@@ -16,11 +16,58 @@ config COAP_SAMPLE_SERVER_HOSTNAME
 
 config COAP_SAMPLE_SERVER_PORT
 	int "CoAP server port"
+	default 5684 if COAP_SAMPLE_DTLS
 	default 5683
 
 config COAP_SAMPLE_REQUEST_INTERVAL_SECONDS
 	int "Request interval in seconds"
 	default 5
+
+config COAP_SAMPLE_DTLS
+	bool "Enable DTLS (CoAPS) with mutual X.509 authentication"
+	select NET_SOCKETS_SOCKOPT_TLS
+	select NET_SOCKETS_ENABLE_DTLS
+	select TLS_CREDENTIALS
+	help
+	  Enable DTLS for CoAP (CoAPS) using mutual X.509 certificate
+	  authentication.  When enabled, the default server port changes to
+	  5684 and the socket is created with IPPROTO_DTLS_1_2.
+
+if COAP_SAMPLE_DTLS
+
+config COAP_SAMPLE_DTLS_SEC_TAG
+	int "DTLS security tag"
+	default 42
+	help
+	  Security tag used to store the DTLS credentials.
+
+config COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS
+	int "Maximum DTLS handshake retransmission timeout in milliseconds"
+	default 5000
+	help
+	  Caps the DTLS handshake retransmission backoff, to avoid blocking
+	  for up to a minute.
+
+config COAP_SAMPLE_CA_CERT_FILE
+	string "CA certificate file (PEM)"
+	default "cert/cf-ca.pem"
+	help
+	  Path to the CA certificate used to verify the server.
+	  Relative to the sample root directory.
+
+config COAP_SAMPLE_CLIENT_CERT_FILE
+	string "Client certificate file (PEM)"
+	default "cert/cf-client.pem"
+	help
+	  Path to the client certificate presented during mutual TLS.
+
+config COAP_SAMPLE_CLIENT_KEY_FILE
+	string "Client private key file (PEM)"
+	default "cert/cf-client-key.pem"
+	help
+	  Path to the client private key.
+
+endif # COAP_SAMPLE_DTLS
 
 endmenu
 

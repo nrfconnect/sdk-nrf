@@ -26,6 +26,9 @@
 #include <zephyr/net/coap_client.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
+#if defined(CONFIG_COAP_SAMPLE_DTLS)
+#include <zephyr/net/tls_credentials.h>
+#endif
 
 LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 
@@ -134,13 +137,111 @@ static int periodic_coap_request_loop(void)
 		return err;
 	}
 
+#if defined(CONFIG_COAP_SAMPLE_DTLS)
+	static const char ca_cert[] = {
+		#include "coap_sample_ca_cert.inc"
+		'\0'
+	};
+	static const char client_cert[] = {
+		#include "coap_sample_client_cert.inc"
+		'\0'
+	};
+	static const char client_key[] = {
+		#include "coap_sample_client_key.inc"
+		'\0'
+	};
+
+	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+				 TLS_CREDENTIAL_CA_CERTIFICATE,
+				 ca_cert, sizeof(ca_cert));
+	if ((err < 0) && (err != -EEXIST)) {
+		LOG_ERR("Failed to register CA certificate: %d", err);
+		return err;
+	}
+
+	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+				 client_cert, sizeof(client_cert));
+	if ((err < 0) && (err != -EEXIST)) {
+		LOG_ERR("Failed to register client certificate: %d", err);
+		return err;
+	}
+
+	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+				 TLS_CREDENTIAL_PRIVATE_KEY,
+				 client_key, sizeof(client_key));
+	if ((err < 0) && (err != -EEXIST)) {
+		LOG_ERR("Failed to register private key: %d", err);
+		return err;
+	}
+
+	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+#else
 	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+#endif
 	if (sock < 0) {
 		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
 		return -errno;
 	}
 
-	LOG_INF("Initializing CoAP client");
+#if defined(CONFIG_COAP_SAMPLE_DTLS)
+	sec_tag_t sec_tag_list[] = { CONFIG_COAP_SAMPLE_DTLS_SEC_TAG };
+
+	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST,
+			 sec_tag_list, sizeof(sec_tag_list));
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS_SEC_TAG_LIST: %d", -errno);
+		(void)zsock_close(sock);
+		return -errno;
+	}
+
+	uint32_t handshake_timeout_ms = CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS;
+
+	err = setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEOUT_MAX,
+			 &handshake_timeout_ms, sizeof(handshake_timeout_ms));
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS_DTLS_HANDSHAKE_TIMEOUT_MAX: %d", -errno);
+		(void)zsock_close(sock);
+		return -errno;
+	}
+
+	/* Set the expected server hostname for SNI and server certificate
+	 * CN/SAN verification.
+	 */
+	err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME,
+			 CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+			 sizeof(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME) - 1);
+	if (err < 0) {
+		LOG_ERR("Failed to set TLS_HOSTNAME: %d", -errno);
+		(void)zsock_close(sock);
+		return -errno;
+	}
+
+	/* Explicitly connect to trigger the DTLS handshake now so we can log
+	 * the outcome and negotiated ciphersuite before handing the socket to
+	 * the CoAP client.
+	 */
+	LOG_INF("Performing DTLS handshake with %s:%d (mutual TLS)...",
+		CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+		CONFIG_COAP_SAMPLE_SERVER_PORT);
+
+	err = zsock_connect(sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in));
+	if (err < 0) {
+		LOG_ERR("DTLS handshake failed: %d", -errno);
+		(void)zsock_close(sock);
+		return -errno;
+	}
+
+	int cipher_id;
+	socklen_t cipher_id_len = sizeof(cipher_id);
+
+	err = getsockopt(sock, SOL_TLS, TLS_CIPHERSUITE_USED, &cipher_id, &cipher_id_len);
+	if (err == 0) {
+		LOG_INF("DTLS handshake complete, ciphersuite: 0x%04x", cipher_id);
+	} else {
+		LOG_INF("DTLS handshake complete (ciphersuite unknown, getsockopt err %d)", err);
+	}
+#endif
 
 	err = coap_client_init(&coap_client, NULL);
 	if (err) {
@@ -173,8 +274,10 @@ static int periodic_coap_request_loop(void)
 
 		consecutive_busy_retries = 0;
 
-		LOG_INF("CoAP GET request sent sent to %s, resource: %s",
-			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, CONFIG_COAP_SAMPLE_RESOURCE);
+		LOG_INF("CoAP GET request sent to %s:%d, resource: %s",
+			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+			CONFIG_COAP_SAMPLE_SERVER_PORT,
+			CONFIG_COAP_SAMPLE_RESOURCE);
 
 		k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 	}
