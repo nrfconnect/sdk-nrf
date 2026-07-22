@@ -30,8 +30,8 @@ Overview
 
 The CoAP Client sample performs the following actions:
 
-#. Connect to the configured public CoAP test server (specified by the Kconfig option :ref:`CONFIG_COAP_SAMPLE_SERVER_HOSTNAME <CONFIG_COAP_SAMPLE_SERVER_HOSTNAME>`).
-#. Send periodic GET request for a test resource (specified by the Kconfig option :ref:`CONFIG_COAP_SAMPLE_RESOURCE <CONFIG_COAP_SAMPLE_RESOURCE>`) that is available on the server.
+#. Connect to the configured public CoAP test server.
+#. Send a periodic GET request for a test resource that is available on the server.
 #. Display the received data about the resource on a terminal emulator.
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
@@ -40,7 +40,41 @@ This server runs Eclipse Californium, which is an open source implementation of 
 This sample uses the resource **obs** (Californium observable resource) in the communication between the CoAP client and the public CoAP server.
 The communication follows the standard request/response pattern and is based on the change in the state of the value of the resource.
 The sample queries one resource at a time.
-To configure other resources, use the Kconfig option :ref:`CONFIG_COAP_SAMPLE_RESOURCE <CONFIG_COAP_SAMPLE_RESOURCE>`.
+
+Selecting the server and resource
+==================================
+
+The server and resource to query are configured with Kconfig options and default to the Californium test server:
+
+* :option:`CONFIG_COAP_SAMPLE_SERVER_HOSTNAME` and :option:`CONFIG_COAP_SAMPLE_SERVER_PORT`- The CoAP server to connect to.
+* :option:`CONFIG_COAP_SAMPLE_RESOURCE`- The resource to query on that server.
+
+.. _coap_client_sample_mtls:
+
+Mutual DTLS (client certificate authentication)
+===============================================
+
+The sample can optionally use DTLS to secure the CoAP communication (CoAPS), with client authentication (mutual TLS).
+
+.. note::
+   This functionality is only supported on Wi-Fi boards and not on cellular boards.
+
+Enable the :option:`CONFIG_COAP_SAMPLE_DTLS` option to provision a CA certificate, a client certificate, and a client private key, and to connect over CoAPS using mutual X.509 authentication.
+Set :option:`CONFIG_COAP_SAMPLE_CA_CERT_FILE`, :option:`CONFIG_COAP_SAMPLE_CLIENT_CERT_FILE`, and :option:`CONFIG_COAP_SAMPLE_CLIENT_KEY_FILE` to the CA certificate, client certificate, and client private key to provision, matching what the server you connect to expects.
+
+The sample includes an example CA trust chain and client certificate and private key under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interoperability server:
+
+* :file:`cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
+* :file:`cert/cf-client.pem` — client certificate
+* :file:`cert/cf-client-key.pem` — client private key (EC P-256)
+
+The :file:`wifi-dtls.conf` extra-conf file configures the sample with mutual X.509 authentication and the cipher suite needed for the Californium interop server.
+
+Wi-Fi
+=====
+
+On Wi-Fi boards, use the :file:`wifi.conf` extra-conf file, using the ``coap_client_EXTRA_CONF_FILE`` sysbuild variable.
+To perform mutual DTLS (CoAPS) with the Californium interoperability server (see :ref:`Mutual DTLS (client certificate authentication) <coap_client_sample_mtls>`), add the :file:`wifi-dtls.conf` extra-conf file on top of :file:`wifi.conf`.
 
 Configuration
 *************
@@ -50,22 +84,10 @@ Configuration
 Configuration options
 =====================
 
-Check and configure the following Kconfig options in the :file:`coap_client/prj.conf` file:
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/coap_client/Kconfig`):
 
-.. _CONFIG_COAP_SAMPLE_RESOURCE:
-
-CONFIG_COAP_SAMPLE_RESOURCE - CoAP resource configuration
-   This option sets the CoAP resource. Default is Californium observable resource.
-
-.. _CONFIG_COAP_SAMPLE_SERVER_HOSTNAME:
-
-CONFIG_COAP_SAMPLE_SERVER_HOSTNAME - CoAP server hostname
-   This option sets the CoAP server hostname. Default is ``californium.eclipseprojects.io``.
-
-.. _CONFIG_COAP_SAMPLE_SERVER_PORT:
-
-CONFIG_COAP_SAMPLE_SERVER_PORT - CoAP server port
-   This option sets the port for the CoAP server. Default is ``5683``.
+.. options-from-kconfig::
+   :show-type:
 
 .. include:: /includes/wifi_credentials_shell.txt
 
@@ -81,7 +103,6 @@ Building and running
 .. |sample path| replace:: :file:`samples/net/coap_client`
 
 .. include:: /includes/build_and_run_ns.txt
-
 
 Testing
 =======
