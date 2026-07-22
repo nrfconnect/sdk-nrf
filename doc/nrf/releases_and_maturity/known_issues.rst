@@ -5320,6 +5320,20 @@ The issues in this section are related to :ref:`nrfxlib:mpsl`.
 
 .. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0
 
+DRGN-29277: Increased sleep current after disconnecting USB when MPSL is enabled
+  Releasing the HFCLK24M USB clock using the :c:func:`mpsl_clock_hfclk_src_release` function leaves the clock running, causing increased power consumption.
+
+  **Affected platforms:** nRF54LM20
+
+  **Workaround:** After calling the :c:func:`usbd_disable` function while handling the ``USBD_MSG_VBUS_REMOVED`` callback, call the following:
+
+  .. code-block:: C
+
+     nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_HFCLK24MSTOP);
+     nrf_clock_event_clear(NRF_CLOCK, NRF_CLOCK_EVENT_HFCLK24MSTARTED);
+
+.. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0
+
 DRGN-29129: :c:func:`mpsl_init` might hang if HFCLK24M is already running
   Calling :c:func:`mpsl_uninit` while the USB clock is still active, and then calling :c:func:`mpsl_init` causes it to hang indefinitely.
   Additionally, calling :c:func:`mpsl_clock_hfclk_src_release` for HFCLK24M after :c:func:`mpsl_uninit` might cause an assert.
