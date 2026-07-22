@@ -287,6 +287,11 @@ struct nrf_wifi_fmac_callbk_fns {
 					  struct nrf_wifi_event_set_channel *channel_event,
 					  unsigned int event_len);
 #endif /* NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX */
+	/** Callback when a coexistence (CM2CD) event NRF_WIFI_EVENT_COEX_CONFIG
+	 *  is received. Delivers the coexistence event payload to the host
+	 *  coexistence driver.
+	 */
+	void (*coex_event_callbk_fn)(void *os_dev_ctx, void *coex_event, unsigned int event_len);
 };
 
 #if defined(NRF71_STA_MODE) || defined(__DOXYGEN__)

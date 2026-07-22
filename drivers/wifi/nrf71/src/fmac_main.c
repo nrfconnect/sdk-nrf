@@ -26,6 +26,7 @@
 #include <util.h>
 #include "common/fmac_util.h"
 #include <fmac_main.h>
+#include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
 #ifndef CONFIG_NRF71_RADIO_TEST
 #ifdef CONFIG_NRF71_STA_MODE
@@ -800,6 +801,17 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
+#if defined(CONFIG_NRF71_SR_COEX_DRIVER) && !defined(CONFIG_NRF71_RADIO_TEST)
+/* FMAC delivers CM2CD coexistence events (NRF_WIFI_EVENT_COEX_CONFIG) here;
+ * forward the payload to the coexistence driver.
+ */
+static void nrf_wifi_coex_event_cb(void *os_dev_ctx, void *event, unsigned int len)
+{
+	ARG_UNUSED(os_dev_ctx);
+	nrf71_wifi_coex_on_event(event, (size_t)len);
+}
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER && !CONFIG_NRF71_RADIO_TEST */
+
 static int nrf_wifi_drv_main_zep(const struct device *dev)
 {
 #ifndef CONFIG_NRF71_RADIO_TEST
@@ -889,6 +901,9 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 #endif /* CONFIG_NRF71_STA_MODE */
 #if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 	callbk_fns.channel_set_done_callbk_fn = nrf_wifi_event_proc_channel_set_done_zep;
+#endif
+#if defined(CONFIG_NRF71_SR_COEX_DRIVER)
+	callbk_fns.coex_event_callbk_fn = nrf_wifi_coex_event_cb;
 #endif
 
 	/* The OSAL layer needs to be initialized before any other initialization
