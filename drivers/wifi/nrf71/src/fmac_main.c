@@ -187,6 +187,15 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NRF71_STA_MODE
 	case SCAN_CONNECT:
+#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+		/* Cache for the get scan results call; free any unread previous one. */
+		if (vif_ctx_zep->connect_scan_db_addr) {
+			nrf_wifi_osal_mem_free(
+				(void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
+		}
+		vif_ctx_zep->connect_scan_db_addr = scan_done_event->scan_db_addr;
+		vif_ctx_zep->connect_scan_res_cnt = scan_done_event->scan_results_cnt;
+#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
 		nrf_wifi_wpa_supp_event_proc_scan_done(vif_ctx_zep,
 						       scan_done_event,
 						       event_len,
