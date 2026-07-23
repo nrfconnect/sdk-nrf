@@ -18,7 +18,10 @@
  *
  */
 
-/** Channel identifiers. Keep VTF_CH_COUNT last. */
+/** Channel identifiers. Keep VTF_CH_COUNT last.
+ * Enum must not change in order to align with Wi-Fi driver.
+ * Will assert if this order is changed.
+ */
 enum vtf_channel_id {
 	VTF_CH_BATTERY_VOLTAGE,
 	VTF_CH_DIE_TEMP,
