@@ -27,6 +27,7 @@
 #include "timer.h"
 #include "osal_ops.h"
 #include "common/hal_structs_common.h"
+#include <nrf71_wifi_ctrl.h> /* struct umac_display_results, for heap sizing */
 
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -38,11 +39,25 @@ static struct k_heap * const wifi_ctrl_pool = &_system_heap;
 static struct k_heap * const wifi_data_pool = &_system_heap;
 #else
 /* Use dedicated heaps */
+#if defined(CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM)
+/* Connect and display scan databases share the control pool but never run at
+ * once, so only reserve what the connect one needs beyond the display one.
+ */
+#define NRF_WIFI_DISP_SCAN_DB (CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT * \
+			       sizeof(struct umac_display_results))
+#define NRF_WIFI_CONN_SCAN_DB CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE
+#define NRF_WIFI_CTRL_HEAP_EXTRA (NRF_WIFI_CONN_SCAN_DB > NRF_WIFI_DISP_SCAN_DB ? \
+				  NRF_WIFI_CONN_SCAN_DB - NRF_WIFI_DISP_SCAN_DB : 0)
+#else
+#define NRF_WIFI_CTRL_HEAP_EXTRA 0
+#endif
 #if defined(CONFIG_NOCACHE_MEMORY)
-K_HEAP_DEFINE_NOCACHE(wifi_drv_ctrl_mem_pool, CONFIG_NRF_WIFI_CTRL_HEAP_SIZE);
+K_HEAP_DEFINE_NOCACHE(wifi_drv_ctrl_mem_pool,
+		      CONFIG_NRF_WIFI_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
 K_HEAP_DEFINE_NOCACHE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_SIZE);
 #else
-K_HEAP_DEFINE(wifi_drv_ctrl_mem_pool, CONFIG_NRF_WIFI_CTRL_HEAP_SIZE);
+K_HEAP_DEFINE(wifi_drv_ctrl_mem_pool,
+	      CONFIG_NRF_WIFI_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
 K_HEAP_DEFINE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_SIZE);
 #endif /* CONFIG_NOCACHE_MEMORY */
 static struct k_heap * const wifi_ctrl_pool = &wifi_drv_ctrl_mem_pool;
