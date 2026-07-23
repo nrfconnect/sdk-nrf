@@ -625,6 +625,7 @@
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
+/samples/vtf_monitoring/                  @nrfconnect/ncs-malago
 /samples/wifi/common/                     @D-Triveni
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
 /samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
@@ -766,6 +767,7 @@
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
+/samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/wifi/nrf_cloud/*.rst             @nrfconnect/ncs-bifrost @nrfconnect/ncs-nrf-cloud-doc
