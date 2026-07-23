@@ -27,6 +27,14 @@ struct downloader_transport_coap_cfg {
 	enum coap_block_size block_size;
 	/** Max retransmission requests. */
 	uint8_t max_retransmission;
+	/** Maximum number of reconnect attempts before the download is aborted.
+	 *
+	 *  This bounds how many times the downloader retries the transfer when
+	 *  recovery (retransmission or reconnection) does not make progress,
+	 *  preventing indefinite retry loops. The counter is reset every time a
+	 *  block is received successfully. A value of 0 selects the default.
+	 */
+	uint8_t max_reconnects;
 };
 
 /**
