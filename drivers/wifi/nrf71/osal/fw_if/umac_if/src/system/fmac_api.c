@@ -634,7 +634,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 		goto out;
 	}
 
-	if (scan_info->scan_reason == SCAN_DISPLAY) {
+	/* The firmware fills the scan results database into this buffer, both
+	 * for display scan and (when the host asks for it) connect scan. Any
+	 * scan that provides a non-zero database length gets a buffer.
+	 */
+	if (scan_info->scan_db_len) {
 		nrf_wifi_osal_log_dbg("%s: scan_db_len = %d",
 				      __func__,
 				      scan_info->scan_db_len);
@@ -661,6 +665,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 out:
 	if (scan_cmd) {
 		nrf_wifi_osal_mem_free(scan_cmd);
+	}
+
+	/* Free the database buffer if the scan did not start. */
+	if ((status != NRF_WIFI_STATUS_SUCCESS) && scan_info->scan_db_addr) {
+		nrf_wifi_osal_mem_free((void *)(unsigned long)scan_info->scan_db_addr);
+		scan_info->scan_db_addr = 0;
 	}
 
 	return status;
