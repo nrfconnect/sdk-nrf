@@ -35,6 +35,9 @@ LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 #define COAP "coap://"
 #define COAPS "coaps://"
 
+#define COAP_DEFAULT_MAX_RETRANSMISSION 4
+#define COAP_DEFAULT_MAX_RECONNECTS	3
+
 struct transport_params_coap {
 	/** Flag whether config is set */
 	bool cfg_set;
@@ -64,6 +67,11 @@ struct transport_params_coap {
 	bool new_data_req;
 	/** Request retransmission */
 	bool retransmission_req;
+	/** Number of reconnect attempts since the last forward progress.
+	 *  Reset whenever a block is received successfully. Bounds the number
+	 *  of times the download is retried when recovery does not succeed.
+	 */
+	uint8_t reconnects;
 	/* Proxy-URI option value */
 	const char *proxy_uri;
 	/* Client auth callback */
@@ -243,8 +251,16 @@ static int coap_parse(struct downloader *dl, size_t len)
 
 	response_code = coap_header_get_code(&response);
 	if (response_code != COAP_RESPONSE_CODE_CONTENT) {
+		/* The server returned a valid response, but not the expected
+		 * content (e.g. a 4.xx/5.xx such as 4.01 Unauthorized). This is a
+		 * definitive answer from the server; retransmitting the same
+		 * request will not change it, so report a fatal error instead of
+		 * requesting the block again. -ECONNREFUSED is used (as opposed to
+		 * the -EBADMSG returned for malformed/unexpected packets) so the
+		 * caller can tell the two apart and stop the download.
+		 */
 		LOG_ERR("Server responded with code 0x%x", response_code);
-		return -EBADMSG;
+		return -ECONNREFUSED;
 	}
 
 	err = coap_block_update(dl, &response, &blk_off, &more);
@@ -261,6 +277,9 @@ static int coap_parse(struct downloader *dl, size_t len)
 	/* Accumulate buffer offset */
 	dl->progress += payload_len;
 	dl->buf_offset = 0;
+
+	/* Forward progress was made, reset the reconnect budget. */
+	coap->reconnects = 0;
 
 	dl_transport_evt_data(dl, (void *)payload, payload_len);
 
@@ -394,7 +413,14 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 		coap->cfg_set = cfg_set;
 	} else {
 		coap->cfg.block_size = COAP_BLOCK_1024;
-		coap->cfg.max_retransmission = 4;
+		coap->cfg.max_retransmission = COAP_DEFAULT_MAX_RETRANSMISSION;
+	}
+
+	/* A value of 0 (e.g. from a config that predates this field) selects the
+	 * default so that there is always an upper bound on retries.
+	 */
+	if (coap->cfg.max_reconnects == 0) {
+		coap->cfg.max_reconnects = COAP_DEFAULT_MAX_RECONNECTS;
 	}
 
 	coap->sock.proto = NET_IPPROTO_UDP;
@@ -454,6 +480,23 @@ static int dl_coap_connect(struct downloader *dl)
 	struct transport_params_coap *coap;
 
 	coap = (struct transport_params_coap *)dl->transport_internal;
+
+	/* coap->initialized is only set after the first successful connection of
+	 * a download, so if it is set here this call is a reconnect attempt.
+	 * Bound the number of reconnects that do not lead to forward progress to
+	 * avoid retrying indefinitely (the counter is reset in coap_parse() when
+	 * a block is received).
+	 */
+	if (coap->initialized) {
+		if (coap->reconnects >= coap->cfg.max_reconnects) {
+			LOG_ERR("Reconnect limit (%u) reached, aborting download",
+				coap->cfg.max_reconnects);
+			return -ECONNABORTED;
+		}
+		coap->reconnects++;
+		LOG_DBG("Reconnect attempt %u/%u", coap->reconnects,
+			coap->cfg.max_reconnects);
+	}
 
 	err = -1;
 
@@ -562,9 +605,20 @@ static int dl_coap_download(struct downloader *dl)
 
 	ret = coap_parse(dl, len);
 	if (ret < 0) {
-		/* Request data again */
-		coap->retransmission_req = true;
-		return 0;
+		if (ret == -EBADMSG) {
+			/* Malformed or unexpected packet, likely transient.
+			 * Request the same block again.
+			 */
+			coap->retransmission_req = true;
+			return 0;
+		}
+
+		/* Any other error (e.g. a 4.xx/5.xx server response) is
+		 * definitive. Propagate it so the download is stopped and the
+		 * error is reported to the application instead of retrying
+		 * indefinitely.
+		 */
+		return ret;
 	}
 
 	if (dl->progress == dl->file_size) {

@@ -1159,6 +1159,17 @@ static ssize_t z_impl_zsock_recvfrom_coap_timeout_then_data(int sock, void *buf,
 	return z_impl_zsock_recvfrom_coap(sock, buf, max_len, flags, src_addr, addrlen);
 }
 
+static ssize_t z_impl_zsock_recvfrom_coap_econnreset(int sock, void *buf, size_t max_len,
+						     int flags, struct net_sockaddr *src_addr,
+						     net_socklen_t *addrlen)
+{
+	/* Connection reset on every receive, forcing the downloader to reconnect
+	 * repeatedly without ever making progress.
+	 */
+	errno = ECONNRESET;
+	return -1;
+}
+
 int coap_get_option_int_ok(const struct coap_packet *cpkt, uint16_t code)
 {
 	return 0;
@@ -1241,6 +1252,12 @@ uint8_t coap_header_get_code_bad_then_ok(const struct coap_packet *cpkt)
 uint8_t coap_header_get_code_bad(const struct coap_packet *cpkt)
 {
 	return 0xba;
+}
+
+uint8_t coap_header_get_code_unauthorized(const struct coap_packet *cpkt)
+{
+	/* 4.01 Unauthorized, wire code 0x81. See NCSDK-38508. */
+	return COAP_RESPONSE_CODE_UNAUTHORIZED;
 }
 
 #define COAP_PAYLOAD "This is the payload"
@@ -2105,7 +2122,12 @@ void test_downloader_get_coap_one_bad_header_code(void)
 	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
 	TEST_ASSERT_EQUAL(0, err);
 
-	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+	/* A non-CONTENT CoAP response code is a definitive answer from the server
+	 * (e.g. 4.01 Unauthorized). The downloader must not retransmit the request
+	 * indefinitely; it reports the error and stops. See NCSDK-38508.
+	 */
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-ECONNREFUSED, evt.error);
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
@@ -2211,6 +2233,86 @@ void test_downloader_get_coap_retransmission_recovery(void)
 
 	TEST_ASSERT_EQUAL(2, coap_pending_cycle_fake.call_count);
 	TEST_ASSERT_EQUAL(2, z_impl_zsock_recvfrom_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* A CoAP transfer that never makes progress must not reconnect forever. After
+ * the reconnect budget is exhausted, the download is aborted with -ECONNABORTED
+ * instead of looping indefinitely. See NCSDK-38508.
+ */
+void test_downloader_get_coap_reconnect_limit(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap_econnreset;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-ECONNABORTED, evt.error);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* Exact scenario from NCSDK-38508: the server answers the block request with a
+ * 4.01 Unauthorized (wire code 0x81). This is a definitive response, so the
+ * downloader must report an error and stop, not retransmit the request forever.
+ * The request is expected to be sent exactly once (no retransmission/reconnect
+ * loop).
+ */
+void test_downloader_get_coap_unauthorized_response(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_unauthorized;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-ECONNREFUSED, evt.error);
+
+	/* The request must have been sent exactly once: the 4.01 response is not
+	 * retransmitted.
+	 */
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_sendto_fake.call_count);
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_recvfrom_fake.call_count);
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));

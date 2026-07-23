@@ -44,7 +44,9 @@ enum downloader_evt_id {
 	 *
 	 * Error reason may be one of the following:
 	 * - -ECONNRESET: Socket error, peer closed connection.
-	 * - -ECONNREFUSED: Socket error, connection refused by server.
+	 * - -ECONNREFUSED: Socket error, connection refused by server, or (CoAP)
+	 *   the server returned an error response (e.g. 4.01 Unauthorized).
+	 * - -ECONNABORTED: (CoAP) reconnect attempts exhausted, download aborted.
 	 * - -ENETDOWN: Socket error, network down.
 	 * - -ETIMEDOUT: Socket error, connection timed out.
 	 * - -EHOSTDOWN: Host went down during download.
@@ -58,11 +60,13 @@ enum downloader_evt_id {
 	 * - -EMSGSIZE: TLS packet is larger than the nRF91 Modem can handle.
 	 * - -EMLINK: Maximum number of redirects reached.
 	 *
-	 * In case of @c ECONNRESET errors, returning zero from the callback will let the
-	 * library attempt to reconnect to the server and download the last fragment again.
-	 * Otherwise, the application may return any non-zero value to stop the download.
-	 * On any other error code than @c ECONNRESET, the downloader will not attempt to reconnect
-	 * and will ignore the return value.
+	 * How the downloader reacts depends on the error:
+	 * - @c -ECONNRESET: the downloader automatically closes the connection, reconnects,
+	 *   and resumes the download without invoking the callback. The
+	 *   @c DOWNLOADER_EVT_ERROR event is only generated if the reconnection itself fails.
+	 * - Any other error (including the CoAP @c -ECONNREFUSED and @c -ECONNABORTED above):
+	 *   the @c DOWNLOADER_EVT_ERROR event is generated. Return a non-zero value from the
+	 *   callback to stop the download, or zero to let the downloader reconnect and resume.
 	 *
 	 * In case the download is stopped or completed, and the
 	 * @c downloader_host_cfg.keep_connection flag is set, the downloader will stay
@@ -115,13 +119,11 @@ struct downloader_evt {
  * Through this callback, the application receives events, such as
  * download of a fragment, download completion, or errors.
  *
- * On a @c DOWNLOADER_EVT_ERROR event with error @c ECONNRESET,
- * returning zero from the callback will let the library attempt
- * to reconnect to the server and continue the download.
- * Otherwise, the callback may return any non-zero value
- * to stop the download. On any other error code than @c ECONNRESET, the downloader
- * will not attempt to reconnect and will ignore the return value.
- * To resume the download, use @ref downloader_get().
+ * When a @c DOWNLOADER_EVT_ERROR event is received, the return value controls
+ * whether the download is resumed: return a non-zero value to stop it, or zero to
+ * let the downloader reconnect and resume. On @c -ECONNRESET the downloader
+ * reconnects automatically and the event is only generated if that reconnection
+ * fails. To resume a stopped download later, use @ref downloader_get().
  *
  * @param[in] event	The event.
  *
