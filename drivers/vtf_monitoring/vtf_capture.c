@@ -28,12 +28,11 @@ static const union vtf_sample_value vtf_channel_defaults[VTF_CH_COUNT] = {
 #error " 'nordic,vtf-region' must be chosen and enabled"
 #endif
 
-volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT]
-	__aligned(4)
-	__attribute__((__section__(LINKER_DT_NODE_REGION_NAME(VTF_NODE))));
+volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT] __aligned(4)
+__attribute__((__section__(LINKER_DT_NODE_REGION_NAME(VTF_NODE))));
 
 BUILD_ASSERT(sizeof(vtf_snapshots) <= DT_REG_SIZE(VTF_NODE),
-			 "vtf_snapshots too large for nordic_vtf_region");
+	     "vtf_snapshots too large for nordic_vtf_region");
 
 static bool ch_live_update[VTF_CH_COUNT];
 
