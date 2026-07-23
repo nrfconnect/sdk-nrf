@@ -56,6 +56,8 @@ struct vtf_sample {
 	enum vtf_sample_status status;
 };
 
+extern volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
+
 struct vtf_channel {
 	/** Channel id this descriptor implements. */
 	enum vtf_channel_id id;
