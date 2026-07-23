@@ -666,50 +666,15 @@
     "UP012",    # https://docs.astral.sh/ruff/rules/unnecessary-encode-utf8
     "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
 ]
-"./tests/lib/hw_unique_key_tfm/create_test_vector.py" = [
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
 "./tests/lib/hw_unique_key_tfm/write_kmu.py" = [
     "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
 ]
 "./tests/subsys/bluetooth/mesh/metadata_extraction/verify_metadata.py" = [
     "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
 ]
-"./tests/subsys/bootloader/bl_crypto/test_generator.py" = [
-    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
-    "F821",     # https://docs.astral.sh/ruff/rules/undefined-name
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-    "UP031",    # https://docs.astral.sh/ruff/rules/printf-string-formatting
-    "W191",     # https://docs.astral.sh/ruff/rules/tab-indentation
-    "W291",     # https://docs.astral.sh/ruff/rules/trailing-whitespace
-]
 "./tests/subsys/bootloader/bl_validation_ff_key/generate_ff_key.py" = [
     "B007",     # https://docs.astral.sh/ruff/rules/unused-loop-control-variable
     "B905",     # https://docs.astral.sh/ruff/rules/zip-without-explicit-strict
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
-"./tests/subsys/kmu/pytest/conftest.py" = [
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-    "UP032",    # https://docs.astral.sh/ruff/rules/f-string
-]
-"./tests/subsys/kmu/pytest/test_kmu_provision.py" = [
-    "E501",     # https://docs.astral.sh/ruff/rules/line-too-long
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
-"./tests/subsys/kmu/pytest/test_kmu_verify_keys_in_app.py" = [
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
-"./tests/subsys/rtt/pytest/test_rtt.py" = [
-    "F541",     # https://docs.astral.sh/ruff/rules/f-string-missing-placeholders
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
-"./tests/subsys/swo/pytest/test_swo.py" = [
-    "I001",     # https://docs.astral.sh/ruff/rules/unsorted-imports
-]
-"./tests/subsys/usb/negotiated_speed/pytest/test_usb_speed.py" = [
-    "UP006",    # https://docs.astral.sh/ruff/rules/non-pep585-annotation
-    "UP035",    # https://docs.astral.sh/ruff/rules/deprecated-import
 ]
 [format]
 exclude = [
@@ -836,14 +801,6 @@ exclude = [
     "./scripts/west_commands/utils/__init__.py",
     "./subsys/net/lib/wifi_prov_core/proto/generate_wifi_prov_config.py",
     "./subsys/net/lib/wifi_prov_core/proto/test_auth_modes.py",
-    "./tests/drivers/grtc/grtc_reset/pytest/tests.py",
     "./tests/lib/hw_unique_key_tfm/create_test_vector.py",
     "./tests/lib/hw_unique_key_tfm/write_kmu.py",
-    "./tests/subsys/bluetooth/mesh/metadata_extraction/verify_metadata.py",
-    "./tests/subsys/bootloader/bl_crypto/test_generator.py",
-    "./tests/subsys/bootloader/bl_validation_ff_key/generate_ff_key.py",
-    "./tests/subsys/kmu/pytest/test_kmu_provision.py",
-    "./tests/subsys/kmu/pytest/test_kmu_verify_keys_in_app.py",
-    "./tests/subsys/rtt/pytest/test_rtt.py",
-    "./tests/subsys/usb/negotiated_speed/pytest/test_usb_speed.py",
 ]

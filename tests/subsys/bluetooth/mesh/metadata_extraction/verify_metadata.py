@@ -58,12 +58,10 @@ def expected_metadata(size):
                 'vid': 3,
                 'crpl': 64,
                 'features': 5,
-                'elements': [
-                    {'location': 1, 'sig_models': [0, 2], 'vendor_models': [0x56781234]}
-                ]
+                'elements': [{'location': 1, 'sig_models': [0, 2], 'vendor_models': [0x56781234]}],
             },
             'composition_hash': 1829016033,
-            'encoded_metadata': f'0102030004000000{encoded_size}01e191046d0100'
+            'encoded_metadata': f'0102030004000000{encoded_size}01e191046d0100',
         },
         {
             'sign_version': {'major': 1, 'minor': 2, 'revision': 3, 'build_number': 4},
@@ -77,12 +75,12 @@ def expected_metadata(size):
                 'features': 5,
                 'elements': [
                     {'location': 1, 'sig_models': [0, 2], 'vendor_models': [0x56781234]},
-                    {'location': 2, 'sig_models': [4097, 4099], 'vendor_models': []}
-                ]
+                    {'location': 2, 'sig_models': [4097, 4099], 'vendor_models': []},
+                ],
             },
             'composition_hash': 214185805,
-            'encoded_metadata': f'0102030004000000{encoded_size}014d37c40c0200'
-        }
+            'encoded_metadata': f'0102030004000000{encoded_size}014d37c40c0200',
+        },
     ]
 
 
@@ -92,7 +90,9 @@ if __name__ == '__main__':
     fwid = sys.argv[3]
 
     zip_path = os.path.join(bin_dir, "dfu_application.zip")
-    binary_size = os.path.getsize(os.path.join(bin_dir, "metadata_extraction", "zephyr", "zephyr.signed.bin"))
+    binary_size = os.path.getsize(
+        os.path.join(bin_dir, "metadata_extraction", "zephyr", "zephyr.signed.bin")
+    )
 
     expected = expected_metadata(binary_size)
 
@@ -112,8 +112,9 @@ if __name__ == '__main__':
         assert_metadata_equal(json_data, expected[0])
     elif comp_data_layout == '--multiple':
         assert not isinstance(json_data, dict), "Expected multiple metadata but got one."
-        assert len(json_data) == len(expected), (f"Expected {len(expected)} metadatas "
-                                                          f"but got {len(json_data)}")
+        assert len(json_data) == len(expected), (
+            f"Expected {len(expected)} metadatas but got {len(json_data)}"
+        )
         for i, data in enumerate(json_data):
             assert_metadata_equal(data, expected[i], f"Metadata[{i}] not equal to expected")
     else:

@@ -17,7 +17,7 @@ for _i in range(100000):
 
     # Search for aligned 0xFFFF.
     for u16 in zip(vk_hash[::2], vk_hash[1::2], strict=False):
-        if u16 == (0xff, 0xff):
+        if u16 == (0xFF, 0xFF):
             print(vk_hash)
             with open('ff.pem', 'wb') as f:
                 f.write(sk.to_pem())
