@@ -367,8 +367,8 @@ static void ppi_seq_cb(struct ppi_seq *ppi_seq, bool last)
 	uint8_t *rx_buf = prim ? spim_data.rx_buf0 : spim_data.rx_buf1;
 	uint32_t batch_bytes = XFER_CNT * XFER_LEN;
 
-	spim_data.spim.p_reg->DMA.RX.PTR = (uint32_t)(prim ? spim_data.tx_buf1 : spim_data.tx_buf0);
-	spim_data.spim.p_reg->DMA.TX.PTR = (uint32_t)(prim ? spim_data.rx_buf1 : spim_data.rx_buf0);
+	nrf_spim_rx_ptr_set(spim_data.spim.p_reg, prim ? spim_data.tx_buf1 : spim_data.tx_buf0);
+	nrf_spim_tx_ptr_set(spim_data.spim.p_reg, prim ? spim_data.rx_buf1 : spim_data.rx_buf0);
 	spim_data.primary_buf = !spim_data.primary_buf;
 
 	spim_data.t_cb = k_cycle_get_32();
