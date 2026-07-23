@@ -15,6 +15,7 @@ from twister_harness import DeviceAdapter
 
 logger = logging.getLogger(__name__)
 
+
 # Kill parent process and all child processes (if started)
 def _kill(proc):
     try:
@@ -116,7 +117,7 @@ def test_rtt_logging(dut: DeviceAdapter):
         # Using nRF54L15_M33 as the device because its RAM region closely matches nRF7120.
         # This enables automatic SEGGER RTT symbol detection by JLinkRTTLogger.
         # Update to the official nRF7120 device name when SEGGER adds support.
-        'nrf7120dk/nrf7120/cpuapp' : {
+        'nrf7120dk/nrf7120/cpuapp': {
             'device': 'nRF54L15_M33',
         },
     }
@@ -178,9 +179,7 @@ def test_rtt_logging(dut: DeviceAdapter):
         raise exc
 
     # if nothing in log_file, stop test
-    assert(
-        len(log_file_content) > 0
-    ), f"File {log_filename} is empty"
+    assert len(log_file_content) > 0, f"File {log_filename} is empty"
 
     # Check if log file contains expected string
     expected_str = re.search(EXPECTED, log_file_content)

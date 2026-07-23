@@ -51,15 +51,10 @@ def test_usb_negotaited_speed(dut: DeviceAdapter):
 
     assert USB_SAMPLE_ID in usb_devices, failure_info
 
-    vendor_and_dev_id: str = (
-        usb_devices.split(USB_SAMPLE_ID)[0].split("ID ")[-1].strip(" ")
-    )
+    vendor_and_dev_id: str = usb_devices.split(USB_SAMPLE_ID)[0].split("ID ")[-1].strip(" ")
     usb_device_info: str = excute_command(f"lsusb -d {vendor_and_dev_id} -v")
     max_packet_size: int = int(
-        usb_device_info.split("wMaxPacketSize")[-1]
-        .split("bytes")[0]
-        .split("1x ")[-1]
-        .strip(" ")
+        usb_device_info.split("wMaxPacketSize")[-1].split("bytes")[0].split("1x ")[-1].strip(" ")
     )
     negotiated_speed: str = packet_size_vs_speed[max_packet_size]
 

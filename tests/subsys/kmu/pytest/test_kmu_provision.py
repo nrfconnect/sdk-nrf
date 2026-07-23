@@ -7,14 +7,14 @@ import logging
 from pathlib import Path
 
 import pytest
+from constant import APP_KEYS_FOR_KMU
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config, match_lines
+from twister_harness_ext.utils.common import reset_board
 from twister_harness_ext.utils.key_provisioning import (
     get_keyname_for_mcuboot,
     provision_keys_for_kmu,
 )
-from twister_harness_ext.utils.common import reset_board
-from constant import APP_KEYS_FOR_KMU
 
 logger = logging.getLogger(__name__)
 
@@ -36,31 +36,33 @@ def test_kmu_use_key_from_config(dut: DeviceAdapter, test_option):
         keys = [
             APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
             key_file,
-            APP_KEYS_FOR_KMU / 'root-ed25519-2.pem'
+            APP_KEYS_FOR_KMU / 'root-ed25519-2.pem',
         ]
     elif test_option == 'three_keys_last_used':
         keys = [
             APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
             APP_KEYS_FOR_KMU / 'root-ed25519-2.pem',
-            key_file
+            key_file,
         ]
     else:
         keys = [key_file]
 
     provision_keys_for_kmu(
-        keys=keys,
-        keyname=get_keyname_for_mcuboot(sysbuild_config),
-        dev_id=dut.device_config.id
+        keys=keys, keyname=get_keyname_for_mcuboot(sysbuild_config), dev_id=dut.device_config.id
     )
     dut.clear_buffer()
     reset_board(dut.device_config.id)
 
     lines = dut.readlines_until(
         regex='Unable to find bootable image|Jumping to the first image slot',
-        print_output=True, timeout=20)
+        print_output=True,
+        timeout=20,
+    )
 
     match_lines(lines, ['Jumping to the first image slot'])
-    logger.info("Passed: Booted successfully after provisioning the same key that was used during building")
+    logger.info(
+        "Passed: Booted successfully after provisioning the same key that was used during building"
+    )
 
 
 @pytest.mark.usefixtures("no_reset")
@@ -75,10 +77,10 @@ def test_kmu_use_wrong_key(dut: DeviceAdapter):
         keys=[
             APP_KEYS_FOR_KMU / 'root-ed25519-1.pem',
             APP_KEYS_FOR_KMU / 'root-ed25519-2.pem',
-            APP_KEYS_FOR_KMU / 'root-ed25519-w.pem'
+            APP_KEYS_FOR_KMU / 'root-ed25519-w.pem',
         ],
         keyname=get_keyname_for_mcuboot(sysbuild_config),
-        dev_id=dut.device_config.id
+        dev_id=dut.device_config.id,
     )
 
     dut.clear_buffer()
@@ -86,11 +88,16 @@ def test_kmu_use_wrong_key(dut: DeviceAdapter):
 
     lines = dut.readlines_until(
         regex='Unable to find bootable image|Jumping to the first image slot',
-        print_output=True, timeout=20)
+        print_output=True,
+        timeout=20,
+    )
 
-    match_lines(lines, [
-        'ED25519 signature verification failed',
-        'Image in the primary slot is not valid',
-        'Unable to find bootable image'
-    ])
+    match_lines(
+        lines,
+        [
+            'ED25519 signature verification failed',
+            'Image in the primary slot is not valid',
+            'Unable to find bootable image',
+        ],
+    )
     logger.info("Passed: Not booted when used wrong keys")
