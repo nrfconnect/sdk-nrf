@@ -14,22 +14,13 @@
 #include <zephyr/logging/log.h>
 #include <drivers/vtf_monitoring/vtf_monitoring.h>
 
-#ifdef CONFIG_VTF_DIE_TEMP_MONITOR
-#include "temperature_monitor.h"
-#endif
-
 LOG_MODULE_REGISTER(vtf_capture, CONFIG_VTF_LOG_LEVEL);
 
-VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP,
-		   COND_CODE_1(CONFIG_VTF_DIE_TEMP_MONITOR, (die_temp_sample), (NULL)),
-		   COND_CODE_1(CONFIG_VTF_DIE_TEMP_MONITOR, (die_temp_init), (NULL)),
-		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);
-
-VTF_CHANNEL_DEFINE(vtf_channel_battery_voltage, VTF_CH_BATTERY_VOLTAGE, NULL, NULL,
-		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE);
-
-VTF_CHANNEL_DEFINE(vtf_channel_freq_offset, VTF_CH_FREQ_OFFSET, NULL, NULL, VTF_SAMPLE_TYPE_INT,
-		   i32, CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE);
+static const union vtf_sample_value vtf_channel_defaults[VTF_CH_COUNT] = {
+	[VTF_CH_BATTERY_VOLTAGE] = {.i32 = CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE},
+	[VTF_CH_DIE_TEMP] = {.i32 = CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE},
+	[VTF_CH_FREQ_OFFSET] = {.i32 = CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE},
+};
 
 #if DT_HAS_CHOSEN(nordic_vtf_region)
 #define VTF_NODE DT_CHOSEN(nordic_vtf_region)
@@ -79,6 +70,10 @@ static int vtf_monitoring_init(void)
 {
 	int err = 0;
 	bool any_live_update = false;
+
+	for (enum vtf_channel_id id = 0; id < VTF_CH_COUNT; id++) {
+		vtf_snapshots[id] = vtf_channel_defaults[id];
+	}
 
 	STRUCT_SECTION_FOREACH(vtf_channel, ch)
 	{
