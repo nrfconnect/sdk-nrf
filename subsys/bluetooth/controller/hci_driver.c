@@ -1003,6 +1003,14 @@ static void configure_supported_features(void)
 	if (IS_ENABLED(CONFIG_BT_CTLR_DTM)) {
 		sdc_support_direct_test_mode();
 	}
+
+	if (IS_ENABLED(CONFIG_MPSL_FEM)) {
+		sdc_support_mpsl_fem();
+	}
+
+	if (IS_ENABLED(CONFIG_MPSL_CX)) {
+		sdc_support_mpsl_coex();
+	}
 }
 
 static int configure_memory_usage(void)
