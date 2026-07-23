@@ -273,11 +273,39 @@ static int ppi_seq_notifier_init(struct ppi_seq *seq)
 
 	if (IS_ENABLED(CONFIG_NRFX_GPPI)) {
 		rv = nrfx_gppi_ep_channel_get(notifier->nrfx_timer.end_seq_event);
-		if ((rv >= 0) &&
-		    (nrfx_gppi_domain_id_get(notifier->nrfx_timer.end_seq_event) ==
-		     nrfx_gppi_domain_id_get(cnt_task))) {
-			/* Channel is already in use */
-			nrfx_gppi_ep_to_ch_attach(cnt_task, rv);
+		if (rv >= 0) {
+			/* Channel already attached to the event. Attach another task to it. */
+			uint32_t producer =
+				nrfx_gppi_domain_id_get(notifier->nrfx_timer.end_seq_event);
+			uint32_t consumer = nrfx_gppi_domain_id_get(cnt_task);
+
+			if (producer == consumer) {
+				/* Same domain - attach endpoint to existing channel. */
+				nrfx_gppi_ep_to_ch_attach(cnt_task, rv);
+			} else {
+				/* Different domain - attach endpoint to external connection. */
+				nrfx_gppi_resource_t resource = {
+					.domain_id = producer,
+					.channel = rv,
+				};
+				nrfx_gppi_handle_t ext_handle;
+
+				rv = nrfx_gppi_ext_conn_alloc(producer, consumer,
+							      &ext_handle, &resource);
+				if (rv < 0) {
+					return rv;
+				}
+
+				rv = nrfx_gppi_ep_attach(cnt_task, ext_handle);
+				if (rv < 0) {
+					nrfx_gppi_domain_conn_free(ext_handle);
+					return rv;
+				}
+
+				seq->ppi_pool[seq->ppi_cnt++] = ext_handle;
+				nrfx_gppi_conn_enable(ext_handle);
+			}
+
 			notifier->nrfx_timer.attached = true;
 			return 0;
 		}
