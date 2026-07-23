@@ -1,0 +1,25 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+    - ppk_power_measure
+
+tests:
+  benchmarks.multicore.idle_flpr:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - SNIPPET=nordic-flpr
+      - SB_CONFIG_FLPRCORE_TESTAPP=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_flpr_idle"

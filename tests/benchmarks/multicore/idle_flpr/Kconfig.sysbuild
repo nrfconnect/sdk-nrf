@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SUPPORT_FLPRCORE_TESTAPP
+	bool
+	default y
+
+choice FLPRCORE
+
+config FLPRCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+if !FLPRCORE_NONE
+
+config FLPRCORE_IMAGE_NAME
+	default "flpr_test_app" if FLPRCORE_TESTAPP
+
+config FLPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_flpr/flpr_test_app" if FLPRCORE_TESTAPP
+
+endif # !FLPRCORE_NONE
+
+source "share/sysbuild/Kconfig"
