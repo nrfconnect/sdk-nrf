@@ -682,6 +682,8 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_cs_read_remote_supported_capabilities = 1;
 	cmds->hci_le_cs_write_cached_remote_supported_capabilities = 1;
 	cmds->hci_le_cs_write_cached_remote_supported_capabilities_v2 = 1;
+	cmds->hci_le_cs_set_security_requirements = 1;
+	cmds->hci_le_cs_set_default_security_requirements = 1;
 #if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)
 	cmds->hci_le_cs_test = 1;
 	cmds->hci_le_cs_test_end = 1;
@@ -1596,6 +1598,13 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 			sdc_hci_cmd_le_cs_write_cached_remote_supported_capabilities_v2_return_t);
 		return sdc_hci_cmd_le_cs_write_cached_remote_supported_capabilities_v2(
 			(void *)cmd_params, (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SET_SECURITY_REQUIREMENTS:
+		*param_length_out += sizeof(
+			sdc_hci_cmd_le_cs_set_security_requirements_return_t);
+		return sdc_hci_cmd_le_cs_set_security_requirements(
+			(void *)cmd_params, (void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_LE_CS_SET_DEFAULT_SECURITY_REQUIREMENTS:
+		return sdc_hci_cmd_le_cs_set_default_security_requirements((void *)cmd_params);
 #if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)
 	case SDC_HCI_OPCODE_CMD_LE_CS_TEST:
 		return sdc_hci_cmd_le_cs_test((void *)cmd_params);
