@@ -8,6 +8,8 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 #include <drivers/vtf_monitoring/vtf_monitoring.h>
@@ -29,7 +31,19 @@ VTF_CHANNEL_DEFINE(vtf_channel_battery_voltage, VTF_CH_BATTERY_VOLTAGE, NULL, NU
 VTF_CHANNEL_DEFINE(vtf_channel_freq_offset, VTF_CH_FREQ_OFFSET, NULL, NULL, VTF_SAMPLE_TYPE_INT,
 		   i32, CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE);
 
-union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
+#if DT_HAS_CHOSEN(nordic_vtf_region)
+#define VTF_NODE DT_CHOSEN(nordic_vtf_region)
+#else
+#error " 'nordic,vtf-region' must be chosen and enabled"
+#endif
+
+volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT]
+	__aligned(4)
+	__attribute__((__section__(LINKER_DT_NODE_REGION_NAME(VTF_NODE))));
+
+BUILD_ASSERT(sizeof(vtf_snapshots) <= DT_REG_SIZE(VTF_NODE),
+			 "vtf_snapshots too large for nordic_vtf_region");
+
 static bool ch_live_update[VTF_CH_COUNT];
 
 static void vtf_capture_work_handler(struct k_work *work);
