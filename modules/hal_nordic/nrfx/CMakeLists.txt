@@ -7,6 +7,9 @@ set(SOC_DIR ${NRFX_DIR}/bsp/stable)
 set(MDK_DIR ${SOC_DIR}/mdk)
 set(helpers_dir ${NRFX_DIR}/helpers)
 
+zephyr_compile_definitions_ifdef(CONFIG_NRF_PLATFORM_LUMOS LUMOS_XXAA)
+zephyr_compile_definitions_ifdef(CONFIG_NRF_PLATFORM_HALTIUM HALTIUM_XXAA)
+
 # Add definitions for products which are yet to be upstreamed.
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF54LC10A NRF54LC10A_XXAA)
 zephyr_compile_definitions_ifdef(CONFIG_SOC_NRF54LC10A_CPUAPP NRF_APPLICATION)
