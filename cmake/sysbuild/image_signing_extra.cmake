@@ -137,6 +137,12 @@ if(num_binaries GREATER 0)
     else()
       dt_nodelabel(slot_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot${slot_id}_partition" REQUIRED)
       dt_reg_size(slot_size TARGET ${DEFAULT_IMAGE} PATH ${slot_flash})
+      dt_partition_addr(slot_address PATH "${slot_flash}" TARGET ${DEFAULT_IMAGE} ABSOLUTE)
+
+      set(imgtool_rom_command)
+      if(CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS)
+        set(imgtool_rom_command --rom-fixed ${slot_address})
+      endif()
 
       set(imgtool_sign
         ${PYTHON_EXECUTABLE} ${IMGTOOL} sign
@@ -145,6 +151,7 @@ if(num_binaries GREATER 0)
         --slot-size ${slot_size}
         --pad-header
         --header-size ${CONFIG_ROM_START_OFFSET}
+        ${imgtool_rom_command}
       )
     endif()
 
@@ -185,9 +192,6 @@ if(num_binaries GREATER 0)
         VERBATIM
       )
     else()
-      dt_nodelabel(slot_flash TARGET ${DEFAULT_IMAGE} NODELABEL "slot${slot_id}_partition" REQUIRED)
-      dt_partition_addr(slot_address PATH "${slot_flash}" TARGET ${DEFAULT_IMAGE} ABSOLUTE)
-
       foreach(partition_node ${fixed_partition_nodes})
         if(${slot_flash} MATCHES ${partition_node}/.*$)
           dt_prop(partition_node_compatible TARGET ${DEFAULT_IMAGE} PATH "${partition_node}"
