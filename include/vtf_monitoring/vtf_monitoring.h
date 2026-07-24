@@ -14,7 +14,7 @@
 /**
  * @defgroup vtf_monitoring VTF monitoring
  * @{
- * @brief Driver to capture data to help ensure optimal performance of the Wi-Fi® system.
+ * @brief Subsystem to capture data to help ensure optimal performance of the Wi-Fi® system.
  *
  */
 

@@ -95,6 +95,6 @@ Testing
 Dependencies
 ************
 
-This sample uses the following |NCS| driver:
+This sample uses the following |NCS| subsystem:
 
 * :ref:`vtf_monitoring`
