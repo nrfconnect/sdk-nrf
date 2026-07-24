@@ -386,3 +386,7 @@
 .. nrf93m1dk_nrf54l15_cpuapp
 
 | nRF93M1 DK |   | :zephyr:board:`nrf93m1dk <nrf93m1dk>` | ``nrf93m1dk/nrf54l15/cpuapp`` |
+
+.. nrf93m1dk_nrf54l15_cpuflpr
+
+| nRF93M1 DK |   | :zephyr:board:`nrf93m1dk <nrf93m1dk>` | ``nrf93m1dk/nrf54l15/cpuflpr`` |

@@ -26,6 +26,29 @@ The following GPIOs are exposed through the buttons on the development kit:
 
 The UART baud rate is 115200.
 
+Configuration
+*************
+
+|config|
+
+Sysbuild Kconfig options
+========================
+
+When building for the ``nrf93m1dk/nrf54l15/cpuflpr`` board target using sysbuild, you can combine this sample with the :ref:`radio_test` running on the application core.
+
+To enable this, use the following sysbuild configuration options:
+
+* Set :kconfig:option:`SB_CONFIG_APPCORE_RADIO_TEST` to ``y``.
+* Set :kconfig:option:`SB_CONFIG_VPR_LAUNCHER` to ``n``.
+* Include ``nordic-flpr`` snippet on the ``radio_test`` target.
+
+For example, when building on the command line, enter the following command:
+
+.. code-block:: console
+
+   west build -p -b nrf93m1dk/nrf54l15/cpuflpr --sysbuild -- -DSB_CONFIG_APPCORE_RADIO_TEST=y -DSB_CONFIG_VPR_LAUNCHER=n -Dradio_test_SNIPPET="nordic-flpr"
+
+
 Building and running
 ********************
 

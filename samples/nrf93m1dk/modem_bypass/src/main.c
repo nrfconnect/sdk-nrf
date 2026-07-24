@@ -15,8 +15,6 @@
 #include <zephyr/drivers/uart.h>
 #include <zephyr/kernel.h>
 #include <zephyr/input/input.h>
-#include <zephyr/sys/printk.h>
-#include <zephyr/sys/ring_buffer.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/pm/pm.h>
 #include <zephyr/pm/device.h>
@@ -68,6 +66,7 @@ int main(void)
 
 	/* Keep GPIO active */
 	pm_device_runtime_get(DEVICE_DT_GET(DT_PARENT(DT_NODELABEL(button0))));
+	pm_device_runtime_get(DEVICE_DT_GET(DT_PARENT(DT_NODELABEL(button1))));
 	return 0;
 }
 
@@ -111,6 +110,18 @@ static void modem_boot_work(struct k_work *work)
 
 static int power_modem_on_boot(void)
 {
+	int ret;
+
+	ret = gpio_pin_configure_dt(&modem_rst_gpio, GPIO_OUTPUT_INACTIVE);
+	if (ret < 0) {
+		printf("Failed to set modem GPIO: %d\n", ret);
+		return ret;
+	}
+	ret = gpio_pin_configure_dt(&modem_powerkey_gpio, GPIO_OUTPUT_INACTIVE);
+	if (ret < 0) {
+		printf("Failed to set modem GPIO: %d\n", ret);
+		return ret;
+	}
 	k_work_schedule(&nrf93_pwr_state_data.dwork, DELAY_MODEM_BOOT);
 	return 0;
 }
