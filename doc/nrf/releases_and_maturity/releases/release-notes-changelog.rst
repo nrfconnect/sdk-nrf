@@ -676,6 +676,8 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
+
 * :ref:`lib_ram_pwrdn` library:
 
   * Added support for the nRF54LC10A SoC.

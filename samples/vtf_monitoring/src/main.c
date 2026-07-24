@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/logging/log.h>
-#include <drivers/vtf_monitoring/vtf_monitoring.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 LOG_MODULE_REGISTER(vtf_monitoring_sample, CONFIG_LOG_DEFAULT_LEVEL);
 
