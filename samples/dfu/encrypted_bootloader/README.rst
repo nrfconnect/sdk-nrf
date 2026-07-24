@@ -63,6 +63,10 @@ The following table describes the available configurations.
      - UART
      - Swap
      - Uses UUID to determine the update candidate.
+   * - sample.dfu.encrypted_mcuboot.ext_flash
+     - UART
+     - Swap
+     - Uses external flash to store the update candidate.
 
 Platform-specific information
 =============================
