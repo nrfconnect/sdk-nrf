@@ -10,6 +10,14 @@
 	};
 };
 
+&led0 {
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+};
+
+&button3 {
+	gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+};
+
 &mx25r64 {
 	status = "okay";
 };
