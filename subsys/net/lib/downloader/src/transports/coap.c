@@ -49,6 +49,13 @@ struct transport_params_coap {
 	struct coap_block_context block_ctx;
 	/** CoAP pending object. */
 	struct coap_pending pending;
+	/** Token of the outstanding request. Stored so that the response token
+	 *  can be validated (RFC 7252 5.3.2) and reused across retransmissions
+	 *  of the same request.
+	 */
+	uint8_t token[COAP_TOKEN_MAX_LEN];
+	/** Length of the outstanding request token. */
+	uint8_t token_len;
 
 	struct {
 		/** Socket descriptor. */
@@ -100,6 +107,45 @@ static bool has_pending(struct downloader *dl)
 
 	coap = (struct transport_params_coap *)dl->transport_internal;
 	return coap->pending.timeout > 0;
+}
+
+/* Check that the token in the received response matches the one that was sent
+ * with the outstanding request (RFC 7252 5.3.2).
+ */
+static bool coap_tokens_match(const struct coap_packet *response,
+			      const struct transport_params_coap *coap)
+{
+	uint8_t token[COAP_TOKEN_MAX_LEN];
+	uint8_t token_len;
+
+	token_len = coap_header_get_token(response, token);
+
+	return (token_len == coap->token_len) &&
+	       (memcmp(token, coap->token, token_len) == 0);
+}
+
+/* Acknowledge a separate response that was sent as a confirmable message with
+ * an empty ACK (RFC 7252 5.2.2). A dedicated buffer is used so that the receive
+ * buffer holding the response payload is left untouched.
+ */
+static int coap_send_empty_ack(struct downloader *dl, uint16_t id)
+{
+	int err;
+	struct coap_packet ack;
+	struct transport_params_coap *coap;
+	/* An empty ACK is header-only: 4-byte header, no token/options/payload. */
+	uint8_t buf[4];
+
+	coap = (struct transport_params_coap *)dl->transport_internal;
+
+	err = coap_packet_init(&ack, buf, sizeof(buf), COAP_VER, COAP_TYPE_ACK, 0, NULL,
+			       COAP_CODE_EMPTY, id);
+	if (err) {
+		LOG_ERR("Failed to init empty ACK, err %d", err);
+		return err;
+	}
+
+	return dl_socket_send(coap->sock.fd, ack.data, ack.offset);
 }
 
 int coap_block_init(struct downloader *dl, size_t from)
@@ -219,6 +265,7 @@ static int coap_parse(struct downloader *dl, size_t len)
 	int err;
 	size_t blk_off;
 	uint8_t response_code;
+	uint8_t response_type;
 	uint16_t payload_len;
 	const uint8_t *payload;
 	struct coap_packet response;
@@ -237,19 +284,78 @@ static int coap_parse(struct downloader *dl, size_t len)
 		return -EBADMSG;
 	}
 
-	if (coap_header_get_id(&response) != coap->pending.id) {
-		LOG_ERR("Response is not pending");
+	response_type = coap_header_get_type(&response);
+	response_code = coap_header_get_code(&response);
+
+	/* RFC 7252 5.2.2: when the server cannot answer a confirmable request
+	 * immediately, it sends an empty ACK to stop the client retransmitting
+	 * and delivers the payload later in a separate CON/NON message. Consume
+	 * the empty ACK and keep waiting for that message; the pending object is
+	 * intentionally left untouched so the existing retransmission window
+	 * still bounds how long we wait.
+	 */
+	if (response_type == COAP_TYPE_ACK && response_code == COAP_CODE_EMPTY) {
+		if (coap_header_get_id(&response) != coap->pending.id) {
+			/* Empty ACK for a different exchange (e.g. a stale or
+			 * reordered ACK belonging to an already completed block).
+			 * Silently consume it and keep waiting; retransmitting in
+			 * response to it would be spurious. -EAGAIN is used rather
+			 * than -EBADMSG so dl_coap_download() does not request a
+			 * retransmission.
+			 */
+			LOG_DBG("Ignoring empty ACK with unexpected message ID");
+			return -EAGAIN;
+		}
+		LOG_DBG("Received empty ACK, awaiting separate response");
+		return -EAGAIN;
+	}
+
+	/* Match the response to the outstanding request. A piggybacked response
+	 * is an ACK carrying the request's message ID. A separate response
+	 * (RFC 7252 5.2.2) is a new CON/NON message whose message ID is chosen
+	 * by the server and thus unknown in advance, so it is matched by its
+	 * token below. UDP does not preserve ordering, so the separate response
+	 * may arrive before or after the empty ACK; both orderings are handled.
+	 */
+	switch (response_type) {
+	case COAP_TYPE_ACK:
+		if (coap_header_get_id(&response) != coap->pending.id) {
+			LOG_ERR("Response is not pending");
+			return -EBADMSG;
+		}
+		break;
+	case COAP_TYPE_CON:
+	case COAP_TYPE_NON_CON:
+		/* Separate response, matched by token below. */
+		break;
+	default:
+		LOG_ERR("Unexpected CoAP response type 0x%x", response_type);
 		return -EBADMSG;
+	}
+
+	/* RFC 7252 5.3.2: the response token must match the request token. The
+	 * downloader generates the token, so it cannot be treated as opaque and
+	 * must be verified. This is also what matches a separate response to its
+	 * request.
+	 */
+	if (!coap_tokens_match(&response, coap)) {
+		LOG_ERR("CoAP token mismatch");
+		return -EBADMSG;
+	}
+
+	/* A separate response delivered as a confirmable message must itself be
+	 * acknowledged with an empty ACK.
+	 */
+	if (response_type == COAP_TYPE_CON) {
+		err = coap_send_empty_ack(dl, coap_header_get_id(&response));
+		if (err) {
+			LOG_ERR("Failed to ACK separate response, err %d", err);
+			return err;
+		}
 	}
 
 	coap_pending_clear(&coap->pending);
 
-	if (coap_header_get_type(&response) != COAP_TYPE_ACK) {
-		LOG_ERR("Response must be of coap type ACK");
-		return -EBADMSG;
-	}
-
-	response_code = coap_header_get_code(&response);
 	if (response_code != COAP_RESPONSE_CODE_CONTENT) {
 		/* The server returned a valid response, but not the expected
 		 * content (e.g. a 4.xx/5.xx such as 4.01 Unauthorized). This is a
@@ -308,10 +414,17 @@ static int coap_request_send(struct downloader *dl)
 		id = coap->pending.id;
 	} else {
 		id = coap_next_id();
+		/* New request: generate a fresh token and remember it so the
+		 * response token can be validated (RFC 7252 5.3.2).
+		 * Retransmissions of the same request reuse the stored message
+		 * ID and token.
+		 */
+		memcpy(coap->token, coap_next_token(), COAP_TOKEN_MAX_LEN);
+		coap->token_len = COAP_TOKEN_MAX_LEN;
 	}
 
 	err = coap_packet_init(&request, dl->cfg.buf, dl->cfg.buf_size, COAP_VER,
-			       COAP_TYPE_CON, 8, coap_next_token(), COAP_METHOD_GET, id);
+			       COAP_TYPE_CON, coap->token_len, coap->token, COAP_METHOD_GET, id);
 	if (err) {
 		LOG_ERR("Failed to init CoAP message, err %d", err);
 		return err;
@@ -605,6 +718,14 @@ static int dl_coap_download(struct downloader *dl)
 
 	ret = coap_parse(dl, len);
 	if (ret < 0) {
+		if (ret == -EAGAIN) {
+			/* Empty ACK consumed (RFC 7252 5.2.2). Keep receiving
+			 * within the current retransmission window without
+			 * requesting new data or forcing a retransmission, so the
+			 * separate response can be received.
+			 */
+			return 0;
+		}
 		if (ret == -EBADMSG) {
 			/* Malformed or unexpected packet, likely transient.
 			 * Request the same block again.
