@@ -266,7 +266,7 @@ ci_samples_vtf_monitoring:
   files:
     - nrf/include/vtf_monitoring
     - nrf/samples/vtf_monitoring
-    - nrf/drivers/vtf_monitoring
+    - nrf/subsys/vtf_monitoring
 
 ci_tests_subsys_sd:
   files:
