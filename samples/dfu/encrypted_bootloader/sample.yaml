@@ -36,3 +36,13 @@ tests:
       - encryption
     extra_args:
       - FILE_SUFFIX=uuid
+
+  sample.dfu.encrypted_mcuboot.ext_flash:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - encryption
+    extra_args:
+      - FILE_SUFFIX=ext_flash
