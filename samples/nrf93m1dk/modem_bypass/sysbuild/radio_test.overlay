@@ -14,3 +14,12 @@
 &modem_dcdc {
 	startup-delay-us = <500000>; /* wait for 500ms to stabilize dcdc supply */
 };
+
+&xo {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+	k32src = "rc";
+};
