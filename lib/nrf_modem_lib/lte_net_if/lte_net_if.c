@@ -332,6 +332,12 @@ static void lte_evt_handler(const struct lte_lc_evt *const evt)
 
 		break;
 	case LTE_LC_EVT_PDN:
+		/* We only handle default PDN (CID 0), ignore others */
+		if (evt->pdn.cid != 0) {
+			LOG_DBG("Filtered PDN CID %d event: %d", evt->pdn.cid, evt->pdn.type);
+			break;
+		}
+
 		switch (evt->pdn.type) {
 		case LTE_LC_EVT_PDN_ACTIVATED:
 			LOG_DBG("PDN connection activated");
