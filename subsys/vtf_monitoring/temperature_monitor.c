@@ -10,7 +10,7 @@
 #include <zephyr/drivers/sensor.h>
 #include <zephyr/logging/log.h>
 
-#include <drivers/vtf_monitoring/vtf_monitoring.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 LOG_MODULE_REGISTER(die_temp_monitor, CONFIG_VTF_LOG_LEVEL);
 

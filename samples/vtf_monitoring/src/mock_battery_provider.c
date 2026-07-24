@@ -16,7 +16,7 @@
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 
-#include <drivers/vtf_monitoring/vtf_monitoring.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 #define MOCK_BATTERY_MAX_MV  4200
 #define MOCK_BATTERY_MIN_MV  3300
