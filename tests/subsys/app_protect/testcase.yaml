@@ -1,5 +1,6 @@
 common:
   tags: ci_tests_subsys_app_protect
+  timeout: 80
   harness: pytest
   harness_config:
     pytest_root:
