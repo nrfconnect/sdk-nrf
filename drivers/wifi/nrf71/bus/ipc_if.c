@@ -126,11 +126,25 @@ static void host_tx_ack_slot_free(uint32_t *ack_addr)
 static void host_rx_recv(void *data, size_t len, void *priv)
 {
 	struct nrf_wifi_bus_qspi_dev_ctx *dev_ctx = (struct nrf_wifi_bus_qspi_dev_ctx *)priv;
-	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = dev_ctx->bal_dev_ctx;
-	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = bal_dev_ctx->hal_dev_ctx;
+	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx;
+	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx;
 	wifi_ipc_buf_desc_t msg_info = *(wifi_ipc_buf_desc_t *)data;
 
 	LOG_DBG("Host RX IPC received");
+
+	/* The endpoint stays bound across device teardown, so events can arrive
+	 * with no consumer attached. Drop them, but always release the ring slot
+	 * or the UMAC event ring fills up and wedges the next bring-up.
+	 */
+	if ((callback_func == NULL) || (dev_ctx == NULL)) {
+		LOG_DBG("Host RX IPC event dropped, no consumer");
+		wifi_ipc_host_rx_free_event(&msg_info);
+		return;
+	}
+
+	bal_dev_ctx = dev_ctx->bal_dev_ctx;
+	hal_dev_ctx = bal_dev_ctx->hal_dev_ctx;
+
 	hal_dev_ctx->ipc_msg = (void *)msg_info.addr;
 	callback_func(priv);
 	wifi_ipc_host_rx_free_event(&msg_info);
@@ -254,8 +268,18 @@ int ipc_register_rx_cb(int (*rx_handler)(void *priv), void *data)
 					     host_rx_recv, data);
 	if (ret != WIFI_IPC_STATUS_OK) {
 		LOG_ERR("Failed to bind IPC host TX+RX (ipc0): %d", ret);
+		callback_func = NULL;
 		return -1;
 	}
 
 	return 0;
+}
+
+void ipc_unregister_rx_cb(void)
+{
+	/* Detach the consumer only. The endpoint stays bound for the lifetime of
+	 * the Wi-Fi core; events arriving from now on are dropped in
+	 * host_rx_recv() with their ring slot released.
+	 */
+	callback_func = NULL;
 }
