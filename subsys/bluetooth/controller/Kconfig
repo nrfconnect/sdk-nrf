@@ -304,6 +304,18 @@ config BT_CTLR_DF_CONN_CTE_RSP
 	  Enable support for Bluetooth v5.1 Connection CTE Response feature
 	  in controller.
 
+config BT_CTLR_SDC_MPSL_COEX_SUPPORT
+	bool
+	depends on !(BT_CTLR_PHY_CODED && MPSL_FEM && SOC_SERIES_NRF53)
+
+config BT_CTLR_SDC_MPSL_COEX
+	bool "SoftDevice Controller support for MPSL Coex"
+	default y if MPSL_CX
+	select BT_CTLR_SDC_MPSL_COEX_SUPPORT
+	help
+	  Enable support for MPSL Coex in the SoftDevice Controller.
+	  This is not supported with Coded Phy and FEM on the nRF5340 SoC.
+
 # As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
 # only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
 # configuration here.
@@ -318,7 +330,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 						     BT_CTLR_PHY_CODED || \
 						     BT_CTLR_ADV_PERIODIC || \
 						     BT_CTLR_DF_CTE_TX || \
-						     MPSL_CX || \
+						     BT_CTLR_SDC_MPSL_COEX || \
 						     BT_CTLR_SYNC_PERIODIC || \
 						     BT_CTLR_SCA_UPDATE || \
 						     BT_CTLR_SUBRATING || \

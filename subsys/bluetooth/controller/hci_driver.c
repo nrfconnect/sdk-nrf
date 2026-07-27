@@ -1008,7 +1008,7 @@ static void configure_supported_features(void)
 		sdc_support_mpsl_fem();
 	}
 
-	if (IS_ENABLED(CONFIG_MPSL_CX)) {
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_MPSL_COEX)) {
 		sdc_support_mpsl_coex();
 	}
 }
