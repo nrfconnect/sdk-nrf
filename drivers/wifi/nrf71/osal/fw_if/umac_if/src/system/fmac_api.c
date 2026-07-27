@@ -460,8 +460,11 @@ void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		return;
 	}
 
-	nrf_wifi_hal_dev_deinit(fmac_dev_ctx->hal_dev_ctx);
+	/* Tell the firmware to stand down first: the de-init command travels over
+	 * the same transport that the HAL de-init tears down.
+	 */
 	nrf_wifi_sys_fmac_fw_deinit(fmac_dev_ctx);
+	nrf_wifi_hal_dev_deinit(fmac_dev_ctx->hal_dev_ctx);
 	nrf_wifi_osal_mem_free(fmac_dev_ctx->tx_pwr_ceil_params);
 }
 
