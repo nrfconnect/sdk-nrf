@@ -167,14 +167,22 @@ void wifi_ipc_host_rx_free_event(const wifi_ipc_buf_desc_t *event_info)
 
 int ipc_init(void)
 {
+	static bool slots_initialized;
 	int i;
 
 	wifi_ipc_host_tx_init(&wifi_host_tx, 0);
 	wifi_ipc_host_rx_init(&wifi_host_rx, 0);
 
-	for (i = 0; i < IPC_TX_ACK_SLOTS; i++) {
-		host_tx_ack_slots[i] = 0U;
-		host_tx_pending_bufs[i] = NULL;
+	/* The ack slots track buffers the UMAC may still be reading. Clearing
+	 * them on a re-init would leak every in-flight buffer, so initialize
+	 * them only once.
+	 */
+	if (!slots_initialized) {
+		for (i = 0; i < IPC_TX_ACK_SLOTS; i++) {
+			host_tx_ack_slots[i] = 0U;
+			host_tx_pending_bufs[i] = NULL;
+		}
+		slots_initialized = true;
 	}
 
 	LOG_DBG("IPC host single endpoint (ipc0) TX+RX initialized");
@@ -183,6 +191,17 @@ int ipc_init(void)
 
 int ipc_deinit(void)
 {
+	/* Reclaim whatever the UMAC has already acknowledged. Buffers still in
+	 * flight stay owned by the ack slots and are reclaimed on a later send.
+	 */
+	host_tx_reclaim_completed();
+
+	/* TODO(WZN-10457): this runs on interface teardown, where the core stays
+	 * powered and the IPC endpoint stays bound. When power management gains a
+	 * real core power-down, tear the endpoint down here (clear the bind latch
+	 * so the next power-up re-runs the handshake) rather than leaving it armed
+	 * against a core that has rebooted.
+	 */
 	return 0;
 }
 
