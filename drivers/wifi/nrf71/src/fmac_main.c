@@ -836,6 +836,7 @@ static int nrf_wifi_drv_main_zep(const struct device *dev)
 
 	/* Setup the linkage between the FMAC and the VIF contexts */
 	vif_ctx_zep->rpu_ctx_zep = &rpu_drv_priv_zep.rpu_ctx_zep;
+	k_mutex_init(&vif_ctx_zep->vif_lock);
 #ifndef CONFIG_NRF71_RADIO_TEST
 	k_work_init_delayable(&vif_ctx_zep->scan_timeout_work,
 			      nrf_wifi_scan_timeout_work);

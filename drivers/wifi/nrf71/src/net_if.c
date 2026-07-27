@@ -853,7 +853,6 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		goto dev_rem;
 	}
 
-	k_mutex_init(&vif_ctx_zep->vif_lock);
 	vif_ctx_zep->if_type = add_vif_info.iftype;
 
 	/* Check if user has provided a valid MAC address, if not
