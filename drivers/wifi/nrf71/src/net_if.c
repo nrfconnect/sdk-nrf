@@ -774,6 +774,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	unsigned int mac_addr_len = 0;
 	int ret = -1;
 	bool fmac_dev_added = false;
+	bool locked = false;
 
 	if (!dev) {
 		LOG_ERR("%s: Invalid parameters",
@@ -816,6 +817,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 		LOG_ERR("%s: Failed to lock vif_lock", __func__);
 		goto out;
 	}
+	locked = true;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
 		status = nrf_wifi_fmac_dev_add_zep(&rpu_drv_priv_zep);
@@ -944,7 +946,9 @@ dev_rem:
 		nrf_wifi_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
 out:
-	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	if (locked) {
+		k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	}
 	return ret;
 }
 
@@ -974,7 +978,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev)
 	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 	if (ret != 0) {
 		LOG_ERR("%s: Failed to lock vif_lock", __func__);
-		goto unlock;
+		goto out;
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
