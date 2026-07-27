@@ -6,10 +6,13 @@
 
 import logging
 import re
+import socket
 import subprocess
 import time
+from contextlib import closing
 
 import psutil
+import pytest
 from twister_harness import DeviceAdapter
 
 logger = logging.getLogger(__name__)
@@ -47,6 +50,15 @@ def _kill(proc):
         logger.exception(f"Could not kill process - {e}")
 
 
+# get free port
+# bind to port 0 and get free port from system
+def find_free_port():
+    with closing(socket.socket(socket.AF_INET, socket.SOCK_STREAM)) as s:
+        s.bind(("", 0))
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        return s.getsockname()[1]
+
+
 def print_output(stdouts, stderrs):
     if stdouts:
         for out in stdouts.split("\n"):
@@ -56,7 +68,7 @@ def print_output(stdouts, stderrs):
             logger.error(f"{err}")
 
 
-def run_communicate_check(cmd: str, input: str, regex: str):
+def run_communicate_check(cmd: str, input: str, regex: str, regex_found=True):
     logger.info(f"Executing:\n{cmd}")
     proc = subprocess.Popen(
         cmd.split(),
@@ -64,6 +76,7 @@ def run_communicate_check(cmd: str, input: str, regex: str):
         stdout=subprocess.PIPE,
         stderr=subprocess.STDOUT,
         encoding='UTF-8',
+        errors='replace',
         text=True,
     )
 
@@ -80,16 +93,19 @@ def run_communicate_check(cmd: str, input: str, regex: str):
         print_output(outs, errs)
 
     expected_str = re.search(regex, outs)
-    assert expected_str is not None, f"Failed to match {regex} in {outs}"
+    if regex_found:
+        assert expected_str is not None, f"Failed to match {regex} in {outs}"
+    else:
+        assert expected_str is None, f"Fail: '{regex}' should not be found in '{outs}'"
 
 
-def test_debug_interface(dut: DeviceAdapter):
+def test_001_debug_access_enabled(dut: DeviceAdapter):
     """
     Compile and flash test application on MCU.
     Repeat three times:
     - Do pinreset.
     - Wait for log on serial console.
-    - Check that debug interface is opened (AppProtect is disabled).
+    - Check that debug interface is open (AppProtect is disabled).
     """
     PLATFORM = dut.device_config.platform
     SEGGER_ID = dut.device_config.id
@@ -105,9 +121,9 @@ def test_debug_interface(dut: DeviceAdapter):
         cmd = f"nrfutil device reset --reset-kind RESET_PIN --serial-number {SEGGER_ID}"
         expected = r".*"
         run_communicate_check(
-            cmd,
-            None,
-            expected,
+            cmd=cmd,
+            input=None,
+            regex=expected,
         )
 
         ### Check that code is executed
@@ -120,22 +136,133 @@ def test_debug_interface(dut: DeviceAdapter):
         cmd = f"nrfutil device read --address {DEVICEID[PLATFORM]} --serial-number {SEGGER_ID}"
         expected = rf"{DEVICEID[PLATFORM]}: [A-F0-9]+"
         run_communicate_check(
-            cmd,
-            None,
-            expected,
+            cmd=cmd,
+            input=None,
+            regex=expected,
         )
 
         ### Check nrfutil device protection-get
         cmd = f"nrfutil device protection-get --serial-number {SEGGER_ID}"
         expected = r"access status: Debug access is enabled \(status value: None\)"
         run_communicate_check(
-            cmd,
-            None,
-            expected,
+            cmd=cmd,
+            input=None,
+            regex=expected,
         )
 
 
-def test_nrfjprog_recover(dut: DeviceAdapter):
+@pytest.fixture
+def setup_test(dut: DeviceAdapter):
+    SEGGER_ID = dut.device_config.id
+
+    try:
+        yield dut
+
+    finally:
+        logger.info("TEAR DOWN - restore the device")
+        ### Execute nrfutil device recover
+        cmd = f"nrfutil device recover --serial-number {SEGGER_ID}"
+        expected = r".*"
+        run_communicate_check(
+            cmd=cmd,
+            input=None,
+            regex=expected,
+        )
+
+        ### Check nrfutil device protection-get
+        cmd = f"nrfutil device protection-get --serial-number {SEGGER_ID}"
+        expected = r"access status: Debug access is enabled \(status value: None\)"
+        run_communicate_check(
+            cmd=cmd,
+            input=None,
+            regex=expected,
+        )
+
+
+def test_002_nrfutil_device_protection_set_all(setup_test):
+    """
+    Compile and flash test application on MCU.
+    - Enable app protect with nrfutil device.
+    - Do pinreset.
+    - Wait for log on serial console.
+    - Check that debug interface is closed (AppProtect is enabled).
+    - Recover the device in tear down.
+    """
+    dut = setup_test
+    PLATFORM = dut.device_config.platform
+    SEGGER_ID = dut.device_config.id
+    BUILD_DIR = str(dut.device_config.build_dir)
+    LOG_TIMEOUT = 10.0
+
+    if "nrf54h20" in PLATFORM:
+        pytest.skip("Setting AP protection on device nRF54H20 is not implemented")
+
+    # Wait a bit for the core to boot
+    time.sleep(4)
+
+    dut.clear_buffer()
+
+    ### Enable App Protect
+    cmd = f"nrfutil device protection-set --serial-number {SEGGER_ID} All"
+    expected = r".*"
+    run_communicate_check(
+        cmd=cmd,
+        input=None,
+        regex=expected,
+    )
+
+    time.sleep(2)
+
+    ### Check nrfutil device protection-get
+    cmd = f"nrfutil device protection-get --serial-number {SEGGER_ID}"
+    expected = r"access status: Debug access is currently disabled \(status value: All\)"
+    run_communicate_check(
+        cmd=cmd,
+        input=None,
+        regex=expected,
+    )
+
+    ### Pinreset
+    cmd = f"nrfutil device reset --reset-kind RESET_PIN --serial-number {SEGGER_ID}"
+    expected = r".*"
+    run_communicate_check(
+        cmd=cmd,
+        input=None,
+        regex=expected,
+    )
+
+    ### Check that code is executed
+    dut.readlines_until(
+        regex=r'.*west_flash: 3: Hello from',
+        timeout=LOG_TIMEOUT,
+    )
+
+    ### Check nrfutil device protection-get
+    cmd = f"nrfutil device protection-get --serial-number {SEGGER_ID}"
+    expected = r"access status: Debug access is currently disabled \(status value: All\)"
+    run_communicate_check(
+        cmd=cmd,
+        input=None,
+        regex=expected,
+    )
+
+    gdb_port = find_free_port()
+
+    ### Check that debug access port is closed
+    cmd = (
+        f"west attach -d {BUILD_DIR} --no-rebuild --"
+        f" --dev-id {SEGGER_ID} --gdb-port {gdb_port} --domain app_protect"
+    )
+    unexpected = r"LOG_INF\(.* counter, CONFIG_BOARD_TARGET\);"
+    run_communicate_check(
+        cmd=cmd,
+        input="b main.c:17\nc\ndisconnect\nq\n",
+        regex=unexpected,
+        regex_found=False,
+    )
+
+
+def test_002_nrfutil_device_recover(dut: DeviceAdapter):
     """
     Compile and flash test application on MCU.
     Wait for serial console log.
@@ -156,16 +283,16 @@ def test_nrfjprog_recover(dut: DeviceAdapter):
     cmd = f"nrfutil device recover --serial-number {SEGGER_ID}"
     expected = r".*"
     run_communicate_check(
-        cmd,
-        None,
-        expected,
+        cmd=cmd,
+        input=None,
+        regex=expected,
     )
 
     ### Check that debug access port is open
     cmd = f"nrfutil device read --address {DEVICEID[PLATFORM]} --serial-number {SEGGER_ID}"
     expected = rf"{DEVICEID[PLATFORM]}: [A-F0-9]+"
     run_communicate_check(
-        cmd,
-        None,
-        expected,
+        cmd=cmd,
+        input=None,
+        regex=expected,
     )
