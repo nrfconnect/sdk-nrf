@@ -2201,6 +2201,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 		goto out;
 	}
 
+	if (if_idx >= MAX_NUM_VIFS) {
+		nrf_wifi_osal_log_err("%s: Invalid VIF index %d",
+				      __func__, if_idx);
+		goto out;
+	}
+
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
@@ -2718,7 +2724,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_get_interface(void *dev_ctx,
 	struct nrf_wifi_cmd_get_interface *cmd = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 
-	if (!dev_ctx || if_idx > MAX_NUM_VIFS) {
+	if (!dev_ctx || if_idx >= MAX_NUM_VIFS) {
 		goto out;
 	}
 	fmac_dev_ctx = dev_ctx;
