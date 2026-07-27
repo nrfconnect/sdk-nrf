@@ -49,7 +49,7 @@
  *      Bits 15-8:  slot-id
  *      Bits 7-0:   number of slots
  */
-#define PROVISIONING_SLOT 186
+#define PROVISIONING_SLOT CONFIG_CRACEN_KMU_PROVISIONING_SLOT
 
 #define SECONDARY_SLOT_METADATA_VALUE UINT32_MAX
 
