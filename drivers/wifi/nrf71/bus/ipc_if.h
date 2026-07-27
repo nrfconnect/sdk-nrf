@@ -44,5 +44,7 @@ int ipc_send(ipc_ctx_t ctx, const void *data, int len);
 int ipc_recv(ipc_ctx_t ctx, void *data, int len);
 /* Non-blocking Receive (global, not per instance) */
 int ipc_register_rx_cb(int (*rx_handler)(void *priv), void *data);
+/* Detach the receive consumer, leaving the endpoint bound */
+void ipc_unregister_rx_cb(void);
 
 #endif /* __IPC_IF_H__ */
