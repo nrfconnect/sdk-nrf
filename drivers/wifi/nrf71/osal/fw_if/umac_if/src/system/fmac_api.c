@@ -2203,7 +2203,15 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	switch (sys_dev_ctx->vif_ctx[if_idx]->if_type) {
+	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+
+	if (!vif_ctx) {
+		nrf_wifi_osal_log_err("%s: VIF ctx does not exist",
+				      __func__);
+		goto out;
+	}
+
+	switch (vif_ctx->if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 	case NRF_WIFI_IFTYPE_AP:
@@ -2211,14 +2219,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 		break;
 	default:
 		nrf_wifi_osal_log_err("%s: VIF type not supported",
-				      __func__);
-		goto out;
-	}
-
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
-
-	if (!vif_ctx) {
-		nrf_wifi_osal_log_err("%s: VIF ctx does not exist",
 				      __func__);
 		goto out;
 	}
@@ -2261,6 +2261,11 @@ out:
 	}
 
 	if (vif_ctx) {
+		/* Release the slot along with the context. Leaving it set would
+		 * both dangle and make nrf_wifi_fmac_vif_idx_get() hand out the
+		 * next index instead of reusing this one.
+		 */
+		sys_dev_ctx->vif_ctx[if_idx] = NULL;
 		nrf_wifi_osal_mem_free(vif_ctx);
 	}
 
