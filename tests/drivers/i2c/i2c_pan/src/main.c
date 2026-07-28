@@ -147,9 +147,11 @@ ZTEST(i2c_pan, test_clock_stretching_recovery)
 	zassert_ok(ret);
 	TC_PRINT("TWIS SCL pin (reconfigured): 0x%x\n", nrf_twis_scl_pin_get(twis.p_reg));
 
-	/* Attempt proper transfer, expected to fail on devices affected by nRf54L anomaly 105. */
+	/* Attempt proper transfer, expected to fail on devices affected by nRF54L and nRF71
+	 * anomaly 105.
+	 */
 	ret = i2c_read(fixture.dev, fixture.master_buffer, TEST_BUFFER_SIZE, fixture.addr);
-	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 105)) {
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 105) || NRF_ERRATA_DYNAMIC_CHECK(71, 105)) {
 		zassert_equal(ret, -ETIMEDOUT,
 			      "i2c_read failed with different error than expeced (ETIMEDOUT) %d\n",
 			      ret);
