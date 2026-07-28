@@ -72,7 +72,7 @@
 			clock-frequency = <DT_FREQ_M(256)>;
 			riscv,isa-base = "rv32e";
 			riscv,isa-extensions = "e", "m", "c", "zicsr";
-			nordic,bus-width = <64>;
+			nordic,bus-width = <32>;
 
 			cpuflpr_vevif_rx: mailbox {
 				compatible = "nordic,nrf-vevif-task-rx";
