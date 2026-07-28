@@ -138,6 +138,20 @@ config DESKTOP_INIT_LOG_HID_HOST_SUSPEND_EVENT
 	help
 	  Log HID host suspend enter/exit events in nRF Desktop application.
 
+config DESKTOP_INIT_LOG_HOGP_SCI_MODE_CHANGED_EVENT
+	bool "Log HOGP SCI mode changed events"
+	depends on DESKTOP_HOGP_EVENTS
+	default y
+	help
+	  Log HOGP SCI mode changed events in nRF Desktop application.
+
+config DESKTOP_INIT_LOG_HOGP_SCI_MODE_REQ_EVENT
+	bool "Log HOGP SCI mode request events"
+	depends on DESKTOP_HOGP_EVENTS
+	default y
+	help
+	  Log HOGP SCI mode request events in nRF Desktop application.
+
 endmenu
 
 endif # LOG

@@ -18,6 +18,7 @@
 #include "ble_event.h"
 
 #include "usb_event.h"
+#include "hogp_event.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_CONN_PARAMS_LOG_LEVEL);
@@ -42,6 +43,7 @@ struct connected_peer {
 	struct bt_conn *conn;
 	bool discovered;
 	bool use_llpm;
+	bool use_sci;
 	uint16_t requested_latency;
 	bool conn_param_update_pending;
 };
@@ -186,6 +188,14 @@ static bool conn_params_update_required(struct connected_peer *peer)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) && peer->use_sci) {
+		/* No parameters update with HID SCI supported yet.
+		 * FAST mode is requested on discovery complete.
+		 * After that, no dongle requested parameter update is performed.
+		 */
+		return false;
+	}
+
 	struct bt_conn_info info;
 	int err = bt_conn_get_info(peer->conn, &info);
 
@@ -282,21 +292,114 @@ static void peer_disconnected(struct bt_conn *conn)
 	if (peer) {
 		peer->conn = NULL;
 		peer->use_llpm = false;
+		peer->use_sci = false;
 		peer->discovered = false;
 		peer->requested_latency = 0;
 		peer->conn_param_update_pending = false;
 	}
 }
 
-static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support)
+static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support, bool peer_sci_support)
 {
 	struct connected_peer *peer = find_connected_peer(conn);
 
 	if (peer) {
-		peer->use_llpm = IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) && peer_llpm_support;
+		/* Note: if a nRF Desktop peripheral supports both HID SCI and LLPM,
+		 * HID SCI will take precedence.
+		 * Currently no nRF Desktop peripheral supports both HID SCI and LLPM,
+		 * however the code is present for better compatibility with future implementations.
+		 */
+		peer->use_sci = IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE)
+				&& peer_sci_support;
+		peer->use_llpm = IS_ENABLED(CONFIG_CAF_BLE_USE_LLPM) && peer_llpm_support
+				 && !peer->use_sci;
 		peer->discovered = true;
 		k_work_reschedule(&conn_params_update, K_NO_WAIT);
+
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) && peer->use_sci) {
+			struct hogp_sci_mode_req_event *sci_event = new_hogp_sci_mode_req_event();
+
+			sci_event->conn = conn;
+			sci_event->mode = BT_HIDS_SCI_MODE_FAST;
+			APP_EVENT_SUBMIT(sci_event);
+		}
 	}
+}
+
+static int set_default_sci_conn_params(void)
+{
+#if CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+	static const uint16_t sci_interval_min_125us =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US;
+	static const uint16_t sci_interval_max_125us =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US;
+	static const uint16_t sci_subrate_min =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MIN;
+	static const uint16_t sci_subrate_max =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MAX;
+	static const uint16_t sci_max_latency =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_MAX_LATENCY;
+	static const uint16_t sci_continuation_num =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_CONTINUATION_NUM;
+	static const uint16_t sci_supervision_timeout_10ms =
+		CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUPERVISION_TIMEOUT_10MS;
+#else /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
+	/* SCI Kconfig symbols are unavailable when HID SCI is disabled; use placeholders so
+	 * this function still compiles (it is never called in that case).
+	 */
+	static const uint16_t sci_interval_min_125us;
+	static const uint16_t sci_interval_max_125us;
+	static const uint16_t sci_subrate_min;
+	static const uint16_t sci_subrate_max;
+	static const uint16_t sci_max_latency;
+	static const uint16_t sci_continuation_num;
+	static const uint16_t sci_supervision_timeout_10ms;
+
+	__ASSERT_NO_MSG(false);
+#endif /* CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE */
+
+	int err;
+	uint16_t local_min_interval_us = 0;
+	uint16_t interval_min_125us = sci_interval_min_125us;
+
+	err = bt_conn_le_read_min_conn_interval(&local_min_interval_us);
+	if (!err) {
+		__ASSERT_NO_MSG(local_min_interval_us % 125U == 0);
+		__ASSERT_NO_MSG(local_min_interval_us != 0);
+
+		if (BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us) < local_min_interval_us) {
+			LOG_WRN("Configured minimum connection interval (%u us) is below "
+				"controller minimum (%u us); using %u us",
+				BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us),
+				local_min_interval_us,
+				local_min_interval_us);
+
+			interval_min_125us = local_min_interval_us / 125U;
+		}
+		if (interval_min_125us > sci_interval_max_125us) {
+			LOG_ERR("Controller connection interval minimum is larger "
+				"than configured maximum (%u > %u)",
+				interval_min_125us,
+				sci_interval_max_125us);
+			return -EINVAL;
+		}
+	} else {
+		LOG_ERR("Failed to read min conn interval (err %d)", err);
+	}
+
+	const struct bt_conn_le_conn_rate_param params = {
+		.interval_min_125us = interval_min_125us,
+		.interval_max_125us = sci_interval_max_125us,
+		.subrate_min = sci_subrate_min,
+		.subrate_max = sci_subrate_max,
+		.max_latency = sci_max_latency,
+		.continuation_number = sci_continuation_num,
+		.supervision_timeout_10ms = sci_supervision_timeout_10ms,
+		.min_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MIN_125US,
+		.max_ce_len_125us = BT_HCI_LE_SCI_CE_LEN_MAX_125US,
+	};
+
+	return bt_conn_le_conn_rate_set_defaults(&params);
 }
 
 static bool app_event_handler(const struct app_event_header *aeh)
@@ -311,6 +414,17 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			__ASSERT_NO_MSG(!initialized);
 			initialized = true;
 
+			if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE)) {
+				int err = set_default_sci_conn_params();
+
+				if (err) {
+					LOG_ERR("Failed to set default conn rate params (err %d)",
+						err);
+					module_set_state(MODULE_STATE_ERROR);
+					return false;
+				}
+			}
+
 			module_set_state(MODULE_STATE_READY);
 		}
 
@@ -321,7 +435,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		const struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(aeh);
 
-		peer_discovered(bt_gatt_dm_conn_get(event->dm), event->peer_llpm_support);
+		peer_discovered(bt_gatt_dm_conn_get(event->dm), event->peer_llpm_support,
+				event->peer_sci_support);
 
 		return false;
 	}

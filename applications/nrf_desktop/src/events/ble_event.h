@@ -44,6 +44,7 @@ struct ble_discovery_complete_event {
 	uint16_t pid;
 	uint8_t hwid[HWID_LEN];
 	bool peer_llpm_support;
+	bool peer_sci_support;
 	enum peer_type peer_type;
 };
 APP_EVENT_TYPE_DECLARE(ble_discovery_complete_event);

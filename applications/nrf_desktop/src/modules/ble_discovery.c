@@ -79,6 +79,9 @@ static void hids_discovery_completed(struct bt_gatt_dm *dm, void *context)
 	event->dm = dm;
 	event->pid = peer_pid;
 	event->peer_llpm_support = peer_llpm_support;
+	/* Set by hid_forward module */
+	event->peer_sci_support = false;
+
 	__ASSERT_NO_MSG(sizeof(peer_hwid) == sizeof(event->hwid));
 	memcpy(event->hwid, peer_hwid, sizeof(peer_hwid));
 

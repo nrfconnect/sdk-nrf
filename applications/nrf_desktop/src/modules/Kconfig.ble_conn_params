@@ -56,6 +56,17 @@ config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 
 endif # !DESKTOP_BLE_USB_MANAGED_CI
 
+config DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+	bool
+	depends on DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+	default y
+
+if DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+
+rsource "Kconfig.ble_conn_params.sci"
+
+endif # DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+
 module = DESKTOP_BLE_CONN_PARAMS
 module-str = BLE connection parameters
 source "subsys/logging/Kconfig.template.log_config"

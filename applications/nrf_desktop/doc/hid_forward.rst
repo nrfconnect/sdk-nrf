@@ -62,6 +62,10 @@ Complete the following steps to configure the module:
    By default, the module uses a dedicated HID subscriber (USB HID class instance) for every BLE bonded HID peripheral.
    For more details, see the `Interaction with the USB`_ section.
 
+#. Optionally, enable :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` to use HID SCI (Shorter Connection Intervals) on the dongle.
+   The option selects HOGP SCI client support (:kconfig:option:`CONFIG_BT_HOGP_SCI`) and configures default connection rate parameters used for new Bluetooth connections, done inside :ref:`nrf_desktop_ble_conn_params`.
+   See the :ref:`nrf_desktop_ble_conn_params_hid_sci` section in the implementation details for the related application events.
+
 Implementation details
 **********************
 
@@ -132,6 +136,21 @@ The HID output report is never forwarded to peripheral that does not support it.
 If the GATT write without response operation is in progress for the given HID output report ID and connected peripheral, the report is placed in a queue and sent later.
 The |hid_forward| sends information only about the last received HID output report with given ID.
 If changes of state related to the HID output report with the given ID are frequent, some intermediate states can be omitted by the |hid_forward|.
+
+HID SCI
+=======
+
+With :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` enabled, the |hid_forward| uses the :ref:`hogp_readme` to handle HID SCI on connected peripherals.
+
+After :ref:`nrf_desktop_ble_discovery` successfully discovers a connected peripheral, the module calls :c:func:`bt_hogp_sci_supported` to check if the peripheral supports HID SCI.
+If it does, the module enriches the event with :c:member:`ble_discovery_complete_event.peer_sci_support` set to ``true`` for the remaining subscribers.
+|hid_forward| is the first subscriber of the :c:struct:`ble_discovery_complete_event` event, in order to ensure all other subscribers are notified about the SCI support.
+
+|hid_forward| also interacts with the following HID SCI related events:
+
+* :c:struct:`hogp_sci_mode_req_event` - When received, the module calls :c:func:`bt_hogp_sci_mode_req` to request the mode change from the peripheral.
+  If the event arrives before the peripheral is ready to receive the HID SCI mode change request, the module caches the SCI mode and requests the mode change when the peripheral is ready.
+* :c:struct:`hogp_sci_mode_changed_event` - Submitted by the module when the peripheral notifies about an HID SCI mode change.
 
 Bluetooth Peripheral disconnection
 ==================================
