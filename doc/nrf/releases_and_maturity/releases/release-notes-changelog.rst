@@ -414,6 +414,10 @@ Networking samples
   * :ref:`https_client`
   * :ref:`udp_sample`
 
+* :ref:`download_sample` sample:
+
+  * Updated the sample to enable CoAP by default so that the sample now always builds in support for both HTTP and CoAP, selecting the transport automatically at runtime.
+
 NFC samples
 -----------
 

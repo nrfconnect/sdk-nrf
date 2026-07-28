@@ -43,6 +43,14 @@ Downloading from a CoAP server
 
 To enable CoAP block-wise transfer, it is necessary to enable :ref:`Zephyr's CoAP stack <zephyr:coap_sock_interface>` using the :kconfig:option:`CONFIG_COAP` option.
 
+Selecting the HTTP(S) or CoAP(S) transport
+===========================================
+
+The :ref:`lib_downloader` library supports both HTTP(S) and CoAP(S), and this sample builds in support for both (:kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_HTTP` and :kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_COAP`, together with :kconfig:option:`CONFIG_COAP`).
+No separate build-time choice is needed to pick between them.
+The transport is selected automatically at runtime from the scheme of the URL being downloaded (``http://`` or ``https://`` for HTTP(S), ``coap://`` or ``coaps://`` for CoAP(S)).
+Set :option:`CONFIG_SAMPLE_FILE_URL` (with :option:`CONFIG_SAMPLE_FILE_CUSTOM` selected) to a URL with the appropriate scheme to exercise either transport or security level.
+
 Using TLS and DTLS
 ==================
 
