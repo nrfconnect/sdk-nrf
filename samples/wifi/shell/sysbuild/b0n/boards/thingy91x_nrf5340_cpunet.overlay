@@ -9,7 +9,7 @@
  * overlays replace, not append), so both the partition definitions and the
  * chosen node from app.overlay must be present here.
  */
-#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
+#include <samples/wifi/nrf5340_cpunet_partitions.dtsi>
 
 / {
 	chosen {
