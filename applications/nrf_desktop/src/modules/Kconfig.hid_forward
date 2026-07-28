@@ -18,6 +18,16 @@ config DESKTOP_HID_FORWARD_ENABLE
 
 if DESKTOP_HID_FORWARD_ENABLE
 
+config DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+	bool "HID SCI for the BLE dongle"
+	select BT_HOGP_SCI
+	select BT_SHORTER_CONNECTION_INTERVALS
+	select BT_LE_EXTENDED_FEAT_SET
+	select BT_SUBRATING
+	select DESKTOP_HOGP_EVENTS
+	help
+	  Enable HID SCI for the BLE dongle.
+
 config DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT
 	int "Number of HID subscribers"
 	range 1 255

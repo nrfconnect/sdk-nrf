@@ -270,6 +270,9 @@ nRF Desktop
   * The ``release_fast_pair`` build type for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
     The configuration acts as a HID mouse with Fast Pair support.
     It uses MCUboot in direct-xip mode with software-based image signature verification.
+  * Optional support for dongles with HID SCI, configurable through the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option.
+    The :ref:`nrf_desktop_hid_forward` module now uses :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` to subscribe to the :c:struct:`ble_discovery_complete_event` event.
+    The module updates event data to ensure all other modules are notified about the SCI support.
 
 Thingy:53: Matter weather station
 ---------------------------------

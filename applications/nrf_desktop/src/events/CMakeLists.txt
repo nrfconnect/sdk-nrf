@@ -34,6 +34,10 @@ target_sources_ifdef(CONFIG_DESKTOP_HIDS_ENABLE app PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/hids_event.c
 )
 
+target_sources_ifdef(CONFIG_DESKTOP_HOGP_EVENTS app PRIVATE
+  ${CMAKE_CURRENT_SOURCE_DIR}/hogp_event.c
+)
+
 target_sources_ifdef(CONFIG_DESKTOP_HID_REPORT_PROVIDER_EVENT app PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/hid_report_provider_event.c
 )

@@ -54,6 +54,18 @@ The connection interval and supervision timeout are not changed according to the
 .. note::
    On the peripheral side, the Bluetooth connection latency is controlled by :ref:`nrf_desktop_ble_latency`.
 
+.. _nrf_desktop_ble_conn_params_hid_sci:
+
+HID SCI
+=======
+
+When the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option is enabled, the |ble_conn_params| sets the promptless :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE` Kconfig option.
+With this option set, the module sets default connection rate parameters on module initialization using :c:func:`bt_conn_le_conn_rate_set_defaults`.
+
+For HID SCI connections, the module does not perform the standard connection parameter update.
+Instead, it controls the connection parameters by requesting appropriate HID SCI modes from the peripheral, as required by the `HID Over GATT Profile Specification`_.
+For details, see the :ref:`nrf_desktop_ble_conn_params_connection_interval_update` section.
+
 LLPM connections
 ================
 
@@ -62,11 +74,14 @@ The Low Latency Packet Mode (LLPM) connection parameters are not supported by th
 The LLPM connection parameters update requires using vendor-specific HCI commands.
 Moreover, the peripheral cannot request the LLPM connection parameters using Zephyr Bluetooth® API.
 
+.. _nrf_desktop_ble_conn_params_connection_interval_update:
+
 Connection interval update
 ==========================
 
 After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, the |ble_conn_params| updates the connection parameters in the following manner:
 
+* If the peripheral supports HID SCI, the parameter update is skipped and HID SCI FAST mode is requested as soon as the peripheral discovery completes.
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 

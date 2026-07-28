@@ -18,6 +18,7 @@
 #include "hid_reportq.h"
 
 #include "hid_event.h"
+#include "hogp_event.h"
 #include <caf/events/ble_common_event.h>
 #include "ble_event.h"
 #include "config_event.h"
@@ -35,6 +36,10 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_HID_FORWARD_LOG_LEVEL);
 
 BUILD_ASSERT(CFG_CHAN_MAX_RSP_POLL_CNT <= UCHAR_MAX);
 
+BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE) ==
+	     IS_ENABLED(CONFIG_BT_HOGP_SCI),
+	     "CONFIG_BT_HOGP_SCI must be enabled through CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE"
+	     " in the nRF Desktop application");
 struct report_data {
 	uint8_t report_id;
 	uint8_t data[REPORT_BUFFER_SIZE_OUTPUT_REPORT];
@@ -56,6 +61,8 @@ struct hids_peripheral {
 	uint8_t hwid[HWID_LEN];
 	uint8_t cur_poll_cnt;
 	uint8_t sub_id;
+
+	enum bt_hids_sci_mode_value requested_sci_mode;
 };
 
 static struct subscriber subscribers[CONFIG_DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT];
@@ -67,6 +74,7 @@ static bool suspended;
 
 static void hogp_out_rep_write_cb(struct bt_hogp *hogp, struct bt_hogp_rep_info *rep, uint8_t err);
 static int send_hid_out_report(struct bt_hogp *hogp, const uint8_t *data, size_t size);
+static bool is_peripheral_connected(struct hids_peripheral *per);
 
 #if CONFIG_DESKTOP_HID_FORWARD_SUBSCRIBER_COUNT > 1
 static void verify_data(const struct bt_bond_info *info, void *user_data)
@@ -140,6 +148,61 @@ static void reset_peripheral_address(void)
 	for (size_t i = 0; i < ARRAY_SIZE(peripheral_address); i++) {
 		bt_addr_le_copy(&peripheral_address[i], BT_ADDR_LE_NONE);
 	}
+}
+
+static struct hids_peripheral *peripheral_from_conn(struct bt_conn *conn)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
+		struct hids_peripheral *per = &peripherals[i];
+
+		if (is_peripheral_connected(per) && (bt_hogp_conn(&per->hogp) == conn)) {
+			return per;
+		}
+	}
+
+	return NULL;
+}
+
+static void submit_hogp_sci_mode_changed_event(struct bt_conn *conn,
+					       enum bt_hids_sci_mode_value mode)
+{
+	struct hogp_sci_mode_changed_event *event = new_hogp_sci_mode_changed_event();
+
+	event->conn = conn;
+	event->mode = mode;
+
+	APP_EVENT_SUBMIT(event);
+}
+
+static void hogp_sci_mode_changed(struct bt_conn *conn, enum bt_hids_sci_mode_value mode)
+{
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)) {
+		submit_hogp_sci_mode_changed_event(conn, mode);
+	}
+}
+
+static bool handle_hogp_sci_mode_req_event(const struct hogp_sci_mode_req_event *event)
+{
+	struct hids_peripheral *per = peripheral_from_conn(event->conn);
+
+	if (!per) {
+		LOG_WRN("SCI mode request for unknown conn %p", (void *)event->conn);
+		return true;
+	}
+
+	if (bt_hogp_ready_check(&per->hogp)) {
+		__ASSERT_NO_MSG(bt_hogp_sci_supported(&per->hogp));
+
+		int err = bt_hogp_sci_mode_req(&per->hogp, event->mode);
+
+		if (err) {
+			LOG_ERR("SCI mode request failed (err: %d)", err);
+		}
+	} else {
+		per->requested_sci_mode = event->mode;
+	}
+
+	return false;
 }
 
 static struct subscriber *get_subscriber(const struct hids_peripheral *per)
@@ -277,8 +340,7 @@ static void update_sub_protocol_mode(const struct subscriber *sub, enum bt_hids_
 	}
 }
 
-static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
-			       size_t hwid_len)
+static int register_peripheral(struct ble_discovery_complete_event *event)
 {
 	BUILD_ASSERT((ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripheral_address)) ||
 		     (ARRAY_SIZE(subscribers) == 1));
@@ -293,14 +355,14 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 		/* If there is a dedicated subscriber for each bonded peer. */
 		for (sub_id = 0; sub_id < ARRAY_SIZE(peripheral_address); sub_id++) {
 			if (!bt_addr_le_cmp(&peripheral_address[sub_id],
-					    bt_conn_get_dst(bt_gatt_dm_conn_get(dm)))) {
+					    bt_conn_get_dst(bt_gatt_dm_conn_get(event->dm)))) {
 				LOG_INF("Subscriber id found (%zu)", sub_id);
 				break;
 			}
 			if (!bt_addr_le_cmp(&peripheral_address[sub_id], BT_ADDR_LE_NONE)) {
 				LOG_INF("New subscriber id attached (%zu)", sub_id);
 				bt_addr_le_copy(&peripheral_address[sub_id],
-						bt_conn_get_dst(bt_gatt_dm_conn_get(dm)));
+						bt_conn_get_dst(bt_gatt_dm_conn_get(event->dm)));
 				store_peripheral_address();
 				break;
 			}
@@ -322,7 +384,7 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 	 * and won't be preempted. */
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 
-	int err = bt_hogp_handles_assign(dm, &per->hogp);
+	int err = bt_hogp_handles_assign(event->dm, &per->hogp);
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
@@ -331,8 +393,8 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 
 	per->sub_id = sub_id;
 
-	__ASSERT_NO_MSG(hwid_len == HWID_LEN);
-	memcpy(per->hwid, hwid, hwid_len);
+	__ASSERT_NO_MSG(sizeof(event->hwid) == HWID_LEN);
+	memcpy(per->hwid, event->hwid, sizeof(event->hwid));
 
 	if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 		peripheral_cache[per_id]++;
@@ -342,6 +404,9 @@ static int register_peripheral(struct bt_gatt_dm *dm, const uint8_t *hwid,
 
 	LOG_INF("Peripheral %p registered and linked to %p", (void *)per,
 		(void *)get_subscriber(per));
+
+	event->peer_sci_support = IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)
+				  && bt_hogp_sci_supported(&per->hogp);
 
 	return err;
 }
@@ -415,7 +480,8 @@ static uint8_t hogp_read_cfg(struct bt_hogp *hogp,
 				submit_forward_error_rsp(per, CONFIG_STATUS_WRITE_FAIL);
 			} else {
 				/* Reset response size. */
-				per->cfg_chan_rsp->dyndata.size = CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
+				per->cfg_chan_rsp->dyndata.size =
+					CONFIG_CHANNEL_FETCHED_DATA_MAX_SIZE;
 				k_work_reschedule(&per->read_rsp, K_MSEC(CFG_CHAN_RSP_READ_DELAY));
 			}
 		} else {
@@ -793,6 +859,10 @@ static void disconnect_peripheral(struct hids_peripheral *per)
 		/* An even number is assigned to a disconnected peripheral. */
 		__ASSERT_NO_MSG(!(peripheral_cache[per_id] & 0x01));
 	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)) {
+		per->requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+	}
 }
 
 static void hogp_ready(struct bt_hogp *hids_c)
@@ -861,6 +931,28 @@ static void hogp_ready(struct bt_hogp *hids_c)
 			}
 		}
 	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)) {
+		if (bt_hogp_sci_supported(hids_c)) {
+			int err = bt_hogp_sci_mode_subscribe(hids_c, hogp_sci_mode_changed);
+
+			if (err) {
+				LOG_ERR("Cannot subscribe to SCI mode notifications (err:%d)", err);
+			}
+		}
+
+		if (per->requested_sci_mode != BT_HIDS_SCI_MODE_NONE) {
+			__ASSERT_NO_MSG(bt_hogp_sci_supported(hids_c));
+
+			int err = bt_hogp_sci_mode_req(hids_c, per->requested_sci_mode);
+
+			if (err) {
+				LOG_ERR("SCI mode request failed (err: %d)", err);
+			}
+
+			per->requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+		}
+	}
 }
 
 static void hogp_prep_error(struct bt_hogp *hids_c, int err)
@@ -893,6 +985,10 @@ static void init(void)
 		if (IS_ENABLED(CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE)) {
 			k_work_init_delayable(&per->read_rsp, read_rsp_fn);
 			per->cfg_chan_id = CFG_CHAN_UNUSED_PEER_ID;
+		}
+
+		if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)) {
+			per->requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 		}
 	}
 
@@ -1186,11 +1282,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (is_ble_discovery_complete_event(aeh)) {
-		const struct ble_discovery_complete_event *event =
+		struct ble_discovery_complete_event *event =
 			cast_ble_discovery_complete_event(aeh);
 
-		register_peripheral(event->dm, event->hwid,
-				    sizeof(event->hwid));
+		register_peripheral(event);
 
 		return false;
 	}
@@ -1213,13 +1308,10 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			cast_ble_peer_event(aeh);
 
 		if (event->state == PEER_STATE_DISCONNECTED) {
-			for (size_t i = 0; i < ARRAY_SIZE(peripherals); i++) {
-				struct bt_hogp *hogp = &peripherals[i].hogp;
+			struct hids_peripheral *per = peripheral_from_conn(event->id);
 
-				if (bt_hogp_assign_check(hogp) &&
-				    bt_hogp_conn(hogp) == event->id) {
-					disconnect_peripheral(&peripherals[i]);
-				}
+			if (per) {
+				disconnect_peripheral(per);
 			}
 		}
 
@@ -1255,6 +1347,11 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return handle_config_event(cast_config_event(aeh));
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE) &&
+	    is_hogp_sci_mode_req_event(aeh)) {
+		return handle_hogp_sci_mode_req_event(cast_hogp_sci_mode_req_event(aeh));
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -1263,7 +1360,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_discovery_complete_event);
+APP_EVENT_SUBSCRIBE_FIRST(MODULE, ble_discovery_complete_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_operation_event);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
@@ -1275,3 +1372,6 @@ APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
+#if CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+APP_EVENT_SUBSCRIBE_EARLY(MODULE, hogp_sci_mode_req_event);
+#endif /* CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE */
