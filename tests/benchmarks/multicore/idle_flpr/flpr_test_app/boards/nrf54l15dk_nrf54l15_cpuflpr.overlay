@@ -4,6 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+&led0 {
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+};
+
+&button3 {
+	gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+};
+
 &uart30 {
 	zephyr,pm-device-runtime-auto;
 	disable-rx;
