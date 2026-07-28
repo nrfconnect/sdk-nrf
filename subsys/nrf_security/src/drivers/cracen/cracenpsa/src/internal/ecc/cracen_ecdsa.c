@@ -81,6 +81,7 @@ static void digest2op(const uint8_t *digest, size_t sz, uint8_t *dst, size_t ops
 	if (opsz > sz) {
 		sx_clrpkmem(dst, opsz - sz);
 		dst += opsz - sz;
+		opsz = sz;
 	}
 	sx_wrpkmem(dst, digest, opsz);
 }
@@ -498,6 +499,13 @@ int cracen_ecdsa_sign_digest_deterministic(const struct cracen_ecc_priv_key *pri
 {
 	struct sxhash hashctx;
 	int status;
+
+	/* The workmem layout and the HMAC_DRBG steps are sized from the digest length of hashalg,
+	 * so a caller-provided digest of a different length cannot be used here.
+	 */
+	if (digestsz != sx_hash_get_alg_digestsz(hashalg)) {
+		return SX_ERR_INVALID_PARAM;
+	}
 
 	status = sx_hw_reserve(&hashctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (status != SX_OK) {
