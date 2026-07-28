@@ -1829,6 +1829,12 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 		(sdc_hci_cmd_vs_enable_periodic_adv_event_counter_reports_t const *)cmd_params);
 #endif
 #if defined(CONFIG_BT_CTLR_DTM_HCI)
+	case SDC_HCI_OPCODE_CMD_VS_TRANSMITTER_CARRIER_TEST:
+		/* This command is deprecated and will be removed in the future.
+		 * Use the Transmitter Carrier Test subcommand of the VS DTM command instead.
+		 */
+		return sdc_hci_cmd_vs_transmitter_carrier_test(
+			(sdc_hci_cmd_vs_transmitter_carrier_test_t const *)cmd_params);
 	case SDC_HCI_OPCODE_CMD_VS_DTM_COMMAND:
 		return sdc_hci_cmd_vs_dtm_command(
 			(sdc_hci_cmd_vs_dtm_command_t const *)cmd_params,
