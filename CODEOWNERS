@@ -1130,6 +1130,7 @@
 /tests/zephyr/drivers/clock_control/      @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/counter/            @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/disk/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/common/       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
 /tests/zephyr/drivers/flash/negative_tests/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/flash/negative_tests_nrf7120/ @nrfconnect/ncs-code-owners @rob-robinson-14 @Hi-Im-David @travis3630
@@ -1142,6 +1143,7 @@
 /tests/zephyr/drivers/mbox/mbox_error_cases/ @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/pwm/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/retained_mem/       @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/sdhc/               @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/sensor/             @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/spi/                @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/timer/              @nrfconnect/ncs-low-level-test
