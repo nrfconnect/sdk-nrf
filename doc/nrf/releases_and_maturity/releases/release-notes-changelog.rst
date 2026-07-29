@@ -194,8 +194,6 @@ Matter
 * Moved all Matter samples, shared sample infrastructure, devicetree partition files, and Matter-specific snippets from ``sdk-nrf`` to the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``).
   The Matter bridge and Thingy:53 weather station reference applications are also relocated into the add-on.
   See :ref:`migration_sdk_nrf_to_ncs_matter` for the migration guide.
-* Renamed all ``CONFIG_NCS_SAMPLE_MATTER_*`` Kconfig options to ``CONFIG_MATTER_*`` in the add-on.
-* Replaced the tables on the ``ug_matter_hw_requirements_ram_flash`` and ``ug_matter_hw_requirements_layouts`` pages with memory layout charts.
 
 Matter fork
 +++++++++++
@@ -241,8 +239,8 @@ IPC radio firmware
 Matter bridge
 -------------
 
-* Moved the Matter bridge reference application from :file:`nrf/applications/matter_bridge` to :file:`ncs-matter/samples/matter_bridge` in the `Matter add-on <ncs-matter add-on repository_>`_.
-  See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.
+* Moved the Matter bridge application to the `Matter add-on <ncs-matter add-on repository_>`_ repository.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the migration guide.
 
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
@@ -276,7 +274,7 @@ nRF Desktop
 Thingy:53: Matter weather station
 ---------------------------------
 
-* Moved the Thingy:53 `Matter Weather Station`_ reference application from :file:`nrf/applications/matter_weather_station` to :file:`ncs-matter/samples/matter_weather_station` in the `Matter add-on <ncs-matter add-on repository_>`_.
+* Moved the Thingy:53 Matter Weather Station application to the `Matter add-on <ncs-matter add-on repository_>`_ repository.
   See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.
 
 Installer (MCUboot Firmware Loader installer)
@@ -419,14 +417,6 @@ Matter samples
 
 * Moved Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
   Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
-
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
-
-  * ``matter_template_sample``
-  * ``matter_temperature_sensor_sample``
-
-  DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
-  See ``ug_matter_hw_requirements_external_flash`` for more information.
 
 Networking samples
 ------------------

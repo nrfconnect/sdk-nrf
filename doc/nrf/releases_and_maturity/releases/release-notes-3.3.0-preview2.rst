@@ -200,7 +200,7 @@ Gazell
 Matter
 ------
 
-* Updated the ``matter_test_event_triggers_default_test_event_triggers`` section with the new Closure Control cluster test event triggers.
+* Updated the Matter Test Event Triggers default test event triggers section with the new Closure Control cluster test event triggers.
 * Deprecated the secure persistent storage backend enabled with the ``CONFIG_NCS_SAMPLE_MATTER_SECURE_STORAGE_BACKEND`` Kconfig option.
 
 Matter fork
@@ -473,22 +473,22 @@ Matter samples
   * Partitions mapping for the nRF7002 DK in all Matter samples.
     See the :ref:`migration notes <migration_3.3_required>` for more information.
 
-* ``matter_manufacturer_specific_sample``:
+* Matter Manufacturer Specific sample:
 
   * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
 
-* ``matter_closure_sample``:
+* Matter Closure sample:
 
   * Added support for the Closure Control cluster test event triggers.
 
-* ``matter_lock_sample``:
+* Matter Lock sample:
 
   * Added:
 
     * Support for the Thread and Wi-Fi switching section in the nRF54LM20 DK with the nRF7002-EB II shield attached.
     * Lock data storage implementation based on the ARM PSA Protected Storage API, enabled with the :kconfig:option:`CONFIG_LOCK_ACCESS_STORAGE_PROTECTED_STORAGE` Kconfig option.
 
-* ``matter_light_bulb_sample``:
+* Matter Light Bulb sample:
 
   * Added support for the AWS IoT integration in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
@@ -719,7 +719,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
 * Added:
 
-  * The ``matter_sample_checker`` script to check the consistency of Matter samples in the |NCS|.
+  * The Matter Sample Checker script to check the consistency of Matter samples in the |NCS|.
   * The :ref:`bt_nus_shell_script` that forwards data between TCP clients and a Bluetooth LE device using the Nordic UART Service.
 
 * :ref:`west_sbom` script:

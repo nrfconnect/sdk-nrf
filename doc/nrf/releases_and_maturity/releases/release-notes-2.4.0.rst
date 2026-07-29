@@ -219,15 +219,15 @@ Matter
 * Added:
 
   * Support for Matter 1.1.0 version.
-  * Support for the ``ug_matter_configuring_optional_persistent_subscriptions`` feature.
+  * Support for the Matter Configuring Optional Persistent Subscriptions feature.
   * Support for negotiating subscription report interval with a Matter Controller to minimalize overall power consumption.
-  * The Matter Nordic UART Service (NUS) feature to the ``matter_lock_sample`` sample.
+  * The Matter Nordic UART Service (NUS) feature to the Matter Lock sample.
     This feature allows using Nordic UART Service to control the device remotely through Bluetooth LE and adding custom text commands to a Matter sample.
     The Matter NUS implementation allows controlling the device regardless of whether the device is connected to a Matter network or not.
     The feature is dedicated for the Matter over Thread solution.
-  * Documentation page about ``ug_matter_device_configuring_cd``.
-  * Matter SDK fork ``matter_index`` with the page about CHIP Certificate Tool.
-  * Documentation page about ``ug_matter_device_adding_bt_services``.
+  * Documentation page about Matter Device Configuring CD.
+  * Matter SDK fork Matter Index with the page about CHIP Certificate Tool.
+  * Documentation page about Matter Device Adding BT Services.
 
 * Updated:
 
@@ -235,8 +235,8 @@ Matter
   * Configuration of logging verbosity in the debug variants of samples.
   * Overall stability and robustness of Matter over Wi-Fi solution.
   * The default number of user RTC channels on the nRF5340 SoC's network core from 2 to 3 (the platform default) to fix the CSL transmitter feature on Matter over Thread devices acting as Thread routers.
-  * ``ug_matter_hw_requirements`` with updated memory requirement values valid for the |NCS| v2.4.0.
-  * ``matter_lock_sample``, ``matter_window_covering_sample``, and ``matter_light_bulb_sample`` samples as well as the ``matter_weather_station_app`` application have been tested with the following ecosystems:
+  * Matter HW Requirements with updated memory requirement values valid for the |NCS| v2.4.0.
+  * Matter Lock sample, Matter Window Covering sample, Matter Light Bulb sample as well as the Matter Weather Station application application have been tested with the following ecosystems:
 
     * Google Home ecosystem for both Matter over Thread and Matter over Wi-Fi solutions.
       Tested with Google Nest Hub 2\ :sup:`nd` generation (software version: 47.9.4.447810048; Chromecast firmware version: 1.56.324896, and Google Home mobile application v3.0.1.9).
@@ -245,10 +245,10 @@ Matter
 
     Additionally, these samples and application were positively verified against “Works with Google” certification tests.
 
-  * The ``ug_matter`` protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
-  * The ``ug_matter_tools`` page with installation instructions for the ZAP tool, moved from the ``ug_matter_creating_accessory`` page.
-  * The ``ug_matter_tools`` page with information about CHIP Tool, CHIP Certificate Tool, and the Spake2+ Python tool.
-  * The ``ug_matter_device_low_power_configuration`` page with information about sleepy active threshold parameter configuration and optimizing subscription report intervals.
+  * The Matter protocol page with a table that lists compatibility versions for the |NCS|, the Matter SDK, and the Matter specification.
+  * The Matter Tools page with installation instructions for the ZAP tool, moved from the Matter Creating Accessory page.
+  * The Matter Tools page with information about CHIP Tool, CHIP Certificate Tool, and the Spake2+ Python tool.
+  * The Matter Device Low Power Configuration page with information about sleepy active threshold parameter configuration and optimizing subscription report intervals.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -266,7 +266,7 @@ The following list summarizes the most important changes inherited from the upst
   * The factory data generation script with the feature for generating the onboarding code.
     You can now use the factory data script to generate a manual pairing code and a QR Code that are required to commission a Matter-enabled device over Bluetooth LE.
     Generated onboarding codes should be put on the device's package or on the device itself.
-    For details, see the Generating onboarding codes section on the ``nrfconnect_factory_data_configuration`` page in the Matter documentation.
+    For details, see the Generating onboarding codes section on the nRF Connect Factory Data Configuration page in the Matter documentation.
   * The Basic Information cluster with device finish and device color attributes and added the related entries in factory data set.
 
 Thread
@@ -513,10 +513,10 @@ Matter samples
 
     .. caution::
        This change can affect the Device Firmware Update (DFU) from the older firmware versions that were using the 16-kB settings size.
-       Read more about this in the ``ug_matter_device_bootloader_partition_layout`` section of the Matter documentation.
+       Read more about this in the Matter Device Bootloader Partition Layout section of the Matter documentation.
        You can still perform DFU from the older firmware version to the latest firmware version, but you will have to change the default settings size from 32 kB to the value used in the older version.
 
- * ``matter_lock_sample`` sample:
+ * Matter Lock sample:
 
   * Added the Matter Nordic UART Service (NUS) feature, which allows controlling the door lock device remotely through Bluetooth LE using two simple commands: ``Lock`` and ``Unlock``.
     This feature is dedicated for the nRF52840 and the nRF5340 DKs.
@@ -524,11 +524,11 @@ Matter samples
     Matter commissioning, DFU, and NUS over Bluetooth LE must be run separately.
   * Updated the default value of the feature map.
 
-* ``matter_light_bulb_sample`` sample:
+* Matter Light Bulb sample:
 
   * Added handling of TriggerEffect command.
 
-* ``matter_window_covering_sample`` sample:
+* Matter Window Covering sample:
 
   * Updated by aligning default values of Window Covering attributes with the specification.
 

@@ -320,19 +320,19 @@ Matter
 
 * Added:
 
-  * ``ug_matter_device_recertification_process`` and ``ug_matter_device_portfolio_certification`` programs.
-  * The ``ug_matter_networking_selection`` section on the ``ug_matter_device_advanced_kconfigs`` page.
+  * Matter Device Recertification Process and Matter Device Portfolio Certification programs.
+  * The Matter Networking Selection section on the Matter Device Advanced Kconfigs page.
     The section describes how to select the networking layer for Matter applications.
 
 * Updated:
 
   * The ``west zap-generate`` command to remove previously generated ZAP files before generating new files.
     To skip removing the files, use the ``--keep-previous`` argument.
-  * The ``ug_matter_creating_custom_cluster`` user guide by adding information about implementing custom commands.
+  * The Matter Creating Custom Cluster user guide by adding information about implementing custom commands.
   * Matter-over-Thread apps can now use the OpenThread API directly, instead of using intermediate Zephyr L2 layer.
     This change significantly reduces memory usage in Matter applications.
     On the :zephyr:board:`nrf54l15dk`, it saves approximately 15 kB of RAM and 40 kB of flash.
-    To learn more about the new architecture option, see the ``ug_matter_networking_selection`` user guide.
+    To learn more about the new architecture option, see the Matter Networking Selection user guide.
 
 * Removed:
 
@@ -722,7 +722,7 @@ Matter samples
     The maximum size of the non-volatile area was changed from 1022 kB to 1012 kB, the application partition size was decreased by 8 kB, and the reserved partition was removed.
   * Disabled usage of Zephyr L2 networking layer in favor of using the OpenThread API directly in the Matter over Thread applications.
 
-* ``matter_light_switch_sample``:
+* Matter Light Switch sample:
 
   * Updated the testing steps to use the proper commands for groupcast binding.
     This resolves the :ref:`known issue <known_issues>` KRKNWK-19277.

@@ -38,7 +38,7 @@ Added the following features as supported:
 * Matter:
 
   * Matter 1.4.1: Matter commissioning using NFC tag can be officially certified now.
-  * ``matter_manufacturer_specific_sample`` sample: Dedicated sample, containing documentation and a preview ``ug_matter_gs_tools_matter_cluster_editor``, facilitating creation and modification of manufacturer specific clusters.
+  * Matter Manufacturer Specific sample: Dedicated sample, containing documentation and a preview Matter GS Tools Matter Cluster Editor, facilitating creation and modification of manufacturer specific clusters.
 
 * PMIC:
 
@@ -365,15 +365,15 @@ Matter
 
 * Added:
 
-  * A new documentation page ``ug_matter_group_communication`` in the ``ug_matter_intro_overview``.
-  * A new page on ``ug_matter_creating_custom_cluster``.
-  * A description for the new ``ug_matter_gs_tools_matter_west_commands_append`` within the ``ug_matter_gs_tools_matter_west_commands`` page.
-  * New arguments to the ``ug_matter_gs_tools_matter_west_commands_zap_tool_gui`` to provide a custom cache directory and add new clusters to Matter Data Model.
-  * ``ug_matter_debug_snippet``.
-  * Storing Matter key materials in the ``matter_platforms_security_kmu``.
-  * A new section ``ug_matter_device_low_power_calibration_period`` in the ``ug_matter_device_low_power_configuration`` page.
-  * A new section ``ug_matter_gs_tools_opp`` in the ``ug_matter_gs_tools`` page.
-  * A new overview page for ``ug_matter_gs_tools_matter_cluster_editor``.
+  * A new documentation page on the Matter Group Communication page in the Matter Introduction Overview page.
+  * A new page on the Matter Creating Custom Cluster page.
+  * A description for the new Matter GS Tools Matter West Commands Append page within the Matter GS Tools Matter West Commands page.
+  * New arguments to the Matter GS Tools Matter West Commands Zap Tool GUI page to provide a custom cache directory and add new clusters to Matter Data Model.
+  * Matter Debug snippet.
+  * Storing Matter key materials in the Matter Platforms Security KMU page.
+  * A new section on the Matter Device Low Power Calibration Period page in the Matter Device Low Power Configuration page.
+  * A new section on the Matter GS Tools OPP page in the Matter GS Tools page.
+  * A new overview page for the Matter GS Tools Matter Cluster Editor page.
   * Released the first preview version of the Matter Cluster Editor app.
     The app allows you to create and edit Matter Cluster files or create an extension to the existing one.
     The app is available in release artifacts.
@@ -381,7 +381,7 @@ Matter
 * Updated:
 
   * By disabling the :ref:`mpsl` before performing a factory reset to speed up the process.
-  * The ``ug_matter_device_low_power_configuration`` page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as useful resources in optimizing the power consumption of a Matter device.
+  * The Matter Device Low Power Configuration page to mention the `nWP049 - Matter over Thread: Power consumption and battery life`_ and `Online Power Profiler for Matter over Thread`_ as useful resources in optimizing the power consumption of a Matter device.
   * The general documentation on secure storage by moving it to the :ref:`secure_storage_in_ncs` page and :ref:`trusted_storage_readme` library documentation.
 
 Matter fork
@@ -821,9 +821,9 @@ Enhanced ShockBurst samples
 Matter samples
 --------------
 
-* Added ``matter_manufacturer_specific_sample`` sample that demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
+* Added Matter Manufacturer Specific sample that demonstrates an implementation of custom manufacturer-specific clusters used by the application layer.
 
-* ``matter_template_sample`` sample:
+* Matter Template sample:
 
   * Updated:
 
@@ -832,7 +832,7 @@ Matter samples
 
   * Removed support for nRF54H20 devices.
 
-* ``matter_lock_sample`` sample:
+* Matter Lock sample:
 
   * Updated the API of ``AppTask``, ``BoltLockManager``, and ``AccessManager`` to provide additional information for the ``LockOperation`` event.
   * Removed support for nRF54H20 devices.

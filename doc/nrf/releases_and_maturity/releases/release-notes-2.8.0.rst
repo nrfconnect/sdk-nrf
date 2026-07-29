@@ -429,11 +429,11 @@ Matter
     * ``CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_MIN_RETRY_INTERVAL``
     * ``CONFIG_CHIP_SUBSCRIPTION_RESUMPTION_RETRY_MULTIPLIER``
 
-  * The ``ug_matter_device_memory_profiling`` section to the ``ug_matter_device_optimizing_memory`` page.
+  * The Matter Device Memory Profiling section to the Matter Device Optimizing Memory page.
     The section contains useful commands for measuring memory and troubleshooting tips.
   * The ZMS file subsystem to all devices that contain RRAM, such as the nRF54L Series devices.
   * Migration of the Device Attestation Certificates private key to Key Management Unit (KMU) for the nRF54L Series SoCs.
-    See ``matter_platforms_security_dac_priv_key_kmu`` to learn how to enable it in your sample.
+    See Matter Platforms Security section to learn how to enable it in your sample.
   * Support for the Device Firmware Upgrade over Bluetooth LE SMP and Matter Over-the-air Software Update (OTA) on nRF54H20 SoC.
 
 * Updated:
@@ -444,11 +444,11 @@ Matter
   * The firmware version format used for informational purposes when using the :file:`VERSION` file.
     The format now includes the optional ``EXTRAVERSION`` component.
   * Storing the Device Attestation Certificates private key in the Trusted Storage library to be enabled for all platforms that support the PSA crypto API.
-    See ``matter_platforms_security_dac_priv_key_its`` for more information.
+    See Matter Platforms Security section for more information.
   * The stack sizes for OpenThread and CHIP (Matter) threads to increase them for the targets using the CRACEN crypto backend.
   * The IPv6 multicast subscription mechanism for Wi-Fi to enable the MLDv2 join procedure and improve reliability in multicast communication.
   * Storing the Device Attestation Certificates private key in the Key Management Unit (KMU) to be enabled for nRF54L Series devices.
-    See ``matter_platforms_security_dac_priv_key_kmu`` for more information.
+    See Matter Platforms Security section for more information.
 
 Matter fork
 +++++++++++
@@ -854,7 +854,7 @@ Matter samples
     By default, the option points to the :file:`src/default_zap` directory and can be changed to any path relative to sample's location that contains the ZAP file and :file:`zap-generated` directory.
   * Support for the :zephyr:board:`nrf54l15dk`, replacing the nRF54L15 PDK.
   * Support for :ref:`Trusted Firmware-M <ug_tfm>` on the nRF54L15 SoC.
-  * The ``matter_smoke_co_alarm_sample`` sample that demonstrates implementation of Matter Smoke CO alarm device type.
+  * The Matter Smoke CO Alarm sample that demonstrates implementation of Matter Smoke CO alarm device type.
   * The ``CONFIG_NCS_SAMPLE_MATTER_LEDS`` Kconfig option, which can be used to disable the LEDs in the Matter sample or application.
 
 * Updated:
@@ -862,24 +862,24 @@ Matter samples
   * All samples to enable the :ref:`ug_thread_build_report` generation.
   * Enabled Matter OTA on the nRF54H20 DK.
 
-* ``matter_lock_sample`` sample:
+* Matter Lock sample:
 
-  * Added ``matter_lock_snippets`` and updated the documentation to use the snippet.
+  * Added Matter Lock snippets and updated the documentation to use the snippet.
 
   * Updated:
 
     * The low power configuration to be enabled for the nRF54L15 DK target.
     * The Link-Time Optimization (LTO) to be enabled for the nRF7002 DK target.
 
-* ``matter_smoke_co_alarm_sample`` sample:
+* Matter Smoke CO Alarm sample:
 
   * Updated the low power configuration to be enabled for the nRF54L15 DK target.
 
-* ``matter_template_sample`` sample:
+* Matter Template sample:
 
   * Updated the DAC private key migration from factory data to KMU to be enabled for the nRF54L Series SoCs by default.
 
-* ``matter_window_covering_sample`` sample:
+* Matter Window Covering sample:
 
   * Updated the low power configuration to be enabled for the nRF54L15 DK target.
 

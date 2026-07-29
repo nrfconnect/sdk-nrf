@@ -23,7 +23,7 @@ Added the following features as supported:
 * nRF54H20 Series:
 
   * Triggering firmware recovery by pressing a hardware button or calling the respective API.
-    For more information, see ``ug_nrf54h20_suit_recovery``.
+    For more information, see nRF54H20 SUIT Recovery.
   * Global Domain Frequency Scaling (GDFS), optimizing USB suspend power consumption.
   * The support for a new ZMS backend for Settings.
   * Drivers adapted for the following peripherals:
@@ -153,7 +153,7 @@ Matter
   * Implementation of the ``Spake2pVerifier`` class for the PSA crypto backend.
     You can use this class to generate the Spake2+ verifier at runtime.
     To use this class, enable the Kconfig options :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`.
-  * The ``ug_matter_device_watchdog_pause_mode`` to the ``ug_matter_device_watchdog`` feature.
+  * The Matter Device Watchdog Pause Mode to the Matter Device Watchdog feature.
 
 Enhanced ShockBurst (ESB)
 -------------------------
@@ -346,17 +346,17 @@ Matter samples
   * All Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
     It is enabled by default for the release configuration of the following samples:
 
-    * ``matter_lock_sample``
-    * ``matter_light_switch_sample``
-    * ``matter_smoke_co_alarm_sample``
-    * ``matter_window_covering_sample``
+    * Matter Lock sample
+    * Matter Light Switch sample
+    * Matter Smoke CO Alarm sample
+    * Matter Window Covering sample
 
   * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
   To enable it, set the ``CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP`` Kconfig option to ``y``.
 
-* ``matter_smoke_co_alarm_sample`` sample:
+* Matter Smoke CO Alarm sample:
 
   * Added support for ICD dynamic SIT LIT switching (DSLS).
 
@@ -468,7 +468,7 @@ Documentation
 
 * Added:
 
-  * The ``matter_samples_config`` page that documents Kconfig options and snippets shared by Matter samples and applications.
+  * The Matter Samples Config page that documents Kconfig options and snippets shared by Matter samples and applications.
   * A page about :ref:`add_new_driver`.
   * A page for the :ref:`sdp_gpio` application.
   * The :ref:`ug_nrf54h20_keys` page.

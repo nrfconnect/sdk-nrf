@@ -102,8 +102,8 @@ Matter
 ------
 
 * Updated the `Matter (Project CHIP)`_ fork in the |NCS| to a newer version.
-* Added the ``ug_matter_configuring_protocol`` user guide.
-* Added a new documentation section ``ug_matter_configuring`` that contains several configuration guides for Matter.
+* Added the Matter Configuring Protocol page.
+* Added a new documentation section Matter Configuring that contains several configuration guides for Matter.
 
 Zigbee
 ------
@@ -322,13 +322,13 @@ HomeKit samples
 Matter samples
 --------------
 
-* Added a table that lists variants and extensions available out of the box for each Matter sample on the ``matter_samples`` page.
-* ``matter_lock_sample``:
+* Added a table that lists variants and extensions available out of the box for each Matter sample on the  Matter samples page.
+* Matter Door lock sample:
 
   * Added multi-image Device Firmware Upgrade over Bluetooth LE support for the nRF5340 DK.
   * Added low-power build support.
 
-* ``matter_light_bulb_sample``:
+* Matter: Light bulb sample:
 
   * Added multi-image Device Firmware Upgrade over Bluetooth LE support for the nRF5340 DK.
 
@@ -834,7 +834,7 @@ In addition to documentation related to the changes listed above, the following 
   * Updated the Building with SEGGER Embedded Studio section with a warning about a "no input files" error.
 
 * :ref:`gs_updating` - Added a section about updating SEGGER Embedded Studio packages.
-* :ref:`glossary` - Added new terms related to ``ug_matter`` and :ref:`ug_zigbee`.
+* :ref:`glossary` - Added new terms related to Matter and :ref:`ug_zigbee`.
 * :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
 * :ref:`ug_nrf5340`:
 

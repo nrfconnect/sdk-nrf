@@ -250,7 +250,7 @@ Matter
        This will significantly reduce the size of the code required to be implemented in the application.
        You can also choose to keep using the previous approach, but due to the structural differences, it may be harder to use Matter samples and applications as a reference for an application using the older approach.
 
-       The following steps use the ``matter_template_sample`` sample as an example.
+       The following steps use the Matter Template sample as an example.
        To migrate the application from |NCS| v2.5.0 and start using the common software modules used in |NCS| v2.6.0:
 
        * Replace the code used for initialization and handling of the board's components, like LEDs or buttons, with the common ``board`` module.

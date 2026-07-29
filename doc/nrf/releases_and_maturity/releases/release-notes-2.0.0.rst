@@ -124,8 +124,8 @@ Matter
 ------
 
 * The CHIP Tool controller is now the recommended controller for Matter.
-  The documentation about ``ug_matter_configuring_controller`` has been updated accordingly.
-  For more information about the CHIP Tool controller, read the ``chip_tool_guide`` page in the Matter documentation.
+  The documentation about Matter Configuring Controller page has been updated accordingly.
+  For more information about the CHIP Tool controller, read the CHIP Tool Guide page in the Matter documentation.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -452,7 +452,7 @@ Matter samples
 * Added:
 
   * Release configuration for all samples.
-  * ``matter_window_covering_sample`` sample, based on the Matter upstream sample.
+  * Matter Window covering sample, based on the Matter upstream sample.
     This sample utilizes Thread Synchronized Sleepy End Device role.
 
 * Updated:
@@ -460,11 +460,11 @@ Matter samples
   * Simplified the :file:`prj.conf` file of each sample by using the default configuration from the :file:`Kconfig.defaults` file in Matter upstream.
   * All ZAP configurations due to changes in Matter upstream.
 
-* ``matter_template_sample``:
+* Matter Template sample:
 
   * Added OTA DFU support.
 
-* ``matter_light_switch_sample`` sample:
+* Matter Light switch sample:
 
   * Added:
 
@@ -474,7 +474,7 @@ Matter samples
 
   * Updated the Pairing process to Binding process in the sample.
 
-* ``matter_lock_sample`` sample:
+* Matter Door lock sample:
 
   * Added support for the Door Lock cluster, which replaced the previous temporary solution based on the On/Off cluster.
 
@@ -1038,7 +1038,7 @@ Documentation
   * :ref:`ncs_2.0.0_migration` reflecting major changes in |NCS| v2.0.0 that might require a migration action.
   * Documentation for debugging of nRF5340 in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
   * Section about :ref:`ug_nrf5340_intro_xip` in :ref:`working with nRF5340 DK<ug_nrf5340>` user guide.
-  * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in ``ug_matter_configuring_device_identification`` user guide.
+  * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in Matter Configuring Device Identification page.
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
   * Additional user guidance to the :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages and the corresponding Developing with pages.
@@ -1058,7 +1058,7 @@ Documentation
   * Replaced reference to Secure Partition Manager with reference to Trusted Firmware-M for multi-image project builds (nRF9160 samples) in :ref:`gs_programming` page.
   * :ref:`gs_updating` page with information about updating |VSC| and the toolchain.
   * :ref:`ug_nrf52` and :ref:`ug_nrf5340` user guides with information about FOTA upgrades for Matter, Thread, and Zigbee.
-  * Protocol architecture diagram in ``ug_matter_architecture`` page.
+  * Protocol architecture diagram in Matter Architecture page.
   * :ref:`app_memory` page with sections for Matter and Zigbee.
   * :ref:`thread_ug_feature_updating_libs` section to clarify the use, and added |VSC| instructions.
   * :ref:`ug_thread_communication` by moving it to a separate page instead of it being under :ref:`ug_thread_architectures`.

@@ -143,15 +143,15 @@ Matter
 
    * Removed the application-specific snippets from the Matter samples.
      Snippets are available now in the global :file:`snippets/matter` directory in the |NCS| root.
-     To see the snippets documentation, refer to the ``matter_snippets`` page.
+     To see the snippets documentation, refer to the Matter Snippets page.
 
      Refer to the following list of changes for more information:
 
-     * ``matter_light_switch_sample``
+     * Matter Light Switch sample
 
        * Removed the ``lit_icd`` snippet and enabled LIT ICD configuration by default.
 
-     * ``matter_lock_sample``
+     * Matter Lock sample:
 
        * Removed the ``schedules`` snippet.
          Use the :file:`schedules.conf` configuration overlay file instead.
@@ -162,7 +162,7 @@ Matter
 
            west build -b nrf54l15dk_nrf54l15_cpuapp -p -- -DEXTRA_CONF_FILE=schedules.conf
 
-     * ``matter_bridge_app``
+     * Matter Bridge application:
 
        * Removed the ``onoff_plug`` snippet.
          Use the :file:`onoff_plug.conf` configuration overlay file instead.

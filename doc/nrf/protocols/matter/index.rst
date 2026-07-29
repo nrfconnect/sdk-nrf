@@ -9,3 +9,5 @@ It supports a wide range of existing technologies, including Wi-Fi®, Thread, an
 
 To learn more about the solution, see the `Matter Add-on`_ documentation.
 For source code, refer to the `ncs-matter add-on repository`_.
+
+See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.

@@ -67,7 +67,7 @@ The following list includes the summary of the most relevant changes introduced 
 
   * Matter:
 
-    * ``matter_bridge_app`` application for nRF7002 DK (nRF5340 + nRF7002).
+    * Matter Bridge application for nRF7002 DK (nRF5340 + nRF7002).
 
 * Improved:
 
@@ -239,7 +239,7 @@ Matter
 
 * Added:
 
-  * Page about ``ug_matter_device_optimizing_memory``.
+  * Page about Matter Device Optimizing Memory.
   * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
     These shell commands are available when both ``CONFIG_CHIP_LIB_SHELL`` and ``CONFIG_CHIP_STATISTICS`` Kconfig options are set.
   * Reaction to removing the last fabric.
@@ -249,8 +249,8 @@ Matter
     * Perform a factory reset of the device (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY``).
     * Perform a factory reset of the device and start Bluetooth LE advertising (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START``).
     * Perform a factory reset of the device and then reboot the device (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT``).
-  * Page about ``ug_matter_ecosystems_certification``.
-  * Page about ``ug_matter_overview_bridge``.
+  * Page about Matter Ecosystems Certification.
+  * Page about Matter Overview Bridge.
 
 * Updated:
 
@@ -269,7 +269,7 @@ Matter
     * Improved the buffer usage of the nRF700X driver for Matter.
     * Reduced the size of the Matter event queue.
 
-  * Page about ``ug_matter_device_certification`` with the information about ``ug_matter_device_certification_matter_samples``.
+  * Page about Matter Device Certification with the information about Matter Device Certification Matter Samples.
 
 * Fixed:
 
@@ -327,7 +327,7 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
-* Added new application ``matter_bridge_app`` that provides support for the following:
+* Added new application Matter Bridge application that provides support for the following:
 
   * Bluetooth LE bridged devices
   * Bridging of the Bluetooth LE Environmental Sensor (ESP)
@@ -699,21 +699,21 @@ Thread samples
 Matter samples
 --------------
 
-* Added the ``matter_thermostat_sample`` sample.
+* Added the Matter Thermostat sample.
 
 * Updated:
 
   * Matter over Thread samples by disabling OpenThread shell by default.
   * All samples to have build with factory data enabled.
 
-* ``matter_lock_sample`` sample:
+* Matter Lock sample:
 
   * Fixed the feature map for software diagnostic cluster.
     Previously, it was set incorrectly.
   * Fixed the cluster revision for basic information cluster.
     Previously, it was set incorrectly.
 
-* ``matter_template_sample``:
+* Matter Template sample:
 
   * Removed support for the Thread, Wi-Fi, and software diagnostics clusters from the ZAP file.
 

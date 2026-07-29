@@ -87,7 +87,7 @@ Matter
 * Fixed:
 
   * An issue with commissioning Matter over Wi-Fi devices to the fifth fabric.
-  * An issue with the Matter Bridge not being operational in commercial ecosystems, `Apple Home <Apple Home integration with Matter_>`_ and `Samsung SmartThings <Samsung SmartThings integration with Matter_>`_.
+  * An issue with the Matter Bridge not being operational in commercial ecosystems, Apple Home and Samsung SmartThings.
 
 Wi-Fi
 -----
