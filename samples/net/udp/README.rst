@@ -8,7 +8,7 @@ UDP
 	:depth: 2
 
 The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
-The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002 EB as a shield.
+The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002-EB II as a shield.
 
 .. |wifi| replace:: Wi-Fi
 
