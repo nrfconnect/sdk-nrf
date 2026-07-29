@@ -4,7 +4,33 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/* Dual-slot layout for MCUboot (on internal flash) */
+
 /delete-node/ &slot0_partition;
+
+/* Shared boot/slot0/slot1 addresses and sizes */
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(48)>;
+		};
+
+		slot0_partition: partition@c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xc000 DT_SIZE_K(972)>;
+		};
+
+		slot1_partition: partition@ff000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xff000 DT_SIZE_K(972)>;
+		};
+	};
+};
+
 /delete-node/ &tfm_ps_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
@@ -12,19 +38,49 @@
 /delete-node/ &storage_partition;
 /delete-node/ &sram0_ns;
 
+&slot0_partition {
+	ranges = <0x0 0xc000 DT_SIZE_K(972)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot0_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-secure";
+		reg = <0x0 DT_SIZE_K(120)>;
+	};
+
+	slot0_ns_partition: partition@1e000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-nonsecure";
+		reg = <0x1e000 DT_SIZE_K(852)>;
+	};
+};
+
+&slot1_partition {
+	ranges = <0x0 0xff000 DT_SIZE_K(972)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot1_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-1-secure";
+		reg = <0x0 DT_SIZE_K(120)>;
+	};
+
+	slot1_ns_partition: partition@1e000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-1-nonsecure";
+		reg = <0x1e000 DT_SIZE_K(852)>;
+	};
+};
+
 &cpuapp_rram {
 	partitions {
-		slot0_s_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-0-secure";
-			reg = <0x0 0x24000>;
-		};
-
-		tfm_storage_partition: partition@24000 {
+		tfm_storage_partition: partition@1f2000 {
 			compatible = "zephyr,mapped-partition";
 			label = "tfm-storage";
-			reg = <0x24000 DT_SIZE_K(32)>;
-			ranges = <0x0 0x24000 DT_SIZE_K(32)>;
+			reg = <0x1f2000 DT_SIZE_K(32)>;
+			ranges = <0x0 0x1f2000 DT_SIZE_K(32)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -47,25 +103,10 @@
 			};
 		};
 
-		slot0_ns_partition: partition@2c000 {
+		storage_partition: partition@1fa000 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0-nonsecure";
-			reg = <0x2c000 0x1cf000>;
-		};
-
-		nonsecure_storage: partition@1fb000 {
-			compatible = "zephyr,mapped-partition";
-			label = "nonsecure-storage";
-			reg = <0x1fb000 DT_SIZE_K(8)>;
-			ranges = <0x0 0x1fb000 DT_SIZE_K(8)>;
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			storage_partition: partition@0 {
-				compatible = "zephyr,mapped-partition";
-				label = "storage";
-				reg = <0x0 DT_SIZE_K(8)>;
-			};
+			label = "storage";
+			reg = <0x1fa000 DT_SIZE_K(12)>;
 		};
 	};
 };
@@ -74,7 +115,7 @@
  * TrustZone SRAM split. TF-M occupies the low 48 KiB (0xc000) of cpuapp SRAM;
  * the NS application therefore starts at 0x20000000 + 0xc000 = 0x2000c000.
  *
- * nRF54LM20B has 512 KiB of SRAM but only 511 KiB (0x7fe40 bytes) is physically
+ * nRF54LM20A/B has 512 KiB of SRAM but only 511 KiB (0x7fe40 bytes) is physically
  * accessible. NS SRAM = 0x7fe40 - 0xc000 = 0x73e40 bytes.
  */
 &sram0_s {
