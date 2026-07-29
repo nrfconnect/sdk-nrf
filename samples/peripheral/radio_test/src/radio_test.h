@@ -325,4 +325,21 @@ struct radio_test_channel_sequence *radio_test_channel_sequence_get(void);
  */
 void shuffle_channel_sequence(void);
 
+/**
+ * @brief Convert channel to frequency.
+ *
+ * @param[in] mode  Radio mode.
+ * @param[in] channel  Channel.
+ *
+ * @return Frequency.
+ */
+uint16_t channel_to_frequency(nrf_radio_mode_t mode, uint8_t channel);
+
+/**
+ * @brief Function for processing the radio test sweep.
+ *
+ * @return True if the sweep is finished, false otherwise.
+ */
+bool radio_test_sweep_processing(void);
+
 #endif /* RADIO_TEST_H_ */
