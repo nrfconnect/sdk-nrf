@@ -171,14 +171,17 @@ config MEMFAULT_NCS_STACK_METRICS
 
 config MEMFAULT_NCS_LTE_METRICS
 	bool "Collect LTE metrics"
-	select LTE_LC_TRACE
-	depends on LTE_LINK_CONTROL
-	depends on LTE_LC_EDRX_MODULE
-	depends on LTE_LC_PSM_MODULE
-	depends on MODEM_INFO
+	depends on MODEM_INFO || LTE_LINK_CONTROL
+	# LTE_LINK_CONTROL derived metrics require both eDRX and PSM modules to be enabled.
+	depends on !LTE_LINK_CONTROL || (LTE_LC_EDRX_MODULE && LTE_LC_PSM_MODULE)
+	select LTE_LC_TRACE if LTE_LINK_CONTROL
 	help
-	  Capture LTE metrics while the application is running. Supported
-	  metrics are time to connect and number of connection establishments.
+	  Capture LTE metrics while the application is running.
+	  With LTE_LINK_CONTROL enabled, this includes metrics such as time to
+	  connect and number of connection establishments. With MODEM_INFO
+	  enabled, this also includes metrics such as RSRP, SNR, and modem
+	  connectivity statistics. At least one of LTE_LINK_CONTROL or
+	  MODEM_INFO must be enabled to use this option.
 
 config MEMFAULT_NCS_BT_METRICS
 	bool "Collect BT metrics"

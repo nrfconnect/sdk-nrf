@@ -7,9 +7,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #include <modem/lte_lc_trace.h>
 #include <modem/nrf_modem_lib.h>
+#endif
 
 #if defined(CONFIG_MODEM_INFO)
 #include <modem/modem_info.h>
@@ -23,6 +25,7 @@
 
 LOG_MODULE_DECLARE(memfault_ncs_metrics, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 static bool connected;
 static enum lte_lc_func_mode current_func_mode;
 
@@ -64,6 +67,7 @@ static void lte_trace_cb(enum lte_lc_trace_type type)
 		break;
 	}
 }
+#endif /* CONFIG_LTE_LINK_CONTROL */
 
 static void modem_params_get(void)
 {
@@ -111,6 +115,7 @@ static void modem_params_get(void)
 #endif
 }
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 static void lte_handler(const struct lte_lc_evt *const evt)
 {
 	int err;
@@ -158,6 +163,7 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		default:
 			break;
 		}
+		break;
 	case LTE_LC_EVT_PSM_UPDATE:
 		err = MEMFAULT_METRIC_SET_SIGNED(ncs_lte_psm_tau_seconds, evt->psm_cfg.tau);
 		if (err) {
@@ -201,14 +207,18 @@ static void lte_handler(const struct lte_lc_evt *const evt)
 		break;
 	}
 }
+#endif /* CONFIG_LTE_LINK_CONTROL */
 
 void memfault_lte_metrics_init(void)
 {
+	int err;
+
+#if defined(CONFIG_LTE_LINK_CONTROL)
 	lte_lc_trace_handler_set(lte_trace_cb);
 	lte_lc_register_handler(lte_handler);
+#endif
 
 #if defined(CONFIG_MODEM_INFO)
-	int err;
 	char buf[MODEM_INFO_FWVER_SIZE];
 
 	modem_info_get_fw_version(buf, sizeof(buf));
@@ -224,18 +234,27 @@ void memfault_lte_metrics_init(void)
 	}
 #endif
 
-#if CONFIG_MEMFAULT_NCS_STACK_METRICS
+#if defined(CONFIG_LTE_LINK_CONTROL) && CONFIG_MEMFAULT_NCS_STACK_METRICS
 	err = memfault_ncs_metrics_thread_add(&lte_metrics_thread);
 	if (err) {
 		LOG_WRN("Failed to add thread: %s for stack unused space measurement, err: %d",
 			lte_metrics_thread.thread_name, err);
 	}
-#endif /* CONFIG_MEMFAULT_NCS_STACK_METRICS */
+#endif /* CONFIG_LTE_LINK_CONTROL && CONFIG_MEMFAULT_NCS_STACK_METRICS */
+
+	ARG_UNUSED(err);
 }
 
 void memfault_lte_metrics_update(void)
 {
 #if defined(CONFIG_MODEM_INFO)
+#if !defined(CONFIG_LTE_LINK_CONTROL)
+	/* Without LTE_LINK_CONTROL there is no event handler to trigger this on
+	 * registration status changes, so collect it on every heartbeat instead.
+	 */
+	modem_params_get();
+#endif
+
 	int tx_kbytes;
 	int rx_kybtes;
 	char operator_name[MODEM_INFO_SHORT_OP_NAME_SIZE];
