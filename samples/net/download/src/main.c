@@ -44,7 +44,7 @@ static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static int sec_tag_list[] = { SEC_TAG };
 #if CONFIG_SAMPLE_PROVISION_CERT
 static const char cert[] = {
-	#include SAMPLE_CERT_FILE_INC
+	#include "sample_cert.inc"
 
 	/* Null terminate certificate if running Mbed TLS on the application core.
 	 * Required by TLS credentials API.
