@@ -249,6 +249,18 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 		goto out;
 	}
 
+	status = umac_cmd_sys_lmac_tuning_params(fmac_dev_ctx);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		nrf_wifi_osal_log_err("%s: LMAC tuning params config failed",
+				      __func__);
+		nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
+#ifdef NRF71_DATA_TX
+		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
+#endif /* NRF71_DATA_TX */
+		goto out;
+	}
+
 #ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	rx_buf_ipc = nrf_wifi_osal_mem_zalloc(sys_fpriv->num_rx_bufs *
 					      sizeof(struct nrf_wifi_rx_buf));
