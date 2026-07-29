@@ -4,34 +4,44 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/delete-node/ &boot_partition;
+/* Dual-slot layout for MCUboot (with external flash for slot1) */
+
 /delete-node/ &slot0_partition;
 /delete-node/ &slot1_partition;
+/delete-node/ &tfm_ps_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
-/delete-node/ &tfm_ps_partition;
 /delete-node/ &storage_partition;
 /delete-node/ &sram0_ns;
 
+#include "nrf7002dk_nrf5340_dualslot_partitions.dtsi"
+
+&slot0_partition {
+	ranges = <0x0 0x10000 DT_SIZE_K(904)>;
+	#address-cells = <1>;
+	#size-cells = <1>;
+
+	slot0_s_partition: partition@0 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-secure";
+		reg = <0x0 DT_SIZE_K(128)>;
+	};
+
+	slot0_ns_partition: partition@20000 {
+		compatible = "zephyr,mapped-partition";
+		label = "image-0-nonsecure";
+		reg = <0x20000 DT_SIZE_K(776)>;
+	};
+};
+
 &flash0 {
 	partitions {
-		slot0_s_partition: partition@0 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-0-secure";
-			reg = <0x0 0x24000>;
-		};
-
-		slot0_ns_partition: partition@24000 {
-			compatible = "zephyr,mapped-partition";
-			label = "image-0-nonsecure";
-			reg = <0x24000 0xcc000>;
-		};
-
-		nonsecure_storage: partition@f0000 {
+		/* 0x10000 (boot_partition) + 904K (slot0_partition) = 0xf2000 */
+		nonsecure_storage: partition@f2000 {
 			compatible = "zephyr,mapped-partition";
 			label = "nonsecure-storage";
-			reg = <0xf0000 DT_SIZE_K(8)>;
-			ranges = <0x0 0xf0000 DT_SIZE_K(8)>;
+			reg = <0xf2000 DT_SIZE_K(8)>;
+			ranges = <0x0 0xf2000 DT_SIZE_K(8)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -42,6 +52,7 @@
 			};
 		};
 
+		/* 0xf2000 + 8K = 0xf4000; ends exactly at 0x100000 (1 MiB, end of flash0) */
 		tfm_storage_partition: partition@f4000 {
 			compatible = "zephyr,mapped-partition";
 			label = "tfm-storage";
