@@ -49,6 +49,11 @@ west-commands:
       - name: ncs-cherry-pick
         class: NcsCherryPick
         help: NCS cherry-pick utility
+  - file: scripts/west_commands/create_mergedhex.py
+    commands:
+      - name: create-mergedhex
+        class: CreateMergedHex
+        help: merge the hex files flashed by "west flash" into one hex file
   - file: scripts/west_commands/ncs_contains_commit.py
     commands:
       - name: ncs-contains-commit
