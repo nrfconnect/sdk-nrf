@@ -22,9 +22,9 @@
 #include <ncs_version.h>
 #include <ncs_commit.h>
 #include "cJSON_os.h"
-#if (CONFIG_MEMFAULT)
+#if defined(CONFIG_MEMFAULT_PERIODIC_UPLOAD)
 #include "memfault/ports/zephyr/periodic_upload.h"
-#endif /* CONFIG_MEMFAULT */
+#endif /* CONFIG_MEMFAULT_PERIODIC_UPLOAD */
 
 LOG_MODULE_REGISTER(nrf_cloud_codec_internal, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
@@ -3081,11 +3081,11 @@ void nrf_cloud_device_control_get(struct nrf_cloud_ctrl_data *const ctrl)
 		return;
 	}
 
-#if (CONFIG_MEMFAULT)
+#if defined(CONFIG_MEMFAULT_PERIODIC_UPLOAD)
 	ctrl->memfault_enabled = memfault_zephyr_port_periodic_upload_enabled();
 #else
 	ctrl->memfault_enabled = false;
-#endif /* CONFIG_MEMFAULT */
+#endif /* CONFIG_MEMFAULT_PERIODIC_UPLOAD */
 }
 
 bool nrf_cloud_shadow_app_send_check(struct nrf_cloud_obj_shadow_data *const input)
@@ -3352,11 +3352,11 @@ int nrf_cloud_shadow_control_process(struct nrf_cloud_obj_shadow_data *const inp
 	if (ctrl_status != NRF_CLOUD_CTRL_REJECT) {
 		if (device_ctrl.memfault_enabled != cloud_ctrl.memfault_enabled) {
 			ctrl_status = NRF_CLOUD_CTRL_REPLY;
-#if (CONFIG_MEMFAULT)
+#if defined(CONFIG_MEMFAULT_PERIODIC_UPLOAD)
 			LOG_INF("Changing Memfault enabled to: %s",
 				cloud_ctrl.memfault_enabled ? "true" : "false");
 			memfault_zephyr_port_periodic_upload_enable(cloud_ctrl.memfault_enabled);
-#endif /* CONFIG_MEMFAULT */
+#endif /* CONFIG_MEMFAULT_PERIODIC_UPLOAD */
 		}
 	}
 
