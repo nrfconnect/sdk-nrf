@@ -150,13 +150,13 @@ User interface
       Buttons:
         Can be used to input the out-of-band (OOB) authentication value during provisioning. All buttons have the same functionality during this procedure.
 
-      Button 1:
+      Button 0:
         On press and release, **Button 0** will publish a Generic OnOff Set message using the configured publication parameters of its model instance, and toggle the LED on/off on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
 
         On press and hold, **Button 0** will publish a Generic Level move set message using the configured publication parameters of its model instance and will continuously dim the LED lightness state on a :ref:`mesh light fixture <bluetooth_mesh_light_lc>` device.
         On release, the button publishes another Generic Level move set message with the ``delta`` parameter set to 0 and stops the continuous level change from the previous message.
 
-      Button 2:
+      Button 1:
         On short press and release, **Button 1** publishes a Scene Restore message using the configured publication parameters of its model instance, and restores the LED state of all targets to the values stored under the current scene number.
         Each press of the button recalls the next scene.
         The first press recalls scene 2, the next press recalls scene 3, and the sequence continues incrementally until it wraps around back to scene 1.
