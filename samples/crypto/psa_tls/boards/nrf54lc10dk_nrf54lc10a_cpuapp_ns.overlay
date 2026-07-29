@@ -1,0 +1,83 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot0_ns_partition;
+/delete-node/ &storage_partition;
+
+/delete-node/ &tfm_its_partition;
+/delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+/* Rebalance the secure/non-secure SRAM split to 64 kB / 127 kB so the
+ * non-secure image (psa_tls needs ~115 kB of RAM) fits. nRF54LV10A has
+ * 192 kB total SRAM; 1 kB at the top is left unused to match the upstream
+ * TF-M layout.
+ */
+&cpuapp_sram {
+	sram0_s: image_s@0 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Secure image memory */
+		reg = <0x0 DT_SIZE_K(64)>;
+		ranges = <0x0 0x0 DT_SIZE_K(64)>;
+	};
+
+	sram0_ns: image_ns@10000 {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Non-Secure image memory */
+		reg = <0x10000 DT_SIZE_K(127)>;
+		ranges = <0x0 0x10000 DT_SIZE_K(127)>;
+	};
+};
+
+&cpuapp_rram {
+	partitions {
+		slot0_s_partition: partition@0 {
+			label = "image-0-secure";
+			reg = <0x0 0x40000>;
+		};
+
+		tfm_storage_partition: partition@40000 {
+			compatible = "fixed-subpartitions";
+			label = "tfm-storage";
+			reg = <0x40000 DT_SIZE_K(40)>;
+			ranges = <0x0 0x40000 DT_SIZE_K(40)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			tfm_its_partition: partition@0 {
+				label = "tfm-its";
+				reg = <0x0 DT_SIZE_K(16)>;
+			};
+
+			tfm_otp_partition: partition@4000 {
+				label = "tfm-otp";
+				reg = <0x4000 DT_SIZE_K(8)>;
+			};
+
+			tfm_ps_partition: partition@6000 {
+				label = "tfm-ps";
+				reg = <0x6000 DT_SIZE_K(16)>;
+			};
+		};
+
+		slot0_ns_partition: partition@4a000 {
+			label = "image-0-nonsecure";
+			reg = <0x4a000 0xb3000>;
+		};
+	};
+};
+
+/ {
+	eth-rtt {
+		compatible = "segger,eth-rtt";
+	};
+};
