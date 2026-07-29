@@ -94,7 +94,7 @@ If the application needs to use one of these channels beyond the requirements fo
    int die_temp_sample(struct vtf_sample *out)
    {
        out->type = VTF_SAMPLE_TYPE_INT;
-       out->value.i32 = /* centi-degC */;
+       out->value.i32 = /* degC */;
        out->timestamp_ms = k_uptime_get();
        out->status = VTF_STATUS_OK;
        return 0;

@@ -17,6 +17,7 @@
 LOG_MODULE_REGISTER(vtf_capture, CONFIG_VTF_LOG_LEVEL);
 
 static const union vtf_sample_value vtf_channel_defaults[VTF_CH_COUNT] = {
+	[VTF_CH_INITIALIZATION] = {.metadata = {.init_code = 0, .reserved = 0}},
 	[VTF_CH_BATTERY_VOLTAGE] = {.i32 = CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE},
 	[VTF_CH_DIE_TEMP] = {.i32 = CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE},
 	[VTF_CH_FREQ_OFFSET] = {.i32 = CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE},
@@ -73,6 +74,7 @@ static int vtf_monitoring_init(void)
 	for (enum vtf_channel_id id = 0; id < VTF_CH_COUNT; id++) {
 		vtf_snapshots[id] = vtf_channel_defaults[id];
 	}
+	vtf_snapshots[VTF_CH_INITIALIZATION].metadata.init_code = VTF_CH_INITIALIZATION_CODE;
 
 	STRUCT_SECTION_FOREACH(vtf_channel, ch)
 	{

@@ -41,6 +41,7 @@ static void die_temp_work_handler(struct k_work *work)
 {
 	struct sensor_value val;
 	int err;
+	int32_t temp;
 
 	ARG_UNUSED(work);
 
@@ -61,7 +62,10 @@ static void die_temp_work_handler(struct k_work *work)
 		LOG_ERR("Failed to read DIE_TEMP: %d", err);
 		sensor_state.status = VTF_STATUS_ERROR;
 	} else {
-		sensor_state.value.i32 = (int32_t)sensor_value_to_centi(&val);
+		/* Wi-Fi driver requires temperature in degrees of type int8_t */
+		temp = (int32_t)sensor_value_to_deci(&val);
+		sensor_state.value.i32 = (int8_t)(temp > INT8_MAX ? INT8_MAX :
+						  temp < INT8_MIN ? INT8_MIN : temp);
 		sensor_state.timestamp_ms = k_uptime_get();
 		sensor_state.status = VTF_STATUS_OK;
 	}

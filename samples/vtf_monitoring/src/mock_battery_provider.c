@@ -22,6 +22,9 @@
 #define MOCK_BATTERY_MIN_MV  3300
 #define MOCK_BATTERY_STEP_MV 20
 
+/* VTF battery snapshots use 0.100 V units (mV = raw / 100). */
+#define MOCK_BATTERY_MV_TO_RAW(mv) (((mv) / 100))
+
 static int32_t mock_battery_mv = MOCK_BATTERY_MAX_MV;
 
 #define MOCK_VTF_BATTERY_VOLTAGE_MONITOR_INTERVAL_MS 10000
@@ -58,7 +61,8 @@ static void battery_voltage_work_handler(struct k_work *work)
 	}
 
 	k_sem_take(&sensor_state_lock, K_FOREVER);
-	sensor_state.value.i32 = mock_battery_mv;
+	/* Provide value in same units Wi-Fi driver expects (0.100 V). */
+	sensor_state.value.i32 = MOCK_BATTERY_MV_TO_RAW(mock_battery_mv);
 	sensor_state.timestamp_ms = k_uptime_get();
 	sensor_state.status = VTF_STATUS_OK;
 	k_sem_give(&sensor_state_lock);
@@ -85,4 +89,5 @@ static int mock_battery_sample(struct vtf_sample *out)
 }
 
 VTF_CHANNEL_DEFINE(vtf_channel_battery_voltage, VTF_CH_BATTERY_VOLTAGE, mock_battery_sample,
-		   mock_battery_init, VTF_SAMPLE_TYPE_INT, i32, MOCK_BATTERY_MAX_MV);
+		   mock_battery_init, VTF_SAMPLE_TYPE_INT, i32,
+		   MOCK_BATTERY_MV_TO_RAW(MOCK_BATTERY_MAX_MV));
