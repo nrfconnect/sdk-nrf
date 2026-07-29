@@ -69,10 +69,12 @@ config SAMPLE_COMPUTE_HASH
 	bool "Compute sha256 hash"
 	select PSA_CRYPTO
 	select PSA_WANT_ALG_SHA_256
+	default y
 
 config SAMPLE_COMPARE_HASH
 	bool "Compare hash"
 	depends on SAMPLE_COMPUTE_HASH
+	default y
 
 config SAMPLE_SHA256_HASH
 	string "sha256 hash"

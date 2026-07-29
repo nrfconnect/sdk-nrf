@@ -90,6 +90,11 @@ static struct downloader_host_cfg host_dl_cfg = {
 #if CONFIG_SAMPLE_COMPUTE_HASH
 #include <psa/crypto.h>
 static psa_hash_operation_t hash_ctx;
+
+#if CONFIG_SAMPLE_COMPARE_HASH
+BUILD_ASSERT(sizeof(CONFIG_SAMPLE_SHA256_HASH) == 65,
+	     "CONFIG_SAMPLE_SHA256_HASH is not set or wrong length");
+#endif
 #endif
 
 static int64_t ref_time;
@@ -291,7 +296,7 @@ static int callback(const struct downloader_evt *event)
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		uint8_t hash[32];
-		uint8_t hash_str[64 + 1];
+		char hash_str[64 + 1];
 		size_t hash_length;
 
 		status = psa_hash_finish(&hash_ctx, hash, sizeof(hash), &hash_length);
