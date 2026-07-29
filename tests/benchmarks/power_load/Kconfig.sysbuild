@@ -1,0 +1,41 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice FLPRCORE
+
+config FLPR_VPR_TEST_APP
+	bool "Test app image for cpuflpr"
+
+endchoice
+
+if !FLPRCORE_NONE
+
+config FLPRCORE_IMAGE_NAME
+	default "flpr_vpr_test_app" if FLPR_VPR_TEST_APP
+
+config FLPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_load/vpr_test_app" if FLPR_VPR_TEST_APP
+
+endif # !FLPRCORE_NONE
+
+choice PPRCORE
+
+config PPR_VPR_TEST_APP
+	bool "Test app image for cpuppr"
+
+endchoice
+
+if !PPRCORE_NONE
+
+config PPRCORE_IMAGE_NAME
+	default "ppr_vpr_test_app" if PPR_VPR_TEST_APP
+
+config PPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_load/vpr_test_app" if PPR_VPR_TEST_APP
+
+endif # !PPRCORE_NONE
+
+source "share/sysbuild/Kconfig"
