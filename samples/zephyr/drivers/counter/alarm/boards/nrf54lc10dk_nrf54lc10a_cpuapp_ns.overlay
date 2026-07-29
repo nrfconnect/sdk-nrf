@@ -1,9 +1,1 @@
-/ {
-	chosen {
-		counter = &timer24;
-	};
-};
-
-&timer24 {
-	status = "okay";
-};
+#include "nrf54lc10dk_nrf54lc10a_cpuapp.overlay"
