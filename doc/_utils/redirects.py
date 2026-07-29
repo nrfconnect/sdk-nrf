@@ -346,39 +346,6 @@ NRF = (
     ("ug_gzll", "protocols/gazell/gzll"), # Gazell Link Layer
     ("ug_gzp", "protocols/gazell/gzp"), # Gazell Pairing
     ("test_and_optimize/optimizing/power_nrf91", "protocols/lte/power_nrf91"), # Power profiling cellular applications (moved from Test and optimizing general section)
-    ("ug_matter", "releases_and_maturity/migration/migration_ncs_matter"), # Matter (landing)
-    ("ug_matter_intro_overview", "releases_and_maturity/migration/migration_ncs_matter"), # Matter overview (landing)
-    ("ug_matter_overview_architecture", "releases_and_maturity/migration/migration_ncs_matter"), # Matter architecture
-    ("ug_matter_overview_data_model", "releases_and_maturity/migration/migration_ncs_matter"), # Matter Data Model and device types
-    ("ug_matter_overview_int_model", "releases_and_maturity/migration/migration_ncs_matter"), # Matter Interaction Model and interaction types
-    ("ug_matter_overview_network_topologies", "releases_and_maturity/migration/migration_ncs_matter"), # Matter network topology and concepts
-    ("ug_matter_overview_security", "releases_and_maturity/migration/migration_ncs_matter"), # Matter network security
-    ("ug_matter_overview_commissioning", "releases_and_maturity/migration/migration_ncs_matter"), # Matter network commissioning
-    ("ug_matter_overview_multi_fabrics", "releases_and_maturity/migration/migration_ncs_matter"), # Matter multiple fabrics feature
-    ("ug_matter_overview_dfu", "releases_and_maturity/migration/migration_ncs_matter"), # Matter OTA
-    ("ug_matter_overview_dev_model", "releases_and_maturity/migration/migration_ncs_matter"), # Matter development model and compatible ecosystems
-    ("ug_matter_overview_architecture_integration", "releases_and_maturity/migration/migration_ncs_matter"), # Matter integration in the nRF Connect SDK
-    ("ug_matter_intro_gs", "releases_and_maturity/migration/migration_ncs_matter"), # Getting started with Matter (landing)
-    ("ug_matter_hw_requirements", "releases_and_maturity/migration/migration_ncs_matter"), # Matter hardware and memory requirements
-    ("ug_matter_gs_testing", "releases_and_maturity/migration/migration_ncs_matter"), # Testing Matter in the nRF Connect SDK (landing)
-    ("ug_matter_gs_testing_thread_separate_linux_macos", "releases_and_maturity/migration/migration_ncs_matter"), # Matter over Thread: Configuring Border Router and Linux/macOS controller on separate devices
-    ("ug_matter_gs_testing_thread_one_otbr", "releases_and_maturity/migration/migration_ncs_matter"), # Matter over Thread: Configuring Border Router and controller on one device
-    ("ug_matter_gs_testing_wifi_pc", "releases_and_maturity/migration/migration_ncs_matter"), # Matter over Wi-Fi: Configuring CHIP Tool for Linux or macOS
-    ("ug_matter_gs_testing_thread_separate_otbr_android", "releases_and_maturity/migration/migration_ncs_matter"), # Matter over Thread: Configuring Border Router and Android controller on separate devices (removed after 2.2.0)
-    ("ug_matter_gs_testing_wifi_mobile", "releases_and_maturity/migration/migration_ncs_matter"), # Matter over Wi-Fi: Configuring CHIP Tool for Android (removed after 2.2.0)
-    ("ug_matter_gs_tools", "releases_and_maturity/migration/migration_ncs_matter"), # Matter tools
-    ("protocols/matter/getting_started/manufacturer_cluster_editor_tool", "releases_and_maturity/migration/migration_ncs_matter"), # Matter Cluster Editor tool page (removed for v3.1.0)
-    ("ug_matter_gs_kconfig", "releases_and_maturity/migration/migration_ncs_matter"), # Enabling Matter in Kconfig
-    ("ug_matter_gs_advanced_kconfigs", "releases_and_maturity/migration/migration_ncs_matter"), # Advanced Matter Kconfig options
-    ("ug_matter_gs_adding_clusters", "releases_and_maturity/migration/migration_ncs_matter"), # Adding clusters to Matter application
-    ("ug_matter_intro_device", "releases_and_maturity/migration/migration_ncs_matter"), # How to create Matter end product
-    ("ug_matter_device_prerequisites", "releases_and_maturity/migration/migration_ncs_matter"), # Matter device development prerequisites
-    ("ug_matter_device_factory_provisioning", "releases_and_maturity/migration/migration_ncs_matter"), # Factory provisioning in Matter
-    ("ug_matter_device_attestation", "releases_and_maturity/migration/migration_ncs_matter"), # Matter Device Attestation
-    ("ug_matter_device_dcl", "releases_and_maturity/migration/migration_ncs_matter"), # Matter Distributed Compliance Ledger
-    ("ug_matter_device_certification", "releases_and_maturity/migration/migration_ncs_matter"), # Matter certification
-    ("ug_matter_ecosystems_certification", "releases_and_maturity/migration/migration_ncs_matter"), # Ecosystems certification
-    ("ug_matter_device_bootloader", "releases_and_maturity/migration/migration_ncs_matter"), # Bootloader configuration in Matter
     ("ug_multiprotocol_support", "protocols/multiprotocol/index"), # Multiprotocol support (landing page in Protocols)
     ("ug_nfc", "protocols/nfc/index"), # Near Field Communication (NFC)
     ("ug_thread", "protocols/thread/index"), # Thread (landing)
@@ -457,7 +424,6 @@ NRF = (
     ("samples/samples_nrf9160", "samples/cellular"), # Cellular samples (landing)
     ("samples/samples_crypto", "samples/crypto"), # Cryptography samples (landing)
     ("samples/samples_gazell", "samples/gazell"), # Gazell samples (landing)
-    ("samples/samples_matter", "releases_and_maturity/migration/migration_ncs_matter"), # Matter samples (landing)
     ("samples/samples_nfc", "samples/nfc"), # NFC samples (landing)
     ("samples/samples_nrf5340", "samples/nrf5340"), # nRF5340 samples (landing)
     ("samples/samples_thread", "samples/thread"), # Thread samples (landing)
