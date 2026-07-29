@@ -8,7 +8,6 @@ common:
 tests:
   test.sample.esb.same_boards_connected:
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow: &platform_allow_basic
@@ -30,7 +29,6 @@ tests:
 
   test.sample.esb.nrf54h20_with_other_board:
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     platform_allow: *platform_allow_basic
