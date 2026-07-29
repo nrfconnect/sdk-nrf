@@ -201,22 +201,6 @@
 
 .. _`ncs-door-lock-and-access-control`: https://github.com/nrfconnect/ncs-door-lock-and-access-control
 
-.. ### Matter links that need updated SHA per release
-
-.. _`other controller setups`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/controller
-.. _`CHIP Certificate Tool source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/tools
-.. _`Bluetooth LE Arbiter's header file`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/platform/Zephyr/BLEAdvertisingArbiter.h
-.. _`LogModule enumeration`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/lib/support/logging/Constants.h
-.. _`Matter SDK's Logging header`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/lib/support/logging/CHIPLogging.h
-.. _`Factory Data Provider`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/platform/nrfconnect/FactoryDataProvider.h
-.. _`Matter nRF Connect platform source files`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/src/platform/nrfconnect
-.. _`Generate factory data script`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/generate_nrfconnect_chip_factory_data.py
-.. _`Factory data schema`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/nrfconnect_factory_data.schema
-.. _`Generate partition script`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/scripts/tools/nrfconnect/nrfconnect_generate_partition.py
-.. _`Matter nRF Connect scripts`: https://github.com/nrfconnect/sdk-connectedhomeip/tree/5e2e5a02d6/scripts/tools/nrfconnect
-.. _`Matter nRF Connect Kconfig`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/config/nrfconnect/chip-module/Kconfig
-.. _`Matter Clusters Code-Driven support`: https://github.com/nrfconnect/sdk-connectedhomeip/blob/5e2e5a02d6/src/app/common/templates/config-data.yaml
-
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 .. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/main/src/nrfcloud_utils/device_credentials_installer.py
@@ -1198,14 +1182,12 @@
 .. _`migration_notes_3.0_recommended`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/releases_and_maturity/migration/migration_guide_3.0.html#migration-3-0-recommended
 
 .. _`Matter weather station application from the v2.1.1`: https://nrfconnectdocs.nordicsemi.com/ncs/2.1.1/nrf/applications/matter_weather_station/README.html
-.. _`Matter Weather Station`: https://nrfconnectdocs.nordicsemi.com/ncs/3.4.0/nrf/applications/matter_weather_station/README.html
 .. _`GN tool`: https://nrfconnectdocs.nordicsemi.com/ncs/3.4.0/nrf/protocols/matter/getting_started/tools.html
 .. _`Matter certification`: https://nrfconnectdocs.nordicsemi.com/ncs/3.4.0/nrf/protocols/matter/end_product/certification.html
 
 .. _`CONFIG_BT_CTLR_TX_PWR_MINUS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_MINUS
 .. _`CONFIG_BT_CTLR_TX_PWR_PLUS`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_BT_CTLR_TX_PWR_PLUS
 .. _`CONFIG_PSA_SSF_CRYPTO_CLIENT`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_SSF_CRYPTO_CLIENT
-.. _`Matter factory data Kconfig options`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CHIP_FACTORY_DATA
 .. _`Kconfig search results`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PM_PARTITION_SIZE
 .. _`CONFIG_PSA_WANT_*`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_WANT_*
 .. _`CONFIG_PSA_USE_*`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/kconfig/index.html#!CONFIG_PSA_USE_*
@@ -1549,12 +1531,6 @@
 .. _`AWS S3 Developer Guide: Bucket Policy Examples`: https://docs.aws.amazon.com/AmazonS3/latest/userguide/example-bucket-policies.html
 .. _`AWS IoT Core`: https://aws.amazon.com/iot-core/
 
-.. _`Understanding Frustration-Free Setup`: https://developer.amazon.com/docs/frustration-free-setup/understanding-ffs.html
-.. _`Matter Simple Setup`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-getting-started.html
-.. _`Matter Simple Setup for Wi-Fi Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-wifi-overview.html
-.. _`Matter Simple Setup for Thread Overview`: https://developer.amazon.com/docs/frustration-free-setup/matter-simple-setup-for-thread-overview.html
-.. _`Amazon Alexa integration with Matter`: https://developer.amazon.com/en-US/docs/alexa/smarthome/matter-support.html
-
 .. ### Source: openthread.io
 
 .. _`OpenThread.io`: https://openthread.io/
@@ -1724,27 +1700,8 @@
 
 .. ### Source: csa-iot.org
 
-.. _`Connectivity Standards Alliance`: https://csa-iot.org
-.. _`CSA Specifications Download Request`: https://csa-iot.org/developer-resource/specifications-download-request/
-
-.. _`Matter Resource Kit`:
-.. _`CSA Matter Resource Kit`: https://community.csa-iot.org/page/matter-resource-kit
-.. _`Connectivity Standards Alliance Certification Policy`: https://csa-iot.org/wp-content/uploads/2021/12/07-4842-14-ptsc-certification-policy.pdf
-.. _`CSA's Testing Providers`: https://csa-iot.org/certification/testing-providers/
-.. _`CSA's Certification Team`: https://csa-iot.org/contact-us/
-.. _`Connectivity Standards Alliance members`: https://csa-iot.org/members/
-.. _`Join CSA`: https://csa-iot.org/become-member/
-.. _`PICS Tool`: https://picstool.csa-iot.org/
-.. _`Matter Attestation Form`: https://groups.csa-iot.org/wg/members-all/document/folder/2255
-.. _`Matter Attestation of Security template`: https://groups.csa-iot.org/wg/members-all/document/27432
-.. _`Connectivity Standards Alliance Certification Web Tool`: https://zigbeecertifiedproducts.knack.com/zigbee-certified#home/
-.. _`CSA Certified Products Database`: https://csa-iot.org/csa-iot_products/
 .. _`CSA blog post`: https://csa-iot.org/newsroom/matter-1-1-release-enhancements-for-developers-and-devices/
-.. _`Distributed Compliance Ledger`: https://webui.dcl.csa-iot.org/
-
 .. _`Matter 1.3 CSA blog post`: https://csa-iot.org/newsroom/matter-1-3-specification-released/
-.. _`CSA press release for Matter 1.4`: https://csa-iot.org/newsroom/matter-1-4-enables-more-capable-smart-homes/
-.. _`CSA press release for Matter 1.5`: https://csa-iot.org/newsroom/matter-1-5-introduces-cameras-closures-and-enhanced-energy-management-capabilities/
 
 .. ### Source: Chocolatey
 
@@ -1903,7 +1860,6 @@
 
 .. ### Source: youtube.com
 
-.. _`Developing Matter 1.0 products with nRF Connect SDK`: https://www.youtube.com/watch?v=9Ar13rMxGIk
 .. _`Accelerate cellular product development`: https://youtu.be/b1YW1J4aUps
 .. _`How nRF9160 enables cellular IoT asset tracking`: https://webinars.nordicsemi.com/events/12113311018?n=How+nRF9160+enables+cellular+IoT+asset+tracking&event_id=12113311018
 
@@ -2059,8 +2015,6 @@
 .. _`WPA Supplicant`: https://w1.fi/wpa_supplicant/
 
 .. _`IEEE 802.11 Working Group`: https://www.ieee802.org/11/
-
-.. _`Samsung SmartThings integration with Matter`: https://support.smartthings.com/hc/en-us/articles/11219700390804-SmartThings-x-Matter-Integration-
 
 .. _`Community Best Practice for Copyright Notice`: https://www.linuxfoundation.org/blog/copyright-notices-in-open-source-software-projects/
 

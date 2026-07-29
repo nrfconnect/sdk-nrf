@@ -220,7 +220,7 @@ Glossary
 
    Device
       A piece of hardware that is considered together with the software it is running.
-      For example, this can be a :term:`development kit (DK)` provided by Nordic Semiconductor and programmed with a sample from the |NCS|, a prototyping platform such as Nordic Thingy:53 programmed with the `Matter Weather Station`_ application, or the nPM1300 EK connected to a compatible development kit.
+      For example, this can be a :term:`development kit (DK)` provided by Nordic Semiconductor and programmed with a sample from the |NCS|, a prototyping platform such as Nordic Thingy:53, or the nPM1300 EK connected to a compatible development kit.
       These can also be third-party development kits compatible with Nordic :term:`boards <Board>` or end-user devices.
 
    Device Firmware Update (DFU)

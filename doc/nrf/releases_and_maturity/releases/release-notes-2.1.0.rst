@@ -20,7 +20,7 @@ The following list includes the summary of the most relevant changes introduced 
 
 * Added :ref:`experimental support <software_maturity>` for the nRF7002 Wi-Fi 6 companion IC with samples.
   See :ref:`nrf7002dk_nrf5340` and :ref:`wifi_samples` for more information.
-* Added experimental support for ``ug_matter_overview_architecture_integration``.
+* Added experimental support for Matter Overview Architecture Integration.
 * Feature-completed experimental support for Matter over Thread.
   It uses the :ref:`Thread v1.3 certified stack <thread_ug_supported_features_v13>` introduced in the |NCS| v2.0.2.
 * Added experimental support for setting the TX power envelope with FEM power control for Bluetooth® LE and 802.15.4.
@@ -169,7 +169,7 @@ Matter
 ------
 
 * Added support for Matter over Wi-Fi to several samples.
-* Updated ``ug_matter`` with new pages about Matter SDK as well as information about Matter over Wi-Fi.
+* Updated Matter with new pages about Matter SDK as well as information about Matter over Wi-Fi.
 * Removed the overlay file for the low-power configuration build type from several Matter samples.
   The low-power communication modes are now enabled by the default for these samples.
 
@@ -555,25 +555,25 @@ Matter samples
 * Added optimized usage of the QSPI NOR flash sleep mode to reduce power consumption during the Matter commissioning.
 * Updated the size of MCUBoot partition on ``nrf5340dk_nrf5340_cpuapp`` by reducing it by 16 kB.
 
-* ``matter_light_switch_sample``:
+* Matter Light switch sample:
 
   * Added support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
   * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to be enabled by default.
   * Removed the overlay file for the low-power configuration build type.
     The low-power communication modes is now enabled by the default for this sample.
 
-* ``matter_lock_sample``:
+* Matter Door lock sample:
 
   * Added support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
   * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to be enabled by default.
   * Removed the overlay file for the low-power configuration build type.
     The low-power communication modes is now enabled by the default for this sample.
 
-* ``matter_template_sample``:
+* Matter Template sample:
 
   * Added support for Matter over Wi-Fi on ``nrf7002dk_nrf5340_cpuapp`` and on ``nrf5340dk_nrf5340_cpuapp`` with the ``nrf7002_ek`` shield.
 
-* ``matter_window_covering_sample``:
+* Matter Window covering sample:
 
   * Added information about the ``matter_window_covering_sample_ssed`` in the sample documentation.
   * Updated ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` and ``CONFIG_CHIP_THREAD_SSED`` to be enabled by default.
@@ -1093,5 +1093,5 @@ Documentation
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.
     As part of this change, the former :ref:`ug_thread_prebuilt_libs` section has been moved to a separate page.
-  * ``ug_matter_tools`` page with a new section about the ZAP tool.
+  * Matter Tools page with a new section about the ZAP tool.
   * :ref:`caf_settings_loader` page with a section about the file system used as settings backend.

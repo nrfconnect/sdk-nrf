@@ -1,7 +1,7 @@
 .. _migration_sdk_nrf_to_ncs_matter:
 
-Migrating Matter projects from sdk-nrf to ncs-matter
-####################################################
+Migrating Matter projects from sdk-nrf to Matter add-on
+#######################################################
 
 .. contents::
    :local:
@@ -47,7 +47,7 @@ Complete the following steps to create a new workspace with the `Matter Add-on`_
    cd ncs-matter
    west update
 
-Replace ``|release|`` with the add-on release tag that matches your target |NCS| version (see the add-on release notes).
+Replace |release| with the add-on release tag that matches your target |NCS| version (see the add-on release notes).
 
 Alternatively, if you already cloned the add-on repository locally:
 
@@ -132,7 +132,7 @@ The ``matter`` subdirectory is removed from sample paths, and former application
 Shared sample infrastructure
 ============================
 
-The shared code, Kconfig definitions, and CMake logic that was previously located under :file:`nrf/samples/matter/common` is reorganized in the add-on module:
+The shared code, Kconfig definitions, and CMake logic that were previously located under :file:`nrf/samples/matter/common` are reorganized in the add-on module:
 
 .. list-table:: Shared Matter infrastructure path mapping
    :widths: 45 55
@@ -215,7 +215,7 @@ Build system changes
 ********************
 
 To align the `Matter Add-on`_ with the |NCS| build system, the CMake, Sysbuild and Kconfig files have been created.
-The Zephyr module configuration points to the new files instead of the alterantives in the |NCS| repository.
+The Zephyr module configuration points to the new files instead of the alternatives in the |NCS| repository.
 
 CMake updates
 =============
@@ -390,7 +390,7 @@ Validation scripts
 ==================
 
 If you use the Matter sample validation tooling locally, switch to the add-on copy under :file:`ncs-matter/scripts/matter_sample_checker/`.
-The checker configuration expects add-on directory layout (for example, partition includes without the ``samples/matter/`` prefix and snippet paths under :file:`ncs-matter/snippets/`).
+The checker configuration expects add-on directory layout (for example, a partition includes without the ``samples/matter/`` prefix and snippet paths under :file:`ncs-matter/snippets/`).
 
 West ZAP tooling
 ================
@@ -415,16 +415,15 @@ Migration checklist
 
 Use this checklist when migrating a custom Matter application:
 
-1. Set up a west workspace that includes the ``ncs-matter`` add-on at a release matching your target |NCS| version.
-2. Move or copy your application sources to a path under your workspace (or use an add-on sample as the new base).
-3. Update :file:`CMakeLists.txt`:
-
+#. Set up a west workspace that includes the ``ncs-matter`` add-on at a release matching your target |NCS| version.
+#. Move or copy your application sources to a path under your workspace (or use an add-on sample as the new base).
+#. Update :file:`CMakeLists.txt`:
    * Include :file:`ncs-matter/cmake/sample.cmake` instead of the former ``samples/matter/common/cmake/*`` files.
    * Replace ``ZEPHYR_NRF_MODULE_DIR`` Matter paths with ``ZEPHYR_NCS_MATTER_MODULE_DIR``.
-4. Update :file:`Kconfig` files: remove the ``samples/matter/common/src/Kconfig`` source line.
-5. Rename all ``CONFIG_NCS_SAMPLE_MATTER_*`` symbols to ``CONFIG_MATTER_*`` in configuration files.
-6. Update devicetree board overlays: replace ``#include <samples/matter/...>`` with ``#include <...>`` using the filenames from :file:`ncs-matter/dts/`.
-7. Update snippet names in build commands (``matter-debug`` → ``debug``, ``matter-diagnostic-logs`` → ``diagnostic-logs``).
-8. Update ``west build`` paths to point to the new sample location.
-9. Copy or merge :file:`sysbuild_internal.conf` defaults from the matching add-on sample if needed.
-10. Rebuild from a pristine build directory and verify commissioning, DFU, and factory data workflows.
+#. Update :file:`Kconfig` files: remove the ``samples/matter/common/src/Kconfig`` source line.
+#. Rename all ``CONFIG_NCS_SAMPLE_MATTER_*`` symbols to ``CONFIG_MATTER_*`` in configuration files.
+#. Update devicetree board overlays: replace ``#include <samples/matter/...>`` with ``#include <...>`` using the filenames from :file:`ncs-matter/dts/`.
+#. Update snippet names in build commands (``matter-debug`` → ``debug``, ``matter-diagnostic-logs`` → ``diagnostic-logs``).
+#. Update ``west build`` paths to point to the new sample location.
+#. Copy or merge :file:`sysbuild_internal.conf` defaults from the matching add-on sample if needed.
+#. Rebuild from a pristine build directory and verify commissioning, DFU, and factory data workflows.

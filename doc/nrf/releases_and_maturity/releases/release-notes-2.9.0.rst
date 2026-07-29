@@ -40,13 +40,13 @@ Added the following features as supported:
 * Matter 1.4 enhancements:
 
   * Long Idle Time (LIT) protocol extending battery life for Matter over Thread devices.
-    This feature is showcased in the new ``matter_smoke_co_alarm_sample`` sample.
+    This feature is showcased in the new Matter Smoke CO Alarm sample.
   * Check-in protocol ensuring reliable communication for low-power devices requiring LIT.
   * Energy management - Support for new device types, such as solar panels, batteries, heat pumps, and water heaters, as well as improvements to Electric Vehicle Supply Equipment (EVSE) and thermostats.
   * Occupancy sensing - Sensing features, such as radar vision and ambient sensing technologies.
   * Two new device types (mounted On/Off and dimmable load control) designed specifically for fixed in-wall smart home devices that deliver power to wired devices.
 
-    For more information, see the `CSA press release for Matter 1.4`_.
+    For more information, see the ``Matter 1.4`` press release.
 
 Added the following features as experimental:
 
@@ -213,7 +213,7 @@ Matter
   * Implementation of the ``Spake2pVerifier`` class for the PSA crypto backend.
     You can use this class to generate the Spake2+ verifier at runtime.
     To use this class, enable the Kconfig options :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC` and :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`.
-  * The ``ug_matter_device_watchdog_pause_mode`` to the ``ug_matter_device_watchdog`` feature.
+  * The Matter Device Watchdog Pause Mode to the Matter Device Watchdog feature.
 
 Matter fork
 +++++++++++
@@ -484,22 +484,22 @@ Matter samples
   * All Matter samples that support low-power mode to enable the :ref:`lib_ram_pwrdn` feature.
     It is enabled by default for the release configuration of the following samples:
 
-    * ``matter_lock_sample``
-    * ``matter_light_switch_sample``
-    * ``matter_smoke_co_alarm_sample``
-    * ``matter_window_covering_sample``
+    * Matter Lock sample
+    * Matter Light Switch sample
+    * Matter Smoke CO Alarm sample
+    * Matter Window Covering sample
 
   * All Matter samples to enable the ZMS file subsystem in all devices that contain MRAM, such as the nRF54H Series devices.
 
 * Disabled pausing Matter watchdog while CPU is in idle state in all Matter samples.
   To enable it, set the ``CONFIG_NCS_SAMPLE_MATTER_WATCHDOG_PAUSE_IN_SLEEP`` Kconfig option to ``y``.
 
-* ``matter_template_sample`` sample:
+* Matter Template sample:
 
   * Added support for the ``nrf54l15dk/nrf54l10/cpuapp`` board target.
   * Updated the internal configuration for the :zephyr:board:`nrf54l15dk` target to use the DFU image compression and provide more memory space for the application.
 
-* ``matter_smoke_co_alarm_sample`` sample:
+* Matter Smoke CO Alarm sample:
 
   * Added:
 
@@ -654,7 +654,7 @@ Documentation
 
 * Added:
 
-  * The ``matter_samples_config`` page that documents Kconfig options and snippets shared by Matter samples and applications.
+  * The Matter Samples Config page that documents Kconfig options and snippets shared by Matter samples and applications.
   * A page about :ref:`add_new_driver`.
   * A page for the :ref:`sdp_gpio` application.
 

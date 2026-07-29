@@ -153,11 +153,11 @@ Matter
 
 * Added:
 
-  * A new documentation page ``ug_matter_group_communication`` in the ``ug_matter_intro_overview``.
-  * A new section ``ug_matter_creating_accessory_vendor_cluster`` in the ``ug_matter_creating_accessory`` page.
-  * A description for the new ``ug_matter_gs_tools_matter_west_commands_append`` within the ``ug_matter_gs_tools_matter_west_commands`` page.
-  * New arguments to the ``ug_matter_gs_tools_matter_west_commands_zap_tool_gui`` to provide a custom cache directory and add new clusters to Matter Data Model.
-  * ``ug_matter_debug_snippet``.
+  * A new documentation page Matter Group Communication in the Matter Overview Introduction page.
+  * A new section Matter Creating Accessory Vendor Cluster in the Matter Creating Accessory page.
+  * A description for the new Matter GS Tools Matter West Commands Append within the Matter GS Tools Matter West Commands page.
+  * New arguments to the Matter GS Tools Matter West Commands Zap Tool GUI to provide a custom cache directory and add new clusters to Matter Data Model.
+  * Matter Debug Snippet.
 
 * Disabled the :ref:`mpsl` before performing factory reset to speed up the process.
 
@@ -214,7 +214,7 @@ IPC radio firmware
 Matter Bridge
 -------------
 
-* Enabled SUIT DFU support for the ``matter_bridge_app`` application.
+* Enabled SUIT DFU support for the Matter Bridge application.
   Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration.
 
@@ -455,8 +455,8 @@ Keys samples
 Matter samples
 --------------
 
-* Updated the ``matter_template_sample`` sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
-* Enabled SUIT DFU support for the ``matter_lock_sample``, and ``matter_template_sample`` samples.
+* Updated the Matter Template sample document with the instructions on how to build the sample on the nRF54L15 DK with support for Matter OTA DFU and DFU over Bluetooth SMP, and using internal MRAM only.
+* Enabled SUIT DFU support for the Matter Lock sample, and Matter Template sample.
   Currently, only the Matter OTA protocol is fully supported for SUIT DFU purposes.
 * Enabled Link Time Optimization (LTO) by default for the ``release`` configuration and ``nrf7002dk/nrf5340/cpuapp`` build target.
 

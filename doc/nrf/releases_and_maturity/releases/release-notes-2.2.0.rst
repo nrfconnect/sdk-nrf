@@ -188,19 +188,19 @@ Matter
 
 * Added the following documentation pages:
 
-    * ``ug_matter_overview_dfu``.
-    * ``ug_matter_overview_multi_fabrics`` and entry about binding to ``ug_matter_network_topologies_concepts``.
-    * ``ug_matter_overview_commissioning``, which is based on an earlier subsection of ``ug_matter_overview_network_topologies``.
-    * ``ug_matter_overview_security``, which is based on an earlier subsection of ``ug_matter_overview_network_topologies``.
-    * ``ug_matter_device_certification_reqs_security`` on the page about ``ug_matter_device_certification``.
+    * Matter Overview DFU.
+    * Matter Overview Multi Fabrics and entry about binding to Matter Network Topologies Concepts.
+    * Matter Overview Commissioning, which is based on an earlier subsection of Matter Overview Network Topologies.
+    * Matter Overview Security, which is based on an earlier subsection of Matter Overview Network Topologies.
+    * Matter Device Certification Reqs Security on the page about Matter Device Certification.
 
 * Updated:
 
-  * ``ug_matter_device_certification`` with several new sections that provide an overview of the certification process.
-  * ``ug_matter_overview_int_model`` with an example of the interaction.
-  * ``ug_matter_overview_data_model`` with an example of the Data Model of a door lock device.
-  * ``ug_matter_gs_adding_cluster`` documentation with new code snippets to align it with the source code of refactored Matter template sample.
-  * ``ug_matter_hw_requirements`` with the latest RAM and flash memory requirements.
+  * Matter Device Certification with several new sections that provide an overview of the certification process.
+  * Matter Overview Interaction Model with an example of the interaction.
+  * Matter Overview Data Model with an example of the Data Model of a door lock device.
+  * Matter GS Adding Cluster documentation with new code snippets to align it with the source code of refactored Matter template sample.
+  * Matter HW Requirements with the latest RAM and flash memory requirements.
 
 See `Matter samples`_ for the list of changes for the Matter samples.
 
@@ -502,7 +502,7 @@ Matter samples
 
 * Updated ZAP configuration of the samples to conform with device types defined in Matter 1.0 specification.
 
-* ``matter_light_bulb_sample`` sample:
+* Matter Light Bulb sample:
 
   * Added:
 

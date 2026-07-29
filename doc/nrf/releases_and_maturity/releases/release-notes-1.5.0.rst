@@ -191,10 +191,10 @@ Project Connected Home over IP (Project CHIP)
 * Project CHIP is now supported for development as an |NCS| submodule for Windows, Linux, and macOS.
 * Added:
 
-  * ``ug_chip`` protocol user guide
-  * ``chip_lock_sample`` sample
-  * ``chip_light_switch_sample`` sample
-  * ``chip_light_bulb_sample`` sample
+  * Matter protocol user guide
+  * Project CHIP door lock sample
+  * Project CHIP light switch sample
+  * Project CHIP light bulb sample
 
 Bluetooth Mesh
 --------------
@@ -964,7 +964,7 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`ug_tfm`
   * :ref:`ug_radio_fem`
   * Edge Impulse integration
-  * ``ug_chip``
+  * Matter
 * :ref:`ug_nrf9160` - Added information about TF-M, board revisions, and full modem firmware update.
 * :ref:`ug_nrf5340` - Added and updated information about:
 

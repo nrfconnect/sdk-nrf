@@ -485,7 +485,7 @@ The changes to final output files (ignoring artifacts and intermediary files) ar
 Example output files
 ********************
 
-To demonstrate the expected output files when using sysbuild for an application build, the following sections show and describe the output files for the ``matter_weather_station`` application when building using the ``thingy53/nrf5340/cpaupp`` board target:
+To demonstrate the expected output files when using sysbuild for an application build, the following sections show and describe the output files for the Matter Weather Station sample when building using the Thingy:53 DK with the nRF7002-EB II shield attached board target:
 
 Provision/container files
 =========================

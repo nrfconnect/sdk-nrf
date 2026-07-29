@@ -295,7 +295,8 @@ For example, if an application uses :file:`pm_static_release.yml` to define Part
 
 Many applications and samples in the |NCS| use build types to define more detailed build configurations.
 The most common build types are ``release`` and ``debug``, which correspond to CMake defaults, but other names can be defined as well.
-For example, nRF Desktop features a ``wwcb`` build type, while `Matter Weather Station`_ features the ``factory_data`` build type.
+For example, nRF Desktop features a ``wwcb`` build type.
+
 See the application's Configuration section for information if it includes any build types.
 
 The following software components can be made dependent on the build type:

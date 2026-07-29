@@ -271,7 +271,7 @@ Matter
         * User Label
         * Wi-Fi Network Diagnostics
 
-        For the full list of clusters and their migration status, see the `Matter Clusters Code-Driven support`_ file.
+        For the full list of clusters and their migration status, see the Matter Clusters Code-Driven support file.
 
       * By default, all the mandatory attributes are enabled for the cluster.
         To enable an optional attribute or set an optional feature in the feature map, you must do that in the source code by calling dedicated methods.
@@ -304,7 +304,7 @@ Matter
         * Unregister the original cluster delegate and register the customized one.
           See the ``AppTask::StartApp`` function in the :file:`samples/matter/manufacturer_specific/src/app_task.cpp` file for an example.
 
-    * ``matter_lock_sample`` sample:
+    * Matter Lock sample:
 
       * The :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option has been deprecated, replace it with the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option.
         Now, if you want to use a fixed passkey for the Matter Lock NUS service, register the :c:member:`bt_conn_auth_cb.app_passkey` callback in the :c:struct:`bt_conn_auth_cb` structure.
