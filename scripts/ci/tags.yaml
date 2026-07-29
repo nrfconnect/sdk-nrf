@@ -1346,6 +1346,13 @@ ci_tests_benchmarks_spi_performance:
     - zephyr/boards/nordic/nrf54*
     - nrf/tests/benchmarks/xspi_performance/
 
+ci_tests_benchmarks_can_performance:
+  files:
+    - zephyr/drivers/can/
+    - zephyr/dts/vendor/nordic/
+    - zephyr/boards/nordic/nrf54*
+    - nrf/tests/benchmarks/can_performance/
+
 ci_tests_benchmarks_current_consumption:
   files:
     - modules/hal/nordic/nrfx/

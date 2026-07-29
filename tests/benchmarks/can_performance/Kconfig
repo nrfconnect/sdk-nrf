@@ -1,0 +1,105 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "CAN performance benchmark"
+
+config TEST_CAN_PERF_FRAME_COUNT
+	int "Number of frames per throughput test"
+	default 100 if !TEST_CAN_PERF_SHORT_RUN
+	default 10 if TEST_CAN_PERF_SHORT_RUN
+	help
+	  Number of frames transmitted during each throughput measurement.
+
+config TEST_CAN_PERF_LATENCY_SAMPLES
+	int "Number of round-trip latency samples"
+	default 50 if !TEST_CAN_PERF_SHORT_RUN
+	default 5 if TEST_CAN_PERF_SHORT_RUN
+	help
+	  Number of send/receive iterations used for latency statistics.
+
+config TEST_CAN_PERF_SUSTAINED_ROUNDTRIP_COUNT
+	int "Number of sustained round-trip latency samples"
+	default 50 if !TEST_CAN_PERF_SHORT_RUN
+	default 5 if TEST_CAN_PERF_SHORT_RUN
+	help
+	  Repeated send (wait TX complete, then RX msgq) in internal loopback.
+
+config TEST_CAN_PERF_BURST_FRAME_COUNT
+	int "Number of frames for RX burst test"
+	default 3
+	help
+	  Frames sent without reading the RX message queue before draining it.
+	  Should not exceed the controller RX FIFO depth.
+
+config TEST_CAN_PERF_NOMINAL_SAMPLE_POINT
+	int "Nominal (arbitration) sample point in permille"
+	default 875
+	help
+	  Same default as zephyr/tests/drivers/can/api (TEST_SAMPLE_POINT) and
+	  zephyr/tests/drivers/can/timing CiA 301 nominal bitrates.
+
+config TEST_CAN_PERF_FD_DATA_SAMPLE_POINT
+	int "CAN FD data-phase sample point in permille"
+	default 750
+	help
+	  Same default as zephyr/tests/drivers/can/timing data-phase tests.
+
+config TEST_CAN_PERF_FD_BITRATE
+	int "Arbitration bitrate for CAN FD performance tests in bit/s"
+	default 1000000
+	help
+	  Arbitration-phase bitrate for CAN FD throughput tests.
+
+config TEST_CAN_PERF_FD_BITRATE_DATA
+	int "Data-phase bitrate for CAN FD performance tests in bit/s"
+	default 8000000
+	help
+	  Data-phase bitrate for CAN FD throughput tests with BRS enabled.
+
+config TEST_CAN_PERF_MIN_BUS_EFFICIENCY_PERMILLE
+	int "Minimum bus efficiency in permille"
+	default 500
+	help
+	  Measured throughput must be at least this fraction of the theoretical
+	  bus maximum. 500 equals 50%.
+
+config TEST_CAN_PERF_STRICT_THRESHOLDS
+	bool "Enable hard minimum throughput limits"
+	help
+	  When enabled, additional fixed minimum throughput limits are enforced.
+
+config TEST_CAN_PERF_MIN_TX_FPS_CLASSIC
+	int "Minimum classic CAN throughput in frames/s"
+	default 0
+	help
+	  Hard lower limit for classic throughput when
+	  CONFIG_TEST_CAN_PERF_STRICT_THRESHOLDS is enabled. Zero disables the check.
+
+config TEST_CAN_PERF_MIN_TX_FPS_FD
+	int "Minimum CAN FD throughput in frames/s"
+	default 0
+	help
+	  Hard lower limit for CAN FD throughput when
+	  CONFIG_TEST_CAN_PERF_STRICT_THRESHOLDS is enabled. Zero disables the check.
+
+config TEST_CAN_PERF_MAX_AVG_LATENCY_US
+	int "Maximum average round-trip latency in microseconds"
+	default 10000
+	help
+	  Loose upper bound for average send-to-receive latency.
+
+config TEST_CAN_PERF_SHORT_RUN
+	bool "Run a shortened benchmark (fewer frames, single classic bitrate)"
+	help
+	  Used by automated PPK/pytest scenarios to limit runtime.
+
+config TEST_CAN_PERF_DEAD_TIME_MS
+	int "Idle time between benchmark phases in milliseconds"
+	default 1000
+	help
+	  Delay between scenarios for baseline idle current measurement windows.
+
+source "Kconfig.zephyr"
