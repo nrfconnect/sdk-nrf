@@ -204,14 +204,14 @@ static int test_setup(void)
 
 /*
  * Display peak and average CPU load
- * in mili-percent [m%]
+ * in [per mille]
  */
 static void show_measured_cpu_loads(void)
 {
 	k_sem_take(&cpu_load_calc_done_sem, K_FOREVER);
-	printk("Meeasured CPU load:\n");
-	printk("Peak CPU load: %u [m%%]\n", peak_cpu_load);
-	printk("Average CPU load: %u [m%%]\n", average_cpu_load);
+	printk("Measured CPU load:\n");
+	printk("Peak CPU load: %u [per mille]\n", peak_cpu_load);
+	printk("Average CPU load: %u [per mille]\n", average_cpu_load);
 }
 
 /*

@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		test-gpio = &led0;
+		watchdog0 = &wdt31;
+		/delete-property/ pwm_led1;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>;
+	};
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>; /* P1.00 */
+		zephyr,resolution = <10>;
+	};
+};
+
+&timer20 {
+	status = "okay";
+};
+
+&timer21 {
+	status = "okay";
+};
+
+&timer22 {
+	status = "okay";
+};
+
+&timer23 {
+	status = "okay";
+};
+
+&timer24 {
+	status = "okay";
+};
+
+temp_sensor: &temp {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&wdt31 {
+	status = "okay";
+};
