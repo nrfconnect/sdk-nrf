@@ -2056,3 +2056,8 @@ ci_samples_zephyr_tfm_integration:
 ci_samples_nrf93m1dk:
   files:
     - nrf/samples/nrf93m1dk/
+
+ci_tests_zephyr_drivers_sdhc:
+  files:
+    - nrf/tests/zephyr/drivers/sdhc/
+    - zephyr/tests/drivers/sdhc/
