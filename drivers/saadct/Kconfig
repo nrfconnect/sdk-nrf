@@ -1,0 +1,27 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_NRF_SAADCT := nordic,nrf-saadct
+
+config SAADCT
+	bool "SAADCT NRFX driver (SAADC sampled by TIMER)"
+	select NRFX_TIMER
+	select NRFX_GPPI
+	select NRFX_SAADC
+	help
+	  Enable the SAADCT shim that uses an external TIMER and GPPI to trigger
+	  SAADC sampling at a configured rate.
+
+if SAADCT
+
+config SAADCT_LOG_LEVEL
+	int "SAADCT driver log level"
+	default LOG_DEFAULT_LEVEL
+	depends on LOG
+	help
+	  Sets the logging level for the SAADCT driver.
+
+endif

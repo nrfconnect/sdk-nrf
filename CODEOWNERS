@@ -316,6 +316,7 @@
 /drivers/net/                             @nrfconnect/ncs-co-drivers @doki-nordic
 /drivers/ppi_seq/                             @nrfconnect/ncs-ll-izera
 /drivers/regulator/                       @nrfconnect/ncs-co-drivers
+/drivers/saadct/                          @nrfconnect/ncs-ll-izera
 /drivers/sdhc/                            @nrfconnect/ncs-co-drivers
 /drivers/serial/                          @nrfconnect/ncs-co-drivers @nordic-krch
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -386,6 +387,7 @@
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
 /include/drivers/vtf_monitoring/          @nrfconnect/ncs-malago
+/include/drivers/saadct.h                 @nrfconnect/ncs-ll-izera
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
@@ -618,6 +620,7 @@
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
+/samples/saadct/                          @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
@@ -1030,6 +1033,7 @@
 /tests/drivers/ppi_seq/                   @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /tests/drivers/pwm/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/qdec/                      @nrfconnect/ncs-low-level-test
+/tests/drivers/saadct/                    @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /tests/drivers/sensor/multicore_temp/     @nrfconnect/ncs-low-level-test
 /tests/drivers/spi/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/timer/                     @nrfconnect/ncs-low-level-test

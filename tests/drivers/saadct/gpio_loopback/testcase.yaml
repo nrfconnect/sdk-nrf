@@ -1,0 +1,15 @@
+common:
+  tags:
+    - drivers
+    - saadct
+    - ci_tests_drivers_nrf_saadct
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  drivers.saadct.gpio_loopback: {}
