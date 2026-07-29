@@ -1076,7 +1076,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 	LOG_DBG("Writing to Control Point characteristic.");
 
 	struct bt_hids_cp *cp = (struct bt_hids_cp *)attr->user_data;
-	ssize_t ret = 0;
+	ssize_t ret = BT_GATT_ERR(BT_ATT_ERR_SUCCESS);
 
 	uint8_t *cur_cp = &cp->value;
 	uint8_t const *new_cp = (uint8_t const *)buf;
@@ -1108,6 +1108,7 @@ static ssize_t hids_ctrl_point_write(struct bt_conn *conn,
 		if (cp->conn_evt_handler) {
 			cp->conn_evt_handler(*new_cp, conn);
 		}
+		break;
 #endif
 
 	default:
