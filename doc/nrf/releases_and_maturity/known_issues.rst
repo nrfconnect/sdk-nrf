@@ -3120,15 +3120,6 @@ NCSDK-37899: High-duty cycle directed advertising in the :ref:`peripheral_hids_m
   **Workaround:** Use low-duty cycle directed advertising when there are peers connected to the device.
   Manually cherry-pick and apply commit with fix from main (commit hash: ``1de05797baa8cd2096d4748672c66dd0e6ab3ab0``).
 
-.. rst-class:: v3-2-1 v3-2-0
-
-NCSDK-36880: The :ref:`direct_test_mode` sample cannot allocate a DPPI channel on nRF54H20 devices
-  The sample uses an incorrect version of the GPPI API.
-
-  **Affected platforms:** nRF54H20
-
-  **Workaround:** Explicitly disable the :kconfig:option:`CONFIG_NRFX_GPPI_V1` Kconfig option in the :file:`nrf54h20dk_nrf54h20_cpurad.conf` board configuration file.
-
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 
 NCSDK-33915: The :ref:`direct_test_mode` asserts on nRF54H20 devices
@@ -3786,15 +3777,6 @@ NCSDK-20967: The :ref:`nrf_rpc_entropy_nrf53` sample does not work on the networ
 
 Peripheral samples
 ==================
-
-.. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
-
-NCSDK-38043: The :ref:`radio_test` sample cannot allocate a DPPI channel on nRF54H20 devices
-  The sample uses an incorrect version of the GPPI API.
-
-  **Affected platforms:** nRF54H20
-
-  **Workaround:** Explicitly disable the :kconfig:option:`CONFIG_NRFX_GPPI_V1` Kconfig option in the :file:`nrf54h20dk_nrf54h20_cpurad.conf` board configuration file.
 
 .. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0
 
