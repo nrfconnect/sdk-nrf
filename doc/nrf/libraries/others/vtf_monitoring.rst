@@ -12,7 +12,7 @@ The voltage-temperature-frequency (VTF) monitoring subsystem fetches and stores 
 The subsystem maintains a periodic snapshot of the following three channels:
 
 * Battery voltage - Supply voltage in millivolts (mV).
-* Die temperature - SoC die temperature in centi-degrees Celsius (centi-degC); for example, ``2500`` represents 25.00°C.
+* Die temperature - SoC die temperature in degrees Celsius (degC); for example, ``25`` represents 25°C.
 * XO frequency offset - Crystal oscillator frequency offset in parts per million (ppm).
 
 Configuration
@@ -94,7 +94,7 @@ If the application needs to use one of these channels beyond the requirements fo
    int die_temp_sample(struct vtf_sample *out)
    {
        out->type = VTF_SAMPLE_TYPE_INT;
-       out->value.i32 = /* centi-degC */;
+       out->value.i32 = /* degC */;
        out->timestamp_ms = k_uptime_get();
        out->status = VTF_STATUS_OK;
        return 0;

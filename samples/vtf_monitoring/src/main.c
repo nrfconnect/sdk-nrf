@@ -17,6 +17,7 @@
 LOG_MODULE_REGISTER(vtf_monitoring_sample, CONFIG_LOG_DEFAULT_LEVEL);
 
 #define SLEEP_TIME_MS 1000
+#define RAW_BATTERY_VOLTAGE_TO_MV 100
 
 #if DT_HAS_CHOSEN(nordic_vtf_region)
 #define VTF_NODE DT_CHOSEN(nordic_vtf_region)
@@ -26,12 +27,18 @@ LOG_MODULE_REGISTER(vtf_monitoring_sample, CONFIG_LOG_DEFAULT_LEVEL);
 
 int main(void)
 {
+	while (vtf_monitoring_is_ready() == false) {
+		LOG_INF("vtf_snapshots not yet initialized\n");
+		k_msleep(500);
+	}
+
 	while (1) {
 		int32_t temp = vtf_snapshots[VTF_CH_DIE_TEMP].i32;
-		int32_t batt = vtf_snapshots[VTF_CH_BATTERY_VOLTAGE].i32;
+		int32_t batt =
+			vtf_snapshots[VTF_CH_BATTERY_VOLTAGE].i32 * RAW_BATTERY_VOLTAGE_TO_MV;
 		int32_t xo = vtf_snapshots[VTF_CH_FREQ_OFFSET].i32;
 
-		LOG_INF("die temp: %d.%02d C", temp / 100, abs(temp % 100));
+		LOG_INF("die temp: %d C", temp);
 		LOG_INF("battery voltage: %d mV", batt);
 		LOG_INF("XO offset: %d ppm", xo);
 

@@ -48,22 +48,22 @@ config VTF_LOG_LEVEL
 	  Sets the logging level for VTF monitoring.
 
 config VTF_DIE_TEMP_DEFAULT_VALUE
-	int "Die temperature default value (centi-degC)"
-	default 2500
+	int "Die temperature default value (degC)"
+	default 25
 	help
-	  Default value when VTF_DIE_TEMP_MONITOR=n. 2500 = 25.00 C.
+	  Default value when VTF_DIE_TEMP_MONITOR=n. 25 = 25 C.
 
 config VTF_BATTERY_VOLTAGE_DEFAULT_VALUE
-	int "Battery voltage default value (mV)"
-	default 3300
+	int "Battery voltage default value (0.100V)"
+	default 35
 	help
-	  Default value when VTF_BATTERY_VOLTAGE_MONITOR=n. 3300 = 3.3 V.
+	  Default value when VTF_BATTERY_VOLTAGE_MONITOR=n. 35 = 3.5 V.
 
 config VTF_FREQ_OFFSET_DEFAULT_VALUE
 	int "Frequency offset default value (ppm)"
-	default 100
+	default 0
 	help
-	  Default value when VTF_FREQ_OFFSET_MONITOR=n. 100 = 100 ppm.
+	  Default value when VTF_FREQ_OFFSET_MONITOR=n. 0 = 0 ppm.
 
 config VTF_SNAPSHOT_INTERVAL_MS
 	int "Snapshot interval (ms)"
