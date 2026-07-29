@@ -43,11 +43,11 @@ Complete the following steps to create a new workspace with the `Matter Add-on`_
 
 .. parsed-literal::
 
-   west init -m https://github.com/nrfconnect/ncs-matter --mr |release|
+   west init -m https://github.com/nrfconnect/ncs-matter --mr <release>
    cd ncs-matter
    west update
 
-Replace |release| with the add-on release tag that matches your target |NCS| version (see the add-on release notes).
+Replace <release> with the add-on release tag that matches your target |NCS| version (see the add-on release notes).
 
 Alternatively, if you already cloned the add-on repository locally:
 
@@ -369,7 +369,7 @@ Matter samples in the add-on use a :file:`sysbuild_internal.conf` file at the sa
 If your custom project relied on the same sysbuild defaults (for example, MCUboot overwrite-only mode with compressed image support), copy the relevant options from the corresponding add-on sample's :file:`sysbuild_internal.conf` file.
 
 The add-on sysbuild Kconfig (:file:`ncs-matter/sysbuild/Kconfig.sysbuild`) disables the :ref:`partition_manager` globally for Matter builds, consistent with the devicetree-based partitioning introduced in |NCS| v3.4.0.
-See also ``matter_migration_3.4`` for partition migration details that still apply after moving to the add-on.
+See also :ref:`matter_migration_3.4` for partition migration details that still apply after moving to the add-on.
 
 Documentation and tooling
 ***************************
@@ -390,7 +390,7 @@ Validation scripts
 ==================
 
 If you use the Matter sample validation tooling locally, switch to the add-on copy under :file:`ncs-matter/scripts/matter_sample_checker/`.
-The checker configuration expects add-on directory layout (for example, a partition includes without the ``samples/matter/`` prefix and snippet paths under :file:`ncs-matter/snippets/`).
+The checker configuration expects the add-on directory layout - for example, partition ``#include`` directives without the ``samples/matter/`` prefix, and snippet paths under :file:`ncs-matter/snippets/`.
 
 West ZAP tooling
 ================
