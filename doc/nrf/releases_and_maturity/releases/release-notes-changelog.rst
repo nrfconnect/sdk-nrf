@@ -409,6 +409,11 @@ Networking samples
   * :ref:`download_sample`
   * :ref:`aws_iot`
 
+* Removed the ``nrf54l15dk/nrf54l15/cpuapp`` with nRF7002 EB shield from the following samples, keeping only the nRF7002-EB II shield for the ``nrf54l15dk/nrf54l15/cpuapp`` board target:
+
+  * :ref:`https_client`
+  * :ref:`udp_sample`
+
 NFC samples
 -----------
 
