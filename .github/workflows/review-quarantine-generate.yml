@@ -34,9 +34,9 @@ jobs:
           fetch-depth: 1
 
       - name: Install Python deps
+        working-directory: nrf
         run: |
-          python -m pip install --upgrade pip
-          python -m pip install pyyaml west pathspec
+          ./scripts/ci/install-fixed-pip-pkg.sh pyyaml west pathspec
 
       # Compare base..head via GitHub API (works for fork PRs).
       - name: Detect changed quarantine YAML files (base vs PR)

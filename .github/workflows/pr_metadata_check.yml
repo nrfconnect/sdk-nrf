@@ -30,10 +30,11 @@ jobs:
         with:
           python-version: 3.12
           cache: pip
+          cache-dependency-path: scripts/requirements-fixed.txt
 
       - name: Install Python dependencies
         run: |
-          pip install pygithub
+          ./scripts/ci/install-fixed-pip-pkg.sh pygithub
 
       - name: Run the check script
         env:
