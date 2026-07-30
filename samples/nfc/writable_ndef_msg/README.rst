@@ -50,7 +50,7 @@ User interface
       Button 1:
          Press during startup to restore the default NDEF message.
 
-   .. group-tab:: nRF54 DKs
+   .. group-tab:: nRF54 and nRF9251 DKs
 
       LED 0:
          Indicates if an NFC field is present.
@@ -86,7 +86,7 @@ After programming the sample to your development kit, complete the following ste
       #. Restart your development kit and touch the antenna again.
          Observe that the new message is displayed.
 
-   .. group-tab:: nRF54 DKs
+   .. group-tab:: nRF54 and nRF9251 DKs
 
       1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 0** and **LED 3** are lit.
       #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
