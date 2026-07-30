@@ -222,6 +222,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
 |              |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |
+|              |                                | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) |
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 
@@ -238,8 +239,8 @@ The configuration of the signature algorithm and the public key storage solution
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 | Signature algorithm            | Board targets                                                        | Public key storage        | Properties                |
 +================================+======================================================================+===========================+===========================+
-| ECDSA-P256                     | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) | Bootloader partition      | SW calculation,           |
-|                                |                                                                      |                           | Signature derived from    |
+| ECDSA-P256                     | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) | Bootloader partition      | SW calculation,           |
+|                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |                           | Signature derived from    |
 |                                |                                                                      |                           | image hash                |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 | ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |
