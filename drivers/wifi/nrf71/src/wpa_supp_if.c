@@ -1739,6 +1739,7 @@ enum nrf_wifi_status nrf_wifi_parse_sband(
 	)
 {
 	int count;
+	const unsigned char *mcs_raw;
 
 	if (event == NULL || (event->nrf_wifi_n_bitrates == 0 || event->nrf_wifi_n_channels == 0)) {
 		return NRF_WIFI_STATUS_FAIL;
@@ -1779,14 +1780,24 @@ enum nrf_wifi_status nrf_wifi_parse_sband(
 
 	band->ht_cap.wpa_supp_ht_supported = event->ht_cap.nrf_wifi_ht_supported;
 	band->ht_cap.wpa_supp_cap = event->ht_cap.nrf_wifi_cap;
-	band->ht_cap.mcs.wpa_supp_rx_highest = event->ht_cap.mcs.nrf_wifi_rx_highest;
+
+	/* The RPU firmware sends the MCS blob as rx_highest (2 bytes) followed
+	 * by rx_mask (10 bytes), tx_params and reserved. This does NOT match the
+	 * field order of struct nrf_wifi_event_mcs_info in nrf71_wifi_ctrl.h
+	 * (rx_mask first), so reading the named members shifts rx_mask by 2 bytes
+	 * and corrupts the MCS set. Parse the raw bytes at the firmware offsets
+	 * instead.
+	 */
+	mcs_raw = (const unsigned char *)&event->ht_cap.mcs;
+
+	band->ht_cap.mcs.wpa_supp_rx_highest =
+		(unsigned short)(mcs_raw[0] | (mcs_raw[1] << 8));
 
 	for (count = 0; count < WPA_SUPP_HT_MCS_MASK_LEN; count++) {
-		band->ht_cap.mcs.wpa_supp_rx_mask[count] =
-			event->ht_cap.mcs.nrf_wifi_rx_mask[count];
+		band->ht_cap.mcs.wpa_supp_rx_mask[count] = mcs_raw[2 + count];
 	}
 
-	band->ht_cap.mcs.wpa_supp_tx_params = event->ht_cap.mcs.nrf_wifi_tx_params;
+	band->ht_cap.mcs.wpa_supp_tx_params = mcs_raw[2 + WPA_SUPP_HT_MCS_MASK_LEN];
 
 	for (count = 0; count < NRF_WIFI_HT_MCS_RES_LEN; count++) {
 
@@ -1796,7 +1807,7 @@ enum nrf_wifi_status nrf_wifi_parse_sband(
 		}
 
 		band->ht_cap.mcs.wpa_supp_reserved[count] =
-			event->ht_cap.mcs.nrf_wifi_reserved[count];
+			mcs_raw[2 + WPA_SUPP_HT_MCS_MASK_LEN + 1 + count];
 	}
 
 	band->ht_cap.wpa_supp_ampdu_factor = event->ht_cap.nrf_wifi_ampdu_factor;
