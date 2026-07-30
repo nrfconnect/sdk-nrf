@@ -4,6 +4,7 @@
     - nrf52dk/nrf52832
     - nrf52833dk/nrf52833
     - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
   rom_increase: 512
   ram_increase: 512
