@@ -2237,7 +2237,7 @@ The following table indicates the software maturity levels of the support for Go
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
@@ -2247,7 +2247,7 @@ The following table indicates the software maturity levels of the support for Go
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
 
 The following table indicates the software maturity levels of the support for each Fast Pair feature:
@@ -2367,7 +2367,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Subsequent pairing**
               - Experimental
@@ -2376,7 +2376,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Battery Notification extension**
               - Experimental
@@ -2385,7 +2385,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Personalized Name extension**
               - Experimental
@@ -2394,7 +2394,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Find Hub Network extension**
               - Supported
@@ -2403,7 +2403,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
 
 Find Hub Network extension
@@ -2491,7 +2491,7 @@ The following table indicates the software maturity levels of the support for th
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Precision Finding with Bluetooth LE Channel Sounding**
               - Experimental
