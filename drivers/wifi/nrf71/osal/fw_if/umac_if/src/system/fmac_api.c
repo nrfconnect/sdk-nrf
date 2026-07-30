@@ -591,8 +591,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	struct nrf_wifi_umac_cmd_scan *scan_cmd = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	int channel_info_len = (sizeof(struct nrf_wifi_channel) *
-				scan_info->scan_params.num_scan_channels);
+	int channel_info_len = (sizeof(scan_info->scan_params.center_frequency[0]) *
+	scan_info->scan_params.num_scan_channels);
 
 	fmac_dev_ctx = dev_ctx;
 
