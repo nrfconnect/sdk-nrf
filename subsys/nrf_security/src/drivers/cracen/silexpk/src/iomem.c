@@ -164,6 +164,8 @@ void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 	*word_dst = word;
 }
 
+#endif /* !CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND */
+
 void sx_rdpkmem(void *dst, const void *src, size_t sz)
 {
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
@@ -175,17 +177,20 @@ void sx_rdpkmem(void *dst, const void *src, size_t sz)
 
 	/* Always read aligned words from CRACEN, write bytes to dst */
 	while (sz > 0) {
-		uint32_t word = *(const uint32_t *)(s & ~3);
+		uint32_t word = *(const volatile uint32_t *)(s & ~3);
 		size_t offset = s % 4;
 		size_t count = MIN(4 - offset, sz);
 
-		for (size_t i = 0; i < count; ++i) {
-			d[i] = ((const uint8_t *)&word)[offset + i];
+		if (count == sizeof(word)) {
+			/* A whole word is wanted, but d may be unaligned. */
+			UNALIGNED_PUT(word, (uint32_t *)d);
+		} else {
+			for (size_t i = 0; i < count; ++i) {
+				d[i] = ((const uint8_t *)&word)[offset + i];
+			}
 		}
 		d += count;
 		s += count;
 		sz -= count;
 	}
 }
-
-#endif
