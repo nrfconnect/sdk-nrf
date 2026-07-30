@@ -1284,7 +1284,7 @@ static void num_comp_reply(bool accept)
 static int set_default_conn_rate(void)
 {
 	int err;
-	uint16_t local_min_interval_us;
+	uint16_t local_min_interval_us = 0;
 	uint16_t interval_min_125us = CONFIG_SAMPLE_CENTRAL_HIDS_SCI_INTERVAL_MIN_125US;
 
 	err = bt_conn_le_read_min_conn_interval(&local_min_interval_us);
@@ -1292,7 +1292,10 @@ static int set_default_conn_rate(void)
 		printk("Failed to read min conn interval (err %d)\n", err);
 	}
 
-	if (!err && interval_min_125us < local_min_interval_us / 125U) {
+	__ASSERT_NO_MSG(err || (local_min_interval_us % 125U == 0));
+	__ASSERT_NO_MSG(err || (local_min_interval_us > 0));
+
+	if (!err && (BT_CONN_SCI_INTERVAL_TO_US(interval_min_125us) < local_min_interval_us)) {
 		printk("Configured minimum connection interval (%u) is below controller "
 		       "minimum %u; using %u\n",
 		       interval_min_125us, local_min_interval_us / 125U,
