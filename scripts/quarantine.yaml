@@ -21,6 +21,8 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
+    - nrf.extended.drivers.spi.direct_xfer
+    - nrf.extended.drivers.spi.direct_xfer.no_prealloc
     - nrf.extended.drivers.clock.clock_control_onoff
     - nrf.extended.drivers.clock.nrf5_clock_calibration
     - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
