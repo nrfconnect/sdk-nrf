@@ -32,6 +32,22 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf7120dk/nrf7120/cpuapp
+  sample.dfu.single_slot.ble_enter:
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - FILE_SUFFIX=ble_enter
   sample.dfu.single_slot.usb:
     tags:
       - dfu_single_slot

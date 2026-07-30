@@ -10,3 +10,7 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(single_slot)
 
 target_sources(app PRIVATE src/main.c)
+
+if(CONFIG_MCUMGR_TRANSPORT_BT)
+  target_sources(app PRIVATE src/ble_enter.c)
+endif()
