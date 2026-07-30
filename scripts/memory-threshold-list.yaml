@@ -2,6 +2,7 @@
     - sample.bluetooth.fast_pair.locator_tag.release
   platforms: # configuration for small memory devices
     - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
   rom_increase: 512
   ram_increase: 512
