@@ -47,7 +47,11 @@ Build and configuration system
 Bootloaders and DFU
 ===================
 
-|no_changes_yet_note|
+* Fixed sequential updates on the nRF5340 SoC.
+  The address-based detection of the update candidate type allows placing the network core update candidate in the same partition as used for as the application update candidate.
+  The build system no longer requires dedicated slots for the network core update candidate.
+  You can enable software-based downgrade prevention for network core updates.
+  MCUboot now erases the secondary slot after the network core is updated.
 
 Developing with nRF91 Series
 ============================
