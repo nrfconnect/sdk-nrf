@@ -116,6 +116,10 @@ Developing with custom boards
 Security
 ========
 
+* Updated:
+
+  * Oberon PSA Crypto from v2.0.0 to v2.1.0.
+    The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
 
 Mbed TLS
 --------
