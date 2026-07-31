@@ -86,4 +86,12 @@ int bt_lbs_send_button_state(bool button_state);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @param[in] a First
+ * @param[out] b Second
+ */
+int doxy_pr_test_lbs_87dfbc_params_no_brief(int a, int b);
 #endif /* BT_LBS_H_ */

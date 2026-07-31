@@ -17,4 +17,11 @@
 
 #include <zephyr/sys/reboot.h>
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+enum doxy_pr_test_reboot_02cf60_mode {
+	DOXY_PR_TEST_REBOOT_02CF60_MODE_A = 1,
+	DOXY_PR_TEST_REBOOT_02CF60_MODE_B = 2,
+};
 #endif

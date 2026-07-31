@@ -151,4 +151,11 @@ bool dect_net_l2_ipv6_addressing_sink_changed_handle(struct net_if *iface,
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @deprecated
+ */
+void doxy_pr_test_dect_net_l2_ipv6_21fb3e_deprecated_no_desc(void);
 #endif /* DECT_NET_L2_IPV6_UTIL_H_ */

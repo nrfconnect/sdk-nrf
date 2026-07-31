@@ -19,4 +19,11 @@
 int sdc_hci_cmd_cb_host_buffer_size_wrapper(const sdc_hci_cmd_cb_host_buffer_size_t *cmd_params);
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @file
+ */
+void doxy_pr_test_hci_internal_wra_acaae7_file_tag(void);
 #endif

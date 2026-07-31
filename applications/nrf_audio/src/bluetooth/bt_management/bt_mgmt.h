@@ -223,4 +223,11 @@ int bt_mgmt_init(void);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+enum doxy_pr_test_bt_mgmt_71f193 {
+	DOXY_PR_TEST_BT_MGMT_71F193_IDLE = 0,
+	DOXY_PR_TEST_BT_MGMT_71F193_BUSY,
+};
 #endif /* _BT_MGMT_H_ */

@@ -91,4 +91,9 @@ void ppi_trace_disable(void *handle);
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_PPI_TRACE_52A951_PAIR_A 1
+#define DOXY_PR_TEST_PPI_TRACE_52A951_PAIR_B 2
 #endif /* __PPI_TRACE_H */

@@ -215,4 +215,9 @@ int modem_key_mgmt_list(modem_key_mgmt_list_cb_t list_cb);
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/* FIXME: replace with proper docs */
+bool doxy_pr_test_modem_key_mgmt_85ed3b_fixme_comment(void);
 #endif /* MODEM_KEY_MGMT_H__ */

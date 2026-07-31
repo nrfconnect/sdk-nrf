@@ -573,4 +573,11 @@ int nrf_cloud_coap_obj_send(struct nrf_cloud_obj *const obj, bool confirmable);
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_nrf_cloud_coap_817aa4_ctx {
+	uint8_t *data;
+	size_t len;
+};
 #endif /* NRF_CLOUD_COAP_H_ */

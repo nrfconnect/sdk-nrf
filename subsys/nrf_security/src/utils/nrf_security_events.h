@@ -33,6 +33,12 @@ typedef volatile uint32_t *nrf_security_event_t;
 	uint32_t volatile local_##event_name;                                                      \
 	nrf_security_event_t event_name = &local_##event_name;
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_nrf_security_eve_546ba0 {
+	int value;
+};
 #endif
 
 /**

@@ -46,4 +46,8 @@ void streamctrl_send(struct net_buf const *const audio_frame);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_STREAMCTRL_D439B9_DEFAULT 0
 #endif /* _STREAMCTRL_H_ */

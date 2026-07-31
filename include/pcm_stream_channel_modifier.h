@@ -152,4 +152,8 @@ int pscm_deinterleave(void const *const input, size_t input_size, uint8_t input_
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+bool doxy_pr_test_pcm_stream_chann_588df8_ready(void);
 #endif /* _PCM_STREAM_CHANNEL_MODIFIER_H_ */

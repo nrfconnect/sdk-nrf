@@ -29,4 +29,8 @@ void dm_io_clear(enum dm_io_output out);
 #endif
 
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_DM_IO_0461F2_TIMEOUT_MS 500
 #endif /* DM_IO_H_ */

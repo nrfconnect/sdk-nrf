@@ -96,4 +96,11 @@ int bt_radio_notification_conn_cb_register(const struct bt_radio_notification_co
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ *
+ */
+int doxy_pr_test_radio_notificati_a49746_empty_brief(void);
 #endif /* BT_RADIO_NOTIFICATION_CB_H__ */

@@ -317,6 +317,13 @@ extern const struct bt_mesh_model_cb _bt_mesh_time_cli_cb;
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @see some_random_symbol
+ */
+void doxy_pr_test_time_cli_d220f4_see_only(void);
 #endif /* BT_MESH_TIME_CLI_H__ */
 
 /** @} */

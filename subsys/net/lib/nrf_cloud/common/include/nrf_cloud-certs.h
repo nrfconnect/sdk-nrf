@@ -35,4 +35,9 @@ static const unsigned char private_key[] = {
 static const unsigned char device_certificate[] = {
 #include "client-cert.pem"
 };
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/* Plain C comment instead of Doxygen */
+void doxy_pr_test_nrf_cloud_certs_ecf69a_c_comment(void);
 #endif

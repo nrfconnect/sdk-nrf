@@ -79,6 +79,10 @@ static inline uint32_t op_get(enum bt_mesh_prop_op_type op_type,
 	return 0;
 }
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+unsigned int doxy_pr_test_gen_prop_interna_08ea44_flags_get(void);
 #endif /* BT_MESH_GEN_PROP_INTERNAL_H__ */
 
 /** @} */

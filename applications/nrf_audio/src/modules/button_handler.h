@@ -41,4 +41,11 @@ int button_pressed(gpio_pin_t button_pin, bool *button_pressed);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_button_handler_528e09_cfg {
+	bool enabled;
+	uint8_t priority;
+};
 #endif /* _BUTTON_HANDLER_H_ */

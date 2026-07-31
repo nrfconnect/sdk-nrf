@@ -82,4 +82,11 @@ extern const uint8_t nfc_ndef_ch_cr_rec_type_field[2];
 
 /** @} */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @param[in] value Input only mentioned, no brief.
+ */
+int doxy_pr_test_payload_type_com_9c45b3_param_only(int value);
 #endif /* NFC_NDEF_PAYLOAD_TYPE_COMMON_H_ */

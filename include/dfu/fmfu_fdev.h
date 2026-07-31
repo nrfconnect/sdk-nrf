@@ -45,4 +45,11 @@ int fmfu_fdev_load(uint8_t *buf, size_t buf_len,
 
 /** @} */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @todo Add docs
+ */
+int doxy_pr_test_fmfu_fdev_cbc3b5_todo_tag(void);
 #endif /* FMFU_FDEV_H__ */

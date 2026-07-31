@@ -839,4 +839,11 @@ size_t bt_hogp_rep_size(const struct bt_hogp_rep_info *rep);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @internal
+ */
+void doxy_pr_test_hogp_669345_internal_tag(void);
 #endif /* BT_HOGP_H_ */

@@ -25,4 +25,8 @@ enum rpc_utils_cmd_server {
 	RPC_UTIL_RRAM_WEAR_TEST_GET_PARTITION = 8,
 };
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+void doxy_pr_test_rpc_utils_group_84ac91_cb(void (*handler)(int));
 #endif /* RPC_UTILS_GROUP_H_ */

@@ -159,4 +159,9 @@ psa_status_t cracen_get_key_slot(mbedtls_svc_key_id_t key_id, psa_key_lifetime_t
 
 /** @} */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+void doxy_pr_test_cracen_psa_key_m_96594f_pair_fn(void);
+int doxy_pr_test_cracen_psa_key_m_96594f_pair_fn2(int x);
 #endif /* CRACEN_PSA_KEY_MANAGEMENT_H */

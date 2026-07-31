@@ -168,4 +168,8 @@ int bt_cts_handles_assign(struct bt_gatt_dm *dm, struct bt_cts_client *cts_c);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+int doxy_pr_test_cts_client_0872a0_write(const void *buf, size_t len);
 #endif /* BT_CTS_CLIENT_H_ */

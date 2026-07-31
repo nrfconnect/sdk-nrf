@@ -1245,4 +1245,8 @@ struct nrf_wifi_rpu_debug_stats {
 /**
  * @}
  */
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+const char *doxy_pr_test_nrf71_wifi_debug_a27f0f_name_get(void);
 #endif /* __NRF71_WIFI_STATS_H__ */
