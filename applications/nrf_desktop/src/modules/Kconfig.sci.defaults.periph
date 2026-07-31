@@ -1,0 +1,56 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Set the connection interval to the lowest available value for the FAST HID SCI mode.
+# The host will request a higher connection interval if necessary, but the peripheral should
+# not limit it.
+
+configdefault BT_HIDS_SCI_FAST_INTERVAL_MIN_125US
+	default 8 if SOC_NRF5340_CPUAPP
+	default 6
+
+configdefault BT_HIDS_SCI_FULL_RANGE_INTERVAL_MIN_125US
+	default BT_HIDS_SCI_FAST_INTERVAL_MIN_125US
+
+# Set the maximum peripheral latency for the FAST, DEFAULT and FULL_RANGE HID SCI modes
+# to the default preferred peripheral latency (99).
+# If a lower latency is required it will be requested without changing the SCI mode.
+# This is useful for dongle-initiated communication (configuration channel or DFU).
+# Note: the hardcoded value 99 is used instead of BT_PERIPHERAL_PREF_LATENCY due to
+# the need to align the supervision timeout with the maximum latencies.
+# If the BT_PERIPHERAL_PREF_LATENCY is changed without updating the values below,
+# the supervision timeouts will remain intact with the used maximum latencies.
+
+configdefault BT_HIDS_SCI_FAST_MAX_LATENCY
+	default 99
+
+configdefault BT_HIDS_SCI_FULL_RANGE_MAX_LATENCY
+	default 99
+
+configdefault BT_HIDS_SCI_DEFAULT_MAX_LATENCY
+	default 99
+
+# Set the supervision timeout for the FAST, DEFAULT and FULL_RANGE HID SCI modes
+# to satisfy Link Layer Vol 6 Part B §4.5.2 when using the default maximum latency (99):
+#
+# connSupervisionTimeout > (1 + connPeripheralLatency) × connSubrateFactor × connInterval × 2
+#
+# with connPeripheralLatency = 99, connSubrateFactor = subrate_max (4), and connInterval =
+# interval_max in 125 µs units. The smallest HCI-legal value (10 ms units) is one step above
+# the bound:
+#
+# FAST:       (1 + 99) × 4 × (40 × 125 µs) × 2 = 4000 ms  → 401
+# DEFAULT:    (1 + 99) × 4 × (120 × 125 µs) × 2 = 12000 ms → 1201
+# FULL_RANGE: (1 + 99) × 4 × (120 × 125 µs) × 2 = 12000 ms → 1201
+
+configdefault BT_HIDS_SCI_FAST_SUPERVISION_TIMEOUT_10MS
+	default 401
+
+configdefault BT_HIDS_SCI_FULL_RANGE_SUPERVISION_TIMEOUT_10MS
+	default 1201
+
+configdefault BT_HIDS_SCI_DEFAULT_SUPERVISION_TIMEOUT_10MS
+	default 1201

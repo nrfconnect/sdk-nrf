@@ -95,6 +95,20 @@ tests:
       - nrf52840gmouse/nrf52840
     extra_args:
       - FILE_SUFFIX=fast_pair
+  applications.nrf_desktop.zdebug_hid_sci.uart:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: FILE_SUFFIX=hid_sci
+    harness: console
+  applications.nrf_desktop.zrelease_hid_sci:
+    build_only: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args: FILE_SUFFIX=release_hid_sci
   applications.nrf_desktop.zdebug_mcuboot_qspi:
     build_only: true
     platform_allow: nrf52840dk/nrf52840

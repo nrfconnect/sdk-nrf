@@ -424,6 +424,14 @@ The application supports the following build types:
      - ``keyboard``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the keyboard role.
+   * - HID SCI mouse
+     - ``hid_sci``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Debug version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
+   * - Release HID SCI mouse
+     - ``release_hid_sci``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Release version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
    * - MCUboot QSPI
      - ``mcuboot_qspi``
      - ``nrf52840dk/nrf52840``
