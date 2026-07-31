@@ -1,0 +1,42 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires GPIO loopback:
+ * - between P2.10 and P1.14,
+ */
+
+/delete-node/ &button3;
+
+/ {
+	zephyr,user {
+		out-gpios = <&hpf_gpio 10 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio1 14 GPIO_ACTIVE_HIGH>;
+	};
+
+	/* PPK takes cpuapp active/sleep state from P0.04
+	 * which is Button3 in the board definition.
+	 * Moreover, Buttons have (GPIO_PULL_UP | GPIO_ACTIVE_LOW).
+	 */
+	aliases {
+		led = &led_sw3;
+		/delete-property/ sw3;
+	};
+
+	leds {
+		led_sw3: led_sw3 {
+			gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+			label = "Change GPIO from Button3 to custom LED";
+		};
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
