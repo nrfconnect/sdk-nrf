@@ -111,15 +111,3 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
-
-- scenarios:
-    - sample.54lm20dk.nrf7002eb2.wifi_ble_radio_test_sd
-    - sample.nrf70.wifi_ble_radio_test_sd
-    - sample.nrf7002eb2.wifi_ble_radio_test_sd
-    - sample.nrf7120.wifi_ble_radio_test_sd
-  platforms:
-    - nrf54l15dk/nrf54l15/cpuapp
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-    - nrf54lm20dk/nrf54lm20b/cpuapp
-    - nrf7120dk/nrf7120/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40603"
