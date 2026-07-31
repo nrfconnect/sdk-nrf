@@ -15,6 +15,11 @@
 #include <zephyr/net/wifi_mgmt.h>
 
 #include "osal_api.h"
+
+/* Fallback RSSI (dBm) for scan results with no valid signal info
+ */
+#define NRF_WIFI_RSSI_INVALID -127
+
 int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
 			   scan_result_cb_t cb);
 

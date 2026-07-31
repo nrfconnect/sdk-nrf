@@ -273,6 +273,32 @@ static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 	}
 }
 
+/* Return the scan result RSSI in dBm, or NRF_WIFI_RSSI_INVALID if unavailable.
+ */
+static int nrf_wifi_get_rssi_dbm(const struct umac_display_results *r)
+{
+	if (r->signal.signal_type == NRF_WIFI_SIGNAL_TYPE_MBM) {
+		return ((int)r->signal.signal.mbm_signal) / 100;
+	}
+
+	return NRF_WIFI_RSSI_INVALID;
+}
+
+/* qsort() comparator that orders scan results by descending RSSI. */
+static int nrf_wifi_scan_res_rssi_cmp(const void *a, const void *b)
+{
+	int rssi_a = nrf_wifi_get_rssi_dbm((const struct umac_display_results *)a);
+	int rssi_b = nrf_wifi_get_rssi_dbm((const struct umac_display_results *)b);
+
+	if (rssi_a < rssi_b) {
+		return 1;
+	} else if (rssi_a > rssi_b) {
+		return -1;
+	}
+
+	return 0;
+}
+
 void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 				struct nrf_wifi_umac_event_scan_done *scan_done_event,
 				unsigned int event_len)
@@ -301,6 +327,14 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 
 	LOG_DBG("%s: scan_results_cnt = %d", __func__,
 		scan_done_event->scan_results_cnt);
+
+	if (display_results && (scan_done_event->scan_results_cnt > 1)) {
+		qsort(display_results,
+		      scan_done_event->scan_results_cnt,
+		      sizeof(struct umac_display_results),
+		      nrf_wifi_scan_res_rssi_cmp);
+	}
+
 	for (i = 0; i < scan_done_event->scan_results_cnt; i++) {
 		struct umac_display_results *r = &display_results[i];
 
