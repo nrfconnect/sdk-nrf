@@ -131,6 +131,11 @@ Security
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
 
+* Updated:
+
+  * Oberon PSA Crypto from v2.0.0 to v2.1.0.
+    The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
+
 Security libraries
 ------------------
 
