@@ -36,3 +36,7 @@
 		zephyr,code-partition = &s0_partition;
 	};
 };
+
+&xo {
+	status = "disabled";
+};

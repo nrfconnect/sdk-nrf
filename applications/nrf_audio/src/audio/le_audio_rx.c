@@ -8,7 +8,6 @@
 
 #include <stdlib.h>
 #include <zephyr/kernel.h>
-#include <nrfx_clock.h>
 
 #include "streamctrl.h"
 #include "audio_datapath.h"

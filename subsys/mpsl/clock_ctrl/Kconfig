@@ -18,7 +18,7 @@ if MPSL_USE_EXTERNAL_CLOCK_CONTROL
 
 config MPSL_EXT_CLK_CTRL_CLOCK_REQUEST_WAIT_TIMEOUT_MS
 	int "Timeout value that MPSL will wait for request to be completed by a clock driver, in milliseconds"
-	default CLOCK_CONTROL_NRFS_LFCLK_CLOCK_TIMEOUT_MS if CLOCK_CONTROL_NRF_LFCLK
+	default CLOCK_CONTROL_NRFS_LFCLK_CLOCK_TIMEOUT_MS if CLOCK_CONTROL_NRFS_LFCLK
 	default 1000
 	help
 	  The option specifies a timeout value that MPSL clock control integration layer

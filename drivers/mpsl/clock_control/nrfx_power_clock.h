@@ -4,8 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#ifndef MPSL_CLOCK_CONTROL_NRFX_POWER_CLOCK_H__
-#define MPSL_CLOCK_CONTROL_NRFX_POWER_CLOCK_H__
+#ifndef MPSL_CLOCK_CONTROL_NRF_POWER_CLOCK_H__
+#define MPSL_CLOCK_CONTROL_NRF_POWER_CLOCK_H__
 
 #if (NRFX_CLOCK_ENABLED != 0)
 #error "Expected disabled nrfx_clock."
@@ -17,4 +17,4 @@
 
 #include <drivers/include/nrfx_power_clock.h>
 
-#endif // MPSL_CLOCK_CONTROL_NRFX_POWER_CLOCK_H__
+#endif // MPSL_CLOCK_CONTROL_NRF_POWER_CLOCK_H__
