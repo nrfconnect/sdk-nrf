@@ -161,6 +161,7 @@ ci_samples_wifi:
     - modules/lib/matter/
     - modules/lib/nrf_wifi/
     - nrf/boards/shields/nrf7002eb2/
+    - nrf/samples/peripheral/radio_test
     - nrf/samples/wifi/
     - nrf/subsys/net/lib/hostap_crypto/
     - nrf/subsys/net/lib/nrf70_fw_ext/
