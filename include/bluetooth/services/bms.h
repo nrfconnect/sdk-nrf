@@ -101,15 +101,14 @@ struct bt_bms_init_params {
 
 /** @brief Initialize the BMS Service.
  *
- *  Initializes the module with the list of supported operations.
- *  If any operation is configured as authorized, the authorize() callback must be provided.
+ *  Initialize the BMS Service by specifying a list of supported operations.
+ *  If any operation is configured as authorized, you need to provide
+ *  authorize() callback.
  *
- *  @note The GATT service is defined and registered statically at compile time.
- *
- *  @param init_params Initialization parameters. Must not be NULL.
+ *  @param init_params Initialization parameters.
  *
  *  @retval 0 If the operation was successful.
- *          Otherwise, a negative error code is returned.
+ *            Otherwise, a (negative) error code is returned.
  */
 int bt_bms_init(const struct bt_bms_init_params *init_params);
 

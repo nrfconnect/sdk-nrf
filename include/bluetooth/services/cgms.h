@@ -112,14 +112,12 @@ int bt_cgms_measurement_add(struct bt_cgms_measurement measurement);
 
 /** @brief Initialize Continuous Glucose Monitoring service.
  *
- *  Initializes the module with the given initialization parameters.
+ * This will initialize components used in CGMS.
  *
- *  @note The GATT service is defined and registered statically at compile time.
+ *  @param[in] init_params The parameter used to initialize the corresponding
+ *             values of CGMS module.
  *
- *  @param[in] init_params Initialization parameters. Must not be NULL.
- *
- *  @retval 0 If the operation was successful.
- *          Otherwise, a negative error code is returned.
+ *  @return Zero in case of success and error code in case of error.
  */
 int bt_cgms_init(struct bt_cgms_init_param *init_params);
 
