@@ -8,9 +8,8 @@ from pathlib import Path
 import pytest
 from intelhex import bin2hex
 from twister_harness import DeviceAdapter
-from twister_harness_ext.utils.common import flash_with_nrfutil
+from twister_harness_ext.utils.common import flash_with_nrfutil, reset_board
 from twister_harness_ext.utils.dts_helper import get_partition_address
-from twister_harness_ext.utils.helpers import reset_board
 from twister_harness_ext.utils.required_build import get_required_build
 
 
@@ -42,7 +41,7 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     )
 
     flash_with_nrfutil(
-        build_dir / f"signed_by_b0_{dut.device_config.app_build_dir.name}_s1_variant.hex",
+        build_dir / f"signed_by_b0_{dut.device_config.app_build_dir.name}_s1_variant.hex",  # type: ignore
         dut.device_config.id,
         erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
     )
@@ -51,7 +50,7 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
     pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
 
-    edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"
+    edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"  # type: ignore
     s0_offset = get_partition_address(
         edt_data,
         "s0_partition",

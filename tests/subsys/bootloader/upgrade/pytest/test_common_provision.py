@@ -14,7 +14,7 @@ import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.fixtures import determine_scope
 from twister_harness.helpers.utils import match_lines
-from twister_harness_ext.utils.helpers import reset_board
+from twister_harness_ext.utils.common import reset_board
 from twister_harness_ext.utils.key_provisioning import provision_keys_for_kmu
 
 logger = logging.getLogger(__name__)
@@ -33,7 +33,7 @@ def kmu_provision_all(no_reset, dut: DeviceAdapter):
 
     # The maximum number of key slots per type (BL_PUBKEY, UROT_PUBKEY)
     MAX_KEY_SLOTS_PER_TYPE = 3
-    all_keys = [key_file] * MAX_KEY_SLOTS_PER_TYPE
+    all_keys: list[str | Path] = [key_file] * MAX_KEY_SLOTS_PER_TYPE
 
     # Provision the same key to all KMU key slots.
     # It does not matter for the tests if the keys differ.

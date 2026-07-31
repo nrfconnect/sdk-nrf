@@ -1,6 +1,6 @@
 common:
   sysbuild: true
-  timeout: 600
+  timeout: 700
   slow: true
   harness: pytest
   tags:
@@ -558,3 +558,43 @@ tests:
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=2
       - FILE_SUFFIX=nsib
+
+  # nrf54h20 with XIP is the main target for this feature
+  mcuboot.direct_xip.image_verification_retry:
+    tags:
+      - direct_xip
+      - image_verification_retry
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
+      - mcuboot_CONFIG_NCS_MCUBOOT_IMG_VALIDATE_ATTEMPT_COUNT=3
+      - mcuboot_CONFIG_NCS_MCUBOOT_IMG_VALIDATE_ATTEMPT_WAIT_MS=5000
+      - FILE_SUFFIX=direct_xip
+    harness_config:
+      pytest_root:
+        - "../pytest/test_image_verification_retry.py"
+
+  mcuboot.image_verification_retry:
+    tags:
+      - image_verification_retry
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    platform_allow:
+      - nrf52840dk/nrf52840
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf9160dk/nrf9160
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_CONFIG_NCS_MCUBOOT_IMG_VALIDATE_ATTEMPT_COUNT=3
+      - mcuboot_CONFIG_NCS_MCUBOOT_IMG_VALIDATE_ATTEMPT_WAIT_MS=5000
+    harness_config:
+      pytest_root:
+        - "../pytest/test_image_verification_retry.py"
