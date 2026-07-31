@@ -18,11 +18,11 @@ endif()
 
 target_include_directories(app PRIVATE ${common_rt_dir}/inc)
 
+file(GLOB perip_rt_sources ${perip_rt_dir}/src/*.c)
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-  ${perip_rt_dir}/src/main.c
-  ${perip_rt_dir}/src/radio_test.c
-  ${perip_rt_dir}/src/radio_cmd.c
+  ${perip_rt_sources}
   ${common_rt_dir}/src/nrf_wifi_radio_test_shell.c
 )
 
