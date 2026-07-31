@@ -80,6 +80,10 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
+      # nRF54L signs with ED25519, which excludes the hash, so there is no
+      # hardware hashing to request. Hardware signature verification is the
+      # default there and is covered by boot_chains.secure_boot.
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_minimal:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y

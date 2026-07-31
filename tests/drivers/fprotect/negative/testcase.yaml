@@ -24,7 +24,8 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
+      # The nRF52832 has no CryptoCell, so neither backend can be requested.
+      - nrf52dk/nrf52832
     integration_platforms:
       - nrf9160dk/nrf9160
-      - nrf52dk/nrf52832
       - nrf52840dk/nrf52840

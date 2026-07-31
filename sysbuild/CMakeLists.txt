@@ -739,6 +739,26 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
+    # The hardware crypto options are hidden by Kconfig on SoCs that do not support them, so a
+    # request for them never reaches SB_CONFIG_*. CLI_SB_CONFIG_* still holds the value as it was
+    # given to CMake, which is what lets the request be rejected instead of quietly downgrading
+    # the bootloader to the software implementation.
+    if(NOT SB_CONFIG_SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE AND
+       CLI_SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE)
+      message(FATAL_ERROR
+        "SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE was requested but hardware accelerated "
+        "hashing is not supported by the secure boot application core bootloader on "
+        "${BOARD}/${BOARD_QUALIFIERS}.")
+    endif()
+
+    if(NOT SB_CONFIG_SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE AND
+       CLI_SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE)
+      message(FATAL_ERROR
+        "SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE was requested but hardware "
+        "accelerated signature verification is not supported by the secure boot application "
+        "core bootloader on ${BOARD}/${BOARD_QUALIFIERS}.")
+    endif()
+
     # Apply configuration for hashing
     if(SB_CONFIG_SECURE_BOOT_HASH_TYPE_SHA256 AND NOT SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_NONE)
       if(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE)
