@@ -11,6 +11,7 @@
  *
  * @defgroup nfc_ndef_ch_msg NFC Connection Hanover messages
  * @{
+ * @ingroup nfc_ndef_messages
  *
  * @brief Generation of The Connection Handover NDEF messages.
  *

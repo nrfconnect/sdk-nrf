@@ -11,6 +11,7 @@
  *
  * @defgroup nfc_uri_msg URI messages
  * @{
+ * @ingroup  nfc_ndef_messages
  *
  * @brief    Generation of NFC NDEF messages with a URI record.
  *
