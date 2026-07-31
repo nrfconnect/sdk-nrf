@@ -432,6 +432,7 @@ Networking samples
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
 
   * Updated the sample to enable CoAP by default so that the sample now always builds in support for both HTTP and CoAP, selecting the transport automatically at runtime.
+  * Fixed the HTTP file link, which was previously broken.
 
 * :ref:`net_coap_client_sample` sample:
 
