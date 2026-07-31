@@ -1016,8 +1016,8 @@ config NRF_WIFI_TWT_SETUP_TIMEOUT_MS
 	  received before the timeout expires, the TWT setup is considered failed.
 
 config NRF_WIFI_USE_KMU
-	bool "Use CRACEN KMU for key installation"
-	depends on CRACEN_KMU
+	bool "Use KMU for key installation"
+	depends on NRF_WIFI_KMU
 
 config NRF_WIFI_CMD_EVENT_LOG
 	bool "Log HAL command/events (debug)"

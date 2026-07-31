@@ -435,6 +435,7 @@
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
 /include/wave_gen.h                       @nrfconnect/ncs-si-muffin
+/include/wifi_kmu/                        @adrianiainlam
 
 # Libraries
 /lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
@@ -486,6 +487,7 @@
 /lib/tone/                                @nrfconnect/ncs-audio
 /lib/uicc_lwm2m/                          @stig-bjorlykke
 /lib/wave_gen/                            @nrfconnect/ncs-si-muffin
+/lib/wifi_kmu/                            @adrianiainlam
 
 # Modules
 /modules/azure-sdk-for-c/                 @nrfconnect/ncs-cia
@@ -1069,6 +1071,7 @@
 /tests/lib/tone/                          @nrfconnect/ncs-audio
 /tests/lib/uicc_lwm2m/                    @stig-bjorlykke
 /tests/lib/app_jwt/                       @nrfconnect/ncs-modem
+/tests/lib/wifi_kmu/                      @adrianiainlam
 /tests/mocks/nrf_modem_at/mock_nrf_modem_at.c @nrfconnect/ncs-modem-tre
 /tests/mocks/nrf_rpc/                     @nrfconnect/ncs-protocols-serialization
 /tests/modules/lib/zcbor/                 @oyvindronningstad
@@ -1124,6 +1127,7 @@
 /tests/subsys/west_flash/                 @nrfconnect/ncs-low-level-test
 /tests/tfm/                               @nrfconnect/ncs-aegir @magnev
 /tests/unity/                             @nordic-krch
+/tests/wifi/crypto/                       @adrianiainlam @krish2718
 /tests/zephyr/arch/arm/                   @nrfconnect/ncs-low-level-test
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
