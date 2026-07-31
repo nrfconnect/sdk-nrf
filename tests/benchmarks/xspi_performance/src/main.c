@@ -158,7 +158,7 @@ static void cpu_load_monitor(void *param1, void *param2, void *param3)
 }
 
 /*
- * CPU load mintor thread
+ * CPU load monitor thread
  */
 K_THREAD_DEFINE(thread_a, CPU_LOAD_MONITOR_THREAD_STACK_SIZE, cpu_load_monitor, NULL, NULL, NULL, 3,
 		0, 0);
@@ -219,7 +219,7 @@ static void show_measured_cpu_loads(void)
  * set DK_LED1 to ON state
  * start CPU load monitor
  * start timer
- * perform flahs operation(s) (read, write, erase)
+ * perform flash operation(s) (read, write, erase)
  * get timer value
  * stop timer
  * set DK_LED1 to OFF state

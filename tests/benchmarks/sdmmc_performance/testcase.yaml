@@ -1,0 +1,27 @@
+common:
+  tags:
+    - drivers
+    - ppk_power_measure
+    - ci_tests_benchmarks_sdmmc_performance
+
+tests:
+  benchmarks.sd_mmc.performance.semmc:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - CONFIG_MMC_STACK=y
+      - FILE_SUFFIX=semmc
+
+  # DRIVER not ready
+  # benchmarks.sd_mmc.performance.ssdcard:
+  #   platform_allow:
+  #     - nrf54h20dk/nrf54h20/cpuapp
+  #     - nrf54l15dk/nrf54l15/cpuapp
+  #   integration_platforms:
+  #     - nrf54l15dk/nrf54l15/cpuapp
+  #   extra_args:
+  #     - CONFIG_SDMMC_STACK=y
+  #     - FILE_SUFFIX=ssdcard
