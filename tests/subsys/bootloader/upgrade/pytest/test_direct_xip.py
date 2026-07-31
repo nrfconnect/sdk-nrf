@@ -35,7 +35,7 @@ class UpgradeTestDirectXipUseMCUmgr(UpgradeTestWithMCUmgr):
             if config.read_bool("SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT", False):
                 self.build_params.imgtool_params.rom_fixed = (
                     get_edt_node(edt_data, "secondary_app_partition").regs[0].addr
-                )
+                )  # type: ignore
             elif config.read_bool("SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT", False):
                 slot1_variant_dir = self.build_params.app_build_dir.with_name(
                     self.build_params.app_build_dir.name + "_slot1_variant"
