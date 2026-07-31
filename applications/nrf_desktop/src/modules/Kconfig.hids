@@ -33,6 +33,12 @@ config DESKTOP_HIDS_SCI_ENABLE
 	  Enabling this option also selects the Bluetooth LE features required
 	  for shorter connection intervals support in the Host and Controller.
 
+if DESKTOP_HIDS_SCI_ENABLE
+
+rsource "Kconfig.sci.defaults.periph"
+
+endif # DESKTOP_HIDS_SCI_ENABLE
+
 config DESKTOP_HIDS_FIRST_REPORT_DELAY
 	int "First HID report delay [ms]"
 	default 1000 if DESKTOP_PERIPHERAL_TYPE_KEYBOARD
