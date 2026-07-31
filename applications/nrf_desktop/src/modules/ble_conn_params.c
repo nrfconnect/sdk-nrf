@@ -189,9 +189,8 @@ static bool conn_params_update_required(struct connected_peer *peer)
 	}
 
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) && peer->use_sci) {
-		/* No parameters update with HID SCI supported yet.
-		 * FAST mode is requested on discovery complete.
-		 * After that, no dongle requested parameter update is performed.
+		/* Parameters update with HID SCI is performed by requesting
+		 * the appropriate SCI mode.
 		 */
 		return false;
 	}
@@ -232,6 +231,48 @@ static void conn_params_update_fn(struct k_work *work)
 	}
 }
 
+static void request_sci_mode(struct bt_conn *conn, enum bt_hids_sci_mode_value mode)
+{
+	/* Currently we assume the happy path always works and the mode which
+	 * is requested is the one that the peripheral will use.
+	 */
+	struct hogp_sci_mode_req_event *sci_event = new_hogp_sci_mode_req_event();
+
+	sci_event->conn = conn;
+	sci_event->mode = mode;
+	APP_EVENT_SUBMIT(sci_event);
+}
+
+static void sci_usb_state_change_handler(void)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(peers); i++) {
+		struct connected_peer *peer = &peers[i];
+
+		if (!peer->conn || !peer->use_sci) {
+			continue;
+		}
+
+		if (usb_suspended) {
+			request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_LOW_POWER);
+			LOG_INF("USB suspend: request LOW POWER SCI mode for peer %p",
+				(void *)peer->conn);
+		} else {
+			/* Note: currently the dongle only uses FAST SCI mode
+			 * for "active" operation.
+			 * If this changes in the future, the dongle will need to
+			 * cache the SCI mode and restore it when the USB is resumed.
+			 *
+			 * Also note that this dongle works under the assumption that
+			 * it is the peripheral's responsibility to re-request LOW_POWER
+			 * mode if it wants to remain in this mode.
+			 */
+			request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_FAST);
+			LOG_INF("USB resume: request FAST SCI mode for peer %p",
+				(void *)peer->conn);
+		}
+	}
+}
+
 static void ble_peer_conn_params_event_handler(const struct ble_peer_conn_params_event *event)
 {
 	struct connected_peer *peer = find_connected_peer(event->id);
@@ -265,6 +306,10 @@ static void usb_state_event_handler(enum usb_state new_state)
 	default:
 		/* Ignore other USB state events */
 		return;
+	}
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE)) {
+		sci_usb_state_change_handler();
 	}
 
 	k_work_reschedule(&conn_params_update, K_NO_WAIT);
@@ -317,12 +362,39 @@ static void peer_discovered(struct bt_conn *conn, bool peer_llpm_support, bool p
 		k_work_reschedule(&conn_params_update, K_NO_WAIT);
 
 		if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) && peer->use_sci) {
-			struct hogp_sci_mode_req_event *sci_event = new_hogp_sci_mode_req_event();
+			enum bt_hids_sci_mode_value mode_to_request = BT_HIDS_SCI_MODE_FAST;
 
-			sci_event->conn = conn;
-			sci_event->mode = BT_HIDS_SCI_MODE_FAST;
-			APP_EVENT_SUBMIT(sci_event);
+			if (IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended) {
+				mode_to_request = BT_HIDS_SCI_MODE_LOW_POWER;
+			}
+
+			request_sci_mode(conn, mode_to_request);
 		}
+	}
+}
+
+static void hogp_sci_mode_changed_event_handler(const struct hogp_sci_mode_changed_event *event)
+{
+	struct connected_peer *peer = find_connected_peer(event->conn);
+
+	if (!peer) {
+		return;
+	}
+
+	__ASSERT_NO_MSG(peer->use_sci);
+
+	LOG_INF("Peer %p SCI mode: 0x%02" PRIx8, (void *)peer->conn, (uint8_t)event->mode);
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_USB_MANAGED_CI) && usb_suspended
+	    && event->mode != BT_HIDS_SCI_MODE_LOW_POWER) {
+		/* A peer waking up from powerdown may initiate a SCI mode change request.
+		 * Immediately switch back to LOW_POWER SCI mode to avoid excessive power
+		 * consumption.
+		 */
+		LOG_INF("Peer %p switched out of LOW_POWER mode while in USB suspend.",
+			(void *)peer->conn);
+		LOG_INF("Requesting LOW_POWER SCI mode for peer %p", (void *)peer->conn);
+		request_sci_mode(peer->conn, BT_HIDS_SCI_MODE_LOW_POWER);
 	}
 }
 
@@ -470,6 +542,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE) &&
+	    is_hogp_sci_mode_changed_event(aeh)) {
+		hogp_sci_mode_changed_event_handler(cast_hogp_sci_mode_changed_event(aeh));
+
+		return false;
+	}
+
 	/* If event is unhandled, unsubscribe. */
 	__ASSERT_NO_MSG(false);
 
@@ -483,4 +562,7 @@ APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 #ifdef CONFIG_DESKTOP_BLE_USB_MANAGED_CI
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
+#endif
+#ifdef CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+APP_EVENT_SUBSCRIBE(MODULE, hogp_sci_mode_changed_event);
 #endif

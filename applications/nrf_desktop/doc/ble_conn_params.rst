@@ -11,7 +11,7 @@ Use the Bluetooth® LE connection parameters module for the following purposes:
 
 * Update the connection parameters after the peripheral discovery.
 * React on connection parameter update requests from the connected peripherals.
-* Increase Bluetooth connection interval for peripherals while USB is suspended to reduce power consumption.
+* Reduce power consumption while USB is suspended by increasing the Bluetooth connection interval for non-HID SCI connections, or by switching HID SCI connections to the LOW_POWER mode.
 
 Module Events
 *************
@@ -31,12 +31,9 @@ Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG
 The |ble_conn_params| is enabled by the :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE` option.
 The option is implied by :option:`CONFIG_DESKTOP_BT_CENTRAL` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
 
-Enable :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to manage Bluetooth connections' parameters reacting on the USB state change.
-The connection intervals for all of the Bluetooth connected peripherals are set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` Kconfig option (100 ms by default) while USB is suspended.
-The connections' peripheral latencies are set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE` Kconfig option (``1`` by default).
-The non-zero peripheral latency is used to prevent peripheral latency increase requests triggered by the :ref:`nrf_desktop_ble_latency` used on the peripheral's end.
-The connection parameter change is reverted when USB is active or disconnected.
-The :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled by default.
+Enable :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` to reduce dongle power consumption while USB is suspended by adjusting Bluetooth connection parameters based on the USB state.
+The option is enabled by default.
+See :ref:`nrf_desktop_ble_conn_params_usb_managed_ci` for details on how the module handles USB suspend and resume.
 
 Implementation details
 **********************
@@ -54,6 +51,42 @@ The connection interval and supervision timeout are not changed according to the
 .. note::
    On the peripheral side, the Bluetooth connection latency is controlled by :ref:`nrf_desktop_ble_latency`.
 
+.. _nrf_desktop_ble_conn_params_usb_managed_ci:
+
+USB managed connection parameters
+=================================
+
+When the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` Kconfig option is enabled, the |ble_conn_params| reacts to :c:struct:`usb_state_event` to reduce power consumption while USB is suspended.
+The applied mechanism depends on whether a given connection uses HID SCI.
+
+.. _nrf_desktop_ble_conn_params_usb_managed_ci_standard:
+
+Standard connections
+--------------------
+
+For connections that do not use HID SCI, the module updates the Bluetooth connection parameters directly while USB is suspended:
+
+* The connection interval is set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` Kconfig option (100 ms by default).
+* The peripheral latency is set to the value of :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE` Kconfig option (``1`` by default).
+  The non-zero peripheral latency is used to prevent peripheral latency increase requests triggered by the :ref:`nrf_desktop_ble_latency` used on the peripheral's end.
+
+When USB becomes active or disconnected, the module restores the connection parameters used during normal operation.
+
+.. _nrf_desktop_ble_conn_params_usb_managed_ci_hid_sci:
+
+HID SCI connections
+-------------------
+
+For connections that use HID SCI, the module does not update connection parameters directly.
+Instead, it requests an appropriate HID SCI mode from the peripheral:
+
+* On USB suspend, the module requests the LOW_POWER HID SCI mode.
+* On USB resume or disconnect, the module requests the FAST HID SCI mode.
+
+The :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` and :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE` Kconfig options do not apply to HID SCI connections.
+
+If a peer switches out of the LOW_POWER mode while USB is suspended (for example, when the peer wakes up from powerdown), the module immediately requests the LOW_POWER mode again to avoid excessive power consumption.
+
 .. _nrf_desktop_ble_conn_params_hid_sci:
 
 HID SCI
@@ -65,6 +98,8 @@ With this option set, the module sets default connection rate parameters on modu
 For HID SCI connections, the module does not perform the standard connection parameter update.
 Instead, it controls the connection parameters by requesting appropriate HID SCI modes from the peripheral, as required by the `HID Over GATT Profile Specification`_.
 For details, see the :ref:`nrf_desktop_ble_conn_params_connection_interval_update` section.
+
+For USB suspend and resume behavior, see :ref:`nrf_desktop_ble_conn_params_usb_managed_ci_hid_sci`.
 
 LLPM connections
 ================
@@ -82,6 +117,7 @@ Connection interval update
 After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, the |ble_conn_params| updates the connection parameters in the following manner:
 
 * If the peripheral supports HID SCI, the parameter update is skipped and HID SCI FAST mode is requested as soon as the peripheral discovery completes.
+  When :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` is enabled and USB is suspended, HID SCI LOW_POWER mode is requested instead.
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 
