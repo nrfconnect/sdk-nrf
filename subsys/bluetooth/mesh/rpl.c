@@ -55,7 +55,7 @@ BUILD_ASSERT(PARTITION_SIZE(rpl_partition) >=
 	     (2U * DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)),
 	     "rpl_partition must be at least 2 erase blocks in size when using ZMS storage mode");
 
-struct rpl_val {
+struct __packed rpl_val {
 	uint32_t seq:24,
 	      old_iv:1;
 };
