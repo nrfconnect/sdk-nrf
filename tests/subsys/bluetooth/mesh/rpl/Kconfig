@@ -1,0 +1,33 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_RPL_UNIT_TEST
+	bool
+	default y
+
+config BT_MESH_CRPL
+	depends on TEST_RPL_UNIT_TEST
+	default 8
+
+config BT_MESH_RPL_STORE_TIMEOUT
+	depends on TEST_RPL_UNIT_TEST
+	default 5
+
+choice BT_MESH_RPL_STORAGE_MODE
+	prompt "Replay protection list storage mode"
+	default BT_MESH_NRF_RPL_STORAGE_MODE_ZMS if TEST_RPL_UNIT_TEST
+
+config BT_MESH_NRF_RPL_STORAGE_MODE_ZMS
+	bool "Persistent storage of RPL in Zephyr Memory Storage"
+	depends on TEST_RPL_UNIT_TEST
+
+endchoice
+
+config BT_LOG_LEVEL
+	depends on TEST_RPL_UNIT_TEST
+	default 0 if TEST_RPL_UNIT_TEST
+
+source "Kconfig.zephyr"
