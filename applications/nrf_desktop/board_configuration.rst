@@ -155,7 +155,9 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
-        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
+        Most of the configurations use the Low Latency Packet Mode (LLPM).
+        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.

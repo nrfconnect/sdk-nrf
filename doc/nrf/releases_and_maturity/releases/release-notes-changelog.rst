@@ -278,6 +278,8 @@ nRF Desktop
     The :ref:`nrf_desktop_hids` module enables support for the feature in the underlying HID GATT Service.
     The :ref:`nrf_desktop_ble_latency` module handles HID SCI mode change requests and the related connection parameter updates.
     Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
+  * The ``hid_sci`` and ``release_hid_sci`` build types for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+    The configurations act as a HID mouse peripheral with HID SCI support.
 
 * Removed:
 
