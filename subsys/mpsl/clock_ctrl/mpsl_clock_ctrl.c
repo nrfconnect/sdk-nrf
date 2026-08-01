@@ -9,9 +9,11 @@
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/logging/log.h>
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON))) && \
+	!(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+
 #include <nrfx_clock.h>
-#endif /* CONFIG_CLOCK_CONTROL_NRF */
+#endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRF_COMMON */
 
 #include <mpsl_clock.h>
 #include "mpsl_clock_ctrl.h"
@@ -179,7 +181,8 @@ static int32_t m_lfclk_wait(void)
 	return err;
 }
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON)) && \
+	 !(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
 
 static void m_hfclk_request(void)
 {
@@ -513,7 +516,7 @@ int32_t mpsl_clock_ctrl_nvm_clock_wait(void)
 
 #else
 #error "Unsupported clock control"
-#endif /* CONFIG_CLOCK_CONTROL_NRF */
+#endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRF_COMMON */
 
 static mpsl_clock_lfclk_ctrl_source_t m_nrf_lfclk_ctrl_data = {
 	.lfclk_wait = m_lfclk_wait,
@@ -574,15 +577,18 @@ int32_t mpsl_clock_ctrl_init(void)
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 
-#if !(defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) || defined(CONFIG_CLOCK_CONTROL_NRF))
-#error "Unsupported HFCLK statup time get operation"
-#elif !defined(CONFIG_SOC_SERIES_NRF54H)
+#if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON)) && \
+	 !(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+
 #if DT_NODE_EXISTS(DT_NODELABEL(hfxo))
 	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
 #else
 	m_nrf_hfclk_ctrl_data.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY;
 #endif /* DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
-#else
+
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                               \
+	(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+
 #if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
 	uint32_t startup_time_us;
 
@@ -597,20 +603,23 @@ int32_t mpsl_clock_ctrl_init(void)
 		LOG_ERR("HFCLK startup time is too large: %d [us]", startup_time_us);
 		return -NRF_EFAULT;
 	}
-#if defined(CONFIG_SOC_SERIES_NRF54H) && defined(CONFIG_MPSL_USE_ZEPHYR_PM)
+#if defined(CONFIG_MPSL_USE_ZEPHYR_PM)
 	else if (startup_time_us < MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US) {
 		/* Override the startup time to the minimum allowed value. */
 		startup_time_us = MPSL_PM_HFCLK_MINIMUM_ALLOWED_STARTUP_TIME_US;
 	}
-#endif /* CONFIG_SOC_SERIES_NRF54H && CONFIG_MPSL_USE_ZEPHYR_PM */
+#endif /* CONFIG_MPSL_USE_ZEPHYR_PM */
 
 	m_nrf_hfclk_ctrl_data.startup_time_us = startup_time_us;
 #else
-#error "Unsupported HFCLK statup time get operation"
+#error "A HFXO DTS instance not found"
 #endif /* DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && \
 	* DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo) \
 	*/
-#endif /* CONFIG_CLOCK_CONTROL_NRF */
+
+#else
+#error "Unsupported clock control configuration"
+#endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRF_COMMON */
 
 #if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                    \
 	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
