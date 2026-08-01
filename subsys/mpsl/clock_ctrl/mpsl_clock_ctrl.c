@@ -9,7 +9,7 @@
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <zephyr/logging/log.h>
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_LFCLK)
 #include <nrfx_clock.h>
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
 
@@ -179,7 +179,7 @@ static int32_t m_lfclk_wait(void)
 	return err;
 }
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
+#if defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_LFCLK)
 
 static void m_hfclk_request(void)
 {
@@ -512,7 +512,7 @@ int32_t mpsl_clock_ctrl_nvm_clock_wait(void)
 
 #else
 #error "Unsupported clock control"
-#endif /* CONFIG_CLOCK_CONTROL_NRF */
+#endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRFX_LFCLK */
 
 static mpsl_clock_lfclk_ctrl_source_t m_nrf_lfclk_ctrl_data = {
 	.lfclk_wait = m_lfclk_wait,
@@ -572,7 +572,7 @@ int32_t mpsl_clock_ctrl_init(void)
 	}
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_COMMON)
+#if defined(CONFIG_CLOCK_CONTROL_NRF) || defined(CONFIG_CLOCK_CONTROL_NRFX_LFCLK)
 #if DT_NODE_EXISTS(DT_NODELABEL(hfxo))
 	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
 #else
