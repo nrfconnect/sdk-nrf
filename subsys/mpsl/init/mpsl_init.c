@@ -451,21 +451,28 @@ static int32_t mpsl_lib_init_internal(void)
 	clock_cfg.skip_wait_lfclk_started =
 		IS_ENABLED(CONFIG_SYSTEM_CLOCK_NO_WAIT);
 
-#ifdef CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC) || \
+	(!defined(CONFIG_CLOCK_CONTROL_NRF) && DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, rc))
+#if defined(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC)
 	BUILD_ASSERT(IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION),
 		    "MPSL requires clock calibration to be enabled when RC is used as LFCLK");
+#endif
 
 	/* clock_cfg.rc_ctiv is given in 1/4 seconds units.
 	 * CONFIG_MPSL_CALIBRATION_PERIOD is given in ms.
 	 */
 	clock_cfg.rc_ctiv = (CONFIG_MPSL_CALIBRATION_PERIOD * 4 / 1000);
+#if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC_CALIBRATION)
 	clock_cfg.rc_temp_ctiv = CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP + 1;
 	BUILD_ASSERT(CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF == 2,
 		     "MPSL always uses a temperature diff threshold of 0.5 degrees");
 #else
+	clock_cfg.rc_temp_ctiv = MPSL_RECOMMENDED_RC_TEMP_CTIV;
+#endif
+#else
 	clock_cfg.rc_ctiv = 0;
 	clock_cfg.rc_temp_ctiv = 0;
-#endif /* CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC */
+#endif /* RC LFCLK source */
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
