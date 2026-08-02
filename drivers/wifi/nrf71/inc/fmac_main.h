@@ -166,7 +166,6 @@ void nrf_wifi_scan_timeout_work(struct k_work *work);
 
 void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 				struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
-void configure_board_dep_params(struct nrf_wifi_board_params *board_params);
 void set_tx_pwr_ceil_default(struct nrf_wifi_tx_pwr_ceil_params *pwr_ceil_params);
 const char *nrf_wifi_get_drv_version(void);
 char *nrf_wifi_sprint_ll_addr_buf(const uint8_t *ll, uint8_t ll_len,

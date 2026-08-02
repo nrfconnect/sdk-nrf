@@ -113,61 +113,26 @@ extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 static const int valid_data_rates[] = { 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54,
 				  0, 1, 2, 3, 4, 5, 6, 7, -1 };
 
+/* The RF front-end description lives on the Wi-Fi node, the parent of the wlan
+ * interface nodes. Look it up by compatible so it cannot silently bind to the
+ * wrong node.
+ */
+#define NRF71_WIFI_NODE DT_INST(0, nordic_nrf7120_wifi)
+
 /* DTS uses 1dBm as the unit for TX power, while the RPU uses 0.25dBm */
-#define MAX_TX_PWR(label) DT_PROP(DT_NODELABEL(nrf71), label) * 4
+#define MAX_TX_PWR(label) (DT_PROP(NRF71_WIFI_NODE, label) * 4)
+
 static void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *ctrl_params,
 				      struct nrf_wifi_tx_pwr_ceil_params *ceil_params)
 {
-	ctrl_params->ant_gain_2g = CONFIG_NRF71_ANT_GAIN_2G;
-	ctrl_params->ant_gain_5g_band1 = CONFIG_NRF71_ANT_GAIN_5G_BAND1;
-	ctrl_params->ant_gain_5g_band2 = CONFIG_NRF71_ANT_GAIN_5G_BAND2;
-	ctrl_params->ant_gain_5g_band3 = CONFIG_NRF71_ANT_GAIN_5G_BAND3;
-	ctrl_params->band_edge_2g_lo_dss = CONFIG_NRF71_BAND_2G_LOWER_EDGE_BACKOFF_DSSS;
-	ctrl_params->band_edge_2g_lo_ht = CONFIG_NRF71_BAND_2G_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_2g_lo_he = CONFIG_NRF71_BAND_2G_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_2g_hi_dsss = CONFIG_NRF71_BAND_2G_UPPER_EDGE_BACKOFF_DSSS;
-	ctrl_params->band_edge_2g_hi_ht = CONFIG_NRF71_BAND_2G_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_2g_hi_he = CONFIG_NRF71_BAND_2G_UPPER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_1_lo_ht =
-		CONFIG_NRF71_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_1_lo_he =
-		CONFIG_NRF71_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_1_hi_ht =
-		CONFIG_NRF71_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_1_hi_he =
-		CONFIG_NRF71_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_2a_lo_ht =
-		CONFIG_NRF71_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_2a_lo_he =
-		CONFIG_NRF71_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_2a_hi_ht =
-		CONFIG_NRF71_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_2a_hi_he =
-		CONFIG_NRF71_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_2c_lo_ht =
-		CONFIG_NRF71_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_2c_lo_he =
-		CONFIG_NRF71_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_2c_hi_ht =
-		CONFIG_NRF71_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_2c_hi_he =
-		CONFIG_NRF71_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_3_lo_ht =
-		CONFIG_NRF71_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_3_lo_he =
-		CONFIG_NRF71_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_3_hi_ht =
-		CONFIG_NRF71_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_3_hi_he =
-		CONFIG_NRF71_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_4_lo_ht =
-		CONFIG_NRF71_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_4_lo_he =
-		CONFIG_NRF71_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE;
-	ctrl_params->band_edge_5g_unii_4_hi_ht =
-		CONFIG_NRF71_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT;
-	ctrl_params->band_edge_5g_unii_4_hi_he =
-		CONFIG_NRF71_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE;
+	/* nRF7120 is a dual-band part, so the 6 GHz antenna gains stay at 0 */
+	memset(ctrl_params, 0, sizeof(*ctrl_params));
+
+	ctrl_params->ant_gain_2g = DT_PROP(NRF71_WIFI_NODE, nordic_wifi_ant_gain_2g);
+	ctrl_params->ant_gain_5g_band1 = DT_PROP(NRF71_WIFI_NODE, nordic_wifi_ant_gain_5g_band1);
+	ctrl_params->ant_gain_5g_band2 = DT_PROP(NRF71_WIFI_NODE, nordic_wifi_ant_gain_5g_band2);
+	ctrl_params->ant_gain_5g_band3 = DT_PROP(NRF71_WIFI_NODE, nordic_wifi_ant_gain_5g_band3);
+
 	ceil_params->max_pwr_2g_dsss = MAX_TX_PWR(wifi_max_tx_pwr_2g_dsss);
 	ceil_params->max_pwr_2g_mcs7 = MAX_TX_PWR(wifi_max_tx_pwr_2g_mcs7);
 	ceil_params->max_pwr_2g_mcs0 = MAX_TX_PWR(wifi_max_tx_pwr_2g_mcs0);
@@ -177,14 +142,6 @@ static void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *ctrl_p
 	ceil_params->max_pwr_5g_low_mcs0 = MAX_TX_PWR(wifi_max_tx_pwr_5g_low_mcs0);
 	ceil_params->max_pwr_5g_mid_mcs0 = MAX_TX_PWR(wifi_max_tx_pwr_5g_mid_mcs0);
 	ceil_params->max_pwr_5g_high_mcs0 = MAX_TX_PWR(wifi_max_tx_pwr_5g_high_mcs0);
-}
-
-static void configure_board_dep_params(struct nrf_wifi_board_params *board_params)
-{
-	board_params->pcb_loss_2g = CONFIG_NRF71_PCB_LOSS_2G;
-	board_params->pcb_loss_5g_band1 = CONFIG_NRF71_PCB_LOSS_5G_BAND1;
-	board_params->pcb_loss_5g_band2 = CONFIG_NRF71_PCB_LOSS_5G_BAND2;
-	board_params->pcb_loss_5g_band3 = CONFIG_NRF71_PCB_LOSS_5G_BAND3;
 }
 
 #ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
@@ -236,7 +193,6 @@ int nrf71_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	void *rpu_ctx = NULL;
 	struct nrf_wifi_tx_pwr_ctrl_params ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params ceil_params;
-	struct nrf_wifi_board_params board_params;
 	unsigned int fw_ver = 0;
 	k_spinlock_key_t key;
 	enum op_band op_band = get_nrf_wifi_op_band();
@@ -289,10 +245,6 @@ int nrf71_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	configure_tx_pwr_settings(&ctrl_params,
 				  &ceil_params);
 
-	memset(&board_params, 0, sizeof(board_params));
-
-	configure_board_dep_params(&board_params);
-
 	memset(rpu_ctx_zep->phy_rf_params_addr, 0, sizeof(rpu_ctx_zep->phy_rf_params_addr));
 	status = off_raw_tx_config_rf_params(rpu_ctx_zep->rpu_ctx, rpu_ctx_zep->phy_rf_params_addr);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -314,7 +266,7 @@ int nrf71_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 		HW_SLEEP_ENABLE,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
-		&ctrl_params, &ceil_params, &board_params, country_code,
+		&ctrl_params, &ceil_params, country_code,
 		rpu_ctx_zep->phy_rf_params_addr, rpu_ctx_zep->vtf_buffer_start_address);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nRF70 firmware initialization failed", __func__);
