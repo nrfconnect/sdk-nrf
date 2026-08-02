@@ -25,7 +25,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_off_raw_tx_fw_init(
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 	unsigned int phy_calib, unsigned char op_band, bool beamforming,
-	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl, struct nrf_wifi_board_params *board_params,
+	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 	unsigned char *country_code)
 {
 	unsigned long start_time_us = 0;
@@ -42,7 +42,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_off_raw_tx_fw_init(
 					  sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 					  phy_calib, op_band, beamforming, tx_pwr_ctrl,
-					  board_params, country_code);
+					  country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		nrf_wifi_osal_log_err("%s: UMAC init failed",
@@ -176,7 +176,6 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				  bool beamforming,
 				  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 				  struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-				  struct nrf_wifi_board_params *board_params,
 				  unsigned char *country_code,
 				  unsigned int *rf_params_addr,
 				  unsigned int vtf_buffer_start_address)
@@ -212,7 +211,7 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef NRF_WIFI_LOW_POWER
 		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, board_params, country_code);
+		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err("%s: nrf_wifi_fmac_off_raw_tx_fw_init failed",
