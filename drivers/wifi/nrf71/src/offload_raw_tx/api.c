@@ -18,6 +18,7 @@
 #include <nrf71_wifi_ctrl.h>
 #include <nrf71_wifi_rf.h>
 #include <util.h>
+#include <common/rf_params.h>
 #include <offload_raw_tx/api.h>
 
 #define DT_DRV_COMPAT nordic_wlan
@@ -28,24 +29,6 @@ struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 
 static const int valid_data_rates[] = { 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54,
 				  0, 1, 2, 3, 4, 5, 6, 7, -1 };
-
-static void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *ctrl_params)
-{
-	ctrl_params->ant_gain_2g = NRF71_ANT_GAIN_2G;
-	ctrl_params->ant_gain_5g_band1 = NRF71_ANT_GAIN_5G_BAND1;
-	ctrl_params->ant_gain_5g_band2 = NRF71_ANT_GAIN_5G_BAND2;
-	ctrl_params->ant_gain_5g_band3 = NRF71_ANT_GAIN_5G_BAND3;
-}
-
-static void configure_board_dep_params(struct nrf_wifi_board_params *board_params)
-{
-	board_params->pcb_loss_2g = NRF71_PCB_LOSS_2G;
-#ifndef CONFIG_NRF_WIFI_2G_BAND
-	board_params->pcb_loss_5g_band1 = NRF71_PCB_LOSS_5G_BAND1;
-	board_params->pcb_loss_5g_band2 = NRF71_PCB_LOSS_5G_BAND2;
-	board_params->pcb_loss_5g_band3 = NRF71_PCB_LOSS_5G_BAND3;
-#endif /* CONFIG_NRF_WIFI_2G_BAND */
-}
 
 #ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
 static int bytes_from_str(uint8_t *buf, int buf_len, const char *src)
@@ -82,7 +65,6 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	unsigned char op_band = nrf_wifi_utils_get_op_band();
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
-	struct nrf_wifi_board_params board_params;
 	unsigned int fw_ver = 0;
 
 	/* The OSAL layer needs to be initialized before any other initialization
@@ -147,10 +129,8 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 
 	memset(&tx_pwr_ctrl_params, 0, sizeof(tx_pwr_ctrl_params));
 	memset(&tx_pwr_ceil_params, 0, sizeof(tx_pwr_ceil_params));
-	memset(&board_params, 0, sizeof(board_params));
 
-	configure_tx_pwr_settings(&tx_pwr_ctrl_params);
-	configure_board_dep_params(&board_params);
+	configure_tx_pwr_settings(&tx_pwr_ctrl_params, &tx_pwr_ceil_params);
 
 	status = nrf_wifi_off_raw_tx_fmac_dev_init(drv_ctx->rpu_ctx,
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -161,7 +141,6 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 						   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
 						   &tx_pwr_ctrl_params,
 						   &tx_pwr_ceil_params,
-						   &board_params,
 						   country_code,
 						   drv_ctx->phy_rf_params_addr,
 						   drv_ctx->vtf_buffer_start_address);
