@@ -13,6 +13,8 @@
 
 #include <stdint.h>
 
+#include <nrf71_wifi_common.h>
+
 #define NUM_RF_PARAM_ADDRS 22
 
 struct rf_hex_param {
@@ -32,5 +34,19 @@ struct rf_hex_param {
  */
 enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx,
 						    unsigned int *rf_params_addr);
+
+/**
+ * @brief Fill the transmit power control and ceiling parameters from devicetree.
+ *
+ * The values come from the Wi-Fi node in the board devicetree. Antenna gain is
+ * additionally applied to the RF parameters by
+ * nrf_wifi_fmac_config_rf_params(), which is where the transmit power ceilings
+ * and the band edge ceilings are applied as well.
+ *
+ * @param tx_pwr_ctrl_params Transmit power control parameters to fill.
+ * @param tx_pwr_ceil_params Transmit power ceiling parameters to fill.
+ */
+void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
+			       struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
 
 #endif /* __RF_PARAMS_H__ */

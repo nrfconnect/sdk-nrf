@@ -20,7 +20,7 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 #endif /* NRF_WIFI_LOW_POWER */
 			 unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			 struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-			 struct nrf_wifi_board_params *board_params, unsigned char *country_code)
+			 unsigned char *country_code)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
@@ -87,7 +87,6 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 			      &tx_pwr_ctrl_params->ant_gain_2g,
 			      10 * sizeof(unsigned char));
 
-	(void)board_params;
 
 	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
 			      country_code,

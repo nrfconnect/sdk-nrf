@@ -33,7 +33,6 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	unsigned char op_band,
 	bool beamforming,
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
-	struct nrf_wifi_board_params *board_params,
 	unsigned char *country_code)
 {
 	unsigned long start_time_us = 0;
@@ -56,7 +55,6 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 				  op_band,
 				  beamforming,
 				  tx_pwr_ctrl,
-				  board_params,
 				  country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -160,7 +158,6 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 	bool beamforming,
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 	struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-	struct nrf_wifi_board_params *board_params,
 	unsigned char *country_code,
 	unsigned int *rf_params_addr,
 	unsigned int vtf_buffer_start_address)
@@ -197,7 +194,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_init(
 #ifdef NRF_WIFI_LOW_POWER
 		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, board_params, country_code);
+		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err("%s: nrf_wifi_sys_fmac_fw_init failed",

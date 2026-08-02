@@ -25,7 +25,6 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 				       unsigned char op_band,
 				       bool beamforming,
 				       struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-				       struct nrf_wifi_board_params *board_params,
 				       unsigned char *country_code)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -115,7 +114,6 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 			      tx_pwr_ctrl_params,
 			      sizeof(umac_cmd_data->sys_params.tx_pwr_ctrl_params));
 
-	(void)board_params;
 
 	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
 			      country_code,
