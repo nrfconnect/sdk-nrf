@@ -15,11 +15,6 @@
 #define IS_NATURAL_ALIGNED(ptr, type)	!PTR_ALIGNMENT(ptr, type)
 #define IS_SAME_ALIGNMENT(p1, p2, type) (PTR_ALIGNMENT(p1, type) == PTR_ALIGNMENT(p2, type))
 #define MASK_TO_NATURAL_SIZE(sz, type)	((sz) & (~((sizeof(type) << 1) - 1)))
-#if defined(__aarch64__)
-#define IS_NATURAL_SIZE(sz, type) !((sz) & (sizeof(type) - 1))
-#else
-#define IS_NATURAL_SIZE(sz, type) 1
-#endif
 
 void sx_clrpkmem(void *dst, size_t sz)
 {
@@ -36,12 +31,10 @@ void sx_clrpkmem(void *dst, size_t sz)
 		sz--;
 	}
 
-#if !defined(__aarch64__)
 	memset((uint8_t *)dst_ptr, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
 	dst_ptr += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 	sz -= MASK_TO_NATURAL_SIZE(sz, clrblk_t);
 
-#endif
 	while (sz) {
 		*dst_ptr = 0;
 		dst_ptr++;
@@ -52,16 +45,14 @@ void sx_clrpkmem(void *dst, size_t sz)
 struct uchunk {
 	int64_t a[2];
 };
-
 typedef struct uchunk tfrblk;
-#define tfrblksz sizeof(tfrblk)
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
 	volatile uint8_t *dst_ptr = (volatile uint8_t *)dst;
 	volatile const uint8_t *src_ptr = (volatile const uint8_t *)src;
 
-	while (sz && (!IS_NATURAL_ALIGNED(dst_ptr, tfrblk) || !IS_NATURAL_SIZE(sz, tfrblk))) {
+	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, tfrblk)) {
 		*dst_ptr = *src_ptr;
 		dst_ptr++;
 		src_ptr++;
