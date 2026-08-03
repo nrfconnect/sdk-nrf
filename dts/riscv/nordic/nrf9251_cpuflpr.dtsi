@@ -20,6 +20,7 @@ cpusys_vevif: &cpusys_vevif_tx {};
 /delete-node/ &cpuapp_peripherals;
 /delete-node/ &cpuapp_ppb;
 /delete-node/ &cpuapp_ram0x_sram;
+/delete-node/ &cpuapp_tcm_sram;
 /delete-node/ &cpuppr;
 
 / {

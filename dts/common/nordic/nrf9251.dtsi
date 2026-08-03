@@ -28,12 +28,14 @@
 			device_type = "cpu";
 			clocks = <&cpuapp_hsfll>;
 			clock-frequency = <DT_FREQ_M(256)>;
+			cpu-power-states = <&idle_cache_retained &idle_cache_disabled &s2ram>;
 		};
 
 		cpuppr: cpu@d {
 			compatible = "nordic,vpr", "riscv";
 			reg = <13>;
 			device_type = "cpu";
+			clocks = <&fll16m>;
 			clock-frequency = <DT_FREQ_M(16)>;
 			riscv,isa-base = "rv32e";
 			riscv,isa-extensions = "e", "m", "c", "zicsr";
@@ -113,6 +115,32 @@
 				#mbox-cells = <1>;
 				nordic,tasks = <32>;
 				nordic,tasks-mask = <0xffff0000>;
+			};
+		};
+
+		power-states {
+			// substate-id = <0>; is reserved for "idle", cache powered on
+			idle_cache_retained: idle_cache_retained {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-idle";
+				substate-id = <1>;
+				min-residency-us = <700>;
+				exit-latency-us = <5>;
+			};
+
+			idle_cache_disabled: idle_cache_disabled {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-idle";
+				substate-id = <2>;
+				min-residency-us = <1000>;
+				exit-latency-us = <7>;
+			};
+
+			s2ram: s2ram {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-ram";
+				min-residency-us = <2000>;
+				exit-latency-us = <33>;
 			};
 		};
 	};
@@ -778,7 +806,6 @@
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
 							 <NRF_FUN_TWIM_SCL>;
-				zephyr,pm-device-runtime-auto;
 			};
 
 			spi130: spi@9a5000 {
@@ -821,7 +848,6 @@
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
 							 <NRF_FUN_TWIM_SCL>;
-				zephyr,pm-device-runtime-auto;
 			};
 
 			spi131: spi@9a6000 {
@@ -912,7 +938,6 @@
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
 							 <NRF_FUN_TWIM_SCL>;
-				zephyr,pm-device-runtime-auto;
 			};
 
 			spi132: spi@9b5000 {
@@ -955,7 +980,6 @@
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
 							 <NRF_FUN_TWIM_SCL>;
-				zephyr,pm-device-runtime-auto;
 			};
 
 			spi133: spi@9b6000 {
