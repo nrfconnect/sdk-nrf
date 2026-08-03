@@ -112,7 +112,7 @@ To program the nRF device with the RCP application, complete the following steps
 
                nrfutil install nrf5sdk-tools
 
-            See `nrf5sdk-tools command overview`_ for more information.
+            See `nrfutil nrf5sdk-tools`_ command page for more information.
          #. Generate the RCP firmware package:
 
             .. code-block:: console
