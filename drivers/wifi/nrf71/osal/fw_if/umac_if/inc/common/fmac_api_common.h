@@ -111,21 +111,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mcast_addr(struct nrf_wifi_fmac_dev_c
 
 
 /**
- * @brief Fetch MAC address from OTP.
- * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
- * @param vif_idx Interface index for which the MAC address is to be fetched.
- * @param mac_addr Pointer to the address where the MAC address needs to be copied.
- *
- * This function is used to fetch MAC address from the OTP.
- *
- * @return Command execution status
- */
-enum nrf_wifi_status nrf_wifi_fmac_otp_mac_addr_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-						    unsigned char vif_idx,
-						    unsigned char *mac_addr);
-
-
-/**
  * @brief Set regulatory domain in RPU.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
  * @param reg_info Pointer to the address where the regulatory domain information.
