@@ -30,10 +30,14 @@
 #define BL_STORAGE_SIZE		PM_PROVISION_SIZE
 #else
 /* Address of storage as seen in processor address space */
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
 #define BL_STORAGE_SIZE		DT_REG_SIZE(DT_NODELABEL(bl_storage))
+#else
+#define BL_STORAGE_ADDRESS	FIXED_PARTITION_ADDRESS(bl_storage)
+#define BL_STORAGE_SIZE		FIXED_PARTITION_SIZE(bl_storage)
 #endif
-
+#endif
 
 #if USE_PARTITION_MANAGER
 #define RWX_PROTECTION_REGION	PM_B0_SIZE
