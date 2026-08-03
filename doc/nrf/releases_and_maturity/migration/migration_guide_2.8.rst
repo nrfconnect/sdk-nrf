@@ -192,12 +192,12 @@ nrfutil device
 
     For more information, consult the `nRF Util`_ documentation.
 
-nrfutil-trace
+nrfutil trace
 +++++++++++++
 
 .. toggle::
 
-  * ``nrfutil-trace`` has been updated to version 2.11.0.
+  * ``nrfutil trace`` has been updated to version 2.11.0.
 
     Install the nRF Util ``trace`` command version 2.11.0 as follows::
 
@@ -242,7 +242,7 @@ SEGGER J-Link
       #. Add the J-Link executable to the system path on Linux and MacOS, or to the environment variables on Windows, to run it from anywhere on the system.
 
   * The STM logging feature for the nRF54H20 SoC was tested using the J-Trace PRO V2 Cortex-M, with firmware compiled on ``Mar 28 2024 15:14:04``.
-    Using this feature also requires ``nrfutil-trace`` version 2.10.0 or later.
+    Using this feature also requires `nrfutil trace command`_ version 2.10.0 or later.
 
 nRF Connect Device Manager
 ++++++++++++++++++++++++++

@@ -171,7 +171,7 @@ Configuring the KMU varies depending on the device.
 See the device-specific documentation for more information.
 
 For the nRF54L Series devices, you can use nRF Util for provisioning keys to KMU.
-See `Provisioning cryptographic keys`_ in the nRF Util documentation for more information.
+See `nrfutil device x-provision-keys`_ command page for more information.
 
 .. _key_storage_otp:
 

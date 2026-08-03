@@ -208,7 +208,7 @@ Before you program the sample to your development kit, complete the following st
 1. |connect_kit|
 #. |connect_terminal|
 #. Perform a full erase of the device.
-   You can use nRF Util's `device command <Erasing the device_>`_ for this purpose:
+   You can use `nrfutil device erase`_ command for this purpose:
 
    .. code-block:: console
 

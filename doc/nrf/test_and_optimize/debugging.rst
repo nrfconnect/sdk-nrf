@@ -92,7 +92,7 @@ To ensure that the logger module is enabled and you can see the logs, set the :k
 
 For more advanced debug purposes, see the following:
 
-* `Logging HCI packets`_ for logs with a detailed view of what happens both inside and between Bluetooth devices.
+* `nRF Logger for Bluetooth HCI`_ for logs with a detailed view of what happens both inside and between Bluetooth devices.
 * The :kconfig:option:`CONFIG_MPSL_PIN_DEBUG` Kconfig option to figure out when the radio is used.
   On multi-core SoCs, set this option on the core that runs the radio firmware.
 

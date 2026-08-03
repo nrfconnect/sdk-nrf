@@ -68,10 +68,9 @@ After programming the sample to your development kit, perform the following step
 
    b. USB CDC ACM serial firmware loader:
 
-      Use `nRF Util mcu-manager serial` to perform DFU over serial port.
+      Use `nrfutil mcu-manager serial`_ command to perform DFU over serial port.
 
       * Send the generated update package for the second version of the sample.
-        See `nRF Util mcu-manager serial`_ for details on how to use the command to perform the DFU.
 
 #. Verify that the printed build time corresponds to the new version once the update is complete and the device reboots into the main application.
 
