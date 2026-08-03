@@ -481,6 +481,54 @@ boards:
       size_bytes: 66170880
       offset_bytes: 937984
       children: []
+- board_id: nrf54lc10dk/nrf54lc10a/cpuapp
+  tab_title: nRF54LC10 DK
+  tab_intro_rst: The following memory map is valid for Matter applications running
+    on the nRF54LC10 DK.
+  regions:
+  - id: flash_primary
+    title: Internal flash
+    total_bytes: 1036288
+    base_address: 0
+    address_note_rst: ''
+    partitions:
+    - id: boot_partition
+      label: Bootloader
+      size_bytes: 53248
+      offset_bytes: 0
+      children: []
+    - id: slot0_partition
+      label: Application
+      size_bytes: 925696
+      offset_bytes: 53248
+      children: []
+    - id: factory_data_partition
+      label: Factory data
+      size_bytes: 4096
+      offset_bytes: 991232
+      children: []
+    - id: storage_partition
+      label: Non-volatile storage
+      size_bytes: 40960
+      offset_bytes: 995328
+      children: []
+    - id: padding
+      label: Free space
+      size_bytes: 12288
+      offset_bytes: 1024000
+      children: []
+  - id: sram_cpuapp_sram
+    title: Static RAM (cpuapp_sram)
+    total_bytes: 195584
+    base_address: 536870912
+    address_note_rst: SRAM is located at the address ``0x20000000`` in the memory
+      address space of the application.
+    partitions:
+    - id: cpuapp_sram
+      label: Static RAM
+      size_bytes: 195584
+      offset_bytes: 0
+      children: []
 - board_id: nrf54lm20dk/nrf54lm20a/cpuapp/internal
   tab_title: nRF54LM20 DK with internal memory only
   tab_intro_rst: The following memory map is valid for Matter applications running

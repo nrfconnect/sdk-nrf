@@ -200,6 +200,25 @@ You can adjust the retained partitions for your needs by editing the :ref:`snipp
       | User data logs retention      | 190 kB (0x2F800)     | 2 kB (0x800)         |
       +-------------------------------+----------------------+----------------------+
 
+   .. tab:: nRF54LC10 DK
+
+    The following RAM memory layout is valid for Matter applications running on the nRF54LC10 DK.
+
+    Base SRAM size (size: 0x2FC00 = 191 kB)
+    SRAM is located at the address ``0x20000000`` in the memory address space of the application.
+
+      +-------------------------------+----------------------+----------------------+
+      | Partition                     | Offset               | Size                 |
+      +===============================+======================+======================+
+      | Application core SRAM primary | 0 (0x0)              | 186,8125 kB (0x2EB40)|
+      +-------------------------------+----------------------+----------------------+
+      | Crash retention               | 186,8125 kB (0x2EB40)| 192 B (0xC0)         |
+      +-------------------------------+----------------------+----------------------+
+      | Network logs retention        | 187 kB (0x2EC00)     | 2 kB (0x800)         |
+      +-------------------------------+----------------------+----------------------+
+      | User data logs retention      | 189 kB (0x2F400)     | 2 kB (0x800)         |
+      +-------------------------------+----------------------+----------------------+
+
    .. tab:: nRF54LM20 DK
 
     The following RAM memory layout is valid for Matter applications running on the :zephyr:board:`nrf54lm20dk`.
