@@ -660,6 +660,14 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	memcpy(vif_ctx_zep->mac_addr.addr,
 		fixed_mac_addr,
 		WIFI_MAC_ADDR_LEN);
+
+	/* The configured address serves the first interface, the others derive
+	 * their address from it to avoid a duplicate address on the air.
+	 */
+	if (vif_ctx_zep->vif_idx > 0) {
+		nrf_wifi_mac_addr_derive(vif_ctx_zep->mac_addr.addr,
+					 vif_ctx_zep->vif_idx);
+	}
 #elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
 	char random_mac_addr[WIFI_MAC_ADDR_LEN];
 
