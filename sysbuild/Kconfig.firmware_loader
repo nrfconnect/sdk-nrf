@@ -36,7 +36,7 @@ config FIRMWARE_LOADER_IMAGE_NAME
 	default "usb_mcumgr" if FIRMWARE_LOADER_IMAGE_USB_MCUMGR
 
 config FIRMWARE_LOADER_IMAGE_PATH
-	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/single_slot/sysbuild/ble_mcumgr" if FIRMWARE_LOADER_IMAGE_BLE_MCUMGR
 	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/dfu/fw_loader/usb_mcumgr" if FIRMWARE_LOADER_IMAGE_USB_MCUMGR
 
 config FIRMWARE_LOADER_UPDATE

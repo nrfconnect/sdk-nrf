@@ -363,7 +363,7 @@ For devices with a separate radio core, the firmware loader solution has a diffe
 For details, see :ref:`ug_bootloader_firmware_loader_mode_nrf54h20`.
 
 The project must also configure MCUboot to operate in firmware loader mode and specify a firmware loader image in the :file:`sysbuild.conf` file.
-For example, to select the :ref:`fw_loader_ble_mcumgr` firmware loader image, set the following options:
+For example, to select the :ref:`fw_loader_ble_mcumgr` firmware loader image included with the :ref:`single_slot_sample` sample, set the following options:
 
 .. code-block:: cfg
 
