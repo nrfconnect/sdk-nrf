@@ -500,8 +500,8 @@ endif # NRF_WIFI_LOW_POWER
 config WIFI_FIXED_MAC_ADDRESS
 	string "Wi-Fi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
 	help
-	  This option overrides the MAC address read from the xICR registers.
-	  It is strictly for testing purposes only.
+	  This option overrides the MAC address read from the xICR registers and
+	  is used for the first interface. It is strictly for testing purposes only.
 
 choice WIFI_MAC_ADDRESS
 	prompt "Wi-Fi MAC address type"
@@ -528,7 +528,11 @@ config WIFI_NRF71_XICR_MAC_ADDRESS
 config WIFI_FIXED_MAC_ADDRESS_ENABLED
 	bool "Fixed MAC address"
 	help
-	  Enable fixed MAC address
+	  Enable fixed MAC address.
+	  The address configured in WIFI_FIXED_MAC_ADDRESS is used for the first
+	  interface. The remaining interfaces derive their address from it by
+	  incrementing the device-unique part and setting the locally administered
+	  bit, so that they do not share an address with the first interface.
 
 config WIFI_RANDOM_MAC_ADDRESS
 	bool "Random MAC address generation at runtime"
@@ -536,6 +540,8 @@ config WIFI_RANDOM_MAC_ADDRESS
 	help
 	  This option enables random MAC address generation at runtime.
 	  The random MAC address is generated using the entropy device random generator.
+	  Each interface gets its own random address, so the addresses are not
+	  related to each other and change on every boot.
 
 endchoice
 

@@ -97,8 +97,8 @@ static void mac_addr_from_regs(uint32_t low,
  * administered bit is set, so that the derived addresses do not collide with
  * globally unique addresses assigned to other devices.
  */
-static void mac_addr_derive(uint8_t mac_addr[WIFI_MAC_ADDR_LEN],
-			    unsigned char vif_idx)
+void nrf_wifi_mac_addr_derive(uint8_t mac_addr[WIFI_MAC_ADDR_LEN],
+			      unsigned char vif_idx)
 {
 	uint32_t dev_unique = sys_get_be24(&mac_addr[MAC_ADDR_DEV_UNIQUE_OFFSET]);
 
@@ -220,7 +220,7 @@ static int xicr_block_mac_addr_get(bool uicr,
 	memcpy(mac_addr, slot_addr[base_slot], WIFI_MAC_ADDR_LEN);
 
 	if (vif_idx > 0) {
-		mac_addr_derive(mac_addr, vif_idx);
+		nrf_wifi_mac_addr_derive(mac_addr, vif_idx);
 	}
 
 	return 0;
@@ -261,7 +261,7 @@ static int random_mac_addr_get(unsigned char vif_idx,
 	mac_addr[4] = (uint8_t)(seed[0] >> 8);
 	mac_addr[5] = (uint8_t)(seed[0]);
 
-	mac_addr_derive(mac_addr, vif_idx);
+	nrf_wifi_mac_addr_derive(mac_addr, vif_idx);
 
 	return 0;
 }

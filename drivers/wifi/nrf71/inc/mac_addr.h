@@ -90,6 +90,20 @@ int nrf_wifi_xicr_mac_addr_slot_read(bool uicr,
 bool nrf_wifi_mac_addr_regs_empty(uint32_t low, uint32_t high);
 
 /**
+ * @brief Derive the MAC address of a secondary interface from a base address.
+ *
+ * The device-unique part of the address, that is, bits [23:0], is incremented
+ * by the interface index and the locally administered bit is set, so that the
+ * derived address does not collide with a globally unique address assigned to
+ * another device.
+ *
+ * @param mac_addr Base address, updated in place.
+ * @param vif_idx Index of the virtual interface to derive the address for.
+ */
+void nrf_wifi_mac_addr_derive(uint8_t mac_addr[WIFI_MAC_ADDR_LEN],
+			      unsigned char vif_idx);
+
+/**
  * @brief Number of MAC address slots per xICR register block.
  */
 #define NRF_WIFI_XICR_MAC_ADDR_SLOTS 2
