@@ -41,10 +41,13 @@ if(SB_CONFIG_SECURE_BOOT)
         BOARD_REVISION ${BOARD_REVISION}
       )
 
-      include(image_flasher.cmake)
-      add_image_flasher(NAME net_provision HEX_FILE "${CMAKE_BINARY_DIR}/net_provision.hex" BASE_IMAGE b0n)
       add_overlay_dts(${SB_CONFIG_NETCORE_IMAGE_NAME}
         ${ZEPHYR_NRF_MODULE_DIR}/sysbuild/overlays/s0-partition.overlay
+      )
+
+      set(b0n_SIGNING_SCRIPT
+        "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/b0n_provision_merge.cmake" CACHE INTERNAL
+        "b0n provision merging script" FORCE
       )
 
       if(SB_CONFIG_NETCORE_APP_UPDATE)

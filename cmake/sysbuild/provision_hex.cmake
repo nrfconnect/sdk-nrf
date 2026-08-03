@@ -247,4 +247,36 @@ if(SB_CONFIG_SECURE_BOOT_NETCORE)
   endif()
 
   provision("${main_app}" "net_")
+
+  if(NOT SB_CONFIG_PARTITION_MANAGER)
+    # b0n and provision data need to be merged into a single hex to allow for it to be flashed
+    # without one erasing the other, due to provision data being placed part the way in the b0n's
+    # sector which would result in erasing existing data with separate hex files
+    sysbuild_get(b0n_kernel_bin_name IMAGE b0n VAR CONFIG_KERNEL_BIN_NAME KCONFIG)
+
+    add_custom_command(
+      OUTPUT
+        ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+      COMMAND
+        ${PYTHON_EXECUTABLE}
+        ${ZEPHYR_BASE}/scripts/build/mergehex.py
+        -o ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+        ${CMAKE_BINARY_DIR}/net_provision.hex
+        ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
+      DEPENDS
+        b0n_extra_byproducts
+        ${CMAKE_BINARY_DIR}/b0n/zephyr/${b0n_kernel_bin_name}.hex
+        net_provision_target
+        ${CMAKE_BINARY_DIR}/net_provision.hex
+      WORKING_DIRECTORY
+        ${APPLICATION_BINARY_DIR}
+    )
+
+    add_custom_target(
+      ${slot}_combined_app_provision_hex_target
+      ALL
+      DEPENDS
+        ${APPLICATION_BINARY_DIR}/b0n_provision_merged.hex
+    )
+  endif()
 endif()
