@@ -1,0 +1,43 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if WIFI_NRF71
+
+config WIFI_NRF71_PATCH
+	bool "Include nRF7120 Wi-Fi ROM patches in the application image"
+	depends on !IS_BOOTLOADER_IMG
+	help
+	  The Wi-Fi ROM patches are placed at fixed internal NVM addresses
+	  required by the Wi-Fi Core. When MCUboot is enabled, the merged image
+	  including the application and the Wi-Fi ROM patches is signed and
+	  delivered as part of standard firmware updates.
+
+	  Note: The regular ELF-derived artifacts do not contain Wi-Fi patch
+	  data. Only the merged output used for programming and signing
+	  includes the patches.
+
+if WIFI_NRF71_PATCH
+
+choice WIFI_NRF71_PATCH_VERSION
+	prompt "nRF7120 Wi-Fi ROM patch version"
+	default WIFI_NRF71_PATCH_VERSION_0_1_0
+	help
+	  Out-of-tree modules can add further choice entries here, each with
+	  a matching WIFI_NRF71_PATCH_DIR default below.
+
+config WIFI_NRF71_PATCH_VERSION_0_1_0
+	bool "0.1.0"
+
+endchoice
+
+config WIFI_NRF71_PATCH_DIR
+	string
+	default "$(ZEPHYR_NRFXLIB_MODULE_DIR)/nrf71_wifi/bins/0.1.0" if WIFI_NRF71_PATCH_VERSION_0_1_0
+	help
+	  Release directory containing manifest.json, the patch binaries, and
+	  nrf7120_wifi_patch.dtsi. The selected patch must be accompanied by
+	  this overlay in the application's devicetree.
+
+endif # WIFI_NRF71_PATCH
+
+endif # WIFI_NRF71
