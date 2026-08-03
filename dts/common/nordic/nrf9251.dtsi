@@ -28,12 +28,14 @@
 			device_type = "cpu";
 			clocks = <&cpuapp_hsfll>;
 			clock-frequency = <DT_FREQ_M(256)>;
+			cpu-power-states = <&idle_cache_retained &idle_cache_disabled &s2ram>;
 		};
 
 		cpuppr: cpu@d {
 			compatible = "nordic,vpr", "riscv";
 			reg = <13>;
 			device_type = "cpu";
+			clocks = <&fll16m>;
 			clock-frequency = <DT_FREQ_M(16)>;
 			riscv,isa-base = "rv32e";
 			riscv,isa-extensions = "e", "m", "c", "zicsr";
@@ -113,6 +115,32 @@
 				#mbox-cells = <1>;
 				nordic,tasks = <32>;
 				nordic,tasks-mask = <0xffff0000>;
+			};
+		};
+
+		power-states {
+			// substate-id = <0>; is reserved for "idle", cache powered on
+			idle_cache_retained: idle_cache_retained {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-idle";
+				substate-id = <1>;
+				min-residency-us = <700>;
+				exit-latency-us = <5>;
+			};
+
+			idle_cache_disabled: idle_cache_disabled {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-idle";
+				substate-id = <2>;
+				min-residency-us = <1000>;
+				exit-latency-us = <7>;
+			};
+
+			s2ram: s2ram {
+				compatible = "zephyr,power-state";
+				power-state-name = "suspend-to-ram";
+				min-residency-us = <200000>;
+				exit-latency-us = <33>;
 			};
 		};
 	};
@@ -489,6 +517,7 @@
 				clocks = <&hsfll120>;
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			ppib121: ppib@8ef000 {
@@ -598,6 +627,7 @@
 				gpiote-instance = <&gpiote130>;
 				ngpios = <5>;
 				port = <0>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			gpio1: gpio@938200 {
@@ -609,6 +639,7 @@
 				gpiote-instance = <&gpiote130>;
 				ngpios = <12>;
 				port = <1>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			gpio2: gpio@938400 {
@@ -620,6 +651,7 @@
 				gpiote-instance = <&gpiote130>;
 				ngpios = <10>;
 				port = <2>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			gpio5: gpio@938a00 {
@@ -630,6 +662,7 @@
 				gpio-controller;
 				ngpios = <6>;
 				port = <5>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			gpio10: gpio@939400 {
@@ -640,6 +673,7 @@
 				gpio-controller;
 				ngpios = <8>;
 				port = <10>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			gpio12: gpio@939800 {
@@ -651,6 +685,7 @@
 				gpiote-instance = <&gpiote130>;
 				ngpios = <3>;
 				port = <12>;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			dppic131: dppic@981000 {
@@ -808,6 +843,7 @@
 				nordic,clockpin-enable = <NRF_FUN_UART_TX>;
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			i2c131: i2c@9a6000 {
@@ -851,6 +887,7 @@
 				nordic,clockpin-enable = <NRF_FUN_UART_TX>;
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			ppib134: ppib@9ad000 {
@@ -942,6 +979,7 @@
 				nordic,clockpin-enable = <NRF_FUN_UART_TX>;
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			i2c133: i2c@9b6000 {
@@ -985,6 +1023,7 @@
 				nordic,clockpin-enable = <NRF_FUN_UART_TX>;
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				zephyr,pm-device-runtime-auto;
 			};
 
 			ppib135: ppib@9bd000 {
