@@ -19,6 +19,7 @@
 #include <nrf71_wifi_ctrl.h>
 #include <nrf71_wifi_rf.h>
 #include <util.h>
+#include <mac_addr.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -336,15 +337,24 @@ int nrf71_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
 			goto err;
 		}
-#elif CONFIG_WIFI_OTP_MAC_ADDRESS
-		status = nrf_wifi_fmac_otp_mac_addr_get(off_raw_tx_drv_priv.rpu_ctx_zep.rpu_ctx,
-							0,
-							rpu_ctx_zep->mac_addr);
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Fetching of MAC address from OTP failed",
-				__func__);
+#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+		int ret = nrf_wifi_xicr_mac_addr_get(0,
+						     rpu_ctx_zep->mac_addr,
+						     NULL);
+
+		if (ret) {
+			LOG_ERR("%s: Fetching of MAC address from xICR failed: %d",
+				__func__,
+				ret);
 			goto err;
 		}
+#else
+		/* Offloaded raw TX has no interface to generate an address for,
+		 * so a MAC address type that is resolved per interface is not
+		 * supported here. Reject it at build time rather than failing
+		 * the validity check below with an all-zero address.
+		 */
+#error "Offloaded raw TX needs a fixed or an xICR MAC address, see choice WIFI_MAC_ADDRESS"
 #endif /* CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED */
 
 		if (!nrf_wifi_utils_is_mac_addr_valid(rpu_ctx_zep->mac_addr)) {
