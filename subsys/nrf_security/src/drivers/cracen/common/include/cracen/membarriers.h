@@ -40,20 +40,10 @@ static inline void cmb(void)
  */
 static inline void wmb(void)
 {
-#ifdef __aarch64__
-	__asm__ volatile("dsb sy;" ::: "memory");
-#elif defined(__amd64__)
-	__asm__ volatile("sfence;" ::: "memory");
-#else
-	/* CUSTOMIZATION: implement CPU specific memory barrier if it has any.
-	 * Use at least a compiler memory barrier.
-	 */
-
 	/* Cortex-M33 does not support wmb, but cmb/DMB is more
 	 * restrictive and therefore safe to use.
 	 */
 	cmb();
-#endif
 }
 
 /** CPU read memory barrier.
@@ -66,20 +56,10 @@ static inline void wmb(void)
  */
 static inline void rmb(void)
 {
-#ifdef __aarch64__
-	__asm__ volatile("dsb sy;" ::: "memory");
-#elif defined(__amd64__)
-	__asm__ volatile("lfence;" ::: "memory");
-#else
-	/* CUSTOMIZATION: implement CPU specific memory barrier if it has any.
-	 * Use at least a compiler memory barrier.
-	 */
-
 	/* Cortex-M33 does not support rmb, but cmb/DMB is more
 	 * restrictive and therefore safe to use.
 	 */
 	cmb();
-#endif
 }
 
 /** @} */
