@@ -161,6 +161,12 @@ static void radio_vdma_jobs_set(nrf_vdma_job_t *jobs, uint8_t *buffer, size_t si
 static uint32_t tx_packet_cnt;
 /* Number of received packets with valid CRC. */
 static uint32_t rx_packet_cnt;
+#if NRF_RADIO_HAS_EVDMA
+/* Number of packets the running RX test waits for, zero when it runs until cancelled. */
+static uint32_t rx_packets_num;
+/* Number of received packets seen the last time the RX timeout work ran. */
+static uint32_t rx_packet_cnt_polled;
+#endif /* NRF_RADIO_HAS_EVDMA */
 
 /* Radio current channel (frequency). */
 static uint8_t current_channel;
@@ -880,6 +886,45 @@ static void radio_modulated_tx_carrier(uint8_t mode, int8_t txpower, uint8_t cha
 	radio_start(NRF_RADIO_TASK_TXEN, false);
 }
 
+/* Reception is restarted either with a START task, which puts the receiver back on air right away,
+ * or by ramping the receiver down and up again. Ramping up costs tens of microseconds, which only
+ * the modes below can afford.
+ */
+static bool radio_rx_restart_needs_ramp_up(nrf_radio_mode_t mode)
+{
+#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
+	/* Coded PHY post-processes the packet after it has been received. */
+	if ((mode == NRF_RADIO_MODE_BLE_LR125KBIT) || (mode == NRF_RADIO_MODE_BLE_LR500KBIT)) {
+		return true;
+	}
+#else
+	ARG_UNUSED(mode);
+#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
+
+	return false;
+}
+
+static void radio_rx_configure(nrf_radio_mode_t mode)
+{
+	bool ramp_up = radio_rx_restart_needs_ramp_up(mode);
+	uint32_t shorts = NRF_RADIO_SHORT_READY_START_MASK;
+
+	if (ramp_up) {
+		shorts |= RADIO_TEST_SHORT_END_DISABLE_MASK | NRF_RADIO_SHORT_DISABLED_RXEN_MASK;
+	}
+
+#if NRF_RADIO_HAS_EVDMA
+	nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
+	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_PHYEND_MASK);
+#else
+	if (!ramp_up) {
+		shorts |= NRF_RADIO_SHORT_END_START_MASK;
+	}
+#endif /* NRF_RADIO_HAS_EVDMA */
+
+	nrf_radio_shorts_enable(NRF_RADIO, shorts);
+}
+
 static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern pattern,
 		     uint32_t rx_packet_num)
 {
@@ -887,19 +932,7 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 	radio_mode_set(NRF_RADIO, mode);
 
-#if CONFIG_HAS_HW_NRF_RADIO_BLE_CODED
-	if ((mode == NRF_RADIO_MODE_BLE_LR125KBIT) || (mode == NRF_RADIO_MODE_BLE_LR500KBIT)) {
-		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
-							   RADIO_TEST_SHORT_END_DISABLE_MASK |
-							   NRF_RADIO_SHORT_DISABLED_RXEN_MASK);
-	} else {
-		nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK |
-							   NRF_RADIO_SHORT_END_START_MASK);
-	}
-#else
-	nrf_radio_shorts_enable(NRF_RADIO,
-				NRF_RADIO_SHORT_READY_START_MASK | NRF_RADIO_SHORT_END_START_MASK);
-#endif /* CONFIG_HAS_HW_NRF_RADIO_BLE_CODED */
+	radio_rx_configure(mode);
 
 #if NRF_RADIO_HAS_PACKETPTR
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
@@ -913,6 +946,10 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 	radio_channel_set(mode, channel);
 
 	rx_packet_cnt = 0;
+#if NRF_RADIO_HAS_EVDMA
+	rx_packets_num = rx_packet_num;
+	rx_packet_cnt_polled = 0;
+#endif /* NRF_RADIO_HAS_EVDMA */
 
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK);
 
@@ -1219,6 +1256,20 @@ void toggle_dcdc_state(uint8_t dcdc_state)
 
 static void rx_timeout_work_handler(struct k_work *work)
 {
+#if NRF_RADIO_HAS_EVDMA
+	/* Reception ends once the requested number of packets has arrived, or once packets stop
+	 * arriving for RX_PACKET_TIMEOUT_MS. The interrupt handler leaves the timeout standing
+	 * while packets come in, so the second case is the one where the packet counter has not
+	 * moved since the previous run.
+	 */
+	if ((rx_packets_num != 0) && (rx_packet_cnt < rx_packets_num) &&
+	    (rx_packet_cnt != rx_packet_cnt_polled)) {
+		rx_packet_cnt_polled = rx_packet_cnt;
+		k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
+		return;
+	}
+#endif /* NRF_RADIO_HAS_EVDMA */
+
 	radio_disable();
 	/* Send off signal for nRF54H20 errata HMPAN-216 */
 #if NRF_ERRATA_STATIC_CHECK(54H, 216)
@@ -1351,31 +1402,65 @@ void on_radio_end(const struct radio_test_config *config)
 	}
 }
 
+#if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
+static void on_radio_phyend(const struct radio_test_config *config)
+{
+#if NRF_RADIO_HAS_EVDMA
+	if ((config->type == RX) || (config->type == RX_SWEEP)) {
+		/* Put the receiver back on air for the next packet. Modes that restart by ramping
+		 * up instead do so through the shorts radio_rx_configure() enabled.
+		 */
+		if (!radio_rx_restart_needs_ramp_up(config->mode)) {
+			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
+		}
+		return;
+	}
+#endif /* NRF_RADIO_HAS_EVDMA */
+	on_radio_end(config);
+}
+#endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
+
 void radio_handler(const void *context)
 {
 	const struct radio_test_config *config =
 		(const struct radio_test_config *) context;
 
+#if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
+	/* PHYEND is handled ahead of the packet handling below because on EasyVDMA targets this
+	 * is where reception is restarted. The transmitter sends packets back to back, so every
+	 * microsecond between one packet ending and the radio listening again risks missing the
+	 * next one, and the shorter the packet the more that costs.
+	 */
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_PHYEND_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_PHYEND)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
+		on_radio_phyend(config);
+	}
+#endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
+
 	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK) &&
 	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_CRCOK)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_CRCOK);
 		rx_packet_cnt++;
+
 		if (config->params.rx.packets_num) {
 			if (rx_packet_cnt == config->params.rx.packets_num) {
 				k_work_reschedule(&rx_timeout_work, K_NO_WAIT);
-			} else {
+			} else if (!NRF_RADIO_HAS_EVDMA) {
+				/* The first packet switches the timeout from waiting
+				 * CONFIG_RADIO_TEST_RX_TIMEOUT for reception to start to
+				 * waiting RX_PACKET_TIMEOUT_MS between packets. On EasyVDMA
+				 * that is the only rearm: this handler also restarts
+				 * reception, and the microseconds a rearm takes would come
+				 * out of the gap between two packets on air, so
+				 * rx_timeout_work_handler() polls the counter instead.
+				 */
 				k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
+			} else {
+				/* Do nothing */
 			}
 		}
 	}
-
-#if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
-	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_PHYEND_MASK) &&
-	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_PHYEND)) {
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
-		on_radio_end(config);
-	}
-#endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
 
 	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_END_MASK) &&
 	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
