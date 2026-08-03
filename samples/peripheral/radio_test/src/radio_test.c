@@ -26,6 +26,10 @@
 #include <hal/nrf_egu.h>
 #include <helpers/nrfx_gppi.h>
 
+#if NRF_RADIO_HAS_EVDMA
+#include <helpers/nrf_vdma.h>
+#endif /* NRF_RADIO_HAS_EVDMA */
+
 #if CONFIG_FEM
 #include "fem_al/fem_al.h"
 #endif /* CONFIG_FEM */
@@ -117,6 +121,42 @@ DT_NODE_HAS_PROP(ZEPHYR_USER_NODE, address_end_gpios)
 static uint8_t tx_packet[RADIO_MAX_PAYLOAD_LEN];
 /* Buffer for the radio RX packet. */
 static uint8_t rx_packet[RADIO_MAX_PAYLOAD_LEN];
+
+/* Size of one PDU, the length field included, for the given radio mode. */
+static size_t radio_pdu_len_get(nrf_radio_mode_t mode)
+{
+#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
+	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
+		return IEEE_MAX_PAYLOAD_LEN;
+	}
+#else
+	ARG_UNUSED(mode);
+#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
+
+	return RADIO_MAX_PAYLOAD_LEN;
+}
+
+#if NRF_RADIO_HAS_EVDMA
+/* EasyVDMA job lists describing the TX and RX packet buffers, one data job each followed by the
+ * terminating null job.
+ *
+ * The job is sized to one PDU rather than to the buffer, and that is what keeps each packet
+ * starting at the head of the list: EasyVDMA resumes where the previous packet left it and returns
+ * to the head by itself only once a list has been consumed to the byte. Nothing re-arms the list
+ * between packets.
+ */
+static nrf_vdma_job_t tx_vdma_jobs[2];
+static nrf_vdma_job_t rx_vdma_jobs[2];
+
+static void radio_vdma_jobs_set(nrf_vdma_job_t *jobs, uint8_t *buffer, size_t size)
+{
+	nrf_vdma_job_fill(&jobs[0], buffer, size, NRF_VDMA_ATTRIBUTE_PLAIN_DATA_BUF_WRITE);
+	nrf_vdma_job_terminate(&jobs[1]);
+
+	NRF_RADIO->VDMACONFIG.LISTPTR = (uint32_t)jobs;
+}
+#endif /* NRF_RADIO_HAS_EVDMA */
+
 /* Number of transmitted packets. */
 static uint32_t tx_packet_cnt;
 /* Number of received packets with valid CRC. */
@@ -661,15 +701,7 @@ static void generate_modulated_rf_packet(uint8_t mode,
 	radio_config(mode, pattern);
 
 	/* One byte used for size, actual size is SIZE-1 */
-#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
-	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-		tx_packet[0] = IEEE_MAX_PAYLOAD_LEN - 1;
-	} else {
-		tx_packet[0] = sizeof(tx_packet) - 1;
-	}
-#else
-	tx_packet[0] = sizeof(tx_packet) - 1;
-#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
+	tx_packet[0] = radio_pdu_len_get(mode) - 1;
 
 	switch (pattern) {
 	case TRANSMIT_PATTERN_RANDOM:
@@ -688,8 +720,10 @@ static void generate_modulated_rf_packet(uint8_t mode,
 
 #if NRF_RADIO_HAS_PACKETPTR
 	nrf_radio_packetptr_set(NRF_RADIO, tx_packet);
+#elif NRF_RADIO_HAS_EVDMA
+	radio_vdma_jobs_set(tx_vdma_jobs, tx_packet, radio_pdu_len_get(mode));
 #else
-	NRF_RADIO->VDMACONFIG.LISTPTR = (uint32_t)tx_packet;
+#error "Radio has neither PACKETPTR nor EasyVDMA"
 #endif /* NRF_RADIO_HAS_PACKETPTR */
 }
 
@@ -869,8 +903,10 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 
 #if NRF_RADIO_HAS_PACKETPTR
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
+#elif NRF_RADIO_HAS_EVDMA
+	radio_vdma_jobs_set(rx_vdma_jobs, rx_packet, radio_pdu_len_get(mode));
 #else
-	NRF_RADIO->VDMACONFIG.LISTPTR = (uint32_t)rx_packet;
+#error "Radio has neither PACKETPTR nor EasyVDMA"
 #endif /* NRF_RADIO_HAS_PACKETPTR */
 
 	radio_config(mode, pattern);
@@ -1153,23 +1189,8 @@ void radio_test_cancel(enum radio_test_mode type)
 
 void radio_rx_stats_get(struct radio_rx_stats *rx_stats)
 {
-	size_t size;
-
-#if CONFIG_HAS_HW_NRF_RADIO_IEEE802154
-	nrf_radio_mode_t radio_mode;
-
-	radio_mode = nrf_radio_mode_get(NRF_RADIO);
-	if (radio_mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-		size = IEEE_MAX_PAYLOAD_LEN;
-	} else {
-		size = sizeof(rx_packet);
-	}
-#else
-	size = sizeof(rx_packet);
-#endif /* CONFIG_HAS_HW_NRF_RADIO_IEEE802154 */
-
 	rx_stats->last_packet.buf = rx_packet;
-	rx_stats->last_packet.len = size;
+	rx_stats->last_packet.len = radio_pdu_len_get(nrf_radio_mode_get(NRF_RADIO));
 	rx_stats->packet_cnt = rx_packet_cnt;
 }
 
