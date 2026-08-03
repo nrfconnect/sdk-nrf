@@ -673,6 +673,7 @@
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers
 /samples/subsys/rtfw/                     @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/tfm/                             @nrfconnect/ncs-aegir
+/samples/vpr/                             @lucasvdp
 /samples/vtf_monitoring/                  @nrfconnect/ncs-malago
 /samples/wifi/                            @nrfconnect/ncs-wcg-samples
 /samples/wifi/nrf_cloud/                  @nrfconnect/ncs-bifrost
@@ -805,6 +806,7 @@
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-doc-leads
 /samples/subsys/rtfw/**/*.rst             @nrfconnect/ncs-lowlevel-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
+/samples/vpr/**/*.rst                     @nrfconnect/ncs-lowlevel-doc
 /samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-wifi-doc
