@@ -9,7 +9,7 @@
 
 #include <zephyr/kernel.h>
 
-#if !defined(CONFIG_HW_CC3XX)
+#if !CONFIG_HW_CC3XX
 
 /* This needs to be a k_mutex and not a pointer because Oberon uses this
  * directly in its oberon_ctr_drbg_context_t struct.

@@ -27,7 +27,7 @@
 			  BA431_FLD_Control_HealthTestBypass_MASK | \
 			  BA431_FLD_Control_Conditioning_Bypass_MASK)
 
-#if defined(CONFIG_CRACEN_HW_VERSION_LITE)
+#if CONFIG_CRACEN_HW_VERSION_LITE
 #define RNG_REPEATTHRESHOLD_VAL (21)
 #define RNG_PROPTESTCUTOFF_VAL	(311)
 

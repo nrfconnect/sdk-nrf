@@ -22,9 +22,9 @@
 #include <nrfx.h>
 #include <nrfx_kmu.h>
 
-#if defined(CONFIG_SOC_SERIES_NRF54L)
+#if CONFIG_SOC_SERIES_NRF54L
 #include <nrfx_rramc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif CONFIG_SOC_SERIES_NRF71
 #include <nrfx_mramc.h>
 #define MRAM_CONFIGNVR_SICR_PAGE 3
 #endif
@@ -242,8 +242,8 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 static void cracen_kmu_key_slot_provision_write_enable_set(bool enable,
 							   uint8_t *orig_write_buf_size)
 {
-#if defined(CONFIG_SOC_SERIES_NRF54L)
-#if defined(__NRF_TFM__)
+#if CONFIG_SOC_SERIES_NRF54L
+#if __NRF_TFM__
 	nrf_rramc_config_t rramc_config;
 
 	nrf_rramc_config_get(NRF_RRAMC_S, &rramc_config);
@@ -258,7 +258,7 @@ static void cracen_kmu_key_slot_provision_write_enable_set(bool enable,
 	nrfx_rramc_write_enable_set(enable, 0);
 #endif /* __NRF_TFM__ */
 
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif CONFIG_SOC_SERIES_NRF71
 	/* Enable/disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(enable, MRAM_CONFIGNVR_SICR_PAGE);
 #endif /* CONFIG_SOC_SERIES_NRF71 */
@@ -280,9 +280,9 @@ static int cracen_kmu_key_slot_provision(const nrfx_kmu_key_slot_data_t *key_slo
 
 static void cracen_kmu_key_slot_revoke_enable_set(bool enable)
 {
-#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
+#if !__NRF_TFM__ && CONFIG_SOC_SERIES_NRF54L
 	nrfx_rramc_write_enable_set(enable, 0);
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif CONFIG_SOC_SERIES_NRF71
 	/* Enable/disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(enable, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
@@ -300,8 +300,8 @@ static int cracen_kmu_key_slots_revoke(uint32_t slot_id, uint32_t num_slots)
 	return kmu_status;
 }
 
-#if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT) ||                                 \
-	defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT)
+#if CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT ||                                 \
+	CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 psa_status_t cracen_provision_prot_ram_inv_slots(void)
 {
 	uint8_t rng_buffer[2 * CRACEN_KMU_SLOT_KEY_SIZE];
@@ -473,10 +473,10 @@ static psa_status_t get_kmu_slot_id_and_metadata(mbedtls_svc_key_id_t key_id,
 	return read_primary_slot_metadata(*slot_id, metadata);
 }
 
-#if	defined(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS) || \
-	defined(PSA_NEED_CRACEN_ED25519PH)		    || \
-	defined(PSA_NEED_CRACEN_ECDSA)			    || \
-	defined(PSA_NEED_CRACEN_HMAC)
+#if	PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS || \
+	PSA_NEED_CRACEN_ED25519PH		    || \
+	PSA_NEED_CRACEN_ECDSA			    || \
+	PSA_NEED_CRACEN_HMAC
 static bool can_sign(const psa_key_attributes_t *key_attr)
 {
 	return (psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_SIGN_MESSAGE) ||
@@ -484,7 +484,7 @@ static bool can_sign(const psa_key_attributes_t *key_attr)
 }
 #endif
 
-#if defined(PSA_NEED_CRACEN_ECDH)
+#if PSA_NEED_CRACEN_ECDH
 static bool can_derive(const psa_key_attributes_t *key_attr)
 {
 	return psa_get_key_usage_flags(key_attr) & PSA_KEY_USAGE_DERIVE;
@@ -1370,9 +1370,9 @@ psa_status_t cracen_kmu_block(const psa_key_attributes_t *key_attr)
 		return psa_status;
 	}
 
-#if defined(NRF_KMU_HAS_PUSH_BLOCK)
+#if NRF_KMU_HAS_PUSH_BLOCK
 	kmu_status = nrfx_kmu_key_slots_push_block(slot_id, slot_count);
-#elif defined(NRF_KMU_HAS_BLOCK)
+#elif NRF_KMU_HAS_BLOCK
 	kmu_status = nrfx_kmu_key_slots_block(slot_id, slot_count);
 #else
 #error "KMU block functionality is missing"

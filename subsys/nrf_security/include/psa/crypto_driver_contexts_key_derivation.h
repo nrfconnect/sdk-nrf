@@ -24,11 +24,11 @@
 #include "oberon_hmac_drbg.h"
 #endif
 
-#if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER) || defined(PSA_NEED_CRACEN_PAKE_DRIVER)
+#if PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER || PSA_NEED_CRACEN_PAKE_DRIVER
 #include "cracen_psa_primitives.h"
 #endif
 
-#if defined(PSA_CRYPTO_DRIVER_IRONSIDE)
+#if PSA_CRYPTO_DRIVER_IRONSIDE
 #include "ironside_psa_types.h"
 #endif
 

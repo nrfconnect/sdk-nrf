@@ -7,7 +7,7 @@
 #include <mbedtls/threading.h>
 #include <zephyr/kernel.h>
 
-#if !defined(CONFIG_HW_CC3XX)
+#if !CONFIG_HW_CC3XX
 
 #define MBEDTLS_MUTEX_DEFINE(name)                                                \
 	mbedtls_threading_mutex_t name = {                                        \

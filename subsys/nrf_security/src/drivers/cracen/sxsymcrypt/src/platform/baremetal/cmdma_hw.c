@@ -13,7 +13,7 @@
 #include "../../cmdma.h"
 #include <cracen/hardware.h>
 #include <cracen/statuscodes.h>
-#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+#if CONFIG_PSA_WANT_KEY_TYPE_AES
 #include <cracen/prng_pool.h>
 #include <sxsymcrypt/cmmask.h>
 #endif
@@ -46,7 +46,7 @@ int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags)
 {
 	cracen_acquire();
 
-#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+#if CONFIG_PSA_WANT_KEY_TYPE_AES
 	uint32_t prng_value;
 	int err;
 
@@ -68,7 +68,7 @@ int sx_hw_reserve(struct sx_dmactl *dma, sx_hw_reserve_flags_t flags)
 		sx_hw_enable_interrupts();
 	}
 
-#if defined(CONFIG_PSA_WANT_KEY_TYPE_AES)
+#if CONFIG_PSA_WANT_KEY_TYPE_AES
 	if (flags & SX_HW_RESERVE_CM_ENABLED) {
 		err = sx_cm_load_mask(prng_value);
 		safe_memzero(&prng_value, sizeof(prng_value));

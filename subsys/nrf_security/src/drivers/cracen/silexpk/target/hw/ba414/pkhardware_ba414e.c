@@ -345,7 +345,7 @@ int sx_pk_get_status(sx_pk_req *req)
 {
 	rmb(); /* comment for compliance */
 
-#if defined(CONFIG_CRACEN_IKG)
+#if CONFIG_CRACEN_IKG
 	if (sx_pk_is_ik_cmd(req)) {
 		return sx_ik_read_status(req);
 	}

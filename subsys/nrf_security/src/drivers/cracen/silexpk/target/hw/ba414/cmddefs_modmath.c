@@ -53,7 +53,7 @@ static const struct sx_pk_cmd_def CMD_MOD_EXP = {
 	PK_OP_MDEXP, (1 << OP_SLOT_MOD_EXP_RESULT),
 	(1 << OP_SLOT_MOD_EXP_M) | (1 << OP_SLOT_MOD_EXP_INPUT) | (1 << OP_SLOT_MOD_EXP_EXP),
 	OP_SLOT_PTR_A,
-#if defined(CONFIG_CRACEN_RSA_COUNTERMEASURES)
+#if CONFIG_CRACEN_RSA_COUNTERMEASURES
 	/* Generic modular exponentiation does not support exponent randomization in RSA context. */
 	SX_PK_OP_FLAGS_MOD_RAND_CM
 #endif
@@ -64,7 +64,7 @@ static const struct sx_pk_cmd_def CMD_MOD_EXP_FF = {
 	PK_OP_MDEXP, (1 << OP_SLOT_MOD_EXP_RESULT),
 	(1 << OP_SLOT_MOD_EXP_M) | (1 << OP_SLOT_MOD_EXP_INPUT) | (1 << OP_SLOT_MOD_EXP_EXP),
 	OP_SLOT_PTR_A,
-#if defined(CONFIG_CRACEN_RSA_COUNTERMEASURES)
+#if CONFIG_CRACEN_RSA_COUNTERMEASURES
 	SX_PK_OP_FLAGS_MOD_CM
 #endif
 };
@@ -84,7 +84,7 @@ static const struct sx_pk_cmd_def CMD_RSA_MOD_EXP = {
 	(1 << OP_SLOT_MOD_EXP_CM_LAMBDA_N) | (1 << OP_SLOT_MOD_EXP_CM_M) |
 		(1 << OP_SLOT_MOD_EXP_CM_INPUT) | (1 << OP_SLOT_MOD_EXP_CM_EXP),
 	OP_SLOT_PTR_A,
-#if defined(CONFIG_CRACEN_BASE_RSA_COUNTERMEASURES_EXTENDED)
+#if CONFIG_CRACEN_BASE_RSA_COUNTERMEASURES_EXTENDED
 	SX_PK_OP_FLAGS_MOD_CM
 #endif
 };
@@ -95,7 +95,7 @@ static const struct sx_pk_cmd_def CMD_MOD_EXP_CRT = {
 	(1 << OP_SLOT_RSA_CRT_INPUT) | (1 << OP_SLOT_RSA_CRT_P) | (1 << OP_SLOT_RSA_CRT_Q) |
 		(1 << OP_SLOT_RSA_CRT_DP) | (1 << OP_SLOT_RSA_CRT_DQ) | (1 << OP_SLOT_RSA_CRT_QINV),
 	0,
-#if defined(CONFIG_CRACEN_RSA_COUNTERMEASURES)
+#if CONFIG_CRACEN_RSA_COUNTERMEASURES
 	SX_PK_OP_FLAGS_MOD_CM
 #endif
 };

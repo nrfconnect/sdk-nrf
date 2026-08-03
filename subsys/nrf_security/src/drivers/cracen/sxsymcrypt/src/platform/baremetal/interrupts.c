@@ -22,7 +22,7 @@
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_cryptomaster)
 NRF_SECURITY_EVENT_DEFINE(cracen_irq_event_for_pke)
 
-#if !defined(CONFIG_MULTITHREADING)
+#if !CONFIG_MULTITHREADING
 ISR_DIRECT_DECLARE(cracen_direct_isr_handler)
 {
 	cracen_isr_handler(NULL);
@@ -35,7 +35,7 @@ void cracen_interrupts_init(void)
 	nrf_security_event_init(cracen_irq_event_for_cryptomaster);
 	nrf_security_event_init(cracen_irq_event_for_pke);
 
-#if defined(CONFIG_MULTITHREADING)
+#if CONFIG_MULTITHREADING
 	IRQ_CONNECT(CRACEN_IRQn, 0, cracen_isr_handler, NULL, 0);
 #else
 	IRQ_DIRECT_CONNECT(CRACEN_IRQn, 0, cracen_direct_isr_handler, 0);
@@ -96,7 +96,7 @@ static uint32_t cracen_wait_for_interrupt(nrf_security_event_t event)
 
 uint32_t cracen_wait_for_cm_interrupt(void)
 {
-#if !defined(__NRF_TFM__)
+#if !__NRF_TFM__
 	if (k_is_pre_kernel()) {
 		/* Scheduling is not available pre-kernel. Initialization may
 		 * run PRNG at this point.
