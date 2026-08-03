@@ -21,27 +21,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - nrf.extended.drivers.spi.direct_xfer
-    - nrf.extended.drivers.spi.direct_xfer.no_prealloc
-    - nrf.extended.drivers.clock.clock_control_onoff
-    - nrf.extended.drivers.clock.nrf5_clock_calibration
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_stable
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_stable
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable
-    - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
-    - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
-    - nrf.extended.sample.bluetooth.*
-    - sample.bluetooth.*
-    - sample.mpsl.timeslot
+    - all
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "no TFM for nrf54lc10 at the moment"
+  comment: "Unsupported TFM_PLATFORM"
 
 - scenarios:
     - nrf.extended.drivers.counter.basic_api
