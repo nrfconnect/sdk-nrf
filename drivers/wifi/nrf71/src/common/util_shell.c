@@ -16,6 +16,7 @@
 #include <system/main.h>
 #include <shim.h>
 #include <system/wifi_util.h>
+#include <mac_addr.h>
 
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
@@ -1297,6 +1298,71 @@ static int nrf_wifi_util_heap(const struct shell *sh, size_t argc, char **argv)
 	return 0;
 }
 
+static void nrf_wifi_util_dump_mac_addr_slots(const struct shell *sh, bool uicr)
+{
+	const char *block = uicr ? "UICR" : "FICR";
+
+	for (unsigned char slot = 0; slot < NRF_WIFI_XICR_MAC_ADDR_SLOTS; slot++) {
+		uint32_t low, high;
+		int ret;
+
+		ret = nrf_wifi_xicr_mac_addr_slot_read(uicr, slot, &low, &high);
+		if (ret == -ENOTSUP) {
+			shell_print(sh, "%s: not accessible", block);
+			return;
+		} else if (ret) {
+			shell_error(sh, "%s MACADDR[%u]: read failed (err %d)",
+				    block, slot, ret);
+			continue;
+		}
+
+		shell_print(sh, "%s MACADDR[%u].LOW  = 0x%08X", block, slot, low);
+		shell_print(sh, "%s MACADDR[%u].HIGH = 0x%08X", block, slot, high);
+
+		if (nrf_wifi_mac_addr_regs_empty(low, high)) {
+			shell_print(sh, "%s MACADDR[%u]      = not programmed",
+				    block, slot);
+			continue;
+		}
+
+		/* HIGH holds bits [47:24] of the address, LOW bits [23:0], both
+		 * MSB first, so 00F4CE36 / 00112233 is F4:CE:36:11:22:33.
+		 */
+		shell_print(sh, "%s MACADDR[%u]      = %02X:%02X:%02X:%02X:%02X:%02X",
+			    block, slot,
+			    (uint8_t)(high >> 16), (uint8_t)(high >> 8), (uint8_t)high,
+			    (uint8_t)(low >> 16), (uint8_t)(low >> 8), (uint8_t)low);
+	}
+}
+
+static int nrf_wifi_util_mac_addr(const struct shell *sh, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+
+	nrf_wifi_util_dump_mac_addr_slots(sh, true);
+	nrf_wifi_util_dump_mac_addr_slots(sh, false);
+
+	for (unsigned char vif_idx = 0; vif_idx < MAX_NUM_VIFS; vif_idx++) {
+		uint8_t mac_addr[WIFI_MAC_ADDR_LEN];
+		int ret;
+
+		ret = nrf_wifi_xicr_mac_addr_get(vif_idx, mac_addr, NULL);
+		if (ret) {
+			shell_error(sh, "VIF%u: no MAC address available (err %d)",
+				    vif_idx, ret);
+			continue;
+		}
+
+		shell_print(sh, "VIF%u resolved    = %02X:%02X:%02X:%02X:%02X:%02X",
+			    vif_idx,
+			    mac_addr[0], mac_addr[1], mac_addr[2],
+			    mac_addr[3], mac_addr[4], mac_addr[5]);
+	}
+
+	return 0;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf71_util,
 	SHELL_CMD_ARG(he_ltf,
@@ -1416,6 +1482,13 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	SHELL_CMD_ARG(mac_addr,
+		      NULL,
+		      "Dump the MAC addresses programmed in the xICR registers\n"
+		      "and the address each interface resolves to",
+		      nrf_wifi_util_mac_addr,
+		      1,
+		      0),
 	SHELL_SUBCMD_SET_END);
 
 
