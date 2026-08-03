@@ -1,0 +1,35 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Assign and configure the VIO pins for the VPR cores.
+ * The pin configuration will be applied on startup of the app core before enabling the VPR.
+ * FLPR (VPR, 128 MHz), port 2:
+ *     P2.1   -> 0
+ *     P2.2   -> 1
+ *     P2.4   -> 2
+ *     P2.3   -> 3
+ *     P2.0   -> 4
+ *     P2.5   -> 5
+ *     P2.6   -> 6
+ *     P2.7   -> 7
+ *     P2.8   -> 8
+ *     P2.9   -> 9
+ *     P2.10  -> 10
+ */
+&pinctrl {
+	vpr_flpr_vio_default: vpr_flpr_vio_default {
+		group1 {
+			psels = <NRF_PSEL(VPR_VIO, 2, 9)>; /* P2.9 -> VIO 9 */
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+	};
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&vpr_flpr_vio_default>;
+	pinctrl-names = "default";
+};
