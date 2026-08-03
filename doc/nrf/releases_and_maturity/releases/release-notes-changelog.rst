@@ -304,6 +304,8 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
+* Added experimental support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target in all Bluetooth Fast Pair samples.
+
 * Removed support for the nRF52 and nRF53 Series devices from the :ref:`fast_pair_locator_tag` and :ref:`fast_pair_input_device` samples.
   The following board targets have been removed from both samples:
 
@@ -328,7 +330,7 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_input_device` sample:
 
-    * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54ls05b/cpuapp``, and ``nrf54lc10dk/nrf54lc10a/cpuapp`` board targets.
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
 
 Cellular samples
 ----------------
