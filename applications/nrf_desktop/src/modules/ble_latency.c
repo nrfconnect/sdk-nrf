@@ -43,12 +43,14 @@ enum {
 	CONN_IS_SECURED			= BIT(5),
 	CONN_IS_SCI_PARAM_UPDATE_PENDING = BIT(6),
 	CONN_IS_SCI_OUT_OF_SPEC	= BIT(7),
+	CONN_IS_POWER_DOWN		= BIT(8),
 };
 
-static uint8_t latency_state;
+static uint16_t latency_state;
 
 static enum bt_hids_sci_mode_value processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
 static enum bt_hids_sci_mode_value last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+static enum bt_hids_sci_mode_value host_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 static bool last_requested_latency_is_low;
 
 static void security_timeout_fn(struct k_work *w)
@@ -355,6 +357,21 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 
 	__ASSERT_NO_MSG(mode != BT_HIDS_SCI_MODE_NONE);
 
+	if (latency_state & CONN_IS_POWER_DOWN) {
+		/* Force the SCI mode to LOW_POWER if the peripheral is in power down/suspended
+		 * state, regardless of the HID SCI mode requested by the host.
+		 * Usually in this case the peripheral will already be in the LOW_POWER SCI mode,
+		 * so the code below will result in no connection rate update and no SCI mode change
+		 * notification to the host.
+		 * The notable exception is if the peripheral is operating in an out-of-spec state,
+		 * due to a previous direct connection rate update from the host.
+		 * In this case, the current mode might be different - an attempt will be made to
+		 * switch to the LOW_POWER mode, and only if it succeeds, the peripheral will exit
+		 * the out-of-spec state.
+		 */
+		mode = BT_HIDS_SCI_MODE_LOW_POWER;
+	}
+
 	last_requested_sci_mode = mode;
 	/* Once the host issues a HID SCI mode request or uses the connection
 	 * rate API to set the connection parameters, the peripheral switches
@@ -612,6 +629,27 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 	}
 }
 
+static void sci_power_event_handle(void)
+{
+	if (!active_conn) {
+		return;
+	}
+
+	if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+		return;
+	}
+
+	__ASSERT_NO_MSG(latency_state & CONN_IS_SCI);
+
+	if (latency_state & CONN_IS_POWER_DOWN) {
+		hid_sci_mode_request(BT_HIDS_SCI_MODE_LOW_POWER);
+	} else if (host_requested_sci_mode != BT_HIDS_SCI_MODE_NONE) {
+		hid_sci_mode_request(host_requested_sci_mode);
+	} else {
+		/* Do nothing. */
+	}
+}
+
 static void init(void)
 {
 	k_work_init_delayable(&security_timeout, security_timeout_fn);
@@ -673,6 +711,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE)) {
 				processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
 				last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+				host_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 			}
 
 			/* Cancel cannot fail if executed from another work's context. */
@@ -724,6 +763,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			return true;
 		}
 
+		host_requested_sci_mode = event->mode;
 		hid_sci_mode_request(event->mode);
 
 		return false;
@@ -736,25 +776,46 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-	    IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
 	    is_power_down_event(aeh)) {
 		const struct power_down_event *event =
 			cast_power_down_event(aeh);
 
-		if (!event->error) {
+		if (event->error) {
+			return false;
+		}
+
+		latency_state |= CONN_IS_POWER_DOWN;
+
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
+		    !(latency_state & CONN_IS_SCI)) {
 			latency_state &= ~CONN_LOW_LATENCY_LOCKED;
 			update_llpm_conn_latency_lock();
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+			   (latency_state & CONN_IS_SCI)) {
+			sci_power_event_handle();
+		} else {
+			/* No handling of the power down event is needed. */
 		}
 
 		return false;
 	}
 
-	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-	    IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS) &&
 	    is_wake_up_event(aeh)) {
-		latency_state |= CONN_LOW_LATENCY_LOCKED;
-		update_llpm_conn_latency_lock();
+
+		latency_state &= ~CONN_IS_POWER_DOWN;
+
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
+		    !(latency_state & CONN_IS_SCI)) {
+			latency_state |= CONN_LOW_LATENCY_LOCKED;
+			update_llpm_conn_latency_lock();
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+			   (latency_state & CONN_IS_SCI)) {
+			sci_power_event_handle();
+		} else {
+			/* No handling of the wake up event is needed. */
+		}
 
 		return false;
 	}
@@ -779,7 +840,7 @@ APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif
-#if CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK && CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS
+#ifdef CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS
 APP_EVENT_SUBSCRIBE(MODULE, power_down_event);
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

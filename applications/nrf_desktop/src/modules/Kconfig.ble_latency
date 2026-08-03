@@ -45,7 +45,8 @@ config DESKTOP_BLE_LOW_LATENCY_LOCK
 config DESKTOP_BLE_LATENCY_PM_EVENTS
 	bool "Power management events support"
 	depends on CAF_PM_EVENTS
-	default y
+	default y if DESKTOP_BLE_LOW_LATENCY_LOCK
+	default y if DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
 	help
 	  React on power management events in BLE latency module.
 

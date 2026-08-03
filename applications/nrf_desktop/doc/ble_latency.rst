@@ -43,7 +43,9 @@ This speeds up sending the first HID report after not sending a report for some 
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
 
 You can use the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
-The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+The option depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+It is enabled by default when either :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` or :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` is selected.
+Without one of these options, there is no power-management behavior for the module to apply to these events.
 
 When the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled in the :ref:`nrf_desktop_hids`, the |ble_latency| sets the promptless :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` Kconfig option.
 With this option set, the module handles HID SCI mode change requests and adjusts connection latency using the connection rate API.
@@ -111,6 +113,18 @@ The module listens for the following SCI-related events:
 When an SCI mode other than NONE is active, the module adjusts the peripheral latency within the limits of the active mode in response to the same data transfer events as in the non-SCI case (:c:struct:`config_event` and :c:struct:`ble_smp_transfer_event`).
 The module skips the latency update request if the maximum latency configured for the active SCI mode is zero, because such a request would have no effect.
 
+Power down and wake up
+----------------------
+
+When the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option is enabled, the module reacts to the power management events.
+
+On a :c:struct:`power_down_event`, the module requests the LOW_POWER mode.
+On a :c:struct:`wake_up_event`, the module restores the last SCI mode requested by the host through the HID Control Point characteristic.
+If the connection is in the out-of-spec state described in :ref:`nrf_desktop_ble_latency_sci_host_updates`, the module does not change SCI mode in response to power management events.
+
+If the host requests a mode other than LOW_POWER while the device is suspended, the module will save the requested mode but will remain in the LOW_POWER SCI mode.
+On wake up, the module will restore the saved mode.
+
 Pending SCI mode and latency updates
 ------------------------------------
 
@@ -162,4 +176,9 @@ In order to return to the normal operation, the host must:
 
 1. Update the connection rate parameters to a range allowing to support all the HID SCI modes.
 2. Request an HID SCI mode change through the HID Control Point characteristic.
-   As a result, the Bluetooth LE latency module requests a matching connection rate update and clears the out-of-spec host-initiated transport parameter update state.
+   As a result, the Bluetooth LE latency module requests a matching connection rate update and clears the out-of-spec host-initiated transport parameter update state if the request succeeds.
+   If the current connection parameters are already valid for the requested mode, the module clears the out-of-spec state but no connection rate update is requested.
+
+   .. note::
+      If the peripheral is in suspended/power-down state, the module will save the requested mode and attempt to request LOW_POWER mode parameters.
+      Only if this succeeds, the peripheral will exit the out-of-spec state.
