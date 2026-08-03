@@ -5036,6 +5036,82 @@ boards:
       region_type: nvm
       legend_only: false
     external_nvm_total_kb: 65536.0
+- board_id: nrf54lc10dk/nrf54lc10a/cpuapp
+  tab_title: nRF54LC10 DK
+  tab_intro_rst: Memory requirements for samples running on the nRF54LC10 DK.
+  nvm_total_kb: 1000.0
+  ram_total_kb: 192.0
+  samples:
+  - title: :ref:`Template <matter_template_sample>` (Debug)
+    nvm_total_kb: 1000.0
+    ram_total_kb: 192.0
+    ram_used_kb: 161.0
+    nvm_partitions:
+    - id: boot
+      label: MCUboot
+      size_kb: 52.0
+      used_kb: 22.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: slot0
+      label: Application
+      size_kb: 904.0
+      used_kb: 654.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: factory_data
+      label: Factory data
+      size_kb: 4.0
+      used_kb: 4.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: storage
+      label: Settings
+      size_kb: 40.0
+      used_kb: 40.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    external_nvm_partitions: []
+    external_nvm_total_kb: null
+  - title: :ref:`Template <matter_template_sample>` (Release)
+    nvm_total_kb: 1000.0
+    ram_total_kb: 192.0
+    ram_used_kb: 157.0
+    nvm_partitions:
+    - id: boot
+      label: MCUboot
+      size_kb: 52.0
+      used_kb: 22.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: slot0
+      label: Application
+      size_kb: 904.0
+      used_kb: 523.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: factory_data
+      label: Factory data
+      size_kb: 4.0
+      used_kb: 4.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    - id: storage
+      label: Settings
+      size_kb: 40.0
+      used_kb: 40.0
+      offset: null
+      region_type: nvm
+      legend_only: false
+    external_nvm_partitions: []
+    external_nvm_total_kb: null
 - board_id: nrf54l15dk/nrf54l15/cpuapp/ns
   tab_title: nRF54L15 DK with CMSE enabled
   tab_intro_rst: Memory requirements for samples running on the :zephyr:board:`nrf54l15dk`

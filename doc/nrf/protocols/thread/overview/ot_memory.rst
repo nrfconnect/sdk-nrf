@@ -45,6 +45,15 @@ The following tables present memory requirements for samples running on the :zep
 
 .. include:: memory_tables/nrf54l15.txt
 
+.. _thread_ot_memory_54lc10:
+
+nRF54LC10 DK RAM and flash memory requirements
+**********************************************
+
+The following tables present memory requirements for samples running on the nRF54LC10 DK with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
+
+.. include:: memory_tables/nrf54lc10.txt
+
 .. _thread_ot_memory_54lm20:
 
 nRF54LM20 DK RAM and flash memory requirements
