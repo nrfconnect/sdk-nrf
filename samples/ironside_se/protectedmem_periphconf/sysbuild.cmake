@@ -13,6 +13,5 @@ ExternalZephyrProject_Add(
   SOURCE_DIR ${APP_DIR}/secondary
 )
 
-# Apply app.overlay to the UICR image as well
-# This ensures both the default image and UICR image see the same partition layout
-add_overlay_dts(uicr ${APP_DIR}/app.overlay)
+# Ensure that UICR is programmed last
+sysbuild_add_dependencies(FLASH uicr ${DEFAULT_IMAGE} secondary)
