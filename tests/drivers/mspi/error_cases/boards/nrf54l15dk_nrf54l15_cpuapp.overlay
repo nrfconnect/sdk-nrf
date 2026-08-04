@@ -25,7 +25,7 @@
 
 		mspi_device: mspi_device@0 {
 			status = "okay";
-			compatible = "zephyr,mspi-emul-device";
+			compatible = "zephyr,emul-device-mspi";
 			reg = <0x0>;
 			mspi-max-frequency = <DT_FREQ_M(1)>;
 			mspi-io-mode = "MSPI_IO_MODE_SINGLE";
