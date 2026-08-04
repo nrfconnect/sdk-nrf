@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../hpf-gpio-app.overlay"
+
+/* Reuse the board's cpuapp-cpuflpr shared-memory regions */
+sram_tx: &cpuflpr_cpuapp_ipc_shm {
+};
+
+sram_rx: &cpuapp_cpuflpr_ipc_shm {
+};
+
+/ {
+	mbox_consumer: mbox_consumer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuflpr_vevif_rx 16>, <&cpuapp_bellboard 14>;
+		mbox-names = "rx", "tx";
+	};
+};
