@@ -648,7 +648,7 @@ config WIFI_NRF71_SCAN_TIMEOUT_S
 
 choice NRF_WIFI_OP_BAND
 	prompt "nRF Wi-Fi operation bands"
-	default NRF_WIFI_ALL_BAND
+	default NRF_WIFI_DUAL_BAND
 
 config NRF_WIFI_ALL_BAND
 	bool "Set operation band to all supported bands"
