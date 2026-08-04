@@ -26,7 +26,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_off_raw_tx_fw_init(
 	int sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 	unsigned int phy_calib, unsigned char op_band, bool beamforming,
-	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl, struct nrf_wifi_board_params *board_params,
+	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 	unsigned char *country_code)
 {
 	unsigned long start_time_us = 0;
@@ -43,7 +43,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_off_raw_tx_fw_init(
 					  sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
 					  phy_calib, op_band, beamforming, tx_pwr_ctrl,
-					  board_params, country_code);
+					  country_code);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		nrf_wifi_osal_log_err("%s: UMAC init failed",
@@ -162,7 +162,7 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				  unsigned int phy_calib, unsigned char op_band, bool beamforming,
 				  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 				  struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-				  struct nrf_wifi_board_params *board_params,
+
 				  unsigned char *country_code, unsigned int *rf_params_addr,
 				  unsigned int vtf_buffer_start_address)
 {
@@ -211,7 +211,7 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef NRF_WIFI_LOW_POWER
 		sleep_type,
 #endif /* NRF_WIFI_LOW_POWER */
-		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, board_params, country_code);
+		phy_calib, op_band, beamforming, tx_pwr_ctrl_params, country_code);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		nrf_wifi_osal_log_err("%s: nrf_wifi_fmac_off_raw_tx_fw_init failed",
@@ -398,7 +398,6 @@ static int nrf_wifi_off_raw_tx_fmac_phy_rf_params_init(struct nrf_wifi_phy_rf_pa
 						       unsigned char *str)
 {
 	int ret = -1;
-	unsigned int rf_param_offset = BAND_2G_LW_ED_BKF_DSSS_OFST - NRF_WIFI_RF_PARAMS_CONF_SIZE;
 	/* Initilaize reserved bytes */
 	nrf_wifi_osal_mem_set(prf,
 			      0x0,
@@ -465,40 +464,11 @@ static int nrf_wifi_off_raw_tx_fmac_phy_rf_params_init(struct nrf_wifi_phy_rf_pa
 					    sizeof(prf->phy_params),
 					    str);
 
-	prf->phy_params[rf_param_offset]  = NRF71_BAND_2G_LOWER_EDGE_BACKOFF_DSSS;
-	prf->phy_params[rf_param_offset + 1]  = NRF71_BAND_2G_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 2]  = NRF71_BAND_2G_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 3]  = NRF71_BAND_2G_UPPER_EDGE_BACKOFF_DSSS;
-	prf->phy_params[rf_param_offset + 4]  = NRF71_BAND_2G_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 5]  = NRF71_BAND_2G_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 6]  = NRF71_BAND_UNII_1_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 7]  = NRF71_BAND_UNII_1_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 8]  = NRF71_BAND_UNII_1_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 9]  = NRF71_BAND_UNII_1_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 10]  = NRF71_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 11]  = NRF71_BAND_UNII_2A_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 12]  = NRF71_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 13]  = NRF71_BAND_UNII_2A_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 14]  = NRF71_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 15]  = NRF71_BAND_UNII_2C_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 16]  = NRF71_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 17]  = NRF71_BAND_UNII_2C_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 18]  = NRF71_BAND_UNII_3_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 19]  = NRF71_BAND_UNII_3_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 20]  = NRF71_BAND_UNII_3_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 21]  = NRF71_BAND_UNII_3_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 22]  = NRF71_BAND_UNII_4_LOWER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 23]  = NRF71_BAND_UNII_4_LOWER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 24]  = NRF71_BAND_UNII_4_UPPER_EDGE_BACKOFF_HT;
-	prf->phy_params[rf_param_offset + 25]  = NRF71_BAND_UNII_4_UPPER_EDGE_BACKOFF_HE;
-	prf->phy_params[rf_param_offset + 26]  = NRF71_ANT_GAIN_2G;
-	prf->phy_params[rf_param_offset + 27]  = NRF71_ANT_GAIN_5G_BAND1;
-	prf->phy_params[rf_param_offset + 28]  = NRF71_ANT_GAIN_5G_BAND2;
-	prf->phy_params[rf_param_offset + 29]  = NRF71_ANT_GAIN_5G_BAND3;
-	prf->phy_params[rf_param_offset + 30]  = NRF71_PCB_LOSS_2G;
-	prf->phy_params[rf_param_offset + 31]  = NRF71_PCB_LOSS_5G_BAND1;
-	prf->phy_params[rf_param_offset + 32]  = NRF71_PCB_LOSS_5G_BAND2;
-	prf->phy_params[rf_param_offset + 33]  = NRF71_PCB_LOSS_5G_BAND3;
+	/* Antenna gain and band edge ceilings are board dependent and come from
+	 * devicetree. They are applied by the host when the RF parameter buffers
+	 * are built, not here: the ANT_GAIN_OFFSETS, PCB_LOSS_BYTE_OFFSETS and
+	 * EDGE_BACKOFF_OFFSETS byte offsets do not describe the nRF71 layout.
+	 */
 
 	return ret;
 }

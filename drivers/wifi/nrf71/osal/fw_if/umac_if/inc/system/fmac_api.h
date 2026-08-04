@@ -895,7 +895,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
  * @param beamforming Enable/disable Wi-Fi beamforming.
  * @param tx_pwr_ctrl_params TX power control parameters to be passed to the RPU.
  * @param tx_pwr_ceil_params TX power ceil parameters for both frequency bands.
- * @param board_params Board parameters to be passed to the RPU.
  * @param country_code Country code to be set for regularity domain.
  *
  * This function initializes the firmware of an RPU instance. The following is addressed
@@ -915,7 +914,7 @@ nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
-			   struct nrf_wifi_board_params *board_params, unsigned char *country_code,
+			   unsigned char *country_code,
 			   unsigned int *rf_params_addr, unsigned int vtf_buffer_start_address);
 
 /**
