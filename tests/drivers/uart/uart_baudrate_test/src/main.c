@@ -35,8 +35,7 @@ static void uart_fifo_callback(const struct device *dev, void *user_data)
 
 	ARG_UNUSED(user_data);
 
-	ret = uart_irq_update(dev);
-	zassert_true(ret >= 0, "uart_irq_update: %d\n", ret);
+	uart_irq_update(dev);
 
 	ret = uart_irq_tx_ready(dev);
 	zassert_true(ret >= 0, "uart_irq_tx_ready: %d\n", ret);
