@@ -278,6 +278,10 @@ nRF Desktop
     The :ref:`nrf_desktop_ble_latency` module handles HID SCI mode change requests and the related connection parameter updates.
     Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
 
+* Removed:
+
+  * Partition Manager support from the :ref:`nrf_desktop` application.
+
 Thingy:53: Matter weather station
 ---------------------------------
 
