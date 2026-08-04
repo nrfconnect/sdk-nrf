@@ -302,7 +302,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 
 		LOG_INF("Obtained date-time from modem");
 		date_time_now(&time);
-		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
+		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_CURRENT_TIME_RID),
 				     (int32_t)(time / 1000));
 		break;
 	}
@@ -312,7 +312,7 @@ static void date_time_event_handler(const struct date_time_evt *evt)
 
 		LOG_INF("Obtained date-time from NTP server");
 		date_time_now(&time);
-		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, CURRENT_TIME_RID),
+		lwm2m_set_s32(&LWM2M_OBJ(LWM2M_OBJECT_DEVICE_ID, 0, DEVICE_CURRENT_TIME_RID),
 				     (int32_t)(time / 1000));
 		break;
 	}
