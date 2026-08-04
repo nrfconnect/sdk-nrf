@@ -18,7 +18,7 @@
 #include <zephyr/logging/log_ctrl.h>
 #include <date_time.h>
 #include <zephyr/random/random.h>
-#include <app_version.h>
+#include <zephyr/app_version.h>
 #include <dk_buttons_and_leds.h>
 #include "nrf_cloud_shadow.h"
 

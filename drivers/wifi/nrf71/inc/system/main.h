@@ -13,7 +13,7 @@
 
 #include <stdio.h>
 
-#include <version.h>
+#include <zephyr/version.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_if.h>
