@@ -14,7 +14,6 @@
 #include <zephyr/kernel.h>
 #include <nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
-#include <common/vtf.h>
 
 /*  Minimum frame size for raw packet transmission */
 #define NRF_WIFI_OFF_RAW_TX_FRAME_SIZE_MIN 26

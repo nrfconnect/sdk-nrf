@@ -49,7 +49,6 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_bus_dir}/ipc_if.c
     ${nrf71_bus_dir}/ipc_service.c
     src/common/rf_params.c
-    src/common/vtf.c
     src/mac_addr.c
   )
 

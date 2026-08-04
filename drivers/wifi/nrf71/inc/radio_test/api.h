@@ -15,7 +15,6 @@
 #include <nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
 #include <radio_test/fmac_api.h>
-#include <common/vtf.h>
 
 struct nrf_wifi_rt_drv_ctx {
 	void *drv_priv;
