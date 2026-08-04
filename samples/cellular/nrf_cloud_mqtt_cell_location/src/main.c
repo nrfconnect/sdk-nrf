@@ -15,7 +15,7 @@
 #include <net/nrf_cloud.h>
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_defs.h>
-#include <app_version.h>
+#include <zephyr/app_version.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_mqtt_cell_location_sample,
 		    CONFIG_NRF_CLOUD_MQTT_CELL_LOCATION_SAMPLE_LOG_LEVEL);

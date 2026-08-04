@@ -7,13 +7,13 @@
 #include <zephyr/kernel.h>
 #include <zephyr/init.h>
 #include <zephyr/device.h>
-#include <version.h>
+#include <zephyr/version.h>
 #include <zephyr_commit.h>
 #include <ncs_version.h>
 #include <ncs_commit.h>
 
 #if defined(CONFIG_NCS_APPLICATION_BOOT_BANNER_STRING)
-#include <app_version.h>
+#include <zephyr/app_version.h>
 #if defined(NCS_APPLICATION_BOOT_BANNER_GIT_REPO)
 #include <app_commit.h>
 #endif

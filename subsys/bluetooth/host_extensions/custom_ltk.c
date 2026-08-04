@@ -12,7 +12,7 @@
  * specification.
  */
 
-#include <autoconf.h>
+#include <zephyr/autoconf.h>
 #include <bluetooth/nrf/host_extensions.h>
 #include <errno.h>
 #include <stdint.h>

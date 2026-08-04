@@ -19,7 +19,7 @@
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_defs.h>
 #include <helpers/nrfx_reset_reason.h>
-#include <app_version.h>
+#include <zephyr/app_version.h>
 #include <dk_buttons_and_leds.h>
 #ifdef CONFIG_NRF_CLOUD_FOTA_SMP
 #include "smp_reset.h"
