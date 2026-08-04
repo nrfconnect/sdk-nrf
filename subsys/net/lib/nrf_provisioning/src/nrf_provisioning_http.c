@@ -15,7 +15,7 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <version.h>
+#include <zephyr/version.h>
 #include <ncs_version.h>
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/unistd.h>
