@@ -20,18 +20,7 @@ The set of required partitions differs depending on the configuration:
    Before updating the firmware, make sure that the data stored in the settings partition is compatible with the new firmware.
    If it is incompatible, erase the settings area before using the new firmware.
 
-The memory layout is defined through one of the following methods:
-
-* `Memory layout in DTS`_
-* `Memory layout in Partition Manager`_
-
-By default, a Zephyr-based application defines the memory layout in the DTS.
-If enabled, the :ref:`partition_manager` defines a new memory layout that is used instead of the memory layout defined in the DTS.
-You can use the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` sysbuild Kconfig option to enable Partition Manager in the current build.
-
-.. note::
-   Starting from the |NCS| v3.4.0, all nRF Desktop application configurations are migrated from Partition Manager to DTS memory layout because of the Partition Manager deprecation.
-   The Partition Manager should not be used for new products.
+The memory layout is defined in DTS - see `Memory layout in DTS`_.
 
 Memory layout and bootloaders
 *****************************
@@ -51,7 +40,7 @@ For more information about available bootloaders and their modes, see the :ref:`
 Memory layout in DTS
 ********************
 
-If you rely on a non-volatile memory layout described in DTS files, define the ``partitions`` child node under the DTS node that represents the non-volatile memory.
+To configure the memory layout in devicetree, define the ``partitions`` child node under the DTS node that represents the non-volatile memory.
 For example, the nRF52 Series devices use internal non-volatile flash memory represented by the ``&flash0`` DTS node and the application core of nRF54L Series devices uses internal non-volatile RRAM memory represented by the ``&cpuapp_rram`` DTS node.
 Make sure to also update the DTS chosen nodes, which represent the code partition (``zephyr,code-partition``) and flash (``zephyr,flash``), if needed.
 
@@ -84,28 +73,3 @@ For an example of the nRF Desktop application configuration that uses an externa
 This configuration uses the ``MX25R64`` external flash that is part of the development kit.
 
 The memory map is defined in DTS (see :file:`memory_map_mcuboot_qspi.dtsi`), with the ``slot1_partition`` placed under the ``mx25r64`` node.
-
-Memory layout in Partition Manager
-**********************************
-
-.. include:: /includes/pm_deprecation.txt
-
-When the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` sysbuild Kconfig option is enabled, the nRF Desktop application uses the Partition Manager for the memory layout configuration.
-The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout does not change between builds.
-
-Add the :file:`pm_static_${FILE_SUFFIX}.yml` file to the project's board configuration directory to define the static Partition Manager configuration for given board and build type.
-For example, to define the static partition layout for the ``nrf52840dk/nrf52840`` board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applications/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
-
-For an example of configuration, see the static partition maps defined for the existing configuration that uses a given DFU method.
-For more information about how to configure the non-volatile memory layout using the Partition Manager, see :ref:`partition_manager`.
-
-External flash configuration
-============================
-
-Devices with smaller non-volatile memory size can use MCUboot bootloader in swap mode with secondary image partition located on an external non-volatile memory.
-For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 DK.
-This configuration uses the ``MX25R64`` external flash that is part of the development kit.
-
-Up to the |NCS| v3.3.0 release, Partition Manager was used to control the memory partition layout for this application configuration.
-The :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` sysbuild Kconfig option was used next to the proper static Partition Manager configuration to place the MCUboot secondary image slot in external flash.
-For detailed information, see the :ref:`partition_manager` documentation.
