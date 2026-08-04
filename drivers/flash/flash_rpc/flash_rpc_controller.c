@@ -219,7 +219,7 @@ static void flash_rpc_page_layout(const struct device *dev,
 }
 #endif
 
-static const struct flash_driver_api flash_driver_rpc_api = {
+static DEVICE_API(flash, flash_driver_rpc_api) = {
 	.read = flash_rpc_read,
 	.write = flash_rpc_write,
 	.erase = flash_rpc_erase,
