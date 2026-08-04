@@ -6,6 +6,7 @@
 
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <nwrt_conf.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 #include <string.h>
 
 enum nrf_wifi_status nwrt_conf_init_defaults(void)
@@ -31,7 +32,6 @@ enum nrf_wifi_status nwrt_conf_init_defaults(void)
 
     {
         uint32_t rf_params_tmp[NUM_WIFI_PARAMS];
-        uint32_t vtf_addr_tmp;
 
         status = nrf_wifi_fmac_config_rf_params(dev, (unsigned int *)rf_params_tmp);
         if (status != NRF_WIFI_STATUS_SUCCESS)
@@ -41,13 +41,12 @@ enum nrf_wifi_status nwrt_conf_init_defaults(void)
 
         memcpy(conf->rf_params_addr, rf_params_tmp, sizeof(conf->rf_params_addr));
 
-        status = nrf_wifi_fmac_config_vtf_params(dev, 243, 25, 0, (unsigned int *)&vtf_addr_tmp);
-        if (status != NRF_WIFI_STATUS_SUCCESS)
-        {
-            goto out;
-        }
-
-        conf->vtf_buffer_addr = vtf_addr_tmp;
+        /* Point the firmware at the live VTF snapshot region maintained by the
+         * vtf_monitoring subsystem. The battery-voltage entry is the first of
+         * the three consecutive words (voltage, temperature, frequency) the
+         * firmware reads; the preceding initialization word is not included.
+         */
+        conf->vtf_buffer_addr = (unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
     }
 
     conf->tx_pkt_nss             = 1;

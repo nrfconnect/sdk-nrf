@@ -29,10 +29,10 @@
 
 #include <common/status.h>
 #include <common/rf_params.h>
-#include <common/vtf.h>
 #include <common/util.h>
 #include <system/core.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 #ifdef CONFIG_NRF71_STA_MODE
 #include <zephyr/net/wifi_nm.h>
@@ -582,13 +582,14 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 		goto err;
 	}
 
-	/* TODO: Remove hardcodes once we hook in sensor readings */
-	status = nrf_wifi_fmac_config_vtf_params(rpu_ctx_zep->rpu_ctx, 243, 25, 0,
-						 &rpu_ctx_zep->vtf_buffer_start_address);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to configure VTF params", __func__);
-		goto err;
-	}
+	/* Point the firmware at the live VTF snapshot region maintained by the
+	 * vtf_monitoring subsystem (selected by the driver). The battery-voltage
+	 * entry is the first of the three consecutive words (voltage,
+	 * temperature, frequency) the firmware reads; the preceding
+	 * initialization word is not included.
+	 */
+	rpu_ctx_zep->vtf_buffer_start_address =
+		(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
 
 	status = nrf_wifi_sys_fmac_dev_init(
 		rpu_ctx_zep->rpu_ctx,
@@ -629,8 +630,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 				   (void *)rpu_ctx_zep->phy_rf_params_addr[i]);
 		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
 	}
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-			  (void *)rpu_ctx_zep->vtf_buffer_start_address);
+	/* vtf_buffer_start_address points at the static vtf_snapshots region,
+	 * not heap memory, so it must not be freed.
+	 */
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;

@@ -20,7 +20,6 @@ zephyr_library_sources(
   src/common/fmac_api_common.c
   src/common/rf_params.c
   src/common/util.c
-  src/common/vtf.c
   src/common/mem_mgmt.c
   src/common/work_mgmt.c
   src/common/lock_mgmt.c
