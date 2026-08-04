@@ -116,7 +116,13 @@ static void uart_irq_handler(const struct device *dev, void *user_data)
 {
 	const struct uart_irq_context *uart_ctrl = user_data;
 
-	while (uart_irq_update(dev) && uart_irq_is_pending(dev)) {
+	while (true) {
+		uart_irq_update(dev);
+
+		if (uart_irq_is_pending(dev) <= 0) {
+			break;
+		}
+
 		if (uart_irq_rx_ready(dev)) {
 			uart_rx_process(dev, uart_ctrl);
 		}
