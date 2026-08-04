@@ -958,7 +958,12 @@ static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
 {
 	uint32_t *new_pres_dly_us = (uint32_t *)user_data;
 
-	stream->bap_stream.qos->pd = *new_pres_dly_us;
+	/* The stream's qos pointer is const, but here it points to app-owned mutable
+	 * preset storage (server->{snk,src}.lc3_preset[].qos), so updating it is safe.
+	 */
+	struct bt_bap_qos_cfg *qos = (struct bt_bap_qos_cfg *)stream->bap_stream.qos;
+
+	qos->pd = *new_pres_dly_us;
 
 	return true;
 }
