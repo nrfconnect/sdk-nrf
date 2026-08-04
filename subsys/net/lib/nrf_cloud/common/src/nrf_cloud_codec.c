@@ -7,6 +7,7 @@
 #include <math.h>
 #include <date_time.h>
 #include <net/nrf_cloud_codec.h>
+#include <zephyr/logging/log.h>
 #include "nrf_cloud_mem.h"
 #include "nrf_cloud_codec_internal.h"
 #if defined(CONFIG_NRF_CLOUD_COAP)
