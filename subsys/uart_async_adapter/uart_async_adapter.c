@@ -522,7 +522,8 @@ static void uart_irq_handler(const struct device *target_dev, void *context)
 	__ASSERT(target_dev == data->target,
 		"IRQ handler called with a context that seems uninitialized.");
 	LOG_DBG("irq_handler: Enter");
-	if (uart_irq_update(target_dev) && uart_irq_is_pending(target_dev)) {
+	uart_irq_update(target_dev);
+	if (uart_irq_is_pending(target_dev)) {
 		if (data->tx.enabled && uart_irq_tx_ready(target_dev)) {
 			on_tx_ready(dev, data);
 		}
