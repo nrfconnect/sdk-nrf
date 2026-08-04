@@ -79,7 +79,9 @@
  * ------------------------------------------------------------------- */
 #include "iperf_config.h"
 
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #include "version.h"
+#endif
 
 #ifdef __cplusplus
 extern    "C"
