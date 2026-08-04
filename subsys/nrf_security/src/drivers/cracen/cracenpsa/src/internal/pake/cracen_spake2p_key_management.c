@@ -71,7 +71,7 @@ psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const ui
 		uint8_t L[CRACEN_P256_POINT_SIZE + 1];
 
 		memcpy(L, &data[CRACEN_P256_KEY_SIZE], sizeof(L));
-		if (check_wstr_pub_key_data(PSA_ALG_ECDH, PSA_ECC_FAMILY_SECP_R1, bits, L,
+		if (cracen_check_wstr_pub_key_data(PSA_ALG_ECDH, PSA_ECC_FAMILY_SECP_R1, bits, L,
 					    sizeof(L))) {
 			safe_memzero(L, sizeof(L));
 			return PSA_ERROR_INVALID_ARGUMENT;
