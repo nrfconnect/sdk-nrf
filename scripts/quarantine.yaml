@@ -60,13 +60,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40469"
 
 - scenarios:
-    - mcuboot.external_flash.upgrade.netcore
-    - nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40472"
-
-- scenarios:
     - sample.mcumgr.smp_svr.ext_xip
     - sample.mcumgr.smp_svr.ext_xip.no_network_core
   platforms:
