@@ -120,6 +120,10 @@
 	status = "okay";
 };
 
+&usbhs_wrapper {
+	status = "okay";
+};
+
 zephyr_udc0: &usbhs {
 	status = "okay";
 
