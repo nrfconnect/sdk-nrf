@@ -6,7 +6,7 @@
 
 &hpf_mspi {
 	mspi_device@0 {
-		compatible = "zephyr,mspi-emul-device";
+		compatible = "zephyr,emul-device-mspi";
 		status = "okay";
 		reg = <0>;
 

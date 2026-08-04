@@ -9,9 +9,9 @@
 #include <zephyr/drivers/counter.h>
 #include <zephyr/devicetree.h>
 
-#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_MSPI_NOR_ENABLED)
+#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_NOR_ENABLED)
 #include <zephyr/drivers/flash.h>
-#elif IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_MSPI_EMUL_DEVICE_ENABLED)
+#elif IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_EMUL_DEVICE_MSPI_ENABLED)
 #include <zephyr/drivers/mspi.h>
 #else
 #error "The test requires an enabled MSPI NOR flash memory or an emulated MSPI device"
@@ -20,14 +20,14 @@
 #define BUFFER_SIZE	64
 #define TIMEOUT		15000000
 
-#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_MSPI_NOR_ENABLED)
-#define FLASH_TEST_AREA_DEV_NODE	DT_INST(0, jedec_mspi_nor)
+#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_NOR_ENABLED)
+#define FLASH_TEST_AREA_DEV_NODE	DT_INST(0, jedec_nor)
 #define FLASH_TEST_AREA_OFFSET		0x0
 
 static const struct device *const flash_dev = DEVICE_DT_GET(FLASH_TEST_AREA_DEV_NODE);
 #else
 #define MSPI_BUS_NODE DT_NODELABEL(hpf_mspi)
-#define EMUL_DEV_NODE DT_INST(0, zephyr_mspi_emul_device)
+#define EMUL_DEV_NODE DT_INST(0, zephyr_emul_device_mspi)
 
 static const struct device *mspi_bus = DEVICE_DT_GET(MSPI_BUS_NODE);
 static const struct mspi_dev_id emul_dev_id = {
@@ -59,7 +59,7 @@ static void fault_timer_before(void *arg)
 		.ticks = counter_us_to_ticks(flpr_fault_timer, CONFIG_MSPI_HPF_FAULT_TIMEOUT)
 	};
 
-#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_MSPI_NOR_ENABLED)
+#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_NOR_ENABLED)
 	zassert_true(device_is_ready(flash_dev));
 #else
 	zassert_true(device_is_ready(mspi_bus));
@@ -87,7 +87,7 @@ ZTEST(hpf_fault_timer, test_timer_timeout)
 	/* 1. The timer is started and the flash is read. */
 	rc = counter_start(flpr_fault_timer);
 	zassert_equal(rc, 0, "Cannot start timer");
-#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_MSPI_NOR_ENABLED)
+#if IS_ENABLED(CONFIG_DT_HAS_JEDEC_NOR_ENABLED)
 	rc = flash_read(flash_dev, FLASH_TEST_AREA_OFFSET, buf, BUFFER_SIZE);
 	zassert_equal(rc, 0, "Cannot read flash");
 #else
