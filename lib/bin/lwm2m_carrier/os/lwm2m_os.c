@@ -222,7 +222,7 @@ lwm2m_os_work_q_t *lwm2m_os_work_q_start(int index, const char *name)
 			   K_THREAD_STACK_SIZEOF(lwm2m_os_work_q_client_stack[index]),
 			   K_LOWEST_APPLICATION_THREAD_PRIO, NULL);
 
-	k_thread_name_set(&lwm2m_os_work_qs[index].thread, name);
+	k_thread_name_set(lwm2m_os_work_qs[index].thread_id, name);
 
 	return work_q;
 }
