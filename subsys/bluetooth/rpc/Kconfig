@@ -77,6 +77,8 @@ config HEAP_MEM_POOL_SIZE
 config BT_SHELL
 	bool "Bluetooth shell"
 	select SHELL
+	select SHELL_GETOPT
+	select GETOPT_LONG
 	select BT_PRIVATE_SHELL
 
 endif # BT_RPC_CLIENT
