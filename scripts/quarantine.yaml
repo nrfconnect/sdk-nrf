@@ -94,3 +94,9 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
+
+- scenarios:
+    - tests.wifi_kmu.tfm
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40622"
