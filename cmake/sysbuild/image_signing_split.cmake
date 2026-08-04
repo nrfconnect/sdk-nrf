@@ -46,6 +46,25 @@ function(split)
     ${CMAKE_OBJCOPY} --output-target=ihex ${exclude_param} ${SPLIT_ARG_ELF_FILE_IN} ${SPLIT_ARG_HEX_EXCLUDE_FILE_OUT})
 endfunction()
 
+# POST_BUILD runs as one /bin/sh script; imgtool -d "(index, version)" needs \( \) \"
+# escaped in dependency arguments (same rules as CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS).
+function(ncs_imgtool_shell_escape_arg out_var arg)
+  string(REPLACE "\\" "\\\\" escaped "${arg}")
+  string(REPLACE "\"" "\\\"" escaped "${escaped}")
+  string(REPLACE "(" "\\(" escaped "${escaped}")
+  string(REPLACE ")" "\\)" escaped "${escaped}")
+  set(${out_var} "${escaped}" PARENT_SCOPE)
+endfunction()
+
+function(ncs_imgtool_shell_escape_dependency_list out_var)
+  set(result)
+  foreach(arg IN LISTS ARGN)
+    ncs_imgtool_shell_escape_arg(escaped "${arg}")
+    list(APPEND result "${escaped}")
+  endforeach()
+  set(${out_var} ${result} PARENT_SCOPE)
+endfunction()
+
 function(zephyr_mcuboot_tasks)
   set(keyfile "${CONFIG_MCUBOOT_SIGNATURE_KEY_FILE}")
   set(keyfile_enc "${CONFIG_MCUBOOT_ENCRYPTION_KEY_FILE}")
@@ -205,6 +224,21 @@ function(zephyr_mcuboot_tasks)
 
   set(imgtool_args ${imgtool_extra})
 
+  set(internal_dependency)
+  set(external_dependency)
+  if(CONFIG_NCS_MCUBOOT_QSPI_XIP_IMGTOOL_DEPENDENCIES AND
+     CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER GREATER_EQUAL 0 AND
+     CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER GREATER_EQUAL 0)
+    set(_dep_internal "-d \"(${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}, ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})\"")
+    separate_arguments(_dep_internal_args UNIX_COMMAND ${_dep_internal})
+    set(_dep_external "-d \"(${CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}, ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})\"")
+    separate_arguments(_dep_external_args UNIX_COMMAND ${_dep_external})
+    set(internal_dependency ${_dep_internal_args})
+    set(external_dependency ${_dep_external_args})
+    ncs_imgtool_shell_escape_dependency_list(internal_dependency ${internal_dependency})
+    ncs_imgtool_shell_escape_dependency_list(external_dependency ${external_dependency})
+  endif()
+
   # Extensionless prefix of any output file.
   set(output_internal ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.internal.signed)
   set(output_external ${ZEPHYR_BINARY_DIR}/${KERNEL_NAME}.external.signed)
@@ -281,9 +315,9 @@ function(zephyr_mcuboot_tasks)
     # calls to the "extra_post_build_commands" property ensures they run
     # after the commands which generate the unsigned versions.
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_internal_sign} ${imgtool_args} ${input_internal_arg} ${output_internal}.hex)
+      ${imgtool_internal_sign} ${imgtool_args} ${internal_dependency} ${input_internal_arg} ${output_internal}.hex)
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-      ${imgtool_external_sign} ${imgtool_args} ${input_external_arg} ${output_external}.hex)
+      ${imgtool_external_sign} ${imgtool_args} ${external_dependency} ${input_external_arg} ${output_external}.hex)
 
     # Combine the signed hex files into a single output hex file
     set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
@@ -303,10 +337,10 @@ function(zephyr_mcuboot_tasks)
       )
 
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_internal_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+        ${imgtool_internal_sign} ${imgtool_args} ${internal_dependency} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_internal_arg} ${output_internal}.encrypted.hex)
       set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-        ${imgtool_external_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+        ${imgtool_external_sign} ${imgtool_args} ${external_dependency} ${imgtool_encrypt_extra_args} --encrypt
         "${keyfile_enc}" ${input_external_arg} ${output_external}.encrypted.hex)
 
       # Combine the signed hex files into a single output hex file
@@ -325,21 +359,21 @@ function(zephyr_mcuboot_tasks)
 
       if("${keyfile_enc}" STREQUAL "")
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-          ${imgtool_internal_sign} ${imgtool_args} --pad --confirm ${input_internal_arg}.hex
+          ${imgtool_internal_sign} ${imgtool_args} ${internal_dependency} --pad --confirm ${input_internal_arg}.hex
           ${output_internal}.confirmed.hex)
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-          ${imgtool_external_sign} ${imgtool_args} --pad --confirm ${output_external}.hex
+          ${imgtool_external_sign} ${imgtool_args} ${external_dependency} --pad --confirm ${output_external}.hex
           ${output_external}.confirmed.hex)
         # Combine the signed confirmed hex files into a single output hex file
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
           ${PYTHON_EXECUTABLE} ${ZEPHYR_BASE}/scripts/build/mergehex.py -o ${output_merged}.confirmed.hex ${output_internal}.confirmed.hex ${output_external}.confirmed.hex)
       else()
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-          ${imgtool_internal_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          ${imgtool_internal_sign} ${imgtool_args} ${internal_dependency} ${imgtool_encrypt_extra_args} --encrypt
           "${keyfile_enc}" --clear --pad --confirm ${input_internal_arg}
           ${output_internal}.confirmed.hex)
         set_property(GLOBAL APPEND PROPERTY extra_post_build_commands COMMAND
-          ${imgtool_external_sign} ${imgtool_args} ${imgtool_encrypt_extra_args} --encrypt
+          ${imgtool_external_sign} ${imgtool_args} ${external_dependency} ${imgtool_encrypt_extra_args} --encrypt
           "${keyfile_enc}" --clear --pad --confirm ${input_external_arg}
           ${output_external}.confirmed.hex)
         # Combine the signed confirmed hex files into a single output hex file
