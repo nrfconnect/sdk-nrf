@@ -28,6 +28,7 @@ extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
 #ifdef CONFIG_NRF71_STA_MODE
 int nrf_wifi_set_power_save(const struct device *dev,
+			    struct net_if *iface __unused,
 			    struct wifi_ps_params *params)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -157,6 +158,7 @@ out:
 }
 
 int nrf_wifi_get_power_save_config(const struct device *dev,
+				   struct net_if *iface __unused,
 				   struct wifi_ps_config *ps_config)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -489,6 +491,7 @@ out:
 }
 
 int nrf_wifi_set_twt(const struct device *dev,
+		     struct net_if *iface __unused,
 		     struct wifi_twt_params *twt_params)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -748,6 +751,7 @@ out:
 
 #ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
 int nrf_wifi_mode(const struct device *dev,
+		  struct net_if *iface __unused,
 		  struct wifi_mode_info *mode)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -853,6 +857,7 @@ out:
 
 #if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 int nrf_wifi_channel(const struct device *dev,
+		     struct net_if *iface __unused,
 		     struct wifi_channel_info *channel)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -970,6 +975,7 @@ out:
 
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 int nrf_wifi_filter(const struct device *dev,
+		    struct net_if *iface __unused,
 		    struct wifi_filter_info *filter)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -1050,6 +1056,7 @@ out:
 #endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 
 int nrf_wifi_set_rts_threshold(const struct device *dev,
+			       struct net_if *iface __unused,
 			       unsigned int rts_threshold)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -1117,6 +1124,7 @@ out:
 }
 
 int nrf_wifi_get_rts_threshold(const struct device *dev,
+			       struct net_if *iface __unused,
 			       unsigned int *rts_threshold)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -1140,6 +1148,7 @@ int nrf_wifi_get_rts_threshold(const struct device *dev,
 }
 
 int nrf_wifi_set_bss_max_idle_period(const struct device *dev,
+				     struct net_if *iface __unused,
 				     unsigned short bss_max_idle_period)
 {
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
