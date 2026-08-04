@@ -73,10 +73,10 @@ static void write_tag_and_length(struct sx_buf *buf, uint8_t tag)
 	memcpy(outbuf, ((uint8_t *)&length) + sizeof(length) - len_bytes, len_bytes);
 }
 
-psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_t *attributes,
-						const uint8_t *key_buffer,
-						size_t key_buffer_size, uint8_t *data,
-						size_t data_size, size_t *data_length)
+psa_status_t cracen_export_rsa_public_key_from_keypair(const psa_key_attributes_t *attributes,
+						       const uint8_t *key_buffer,
+						       size_t key_buffer_size, uint8_t *data,
+						       size_t data_size, size_t *data_length)
 {
 	/*
 	 * RSAPublicKey ::= SEQUENCE {
@@ -145,8 +145,8 @@ psa_status_t export_rsa_public_key_from_keypair(const psa_key_attributes_t *attr
 	return PSA_SUCCESS;
 }
 
-psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, uint8_t *key,
-				      size_t key_size, size_t *key_length)
+psa_status_t cracen_generate_rsa_private_key(const psa_key_attributes_t *attributes, uint8_t *key,
+					     size_t key_size, size_t *key_length)
 {
 #if PSA_MAX_RSA_KEY_BITS > 0
 	size_t bits = psa_get_key_bits(attributes);
@@ -291,9 +291,9 @@ error_exit:
 #endif /* PSA_MAX_RSA_KEY_BITS > 0*/
 }
 
-psa_status_t import_rsa_key(const psa_key_attributes_t *attributes, const uint8_t *data,
-			    size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
-			    size_t *key_buffer_length, size_t *key_bits)
+psa_status_t cracen_import_rsa_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+				   size_t data_length, uint8_t *key_buffer, size_t key_buffer_size,
+				   size_t *key_buffer_length, size_t *key_bits)
 {
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_key_type_t key_type = psa_get_key_type(attributes);
@@ -343,9 +343,9 @@ cleanup:
 	return status;
 }
 
-psa_status_t rsa_export_public_key(const psa_key_attributes_t *attributes,
-				   const uint8_t *key_buffer, size_t key_buffer_size,
-				   uint8_t *data, size_t data_size, size_t *data_length)
+psa_status_t cracen_rsa_export_public_key(const psa_key_attributes_t *attributes,
+					  const uint8_t *key_buffer, size_t key_buffer_size,
+					  uint8_t *data, size_t data_size, size_t *data_length)
 {
 	if (data_size < key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;

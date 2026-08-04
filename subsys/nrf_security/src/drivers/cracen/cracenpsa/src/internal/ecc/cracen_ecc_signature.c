@@ -328,7 +328,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 			return PSA_SUCCESS;
 
 		} else {
-			sx_status = ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
+			sx_status = cracen_ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
 		}
 	}
 	return silex_statuscodes_to_psa(sx_status);

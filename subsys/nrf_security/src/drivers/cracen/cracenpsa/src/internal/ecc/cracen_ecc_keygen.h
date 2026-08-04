@@ -9,8 +9,10 @@
 #include <psa/crypto.h>
 #include <stdint.h>
 
-int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve);
+int cracen_ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key,
+			 const struct sx_pk_ecurve *curve);
 
-int ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key, size_t priv_key_size);
+int cracen_ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key,
+			  size_t priv_key_size);
 
 #endif /* CRACEN_ECC_KEYGEN_H */

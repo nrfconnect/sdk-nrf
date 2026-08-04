@@ -15,7 +15,7 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 
-psa_status_t import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
+psa_status_t cracen_import_spake2p_key(const psa_key_attributes_t *attributes, const uint8_t *data,
 				size_t data_length, uint8_t *key_buffer,
 				size_t key_buffer_size, size_t *key_buffer_length,
 				size_t *key_bits)
@@ -138,7 +138,7 @@ psa_status_t cracen_derive_spake2p_key(const psa_key_attributes_t *attributes,
 	}
 }
 
-psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attributes_t *attributes,
+psa_status_t cracen_export_spake2p_public_key_from_keypair(const psa_key_attributes_t *attributes,
 						    const uint8_t *priv_key,
 						    size_t priv_key_length, uint8_t *pub_key,
 						    size_t pub_key_size,
@@ -173,7 +173,7 @@ psa_status_t export_spake2p_public_key_from_keypair(const psa_key_attributes_t *
 		}
 		pub_key[CRACEN_P256_KEY_SIZE] = CRACEN_ECC_PUBKEY_UNCOMPRESSED;
 		status = silex_statuscodes_to_psa(
-			ecc_genpubkey(w1, &pub_key[CRACEN_P256_KEY_SIZE + 1], sx_curve));
+			cracen_ecc_genpubkey(w1, &pub_key[CRACEN_P256_KEY_SIZE + 1], sx_curve));
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
