@@ -537,7 +537,7 @@ int lc3_streamer_init(void)
 	k_work_queue_start(&lc3_streamer_work_q, lc3_streamer_work_q_stack_area,
 			   K_THREAD_STACK_SIZEOF(lc3_streamer_work_q_stack_area),
 			   CONFIG_SD_CARD_LC3_STREAMER_THREAD_PRIO, NULL);
-	k_thread_name_set(&lc3_streamer_work_q.thread, "lc3_streamer_work_q");
+	k_thread_name_set(lc3_streamer_work_q.thread_id, "lc3_streamer_work_q");
 
 	initialized = true;
 

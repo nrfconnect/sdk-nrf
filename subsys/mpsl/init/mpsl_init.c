@@ -541,7 +541,7 @@ static int mpsl_low_prio_init(void)
 	k_work_queue_start(&mpsl_work_q, mpsl_work_stack,
 			   K_THREAD_STACK_SIZEOF(mpsl_work_stack),
 			   K_PRIO_COOP(CONFIG_MPSL_THREAD_COOP_PRIO), NULL);
-	k_thread_name_set(&mpsl_work_q.thread, "MPSL Work");
+	k_thread_name_set(mpsl_work_q.thread_id, "MPSL Work");
 	k_work_init(&mpsl_low_prio_work, mpsl_low_prio_work_handler);
 
 	IRQ_CONNECT(CONFIG_MPSL_LOW_PRIO_IRQN, MPSL_LOW_PRIO,

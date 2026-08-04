@@ -342,7 +342,7 @@ void th_ctrl_init(void)
 	k_work_queue_start(&th_work_q_1, th_stack_area_1,
 			   K_THREAD_STACK_SIZEOF(th_stack_area_1),
 			   TH_1_PRIORITY, NULL);
-	k_thread_name_set(&(th_work_q_1.thread), "mosh_bg_1");
+	k_thread_name_set(th_work_q_1.thread_id, "mosh_bg_1");
 	k_work_init(&th_work_data_1.work, th_ctrl_work_handler);
 	k_poll_signal_init(&th_work_data_1.kill_signal);
 	th_work_data_1.th_nbr = 1;
@@ -350,7 +350,7 @@ void th_ctrl_init(void)
 	k_work_queue_start(&th_work_q_2, th_stack_area_2,
 			   K_THREAD_STACK_SIZEOF(th_stack_area_2),
 			   TH_2_PRIORITY, NULL);
-	k_thread_name_set(&(th_work_q_2.thread), "mosh_bg_2");
+	k_thread_name_set(th_work_q_2.thread_id, "mosh_bg_2");
 	k_work_init(&th_work_data_2.work, th_ctrl_work_handler);
 	k_poll_signal_init(&th_work_data_2.kill_signal);
 	th_work_data_2.th_nbr = 2;
