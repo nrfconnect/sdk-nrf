@@ -64,7 +64,7 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_RSA_OAEP)) {
 		if (PSA_ALG_IS_RSA_OAEP(alg)) {
-			status = hash_get_algo(PSA_ALG_RSA_OAEP_GET_HASH(alg), &hashalg);
+			status = cracen_hash_get_algo(PSA_ALG_RSA_OAEP_GET_HASH(alg), &hashalg);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}

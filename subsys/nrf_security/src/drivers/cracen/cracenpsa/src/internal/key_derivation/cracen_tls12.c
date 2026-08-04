@@ -96,7 +96,7 @@ static psa_status_t tls12_prf_generate_block(cracen_key_derivation_operation_t *
 
 	const struct sxhashalg *hash;
 
-	status = silex_statuscodes_to_psa(hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash));
+	status = cracen_hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

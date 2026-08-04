@@ -18,7 +18,7 @@
 #if PSA_MAX_RSA_KEY_BITS > 0
 static int cracen_signature_set_hashalgo(const struct sxhashalg **hashalg, psa_algorithm_t alg)
 {
-	return hash_get_algo(PSA_ALG_SIGN_GET_HASH(alg), hashalg);
+	return cracen_hash_get_algo(PSA_ALG_SIGN_GET_HASH(alg), hashalg);
 }
 
 static int cracen_signature_set_hashalgo_from_digestsz(const struct sxhashalg **hashalg,
