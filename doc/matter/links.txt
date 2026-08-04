@@ -1,1 +1,0 @@
-.. _`Matter Add-on`: https://nrfconnectdocs.nordicsemi.com/addons/ncs-matter/latest/index.html

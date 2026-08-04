@@ -491,6 +491,8 @@ NRF = (
     ("applications/nrf5340_audio/unicast_client/README", "applications/nrf_audio/unicast_client/README"),
     ("applications/nrf5340_audio/unicast_server/README", "applications/nrf_audio/unicast_server/README"),
     ("applications/sdp/gpio/README", "applications/hpf/gpio/README"), #High-Performance Framework applications
+    ("applications/matter_bridge/README", "releases_and_maturity/migration/migration_ncs_matter"), # Matter bridge application (page removed)
+    ("applications/matter_weather_station/README", "releases_and_maturity/migration/migration_ncs_matter"), # Matter weather station application (page removed)
     ("samples/samples_bl", "samples/bl"), # Bluetooth samples (landing)
     ("samples/bluetooth/connection_event_trigger/README", "samples/bluetooth/event_trigger/README"),
     ("samples/bluetooth/broadcast_config_tool/README", "samples/bluetooth/nrf_auraconfig/README"),

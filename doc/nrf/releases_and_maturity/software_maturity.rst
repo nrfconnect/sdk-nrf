@@ -224,11 +224,11 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
          * - **Matter**
-           - --
-           - --
-           - --
-           - --
-           - --
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
            - --\ :sup:`8`
          * - **NFC**
            - --
@@ -480,10 +480,10 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
             * - **Matter**
-              - --
-              - --
-              - --
-              - --
+              - --\ :sup:`8`
+              - --\ :sup:`8`
+              - --\ :sup:`8`
+              - --\ :sup:`8`
             * - **NFC**
               - --
               - --

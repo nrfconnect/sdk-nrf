@@ -114,10 +114,6 @@ kconfig_mapping = utils.get_intersphinx_mapping("kconfig")
 if kconfig_mapping:
     intersphinx_mapping["kconfig"] = kconfig_mapping
 
-matter_mapping = utils.get_intersphinx_mapping("matter")
-if matter_mapping:
-    intersphinx_mapping["matter"] = matter_mapping
-
 tfm_mapping = utils.get_intersphinx_mapping("tfm")
 if tfm_mapping:
     intersphinx_mapping["tfm"] = tfm_mapping

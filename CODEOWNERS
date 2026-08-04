@@ -69,7 +69,6 @@
 /doc/_utils/                              @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/internal/                            @nrfconnect/ncs-co-doc @nrfconnect/ncs-doc-leads
 /doc/kconfig/                             @nrfconnect/ncs-doc-leads
-/doc/matter/                              @nrfconnect/ncs-matter-doc
 /doc/mcuboot/                             @nrfconnect/ncs-eris-doc
 /doc/nrf/conf.py                          @nrfconnect/ncs-doc-leads
 /doc/nrf/nrf.doxyfile.in                  @nrfconnect/ncs-doc-leads
