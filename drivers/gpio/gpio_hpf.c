@@ -74,7 +74,7 @@ static int gpio_hpf_port_toggle_bits(const struct device *port, gpio_port_pins_t
 	return gpio_send(&msg);
 }
 
-static const struct gpio_driver_api gpio_hpf_drv_api_funcs = {
+static DEVICE_API(gpio, gpio_hpf_drv_api_funcs) = {
 	.pin_configure = gpio_hpf_pin_configure,
 	.port_set_masked_raw = gpio_hpf_port_set_masked_raw,
 	.port_set_bits_raw = gpio_hpf_port_set_bits_raw,
