@@ -535,9 +535,7 @@ static int data_packet_process(const struct device *dev, uint8_t *hci_buf)
 
 	mpsl_memcpy(net_buf_add(data_buf, len + sizeof(*hdr)), &hci_buf[0], len + sizeof(*hdr));
 
-	struct hci_driver_data *driver_data = dev->data;
-
-	driver_data->recv_func(dev, data_buf);
+	bt_hci_recv(dev, data_buf);
 
 	return 0;
 }
@@ -563,9 +561,7 @@ static int iso_data_packet_process(const struct device *dev, uint8_t *hci_buf)
 
 	mpsl_memcpy(net_buf_add(data_buf, len + sizeof(*hdr)), &hci_buf[0], len + sizeof(*hdr));
 
-	struct hci_driver_data *driver_data = dev->data;
-
-	(void)driver_data->recv_func(dev, data_buf);
+	bt_hci_recv(dev, data_buf);
 
 	return 0;
 }
@@ -669,9 +665,7 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 	mpsl_memcpy(net_buf_add(evt_buf, hdr->len + sizeof(*hdr)), &hci_buf[0],
 		    hdr->len + sizeof(*hdr));
 
-	struct hci_driver_data *driver_data = dev->data;
-
-	(void)driver_data->recv_func(dev, evt_buf);
+	bt_hci_recv(dev, evt_buf);
 
 	return 0;
 }
@@ -1317,7 +1311,7 @@ static int configure_memory_usage(void)
 	return 0;
 }
 
-static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
+static int hci_driver_open(const struct device *dev)
 {
 	LOG_DBG("Open");
 
@@ -1504,10 +1498,6 @@ static int hci_driver_open(const struct device *dev, bt_hci_recv_t recv_func)
 
 	MULTITHREADING_LOCK_RELEASE();
 
-	struct hci_driver_data *driver_data = dev->data;
-
-	driver_data->recv_func = recv_func;
-
 	bt_buf_rx_freed_cb_set(bt_buf_rx_freed_cb);
 
 	return 0;
@@ -1595,7 +1585,7 @@ BUILD_ASSERT(CONFIG_BT_LL_SOFTDEVICE_INIT_PRIORITY > CONFIG_MPSL_INIT_PRIORITY,
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
 #define BT_HCI_CONTROLLER_INIT(inst) \
-	static struct hci_driver_data data_##inst; \
+	static struct bt_hci_driver_data data_##inst; \
 	DEVICE_DT_INST_DEFINE(inst, hci_driver_init, NULL, &data_##inst, NULL, POST_KERNEL, \
 			      CONFIG_BT_LL_SOFTDEVICE_INIT_PRIORITY, &hci_driver_api)
 
