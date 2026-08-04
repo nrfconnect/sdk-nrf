@@ -1,0 +1,23 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&timer131 {
+	status = "reserved";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+/ {
+	pulse_meas: pulse-meas {
+		compatible = "nordic,pulse-meas";
+		status = "okay";
+		timer-instance = <&timer131>;
+		assert-gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+		deassert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+	};
+};

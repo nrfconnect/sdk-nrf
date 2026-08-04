@@ -536,7 +536,8 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`pulse_meas` sample.
+  The sample checks the pulse width of an externally provided signal.
 
 Drivers
 =======
