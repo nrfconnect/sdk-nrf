@@ -60,6 +60,7 @@ any: |
 # Allow different licenses from external sources
 LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
 Apache-2.0: |
+  ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
   ^nrf/.clang-format
   ^nrf/.ruff.toml
@@ -94,8 +95,10 @@ MIT: |
   "^nrf/ext/"
   ^nrf/doc/_doxygen/doxygen-awesome.css
 BSD-3-CLAUSE: |
+  ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
 Apache-2.0 OR GPL-2.0-or-later: |
+  ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/subsys/nrf_security/src/drivers/cracen/cracen_sw/ext/
