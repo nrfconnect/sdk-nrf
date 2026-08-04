@@ -26,7 +26,7 @@
 #include <zephyr/net/conn_mgr_connectivity.h>
 #endif
 
-#include "route.h"
+#include "route_ipv6.h"
 #include "ipv6.h"
 
 #include <net/dect/dect_utils.h>
@@ -384,8 +384,9 @@ static void dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker(struct k_work *w
 		LOG_DBG("(%s): sink iface IPv6 router added as a nbr to sink prefix iface",
 			(__func__));
 	}
-	route = net_route_add(iface_for_prefix, &ipv6_router_addr, 128, &ipv6_router_addr,
-			      NET_IPV6_ND_INFINITE_LIFETIME, NET_ROUTE_PREFERENCE_HIGH);
+	route = net_route_ipv6_add(iface_for_prefix, &ipv6_router_addr, 128,
+				   &ipv6_router_addr, NET_IPV6_ND_INFINITE_LIFETIME,
+				   NET_ROUTE_PREFERENCE_HIGH);
 	if (!route) {
 		LOG_ERR("Cannot add sink ipv6 router as a route");
 	}
