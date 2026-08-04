@@ -51,8 +51,8 @@ static void battery_poll_work_handle(struct k_work *work)
 	int err;
 	static bool first_run_done;
 	static const fuel_gauge_prop_t props[] = {
-		FUEL_GAUGE_VOLTAGE,
-		FUEL_GAUGE_RELATIVE_STATE_OF_CHARGE,
+		FUEL_GAUGE_VOLTAGE_UV,
+		FUEL_GAUGE_RELATIVE_STATE_OF_CHARGE_PCT,
 	};
 	union fuel_gauge_prop_val poll_vals[ARRAY_SIZE(props)];
 	int voltage;
@@ -68,8 +68,8 @@ static void battery_poll_work_handle(struct k_work *work)
 		return;
 	}
 
-	voltage = poll_vals[0].voltage;
-	percentage_level = poll_vals[1].relative_state_of_charge;
+	voltage = poll_vals[0].voltage_uv;
+	percentage_level = poll_vals[1].relative_state_of_charge_pct;
 
 	LOG_DBG("Battery state: voltage: %d [uV], state of charge: %" PRIu8 " [%%]",
 		voltage, percentage_level);
