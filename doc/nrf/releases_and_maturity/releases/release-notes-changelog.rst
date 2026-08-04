@@ -263,6 +263,10 @@ nRF Desktop
     The configuration acts as a HID mouse with Fast Pair support.
     It uses MCUboot in direct-xip mode with software-based image signature verification.
 
+* Removed:
+
+  * Partition Manager support from the :ref:`nrf_desktop` application.
+
 Thingy:53: Matter weather station
 ---------------------------------
 
