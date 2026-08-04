@@ -204,6 +204,12 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-37803"
 
 - scenarios:
+    - bluetooth.hci
+  platforms:
+    - native_sim/native
+  comment: "util_hci_evt.h missing after [nrf noup] revert of ext adv report discard handling"
+
+- scenarios:
     - secure_storage.psa.its.secure_storage.custom.store
   platforms:
     - nrf52840dk/nrf52840
@@ -290,7 +296,9 @@
     - .*secure_storage.*
     - arch.shared_interrupt.lto.speed
     - benchmark.crypto.mbedtls
+    - benchmark.crypto.psa
     - benchmark.kernel.core
+    - benchmark.memory_allocators
     - cpp.libcxx.glibcxx.newlib
     - cpp.libcxx.glibcxx.newlib_nano
     - cpp.libcxx.glibcxx.picolibc
@@ -298,6 +306,7 @@
     - drivers.can.shell
     - drivers.eeprom.shell
     - drivers.gpio.build
+    - drivers.uart.async_api
     - filesystem.lib_link
     - kernel.common
     - kernel.common.lto
@@ -311,6 +320,7 @@
     - kernel.context
     - kernel.context.minimallibc
     - kernel.lifo.usage
+    - kernel.poll
     - kernel.poll.minimallibc
     - kernel.scheduler
     - kernel.scheduler.multiq
@@ -338,6 +348,7 @@
     - libraries.heap
     - libraries.heap.hardening_full
     - libraries.heap.hardening_none
+    - libraries.heap_kasan
     - libraries.libc.c11_threads.minimal
     - libraries.libc.c11_threads.newlib
     - libraries.libc.c11_threads.newlib_nano
@@ -353,6 +364,7 @@
     - libraries.libc.common.picolibc.notls
     - libraries.net_buf.buf
     - libraries.ring_buffer
+    - logging.backend.uart.multi
     - logging.immediate.*
     - logging.thread
     - message_bus.zbus.general_unittests
@@ -398,6 +410,7 @@
 
 - scenarios:
     - .*secure_storage.*
+    - benchmark.crypto.psa
     - cpp.libcxx.glibcxx.picolibc
     - drivers.can.shell
     - kernel.common
@@ -455,9 +468,11 @@
   comment: "not compatible with NCS (Frank Audun Kvamtro)"
 
 - scenarios:
-    - drivers.wifi.build.spi
+    - drivers.net.wifi.build.spi
   platforms:
+    - native_sim
     - native_sim/native
+    - native_sim/native/64
   comment: "requires pulling in hal_atmel but is actually not very useful"
 
 - scenarios:
@@ -532,7 +547,7 @@
 - scenarios:
     - kernel.scheduler.simple_timeslicing
     - sample.display.shield
-    - tests.drivers.display.check.shield
+    - drivers.display.check.shield
   platforms:
     - nrf52dk/nrf52832
   comment: "region RAM overflowed"
@@ -626,3 +641,19 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40724"
+
+- scenarios:
+    - sample.shell.devmem_load.uart.interrupt
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "sample is native_sim only"
+
+- scenarios:
+    - posix.threads_base.dynamic_stack
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "https://github.com/zephyrproject-rtos/zephyr/issues/114095"
+
+- scenarios:
+    - sample.shell.shell_module.robot
+  comment: "https://github.com/zephyrproject-rtos/zephyr/pull/107156 - changes in robot framework"
