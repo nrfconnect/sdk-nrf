@@ -203,6 +203,19 @@ config COAP_SEND_CONFIRMABLE
 	  Ensures all CoAP transfers, even for often less important messages such
 	  as sensor data, are sent as confirmable messages.
 
+config SAMPLE_MEMFAULT_FOTA
+	bool "Application FOTA using Memfault Release Management"
+	depends on BOOTLOADER_MCUBOOT
+	depends on $(dt_nodelabel_enabled,slot1_partition)
+	depends on MCUBOOT_BOOTLOADER_MODE_SWAP_USING_OFFSET || MCUBOOT_BOOTLOADER_MODE_SWAP_USING_MOVE || \
+			MCUBOOT_BOOTLOADER_MODE_SWAP_SCRATCH || MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT || \
+			MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT
+	help
+	  Enables application firmware updates delivered through Memfault
+	  Release Management. Requires a MCUboot mode that supports the
+	  test/confirm revert mechanism, since the sample relies on
+	  boot_write_img_confirmed() to mark an update as good.
+
 endif
 
 endmenu
