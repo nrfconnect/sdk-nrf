@@ -21,6 +21,7 @@
 #include <common/rf_params.h>
 #include <common/util.h>
 #include <offload_raw_tx/api.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -111,16 +112,9 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 		goto err;
 	}
 
-	/* TODO: Remove hardcodes once we hook in sensor readings */
-	status = nrf_wifi_fmac_config_vtf_params(drv_ctx->rpu_ctx,
-						 243,
-						 25,
-						 0,
-						 &drv_ctx->vtf_buffer_start_address);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to configure VTF params", __func__);
-		goto err;
-	}
+	/* Firmware reads 3 words from here; index 0 is the init word. */
+	drv_ctx->vtf_buffer_start_address =
+		(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
 
 	memset(&tx_pwr_ctrl_params, 0, sizeof(tx_pwr_ctrl_params));
 	memset(&tx_pwr_ceil_params, 0, sizeof(tx_pwr_ceil_params));
@@ -219,11 +213,8 @@ void nrf_wifi_off_raw_tx_deinit(void)
 			drv_ctx->phy_rf_params_addr[i] = 0;
 		}
 	}
-	if (drv_ctx->vtf_buffer_start_address) {
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-				  (void *)drv_ctx->vtf_buffer_start_address);
-		drv_ctx->vtf_buffer_start_address = 0;
-	}
+	/* vtf_snapshots is static, not heap: never free. */
+	drv_ctx->vtf_buffer_start_address = 0;
 
 	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 }
