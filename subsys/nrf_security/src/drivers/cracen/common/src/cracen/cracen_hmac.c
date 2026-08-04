@@ -30,8 +30,8 @@ static void xorbuf(uint8_t *buf, uint8_t v, size_t sz)
 	}
 }
 
-int hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_t *digest,
-		 size_t output_buffer_size, uint8_t *workmem)
+int cracen_hmac_produce(struct sxhash *hashctx, const struct sxhashalg *hashalg, uint8_t *digest,
+			size_t output_buffer_size, uint8_t *workmem)
 {
 	int status;
 	size_t blocksz;
@@ -85,8 +85,8 @@ static int internal_start_hmac_computation(struct sxhash *hashopctx,
 	return sx_hash_feed(hashopctx, workmem, blocksz);
 }
 
-int mac_create_hmac(const struct sxhashalg *hashalg, struct sxhash *hashopctx, const uint8_t *key,
-		    size_t keysz, uint8_t *workmem, size_t workmemsz)
+int cracen_hmac_create(const struct sxhashalg *hashalg, struct sxhash *hashopctx,
+		       const uint8_t *key, size_t keysz, uint8_t *workmem, size_t workmemsz)
 {
 	int status;
 	size_t digestsz;

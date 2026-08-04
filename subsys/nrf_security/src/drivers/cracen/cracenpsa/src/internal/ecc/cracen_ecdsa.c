@@ -89,7 +89,7 @@ static void digest2op(const uint8_t *digest, size_t sz, uint8_t *dst, size_t ops
 /**
  * @brief Perform bits2int according to definition in RFC-6979.
  */
-void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t qlen)
+static void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t qlen)
 {
 	size_t data_bitlen = data_len * 8;
 	size_t qbytes = ROUND_UP(qlen, 8) / 8;
@@ -119,8 +119,8 @@ void bits2int(const uint8_t *data, size_t data_len, uint8_t *out_data, size_t ql
 /**
  * @brief Perform bits2octets according to definition in RFC-6979.
  */
-void bits2octets(const uint8_t *data, size_t data_len, uint8_t *out_data, const uint8_t *order,
-		 size_t order_len)
+static void bits2octets(const uint8_t *data, size_t data_len, uint8_t *out_data,
+			const uint8_t *order, size_t order_len)
 {
 	bits2int(data, data_len, out_data, order_len * 8 - clz_u8(order[0]));
 
@@ -291,7 +291,7 @@ static int deterministic_ecdsa_hmac(struct sxhash *hashctx, const struct sxhasha
 		sx_hash_get_alg_digestsz(hashalg) + sx_hash_get_alg_blocksz(hashalg);
 	uint8_t workmem[workmem_requirement];
 
-	status = mac_create_hmac(hashalg, hashctx, key, hash_len, workmem, workmem_requirement);
+	status = cracen_hmac_create(hashalg, hashctx, key, hash_len, workmem, workmem_requirement);
 	if (status != SX_OK) {
 		return status;
 	}
@@ -325,7 +325,7 @@ static int deterministic_ecdsa_hmac(struct sxhash *hashctx, const struct sxhasha
 		}
 	}
 
-	return hmac_produce(hashctx, hashalg, hmac, hash_len, workmem);
+	return cracen_hmac_produce(hashctx, hashalg, hmac, hash_len, workmem);
 }
 
 static int run_deterministic_ecdsa_hmac_step(struct sxhash *hashctx,

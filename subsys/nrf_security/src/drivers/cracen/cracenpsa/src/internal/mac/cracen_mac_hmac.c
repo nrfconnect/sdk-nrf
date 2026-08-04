@@ -39,7 +39,7 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 	}
 
 	/* HMAC operation creation and configuration. */
-	sx_status = mac_create_hmac(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
+	sx_status = cracen_hmac_create(sx_hash_algo, &operation->hmac.hashctx, key_buffer,
 		key_buffer_size, operation->hmac.workmem, sizeof(operation->hmac.workmem));
 	if (sx_status != SX_OK) {
 		sx_hw_release(&operation->hmac.hashctx.dma);
@@ -191,8 +191,9 @@ psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 	}
 
 	/* Generate the MAC */
-	sx_status = hmac_produce(&operation->hmac.hashctx, sx_hash_algo, operation->input_buffer,
-				 sizeof(operation->input_buffer), operation->hmac.workmem);
+	sx_status = cracen_hmac_produce(&operation->hmac.hashctx, sx_hash_algo,
+					operation->input_buffer, sizeof(operation->input_buffer),
+					operation->hmac.workmem);
 
 exit:
 	sx_hw_release(&operation->hmac.hashctx.dma);
