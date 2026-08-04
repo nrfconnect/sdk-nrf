@@ -35,6 +35,8 @@ To use this feature, meet the following requirements:
    Currently, MCUboot images cannot be linked together.
    This means that both parts of the firmware update must be loaded properly before an update is initiated.
    If one part fails to update, the image on the device will be unbootable and that will likely brick the device.
+   When you enable the :kconfig:option:`CONFIG_NCS_MCUBOOT_QSPI_XIP_IMGTOOL_DEPENDENCIES` Kconfig option, MCUboot detects and rejects an update of only one of the two images.
+   However, it does not check whether the two update candidates are compatible with each other.
 
 Network core image updates
 **************************
