@@ -15,7 +15,7 @@ common:
       - "jedec-id ="
 tests:
   sample.drivers.spi.jesd216.sqspi:
-    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -24,7 +24,7 @@ tests:
     extra_args:
       - FILE_SUFFIX=sqspi
   sample.drivers.spi.jesd216.sqspi_16M:
-    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -34,7 +34,7 @@ tests:
       - FILE_SUFFIX=sqspi
       - EXTRA_DTC_OVERLAY_FILE="boards/sqspi_16MHz.overlay"
   sample.drivers.spi.jesd216.sqspi_32M:
-    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,mspi-nor")
+    filter: CONFIG_MSPI_NRF_SQSPI and dt_compat_enabled("jedec,nor")
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp

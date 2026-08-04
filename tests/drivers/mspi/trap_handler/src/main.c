@@ -11,7 +11,7 @@
 
 #define MSPI_BUS_NODE DT_NODELABEL(hpf_mspi)
 
-#if !IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_MSPI_EMUL_DEVICE_ENABLED)
+#if !IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_EMUL_DEVICE_MSPI_ENABLED)
 static const struct device *mspi_devices[] = {
 	DT_FOREACH_CHILD_STATUS_OKAY_SEP(MSPI_BUS_NODE, DEVICE_DT_GET, (,))
 };
@@ -30,7 +30,7 @@ ZTEST(hpf_trap_handler, test_trap_handler)
 	};
 
 	zassert_true(device_is_ready(mspi_bus), "mspi_bus is not ready");
-#if !IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_MSPI_EMUL_DEVICE_ENABLED)
+#if !IS_ENABLED(CONFIG_DT_HAS_ZEPHYR_EMUL_DEVICE_MSPI_ENABLED)
 	zassert_true(device_is_ready(mspi_devices[0]), "mspi_device is not ready");
 #endif
 	/* Push wrong device id to trigger assert on flpr app side */
