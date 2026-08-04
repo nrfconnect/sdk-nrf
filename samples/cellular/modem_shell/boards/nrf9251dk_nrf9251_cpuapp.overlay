@@ -70,3 +70,8 @@
 &cpuapp_wifi {
 	status = "okay";
 };
+
+/ {
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
+};
