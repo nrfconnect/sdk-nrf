@@ -30,6 +30,10 @@ if(CONFIG_COAP_SHADOW)
   target_sources(app PRIVATE src/shadow_support_coap.c)
 endif()
 
+if(CONFIG_SAMPLE_MEMFAULT_FOTA)
+  target_sources(app PRIVATE src/memfault_fota_support.c)
+endif()
+
 # NORDIC SDK APP END
 
 zephyr_include_directories(src)

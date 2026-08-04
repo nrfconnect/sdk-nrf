@@ -13,6 +13,9 @@
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include "shadow_support_coap.h"
 #endif
+#if defined(CONFIG_SAMPLE_MEMFAULT_FOTA)
+#include "memfault_fota_support.h"
+#endif
 
 LOG_MODULE_REGISTER(main, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
@@ -61,6 +64,18 @@ int main(void)
 
 	LOG_INF("Wi-Fi nRF Cloud sample has started, version: %s, protocol: %s",
 		CONFIG_APP_VERSION, protocol);
+
+#if defined(CONFIG_MEMFAULT_NCS_FW_VERSION_STATIC)
+	LOG_INF("Memfault software_version: %s", CONFIG_MEMFAULT_NCS_FW_VERSION);
+#endif
+
+#if defined(CONFIG_SAMPLE_MEMFAULT_FOTA)
+	/* Confirm the running image so MCUboot does not roll back after a successful
+	 * FOTA update reboot. FOTA checks/downloads themselves are driven independently,
+	 * periodically, by the Memfault SDK (see CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK).
+	 */
+	memfault_fota_support_init();
+#endif
 
 	return 0;
 }
