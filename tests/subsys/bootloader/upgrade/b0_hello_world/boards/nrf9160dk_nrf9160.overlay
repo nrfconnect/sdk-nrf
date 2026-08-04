@@ -36,3 +36,8 @@
 		zephyr,code-partition = &s0_partition;
 	};
 };
+
+/ {
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
+};
