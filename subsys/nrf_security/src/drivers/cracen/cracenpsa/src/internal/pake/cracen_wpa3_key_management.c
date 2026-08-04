@@ -102,10 +102,10 @@ static psa_status_t cracen_wpa3_sae_reduce_p256(sx_pk_req *req,
 	return silex_statuscodes_to_psa(sx_status);
 }
 
-psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
-				    const uint8_t *data, size_t data_length,
-				    uint8_t *key_buffer, size_t key_buffer_size,
-				    size_t *key_buffer_length, size_t *key_bits)
+psa_status_t cracen_import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
+					   const uint8_t *data, size_t data_length,
+					   uint8_t *key_buffer, size_t key_buffer_size,
+					   size_t *key_buffer_length, size_t *key_bits)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	int sx_status;

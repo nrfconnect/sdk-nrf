@@ -19,7 +19,8 @@
 
 #define MAX_ECC_ATTEMPTS 10
 
-int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_ecurve *curve)
+int cracen_ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key,
+			 const struct sx_pk_ecurve *curve)
 {
 	const uint8_t **outputs;
 	sx_pk_req req;
@@ -73,7 +74,7 @@ int ecc_genpubkey(const uint8_t *priv_key, uint8_t *pub_key, const struct sx_pk_
 	return status;
 }
 
-int ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key, size_t priv_key_size)
+int cracen_ecc_genprivkey(const struct sx_pk_ecurve *curve, uint8_t *priv_key, size_t priv_key_size)
 {
 	int status;
 	int opsz = sx_pk_curve_opsize(curve);
