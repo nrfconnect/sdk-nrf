@@ -1042,9 +1042,9 @@ static int api_irq_is_pending(const struct device *dev)
 	return api_irq_rx_ready(dev) || api_irq_tx_ready(dev);
 }
 
-static int api_irq_update(const struct device *dev)
+static void api_irq_update(const struct device *dev)
 {
-	return 1;
+	ARG_UNUSED(dev);
 }
 
 #endif /* CONFIG_NRF_SW_LPUART_INT_DRIVEN */
