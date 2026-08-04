@@ -27,7 +27,7 @@
 
 #define COAP_SHADOW_MAX_SIZE 512
 
-#include <app_version.h>
+#include <zephyr/app_version.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_coap_fota_sample, CONFIG_NRF_CLOUD_COAP_FOTA_SAMPLE_LOG_LEVEL);
 
