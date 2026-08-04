@@ -24,6 +24,7 @@
 
 
 #include <util.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 #include "common/fmac_util.h"
 #include <fmac_main.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
@@ -633,36 +634,6 @@ cleanup:
 	return NRF_WIFI_STATUS_FAIL;
 }
 
-struct nrf_wifi_vtf_params_host {
-	unsigned int voltage;
-	unsigned int temp;
-	unsigned int x0_freq;
-};
-
-enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ctx *dev_ctx,
-						     unsigned int voltage, unsigned int temp,
-						     unsigned int x0,
-						     unsigned int *vtf_buffer_start_address)
-{
-	struct nrf_wifi_vtf_params_host *vtf_buf;
-
-	if (!vtf_buffer_start_address) {
-		return NRF_WIFI_STATUS_FAIL;
-	}
-
-	vtf_buf = k_malloc(sizeof(*vtf_buf));
-	if (!vtf_buf) {
-		LOG_ERR("%s: k_malloc failed for VTF params", __func__);
-		return NRF_WIFI_STATUS_FAIL;
-	}
-
-	vtf_buf->voltage = voltage;
-	vtf_buf->temp = temp;
-	vtf_buf->x0_freq = x0;
-	*vtf_buffer_start_address = (unsigned int)vtf_buf;
-	return NRF_WIFI_STATUS_SUCCESS;
-}
-
 enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -722,13 +693,14 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv
 		goto err;
 	}
 
-	/* TODO: Remove hardcodes once we hook in sensor readings */
-	status = nrf_wifi_fmac_config_vtf_params(rpu_ctx_zep->rpu_ctx, 243, 25, 0,
-						 &rpu_ctx_zep->vtf_buffer_start_address);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to configure VTF params", __func__);
-		goto err;
-	}
+	/* Point the firmware at the live VTF snapshot region maintained by the
+	 * vtf_monitoring subsystem (selected by the driver). The battery-voltage
+	 * entry is the first of the three consecutive words (voltage,
+	 * temperature, frequency) the firmware reads; the preceding
+	 * initialization word is not included.
+	 */
+	rpu_ctx_zep->vtf_buffer_start_address =
+		(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
 
 #ifdef CONFIG_NRF71_RADIO_TEST
 	status = nrf_wifi_rt_fmac_dev_init(rpu_ctx_zep->rpu_ctx,
@@ -788,7 +760,9 @@ enum nrf_wifi_status nrf_wifi_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv
 		k_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
 		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
 	}
-	k_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
+	/* vtf_buffer_start_address points at the static vtf_snapshots region,
+	 * not heap memory, so it must not be freed.
+	 */
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
 	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
