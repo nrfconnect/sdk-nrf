@@ -39,12 +39,12 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		struct sx_x25519_op k;
 
 		memcpy(k.bytes, priv_key, CRACEN_X25519_KEY_SIZE_BYTES);
-		decode_scalar_25519(k.bytes);
+		cracen_decode_scalar_25519(k.bytes);
 
 		struct sx_x25519_op pt;
 
 		memcpy(pt.bytes, publ_key, CRACEN_X25519_KEY_SIZE_BYTES);
-		decode_u_coordinate_25519(pt.bytes);
+		cracen_decode_u_coordinate_25519(pt.bytes);
 
 		sx_status = sx_x25519_ptmult(&req, &k, &pt, (struct sx_x25519_op *)output);
 		if (sx_status != SX_OK) {
@@ -55,7 +55,7 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		struct sx_x448_op k;
 
 		memcpy(k.bytes, priv_key, CRACEN_X448_KEY_SIZE_BYTES);
-		decode_scalar_448(k.bytes);
+		cracen_decode_scalar_448(k.bytes);
 
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
 		sx_status = sx_x448_ptmult(&req, &k, (struct sx_x448_op *)publ_key,

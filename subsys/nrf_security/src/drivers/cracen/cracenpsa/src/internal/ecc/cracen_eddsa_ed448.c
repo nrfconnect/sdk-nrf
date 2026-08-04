@@ -110,7 +110,7 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	decode_scalar_448(area_1);
+	cracen_decode_scalar_448(area_1);
 
 	/* Clear second half of private key digest: sx_ed448_ptmult()
 	 * works on an input of SX_ED448_DGST_SZ bytes.
@@ -258,7 +258,7 @@ int cracen_ed448_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	decode_scalar_448(digest);
+	cracen_decode_scalar_448(digest);
 
 	/* Clear second half of private key digest: ed448_ptmult()
 	 * works on an input of SX_ED448_DGST_SZ bytes.

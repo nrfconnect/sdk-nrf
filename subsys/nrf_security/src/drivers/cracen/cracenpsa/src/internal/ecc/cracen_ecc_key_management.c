@@ -160,10 +160,10 @@ psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attributes,
 			 */
 			if (key_size_bytes == 32) {
 				/* X25519 */
-				decode_scalar_25519(&workmem[0]);
+				cracen_decode_scalar_25519(&workmem[0]);
 			} else if (key_size_bytes == 56) {
 				/* X448 */
-				decode_scalar_448(&workmem[0]);
+				cracen_decode_scalar_448(&workmem[0]);
 			} else {
 				/* For compliance */
 			}
@@ -371,7 +371,7 @@ psa_status_t import_ecc_public_key(const psa_key_attributes_t *attributes,
 	switch (curve) {
 	case PSA_ECC_FAMILY_BRAINPOOL_P_R1:
 	case PSA_ECC_FAMILY_SECP_R1:
-		psa_status = check_wstr_pub_key_data(key_alg, curve, key_bits_attr,
+		psa_status = cracen_check_wstr_pub_key_data(key_alg, curve, key_bits_attr,
 						     local_key_buffer, data_length);
 		if (psa_status != PSA_SUCCESS) {
 			return psa_status;
