@@ -428,7 +428,7 @@ static void bt_audio_codec_allocation_set(uint8_t *data, uint8_t data_len,
 }
 
 static int create_param_produce(uint8_t big_index,
-				struct broadcast_source_big const *const ext_create_param,
+				struct broadcast_source_big *ext_create_param,
 				struct bt_cap_initiator_broadcast_create_param *create_param)
 {
 	int ret;
@@ -485,23 +485,26 @@ static int create_param_produce(uint8_t big_index,
 						      stream_params[i][j].data_len, loc);
 		}
 
+		struct bt_audio_codec_cfg *codec_cfg =
+			&ext_create_param->subgroups[i].group_lc3_preset.codec_cfg;
+
 		subgroup_params[i].stream_count = ext_create_param->subgroups[i].num_bises;
 		subgroup_params[i].stream_params = stream_params[i];
-		subgroup_params[i].codec_cfg =
-			&ext_create_param->subgroups[i].group_lc3_preset.codec_cfg;
-		ret = bt_audio_codec_cfg_set_chan_allocation(subgroup_params[i].codec_cfg,
-							     subgroup_loc);
+
+		ret = bt_audio_codec_cfg_set_chan_allocation(codec_cfg, subgroup_loc);
 		if (ret < 0) {
 			LOG_WRN("Failed to set location: %d", ret);
 			return -EINVAL;
 		}
 
 		ret = bt_audio_codec_cfg_meta_set_stream_context(
-			subgroup_params[i].codec_cfg, ext_create_param->subgroups[i].context);
+			codec_cfg, ext_create_param->subgroups[i].context);
 		if (ret < 0) {
 			LOG_WRN("Failed to set context: %d", ret);
 			return -EINVAL;
 		}
+
+		subgroup_params[i].codec_cfg = codec_cfg;
 	}
 
 	/* Create broadcast_source */
@@ -851,8 +854,7 @@ static struct bt_cap_initiator_cb cap_cbs = {
 	.broadcast_stopped = broadcast_stopped_cb,
 };
 
-int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
-			    uint8_t big_index)
+int broadcast_source_enable(struct broadcast_source_big *broadcast_param, uint8_t big_index)
 {
 	int ret;
 
