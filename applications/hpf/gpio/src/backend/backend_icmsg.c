@@ -29,6 +29,7 @@ static void ep_recv(const void *data, size_t len, void *priv)
 }
 
 static struct ipc_ept_cfg ep_cfg = {
+	.name = "hpf_gpio_ep",
 	.cb = {
 		.bound = ep_bound,
 		.received = ep_recv,

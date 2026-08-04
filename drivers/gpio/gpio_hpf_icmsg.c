@@ -31,6 +31,7 @@ static void ep_bound(void *priv)
 }
 
 static struct ipc_ept_cfg ep_cfg = {
+	.name = "hpf_gpio_ep",
 	.cb = {
 		.bound = ep_bound,
 		.received = NULL,
