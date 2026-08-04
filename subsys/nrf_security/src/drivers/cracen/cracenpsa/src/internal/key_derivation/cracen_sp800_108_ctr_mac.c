@@ -94,7 +94,7 @@ static psa_status_t cracen_ctr_mac_generate_block(cracen_key_derivation_operatio
 	    PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
 		const struct sxhashalg *hash;
 
-		status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash);
+		status = cracen_hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &hash);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}

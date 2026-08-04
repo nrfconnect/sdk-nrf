@@ -29,7 +29,7 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 {
 	const struct sxhashalg *sx_hash_algo = NULL;
 
-	psa_status_t psa_status = hash_get_algo(alg, &sx_hash_algo);
+	psa_status_t psa_status = cracen_hash_get_algo(alg, &sx_hash_algo);
 
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
@@ -48,7 +48,7 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
 {
 	int status;
 
-	status = hash_get_algo(alg, &operation->sx_hash_algo);
+	status = cracen_hash_get_algo(alg, &operation->sx_hash_algo);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

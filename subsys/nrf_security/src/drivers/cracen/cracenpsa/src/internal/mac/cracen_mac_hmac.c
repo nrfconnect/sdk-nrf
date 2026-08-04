@@ -26,7 +26,7 @@ psa_status_t cracen_hmac_setup(cracen_mac_operation_t *operation,
 	int sx_status;
 	const struct sxhashalg *sx_hash_algo = NULL;
 
-	psa_status_t psa_status = hash_get_algo(PSA_ALG_HMAC_GET_HASH(alg), &sx_hash_algo);
+	psa_status_t psa_status = cracen_hash_get_algo(PSA_ALG_HMAC_GET_HASH(alg), &sx_hash_algo);
 
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
@@ -73,9 +73,10 @@ psa_status_t cracen_hmac_update(cracen_mac_operation_t *operation, const uint8_t
 	size_t input_chunk_length = 0;
 	size_t remaining_bytes = 0;
 	const struct sxhashalg *sx_hash_algo = NULL;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	/* As the block size is needed several times we compute it once here */
-	psa_status_t psa_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
+	psa_status = cracen_hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
 
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
@@ -159,12 +160,13 @@ exit:
 psa_status_t cracen_hmac_finish(cracen_mac_operation_t *operation)
 {
 	int sx_status;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t block_size, digestsz;
 	const struct sxhashalg *sx_hash_algo = NULL;
 
-	sx_status = hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
+	psa_status = cracen_hash_get_algo(PSA_ALG_GET_HASH(operation->alg), &sx_hash_algo);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
 	}
 
 	digestsz = sx_hash_get_alg_digestsz(sx_hash_algo);
