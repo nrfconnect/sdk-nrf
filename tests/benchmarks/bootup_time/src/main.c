@@ -15,8 +15,8 @@ const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 #define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(jedec_spi_nor)
 #elif DT_HAS_COMPAT_STATUS_OKAY(nordic_qspi_nor)
 #define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_qspi_nor)
-#elif DT_HAS_COMPAT_STATUS_OKAY(jedec_mspi_nor)
-#define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(jedec_mspi_nor)
+#elif DT_HAS_COMPAT_STATUS_OKAY(jedec_nor)
+#define FLASH_NODE DT_COMPAT_GET_ANY_STATUS_OKAY(jedec_nor)
 #else
 #error Unsupported flash driver
 #define FLASH_NODE DT_INVALID_NODE
