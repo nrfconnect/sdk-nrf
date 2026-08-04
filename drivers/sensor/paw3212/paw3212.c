@@ -943,7 +943,7 @@ static int paw3212_attr_set(const struct device *dev, enum sensor_channel chan,
 	return err;
 }
 
-static const struct sensor_driver_api paw3212_driver_api = {
+static DEVICE_API(sensor, paw3212_driver_api) = {
 	.sample_fetch = paw3212_sample_fetch,
 	.channel_get  = paw3212_channel_get,
 	.trigger_set  = paw3212_trigger_set,

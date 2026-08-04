@@ -185,7 +185,7 @@ int ipc_uart_init(const struct device *dev)
 	return 0;
 }
 
-static const struct uart_driver_api uart_ipc_api = {
+static DEVICE_API(uart, uart_ipc_api) = {
 	.poll_in = ipc_uart_poll_in,
 	.poll_out = ipc_uart_poll_out
 };

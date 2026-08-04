@@ -1035,7 +1035,7 @@ static int pmw3360_attr_set(const struct device *dev, enum sensor_channel chan,
 	return err;
 }
 
-static const struct sensor_driver_api pmw3360_driver_api = {
+static DEVICE_API(sensor, pmw3360_driver_api) = {
 	.sample_fetch = pmw3360_sample_fetch,
 	.channel_get  = pmw3360_channel_get,
 	.trigger_set  = pmw3360_trigger_set,
