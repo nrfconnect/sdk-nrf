@@ -227,7 +227,7 @@ int le_audio_stream_dir_get(struct bt_bap_stream const *const stream)
 	struct bt_bap_ep_info ep_info;
 
 	if (unlikely(stream->ep == NULL)) {
-		LOG_ERR("Stream has no endpoint");
+		LOG_DBG("Stream has no endpoint");
 		return -EINVAL;
 	}
 
