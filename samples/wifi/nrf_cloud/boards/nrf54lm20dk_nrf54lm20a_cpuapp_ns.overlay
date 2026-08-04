@@ -6,7 +6,7 @@
 
 /* Dual-slot layout for MCUboot (on internal flash) */
 
-/delete-node/ &slot0_partition;
+/delete-node/ &slot0_s_partition;
 
 /* Shared boot/slot0/slot1 addresses and sizes */
 &cpuapp_rram {
