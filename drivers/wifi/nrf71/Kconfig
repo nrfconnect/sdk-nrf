@@ -15,6 +15,7 @@ menuconfig WIFI_NRF71
 	select MBOX
 	select SPSC_PBUF
 	select SOC_NRF71_WIFI_BOOT
+	select VTF_MONITORING
 	default y
 	depends on DT_HAS_NORDIC_NRF7120_WIFI_ENABLED
 	help
