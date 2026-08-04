@@ -42,3 +42,8 @@
 		};
 	};
 };
+
+/ {
+	/delete-node/ nordic-tz-secure;
+	/delete-node/ nordic-tz-nonsecure;
+};
