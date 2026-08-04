@@ -20,8 +20,8 @@
  */
 #define NRF_WIFI_RSSI_INVALID -127
 
-int nrf_wifi_disp_scan_zep(const struct device *dev, struct wifi_scan_params *params,
-			   scan_result_cb_t cb);
+int nrf_wifi_disp_scan_zep(const struct device *dev, struct net_if *iface,
+			   struct wifi_scan_params *params, scan_result_cb_t cb);
 
 void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 				struct nrf_wifi_umac_event_scan_done *scan_done_event,
