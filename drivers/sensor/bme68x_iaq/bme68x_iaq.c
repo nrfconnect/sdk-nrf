@@ -685,7 +685,7 @@ static int bme68x_channel_get(const struct device *dev,
 	return result;
 }
 
-static const struct sensor_driver_api bme68x_driver_api = {
+static DEVICE_API(sensor, bme68x_driver_api) = {
 	.sample_fetch = &bme68x_sample_fetch,
 	.channel_get = &bme68x_channel_get,
 	.trigger_set = bme68x_trigger_set,

@@ -547,7 +547,7 @@ static void uart_irq_handler(const struct device *target_dev, void *context)
 	LOG_DBG("irq_handler: Exit");
 }
 
-const struct uart_driver_api uart_async_adapter_driver_api = {
+DEVICE_API(uart, uart_async_adapter_driver_api) = {
 	/* Async interface */
 	.callback_set = callback_set,
 	.tx = tx,
