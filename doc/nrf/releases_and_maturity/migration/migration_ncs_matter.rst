@@ -418,8 +418,10 @@ Use this checklist when migrating a custom Matter application:
 #. Set up a west workspace that includes the ``ncs-matter`` add-on at a release matching your target |NCS| version.
 #. Move or copy your application sources to a path under your workspace (or use an add-on sample as the new base).
 #. Update :file:`CMakeLists.txt`:
+
    * Include :file:`ncs-matter/cmake/sample.cmake` instead of the former ``samples/matter/common/cmake/*`` files.
    * Replace ``ZEPHYR_NRF_MODULE_DIR`` Matter paths with ``ZEPHYR_NCS_MATTER_MODULE_DIR``.
+
 #. Update :file:`Kconfig` files: remove the ``samples/matter/common/src/Kconfig`` source line.
 #. Rename all ``CONFIG_NCS_SAMPLE_MATTER_*`` symbols to ``CONFIG_MATTER_*`` in configuration files.
 #. Update devicetree board overlays: replace ``#include <samples/matter/...>`` with ``#include <...>`` using the filenames from :file:`ncs-matter/dts/`.

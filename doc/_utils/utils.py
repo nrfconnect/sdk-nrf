@@ -23,7 +23,6 @@ ALL_DOCSETS = {
     "zephyr": ("Zephyr Project", "index", "zephyr"),
     "mcuboot": ("MCUboot", "wrapper", "mcuboot"),
     "tfm": ("Trusted Firmware-M", "wrapper", "trusted-firmware-m"),
-    "matter": ("Matter Add-on", "index", "matter"),
     "kconfig": ("Kconfig Reference", "index", None),
 }
 """All supported docsets (name: title, home page, manifest project name)."""
