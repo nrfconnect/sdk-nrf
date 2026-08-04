@@ -7,8 +7,10 @@ common:
 
 tests:
   # BC-aware configuration for the compressed_update sample.
-  # Application name restored to "mcuboot_update" and the flash map pinned via
-  # DTS board overlays (no Partition Manager) to the NCS v3.2 layout.
+  # Application name restored to "mcuboot_update". The v3.2 flash map is pinned
+  # via DTS board overlays (no Partition Manager) and the image header gap is
+  # signed with the erase value (see prj.conf), so an NCS v3.2 MCUboot both
+  # accepts and boots the decompressed update.
   mcuboot.backward_compatibility.compressed_update:
     platform_allow:
       - nrf52840dk/nrf52840
