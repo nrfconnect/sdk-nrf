@@ -113,6 +113,15 @@ void bt_conn_unref(struct bt_conn *conn)
 	}
 }
 
+void bt_conn_drop(struct bt_conn **orig)
+{
+	struct bt_conn *conn = bt_conn_take(orig);
+
+	if (conn != NULL) {
+		bt_conn_unref(conn);
+	}
+}
+
 static void bt_conn_foreach_cb_callback_rpc_handler(const struct nrf_rpc_group *group,
 						    struct nrf_rpc_cbor_ctx *ctx,
 						    void *handler_data)
