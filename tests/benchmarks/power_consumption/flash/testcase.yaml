@@ -40,6 +40,5 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
       - SB_CONFIG_VPR_LAUNCHER=n
-      - SB_CONFIG_PARTITION_MANAGER=n
       - SB_CONFIG_HPF=y
       - SB_CONFIG_HPF_MSPI=y
