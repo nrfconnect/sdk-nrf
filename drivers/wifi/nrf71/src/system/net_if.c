@@ -357,7 +357,8 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 }
 #endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 
-enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev)
+enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev __unused,
+					   struct net_if *iface __unused)
 {
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE |
 			ETHERNET_LINK_100BASE | ETHERNET_LINK_1000BASE);
@@ -821,7 +822,7 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 #endif /* CONFIG_NRF71_STA_MODE */
 }
 
-int nrf_wifi_if_start_zep(const struct device *dev)
+int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -1012,7 +1013,7 @@ out:
 }
 
 
-int nrf_wifi_if_stop_zep(const struct device *dev)
+int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -1107,6 +1108,7 @@ out:
 }
 
 int nrf_wifi_if_get_config_zep(const struct device *dev,
+			       struct net_if *iface __unused,
 			       enum ethernet_config_type type,
 			       struct ethernet_config *config)
 {
@@ -1181,6 +1183,7 @@ out:
 }
 
 int nrf_wifi_if_set_config_zep(const struct device *dev,
+			       struct net_if *iface __unused,
 			       enum ethernet_config_type type,
 			       const struct ethernet_config *config)
 {
@@ -1325,7 +1328,8 @@ out:
 
 #ifdef CONFIG_NET_STATISTICS_ETHERNET
 struct net_stats_eth *nrf_wifi_eth_stats_get_type(const struct device *dev,
-						   uint32_t type)
+						  struct net_if *iface __unused,
+						  uint32_t type)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 #ifdef CONFIG_NET_STATISTICS_ETHERNET_VENDOR
@@ -1415,7 +1419,9 @@ err:
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
 
 #ifdef CONFIG_NET_STATISTICS_WIFI
-int nrf_wifi_stats_get(const struct device *dev, struct net_stats_wifi *zstats)
+int nrf_wifi_stats_get(const struct device *dev,
+		       struct net_if *iface __unused,
+		       struct net_stats_wifi *zstats)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -1503,7 +1509,7 @@ out:
 	return ret;
 }
 
-int nrf_wifi_stats_reset(const struct device *dev)
+int nrf_wifi_stats_reset(const struct device *dev, struct net_if *iface __unused)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
