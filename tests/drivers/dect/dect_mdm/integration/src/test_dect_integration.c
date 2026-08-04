@@ -615,13 +615,18 @@ void tearDown(void)
 /**
  * @brief Verify DECT net_mgmt requests fail on an invalid iface
  *
- * Uses a zero-initialized iface so net_if_get_device() returns NULL and
- * get_dect_nr_hal_api() returns NULL. All DECT net_mgmt requests should then
+ * Uses an unregistered iface (not in the net_if section) with if_dev set but
+ * no backing device. Upstream Zephyr treats a non-NULL iface without if_dev as
+ * illegal (NET_ASSERT); net_if_get_device() then returns NULL for dev == NULL
+ * and get_dect_nr_hal_api() returns NULL. All DECT net_mgmt requests should
  * fail from the handler front-end with -ENOTSUP.
  */
 void test_dect_net_mgmt_invalid_iface_errors(void)
 {
-	struct net_if invalid_iface = {0};
+	struct net_if_dev invalid_if_dev;
+	struct net_if invalid_iface = {
+		.if_dev = &invalid_if_dev,
+	};
 	struct dect_scan_params scan_params = {
 		.band = 1,
 		.channel_count = 2,
