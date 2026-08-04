@@ -519,8 +519,12 @@ static void eth_iface_init(struct net_if *iface)
 /** Returns network driver capabilities. Currently no additional capabilities
  *  available.
  */
-static enum ethernet_hw_caps eth_capabilities(const struct device *dev)
+static enum ethernet_hw_caps eth_capabilities(const struct device *dev,
+					      struct net_if *iface)
 {
+	ARG_UNUSED(dev);
+	ARG_UNUSED(iface);
+
 	return (enum ethernet_hw_caps)0;
 }
 
