@@ -144,6 +144,7 @@ class Data(DataBaseClass):
         application_roots Set of application source roots detected from build directories.
         module_roots     Set of module source roots detected from build directories.
         toolchain_paths  Mapping of detected toolchain root paths (resolved) to package IDs.
+        domain           Sysbuild domain name for this run. None for non-sysbuild builds.
     '''
     files: 'list[FileInfo]' = list()
     licenses: 'dict[License|LicenseExpr]' = dict()
@@ -156,3 +157,4 @@ class Data(DataBaseClass):
     application_roots: 'set[str]' = set()
     module_roots: 'set[str]' = set()
     toolchain_paths: 'dict[str,str]' = dict()
+    domain: 'str|None' = None
