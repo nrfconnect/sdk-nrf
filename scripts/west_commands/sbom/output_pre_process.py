@@ -135,6 +135,10 @@ def pre_process(data: Data, built_date: 'str|None' = None):
         if (package.browser_url is None) and (package.url.startswith('http')):
             package.browser_url = package.url
     files_by_package = group_files_by_package(data)
+    # Drop the always-present empty catch-all package when nothing landed in it,
+    # so a fully resolved run does not emit a stray "unknown-package" entry.
+    if '' in data.packages and not files_by_package.get(''):
+        del data.packages['']
     assign_application_dependencies(data, files_by_package)
     add_dependency_placeholder_if_needed(data)
     assign_primary_package_purpose(data, files_by_package, built_date)
@@ -180,19 +184,35 @@ def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
     return packages
 
 
+def application_packages(data: Data, files_by_package: dict) -> 'set[str]':
+    '''Treat the non-empty '' catch-all (this build's generated artifacts) as the
+    application package rather than leaving it unnamed as "unknown-package".'''
+    packages = packages_for_roots(data.application_roots, files_by_package)
+    if data.application_roots and files_by_package.get(''):
+        packages = packages | {''}
+    return packages
+
+
 def assign_primary_package_purpose(data: Data, files_by_package: dict,
                                    built_date: 'str|None' = None):
     '''Set Package.primary_package_purpose and (for APPLICATION) Package.built_date.
       DEPENDENCY_PLACEHOLDER_ID                                -> OTHER
       no-URL package with files under data.application_roots   -> APPLICATION
+      the unknown-package when an application is known         -> APPLICATION
       package.purl set (git-resolved)                          -> SOURCE
       otherwise                                                -> omit (left as None)
 
     Only no-URL packages can be APPLICATION: they hold the build-specific
-    generated artifacts that uniquely identify this build.
+    generated artifacts that uniquely identify this build. The empty-id ('')
+    catch-all collects those generated artifacts, so when an application is
+    known (build mode always sets application_roots) that catch-all is the
+    application rather than an "unknown-package".
     '''
-    application_pkgs = packages_for_roots(data.application_roots, files_by_package)
-    app_name = application_name(data.application_roots)
+    application_pkgs = application_packages(data, files_by_package)
+    # Prefer the sysbuild domain name (e.g. "mcuboot") over the application source
+    # directory basename, which can be misleading. e.g: MCUboot's application
+    # lives in boot/zephyr, so the basename would be the colliding name "zephyr".
+    app_name = data.domain or application_name(data.application_roots)
     for pkg_id, package in data.packages.items():
         if pkg_id == DEPENDENCY_PLACEHOLDER_ID:
             package.primary_package_purpose = 'OTHER'
