@@ -118,6 +118,7 @@ function(nrf71_wifi_setup_include_and_sources)
   # Kconfig -> compile definitions
   zephyr_library_compile_definitions(
     $<$<BOOL:${CONFIG_NRF_WIFI_LOW_POWER}>:NRF_WIFI_LOW_POWER>
+    $<$<BOOL:${CONFIG_NRF_WIFI_LP_RX}>:NRF_WIFI_LP_RX>
     $<$<BOOL:${CONFIG_NRF_WIFI_RPU_RECOVERY}>:NRF_WIFI_RPU_RECOVERY>
     $<$<BOOL:${CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG}>:NRF_WIFI_RPU_RECOVERY_DEBUG>
     $<$<BOOL:${CONFIG_NRF_WIFI_RPU_RECOVERY_PS_STATE_DEBUG}>:NRF_WIFI_RPU_RECOVERY_PS_STATE_DEBUG>
