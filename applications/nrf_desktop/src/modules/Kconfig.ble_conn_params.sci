@@ -15,11 +15,16 @@ menu "SCI default connection rate parameters"
 
 config DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US
 	int "Minimum connection interval (125 microsecond units)"
-	default 7
+	default 6 if USBD_MAX_SPEED_HIGH
+	default 8
 	range 3 32000
 	help
 	  Minimum connection interval in 125 microsecond units (LE connection interval
 	  quantum), matching struct bt_conn_le_conn_rate_param.interval_min_125us.
+
+	  Connection intervals below 1000 us (8 units) should only be configured when
+	  the USB HID polling rate is high enough to keep up (for example, when using
+	  USB High-Speed with a 125 us polling period).
 
 config DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US
 	int "Maximum connection interval (125 microsecond units)"
