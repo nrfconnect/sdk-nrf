@@ -31,7 +31,7 @@ To use this feature, meet the following requirements:
 * External QSPI flash chip with supported commands connected to QSPI pins
 * QSPI flash chip in always-on mode (meaning, no DPM or low-power modes)
 * :doc:`MCUboot configuration <mcuboot:design>` in the Swap using move mode (``MCUBOOT_SWAP_USING_MOVE``), the Upgrade only mode (``MCUBOOT_OVERWRITE_ONLY``), or in the direct-XIP mode
-* :ref:`Static partition manager file <ug_pm_static>`
+* Memory layout defined by :ref:`devicetree-based partitioning <zephyr:dt-guide>`
 * Linker file with QSPI XIP flash offset and size
 * :ref:`configuration_system_overview_sysbuild`
 
@@ -49,45 +49,59 @@ The QSPI XIP split image feature supports network core image updates on nRF5340 
 
 .. rst-class:: numbered-step
 
-Create the Partition Manager static files
-*****************************************
+Create the memory layout with devicetree files
+**********************************************
 
 .. include:: ../../includes/pm_deprecation.txt
 
 Create the following files:
 
-* A static :ref:`partition_manager` file to set up the partitions that will be used on the device.
-  The following three files from the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample provide an example of the Partition Manager layouts for nRF5340:
+* A project ``cpuapp`` board devicetree overlay that defines the partition nodes used on the device (``boot_partition``, ``slot0_partition``, external ``slot1_partition`` through ``slot5_partition``, and related nodes).
+  The following files from the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample provide an example of the devicetree memory layouts for nRF5340:
 
   .. tabs::
 
       .. group-tab:: Swap using move with network core support
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static.yml
-              :language: yaml
+          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp.overlay
+              :language: dts
 
       .. group-tab:: Swap using move without network core support
 
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static_no_network_core.yml
-              :language: yaml
+          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp_no_network_core.overlay
+              :language: dts
 
       .. group-tab:: Direct-XIP without network core support
 
-          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/pm_static_no_network_core_directxip.yml
-              :language: yaml
+          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp_no_network_core_directxip.overlay
+              :language: dts
 
-* A board overlay file to set the chosen Partition Manager external flash device:
+      .. group-tab:: Swap using move with network core support along with TF-M
+          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp_ns.overlay
+              :language: dts
 
-  .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp.overlay
+          The following include defines SRAM partitioning required for the secure/non-secure setup:
+
+          .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/dts/nrf5340_extxip_sram_tfm_ns.dtsi
+              :language: dts
+
+* An MCUboot board overlay file to set the same partition layout and ``zephyr,code-partition`` to the ``boot_partition`` partition node:
+
+  .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/sysbuild/mcuboot/boards/nrf5340dk_nrf5340_cpuapp.overlay
      :language: dts
 
-  You can either place this file as a board overlay in the :file:`boards` folder of the application or name it :file:`app.overlay` and place it in the application folder so that it applies to all board targets.
+  You can either place this file as a board overlay in the :file:`sysbuild/mcuboot/boards` folder of the application or name it :file:`app.overlay` and place it in the :file:`sysbuild/mcuboot` folder so that it applies to all board targets.
+
+* A devicetree overlay for b0n to define ``cpunet`` partition nodes (including ``b0n_partition`` and ``s0_partition``):
+
+  .. literalinclude:: ../../../../samples/nrf5340/extxip_smp_svr/sysbuild/b0n.overlay
+     :language: dts
 
 .. rst-class:: numbered-step
 
 Create a linker file
 ********************
 
-Create a linker file that has the same information as the static Partition Manager file for the external QSPI flash device.
+Create a linker file that uses devicetree and Kconfig information for defining memory regions on the external QSPI flash device.
 The following code example from the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample shows how to set up a linker file for direct-XIP mode, with the direct-XIP secondary image configuration in the ``CONFIG_NCS_IS_VARIANT_IMAGE`` section.
 You can omit this section if you are using other MCUboot operating modes.
 
@@ -123,10 +137,11 @@ Configure :ref:`configuration_system_overview_sysbuild` to enable the required K
          .. code-block:: cfg
 
             SB_CONFIG_BOOTLOADER_MCUBOOT=y
-            SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
             SB_CONFIG_NETCORE_APP_UPDATE=y
             SB_CONFIG_SECURE_BOOT_NETCORE=y
             SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+            SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE=y
+            SB_CONFIG_MCUBOOT_USE_ALL_AVAILABLE_RAM=y
 
             # This will enable the hci_ipc image for the network core, change to the desired image
             SB_CONFIG_NETCORE_HCI_IPC=y
@@ -136,8 +151,9 @@ Configure :ref:`configuration_system_overview_sysbuild` to enable the required K
          .. code-block:: cfg
 
             SB_CONFIG_BOOTLOADER_MCUBOOT=y
-            SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
             SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+            SB_CONFIG_NETCORE_NONE=y
+            SB_CONFIG_SECURE_BOOT_NETCORE=n
 
       .. group-tab:: Direct-XIP without network core support
 
@@ -145,27 +161,9 @@ Configure :ref:`configuration_system_overview_sysbuild` to enable the required K
 
             SB_CONFIG_BOOTLOADER_MCUBOOT=y
             SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
-            SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
             SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
-
-#. Create a :file:`sysbuild.cmake` file.
-   This file applies the devicetree overlay file for enabling the external flash device for the Partition Manager (created in :ref:`qspi_xip_split_image_pm_static_files`) to MCUboot.
-   The following examples assume you created the :file:`app.overlay` file valid for all board targets; adjust as needed if you created as a board overlay instead.
-
-   .. tabs::
-
-      .. group-tab:: With network core support
-
-         .. code-block:: cmake
-
-            list(APPEND mcuboot_EXTRA_DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.overlay")
-
-      .. group-tab:: Without networe core support
-
-         .. code-block:: cmake
-
-            list(APPEND mcuboot_EXTRA_DTC_OVERLAY_FILE "${CMAKE_CURRENT_SOURCE_DIR}/app.overlay")
-            set(mcuboot_CONFIG_BOOT_IMAGE_ACCESS_HOOKS n)
+            SB_CONFIG_NETCORE_NONE=y
+            SB_CONFIG_SECURE_BOOT_NETCORE=n
 
 .. rst-class:: numbered-step
 
