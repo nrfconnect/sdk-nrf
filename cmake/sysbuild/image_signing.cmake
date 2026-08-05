@@ -58,10 +58,8 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
-  # Fetch devicetree details for flash and slot information
+  # Fetch devicetree details for flash information
   dt_chosen(flash_node PROPERTY "zephyr,flash")
-  dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
-  dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
   dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
 
   if(NOT write_block_size)
@@ -87,6 +85,9 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_sign_sysbuild --slot-size @PM_MCUBOOT_PRIMARY_SIZE@ --pad-header --header-size @PM_MCUBOOT_PAD_SIZE@ ${imgtool_rom_command} CACHE STRING "imgtool sign sysbuild replacement")
     set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} ${imgtool_sign_sysbuild})
   else()
+    dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
+    dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
+
     set(imgtool_rom_command)
     if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
       # Use overwrite-only instead of swap upgrades.
