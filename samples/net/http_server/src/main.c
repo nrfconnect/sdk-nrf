@@ -559,6 +559,7 @@ static void process_tcp(sa_family_t family, int *sock, int *accepted)
 			&tcp6_handler_tid[slot],
 			THREAD_PRIORITY,
 			0, K_NO_WAIT);
+		k_thread_name_set(tcp6_handler_tid[slot], "tcp6_handler");
 	} else if (family == AF_INET) {
 		tcp4_handler_tid[slot] = k_thread_create(
 			&tcp4_handler_thread[slot],
@@ -570,6 +571,7 @@ static void process_tcp(sa_family_t family, int *sock, int *accepted)
 			&tcp4_handler_tid[slot],
 			THREAD_PRIORITY,
 			0, K_NO_WAIT);
+		k_thread_name_set(tcp4_handler_tid[slot], "tcp4_handler");
 	}
 
 	net_addr_ntop(client_addr.sin6_family, &client_addr.sin6_addr, addr_str, sizeof(addr_str));
