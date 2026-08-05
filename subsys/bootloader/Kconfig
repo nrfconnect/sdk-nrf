@@ -223,6 +223,24 @@ config NCS_MCUBOOT_MANIFEST_IMAGE_INDEX
 
 endif # NCS_MCUBOOT_MANIFEST_UPDATES
 
+config NCS_MCUBOOT_QSPI_XIP_IMGTOOL_DEPENDENCIES
+	bool "Add mutual MCUboot dependency TLVs for QSPI XIP split signing"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  When enabled, QSPI XIP split image signing (image_signing_split.cmake)
+	  passes imgtool -d for internal and external halves separately: the
+	  on-chip part depends on the QSPI XIP part and vice versa. The minimum
+	  version in each dependency TLV is CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION.
+
+	  Image indices come from CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER and
+	  CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER (assigned by sysbuild). Requires
+	  SB_CONFIG_QSPI_XIP_SPLIT_IMAGE so the split signing script is used.
+
+	  Do not set -d in CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS when this option is
+	  enabled. Imgtool dependency format is -d "(image_index, version)"; when
+	  passing -d via CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS, use that quoting and
+	  escape \", (, and ) for the shell if needed.
+
 config NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS
 	bool "Set ih_load_addr using imgtool --rom-fixed when signing images"
 	depends on !MCUBOOT_BOOTLOADER_MODE_SINGLE_APP
