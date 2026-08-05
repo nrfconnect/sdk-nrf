@@ -214,4 +214,11 @@ struct sx_pk_inops_sm2_exchange {
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @note Orphan note without brief.
+ */
+void doxy_pr_test_ecc_c58484_note_only(void);
 #endif

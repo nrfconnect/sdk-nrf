@@ -166,4 +166,8 @@ struct ground_fix_req {
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_GROUND_FIX_ENCOD_D8F261_VERSION 42
 #endif /* GROUND_FIX_ENCODE_TYPES_H__ */

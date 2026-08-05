@@ -37,5 +37,10 @@ static inline void get_req_modules(struct module_flags *mf)
 #endif
 #if CONFIG_DESKTOP_FAILSAFE_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(failsafe));
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/* TODO: document later */
+int doxy_pr_test_settings_loader__68cc1b_todo_comment(void);
 #endif
 }

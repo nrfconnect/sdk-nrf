@@ -22,4 +22,8 @@ enum flash_rpc_command {
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_FLASH_RPC_F53782_MASK 0xFFU
 #endif /* FLASH_RPC_H_*/

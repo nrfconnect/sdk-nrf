@@ -117,6 +117,10 @@ bt_mesh_model_transition_time(const struct bt_mesh_model_transition *trans)
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+uint32_t doxy_pr_test_model_types_b4805d_read(void);
 #endif /* BT_MESH_MODEL_TYPES_H__ */
 
 /** @} */

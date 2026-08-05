@@ -152,4 +152,8 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 			unsigned int flags_and);
 int nrf_wifi_wpa_supp_sta_get_inact_sec(void *if_priv, const u8 *addr);
 #endif /* CONFIG_NRF71_AP_MODE */
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_WPA_SUPP_IF_CF6F81_MAX_LEN 128
 #endif /*  __ZEPHYR_WPA_SUPP_IF_H__ */

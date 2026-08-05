@@ -54,4 +54,8 @@ APP_EVENT_TYPE_DECLARE(motion_event);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_MOTION_EVENT_837638_ENABLE 1
 #endif /* _MOTION_EVENT_H_ */

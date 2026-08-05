@@ -22,4 +22,8 @@
  */
 void bl_boot(const struct fw_info *fw_info);
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+int doxy_pr_test_bl_boot_027b5b_multi(int a, int b, int c);
 #endif /* BL_BOOT_H_ */

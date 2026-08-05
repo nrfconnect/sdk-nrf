@@ -375,6 +375,11 @@ int downloader_downloaded_size_get(struct downloader *dl, size_t *size);
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/** */
+void doxy_pr_test_downloader_3ddd65_one_line(void);
 #endif /* __DOWNLOADER_H__ */
 
 /**@} */

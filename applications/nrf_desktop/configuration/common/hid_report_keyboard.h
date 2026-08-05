@@ -89,4 +89,13 @@ extern "C" {
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_hid_report_keybo_009a5d_pair {
+	int a;
+};
+enum doxy_pr_test_hid_report_keybo_009a5d_pair_e {
+	DOXY_PR_TEST_HID_REPORT_KEYBO_009A5D_PAIR_E = 0,
+};
 #endif /* _HID_REPORT_KEYBOARD_H_ */

@@ -33,6 +33,10 @@
 #define cracen_abs(x) __builtin_abs(x)
 #else
 #define cracen_abs(x) ((x) < 0 ? -(x) : (x))
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+void doxy_pr_test_common_919c86(void);
 #endif
 
 

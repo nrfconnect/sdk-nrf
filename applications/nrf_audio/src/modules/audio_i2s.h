@@ -97,4 +97,11 @@ void audio_i2s_init(void);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_audio_i2s_6458dc_stats {
+	uint32_t packets;
+	uint32_t errors;
+};
 #endif /* _AUDIO_I2S_H_ */

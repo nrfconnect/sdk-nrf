@@ -62,4 +62,12 @@ psa_status_t cracen_get_opaque_size(const psa_key_attributes_t *attributes, size
 
 /** @} */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+enum doxy_pr_test_cracen_psa_2d39c0_state {
+	DOXY_PR_TEST_CRACEN_PSA_2D39C0_OFF = 0,
+	DOXY_PR_TEST_CRACEN_PSA_2D39C0_ON = 1,
+	DOXY_PR_TEST_CRACEN_PSA_2D39C0_ERR = -1,
+};
 #endif /* CRACEN_PSA_H */

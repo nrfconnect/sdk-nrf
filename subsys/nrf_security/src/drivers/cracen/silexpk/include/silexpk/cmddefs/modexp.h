@@ -47,4 +47,10 @@ struct sx_pk_inops_mod_exp {
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/* Leading block comment */
+/* Second line */
+void doxy_pr_test_modexp_b0f38b_multi_c_comment(void);
 #endif

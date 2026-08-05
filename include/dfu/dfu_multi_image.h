@@ -213,4 +213,13 @@ int dfu_multi_image_reset(void);
 
 /** @} */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @file
+ * @defgroup doxy_pr_test_dfu_multi_image_e91269 Internal test group
+ * @{
+ */
+void doxy_pr_test_dfu_multi_image_e91269_open_group(void);
 #endif /* DFU_MULTI_IMAGE_H__ */

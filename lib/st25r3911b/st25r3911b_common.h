@@ -207,4 +207,8 @@ int st25r3911b_technology_led_set(enum st25r3911b_leds led, bool on);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+ssize_t doxy_pr_test_st25r3911b_commo_597824_poll(int timeout_ms);
 #endif /* ST25R3911B_H_ */

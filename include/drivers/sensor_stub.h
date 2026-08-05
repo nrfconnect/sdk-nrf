@@ -57,4 +57,11 @@ void sensor_stub_udata_set(const struct device *dev, void *udata);
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @warning
+ */
+void doxy_pr_test_sensor_stub_94214e_warning_only(void);
 #endif /* _SENSOR_STUB_H_ */

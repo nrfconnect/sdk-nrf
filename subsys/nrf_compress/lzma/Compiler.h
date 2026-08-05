@@ -223,4 +223,9 @@ typedef void (*Z7_void_Function)(void);
 #define UNUSED_VAR(x) (void)x;
 /* #define UNUSED_VAR(x) x=x; */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/* non-doxygen prelude */
+#define DOXY_PR_TEST_COMPILER_73204F_PLAIN 7
 #endif

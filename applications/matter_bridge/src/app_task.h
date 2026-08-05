@@ -25,6 +25,10 @@ public:
 	static constexpr chip::EndpointId kSmartplugEndpointId = 2;
 	static void ButtonEventHandler(Nrf::ButtonState state, Nrf::ButtonMask hasChanged);
 	static void SmartplugOnOffEventHandler();
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+#define DOXY_PR_TEST_APP_TASK_1F15AA_FLAG (1U << 3)
 #endif /* CONFIG_BRIDGE_SMART_PLUG_SUPPORT */
 
 static void IdentifyStartHandler(Identify *);

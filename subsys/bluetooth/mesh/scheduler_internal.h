@@ -82,4 +82,11 @@ static inline void scheduler_action_pack(struct net_buf_simple *buf,
 }
 #endif
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @retval 0
+ */
+int doxy_pr_test_scheduler_intern_278ccc_retval_only(void);
 #endif /* SCHEDULER_INTERNAL_H_ */

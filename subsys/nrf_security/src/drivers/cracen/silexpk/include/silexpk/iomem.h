@@ -93,4 +93,11 @@ static inline uint8_t sx_rdpkmem_byte(const void *src)
 	return s[0];
 }
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+/**
+ * @return Always zero without describing the API.
+ */
+int doxy_pr_test_iomem_0a1864_return_only(void);
 #endif

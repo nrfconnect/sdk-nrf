@@ -34,4 +34,8 @@
 #define IK_CTRDRBG_BUSY	    (1 << 4)
 #define IK_CATASTROPHIC_ERR (1 << 5)
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+int doxy_pr_test_regs_addr_345477_init(void);
 #endif

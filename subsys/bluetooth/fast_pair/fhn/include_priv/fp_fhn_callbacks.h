@@ -64,4 +64,8 @@ int fp_fhn_callbacks_info_cb_register(struct bt_fast_pair_fhn_info_cb *cb);
  * @}
  */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+struct doxy_pr_test_fp_fhn_callbacks_186e89_opaque *doxy_pr_test_fp_fhn_callbacks_186e89_alloc(void);
 #endif /* _FP_FHN_CALLBACKS_H_ */

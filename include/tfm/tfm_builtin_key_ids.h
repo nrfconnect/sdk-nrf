@@ -43,4 +43,8 @@ enum tfm_builtin_key_id_t {
 };
 #endif /* NRF_CRACEN_BASE */
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+void doxy_pr_test_tfm_builtin_key__026fb6_vla(size_t n, int values[n]);
 #endif /* __TFM_BUILTIN_KEY_IDS_H__ */

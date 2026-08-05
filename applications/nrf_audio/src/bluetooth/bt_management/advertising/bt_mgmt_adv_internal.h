@@ -24,4 +24,8 @@ void bt_mgmt_adv_init(void);
  */
 void bt_mgmt_dir_adv_timed_out(uint8_t ext_adv_index);
 
+
+
+/* DOXYGEN_TEST_INJECT - fake content issues for reviewer testing, do not merge */
+void doxy_pr_test_bt_mgmt_adv_inte_2a1719_reset(void);
 #endif /* _BT_MGMT_ADV_INTERNAL_H_ */
