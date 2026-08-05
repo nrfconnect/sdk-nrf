@@ -128,6 +128,27 @@ config HOSTAP_CRYPTO_WPA3_PSA
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
 	select PSA_WANT_ECC_SECP_R1_256
 
+if HOSTAP_CRYPTO_WPA3_PSA
+
+config HEAP_MEM_POOL_ADD_SIZE_WPA3_PSA
+	int "System heap reserved for the WPA3 SAE PSA context"
+	depends on WIFI_NM_WPA_SUPPLICANT_GLOBAL_HEAP
+	# One shared peak-sized pool: enterprise/AP/P2P baselines already carry
+	# slack, and adding to them overflowed nRF5340 enterprise RAM. Keyed off
+	# the resolved baseline so new Zephyr cases need no change here.
+	default 0 if HEAP_MEM_POOL_ADD_SIZE_HOSTAP > 30000
+	default 4096
+	help
+	  Covers the SAE PSA context in wpa3_psa.c: one contiguous
+	  struct wpa3_psa_operation (2696 bytes, mostly the embedded
+	  psa_pake_operation_t). Zephyr sums HEAP_MEM_POOL_ADD_SIZE_* into the
+	  system heap; wpa3_psa.c build-asserts that the context fits.
+
+	  With WIFI_NM_WPA_SUPPLICANT_GLOBAL_HEAP=n the supplicant uses its own
+	  pool; size WIFI_NM_WPA_SUPPLICANT_HEAP instead.
+
+endif # HOSTAP_CRYPTO_WPA3_PSA
+
 endif
 
 endif
