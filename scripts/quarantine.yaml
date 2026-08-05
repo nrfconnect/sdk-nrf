@@ -100,3 +100,11 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40622"
+
+- scenarios:
+    - sample.bluetooth.peripheral_nsms_no_security
+    - sample.sensor.bme68x.i2c
+    - sample.sensor.bme68x.polling
+  platforms:
+    - thingy53/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
