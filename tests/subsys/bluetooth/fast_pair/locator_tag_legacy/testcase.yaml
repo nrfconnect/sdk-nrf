@@ -4,7 +4,7 @@ common:
     - bluetooth
     - ci_tests_subsys_bluetooth_fast_pair
 tests:
-  test.bluetooth.fast_pair.locator_tag_legacy.fast_pair_api_legacy.pm_legacy:
+  test.bluetooth.fast_pair.locator_tag_legacy.fast_pair_api_legacy:
     sysbuild: true
     build_only: true
     platform_allow:
