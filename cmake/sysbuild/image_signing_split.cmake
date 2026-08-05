@@ -83,10 +83,8 @@ function(zephyr_mcuboot_tasks)
     return()
   endif()
 
-  # Fetch devicetree details for flash and slot information
+  # Fetch devicetree details for flash information
   dt_chosen(flash_node PROPERTY "zephyr,flash")
-  dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
-  dt_prop(slot_size PATH "${slot0_flash}" PROPERTY "reg" INDEX 1 REQUIRED)
   dt_prop(write_block_size PATH "${flash_node}" PROPERTY "write-block-size")
 
   if(NOT write_block_size)
