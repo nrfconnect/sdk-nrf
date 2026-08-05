@@ -14,8 +14,12 @@
 #include <hal/nrf_power.h>
 #elif defined(CONFIG_SOC_NRF5340_CPUAPP)
 #include <hal/nrf_vmc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#elif defined(CONFIG_SOC_SERIES_NRF54L) ||                                                         \
+	(defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP) &&                                                \
+	 !defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE))
 #include <hal/nrf_memconf.h>
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+#include "tfm_ioctl_core_api.h"
 #else
 #error "RAM power-down library is not supported on the current platform"
 #endif
@@ -52,6 +56,12 @@ static const struct ram_bank banks[] = {
 	{ .start = 0x20000000UL, .section_count = 3, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF54LM20A_CPUAPP) || defined(CONFIG_SOC_NRF54LM20B_CPUAPP)
 	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x8000 },
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+	/*
+	 * MEMCONF controls nRF7120 RAM in 32 KiB sections. Section 31 is
+	 * intentionally excluded because it cannot be powered down.
+	 */
+	{ .start = 0x20000000UL, .section_count = 31, .section_size = 0x8000 },
 #elif defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
 	{ .start = 0x20000000UL, .section_count = 2, .section_size = 0x1000 },
 	{ .start = 0x20002000UL, .section_count = 2, .section_size = 0x1000 },
@@ -91,10 +101,20 @@ static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
 				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
 	nrf_vmc_ram_block_power_clear(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#elif defined(CONFIG_SOC_SERIES_NRF54L) ||                                                         \
+	(defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP) &&                                                \
+	 !defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE))
 	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
 				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
 	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, false);
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+	const struct ram_bank *bank = &banks[bank_id];
+	uint32_t addr = bank->start + first_section_id * bank->section_size;
+	uint32_t len = (last_section_id - first_section_id + 1U) * bank->section_size;
+
+	if (tfm_platform_ram_ctrl_power_set(addr, len, false) != TFM_PLATFORM_ERR_SUCCESS) {
+		LOG_ERR("TF-M rejected RAM power-down range 0x%08x..0x%08x", addr, addr + len);
+	}
 #endif
 }
 
@@ -111,10 +131,20 @@ static void ram_bank_power_up(uint8_t bank_id, uint8_t first_section_id, uint8_t
 	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
 				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
 	nrf_vmc_ram_block_power_set(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#elif defined(CONFIG_SOC_SERIES_NRF54L) ||                                                         \
+	(defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP) &&                                                \
+	 !defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE))
 	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
 				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
 	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, true);
+#elif defined(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
+	const struct ram_bank *bank = &banks[bank_id];
+	uint32_t addr = bank->start + first_section_id * bank->section_size;
+	uint32_t len = (last_section_id - first_section_id + 1U) * bank->section_size;
+
+	if (tfm_platform_ram_ctrl_power_set(addr, len, true) != TFM_PLATFORM_ERR_SUCCESS) {
+		LOG_ERR("TF-M rejected RAM power-up range 0x%08x..0x%08x", addr, addr + len);
+	}
 #endif
 }
 
