@@ -24,6 +24,16 @@ endif()
 # Include certs files if enabled.
 zephyr_include_directories_ifdef(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES certs)
 
+# CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN generates its own private key on-device,
+# which is incompatible with hardcoded keys via CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES.
+# Make them mutually exclusive.
+if(CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES AND CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
+  message(FATAL_ERROR
+    "CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES and CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN "
+    "cannot both be enabled: With CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN enabled, "
+    "the hardcoded private key would silently be ignored. Disable one of them.")
+endif()
+
 # NORDIC SDK APP START
 target_sources(app PRIVATE src/main.c)
 target_sources(app PRIVATE src/application.c)
