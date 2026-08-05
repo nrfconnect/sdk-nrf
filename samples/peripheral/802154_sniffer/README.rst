@@ -122,11 +122,15 @@ Building and running
 Testing the sample
 ==================
 
-After programming the sample to your development kit, complete the following steps to test it:
+After programming the sample to your device, complete the following steps to test it:
 
-1. Connect the development kit to the computer using a USB cable.
-   Use the development kit's nRF USB port (**J3**).
-   The kits are assigned serial ports.
+#. Connect the device to the computer:
+
+   * For the nRF52840 DK and the nRF5340 DK, use a USB cable connected to the kit's nRF USB port (**J3**).
+   * For the nRF54LM20 Dongle, use a USB cable connected to the dongle's USB-C connector.
+   * For the nRF52840 Dongle, plug the dongle directly into the computer's USB port.
+
+   The devices are assigned serial ports.
    |serial_port_number_list|
 #. |connect_terminal|
 #. Switch to a radio channel with an ongoing radio traffic:
