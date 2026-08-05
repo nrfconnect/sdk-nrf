@@ -104,7 +104,7 @@ config TFM_CRYPTO_CONC_OPER_NUM
 	int
 	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
 	default 1 if TFM_PROFILE_TYPE_MINIMAL
-	default 8
+	default 6
 	help
 	  This parameter defines the maximum number of possible
 	  concurrent operation contexts (cipher, MAC, hash and key derivation)
