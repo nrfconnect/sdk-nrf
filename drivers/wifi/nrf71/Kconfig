@@ -158,6 +158,12 @@ config NRF_WIFI_LOW_POWER
 	depends on !NRF71_RADIO_TEST && !NRF71_AP_MODE
 	default y
 
+config NRF_WIFI_LP_RX
+	bool "Low power RF mode in nRF Wi-Fi chipsets"
+	depends on NRF_WIFI_LOW_POWER
+	help
+	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
+
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool "TCP/IP checksum offload"
 	default y if !NRF71_RADIO_TEST

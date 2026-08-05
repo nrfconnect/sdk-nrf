@@ -395,7 +395,13 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	umac_cmd_data->params.dsss_sifs_value = NRF_WIFI_LMAC_DSSS_SIFS_VALUE;
 
 	umac_cmd_data->params.cfg_bet_enable = 0;
+#ifdef NRF_WIFI_LP_RX
+	umac_cmd_data->params.cfg_bet_enable = 1;
+	umac_cmd_data->params.lp_rx_enable = 1;
+#else
 	umac_cmd_data->params.lp_rx_enable = 0;
+	umac_cmd_data->params.cfg_bet_enable = 0;
+#endif /* NRF_WIFI_LP_RX */
 
 	/* Internal tuning parameter for ACK timeout in the firmware. Accounts for
 	 * internal hardware latencies and is calibrated in the lab. Changing
