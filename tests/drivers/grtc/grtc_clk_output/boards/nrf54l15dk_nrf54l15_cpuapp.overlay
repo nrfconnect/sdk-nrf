@@ -18,7 +18,7 @@
 	status = "okay";
 };
 
-&gpiote20 {
+&gpiote30 {
 	status = "okay";
 };
 
