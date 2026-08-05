@@ -91,6 +91,18 @@ struct wpa3_psa_operation {
 	u16 rc;
 };
 
+/*
+ * init_psa_op() allocates this as one contiguous chunk. It is mostly the
+ * embedded psa_pake_operation_t, which a PSA driver change can grow without
+ * touching this file, so fail the build rather than fail to connect.
+ */
+#if CONFIG_HEAP_MEM_POOL_ADD_SIZE_WPA3_PSA > 0
+BUILD_ASSERT(sizeof(struct wpa3_psa_operation) <=
+	     CONFIG_HEAP_MEM_POOL_ADD_SIZE_WPA3_PSA,
+	     "CONFIG_HEAP_MEM_POOL_ADD_SIZE_WPA3_PSA is too small to hold "
+	     "struct wpa3_psa_operation");
+#endif
+
 /* Forward declarations */
 
 static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
