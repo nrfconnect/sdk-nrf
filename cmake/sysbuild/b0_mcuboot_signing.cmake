@@ -30,7 +30,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   sysbuild_get(CONFIG_BUILD_OUTPUT_HEX IMAGE ${application} VAR CONFIG_BUILD_OUTPUT_HEX KCONFIG)
 
   set(slot_size)        # imgtool --slot-size
-  set(header_size)      # imgtool --header
+  set(header_size)      # imgtool --header-size
   if(SB_CONFIG_PARTITION_MANAGER)
     string(TOUPPER "${application}" application_uppercase)
     set(slot_size $<TARGET_PROPERTY:partition_manager,${prefix}PM_${application_uppercase}_SIZE>)
@@ -52,15 +52,34 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     else()
       dt_partition_addr(slot_address PATH "${code_partition_path}" TARGET ${application} REQUIRED ABSOLUTE)
     endif()
-    # Header size is picked from the image that is being signed.
-    sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_ROM_START_OFFSET KCONFIG)
 
-    if(${header_size} EQUAL 0)
-      sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
-      if(build_with_tfm)
-        sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
-      else()
-        message(FATAL_ERROR "imgtool header size picked from ${DEFAULT_IMAGE} is 0, check CONFIG_ROM_START_OFFSET value")
+    # Header size is picked from the image that is being signed, as an offset for where executables
+    # starts within generated binary, which is represented by CONFIG_ROM_START_OFFSET.
+    # It is assumed that all that space, from the start of a binary to the CONFIG_ROM_START_OFFSET
+    # is available for the header, but the header will take only several bytes from the beginning
+    # of the binary; most of other bytes will be wasted, but that may happen due to VTOR alignment
+    # requirements, that mandate alignment of CONFIG_ROM_START_OFFSET.
+    # Whatever will be built for nRF5340 NETCORE, CONFIG_SOC_NRF5340_CPUNET=y, will have
+    # CONFIG_ROM_START_OFFSET=0, as MCUboot is never run on CPUNET; b0n is and it does not need
+    # the MCUboot image header for anything, so when image is transferred to CPUNET, the
+    # MCUboot image header is stripped in process.
+    # This means that we will have to "glue" the header in front of firmware image, and we can
+    # choose any size for it as long as we are able to fit all information in it.
+    # CONFIG_ROM_START_OFFSET=0, for application, is not helping, getting size from default
+    # image makes no sense, so the --header-size=auto will be used.
+
+    # Do not bother picking header size from image that is for CPUNET
+    if("${prefix}" STREQUAL "CPUNET_")
+      set(header_size auto)
+    else()
+      sysbuild_get(header_size IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
+      if(${header_size} EQUAL 0)
+        sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)
+        if(build_with_tfm)
+          sysbuild_get(header_size IMAGE ${DEFAULT_IMAGE} VAR CONFIG_TFM_MCUBOOT_HEADER_SIZE KCONFIG)
+        else()
+          message(WARNING "imgtool header size picked from ${application} is 0, check CONFIG_ROM_START_OFFSET value")
+        endif()
       endif()
     endif()
   endif()
