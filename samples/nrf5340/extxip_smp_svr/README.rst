@@ -95,17 +95,17 @@ For this sample configuration, MCUmgr supports the uploading of three target ima
 The MCUmgr ``image upload`` command has the optional ``-e -n <image>`` parameter, which lets you select the target image for upload.
 When this parameter is not provided, ``0`` is assumed (interpreted as the default behavior), and MCUmgr uploads to ``image-1`` (MCUboot's secondary slot).
 
-Use the devicetree partition nodelabel for slot-to-``<image>`` translation:
+Use the partition node to map MCUboot slots to ``<image>`` for MCUmgr:
 
-    +------------------+--------+-------------+------------------------------+
-    |    nodelabel        | Slot   | -n <image>  |       Firmware part       |
-    +==================+========+=============+==============================+
-    | ``slot1_partition`` | slot-1 |     0       | Internal application part |
-    +------------------+--------+-------------+------------------------------+
-    | ``slot3_partition`` | slot-3 |     1       | Networking                |
-    +------------------+--------+-------------+------------------------------+
-    | ``slot5_partition`` | slot-5 |     2       | QSPI application part     |
-    +------------------+--------+-------------+------------------------------+
+    +---------------------+--------+-------------+------------------------------+
+    | Partition node      | Slot   | -n <image>  |       Firmware part          |
+    +=====================+========+=============+==============================+
+    | ``slot1_partition`` | slot-1 |     0       | Internal application part    |
+    +---------------------+--------+-------------+------------------------------+
+    | ``slot3_partition`` | slot-3 |     1       | Networking                   |
+    +---------------------+--------+-------------+------------------------------+
+    | ``slot5_partition`` | slot-5 |     2       | QSPI application part        |
+    +---------------------+--------+-------------+------------------------------+
 
 .. note::
 
