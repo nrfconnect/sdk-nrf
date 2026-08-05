@@ -1,0 +1,28 @@
+tests:
+  dfu.image_signing:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - dfu
+      - sysbuild
+      - ci_tests_subsys_dfu
+
+  dfu.image_signing.sysbuild:
+    sysbuild: true
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    tags:
+      - dfu
+      - sysbuild
+      - ci_tests_subsys_dfu
+    extra_args:
+      - SB_CONFIG_MCUBOOT_SYSBUILD_SIGN=y

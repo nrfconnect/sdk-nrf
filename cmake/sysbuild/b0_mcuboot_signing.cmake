@@ -20,7 +20,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   string(CONFIGURE "${keyfile_enc}" keyfile_enc)
 
   # No imgtool, no signed binaries.
-  if(NOT DEFINED IMGTOOL)
+  if("${IMGTOOL}" STREQUAL "IMGTOOL-NOTFOUND")
     message(FATAL_ERROR "Can't sign images for MCUboot: can't find imgtool. To fix, install imgtool with pip3, or add the mcuboot repository to the west manifest and ensure it has a scripts/imgtool.py file.")
     return()
   endif()

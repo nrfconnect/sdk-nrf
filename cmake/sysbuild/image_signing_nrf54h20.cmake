@@ -17,7 +17,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
   if(CONFIG_BUILD_OUTPUT_BIN)
     get_target_property(bin_file runners_yaml_props_target "bin_file")
-    if("${bin_file}" STREQUAL "bin_file-NOTFOUND")
+    if(NOT bin_file)
       set(bin_file ${KERNEL_BIN_NAME})
     endif()
 
@@ -35,7 +35,7 @@ if(CONFIG_BOOTLOADER_MCUBOOT)
 
   if(CONFIG_BUILD_OUTPUT_HEX)
     get_target_property(hex_file runners_yaml_props_target "hex_file")
-    if("${hex_file}" STREQUAL "hex_file-NOTFOUND")
+    if(NOT hex_file)
       set(hex_file ${KERNEL_HEX_NAME})
     endif()
 
