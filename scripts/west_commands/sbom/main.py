@@ -47,8 +47,9 @@ generators = {
 }
 
 
-def _run_pipeline():
+def _run_pipeline(domain: 'str|None' = None):
     data = Data()
+    data.domain = domain
 
     for input_name, input in inputs.items():
         t = dbg_time(f'INPUT: {input_name}')
@@ -193,7 +194,7 @@ def main():
                             base_outputs[key], domain_name, defaults[gen]
                         )
 
-                    _run_pipeline()
+                    _run_pipeline(domain_name)
                     processed_domains += 1
 
                 if processed_domains == 0:
