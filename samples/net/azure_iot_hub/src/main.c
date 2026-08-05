@@ -433,13 +433,18 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 
 static void work_init(void)
 {
+	const struct k_work_queue_config cfg = {
+		.name = "application_work_q",
+	};
+
 	k_work_init(&method_data.work, direct_method_handler);
 	k_work_init(&twin_report_work, twin_report_work_fn);
 	k_work_init_delayable(&send_event_work, send_event);
 	k_work_init_delayable(&reboot_work, reboot_work_fn);
+
 	k_work_queue_start(&application_work_q, application_stack_area,
 		       K_THREAD_STACK_SIZEOF(application_stack_area),
-		       K_HIGHEST_APPLICATION_THREAD_PRIO, NULL);
+		       K_HIGHEST_APPLICATION_THREAD_PRIO, &cfg);
 }
 
 #if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
