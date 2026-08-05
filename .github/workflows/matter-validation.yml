@@ -28,14 +28,14 @@ jobs:
         with:
           python-version: 3.12
           cache: pip
-          cache-dependency-path: ncs/nrf/scripts/requirements.txt
+          cache-dependency-path: ncs/nrf/scripts/requirements-fixed.txt
 
       - name: Install packages
         working-directory: ncs/nrf
         run: |
           sudo apt update
           sudo apt-get install -y wget python3-pip git
-          pip install -r scripts/requirements.txt
+          ./scripts/ci/install-fixed-pip-pkg.sh pyyaml
 
       - name: Checkout Matter repository
         working-directory: ncs

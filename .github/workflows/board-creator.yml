@@ -53,7 +53,7 @@ jobs:
       - name: Update
         working-directory: ncs/nrf
         run: |
-          pip3 install west
+          ./scripts/ci/install-fixed-pip-pkg.sh west
           west init -l .
           west config manifest.project-filter -- "-.*,+zephyr"
           west update --narrow -o=--depth=1

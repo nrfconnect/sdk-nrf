@@ -5,7 +5,7 @@ ENV HOME=/opt
 RUN apt-get update && apt-get install -y gcc gcc-multilib wget ca-certificates qemu-system-arm git \
     libxcb-render-util0 libxcb-shape0 libxcb-icccm4  libxcb-keysyms1 libxcb-image0 libxkbcommon-x11-0 libsm6 libice6 udev \
     && rm -rf /var/lib/apt/lists/*
-RUN wget https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil -q -O /usr/local/bin/nrfutil  \
+RUN wget --max-redirect=0 https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil -q -O /usr/local/bin/nrfutil  \
     && chmod +x /usr/local/bin/nrfutil \
     && nrfutil install toolchain-manager=0.15.0
 RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
@@ -14,7 +14,9 @@ RUN nrfutil toolchain-manager install --toolchain-bundle-id $VERSION \
 
 # Prepare JLink to be installed when user accepts license agreement
 COPY --chmod=0555 jlink/ /jlink
-RUN wget --post-data="accept_license_agreement=accepted&submit=Download+software" -O /jlink/JLink_Linux.deb \
+RUN wget --max-redirect=0 \
+    --post-data="accept_license_agreement=accepted&submit=Download+software" \
+    -O /jlink/JLink_Linux.deb \
     https://www.segger.com/downloads/jlink/JLink_Linux_V916a_x86_64.deb
 
 # Add interactive-setup.sh which is called at the beginning of bash session, only if session is interactive

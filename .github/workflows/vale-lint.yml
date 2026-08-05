@@ -31,10 +31,10 @@ jobs:
           echo "Installing pip and docutils..."
           sudo apt-get update
           sudo apt-get install -y python3-pip
-          pip install --upgrade docutils
+          pip install --only-binary :all: -U docutils
 
           echo "Installing Vale..."
-          curl -L -o vale.tar.gz https://github.com/errata-ai/vale/releases/download/v2.30.0/vale_2.30.0_Linux_64-bit.tar.gz
+          curl --proto '=https' --tlsv1.2 --max-redirs 5 -L -o vale.tar.gz https://github.com/errata-ai/vale/releases/download/v2.30.0/vale_2.30.0_Linux_64-bit.tar.gz
           mkdir -p bin
           tar -xvzf vale.tar.gz -C bin
           sudo mv bin/vale /usr/local/bin/vale
