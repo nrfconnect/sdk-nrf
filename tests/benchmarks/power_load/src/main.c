@@ -17,7 +17,10 @@ atomic_t started_threads;
 
 int main(void)
 {
+
+#if defined(CONFIG_BT)
 	int ret;
+#endif
 	uint32_t cpu_load;
 
 	LOG_INF("Power load performance benchmark %s", CONFIG_BOARD_TARGET);
