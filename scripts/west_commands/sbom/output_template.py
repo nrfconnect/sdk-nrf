@@ -66,8 +66,38 @@ def counter() -> int:
     return counter_value
 
 
-def relative_path(file: 'str|Path', output_directory: Path) -> str:
-    return './' + os.path.relpath(Path(file).resolve(), output_directory)
+def package_roots(data: Data) -> 'dict[str,Path]':
+    '''Resolved root directory of each package that provides one.'''
+    roots = {}
+    for package_id, package in data.packages.items():
+        if package.root_path is None:
+            continue
+        try:
+            roots[package_id] = Path(package.root_path).resolve()
+        except OSError:
+            continue
+    return roots
+
+
+def strip_anchor(path: Path) -> str:
+    '''POSIX form of an absolute path.'''
+    return path.relative_to(path.anchor).as_posix() if path.anchor else path.as_posix()
+
+
+def spdx_file_name(file: FileInfo, roots: 'dict[str,Path]') -> str:
+    '''SPDX FileName of a file: a POSIX path relative to the root of its package.
+    See SPDX 2.3 clause 8.1: the name is relative to the package root and starts with "./".
+    '''
+    root = roots.get(file.package)
+    if root is not None:
+        try:
+            return './' + Path(file.file_path).resolve().relative_to(root).as_posix()
+        except (ValueError, OSError):
+            pass
+    workspace_path = Path(file.file_rel_path)
+    if not workspace_path.is_absolute() and '..' not in workspace_path.parts:
+        return './' + workspace_path.as_posix()
+    return './' + strip_anchor(Path(file.file_path).resolve())
 
 
 def timestamp() -> str:
@@ -112,17 +142,18 @@ def get_ncs_version() -> 'str|None':
     return None
 
 
-def data_to_dict(data: Data, output_directory: Path) -> dict:
+def data_to_dict(data: Data) -> dict:
     '''Convert object to dict by copying public attributes to a new dictionary.'''
     result = dict()
     for name in dir(data):
         if name.startswith('_'):
             continue
         result[name] = getattr(data, name)
+    roots = package_roots(data)
     result['func'] = {
         'group_by': group_by,
         'counter': counter,
-        'relative_path': lambda file: relative_path(file, output_directory),
+        'spdx_file_name': lambda file: spdx_file_name(file, roots),
         'timestamp': timestamp,
         'download_location': download_location,
     }
@@ -138,7 +169,7 @@ def generate(data: Data, output_file: 'Path|str', template_file: Path):
     with open(template_file, encoding='utf-8') as fd:
         template_source = fd.read()
     t = Template(template_source)
-    out = t.render(**data_to_dict(data, output_file.parent.resolve()))
+    out = t.render(**data_to_dict(data))
     with open(output_file, 'w', encoding='utf-8') as fd:
         fd.write(out)
     escaped_path = quote(str(output_file.resolve()).replace(os.sep, '/').strip("/"))
