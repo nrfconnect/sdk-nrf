@@ -130,9 +130,7 @@ Check and configure the following options for Memfault that are specific to |NCS
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
 
-If :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, you can use :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE` to set the flash partition size for the flash storage when Partition Manager is in use.
-
-When building without Partition Manager (|NCS| v3.4.0 or later), enable the :ref:`snippet-memfault-coredump` snippet to supply the coredump partition using devicetree:
+If :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` is enabled, enable the :ref:`snippet-memfault-coredump` snippet to supply the coredump partition using devicetree:
 
 .. code-block:: console
 

@@ -80,9 +80,7 @@ There are three ways to define this storage location:
 
   * :kconfig:option:`CONFIG_SPI`
   * :kconfig:option:`CONFIG_SPI_NOR`
-  * :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`
   * :kconfig:option:`CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION`
-  * :kconfig:option:`CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL`
   * :kconfig:option:`CONFIG_SPI_NOR_FLASH_LAYOUT_PAGE_SIZE` set to 4096
 
   Finally, add the following to a device tree overlay for your board.
