@@ -110,6 +110,7 @@ Following are some of the configuration options that Memfault SDK defines:
 * :kconfig:option:`CONFIG_MEMFAULT_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD`
+* :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY`
 
 For more details on each option, use ``menuconfig`` or ``guiconfig``, and see the Kconfig sources in ``modules/lib/memfault-firmware-sdk/ports/zephyr/Kconfig``.
 
@@ -128,7 +129,6 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_COREDUMP_ON_NETWORK_CONNECTED`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_INITIAL_HEARTBEAT_ON_NETWORK_CONNECTED`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_POST_MODEM_TRACE_ON_COREDUMP`
-* :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`

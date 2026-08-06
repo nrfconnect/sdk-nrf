@@ -5,7 +5,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
+      - CONFIG_MEMFAULT_PROJECT_KEY="dummy-key"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - thingy91x/nrf9151/ns
@@ -25,7 +25,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
+      - CONFIG_MEMFAULT_PROJECT_KEY="dummy-key"
     extra_args: OVERLAY_CONFIG=overlay-etb.conf
     integration_platforms:
       - nrf9161dk/nrf9161/ns
@@ -47,7 +47,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
+      - CONFIG_MEMFAULT_PROJECT_KEY="dummy-key"
     extra_args: OVERLAY_CONFIG=overlay-modem-trace-to-memfault.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
