@@ -19,6 +19,7 @@ from pathlib import Path
 from typing import BinaryIO
 
 from cryptography.hazmat.primitives import serialization
+from cryptography.hazmat.primitives.asymmetric import ec
 
 # Extra PSA key usage flags
 PSA_KEY_USAGE_EXPORT = 0x01
@@ -195,6 +196,7 @@ class PlatformKeyAttributes:
         self.key_type = key_type
         self.key_bits = key_bits
         self.location = location
+        self.persistence = persistence
         self.key_lifetime = location | (persistence & 0xFF)
         self.usage = key_usage
         self.alg0 = algorithm
@@ -248,6 +250,9 @@ class PlatformKeyAttributes:
                 raise ValueError(
                     "--cracen-usage must be set to other than NONE if location is LOCATION_CRACEN_KMU"
                 )
+
+            if self.persistence == PsaKeyPersistence.PERSISTENCE_VOLATILE:
+                raise ValueError("PERSISTENCE_VOLATILE can not be used with LOCATION_CRACEN_KMU")
 
         # AES and AEAD algorithms
         if self.alg0 in (
@@ -324,6 +329,14 @@ class PlatformKeyAttributes:
                 raise ValueError(
                     f"Algorithm {self.alg0.name} only supports 256-bit and 384-bit keys"
                 )
+            if (self.alg0 == PsaAlgorithm.ECDSA_SHA256 and self.key_bits != 256) or (
+                self.alg0 == PsaAlgorithm.ECDSA_SHA384 and self.key_bits != 384
+            ):
+                print(
+                    f"WARNING: {self.alg0.name} is being used with a {self.key_bits}-bit key. "
+                    "ECDSA is normally paired with a hash matching the curve size "
+                    "(SHA-256 with secp256r1, SHA-384 with secp384r1)."
+                )
             if self.key_type == PsaKeyType.ECC_PUBLIC_KEY_SECP_R1 and self.usage not in (
                 PsaKeyUsage.VERIFY,
             ):
@@ -367,15 +380,22 @@ class PlatformKeyAttributes:
 
         # ECDH algorithm
         elif self.alg0 == PsaAlgorithm.ECDH:
-            if self.key_type != PsaKeyType.ECC_KEY_PAIR_SECP_R1 and self.key_type != PsaKeyType.ECC_KEY_PAIR_MONTGOMERY:
+            if self.key_type not in (
+                PsaKeyType.ECC_KEY_PAIR_SECP_R1,
+                PsaKeyType.ECC_KEY_PAIR_MONTGOMERY,
+            ):
                 raise ValueError(
                     f"Algorithm {self.alg0.name} can only be used with PsaKeyType.ECC_KEY_PAIR_SECP_R1 or PsaKeyType.ECC_KEY_PAIR_MONTGOMERY"
                 )
 
-            if self.key_type == PsaKeyType.ECC_KEY_PAIR_SECP_R1 and self.key_bits != 256:
-                raise ValueError(f"Algorithm secp256r1 only supports 256-bit keys")
+            if self.key_type == PsaKeyType.ECC_KEY_PAIR_SECP_R1 and (
+                self.key_bits not in (256, 384)
+            ):
+                raise ValueError(
+                    f"Key type {self.key_type.name} only supports 256-bit or 384-bit keys"
+                )
             if self.key_type == PsaKeyType.ECC_KEY_PAIR_MONTGOMERY and self.key_bits != 255:
-                raise ValueError(f"Algorithm montgomery only supports 255-bit keys")
+                raise ValueError(f"Key type {self.key_type.name} only supports 255-bit keys")
             if self.usage != PsaKeyUsage.DERIVE:
                 raise ValueError(
                     f"Algorithm {self.alg0.name} can only be used with the DERIVE key usage"
@@ -384,7 +404,7 @@ class PlatformKeyAttributes:
     def pack(self):
         """Builds a binary blob compatible with the psa_key_attributes_s C struct"""
         return struct.pack(
-            "<hhIIIIII",
+            "<HHIIIIII",
             self.key_type,
             self.key_bits,
             self.key_lifetime,
@@ -436,7 +456,16 @@ def generate_attr_file(
             # it seems it is not public key, so lets try with private
             private_key = serialization.load_pem_private_key(key_data, password=None)
             public_key = private_key.public_key()
-        value = f"0x{public_key.public_bytes_raw().hex()}"
+        if isinstance(public_key, ec.EllipticCurvePublicKey):
+            # SECP-R1 public keys are exported in the uncompressed point format
+            raw = public_key.public_bytes(
+                serialization.Encoding.X962,
+                serialization.PublicFormat.UncompressedPoint,
+            )
+        else:
+            # Twisted Edwards and Montgomery keys support the raw encoding
+            raw = public_key.public_bytes_raw()
+        value = f"0x{raw.hex()}"
     else:
         raise RuntimeError(
             "No key input received. Expecting either --key, --trng-key or --key-from-file"
@@ -546,40 +575,40 @@ if __name__ == "__main__":
         choices=[x.name for x in PsaCracenUsageScheme],
     )
 
-    parser.add_argument(
+    key_source_group = parser.add_mutually_exclusive_group(required=True)
+
+    key_source_group.add_argument(
         "--key",
         help="Key value as a HEX string: 0x1234567890ABCDEF... "
-        "ECC secp256r1 public keys should be in an uncompressed, 65-byte format",
+        "For ECC SECP-R1 public keys, use uncompressed point format (65 bytes for 256-bit, 97 bytes for 384-bit). "
+        "For Ed25519/X25519 public keys, use the 32-byte raw encoding.",
         type=str,
-        required=False,
     )
 
-    parser.add_argument(
+    key_source_group.add_argument(
         "--trng-key",
         help="Generate a key randomly on the target using the TRNG. Should not be done for ECC keys.",
         action="store_true",
-        required=False,
     )
 
-    parser.add_argument(
+    key_source_group.add_argument(
         "--key-from-file",
         help="(Experimental) Read a key from a PEM file",
         type=argparse.FileType(mode="rb"),
-        required=False,
     )
 
-    parser.add_argument(
+    output_group = parser.add_mutually_exclusive_group()
+
+    output_group.add_argument(
         "--bin-output",
         help="Output metadata as a binary blob",
         action="store_true",
-        required=False,
     )
 
-    parser.add_argument(
+    output_group.add_argument(
         "--file",
         help="JSON file to create or modify. If the file does not exist, it will be created. If it exists, the keys will be added to the existing file.",
         type=str,
-        required=False,
     )
 
     parser.set_defaults(allow_usage_export=False, allow_usage_copy=False)
