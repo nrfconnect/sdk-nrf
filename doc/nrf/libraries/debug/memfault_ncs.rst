@@ -141,11 +141,7 @@ The Kconfig options for Memfault that are defined in |NCS| provide some addition
 Flash-backed coredump storage
 -----------------------------
 
-When the :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` Kconfig option is enabled, the storage region is resolved at build time using one of the following sources:
-
-* **Partition Manager** (legacy): When :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED` is ``y``, a ``MEMFAULT_STORAGE`` partition is generated automatically.
-  The size defaults to 64 kB, and you can override it with :kconfig:option:`CONFIG_PM_PARTITION_SIZE_MEMFAULT_STORAGE`.
-* **Devicetree** (|NCS| v3.4.0 or later recommended): When Partition Manager is disabled, the backend locates a fixed partition labeled ``memfault_coredump_partition`` under the internal flash controller.
+When the :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP` Kconfig option is enabled, the backend locates a fixed partition labeled ``memfault_coredump_partition`` under the internal flash controller, defined in devicetree.
 
 The easiest way to enable the devicetree path is the :ref:`snippet-memfault-coredump` snippet that supplies a board-specific overlay defining the partition:
 
