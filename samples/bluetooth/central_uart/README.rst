@@ -1,14 +1,10 @@
 .. _central_uart:
 
-Bluetooth: Central UART
-#######################
+.. ncs-sample::
+   :title: Bluetooth: Central UART
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Central UART sample demonstrates how to use the :ref:`nus_client_readme`.
-It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
+   The Central UART sample demonstrates how to use the :ref:`nus_client_readme`.
+   It uses the NUS Client to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
 .. _central_uart_requirements:
 

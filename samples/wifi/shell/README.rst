@@ -1,13 +1,9 @@
 .. _wifi_shell_sample:
 
-Wi-Fi: Shell
-############
+.. ncs-sample::
+   :title: Wi-Fi: Shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Shell sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
+   The Shell sample allows you to test Nordic Semiconductor's Wi-Fi® chipsets.
 
 Requirements
 ************

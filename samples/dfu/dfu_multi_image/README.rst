@@ -1,14 +1,10 @@
 .. _dfu_multi_image_sample:
 
-DFU Multi-image
-###############
+.. ncs-sample::
+   :title: DFU Multi-image
 
-.. contents::
-   :local:
-   :depth: 2
-
-The DFU Multi-image sample demonstrates the use of the Device Firmware Update (DFU) multi-image functionality in the |NCS|.
-Currently, it only supports DFU targets for MCUboot as its backend.
+   The DFU Multi-image sample demonstrates the use of the Device Firmware Update (DFU) multi-image functionality in the |NCS|.
+   Currently, it only supports DFU targets for MCUboot as its backend.
 
 Requirements
 ************

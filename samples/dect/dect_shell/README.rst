@@ -1,13 +1,9 @@
 .. _dect_shell_application:
 
-nRF91x1: DECT NR+ Shell
-#######################
+.. ncs-sample::
+   :title: nRF91x1: DECT NR+ Shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-The DECT NR+ Shell (DeSh) sample application demonstrates how to set up a DECT NR+ application on top of the DECT NR+ networking stack and enables you to test various stack and modem features.
+   The DECT NR+ Shell (DeSh) sample application demonstrates how to set up a DECT NR+ application on top of the DECT NR+ networking stack and enables you to test various stack and modem features.
 
 Requirements
 ************

@@ -1,14 +1,10 @@
 .. _crypto_aes_ccm:
 
-Crypto: AES CCM
-###############
+.. ncs-sample::
+   :title: Crypto: AES CCM
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AES CCM sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the CCM AEAD algorithm with a 128-bit AES key.
-The sample uses additional authenticated data (AAD) and a random nonce.
+   The AES CCM sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the CCM AEAD algorithm with a 128-bit AES key.
+   The sample uses additional authenticated data (AAD) and a random nonce.
 
 Requirements
 ************

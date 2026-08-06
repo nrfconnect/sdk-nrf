@@ -1,13 +1,9 @@
 .. _ppi_seq_spi_sample:
 
-PPI Sequencer with SPI
-######################
+.. ncs-sample::
+   :title: PPI Sequencer with SPI
 
-.. contents::
-   :local:
-   :depth: 2
-
-The PPI Sequencer with SPI sample presents how to use :ref:`ppi_seq_i2c_spi` driver.
+   The PPI Sequencer with SPI sample presents how to use :ref:`ppi_seq_i2c_spi` driver.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _wifi_promiscuous_sample:
 
-Wi-Fi: Promiscuous
-##################
+.. ncs-sample::
+   :title: Wi-Fi: Promiscuous
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Promiscuous sample demonstrates how to set Promiscuous mode, establish a connection to an Access Point (AP), analyze incoming Wi-Fi® packets, and print packet statistics.
+   The Promiscuous sample demonstrates how to set Promiscuous mode, establish a connection to an Access Point (AP), analyze incoming Wi-Fi® packets, and print packet statistics.
 
 Requirements
 ************

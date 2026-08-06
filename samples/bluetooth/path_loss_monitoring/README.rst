@@ -1,15 +1,11 @@
 .. _bluetooth_path_loss_monitoring:
 
-Bluetooth: Path loss monitoring
-###############################
+.. ncs-sample::
+   :title: Bluetooth: Path loss monitoring
 
-.. contents::
-	 :local:
-	 :depth: 2
-
-The Path loss monitoring sample demonstrates how to evaluate Bluetooth® LE signal quality using the path loss monitoring feature.
-It consists of a Central and a Peripheral device.
-The Central continuously monitors the signal strength and classifies the connection quality using onboard LEDs.
+   The Path loss monitoring sample demonstrates how to evaluate Bluetooth® LE signal quality using the path loss monitoring feature.
+   It consists of a Central and a Peripheral device.
+   The Central continuously monitors the signal strength and classifies the connection quality using onboard LEDs.
 
 Requirements
 ************

@@ -1,15 +1,11 @@
 .. _power_profiling:
 
-Bluetooth: Peripheral power profiling
-#####################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral power profiling
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral power profiling sample can be used to measure power consumption when Bluetooth® Low Energy stack is used for communication.
-You can measure power consumption during advertising and data transmission.
-For this purpose, the sample uses the vendor-specific service and demonstrates advertising in a connectable and non-connectable mode.
+   The Peripheral power profiling sample can be used to measure power consumption when Bluetooth® Low Energy stack is used for communication.
+   You can measure power consumption during advertising and data transmission.
+   For this purpose, the sample uses the vendor-specific service and demonstrates advertising in a connectable and non-connectable mode.
 
 Requirements
 ************

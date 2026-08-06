@@ -1,14 +1,10 @@
 .. _esb_monitor:
 
-Enhanced ShockBurst: Monitor
-#############################
+.. ncs-sample::
+   :title: Enhanced ShockBurst: Monitor
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Monitor sample shows how to use the :ref:`ug_esb` protocol in Monitor mode.
-It demonstrates how to configure the Enhanced ShockBurst protocol to receive all the traffic generated on the configured channel and pipes.
+   The Monitor sample shows how to use the :ref:`ug_esb` protocol in Monitor mode.
+   It demonstrates how to configure the Enhanced ShockBurst protocol to receive all the traffic generated on the configured channel and pipes.
 
 Requirements
 ************

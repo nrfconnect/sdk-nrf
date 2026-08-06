@@ -1,17 +1,13 @@
 .. _mcuboot_with_encryption:
 
-MCUboot with encryption enabled
-###############################
+.. ncs-sample::
+   :title: MCUboot with encryption enabled
 
-.. contents::
-   :local:
-   :depth: 2
-
-The MCUboot with encryption enabled sample demonstrates secure device firmware update (DFU) using MCUboot with encryption enabled.
-You will learn how to build encrypted images and deploy them to supported development kits, protecting application code from unauthorized access during updates.
-This sample does not contain its own application code.
-Instead, it focuses on configuring encryption in MCUboot and generating encrypted DFU images.
-To provide a working example, the sample uses the :zephyr:code-sample:`smp-svr` project as its application by directly importing the project's sources in the main :file:`CMakeLists.txt` file.
+   The MCUboot with encryption enabled sample demonstrates secure device firmware update (DFU) using MCUboot with encryption enabled.
+   You will learn how to build encrypted images and deploy them to supported development kits, protecting application code from unauthorized access during updates.
+   This sample does not contain its own application code.
+   Instead, it focuses on configuring encryption in MCUboot and generating encrypted DFU images.
+   To provide a working example, the sample uses the :zephyr:code-sample:`smp-svr` project as its application by directly importing the project's sources in the main :file:`CMakeLists.txt` file.
 
 Requirements
 ************

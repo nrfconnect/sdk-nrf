@@ -1,13 +1,9 @@
 .. _ble_subrating:
 
-Bluetooth: Connection Subrating
-###############################
+.. ncs-sample::
+   :title: Bluetooth: Connection Subrating
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth® Connection Subrating sample showcases the effect of the LE Connection Subrating feature on the duty cycle of a connection.
+   The Bluetooth® Connection Subrating sample showcases the effect of the LE Connection Subrating feature on the duty cycle of a connection.
 
 Requirements
 ************

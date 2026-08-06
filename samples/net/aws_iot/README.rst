@@ -1,21 +1,17 @@
 .. _aws_iot:
 
-AWS IoT
-#######
+.. ncs-sample::
+   :title: AWS IoT
 
-.. contents::
-   :local:
-   :depth: 2
+   The Amazon Web Services Internet-of-Things (AWS IoT) sample demonstrates how to connect an nRF91 Series, nRF70 Series, or nRF54LM20 with nRF7002 EB2 device to the `AWS IoT Core`_ service over MQTT to publish and receive messages.
+   This sample showcases the use of the :ref:`lib_aws_iot` library, which includes support for FOTA using the :ref:`lib_aws_fota` library.
 
-The Amazon Web Services Internet-of-Things (AWS IoT) sample demonstrates how to connect an nRF91 Series, nRF70 Series, or nRF54LM20 with nRF7002 EB2 device to the `AWS IoT Core`_ service over MQTT to publish and receive messages.
-This sample showcases the use of the :ref:`lib_aws_iot` library, which includes support for FOTA using the :ref:`lib_aws_fota` library.
+   .. |wifi| replace:: Wi-Fi®
 
-.. |wifi| replace:: Wi-Fi®
+   .. include:: /includes/net_connection_manager.txt
 
-.. include:: /includes/net_connection_manager.txt
-
-Before this sample can be used, an AWS IoT server instance needs to be setup in order for the device to connect to it.
-Refer to :ref:`aws_iot_sample_server_setup` to complete the necessary steps.
+   Before this sample can be used, an AWS IoT server instance needs to be setup in order for the device to connect to it.
+   Refer to :ref:`aws_iot_sample_server_setup` to complete the necessary steps.
 
 Requirements
 ************

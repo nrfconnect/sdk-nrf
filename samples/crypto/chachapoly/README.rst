@@ -1,14 +1,10 @@
 .. _crypto_chacha_poly:
 
-Crypto: Chacha20-Poly1305 example
-#################################
+.. ncs-sample::
+   :title: Crypto: Chacha20-Poly1305 example
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Chacha20-Poly1305 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the Chacha20-Poly1305 AEAD algorithm with a 256-bit Chacha20 key.
-The sample uses additional authenticated data (AAD) and a random nonce.
+   The Chacha20-Poly1305 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the Chacha20-Poly1305 AEAD algorithm with a 256-bit Chacha20 key.
+   The sample uses additional authenticated data (AAD) and a random nonce.
 
 Requirements
 ************

@@ -1,14 +1,10 @@
 .. _bt_peripheral_with_multiple_identities:
 
-Bluetooth: Peripheral with multiple identities
-##############################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral with multiple identities
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample demonstrates how to use a single physical device to create and manage multiple advertisers, making it appear as multiple distinct devices by assigning each a unique identity.
-You can use this sample to test a central device that requires connections to multiple peripheral devices when you do not have several development kits available.
+   The sample demonstrates how to use a single physical device to create and manage multiple advertisers, making it appear as multiple distinct devices by assigning each a unique identity.
+   You can use this sample to test a central device that requires connections to multiple peripheral devices when you do not have several development kits available.
 
 Requirements
 ************

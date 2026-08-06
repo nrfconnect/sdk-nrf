@@ -1,13 +1,9 @@
 .. _multiple_adv_sets:
 
-Bluetooth: Multiple advertising sets
-####################################
+.. ncs-sample::
+   :title: Bluetooth: Multiple advertising sets
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Multiple advertising sets sample demonstrates how to use the Bluetooth® advertising sets.
+   The Multiple advertising sets sample demonstrates how to use the Bluetooth® advertising sets.
 
 Requirements
 ************

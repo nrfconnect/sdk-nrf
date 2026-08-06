@@ -1,13 +1,9 @@
 .. _npm13xx_one_button:
 
-nPM1300 and nPM1304: One button
-###############################
+.. ncs-sample::
+   :title: nPM1300 and nPM1304: One button
 
-.. contents::
-   :local:
-   :depth: 2
-
-The One button sample demonstrates how to support wake-up, shutdown, and user interactions of `nPM1300 <nPM1300 product website_>`_ or `nPM1304 <nPM1304 product website_>`_ using a single button connected to the PMIC's **SHPHLD/RESET** pin.
+   The One button sample demonstrates how to support wake-up, shutdown, and user interactions of `nPM1300 <nPM1300 product website_>`_ or `nPM1304 <nPM1304 product website_>`_ using a single button connected to the PMIC's **SHPHLD/RESET** pin.
 
 Requirements
 ************

@@ -1,14 +1,10 @@
 .. _ot_cli_sample:
 
-Thread: CLI
-###########
+.. ncs-sample::
+   :title: Thread: CLI
 
-.. contents::
-   :local:
-   :depth: 2
-
-The :ref:`Thread <ug_thread>` CLI sample demonstrates how to send commands to a Thread device using the OpenThread Command Line Interface (CLI).
-The CLI is integrated into the Zephyr shell.
+   The :ref:`Thread <ug_thread>` CLI sample demonstrates how to send commands to a Thread device using the OpenThread Command Line Interface (CLI).
+   The CLI is integrated into the Zephyr shell.
 
 Requirements
 ************

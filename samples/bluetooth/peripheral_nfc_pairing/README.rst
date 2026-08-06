@@ -1,25 +1,21 @@
 .. _peripheral_nfc_pairing:
 
-Bluetooth: NFC pairing
-######################
+.. ncs-sample::
+   :title: Bluetooth: NFC pairing
 
-.. contents::
-   :local:
-   :depth: 2
+   The NFC pairing sample demonstrates Bluetooth® LE out-of-band pairing using an NFC tag and the NFC TNEP protocol.
+   You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices and an NFC polling device with Bluetooth LE support, for example, a mobile phone.
 
-The NFC pairing sample demonstrates Bluetooth® LE out-of-band pairing using an NFC tag and the NFC TNEP protocol.
-You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices and an NFC polling device with Bluetooth LE support, for example, a mobile phone.
+   The sample shows the usage of NFC NDEF :ref:`nfc_ch` and :ref:`tnep_tag_readme` with the :ref:`Connection Handover service<nfc_tnep_ch_readme>`.
+   It provides minimal Bluetooth functionality in Peripheral role and on GATT level it implements only the Device Information Service.
 
-The sample shows the usage of NFC NDEF :ref:`nfc_ch` and :ref:`tnep_tag_readme` with the :ref:`Connection Handover service<nfc_tnep_ch_readme>`.
-It provides minimal Bluetooth functionality in Peripheral role and on GATT level it implements only the Device Information Service.
+   The sample supports pairing in one of the following modes:
 
-The sample supports pairing in one of the following modes:
-
-* LE Secure Connections Just Works pairing
-* LE Secure Connections OOB pairing
-* Legacy OOB pairing
-* Legacy Just Works pairing
-* Negotiated Handover (TNEP protocol) - two-way OOB pairing
+   * LE Secure Connections Just Works pairing
+   * LE Secure Connections OOB pairing
+   * Legacy OOB pairing
+   * Legacy Just Works pairing
+   * Negotiated Handover (TNEP protocol) - two-way OOB pairing
 
 Requirements
 ************

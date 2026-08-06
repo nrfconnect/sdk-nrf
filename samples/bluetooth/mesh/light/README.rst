@@ -1,19 +1,15 @@
 .. _bluetooth_mesh_light:
 
-Bluetooth Mesh: Light
-#####################
+.. ncs-sample::
+   :title: Bluetooth Mesh: Light
 
-.. contents::
-   :local:
-   :depth: 2
+   The Bluetooth® Mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
-The Bluetooth® Mesh light sample demonstrates how to set up a mesh server model application, and control LEDs with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
+   .. note::
+      This sample is self-contained, and can be tested on its own.
+      However, it is required when testing the :ref:`bluetooth_mesh_light_switch` sample.
 
-.. note::
-   This sample is self-contained, and can be tested on its own.
-   However, it is required when testing the :ref:`bluetooth_mesh_light_switch` sample.
-
-This sample also provides support for point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
+   This sample also provides support for point-to-point Device Firmware Update (DFU) over the Simple Management Protocol (SMP).
 
 Requirements
 ************

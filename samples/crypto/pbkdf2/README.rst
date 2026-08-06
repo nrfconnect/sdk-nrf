@@ -1,14 +1,10 @@
 .. _crypto_pbkdf2:
 
-Crypto: PBKDF2
-##############
+.. ncs-sample::
+   :title: Crypto: PBKDF2
 
-.. contents::
-   :local:
-   :depth: 2
-
-The PBKDF2 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to derive keys using the PBKDF2 algorithm with HMAC-SHA-256 as the underlying pseudorandom function.
-The sample uses a sample password, salt, and iteration count to derive a new key.
+   The PBKDF2 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to derive keys using the PBKDF2 algorithm with HMAC-SHA-256 as the underlying pseudorandom function.
+   The sample uses a sample password, salt, and iteration count to derive a new key.
 
 Requirements
 ************

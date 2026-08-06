@@ -1,14 +1,10 @@
 .. _crypto_hkdf:
 
-Crypto: HKDF
-############
+.. ncs-sample::
+   :title: Crypto: HKDF
 
-.. contents::
-   :local:
-   :depth: 2
-
-The HKDF sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to derive keys using the HKDF algorithm with SHA-256 as the underlying hash function.
-The sample uses a sample key, salt, and additional data to derive a new key.
+   The HKDF sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to derive keys using the HKDF algorithm with SHA-256 as the underlying hash function.
+   The sample uses a sample key, salt, and additional data to derive a new key.
 
 Requirements
 ************

@@ -1,18 +1,14 @@
 .. _download_sample:
 
-Download
-########
+.. ncs-sample::
+   :title: Download
 
-.. contents::
-   :local:
-   :depth: 2
+   The Download sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
+   It uses the :ref:`lib_downloader` library.
 
-The Download sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
-It uses the :ref:`lib_downloader` library.
+   .. |wifi| replace:: Wi-Fi®
 
-.. |wifi| replace:: Wi-Fi®
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

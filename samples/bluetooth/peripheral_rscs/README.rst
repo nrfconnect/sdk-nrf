@@ -1,13 +1,9 @@
 .. _peripheral_rscs:
 
-Bluetooth: Peripheral Running Speed and Cadence Service (RSCS)
-###############################################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral Running Speed and Cadence Service (RSCS)
 
-.. contents::
-   :local:
-   :depth: 2
-
-The peripheral RSCS sample demonstrates how to use the :ref:`rscs_readme`.
+   The peripheral RSCS sample demonstrates how to use the :ref:`rscs_readme`.
 
 Requirements
 ************
