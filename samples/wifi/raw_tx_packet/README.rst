@@ -1,13 +1,9 @@
 .. _wifi_raw_tx_packet_sample:
 
-Wi-Fi: Raw TX packet
-####################
+.. ncs-sample::
+   :title: Wi-Fi: Raw TX packet
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Raw TX packet sample demonstrates how to transmit raw IEEE 802.11 packets.
+   The Raw TX packet sample demonstrates how to transmit raw IEEE 802.11 packets.
 
 Requirements
 ************

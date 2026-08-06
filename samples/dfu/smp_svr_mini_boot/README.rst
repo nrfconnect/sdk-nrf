@@ -1,13 +1,9 @@
 .. _mcuboot_minimal_configuration:
 
-MCUboot minimal configuration
-#############################
+.. ncs-sample::
+   :title: MCUboot minimal configuration
 
-.. contents::
-   :local:
-   :depth: 2
-
-The MCUboot minimal configuration sample provides the minimal and recommended settings for MCUboot on :ref:`nRF54L15 DK <ug_nrf54l>` and :ref:`nRF54H20 DK <ug_nrf54h>` using the Zephyr's :zephyr:code-sample:`smp-svr` sample, where MCUboot is configured as a sub-image.
+   The MCUboot minimal configuration sample provides the minimal and recommended settings for MCUboot on :ref:`nRF54L15 DK <ug_nrf54l>` and :ref:`nRF54H20 DK <ug_nrf54h>` using the Zephyr's :zephyr:code-sample:`smp-svr` sample, where MCUboot is configured as a sub-image.
 
 Overview
 ********

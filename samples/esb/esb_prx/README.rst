@@ -1,14 +1,10 @@
 .. _esb_prx:
 
-Enhanced ShockBurst: Receiver
-#############################
+.. ncs-sample::
+   :title: Enhanced ShockBurst: Receiver
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample shows how to use the :ref:`ug_esb` protocol in receiver mode.
-It shows how to configure the Enhanced ShockBurst protocol to receive packets.
+   The sample shows how to use the :ref:`ug_esb` protocol in receiver mode.
+   It shows how to configure the Enhanced ShockBurst protocol to receive packets.
 
 Requirements
 ************

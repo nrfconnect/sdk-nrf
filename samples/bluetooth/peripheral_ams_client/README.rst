@@ -1,13 +1,9 @@
 .. _peripheral_ams_client:
 
-Bluetooth: Peripheral AMS client
-################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral AMS client
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral AMS client sample demonstrates how to use the :ref:`ams_client_readme`.
+   The Peripheral AMS client sample demonstrates how to use the :ref:`ams_client_readme`.
 
 Requirements
 ************

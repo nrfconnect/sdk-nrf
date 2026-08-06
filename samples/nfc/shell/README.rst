@@ -1,15 +1,11 @@
 .. _nfc_shell:
 
-NFC: Shell
-##########
+.. ncs-sample::
+   :title: NFC: Shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates the NFC transport feature for a shell interface.
-It runs the shell interface with the NFC T4T ISO-DEP transport layer.
-It uses the :ref:`shell_nfc_readme` library.
+   This sample demonstrates the NFC transport feature for a shell interface.
+   It runs the shell interface with the NFC T4T ISO-DEP transport layer.
+   It uses the :ref:`shell_nfc_readme` library.
 
 Requirements
 ************

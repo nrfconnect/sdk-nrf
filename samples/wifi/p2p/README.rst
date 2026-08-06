@@ -1,13 +1,9 @@
 .. _wifi_p2p_sample:
 
-Wi-Fi: P2P
-##########
+.. ncs-sample::
+   :title: Wi-Fi: P2P
 
-.. contents::
-   :local:
-   :depth: 2
-
-The P2P sample demonstrates how to establish a Wi-Fi® Peer-to-Peer (P2P) connection between devices using the Wi-Fi Direct® functionality.
+   The P2P sample demonstrates how to establish a Wi-Fi® Peer-to-Peer (P2P) connection between devices using the Wi-Fi Direct® functionality.
 
 Requirements
 ************

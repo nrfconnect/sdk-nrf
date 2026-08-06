@@ -1,13 +1,9 @@
 .. _channel_sounding_ipt_reflector:
 
-Bluetooth: Channel Sounding Reflector with Inline PCT Transfer
-##############################################################
+.. ncs-sample::
+   :title: Bluetooth: Channel Sounding Reflector with Inline PCT Transfer
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the Bluetooth® Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature as a CS reflector, to achieve fast and efficient distance estimation.
+   This sample demonstrates how to use the Bluetooth® Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature as a CS reflector, to achieve fast and efficient distance estimation.
 
 Requirements
 ************

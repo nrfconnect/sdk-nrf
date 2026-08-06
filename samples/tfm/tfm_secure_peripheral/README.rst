@@ -1,13 +1,9 @@
 .. _tfm_secure_peripheral_partition:
 
-TF-M secure peripheral partition
-################################
+.. ncs-sample::
+   :title: TF-M secure peripheral partition
 
-.. contents::
-   :local:
-   :depth: 2
-
-The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` partition.
+   The TF-M secure peripheral partition sample demonstrates the configuration and usage of secure peripherals in a :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` partition.
 
 Requirements
 ************

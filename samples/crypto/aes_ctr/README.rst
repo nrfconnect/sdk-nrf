@@ -1,13 +1,9 @@
 .. _crypto_aes_ctr:
 
-Crypto: AES CTR
-###############
+.. ncs-sample::
+   :title: Crypto: AES CTR
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AES CTR sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform AES encryption and decryption operations using the CTR block cipher mode and a 128-bit AES key.
+   The AES CTR sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform AES encryption and decryption operations using the CTR block cipher mode and a 128-bit AES key.
 
 Requirements
 ************

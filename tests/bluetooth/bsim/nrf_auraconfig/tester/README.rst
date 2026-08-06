@@ -1,15 +1,11 @@
 .. _nrf_auraconfig_tester_test:
 
-nRF Auraconfig tester test
-##########################
+.. ncs-sample::
+   :title: nRF Auraconfig tester test
 
-.. contents::
-   :local:
-   :depth: 2
-
-This test code will set up a broadcast sink to receive and parse the advertisement packets from the :ref:`nrf_auraconfig` sample using Zephyr's :ref:`zephyr:bsim` and verify that the result matches the test vector supplied.
-It is not intended for use in production code.
-Compared to other tests, these run as integration tests involving the Controller, the Host, and the application layer.
+   This test code will set up a broadcast sink to receive and parse the advertisement packets from the :ref:`nrf_auraconfig` sample using Zephyr's :ref:`zephyr:bsim` and verify that the result matches the test vector supplied.
+   It is not intended for use in production code.
+   Compared to other tests, these run as integration tests involving the Controller, the Host, and the application layer.
 
 Requirements
 ************

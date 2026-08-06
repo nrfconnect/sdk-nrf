@@ -1,15 +1,11 @@
 .. _bt_mesh_chat:
 
-Bluetooth Mesh: Chat
-####################
+.. ncs-sample::
+   :title: Bluetooth Mesh: Chat
 
-.. contents::
-   :local:
-   :depth: 2
+   The Bluetooth® Mesh chat sample demonstrates how to use the mesh network to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
 
-The Bluetooth® Mesh chat sample demonstrates how to use the mesh network to facilitate communication between nodes by text, using the :ref:`bt_mesh_chat_client_model`.
-
-See the subpages for detailed documentation on the sample and its internal model.
+   See the subpages for detailed documentation on the sample and its internal model.
 
 .. _mesh_chat_subpages:
 

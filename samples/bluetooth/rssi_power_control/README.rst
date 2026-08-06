@@ -1,18 +1,14 @@
 .. _bluetooth_automated_power_control:
 
-Bluetooth: Automated power control
-##################################
+.. ncs-sample::
+   :title: Bluetooth: Automated power control
 
-.. contents::
-	 :local:
-	 :depth: 2
+   The Automated power control sample demonstrates how to monitor the Bluetooth® Low Energy signal strength (RSSI) and dynamically adjust the transmit (TX) power of a connected Peripheral device.
+   There are two versions of this sample: One for the central device (in the :file:`rssi_power_control/central` folder) and one for the peripheral device (in the :file:`rssi_power_control/peripheral` folder)
 
-The Automated power control sample demonstrates how to monitor the Bluetooth® Low Energy signal strength (RSSI) and dynamically adjust the transmit (TX) power of a connected Peripheral device.
-There are two versions of this sample: One for the central device (in the :file:`rssi_power_control/central` folder) and one for the peripheral device (in the :file:`rssi_power_control/peripheral` folder)
+   The sample for the central device collects RSSI data and sends power control commands to optimize the connection quality, which in turn optimizes the current consumption.
 
-The sample for the central device collects RSSI data and sends power control commands to optimize the connection quality, which in turn optimizes the current consumption.
-
-The sample for the peripheral device is simply advertising its existence, allowing the central device to establish a connection.
+   The sample for the peripheral device is simply advertising its existence, allowing the central device to establish a connection.
 
 Requirements
 ************

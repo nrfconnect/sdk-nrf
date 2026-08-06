@@ -1,13 +1,9 @@
 .. _identity_key_generate:
 
-Identity key generation
-#######################
+.. ncs-sample::
+   :title: Identity key generation
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to generate a random device-specific identity using :ref:`lib_identity_key`, which is then stored in the Key Management Unit (KMU).
+   This sample demonstrates how to generate a random device-specific identity using :ref:`lib_identity_key`, which is then stored in the Key Management Unit (KMU).
 
 Requirements
 ************

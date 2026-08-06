@@ -1,16 +1,12 @@
 .. _bluetooth_mesh_silvair_enocean:
 
-Bluetooth Mesh: Silvair EnOcean
-###############################
+.. ncs-sample::
+   :title: Bluetooth Mesh: Silvair EnOcean
 
-.. contents::
-   :local:
-   :depth: 2
+   You can use the :ref:`ug_bt_mesh` Silvair EnOcean sample to change the state of light sources on other devices within the same mesh network.
+   It also demonstrates how to use Bluetooth® Mesh models by using the Silvair EnOcean Proxy Server model in an application.
 
-You can use the :ref:`ug_bt_mesh` Silvair EnOcean sample to change the state of light sources on other devices within the same mesh network.
-It also demonstrates how to use Bluetooth® Mesh models by using the Silvair EnOcean Proxy Server model in an application.
-
-Use the Silvair EnOcean sample with the :ref:`bluetooth_mesh_light_lc` sample to demonstrate its function in a Bluetooth Mesh network.
+   Use the Silvair EnOcean sample with the :ref:`bluetooth_mesh_light_lc` sample to demonstrate its function in a Bluetooth Mesh network.
 
 Requirements
 ************

@@ -1,19 +1,15 @@
 .. _bluetooth_iso_combined_bis_cis:
 
-Bluetooth: ISO combined BIS and CIS
-###################################
+.. ncs-sample::
+   :title: Bluetooth: ISO combined BIS and CIS
 
-.. contents::
-   :local:
-   :depth: 2
+   The Bluetooth® ISO combined BIS and CIS sample demonstrates the capability of a Controller to support both Broadcast Isochronous Stream (BIS) and Connected Isochronous Stream (CIS) simultaneously when using the LE Isochronous Channels (ISO) feature.
+   It uses ISO-specific APIs to create a stream, and to receive and send data.
+   The sample acts as a Central device that receives data over CIS and forwards the received data to a BIS.
 
-The Bluetooth® ISO combined BIS and CIS sample demonstrates the capability of a Controller to support both Broadcast Isochronous Stream (BIS) and Connected Isochronous Stream (CIS) simultaneously when using the LE Isochronous Channels (ISO) feature.
-It uses ISO-specific APIs to create a stream, and to receive and send data.
-The sample acts as a Central device that receives data over CIS and forwards the received data to a BIS.
-
-.. note::
-   The sample uses the Time of Arrival method to send data over ISO without using timestamps through a single stream (see the :ref:`nrfxlib:iso_providing_data` section in the SoftDevice Controller documentation for more information).
-   The :ref:`bluetooth_isochronous_time_synchronization` sample can be used to learn how to synchronize data using ISO channels.
+   .. note::
+      The sample uses the Time of Arrival method to send data over ISO without using timestamps through a single stream (see the :ref:`nrfxlib:iso_providing_data` section in the SoftDevice Controller documentation for more information).
+      The :ref:`bluetooth_isochronous_time_synchronization` sample can be used to learn how to synchronize data using ISO channels.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _nrf_cloud_coap_cell_location:
 
-Cellular: nRF Cloud CoAP cellular location
-##########################################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud CoAP cellular location
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service on your device.
+   This sample demonstrates how to use the `nRF Cloud CoAP API`_ for nRF Cloud's cellular location service on your device.
 
 Requirements
 ************

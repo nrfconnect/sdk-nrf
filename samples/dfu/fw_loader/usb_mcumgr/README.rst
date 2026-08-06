@@ -1,17 +1,13 @@
 .. _fw_loader_usb_mcumgr:
 
-Minimal USB virtual serial port SMP firmware loader
-###################################################
+.. ncs-sample::
+   :title: Minimal USB virtual serial port SMP firmware loader
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample provides the minimal and recommended configuration for the Firmware Loader application to run on the :zephyr:board:`nrf54lm20dk`.
+   It uses code from Zephyr's :zephyr:code-sample:`smp-svr` sample to enable the USB serial Simple Management Protocol (SMP) server functionality.
 
-This sample provides the minimal and recommended configuration for the Firmware Loader application to run on the :zephyr:board:`nrf54lm20dk`.
-It uses code from Zephyr's :zephyr:code-sample:`smp-svr` sample to enable the USB serial Simple Management Protocol (SMP) server functionality.
-
-This sample is not intended to function as a standalone sample.
-Instead, it serves as a starting point for developing a custom Firmware Loader application that works with the MCUboot bootloader.
+   This sample is not intended to function as a standalone sample.
+   Instead, it serves as a starting point for developing a custom Firmware Loader application that works with the MCUboot bootloader.
 
 .. _fw_loader_usb_minimal_overview:
 

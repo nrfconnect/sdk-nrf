@@ -1,15 +1,11 @@
 .. _fmfu_smp_svr_sample:
 
-Cellular: Full modem firmware update using SMP Server
-#####################################################
+.. ncs-sample::
+   :title: Cellular: Full modem firmware update using SMP Server
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample application implements a Simple Management Protocol (SMP) Server, using the SMP transfer encoding with the MCU manager (mcumgr) management protocol, to provide an interface over UART which enables the device to do full modem firmware updates.
 
-This sample application implements a Simple Management Protocol (SMP) Server, using the SMP transfer encoding with the MCU manager (mcumgr) management protocol, to provide an interface over UART which enables the device to do full modem firmware updates.
-
-For more information about mcumgr and SMP, see :ref:`device_mgmt`.
+   For more information about mcumgr and SMP, see :ref:`device_mgmt`.
 
 Requirements
 ************

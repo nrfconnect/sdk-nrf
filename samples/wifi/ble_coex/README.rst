@@ -1,14 +1,10 @@
 .. _wifi_sr_coex_sample:
 .. _wifi_ble_coex_sample:
 
-Wi-Fi: Bluetooth LE coexistence
-###############################
+.. ncs-sample::
+   :title: Wi-Fi: Bluetooth LE coexistence
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Bluetooth® LE radios in 2.4 GHz frequency.
+   The Bluetooth LE coexistence sample demonstrates coexistence between Wi-Fi® and Bluetooth® LE radios in 2.4 GHz frequency.
 
 Requirements
 ************

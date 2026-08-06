@@ -1,13 +1,9 @@
 .. _wifi_thread_coex_sample:
 
-Wi-Fi: Thread coexistence
-#########################
+.. ncs-sample::
+   :title: Wi-Fi: Thread coexistence
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Thread coexistence sample demonstrates coexistence between Wi-Fi® and OpenThread device radios in 2.4 GHz frequency.
+   The Thread coexistence sample demonstrates coexistence between Wi-Fi® and OpenThread device radios in 2.4 GHz frequency.
 
 Requirements
 ************

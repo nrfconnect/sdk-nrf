@@ -1,13 +1,9 @@
 .. _crypto_aes_cbc:
 
-Crypto: AES CBC
-###############
+.. ncs-sample::
+   :title: Crypto: AES CBC
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AES CBC sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform AES encryption and decryption operations using the CBC block cipher mode without padding and a 128-bit AES key.
+   The AES CBC sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform AES encryption and decryption operations using the CBC block cipher mode without padding and a 128-bit AES key.
 
 Requirements
 ************

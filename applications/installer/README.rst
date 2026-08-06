@@ -1,16 +1,12 @@
 .. _installer:
 
-Installer (MCUboot Firmware Loader installer)
-#############################################
+.. ncs-sample::
+   :title: Installer (MCUboot Firmware Loader installer)
 
-.. contents::
-   :local:
-   :depth: 2
-
-Installer provides update functionality to the firmware loader when used with the MCUboot bootloader in firmware updater mode.
-The Installer application extracts a new firmware loader image from a combined installer and firmware loader package stored in the primary slot.
-It then copies the image to the firmware loader partition.
-Finally, it requests firmware loader entrance on the next boot.
+   Installer provides update functionality to the firmware loader when used with the MCUboot bootloader in firmware updater mode.
+   The Installer application extracts a new firmware loader image from a combined installer and firmware loader package stored in the primary slot.
+   It then copies the image to the firmware loader partition.
+   Finally, it requests firmware loader entrance on the next boot.
 
 Overview
 ********

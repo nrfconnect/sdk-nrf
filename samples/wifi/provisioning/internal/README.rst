@@ -1,15 +1,11 @@
 .. _wifi_provisioning_internal_sample:
 
-Wi-Fi: Provisioning Internal
-############################
+.. ncs-sample::
+   :title: Wi-Fi: Provisioning Internal
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Provisioning Internal sample demonstrates the internal Wi-Fi® provisioning functionality using the decoupled Wi-Fi provisioning library.
-The sample demonstrates proper integration of the Wi-Fi provisioning library with comprehensive testing capabilities and human-readable protocol decoding.
-It provides shell commands to test all supported Wi-Fi provisioning operations.
+   The Provisioning Internal sample demonstrates the internal Wi-Fi® provisioning functionality using the decoupled Wi-Fi provisioning library.
+   The sample demonstrates proper integration of the Wi-Fi provisioning library with comprehensive testing capabilities and human-readable protocol decoding.
+   It provides shell commands to test all supported Wi-Fi provisioning operations.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _app_event_manager_profiling_tracer_sample:
 
-Application Event Manager profiling tracer
-##########################################
+.. ncs-sample::
+   :title: Application Event Manager profiling tracer
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`nrf_profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
+   The Application Event Manager profiling tracer sample demonstrates the functionality of profiling :ref:`app_event_manager` events using the :ref:`nrf_profiler` and the :ref:`app_event_manager_profiler_tracer` modules.
 
 Requirements
 ************

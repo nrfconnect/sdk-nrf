@@ -1,18 +1,14 @@
 .. _radio_test:
 
-Radio test (short-range)
-########################
+.. ncs-sample::
+   :title: Radio test (short-range)
 
-.. contents::
-   :local:
-   :depth: 2
+   The Radio test sample demonstrates how to configure the 2.4 GHz short-range radio (Bluetooth® LE, IEEE 802.15.4 and proprietary) in a specific mode and then test its performance.
+   The sample provides a set of predefined commands that allow you to configure the radio in three modes:
 
-The Radio test sample demonstrates how to configure the 2.4 GHz short-range radio (Bluetooth® LE, IEEE 802.15.4 and proprietary) in a specific mode and then test its performance.
-The sample provides a set of predefined commands that allow you to configure the radio in three modes:
-
-* Constant RX or TX carrier
-* Modulated TX carrier
-* RX or TX sweep
+   * Constant RX or TX carrier
+   * Modulated TX carrier
+   * RX or TX sweep
 
 Requirements
 ************

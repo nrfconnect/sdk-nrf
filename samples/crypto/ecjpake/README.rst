@@ -1,14 +1,10 @@
 .. _crypto_ecjpake:
 
-Crypto: EC J-PAKE
-#################
+.. ncs-sample::
+   :title: Crypto: EC J-PAKE
 
-.. contents::
-   :local:
-   :depth: 2
-
-The EC J-PAKE sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform password-authenticated key exchange using the EC J-PAKE algorithm.
-The sample uses the elliptic curve (EC) version of the password-authenticated key exchange by juggling (J-PAKE) protocol with a shared password.
+   The EC J-PAKE sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform password-authenticated key exchange using the EC J-PAKE algorithm.
+   The sample uses the elliptic curve (EC) version of the password-authenticated key exchange by juggling (J-PAKE) protocol with a shared password.
 
 Requirements
 ************

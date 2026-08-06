@@ -1,13 +1,9 @@
 .. _smp_svr_ext_xip:
 
-nRF5340: SMP Server with external XIP
-#####################################
+.. ncs-sample::
+   :title: nRF5340: SMP Server with external XIP
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using Execute in place (XIP) and the Simple Management Protocol (SMP) server.
+   This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using Execute in place (XIP) and the Simple Management Protocol (SMP) server.
 
 Requirements
 ************

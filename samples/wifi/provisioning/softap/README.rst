@@ -1,17 +1,13 @@
 .. _softap_wifi_provision_sample:
 
-Wi-Fi: SoftAP based provision
-#############################
+.. ncs-sample::
+   :title: Wi-Fi: SoftAP based provision
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample demonstrates how to use the :ref:`lib_softap_wifi_provision` library to provision credentials to a Nordic Semiconductor Wi-Fi® device.
 
-This sample demonstrates how to use the :ref:`lib_softap_wifi_provision` library to provision credentials to a Nordic Semiconductor Wi-Fi® device.
+   .. |wifi| replace:: Wi-Fi
 
-.. |wifi| replace:: Wi-Fi
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

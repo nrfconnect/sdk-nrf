@@ -1,13 +1,9 @@
 .. _at_monitor_sample:
 
-Cellular: AT monitor
-####################
+.. ncs-sample::
+   :title: Cellular: AT monitor
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AT monitor sample demonstrates how to use the :ref:`at_monitor_readme` library and define AT monitors to receive AT notifications from the :ref:`nrfxlib:nrf_modem`.
+   The AT monitor sample demonstrates how to use the :ref:`at_monitor_readme` library and define AT monitors to receive AT notifications from the :ref:`nrfxlib:nrf_modem`.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _crypto_ecdsa:
 
-Crypto: ECDSA
-#############
+.. ncs-sample::
+   :title: Crypto: ECDSA
 
-.. contents::
-   :local:
-   :depth: 2
-
-The ECDSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the ECDSA algorithm with SHA-256 as the hashing algorithm and a 256-bit ECC key pair on the secp256r1 curve.
+   The ECDSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the ECDSA algorithm with SHA-256 as the hashing algorithm and a 256-bit ECC key pair on the secp256r1 curve.
 
 Requirements
 ************

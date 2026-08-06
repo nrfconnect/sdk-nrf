@@ -1,13 +1,9 @@
 .. _peripheral_ancs_client:
 
-Bluetooth: Peripheral ANCS client
-#################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral ANCS client
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral ANCS client sample demonstrates how to use the :ref:`ancs_client_readme`.
+   The Peripheral ANCS client sample demonstrates how to use the :ref:`ancs_client_readme`.
 
 Requirements
 ************

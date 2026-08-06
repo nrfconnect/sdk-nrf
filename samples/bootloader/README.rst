@@ -1,22 +1,18 @@
 .. _bootloader:
 
-|NSIB|
-######
+.. ncs-sample::
+   :title: |NSIB|
 
-.. contents::
-   :local:
-   :depth: 2
+   The |NSIB| (NSIB), previously also known as *B0* or ``b0``, is a secure bootloader built and maintained by Nordic Semiconductor.
+   It is specifically tailored for the :ref:`immutable bootloader architecture <immutable_bootloader>` of a secure boot chain.
+   It can verify and boot a second-stage bootloader or application while providing a persistent and reliable :ref:`Root of Trust (RoT) <ug_bootloader_chain_of_trust>`.
 
-The |NSIB| (NSIB), previously also known as *B0* or ``b0``, is a secure bootloader built and maintained by Nordic Semiconductor.
-It is specifically tailored for the :ref:`immutable bootloader architecture <immutable_bootloader>` of a secure boot chain.
-It can verify and boot a second-stage bootloader or application while providing a persistent and reliable :ref:`Root of Trust (RoT) <ug_bootloader_chain_of_trust>`.
+   See :ref:`ug_bootloader` for more information about the full bootloader chain.
 
-See :ref:`ug_bootloader` for more information about the full bootloader chain.
+   .. note::
 
-.. note::
-
-   Currently, the NSIB does not support performing firmware updates over the SMP transport.
-   If the application using the NSIB requires SMP-based firmware updates, such as Bluetooth® LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_sysbuild_upgradable>`.
+      Currently, the NSIB does not support performing firmware updates over the SMP transport.
+      If the application using the NSIB requires SMP-based firmware updates, such as Bluetooth® LE DFU, :ref:`include MCUboot as a second-stage bootloader <ug_bootloader_adding_sysbuild_upgradable>`.
 
 .. _bootloader_rot:
 

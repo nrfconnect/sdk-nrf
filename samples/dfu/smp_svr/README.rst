@@ -1,15 +1,11 @@
 .. _nrf_smp_svr_sample:
 
-MCUboot SMP Server
-##################
+.. ncs-sample::
+   :title: MCUboot SMP Server
 
-.. contents::
-   :local:
-   :depth: 2
-
-The MCUboot SMP Server sample demonstrates firmware update using the Simple Management Protocol (SMP) with MCUboot.
-It provides a starting point for working with multiple MCUboot configurations.
-You can update the device over UART or Bluetooth® Low Energy.
+   The MCUboot SMP Server sample demonstrates firmware update using the Simple Management Protocol (SMP) with MCUboot.
+   It provides a starting point for working with multiple MCUboot configurations.
+   You can update the device over UART or Bluetooth® Low Energy.
 
 Requirements
 ************

@@ -1,18 +1,14 @@
 .. _https_client:
 
-HTTPS Client
-############
+.. ncs-sample::
+   :title: HTTPS Client
 
-.. contents::
-   :local:
-   :depth: 2
+   The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
+   It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
 
-The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
-It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
+   .. |wifi| replace:: Wi-Fi®
 
-.. |wifi| replace:: Wi-Fi®
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

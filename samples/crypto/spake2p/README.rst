@@ -1,13 +1,9 @@
 .. _crypto_spake2p:
 
-Crypto: Spake2+
-###############
+.. ncs-sample::
+   :title: Crypto: Spake2+
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Spake2+ sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform password-authenticated key exchange using the Spake2+ protocol with HMAC-SHA-256 and the secp256r1 ECC curve.
+   The Spake2+ sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform password-authenticated key exchange using the Spake2+ protocol with HMAC-SHA-256 and the secp256r1 ECC curve.
 
 Requirements
 ************

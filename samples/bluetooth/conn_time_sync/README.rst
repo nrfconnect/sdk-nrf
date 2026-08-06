@@ -1,13 +1,9 @@
 .. _bluetooth_conn_time_synchronization:
 
-Bluetooth: Connection time synchronization
-##########################################
+.. ncs-sample::
+   :title: Bluetooth: Connection time synchronization
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates an optimized, microsecond-accurate synchronization of connections that are happening over Bluetooth® Low Energy Asynchronous Connection-oriented Logical transport (ACL).
+   This sample demonstrates an optimized, microsecond-accurate synchronization of connections that are happening over Bluetooth® Low Energy Asynchronous Connection-oriented Logical transport (ACL).
 
 Requirements
 ************

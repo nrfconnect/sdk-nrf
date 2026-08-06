@@ -1,13 +1,9 @@
 .. _peripheral_cgms:
 
-Bluetooth: Continuous Glucose Monitoring Service (CGMS)
-#######################################################
+.. ncs-sample::
+   :title: Bluetooth: Continuous Glucose Monitoring Service (CGMS)
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral Continuous Glucose Monitoring Service (CGMS) sample demonstrates how to use the :ref:`cgms_readme` to implement a glucose monitoring device.
+   The Peripheral Continuous Glucose Monitoring Service (CGMS) sample demonstrates how to use the :ref:`cgms_readme` to implement a glucose monitoring device.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _bluetooth_radio_coex_1wire_sample:
 
-Bluetooth: External radio coexistence using 1-wire interface
-############################################################
+.. ncs-sample::
+   :title: Bluetooth: External radio coexistence using 1-wire interface
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the 1-wire coexistence feature described in :ref:`ug_radio_mpsl_cx_generic_1wire`.
+   This sample demonstrates how to use the 1-wire coexistence feature described in :ref:`ug_radio_mpsl_cx_generic_1wire`.
 
 Requirements
 ************

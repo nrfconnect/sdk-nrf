@@ -1,13 +1,9 @@
 .. _crypto_rng:
 
-Crypto: RNG
-###########
+.. ncs-sample::
+   :title: Crypto: RNG
 
-.. contents::
-   :local:
-   :depth: 2
-
-The RNG sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate cryptographically secure random numbers.
+   The RNG sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate cryptographically secure random numbers.
 
 Requirements
 ************

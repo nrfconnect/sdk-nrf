@@ -1,13 +1,9 @@
 .. _identity_key_usage:
 
-Identity key usage
-##################
+.. ncs-sample::
+   :title: Identity key usage
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample shows how to use a previously written identity key with the PSA crypto APIs.
+   This sample shows how to use a previously written identity key with the PSA crypto APIs.
 
 Requirements
 ************

@@ -1,15 +1,11 @@
 .. _hello_dect:
 
-nRF91x1: Hello DECT
-###################
+.. ncs-sample::
+   :title: nRF91x1: Hello DECT
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to transmit and receive IPv6 data over DECT NR+ between two devices.
-It shows the basic usage of the DECT NR+ stack through the DECT NR+ connection manager, with automatic peer discovery using mDNS.
-You can compile the sample to operate as either a Fixed Terminal (FT) or Portable Terminal (PT).
+   This sample demonstrates how to transmit and receive IPv6 data over DECT NR+ between two devices.
+   It shows the basic usage of the DECT NR+ stack through the DECT NR+ connection manager, with automatic peer discovery using mDNS.
+   You can compile the sample to operate as either a Fixed Terminal (FT) or Portable Terminal (PT).
 
 Requirements
 ************

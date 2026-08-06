@@ -1,17 +1,13 @@
 .. _nrf_modem_dect_phy_hello:
 
-nRF91x1: DECT NR+ PHY hello
-###########################
+.. ncs-sample::
+   :title: nRF91x1: DECT NR+ PHY hello
 
-.. contents::
-   :local:
-   :depth: 2
+   The DECT NR+ physical layer (PHY) hello sample demonstrates how to set up a simple DECT NR+ application with the DECT PHY firmware.
 
-The DECT NR+ physical layer (PHY) hello sample demonstrates how to set up a simple DECT NR+ application with the DECT PHY firmware.
+   .. important::
 
-.. important::
-
-   The sample only showcases the use of the :ref:`nrf_modem_dect_phy` interface of the Modem library and is not a complete standalone application.
+      The sample only showcases the use of the :ref:`nrf_modem_dect_phy` interface of the Modem library and is not a complete standalone application.
 
 Requirements
 ************

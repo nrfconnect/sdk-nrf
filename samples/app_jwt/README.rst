@@ -1,13 +1,9 @@
 .. _app_jwt_sample:
 
-Application JWT
-###############
+.. ncs-sample::
+   :title: Application JWT
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how the application core can generate a signed JWT.
+   This sample demonstrates how the application core can generate a signed JWT.
 
 Requirements
 ************

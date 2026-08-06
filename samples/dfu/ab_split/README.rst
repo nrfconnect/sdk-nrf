@@ -1,23 +1,19 @@
 .. _ab_split_sample:
 
-A/B with MCUboot and separated slots
-####################################
+.. ncs-sample::
+   :title: A/B with MCUboot and separated slots
 
-.. contents::
-   :local:
-   :depth: 2
+   The A/B with MCUboot and separated slots sample demonstrates how to configure the application for updates using the A/B method using MCUboot.
+   This sample is a variant of the :ref:`A/B sample <ab_sample>`, where the application and radio images are not merged, but reside in separate MCUboot slots.
+   This split increases the number of memory areas that must be individually protected from accidental writes.
+   It also requires additional care when preparing updates to ensure that only a compatible set of slots is booted.
+   The additional dependency check during the boot process increases the time to boot the system.
 
-The A/B with MCUboot and separated slots sample demonstrates how to configure the application for updates using the A/B method using MCUboot.
-This sample is a variant of the :ref:`A/B sample <ab_sample>`, where the application and radio images are not merged, but reside in separate MCUboot slots.
-This split increases the number of memory areas that must be individually protected from accidental writes.
-It also requires additional care when preparing updates to ensure that only a compatible set of slots is booted.
-The additional dependency check during the boot process increases the time to boot the system.
+   It also includes an example to perform a device health check before confirming the image after the update.
+   You can update the sample using the Simple Management Protocol (SMP) with UART or Bluetooth® Low Energy.
 
-It also includes an example to perform a device health check before confirming the image after the update.
-You can update the sample using the Simple Management Protocol (SMP) with UART or Bluetooth® Low Energy.
-
-To prevent the build system from merging slots, the sysbuild :kconfig:option:`SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY` option is disabled.
-To enable manifest-based dependency management, the :kconfig:option:`SB_CONFIG_MCUBOOT_MANIFEST_UPDATES=y` option is enabled in the :file:`sysbuild.conf` file.
+   To prevent the build system from merging slots, the sysbuild :kconfig:option:`SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY` option is disabled.
+   To enable manifest-based dependency management, the :kconfig:option:`SB_CONFIG_MCUBOOT_MANIFEST_UPDATES=y` option is enabled in the :file:`sysbuild.conf` file.
 
 Requirements
 ************

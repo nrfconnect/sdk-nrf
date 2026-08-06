@@ -1,22 +1,18 @@
 .. _nrf_audio_broadcast_source_app:
 
-nRF Audio: Broadcast source
-###############################
+.. ncs-sample::
+   :title: nRF Audio: Broadcast source
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Audio broadcast source application implements the :ref:`BIS gateway mode <nrf_audio_app_overview>`.
 
-The nRF Audio broadcast source application implements the :ref:`BIS gateway mode <nrf_audio_app_overview>`.
+   In this mode, transmitting broadcast audio happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
+   Play and pause are emulated by enabling and disabling stream, respectively.
 
-In this mode, transmitting broadcast audio happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
-Play and pause are emulated by enabling and disabling stream, respectively.
+   The following limitations apply to this application:
 
-The following limitations apply to this application:
-
-* One BIG with two BIS streams.
-* Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
-* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
+   * One BIG with two BIS streams.
+   * Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
+   * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf_audio_broadcast_source_app_requirements:
 

@@ -1,15 +1,11 @@
 .. _single_slot_sample:
 
-Single-slot DFU with MCUboot
-############################
+.. ncs-sample::
+   :title: Single-slot DFU with MCUboot
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Single-slot DFU with MCUboot sample demonstrates how to maximize the available space for the application using MCUboot.
-You can do this by using the firmware loader mode (single-slot layout) in MCUboot.
-Both MCUboot and the firmware loader images are configured to achieve minimal size, leaving more space available for the application.
+   The Single-slot DFU with MCUboot sample demonstrates how to maximize the available space for the application using MCUboot.
+   You can do this by using the firmware loader mode (single-slot layout) in MCUboot.
+   Both MCUboot and the firmware loader images are configured to achieve minimal size, leaving more space available for the application.
 
 Requirements
 ************
