@@ -112,6 +112,10 @@
 #include "oberon_key_wrap.h"
 #endif
 
+#ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
+#include "oberon_key_encapsulation.h"
+#endif
+
 #if defined(PSA_CRYPTO_DRIVER_CRACEN)
 #ifndef PSA_CRYPTO_DRIVER_PRESENT
 #define PSA_CRYPTO_DRIVER_PRESENT
@@ -2671,9 +2675,9 @@ psa_status_t psa_driver_wrapper_encapsulate(const psa_key_attributes_t *attribut
 		}
 #endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
-		return oberon_key_encapsulate(attributes, key, key_length, alg, output_attributes,
-					      output_key, output_key_size, output_key_length,
-					      ciphertext, ciphertext_size, ciphertext_length);
+		return oberon_encapsulate(attributes, key, key_length, alg, output_attributes,
+					  output_key, output_key_size, output_key_length,
+					  ciphertext, ciphertext_size, ciphertext_length);
 #endif /* PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 
@@ -2718,9 +2722,9 @@ psa_status_t psa_driver_wrapper_decapsulate(const psa_key_attributes_t *attribut
 		}
 #endif /* PSA_CRYPTO_DRIVER_IRONSIDE */
 #ifdef PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER
-		return oberon_key_decapsulate(attributes, key, key_length, alg, ciphertext,
-					      ciphertext_length, output_attributes, output_key,
-					      output_key_size, output_key_length);
+		return oberon_decapsulate(attributes, key, key_length, alg, ciphertext,
+					  ciphertext_length, output_attributes, output_key,
+					  output_key_size, output_key_length);
 #endif /* PSA_NEED_OBERON_KEY_ENCAPSULATION_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 
