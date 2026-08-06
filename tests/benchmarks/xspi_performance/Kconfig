@@ -12,3 +12,6 @@ config TEST_FIXED_OPERATION_SIZE
 config TEST_FLASH_OPERATION_SIZE
 	int "Flash operation size for fixed size mode"
 	default 65536
+
+config TEST_DISABLE_CPU_LOAD_MONITOR
+	bool "Disable the background CPU load monitor"

@@ -242,7 +242,9 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	printk("Flash %s test [size: %u bytes]\n", operation_name, flash_operation_size);
 	memset(test_buffer, 0xAB, MAX_TEST_BUFFER_SIZE);
 
+#if !defined(CONFIG_TEST_DISABLE_CPU_LOAD_MONITOR)
 	k_sem_give(&cpu_load_start_sem);
+#endif
 	dk_set_led_on(DK_LED1);
 	counter_reset(tst_timer_dev);
 	counter_start(tst_timer_dev);
@@ -259,7 +261,9 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	counter_get_value(tst_timer_dev, &tst_timer_value);
 	counter_stop(tst_timer_dev);
 	dk_set_led_off(DK_LED1);
+#if !defined(CONFIG_TEST_DISABLE_CPU_LOAD_MONITOR)
 	k_sem_give(&cpu_load_stop_sem);
+#endif
 
 	if (err != 0) {
 		printk("!!!! Flash operation error: %d !!!!\n", err);
