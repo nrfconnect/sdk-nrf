@@ -560,6 +560,24 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_nrf71_wifi
+  # Used by QA and also acts as a memory stress test
+  sample.nrf7120.superset:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=n
+      - SNIPPET=nordic-wifi-enterprise
+      - EXTRA_CONF_FILE=overlay-superset.conf
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+    tags:
+      - ci_build_superset
+      - sysbuild
+      - ci_samples_nrf71_wifi
   sample.nrf7002.shell.wpa3_psa:
     build_only: true
     extra_args:
