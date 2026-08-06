@@ -1,14 +1,10 @@
 .. _secondary_boot_trigger_lockup_sample:
 
-Secondary boot with APPLICATIONLOCKUP trigger
-##############################################
+.. ncs-sample::
+   :title: Secondary boot with APPLICATIONLOCKUP trigger
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates an automatic secondary boot triggered by a lockup of the application core CPU on the nRF54H20 DK.
-When the primary application triggers a CPU lockup, IronSide SE automatically boots the secondary image without requiring any application-level software intervention.
+   This sample demonstrates an automatic secondary boot triggered by a lockup of the application core CPU on the nRF54H20 DK.
+   When the primary application triggers a CPU lockup, IronSide SE automatically boots the secondary image without requiring any application-level software intervention.
 
 Requirements
 ************

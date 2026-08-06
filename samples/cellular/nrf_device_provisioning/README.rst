@@ -1,13 +1,9 @@
 .. _nrf_provisioning_sample:
 
-Cellular: nRF Device provisioning
-#################################
+.. ncs-sample::
+   :title: Cellular: nRF Device provisioning
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the :ref:`lib_nrf_provisioning` service on your device.
+   This sample demonstrates how to use the :ref:`lib_nrf_provisioning` service on your device.
 
 Requirements
 ************

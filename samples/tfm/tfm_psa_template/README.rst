@@ -1,13 +1,9 @@
 .. _tfm_psa_template:
 
-TF-M: PSA template
-##################
+.. ncs-sample::
+   :title: TF-M: PSA template
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample provides a template for Arm's `Platform Security Architecture (PSA)`_ best practices on Nordic Semiconductor devices.
+   This sample provides a template for Arm's `Platform Security Architecture (PSA)`_ best practices on Nordic Semiconductor devices.
 
 Requirements
 ************

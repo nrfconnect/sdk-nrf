@@ -1,13 +1,9 @@
 .. _modem_trace_flash:
 
-Cellular: Modem trace external flash backend
-############################################
+.. ncs-sample::
+   :title: Cellular: Modem trace external flash backend
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to add a modem trace backend that stores the trace data to external flash.
+   This sample demonstrates how to add a modem trace backend that stores the trace data to external flash.
 
 Requirements
 ************

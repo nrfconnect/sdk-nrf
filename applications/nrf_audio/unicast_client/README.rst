@@ -1,23 +1,19 @@
 .. _nrf_audio_unicast_client_app:
 
-nRF Audio: Unicast client
-#############################
+.. ncs-sample::
+   :title: nRF Audio: Unicast client
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Audio unicast client application implements the :ref:`CIS gateway mode <nrf_audio_app_overview>`.
 
-The nRF Audio unicast client application implements the :ref:`CIS gateway mode <nrf_audio_app_overview>`.
+   In this mode, one Connected Isochronous Group (CIG) can be used with two Connected Isochronous Streams (CIS).
+   Transmitting unidirectional or transceiving bidirectional audio happens using CIG and CIS.
 
-In this mode, one Connected Isochronous Group (CIG) can be used with two Connected Isochronous Streams (CIS).
-Transmitting unidirectional or transceiving bidirectional audio happens using CIG and CIS.
+   The following limitations apply to this application:
 
-The following limitations apply to this application:
-
-* One CIG with two CIS.
-* Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
-* Audio output: USB or I2S/Analog headset output.
-* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
+   * One CIG with two CIS.
+   * Audio input: USB or I2S (Line-in or using Pulse Density Modulation).
+   * Audio output: USB or I2S/Analog headset output.
+   * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf_audio_unicast_client_app_requirements:
 

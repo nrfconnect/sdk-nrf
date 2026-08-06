@@ -1,25 +1,21 @@
 .. _nrf_audio_unicast_server_app:
 
-nRF Audio: Unicast server
-#############################
+.. ncs-sample::
+   :title: nRF Audio: Unicast server
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Audio unicast server application implements the :ref:`CIS headset mode <nrf_audio_app_overview>`.
 
-The nRF Audio unicast server application implements the :ref:`CIS headset mode <nrf_audio_app_overview>`.
+   In this mode, one Connected Isochronous Group (CIG) can be used with two Connected Isochronous Streams (CIS).
+   Receiving unidirectional or transceiving bidirectional audio happens using CIG and CIS.
+   In addition, Coordinated Set Identification Service (CSIS) is implemented on the server side.
 
-In this mode, one Connected Isochronous Group (CIG) can be used with two Connected Isochronous Streams (CIS).
-Receiving unidirectional or transceiving bidirectional audio happens using CIG and CIS.
-In addition, Coordinated Set Identification Service (CSIS) is implemented on the server side.
+   The following limitations apply to this application:
 
-The following limitations apply to this application:
-
-* One CIG, one of the two CIS streams or a mixed stereo comprising of the two (selectable).
-  See :file:`overlay-unicast_server.conf` for more information.
-* Audio output: I2S/Analog headset output.
-* Audio input: PDM microphone over I2S.
-* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
+   * One CIG, one of the two CIS streams or a mixed stereo comprising of the two (selectable).
+     See :file:`overlay-unicast_server.conf` for more information.
+   * Audio output: I2S/Analog headset output.
+   * Audio input: PDM microphone over I2S.
+   * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf_audio_unicast_server_app_requirements:
 

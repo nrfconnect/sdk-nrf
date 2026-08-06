@@ -1,16 +1,12 @@
 .. _ab_sample:
 
-A/B with MCUboot
-################
+.. ncs-sample::
+   :title: A/B with MCUboot
 
-.. contents::
-   :local:
-   :depth: 2
+   The A/B with MCUboot sample demonstrates how to configure the application for updates using the A/B method using MCUboot.
+   It also includes an example to perform a device health check before confirming the image after the update.
 
-The A/B with MCUboot sample demonstrates how to configure the application for updates using the A/B method using MCUboot.
-It also includes an example to perform a device health check before confirming the image after the update.
-
-You can update the sample using the Simple Management Protocol (SMP) with UART or Bluetooth® Low Energy.
+   You can update the sample using the Simple Management Protocol (SMP) with UART or Bluetooth® Low Energy.
 
 Requirements
 ************

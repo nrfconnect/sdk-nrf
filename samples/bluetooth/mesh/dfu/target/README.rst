@@ -1,15 +1,11 @@
 .. _ble_mesh_dfu_target:
 
-Bluetooth Mesh: Device Firmware Update (DFU) target
-###################################################
+.. ncs-sample::
+   :title: Bluetooth Mesh: Device Firmware Update (DFU) target
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth® Mesh DFU target sample demonstrates how to update device firmware over Bluetooth Mesh network.
-The sample implements the Target role of the Bluetooth Mesh DFU architecture.
-Refer to :ref:`dfu_over_bt_mesh` for an introduction to the feature and links to the Zephyr :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
+   The Bluetooth® Mesh DFU target sample demonstrates how to update device firmware over Bluetooth Mesh network.
+   The sample implements the Target role of the Bluetooth Mesh DFU architecture.
+   Refer to :ref:`dfu_over_bt_mesh` for an introduction to the feature and links to the Zephyr :ref:`Bluetooth Mesh DFU subsystem <zephyr:bluetooth_mesh_dfu>`.
 
 Requirements
 ************

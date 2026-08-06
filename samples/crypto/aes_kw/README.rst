@@ -1,15 +1,11 @@
 .. _crypto_aes_kw:
 
-Crypto: AES KW
-##############
+.. ncs-sample::
+   :title: Crypto: AES KW
 
-.. contents::
-   :local:
-   :depth: 2
+   The AES KW sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform key wrapping and unwrapping operations using AES Key-Encryption Key.
 
-The AES KW sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform key wrapping and unwrapping operations using AES Key-Encryption Key.
-
-The sample can be configured to use either AES-KW (Key Wrap) or AES-KWP (Key Wrap with padding) algorithm and to make use of :ref:`Key Management Unit (KMU) <ug_kmu_guides_cracen_overview>` to store the Key-Encryption Key.
+   The sample can be configured to use either AES-KW (Key Wrap) or AES-KWP (Key Wrap with padding) algorithm and to make use of :ref:`Key Management Unit (KMU) <ug_kmu_guides_cracen_overview>` to store the Key-Encryption Key.
 
 Requirements
 ************

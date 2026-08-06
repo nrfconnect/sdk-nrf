@@ -884,3 +884,4 @@ Documentation
   *  The :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
      To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
   * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
+  * The page for each sample now contains an `Open in VS Code` button allowing to quickly open the sample and install required version of the |NCS| toolchain.

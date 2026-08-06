@@ -1,23 +1,19 @@
 .. _central_nfc_pairing:
 
-Bluetooth: Central NFC pairing
-##############################
+.. ncs-sample::
+   :title: Bluetooth: Central NFC pairing
 
-.. contents::
-   :local:
-   :depth: 2
+   The Central NFC pairing sample demonstrates Bluetooth® LE out-of-band pairing using an :ref:`st25r3911b_nfc_readme` and the NFC TNEP protocol.
+   You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices with :ref:`st25r3911b_nfc_readme` and an NFC Tag device with Bluetooth LE support.
 
-The Central NFC pairing sample demonstrates Bluetooth® LE out-of-band pairing using an :ref:`st25r3911b_nfc_readme` and the NFC TNEP protocol.
-You can use it to test the touch-to-pair feature between Nordic Semiconductor's devices with :ref:`st25r3911b_nfc_readme` and an NFC Tag device with Bluetooth LE support.
+   The sample shows the usage of NFC NDEF :ref:`nfc_ch` and :ref:`tnep_poller_readme` with the :ref:`Connection Handover service<nfc_tnep_ch_readme>`.
+   It provides minimal Bluetooth functionality in the Central role, and on GATT level it implements only the Device Information Service.
 
-The sample shows the usage of NFC NDEF :ref:`nfc_ch` and :ref:`tnep_poller_readme` with the :ref:`Connection Handover service<nfc_tnep_ch_readme>`.
-It provides minimal Bluetooth functionality in the Central role, and on GATT level it implements only the Device Information Service.
+   The sample supports pairing in one of the following modes:
 
-The sample supports pairing in one of the following modes:
-
-* LE Secure Connections Just Works pairing
-* LE Secure Connections OOB pairing
-* Negotiated Handover (TNEP protocol) - two-way OOB pairing
+   * LE Secure Connections Just Works pairing
+   * LE Secure Connections OOB pairing
+   * Negotiated Handover (TNEP protocol) - two-way OOB pairing
 
 Requirements
 ************

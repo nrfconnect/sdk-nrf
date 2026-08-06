@@ -1,15 +1,11 @@
 .. _crypto_tls:
 
-Crypto: PSA TLS
-###############
+.. ncs-sample::
+   :title: Crypto: PSA TLS
 
-.. contents::
-   :local:
-   :depth: 2
+   The Platform Security Architecture Transport Layer Security (PSA TLS) sample shows how to perform a TLS handshake and send encrypted messages with Cortex-M Security Extensions (CMSE) enabled, in both Non-Secure Processing Environment (NSPE) and Secure Processing Environment (SPE) with :ref:`Trusted Firmware-M<ug_tfm>`.
 
-The Platform Security Architecture Transport Layer Security (PSA TLS) sample shows how to perform a TLS handshake and send encrypted messages with Cortex-M Security Extensions (CMSE) enabled, in both Non-Secure Processing Environment (NSPE) and Secure Processing Environment (SPE) with :ref:`Trusted Firmware-M<ug_tfm>`.
-
-For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
+   For information about CMSE and the difference between the two environments, see :ref:`app_boards_spe_nspe`.
 
 Requirements
 ************

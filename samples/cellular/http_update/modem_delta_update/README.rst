@@ -1,16 +1,12 @@
 .. _http_modem_delta_update_sample:
 
-Cellular: HTTP modem delta update
-#################################
+.. ncs-sample::
+   :title: Cellular: HTTP modem delta update
 
-.. contents::
-   :local:
-   :depth: 2
+   The HTTP modem delta update sample demonstrates how to do a delta update of the modem firmware.
+   A delta update is an update that contains only the code that has changed, not the entire firmware.
 
-The HTTP modem delta update sample demonstrates how to do a delta update of the modem firmware.
-A delta update is an update that contains only the code that has changed, not the entire firmware.
-
-The sample uses the :ref:`lib_fota_download` library to download a file from a remote server and write it to the modem.
+   The sample uses the :ref:`lib_fota_download` library to download a file from a remote server and write it to the modem.
 
 Requirements
 ************

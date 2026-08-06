@@ -1,13 +1,9 @@
 .. _802154_phy_test:
 
-IEEE 802.15.4 PHY test tool
-###########################
+.. ncs-sample::
+   :title: IEEE 802.15.4 PHY test tool
 
-.. contents::
-   :local:
-   :depth: 2
-
-The IEEE 802.15.4 PHY test tool performs 802.15.4 RF Performance and PHY Certification tests, and can also provide information for a general evaluation of the performance of the integrated 802.15.4 radio.
+   The IEEE 802.15.4 PHY test tool performs 802.15.4 RF Performance and PHY Certification tests, and can also provide information for a general evaluation of the performance of the integrated 802.15.4 radio.
 
 Requirements
 ************

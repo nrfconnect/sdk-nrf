@@ -1,13 +1,9 @@
 .. _nrf5340_remote_shell:
 
-nRF5340: Remote IPC shell
-#########################
+.. ncs-sample::
+   :title: nRF5340: Remote IPC shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-You can use this sample to run the remote shell on the nRF5340 network core through the IPC service.
+   You can use this sample to run the remote shell on the nRF5340 network core through the IPC service.
 
 Requirements
 ************

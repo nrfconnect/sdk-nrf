@@ -1,14 +1,10 @@
 .. _coremark_sample:
 
-CoreMark
-########
+.. ncs-sample::
+   :title: CoreMark
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample demonstrates how to run the `CoreMark®`_ benchmark to evaluate the performance of a core.
-To get started with CoreMark integration in |NCS|, see :ref:`ug_coremark`.
+   The sample demonstrates how to run the `CoreMark®`_ benchmark to evaluate the performance of a core.
+   To get started with CoreMark integration in |NCS|, see :ref:`ug_coremark`.
 
 Requirements
 ************

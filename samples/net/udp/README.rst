@@ -1,18 +1,14 @@
 .. _udp_sample:
 
-UDP
-###
+.. ncs-sample::
+   :title: UDP
 
-.. contents::
-	:local:
-	:depth: 2
+   The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
+   The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002-EB II as a shield.
 
-The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
-The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002-EB II as a shield.
+   .. |wifi| replace:: Wi-Fi
 
-.. |wifi| replace:: Wi-Fi
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

@@ -1,14 +1,10 @@
 .. _multicore_idle_gpio_test:
 
-Multicore idle GPIO test
-########################
+.. ncs-sample::
+   :title: Multicore idle GPIO test
 
-.. contents::
-   :local:
-   :depth: 2
-
-The test benchmarks the idle behavior of an application that runs on multiple cores.
-It uses a pin as a wake-up source.
+   The test benchmarks the idle behavior of an application that runs on multiple cores.
+   It uses a pin as a wake-up source.
 
 Requirements
 ************

@@ -2,17 +2,13 @@
 .. _agps_sample:
 .. _gnss_sample:
 
-Cellular: GNSS
-##############
+.. ncs-sample::
+   :title: Cellular: GNSS
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the :ref:`GNSS interface <nrfxlib:gnss_interface>` to control the `GNSS`_ module.
-It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agnss` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
-A-GNSS data is downloaded from nRF Cloud using nRF Cloud's `CoAP-based device API <nRF Cloud CoAP API_>`_.
-For P-GPS, the device requests a URL over CoAP and downloads the prediction file over HTTP.
+   This sample demonstrates how to use the :ref:`GNSS interface <nrfxlib:gnss_interface>` to control the `GNSS`_ module.
+   It also shows how to improve fix speed and accuracy with the :ref:`lib_nrf_cloud_agnss` library and how to use the :ref:`lib_nrf_cloud_pgps` library.
+   A-GNSS data is downloaded from nRF Cloud using nRF Cloud's `CoAP-based device API <nRF Cloud CoAP API_>`_.
+   For P-GPS, the device requests a URL over CoAP and downloads the prediction file over HTTP.
 
 Requirements
 ************

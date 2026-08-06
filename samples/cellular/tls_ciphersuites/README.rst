@@ -1,14 +1,10 @@
 .. _ciphersuites:
 
-Cellular: TLS cipher suites
-###########################
+.. ncs-sample::
+   :title: Cellular: TLS cipher suites
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Transport Layer Security (TLS) cipher suites sample demonstrates a minimal implementation of a client application that attempts to connect to a host by trying different TLS cipher suites.
-This sample shows the cipher suites and lists them as supported or not supported by the host, and provides a summary of the support.
+   The Transport Layer Security (TLS) cipher suites sample demonstrates a minimal implementation of a client application that attempts to connect to a host by trying different TLS cipher suites.
+   This sample shows the cipher suites and lists them as supported or not supported by the host, and provides a summary of the support.
 
 Requirements
 ************

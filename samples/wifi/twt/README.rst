@@ -1,13 +1,9 @@
 .. _wifi_twt_sample:
 
-Wi-Fi: TWT
-##########
+.. ncs-sample::
+   :title: Wi-Fi: TWT
 
-.. contents::
-   :local:
-   :depth: 2
-
-The TWT sample demonstrates how to use TWT power save feature.
+   The TWT sample demonstrates how to use TWT power save feature.
 
 Requirements
 ************

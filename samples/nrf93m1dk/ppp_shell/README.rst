@@ -1,13 +1,9 @@
 .. _nrf93m1dk_ppp_shell:
 
-nRF93M1 DK: PPP shell
-#####################
+.. ncs-sample::
+   :title: nRF93M1 DK: PPP shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample establishes a PPP connection between the nRF54L15 host core and the nRF93M1 modem over a CMUX-multiplexed UART link, giving shell-driven access to IP networking and performance testing tools.
+   This sample establishes a PPP connection between the nRF54L15 host core and the nRF93M1 modem over a CMUX-multiplexed UART link, giving shell-driven access to IP networking and performance testing tools.
 
 Requirements
 ************

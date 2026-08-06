@@ -1,14 +1,10 @@
 .. _ironside_se_snapshot_capture_recover:
 
-IronSide SE: Snapshot capture and recover
-#########################################
+.. ncs-sample::
+   :title: IronSide SE: Snapshot capture and recover
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Snapshot capture and recover sample demonstrates the |ISE| snapshot capture and recovery features.
-This feature helps in recovering the content of the MRAM when corruption due to bit flips caused by magnetic fields occurs.
+   The Snapshot capture and recover sample demonstrates the |ISE| snapshot capture and recovery features.
+   This feature helps in recovering the content of the MRAM when corruption due to bit flips caused by magnetic fields occurs.
 
 Requirements
 ************

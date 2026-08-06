@@ -1,13 +1,9 @@
 .. _nrf5340_empty_app_core:
 
-nRF5340: Empty firmware for application core
-############################################
+.. ncs-sample::
+   :title: nRF5340: Empty firmware for application core
 
-.. contents::
-   :local:
-   :depth: 2
-
-You can use this sample to run an application on the network core of the nRF5340 when there is no need for the working application core.
+   You can use this sample to run an application on the network core of the nRF5340 when there is no need for the working application core.
 
 Requirements
 ************

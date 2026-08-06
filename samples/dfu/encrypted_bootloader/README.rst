@@ -1,17 +1,13 @@
 .. _encrypted_bootloader:
 
-Encrypted bootloader
-####################
+.. ncs-sample::
+   :title: Encrypted bootloader
 
-.. contents::
-   :local:
-   :depth: 2
+   The Encrypted bootloader sample demonstrates secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
 
-The Encrypted bootloader sample demonstrates secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
+   This sample uses the :zephyr:code-sample:`smp-svr` project as its application by directly importing the project's sources in the main :file:`CMakeLists.txt` file.
 
-This sample uses the :zephyr:code-sample:`smp-svr` project as its application by directly importing the project's sources in the main :file:`CMakeLists.txt` file.
-
-For a simpler setup that only encrypts application images (single MCUboot instance, no b0 chain), see :ref:`mcuboot_with_encryption`.
+   For a simpler setup that only encrypts application images (single MCUboot instance, no b0 chain), see :ref:`mcuboot_with_encryption`.
 
 Requirements
 ************

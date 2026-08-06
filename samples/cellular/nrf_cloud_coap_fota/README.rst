@@ -1,14 +1,10 @@
 .. _nrf_cloud_coap_fota_sample:
 
-Cellular: nRF Cloud CoAP FOTA
-#############################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud CoAP FOTA
 
-.. contents::
-   :local:
-   :depth: 2
-
-The nRF Cloud CoAP FOTA sample demonstrates how to perform Firmware Over-the-Air (FOTA) updates over CoAP on your device.
-This covers application and delta modem FOTA updates.
+   The nRF Cloud CoAP FOTA sample demonstrates how to perform Firmware Over-the-Air (FOTA) updates over CoAP on your device.
+   This covers application and delta modem FOTA updates.
 
 Requirements
 ************
