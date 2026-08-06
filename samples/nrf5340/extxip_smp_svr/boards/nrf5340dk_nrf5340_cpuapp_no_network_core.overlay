@@ -3,9 +3,8 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
- * Memory map for QSPI XIP split image with network core update.
- * External slots: slot1 = app secondary, slot3 = netcore secondary,
- * slot4/5 = QSPI XIP primary/secondary.
+ * Memory map for QSPI XIP split image (overwrite-only, no network core).
+ * External slots: slot1 = app secondary, slot2/3 = QSPI XIP primary/secondary.
  */
 
 /delete-node/ &boot_partition;
@@ -53,14 +52,9 @@
 			reg = <0x000d4000 DT_SIZE_K(256)>;
 		};
 
-		slot4_partition: partition@120000 {
-			label = "image-4";
+		slot2_partition: partition@120000 {
+			label = "image-2";
 			reg = <0x00120000 DT_SIZE_K(256)>;
-		};
-
-		slot5_partition: partition@160000 {
-			label = "image-5";
-			reg = <0x00160000 DT_SIZE_K(256)>;
 		};
 	};
 };

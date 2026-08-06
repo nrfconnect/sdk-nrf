@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * SRAM layout for TF-M non-secure ext XIP (static DTS, no Partition Manager).
+ * Aligns with pm_static_nrf5340dk_nrf5340_cpuapp_ns.yml (NCSDK-33694):
+ *   PCD (sram0_dfu_shared) 0x20000000–0x20002000,
+ *   TF-M secure 0x20002000–0x20010000,
+ *   NS app 0x20010000–0x20070000, IPC 0x20070000–0x20080000.
+ *
+ * sram0_dfu_shared uses the default node in nrf5340_shared_sram_partition.dtsi
+ * (reg = <0x0 0x2000> under sram0 @ 0x20000000).
+ */
+#include <mem.h>
+
+&sram0_image {
+	reg = <0x0 DT_SIZE_K(512)>;
+	ranges = <0x0 0x0 DT_SIZE_K(512)>;
+};
+
+/* MCUboot RAM from 0x20002000,
+ * size 0x7e000 via sram0_offset_for_dfu (flash_sim.overlay zephyr,sram).
+ */
+&sram0_offset_for_dfu {
+	reg = <0x2000 0x7e000>;
+	ranges = <0x0 0x2000 0x7e000>;
+};
+
+/* TF-M RAM */
+&sram0_s {
+	reg = <0x2000 (DT_SIZE_K(64) - 0x2000)>;
+};
+
+/* NS RAM (Application + IPC) */
+&sram0_ns {
+	reg = <0x10000 DT_SIZE_K(448)>;
+	ranges = <0x0 0x10000 DT_SIZE_K(448)>;
+};
+
+/* Application RAM */
+&sram0_ns_app {
+	reg = <0x0 DT_SIZE_K(384)>;
+};
