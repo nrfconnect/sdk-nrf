@@ -1,13 +1,9 @@
 .. _crypto_eddsa:
 
-Crypto: EdDSA
-#############
+.. ncs-sample::
+   :title: Crypto: EdDSA
 
-.. contents::
-   :local:
-   :depth: 2
-
-The EdDSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the EdDSA algorithm with a 255-bit ECC key pair on the Edwards25519 curve.
+   The EdDSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the EdDSA algorithm with a 255-bit ECC key pair on the Edwards25519 curve.
 
 Requirements
 ************

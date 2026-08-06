@@ -1,13 +1,9 @@
 .. _hw_id_sample:
 
-Hardware ID
-###########
+.. ncs-sample::
+   :title: Hardware ID
 
-.. contents::
-   :local:
-   :depth: 2
-
-The hardware ID sample prints a unique hardware ID by using the :ref:`lib_hw_id` library.
+   The hardware ID sample prints a unique hardware ID by using the :ref:`lib_hw_id` library.
 
 Requirements
 ************

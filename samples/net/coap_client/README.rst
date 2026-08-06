@@ -1,18 +1,14 @@
 .. _nrf_coap_client_sample:
 .. _net_coap_client_sample:
 
-CoAP Client
-###########
+.. ncs-sample::
+   :title: CoAP Client
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample demonstrates the communication between a public CoAP server and a CoAP client application that is running on a Nordic Semiconductor SoC that enables IP networking through cellular or Wi-Fi® connectivity.
 
-This sample demonstrates the communication between a public CoAP server and a CoAP client application that is running on a Nordic Semiconductor SoC that enables IP networking through cellular or Wi-Fi® connectivity.
+   .. |wifi| replace:: Wi-Fi
 
-.. |wifi| replace:: Wi-Fi
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

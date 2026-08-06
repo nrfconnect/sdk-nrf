@@ -1,13 +1,9 @@
 .. _wifi_throughput_sample:
 
-Wi-Fi: Throughput
-#################
+.. ncs-sample::
+   :title: Wi-Fi: Throughput
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Throughput sample provides a framework for users to measure the achievable IP networking throughput of applications using Nordic Semiconductor's Wi-Fi® chipsets.
+   The Throughput sample provides a framework for users to measure the achievable IP networking throughput of applications using Nordic Semiconductor's Wi-Fi® chipsets.
 
 Requirements
 ************

@@ -1,22 +1,18 @@
 .. _fast_pair_input_device:
 
-Bluetooth Fast Pair: Input device
-#################################
+.. ncs-sample::
+   :title: Bluetooth Fast Pair: Input device
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
 
-This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>`.
+   Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
+   Google also provides additional features built upon the Fast Pair standard.
+   For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
+   The software maturity level for the input device use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
-Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
-Google also provides additional features built upon the Fast Pair standard.
-For detailed information about supported functionalities, see the official `Fast Pair`_ documentation.
-The software maturity level for the input device use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
-
-.. note::
-   Support for Fast Pair input device use case is also integrated into :ref:`nrf_desktop`.
-   The nRF Desktop is a complete reference application design of :term:`Human Interface Device (HID)`.
+   .. note::
+      Support for Fast Pair input device use case is also integrated into :ref:`nrf_desktop`.
+      The nRF Desktop is a complete reference application design of :term:`Human Interface Device (HID)`.
 
 Requirements
 ************

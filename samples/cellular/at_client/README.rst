@@ -1,14 +1,10 @@
 .. _at_client_sample:
 
-Cellular: AT Client
-###################
+.. ncs-sample::
+   :title: Cellular: AT Client
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF91 Series modem.
-The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF91 Series device.
+   The AT Client sample demonstrates the asynchronous serial communication taking place over UART to the nRF91 Series modem.
+   The sample enables you to use an external computer or MCU to send AT commands to the LTE-M/NB-IoT modem of your nRF91 Series device.
 
 Requirements
 ************

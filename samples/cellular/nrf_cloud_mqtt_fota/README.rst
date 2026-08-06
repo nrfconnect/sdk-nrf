@@ -1,19 +1,15 @@
 .. _nrf_cloud_mqtt_fota:
 
-Cellular: nRF Cloud MQTT FOTA
-#############################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud MQTT FOTA
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Cloud MQTT FOTA sample demonstrates how to use the `nRF Cloud MQTT API`_ to perform :term:`Firmware Over-the-Air (FOTA) <Firmware Over-the-Air (FOTA) update>` updates over MQTT on your device.
+   This covers modem, application, and full modem FOTA updates (FMFU).
+   Also, with the nRF9160 DK, it supports SMP FOTA updates to the firmware on the nRF52840 SoC present on the DK board (not a separate device).
 
-The nRF Cloud MQTT FOTA sample demonstrates how to use the `nRF Cloud MQTT API`_ to perform :term:`Firmware Over-the-Air (FOTA) <Firmware Over-the-Air (FOTA) update>` updates over MQTT on your device.
-This covers modem, application, and full modem FOTA updates (FMFU).
-Also, with the nRF9160 DK, it supports SMP FOTA updates to the firmware on the nRF52840 SoC present on the DK board (not a separate device).
+   When using MQTT, the `FOTA update <nRF Cloud Getting Started FOTA Documentation_>`_ support is almost entirely implemented by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option, which is implicitly enabled by :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`.
 
-When using MQTT, the `FOTA update <nRF Cloud Getting Started FOTA Documentation_>`_ support is almost entirely implemented by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option, which is implicitly enabled by :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`.
-
-However, even with the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` Kconfig option enabled, applications must still reboot themselves manually after FOTA download completion, and must still update their `Device Shadow <nRF Cloud Device Shadows_>`_ to reflect FOTA support.
+   However, even with the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` Kconfig option enabled, applications must still reboot themselves manually after FOTA download completion, and must still update their `Device Shadow <nRF Cloud Device Shadows_>`_ to reflect FOTA support.
 
 Requirements
 ************

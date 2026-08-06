@@ -1,13 +1,9 @@
 .. _ipc_radio:
 
-IPC radio firmware
-##################
+.. ncs-sample::
+   :title: IPC radio firmware
 
-.. contents::
-   :local:
-   :depth: 2
-
-The IPC radio firmware allows to use the radio peripheral from another core in a multicore device.
+   The IPC radio firmware allows to use the radio peripheral from another core in a multicore device.
 
 .. _ipc_radio_overview:
 

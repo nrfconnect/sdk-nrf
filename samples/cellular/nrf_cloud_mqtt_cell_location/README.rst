@@ -1,13 +1,9 @@
 .. _nrf_cloud_mqtt_cell_location:
 
-Cellular: nRF Cloud MQTT cellular location
-##########################################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud MQTT cellular location
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the `nRF Cloud MQTT API`_ for nRF Cloud's cellular location service on your device.
+   This sample demonstrates how to use the `nRF Cloud MQTT API`_ for nRF Cloud's cellular location service on your device.
 
 Requirements
 ************

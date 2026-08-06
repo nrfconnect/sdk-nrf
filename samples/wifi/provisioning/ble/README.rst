@@ -1,14 +1,10 @@
 .. _wifi_provisioning:
 .. _ble_wifi_provision:
 
-Wi-Fi: Bluetooth LE based provision
-###################################
+.. ncs-sample::
+   :title: Wi-Fi: Bluetooth LE based provision
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
+   This sample demonstrates how to provision a Wi-Fi® device over a Bluetooth® Low Energy link.
 
 .. _wifi_provisioning_app:
 .. _ble_wifi_provision_app:

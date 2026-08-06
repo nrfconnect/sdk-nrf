@@ -1,14 +1,10 @@
 .. _ble_event_trigger:
 
-Bluetooth: Event Trigger
-########################
+.. ncs-sample::
+   :title: Bluetooth: Event Trigger
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth® Event Trigger sample showcases the Event Trigger feature.
-It is a proprietary extension of the Bluetooth® protocol which can be used to schedule sampling, GPIO toggling, or other SW- or HW-based user activities in synchronization with individual Bluetooth LE role instances, such as a central or peripheral link.
+   The Bluetooth® Event Trigger sample showcases the Event Trigger feature.
+   It is a proprietary extension of the Bluetooth® protocol which can be used to schedule sampling, GPIO toggling, or other SW- or HW-based user activities in synchronization with individual Bluetooth LE role instances, such as a central or peripheral link.
 
 Requirements
 ************

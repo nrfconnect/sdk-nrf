@@ -1,13 +1,9 @@
 .. _crypto_rsa:
 
-Crypto: RSA
-###########
+.. ncs-sample::
+   :title: Crypto: RSA
 
-.. contents::
-   :local:
-   :depth: 2
-
-The RSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the RSA signature algorithm with SHA-256 as the hashing algorithm and a 4096-bit RSA key pair.
+   The RSA sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to sign and verify messages using the RSA signature algorithm with SHA-256 as the hashing algorithm and a 4096-bit RSA key pair.
 
 Requirements
 ************

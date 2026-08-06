@@ -1,14 +1,9 @@
 .. _peripheral_status:
 
-Bluetooth: Peripheral Status
-############################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral Status
 
-.. contents::
-   :local:
-   :depth: 2
-
-
-The peripheral status sample demonstrates how to use the :ref:`nsms_readme` library.
+   The peripheral status sample demonstrates how to use the :ref:`nsms_readme` library.
 
 Requirements
 ************

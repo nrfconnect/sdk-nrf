@@ -1,13 +1,9 @@
 .. _wifi_scan_sample:
 
-Wi-Fi: Scan
-############
+.. ncs-sample::
+   :title: Wi-Fi: Scan
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi® chipset to scan for the access points without using the wpa_supplicant.
+   The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi® chipset to scan for the access points without using the wpa_supplicant.
 
 Requirements
 ************

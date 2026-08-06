@@ -1,14 +1,10 @@
 .. _crypto_ecdh:
 
-Crypto: ECDH
-############
+.. ncs-sample::
+   :title: Crypto: ECDH
 
-.. contents::
-   :local:
-   :depth: 2
-
-The ECDH sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform an Elliptic-curve Diffie-Hellman key exchange using the ECDH algorithm with two 256-bit ECC key pairs.
-The sample allows two parties (Alice and Bob) to obtain a shared secret through key exchange.
+   The ECDH sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform an Elliptic-curve Diffie-Hellman key exchange using the ECDH algorithm with two 256-bit ECC key pairs.
+   The sample allows two parties (Alice and Bob) to obtain a shared secret through key exchange.
 
 Requirements
 ************

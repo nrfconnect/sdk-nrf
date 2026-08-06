@@ -1,15 +1,11 @@
 .. _nrf_cloud_coap_fota_sample:
 
-Cellular: nRF Cloud CoAP FOTA
-#############################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud CoAP FOTA
 
-.. contents::
-   :local:
-   :depth: 2
-
-The nRF Cloud CoAP FOTA sample demonstrates how to use the `nRF Cloud CoAP API`_ to perform Firmware Over-the-Air (FOTA) updates over CoAP on your device.
-This covers modem, application, and full modem FOTA updates (FMFU).
-Also, with the nRF9160 DK, it supports SMP FOTA updates to the firmware on the nRF52840 SoC.
+   The nRF Cloud CoAP FOTA sample demonstrates how to use the `nRF Cloud CoAP API`_ to perform Firmware Over-the-Air (FOTA) updates over CoAP on your device.
+   This covers modem, application, and full modem FOTA updates (FMFU).
+   Also, with the nRF9160 DK, it supports SMP FOTA updates to the firmware on the nRF52840 SoC.
 
 Requirements
 ************

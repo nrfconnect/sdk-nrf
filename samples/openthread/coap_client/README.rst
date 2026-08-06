@@ -1,18 +1,14 @@
 .. _coap_client_sample:
 
-Thread: CoAP Client
-###################
+.. ncs-sample::
+   :title: Thread: CoAP Client
 
-.. contents::
-   :local:
-   :depth: 2
+   The :ref:`Thread <ug_thread>` CoAP Client sample demonstrates controlling light resources of other nodes within an OpenThread network.
+   To show this interaction, the sample requires a server sample that is compatible with the OpenThread network and has a light resource available.
+   The recommended server sample referenced on this page is :ref:`coap_server_sample`.
 
-The :ref:`Thread <ug_thread>` CoAP Client sample demonstrates controlling light resources of other nodes within an OpenThread network.
-To show this interaction, the sample requires a server sample that is compatible with the OpenThread network and has a light resource available.
-The recommended server sample referenced on this page is :ref:`coap_server_sample`.
-
-This sample supports optional :ref:`coap_client_sample_multi_ext` and :ref:`Minimal Thread Device variant <thread_ug_device_type>`, which can be turned on or off.
-See :ref:`coap_client_sample_activating_variants` for details.
+   This sample supports optional :ref:`coap_client_sample_multi_ext` and :ref:`Minimal Thread Device variant <thread_ug_device_type>`, which can be turned on or off.
+   See :ref:`coap_client_sample_activating_variants` for details.
 
 Requirements
 ************

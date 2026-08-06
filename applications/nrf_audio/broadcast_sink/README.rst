@@ -1,21 +1,17 @@
 .. _nrf_audio_broadcast_sink_app:
 
-nRF Audio: Broadcast sink
-#############################
+.. ncs-sample::
+   :title: nRF Audio: Broadcast sink
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Audio broadcast sink application implements the :ref:`BIS headset mode <nrf_audio_app_overview>`.
+   In this mode, receiving broadcast audio happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
 
-The nRF Audio broadcast sink application implements the :ref:`BIS headset mode <nrf_audio_app_overview>`.
-In this mode, receiving broadcast audio happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
+   The following limitations apply to this application:
 
-The following limitations apply to this application:
-
-* One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
-  See :file:`overlay-broadcast_sink.conf` for more information.
-* Audio output: I2S/Analog headset output.
-* Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
+   * One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
+     See :file:`overlay-broadcast_sink.conf` for more information.
+   * Audio output: I2S/Analog headset output.
+   * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
 .. _nrf_audio_broadcast_sink_app_requirements:
 

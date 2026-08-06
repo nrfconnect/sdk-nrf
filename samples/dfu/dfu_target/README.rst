@@ -1,14 +1,10 @@
 .. _dfu_target_sample:
 
-DFU Target
-##########
+.. ncs-sample::
+   :title: DFU Target
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates the use of the Device Firmware Update (DFU) target functionality in the |NCS|.
-Currently, it only supports DFU targets for MCUboot.
+   This sample demonstrates the use of the Device Firmware Update (DFU) target functionality in the |NCS|.
+   Currently, it only supports DFU targets for MCUboot.
 
 Requirements
 ************

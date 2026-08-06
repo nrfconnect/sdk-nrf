@@ -1,14 +1,10 @@
 .. _esb_prx_ble:
 
-Enhanced ShockBurst: Receiver with Bluetooth LE
-###############################################
+.. ncs-sample::
+   :title: Enhanced ShockBurst: Receiver with Bluetooth LE
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample shows how to use the :ref:`ug_esb` protocol in receiver mode concurrently with Bluetooth® LE protocol.
-It demonstrates how to configure the Enhanced ShockBurst protocol to receive packets while simultaneously running Bluetooth LE services.
+   The sample shows how to use the :ref:`ug_esb` protocol in receiver mode concurrently with Bluetooth® LE protocol.
+   It demonstrates how to configure the Enhanced ShockBurst protocol to receive packets while simultaneously running Bluetooth LE services.
 
 Requirements
 ************

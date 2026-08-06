@@ -1,13 +1,9 @@
 .. _bluetooth_isochronous_time_synchronization:
 
-Bluetooth: ISO time synchronization
-###################################
+.. ncs-sample::
+   :title: Bluetooth: ISO time synchronization
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth® isochronous time synchronization sample showcases time-synchronized processing of isochronous data.
+   The Bluetooth® isochronous time synchronization sample showcases time-synchronized processing of isochronous data.
 
 Requirements
 ************

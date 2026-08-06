@@ -1,18 +1,14 @@
 .. _multicore_idle_with_pwm_test:
 
-PWM in low power states test
-############################
+.. ncs-sample::
+   :title: PWM in low power states test
 
-.. contents::
-   :local:
-   :depth: 2
+   This test benchmarks the idle behavior of an application that runs on multiple cores and uses the PWM driver to light up a LED.
 
-This test benchmarks the idle behavior of an application that runs on multiple cores and uses the PWM driver to light up a LED.
+   The test scenario repeats forever the following:
 
-The test scenario repeats forever the following:
-
-* Gradually increase PWM duty cycle from 0% to 50% for one second (the LED lights up), power state active.
-* Set PWM duty cycle to 0% for one second (PWM disabled, the LED is OFF), power state low.
+   * Gradually increase PWM duty cycle from 0% to 50% for one second (the LED lights up), power state active.
+   * Set PWM duty cycle to 0% for one second (PWM disabled, the LED is OFF), power state low.
 
 Requirements
 ************

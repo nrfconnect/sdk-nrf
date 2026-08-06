@@ -1,13 +1,9 @@
 .. _modem_shell_application:
 
-Cellular: Modem Shell
-#####################
+.. ncs-sample::
+   :title: Cellular: Modem Shell
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Modem Shell (MoSh) sample application enables you to test various device connectivity features, including data throughput.
+   The Modem Shell (MoSh) sample application enables you to test various device connectivity features, including data throughput.
 
 Requirements
 ************

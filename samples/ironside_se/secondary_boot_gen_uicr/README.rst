@@ -1,13 +1,9 @@
 .. _secondary_boot_sample:
 
-Secondary boot
-##############
+.. ncs-sample::
+   :title: Secondary boot
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to boot a secondary application image on the nRF54H20 DK, where both the primary and secondary application images print ``Hello World`` messages.
+   This sample demonstrates how to boot a secondary application image on the nRF54H20 DK, where both the primary and secondary application images print ``Hello World`` messages.
 
 Requirements
 ************

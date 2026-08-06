@@ -1,15 +1,11 @@
 .. _nrf_rpc_protocols_serialization_server:
 
-nRF RPC: Protocols serialization server
-#######################################
+.. ncs-sample::
+   :title: nRF RPC: Protocols serialization server
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Protocols serialization server sample demonstrates how to receive remote procedure calls (RPCs) from a client device, such as one running the :ref:`Protocols serialization client <nrf_rpc_protocols_serialization_client>` sample.
-The RPCs are used to control :ref:`OpenThread <ug_thread_intro>`, Bluetooth® LE, and :ref:`NFC <ug_nfc>` stacks running on the server device.
-The client and server devices use the :ref:`nrfxlib:nrf_rpc` and the :ref:`nrf_rpc_uart` to communicate with each other.
+   The Protocols serialization server sample demonstrates how to receive remote procedure calls (RPCs) from a client device, such as one running the :ref:`Protocols serialization client <nrf_rpc_protocols_serialization_client>` sample.
+   The RPCs are used to control :ref:`OpenThread <ug_thread_intro>`, Bluetooth® LE, and :ref:`NFC <ug_nfc>` stacks running on the server device.
+   The client and server devices use the :ref:`nrfxlib:nrf_rpc` and the :ref:`nrf_rpc_uart` to communicate with each other.
 
 Requirements
 ************

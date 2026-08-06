@@ -1,19 +1,15 @@
 .. _battery:
 
-Cellular: Battery
-#################
+.. ncs-sample::
+   :title: Cellular: Battery
 
-.. contents::
-   :local:
-   :depth: 2
+   The Battery sample demonstrates how to obtain the following battery related information from the modem of an nRF91 Series DK:
 
-The Battery sample demonstrates how to obtain the following battery related information from the modem of an nRF91 Series DK:
+   * Modem battery voltage
+   * Modem battery voltage low level notifications
+   * Power-off warnings (modem firmware v1.3.1 and higher)
 
-* Modem battery voltage
-* Modem battery voltage low level notifications
-* Power-off warnings (modem firmware v1.3.1 and higher)
-
-The sample uses the :ref:`modem_battery_readme` library.
+   The sample uses the :ref:`modem_battery_readme` library.
 
 Requirements
 ************

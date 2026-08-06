@@ -1,14 +1,10 @@
 .. _ble_radio_notification_conn_cb:
 
-Bluetooth: Radio Notification callback
-######################################
+.. ncs-sample::
+   :title: Bluetooth: Radio Notification callback
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the :ref:`ug_radio_notification_conn_cb` feature.
-It uses the :ref:`latency_readme` and the :ref:`latency_client_readme` to showcase how you can use this feature to minimize the time between data sampling and data transmission.
+   This sample demonstrates how to use the :ref:`ug_radio_notification_conn_cb` feature.
+   It uses the :ref:`latency_readme` and the :ref:`latency_client_readme` to showcase how you can use this feature to minimize the time between data sampling and data transmission.
 
 Requirements
 ************

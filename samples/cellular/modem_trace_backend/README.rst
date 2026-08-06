@@ -1,13 +1,9 @@
 .. _modem_trace_backend_sample:
 
-Cellular: Modem trace backend
-#############################
+.. ncs-sample::
+   :title: Cellular: Modem trace backend
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Modem trace backend sample demonstrates how to add a user-defined modem trace backend to an application.
+   The Modem trace backend sample demonstrates how to add a user-defined modem trace backend to an application.
 
 Requirements
 ************

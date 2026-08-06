@@ -1,14 +1,10 @@
 .. _caf_preview_sample:
 
-Common Application Framework preview
-####################################
+.. ncs-sample::
+   :title: Common Application Framework preview
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use :ref:`lib_caf` (CAF) to build event-based applications with ready-for-use modules and events.
-It uses both stock CAF modules available in the |NCS| and a custom module created specifically for the sample.
+   This sample demonstrates how to use :ref:`lib_caf` (CAF) to build event-based applications with ready-for-use modules and events.
+   It uses both stock CAF modules available in the |NCS| and a custom module created specifically for the sample.
 
 .. _caf_sample_requirements:
 

@@ -1,14 +1,10 @@
 .. _nrf_compression_mcuboot_compressed_update:
 .. _mcuboot_with_decompression:
 
-MCUboot with decompression enabled
-##################################
+.. ncs-sample::
+   :title: MCUboot with decompression enabled
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to enable and use :ref:`image compression within MCUboot <mcuboot_image_compression>`, which allows for smaller application updates to be loaded to a device.
+   This sample demonstrates how to enable and use :ref:`image compression within MCUboot <mcuboot_image_compression>`, which allows for smaller application updates to be loaded to a device.
 
 Requirements
 ************

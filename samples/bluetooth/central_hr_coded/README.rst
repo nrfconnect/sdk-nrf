@@ -1,14 +1,10 @@
 .. _bluetooth_central_hr_coded:
 
-Bluetooth: Central Heart Rate Monitor with Coded PHY
-####################################################
+.. ncs-sample::
+   :title: Bluetooth: Central Heart Rate Monitor with Coded PHY
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Central Heart Rate Monitor with Coded PHY offers similar functionality to the :zephyr:code-sample:`ble_central_hr` sample from Zephyr.
-However, this sample specifically looks for heart rate monitors using LE Coded PHY.
+   The Central Heart Rate Monitor with Coded PHY offers similar functionality to the :zephyr:code-sample:`ble_central_hr` sample from Zephyr.
+   However, this sample specifically looks for heart rate monitors using LE Coded PHY.
 
 Requirements
 ************

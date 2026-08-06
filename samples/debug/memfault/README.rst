@@ -1,20 +1,16 @@
 .. _memfault_sample:
 
-Memfault
-########
+.. ncs-sample::
+   :title: Memfault
 
-.. contents::
-   :local:
-   :depth: 2
+   The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
+   The sample connects to an LTE network using an nRF91 Series DK, a Thingy:91, or a Thingy:91 X, or to Wi-Fi®  using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
 
-The Memfault sample shows how to use the `Memfault SDK`_ in an |NCS| application to collect coredumps and metrics.
-The sample connects to an LTE network using an nRF91 Series DK, a Thingy:91, or a Thingy:91 X, or to Wi-Fi®  using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
+   .. |wifi| replace:: Wi-Fi
 
-.. |wifi| replace:: Wi-Fi
+   .. include:: /includes/net_connection_manager.txt
 
-.. include:: /includes/net_connection_manager.txt
-
-To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
+   To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
 Requirements
 ************

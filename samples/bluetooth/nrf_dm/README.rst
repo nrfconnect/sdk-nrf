@@ -1,21 +1,17 @@
 .. _ble_nrf_dm:
 
-Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
-###############################################################
+.. ncs-sample::
+   :title: Bluetooth: nRF Distance Measurement with Bluetooth LE discovery
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` (DM) subsystem.
+   It shows how to use DM to measure the distance between devices.
+   The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
 
-The nRF Distance Measurement sample demonstrates the functionality of the :ref:`mod_dm` (DM) subsystem.
-It shows how to use DM to measure the distance between devices.
-The Bluetooth® :ref:`ddfs_readme` is running simultaneously.
+   Sample is configured to use Nordic's SoftDevice link layer.
 
-Sample is configured to use Nordic's SoftDevice link layer.
-
-.. note::
-   The Distance Measurement support in the |NCS| is :ref:`experimental <software_maturity>`.
-   See :ref:`mod_dm` for details.
+   .. note::
+      The Distance Measurement support in the |NCS| is :ref:`experimental <software_maturity>`.
+      See :ref:`mod_dm` for details.
 
 Requirements
 ************

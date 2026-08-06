@@ -1,13 +1,9 @@
 .. _bluetooth_ble_peripheral_lbs_coex:
 
-Bluetooth Mesh: Coexistence with other LE services
-##################################################
+.. ncs-sample::
+   :title: Bluetooth Mesh: Coexistence with other LE services
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to combine Bluetooth® Mesh and another Bluetooth Low Energy (LE) service in a single application.
+   This sample demonstrates how to combine Bluetooth® Mesh and another Bluetooth Low Energy (LE) service in a single application.
 
 Requirements
 ************

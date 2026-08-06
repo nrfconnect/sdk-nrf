@@ -1,13 +1,9 @@
 .. _wifi_wfa_qt_app_sample:
 
-Wi-Fi: WFA QuickTrack control application
-#########################################
+.. ncs-sample::
+   :title: Wi-Fi: WFA QuickTrack control application
 
-.. contents::
-   :local:
-   :depth: 2
-
-The QuickTrack sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance® QuickTrack certification.
+   The QuickTrack sample demonstrates how to use the WFA QuickTrack (WFA QT) library needed for Wi-Fi Alliance® QuickTrack certification.
 
 Requirements
 ************

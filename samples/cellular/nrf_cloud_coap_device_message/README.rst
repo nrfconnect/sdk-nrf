@@ -1,14 +1,10 @@
 .. _nrf_cloud_coap_device_message:
 
-Cellular: nRF Cloud CoAP device message
-#######################################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud CoAP device message
 
-.. contents::
-   :local:
-   :depth: 2
-
-The nRF Cloud CoAP device message sample demonstrates how to use the `nRF Cloud CoAP API`_ to send `device messages <nRF Cloud Device Messages_>`_.
-Every button press sends a message to nRF Cloud.
+   The nRF Cloud CoAP device message sample demonstrates how to use the `nRF Cloud CoAP API`_ to send `device messages <nRF Cloud Device Messages_>`_.
+   Every button press sends a message to nRF Cloud.
 
 Requirements
 ************

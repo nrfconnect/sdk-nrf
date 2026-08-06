@@ -1,22 +1,18 @@
 .. _wifi_shutdown_sample:
 
-Wi-Fi: Shutdown
-###############
+.. ncs-sample::
+   :title: Wi-Fi: Shutdown
 
-.. contents::
-   :local:
-   :depth: 2
+   The Shutdown sample demonstrates how to put the Nordic Semiconductor's Wi-Fi® chipset in the Shutdown state, where the device is completely powered off.
+   For more information, see the `nRF70 Series power states`_ page.
 
-The Shutdown sample demonstrates how to put the Nordic Semiconductor's Wi-Fi® chipset in the Shutdown state, where the device is completely powered off.
-For more information, see the `nRF70 Series power states`_ page.
+   This also demonstrates how to achieve the lowest possible power consumption in the host SoC (nRF53, nRF52 or nRF91 Series) when Wi-Fi is enabled but not being used.
 
-This also demonstrates how to achieve the lowest possible power consumption in the host SoC (nRF53, nRF52 or nRF91 Series) when Wi-Fi is enabled but not being used.
+   The sample supports the following three modes of operation:
 
-The sample supports the following three modes of operation:
-
-* Continuous mode (default): Continuously cycles between Wi-Fi startup and shutdown with a configurable timeout.
-* One-shot mode: Performs Wi-Fi startup followed by shutdown once, then remains in shutdown mode.
-* Buttons mode: Manual control of Wi-Fi startup and shutdown using buttons.
+   * Continuous mode (default): Continuously cycles between Wi-Fi startup and shutdown with a configurable timeout.
+   * One-shot mode: Performs Wi-Fi startup followed by shutdown once, then remains in shutdown mode.
+   * Buttons mode: Manual control of Wi-Fi startup and shutdown using buttons.
 
 Requirements
 ************

@@ -1,24 +1,20 @@
 .. _bluetooth_mesh_sensor_server:
 
-Bluetooth Mesh NLC: Ambient Light Sensor/Occupancy Sensor
-#########################################################
+.. ncs-sample::
+   :title: Bluetooth Mesh NLC: Ambient Light Sensor/Occupancy Sensor
 
-.. contents::
-   :local:
-   :depth: 2
+   The Bluetooth® Mesh NLC Ambient Light Sensor/Occupancy Sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
+   Eight different sensor types are used to showcase different ways for the server to publish data.
+   In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
 
-The Bluetooth® Mesh NLC Ambient Light Sensor/Occupancy Sensor sample demonstrates how to set up a basic mesh Sensor Server model application that provides sensor data to one :ref:`bt_mesh_sensor_cli_readme` model.
-Eight different sensor types are used to showcase different ways for the server to publish data.
-In addition, the samples demonstrate usage of both :ref:`single-channel sensor types and sensor series types <bt_mesh_sensor_types_channels>`, as well as how to add and write to a sensor setting.
+   .. note::
+      This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
+      The mesh sensor provides the sensor data used by the observer.
 
-.. note::
-   This sample must be paired with the :ref:`bluetooth_mesh_sensor_client` sample to show any functionality.
-   The mesh sensor provides the sensor data used by the observer.
+   This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
 
-This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
-
-  * Ambient Light Sensor NLC Profile
-  * Occupancy Sensor NLC Profile
+     * Ambient Light Sensor NLC Profile
+     * Occupancy Sensor NLC Profile
 
 Requirements
 ************

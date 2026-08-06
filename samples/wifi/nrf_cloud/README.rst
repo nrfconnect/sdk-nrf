@@ -1,15 +1,11 @@
 .. _wifi_nrf_cloud:
 
-Wi-Fi: nRF Cloud
-################
+.. ncs-sample::
+   :title: Wi-Fi: nRF Cloud
 
-.. contents::
-   :local:
-   :depth: 2
-
-The nRF Cloud sample demonstrates an nRF Cloud application running on nRF70 Series and nRF71 Series hardware, using Wi-Fi® as the transport.
-It integrates Wi-Fi-based location services, periodic sensor sampling, and more.
-It also demonstrates how to build connected, error-tolerant applications using Zephyr's ``conn_mgr`` connectivity management framework.
+   The nRF Cloud sample demonstrates an nRF Cloud application running on nRF70 Series and nRF71 Series hardware, using Wi-Fi® as the transport.
+   It integrates Wi-Fi-based location services, periodic sensor sampling, and more.
+   It also demonstrates how to build connected, error-tolerant applications using Zephyr's ``conn_mgr`` connectivity management framework.
 
 .. _wifi_nrf_cloud_requirements:
 

@@ -1,13 +1,9 @@
 .. _tfm_psa_test:
 
-TF-M: Platform security architecture test
-#########################################
+.. ncs-sample::
+   :title: TF-M: Platform security architecture test
 
-.. contents::
-   :local:
-   :depth: 2
-
-The TF-M platform security architecture test sample provides a basis for validating compliance with PSA Certified requirements using the Arm® Platform Security Architecture (PSA) test suites.
+   The TF-M platform security architecture test sample provides a basis for validating compliance with PSA Certified requirements using the Arm® Platform Security Architecture (PSA) test suites.
 
 Requirements
 ************

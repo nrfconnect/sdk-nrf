@@ -1,13 +1,9 @@
 .. _channel_sounding_ras_reflector:
 
-Bluetooth: Channel Sounding Reflector with Ranging Responder
-############################################################
+.. ncs-sample::
+   :title: Bluetooth: Channel Sounding Reflector with Ranging Responder
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the ranging service to provide ranging data to a client.
+   This sample demonstrates how to use the ranging service to provide ranging data to a client.
 
 Requirements
 ************

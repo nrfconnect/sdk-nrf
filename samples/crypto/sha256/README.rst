@@ -1,14 +1,10 @@
 .. _crypto_sha256:
 
-Crypto: SHA-256
-###############
+.. ncs-sample::
+   :title: Crypto: SHA-256
 
-.. contents::
-   :local:
-   :depth: 2
-
-The SHA-256 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to compute and verify hashes using the SHA-256 hash algorithm.
-The sample demonstrates both single-part and multi-part hash operations.
+   The SHA-256 sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to compute and verify hashes using the SHA-256 hash algorithm.
+   The sample demonstrates both single-part and multi-part hash operations.
 
 Requirements
 ************
