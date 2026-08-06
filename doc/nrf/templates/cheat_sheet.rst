@@ -349,7 +349,7 @@ Include 4:
   .. ncs-include:: nfc/doc/type_2_tag.rst
      :docset: nrfxlib
      :auto-dedent:
-     :start-after: Version 1.0*.
+     :start-after: can be write protected.
      :end-before: If you use the supplied library,
 
 You can also use ncs-include if you want to use the indentation options inside the nrf doc set:
