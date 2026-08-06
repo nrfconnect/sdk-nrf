@@ -52,6 +52,9 @@ class PsaKeyType(IntEnum):
     # PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_TWISTED_EDWARDS)
     ECC_KEY_PAIR_TWISTED_EDWARDS = 0x7142
 
+    # PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_MONTGOMERY)
+    ECC_KEY_PAIR_MONTGOMERY = 0x7141
+
 
 class PsaKeyUsage(IntEnum):
     """Permitted usage of a key"""
@@ -364,12 +367,15 @@ class PlatformKeyAttributes:
 
         # ECDH algorithm
         elif self.alg0 == PsaAlgorithm.ECDH:
-            if self.key_type != PsaKeyType.ECC_KEY_PAIR_SECP_R1:
+            if self.key_type != PsaKeyType.ECC_KEY_PAIR_SECP_R1 and self.key_type != PsaKeyType.ECC_KEY_PAIR_MONTGOMERY:
                 raise ValueError(
-                    f"Algorithm {self.alg0.name} can only be used with PsaKeyType.ECC_KEY_PAIR_SECP_R1"
+                    f"Algorithm {self.alg0.name} can only be used with PsaKeyType.ECC_KEY_PAIR_SECP_R1 or PsaKeyType.ECC_KEY_PAIR_MONTGOMERY"
                 )
-            if self.key_bits != 256:
-                raise ValueError(f"Algorithm {self.alg0.name} only supports 256-bit keys")
+
+            if self.key_type == PsaKeyType.ECC_KEY_PAIR_SECP_R1 and self.key_bits != 256:
+                raise ValueError(f"Algorithm secp256r1 only supports 256-bit keys")
+            if self.key_type == PsaKeyType.ECC_KEY_PAIR_MONTGOMERY and self.key_bits != 255:
+                raise ValueError(f"Algorithm montgomery only supports 255-bit keys")
             if self.usage != PsaKeyUsage.DERIVE:
                 raise ValueError(
                     f"Algorithm {self.alg0.name} can only be used with the DERIVE key usage"
