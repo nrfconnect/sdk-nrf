@@ -1114,12 +1114,6 @@ struct rpu_lmac_stats {
 	unsigned int warmBootCnt;
 } __NRF_WIFI_PKD;
 
-/*! LMAC error event status */
-enum LMAC_ERROR_ID {
-	/*! LMAC internal memory full */
-	LMAC_FW_PEER_DATA_BASE_FULL = 0,
-};
-
 /**
  * @brief This structure defines the PHY (Physical Layer) debug statistics.
  *
