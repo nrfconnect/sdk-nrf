@@ -20,6 +20,7 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/hci_raw.h>
+#include <zephyr/bluetooth/hci_vs.h>
 
 #include <zephyr/ipc/ipc_service.h>
 
@@ -334,8 +335,16 @@ __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 
 #endif /* !CONFIG_BT_HCI_VS_FATAL_ERROR */
 
+#if defined(CONFIG_RESET_ON_FATAL_ERROR)
+	extern void fatal_error_reset(void);
+
+	fatal_error_reset();
+#else /* !CONFIG_RESET_ON_FATAL_ERROR */
 	for (;;) {
 	};
+#endif /* !CONFIG_RESET_ON_FATAL_ERROR */
+
+	CODE_UNREACHABLE;
 }
 #endif /* CONFIG_BT_CTLR_ASSERT_HANDLER */
 
@@ -357,8 +366,14 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 		}
 	}
 
+#if defined(CONFIG_RESET_ON_FATAL_ERROR)
+	extern void fatal_error_reset(void);
+
+	fatal_error_reset();
+#else /* !CONFIG_RESET_ON_FATAL_ERROR */
 	for (;;) {
 	};
+#endif /* !CONFIG_RESET_ON_FATAL_ERROR */
 
 	CODE_UNREACHABLE;
 }
