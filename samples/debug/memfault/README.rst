@@ -21,7 +21,7 @@ Requirements
 
 Before using this sample, make sure to sign up in the `Memfault registration page`_ and `create a new project in Memfault`_.
 You will be directed to the Integration guide for Memfault.
-You will receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+You will receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.
 
 The sample supports the following development kits:
 
@@ -98,7 +98,7 @@ See `Memfault SDK`_ for more information.
 Minimal setup
 =============
 
-To send data to the Memfault cloud, a project key must be configured using :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`.
+To send data to the Memfault cloud, a project key must be configured using :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY`.
 If you are using the nRF7002 DK and want to automatically connect to a Wi-Fi network upon boot, configure the Wi-Fi credentials using the Kconfig options :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_SSID` and :kconfig:option:`CONFIG_WIFI_CREDENTIALS_STATIC_PASSWORD`.
 
 .. note::
@@ -126,10 +126,10 @@ Check and configure the following options in Memfault SDK that are used by the s
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_INTERVAL_SECS`
 * :kconfig:option:`CONFIG_MEMFAULT_HTTP_PERIODIC_UPLOAD_USE_DEDICATED_WORKQUEUE`
 * :kconfig:option:`CONFIG_MEMFAULT_COREDUMP_COLLECT_BSS_REGIONS`
+* :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY`
 
 Check and configure the following options for Memfault that are specific to |NCS|:
 
-* :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_LTE_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_STACK_METRICS`
 * :kconfig:option:`CONFIG_MEMFAULT_NCS_INTERNAL_FLASH_BACKED_COREDUMP`
