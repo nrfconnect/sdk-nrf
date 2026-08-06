@@ -786,7 +786,6 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 * The following non-PSA Crypto implementations were deprecated:
 
-  * :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON`
   * :kconfig:option:`CONFIG_BOOT_ECDSA_TINYCRYPT`
   * :kconfig:option:`CONFIG_BOOT_ECDSA_CC310`
   * :kconfig:option:`CONFIG_BOOT_ED25519_TINYCRYPT`
