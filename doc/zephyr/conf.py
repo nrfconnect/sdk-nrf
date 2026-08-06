@@ -74,6 +74,12 @@ if kconfig_mapping:
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
+_UPSTREAM_DOXYFILE = utils.get_builddir() / "upstream.doxyfile"
+
+def get_upstream_doxyfile() -> str:
+    with open(_UPSTREAM_DOXYFILE) as f:
+        return f.read()
+
 _doxyrunner_outdir = utils.get_builddir() / "html" / "zephyr" / "doxygen"
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
@@ -87,6 +93,7 @@ doxyrunner_projects = {
             "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
             "DOCSET_BUILD_DIR": str(_doxyrunner_outdir),
             "DOCSET_VERSION": version,
+            "ZEPHYR_UPSTREAM_DOXYFILE": get_upstream_doxyfile(),
         }
     }
 }
