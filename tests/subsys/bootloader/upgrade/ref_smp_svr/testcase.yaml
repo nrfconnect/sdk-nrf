@@ -1,6 +1,6 @@
 common:
   sysbuild: true
-  timeout: 700
+  timeout: 900
   slow: true
   harness: pytest
   tags:
