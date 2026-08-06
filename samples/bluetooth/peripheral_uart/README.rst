@@ -1,14 +1,10 @@
 .. _peripheral_uart:
 
-Bluetooth: Peripheral UART
-##########################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral UART
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral UART sample demonstrates how to use the :ref:`nus_service_readme`.
-It uses the NUS service to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
+   The Peripheral UART sample demonstrates how to use the :ref:`nus_service_readme`.
+   It uses the NUS service to send data back and forth between a UART connection and a Bluetooth® LE connection, emulating a serial port over Bluetooth LE.
 
 Requirements
 ************

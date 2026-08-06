@@ -1,14 +1,10 @@
 .. _nrf_cloud_mqtt_device_message:
 
-Cellular: nRF Cloud MQTT device message
-#######################################
+.. ncs-sample::
+   :title: Cellular: nRF Cloud MQTT device message
 
-.. contents::
-   :local:
-   :depth: 2
-
-The nRF Cloud MQTT device message sample demonstrates how to use the `nRF Cloud MQTT API`_ to send `device messages <nRF Cloud Device Messages_>`_.
-Every button press sends a message to nRF Cloud.
+   The nRF Cloud MQTT device message sample demonstrates how to use the `nRF Cloud MQTT API`_ to send `device messages <nRF Cloud Device Messages_>`_.
+   Every button press sends a message to nRF Cloud.
 
 Requirements
 ************

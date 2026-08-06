@@ -1,13 +1,9 @@
 .. _nfc_tag_reader:
 
-NFC: Tag reader
-###############
+.. ncs-sample::
+   :title: NFC: Tag reader
 
-.. contents::
-   :local:
-   :depth: 2
-
-The NFC Tag reader sample demonstrates how to use the :ref:`st25r3911b_nfc_readme` driver to interact with an NFC-A Tag.
+   The NFC Tag reader sample demonstrates how to use the :ref:`st25r3911b_nfc_readme` driver to interact with an NFC-A Tag.
 
 Requirements
 ************

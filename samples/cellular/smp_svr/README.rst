@@ -1,13 +1,9 @@
 .. _smp_svr:
 
-Cellular: SMP Server
-####################
+.. ncs-sample::
+   :title: Cellular: SMP Server
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample is a reference implementation to use MCUboot recovery mode or serial SMP server mode for external image update.
+   This sample is a reference implementation to use MCUboot recovery mode or serial SMP server mode for external image update.
 
 Requirements
 ************

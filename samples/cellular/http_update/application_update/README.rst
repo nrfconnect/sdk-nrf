@@ -1,14 +1,10 @@
 .. _http_application_update_sample:
 
-Cellular: HTTP application update
-#################################
+.. ncs-sample::
+   :title: Cellular: HTTP application update
 
-.. contents::
-   :local:
-   :depth: 2
-
-The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
-It uses the :ref:`lib_fota_download` library to download two image files from a remote server and program them to flash memory.
+   The HTTP application update sample demonstrates how to do a basic firmware over-the-air (FOTA) update.
+   It uses the :ref:`lib_fota_download` library to download two image files from a remote server and program them to flash memory.
 
 Requirements
 ************

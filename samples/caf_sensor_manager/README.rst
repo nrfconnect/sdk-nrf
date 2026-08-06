@@ -1,14 +1,10 @@
 .. _caf_sensor_manager_sample:
 
-CAF: Sensor manager
-###################
+.. ncs-sample::
+   :title: CAF: Sensor manager
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sensor manager sample demonstrates the functionality of the :ref:`caf_sensor_manager`.
-It uses the :ref:`sensor_stub`, the sensor manager module, the :ref:`caf_sensor_data_aggregator`, and the workload simulator module to automatically sample and gather data and then receive and process it in packages.
+   The sensor manager sample demonstrates the functionality of the :ref:`caf_sensor_manager`.
+   It uses the :ref:`sensor_stub`, the sensor manager module, the :ref:`caf_sensor_data_aggregator`, and the workload simulator module to automatically sample and gather data and then receive and process it in packages.
 
 Requirements
 ************

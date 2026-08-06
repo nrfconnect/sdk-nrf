@@ -1,14 +1,10 @@
 .. _npm2100_one_button:
 
-nPM2100: One button
-###################
+.. ncs-sample::
+   :title: nPM2100: One button
 
-.. contents::
-   :local:
-   :depth: 2
-
-The One button sample demonstrates how to support wake-up, shutdown, and user interactions
-through a single button connected to the `nPM2100 PMIC <nPM2100 product website_>`_.
+   The One button sample demonstrates how to support wake-up, shutdown, and user interactions
+   through a single button connected to the `nPM2100 PMIC <nPM2100 product website_>`_.
 
 Requirements
 ************

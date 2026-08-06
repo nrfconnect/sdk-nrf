@@ -1,14 +1,10 @@
 .. _samples_test_app:
 
-Bluetooth: Bluetooth LE master test app
-#######################################
+.. ncs-sample::
+   :title: Bluetooth: Bluetooth LE master test app
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Bluetooth LE master test app is a Bluetooth® Low Energy (LE) central application designed to test basic Bluetooth functionality in peripheral samples.
-This application acts as a tester in the central role to validate Bluetooth LE peripheral applications in the |NCS|.
+   The Bluetooth LE master test app is a Bluetooth® Low Energy (LE) central application designed to test basic Bluetooth functionality in peripheral samples.
+   This application acts as a tester in the central role to validate Bluetooth LE peripheral applications in the |NCS|.
 
 Requirements
 ************

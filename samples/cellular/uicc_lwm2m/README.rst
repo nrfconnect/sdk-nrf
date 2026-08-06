@@ -1,13 +1,9 @@
 .. _uicc_lwm2m_sample:
 
-Cellular: UICC LwM2M
-####################
+.. ncs-sample::
+   :title: Cellular: UICC LwM2M
 
-.. contents::
-   :local:
-   :depth: 2
-
-The UICC LwM2M sample demonstrates how to use the :ref:`lib_uicc_lwm2m` library on an nRF91 Series device.
+   The UICC LwM2M sample demonstrates how to use the :ref:`lib_uicc_lwm2m` library on an nRF91 Series device.
 
 Requirements
 ************

@@ -1,17 +1,13 @@
 .. _dect_phy_shell_application:
 
-nRF91x1: DECT NR+ PHY Shell
-###########################
+.. ncs-sample::
+   :title: nRF91x1: DECT NR+ PHY Shell
 
-.. contents::
-   :local:
-   :depth: 2
+   The DECT NR+ physical layer (PHY) Shell (DeSh) sample application demonstrates how to set up a DECT NR+ application with the DECT PHY firmware and enables you to test various modem features.
 
-The DECT NR+ physical layer (PHY) Shell (DeSh) sample application demonstrates how to set up a DECT NR+ application with the DECT PHY firmware and enables you to test various modem features.
+   .. important::
 
-.. important::
-
-   The sample showcases the use of the :ref:`nrf_modem_dect_phy` interface of the :ref:`nrfxlib:nrf_modem`.
+      The sample showcases the use of the :ref:`nrf_modem_dect_phy` interface of the :ref:`nrfxlib:nrf_modem`.
 
 Requirements
 ************

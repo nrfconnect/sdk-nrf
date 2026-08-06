@@ -1,13 +1,9 @@
 .. _crypto_hmac:
 
-Crypto: HMAC
-############
+.. ncs-sample::
+   :title: Crypto: HMAC
 
-.. contents::
-   :local:
-   :depth: 2
-
-The HMAC sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate and verify message authentication codes using the HMAC algorithm with SHA-256 as the underlying hash function.
+   The HMAC sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to generate and verify message authentication codes using the HMAC algorithm with SHA-256 as the underlying hash function.
 
 Requirements
 ************

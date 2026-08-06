@@ -1,14 +1,10 @@
 .. _nrf93m1dk_modem_bypass:
 
-nRF93M1 DK: Modem bypass
-#########################
+.. ncs-sample::
+   :title: nRF93M1 DK: Modem bypass
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample configures the modem UART switch in bypass mode, forwarding it to the USB CDC-ACM VCOM port.
-This allows a host PC can send AT commands directly to the modem.
+   This sample configures the modem UART switch in bypass mode, forwarding it to the USB CDC-ACM VCOM port.
+   This allows a host PC can send AT commands directly to the modem.
 
 Requirements
 ************

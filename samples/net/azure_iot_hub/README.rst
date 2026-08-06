@@ -1,18 +1,14 @@
 .. _azure_iot_hub:
 
-Azure IoT Hub
-#############
+.. ncs-sample::
+   :title: Azure IoT Hub
 
-.. contents::
-   :local:
-   :depth: 2
+   The Azure IoT Hub sample shows the communication of an Internet-connected device with an `Azure IoT Hub`_ instance.
+   This sample uses the :ref:`lib_azure_iot_hub` library to communicate with the IoT hub and the :ref:`lib_azure_fota` library to provide firmware over-the-air (FOTA) functionality.
 
-The Azure IoT Hub sample shows the communication of an Internet-connected device with an `Azure IoT Hub`_ instance.
-This sample uses the :ref:`lib_azure_iot_hub` library to communicate with the IoT hub and the :ref:`lib_azure_fota` library to provide firmware over-the-air (FOTA) functionality.
+   .. |wifi| replace:: Wi-Fi®
 
-.. |wifi| replace:: Wi-Fi®
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************

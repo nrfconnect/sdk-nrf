@@ -1,17 +1,13 @@
 .. _vtf_monitoring_sample:
 
-VTF monitoring
-##############
+.. ncs-sample::
+   :title: VTF monitoring
 
-.. contents::
-   :local:
-   :depth: 2
-
-The VTF monitoring sample demonstrates how voltage-temperature-frequency (VTF) data is captured and stored for the nRF Wi-Fi® subsystem.
-The sample monitors battery voltage, die temperature, and crystal oscillator (XO) frequency offset.
-The Wi-Fi core uses this data to determine when recalibration is required.
-The :ref:`vtf_monitoring` subsystem updates the snapshots on the application core and stores them in a dedicated memory region that the Wi-Fi core can read.
-This sample runs on the application core and periodically logs the stored channel values.
+   The VTF monitoring sample demonstrates how voltage-temperature-frequency (VTF) data is captured and stored for the nRF Wi-Fi® subsystem.
+   The sample monitors battery voltage, die temperature, and crystal oscillator (XO) frequency offset.
+   The Wi-Fi core uses this data to determine when recalibration is required.
+   The :ref:`vtf_monitoring` subsystem updates the snapshots on the application core and stores them in a dedicated memory region that the Wi-Fi core can read.
+   This sample runs on the application core and periodically logs the stored channel values.
 
 Requirements
 ************

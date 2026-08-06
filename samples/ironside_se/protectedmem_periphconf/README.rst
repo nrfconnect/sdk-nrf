@@ -1,13 +1,9 @@
 .. _protectedmem_periphconf_sample:
 
-Protected Memory with PERIPHCONF Partition
-##########################################
+.. ncs-sample::
+   :title: Protected Memory with PERIPHCONF Partition
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to protect the PERIPHCONF partition using UICR.PROTECTEDMEM.
+   This sample demonstrates how to protect the PERIPHCONF partition using UICR.PROTECTEDMEM.
 
 Requirements
 ************

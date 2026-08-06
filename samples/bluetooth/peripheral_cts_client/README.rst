@@ -1,13 +1,9 @@
 .. _peripheral_cts_client:
 
-Bluetooth: Peripheral CTS client
-################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral CTS client
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Peripheral CTS client sample demonstrates how to use the :ref:`cts_client_readme`.
+   The Peripheral CTS client sample demonstrates how to use the :ref:`cts_client_readme`.
 
 Requirements
 ************

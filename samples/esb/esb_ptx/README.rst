@@ -1,13 +1,9 @@
 .. _esb_ptx:
 
-Enhanced ShockBurst: Transmitter
-################################
+.. ncs-sample::
+   :title: Enhanced ShockBurst: Transmitter
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Enhanced ShockBurst Transmitter sample shows the basic steps that are needed to transmit and receive packets using :ref:`ug_esb`.
+   The Enhanced ShockBurst Transmitter sample shows the basic steps that are needed to transmit and receive packets using :ref:`ug_esb`.
 
 Requirements
 ************

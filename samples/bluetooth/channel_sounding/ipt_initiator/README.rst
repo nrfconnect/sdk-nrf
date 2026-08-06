@@ -1,14 +1,9 @@
 .. _channel_sounding_ipt_initiator:
 
-Bluetooth: Channel Sounding Initiator with Inline PCT Transfer
-##############################################################
+.. ncs-sample::
+   :title: Bluetooth: Channel Sounding Initiator with Inline PCT Transfer
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the Bluetooth® Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature as a CS initiator, to achieve fast and efficient distance estimation.
-
+   This sample demonstrates how to use the Bluetooth® Channel Sounding (CS) Inline Phase Correction Term Transfer (IPT) feature as a CS initiator, to achieve fast and efficient distance estimation.
 
 Requirements
 ************

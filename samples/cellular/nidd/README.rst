@@ -1,13 +1,9 @@
 .. _nidd_sample:
 
-Cellular: NIDD
-##############
+.. ncs-sample::
+   :title: Cellular: NIDD
 
-.. contents::
-   :local:
-   :depth: 2
-
-The NIDD sample demonstrates how to use Non-IP Data Delivery (NIDD) on an nRF91 Series device.
+   The NIDD sample demonstrates how to use Non-IP Data Delivery (NIDD) on an nRF91 Series device.
 
 Requirements
 ************

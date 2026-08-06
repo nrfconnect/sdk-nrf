@@ -1,13 +1,9 @@
 .. _wifi_station_sample:
 
-Wi-Fi: Station
-##############
+.. ncs-sample::
+   :title: Wi-Fi: Station
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Station sample demonstrates how to connect the Wi-Fi® station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
+   The Station sample demonstrates how to connect the Wi-Fi® station to a specified access point using Dynamic Host Configuration Protocol (DHCP).
 
 Requirements
 ************

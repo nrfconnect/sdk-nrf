@@ -1,17 +1,13 @@
 .. _http_server:
 
-HTTP Server
-###########
+.. ncs-sample::
+   :title: HTTP Server
 
-.. contents::
-   :local:
-   :depth: 2
+   The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE or Wi-Fi®.
 
-The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE or Wi-Fi®.
+   .. |wifi| replace:: Wi-Fi
 
-.. |wifi| replace:: Wi-Fi
-
-.. include:: /includes/net_connection_manager.txt
+   .. include:: /includes/net_connection_manager.txt
 
 Requirements
 ************
