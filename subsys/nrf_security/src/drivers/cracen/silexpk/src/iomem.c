@@ -13,52 +13,51 @@
 
 #define PTR_ALIGNMENT(ptr, type)	(((uintptr_t)ptr) & (sizeof(type) - 1))
 #define IS_NATURAL_ALIGNED(ptr, type)	!PTR_ALIGNMENT(ptr, type)
-#define IS_SAME_ALIGNMENT(p1, p2, type) (PTR_ALIGNMENT(p1, type) == PTR_ALIGNMENT(p2, type))
-#define MASK_TO_NATURAL_SIZE(sz, type)	((sz) & (~((sizeof(type) << 1) - 1)))
 
 void sx_clrpkmem(void *dst, size_t sz)
 {
-	typedef int64_t clrblk_t;
-	volatile uint8_t *dst_ptr = (volatile uint8_t *)dst;
+	uint8_t *dst_ptr = (uint8_t *)dst;
 
-	if (sz == 0) {
-		return;
-	}
-
-	while (sz && (!IS_NATURAL_ALIGNED(dst_ptr, clrblk_t))) {
-		*dst_ptr = 0;
+	/* Align start address since PK memory is device memory */
+	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, uint32_t)) {
+		*(volatile uint8_t *)dst_ptr = 0;
 		dst_ptr++;
 		sz--;
 	}
 
-	memset((uint8_t *)dst_ptr, 0, MASK_TO_NATURAL_SIZE(sz, clrblk_t));
-	dst_ptr += MASK_TO_NATURAL_SIZE(sz, clrblk_t);
-	sz -= MASK_TO_NATURAL_SIZE(sz, clrblk_t);
-
-	while (sz) {
-		*dst_ptr = 0;
-		dst_ptr++;
-		sz--;
-	}
+	memset(dst_ptr, 0, sz);
 }
-
-struct uchunk {
-	int64_t a[2];
-};
-typedef struct uchunk tfrblk;
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
-	volatile uint8_t *dst_ptr = (volatile uint8_t *)dst;
-	volatile const uint8_t *src_ptr = (volatile const uint8_t *)src;
+	uint8_t *dst_ptr = (uint8_t *)dst;
+	const uint8_t *src_ptr = (const uint8_t *)src;
 
-	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, tfrblk)) {
-		*dst_ptr = *src_ptr;
+	/* Align start address since PK memory is device memory */
+	while (sz && !IS_NATURAL_ALIGNED(dst_ptr, uint32_t)) {
+		*(volatile uint8_t *)dst_ptr = *src_ptr;
 		dst_ptr++;
 		src_ptr++;
 		sz--;
 	}
-	memcpy((uint8_t *)dst_ptr, (uint8_t *)src_ptr, sz);
+
+	memcpy(dst_ptr, src_ptr, sz);
+}
+
+void sx_rdpkmem(void *dst, const void *src, size_t sz)
+{
+	uint8_t *dst_ptr = (uint8_t *)dst;
+	const uint8_t *src_ptr = (const uint8_t *)src;
+
+	/* Align start address since PK memory is device memory */
+	while (sz && !IS_NATURAL_ALIGNED(src_ptr, uint32_t)) {
+		*dst_ptr = *(const volatile uint8_t *)src_ptr;
+		dst_ptr++;
+		src_ptr++;
+		sz--;
+	}
+
+	memcpy(dst_ptr, src_ptr, sz);
 }
 
 #else /* 54LM20A requires word-aligned, word-sized memory accesses */
