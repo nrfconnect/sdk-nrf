@@ -619,3 +619,10 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk@0.14.0/nrf9160/ns
   comment: "FLASH overflowed"
+
+- scenarios:
+    - arch.arm.irq_vector_table
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40724"
