@@ -110,7 +110,6 @@
 /doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/uart.rst                 @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
-/doc/nrf/drivers/vtf_monitoring.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/nrf71_sr_coex.rst        @nrfconnect/ncs-wifi-doc
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
@@ -224,6 +223,7 @@
 /doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-iot-positioning-doc
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/vtf_monitoring.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/others/wave_gen.rst    @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/security/bootloader/   @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/security/nrf_security.rst @nrfconnect/ncs-aegir-doc
@@ -319,7 +319,6 @@
 /drivers/sensor/pmw3360/                  @nrfconnect/ncs-co-drivers @nrfconnect/ncs-si-xcake
 /drivers/sensor/sensor_sim/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/sensor/sensor_stub/              @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
-/drivers/vtf_monitoring/                  @nrfconnect/ncs-malago
 /drivers/wifi/nrf71/                      @krish2718 @sachinthegreen
 /drivers/wifi/nrf92/                      @nrfconnect/ncs-modem-tre
 /include/drivers/wifi/nrf71/              @kapbh @krish2718 @sachinthegreen
@@ -380,7 +379,6 @@
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
-/include/drivers/vtf_monitoring/          @nrfconnect/ncs-malago
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
@@ -425,6 +423,7 @@
 /include/shell/                           @nordic-krch
 /include/tone.h                           @nrfconnect/ncs-audio
 /include/uart_async_adapter.h             @nrfconnect/ncs-si-muffin
+/include/vtf_monitoring/                  @nrfconnect/ncs-malago
 /include/util/                            @nrfconnect/ncs-aegir @nordic-krch
 /include/tfm/                             @nrfconnect/ncs-aegir
 /include/dult.h                           @nrfconnect/ncs-si-bluebagel
@@ -617,6 +616,7 @@
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
+/samples/vtf_monitoring/                  @nrfconnect/ncs-malago
 /samples/wifi/common/                     @D-Triveni
 /samples/wifi/provisioning/ble/           @wentong-li @bama-nordic
 /samples/wifi/provisioning/softap/        @nrfconnect/ncs-cia
@@ -757,6 +757,7 @@
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
+/samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/wifi/nrf_cloud/*.rst             @nrfconnect/ncs-bifrost @nrfconnect/ncs-nrf-cloud-doc
@@ -988,6 +989,7 @@
 /subsys/shell/                            @nordic-krch
 /subsys/trusted_storage/                  @nrfconnect/ncs-aegir
 /subsys/uart_async_adapter/               @nrfconnect/ncs-si-muffin
+/subsys/vtf_monitoring/                   @nrfconnect/ncs-malago
 
 # Sysbuild
 /sysbuild/                                @nrfconnect/ncs-co-build-system

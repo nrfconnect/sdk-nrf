@@ -8,28 +8,33 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
+#include <zephyr/linker/devicetree_regions.h>
 #include <zephyr/init.h>
 #include <zephyr/logging/log.h>
-#include <drivers/vtf_monitoring/vtf_monitoring.h>
-
-#ifdef CONFIG_VTF_DIE_TEMP_MONITOR
-#include "temperature_monitor.h"
-#endif
+#include <vtf_monitoring/vtf_monitoring.h>
 
 LOG_MODULE_REGISTER(vtf_capture, CONFIG_VTF_LOG_LEVEL);
 
-VTF_CHANNEL_DEFINE(vtf_channel_die_temp, VTF_CH_DIE_TEMP,
-		   COND_CODE_1(CONFIG_VTF_DIE_TEMP_MONITOR, (die_temp_sample), (NULL)),
-		   COND_CODE_1(CONFIG_VTF_DIE_TEMP_MONITOR, (die_temp_init), (NULL)),
-		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE);
+static const union vtf_sample_value vtf_channel_defaults[VTF_CH_COUNT] = {
+	[VTF_CH_INITIALIZATION] = {.metadata = {.init_code = 0, .reserved = 0}},
+	[VTF_CH_BATTERY_VOLTAGE] = {.i32 = CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE},
+	[VTF_CH_DIE_TEMP] = {.i32 = CONFIG_VTF_DIE_TEMP_DEFAULT_VALUE},
+	[VTF_CH_FREQ_OFFSET] = {.i32 = CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE},
+};
 
-VTF_CHANNEL_DEFINE(vtf_channel_battery_voltage, VTF_CH_BATTERY_VOLTAGE, NULL, NULL,
-		   VTF_SAMPLE_TYPE_INT, i32, CONFIG_VTF_BATTERY_VOLTAGE_DEFAULT_VALUE);
+#if DT_HAS_CHOSEN(nordic_vtf_region)
+#define VTF_NODE DT_CHOSEN(nordic_vtf_region)
+#else
+#error " 'nordic,vtf-region' must be chosen and enabled"
+#endif
 
-VTF_CHANNEL_DEFINE(vtf_channel_freq_offset, VTF_CH_FREQ_OFFSET, NULL, NULL, VTF_SAMPLE_TYPE_INT,
-		   i32, CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE);
+volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT] __aligned(4)
+__attribute__((__section__(LINKER_DT_NODE_REGION_NAME(VTF_NODE))));
 
-union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
+BUILD_ASSERT(sizeof(vtf_snapshots) <= DT_REG_SIZE(VTF_NODE),
+	     "vtf_snapshots too large for nordic_vtf_region");
+
 static bool ch_live_update[VTF_CH_COUNT];
 
 static void vtf_capture_work_handler(struct k_work *work);
@@ -65,6 +70,11 @@ static int vtf_monitoring_init(void)
 {
 	int err = 0;
 	bool any_live_update = false;
+
+	for (enum vtf_channel_id id = 0; id < VTF_CH_COUNT; id++) {
+		vtf_snapshots[id] = vtf_channel_defaults[id];
+	}
+	vtf_snapshots[VTF_CH_INITIALIZATION].metadata.init_code = VTF_CH_INITIALIZATION_CODE;
 
 	STRUCT_SECTION_FOREACH(vtf_channel, ch)
 	{

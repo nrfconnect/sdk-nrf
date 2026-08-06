@@ -1,15 +1,15 @@
 .. _vtf_monitoring:
 
-VTF monitoring driver
-#####################
+VTF monitoring
+##############
 
 .. contents::
    :local:
    :depth: 2
 
-The VTF (Voltage-Temperature-Frequency) monitoring driver fetches and stores data that the nRF Wi-Fi driver uses to trigger re-calibrations or re-configurations of the Wi-Fi® subsystem.
+The voltage-temperature-frequency (VTF) monitoring subsystem fetches and stores data that the nRF Wi-Fi driver uses to trigger recalibrations or reconfigurations of the Wi-Fi® subsystem.
 
-The driver maintains a periodic snapshot of the following three channels:
+The subsystem maintains a periodic snapshot of the following three channels:
 
 * Battery voltage - Supply voltage in millivolts (mV).
 * Die temperature - SoC die temperature in centi-degrees Celsius (centi-degC); for example, ``2500`` represents 25.00°C.
@@ -94,7 +94,7 @@ If the application needs to use one of these channels beyond the requirements fo
    int die_temp_sample(struct vtf_sample *out)
    {
        out->type = VTF_SAMPLE_TYPE_INT;
-       out->value.i32 = /* centi-degC */;
+       out->value.i32 = /* degC */;
        out->timestamp_ms = k_uptime_get();
        out->status = VTF_STATUS_OK;
        return 0;
@@ -103,7 +103,7 @@ If the application needs to use one of these channels beyond the requirements fo
 API documentation
 *****************
 
-| Header file: :file:`drivers/vtf_monitoring/vtf_monitoring.h`
-| Source files: :file:`drivers/vtf_monitoring/vtf_capture.c`
+| Header file: :file:`include/vtf_monitoring/vtf_monitoring.h`
+| Source files: :file:`subsys/vtf_monitoring/`
 
 .. doxygengroup:: vtf_monitoring

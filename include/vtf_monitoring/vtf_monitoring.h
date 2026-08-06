@@ -14,17 +14,29 @@
 /**
  * @defgroup vtf_monitoring VTF monitoring
  * @{
- * @brief Driver to capture data to help ensure optimal performance of the Wi-Fi® system.
+ * @brief Subsystem to capture data to help ensure optimal performance of the Wi-Fi® system.
  *
  */
 
-/** Channel identifiers. Keep VTF_CH_COUNT last. */
+/* Code written at address VTF_CH_INITIALIZATION to verify initialization */
+#define VTF_CH_INITIALIZATION_CODE 0xAA
+
+/** Channel identifiers. Keep VTF_CH_COUNT last.
+ * Enum must not change in order to align with Wi-Fi driver.
+ * Will assert if this order is changed.
+ */
 enum vtf_channel_id {
+	VTF_CH_INITIALIZATION,
 	VTF_CH_BATTERY_VOLTAGE,
 	VTF_CH_DIE_TEMP,
 	VTF_CH_FREQ_OFFSET,
 	VTF_CH_COUNT,
 };
+
+BUILD_ASSERT(VTF_CH_INITIALIZATION  == 0, "VTF_CH_INITIALIZATION must be 0");
+BUILD_ASSERT(VTF_CH_BATTERY_VOLTAGE == 1, "VTF_CH_BATTERY_VOLTAGE must be 1");
+BUILD_ASSERT(VTF_CH_DIE_TEMP        == 2, "VTF_CH_DIE_TEMP must be 2");
+BUILD_ASSERT(VTF_CH_FREQ_OFFSET     == 3, "VTF_CH_FREQ_OFFSET must be 3");
 
 /** Per-sample status reported back to consumers. */
 enum vtf_sample_status {
@@ -42,7 +54,13 @@ enum vtf_sample_type {
 	VTF_SAMPLE_TYPE_FLOAT,
 };
 
+typedef struct {
+	uint16_t init_code;
+	uint16_t reserved;
+} vtf_metadata_t;
+
 union vtf_sample_value {
+	vtf_metadata_t metadata;
 	int32_t i32;
 	uint32_t u32;
 	float f32;
@@ -55,6 +73,8 @@ struct vtf_sample {
 	uint64_t timestamp_ms;
 	enum vtf_sample_status status;
 };
+
+extern volatile union vtf_sample_value vtf_snapshots[VTF_CH_COUNT];
 
 struct vtf_channel {
 	/** Channel id this descriptor implements. */
@@ -104,6 +124,19 @@ struct vtf_channel {
 		.default_type = (_type),                                                           \
 		.default_value._field = (_default),                                                \
 	}
+
+/**
+ * @brief Check whether VTF monitoring initialization is complete.
+ *
+ * Returns true once the application core has finished setting up the
+ * snapshot region. Other @c vtf_snapshots entries must not be relied
+ * on until this returns true.
+ */
+static inline bool vtf_monitoring_is_ready(void)
+{
+	return vtf_snapshots[VTF_CH_INITIALIZATION].metadata.init_code ==
+	       VTF_CH_INITIALIZATION_CODE;
+}
 
 /**
  * @}

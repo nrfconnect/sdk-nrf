@@ -556,7 +556,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
 
 Drivers
 =======
@@ -690,6 +690,8 @@ nRF RPC libraries
 
 Other libraries
 ---------------
+
+* Added the :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
 
 * :ref:`lib_ram_pwrdn` library:
 
