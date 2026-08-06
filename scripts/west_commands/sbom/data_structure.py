@@ -153,8 +153,12 @@ class Data(DataBaseClass):
     packages_sorted: 'list[str]' = list()
     inputs: 'list[str]' = list()
     detectors: 'set[str]' = set()
-    report_uuid: 'str' = uuid4()
+    report_uuid: str = ''
     application_roots: 'set[str]' = set()
     module_roots: 'set[str]' = set()
     toolchain_paths: 'dict[str,str]' = dict()
     domain: 'str|None' = None
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.report_uuid = str(uuid4())
