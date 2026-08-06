@@ -360,6 +360,7 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package.id = package_id
         package.url = git_origin
         package.version = git_sha
+        package.root_path = module_root
         if git_origin is None and package_name is not None:
             package.name = package_name
         if git_origin and git_sha:
