@@ -152,8 +152,10 @@ The GATT Service is implemented by the :ref:`nrf_desktop_dev_descr`.
 Apart from the GATT Services, an nRF Desktop peripheral device must enable and configure the following application modules:
 
 * :ref:`nrf_desktop_ble_adv` - Controls the Bluetooth advertising.
-* :ref:`nrf_desktop_ble_latency` - Keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is used or when either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` receives an update image.
+* :ref:`nrf_desktop_ble_latency` - Controls data exchange latencies and power consumption.
+  It keeps the connection latency low when the :ref:`nrf_desktop_config_channel` is used or when either the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` receives an update image.
   This is done to ensure quick data transfer.
+  It also handles HID Shorter Connection Intervals (SCI) mode change requests when the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled.
 
 Optionally, you can also enable the following module:
 

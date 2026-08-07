@@ -20,6 +20,11 @@ menuconfig DESKTOP_BLE_LATENCY_ENABLE
 
 if DESKTOP_BLE_LATENCY_ENABLE
 
+config DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
+	bool
+	depends on DESKTOP_HIDS_SCI_ENABLE
+	default y
+
 config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 	int "Security fail timeout [s]"
 	default 10
