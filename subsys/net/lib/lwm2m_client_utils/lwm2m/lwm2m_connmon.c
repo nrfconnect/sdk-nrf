@@ -43,9 +43,9 @@ static struct k_work modem_data_work;
 static struct k_work modem_signal_work;
 static int16_t modem_rsrp;
 
-static char *ip_addr[IP_ADDR_LENGTH];
-static char *apn[APN_LENGTH];
-static char *fw_version[FW_VERSION_LENGTH];
+static char ip_addr[IP_ADDR_LENGTH];
+static char apn[APN_LENGTH];
+static char fw_version[FW_VERSION_LENGTH];
 
 /* LTE-FDD bearer & NB-IoT bearer */
 #define LTE_FDD_BEARER 6U
