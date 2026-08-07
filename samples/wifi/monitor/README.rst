@@ -119,6 +119,17 @@ Testing
       [00:00:05.492,980] <inf> monitor:       Null Count: 0
       [00:00:05.493,011] <inf> monitor:       QoS Null Count: 0
 
+Changing the channel at runtime
+*******************************
+
+The sample enables the Wi-Fi shell, so you can change the monitored channel at runtime without rebuilding, using the ``wifi channel`` command:
+
+.. code-block:: console
+
+   uart:~$ wifi channel -i 1 -b 2 -c 6
+
+The ``-b`` option selects the band (``2`` for 2.4 GHz, ``5`` for 5 GHz, and ``6`` for 6 GHz) and is required for channels that exist in multiple bands.
+
 Offline net capture
 *******************
 
