@@ -50,6 +50,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
@@ -74,6 +75,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
   sample.dfu.smp_svr.encryption.rsa:
@@ -86,6 +88,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -106,6 +109,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -125,6 +129,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -145,6 +150,7 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -161,6 +167,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     tags:
@@ -172,6 +179,7 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     tags:
       - signature
     extra_args:
@@ -182,6 +190,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     tags:
       - signature
     extra_args:
