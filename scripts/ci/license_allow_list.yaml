@@ -60,6 +60,7 @@ any: |
 # Allow different licenses from external sources
 LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
 Apache-2.0: |
+  ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
   ^nrf/.clang-format
@@ -95,6 +96,7 @@ MIT: |
   "^nrf/ext/"
   ^nrf/doc/_doxygen/doxygen-awesome.css
 BSD-3-CLAUSE: |
+  ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
