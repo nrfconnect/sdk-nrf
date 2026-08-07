@@ -519,7 +519,7 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* Added support for the nRF54LC10A SoC in the TF-M samples.
 
 Thread samples
 --------------
