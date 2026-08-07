@@ -71,7 +71,7 @@ PackageCopyrightText: NOASSERTION
 
 # File
 
-FileName: {{func.relative_path(file.file_path)}}
+FileName: {{func.spdx_file_name(file)}}
 SPDXID: {{file_refs[file.file_path]}}
 FileChecksum: SHA1: {{file.sha1}}
 {% if file.local_modifications -%}
