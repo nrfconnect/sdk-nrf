@@ -1,0 +1,36 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+#
+# Support building a modem_bypass combined with
+# radio_test application for nRF93M1 DK
+#
+
+if BOARD_NRF93M1DK_NRF54L15_CPUFLPR
+
+config SUPPORT_APPCORE
+	default y
+
+choice APPCORE
+	default APPCORE_RADIO_TEST
+
+config APPCORE_RADIO_TEST
+	bool "Radio test application"
+	depends on !VPR_LAUNCHER
+	help
+	  Build the radio_test application for the application core.
+
+endchoice
+
+config APPCORE_IMAGE_NAME
+	default "radio_test" if APPCORE_RADIO_TEST
+
+config APPCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/samples/peripheral/radio_test" if APPCORE_RADIO_TEST
+
+endif # BOARD_NRF93M1DK_NRF54L15_CPUFLPR
+
+source "share/sysbuild/Kconfig"
