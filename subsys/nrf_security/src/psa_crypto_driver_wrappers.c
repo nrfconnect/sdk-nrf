@@ -2524,6 +2524,18 @@ psa_driver_wrapper_key_derivation_output_key(psa_key_derivation_operation_t *ope
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
+psa_status_t
+psa_driver_wrapper_key_derivation_verify_key(psa_key_derivation_operation_t *operation,
+					     const psa_key_attributes_t *key_attributes,
+					     const uint8_t *key, size_t key_length)
+{
+	(void)operation;
+	(void)key_attributes;
+	(void)key;
+	(void)key_length;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
 psa_status_t psa_driver_wrapper_key_derivation_abort(psa_key_derivation_operation_t *operation)
 {
 	switch (operation->id) {
