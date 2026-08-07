@@ -655,7 +655,7 @@ uint32_t pulse_meas_pending(const struct device *dev)
 			    (NRF_DT_IRQ_CONNECT(GPIOTE_PHANDLE(inst, assert_gpios),                \
 						nrfx_gpiote_irq_handler,                           \
 						&GPIOTE_NRFX_INST_BY_NODE(                         \
-							GPIOTE_PHANDLE(inst, assert_gpios)));),)   \
+							GPIOTE_PHANDLE(inst, assert_gpios)));),()) \
 		return 0;                                                                          \
 	}                                                                                          \
 	DEVICE_DT_INST_DEFINE(inst, pulse_meas_##inst##_init, NULL, &drv_data_##inst,              \
