@@ -157,6 +157,12 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
 	case TFM_PLATFORM_IOCTL_MRAMC_SET_WEN_SERVICE:
 		return tfm_platform_hal_mramc_set_wen_service(in_vec);
 #endif
+#if CONFIG_NRF_WIFI_KMU
+	case TFM_PLATFORM_IOCTL_WIFI_KMU_WRITE_KEY_SERVICE:
+		return tfm_platform_hal_wifi_kmu_write_key_service(in_vec);
+	case TFM_PLATFORM_IOCTL_WIFI_KMU_ERASE_KEYS_SERVICE:
+		return tfm_platform_hal_wifi_kmu_erase_keys_service();
+#endif
 
 		/* Board specific IOCTL services */
 #if CONFIG_FW_INFO
