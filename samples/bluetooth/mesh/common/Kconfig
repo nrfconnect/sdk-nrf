@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config NCS_SAMPLE_MESH_COMMON_SMP_BT_DEDICATED_ADV_SET
+	bool "When enabled, create a separate BT ID and advertising set broadcasting SMP DFU availability"
+	depends on MCUMGR_TRANSPORT_BT
+	default n if BT_SMP
+	default y
