@@ -10,7 +10,7 @@ zephyr_library_sources(
   src/pcd.c
 )
 
-if(CONFIG_PCD_APP AND NOT CONFIG_PARTITION_MANAGER_ENABLED)
+if(CONFIG_PCD_APP)
   include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
   # Read s0 address from b0n image

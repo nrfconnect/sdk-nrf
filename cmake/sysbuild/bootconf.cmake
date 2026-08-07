@@ -8,12 +8,7 @@ include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 set(bootconf_hex ${CMAKE_BINARY_DIR}/bootconf.hex)
 set(bootconf_dependency)
 
-if(SB_CONFIG_PARTITION_MANAGER)
-  set(bootconf_size $<TARGET_PROPERTY:partition_manager,PM_B0_SIZE>)
-  set(bootconf_dependency ${APPLICATION_BINARY_DIR}/pm.config)
-else()
-  dt_partition_size(bootconf_size LABEL b0_partition TARGET b0 REQUIRED)
-endif()
+dt_partition_size(bootconf_size LABEL b0_partition TARGET b0 REQUIRED)
 
 # bootconf.hex is only created when there is b0_partition, which
 # indicates that b0 is used.
@@ -55,19 +50,5 @@ if(SB_CONFIG_MERGED_HEX_FILES)
   set(board_target)
 endif()
 
-if(SB_CONFIG_PARTITION_MANAGER)
-  set_property(
-    GLOBAL PROPERTY
-    bootconf_PM_HEX_FILE
-    ${bootconf_hex}
-  )
-
-  set_property(
-    GLOBAL PROPERTY
-    bootconf_PM_TARGET
-    bootconf_target
-  )
-else()
-  # Add the bootconf with b0 as bootconf is supposed to protect it.
-  add_dependencies(b0 bootconf_target)
-endif()
+# Add the bootconf with b0 as bootconf is supposed to protect it.
+add_dependencies(b0 bootconf_target)

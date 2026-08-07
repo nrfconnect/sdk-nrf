@@ -549,7 +549,7 @@ nRF Desktop
 
 * Updated:
 
-  * The :ref:`nrf_desktop_dfu` to use :ref:`partition_manager` definitions for determining currently booted image slot at build time.
+  * The :ref:`nrf_desktop_dfu` to use partition_manager definitions for determining currently booted image slot at build time.
     The other image slot is used to store an application update image.
   * The :ref:`nrf_desktop_dfu_mcumgr` to use MCUmgr SMP command status callbacks (the :kconfig:option:`CONFIG_MCUMGR_SMP_COMMAND_STATUS_HOOKS` Kconfig option) instead of MCUmgr image and OS management callbacks.
   * The dependencies of the :ref:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK <config_desktop_app_options>` Kconfig option.
@@ -1057,7 +1057,7 @@ DFU libraries
   * Updated:
 
     * The :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM_USE_EXT_PARTITION` Kconfig option to be automatically enabled when ``nordic,pm-ext-flash`` is chosen in the devicetree.
-      See :ref:`partition_manager` for details.
+      See partition_manager for details.
     * Adapted to API changes in zcbor 0.8.x.
 
 * :ref:`lib_fmfu_fdev` library:

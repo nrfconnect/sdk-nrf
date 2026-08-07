@@ -9,8 +9,6 @@ Firmware patches in the external memory
 
 This guide explains the available options for having the nRF70 Series firmware patches reside in the external memory.
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 .. note::
    External memory refers to the memory that is outside the SoC, for example, an external flash memory chip, or external non-volatile memory (NVM) chip.
 

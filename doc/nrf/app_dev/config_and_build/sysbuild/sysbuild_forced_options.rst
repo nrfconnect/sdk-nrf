@@ -7,13 +7,9 @@ Sysbuild controls some Kconfig options in images that are part of a project.
 This means that these Kconfig options can only be changed from within sysbuild itself and cannot be changed directly in an image.
 Trying to change them directly in an image will result in the new value being overwritten with the sysbuild value.
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | Kconfig                                                                 | Sysbuild Kconfig                                                          | Images                  |
 +=========================================================================+===========================================================================+=========================+
-| :kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED`                      + :kconfig:option:`SB_CONFIG_PARTITION_MANAGER`                             | All                     |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_BUILD_OUTPUT_BIN`                               + :kconfig:option:`SB_CONFIG_BUILD_OUTPUT_BIN`                              |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_BUILD_OUTPUT_HEX`                               + :kconfig:option:`SB_CONFIG_BUILD_OUTPUT_HEX`                              |                         |
@@ -78,10 +74,6 @@ Trying to change them directly in an image will result in the new value being ov
 | :kconfig:option:`CONFIG_SECURE_BOOT_STORAGE`                            +                                                                           |                         |
 +-------------------------------------------------------------------------+                                                                           |                         |
 | :kconfig:option:`CONFIG_SECURE_BOOT_CRYPTO`                             +                                                                           |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`            + :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY`           |                         |
-+-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
-| :kconfig:option:`CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`              + :kconfig:option:`SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK`             |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
 | :kconfig:option:`CONFIG_FW_INFO`                                        + :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE`                           |                         |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+

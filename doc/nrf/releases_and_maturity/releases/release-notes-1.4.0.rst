@@ -476,7 +476,7 @@ The following list summarizes the most important changes inherited from upstream
 Build system
 ============
 
-* Updated :ref:`partition_manager`:
+* Updated partition_manager:
 
   * Added RAM partitioning through the partition manager.
   * Added the ``ncs_add_partition_manager_config`` function that allows out-of-tree users to specify partition manager configuration files.
@@ -522,7 +522,7 @@ Additions specific to |NCS|
 
 The following list contains |NCS| specific additions:
 
-* Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
+* Added support for the |NCS|'s partition_manager, which can be used for flash partitioning.
 * Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the BSD library:
 
   * AF_LTE

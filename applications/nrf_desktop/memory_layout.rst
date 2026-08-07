@@ -26,7 +26,7 @@ The memory layout is defined through one of the following methods:
 * `Memory layout in Partition Manager`_
 
 By default, a Zephyr-based application defines the memory layout in the DTS.
-If enabled, the :ref:`partition_manager` defines a new memory layout that is used instead of the memory layout defined in the DTS.
+If enabled, the ``deprecated_partition_manager`` defines a new memory layout that is used instead of the memory layout defined in the DTS.
 You can use the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` sysbuild Kconfig option to enable Partition Manager in the current build.
 
 .. note::
@@ -88,8 +88,6 @@ The memory map is defined in DTS (see :file:`memory_map_mcuboot_qspi.dtsi`), wit
 Memory layout in Partition Manager
 **********************************
 
-.. include:: /includes/pm_deprecation.txt
-
 When the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` sysbuild Kconfig option is enabled, the nRF Desktop application uses the Partition Manager for the memory layout configuration.
 The nRF Desktop configurations use static configurations of partitions to ensure that the partition layout does not change between builds.
 
@@ -97,7 +95,7 @@ Add the :file:`pm_static_${FILE_SUFFIX}.yml` file to the project's board configu
 For example, to define the static partition layout for the ``nrf52840dk/nrf52840`` board and ``release`` build type, you would need to add the :file:`pm_static_release.yml` file into the :file:`applications/nrf_desktop/configuration/nrf52840dk_nrf52840` directory.
 
 For an example of configuration, see the static partition maps defined for the existing configuration that uses a given DFU method.
-For more information about how to configure the non-volatile memory layout using the Partition Manager, see :ref:`partition_manager`.
+For more information about how to configure the non-volatile memory layout using the Partition Manager, see ``deprecated_partition_manager``.
 
 External flash configuration
 ============================
@@ -105,7 +103,3 @@ External flash configuration
 Devices with smaller non-volatile memory size can use MCUboot bootloader in swap mode with secondary image partition located on an external non-volatile memory.
 For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 DK.
 This configuration uses the ``MX25R64`` external flash that is part of the development kit.
-
-Up to the |NCS| v3.3.0 release, Partition Manager was used to control the memory partition layout for this application configuration.
-The :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` sysbuild Kconfig option was used next to the proper static Partition Manager configuration to place the MCUboot secondary image slot in external flash.
-For detailed information, see the :ref:`partition_manager` documentation.

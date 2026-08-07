@@ -26,17 +26,12 @@
 #include <zephyr/net/coap.h>
 #include <modem/modem_info.h>
 #include <zephyr/sys/reboot.h>
+#include <zephyr/storage/flash_map.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(lwm2m_firmware, CONFIG_LWM2M_CLIENT_UTILS_LOG_LEVEL);
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
-#define MCUBOOT_PRIMARY_ID PM_MCUBOOT_PRIMARY_ID
-#else /* !CONFIG_PARTITION_MANAGER_ENABLED */
-#include <zephyr/storage/flash_map.h>
 #define MCUBOOT_PRIMARY_ID PARTITION_ID(slot0_partition)
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #define BYTE_PROGRESS_STEP (1024 * 10)
 

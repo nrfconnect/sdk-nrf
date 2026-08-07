@@ -891,7 +891,7 @@ Other libraries
 * Added:
 
   * Documentation for the :ref:`lib_adp536x` library.
-  * Documentation for the :ref:`lib_flash_map_pm` library.
+  * Documentation for the ``lib_flash_map_pm`` library.
   * :ref:`lib_identity_key` library.
 
 * :ref:`lib_flash_patch` library:
@@ -976,7 +976,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 
   * Added a SHA-256 hash of the Fast Pair provisioning data to ensure its integrity.
 
-* :ref:`partition_manager`:
+* partition_manager:
 
   * Added:
 

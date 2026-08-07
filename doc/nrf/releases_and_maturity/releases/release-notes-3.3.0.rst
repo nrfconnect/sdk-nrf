@@ -488,7 +488,7 @@ nRF Desktop
   * The memory map for the nRF54H20 SoC to include a secure storage partition and adjust the size of existing partitions.
   * The dependencies of the :ref:`nrf_desktop_constlat` to allow using it for nRF54L Series SoC.
     The :option:`CONFIG_DESKTOP_CONSTLAT_ENABLE` Kconfig option no longer depends on :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` being disabled.
-  * The nRF Desktop application configurations for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, and ``nrf52833dk/nrf52833`` board targets to use the DTS-based memory layout instead of the :ref:`partition_manager`.
+  * The nRF Desktop application configurations for the ``nrf54l15dk/nrf54l15/cpuapp``, ``nrf54l15dk/nrf54l05/cpuapp``, and ``nrf52833dk/nrf52833`` board targets to use the DTS-based memory layout instead of the partition_manager.
     The DTS memory layout is defined in the :file:`memory_map.dtsi` and similar files placed in the project's board configuration directory.
     These files are included by the DTS overlay files of the application.
     The old Partition Manager configurations are still supported.
@@ -637,7 +637,7 @@ Bluetooth Fast Pair samples
 * Updated:
 
   * The Fast Pair samples to use the new :file:`<bluetooth/fast_pair/...>` include paths.
-  * The Fast Pair samples to use devicetree (DTS) for defining NVM partitions instead of the deprecated :ref:`partition_manager`.
+  * The Fast Pair samples to use devicetree (DTS) for defining NVM partitions instead of the deprecated partition_manager.
     The Partition Manager configuration is removed from the samples except for a few selected board targets that are used to validate the correctness of the deprecated Partition Manager solution.
 
     The DTS migration has not been completed for the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
@@ -956,7 +956,7 @@ Bluetooth libraries and services
     * :ref:`ug_bt_fast_pair_fhn_pf` support for the Find Hub Network (FHN) extension, enabling distance measurement for FHN accessories using supported ranging technologies.
       The feature is controlled by the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_PF` Kconfig option and is experimental.
     * Support for the Fast Pair partition definition using devicetree (DTS) for all supported board targets.
-      Defining the Fast Pair partition using DTS is the recommended approach and replaces the deprecated :ref:`partition_manager` approach.
+      Defining the Fast Pair partition using DTS is the recommended approach and replaces the deprecated partition_manager approach.
 
   * Updated:
 
@@ -1140,7 +1140,7 @@ Google Fast Pair integration
 * Updated:
 
   * The :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to reflect the Find My Device Network (FMDN) extension rename to Find Hub Network (FHN), aligning with the updated Google specification.
-  * The :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to recommend devicetree (DTS) as the primary partition definition method and to deprecate the :ref:`partition_manager` approach.
+  * The :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to recommend devicetree (DTS) as the primary partition definition method and to deprecate the partition_manager approach.
     The only exception from these migration recommendations in the context of the Fast Pair sample support is the nRF53 Series DFU configuration with MCUboot in the overwrite mode (for example, the ``nrf5340dk/nrf5340/cpuapp`` board target in the :ref:`fast_pair_locator_tag` sample).
     This particular configuration is not yet deprecated, as the DTS alternative is not yet available.
 

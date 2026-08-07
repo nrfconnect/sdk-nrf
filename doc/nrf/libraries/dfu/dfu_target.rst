@@ -150,42 +150,30 @@ Enable the following options:
 
 The MCUboot target will then use the :ref:`zephyr:settings_api` subsystem in Zephyr to store the current progress used by the :c:func:`dfu_target_write` function across power failures and device resets.
 
-.. include:: ../../includes/pm_deprecation.txt
-
 Using a dedicated partition for full modem upgrades
 ===================================================
 
-Configure a dedicated storage partition for full modem firmware updates:
+To configure a dedicated storage partition for full modem firmware updates, define a fixed partition in devicetree and set the ``nordic,fmfu_storage_partition`` chosen property to point to the defined partition:
 
-* If you enable Partition Manager (:kconfig:option:`CONFIG_PARTITION_MANAGER_ENABLED`):
+.. code-block:: devicetree
 
-  Set the chosen node ``nordic,pm-ext-flash`` to the external flash device in devicetree.
-  The Partition Manager automatically creates the ``fmfu_storage`` partition in the external flash region.
-  See :ref:`partition_manager` for details.
+   / {
+   chosen {
+      nordic,fmfu_storage_partition = &fmfu_storage_partition;
+   };
+   };
 
-* If you do not enable Partition Manager (DTS-based partitioning):
+   &your_external_flash {
+   partitions {
+      compatible = "fixed-partitions";
+      #address-cells = <1>;
+      #size-cells = <1>;
 
-  Define a fixed partition in devicetree and set the ``nordic,fmfu_storage_partition`` chosen property to point to the defined partition:
-
-  .. code-block:: devicetree
-
-    / {
-      chosen {
-        nordic,fmfu_storage_partition = &fmfu_storage_partition;
+      fmfu_storage_partition: partition@0 {
+         reg = <0x0 0x400000>;
       };
-    };
-
-    &your_external_flash {
-      partitions {
-        compatible = "fixed-partitions";
-        #address-cells = <1>;
-        #size-cells = <1>;
-
-        fmfu_storage_partition: partition@0 {
-          reg = <0x0 0x400000>;
-        };
-      };
-    };
+   };
+   };
 
 
 API documentation

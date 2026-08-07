@@ -1229,7 +1229,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* :ref:`partition_manager`:
+* partition_manager:
 
   * Updated by changing the size of the span partitions to include the alignment partitions (``EMPTY_x``) appearing between other partitions, but not alignment partitions at the beginning or end of the span partition.
     The size of the span partitions now reflects the memory space taken from the start of the first of its elements to the end of the last, not just the sum of the sizes of the included partitions.

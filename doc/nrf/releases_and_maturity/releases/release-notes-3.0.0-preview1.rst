@@ -62,7 +62,7 @@ Developing with nRF70 Series
 
 * :ref:`ug_nrf70_developing_fw_patch_ext_flash`
 
-   * Removed support for storing the nRF70 firmware patches in external flash without the :ref:`partition_manager`.
+   * Removed support for storing the nRF70 firmware patches in external flash without the partition_manager.
 
 
 Working with nRF54H Series
@@ -560,7 +560,7 @@ Wi-Fi samples
 
 * :ref:`wifi_shell_sample` sample:
 
-  * Modified support for storing the nRF70 firmware patches in external flash using the :ref:`partition_manager`.
+  * Modified support for storing the nRF70 firmware patches in external flash using the partition_manager.
 
 Other samples
 -------------
@@ -787,7 +787,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :zephyr:board:`nrf54h20dk`.
+* Added instructions on how to provision the Fast Pair data onto devices without the partition_manager support, specifically for the :zephyr:board:`nrf54h20dk`.
 
 Edge Impulse integration
 ------------------------

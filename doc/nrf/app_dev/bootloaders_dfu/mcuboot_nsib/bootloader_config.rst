@@ -65,4 +65,3 @@ Customizing partitions
 **********************
 
 With the Partition Manager, you can further customize it if a dynamic partition map has been set.
-For more information, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
