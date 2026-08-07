@@ -969,6 +969,19 @@ struct nrf_wifi_umac_event_debug_stats {
 enum umac_fail_events {
 	UMAC_MEM_ALLOC_FAIL = 0,
 };
+
+enum lmac_fail_events {
+	RX_INT_MEM_UNDERRUN = 0,
+	DATA_PATH_STUCK,
+	WIFI_REQ_TO_PTA_FAIL,
+	HW_DATA_PATH_DEACTIVATE_FAIL,
+	HW_DATA_PATH_ACTIVATE_FAIL,
+	CAPTURE_DMA_NOT_FINISHING,
+	FEED_DMA_NOT_FINISHING,
+	RF_PLL_RECOVERY_FAILED,
+	DEVICE_IS_ACTIVE_FOR_TOO_LONG
+};
+
 /**
  * @brief This structure defines the event used to send error statistics to the Host.
  *
@@ -978,7 +991,7 @@ struct nrf_wifi_umac_event_error_stats {
 	struct nrf_wifi_sys_head sys_head;
 	/** Statistics type &enum rpu_stats_type */
 	signed int stats_type;
-	/** Error code, see &enum LMAC_ERROR_ID or &enum UMAC_ERROR_ID */
+	/** Error code, see &enum lmac_fail_events or &enum umac_fail_events */
 	unsigned int status_code;
 } __NRF_WIFI_PKD;
 
