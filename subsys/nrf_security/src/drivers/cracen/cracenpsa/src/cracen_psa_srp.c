@@ -145,7 +145,7 @@ psa_status_t cracen_srp_set_role(cracen_srp_operation_t *operation, const psa_pa
 		/* For the server role the Oberon implementation supports setting
 		 * the x value instead of v. Add this for compatibility between implementations.
 		 */
-		if (constant_memcmp(operation->v, 0, CRACEN_SRP_FIELD_SIZE) == 0) {
+		if (constant_memcmp_is_zero(operation->v, CRACEN_SRP_FIELD_SIZE)) {
 			status = calculate_v_from_k(operation->x, CRACEN_SRP_HASH_LENGTH,
 						    operation->v, CRACEN_SRP_FIELD_SIZE);
 			if (status != PSA_SUCCESS) {

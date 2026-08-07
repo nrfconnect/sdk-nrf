@@ -224,15 +224,20 @@ static psa_status_t generate_key_for_kmu(const psa_key_attributes_t *attributes,
 	} else if (key_type == PSA_KEY_TYPE_AES || key_type == PSA_KEY_TYPE_HMAC ||
 		   key_type == PSA_KEY_TYPE_CHACHA20) {
 		status = cracen_get_random(NULL, key, key_size);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
 	} else {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	return cracen_import_key(attributes, key, key_size, key_buffer, key_buffer_size,
-				 key_buffer_length, &key_bits);
+	if (status != PSA_SUCCESS) {
+		goto cleanup;
+	}
+
+	status = cracen_import_key(attributes, key, key_size, key_buffer, key_buffer_size,
+				   key_buffer_length, &key_bits);
+
+cleanup:
+	safe_memzero(key, sizeof(key));
+	return status;
 }
 
 psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t *key_buffer,
@@ -381,6 +386,9 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	    ecc_fam == PSA_ECC_FAMILY_MONTGOMERY ||
 	    ecc_fam == PSA_ECC_FAMILY_SECP_R1 ||
 	    key_type == PSA_KEY_TYPE_HMAC) {
+		if (key_buffer_size > data_size) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
+		}
 		memcpy(data, key_buffer, key_buffer_size);
 		*data_length = key_buffer_size;
 		return PSA_SUCCESS;

@@ -267,6 +267,7 @@ int sx_hash_status(struct sxhash *hash_ctx)
 #if CONFIG_DCACHE
 	if (status != SX_ERR_HW_PROCESSING) {
 		sys_cache_data_invd_range((void *)&hash_ctx->extramem, sizeof(hash_ctx->extramem));
+		sx_cmdma_invalidate_output(&hash_ctx->dma);
 	}
 #endif
 	return status;
