@@ -19,7 +19,7 @@
 #include "util.h"
 
 #define RADIO_CMD_STATUS_TIMEOUT 5000
-#define RX_CAP_BYTES_PER_SAMPLE 4
+#define RX_CAP_BYTES_PER_SAMPLE 3
 
 static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,

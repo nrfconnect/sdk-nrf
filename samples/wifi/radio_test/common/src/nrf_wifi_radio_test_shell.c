@@ -30,11 +30,9 @@ struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
 #ifdef CONFIG_NRF71_RADIO_TEST
 #define rt_mem_alloc(size) k_malloc(size)
 #define rt_mem_free(ptr) k_free(ptr)
-#define RX_CAP_BYTES_PER_SAMPLE 4
 #else
 #define rt_mem_alloc(size) nrf_wifi_osal_mem_zalloc(size)
 #define rt_mem_free(ptr) nrf_wifi_osal_mem_free(ptr)
-#define RX_CAP_BYTES_PER_SAMPLE 3
 #endif
 
 static bool check_test_in_prog(const struct shell *shell)
@@ -1422,6 +1420,20 @@ static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
 }
 #endif /* CONFIG_NRF70_SR_COEX */
 
+static void rx_cap_print_iq_sample(const struct shell *shell,
+				   const struct rx_cap_iq_sample *sample)
+{
+	const uint8_t *bytes = (const uint8_t *)sample;
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "%02X%02X%02X ",
+		      bytes[2],
+		      bytes[1],
+		      bytes[0]);
+}
+
+
 static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 				      size_t argc,
 				      const char *argv[])
@@ -1508,19 +1520,18 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 	}
 
 	if (capture_status == 0) {
+		const struct rx_cap_iq_sample *samples =
+			(const struct rx_cap_iq_sample *)rx_cap_buf;
+
 		shell_fprintf(shell,
 			      SHELL_INFO,
 			      "\n************* RX capture data ***********\n");
 
-		for (i = 0; i < (ctx->conf_params.capture_length/SAMPLES_PER_LINE); i++) {
+		for (i = 0; i < (ctx->conf_params.capture_length / SAMPLES_PER_LINE); i++) {
 			for (int j = 0; j < SAMPLES_PER_LINE; j++) {
-				shell_fprintf(shell,
-					      SHELL_INFO,
-					      "%02X%02X%02X ",
-					      rx_cap_buf[i*BYTES_PER_LINE + 2 + j*BYTES_PER_SAMPLE],
-					      rx_cap_buf[i*BYTES_PER_LINE + 1 + j*BYTES_PER_SAMPLE],
-					      rx_cap_buf[i*BYTES_PER_LINE + 0 +
-								j*BYTES_PER_SAMPLE]);
+				unsigned int idx = (i * SAMPLES_PER_LINE) + j;
+
+				rx_cap_print_iq_sample(shell, &samples[idx]);
 			}
 
 			shell_fprintf(shell,
