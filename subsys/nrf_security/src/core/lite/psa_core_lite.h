@@ -91,17 +91,17 @@
 /* Macros to verify configuration */
 
 #if CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE == 0 && \
-    defined(CONFIG_PSA_CORE_LITE_HAS_VERIFY_SIGNATURE)
+    CONFIG_PSA_CORE_LITE_HAS_VERIFY_SIGNATURE
 #error "No valid algorithm for signature validation"
 #endif
 
 #if CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE == 0 && \
-    defined(PSA_WANT_ALG_CTR)
+    PSA_WANT_ALG_CTR
 #error "FW encryption requires either AES-256 or AES-128 being enabled"
 #endif
 
 #if CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE == 0 && \
-    defined(PSA_WANT_ALG_ECDH)
+    PSA_WANT_ALG_ECDH
 #error "No valid algorithm for key agreement"
 #endif
 

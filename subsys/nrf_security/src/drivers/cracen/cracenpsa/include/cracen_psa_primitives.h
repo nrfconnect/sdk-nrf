@@ -37,8 +37,8 @@
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/hashdefs.h>
 
-#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
-#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+#if PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
+#if PSA_NEED_CRACEN_CHACHA20_POLY1305
 #include "poly1305_ext.h"
 #endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
 #endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
@@ -48,7 +48,7 @@
 
 #define SX_BLKCIPHER_CHACHA20_BLK_SZ (64U)
 
-#if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
+#if PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20
 /** Maximum block cipher block size.
  *
  * ChaCha20 has a 512-bit block size.
@@ -61,7 +61,7 @@
 #define CRACEN_MAX_AES_KEY_SIZE (32u)
 #define CRACEN_MAX_AEAD_BLOCK_SIZE (64u)
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+#if PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC
 #define CRACEN_MAC_CTR_MAX_KEY_SIZE (128u)
 #else
 #define CRACEN_MAC_CTR_MAX_KEY_SIZE CRACEN_MAX_AES_KEY_SIZE
@@ -335,8 +335,8 @@ struct cracen_sw_gcm_context_s {
 };
 typedef struct cracen_sw_gcm_context_s cracen_sw_gcm_context_t;
 
-#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
-#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+#if PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
+#if PSA_NEED_CRACEN_CHACHA20_POLY1305
 /** Software ChaCha20-Poly1305 context for CRACEN software implementations. */
 struct cracen_sw_chacha20_poly1305_context_s {
 	uint8_t ctr[CRACEN_CHACHA20_COUNTER_SIZE]; /* Counter */
@@ -368,18 +368,18 @@ struct cracen_aead_operation {
 	enum cracen_context_state context_state;
 	bool ad_finished;
 	struct sxaead ctx;
-#if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS)
-#if defined(PSA_NEED_CRACEN_CCM_AES)
+#if PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS
+#if PSA_NEED_CRACEN_CCM_AES
 	cracen_sw_ccm_context_t sw_ccm_ctx;
 #endif /* PSA_NEED_CRACEN_CCM_AES */
 #endif /* PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS */
 
-#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
-#if defined(PSA_NEED_CRACEN_GCM_AES)
+#if PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
+#if PSA_NEED_CRACEN_GCM_AES
 	cracen_sw_gcm_context_t sw_gcm_ctx;
 #endif /* PSA_NEED_CRACEN_GCM_AES */
 
-#if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
+#if PSA_NEED_CRACEN_CHACHA20_POLY1305
 	cracen_sw_chacha20_poly1305_context_t sw_chacha_poly_ctx;
 #endif /* PSA_NEED_CRACEN_CHACHA20_POLY1305 */
 #endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
@@ -411,19 +411,19 @@ struct cracen_mac_operation_s {
 	/* Flag indicating saved state exists that needs to be resumed */
 	bool has_saved_state;
 	union {
-#if defined(PSA_NEED_CRACEN_HMAC)
+#if PSA_NEED_CRACEN_HMAC
 		struct {
 			struct sxhash hashctx;
 			uint8_t workmem[SX_HASH_MAX_ENABLED_BLOCK_SIZE +
 					PSA_HASH_MAX_SIZE];
 		} hmac;
 #endif /* PSA_NEED_CRACEN_HMAC */
-#if defined(PSA_NEED_CRACEN_CMAC)
+#if PSA_NEED_CRACEN_CMAC
 		struct {
 			struct sxmac ctx;
 			struct sxkeyref keyref;
 			uint8_t key_buffer[CRACEN_MAX_AES_KEY_SIZE];
-#if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
+#if PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
 			cracen_cmac_context_t sw_ctx;
 			struct sxblkcipher cipher;
 #endif /* PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS */
@@ -446,7 +446,7 @@ struct cracen_key_derivation_operation {
 		cracen_hash_operation_t hash_op;
 	};
 	union {
-#if defined(PSA_NEED_CRACEN_HKDF)
+#if PSA_NEED_CRACEN_HKDF
 		struct {
 			uint8_t blk_counter;
 			uint8_t prk[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
@@ -456,7 +456,7 @@ struct cracen_key_derivation_operation {
 			bool info_set;
 		} hkdf;
 #endif /* PSA_NEED_CRACEN_HKDF */
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if PSA_NEED_CRACEN_PBKDF2_HMAC
 		struct {
 			uint64_t input_cost;
 			uint8_t password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
@@ -468,10 +468,10 @@ struct cracen_key_derivation_operation {
 			uint8_t tj[PSA_MAC_MAX_SIZE];
 		} pbkdf2;
 #endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
-#if	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) || \
-	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+#if	PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC || \
+	PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC
 		struct {
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+#if PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC
 			uint8_t K_0[SX_BLKCIPHER_AES_BLK_SZ];
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC */
 			psa_key_lifetime_t key_lifetime;
@@ -489,12 +489,12 @@ struct cracen_key_derivation_operation {
 			uint32_t L;
 		} mac_ctr;
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC || PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
-#if defined(PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS)
+#if PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS
 		struct {
 			uint8_t key[32];
 		} ecjpake_to_pms;
 #endif /* PSA_NEED_CRACEN_TLS12_ECJPAKE_TO_PMS */
-#if defined(PSA_NEED_CRACEN_TLS12_PRF) || defined(PSA_NEED_CRACEN_TLS12_PSK_TO_MS)
+#if PSA_NEED_CRACEN_TLS12_PRF || PSA_NEED_CRACEN_TLS12_PSK_TO_MS
 		struct {
 			/* May contain secret, length of secret as uint16be, other secret and
 			 * other secret length as uint16be.

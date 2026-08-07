@@ -47,7 +47,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
  * Will be modified after this call
  * @param[in] input_byte The byte value to be written.
  */
-#if !defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+#if !CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND
 static inline void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
 {
 	volatile uint8_t *d = (volatile uint8_t *)dst;
@@ -67,7 +67,7 @@ void sx_wrpkmem_byte(void *dst, uint8_t input_byte);
  * @param[in] src Source of read operation
  * @param[in] sz The number of bytes to read from src to dst
  */
-#if !defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+#if !CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND
 static inline void sx_rdpkmem(void *dst, const void *src, size_t sz)
 {
 	memcpy(dst, src, sz);

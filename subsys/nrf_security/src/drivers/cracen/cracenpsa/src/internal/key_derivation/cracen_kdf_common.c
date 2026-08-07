@@ -21,7 +21,7 @@ psa_status_t cracen_kdf_start_mac_operation(cracen_key_derivation_operation_t *o
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_HASH);
 	psa_set_key_bits(&attributes, PSA_BYTES_TO_BITS(key_buffer_size));
 
-#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC)
+#if PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC
 	if (operation->alg == PSA_ALG_SP800_108_COUNTER_CMAC) {
 		psa_set_key_id(&attributes, operation->mac_ctr.key_id);
 		psa_set_key_lifetime(&attributes, operation->mac_ctr.key_lifetime);

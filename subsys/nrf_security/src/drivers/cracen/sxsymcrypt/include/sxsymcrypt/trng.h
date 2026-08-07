@@ -207,7 +207,7 @@ int sx_trng_restore_state(struct sx_trng *ctx, const struct sx_trng_config *conf
  */
 void sx_trng_restart(void);
 
-#if defined(CONFIG_CRACEN_HW_VERSION_LITE)
+#if CONFIG_CRACEN_HW_VERSION_LITE
 /** Configure CRACEN Lite TRNG test threshold registers
  *
  * This function configures the TRNG REPEATTHRESHOLD and PROPTHRESHOLD registers

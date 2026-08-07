@@ -26,7 +26,7 @@
 
 #define NOT_ENABLED_CURVE	(0)
 
-#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1)
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1
 static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -65,7 +65,7 @@ static psa_status_t get_sx_brainpool_curve(size_t curve_bits, const struct sx_pk
 }
 #endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_BRAINPOOL_P_R1 */
 
-#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1)
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1
 static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -100,7 +100,7 @@ static psa_status_t get_sx_secp_r1_curve(size_t curve_bits, const struct sx_pk_e
 }
 #endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_R1 */
 
-#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1)
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1
 static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -118,7 +118,7 @@ static psa_status_t get_sx_secp_k1_curve(size_t curve_bits, const struct sx_pk_e
 }
 #endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_SECP_K1 */
 
-#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY
 static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;
@@ -145,7 +145,7 @@ static psa_status_t get_sx_montgomery_curve(size_t curve_bits, const struct sx_p
 }
 #endif /* PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY */
 
-#if defined(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)
+#if PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS
 static psa_status_t get_sx_edwards_curve(size_t curve_bits, const struct sx_pk_ecurve **sicurve)
 {
 	const struct sx_pk_ecurve *selected_curve = NOT_ENABLED_CURVE;

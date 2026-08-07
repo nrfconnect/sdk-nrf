@@ -18,7 +18,7 @@
 #include <silexpk/core.h>
 #include <nrfx_kmu.h>
 
-#if !defined(CONFIG_BUILD_WITH_TFM)
+#if !CONFIG_BUILD_WITH_TFM
 #define LOG_ERR_MSG(msg) LOG_ERR(msg)
 #define LOG_INF_MSG(msg) LOG_INF(msg)
 #define LOG_DBG_MSG(msg) LOG_DBG(msg)
@@ -163,14 +163,14 @@ int cracen_init(void)
 		}
 	}
 
-#if defined(CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT)
+#if CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	status = cracen_provision_prot_ram_inv_slots();
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 #endif /* CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT */
 
-#if defined(CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
+#if CONFIG_PSA_NEED_CRACEN_KMU_DRIVER
 	status = cracen_push_prot_ram_inv_slots();
 #endif
 

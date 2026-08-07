@@ -9,7 +9,7 @@
 #include <zephyr/toolchain.h>
 #include <zephyr/sys/util.h>
 
-#if !defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
+#if !CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND
 
 #define PTR_ALIGNMENT(ptr, type)	(((uintptr_t)ptr) & (sizeof(type) - 1))
 #define IS_NATURAL_ALIGNED(ptr, type)	!PTR_ALIGNMENT(ptr, type)

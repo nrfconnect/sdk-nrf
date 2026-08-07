@@ -31,19 +31,19 @@
 /* Include the context structure definitions for those drivers that were
  * declared during the autogeneration process.
  */
-#if defined(PSA_NEED_CC3XX_CIPHER_DRIVER) || defined(PSA_NEED_CC3XX_HASH_DRIVER)
+#if PSA_NEED_CC3XX_CIPHER_DRIVER || PSA_NEED_CC3XX_HASH_DRIVER
 #include "cc3xx_crypto_primitives.h"
-#elif defined(PSA_CRYPTO_DRIVER_CRACEN)
+#elif PSA_CRYPTO_DRIVER_CRACEN
 #include "cracen_psa_primitives.h"
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
 
-#if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
+#if PSA_NEED_OBERON_CIPHER_DRIVER
 #include "oberon_cipher.h"
 #endif
-#if defined(PSA_NEED_OBERON_HASH_DRIVER)
+#if PSA_NEED_OBERON_HASH_DRIVER
 #include "oberon_hash.h"
 #endif
-#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+#if PSA_NEED_OBERON_XOF_DRIVER
 #include "oberon_xof.h"
 #endif
 
@@ -57,26 +57,26 @@
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(PSA_NEED_CC3XX_HASH_DRIVER)
+#if PSA_NEED_CC3XX_HASH_DRIVER
 	cc3xx_hash_operation_t cc3xx_driver_ctx;
 #endif
-#if defined(PSA_NEED_OBERON_HASH_DRIVER)
+#if PSA_NEED_OBERON_HASH_DRIVER
 	oberon_hash_operation_t oberon_driver_ctx;
 #endif
-#if defined(PSA_CRYPTO_DRIVER_CRACEN)
+#if PSA_CRYPTO_DRIVER_CRACEN
 	cracen_hash_operation_t cracen_driver_ctx;
 #endif
 } psa_driver_hash_context_t;
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(PSA_NEED_CC3XX_CIPHER_DRIVER)
+#if PSA_NEED_CC3XX_CIPHER_DRIVER
 	cc3xx_cipher_operation_t cc3xx_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
-#if defined(PSA_NEED_OBERON_CIPHER_DRIVER)
+#if PSA_NEED_OBERON_CIPHER_DRIVER
 	oberon_cipher_operation_t oberon_driver_ctx;
 #endif /* PSA_CRYPTO_DRIVER_CC3XX */
-#if defined(PSA_CRYPTO_DRIVER_CRACEN)
+#if PSA_CRYPTO_DRIVER_CRACEN
 	cracen_cipher_operation_t cracen_driver_ctx;
 #endif
 
@@ -84,10 +84,10 @@ typedef union {
 
 typedef union {
 	unsigned int dummy; /* Make sure this union is always non-empty */
-#if defined(PSA_NEED_OBERON_XOF_DRIVER)
+#if PSA_NEED_OBERON_XOF_DRIVER
 	oberon_xof_operation_t oberon_xof_ctx;
 #endif
-#if defined(PSA_NEED_CRACEN_XOF_DRIVER)
+#if PSA_NEED_CRACEN_XOF_DRIVER
 	cracen_xof_operation_t cracen_xof_ctx;
 #endif
 } psa_driver_xof_context_t;
