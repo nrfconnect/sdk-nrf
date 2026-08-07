@@ -361,7 +361,7 @@ Cellular samples
 Cryptography samples
 --------------------
 
-|no_changes_yet_note|
+* Added support for the nRF54LC10A SoC (with and without TF-M) in the crypto samples.
 
 Debug samples
 -------------
@@ -519,7 +519,7 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-|no_changes_yet_note|
+* Added support for the nRF54LC10A SoC in the TF-M samples.
 
 Thread samples
 --------------
