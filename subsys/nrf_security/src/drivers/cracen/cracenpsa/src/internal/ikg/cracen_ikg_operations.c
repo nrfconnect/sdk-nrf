@@ -46,6 +46,7 @@ static void digest2op(const uint8_t *digest, size_t sz, uint8_t *dst, size_t ops
 	if (opsz > sz) {
 		sx_clrpkmem(dst, opsz - sz);
 		dst += opsz - sz;
+		opsz = sz;
 	}
 	sx_wrpkmem(dst, digest, opsz);
 }
@@ -102,6 +103,9 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 	uint8_t workmem[digestsz];
 	struct cracen_signature internal_signature = {0};
 
+	if (digest_length > digestsz) {
+		return SX_ERR_TOO_BIG;
+	}
 	memcpy(workmem, digest, digest_length);
 
 	internal_signature.r = signature;
@@ -122,7 +126,7 @@ int cracen_ikg_sign_digest(int identity_key_index, const struct sxhashalg *hasha
 			return status;
 		}
 
-		digest2op(workmem, digestsz, inputs.h.addr, opsz);
+		digest2op(workmem, digest_length, inputs.h.addr, opsz);
 		sx_pk_run(&req);
 		status = sx_pk_wait(&req);
 
