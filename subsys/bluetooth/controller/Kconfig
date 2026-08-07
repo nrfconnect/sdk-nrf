@@ -720,6 +720,17 @@ config BT_CTLR_SDC_CS_T_PM_LEN_DEFAULT
 	default 20 if BT_CTLR_SDC_CS_T_PM_LEN_20_US
 	default 40 if BT_CTLR_SDC_CS_T_PM_LEN_40_US
 
+config BT_CTLR_SDC_CS_USE_LDO
+	bool "Use LDO voltage regulator in channel sounding"
+	depends on BT_CTLR_CHANNEL_SOUNDING
+	depends on SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP || \
+		   SOC_NRF54L15_CPUAPP || SOC_NRF54L10_CPUAPP || \
+		   SOC_NRF54L05_CPUAPP
+	select EXPERIMENTAL
+	help
+	  Use the LDO voltage regulator during Channel Sounding.
+	  This negatively impacts power consumption but may improve RF characteristics.
+
 config BT_CTLR_LE_PATH_LOSS_MONITORING
 	select BT_CTLR_LE_POWER_CONTROL
 
