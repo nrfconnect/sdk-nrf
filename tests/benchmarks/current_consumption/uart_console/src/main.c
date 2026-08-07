@@ -19,7 +19,7 @@ int main(void)
 #endif
 
 	while (1) {
-		printk("33 characters long string !!!!!!\n");
+		printk("83 characters long string !!!!!!#####!!!!!#####!!!!!#####!!!!!#####!!!!!#####!!!!!\n");
 		k_sleep(K_MSEC(SLEEP_TIME_MS));
 	}
 
