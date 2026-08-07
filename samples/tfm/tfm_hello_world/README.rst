@@ -1,13 +1,9 @@
 .. _tfm_hello_world:
 
-TF-M Hello World
-################
+.. ncs-sample::
+   :title: TF-M Hello World
 
-.. contents::
-   :local:
-   :depth: 2
-
-The TF-M Hello World sample is based on Hello World that demonstrates adding Trusted Firmware-M (TF-M) to an application.
+   The TF-M Hello World sample is based on Hello World that demonstrates adding Trusted Firmware-M (TF-M) to an application.
 
 Requirements
 ************

@@ -1,15 +1,11 @@
 .. _npm13xx_fuel_gauge:
 
-nPM1300 and nPM1304: Fuel gauge
-###############################
+.. ncs-sample::
+   :title: nPM1300 and nPM1304: Fuel gauge
 
-.. contents::
-   :local:
-   :depth: 2
+   The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ or  `nPM1304 <nPM1304 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
 
-The Fuel gauge sample demonstrates how to calculate the state of charge of a development kit battery using `nPM1300 <nPM1300 product website_>`_ or  `nPM1304 <nPM1304 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
-
-For more information about fuel gauging with the nPM1300 or nPM1304, see `Using the nPM1300 and nPM1304 Fuel Gauge`_.
+   For more information about fuel gauging with the nPM1300 or nPM1304, see `Using the nPM1300 and nPM1304 Fuel Gauge`_.
 
 Requirements
 ************

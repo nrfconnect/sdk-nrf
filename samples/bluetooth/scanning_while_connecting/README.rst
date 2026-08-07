@@ -1,14 +1,10 @@
 .. _bt_scanning_while_connecting:
 
-Bluetooth: Scanning while connecting
-####################################
+.. ncs-sample::
+   :title: Bluetooth: Scanning while connecting
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample demonstrates how to reduce the time to establish connections to many devices, typically done when provisioning devices to a network.
-The total connection establishment time is reduced by scanning while connecting and by using the filter accept list.
+   The sample demonstrates how to reduce the time to establish connections to many devices, typically done when provisioning devices to a network.
+   The total connection establishment time is reduced by scanning while connecting and by using the filter accept list.
 
 Requirements
 ************

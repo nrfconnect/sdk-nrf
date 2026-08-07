@@ -1,13 +1,9 @@
 .. _bme68x:
 
-BME68X: Gas Sensor
-##################
+.. ncs-sample::
+   :title: BME68X: Gas Sensor
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample application sets up the BME68X gas sensor with the Bosch Sensor Environmental Cluster (BSEC) library.
+   This sample application sets up the BME68X gas sensor with the Bosch Sensor Environmental Cluster (BSEC) library.
 
 Requirements
 ************

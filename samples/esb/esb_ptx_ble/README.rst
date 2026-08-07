@@ -1,14 +1,10 @@
 .. _esb_ptx_ble:
 
-Enhanced ShockBurst: Transmitter with Bluetooth LE
-##################################################
+.. ncs-sample::
+   :title: Enhanced ShockBurst: Transmitter with Bluetooth LE
 
-.. contents::
-   :local:
-   :depth: 2
-
-The sample shows how to use the :ref:`ug_esb` protocol in transmitter mode concurrently with Bluetooth® LE protocol.
-It demonstrates how to configure the Enhanced ShockBurst protocol to transmit packets while simultaneously running Bluetooth LE services.
+   The sample shows how to use the :ref:`ug_esb` protocol in transmitter mode concurrently with Bluetooth® LE protocol.
+   It demonstrates how to configure the Enhanced ShockBurst protocol to transmit packets while simultaneously running Bluetooth LE services.
 
 Requirements
 ************

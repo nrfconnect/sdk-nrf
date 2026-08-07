@@ -1,16 +1,12 @@
 .. _firmware_loader_entrance:
 
-Firmware loader entrance
-########################
+.. ncs-sample::
+   :title: Firmware loader entrance
 
-.. contents::
-   :local:
-   :depth: 2
+   The Firmware loader entrance sample demonstrates how to enter the firmware loader application using MCUboot's firmware updater mode with boot mode entrance.
 
-The Firmware loader entrance sample demonstrates how to enter the firmware loader application using MCUboot's firmware updater mode with boot mode entrance.
-
-The sample shows how to configure an application that can trigger entry into a dedicated firmware loader application for performing firmware updates over Bluetooth® Low Energy using MCUmgr.
-This approach allows you to have a larger main application while keeping firmware update functionality separate in a dedicated loader application.
+   The sample shows how to configure an application that can trigger entry into a dedicated firmware loader application for performing firmware updates over Bluetooth® Low Energy using MCUmgr.
+   This approach allows you to have a larger main application while keeping firmware update functionality separate in a dedicated loader application.
 
 Requirements
 ************

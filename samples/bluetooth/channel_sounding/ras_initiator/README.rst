@@ -1,14 +1,10 @@
 .. _channel_sounding_ras_initiator:
 
-Bluetooth: Channel Sounding Initiator with Ranging Requestor
-############################################################
+.. ncs-sample::
+   :title: Bluetooth: Channel Sounding Initiator with Ranging Requestor
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the ranging service to request ranging data from a server.
-Distance estimates are then computed from the ranging data and logged to the terminal.
+   This sample demonstrates how to use the ranging service to request ranging data from a server.
+   Distance estimates are then computed from the ranging data and logged to the terminal.
 
 Requirements
 ************

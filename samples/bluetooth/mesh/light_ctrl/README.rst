@@ -1,18 +1,14 @@
 .. _bluetooth_mesh_light_lc:
 
-Bluetooth Mesh NLC: Lightness Controller/Energy Monitor
-#######################################################
+.. ncs-sample::
+   :title: Bluetooth Mesh NLC: Lightness Controller/Energy Monitor
 
-.. contents::
-   :local:
-   :depth: 2
+   The Bluetooth® Mesh NLC Lightness Controller/Energy Monitor sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
 
-The Bluetooth® Mesh NLC Lightness Controller/Energy Monitor sample demonstrates how to set up a light control mesh server model application, and control a dimmable LED with Bluetooth Mesh using the :ref:`bt_mesh_onoff_readme`.
+   This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
 
-This sample demonstrates how to implement the following :ref:`ug_bt_mesh_nlc`:
-
-  * Basic Lightness Controller NLC Profile
-  * Energy Monitor NLC Profile
+     * Basic Lightness Controller NLC Profile
+     * Energy Monitor NLC Profile
 
 Requirements
 ************

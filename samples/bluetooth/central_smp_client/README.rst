@@ -1,18 +1,14 @@
 .. _bluetooth_central_dfu_smp:
 
-Bluetooth: Central SMP Client
-#############################
+.. ncs-sample::
+   :title: Bluetooth: Central SMP Client
 
-.. contents::
-   :local:
-   :depth: 2
+   The Central Simple Management Protocol (SMP) Client sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
+   The response, which is received as CBOR-encoded data, is decoded and printed.
 
-The Central Simple Management Protocol (SMP) Client sample demonstrates how to use the :ref:`dfu_smp_readme` to connect to an SMP Server and send a simple echo command.
-The response, which is received as CBOR-encoded data, is decoded and printed.
-
-.. note::
-   This sample does not provide the means to program a device using DFU.
-   It demonstrates the communication between SMP Client and SMP Server.
+   .. note::
+      This sample does not provide the means to program a device using DFU.
+      It demonstrates the communication between SMP Client and SMP Server.
 
 Requirements
 ************

@@ -1,14 +1,10 @@
 .. _record_launch_app:
 
-NFC: Launch App
-###############
+.. ncs-sample::
+   :title: NFC: Launch App
 
-.. contents::
-   :local:
-   :depth: 2
-
-The NFC Launch App sample shows how to use the NFC tag to launch an app on the polling smartphone.
-It uses the :ref:`lib_nfc_ndef` library.
+   The NFC Launch App sample shows how to use the NFC tag to launch an app on the polling smartphone.
+   It uses the :ref:`lib_nfc_ndef` library.
 
 Requirements
 ************

@@ -1,13 +1,9 @@
 .. _ble_shorter_conn_intervals:
 
-Bluetooth: Shorter Connection Intervals
-#######################################
+.. ncs-sample::
+   :title: Bluetooth: Shorter Connection Intervals
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to use the Bluetooth® Shorter Connection Intervals (SCI) feature to achieve the shortest connection intervals supported by the controller.
+   This sample demonstrates how to use the Bluetooth® Shorter Connection Intervals (SCI) feature to achieve the shortest connection intervals supported by the controller.
 
 Requirements
 ************

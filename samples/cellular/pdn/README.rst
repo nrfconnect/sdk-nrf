@@ -1,13 +1,9 @@
 .. _pdn_sample:
 
-Cellular: PDN
-#############
+.. ncs-sample::
+   :title: Cellular: PDN
 
-.. contents::
-   :local:
-   :depth: 2
-
-The PDN sample demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the PDN functionality in the :ref:`lte_lc_readme` library.
+   The PDN sample demonstrates how to create and configure a Packet Data Protocol (PDP) context, activate a Packet Data Network connection, and receive events on its state and connectivity using the PDN functionality in the :ref:`lte_lc_readme` library.
 
 Requirements
 ************

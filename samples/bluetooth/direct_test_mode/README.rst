@@ -1,15 +1,10 @@
 .. _direct_test_mode:
 
-Bluetooth: Direct Test Mode
-###########################
+.. ncs-sample::
+   :title: Bluetooth: Direct Test Mode
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification_>`_ (Vol. 6, Part F).
-The actual encoding of the test commands and events is described in sections 3.3 and 3.4, respectively, of Vol. 6, Part F of this specification document.
-
+   This sample enables the Direct Test Mode functions described in `Bluetooth® Core Specification <Bluetooth Core Specification_>`_ (Vol. 6, Part F).
+   The actual encoding of the test commands and events is described in sections 3.3 and 3.4, respectively, of Vol. 6, Part F of this specification document.
 
 Requirements
 ************
