@@ -50,7 +50,7 @@ PROJECT_NAME           = nrfx
 
 ### EDIT THIS ###
 
-PROJECT_NUMBER         = 4.0.1
+PROJECT_NUMBER         = 4.5.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
