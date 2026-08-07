@@ -55,3 +55,11 @@ boards:
     append:
       EXTRA_CONF_FILE: flpr.conf
       EXTRA_DTC_OVERLAY_FILE: soc/nrf7120_cpuflpr.overlay
+  /.*/nrf9251/cpuapp/:
+    append:
+      EXTRA_CONF_FILE: app.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuapp.overlay
+  /.*/nrf9251/cpuflpr/:
+    append:
+      EXTRA_CONF_FILE: flpr.conf
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuflpr.overlay
