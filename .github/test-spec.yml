@@ -467,6 +467,19 @@
   - "subsys/net/lib/mqtt_helper/**/*"
   - "subsys/net/lib/hostap_crypto/**/*"
 
+"CI-wifi-soc-fpga":
+  - "drivers/wifi/nrf71/**/*"
+  - "include/drivers/wifi/nrf71/**/*"
+  - "include/net/wifi_*"
+  - "tests/drivers/nrf_wifi/**/*"
+  - "samples/wifi/**/*7120*"
+  - "samples/wifi/**/nrf7120*"
+  - "subsys/net/l2_wifi_if_conn/**/*"
+  - "subsys/net/lib/wifi_*"
+  - "subsys/net/lib/softap_wifi_provision/**/*"
+  - "subsys/partition_manager/pm.yml.wifi"
+  - "sysbuild/Kconfig.wifi"
+
 "CI-cloud-test":
   - "include/caf/**/*"
   - "include/date_time.h"
