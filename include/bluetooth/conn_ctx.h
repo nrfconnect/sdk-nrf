@@ -126,6 +126,9 @@ void bt_conn_ctx_free_all(struct bt_conn_ctx_lib *ctx_lib);
  * This function finds a connection's context data in the memory pool.
  * The link to find is identified by the connection object.
  *
+ * This function can also be used to check whether a context has been
+ * allocated for a connection.
+ *
  * This function should be used in conjunction with
  * @ref bt_conn_ctx_release to ensure proper operation.
  *
@@ -133,7 +136,8 @@ void bt_conn_ctx_free_all(struct bt_conn_ctx_lib *ctx_lib);
  * @param conn		Bluetooth connection.
  *
  * @return Pointer to the connection context data if the operation
- *         was successful. Otherwise NULL.
+ *         was successful.
+ *         NULL if no context was allocated for the connection.
  */
 void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn);
 
