@@ -45,21 +45,53 @@ To update the firmware on the Thingy:91 using the `Cellular Monitor app`_ in nRF
 Partition layout
 ================
 
-When building firmware on Nordic Thingy:91, a static partition layout matching the factory layout is used.
+When building firmware for Nordic Thingy:91, the partition layout is defined in devicetree.
+The board provides a default layout in the :file:`nrf/boards/nordic/thingy91/thingy91_nrf9160_partition.dtsi` file in the |NCS| installation, which is included by the board devicetree and matches the factory layout.
 This setup ensures that when you program the firmware through USB, it works correctly without updating the MCUboot bootloader.
 You must keep the image partitions in their original place to avoid compatibility issues.
+
+The default layout reserves the following partitions:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Partition
+     - Address
+     - Size
+   * - MCUboot (``boot_partition``)
+     - ``0x0000_0000``
+     - 48 kB
+   * - Primary image (``slot0_partition``, split into a secure and a non-secure partition)
+     - ``0x0000_c000``
+     - 420 kB
+   * - Secondary image (``slot1_partition``, split into a secure and a non-secure partition)
+     - ``0x0007_5000``
+     - 420 kB
+   * - DFU scratch area (``scratch_partition``)
+     - ``0x000d_e000``
+     - 120 kB
+   * - Settings storage (``storage_partition``)
+     - ``0x000f_e000``
+     - 8 kB
+
 When you use an external debug probe to program the Thingy:91, you can update all the memory sections, including the MCUboot bootloader.
 This allows you to use a newer version of the bootloader or define an application-specific partition layout.
 
-Configure the partition layout using one of the following configuration options:
+Using a custom partition layout
+-------------------------------
 
-* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_FACTORY` - This option is the default Thingy:91 partition layout used in the factory firmware.
-  This ensures firmware updates are compatible with Thingy:91 when programming firmware through USB.
-* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_SECURE_BOOT` - This option is similar to the factory partition layout, but also has space for the immutable bootloader and two MCUboot slots.
-  You need a debugger to program Thingy:91 for the first time.
-  This is an :ref:`experimental <software_maturity>` feature.
-* :kconfig:option:`CONFIG_THINGY91_STATIC_PARTITIONS_LWM2M_CARRIER` - This option uses a partition layout, including a storage partition needed for the :ref:`liblwm2m_carrier_readme` library.
-* :kconfig:option:`CONFIG_THINGY91_NO_PREDEFINED_LAYOUT` - Enabling this option disables Thingy:91 pre-defined static partitions.
-  This allows the application to use a dynamic layout or define a custom static partition layout for the application.
-  You need a debugger to program Thingy:91 for the first time.
-  This is an :ref:`experimental <software_maturity>` feature.
+To use a layout that differs from the default one, add a devicetree overlay for the ``thingy91/nrf9160/ns`` board target to your application, as described in :ref:`configure_application_hw`.
+Because devicetree overlays of the main application are not applied to the other images built by sysbuild, you must also add a matching overlay for MCUboot in the :file:`sysbuild/mcuboot/boards/thingy91_nrf9160.overlay` file of your application.
+MCUboot runs in secure mode, so sysbuild builds it for the ``thingy91/nrf9160`` board target, without the ``/ns`` variant.
+
+Consider the following when replacing the default layout:
+
+* Adding a partition for the :ref:`liblwm2m_carrier_readme` library - Define an ``lwm2m_carrier`` partition and select it with the ``nordic,lwm2m-carrier-partition`` chosen node.
+  For an example, see the overlay files in the :file:`nrf/samples/cellular/lwm2m_carrier/boards/` directory.
+* Adding the |NSIB| - Enable the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option and reserve space for the immutable bootloader and the two MCUboot slots in the overlay, as described in :ref:`ug_bootloader_adding_sysbuild`.
+  You need a debugger to program the Thingy:91 for the first time.
+
+.. note::
+
+   A Thingy:91 programmed with a layout that does not match the factory layout can no longer be updated through USB using MCUboot.
+   Reprogramming such a device requires an external debug probe.
