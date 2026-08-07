@@ -226,6 +226,8 @@ function(nrf71_wifi_setup_include_and_sources)
     zephyr_library_sources(src/net_if.c)
   endif()
 
+  zephyr_library_sources(src/mac_addr.c)
+
   zephyr_library_sources_ifdef(CONFIG_NET_L2_WIFI_MGMT
     src/wifi_mgmt_scan.c
   )
