@@ -10,7 +10,8 @@ Check for allowed licenses in a "sdk-nrf" pull request.
 For the "sdk-nrf" repository it checks the files changed by the pull request. In addition, when the
 pull request modifies the west manifest (west.yml) it also checks the new files brought in by the
 modules:
-  1. Parses the manifest at the base and at the PR head.
+  1. Parses and fully expands the manifest (including projects brought in through imports, such as
+     modules imported via the "zephyr" project) at the base and at the PR head.
   2. Classifies which manifest projects were updated or added considering only projects in the
      "nrfconnect" org (classify_project_changes).
   3. Collects the files to check:
@@ -312,10 +313,12 @@ class PatchLicenseChecker:
 
     def load_projects(self, manifest_data: str) -> 'dict':
         '''
-        parses one west.yml manifest and returns only the relevant projects keeping only
-        active projects hosted under the NRFCONNECT_URL_PREFIX org.
+        Parse one west.yml manifest, expanding its imports, and return only the active projects
+        hosted under the NRFCONNECT_URL_PREFIX org. Projects pulled in indirectly through manifest
+        imports (for example modules imported via the "zephyr" project) are included as well.
         '''
-        manifest = Manifest.from_data(manifest_data, import_flags=ImportFlag.IGNORE)
+        manifest = Manifest.from_data(manifest_data, importer=self.import_manifest,
+                                      import_flags=ImportFlag.FORCE_PROJECTS)
         projects = {}
         for project in manifest.projects:
             url = (project.url or '').lower().removesuffix('.git')
@@ -325,6 +328,23 @@ class PatchLicenseChecker:
                 continue
             projects[project.name] = project
         return projects
+
+    def import_manifest(self, project, file: str) -> str:
+        '''
+        Importer callback for "Manifest.from_data". Return the manifest content read from Git
+        at the revision pinned in the importing manifest.
+        This is what makes indirectly imported modules (for example the projects pulled
+        in via "zephyr") appear in the resolved project list.
+        '''
+        project_dir = self.west_workspace / project.path
+        self.ensure_revision(project_dir, project.revision)
+        data = yaml.safe_load(self.run('git', 'show', f'{project.revision}:{file}',
+                                       cwd=project_dir))
+        #cleanup for 'self: import: manifest' string
+        self_section = (data or {}).get('manifest', {}).get('self')
+        if isinstance(self_section, dict):
+            self_section.pop('import', None)
+        return yaml.safe_dump(data)
 
     def ensure_revision(self, project_dir: Path, revision: str) -> bool:
         '''Make sure a revision is available locally, fetching it if necessary.'''
