@@ -7,11 +7,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/drivers/counter.h>
-#include <zephyr/debug/cpu_load.h>
 #include <dk_buttons_and_leds.h>
+#include "cpu_load_monitor.h"
 
-#define CPU_LOAD_MONITOR_THREAD_STACK_SIZE 4096
-#define CPU_LOAD_MONITOR_PERIOD_MS	   25
 #define FLASH_TEST_DATA_OFFSET		   0x0
 #define MAX_TEST_BUFFER_SIZE		   80 * 1024
 #define MAX_CPU_LOAD_VALUES_HELD	   32
@@ -26,20 +24,6 @@ static size_t pages_count;
 static size_t write_block_size;
 static size_t page_size;
 static uint8_t test_buffer[MAX_TEST_BUFFER_SIZE];
-static uint32_t cpu_loads[MAX_CPU_LOAD_VALUES_HELD];
-static uint32_t average_cpu_load;
-static uint32_t peak_cpu_load;
-
-typedef enum {
-	WAIT_FOR_TRIGGER = 0,
-	MEASURE_CPU_LOAD = 1,
-	CHECK_TERM_SIGNAL = 2
-} monitor_state;
-
-static K_SEM_DEFINE(cpu_load_start_sem, 0, 1);
-static K_SEM_DEFINE(cpu_load_stop_sem, 0, 1);
-static K_SEM_DEFINE(cpu_load_calc_done_sem, 0, 1);
-static K_SEM_DEFINE(cpu_load_thread_terminate_sem, 0, 1);
 
 /*
  * Flash operation function pointer
@@ -80,90 +64,6 @@ static void configure_test_timer(const struct device *timer_dev, uint32_t count_
 }
 
 /*
- * Instead of listing individual values
- * calculate peak and average CPU load
- */
-static void calculate_peak_and_average_cpu_load(uint32_t loads_counter, uint32_t *peak_load,
-						uint32_t *average_load)
-{
-
-	uint64_t average_buffer = 0;
-	*peak_load = 0;
-
-	for (int i = 0; i < loads_counter; i++) {
-		average_buffer += cpu_loads[i];
-		if (cpu_loads[i] > *peak_load) {
-			*peak_load = cpu_loads[i];
-		}
-	}
-
-	*average_load = (uint32_t)(average_buffer / loads_counter);
-}
-
-/*
- * Background CPU load minitoring task
- * start - when 'cpu_load_start_sem' is released
- * stop - when 'cpu_load_stop_sem' is released
- * after stop it performs load calculations
- * terminates when 'cpu_load_thread_terminate_sem' is given
- * they are done when 'cpu_load_stop_sem' is released
- */
-static void cpu_load_monitor(void *param1, void *param2, void *param3)
-{
-	int32_t cpu_load;
-	static uint32_t cpu_loads_counter;
-
-	static monitor_state cpu_load_monitor_state = WAIT_FOR_TRIGGER;
-
-	while (1) {
-		switch (cpu_load_monitor_state) {
-		case WAIT_FOR_TRIGGER:
-			if (k_sem_take(&cpu_load_start_sem, K_NO_WAIT) == 0) {
-				cpu_load_monitor_state = MEASURE_CPU_LOAD;
-				peak_cpu_load = 0;
-				average_cpu_load = 0;
-				cpu_loads_counter = 0;
-			}
-			if (k_sem_take(&cpu_load_thread_terminate_sem, K_NO_WAIT) == 0) {
-				k_sleep(K_FOREVER);
-			}
-			k_msleep(1);
-			break;
-
-		case MEASURE_CPU_LOAD:
-			cpu_load = cpu_load_get(true);
-			if (cpu_load < 0) {
-				/* error */
-				cpu_load = 0;
-			}
-			cpu_loads[cpu_loads_counter] = (uint32_t)cpu_load;
-			cpu_loads_counter = (cpu_loads_counter + 1) % MAX_CPU_LOAD_VALUES_HELD;
-			k_msleep(CPU_LOAD_MONITOR_PERIOD_MS);
-			cpu_load_monitor_state = CHECK_TERM_SIGNAL;
-
-		case CHECK_TERM_SIGNAL:
-			if (k_sem_take(&cpu_load_stop_sem, K_NO_WAIT) == 0) {
-				cpu_load_monitor_state = WAIT_FOR_TRIGGER;
-				calculate_peak_and_average_cpu_load(
-					cpu_loads_counter, &peak_cpu_load, &average_cpu_load);
-				k_sem_give(&cpu_load_calc_done_sem);
-			} else {
-				cpu_load_monitor_state = MEASURE_CPU_LOAD;
-			}
-
-		default:
-			break;
-		}
-	}
-}
-
-/*
- * CPU load mintor thread
- */
-K_THREAD_DEFINE(thread_a, CPU_LOAD_MONITOR_THREAD_STACK_SIZE, cpu_load_monitor, NULL, NULL, NULL, 3,
-		0, 0);
-
-/*
  * Check flash meory readiness
  * read memory parameters to be used
  * in the upcoming tests
@@ -174,6 +74,10 @@ static int test_setup(void)
 
 	dk_leds_init();
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
+
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		cpu_load_monitor_init();
+	}
 
 	for (int i = 0; i < 3; i++) {
 		is_flash_ready = device_is_ready(flash_dev);
@@ -200,18 +104,6 @@ static int test_setup(void)
 
 	k_msleep(DEAD_TIME_MS);
 	return 0;
-}
-
-/*
- * Display peak and average CPU load
- * in [per mille]
- */
-static void show_measured_cpu_loads(void)
-{
-	k_sem_take(&cpu_load_calc_done_sem, K_FOREVER);
-	printk("Measured CPU load:\n");
-	printk("Peak CPU load: %u [per mille]\n", peak_cpu_load);
-	printk("Average CPU load: %u [per mille]\n", average_cpu_load);
 }
 
 /*
@@ -242,7 +134,9 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	printk("Flash %s test [size: %u bytes]\n", operation_name, flash_operation_size);
 	memset(test_buffer, 0xAB, MAX_TEST_BUFFER_SIZE);
 
-	k_sem_give(&cpu_load_start_sem);
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		cpu_load_monitor_start();
+	}
 	dk_set_led_on(DK_LED1);
 	counter_reset(tst_timer_dev);
 	counter_start(tst_timer_dev);
@@ -259,7 +153,9 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	counter_get_value(tst_timer_dev, &tst_timer_value);
 	counter_stop(tst_timer_dev);
 	dk_set_led_off(DK_LED1);
-	k_sem_give(&cpu_load_stop_sem);
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		cpu_load_monitor_stop();
+	}
 
 	if (err != 0) {
 		printk("!!!! Flash operation error: %d !!!!\n", err);
@@ -270,7 +166,9 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	printk("### Summary ###\n");
 	printk("Flash %s [size: %u bytes] took: %llu us\n", operation_name, flash_operation_size,
 	       timer_value_us);
-	show_measured_cpu_loads();
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		cpu_load_monitor_show();
+	}
 	k_msleep(DEAD_TIME_MS);
 }
 
@@ -327,7 +225,9 @@ int main(void)
 	 * Terminate the CPU load monitor thread
 	 * to reduce current consumption
 	 */
-	k_sem_give(&cpu_load_thread_terminate_sem);
+	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
+		cpu_load_monitor_terminate();
+	}
 	printk("Done\n");
 
 	return 0;
