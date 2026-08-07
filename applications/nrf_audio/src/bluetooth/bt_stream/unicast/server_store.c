@@ -714,10 +714,8 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		LOG_ERR("Failed to get ep info: %d", ret);
 		return ret;
 	}
-
 	struct bt_cap_unicast_group_info cap_info;
 	struct bt_bap_unicast_group_info bap_info;
-
 	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
 	if (ret != 0) {
 		LOG_ERR("Failed to get CAP unicast group info: %d", ret);
