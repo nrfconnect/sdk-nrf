@@ -25,12 +25,37 @@ This sample contains a simple main application with no firmware update capabilit
 The firmware loader image is used to perform the DFU over Bluetooth® Low Energy or USB CDC ACM serial.
 See :ref:`ug_bootloader_using_firmware_loader_mode` and :ref:`fw_loader_usb_mcumgr` for more details.
 
-This sample employs one of alternatives:
+This sample employs one of the following firmware loader images, built as sysbuild child images:
+
 * The :ref:`fw_loader_ble_mcumgr` firmware loader image, which uses the Simple Management Protocol (SMP) over Bluetooth LE.
 * The :ref:`fw_loader_usb_mcumgr` firmware loader image, which uses the USB CDC ACM serial.
 
 This sample can employ the buttonless DFU feature when the application can enter firmware loader mode without the need to hold a button during reset.
 This is achieved by enabling the SMP MCUmgr group reset command with the boot mode parameter, which must be set to ``1`` to enter firmware loader mode.
+
+.. _fw_loader_ble_mcumgr:
+
+BLE MCUmgr firmware loader image
+================================
+
+The BLE MCUmgr firmware loader image provides the minimal and recommended configuration for the firmware loader application.
+It uses code from Zephyr's :zephyr:code-sample:`smp-svr` sample to enable the Bluetooth LE SMP server functionality.
+
+The firmware loader advertises itself as *FW loader* over Bluetooth LE and accepts SMP commands for:
+
+* Image upload and management
+* Device information queries
+* Bootloader information
+
+The image source and configuration files are located in :file:`samples/dfu/single_slot/sysbuild/ble_mcumgr/`.
+If your application uses a custom memory layout, provide a board-specific overlay in that directory.
+For reference, see :file:`samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54l15dk_nrf54l15_cpuapp.overlay`.
+
+This image is selected by default when the following sysbuild options are set in :file:`sysbuild.conf`:
+
+* :kconfig:option:`SB_CONFIG_BOOTLOADER_MCUBOOT`
+* :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER`
+* :kconfig:option:`SB_CONFIG_FIRMWARE_LOADER_IMAGE_BLE_MCUMGR`
 
 Building and running
 ********************
