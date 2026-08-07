@@ -350,7 +350,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 	}
 
 	ret = le_audio_metadata_populate(&meta, stream, info, audio_frame);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to populate meta data: %d", ret);
 		return;
 	}
@@ -509,7 +509,7 @@ int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_locatio
 
 		ret = bt_audio_codec_cfg_get_chan_allocation(
 			cap_audio_streams[i].bap_stream.codec_cfg, &chan_allocation, false);
-		if (ret) {
+		if (ret != 0) {
 			LOG_WRN("Failed to get channel allocation");
 			return ret;
 		}
@@ -543,7 +543,7 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		if (sampling_rate_hz != NULL) {
 			ret = le_audio_freq_hz_get(cap_audio_streams[0].bap_stream.codec_cfg,
 						   sampling_rate_hz);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
 				return -ENXIO;
 			}
@@ -552,7 +552,7 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		if (bitrate != NULL) {
 			ret = le_audio_bitrate_get(cap_audio_streams[0].bap_stream.codec_cfg,
 						   bitrate);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
 				return -ENXIO;
 			}
@@ -578,7 +578,7 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		if (sampling_rate_hz != NULL) {
 			ret = le_audio_freq_hz_get(cap_tx_streams[0]->bap_stream.codec_cfg,
 						   sampling_rate_hz);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Invalid sampling frequency: %d", ret);
 				return -ENXIO;
 			}
@@ -587,7 +587,7 @@ int unicast_server_config_get(struct bt_conn *conn, enum bt_audio_dir dir, uint3
 		if (bitrate != NULL) {
 			ret = le_audio_bitrate_get(cap_tx_streams[0]->bap_stream.codec_cfg,
 						   bitrate);
-			if (ret) {
+			if (ret != 0) {
 				LOG_ERR("Unable to calculate bitrate: %d", ret);
 				return -ENXIO;
 			}
@@ -628,7 +628,7 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
 				     sizeof(unicast_server_adv_data), BT_DATA_SVC_DATA16,
 				     unicast_server_adv_data);
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
@@ -636,7 +636,7 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 		ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
 					     sizeof(csip_rsi_adv_data), BT_DATA_CSIS_RSI,
 					     (void *)csip_rsi_adv_data);
-		if (ret) {
+		if (ret != 0) {
 			return ret;
 		}
 	}
@@ -646,7 +646,7 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
 				     sizeof(gap_appear_adv_data), BT_DATA_GAP_APPEARANCE,
 				     (void *)gap_appear_adv_data);
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
@@ -654,14 +654,14 @@ int unicast_server_adv_populate(struct bt_data *adv_buf, uint8_t adv_buf_vacant)
 
 	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant, sizeof(uint8_t),
 				     BT_DATA_FLAGS, (void *)&flags_adv_data);
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
 	ret = bt_mgmt_adv_buffer_put(adv_buf, &adv_buf_cnt, adv_buf_vacant,
 				     ARRAY_SIZE(cap_adv_data), BT_DATA_SVC_DATA16,
 				     (void *)cap_adv_data);
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
@@ -695,7 +695,7 @@ int unicast_server_send(struct net_buf const *const audio_frame)
 	}
 
 	ret = bt_le_audio_tx_send(bt_le_audio_tx, audio_frame, tx, num_active_streams);
-	if (ret) {
+	if (ret != 0) {
 		return ret;
 	}
 
@@ -737,11 +737,14 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	receive_cb = recv_cb;
 
-	/* For this application, we create one sink endpoint for each location */
-	unicast_server_params.snk_cnt = POPCOUNT(location);
-	if (unicast_server_params.snk_cnt == 0) {
-		LOG_ERR("No sink endpoint requested");
-		return -EINVAL;
+	/* For this application, we create one sink endpoint for each location.
+	 * Note that a mono location == 0, hence will always have at least one
+	 * endpoint.
+	 */
+	if (location == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		unicast_server_params.snk_cnt = 1;
+	} else {
+		unicast_server_params.snk_cnt = POPCOUNT(location);
 	}
 
 	if (unicast_server_params.snk_cnt > CONFIG_BT_ASCS_MAX_ASE_SNK_COUNT) {
@@ -756,13 +759,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	unicast_server_params.src_cnt = CONFIG_BT_ASCS_MAX_ASE_SRC_COUNT;
 
 	ret = bt_bap_unicast_server_register(&unicast_server_params);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Could not register unicast server (err %d)", ret);
 		return ret;
 	}
 
 	ret = bt_bap_unicast_server_register_cb(&unicast_server_cb);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Could not register unicast server callbacks (err %d)", ret);
 		return ret;
 	}
@@ -781,20 +784,23 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	}
 
 	ret = bt_pacs_register(&pacs_param);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Could not register PACS (err %d)\n", ret);
 		return ret;
 	}
 
 	for (int i = 0; i < ARRAY_SIZE(caps); i++) {
 		ret = bt_pacs_cap_register(caps_dirs[i], &caps[i]);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Capability register failed. Err: %d (%d)", ret, i);
 			return ret;
 		}
 	}
 
-	if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
+	if (location == BT_AUDIO_LOCATION_MONO_AUDIO) {
+		/* This is only for testing the headset can handle a mono location */
+		csip_param.rank = CSIP_HL_RANK;
+	} else if (location == BT_AUDIO_LOCATION_FRONT_LEFT) {
 		csip_param.rank = CSIP_HL_RANK;
 	} else if (location == BT_AUDIO_LOCATION_FRONT_RIGHT) {
 		csip_param.rank = CSIP_HR_RANK;
@@ -808,7 +814,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SINK, location);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Location set failed. Err: %d", ret);
 			return ret;
 		}
@@ -817,13 +823,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		/* A unicast server is the Bluetooth peripheral device */
 		ret = bt_le_audio_tx_init(bt_le_audio_tx, false);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to initialize LE Audio TX: %d", ret);
 			return ret;
 		}
 
 		ret = bt_pacs_set_location(BT_AUDIO_DIR_SOURCE, location);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Location set failed. Err: %d", ret);
 			return ret;
 		}
@@ -832,13 +838,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 	if (IS_ENABLED(CONFIG_BT_AUDIO_RX)) {
 		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
 
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Supported context set failed (sink). Err: %d", ret);
 			return ret;
 		}
 
 		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SINK, AVAILABLE_SINK_CONTEXT);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Available context set failed (sink). Err: %d", ret);
 			return ret;
 		}
@@ -846,13 +852,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_TX)) {
 		ret = bt_pacs_set_supported_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Supported context set failed (source). Err: %d", ret);
 			return ret;
 		}
 
 		ret = bt_pacs_set_available_contexts(BT_AUDIO_DIR_SOURCE, AVAILABLE_SOURCE_CONTEXT);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Available context set failed (source). Err: %d", ret);
 			return ret;
 		}
@@ -864,13 +870,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 
 	if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER)) {
 		ret = bt_cap_acceptor_register(&csip_param, &csip);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to register CAP acceptor. Err: %d", ret);
 			return ret;
 		}
 
 		ret = bt_csip_set_member_generate_rsi(csip, csip_rsi_adv_data);
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to generate RSI. Err: %d", ret);
 			return ret;
 		}

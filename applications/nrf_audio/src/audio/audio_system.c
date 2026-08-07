@@ -294,7 +294,7 @@ int audio_system_encode_test_tone_step(void)
 	}
 
 	ret = audio_system_encode_test_tone_set(test_tone_hz);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to generate test tone");
 		return ret;
 	}
@@ -378,7 +378,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	meta_out->bad_data = meta_in->bad_data;
 
 	ret = sw_codec_decode(audio_frame_in, audio_frame_out);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to decode");
 		net_buf_unref(audio_frame_out);
 		return ret;
@@ -423,7 +423,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		usb_spill_meta->bytes_per_location = USB_BLOCK_1MS_MONO_SIZE;
 
 		ret = k_msgq_put(&audio_q_out, (void *)&usb_out_spillover, K_NO_WAIT);
-		if (ret) {
+		if (ret != 0) {
 			net_buf_unref(audio_frame_out);
 			net_buf_unref(usb_out_spillover);
 			usb_out_spillover = NULL;
@@ -449,7 +449,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		net_buf_pull_mem(audio_frame_out, usb_out_1ms_frame_size);
 
 		ret = k_msgq_put(&audio_q_out, (void *)&usb_block, K_NO_WAIT);
-		if (ret) {
+		if (ret != 0) {
 			net_buf_unref(audio_frame_out);
 			return ret;
 		}
@@ -555,26 +555,28 @@ void audio_system_stop(void)
 	sw_codec_cfg.initialized = false;
 }
 
-int audio_system_decoder_num_ch_get(void)
-{
-	return sw_codec_cfg.decoder.num_ch;
-}
-
-int audio_system_encoder_num_ch_set(uint32_t locations)
+void audio_system_encoder_num_ch_set(uint32_t locations, uint8_t num_channels)
 {
 	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
 		LOG_DBG("Cannot set encoder channels when MONO_TO_ALL_RECEIVERS is enabled");
-		return 0;
+		return;
 	}
 
-	int num_ch = POPCOUNT(locations);
+	LOG_WRN("Setting encoder channels to %d based on locations 0x%08x", num_channels,
+		locations);
 
-	LOG_DBG("Setting encoder channels to %d based on locations 0x%08x", num_ch, locations);
-
-	sw_codec_cfg.encoder.num_ch = CONFIG_AUDIO_ENCODE_CHANNELS_MAX;
+	sw_codec_cfg.encoder.num_ch = num_channels;
 	sw_codec_cfg.encoder.audio_loc = locations;
+}
 
-	return 0;
+int audio_system_encoder_num_ch_get(void)
+{
+	return sw_codec_cfg.encoder.num_ch;
+}
+
+int audio_system_decoder_num_ch_get(void)
+{
+	return sw_codec_cfg.decoder.num_ch;
 }
 
 int audio_system_init(void)
@@ -583,7 +585,7 @@ int audio_system_init(void)
 
 	if (NRF_CLOCK_HAS_HFCLKAUDIO) {
 		ret = audio_clock_init();
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to initialize audio clock: %d", ret);
 			return ret;
 		}
@@ -597,20 +599,20 @@ int audio_system_init(void)
 	bool host_out = true;
 
 	ret = audio_usb_init(host_in, host_out);
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to initialize USB: %d", ret);
 		return ret;
 	}
 #else
 	ret = audio_datapath_init();
-	if (ret) {
+	if (ret != 0) {
 		LOG_ERR("Failed to initialize audio datapath: %d", ret);
 		return ret;
 	}
 
 	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
 		ret = hw_codec_init();
-		if (ret) {
+		if (ret != 0) {
 			LOG_ERR("Failed to initialize HW codec: %d", ret);
 			return ret;
 		}
