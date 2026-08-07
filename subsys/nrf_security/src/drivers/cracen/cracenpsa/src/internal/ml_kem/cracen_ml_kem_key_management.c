@@ -1,0 +1,190 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <internal/ml_kem/cracen_ml_kem_key_management.h>
+#include <internal/ml_kem/cracen_ml_kem.h>
+#include "cracen_ml_kem_internal.h"
+
+#include <nrf_security_mem_helpers.h>
+#include <string.h>
+#include <zephyr/sys/util.h>
+
+/* All PSA key-bits values defined by FIPS 203, Table 3. */
+static const size_t ml_kem_supported_bits[] = {
+	IF_ENABLED(PSA_NEED_CRACEN_ML_KEM_512,  (512,))
+	IF_ENABLED(PSA_NEED_CRACEN_ML_KEM_768,  (768,))
+	IF_ENABLED(PSA_NEED_CRACEN_ML_KEM_1024, (1024,))
+};
+
+/* Validate the attributes of an ML-KEM key and resolve the key bits.
+ *
+ * For a public key, @p key_bits is derived from @p key_size_bytes when it is 0
+ * on entry; otherwise it must match a supported parameter set whose
+ * encapsulation-key size equals @p key_size_bytes.
+ *
+ * For a key pair, @p key_bits must be set on entry: all parameter sets share
+ * the (d || z) seed size, so the length carries no information about the
+ * parameter set.
+ */
+static psa_status_t check_ml_kem_key_attributes(const psa_key_attributes_t *attributes,
+						size_t key_size_bytes, size_t *key_bits)
+{
+	psa_key_type_t key_type = psa_get_key_type(attributes);
+	const ml_kem_params_t *params;
+
+	if (psa_get_key_algorithm(attributes) != PSA_ALG_ML_KEM) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR) {
+		params = cracen_ml_kem_params_get(*key_bits);
+		if (params == NULL) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+
+		if (key_size_bytes != ML_KEM_SEED_SZ_BYTES) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		return PSA_SUCCESS;
+	}
+
+	if (key_type != PSA_KEY_TYPE_ML_KEM_PUBLIC_KEY) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	for (uint32_t i = 0; i < ARRAY_SIZE(ml_kem_supported_bits); i++) {
+		params = cracen_ml_kem_params_get(ml_kem_supported_bits[i]);
+
+		if (params == NULL) {
+			continue;
+		}
+
+		if (*key_bits == 0 && params->pk_size == key_size_bytes) {
+			*key_bits = params->key_bits;
+		}
+
+		if (*key_bits == params->key_bits) {
+			if (params->pk_size != key_size_bytes) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
+			return PSA_SUCCESS;
+		}
+	}
+
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+/* Imports ML-KEM private key, which is actually a 64-byte (d||z) seed value. */
+psa_status_t cracen_import_ml_kem_private_key(const psa_key_attributes_t *attributes,
+					      const uint8_t *data, size_t data_length,
+					      uint8_t *key_buffer, size_t key_buffer_size,
+					      size_t *key_buffer_length, size_t *key_bits)
+{
+	size_t bits = psa_get_key_bits(attributes);
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (data_length > key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	status = check_ml_kem_key_attributes(attributes, data_length, &bits);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	if (!memcpy_check_non_zero(key_buffer, key_buffer_size, data, data_length)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	*key_bits = bits;
+	*key_buffer_length = data_length;
+
+	return PSA_SUCCESS;
+}
+
+/* Imports ML-KEM public key, which is actually an encapsulation key. */
+psa_status_t cracen_import_ml_kem_public_key(const psa_key_attributes_t *attributes,
+					     const uint8_t *data, size_t data_length,
+					     uint8_t *key_buffer, size_t key_buffer_size,
+					     size_t *key_buffer_length, size_t *key_bits)
+{
+	size_t bits = psa_get_key_bits(attributes);
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (data_length > key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	status = check_ml_kem_key_attributes(attributes, data_length, &bits);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	/** Note: the modulus check of the encapsulation key (FIPS 203, Section 7.2)
+	 *  is not done here now. Oberon does this check before import, however even without it
+	 *  an attempt to use invalid key must fail.
+	 */
+	memcpy(key_buffer, data, data_length);
+
+	*key_bits = bits;
+	*key_buffer_length = data_length;
+
+	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_export_ml_kem_public_key(const psa_key_attributes_t *attributes,
+					     const uint8_t *key_buffer, size_t key_buffer_size,
+					     uint8_t *data, size_t data_size, size_t *data_length)
+{
+	if (data_size < key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(data, key_buffer, key_buffer_size);
+	*data_length = key_buffer_size;
+
+	return PSA_SUCCESS;
+}
+
+psa_status_t cracen_export_ml_kem_public_key_from_keypair(const psa_key_attributes_t *attributes,
+							  const uint8_t *key_buffer,
+							  size_t key_buffer_size, uint8_t *data,
+							  size_t data_size, size_t *data_length)
+{
+	if (key_buffer_size != ML_KEM_SEED_SZ_BYTES) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_ML_KEM)) {
+		/* The key pair is stored as its (d || z) seed, so the encapsulation key is
+		 * regenerated by running key generation again.
+		 */
+		return cracen_ml_kem_public_key_from_seed(psa_get_key_bits(attributes),
+							  key_buffer, data, data_size,
+							  data_length);
+	}
+
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t cracen_export_ml_kem_key(const psa_key_attributes_t *attributes,
+				      const uint8_t *key_buffer, size_t key_buffer_size,
+				      uint8_t *data, size_t data_size, size_t *data_length)
+{
+	if (key_buffer_size != ML_KEM_SEED_SZ_BYTES) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	if (data_size < key_buffer_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	memcpy(data, key_buffer, key_buffer_size);
+	*data_length = key_buffer_size;
+
+	return PSA_SUCCESS;
+}
