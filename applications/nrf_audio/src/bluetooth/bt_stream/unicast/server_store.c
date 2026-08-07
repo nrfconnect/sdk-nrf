@@ -402,7 +402,7 @@ static void done_print(uint8_t existing_streams_checked,
 {
 	char buf[20] = {0};
 
-	if (computed_pres_dly_us != UINT32_MAX) {
+	if (computed_pres_dly_us != BT_BAP_PD_UNSET) {
 		snprintf(buf, sizeof(buf), "%u", computed_pres_dly_us);
 	} else {
 		strcpy(buf, "No common value");
@@ -439,14 +439,34 @@ static bool pres_dly_stream_ignore(struct bt_bap_stream const *const existing_st
 		return true;
 	}
 
-	/* Check if the existing stream has gotten into a codec configured, QoS configured,
+	int existing_dir = le_audio_stream_dir_get(existing_stream);
+
+	if (existing_dir <= 0) {
+		LOG_ERR("Failed to get dir of existing stream %p", existing_stream);
+		return true;
+	}
+
+	int incoming_dir = le_audio_stream_dir_get(stream_in);
+
+	if (incoming_dir <= 0) {
+		LOG_ERR("Failed to get dir of incoming stream %p", stream_in);
+		return true;
+	}
+
+	if (existing_dir != incoming_dir) {
+		/* The existing stream is not in the same direction as the incoming stream */
+		LOG_DBG("Existing stream dir: (%d) not in same dir as incoming stream  (%d)",
+			existing_dir, incoming_dir);
+		return true;
+	}
+
+	/* Check if the existing stream has gotten into a QoS configured,
 	 * enabling or streaming state.
 	 */
-	if (!le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_CODEC_CONFIGURED) &&
-	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_QOS_CONFIGURED) &&
+	if (!le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_QOS_CONFIGURED) &&
 	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_ENABLING) &&
 	    !le_audio_ep_state_check(existing_stream->ep, BT_BAP_EP_STATE_STREAMING)) {
-		LOG_DBG("Existing stream not in codec configured, QoS configured, enabling or "
+		LOG_DBG("Existing stream not in QoS configured, enabling or "
 			"streaming state");
 		return true;
 	}
@@ -601,10 +621,9 @@ static bool stream_check_pd(struct bt_cap_stream *existing_stream, void *user_da
 	/* All already running streams in the same direction and in the
 	 * same group shall have the same presentation delay.
 	 */
-	*ctx->existing_pres_dly_us = existing_stream->bap_stream.qos->pd;
 
-	if (*ctx->existing_pres_dly_us_check == UINT32_MAX) {
-		ctx->existing_pres_dly_us_check = ctx->existing_pres_dly_us;
+	if (*ctx->existing_pres_dly_us_check == BT_BAP_PD_UNSET) {
+		*ctx->existing_pres_dly_us_check = *ctx->existing_pres_dly_us;
 	} else if (*ctx->existing_pres_dly_us_check != *ctx->existing_pres_dly_us) {
 		LOG_ERR("Illegal value. Pres delays do not match: %u != %u",
 			*ctx->existing_pres_dly_us_check, *ctx->existing_pres_dly_us);
@@ -656,23 +675,19 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		return -EINVAL;
 	}
 
-	*existing_pres_dly_us = 0;
+	*existing_pres_dly_us = BT_BAP_PD_UNSET;
 	*group_reconfig_needed = false;
-	*computed_pres_dly_us = UINT32_MAX;
-	uint32_t existing_pres_dly_us_check = UINT32_MAX;
+	*computed_pres_dly_us = BT_BAP_PD_UNSET;
+	uint32_t existing_pres_dly_us_check = BT_BAP_PD_UNSET;
 	uint8_t existing_streams_checked = 0;
 
 	if (stream->group == NULL) {
-		LOG_ERR("The incoming stream %p has no group", (void *)stream);
-		*computed_pres_dly_us = UINT32_MAX;
-
+		LOG_ERR("The incoming stream %p has no group", stream);
 		return -EINVAL;
 	}
 
 	if (server_qos_pref->pd_min == 0 || server_qos_pref->pd_max == 0) {
 		LOG_ERR("Incoming pd_min or pd_max is zero");
-		*computed_pres_dly_us = UINT32_MAX;
-
 		return -EINVAL;
 	}
 
@@ -689,8 +704,6 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	ret = pres_delay_compute(&common_qos, server_qos_pref);
 	if (ret) {
 		LOG_ERR("Failed to find initial common presentation delay: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
 		return ret;
 	}
 
@@ -699,9 +712,41 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	ret = bt_bap_ep_get_info(stream->ep, &ep_info);
 	if (ret) {
 		LOG_ERR("Failed to get ep info: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
 		return ret;
+	}
+
+	struct bt_cap_unicast_group_info cap_info;
+	struct bt_bap_unicast_group_info bap_info;
+
+	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get CAP unicast group info: %d", ret);
+		return ret;
+	}
+
+	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &bap_info);
+
+	if (ret != 0) {
+		LOG_ERR("Failed to get BAP unicast group info: %d", ret);
+		return ret;
+	}
+
+	int dir = le_audio_stream_dir_get(stream);
+
+	if (dir <= 0) {
+		LOG_ERR("Failed to get dir of incoming stream %p", stream);
+		return -EINVAL;
+	}
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		LOG_DBG("Incoming stream is a sink. Group sink PD: %u", bap_info.sink_pd);
+		*existing_pres_dly_us = bap_info.sink_pd;
+	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+		LOG_DBG("Incoming stream is a source. Group source PD: %u", bap_info.source_pd);
+		*existing_pres_dly_us = bap_info.source_pd;
+	} else {
+		LOG_ERR("Incoming stream has unknown direction: %d", dir);
+		return -EINVAL;
 	}
 
 	struct foreach_stream_data foreach_data = {
@@ -718,19 +763,18 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 		.existing_pres_dly_already_in_range = false,
 	};
 
+
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd,
 						  (void *)&foreach_data);
 	if (foreach_data.ret) {
 		LOG_ERR("Failed to compute presentation delay");
-		*computed_pres_dly_us = UINT32_MAX;
-
+		*computed_pres_dly_us = BT_BAP_PD_UNSET;
 		return foreach_data.ret;
 	}
 
 	if (ret != 0 && ret != -ECANCELED) {
 		LOG_ERR("Failed to iterate streams in group: %d", ret);
-		*computed_pres_dly_us = UINT32_MAX;
-
+		*computed_pres_dly_us = BT_BAP_PD_UNSET;
 		return ret;
 	}
 
@@ -765,7 +809,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 	if (common_qos.pd_min > common_qos.pd_max) {
 		LOG_ERR("No common ground for pd_min %u and pd_max %u", common_qos.pd_min,
 			common_qos.pd_max);
-		*computed_pres_dly_us = UINT32_MAX;
+		*computed_pres_dly_us = BT_BAP_PD_UNSET;
 
 		ret = -ESPIPE;
 		goto print_and_return;
@@ -1300,7 +1344,7 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	if (ret == 0) {
 		/* Server already exists, no need to add again, but we update the conn pointer */
 		temp_server->conn = conn;
-		LOG_DBG("Server already exists for conn: %p", (void *)conn);
+		LOG_DBG("Server already exists for conn: %p", conn);
 		return -EALREADY;
 	}
 
