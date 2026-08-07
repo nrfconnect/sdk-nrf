@@ -209,9 +209,7 @@ As an example, the nRF Desktop application uses the RAM load mode for the nRF54L
 
 To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_RAM_LOAD` Kconfig option in the sysbuild configuration.
 
-To support the RAM load mode, you must use DTS as the partitioning method, as the Partition Manager (PM) is not supported in this mode.
-To satisfy this requirement, ensure that the :kconfig:option:`SB_CONFIG_PARTITION_MANAGER` Kconfig option is disabled in your sysbuild configuration.
-Additionally, you must define the custom memory layout for the RAM in your target board configuration.
+To support the RAM load mode, you must define the custom memory layout for the RAM in your target board configuration.
 Your RAM layout must define the following DTS child nodes as part of the ``cpuapp_sram`` DTS node in the address order listed below:
 
 * ``cpuapp_sram_app_rxm_region`` - This DTS node defines the hard limits for the executable ROM section (with the application image) and must be aligned with the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START` and the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE` Kconfig options that are set in the MCUboot image configuration.

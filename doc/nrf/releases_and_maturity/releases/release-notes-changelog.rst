@@ -274,6 +274,10 @@ nRF Desktop
     The :ref:`nrf_desktop_hid_forward` module now uses :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` to subscribe to the :c:struct:`ble_discovery_complete_event` event.
     The module updates event data to ensure all other modules are notified about the SCI support.
 
+* Removed:
+
+  * Partition Manager support from the :ref:`nrf_desktop` application.
+
 Thingy:53: Matter weather station
 ---------------------------------
 
