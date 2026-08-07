@@ -50,7 +50,7 @@ static void configure_region(uint32_t region_idx, uint32_t addr, uint8_t size_kb
 		.read       = true,
 		.write      = false,
 		.execute    = true,
-		.secure     = false,
+		.secure     = true,
 		.write_once = true,
 		.lock       = true,
 		.size       = size_kb,

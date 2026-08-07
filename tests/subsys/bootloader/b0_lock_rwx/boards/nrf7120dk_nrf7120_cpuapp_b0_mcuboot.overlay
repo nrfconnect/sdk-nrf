@@ -1,0 +1,67 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Two-stage (NSIB -> MCUboot -> application) partition layout for nRF7120
+ * without Partition Manager.
+ *
+ *   b0_partition     0x000000   32K     NSIB (boot_partition resized in place so
+ *                                        the b0_partition alias stays valid)
+ *   s0_partition     0x008000   62K     MCUboot copy 0
+ *   s1_partition     0x018000   62K     MCUboot copy 1
+ *   slot0_partition  0x028000   1392K   application image-0 (MCUboot primary)
+ *   slot1_partition  0x184000   1392K   application image-1 (MCUboot secondary)
+ *
+ * Unlike the nRF54L reference overlay, we deliberately do NOT '/delete-node/'
+ * the whole partitions node. The nRF7120 board defines Wi-Fi ROM-patch
+ * partitions (wifi_lmac_patch_partition / wifi_umac_patch_partition) referenced
+ * by phandle, so removing the node would leave dangling phandles and break the
+ * build. Instead we resize boot_partition in place (b0_partition is its alias)
+ * and re-carve only the application slots. Wi-Fi is an nRF7120-specific
+ * divergence from the nRF54L reference (MRAM instead of RRAM as well).
+ */
+
+/* NSIB region; b0_partition is an alias of boot_partition. */
+b0_partition: &boot_partition {
+	reg = <0x0 DT_SIZE_K(32)>;
+};
+
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_mram {
+	partitions {
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot-0";
+			reg = <0x00008000 DT_SIZE_K(62)>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot-1";
+			reg = <0x00018000 DT_SIZE_K(62)>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x00028000 DT_SIZE_K(1392)>;
+		};
+
+		slot1_partition: partition@184000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x00184000 DT_SIZE_K(1392)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
