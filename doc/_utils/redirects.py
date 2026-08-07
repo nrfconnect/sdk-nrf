@@ -22,6 +22,7 @@ Examples:
 """
 
 NRF = (
+    ("", "index" ) # In case of a missing page, redirect to the main index page at root
     ("introduction", "index"), # Introduction
     ("ug_nrf9160_gs", "gsg_guides"), # Getting started with nRF9160 DK (removed in v3.0.0)
     ("working_with_nrf/nrf91/nrf9160_gs", "gsg_guides"),
