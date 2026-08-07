@@ -118,8 +118,6 @@ if(${TFM_PARTITION_CRYPTO})
   if(CONFIG_NRF_WIFI_KMU)
     target_compile_definitions(platform_s PUBLIC
       CONFIG_NRF_WIFI_KMU=1
-      CONFIG_NRF_WIFI_KMU_SLOT_MIN=${CONFIG_NRF_WIFI_KMU_SLOT_MIN}
-      CONFIG_NRF_WIFI_KMU_NUM_SLOTS=${CONFIG_NRF_WIFI_KMU_NUM_SLOTS}
     )
 
     target_sources(platform_s
