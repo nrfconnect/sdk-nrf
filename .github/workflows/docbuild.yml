@@ -83,11 +83,13 @@ jobs:
           cache-dependency-path: ncs/nrf/doc/requirements.txt
 
       - name: Setup Zephyr project
-        uses: zephyrproject-rtos/action-zephyr-setup@6a744370a22e4ecb24f5dda3c7e80ff3e0a3b847 # v1.0.8
+        uses: zephyrproject-rtos/action-zephyr-setup@25e897e475e864e19439414bc185401a28349b4f
+        # v1.0.14 + 7 ("action: allow overwriting west update flags")
         with:
           base-path: ncs
           app-path: nrf
           toolchains: 'all'
+          west-update-flags: '-n'
 
       - name: install-pip
         working-directory: ncs
