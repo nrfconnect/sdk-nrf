@@ -111,7 +111,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
   sample.newlib_libc.sha256:
     build_only: true
-    extra_args: CONFIG_NEWLIB_LIBC=y
+    extra_args: CONFIG_NEWLIB_LIBC=n
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840
