@@ -556,7 +556,7 @@ psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 		return status;
 	}
 
-	return psa_driver_wrapper_destroy_builtin_key(&attr);
+	return psa_driver_wrapper_destroy_key(&attr, NULL, 0);
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -602,6 +602,7 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 	psa_core_lite_key_slot_t *key_slot;
 	size_t storage_size;
 	size_t required_key_size_bits;
+	size_t unwrapped_key_bits;
 
 	if (attributes == NULL || key == NULL || data == NULL || alg != PSA_ALG_KW ||
 	    data_length < PSA_CORE_LITE_KEY_WRAP_BLOCK_SIZE) {
@@ -628,12 +629,10 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 		goto error;
 	}
 
-	status = psa_driver_wrapper_unwrap_key(attributes, &wrapping_key_slot.key_attributes,
-					       wrapping_key_slot.key,
-					       wrapping_key_slot.key_size, alg, data, data_length,
-					       key_slot->key,
-					       sizeof(key_slot->key),
-					       &key_slot->key_size);
+	status = psa_driver_wrapper_unwrap_key(
+		attributes, &wrapping_key_slot.key_attributes, wrapping_key_slot.key,
+		wrapping_key_slot.key_size, alg, data, data_length, key_slot->key,
+		sizeof(key_slot->key), &key_slot->key_size, &unwrapped_key_bits);
 
 	safe_memzero(&wrapping_key_slot, sizeof(wrapping_key_slot));
 	if (status != PSA_SUCCESS) {
@@ -643,9 +642,8 @@ psa_status_t psa_unwrap_key(const psa_key_attributes_t *attributes,
 	key_slot->key_attributes = *attributes;
 	required_key_size_bits = psa_get_key_bits(attributes);
 	if (required_key_size_bits == 0) {
-		psa_set_key_bits(&key_slot->key_attributes,
-				 PSA_BYTES_TO_BITS(key_slot->key_size));
-	} else if (required_key_size_bits != PSA_BYTES_TO_BITS(key_slot->key_size)) {
+		psa_set_key_bits(&key_slot->key_attributes, unwrapped_key_bits);
+	} else if (required_key_size_bits != unwrapped_key_bits) {
 		status = PSA_ERROR_INVALID_ARGUMENT;
 		goto error;
 	} else {
@@ -685,7 +683,7 @@ psa_status_t psa_key_derivation_setup(psa_key_derivation_operation_t *operation,
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = psa_driver_wrapper_key_derivation_setup(operation, kdf_alg);
+	status = psa_driver_wrapper_key_derivation_setup(operation, NULL, kdf_alg);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

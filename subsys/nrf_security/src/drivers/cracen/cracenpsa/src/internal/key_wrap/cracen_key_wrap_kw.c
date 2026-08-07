@@ -68,9 +68,8 @@ exit:
 
 psa_status_t cracen_key_wrap_kw_unwrap(const psa_key_attributes_t *wrapping_key_attributes,
 				       const uint8_t *wrapping_key_data, size_t wrapping_key_size,
-				       const uint8_t *data, size_t data_size,
-				       uint8_t *key_data, size_t key_data_size,
-				       size_t *key_data_length)
+				       const uint8_t *data, size_t data_size, uint8_t *key_data,
+				       size_t key_data_size, size_t *key_data_length, size_t *bits)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t blocks_count;
@@ -120,6 +119,7 @@ psa_status_t cracen_key_wrap_kw_unwrap(const psa_key_attributes_t *wrapping_key_
 	}
 
 	*key_data_length = data_size - CRACEN_KEY_WRAP_INTEGRITY_CHECK_REG_SIZE;
+	*bits = PSA_BYTES_TO_BITS(*key_data_length);
 	return status;
 exit:
 	safe_memzero(key_data, key_data_size);
