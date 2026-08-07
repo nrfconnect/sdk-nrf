@@ -529,6 +529,19 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* :ref:`wifi_nrf_cloud` sample:
+
+  * Added:
+
+    * Support for FOTA and device monitoring through `Memfault`_, using the CoAP transport.
+    * Support for dual-slot MCUboot (with FOTA support) on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, and ``nrf7120dk/nrf7120/cpuapp`` board targets.
+
+  * Updated:
+
+    * Transport selection.
+      The sample no longer defaults to MQTT.
+      You must now explicitly select either the MQTT or the CoAP transport, using the new :file:`mqtt.conf` or the existing :file:`coap.conf` configuration file, respectively.
+
 * Removed support from the following Zephyr samples:
 
   * :zephyr:code-sample:`dns-resolve`

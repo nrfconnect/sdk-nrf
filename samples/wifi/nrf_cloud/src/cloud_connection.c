@@ -15,6 +15,9 @@
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
+#if defined(CONFIG_MEMFAULT_PERIODIC_UPLOAD)
+#include <memfault/ports/zephyr/periodic_upload.h>
+#endif
 #include "cloud_connection.h"
 #include "location_tracking.h"
 #include "led_control.h"
@@ -141,6 +144,13 @@ static void cloud_ready(void)
 	k_event_post(&cloud_events, CLOUD_READY);
 	LOG_DBG("Setting CLOUD_READY");
 
+#if defined(CONFIG_MEMFAULT_PERIODIC_UPLOAD)
+	/* Only let the Memfault SDK's own periodic upload/FOTA-check timer start doing
+	 * anything once we know nRF Cloud is actually reachable, instead of racing Wi-Fi/DNS
+	 * readiness at boot (see CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT=n).
+	 */
+	memfault_zephyr_port_periodic_upload_enable(true);
+#endif
 }
 
 /* A callback that the application may register in order to handle custom device messages.

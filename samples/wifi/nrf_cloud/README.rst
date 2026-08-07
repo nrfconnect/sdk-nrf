@@ -32,8 +32,13 @@ Features
 
 This sample implements or demonstrates the following features:
 
-* Error-tolerant use of the nRF Cloud CoAP API using the :ref:`lib_nrf_cloud_coap` library.
+* Error-tolerant use of the `nRF Cloud CoAP API`_ using the :ref:`lib_nrf_cloud_coap` library.
 * Error-tolerant use of the `nRF Cloud MQTT API`_ using the :ref:`lib_nrf_cloud` library.
+* Application Firmware Over-The-Air (FOTA) updates through `Memfault`_ Release Management, when built with the CoAP transport.
+  See :ref:`wifi_nrf_cloud_fota` for details.
+* Device monitoring and diagnostics through `Memfault`_, including periodic metrics and fault reporting.
+  Available only when built with the CoAP transport.
+  See :ref:`wifi_nrf_cloud_memfault` for details.
 * Periodic Wi-Fi location tracking by scanning nearby access points and submitting them to nRF Cloud, using the :ref:`lib_location` library.
 * Fake temperature measurements.
 * Transmission of sensor samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
@@ -194,6 +199,50 @@ Under all other circumstances, on-board LEDs are turned off.
 See :ref:`wifi_nrf_cloud_customizing_LED_status_indication` for details on customizing the LED behavior.
 
 See :ref:`wifi_nrf_cloud_led_third_party` for details on configuring LED status indication on third-party boards.
+
+.. _wifi_nrf_cloud_memfault:
+
+Memfault device monitoring
+==========================
+
+This sample uses `Memfault`_ (:kconfig:option:`CONFIG_MEMFAULT`) for general device monitoring and diagnostics whenever built with the CoAP transport.
+This includes periodic metrics reporting, as well as coredump and fault reporting on crash and reboot (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
+RAM-backed coredumps are enabled on the ``nrf7002dk/nrf5340/cpuapp/ns`` board target, see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+This data is uploaded through nRF Cloud's CoAP endpoint (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`), reusing the sample's existing nRF Cloud CoAP connection.
+
+The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD`), independently of the sample's own logic.
+To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
+This same timer also drives FOTA checks when :ref:`wifi_nrf_cloud_fota` is enabled.
+
+.. _wifi_nrf_cloud_fota:
+
+Memfault FOTA
+=============
+
+This sample optionally supports application Firmware Over-The-Air (FOTA) updates, delivered through `Memfault`_ Release Management, when built with the CoAP transport (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
+Enable it with :kconfig:option:`CONFIG_WIFI_NRF_CLOUD_MEMFAULT_FOTA`, which performs the following operations:
+
+* Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
+* Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
+* Drives the actual FOTA check periodically and independently, through the Memfault SDK's own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`), only once the app has confirmed nRF Cloud connectivity (see :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`).
+* Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
+
+This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud's native FOTA job-polling API, for application updates.
+
+.. note::
+   FOTA requires MCUboot with a devicetree layout that provides two full application image slots (``slot0_partition`` and ``slot1_partition``, each large enough to hold the secure and non-secure images together).
+   This sample provides such dual-slot layout out of the box for the following board targets:
+
+   * ``nrf7002dk/nrf5340/cpuapp/ns`` (``slot1_partition`` is placed in the board's external QSPI flash, since the 1 MB internal flash is too small to fit two full images).
+   * ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` (both slots fit in internal flash).
+   * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
+
+   The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
+   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :kconfig:option:`CONFIG_WIFI_NRF_CLOUD_MEMFAULT_FOTA` for that target.
+
+   To build with FOTA enabled on a supported target, merge in both :file:`coap.conf` and :file:`coap-fota.conf` (see :ref:`wifi_nrf_cloud_building_coap`):
+
+   ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
 
 .. _wifi_nrf_cloud_test_counter:
 
@@ -373,13 +422,18 @@ See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more det
 
 .. _wifi_nrf_cloud_building_coap:
 
-Building with CoAP
-==================
+Selecting the transport: MQTT or CoAP
+======================================
 
-By default, the sample uses MQTT to connect to nRF Cloud.
-To use CoAP instead, add the following parameter to your build command:
+The sample does not default to a transport.
+You must select either MQTT or CoAP by adding one of the following parameters to your build command:
 
-``-DEXTRA_CONF_FILE=coap.conf``
+* For MQTT, add ``-DEXTRA_CONF_FILE=mqtt.conf``.
+* For CoAP, add ``-DEXTRA_CONF_FILE=coap.conf``.
+
+On board targets that can enable :kconfig:option:`CONFIG_WIFI_NRF_CLOUD_MEMFAULT_FOTA` (currently only ``nrf7120dk/nrf7120/cpuapp``, see :ref:`wifi_nrf_cloud_fota`), also merge in the :file:`coap-fota.conf` file:
+
+``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
 
 .. _wifi_nrf_cloud_onboarding:
 

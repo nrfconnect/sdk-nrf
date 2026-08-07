@@ -10,6 +10,21 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args:
+      - EXTRA_CONF_FILE="mqtt.conf"
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.wifi.conn.coap.nofota:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args:
+      - EXTRA_CONF_FILE="coap.conf"
     tags:
       - ci_build
       - sysbuild
@@ -19,12 +34,12 @@ tests:
     build_only: true
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/ns
-      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
-      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp
     extra_args:
-      - EXTRA_CONF_FILE="coap.conf"
+      - EXTRA_CONF_FILE="coap.conf;coap-fota.conf"
     tags:
       - ci_build
       - sysbuild
@@ -40,6 +55,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - SHIELD=nrf7002eb2
+      - EXTRA_CONF_FILE="mqtt.conf"
     tags:
       - ci_build
       - sysbuild
@@ -55,7 +71,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - SHIELD=nrf7002eb2
-      - EXTRA_CONF_FILE="coap.conf"
+      - EXTRA_CONF_FILE="coap.conf;coap-fota.conf"
     tags:
       - ci_build
       - sysbuild

@@ -203,6 +203,13 @@ config COAP_SEND_CONFIRMABLE
 	  Ensures all CoAP transfers, even for often less important messages such
 	  as sensor data, are sent as confirmable messages.
 
+config WIFI_NRF_CLOUD_MEMFAULT_FOTA
+	bool "Application FOTA using Memfault Release Management"
+	depends on BOOTLOADER_MCUBOOT
+	depends on $(dt_nodelabel_enabled,slot1_partition)
+	help
+	  Enables application firmware updates delivered through Memfault
+
 endif
 
 endmenu
