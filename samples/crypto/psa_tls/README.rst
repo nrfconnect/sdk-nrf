@@ -96,6 +96,13 @@ The table mirrors the test setup used for TLS verification.
        | TLS v1.3: No
      -
      -
+   * - ``nrf54lc10dk/nrf54lc10a/cpuapp``
+     - :ref:`CRACEN <nrf_security_drivers_cracen>`
+     - No
+     - | TLS v1.2: Yes
+       | TLS v1.3: No
+     -
+     -
    * - | ``nrf54ls05dk/nrf54ls05a/cpuapp``
        | ``nrf54ls05dk/nrf54ls05b/cpuapp``
      - :ref:`nrf_oberon <nrf_security_drivers_oberon>`
