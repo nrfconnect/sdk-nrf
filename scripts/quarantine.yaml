@@ -89,12 +89,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
 
 - scenarios:
-    - tests.wifi_kmu.tfm
-  platforms:
-    - nrf7120dk/nrf7120/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40622"
-
-- scenarios:
     - sample.bluetooth.peripheral_nsms_no_security
   platforms:
     - thingy53/nrf5340/cpuapp/ns

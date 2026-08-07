@@ -11,8 +11,12 @@
 
 #include <wifi_kmu/wifi_kmu.h>
 
-#if defined(CONFIG_BUILD_WITH_TFM)
-#include <tfm_ioctl_api.h>
+#if defined(CONFIG_BUILD_WITH_TFM) && !defined(__NRF_TFM__)
+#define WIFI_KMU_NS_TFM
+#endif
+
+#if defined(WIFI_KMU_NS_TFM)
+#include <tfm_ioctl_core_api.h>
 #else
 #include <nrfx_kmu.h>
 #include <nrfx_mramc.h>
@@ -46,7 +50,7 @@ typedef union {
 	};
 } wifi_key_metadata_t;
 
-#if !defined(CONFIG_BUILD_WITH_TFM)
+#if !defined(WIFI_KMU_NS_TFM)
 static int provision_slots(uint32_t slot_id, size_t num_slots, uint32_t target_address,
 			   const uint8_t *key_buffer, size_t key_size)
 {
@@ -121,8 +125,14 @@ static int erase_slots(uint32_t slot_id, size_t num_slots)
 int wifi_kmu_write_key(uint32_t slot_id, uint32_t target_addr, const uint8_t *key_buffer,
 		       size_t key_size)
 {
-	int err = -EINVAL;
+#if defined(WIFI_KMU_NS_TFM)
+	enum tfm_platform_err_t status =
+		tfm_platform_wifi_kmu_write_key(slot_id, target_addr, key_buffer, key_size);
+
+	return status == TFM_PLATFORM_ERR_SUCCESS ? 0 : -EFAULT;
+#else
 	size_t num_slots;
+	int err = -EINVAL;
 	int err_erase;
 
 	if (key_size == 0 || !key_buffer) {
@@ -140,12 +150,6 @@ int wifi_kmu_write_key(uint32_t slot_id, uint32_t target_addr, const uint8_t *ke
 		return -EINVAL;
 	}
 
-#if defined(CONFIG_BUILD_WITH_TFM)
-	/* WIFI KMU keys are transferred with IOCTL call */
-	(void)err_erase;
-
-	return err;
-#else
 	while (!nrfx_mramc_ready_check()) {
 		/* Wait until MRAMC is ready for the next operation */
 	}
@@ -171,13 +175,14 @@ int wifi_kmu_write_key(uint32_t slot_id, uint32_t target_addr, const uint8_t *ke
 
 int wifi_kmu_erase_keys(void)
 {
+#if defined(WIFI_KMU_NS_TFM)
+	enum tfm_platform_err_t status = tfm_platform_wifi_kmu_erase_keys();
+
+	return status == TFM_PLATFORM_ERR_SUCCESS ? 0 : -EFAULT;
+#else
 	int err = -EFAULT;
 	bool is_empty;
 
-#if defined(CONFIG_BUILD_WITH_TFM)
-	/* WIFI KMU key are transferred with IOCTL call */
-	(void)is_empty;
-#else
 	/* Check if any of the keys are populated */
 	err = nrfx_kmu_key_slots_empty_check(CONFIG_NRF_WIFI_KMU_SLOT_MIN,
 					     CONFIG_NRF_WIFI_KMU_NUM_SLOTS, &is_empty);
@@ -195,9 +200,21 @@ int wifi_kmu_erase_keys(void)
 
 	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 
-	err = erase_slots(CONFIG_NRF_WIFI_KMU_SLOT_MIN, CONFIG_NRF_WIFI_KMU_NUM_SLOTS);
+	/* Revoke each key slot only if not empty */
+	for (uint32_t i = 0; i < CONFIG_NRF_WIFI_KMU_NUM_SLOTS; i++) {
+		int slot_err = nrfx_kmu_key_slots_empty_check(CONFIG_NRF_WIFI_KMU_SLOT_MIN + i, 1,
+							      &is_empty);
+		if (!slot_err && !is_empty) {
+			slot_err = erase_slots(CONFIG_NRF_WIFI_KMU_SLOT_MIN + i, 1);
+		}
+		if (slot_err) {
+			err = slot_err;
+			break;
+		}
+	}
 
 	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
-#endif
+
 	return err;
+#endif
 }

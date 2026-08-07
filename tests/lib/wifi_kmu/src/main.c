@@ -34,13 +34,11 @@ LOG_MODULE_REGISTER(wifi_kmu_test, LOG_LEVEL_DBG);
 #define SLOT_ID_FOR_TEST (CONFIG_NRF_WIFI_KMU_SLOT_MIN)
 
 /** @brief Buffer to store the target key */
-uint8_t target_buffer[MAX_KEY_SIZE] = {0};
+uint8_t target_buffer[MAX_KEY_SIZE] __aligned(KEY_SLOT_SIZE_BYTES) = {0};
 
 /** @brief test pattern for a cryptographic key to push */
-const uint8_t test_key[16] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff
-};
+const uint8_t test_key[16] = {0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
+			      0x08, 0x09, 0xaa, 0xbb, 0xcc, 0xdd, 0xee, 0xff};
 
 BUILD_ASSERT(sizeof(test_key) == KEY_SLOT_SIZE_BYTES, "Update the test_key to KMU size");
 
@@ -61,16 +59,16 @@ static void fill_key(uint8_t *key_buffer, size_t key_size)
 
 static void check_none_filled(void)
 {
+	/* Skip check if TF-M, as KMU is not exposed */
+#if !defined(CONFIG_BUILD_WITH_TFM)
 	int err = -EFAULT;
 	bool is_empty = false;
 
-#if !defined(CONFIG_BUILD_WITH_TFM)
 	err = nrfx_kmu_key_slots_empty_check(CONFIG_NRF_WIFI_KMU_SLOT_MIN,
-					     CONFIG_NRF_WIFI_KMU_NUM_SLOTS,
-					     &is_empty);
-#endif
+					     CONFIG_NRF_WIFI_KMU_NUM_SLOTS, &is_empty);
 	zassert_equal(err, 0, "nrfx_kmu_key_slots_empty_check returned err: %d", err);
 	zassert_true(is_empty, "KMU was not empty (unexpected)");
+#endif
 }
 
 static void check_key_value(const uint8_t *key_buffer, size_t key_size)
@@ -115,21 +113,24 @@ ZTEST(wifi_kmu, test_key_writes)
 ZTEST(wifi_kmu, test_key_erase)
 {
 	int err = -EFAULT;
+#if !defined(CONFIG_BUILD_WITH_TFM)
 	nrfx_kmu_key_slot_data_t slot_data = {0};
+#endif
 
 	clear_wifi_kmu_keys();
 	check_none_filled();
 
+	/* Skip dummy key provision if TF-M, as KMU and MRAMC are not exposed */
+#if !defined(CONFIG_BUILD_WITH_TFM)
 	slot_data.revoke_policy = NRFX_KMU_RPOLICY_ROTATING;
 	memcpy(slot_data.keyslot_value, test_key, sizeof(test_key));
 
-#if !defined(CONFIG_BUILD_WITH_TFM)
 	nrfx_mramc_confignvr_perm_set(true, MRAM_CONFIGNVR_SICR_PAGE);
 	err = nrfx_kmu_key_slot_provision(&slot_data, CONFIG_NRF_WIFI_KMU_SLOT_MIN);
 	nrfx_mramc_confignvr_perm_set(false, MRAM_CONFIGNVR_SICR_PAGE);
-#endif
 
 	zassert_equal(err, 0, "Failed to provision dummy key for erase check");
+#endif
 
 	err = wifi_kmu_erase_keys();
 
