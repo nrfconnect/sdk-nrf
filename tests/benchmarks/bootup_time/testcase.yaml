@@ -23,6 +23,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -43,6 +44,7 @@ tests:
     extra_args:
       - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -61,6 +63,7 @@ tests:
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_mcuboot"
 
@@ -77,6 +80,7 @@ tests:
     extra_args:
       - CONFIG_FLASH=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -90,6 +94,7 @@ tests:
       - SB_CONFIG_PPRCORE_TESTAPP=y
       - SB_CONFIG_FLPRCORE_TESTAPP=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_all_cores"
 
@@ -119,6 +124,7 @@ tests:
     extra_args:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_lfrc_54l"
 
@@ -132,5 +138,6 @@ tests:
       - CONFIG_POWEROFF=y
       - SB_CONFIG_NETCORE_TESTAPP=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
