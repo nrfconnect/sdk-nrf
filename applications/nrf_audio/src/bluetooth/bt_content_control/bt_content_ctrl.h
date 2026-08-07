@@ -71,6 +71,13 @@ int bt_content_ctrl_uuid_populate(struct net_buf_simple *uuid_buf);
 bool bt_content_ctlr_media_state_playing(void);
 
 /**
+ * @brief	Override the current state of the media player.
+ *
+ * @param[in]	playing	Indicate whether the content should be in the playing state.
+ */
+void bt_content_ctrl_state_override(bool playing);
+
+/**
  * @brief	Initialize the content control module.
  *
  * @return	0 for success, error otherwise.

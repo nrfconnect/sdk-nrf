@@ -1107,6 +1107,7 @@ int srv_store_all_ep_state_count(enum bt_bap_ep_state state, enum bt_audio_dir d
 				srv_idx, count);
 			return count;
 		}
+
 		count_total += count;
 	}
 
