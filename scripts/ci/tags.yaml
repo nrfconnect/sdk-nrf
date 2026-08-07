@@ -2017,3 +2017,11 @@ ci_tests_zephyr_drivers_disk:
   files:
     - nrf/tests/zephyr/drivers/disk/
     - zephyr/tests/drivers/disk/
+
+ci_tests_lib_wifi_kmu:
+  files:
+    - modules/hal/nordic/nrfx/drivers/include/nrfx_kmu.h
+    - modules/hal/nordic/nrfx/drivers/src/nrfx_kmu.c
+    - nrf/include/wifi_kmu/
+    - nrf/lib/wifi_kmu/
+    - nrf/tests/lib/wifi_kmu/
