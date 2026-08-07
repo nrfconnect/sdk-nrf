@@ -1,0 +1,3 @@
+tst_timer: &timer20 {
+	status = "okay";
+};
