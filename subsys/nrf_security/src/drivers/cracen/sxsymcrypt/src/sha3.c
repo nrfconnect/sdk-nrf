@@ -93,7 +93,7 @@ static void shake_var_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *out,
 		skip -= discard_bytes;
 	}
 
-	ADD_OUTDESCA(hash_ctx->dma, out, out_len, CMDMA_BA418_BUS_MSK);
+	WR_OUTDESC(hash_ctx->dma, out, out_len);
 }
 
 static void shake_digest(struct sxhash *hash_ctx, size_t skip, uint8_t *digest, size_t digest_sz)

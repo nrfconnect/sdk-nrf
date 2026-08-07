@@ -24,34 +24,43 @@ _Static_assert(SX_XOF_POOL_BUF_SZ != 1,
 	       "To compile this file you need at least one XOF algorithm enabled in the driver "
 	       "using the PSA_WANT_* configs.");
 
-/**
- * @brief Refill pool buffer with SX_XOF_POOL_BUF_SZ bytes squeezed from XOF function.
- *
- *	  The BA418 does not support output continuation, so the entire
- *	  buffer is regenerated from scratch each time, which requires
- *	  discarding the already-emitted prefix, increasing the cost of
- *	  each HW call.
- *
- * @param[in, out] operation XOF operation context
- *
- * @return psa_status_t
- */
-static psa_status_t xof_refill_pool(cracen_xof_operation_t *operation)
+static psa_status_t get_possible_squeeze_size(cracen_xof_operation_t *operation,
+					      size_t req_squeeze_sz,
+					      size_t *possible_squeeze_sz)
 {
-	int sx_status;
-	size_t block_sz;
-	size_t squeeze_sz;
-
 	/** HW has a limitation on maximum possible output.
 	 *  This lets callers reach SX_HASH_DIGESTSZ_SHAKE_MAX and keeps
 	 *  the final refill from failing with SX_ERR_TOO_BIG.
 	 */
-	squeeze_sz = MIN((size_t)SX_XOF_POOL_BUF_SZ,
-			 (size_t)SX_HASH_DIGESTSZ_SHAKE_MAX - operation->prev_squeezed);
-	if (squeeze_sz == 0) {
+	*possible_squeeze_sz = MIN(req_squeeze_sz,
+				   (size_t)SX_HASH_DIGESTSZ_SHAKE_MAX - operation->prev_squeezed);
+	if (*possible_squeeze_sz == 0) {
 		/* Output budget exhausted. */
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
+
+	return PSA_SUCCESS;
+}
+
+/**
+ * @brief Squeeze bytes of XOF output into a buffer.
+ *
+ *	  The BA418 does not support output continuation, so the stream is
+ *	  regenerated from scratch on every call and the already-emitted
+ *	  prefix (operation->prev_squeezed bytes) is discarded, increasing
+ *	  the cost of each HW call.
+ *
+ * @param[in, out] operation  XOF operation context
+ * @param[out]     out        Squeezed output bytes
+ * @param[in]      squeeze_sz Number of bytes to squeeze
+ *
+ * @return psa_status_t
+ */
+static psa_status_t xof_squeeze(cracen_xof_operation_t *operation, uint8_t *out,
+				size_t squeeze_sz)
+{
+	int sx_status;
+	size_t block_sz;
 
 	sx_status = sx_hw_reserve(&operation->hash_op.sx_ctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (sx_status != SX_OK) {
@@ -78,22 +87,44 @@ static psa_status_t xof_refill_pool(cracen_xof_operation_t *operation)
 	}
 
 	sx_status = sx_hash_shake_digest(&operation->hash_op.sx_ctx,
-						 operation->prev_squeezed,
-						 operation->pool,
-						 squeeze_sz);
+					 operation->prev_squeezed,
+					 out,
+					 squeeze_sz);
 	if (sx_status != SX_OK) {
 		goto exit;
 	}
 
 	sx_status = sx_hash_wait(&operation->hash_op.sx_ctx);
-	if (sx_status == SX_OK) {
-		operation->pool_offset = 0;
-		operation->pool_avail = squeeze_sz;
-	}
 
 exit:
 	sx_hw_release(&operation->hash_op.sx_ctx.dma);
 	return silex_statuscodes_to_psa(sx_status);
+}
+
+/**
+ * @brief Refill pool buffer with SX_XOF_POOL_BUF_SZ bytes squeezed from XOF function.
+ *
+ * @param[in, out] operation XOF operation context
+ *
+ * @return psa_status_t
+ */
+static psa_status_t xof_refill_pool(cracen_xof_operation_t *operation)
+{
+	psa_status_t status;
+	size_t squeeze_sz;
+
+	status = get_possible_squeeze_size(operation, SX_XOF_POOL_BUF_SZ, &squeeze_sz);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = xof_squeeze(operation, operation->pool, squeeze_sz);
+	if (status == PSA_SUCCESS) {
+		operation->pool_offset = 0;
+		operation->pool_avail = squeeze_sz;
+	}
+
+	return status;
 }
 
 psa_status_t cracen_xof_setup(cracen_xof_operation_t *operation, psa_algorithm_t alg)
@@ -144,20 +175,40 @@ psa_status_t cracen_xof_output(cracen_xof_operation_t *operation, uint8_t *outpu
 	__ASSERT_NO_MSG(output != NULL);
 
 	while (output_length > 0) {
-		if (operation->pool_avail == 0) {
-			status = xof_refill_pool(operation);
+		/** Optimization path: for large requests squeezing just into the caller's buffer,
+		 *  bypassing pool, this allows to skip unnecessary memcpy operation.
+		 *  For small requests keep going through the pool to decrease the time cost
+		 *  of accessing HW for small chunks of data.
+		 */
+		if (operation->pool_avail == 0 &&
+		    output_length >= sx_hash_get_alg_blocksz(operation->hash_op.sx_hash_algo)) {
+
+			status = get_possible_squeeze_size(operation, output_length,
+							   &bytes_to_copy);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
+
+			status = xof_squeeze(operation, output, bytes_to_copy);
+			if (status != PSA_SUCCESS) {
+				return status;
+			}
+		} else {
+			if (operation->pool_avail == 0) {
+				status = xof_refill_pool(operation);
+				if (status != PSA_SUCCESS) {
+					return status;
+				}
+			}
+
+			bytes_to_copy = MIN(output_length, operation->pool_avail);
+			memcpy(output, operation->pool + operation->pool_offset, bytes_to_copy);
+
+			operation->pool_offset += bytes_to_copy;
+			operation->pool_avail -= bytes_to_copy;
 		}
 
-		bytes_to_copy = MIN(output_length, operation->pool_avail);
-		memcpy(output, operation->pool + operation->pool_offset, bytes_to_copy);
-
-		operation->pool_offset += bytes_to_copy;
-		operation->pool_avail -= bytes_to_copy;
 		operation->prev_squeezed += bytes_to_copy;
-
 		output += bytes_to_copy;
 		output_length -= bytes_to_copy;
 	}
