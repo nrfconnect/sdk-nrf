@@ -9,12 +9,11 @@
 #include "tfm_platform_system.h"
 #include "tfm_attest_hal.h"
 #include "hw_unique_key.h"
-#include "nrfx_nvmc.h"
 #include <nrfx.h>
-#include <nrf_cc3xx_platform.h>
-#include <nrf_cc3xx_platform_identity_key.h>
 #include "nrf_provisioning.h"
+#if !defined(CONFIG_HAS_HW_NRF_CRACEN)
 #include <identity_key.h>
+#endif
 #include <tfm_log.h>
 #if defined(CONFIG_PARTITION_MANAGER_ENABLED)
 #include <pm_config.h>
@@ -76,6 +75,32 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 }
 #endif /* NRF53_SERIES && PM_CPUNET_APP_ADDRESS */
 
+#if defined(CONFIG_SOC_SERIES_NRF54L) || defined(CONFIG_SOC_SERIES_NRF71)
+/* On nRF54L/nRF71 the persistent APPROTECT/SECUREAPPROTECT policy lives in
+ * UICR.APPROTECT/SECUREAPPROTECT (RRAMC-backed, write-once). The runtime debug
+ * signals are enforced by TAMPC PROTECT and re-programmed on every reset by
+ * nrf54l_handle_approtect() in SystemInit: hardware pre-locks TAMPC when UICR
+ * is Protected, otherwise the FW branch (ENABLE_APPROTECT /
+ * ENABLE_SECUREAPPROTECT) decides for this boot only.
+ */
+static enum tfm_plat_err_t verify_debug_disabled(void)
+{
+	/* Both redundancy words in each block must be programmed away from the
+	 * default Unprotected (0xFFFFFFFF) value for the hardware to enforce
+	 * protection on the next reset.
+	 */
+	if (NRF_UICR_S->APPROTECT[0].PROTECT0 == UICR_APPROTECT_PROTECT0_PALL_Unprotected ||
+	    NRF_UICR_S->APPROTECT[0].PROTECT1 == UICR_APPROTECT_PROTECT1_PALL_Unprotected ||
+	    NRF_UICR_S->SECUREAPPROTECT[0].PROTECT0 ==
+		    UICR_SECUREAPPROTECT_PROTECT0_PALL_Unprotected ||
+	    NRF_UICR_S->SECUREAPPROTECT[0].PROTECT1 ==
+		    UICR_SECUREAPPROTECT_PROTECT1_PALL_Unprotected) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	return TFM_PLAT_ERR_SUCCESS;
+}
+#else
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
 	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
@@ -86,6 +111,7 @@ static enum tfm_plat_err_t verify_debug_disabled(void)
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
+#endif
 
 enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {
@@ -121,8 +147,8 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
-	/* The Initial Attestation key should be already written */
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
+	/* The Initial Attestation key should be already written. */
 	if (!identity_key_is_written()) {
 		ERROR(
 			"This device has not been provisioned with an Initial Attestation Key.");
@@ -170,7 +196,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 static bool dummy_key_is_present(void)
 {
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && !defined(CONFIG_HAS_HW_NRF_CRACEN)
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
 	int err;
 
