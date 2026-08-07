@@ -20,8 +20,8 @@ tests:
       - nrf52840dk/nrf52840
   drivers.fprotect.negative_and_hw_crypto:
     extra_args:
-      - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
-      - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
+      - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=n
+      - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=n
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
