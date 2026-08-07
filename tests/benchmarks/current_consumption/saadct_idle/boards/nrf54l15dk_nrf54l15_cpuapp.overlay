@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &button3;
+		adc0 = &adc;
+	};
+};
+
+&button3 {
+	/* Logic is inverted to adapt to measurement methods */
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
+};
+
+&timer20 {
+	prescaler = <1>;
+	status = "okay";
+	clocks = <&hfxo>;
+};
+
+&adc {
+	compatible = "nordic,nrf-saadct";
+	status = "okay";
+	timer-instance = <&timer20>;
+	/* Reserve SAADC to ensure that it is assigned to cpuapp and can be used by nrfx_saadc. */
+	#address-cells = <1>;
+	#size-cells = <0>;
+};
