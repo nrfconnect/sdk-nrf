@@ -239,6 +239,24 @@ config NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS
 	  update candidate to the correct primary slot when the secondary slot is shared between
 	  images. The image header is always plain text, so this also works for encrypted images.
 
+config NCS_MCUBOOT_IMGTOOL_PAD_VALUE_PM_COMPAT
+	bool "Partition Manager compatible imgtool pad value"
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  When enabled, pass --pad-value 0xff to imgtool when signing images.
+	  This produces the same padding as when Partition Manager was used
+	  for image signing.
+
+config NCS_MCUBOOT_IMGTOOL_PAD_VALUE
+	string "imgtool --pad-value option"
+	depends on BOOTLOADER_MCUBOOT
+	default "0xff" if NCS_MCUBOOT_IMGTOOL_PAD_VALUE_PM_COMPAT
+	default "0" if BUILD_WITH_TFM
+	default ""
+	help
+	  When non-empty, pass --pad-value to imgtool when signing images.
+	  This sets the byte value used for header and slot padding.
+
 DT_CHOSEN_Z_CODE_PARTITION := zephyr,code-partition
 DT_NODELABEL_SECONDARY_PARTITION := secondary_app_partition
 DT_NODELABEL_SLOT1_PARTITION := slot1_partition

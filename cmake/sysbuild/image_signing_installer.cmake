@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_imgtool_args.cmake)
 
 function(concat_binaries)
   cmake_parse_arguments(ARG "" "OUTPUT" "INPUT;DEPENDS" ${ARGN})
@@ -104,6 +105,11 @@ if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")
 else()
   set(imgtool_extra)
 endif()
+
+set(CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE)
+sysbuild_get(CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE IMAGE ${installer_image} VAR
+  CONFIG_NCS_MCUBOOT_IMGTOOL_PAD_VALUE KCONFIG)
+ncs_mcuboot_imgtool_append_pad_value_args(imgtool_extra)
 
 # Set proper hash calculation algorithm for signing
 if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)

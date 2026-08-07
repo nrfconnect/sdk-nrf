@@ -12,6 +12,7 @@
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/ironside_se_tlv.cmake)
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_imgtool_args.cmake)
 
 function(zephyr_runner_file type path)
   # Property magic which makes west flash choose the signed build
@@ -90,6 +91,8 @@ function(zephyr_mcuboot_tasks)
   else()
     set(imgtool_extra)
   endif()
+
+  ncs_mcuboot_imgtool_append_pad_value_args(imgtool_extra)
 
   # Set proper hash calculation algorithm for signing
   if(CONFIG_MCUBOOT_BOOTLOADER_SIGNATURE_TYPE_PURE)
