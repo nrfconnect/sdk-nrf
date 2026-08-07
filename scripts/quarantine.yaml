@@ -22,12 +22,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - all
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "Unsupported TFM_PLATFORM"
-
-- scenarios:
     - nrf.extended.drivers.counter.basic_api
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
