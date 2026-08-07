@@ -50,7 +50,7 @@ PROJECT_NAME           = nrfx
 
 ### EDIT THIS ###
 
-PROJECT_NUMBER         = 4.0.1
+PROJECT_NUMBER         = 4.5.0
 
 # Using the PROJECT_BRIEF tag one can provide an optional one line description
 # for a project that appears at the top of each page and should give viewer a
@@ -1017,7 +1017,8 @@ INPUT_FILE_ENCODING    =
 # *.f18, *.f, *.for, *.vhd, *.vhdl, *.ucf, *.qsf and *.ice.
 
 FILE_PATTERNS          = *.h \
-                         *.dox
+                         *.dox \
+                         README.md
 
 # The RECURSIVE tag can be used to specify whether or not subdirectories should
 # be searched for input files as well.
@@ -1048,7 +1049,10 @@ EXCLUDE_SYMLINKS       = NO
 # Note that the wildcards are matched against the file with absolute path, so to
 # exclude all test directories for example use the pattern */test/*
 
-EXCLUDE_PATTERNS       =
+EXCLUDE_PATTERNS       = */bsp/stable/mdk/* \
+                         */samples/src/**/*.c \
+                         */samples/src/**/*.h \
+                         */samples/src/**/build/*
 
 # The EXCLUDE_SYMBOLS tag can be used to specify one or more symbol names
 # (namespaces, classes, functions, etc.) that should be excluded from the
