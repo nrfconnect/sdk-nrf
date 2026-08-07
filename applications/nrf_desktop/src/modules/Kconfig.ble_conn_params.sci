@@ -15,7 +15,8 @@ menu "SCI default connection rate parameters"
 
 config DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US
 	int "Minimum connection interval (125 microsecond units)"
-	default 7
+	default 6 if USBD_MAX_SPEED_HIGH
+	default 8
 	range 3 32000
 	help
 	  Minimum connection interval in 125 microsecond units (LE connection interval

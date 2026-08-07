@@ -154,6 +154,22 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args: FILE_SUFFIX=release_dongle
+  applications.nrf_desktop.zdebug_hid_sci_dongle.uart:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args: FILE_SUFFIX=hid_sci_dongle
+    harness: console
+  applications.nrf_desktop.zrelease_hid_sci_dongle:
+    build_only: true
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args: FILE_SUFFIX=release_hid_sci_dongle
   applications.nrf_desktop.zdebug_keyboard.uart:
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
