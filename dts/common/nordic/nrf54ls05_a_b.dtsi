@@ -257,6 +257,7 @@
 				status = "disabled";
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				dmaend-supported;
 			};
 
 			spi21: spi@c7000 {
@@ -296,6 +297,7 @@
 				status = "disabled";
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				dmaend-supported;
 			};
 
 			spi22: spi@c8000 {
@@ -335,6 +337,7 @@
 				status = "disabled";
 				endtx-stoptx-supported;
 				frame-timeout-supported;
+				dmaend-supported;
 			};
 
 			egu20: egu@c9000 {
