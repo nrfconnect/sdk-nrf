@@ -553,6 +553,10 @@ Wi-Fi samples
   * :zephyr:code-sample:`mqtt-sn-publisher`
   * :zephyr:code-sample:`coap-server`
 
+* :ref:`wifi_monitor_sample` sample:
+
+  * Added the Wi-Fi shell, so that the monitored channel can be changed at runtime using the ``wifi channel`` command.
+
 Other samples
 -------------
 
