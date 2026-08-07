@@ -75,6 +75,7 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
 - scenarios:
+    - mcuboot.external_flash.legacy
     - sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip
   platforms:
     - nrf5340dk/nrf5340/cpuapp
