@@ -18,6 +18,7 @@ target_include_directories(platform_s
 target_sources(platform_s
   PRIVATE
   ${ZEPHYR_BASE}/soc/nordic/nrf71/soc.c
+  ${ZEPHYR_BASE}/soc/nordic/nrf71/wicr_setup.c
   )
 
 target_include_directories(platform_s
