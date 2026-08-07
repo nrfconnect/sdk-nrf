@@ -86,10 +86,10 @@ static void nrf92_wifi_scan_evt_handler(const struct nrf_modem_wifi_scan_event *
 	}
 }
 
-static int nrf92_wifi_scan(
-	const struct device *dev,
-	struct wifi_scan_params *params,
-	scan_result_cb_t cb)
+static int nrf92_wifi_scan(const struct device *dev,
+			   struct net_if *iface __unused,
+			   struct wifi_scan_params *params,
+			   scan_result_cb_t cb)
 {
 	int err;
 	struct nrf_modem_wifi_scan_start_params nrf_modem_params = { 0 };

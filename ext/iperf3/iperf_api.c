@@ -113,7 +113,9 @@
 #include "units.h"
 #include "iperf_util.h"
 #include "iperf_locale.h"
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #include "version.h"
+#endif
 #if defined(HAVE_SSL)
 #include <openssl/bio.h>
 #include "iperf_auth.h"

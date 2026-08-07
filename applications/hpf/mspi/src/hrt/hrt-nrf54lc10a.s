@@ -648,7 +648,7 @@ hrt_read:
  #NO_APP
 	j	.L44
 	.size	hrt_read, .-hrt_read
-	.section	.sdata.xfer_shift_ctrl,"aw"
+	.section	.data.xfer_shift_ctrl,"aw"
 	.align	2
 	.type	xfer_shift_ctrl, @object
 	.size	xfer_shift_ctrl, 4

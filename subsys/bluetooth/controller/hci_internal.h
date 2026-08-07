@@ -18,10 +18,6 @@
 #ifndef HCI_INTERNAL_H__
 #define HCI_INTERNAL_H__
 
-struct hci_driver_data {
-	bt_hci_recv_t recv_func;
-};
-
 /** @brief Send an HCI command packet to the SoftDevice Controller.
  *
  * If the application has provided user handlers, these handlers get precedence

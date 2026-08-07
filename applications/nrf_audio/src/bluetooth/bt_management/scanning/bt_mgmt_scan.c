@@ -25,7 +25,7 @@ static void addr_print(void)
 	/* NOTE: We are using an internal struct here to get the address without forcing the
 	 * RPA to time out, should be changed once k_forever bug (DRGN-21459) has been fixed
 	 */
-	bt_addr_le_copy(&_oob.addr, &bt_dev.random_addr);
+	bt_addr_le_copy_addr(&_oob.addr, &bt_dev.random_addr, BT_ADDR_LE_RANDOM);
 
 	(void)bt_addr_le_to_str(&_oob.addr, addr_str, BT_ADDR_LE_STR_LEN);
 	LOG_INF("Local addr: %s. May time out. Updates not printed", addr_str);

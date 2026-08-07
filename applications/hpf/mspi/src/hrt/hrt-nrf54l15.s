@@ -553,33 +553,7 @@ hrt_read:
 	srli	a4,a4,16
 .L95:
 	sw	a4,72(s0)
- #APP
-	csrw 2000, 0
-	csrw 2001, 0
- #NO_APP
-	andi	s1,s1,63
-	or	s1,s1,a5
- #APP
-	csrw 3019, s1
- #NO_APP
-	lbu	a5,87(s0)
-	bne	a5,zero,.L44
-	lbu	a4,88(s0)
-	li	a5,1
-	bne	a4,zero,.L78
-	lbu	a4,86(s0)
-	sll	a5,a5,a4
-	slli	a5,a5,16
-	srli	a5,a5,16
- #APP
-	csrs 3008, a5
- #NO_APP
-.L44:
-	lw	ra,32(sp)
-	lw	s0,28(sp)
-	lw	s1,24(sp)
-	addi	sp,sp,36
-	jr	ra
+	j	.L55
 .L46:
 	lbu	a0,86(s0)
 	sll	a2,a2,a0
@@ -673,12 +647,12 @@ hrt_read:
 	bne	a3,a4,.L71
  #APP
 	fence iorw,iorw
-	csrr a3, 3018
+	csrr a0, 3018
 	csrw 3011, 0
  #NO_APP
-	lhu	a2,84(s0)
+	lhu	a3,84(s0)
 	li	a4,35
-	bleu	a2,a4,.L72
+	bleu	a3,a4,.L72
  #APP
 	csrw 2000, 0
  #NO_APP
@@ -694,67 +668,82 @@ hrt_read:
 	addi	a4,a4,-1
 .L73:
  #APP
-	csrr a2, 3010
+	csrr a3, 3010
  #NO_APP
-	slli	a2,a2,16
-	srli	a2,a2,16
-	beq	a2,a4,.L73
-	lhu	a2,84(s0)
+	slli	a3,a3,16
+	srli	a3,a3,16
+	beq	a3,a4,.L73
+	lhu	a3,84(s0)
 	li	a4,35
-	bleu	a2,a4,.L74
+	bleu	a3,a4,.L74
  #APP
 	csrw 2010, 0
  #NO_APP
 .L74:
  #APP
-	csrr a2, 3010
+	csrr a4, 3010
  #NO_APP
-	slli	a2,a2,16
-	srli	a2,a2,16
+	slli	a4,a4,16
+	srli	a4,a4,16
  #APP
 	csrs 3008, 1
  #NO_APP
-	lbu	a4,83(s0)
-	li	a1,4
-	li	t0,2
-	bne	a4,a1,.L75
-	li	t0,1
-	li	a1,30
+	lbu	a2,83(s0)
+	li	a3,4
+	beq	a2,a3,.L81
+	li	a2,2
 .L75:
-	slli	a0,a3,24
-	srli	a4,a3,24
-	or	a4,a4,a0
-	li	a0,65536
-	srli	t1,a3,8
-	addi	a0,a0,-256
-	and	t1,t1,a0
-	lbu	t2,83(s0)
-	or	a4,a4,t1
-	slli	a3,a3,8
-	li	t1,16711680
-	and	a3,a3,t1
-	or	a4,a4,a3
-	and	a2,a2,a1
+	sw	a5,0(sp)
+	sw	a2,12(sp)
+	sw	a3,8(sp)
+	sw	a4,4(sp)
+	call	__bswapsi2
+	lw	a3,8(sp)
+	lw	a4,4(sp)
+	lw	a2,12(sp)
+	lbu	a1,83(s0)
+	and	a4,a4,a3
 	lbu	a3,68(s0)
-	sra	a2,a2,t0
-	sll	a4,a4,t2
-	or	a4,a4,a2
+	sra	a4,a4,a2
 	lbu	a2,83(s0)
 	addi	a3,a3,1
+	sll	a0,a0,a1
 	mul	a3,a3,a2
-	li	a2,32
-	sub	a3,a2,a3
-	sll	a4,a4,a3
-	slli	a2,a4,24
-	srli	a3,a4,24
-	or	a3,a3,a2
-	srli	a2,a4,8
-	and	a2,a2,a0
-	slli	a4,a4,8
-	or	a3,a3,a2
-	and	a4,a4,t1
-	or	a4,a3,a4
-	j	.L95
+	or	a4,a4,a0
+	li	a0,32
+	sub	a0,a0,a3
+	sll	a0,a4,a0
+	call	__bswapsi2
+	lw	a5,0(sp)
+	sw	a0,72(s0)
+.L55:
+ #APP
+	csrw 2000, 0
+	csrw 2001, 0
+ #NO_APP
+	andi	s1,s1,63
+	or	s1,s1,a5
+ #APP
+	csrw 3019, s1
+ #NO_APP
+	lbu	a5,87(s0)
+	bne	a5,zero,.L44
+	lbu	a4,88(s0)
+	li	a5,1
+	bne	a4,zero,.L78
+	lbu	a4,86(s0)
+	sll	a5,a5,a4
+	slli	a5,a5,16
+	srli	a5,a5,16
+ #APP
+	csrs 3008, a5
+ #NO_APP
+.L44:
+	lw	ra,32(sp)
+	lw	s0,28(sp)
+	lw	s1,24(sp)
+	addi	sp,sp,36
+	jr	ra
 .L61:
 	lbu	s1,69(s0)
 	j	.L93
@@ -786,6 +775,10 @@ hrt_read:
 .L66:
 	lbu	s1,69(s0)
 	j	.L94
+.L81:
+	li	a2,1
+	li	a3,30
+	j	.L75
 .L71:
  #APP
 	csrr a4, 3018
@@ -807,7 +800,7 @@ hrt_read:
  #NO_APP
 	j	.L44
 	.size	hrt_read, .-hrt_read
-	.section	.sdata.xfer_shift_ctrl,"aw"
+	.section	.data.xfer_shift_ctrl,"aw"
 	.align	2
 	.type	xfer_shift_ctrl, @object
 	.size	xfer_shift_ctrl, 4
@@ -816,4 +809,5 @@ xfer_shift_ctrl:
 	.byte	4
 	.byte	1
 	.byte	0
+	.globl	__bswapsi2
 	.section	.note.GNU-stack,"",@progbits

@@ -13,7 +13,7 @@
 #include <date_time.h>
 #include <zephyr/logging/log.h>
 #include <net/nrf_cloud_coap.h>
-#include <app_version.h>
+#include <zephyr/app_version.h>
 
 LOG_MODULE_REGISTER(nrf_cloud_coap_cell_location_sample,
 		    CONFIG_NRF_CLOUD_COAP_CELL_LOCATION_SAMPLE_LOG_LEVEL);

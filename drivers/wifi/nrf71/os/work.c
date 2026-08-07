@@ -82,7 +82,7 @@ static int workqueue_init(void)
 			   CONFIG_NRF71_BH_WQ_PRIORITY,
 			   NULL);
 
-	k_thread_name_set(&zep_wifi_bh_q.thread, "nrf71_bh_wq");
+	k_thread_name_set(zep_wifi_bh_q.thread_id, "nrf71_bh_wq");
 
 	k_work_queue_init(&zep_wifi_intr_q);
 
@@ -92,7 +92,7 @@ static int workqueue_init(void)
 			   CONFIG_NRF71_IRQ_WQ_PRIORITY,
 			   NULL);
 
-	k_thread_name_set(&zep_wifi_intr_q.thread, "nrf71_intr_wq");
+	k_thread_name_set(zep_wifi_intr_q.thread_id, "nrf71_intr_wq");
 #ifdef CONFIG_NRF71_TX_DONE_WQ_ENABLED
 	k_work_queue_init(&zep_wifi_tx_done_q);
 
@@ -102,7 +102,7 @@ static int workqueue_init(void)
 			   CONFIG_NRF71_TX_DONE_WQ_PRIORITY,
 			   NULL);
 
-	k_thread_name_set(&zep_wifi_tx_done_q.thread, "nrf71_tx_done_wq");
+	k_thread_name_set(zep_wifi_tx_done_q.thread_id, "nrf71_tx_done_wq");
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
 
 #ifdef CONFIG_NRF71_RX_WQ_ENABLED
@@ -114,7 +114,7 @@ static int workqueue_init(void)
 			   CONFIG_NRF71_RX_WQ_PRIORITY,
 			   NULL);
 
-	k_thread_name_set(&zep_wifi_rx_q.thread, "nrf71_rx_wq");
+	k_thread_name_set(zep_wifi_rx_q.thread_id, "nrf71_rx_wq");
 #endif /* CONFIG_NRF71_RX_WQ_ENABLED */
 
 	return 0;

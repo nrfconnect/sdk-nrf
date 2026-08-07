@@ -1951,7 +1951,7 @@ static int dect_phy_ctrl_init(void)
 	k_work_queue_start(&dect_phy_ctrl_work_q, dect_phy_ctrl_th_stack,
 			   K_THREAD_STACK_SIZEOF(dect_phy_ctrl_th_stack), DECT_PHY_CTRL_PRIORITY,
 			   NULL);
-	k_thread_name_set(&(dect_phy_ctrl_work_q.thread), "dect_phy_ctrl_worker_th");
+	k_thread_name_set(dect_phy_ctrl_work_q.thread_id, "dect_phy_ctrl_worker_th");
 
 	return 0;
 }

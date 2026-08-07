@@ -268,8 +268,7 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
  *
  * @return	0 for success, error otherwise.
  */
-int broadcast_source_enable(struct broadcast_source_big const *const broadcast_param,
-			    uint8_t big_index);
+int broadcast_source_enable(struct broadcast_source_big *broadcast_param, uint8_t big_index);
 
 /**
  * @}

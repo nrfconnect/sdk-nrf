@@ -5,9 +5,9 @@
 #
 
 config FLASH
-	default y if DT_HAS_JEDEC_MSPI_NOR_ENABLED
+	default y if DT_HAS_JEDEC_NOR_ENABLED
 
 config FLASH_PAGE_LAYOUT
-	default y if DT_HAS_JEDEC_MSPI_NOR_ENABLED
+	default y if DT_HAS_JEDEC_NOR_ENABLED
 
 source "Kconfig.zephyr"

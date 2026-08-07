@@ -5,7 +5,7 @@
  */
 #include <zephyr/ztest.h>
 #include <zephyr/random/random.h>
-#include <syscalls/random.h>
+#include <zephyr/syscalls/random.h>
 
 #include <app_event_manager.h>
 #include <event_manager_proxy.h>

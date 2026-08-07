@@ -8,12 +8,13 @@ menu "Logging over RPC"
 
 config LOG_RPC
 	bool
-	select NRF_RPC
+	depends on NRF_RPC
 	select NRF_RPC_CBOR
 
 config LOG_FORWARDER_RPC
 	bool "nRF RPC logging forwarder"
 	depends on LOG
+	depends on NRF_RPC
 	select LOG_RPC
 	help
 	  Enables receiving log messages as nRF RPC events and forwarding them to
@@ -24,6 +25,7 @@ menuconfig LOG_BACKEND_RPC
 	depends on LOG_MODE_DEFERRED
 	depends on LOG_PROCESS_THREAD
 	depends on !LOG_FORWARDER_RPC
+	depends on NRF_RPC
 	select LOG_OUTPUT
 	select LOG_RPC
 	help

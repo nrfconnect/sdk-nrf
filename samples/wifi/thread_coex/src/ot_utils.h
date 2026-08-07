@@ -17,7 +17,7 @@
 #include "zephyr/net/openthread.h"
 
 #include <openthread/instance.h>
-#include <version.h>
+#include <zephyr/version.h>
 #include <openthread/config.h>
 #include <openthread/cli.h>
 #include <openthread/diag.h>
