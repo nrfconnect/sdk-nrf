@@ -13,7 +13,13 @@
 
 #include <zephyr/ztest.h>
 #include <zephyr/device.h>
+#if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
+#elif defined(CONFIG_NRFX_RRAMC)
+#include <nrfx_rramc.h>
+#else
+#error Could not determine type of NVM
+#endif
 #include <zephyr/sys/util.h>
 #include <fprotect.h>
 #include <zephyr/linker/linker-defs.h>
@@ -44,6 +50,15 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *pEsf)
 	actual_fatal++;
 }
 
+static inline void test_write_bytes(uint32_t addr, const uint8_t *buf, size_t len)
+{
+#if defined(CONFIG_NRFX_NVMC)
+	nrfx_nvmc_bytes_write(addr, buf, len);
+#elif defined(CONFIG_NRFX_RRAMC)
+	nrfx_rramc_bytes_write(addr, buf, len);
+#endif
+}
+
 static void flash_write_protected_fails(uint32_t addr, bool backup)
 {
 	uint8_t buf[BUF_SIZE];
@@ -61,7 +76,7 @@ static void flash_write_protected_fails(uint32_t addr, bool backup)
 		" means the test passed!\n");
 	zassert_equal(expected_fatal, actual_fatal, "An unexpected fatal error has occurred.\n");
 	expected_fatal++;
-	nrfx_nvmc_bytes_write(addr, buf, sizeof(buf));
+	test_write_bytes(addr, buf, sizeof(buf));
 	zassert_unreachable("Should have BUS FAULTed before coming here.");
 }
 
@@ -78,7 +93,7 @@ ZTEST(test_fprotect_negative, test_flash_write_protected_fails)
 	uint8_t buf[BUF_SIZE];
 
 	(void)memset(buf, 0x5a, sizeof(buf));
-	nrfx_nvmc_bytes_write(TEST_FPROTECT_WRITE_ADDR, buf, sizeof(buf));
+	test_write_bytes(TEST_FPROTECT_WRITE_ADDR, buf, sizeof(buf));
 
 #ifdef CONFIG_HAS_HW_NRF_ACL
 	zassert_equal(0, fprotect_is_protected(TEST_FPROTECT_WRITE_ADDR), NULL);
