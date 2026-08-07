@@ -1,5 +1,5 @@
 tests:
-  psa_xof.cracen:
+  xof.cracen:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -18,7 +18,7 @@ tests:
       - crypto
       - ci_crypto
       - ci_tests_crypto
-  psa_xof.cracen.small_pool:
+  xof.cracen.small_pool:
     sysbuild: true
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
