@@ -7,6 +7,12 @@
 #ifndef ESB_PERIPHERALS_H_
 #define ESB_PERIPHERALS_H_
 
+/**
+ * @file
+ * @defgroup esb_peripherals Enhanced ShockBurst Peripherals API 
+ * @{
+ */
+
 #ifdef __cplusplus
 extern "C" {
 #endif
