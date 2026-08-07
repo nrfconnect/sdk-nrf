@@ -41,3 +41,13 @@ tests:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+  sample.dfu.smp_svr_mini_boot.nrf54ls05a:
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+  sample.dfu.smp_svr_mini_boot.swap_move.nrf54ls05a:
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp

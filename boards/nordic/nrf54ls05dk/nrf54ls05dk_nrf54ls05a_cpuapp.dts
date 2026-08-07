@@ -13,6 +13,11 @@
 	compatible = "nordic,nrf54ls05dk_nrf54ls05a-cpuapp";
 	model = "Nordic nRF54LS05 DK nRF54LS05A Application MCU";
 
+	aliases {
+		mcuboot-button0 = &button0;
+		mcuboot-led0 = &led0;
+	};
+
 	chosen {
 		zephyr,code-partition = &slot0_partition;
 		zephyr,sram = &cpuapp_sram;
