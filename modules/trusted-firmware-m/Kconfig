@@ -235,6 +235,7 @@ config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
 	default y if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
+	depends on TFM_PARTITION_CRYPTO
 	select PSA_WANT_KEY_TYPE_CHACHA20 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	select PSA_WANT_GENERATE_RANDOM
@@ -326,8 +327,8 @@ choice TFM_PROFILE_TYPE
 
 config TFM_PROFILE_TYPE_MINIMAL
 	bool "TF-M build profile: minimal"
-	select PSA_WANT_GENERATE_RANDOM
-	select PSA_WANT_ALG_HMAC_DRBG
+	select PSA_WANT_GENERATE_RANDOM if PSA_CRYPTO
+	select PSA_WANT_ALG_HMAC_DRBG if PSA_CRYPTO
 	help
 	  Minimal TF-M build profile. This will make the TF-M image fit within 32kB.
 	  No configuration of the size of the partition nor the features of the
