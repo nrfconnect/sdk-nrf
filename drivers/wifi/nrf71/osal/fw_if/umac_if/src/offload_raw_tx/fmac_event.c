@@ -9,11 +9,10 @@
  * Offloaded raw TX modefor the FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include "queue.h"
+#include <queue.h>
 #include <nrf71_wifi_ctrl.h>
-#include "common/hal_mem.h"
-#include "offload_raw_tx/fmac_structs.h"
-#include "common/fmac_util.h"
+#include <offload_raw_tx/fmac_structs.h>
+#include <common/fmac_util.h>
 static enum nrf_wifi_status umac_event_off_raw_tx_stats_process(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	void *event)
