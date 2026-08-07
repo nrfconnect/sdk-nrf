@@ -8,6 +8,7 @@ if MEMFAULT
 
 config MEMFAULT_NCS_PROJECT_KEY
 	string "Memfault API key [DEPRECATED]"
+	default MEMFAULT_PROJECT_KEY
 	help
 	  Deprecated. Use CONFIG_MEMFAULT_PROJECT_KEY instead.
 	  To load the project key at runtime from the Zephyr settings subsystem,

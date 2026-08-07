@@ -41,12 +41,6 @@ LOG_MODULE_REGISTER(memfault_ncs, CONFIG_MEMFAULT_NCS_LOG_LEVEL);
 
 #define IMEI_LEN 15
 
-#if defined(CONFIG_SOC_SERIES_NRF91)
-#define MEMFAULT_URL "https://goto.memfault.com/create-key/nrf91"
-#else
-#define MEMFAULT_URL "https://goto.memfault.com/create-key/nrf"
-#endif
-
 extern void memfault_ncs_metrics_init(void);
 
 #if defined(CONFIG_MEMFAULT_NCS_DEVICE_INFO_BUILTIN)

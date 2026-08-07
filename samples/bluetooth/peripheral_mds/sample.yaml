@@ -5,7 +5,7 @@ tests:
   sample.bluetooth.peripheral_mds:
     sysbuild: true
     extra_configs:
-      - CONFIG_MEMFAULT_NCS_PROJECT_KEY="dummy-key"
+      - CONFIG_MEMFAULT_PROJECT_KEY="dummy-key"
       - CONFIG_MEMFAULT_NCS_DEVICE_ID="dummy-device-id"
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
