@@ -739,6 +739,22 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       endif()
     endif()
 
+    if(NOT SB_CONFIG_SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE AND
+       NOT SB_CONFIG_SECURE_BOOT_APPCORE_SUPPORTED_SIGNATURE_HARDWARE)
+      set(extra_kconfig_options_file
+          ${CMAKE_BINARY_DIR}/zephyr/misc/generated/extra_kconfig_options.conf)
+      if(EXISTS ${extra_kconfig_options_file})
+        file(READ ${extra_kconfig_options_file} extra_kconfig_options)
+        if(extra_kconfig_options MATCHES "SB_CONFIG_SECURE_BOOT_APPCORE=y" AND
+           extra_kconfig_options MATCHES "SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y" AND
+           extra_kconfig_options MATCHES "SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y")
+          message(FATAL_ERROR
+            "Secure boot application core hardware crypto is not supported on "
+            "${BOARD}/${BOARD_QUALIFIERS}.")
+        endif()
+      endif()
+    endif()
+
     # Apply configuration for hashing
     if(SB_CONFIG_SECURE_BOOT_HASH_TYPE_SHA256 AND NOT SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_NONE)
       if(SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE)
