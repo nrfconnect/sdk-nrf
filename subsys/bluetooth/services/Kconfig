@@ -34,6 +34,7 @@ rsource "Kconfig.ddfs"
 rsource "Kconfig.mds"
 rsource "cgms/Kconfig.cgms"
 rsource "ras/Kconfig.ras"
+rsource "sap/Kconfig.sap"
 rsource "wifi_prov/Kconfig.wifi_prov"
 
 endmenu
