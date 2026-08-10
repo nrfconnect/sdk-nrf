@@ -477,6 +477,8 @@ Networking samples
     * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
 
+  * Fixed an issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
+
 NFC samples
 -----------
 
