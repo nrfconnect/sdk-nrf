@@ -27,7 +27,7 @@
 		zephyr,console = &uart120;
 		zephyr,code-partition = &cpuflpr_code_partition;
 		zephyr,flash = &mram1x;
-		zephyr,sram = &cpuflpr_tcm_sram;
+		zephyr,sram = &cpuflpr_code_data;
 	};
 };
 

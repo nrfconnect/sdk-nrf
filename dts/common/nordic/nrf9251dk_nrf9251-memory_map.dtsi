@@ -47,6 +47,10 @@
 			reg = <0x2f88fd00 0x200>;
 		};
 
+		cpuflpr_code_data: memory@2f890000 {
+			reg = <0x2f890000 DT_SIZE_K(46)>;
+		};
+
 		cpuapp_cpuflpr_ipc_shm: memory@2f89b800 {
 			reg = <0x2f89b800 DT_SIZE_K(1)>;
 		};

@@ -85,7 +85,7 @@
 };
 
 &cpuflpr_vpr {
-	execution-memory = <&cpuflpr_tcm_sram>;
+	execution-memory = <&cpuflpr_code_data>;
 	source-memory = <&cpuflpr_code_partition>;
 };
 
