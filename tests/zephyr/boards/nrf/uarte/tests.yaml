@@ -1,0 +1,17 @@
+common:
+  tags:
+    - drivers
+    - uart
+    - ci_tests_zephyr_boards_nrf_uarte
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  depends_on: gpio
+
+tests:
+  nrf.extended.boards.nrf.uarte:
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
