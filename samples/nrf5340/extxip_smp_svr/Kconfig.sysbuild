@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Applies only to the non-secure board targets with the network core update enabled.
+configdefault MCUBOOT_USE_ALL_AVAILABLE_RAM
+	default y if MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
+
+source "share/sysbuild/Kconfig"

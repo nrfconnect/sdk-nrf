@@ -46,7 +46,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE="61.49375330"
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-      - CONFIG_LOG_BUFFER_SIZE=2048
+      # Ineffective here: LOG_BUFFER_SIZE exists only in deferred log mode and this build uses
+      # LOG_MODE_IMMEDIATE, so LOG_BUFFER_SIZE stays unset.
+      # - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
@@ -75,7 +77,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE="61.49375330"
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-      - CONFIG_LOG_BUFFER_SIZE=2048
+      # Ineffective here: LOG_BUFFER_SIZE exists only in deferred log mode and this build uses
+      # LOG_MODE_IMMEDIATE, so LOG_BUFFER_SIZE stays unset.
+      # - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
@@ -103,7 +107,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE="61.49375330"
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-      - CONFIG_LOG_BUFFER_SIZE=2048
+      # Ineffective here: LOG_BUFFER_SIZE exists only in deferred log mode and this build uses
+      # LOG_MODE_IMMEDIATE, so LOG_BUFFER_SIZE stays unset.
+      # - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
       - EXTRA_CONF_FILE=pgps.conf
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
@@ -134,7 +140,9 @@ tests:
       - CONFIG_GNSS_SAMPLE_REFERENCE_LATITUDE="61.49375330"
       - CONFIG_GNSS_SAMPLE_REFERENCE_LONGITUDE="23.77588976"
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
-      - CONFIG_LOG_BUFFER_SIZE=2048
+      # Ineffective here: LOG_BUFFER_SIZE exists only in deferred log mode and this build uses
+      # LOG_MODE_IMMEDIATE, so LOG_BUFFER_SIZE stays unset.
+      # - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y

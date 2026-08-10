@@ -1,0 +1,29 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# minimal-size.conf disables logging, so the logging options are defaults that apply only
+# when LOG is enabled.
+if LOG
+
+choice LOG_MODE
+	depends on !LOG_FRONTEND_ONLY
+	default LOG_MODE_MINIMAL
+endchoice
+
+configdefault LOG_DEFAULT_LEVEL
+	default 0
+
+if SECURE_BOOT_VALIDATION
+
+choice SECURE_BOOT_VALIDATION_LOG_LEVEL_CHOICE
+	default SECURE_BOOT_VALIDATION_LOG_LEVEL_INF
+endchoice
+
+endif # SECURE_BOOT_VALIDATION
+
+endif # LOG
+
+source "Kconfig.zephyr"

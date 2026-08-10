@@ -34,4 +34,20 @@ config LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
 
 endmenu
 
+# The controller options apply only where the controller is part of this image.
+configdefault BT_CTLR_SDC_PERIPHERAL_COUNT
+	default 1
+
+configdefault BT_CTLR_SDC_ISO_TX_HCI_BUFFER_COUNT
+	default 4
+
+configdefault BT_CTLR_ADV_ISO_STREAM_COUNT
+	default 4
+
+configdefault BT_CTLR_SYNC_ISO_STREAM_COUNT
+	default 4
+
+configdefault BT_CTLR_CONN_ISO_STREAMS
+	default 4
+
 source "Kconfig.zephyr"

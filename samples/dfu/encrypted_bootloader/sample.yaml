@@ -20,8 +20,10 @@ common:
 
 tests:
   sample.dfu.encrypted_mcuboot.load_addr:
-    extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+    # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which is not
+    # enabled, so SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+    # extra_args:
+    #   - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
@@ -37,7 +39,9 @@ tests:
     tags:
       - encryption
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which is not
+      # enabled, so SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - FILE_SUFFIX=uuid
 
   sample.dfu.encrypted_mcuboot.ext_flash:
@@ -48,5 +52,7 @@ tests:
     tags:
       - encryption
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which is not
+      # enabled, so SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - FILE_SUFFIX=ext_flash

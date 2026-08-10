@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Applies only to the store implementations that support the trusted storage format.
+configdefault SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY
+	default y
+
+# Applies only to the board targets with a hardware unique key.
+configdefault HW_UNIQUE_KEY_WRITE_ON_CRYPTO_INIT
+	default y
+
+source "Kconfig.zephyr"

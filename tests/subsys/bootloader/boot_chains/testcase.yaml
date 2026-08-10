@@ -19,7 +19,10 @@ common:
 tests:
   boot_chains.secure_boot:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
   boot_chains.bootloader_mcuboot:
     extra_args:
@@ -32,7 +35,10 @@ tests:
       - nrf9161dk/nrf9161/ns
   boot_chains.secure_boot_and_bootloader_mcuboot:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
@@ -49,13 +55,19 @@ tests:
       - SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_nv_counters:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_mcuboot_and_nv_counters:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
@@ -63,30 +75,48 @@ tests:
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
   boot_chains.secure_boot_and_optimizations_speed:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_SPEED_OPTIMIZATIONS=y
   boot_chains.secure_boot_and_optimizations_size:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_SIZE_OPTIMIZATIONS=y
     tags: ci_tests_subsys_bootloader
   boot_chains.secure_boot_and_optimizations_debug:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_DEBUG_OPTIMIZATIONS=y
   boot_chains.secure_boot_and_hw_crypto_backends:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
-      - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE; NSIB
+      # on nRF54L validates the signature in hardware without a separate hash, so
+      # SECURE_BOOT_APPCORE_HASH_TYPE_NONE is selected.
+      # - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
   boot_chains.secure_boot_minimal:
     extra_args:
-      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      # Ineffective here: unsatisfied dependency SECURE_BOOT_BOOTCONF_LOCK_WRITES, which defaults to
+      # n on nRF54L05, nRF54L10 and nRF54L15 and is not enabled in this scenario, so
+      # SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED stays n.
+      # - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - b0_FILE_SUFFIX=minimal

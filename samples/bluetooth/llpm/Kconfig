@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Applies only where the SoftDevice Controller is part of this image.
+configdefault BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
+	default y
+
+source "Kconfig.zephyr"

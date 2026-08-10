@@ -35,14 +35,29 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120e/cpuapp
     integration_platforms: *peripheral_lbs_platforms
+    extra_args: mcuboot_EXTRA_CONF_FILE=log.conf
     harness: console
-    harness_config:
+    harness_config: &peripheral_lbs_harness_config
       type: multi_line
       ordered: true
       regex:
         - "Starting Bluetooth Peripheral LBS sample"
         - "Bluetooth initialized"
         - "Advertising successfully started"
+    timeout: 15
+
+  # Split off from sample.bluetooth.peripheral_lbs: the MCUboot fragment of this
+  # board switches logging and the boot banner off to save flash, which leaves
+  # the log settings of log.conf without their dependencies, so this board is
+  # built without that file.
+  sample.bluetooth.peripheral_lbs.thingy53:
+    build_only: false
+    platform_allow:
+      - thingy53/nrf5340/cpuapp
+    integration_platforms:
+      - thingy53/nrf5340/cpuapp
+    harness: console
+    harness_config: *peripheral_lbs_harness_config
     timeout: 15
 
   sample.bluetooth.peripheral_lbs_minimal:
@@ -56,7 +71,9 @@ tests:
     platform_allow: *peripheral_lbs_platforms
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    extra_args: CONFIG_BT_LBS_SECURITY_ENABLED=n
+    extra_args:
+      - CONFIG_BT_LBS_SECURITY_ENABLED=n
+      - mcuboot_EXTRA_CONF_FILE=log.conf
 
   sample.bluetooth.peripheral_lbs_bt_ota_dfu:
     build_only: true
@@ -93,9 +110,12 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-    extra_configs:
-      - CONFIG_BOOTLOADER_MCUBOOT=y
-      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+    extra_args: mcuboot_EXTRA_CONF_FILE=log.conf
+    # Ineffective here: SB_CONFIG_BOOTLOADER_MCUBOOT is not set for this scenario, so sysbuild forces
+    # BOOTLOADER_MCUBOOT=n and the MCUboot-dependent options below stay n.
+    # extra_configs:
+    #   - CONFIG_BOOTLOADER_MCUBOOT=y
+    #   - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
 
   sample.bluetooth.peripheral_lbs_bt_ota_dfu.direct_xip:
     build_only: true
@@ -103,11 +123,15 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    extra_args: mcuboot_CONFIG_BOOT_DIRECT_XIP=y
-    extra_configs:
-      - CONFIG_BOOTLOADER_MCUBOOT=y
-      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
-      - CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
+    extra_args:
+      - mcuboot_CONFIG_BOOT_DIRECT_XIP=y
+      - mcuboot_EXTRA_CONF_FILE=log.conf
+    # Ineffective here: SB_CONFIG_BOOTLOADER_MCUBOOT is not set for this scenario, so sysbuild forces
+    # BOOTLOADER_MCUBOOT=n and the MCUboot-dependent options below stay n.
+    # extra_configs:
+    #   - CONFIG_BOOTLOADER_MCUBOOT=y
+    #   - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+    #   - CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP=y
 
   sample.bluetooth.peripheral_lbs_bt_ota_dfu.direct_xip.revert:
     build_only: true
@@ -118,13 +142,17 @@ tests:
     extra_args:
       - mcuboot_CONFIG_BOOT_DIRECT_XIP=y
       - mcuboot_CONFIG_BOOT_DIRECT_XIP_REVERT=y
-    extra_configs:
-      - CONFIG_BOOTLOADER_MCUBOOT=y
-      - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
-      - CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
+      - mcuboot_EXTRA_CONF_FILE=log.conf
+    # Ineffective here: SB_CONFIG_BOOTLOADER_MCUBOOT is not set for this scenario, so sysbuild forces
+    # BOOTLOADER_MCUBOOT=n and the MCUboot-dependent options below stay n.
+    # extra_configs:
+    #   - CONFIG_BOOTLOADER_MCUBOOT=y
+    #   - CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU=y
+    #   - CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT=y
 
   sample.bluetooth.peripheral_lbs.llvm:
     toolchain_allow: llvm
+    extra_args: mcuboot_EXTRA_CONF_FILE=log.conf
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -172,6 +200,7 @@ tests:
       - CONFIG_SEGGER_RTT_PRINTF_BUFFER_SIZE=128
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_EXTRA_CONF_FILE=log.conf
       - mcuboot_CONFIG_LOG_BACKEND_UART=n
       - mcuboot_CONFIG_UART_CONSOLE=n
       - mcuboot_CONFIG_USE_SEGGER_RTT=y

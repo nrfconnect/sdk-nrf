@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Each key file option exists only when its bootloader is part of the build.
+configdefault BOOT_SIGNATURE_KEY_FILE
+	default "${APPLICATION_CONFIG_DIR}/private_key.pem"
+
+configdefault SECURE_BOOT_SIGNING_KEY_FILE
+	default "${APPLICATION_CONFIG_DIR}/private_key.pem"
+
+source "share/sysbuild/Kconfig"

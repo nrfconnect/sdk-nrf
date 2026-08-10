@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Applies only to the targets with the CC3XX identity key backend.
+configdefault IDENTITY_KEY_TFM
+	default y
+
+source "Kconfig.zephyr"

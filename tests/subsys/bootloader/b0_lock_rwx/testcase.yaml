@@ -38,7 +38,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -106,6 +109,7 @@ tests:
       - FILE_SUFFIX=mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=n
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
+      - SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES=n
       - SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - CONFIG_TEST_MCUBOOT_ALONE=y
@@ -172,7 +176,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -194,7 +201,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -217,7 +227,10 @@ tests:
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
@@ -238,7 +251,10 @@ tests:
       - FILE_SUFFIX=b0_mcuboot
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -259,7 +275,10 @@ tests:
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # Ineffective here: unsatisfied dependency MCUBOOT_SIGNATURE_USING_KMU ||
+      # MCUBOOT_SIGNATURE_USING_ITS, which this scenario does not enable, so
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE stays n.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:

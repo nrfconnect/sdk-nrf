@@ -113,11 +113,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: CONSOLE is selected by the RTT shell backend that prj.conf enables, so
+      # CONSOLE stays y.
+      # - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # The UART log backend depends on UART_CONSOLE, which is disabled above.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_NRF_AUDIO_SOURCE_I2S=y
       - EXTRA_CONF_FILE=broadcast_sink/overlay-broadcast_sink.conf
@@ -140,11 +144,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: CONSOLE is selected by the RTT shell backend that prj.conf enables, so
+      # CONSOLE stays y.
+      # - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # The UART log backend depends on UART_CONSOLE, which is disabled above.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
       - CONFIG_NRF_AUDIO_SOURCE_I2S=y
@@ -168,11 +176,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: CONSOLE is selected by the RTT shell backend that prj.conf enables, so
+      # CONSOLE stays y.
+      # - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # The UART log backend depends on UART_CONSOLE, which is disabled above.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - EXTRA_CONF_FILE=broadcast_source/overlay-broadcast_source.conf
   applications.nrf_audio.gateway_unicast_client_bidir_alternative_i2s:
@@ -194,11 +206,15 @@ tests:
       - CONFIG_STACK_USAGE=n
       - CONFIG_THREAD_MONITOR=n
       - CONFIG_SERIAL=n
-      - CONFIG_CONSOLE=n
+      # Ineffective here: CONSOLE is selected by the RTT shell backend that prj.conf enables, so
+      # CONSOLE stays y.
+      # - CONFIG_CONSOLE=n
       - CONFIG_PRINTK=n
       - CONFIG_BT_SETTINGS_USE_PRINTK=n
       - CONFIG_NCS_BOOT_BANNER=n
       - CONFIG_UART_CONSOLE=n
+      # The UART log backend depends on UART_CONSOLE, which is disabled above.
+      - CONFIG_LOG_BACKEND_UART=n
       - CONFIG_BOOT_BANNER=n
       - CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL=y
       - CONFIG_NRF_AUDIO_SOURCE_I2S=y

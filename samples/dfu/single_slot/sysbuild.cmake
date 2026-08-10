@@ -22,3 +22,12 @@ if(SB_CONFIG_MCUBOOT_SIGN_MERGED_BINARY)
       "Application extra DTC overlay file" FORCE)
   endforeach()
 endif()
+
+# On nRF54H20 the firmware loader slot is too small for UART logging, so the board configuration
+# of the firmware loader image disables it and the logging options are applied only elsewhere.
+if(SB_CONFIG_FIRMWARE_LOADER_IMAGE_BLE_MCUMGR AND NOT SB_CONFIG_SOC_SERIES_NRF54H)
+  include(${ZEPHYR_NRF_MODULE_DIR}/sysbuild/extensions.cmake)
+  add_overlay_config(${SB_CONFIG_FIRMWARE_LOADER_IMAGE_NAME}
+    ${APP_DIR}/sysbuild/ble_mcumgr/log.conf
+  )
+endif()

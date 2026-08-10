@@ -4,5 +4,18 @@
 # SPDX-License-Identifier: Apache-2.0
 #
 
+# Each default applies only when the wifi snippet enables the matching IP protocol.
+configdefault NET_CONFIG_MY_IPV6_ADDR
+	default "2001:db8::1"
+
+configdefault NET_IF_MCAST_IPV6_ADDR_COUNT
+	default 5
+
+configdefault NET_CONFIG_MY_IPV4_ADDR
+	default "192.0.2.1"
+
+configdefault NET_IPV4_MAPPING_TO_IPV6
+	default y
+
 # Source the original Zephyr sample Kconfig directly to avoid duplication.
 source "${ZEPHYR_BASE}/samples/net/sockets/coap_server/Kconfig"

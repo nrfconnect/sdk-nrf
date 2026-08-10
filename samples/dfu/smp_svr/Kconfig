@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Applies only where the Bluetooth controller is part of this image.
+configdefault BT_CTLR_DATA_LENGTH_MAX
+	default 251
+
+source "Kconfig.zephyr"
