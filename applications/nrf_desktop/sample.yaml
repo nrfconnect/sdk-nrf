@@ -122,6 +122,9 @@ tests:
       - nrf52840dk/nrf52840
     extra_configs:
       - CONFIG_DESKTOP_SHELL=y
+      # The shell selects the console, so the CONSOLE=n of the board
+      # configurations cannot hold for this scenario.
+      - CONFIG_CONSOLE=y
   applications.nrf_desktop.zdebug_3bleconn:
     build_only: true
     platform_allow: nrf52840dongle/nrf52840
@@ -193,6 +196,10 @@ tests:
     extra_args: SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CAF_BLE_USE_LLPM=n
+      # The low latency lock needs LLPM, which this scenario turns off, so the
+      # DESKTOP_BLE_LOW_LATENCY_LOCK=y of the board configuration cannot hold
+      # here.
+      - CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK=n
   applications.nrf_desktop.zdebug_nrf21540ek_multicore:
     build_only: true
     platform_allow: nrf5340dk/nrf5340/cpuapp

@@ -16,20 +16,44 @@ tests:
       - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  # Split off because MCUboot's FPROTECT depends on !SOC_SERIES_NRF54H: the
+  # sysbuild/mcuboot/prj.conf default cannot be honored on nRF54H20, so it is
+  # turned off explicitly here instead of being silently dropped.
+  sample.dfu.smp_svr_mini_boot.nrf54h20:
+    extra_args:
+      - FILE_SUFFIX="direct_xip"
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+      - mcuboot_CONFIG_FPROTECT=n
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
   sample.dfu.smp_svr_mini_boot.swap_move:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+      # BOOT_VERSION_CMP_USE_BUILD_NUMBER requires one of UPDATEABLE_IMAGE_NUMBER
+      # > 1, BOOT_DIRECT_XIP, BOOT_RAM_LOAD or MCUBOOT_DOWNGRADE_PREVENTION. A
+      # single-image swap-using-move build has none of them.
+      - mcuboot_CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER=n
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+  # Same FPROTECT split as above. The nRF54H20 build has more than one
+  # updateable image, so BOOT_VERSION_CMP_USE_BUILD_NUMBER stays available here.
+  sample.dfu.smp_svr_mini_boot.swap_move.nrf54h20:
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+      - mcuboot_CONFIG_FPROTECT=n
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
   sample.dfu.smp_svr_mini_boot.nrf54ls05b:
     platform_allow:
@@ -37,6 +61,8 @@ tests:
   sample.dfu.smp_svr_mini_boot.swap_move.nrf54ls05b:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+      # Single-image swap-using-move, see the comment on the nRF54L15 variant.
+      - mcuboot_CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER=n
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:

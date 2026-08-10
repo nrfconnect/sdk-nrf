@@ -19,11 +19,15 @@ common:
       - "\\*\\*\\*\\*\\* PSA Architecture Test Suite - Version .* \\*\\*\\*\\*\\*"
       - "TOTAL FAILED *: 0"
 tests:
+  # The storage and crypto scenarios run on CRACEN parts instead of the CC3XX
+  # parts the attestation scenarios use, so the identity key prj.conf enables
+  # for those has no backend here and is turned off again.
   tfm.psa_test_storage_lvl1:
     tags: tfm_lvl1
     extra_args:
       - CONFIG_TFM_PSA_TEST_STORAGE=y
       - CONFIG_TFM_ISOLATION_LEVEL=1
+      - CONFIG_IDENTITY_KEY_TFM=n
     timeout: 130
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -35,6 +39,7 @@ tests:
     tags: tfm_lvl2
     extra_args:
       - CONFIG_TFM_PSA_TEST_STORAGE=y
+      - CONFIG_IDENTITY_KEY_TFM=n
     timeout: 130
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -47,6 +52,7 @@ tests:
     extra_args:
       - CONFIG_TFM_PSA_TEST_CRYPTO=y
       - CONFIG_TFM_ISOLATION_LEVEL=1
+      - CONFIG_IDENTITY_KEY_TFM=n
     timeout: 120
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
@@ -58,6 +64,7 @@ tests:
     tags: tfm_lvl2
     extra_args:
       - CONFIG_TFM_PSA_TEST_CRYPTO=y
+      - CONFIG_IDENTITY_KEY_TFM=n
     timeout: 120
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns

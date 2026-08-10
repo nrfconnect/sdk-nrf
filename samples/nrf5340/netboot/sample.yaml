@@ -9,6 +9,12 @@ tests:
       - nrf5340dk/nrf5340/cpunet
     platform_allow:
       - nrf5340dk/nrf5340/cpunet
+    # These used to live in prj.conf, but minimal-size.conf sets CONFIG_LOG=n,
+    # so they were only ever effective in this scenario.
+    extra_configs:
+      - CONFIG_SECURE_BOOT_VALIDATION_LOG_LEVEL_INF=y
+      - CONFIG_LOG_MODE_MINIMAL=y
+      - CONFIG_LOG_DEFAULT_LEVEL=0
     extra_args:
       - DTC_OVERLAY_FILE="test.overlay"
     tags:

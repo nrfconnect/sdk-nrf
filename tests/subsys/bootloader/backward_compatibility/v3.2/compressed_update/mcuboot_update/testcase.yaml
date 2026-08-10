@@ -10,7 +10,17 @@ tests:
   # Application name restored to "mcuboot_update" and the flash map pinned via
   # DTS board overlays (no Partition Manager) to the NCS v3.2 layout.
   mcuboot.backward_compatibility.compressed_update:
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-bt-ctlr.conf
     platform_allow:
       - nrf52840dk/nrf52840
-      - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+
+  # Split off from the scenario above: on the nRF5340 application core the
+  # Bluetooth controller runs on the network core, so BT_CTLR_DATA_LENGTH_MAX
+  # has no controller to configure and overlay-bt-ctlr.conf must be left out.
+  mcuboot.backward_compatibility.compressed_update.nrf5340:
+    extra_args:
+      - SB_CONFIG_NETCORE_HCI_IPC=y
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp

@@ -44,7 +44,9 @@ tests:
     extra_args:
       - FILE_SUFFIX=tfm
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
+      # PM_PARTITION_SIZE_MCUBOOT depends on PARTITION_MANAGER_ENABLED, and the
+      # tfm suffix partitions through DTS, so this size was never applied.
+      # - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
 
   mcuboot.external_flash.upgrade.hw_downgrade_prevention:
     tags:
@@ -93,6 +95,8 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_NETCORE_EMPTY=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
       - b0n_CONFIG_PCD_READ_NETCORE_APP_VERSION=y
 
   nsib.mcuboot.external_flash.upgrade.basic:
@@ -100,6 +104,24 @@ tests:
       - nsib
     platform_allow:
       - nrf52840dk/nrf52840
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py::test_upgrade_with_revert"
+    extra_args:
+      - FILE_SUFFIX=nsib
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
+
+  # nRF54L half of the scenario above. FPROTECT declares
+  # "depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)" - on nRF54L the
+  # RRAM protection registers belong to the secure bootloader itself - so a
+  # single b0 fragment cannot cover both SoC families.
+  nsib.mcuboot.external_flash.upgrade.basic.nrf54l:
+    tags:
+      - nsib
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -114,6 +136,7 @@ tests:
       - FILE_SUFFIX=nsib
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
   mcuboot.external_flash.nrf_compress.basic:
     tags:

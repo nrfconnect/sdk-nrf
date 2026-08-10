@@ -9,18 +9,32 @@ tests:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-      - nrf9251dk/nrf9251/cpuapp
       - thingy91x/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-      - nrf9251dk/nrf9251/cpuapp
       - thingy91x/nrf9151/ns
     tags:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  # Split out of sample.cellular.at_client: nrf9251dk is the only platform of
+  # this sample that builds without TF-M, which leaves the TF-M profile choice
+  # prj.conf selects for all the non-secure platforms unavailable here.
+  sample.cellular.at_client.no_tfm:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    extra_args:
+      - FILE_SUFFIX=no_tfm
   sample.cellular.at_client.tracing:
     sysbuild: true
     build_only: true

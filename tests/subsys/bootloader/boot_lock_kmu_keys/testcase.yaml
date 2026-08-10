@@ -33,6 +33,10 @@ tests:
 
   boot.b0.kmu_keys_locked:
     extra_args:
+      # FILE_SUFFIX selects sysbuild_b0.conf, which sets only the NSIB signing
+      # key. The plain sysbuild.conf also set BOOT_SIGNATURE_KEY_FILE, which
+      # depends on BOOTLOADER_MCUBOOT and is therefore unavailable here.
+      - FILE_SUFFIX=b0
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
     tags:
       - b0

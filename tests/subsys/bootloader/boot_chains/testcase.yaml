@@ -2,9 +2,10 @@ common:
   platform_allow:
     # NB: It's not yet supported to boot TF-M from NSIB without
     # MCUBoot enabled as well
+    # nRF54L is not listed here: every scenario that builds b0 needs a
+    # different b0 configuration on that SoC, see the *.nrf54l entries below.
     - nrf52840dk/nrf52840
     - nrf5340dk/nrf5340/cpuapp
-    - nrf54l15dk/nrf54l15/cpuapp
   tags:
     - ci_tests_subsys_bootloader
   harness: console
@@ -13,10 +14,22 @@ common:
     regex:
       - "Hello World! (.*)"
 
+# The scenarios that enable SB_CONFIG_SECURE_BOOT_APPCORE come in two flavours.
+# FPROTECT declares "depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)"
+# because on nRF54L the RRAM protection registers are driven by the secure
+# bootloader itself, so b0 must not enable the library there. A single b0
+# fragment cannot express both, hence the split into a base scenario that asks
+# for b0_CONFIG_FPROTECT=y and an .nrf54l scenario that does not.
 tests:
   boot_chains.secure_boot:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.bootloader_mcuboot:
     extra_args:
       - FILE_SUFFIX=mcuboot
@@ -35,24 +48,43 @@ tests:
       - FILE_SUFFIX=b0_mcuboot
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - b0_CONFIG_FPROTECT=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+  boot_chains.secure_boot_and_bootloader_mcuboot.nrf54l:
+    extra_args:
+      - FILE_SUFFIX=b0_mcuboot
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.bootloader_mcuboot_and_nv_counters:
     extra_args:
       - FILE_SUFFIX=mcuboot
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION=y
       - SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS=64
-    platform_exclude:
-      - nrf52840dk/nrf52840
+    # This scenario builds no b0, so it is unaffected by the FPROTECT split and
+    # keeps the platforms it inherited from common before nRF54L was taken out.
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_and_nv_counters:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot_and_nv_counters.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
+      - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_and_mcuboot_and_nv_counters:
     extra_args:
       - FILE_SUFFIX=b0_mcuboot
@@ -60,27 +92,77 @@ tests:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot_and_mcuboot_and_nv_counters.nrf54l:
+    extra_args:
+      - FILE_SUFFIX=b0_mcuboot
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
+      - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=64
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_and_optimizations_speed:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_SPEED_OPTIMIZATIONS=y
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot_and_optimizations_speed.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - CONFIG_SPEED_OPTIMIZATIONS=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_and_optimizations_size:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_SIZE_OPTIMIZATIONS=y
+      - b0_CONFIG_FPROTECT=y
+    tags: ci_tests_subsys_bootloader
+  boot_chains.secure_boot_and_optimizations_size.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - CONFIG_SIZE_OPTIMIZATIONS=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
     tags: ci_tests_subsys_bootloader
   boot_chains.secure_boot_and_optimizations_debug:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - CONFIG_DEBUG_OPTIMIZATIONS=y
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot_and_optimizations_debug.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - CONFIG_DEBUG_OPTIMIZATIONS=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_and_hw_crypto_backends:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
       - SB_CONFIG_SECURE_BOOT_APPCORE_HASH_TYPE_HARDWARE=y
+      - b0_CONFIG_FPROTECT=y
     platform_exclude:
       - nrf5340dk/nrf5340/cpuapp
+  boot_chains.secure_boot_and_hw_crypto_backends.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      # Hardware signature verification is available here (ED25519 on nRF54L),
+      # but hardware hashing is not: SECURE_BOOT_APPCORE_SUPPORTED_HASH_HARDWARE
+      # requires SECURE_BOOT_HASH_TYPE_SHA256 on nRF91/nRF52840, and an ED25519
+      # chain uses no separate SHA-256 hash, so the choice fell back to "None".
+      - SB_CONFIG_SECURE_BOOT_APPCORE_SIGNATURE_TYPE_HARDWARE=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
   boot_chains.secure_boot_minimal:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - b0_FILE_SUFFIX=minimal
+      - b0_CONFIG_FPROTECT=y
+  boot_chains.secure_boot_minimal.nrf54l:
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - b0_FILE_SUFFIX=minimal
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp

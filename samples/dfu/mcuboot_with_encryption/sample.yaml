@@ -10,6 +10,7 @@ tests:
     build_only: true
     extra_args:
       - SB_EXTRA_CONF_FILE=sysbuild_kmu.conf
+      - EXTRA_CONF_FILE=overlay-bt-ctlr.conf
       - mcuboot_CONFIG_FPROTECT=n
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp

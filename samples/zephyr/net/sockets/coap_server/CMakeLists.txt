@@ -5,8 +5,10 @@
 #
 
 cmake_minimum_required(VERSION 3.20.0)
-# Board/shield and overlay lookup in original directory
-set(APPLICATION_CONFIG_DIR "\${ZEPHYR_BASE}/samples/net/sockets/coap_server")
+# Board, shield and overlay lookup stays in this directory. Pointing it at the
+# original sample would also make its prj.conf part of this application's
+# configuration, and the IPv6 settings there cannot hold for the IPv4-only
+# configuration that the wifi-ipv4 snippet selects.
 # Point to original prj.conf (add one more file here if you need overrides)
 set(CONF_FILE "\${ZEPHYR_BASE}/samples/net/sockets/coap_server/prj.conf")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})

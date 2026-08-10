@@ -130,6 +130,26 @@ tests:
       - nsib
     platform_allow:
       - nrf52840dk/nrf52840
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py::test_upgrade_with_revert"
+        - "../pytest/test_upgrade_mcuboot_nsib.py"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
+      - FILE_SUFFIX=nsib
+
+  # Same scenario for nRF54L. It has to be a separate entry because FPROTECT
+  # declares "depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)": on nRF54L
+  # the RRAM protection registers are owned by the secure bootloader itself, so
+  # b0 cannot enable the library. One shared b0 fragment therefore cannot serve
+  # both SoC families.
+  nsib.mcuboot.upgrade.basic.nrf54l:
+    tags:
+      - nsib
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -142,6 +162,7 @@ tests:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
       - FILE_SUFFIX=nsib
 
   mcuboot.direct_xip.basic:
@@ -210,6 +231,8 @@ tests:
     extra_args:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_CLEANUP_UNUSABLE_SECONDARY=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
       - FILE_SUFFIX=nsib
 
   # Encryption test cases
@@ -393,6 +416,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
       - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
       - FILE_SUFFIX=nsib
 
   mcuboot.upgrade.kmu.revocation:
@@ -542,6 +566,27 @@ tests:
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf9160dk/nrf9160
+    harness_config:
+      pytest_root:
+        - "../pytest/test_downgrade_prevention_nsib.py"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      # Ineffective here: the KMU keyfile symbol depends on SOC_SERIES_NRF54L || SOC_SERIES_NRF71,
+      # and none of the boards above is one. The nrf54l variant below keeps it.
+      # - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+      - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
+      - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=2
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
+      - FILE_SUFFIX=nsib
+
+  # nRF54L half of the scenario above: b0 cannot enable FPROTECT there because
+  # the library depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER).
+  nsib.mcuboot.upgrade.hw_downgrade_prevention.nrf54l:
+    tags:
+      - nsib
+      - hw_downgrade_prevention
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -557,6 +602,7 @@ tests:
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
       - SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER=y
       - SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS=2
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
       - FILE_SUFFIX=nsib
 
   # nrf54h20 with XIP is the main target for this feature

@@ -22,6 +22,11 @@ tests:
   mcuboot.backward_compatibility.smp_svr_mini_boot.swap_move:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+      # BOOT_VERSION_CMP_USE_BUILD_NUMBER requires one of UPDATEABLE_IMAGE_NUMBER
+      # > 1, BOOT_DIRECT_XIP, BOOT_RAM_LOAD or MCUBOOT_DOWNGRADE_PREVENTION. This
+      # single-image swap-using-move build has none of them, unlike the
+      # Direct-XIP scenario that shares sysbuild/mcuboot/prj.conf.
+      - mcuboot_CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER=n
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:

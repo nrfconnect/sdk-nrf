@@ -4,15 +4,28 @@ tests:
   sample.cellular.gnss:
     sysbuild: true
     build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE=overlay-tfm.conf
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
-      - nrf9251dk/nrf9251/cpuapp
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  # Split off from sample.cellular.gnss: this board target runs without TF-M, so
+  # the TFM_PROFILE choice in overlay-tfm.conf does not exist for it.
+  sample.cellular.gnss.nrf9251:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
       - nrf9251dk/nrf9251/cpuapp
     tags:
       - ci_build
@@ -38,6 +51,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
+      - EXTRA_CONF_FILE=overlay-tfm.conf
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
@@ -67,6 +81,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
+      - EXTRA_CONF_FILE=overlay-tfm.conf
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:
@@ -95,7 +110,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
-      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_CONF_FILE="overlay-tfm.conf;pgps.conf"
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
@@ -126,6 +141,7 @@ tests:
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
       - CONFIG_LOG_BUFFER_SIZE=2048
     extra_args:
+      - EXTRA_CONF_FILE=overlay-tfm.conf
       - gnss_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:

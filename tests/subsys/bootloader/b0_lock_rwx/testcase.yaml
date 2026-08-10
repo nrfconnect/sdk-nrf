@@ -35,7 +35,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_SELF_RWX=y
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -77,7 +80,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -98,7 +104,10 @@ tests:
       - b0_CONFIG_SB_DISABLE_NEXT_W=y
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -120,7 +129,10 @@ tests:
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:
@@ -140,7 +152,10 @@ tests:
       - FILE_SUFFIX=b0_mcuboot
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -160,7 +175,10 @@ tests:
       - b0_CONFIG_TEST_B0_LOCK_USE_S1=y
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
+      # MCUBOOT_GENERATE_DEFAULT_KEY_FILE depends on
+      # MCUBOOT_SIGNATURE_USING_ITS || MCUBOOT_SIGNATURE_USING_KMU, and no
+      # scenario here signs with ITS or KMU, so no keyfile was ever generated.
+      # - SB_CONFIG_MCUBOOT_GENERATE_DEFAULT_KEY_FILE=y
       - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_TEST_B0_LOCK_USE_S1=y
     platform_allow:

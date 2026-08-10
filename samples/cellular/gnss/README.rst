@@ -176,6 +176,9 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+When building for a ``*/ns`` board target, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-tfm.conf` file to select the minimal TF-M profile.
+The board targets that run without TF-M do not use this file.
+
 If the sample is to be used with the SUPL client library, the library must be downloaded and enabled in the sample configuration.
 You can download it from the `Nordic Semiconductor website`_.
 See :ref:`supl_client` for information on installing and enabling the SUPL client library.

@@ -40,7 +40,12 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
-    extra_args: OVERLAY_CONFIG=overlay-lpn.conf
+    # Uses prj_lpn.conf as its base configuration: overlay-lpn.conf turns
+    # logging off, which makes the deferred log mode prj.conf selects for the
+    # Friend feature unavailable for this scenario only.
+    extra_args:
+      - FILE_SUFFIX=lpn
+      - OVERLAY_CONFIG=overlay-lpn.conf
   sample.bluetooth.mesh.light_switch.settings_ext_flash:
     sysbuild: true
     build_only: true
