@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: cdc01217b2bd64a726a707a98b888fa07fa82d83
+      revision: 2516f19e1b88e5787338029aa1d37c35b729f7ae
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
