@@ -2,26 +2,35 @@ sample:
   description: Bluetooth Low Energy Channel Sounding Initiator with Ranging Service
     Requestor
   name: Bluetooth LE Channel Sounding Initiator with RREQ
+common:
+  sysbuild: true
+  build_only: true
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_samples_bluetooth
 tests:
   sample.bluetooth.channel_sounding_ras_initiator:
-    sysbuild: true
-    build_only: true
+    extra_args: EXTRA_CONF_FILE=overlay-bt_ctlr.conf
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-    tags:
-      - bluetooth
-      - ci_build
-      - sysbuild
-      - ci_samples_bluetooth
+  # Split off from sample.bluetooth.channel_sounding_ras_initiator: this board
+  # runs the SoftDevice Controller in the separate ipc_radio image, so the
+  # BT_CTLR_* settings in overlay-bt_ctlr.conf have no effect in the application
+  # image.
+  sample.bluetooth.channel_sounding_ras_initiator.ipc_radio:
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
