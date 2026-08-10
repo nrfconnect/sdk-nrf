@@ -25,13 +25,13 @@
 #include <cracen/hardware.h>
 #include <nrf_security_mutexes.h>
 
-#if defined(CONFIG_CRACEN_HW_VERSION_LITE) &&                                                      \
-	!defined(CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND)
+#if CONFIG_CRACEN_HW_VERSION_LITE &&                                                      \
+	!CONFIG_PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND
 #error Check to see if the current board needs the IKG-PKE interrupt workaround or not, \
 then update this error
 #endif
 
-#if defined(CONFIG_PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND)
+#if CONFIG_PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND
 #warning "CONFIG_PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND is enabled, any use of CRACEN IKG \
 module with entropy will fail"
 #endif
@@ -78,7 +78,7 @@ bool ik_is_busy(sx_pk_req *req)
 
 bool is_busy(sx_pk_req *req)
 {
-#if defined(CONFIG_CRACEN_IKG)
+#if CONFIG_CRACEN_IKG
 	if (sx_pk_is_ik_cmd(req)) {
 		return ik_is_busy(req) || ba414ep_is_busy(req);
 	}
@@ -91,7 +91,7 @@ void sx_clear_interrupt(sx_pk_req *req)
 {
 	sx_pk_wrreg(&req->regs, PK_REG_CONTROL, PK_RB_CONTROL_CLEAR_IRQ);
 
-#if defined(CONFIG_CRACEN_IKG)
+#if CONFIG_CRACEN_IKG
 	if (sx_pk_is_ik_cmd(req)) {
 		sx_pk_wrreg(&req->regs, IK_REG_PK_CONTROL, IK_PK_CONTROL_CLEAR_IRQ);
 	}
@@ -100,7 +100,7 @@ void sx_clear_interrupt(sx_pk_req *req)
 
 int read_status(sx_pk_req *req)
 {
-#if defined(CONFIG_CRACEN_IKG)
+#if CONFIG_CRACEN_IKG
 	if (sx_pk_is_ik_cmd(req)) {
 		return sx_ik_read_status(req);
 	}
