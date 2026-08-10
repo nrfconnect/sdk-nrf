@@ -161,15 +161,12 @@ static void radio_vdma_jobs_set(nrf_vdma_job_t *jobs, uint8_t *buffer, size_t si
 static uint32_t tx_packet_cnt;
 /* Number of received packets with valid CRC. */
 static uint32_t rx_packet_cnt;
-#if NRF_RADIO_HAS_EVDMA
-/* Number of packets the running RX test waits for, zero when it runs until cancelled. */
-static uint32_t rx_packets_num;
-/* Number of received packets seen the last time the RX timeout work ran. */
-static uint32_t rx_packet_cnt_polled;
-#endif /* NRF_RADIO_HAS_EVDMA */
 
 /* Radio current channel (frequency). */
 static uint8_t current_channel;
+
+/* Flag to indicate that the timeout rescheduling has been deferred.*/
+static bool deferred_rx_timeout_reschedule;
 
 #define DEFAULT_CHANNEL_VALUES						\
 	4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,				\
@@ -946,10 +943,6 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 	radio_channel_set(mode, channel);
 
 	rx_packet_cnt = 0;
-#if NRF_RADIO_HAS_EVDMA
-	rx_packets_num = rx_packet_num;
-	rx_packet_cnt_polled = 0;
-#endif /* NRF_RADIO_HAS_EVDMA */
 
 	nrf_radio_int_enable(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK);
 
@@ -1256,20 +1249,7 @@ void toggle_dcdc_state(uint8_t dcdc_state)
 
 static void rx_timeout_work_handler(struct k_work *work)
 {
-#if NRF_RADIO_HAS_EVDMA
-	/* Reception ends once the requested number of packets has arrived, or once packets stop
-	 * arriving for RX_PACKET_TIMEOUT_MS. The interrupt handler leaves the timeout standing
-	 * while packets come in, so the second case is the one where the packet counter has not
-	 * moved since the previous run.
-	 */
-	if ((rx_packets_num != 0) && (rx_packet_cnt < rx_packets_num) &&
-	    (rx_packet_cnt != rx_packet_cnt_polled)) {
-		rx_packet_cnt_polled = rx_packet_cnt;
-		k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
-		return;
-	}
-#endif /* NRF_RADIO_HAS_EVDMA */
-
+	deferred_rx_timeout_reschedule = false;
 	radio_disable();
 	/* Send off signal for nRF54H20 errata HMPAN-216 */
 #if NRF_ERRATA_STATIC_CHECK(54H, 216)
@@ -1402,21 +1382,39 @@ void on_radio_end(const struct radio_test_config *config)
 	}
 }
 
+static bool manual_radio_restart_needed(void)
+{
+	uint32_t shorts = nrf_radio_shorts_get(NRF_RADIO);
+
+	if (shorts & NRF_RADIO_SHORT_END_START_MASK) {
+		return false;
+	}
+
+	if ((shorts & RADIO_TEST_SHORT_END_DISABLE_MASK) &&
+	    (shorts & NRF_RADIO_SHORT_DISABLED_RXEN_MASK)) {
+		return false;
+	}
+
+	return true;
+}
+
 #if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
 static void on_radio_phyend(const struct radio_test_config *config)
 {
-#if NRF_RADIO_HAS_EVDMA
 	if ((config->type == RX) || (config->type == RX_SWEEP)) {
-		/* Put the receiver back on air for the next packet. Modes that restart by ramping
-		 * up instead do so through the shorts radio_rx_configure() enabled.
+		/* Manually trigger the receiver again for the next packet if shorts are not used.
 		 */
-		if (!radio_rx_restart_needs_ramp_up(config->mode)) {
+		if (manual_radio_restart_needed()) {
 			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
 		}
-		return;
+
+		if (deferred_rx_timeout_reschedule) {
+			deferred_rx_timeout_reschedule = false;
+			k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
+		}
+	} else {
+		on_radio_end(config);
 	}
-#endif /* NRF_RADIO_HAS_EVDMA */
-	on_radio_end(config);
 }
 #endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
 
@@ -1446,18 +1444,14 @@ void radio_handler(const void *context)
 		if (config->params.rx.packets_num) {
 			if (rx_packet_cnt == config->params.rx.packets_num) {
 				k_work_reschedule(&rx_timeout_work, K_NO_WAIT);
-			} else if (!NRF_RADIO_HAS_EVDMA) {
-				/* The first packet switches the timeout from waiting
-				 * CONFIG_RADIO_TEST_RX_TIMEOUT for reception to start to
-				 * waiting RX_PACKET_TIMEOUT_MS between packets. On EasyVDMA
-				 * that is the only rearm: this handler also restarts
-				 * reception, and the microseconds a rearm takes would come
-				 * out of the gap between two packets on air, so
-				 * rx_timeout_work_handler() polls the counter instead.
+			} else if (!manual_radio_restart_needed()) {
+				/* When triggering NRF_RADIO->TASKS_START manually between packets,
+				 * we do not have time to reschedule timeout work here.
+				 * Defer rescheduling to after the TASKS_START is triggered.
 				 */
 				k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
 			} else {
-				/* Do nothing */
+				deferred_timeout_reschedule = true;
 			}
 		}
 	}
