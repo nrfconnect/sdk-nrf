@@ -55,15 +55,44 @@ static bool is_connected;
 K_MUTEX_DEFINE(network_connected_lock);
 K_CONDVAR_DEFINE(network_connected);
 
+static void server_addr_set_ipv4(struct sockaddr_storage *server, struct addrinfo *result)
+{
+	struct sockaddr_in *server4 = (struct sockaddr_in *)server;
+	char addr_str[NET_IPV6_ADDR_LEN];
+
+	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
+	server4->sin_family = AF_INET;
+	server4->sin_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
+
+	inet_ntop(AF_INET, &server4->sin_addr.s_addr, addr_str, sizeof(addr_str));
+	LOG_INF("IPv4 Address found %s", addr_str);
+}
+
+#if defined(CONFIG_NET_IPV6)
+static void server_addr_set_ipv6(struct sockaddr_storage *server, struct addrinfo *result)
+{
+	struct sockaddr_in6 *server6 = (struct sockaddr_in6 *)server;
+	char addr_str[NET_IPV6_ADDR_LEN];
+
+	memcpy(&server6->sin6_addr,
+	       &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr,
+	       sizeof(server6->sin6_addr));
+	server6->sin6_family = AF_INET6;
+	server6->sin6_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
+
+	inet_ntop(AF_INET6, &server6->sin6_addr, addr_str, sizeof(addr_str));
+	LOG_INF("IPv6 Address found %s", addr_str);
+}
+#endif /* CONFIG_NET_IPV6 */
+
 static int server_resolve(struct sockaddr_storage *server)
 {
 	int err;
 	struct addrinfo *result;
 	struct addrinfo hints = {
-		.ai_family = AF_INET,
+		.ai_family = AF_UNSPEC,
 		.ai_socktype = SOCK_DGRAM
 	};
-	char ipv4_addr[NET_IPV4_ADDR_LEN];
 
 	err = getaddrinfo(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints, &result);
 	if (err) {
@@ -76,16 +105,21 @@ static int server_resolve(struct sockaddr_storage *server)
 		return -ENOENT;
 	}
 
-	/* IPv4 Address. */
-	struct sockaddr_in *server4 = ((struct sockaddr_in *)server);
-
-	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-	server4->sin_family = AF_INET;
-	server4->sin_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
-
-	inet_ntop(AF_INET, &server4->sin_addr.s_addr, ipv4_addr, sizeof(ipv4_addr));
-
-	LOG_INF("IPv4 Address found %s", ipv4_addr);
+	/* Resolve either IPv4 or IPv6 */
+	switch (result->ai_family) {
+	case AF_INET:
+		server_addr_set_ipv4(server, result);
+		break;
+#if defined(CONFIG_NET_IPV6)
+	case AF_INET6:
+		server_addr_set_ipv6(server, result);
+		break;
+#endif /* CONFIG_NET_IPV6 */
+	default:
+		LOG_ERR("Unexpected address family: %d", result->ai_family);
+		freeaddrinfo(result);
+		return -EAFNOSUPPORT;
+	}
 
 	/* Free the address. */
 	freeaddrinfo(result);
@@ -175,9 +209,9 @@ static int periodic_coap_request_loop(void)
 		return err;
 	}
 
-	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_DTLS_1_2);
+	sock = socket(server.ss_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 #else
-	sock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+	sock = socket(server.ss_family, SOCK_DGRAM, IPPROTO_UDP);
 #endif
 	if (sock < 0) {
 		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
@@ -225,7 +259,9 @@ static int periodic_coap_request_loop(void)
 		CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
 		CONFIG_COAP_SAMPLE_SERVER_PORT);
 
-	err = zsock_connect(sock, (struct sockaddr *)&server, sizeof(struct sockaddr_in));
+	err = zsock_connect(sock, (struct sockaddr *)&server,
+			    server.ss_family == AF_INET6 ?
+				    sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in));
 	if (err < 0) {
 		LOG_ERR("DTLS handshake failed: %d", -errno);
 		(void)zsock_close(sock);
