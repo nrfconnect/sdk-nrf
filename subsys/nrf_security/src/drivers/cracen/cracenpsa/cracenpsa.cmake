@@ -258,3 +258,9 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_wrap.c
   )
 endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_ENCAPSULATION_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_encapsulation.c
+  )
+endif()
