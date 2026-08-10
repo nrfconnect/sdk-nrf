@@ -62,7 +62,7 @@ tests:
     sysbuild: false
     build_only: true
     extra_args:
-      - OVERLAY_CONFIG="overlay-aod.conf;overlay-bt_ll_sw_split.conf"
+      - OVERLAY_CONFIG="overlay-aod.conf;overlay-aod-ctlr.conf;overlay-bt_ll_sw_split.conf"
       - SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf52833dk/nrf52833
@@ -70,12 +70,14 @@ tests:
     integration_platforms:
       - nrf52833dk/nrf52833
       - nrf52833dk/nrf52820
+  # The controller runs in the ipc_radio image on this board, so the controller
+  # part of the AoD configuration is applied there and not to the application.
   sample.bluetooth.direction_finding_connectionless_tx.aod.bt_ll_sw_split.nrf53:
     sysbuild: true
     build_only: true
     extra_args:
       - OVERLAY_CONFIG="overlay-aod.conf"
-      - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
+      - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf;../../overlay-aod-ctlr.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp

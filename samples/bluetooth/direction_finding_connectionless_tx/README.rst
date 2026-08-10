@@ -57,7 +57,10 @@ This sample builds the angle of arrival (AoA) mode by default.
 Angle of departure mode
 =======================
 
-To build this sample with the angle of departure (AoD) mode, set :makevar:`EXTRA_CONF_FILE` to ``overlay-aod.conf;overlay-bt_ll_sw_split.conf`` and set :makevar:`SNIPPET` to ``bt-ll-sw-split`` using the respective :ref:`CMake option <cmake_options>`.
+To build this sample with the angle of departure (AoD) mode, set :makevar:`EXTRA_CONF_FILE` to ``overlay-aod.conf;overlay-aod-ctlr.conf;overlay-bt_ll_sw_split.conf`` and set :makevar:`SNIPPET` to ``bt-ll-sw-split`` using the respective :ref:`CMake option <cmake_options>`.
+
+The :file:`overlay-aod-ctlr.conf` file configures the Bluetooth controller.
+On boards with a dedicated radio core, apply it to the image that runs the controller instead, for example by setting :makevar:`ipc_radio_EXTRA_CONF_FILE`.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 

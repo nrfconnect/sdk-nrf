@@ -111,7 +111,9 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
   sample.newlib_libc.sha256:
     build_only: true
-    extra_args: CONFIG_NEWLIB_LIBC=y
+    # Ineffective here: newlib is not available for these board targets, so PICOLIBC wins the C
+    # library choice and the sample is built against it.
+    # extra_args: CONFIG_NEWLIB_LIBC=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf52840dk/nrf52840

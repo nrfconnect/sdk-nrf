@@ -4,6 +4,7 @@ tests:
   sample.cellular.modem_shell:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms: &modem_shell_integration_platforms
       - nrf9151dk/nrf9151/ns
     platform_allow: &modem_shell_platform_allow
@@ -17,6 +18,7 @@ tests:
   sample.cellular.modem_shell.nrf9251:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf"
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
     platform_allow:
@@ -30,7 +32,7 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: EXTRA_CONF_FILE=debug.conf
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;debug.conf"
     tags:
       - ci_build
       - sysbuild
@@ -42,7 +44,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_configs:
       - CONFIG_LOCATION_SERVICE_NRF_CLOUD_GNSS_POS_SEND=y
-    extra_args: EXTRA_CONF_FILE=cloud_mqtt.conf
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;cloud_mqtt.conf"
     tags:
       - ci_build
       - sysbuild
@@ -52,7 +54,7 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: EXTRA_CONF_FILE=non-offloading.conf
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;non-offloading.conf"
     tags:
       - ci_build
       - sysbuild
@@ -64,7 +66,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -78,7 +80,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - CONFIG_WIFI_NM_WPA_SUPPLICANT=n
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -93,7 +95,7 @@ tests:
     platform_allow: *modem_shell_platform_allow
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE="nrf700x-wifi-scan-only.conf;debug.conf"
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf;debug.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -106,7 +108,7 @@ tests:
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_args:
-      - EXTRA_CONF_FILE=app_fota.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;app_fota.conf"
       - DTC_OVERLAY_FILE=nrf91_bootloader.overlay
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     tags:
@@ -117,7 +119,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=modem_fota_full.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;soc_features.conf;modem_fota_full.conf"
       - EXTRA_DTC_OVERLAY_FILE="nrf9160dk_ext_flash.overlay"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -130,7 +132,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=modem_fota_full.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;soc_features.conf;modem_fota_full.conf"
       - EXTRA_DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
@@ -145,7 +147,9 @@ tests:
   sample.cellular.modem_shell.perf_test:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_DTC_OVERLAY_FILE="nrf91dk_perf_test.overlay"
+    extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf91dk_perf_test.overlay"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -156,7 +160,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE="nrf91dk_perf_test_modem_trace_uart.conf"
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf91dk_perf_test_modem_trace_uart.conf"
       - EXTRA_DTC_OVERLAY_FILE="nrf91dk_perf_test_modem_trace_uart.overlay"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -168,7 +172,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=carrier.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;carrier.conf"
       - EXTRA_DTC_OVERLAY_FILE=carrier.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -181,7 +185,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE=lwm2m.conf
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;lwm2m.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -193,7 +197,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
-    extra_args: EXTRA_CONF_FILE="lwm2m.conf;lwm2m_bootstrap.conf"
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;lwm2m.conf;lwm2m_bootstrap.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -206,7 +210,7 @@ tests:
     extra_configs:
       - CONFIG_MOSH_LWM2M_PSK="000102030405060708090a0b0c0d0e0f"
     extra_args:
-      - EXTRA_CONF_FILE="lwm2m.conf;lwm2m_pgps.conf;pgps.conf"
+      - EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;lwm2m.conf;lwm2m_pgps.conf;pgps.conf"
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -218,7 +222,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;pgps.conf"
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -230,7 +234,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=pgps.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;pgps.conf"
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -243,7 +247,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_LOCATION_SERVICE_EXTERNAL=y
-    extra_args: EXTRA_CONF_FILE=cloud_mqtt.conf
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;cloud_mqtt.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -258,7 +262,7 @@ tests:
       - CONFIG_NRF_CLOUD_PGPS_TRANSPORT_NONE=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE="cloud_mqtt.conf;pgps.conf;nrf700x-wifi-scan-only.conf"
+      - EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;cloud_mqtt.conf;pgps.conf;nrf700x-wifi-scan-only.conf"
       - EXTRA_DTC_OVERLAY_FILE=pgps.overlay
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -272,7 +276,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=ppp.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;ppp.conf"
       - EXTRA_DTC_OVERLAY_FILE="ppp.overlay"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -284,7 +288,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=bt.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;bt.conf"
       - EXTRA_DTC_OVERLAY_FILE="bt.overlay"
     integration_platforms:
       - nrf9160dk/nrf9160/ns
@@ -297,7 +301,7 @@ tests:
   sample.cellular.modem_shell.rtt:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=rtt.conf
+    extra_args: EXTRA_CONF_FILE="cloud_coap.conf;tfm_log.conf;soc_features.conf;rtt.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     tags:
@@ -307,6 +311,7 @@ tests:
   sample.cellular.modem_shell.thingy91:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms:
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
@@ -325,7 +330,7 @@ tests:
     platform_allow:
       - thingy91x/nrf9151/ns
     extra_args:
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - EXTRA_DTC_OVERLAY_FILE=thingy91x_wifi.overlay
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
@@ -343,6 +348,7 @@ tests:
     extra_configs:
       - CONFIG_GNSS=y
     extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
       - EXTRA_DTC_OVERLAY_FILE=ext_gnss_uart.overlay
     tags:
       - ci_build
@@ -353,7 +359,9 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: modem_shell_SNIPPET="nrf91-modem-trace-ext-flash"
+    extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
+      - modem_shell_SNIPPET="nrf91-modem-trace-ext-flash"
     extra_configs:
       - CONFIG_NRF_MODEM_LIB_SHELL_TRACE=y
     tags:
@@ -365,7 +373,9 @@ tests:
     build_only: true
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
-    extra_args: modem_shell_SNIPPET="nrf91-modem-trace-ram"
+    extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
+      - modem_shell_SNIPPET="nrf91-modem-trace-ram"
     tags:
       - ci_build
       - sysbuild
@@ -382,7 +392,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -400,7 +410,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -418,7 +428,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -428,6 +438,7 @@ tests:
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_configs:
@@ -441,6 +452,7 @@ tests:
   sample.cellular.modem_shell.location_cellular_no_wifi_no_gnss:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_configs:
@@ -464,7 +476,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -474,6 +486,7 @@ tests:
   sample.cellular.modem_shell.location_gnss_no_wifi_no_cellular_details:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_configs:
@@ -497,7 +510,7 @@ tests:
       - CONFIG_LOCATION_METHOD_WIFI=y
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
-      - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf;nrf700x-wifi-scan-only.conf"
       - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
@@ -507,6 +520,7 @@ tests:
   sample.cellular.modem_shell.location_gnss_cellular_no_wifi_details:
     sysbuild: true
     build_only: true
+    extra_args: EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
     extra_configs:
@@ -523,7 +537,9 @@ tests:
   sample.cellular.modem_shell_modem_uart_trace:
     sysbuild: true
     build_only: true
-    extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
+    extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
+      - modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - thingy91/nrf9160/ns
@@ -542,7 +558,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=non-offloading.conf
+      - EXTRA_CONF_FILE="shell_uart.conf;tfm_log.conf;soc_features.conf;non-offloading.conf"
       - modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms: *modem_shell_integration_platforms
     platform_allow: *modem_shell_platform_allow
@@ -558,6 +574,7 @@ tests:
       - CONFIG_LTE_NETWORK_MODE_LTE_M=y
       - CONFIG_MODEM_ANTENNA_GNSS_EXTERNAL=y
     extra_args:
+      - EXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
       - modem_shell_SNIPPET="nrf91-modem-trace-uart"
       - SB_CONFIG_MERGED_HEX_FILES=y
     integration_platforms:

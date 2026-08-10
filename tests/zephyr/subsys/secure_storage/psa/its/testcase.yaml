@@ -18,6 +18,11 @@ common:
 
 tests:
   nrf.extended.secure_storage.psa.its.secure_storage.store.zms:
+    platform_exclude: native_sim
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf9151dk/nrf9151
+      - nrf52840dk/nrf52840
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/zms.overlay
       - EXTRA_CONF_FILE=\
@@ -26,12 +31,41 @@ tests:
         ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
         transform_default.conf
 
+  # Split off from the scenarios above and below that use transform_default.conf:
+  # native_sim has no hardware unique key, so HW_UNIQUE_KEY is not available and
+  # that fragment has no effect there.
+  nrf.extended.secure_storage.psa.its.secure_storage.store.zms.native_sim:
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/zms.overlay
+      - EXTRA_CONF_FILE=\
+        ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
+        ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_zms.conf;\
+        ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf
+
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.store.settings:
+    platform_exclude: native_sim
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf9151dk/nrf9151
+      - nrf52840dk/nrf52840
     extra_args: "EXTRA_CONF_FILE=\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_settings.conf;\
       transform_default.conf;\
+      store_settings.conf"
+
+  nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.store.settings.native_sim:
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_args: "EXTRA_CONF_FILE=\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_settings.conf;\
       store_settings.conf"
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.transform:
@@ -42,11 +76,25 @@ tests:
       store_settings.conf"
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.store:
+    platform_exclude: native_sim
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf9151dk/nrf9151
+      - nrf52840dk/nrf52840
     extra_args: "EXTRA_CONF_FILE=\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
       ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_custom.conf;\
       transform_default.conf"
+
+  nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.store.native_sim:
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    extra_args: "EXTRA_CONF_FILE=\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-secure_storage.conf;\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-transform_default.conf;\
+      ${ZEPHYR_BASE}/tests/subsys/secure_storage/psa/its/overlay-store_custom.conf"
 
   nrf.extended.secure_storage.backward_compatibility.psa.its.secure_storage.custom.both:
     extra_args: "EXTRA_CONF_FILE=\

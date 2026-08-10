@@ -952,6 +952,28 @@ Building and running
 
 See :ref:`cmake_options` for instructions on how to provide CMake options, for example to use a configuration overlay.
 
+.. _modem_shell_default_fragments:
+
+Default configuration fragments
+===============================
+
+The :file:`prj.conf` file only holds settings that apply to every supported board target and variant.
+The remaining parts of the default configuration are in the following fragments, which you add with :makevar:`EXTRA_CONF_FILE`:
+
+* :file:`shell_uart.conf` - Tuning of the UART shell backend. Leave it out when you replace that backend, as :file:`rtt.conf` does.
+* :file:`cloud_coap.conf` - Tuning of the nRF Cloud CoAP transport. Leave it out for the LwM2M, MQTT-only and non-offloading variants, which disable that transport.
+* :file:`tfm_log.conf` - TF-M logging. Leave it out for board targets that run without TF-M, and when TF-M logging is silenced, as :file:`modem_fota_full.conf` does.
+* :file:`soc_features.conf` - Settings that require SoC support for system poweroff and NVS as the settings backend.
+
+The following example builds the default configuration:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -p -b *board_target* -- -DEXTRA_CONF_FILE="shell_uart.conf;cloud_coap.conf;tfm_log.conf;soc_features.conf"
+
+When a variant fragment is listed in the sections below, add it after these fragments, and drop the fragments that the variant replaces.
+
 .. _dk_buttons:
 
 DK buttons
