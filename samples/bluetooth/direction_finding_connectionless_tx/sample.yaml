@@ -48,7 +48,7 @@ tests:
     build_only: true
     extra_args:
       - OVERLAY_CONFIG="overlay-aod.conf"
-      - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf"
+      - ipc_radio_OVERLAY_CONFIG="../../overlay-bt_ll_sw_split.conf;../../overlay-aod-ctlr.conf"
       - ipc_radio_SNIPPET="bt-ll-sw-split"
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp

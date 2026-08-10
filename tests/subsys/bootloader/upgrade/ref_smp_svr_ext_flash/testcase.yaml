@@ -44,6 +44,9 @@ tests:
     extra_args:
       - FILE_SUFFIX=tfm
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      # PM_PARTITION_SIZE_MCUBOOT depends on PARTITION_MANAGER_ENABLED, and the
+      # tfm suffix partitions through DTS, so this size was never applied.
+      # - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
 
   mcuboot.external_flash.upgrade.hw_downgrade_prevention:
     tags:
@@ -93,6 +96,8 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - SB_CONFIG_NETCORE_EMPTY=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
+      - b0_CONFIG_FPROTECT=y
       - b0n_CONFIG_PCD_READ_NETCORE_APP_VERSION=y
 
   nsib.mcuboot.external_flash.upgrade.encryption.ecdsa_p256:
@@ -115,7 +120,9 @@ tests:
       - mcuboot_CONFIG_BOOT_ECDSA_NRF_OBERON=y
       - mcuboot_CONFIG_MCUBOOT_CLEANUP_UNUSABLE_SECONDARY=y
 
-  nsib.mcuboot.external_flash.upgrade.basic:
+  # FPROTECT cannot be enabled in an nRF54L-family secure bootloader, so this
+  # scenario keeps the current nRF54L-family platform set without that option.
+  nsib.mcuboot.external_flash.upgrade.basic.nrf54l:
     tags:
       - nsib
     platform_allow:
@@ -133,6 +140,7 @@ tests:
       - FILE_SUFFIX=nsib
       - SB_CONFIG_SECURE_BOOT_APPCORE=y
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_FW_INFO_FIRMWARE_VERSION=2
 
   mcuboot.external_flash.nrf_compress.basic:
     tags:
