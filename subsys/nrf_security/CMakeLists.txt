@@ -5,6 +5,39 @@
 #
 
 # This file is nrf_security's entry-point for the NCS build system
+
+if(CONFIG_CRACEN_HW_VERSION_BASE AND CONFIG_CRACEN_HW_VERSION_LITE)
+  message(WARNING
+    "CRACEN_HW_VERSION_BASE and CRACEN_HW_VERSION_LITE are mutually exclusive"
+  )
+  return()
+endif()
+
+if(CONFIG_PSA_CRYPTO_DRIVER_CRACEN AND
+   NOT CONFIG_CRACEN_HW_VERSION_BASE AND
+   NOT CONFIG_CRACEN_HW_VERSION_LITE)
+  message(WARNING
+    "PSA_CRYPTO_DRIVER_CRACEN requires one CRACEN hardware version capability"
+  )
+  return()
+endif()
+
+if(CONFIG_CRACEN_KMU_USES_RRAMC AND CONFIG_CRACEN_KMU_USES_MRAMC)
+  message(WARNING
+    "CRACEN_KMU_USES_RRAMC and CRACEN_KMU_USES_MRAMC are mutually exclusive"
+  )
+  return()
+endif()
+
+if(CONFIG_CRACEN_KMU AND
+   NOT CONFIG_CRACEN_KMU_USES_RRAMC AND
+   NOT CONFIG_CRACEN_KMU_USES_MRAMC)
+  message(WARNING
+    "CRACEN_KMU requires one KMU backing-memory capability"
+  )
+  return()
+endif()
+
 # Set SPM to false as we are not in a secure image build
 set(CONFIG_MBEDTLS_PSA_CRYPTO_SPM False)
 

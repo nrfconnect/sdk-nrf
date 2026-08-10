@@ -22,9 +22,9 @@
 #include <nrfx.h>
 #include <nrfx_kmu.h>
 
-#if defined(CONFIG_SOC_SERIES_NRF54L)
+#if defined(CONFIG_CRACEN_KMU_USES_RRAMC)
 #include <nrfx_rramc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif defined(CONFIG_CRACEN_KMU_USES_MRAMC)
 #include <nrfx_mramc.h>
 #define MRAM_CONFIGNVR_SICR_PAGE 3
 #endif
@@ -242,7 +242,7 @@ static psa_status_t cracen_kmu_decrypt(kmu_metadata *metadata, size_t number_of_
 static void cracen_kmu_key_slot_provision_write_enable_set(bool enable,
 							   uint8_t *orig_write_buf_size)
 {
-#if defined(CONFIG_SOC_SERIES_NRF54L)
+#if defined(CONFIG_CRACEN_KMU_USES_RRAMC)
 #if defined(__NRF_TFM__)
 	nrf_rramc_config_t rramc_config;
 
@@ -258,10 +258,10 @@ static void cracen_kmu_key_slot_provision_write_enable_set(bool enable,
 	nrfx_rramc_write_enable_set(enable, 0);
 #endif /* __NRF_TFM__ */
 
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif defined(CONFIG_CRACEN_KMU_USES_MRAMC)
 	/* Enable/disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(enable, MRAM_CONFIGNVR_SICR_PAGE);
-#endif /* CONFIG_SOC_SERIES_NRF71 */
+#endif
 }
 
 static int cracen_kmu_key_slot_provision(const nrfx_kmu_key_slot_data_t *key_slot_data,
@@ -280,9 +280,9 @@ static int cracen_kmu_key_slot_provision(const nrfx_kmu_key_slot_data_t *key_slo
 
 static void cracen_kmu_key_slot_revoke_enable_set(bool enable)
 {
-#if !defined(__NRF_TFM__) && defined(CONFIG_SOC_SERIES_NRF54L)
+#if !defined(__NRF_TFM__) && defined(CONFIG_CRACEN_KMU_USES_RRAMC)
 	nrfx_rramc_write_enable_set(enable, 0);
-#elif defined(CONFIG_SOC_SERIES_NRF71)
+#elif defined(CONFIG_CRACEN_KMU_USES_MRAMC)
 	/* Enable/disable write and erase from KMU to SICR in MRAM */
 	nrfx_mramc_confignvr_perm_set(enable, MRAM_CONFIGNVR_SICR_PAGE);
 #endif
