@@ -83,7 +83,7 @@ temp_sensor: &temp {
 {% else %}
 /dts-v1/;
 
-#include <nordic/nrf54lm20_a_b_{{ target['core'] }}.dtsi>
+#include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
 #include "{{ board }}-pinctrl.dtsi"
 
 / {
