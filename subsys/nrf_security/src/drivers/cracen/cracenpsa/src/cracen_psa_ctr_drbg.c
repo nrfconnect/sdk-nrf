@@ -283,7 +283,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 			return silex_statuscodes_to_psa(sx_status);
 		}
 
-		for (int i = 0; i < cur_len; i++) {
+		for (size_t i = 0; i < cur_len; i++) {
 			output[i] = temp[i];
 		}
 
