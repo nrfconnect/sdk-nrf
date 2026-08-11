@@ -158,7 +158,7 @@ static psa_status_t validate_signing_conditions(bool is_message, psa_algorithm_t
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if ((int)signature_size < 2 * ecurve_sz) {
+	if (signature_size < 2 * ecurve_sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
@@ -218,7 +218,7 @@ psa_status_t cracen_signature_ecc_sign(bool is_message,
 		return status;
 	}
 
-	if ((int)signature_size < 2 * ecurve->sz) {
+	if (signature_size < 2 * ecurve->sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 

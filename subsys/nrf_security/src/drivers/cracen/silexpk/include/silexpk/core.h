@@ -39,7 +39,7 @@ struct sx_pk_req {
 	struct sx_regs regs;
 	uint8_t *cryptoram;
 	int slot_sz;
-	int op_size;
+	size_t op_size;
 	struct sx_pk_cnx *cnx;
 	const uint8_t *outputops[12];
 	void *userctxt;
@@ -328,9 +328,9 @@ sx_pk_req *sx_get_current_req(void);
  */
 struct sx_pk_ecurve {
 	uint32_t curveflags;
-	int sz;
+	size_t sz;
 	const uint8_t *params;
-	int params_total_sz;
+	size_t params_total_sz;
 };
 
 /** @} */

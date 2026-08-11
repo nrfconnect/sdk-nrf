@@ -59,7 +59,7 @@ void sx_pk_write_curve_gen(sx_pk_req *pk, const struct sx_pk_ecurve *curve, stru
  * @param[in] curve Initialised curve to get operand size from
  * @return Operand size in bytes for the given curve
  */
-static inline int sx_pk_curve_opsize(const struct sx_pk_ecurve *curve)
+static inline size_t sx_pk_curve_opsize(const struct sx_pk_ecurve *curve)
 {
 	return curve->sz;
 }

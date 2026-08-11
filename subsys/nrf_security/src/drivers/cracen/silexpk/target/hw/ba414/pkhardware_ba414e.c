@@ -125,7 +125,7 @@ static int sx_pk_ik_mode(sx_pk_req *pk)
 	return pk->ik_mode;
 }
 
-static void write_command(sx_pk_req *req, int op_size, uint32_t flags)
+static void write_command(sx_pk_req *req, size_t op_size, uint32_t flags)
 {
 	uint32_t command = sx_pk_get_cmd(req)->cmdcode | ((op_size - 1) << 8) | flags;
 
@@ -182,7 +182,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	}
 
 	caps = sx_pk_fetch_capabilities();
-	int max_opsz = 0;
+	size_t max_opsz = 0;
 
 	if (curve->curveflags & 0x80) {
 		max_opsz = caps->max_gfb_opsz;
