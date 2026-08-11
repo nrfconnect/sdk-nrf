@@ -89,7 +89,9 @@ The following is an example of the CLI command:
    The nRF91 Series supports Wi-Fi through nR70 Series shields but is limited to scan-only operation to enhance location accuracy.
    However, it does not support full Wi-Fi operations.
 
-To build for the Thingy:91 X using the nRF5340 as the host chip, use the ``thingy91x/nrf5340/cpuapp`` board target with the :kconfig:option:`SB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH` Kconfig option set to ``y``.
+To build for the Thingy:91 X using the nRF5340 as the host chip, use the ``thingy91x/nrf5340/cpuapp`` board target.
+The sample uses a partition layout in which the nRF5340 owns the external flash.
+This layout is defined in devicetree by the :file:`boards/thingy91x_nrf5340_cpuapp.overlay` file of this sample, with matching overlays for the other images built by sysbuild in the :file:`sysbuild/` directory, so no additional build options are needed.
 This requires an external debugger since the nRF9151 normally owns the buses.
 This special configuration is not compatible with nRF9151 firmware compiled for the default configuration.
 You need to erase the nRF9151 first to avoid conflicts.
@@ -97,7 +99,7 @@ The following is an example of the CLI commands:
 
 .. code-block:: console
 
-   west build -b thingy91x/nrf5340/cpuapp -- -DSB_CONFIG_THINGY91X_STATIC_PARTITIONS_NRF53_EXTERNAL_FLASH=y
+   west build -b thingy91x/nrf5340/cpuapp
    # Set SWD switch to nRF91 and check if you are connected to an nRF91:
    nrfutil device device-info
    # If you see deviceVersion as NRF9120_xxAA_REV3 in the above output, proceed with erasing:
