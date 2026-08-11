@@ -145,6 +145,23 @@ If so, it submits a new connection rate request that applies the stored preferen
 The pending flag is cleared after this check, even when no follow-up request is sent.
 This prevents cyclic connection rate requests when a previous update failed or did not take effect.
 
+Connection interval optimization in the LOW_POWER mode
+------------------------------------------------------
+
+During connection rate negotiation, the Bluetooth controller selects the lowest connection interval from the allowed range by default.
+There is no application-level API to request a different interval within a range.
+This is not optimal for the LOW_POWER mode, because it results in higher power consumption due to the use of shorter connection intervals than are actually possible with this mode.
+
+The |ble_latency| implements a workaround to optimize the power consumption for the LOW_POWER mode.
+When the module requests the LOW_POWER HID SCI mode, it first attempts to negotiate the maximum connection interval allowed for that mode.
+This is done by setting both the minimum and maximum connection intervals in the connection rate request to the LOW_POWER mode maximum interval.
+
+If the connected host rejects this request, the module performs the following operations:
+
+* Records that the maximum LOW_POWER interval is not supported for the current connection.
+  This blocks the module from trying to negotiate the maximum interval again for the current connection.
+* Automatically retries the LOW_POWER mode request using the full connection interval range defined for the mode.
+
 .. _nrf_desktop_ble_latency_sci_host_updates:
 
 Out-of-spec host-initiated transport parameter updates
