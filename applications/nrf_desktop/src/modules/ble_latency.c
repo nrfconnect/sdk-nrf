@@ -44,6 +44,7 @@ enum {
 	CONN_IS_SCI_PARAM_UPDATE_PENDING = BIT(6),
 	CONN_IS_SCI_OUT_OF_SPEC	= BIT(7),
 	CONN_IS_POWER_DOWN		= BIT(8),
+	CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN = BIT(9),
 };
 
 static uint16_t latency_state;
@@ -154,6 +155,17 @@ static int hid_sci_conn_rate_request(bool low_latency, enum bt_hids_sci_mode_val
 
 	if (low_latency) {
 		params.max_latency = 0;
+	}
+
+	if (mode == BT_HIDS_SCI_MODE_LOW_POWER &&
+		!(latency_state & CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN)) {
+		/* Attempt to request the highest interval possible for the LOW_POWER mode.
+		 * This is done to reduce power consumption as much as possible.
+		 * Most hosts will support the maximum LOW_POWER mode interval.
+		 * If negotiation fails, the CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN
+		 * flag is set, and no more such attempts are made until BLE link disconnects.
+		 */
+		params.interval_min_125us = params.interval_max_125us;
 	}
 
 	err = bt_conn_le_conn_rate_request(active_conn, &params);
@@ -616,6 +628,29 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 		conn_rate_update_success_handle(event);
 	} else {
 		LOG_WRN("Connection rate change failed (status: 0x%02x)", event->status);
+
+		if (((event->status == BT_HCI_ERR_UNSUPP_LL_PARAM_VAL) ||
+		     (event->status == BT_HCI_ERR_UNSUPP_FEATURE_PARAM_VAL) ||
+		     (event->status == BT_HCI_ERR_UNACCEPT_CONN_PARAM) ||
+		     (event->status == BT_HCI_ERR_INVALID_LL_PARAM)) &&
+		    (processed_sci_mode == BT_HIDS_SCI_MODE_LOW_POWER) &&
+		    !(latency_state & CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN)) {
+			/* For properly configured peripheral and host devices
+			 * the only reason we could get here is on the first LOW_POWER mode
+			 * request, which attempts to request connection rate with min interval
+			 * equal to the maximum interval.
+			 */
+			latency_state |= CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN;
+			LOG_INF("Max LOW_POWER mode interval not supported for this connection.");
+			LOG_INF("No more attempts will be made to request the max LOW_POWER "
+				"interval for this connection.");
+
+			/* If a new mode update is already pending, this will have no effect.
+			 * Otherwise, LOW_POWER parameters with full LOW_POWER interval range
+			 * will be requested.
+			 */
+			latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		}
 	}
 
 	processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
