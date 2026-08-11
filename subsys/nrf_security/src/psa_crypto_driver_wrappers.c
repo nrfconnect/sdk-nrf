@@ -740,6 +740,7 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
 		status = cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						  data_size, data_length);
 		/* Declared with fallback == true */
@@ -763,11 +764,6 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
-	case PSA_KEY_LOCATION_CRACEN:
-		return cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
-						data_size, data_length);
-#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 		/* Fell through, meaning no accelerator supports this operation.
 		 * The CryptoCell driver doesn't support export public keys when
 		 * the key is a public key itself, so this is necessary.
