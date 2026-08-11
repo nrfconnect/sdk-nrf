@@ -9,6 +9,10 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
 
+<<<<<<< HEAD
+=======
+#include "ble_smp.h"
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
 
 void io_led_init(void);
 void io_led_set(int value);
@@ -26,6 +30,11 @@ int main(void)
 	 */
 	printk("build time: " __DATE__ " " __TIME__ "\n");
 
+<<<<<<< HEAD
+=======
+	ble_smp_init();
+
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
 	while (1) {
 		io_led_set(1);
 		k_msleep(100);

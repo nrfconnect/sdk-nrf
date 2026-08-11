@@ -50,7 +50,11 @@ tests:
     harness_config:
       type: multi_line
       regex:
+<<<<<<< HEAD
         - "Bluetooth initialized"
+=======
+        - "Starting single_slot sample"
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
         - "Advertising successfully started"
   sample.dfu.single_slot.usb:
     tags:

@@ -12,6 +12,7 @@
 #include <zephyr/mgmt/mcumgr/transport/smp_bt.h>
 #include <zephyr/logging/log.h>
 
+<<<<<<< HEAD
 #if defined(CONFIG_FW_LOADER_SETTINGS_ADV_NAME)
 #include <dfu/fw_loader_settings.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
@@ -20,6 +21,9 @@
 #include <zephyr/retention/bootmode.h>
 #include <zephyr/settings/settings.h>
 #endif
+=======
+#include "ble_smp.h"
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
 
 LOG_MODULE_REGISTER(single_slot_ble_smp, LOG_LEVEL_INF);
 
@@ -34,6 +38,7 @@ static const struct bt_data sd[] = {
 	BT_DATA(BT_DATA_NAME_COMPLETE, CONFIG_BT_DEVICE_NAME, (sizeof(CONFIG_BT_DEVICE_NAME) - 1)),
 };
 
+<<<<<<< HEAD
 #if defined(CONFIG_FW_LOADER_SETTINGS_ADV_NAME)
 static bool fw_loader_reset_pending;
 
@@ -126,6 +131,8 @@ static int fw_loader_reset_hook_init(void)
 
 #endif /* CONFIG_FW_LOADER_SETTINGS_ADV_NAME */
 
+=======
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
 static void adv_work_handler(struct k_work *work)
 {
 	int rc = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
@@ -169,6 +176,7 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 	.recycled     = recycled_cb,
 };
 
+<<<<<<< HEAD
 static int ble_smp_init(void)
 {
 	int rc;
@@ -177,6 +185,12 @@ static int ble_smp_init(void)
 	fw_loader_reset_hook_init();
 #endif
 	rc = bt_enable(NULL);
+=======
+int ble_smp_init(void)
+{
+	int rc = bt_enable(NULL);
+
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
 	if (rc) {
 		LOG_ERR("Bluetooth init failed: %d", rc);
 		return rc;
@@ -193,5 +207,8 @@ static int ble_smp_init(void)
 
 	return 0;
 }
+<<<<<<< HEAD
 
 SYS_INIT(ble_smp_init, APPLICATION, CONFIG_APPLICATION_INIT_PRIORITY);
+=======
+>>>>>>> samples: dfu: Move BLE MCUmgr firmware loader
