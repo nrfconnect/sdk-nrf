@@ -390,6 +390,12 @@ DFU samples
 * Updated:
 
   * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
+  * The :ref:`single_slot_sample` sample with support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
+    This is a buttonless DFU enter mechanism.
+  * The :ref:`single_slot_sample` sample with support for the ``nrf52840dk/nrf52840`` board target.
+
+* Removed the Firmware loader entrance sample from the :file:`samples/mcuboot` directory.
+  Its functionality has been consolidated into the :ref:`single_slot_sample` sample, which now covers all supported MCUmgr transports for the MCUboot firmware updater mode.
 
 DECT NR+ samples
 ----------------

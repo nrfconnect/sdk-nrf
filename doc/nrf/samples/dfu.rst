@@ -45,7 +45,6 @@ The following categories of samples are available:
    :caption: MCuboot configurations:
    :glob:
 
-   ../../../samples/mcuboot/*/README
    ../../../samples/dfu/mcuboot_with_encryption/README
    ../../../samples/dfu/encrypted_bootloader/README
    ../../../samples/dfu/smp_svr_mini_boot/README

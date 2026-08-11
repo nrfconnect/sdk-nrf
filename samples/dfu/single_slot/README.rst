@@ -1,4 +1,5 @@
 .. _single_slot_sample:
+.. _firmware_loader_entrance:
 
 Single-slot DFU with MCUboot
 ############################
@@ -32,12 +33,40 @@ This sample employs one of alternatives:
 This sample can employ the buttonless DFU feature when the application can enter firmware loader mode without the need to hold a button during reset.
 This is achieved by enabling the SMP MCUmgr group reset command with the boot mode parameter, which must be set to ``1`` to enter firmware loader mode.
 
+Entering the firmware loader
+============================
+
+The sample demonstrates the following methods of entering the firmware loader image:
+
+.. list-table:: Firmware loader entrance methods
+   :header-rows: 1
+
+   * - Method
+     - Build variant
+     - Description
+   * - GPIO
+     - Default
+     - MCUboot reads the state of **Button 0** at boot time, as enabled by the :kconfig:option:`CONFIG_BOOT_FIRMWARE_LOADER_ENTRANCE_GPIO` Kconfig option.
+   * - Buttonless over Bluetooth LE
+     - ``ble_enter``
+     - The main application exposes an SMP server over Bluetooth LE and requests the firmware loader through the MCUmgr reset command with the boot mode parameter.
+   * - Buttonless over USB
+     - ``usb_enter``
+     - The main application exposes an SMP server over USB CDC ACM serial and requests the firmware loader through the MCUmgr reset command with the boot mode parameter.
+
+The buttonless variants build with the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER_BOOT_MODE_ENTRANCE` sysbuild option, which makes MCUboot read the requested boot mode from the retention subsystem instead of a GPIO.
+
+.. note::
+   Pressing **Button 0** without resetting the device does not enter the firmware loader mode.
+   The button must be held during the reset for MCUboot to detect the entrance request.
+
 Building and running
 ********************
 
 .. |sample path| replace:: :file:`samples/dfu/single_slot`
 
 By default, the sample builds with the :ref:`fw_loader_ble_mcumgr` firmware loader image.
+To build the sample with the :ref:`fw_loader_ble_mcumgr` firmware loader image and Bluetooth LE buttonless DFU support, append ``FILE_SUFFIX=ble_enter`` to the build command.
 To build with the :ref:`fw_loader_usb_mcumgr` firmware loader image, append ``FILE_SUFFIX=usb`` to the build command.
 To build the sample for the :zephyr:board:`nrf54lm20dk` with the :ref:`fw_loader_usb_mcumgr` firmware loader image and USB buttonless DFU support, append ``FILE_SUFFIX=usb_enter`` to the build command.
 To build the sample for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` target with the :ref:`fw_loader_usb_mcumgr` firmware loader image and USB buttonless DFU support, append ``FILE_SUFFIX=usb_enter_dongle`` to the build command.
@@ -62,6 +91,7 @@ After programming the sample to your development kit, perform the following step
 
       Open the `nRF Connect Device Manager`_ mobile app to perform DFU over Bluetooth® LE.
 
+      * When built with ``FILE_SUFFIX=ble_enter``, the main application advertises itself as *single_slot* and accepts the MCUmgr reset command with the boot-mode parameter, which reboots the device into the firmware loader.
       * The firmware loader advertises itself as *FW loader* and accepts MCUmgr image upload.
       * Send the generated update package for the second version of the sample.
         See :ref:`ug_nrf54l_developing_ble_fota_steps_testing` for details on how to use the mobile app to perform the DFU.
