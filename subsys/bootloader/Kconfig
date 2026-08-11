@@ -16,13 +16,16 @@ config SECURE_BOOT
 	  Set this option to enable the first stage bootloader which
 	  verifies the signature of the app.
 
+
 config SB_IMAGE_BOOT_OFFSET
-	hex
+	hex "Offset of executable code within firmware image"
 	depends on !PARTITION_MANAGER_ENABLED
 	default 0x800 if SOC_SERIES_NRF54L
 	default 0x200 if SOC_SERIES_NRF53 || SOC_SERIES_NRF91
 	default 0x200 if SOC_SERIES_NRF52
+	default 0
 	help
+	  Sysbuild, when used, will enforce the value by own logic in CMake files.
 	  Size of offset, from the beginning of storage partition, or __rom_start,
 	  where to application code begins. This is usually size of non-executable
 	  header that precedes the entry point and is not used by the applicaiton
