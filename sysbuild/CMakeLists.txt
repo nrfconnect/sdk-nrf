@@ -675,6 +675,28 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_SECURE_BOOT y)
       set_config_bool(mcuboot CONFIG_FW_INFO y)
 
+      # Discardable header is glued in front of image, not part of firmware image,
+      # so there is no offset to jump to, as executable image starts at the partition
+      # starting address.
+      if(SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
+        set_config_int(b0 CONFIG_SB_IMAGE_BOOT_OFFSET 0)
+        set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT y)
+        # No nice way to do this without changes to Zephyr ROM_START_OFFSET definitions.
+        # This is special case, as we have MCUboot as bootloader and at the same time
+        # we do not want the shifter binary, as we usually do with Zephyr builds for
+        # MCUboot, with space left for MCUboot image header.
+        set_config_int(mcuboot CONFIG_ROM_START_OFFSET 0)
+      else()
+        if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF91 OR SB_CONFIG_SOC_SERIES_NRF52)
+          set_config_int(b0 CONFIG_SB_IMAGE_BOOT_OFFSET 0x200)
+        elseif(SB_CONFIG_SOC_SERIES_NRF54L)
+          set_config_int(b0 CONFIG_SB_IMAGE_BOOT_OFFSET 0x800)
+        else()
+          message(WARNING "Missing CONFIG_SB_IMAGE_BOOT_OFFSET setting for selected SoC")
+        endif()
+        set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT n)
+      endif()
+
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256)
         if(SB_CONFIG_BOOT_SHARED_CRYPTO_ECDSA_P256)
           add_overlay_config(

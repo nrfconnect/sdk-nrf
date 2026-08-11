@@ -69,7 +69,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     # image makes no sense, so the --header-size=auto will be used.
 
     # Do not bother picking header size from image that is for CPUNET
-    if("${prefix}" STREQUAL "CPUNET_")
+    if("${prefix}" STREQUAL "CPUNET_" OR SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
       set(header_size auto)
     else()
       sysbuild_get(header_size IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
@@ -92,7 +92,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   # partition start address.
   if(SB_CONFIG_PARTITION_MANAGER)
     set(pad_header --pad-header)
-  elseif("${prefix}" STREQUAL "CPUNET_")
+  elseif("${prefix}" STREQUAL "CPUNET_" OR SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
     set(pad_header --pad-header)
   else()
     set(pad_header)
