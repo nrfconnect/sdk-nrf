@@ -72,13 +72,13 @@ void sx_pk_affpt2mem(const sx_pk_const_affine_point *op, uint8_t *mem_x, uint8_t
  * @param[in] op Operand
  * @return Operand size in bytes
  */
-int sx_op_size(const sx_op *op);
+size_t sx_op_size(const sx_op *op);
 
 /** Return the size in bytes of the const operand.
  *
  * @param[in] op Const operand
  * @return Operand size in bytes
  */
-int sx_const_op_size(const sx_const_op *op);
+size_t sx_const_op_size(const sx_const_op *op);
 
 #endif

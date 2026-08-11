@@ -145,7 +145,7 @@ static psa_status_t cracen_ecjpake_get_public_key(sx_pk_req *req,
 						  const uint8_t *secret)
 {
 	struct sx_pk_inops_ecp_mult inputs;
-	int opsz;
+	size_t opsz;
 	int status;
 
 	sx_pk_set_cmd(req, SX_PK_CMD_ECC_PTMUL);
