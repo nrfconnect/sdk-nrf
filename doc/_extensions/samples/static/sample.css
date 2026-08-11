@@ -1,27 +1,89 @@
 
 .vscode-button {
-  width: var(--ncs-right-toc-width);
-  max-width: var(--ncs-right-toc-width);
-  background-color: #252526 !important;
-  color: #F3F3F3;
+  width: max(var(--ncs-right-toc-width), 200px);
+  max-width: max(var(--ncs-right-toc-width), 200px);
+  background-color: #333f48 !important;
+  color: #ffffff;
   /* Align with toc */
   margin-right: -26px !important;
   padding: 0 !important;
+  border-radius: 4px;
+  position: relative;
+}
+
+.vscode-button:not(.vscode-button-disabled):hover {
+  background-color: #e8f5f8 !important;
 }
 
 .vscode-button p {
   max-width: 100% !important;
+  font-size: 16px !important;
+  color: #ffffff;
+  margin-bottom: 0;
 }
+
+.vscode-button-tooltip {
+  display: none
+}
+.vscode-button:hover .vscode-button-tooltip {
+  display: block;
+  width: 100%;
+  color: #000000;
+  background-color: #333f48;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 5px;
+  position: absolute;
+  z-index: 1;
+  bottom: calc(100% + 5px);
+  right: 50%;
+  opacity: .9;
+  transform: translateX(50%);
+}
+
+.vscode-button-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  margin-left: -5px;
+  border-width: 5px;
+  border-style: solid;
+  border-color: #333f48 transparent transparent transparent;
+}
+
+.vscode-button-disabled {
+  background-color: #333f48 !important;
+  opacity: 0.9;
+}
+
+.vscode-button-disabled p {
+  margin: .6em auto !important;
+  text-align: center;
+  background-color: #333f48 !important;
+}
+
 .vscode-button img {
-  width: 2em;
-  max-width: 2em !important;
-  margin-right: .5em !important;
+  width: 1.6em;
+  max-width: 1.6em !important;
+  margin-right: .4em !important;
+  margin-left: 0 !important;
   display: inline-block !important;
 }
 
+.vscode-button-disabled img {
+  filter: grayscale(1);
+}
+
 .vscode-button a {
-  color: #F3F3F3 !important;
+  color: #ffffff !important;
   text-decoration: none !imortant;
-  display: block;
-  margin: 24px;
+  display: flex;
+  justify-content: center;
+  margin: .6em auto;
+}
+
+.vscode-button:not(.vscode-button-disabled):hover a {
+  color: #00a2c6 !important;
 }

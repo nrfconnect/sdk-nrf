@@ -5,7 +5,6 @@ SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 """
 
 import os
-import re
 import subprocess
 from pathlib import Path
 
@@ -27,8 +26,6 @@ CONTENTS_DIRECTIVE = """
 
 """
 
-VERSIONS_FILE = (Path(__file__).parents[2] / "versions.json").as_posix()
-VERSION_REGEX = re.compile(r"^\d+\.\d+\.\d+$")
 OPEN_IN_VSCODE_URL = (
     "vscode://nordic-semiconductor.nrf-connect/openSampleFromSDK"
     "?samplePath={sample}"
@@ -81,25 +78,26 @@ class NCSSampleDirective(SphinxDirective):
             == 0
         )
 
-    def get_vscode_uri(self) -> str | None:
+    def get_vscode_uri(self, version: str) -> str | None:
         file = self.env.doc2path(self.env.docname).relative_to(self.env.app.srcdir)
         out_dirname = file.parent
         docset = Path(self.config.html_theme_options["docset"])
 
-        if not self.sample_existed(
-            file.as_posix(), get_versions(self.env.app).normalized().patchlevel().vlatest()
-        ):
+        if not self.sample_existed(file.as_posix(), f"v{version}"):
             return None
 
         return OPEN_IN_VSCODE_URL.format(
-            version=get_versions(self.env.app).normalized().patchlevel().latest(),
+            version=version,
             sample=(docset / out_dirname).as_posix(),
         )
 
-    def render_vscode_button(self) -> list[nodes.Node]:
-        uri = self.get_vscode_uri()
+    @staticmethod
+    def render_tooltip(text: str) -> nodes.Node:
+        return nodes.raw("", f'<span class="vscode-button-tooltip">{text}</span>', format="html")
 
-        if not uri:
+    def render_vscode_button(self) -> list[nodes.Node]:
+        version = get_versions(self.env.app).normalized().patchlevel().latest()
+        if not version:
             return []
 
         svg_path = (
@@ -110,13 +108,27 @@ class NCSSampleDirective(SphinxDirective):
             nodes.raw("", f'<img src="{svg_path}"/>', format="html"),
             nodes.Text("Open in VS Code"),
         ]
-        ref = nodes.reference("", "", *ref_children, refuri=self.get_vscode_uri())
+
+        uri = self.get_vscode_uri(version)
+
+        if not uri:
+            sidebar = nodes.sidebar(classes=["vscode-button", "vscode-button-disabled"])
+            sidebar += nodes.paragraph("", "", *ref_children)
+            sidebar += self.render_tooltip(
+                "This sample hasn't been included in an SDK release yet."
+            )
+            return [sidebar]
+
+        ref = nodes.reference("", "", *ref_children, refuri=uri)
 
         ref_p = nodes.paragraph()
         ref_p += ref
 
         sidebar = nodes.sidebar(classes=["vscode-button"])
         sidebar += ref_p
+        sidebar += self.render_tooltip(
+            f'Opening the sample may trigger installation of the SDK and toolchain v{version}.'
+        )
         return [sidebar]
 
     def parent_remainder(self, section: nodes.section) -> None:
