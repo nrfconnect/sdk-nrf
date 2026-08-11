@@ -88,7 +88,7 @@ function(b0_sign_image slot cpunet_target)
 
   if(NOT SB_CONFIG_BOOTLOADER_MCUBOOT)
     set(skip_size 0)
-  elseif(cpunet_target)
+  elseif(cpunet_target OR SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
     set(skip_size 0)
   else()
     sysbuild_get(build_with_tfm IMAGE ${DEFAULT_IMAGE} VAR CONFIG_BUILD_WITH_TFM KCONFIG)

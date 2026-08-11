@@ -192,6 +192,29 @@ config SECURE_BOOT_MCUBOOT_VERSION
 	help
 	  The version of the MCUboot S0/S1 upgrade package
 
+config SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER
+	bool "Use enough space in front of image to just fit header there"
+	depends on SECURE_BOOT
+	depends on BOOTLOADER_MCUBOOT
+	help
+	  INCOMPATIBILITY WARNING: MCUboot as secondary bootloader that have been
+	  built without the option enabled will not be able to update itself
+	  with a binary built with the option enabled. NSIB will not be able to
+	  boot such MCUboot either. The entire bootchain has to be built with the
+	  option enabled. This will happen because pre-existing MCUboot, built
+	  without the option, will try to skip non-existing header while trying
+	  to verify the image with NSIB, failing the process of verification.
+	  When this option is enabled, the MCUboot for secondary bootloader is
+	  built with ROM_START_OFFSET set to 0 and NSIB has nothing to skip over.
+	  Instead the header is glued in front of the image during signing, post
+	  build,  and is left out when MCUboot does update.
+	  NSIB will now have to verify, and boot MCUBOOT image, exactly at
+	  the beginning of S0/S1 partition, which means
+	  that SB_IMAGE_BOOT_OFFSET, for Secure Bootloader, has to be set to 0 too;
+	  RWX protections no longer need to skip the leftover MCUboot image header,
+	  because it no longer occupies the beginning of partition, so
+	  SB_DISABLE_SELF_RWX_SKIP_SIZE should also be set to 0.
+
 if BOOTLOADER_MCUBOOT
 
 choice BOOT_SIGNATURE_TYPE
