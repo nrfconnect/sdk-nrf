@@ -63,7 +63,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   # image makes no sense, so the --header-size=auto will be used.
 
   # Do not bother picking header size from image that is for CPUNET
-  if("${prefix}" STREQUAL "CPUNET_")
+  if("${prefix}" STREQUAL "CPUNET_" OR SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
     set(header_size auto)
   else()
     sysbuild_get(header_size IMAGE ${application} VAR CONFIG_ROM_START_OFFSET KCONFIG)
@@ -83,7 +83,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   # CPUNET targets are special case and they require padding for either configuration,
   # as the header is not included neither in PM nor DTS builds and image starts exactly at
   # partition start address.
-  if("${prefix}" STREQUAL "CPUNET_")
+  if("${prefix}" STREQUAL "CPUNET_" OR SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER)
     set(pad_header --pad-header)
   else()
     set(pad_header)
