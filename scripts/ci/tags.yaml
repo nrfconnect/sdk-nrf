@@ -843,17 +843,6 @@ ci_samples_zephyr_bluetooth:
     - zephyr/samples/bluetooth/hci_uart/
     - zephyr/samples/bluetooth/peripheral_hr/
 
-ci_samples_mcuboot:
-  files:
-    - nrf/include/bluetooth/
-    - nrf/samples/mcuboot/
-    - nrf/subsys/bluetooth/
-    - zephyr/drivers/bluetooth/
-    - zephyr/include/mgmt/mcumgr/
-    - zephyr/include/zephyr/bluetooth/
-    - zephyr/subsys/bluetooth/
-    - zephyr/subsys/mgmt/mcumgr/
-
 ci_tests_bluetooth_tester:
   files:
     - nrf/include/bluetooth/mesh/
@@ -1961,7 +1950,9 @@ ci_samples_dfu:
     - bootloader/mcuboot/
     - nrf/samples/dfu/
     - zephyr/drivers/flash/
+    - zephyr/include/mgmt/mcumgr/
     - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/mcumgr/
 
 ci_samples_nrf54h20:
   files:
