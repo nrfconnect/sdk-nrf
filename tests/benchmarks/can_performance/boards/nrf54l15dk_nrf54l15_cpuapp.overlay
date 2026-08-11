@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		zephyr,canbus = &scan;
+	};
+};
+
+&pinctrl {
+	scan_default: scan_default {
+		group1 {
+			psels = <NRF_PSEL(SDP_MSPI_DQ1, 2, 2)>; //TX
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			bias-pull-up;
+		};
+
+		group2 {
+			psels = <NRF_PSEL(SDP_MSPI_DQ3, 2, 4)>; //RX
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			bias-disable;
+		};
+	};
+
+	scan_sleep: scan_sleep {
+		group1 {
+			low-power-enable;
+			psels = <NRF_PSEL(SDP_MSPI_DQ1, 2, 2)>,
+				<NRF_PSEL(SDP_MSPI_DQ3, 2, 4)>;
+			bias-pull-up;
+		};
+	};
+};
+
+&spi00 {
+	status = "disabled";
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&scan_default>;
+	pinctrl-1 = <&scan_sleep>;
+	pinctrl-names = "default", "sleep";
+	interrupts = <76 NRF_DEFAULT_IRQ_PRIORITY>;
+	status = "okay";
+	/delete-property/ execution-memory;
+};
+
+/ {
+	soc {
+		softperiph_ram: memory@2003b400 {
+			reg = <0x2003b400 0x4400>;
+			ranges = <0 0x2003b400 0x4400>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			scan: scan@4200 {
+				compatible = "nordic,nrf-scan";
+				#address-cells = <1>;
+				#size-cells = <0>;
+				reg = <0x4200 0x200>;
+			};
+		};
+	};
+};
+
+/delete-node/ &mx25r64;
