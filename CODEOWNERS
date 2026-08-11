@@ -591,7 +591,6 @@
 /samples/hw_id/                           @nrfconnect/ncs-cia
 /samples/ipc/ipc_service/                 @anangl
 /samples/keys/                            @nrfconnect/ncs-aegir
-/samples/mcuboot/                         @nrfconnect/ncs-eris
 /samples/mpsl/                            @nrfconnect/ncs-dragoon
 /samples/net/                             @nrfconnect/ncs-cia @nrfconnect/ncs-bifrost
 /samples/nfc/                             @nrfconnect/ncs-radio-sw
@@ -689,7 +688,6 @@
 /samples/bluetooth/subrating/*.rst        @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/throughput/*.rst       @nrfconnect/ncs-blenders-doc
 /samples/bootloader/*.rst                 @nrfconnect/ncs-eris-doc
-/samples/mcuboot/firmware_loader_entrance/*.rst @nrfconnect/ncs-eris-doc
 /samples/caf/*.rst                        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
 /samples/cellular/**/*.rst                @nrfconnect/ncs-modem-doc

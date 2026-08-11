@@ -9,6 +9,8 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
 
+#include "ble_smp.h"
+
 void io_led_init(void);
 void io_led_set(int value);
 
@@ -25,6 +27,7 @@ int main(void)
 	 */
 	printk("build time: " __DATE__ " " __TIME__ "\n");
 
+	ble_smp_init();
 
 	while (1) {
 		io_led_set(1);
