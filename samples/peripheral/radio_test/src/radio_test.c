@@ -137,23 +137,22 @@ static size_t radio_pdu_len_get(nrf_radio_mode_t mode)
 }
 
 #if NRF_RADIO_HAS_EVDMA
-/* EasyVDMA job lists describing the TX and RX packet buffers, one data job each followed by the
- * terminating null job.
- *
- * The job is sized to one PDU rather than to the buffer, and that is what keeps each packet
- * starting at the head of the list: EasyVDMA resumes where the previous packet left it and returns
- * to the head by itself only once a list has been consumed to the byte. Nothing re-arms the list
- * between packets.
- */
-static nrf_vdma_job_t tx_vdma_jobs[2];
-static nrf_vdma_job_t rx_vdma_jobs[2];
-
-static void radio_vdma_jobs_set(nrf_vdma_job_t *jobs, uint8_t *buffer, size_t size)
+static void radio_vdma_jobs_set(uint8_t *buffer, size_t size)
 {
-	nrf_vdma_job_fill(&jobs[0], buffer, size, NRF_VDMA_ATTRIBUTE_PLAIN_DATA_BUF_WRITE);
-	nrf_vdma_job_terminate(&jobs[1]);
+	/* EasyVDMA job list describing the TX and RX packet buffers, one data job followed by the
+	 * terminating null job.
+	 *
+	 * The job is sized to one PDU rather than to the buffer, and that is what keeps each packet
+	 * starting at the head of the list: EasyVDMA resumes where the previous packet left it
+	 * and returns  to the head by itself only once a list has been consumed to the byte.
+	 * Nothing re-arms the list between packets.
+	 */
+	static nrf_vdma_job_t vdma_jobs[2];
 
-	NRF_RADIO->VDMACONFIG.LISTPTR = (uint32_t)jobs;
+	nrf_vdma_job_fill(&vdma_jobs[0], buffer, size, NRF_VDMA_ATTRIBUTE_PLAIN_DATA_BUF_WRITE);
+	nrf_vdma_job_terminate(&vdma_jobs[1]);
+
+	NRF_RADIO->VDMACONFIG.LISTPTR = (uint32_t)vdma_jobs;
 }
 #endif /* NRF_RADIO_HAS_EVDMA */
 
@@ -724,7 +723,7 @@ static void generate_modulated_rf_packet(uint8_t mode,
 #if NRF_RADIO_HAS_PACKETPTR
 	nrf_radio_packetptr_set(NRF_RADIO, tx_packet);
 #elif NRF_RADIO_HAS_EVDMA
-	radio_vdma_jobs_set(tx_vdma_jobs, tx_packet, radio_pdu_len_get(mode));
+	radio_vdma_jobs_set(tx_packet, radio_pdu_len_get(mode));
 #else
 #error "Radio has neither PACKETPTR nor EasyVDMA"
 #endif /* NRF_RADIO_HAS_PACKETPTR */
@@ -934,7 +933,7 @@ static void radio_rx(uint8_t mode, uint8_t channel, enum transmit_pattern patter
 #if NRF_RADIO_HAS_PACKETPTR
 	nrf_radio_packetptr_set(NRF_RADIO, rx_packet);
 #elif NRF_RADIO_HAS_EVDMA
-	radio_vdma_jobs_set(rx_vdma_jobs, rx_packet, radio_pdu_len_get(mode));
+	radio_vdma_jobs_set(rx_packet, radio_pdu_len_get(mode));
 #else
 #error "Radio has neither PACKETPTR nor EasyVDMA"
 #endif /* NRF_RADIO_HAS_PACKETPTR */
