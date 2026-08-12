@@ -868,6 +868,13 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
   Use their PSA Crypto counterparts instead.
 
+* Updated:
+
+  * The behavior of the imgtool.
+    The ``--header-size`` parameter now accepts ``auto`` as value and automatically calculates the smallest possible header.
+  * The sysbuild signing scripts for nRF5340 CPUNET to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
+    The size of CPUNET firmware image signed for MCUboot is reduced by 480 bytes.
+
 Zephyr
 ======
 
