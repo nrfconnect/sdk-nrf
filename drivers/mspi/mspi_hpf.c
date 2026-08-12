@@ -12,6 +12,7 @@
 #include <zephyr/drivers/counter.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 #if !defined(CONFIG_MULTITHREADING)
 #include <zephyr/sys/atomic.h>
 #endif
@@ -106,6 +107,7 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 
 struct mspi_hpf_data {
 	hpf_mspi_xfer_config_msg_t xfer_config_msg;
+	enum mspi_io_mode io_mode;
 };
 
 struct mspi_hpf_config {
@@ -807,6 +809,8 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	mspi_dev_config_msg.dev_config.cnt0_value = CNT0_TOP_CALCULATE(cfg->freq);
 	mspi_dev_config_msg.dev_config.ce_index = cfg->ce_num;
 
+	((struct mspi_hpf_data *)dev->data)->io_mode = cfg->io_mode;
+
 	return send_data(HPF_MSPI_CONFIG_DEV, (void *)&mspi_dev_config_msg,
 			 sizeof(hpf_mspi_dev_config_msg_t));
 }
@@ -973,27 +977,83 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	drv_data->xfer_config_msg.xfer_config.tx_dummy = req->tx_dummy;
 	drv_data->xfer_config_msg.xfer_config.rx_dummy = req->rx_dummy;
 
+	rc = pm_device_runtime_get(dev);
+	if (rc < 0) {
+		return rc;
+	}
+
 	rc = send_data(HPF_MSPI_CONFIG_XFER, (void *)&drv_data->xfer_config_msg,
 		       sizeof(hpf_mspi_xfer_config_msg_t));
 
 	if (rc < 0) {
 		LOG_ERR("Send xfer config error: %d", rc);
-		return rc;
+		goto release;
 	}
 
 	while (packets_done < req->num_packet) {
 		rc = start_next_packet((struct mspi_xfer *)req, packets_done);
 		if (rc < 0) {
 			LOG_ERR("Start next packet error: %d", rc);
-			return rc;
+			goto release;
 		}
 		++packets_done;
+	}
+
+release:
+	(void)pm_device_runtime_put(dev);
+
+	return rc;
+}
+
+#if CONFIG_PM_DEVICE
+/**
+ * @brief Put the bus pins into their low power configuration.
+ *
+ * The FLPR keeps driving the pins for as long as they are assigned to the VPR, which
+ * also makes the GPIO configuration of the sleep state ineffective. Therefore the pins
+ * are taken back from the VPR here. The FLPR keeps its VIO state, so the pins can be
+ * handed back to it on resume without reconfiguring the FLPR.
+ *
+ * @param drv_cfg Driver configuration.
+ *
+ * @retval 0 If successful.
+ * @retval -errno code if failure.
+ */
+static int hpf_mspi_pins_park(const struct mspi_hpf_config *drv_cfg)
+{
+	const struct pinctrl_state *state = NULL;
+	int ret;
+
+	for (uint8_t i = 0; i < drv_cfg->pcfg->state_cnt; i++) {
+		if (drv_cfg->pcfg->states[i].id == PINCTRL_STATE_SLEEP) {
+			state = &drv_cfg->pcfg->states[i];
+			break;
+		}
+	}
+
+	if (state == NULL) {
+		LOG_ERR("Pins sleep state not found.");
+		return -ENOTSUP;
+	}
+
+	ret = pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_SLEEP);
+	if (ret < 0) {
+		return ret;
+	}
+
+	for (uint8_t i = 0; i < state->pin_cnt; i++) {
+		uint32_t psel = NRF_GET_PIN(state->pins[i]);
+
+		if (psel == NRF_PIN_DISCONNECTED) {
+			continue;
+		}
+
+		nrf_gpio_pin_control_select(psel, NRF_GPIO_PIN_SEL_GPIO);
 	}
 
 	return 0;
 }
 
-#if CONFIG_PM_DEVICE
 /**
  * @brief Callback function to handle power management actions.
  *
@@ -1010,18 +1070,16 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
  */
 static int dev_pm_action_cb(const struct device *dev, enum pm_device_action action)
 {
+	const struct mspi_hpf_config *drv_cfg = dev->config;
+
 	switch (action) {
 	case PM_DEVICE_ACTION_SUSPEND:
-		/* TODO: Handle PM suspend state */
-		break;
+		return hpf_mspi_pins_park(drv_cfg);
 	case PM_DEVICE_ACTION_RESUME:
-		/* TODO: Handle PM resume state */
-		break;
+		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 	default:
 		return -ENOTSUP;
 	}
-
-	return 0;
 }
 #endif
 
