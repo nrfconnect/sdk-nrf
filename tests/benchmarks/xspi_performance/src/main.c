@@ -117,7 +117,7 @@ static int test_setup(void)
  * set DK_LED1 to OFF state
  * stop CPU load monitor
  * calculate operation duration in [us]
- * show measured timing
+ * show measured timing and the rate it gives
  * wait for CPU loads caluclations to finish
  * show measured CPU loads
  * sleep for 'DEAD_TIME_MS'
@@ -166,6 +166,12 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	printk("### Summary ###\n");
 	printk("Flash %s [size: %u bytes] took: %llu us\n", operation_name, flash_operation_size,
 	       timer_value_us);
+	if ((err == 0) && (timer_value_us > 0)) {
+		uint64_t rate = (uint64_t)flash_operation_size * 1000ULL / timer_value_us;
+
+		printk("Flash %s rate: %llu.%03llu MB/s\n", operation_name, rate / 1000,
+		       rate % 1000);
+	}
 	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
 		cpu_load_monitor_show();
 	}
