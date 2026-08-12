@@ -110,7 +110,7 @@ K_THREAD_DEFINE(cpu_load_monitor_thread, CPU_LOAD_MONITOR_THREAD_STACK_SIZE, cpu
 
 void cpu_load_monitor_init(void)
 {
-	cpu_load_get(false);
+	cpu_load_get(true);
 }
 
 void cpu_load_monitor_start(void)

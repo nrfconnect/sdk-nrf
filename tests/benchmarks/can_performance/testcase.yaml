@@ -32,6 +32,9 @@ tests:
     tags:
       - ppk_power_measure
     extra_configs:
+      - CONFIG_PM=y
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
       - CONFIG_TEST_CAN_PERF_DEAD_TIME_MS=100
       - CONFIG_TEST_CAN_PERF_SHORT_RUN=y
       - CONFIG_PRINTK=n
