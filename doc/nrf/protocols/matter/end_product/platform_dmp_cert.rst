@@ -48,23 +48,20 @@ If you follow within the Matter Platform SOE and the platform's certified scope,
 
 .. _ug_matter_platform_and_dmp_matrix:
 
-Matter Compliant Platform certification matrix:
-===============================================
+Matter Compliant Platform certification information
+===================================================
 
-The following table presents the certification matrix for the Matter Compliant Platform delivered through the |NCS|.
-This matrix lists the |NCS| versions, Matter versions, product names, certification details, CSA certificate links, and supported hardware within the SDK (SOE).
-The table will be updated as new platform versions are certified.
+Use the following Matter CIDs compatibility matrices to find the current Matter Compliant Platform Certification IDs (CIDs), |NCS| release mappings, dependent certification references, and supported hardware within the SOE for each SoC that supports Matter in the |NCS|:
 
-+-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
-| |NCS| version     | Matter version    | Product name        | Certification ID    | Transport             | CSA Certificate link                                     | Supported hardware (SOE)                  |
-+===================+===================+=====================+=====================+=======================+==========================================================+===========================================+
-| 3.1.1             | 1.4.2             | |NCS|               | CSA25001MCPM0001-24 | Thread, Bluetooth LE  | `Matter nRF Connect SDK Platform Certificate_1_4_2`_     | nRF52 Series, nRF53 Series, nRF54L Series |
-+-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
-| 3.2.0             | 1.5.0             | |NCS|               | CSA26002MCPM0008-24 | Thread, Bluetooth LE  | `Matter nRF Connect SDK Platform Certificate_1_5_0`_     | nRF52 Series, nRF53 Series, nRF54L Series |
-+-------------------+-------------------+---------------------+---------------------+-----------------------+----------------------------------------------------------+-------------------------------------------+
+* `Matter CIDs for nRF52840`_
+* `Matter CIDs for nRF5340`_
+* `Matter CIDs for nRF54L10`_
+* `Matter CIDs for nRF54L15`_
+* `Matter CIDs for nRF54LM20A`_
+* `Matter CIDs for nRF54LM20B`_
 
-.. note::
-   The CSA Certificate link provides information about the platform certificate and the associated PICS baseline.
+The Matter CIDs compatibility matrices do not link directly to CSA platform certificates.
+Enter the platform Certification ID from the matrix for your SoC and |NCS| version in the **Certification ID #** filter on the `CSA Certified Products Database`_ to open the platform certificate entry and download the associated PICS baseline.
 
 Derived Matter Product
 ======================
@@ -263,13 +260,15 @@ Before testing, prepare the following inputs:
   Products may declare additional features beyond the platform's certified scope, but these additional features must be tested in the DMP certification process.
 * Request the platform's templated security attestation (pre-filled with platform details) through the `DevZone`_ (Nordic's developer portal for technical support and resources).
 * Leverage dependent certification identifiers from platform.
-  You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
+  Use the compatibility matrix for your SoC to check the Bluetooth QDIDs and Thread CIDs valid for Matter applications:
 
   * `nRF52840 Compatibility Matrix`_
   * `nRF5340 Compatibility Matrix`_
+  * `nRF54L10 Compatibility Matrix`_
   * `nRF54L15 Compatibility Matrix`_
-
-* Retrieve the Platform PICS baseline from the CSA website ref :ref:`ug_matter_platform_and_dmp_matrix` to confirm compatibility.
+  * `nRF54LM20A Compatibility Matrix`_
+  * `nRF54LM20B Compatibility Matrix`_
+* Enter the platform Certification ID from the Matter CIDs compatibility matrix for your SoC in the **Certification ID #** filter on the `CSA Certified Products Database`_ and retrieve the Platform PICS baseline from the search result to confirm compatibility.
 
 .. rst-class:: numbered-step
 
