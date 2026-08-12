@@ -726,7 +726,7 @@ void dect_net_l2_parent_association_created(struct net_if *iface, uint32_t targe
 	dect_net_l2_join_ipv6_mdns_group(iface);
 }
 
-void dect_net_l2_child_association_created(struct net_if *iface, uint32_t child_long_rd_id)
+int dect_net_l2_child_association_created(struct net_if *iface, uint32_t child_long_rd_id)
 {
 	struct dect_net_l2_association_data *assoc = NULL;
 	bool first_child = false;
@@ -757,8 +757,8 @@ void dect_net_l2_child_association_created(struct net_if *iface, uint32_t child_
 	k_mutex_unlock(&associations_mutex);
 
 	if (assoc == NULL) {
-		LOG_WRN("No free slot for child association");
-		return;
+		LOG_WRN("No free slot for child association (long rd id %u)", child_long_rd_id);
+		return -ENOSPC;
 	}
 
 	/* Do external calls outside of mutex to avoid lock ordering issues */
@@ -773,6 +773,8 @@ send_event:
 		net_if_dormant_off(iface);
 		dect_net_l2_join_ipv6_mdns_group(iface);
 	}
+
+	return 0;
 }
 
 /**
