@@ -504,24 +504,39 @@ endif # NRF_WIFI_LOW_POWER
 config WIFI_FIXED_MAC_ADDRESS
 	string "Wi-Fi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
 	help
-	  This option overrides the MAC address read from OTP. It is strictly for testing purposes only.
+	  This option overrides the MAC address read from the xICR registers and
+	  is used for the first interface. It is strictly for testing purposes only.
 
 choice WIFI_MAC_ADDRESS
 	prompt "Wi-Fi MAC address type"
 	default WIFI_FIXED_MAC_ADDRESS_ENABLED if WIFI_FIXED_MAC_ADDRESS != ""
-	default WIFI_OTP_MAC_ADDRESS
+	default WIFI_NRF71_XICR_MAC_ADDRESS
 	help
-	  Select the type of MAC address to be used by the Wi-Fi driver
+	  Select the type of MAC address to be used by the Wi-Fi driver.
+	  A MAC address configured at runtime through the net_mgmt API always
+	  takes precedence over the selected type.
 
-config WIFI_OTP_MAC_ADDRESS
-	bool "Use MAC address from OTP"
+config WIFI_NRF71_XICR_MAC_ADDRESS
+	bool "Use MAC address from the xICR registers"
 	help
-	  This option uses the MAC address stored in the OTP memory of the nRF70.
+	  This option uses the MAC address programmed in the MACADDR registers of
+	  the nRF71, looked up in UICR first and in FICR next. UICR is only read
+	  in builds that have access to it, that is, it is skipped in non-secure
+	  builds where UICR is mapped to the secure domain only.
+	  If both slots of a register block are programmed, MACADDR[n] is used
+	  for interface n. If only one slot is programmed, it is used for the
+	  first interface and the remaining interfaces derive their address from
+	  it by incrementing the device-unique part and setting the locally
+	  administered bit.
 
 config WIFI_FIXED_MAC_ADDRESS_ENABLED
 	bool "Fixed MAC address"
 	help
-	  Enable fixed MAC address
+	  Enable fixed MAC address.
+	  The address configured in WIFI_FIXED_MAC_ADDRESS is used for the first
+	  interface. The remaining interfaces derive their address from it by
+	  incrementing the device-unique part and setting the locally administered
+	  bit, so that they do not share an address with the first interface.
 
 config WIFI_RANDOM_MAC_ADDRESS
 	bool "Random MAC address generation at runtime"
@@ -529,8 +544,24 @@ config WIFI_RANDOM_MAC_ADDRESS
 	help
 	  This option enables random MAC address generation at runtime.
 	  The random MAC address is generated using the entropy device random generator.
+	  Each interface gets its own random address, so the addresses are not
+	  related to each other and change on every boot.
 
 endchoice
+
+config WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM
+	bool "Fall back to a locally administered MAC address"
+	depends on WIFI_NRF71_XICR_MAC_ADDRESS
+	default y
+	help
+	  Generate a locally administered MAC address if neither UICR nor FICR
+	  has a MAC address programmed, which is the case for mass-market dies
+	  that ship with an empty MAC address. The address is seeded from the
+	  factory programmed device identifier, so it stays the same across
+	  reboots, and falls back to the entropy source if the device identifier
+	  is not programmed either.
+	  Disable this option to bring up the interface only with a MAC address
+	  that has been programmed.
 
 config NRF71_RSSI_STALE_TIMEOUT_MS
 	int "RSSI stale timeout in milliseconds"

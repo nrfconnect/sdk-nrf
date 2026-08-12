@@ -31,6 +31,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include "fmac_main.h"
 #include "wpa_supp_if.h"
 #include "net_if.h"
+#include <mac_addr.h>
 
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
@@ -640,6 +641,14 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	memcpy(vif_ctx_zep->mac_addr.addr,
 		fixed_mac_addr,
 		WIFI_MAC_ADDR_LEN);
+
+	/* The configured address serves the first interface, the others derive
+	 * their address from it to avoid a duplicate address on the air.
+	 */
+	if (vif_ctx_zep->vif_idx > 0) {
+		nrf_wifi_mac_addr_derive(vif_ctx_zep->mac_addr.addr,
+					 vif_ctx_zep->vif_idx);
+	}
 #elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
 	char random_mac_addr[WIFI_MAC_ADDR_LEN];
 
@@ -649,14 +658,18 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	memcpy(vif_ctx_zep->mac_addr.addr,
 		random_mac_addr,
 		WIFI_MAC_ADDR_LEN);
-#elif CONFIG_WIFI_OTP_MAC_ADDRESS
-	/* Set dummy MAC address */
-	vif_ctx_zep->mac_addr.addr[0] = 0x00;
-	vif_ctx_zep->mac_addr.addr[1] = 0x00;
-	vif_ctx_zep->mac_addr.addr[2] = 0x5E;
-	vif_ctx_zep->mac_addr.addr[3] = 0x00;
-	vif_ctx_zep->mac_addr.addr[4] = 0x10;
-	vif_ctx_zep->mac_addr.addr[5] = 0x00;
+#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+	ret = nrf_wifi_xicr_mac_addr_get(vif_ctx_zep->vif_idx,
+					 vif_ctx_zep->mac_addr.addr,
+					 NULL);
+	if (ret) {
+		LOG_ERR("%s: Failed to get MAC address from xICR: %d",
+			__func__,
+			ret);
+		goto unlock;
+	}
+#else
+#error "No Wi-Fi MAC address type selected, see choice WIFI_MAC_ADDRESS"
 #endif
 
 	if (!nrf_wifi_utils_is_mac_addr_valid(vif_ctx_zep->mac_addr.addr)) {
@@ -898,7 +911,7 @@ int nrf_wifi_if_start_zep(const struct device *dev)
 	vif_ctx_zep->if_type = add_vif_info.iftype;
 
 	/* Check if user has provided a valid MAC address, if not
-	 * fetch it from OTP.
+	 * fetch it from the configured source.
 	 */
 	mac_addr = net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr;
 	mac_addr_len = net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->len;
