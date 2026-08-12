@@ -23,6 +23,18 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
+#ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+/* Unaligned data is bounced through a buffer on the stack.
+ * Flash page program can be max 256 bytes in this case.
+ */
+#define BOUNCE_BUF_SIZE		     256
+#else
+/* The transfer packet message is built on the stack before ICMsg copies it into the TX region. */
+#define MAX_COPY_MSG_SIZE	     MAX_TX_MSG_SIZE
+#define MAX_STACK_MSG_SIZE	     1024
+#endif
+/* Alignment the FLPR requires for data passed by reference. */
+#define DATA_BUF_ALIGNMENT	     sizeof(uint32_t)
 #define HPF_MSPI_IPC_CONFIG_TIMEOUT_MS 100
 #define IPC_BOUND_TIMEOUT_MS	     100
 #define IPC_BOUND_RETRY_COUNT	     10
@@ -414,6 +426,9 @@ static void hpf_mspi_halt_flpr(void)
 
 /**
  * @brief Send data to the FLPR core using the IPC service, and wait for FLPR response.
+ *
+ * The length of the data is ignored in no copy mode, where only the pointer
+ * to the data is sent.
  *
  * @param opcode The configuration packet opcode to send.
  * @param data The data to send.
@@ -862,6 +877,50 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
 	return 0;
 }
 
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+BUILD_ASSERT(MAX_COPY_MSG_SIZE <= MAX_STACK_MSG_SIZE,
+	     "TX region is too large for the transfer packet message buffer on the stack. Size "
+	     "sram_tx for the largest TX packet only; RX data uses sram_rx.");
+#endif
+
+/**
+ * @brief Check whether a packet can be sent to the FLPR.
+ *
+ * @param packet Transfer packet to check.
+ *
+ * @retval 0 if the packet can be sent
+ * @retval -EINVAL if the packet is too large
+ */
+static int check_packet_size(const struct mspi_xfer_packet *packet)
+{
+#ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+	if (!IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT) &&
+	    (packet->num_bytes > BOUNCE_BUF_SIZE)) {
+		LOG_ERR("Unaligned packet of %u bytes exceeds the %u byte bounce buffer. Use a "
+			"word-aligned buffer or declare packet-data-limit.",
+			packet->num_bytes, BOUNCE_BUF_SIZE);
+		return -EINVAL;
+	}
+#else
+	if (packet->num_bytes > MAX_COPY_MSG_SIZE - sizeof(hpf_mspi_xfer_packet_msg_t)) {
+		LOG_ERR("Packet of %u bytes does not fit the %u byte TX region. Declare "
+			"packet-data-limit or increase the TX region.",
+			packet->num_bytes, (uint32_t)MAX_COPY_MSG_SIZE);
+		return -EINVAL;
+	}
+
+	if ((packet->dir == MSPI_RX) &&
+	    (packet->num_bytes > MAX_RX_MSG_SIZE - sizeof(hpf_mspi_opcode_t))) {
+		LOG_ERR("Reply of %u bytes does not fit the %u byte RX region. Declare "
+			"packet-data-limit.",
+			packet->num_bytes, (uint32_t)MAX_RX_MSG_SIZE);
+		return -EINVAL;
+	}
+#endif
+
+	return 0;
+}
+
 /**
  * @brief Send a transfer packet to the eMSPI controller.
  *
@@ -870,25 +929,31 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
  * @param timeout Timeout in milliseconds
  *
  * @retval 0 on success
+ * @retval -EINVAL if the packet does not fit the memory shared with the FLPR
  * @retval -ENOTSUP if the packet is not supported
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
  */
-static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
+static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 {
 	int rc;
 	hpf_mspi_opcode_t opcode = (packet->dir == MSPI_RX) ? HPF_MSPI_TXRX : HPF_MSPI_TX;
-
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-	/* In case of buffer alignment problems: create correctly aligned temporary buffer. */
-	uint32_t len = ((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0
-			       ? sizeof(hpf_mspi_xfer_packet_msg_t) + packet->num_bytes
-			       : sizeof(hpf_mspi_xfer_packet_msg_t);
+	/* Only a pointer to the message is sent. */
+	hpf_mspi_xfer_packet_msg_t msg;
+	hpf_mspi_xfer_packet_msg_t *xfer_packet = &msg;
+	uint8_t bounce_buf[BOUNCE_BUF_SIZE] __aligned(DATA_BUF_ALIGNMENT);
+	bool bounce = !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT);
 #else
-	uint32_t len = sizeof(hpf_mspi_xfer_packet_msg_t) + packet->num_bytes;
-#endif
-	uint8_t buffer[len];
+	uint8_t buffer[MAX_COPY_MSG_SIZE] __aligned(__alignof(hpf_mspi_xfer_packet_msg_t));
 	hpf_mspi_xfer_packet_msg_t *xfer_packet = (hpf_mspi_xfer_packet_msg_t *)buffer;
+#endif
+	size_t len;
+
+	rc = check_packet_size(packet);
+	if (rc < 0) {
+		return rc;
+	}
 
 	xfer_packet->opcode = opcode;
 	xfer_packet->command = packet->cmd;
@@ -896,38 +961,27 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	xfer_packet->num_bytes = packet->num_bytes;
 
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-	/* In case of buffer alignment problems: fill temporary buffer with TX data and
-	 * set it as packet data.
-	 */
-	if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
+	if (bounce) {
 		if (packet->dir == MSPI_TX) {
-			memcpy((void *)(buffer + sizeof(hpf_mspi_xfer_packet_msg_t)),
-			       (void *)packet->data_buf, packet->num_bytes);
+			memcpy(bounce_buf, packet->data_buf, packet->num_bytes);
 		}
-		xfer_packet->data = buffer + sizeof(hpf_mspi_xfer_packet_msg_t);
+		xfer_packet->data = bounce_buf;
 	} else {
 		xfer_packet->data = packet->data_buf;
 	}
+	len = sizeof(*xfer_packet);
 #else
-	memcpy((void *)xfer_packet->data, (void *)packet->data_buf, packet->num_bytes);
+	memcpy(xfer_packet->data, packet->data_buf, packet->num_bytes);
+	len = sizeof(*xfer_packet) + packet->num_bytes;
 #endif
 
 	rc = send_data(xfer_packet->opcode, xfer_packet, len, timeout);
 
-	/* Wait for the transfer to complete and receive data. */
 	if (packet->dir == MSPI_RX) {
-
-		/* In case of CONFIG_MSPI_HPF_IPC_NO_COPY ipc_received if equal to 0 because
-		 * packet buffer address was passed to vpr and data was written directly there.
-		 * So there is no way of checking how much data was written.
-		 */
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-		/* In case of buffer alignment problems: copy received data from temporary buffer
-		 * back to users buffer.
-		 */
-		if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
-			memcpy((void *)packet->data_buf, (void *)xfer_packet->data,
-			       packet->num_bytes);
+		/* The FLPR wrote the data by reference, into the bounce buffer if it was used. */
+		if (bounce) {
+			memcpy(packet->data_buf, bounce_buf, packet->num_bytes);
 		}
 #else
 		if ((ipc_receive_buffer != NULL) && (ipc_received > 0)) {
@@ -951,33 +1005,6 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	}
 
 	return rc;
-}
-
-/**
- * @brief Initiates the transfer of the next packet in an MSPI transaction.
- *
- * This function prepares and starts the transmission of the next packet
- * specified in the MSPI transfer configuration. It checks if the packet
- * size is within the allowable limits before initiating the transfer.
- *
- * @param xfer Pointer to the mspi_xfer structure.
- * @param packets_done Number of packets that have already been processed.
- *
- * @retval 0 If the packet transfer is successfully started.
- * @retval -EINVAL If the packet size exceeds the maximum transmission size.
- */
-static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
-{
-	struct mspi_xfer_packet *packet = (struct mspi_xfer_packet *)&xfer->packets[packets_done];
-
-#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
-	if (packet->num_bytes >= MAX_TX_MSG_SIZE) {
-		LOG_ERR("Packet size to large: %u. Increase SRAM data region.", packet->num_bytes);
-		return -EINVAL;
-	}
-#endif
-
-	return send_packet(packet, xfer->timeout);
 }
 
 /**
@@ -1038,7 +1065,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	}
 
 	while (packets_done < req->num_packet) {
-		rc = start_next_packet((struct mspi_xfer *)req, packets_done);
+		rc = send_packet(&req->packets[packets_done], req->timeout);
 		if (rc < 0) {
 			LOG_ERR("Start next packet error: %d", rc);
 			goto release;
