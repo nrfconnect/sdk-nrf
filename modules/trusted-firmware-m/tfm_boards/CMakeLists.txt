@@ -49,6 +49,7 @@ target_sources(platform_s
   common/assert.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
 )
 
 target_link_libraries(platform_s
