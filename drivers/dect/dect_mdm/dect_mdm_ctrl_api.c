@@ -224,7 +224,7 @@ int dect_mdm_ctrl_api_tx_cmd(struct dect_mdm_ctrl_api_tx_cmd_params *params)
 		return -EINVAL;
 	}
 	if (data->dlc_data_tx_infos[arr_index].req_on_going) {
-		LOG_WRN("Transaction ID %d already in use", params->transaction_id);
+		LOG_DBG("Transaction ID %d already in use", params->transaction_id);
 		CTRL_DATA_UNLOCK();
 		return -EBUSY;
 	}
