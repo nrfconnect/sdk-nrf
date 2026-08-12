@@ -24,11 +24,11 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_rem(struct nrf_wifi_rt_drv_priv *drv_p
 	nrf_wifi_fmac_dev_rem(drv_ctx->rpu_ctx);
 
 	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		k_free((void *)drv_ctx->phy_rf_params_addr[i]);
+		nrf_wifi_osal_mem_free((void *)drv_ctx->phy_rf_params_addr[i]);
 		drv_ctx->phy_rf_params_addr[i] = 0;
 	}
 
-	k_free((void *)drv_ctx->vtf_buffer_start_address);
+	nrf_wifi_osal_mem_free((void *)drv_ctx->vtf_buffer_start_address);
 	drv_ctx->vtf_buffer_start_address = 0;
 
 	drv_ctx->rpu_ctx = NULL;

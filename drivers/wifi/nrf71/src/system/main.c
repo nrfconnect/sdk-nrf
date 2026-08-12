@@ -602,10 +602,10 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
 	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		k_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
+		nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
 		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
 	}
-	k_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
+	nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
 	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
