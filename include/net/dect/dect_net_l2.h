@@ -53,7 +53,7 @@ extern "C" {
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/net_pkt.h>
 
-#define DECT_MTU 1280
+#define DECT_MTU CONFIG_NET_L2_DECT_MTU
 
 /**
  * INTERNAL_HIDDEN @endcond
