@@ -1422,19 +1422,6 @@ void radio_handler(const void *context)
 	const struct radio_test_config *config =
 		(const struct radio_test_config *) context;
 
-#if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
-	/* PHYEND is handled ahead of the packet handling below because on EasyVDMA targets this
-	 * is where reception is restarted. The transmitter sends packets back to back, so every
-	 * microsecond between one packet ending and the radio listening again risks missing the
-	 * next one, and the shorter the packet the more that costs.
-	 */
-	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_PHYEND_MASK) &&
-	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_PHYEND)) {
-		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
-		on_radio_phyend(config);
-	}
-#endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
-
 	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_CRCOK_MASK) &&
 	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_CRCOK)) {
 		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_CRCOK);
@@ -1450,10 +1437,19 @@ void radio_handler(const void *context)
 				 */
 				k_work_reschedule(&rx_timeout_work, K_MSEC(RX_PACKET_TIMEOUT_MS));
 			} else {
-				deferred_timeout_reschedule = true;
+				deferred_rx_timeout_reschedule = true;
 			}
 		}
 	}
+
+#if defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk)
+	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_PHYEND_MASK) &&
+	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_PHYEND)) {
+		nrf_radio_event_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
+		on_radio_phyend(config);
+	}
+#endif /* defined(RADIO_INTENSET_PHYEND_Msk) || defined(RADIO_INTENSET00_PHYEND_Msk) */
+
 
 	if (nrf_radio_int_enable_check(NRF_RADIO, NRF_RADIO_INT_END_MASK) &&
 	    nrf_radio_event_check(NRF_RADIO, NRF_RADIO_EVENT_END)) {
