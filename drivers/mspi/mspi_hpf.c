@@ -12,13 +12,13 @@
 #include <zephyr/drivers/counter.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 #if !defined(CONFIG_MULTITHREADING)
 #include <zephyr/sys/atomic.h>
 #endif
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 
-#include <hal/nrf_gpio.h>
 #include <drivers/mspi/hpf_mspi.h>
 
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
@@ -973,24 +973,32 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	drv_data->xfer_config_msg.xfer_config.tx_dummy = req->tx_dummy;
 	drv_data->xfer_config_msg.xfer_config.rx_dummy = req->rx_dummy;
 
+	rc = pm_device_runtime_get(dev);
+	if (rc < 0) {
+		return rc;
+	}
+
 	rc = send_data(HPF_MSPI_CONFIG_XFER, (void *)&drv_data->xfer_config_msg,
 		       sizeof(hpf_mspi_xfer_config_msg_t));
 
 	if (rc < 0) {
 		LOG_ERR("Send xfer config error: %d", rc);
-		return rc;
+		goto release;
 	}
 
 	while (packets_done < req->num_packet) {
 		rc = start_next_packet((struct mspi_xfer *)req, packets_done);
 		if (rc < 0) {
 			LOG_ERR("Start next packet error: %d", rc);
-			return rc;
+			goto release;
 		}
 		++packets_done;
 	}
 
-	return 0;
+release:
+	(void)pm_device_runtime_put(dev);
+
+	return rc;
 }
 
 #if CONFIG_PM_DEVICE
@@ -1010,18 +1018,16 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
  */
 static int dev_pm_action_cb(const struct device *dev, enum pm_device_action action)
 {
+	const struct mspi_hpf_config *drv_cfg = dev->config;
+
 	switch (action) {
 	case PM_DEVICE_ACTION_SUSPEND:
-		/* TODO: Handle PM suspend state */
-		break;
+		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_SLEEP);
 	case PM_DEVICE_ACTION_RESUME:
-		/* TODO: Handle PM resume state */
-		break;
+		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 	default:
 		return -ENOTSUP;
 	}
-
-	return 0;
 }
 #endif
 
