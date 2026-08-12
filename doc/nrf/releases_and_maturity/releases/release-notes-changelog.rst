@@ -882,6 +882,12 @@ The following list summarizes both the main changes inherited from upstream MCUb
   This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
   MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
 
+* Updated:
+
+  * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
+  * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
+    The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
+
 Zephyr
 ======
 
