@@ -820,6 +820,34 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
 }
 
 /**
+ * @brief Check whether a packet fits the memory shared with the FLPR.
+ *
+ * @param packet Transfer packet to check.
+ * @param msg_len Length of the IPC message that carries the packet.
+ *
+ * @retval 0 if the packet fits in the memory shared with the FLPR
+ * @retval -EINVAL if the packet does not fit the memory shared with the FLPR
+ */
+static int check_packet_size(const struct mspi_xfer_packet *packet, uint32_t msg_len)
+{
+	if (msg_len > MAX_TX_MSG_SIZE) {
+		LOG_ERR("Packet of %u bytes does not fit the %u byte TX region. Declare "
+			"packet-data-limit or increase the SRAM data region.",
+			packet->num_bytes, (uint32_t)MAX_TX_MSG_SIZE);
+		return -EINVAL;
+	}
+
+	if (!IS_ENABLED(CONFIG_MSPI_HPF_IPC_NO_COPY) && (packet->dir == MSPI_RX) &&
+	    (packet->num_bytes > MAX_RX_MSG_SIZE - sizeof(hpf_mspi_opcode_t))) {
+		LOG_ERR("Reply of %u bytes does not fit the %u byte RX region.",
+			packet->num_bytes, (uint32_t)MAX_RX_MSG_SIZE);
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
+/**
  * @brief Send a transfer packet to the eMSPI controller.
  *
  * @param dev eMSPI controller device
@@ -827,6 +855,7 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
  * @param timeout Timeout in milliseconds
  *
  * @retval 0 on success
+ * @retval -EINVAL if the packet does not fit the memory shared with the FLPR
  * @retval -ENOTSUP if the packet is not supported
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
@@ -844,6 +873,12 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 #else
 	uint32_t len = sizeof(hpf_mspi_xfer_packet_msg_t) + packet->num_bytes;
 #endif
+
+	rc = check_packet_size(packet, len);
+	if (rc < 0) {
+		return rc;
+	}
+
 	uint8_t buffer[len];
 	hpf_mspi_xfer_packet_msg_t *xfer_packet = (hpf_mspi_xfer_packet_msg_t *)buffer;
 
@@ -921,7 +956,7 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
  * @param packets_done Number of packets that have already been processed.
  *
  * @retval 0 If the packet transfer is successfully started.
- * @retval -EINVAL If the packet size exceeds the maximum transmission size.
+ * @retval -EINVAL If the packet does not fit the memory shared with the FLPR.
  */
 static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
 {
