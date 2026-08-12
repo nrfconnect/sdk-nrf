@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="8.85in" height="2.55in"
+		viewBox="0 0 798 183" xml:space="preserve" color-interpolation-filters="sRGB">
+	<style type="text/css">
+	<![CDATA[
+		.st1 {fill:#ffffff;stroke:#00a9ce;stroke-width:0.5}
+		.st5 {fill:#00a9ce;stroke:none;stroke-width:1}
+		.st6 {fill:#d9e1e2;stroke:none;stroke-width:1}
+		.st7 {fill:#000000;font-family:Arial;font-size:11px}
+		.st7s {fill:#000000;font-family:Arial;font-size:10px}
+		.stHdr {fill:#000000;font-family:Arial;font-size:11px}
+	]]>
+	</style>
+
+	<!-- Application processor: 168 + 212 + 178 columns, 12px gaps, 16px margin -->
+	<rect x="16" y="24" width="614" height="144" class="st1"/>
+	<text x="323" y="18" text-anchor="middle" class="stHdr">Application processor</text>
+
+	<!-- Network processor -->
+	<rect x="642" y="24" width="140" height="144" class="st1"/>
+	<text x="712" y="18" text-anchor="middle" class="stHdr">Network processor</text>
+
+	<!-- Internal flash -->
+	<text x="116" y="44" text-anchor="middle" class="st7">Internal flash</text>
+	<rect x="32" y="52" width="168" height="112" class="st5"/>
+	<rect x="36" y="98" width="160" height="20" class="st6"/>
+	<text x="116" y="112" text-anchor="middle" class="st7s">slot 0: App-internal primary</text>
+
+	<!-- QSPI XIP -->
+	<text x="318" y="44" text-anchor="middle" class="st7">QSPI XIP</text>
+	<rect x="212" y="52" width="212" height="112" class="st5"/>
+	<rect x="216" y="58" width="204" height="20" class="st6"/>
+	<text x="222" y="72" text-anchor="start" class="st7s">slot 1: App-internal secondary</text>
+	<rect x="216" y="82" width="204" height="20" class="st6"/>
+	<text x="222" y="96" text-anchor="start" class="st7s">slot 3: Network secondary</text>
+	<rect x="216" y="106" width="204" height="20" class="st6"/>
+	<text x="222" y="120" text-anchor="start" class="st7s">slot 4: App-external primary</text>
+	<rect x="216" y="130" width="204" height="20" class="st6"/>
+	<text x="222" y="144" text-anchor="start" class="st7s">slot 5: App-external secondary</text>
+
+	<!-- SIM flash -->
+	<text x="525" y="44" text-anchor="middle" class="st7">SIM flash</text>
+	<rect x="436" y="52" width="178" height="112" class="st5"/>
+	<rect x="440" y="98" width="170" height="20" class="st6"/>
+	<text x="525" y="112" text-anchor="middle" class="st7s">slot 2: network primary mirror</text>
+
+	<!-- Network core -->
+	<text x="712" y="44" text-anchor="middle" class="st7">Network core</text>
+	<rect x="650" y="52" width="124" height="112" class="st5"/>
+	<rect x="654" y="98" width="116" height="20" class="st6"/>
+	<text x="712" y="112" text-anchor="middle" class="st7s">s0: network primary</text>
+</svg>

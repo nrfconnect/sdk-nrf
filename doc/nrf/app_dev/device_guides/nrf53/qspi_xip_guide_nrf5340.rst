@@ -99,11 +99,11 @@ See the following snippet for an example of the Nordic Thingy:53 configuration t
 Setting up NVM memory layout with devicetree
 ********************************************
 
-You need to complete the setup to use the expected NVM memory layout with devicetree partitioning.
+Complete a setup to use the expected NVM memory layout with devicetree partitioning.
 The configuration must have 3 images with 2 slots each:
 
-.. figure:: images/nrf5340_static_partition_manager_slots.svg
-   :alt: Static partitioning slots in the nRF5340 SoC
+.. figure:: images/nrf5340_extxip_partitions.svg
+   :alt: Partitioning slots in the nRF5340 SoC
 
    Partitioning slots in the nRF5340 SoC.
 
@@ -122,7 +122,7 @@ See the following snippet for an example of the memory layout configuration for 
 .. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp.overlay
     :language: dts
 
-Partitioning for the ``cpunet`` images (``b0n`` and ``hci_ipc``) is expected to follow the normal nRF5340 SoC configuration.
+Partitioning for the ``cpunet`` images (``b0n`` and ``hci_ipc``) is expected to follow the nRF5340 SoC configuration.
 See :file:`sysbuild/b0n.overlay` in the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample.
 
 Configuring linker script
@@ -153,7 +153,7 @@ See the following example of the calculation:
         *  - 0x10000000: offset of QSPI external memory in SoC memory mapping.
         *  - 0x120000: slot4_partition offset in QSPI external memory
         *  - 0x200: image header size.
-        * The size of this region is the size of the slot4_partition partition node reduced by the
+        * The size of this region is size of slot4_partition reduced by the
         * image header size.
         */
         EXTFLASH (wx) : ORIGIN = 0x10120200, LENGTH = 0x3FE00
