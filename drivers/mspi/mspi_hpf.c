@@ -107,7 +107,9 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 
 struct mspi_hpf_data {
 	hpf_mspi_xfer_config_msg_t xfer_config_msg;
+	uint32_t freq;
 	enum mspi_io_mode io_mode;
+	uint32_t xfer_timeout;
 };
 
 struct mspi_hpf_config {
@@ -381,6 +383,40 @@ static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instan
 }
 
 /**
+ * @brief Function that calculates the timeout time based on the currently set frequency.
+ *
+ * @param opcode The opcode of the message.
+ * @param data The data of the message.
+ *
+ * @return Timeout in milliseconds.
+ */
+static uint32_t packet_timeout_ms(hpf_mspi_opcode_t opcode, const void *data)
+{
+	if ((opcode != HPF_MSPI_TX) && (opcode != HPF_MSPI_TXRX)) {
+		return IPC_TIMEOUT_MS;
+	}
+
+	const hpf_mspi_xfer_packet_msg_t *packet = (const hpf_mspi_xfer_packet_msg_t *)data;
+	const hpf_mspi_xfer_config_t *xfer = &dev_data.xfer_config_msg.xfer_config;
+	uint32_t freq = dev_data.freq != 0 ? dev_data.freq : dev_config.mspicfg.max_freq;
+	uint32_t data_lines = (dev_data.io_mode == MSPI_IO_MODE_SINGLE) ? 1 : 4;
+
+	/* Command and address go out on one line in every mode this driver takes,
+	 * and the dummy cycles in between are clocks in their own right.
+	 */
+	uint32_t clocks = (xfer->command_length + xfer->address_length) * 8 +
+			  MAX(xfer->tx_dummy, xfer->rx_dummy) +
+			  NRFX_CEIL_DIV(packet->num_bytes * 8, data_lines);
+	uint32_t wire_ms = NRFX_CEIL_DIV(clocks, MAX(freq / 1000, 1));
+
+	/* Allow the time on the bus, a quarter of it again as margin, and the fixed
+	 * cost of the IPC round trip and the FLPR setting the transfer up. Take the
+	 * timeout the caller asked for instead, if that one is longer.
+	 */
+	return MAX(dev_data.xfer_timeout, wire_ms + wire_ms / 4 + IPC_TIMEOUT_MS);
+}
+
+/**
  * @brief Send data to the FLPR core using the IPC service, and wait for FLPR response.
  *
  * @param opcode The configuration packet opcode to send.
@@ -429,7 +465,7 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
 		return rc;
 	}
 
-	rc = hpf_mspi_wait_for_response(opcode, IPC_TIMEOUT_MS);
+	rc = hpf_mspi_wait_for_response(opcode, packet_timeout_ms(opcode, data));
 	if (rc < 0) {
 		LOG_ERR("Data transfer: %d response timeout: %d!", opcode, rc);
 	}
@@ -809,6 +845,7 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	mspi_dev_config_msg.dev_config.cnt0_value = CNT0_TOP_CALCULATE(cfg->freq);
 	mspi_dev_config_msg.dev_config.ce_index = cfg->ce_num;
 
+	((struct mspi_hpf_data *)dev->data)->freq = cfg->freq;
 	((struct mspi_hpf_data *)dev->data)->io_mode = cfg->io_mode;
 
 	return send_data(HPF_MSPI_CONFIG_DEV, (void *)&mspi_dev_config_msg,
@@ -853,7 +890,6 @@ static int check_packet_size(const struct mspi_xfer_packet *packet, uint32_t msg
  *
  * @param dev eMSPI controller device
  * @param packet Transfer packet containing the data to be transferred
- * @param timeout Timeout in milliseconds
  *
  * @retval 0 on success
  * @retval -EINVAL if the packet does not fit the memory shared with the FLPR
@@ -861,7 +897,7 @@ static int check_packet_size(const struct mspi_xfer_packet *packet, uint32_t msg
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
  */
-static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
+static int send_packet(struct mspi_xfer_packet *packet)
 {
 	int rc;
 	hpf_mspi_opcode_t opcode = (packet->dir == MSPI_RX) ? HPF_MSPI_TXRX : HPF_MSPI_TX;
@@ -963,12 +999,7 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
 {
 	struct mspi_xfer_packet *packet = (struct mspi_xfer_packet *)&xfer->packets[packets_done];
 
-	if (packet->num_bytes >= MAX_TX_MSG_SIZE) {
-		LOG_ERR("Packet size to large: %u. Increase SRAM data region.", packet->num_bytes);
-		return -EINVAL;
-	}
-
-	return send_packet(packet, xfer->timeout);
+	return send_packet(packet);
 }
 
 /**
@@ -1011,6 +1042,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	drv_data->xfer_config_msg.xfer_config.hold_ce = req->hold_ce;
 	drv_data->xfer_config_msg.xfer_config.tx_dummy = req->tx_dummy;
 	drv_data->xfer_config_msg.xfer_config.rx_dummy = req->rx_dummy;
+	drv_data->xfer_timeout = req->timeout;
 
 	rc = pm_device_runtime_get(dev);
 	if (rc < 0) {
