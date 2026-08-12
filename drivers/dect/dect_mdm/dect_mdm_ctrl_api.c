@@ -210,7 +210,7 @@ int dect_mdm_ctrl_api_tx_cmd(struct dect_mdm_ctrl_api_tx_cmd_params *params)
 
 	if (data->total_unacked_tx_data_amount + params->data_len >
 	    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE) {
-		LOG_WRN("Too much unacked TX data: %d bytes - continue but flow ctrl might occur",
+		LOG_DBG("Too much unacked TX data: %d bytes - continue but flow ctrl might occur",
 			data->total_unacked_tx_data_amount);
 	}
 	if (data->total_unacked_req_amount >= DECT_MDM_DATA_TX_HANDLE_COUNT) {
@@ -238,7 +238,7 @@ int dect_mdm_ctrl_api_tx_cmd(struct dect_mdm_ctrl_api_tx_cmd_params *params)
 	if (ret) {
 		if (ret == -NRF_ENOMEM) {
 			ret = -ENOMEM;
-			LOG_WRN("nrf_modem_dect_dlc_data_tx returned NRF_ENOMEM");
+			LOG_DBG("nrf_modem_dect_dlc_data_tx returned NRF_ENOMEM");
 		} else {
 			LOG_ERR("nrf_modem_dect_dlc_data_tx returned error: %d", ret);
 		}
