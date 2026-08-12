@@ -188,6 +188,17 @@ config DULT_MOTION_DETECTOR
 
 if DULT_MOTION_DETECTOR
 
+config DULT_MOTION_DETECTOR_TEST_MODE
+	bool "DULT Motion detector test mode"
+	select DULT_TEST
+	help
+	  The DULT Motion detector test mode allows to configure motion detector parameters
+	  for testing purposes. Those values are defined in the DULT specification and should
+	  not be changed in the production code.
+	  When enabled, the separated UT timing parameters are overridden with short test defaults
+	  and can be adjusted at build time and at runtime via the
+	  dult_test_motion_detector_separated_ut_period_set() function.
+
 config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE1
 	int
 	default 10000
@@ -201,33 +212,20 @@ config DULT_MOTION_DETECTOR_SEPARATED_UT_SAMPLING_RATE2
 	  Motion detector sampling rate in milliseconds when movement is detected in separated
 	  state.
 
-config DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
-	int
-	default 4294967
-	help
-	  Maximum value, in seconds, accepted for the separated UT timing periods
-	  (backoff and timeout min/max). Equal to UINT32_MAX / MSEC_PER_SEC: the
-	  periods are converted to milliseconds with K_SECONDS() before being passed
-	  to the work scheduler, so a larger value would overflow the 32-bit
-	  millisecond timeout.
-
 config DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD
-	int "Period in seconds to disable motion detector if accessory is in separated state" if DULT_TEST_MOTION_DETECTOR
-	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
-	default 120 if DULT_TEST_MOTION_DETECTOR
-	default 21600
+	int "Period in minutes to disable motion detector if accessory is in separated state" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 2 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 360
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN
-	int "Minimum time span in seconds in separated state before enabling motion detector" if DULT_TEST_MOTION_DETECTOR
-	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
-	default 180 if DULT_TEST_MOTION_DETECTOR
-	default 28800
+	int "Minimum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default 3 if DULT_MOTION_DETECTOR_TEST_MODE
+	default 480
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX
-	int "Maximum time span in seconds in separated state before enabling motion detector" if DULT_TEST_MOTION_DETECTOR
-	range 0 DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX
-	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_TEST_MOTION_DETECTOR
-	default 86400
+	int "Maximum time span in minutes in separated state before enabling motion detector" if DULT_MOTION_DETECTOR_TEST_MODE
+	default DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN if DULT_MOTION_DETECTOR_TEST_MODE
+	default 1440
 
 config DULT_MOTION_DETECTOR_SEPARATED_UT_ACTIVE_POLL_DURATION
 	int
@@ -255,18 +253,6 @@ config DULT_TEST
 	  test-related features for the DULT module. It is selected automatically by
 	  the individual DULT test-feature options and must not be enabled in
 	  production code.
-
-config DULT_TEST_MOTION_DETECTOR
-	bool "DULT motion detector test mode"
-	depends on DULT_MOTION_DETECTOR
-	select DULT_TEST
-	help
-	  The DULT Motion detector test mode allows to configure motion detector parameters
-	  for testing purposes. Those values are defined in the DULT specification and should
-	  not be changed in the production code.
-	  When enabled, the separated UT timing parameters are overridden with short test defaults
-	  and can be adjusted at build time and at runtime via the
-	  dult_test_motion_detector_separated_ut_period_set() function.
 
 module = DULT
 module-str = DULT

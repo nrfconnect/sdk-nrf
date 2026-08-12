@@ -8,6 +8,7 @@
 #define _DULT_TEST_H_
 
 #include <stdint.h>
+#include <zephyr/sys/clock.h>
 
 /**
  * @defgroup dult_test Detecting Unwanted Location Trackers - test functionality
@@ -15,7 +16,7 @@
  *
  * This header collects all DULT test-mode APIs. Each feature has its own
  * per-feature test Kconfig option (for example
- * @kconfig{CONFIG_DULT_TEST_MOTION_DETECTOR} for the motion-detector test
+ * @kconfig{CONFIG_DULT_MOTION_DETECTOR_TEST_MODE} for the motion-detector test
  * APIs), which in turn selects the umbrella @kconfig{CONFIG_DULT_TEST}
  * option; @kconfig{CONFIG_DULT_TEST} is not enabled directly. Every API in
  * this group requires its specific per-feature Kconfig option to be enabled
@@ -35,10 +36,13 @@ extern "C" {
 #endif
 
 /** Separated UT timing parameters for the motion detector test functionality.
- *  All time values are in seconds.
+ *
+ *  @note These runtime override values are in seconds, whereas the compile-time
+ *        Kconfig defaults (CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_*) are in
+ *        minutes and converted internally to seconds.
  */
 struct dult_test_motion_detector_separated_ut_period {
-	/** Backoff period in seconds. */
+	/** Backoff period, in seconds. */
 	uint32_t backoff;
 
 	/** Minimum time in separated state before enabling the motion detector, in seconds. */
@@ -53,11 +57,9 @@ struct dult_test_motion_detector_separated_ut_period {
 /** Maximum value, in seconds, accepted for any field of
  *  @ref dult_test_motion_detector_separated_ut_period.
  *
- *  Derived from
- *  @kconfig{CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX}.
+ *  Range ceiling must fit the K_SECONDS() millisecond conversion.
  */
-#define DULT_TEST_MOTION_DETECTOR_PERIOD_MAX \
-	(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_PERIOD_VALUE_MAX)
+#define DULT_TEST_MOTION_DETECTOR_PERIOD_MAX	(UINT32_MAX / MSEC_PER_SEC)
 
 /** @brief Override the DULT motion detector separated UT timing parameters.
  *
@@ -65,7 +67,7 @@ struct dult_test_motion_detector_separated_ut_period {
  *  The new values take effect on the next timer arm; any already-running timer
  *  is not restarted.
  *
- *  This API can only be used when the @kconfig{CONFIG_DULT_TEST_MOTION_DETECTOR}
+ *  This API can only be used when the @kconfig{CONFIG_DULT_MOTION_DETECTOR_TEST_MODE}
  *  Kconfig option is enabled. That option depends on
  *  @kconfig{CONFIG_DULT_MOTION_DETECTOR}, so the motion detector feature and its
  *  functionality must be available for this API to have any effect.

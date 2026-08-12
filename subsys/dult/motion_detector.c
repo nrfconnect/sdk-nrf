@@ -31,18 +31,29 @@ LOG_MODULE_REGISTER(dult_motion_detector, CONFIG_DULT_LOG_LEVEL);
 #define SEPARATED_UT_MAX_SOUND_COUNT		\
 	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_MAX_SOUND_COUNT
 
-/* The Kconfig range ceiling must fit the K_SECONDS() millisecond conversion. */
-BUILD_ASSERT(DULT_TEST_MOTION_DETECTOR_PERIOD_MAX <= (UINT32_MAX / MSEC_PER_SEC));
-
 BUILD_ASSERT(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX >=
 	     CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN);
 
+/* Convert a Kconfig minute period to the internal uint32_t seconds. */
+#define SEPARATED_UT_MIN_TO_SEC(_min) ((uint32_t)(_min) * SEC_PER_MIN)
+
+/* Seconds ceiling in minutes; bounds the Kconfig values before conversion. */
+#define SEPARATED_UT_PERIOD_MAX_MIN (DULT_TEST_MOTION_DETECTOR_PERIOD_MAX / SEC_PER_MIN)
+
+/* Kconfig minute periods must be non-negative and fit the seconds ceiling. */
+BUILD_ASSERT(IN_RANGE(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD,
+		      0, SEPARATED_UT_PERIOD_MAX_MIN));
+BUILD_ASSERT(IN_RANGE(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN,
+		      0, SEPARATED_UT_PERIOD_MAX_MIN));
+BUILD_ASSERT(IN_RANGE(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX,
+		      0, SEPARATED_UT_PERIOD_MAX_MIN));
+
 static uint32_t ut_backoff_period =
-	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD;
+	SEPARATED_UT_MIN_TO_SEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD);
 static uint32_t ut_timeout_period_min =
-	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN;
+	SEPARATED_UT_MIN_TO_SEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MIN);
 static uint32_t ut_timeout_period_max =
-	CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX;
+	SEPARATED_UT_MIN_TO_SEC(CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_TIMEOUT_PERIOD_MAX);
 
 static bool is_enabled;
 static const struct dult_motion_detector_cb *motion_detector_cb;
@@ -390,7 +401,7 @@ int dult_motion_detector_reset(void)
 int dult_test_motion_detector_separated_ut_period_set(
 	const struct dult_test_motion_detector_separated_ut_period *data)
 {
-	if (!IS_ENABLED(CONFIG_DULT_TEST_MOTION_DETECTOR)) {
+	if (!IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR_TEST_MODE)) {
 		LOG_ERR("DULT Motion Detector: separated UT period can only be set in test mode");
 		return -ENOTSUP;
 	}
@@ -403,8 +414,8 @@ int dult_test_motion_detector_separated_ut_period_set(
 	    (data->timeout_min > DULT_TEST_MOTION_DETECTOR_PERIOD_MAX) ||
 	    (data->timeout_max > DULT_TEST_MOTION_DETECTOR_PERIOD_MAX)) {
 		LOG_ERR("DULT Motion Detector: separated UT period: "
-			"value exceeds %" PRIu32 " s cap (backoff=%" PRIu32 ", "
-			"timeout_min=%" PRIu32 ", timeout_max=%" PRIu32 ")",
+			"value exceeds %" PRIu32 " s cap (backoff=%" PRIu32 " s, "
+			"timeout_min=%" PRIu32 " s, timeout_max=%" PRIu32 " s)",
 			(uint32_t) DULT_TEST_MOTION_DETECTOR_PERIOD_MAX, data->backoff,
 			data->timeout_min, data->timeout_max);
 		return -EINVAL;
@@ -412,7 +423,7 @@ int dult_test_motion_detector_separated_ut_period_set(
 
 	if (data->timeout_max < data->timeout_min) {
 		LOG_ERR("DULT Motion Detector: separated UT period: "
-			"timeout_max (%" PRIu32 ") must be >= timeout_min (%" PRIu32 ")",
+			"timeout_max (%" PRIu32 " s) must be >= timeout_min (%" PRIu32 " s)",
 			data->timeout_max, data->timeout_min);
 		return -EINVAL;
 	}
