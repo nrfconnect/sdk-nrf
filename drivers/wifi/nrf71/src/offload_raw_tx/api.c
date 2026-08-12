@@ -215,12 +215,12 @@ void nrf70_off_raw_tx_deinit(void)
 
 	for (i = 0; i < NUM_WIFI_PARAMS; i++) {
 		if (drv_ctx->phy_rf_params_addr[i]) {
-			k_free((void *)drv_ctx->phy_rf_params_addr[i]);
+			nrf_wifi_osal_mem_free((void *)drv_ctx->phy_rf_params_addr[i]);
 			drv_ctx->phy_rf_params_addr[i] = 0;
 		}
 	}
 	if (drv_ctx->vtf_buffer_start_address) {
-		k_free((void *)drv_ctx->vtf_buffer_start_address);
+		nrf_wifi_osal_mem_free((void *)drv_ctx->vtf_buffer_start_address);
 		drv_ctx->vtf_buffer_start_address = 0;
 	}
 
