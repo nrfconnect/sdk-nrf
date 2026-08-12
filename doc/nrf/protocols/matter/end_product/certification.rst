@@ -287,20 +287,25 @@ Nordic Semiconductor provides the following certification identifiers:
 * Bluetooth Qualified Design IDs (Bluetooth QDIDs) - Obtained in accordance with `Bluetooth SIG's Qualification Process`_.
 * Thread Certification IDs (Thread CIDs) - Obtained in accordance with `Thread Group's certification information`_.
 
-You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
+Visit the following compatibility matrices to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
 
-* `nRF52840 Compatibility Matrix <nRF52840 Compatibility Matrix_>`_
-* `nRF5340 Compatibility Matrix <nRF5340 Compatibility Matrix_>`_
-* `nRF54L15 Compatibility Matrix <nRF54L15 SoC Compatibility Matrix_>`_
+* `nRF52840 Compatibility Matrix`_
+* `nRF5340 Compatibility Matrix`_
+* `nRF54L10 Compatibility Matrix`_
+* `nRF54L15 Compatibility Matrix`_
+* `nRF54LM20A Compatibility Matrix`_
+* `nRF54LM20B Compatibility Matrix`_
+
+For Matter Compliant Platform Certification IDs and |NCS| release mappings, see :ref:`ug_matter_platform_and_dmp_matrix`.
 
 Matter certification process variants
 =====================================
 
 The standard Matter certification process has several variants, for example:
 
-* certification paths for different devices (including Derived Matter Product),
-* recertification for devices that are already certified,
-* variants for certifying several products of the same family.
+* Certification paths for different devices (including Derived Matter Product)
+* Recertification for devices that are already certified
+* Variants for certifying several products of the same family
 
 .. _ug_matter_device_certification_dmp:
 
@@ -341,11 +346,11 @@ The procedure for FastTrack recertification consists of the following steps:
 .. note::
    For critical and security fixes, you can deploy updates to devices after the Director of Certifications acknowledges the *receipt* of your certification request, without waiting for formal certification approval.
 
-To maintain qualified status, you must:
+To maintain qualified status, you must fulfill the following requirements:
 
-* be a registered Point of Contact (PoC),
-* participate in the relevant working-group subgroups (for example, Matter CSG),
-* undergo annual training for self-test individuals as required by the Alliance.
+* Be a registered Point of Contact (PoC).
+* Participate in the relevant working-group subgroups (for example, Matter CSG).
+* Undergo annual training for self-test individuals as required by the Alliance.
 
 .. figure:: images/matter_device_certification_process_ft.svg
    :alt: Matter's FastTrack Recertification program overview
