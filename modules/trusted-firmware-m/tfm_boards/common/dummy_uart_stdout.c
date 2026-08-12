@@ -5,8 +5,14 @@
  */
 
 #include "uart_stdout.h"
+#include <stdbool.h>
 
-int stdio_output_string(const unsigned char *str, uint32_t len)
+bool stdio_is_initialized(void)
+{
+	return false;
+}
+
+int stdio_output_string(const char *str, uint32_t len)
 {
 	return 0;
 }
