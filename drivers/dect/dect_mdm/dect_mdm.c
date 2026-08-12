@@ -55,6 +55,17 @@ BUILD_ASSERT(DECT_MDM_DATA_TX_HANDLE_COUNT == DECT_MDM_DLC_DATA_INFO_MAX_COUNT,
 #define DECT_MDM_TX_TRY_MAX_COUNT 20
 #define DECT_MDM_TX_RETRY_SLEEP_MS 50
 
+static uint32_t dect_mdm_tx_transaction_id_next(uint32_t *next)
+{
+	if (!DECT_MDM_DATA_TX_HANDLE_IN_RANGE(*next)) {
+		*next = DECT_MDM_DATA_TX_HANDLE_START;
+	}
+	const uint32_t id = *next;
+
+	*next = (id == DECT_MDM_DATA_TX_HANDLE_END) ? DECT_MDM_DATA_TX_HANDLE_START : id + 1;
+	return id;
+}
+
 /* Sanity checks between Zephyr and nrf api */
 BUILD_ASSERT((NRF_MODEM_DECT_MAC_MAX_CHANNELS_IN_RSSI_SCAN == DECT_MAX_CHANNELS_IN_RSSI_SCAN),
 	     "NRF_MODEM_DECT_MAC_MAX_CHANNELS_IN_RSSI_SCAN != "
@@ -692,22 +703,22 @@ static int dect_mdm_hal_driver_send(const struct device *dev, struct net_pkt *pk
 		tx_params.data_len = data_len;
 		tx_params.long_rd_id = target_long_rd_id;
 		tx_params.flow_id = 1;
-		tx_params.transaction_id = transaction_id++;
+		tx_params.transaction_id = dect_mdm_tx_transaction_id_next(&transaction_id);
 
 		while (retry_count < DECT_MDM_TX_TRY_MAX_COUNT &&
 		       data_sent == false) {
 			ret = dect_mdm_ctrl_api_tx_cmd(&tx_params);
-			if (ret == -ENOMEM || ret == -EACCES) {
+			if (ret == 0) {
+				data_sent = true;
+			} else if (ret == -ENOMEM || ret == -EACCES) {
 				k_sleep(K_MSEC(DECT_MDM_TX_RETRY_SLEEP_MS));
 				retry_count++;
-			} else if (ret == -EBUSY) {
-				tx_params.transaction_id = transaction_id++;
+			} else if (ret == -EBUSY || ret == -EINVAL) {
+				tx_params.transaction_id =
+					dect_mdm_tx_transaction_id_next(&transaction_id);
 				retry_count++;
 			} else {
 				data_sent = true;
-			}
-			if (transaction_id > DECT_MDM_DATA_TX_HANDLE_END) {
-				transaction_id = DECT_MDM_DATA_TX_HANDLE_START;
 			}
 		}
 
