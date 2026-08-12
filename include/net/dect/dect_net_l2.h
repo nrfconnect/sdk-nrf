@@ -1298,8 +1298,13 @@ void dect_net_l2_parent_association_created(struct net_if *iface, uint32_t paren
  *
  * @param iface Network interface.
  * @param target_long_rd_id Long Radio Device ID of the child.
+ *
+ * @retval 0 on success, including when an entry for @p target_long_rd_id already existed.
+ * @retval -ENOSPC if the L2 association table is full. The caller must release the
+ *         association, otherwise the child stays associated at MAC level with no L2 route
+ *         to it and nothing will reconcile the two.
  */
-void dect_net_l2_child_association_created(struct net_if *iface, uint32_t target_long_rd_id);
+int dect_net_l2_child_association_created(struct net_if *iface, uint32_t target_long_rd_id);
 
 /**
  * @brief Inform L2 that association has been released.

@@ -917,7 +917,12 @@ void dect_mdm_child_association_created(uint32_t target_long_rd_id)
 			target_long_rd_id);
 		goto association_release;
 	}
-	dect_net_l2_child_association_created(iface, target_long_rd_id);
+	if (dect_net_l2_child_association_created(iface, target_long_rd_id) != 0) {
+		LOG_ERR("Cannot add child (long rd id %u) to L2 association table - "
+			"releasing association",
+			target_long_rd_id);
+		goto association_release;
+	}
 	return;
 
 association_release:
