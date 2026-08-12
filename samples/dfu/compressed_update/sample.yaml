@@ -1,3 +1,9 @@
+sample:
+  description: >
+    Demonstrates how to enable and use image compression within MCUboot,
+    allowing for smaller application updates to be loaded to a device.
+  name: MCUboot with decompression enabled sample
+
 common:
   sysbuild: true
   tags:
