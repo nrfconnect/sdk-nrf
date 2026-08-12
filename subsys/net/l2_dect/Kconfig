@@ -10,6 +10,15 @@ menuconfig NET_L2_DECT
 
 if NET_L2_DECT
 
+config NET_L2_DECT_MTU
+	int "DECT NR+ L2 MTU (bytes)"
+	default 1280
+	range 500 1500
+	help
+	  Maximum Transmission Unit for the DECT NR+ network interface. The
+	  default (1280) equals the IPv6 minimum MTU (RFC 2460). Increase only
+	  if the underlying core network and DECT NR+ peer support larger payloads.
+
 config NET_L2_DECT_MGMT
 	bool "DECT NR+ Net Management support"
 	depends on NET_IPV6
