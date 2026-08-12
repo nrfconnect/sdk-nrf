@@ -37,10 +37,10 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
-  sample.bluetooth.direct_test_mode.nrf2220:
+  sample.bluetooth.direct_test_mode.nrf2240:
     sysbuild: true
     build_only: true
-    extra_args: SHIELD=nrf2220ek
+    extra_args: SHIELD=nrf2240eb
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - nrf54l15dk/nrf54l15/cpuapp
