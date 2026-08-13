@@ -38,6 +38,14 @@ extern "C" {
  * (https://www.etsi.org/deliver/etsi_ts/103600_103699/10363604/01.05.01_60/ts_10363604v010501p.pdf)
  */
 
+/**
+ * @anchor DECT-DLC-SPEC
+ * @brief DECT-2020 NR Part 5: DLC and Convergence layer specification.
+ * @details Links to pertaining specification and regulations.
+ * - [DECT-2020 NR Part 5: DLC and Convergence layer specification]
+ * (https://www.etsi.org/deliver/etsi_ts/103600_103699/10363605/01.05.01_60/ts_10363605v010501p.pdf)
+ */
+
  /** @cond INTERNAL_HIDDEN */
 
 #include <zephyr/net/net_if.h>
@@ -749,6 +757,7 @@ enum dect_settings_cmd_params_write_scope {
 	DECT_SETTINGS_WRITE_SCOPE_ASSOCIATION = 0x0400,
 	DECT_SETTINGS_WRITE_SCOPE_NETWORK_JOIN = 0x0800,
 	DECT_SETTINGS_WRITE_SCOPE_SECURITY_CONFIGURATION = 0x1000,
+	DECT_SETTINGS_WRITE_SCOPE_DLC = 0x2000,
 };
 
 /** @brief Settings command parameters. */
@@ -891,6 +900,83 @@ struct dect_settings_security_conf {
 	uint8_t cipher_key[DECT_CIPHER_KEY_LENGTH];
 };
 
+/** @brief DLC SDU discard-timer (lifetime).
+ * @details TX_SDU_discard_timer field carried in the DLC Timers configuration
+ * Control IE (clause 5.3.3.2, Table 5.3.3.2-2 in
+ * @ref DECT-DLC-SPEC "DECT-2020 NR Part 5"); used by the DLC SDU lifetime
+ * control procedures (clauses 5.2.7.1-5.2.7.3) for DLC service types 1, 2
+ * and 3. Values 1..31 are fixed durations (0.5 ms .. 60 s), 255 is INFINITY
+ * (do not discard); 0 and 32..254 are reserved.
+ */
+enum dect_dlc_sdu_lifetime {
+	DECT_DLC_SDU_LIFETIME_0_5_MS = 1,
+	DECT_DLC_SDU_LIFETIME_1_MS = 2,
+	DECT_DLC_SDU_LIFETIME_5_MS = 3,
+	DECT_DLC_SDU_LIFETIME_10_MS = 4,
+	DECT_DLC_SDU_LIFETIME_20_MS = 5,
+	DECT_DLC_SDU_LIFETIME_30_MS = 6,
+	DECT_DLC_SDU_LIFETIME_40_MS = 7,
+	DECT_DLC_SDU_LIFETIME_50_MS = 8,
+	DECT_DLC_SDU_LIFETIME_60_MS = 9,
+	DECT_DLC_SDU_LIFETIME_70_MS = 10,
+	DECT_DLC_SDU_LIFETIME_80_MS = 11,
+	DECT_DLC_SDU_LIFETIME_90_MS = 12,
+	DECT_DLC_SDU_LIFETIME_100_MS = 13,
+	DECT_DLC_SDU_LIFETIME_150_MS = 14,
+	DECT_DLC_SDU_LIFETIME_200_MS = 15,
+	DECT_DLC_SDU_LIFETIME_250_MS = 16,
+	DECT_DLC_SDU_LIFETIME_300_MS = 17,
+	DECT_DLC_SDU_LIFETIME_500_MS = 18,
+	DECT_DLC_SDU_LIFETIME_750_MS = 19,
+	DECT_DLC_SDU_LIFETIME_1_S = 20,
+	DECT_DLC_SDU_LIFETIME_1_5_S = 21,
+	DECT_DLC_SDU_LIFETIME_2_S = 22,
+	DECT_DLC_SDU_LIFETIME_2_5_S = 23,
+	DECT_DLC_SDU_LIFETIME_3_S = 24,
+	DECT_DLC_SDU_LIFETIME_4_S = 25,
+	DECT_DLC_SDU_LIFETIME_5_S = 26,
+	DECT_DLC_SDU_LIFETIME_6_S = 27,
+	DECT_DLC_SDU_LIFETIME_8_S = 28,
+	DECT_DLC_SDU_LIFETIME_16_S = 29,
+	DECT_DLC_SDU_LIFETIME_32_S = 30,
+	DECT_DLC_SDU_LIFETIME_60_S = 31,
+	DECT_DLC_SDU_LIFETIME_INFINITY = 255,
+};
+
+/** Disable association release on DLC discard-timer expiry (see
+ *  @ref dect_settings_dlc.discard_timer_release_assoc_count).
+ */
+#define DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_DISABLED 0
+
+/** Maximum @ref dect_settings_dlc.discard_timer_release_assoc_count (uint8_t). */
+#define DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT_MAX UINT8_MAX
+
+/** Maximum discard release count accepted at runtime (``dect sett``).
+ *  Values greater than 1 require per-peer tracking at build time
+ *  (``CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT`` > 1).
+ */
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+#define DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_RUNTIME_MAX \
+	DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT_MAX
+#else
+#define DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_RUNTIME_MAX 1
+#endif
+
+/** @brief DLC (Data Link Control) settings. */
+struct dect_settings_dlc {
+	/** Number of consecutive DLC_DISCARD_TIMER_EXPIRED TX responses from a
+	 *  peer before releasing the association (cause BAD_RADIO_QUALITY).
+	 *  Boot default from CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT.
+	 *  0 = never release (@ref DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_DISABLED).
+	 */
+	uint8_t discard_timer_release_assoc_count;
+
+	/** DLC SDU discard-timer (lifetime) used for the PT->FT data flow on
+	 *  association. Boot default from CONFIG_DECT_MDM_NRF_DLC_SDU_LIFETIME.
+	 */
+	enum dect_dlc_sdu_lifetime sdu_lifetime;
+};
+
 /** @brief DECT NR+ Settings. */
 struct dect_settings {
 	/** Command params. */
@@ -934,6 +1020,9 @@ struct dect_settings {
 
 	/** Security configuration. */
 	struct dect_settings_security_conf sec_conf;
+
+	/** DLC (Data Link Control) settings. */
+	struct dect_settings_dlc dlc;
 };
 
 /** @brief Association data. */

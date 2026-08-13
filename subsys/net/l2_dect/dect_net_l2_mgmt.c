@@ -412,7 +412,8 @@ static int dect_mgmt_settings_write(uint64_t mgmt_request, struct net_if *iface,
 	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_NW_BEACON) ||
 	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_ASSOCIATION) ||
 	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_NETWORK_JOIN) ||
-	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_SECURITY_CONFIGURATION))) {
+	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_SECURITY_CONFIGURATION) ||
+	      (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_DLC))) {
 		return -EINVAL;
 	}
 

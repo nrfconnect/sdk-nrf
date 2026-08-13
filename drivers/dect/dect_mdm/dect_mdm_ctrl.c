@@ -93,6 +93,10 @@ static void handle_mdm_neighbor_info(struct dect_mdm_common_op_event_msgq_item *
 static void handle_mdm_neighbor_list(struct dect_mdm_common_op_event_msgq_item *event);
 static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *event);
 
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+static void dlc_discard_peer_remove(uint32_t long_rd_id);
+#endif
+
 static void dect_mdm_ctrl_rssi_scan_data_init(bool actual_command)
 {
 	CTRL_DATA_LOCK();
@@ -529,12 +533,13 @@ static void dect_mdm_ctrl_trigger_association(void)
 	LOG_INF("  transmitter id (long RD ID)....................%u (0x%08x)", parent_long_rd_id,
 		parent_long_rd_id);
 
+	struct dect_mdm_settings *set_ptr = dect_mdm_settings_ref_get();
 	struct nrf_modem_dect_mac_tx_flow_config flow_config[1] = {{
 		.flow_id = 1,
 		.dlc_service_type = NRF_MODEM_DECT_DLC_SERVICE_TYPE_3,
-		.dlc_sdu_lifetime = NRF_MODEM_DECT_DLC_SDU_LIFETIME_60_S,
+		.dlc_sdu_lifetime = (enum nrf_modem_dect_dlc_sdu_lifetime)
+			set_ptr->net_mgmt_common.dlc.sdu_lifetime,
 	}};
-	struct dect_mdm_settings *set_ptr = dect_mdm_settings_ref_get();
 	struct nrf_modem_dect_mac_association_params params = {
 		.long_rd_id = parent_long_rd_id,
 		.network_id = network_id,
@@ -1160,6 +1165,10 @@ static void handle_mdm_association_release_resp(struct dect_mdm_common_op_event_
 	LOG_INF("Association released with long RD ID: %u (0x%08x)", params->long_rd_id,
 		params->long_rd_id);
 
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+	dlc_discard_peer_remove(params->long_rd_id);
+#endif
+
 	CTRL_DATA_LOCK();
 	if (ctrl_data.ass_config.pt_association_state == CTRL_PT_ASSOCIATION_STATE_ASSOCIATED) {
 		ctrl_data.ass_config.pt_association_state = CTRL_PT_ASSOCIATION_STATE_NONE;
@@ -1185,6 +1194,10 @@ static void handle_mdm_association_release_ind(struct dect_mdm_common_op_event_m
 	LOG_INF("Release req received and association released with long RD ID: "
 		"%u (0x%X)",
 		params->long_rd_id, params->long_rd_id);
+
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+	dlc_discard_peer_remove(params->long_rd_id);
+#endif
 
 	if (set_ptr->net_mgmt_common.device_type & DECT_DEVICE_TYPE_FT) {
 		dect_mdm_child_association_removed(params->long_rd_id, params->release_cause,
@@ -1744,10 +1757,16 @@ static void handle_mdm_rssi_complete(struct dect_mdm_common_op_event_msgq_item *
 			},
 		.default_tx_flow_config = {
 			{
+				/* Default user-data flow: lifetime tracks
+				 * dect_settings_dlc.sdu_lifetime (boot default
+				 * from CONFIG_DECT_MDM_NRF_DLC_SDU_LIFETIME,
+				 * runtime via "dect sett --dlc_sdu_lifetime").
+				 */
 				.dlc_service_type =
 				NRF_MODEM_DECT_DLC_SERVICE_TYPE_3,
 				.dlc_sdu_lifetime =
-				NRF_MODEM_DECT_DLC_SDU_LIFETIME_60_S,
+				(enum nrf_modem_dect_dlc_sdu_lifetime)
+					set_ptr->net_mgmt_common.dlc.sdu_lifetime,
 			},
 			{
 				.dlc_service_type =
@@ -2614,6 +2633,70 @@ static void handle_mdm_neighbor_list(struct dect_mdm_common_op_event_msgq_item *
 	dect_mgmt_neighbor_list_evt(iface, l2_results_evt);
 }
 
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+
+#define DECT_MDM_CTRL_DLC_DISCARD_PEER_MAX CONFIG_DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT
+
+struct dect_mdm_ctrl_dlc_discard_peer {
+	uint32_t long_rd_id;
+	uint8_t expiry_count;
+};
+
+static struct dect_mdm_ctrl_dlc_discard_peer
+	ctrl_dlc_discard_peers[DECT_MDM_CTRL_DLC_DISCARD_PEER_MAX];
+
+static struct dect_mdm_ctrl_dlc_discard_peer *dlc_discard_peer_find(uint32_t long_rd_id)
+{
+	for (int i = 0; i < DECT_MDM_CTRL_DLC_DISCARD_PEER_MAX; i++) {
+		if (ctrl_dlc_discard_peers[i].long_rd_id == long_rd_id) {
+			return &ctrl_dlc_discard_peers[i];
+		}
+	}
+
+	return NULL;
+}
+
+static struct dect_mdm_ctrl_dlc_discard_peer *dlc_discard_peer_get(uint32_t long_rd_id)
+{
+	struct dect_mdm_ctrl_dlc_discard_peer *peer = dlc_discard_peer_find(long_rd_id);
+
+	if (peer != NULL) {
+		return peer;
+	}
+
+	for (int i = 0; i < DECT_MDM_CTRL_DLC_DISCARD_PEER_MAX; i++) {
+		if (ctrl_dlc_discard_peers[i].long_rd_id == 0) {
+			ctrl_dlc_discard_peers[i].long_rd_id = long_rd_id;
+			ctrl_dlc_discard_peers[i].expiry_count = 0;
+			return &ctrl_dlc_discard_peers[i];
+		}
+	}
+
+	LOG_WRN("DLC discard expiry peer table full, long_rd_id %u", long_rd_id);
+	return NULL;
+}
+
+static void dlc_discard_peer_reset(uint32_t long_rd_id)
+{
+	struct dect_mdm_ctrl_dlc_discard_peer *peer = dlc_discard_peer_find(long_rd_id);
+
+	if (peer != NULL) {
+		peer->expiry_count = 0;
+	}
+}
+
+static void dlc_discard_peer_remove(uint32_t long_rd_id)
+{
+	struct dect_mdm_ctrl_dlc_discard_peer *peer = dlc_discard_peer_find(long_rd_id);
+
+	if (peer != NULL) {
+		peer->long_rd_id = 0;
+		peer->expiry_count = 0;
+	}
+}
+
+#endif /* CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING */
+
 static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *event)
 {
 	char tmp_str[DECT_MDM_UTILS_STR_BUFF_SIZE] = {0};
@@ -2621,20 +2704,61 @@ static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *
 	struct dect_mdm_ctrl_dlc_data_tx_resp_evt *evt_data = event->data;
 	int arr_index;
 
-	if (evt_data->status != NRF_MODEM_DECT_MAC_STATUS_OK) {
+	if (evt_data->status == NRF_MODEM_DECT_MAC_STATUS_OK) {
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+		dlc_discard_peer_reset(evt_data->long_rd_id);
+#endif
+	} else {
 		dect_mdm_utils_modem_mac_err_to_string(evt_data->status, tmp_str, sizeof(tmp_str));
-		LOG_ERR("DLC data TX response failed to rd id %u with err %s (%d), "
+		LOG_WRN("DLC data TX response failed to rd id %u with err %s (%d), "
 			"transaction id %u",
 			evt_data->long_rd_id, tmp_str, evt_data->status,
 			evt_data->acked_data[0].transaction_id);
 		if (evt_data->status == NRF_MODEM_DECT_MAC_STATUS_DLC_DISCARD_TIMER_EXPIRED) {
-			LOG_ERR("DLC discard timer expired, "
-				"releasing association with long rd id %u",
-				evt_data->long_rd_id);
+			uint8_t release_count =
+				dect_mdm_settings_ref_get()
+					->net_mgmt_common.dlc.discard_timer_release_assoc_count;
 
-			dect_mdm_ctrl_api_associate_release_cmd(
-				evt_data->long_rd_id,
-				NRF_MODEM_DECT_MAC_RELEASE_CAUSE_BAD_RADIO_QUALITY);
+			if (release_count == DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_DISABLED) {
+				/* Disabled: log only. */
+			} else if (release_count == 1) {
+				LOG_ERR("DLC discard timer expired, releasing association "
+					"with long rd id %u",
+					evt_data->long_rd_id);
+				dect_mdm_ctrl_api_associate_release_cmd(
+					evt_data->long_rd_id,
+					NRF_MODEM_DECT_MAC_RELEASE_CAUSE_BAD_RADIO_QUALITY);
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+			} else {
+				struct dect_mdm_ctrl_dlc_discard_peer *peer =
+					dlc_discard_peer_get(evt_data->long_rd_id);
+
+				if (peer != NULL) {
+					peer->expiry_count++;
+					if (peer->expiry_count >= release_count) {
+						LOG_ERR("DLC discard timer expired %u times, "
+							"releasing association with long rd id %u",
+							peer->expiry_count, evt_data->long_rd_id);
+
+						dlc_discard_peer_remove(evt_data->long_rd_id);
+						dect_mdm_ctrl_api_associate_release_cmd(
+						evt_data->long_rd_id,
+						NRF_MODEM_DECT_MAC_RELEASE_CAUSE_BAD_RADIO_QUALITY);
+					} else {
+						LOG_WRN("DLC discard timer expired (%u/%u), "
+							"keeping association with long rd id %u",
+							peer->expiry_count, release_count,
+							evt_data->long_rd_id);
+					}
+				}
+#else /* !CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING */
+			} else {
+				LOG_WRN("DLC discard timer expired but release_count %u > 1 "
+					"is not supported (Kconfig count is %d)",
+					release_count,
+					CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT);
+#endif /* CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING */
+			}
 		}
 	}
 

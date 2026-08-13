@@ -33,6 +33,29 @@ config DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS
 	help
 	  Enable TX window based flow ctrl on unacked mdm TX DLC data requests.
 
+config DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT
+	int "DLC discard timer expiries before association release"
+	depends on DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS
+	default 1
+	range 0 255
+	help
+	  DLC discard timer expires before association release (0 = off,
+	  default 1). Resets on successful TX. Values > 1 enable per-peer
+	  counting at compile time.
+
+config DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING
+	def_bool DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT > 1
+	depends on DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS
+
+config DECT_MDM_NRF_DLC_SDU_LIFETIME
+	int "DLC SDU discard-timer (lifetime) for child uplink (PT->FT) data flow"
+	default 31
+	range 1 255
+	help
+	  Boot default DLC SDU lifetime for child uplink (PT->FT) at
+	  association (1..31, 255 = infinity; default 31 = 60 s).
+	  Values 32..254 are invalid at runtime.
+
 config DECT_MDM_NRF_CTRL_THREAD_STACK_SIZE
 	int "Driver's internal ctrl thread stack size"
 	default 3072

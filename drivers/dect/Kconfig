@@ -32,6 +32,7 @@ endchoice
 config DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT
 	int "Maximum number of associations"
 	default 20
+	range 1 255
 	help
 	  Maximum number of supported child associations.
 	  Should be aligned with CONFIG_NET_IPV6_MAX_NEIGHBORS.
