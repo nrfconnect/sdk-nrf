@@ -670,8 +670,11 @@ Common Application Framework
 
 * :ref:`caf_ble_state`:
 
-  * Added the :c:struct:`ble_peer_sci_conn_rate_event` event to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
-  * Added the :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
+* Added:
+
+  * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
+  * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
+  * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
 
 Debug libraries
 ---------------

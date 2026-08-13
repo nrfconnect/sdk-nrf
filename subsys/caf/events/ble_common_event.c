@@ -219,3 +219,23 @@ APP_EVENT_TYPE_DEFINE(ble_peer_frame_space_updated_event,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 #endif /* CONFIG_CAF_BLE_FRAME_SPACE_EVENTS */
+
+#if CONFIG_CAF_BLE_PHY_UPDATED_EVENTS
+
+static void log_ble_peer_phy_updated_event(const struct app_event_header *aeh)
+{
+	const struct ble_peer_phy_updated_event *event =
+		cast_ble_peer_phy_updated_event(aeh);
+
+	APP_EVENT_MANAGER_LOG(aeh, "peer=%p tx_phy=0x%02" PRIx8 " rx_phy=0x%02" PRIx8,
+			      event->id, event->params.tx_phy, event->params.rx_phy);
+}
+
+APP_EVENT_TYPE_DEFINE(ble_peer_phy_updated_event,
+		  log_ble_peer_phy_updated_event,
+		  NULL,
+		  APP_EVENT_FLAGS_CREATE(
+			IF_ENABLED(CONFIG_CAF_INIT_LOG_BLE_PHY_UPDATED_EVENTS,
+				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
+
+#endif /* CONFIG_CAF_BLE_PHY_UPDATED_EVENTS */

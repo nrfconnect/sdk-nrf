@@ -43,6 +43,10 @@ The following Kconfig options are also available for this module:
   This event is used to inform other application modules about frame space changes and failed frame space update requests.
   It depends on :kconfig:option:`CONFIG_BT_FRAME_SPACE_UPDATE`.
   This option is enabled by default.
+* :kconfig:option:`CONFIG_CAF_BLE_PHY_UPDATED_EVENTS` - This option causes the module to emit the :c:struct:`ble_peer_phy_updated_event`.
+  This event is used to inform other application modules about PHY changes.
+  It depends on :kconfig:option:`CONFIG_BT_USER_PHY_UPDATE`.
+  This option is enabled by default.
 
 Implementation details
 **********************
