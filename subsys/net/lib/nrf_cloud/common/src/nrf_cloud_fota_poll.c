@@ -122,6 +122,7 @@ static void on_download_evt_finished(struct nrf_cloud_fota_poll_ctx *ctx,
 			nrf_cloud_download_cancel();
 		}
 
+		nrf_cloud_coap_fota_job_free(&job);
 		return;
 	}
 
@@ -134,7 +135,14 @@ static void cancel_if_job_is_not_valid(struct nrf_cloud_fota_poll_ctx *ctx, uint
 	int err;
 	struct nrf_cloud_fota_job_info job_current = {0};
 	static uint32_t last_progress_threshold;
-	uint32_t current_progress_threshold = ROUND_DOWN(progress, threshold);
+	uint32_t current_progress_threshold;
+
+	if (threshold == 0) {
+		/* Progress checks are disabled */
+		return;
+	}
+
+	current_progress_threshold = ROUND_DOWN(progress, threshold);
 
 	if ((current_progress_threshold != last_progress_threshold) &&
 	    (current_progress_threshold != 0)) {
@@ -145,9 +153,10 @@ static void cancel_if_job_is_not_valid(struct nrf_cloud_fota_poll_ctx *ctx, uint
 		if (err == 1) {
 			LOG_ERR("No job available, canceling...");
 
-			nrf_cloud_coap_fota_job_free(&job_current);
 			k_work_schedule(&ctx->cancel_work, K_SECONDS(1));
 		}
+
+		nrf_cloud_coap_fota_job_free(&job_current);
 	}
 }
 
@@ -200,6 +209,7 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 			ctx_ptr->status_fn(fota_status, fota_status_details);
 
 			(void)update_job_status(ctx_ptr);
+			nrf_cloud_coap_fota_job_free(&job);
 		} else {
 			k_sem_give(&fota_download_sem);
 		}
@@ -221,12 +231,14 @@ static void fota_dl_handler(const struct fota_download_evt *evt)
 			ctx_ptr->status_fn(fota_status, fota_status_details);
 
 			(void)update_job_status(ctx_ptr);
+			nrf_cloud_coap_fota_job_free(&job);
 		}
 		break;
 	case FOTA_DOWNLOAD_EVT_PROGRESS:
 		LOG_DBG("FOTA download percent: %d%%", evt->progress);
 
-		cancel_if_job_is_not_valid(ctx_ptr, evt->progress, 10);
+		cancel_if_job_is_not_valid(ctx_ptr, evt->progress,
+					   CONFIG_NRF_CLOUD_FOTA_POLL_JOB_CHECK_PROGRESS_THRESHOLD);
 		break;
 	default:
 		break;
@@ -605,6 +617,8 @@ int nrf_cloud_fota_poll_update_apply(struct nrf_cloud_fota_poll_ctx *ctx)
 {
 	int err = handle_downloaded_image(ctx, false);
 
+	nrf_cloud_coap_fota_job_free(&job);
+
 	if (err) {
 		LOG_ERR("handle_downloaded_image, error: %d", err);
 		return err;
@@ -642,6 +656,7 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 		return err;
 	} else if (err < 0) {
 		LOG_ERR("Failed to check for FOTA job, error: %d", err);
+		nrf_cloud_coap_fota_job_free(&job);
 		return IS_RECOVERABLE_NETWORK_ERR(err) ? err : -ENOTRECOVERABLE;
 	} else if (err > 0) {
 		/* No job. */
@@ -655,6 +670,7 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 	err = start_download();
 	if (err) {
 		LOG_ERR("Failed to start FOTA download");
+		nrf_cloud_coap_fota_job_free(&job);
 		return -ENOTRECOVERABLE;
 	}
 
@@ -680,6 +696,7 @@ int nrf_cloud_fota_poll_process(struct nrf_cloud_fota_poll_ctx *ctx)
 	 */
 	if (fota_status == NRF_CLOUD_FOTA_SUCCEEDED) {
 		handle_downloaded_image(ctx, true);
+		nrf_cloud_coap_fota_job_free(&job);
 		/* Application was expected to reboot... */
 		return -EBUSY;
 	}

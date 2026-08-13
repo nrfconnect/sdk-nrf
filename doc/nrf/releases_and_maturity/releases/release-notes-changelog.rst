@@ -530,7 +530,9 @@ AVSystem integration
 nRF Cloud integration
 ---------------------
 
-|no_changes_yet_note|
+* Added the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL_JOB_CHECK_PROGRESS_THRESHOLD` Kconfig option to the :ref:`lib_nrf_cloud` FOTA polling helpers, allowing the progress-based FOTA job re-check to be configured or disabled.
+
+* Fixed a memory leak in the :ref:`lib_nrf_cloud` FOTA polling helpers where the temporary job info returned by each FOTA job check was not released on all code paths.
 
 CoreMark integration
 --------------------
