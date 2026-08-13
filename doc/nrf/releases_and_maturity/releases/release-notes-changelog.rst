@@ -85,7 +85,8 @@ Developing with nRF54H Series
 Developing with nRF53 Series
 ============================
 
-|no_changes_yet_note|
+* Added a workaround for anomaly 166 on the nRF5340 devices and the :kconfig:option:`CONFIG_SOC_NRF53_ANOMALY_166_WORKAROUND` Kconfig option, which allows enabling the workaround.
+  You can use the option also in builds with TF-M.
 
 Developing with nRF52 Series
 ============================
