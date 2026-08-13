@@ -18,6 +18,7 @@ target_include_directories(platform_s
 target_sources(platform_s
   PRIVATE
   ${ZEPHYR_BASE}/soc/nordic/nrf71/soc.c
+        ${ZEPHYR_BASE}/soc/nordic/nrf71/wicr_setup.c
   )
 
 target_include_directories(platform_s
@@ -26,6 +27,18 @@ target_include_directories(platform_s
   ${ZEPHYR_BASE}/soc/nordic/nrf71
   ${ZEPHYR_BASE}/soc/nordic/common
   )
+
+if(DEFINED NRF71_WIFI_LMAC_PATCH_ADDR)
+  target_compile_definitions(platform_s PRIVATE
+    NRF71_WIFI_LMAC_PATCH_ADDR=${NRF71_WIFI_LMAC_PATCH_ADDR}
+  )
+endif()
+
+if(DEFINED NRF71_WIFI_UMAC_PATCH_ADDR)
+  target_compile_definitions(platform_s PRIVATE
+    NRF71_WIFI_UMAC_PATCH_ADDR=${NRF71_WIFI_UMAC_PATCH_ADDR}
+  )
+endif()
 
 install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
