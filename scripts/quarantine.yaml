@@ -158,24 +158,8 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40469"
 
 - scenarios:
-    - sample.mcumgr.smp_svr.ext_xip
-    - sample.mcumgr.smp_svr.ext_xip.no_network_core
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
     - mcuboot.external_flash
   platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
