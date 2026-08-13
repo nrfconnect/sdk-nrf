@@ -19,10 +19,13 @@ config SAMPLE_DESH_COMMON_WORKQ_STACK_SIZE
 
 config SAMPLE_DESH_DECT_ICMP_PING
 	bool "ICMP ping support"
-	depends on NET_SOCKETS_INET_RAW
+	depends on NET_IPV6 && NET_NATIVE && NET_SOCKETS
 	default y
 	help
-	  Support for ICMP ping.
+	  ICMPv6 ping through the Zephyr net_icmp API. DeSh ping extends net ping with
+	  hostname resolution, configurable count/interval/timeout/payload,
+	  per-reply and summary RTT statistics, default DECT interface binding,
+	  and abort through the DeSh kill signal.
 
 config SAMPLE_DESH_IPERF3
 	bool "iPerf3"

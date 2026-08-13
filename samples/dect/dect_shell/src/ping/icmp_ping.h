@@ -18,15 +18,12 @@
 
 #include <zephyr/net/socket.h>
 
-#define ICMP_IPV4_HDR_LEN 20
 #define ICMP_IPV6_HDR_LEN 40
 
 #define ICMP_MAX_ADDR	      128
 #define ICMP_DEFAULT_LINK_MTU 1500
 #define ICMP_HDR_LEN	      8
 
-/* Max payload lengths: */
-#define ICMP_IPV4_MAX_LEN (ICMP_DEFAULT_LINK_MTU - ICMP_IPV4_HDR_LEN - ICMP_HDR_LEN)
 #define ICMP_IPV6_MAX_LEN (ICMP_DEFAULT_LINK_MTU - ICMP_IPV6_HDR_LEN - ICMP_HDR_LEN)
 
 #define ICMP_PARAM_LENGTH_DEFAULT   0
@@ -42,7 +39,6 @@ struct icmp_ping_shell_cmd_argv {
 	char target_name[ICMP_MAX_ADDR + 1];
 	struct zsock_addrinfo *src;
 	struct zsock_addrinfo *dest;
-	struct in_addr current_addr4;
 	struct in6_addr current_addr6;
 
 	uint32_t mtu;
@@ -51,7 +47,6 @@ struct icmp_ping_shell_cmd_argv {
 	uint32_t count;
 	uint32_t interval;
 	struct net_if *ping_iface;
-	bool force_ipv6;
 
 	int64_t conn_info_read_uptime;
 };

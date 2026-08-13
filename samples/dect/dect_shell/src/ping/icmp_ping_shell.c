@@ -29,7 +29,6 @@ static const char icmp_ping_shell_cmd_usage_str[] =
 	"  -i, --interval, [int]    Interval between successive packet transmissions\n"
 	"                           in milliseconds\n"
 	"  -l, --length, [int]      Payload length to be sent\n"
-	"  -6, --ipv6,              Force IPv6 usage with the dual stack interfaces\n"
 	"  -I, --interface, [int]   Interface index to be used. Default: DECT NR+ interface.\n"
 	"  -h, --help,              Shows this help information";
 
@@ -40,7 +39,6 @@ static struct sys_getopt_option long_options[] = {
 	{ "count", sys_getopt_required_argument, 0, 'c' },
 	{ "interval", sys_getopt_required_argument, 0, 'i' },
 	{ "length", sys_getopt_required_argument, 0, 'l' },
-	{ "ipv6", sys_getopt_no_argument, 0, '6' },
 	{ "interface", sys_getopt_required_argument, 0, 'I' },
 	{ "help", sys_getopt_no_argument, 0, 'h' },
 	{ 0, 0, 0, 0 }
@@ -60,7 +58,7 @@ static int icmp_ping_shell_cmd(const struct shell *shell, size_t argc, char **ar
 	sys_getopt_init();
 	int opt;
 
-	while ((opt = sys_getopt_long(argc, argv, "d:t:c:i:l:I:h6", long_options, NULL)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv, "d:t:c:i:l:I:h", long_options, NULL)) != -1) {
 		switch (opt) {
 		case 'I': /* interface */
 			tmp_opt = atoi(sys_getopt_optarg);
@@ -96,7 +94,7 @@ static int icmp_ping_shell_cmd(const struct shell *shell, size_t argc, char **ar
 			if (ping_args.count == 0) {
 				desh_warn("count not an integer (> 0), defaulting to %d",
 					  ICMP_PARAM_COUNT_DEFAULT);
-				ping_args.timeout = ICMP_PARAM_COUNT_DEFAULT;
+				ping_args.count = ICMP_PARAM_COUNT_DEFAULT;
 			}
 			break;
 		case 'i': /* interval */
@@ -109,14 +107,11 @@ static int icmp_ping_shell_cmd(const struct shell *shell, size_t argc, char **ar
 			break;
 		case 'l': /* payload length */
 			ping_args.len = atoi(sys_getopt_optarg);
-			if (ping_args.len > ICMP_IPV4_MAX_LEN) {
+			if (ping_args.len > ICMP_IPV6_MAX_LEN) {
 				desh_error("Payload size exceeds the ultimate max limit %d",
-					   ICMP_IPV4_MAX_LEN);
+					   ICMP_IPV6_MAX_LEN);
 				goto show_usage;
 			}
-			break;
-		case '6': /* force ipv6 */
-			ping_args.force_ipv6 = true;
 			break;
 		case 'h':
 			goto show_usage;
