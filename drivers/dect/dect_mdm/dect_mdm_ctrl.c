@@ -1720,7 +1720,9 @@ static void handle_mdm_rssi_complete(struct dect_mdm_common_op_event_msgq_item *
 		.network_id = network_id,
 		.rach_configuration = {.policy = NRF_MODEM_DECT_MAC_RACH_CONFIG_POLICY_FILL,
 				       .common = {
-						       .response_window_length = 8,
+						       .response_window_length =
+							       set_ptr->net_mgmt_common.cluster
+								       .rach_conf_resp_win_length,
 						       .max_transmission_length = 8,
 						       .cw_min_sig = 2,
 						       .cw_max_sig = 7,

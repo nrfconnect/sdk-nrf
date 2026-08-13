@@ -790,6 +790,11 @@ struct dect_settings_cluster {
 	 *  channel reselection automatically.
 	 */
 	uint8_t channel_loaded_percent;
+
+	/** Random access configuration: response window length (in subslots) used in
+	 *  the cluster's RA configuration broadcast. Range: 0-15.
+	 */
+	uint8_t rach_conf_resp_win_length;
 };
 
 /** @brief Network beacon settings. */
