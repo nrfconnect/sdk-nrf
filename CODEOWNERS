@@ -89,6 +89,7 @@
 /doc/nrf/app_dev/device_guides/nrf70/     @nrfconnect/ncs-wifi-doc
 /doc/nrf/app_dev/device_guides/nrf91/     @nrfconnect/ncs-modem-doc
 /doc/nrf/app_dev/device_guides/nrf91/nrf91_snippet.rst @nrfconnect/ncs-cia-doc
+/doc/nrf/app_dev/device_guides/nrf93m1/   @nrfconnect/ncs-cia-doc
 /doc/nrf/app_dev/device_guides/pmic/      @nrfconnect/ncs-pmic-doc
 /doc/nrf/app_dev/device_guides/nrf54h/    @FrancescoSer
 /doc/nrf/app_dev/device_guides/wifi_coex.rst @nrfconnect/ncs-doc-leads

@@ -63,6 +63,11 @@ Developing with nRF91 Series
 
 |no_changes_yet_note|
 
+Developing with nRF93M1
+=======================
+
+* Added the :ref:`ug_nrf93m1` documentation.
+
 Developing with nRF70 Series
 ============================
 
