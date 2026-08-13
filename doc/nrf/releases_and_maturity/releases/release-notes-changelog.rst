@@ -140,7 +140,7 @@ Security
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* Added the :ref:`bt_sap_readme` library for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
 
 * :ref:`trusted_storage_readme` library:
 
@@ -301,6 +301,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 
 Bluetooth samples
 -----------------
+
+* Added the :ref:`secure_application_pairing_sample` sample for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
 
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
