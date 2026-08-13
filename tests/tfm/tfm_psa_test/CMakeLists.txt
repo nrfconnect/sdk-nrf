@@ -95,6 +95,17 @@ file(
     ${INSTALL_INTERFACE_INC_DIR}/psa
 )
 
+# The PSA arch test non-secure app is built by the TF-M build system instead of
+# Zephyr, so it takes its console UART from TF-M's NS_DRIVER_STDIO (platform
+# target_cfg.h) rather than from Kconfig. NS_DRIVER_STDIO is derived from
+# NRF_SECURE_UART_INSTANCE, which modules/trusted-firmware-m/CMakeLists.txt only
+# passes to the secure build, so pass it to the non-secure build here as well.
+foreach(uart_instance 0 1 00 20 21 22 30)
+  if(CONFIG_TFM_SECURE_UART${uart_instance})
+    set(tfm_ns_c_flags -DNRF_SECURE_UART_INSTANCE=${uart_instance})
+  endif()
+endforeach()
+
 include(ExternalProject)
 
 if(CONFIG_DEBUG_OPTIMIZATIONS)
@@ -122,6 +133,7 @@ ExternalProject_Add(tfm_psa_arch_test_app
                 -DZEPHYR_NRF_MODULE_DIR=${ZEPHYR_NRF_MODULE_DIR}
                 -DTFM_BOARDS_NRF_DIR=${TFM_BOARDS_NRF_DIR}
                 -DNRF_CONFIG_CPU_FREQ_MHZ=${CONFIG_TFM_CPU_FREQ_MHZ}
+                -DCMAKE_C_FLAGS=${tfm_ns_c_flags}
     BUILD_COMMAND ${CMAKE_COMMAND} --build .
     INSTALL_COMMAND ""
     BUILD_ALWAYS True
