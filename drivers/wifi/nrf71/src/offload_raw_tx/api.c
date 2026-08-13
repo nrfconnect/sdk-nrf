@@ -285,7 +285,6 @@ static bool validate_rate(enum nrf_wifi_off_raw_tx_tput_mode tput_mode,
 
 	return true;
 }
-
 static bool validate_chan_band(enum nrf_wifi_off_raw_tx_band band, unsigned int chan)
 {
 	switch (band) {
@@ -320,7 +319,6 @@ static bool validate_chan_band(enum nrf_wifi_off_raw_tx_band band, unsigned int 
 
 	return true;
 }
-
 int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 {
 	int ret = -1;
@@ -415,7 +413,6 @@ int nrf_wifi_off_raw_tx_start(struct nrf_wifi_off_raw_tx_conf *conf)
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
 	k_spinlock_key_t key;
-
 	ret = nrf_wifi_off_raw_tx_conf_update(conf);
 	if (ret != 0) {
 		LOG_ERR("%s: nRF71 offloaded raw TX configuration failed",
