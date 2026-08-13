@@ -443,7 +443,8 @@ int dect_mdm_hal_associate_req(const struct device *dev,
 
 	flow_config[0].flow_id = 1;
 	flow_config[0].dlc_service_type = NRF_MODEM_DECT_DLC_SERVICE_TYPE_3;
-	flow_config[0].dlc_sdu_lifetime = NRF_MODEM_DECT_DLC_SDU_LIFETIME_60_S;
+	flow_config[0].dlc_sdu_lifetime =
+		(enum nrf_modem_dect_dlc_sdu_lifetime)set_ptr->net_mgmt_common.dlc.sdu_lifetime;
 	mdm_params.tx_flow_configs = flow_config;
 
 	ret = dect_mdm_ctrl_api_associate_req_cmd(&mdm_params);

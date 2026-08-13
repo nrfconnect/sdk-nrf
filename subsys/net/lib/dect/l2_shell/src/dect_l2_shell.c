@@ -172,7 +172,7 @@ static const char dect_shell_sett_cluster_usage_str2[] =
 	"      --cluster_nbr_inactivity_time <ms>, Neighbor inactivity timer (in ms) that\n"
 	"                                          triggers association releasing.\n"
 	"                                          Use 0 to disable timer.\n"
-	"      --cluster_rach_resp_win <0-15>, Random access response window_length (in subslots)\n"
+	"      --cluster_rach_resp_win <0-15>, Random access response window length (in subslots)\n"
 	"                                      used in the cluster RA configuration broadcast.\n"
 	"                                      Range: 0-15. Default: 8.\n";
 static const char dect_shell_sett_network_beacon_usage_str[] =
@@ -190,6 +190,24 @@ static const char dect_shell_sett_sec_conf_usage_str[] =
 	"                                     Example: 0123456789abcdef0123456789abcdef\n"
 	"      --sec_cipher_key <key>,        Set cipher key (hex string). Length 16.\n"
 	"                                     Example: 0123456789abcdef0123456789abcdef\n";
+static const char dect_shell_sett_dlc_usage_str[] =
+	"DLC settings\n"
+	"      --dlc_discard_release_assoc_count <n>,\n"
+	"                                     DLC_DISCARD_TIMER_EXPIRED TX responses\n"
+	"                                     from a peer before releasing the association\n"
+	"                                     (cause BAD_RADIO_QUALITY). 0 = never release;\n"
+	"                                     counter resets on successful DLC TX.\n"
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+	"                                     Valid: 0 or 1..255. Default: 1.\n"
+#else
+	"                                     Valid: 0 or 1 only (Kconfig count > 1 required\n"
+	"                                     for values > 1). Default: 1.\n"
+#endif
+	"      --dlc_sdu_lifetime <n>,        DLC SDU discard-timer (lifetime) for PT->FT\n"
+	"                                     data flow. enum dect_dlc_sdu_lifetime value:\n"
+	"                                     1..31 = 0.5 ms..60 s (e.g. 31 = 60 s),\n"
+	"                                     255 = infinity.\n"
+	"                                     Default: 31 = 60 s (from Kconfig).\n";
 
 /* The following do not have short options: */
 enum {
@@ -218,6 +236,8 @@ enum {
 	DECT_SHELL_SETT_CMD_SEC_MODE,
 	DECT_SHELL_SETT_CMD_SEC_INTEG_KEY,
 	DECT_SHELL_SETT_CMD_SEC_CIPHER_KEY,
+	DECT_SHELL_SETT_CMD_DLC_DISCARD_RELEASE_ASSOC_COUNT,
+	DECT_SHELL_SETT_CMD_DLC_SDU_LIFETIME,
 };
 
 /* Specifying the expected options (both long and short): */
@@ -263,6 +283,10 @@ static struct sys_getopt_option long_options_sett_cmd[] = {
 	{"sec_mode", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_MODE},
 	{"sec_integ_key", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_INTEG_KEY},
 	{"sec_cipher_key", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_SEC_CIPHER_KEY},
+	{"dlc_discard_release_assoc_count", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_DLC_DISCARD_RELEASE_ASSOC_COUNT},
+	{"dlc_sdu_lifetime", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_DLC_SDU_LIFETIME},
 	{0, 0, 0, 0}};
 
 	static const char dect_shell_cluster_reconfig_usage_str[] =
@@ -1874,8 +1898,54 @@ dect_common_utils_settings_write_scope_to_string(enum dect_settings_cmd_params_w
 		return "network_join";
 	case DECT_SETTINGS_WRITE_SCOPE_SECURITY_CONFIGURATION:
 		return "security_configuration";
+	case DECT_SETTINGS_WRITE_SCOPE_DLC:
+		return "dlc";
 	default:
 		return "Unknown";
+	}
+}
+
+/* Returns the encoded duration of the DLC TX_SDU_discard_timer as defined in
+ * ETSI TS 103 636-5, clause 5.3.3.2 Table 5.3.3.2-2 (mirrored by
+ * enum dect_dlc_sdu_lifetime / nrf_modem_dect_dlc_sdu_lifetime).
+ */
+static const char *
+dect_common_utils_settings_dlc_sdu_lifetime_to_string(enum dect_dlc_sdu_lifetime lt)
+{
+	switch (lt) {
+	case DECT_DLC_SDU_LIFETIME_0_5_MS:	return "0.5 ms";
+	case DECT_DLC_SDU_LIFETIME_1_MS:	return "1 ms";
+	case DECT_DLC_SDU_LIFETIME_5_MS:	return "5 ms";
+	case DECT_DLC_SDU_LIFETIME_10_MS:	return "10 ms";
+	case DECT_DLC_SDU_LIFETIME_20_MS:	return "20 ms";
+	case DECT_DLC_SDU_LIFETIME_30_MS:	return "30 ms";
+	case DECT_DLC_SDU_LIFETIME_40_MS:	return "40 ms";
+	case DECT_DLC_SDU_LIFETIME_50_MS:	return "50 ms";
+	case DECT_DLC_SDU_LIFETIME_60_MS:	return "60 ms";
+	case DECT_DLC_SDU_LIFETIME_70_MS:	return "70 ms";
+	case DECT_DLC_SDU_LIFETIME_80_MS:	return "80 ms";
+	case DECT_DLC_SDU_LIFETIME_90_MS:	return "90 ms";
+	case DECT_DLC_SDU_LIFETIME_100_MS:	return "100 ms";
+	case DECT_DLC_SDU_LIFETIME_150_MS:	return "150 ms";
+	case DECT_DLC_SDU_LIFETIME_200_MS:	return "200 ms";
+	case DECT_DLC_SDU_LIFETIME_250_MS:	return "250 ms";
+	case DECT_DLC_SDU_LIFETIME_300_MS:	return "300 ms";
+	case DECT_DLC_SDU_LIFETIME_500_MS:	return "500 ms";
+	case DECT_DLC_SDU_LIFETIME_750_MS:	return "750 ms";
+	case DECT_DLC_SDU_LIFETIME_1_S:		return "1 s";
+	case DECT_DLC_SDU_LIFETIME_1_5_S:	return "1.5 s";
+	case DECT_DLC_SDU_LIFETIME_2_S:		return "2 s";
+	case DECT_DLC_SDU_LIFETIME_2_5_S:	return "2.5 s";
+	case DECT_DLC_SDU_LIFETIME_3_S:		return "3 s";
+	case DECT_DLC_SDU_LIFETIME_4_S:		return "4 s";
+	case DECT_DLC_SDU_LIFETIME_5_S:		return "5 s";
+	case DECT_DLC_SDU_LIFETIME_6_S:		return "6 s";
+	case DECT_DLC_SDU_LIFETIME_8_S:		return "8 s";
+	case DECT_DLC_SDU_LIFETIME_16_S:	return "16 s";
+	case DECT_DLC_SDU_LIFETIME_32_S:	return "32 s";
+	case DECT_DLC_SDU_LIFETIME_60_S:	return "60 s";
+	case DECT_DLC_SDU_LIFETIME_INFINITY:	return "infinity";
+	default:				return "reserved";
 	}
 }
 
@@ -2054,6 +2124,32 @@ static void dect_shell_sett_cmd_print(struct dect_settings *dect_sett)
 					    "   Security cipher key:                 %s",
 					    sec_key_str);
 		}
+	}
+
+	dect_l2_shell_print("  DLC:");
+	if (dect_sett->dlc.discard_timer_release_assoc_count ==
+	    DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_DISABLED) {
+		dect_l2_shell_print("   Discard timer expiries before assoc release: disabled (0)");
+	} else {
+		dect_l2_shell_print("   Discard timer expiries before assoc release: %u",
+				    dect_sett->dlc.discard_timer_release_assoc_count);
+	}
+	{
+		/* The same setting drives the local node's default user-data
+		 * TX flow on both roles - direction differs:
+		 *   PT: applied at association (flow_config[0])
+		 *   FT: advertised at cluster start (default_tx_flow_config[0])
+		 */
+		const char *dir = (dect_sett->device_type & DECT_DEVICE_TYPE_FT)
+					  ? "FT->PT"
+					  : "PT->FT";
+
+		dect_l2_shell_print(
+				    "   SDU lifetime (%s data flow):       %s (raw=%u)",
+				    dir,
+				    dect_common_utils_settings_dlc_sdu_lifetime_to_string(
+					    dect_sett->dlc.sdu_lifetime),
+				    (unsigned int)dect_sett->dlc.sdu_lifetime);
 	}
 }
 
@@ -2460,6 +2556,44 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 				DECT_SETTINGS_WRITE_SCOPE_SECURITY_CONFIGURATION;
 			break;
 		}
+		case DECT_SHELL_SETT_CMD_DLC_DISCARD_RELEASE_ASSOC_COUNT: {
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
+			if (ret || tmp_value > DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_RUNTIME_MAX) {
+#if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
+				dect_l2_shell_error(
+					"Invalid dlc_discard_release_assoc_count value: %s "
+					"(valid: 0..%u; 0 = disabled)",
+					sys_getopt_optarg,
+					DECT_DLC_DISCARD_TIMER_RELEASE_ASSOC_RUNTIME_MAX);
+#else
+				dect_l2_shell_error(
+					"Invalid dlc_discard_release_assoc_count value: %s "
+					"(valid: 0 or 1; values > 1 need Kconfig "
+					"DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_COUNT > 1)",
+					sys_getopt_optarg);
+#endif
+				return;
+			}
+			newsettings.dlc.discard_timer_release_assoc_count = (uint8_t)tmp_value;
+			newsettings.cmd_params.write_scope_bitmap |= DECT_SETTINGS_WRITE_SCOPE_DLC;
+			break;
+		}
+		case DECT_SHELL_SETT_CMD_DLC_SDU_LIFETIME: {
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
+			if (ret ||
+			    !((tmp_value >= DECT_DLC_SDU_LIFETIME_0_5_MS &&
+			       tmp_value <= DECT_DLC_SDU_LIFETIME_60_S) ||
+			      tmp_value == DECT_DLC_SDU_LIFETIME_INFINITY)) {
+				dect_l2_shell_error(
+					"Invalid dlc_sdu_lifetime value: %s "
+					"(valid: 1..31 or 255)",
+					sys_getopt_optarg);
+				return;
+			}
+			newsettings.dlc.sdu_lifetime = (enum dect_dlc_sdu_lifetime)tmp_value;
+			newsettings.cmd_params.write_scope_bitmap |= DECT_SETTINGS_WRITE_SCOPE_DLC;
+			break;
+		}
 
 		case 'h':
 			goto show_usage;
@@ -2485,10 +2619,19 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 	ret = net_mgmt(NET_REQUEST_DECT_SETTINGS_WRITE, context.iface, &newsettings,
 		       sizeof(newsettings));
 	if (ret) {
-		dect_l2_shell_error(
-			"Cannot write new settings: %d, there was a failure on scope: %s", ret,
-			dect_common_utils_settings_write_scope_to_string(
-				newsettings.cmd_params.failure_scope_bitmap_out));
+		if (newsettings.cmd_params.failure_scope_bitmap_out) {
+			dect_l2_shell_error(
+				"Cannot write new settings: %d "
+				"(failure scope bitmap: 0x%04x = %s)",
+				ret, newsettings.cmd_params.failure_scope_bitmap_out,
+				dect_common_utils_settings_write_scope_to_string(
+					newsettings.cmd_params.failure_scope_bitmap_out));
+		} else {
+			dect_l2_shell_error(
+				"Cannot write new settings: %d "
+				"(request rejected, requested scope bitmap: 0x%04x)",
+				ret, newsettings.cmd_params.write_scope_bitmap);
+		}
 	} else {
 		dect_l2_shell_print("Settings updated.");
 	}
@@ -2505,6 +2648,7 @@ show_usage:
 	dect_l2_shell_print("%s", dect_shell_sett_cluster_usage_str2);
 	dect_l2_shell_print("%s", dect_shell_sett_network_beacon_usage_str);
 	dect_l2_shell_print("%s", dect_shell_sett_sec_conf_usage_str);
+	dect_l2_shell_print("%s", dect_shell_sett_dlc_usage_str);
 }
 
 static void dect_shell_cluster_start_cmd(const struct shell *shell, size_t argc, char **argv)
