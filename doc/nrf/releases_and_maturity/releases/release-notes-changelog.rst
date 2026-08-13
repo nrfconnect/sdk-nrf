@@ -965,6 +965,8 @@ The following list summarizes both the main changes inherited from upstream MCUb
   * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
     The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
 
+* Restored the :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` Kconfig option (for the Crypto implementation support), which was marked as deprecated in the previous release.
+
 Zephyr
 ======
 
