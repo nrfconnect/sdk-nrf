@@ -289,6 +289,22 @@ static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 }
 #endif /* CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS */
 
+#if CONFIG_CAF_BLE_FRAME_SPACE_EVENTS
+static void frame_space_updated(struct bt_conn *conn,
+				const struct bt_conn_le_frame_space_updated *params)
+{
+	struct ble_peer_frame_space_updated_event *event =
+		new_ble_peer_frame_space_updated_event();
+
+	__ASSERT(params != NULL, "params pointer is NULL");
+
+	event->id = conn;
+	event->params = *params;
+
+	APP_EVENT_SUBMIT(event);
+}
+#endif /* CONFIG_CAF_BLE_FRAME_SPACE_EVENTS */
+
 static void bt_ready(int err)
 {
 	if (err) {
@@ -325,6 +341,9 @@ static int ble_state_init(void)
 #if CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS
 		.conn_rate_changed = conn_rate_changed,
 #endif /* CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS */
+#if CONFIG_CAF_BLE_FRAME_SPACE_EVENTS
+		.frame_space_updated = frame_space_updated,
+#endif /* CONFIG_CAF_BLE_FRAME_SPACE_EVENTS */
 	};
 	bt_conn_cb_register(&conn_callbacks);
 
