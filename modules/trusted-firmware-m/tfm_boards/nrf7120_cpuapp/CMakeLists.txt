@@ -28,6 +28,18 @@ target_include_directories(platform_s
   ${ZEPHYR_BASE}/soc/nordic/common
   )
 
+if(DEFINED NRF71_WIFI_LMAC_PATCH_ADDR)
+  target_compile_definitions(platform_s PRIVATE
+    NRF71_WIFI_LMAC_PATCH_ADDR=${NRF71_WIFI_LMAC_PATCH_ADDR}
+  )
+endif()
+
+if(DEFINED NRF71_WIFI_UMAC_PATCH_ADDR)
+  target_compile_definitions(platform_s PRIVATE
+    NRF71_WIFI_UMAC_PATCH_ADDR=${NRF71_WIFI_UMAC_PATCH_ADDR}
+  )
+endif()
+
 install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
         RENAME      cpuarch.cmake)
