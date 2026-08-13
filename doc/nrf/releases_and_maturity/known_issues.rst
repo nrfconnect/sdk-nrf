@@ -5606,6 +5606,13 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
+
+DRGN-29306: Starting a high duty cycle directed advertiser causes subsequent undirected advertising events on the same advertising set to not use a random delay
+   The randomness is not restored by either stopping the high duty cycle advertiser or by disabling and re-enabling the advertising set.
+
+   **Workaround:** Call the :c:func:`hci_vs_sdc_set_adv_randomness` function with the affected advertising handle and a ``rand_us`` value of ``10000`` or recreate the advertising set.
+
 .. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
 DRGN-29227: Incorrect return parameters from the HCI LE Read Supported States command
