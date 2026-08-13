@@ -40,6 +40,7 @@ static const struct dect_settings_cluster cluster_beacon_data = {
 	.channel_loaded_percent = CONFIG_DECT_MDM_DEFAULT_FT_CLUSTER_CHANNEL_LOADED_PERCENT,
 	.neighbor_inactivity_disconnect_timer_ms =
 		CONFIG_DECT_MDM_DEFAULT_FT_NEIGHBOR_INACTIVITY_DISCONNECT_TIMER_MS,
+	.rach_conf_resp_win_length = 8,
 };
 
 static const struct dect_settings_auto_start auto_start_data = {
@@ -253,6 +254,8 @@ dect_mdm_settings_write(struct dect_mdm_settings *dect_sett_in)
 			new_sett->cluster.channel_loaded_percent;
 		current_sett->cluster.neighbor_inactivity_disconnect_timer_ms =
 			new_sett->cluster.neighbor_inactivity_disconnect_timer_ms;
+		current_sett->cluster.rach_conf_resp_win_length =
+			new_sett->cluster.rach_conf_resp_win_length;
 	}
 	if (write_scope_bitmap_in & DECT_SETTINGS_WRITE_SCOPE_NW_BEACON) {
 		current_sett->nw_beacon.beacon_period = new_sett->nw_beacon.beacon_period;

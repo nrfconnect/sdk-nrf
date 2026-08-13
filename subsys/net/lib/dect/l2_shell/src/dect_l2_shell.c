@@ -171,7 +171,10 @@ static const char dect_shell_sett_cluster_usage_str2[] =
 	"                                     initiating channel reselection automatically.\n"
 	"      --cluster_nbr_inactivity_time <ms>, Neighbor inactivity timer (in ms) that\n"
 	"                                          triggers association releasing.\n"
-	"                                          Use 0 to disable timer.\n";
+	"                                          Use 0 to disable timer.\n"
+	"      --cluster_rach_resp_win <0-15>, Random access response window_length (in subslots)\n"
+	"                                      used in the cluster RA configuration broadcast.\n"
+	"                                      Range: 0-15. Default: 8.\n";
 static const char dect_shell_sett_network_beacon_usage_str[] =
 	"Network beacon settings\n"
 	"      --nw_beacon_period <#>,        Set network beacon period in ms. Possible values:\n"
@@ -204,6 +207,7 @@ enum {
 	DECT_SHELL_SETT_CMD_CLUSTER_MAX_BEACON_TX_PWR,
 	DECT_SHELL_SETT_CMD_CLUSTER_MAX_TX_PWR,
 	DECT_SHELL_SETT_CMD_CLUSTER_NBR_INACTIVITY_TIME,
+	DECT_SHELL_SETT_CMD_CLUSTER_RACH_RESP_WIN,
 	DECT_SHELL_SETT_CMD_ASSOCIATION_MAX_CLUSTER_BEACON_RX_FAILS,
 	DECT_SHELL_SETT_CMD_ASSOCIATION_MIN_SENSITIVITY,
 	DECT_SHELL_SETT_CMD_NW_BEACON_PERIOD,
@@ -247,6 +251,8 @@ static struct sys_getopt_option long_options_sett_cmd[] = {
 	 DECT_SHELL_SETT_CMD_CLUSTER_MAX_TX_PWR},
 	{"cluster_nbr_inactivity_time", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_CLUSTER_NBR_INACTIVITY_TIME},
+	{"cluster_rach_resp_win", sys_getopt_required_argument, 0,
+	 DECT_SHELL_SETT_CMD_CLUSTER_RACH_RESP_WIN},
 	{"nw_beacon_period", sys_getopt_required_argument, 0, DECT_SHELL_SETT_CMD_NW_BEACON_PERIOD},
 	{"nw_beacon_channel", sys_getopt_required_argument, 0,
 	 DECT_SHELL_SETT_CMD_NW_BEACON_CHANNEL},
@@ -1994,6 +2000,8 @@ static void dect_shell_sett_cmd_print(struct dect_settings *dect_sett)
 		dect_l2_shell_print(
 				    "   Neighbor inactivity time:            timer disabled");
 	}
+	dect_l2_shell_print("   RACH response window length:         %u",
+			    dect_sett->cluster.rach_conf_resp_win_length);
 	dect_l2_shell_print("  Network beacon:");
 	dect_l2_shell_print("   Period:                              %d ms",
 			    dect_common_utils_settings_mac_pdu_nw_beacon_period_in_ms(
@@ -2305,6 +2313,17 @@ static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **a
 				return;
 			}
 			newsettings.cluster.neighbor_inactivity_disconnect_timer_ms = tmp_value;
+			newsettings.cmd_params.write_scope_bitmap |=
+				DECT_SETTINGS_WRITE_SCOPE_CLUSTER;
+			break;
+		}
+		case DECT_SHELL_SETT_CMD_CLUSTER_RACH_RESP_WIN: {
+			tmp_value = shell_strtoul(sys_getopt_optarg, 10, &ret);
+			if (ret || tmp_value > 15) {
+				dect_l2_shell_error("Give decent value (range: 0-15)");
+				return;
+			}
+			newsettings.cluster.rach_conf_resp_win_length = (uint8_t)tmp_value;
 			newsettings.cmd_params.write_scope_bitmap |=
 				DECT_SETTINGS_WRITE_SCOPE_CLUSTER;
 			break;
