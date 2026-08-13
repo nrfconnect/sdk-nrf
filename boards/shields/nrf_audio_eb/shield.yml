@@ -1,0 +1,11 @@
+shield:
+  name: nrf_audio_eb
+  full_name: NRF_AUDIO_EB
+  vendor: nordic
+  supported_features:
+    - tac5112
+    - nvt4858
+    - led
+    - i2c
+    - i2s
+    - spi

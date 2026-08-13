@@ -1,0 +1,27 @@
+# Texas Instruments TAC5112 low-power stereo audio codec
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config AUDIO_TAC5112
+	bool "TAC5112 stereo audio codec support"
+	default y
+	depends on DT_HAS_TI_TAC5112_ENABLED
+	select I2C
+	depends on GPIO
+	help
+	  Enable the driver for the Texas Instruments TAC5112 low-power
+	  stereo audio codec, controlled over I2C with the audio data path
+	  carried over I2S/TDM (the codec operating as the I2S bus target).
+
+config AUDIO_TAC5112_EMUL
+	bool "TAC5112 I2C emulator (test only)"
+	default n
+	depends on AUDIO_TAC5112
+	depends on EMUL
+	help
+	  Enable the I2C emulator used by tests/drivers/audio/tac5112 to
+	  exercise the TAC5112 driver on native_sim without hardware. Not
+	  intended for production images.

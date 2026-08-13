@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Devicetree overlay for running the TAC5112 driver + I2C-mock ztest suite
+ * on a Nordic nRF54LM20 DK (board target nrf54lm20dk/nrf54lm20a/cpuapp).
+ *
+ * This runs the *unit tests* on the real Cortex-M33 application core -- the
+ * production driver code, the real Zephyr I2C API, kernel mutex and system
+ * workqueue -- without needing a physical TAC5112 wired up. As on QEMU, the
+ * codec is provided by the software mock (drivers/audio/tac5112_emul.c)
+ * bound to a "zephyr,i2c-emul-controller" bus, so no real TWIM pins are
+ * touched. For driving a *physical* codec over a real TWIM instance, see
+ * the production overlay snippet in README.md instead.
+ *
+ * NOTE: confirm the exact board target on your NCS/Zephyr version with
+ *   west boards | grep -i 54lm20
+ * If it differs (e.g. a different SoC revision or a /ns variant), rename
+ * this file to boards/<that-target-with-slashes-as-underscores>.overlay.
+ */
+
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+
+	tac5112_i2c: i2c@100 {
+		status = "okay";
+		compatible = "zephyr,i2c-emul-controller";
+		/* This binding marks reg as required. The node is not real
+		 * MMIO -- reg is only an identifier for an emulated bus -- but
+		 * it must be present and match the @unit-address above.
+		 */
+		reg = <0x100 4>;
+		clock-frequency = <I2C_BITRATE_STANDARD>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tac5112_0: audio-codec@50 {
+			compatible = "ti,tac5112";
+			reg = <0x50>;
+		};
+	};
+};

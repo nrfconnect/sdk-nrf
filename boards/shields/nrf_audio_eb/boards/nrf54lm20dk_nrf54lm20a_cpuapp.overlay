@@ -1,0 +1,164 @@
+/*
+ * nRF-Audio-EB shield overlay for the nRF54LM20.
+ *
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * The nRF-Audio-EB header (P2, socket 2x13) mates 1:1 with the Nordic
+ * expansion-board header P17 (pin hdr 2x13) on the nRF54LM20 carrier.
+ * All physical pins therefore correspond directly.
+ *
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+
+/ {
+	aliases {
+		dmic0 = &pdm20;
+		tac5112-i2s = &tdm;
+	};
+
+	nrf_audio_eb_inputs: gpio-keys {
+		compatible = "gpio-keys";
+
+		line_in_detect: line_in_detect {
+			gpios = <&gpio3 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+			label = "nRF-Audio-EB line-in detect";
+			zephyr,code = <INPUT_KEY_0>;
+		};
+	};
+
+	nrf_audio_eb_leds: leds {
+		compatible = "gpio-leds";
+
+		led_rgb_red: led_0 {
+			gpios = <&gpio3 1 GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB red";
+		};
+
+		led_rgb_green: led_1 {
+			gpios = <&gpio3 3 GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB green";
+		};
+
+		led_rgb_blue: led_2 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "nRF-Audio-EB RGB blue";
+		};
+	};
+};
+
+&pinctrl {
+	tdm_tac5112_default: tdm_tac5112_default {
+		group1 {
+			psels = <NRF_PSEL(TDM_SCK_M, 1, 3)>,
+				<NRF_PSEL(TDM_FSYNC_M, 1, 0)>,
+				<NRF_PSEL(TDM_SDOUT, 1, 13)>,
+				<NRF_PSEL(TDM_SDIN, 1, 5)>;
+		};
+	};
+
+	tdm_tac5112_sleep: tdm_tac5112_sleep {
+		group1 {
+			psels = <NRF_PSEL(TDM_SCK_M, 1, 3)>,
+				<NRF_PSEL(TDM_FSYNC_M, 1, 0)>,
+				<NRF_PSEL(TDM_SDOUT, 1, 13)>,
+				<NRF_PSEL(TDM_SDIN, 1, 5)>;
+			low-power-enable;
+		};
+	};
+
+	i2c_tac5112_default: i2c_tac5112_default {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, 1, 7)>,
+				<NRF_PSEL(TWIM_SDA, 1, 6)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c_tac5112_sleep: i2c_tac5112_sleep {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SCL, 1, 7)>,
+				<NRF_PSEL(TWIM_SDA, 1, 6)>;
+			low-power-enable;
+		};
+	};
+
+	pdm_default: pdm_default {
+		group1 {
+			psels = <NRF_PSEL(PDM_CLK, 0, 3)>,
+				<NRF_PSEL(PDM_DIN, 0, 4)>;
+		};
+	};
+
+	spi_sdcard_default: spi_sdcard_default {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 2)>,
+				<NRF_PSEL(SPIM_MISO, 2, 4)>;
+		};
+	};
+	spi_sdcard_sleep: spi_sdcard_sleep {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 2)>,
+				<NRF_PSEL(SPIM_MISO, 2, 4)>;
+			low-power-enable;
+		};
+	};
+};
+
+&tdm {
+	status = "okay";
+	pinctrl-0 = <&tdm_tac5112_default>;
+	pinctrl-1 = <&tdm_tac5112_sleep>;
+	pinctrl-names = "default", "sleep";
+	sck-clock-source = "PCLK";
+};
+
+&i2c22 {
+	status = "okay";
+	compatible = "nordic,nrf-twim";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+	pinctrl-0 = <&i2c_tac5112_default>;
+	pinctrl-1 = <&i2c_tac5112_sleep>;
+	pinctrl-names = "default", "sleep";
+
+	tac5112: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+		fault-gpios = <&gpio3 2 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&pdm20 {
+	status = "okay";
+	pinctrl-0 = <&pdm_default>;
+	pinctrl-names = "default";
+	clock-source = "PCLK32M";
+};
+
+&spi00 {
+	status = "okay";
+	pinctrl-0 = <&spi_sdcard_default>;
+	pinctrl-1 = <&spi_sdcard_sleep>;
+	pinctrl-names = "default", "sleep";
+	cs-gpios = <&gpio2 5 GPIO_ACTIVE_LOW>;
+
+	sdhc0: sdhc@0 {
+		compatible = "zephyr,sdhc-spi-slot";
+		reg = <0>;
+		status = "okay";
+		spi-max-frequency = <24000000>;
+
+		mmc {
+			compatible = "zephyr,sdmmc-disk";
+			disk-name = "SD";
+			status = "okay";
+		};
+	};
+};

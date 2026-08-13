@@ -1,0 +1,88 @@
+.. _lib_tac5112:
+
+TAC5112 audio codec driver
+##########################
+
+.. contents::
+   :local:
+   :depth: 2
+
+The TAC5112 driver lets you configure and operate the Texas Instruments TAC5112 low-power stereo audio codec.
+The TAC5112 provides a 105 dB dynamic-range stereo ADC and a 114 dB dynamic-range stereo DAC, with a programmable low-jitter PLL, digital volume control, and battery and thermal fault protection.
+See `TAC5112 product page`_ for more information about the device.
+
+The driver controls the codec over I2C and conforms to the :ref:`Zephyr audio codec API <zephyr:audio_codec_api>`.
+Audio sample data is carried separately over the codec's audio serial interface (I2S, left-justified, or TDM), with the codec acting as the bus target while the host (for example, an nRF5-series I2S or TDM peripheral) generates the bit and frame clocks.
+
+The :ref:`tac5112_sample` sample demonstrates how to use this driver in an application, including tone playback and an ADC-to-DAC loopback.
+
+Supported features
+******************
+
+The driver implements the following members of the Zephyr audio codec API:
+
+* Codec configuration (``audio_codec_configure``): software reset, sleep exit, audio serial interface format (I2S, LJ, or TDM) and word length (16, 20, 24, or 32 bits), and automatic PLL and clock configuration.
+* Output enable and disable (``audio_codec_start_output`` / ``audio_codec_stop_output``) and direction-selectable power control (``audio_codec_start`` / ``audio_codec_stop``).
+* Per-channel output and input digital volume in 0.5 dB steps, and mute (``audio_codec_set_property`` / ``audio_codec_apply_properties``).
+* Fault reporting (``audio_codec_clear_errors`` / ``audio_codec_register_error_callback``): output short-circuit and virtual-ground faults are delivered to a registered callback through the optional codec interrupt line.
+
+In addition, the driver exposes a helper for explicit PLL and clock-divider configuration for clock ratios outside the codec's auto-detection table.
+
+Configuration
+*************
+
+To enable the driver, set the :kconfig:option:`CONFIG_AUDIO_TAC5112` Kconfig option.
+This option depends on :kconfig:option:`CONFIG_AUDIO` and :kconfig:option:`CONFIG_AUDIO_CODEC`, and selects :kconfig:option:`CONFIG_I2C`.
+
+The following Kconfig options are available:
+
+* :kconfig:option:`CONFIG_AUDIO_TAC5112` - Enables the TAC5112 codec driver.
+* :kconfig:option:`CONFIG_AUDIO_TAC5112_EMUL` - Enables the I2C emulator used to run the driver's tests without hardware. Intended for test builds only.
+
+Devicetree
+==========
+
+The codec node must be a child of an I2C controller node and use the ``ti,tac5112`` compatible (:dtcompatible:`ti,tac5112`).
+Set the ``reg`` property to the 7-bit I2C address selected by the codec ``ADDR`` pin (``0x50`` to ``0x53``).
+
+The following optional properties are supported:
+
+* ``reset-gpios`` - Hardware reset line, driven inactive during initialization to release the codec from reset.
+* ``fault-gpios`` - GPIO connected to the codec interrupt output. When present, the driver services the interrupt from the system workqueue and invokes the callback registered with ``audio_codec_register_error_callback``.
+
+The following snippet shows an example configuration:
+
+.. code-block:: devicetree
+
+   &i2c1 {
+           status = "okay";
+
+           tac5112: audio-codec@50 {
+                   compatible = "ti,tac5112";
+                   reg = <0x50>;
+                   reset-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
+                   fault-gpios = <&gpio0 19 GPIO_ACTIVE_LOW>;
+           };
+   };
+
+Limitations
+***********
+
+The driver has the following limitations:
+
+* Only I2C control is supported. The codec's SPI control interface is not implemented.
+* Only audio-serial-interface target mode is supported. The host must generate the bit clock (BCLK) and frame sync (FSYNC); the driver rejects a request for controller mode with ``-ENOTSUP``.
+* Only the two-channel (stereo) analog path is modeled. The multichannel PDM and TDM extensions of the wider TAx5x1x family are out of scope.
+* Only the output short-circuit and virtual-ground fault interrupts are enabled. The clock-error interrupt is left masked.
+* Equalizer and biquad programmable coefficients (``AUDIO_PROPERTY_EQ_GAIN``) are not supported and are rejected with ``-ENOTSUP``.
+
+API documentation
+*****************
+
+| Header file: :file:`drivers/audio/tac5112.h`
+| Source file: :file:`drivers/audio/tac5112.c`
+
+The driver implements the Zephyr audio codec API.
+See :ref:`zephyr:audio_codec_api` for the interface documentation.
+
+.. _TAC5112 product page: https://www.ti.com/product/TAC5112

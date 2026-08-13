@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Runs the TAC5112 driver + I2C-mock ztest suite on the nRF5340 DK
+ * application core (Cortex-M33). Like the qemu_cortex_m3 overlay, it
+ * supplies a software "zephyr,i2c-emul-controller" so the whole stack --
+ * driver, Zephyr I2C API, and the mock -- runs with no physical codec.
+ */
+
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+
+	tac5112_i2c: i2c@100 {
+		status = "okay";
+		compatible = "zephyr,i2c-emul-controller";
+		reg = <0x100 4>;
+		clock-frequency = <I2C_BITRATE_STANDARD>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tac5112_0: audio-codec@50 {
+			compatible = "ti,tac5112";
+			reg = <0x50>;
+		};
+	};
+};
