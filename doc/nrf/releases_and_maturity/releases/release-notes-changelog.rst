@@ -797,6 +797,8 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 * Added support for the nRF54LC10A SoC.
 
+* Restored support for the Crypto implementation through the :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` Kconfig option, which was deprecated in the previous release.
+
 Zephyr
 ======
 
