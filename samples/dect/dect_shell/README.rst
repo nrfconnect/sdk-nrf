@@ -370,7 +370,15 @@ PT: ICMPv6 ping an FT device
 
 DeSh command ``ping``.
 
-The ``ping`` command sends ICMPv6 echo request to an FT device using the AF_INET6/SOCK_RAW/IPPROTO_IP sockets.
+The ``ping`` command sends ICMPv6 (IPv6 only) echo requests over the DECT interface using Zephyr's ``net_icmp`` API (the same low-level mechanism as the built-in ``net ping`` command).
+DeSh ``ping`` adds the following features beyond ``net ping``:
+
+* Hostname resolution (including mDNS names, such as ``dect-ft-device.local``)
+* Configurable count, interval, timeout, and payload length
+* Per-reply RTT and payload reporting
+* End-of-run loss and min/max/average statistics
+* Default binding to the DECT NR+ interface
+* Abort over the DeSh kill signal
 
 * PT device: Using global IPv6 address of the FT device (the global address is only available if the FT device is connected to the Internet):
 
@@ -414,7 +422,7 @@ The ``ping`` command sends ICMPv6 echo request to an FT device using the AF_INET
         Minimum = 991ms, Maximum = 1995ms, Average = 1242ms
      Pinging DONE
 
-* PT device: Zephyr IP stack ``net ping`` command is also available:
+* PT device: The built-in Zephyr ``net ping`` command is also available for a minimal ping to a literal IPv6 address (no hostname resolution or DeSh statistics/abort):
 
   .. code-block:: console
 
