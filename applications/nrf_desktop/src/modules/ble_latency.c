@@ -79,8 +79,6 @@ static void set_init_conn_params(void)
 		.timeout = DEFAULT_TIMEOUT
 	};
 
-	last_requested_latency_is_low = true;
-
 	int err = bt_conn_le_param_update(active_conn, &param);
 
 	if (!err || (err == -EALREADY)) {
@@ -657,7 +655,12 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)) {
 				latency_state |= CONN_LOW_LATENCY_LOCKED;
 			}
-			set_init_conn_params();
+
+			if (!IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE)) {
+				set_init_conn_params();
+			}
+			last_requested_latency_is_low = true;
+
 			k_work_reschedule(&security_timeout,
 					      SECURITY_FAIL_TIMEOUT_MS);
 			break;

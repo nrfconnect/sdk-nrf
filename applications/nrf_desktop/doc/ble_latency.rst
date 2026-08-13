@@ -11,7 +11,7 @@ The Bluetooth® LE latency module manages Bluetooth LE connection parameters to 
 Use the Bluetooth LE latency module for the following purposes:
 
 * Lower the Bluetooth LE connection latency when the :ref:`nrf_desktop_config_channel` is in use or when a firmware update is received either by the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` (low latency ensures quick data exchange).
-* Request setting the initial connection parameters for a new Bluetooth connection.
+* Request setting the initial connection parameters for a new Bluetooth connection (not applicable to HID SCI supporting peripherals).
 * Keep the connection latency low for the LLPM (Low Latency Packet Mode) connections to improve performance.
 * Handle mode change requests for HID Shorter Connection Intervals (SCI) and adjust the peripheral latency within the active SCI mode.
 * Disconnect the Bluetooth Central if the connection has not been secured in the predefined amount of time after the connection occurred.
