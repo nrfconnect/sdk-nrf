@@ -17,6 +17,7 @@
 
 &mx25r64 {
 	status = "okay";
+	sck-frequency = <DT_FREQ_M(8)>;
 };
 
 tst_timer: &timer2 {

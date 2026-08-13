@@ -66,7 +66,7 @@
 
 &mx25uw63 {
 	status = "okay";
-	mspi-max-frequency = <DT_FREQ_M(50)>;
+	mspi-max-frequency = <DT_FREQ_M(8)>;
 	mspi-io-mode = "MSPI_IO_MODE_SINGLE";
 	transfer-timeout = <1000>;
 };
