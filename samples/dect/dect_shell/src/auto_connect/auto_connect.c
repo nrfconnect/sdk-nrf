@@ -29,10 +29,15 @@ static struct net_mgmt_event_callback auto_connect_net_mgmt_cb;
 static struct {
 	struct net_if *iface;
 	bool connected;
+	bool dect_activated;
+#if defined(CONFIG_NET_CONNECTION_MANAGER)
+	bool l4_connected;
+#endif
 } context;
 
-static bool sett_auto_connect_enabled;
-static int sett_auto_connect_delay_secs;
+static bool sett_auto_connect_enabled =
+	IS_ENABLED(CONFIG_SAMPLE_DESH_AUTO_CONNECT_DEFAULT_ENABLED);
+static int sett_auto_connect_delay_secs = CONFIG_SAMPLE_DESH_AUTO_CONNECT_DEFAULT_DELAY_SECS;
 
 K_SEM_DEFINE(auto_conn_sink_connected_sem, 0, 1);
 
@@ -116,6 +121,38 @@ static void auto_connect_work_fn(struct k_work *item)
 
 K_WORK_DELAYABLE_DEFINE(auto_connect_work, auto_connect_work_fn);
 
+/*
+ * Trigger rules when delay == AUTO_CONNECT_DELAY_USE_DEFAULT_TRIGGER:
+ *   - with CONFIG_NET_CONNECTION_MANAGER: fire once both
+ *     NET_EVENT_DECT_ACTIVATE_DONE and NET_EVENT_L4_CONNECTED have arrived.
+ *   - without it: fire on NET_EVENT_DECT_ACTIVATE_DONE.
+ * Any other delay overrides this and is scheduled from
+ * NET_EVENT_DECT_ACTIVATE_DONE.
+ */
+static void auto_connect_try_trigger(void)
+{
+	if (!sett_auto_connect_enabled) {
+		return;
+	}
+	if (context.connected) {
+		return;
+	}
+	if (!context.dect_activated) {
+		return;
+	}
+	if (sett_auto_connect_delay_secs != AUTO_CONNECT_DELAY_USE_DEFAULT_TRIGGER) {
+		/* Delay-driven path: scheduled from NET_EVENT_DECT_ACTIVATE_DONE. */
+		return;
+	}
+#if defined(CONFIG_NET_CONNECTION_MANAGER)
+	if (!context.l4_connected) {
+		return;
+	}
+#endif
+	desh_print("auto_connect: preconditions met, triggering");
+	k_work_schedule_for_queue(&desh_common_work_q, &auto_connect_work, K_NO_WAIT);
+}
+
 /**************************************************************************************************/
 
 #if defined(CONFIG_DATE_TIME_NTP)
@@ -159,9 +196,12 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb, uint64_t event,
 	case NET_EVENT_L4_CONNECTED:
 		desh_print("NET_EVENT_L4_CONNECTED: Network connectivity established "
 			   "and global IPv6 address assigned, iface %p", iface);
+		context.l4_connected = true;
+		auto_connect_try_trigger();
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
 		desh_print("NET_EVENT_L4_DISCONNECTED: IP down, iface %p", iface);
+		context.l4_connected = false;
 		break;
 	case NET_EVENT_L4_IPV6_CONNECTED:
 		desh_print("NET_EVENT_L4_IPV6_CONNECTED: IPv6 connectivity established, iface %p",
@@ -213,12 +253,24 @@ static void auto_connect_net_mgmt_event_handler(struct net_mgmt_event_callback *
 			desh_error("Activation failed: %d (%s)", evt->status, err_str);
 		} else {
 			desh_print("Activation done");
-			if (auto_connect_sett_is_enabled()) {
-				/* Trigger a work for doing the auto connect */
-				desh_print("Auto connect is enabled, scheduling work in %d seconds",
-					   sett_auto_connect_delay_secs);
-				k_work_schedule_for_queue(&desh_common_work_q, &auto_connect_work,
-							  K_SECONDS(sett_auto_connect_delay_secs));
+			context.dect_activated = true;
+			if (sett_auto_connect_enabled) {
+				if (sett_auto_connect_delay_secs !=
+				    AUTO_CONNECT_DELAY_USE_DEFAULT_TRIGGER) {
+					desh_print("auto_connect: scheduling work in %d seconds",
+						   sett_auto_connect_delay_secs);
+					k_work_schedule_for_queue(
+						&desh_common_work_q, &auto_connect_work,
+						K_SECONDS(sett_auto_connect_delay_secs));
+				} else {
+#if defined(CONFIG_NET_CONNECTION_MANAGER)
+					if (!context.l4_connected) {
+						desh_print("auto_connect: waiting for "
+							   "NET_EVENT_L4_CONNECTED");
+					}
+#endif
+					auto_connect_try_trigger();
+				}
 			}
 		}
 		break;
@@ -234,6 +286,7 @@ static void auto_connect_net_mgmt_event_handler(struct net_mgmt_event_callback *
 		} else {
 			desh_print("De-activation done");
 			context.connected = false;
+			context.dect_activated = false;
 		}
 		break;
 	}
@@ -364,8 +417,10 @@ int auto_connect_init(void)
 		printk("Interface %s not found\n", CONFIG_DECT_MDM_DEVICE_NAME);
 	}
 
-	/* Settings init */
-	sett_auto_connect_enabled = false;
+	/* Settings init. sett_auto_connect_{enabled,delay_secs} hold the
+	 * Kconfig-supplied defaults at this point; settings_load() below
+	 * overwrites them when a persisted value exists.
+	 */
 	ret = settings_subsys_init();
 	if (ret) {
 		printk("Failed to initialize settings subsystem, error: %d\n", ret);

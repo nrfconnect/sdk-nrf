@@ -51,6 +51,55 @@ config SAMPLE_DESH_L2_SHELL
 	  Enable support for DECT NR+ Net Management interface.
 	  This selects the DECT MAC L2 shell library.
 
+menuconfig SAMPLE_DESH_AUTO_CONNECT
+	bool "Auto-connect command"
+	default y
+	help
+	  Build the "auto_connect" shell command and its event-driven worker
+	  that joins (PT) or creates (FT) the DECT NR+ network automatically
+	  once the configured trigger conditions are met. The runtime state is
+	  persisted through the Zephyr settings subsystem. Auto-connect is
+	  disabled at runtime by default; enable it using the shell or
+	  SAMPLE_DESH_AUTO_CONNECT_DEFAULT_ENABLED.
+
+	  Disable to drop both auto_connect.c and auto_connect_shell.c from the
+	  build when the sample only needs manual network bring-up.
+
+if SAMPLE_DESH_AUTO_CONNECT
+
+config SAMPLE_DESH_AUTO_CONNECT_DEFAULT_ENABLED
+	bool "Enable auto-connect by default"
+	help
+	  Initial value of the auto-connect setting at first boot, used until
+	  the user overrides it using the "auto_connect enable|disable" shell
+	  commands. The override is persisted through the Zephyr settings
+	  subsystem and wins over this default on subsequent boots.
+
+	  When enabled, the sample joins (PT) or creates (FT) the DECT NR+
+	  network automatically once the trigger conditions are met
+	  (see SAMPLE_DESH_AUTO_CONNECT_DEFAULT_DELAY_SECS).
+
+config SAMPLE_DESH_AUTO_CONNECT_DEFAULT_DELAY_SECS
+	int "Auto-connect delay (seconds)"
+	default 0
+	range 0 86400
+	help
+	  Initial auto-connect delay used at first boot, until the user
+	  overrides it using "auto_connect delay <seconds>". The override is
+	  persisted through the Zephyr settings subsystem and wins over this
+	  default on subsequent boots.
+
+	  0 selects the default trigger: when CONFIG_NET_CONNECTION_MANAGER is
+	  enabled, auto_connect waits for both NET_EVENT_DECT_ACTIVATE_DONE and
+	  NET_EVENT_L4_CONNECTED before firing; otherwise it fires as soon as
+	  NET_EVENT_DECT_ACTIVATE_DONE arrives.
+
+	  A non-zero value overrides the default trigger and schedules the
+	  auto-connect work that many seconds after NET_EVENT_DECT_ACTIVATE_DONE,
+	  independent of L4 connectivity.
+
+endif # SAMPLE_DESH_AUTO_CONNECT
+
 rsource "Kconfig.native_tls"
 
 endmenu # Nordic DECT NR+ Shell config

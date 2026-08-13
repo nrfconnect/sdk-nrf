@@ -24,12 +24,14 @@ target_include_directories(app PRIVATE
 target_sources(app PRIVATE
   src/main.c
   src/shell.c
-  src/auto_connect/auto_connect.c
-  src/auto_connect/auto_connect_shell.c
   src/print/print_shell.c
   src/utils/desh_print.c
 )
 
+target_sources_ifdef(CONFIG_SAMPLE_DESH_AUTO_CONNECT app PRIVATE
+  src/auto_connect/auto_connect.c
+  src/auto_connect/auto_connect_shell.c
+)
 target_sources_ifdef(CONFIG_AT_CMD_CUSTOM app PRIVATE src/at/at_cmd_mode_custom.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_CLOUD_MQTT app PRIVATE src/cloud/cloud_mqtt_shell.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_CLOUD_COAP app PRIVATE src/cloud/cloud_coap_shell.c)
