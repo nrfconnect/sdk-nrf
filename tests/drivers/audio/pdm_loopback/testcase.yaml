@@ -24,6 +24,14 @@ tests:
     extra_args:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+  drivers.audio.pdm_loopback.nrf54lm20.custom_ratio:
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=20000
+      - CONFIG_AUDIO_DMIC_NRFX_PDM_CUSTOM_RATIO=y
   drivers.audio.pdm_loopback.nrf54l.1280khz:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -165,6 +173,14 @@ tests:
       - CONFIG_NRFX_TIMER=y
       - CONFIG_TEST_PDM_SAMPLING_RATE=16000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+  drivers.audio.pdm_loopback.nrf7120.custom_ratio:
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    extra_args:
+      - CONFIG_NRFX_TIMER=y
+      - CONFIG_TEST_PDM_SAMPLING_RATE=16000
+      - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1280000
+      - CONFIG_AUDIO_DMIC_NRFX_PDM_CUSTOM_RATIO=y
   drivers.audio.pdm_loopback.nrf7120.auxpll.44k1hz:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
