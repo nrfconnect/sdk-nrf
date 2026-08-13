@@ -99,3 +99,16 @@
   platforms:
     - thingy53/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
+
+- scenarios:
+    - drivers.timer.grtc_multiple_access
+  platforms:
+    - nrf9251dk/nrf9251/cpuflpr
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9987"
+
+- scenarios:
+    - nrf.extended.kernel.timer.timer
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+  comment: "Overflow"
