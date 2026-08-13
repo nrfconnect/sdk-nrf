@@ -305,6 +305,20 @@ static void frame_space_updated(struct bt_conn *conn,
 }
 #endif /* CONFIG_CAF_BLE_FRAME_SPACE_EVENTS */
 
+#if CONFIG_CAF_BLE_PHY_UPDATED_EVENTS
+static void le_phy_updated(struct bt_conn *conn, struct bt_conn_le_phy_info *params)
+{
+	struct ble_peer_phy_updated_event *event = new_ble_peer_phy_updated_event();
+
+	__ASSERT(params != NULL, "params pointer is NULL");
+
+	event->id = conn;
+	event->params = *params;
+
+	APP_EVENT_SUBMIT(event);
+}
+#endif /* CONFIG_CAF_BLE_PHY_UPDATED_EVENTS */
+
 static void bt_ready(int err)
 {
 	if (err) {
@@ -344,6 +358,9 @@ static int ble_state_init(void)
 #if CONFIG_CAF_BLE_FRAME_SPACE_EVENTS
 		.frame_space_updated = frame_space_updated,
 #endif /* CONFIG_CAF_BLE_FRAME_SPACE_EVENTS */
+#if CONFIG_CAF_BLE_PHY_UPDATED_EVENTS
+		.le_phy_updated = le_phy_updated,
+#endif /* CONFIG_CAF_BLE_PHY_UPDATED_EVENTS */
 	};
 	bt_conn_cb_register(&conn_callbacks);
 
