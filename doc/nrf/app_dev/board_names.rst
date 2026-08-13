@@ -102,6 +102,14 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf9131ek/nrf9131/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)             |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
+| nRF93M1 DK        |            | :zephyr:board:`nrf93m1dk <nrf93m1dk>`                  | ``nrf93m1dk/nrf54l15/cpuapp``                                            |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)     |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr``                                           |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr/xip``                                       |
++-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF54H20 DK       | PCA10175   | :zephyr:board:`nrf54h20dk <nrf54h20dk>`                | ``nrf54h20dk/nrf54h20/cpuapp``                                           |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54h20dk/nrf54h20/cpurad``                                           |
@@ -178,14 +186,6 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp``                                             |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf7002dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| nRF93M1 DK        |            | :zephyr:board:`nrf93m1dk <nrf93m1dk>`                  | ``nrf93m1dk/nrf54l15/cpuapp``                                            |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)     |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr``                                           |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``nrf93m1dk/nrf54l15/cpuflpr/xip``                                       |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 
 .. note::

@@ -335,6 +335,9 @@
 .. _`Nordic nRF9151 SMA DK`:
 .. _`nRF9151 SMA DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF9151-SMA-DK
 
+.. _`nRF93M1 DK product page`: https://www.nordicsemi.com/Products/Development-hardware/nRF93M1-DK
+.. _`nRF93M1 module product page`: https://www.nordicsemi.com/Products/nRF93M1
+
 .. _`nRF9151 product website`: https://www.nordicsemi.com/Products/nRF9151
 .. _`nRF9161 product website`: https://www.nordicsemi.com/Products/nRF9161
 .. _`nRF9160 product website`: https://www.nordicsemi.com/Products/Low-power-cellular-IoT/nRF9160
@@ -526,6 +529,7 @@
 .. _`Install the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/common/nrf_connect_app_installing.html
 .. _`Using the Power Profiler app`: https://docs.nordicsemi.com/bundle/ug_ppk2/page/UG/ppk/PPK_user_guide_Running_the_software.html
 .. _`Power Profiler app`: https://docs.nordicsemi.com/bundle/swtools_docs/page/app/pc-nrfconnect-ppk/index.html
+.. _`Power Profiler Kit Hardware`: https://docs.nordicsemi.com/r/bundle/ug_ppk/page/ug/ppk/ppk_user_guide_intro.html
 
 .. _`Electrical specification for nRF7002`: https://docs.nordicsemi.com/bundle/ps_nrf7002/page/chapters/elspec/doc/electrical_specification.html
 
@@ -571,6 +575,10 @@
 
 .. _`nRF9151 SMA DK Hardware`: https://docs.nordicsemi.com/bundle/ug_nrf9151_sma_dk/page/UG/nrf91_DK/intro.html
 .. _`nRF9151 SMA DK board control section in the nRF9151 SMA DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf9151_sma_dk/page/UG/nrf91_DK/hw_description/nrf9161_board_controller.html
+
+.. _`nRF93M1 Datasheet`: https://docs.nordicsemi.com/r/bundle/ps_nrf93m1/page/keyfeatures_html5.html
+.. _`nRF93M1 AT Commands Reference Guide`: https://docs.nordicsemi.com/r/bundle/ref_at_commands_nrf93m1/page/ref/at_commands_93/intro.html
+.. _`nRF93M1 DK Hardware User Guide`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/nRF93M1_DK_HW_User_Guide_v0.4.0.pdf
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html

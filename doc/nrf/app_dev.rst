@@ -27,6 +27,7 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/data_storage
    app_dev/device_guides/kmu_guides/index
    app_dev/device_guides/nrf91/index
+   app_dev/device_guides/nrf93m1/index
    app_dev/device_guides/nrf70/index
    app_dev/device_guides/nrf54l/index
    app_dev/device_guides/nrf54h/index
