@@ -10,6 +10,7 @@
  */
 
 #include <nrf71_wifi_ctrl.h>
+#include <common/mem_mgmt.h>
 #include <offload_raw_tx/hal_api.h>
 #include <offload_raw_tx/fmac_api.h>
 #include <offload_raw_tx/fmac_cmd.h>
@@ -93,14 +94,14 @@ struct nrf_wifi_fmac_priv *nrf_wifi_off_raw_tx_fmac_init(void)
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
 	struct nrf_wifi_hal_cfg_params hal_cfg_params;
 
-	fpriv = nrf_wifi_osal_mem_zalloc(sizeof(*fpriv));
+	fpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*fpriv));
 	if (!fpriv) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate fpriv",
 				      __func__);
 		goto out;
 	}
 
-	nrf_wifi_osal_mem_set(&hal_cfg_params,
+	nrf_wifi_mem_set(&hal_cfg_params,
 			      0,
 			      sizeof(hal_cfg_params));
 
@@ -110,7 +111,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_off_raw_tx_fmac_init(void)
 	if (!fpriv->hpriv) {
 		nrf_wifi_osal_log_err("%s: Unable to do HAL init",
 				      __func__);
-		nrf_wifi_osal_mem_free(fpriv);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
 		fpriv = NULL;
 		goto out;
 	}
@@ -137,7 +138,7 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_off_raw_tx_fmac_dev_add(struct nrf_wifi_f
 		goto out;
 	}
 
-	fmac_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*fmac_dev_ctx) +
+	fmac_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*fmac_dev_ctx) +
 						sizeof(*off_raw_tx_fmac_dev_ctx));
 
 	if (!fmac_dev_ctx) {
@@ -156,7 +157,7 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_off_raw_tx_fmac_dev_add(struct nrf_wifi_f
 		nrf_wifi_osal_log_err("%s: nrf_wifi_off_raw_tx_hal_dev_add failed",
 				      __func__);
 
-		nrf_wifi_osal_mem_free(fmac_dev_ctx);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx);
 		fmac_dev_ctx = NULL;
 		goto out;
 	}
@@ -202,8 +203,10 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	fmac_dev_ctx->tx_pwr_ceil_params = nrf_wifi_osal_mem_alloc(sizeof(*tx_pwr_ceil_params));
-	nrf_wifi_osal_mem_cpy(fmac_dev_ctx->tx_pwr_ceil_params,
+	fmac_dev_ctx->tx_pwr_ceil_params =
+		nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				   sizeof(*tx_pwr_ceil_params));
+	nrf_wifi_mem_cpy(fmac_dev_ctx->tx_pwr_ceil_params,
 			      tx_pwr_ceil_params,
 			      sizeof(*tx_pwr_ceil_params));
 
@@ -232,7 +235,7 @@ void nrf_wifi_off_raw_tx_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 		return;
 	}
 
-	nrf_wifi_osal_mem_free(fmac_dev_ctx->tx_pwr_ceil_params);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx->tx_pwr_ceil_params);
 	nrf_wifi_off_raw_tx_fmac_fw_deinit(fmac_dev_ctx);
 }
 

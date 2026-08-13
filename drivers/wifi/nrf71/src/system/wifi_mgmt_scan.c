@@ -9,6 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <stdlib.h>
 
 #include <zephyr/kernel.h>
@@ -109,7 +110,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 
 	vif_ctx_zep->disp_scan_cb = cb;
 
-	scan_info = nrf_wifi_osal_mem_zalloc(sizeof(*scan_info) +
+	scan_info = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*scan_info) +
 			     (num_scan_channels *
 			      sizeof(scan_info->scan_params.center_frequency[0])));
 
@@ -229,7 +230,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	ret = 0;
 out:
 	if (scan_info) {
-		nrf_wifi_osal_mem_free(scan_info);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, scan_info);
 	}
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
@@ -404,7 +405,8 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	vif_ctx_zep->scan_in_progress = false;
 	vif_ctx_zep->disp_scan_cb = NULL;
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
-	nrf_wifi_osal_mem_free((void *)(uintptr_t)scan_done_event->scan_db_addr);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+			  (void *)(uintptr_t)scan_done_event->scan_db_addr);
 	memset(&vif_ctx_zep->scan_done_event, 0, sizeof(vif_ctx_zep->scan_done_event));
 }
 
@@ -452,12 +454,12 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 	frame_length = nrf_wifi_osal_nbuf_data_size(nwb);
 
 	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
-		nrf_wifi_osal_mem_cpy(&bcn_prb_resp_info.data,
+		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
 				      nrf_wifi_osal_nbuf_data_get(nwb),
 				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
 
 	} else {
-		nrf_wifi_osal_mem_cpy(&bcn_prb_resp_info.data,
+		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
 				      nrf_wifi_osal_nbuf_data_get(nwb),
 				      frame_length);
 	}

@@ -27,15 +27,7 @@
 #include <stdarg.h>
 #endif
 
-/**
- * @brief The status of an operation performed by the RPU driver.
- */
-enum nrf_wifi_status {
-	/** The operation was successful. */
-	NRF_WIFI_STATUS_SUCCESS,
-	/** The operation failed. */
-	NRF_WIFI_STATUS_FAIL = -1
-};
+#include <common/main.h>
 
 /**
  * @brief DMA direction for a DMA operation.

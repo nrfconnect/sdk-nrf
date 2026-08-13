@@ -9,6 +9,7 @@
  * system mode in the FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "system/fmac_structs.h"
 #include "system/fmac_cmd.h"
 #include "common/fmac_util.h"
@@ -86,11 +87,11 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 				   umac_cmd_data->keep_alive_enable);
 #endif /* NRF_WIFI_FEAT_KEEPALIVE */
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->rx_buf_pools,
+	nrf_wifi_mem_cpy(umac_cmd_data->rx_buf_pools,
 			      sys_fpriv->rx_buf_pools,
 			      sizeof(umac_cmd_data->rx_buf_pools));
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->data_config_params,
+	nrf_wifi_mem_cpy(&umac_cmd_data->data_config_params,
 			      config,
 			      sizeof(umac_cmd_data->data_config_params));
 
@@ -107,17 +108,17 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	umac_cmd_data->sys_params.vtf_buffer_addr = vtf_buffer_start_address;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params_addr,
+	nrf_wifi_mem_cpy(&umac_cmd_data->sys_params.rf_params_addr,
 			      rf_params_addr,
 			      sizeof(umac_cmd_data->sys_params.rf_params_addr));
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
+	nrf_wifi_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
 			      tx_pwr_ctrl_params,
 			      sizeof(umac_cmd_data->sys_params.tx_pwr_ctrl_params));
 
 	(void)board_params;
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
+	nrf_wifi_mem_cpy(umac_cmd_data->country_code,
 			      country_code,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
 
@@ -340,15 +341,15 @@ enum nrf_wifi_status umac_cmd_sys_he_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	umac_cmd_data->sys_head.len = len;
 
 	if (enabled) {
-		nrf_wifi_osal_mem_cpy(&umac_cmd_data->he_ltf,
+		nrf_wifi_mem_cpy(&umac_cmd_data->he_ltf,
 				      &he_ltf,
 				      sizeof(he_ltf));
-		nrf_wifi_osal_mem_cpy(&umac_cmd_data->he_gi_type,
+		nrf_wifi_mem_cpy(&umac_cmd_data->he_gi_type,
 				      &he_gi,
 				      sizeof(he_gi));
 	}
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->enable,
+	nrf_wifi_mem_cpy(&umac_cmd_data->enable,
 			      &enabled,
 			      sizeof(enabled));
 
@@ -384,7 +385,7 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_LMAC_TUNING_PARAMS;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_set(&umac_cmd_data->params, 0, sizeof(umac_cmd_data->params));
+	nrf_wifi_mem_set(&umac_cmd_data->params, 0, sizeof(umac_cmd_data->params));
 
 	/* Hardware latency compensation tuning parameters used to achieve the
 	 * target SIFS timing. These values have been calibrated through lab

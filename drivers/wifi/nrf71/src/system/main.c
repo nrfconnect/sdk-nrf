@@ -9,6 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,6 +27,7 @@
 #include <zephyr/net/conn_mgr/connectivity_wifi_mgmt.h>
 #endif /* CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT */
 
+#include <common/status.h>
 #include <util.h>
 #include <common/fmac_util.h>
 #include <system/main.h>
@@ -152,7 +154,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		 */
 		k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 		if (vif_ctx_zep->connect_scan_db_addr) {
-			nrf_wifi_osal_mem_free(
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 				(void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 		}
 		vif_ctx_zep->connect_scan_db_addr = scan_done_event->scan_db_addr;
@@ -476,7 +478,7 @@ void reg_change_callbk_fn(void *vif_ctx,
 		return;
 	}
 
-	fmac_dev_ctx->reg_change = nrf_wifi_osal_mem_alloc(sizeof(struct
+	fmac_dev_ctx->reg_change = nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(struct
 							   nrf_wifi_event_regulatory_change));
 	if (!fmac_dev_ctx->reg_change) {
 		LOG_ERR("%s: Failed to allocate memory for reg_change", __func__);
@@ -603,14 +605,16 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
 	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				   (void *)rpu_ctx_zep->phy_rf_params_addr[i]);
 		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
 	}
-	nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+			  (void *)rpu_ctx_zep->vtf_buffer_start_address);
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
-	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
-	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa_mask);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa_mask);
 	rpu_ctx_zep->extended_capa_mask = NULL;
 
 	rpu_ctx_zep->rpu_ctx = NULL;

@@ -15,6 +15,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/net/net_pkt.h>
+#include <common/mem_mgmt.h>
 
 #define NRF_WIFI_EXTRA_TX_HEADROOM 100
 

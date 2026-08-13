@@ -9,6 +9,7 @@
  * radio test mode in the FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "radio_test/fmac_cmd.h"
 #include "common/hal_api_common.h"
 
@@ -48,7 +49,7 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_INIT;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->sys_params.rf_params_addr,
+	nrf_wifi_mem_cpy(umac_cmd_data->sys_params.rf_params_addr,
 		rf_params_addr,
 		sizeof(unsigned int) * NUM_WIFI_PARAMS);
 	umac_cmd_data->sys_params.vtf_buffer_addr = vtf_buffer_start_address;
@@ -87,11 +88,11 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 
 	umac_cmd_data->op_band = op_band;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
+	nrf_wifi_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
 		&tx_pwr_ctrl_params->ant_gain_2g,
 		10 * sizeof(unsigned char));
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
+	nrf_wifi_mem_cpy(umac_cmd_data->country_code,
 			      country_code,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
 
@@ -189,7 +190,7 @@ enum nrf_wifi_status umac_cmd_rt_prog_init(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_RADIO_TEST_INIT;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->conf,
+	nrf_wifi_mem_cpy(&umac_cmd_data->conf,
 			      init_params,
 			      sizeof(umac_cmd_data->conf));
 
@@ -226,7 +227,7 @@ enum nrf_wifi_status umac_cmd_rt_prog_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_TX;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->conf,
+	nrf_wifi_mem_cpy(&umac_cmd_data->conf,
 			      params,
 			      sizeof(umac_cmd_data->conf));
 
@@ -264,7 +265,7 @@ enum nrf_wifi_status umac_cmd_rt_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_RX;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->conf,
+	nrf_wifi_mem_cpy(&umac_cmd_data->conf,
 			      rx_params,
 			      sizeof(umac_cmd_data->conf));
 
@@ -303,7 +304,7 @@ enum nrf_wifi_status umac_cmd_rt_prog_rf_test(struct nrf_wifi_fmac_dev_ctx *fmac
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_RF_TEST;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy((void *)umac_cmd_data->rf_test_info.rfcmd,
+	nrf_wifi_mem_cpy((void *)umac_cmd_data->rf_test_info.rfcmd,
 			      rf_test_params,
 			      rf_test_params_sz);
 
