@@ -85,6 +85,18 @@ config FOTA_DL_TIMEOUT_MIN
 	  the download will be cancelled and the job status will be
 	  set as failed.
 
+config NRF_CLOUD_FOTA_POLL_JOB_CHECK_PROGRESS_THRESHOLD
+	int "Progress percentage interval at which the FOTA job is re-checked"
+	range 0 100
+	default 0 if MEMFAULT_USE_NRF_CLOUD_COAP
+	default 10
+	help
+	  During a FOTA download, the current FOTA job is re-checked with
+	  nRF Cloud at every multiple of this progress percentage, to allow
+	  the download to be canceled if the job is no longer valid.
+	  0 disables these checks, for backends that do not provide
+	  cancellation information.
+
 module = NRF_CLOUD_FOTA_POLL
 module-str = nRF Cloud FOTA Poll
 source "subsys/logging/Kconfig.template.log_config"
