@@ -1,0 +1,37 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "VPR VIO clocked output sample"
+
+config APP_VIO_PIN
+	int "VIO bit index used as UART TX"
+	range 0 15
+	help
+	  The VPR VIO pin number used for the emulated UART signal.
+	  This must match the physical pin routed to the VPR core.
+
+config APP_TX_GPIO_PORT
+	int "Physical GPIO port for the emulated UART TX line"
+	help
+	  Physical GPIO port of the TX pin. It must correspond to the VIO index and board routing.
+	  Required for nRF54L, only for testing purposes on nRF92.
+
+config APP_TX_GPIO_PIN
+	int "Physical GPIO pin for the emulated UART TX line"
+	help
+	  Physical GPIO pin number on :kconfig:option:`CONFIG_APP_TX_GPIO_PORT`.
+	  It must correspond to the VIO index.
+	  Required for nRF54L, only for testing purposes on nRF92.
+
+config APP_UART_BAUD_RATE
+	int "Baud rate of the emulated UART"
+	default 115200
+	help
+	  Baud rate of the bit-banged UART transmitter.
+	  It must correspond to the VIO index.
+	  The bit period is derived from the VPR core clock, so very low baud rates may exceed the
+	  16-bit range of VTIM counter 0.
+
+endmenu
+
+source "Kconfig.zephyr"
