@@ -2,7 +2,9 @@
  * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- *
+ */
+
+ /*
  * Zephyr audio codec driver for the Texas Instruments TAC5112 low-power
  * stereo audio codec, targeting an nRF5-series host communicating over
  * I2C for control and I2S for audio data (the codec operating as the
@@ -38,9 +40,8 @@
 
 #include "tac5112.h"
 
-#define LOG_LEVEL CONFIG_AUDIO_CODEC_LOG_LEVEL
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(tac5112);
+LOG_MODULE_REGISTER(tac5112, CONFIG_AUDIO_CODEC_LOG_LEVEL);
 
 /* Number of physical stereo channels (left, right). */
 #define TAC5112_NUM_CHAN 2U
@@ -50,6 +51,11 @@ LOG_MODULE_REGISTER(tac5112);
  *
  * Called at the top of every function reachable from the public API
  * before `dev->data` or `dev->config` is dereferenced.
+ *
+ * @param[in] dev  Device handle to validate.
+ *
+ * @retval true on success.
+ * @retval false id @p dev is unusable.
  */
 static inline bool tac5112_dev_valid(const struct device *dev)
 {
@@ -96,9 +102,11 @@ static void tac5112_channel_mask(audio_channel_t channel, bool *do_left, bool *d
 
 int tac5112_dvol_from_half_db(bool is_output, int32_t half_db, uint8_t *dvol_out)
 {
-	int32_t min_half_db;
-	int32_t max_half_db;
+	int32_t half_db_min;
+	int32_t half_db_max;
 	int32_t zero_db_reg;
+	int32_t vol_db_max;
+	int32_t vol_db_min;
 	int32_t reg;
 
 	if (dvol_out == NULL) {
@@ -107,31 +115,29 @@ int tac5112_dvol_from_half_db(bool is_output, int32_t half_db, uint8_t *dvol_out
 
 	if (is_output) {
 		zero_db_reg = (int32_t)TAC5112_DAC_DVOL_0DB;
-		min_half_db = TAC5112_DAC_VOL_MIN_HALF_DB;
-		max_half_db = TAC5112_DAC_VOL_MAX_HALF_DB;
+		half_db_min = TAC5112_DAC_VOL_HALF_DB_MIN;
+		half_db_max = TAC5112_DAC_VOL_HALF_DB_MAX;
+		vol_db_max = TAC5112_DAC_DVOL_MAX;
+		vol_db_min = TAC5112_DAC_DVOL_MIN;
 	} else {
 		zero_db_reg = (int32_t)TAC5112_ADC_DVOL_0DB;
-		min_half_db = TAC5112_ADC_VOL_MIN_HALF_DB;
-		max_half_db = TAC5112_ADC_VOL_MAX_HALF_DB;
+		half_db_min = TAC5112_ADC_VOL_half_db_min;
+		half_db_max = TAC5112_ADC_VOL_half_db_max;
+		vol_db_max = TAC5112_ADC_DVOL_MAX;
+		vol_db_min = TAC5112_ADC_DVOL_MIN;
 	}
 
-	/* Range-check on the full 32-bit width *before* any narrowing, so a
-	 * huge value can never be truncated into an in-range register code.
-	 */
-	if ((half_db < min_half_db) || (half_db > max_half_db)) {
+	if ((half_db < half_db_min) || (half_db > half_db_max)) {
 		return -EINVAL;
 	}
 
 	reg = zero_db_reg + half_db;
+	if (reg > vol_db_max) {
+		reg = TAC5112_DAC_DVOL_MAX;
+	}
 
-	/* Defensive clamp: the range check above already guarantees
-	 * 1 <= reg <= 255, but never trust arithmetic alone to keep a value
-	 * inside the bounds of a uint8_t register field.
-	 */
-	if (reg < (int32_t)TAC5112_DAC_DVOL_MIN) {
-		reg = (int32_t)TAC5112_DAC_DVOL_MIN;
-	} else if (reg > 0xFF) {
-		reg = 0xFF;
+	if (reg < vol_db_min) {
+		reg = vol_db_min;
 	}
 
 	*dvol_out = (uint8_t)reg;
@@ -164,9 +170,6 @@ int tac5112_reg_write(const struct device *dev, struct tac5112_reg reg, uint8_t 
 	if (ret < 0) {
 		LOG_ERR("Write pg:%u reg:0x%02x val:0x%02x failed (%d)", reg.page, reg.addr, val,
 			ret);
-		/* The bus transaction failed; do not trust that the device's
-		 * page pointer is still where we think it is.
-		 */
 		data->page_cache = TAC5112_PAGE_CACHE_INVALID;
 		return ret;
 	}
@@ -244,23 +247,28 @@ int tac5112_configure_pll(const struct device *dev, const struct tac5112_pll_con
 				TAC5112_PLL_JMUL_MIN, TAC5112_PLL_JMUL_MAX);
 			return -EINVAL;
 		}
+
 		if (pll->dmul > TAC5112_PLL_DMUL_MAX) {
 			LOG_ERR("PLL DMUL %u exceeds max %u", pll->dmul, TAC5112_PLL_DMUL_MAX);
 			return -EINVAL;
 		}
+
 		if (pll->ndiv > TAC5112_PLL_NDIV_MAX) {
 			LOG_ERR("PLL NDIV %u exceeds max %u", pll->ndiv, TAC5112_PLL_NDIV_MAX);
 			return -EINVAL;
 		}
+
 		if (pll->mdiv > TAC5112_PLL_MDIV_MAX) {
 			LOG_ERR("PLL MDIV %u exceeds max %u", pll->mdiv, TAC5112_PLL_MDIV_MAX);
 			return -EINVAL;
 		}
+
 		if (pll->pdm_div_sel > TAC5112_PLL_PDM_DIV_SEL_MAX) {
 			LOG_ERR("PLL PDM_DIV_SEL %u exceeds max %u", pll->pdm_div_sel,
 				TAC5112_PLL_PDM_DIV_SEL_MAX);
 			return -EINVAL;
 		}
+
 		if (pll->adc_modclk_div_sel > TAC5112_ADC_MODCLK_DIV_SEL_MAX) {
 			LOG_ERR("ADC_MODCLK_DIV_SEL %u exceeds max %u", pll->adc_modclk_div_sel,
 				TAC5112_ADC_MODCLK_DIV_SEL_MAX);
@@ -355,6 +363,11 @@ unlock:
  * misconfigured, since correctly generating those clocks internally
  * requires additional CNT_CLK_CFG programming not exercised by this
  * driver.
+ *
+ * @param[in] dev  Device handle.
+ * @param[in] cfg  Pointer to the configuration.
+ *
+ * @return 0 if successful, error otherwise.
  */
 static int tac5112_configure_dai(const struct device *dev, const struct audio_codec_cfg *cfg)
 {
@@ -457,6 +470,7 @@ static int codec_configure(const struct device *dev, struct audio_codec_cfg *cfg
 	if (ret < 0) {
 		goto unlock;
 	}
+
 	k_msleep(TAC5112_T_RESET_SETTLE_MS);
 	/* SW_RESET also resets the device's page pointer to 0. */
 	data->page_cache = 0U;
@@ -467,6 +481,7 @@ static int codec_configure(const struct device *dev, struct audio_codec_cfg *cfg
 	if (ret < 0) {
 		goto unlock;
 	}
+
 	k_msleep(TAC5112_T_SLEEP_EXIT_MIN_MS);
 
 	ret = tac5112_configure_dai(dev, cfg);
@@ -524,6 +539,7 @@ static int codec_configure(const struct device *dev, struct audio_codec_cfg *cfg
 	if (ret < 0) {
 		goto unlock;
 	}
+
 	ret = tac5112_reg_update(
 		dev, TAC5112_REG_INT_MASK4,
 		(uint8_t)(TAC5112_INT_MASK4_OUT_SC_BIT | TAC5112_INT_MASK4_DRVR_VG_BIT), 0U);
@@ -559,6 +575,7 @@ static int codec_start(const struct device *dev, audio_dai_dir_t dir)
 		mask |= TAC5112_PWR_CFG_DAC_PDZ_BIT;
 		val |= TAC5112_PWR_CFG_DAC_PDZ_BIT;
 	}
+
 	if (dir & AUDIO_DAI_DIR_RX) {
 		mask |= TAC5112_PWR_CFG_ADC_PDZ_BIT;
 		val |= TAC5112_PWR_CFG_ADC_PDZ_BIT;
@@ -591,6 +608,7 @@ static int codec_stop(const struct device *dev, audio_dai_dir_t dir)
 	if (dir & AUDIO_DAI_DIR_TX) {
 		mask |= TAC5112_PWR_CFG_DAC_PDZ_BIT;
 	}
+
 	if (dir & AUDIO_DAI_DIR_RX) {
 		mask |= TAC5112_PWR_CFG_ADC_PDZ_BIT;
 	}
@@ -665,6 +683,7 @@ static int tac5112_apply_property(const struct device *dev, audio_property_t pro
 			/* Stay muted; the new volume takes effect on unmute. */
 			return 0;
 		}
+
 		break;
 	case AUDIO_PROPERTY_OUTPUT_MUTE:
 	case AUDIO_PROPERTY_INPUT_MUTE:
@@ -677,6 +696,7 @@ static int tac5112_apply_property(const struct device *dev, audio_property_t pro
 				return ret;
 			}
 		}
+
 		break;
 	default:
 		return -ENOTSUP;
@@ -692,6 +712,7 @@ static int tac5112_apply_property(const struct device *dev, audio_property_t pro
 		if (ret < 0) {
 			return ret;
 		}
+
 		return tac5112_reg_write(dev, reg_b, dvol);
 	}
 
@@ -718,8 +739,7 @@ static int codec_set_property(const struct device *dev, audio_property_t propert
 	if (property == AUDIO_PROPERTY_EQ_GAIN) {
 		/* Biquad/EQ coefficients require 32-bit fixed-point
 		 * programmable-coefficient registers not modeled by this
-		 * driver; reject explicitly rather than writing something
-		 * unverified.
+		 * driver; reject explicitly.
 		 */
 		LOG_ERR("EQ_GAIN is not supported by this driver");
 		return -ENOTSUP;
@@ -745,6 +765,7 @@ static int codec_set_property(const struct device *dev, audio_property_t propert
 	if (do_left) {
 		ret = tac5112_apply_property(dev, property, 0U, val);
 	}
+
 	if ((ret == 0) && do_right) {
 		ret = tac5112_apply_property(dev, property, 1U, val);
 	}
@@ -774,6 +795,7 @@ static uint32_t tac5112_read_fault_bits(const struct device *dev)
 		if (live & (TAC5112_OUT_CH_SC_OUTP_BIT | TAC5112_OUT_CH_SC_OUTM_BIT)) {
 			errors |= AUDIO_CODEC_ERROR_OVERCURRENT;
 		}
+
 		if (live & (TAC5112_OUT_CH_VG_FAULT_P_BIT | TAC5112_OUT_CH_VG_FAULT_M_BIT)) {
 			errors |= AUDIO_CODEC_ERROR_DC;
 		}
@@ -783,6 +805,7 @@ static uint32_t tac5112_read_fault_bits(const struct device *dev)
 		if (live & (TAC5112_OUT_CH_SC_OUTP_BIT | TAC5112_OUT_CH_SC_OUTM_BIT)) {
 			errors |= AUDIO_CODEC_ERROR_OVERCURRENT;
 		}
+
 		if (live & (TAC5112_OUT_CH_VG_FAULT_P_BIT | TAC5112_OUT_CH_VG_FAULT_M_BIT)) {
 			errors |= AUDIO_CODEC_ERROR_DC;
 		}
@@ -819,6 +842,7 @@ static int codec_clear_errors(const struct device *dev)
 	if (ret == 0) {
 		ret = tac5112_reg_read(dev, TAC5112_REG_OUT_CH1_LTCH, &tmp);
 	}
+
 	if (ret == 0) {
 		ret = tac5112_reg_read(dev, TAC5112_REG_OUT_CH2_LTCH, &tmp);
 	}

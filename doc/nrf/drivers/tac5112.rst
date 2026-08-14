@@ -12,7 +12,7 @@ The TAC5112 provides a 105 dB dynamic-range stereo ADC and a 114 dB dynamic-rang
 See `TAC5112 product page`_ for more information about the device.
 
 The driver controls the codec over I2C and conforms to the :ref:`Zephyr audio codec API <zephyr:audio_codec_api>`.
-Audio sample data is carried separately over the codec's audio serial interface (I2S, left-justified, or TDM), with the codec acting as the bus target while the host (for example, an nRF5-series I2S or TDM peripheral) generates the bit and frame clocks.
+Audio sample data is carried separately over the codec's audio serial interface (I2S, left-justified, or TDM).
 
 The :ref:`tac5112_sample` sample demonstrates how to use this driver in an application, including tone playback and an ADC-to-DAC loopback.
 

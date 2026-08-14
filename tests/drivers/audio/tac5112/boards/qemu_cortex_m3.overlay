@@ -2,7 +2,9 @@
  * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- *
+ */
+
+ /*
  * Devicetree overlay for running the TAC5112 driver + I2C-mock ztest suite
  * on the qemu_cortex_m3 platform.
  *

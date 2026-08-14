@@ -5,6 +5,7 @@
 #
 
 cmake_minimum_required(VERSION 3.20.0)
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(tac5112_api)
 
@@ -12,7 +13,6 @@ project(tac5112_api)
 # include path); this whitebox test suite includes it directly to reach
 # tac5112_reg_write()/tac5112_reg_read()/tac5112_configure_pll()/
 # tac5112_dvol_from_half_db(), so add drivers/audio/ to the include path.
-zephyr_include_directories(../../../../drivers/audio)
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/drivers/audio)
 
-FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE src/main.c)

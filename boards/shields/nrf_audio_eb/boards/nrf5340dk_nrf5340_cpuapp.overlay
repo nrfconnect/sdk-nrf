@@ -1,0 +1,81 @@
+/*
+ * nRF-Audio-EB shield overlay for the nRF5340 DK (PCA10095), P3 + P4 headers.
+ *
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * The plain nRF5340 DK has no codec connector; the nRF-Audio-EB is wired to the
+ * DK's Arduino digital headers P3 (D0-D7) and P4 (D8-D15). The TAC5112 is
+ * controlled over I2C on the DK's arduino_i2c (i2c1, SDA P1.02 / SCL P1.03);
+ * audio uses I2S (&i2s0) routed to spare P3/P4 pins.
+ *
+ * Because the EB is a 2x13 socket, connecting it to the Arduino headers needs
+ * an adapter/harness, so which EB signal lands on which D-pin is adapter-
+ * defined -- EVERY assignment below is [VERIFY]. The nRF5340 GPIOs themselves
+ * are the DK's confirmed Arduino-header nexus.
+ *
+ * ==========================================================================
+ *  Arduino pin -> nRF5340 GPIO  (P3 = D0-D7, P4 = D8-D15; all [VERIFY])
+ *  I2S : MCK D2 P1.04 | SCK D3 P1.05 | LRCK D4 P1.06 | SDIN D5 P1.07 | SDOUT D6 P1.08
+ *  I2C : SDA D14 P1.02 | SCL D15 P1.03      (arduino_i2c / i2c1)
+ *  GPIO: RESET D7 P1.09 | IRQ D8 P1.10 | CODEC_GPIO D9 P1.11
+ *  Free on P3/P4: D0 P1.00, D1 P1.01, D10-D13 P1.12-15 (arduino_spi), P0.27.
+ * ==========================================================================
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+
+/ {
+	aliases {
+		tac5112-i2s = &i2s0;
+	};
+};
+
+&pinctrl {
+	i2s0_audio_default: i2s0_audio_default {
+		group1 {
+			psels = <NRF_PSEL(I2S_MCK, 1, 4)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
+		};
+		group2 {
+			psels = <NRF_PSEL(I2S_SCK_M, 1, 5)>,
+				<NRF_PSEL(I2S_LRCK_M, 1, 6)>,
+				<NRF_PSEL(I2S_SDOUT, 1, 8)>,
+				<NRF_PSEL(I2S_SDIN, 1, 7)>;
+		};
+	};
+
+	i2s0_audio_sleep: i2s0_audio_sleep {
+		group1 {
+			psels = <NRF_PSEL(I2S_MCK, 1, 4)>,
+				<NRF_PSEL(I2S_SCK_M, 1, 5)>,
+				<NRF_PSEL(I2S_LRCK_M, 1, 6)>,
+				<NRF_PSEL(I2S_SDOUT, 1, 8)>,
+				<NRF_PSEL(I2S_SDIN, 1, 7)>;
+			low-power-enable;
+		};
+	};
+};
+
+&i2s0 {
+	status = "okay";
+	pinctrl-0 = <&i2s0_audio_default>;
+	pinctrl-1 = <&i2s0_audio_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+&i2c1 {
+	status = "okay";
+	clock-frequency = <I2C_BITRATE_STANDARD>;
+
+	tac5112: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+		reset-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
+		int-gpios   = <&gpio1 10 GPIO_ACTIVE_LOW>;
+		codec-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+	};
+};

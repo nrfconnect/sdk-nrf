@@ -1,0 +1,54 @@
+/*
+ * nRF-Audio-EB shield overlay for the nRF5340 Audio DK (cpuapp), P10 connector.
+ *
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * P10 is the Audio DK's dedicated "external HW codec" header. Its audio and
+ * side-band pins are the same SoC pins that reach the onboard CS47L63, routed
+ * through the P0.21 HW_CODEC_SELECT mux; P10 additionally breaks out the nRF
+ * I2C bus so an external codec can be controlled over I2C. This overlay removes
+ * the onboard CS47L63 and puts the TAC5112 on P10, controlled over I2C.
+ *
+ * P10 -> nRF5340 (from the Audio DK HW user guide + PCA10121 schematic):
+ *   Audio (I2S, &i2s0, unchanged): MCLK P0.12 | BCLK P0.14 | FSYNC P0.16 |
+ *     DIN P0.13 = I2S_SDOUT (nRF->codec) | DOUT P0.15 = I2S_SDIN (codec->nRF)
+ *   Control (I2C):  SDA P1.02 | SCL P1.03   (i2c1 = arduino_i2c = TWIM1)
+ *   Side-band:      RESET P0.18 | IRQ P0.19 | GPIO P0.20  (via the P0.21 mux)
+ *
+ * TAC5112 at I2C 0x50 (ADDR->GND). No in-tree driver -- see
+ * dts/bindings/audio/ti,tac5112.yaml; the app drives the registers over I2C.
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+#include <zephyr/dt-bindings/i2c/i2c.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <zephyr/dt-bindings/pinctrl/nrf-pinctrl.h>
+
+/ {
+	aliases {
+		tac5112-i2s = &i2s0;
+	};
+};
+
+/delete-node/ &cs47l63;
+
+&i2c1 {
+	status = "okay";
+
+	tac5112: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+		reset-gpios = <&gpio0 18 GPIO_ACTIVE_LOW>;
+		int-gpios   = <&gpio0 19 GPIO_ACTIVE_LOW>;
+		codec-gpios = <&gpio0 20 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&gpio0 {
+	codec-interface {
+		/delete-property/ output-low;
+		output-high;
+	};
+};

@@ -2,7 +2,9 @@
  * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- *
+ */
+
+ /*
  * ztest suite for the TAC5112 audio codec driver. Runs on native_sim
  * against the I2C emulator in drivers/audio/tac5112_emul.c (see
  * boards/native_sim.overlay and prj.conf wiring), so the *real* driver
@@ -20,14 +22,29 @@
  * own tac5112_dev_valid() check runs.
  */
 
-#include <errno.h>
-
 #include <zephyr/ztest.h>
+#include <errno.h>
 #include <zephyr/device.h>
 #include <zephyr/audio/codec.h>
 #include <zephyr/drivers/i2s.h>
 
 #include "tac5112.h"
+
+#define TEST_TA5112_CHANNELS_1 (1)
+#define TEST_TA5112_CHANNELS_2 (2)
+#define TEST_TA5112_CHANNELS_4 (4)
+
+#define TEST_TA5112_SAMPLE_FREQ_HZ (48000)
+
+#define TEST_TA5112_FRAME_CLK_HZ_FLOOR (4000U)
+#define TEST_TA5112_FRAME_CLK_HZ_FLOOR_BELOW (TEST_TA5112_FRAME_CLK_HZ_FLOOR - 2000)
+#define TEST_TA5112_FRAME_CLK_HZ_CEILING (4000U)
+#define TEST_TA5112_FRAME_CLK_HZ_CEILING_ABOVE (TEST_TA5112_FRAME_CLK_HZ_CEILING + 1000)
+
+#define TEST_TAC5112_REG_CLK_CFG15 (0x07U)
+
+#define TEST_TAC5112_DVOL (0xAAU)
+#define TEST_TAC5112_DVOL_CEILING_ABOVE (TAC5112_DAC_VOL_HALF_DB_MAX + 10)
 
 struct tac5112_fixture {
 	const struct device *dev;
@@ -37,14 +54,14 @@ static struct audio_codec_cfg valid_codec_cfg(void)
 {
 	struct audio_codec_cfg cfg = {0};
 
-	cfg.mclk_freq = 0U; /* not used in ASI-target mode */
+	cfg.mclk_freq = 0U;
 	cfg.dai_type = AUDIO_DAI_TYPE_I2S;
 	cfg.dai_route = AUDIO_ROUTE_PLAYBACK_CAPTURE;
 	cfg.dai_cfg.i2s.word_size = AUDIO_PCM_WIDTH_16_BITS;
-	cfg.dai_cfg.i2s.channels = 2U;
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_2;
 	cfg.dai_cfg.i2s.format = I2S_FMT_DATA_FORMAT_I2S;
 	cfg.dai_cfg.i2s.options = I2S_OPT_BIT_CLK_TARGET | I2S_OPT_FRAME_CLK_TARGET;
-	cfg.dai_cfg.i2s.frame_clk_freq = 48000U;
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_SAMPLE_FREQ_HZ;
 
 	return cfg;
 }
@@ -67,11 +84,6 @@ static void *tac5112_suite_setup(void)
 }
 
 ZTEST_SUITE(tac5112, NULL, tac5112_suite_setup, NULL, NULL, NULL);
-
-/* ---------------------------------------------------------------------
- * configure()
- * ---------------------------------------------------------------------
- */
 
 ZTEST_F(tac5112, test_configure_accepts_valid_i2s_target_config)
 {
@@ -118,10 +130,10 @@ ZTEST_F(tac5112, test_configure_rejects_wrong_channel_count)
 {
 	struct audio_codec_cfg cfg = valid_codec_cfg();
 
-	cfg.dai_cfg.i2s.channels = 1U;
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_1;
 	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
 
-	cfg.dai_cfg.i2s.channels = 4U;
+	cfg.dai_cfg.i2s.channels = TEST_TA5112_CHANNELS_4;
 	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
 }
 
@@ -129,10 +141,10 @@ ZTEST_F(tac5112, test_configure_rejects_out_of_range_sample_rate)
 {
 	struct audio_codec_cfg cfg = valid_codec_cfg();
 
-	cfg.dai_cfg.i2s.frame_clk_freq = 1000U; /* below the 4 kHz floor */
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_FRAME_CLK_HZ_FLOOR_BELOW;
 	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
 
-	cfg.dai_cfg.i2s.frame_clk_freq = 900000U; /* above the 768 kHz ceiling */
+	cfg.dai_cfg.i2s.frame_clk_freq = TEST_TA5112_FRAME_CLK_HZ_CEILING_ABOVE;
 	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
 }
 
@@ -155,11 +167,6 @@ ZTEST_F(tac5112, test_configure_rejects_unsupported_word_size)
 	cfg.dai_cfg.i2s.word_size = 0U;
 	zassert_equal(audio_codec_configure(fixture->dev, &cfg), -EINVAL);
 }
-
-/* ---------------------------------------------------------------------
- * start_output() / stop_output() / start() / stop()
- * ---------------------------------------------------------------------
- */
 
 ZTEST_F(tac5112, test_start_stop_output_toggles_dac_pdz_only)
 {
@@ -193,11 +200,6 @@ ZTEST_F(tac5112, test_start_stop_direction_bitmap_validation)
 	zassert_equal(audio_codec_stop(fixture->dev, 0x80U), -EINVAL);
 }
 
-/* ---------------------------------------------------------------------
- * set_property(): volume / mute
- * ---------------------------------------------------------------------
- */
-
 ZTEST_F(tac5112, test_output_volume_bounds_checking)
 {
 	audio_property_value_t val;
@@ -210,15 +212,17 @@ ZTEST_F(tac5112, test_output_volume_bounds_checking)
 	/* One past the valid range on each side must be rejected, and must
 	 * not have modified hardware state.
 	 */
-	val.vol = TAC5112_DAC_VOL_MIN_HALF_DB - 1;
+	val.vol = TAC5112_DAC_VOL_HALF_DB_MIN - 1;
 	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
 					       AUDIO_CHANNEL_FRONT_LEFT, val),
 		      -EINVAL);
-	val.vol = TAC5112_DAC_VOL_MAX_HALF_DB + 1;
-	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
-					       AUDIO_CHANNEL_FRONT_LEFT, val),
-		      -EINVAL);
+	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
+	zassert_equal(before, after, "rejected volume write must not touch hardware");
 
+	val.vol = TAC5112_DAC_VOL_HALF_DB_MAX + 1;
+	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
+					       AUDIO_CHANNEL_FRONT_LEFT, val),
+		      -EINVAL);
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
 	zassert_equal(before, after, "rejected volume write must not touch hardware");
 
@@ -235,13 +239,13 @@ ZTEST_F(tac5112, test_output_volume_bounds_checking)
 	zassert_equal(after, TAC5112_DAC_DVOL_0DB);
 
 	/* The extreme ends of the range must be accepted. */
-	val.vol = (int)TAC5112_DAC_VOL_MIN_HALF_DB;
+	val.vol = (int)TAC5112_DAC_VOL_HALF_DB_MIN;
 	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
 					    AUDIO_CHANNEL_FRONT_LEFT, val));
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
 	zassert_equal(after, TAC5112_DAC_DVOL_MIN);
 
-	val.vol = (int)TAC5112_DAC_VOL_MAX_HALF_DB;
+	val.vol = (int)TAC5112_DAC_VOL_HALF_DB_MAX;
 	zassert_ok(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_OUTPUT_VOLUME,
 					    AUDIO_CHANNEL_FRONT_LEFT, val));
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_DAC_CH1A_CFG0, &after));
@@ -281,7 +285,7 @@ ZTEST_F(tac5112, test_input_volume_uses_adc_range)
 
 	configure_dut(fixture->dev);
 
-	val.vol = (int)TAC5112_ADC_VOL_MAX_HALF_DB + 1;
+	val.vol = (int)TAC5112_ADC_VOL_half_db_max + 1;
 	zassert_equal(audio_codec_set_property(fixture->dev, AUDIO_PROPERTY_INPUT_VOLUME,
 					       AUDIO_CHANNEL_ALL, val),
 		      -EINVAL);
@@ -326,11 +330,6 @@ ZTEST_F(tac5112, test_apply_properties_is_a_no_op_success)
 {
 	zassert_ok(audio_codec_apply_properties(fixture->dev));
 }
-
-/* ---------------------------------------------------------------------
- * PLL control
- * ---------------------------------------------------------------------
- */
 
 ZTEST_F(tac5112, test_pll_auto_mode_programs_clk_src_and_clears_custom_bit)
 {
@@ -445,7 +444,7 @@ ZTEST_F(tac5112, test_pll_rejects_out_of_range_fields_without_side_effects)
 	bad.clk_src = (enum tac5112_pll_clk_src)6; /* above TAC5112_CLK_SRC_SEL_MAX */
 	zassert_equal(tac5112_configure_pll(fixture->dev, &bad), -EINVAL);
 
-	/* None of the rejected calls above may have written CLK_CFG15
+	/* None of the rejected calls above should have written CLK_CFG15
 	 * (PDIV) or any other divider register: rejection happens before
 	 * the first I2C write.
 	 */
@@ -460,11 +459,6 @@ ZTEST_F(tac5112, test_pll_rejects_null_pointers)
 	zassert_equal(tac5112_configure_pll(NULL, &pll), -EINVAL);
 	zassert_equal(tac5112_configure_pll(fixture->dev, NULL), -EINVAL);
 }
-
-/* ---------------------------------------------------------------------
- * Error handling
- * ---------------------------------------------------------------------
- */
 
 ZTEST_F(tac5112, test_clear_errors_and_register_callback)
 {
@@ -497,11 +491,6 @@ ZTEST_F(tac5112, test_configure_enables_fault_interrupts)
 		      "clock-error interrupt should remain masked for now");
 }
 
-/* ---------------------------------------------------------------------
- * Low-level I2C helpers: pointer validation and bounds checking
- * ---------------------------------------------------------------------
- */
-
 ZTEST_F(tac5112, test_reg_helpers_reject_null_pointers)
 {
 	uint8_t val;
@@ -526,6 +515,10 @@ ZTEST_F(tac5112, test_reg_update_preserves_untouched_bits)
 	zassert_equal(after, (uint8_t)(before & (uint8_t)~TAC5112_AUTO_PLL_FR_ALLOW_BIT));
 }
 
+#define	TEST_TAC5112_REG_CH_EN_RESET_VAL				(0xCCU)
+#define	TEST_TAC5112_REG_INT_MASK0_RESET_VAL				(0xFFU)
+#define	TEST_TAC5112_REG_CLK_CFG15_RESET_VAL		(0x01U)
+
 ZTEST_F(tac5112, test_page_select_cache_survives_cross_page_access)
 {
 	uint8_t page0_val;
@@ -541,10 +534,13 @@ ZTEST_F(tac5112, test_page_select_cache_survives_cross_page_access)
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &page0_val));
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_INT_MASK0, &page1_val));
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &page3_val));
-	zassert_equal(page1_val, 0xFFU, "INT_MASK0 reset default");
-	zassert_equal(page3_val, 0x01U, "CLK_CFG15 (PDIV) reset default");
+	zassert_equal(page0_val, TEST_TAC5112_REG_CH_EN_RESET_VAL, "CH_EN reset default");
+	zassert_equal(page1_val, TEST_TAC5112_REG_INT_MASK0_RESET_VAL, "INT_MASK0 reset default");
+	zassert_equal(page3_val, TEST_TAC5112_REG_CLK_CFG15_RESET_VAL,
+		"CLK_CFG15 (PDIV) reset default");
 
-	zassert_ok(tac5112_reg_write(fixture->dev, TAC5112_REG_CLK_CFG15, 7U));
+	zassert_ok(tac5112_reg_write(fixture->dev, TAC5112_REG_CLK_CFG15,
+		TEST_TAC5112_REG_CLK_CFG15));
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CH_EN, &page0_val));
 	zassert_equal(page0_val,
 		      TAC5112_CH_EN_IN_CH1_BIT | TAC5112_CH_EN_IN_CH2_BIT |
@@ -552,30 +548,25 @@ ZTEST_F(tac5112, test_page_select_cache_survives_cross_page_access)
 		      "page 0 register must be unaffected by a page 3 write");
 
 	zassert_ok(tac5112_reg_read(fixture->dev, TAC5112_REG_CLK_CFG15, &page3_val));
-	zassert_equal(page3_val, 7U);
+	zassert_equal(page3_val, TEST_TAC5112_REG_CLK_CFG15);
 }
-
-/* ---------------------------------------------------------------------
- * tac5112_dvol_from_half_db(): whitebox unit tests, no I2C involved
- * ---------------------------------------------------------------------
- */
 
 ZTEST(tac5112, test_dvol_conversion_dac_range)
 {
 	uint8_t dvol;
 
-	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_MIN_HALF_DB, &dvol));
+	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MIN, &dvol));
 	zassert_equal(dvol, TAC5112_DAC_DVOL_MIN);
 
 	zassert_ok(tac5112_dvol_from_half_db(true, 0, &dvol));
 	zassert_equal(dvol, TAC5112_DAC_DVOL_0DB);
 
-	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_MAX_HALF_DB, &dvol));
+	zassert_ok(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MAX, &dvol));
 	zassert_equal(dvol, TAC5112_DAC_DVOL_MAX);
 
-	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_MIN_HALF_DB - 1, &dvol),
+	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MIN - 1, &dvol),
 		      -EINVAL);
-	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_MAX_HALF_DB + 1, &dvol),
+	zassert_equal(tac5112_dvol_from_half_db(true, TAC5112_DAC_VOL_HALF_DB_MAX + 1, &dvol),
 		      -EINVAL);
 }
 
@@ -583,13 +574,13 @@ ZTEST(tac5112, test_dvol_conversion_adc_range)
 {
 	uint8_t dvol;
 
-	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_MIN_HALF_DB, &dvol));
+	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_half_db_min, &dvol));
 	zassert_equal(dvol, TAC5112_ADC_DVOL_MIN);
 
-	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_MAX_HALF_DB, &dvol));
+	zassert_ok(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_half_db_max, &dvol));
 	zassert_equal(dvol, TAC5112_ADC_DVOL_MAX);
 
-	zassert_equal(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_MAX_HALF_DB + 1, &dvol),
+	zassert_equal(tac5112_dvol_from_half_db(false, TAC5112_ADC_VOL_half_db_max + 1, &dvol),
 		      -EINVAL);
 }
 
@@ -598,15 +589,12 @@ ZTEST(tac5112, test_dvol_conversion_rejects_null_output)
 	zassert_equal(tac5112_dvol_from_half_db(true, 0, NULL), -EINVAL);
 }
 
-/* A huge out-of-range value must be rejected on its full width, not
- * silently wrapped/truncated by an internal narrowing cast before the
- * range check runs (this is the specific bug class strict bounds
- * checking is meant to prevent).
- */
 ZTEST(tac5112, test_dvol_conversion_does_not_truncate_before_bounds_check)
 {
-	uint8_t dvol = 0xAAU;
+	uint8_t dvol = TEST_TAC5112_DVOL;
 
-	zassert_equal(tac5112_dvol_from_half_db(true, 65536 + 10, &dvol), -EINVAL);
-	zassert_equal(dvol, 0xAAU, "rejected conversion must not touch the output parameter");
+	zassert_equal(tac5112_dvol_from_half_db(true, TEST_TAC5112_DVOL_CEILING_ABOVE,
+		&dvol), -EINVAL);
+	zassert_equal(dvol, TEST_TAC5112_DVOL, "rejected conversion must not touch "
+		"the output parameter");
 }

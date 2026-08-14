@@ -14,11 +14,14 @@ common:
     type: one_line
     regex:
       - "TAC5112 sample complete"
+  fixtures:
+      - nrf_audio_eb_shield:exp_p17
+      - analog_input_cable:line_in
+      - analog_output_cable:headset_1
 
 tests:
   sample.drivers.audio.tac5112:
     sysbuild: true
-    build_only: true
     extra_args: SHIELD=nrf_audio_eb
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp

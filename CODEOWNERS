@@ -104,10 +104,9 @@
 /doc/nrf/drivers/ppi_seq.rst              @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/ppi_seq_i2c_spi.rst      @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/drivers/tac5112.rst              @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/tac5112.rst              @nrfconnect/ncs-audio-doc
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
-/doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/wifi/*.rst               @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
@@ -264,7 +263,7 @@
 /doc/nrf/samples/debug.rst                @nrfconnect/ncs-cia-doc
 /doc/nrf/samples/dect.rst                 @nrfconnect/ncs-modem-doc
 /doc/nrf/samples/dfu.rst                  @nrfconnect/ncs-eris-doc
-/doc/nrf/samples/drivers/tac5112.rst      @nrfconnect/ncs-eris-doc
+/doc/nrf/samples/drivers/tac5112.rst      @nrfconnect/ncs-audio-doc
 /doc/nrf/samples/edge_impulse.rst         @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/samples/esb.rst                  @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/samples/fast_pair.rst            @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
