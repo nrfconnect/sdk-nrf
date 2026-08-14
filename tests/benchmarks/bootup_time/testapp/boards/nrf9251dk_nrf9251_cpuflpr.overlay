@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led3;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		/* Move to other GPIO. */
+		led3: led_3 {
+			gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom pin";
+		};
+	};
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <2>;
+	interrupts = <104 NRF_DEFAULT_IRQ_PRIORITY>;
+};
