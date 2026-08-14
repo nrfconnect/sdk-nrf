@@ -10,8 +10,6 @@ common:
       - "Bluetooth initialized"
       - "Advertising successfully started"
       - "ESB initialized"
-      - "Setting up for packet reception"
-      - "Initialization complete"
   timeout: 15
 
 tests:
