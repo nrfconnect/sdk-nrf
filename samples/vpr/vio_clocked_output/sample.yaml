@@ -1,0 +1,15 @@
+sample:
+  name: VPR VIO clocked output
+  description: Drive a VIO pin from a VPR coprocessor emulating UART
+tests:
+  sample.vpr.vio_clocked_output.build:
+    build_only: true
+    sysbuild: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuflpr
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuflpr
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf54l15dk/nrf54l15/cpuflpr
+    tags:
+      - ci_build
