@@ -12,3 +12,11 @@ config TEST_FIXED_OPERATION_SIZE
 config TEST_FLASH_OPERATION_SIZE
 	int "Flash operation size for fixed size mode"
 	default 65536
+
+config TEST_DATA_VERIFICATION
+	bool "Verify flash data content after each operation"
+	default y
+	help
+	  When enabled, the test reads back the flash region touched by each
+	  erase/write/read operation and checks its content against the
+	  expected pattern.
