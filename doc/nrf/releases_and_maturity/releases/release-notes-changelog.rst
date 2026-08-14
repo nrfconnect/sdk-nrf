@@ -558,6 +558,8 @@ Wi-Fi samples
     * Transport selection.
       The sample no longer defaults to MQTT.
       You must now explicitly select either the MQTT or the CoAP transport, using the new :file:`mqtt.conf` or the existing :file:`coap.conf` configuration file, respectively.
+    * Re-enabled :kconfig:option:`CONFIG_NET_IPV6` in :file:`coap.conf`.
+      It was previously disabled to work around the slow IPv6-to-IPv4 fallback fixed in :ref:`lib_nrf_cloud` (see above).
 
   * Removed:
 
