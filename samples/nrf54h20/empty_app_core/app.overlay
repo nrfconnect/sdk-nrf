@@ -73,3 +73,10 @@
 &uart136 {
 	status = "disabled";
 };
+
+/* Shrink cpuapp_data so unused Global RAM blocks can be powered off.
+ * Must match the application memory_map cpuapp_data sizing.
+ */
+&cpuapp_data {
+	reg = <0x2f000000 0x4000>;
+};
