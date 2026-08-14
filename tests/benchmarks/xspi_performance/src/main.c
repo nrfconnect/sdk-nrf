@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <errno.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/drivers/counter.h>
@@ -15,6 +16,8 @@
 #define MAX_CPU_LOAD_VALUES_HELD	   32
 #define TEST_TIMER_COUNT_TIME_LIMIT_MS	   10000
 #define DEAD_TIME_MS			   1000
+#define TEST_DATA_PATTERN		   0xAB
+#define VERIFY_CHUNK_SIZE		   4096
 
 static const struct device *const flash_dev = DEVICE_DT_GET(DT_ALIAS(dut_flash));
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_NODELABEL(tst_timer));
@@ -23,7 +26,22 @@ static uint64_t flash_size;
 static size_t pages_count;
 static size_t write_block_size;
 static size_t page_size;
-static uint8_t test_buffer[MAX_TEST_BUFFER_SIZE];
+static uint8_t flash_erase_value;
+/* Word alignment keeps driver that pass buffers by reference (e.g. the HPF
+ * MSPI zero-copy path) on its fast path instead of falling back to a copy path.
+ */
+static uint8_t test_buffer[MAX_TEST_BUFFER_SIZE] __aligned(sizeof(uint32_t));
+static uint8_t verify_buffer[VERIFY_CHUNK_SIZE] __aligned(sizeof(uint32_t));
+
+/*
+ * Flash operation kind, used to select the data pattern that is
+ * expected to be found in flash once the operation has completed.
+ */
+typedef enum {
+	FLASH_OP_ERASE,
+	FLASH_OP_WRITE,
+	FLASH_OP_READ,
+} flash_op_type;
 
 /*
  * Flash operation function pointer
@@ -63,6 +81,24 @@ static void configure_test_timer(const struct device *timer_dev, uint32_t count_
 	counter_cfg.user_data = &counter_cfg;
 }
 
+static void measure_start(void)
+{
+	dk_set_led_on(DK_LED1);
+	counter_reset(tst_timer_dev);
+	counter_start(tst_timer_dev);
+}
+
+static uint32_t measure_finish(void)
+{
+	uint32_t tst_timer_value;
+
+	counter_get_value(tst_timer_dev, &tst_timer_value);
+	counter_stop(tst_timer_dev);
+	dk_set_led_off(DK_LED1);
+
+	return tst_timer_value;
+}
+
 /*
  * Check flash meory readiness
  * read memory parameters to be used
@@ -96,14 +132,87 @@ static int test_setup(void)
 	pages_count = flash_get_page_count(flash_dev);
 	write_block_size = flash_get_write_block_size(flash_dev);
 	page_size = (size_t)(flash_size / pages_count);
+	flash_erase_value = flash_get_parameters(flash_dev)->erase_value;
 
 	printk("Flash size: %llu\n", flash_size);
 	printk("Pages: %u\n", pages_count);
 	printk("Minimal write block size: %u\n", write_block_size);
 	printk("Page size: %u\n", page_size);
+	printk("Erase value: 0x%02x\n", flash_erase_value);
 
 	k_msleep(DEAD_TIME_MS);
 	return 0;
+}
+
+/*
+ * Data verification state, accumulated over the chunks of one operation.
+ */
+struct verify_result {
+	size_t checked;
+	size_t mismatches;
+	size_t first_mismatch;
+	uint8_t first_mismatch_value;
+};
+
+static void verify_chunk(struct verify_result *res, const uint8_t *buf, size_t len,
+			 uint8_t expected_byte)
+{
+	for (size_t i = 0; i < len; i++) {
+		if (buf[i] != expected_byte) {
+			if (res->mismatches == 0) {
+				res->first_mismatch = res->checked + i;
+				res->first_mismatch_value = buf[i];
+			}
+			res->mismatches++;
+		}
+	}
+	res->checked += len;
+}
+
+static int verify_report(const struct verify_result *res, uint8_t expected_byte,
+			 const char *operation_name)
+{
+	if (res->mismatches > 0) {
+		printk("!!!! Data verification FAILED for %s [size: %u bytes]: "
+		       "%u mismatching byte(s), first at byte %u "
+		       "(expected 0x%02x, got 0x%02x) !!!!\n",
+		       operation_name, (unsigned int)res->checked,
+		       (unsigned int)res->mismatches, (unsigned int)res->first_mismatch,
+		       expected_byte, res->first_mismatch_value);
+		return -EIO;
+	}
+
+	printk("Data verification PASSED for %s [size: %u bytes]\n", operation_name,
+	       (unsigned int)res->checked);
+	return 0;
+}
+
+/*
+ * Read back a flash region in bounded chunks and check that region content
+ * matches the expected pattern.
+ * Returns 0 if the whole region matches, a negative error code otherwise.
+ */
+static int verify_flash_region(off_t offset, size_t len, uint8_t expected_byte,
+				const char *operation_name)
+{
+	struct verify_result res = {0};
+	int err;
+
+	while (res.checked < len) {
+		size_t chunk = MIN(len - res.checked, VERIFY_CHUNK_SIZE);
+		off_t cur_offset = offset + (off_t)res.checked;
+
+		err = flash_read(flash_dev, cur_offset, verify_buffer, chunk);
+		if (err != 0) {
+			printk("!!!! Verify %s: flash_read error %d at offset 0x%llx !!!!\n",
+			       operation_name, err, (unsigned long long)cur_offset);
+			return err;
+		}
+
+		verify_chunk(&res, verify_buffer, chunk, expected_byte);
+	}
+
+	return verify_report(&res, expected_byte, operation_name);
 }
 
 /*
@@ -120,48 +229,78 @@ static int test_setup(void)
  * show measured timing and the rate it gives
  * wait for CPU loads caluclations to finish
  * show measured CPU loads
+ * verify flash content against the expected pattern (untimed)
  * sleep for 'DEAD_TIME_MS'
  */
 static void test_flash_operation(size_t flash_operation_size, flash_operation_fn flash_operation,
-				 const char *operation_name)
+				 const char *operation_name, flash_op_type op_type)
 {
-
 	int err = 0;
-	uint32_t tst_timer_value = 0;
 	uint64_t timer_value_us = 0;
-	uint32_t required_repetitions = flash_operation_size / page_size;
+	size_t remaining = flash_operation_size;
+	off_t flash_offset = FLASH_TEST_DATA_OFFSET;
+	struct verify_result read_res = {0};
 
 	printk("Flash %s test [size: %u bytes]\n", operation_name, flash_operation_size);
-	memset(test_buffer, 0xAB, MAX_TEST_BUFFER_SIZE);
+	memset(test_buffer, TEST_DATA_PATTERN, MAX_TEST_BUFFER_SIZE);
+
+	if (page_size > MAX_TEST_BUFFER_SIZE) {
+		printk("!!!! Page size %u exceeds test buffer %u !!!!\n", (unsigned int)page_size,
+		       MAX_TEST_BUFFER_SIZE);
+		return;
+	}
+
+	/* Partial-page erase is not supported, so erase operation ends in the region aligned
+	 * to the page boundary.
+	 */
+	if (op_type == FLASH_OP_ERASE) {
+		if ((FLASH_TEST_DATA_OFFSET % page_size) != 0) {
+			printk("!!!! Erase offset 0x%lx is not page aligned [page size: %u] !!!!\n",
+			       (unsigned long)FLASH_TEST_DATA_OFFSET, (unsigned int)page_size);
+			return;
+		}
+
+		if ((flash_operation_size % page_size) != 0) {
+			printk("!!!! Erase size %u is not a multiple of page size %u !!!!\n",
+			       (unsigned int)flash_operation_size, (unsigned int)page_size);
+			return;
+		}
+	}
 
 	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
 		cpu_load_monitor_start();
 	}
-	dk_set_led_on(DK_LED1);
-	counter_reset(tst_timer_dev);
-	counter_start(tst_timer_dev);
-	if (required_repetitions > 0) {
-		/* Cannot be done in one shot due to CPU RAM limitation */
-		for (int i = 0; i < required_repetitions; i++) {
-			err = flash_operation(flash_dev, FLASH_TEST_DATA_OFFSET + i * page_size,
-					       test_buffer, page_size);
+
+	/* Chunked by page: the whole region cannot be held in RAM at once. */
+	while (remaining > 0) {
+		size_t chunk = MIN(remaining, page_size);
+
+		measure_start();
+		err = flash_operation(flash_dev, flash_offset, test_buffer, chunk);
+		timer_value_us += counter_ticks_to_us(tst_timer_dev, measure_finish());
+
+		if (err != 0) {
+			break;
 		}
-	} else {
-		err = flash_operation(flash_dev, FLASH_TEST_DATA_OFFSET, test_buffer,
-				      flash_operation_size);
+		if (IS_ENABLED(CONFIG_TEST_DATA_VERIFICATION) && (op_type == FLASH_OP_READ)) {
+			verify_chunk(&read_res, test_buffer, chunk, TEST_DATA_PATTERN);
+		}
+		flash_offset += (off_t)chunk;
+		remaining -= chunk;
 	}
-	counter_get_value(tst_timer_dev, &tst_timer_value);
-	counter_stop(tst_timer_dev);
-	dk_set_led_off(DK_LED1);
+
 	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
 		cpu_load_monitor_stop();
+	}
+
+	if (IS_ENABLED(CONFIG_TEST_DATA_VERIFICATION) && (op_type == FLASH_OP_READ) &&
+	    (err == 0)) {
+		err = verify_report(&read_res, TEST_DATA_PATTERN, operation_name);
 	}
 
 	if (err != 0) {
 		printk("!!!! Flash operation error: %d !!!!\n", err);
 	}
-
-	timer_value_us = counter_ticks_to_us(tst_timer_dev, tst_timer_value);
 
 	printk("### Summary ###\n");
 	printk("Flash %s [size: %u bytes] took: %llu us\n", operation_name, flash_operation_size,
@@ -175,6 +314,17 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
 		cpu_load_monitor_show();
 	}
+
+	if (IS_ENABLED(CONFIG_TEST_DATA_VERIFICATION) && (err == 0)) {
+		uint8_t expected_pattern =
+			(op_type == FLASH_OP_ERASE) ? flash_erase_value : TEST_DATA_PATTERN;
+
+		if (op_type != FLASH_OP_READ) {
+			verify_flash_region(FLASH_TEST_DATA_OFFSET, flash_operation_size,
+					    expected_pattern, operation_name);
+		}
+	}
+
 	k_msleep(DEAD_TIME_MS);
 }
 
@@ -212,16 +362,21 @@ int main(void)
 		       test_operation_size[i]);
 		if (test_operation_size[i] >= page_size) {
 			test_flash_operation(test_operation_size[i], flash_erase_operation,
-					     "erase");
+					     "erase", FLASH_OP_ERASE);
 		} else {
 			err = flash_erase(flash_dev, FLASH_TEST_DATA_OFFSET, page_size);
 			k_msleep(DEAD_TIME_MS);
 			if (err != 0) {
 				printk("!!!! Flash erase error: %d !!!!\n", err);
+			} else if (IS_ENABLED(CONFIG_TEST_DATA_VERIFICATION)) {
+				verify_flash_region(FLASH_TEST_DATA_OFFSET, page_size,
+						     flash_erase_value, "erase");
 			}
 		}
-		test_flash_operation(test_operation_size[i], flash_write_operation, "write");
-		test_flash_operation(test_operation_size[i], flash_read_operation, "read");
+		test_flash_operation(test_operation_size[i], flash_write_operation, "write",
+				     FLASH_OP_WRITE);
+		test_flash_operation(test_operation_size[i], flash_read_operation, "read",
+				     FLASH_OP_READ);
 	}
 
 	/*
