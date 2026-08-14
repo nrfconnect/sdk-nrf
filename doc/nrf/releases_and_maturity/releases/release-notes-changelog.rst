@@ -1112,6 +1112,7 @@ VPR samples
 * Added the :ref:`vpr_samples` category with the following samples, which run on the VPR coprocessors (FLPR and PPR):
 
   * The :ref:`vpr_vio_toggle_sample` sample that demonstrates the VIO functionality by generating a cycle-accurate square wave.
+  * The :ref:`vpr_vio_clocked_output` sample that demonstrates using VIO buffered output clocked by the VPR timer by emulating a UART transmitter.
 
 Wi-Fi samples
 -------------
