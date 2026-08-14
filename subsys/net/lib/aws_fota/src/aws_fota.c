@@ -19,6 +19,11 @@ LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
 #define AWS_JOB_ID_DEFAULT "INVALID-JOB-ID"
 
+/* Maximum length of the status details JSON object that is reported to AWS IoT Jobs when a job
+ * execution is marked as failed. Must fit {"reason":"<cause>","progress":"<0-100>"}.
+ */
+#define STATUS_DETAILS_MAX_LEN 64
+
 static enum internal_state {
 	STATE_UNINIT,
 	STATE_INIT,
@@ -50,6 +55,11 @@ static uint32_t execution_version_number;
 
 /* File download progress in percentage [0-100%]. */
 static size_t download_progress;
+
+/* Cause of the failure of the job execution currently being handled. Kept so that the reason can
+ * be reported to AWS IoT Jobs, also when the update is retried after a reconnect.
+ */
+static enum aws_fota_error_cause error_cause = AWS_FOTA_ERROR_CAUSE_NO_ERROR;
 
 /* Variable that keeps tracks of the MQTT connection state. */
 static bool connected;
@@ -88,6 +98,72 @@ static char *state2str(enum internal_state state)
 	}
 }
 
+/* Convert a fota_download error cause to the corresponding aws_fota error cause. */
+static enum aws_fota_error_cause error_cause_convert(enum fota_download_error_cause cause)
+{
+	switch (cause) {
+	case FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR:
+		return AWS_FOTA_ERROR_CAUSE_NO_ERROR;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_CONNECT_FAILED:
+		return AWS_FOTA_ERROR_CAUSE_CONNECT_FAILED;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_DOWNLOAD_FAILED:
+		return AWS_FOTA_ERROR_CAUSE_DOWNLOAD_FAILED;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_UPDATE:
+		return AWS_FOTA_ERROR_CAUSE_INVALID_UPDATE;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH:
+		return AWS_FOTA_ERROR_CAUSE_TYPE_MISMATCH;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_INTERNAL:
+		return AWS_FOTA_ERROR_CAUSE_INTERNAL;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_DFU:
+		return AWS_FOTA_ERROR_CAUSE_DFU;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_PROTO_NOT_SUPPORTED:
+		return AWS_FOTA_ERROR_CAUSE_PROTO_NOT_SUPPORTED;
+	case FOTA_DOWNLOAD_ERROR_CAUSE_INVALID_CONFIGURATION:
+		return AWS_FOTA_ERROR_CAUSE_INVALID_CONFIGURATION;
+	default:
+		return AWS_FOTA_ERROR_CAUSE_UNKNOWN;
+	}
+}
+
+/* Convert an error cause to the string that is reported in the job execution status details. */
+static const char *error_cause2str(enum aws_fota_error_cause cause)
+{
+	switch (cause) {
+	case AWS_FOTA_ERROR_CAUSE_NO_ERROR:
+		return "NO_ERROR";
+	case AWS_FOTA_ERROR_CAUSE_CONNECT_FAILED:
+		return "CONNECT_FAILED";
+	case AWS_FOTA_ERROR_CAUSE_DOWNLOAD_FAILED:
+		return "DOWNLOAD_FAILED";
+	case AWS_FOTA_ERROR_CAUSE_INVALID_UPDATE:
+		return "INVALID_UPDATE";
+	case AWS_FOTA_ERROR_CAUSE_TYPE_MISMATCH:
+		return "TYPE_MISMATCH";
+	case AWS_FOTA_ERROR_CAUSE_INTERNAL:
+		return "INTERNAL";
+	case AWS_FOTA_ERROR_CAUSE_DFU:
+		return "DFU";
+	case AWS_FOTA_ERROR_CAUSE_PROTO_NOT_SUPPORTED:
+		return "PROTO_NOT_SUPPORTED";
+	case AWS_FOTA_ERROR_CAUSE_INVALID_CONFIGURATION:
+		return "INVALID_CONFIGURATION";
+	case AWS_FOTA_ERROR_CAUSE_INVALID_JOB_DOCUMENT:
+		return "INVALID_JOB_DOCUMENT";
+	case AWS_FOTA_ERROR_CAUSE_URL_TOO_LONG:
+		return "URL_TOO_LONG";
+	case AWS_FOTA_ERROR_CAUSE_NO_SEC_TAG:
+		return "NO_SEC_TAG";
+	case AWS_FOTA_ERROR_CAUSE_DOWNLOAD_START_FAILED:
+		return "DOWNLOAD_START_FAILED";
+	case AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_REJECTED:
+		return "JOB_UPDATE_REJECTED";
+	case AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED:
+		return "JOB_UPDATE_FAILED";
+	default:
+		return "UNKNOWN";
+	}
+}
+
 static void internal_state_set(enum internal_state new_state)
 {
 	if (new_state == internal_state) {
@@ -111,6 +187,7 @@ static void reset_library(void)
 	internal_state_set(STATE_INIT);
 	execution_status = AWS_JOBS_QUEUED;
 	download_progress = 0;
+	error_cause = AWS_FOTA_ERROR_CAUSE_NO_ERROR;
 	set_current_job_id(AWS_JOB_ID_DEFAULT);
 	LOG_DBG("Library reset");
 }
@@ -193,6 +270,8 @@ static int update_job_execution(struct mqtt_client *const client,
 				const char *client_token)
 {
 	int err;
+	char status_details[STATUS_DETAILS_MAX_LEN];
+	const char *status_details_ptr = NULL;
 
 	/* Check if the library has obtained a job ID. */
 	if (strncmp(job_id, AWS_JOB_ID_DEFAULT, job_id_len) == 0) {
@@ -202,8 +281,25 @@ static int update_job_execution(struct mqtt_client *const client,
 	LOG_DBG("%s, status: %d, version_number: %d", __func__,
 		status, execution_version_number);
 
+	/* Report the cause of the failure and the download progress at the time of the failure
+	 * in the status details of the job execution. This makes it possible to diagnose a failed
+	 * update from the AWS IoT Jobs console, without access to a serial log from the device.
+	 */
+	if (status == AWS_JOBS_FAILED) {
+		int len = snprintf(status_details, sizeof(status_details),
+				   "{\"reason\":\"%s\",\"progress\":\"%u\"}",
+				   error_cause2str(error_cause),
+				   (unsigned int)download_progress);
+
+		if ((len > 0) && ((size_t)len < sizeof(status_details))) {
+			status_details_ptr = status_details;
+		} else {
+			LOG_WRN("Status details truncated, reporting failure without them");
+		}
+	}
+
 	err = aws_jobs_update_job_execution(client, job_id, status,
-					    NULL,
+					    status_details_ptr,
 					    execution_version_number,
 					    client_token, update_topic);
 
@@ -221,14 +317,26 @@ static int update_job_execution(struct mqtt_client *const client,
  * @brief Update the job document of the current job to AWS_JOBS_FAILED and move to ERROR state.
  *
  * @param client Connected MQTT client instance
+ * @param cause  Cause of the failure. Reported to the application in the
+ *		 AWS_FOTA_EVT_ERROR event and to AWS IoT Jobs in the job execution
+ *		 status details.
  *
  * @return 0 If successful otherwise a negative error code is returned.
  */
-static int set_current_job_failed(struct mqtt_client *const client)
+static int set_current_job_failed(struct mqtt_client *const client,
+				  enum aws_fota_error_cause cause)
 {
 	struct aws_fota_event aws_fota_evt = {
-		.id = AWS_FOTA_EVT_ERROR
+		.id = AWS_FOTA_EVT_ERROR,
+		.cause = cause
 	};
+
+	LOG_ERR("FOTA job failed, cause: %s", error_cause2str(cause));
+
+	/* Store the cause so that it is also reported if the job execution update has to be
+	 * retried after a reconnect.
+	 */
+	error_cause = cause;
 
 	callback(&aws_fota_evt);
 	internal_state_set(STATE_ERROR);
@@ -303,10 +411,11 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 	/* Check if the update data is valid */
 	if (err == AWS_FOTA_JSON_RES_INVALID_DOCUMENT) {
 		LOG_ERR("Invalid FOTA update document: %d", err);
-		return set_current_job_failed(client);
+		return set_current_job_failed(client,
+					      AWS_FOTA_ERROR_CAUSE_INVALID_JOB_DOCUMENT);
 	} else if (err == AWS_FOTA_JSON_RES_URL_TOO_LONG) {
 		LOG_ERR("URL elements too long for buffer: %d", err);
-		return set_current_job_failed(client);
+		return set_current_job_failed(client, AWS_FOTA_ERROR_CAUSE_URL_TOO_LONG);
 	}
 
 	/* Valid update */
@@ -376,7 +485,8 @@ static int job_update_accepted(struct mqtt_client *const client, uint32_t payloa
 		if (strncmp(protocol, "https", 5) == 0) {
 			if (CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG == -1) {
 				LOG_ERR("Trying to use https without sec tag configured.");
-				return set_current_job_failed(client);
+				return set_current_job_failed(client,
+							      AWS_FOTA_ERROR_CAUSE_NO_SEC_TAG);
 			}
 
 			sec_tag = CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG;
@@ -387,7 +497,8 @@ static int job_update_accepted(struct mqtt_client *const client, uint32_t payloa
 		err = fota_download_start(hostname, file_path, sec_tag, 0, 0);
 		if (err) {
 			LOG_ERR("Error (%d) when trying to start firmware download", err);
-			return set_current_job_failed(client);
+			return set_current_job_failed(
+				client, AWS_FOTA_ERROR_CAUSE_DOWNLOAD_START_FAILED);
 		}
 
 		internal_state_set(STATE_DOWNLOADING);
@@ -435,7 +546,10 @@ static int job_update_accepted(struct mqtt_client *const client, uint32_t payloa
  */
 static int job_update_rejected(struct mqtt_client *const client, uint32_t payload_len)
 {
-	struct aws_fota_event aws_fota_evt = { .id = AWS_FOTA_EVT_ERROR };
+	struct aws_fota_event aws_fota_evt = {
+		.id = AWS_FOTA_EVT_ERROR,
+		.cause = AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_REJECTED
+	};
 	LOG_ERR("Job document update was rejected");
 	execution_version_number--;
 	int err = get_published_payload(client, payload_buf, payload_len);
@@ -756,6 +870,7 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 					   "");
 		if (err != 0 && connected) {
 			aws_fota_evt.id = AWS_FOTA_EVT_ERROR;
+			aws_fota_evt.cause = AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED;
 			callback(&aws_fota_evt);
 			reset_library();
 			return;
@@ -782,9 +897,9 @@ static void http_fota_handler(const struct fota_download_evt *evt)
 		break;
 
 	case FOTA_DOWNLOAD_EVT_ERROR:
-		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR");
+		LOG_ERR("FOTA_DOWNLOAD_EVT_ERROR, cause: %d", evt->cause);
 
-		err = set_current_job_failed(client_internal);
+		err = set_current_job_failed(client_internal, error_cause_convert(evt->cause));
 		if (err < 0) {
 			reset_library();
 		}
