@@ -38,8 +38,9 @@ logging.basicConfig(format='%(levelname)s: %(message)s', level=logging.INFO)
 logging.getLogger("pykwalify.core").setLevel(50)
 
 sys.path.append(os.path.join(zephyr_base, 'scripts'))
+sys.path.append(os.path.join(zephyr_base, 'scripts', 'pylib', 'twister'))
 import list_boards
-from pylib.twister.twisterlib.statuses import TwisterStatus
+from twisterlib.statuses import TwisterStatus
 
 
 def _get_match_fn(globs, regexes):
