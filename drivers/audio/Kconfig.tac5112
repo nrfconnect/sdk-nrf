@@ -18,7 +18,6 @@ config AUDIO_TAC5112
 
 config AUDIO_TAC5112_EMUL
 	bool "TAC5112 I2C emulator (test only)"
-	default n
 	depends on AUDIO_TAC5112
 	depends on EMUL
 	help

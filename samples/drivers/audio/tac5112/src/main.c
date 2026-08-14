@@ -48,7 +48,8 @@ LOG_MODULE_REGISTER(tac5112_sample, LOG_LEVEL_INF);
  * the I2S peripheral feeding it.
  */
 #define AUDIO_SAMPLE_RATE_HZ 48000U
-#define AUDIO_WORD_BITS	     16U
+#define AUDIO_WORD_BITS_16   16U
+#define AUDIO_WORD_BITS_24   24U
 #define AUDIO_CHANNELS	     2U
 
 static const struct device *const codec = DEVICE_DT_GET(CODEC_NODE);
@@ -71,9 +72,11 @@ static void codec_fault_handler(const struct device *dev, uint32_t errors)
 	if (errors & AUDIO_CODEC_ERROR_OVERCURRENT) {
 		LOG_ERR("  - output over-current / short circuit");
 	}
+
 	if (errors & AUDIO_CODEC_ERROR_DC) {
 		LOG_ERR("  - output DC / virtual-ground fault");
 	}
+
 	if (errors & AUDIO_CODEC_ERROR_UNDERVOLTAGE) {
 		LOG_ERR("  - supply under-voltage / brown-out");
 	}
@@ -100,7 +103,7 @@ static int codec_setup(void)
 	cfg.mclk_freq = 0U;
 	cfg.dai_type = AUDIO_DAI_TYPE_I2S;
 	cfg.dai_route = AUDIO_ROUTE_PLAYBACK;
-	cfg.dai_cfg.i2s.word_size = AUDIO_WORD_BITS;
+	cfg.dai_cfg.i2s.word_size = AUDIO_WORD_BITS_16;
 	cfg.dai_cfg.i2s.channels = AUDIO_CHANNELS;
 	cfg.dai_cfg.i2s.format = I2S_FMT_DATA_FORMAT_I2S;
 	cfg.dai_cfg.i2s.options = I2S_OPT_BIT_CLK_TARGET | I2S_OPT_FRAME_CLK_TARGET;
@@ -113,7 +116,7 @@ static int codec_setup(void)
 	}
 
 	LOG_INF("codec configured: I2S target, %u Hz, %u-bit, %u ch", AUDIO_SAMPLE_RATE_HZ,
-		AUDIO_WORD_BITS, AUDIO_CHANNELS);
+		AUDIO_WORD_BITS_16, AUDIO_CHANNELS);
 	return 0;
 }
 
@@ -165,23 +168,15 @@ static int codec_set_mute(bool mute)
 #define I2S_TX_NODE	  DT_ALIAS(tac5112_i2s)
 #define TONE_FREQ_HZ	  1000U
 #define SAMPLES_PER_BLOCK (AUDIO_SAMPLE_RATE_HZ / 100U) /* 10 ms of frames */
-#define BLOCK_BYTES	  (SAMPLES_PER_BLOCK * AUDIO_CHANNELS * (AUDIO_WORD_BITS / 8U))
+#define BLOCK_BYTES_16	  (SAMPLES_PER_BLOCK * AUDIO_CHANNELS * (AUDIO_WORD_BITS_16 / 8U))
+#define BLOCK_BYTES_24	  (SAMPLES_PER_BLOCK * AUDIO_CHANNELS * (AUDIO_WORD_BITS_24 / 8U))
 #define BLOCK_COUNT	  8U
 #define TONE_BLOCKS	  100U /* ~1 second */
+#define PRIME_BLOCKS	  3U
 
-K_MEM_SLAB_DEFINE_STATIC(tone_slab, BLOCK_BYTES, BLOCK_COUNT, 4);
+K_MEM_SLAB_DEFINE_STATIC(tone_slab, BLOCK_BYTES_16, BLOCK_COUNT, 4);
+K_MEM_SLAB_DEFINE_STATIC(loopback_slab, BLOCK_BYTES_24, BLOCK_COUNT, 4);
 
-/* Queue this many blocks before START. Must be >= 2 (the nRF TDM DMA is
- * double-buffered and underruns immediately if started with fewer) and
- * <= BLOCK_COUNT.
- */
-#define PRIME_BLOCKS 3U
-
-/* SAMPLES_PER_BLOCK (480) is exactly 10 full 1 kHz cycles at 48 kHz, so
- * every block is identical and phase-continuous. Precompute it once and
- * just copy it into each DMA buffer; this keeps the per-block fill trivial
- * so the CPU never falls behind the DMA and causes an underrun.
- */
 static int16_t tone_block[SAMPLES_PER_BLOCK * AUDIO_CHANNELS];
 
 static void tone_block_init(void)
@@ -207,14 +202,13 @@ static int play_test_tone(void)
 {
 	const struct device *i2s_dev = DEVICE_DT_GET(I2S_TX_NODE);
 	struct i2s_config i2s_cfg = {
-		.word_size = AUDIO_WORD_BITS,
+		.word_size = AUDIO_WORD_BITS_16,
 		.channels = AUDIO_CHANNELS,
 		.format = I2S_FMT_DATA_FORMAT_I2S,
-		/* nRF TDM generates the clocks (controller); codec is the target. */
 		.options = I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_FRAME_CLK_CONTROLLER,
 		.frame_clk_freq = AUDIO_SAMPLE_RATE_HZ,
 		.mem_slab = &tone_slab,
-		.block_size = BLOCK_BYTES,
+		.block_size = BLOCK_BYTES_16,
 		.timeout = 2000,
 	};
 	bool started = false;
@@ -245,7 +239,7 @@ static int play_test_tone(void)
 
 		fill_tone_block((int16_t *)block);
 
-		ret = i2s_write(i2s_dev, block, BLOCK_BYTES);
+		ret = i2s_write(i2s_dev, block, BLOCK_BYTES_16);
 		if (ret != 0) {
 			LOG_ERR("i2s_write() failed (%d)", ret);
 			k_mem_slab_free(&tone_slab, block);
@@ -265,7 +259,6 @@ static int play_test_tone(void)
 		}
 	}
 
-	/* Tone shorter than the prime count: start what we queued. */
 	if (!started) {
 		ret = i2s_trigger(i2s_dev, I2S_DIR_TX, I2S_TRIGGER_START);
 		if (ret != 0) {
@@ -274,18 +267,11 @@ static int play_test_tone(void)
 		}
 	}
 
-	/* Let the queued blocks drain out of the peripheral. */
 	ret = i2s_trigger(i2s_dev, I2S_DIR_TX, I2S_TRIGGER_DRAIN);
 	if (ret != 0) {
 		LOG_ERR("I2S drain trigger failed (%d)", ret);
 	}
 
-	/* DRAIN is asynchronous: the TDM stays in the STOPPING state until the
-	 * last queued block finishes transmitting. Wait long enough for every
-	 * in-flight block to play out and the peripheral to return to READY,
-	 * so a following i2s_configure() (e.g. the loopback) isn't rejected
-	 * with -EINVAL ("Cannot configure in state: 3").
-	 */
 	k_msleep((BLOCK_COUNT * 10U) + 50U); /* block period is 10 ms */
 
 	return ret;
@@ -328,6 +314,7 @@ static void loopback_demo_step(uint32_t b)
 		LOG_INF("loopback: %s", mute ? "mute" : "unmute");
 		last_mute = mute;
 	}
+
 	if (!mute && (vol_db != last_vol_db)) {
 		(void)codec_set_volume(HALF_DB(vol_db));
 		if ((vol_db % 10) == 0) {
@@ -352,13 +339,13 @@ static int run_loopback(void)
 {
 	const struct device *i2s_dev = DEVICE_DT_GET(I2S_TX_NODE);
 	struct i2s_config cfg = {
-		.word_size = AUDIO_WORD_BITS,
+		.word_size = AUDIO_WORD_BITS_24,
 		.channels = AUDIO_CHANNELS,
 		.format = I2S_FMT_DATA_FORMAT_I2S,
 		.options = I2S_OPT_BIT_CLK_CONTROLLER | I2S_OPT_FRAME_CLK_CONTROLLER,
 		.frame_clk_freq = AUDIO_SAMPLE_RATE_HZ,
-		.mem_slab = &tone_slab,
-		.block_size = BLOCK_BYTES,
+		.mem_slab = &loopback_slab,
+		.block_size = BLOCK_BYTES_24,
 		.timeout = 2000,
 	};
 	int ret;
@@ -368,26 +355,26 @@ static int run_loopback(void)
 		return -ENODEV;
 	}
 
-	/* Configure RX (codec ADC -> SDIN) and TX (SDOUT -> codec DAC) together. */
 	ret = i2s_configure(i2s_dev, I2S_DIR_BOTH, &cfg);
 	if (ret != 0) {
 		LOG_ERR("i2s_configure(BOTH) failed (%d)", ret);
 		return ret;
 	}
 
-	/* Prime the TX side with silence so it has data the moment it starts. */
 	for (uint32_t i = 0; i < PRIME_BLOCKS; i++) {
 		void *block;
 
-		ret = k_mem_slab_alloc(&tone_slab, &block, K_MSEC(200));
+		ret = k_mem_slab_alloc(&loopback_slab, &block, K_MSEC(200));
 		if (ret != 0) {
 			LOG_ERR("loopback prime alloc failed (%d)", ret);
 			return ret;
 		}
+
 		for (uint32_t j = 0; j < SAMPLES_PER_BLOCK * AUDIO_CHANNELS; j++) {
 			((int16_t *)block)[j] = 0;
 		}
-		ret = i2s_write(i2s_dev, block, BLOCK_BYTES);
+
+		ret = i2s_write(i2s_dev, block, BLOCK_BYTES_16);
 		if (ret != 0) {
 			LOG_ERR("loopback prime write failed (%d)", ret);
 			k_mem_slab_free(&tone_slab, block);
@@ -407,30 +394,22 @@ static int run_loopback(void)
 		void *block;
 		size_t size;
 
-		/* Pull one captured block in from the ADC ... */
 		ret = i2s_read(i2s_dev, &block, &size);
 		if (ret != 0) {
 			LOG_ERR("i2s_read() failed (%d)", ret);
 			break;
 		}
-		/* ... and hand the same buffer straight to the DAC. The driver
-		 * frees it once transmitted (zero-copy passthrough).
-		 */
+
 		ret = i2s_write(i2s_dev, block, size);
 		if (ret != 0) {
 			LOG_ERR("i2s_write() failed (%d)", ret);
-			k_mem_slab_free(&tone_slab, block);
+			k_mem_slab_free(&loopback_slab, block);
 			break;
 		}
 
-		/* Adjust volume/mute so the changes are audible on the live
-		 * passthrough. Done after i2s_write (not between read and write)
-		 * to keep TX fed.
-		 */
 		loopback_demo_step(b);
 	}
 
-	/* Stop both directions and discard anything still queued. */
 	(void)i2s_trigger(i2s_dev, I2S_DIR_BOTH, I2S_TRIGGER_DROP);
 
 	return ret;
@@ -478,7 +457,6 @@ int main(void)
 		return 0;
 	}
 
-	/* Start at 0 dB, unmuted, then power up the DAC. */
 	if (codec_set_volume(HALF_DB(0)) != 0 || codec_set_mute(false) != 0) {
 		return 0;
 	}
@@ -488,21 +466,15 @@ int main(void)
 
 	(void)play_test_tone();
 
-	/* Loop the codec's analog input back to its output, varying the output
-	 * volume and mute so those controls are audible on the live audio.
-	 */
 	(void)run_loopback();
 
 #if !DT_NODE_EXISTS(DT_ALIAS(tac5112_i2s))
-	/* Control-only build (no TDM audio path, e.g. native_sim): still
-	 * exercise volume and mute over I2C. When the audio path is present,
-	 * run_loopback() already demonstrates these audibly.
-	 */
 	LOG_INF("volume ramp down/up");
 	for (int db = 0; db >= -20; db -= 2) {
 		(void)codec_set_volume(HALF_DB(db));
 		k_msleep(100);
 	}
+
 	for (int db = -20; db <= 0; db += 2) {
 		(void)codec_set_volume(HALF_DB(db));
 		k_msleep(100);
@@ -511,6 +483,7 @@ int main(void)
 	LOG_INF("mute");
 	(void)codec_set_mute(true);
 	k_msleep(500);
+
 	LOG_INF("unmute");
 	(void)codec_set_mute(false);
 	k_msleep(500);
@@ -519,7 +492,6 @@ int main(void)
 	audio_codec_stop_output(codec);
 	LOG_INF("output disabled");
 
-	/* Clear any latched faults accumulated during the demo. */
 	(void)audio_codec_clear_errors(codec);
 
 	LOG_INF("TAC5112 sample complete");

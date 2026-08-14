@@ -25,13 +25,9 @@
 
 #include "tac5112.h"
 
-#define LOG_LEVEL CONFIG_I2C_LOG_LEVEL
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(tac5112_emul);
+LOG_MODULE_DECLARE(tac5112_emul, CONFIG_I2C_LOG_LEVEL);
 
-/* Backing store covers pages 0..TAC5112_PAGE_MAX inclusive; every page is
- * a full 256-byte register file (register addresses are 8-bit).
- */
 #define TAC5112_EMUL_NUM_PAGES (TAC5112_PAGE_MAX + 1U)
 #define TAC5112_EMUL_PAGE_SIZE 256U
 
@@ -68,7 +64,7 @@ static void tac5112_emul_reset_defaults(struct tac5112_emul_data *data)
 	/* Page 1 reset defaults. */
 	data->regs[1][TAC5112_REG_INT_MASK0.addr] = 0xFFU;
 
-	/* Page 3 reset defaults (PLL / clock dividers). */
+	/* Page 3 reset defaults (PLL/clock dividers). */
 	data->regs[3][TAC5112_REG_CLK_CFG15.addr] = 0x01U;
 	data->regs[3][TAC5112_REG_CLK_CFG18.addr] = 0x08U;
 	data->regs[3][TAC5112_REG_CLK_CFG19.addr] = 0x20U;
@@ -78,29 +74,18 @@ static void tac5112_emul_reset_defaults(struct tac5112_emul_data *data)
 	data->cur_addr = 0U;
 }
 
-/*
- * @brief Fetch a register value, applying read-side effects.
- *
- * @p page is validated against the backing-store bounds before it is used
- * as an array index: the page-select register accepts any 8-bit value,
- * but this driver only ever models pages 0..TAC5112_PAGE_MAX. A read of a
- * page outside that range reads as 0 rather than indexing out of bounds.
- */
 static uint8_t tac5112_emul_reg_get(struct tac5112_emul_data *data, uint8_t page, uint8_t addr)
 {
 	uint8_t val;
 
 	if (page >= TAC5112_EMUL_NUM_PAGES) {
-		LOG_WRN("Read from unmodeled page %u treated as 0", page);
+		LOG_WRN("Read from defined page %u treated as 0", page);
 		return 0U;
 	}
 
 	val = data->regs[page][addr];
 
 	if (page == 1U) {
-		/* Latched fault/interrupt registers self-clear on read
-		 * (datasheet Section 8.1.2).
-		 */
 		if ((addr == TAC5112_REG_INT_LTCH0.addr) ||
 		    (addr == TAC5112_REG_OUT_CH1_LTCH.addr) ||
 		    (addr == TAC5112_REG_OUT_CH2_LTCH.addr)) {
@@ -133,16 +118,6 @@ static void tac5112_emul_reg_set(struct tac5112_emul_data *data, uint8_t val)
 	}
 }
 
-/**
- * @brief Emulate an I2C transfer to a TAC5112.
- *
- * Mirrors the addressing scheme used by tac5112_reg_write()/
- * tac5112_reg_read(): a single write message is [reg_addr, data...]
- * (sequential write starting at reg_addr); a write-then-read pair sets
- * the current register from the write and then returns sequential data
- * starting there, exactly as i2c_reg_write_byte_dt()/i2c_reg_read_byte_dt()
- * generate.
- */
 static int tac5112_emul_transfer(const struct emul *target, struct i2c_msg *msgs, int num_msgs,
 				 int addr)
 {
@@ -170,16 +145,20 @@ static int tac5112_emul_transfer(const struct emul *target, struct i2c_msg *msgs
 					tac5112_emul_reg_get(data, data->cur_page, data->cur_addr);
 				data->cur_addr++;
 			}
+
 			return 0;
 		}
+
 		if (msgs->len == 0) {
 			return 0; /* zero-length write used for probing */
 		}
+
 		data->cur_addr = msgs->buf[0];
 		for (i = 1; i < msgs->len; i++) {
 			tac5112_emul_reg_set(data, msgs->buf[i]);
 			data->cur_addr++;
 		}
+
 		return 0;
 	case 2:
 		if ((msgs->flags & I2C_MSG_READ) || (msgs->len != 1)) {
@@ -193,10 +172,12 @@ static int tac5112_emul_transfer(const struct emul *target, struct i2c_msg *msgs
 			LOG_ERR("Unexpected second message in 2-message transfer");
 			return -EIO;
 		}
+
 		for (i = 0; i < msgs->len; i++) {
 			msgs->buf[i] = tac5112_emul_reg_get(data, data->cur_page, data->cur_addr);
 			data->cur_addr++;
 		}
+
 		return 0;
 	default:
 		LOG_ERR("Invalid number of messages: %d", num_msgs);

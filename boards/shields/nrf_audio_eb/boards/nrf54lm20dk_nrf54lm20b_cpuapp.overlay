@@ -102,6 +102,7 @@
 				<NRF_PSEL(SPIM_MISO, 2, 4)>;
 		};
 	};
+
 	spi_sdcard_sleep: spi_sdcard_sleep {
 		group1 {
 			psels = <NRF_PSEL(SPIM_SCK, 2, 1)>,

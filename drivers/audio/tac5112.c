@@ -38,9 +38,8 @@
 
 #include "tac5112.h"
 
-#define LOG_LEVEL CONFIG_AUDIO_CODEC_LOG_LEVEL
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(tac5112);
+LOG_MODULE_REGISTER(tac5112, CONFIG_AUDIO_CODEC_LOG_LEVEL);
 
 /* Number of physical stereo channels (left, right). */
 #define TAC5112_NUM_CHAN 2U
@@ -115,23 +114,17 @@ int tac5112_dvol_from_half_db(bool is_output, int32_t half_db, uint8_t *dvol_out
 		max_half_db = TAC5112_ADC_VOL_MAX_HALF_DB;
 	}
 
-	/* Range-check on the full 32-bit width *before* any narrowing, so a
-	 * huge value can never be truncated into an in-range register code.
-	 */
 	if ((half_db < min_half_db) || (half_db > max_half_db)) {
 		return -EINVAL;
 	}
 
 	reg = zero_db_reg + half_db;
+	if (reg > TAC5112_DAC_DVOL_MAX) {
+		reg = TAC5112_DAC_DVOL_MAX;
+	}
 
-	/* Defensive clamp: the range check above already guarantees
-	 * 1 <= reg <= 255, but never trust arithmetic alone to keep a value
-	 * inside the bounds of a uint8_t register field.
-	 */
 	if (reg < (int32_t)TAC5112_DAC_DVOL_MIN) {
 		reg = (int32_t)TAC5112_DAC_DVOL_MIN;
-	} else if (reg > 0xFF) {
-		reg = 0xFF;
 	}
 
 	*dvol_out = (uint8_t)reg;
@@ -164,9 +157,6 @@ int tac5112_reg_write(const struct device *dev, struct tac5112_reg reg, uint8_t 
 	if (ret < 0) {
 		LOG_ERR("Write pg:%u reg:0x%02x val:0x%02x failed (%d)", reg.page, reg.addr, val,
 			ret);
-		/* The bus transaction failed; do not trust that the device's
-		 * page pointer is still where we think it is.
-		 */
 		data->page_cache = TAC5112_PAGE_CACHE_INVALID;
 		return ret;
 	}
