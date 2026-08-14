@@ -790,5 +790,11 @@ config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	  This option configures the LL_SOFTDEVICE initialization priority level. The priority
 	  must be lower than the CONFIG_MPSL_INIT_PRIORITY due to dependency on the MPSL library.
 
+config BT_HCI_SUPPORT_DEPRECATED_COMMANDS
+	bool "Support deprecated HCI commands"
+	help
+	  Enable support for deprecated HCI commands in the SoftDevice Controller, if any.
+	  These may cause deprecation warnings or errors during compilation.
+
 endmenu
 endif  # BT_LL_SOFTDEVICE
