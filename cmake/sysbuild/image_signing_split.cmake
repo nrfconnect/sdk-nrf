@@ -103,8 +103,8 @@ function(zephyr_mcuboot_tasks)
     # The MCUboot header is placed at slot0 start by --pad-header, so ih_load_addr
     # must match slot0 and not the NS-only code partition.
     if(CONFIG_BUILD_WITH_TFM)
-      dt_partition_size(slot_size PATH "${slot0_flash}" REQUIRED)
-      dt_partition_addr(slot_address PATH "${slot0_flash}" REQUIRED ABSOLUTE)
+      dt_partition_size(slot_size PATH "${slot0_partition_path}" REQUIRED)
+      dt_partition_addr(slot_address PATH "${slot0_partition_path}" REQUIRED ABSOLUTE)
     else()
       dt_partition_size(slot_size PATH "${code_partition_path}" REQUIRED)
       dt_partition_addr(slot_address PATH "${code_partition_path}" REQUIRED ABSOLUTE)
