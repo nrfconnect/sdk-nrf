@@ -8,17 +8,22 @@ import re
 from pathlib import Path
 
 from args import args
-from common import SbomException, command_execute, concurrent_pool_iter
+from common import SbomException, command_execute, concurrent_pool_iter, is_sha
 from data_structure import Data, FileInfo, Package
 from west import log
 
                                                     # FileInfo is used.
+
+NCS_TAG_RE = re.compile(r'^ncs-v\d+\.\d+\.\d+')  # ncs-v3.4.0, the NCS release
+VERSION_TAG_RE = re.compile(r'^v?\d+\.\d+')      # v3.4.0, v1.3.4-ncs1, 1.42.0
+PRERELEASE_RE = re.compile(r'-(rc|snapshot|alpha|beta|dev)', re.IGNORECASE)  # ncs-v3.4.0-rc2
 
 _manifest_projects: 'dict[Path, object]' = {}
 _manifest_path_index: 'list[tuple[Path, object]]' = []
 _self_repo_path: 'Path|None' = None
 _self_repo_name: 'str|None' = None
 _self_repo_version: 'str|None' = None
+_version_cache: 'dict[tuple[Path, str], str]' = {}
 
 
 def split_lines(text: str) -> 'tuple[str]':
@@ -149,6 +154,51 @@ def get_toplevel(absolute_path: Path) -> 'Path|None':
         return None
 
 
+def tags_at(repo: Path, revision: str) -> 'tuple[str]':
+    '''Returns all git tags pointing exactly at `revision` in the `repo` directory.
+
+    Returns an empty tuple when the revision is unknown locally.
+    '''
+    output, error_code = command_execute(args.git, 'tag', '--points-at', revision, cwd=repo,
+                                         return_error_code=True, allow_stderr=True,
+                                         log_stderr=False)
+    if error_code != 0:
+        return tuple()
+    return split_lines(output)
+
+
+def tag_priority(tag: str) -> 'tuple[int,int,str]':
+    '''Returns the sort key of `tag`. The greatest key identifies a release best.
+
+    An NCS release tag wins over the repository's own version tag, a final release wins over
+    a pre-release and the highest tag name wins the rest.
+    '''
+    if NCS_TAG_RE.match(tag):
+        group = 2
+    elif VERSION_TAG_RE.match(tag):
+        group = 1
+    else:
+        group = 0
+    return (group, 0 if PRERELEASE_RE.search(tag) else 1, tag)
+
+
+def select_tag(tags: 'tuple[str]') -> 'str|None':
+    '''Returns the tag from `tags` that identifies a release best, or None if there is none.'''
+    return max(tags, key=tag_priority) if tags else None
+
+
+def resolve_version(repo: 'Path|None', revision: 'str|None') -> 'str|None':
+    '''Returns a release tag pointing at `revision` or `revision` if there is no such tag.'''
+
+    if (revision is None) or (repo is None) or (not is_sha(revision)):
+        return revision
+    key = (repo, revision)
+    if key not in _version_cache:
+        # detect_dir runs once per directory. Cache the tags of each repository.
+        _version_cache[key] = select_tag(tags_at(repo, revision)) or revision
+    return _version_cache[key]
+
+
 def upstream_url(project) -> 'str|None':
     '''Returns userdata.ncs.upstream-url for a manifest project.'''
     userdata = getattr(project, 'userdata', None)
@@ -195,6 +245,7 @@ def load_manifest():
     _self_repo_path = None
     _self_repo_name = None
     _self_repo_version = None
+    _version_cache.clear()
     try:
         from west.manifest import Manifest
         manifest = Manifest.from_topdir()
@@ -278,6 +329,9 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
             if project is None:
                 project = mproject
 
+    # report the tag when there is one.
+    git_version = resolve_version(repo, git_sha)
+
     if repo is not None:
         output, error_code = command_execute(args.git, 'status', '--porcelain', '--ignored',
                                              '--untracked-files=all', '*', cwd=absolute_path,
@@ -303,7 +357,8 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package = Package()
         package.id = package_id
         package.url = git_origin
-        package.version = git_sha
+        package.version = git_version
+        package.revision = git_sha
         if git_origin is None and package_name is not None:
             package.name = package_name
         if git_origin and git_sha:

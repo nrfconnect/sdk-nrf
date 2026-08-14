@@ -93,11 +93,12 @@ def github_archive_url(git_url: str, version: str) -> 'str|None':
 def download_location(package: Package) -> str:
     '''Format the SPDX PackageDownloadLocation field for a package.'''
     if package.purl:
+        revision = package.revision or package.version
         if args.package_download_format == 'github-archive':
-            archive_url = github_archive_url(package.url, package.version)
+            archive_url = github_archive_url(package.url, revision)
             if archive_url is not None:
                 return archive_url
-        return f'git+{package.url}@{package.version}'
+        return f'git+{package.url}@{revision}'
     return package.url or 'NONE'
 
 
