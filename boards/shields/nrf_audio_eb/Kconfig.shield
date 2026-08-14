@@ -6,35 +6,3 @@
 
 config SHIELD_NRF_AUDIO_EB
 	def_bool $(shields_list_contains,nrf_audio_eb)
-
-if SHIELD_NRF_AUDIO_EB
-
-# The TDM peripheral is used through the standard Zephyr I2S API.
-config I2S
-	default y
-
-# The TAC5112 codec is controlled over I2C (no in-tree driver; the app drives
-# the registers directly, so the I2C bus must be available).
-config I2C
-	default y
-
-# SD-card slot on the board's "QSPI" pins, driven over SPI (spi00) via the
-# Zephyr SD / Disk Access subsystem.
-config SPI
-	default y
-
-config DISK_ACCESS
-	default y
-
-config DISK_DRIVER_SDMMC
-	default y
-
-# Uncomment / adjust to match the interfaces you actually build against.
-# These are left as defaults rather than "select" so an application can
-# still turn a subsystem off if it does not use it.
-
-# Digital microphone (PDM) is consumed through the Audio DMIC API.
-# config AUDIO
-#	default y if AUDIO_DMIC
-
-endif # SHIELD_NRF_AUDIO_EB

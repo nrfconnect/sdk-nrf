@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Logging"
+
+module = NRF_AUDIO_EB
+module-str = nrf-audio-eb
+source "subsys/logging/Kconfig.template.log_config"
+
+endmenu # Log levels
+
+source "Kconfig.zephyr"

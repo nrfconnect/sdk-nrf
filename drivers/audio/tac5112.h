@@ -2,17 +2,26 @@
  * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/**
+ * @file
  *
  * Private register map and driver-internal API for the Texas Instruments
  * TAC5112 low-power stereo audio codec.
  *
- * Register field values in this file are transcribed from the TAC5112
- * datasheet (SLASF24A, December 2023 - Revised January 2025), section 8
- * "Device Configuration Registers". Only the registers required to
- * implement the Zephyr audio codec interface (configure / start / stop /
- * volume+mute / PLL control / fault reporting) for the stereo analog
- * path are modeled; multi-channel PDM/TDM extensions of the wider TAx5x1x
- * family are intentionally out of scope for this driver.
+ * Register addresses and field values in this file are transcribed from the
+ * TAC5112 datasheet (SLASF24A, December 2023 - Revised January 2025), section
+ * 8 "Register Maps". The complete page 0, page 1, and page 3 device
+ * configuration register map is declared for reference, even where the driver
+ * does not use a register yet. Bitfield definitions are only provided for the
+ * registers required to implement the Zephyr audio codec interface (configure,
+ * start, stop, volume and mute, PLL control, and fault reporting) for the
+ * stereo analog path. The multi-channel PDM/TDM extensions of the wider
+ * TAx5x1x family remain out of scope for this driver.
+ *
+ * The declarations in this header are driver-internal and not part of the
+ * public Zephyr audio codec API. They may change without notice.
  */
 
 #ifndef ZEPHYR_DRIVERS_AUDIO_TAC5112_H_
@@ -32,51 +41,130 @@ extern "C" {
 /*
  * ---------------------------------------------------------------------
  * Register addressing
- *
- * TAC5112 control registers are organized as 256-register "pages"
- * (Section 7.5, "Programming"). Register 0 of every page is PAGE_CFG and
- * selects which page addresses 1-255 refer to. All registers used by this
- * driver live on page 0 (device/DAC/ADC control), page 1 (interrupt and
- * fault status) or page 3 (PLL / clock dividers).
  * ---------------------------------------------------------------------
  */
+
+/**
+ * @brief Paged register address.
+ *
+ * TAC5112 control registers are organized as 256-register "pages" (datasheet
+ * Section 7.5, "Programming"). Register 0 of every page is PAGE_CFG and
+ * selects which page addresses 1-255 refer to. All registers used by this
+ * driver live on page 0 (device, DAC, and ADC control), page 1 (interrupt and
+ * fault status), or page 3 (PLL and clock dividers).
+ */
 struct tac5112_reg {
-	uint8_t page;
-	uint8_t addr;
+	uint8_t page; /**< Register page selected through PAGE_CFG. */
+	uint8_t addr; /**< Register address within the page. */
 };
 
+/** @brief Build a @ref tac5112_reg from a page number and address. */
 #define TAC5112_REG(_page, _addr)                                                                  \
 	((struct tac5112_reg){.page = (uint8_t)(_page), .addr = (uint8_t)(_addr)})
 
-/* Sentinel used to mark the page-select cache as invalid (forces a
- * PAGE_CFG write before the next register access).
+/**
+ * @brief Sentinel marking the page-select cache as invalid.
+ *
+ * Forces a PAGE_CFG write before the next register access.
  */
 #define TAC5112_PAGE_CACHE_INVALID 0xFFU
 
-/* ---- Page 0: device control ---- */
-#define TAC5112_REG_PAGE_CFG	     TAC5112_REG(0, 0x00)
-#define TAC5112_REG_SW_RESET	     TAC5112_REG(0, 0x01)
-#define TAC5112_REG_DEV_MISC_CFG     TAC5112_REG(0, 0x02)
-#define TAC5112_REG_AVDD_IOVDD_STS   TAC5112_REG(0, 0x03)
+/* ---- Page 0: device, ASI, clock, ADC, DAC, and status registers ---- */
+#define TAC5112_REG_PAGE_CFG	   TAC5112_REG(0, 0x00)
+#define TAC5112_REG_SW_RESET	   TAC5112_REG(0, 0x01)
+#define TAC5112_REG_DEV_MISC_CFG   TAC5112_REG(0, 0x02)
+#define TAC5112_REG_AVDD_IOVDD_STS TAC5112_REG(0, 0x03)
+
 #define TAC5112_REG_MISC_CFG	     TAC5112_REG(0, 0x04)
+#define TAC5112_REG_MISC_CFG1	     TAC5112_REG(0, 0x05)
+#define TAC5112_REG_DAC_CFG_A0	     TAC5112_REG(0, 0x06)
+#define TAC5112_REG_MISC_CFG0	     TAC5112_REG(0, 0x0A)
+#define TAC5112_REG_GPIO2_CFG0	     TAC5112_REG(0, 0x0B)
+#define TAC5112_REG_GPO1_CFG0	     TAC5112_REG(0, 0x0C)
+#define TAC5112_REG_GPI_CFG	     TAC5112_REG(0, 0x0D)
+#define TAC5112_REG_GPO_GPI_VAL	     TAC5112_REG(0, 0x0E)
 #define TAC5112_REG_INTF_CFG0	     TAC5112_REG(0, 0x0F)
+#define TAC5112_REG_INTF_CFG1	     TAC5112_REG(0, 0x10)
+#define TAC5112_REG_INTF_CFG2	     TAC5112_REG(0, 0x11)
+#define TAC5112_REG_INTF_CFG3	     TAC5112_REG(0, 0x12)
+#define TAC5112_REG_INTF_CFG4	     TAC5112_REG(0, 0x13)
+#define TAC5112_REG_INTF_CFG5	     TAC5112_REG(0, 0x14)
+#define TAC5112_REG_INTF_CFG6	     TAC5112_REG(0, 0x15)
+#define TAC5112_REG_ASI_CFG0	     TAC5112_REG(0, 0x18)
+#define TAC5112_REG_ASI_CFG1	     TAC5112_REG(0, 0x19)
 #define TAC5112_REG_PASI_CFG0	     TAC5112_REG(0, 0x1A)
 #define TAC5112_REG_PASI_TX_CFG0     TAC5112_REG(0, 0x1B)
+#define TAC5112_REG_PASI_TX_CFG1     TAC5112_REG(0, 0x1C)
+#define TAC5112_REG_PASI_TX_CFG2     TAC5112_REG(0, 0x1D)
+#define TAC5112_REG_PASI_TX_CH1_CFG  TAC5112_REG(0, 0x1E)
+#define TAC5112_REG_PASI_TX_CH2_CFG  TAC5112_REG(0, 0x1F)
+#define TAC5112_REG_PASI_TX_CH3_CFG  TAC5112_REG(0, 0x20)
+#define TAC5112_REG_PASI_TX_CH4_CFG  TAC5112_REG(0, 0x21)
+#define TAC5112_REG_PASI_TX_CH5_CFG  TAC5112_REG(0, 0x22)
+#define TAC5112_REG_PASI_TX_CH6_CFG  TAC5112_REG(0, 0x23)
+#define TAC5112_REG_PASI_TX_CH7_CFG  TAC5112_REG(0, 0x24)
+#define TAC5112_REG_PASI_TX_CH8_CFG  TAC5112_REG(0, 0x25)
+#define TAC5112_REG_PASI_RX_CFG0     TAC5112_REG(0, 0x26)
+#define TAC5112_REG_PASI_RX_CFG1     TAC5112_REG(0, 0x27)
+#define TAC5112_REG_PASI_RX_CH1_CFG  TAC5112_REG(0, 0x28)
+#define TAC5112_REG_PASI_RX_CH2_CFG  TAC5112_REG(0, 0x29)
+#define TAC5112_REG_PASI_RX_CH3_CFG  TAC5112_REG(0, 0x2A)
+#define TAC5112_REG_PASI_RX_CH4_CFG  TAC5112_REG(0, 0x2B)
+#define TAC5112_REG_PASI_RX_CH5_CFG  TAC5112_REG(0, 0x2C)
+#define TAC5112_REG_PASI_RX_CH6_CFG  TAC5112_REG(0, 0x2D)
+#define TAC5112_REG_PASI_RX_CH7_CFG  TAC5112_REG(0, 0x2E)
+#define TAC5112_REG_PASI_RX_CH8_CFG  TAC5112_REG(0, 0x2F)
 #define TAC5112_REG_CLK_CFG0	     TAC5112_REG(0, 0x32)
 #define TAC5112_REG_CLK_CFG1	     TAC5112_REG(0, 0x33)
 #define TAC5112_REG_CLK_CFG2	     TAC5112_REG(0, 0x34)
+#define TAC5112_REG_CNT_CLK_CFG0     TAC5112_REG(0, 0x35)
+#define TAC5112_REG_CNT_CLK_CFG1     TAC5112_REG(0, 0x36)
+#define TAC5112_REG_CNT_CLK_CFG2     TAC5112_REG(0, 0x37)
+#define TAC5112_REG_CNT_CLK_CFG3     TAC5112_REG(0, 0x38)
+#define TAC5112_REG_CNT_CLK_CFG4     TAC5112_REG(0, 0x39)
+#define TAC5112_REG_CNT_CLK_CFG5     TAC5112_REG(0, 0x3A)
+#define TAC5112_REG_CNT_CLK_CFG6     TAC5112_REG(0, 0x3B)
+#define TAC5112_REG_CLK_ERR_STS0     TAC5112_REG(0, 0x3C)
+#define TAC5112_REG_CLK_ERR_STS1     TAC5112_REG(0, 0x3D)
+#define TAC5112_REG_CLK_DET_STS0     TAC5112_REG(0, 0x3E)
+#define TAC5112_REG_CLK_DET_STS1     TAC5112_REG(0, 0x3F)
+#define TAC5112_REG_CLK_DET_STS2     TAC5112_REG(0, 0x40)
+#define TAC5112_REG_CLK_DET_STS3     TAC5112_REG(0, 0x41)
 #define TAC5112_REG_INT_CFG	     TAC5112_REG(0, 0x42)
+#define TAC5112_REG_DAC_FLT_CFG	     TAC5112_REG(0, 0x43)
+#define TAC5112_REG_ADC_DAC_MISC_CFG TAC5112_REG(0, 0x4B)
+#define TAC5112_REG_IADC_CFG	     TAC5112_REG(0, 0x4C)
 #define TAC5112_REG_VREF_MICBIAS_CFG TAC5112_REG(0, 0x4D)
+#define TAC5112_REG_PWR_TUNE_CFG0    TAC5112_REG(0, 0x4E)
+#define TAC5112_REG_PWR_TUNE_CFG1    TAC5112_REG(0, 0x4F)
 #define TAC5112_REG_ADC_CH1_CFG0     TAC5112_REG(0, 0x50)
-#define TAC5112_REG_ADC_CH1_CFG2     TAC5112_REG(0, 0x52) /* DVOL */
-#define TAC5112_REG_ADC_CH1_CFG3     TAC5112_REG(0, 0x53) /* FGAIN */
+#define TAC5112_REG_IADC_CH_CFG	     TAC5112_REG(0, 0x51)
+#define TAC5112_REG_ADC_CH1_CFG2     TAC5112_REG(0, 0x52)
+#define TAC5112_REG_ADC_CH1_CFG3     TAC5112_REG(0, 0x53)
+#define TAC5112_REG_ADC_CH1_CFG4     TAC5112_REG(0, 0x54)
 #define TAC5112_REG_ADC_CH2_CFG0     TAC5112_REG(0, 0x55)
-#define TAC5112_REG_ADC_CH2_CFG2     TAC5112_REG(0, 0x57) /* DVOL */
-#define TAC5112_REG_ADC_CH2_CFG3     TAC5112_REG(0, 0x58) /* FGAIN */
-#define TAC5112_REG_DAC_CH1A_CFG0    TAC5112_REG(0, 0x67) /* DVOL, ch1 (left) core A */
-#define TAC5112_REG_DAC_CH1B_CFG0    TAC5112_REG(0, 0x69) /* DVOL, ch1 (left) core B */
-#define TAC5112_REG_DAC_CH2A_CFG0    TAC5112_REG(0, 0x6E) /* DVOL, ch2 (right) core A */
-#define TAC5112_REG_DAC_CH2B_CFG0    TAC5112_REG(0, 0x70) /* DVOL, ch2 (right) core B */
+#define TAC5112_REG_ADC_CH2_CFG2     TAC5112_REG(0, 0x57)
+#define TAC5112_REG_ADC_CH2_CFG3     TAC5112_REG(0, 0x58)
+#define TAC5112_REG_ADC_CH2_CFG4     TAC5112_REG(0, 0x59)
+#define TAC5112_REG_ADC_CH3_CFG0     TAC5112_REG(0, 0x5A)
+#define TAC5112_REG_ADC_CH3_CFG2     TAC5112_REG(0, 0x5B)
+#define TAC5112_REG_ADC_CH3_CFG3     TAC5112_REG(0, 0x5C)
+#define TAC5112_REG_ADC_CH3_CFG4     TAC5112_REG(0, 0x5D)
+#define TAC5112_REG_ADC_CH4_CFG0     TAC5112_REG(0, 0x5E)
+#define TAC5112_REG_ADC_CH4_CFG2     TAC5112_REG(0, 0x5F)
+#define TAC5112_REG_ADC_CH4_CFG3     TAC5112_REG(0, 0x60)
+#define TAC5112_REG_ADC_CH4_CFG4     TAC5112_REG(0, 0x61)
+#define TAC5112_REG_ADC_CFG1	     TAC5112_REG(0, 0x62)
+#define TAC5112_REG_DAC_CH1A_CFG0    TAC5112_REG(0, 0x67)
+#define TAC5112_REG_DAC_CH1A_CFG1    TAC5112_REG(0, 0x68)
+#define TAC5112_REG_DAC_CH1B_CFG0    TAC5112_REG(0, 0x69)
+#define TAC5112_REG_DAC_CH1B_CFG1    TAC5112_REG(0, 0x6A)
+#define TAC5112_REG_DAC_CH2A_CFG0    TAC5112_REG(0, 0x6E)
+#define TAC5112_REG_DAC_CH2A_CFG1    TAC5112_REG(0, 0x6F)
+#define TAC5112_REG_DAC_CH2B_CFG0    TAC5112_REG(0, 0x70)
+#define TAC5112_REG_DAC_CH2B_CFG1    TAC5112_REG(0, 0x71)
+#define TAC5112_REG_DSP_CFG0	     TAC5112_REG(0, 0x72)
+#define TAC5112_REG_DSP_CFG1	     TAC5112_REG(0, 0x73)
 #define TAC5112_REG_CH_EN	     TAC5112_REG(0, 0x76)
 #define TAC5112_REG_DYN_PUPD_CFG     TAC5112_REG(0, 0x77)
 #define TAC5112_REG_PWR_CFG	     TAC5112_REG(0, 0x78)
@@ -84,27 +172,113 @@ struct tac5112_reg {
 #define TAC5112_REG_DEV_STS1	     TAC5112_REG(0, 0x7A)
 #define TAC5112_REG_I2C_CKSUM	     TAC5112_REG(0, 0x7E)
 
-/* ---- Page 1: interrupts and fault status ---- */
-#define TAC5112_REG_INT_MASK0	 TAC5112_REG(1, 0x2F)
-#define TAC5112_REG_INT_MASK4	 TAC5112_REG(1, 0x32)
-#define TAC5112_REG_INT_LTCH0	 TAC5112_REG(1, 0x34)
-#define TAC5112_REG_OUT_CH1_LTCH TAC5112_REG(1, 0x38)
-#define TAC5112_REG_OUT_CH2_LTCH TAC5112_REG(1, 0x39)
-#define TAC5112_REG_INT_LIVE0	 TAC5112_REG(1, 0x3C)
-#define TAC5112_REG_OUT_CH1_LIVE TAC5112_REG(1, 0x40)
-#define TAC5112_REG_OUT_CH2_LIVE TAC5112_REG(1, 0x41)
+/* ---- Page 1: DSP, limiter/AGC, interrupts, and diagnostics registers ---- */
+/* Register 0 of every page is PAGE_CFG (the page-select). */
+#define TAC5112_REG_DSP_CFG0_P1		    TAC5112_REG(1, 0x03)
+#define TAC5112_REG_CLK_CFG0_P1		    TAC5112_REG(1, 0x0D)
+#define TAC5112_REG_CHANNEL_CFG1	    TAC5112_REG(1, 0x0E)
+#define TAC5112_REG_CHANNEL_CFG2	    TAC5112_REG(1, 0x0F)
+#define TAC5112_REG_SRC_CFG0		    TAC5112_REG(1, 0x17)
+#define TAC5112_REG_SRC_CFG1		    TAC5112_REG(1, 0x18)
+#define TAC5112_REG_JACK_DET_CFG0	    TAC5112_REG(1, 0x19)
+#define TAC5112_REG_JACK_DET_CFG1	    TAC5112_REG(1, 0x1A)
+#define TAC5112_REG_JACK_DET_CFG2	    TAC5112_REG(1, 0x1B)
+#define TAC5112_REG_JACK_DET_CFG3	    TAC5112_REG(1, 0x1C)
+#define TAC5112_REG_LPAD_CFG1		    TAC5112_REG(1, 0x1E)
+#define TAC5112_REG_LPSG_CFG1		    TAC5112_REG(1, 0x1F)
+#define TAC5112_REG_LPAD_LPSG_CFG1	    TAC5112_REG(1, 0x20)
+#define TAC5112_REG_LIMITER_CFG		    TAC5112_REG(1, 0x23)
+#define TAC5112_REG_AGC_DRC_CFG		    TAC5112_REG(1, 0x24)
+#define TAC5112_REG_PLIM_CFG0		    TAC5112_REG(1, 0x2B)
+#define TAC5112_REG_MIXER_CFG0		    TAC5112_REG(1, 0x2C)
+#define TAC5112_REG_MISC_CFG0_P1	    TAC5112_REG(1, 0x2D)
+#define TAC5112_REG_BRWNOUT		    TAC5112_REG(1, 0x2E)
+#define TAC5112_REG_INT_MASK0		    TAC5112_REG(1, 0x2F)
+#define TAC5112_REG_INT_MASK4		    TAC5112_REG(1, 0x32)
+#define TAC5112_REG_INT_MASK5		    TAC5112_REG(1, 0x33)
+#define TAC5112_REG_INT_LTCH0		    TAC5112_REG(1, 0x34)
+#define TAC5112_REG_OUT_CH1_LTCH	    TAC5112_REG(1, 0x38)
+#define TAC5112_REG_OUT_CH2_LTCH	    TAC5112_REG(1, 0x39)
+#define TAC5112_REG_INT_LTCH1		    TAC5112_REG(1, 0x3A)
+#define TAC5112_REG_INT_LTCH2		    TAC5112_REG(1, 0x3B)
+#define TAC5112_REG_INT_LIVE0		    TAC5112_REG(1, 0x3C)
+#define TAC5112_REG_OUT_CH1_LIVE	    TAC5112_REG(1, 0x40)
+#define TAC5112_REG_OUT_CH2_LIVE	    TAC5112_REG(1, 0x41)
+#define TAC5112_REG_INT_LIVE1		    TAC5112_REG(1, 0x42)
+#define TAC5112_REG_INT_LIVE2		    TAC5112_REG(1, 0x43)
+#define TAC5112_REG_DIAG_CFG8		    TAC5112_REG(1, 0x4E)
+#define TAC5112_REG_DIAG_CFG9		    TAC5112_REG(1, 0x4F)
+#define TAC5112_REG_DIAG_CFG13		    TAC5112_REG(1, 0x53)
+#define TAC5112_REG_DIAG_CFG14		    TAC5112_REG(1, 0x54)
+#define TAC5112_REG_DIAGDATA_CFG	    TAC5112_REG(1, 0x55)
+#define TAC5112_REG_DIAG_MON_MSB_MBIAS	    TAC5112_REG(1, 0x58)
+#define TAC5112_REG_DIAG_MON_LSB_MBIAS	    TAC5112_REG(1, 0x59)
+#define TAC5112_REG_DIAG_MON_MSB_OUT1P	    TAC5112_REG(1, 0x62)
+#define TAC5112_REG_DIAG_MON_LSB_OUT1P	    TAC5112_REG(1, 0x63)
+#define TAC5112_REG_DIAG_MON_MSB_OUT1M	    TAC5112_REG(1, 0x64)
+#define TAC5112_REG_DIAG_MON_LSB_OUT1M	    TAC5112_REG(1, 0x65)
+#define TAC5112_REG_DIAG_MON_MSB_OUT2P	    TAC5112_REG(1, 0x66)
+#define TAC5112_REG_DIAG_MON_LSB_OUT2P	    TAC5112_REG(1, 0x67)
+#define TAC5112_REG_DIAG_MON_MSB_OUT2M	    TAC5112_REG(1, 0x68)
+#define TAC5112_REG_DIAG_MON_LSB_OUT2M	    TAC5112_REG(1, 0x69)
+#define TAC5112_REG_DIAG_MON_MSB_TEMP	    TAC5112_REG(1, 0x6A)
+#define TAC5112_REG_DIAG_MON_LSB_TEMP	    TAC5112_REG(1, 0x6B)
+#define TAC5112_REG_DIAG_MON_MSB_MBIAS_LOAD TAC5112_REG(1, 0x6C)
+#define TAC5112_REG_DIAG_MON_LSB_MBIAS_LOAD TAC5112_REG(1, 0x6D)
+#define TAC5112_REG_DIAG_MON_MSB_AVDD	    TAC5112_REG(1, 0x6E)
+#define TAC5112_REG_DIAG_MON_LSB_AVDD	    TAC5112_REG(1, 0x6F)
+#define TAC5112_REG_DIAG_MON_MSB_GPA	    TAC5112_REG(1, 0x70)
+#define TAC5112_REG_DIAG_MON_LSB_GPA	    TAC5112_REG(1, 0x71)
 
-/* ---- Page 3: PLL and clock dividers (custom clock configuration) ---- */
-#define TAC5112_REG_CLK_CFG15 TAC5112_REG(3, 0x35) /* PLL_PDIV */
-#define TAC5112_REG_CLK_CFG16 TAC5112_REG(3, 0x36) /* JMUL msb / DIV_BY_2 / DMUL msb */
-#define TAC5112_REG_CLK_CFG17 TAC5112_REG(3, 0x37) /* DMUL lsb */
-#define TAC5112_REG_CLK_CFG18 TAC5112_REG(3, 0x38) /* JMUL lsb */
-#define TAC5112_REG_CLK_CFG19 TAC5112_REG(3, 0x39) /* NDIV / PDM_DIV */
-#define TAC5112_REG_CLK_CFG20 TAC5112_REG(3, 0x3A) /* MDIV / ADC_MODCLK_DIV */
+/* ---- Page 3: secondary ASI and PLL / clock divider registers ---- */
+/* Register 0 of every page is PAGE_CFG (the page-select). */
+#define TAC5112_REG_SASI_CFG0	    TAC5112_REG(3, 0x1A)
+#define TAC5112_REG_SASI_TX_CFG0    TAC5112_REG(3, 0x1B)
+#define TAC5112_REG_SASI_TX_CFG1    TAC5112_REG(3, 0x1C)
+#define TAC5112_REG_SASI_TX_CFG2    TAC5112_REG(3, 0x1D)
+#define TAC5112_REG_SASI_TX_CH1_CFG TAC5112_REG(3, 0x1E)
+#define TAC5112_REG_SASI_TX_CH2_CFG TAC5112_REG(3, 0x1F)
+#define TAC5112_REG_SASI_TX_CH3_CFG TAC5112_REG(3, 0x20)
+#define TAC5112_REG_SASI_TX_CH4_CFG TAC5112_REG(3, 0x21)
+#define TAC5112_REG_SASI_TX_CH5_CFG TAC5112_REG(3, 0x22)
+#define TAC5112_REG_SASI_TX_CH6_CFG TAC5112_REG(3, 0x23)
+#define TAC5112_REG_SASI_TX_CH7_CFG TAC5112_REG(3, 0x24)
+#define TAC5112_REG_SASI_TX_CH8_CFG TAC5112_REG(3, 0x25)
+#define TAC5112_REG_SASI_RX_CFG0    TAC5112_REG(3, 0x26)
+#define TAC5112_REG_SASI_RX_CFG1    TAC5112_REG(3, 0x27)
+#define TAC5112_REG_SASI_RX_CH1_CFG TAC5112_REG(3, 0x28)
+#define TAC5112_REG_SASI_RX_CH2_CFG TAC5112_REG(3, 0x29)
+#define TAC5112_REG_SASI_RX_CH3_CFG TAC5112_REG(3, 0x2A)
+#define TAC5112_REG_SASI_RX_CH4_CFG TAC5112_REG(3, 0x2B)
+#define TAC5112_REG_SASI_RX_CH5_CFG TAC5112_REG(3, 0x2C)
+#define TAC5112_REG_SASI_RX_CH6_CFG TAC5112_REG(3, 0x2D)
+#define TAC5112_REG_SASI_RX_CH7_CFG TAC5112_REG(3, 0x2E)
+#define TAC5112_REG_SASI_RX_CH8_CFG TAC5112_REG(3, 0x2F)
+#define TAC5112_REG_CLK_CFG12	    TAC5112_REG(3, 0x32)
+#define TAC5112_REG_CLK_CFG13	    TAC5112_REG(3, 0x33)
+#define TAC5112_REG_CLK_CFG14	    TAC5112_REG(3, 0x34)
+#define TAC5112_REG_CLK_CFG15	    TAC5112_REG(3, 0x35)
+#define TAC5112_REG_CLK_CFG16	    TAC5112_REG(3, 0x36)
+#define TAC5112_REG_CLK_CFG17	    TAC5112_REG(3, 0x37)
+#define TAC5112_REG_CLK_CFG18	    TAC5112_REG(3, 0x38)
+#define TAC5112_REG_CLK_CFG19	    TAC5112_REG(3, 0x39)
+#define TAC5112_REG_CLK_CFG20	    TAC5112_REG(3, 0x3A)
+#define TAC5112_REG_CLK_CFG21	    TAC5112_REG(3, 0x3B)
+#define TAC5112_REG_CLK_CFG22	    TAC5112_REG(3, 0x3C)
+#define TAC5112_REG_CLK_CFG23	    TAC5112_REG(3, 0x3D)
+#define TAC5112_REG_CLK_CFG24	    TAC5112_REG(3, 0x3E)
+#define TAC5112_REG_CLK_CFG30	    TAC5112_REG(3, 0x44)
+#define TAC5112_REG_CLK_CFG31	    TAC5112_REG(3, 0x45)
+#define TAC5112_REG_CLKOUT_CFG1	    TAC5112_REG(3, 0x46)
+#define TAC5112_REG_CLKOUT_CFG2	    TAC5112_REG(3, 0x47)
+#define TAC5112_REG_SARCLK_CFG1	    TAC5112_REG(3, 0x49)
+#define TAC5112_REG_ADC_OVRLD_FLAG  TAC5112_REG(3, 0x5B)
 
-/* Highest page number this driver ever accesses; used by the I2C
- * emulator (test build) to size its backing store and to reject
- * out-of-range page selects.
+/**
+ * @brief Highest page number this driver ever accesses.
+ *
+ * Used by the I2C emulator (test build) to size its backing store and to
+ * reject out-of-range page selects.
  */
 #define TAC5112_PAGE_MAX 3U
 
@@ -118,7 +292,7 @@ struct tac5112_reg {
 #define TAC5112_SW_RESET_BIT BIT(0)
 
 /* DEV_MISC_CFG (P0_R2) */
-#define TAC5112_SLEEP_ENZ_BIT BIT(0) /* 1 = active mode, 0 = sleep mode */
+#define TAC5112_SLEEP_ENZ_BIT BIT(0) /**< 1 = active mode, 0 = sleep mode. */
 
 /* AVDD_IOVDD_STS (P0_R3) */
 #define TAC5112_BRWNOUT_SHDN_STS_BIT BIT(1)
@@ -170,17 +344,17 @@ struct tac5112_reg {
 
 /* ADC_CHx_CFG2 / DAC_CHxy_CFG0 digital volume field: full 8-bit register */
 #define TAC5112_DVOL_MUTE    0x00U
-#define TAC5112_DAC_DVOL_MIN 0x01U /* -100.0 dB */
-#define TAC5112_DAC_DVOL_0DB 0xC9U /* 201d,  0.0 dB */
-#define TAC5112_DAC_DVOL_MAX 0xFFU /* +27.0 dB */
-#define TAC5112_ADC_DVOL_MIN 0x01U /* -80.0 dB */
-#define TAC5112_ADC_DVOL_0DB 0xA1U /* 161d,  0.0 dB */
-#define TAC5112_ADC_DVOL_MAX 0xFFU /* +47.0 dB */
+#define TAC5112_DAC_DVOL_MIN 0x01U /**< DAC digital volume minimum, -100.0 dB. */
+#define TAC5112_DAC_DVOL_0DB 0xC9U /**< DAC digital volume 0.0 dB (201 decimal). */
+#define TAC5112_DAC_DVOL_MAX 0xFFU /**< DAC digital volume maximum, +27.0 dB. */
+#define TAC5112_ADC_DVOL_MIN 0x01U /**< ADC digital volume minimum, -80.0 dB. */
+#define TAC5112_ADC_DVOL_0DB 0xA1U /**< ADC digital volume 0.0 dB (161 decimal). */
+#define TAC5112_ADC_DVOL_MAX 0xFFU /**< ADC digital volume maximum, +47.0 dB. */
 
 /*
- * AUDIO_PROPERTY_{OUTPUT,INPUT}_VOLUME are expressed by this driver in
- * units of 0.5 dB (audio_property_value_t.vol == dB * 2), matching the
- * codec's native digital-volume register step size. These are the
+ * AUDIO_PROPERTY_{OUTPUT,INPUT}_VOLUME are expressed by this driver in units
+ * of 0.5 dB (audio_property_value_t.vol == dB * 2), matching the codec's
+ * native digital-volume register step size. The following macros give the
  * inclusive valid ranges for tac5112_dvol_from_half_db().
  */
 #define TAC5112_DAC_VOL_MIN_HALF_DB ((int32_t)TAC5112_DAC_DVOL_MIN - (int32_t)TAC5112_DAC_DVOL_0DB)
@@ -203,32 +377,33 @@ struct tac5112_reg {
 #define TAC5112_DEV_STS1_PLL_STS_BIT BIT(4)
 
 /* OUT_CHn_LTCH / OUT_CHn_LIVE (P1) fault bits, common layout */
-#define TAC5112_OUT_CH_SC_OUTP_BIT    BIT(7)
-#define TAC5112_OUT_CH_SC_OUTM_BIT    BIT(6)
-#define TAC5112_OUT_CH_VG_FAULT_P_BIT BIT(5)
-#define TAC5112_OUT_CH_VG_FAULT_M_BIT BIT(4)
+#define TAC5112_OUT_CH_SC_OUTP_BIT    BIT(7) /**< Output short-circuit, OUTP. */
+#define TAC5112_OUT_CH_SC_OUTM_BIT    BIT(6) /**< Output short-circuit, OUTM. */
+#define TAC5112_OUT_CH_VG_FAULT_P_BIT BIT(5) /**< Virtual-ground fault, positive. */
+#define TAC5112_OUT_CH_VG_FAULT_M_BIT BIT(4) /**< Virtual-ground fault, negative. */
 
 /* INT_LTCH0 / INT_LIVE0 (P1) */
-#define TAC5112_INT_CLK_ERROR_BIT BIT(7)
-#define TAC5112_INT_PLL_LOCK_BIT  BIT(6)
+#define TAC5112_INT_CLK_ERROR_BIT BIT(7) /**< Clock-error interrupt. */
+#define TAC5112_INT_PLL_LOCK_BIT  BIT(6) /**< PLL-lock interrupt. */
 
-/* INT_CFG (P0_R66). Reset 0x00 = active-low IRQ, assert on unmasked
- * latched events -- which is exactly the configuration this driver wants,
- * written explicitly rather than relied upon implicitly.
+/*
+ * INT_CFG (P0_R66). Reset 0x00 = active-low IRQ, assert on unmasked latched
+ * events -- which is exactly the configuration this driver wants, written
+ * explicitly rather than relied upon implicitly.
  */
-#define TAC5112_INT_POL_ACTIVE_HIGH_BIT BIT(7) /* 0 = active low (IRQZ) */
+#define TAC5112_INT_POL_ACTIVE_HIGH_BIT BIT(7) /**< 0 = active low (IRQZ). */
 #define TAC5112_INT_EVENT_SHIFT		5
 #define TAC5112_INT_EVENT_MASK		GENMASK(6, 5)
-#define TAC5112_INT_EVENT_LATCHED	0U    /* assert on unmasked latched events */
-#define TAC5112_INT_CFG_FAULT_IRQ	0x00U /* active-low, latched-event IRQ */
+#define TAC5112_INT_EVENT_LATCHED	0U    /**< Assert on unmasked latched events. */
+#define TAC5112_INT_CFG_FAULT_IRQ	0x00U /**< Active-low, latched-event IRQ. */
 
 /* Interrupt mask registers (P1): bit set = masked, bit clear = enabled. */
 /* INT_MASK0 (P1_R47) */
 #define TAC5112_INT_MASK0_CLK_ERR_BIT  BIT(7)
 #define TAC5112_INT_MASK0_PLL_LOCK_BIT BIT(6)
 /* INT_MASK4 (P1_R50) */
-#define TAC5112_INT_MASK4_OUT_SC_BIT   BIT(5) /* OUT short-circuit fault */
-#define TAC5112_INT_MASK4_DRVR_VG_BIT  BIT(4) /* driver virtual-ground fault */
+#define TAC5112_INT_MASK4_OUT_SC_BIT   BIT(5) /**< Output short-circuit fault. */
+#define TAC5112_INT_MASK4_DRVR_VG_BIT  BIT(4) /**< Driver virtual-ground fault. */
 
 /* CLK_CFG16 (P3) */
 #define TAC5112_PLL_JMUL_MSB_BIT  BIT(7)
@@ -255,31 +430,32 @@ struct tac5112_reg {
 #define TAC5112_ADC_MODCLK_DIV_SEL_MAX 2U
 
 /* Timing constants from datasheet Section 7.4 "Power Modes" */
-#define TAC5112_T_SLEEP_EXIT_MIN_MS  2U	 /* wait after SLEEP_ENZ=1 before further I2C */
-#define TAC5112_T_SLEEP_ENTER_MIN_MS 10U /* wait after entering sleep before I2C */
-#define TAC5112_T_RESET_SETTLE_MS    2U	 /* conservative settle time after SW_RESET */
+#define TAC5112_T_SLEEP_EXIT_MIN_MS  2U	 /**< Wait after SLEEP_ENZ=1 before further I2C. */
+#define TAC5112_T_SLEEP_ENTER_MIN_MS 10U /**< Wait after entering sleep before I2C. */
+#define TAC5112_T_RESET_SETTLE_MS    2U	 /**< Conservative settle time after SW_RESET. */
 
 /* Supported audio sample rate limits, datasheet Section 7.3.2. */
-#define TAC5112_FS_MIN_HZ 4000U
-#define TAC5112_FS_MAX_HZ 768000U
+#define TAC5112_FS_MIN_HZ 4000U	  /**< Minimum supported sample rate, in Hz. */
+#define TAC5112_FS_MAX_HZ 768000U /**< Maximum supported sample rate, in Hz. */
 
-/* Temporary define */
+/** Temporary placeholder property ID for EQ gain. */
 #define AUDIO_PROPERTY_EQ_GAIN (AUDIO_PROPERTY_INPUT_MUTE + 1)
 
-/*
- * ---------------------------------------------------------------------
- * PLL / clock source selection
+/**
+ * @brief PLL reference clock source.
  *
  * Values match CLK_CFG2.CLK_SRC_SEL[2:0] (P0_R52_D[3:1]).
- * ---------------------------------------------------------------------
  */
 enum tac5112_pll_clk_src {
-	TAC5112_PLL_CLK_SRC_PASI_BCLK = 0,
-	TAC5112_PLL_CLK_SRC_CCLK_PASI_FSYNC = 1,
-	TAC5112_PLL_CLK_SRC_SASI_BCLK = 2,
-	TAC5112_PLL_CLK_SRC_CCLK_SASI_FSYNC = 3,
-	TAC5112_PLL_CLK_SRC_FIXED_CCLK = 4,
-	TAC5112_PLL_CLK_SRC_INTERNAL_OSC = 5,
+	TAC5112_PLL_CLK_SRC_PASI_BCLK = 0, /**< Primary ASI BCLK. */
+	TAC5112_PLL_CLK_SRC_CCLK_PASI_FSYNC =
+		1,			   /**< CCLK synchronized with the primary ASI FSYNC. */
+	TAC5112_PLL_CLK_SRC_SASI_BCLK = 2, /**< Secondary ASI BCLK. */
+	TAC5112_PLL_CLK_SRC_CCLK_SASI_FSYNC =
+		3,			    /**< CCLK synchronized with the secondary ASI FSYNC. */
+	TAC5112_PLL_CLK_SRC_FIXED_CCLK = 4, /**< Fixed CCLK frequency (controller mode only). */
+	TAC5112_PLL_CLK_SRC_INTERNAL_OSC =
+		5, /**< Internal oscillator (custom clock configuration only). */
 };
 
 /**
@@ -290,17 +466,17 @@ enum tac5112_pll_clk_src {
  * P/J/D and N/M dividers, purely by observing the incoming BCLK/FSYNC
  * frequency ratio. TI recommends this "auto" mode for all standard audio
  * use cases, and it is what tac5112_configure_pll() programs when
- * @ref auto_config is true.
+ * @ref tac5112_pll_config.auto_config is true.
  *
- * "Custom" mode (@ref auto_config = false) exposes the raw PLL divider
- * registers (Section 8.1.3) for applications that must use a clock ratio
- * outside of the auto-detected table (Table 7-7 / 7-8) and have derived
- * P/J/D/N/M values from TI's "Clocking Configuration of Device and
- * Flexible Clocking For TAx5x1x Family" application note. This driver
- * does not compute those values itself: it only validates that each
- * field fits within its documented register range and writes them
- * verbatim, since the closed-form PLL frequency equation is not
- * reproduced in the register-level section of the datasheet.
+ * "Custom" mode (@ref tac5112_pll_config.auto_config = false) exposes the raw
+ * PLL divider registers (Section 8.1.3) for applications that must use a clock
+ * ratio outside of the auto-detected table (Table 7-7 / 7-8) and have derived
+ * P/J/D/N/M values from TI's "Clocking Configuration of Device and Flexible
+ * Clocking For TAx5x1x Family" application note. This driver does not compute
+ * those values itself: it only validates that each field fits within its
+ * documented register range and writes them verbatim, since the closed-form
+ * PLL frequency equation is not reproduced in the register-level section of
+ * the datasheet.
  */
 struct tac5112_pll_config {
 	/** Use the device's automatic clock/PLL configuration (recommended). */
@@ -334,12 +510,13 @@ struct tac5112_pll_config {
  * ---------------------------------------------------------------------
  */
 
-/** Per-channel property cache so mute/unmute can restore the last volume. */
+/** @brief Per-channel property cache so mute/unmute can restore the last volume. */
 struct tac5112_chan_cache {
-	int16_t vol_half_db;
-	bool muted;
+	int16_t vol_half_db; /**< Last requested volume, in 0.5 dB steps. */
+	bool muted;	     /**< Current mute state of the channel. */
 };
 
+/** @brief TAC5112 driver runtime data. */
 struct tac5112_data {
 	/** Serializes multi-register sequences and the property cache. */
 	struct k_mutex lock;
@@ -361,10 +538,11 @@ struct tac5112_data {
 	const struct device *self;
 };
 
+/** @brief TAC5112 driver instance configuration (devicetree-derived). */
 struct tac5112_config {
-	struct i2c_dt_spec bus;
-	struct gpio_dt_spec reset_gpio;
-	struct gpio_dt_spec fault_gpio;
+	struct i2c_dt_spec bus;		/**< I2C bus and address of the codec. */
+	struct gpio_dt_spec reset_gpio; /**< Optional hardware reset line. */
+	struct gpio_dt_spec fault_gpio; /**< Optional fault/IRQ input line. */
 };
 
 /*
@@ -386,12 +564,82 @@ struct tac5112_config {
  * take dev->data's lock itself.
  * ---------------------------------------------------------------------
  */
+
+/**
+ * @brief Write a single codec register.
+ *
+ * Selects the register's page if it differs from the cached page, then writes
+ * @p val. Does not take the driver lock.
+ *
+ * @param[in] dev Codec device.
+ * @param[in] reg Register (page and address) to write.
+ * @param[in] val Value to write.
+ *
+ * @retval 0 On success.
+ * @retval -errno Negative error code propagated from the I2C API.
+ */
 int tac5112_reg_write(const struct device *dev, struct tac5112_reg reg, uint8_t val);
+
+/**
+ * @brief Read a single codec register.
+ *
+ * Selects the register's page if it differs from the cached page, then reads
+ * into @p val. Does not take the driver lock.
+ *
+ * @param[in]  dev Codec device.
+ * @param[in]  reg Register (page and address) to read.
+ * @param[out] val Location that receives the register value.
+ *
+ * @retval 0 On success.
+ * @retval -errno Negative error code propagated from the I2C API.
+ */
 int tac5112_reg_read(const struct device *dev, struct tac5112_reg reg, uint8_t *val);
+
+/**
+ * @brief Read-modify-write a single codec register.
+ *
+ * Updates only the bits set in @p mask with the corresponding bits of
+ * @p val, leaving the remaining bits unchanged. Does not take the driver
+ * lock.
+ *
+ * @param[in] dev  Codec device.
+ * @param[in] reg  Register (page and address) to update.
+ * @param[in] mask Bits to modify.
+ * @param[in] val  New values for the bits selected by @p mask.
+ *
+ * @retval 0 On success.
+ * @retval -errno Negative error code propagated from the I2C API.
+ */
 int tac5112_reg_update(const struct device *dev, struct tac5112_reg reg, uint8_t mask, uint8_t val);
 
+/**
+ * @brief Configure the codec PLL and clock tree.
+ *
+ * Programs automatic clock configuration, or the raw PLL and divider
+ * registers in custom mode, according to @p pll. In custom mode, each field
+ * is validated against its documented register range. Takes the driver lock
+ * for the whole multi-register sequence.
+ *
+ * @param[in] dev Codec device.
+ * @param[in] pll PLL configuration to apply.
+ *
+ * @retval 0 On success.
+ * @retval -EINVAL A custom-mode field is outside its valid range.
+ * @retval -errno Negative error code propagated from the I2C API.
+ */
 int tac5112_configure_pll(const struct device *dev, const struct tac5112_pll_config *pll);
 
+/**
+ * @brief Convert a volume in 0.5 dB steps to a codec digital-volume value.
+ *
+ * @param[in]  is_output True to convert for the output (DAC) range, false for
+ *                       the input (ADC) range.
+ * @param[in]  half_db   Requested volume, in 0.5 dB steps.
+ * @param[out] dvol_out  Location that receives the register value.
+ *
+ * @retval 0 On success.
+ * @retval -EINVAL @p half_db is outside the selected range.
+ */
 int tac5112_dvol_from_half_db(bool is_output, int32_t half_db, uint8_t *dvol_out);
 
 #ifdef __cplusplus

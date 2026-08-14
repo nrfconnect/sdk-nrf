@@ -1,0 +1,17 @@
+sample:
+  name: nRF-Audio-EB smoke test
+  description: >
+    Bring-up test for the nRF-Audio-EB shield: RGB LED, line-in detect,
+    TAC5112 codec probe, SD card, PDM microphone and the I2S/TDM audio port.
+tests:
+  sample.nrf_audio_eb.smoke:
+    build_only: true
+    tags: shield audio
+    extra_args:
+      - SHIELD=nrf_audio_eb
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20/cpuapp
+      - nrf5340_audio_dk/nrf5340/cpuapp
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20/cpuapp
