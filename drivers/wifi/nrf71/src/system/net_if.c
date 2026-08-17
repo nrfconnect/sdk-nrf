@@ -26,8 +26,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #include <net_private.h>
 
-#include <util.h>
-#include <common/fmac_util.h>
+#include <common/util.h>
 #include <system/fmac_peer.h>
 #include <system/core.h>
 #include <system/wpa_supp_if.h>

@@ -11,7 +11,7 @@
 #include <string.h>
 #include <nrf71_wifi_ctrl.h>
 #include <zephyr/sys/sys_heap.h>
-#include <common/fmac_util.h>
+#include <common/util.h>
 #include <system/fmac_api.h>
 #include <common/mem_mgmt.h>
 #include <system/core.h>

@@ -13,7 +13,7 @@
 #include "system/fmac_peer.h"
 #include <common/llist_mgmt.h>
 #include "system/fmac_tx.h"
-#include "common/fmac_util.h"
+#include "common/util.h"
 #include <common/lock_mgmt.h>
 #include <zephyr/logging/log.h>
 

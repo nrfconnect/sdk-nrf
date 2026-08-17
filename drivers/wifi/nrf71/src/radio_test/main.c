@@ -15,7 +15,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/device.h>
 
-#include <util.h>
+#include <common/util.h>
 #include <radio_test/core.h>
 
 #define DT_DRV_COMPAT nordic_wlan

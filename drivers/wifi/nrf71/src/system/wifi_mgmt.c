@@ -14,11 +14,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include <util.h>
+#include <common/util.h>
 #include <common/lock_mgmt.h>
 #include <system/fmac_api.h>
 #include <system/fmac_tx.h>
-#include <common/fmac_util.h>
 #include <common/fmac_structs_common.h>
 #include <system/core.h>
 #include <system/wifi_mgmt.h>

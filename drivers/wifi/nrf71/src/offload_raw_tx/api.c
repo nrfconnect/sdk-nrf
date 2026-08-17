@@ -18,7 +18,7 @@
 #include <offload_raw_tx/fmac_api.h>
 #include <nrf71_wifi_ctrl.h>
 #include <nrf71_wifi_rf.h>
-#include <util.h>
+#include <common/util.h>
 #include <offload_raw_tx/api.h>
 
 #define DT_DRV_COMPAT nordic_wlan
