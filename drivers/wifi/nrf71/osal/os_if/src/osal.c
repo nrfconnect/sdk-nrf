@@ -74,27 +74,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 
 
 
-unsigned long nrf_wifi_osal_time_get_curr_us(void)
-{
-	return os_ops->time_get_curr_us();
-}
-
-
-unsigned int nrf_wifi_osal_time_elapsed_us(unsigned long start_time_us)
-{
-	return os_ops->time_elapsed_us(start_time_us);
-}
-
-unsigned long nrf_wifi_osal_time_get_curr_ms(void)
-{
-	return os_ops->time_get_curr_ms();
-}
-
-unsigned int nrf_wifi_osal_time_elapsed_ms(unsigned long start_time_ms)
-{
-	return os_ops->time_elapsed_ms(start_time_ms);
-}
-
 void *nrf_wifi_osal_bus_pcie_init(const char *dev_name,
 				  unsigned int vendor_id,
 				  unsigned int sub_vendor_id,

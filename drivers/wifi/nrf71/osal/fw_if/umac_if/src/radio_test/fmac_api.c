@@ -67,11 +67,11 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 				      __func__);
 		goto out;
 	}
-	start_time_us = nrf_wifi_osal_time_get_curr_us();
+	start_time_us = k_ticks_to_us_floor64(k_uptime_ticks());
 	while (!fmac_dev_ctx->fw_init_done) {
 		k_msleep(1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
-		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_INIT_WAIT) {
+		if ((k_ticks_to_us_floor64(k_uptime_ticks()) - start_time_us) >= MAX_INIT_WAIT) {
 			break;
 		}
 	}

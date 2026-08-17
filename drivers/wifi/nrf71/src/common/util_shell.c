@@ -9,8 +9,9 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <nrf71_wifi_ctrl.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/sys_heap.h>
+#include <nrf71_wifi_ctrl.h>
 #include <common/fmac_util.h>
 #include <system/fmac_api.h>
 #include <common/mem_mgmt.h>
@@ -925,7 +926,7 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
-	unsigned long current_time_ms = nrf_wifi_osal_time_get_curr_ms();
+	unsigned long current_time_ms = k_uptime_get();
 	int ret;
 
 	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);

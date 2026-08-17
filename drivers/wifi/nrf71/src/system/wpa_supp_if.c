@@ -12,6 +12,7 @@
 #include <common/mem_mgmt.h>
 
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -1413,7 +1414,8 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	vif_ctx_zep->signal_info = si;
 
 	rssi_record_elapsed_time_ms =
-		nrf_wifi_osal_time_elapsed_us(vif_ctx_zep->rssi_record_timestamp_us) / 1000;
+		(k_ticks_to_us_floor64(k_uptime_ticks()) -
+		 vif_ctx_zep->rssi_record_timestamp_us) / 1000;
 
 	if (rssi_record_elapsed_time_ms > CONFIG_NRF71_RSSI_STALE_TIMEOUT_MS) {
 		ret = nrf_wifi_sys_fmac_get_station(rpu_ctx_zep->rpu_ctx,
