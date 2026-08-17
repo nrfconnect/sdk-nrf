@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Memory for the fatal error report channel, carved off the end of the region the two cores
+ * already share so that the HCI transport keeps the layout it had. Both cores include this file,
+ * which is what keeps them agreeing on the addresses.
+ *
+ * The channel only ever holds one report, so a single region and a single direction is enough.
+ */
+
+&sram0_shared {
+	reg = <0x70000 0xfc00>;
+};
+
+&sram0 {
+	sram_ipc_fatal: sram@7fc00 {
+		reg = <0x7fc00 0x400>;
+	};
+};

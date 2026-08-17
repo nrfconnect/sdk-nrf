@@ -24,6 +24,10 @@
 
 #include <zephyr/ipc/ipc_service.h>
 
+#if defined(CONFIG_BT_HCI_FATAL_REPORT)
+#include <zephyr/bluetooth/hci_fatal_report.h>
+#endif /* CONFIG_BT_HCI_FATAL_REPORT */
+
 #if defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
 #include <zephyr/logging/log_ctrl.h>
 #endif /* CONFIG_BT_HCI_VS_FATAL_ERROR */
@@ -324,6 +328,69 @@ static struct ipc_ept_cfg hci_ept_cfg = {
 	},
 };
 
+#if defined(CONFIG_BT_HCI_FATAL_REPORT)
+/* A fatal error is reported with interrupts locked, and possibly from an interrupt or a
+ * zero-latency interrupt context. The HCI endpoint cannot carry the report from there, because its
+ * backend takes a mutex and may hand the message to a thread on the way to the shared memory.
+ * The dedicated channel is a shared memory write followed by a mailbox signal and nothing else,
+ * so it works wherever the fault happens to be raised.
+ */
+static bool fatal_report_enabled;
+
+#if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
+static bool fatal_report_ready(void)
+{
+	return fatal_report_enabled;
+}
+
+static void fatal_report_send(struct net_buf *buf)
+{
+	int ret;
+
+	ret = bt_hci_fatal_report_send(buf->data, buf->len);
+	if (ret < 0) {
+		LOG_ERR("Fatal error report send failed: %d.", ret);
+	}
+
+	net_buf_unref(buf);
+}
+#endif /* CONFIG_BT_CTLR_ASSERT_HANDLER || CONFIG_BT_HCI_VS_FATAL_ERROR */
+
+static int fatal_report_init(void)
+{
+	int err;
+
+	err = bt_hci_fatal_report_tx_enable();
+	if (err) {
+		return err;
+	}
+
+	fatal_report_enabled = true;
+
+	return 0;
+}
+#else /* !CONFIG_BT_HCI_FATAL_REPORT */
+/* Without a channel of its own the report has to take the HCI endpoint, which is only safe from
+ * a thread context.
+ */
+#if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
+static bool fatal_report_ready(void)
+{
+	return ipc_ept_ready;
+}
+
+static void fatal_report_send(struct net_buf *buf)
+{
+	send(buf, HCI_FATAL_MSG);
+}
+#endif /* CONFIG_BT_CTLR_ASSERT_HANDLER || CONFIG_BT_HCI_VS_FATAL_ERROR */
+
+static int fatal_report_init(void)
+{
+	return 0;
+}
+#endif /* !CONFIG_BT_HCI_FATAL_REPORT */
+
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER)
 __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 {
@@ -332,18 +399,18 @@ __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 	LOG_ERR("HCI Fatal error in: %s at %d.", file, line);
 
 #if defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
-	if (ipc_ept_ready) {
+	if (fatal_report_ready()) {
 		struct net_buf *buf;
 
 		buf = hci_vs_err_assert(file, line);
 		if (buf) {
 			LOG_WRN("Send from bt ctlr assert handler over ipc.");
-			send(buf, HCI_FATAL_MSG);
+			fatal_report_send(buf);
 		} else {
 			LOG_ERR("Can't send Fatal Error HCI event.");
 		}
 	} else {
-		LOG_ERR("HCI Fatal error before IPC endpoint is ready.");
+		LOG_ERR("HCI Fatal error before the report channel is ready.");
 	}
 
 #else /* !CONFIG_BT_HCI_VS_FATAL_ERROR */
@@ -372,13 +439,13 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 	(void)irq_lock();
 
 	/* The report carries the stack frame, so there is nothing to send without one. */
-	if ((esf != NULL) && (ipc_ept_ready)) {
+	if ((esf != NULL) && fatal_report_ready()) {
 		struct net_buf *buf;
 
 		buf = hci_vs_err_stack_frame(reason, esf);
 		if (buf) {
 			LOG_WRN("Send from fatal error handler over ipc.");
-			send(buf, HCI_FATAL_MSG);
+			fatal_report_send(buf);
 		} else {
 			LOG_ERR("Can't create Fatal Error HCI event.");
 		}
@@ -419,6 +486,12 @@ int ipc_bt_init(void)
 	err = ipc_service_register_endpoint(hci_ipc_instance, &hci_ept, &hci_ept_cfg);
 	if (err) {
 		LOG_ERR("Registering endpoint failed: %d.", err);
+		return err;
+	}
+
+	err = fatal_report_init();
+	if (err) {
+		LOG_ERR("Preparing the fatal error report channel failed: %d.", err);
 		return err;
 	}
 
