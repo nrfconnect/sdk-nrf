@@ -553,6 +553,12 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 	sys_fpriv->num_tx_tokens = NRF71_MAX_TX_TOKENS;
 	sys_fpriv->num_tx_tokens_per_ac = (sys_fpriv->num_tx_tokens / NRF_WIFI_FMAC_AC_MAX);
 	sys_fpriv->num_tx_tokens_spare = (sys_fpriv->num_tx_tokens % NRF_WIFI_FMAC_AC_MAX);
+	if (sys_fpriv->num_tx_tokens_per_ac == 0) {
+		LOG_ERR("%s: num_tx_tokens_per_ac is zero", __func__);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
+		fpriv = NULL;
+		goto out;
+	}
 #endif /* NRF71_DATA_TX */
 	nrf_wifi_mem_cpy(sys_fpriv->rx_buf_pools,
 			      rx_buf_pools,

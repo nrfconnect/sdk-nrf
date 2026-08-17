@@ -59,22 +59,4 @@ struct nrf_wifi_osal_priv {
 	const struct nrf_wifi_osal_ops *ops;
 };
 
-/**
- * @brief The type of assertion operation to be performed.
- */
-enum nrf_wifi_assert_op_type {
-	/** The assertion check for equality. */
-	NRF_WIFI_ASSERT_EQUAL_TO,
-	/** The assertion check for non-equality. */
-	NRF_WIFI_ASSERT_NOT_EQUAL_TO,
-	/** The assertion check for lesser value. */
-	NRF_WIFI_ASSERT_LESS_THAN,
-	/** The assertion check for equal or lesser. */
-	NRF_WIFI_ASSERT_LESS_THAN_EQUAL_TO,
-	/** The assertion check for condition of more than value. */
-	NRF_WIFI_ASSERT_GREATER_THAN,
-	/** The assertion check for condition equal or more than value. */
-	NRF_WIFI_ASSERT_GREATER_THAN_EQUAL_TO
-};
-
 #endif /* __OSAL_STRUCTS_H__ */

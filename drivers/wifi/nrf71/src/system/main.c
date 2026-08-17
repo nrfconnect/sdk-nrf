@@ -66,8 +66,8 @@ extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 #define TOTAL_RX_SIZE \
 	(CONFIG_NRF71_RX_NUM_BUFS * CONFIG_NRF71_RX_MAX_DATA_SIZE)
 
-BUILD_ASSERT(CONFIG_NRF71_MAX_TX_TOKENS >= 1,
-	"At least one TX token is required");
+BUILD_ASSERT(CONFIG_NRF71_MAX_TX_TOKENS >= NRF_WIFI_FMAC_AC_MAX,
+	"At least one TX token per access category is required");
 BUILD_ASSERT(CONFIG_NRF71_MAX_TX_AGGREGATION <= 15,
 	"Max TX aggregation is 15");
 BUILD_ASSERT(CONFIG_NRF71_TX_MAX_DATA_SIZE >= MAX_TX_FRAME_SIZE,
