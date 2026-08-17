@@ -11,7 +11,7 @@
 
 #include "system/fmac_ap.h"
 #include "system/fmac_peer.h"
-#include "queue.h"
+#include <common/llist_mgmt.h>
 #include "system/fmac_tx.h"
 #include "common/fmac_util.h"
 #include <common/lock_mgmt.h>
@@ -57,7 +57,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
 
 	if (wakeup_client_q) {
-		nrf_wifi_utils_q_enqueue(wakeup_client_q,
+		nrf_wifi_llist_add_tail_data(wakeup_client_q,
 					 peer);
 	}
 
@@ -121,7 +121,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 		wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
 
 		if (wakeup_client_q) {
-			nrf_wifi_utils_q_enqueue(wakeup_client_q,
+			nrf_wifi_llist_add_tail_data(wakeup_client_q,
 						 peer);
 		}
 

@@ -9,7 +9,7 @@
  * Offloaded raw TX modefor the FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include <queue.h>
+#include <common/llist_mgmt.h>
 #include <common/mem_mgmt.h>
 #include <nrf71_wifi_ctrl.h>
 #include <offload_raw_tx/fmac_structs.h>
