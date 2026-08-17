@@ -11,6 +11,7 @@
 
 #include <nrf71_wifi_ctrl.h>
 #include <common/mem_mgmt.h>
+#include <common/llist_mgmt.h>
 #include <common/work_mgmt.h>
 #include "system/fmac_api.h"
 #include "system/hal_api.h"
@@ -122,7 +123,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_c
 		goto out;
 	}
 
-	sys_dev_ctx->rx_tasklet_event_q = nrf_wifi_utils_q_alloc();
+	sys_dev_ctx->rx_tasklet_event_q = nrf_wifi_llist_create();
 	if (!sys_dev_ctx->rx_tasklet_event_q) {
 		LOG_ERR("%s: No space for RX tasklet event queue",
 				      __func__);
@@ -153,7 +154,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_deinit_rx(struct nrf_wifi_fmac_dev
 
 #ifdef NRF71_RX_WQ_ENABLED
 	nrf_wifi_work_free(sys_dev_ctx->rx_tasklet);
-	nrf_wifi_utils_q_free(sys_dev_ctx->rx_tasklet_event_q);
+	nrf_wifi_llist_free(sys_dev_ctx->rx_tasklet_event_q);
 #endif /* NRF71_RX_WQ_ENABLED */
 
 	for (desc_id = 0; desc_id < sys_fpriv->num_rx_bufs; desc_id++) {

@@ -33,8 +33,6 @@ function(nrf71_wifi_setup_include_and_sources)
   # ---- Sources: osal (os_if, utils, bus_if, fw_if, hw_if) ----
   zephyr_library_sources(
     ${nrf71_osal_base}/os_if/src/osal.c
-    ${nrf71_utils_base}/utils/src/list.c
-    ${nrf71_utils_base}/utils/src/queue.c
     ${nrf71_utils_base}/utils/src/util.c
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
     ${nrf71_osal_base}/bus_if/bal/src/bal.c
@@ -52,6 +50,7 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/nbuf_mgmt.c
     src/common/work_mgmt.c
     src/common/lock_mgmt.c
+    src/common/llist_mgmt.c
   )
 
   if(CONFIG_NRF71_RADIO_TEST)

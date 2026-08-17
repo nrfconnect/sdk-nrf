@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include <common/lock_mgmt.h>
 #include <common/work_mgmt.h>
-#include "queue.h"
+#include <common/llist_mgmt.h>
 #include "common/hal_structs_common.h"
 #include "common/hal_api_common.h"
 #include "system/hal_api.h"
@@ -67,7 +67,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->mac_dev_ctx = mac_dev_ctx;
 	hal_dev_ctx->idx = hpriv->num_devs++;
 
-	hal_dev_ctx->cmd_q = nrf_wifi_utils_ctrl_q_alloc();
+	hal_dev_ctx->cmd_q = nrf_wifi_ctrl_llist_create();
 
 	if (!hal_dev_ctx->cmd_q) {
 		LOG_ERR("%s: Unable to allocate command queue",
@@ -75,7 +75,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 		goto hal_dev_free;
 	}
 
-	hal_dev_ctx->event_q = nrf_wifi_utils_ctrl_q_alloc();
+	hal_dev_ctx->event_q = nrf_wifi_ctrl_llist_create();
 
 	if (!hal_dev_ctx->event_q) {
 		LOG_ERR("%s: Unable to allocate event queue",
@@ -133,9 +133,9 @@ lock_rx_free:
 lock_hal_free:
 	nrf_wifi_lock_free(hal_dev_ctx->lock_hal);
 event_q_free:
-	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->event_q);
+	nrf_wifi_ctrl_llist_free(hal_dev_ctx->event_q);
 cmd_q_free:
-	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->cmd_q);
+	nrf_wifi_ctrl_llist_free(hal_dev_ctx->cmd_q);
 hal_dev_free:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hal_dev_ctx);
 	hal_dev_ctx = NULL;

@@ -45,16 +45,6 @@ struct zep_shim_intr_priv {
 	struct k_work_delayable work;
 };
 
-struct zep_shim_llist_node {
-	sys_dnode_t head;
-	void *data;
-};
-
-struct zep_shim_llist {
-	sys_dlist_t head;
-	unsigned int len;
-};
-
 /**
  * @brief Get pointers to the driver control and data heaps.
  *

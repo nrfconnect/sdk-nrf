@@ -10,7 +10,7 @@
  * for the FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include "queue.h"
+#include <common/llist_mgmt.h>
 #include <common/mem_mgmt.h>
 #include <common/work_mgmt.h>
 
@@ -517,7 +517,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		nrf_wifi_mem_cpy(config,
 				      umac_head,
 				      sizeof(struct nrf_wifi_rx_buff));
-		status = nrf_wifi_utils_q_enqueue(sys_dev_ctx->rx_config.rx_tasklet_event_q,
+		status = nrf_wifi_llist_add_tail_data(sys_dev_ctx->rx_config.rx_tasklet_event_q,
 						  config);
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: Failed to enqueue RX buffer",
@@ -546,8 +546,8 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		nrf_wifi_mem_cpy(config,
 				      umac_head,
 				      sizeof(struct nrf_wifi_tx_buff_done));
-		status = nrf_wifi_utils_q_enqueue(sys_dev_ctx->tx_config.tx_done_tasklet_event_q,
-						  config);
+		status = nrf_wifi_llist_add_tail_data(
+			sys_dev_ctx->tx_config.tx_done_tasklet_event_q, config);
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: Failed to enqueue TX buffer",
 					      __func__);
