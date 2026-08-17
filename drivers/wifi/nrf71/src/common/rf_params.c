@@ -17,7 +17,7 @@
 #include <common/mem_mgmt.h>
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
-#include <util.h>
+#include <common/util.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 

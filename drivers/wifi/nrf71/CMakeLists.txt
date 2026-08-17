@@ -8,7 +8,6 @@ function(nrf71_wifi_setup_include_and_sources)
   zephyr_library_named(nrf71_wifi)
 
   set(nrf71_osal_base ${CMAKE_CURRENT_SOURCE_DIR}/osal)
-  set(nrf71_utils_base ${CMAKE_CURRENT_SOURCE_DIR})
   set(nrf71_os_shim_dir ${CMAKE_CURRENT_SOURCE_DIR}/os)
   set(nrf71_bus_dir ${CMAKE_CURRENT_SOURCE_DIR}/bus)
   set(os_agnostic_base ${ZEPHYR_NRF_WIFI_MODULE_DIR})
@@ -19,33 +18,30 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../bus
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/common/fw_if
-    ${nrf71_utils_base}/utils/inc
     ${nrf71_osal_base}/os_if/inc
     ${nrf71_osal_base}/bus_if/bus/qspi/inc
     ${nrf71_osal_base}/bus_if/bal/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
     ${nrf71_osal_base}/hw_if/hal/inc
-    ${nrf71_osal_base}/os_if/inc
     ${nrf71_os_shim_dir}
     ${nrf71_bus_dir}
     ${ZEPHYR_BASE}/subsys/net/ip
   )
 
-  # ---- Sources: osal (os_if, utils, bus_if, fw_if, hw_if) ----
+  # ---- Sources: osal (bus_if, fw_if, hw_if) ----
   zephyr_library_sources(
     ${nrf71_osal_base}/os_if/src/osal.c
-    ${nrf71_utils_base}/utils/src/util.c
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
     ${nrf71_osal_base}/bus_if/bal/src/bal.c
     ${nrf71_osal_base}/bus_if/bus/qspi/src/qspi.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
-    ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_util.c
     ${nrf71_os_shim_dir}/shim.c
     ${nrf71_bus_dir}/device.c
     ${nrf71_bus_dir}/ipc_if.c
     ${nrf71_bus_dir}/ipc_service.c
     src/common/rf_params.c
+    src/common/util.c
     src/common/vtf.c
     src/mac_addr.c
     src/common/mem_mgmt.c
@@ -83,7 +79,6 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/os_if/inc
       ${nrf71_osal_base}/bus_if/bal/inc
       ${nrf71_osal_base}/bus_if/bus/qspi/inc
-      ${nrf71_utils_base}/utils/inc
     )
   endif()
 

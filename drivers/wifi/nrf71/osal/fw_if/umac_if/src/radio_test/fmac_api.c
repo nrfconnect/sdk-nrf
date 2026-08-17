@@ -14,10 +14,9 @@
 #include <radio_test/fmac_api.h>
 #include <radio_test/hal_api.h>
 #include <radio_test/fmac_structs.h>
-#include <common/fmac_util.h>
+#include <common/util.h>
 #include <radio_test/fmac_cmd.h>
 #include <radio_test/fmac_event.h>
-#include <util.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
