@@ -11,6 +11,7 @@
 
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
+#include <common/llist_mgmt.h>
 #include "system/hal_api.h"
 #include "system/fmac_rx.h"
 #include "common/fmac_util.h"
@@ -312,7 +313,7 @@ void nrf_wifi_fmac_rx_tasklet(void *data)
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	config = (struct nrf_wifi_rx_buff *)nrf_wifi_utils_q_dequeue(
+	config = (struct nrf_wifi_rx_buff *)nrf_wifi_llist_pop_head(
 		sys_dev_ctx->rx_tasklet_event_q);
 
 	if (!config) {
