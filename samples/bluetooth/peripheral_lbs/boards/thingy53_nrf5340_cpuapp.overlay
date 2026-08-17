@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2021 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
@@ -55,17 +55,5 @@
 			label = "image-3";
 			reg = <0x000e0000 DT_SIZE_K(256)>;
 		};
-	};
-};
-
-/ {
-	chosen {
-		zephyr,shell-uart = &cdc_acm_uart1;
-	};
-};
-
-&zephyr_udc0 {
-	cdc_acm_uart1: cdc_acm_uart1 {
-		compatible = "zephyr,cdc-acm-uart";
 	};
 };
