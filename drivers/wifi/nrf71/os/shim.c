@@ -248,7 +248,6 @@ static unsigned int zep_shim_strlen(const void *str)
 }
 
 const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
-	.sleep_ms = k_msleep,
 	.delay_us = k_usleep,
 	.time_get_curr_us = zep_shim_time_get_curr_us,
 	.time_elapsed_us = zep_shim_time_elapsed_us,

@@ -111,15 +111,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 
 
 /**
- * @brief Sleep for a specified duration in milliseconds.
- * @param msecs: Sleep duration in milliseconds.
- *
- * Puts the calling thread to sleep for at least msecs milliseconds.
- */
-void nrf_wifi_osal_sleep_ms(unsigned int msecs);
-
-
-/**
  * @brief Delay for a specified duration in microseconds.
  * @param usecs Delay duration in microseconds.
  *

@@ -24,6 +24,7 @@
 #include "system/fmac_cmd.h"
 #include "system/fmac_event.h"
 #include "util.h"
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -237,7 +238,7 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 	}
 	start_time_us = nrf_wifi_osal_time_get_curr_us();
 	while (!fmac_dev_ctx->fw_init_done) {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
 		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_INIT_WAIT) {
 			break;
@@ -328,7 +329,7 @@ static void nrf_wifi_sys_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 
 	while (!fmac_dev_ctx->fw_deinit_done) {
 #define MAX_DEINIT_WAIT (5 * 1000 * 1000)
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_DEINIT_WAIT) {
 			break;
 		}
@@ -2467,7 +2468,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			      sizeof(*chg_vif_state_cmd));
 
 	while (!vif_ctx->ifflags && (--count > 0)) {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 	}
 
 	if (count == 0) {
@@ -3458,7 +3459,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *f
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((fmac_dev_ctx->stats_req == true) &&
 		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
@@ -3720,7 +3721,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((fmac_dev_ctx->debug_stats_req == true) &&
 		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
@@ -3771,7 +3772,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((fmac_dev_ctx->umac_int_stats_req == true) &&
 		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));

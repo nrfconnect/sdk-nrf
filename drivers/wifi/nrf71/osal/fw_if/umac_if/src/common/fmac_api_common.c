@@ -15,6 +15,7 @@
 #include "common/fmac_util.h"
 #include "common/fmac_cmd_common.h"
 #include "util.h"
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -86,7 +87,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(100);
+		k_msleep(100);
 	} while (count++ < 100 && !fmac_dev_ctx->alpha2_valid);
 
 	if (!fmac_dev_ctx->alpha2_valid) {
@@ -120,7 +121,7 @@ enum nrf_wifi_status nrf_wifi_fmac_stats_reset(struct nrf_wifi_fmac_dev_ctx *fma
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 	} while ((fmac_dev_ctx->stats_req == true) &&
 		 (count++ < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
 
@@ -232,7 +233,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	fmac_dev_ctx->reg_set_status = false;
 	LOG_DBG("%s: Waiting for regulatory domain change event", __func__);
 	while (!fmac_dev_ctx->reg_set_status && count++ <= max_count) {
-		nrf_wifi_osal_sleep_ms(100);
+		k_msleep(100);
 	}
 
 	if (!fmac_dev_ctx->reg_set_status) {

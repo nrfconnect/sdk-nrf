@@ -18,6 +18,7 @@
 #include <offload_raw_tx/fmac_structs.h>
 #include <common/fmac_util.h>
 #include <stdio.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -56,7 +57,7 @@ static enum nrf_wifi_status nrf_wifi_fmac_off_raw_tx_fw_init(
 
 	start_time_us = nrf_wifi_osal_time_get_curr_us();
 	while (!fmac_dev_ctx->fw_init_done) {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
 		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_INIT_WAIT) {
 			break;
@@ -284,7 +285,7 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_conf(
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((dev_ctx_off_raw_tx->off_raw_tx_cmd_done == true) &&
 		 (count < NRF_WIFI_FMAC_PARAMS_RECV_TIMEOUT));
@@ -397,7 +398,7 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_stats_get(struct nrf_wifi_fmac_dev
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((fmac_dev_ctx->stats_req == true) &&
 		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));

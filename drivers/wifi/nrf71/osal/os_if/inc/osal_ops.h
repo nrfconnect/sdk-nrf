@@ -152,14 +152,6 @@ struct nrf_wifi_osal_ops {
 	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
 	/**
-	 * @brief Sleep for a specified number of milliseconds.
-	 *
-	 * @param msecs The number of milliseconds to sleep.
-	 * @return 0 on success, a negative value on failure.
-	 */
-	int (*sleep_ms)(int msecs);
-
-	/**
 	 * @brief Delay for a specified number of microseconds.
 	 *
 	 * @param usecs The number of microseconds to delay.

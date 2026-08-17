@@ -73,12 +73,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 }
 
 
-void nrf_wifi_osal_sleep_ms(unsigned int msecs)
-{
-	os_ops->sleep_ms(msecs);
-}
-
-
 void nrf_wifi_osal_delay_us(unsigned long usecs)
 {
 	os_ops->delay_us(usecs);

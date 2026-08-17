@@ -18,6 +18,7 @@
 #include <radio_test/fmac_cmd.h>
 #include <radio_test/fmac_event.h>
 #include <util.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -70,7 +71,7 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	}
 	start_time_us = nrf_wifi_osal_time_get_curr_us();
 	while (!fmac_dev_ctx->fw_init_done) {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
 		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_INIT_WAIT) {
 			break;
@@ -271,7 +272,7 @@ static enum nrf_wifi_status wait_for_radio_cmd_status(struct nrf_wifi_fmac_dev_c
 
 	rt_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((!rt_dev_ctx->radio_cmd_done) &&
 		 (count < timeout));
@@ -486,7 +487,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_rx_cap(struct nrf_wifi_fmac_dev_ct
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(100);
+		k_msleep(100);
 		count++;
 	} while ((rt_dev_ctx->rf_test_type != NRF_WIFI_RF_TEST_MAX) &&
 		 (count < (RX_CAPTURE_TIMEOUT_CONST * capture_timeout)));
@@ -555,7 +556,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_tx_tone(struct nrf_wifi_fmac_dev_c
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(100);
+		k_msleep(100);
 		count++;
 	} while ((rt_dev_ctx->rf_test_type != NRF_WIFI_RF_TEST_MAX) &&
 		 (count < NRF_WIFI_FMAC_RF_TEST_EVNT_TIMEOUT));
@@ -611,7 +612,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_rf_test_compute_xo(struct nrf_wifi_fmac_de
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(100);
+		k_msleep(100);
 		count++;
 	} while ((rt_dev_ctx->rf_test_type != NRF_WIFI_RF_TEST_MAX) &&
 		 (count < NRF_WIFI_FMAC_RF_TEST_EVNT_TIMEOUT));
@@ -663,7 +664,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fm
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		count++;
 	} while ((fmac_dev_ctx->stats_req == true) &&
 		 (count < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
