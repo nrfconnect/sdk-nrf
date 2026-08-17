@@ -43,21 +43,6 @@ Configuration
 
 |config|
 
-Selecting ICMSG backend
-=======================
-
-On the nRF5340 DK, this sample uses by default the OpenAMP backend provided by the IPC Service.
-You can instead select the ICMSG backend configuration, which has smaller memory requirements.
-
-The ICMSG backend configuration is provided in the :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp_icmsg.conf` file.
-To provide the ICMSG backend configuration, specify the ``-DFILE_SUFFIX=icmsg`` parameter along with the build command when building the sample:
-
-   .. code-block:: console
-
-      west build -p -b nrf5340dk/nrf5340/cpuapp -- -DFILE_SUFFIX=icmsg
-
-The nRF54H20 target supports only ICMSG backend.
-
 Building and running
 ********************
 .. |sample path| replace:: :file:`samples/event_manager_proxy`
@@ -75,27 +60,11 @@ Complete the following steps to program the sample:
 
 1. Go to the sample directory.
 #. |open_terminal_window_with_environment|
-#. Run the following command to build the application code for the host and the remote:
-
-   **nRF5340 DK**
+#. Run the following command to build the specific configuration for the host and the remote:
 
    .. code-block:: console
 
-      west build -b nrf5340dk/nrf5340/cpuapp
-
-   **nRF54H20 DK**
-
-   A snippet for running the PPR core is added automatically to build configuration.
-
-   .. code-block:: console
-
-      west build -b nrf54h20dk/nrf54h20/cpuapp
-
-   or use twister test case:
-
-   .. code-block:: console
-
-      west build -b nrf54h20dk/nrf54h20/cpuapp -T sample.event_manager_proxy.nrf54h20dk_cpuapp .
+      west build -b nrf5340dk/nrf5340/cpuapp -T sample.event_manager_proxy
 
 #. Program both the cores:
 
