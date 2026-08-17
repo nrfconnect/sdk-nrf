@@ -45,6 +45,7 @@ struct dect_mdm_mac_dev_context {
 static struct dect_mdm_mac_dev_context dect_mdm_mac_dev_context_data;
 
 static K_MUTEX_DEFINE(send_buf_lock); /* Only one TX requests at a time */
+static uint8_t send_buf[NRF91_DECT_UL_BUFFER_SIZE];
 
 #if defined(CONFIG_DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS)
 /* We are using handle as array index */
@@ -678,7 +679,7 @@ static int dect_mdm_hal_driver_send(const struct device *dev, struct net_pkt *pk
 		return -EINVAL;
 	}
 
-	ret = net_pkt_read(pkt, tx_params.data, data_len);
+	ret = net_pkt_read(pkt, send_buf, data_len);
 	if (ret < 0) {
 		LOG_ERR("%s: cannot read packet: %d, from pkt %p, data_len %d\n", __func__, ret,
 			pkt, data_len);
@@ -686,6 +687,7 @@ static int dect_mdm_hal_driver_send(const struct device *dev, struct net_pkt *pk
 		int retry_count = 0;
 		bool data_sent = false;
 
+		tx_params.data = send_buf;
 		tx_params.data_len = data_len;
 		tx_params.long_rd_id = target_long_rd_id;
 		tx_params.flow_id = 1;
