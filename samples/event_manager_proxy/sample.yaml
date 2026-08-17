@@ -28,40 +28,20 @@ tests:
   sample.event_manager_proxy:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-  sample.event_manager_proxy.nrf5340dk_nrf5340_cpuapp.icmsg:
-    platform_allow:
-      - nrf5340dk/nrf5340/cpuapp
-    integration_platforms:
-      - nrf5340dk/nrf5340/cpuapp
-    extra_args: FILE_SUFFIX=icmsg
-  sample.event_manager_proxy.nrf54h20dk_cpuapp:
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    timeout: 20
-  sample.event_manager_proxy.nrf54l_cpuapp_cpuflpr:
-    extra_args:
-      - event_manager_proxy_SNIPPET=nordic-flpr
-    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf7120dk/nrf7120/cpuapp
-  sample.event_manager_proxy.nrf9251dk_cpuapp_cpuppr:
-    platform_allow:
-      - nrf9251dk/nrf9251/cpuapp
-    integration_platforms:
-      - nrf9251dk/nrf9251/cpuapp
     extra_args:
-      - event_manager_proxy_SNIPPET=nordic-ppr
+      - platform:nrf54h20dk:event_manager_proxy_SNIPPET=nordic-ppr
+      - platform:nrf9251dk:event_manager_proxy_SNIPPET=nordic-ppr
+      - platform:nrf54l:event_manager_proxy_SNIPPET=nordic-flpr
+      - platform:nrf7120dk:event_manager_proxy_SNIPPET=nordic-flpr
     timeout: 20
