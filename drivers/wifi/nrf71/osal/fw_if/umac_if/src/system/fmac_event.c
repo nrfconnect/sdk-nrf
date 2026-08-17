@@ -12,6 +12,7 @@
 
 #include "queue.h"
 #include <common/mem_mgmt.h>
+#include <common/work_mgmt.h>
 
 #include <nrf71_wifi_ctrl.h>
 #include "system/fmac_rx.h"
@@ -521,7 +522,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 			break;
 		}
-		nrf_wifi_osal_tasklet_schedule(sys_dev_ctx->rx_tasklet);
+		nrf_wifi_work_schedule(sys_dev_ctx->rx_tasklet);
 #else
 		status = nrf_wifi_fmac_rx_event_process(fmac_dev_ctx,
 							umac_head);
@@ -550,7 +551,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 			break;
 		}
-		nrf_wifi_osal_tasklet_schedule(sys_dev_ctx->tx_done_tasklet);
+		nrf_wifi_work_schedule(sys_dev_ctx->tx_done_tasklet);
 #else
 		status = nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx,
 								umac_head);

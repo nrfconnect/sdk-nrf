@@ -11,6 +11,7 @@
 
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
+#include <common/work_mgmt.h>
 #include "list.h"
 #include "queue.h"
 #include "system/hal_api.h"
@@ -1610,7 +1611,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 
 #ifdef NRF71_TX_DONE_WQ_ENABLED
-	sys_dev_ctx->tx_done_tasklet = nrf_wifi_osal_tasklet_alloc(NRF_WIFI_TASKLET_TYPE_TX_DONE);
+	sys_dev_ctx->tx_done_tasklet = nrf_wifi_work_alloc(ZEP_WORK_TYPE_TX_DONE);
 	if (!sys_dev_ctx->tx_done_tasklet) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate tx_done_tasklet",
 				      __func__);
@@ -1623,14 +1624,14 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		goto tx_done_tasklet_free;
 	}
 
-	nrf_wifi_osal_tasklet_init(sys_dev_ctx->tx_done_tasklet,
+	nrf_wifi_work_init(sys_dev_ctx->tx_done_tasklet,
 				   tx_done_tasklet_fn,
 				   (unsigned long)fmac_dev_ctx);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 	return NRF_WIFI_STATUS_SUCCESS;
 #ifdef NRF71_TX_DONE_WQ_ENABLED
 tx_done_tasklet_free:
-	nrf_wifi_osal_tasklet_free(sys_dev_ctx->tx_done_tasklet);
+	nrf_wifi_work_free(sys_dev_ctx->tx_done_tasklet);
 wakeup_client_q_free:
 	nrf_wifi_utils_q_free(sys_dev_ctx->tx_config.wakeup_client_q);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
@@ -1675,7 +1676,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 #ifdef NRF71_TX_DONE_WQ_ENABLED
 	/* TODO: Need to deinit network buffers? */
-	nrf_wifi_osal_tasklet_free(sys_dev_ctx->tx_done_tasklet);
+	nrf_wifi_work_free(sys_dev_ctx->tx_done_tasklet);
 	nrf_wifi_utils_q_free(sys_dev_ctx->tx_config.tx_done_tasklet_event_q);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 	nrf_wifi_utils_q_free(sys_dev_ctx->tx_config.wakeup_client_q);

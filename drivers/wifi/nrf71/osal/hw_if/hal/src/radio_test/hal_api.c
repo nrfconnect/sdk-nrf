@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/work_mgmt.h>
 #include <queue.h>
 #include <common/hal_structs_common.h>
 #include <radio_test/hal_api.h>
@@ -96,7 +97,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 
 	nrf_wifi_osal_spinlock_init(hal_dev_ctx->lock_rx);
 
-	hal_dev_ctx->event_tasklet = nrf_wifi_osal_tasklet_alloc(NRF_WIFI_TASKLET_TYPE_BH);
+	hal_dev_ctx->event_tasklet = nrf_wifi_work_alloc(ZEP_WORK_TYPE_BH);
 
 	if (!hal_dev_ctx->event_tasklet) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate event_tasklet",
@@ -104,7 +105,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 		goto lock_rx_free;
 	}
 
-	nrf_wifi_osal_tasklet_init(hal_dev_ctx->event_tasklet,
+	nrf_wifi_work_init(hal_dev_ctx->event_tasklet,
 				   event_tasklet_fn,
 				   (unsigned long)hal_dev_ctx);
 
@@ -119,7 +120,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 
 	return hal_dev_ctx;
 event_tasklet_free:
-	nrf_wifi_osal_tasklet_free(hal_dev_ctx->event_tasklet);
+	nrf_wifi_work_free(hal_dev_ctx->event_tasklet);
 lock_rx_free:
 	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_rx);
 lock_hal_free:
