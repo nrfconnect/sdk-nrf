@@ -1,4 +1,4 @@
-	/*
+/*
  * Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
@@ -15,6 +15,10 @@
  */
 
 #pragma once
+
+/* These must stay above cracen_psa.h */
+#include <cracen/statuscodes.h>
+#include <nrf_security_mem_helpers.h>
 
 #include "cracen_psa.h"
 #include "sxsymcrypt/internal.h"
@@ -35,7 +39,6 @@
 #define cracen_abs(x) ((x) < 0 ? -(x) : (x))
 #endif
 
-
 typedef struct {
 	uint8_t slot_number;
 	uint8_t owner_id;
@@ -43,11 +46,11 @@ typedef struct {
 
 __must_check psa_status_t silex_statuscodes_to_psa(int sx_status);
 
-__must_check psa_status_t
-cracen_hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo);
+__must_check psa_status_t cracen_hash_get_algo(psa_algorithm_t alg,
+					       const struct sxhashalg **sx_hash_algo);
 
-__must_check psa_status_t
-cracen_xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_xof_algo);
+__must_check psa_status_t cracen_xof_get_algo(psa_algorithm_t alg,
+					      const struct sxhashalg **sx_xof_algo);
 
 /**
  * @brief Use cracen_get_random up to generate a random number in the range [1, upperlimit).

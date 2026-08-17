@@ -9,7 +9,6 @@
 
 #include <cracen/hardware.h>
 #include <cracen/interrupts.h>
-#include <cracen/statuscodes.h>
 #include <cracen/common.h>
 #include <cracen/cracen_kmu.h>
 #include "microcode_binary.h"

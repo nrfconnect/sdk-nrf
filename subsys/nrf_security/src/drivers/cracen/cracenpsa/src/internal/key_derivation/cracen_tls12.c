@@ -11,7 +11,6 @@
 #include <stdbool.h>
 #include <silexpk/core.h>
 #include <sxsymcrypt/hash.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
 #include <cracen_psa_primitives.h>

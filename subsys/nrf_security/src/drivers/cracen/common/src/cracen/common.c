@@ -10,8 +10,6 @@
 #include <cracen_psa_ctr_drbg.h>
 #include <hal/nrf_cracen.h>
 #include <nrfx_kmu.h>
-#include <nrf_security_mem_helpers.h>
-#include <cracen/statuscodes.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>
 #include <silexpk/ik.h>

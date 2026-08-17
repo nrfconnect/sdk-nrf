@@ -11,7 +11,6 @@
 #include <string.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
 

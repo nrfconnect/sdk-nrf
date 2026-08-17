@@ -13,7 +13,6 @@
 #include "cracen_psa_ctr_drbg.h"
 #include "cracen_psa_primitives.h"
 #include <sxsymcrypt/blkcipher.h>
-#include <cracen/statuscodes.h>
 #include <cracen/hardware.h>
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/aes.h>

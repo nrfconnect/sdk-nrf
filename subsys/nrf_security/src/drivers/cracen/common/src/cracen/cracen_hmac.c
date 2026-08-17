@@ -15,8 +15,6 @@
 #include <string.h>
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/internal.h>
-#include <cracen/statuscodes.h>
-#include <nrf_security_mem_helpers.h>
 #include "cracen_psa_primitives.h"
 #include "cracen_psa.h"
 #include <cracen/common.h>

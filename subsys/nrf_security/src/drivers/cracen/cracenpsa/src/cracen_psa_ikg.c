@@ -8,7 +8,6 @@
 
 #include <stdint.h>
 #include <string.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa_primitives.h>
 #include <cracen_psa_builtin_key_policy.h>
 #include <cracen/common.h>

@@ -14,7 +14,6 @@
 
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/hashdefs.h>
-#include <cracen/statuscodes.h>
 #include <cracen/common.h>
 
 /* number of bytes used for the MGF1 internal counter */

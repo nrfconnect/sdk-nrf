@@ -23,7 +23,6 @@
 #include <silexpk/core.h>
 #include <sxsymcrypt/hashdefs.h>
 #include <sxsymcrypt/hash.h>
-#include <cracen/statuscodes.h>
 #include <cracen/common.h>
 #include <cracen_psa_primitives.h>
 

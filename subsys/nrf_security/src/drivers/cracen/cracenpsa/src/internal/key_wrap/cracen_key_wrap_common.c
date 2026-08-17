@@ -8,9 +8,7 @@
 #include <internal/aes/cracen_aes_ecb.h>
 
 #include <stddef.h>
-#include <cracen/statuscodes.h>
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
 #include <silexpk/core.h>
 #include <sxsymcrypt/internal.h>
 

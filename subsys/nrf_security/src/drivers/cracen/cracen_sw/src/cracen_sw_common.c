@@ -8,7 +8,6 @@
 #include <sxsymcrypt/keyref.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/internal.h>
-#include <cracen/statuscodes.h>
 #include <zephyr/logging/log.h>
 #include <cracen/common.h>
 #include <cracen_sw_common.h>

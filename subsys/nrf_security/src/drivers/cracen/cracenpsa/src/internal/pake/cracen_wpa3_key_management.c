@@ -13,7 +13,6 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/sxops/eccweierstrass.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
 

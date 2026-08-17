@@ -11,7 +11,6 @@
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
-#include <cracen/statuscodes.h>
 #include <silexpk/blinding.h>
 #include <internal/rsa/cracen_rsa_common.h>
 #include <internal/rsa/cracen_rsa_encryption.h>
