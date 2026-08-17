@@ -25,7 +25,6 @@
 
 #include "shim.h"
 #include "work.h"
-#include "timer.h"
 #include "osal_ops.h"
 #include "common/hal_structs_common.h"
 
@@ -860,44 +859,6 @@ static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 	ipc_unregister_rx_cb();
 }
 
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
-static void *zep_shim_timer_alloc(void)
-{
-	struct timer_list *timer = NULL;
-
-	timer = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*timer));
-
-	if (!timer) {
-		LOG_ERR("%s: Unable to allocate memory for work", __func__);
-	}
-
-	return timer;
-}
-
-static void zep_shim_timer_init(void *timer, void (*callback)(unsigned long), unsigned long data)
-{
-	((struct timer_list *)timer)->function = callback;
-	((struct timer_list *)timer)->data = data;
-
-	init_timer(timer);
-}
-
-static void zep_shim_timer_free(void *timer)
-{
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, timer);
-}
-
-static void zep_shim_timer_schedule(void *timer, unsigned long duration)
-{
-	mod_timer(timer, duration);
-}
-
-static void zep_shim_timer_kill(void *timer)
-{
-	del_timer_sync(timer);
-}
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
-
 static void zep_shim_assert(int test_val, int val, enum nrf_wifi_assert_op_type op, char *msg)
 {
 	switch (op) {
@@ -1000,12 +961,6 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.bus_qspi_dev_host_map_get = zep_shim_bus_qspi_dev_host_map_get,
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
-	.timer_alloc = zep_shim_timer_alloc,
-	.timer_init = zep_shim_timer_init,
-	.timer_free = zep_shim_timer_free,
-	.timer_schedule = zep_shim_timer_schedule,
-	.timer_kill = zep_shim_timer_kill,
-
 	.bus_qspi_ps_sleep = zep_shim_bus_qspi_ps_sleep,
 	.bus_qspi_ps_wake = zep_shim_bus_qspi_ps_wake,
 	.bus_qspi_ps_status = zep_shim_bus_qspi_ps_status,

@@ -1084,57 +1084,6 @@ void nrf_wifi_osal_spi_cpy_to(void *priv,
 
 #if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 /**
- * @brief Allocate a timer.
- *
- * Allocates a timer instance and returns a pointer to it.
- *
- * @return Pointer to the allocated timer instance.
- */
-void *nrf_wifi_osal_timer_alloc(void);
-
-/**
- * @brief Free a timer.
- * @param timer Pointer to a timer instance.
- *
- * Frees/Deallocates a timer that has been allocated using nrf_wifi_osal_timer_alloc
- */
-void nrf_wifi_osal_timer_free(void *timer);
-
-
-/**
- * @brief Initialize a timer.
- * @param timer Pointer to a timer instance.
- * @param callbk_fn Callback function to be invoked when the timer expires.
- * @param data Data to be passed to the callback function.
- *
- * Initializes a timer that has been allocated using nrf_wifi_osal_timer_alloc
- * Need to pass (@p callbk_fn) callback function with the data(@p data) to be
- * passed to the callback function, whenever the timer expires.
- */
-void nrf_wifi_osal_timer_init(void *timer,
-			      void (*callbk_fn)(unsigned long),
-			      unsigned long data);
-
-
-/**
- * @brief Schedule a timer.
- * @param timer Pointer to a timer instance.
- * @param duration Duration of the timer in seconds.
- *
- * Schedules a timer with a @p duration seconds that has been allocated using
- * nrf_wifi_osal_timer_alloc and initialized with nrf_wifi_osal_timer_init.
- */
-void nrf_wifi_osal_timer_schedule(void *timer,
-				  unsigned long duration);
-
-
-/**
- * @brief Kills a timer.
- * @param timer Pointer to a timer instance.
- */
-void nrf_wifi_osal_timer_kill(void *timer);
-
-/**
  * @brief Puts the QSPI interface to sleep.
  * @param os_qspi_priv Pointer to the QSPI private data.
  *
