@@ -32,9 +32,18 @@
 };
 
 &cpuapp_cpuflpr_ipc {
+	status = "okay";
 	mbox-names = "tx", "rx";
 	tx-region = <&cpuflpr_cpuapp_ipc_shm>;
 	rx-region = <&cpuapp_cpuflpr_ipc_shm>;
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};
+
+&cpuapp_bellboard {
+	status = "okay";
 };
 
 &grtc {
