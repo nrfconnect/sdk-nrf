@@ -247,10 +247,9 @@
   comment: "Won't be fixed - https://nordicsemi.atlassian.net/browse/NCSDK-18853"
 
 - scenarios:
-    - tf-m.regression.ipc.lvl1
-    - tf-m.regression.ipc.lvl2
-    - tf-m.regression.sfn.profile.not_set
-    - tf-m.regression.sfn.profile.small
+    - tfm.regression.ipc.lvl1
+    - tfm.regression.ipc.lvl2
+    - tfm.regression.sfn
     - sample.tfm.psa_test_protected_storage
     - sample.tfm.psa_test_internal_trusted_storage
     - sample.tfm.psa_test_storage

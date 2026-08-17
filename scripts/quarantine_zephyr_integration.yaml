@@ -82,7 +82,7 @@
 
 - scenarios:
     - sample.tfm.protected_storage
-    - sample.tfm_ipc
+    - sample.tfm.tfm_ipc
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
     - nrf5340dk/nrf5340/cpuapp/ns
