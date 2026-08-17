@@ -17,6 +17,7 @@
 
 #include <common/rf_params.h>
 #include <common/util.h>
+#include <osal_api.h>
 #include <radio_test/core.h>
 
 #define DT_DRV_COMPAT nordic_wlan

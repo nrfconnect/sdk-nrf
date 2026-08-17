@@ -18,7 +18,7 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
 #include <common/mem_mgmt.h>
-#include "ipc_if.h"
+#include <common/ipc_bus.h>
 #include <zephyr/sys/math_extras.h>
 
 #include "shim.h"
@@ -39,17 +39,18 @@ static enum nrf_wifi_status zep_shim_bus_qspi_dev_init(void *os_qspi_dev_ctx)
 static void zep_shim_bus_qspi_dev_deinit(void *priv)
 {
 	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	volatile struct rpu_dev *dev = qspi_priv->qspi_dev;
 
-	dev->deinit();
+	if (qspi_priv && qspi_priv->dev_added) {
+		ipc_deinit();
+		qspi_priv->dev_added = false;
+	}
 }
 
 static int ipc_send_msg(unsigned int msg_type, void *msg, unsigned int len)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct rpu_dev *dev = rpu_dev();
-	int ret;
 	ipc_ctx_t ctx;
+	int ret;
 
 	switch (msg_type) {
 	case NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL:
@@ -67,9 +68,9 @@ static int ipc_send_msg(unsigned int msg_type, void *msg, unsigned int len)
 	default:
 		LOG_ERR("%s: Invalid msg_type (%d)", __func__, msg_type);
 		goto out;
-	};
+	}
 
-	ret = dev->send(ctx, msg, len);
+	ret = ipc_send(ctx, msg, len);
 	if (ret < 0) {
 		LOG_ERR("%s: Sending message to RPU failed\n", __func__);
 		goto out;
@@ -83,10 +84,14 @@ out:
 static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_ctx)
 {
 	struct zep_shim_bus_qspi_priv *zep_qspi_priv = os_qspi_priv;
-	struct rpu_dev *dev = rpu_dev();
 
-	dev->init();
-	zep_qspi_priv->qspi_dev = dev;
+	ARG_UNUSED(osal_qspi_dev_ctx);
+
+	if (ipc_init() != 0) {
+		LOG_ERR("%s: ipc_init failed", __func__);
+		return NULL;
+	}
+
 	zep_qspi_priv->dev_added = true;
 
 	return zep_qspi_priv;
@@ -94,11 +99,7 @@ static void *zep_shim_bus_qspi_dev_add(void *os_qspi_priv, void *osal_qspi_dev_c
 
 static void zep_shim_bus_qspi_dev_rem(void *priv)
 {
-	struct zep_shim_bus_qspi_priv *qspi_priv = priv;
-	struct qspi_dev *dev = qspi_priv->qspi_dev;
-
-	ARG_UNUSED(dev);
-
+	ARG_UNUSED(priv);
 }
 
 static void *zep_shim_bus_qspi_init(void)
