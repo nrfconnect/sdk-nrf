@@ -16,12 +16,12 @@
 #include <stdlib.h>
 #include <zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h>
 
-#ifdef CONFIG_GENERATE_MAC_ADDRESS
+#ifdef CONFIG_SAMPLE_OFFLOADED_RAW_TX_GENERATE_MAC_ADDRESS
 #include <zephyr/random/random.h>
 
 #define UNICAST_MASK GENMASK(7, 1)
 #define LOCAL_BIT BIT(1)
-#endif /* CONFIG_GENERATE_MAC_ADDRESS */
+#endif /* CONFIG_SAMPLE_OFFLOADED_RAW_TX_GENERATE_MAC_ADDRESS */
 
 uint8_t bcn_extra_fields[] = {
 0x03, 0x01, 0x01, 0x05, 0x04, 0x00, 0x01, 0x00, 0x00, 0x07, 0x06, 0x55, 0x53, 0x04, 0x01, 0x0b,
@@ -131,6 +131,34 @@ static int build_wifi_beacon(unsigned short beacon_interval,
 	return pos;
 }
 
+static enum nrf_wifi_off_raw_tx_band set_band(void)
+{
+#if defined(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BAND_2GHZ)
+	return NRF_WIFI_OFF_RAW_TX_BAND_2GHZ;
+#elif defined(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BAND_5GHZ)
+	return NRF_WIFI_OFF_RAW_TX_BAND_5GHZ;
+#elif defined(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BAND_6GHZ)
+	return NRF_WIFI_OFF_RAW_TX_BAND_6GHZ;
+#else
+	return NRF_WIFI_OFF_RAW_TX_BAND_AUTO;
+#endif
+}
+
+static const char *band_to_str(enum nrf_wifi_off_raw_tx_band band)
+{
+	switch (band) {
+	case NRF_WIFI_OFF_RAW_TX_BAND_2GHZ:
+		return "2.4 GHz";
+	case NRF_WIFI_OFF_RAW_TX_BAND_5GHZ:
+		return "5 GHz";
+	case NRF_WIFI_OFF_RAW_TX_BAND_6GHZ:
+		return "6 GHz";
+	case NRF_WIFI_OFF_RAW_TX_BAND_AUTO:
+	default:
+		return "Auto";
+	}
+}
+
 
 int main(void)
 {
@@ -144,9 +172,9 @@ int main(void)
 				   "MC4", "MC5", "MC6", "MC7"};
 	char tput_mode[TPUT_MODE_MAX][10] = {"Legacy", "HT", "VHT", "HE SU", "HE ER SU", "HE TB"};
 
-	printf("----- Initializing nRF70 -----\n");
+	printf("----- Initializing nRF wifi offloaded raw tx -----\n");
 
-#ifdef CONFIG_GENERATE_MAC_ADDRESS
+#ifdef CONFIG_SAMPLE_OFFLOADED_RAW_TX_GENERATE_MAC_ADDRESS
 	mac_addr = malloc(6);
 	if (!mac_addr) {
 		printf("Failed to allocate memory for mac_addr\n");
@@ -154,7 +182,7 @@ int main(void)
 	}
 	sys_rand_get(mac_addr, 6);
 	mac_addr[0] = (mac_addr[0] & UNICAST_MASK) | LOCAL_BIT;
-#endif /* CONFIG_GENERATE_MAC_ADDRESS */
+#endif /* CONFIG_SAMPLE_OFFLOADED_RAW_TX_GENERATE_MAC_ADDRESS */
 
 	country_code = (unsigned char *)malloc(3 * sizeof(unsigned char));
 	if (!country_code) {
@@ -166,9 +194,9 @@ int main(void)
 	nrf_wifi_off_raw_tx_init(mac_addr, country_code);
 
 	/* Build a beacon frame */
-	len = build_wifi_beacon(CONFIG_BEACON_INTERVAL,
+	len = build_wifi_beacon(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BEACON_INTERVAL,
 				0x431,
-				"nRF70_off_raw_tx_1",
+				"nRF_wifi_off_raw_tx_1",
 				bcn_supp_rates,
 				sizeof(bcn_supp_rates),
 				bcn_extra_fields,
@@ -177,9 +205,10 @@ int main(void)
 	memset(&conf, 0, sizeof(conf));
 	conf.pkt = bcn.frame;
 	conf.pkt_len = len;
-	conf.period_us = CONFIG_BEACON_INTERVAL * USEC_PER_MSEC;
+	conf.period_us = CONFIG_SAMPLE_OFFLOADED_RAW_TX_BEACON_INTERVAL * USEC_PER_MSEC;
 	conf.tx_pwr = 15;
 	conf.chan = 1;
+	conf.band = set_band();
 	conf.short_preamble = false;
 	conf.num_retries = 10;
 	conf.tput_mode = TPUT_MODE_LEGACY;
@@ -188,10 +217,11 @@ int main(void)
 	conf.he_ltf = 1;
 
 	printf("----- Starting to transmit beacons with the following configuration -----\n");
-	printf("\tSSID: nRF70_off_raw_tx_1\n");
+	printf("\tSSID: nRF_wifi_off_raw_tx_1\n");
 	printf("\tPeriod: %d\n", conf.period_us);
 	printf("\tTX Power: %d\n", conf.tx_pwr);
 	printf("\tChannel: %d\n", conf.chan);
+	printf("\tBand: %s\n", band_to_str(conf.band));
 	printf("\tShort Preamble: %d\n", conf.short_preamble);
 	printf("\tNumber of Retries: %d\n", conf.num_retries);
 	printf("\tThroughput Mode: %s\n", tput_mode[conf.tput_mode]);
@@ -208,9 +238,9 @@ int main(void)
 	printf("\tPacket sent: %u\n", stats.off_raw_tx_pkt_sent);
 
 	/* Build a beacon frame */
-	len = build_wifi_beacon(CONFIG_BEACON_INTERVAL,
+	len = build_wifi_beacon(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BEACON_INTERVAL,
 				0x431,
-				"nRF70_off_raw_tx_2",
+				"nRF_wifi_off_raw_tx_2",
 				bcn_supp_rates,
 				sizeof(bcn_supp_rates),
 				bcn_extra_fields,
@@ -219,15 +249,17 @@ int main(void)
 	conf.pkt_len = len;
 	conf.tx_pwr = 11;
 	conf.chan = 36;
+	conf.band = NRF_WIFI_OFF_RAW_TX_BAND_5GHZ;
 	conf.short_preamble = false;
 	conf.num_retries = 10;
 	conf.rate = RATE_12M;
 
 	printf("----- Updating configuration to -----\n");
-	printf("\tSSID: nRF70_off_raw_tx_2\n");
+	printf("\tSSID: nRF_wifi_off_raw_tx_2\n");
 	printf("\tPeriod: %d\n", conf.period_us);
 	printf("\tTX Power: %d\n", conf.tx_pwr);
 	printf("\tChannel: %d\n", conf.chan);
+	printf("\tBand: %s\n", band_to_str(conf.band));
 	printf("\tShort Preamble: %d\n", conf.short_preamble);
 	printf("\tNumber of Retries: %d\n", conf.num_retries);
 	printf("\tThroughput Mode: %s\n", tput_mode[conf.tput_mode]);
@@ -245,7 +277,7 @@ int main(void)
 	printf("----- Stopping transmission -----\n");
 	nrf_wifi_off_raw_tx_stop();
 
-	printf("----- Deinitializing nRF70 -----\n");
+	printf("----- Deinitializing nRF wifi offloaded raw tx -----\n");
 	nrf_wifi_off_raw_tx_deinit();
 
 	if (mac_addr) {
