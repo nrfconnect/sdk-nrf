@@ -6,6 +6,8 @@
 
 #include "../../hpf-gpio-app.overlay"
 
+/delete-node/ &ipc0;
+
 / {
 	reserved-memory {
 		#address-cells = <1>;
@@ -34,7 +36,6 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
-			dcache-alignment = <32>;
 			/delete-property/ tx-blocks;
 			/delete-property/ rx-blocks;
 			tx-region = <&sram_tx>;
