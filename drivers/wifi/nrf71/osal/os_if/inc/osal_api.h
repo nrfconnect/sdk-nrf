@@ -99,17 +99,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 
 
 /**
- * @brief Delay for a specified duration in microseconds.
- * @param usecs Delay duration in microseconds.
- *
- * Delays execution of calling thread for usecs microseconds. This is
- * busy-waiting and won't allow other threads to execute during
- * the time lapse.
- */
-void nrf_wifi_osal_delay_us(unsigned long usecs);
-
-
-/**
  * @brief Get current system uptime in microseconds.
  *
  * Get the current system uptime in microseconds.
