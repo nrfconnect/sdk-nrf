@@ -18,7 +18,6 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/__assert.h>
-#include <zephyr/net/net_core.h>
 #include <common/mem_mgmt.h>
 #include "ipc_if.h"
 #include <zephyr/sys/math_extras.h>
@@ -216,32 +215,6 @@ static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 	ipc_unregister_rx_cb();
 }
 
-static void zep_shim_assert(int test_val, int val, enum nrf_wifi_assert_op_type op, char *msg)
-{
-	switch (op) {
-	case NRF_WIFI_ASSERT_EQUAL_TO:
-		NET_ASSERT(test_val == val, "%s", msg);
-	break;
-	case NRF_WIFI_ASSERT_NOT_EQUAL_TO:
-		NET_ASSERT(test_val != val, "%s", msg);
-	break;
-	case NRF_WIFI_ASSERT_LESS_THAN:
-		NET_ASSERT(test_val < val, "%s", msg);
-	break;
-	case NRF_WIFI_ASSERT_LESS_THAN_EQUAL_TO:
-		NET_ASSERT(test_val <= val, "%s", msg);
-	break;
-	case NRF_WIFI_ASSERT_GREATER_THAN:
-		NET_ASSERT(test_val > val, "%s", msg);
-	break;
-	case NRF_WIFI_ASSERT_GREATER_THAN_EQUAL_TO:
-		NET_ASSERT(test_val >= val, "%s", msg);
-	break;
-	default:
-		LOG_ERR("%s: Invalid assertion operation", __func__);
-	}
-}
-
 static unsigned int zep_shim_strlen(const void *str)
 {
 	return strlen(str);
@@ -268,7 +241,6 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.bus_qspi_ps_wake = zep_shim_bus_qspi_ps_wake,
 	.bus_qspi_ps_status = zep_shim_bus_qspi_ps_status,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-	.assert = zep_shim_assert,
 	.strlen = zep_shim_strlen,
 	.ipc_send_msg = ipc_send_msg,
 };

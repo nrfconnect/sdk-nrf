@@ -620,20 +620,6 @@ int nrf_wifi_osal_bus_qspi_ps_status(void *os_qspi_priv);
 #endif /* NRF_WIFI_LOW_POWER */
 
 /**
- * @brief nrf_wifi_osal_assert() - Assert a condition with a value.
- * @param test Variable to be tested.
- * @param val Value to be checked for the @p test
- * @param op Type of operation to be done during assertion check.
- * @param msg Assertion message.
- *
- * Compares @p test with @p val. If true, prints assert message.
- */
-void nrf_wifi_osal_assert(int test,
-			  int val,
-			  enum nrf_wifi_assert_op_type op,
-			  char *msg);
-
-/**
  * @brief Gives the length of the string @p str.
  * @param str: Pointer to the memory location of the string.
  *

@@ -20,6 +20,7 @@
 #include "system/fmac_peer.h"
 #include "common/hal_structs_common.h"
 #include "common/fmac_util.h"
+#include <zephyr/net/net_core.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -58,10 +59,7 @@ static void set_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_osal_assert(sys_fpriv->num_tx_tokens_per_ac,
-			     0,
-			     NRF_WIFI_ASSERT_NOT_EQUAL_TO,
-			     "num_tx_tokens_per_ac is zero");
+	NET_ASSERT(sys_fpriv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
 
 	spare_desc_indx = (desc % (sys_fpriv->num_tx_tokens_per_ac *
 				   NRF_WIFI_FMAC_AC_MAX));
@@ -86,10 +84,7 @@ static void clear_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_osal_assert(sys_fpriv->num_tx_tokens_per_ac,
-			     0,
-			     NRF_WIFI_ASSERT_NOT_EQUAL_TO,
-			     "num_tx_tokens_per_ac is zero");
+	NET_ASSERT(sys_fpriv->num_tx_tokens_per_ac != 0, "num_tx_tokens_per_ac is zero");
 
 	spare_desc_indx = (desc % (sys_fpriv->num_tx_tokens_per_ac *
 				   NRF_WIFI_FMAC_AC_MAX));
