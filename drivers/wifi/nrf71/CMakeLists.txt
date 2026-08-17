@@ -53,6 +53,12 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/mem_mgmt.c
   )
 
+  if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
+    zephyr_library_sources(
+      src/common/nbuf_mgmt.c
+    )
+  endif()
+
   if(CONFIG_NRF71_RADIO_TEST)
     zephyr_library_sources(
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_api.c

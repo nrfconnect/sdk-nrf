@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/nbuf_mgmt.h>
 #include <stdlib.h>
 
 #ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
@@ -271,7 +272,7 @@ void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 	host_stats = &sys_dev_ctx->host_stats;
 	host_stats->total_rx_pkts++;
 
-	pkt = net_pkt_from_nbuf(iface, frm);
+	pkt = nrf_wifi_net_pkt_from_nbuf(iface, frm);
 	if (!pkt) {
 		LOG_DBG("Failed to allocate net_pkt");
 		host_stats->total_rx_drop_pkts++;
@@ -340,7 +341,7 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	pkt = net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header),
+	pkt = nrf_wifi_net_raw_pkt_from_nbuf(iface, frm, sizeof(struct raw_rx_pkt_header),
 				    raw_rx_hdr,
 				    pkt_free);
 	if (!pkt) {
@@ -406,7 +407,7 @@ int nrf_wifi_if_send(const struct device *dev,
 	}
 
 	/* Allocate packet before locking mutex (blocks until allocation success) */
-	nbuf = net_pkt_to_nbuf(pkt);
+	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt);
 
 	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 	if (ret != 0) {
@@ -498,7 +499,7 @@ drop:
 		host_stats->total_tx_drop_pkts++;
 	}
 	if (nbuf != NULL) {
-		nrf_wifi_osal_nbuf_free(nbuf);
+		nrf_wifi_nbuf_free(nbuf);
 	}
 unlock:
 	if (locked) {

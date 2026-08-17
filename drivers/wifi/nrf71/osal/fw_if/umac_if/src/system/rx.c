@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/nbuf_mgmt.h>
 #include "system/hal_api.h"
 #include "system/fmac_rx.h"
 #include "common/fmac_util.h"
@@ -69,7 +70,7 @@ unsigned long nrf_wifi_fmac_get_rx_buf_map_addr(struct nrf_wifi_fmac_dev_ctx *fm
 
 	rx_buf_info = &sys_dev_ctx->rx_buf_info[desc_id];
 	if (rx_buf_info->mapped) {
-		nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)rx_buf_info->nwb);
+		nwb_data = (unsigned long)nrf_wifi_nbuf_data_get((void *)rx_buf_info->nwb);
 		return nwb_data;
 	}
 
@@ -115,21 +116,21 @@ static void nrf_wifi_convert_amsdu_to_eth(void *nwb)
 	amsdu_hdr_len = sizeof(struct nrf_wifi_fmac_amsdu_hdr);
 
 	nrf_wifi_mem_cpy(&amsdu_hdr,
-				  nrf_wifi_osal_nbuf_data_get(nwb),
+				  nrf_wifi_nbuf_data_get(nwb),
 				  amsdu_hdr_len);
 
-	nwb_data = (unsigned char *)nrf_wifi_osal_nbuf_data_get(nwb) + amsdu_hdr_len;
+	nwb_data = (unsigned char *)nrf_wifi_nbuf_data_get(nwb) + amsdu_hdr_len;
 
 	eth_type = nrf_wifi_util_rx_get_eth_type(nwb_data);
 
-	nrf_wifi_osal_nbuf_data_pull(nwb,
+	nrf_wifi_nbuf_data_pull(nwb,
 					 (amsdu_hdr_len +
 					  nrf_wifi_get_skip_header_bytes(eth_type)));
 
-	len = nrf_wifi_osal_nbuf_data_size(nwb);
+	len = nrf_wifi_nbuf_data_size(nwb);
 
 	ehdr = (struct nrf_wifi_fmac_eth_hdr *)
-		nrf_wifi_osal_nbuf_data_push(nwb,
+		nrf_wifi_nbuf_data_push(nwb,
 						 sizeof(struct nrf_wifi_fmac_eth_hdr));
 
 	nrf_wifi_mem_cpy(ehdr->src,
@@ -155,10 +156,10 @@ static void nrf_wifi_convert_to_eth(void *nwb,
 	struct nrf_wifi_fmac_eth_hdr *ehdr = NULL;
 	unsigned int len = 0;
 
-	len = nrf_wifi_osal_nbuf_data_size(nwb);
+	len = nrf_wifi_nbuf_data_size(nwb);
 
 	ehdr = (struct nrf_wifi_fmac_eth_hdr *)
-		nrf_wifi_osal_nbuf_data_push(nwb,
+		nrf_wifi_nbuf_data_push(nwb,
 						 sizeof(struct nrf_wifi_fmac_eth_hdr));
 
 	switch (hdr->fc & (NRF_WIFI_FCTL_TODS | NRF_WIFI_FCTL_FROMDS)) {
@@ -246,7 +247,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 			goto out;
 		}
 
-		nwb = (unsigned long)nrf_wifi_osal_nbuf_alloc(buf_len);
+		nwb = (unsigned long)nrf_wifi_nbuf_alloc(buf_len);
 
 		if (!nwb) {
 			nrf_wifi_osal_log_err("%s: No space for allocating RX buffer",
@@ -255,7 +256,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 			goto out;
 		}
 
-		nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)nwb);
+		nwb_data = (unsigned long)nrf_wifi_nbuf_data_get((void *)nwb);
 
 		*(unsigned int *)(nwb_data) = desc_id;
 
@@ -281,7 +282,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	} else if (cmd_type == NRF_WIFI_FMAC_RX_CMD_TYPE_DEINIT) {
 
-		nrf_wifi_osal_nbuf_free((void *)rx_buf_info->nwb);
+		nrf_wifi_nbuf_free((void *)rx_buf_info->nwb);
 		status = NRF_WIFI_STATUS_SUCCESS;
 	} else {
 		nrf_wifi_osal_log_err("%s: Unknown cmd_type (%d)",
@@ -412,9 +413,9 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 		 * For nRF71 the RX_BUF_HEADROOM does not seem to be needed.
 		 * Remove the same. What parameters does RX_BUF_HEADROOM have??
 		 */
-		nrf_wifi_osal_nbuf_data_put(nwb,
+		nrf_wifi_nbuf_data_put(nwb,
 						pkt_len);
-		nwb_data = nrf_wifi_osal_nbuf_data_get(nwb);
+		nwb_data = nrf_wifi_nbuf_data_get(nwb);
 		rx_buf_info->nwb = 0;
 		rx_buf_info->mapped = false;
 
@@ -453,7 +454,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 					nrf_wifi_get_skip_header_bytes(eth_type);
 
 				/* Remove hdr len and llc header/length */
-				nrf_wifi_osal_nbuf_data_pull(nwb,
+				nrf_wifi_nbuf_data_pull(nwb,
 								 size);
 
 				nrf_wifi_convert_to_eth(nwb,
@@ -461,7 +462,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 							eth_type);
 				break;
 			case PKT_TYPE_MSDU_WITH_MAC:
-				nrf_wifi_osal_nbuf_data_pull(nwb,
+				nrf_wifi_nbuf_data_pull(nwb,
 								 config->mac_header_len);
 
 				nrf_wifi_convert_amsdu_to_eth(nwb);
@@ -487,7 +488,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 							config->frequency,
 							config->signal);
 #endif /* WIFI_MGMT_RAW_SCAN_RESULTS */
-			nrf_wifi_osal_nbuf_free(nwb);
+			nrf_wifi_nbuf_free(nwb);
 #ifdef NRF_WIFI_MGMT_BUFF_OFFLOAD
 			continue;
 #endif /* NRF_WIFI_MGMT_BUFF_OFFLOAD */
@@ -516,7 +517,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			 * to be freed here.
 			 */
 			else {
-				nrf_wifi_osal_nbuf_free(nwb);
+				nrf_wifi_nbuf_free(nwb);
 			}
 #endif
 		}
@@ -526,7 +527,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 						  __func__,
 						  config->rx_pkt_type);
 			status = NRF_WIFI_STATUS_FAIL;
-			nrf_wifi_osal_nbuf_free(nwb);
+			nrf_wifi_nbuf_free(nwb);
 			continue;
 		}
 
