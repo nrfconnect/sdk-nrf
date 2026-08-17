@@ -18,12 +18,6 @@ function(provision application prefix_name)
   set(PROVISION_HEX_NAME     ${prefix_name}provision.hex)
   set(PROVISION_HEX          ${CMAKE_BINARY_DIR}/${PROVISION_HEX_NAME})
 
-  if(CONFIG_SOC_SERIES_NRF54L)
-    set(otp_write_width 4) # OTP writes are in words (4 bytes)
-  else()
-    set(otp_write_width 2) # OTP writes are in half-words (2 bytes)
-  endif()
-
   if(CONFIG_SECURE_BOOT)
     if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
       set(monotonic_counter_arg
@@ -154,7 +148,7 @@ function(provision application prefix_name)
       ${monotonic_counter_arg}
       ${no_verify_hashes_arg}
       ${mcuboot_counters_slots}
-      --otp-write-width ${otp_write_width}
+      --otp-write-width ${SB_CONFIG_SECURE_BOOT_OTP_WRITE_SIZE}
       ${psa_certificate_reference}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
@@ -178,7 +172,7 @@ function(provision application prefix_name)
       --max-size ${provision_size}
       ${mcuboot_counters_num}
       ${mcuboot_counters_slots}
-      --otp-write-width ${otp_write_width}
+      --otp-write-width ${SB_CONFIG_SECURE_BOOT_OTP_WRITE_SIZE}
       ${psa_certificate_reference}
       DEPENDS
       ${PROVISION_KEY_DEPENDS}
