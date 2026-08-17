@@ -180,14 +180,6 @@ struct nrf_wifi_osal_ops {
 	int (*log_err)(const char *fmt, va_list args);
 
 	/**
-	 * @brief Sleep for a specified number of milliseconds.
-	 *
-	 * @param msecs The number of milliseconds to sleep.
-	 * @return 0 on success, a negative value on failure.
-	 */
-	int (*sleep_ms)(int msecs);
-
-	/**
 	 * @brief Delay for a specified number of microseconds.
 	 *
 	 * @param usecs The number of microseconds to delay.

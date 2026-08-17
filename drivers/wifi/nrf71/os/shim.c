@@ -285,7 +285,6 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.log_info = zep_shim_pr_info,
 	.log_err = zep_shim_pr_err,
 
-	.sleep_ms = k_msleep,
 	.delay_us = k_usleep,
 	.time_get_curr_us = zep_shim_time_get_curr_us,
 	.time_elapsed_us = zep_shim_time_elapsed_us,

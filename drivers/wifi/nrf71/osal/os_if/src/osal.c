@@ -126,12 +126,6 @@ int nrf_wifi_osal_log_err(const char *fmt,
 }
 #endif /* WIFI_NRF71_LOG_LEVEL_ERR */
 
-void nrf_wifi_osal_sleep_ms(unsigned int msecs)
-{
-	os_ops->sleep_ms(msecs);
-}
-
-
 void nrf_wifi_osal_delay_us(unsigned long usecs)
 {
 	os_ops->delay_us(usecs);

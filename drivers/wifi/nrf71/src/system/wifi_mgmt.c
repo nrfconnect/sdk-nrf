@@ -221,7 +221,7 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		 count++;
 	} while ((vif_ctx_zep->ps_config_info_evnt == false) &&
 		 (count < NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
