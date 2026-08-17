@@ -6,6 +6,8 @@
 
 #include "../../hpf-gpio-app.overlay"
 
+/delete-node/ &ipc0;
+
 / {
 	soc {
 		cpuflpr_code_data_sram: memory@2003c800 {

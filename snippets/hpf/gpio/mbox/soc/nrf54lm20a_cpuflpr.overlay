@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &sram_tx;
+/delete-node/ &sram_rx;
+
 / {
 	reserved-memory {
 		#address-cells = <1>;
