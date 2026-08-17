@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include <common/lock_mgmt.h>
 #include <common/work_mgmt.h>
-#include "queue.h"
+#include <common/llist_mgmt.h>
 
 #include "common/hal_api_common.h"
 
@@ -52,7 +52,7 @@ enum nrf_wifi_status hal_rpu_eventq_process(struct nrf_wifi_hal_dev_ctx *hal_dev
 	unsigned int event_len = 0;
 
 	while (1) {
-		event = nrf_wifi_utils_ctrl_q_dequeue(hal_dev_ctx->event_q);
+		event = nrf_wifi_ctrl_llist_pop_head(hal_dev_ctx->event_q);
 		if (!event) {
 			goto out;
 		}
@@ -88,7 +88,7 @@ static void hal_rpu_eventq_drain(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 		nrf_wifi_lock_irq_take(hal_dev_ctx->lock_rx,
 						&flags);
 
-		event = nrf_wifi_utils_ctrl_q_dequeue(hal_dev_ctx->event_q);
+		event = nrf_wifi_ctrl_llist_pop_head(hal_dev_ctx->event_q);
 
 		nrf_wifi_lock_irq_rel(hal_dev_ctx->lock_rx,
 					       &flags);
@@ -132,9 +132,9 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 	nrf_wifi_lock_free(hal_dev_ctx->lock_hal);
 	nrf_wifi_lock_free(hal_dev_ctx->lock_rx);
 
-	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->event_q);
+	nrf_wifi_ctrl_llist_free(hal_dev_ctx->event_q);
 
-	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->cmd_q);
+	nrf_wifi_ctrl_llist_free(hal_dev_ctx->cmd_q);
 
 #ifdef NRF_WIFI_LOW_POWER
 	hal_rpu_ps_deinit(hal_dev_ctx);

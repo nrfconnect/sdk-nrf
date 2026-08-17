@@ -310,7 +310,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 
 	for (int i = 0; i < NRF_WIFI_FMAC_AC_MAX ; i++) {
 		queue = sys_dev_ctx->tx_config.data_pending_txq[peer_index][i];
-		tx_pending_pkts = nrf_wifi_utils_q_len(queue);
+		tx_pending_pkts = nrf_wifi_llist_len(queue);
 
 		shell_fprintf(
 			sh,
