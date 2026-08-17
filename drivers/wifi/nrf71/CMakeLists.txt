@@ -14,7 +14,7 @@ function(nrf71_wifi_setup_include_and_sources)
   zephyr_library_include_directories(
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
-    ${CMAKE_CURRENT_SOURCE_DIR}/fw_if
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc/fw_if
     ${nrf71_osal_base}/bus_if/bus/ipc/inc
     ${nrf71_osal_base}/bus_if/bal/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
@@ -58,7 +58,7 @@ function(nrf71_wifi_setup_include_and_sources)
     zephyr_interface_library_named(nrf71_wifi_radio_test_headers)
     target_include_directories(nrf71_wifi_radio_test_headers INTERFACE
       ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
-      ${CMAKE_CURRENT_SOURCE_DIR}/fw_if
+      ${CMAKE_CURRENT_SOURCE_DIR}/inc/fw_if
       ${CMAKE_CURRENT_SOURCE_DIR}/inc
       ${nrf71_osal_base}/fw_if/umac_if/inc
       ${nrf71_osal_base}/hw_if/hal/inc

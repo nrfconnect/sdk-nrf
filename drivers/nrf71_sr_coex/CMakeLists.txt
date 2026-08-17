@@ -14,6 +14,6 @@ zephyr_library_sources(src/nrf71_sr_coex_cm.c)
 # pack_def.h they pull in). The public API of this driver does not expose these
 # types.
 zephyr_library_include_directories(
-  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/fw_if
+  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/inc/fw_if
   ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/osal/hw_if/hal/inc
 )
