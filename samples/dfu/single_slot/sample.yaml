@@ -92,7 +92,6 @@ tests:
   sample.dfu.single_slot.fw_loader_update.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
-      - installer_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/single_slot/boards/nrf54l15dk_nrf54l15_cpuapp.overlay"
       - installer_CONFIG_REBOOT=y
     tags:
       - dfu_single_slot
@@ -104,7 +103,6 @@ tests:
   sample.dfu.single_slot.fw_loader_update.nrf54h20:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
-      - installer_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/single_slot/boards/nrf54h20dk_nrf54h20_cpuapp.overlay"
       - installer_CONFIG_REBOOT=y
     tags:
       - dfu_single_slot
@@ -113,10 +111,29 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+  sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_pin_reset:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
+      - installer_CONFIG_REBOOT=y
+      - mcuboot_CONFIG_BOOT_FIRMWARE_LOADER_PIN_RESET=y
+    tags:
+      - dfu_single_slot
+      - ci_samples_dfu
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
   sample.dfu.single_slot.fw_loader_update.fw_loader_entrance_boot_mode.nrf54l15:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
-      - installer_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/single_slot/boards/nrf54l15dk_nrf54l15_cpuapp.overlay"
       - installer_CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_MODE=y
       - installer_CONFIG_RETAINED_MEM=y
       - installer_CONFIG_RETENTION=y
@@ -137,7 +154,6 @@ tests:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
       - FILE_SUFFIX=boot_req
-      - installer_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/single_slot/boards/nrf54l15dk_nrf54l15_cpuapp_boot_req.overlay"
       - installer_CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ=y
       - installer_CONFIG_RETAINED_MEM=y
       - installer_CONFIG_RETENTION=y
@@ -156,7 +172,6 @@ tests:
     extra_args:
       - SB_CONFIG_FIRMWARE_LOADER_UPDATE=y
       - FILE_SUFFIX=boot_req
-      - installer_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/samples/dfu/single_slot/boards/nrf54h20dk_nrf54h20_cpuapp_boot_req.overlay"
       - installer_CONFIG_INSTALLER_FW_LOADER_ENTRANCE_BOOT_REQ=y
       - installer_CONFIG_NRF_MCUBOOT_BOOT_REQUEST=y
       - installer_CONFIG_IMG_MANAGER=y
