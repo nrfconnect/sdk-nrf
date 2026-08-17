@@ -14,7 +14,7 @@
 #define __HAL_STRUCTS_COMMON_H__
 
 #include <nrf71_wifi_ctrl.h>
-#include "bal_api.h"
+#include <common/ipc_bus.h>
 
 /** 1 sec */
 #define MAX_HAL_RPU_READY_WAIT (1 * 1000 * 1000)
@@ -148,8 +148,8 @@ struct nrf_wifi_hal_cfg_params {
  * @brief Structure to hold context information for the HAL layer.
  */
 struct nrf_wifi_hal_priv {
-	/** Pointer to BAL private data */
-	struct nrf_wifi_bal_priv *bpriv;
+	/** Pointer to IPC private data */
+	struct nrf_wifi_ipc_priv *ipc_priv;
 	/** Number of devices */
 	unsigned char num_devs;
 	/** Additional device callback data */
@@ -184,8 +184,8 @@ struct nrf_wifi_hal_dev_ctx {
 	struct nrf_wifi_hal_priv *hpriv;
 	/** MAC device context */
 	void *mac_dev_ctx;
-	/** BAL device context */
-	void *bal_dev_ctx;
+	/** IPC device context */
+	struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx;
 	/** Device index */
 	unsigned char idx;
 	/** RPU information */
