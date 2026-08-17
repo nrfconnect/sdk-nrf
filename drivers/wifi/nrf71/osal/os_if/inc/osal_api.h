@@ -12,8 +12,6 @@
 #ifndef __OSAL_API_H__
 #define __OSAL_API_H__
 
-#include "osal_structs.h"
-
 /* Have to match zephyr/include/zephyr/logging/log_core.h */
 #define NRF_WIFI_LOG_LEVEL_ERR 1U
 #define NRF_WIFI_LOG_LEVEL_INF 3U

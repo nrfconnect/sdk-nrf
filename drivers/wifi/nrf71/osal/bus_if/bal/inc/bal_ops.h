@@ -12,7 +12,7 @@
 #ifndef __BAL_OPS_H__
 #define __BAL_OPS_H__
 
-#include "osal_structs.h"
+#include <common/status.h>
 
 /**
  * @brief Ops to be provided by a particular bus implementation.
@@ -116,34 +116,6 @@ struct nrf_wifi_bal_ops {
 				unsigned long dest_addr_offset,
 				const void *src_addr,
 				size_t len);
-
-	/**
-	 * @brief Map a DMA buffer.
-	 *
-	 * @param bus_dev_ctx Pointer to the bus device context.
-	 * @param virt_addr Virtual address of the buffer.
-	 * @param len Length of the buffer.
-	 * @param dma_dir DMA direction.
-	 * @return Physical address of the mapped buffer.
-	 */
-	unsigned long (*dma_map)(void *bus_dev_ctx,
-				 unsigned long virt_addr,
-				 size_t len,
-				 enum nrf_wifi_osal_dma_dir dma_dir);
-
-	/**
-	 * @brief Unmap a DMA buffer.
-	 *
-	 * @param bus_dev_ctx Pointer to the bus device context.
-	 * @param phy_addr Physical address of the buffer.
-	 * @param len Length of the buffer.
-	 * @param dma_dir DMA direction.
-	 * @return Physical address of the unmapped buffer.
-	 */
-	unsigned long (*dma_unmap)(void *bus_dev_ctx,
-				   unsigned long phy_addr,
-				   size_t len,
-				   enum nrf_wifi_osal_dma_dir dma_dir);
 
 	/**
 	 * @brief Send a message to the RPU over IPC.

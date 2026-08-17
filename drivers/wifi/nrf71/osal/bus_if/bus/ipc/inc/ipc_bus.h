@@ -13,6 +13,8 @@
 #ifndef __IPC_BUS_H__
 #define __IPC_BUS_H__
 
+#include <common/status.h>
+
 /**
  * @brief Structure to hold context information for the IPC bus.
  */
@@ -23,9 +25,6 @@ struct nrf_wifi_bus_ipc_priv {
 	 * Called when an IPC event is received from the RPU.
 	 */
 	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_ctx);
-
-	/** Configuration parameters for the IPC bus. */
-	struct nrf_wifi_bal_cfg_params cfg_params;
 };
 
 /**
@@ -39,8 +38,6 @@ struct nrf_wifi_bus_ipc_dev_ctx {
 
 	/** Base address of the host-mapped RPU memory. */
 	unsigned long host_addr_base;
-	/** Base address of the packet RAM. */
-	unsigned long addr_pktram_base;
 };
 
 /**

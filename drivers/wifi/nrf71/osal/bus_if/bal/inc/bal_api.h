@@ -129,34 +129,6 @@ void nrf_wifi_bal_write_block(void *ctx,
 		size_t len);
 
 /**
- * @brief Map a virtual address to a physical address for DMA transfer.
- *
- * @param ctx Pointer to the context.
- * @param virt_addr Virtual address to map.
- * @param len Length of the data to map.
- * @param dma_dir DMA direction.
- *
- * @return The mapped physical address.
- */
-unsigned long nrf_wifi_bal_dma_map(void *ctx,
-		unsigned long virt_addr,
-		size_t len,
-		enum nrf_wifi_osal_dma_dir dma_dir);
-
-/**
- * @brief Unmap a physical address for DMA transfer.
- *
- * @param ctx Pointer to the context.
- * @param phy_addr Physical address to unmap.
- * @param len Length of the data to unmap.
- * @param dma_dir DMA direction.
- */
-unsigned long nrf_wifi_bal_dma_unmap(void *ctx,
-		unsigned long phy_addr,
-		size_t len,
-		enum nrf_wifi_osal_dma_dir dma_dir);
-
-/**
  * @brief Send a message to the RPU over IPC.
  *
  * @param ctx Pointer to the BAL device context.

@@ -52,8 +52,6 @@ static void *nrf_wifi_bus_ipc_dev_add(void *bus_priv, void *bal_dev_ctx)
 	}
 
 	ipc_dev_ctx->host_addr_base = 0;
-	ipc_dev_ctx->addr_pktram_base = ipc_dev_ctx->host_addr_base +
-					ipc_priv->cfg_params.addr_pktram_base;
 
 	return ipc_dev_ctx;
 }
@@ -96,13 +94,14 @@ static void *nrf_wifi_bus_ipc_init(void *params,
 {
 	struct nrf_wifi_bus_ipc_priv *ipc_priv;
 
+	ARG_UNUSED(params);
+
 	ipc_priv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*ipc_priv));
 	if (!ipc_priv) {
 		LOG_ERR("%s: Unable to allocate memory for ipc_priv", __func__);
 		return NULL;
 	}
 
-	nrf_wifi_mem_cpy(&ipc_priv->cfg_params, params, sizeof(ipc_priv->cfg_params));
 	ipc_priv->intr_callbk_fn = intr_callbk_fn;
 
 	return ipc_priv;
@@ -146,30 +145,6 @@ static void nrf_wifi_bus_ipc_write_block(void *dev_ctx, unsigned long dest_addr_
 	uintptr_t addr = ipc_dev_ctx->host_addr_base + dest_addr_offset;
 
 	memcpy((void *)addr, src_addr, len);
-}
-
-static unsigned long nrf_wifi_bus_ipc_dma_map(void *dev_ctx, unsigned long virt_addr,
-					      size_t len,
-					      enum nrf_wifi_osal_dma_dir dma_dir)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-
-	ARG_UNUSED(len);
-	ARG_UNUSED(dma_dir);
-
-	return ipc_dev_ctx->host_addr_base + (virt_addr - ipc_dev_ctx->addr_pktram_base);
-}
-
-static unsigned long nrf_wifi_bus_ipc_dma_unmap(void *dev_ctx, unsigned long phy_addr,
-						size_t len,
-						enum nrf_wifi_osal_dma_dir dma_dir)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-
-	ARG_UNUSED(len);
-	ARG_UNUSED(dma_dir);
-
-	return ipc_dev_ctx->addr_pktram_base + (phy_addr - ipc_dev_ctx->host_addr_base);
 }
 
 static enum nrf_wifi_status nrf_wifi_bus_ipc_send_msg(void *dev_ctx, unsigned int msg_type,
@@ -236,8 +211,6 @@ static struct nrf_wifi_bal_ops nrf_wifi_bus_ipc_ops = {
 	.write_word = &nrf_wifi_bus_ipc_write_word,
 	.read_block = &nrf_wifi_bus_ipc_read_block,
 	.write_block = &nrf_wifi_bus_ipc_write_block,
-	.dma_map = &nrf_wifi_bus_ipc_dma_map,
-	.dma_unmap = &nrf_wifi_bus_ipc_dma_unmap,
 	.ipc_send_msg = &nrf_wifi_bus_ipc_send_msg,
 #ifdef NRF_WIFI_LOW_POWER
 	.rpu_ps_sleep = &nrf_wifi_bus_ipc_ps_sleep,

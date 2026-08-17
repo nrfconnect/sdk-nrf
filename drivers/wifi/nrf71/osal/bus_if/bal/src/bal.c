@@ -269,43 +269,6 @@ void nrf_wifi_bal_write_block(void *ctx,
 }
 
 
-unsigned long nrf_wifi_bal_dma_map(void *ctx,
-				   unsigned long virt_addr,
-				   size_t len,
-				   enum nrf_wifi_osal_dma_dir dma_dir)
-{
-	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = NULL;
-	unsigned long phy_addr = 0;
-
-	bal_dev_ctx = (struct nrf_wifi_bal_dev_ctx *)ctx;
-
-	phy_addr = bal_dev_ctx->bpriv->ops->dma_map(bal_dev_ctx->bus_dev_ctx,
-						    virt_addr,
-						    len,
-						    dma_dir);
-
-	return phy_addr;
-}
-
-
-unsigned long nrf_wifi_bal_dma_unmap(void *ctx,
-				     unsigned long phy_addr,
-				     size_t len,
-				     enum nrf_wifi_osal_dma_dir dma_dir)
-{
-	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = NULL;
-	unsigned long virt_addr = 0;
-
-	bal_dev_ctx = (struct nrf_wifi_bal_dev_ctx *)ctx;
-
-	virt_addr = bal_dev_ctx->bpriv->ops->dma_unmap(bal_dev_ctx->bus_dev_ctx,
-						       phy_addr,
-						       len,
-						       dma_dir);
-
-	return virt_addr;
-}
-
 enum nrf_wifi_status nrf_wifi_bal_ipc_send_msg(void *ctx,
 					       unsigned int msg_type,
 					       void *msg,
