@@ -26,6 +26,8 @@
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuflpr_vevif_rx 16>, <&cpuflpr_vevif_tx 20>;
 			mbox-names = "rx", "tx";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			status = "okay";
 		};
 	};
