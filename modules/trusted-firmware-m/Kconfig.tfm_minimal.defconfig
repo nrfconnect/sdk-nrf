@@ -8,6 +8,13 @@ config TFM_MCUBOOT_IMAGE_NUMBER
 	int
 	default 1
 
+config TFM_PARTITION_CRYPTO
+	bool
+	depends on PSA_CRYPTO_PROVIDER_TFM
+	default y
+
+if TFM_PARTITION_CRYPTO
+
 config TFM_CRYPTO_RNG_MODULE_ENABLED
 	bool
 	default y
@@ -17,9 +24,7 @@ config TFM_CRYPTO_HASH_MODULE_ENABLED
 	depends on PSA_HAS_HASH_SUPPORT
 	default y
 
-config TFM_PARTITION_CRYPTO
-	bool
-	default y
+endif # TFM_PARTITION_CRYPTO
 
 config TFM_PARTITION_PLATFORM
 	bool

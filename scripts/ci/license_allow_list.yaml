@@ -60,6 +60,7 @@ any: |
 # Allow different licenses from external sources
 LicenseRef-west-ncs-sbom-iperf-BSD-3-Clause: "^nrf/ext/"
 Apache-2.0: |
+  ^zephyr/
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
