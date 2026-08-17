@@ -43,7 +43,6 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_util.c
     ${nrf71_os_shim_dir}/shim.c
-    ${nrf71_os_shim_dir}/work.c
     ${nrf71_bus_dir}/device.c
     ${nrf71_bus_dir}/ipc_if.c
     ${nrf71_bus_dir}/ipc_service.c
@@ -51,6 +50,7 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/vtf.c
     src/common/mem_mgmt.c
     src/common/nbuf_mgmt.c
+    src/common/work_mgmt.c
   )
 
   if(CONFIG_NRF71_RADIO_TEST)

@@ -24,7 +24,6 @@
 #include <zephyr/sys/math_extras.h>
 
 #include "shim.h"
-#include "work.h"
 #include "osal_ops.h"
 #include "common/hal_structs_common.h"
 
@@ -261,32 +260,6 @@ static unsigned int zep_shim_llist_len(void *llist)
 	zep_llist = (struct zep_shim_llist *)llist;
 
 	return zep_llist->len;
-}
-
-static void *zep_shim_work_alloc(int type)
-{
-	return work_alloc(type);
-}
-
-static void zep_shim_work_free(void *item)
-{
-	work_free(item);
-}
-
-static void zep_shim_work_init(void *item, void (*callback)(unsigned long data),
-				  unsigned long data)
-{
-	work_init(item, callback, data);
-}
-
-static void zep_shim_work_schedule(void *item)
-{
-	work_schedule(item);
-}
-
-static void zep_shim_work_kill(void *item)
-{
-	work_kill(item);
 }
 
 static unsigned long zep_shim_time_get_curr_us(void)
@@ -533,12 +506,6 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.llist_get_node_nxt = zep_shim_llist_get_node_nxt,
 	.llist_del_node = zep_shim_llist_del_node,
 	.llist_len = zep_shim_llist_len,
-
-	.tasklet_alloc = zep_shim_work_alloc,
-	.tasklet_free = zep_shim_work_free,
-	.tasklet_init = zep_shim_work_init,
-	.tasklet_schedule = zep_shim_work_schedule,
-	.tasklet_kill = zep_shim_work_kill,
 
 	.sleep_ms = k_msleep,
 	.delay_us = k_usleep,

@@ -225,40 +225,6 @@ unsigned int nrf_wifi_osal_llist_len(void *llist)
 }
 
 
-void *nrf_wifi_osal_tasklet_alloc(int type)
-{
-	return os_ops->tasklet_alloc(type);
-}
-
-
-void nrf_wifi_osal_tasklet_free(void *tasklet)
-{
-	os_ops->tasklet_free(tasklet);
-}
-
-
-void nrf_wifi_osal_tasklet_init(void *tasklet,
-				void (*callbk_fn)(unsigned long),
-				unsigned long data)
-{
-	os_ops->tasklet_init(tasklet,
-			     callbk_fn,
-			     data);
-}
-
-
-void nrf_wifi_osal_tasklet_schedule(void *tasklet)
-{
-	os_ops->tasklet_schedule(tasklet);
-}
-
-
-void nrf_wifi_osal_tasklet_kill(void *tasklet)
-{
-	os_ops->tasklet_kill(tasklet);
-}
-
-
 void nrf_wifi_osal_sleep_ms(unsigned int msecs)
 {
 	os_ops->sleep_ms(msecs);

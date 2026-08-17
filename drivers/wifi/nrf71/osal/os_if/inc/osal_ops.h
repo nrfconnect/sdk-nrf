@@ -331,44 +331,6 @@ struct nrf_wifi_osal_ops {
 	unsigned int (*llist_len)(void *llist);
 
 	/**
-	 * @brief Allocate a tasklet structure.
-	 *
-	 * @param type The type of the tasklet.
-	 * @return A pointer to the allocated tasklet structure.
-	 */
-	void *(*tasklet_alloc)(int type);
-
-	/**
-	 * @brief Free a tasklet structure.
-	 *
-	 * @param tasklet A pointer to the tasklet structure to free.
-	 */
-	void (*tasklet_free)(void *tasklet);
-
-	/**
-	 * @brief Initialize a tasklet structure.
-	 *
-	 * @param tasklet A pointer to the tasklet structure to initialize.
-	 * @param callback The callback function to be invoked when the tasklet is scheduled.
-	 * @param data The data to be passed to the callback function.
-	 */
-	void (*tasklet_init)(void *tasklet, void (*callback)(unsigned long), unsigned long data);
-
-	/**
-	 * @brief Schedule a tasklet.
-	 *
-	 * @param tasklet A pointer to the tasklet to schedule.
-	 */
-	void (*tasklet_schedule)(void *tasklet);
-
-	/**
-	 * @brief Terminate a tasklet.
-	 *
-	 * @param tasklet A pointer to the tasklet to terminate.
-	 */
-	void (*tasklet_kill)(void *tasklet);
-
-	/**
 	 * @brief Sleep for a specified number of milliseconds.
 	 *
 	 * @param msecs The number of milliseconds to sleep.
