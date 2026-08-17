@@ -8,6 +8,7 @@
  * @brief IPC bus layer function definitions for the nRF71 Wi-Fi driver.
  */
 
+#include <common/log_cfg.h>
 #include <common/mem_mgmt.h>
 
 #include <stdint.h>

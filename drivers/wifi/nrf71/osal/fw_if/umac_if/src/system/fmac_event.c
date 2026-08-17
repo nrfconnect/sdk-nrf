@@ -10,6 +10,7 @@
  * for the FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/log_cfg.h>
 #include <common/llist_mgmt.h>
 #include <common/mem_mgmt.h>
 #include <common/work_mgmt.h>

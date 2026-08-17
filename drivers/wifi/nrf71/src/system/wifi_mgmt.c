@@ -20,7 +20,7 @@
 #include <system/fmac_tx.h>
 #include <common/fmac_util.h>
 #include <common/fmac_structs_common.h>
-#include <system/main.h>
+#include <system/core.h>
 #include <system/wifi_mgmt.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);

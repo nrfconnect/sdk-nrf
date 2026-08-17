@@ -5,12 +5,13 @@
  */
 
 /**
- * @brief Header containing system mode specific declarations
+ * @brief Header containing core system mode declarations for the nRF71 driver.
  */
 
-#ifndef __SYSTEM_MAIN_H__
-#define __SYSTEM_MAIN_H__
+#ifndef __SYSTEM_CORE_H__
+#define __SYSTEM_CORE_H__
 
+#include <common/log_cfg.h>
 #include <stdio.h>
 
 #include <zephyr/version.h>
@@ -164,4 +165,4 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
-#endif /* __SYSTEM_MAIN_H__ */
+#endif /* __SYSTEM_CORE_H__ */

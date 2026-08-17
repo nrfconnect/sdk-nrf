@@ -12,7 +12,6 @@
 #ifndef __BAL_API_H__
 #define __BAL_API_H__
 
-#include "osal_api.h"
 #include "bal_structs.h"
 
 /**

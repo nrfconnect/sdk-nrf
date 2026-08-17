@@ -30,7 +30,7 @@
 #include <common/status.h>
 #include <util.h>
 #include <common/fmac_util.h>
-#include <system/main.h>
+#include <system/core.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
 #ifdef CONFIG_NRF71_STA_MODE

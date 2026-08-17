@@ -14,7 +14,7 @@
 #include <common/fmac_util.h>
 #include <system/fmac_api.h>
 #include <common/mem_mgmt.h>
-#include <system/main.h>
+#include <system/core.h>
 #include <system/wifi_util.h>
 #include <zephyr/kernel.h>
 

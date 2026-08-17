@@ -12,7 +12,7 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-#include <osal_api.h>
+#include <common/log_cfg.h>
 #include <nrf71_wifi_ctrl.h>
 
 #ifndef ARRAY_SIZE

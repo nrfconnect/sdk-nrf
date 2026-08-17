@@ -5,12 +5,11 @@
  */
 
 /**
- * @brief File containing declarations for the
- * OSAL Layer of the Wi-Fi driver.
+ * @brief Compile-time log configuration for the nRF71 Wi-Fi driver.
  */
 
-#ifndef __OSAL_API_H__
-#define __OSAL_API_H__
+#ifndef __LOG_CFG_H__
+#define __LOG_CFG_H__
 
 /* Have to match zephyr/include/zephyr/logging/log_core.h */
 #define NRF_WIFI_LOG_LEVEL_ERR 1U
@@ -25,4 +24,4 @@
 #define __func__ "<snipped>"
 #endif /* NRF71_LOG_VERBOSE */
 
-#endif /* __OSAL_API_H__ */
+#endif /* __LOG_CFG_H__ */

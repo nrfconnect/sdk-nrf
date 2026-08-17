@@ -10,6 +10,7 @@
  */
 
 
+#include <common/log_cfg.h>
 #include <common/mem_mgmt.h>
 #include "bal_api.h"
 #include <zephyr/logging/log.h>

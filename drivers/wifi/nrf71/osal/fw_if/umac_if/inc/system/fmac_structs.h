@@ -16,8 +16,6 @@
 #ifndef __FMAC_STRUCTS_H__
 #define __FMAC_STRUCTS_H__
 
-#include "osal_api.h"
-
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_structs_common.h"
 

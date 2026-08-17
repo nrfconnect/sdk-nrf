@@ -10,7 +10,6 @@
  * of the Wi-Fi driver.
  */
 
-#include "osal_api.h"
 #include "system/fmac_structs.h"
 #include "system/fmac_promisc.h"
 

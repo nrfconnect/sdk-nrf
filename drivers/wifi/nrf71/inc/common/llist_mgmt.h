@@ -11,7 +11,7 @@
 #ifndef __LLIST_MGMT_H__
 #define __LLIST_MGMT_H__
 
-#include "osal_api.h"
+#include <common/status.h>
 
 /**
  * @brief Allocate a linked list node from the data pool.
