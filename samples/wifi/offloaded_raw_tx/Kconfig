@@ -8,17 +8,40 @@ source "Kconfig.zephyr"
 
 menu "Offloaded Raw TX sample"
 
-config GENERATE_MAC_ADDRESS
+config SAMPLE_OFFLOADED_RAW_TX_GENERATE_MAC_ADDRESS
 	bool "Random Wi-Fi MAC address"
 	depends on ENTROPY_GENERATOR
 	help
 	  The option specifies the MAC address to be used by the sample.
 	  This is only used when the nRF7002 OTP is not programmed with a MAC address.
 
-config BEACON_INTERVAL
+config SAMPLE_OFFLOADED_RAW_TX_BEACON_INTERVAL
 	int "Beacon interval in milliseconds"
 	default 100
 	range 20 10000
 	help
 	  The option sets the time Time interval (in ms) between beacon transmissions.
+
+choice SAMPLE_OFFLOADED_RAW_TX_BAND
+	prompt "Operating band for initial transmission"
+	default SAMPLE_OFFLOADED_RAW_TX_BAND_2GHZ
+	help
+	  Band on which the initial channel resides. Set explicitly for 6 GHz
+	  channels on nRF71, where channel numbers overlap with lower bands.
+
+config SAMPLE_OFFLOADED_RAW_TX_BAND_AUTO
+	bool "Auto (infer from channel number)"
+
+config SAMPLE_OFFLOADED_RAW_TX_BAND_2GHZ
+	bool "2.4 GHz"
+
+config SAMPLE_OFFLOADED_RAW_TX_BAND_5GHZ
+	bool "5 GHz"
+
+config SAMPLE_OFFLOADED_RAW_TX_BAND_6GHZ
+	bool "6 GHz"
+	depends on WIFI_NRF71
+
+endchoice
+
 endmenu
