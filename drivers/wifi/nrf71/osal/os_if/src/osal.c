@@ -745,43 +745,6 @@ void nrf_wifi_osal_spi_cpy_to(void *os_spi_dev_ctx,
 }
 
 #ifdef NRF_WIFI_LOW_POWER
-void *nrf_wifi_osal_timer_alloc(void)
-{
-	return os_ops->timer_alloc();
-}
-
-
-void nrf_wifi_osal_timer_free(void *timer)
-{
-	os_ops->timer_free(timer);
-}
-
-
-void nrf_wifi_osal_timer_init(void *timer,
-			      void (*callbk_fn)(unsigned long),
-			      unsigned long data)
-{
-	os_ops->timer_init(timer,
-			   callbk_fn,
-			   data);
-}
-
-
-void nrf_wifi_osal_timer_schedule(void *timer,
-				  unsigned long duration)
-{
-	os_ops->timer_schedule(timer,
-			       duration);
-}
-
-
-void nrf_wifi_osal_timer_kill(void *timer)
-{
-	os_ops->timer_kill(timer);
-}
-
-
-
 int nrf_wifi_osal_bus_qspi_ps_sleep(void *os_qspi_priv)
 {
 	return os_ops->bus_qspi_ps_sleep(os_qspi_priv);

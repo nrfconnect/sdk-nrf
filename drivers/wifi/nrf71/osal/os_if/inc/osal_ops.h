@@ -823,46 +823,6 @@ struct nrf_wifi_osal_ops {
 
 	#if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 	/**
-	 * @brief Allocate a timer.
-	 *
-	 * @return A pointer to the allocated timer.
-	 */
-	void *(*timer_alloc)(void);
-
-	/**
-	 * @brief Free a timer.
-	 *
-	 * @param timer A pointer to the timer to free.
-	 */
-	void (*timer_free)(void *timer);
-
-	/**
-	 * @brief Initialize a timer.
-	 *
-	 * @param timer A pointer to the timer to initialize.
-	 * @param callback The callback function to be invoked when the timer expires.
-	 * @param data The data to be passed to the callback function.
-	 */
-	void (*timer_init)(void *timer,
-					   void (*callback)(unsigned long),
-					   unsigned long data);
-
-	/**
-	 * @brief Schedule a timer.
-	 *
-	 * @param timer A pointer to the timer to schedule.
-	 * @param duration The duration of the timer in milliseconds.
-	 */
-	void (*timer_schedule)(void *timer, unsigned long duration);
-
-	/**
-	 * @brief Terminate a timer.
-	 *
-	 * @param timer A pointer to the timer to terminate.
-	 */
-	void (*timer_kill)(void *timer);
-
-	/**
 	 * @brief Put the QSPI bus to sleep.
 	 *
 	 * @param os_qspi_priv A pointer to the QSPI bus.
