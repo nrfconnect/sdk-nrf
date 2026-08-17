@@ -50,8 +50,6 @@
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
-
 
 /* 3 bytes for addreess, 3 bytes for length */
 #define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
@@ -725,11 +723,6 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 #if defined(CONFIG_NRF71_SR_COEX_DRIVER)
 	callbk_fns.coex_event_callbk_fn = nrf_wifi_coex_event_cb;
 #endif
-
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
 
 	rpu_drv_priv_zep.fmac_priv = nrf_wifi_sys_fmac_init(&data_config,
 							    rx_buf_pools,

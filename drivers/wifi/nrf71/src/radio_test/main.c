@@ -22,8 +22,6 @@
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_rt_drv_priv rt_drv_priv;
-extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
-
 
 static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv *drv_priv)
 {
@@ -111,11 +109,6 @@ static int nrf_wifi_rt_drv_main(const struct device *dev)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
-
 	rt_drv_priv.fmac_priv = nrf_wifi_rt_fmac_init();
 
 	if (rt_drv_priv.fmac_priv == NULL) {
@@ -136,7 +129,6 @@ static int nrf_wifi_rt_drv_main(const struct device *dev)
 
 fmac_deinit:
 	nrf_wifi_fmac_deinit(rt_drv_priv.fmac_priv);
-	nrf_wifi_osal_deinit();
 err:
 	return -1;
 }

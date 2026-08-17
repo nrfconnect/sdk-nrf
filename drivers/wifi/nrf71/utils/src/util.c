@@ -15,7 +15,7 @@
 #include <util.h>
 #include <zephyr/logging/log.h>
 
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,

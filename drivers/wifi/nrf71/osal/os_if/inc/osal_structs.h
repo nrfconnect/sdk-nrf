@@ -27,7 +27,7 @@
 #include <stdarg.h>
 #endif
 
-#include <common/main.h>
+#include <common/status.h>
 
 /**
  * @brief DMA direction for a DMA operation.
@@ -39,24 +39,6 @@ enum nrf_wifi_osal_dma_dir {
 	NRF_WIFI_OSAL_DMA_DIR_FROM_DEV,
 	/** Data can be DMAed in either direction i.e to or from the device. */
 	NRF_WIFI_OSAL_DMA_DIR_BIDI
-};
-
-/**
- * @brief Structure representing a host map.
- */
-struct nrf_wifi_osal_host_map {
-	/** The address of the host map. */
-	unsigned long addr;
-	/** The size of the host map. */
-	unsigned long size;
-};
-
-/**
- * @brief Structure representing the private data of the OSAL layer.
- */
-struct nrf_wifi_osal_priv {
-	/** Pointer to the OSAL operations. */
-	const struct nrf_wifi_osal_ops *ops;
 };
 
 #endif /* __OSAL_STRUCTS_H__ */

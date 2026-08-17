@@ -12,6 +12,8 @@
 #ifndef __BAL_OPS_H__
 #define __BAL_OPS_H__
 
+#include "osal_structs.h"
+
 /**
  * @brief Ops to be provided by a particular bus implementation.
  *

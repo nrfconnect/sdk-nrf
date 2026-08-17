@@ -14,7 +14,6 @@
 #ifndef __BAL_STRUCTS_H__
 #define __BAL_STRUCTS_H__
 
-#include "osal_ops.h"
 #include "bal_ops.h"
 
 /**

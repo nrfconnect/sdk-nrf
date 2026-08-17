@@ -40,6 +40,17 @@ K_HEAP_DEFINE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_SIZE);
 static struct k_heap *const wifi_ctrl_pool = &wifi_drv_ctrl_mem_pool;
 static struct k_heap *const wifi_data_pool = &wifi_drv_data_mem_pool;
 
+void nrf_wifi_mem_get_heaps(struct k_heap **ctrl, struct k_heap **data)
+{
+	if (ctrl != NULL) {
+		*ctrl = wifi_ctrl_pool;
+	}
+
+	if (data != NULL) {
+		*data = wifi_data_pool;
+	}
+}
+
 void *nrf_wifi_mem_alloc(enum nrf_wifi_mem_pool_type pool_type, size_t size)
 {
 	size_t size_aligned = WORD_ALIGNED(size);
