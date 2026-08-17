@@ -73,51 +73,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 }
 
 
-void *nrf_wifi_osal_spinlock_alloc(void)
-{
-	return os_ops->spinlock_alloc();
-}
-
-
-void nrf_wifi_osal_spinlock_free(void *lock)
-{
-	os_ops->spinlock_free(lock);
-}
-
-
-void nrf_wifi_osal_spinlock_init(void *lock)
-{
-	os_ops->spinlock_init(lock);
-}
-
-
-void nrf_wifi_osal_spinlock_take(void *lock)
-{
-	os_ops->spinlock_take(lock);
-}
-
-
-void nrf_wifi_osal_spinlock_rel(void *lock)
-{
-	os_ops->spinlock_rel(lock);
-}
-
-void nrf_wifi_osal_spinlock_irq_take(void *lock,
-				     unsigned long *flags)
-{
-	os_ops->spinlock_irq_take(lock,
-				  flags);
-}
-
-
-void nrf_wifi_osal_spinlock_irq_rel(void *lock,
-				    unsigned long *flags)
-{
-	os_ops->spinlock_irq_rel(lock,
-				 flags);
-}
-
-
 void *nrf_wifi_osal_llist_node_alloc(void)
 {
 	return os_ops->llist_node_alloc();

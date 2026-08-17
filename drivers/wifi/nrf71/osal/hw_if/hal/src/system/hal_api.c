@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/lock_mgmt.h>
 #include <common/work_mgmt.h>
 #include "queue.h"
 #include "common/hal_structs_common.h"
@@ -28,7 +29,7 @@ static void event_tasklet_fn(unsigned long data)
 
 	hal_dev_ctx = (struct nrf_wifi_hal_dev_ctx *)data;
 
-	nrf_wifi_osal_spinlock_irq_take(hal_dev_ctx->lock_rx,
+	nrf_wifi_lock_irq_take(hal_dev_ctx->lock_rx,
 					&flags);
 
 	if (hal_dev_ctx->hal_status != NRF_WIFI_HAL_STATUS_ENABLED) {
@@ -45,7 +46,7 @@ static void event_tasklet_fn(unsigned long data)
 	}
 
 out:
-	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->lock_rx,
+	nrf_wifi_lock_irq_rel(hal_dev_ctx->lock_rx,
 				       &flags);
 }
 
@@ -82,7 +83,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 		goto cmd_q_free;
 	}
 
-	hal_dev_ctx->lock_hal = nrf_wifi_osal_spinlock_alloc();
+	hal_dev_ctx->lock_hal = nrf_wifi_lock_alloc();
 
 	if (!hal_dev_ctx->lock_hal) {
 		LOG_ERR("%s: Unable to allocate HAL lock", __func__);
@@ -90,9 +91,9 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 		goto event_q_free;
 	}
 
-	nrf_wifi_osal_spinlock_init(hal_dev_ctx->lock_hal);
+	nrf_wifi_lock_init(hal_dev_ctx->lock_hal);
 
-	hal_dev_ctx->lock_rx = nrf_wifi_osal_spinlock_alloc();
+	hal_dev_ctx->lock_rx = nrf_wifi_lock_alloc();
 
 	if (!hal_dev_ctx->lock_rx) {
 		LOG_ERR("%s: Unable to allocate HAL lock",
@@ -100,7 +101,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 		goto lock_hal_free;
 	}
 
-	nrf_wifi_osal_spinlock_init(hal_dev_ctx->lock_rx);
+	nrf_wifi_lock_init(hal_dev_ctx->lock_rx);
 
 	hal_dev_ctx->event_tasklet = nrf_wifi_work_alloc(ZEP_WORK_TYPE_BH);
 
@@ -125,12 +126,12 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	return hal_dev_ctx;
 
 lock_recovery_free:
-	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_recovery);
+	nrf_wifi_lock_free(hal_dev_ctx->lock_recovery);
 	nrf_wifi_work_free(hal_dev_ctx->event_tasklet);
 lock_rx_free:
-	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_rx);
+	nrf_wifi_lock_free(hal_dev_ctx->lock_rx);
 lock_hal_free:
-	nrf_wifi_osal_spinlock_free(hal_dev_ctx->lock_hal);
+	nrf_wifi_lock_free(hal_dev_ctx->lock_hal);
 event_q_free:
 	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->event_q);
 cmd_q_free:
@@ -146,7 +147,7 @@ void nrf_wifi_sys_hal_lock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	unsigned long flags = 0;
 
-	nrf_wifi_osal_spinlock_irq_take(hal_dev_ctx->lock_rx,
+	nrf_wifi_lock_irq_take(hal_dev_ctx->lock_rx,
 					&flags);
 }
 
@@ -154,6 +155,6 @@ void nrf_wifi_sys_hal_unlock_rx(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	unsigned long flags = 0;
 
-	nrf_wifi_osal_spinlock_irq_rel(hal_dev_ctx->lock_rx,
+	nrf_wifi_lock_irq_rel(hal_dev_ctx->lock_rx,
 				       &flags);
 }

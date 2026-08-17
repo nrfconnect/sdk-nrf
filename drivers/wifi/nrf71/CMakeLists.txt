@@ -51,6 +51,7 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/mem_mgmt.c
     src/common/nbuf_mgmt.c
     src/common/work_mgmt.c
+    src/common/lock_mgmt.c
   )
 
   if(CONFIG_NRF71_RADIO_TEST)
