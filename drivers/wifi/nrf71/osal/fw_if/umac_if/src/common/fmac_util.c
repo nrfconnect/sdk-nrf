@@ -10,6 +10,7 @@
  */
 
 #include "osal_api.h"
+#include <common/nbuf_mgmt.h>
 #include "common/fmac_api_common.h"
 #include "common/fmac_util.h"
 
@@ -106,7 +107,7 @@ unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 		return vif->bssid;
 	}
 
-	return nrf_wifi_osal_nbuf_data_get(nwb);
+	return nrf_wifi_nbuf_data_get(nwb);
 }
 #endif /* NRF71_SYSTEM_MODE */
 
