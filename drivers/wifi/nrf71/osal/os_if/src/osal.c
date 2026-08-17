@@ -420,14 +420,6 @@ int nrf_wifi_osal_bus_qspi_ps_status(void *os_qspi_priv)
 }
 #endif /* NRF_WIFI_LOW_POWER */
 
-void nrf_wifi_osal_assert(int test_val,
-			  int val,
-			  enum nrf_wifi_assert_op_type op,
-			  char *msg)
-{
-	return os_ops->assert(test_val, val, op, msg);
-}
-
 unsigned int nrf_wifi_osal_strlen(const void *str)
 {
 	return os_ops->strlen(str);
