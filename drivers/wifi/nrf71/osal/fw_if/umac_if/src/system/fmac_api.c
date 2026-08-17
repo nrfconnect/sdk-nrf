@@ -11,6 +11,7 @@
 
 #include <nrf71_wifi_ctrl.h>
 #include <common/mem_mgmt.h>
+#include <common/work_mgmt.h>
 #include "system/fmac_api.h"
 #include "system/hal_api.h"
 #include "system/fmac_structs.h"
@@ -110,7 +111,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_c
 		}
 	}
 #ifdef NRF71_RX_WQ_ENABLED
-	sys_dev_ctx->rx_tasklet = nrf_wifi_osal_tasklet_alloc(NRF_WIFI_TASKLET_TYPE_RX);
+	sys_dev_ctx->rx_tasklet = nrf_wifi_work_alloc(ZEP_WORK_TYPE_RX);
 	if (!sys_dev_ctx->rx_tasklet) {
 		nrf_wifi_osal_log_err("%s: No space for RX tasklet",
 				      __func__);
@@ -126,7 +127,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_c
 		goto out;
 	}
 
-	nrf_wifi_osal_tasklet_init(sys_dev_ctx->rx_tasklet,
+	nrf_wifi_work_init(sys_dev_ctx->rx_tasklet,
 				   nrf_wifi_fmac_rx_tasklet,
 				   (unsigned long)fmac_dev_ctx);
 #endif /* NRF71_RX_WQ_ENABLED */
@@ -148,7 +149,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_deinit_rx(struct nrf_wifi_fmac_dev
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 #ifdef NRF71_RX_WQ_ENABLED
-	nrf_wifi_osal_tasklet_free(sys_dev_ctx->rx_tasklet);
+	nrf_wifi_work_free(sys_dev_ctx->rx_tasklet);
 	nrf_wifi_utils_q_free(sys_dev_ctx->rx_tasklet_event_q);
 #endif /* NRF71_RX_WQ_ENABLED */
 

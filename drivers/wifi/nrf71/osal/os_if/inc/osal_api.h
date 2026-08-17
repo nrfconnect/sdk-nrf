@@ -398,60 +398,6 @@ unsigned int nrf_wifi_osal_llist_len(void *llist);
 
 
 /**
- * @brief Allocate a tasklet.
- * @param type Type of tasklet.
- *
- * Allocates a tasklet structure and returns a pointer to it.
- *
- * @return Pointer to the tasklet instance allocated if successful, otherwise NULL.
- */
-void *nrf_wifi_osal_tasklet_alloc(int type);
-
-/**
- * @brief Free a tasklet.
- * @param tasklet Pointer to a tasklet.
- *
- * Frees a tasklet structure that had been allocated using
- * nrf_wifi_osal_tasklet_alloc().
- */
-void nrf_wifi_osal_tasklet_free(void *tasklet);
-
-
-/**
- * @brief - Initialize a tasklet.
- * @param tasklet Pointer to a tasklet.
- * @param callbk_fn Callback function to be invoked by the tasklet.
- * @param data Data to be passed to the callback function when the tasklet invokes it.
- *
- * Initializes a tasklet.
- */
-void nrf_wifi_osal_tasklet_init(void *tasklet,
-				void (*callbk_fn)(unsigned long),
-				unsigned long data);
-
-
-/**
- * @brief Schedule a tasklet.
- * @param tasklet Pointer to a tasklet.
- *
- * Schedules a tasklet that had been allocated using
- *  nrf_wifi_osal_tasklet_alloc and initialized using
- *  nrf_wifi_osal_tasklet_init.
- */
-void nrf_wifi_osal_tasklet_schedule(void *tasklet);
-
-
-/**
- * @brief Terminate a tasklet.
- * @param tasklet Pointer to a tasklet.
- *
- * Terminates a tasklet(tasklet) that had been scheduled by
- * nrf_wifi_osal_tasklet_schedule.
- */
-void nrf_wifi_osal_tasklet_kill(void *tasklet);
-
-
-/**
  * @brief Sleep for a specified duration in milliseconds.
  * @param msecs: Sleep duration in milliseconds.
  *
