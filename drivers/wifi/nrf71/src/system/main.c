@@ -265,7 +265,7 @@ static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
 
 	vif_ctx_zep->rssi = MBM_TO_DBM(signal);
 	vif_ctx_zep->rssi_record_timestamp_us =
-		nrf_wifi_osal_time_get_curr_us();
+		k_ticks_to_us_floor64(k_uptime_ticks());
 }
 #endif /* CONFIG_NRF71_STA_MODE */
 

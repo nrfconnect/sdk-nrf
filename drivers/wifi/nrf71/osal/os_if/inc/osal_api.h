@@ -99,46 +99,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 
 
 /**
- * @brief Get current system uptime in microseconds.
- *
- * Get the current system uptime in microseconds.
- *
- * @return System uptime in microseconds.
- */
-unsigned long nrf_wifi_osal_time_get_curr_us(void);
-
-/**
- * @brief Get elapsed time in microseconds.
- * @param start_time_us The timestamp in microseconds from which elapsed time is to be measured.
- *
- * Get the elapsed system uptime in microseconds.
- *
- * @return Elapsed time in microseconds.
- */
-unsigned int nrf_wifi_osal_time_elapsed_us(unsigned long start_time_us);
-
-/**
- * nrf_wifi_osal_time_get_curr_ms() - Get current system uptime in milliseconds.
- *
- * Gets the current system uptime in milliseconds.
- *
- * Return: System uptime in milliseconds.
- */
-unsigned long nrf_wifi_osal_time_get_curr_ms(void);
-
-/**
- * nrf_wifi_osal_time_elapsed_ms() - Get elapsed time in milliseconds
- * @param start_time_ms: The timestamp in milliseconds from which elapsed
- *			   time is to be measured.
- *
- * Returns the time elapsed in milliseconds since some
- * time instant (@p start_time_ms).
- *
- * Return: Elapsed time in milliseconds.
- */
-unsigned int nrf_wifi_osal_time_elapsed_ms(unsigned long start_time_ms);
-
-/**
  * @brief Initialize a PCIe driver.
  * @param dev_name Name of the PCIe device.
  * @param vendor_id Vendor ID of the PCIe device.

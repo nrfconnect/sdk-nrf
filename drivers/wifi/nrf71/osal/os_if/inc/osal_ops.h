@@ -152,35 +152,6 @@ struct nrf_wifi_osal_ops {
 	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
 	/**
-	 * @brief Get the current time of the day in microseconds.
-	 *
-	 * @return The current time of the day in microseconds.
-	 */
-	unsigned long (*time_get_curr_us)(void);
-
-	/**
-	 * @brief Return the time elapsed in microseconds since a specified time instant.
-	 *
-	 * @param start_time The time instant to measure the elapsed time from.
-	 * @return The time elapsed in microseconds.
-	 */
-	unsigned int (*time_elapsed_us)(unsigned long start_time);
-
-	/** @brief Get the current time of the day in milliseconds.
-	 *
-	 * @return The current time of the day in milliseconds.
-	 */
-	unsigned long (*time_get_curr_ms)(void);
-
-	/**
-	 * @brief Return the time elapsed in milliseconds since a specified time instant.
-	 *
-	 * @param start_time The time instant to measure the elapsed time from.
-	 * @return The time elapsed in milliseconds.
-	 */
-	unsigned int (*time_elapsed_ms)(unsigned long start_time_us);
-
-	/**
 	 * @brief Initialize the PCIe bus.
 	 *
 	 * @param dev_name The name of the PCIe device.
