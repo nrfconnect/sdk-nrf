@@ -236,11 +236,11 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 #endif /* NRF71_DATA_TX */
 		goto out;
 	}
-	start_time_us = nrf_wifi_osal_time_get_curr_us();
+	start_time_us = k_ticks_to_us_floor64(k_uptime_ticks());
 	while (!fmac_dev_ctx->fw_init_done) {
 		k_msleep(1);
 #define MAX_INIT_WAIT (5 * 1000 * 1000)
-		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_INIT_WAIT) {
+		if ((k_ticks_to_us_floor64(k_uptime_ticks()) - start_time_us) >= MAX_INIT_WAIT) {
 			break;
 		}
 	}
@@ -325,12 +325,12 @@ static void nrf_wifi_sys_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 		goto out;
 	}
 
-	start_time_us = nrf_wifi_osal_time_get_curr_us();
+	start_time_us = k_ticks_to_us_floor64(k_uptime_ticks());
 
 	while (!fmac_dev_ctx->fw_deinit_done) {
 #define MAX_DEINIT_WAIT (5 * 1000 * 1000)
 		k_msleep(1);
-		if (nrf_wifi_osal_time_elapsed_us(start_time_us) >= MAX_DEINIT_WAIT) {
+		if ((k_ticks_to_us_floor64(k_uptime_ticks()) - start_time_us) >= MAX_DEINIT_WAIT) {
 			break;
 		}
 	}

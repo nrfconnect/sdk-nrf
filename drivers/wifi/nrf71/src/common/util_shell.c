@@ -16,6 +16,7 @@
 #include <system/main.h>
 #include <shim.h>
 #include <system/wifi_util.h>
+#include <zephyr/kernel.h>
 
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
@@ -924,7 +925,7 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
-	unsigned long current_time_ms = nrf_wifi_osal_time_get_curr_ms();
+	unsigned long current_time_ms = k_uptime_get();
 	int ret;
 
 	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
