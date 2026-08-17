@@ -11,6 +11,7 @@
 
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
+#include <common/lock_mgmt.h>
 #include <common/work_mgmt.h>
 #include "list.h"
 #include "queue.h"
@@ -1382,7 +1383,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rawtx_done_event_process(
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
 
-	nrf_wifi_osal_spinlock_take(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
 
 	if (config->status == NRF_WIFI_STATUS_FAIL) {
 		/**
@@ -1402,7 +1403,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rawtx_done_event_process(
 		goto unlock;
 	}
 unlock:
-	nrf_wifi_osal_spinlock_rel(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
 out:
 	return status;
 }
@@ -1430,12 +1431,12 @@ enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	}
 
 
-	nrf_wifi_osal_spinlock_take(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
 
 	status = tx_done_process(fmac_dev_ctx,
 				 config->tx_desc_num);
 
-	nrf_wifi_osal_spinlock_rel(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
 
 out:
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -1463,7 +1464,7 @@ static enum nrf_wifi_fmac_tx_status nrf_wifi_fmac_tx(struct nrf_wifi_fmac_dev_ct
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fpriv);
 
-	nrf_wifi_osal_spinlock_take(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
 
 
 	if (sys_fpriv->num_tx_tokens == 0) {
@@ -1496,7 +1497,7 @@ static enum nrf_wifi_fmac_tx_status nrf_wifi_fmac_tx(struct nrf_wifi_fmac_dev_ct
 					desc,
 					ac);
 out:
-	nrf_wifi_osal_spinlock_rel(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
 
 	return status;
 }
@@ -1590,7 +1591,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		sys_dev_ctx->tx_config.peers[i].peer_id = -1;
 	}
 
-	sys_dev_ctx->tx_config.tx_lock = nrf_wifi_osal_spinlock_alloc();
+	sys_dev_ctx->tx_config.tx_lock = nrf_wifi_lock_alloc();
 
 	if (!sys_dev_ctx->tx_config.tx_lock) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate TX lock",
@@ -1598,7 +1599,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		goto tx_buff_map_free;
 	}
 
-	nrf_wifi_osal_spinlock_init(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_init(sys_dev_ctx->tx_config.tx_lock);
 
 	sys_dev_ctx->tx_config.wakeup_client_q = nrf_wifi_utils_q_alloc();
 
@@ -1636,7 +1637,7 @@ wakeup_client_q_free:
 	nrf_wifi_utils_q_free(sys_dev_ctx->tx_config.wakeup_client_q);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 tx_spin_lock_free:
-	nrf_wifi_osal_spinlock_free(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_free(sys_dev_ctx->tx_config.tx_lock);
 tx_buff_map_free:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 tx_pkt_info_free:
@@ -1681,7 +1682,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 	nrf_wifi_utils_q_free(sys_dev_ctx->tx_config.wakeup_client_q);
 
-	nrf_wifi_osal_spinlock_free(sys_dev_ctx->tx_config.tx_lock);
+	nrf_wifi_lock_free(sys_dev_ctx->tx_config.tx_lock);
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 

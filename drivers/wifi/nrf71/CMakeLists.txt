@@ -51,6 +51,7 @@ function(nrf71_wifi_setup_include_and_sources)
     src/mac_addr.c
     src/common/mem_mgmt.c
     src/common/work_mgmt.c
+    src/common/lock_mgmt.c
   )
 
   if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
