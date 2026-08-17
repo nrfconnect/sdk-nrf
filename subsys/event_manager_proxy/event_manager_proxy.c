@@ -252,9 +252,6 @@ static void handle_ipc_data_receive(const void *data, size_t len, void *priv)
 {
 	struct emp_ipc_data *ipc = priv;
 
-	/* Execute only from threads! */
-	__ASSERT_NO_MSG(!k_is_in_isr());
-
 	if (ipc->started && emp_started) {
 		handle_remote_event(ipc, data, len);
 	} else {
