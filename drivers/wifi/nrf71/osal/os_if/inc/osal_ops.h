@@ -152,14 +152,6 @@ struct nrf_wifi_osal_ops {
 	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
 	/**
-	 * @brief Delay for a specified number of microseconds.
-	 *
-	 * @param usecs The number of microseconds to delay.
-	 * @return 0 on success, a negative value on failure.
-	 */
-	int (*delay_us)(int usecs);
-
-	/**
 	 * @brief Get the current time of the day in microseconds.
 	 *
 	 * @return The current time of the day in microseconds.
