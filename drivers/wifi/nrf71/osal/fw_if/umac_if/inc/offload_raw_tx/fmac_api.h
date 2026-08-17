@@ -18,7 +18,7 @@
 #include <nrf71_wifi_ctrl.h>
 #include <common/fmac_api_common.h>
 #include <offload_raw_tx/fmac_structs.h>
-#include <util.h>
+#include <common/util.h>
 
 
 /**

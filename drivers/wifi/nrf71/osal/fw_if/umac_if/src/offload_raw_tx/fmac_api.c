@@ -16,7 +16,7 @@
 #include <offload_raw_tx/fmac_cmd.h>
 #include <offload_raw_tx/fmac_event.h>
 #include <offload_raw_tx/fmac_structs.h>
-#include <common/fmac_util.h>
+#include <common/util.h>
 #include <stdio.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>

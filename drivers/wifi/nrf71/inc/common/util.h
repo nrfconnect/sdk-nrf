@@ -1,23 +1,23 @@
 /*
- * Copyright (c) 2024 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 /**
- * @brief Header containing utility declarations for the
- * FMAC IF Layer of the Wi-Fi driver.
+ * @brief Header containing utility function declarations for the
+ * Wi-Fi driver.
  */
-#ifndef __FMAC_UTIL_H__
-#define __FMAC_UTIL_H__
 
-#include "fmac_structs_common.h"
+#ifndef __UTIL_H__
+#define __UTIL_H__
 
-#ifdef NRF71_SYSTEM_MODE
-#include "system/fmac_structs.h"
-#endif /* NRF71_SYSTEM_MODE */
+#include <common/log_cfg.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fw_if/pack_def.h>
 
+/* Convert power from mBm to dBm */
+#define MBM_TO_DBM(gain) ((gain) / 100)
 
 #define NRF_WIFI_FMAC_ETH_ADDR_LEN 6
 #define NRF_WIFI_FMAC_ETH_HDR_LEN 14
@@ -79,19 +79,34 @@ struct nrf_wifi_fmac_ieee80211_hdr {
 	unsigned char addr_4[NRF_WIFI_FMAC_ETH_ADDR_LEN];
 } __NRF_WIFI_PKD;
 
-
 struct nrf_wifi_fmac_eth_hdr {
 	unsigned char dst[NRF_WIFI_FMAC_ETH_ADDR_LEN]; /* destination eth addr */
 	unsigned char src[NRF_WIFI_FMAC_ETH_ADDR_LEN]; /* source ether addr */
 	unsigned short proto; /* packet type ID field */
 } __NRF_WIFI_PKD;
 
-
 struct nrf_wifi_fmac_amsdu_hdr {
 	unsigned char dst[NRF_WIFI_FMAC_ETH_ADDR_LEN]; /* destination eth addr */
 	unsigned char src[NRF_WIFI_FMAC_ETH_ADDR_LEN]; /* source ether addr */
 	unsigned short length; /* length*/
 } __NRF_WIFI_PKD;
+
+struct nrf_wifi_fmac_priv;
+struct nrf_wifi_fmac_dev_ctx;
+#ifdef NRF71_SYSTEM_MODE
+struct nrf_wifi_fmac_vif_ctx;
+#endif /* NRF71_SYSTEM_MODE */
+
+int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
+				  unsigned int hex_arr_sz,
+				  unsigned char *str);
+
+bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr);
+
+int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
+				unsigned short chan);
+
+unsigned char nrf_wifi_utils_get_op_band(void);
 
 bool nrf_wifi_util_is_multicast_addr(const unsigned char *addr);
 
@@ -113,4 +128,4 @@ void *wifi_dev_priv(struct nrf_wifi_fmac_dev_ctx *def);
 unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif, void *nwb);
 #endif /* NRF71_SYSTEM_MODE */
 
-#endif /* __FMAC_UTIL_H__ */
+#endif /* __UTIL_H__ */
