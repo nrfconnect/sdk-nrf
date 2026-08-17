@@ -650,6 +650,13 @@ Matter
 
 The issues in this section are related to the Matter protocol.
 
+.. rst-class:: v3-4-0 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+KRKNWK-22344: Printing the binding table might cause a crash
+  This affects the Matter Thermostat and Matter Light Switch samples.
+
+  **Workaround:** See the fix provided in the `ncs-matter add-on repository`_ and apply manually to the :file:`samples/matter/common/src/binding/binding_handler.cpp` file (commit hash: ``2ebf14672981fe7d44f34066b957b26148f33e1d``).
+
 .. rst-class:: v3-1-1 v3-1-0
 
 KRKNWK-21365: AnnounceOTAProvider command missing required privilege causes Matter Certification ACE 2-3 failure
