@@ -27,16 +27,6 @@ typedef struct ipc_ctx {
 	ipc_epts_nrf71_t ept;
 } ipc_ctx_t;
 
-struct rpu_dev {
-	int (*init)();
-	int (*deinit)(void);
-	int (*send)(ipc_ctx_t ctx, const void *data, int len);
-	int (*recv)(ipc_ctx_t ctx, void *data, int len);
-	int (*register_rx_cb)(int (*rx_handler)(void *priv), void *data);
-};
-
-struct rpu_dev *rpu_dev(void);
-
 int ipc_init(void);
 int ipc_deinit(void);
 int ipc_send(ipc_ctx_t ctx, const void *data, int len);
