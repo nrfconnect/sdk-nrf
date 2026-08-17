@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/nbuf_mgmt.h>
 #include "list.h"
 #include "queue.h"
 #include "system/hal_api.h"
@@ -21,7 +22,7 @@
 
 static bool is_twt_emergency_pkt(void *nwb)
 {
-	unsigned char priority = nrf_wifi_osal_nbuf_get_priority(nwb);
+	unsigned char priority = nrf_wifi_nbuf_get_priority(nwb);
 
 	return  priority == NRF_WIFI_AC_TWT_PRIORITY_EMERGENCY;
 }
@@ -114,13 +115,13 @@ static unsigned short get_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 static unsigned char *nrf_wifi_get_dest(void *nwb)
 {
-	return nrf_wifi_osal_nbuf_data_get(nwb);
+	return nrf_wifi_nbuf_data_get(nwb);
 }
 
 
 static unsigned char *nrf_wifi_get_src(void *nwb)
 {
-	return (unsigned char *)nrf_wifi_osal_nbuf_data_get(nwb) + NRF_WIFI_FMAC_ETH_ADDR_LEN;
+	return (unsigned char *)nrf_wifi_nbuf_data_get(nwb) + NRF_WIFI_FMAC_ETH_ADDR_LEN;
 }
 
 static int nrf_wifi_get_tid(void *nwb)
@@ -136,11 +137,11 @@ static int nrf_wifi_get_tid(void *nwb)
 	unsigned short ipv6_hdr = 0;
 	void *nwb_data = NULL;
 
-	nwb_data = nrf_wifi_osal_nbuf_data_get(nwb);
+	nwb_data = nrf_wifi_nbuf_data_get(nwb);
 
 	ether_type = nrf_wifi_util_tx_get_eth_type(nwb_data);
 
-	nwb_data = (unsigned char *)nrf_wifi_osal_nbuf_data_get(nwb) + NRF_WIFI_FMAC_ETH_HDR_LEN;
+	nwb_data = (unsigned char *)nrf_wifi_nbuf_data_get(nwb) + NRF_WIFI_FMAC_ETH_HDR_LEN;
 
 	switch (ether_type & NRF_WIFI_FMAC_ETH_TYPE_MASK) {
 	/* If VLAN 802.1Q (0x8100) ||
@@ -394,7 +395,7 @@ static int tx_aggr_check(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	}
 
 #ifdef NRF71_RAW_DATA_TX
-	if (nrf_wifi_osal_nbuf_is_raw_tx(first_nwb)) {
+	if (nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
 		return false;
 	}
 #endif /* NRF71_RAW_DATA_TX */
@@ -544,7 +545,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	 */
 	pend_pkt_q = sys_dev_ctx->tx_config.data_pending_txq[MAX_PEERS][ac];
 	if (!(nrf_wifi_utils_q_len(pend_pkt_q) > 0 &&
-	      nrf_wifi_osal_nbuf_is_raw_tx(nrf_wifi_utils_q_peek(pend_pkt_q)))) {
+	      nrf_wifi_nbuf_is_raw_tx(nrf_wifi_utils_q_peek(pend_pkt_q)))) {
 #endif
 		peer_id = tx_curr_peer_opp_get(fmac_dev_ctx, ac);
 
@@ -576,7 +577,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		nwb = nrf_wifi_utils_q_peek(pend_pkt_q);
 
 		ampdu_len += TX_BUF_HEADROOM +
-			nrf_wifi_osal_nbuf_data_size((void *)nwb);
+			nrf_wifi_nbuf_data_size((void *)nwb);
 
 		if (ampdu_len >= avail_ampdu_len_per_token) {
 			break;
@@ -639,8 +640,8 @@ enum nrf_wifi_status rawtx_cmd_prep_callbk_fn(void *callbk_data,
 
 	nwb = (unsigned long)nbuf;
 
-	nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)nwb);
-	buf_len = nrf_wifi_osal_nbuf_data_size((void *)nwb);
+	nwb_data = (unsigned long)nrf_wifi_nbuf_data_get((void *)nwb);
+	buf_len = nrf_wifi_nbuf_data_size((void *)nwb);
 
 	config->raw_tx_info.pkt_length[frame_indx] = buf_len;
 	nrf_wifi_osal_log_dbg("%s: frame pointer for data is 0x%x", __func__, nwb_data);
@@ -675,13 +676,13 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 
 	nwb = (unsigned long)nbuf;
 
-	nwb_data = (unsigned long)nrf_wifi_osal_nbuf_data_get((void *)nwb);
+	nwb_data = (unsigned long)nrf_wifi_nbuf_data_get((void *)nwb);
 
-	buf_len = nrf_wifi_osal_nbuf_data_size((void *)nwb);
+	buf_len = nrf_wifi_nbuf_data_size((void *)nwb);
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
-	if (!nrf_wifi_osal_nbuf_get_chksum_done(nbuf)) {
+	if (!nrf_wifi_nbuf_get_chksum_done(nbuf)) {
 		config->csum_bitmap |= (1u << frame_indx);
 	}
 	config->num_tx_pkts++;
@@ -723,7 +724,7 @@ enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	sys_dev_ctx->tx_config.send_pkt_coalesce_count_p[desc] = txq_len;
 	config = (struct nrf_wifi_cmd_raw_tx *)(umac_cmd->msg);
-	len = nrf_wifi_osal_nbuf_data_size(nwb);
+	len = nrf_wifi_nbuf_data_size(nwb);
 
 	config->sys_head.cmd_event = NRF_WIFI_CMD_RAW_TX_PKT;
 	config->sys_head.len = sizeof(*config);
@@ -734,8 +735,8 @@ enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	void *first_nwb = nrf_wifi_utils_list_peek(txq);
 	struct raw_tx_pkt_header *raw_tx_hdr = NULL;
 
-	if (first_nwb && nrf_wifi_osal_nbuf_is_raw_tx(first_nwb)) {
-		raw_tx_hdr = nrf_wifi_osal_nbuf_get_raw_tx_hdr(first_nwb);
+	if (first_nwb && nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
+		raw_tx_hdr = nrf_wifi_nbuf_get_raw_tx_hdr(first_nwb);
 		if (raw_tx_hdr) {
 			config->raw_tx_info.queue_num = raw_tx_hdr->queue;
 			config->raw_tx_info.rate = raw_tx_hdr->data_rate;
@@ -805,9 +806,9 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 	config = (struct nrf_wifi_tx_buff *)(umac_cmd->msg);
 
-	data = nrf_wifi_osal_nbuf_data_get(nwb);
+	data = nrf_wifi_nbuf_data_get(nwb);
 
-	len = nrf_wifi_osal_nbuf_data_size(nwb);
+	len = nrf_wifi_nbuf_data_size(nwb);
 
 	config->umac_head.cmd = NRF_WIFI_CMD_TX_BUFF;
 
@@ -824,7 +825,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 			      nrf_wifi_get_src(nwb),
 			      NRF_WIFI_ETH_ADDR_LEN);
 
-	nwb_data = nrf_wifi_osal_nbuf_data_get(nwb);
+	nwb_data = nrf_wifi_nbuf_data_get(nwb);
 	config->mac_hdr_info.etype =
 		nrf_wifi_util_tx_get_eth_type(nwb_data);
 
@@ -835,7 +836,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_TWT_EMERGENCY_TX;
 	}
 
-	if (nrf_wifi_osal_nbuf_get_chksum_done(nwb)) {
+	if (nrf_wifi_nbuf_get_chksum_done(nwb)) {
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
 	}
 
@@ -931,7 +932,7 @@ enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			continue;
 		}
 
-		nrf_wifi_osal_nbuf_free(nwb);
+		nrf_wifi_nbuf_free(nwb);
 	}
 out:
 	return status;
@@ -1002,7 +1003,7 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 			goto out;
 		}
 #ifdef NRF71_RAW_DATA_TX
-		if (nrf_wifi_osal_nbuf_is_raw_tx(first_nwb)) {
+		if (nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
 			status = rawtx_cmd_init(fmac_dev_ctx,
 						sys_dev_ctx->tx_config.pkt_info_p[desc].pkt,
 						desc,
@@ -1264,7 +1265,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 			continue;
 		}
 
-		nrf_wifi_osal_nbuf_free(nwb);
+		nrf_wifi_nbuf_free(nwb);
 	}
 
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, tx_desc_num, &queue);
@@ -1284,7 +1285,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 		 */
 		nwb = nrf_wifi_utils_list_peek(txq);
 
-		if (!nrf_wifi_osal_nbuf_is_raw_tx(nwb)) {
+		if (!nrf_wifi_nbuf_is_raw_tx(nwb)) {
 #endif /* NRF71_RAW_DATA_TX */
 			if (sys_dev_ctx->twt_sleep_status ==
 			    NRF_WIFI_FMAC_TWT_STATE_AWAKE) {
@@ -1686,7 +1687,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
 		if (sys_dev_ctx->tx_config.pkt_info_p) {
 			while (nrf_wifi_utils_q_len(sys_dev_ctx->tx_config.pkt_info_p[i].pkt)) {
-				nrf_wifi_osal_nbuf_free(
+				nrf_wifi_nbuf_free(
 					nrf_wifi_utils_q_dequeue(
 						sys_dev_ctx->tx_config.pkt_info_p[i].pkt));
 			}
@@ -1700,7 +1701,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		for (j = 0; j < MAX_SW_PEERS; j++) {
 			while (nrf_wifi_utils_q_len(
 					sys_dev_ctx->tx_config.data_pending_txq[j][i])) {
-				nrf_wifi_osal_nbuf_free(
+				nrf_wifi_nbuf_free(
 					nrf_wifi_utils_q_dequeue(
 						sys_dev_ctx->tx_config.data_pending_txq[j][i]));
 			}
@@ -1802,7 +1803,7 @@ enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
 		goto fail;
 	}
 
-	raw_tx_hdr = nrf_wifi_osal_nbuf_set_raw_tx_hdr(nwb, sizeof(struct raw_tx_pkt_header));
+	raw_tx_hdr = nrf_wifi_nbuf_set_raw_tx_hdr(nwb, sizeof(struct raw_tx_pkt_header));
 	if (!raw_tx_hdr) {
 		nrf_wifi_osal_log_err("%s: Failed to get raw tx header",
 				      __func__);
@@ -1838,7 +1839,7 @@ enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
 	return NRF_WIFI_STATUS_SUCCESS;
 fail:
 	if (nwb) {
-		nrf_wifi_osal_nbuf_free(nwb);
+		nrf_wifi_nbuf_free(nwb);
 	}
 
 	if (sys_dev_ctx) {
@@ -1869,7 +1870,7 @@ enum nrf_wifi_status nrf_wifi_fmac_start_xmit(void *dev_ctx,
 	fmac_dev_ctx = dev_ctx;
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	if (nrf_wifi_osal_nbuf_data_size(nbuf) < NRF_WIFI_FMAC_ETH_HDR_LEN) {
+	if (nrf_wifi_nbuf_data_size(nbuf) < NRF_WIFI_FMAC_ETH_HDR_LEN) {
 		goto out;
 	}
 
@@ -1908,7 +1909,7 @@ enum nrf_wifi_status nrf_wifi_fmac_start_xmit(void *dev_ctx,
 	return NRF_WIFI_STATUS_SUCCESS;
 out:
 	if (nbuf) {
-		nrf_wifi_osal_nbuf_free(nbuf);
+		nrf_wifi_nbuf_free(nbuf);
 	}
 	return status;
 }

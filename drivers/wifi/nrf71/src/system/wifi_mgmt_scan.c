@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <common/nbuf_mgmt.h>
 #include <stdlib.h>
 
 #include <zephyr/kernel.h>
@@ -454,16 +455,16 @@ void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-	frame_length = nrf_wifi_osal_nbuf_data_size(nwb);
+	frame_length = nrf_wifi_nbuf_data_size(nwb);
 
 	if (frame_length > CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH) {
 		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
-				      nrf_wifi_osal_nbuf_data_get(nwb),
+				      nrf_wifi_nbuf_data_get(nwb),
 				      CONFIG_WIFI_MGMT_RAW_SCAN_RESULT_LENGTH);
 
 	} else {
 		nrf_wifi_mem_cpy(&bcn_prb_resp_info.data,
-				      nrf_wifi_osal_nbuf_data_get(nwb),
+				      nrf_wifi_nbuf_data_get(nwb),
 				      frame_length);
 	}
 
