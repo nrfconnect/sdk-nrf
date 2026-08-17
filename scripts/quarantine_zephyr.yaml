@@ -219,6 +219,7 @@
 
 - scenarios:
     - sample.edk.app
+    - sample.llext.edk.app
     - sample.llext.shell
   platforms:
     - nrf9160dk@0.14.0/nrf9160/ns
@@ -619,6 +620,9 @@
   comment: "FLASH overflowed"
 
 - scenarios:
+    - net.shell
+    - net.socket.get_addr_info
+    - net.socket.get_addr_info.timeout
     - sample.net.capture
     - sample.net.dns_resolve.llmnr
     - sample.net.dns_resolve.mdns
@@ -629,10 +633,26 @@
     - sample.net.sockets.echo_server.usbd_cdc_ncm
     - sample.net.sockets.http_client
     - sample.net.sockets.http_client.tls
+    - sample.net.telnet
     - sample.net.virtual
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "FLASH overflowed"
+
+- scenarios:
+    - sample.net.sockets.service.echo
+    - sample.net.syslog.no_autostart
+    - sample.net.syslog.runtime_srv_addr
+    - sample.net.syslog.with_timefuncs
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "FLASH overflowed"
+
+- scenarios:
+    - drivers.gpio.build
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
   comment: "FLASH overflowed"
 
 - scenarios:
