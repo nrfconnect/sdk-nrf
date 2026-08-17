@@ -608,16 +608,6 @@ int nrf_wifi_osal_bus_qspi_ps_status(void *os_qspi_priv);
 #endif /* NRF_WIFI_LOW_POWER */
 
 /**
- * @brief Gives the length of the string @p str.
- * @param str: Pointer to the memory location of the string.
- *
- * Calculates the length of the string pointed to by str.
- *
- * @return The number of bytes of the string str.
- */
-unsigned int nrf_wifi_osal_strlen(const void *str);
-
-/**
  * nrf_wifi_osal_rand8_get() - Get a random 8 bit number.
  *
  * Generates an 8 bit random number.

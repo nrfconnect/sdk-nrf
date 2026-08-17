@@ -10,7 +10,6 @@
  */
 
 #include <stdio.h>
-#include <string.h>
 #include <sys/time.h>
 
 #include <zephyr/kernel.h>
@@ -215,11 +214,6 @@ static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 	ipc_unregister_rx_cb();
 }
 
-static unsigned int zep_shim_strlen(const void *str)
-{
-	return strlen(str);
-}
-
 const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.time_get_curr_us = zep_shim_time_get_curr_us,
 	.time_elapsed_us = zep_shim_time_elapsed_us,
@@ -241,6 +235,5 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 	.bus_qspi_ps_wake = zep_shim_bus_qspi_ps_wake,
 	.bus_qspi_ps_status = zep_shim_bus_qspi_ps_status,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-	.strlen = zep_shim_strlen,
 	.ipc_send_msg = ipc_send_msg,
 };

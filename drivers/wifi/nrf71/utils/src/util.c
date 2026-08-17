@@ -10,6 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
+#include <string.h>
 #include <zephyr/sys/util.h>
 #include <util.h>
 #include <zephyr/logging/log.h>
@@ -27,7 +28,7 @@ int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 	unsigned int len = 0;
 	int ret = -1;
 
-	len = nrf_wifi_osal_strlen(str);
+	len = strlen((const char *)str);
 
 	if (len / 2 > hex_arr_sz) {
 		LOG_ERR("%s: String length (%d) greater than array size (%d)",
