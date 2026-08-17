@@ -24,7 +24,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
-#include <util.h>
+#include <common/util.h>
 #include <mac_addr.h>
 
 #if !DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(ficr))

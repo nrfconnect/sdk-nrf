@@ -12,9 +12,8 @@
 #include <common/mem_mgmt.h>
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_api_common.h"
-#include "common/fmac_util.h"
+#include <common/util.h>
 #include "common/fmac_cmd_common.h"
-#include "util.h"
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 

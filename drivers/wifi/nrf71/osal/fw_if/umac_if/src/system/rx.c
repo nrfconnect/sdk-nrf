@@ -14,7 +14,7 @@
 #include <common/llist_mgmt.h>
 #include "system/hal_api.h"
 #include "system/fmac_rx.h"
-#include "common/fmac_util.h"
+#include <common/util.h>
 #include "system/fmac_promisc.h"
 
 #ifdef NRF_WIFI_RX_BUFF_PROG_UMAC

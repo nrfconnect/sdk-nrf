@@ -13,7 +13,7 @@
 #include <common/mem_mgmt.h>
 #include <nrf71_wifi_ctrl.h>
 #include <offload_raw_tx/fmac_structs.h>
-#include <common/fmac_util.h>
+#include <common/util.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
