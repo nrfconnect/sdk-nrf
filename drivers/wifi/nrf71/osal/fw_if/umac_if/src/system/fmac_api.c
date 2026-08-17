@@ -16,14 +16,13 @@
 #include "system/fmac_api.h"
 #include "system/hal_api.h"
 #include "system/fmac_structs.h"
-#include "common/fmac_util.h"
+#include <common/util.h>
 #include "system/fmac_peer.h"
 #include "system/fmac_vif.h"
 #include "system/fmac_tx.h"
 #include "system/fmac_rx.h"
 #include "system/fmac_cmd.h"
 #include "system/fmac_event.h"
-#include "util.h"
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 

@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include "system/fmac_structs.h"
 #include "system/fmac_cmd.h"
-#include "common/fmac_util.h"
+#include <common/util.h>
 #include "common/hal_api_common.h"
 #include <zephyr/logging/log.h>
 
