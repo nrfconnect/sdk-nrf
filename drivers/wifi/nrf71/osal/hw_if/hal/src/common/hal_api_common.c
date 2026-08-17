@@ -13,6 +13,9 @@
 #include "queue.h"
 
 #include "common/hal_api_common.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 						void *cmd,
@@ -21,18 +24,18 @@ enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 #ifdef NRF_WIFI_CMD_EVENT_LOG
-	nrf_wifi_osal_log_info("%s: caller %p",
+	LOG_INF("%s: caller %p",
 			      __func__,
 			      __builtin_return_address(0));
 #else
-	nrf_wifi_osal_log_dbg("%s: caller %p",
+	LOG_DBG("%s: caller %p",
 			     __func__,
 			     __builtin_return_address(0));
 #endif
 	nrf_wifi_osal_spinlock_take(hal_dev_ctx->lock_hal);
 	status = nrf_wifi_osal_ipc_send_msg(NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL, cmd, cmd_size);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Sending command to RPU failed", __func__);
+		LOG_ERR("%s: Sending command to RPU failed", __func__);
 		goto out;
 	}
 out:
@@ -64,7 +67,7 @@ enum nrf_wifi_status hal_rpu_eventq_process(struct nrf_wifi_hal_dev_ctx *hal_dev
 							    event_len);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			nrf_wifi_osal_log_err("%s: Interrupt callback failed",
+			LOG_ERR("%s: Interrupt callback failed",
 					      __func__);
 		}
 
@@ -157,7 +160,7 @@ enum nrf_wifi_status nrf_wifi_hal_dev_init(struct nrf_wifi_hal_dev_ctx *hal_dev_
 	status = nrf_wifi_bal_dev_init(hal_dev_ctx->bal_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: nrf_wifi_bal_dev_init failed",
+		LOG_ERR("%s: nrf_wifi_bal_dev_init failed",
 				      __func__);
 		goto out;
 	}
@@ -175,7 +178,7 @@ enum nrf_wifi_status nrf_wifi_hal_ipc_msg_handler(void *priv)
 	/* IPC message is a pointer to PKTRAM address so the len is not relevant */
 	unsigned int event_len = sizeof(event_data);
 
-	nrf_wifi_osal_log_dbg("%s: IPC message received\n", __func__);
+	LOG_DBG("%s: IPC message received\n", __func__);
 	status = hal_dev_ctx->hpriv->intr_callbk_fn(hal_dev_ctx->mac_dev_ctx,
 						    event_data,
 						    event_len);
@@ -208,7 +211,7 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 	hpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*hpriv));
 
 	if (!hpriv) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate memory for hpriv",
+		LOG_ERR("%s: Unable to allocate memory for hpriv",
 				      __func__);
 		goto out;
 	}
@@ -225,7 +228,7 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 	hpriv->bpriv = nrf_wifi_bal_init(&bal_cfg_params, &nrf_wifi_hal_ipc_msg_handler);
 
 	if (!hpriv->bpriv) {
-		nrf_wifi_osal_log_err("%s: Failed",
+		LOG_ERR("%s: Failed",
 				      __func__);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hpriv);
 		hpriv = NULL;

@@ -203,33 +203,6 @@ struct nrf_wifi_osal_ops {
 	void (*spinlock_irq_rel)(void *lock, unsigned long *flags);
 
 	/**
-	 * @brief Log a debug message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_dbg)(const char *fmt, va_list args);
-
-	/**
-	 * @brief Log an informational message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_info)(const char *fmt, va_list args);
-
-	/**
-	 * @brief Log an error message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_err)(const char *fmt, va_list args);
-
-	/**
 	 * @brief Allocate a linked list node.
 	 *
 	 * @return A pointer to the allocated linked list node.

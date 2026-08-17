@@ -178,52 +178,6 @@ void nrf_wifi_osal_spinlock_irq_take(void *lock,
 void nrf_wifi_osal_spinlock_irq_rel(void *lock,
 				    unsigned long *flags);
 
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
-/**
- * @brief Log a debug message.
- * @param fmt: Format string.
- * @param ...: Variable arguments.
- *
- * Logs a debug message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_dbg(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_dbg(fmt, ...)
-#endif
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
-/**
- * @brief Logs an informational message.
- * @param fmt Format string.
- * @param ... Variable arguments.
- *
- * Logs an informational message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_info(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_info(fmt, ...)
-#endif
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_ERR
-/**
- * @brief Logs an error message.
- * @param fmt Format string.
- * @param ... Variable arguments.
- *
- * Logs an error message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_err(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_err(fmt, ...)
-#endif
-
 /**
  * @brief Allocate a linked list node.
  *

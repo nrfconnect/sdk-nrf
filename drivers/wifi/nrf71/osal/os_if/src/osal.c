@@ -118,60 +118,6 @@ void nrf_wifi_osal_spinlock_irq_rel(void *lock,
 }
 
 
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
-int nrf_wifi_osal_log_dbg(const char *fmt,
-			  ...)
-{
-	va_list args;
-	int ret = -1;
-
-	va_start(args, fmt);
-
-	ret = os_ops->log_dbg(fmt, args);
-
-	va_end(args);
-
-	return ret;
-}
-#endif /* WIFI_NRF71_LOG_LEVEL_DBG */
-
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
-int nrf_wifi_osal_log_info(const char *fmt,
-			   ...)
-{
-	va_list args;
-	int ret = -1;
-
-	va_start(args, fmt);
-
-	ret = os_ops->log_info(fmt, args);
-
-	va_end(args);
-
-	return ret;
-}
-#endif /* WIFI_NRF71_LOG_LEVEL_INF */
-
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_ERR
-int nrf_wifi_osal_log_err(const char *fmt,
-			  ...)
-{
-	va_list args;
-	int ret = -1;
-
-	va_start(args, fmt);
-
-	ret = os_ops->log_err(fmt, args);
-
-	va_end(args);
-
-	return ret;
-}
-#endif /* WIFI_NRF71_LOG_LEVEL_ERR */
-
-
 void *nrf_wifi_osal_llist_node_alloc(void)
 {
 	return os_ops->llist_node_alloc();

@@ -226,7 +226,7 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 		 (count < NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
 
 	if (count == NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
-		nrf_wifi_osal_log_err("%s: Timed out",
+		LOG_ERR("%s: Timed out",
 				      __func__);
 		goto out;
 	}

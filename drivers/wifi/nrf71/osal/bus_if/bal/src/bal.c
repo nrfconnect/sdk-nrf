@@ -12,6 +12,9 @@
 
 #include <common/mem_mgmt.h>
 #include "bal_api.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #ifdef NRF_WIFI_LOW_POWER
 #ifdef NRF_WIFI_LOW_POWER_DBG
@@ -40,7 +43,7 @@ static void nrf_wifi_rpu_bal_sleep_chk(struct nrf_wifi_bal_dev_ctx *bal_ctx,
 			     (1 << RPU_REG_BIT_READY_STATE));
 
 	if ((sleep_reg_val & rpu_ps_state_mask) != rpu_ps_state_mask) {
-		nrf_wifi_osal_log_err("%s:RPU accessed when it is not ready !!! (Reg val = 0x%X)",
+		LOG_ERR("%s:RPU accessed when it is not ready !!! (Reg val = 0x%X)",
 				      __func__,
 				      sleep_reg_val);
 	}
@@ -58,7 +61,7 @@ struct nrf_wifi_bal_dev_ctx *nrf_wifi_bal_dev_add(struct nrf_wifi_bal_priv *bpri
 	bal_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*bal_dev_ctx));
 
 	if (!bal_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate bal_dev_ctx", __func__);
+		LOG_ERR("%s: Unable to allocate bal_dev_ctx", __func__);
 		goto out;
 	}
 
@@ -69,7 +72,7 @@ struct nrf_wifi_bal_dev_ctx *nrf_wifi_bal_dev_add(struct nrf_wifi_bal_priv *bpri
 						       bal_dev_ctx);
 
 	if (!bal_dev_ctx->bus_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: Bus dev_add failed", __func__);
+		LOG_ERR("%s: Bus dev_add failed", __func__);
 		goto out;
 	}
 
@@ -105,7 +108,7 @@ enum nrf_wifi_status nrf_wifi_bal_dev_init(struct nrf_wifi_bal_dev_ctx *bal_dev_
 	status = bal_dev_ctx->bpriv->ops->dev_init(bal_dev_ctx->bus_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: dev_init failed", __func__);
+		LOG_ERR("%s: dev_init failed", __func__);
 		goto out;
 	}
 out:
@@ -141,7 +144,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 	bpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*bpriv));
 
 	if (!bpriv) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate memory for bpriv", __func__);
+		LOG_ERR("%s: Unable to allocate memory for bpriv", __func__);
 		goto out;
 	}
 
@@ -149,7 +152,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 
 	bpriv->ops = get_bus_ops();
 	if (!bpriv->ops) {
-		nrf_wifi_osal_log_err("%s: Bus ops not available", __func__);
+		LOG_ERR("%s: Bus ops not available", __func__);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bpriv);
 		bpriv = NULL;
 		goto out;
@@ -159,7 +162,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 					   &nrf_wifi_bal_isr);
 
 	if (!bpriv->bus_priv) {
-		nrf_wifi_osal_log_err("%s: Failed", __func__);
+		LOG_ERR("%s: Failed", __func__);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bpriv);
 		bpriv = NULL;
 	}

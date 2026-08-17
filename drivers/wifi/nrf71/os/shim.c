@@ -92,39 +92,6 @@ static void zep_shim_spinlock_irq_rel(void *lock, unsigned long *flags)
 	k_mutex_unlock(lock);
 }
 
-static int zep_shim_pr_dbg(const char *fmt, va_list args)
-{
-	static char buf[80];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_DBG("%s", buf);
-
-	return 0;
-}
-
-static int zep_shim_pr_info(const char *fmt, va_list args)
-{
-	static char buf[80];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_INF("%s", buf);
-
-	return 0;
-}
-
-static int zep_shim_pr_err(const char *fmt, va_list args)
-{
-	static char buf[256];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_ERR("%s", buf);
-
-	return 0;
-}
-
 struct nwb {
 	unsigned char *data;
 	unsigned char *tail;
@@ -772,13 +739,13 @@ static int ipc_send_msg(unsigned int msg_type, void *msg, unsigned int len)
 		ctx.ept = IPC_EPT_LMAC;
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s: Invalid msg_type (%d)", __func__, msg_type);
+		LOG_ERR("%s: Invalid msg_type (%d)", __func__, msg_type);
 		goto out;
 	};
 
 	ret = dev->send(ctx, msg, len);
 	if (ret < 0) {
-		nrf_wifi_osal_log_err("%s: Sending message to RPU failed\n", __func__);
+		LOG_ERR("%s: Sending message to RPU failed\n", __func__);
 		goto out;
 	}
 
@@ -971,10 +938,6 @@ const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
 
 	.spinlock_irq_take = zep_shim_spinlock_irq_take,
 	.spinlock_irq_rel = zep_shim_spinlock_irq_rel,
-
-	.log_dbg = zep_shim_pr_dbg,
-	.log_info = zep_shim_pr_info,
-	.log_err = zep_shim_pr_err,
 
 	.llist_node_alloc = zep_shim_llist_node_alloc,
 	.ctrl_llist_node_alloc = zep_shim_ctrl_llist_node_alloc,

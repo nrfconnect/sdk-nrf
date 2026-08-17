@@ -14,6 +14,9 @@
 
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_util.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 int nrf_wifi_fmac_peer_get_id(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			      const unsigned char *mac_addr)
@@ -82,7 +85,7 @@ int nrf_wifi_fmac_peer_add(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			return i;
 		}
 	}
-	nrf_wifi_osal_log_err("%s: Failed !! No Space Available",
+	LOG_ERR("%s: Failed !! No Space Available",
 			      __func__);
 
 	return -1;

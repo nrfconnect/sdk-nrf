@@ -10,6 +10,9 @@
  */
 
 #include "list.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 void *nrf_wifi_utils_list_alloc(void)
 {
@@ -18,7 +21,7 @@ void *nrf_wifi_utils_list_alloc(void)
 	list = nrf_wifi_osal_llist_alloc();
 
 	if (!list) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate list",
+		LOG_ERR("%s: Unable to allocate list",
 				      __func__);
 		goto out;
 	}
@@ -37,7 +40,7 @@ void *nrf_wifi_utils_ctrl_list_alloc(void)
 	list = nrf_wifi_osal_ctrl_llist_alloc();
 
 	if (!list) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate list",
+		LOG_ERR("%s: Unable to allocate list",
 				      __func__);
 		goto out;
 	}
@@ -67,7 +70,7 @@ enum nrf_wifi_status nrf_wifi_utils_list_add_tail(void *list,
 	list_node = nrf_wifi_osal_llist_node_alloc();
 
 	if (!list_node) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate list node",
+		LOG_ERR("%s: Unable to allocate list node",
 				      __func__);
 		return NRF_WIFI_STATUS_FAIL;
 	}
@@ -89,7 +92,7 @@ enum nrf_wifi_status nrf_wifi_utils_ctrl_list_add_tail(void *list,
 	list_node = nrf_wifi_osal_ctrl_llist_node_alloc();
 
 	if (!list_node) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate list node",
+		LOG_ERR("%s: Unable to allocate list node",
 			      __func__);
 		return NRF_WIFI_STATUS_FAIL;
 	}
@@ -109,7 +112,7 @@ enum nrf_wifi_status nrf_wifi_utils_list_add_head(void *list,
 	list_node = nrf_wifi_osal_llist_node_alloc();
 
 	if (!list_node) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate list node",
+		LOG_ERR("%s: Unable to allocate list node",
 				      __func__);
 		return NRF_WIFI_STATUS_FAIL;
 	}

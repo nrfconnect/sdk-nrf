@@ -14,6 +14,9 @@
 #include "common/hal_structs_common.h"
 #include "common/hal_api_common.h"
 #include "system/hal_api.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 
 static void event_tasklet_fn(unsigned long data)
@@ -36,7 +39,7 @@ static void event_tasklet_fn(unsigned long data)
 	status = hal_rpu_eventq_process(hal_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Event queue processing failed",
+		LOG_ERR("%s: Event queue processing failed",
 				      __func__);
 	}
 
@@ -53,7 +56,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*hal_dev_ctx));
 
 	if (!hal_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate hal_dev_ctx",
+		LOG_ERR("%s: Unable to allocate hal_dev_ctx",
 				      __func__);
 		goto err;
 	}
@@ -65,7 +68,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->cmd_q = nrf_wifi_utils_ctrl_q_alloc();
 
 	if (!hal_dev_ctx->cmd_q) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate command queue",
+		LOG_ERR("%s: Unable to allocate command queue",
 				      __func__);
 		goto hal_dev_free;
 	}
@@ -73,7 +76,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->event_q = nrf_wifi_utils_ctrl_q_alloc();
 
 	if (!hal_dev_ctx->event_q) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate event queue",
+		LOG_ERR("%s: Unable to allocate event queue",
 				      __func__);
 		goto cmd_q_free;
 	}
@@ -81,7 +84,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->lock_hal = nrf_wifi_osal_spinlock_alloc();
 
 	if (!hal_dev_ctx->lock_hal) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate HAL lock", __func__);
+		LOG_ERR("%s: Unable to allocate HAL lock", __func__);
 		hal_dev_ctx = NULL;
 		goto event_q_free;
 	}
@@ -91,7 +94,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->lock_rx = nrf_wifi_osal_spinlock_alloc();
 
 	if (!hal_dev_ctx->lock_rx) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate HAL lock",
+		LOG_ERR("%s: Unable to allocate HAL lock",
 				      __func__);
 		goto lock_hal_free;
 	}
@@ -101,7 +104,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 	hal_dev_ctx->event_tasklet = nrf_wifi_osal_tasklet_alloc(NRF_WIFI_TASKLET_TYPE_BH);
 
 	if (!hal_dev_ctx->event_tasklet) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate event_tasklet",
+		LOG_ERR("%s: Unable to allocate event_tasklet",
 				      __func__);
 		goto lock_rx_free;
 	}
@@ -114,7 +117,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 							hal_dev_ctx);
 
 	if (!hal_dev_ctx->bal_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: nrf_wifi_bal_dev_add failed",
+		LOG_ERR("%s: nrf_wifi_bal_dev_add failed",
 				      __func__);
 		goto lock_recovery_free;
 	}

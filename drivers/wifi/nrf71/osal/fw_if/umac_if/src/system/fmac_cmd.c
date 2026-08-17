@@ -14,6 +14,9 @@
 #include "system/fmac_cmd.h"
 #include "common/fmac_util.h"
 #include "common/hal_api_common.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				       unsigned int *rf_params_addr,
@@ -44,7 +47,7 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -72,18 +75,18 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	umac_cmd_data->watchdog_timer_val = 0xFFFFFF;
 #endif /* NRF_WIFI_RPU_RECOVERY */
 
-	nrf_wifi_osal_log_dbg("RPU LPM type: %s",
+	LOG_DBG("RPU LPM type: %s",
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
 		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
 
 #ifdef NRF_WIFI_MGMT_BUFF_OFFLOAD
 	umac_cmd_data->mgmt_buff_offload =  1;
-	nrf_wifi_osal_log_dbg("Management buffer offload enabled");
+	LOG_DBG("Management buffer offload enabled");
 #endif /* NRF_WIFI_MGMT_BUFF_OFFLOAD */
 #ifdef NRF_WIFI_FEAT_KEEPALIVE
 	umac_cmd_data->keep_alive_enable = KEEP_ALIVE_ENABLED;
 	umac_cmd_data->keep_alive_period = NRF_WIFI_KEEPALIVE_PERIOD_S;
-	nrf_wifi_osal_log_dbg("Keepalive enabled with period %d",
+	LOG_DBG("Keepalive enabled with period %d",
 				   umac_cmd_data->keep_alive_enable);
 #endif /* NRF_WIFI_FEAT_KEEPALIVE */
 
@@ -190,7 +193,7 @@ enum nrf_wifi_status umac_cmd_sys_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *f
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -224,7 +227,7 @@ enum nrf_wifi_status umac_cmd_sys_clear_stats(struct nrf_wifi_fmac_dev_ctx *fmac
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -258,7 +261,7 @@ enum nrf_wifi_status umac_cmd_sys_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -295,7 +298,7 @@ enum nrf_wifi_status umac_cmd_sys_umac_int_stats_get(struct nrf_wifi_fmac_dev_ct
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -330,7 +333,7 @@ enum nrf_wifi_status umac_cmd_sys_he_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_d
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -375,7 +378,7 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
