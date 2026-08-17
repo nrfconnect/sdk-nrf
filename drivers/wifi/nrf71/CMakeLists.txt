@@ -21,7 +21,7 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}/fw_if
     ${nrf71_utils_base}/utils/inc
     ${nrf71_osal_base}/os_if/inc
-    ${nrf71_osal_base}/bus_if/bus/qspi/inc
+    ${nrf71_osal_base}/bus_if/bus/ipc/inc
     ${nrf71_osal_base}/bus_if/bal/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
     ${nrf71_osal_base}/hw_if/hal/inc
@@ -36,7 +36,7 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_utils_base}/utils/src/util.c
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
     ${nrf71_osal_base}/bus_if/bal/src/bal.c
-    ${nrf71_osal_base}/bus_if/bus/qspi/src/qspi.c
+    ${nrf71_osal_base}/bus_if/bus/ipc/src/ipc_bus.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_util.c
@@ -76,7 +76,7 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/hw_if/hal/inc
       ${nrf71_osal_base}/os_if/inc
       ${nrf71_osal_base}/bus_if/bal/inc
-      ${nrf71_osal_base}/bus_if/bus/qspi/inc
+      ${nrf71_osal_base}/bus_if/bus/ipc/inc
       ${nrf71_utils_base}/utils/inc
     )
   endif()

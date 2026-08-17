@@ -306,6 +306,19 @@ unsigned long nrf_wifi_bal_dma_unmap(void *ctx,
 	return virt_addr;
 }
 
+enum nrf_wifi_status nrf_wifi_bal_ipc_send_msg(void *ctx,
+					       unsigned int msg_type,
+					       void *msg,
+					       unsigned int len)
+{
+	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = ctx;
+
+	return bal_dev_ctx->bpriv->ops->ipc_send_msg(bal_dev_ctx->bus_dev_ctx,
+						     msg_type,
+						     msg,
+						     len);
+}
+
 
 #ifdef NRF_WIFI_LOW_POWER
 void nrf_wifi_bal_rpu_ps_sleep(void *ctx)

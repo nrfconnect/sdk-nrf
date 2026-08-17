@@ -35,7 +35,10 @@ enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal
 			     __builtin_return_address(0));
 #endif
 	nrf_wifi_lock_take(hal_dev_ctx->lock_hal);
-	status = nrf_wifi_osal_ipc_send_msg(NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL, cmd, cmd_size);
+	status = nrf_wifi_bal_ipc_send_msg(hal_dev_ctx->bal_dev_ctx,
+					   NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL,
+					   cmd,
+					   cmd_size);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: Sending command to RPU failed", __func__);
 		goto out;

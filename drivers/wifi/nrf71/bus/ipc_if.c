@@ -25,9 +25,8 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #include "ipc_if.h"
 #include "bal_structs.h"
-#include "qspi.h"
+#include "ipc_bus.h"
 #include "common/hal_structs_common.h"
-#include "osal_api.h"
 
 #define NUM_INSTANCES 1
 #define NUM_ENDPOINTS 1
@@ -127,7 +126,7 @@ static void host_tx_ack_slot_free(uint32_t *ack_addr)
 /* RX path: receive event (addr, size, ring); after handler, free by writing tail to GDRAM */
 static void host_rx_recv(void *data, size_t len, void *priv)
 {
-	struct nrf_wifi_bus_qspi_dev_ctx *dev_ctx = (struct nrf_wifi_bus_qspi_dev_ctx *)priv;
+	struct nrf_wifi_bus_ipc_dev_ctx *dev_ctx = (struct nrf_wifi_bus_ipc_dev_ctx *)priv;
 	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx;
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx;
 	wifi_ipc_buf_desc_t msg_info = *(wifi_ipc_buf_desc_t *)data;

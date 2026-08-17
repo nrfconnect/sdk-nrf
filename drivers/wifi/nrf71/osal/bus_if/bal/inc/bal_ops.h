@@ -143,6 +143,20 @@ struct nrf_wifi_bal_ops {
 				   size_t len,
 				   enum nrf_wifi_osal_dma_dir dma_dir);
 
+	/**
+	 * @brief Send a message to the RPU over IPC.
+	 *
+	 * @param bus_dev_ctx Pointer to the bus device context.
+	 * @param msg_type HAL message type selecting the IPC instance/endpoint.
+	 * @param msg Pointer to the message payload.
+	 * @param len Length of the message payload.
+	 * @return Status of the send operation.
+	 */
+	enum nrf_wifi_status (*ipc_send_msg)(void *bus_dev_ctx,
+					     unsigned int msg_type,
+					     void *msg,
+					     unsigned int len);
+
 #if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 	/**
 	 * @brief Put the device into power-saving sleep mode.

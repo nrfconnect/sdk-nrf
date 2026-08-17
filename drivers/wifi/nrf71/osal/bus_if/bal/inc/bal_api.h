@@ -157,6 +157,21 @@ unsigned long nrf_wifi_bal_dma_unmap(void *ctx,
 		enum nrf_wifi_osal_dma_dir dma_dir);
 
 /**
+ * @brief Send a message to the RPU over IPC.
+ *
+ * @param ctx Pointer to the BAL device context.
+ * @param msg_type HAL message type selecting the IPC instance/endpoint.
+ * @param msg Pointer to the message payload.
+ * @param len Length of the message payload.
+ *
+ * @return Status of the send operation.
+ */
+enum nrf_wifi_status nrf_wifi_bal_ipc_send_msg(void *ctx,
+					       unsigned int msg_type,
+					       void *msg,
+					       unsigned int len);
+
+/**
  * @brief Enable bus access recording.
  *
  * @param ctx Pointer to the context.
