@@ -26,6 +26,17 @@
 		mcuboot-button0 = &button0;
 		mcuboot-led0 = &led0;
 	};
+
+	ipc {
+		ipc0: ipc0 {
+			status = "disabled";
+			compatible = "zephyr,ipc-icbmsg";
+			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
+			mbox-names = "rx", "tx";
+			tx-blocks = <15>;
+			rx-blocks = <15>;
+		};
+	};
 };
 
 &cpuapp_sram {
