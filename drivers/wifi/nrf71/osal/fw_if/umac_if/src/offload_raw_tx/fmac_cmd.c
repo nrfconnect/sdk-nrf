@@ -83,8 +83,9 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 
 	umac_cmd_data->op_band = op_band;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params, tx_pwr_ctrl_params,
-			      sizeof(umac_cmd_data->sys_params.tx_pwr_ctrl_params));
+	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
+			      &tx_pwr_ctrl_params->ant_gain_2g,
+			      10 * sizeof(unsigned char));
 
 	(void)board_params;
 
