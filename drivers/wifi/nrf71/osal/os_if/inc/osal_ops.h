@@ -465,14 +465,6 @@ struct nrf_wifi_osal_ops {
 	#endif /* NRF_WIFI_LOW_POWER */
 
 	/**
-	 * @brief Get the length of a string.
-	 *
-	 * @param str A pointer to the string.
-	 * @return The length of the string.
-	 */
-	unsigned int (*strlen)(const void *str);
-
-	/**
 	 * @brief Get a random 8-bit value.
 	 *
 	 * @return A random 8-bit value.
