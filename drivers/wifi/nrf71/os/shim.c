@@ -31,53 +31,6 @@ LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct zep_shim_intr_priv *intr_priv;
 
-static void *zep_shim_spinlock_alloc(void)
-{
-	struct k_mutex *lock = NULL;
-
-	lock = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*lock));
-	if (!lock) {
-		LOG_ERR("%s: Unable to allocate memory for spinlock", __func__);
-		return NULL;
-	}
-
-	return lock;
-}
-
-static void zep_shim_spinlock_free(void *lock)
-{
-	if (lock) {
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, lock);
-	}
-}
-
-static void zep_shim_spinlock_init(void *lock)
-{
-	k_mutex_init(lock);
-}
-
-static void zep_shim_spinlock_take(void *lock)
-{
-	k_mutex_lock(lock, K_FOREVER);
-}
-
-static void zep_shim_spinlock_rel(void *lock)
-{
-	k_mutex_unlock(lock);
-}
-
-static void zep_shim_spinlock_irq_take(void *lock, unsigned long *flags)
-{
-	ARG_UNUSED(flags);
-	k_mutex_lock(lock, K_FOREVER);
-}
-
-static void zep_shim_spinlock_irq_rel(void *lock, unsigned long *flags)
-{
-	ARG_UNUSED(flags);
-	k_mutex_unlock(lock);
-}
-
 static int zep_shim_pr_dbg(const char *fmt, va_list args)
 {
 	static char buf[80];
@@ -512,15 +465,6 @@ static unsigned int zep_shim_strlen(const void *str)
 }
 
 const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
-	.spinlock_alloc = zep_shim_spinlock_alloc,
-	.spinlock_free = zep_shim_spinlock_free,
-	.spinlock_init = zep_shim_spinlock_init,
-	.spinlock_take = zep_shim_spinlock_take,
-	.spinlock_rel = zep_shim_spinlock_rel,
-
-	.spinlock_irq_take = zep_shim_spinlock_irq_take,
-	.spinlock_irq_rel = zep_shim_spinlock_irq_rel,
-
 	.log_dbg = zep_shim_pr_dbg,
 	.log_info = zep_shim_pr_info,
 	.log_err = zep_shim_pr_err,

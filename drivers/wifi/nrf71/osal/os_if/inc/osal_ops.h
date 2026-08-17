@@ -151,56 +151,6 @@ struct nrf_wifi_osal_ops {
 	 */
 	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
-	/**
-	 * @brief Allocate a spinlock.
-	 *
-	 * @return A pointer to the allocated spinlock.
-	 */
-	void *(*spinlock_alloc)(void);
-
-	/**
-	 * @brief Free a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to free.
-	 */
-	void (*spinlock_free)(void *lock);
-
-	/**
-	 * @brief Initialize a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to initialize.
-	 */
-	void (*spinlock_init)(void *lock);
-
-	/**
-	 * @brief Acquire a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to acquire.
-	 */
-	void (*spinlock_take)(void *lock);
-
-	/**
-	 * @brief Release a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to release.
-	 */
-	void (*spinlock_rel)(void *lock);
-
-	/**
-	 * @brief Save interrupt states, disable interrupts, and acquire a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to acquire.
-	 * @param flags A pointer to store the saved interrupt states.
-	 */
-	void (*spinlock_irq_take)(void *lock, unsigned long *flags);
-
-	/**
-	 * @brief Restore interrupt states and release a spinlock.
-	 *
-	 * @param lock A pointer to the spinlock to release.
-	 * @param flags A pointer to the saved interrupt states.
-	 */
-	void (*spinlock_irq_rel)(void *lock, unsigned long *flags);
 
 	/**
 	 * @brief Log a debug message.
