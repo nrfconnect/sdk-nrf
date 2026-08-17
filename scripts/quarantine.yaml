@@ -90,3 +90,35 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
   comment: "Overflow"
+
+- scenarios:
+    - nrf.extended.drivers.counter.basic_api
+    - nrf.extended.drivers.uart.uart_elementary_dual.pm
+  platforms:
+    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr
+  comment: "RAM Overflow"
+
+- scenarios:
+    - sample.bluetooth.central_and_peripheral_hrs
+    - sample.bluetooth.central_bas
+    - sample.bluetooth.central_uart
+    - sample.bluetooth.multiple_adv_sets
+    - sample.bluetooth.peripheral_ams_client.build
+    - sample.bluetooth.peripheral_ancs_client.build
+    - sample.bluetooth.peripheral_cgm
+    - sample.bluetooth.peripheral_cts_client
+    - sample.bluetooth.peripheral_gatt_dm
+    - sample.bluetooth.peripheral_mds
+    - sample.bluetooth.peripheral_nfc_pairing
+    - sample.bluetooth.peripheral_nsms
+    - sample.bluetooth.peripheral_nsms_no_security
+    - sample.bluetooth.peripheral_power_profiling
+    - sample.bluetooth.peripheral_rscs
+    - sample.bluetooth.shell_bt_nus
+    - sample.bluetooth.throughput
+    - sample.nrf7002_ns.shell
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf7002dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40844"
