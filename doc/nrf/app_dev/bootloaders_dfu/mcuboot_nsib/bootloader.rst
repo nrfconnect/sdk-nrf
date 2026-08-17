@@ -69,9 +69,14 @@ The |NCS| currently supports two implementations:
 
 .. include:: ../../../includes/pm_deprecation.txt
 
-By default, building an application with any bootloader configuration uses :ref:`sysbuild` to build multiple image, where the :ref:`partition_manager` manages its memory partitions.
-When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, then :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built with the image automatically.
-From the bootloader perspective, the TF-M is part of the booted application image.
+Building an application with any bootloader configuration uses :ref:`sysbuild` to build multiple images, by default.
+Flash partitions, for the boot and DFU chain, are defined in devicetree (board description, overlays, and included ``*.dtsi`` files).
+Each sysbuild image defines its own devicetree specification based on |NCS| device descriptions, with sysbuild-specific and image-specific overlays applied on top; therefore, overlays for each image within the sysbuild project must impose exactly the same layout of partitions to ensure correct read/write access to these regions.
+Misaligned partition boundaries across image devicetree definitions would not only prevent boot or DFU from working but may also cause data destruction or device failure.
+For example, the bootloader may fail to boot an application that was built for partitions defined differently in the bootloader and application devicetrees.
+See :ref:`bootloader_partitioning` for partition node labels, overlay placement, and inspection of the resolved map.
+When building an application with :ref:`Cortex-M Security Extensions (CMSE) enabled <app_boards_spe_nspe_cpuapp_ns>`, :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` is built as part of the application image automatically.
+From the bootloader perspective, TF-M is part of the booted application image.
 
 .. _immutable_bootloader:
 
