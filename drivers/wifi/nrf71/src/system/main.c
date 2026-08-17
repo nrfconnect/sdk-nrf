@@ -31,6 +31,7 @@
 #include <common/rf_params.h>
 #include <common/vtf.h>
 #include <common/util.h>
+#include <osal_api.h>
 #include <system/core.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 

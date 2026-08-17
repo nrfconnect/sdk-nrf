@@ -113,11 +113,11 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 				   event_tasklet_fn,
 				   (unsigned long)hal_dev_ctx);
 
-	hal_dev_ctx->bal_dev_ctx = nrf_wifi_bal_dev_add(hpriv->bpriv,
+	hal_dev_ctx->ipc_dev_ctx = nrf_wifi_ipc_dev_add(hpriv->ipc_priv,
 							hal_dev_ctx);
 
-	if (!hal_dev_ctx->bal_dev_ctx) {
-		LOG_ERR("%s: nrf_wifi_bal_dev_add failed",
+	if (!hal_dev_ctx->ipc_dev_ctx) {
+		LOG_ERR("%s: nrf_wifi_ipc_dev_add failed",
 				      __func__);
 		goto event_tasklet_free;
 	}
