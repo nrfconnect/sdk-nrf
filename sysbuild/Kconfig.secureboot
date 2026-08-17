@@ -10,6 +10,15 @@ config SECURE_BOOT
 	  This option will be set if the first stage bootloader which verifies the signature of the
 	  application is enabled for one or multiple cores.
 
+config SECURE_BOOT_OTP_WRITE_SIZE
+	int
+	depends on SECURE_BOOT || (MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION && !SOC_SERIES_NRF54H)
+	default 4 if SOC_SERIES_NRF54L
+	default 2
+	help
+	  The size of the write operation for the OTP area used to store
+	  downgrade prevention counters.
+
 menuconfig SECURE_BOOT_APPCORE
 	bool "Appcore"
 	select SECURE_BOOT
