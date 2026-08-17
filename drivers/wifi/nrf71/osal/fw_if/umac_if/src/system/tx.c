@@ -20,10 +20,10 @@
 #include "system/fmac_peer.h"
 #include "common/hal_structs_common.h"
 #include "common/fmac_util.h"
+#include <zephyr/net/net_core.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
-
 
 static bool is_twt_emergency_pkt(void *nwb)
 {
@@ -44,6 +44,28 @@ static bool can_xmit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	    sys_dev_ctx->twt_sleep_status == NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 }
 
+static unsigned int spare_desc_ring_size(const struct nrf_wifi_sys_fmac_priv *sys_fpriv)
+{
+	if (sys_fpriv->num_tx_tokens_per_ac == 0) {
+		return 0;
+	}
+
+	return (unsigned int)sys_fpriv->num_tx_tokens_per_ac * NRF_WIFI_FMAC_AC_MAX;
+}
+
+static unsigned short spare_desc_index(const struct nrf_wifi_sys_fmac_priv *sys_fpriv,
+				       unsigned int desc)
+{
+	unsigned int ring_size = spare_desc_ring_size(sys_fpriv);
+
+	if (ring_size == 0) {
+		LOG_ERR("%s: spare descriptor ring size is zero", __func__);
+		return 0;
+	}
+
+	return desc % ring_size;
+}
+
 /* Set the coresponding bit of access category.
  * First 4 bits(0 to 3) represenst first spare desc access cateogories
  * Second 4 bits(4 to 7) represenst second spare desc access cateogories and so on
@@ -59,13 +81,7 @@ static void set_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_osal_assert(sys_fpriv->num_tx_tokens_per_ac,
-			     0,
-			     NRF_WIFI_ASSERT_NOT_EQUAL_TO,
-			     "num_tx_tokens_per_ac is zero");
-
-	spare_desc_indx = (desc % (sys_fpriv->num_tx_tokens_per_ac *
-				   NRF_WIFI_FMAC_AC_MAX));
+	spare_desc_indx = spare_desc_index(sys_fpriv, desc);
 
 	sys_dev_ctx->tx_config.spare_desc_queue_map |=
 		(1 << ((spare_desc_indx * SPARE_DESC_Q_MAP_SIZE) + tx_done_q));
@@ -87,13 +103,7 @@ static void clear_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_osal_assert(sys_fpriv->num_tx_tokens_per_ac,
-			     0,
-			     NRF_WIFI_ASSERT_NOT_EQUAL_TO,
-			     "num_tx_tokens_per_ac is zero");
-
-	spare_desc_indx = (desc % (sys_fpriv->num_tx_tokens_per_ac *
-				   NRF_WIFI_FMAC_AC_MAX));
+	spare_desc_indx = spare_desc_index(sys_fpriv, desc);
 
 	sys_dev_ctx->tx_config.spare_desc_queue_map &=
 		~(1 << ((spare_desc_indx * SPARE_DESC_Q_MAP_SIZE) + tx_done_q));
@@ -110,8 +120,7 @@ static unsigned short get_spare_desc_q_map(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	spare_desc_indx = (desc % (sys_fpriv->num_tx_tokens_per_ac *
-				   NRF_WIFI_FMAC_AC_MAX));
+	spare_desc_indx = spare_desc_index(sys_fpriv, desc);
 
 	return	(sys_dev_ctx->tx_config.spare_desc_queue_map >> (spare_desc_indx *
 			SPARE_DESC_Q_MAP_SIZE)) & 0x000F;

@@ -473,19 +473,6 @@ struct nrf_wifi_osal_ops {
 	#endif /* NRF_WIFI_LOW_POWER */
 
 	/**
-	 * @brief Assert a condition and display an error message if the condition is false.
-	 *
-	 * @param test_val The value to test.
-	 * @param val The value to compare against.
-	 * @param op The comparison operator.
-	 * @param assert_msg The error message to display.
-	 */
-	void (*assert)(int test_val,
-				   int val,
-				   enum nrf_wifi_assert_op_type op,
-				   char *assert_msg);
-
-	/**
 	 * @brief Get the length of a string.
 	 *
 	 * @param str A pointer to the string.
