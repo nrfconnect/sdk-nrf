@@ -34,7 +34,7 @@
 		mboxes = <&mbox 0>, <&mbox 1>;
 		mbox-names = "tx", "rx";
 		unbound = "enable";
-		dcache-alignment = <0x20>;
+		dcache-alignment = <32>;
 		status = "okay";
 	};
 };

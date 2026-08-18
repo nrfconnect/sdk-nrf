@@ -5,18 +5,8 @@
  */
 
 ipc0: &cpuapp_cpuflpr_ipc {
-	status = "okay";
+	compatible = "zephyr,ipc-icmsg";
 	unbound = "enable";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
-&cpuflpr_vevif {
-	status = "okay";
-};
-
-&uart120 {
-	/delete-property/ hw-flow-control;
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
 };
