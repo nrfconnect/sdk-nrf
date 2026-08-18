@@ -26,9 +26,6 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
 
-.. note::
-   |thingy53_sample_note|
-
 .. include:: /includes/tfm.txt
 
 Overview
@@ -131,15 +128,8 @@ User interface
         .. note::
           On the :zephyr:board:`nrf52840dongle`, the scene selection functionality will not be available as the device only has one button.
 
-        .. tip::
-          On Thingy:53, **Button 2** can be accessed by removing the top part of the casing.
-
       LEDs:
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
-
-        .. note::
-          :zephyr:board:`thingy53` supports only one RGB LED.
-          Each RGB LED channel is used as separate LED.
 
    .. group-tab:: nRF54 DKs
 

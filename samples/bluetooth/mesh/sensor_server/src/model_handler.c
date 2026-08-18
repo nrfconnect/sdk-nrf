@@ -14,12 +14,7 @@
 #include <float.h>
 #include "model_handler.h"
 
-#if DT_NODE_HAS_STATUS(DT_NODELABEL(bme680), okay)
-/** Thingy53 */
-#define SENSOR_NODE DT_NODELABEL(bme680)
-#define SENSOR_DATA_TYPE SENSOR_CHAN_AMBIENT_TEMP
-#elif DT_NODE_HAS_STATUS(DT_NODELABEL(temp), okay)
-/** nRF52 DK */
+#if DT_NODE_HAS_STATUS(DT_NODELABEL(temp), okay)
 #define SENSOR_NODE DT_NODELABEL(temp)
 #define SENSOR_DATA_TYPE SENSOR_CHAN_DIE_TEMP
 #else

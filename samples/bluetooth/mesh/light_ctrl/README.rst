@@ -22,9 +22,6 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
   * `nRF Mesh mobile app for Android`_
   * `nRF Mesh mobile app for iOS`_
 
-.. note::
-   |thingy53_sample_note|
-
 .. include:: /includes/tfm.txt
 
 Overview
@@ -140,11 +137,7 @@ User interface
         If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed **LEDs 2** to **LED 4** will light up to show that the board is halted.
 
       .. note::
-        :zephyr:board:`thingy53` supports only one RGB LED.
-        Each RGB LED channel is used as separate LED.
-
-      .. note::
-        :zephyr:board:`thingy53` and the :zephyr:board:`nrf52840dongle` do not support emergency data storage.
+        The :zephyr:board:`nrf52840dongle` does not support emergency data storage.
 
    .. group-tab:: nRF54 DKs
 

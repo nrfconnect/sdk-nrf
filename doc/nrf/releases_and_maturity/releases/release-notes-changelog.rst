@@ -337,7 +337,13 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-|no_changes_yet_note|
+* Removed support for the ``thingy53/nrf5340/cpuapp`` board target from the following samples:
+
+  * :ref:`bluetooth_mesh_light`
+  * :ref:`bluetooth_mesh_light_lc`
+  * :ref:`bluetooth_mesh_light_dim`
+  * :ref:`bluetooth_mesh_light_switch`
+  * :ref:`bluetooth_mesh_sensor_server`
 
 Bluetooth Fast Pair samples
 ---------------------------
