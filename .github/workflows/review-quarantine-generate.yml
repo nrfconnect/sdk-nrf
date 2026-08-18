@@ -38,22 +38,31 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install pyyaml west pathspec
 
-      # Compare base..head via GitHub API (works for fork PRs).
+      # Detect changed quarantine files via GitHub's REST API. This works for
+      # fork PRs and does not rely on local git history (the checkout is a
+      # shallow clone of the fork in the "nrf" subdirectory, so base_sha is not
+      # available for a local diff). The list is emitted as JSON and parsed with
+      # jq below to avoid separator/escaping pitfalls.
       - name: Detect changed quarantine YAML files (base vs PR)
         id: quarantine_changed_files
         uses: tj-actions/changed-files@9426d40962ed5378910ee2e21d5f8c6fcbf2dd96 # v47.0.6
         with:
-          base_sha: ${{ env.BASE_SHA }}
-          sha: ${{ env.HEAD_SHA }}
+          use_rest_api: true
+          token: ${{ secrets.GITHUB_TOKEN }}
           files: |
             scripts/quarantine*.yaml
-          separator: "\n"
+          json: true
+          escape_json: false
 
       - name: Compare only affected quarantine YAMLs (base vs PR)
         shell: bash
         id: compare_quarantine
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Pass the JSON file list through the environment (never interpolate
+          # action outputs directly into the script: it is unsafe and, with
+          # newline separators, bash line-continuation glues the paths together).
+          CHANGED_FILES_JSON: ${{ steps.quarantine_changed_files.outputs.all_modified_files }}
         run: |
           set -euo pipefail
           west init -l ./nrf
@@ -62,10 +71,10 @@ jobs:
           OUTDIR="quarantine-diff-results"
           mkdir -p "$OUTDIR" quarantine-base-files quarantine-pr-files
 
-          echo "Changed quarantine files count: ${{ steps.quarantine_changed_files.outputs.all_modified_files_count }}"
-          files="${{ steps.quarantine_changed_files.outputs.all_modified_files }}"
+          mapfile -t CHANGED_FILES < <(printf '%s' "$CHANGED_FILES_JSON" | jq -r '.[]')
+          echo "Changed quarantine files count: ${#CHANGED_FILES[@]}"
 
-          while IFS= read -r rel; do
+          for rel in "${CHANGED_FILES[@]}"; do
             [[ -z "$rel" ]] && continue
             echo "== Comparing affected quarantine file: $rel =="
             fname="${rel##*/}"
@@ -91,7 +100,7 @@ jobs:
 
             python3 nrf/scripts/compare_quarantine.py "$pr_file" "$base_file" \
               --outdir "$OUTDIR" --repo-root ./nrf
-          done <<< "$files"
+          done
 
       - name: Prepare comment body
         working-directory: nrf
