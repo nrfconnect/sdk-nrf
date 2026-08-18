@@ -16,3 +16,9 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39378"
+
+- scenarios:
+    - unity.dect_integration_test
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40858"
