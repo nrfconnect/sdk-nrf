@@ -14,6 +14,7 @@ if(CONFIG_NRF71_RAW_DATA_TX OR CONFIG_NRF71_PROMISC_DATA_RX)
 endif()
 
 target_sources_ifdef(CONFIG_NRF70_RAW_DATA_TX app PRIVATE src/wifi_raw_tx_pkt_shell.c)
+target_sources_ifdef(CONFIG_NRF71_RAW_DATA_TX app PRIVATE src/wifi_raw_tx_pkt_shell.c)
 
 target_sources_ifdef(CONFIG_NRF70_PROMISC_DATA_RX app PRIVATE src/wifi_promiscuous_shell.c)
 target_sources_ifdef(CONFIG_NRF71_PROMISC_DATA_RX app PRIVATE src/wifi_promiscuous_shell.c)
