@@ -40,4 +40,12 @@ config EVENT_MANAGER_PROXY_SEND_RETRIES
 	help
 	  Number of retries if an error occurs when transmitting event to the core.
 
+config EVENT_MANAGER_PROXY_RX_BUFFER_SLOT_COUNT
+	int "Number of RX buffers"
+	default 32
+	help
+	  It is used by IPC service backend that supports RX buffer hold functionality.
+	  Number of slots used to hold RX IPC buffers. If all slots are used then
+	  new events are copied into a buffer allocated from the heap.
+
 endif # EVENT_MANAGER_PROXY
