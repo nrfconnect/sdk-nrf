@@ -483,7 +483,12 @@ Testing STA mode
 Testing SAP mode
 ================
 
-To test the SAP mode, the sample must be built using the configuration overlay :file:`overlay-sap.conf` file.
+To test the SAP mode, build the sample using the ``wifi-sap`` snippet.
+The following is an example of the CLI command:
+
+.. code-block:: console
+
+   west build -b nrf7002dk/nrf5340/cpuapp -S wifi-sap
 
 |test_sample|
 
