@@ -328,6 +328,25 @@ void bl_boot(const struct fw_info *fw_info)
 		return;
 	}
 
+#if defined(CONFIG_SB_DISABLE_NEXT_W)
+	/* Disable write to the next stage. Note that fw_info->address
+	 * holds value of where image starts, as a binary.
+	 * This matches Sx_IMAGE_ADDRESS for Partition Manager
+	 * the header is separated to PAD partition; the Sx_IMAGE_ADDRESS
+	 * is the same for PM and DTS partitions, assuming same layout,
+	 * but fw_info->address is not.
+	 * non-PM configuration the Sx_IMAGE_ADDRESS is address of
+	 * an MCUboot header (or other header if added), and as we only protect
+	 * binary we have to skip this over; in case of PM the address is
+	 * past the PAD, which serves as MCUboot header, and points directly
+	 * to executable section we want to protect.
+	 */
+	if (disable_next_w(fw_info->address + RWX_SKIP_SIZE)) {
+		printk("Unable to disable writes on next stage");
+		return;
+	}
+#endif
+
 	uninit_used_peripherals();
 
 	/* Allow any pending interrupts to be recognized */
@@ -364,25 +383,6 @@ void bl_boot(const struct fw_info *fw_info)
 
 	VTOR = fw_info->boot_address;
 	uint32_t *vector_table = (uint32_t *)fw_info->boot_address;
-
-#if defined(CONFIG_SB_DISABLE_NEXT_W)
-	/* Disable write to the next stage. Note that fw_info->address
-	 * holds value of where image starts, as a binary.
-	 * This matches Sx_IMAGE_ADDRESS for Partition Manager
-	 * the header is separated to PAD partition; the Sx_IMAGE_ADDRESS
-	 * is the same for PM and DTS partitions, assuming same layout,
-	 * but fw_info->address is not.
-	 * non-PM configuration the Sx_IMAGE_ADDRESS is address of
-	 * an MCUboot header (or other header if added), and as we only protect
-	 * binary we have to skip this over; in case of PM the address is
-	 * past the PAD, which serves as MCUboot header, and points directly
-	 * to executable section we want to protect.
-	 */
-	if (disable_next_w(fw_info->address + RWX_SKIP_SIZE)) {
-		printk("Unable to disable writes on next stage");
-		return;
-	}
-#endif
 
 #if defined(CONFIG_BUILTIN_STACK_GUARD) && \
     defined(CONFIG_CPU_CORTEX_M_HAS_SPLIM)
