@@ -121,7 +121,7 @@ Developing with PMICs
 Developing with Front-End Modules
 =================================
 
-|no_changes_yet_note|
+* Removed support for the nRF2220 Front-End Module (FEM).
 
 Developing with custom boards
 =============================

@@ -17,7 +17,7 @@ if(CONFIG_FEM_AL_LIB)
     ${CMAKE_CURRENT_SOURCE_DIR}/generic_fem.c
   )
 
-  if(CONFIG_MPSL_FEM_NRF2220 OR CONFIG_MPSL_FEM_NRF2240)
+  if(CONFIG_MPSL_FEM_NRF2240)
     target_sources(app PRIVATE ${CMAKE_CURRENT_SOURCE_DIR}/nrf22xx.c)
   endif()
 endif() # CONFIG_FEM_AL_LIB
