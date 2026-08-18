@@ -21,6 +21,8 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
   sample.cellular.at_client.tracing:
     sysbuild: true
     build_only: true
@@ -42,3 +44,51 @@ tests:
       - ci_samples_cellular
     extra_args:
       - at_client_SNIPPET=nrf91-modem-trace-uart
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+  sample.cellular.at_client.legacy:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+  sample.cellular.at_client.tracing.legacy:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+    platform_allow:
+      - nrf9151dk/nrf9151/ns
+      - nrf9160dk/nrf9160/ns
+      - nrf9161dk/nrf9161/ns
+      - thingy91/nrf9160/ns
+      - thingy91x/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    extra_args:
+      - at_client_SNIPPET=nrf91-modem-trace-uart
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
