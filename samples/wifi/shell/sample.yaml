@@ -469,7 +469,7 @@ tests:
   sample.nrf7002.ap:
     sysbuild: true
     build_only: true
-    extra_args: EXTRA_CONF_FILE=overlay-sap.conf
+    extra_args: shell_SNIPPET=wifi-sap
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
@@ -556,6 +556,20 @@ tests:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_nrf71_wifi
+  sample.nrf7120.shell.ap:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=n
+      - shell_SNIPPET=wifi-sap
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
     tags:
       - ci_build
       - sysbuild
