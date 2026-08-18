@@ -11,6 +11,7 @@ Use the Bluetooth® LE connection parameters module for the following purposes:
 
 * Update the connection parameters after the peripheral discovery.
 * React on connection parameter update requests from the connected peripherals.
+* Scale the minimum HID SCI connection interval when multiple HID SCI peripherals are connected to the dongle.
 * Reduce power consumption while USB is suspended by increasing the Bluetooth connection interval for non-HID SCI connections, or by switching HID SCI connections to the LOW_POWER mode.
 
 Module Events
@@ -107,6 +108,10 @@ For HID SCI connections, the module does not perform the standard connection par
 Instead, it controls the connection parameters by requesting appropriate HID SCI modes from the peripheral, as required by the `HID Over GATT Profile Specification`_.
 For details, see the :ref:`nrf_desktop_ble_conn_params_connection_interval_update` section.
 
+When more than one HID SCI peripheral are connected, the module scales the minimum connection interval by the number of connected HID SCI peripherals (N × single-peripheral minimum interval).
+For example, if a single peripheral uses a minimum interval of 750 µs, two connected peripherals will use a minimum interval of 1500 µs for each connection.
+This is to ensure predictable HID report latencies by proper scheduling of Bluetooth LE connection events.
+
 For USB suspend and resume behavior, see :ref:`nrf_desktop_ble_conn_params_usb_managed_ci_hid_sci`.
 
 LLPM connections
@@ -124,8 +129,10 @@ Connection interval update
 
 After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, the |ble_conn_params| updates the connection parameters in the following manner:
 
-* If the peripheral supports HID SCI, the parameter update is skipped and HID SCI FAST mode is requested as soon as the peripheral discovery completes.
+* If the peripheral supports HID SCI and it is the only connected HID SCI peripheral, the standard parameter update is skipped and HID SCI FAST mode is requested as soon as the peripheral discovery completes.
   When the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` Kconfig option is enabled and USB is suspended, HID SCI LOW_POWER mode is requested instead.
+* If the peripheral supports HID SCI and other HID SCI peripherals are already connected, the module scales the minimum connection interval for each peripheral by the number of connected HID SCI peripherals.
+  The module requests the preferred HID SCI mode from a peripheral after its connection rate update completes.
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 
