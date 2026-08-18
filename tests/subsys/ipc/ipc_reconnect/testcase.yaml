@@ -30,36 +30,10 @@ common:
       - "Message 2 received"
 
 tests:
-  subsys.ipc.ipc_reconnect.app_rad.icmsg:
+  subsys.ipc.ipc_reconnect.icmsg:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-    extra_args:
-      - FILE_SUFFIX=icmsg
-
-  subsys.ipc.ipc_reconnect.app_rad.icbmsg:
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
-
-  subsys.ipc.ipc_reconnect.app_flpr.icmsg:
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54lm20dk/nrf54lm20a/cpuapp
-      - nrf54lm20dk/nrf54lm20b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lc10dk/nrf54lc10a/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
-    extra_args:
-      - ipc_reconnect_SNIPPET=nordic-flpr
-
-  subsys.ipc.ipc_reconnect.app_flpr.icbmsg:
-    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
@@ -68,7 +42,12 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
-      - ipc_reconnect_SNIPPET=nordic-flpr
-      - FILE_SUFFIX=icbmsg
+      - ipc_reconnect_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - platform:nrf54l:ipc_reconnect_SNIPPET=nordic-flpr
+      - platform:nrf9251:ipc_reconnect_SNIPPET=nordic-ppr
