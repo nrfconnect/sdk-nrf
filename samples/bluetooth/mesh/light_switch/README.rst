@@ -27,9 +27,6 @@ For provisioning and configuring of the mesh model instances, the sample require
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
 
-.. note::
-   |thingy53_sample_note|
-
 .. include:: /includes/tfm.txt
 
 Low Power node requirements
@@ -85,10 +82,6 @@ The following table shows the mesh light switch composition data for this sample
    Health Server
    Gen. OnOff Client
    =================  =================  =================  =================
-
-.. note::
-   When used with :zephyr:board:`thingy53`, Elements 3 and 4 are not available.
-   :zephyr:board:`thingy53` supports only two buttons.
 
 The models are used for the following purposes:
 
@@ -186,10 +179,6 @@ Buttons:
 LEDs:
    During the provisioning process, on board LEDs are used to output the OOB actions.
    Once the provisioning and configuration are completed, the LEDs are used to reflect the status of actions, and they show the last known OnOff state of the corresponding button.
-
-.. note::
-   :zephyr:board:`thingy53` supports only one RGB LED.
-   Each RGB LED channel is used as separate LED.
 
 The LPN assignments
 ===================

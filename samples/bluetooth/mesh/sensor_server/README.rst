@@ -28,9 +28,6 @@ For provisioning and configuring of the mesh model instances, the sample require
 * `nRF Mesh mobile app for Android`_
 * `nRF Mesh mobile app for iOS`_
 
-.. note::
-   |thingy53_sample_note|
-
 Additionally, the sample requires the :ref:`bluetooth_mesh_sensor_client` sample application.
 The application needs to be programmed on a separate device, and configured according to the sensor observer sample's :ref:`testing guide <bluetooth_mesh_sensor_server_testing>`.
 
@@ -76,12 +73,7 @@ The following Bluetooth Mesh sensor types, and their settings, are used in this 
 .. note::
    These values can be requested through shell commands by the :ref:`bluetooth_mesh_sensor_client`.
 
-Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used for the nRF52 series, and the ``BME680`` temperature sensor for Thingy:53.
-
-.. note::
-  When running this sample on Thingy:53, some functionality will not be available as the device only has two buttons.
-  The two buttons on Thingy:53 will be used for the ambient light sensor and presence detected sensor functionality as described for **Button 1** and **Button 2** in this documentation.
-  **Button 2** can be accessed by removing the top part of the casing.
+Moreover, the on-chip ``TEMP_NRF5`` temperature sensor is used.
 
 Provisioning
 ============
@@ -117,7 +109,7 @@ The models are used for the following purposes:
 * Sensor Setup Server instances are used for configuration of the corresponding Sensor Server instances.
 
 The model handling is implemented in :file:`src/model_handler.c`.
-It uses the TEMP_NRF5 or BME680 temperature sensor depending on the platform.
+It uses the ``TEMP_NRF5`` temperature sensor.
 
 The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the `nRF52832 Temperature Sensor Electrical Specification`_.
 The descriptor also specifies the temperature sensor's sampling type, which is :c:var:`BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS`.
