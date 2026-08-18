@@ -12,6 +12,17 @@
 /* bitlen(q - 1). */
 #define ML_KEM_POLY_COEFF_BITS 12
 
+/** Division by q, expressed as a multiplication by ceil(2^33 / q) followed by a
+ *  shift, inspired by way mlkem-native implementation for Compress_d, where
+ *  d = 11 (which is the maximum possible value).
+ *
+ *  A hardware divide instruction is not used on purpose: UDIV on Cortex-M33
+ *  terminates early, so this might violate constant time execution requirement.
+ */
+#define ML_KEM_Q_RECIPROCAL	  2580335u /* round(2^33 / ML_KEM_PRIME_NUM) */
+#define ML_KEM_Q_RECIPROCAL_SHIFT 33
+#define ML_KEM_HALF_PRIMENUM	  1664 /* ML_KEM_PRIME_NUM / 2 */
+
 /* Maps a coefficient in (-q, q) to its representative in [0, q). */
 static uint16_t to_positive(int16_t coeff)
 {
@@ -21,9 +32,11 @@ static uint16_t to_positive(int16_t coeff)
 /* Compress_d: round(2^d / q * x) mod 2^d, round to the nearest integer. */
 static uint32_t compress(int16_t coeff, uint8_t d)
 {
-	uint32_t x = to_positive(coeff);
+	uint64_t numerator = ((uint64_t)to_positive(coeff) << d) + ML_KEM_HALF_PRIMENUM;
+	uint32_t quotient =
+		(uint32_t)((numerator * ML_KEM_Q_RECIPROCAL) >> ML_KEM_Q_RECIPROCAL_SHIFT);
 
-	return (((x << d) + ML_KEM_PRIME_NUM / 2) / ML_KEM_PRIME_NUM) & ((1u << d) - 1u);
+	return quotient & ((1u << d) - 1u);
 }
 
 /* Decompress_d: round(q / 2^d * y), round to the nearest integer. */
