@@ -26,7 +26,6 @@ static struct event_type *_emp_event_type_pointer_size_check
 extern struct event_type *event_manager_proxy_array[];
 extern struct event_type *_event_manager_proxy_array_list_end[];
 
-
 /** @brief Command codes used by the proxy. */
 enum emp_cmd_code {
 	EMP_CMD_SUBSCRIBE,
@@ -61,6 +60,10 @@ struct emp_ipc_data {
 	const struct event_type **event_type_map;
 };
 
+struct remote_event {
+	void *event;
+	struct emp_ipc_data *ipc;
+};
 
 /** @brief True if proxy was started. */
 static bool emp_started;
@@ -71,6 +74,82 @@ static K_EVENT_DEFINE(emp_all_remotes_started);
 /** @brief IPC communication data. One entry per connected core. */
 static struct emp_ipc_data emp_ipc_data[CONFIG_EVENT_MANAGER_PROXY_CH_COUNT];
 
+static struct remote_event remote_events[16];
+static bool ipc_rx_hold_supported = true;
+static struct k_spinlock lock;
+
+/* IPC service may support buffer hold functionality. In that case we don't need to allocate a
+ * heap buffer. IPC buffer is hold and message pointer is kept in the array of remote_events.
+ * When message is freed, IPC buffer is released if it was used by the message.
+ */
+static int store_remote_event(struct emp_ipc_data *ipc, void *event)
+{
+	int ret = 0;
+
+	if (!ipc_rx_hold_supported) {
+		return -ENOTSUP;
+	}
+
+	if (ARRAY_SIZE(remote_events) == 0) {
+		return -ENOMEM;
+	}
+
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	for (size_t i = 0; i < ARRAY_SIZE(remote_events); ++i) {
+		if (remote_events[i].event == NULL) {
+			ret = ipc_service_hold_rx_buffer(&ipc->ept, event);
+			if (ret < 0) {
+				ipc_rx_hold_supported = false;
+				ret = -ENOTSUP;
+			} else {
+				remote_events[i].event = event;
+				remote_events[i].ipc = ipc;
+			}
+			break;
+		}
+	}
+	k_spin_unlock(&lock, key);
+	return ret;
+}
+
+/* Release IPC buffer is if was used to store the message. */
+static int release_remote_event(void *event)
+{
+	int ret = -ENOENT;
+
+	if (!ipc_rx_hold_supported) {
+		return -ENOTSUP;
+	}
+
+	k_spinlock_key_t key = k_spin_lock(&lock);
+
+	for (size_t i = 0; i < ARRAY_SIZE(remote_events); ++i) {
+		if (remote_events[i].event == event) {
+			ret = ipc_service_release_rx_buffer(&remote_events[i].ipc->ept, event);
+			if (ret < 0) {
+				ret = -ENOTSUP;
+			} else {
+				remote_events[i].event = NULL;
+				remote_events[i].ipc = NULL;
+				ret = 0;
+			}
+			break;
+		}
+	}
+	k_spin_unlock(&lock, key);
+	return ret;
+}
+
+/* Implement custom free function to be able to utilize IPC RX buffer hold functionality. */
+void app_event_manager_free(void *addr)
+{
+	int ret = release_remote_event(addr);
+
+	if (ret < 0) {
+		k_free(addr);
+	}
+}
 
 /**
  * @brief Find IPC structure by the given instance.
@@ -153,9 +232,17 @@ static void handle_ipc_endpoint_bound(void *priv)
 
 static void handle_remote_event(struct emp_ipc_data *ipc, const void *data, size_t len)
 {
-	void *event = app_event_manager_alloc(len);
+	int ret = store_remote_event(ipc, (void *)data);
+	void *event;
 
-	memcpy(event, data, len);
+	if (ret == 0) {
+		/* IPC buffer is hold so no need to allocate a heap buffer. */
+		event = (void *)data;
+	} else {
+		event = app_event_manager_alloc(len);
+		memcpy(event, data, len);
+	}
+
 	_event_submit(event);
 }
 
