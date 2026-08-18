@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&uart133 {
+	status = "disabled";
+};
+
+&led0 {
+	/*
+	 * nrf9251 pulls GPIOs up during bootup, to adapt
+	 * to measurement methods, logic is inverted
+	 */
+	gpios = <&gpio2 2 GPIO_ACTIVE_HIGH>;
+};
+
+&led1 {
+	/* Move to other GPIO. */
+	gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
+};
+
+&led3 {
+	/* Move to other GPIO. */
+	gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+};
+
+/ {
+	aliases {
+		led2 = &led2;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		/* Hack: Same as led_3. */
+		led2: led_2 {
+			gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom pin";
+		};
+	};
+};
