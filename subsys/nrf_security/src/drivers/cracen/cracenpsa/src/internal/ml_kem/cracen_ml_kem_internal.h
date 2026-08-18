@@ -18,6 +18,18 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/** The constant-time properties of this implementation are claimed for Cortex-M33 only.
+ *
+ *  - On Cortex-M33 MUL, MLA and UMULL are fixed latency, which is what lets the Montgomery and
+ *    Barrett reductions and the reciprocal of Compress_d (see cracen_ml_kem_packing.c)
+ *    run in constant time.
+ *  - Division operations (UDIV and SDIV) terminate early on all Cortex-M cores that
+ *    implement them, so these are omitted.
+ */
+#ifndef CONFIG_CPU_CORTEX_M33
+#error "ML-KEM is currently supported on Cortex-M33 devices only."
+#endif
+
 /* FIPS 203, Section 4, global parameters (shared by all parameter sets). */
 
 /* n: the number of coefficients in a polynomial vector */
