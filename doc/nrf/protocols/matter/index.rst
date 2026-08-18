@@ -10,4 +10,7 @@ It supports a wide range of existing technologies, including Wi-Fi®, Thread, an
 To learn more about the solution, see the `Matter Add-on`_ documentation.
 For source code, refer to the `ncs-matter add-on repository`_.
 
+In |NCS| v3.4.0 and earlier, Matter support is integrated in the SDK.
+In later |NCS| releases, Matter 1.6 support and Matter samples are available through the `Matter Add-on`_.
+
 See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.

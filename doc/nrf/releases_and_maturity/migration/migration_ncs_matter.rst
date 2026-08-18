@@ -7,8 +7,8 @@ Migrating Matter projects from sdk-nrf to Matter add-on
    :local:
    :depth: 3
 
-Starting with |NCS| v3.5.0, all Matter samples, shared sample code, board partition devicetree files, and Matter-specific snippets are maintained in the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``) instead of the ``sdk-nrf`` repository.
-The Matter reference applications and their supporting assets are moved to the add-on.
+The |NCS| v3.4.0 was the last major release with Matter samples, shared sample code, board partition devicetree files, and Matter-specific snippets integrated in the ``sdk-nrf`` repository.
+In later releases, the Matter reference applications and their supporting assets are maintained in the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``).
 
 This guide describes the changes required when migrating a Matter project that was based on paths under ``sdk-nrf`` to the ``ncs-matter`` add-on structure.
 It covers workspace setup, repository layout, build system updates, Kconfig symbol renames, devicetree and snippet changes, and documentation references.
