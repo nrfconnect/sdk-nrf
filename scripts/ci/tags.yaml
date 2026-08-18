@@ -167,6 +167,7 @@ ci_samples_wifi:
     - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_security/
     - nrfxlib/nrf_wifi/
+    - zephyr/boards/shields/nrf7002*
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
     - zephyr/modules/nrf_wifi/
