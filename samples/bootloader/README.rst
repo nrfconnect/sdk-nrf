@@ -89,15 +89,20 @@ For information how to erase the entire flash memory when flashing, see :ref:`pr
 Flash memory layout
 ===================
 
-The flash memory layout is defined by the :file:`samples/bootloader/pm.yml` file, which establishes four main partitions:
+.. include:: ../../doc/nrf/includes/pm_deprecation.txt
 
-* *B0* - The NSIB image.
-* *Provision* - The provisioned data.
-* *S0* - Slot 0.
-* *S1* - Slot 1.
+Flash memory layout for |NSIB| is defined in devicetree.
+Partition nodes are placed under the non-volatile memory device for the sysbuild image (for example ``&flash0`` or ``&cpuapp_rram``).
+See :ref:`bootloader_partitioning` for overlay placement, inspection in :file:`zephyr.dts`, and migration from Partition Manager.
 
-The default location for placing the next image in the boot chain is *S0*.
-This would result, for example, in a flash memory layout like the following, when using the ``nrf52840dk/nrf52840`` board target:
+The |NSIB|-specific devicetree node labels are:
+
+* ``b0_partition`` — |NSIB| image
+* ``bl_storage`` and ``provision_partition`` — provisioning data
+* ``s0_partition`` and ``s1_partition`` — redundant slots for the next stage in the boot chain (application or upgradable MCUboot)
+
+The default location for the next image in the boot chain is ``s0_partition``.
+When using the ``nrf52840dk/nrf52840`` board target, a typical layout looks like the following:
 
 .. figure:: ../../doc/nrf/images/b0_flash_layout.svg
    :alt: B0 flash memory layout
@@ -105,17 +110,20 @@ This would result, for example, in a flash memory layout like the following, whe
    B0 flash memory layout
 
 .. note::
-   When the *Provision* area is in the OTP region, it will not appear in the flash memory layout.
+   When provisioning data is stored in the OTP region, it will not appear in the internal flash layout figure.
    See :ref:`bootloader_provisioning_otp` for more information.
+
+This sample's Twister builds use :file:`app_test.overlay` or :file:`app_test_nrf52.overlay` to alias board default partition nodes to the |NSIB| labels (for example ``b0_partition: &boot_partition``).
+Projects that include |NSIB| through sysbuild define the full map in board or sysbuild overlays; see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
 .. _bootloader_pre_signed_variants:
 
 Pre-signed variants
 -------------------
 
-When two slots are present, two images must be built.
-One that is executable from slot 0, and the other one from slot 1.
-Building the image for slot 1 is done by enabling the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE` option.
+When two slots are present, two images must be built: one linked for ``s0_partition`` and one for ``s1_partition``.
+The image for slot 1 is built when :kconfig:option:`SB_CONFIG_SECURE_BOOT_BUILD_S1_VARIANT_IMAGE` is enabled; define ``s1_partition`` in devicetree when that variant is used.
+See :ref:`bootloader_partitioning` and :ref:`app_build_output_files` for sysbuild output names.
 
 When the image for the next stage in the boot chain is upgraded, the new image is written to the slot with the oldest image version.
 See :ref:`bootloader_monotonic_counter` for more information about versioning.
@@ -176,7 +184,6 @@ Dependencies
 
 The following |NCS| libraries are used:
 
-* :ref:`partition_manager`
 * :ref:`doc_fw_info`
 * :ref:`fprotect_readme`
 * :ref:`doc_bl_crypto`
