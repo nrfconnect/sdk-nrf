@@ -9,12 +9,12 @@
 
 #define DT_DRV_COMPAT nordic_nrf92_hfxo
 
-#include "clock_control_nrf2_common.h"
+#include "clock_control_nrf_common.h"
 #include <zephyr/devicetree.h>
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(clock_control_nrf2, CONFIG_CLOCK_CONTROL_LOG_LEVEL);
+LOG_MODULE_REGISTER(clock_control_nrf92_hfxo, CONFIG_CLOCK_CONTROL_LOG_LEVEL);
 
 #include <soc_lrcconf.h>
 #include <hal/nrf_bicr.h>
