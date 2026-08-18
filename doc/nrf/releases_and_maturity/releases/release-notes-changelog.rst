@@ -892,3 +892,9 @@ Documentation
      To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
   * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
   * The page for each sample now contains an `Open in VS Code` button allowing to quickly open the sample and install required version of the |NCS| toolchain.
+
+* Updated:
+
+  * The :ref:`thingy53_app_guide` page by removing the Bluetooth Mesh samples from the list of samples that enable FOTA for Thingy:53 by default.
+  * The :ref:`dfu_over_ble` page by removing the section about out-of-the-box point-to-point DFU over Bluetooth Low Energy on Thingy:53.
+  * The :ref:`ug_bt_mesh_configuring` page by removing Thingy:53 as an example of a board with the Bluetooth LE Controller on a separate image.
