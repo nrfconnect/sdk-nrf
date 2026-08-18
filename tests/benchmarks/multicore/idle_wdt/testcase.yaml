@@ -106,3 +106,51 @@ tests:
       - nrf54h20dk/nrf54h20/cpurad
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpurad
+
+  # cpuapp - idle_wdt test (idle_retained)
+  # cpuppr - remote_sleep_forever (hibernate)
+  benchmarks.multicore.idle_wdt.nrf9251dk_cpuapp_cpuppr.idle_retained:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_wdt_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_wdt_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  # cpuapp - idle_wdt test (idle)
+  # cpuppr - remote_sleep_forever (hibernate)
+  benchmarks.multicore.idle_wdt.nrf9251dk_cpuapp_cpuppr.idle:
+    tags: ppk_power_measure
+    extra_args:
+      - idle_wdt_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_wdt_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  # cpuapp - idle_wdt test (s2ram)
+  # cpuppr - remote_sleep_forever (hibernate)
+  benchmarks.multicore.idle_wdt.nrf9251dk_cpuapp_cpuppr.s2ram:
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_wdt_and_s2ram"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp

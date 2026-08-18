@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led0;
+		watchdog0 = &wdt010;
+	};
+};
+
+&wdt010 {
+	status = "okay";
+};
+
+&led1 {
+	/* Move to other GPIO. */
+	gpios = <&gpio2 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
