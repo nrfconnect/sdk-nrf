@@ -695,8 +695,6 @@
 .. _`Using nRF7002 EB with the Nordic Thingy:53`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/use_thingy53.html
 .. _`nRF7002 EB castellated edge holes`: https://docs.nordicsemi.com/bundle/ug_nrf7002_eb/page/UG/nrf7002_EB/castellated_mounting_holes.html
 .. _`nRF7002 companion IC`: https://docs.nordicsemi.com/bundle/ug_nrf7002_ek/page/UG/nrf7002_EK/hw_wifi_companion_ic.html
-.. _`Antenna gain compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/antenna_compensation.html
-.. _`Band edge compensation`: https://docs.nordicsemi.com/bundle/nan_046/page/APP/nan_046/band_compensation.html
 .. _`overlay-iot-devices.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-iot-devices.conf
 .. _`overlay-memory-optimized.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-memory-optimized.conf
 .. _`overlay-high-performance.conf`: https://github.com/nrfconnect/sdk-nrf/blob/main/samples/wifi/throughput/overlay-high-performance.conf
