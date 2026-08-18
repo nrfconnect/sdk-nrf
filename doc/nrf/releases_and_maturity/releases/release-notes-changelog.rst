@@ -1589,6 +1589,12 @@ Other libraries
 
   * Added UUID support for the nRF54L Series and the nRF5340 SoC.
 
+* :ref:`event_manager_proxy` library:
+
+  * Added support for the IPC service RX buffer holding.
+    If the IPC service backend supports it, the library now holds the received IPC buffer instead of allocating a heap buffer and copying the event into it.
+    This avoids the overhead of memory allocation and copying, and enables the IPC flow control, because the sending core stops sending new events when the receiving core does not release the held buffers on time.
+
 * :ref:`lib_date_time` library:
 
   * Updated the library to resolve the NTP servers only for the address families that the Connection Manager reports as ready.

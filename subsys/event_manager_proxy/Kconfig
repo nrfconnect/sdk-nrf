@@ -40,4 +40,16 @@ config EVENT_MANAGER_PROXY_SEND_RETRIES
 	help
 	  Number of retries if an error occurs when transmitting event to the core.
 
+config EVENT_MANAGER_PROXY_REMOTE_EVENTS_COUNT
+	int "Number of remote events that can be held at the same time"
+	default 16
+	help
+	  Number of remote events to be supported which can be held at the same time. It is using
+	  the IPC service RX buffer holding feature. If number of pending events is greater than
+	  this value, then incoming events are copied into the heap which is slower.
+	  Set to 0 to disable the feature and use the heap instead.
+
+	  When enabled, the event manager proxy implements app_event_manager_free so user cannot
+	  implement custom free function.
+
 endif # EVENT_MANAGER_PROXY

@@ -30,6 +30,9 @@ You can also set the following Kconfig options when working with Event Manager P
   This option is related to the number of cores between which the events are exchanged.
   For example, having two cores means that there is one exchange taking place, and so you need one IPC instance.
 * :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_BIND_TIMEOUT_MS` - This Kconfig sets the timeout value while waiting for the endpoint to bind.
+* :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_REMOTE_EVENTS_COUNT` - This Kconfig sets the number of remote events that the event manager proxy can hold at the same time.
+  It is using the IPC service RX buffer holding feature to reuse the IPC buffer for the event instead of allocating a heap buffer and copying the event.
+  When enabled, the event manager proxy implements the ``app_event_manager_free`` function, so you cannot implement a custom one.
 
 Implementing the proxy
 ======================
@@ -145,6 +148,11 @@ Passing the event from the remote core
 Once the remote and local core started Event Manager Proxy by calling the :c:func:`event_manager_proxy_start` function, every piece of incoming data is treated as a single event.
 A new event is allocated by :c:func:`event_manager_alloc` function and the event is submitted to the event queue by the :c:func:`_event_submit` function.
 From that moment, the event is treated similarly as any other locally generated event.
+
+If you set the :kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_REMOTE_EVENTS_COUNT` option to a value greater than 0 and IPC service supports RX buffer holding feature, the event manager proxy uses the IPC service RX buffer holding feature to reuse the IPC buffer for the event instead of allocating a heap buffer and copying the event.
+This approach is faster and reduces the heap usage but it might affect the IPC communication if many remote events are not released for a long time.
+:kconfig:option:`CONFIG_EVENT_MANAGER_PROXY_REMOTE_EVENTS_COUNT` specifies how many events can be held at once.
+If the number of active remote events exceeds the value of this option, the event manager proxy copies the event to the heap.
 
 .. note::
    If any of the shared events between the cores provide any kind of memory pointer, the pointed memory must be available for the target core if the core is to access the shared events.
