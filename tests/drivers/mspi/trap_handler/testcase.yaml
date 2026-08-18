@@ -27,6 +27,11 @@ tests:
       - hpf_mspi_CONFIG_ASSERT_TEST=y
       - hpf_mspi_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/drivers/mspi/trap_handler/boards/nrf54l15dk_nrf54l15_cpuflpr_memory.overlay"
   drivers.mspi.hpf_trap_handler.lm20:
+    harness_config:
+      fixture: external_flash
+      type: one_line
+      regex:
+        - ">>> HPF APP FATAL ERROR"
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
