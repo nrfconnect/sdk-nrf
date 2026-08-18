@@ -5,8 +5,12 @@
  */
 
 ipc0: &cpuapp_cpuflpr_ipc {
-	status = "okay";
+	compatible = "zephyr,ipc-icmsg";
 	unbound = "enable";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
+	dcache-alignment = <32>;
+	status = "okay";
 };
 
 &cpuapp_bellboard {
