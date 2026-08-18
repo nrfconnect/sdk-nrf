@@ -507,7 +507,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
+      - shell_SNIPPET=wifi-promiscuous-mode
       - SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
@@ -520,7 +520,7 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - EXTRA_CONF_FILE=overlay-promiscuous-mode.conf
+      - shell_SNIPPET=wifi-promiscuous-mode
       - SB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES=y
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp/nrf7001
@@ -580,6 +580,20 @@ tests:
     extra_args:
       - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=wifi-monitor-mode
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_nrf71_wifi
+  sample.nrf7120.shell.promiscuous:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_WIFI_NRF70=n
+      - shell_SNIPPET=wifi-promiscuous-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
