@@ -148,8 +148,8 @@ You can calculate the TX power by using the following formula:
 where the following parameters are used:
 
 * :math:`P_\text{reg}` is the applicable regulatory power limit, as described in :ref:`ug_nrf70_developing_regulatory_support`.
-* ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in `Antenna gain compensation`_.
-* ``EdgeBackoff`` is the backoff applied to band edge channels, as described in `Band edge compensation`_.
+* ``AntGain`` is the compensation for the antenna gain in the TX direction, as described in :ref:`ug_wifi_antenna_gain_compensation`.
+* ``EdgeBackoff`` is the backoff applied to band edge channels, as described in :ref:`ug_wifi_band_edge_compensation`.
 * :math:`P_\text{max} = min (P_\text{ps} , P_\text{max-tx-pwr})`
 * :math:`P_\text{ps}`  is the maximum power level for the package type, modulation, and band as described in `Electrical specification for nRF7002`_.
 * :math:`P_\text{max-tx-pwr}` is the sub-band power limit, dependent on the PCB design.
