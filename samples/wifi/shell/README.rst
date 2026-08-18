@@ -53,12 +53,12 @@ The following is an example of the CLI command:
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
-To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target and raw TX overlay configuration.
+To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target and the ``wifi-raw-tx`` snippet.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-raw-tx.conf
+   west build -b nrf7002dk/nrf5340/cpuapp -S wifi-raw-tx -- -DSB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES=y
 
 .. tabs::
 
