@@ -392,6 +392,10 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 	size_t processed = 0;
 	size_t counter_size = CCM_Q_LEN_FROM_NONCE(operation->nonce_length);
 
+	if (output_size < input_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
 	operation->ad_finished = true;
 	status = initialize_cbc_mac(operation, &cipher);
 	if (status != PSA_SUCCESS) {
@@ -458,6 +462,12 @@ psa_status_t cracen_sw_aes_ccm_finish(cracen_aead_operation_t *operation, uint8_
 {
 	struct sxblkcipher cipher;
 	psa_status_t status;
+
+	*ciphertext_length = 0;
+
+	if (tag_size < operation->tag_size) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
 
 	status = initialize_cbc_mac(operation, &cipher);
 	if (status != PSA_SUCCESS) {
