@@ -11,6 +11,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54l:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
     harness: console
     harness_config:
       type: multi_line
@@ -33,6 +35,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54l_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
       - icmsg_CONFIG_MULTITHREADING=n
       - icmsg_CONFIG_LOG_MODE_MINIMAL=y
       - remote_CONFIG_MULTITHREADING=n
@@ -59,6 +63,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54l_remote_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
       - remote_CONFIG_MULTITHREADING=n
       - remote_CONFIG_LOG_MODE_MINIMAL=y
     harness: console
@@ -83,10 +89,6 @@ tests:
   nrf.extended.sample.ipc.icbmsg.nrf54l:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
-      - icmsg_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - icmsg_FILE_SUFFIX=icbmsg
-      - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - remote_FILE_SUFFIX=icbmsg
     harness: console
     harness_config:
       type: multi_line
@@ -109,12 +111,8 @@ tests:
   nrf.extended.sample.ipc.icbmsg.nrf54l_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
-      - icmsg_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - icmsg_FILE_SUFFIX=icbmsg
       - icmsg_CONFIG_MULTITHREADING=n
       - icmsg_CONFIG_LOG_MODE_MINIMAL=y
-      - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - remote_FILE_SUFFIX=icbmsg
       - remote_CONFIG_MULTITHREADING=n
       - remote_CONFIG_LOG_MODE_MINIMAL=y
     harness: console
@@ -139,10 +137,6 @@ tests:
   nrf.extended.sample.ipc.icbmsg.nrf54l_remote_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-flpr
-      - icmsg_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - icmsg_FILE_SUFFIX=icbmsg
-      - remote_CONFIG_IPC_SERVICE_BACKEND_ICBMSG_NUM_EP=1
-      - remote_FILE_SUFFIX=icbmsg
       - remote_CONFIG_MULTITHREADING=n
       - remote_CONFIG_LOG_MODE_MINIMAL=y
     harness: console
@@ -167,6 +161,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54h_nrf92:
     extra_args:
       - icmsg_SNIPPET=nordic-ppr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
     harness: console
     harness_config:
       type: multi_line
@@ -187,6 +183,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-ppr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
       - icmsg_CONFIG_MULTITHREADING=n
       - icmsg_CONFIG_LOG_MODE_MINIMAL=y
       - remote_CONFIG_MULTITHREADING=n
@@ -211,6 +209,8 @@ tests:
   nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_remote_no_multithreading:
     extra_args:
       - icmsg_SNIPPET=nordic-ppr
+      - icmsg_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
+      - remote_EXTRA_DTC_OVERLAY_FILE="boards/ipc0_icmsg.overlay"
       - remote_CONFIG_MULTITHREADING=n
       - remote_CONFIG_LOG_MODE_MINIMAL=y
     harness: console
