@@ -31,10 +31,12 @@ static int my_wdt_channel;
 #endif
 static volatile uint32_t wdt_status __attribute__((section(NOINIT_SECTION)));
 
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 #define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
 volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
 #define HOST_IS_READY	(1)
 #define REMOTE_IS_READY	(2)
+#endif
 
 /* Variables used to make CPU active for ~1 second */
 static struct k_timer my_timer;
@@ -65,7 +67,9 @@ int main(void)
 
 	LOG_INF("Multicore idle_wdt test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Main sleeps for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 	LOG_INF("Shared memory at %p", (void *) shared_var);
+#endif
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
 
