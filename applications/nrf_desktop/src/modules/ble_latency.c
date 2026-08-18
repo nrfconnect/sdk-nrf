@@ -404,6 +404,9 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 		 * rate update is performed).
 		 */
 		latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+		LOG_INF("The current connection parameters are valid for the requested mode %s",
+			sci_mode_to_string(mode));
+		LOG_INF("Clearing out-of-spec state and returning to normal operation");
 		err = bt_conn_get_info(active_conn, &info);
 
 		if (!err) {
@@ -585,7 +588,12 @@ static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_
 		(void)k_work_cancel_delayable(&low_latency_check);
 	} else if (mode == processed_sci_mode) {
 		/* A properly requested SCI mode update has been successfully performed. */
-		latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+		if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+			LOG_INF("Connection rate update successful for the requested mode %s",
+				sci_mode_to_string(mode));
+			LOG_INF("Clearing out-of-spec state and returning to normal operation");
+			latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+		}
 	} else {
 		/* Do nothing, remain in the in-spec/out-of-spec state. */
 	}
