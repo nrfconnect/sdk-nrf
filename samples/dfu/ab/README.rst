@@ -63,25 +63,28 @@ To enable the persistence of a preferred slot, define a backup region for the bo
 Identifying the active slot
 ---------------------------
 
-If the project uses the Partition Manager, the currently running slot can be identified by checking if ``CONFIG_NCS_IS_VARIANT_IMAGE`` is defined.
-If it is defined, the application is running from slot B.
-Otherwise, it is running from slot A.
+This sample defines partitions in devicetree.
+To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the devicetree slot partition nodes, as in :file:`src/ab_utils.c`.
 
-If the project does not use the Partition Manager (a configuration currently only supported on the nRF54H20), the currently running slot can be identified by comparing the address pointed `zephyr,code-partition` to specific node addresses defined in the device tree.
-The following node partitions are used by default:
+On single-core board targets (for example ``nrf54l15dk/nrf54l15/cpuapp``):
 
-* ``cpuapp_slot0_partition`` - Application core, slot A
-* ``cpuapp_slot1_partition`` - Application core, slot B
-* ``cpurad_slot0_partition`` - Radio core, slot A
-* ``cpurad_slot1_partition`` - Radio core, slot B
+* ``slot0_partition`` — slot A
+* ``slot1_partition`` — slot B
 
-For example, verifying that the application is running from slot A can be done by using the following macro:
+On ``nrf54h20dk/nrf54h20/cpuapp`` with merged Direct XIP slots (see :file:`sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`):
+
+* ``cpuapp_slot0_partition`` and ``cpurad_slot0_partition`` — slot A (application and radio regions)
+* ``cpuapp_slot1_partition`` and ``cpurad_slot1_partition`` — slot B
+
+Example for a single-core target (slot A):
 
 .. code-block:: c
 
     #define IS_RUNNING_FROM_SLOT_A \
         (PARTITION_NODE_OFFSET(DT_CHOSEN(zephyr_code_partition)) == \
-         PARTITION_OFFSET(cpuapp_slot0_partition))
+         PARTITION_OFFSET(slot0_partition))
+
+On nRF54H20, use ``cpuapp_slot0_partition`` instead of ``slot0_partition`` for the application image.
 
 .. _ab_build_files:
 
