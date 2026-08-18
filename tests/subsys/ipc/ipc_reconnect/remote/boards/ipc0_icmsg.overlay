@@ -9,4 +9,5 @@
 	unbound = "enable";
 	/delete-property/ tx-blocks;
 	/delete-property/ rx-blocks;
+	dcache-alignment = <32>;
 };
