@@ -5,19 +5,8 @@
  */
 
 ipc0: &cpuapp_cpuppr_ipc {
-	status = "okay";
-};
-
-&cpuppr_vevif {
-	status = "okay";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
-/ {
-	chosen {
-		/delete-property/ zephyr,bt-hci;
-	};
+	compatible = "zephyr,ipc-icmsg";
+	unbound = "enable";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
 };
