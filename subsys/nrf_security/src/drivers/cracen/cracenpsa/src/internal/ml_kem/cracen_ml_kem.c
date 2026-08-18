@@ -20,11 +20,34 @@
 #include <string.h>
 #include <zephyr/sys/util.h>
 
+/** The constant-time properties of this implementation are claimed for Cortex-M33 only.
+ *
+ *  - On Cortex-M33 MUL, MLA and UMULL are fixed latency, which is what lets the Montgomery and
+ *    Barrett reductions and the reciprocal of Compress_d (see cracen_ml_kem_packing.c)
+ *    run in constant time.
+ *  - Division operations (UDIV and SDIV) terminate early on all Cortex-M cores that
+ *    implement them, so these are omitted.
+ */
+#ifndef CONFIG_CPU_CORTEX_M33
+#error "ML-KEM is currently supported on Cortex-M33 devices only."
+#endif
+
 #define ML_KEM_DK_PKE_MAX_SZ_BYTES (ML_KEM_MATRIX_DIM_MAX * ML_KEM_POLY_PACKED_SZ_BYTES)
 
 _Static_assert(ML_KEM_MATRIX_DIM_MAX != 1,
 	       "To compile this file you need at least one ML-KEM key size "
 	       "(ML-KEM-512/768/1024) enabled in the driver using the PSA_WANT_* configs.");
+
+/** Returns its argument, but hides the value from the optimizer.
+ *
+ * Inspired by mlkem-native (mlk_value_barrier_u8).
+ */
+static inline uint8_t value_barrier_u8(uint8_t x)
+{
+	volatile uint8_t v = x;
+
+	return v;
+}
 
 /* Returns the size in bytes of one compressed polynomial of the u vector. */
 static size_t ciphertext_u_poly_size(const ml_kem_params_t *params)
@@ -638,6 +661,7 @@ psa_status_t cracen_ml_kem_decapsulate(const psa_key_attributes_t *attributes, c
 	 * diff or its two's complement has the most significant bit set.
 	 */
 	secret_sel_mask = 0u - (uint32_t)((secret_cmp_res | (uint8_t)(0u - secret_cmp_res)) >> 7);
+	secret_sel_mask = value_barrier_u8(secret_sel_mask);
 	constant_mask_select_bin(secret_sel_mask, rejection_secret, shared_secret_K, output_key,
 				 ML_KEM_SHARED_SECRET_SZ_BYTES);
 
