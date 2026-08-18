@@ -10,17 +10,18 @@
 
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock.h>
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#include <nrfx_clock_hfclk.h>
 #endif
 #include <stdio.h>
 
 int main(void)
 {
-#if NRFX_CLOCK_ENABLED && (defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
+	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
 	/* For now hardcode to 128MHz */
-	nrfx_clock_divider_set(NRF_CLOCK_DOMAIN_HFCLK,
-			       NRF_CLOCK_HFCLK_DIV_1);
+	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 
