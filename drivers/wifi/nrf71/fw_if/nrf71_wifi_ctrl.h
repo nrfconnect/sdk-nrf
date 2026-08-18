@@ -2747,9 +2747,13 @@ struct nrf_wifi_umac_event_new_scan_results {
 #define NRF_WIFI_MFP_REQUIRED (1 << 0)
 #define NRF_WIFI_MFP_CAPABLE  (1 << 1)
 
-#define NRF_WIFI_RANGING_TB (1 << 0)
-#define NRF_WIFI_RANGING_NON_TB (1 << 1)
-#define NRF_WIFI_RANGING_SECURITY (1 << 2)
+#define NRF_WIFI_PASN_SUPPORT (1 << 0)
+#define NRF_WIFI_FTM_SUPPORT (1 << 1)
+#define NRF_WIFI_SENSING_SUPPORT (1 << 2)
+#define NRF_WIFI_RANGING_TB (1 << 3)
+#define NRF_WIFI_RANGING_NON_TB (1 << 4)
+#define NRF_WIFI_RANGING_SECURITY (1 << 5)
+
 /**
  * @brief This structure represents the response for NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS.
  *  It contains the displayed scan result.
@@ -2780,18 +2784,10 @@ struct umac_display_results {
 	/** management frame protection NRF_WIFI_MFP_REQUIRED/NRF_WIFI_MFP_CAPABLE */
 	unsigned char mfp_flag;
 	unsigned char msmr_capabilities;
-	/** reserved */
-	unsigned char reserved3;
+	/** FTM capabilities */
+	unsigned char ftm_capabilities;
 	/** reserved */
 	unsigned char reserved4;
-	/** PASN enable/disable */
-	unsigned int pasn_support;
-	/** FTM enable/disable */
-	unsigned char ftm_support;
-	/** Ranging enable/disable */
-	unsigned char ranging_support;
-	/** Sensing enable/disable */
-	unsigned char sensing_support;
 } __NRF_WIFI_PKD;
 
 #define DISPLAY_BSS_TOHOST_PEREVNT 8
