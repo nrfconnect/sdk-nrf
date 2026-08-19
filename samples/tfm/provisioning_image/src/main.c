@@ -13,7 +13,11 @@
 #include <config_implementation_id.h>
 
 #if defined(CONFIG_HAS_HW_NRF_CRACEN)
+#if defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
+#endif
 #else
 #include <identity_key.h>
 #include <nrfx_nvmc.h>
@@ -27,7 +31,7 @@ int provision_implementation_id(void)
 {
 #if defined(CONFIG_HAS_HW_NRF_CRACEN)
 	/* BL_STORAGE is at the start of UICR OTP, so each field's OTP index is
-	 * its word offset from BL_STORAGE. The RRAMC OTP API takes a word index
+	 * its word offset from BL_STORAGE. The RRAMC/MRAMC OTP API takes a word index
 	 * rather than an address, so divide the field's byte offset by the word
 	 * size to convert it.
 	 */
@@ -39,8 +43,13 @@ int provision_implementation_id(void)
 
 		memcpy(&word, &implementation_id_in_flash[i * sizeof(word)],
 		       sizeof(word));
+
+#if defined(CONFIG_NRFX_RRAMC)
 		if (!nrfx_rramc_otp_word_write(base_index + i, word)) {
-			LOG_ERR("nrfx_rramc_otp_word_write failed at OTP index %u",
+#elif defined(CONFIG_NRFX_MRAMC)
+		if (!nrfx_mramc_otp_word_write(base_index + i, word)) {
+#endif
+			LOG_ERR("OTP word write failed at OTP index %u",
 				base_index + i);
 			return -1;
 		}
