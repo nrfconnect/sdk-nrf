@@ -35,11 +35,16 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/util.c
     src/common/vtf.c
     src/common/mem_mgmt.c
-    src/common/nbuf_mgmt.c
     src/common/work_mgmt.c
     src/common/lock_mgmt.c
     src/common/llist_mgmt.c
   )
+
+  if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
+    zephyr_library_sources(
+      src/common/nbuf_mgmt.c
+    )
+  endif()
 
   if(CONFIG_NRF71_RADIO_TEST)
     zephyr_library_sources(
@@ -92,7 +97,7 @@ function(nrf71_wifi_setup_include_and_sources)
         ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_peer.c
       )
     endif()
-    if(CONFIG_NRF71_STA_MODE)
+    if(CONFIG_NRF71_STA_MODE AND NOT CONFIG_NRF71_DATA_TX)
       zephyr_library_sources(${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_peer.c)
     endif()
     if(CONFIG_NRF71_PROMISC_DATA_RX)
