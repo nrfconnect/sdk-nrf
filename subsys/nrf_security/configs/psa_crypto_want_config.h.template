@@ -40,6 +40,7 @@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_192                          @PSA_WANT_AES_KEY_SIZE_192@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_256                          @PSA_WANT_AES_KEY_SIZE_256@
+#cmakedefine PSA_WANT_ALG_AES_MMO_ZIGBEE                        @PSA_WANT_ALG_AES_MMO_ZIGBEE@
 #cmakedefine PSA_WANT_ALG_CBC_NO_PADDING                        @PSA_WANT_ALG_CBC_NO_PADDING@
 #cmakedefine PSA_WANT_ALG_CBC_PKCS7                             @PSA_WANT_ALG_CBC_PKCS7@
 #cmakedefine PSA_WANT_ALG_CCM                                   @PSA_WANT_ALG_CCM@
@@ -197,6 +198,16 @@
 #cmakedefine PSA_WANT_ALG_HASH_ML_DSA                           @PSA_WANT_ALG_HASH_ML_DSA@
 #cmakedefine PSA_WANT_ALG_AES_KW                                @PSA_WANT_ALG_AES_KW@
 #cmakedefine PSA_WANT_ALG_AES_KWP                               @PSA_WANT_ALG_AES_KWP@
+
+/* PSA_ALG_AES_MMO_ZIGBEE is specified by the PSA Crypto API (Zigbee specification,
+ * clause B.6) but is not defined by the PSA headers that NCS currently uses. It is
+ * defined here because this file is generated for both the PSA interface and the
+ * PSA library builds, so applications and drivers see the same value. Remove this
+ * once psa/crypto_values.h provides the definition.
+ */
+#if defined(PSA_WANT_ALG_AES_MMO_ZIGBEE) && !defined(PSA_ALG_AES_MMO_ZIGBEE)
+#define PSA_ALG_AES_MMO_ZIGBEE ((psa_algorithm_t)0x02000007)
+#endif
 
 /* The Adjusting is done in this file */
 #define PSA_CRYPTO_ADJUST_KEYPAIR_TYPES_H

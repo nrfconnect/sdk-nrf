@@ -564,6 +564,16 @@ config PSA_NEED_CRACEN_ASYMMETRIC_ENCRYPTION_DRIVER
 
 # CRACEN Hash Driver
 
+config PSA_NEED_CRACEN_AES_MMO_ZIGBEE
+	bool
+	default y
+	select PSA_ACCEL_AES_MMO_ZIGBEE
+	depends on PSA_WANT_ALG_AES_MMO_ZIGBEE
+	depends on PSA_USE_CRACEN_HASH_DRIVER
+	help
+	  AES-MMO uses AES-128 with the running digest as the key, so it does not
+	  need any PSA_WANT_KEY_TYPE_AES or AES key size configuration.
+
 config PSA_NEED_CRACEN_SHA_1
 	bool
 	default y
@@ -638,6 +648,7 @@ config PSA_NEED_CRACEN_HASH_DRIVER
 	bool
 	default y
 	depends on \
+		PSA_NEED_CRACEN_AES_MMO_ZIGBEE || \
 		PSA_NEED_CRACEN_SHA_1   || \
 		PSA_NEED_CRACEN_SHA_224 || \
 		PSA_NEED_CRACEN_SHA_256 || \

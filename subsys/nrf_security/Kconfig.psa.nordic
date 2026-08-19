@@ -65,7 +65,8 @@ config PSA_HAS_CIPHER_SUPPORT
 config PSA_HAS_HASH_SUPPORT
 	bool
 	default y
-	depends on PSA_WANT_ALG_MD5		|| \
+	depends on PSA_WANT_ALG_AES_MMO_ZIGBEE	|| \
+		   PSA_WANT_ALG_MD5		|| \
 		   PSA_WANT_ALG_SHA_1		|| \
 		   PSA_WANT_ALG_SHA_224		|| \
 		   PSA_WANT_ALG_SHA_256		|| \
@@ -264,6 +265,14 @@ config PSA_WANT_ALG_SHA_512_224
 config PSA_WANT_ALG_SHA_512_256
 	bool "PSA SHA-512/256 support" if !PSA_PROMPTLESS
 	default y if PSA_CRYPTO_ENABLE_ALL
+
+config PSA_WANT_ALG_AES_MMO_ZIGBEE
+	bool "PSA AES-MMO (Zigbee) hash support" if !PSA_PROMPTLESS
+	help
+	  Matyas-Meyer-Oseas hash function based on AES-128, as specified in the
+	  Zigbee specification, clause B.6. Only the CRACEN driver implements this
+	  algorithm, so it is left out of PSA_CRYPTO_ENABLE_ALL to keep builds
+	  without CRACEN working.
 
 config PSA_WANT_ALG_ASCON_HASH256
 	bool "PSA ASCON HASH256 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
