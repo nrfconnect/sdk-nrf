@@ -258,12 +258,43 @@ enum cracen_context_state {
 	CRACEN_HW_RESERVED = 0x2
 };
 
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+/** AES-MMO (Zigbee) hash operation state.
+ *
+ * AES-MMO uses AES-128, so both the message blocks and the digest are one AES
+ * block wide.
+ */
+struct cracen_aes_mmo_operation_s {
+	/** Running digest, which is also the AES key used for the next block. */
+	uint8_t digest[SX_BLKCIPHER_AES_BLK_SZ];
+
+	/** Buffer for input data that does not fill a block yet. */
+	uint8_t block[SX_BLKCIPHER_AES_BLK_SZ];
+
+	/** Number of valid bytes in @ref block. */
+	size_t block_length;
+
+	/** Total number of message bytes added to the operation. */
+	size_t message_length;
+};
+typedef struct cracen_aes_mmo_operation_s cracen_aes_mmo_operation_t;
+#endif /* PSA_NEED_CRACEN_AES_MMO_ZIGBEE */
+
 /** Hash operation context. */
 struct cracen_hash_operation_s {
 	const struct sxhashalg *sx_hash_algo;
 
-	/* Internal sxcrypto context. */
-	struct sxhash sx_ctx;
+	union {
+		/* Internal sxcrypto context. */
+		struct sxhash sx_ctx;
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+		/* AES-MMO is not supported by the hash hardware, so it never uses
+		 * the sxsymcrypt context. It is the live member when is_aes_mmo
+		 * is set.
+		 */
+		cracen_aes_mmo_operation_t aes_mmo;
+#endif
+	};
 
 	/* The driver can perform a processing round after getting a multiple of the block size.
 	 * Therefore, the driver must know how much data is left to fill the next block.
@@ -275,6 +306,11 @@ struct cracen_hash_operation_s {
 
 	/* Flag indicating saved state exists that needs to be resumed */
 	bool has_saved_state;
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	/* Selects which member of the context union above is live. */
+	bool is_aes_mmo;
+#endif
 };
 typedef struct cracen_hash_operation_s cracen_hash_operation_t;
 
