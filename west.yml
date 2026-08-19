@@ -88,7 +88,6 @@ manifest:
           - dhara
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -245,6 +244,10 @@ manifest:
     - name: nrf_wifi
       revision: 5046744cb4c9640eb8b11cb92f1ea0b9554c20cf
       path: modules/lib/nrf_wifi
+    - name: hal_nordic
+      repo-path: sdk-hal_nordic
+      path: modules/hal/nordic
+      revision: 18da0cc9726f8759c627dba3180b3ba9294e433c
 
     # Other third-party repositories.
     - name: cmock
