@@ -18,4 +18,19 @@ config NETCORE_IMAGE_NAME
 config NETCORE_IMAGE_PATH
 	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
 
+choice PPRCORE
+	default PPRCORE_REMOTE_SLEEP_FOREVER if SOC_NRF9251_CPUAPP
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE_SLEEP_FOREVER
+	bool "Remote sleep forever image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+
+config PPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+
 source "share/sysbuild/Kconfig"
