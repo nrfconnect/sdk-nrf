@@ -91,6 +91,80 @@ If you want to change the link text::
 
    :ref:`Zephyr coding style <zephyr:coding_style>`
 
+Files in the |NCS| repositories
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+To link to a file in the |NCS| west workspace, use the ``:ncs-file:`` role.
+Do not define these links in the :file:`links.txt` file and do not type the GitHub URL manually.
+The role builds the URL from the documentation version, and, for files in other repositories, from the revision specified in the :file:`west.yml` file.
+This keeps the links valid in each release.
+
+The role also checks that the file exists when the documentation is built.
+If the file is missing, the documentation build fails.
+
+Use one of the following forms:
+
+* A path from the root of the ``sdk-nrf`` repository, starting with a slash::
+
+     :ncs-file:`/doc/versions.json`
+
+* A path relative to the file you are editing, for files in the same directory::
+
+     :ncs-file:`prj.conf`
+
+* A path from the root of another repository in the workspace, where the prefix is the project name from the :file:`west.yml` file::
+
+     :ncs-file:`zephyr:/.checkpatch.conf`
+
+The above examples render as follows:
+
+* :ncs-file:`/doc/versions.json`
+* :ncs-file:`styleguide.rst`
+* :ncs-file:`zephyr:/.checkpatch.conf`
+
+By default, the link text is the name of the file, without the path.
+To use a different link text, place the path in angle brackets::
+
+   :ncs-file:`configuration file <prj.conf>`
+
+For example, :ncs-file:`documentation style guide <styleguide.rst>` links to the source file of this page.
+
+.. note::
+   The ``:ncs-file:`` role is only available in the |NCS| documentation set.
+   Do not use it in files that are also included in other documentation sets.
+
+If you want to show a file path without linking to it, use the ``:file:`` role instead.
+
+.. note::
+   The |NCS| documentation set also provides the ``:zephyr_file:`` and ``:module_file:`` roles, which come from the Zephyr documentation extensions.
+   Do not use them in new content.
+   In the |NCS| documentation set, these roles do not verify that the file exists, so the links break silently when a file is moved or renamed.
+   Use ``:ncs-file:`` instead.
+
+Temporary ``module_file`` test
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+* sdk-nrf file, path that does not exist in zephyr (expect a build warning ``doc/versions.json not found in nrf``):
+  :module_file:`nrf: doc/versions.json`
+
+* sdk-nrf file, path that also exists in zephyr (expect no warning, and a link to sdk-nrf):
+  :module_file:`nrf: west.yml`
+
+* File in another repository (expect a working link to sdk-zephyr at the manifest revision):
+  :module_file:`zephyr: .checkpatch.conf`
+
+* File in another repository that does not exist (expect no warning, and a link that returns 404):
+  :module_file:`zephyr: does/not/exist.conf`
+
+* File in nrfxlib (expect a working link to sdk-nrfxlib):
+  :module_file:`nrfxlib: README.rst`
+
+* Line range (expect the URL to end with ``?plain=1#L1-L5``):
+  :module_file:`nrfxlib: README.rst#L1-L5`
+
+* Alias, so the link text is not the raw prefix (expect the link text ``versions.json``):
+  :module_file:`versions.json <nrf: doc/versions.json>`
+
 Replacements
 ------------
 
