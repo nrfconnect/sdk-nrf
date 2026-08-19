@@ -74,6 +74,13 @@ tests:
       - CONFIG_TFM_NRF_PROVISIONING=y
       - CONFIG_NRF_APPROTECT_LOCK=y
       - CONFIG_NRF_SECURE_APPROTECT_LOCK=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
   tfm.psa_test_initial_attestation_lvl2:
     tags: tfm_lvl2
     extra_args:
@@ -82,3 +89,10 @@ tests:
       - CONFIG_TFM_NRF_PROVISIONING=y
       - CONFIG_NRF_APPROTECT_LOCK=y
       - CONFIG_NRF_SECURE_APPROTECT_LOCK=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns

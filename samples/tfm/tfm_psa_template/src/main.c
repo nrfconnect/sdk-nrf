@@ -65,6 +65,12 @@ void dump_hex_ascii(const uint8_t *data, size_t size)
 	printk("\n");
 }
 
+/* get_fw_info() needs CONFIG_FW_INFO (from CONFIG_SECURE_BOOT) and an
+ * s1_partition. nRF54L has no non-secure backend for that read path, so
+ * CONFIG_SECURE_BOOT is off and this is compiled out there. The rest of the
+ * sample works the same on all targets.
+ */
+#if defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 static void get_fw_info_address(uint32_t fw_address)
 {
 	struct fw_info info;
@@ -109,6 +115,7 @@ static void get_fw_info(void)
 
 	printk("\nActive slot: %s\n", s0_active ? "S0" : "S1");
 }
+#endif /* defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition)) */
 
 static void get_attestation_token(void)
 {
@@ -165,7 +172,9 @@ int main(void)
 	 */
 	printk("build time: " __DATE__ " " __TIME__ "\n");
 
+#if defined(CONFIG_FW_INFO) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 	get_fw_info();
+#endif
 	get_attestation_token();
 
 	/* The system work queue handles all incoming mcumgr requests.  Let the
