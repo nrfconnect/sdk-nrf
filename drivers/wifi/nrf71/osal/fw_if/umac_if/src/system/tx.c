@@ -18,7 +18,7 @@
 #include "system/fmac_tx.h"
 #include "system/fmac_api.h"
 #include "system/fmac_peer.h"
-#include "common/hal_structs_common.h"
+#include "common/hal_api_common.h"
 #include "common/util.h"
 #include <zephyr/net/net_core.h>
 #include <zephyr/logging/log.h>

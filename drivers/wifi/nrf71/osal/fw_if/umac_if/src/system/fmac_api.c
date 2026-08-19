@@ -355,9 +355,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
 {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_fmac_dev_ctx = NULL;
-#ifdef NRF71_DATA_TX
-	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-#endif /* NRF71_DATA_TX */
 
 	if (!fpriv || !os_dev_ctx) {
 		return NULL;
@@ -392,11 +389,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
 		fmac_dev_ctx = NULL;
 		goto out;
 	}
-#ifdef NRF71_DATA_TX
-
-	sys_fpriv = wifi_fmac_priv(fpriv);
-	fpriv->hpriv->cfg_params.max_ampdu_len_per_token = sys_fpriv->max_ampdu_len_per_token;
-#endif /* NRF71_DATA_TX */
 
 	fmac_dev_ctx->op_mode = NRF_WIFI_OP_MODE_SYS;
 out:
@@ -522,7 +514,6 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 {
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-	struct nrf_wifi_hal_cfg_params hal_cfg_params;
 	unsigned int pool_idx = 0;
 	unsigned int desc = 0;
 
@@ -536,10 +527,6 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 	}
 
 	sys_fpriv = wifi_fmac_priv(fpriv);
-
-	nrf_wifi_mem_set(&hal_cfg_params,
-			      0,
-			      sizeof(hal_cfg_params));
 
 	nrf_wifi_mem_cpy(&sys_fpriv->callbk_fns,
 			      callbk_fns,
@@ -566,28 +553,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 
 	sys_fpriv->num_rx_bufs = desc;
 
-	hal_cfg_params.rx_buf_headroom_sz = RX_BUF_HEADROOM;
-	hal_cfg_params.tx_buf_headroom_sz = TX_BUF_HEADROOM;
-#ifdef NRF71_DATA_TX
-	hal_cfg_params.max_tx_frms = (sys_fpriv->num_tx_tokens *
-				      sys_fpriv->data_config.max_tx_aggregation);
-#endif /* NRF71_DATA_TX */
-
-	for (pool_idx = 0; pool_idx < MAX_NUM_OF_RX_QUEUES; pool_idx++) {
-		hal_cfg_params.rx_buf_pool[pool_idx].num_bufs =
-			sys_fpriv->rx_buf_pools[pool_idx].num_bufs;
-		hal_cfg_params.rx_buf_pool[pool_idx].buf_sz =
-			sys_fpriv->rx_buf_pools[pool_idx].buf_sz + RX_BUF_HEADROOM;
-	}
-
-
-	fpriv->hpriv = nrf_wifi_hal_init(&hal_cfg_params,
-					 &nrf_wifi_sys_fmac_event_callback,
-#ifdef NRF_WIFI_RPU_RECOVERY
-					 &nrf_wifi_sys_fmac_rpu_recovery_callback);
-#else
-					 NULL);
-#endif
+	fpriv->hpriv = nrf_wifi_hal_init(&nrf_wifi_sys_fmac_event_callback);
 
 	if (!fpriv->hpriv) {
 		LOG_ERR("%s: Unable to do HAL init",

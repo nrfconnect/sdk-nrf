@@ -1,13 +1,13 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2024 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
 /**
- * @file
+ * @file hal_api_common.h
  *
- * @brief Header containing API declarations for the HAL Layer of the Wi-Fi driver.
+ * @brief HAL structures and API for the nRF71 Wi-Fi driver.
  */
 
 #ifndef __HAL_API_COMMON_H__
@@ -15,57 +15,90 @@
 
 #include <common/log_cfg.h>
 #include <nrf71_wifi_ctrl.h>
-
 #include <common/ipc_bus.h>
-#include "hal_structs_common.h"
-
-#define NRF_WIFI_ADDR_REG_NAME_LEN		16
 
 /**
- * @brief Structure containing information about the firmware address.
+ * @brief Enumeration of NRF Wi-Fi HAL message types.
  */
-struct nrf71_fw_addr_info {
-	/** RPU process type. */
-	enum RPU_PROC_TYPE rpu_proc;
-	/** Name of the address register. */
-	char name[NRF_WIFI_ADDR_REG_NAME_LEN];
-	/** Destination address. */
-	unsigned int dest_addr;
+enum NRF_WIFI_HAL_MSG_TYPE {
+	/** Command control message type */
+	NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL,
 };
 
-extern const struct nrf71_fw_addr_info nrf71_fw_addr_info[];
+/**
+ * @brief Enumeration of NRF WiFi HAL status.
+ */
+enum NRF_WIFI_HAL_STATUS {
+	/** HAL is enabled */
+	NRF_WIFI_HAL_STATUS_ENABLED,
+	/** HAL is disabled */
+	NRF_WIFI_HAL_STATUS_DISABLED,
+};
+
+/**
+ * @brief Structure to hold context information for the HAL layer.
+ */
+struct nrf_wifi_hal_priv {
+	/** Pointer to IPC private data */
+	struct nrf_wifi_ipc_priv *ipc_priv;
+	/** Number of devices */
+	unsigned char num_devs;
+	/** Interrupt callback function */
+	enum nrf_wifi_status (*intr_callbk_fn)(void *mac_ctx,
+					       void *event_data,
+					       unsigned int len);
+};
+
+/**
+ * @brief Structure to hold per device context information for the HAL layer.
+ */
+struct nrf_wifi_hal_dev_ctx {
+	/** Pointer to HAL private data */
+	struct nrf_wifi_hal_priv *hpriv;
+	/** MAC device context */
+	void *mac_dev_ctx;
+	/** IPC device context */
+	struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx;
+	/** Device index */
+	unsigned char idx;
+	/** RPU information */
+	void *ipc_msg;
+	/** HAL lock */
+	void *lock_hal;
+	/** RX lock */
+	void *lock_rx;
+#if defined(NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+	/** RPU wake up now asserted time */
+	unsigned long last_wakeup_now_asserted_time_ms;
+	/** RPU wake up now deasserted time */
+	unsigned long last_wakeup_now_deasserted_time_ms;
+	/** RPU sleep opportunity time */
+	unsigned long last_rpu_sleep_opp_time_ms;
+	/** Number of watchdog timer interrupts received */
+	int wdt_irq_received;
+	/** Number of watchdog timer interrupts ignored */
+	int wdt_irq_ignored;
+#endif /* NRF_WIFI_RPU_RECOVERY */
+	/** HAL status */
+	enum NRF_WIFI_HAL_STATUS hal_status;
+};
 
 /**
  * @brief Initialize the HAL layer.
  *
- * @param cfg_params Parameters needed to configure the HAL for WLAN operation.
- * @param intr_callbk_fn Pointer to the callback function which the user of this
- *                       layer needs to implement to handle events from the RPU.
- * @param rpu_recovery_callbk_fn Pointer to the callback function which the user of
- *                               this layer needs to implement to handle RPU recovery.
+ * @param intr_callbk_fn Callback for RPU events forwarded from IPC.
  *
- * This API is used to initialize the HAL layer and is expected to be called
- * before using the HAL layer. This API returns a pointer to the HAL context
- * which might need to be passed to further API calls.
- *
- * @return Pointer to instance of HAL layer context.
+ * @return Pointer to HAL private context, or NULL on failure.
  */
-struct nrf_wifi_hal_priv *
-nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
-		  enum nrf_wifi_status (*intr_callbk_fn)(void *dev_ctx,
-							 void *event_data,
-							 unsigned int len),
-		  enum nrf_wifi_status (*rpu_recovery_callbk_fn)(void *mac_ctx,
-								 void *event_data,
-								 unsigned int len));
+struct nrf_wifi_hal_priv *nrf_wifi_hal_init(
+	enum nrf_wifi_status (*intr_callbk_fn)(void *dev_ctx,
+					       void *event_data,
+					       unsigned int len));
 
 /**
  * @brief Deinitialize the HAL layer.
  *
- * @param hpriv Pointer to the HAL context returned by the nrf_wifi_hal_init API.
- *
- * This API is used to deinitialize the HAL layer and is expected to be called
- * after done using the HAL layer.
+ * @param hpriv Pointer returned by @ref nrf_wifi_hal_init.
  */
 void nrf_wifi_hal_deinit(struct nrf_wifi_hal_priv *hpriv);
 
@@ -76,135 +109,16 @@ enum nrf_wifi_status nrf_wifi_hal_dev_init(struct nrf_wifi_hal_dev_ctx *hal_dev_
 void nrf_wifi_hal_dev_deinit(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 
 void nrf_wifi_hal_enable(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
+
 void nrf_wifi_hal_disable(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
+
 enum NRF_WIFI_HAL_STATUS nrf_wifi_hal_status_unlocked(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
 
 /**
- * @brief Send a control command to the RPU.
- *
- * @param hal_ctx Pointer to HAL context.
- * @param cmd Pointer to command data.
- * @param cmd_size Size of the command data pointed to by @p cmd.
- *
- * This function sends a control command to the RPU over IPC.
- *
- * @return The status of the operation.
+ * @brief Send a control command to the RPU over IPC.
  */
 enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 						void *cmd,
 						unsigned int cmd_size);
 
-/**
- * @brief Set the processing context for the Wi-Fi HAL.
- *
- * This function sets the processing context for the Wi-Fi HAL device context.
- *
- * @param hal_ctx     Pointer to the Wi-Fi HAL device context.
- * @param proc        The processing type.
- */
-void nrf_wifi_hal_proc_ctx_set(struct nrf_wifi_hal_dev_ctx *hal_ctx,
-							   enum RPU_PROC_TYPE proc);
-
-/**
- * @brief Reset the processing context for the Wi-Fi HAL.
- *
- * This function resets the processing context for the Wi-Fi HAL device context.
- *
- * @param hal_ctx     Pointer to the Wi-Fi HAL device context.
- * @param rpu_proc    The RPU processing type.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_proc_reset(struct nrf_wifi_hal_dev_ctx *hal_ctx,
-			enum RPU_PROC_TYPE rpu_proc);
-
-/**
- * @brief Check the boot status of the firmware for the Wi-Fi HAL.
- *
- * This function checks the boot status of the firmware for the Wi-Fi HAL device context.
- *
- * @param hal_ctx     Pointer to the Wi-Fi HAL device context.
- * @param rpu_proc    The RPU processing type.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_fw_chk_boot(struct nrf_wifi_hal_dev_ctx *hal_ctx,
-			enum RPU_PROC_TYPE rpu_proc);
-
-#if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
-/**
- * @brief Wake up the RPU power save mode for the Wi-Fi HAL.
- *
- * This function wakes up the RPU power save mode for the Wi-Fi HAL device context.
- *
- * @param hal_dev_ctx     Pointer to the Wi-Fi HAL device context.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status hal_rpu_ps_wake(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
-
-/**
- * @brief Get the RPU power save state for the Wi-Fi HAL.
- *
- * This function gets the RPU power save state for the Wi-Fi HAL device context.
- *
- * @param hal_dev_ctx         Pointer to the Wi-Fi HAL device context.
- * @param rpu_ps_ctrl_state   Pointer to the RPU power save control state.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_get_rpu_ps_state(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-			int *rpu_ps_ctrl_state);
-#endif /* NRF_WIFI_LOW_POWER */
-
-/**
- * @brief Get the OTP information for the Wi-Fi HAL.
- *
- * This function gets the OTP (One-Time Programmable) information for the Wi-Fi HAL device context.
- *
- * @param hal_dev_ctx     Pointer to the Wi-Fi HAL device context.
- * @param otp_info        Pointer to the OTP information structure.
- * @param otp_flags       Pointer to the OTP flags.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_otp_info_get(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-			struct host_rpu_umac_info *otp_info,
-			unsigned int *otp_flags);
-
-/**
- * @brief Get the OTP firmware programming version for the Wi-Fi HAL.
- *
- * This function gets the OTP firmware programming version for the Wi-Fi HAL device context.
- *
- * @param hal_dev_ctx     Pointer to the Wi-Fi HAL device context.
- * @param ft_prog_ver     Pointer to the firmware programming version.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_otp_ft_prog_ver_get(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-			unsigned int *ft_prog_ver);
-
-/**
- * @brief Get the OTP package information for the Wi-Fi HAL.
- *
- * This function gets the OTP package information for the Wi-Fi HAL device context.
- *
- * @param hal_dev_ctx     Pointer to the Wi-Fi HAL device context.
- * @param package_info    Pointer to the package information.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status nrf_wifi_hal_otp_pack_info_get(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-			unsigned int *package_info);
-
-enum nrf_wifi_status hal_rpu_ps_init(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
-void hal_rpu_ps_deinit(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx);
-
-enum nrf_wifi_status nrf_wifi_hal_irq_handler(void *data);
-
-enum nrf_wifi_status hal_rpu_msg_post(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
-				      enum NRF_WIFI_HAL_MSG_TYPE msg_type,
-				      unsigned int queue_id,
-				      unsigned int msg_addr);
 #endif /* __HAL_API_COMMON_H__ */
