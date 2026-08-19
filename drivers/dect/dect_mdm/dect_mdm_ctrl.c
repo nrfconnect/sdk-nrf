@@ -2703,6 +2703,7 @@ static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *
 #if defined(CONFIG_DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS)
 	struct dect_mdm_ctrl_dlc_data_tx_resp_evt *evt_data = event->data;
 	int arr_index;
+	bool rd_not_found = false;
 
 	if (evt_data->status == NRF_MODEM_DECT_MAC_STATUS_OK) {
 #if defined(CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING)
@@ -2760,6 +2761,9 @@ static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *
 #endif /* CONFIG_DECT_MDM_NRF_DLC_DISCARD_TIMER_RELEASE_ASSOC_PEER_TRACKING */
 			}
 		}
+
+		/* Evict after unacked-data bookkeeping below completes. */
+		rd_not_found = (evt_data->status == NRF_MODEM_DECT_MAC_STATUS_RD_NOT_FOUND);
 	}
 
 	/* Update total_unacked_tx_data_amount (even if is error) */
@@ -2783,6 +2787,22 @@ static void handle_mdm_dlc_data_resp(struct dect_mdm_common_op_event_msgq_item *
 	LOG_DBG("DLC data response (towards RD ID %u): "
 		"total %d bytes unacked left, total req count %d",
 		evt_data->long_rd_id, total_unacked_tx_data_amount, total_unacked_req_amount);
+
+	/* Modem reports no such RD: local association state is stale and no release
+	 * event will arrive. Evict on FT so driver/L2 tables match the modem (PT parent
+	 * loss is handled elsewhere). Repeat evictions are harmless.
+	 */
+	if (rd_not_found) {
+		struct dect_mdm_settings *set_ptr = dect_mdm_settings_ref_get();
+
+		if (set_ptr->net_mgmt_common.device_type & DECT_DEVICE_TYPE_FT) {
+			LOG_WRN("RD ID %u unknown to modem - evicting stale child association",
+				evt_data->long_rd_id);
+			dect_mdm_child_association_removed(
+				evt_data->long_rd_id,
+				NRF_MODEM_DECT_MAC_RELEASE_CAUSE_CONNECTION_TERMINATION, false);
+		}
+	}
 #endif
 }
 

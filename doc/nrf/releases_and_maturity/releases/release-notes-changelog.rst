@@ -179,7 +179,11 @@ Bluetooth Mesh
 DECT NR+
 --------
 
-|no_changes_yet_note|
+* Updated by improving half-closed association recovery in the nRF91 DECT driver and L2 stack (DLC discard timer, ``RD_NOT_FOUND``, L2 table full).
+  The :c:func:`dect_net_l2_child_association_created` function now returns ``int``; check for ``-ENOSPC`` and release the MAC association.
+  The :c:struct:`dect_settings` structure is extended with ``DECT_SETTINGS_WRITE_SCOPE_DLC`` write scope and ``rach_conf_resp_win_length`` field.
+
+* Fixed the DLC TX transaction ID wrap on retry and made the cluster RACH response window length configurable through ``dect sett``.
 
 Enhanced ShockBurst (ESB)
 -------------------------
@@ -402,8 +406,12 @@ DFU samples
 DECT NR+ samples
 ----------------
 
-|no_changes_yet_note|
+* :ref:`dect_shell_application` sample:
 
+* Added configurable auto-connect with L4-driven trigger.
+* Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
+* Fixed the routing logs.
+  They are now available through the shell backend only.
 
 Enhanced ShockBurst samples
 ---------------------------
