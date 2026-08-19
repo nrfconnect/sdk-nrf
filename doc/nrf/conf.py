@@ -57,7 +57,8 @@ extensions = [
     "page_filter",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
-    "sphinxcontrib.jquery"
+    "sphinxcontrib.jquery",
+    "external_sw_versions",
 ]
 
 linkcheck_ignore = [
