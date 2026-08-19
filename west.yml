@@ -158,7 +158,7 @@ manifest:
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: 2caaea3f7ccd87fad4644bf6e07d197f77257aa7
+      revision: pull/12/head
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
