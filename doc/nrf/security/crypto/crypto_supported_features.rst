@@ -8442,6 +8442,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Hash algorithm
                  - Configuration option
                  - nRF52840
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8499,6 +8502,11 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF52832
                  - nRF52833
                  - nRF52840
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
+                 - --
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8590,6 +8598,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Hash algorithm
                  - Configuration option
                  - nRF5340
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8645,6 +8656,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Hash algorithm
                  - Configuration option
                  - nRF5340
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8711,6 +8725,9 @@ The options are grouped by Series and drivers available for the device Series, a
                * - Hash algorithm
                  - Supported directive
                  - nRF54H20
+               * - AES MMO (Zigbee)
+                 - ``PSA_WANT_ALG_AES_MMO_ZIGBEE``
+                 - --
                * - SHA-1 (weak)
                  - ``PSA_WANT_ALG_SHA_1``
                  - Supported
@@ -8777,6 +8794,17 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LV10A
                  - nRF54LS05A
                  - nRF54LS05B
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - --
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -8960,6 +8988,17 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LV10A
                  - nRF54LS05A
                  - nRF54LS05B
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -9144,6 +9183,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF9151
                  - nRF9160
                  - nRF9161
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
+                 - --
+                 - --
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -9247,6 +9292,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF9151
                  - nRF9160
                  - nRF9161
+               * - AES MMO (Zigbee)
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                 - --
+                 - --
+                 - --
+                 - --
                * - SHA-1 (weak)
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
                  - Supported
@@ -9441,7 +9492,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported hash algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_HASH_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1` (weak)
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1` (weak)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`

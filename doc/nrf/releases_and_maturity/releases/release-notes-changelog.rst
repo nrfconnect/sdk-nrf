@@ -181,6 +181,8 @@ Security
   * Support for signature generation and verification with the ML-DSA-44, ML-DSA-65, and ML-DSA-87 algorithms when using the CRACEN driver.
   * Support for key encapsulation and decapsulation with ML-KEM-512, ML-KEM-768, and ML-KEM-1024 when using the CRACEN driver.
   * Support for the SHAKE128/256 hash algorithm in the CRACEN driver on the nRF54L Series devices.
+  * Support for the Zigbee AES-MMO hash algorithm in the CRACEN driver on the nRF54L Series devices.
+    Enable it with the :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_MMO_ZIGBEE` Kconfig option.
 
 * Updated:
 
