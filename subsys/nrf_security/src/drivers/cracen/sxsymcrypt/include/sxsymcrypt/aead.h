@@ -322,8 +322,9 @@ int sx_aead_status(struct sxaead *c);
  * @pre - one of the sx_aead_create_*()functions must be called first
  *
  * @remark - AES/SM4 CCM tag size is user provided and it must be between 4 and
- * 16 bytes, multiple of 2. If this function is called, the new tag size must be
- * between 4 and the value specified during create, sx_aead_create_*ccm_*().
+ * 16 bytes, multiple of 2, or 0 to select CCM* (IEEE P802.15-4/0537r2). If this
+ * function is called, the new tag size must be between 4 and the value
+ * specified during create, sx_aead_create_*ccm_*().
  */
 int sx_aead_truncate_tag(struct sxaead *c, const size_t tagsz);
 

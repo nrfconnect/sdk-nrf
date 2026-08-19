@@ -314,10 +314,15 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
  * @param[out] c AEAD operation context
  * @param[in] key key used for the AEAD operation, expected size
  *                16, 24 or 32 bytes
- * @param[in] noncesz size, in bytes, of the nonce, between 7 and 13 bytes
+ * @param[in] noncesz size, in bytes, of the nonce, between 7 and 13 bytes,
+ *            and exactly 13 when \p tagsz is 0
  * @param[in] nonce nonce used for the AEAD operation, with size \p noncesz
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be 0 or a value in {4, 6, 8, 10, 12, 14, 16}. A tag size
+ *            of 0 selects CCM* (IEEE Std 802.15.4, Annex B), in which no
+ *            authentication field is produced or verified. CCM* is defined
+ *            only for L = 2, so it accepts only a 13-octet nonce; any other
+ *            \p noncesz returns ::SX_ERR_INVALID_NONCE_SIZE.
  * @param[in] aadsz size, in bytes, of the additional authenticated data(AAD)
  * @param[in] datasz size, in bytes, of the data to be processed
  * @return ::SX_OK
@@ -336,7 +341,8 @@ int sx_aead_create_aesgcm_dec(struct sxaead *c, const struct sxkeyref *key, cons
  *           operation is completed.
  * @remark - This does not create the CCM B_0 and B_1 header block, it must be
  *           created according to RFC3610 2.2 and provided via
- *           sx_aead_feed_aad()
+ *           sx_aead_feed_aad(). For CCM* the M field of the B_0 flags octet
+ *           must encode the same tag size that is passed here, i.e. zero.
  */
 int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
 			      size_t noncesz, size_t tagsz, size_t datasz);
@@ -353,10 +359,15 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  * @param[out] c AEAD operation context
  * @param[in] key key used for the AEAD operation, expected size
  *                16, 24 or 32 bytes
- * @param[in] noncesz size, in bytes, of the nonce, between 7 and 13 bytes
+ * @param[in] noncesz size, in bytes, of the nonce, between 7 and 13 bytes,
+ *            and exactly 13 when \p tagsz is 0
  * @param[in] nonce nonce used for the AEAD operation, with size \p noncesz
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be 0 or a value in {4, 6, 8, 10, 12, 14, 16}. A tag size
+ *            of 0 selects CCM* (IEEE Std 802.15.4, Annex B), in which no
+ *            authentication field is produced or verified. CCM* is defined
+ *            only for L = 2, so it accepts only a 13-octet nonce; any other
+ *            \p noncesz returns ::SX_ERR_INVALID_NONCE_SIZE.
  * @param[in] aadsz size, in bytes, of the additional authenticated data(AAD)
  * @param[in] datasz size, in bytes, of the data to be processed
  * @return ::SX_OK
@@ -375,7 +386,8 @@ int sx_aead_create_aesccm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  *           operation is completed.
  * @remark - This does not create the CCM B_0 and B_1 header block, it must be
  *           created according to RFC3610 2.2 and provided via
- *           sx_aead_feed_aad()
+ *           sx_aead_feed_aad(). For CCM* the M field of the B_0 flags octet
+ *           must encode the same tag size that is passed here, i.e. zero.
  */
 int sx_aead_create_aesccm_dec(struct sxaead *c, const struct sxkeyref *key, const uint8_t *nonce,
 			      size_t noncesz, size_t tagsz, size_t datasz);
