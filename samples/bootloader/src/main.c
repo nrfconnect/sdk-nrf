@@ -231,12 +231,15 @@ int main(void)
 	/* Get slot/partition start address and offset it with
 	 * application header size.
 	 */
+    printk(" Bootloader starting, s0_address_read = 0x%x, APP_HEADER_SKIP = 0x%x\r\n", s0_address_read(), APP_HEADER_SKIP);
+    printk(" Bootloader starting, s1_address_read = 0x%x\r\n", s1_address_read());
 	uint32_t s0_addr = s0_address_read() + APP_HEADER_SKIP;
 	uint32_t s1_addr = s1_address_read() + APP_HEADER_SKIP;
 	const struct fw_info *s0_info = fw_info_find(s0_addr);
 	const struct fw_info *s1_info = fw_info_find(s1_addr);
 
 	if (s0_info && s1_info) {
+        printk(" S0 S1 both exist.\r\n");
 		if (s0_info->version >= s1_info->version) {
 			validate_and_boot(s0_info, BOOT_SLOT_0);
 			validate_and_boot(s1_info, BOOT_SLOT_1);
@@ -245,8 +248,10 @@ int main(void)
 			validate_and_boot(s0_info, BOOT_SLOT_0);
 		}
 	} else if (s0_info) {
+        printk(" S0 both exist.\r\n");
 		validate_and_boot(s0_info, BOOT_SLOT_0);
 	} else if (s1_info) {
+        printk(" S1 both exist.\r\n");
 		validate_and_boot(s1_info, BOOT_SLOT_1);
 	}
 

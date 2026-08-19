@@ -31,9 +31,9 @@ config APP_PROVISIONING_IMAGE
 	  Disable this option only if you provision the device in another way, such as
 	  a standalone build of the provisioning_image sample.
 
-if SOC_SERIES_NRF54L
+if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 
-# nRF54L signs MCUboot with Ed25519 over the full image rather than its hash
+# nRF54L or nRF71 sign MCUboot with Ed25519 over the full image rather than its hash
 # (Pure mode).
 config BOOT_SIGNATURE_TYPE_PURE
 	default y
