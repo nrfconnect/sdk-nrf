@@ -423,6 +423,11 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 #if CONFIG_DCACHE
 	sys_cache_data_flush_range(in_descs, sizeof(in_descs));
 	sys_cache_data_flush_range(&out_desc, sizeof(out_desc));
+	/* The key is fetched by DMA like the input data is, so it must be written back
+	 * as well. sx_cmdma_start() does this by walking the descriptors; this function
+	 * builds its descriptors itself and must therefore flush each buffer.
+	 */
+	sys_cache_data_flush_range(key, key_size);
 	sys_cache_data_flush_range(input, input_size);
 	sys_cache_data_flush_range(output, output_size);
 #endif
