@@ -27,8 +27,6 @@ function(nrf71_wifi_setup_include_and_sources)
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
     ${nrf71_osal_base}/bus_if/bal/src/bal.c
     ${nrf71_osal_base}/bus_if/bus/ipc/src/ipc_bus.c
-    ${nrf71_osal_base}/bus_if/bus/ipc/src/ipc_if.c
-    ${nrf71_osal_base}/bus_if/bus/ipc/src/ipc_service.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
     src/common/rf_params.c
