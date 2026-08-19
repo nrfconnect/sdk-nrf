@@ -7,7 +7,6 @@
 function(nrf71_wifi_setup_include_and_sources)
   zephyr_library_named(nrf71_wifi)
 
-  set(nrf71_osal_base ${CMAKE_CURRENT_SOURCE_DIR}/osal)
   set(os_agnostic_base ${ZEPHYR_NRF_WIFI_MODULE_DIR})
   set(fw_bins_base ${ZEPHYR_NRF_WIFI_MODULE_DIR}/zephyr/blobs/wifi_fw_bins)
 
@@ -15,15 +14,14 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/fw_if
-    ${nrf71_osal_base}/fw_if/umac_if/inc
     ${ZEPHYR_BASE}/subsys/net/ip
   )
 
-  # ---- Sources: osal (fw_if, hw_if) and common ----
+  # ---- Sources: common ----
   zephyr_library_sources(
     src/common/hal_api_common.c
-    ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
-    ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
+    src/common/fmac_cmd_common.c
+    src/common/fmac_api_common.c
     src/common/rf_params.c
     src/common/util.c
     src/common/vtf.c
@@ -42,9 +40,9 @@ function(nrf71_wifi_setup_include_and_sources)
 
   if(CONFIG_NRF71_RADIO_TEST)
     zephyr_library_sources(
-      ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_api.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_cmd.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_event.c
+      src/radio_test/fmac_api.c
+      src/radio_test/fmac_cmd.c
+      src/radio_test/fmac_event.c
       src/radio_test/hal_api.c
       src/radio_test/main.c
       src/radio_test/api.c
@@ -59,15 +57,14 @@ function(nrf71_wifi_setup_include_and_sources)
       ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
       ${CMAKE_CURRENT_SOURCE_DIR}/inc/fw_if
       ${CMAKE_CURRENT_SOURCE_DIR}/inc
-      ${nrf71_osal_base}/fw_if/umac_if/inc
     )
   endif()
 
   if(CONFIG_NRF71_OFFLOADED_RAW_TX)
     zephyr_library_sources(
-      ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_api.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_cmd.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_event.c
+      src/offload_raw_tx/fmac_api.c
+      src/offload_raw_tx/fmac_cmd.c
+      src/offload_raw_tx/fmac_event.c
       src/offload_raw_tx/hal_api.c
       src/offload_raw_tx/api.c
     )
@@ -75,30 +72,30 @@ function(nrf71_wifi_setup_include_and_sources)
 
   if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
     zephyr_library_sources(
-      ${nrf71_osal_base}/fw_if/umac_if/src/system/rx.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_vif.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_api.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_cmd.c
-      ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_event.c
+      src/system/rx.c
+      src/system/fmac_vif.c
+      src/system/fmac_api.c
+      src/system/fmac_cmd.c
+      src/system/fmac_event.c
       src/system/hal_api.c
     )
     if(CONFIG_NRF71_DATA_TX)
       zephyr_library_sources(
-        ${nrf71_osal_base}/fw_if/umac_if/src/system/tx.c
-        ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_peer.c
+        src/system/tx.c
+        src/system/fmac_peer.c
       )
     endif()
     if(CONFIG_NRF71_STA_MODE AND NOT CONFIG_NRF71_DATA_TX)
-      zephyr_library_sources(${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_peer.c)
+      zephyr_library_sources(src/system/fmac_peer.c)
     endif()
     if(CONFIG_NRF71_PROMISC_DATA_RX)
       zephyr_library_sources(
-        ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_promisc.c
+        src/system/fmac_promisc.c
       )
     endif()
     if(CONFIG_NRF71_AP_MODE)
       zephyr_library_sources(
-        ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_ap.c
+        src/system/fmac_ap.c
       )
     endif()
   endif()

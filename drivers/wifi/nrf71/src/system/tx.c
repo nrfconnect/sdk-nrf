@@ -643,7 +643,7 @@ enum nrf_wifi_status rawtx_cmd_prep_callbk_fn(void *callbk_data,
 	buf_len = nrf_wifi_nbuf_data_size((void *)nwb);
 
 	config->raw_tx_info.pkt_length[frame_indx] = buf_len;
-	LOG_DBG("%s: frame pointer for data is 0x%x", __func__, nwb_data);
+	LOG_DBG("%s: frame pointer for data is 0x%lx", __func__, nwb_data);
 	config->raw_tx_info.frame_ddr_pointer[frame_indx] = (unsigned long long)nwb_data;
 	info->num_tx_pkts++;
 
