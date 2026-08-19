@@ -36,6 +36,8 @@
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <string.h>
+#include <zephyr/sys/byteorder.h>
 
 #if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
 #if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
@@ -47,6 +49,61 @@
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
 
 #define SX_BLKCIPHER_CHACHA20_BLK_SZ (64U)
+
+/* CCM* (IEEE Std 802.15.4, Annex B for the mode and clause 7 for the profile) is
+ * CCM with the length field L fixed at 2. Its confidentiality layer is CTR mode
+ * over the counter blocks
+ *
+ *	A_i = Flags || Nonce || i
+ *
+ * which tile one cipher block as
+ *
+ *	octet 0			: Flags, zero except L-1 in bits [2:0]
+ *	octets 1..15-L		: Nonce, 15 - L octets
+ *	octets 16-L..15		: counter i, L octets, big endian
+ *
+ * A_0 is the block that encrypts the authentication field. CCM* with a zero-length
+ * authentication field has none, so the payload keystream starts at A_1 and the
+ * algorithm reduces to AES-CTR seeded with A_1. The 13-octet nonce that follows from
+ * L = 2 is what PSA_CIPHER_IV_LENGTH() reports for PSA_ALG_CCM_STAR_NO_TAG, and it is
+ * the only nonce size the PSA definition of that algorithm allows.
+ *
+ * L octets can express a message of at most 2^(8 * L) - 1 octets, which bounds a CCM*
+ * message at 65535 octets. Beyond that the algorithm is undefined, and past 2^16
+ * blocks the counter field would either carry into the nonce or, where the hardware
+ * CTR is 16 bits wide, wrap and repeat the keystream.
+ */
+#define CCM_STAR_L		 2
+#define CCM_STAR_FLAGS_LENGTH	 1
+#define CCM_STAR_NONCE_LENGTH	 PSA_CIPHER_IV_LENGTH(PSA_KEY_TYPE_AES, PSA_ALG_CCM_STAR_NO_TAG)
+#define CCM_STAR_FLAGS_OFFSET	 0
+#define CCM_STAR_NONCE_OFFSET	 (CCM_STAR_FLAGS_OFFSET + CCM_STAR_FLAGS_LENGTH)
+#define CCM_STAR_COUNTER_OFFSET	 (CCM_STAR_NONCE_OFFSET + CCM_STAR_NONCE_LENGTH)
+/* A_0 encrypts the authentication field, which CCM* no-tag does not have. */
+#define CCM_STAR_COUNTER_INITIAL 1
+#define CCM_STAR_MAX_MESSAGE_LEN (BIT(8 * CCM_STAR_L) - 1)
+
+/* Flags, the nonce PSA gives us and the L-octet counter must tile one cipher block
+ * exactly, and the counter must be the width sys_put_be16() writes.
+ */
+BUILD_ASSERT(CCM_STAR_COUNTER_OFFSET + CCM_STAR_L == SX_BLKCIPHER_IV_SZ);
+BUILD_ASSERT(CCM_STAR_L == sizeof(uint16_t));
+
+/**
+ * @brief Build the CCM* counter block A_1 from a nonce.
+ *
+ * Shared by the hardware and software cipher drivers so that the layout is written
+ * in exactly one place.
+ *
+ * @param[out] block One cipher block, SX_BLKCIPHER_IV_SZ octets.
+ * @param[in]  nonce CCM_STAR_NONCE_LENGTH octets.
+ */
+static inline void cracen_ccm_star_build_a1(uint8_t *block, const uint8_t *nonce)
+{
+	block[CCM_STAR_FLAGS_OFFSET] = CCM_STAR_L - 1;
+	memcpy(&block[CCM_STAR_NONCE_OFFSET], nonce, CCM_STAR_NONCE_LENGTH);
+	sys_put_be16(CCM_STAR_COUNTER_INITIAL, &block[CCM_STAR_COUNTER_OFFSET]);
+}
 
 #if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 /** Maximum block cipher block size.
@@ -301,6 +358,10 @@ struct cracen_cipher_operation {
 	uint8_t unprocessed_input[SX_BLKCIPHER_MAX_BLK_SZ];
 	uint8_t unprocessed_input_bytes;
 	uint8_t blk_size;
+	/* Only used by algorithms bound by the message length, currently
+	 * PSA_ALG_CCM_STAR_NO_TAG.
+	 */
+	uint16_t processed_length;
 	enum cipher_operation dir;
 };
 typedef struct cracen_cipher_operation cracen_cipher_operation_t;

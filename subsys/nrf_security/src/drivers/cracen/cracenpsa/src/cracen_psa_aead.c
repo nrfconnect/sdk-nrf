@@ -256,8 +256,8 @@ static void create_aead_ccmheader(cracen_aead_operation_t *operation,
 	size_t m, l;
 
 	/* RFC3610 paragraph 2.2 defines the formatting of the first block.
-	 * M, CCM TAG size is one of {4,6,8,10,12,14,16}, CCM* not supported
-	 * (MAC size 0)
+	 * M, CCM TAG size is one of {4,6,8,10,12,14,16}, or 0 for CCM* (IEEE
+	 * P802.15-4/0537r2), in which case the M field is zero.
 	 * L must be between 2 and 8.
 	 * Nonce size should be between 7 and 13 bytes.
 	 * The first block contains:
@@ -275,7 +275,8 @@ static void create_aead_ccmheader(cracen_aead_operation_t *operation,
 	l = 15 - operation->nonce_length;
 
 	flags = (operation->ad_length > 0) ? (1 << 6) : 0;
-	m = (operation->tag_size - 2) / 2;
+	/* CCM* encodes M=0 as a zero M field; (0 - 2) / 2 would underflow. */
+	m = operation->tag_size ? (operation->tag_size - 2) / 2 : 0;
 
 	flags |= (m & 0x7) << 3;
 	flags |= ((l - 1) & 0x7);
