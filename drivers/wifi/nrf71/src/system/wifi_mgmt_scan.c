@@ -287,9 +287,9 @@ static inline enum wifi_security_type drv_to_wifi_mgmt(int drv_security_type)
 	case NRF_WIFI_OWE:
 		return WIFI_SECURITY_TYPE_OWE;
 	case NRF_WIFI_FT_PSK_SHA384:
-		return WIFI_SECURITY_TYPE_FT_PSK;
+		return WIFI_SECURITY_TYPE_FT_PSK_SHA384;
 	case NRF_WIFI_PSK_SHA384:
-		return WIFI_SECURITY_TYPE_PSK;
+		return WIFI_SECURITY_TYPE_PSK_SHA384;
 	default:
 		return WIFI_SECURITY_TYPE_UNKNOWN;
 	}
