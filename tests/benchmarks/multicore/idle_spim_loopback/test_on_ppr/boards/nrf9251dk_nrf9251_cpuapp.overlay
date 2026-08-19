@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	zephyr,user {
+		/* Claim ownership so PPR can use it. */
+		test-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+		cs-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&spi130 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&gpiote130 {
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};

@@ -28,3 +28,12 @@
 	nonsecure-channels = <6>;
 	child-owned-channels = <6>;
 };
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart135 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};

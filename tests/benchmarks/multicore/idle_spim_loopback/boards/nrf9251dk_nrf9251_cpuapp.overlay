@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires two wire connections:
+ *  - SPIM_MOSI with SPIM_MISO -> P2.03 - P2.09;
+ *  - SPI cs-gpios with test-gpios -> P1.00 - P1.01.
+ * Test-gpios and cs-gpios must have identical active level flag.
+ */
+
+/ {
+	aliases {
+		led = &led0;
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&pinctrl {
+	spi130_default_alt: spi130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>;
+		};
+	};
+
+	spi130_sleep_alt: spi130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 3)>,
+				<NRF_PSEL(SPIM_MOSI, 2, 3)>,
+				<NRF_PSEL(SPIM_MISO, 2, 9)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi130 {
+	compatible = "nordic,nrf-spim";
+	status = "okay";
+	pinctrl-0 = <&spi130_default_alt>;
+	pinctrl-1 = <&spi130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	memory-regions = <&cpuapp_dma_region>;
+	cs-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
+	zephyr,pm-device-runtime-auto;
+
+	dut_spi_dt: test-spi-dev@0 {
+		compatible = "vnd,spi-device";
+		reg = <0>;
+		spi-max-frequency = <DT_FREQ_M(4)>;
+	};
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};

@@ -1,0 +1,46 @@
+common:
+  sysbuild: true
+  tags:
+    - ci_build
+    - ci_tests_benchmarks_multicore
+    - spim
+
+tests:
+
+  #
+  # 4 Bytes of data
+  #
+
+  benchmarks.multicore.idle_spim_loopback.4_bytes.s2ram.cpuppr:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram_ppr"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  #
+  # 16 Bytes of data
+  #
+
+  benchmarks.multicore.idle_spim_loopback.16_bytes.s2ram.cpuppr:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    extra_args:
+      - idle_spim_loopback_CONFIG_DATA_FIELD=16
+    harness: pytest
+    harness_config:
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram_ppr"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
