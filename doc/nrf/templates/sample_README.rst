@@ -1,32 +1,30 @@
 .. _sample:
 
-Template: Sample
-################
+.. ncs-sample::
+   :title: Template: Sample
 
-.. contents::
-   :local:
-   :depth: 2
+   The XYZ sample demonstrates how to do a specific task. It uses the XYZ library.
 
 .. note::
+   * Each sample must include the ``.. ncs-sample::`` directive with the ``:title:`` parameter set to the sample name.
+     This adds an `Open in VS Code` button to the sample page, allowing you to quickly open the sample and install the required version of the |NCS| toolchain.
    * Give the sample a concise name that corresponds to the folder name.
      If the sample targets a specific protocol or device, add it in the title before the sample name (for example, "NFC:" or "Cellular:").
      Do not include the word "sample" in the title.
+   * Include a short description of the sample with the indent matching the ``ncs-sample`` parameter.
    * Put the documentation inside the sample folder and use the file name :file:`README.rst`.
    * Use the provided stock phrases and includes when possible.
    * Sections with * are optional and can be left out.
      All other sections are required for all samples.
      Do not add new sections (unless in the sections that allow for further subsections) without discussion with the tech writer team.
 
-The Sample sample demonstrates how to blink LEDs in the rhythm of the music that is played.
-
 .. tip::
-   Explain what this sample demonstrates in one, max two sentences (full sentences, not sentence fragments).
+   In the short description, explain what this sample demonstrates in one, max two sentences (full sentences, not sentence fragments).
    This introduction should give users a clear idea of what the sample can be used for.
 
    Think about use cases:
    "The XYZ sample shows how to use the XYZ library" is not a good introduction, because customers do not want to use the XYZ library, but they want to get a task done.
    Instead, write something like "The XYZ sample shows how to do this awesome task. It uses the XYZ library."
-
 
 Requirements
 ************
@@ -34,7 +32,7 @@ Requirements
 .. note::
    * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
      Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all board targets specified in the :file:`sample.yaml` file.
-   * If only one kit is supported, replace the introduction text with "The sample supports the following development kit:".
+   * If only one kit is supported, replace the introduction text with the "The sample supports the following development kit:" sentence.
    * If several kits are required to test the sample, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
    * If TFM is included in the sample, add ``.. include:: /includes/tfm.txt`` to include the standard text that states this.
@@ -48,7 +46,6 @@ The sample supports the following development kits:
 The sample also requires ...
 
 .. include:: /includes/tfm.txt
-
 
 Overview
 ********
@@ -65,7 +62,6 @@ In addition, it uses the ``:ref:RST link`` sound sensor and hooks up to some Int
    How can users extend this sample?
    What libraries are used (link to them)?
 
-
 Some title*
 ===========
 
@@ -74,12 +70,10 @@ Some title*
    Give them a suitable title (sentence style capitalization, thus only the first word capitalized).
    If there is nothing important to point out, do not include any subsections.
 
-
 The sample repeatedly calls function ABC, which ...
 
 .. tip::
    Do not just list the functions that are called, but clarify general concepts or explain parts of the implementation that might be unintuitive for some reason.
-
 
 Wiring*
 *******
