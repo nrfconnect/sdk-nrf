@@ -17,10 +17,12 @@ LOG_MODULE_REGISTER(idle_pwm_loop, LOG_LEVEL_INF);
 #error "Unsupported board: pwm_to_gpio_loopback node is not defined"
 #endif
 
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 #define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
 volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
 #define HOST_IS_READY	(1)
 #define REMOTE_IS_READY	(2)
+#endif /* defined(CONFIG_TEST_SYNCHRONIZE_CORES) */
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
@@ -95,7 +97,9 @@ int main(void)
 	LOG_INF("GPIO loopback at %s, pin %d", pin_in.port->name, pin_in.pin);
 	LOG_INF("Pulse/period: %u/%u usec", pulse / 1000, pwm_out.period / 1000);
 	LOG_INF("Expected number of edges in 1 second: %u (+/- %u)", edges, tolerance);
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 	LOG_INF("Shared memory at %p", (void *) shared_var);
+#endif
 	LOG_INF("===================================================================");
 
 	ret = pwm_is_ready_dt(&pwm_out);
@@ -125,6 +129,7 @@ int main(void)
 
 	k_timer_init(&my_timer, my_timer_handler, NULL);
 
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 	/* Synchronize Remote core with Host core */
 #if !defined(CONFIG_TEST_ROLE_REMOTE)
 	LOG_DBG("HOST starts");
@@ -150,6 +155,7 @@ int main(void)
 	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
 	LOG_DBG("REMOTE continues");
 #endif
+#endif /* defined(CONFIG_TEST_SYNCHRONIZE_CORES) */
 
 #if defined(CONFIG_COVERAGE)
 	printk("Coverage analysis enabled\n");
