@@ -568,8 +568,10 @@ tests:
       - shell_SNIPPET=wifi-sap
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -582,8 +584,10 @@ tests:
       - shell_SNIPPET=wifi-monitor-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -596,8 +600,10 @@ tests:
       - shell_SNIPPET=wifi-promiscuous-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -610,8 +616,10 @@ tests:
       - shell_SNIPPET=wifi-raw-tx
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -625,8 +633,10 @@ tests:
       - CONFIG_NET_DHCPV4_SERVER=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
