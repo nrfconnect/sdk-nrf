@@ -14,7 +14,7 @@
 #ifndef __NRF71_CD_SR_IF_H__
 #define __NRF71_CD_SR_IF_H__
 
-#include "common/pack_def.h"
+#include "pack_def.h"
 
 /** Number of elements in CCCONF priority range buffers. */
 #define NUM_ELEMENTS_IN_CCCONF_PTI_RANGE 3U

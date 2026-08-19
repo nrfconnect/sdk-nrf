@@ -15,7 +15,7 @@
 #ifndef __NRF71_COEX_IF_H__
 #define __NRF71_COEX_IF_H__
 
-#include "common/pack_def.h"
+#include "pack_def.h"
 
 /*
  * The shared SR priority-range structure (struct coex_sr_priority_range_t) and

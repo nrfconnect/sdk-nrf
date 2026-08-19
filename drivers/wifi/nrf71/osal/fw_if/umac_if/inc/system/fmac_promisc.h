@@ -11,7 +11,7 @@
 #ifndef __FMAC_PROMISC_H__
 #define __FMAC_PROMISC_H__
 #include "system/fmac_structs.h"
-#include "common/pack_def.h"
+#include "pack_def.h"
 
 /** 802.11 Packet-type */
 enum nrf_wifi_fmac_frame_type {

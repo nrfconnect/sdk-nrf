@@ -16,7 +16,7 @@
 #define __NRF71_WIFI_COMMON_H__
 
 #include "nrf71_wifi_rf.h"
-#include "common/pack_def.h"
+#include "pack_def.h"
 #include "nrf71_wifi_debug_stats.h"
 
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42
