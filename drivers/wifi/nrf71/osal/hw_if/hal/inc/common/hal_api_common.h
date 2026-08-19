@@ -16,7 +16,7 @@
 #include <common/log_cfg.h>
 #include <nrf71_wifi_ctrl.h>
 
-#include "bal_api.h"
+#include <common/ipc_bus.h>
 #include "hal_structs_common.h"
 
 #define NRF_WIFI_ADDR_REG_NAME_LEN		16

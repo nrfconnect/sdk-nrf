@@ -7,8 +7,8 @@
 /**
  * @brief IPC bus layer for the nRF71 Wi-Fi driver.
  *
- * Combines Zephyr ICMsg service binding, host TX/RX IPC protocol, and BAL
- * bus operations. Design: single IPC endpoint (ipc0) for both TX and RX.
+ * Combines Zephyr ICMsg service binding, host TX/RX IPC protocol, and the
+ * HAL-facing IPC bus API. Design: single IPC endpoint (ipc0) for both TX and RX.
  * - Host sends (addr, size, ack_addr) for TX.
  * - RPU writes completion to ack_addr directly, no IPC ACK.
  * - UMAC sends (event addr, size, ring) for RX; Host processes then frees
@@ -17,7 +17,6 @@
 
 #include <errno.h>
 #include <stdint.h>
-#include <string.h>
 
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
@@ -26,9 +25,8 @@
 #include <common/log_cfg.h>
 #include <common/mem_mgmt.h>
 
-#include "bal_structs.h"
-#include "common/hal_structs_common.h"
-#include "ipc_bus.h"
+#include <common/hal_structs_common.h>
+#include <common/ipc_bus.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -347,8 +345,7 @@ static void host_tx_ack_slot_free(uint32_t *ack_addr)
 /* RX path: receive event (addr, size, ring); after handler, free by writing tail to GDRAM */
 static void host_rx_recv(void *data, size_t len, void *priv)
 {
-	struct nrf_wifi_bus_ipc_dev_ctx *dev_ctx = (struct nrf_wifi_bus_ipc_dev_ctx *)priv;
-	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx;
+	struct nrf_wifi_ipc_dev_ctx *dev_ctx = priv;
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx;
 	wifi_ipc_buf_desc_t msg_info = *(wifi_ipc_buf_desc_t *)data;
 
@@ -358,17 +355,15 @@ static void host_rx_recv(void *data, size_t len, void *priv)
 	 * with no consumer attached. Drop them, but always release the ring slot
 	 * or the UMAC event ring fills up and wedges the next bring-up.
 	 */
-	if ((callback_func == NULL) || (dev_ctx == NULL)) {
+	if ((callback_func == NULL) || (dev_ctx == NULL) || (dev_ctx->hal_dev_ctx == NULL)) {
 		LOG_DBG("Host RX IPC event dropped, no consumer");
 		wifi_ipc_host_rx_free_event(&msg_info);
 		return;
 	}
 
-	bal_dev_ctx = dev_ctx->bal_dev_ctx;
-	hal_dev_ctx = bal_dev_ctx->hal_dev_ctx;
-
+	hal_dev_ctx = dev_ctx->hal_dev_ctx;
 	hal_dev_ctx->ipc_msg = (void *)msg_info.addr;
-	callback_func(priv);
+	callback_func(dev_ctx);
 	wifi_ipc_host_rx_free_event(&msg_info);
 	LOG_DBG("Host RX IPC callback completed");
 }
@@ -525,20 +520,19 @@ void ipc_unregister_rx_cb(void)
 	callback_func = NULL;
 }
 
-/* ---- BAL bus operations ---- */
+/* ---- HAL-facing IPC bus API ---- */
 
-static int nrf_wifi_bus_ipc_irq_handler(void *data)
+static int nrf_wifi_ipc_irq_handler(void *data)
 {
-	struct nrf_wifi_bus_ipc_dev_ctx *dev_ctx = data;
-	struct nrf_wifi_bus_ipc_priv *ipc_priv = dev_ctx->ipc_priv;
+	struct nrf_wifi_ipc_dev_ctx *dev_ctx = data;
 
-	return ipc_priv->intr_callbk_fn(dev_ctx->bal_dev_ctx);
+	return dev_ctx->ipc_priv->intr_callbk_fn(dev_ctx->hal_dev_ctx);
 }
 
-static void *nrf_wifi_bus_ipc_dev_add(void *bus_priv, void *bal_dev_ctx)
+struct nrf_wifi_ipc_dev_ctx *nrf_wifi_ipc_dev_add(struct nrf_wifi_ipc_priv *ipc_priv,
+						  void *hal_dev_ctx)
 {
-	struct nrf_wifi_bus_ipc_priv *ipc_priv = bus_priv;
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx;
+	struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx;
 	int ret;
 
 	ipc_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*ipc_dev_ctx));
@@ -548,7 +542,7 @@ static void *nrf_wifi_bus_ipc_dev_add(void *bus_priv, void *bal_dev_ctx)
 	}
 
 	ipc_dev_ctx->ipc_priv = ipc_priv;
-	ipc_dev_ctx->bal_dev_ctx = bal_dev_ctx;
+	ipc_dev_ctx->hal_dev_ctx = hal_dev_ctx;
 
 	ret = ipc_init();
 	if (ret) {
@@ -557,24 +551,19 @@ static void *nrf_wifi_bus_ipc_dev_add(void *bus_priv, void *bal_dev_ctx)
 		return NULL;
 	}
 
-	ipc_dev_ctx->host_addr_base = 0;
-
 	return ipc_dev_ctx;
 }
 
-static void nrf_wifi_bus_ipc_dev_rem(void *bus_dev_ctx)
+void nrf_wifi_ipc_dev_rem(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx)
 {
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = bus_dev_ctx;
-
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, ipc_dev_ctx);
 }
 
-static enum nrf_wifi_status nrf_wifi_bus_ipc_dev_init(void *bus_dev_ctx)
+enum nrf_wifi_status nrf_wifi_ipc_dev_init(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx)
 {
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = bus_dev_ctx;
 	int ret;
 
-	ret = ipc_register_rx_cb(&nrf_wifi_bus_ipc_irq_handler, ipc_dev_ctx);
+	ret = ipc_register_rx_cb(&nrf_wifi_ipc_irq_handler, ipc_dev_ctx);
 	if (ret) {
 		LOG_ERR("%s: ipc_register_rx_cb failed", __func__);
 		return NRF_WIFI_STATUS_FAIL;
@@ -583,9 +572,9 @@ static enum nrf_wifi_status nrf_wifi_bus_ipc_dev_init(void *bus_dev_ctx)
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
-static void nrf_wifi_bus_ipc_dev_deinit(void *bus_dev_ctx)
+void nrf_wifi_ipc_dev_deinit(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx)
 {
-	ARG_UNUSED(bus_dev_ctx);
+	ARG_UNUSED(ipc_dev_ctx);
 
 	/* Detach the event consumer before the HAL context is torn down. The IPC
 	 * endpoint itself stays bound: it is the control plane and its lifetime
@@ -595,12 +584,10 @@ static void nrf_wifi_bus_ipc_dev_deinit(void *bus_dev_ctx)
 	ipc_deinit();
 }
 
-static void *nrf_wifi_bus_ipc_init(void *params,
-				   enum nrf_wifi_status (*intr_callbk_fn)(void *bal_dev_ctx))
+struct nrf_wifi_ipc_priv *nrf_wifi_ipc_init(
+	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_dev_ctx))
 {
-	struct nrf_wifi_bus_ipc_priv *ipc_priv;
-
-	ARG_UNUSED(params);
+	struct nrf_wifi_ipc_priv *ipc_priv;
 
 	ipc_priv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*ipc_priv));
 	if (!ipc_priv) {
@@ -613,53 +600,20 @@ static void *nrf_wifi_bus_ipc_init(void *params,
 	return ipc_priv;
 }
 
-static void nrf_wifi_bus_ipc_deinit(void *bus_priv)
+void nrf_wifi_ipc_deinit(struct nrf_wifi_ipc_priv *ipc_priv)
 {
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bus_priv);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, ipc_priv);
 }
 
-static unsigned int nrf_wifi_bus_ipc_read_word(void *dev_ctx, unsigned long addr_offset)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-	uintptr_t addr = ipc_dev_ctx->host_addr_base + addr_offset;
-
-	return *(const volatile uint32_t *)addr;
-}
-
-static void nrf_wifi_bus_ipc_write_word(void *dev_ctx, unsigned long addr_offset,
-					unsigned int val)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-	uintptr_t addr = ipc_dev_ctx->host_addr_base + addr_offset;
-
-	*(volatile uint32_t *)addr = val;
-}
-
-static void nrf_wifi_bus_ipc_read_block(void *dev_ctx, void *dest_addr,
-					unsigned long src_addr_offset, size_t len)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-	uintptr_t addr = ipc_dev_ctx->host_addr_base + src_addr_offset;
-
-	memcpy(dest_addr, (const void *)addr, len);
-}
-
-static void nrf_wifi_bus_ipc_write_block(void *dev_ctx, unsigned long dest_addr_offset,
-					 const void *src_addr, size_t len)
-{
-	struct nrf_wifi_bus_ipc_dev_ctx *ipc_dev_ctx = dev_ctx;
-	uintptr_t addr = ipc_dev_ctx->host_addr_base + dest_addr_offset;
-
-	memcpy((void *)addr, src_addr, len);
-}
-
-static enum nrf_wifi_status nrf_wifi_bus_ipc_send_msg(void *dev_ctx, unsigned int msg_type,
-						      void *msg, unsigned int len)
+enum nrf_wifi_status nrf_wifi_ipc_send_msg(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx,
+					   unsigned int msg_type,
+					   void *msg,
+					   unsigned int len)
 {
 	ipc_ctx_t ctx;
 	int ret;
 
-	ARG_UNUSED(dev_ctx);
+	ARG_UNUSED(ipc_dev_ctx);
 
 	switch (msg_type) {
 	case NRF_WIFI_IPC_MSG_CMD_CTRL:
@@ -685,47 +639,4 @@ static enum nrf_wifi_status nrf_wifi_bus_ipc_send_msg(void *dev_ctx, unsigned in
 	}
 
 	return NRF_WIFI_STATUS_SUCCESS;
-}
-
-#ifdef NRF_WIFI_LOW_POWER
-static void nrf_wifi_bus_ipc_ps_sleep(void *dev_ctx)
-{
-	ARG_UNUSED(dev_ctx);
-}
-
-static void nrf_wifi_bus_ipc_ps_wake(void *dev_ctx)
-{
-	ARG_UNUSED(dev_ctx);
-}
-
-static int nrf_wifi_bus_ipc_ps_status(void *dev_ctx)
-{
-	ARG_UNUSED(dev_ctx);
-
-	return 0;
-}
-#endif /* NRF_WIFI_LOW_POWER */
-
-static struct nrf_wifi_bal_ops nrf_wifi_bus_ipc_ops = {
-	.init = &nrf_wifi_bus_ipc_init,
-	.deinit = &nrf_wifi_bus_ipc_deinit,
-	.dev_add = &nrf_wifi_bus_ipc_dev_add,
-	.dev_rem = &nrf_wifi_bus_ipc_dev_rem,
-	.dev_init = &nrf_wifi_bus_ipc_dev_init,
-	.dev_deinit = &nrf_wifi_bus_ipc_dev_deinit,
-	.read_word = &nrf_wifi_bus_ipc_read_word,
-	.write_word = &nrf_wifi_bus_ipc_write_word,
-	.read_block = &nrf_wifi_bus_ipc_read_block,
-	.write_block = &nrf_wifi_bus_ipc_write_block,
-	.ipc_send_msg = &nrf_wifi_bus_ipc_send_msg,
-#ifdef NRF_WIFI_LOW_POWER
-	.rpu_ps_sleep = &nrf_wifi_bus_ipc_ps_sleep,
-	.rpu_ps_wake = &nrf_wifi_bus_ipc_ps_wake,
-	.rpu_ps_status = &nrf_wifi_bus_ipc_ps_status,
-#endif /* NRF_WIFI_LOW_POWER */
-};
-
-struct nrf_wifi_bal_ops *get_bus_ops(void)
-{
-	return &nrf_wifi_bus_ipc_ops;
 }

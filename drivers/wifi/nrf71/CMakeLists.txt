@@ -15,18 +15,14 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/fw_if
-    ${nrf71_osal_base}/bus_if/bus/ipc/inc
-    ${nrf71_osal_base}/bus_if/bal/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
     ${nrf71_osal_base}/hw_if/hal/inc
     ${ZEPHYR_BASE}/subsys/net/ip
   )
 
-  # ---- Sources: osal (bus_if, fw_if, hw_if) ----
+  # ---- Sources: osal (fw_if, hw_if) and common ----
   zephyr_library_sources(
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
-    ${nrf71_osal_base}/bus_if/bal/src/bal.c
-    ${nrf71_osal_base}/bus_if/bus/ipc/src/ipc_bus.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
     src/common/rf_params.c
@@ -36,6 +32,7 @@ function(nrf71_wifi_setup_include_and_sources)
     src/common/work_mgmt.c
     src/common/lock_mgmt.c
     src/common/llist_mgmt.c
+    src/common/ipc_bus.c
   )
 
   if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
@@ -65,8 +62,6 @@ function(nrf71_wifi_setup_include_and_sources)
       ${CMAKE_CURRENT_SOURCE_DIR}/inc
       ${nrf71_osal_base}/fw_if/umac_if/inc
       ${nrf71_osal_base}/hw_if/hal/inc
-      ${nrf71_osal_base}/bus_if/bal/inc
-      ${nrf71_osal_base}/bus_if/bus/ipc/inc
     )
   endif()
 

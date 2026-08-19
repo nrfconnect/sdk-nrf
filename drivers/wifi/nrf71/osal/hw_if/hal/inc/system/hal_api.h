@@ -15,7 +15,6 @@
 #define __HAL_API_SYS_H__
 
 #include <nrf71_wifi_ctrl.h>
-#include "bal_api.h"
 #include "common/hal_structs_common.h"
 #include "common/hal_api_common.h"
 

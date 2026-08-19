@@ -51,10 +51,10 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *h
 
 	nrf_wifi_lock_init(hal_dev_ctx->lock_rx);
 
-	hal_dev_ctx->bal_dev_ctx = nrf_wifi_bal_dev_add(hpriv->bpriv, hal_dev_ctx);
+	hal_dev_ctx->ipc_dev_ctx = nrf_wifi_ipc_dev_add(hpriv->ipc_priv, hal_dev_ctx);
 
-	if (!hal_dev_ctx->bal_dev_ctx) {
-		LOG_ERR("%s: nrf_wifi_bal_dev_add failed", __func__);
+	if (!hal_dev_ctx->ipc_dev_ctx) {
+		LOG_ERR("%s: nrf_wifi_ipc_dev_add failed", __func__);
 		goto lock_rx_free;
 	}
 

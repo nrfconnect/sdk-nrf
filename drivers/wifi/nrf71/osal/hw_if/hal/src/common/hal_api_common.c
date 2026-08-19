@@ -33,8 +33,8 @@ enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal
 			     __builtin_return_address(0));
 #endif
 	nrf_wifi_lock_take(hal_dev_ctx->lock_hal);
-	status = nrf_wifi_bal_ipc_send_msg(hal_dev_ctx->bal_dev_ctx,
-					   NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL,
+	status = nrf_wifi_ipc_send_msg(hal_dev_ctx->ipc_dev_ctx,
+				       NRF_WIFI_HAL_MSG_TYPE_CMD_CTRL,
 					   cmd,
 					   cmd_size);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -64,7 +64,7 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 	hal_rpu_ps_deinit(hal_dev_ctx);
 #endif
 
-	nrf_wifi_bal_dev_rem(hal_dev_ctx->bal_dev_ctx);
+	nrf_wifi_ipc_dev_rem(hal_dev_ctx->ipc_dev_ctx);
 
 	hal_dev_ctx->hpriv->num_devs--;
 
@@ -80,10 +80,10 @@ enum nrf_wifi_status nrf_wifi_hal_dev_init(struct nrf_wifi_hal_dev_ctx *hal_dev_
 	hal_dev_ctx->rpu_fw_booted = true;
 #endif /* NRF_WIFI_LOW_POWER */
 
-	status = nrf_wifi_bal_dev_init(hal_dev_ctx->bal_dev_ctx);
+	status = nrf_wifi_ipc_dev_init(hal_dev_ctx->ipc_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_bal_dev_init failed",
+		LOG_ERR("%s: nrf_wifi_ipc_dev_init failed",
 				      __func__);
 		goto out;
 	}
@@ -112,7 +112,7 @@ enum nrf_wifi_status nrf_wifi_hal_ipc_msg_handler(void *priv)
 void nrf_wifi_hal_dev_deinit(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	nrf_wifi_hal_disable(hal_dev_ctx);
-	nrf_wifi_bal_dev_deinit(hal_dev_ctx->bal_dev_ctx);
+	nrf_wifi_ipc_dev_deinit(hal_dev_ctx->ipc_dev_ctx);
 }
 
 
@@ -128,7 +128,6 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_hal_priv *hpriv = NULL;
-	struct nrf_wifi_bal_cfg_params bal_cfg_params;
 
 	hpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*hpriv));
 
@@ -146,10 +145,9 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 	hpriv->rpu_recovery_callbk_fn = rpu_recovery_callbk_fn;
 
 	ARG_UNUSED(status);
-	/* PKTRAM base addr is not needed for IPC */
-	hpriv->bpriv = nrf_wifi_bal_init(&bal_cfg_params, &nrf_wifi_hal_ipc_msg_handler);
+	hpriv->ipc_priv = nrf_wifi_ipc_init(&nrf_wifi_hal_ipc_msg_handler);
 
-	if (!hpriv->bpriv) {
+	if (!hpriv->ipc_priv) {
 		LOG_ERR("%s: Failed",
 				      __func__);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hpriv);
@@ -162,7 +160,7 @@ out:
 
 void nrf_wifi_hal_deinit(struct nrf_wifi_hal_priv *hpriv)
 {
-	nrf_wifi_bal_deinit(hpriv->bpriv);
+	nrf_wifi_ipc_deinit(hpriv->ipc_priv);
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hpriv);
 }

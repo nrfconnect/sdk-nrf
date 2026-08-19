@@ -119,22 +119,6 @@ int ipc_register_rx_cb(int (*rx_handler)(void *priv), void *data);
 void ipc_unregister_rx_cb(void);
 
 /**
- * @brief Structure to hold context information for the IPC bus.
- */
-struct nrf_wifi_bus_ipc_priv {
-	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_ctx);
-};
-
-/**
- * @brief Structure to hold the device context for the IPC bus.
- */
-struct nrf_wifi_bus_ipc_dev_ctx {
-	struct nrf_wifi_bus_ipc_priv *ipc_priv;
-	void *bal_dev_ctx;
-	unsigned long host_addr_base;
-};
-
-/**
  * @brief IPC message types for host-to-RPU command send.
  */
 enum nrf_wifi_ipc_msg_type {
@@ -142,5 +126,34 @@ enum nrf_wifi_ipc_msg_type {
 	NRF_WIFI_IPC_MSG_CMD_DATA_RX = 2,
 	NRF_WIFI_IPC_MSG_CMD_DATA_TX = 4,
 };
+
+/**
+ * @brief HAL-facing IPC bus private context.
+ */
+struct nrf_wifi_ipc_priv {
+	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_dev_ctx);
+};
+
+/**
+ * @brief HAL-facing IPC bus per-device context.
+ */
+struct nrf_wifi_ipc_dev_ctx {
+	struct nrf_wifi_ipc_priv *ipc_priv;
+	void *hal_dev_ctx;
+};
+
+struct nrf_wifi_ipc_priv *nrf_wifi_ipc_init(
+	enum nrf_wifi_status (*intr_callbk_fn)(void *hal_dev_ctx));
+void nrf_wifi_ipc_deinit(struct nrf_wifi_ipc_priv *ipc_priv);
+
+struct nrf_wifi_ipc_dev_ctx *nrf_wifi_ipc_dev_add(struct nrf_wifi_ipc_priv *ipc_priv,
+						  void *hal_dev_ctx);
+void nrf_wifi_ipc_dev_rem(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx);
+enum nrf_wifi_status nrf_wifi_ipc_dev_init(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx);
+void nrf_wifi_ipc_dev_deinit(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx);
+enum nrf_wifi_status nrf_wifi_ipc_send_msg(struct nrf_wifi_ipc_dev_ctx *ipc_dev_ctx,
+					   unsigned int msg_type,
+					   void *msg,
+					   unsigned int len);
 
 #endif /* __IPC_BUS_H__ */
