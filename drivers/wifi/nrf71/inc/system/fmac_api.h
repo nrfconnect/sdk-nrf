@@ -1148,7 +1148,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	struct umac_int_stats *stats);
 #endif /* NRF71_UTIL */
 
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 /**
  * @brief Send  Rx buffer details to firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1163,7 +1162,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 enum nrf_wifi_status nrf_wifi_fmac_prog_rx_buf_info(void *fmac_dev_ctx,
 					       struct nrf_wifi_rx_buf *rx_buf,
 					       unsigned int num_buffs);
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC*/
 
 enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr);
 
