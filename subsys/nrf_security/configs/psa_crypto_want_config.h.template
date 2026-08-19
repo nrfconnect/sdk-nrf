@@ -40,6 +40,7 @@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_128                          @PSA_WANT_AES_KEY_SIZE_128@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_192                          @PSA_WANT_AES_KEY_SIZE_192@
 #cmakedefine PSA_WANT_AES_KEY_SIZE_256                          @PSA_WANT_AES_KEY_SIZE_256@
+#cmakedefine PSA_WANT_ALG_AES_MMO_ZIGBEE                        @PSA_WANT_ALG_AES_MMO_ZIGBEE@
 #cmakedefine PSA_WANT_ALG_CBC_NO_PADDING                        @PSA_WANT_ALG_CBC_NO_PADDING@
 #cmakedefine PSA_WANT_ALG_CBC_PKCS7                             @PSA_WANT_ALG_CBC_PKCS7@
 #cmakedefine PSA_WANT_ALG_CCM                                   @PSA_WANT_ALG_CCM@

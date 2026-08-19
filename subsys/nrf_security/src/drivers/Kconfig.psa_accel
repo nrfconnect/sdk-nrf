@@ -74,6 +74,9 @@ config PSA_ACCEL_CCM_ARIA
 config PSA_ACCEL_CCM_CAMELLIA
 	bool
 
+config PSA_ACCEL_AES_MMO_ZIGBEE
+	bool
+
 config PSA_ACCEL_CCM_STAR_NO_TAG_AES_128
 	bool
 
