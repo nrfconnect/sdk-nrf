@@ -134,16 +134,16 @@ static void disconnected_cb(struct bt_conn *conn, uint8_t reason)
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Disconnected: %s, reason 0x%02x %s", addr, reason, bt_hci_err_to_str(reason));
 
-	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
-		bt_conn_unref(conn);
-	}
-
 	/* Publish disconnected */
 	msg.event = BT_MGMT_DISCONNECTED;
 	msg.conn = conn;
 
 	ret = zbus_chan_pub(&bt_mgmt_chan, &msg, K_NO_WAIT);
 	ERR_CHK(ret);
+
+	if (IS_ENABLED(CONFIG_BT_CENTRAL)) {
+		bt_conn_unref(conn);
+	}
 
 	if (IS_ENABLED(CONFIG_BT_PERIPHERAL)) {
 		ret = bt_mgmt_adv_start(0, NULL, 0, NULL, 0, true);
