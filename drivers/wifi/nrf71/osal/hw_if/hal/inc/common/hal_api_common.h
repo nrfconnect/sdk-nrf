@@ -86,41 +86,13 @@ enum NRF_WIFI_HAL_STATUS nrf_wifi_hal_status_unlocked(struct nrf_wifi_hal_dev_ct
  * @param cmd Pointer to command data.
  * @param cmd_size Size of the command data pointed to by @p cmd.
  *
- * This function takes care of sending a command to the RPU. It does the
- * following:
- *
- *     - Fragments a command into smaller chunks if the size of a command is
- *       greater than %MAX_CMD_SIZE.
- *     - Queues up the command(s) to the HAL command queue.
- *     - Calls a function to further process the commands queued up in the HAL
- *       command queue which handles it by:
- *
- *           - Waiting for the RPU to be ready to handle a command.
- *           - Copies the command to the GRAM memory and indicates to the RPU
- *             that a command has been posted
+ * This function sends a control command to the RPU over IPC.
  *
  * @return The status of the operation.
  */
 enum nrf_wifi_status nrf_wifi_hal_ctrl_cmd_send(struct nrf_wifi_hal_dev_ctx *hal_ctx,
 						void *cmd,
 						unsigned int cmd_size);
-
-
-/**
- * @brief Process events from the RPU.
- *
- * @param hal_ctx Pointer to HAL context.
- *
- * This function processes the events which have been queued into the event
- * queue by an ISR. It does the following:
- *
- *     - Dequeues an event from the event queue.
- *     - Calls hal_event_process to further process the event.
- *
- * @return The status of the operation.
- */
-enum nrf_wifi_status hal_rpu_eventq_process(struct nrf_wifi_hal_dev_ctx *hal_ctx);
-
 
 /**
  * @brief Set the processing context for the Wi-Fi HAL.

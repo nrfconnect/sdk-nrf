@@ -190,12 +190,6 @@ struct nrf_wifi_hal_dev_ctx {
 	unsigned char idx;
 	/** RPU information */
 	void *ipc_msg;
-	/** Number of commands */
-	unsigned int num_cmds;
-	/** Command queue */
-	void *cmd_q;
-	/** Event queue */
-	void *event_q;
 	/** Current RPU processor type:
 	 * This is only used during FW loading where we need the information
 	 * about the processor whose core memory the code/data needs to be
@@ -206,8 +200,6 @@ struct nrf_wifi_hal_dev_ctx {
 	enum RPU_PROC_TYPE curr_proc;
 	/** HAL lock */
 	void *lock_hal;
-	/** Event tasklet */
-	void *event_tasklet;
 	/** RX lock */
 	void *lock_rx;
 	/** RPU PKTRAM base address */
@@ -248,31 +240,7 @@ struct nrf_wifi_hal_dev_ctx {
 	/** RPU firmware booted flag */
 	bool rpu_fw_booted;
 #endif /* NRF_WIFI_LOW_POWER */
-	/** Event data */
-	char *event_data;
-	/** Current event data */
-	char *event_data_curr;
-	/** Event data length */
-	unsigned int event_data_len;
-	/** Pending event data */
-	unsigned int event_data_pending;
-	/** Event resubmit flag */
-	unsigned int event_resubmit;
 	/** HAL status */
 	enum NRF_WIFI_HAL_STATUS hal_status;
-	/** Recovery tasklet */
-	void *recovery_tasklet;
-	/** Recovery lock */
-	void *lock_recovery;
-};
-
-/**
- * @brief Structure to hold information about a HAL message.
- */
-struct nrf_wifi_hal_msg {
-	/** Length of the message */
-	unsigned int len;
-	/** Message data */
-	char data[0];
 };
 #endif /* __HAL_STRUCTS_COMMON_H__ */

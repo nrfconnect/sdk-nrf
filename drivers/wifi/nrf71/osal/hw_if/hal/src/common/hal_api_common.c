@@ -11,8 +11,6 @@
 
 #include <common/mem_mgmt.h>
 #include <common/lock_mgmt.h>
-#include <common/work_mgmt.h>
-#include <common/llist_mgmt.h>
 
 #include "common/hal_api_common.h"
 #include <zephyr/logging/log.h>
@@ -50,68 +48,6 @@ out:
 }
 
 
-enum nrf_wifi_status hal_rpu_eventq_process(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_SUCCESS;
-	struct nrf_wifi_hal_msg *event = NULL;
-	void *event_data = NULL;
-	unsigned int event_len = 0;
-
-	while (1) {
-		event = nrf_wifi_ctrl_llist_pop_head(hal_dev_ctx->event_q);
-		if (!event) {
-			goto out;
-		}
-
-		event_data = event->data;
-		event_len = event->len;
-
-		/* Process the event further */
-		status = hal_dev_ctx->hpriv->intr_callbk_fn(hal_dev_ctx->mac_dev_ctx,
-							    event_data,
-							    event_len);
-
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Interrupt callback failed",
-					      __func__);
-		}
-
-		/* Free up the local buffer */
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, event);
-		event = NULL;
-	}
-
-out:
-	return status;
-}
-
-static void hal_rpu_eventq_drain(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
-{
-	struct nrf_wifi_hal_msg *event = NULL;
-	unsigned long flags = 0;
-
-	while (1) {
-		nrf_wifi_lock_irq_take(hal_dev_ctx->lock_rx,
-						&flags);
-
-		event = nrf_wifi_ctrl_llist_pop_head(hal_dev_ctx->event_q);
-
-		nrf_wifi_lock_irq_rel(hal_dev_ctx->lock_rx,
-					       &flags);
-
-		if (!event) {
-			goto out;
-		}
-
-		/* Free up the local buffer */
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, event);
-		event = NULL;
-	}
-
-out:
-	return;
-}
-
 void nrf_wifi_hal_proc_ctx_set(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 			       enum RPU_PROC_TYPE proc)
 {
@@ -121,26 +57,8 @@ void nrf_wifi_hal_proc_ctx_set(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx,
 
 void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
-	if (hal_dev_ctx->recovery_tasklet) {
-		nrf_wifi_work_kill(hal_dev_ctx->recovery_tasklet);
-		nrf_wifi_work_free(hal_dev_ctx->recovery_tasklet);
-	}
-	if (hal_dev_ctx->lock_recovery) {
-		nrf_wifi_lock_free(hal_dev_ctx->lock_recovery);
-	}
-
-	nrf_wifi_work_kill(hal_dev_ctx->event_tasklet);
-
-	nrf_wifi_work_free(hal_dev_ctx->event_tasklet);
-
-	hal_rpu_eventq_drain(hal_dev_ctx);
-
 	nrf_wifi_lock_free(hal_dev_ctx->lock_hal);
 	nrf_wifi_lock_free(hal_dev_ctx->lock_rx);
-
-	nrf_wifi_ctrl_llist_free(hal_dev_ctx->event_q);
-
-	nrf_wifi_ctrl_llist_free(hal_dev_ctx->cmd_q);
 
 #ifdef NRF_WIFI_LOW_POWER
 	hal_rpu_ps_deinit(hal_dev_ctx);
@@ -195,7 +113,6 @@ void nrf_wifi_hal_dev_deinit(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 {
 	nrf_wifi_hal_disable(hal_dev_ctx);
 	nrf_wifi_bal_dev_deinit(hal_dev_ctx->bal_dev_ctx);
-	hal_rpu_eventq_drain(hal_dev_ctx);
 }
 
 
