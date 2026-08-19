@@ -18,9 +18,6 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 K_THREAD_STACK_DEFINE(bh_wq_stack_area, CONFIG_NRF71_BH_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_bh_q;
 
-K_THREAD_STACK_DEFINE(irq_wq_stack_area, CONFIG_NRF71_IRQ_WQ_STACK_SIZE);
-struct k_work_q zep_wifi_intr_q;
-
 #ifdef CONFIG_NRF71_TX_DONE_WQ_ENABLED
 K_THREAD_STACK_DEFINE(tx_done_wq_stack_area, CONFIG_NRF71_TX_DONE_WQ_STACK_SIZE);
 struct k_work_q zep_wifi_tx_done_q;
@@ -81,15 +78,6 @@ static int workqueue_init(void)
 
 	k_thread_name_set(zep_wifi_bh_q.thread_id, "nrf71_bh_wq");
 
-	k_work_queue_init(&zep_wifi_intr_q);
-
-	k_work_queue_start(&zep_wifi_intr_q,
-			   irq_wq_stack_area,
-			   K_THREAD_STACK_SIZEOF(irq_wq_stack_area),
-			   CONFIG_NRF71_IRQ_WQ_PRIORITY,
-			   NULL);
-
-	k_thread_name_set(zep_wifi_intr_q.thread_id, "nrf71_intr_wq");
 #ifdef CONFIG_NRF71_TX_DONE_WQ_ENABLED
 	k_work_queue_init(&zep_wifi_tx_done_q);
 
@@ -128,21 +116,22 @@ void nrf_wifi_work_init(struct zep_work_item *item, void (*callback)(unsigned lo
 
 void nrf_wifi_work_schedule(struct zep_work_item *item)
 {
-	if (item->type == ZEP_WORK_TYPE_IRQ) {
-		k_work_submit_to_queue(&zep_wifi_intr_q, &item->work);
-	} else if (item->type == ZEP_WORK_TYPE_BH) {
-		k_work_submit_to_queue(&zep_wifi_bh_q, &item->work);
-	}
+	switch (item->type) {
 #ifdef CONFIG_NRF71_TX_DONE_WQ_ENABLED
-	else if (item->type == ZEP_WORK_TYPE_TX_DONE) {
+	case ZEP_WORK_TYPE_TX_DONE:
 		k_work_submit_to_queue(&zep_wifi_tx_done_q, &item->work);
-	}
+		break;
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
 #ifdef CONFIG_NRF71_RX_WQ_ENABLED
-	else if (item->type == ZEP_WORK_TYPE_RX) {
+	case ZEP_WORK_TYPE_RX:
 		k_work_submit_to_queue(&zep_wifi_rx_q, &item->work);
-	}
+		break;
 #endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+	case ZEP_WORK_TYPE_BH:
+	default:
+		k_work_submit_to_queue(&zep_wifi_bh_q, &item->work);
+		break;
+	}
 }
 
 void nrf_wifi_work_kill(struct zep_work_item *item)

@@ -22,8 +22,6 @@ extern struct k_work_q zep_wifi_bh_q;
 enum zep_work_type {
 	/** Bottom-half work queue. */
 	ZEP_WORK_TYPE_BH,
-	/** Interrupt work queue. */
-	ZEP_WORK_TYPE_IRQ,
 	/** TX-done work queue. */
 	ZEP_WORK_TYPE_TX_DONE,
 	/** RX work queue. */

@@ -25,7 +25,7 @@
 #include <common/log_cfg.h>
 #include <common/mem_mgmt.h>
 
-#include <common/hal_structs_common.h>
+#include <common/hal_api_common.h>
 #include <common/ipc_bus.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
