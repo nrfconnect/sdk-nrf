@@ -96,7 +96,6 @@ static void nrf_wifi_off_raw_tx_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fma
 struct nrf_wifi_fmac_priv *nrf_wifi_off_raw_tx_fmac_init(void)
 {
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
-	struct nrf_wifi_hal_cfg_params hal_cfg_params;
 
 	fpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*fpriv));
 	if (!fpriv) {
@@ -105,13 +104,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_off_raw_tx_fmac_init(void)
 		goto out;
 	}
 
-	nrf_wifi_mem_set(&hal_cfg_params,
-			      0,
-			      sizeof(hal_cfg_params));
-
-	fpriv->hpriv = nrf_wifi_hal_init(&hal_cfg_params,
-					 &nrf_wifi_off_raw_tx_fmac_event_callback,
-					 NULL);
+	fpriv->hpriv = nrf_wifi_hal_init(&nrf_wifi_off_raw_tx_fmac_event_callback);
 	if (!fpriv->hpriv) {
 		LOG_ERR("%s: Unable to do HAL init",
 				      __func__);
