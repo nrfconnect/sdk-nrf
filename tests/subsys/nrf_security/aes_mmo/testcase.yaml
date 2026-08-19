@@ -1,0 +1,26 @@
+common:
+  sysbuild: true
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lc10dk/nrf54lc10a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  tags:
+    - sysbuild
+    - crypto
+    - ci_crypto
+    - ci_tests_crypto
+
+tests:
+  # CRACEN is the only implementation of AES-MMO: neither Oberon nor CC3xx has
+  # one, so there is no second leg to cross-check against. The install code
+  # vector from the Zigbee specification takes that role instead.
+  aes_mmo.cracen:
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y
