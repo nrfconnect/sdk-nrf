@@ -107,6 +107,14 @@ if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   )
 endif()
 
+# AES-MMO is composed from single-block AES-ECB operations instead of using the
+# hash hardware, so it does not depend on the cipher sources being available.
+if(CONFIG_PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_mmo.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_XOF_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_xof.c
