@@ -244,6 +244,7 @@
 /doc/nrf/protocols/dect/                  @nrfconnect/ncs-modem-doc
 /doc/nrf/protocols/esb/                   @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/protocols/gazell/                @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/protocols/knx-iot/               @nrfconnect/ncs-terahertz-doc
 /doc/nrf/protocols/lte/                   @nrfconnect/ncs-carrier-doc
 /doc/nrf/protocols/lte/power_nrf91.rst    @nrfconnect/ncs-cia-doc
 /doc/nrf/protocols/matter/                @nrfconnect/ncs-matter-doc
