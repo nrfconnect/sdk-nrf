@@ -6701,7 +6701,7 @@ NRFJPROG-454: TF-M might fail to reset when using nrfjprog version 10.22.x on nR
 .. rst-class:: v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
 NCSDK-18321: TF-M PSA architecture tests do not build with CMake v3.25.x
-  The :ref:`tfm_psa_test` fails to build with CMake version 3.25.x with missing header files.
+  The "TF-M: Platform security architecture test" fails to build with CMake version 3.25.x with missing header files.
   This happens because the CMake install command is executed before the build command with the affected CMake versions.
 
   **Workaround:** Do not use the CMake version 3.25.x.
