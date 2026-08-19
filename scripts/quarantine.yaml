@@ -13,9 +13,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
 
 - scenarios:
-    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
+    - benchmarks.bootup_time.mcuboot
     - drivers.grtc.test_mcuboot_grtc_no_uninit
     - drivers.grtc.test_mcuboot_grtc_uninit
+    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
@@ -122,3 +123,10 @@
     - nrf5340dk/nrf5340/cpuapp/ns
     - nrf7002dk/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40844"
+
+- scenarios:
+    - benchmarks.current_consumption.nfc_idle
+  platforms:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-10000"
