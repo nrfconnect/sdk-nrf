@@ -20,9 +20,7 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 #include <system/fmac_api.h>
-#endif /* NRF_WIFI_RX_BUFF_PROG_UMAC */
 
 static enum nrf_wifi_status
 nrf_wifi_fmac_map_desc_to_pool(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -50,7 +48,7 @@ nrf_wifi_fmac_map_desc_to_pool(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 out:
 	return status;
 }
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
+
 unsigned long nrf_wifi_fmac_get_rx_buf_map_addr(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned int desc_id)
 {
@@ -85,7 +83,6 @@ unsigned long nrf_wifi_fmac_get_rx_buf_map_addr(struct nrf_wifi_fmac_dev_ctx *fm
 out:
 	return 0;
 }
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 
 #ifdef NRF71_STA_MODE
 int nrf_wifi_get_skip_header_bytes(unsigned short eth_type)
@@ -217,7 +214,6 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info = NULL;
-	unsigned int rx_addr;
 	struct nrf_wifi_fmac_rx_pool_map_info pool_info;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
@@ -264,8 +260,6 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 
 		*(unsigned int *)(nwb_data) = desc_id;
 
-		rx_addr = (unsigned int)nwb_data;
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 		/**
 		 * Do not map nwb_data to rx_buf_info here. Map nwb. Driver
 		 * always maps from network buffer pointer. nwb->data pointer
@@ -279,11 +273,6 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fma
 		 */
 		rx_buf_info->nwb =  (unsigned int)nwb;
 		rx_buf_info->mapped = true;
-#else
-		status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-							&rx_addr,
-							sizeof(rx_addr));
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	} else if (cmd_type == NRF_WIFI_FMAC_RX_CMD_TYPE_DEINIT) {
 
 		nrf_wifi_nbuf_free((void *)rx_buf_info->nwb);
@@ -365,10 +354,8 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 #endif /* NRF71_STA_MODE */
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	unsigned int buf_addr = 0;
 	struct nrf_wifi_rx_buf *rx_buf_ipc = NULL, *rx_buf_info_iter = NULL;
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
@@ -382,11 +369,9 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 	}
 #endif /* NRF71_STA_MODE */
 	num_pkts = config->rx_pkt_cnt;
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 					 num_pkts * sizeof(struct nrf_wifi_rx_buf));
 	rx_buf_info_iter = rx_buf_ipc;
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 
 	for (i = 0; i < num_pkts; i++) {
 		desc_id = config->rx_buff_info[i].descriptor_id;
@@ -544,7 +529,6 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 						  __func__);
 			continue;
 		}
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 		buf_addr = (unsigned int) nrf_wifi_fmac_get_rx_buf_map_addr(fmac_dev_ctx, desc_id);
 		if (buf_addr) {
 			rx_buf_info_iter->skb_pointer = buf_addr;
@@ -556,9 +540,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			status = NRF_WIFI_STATUS_FAIL;
 			continue;
 		}
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	}
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	status = nrf_wifi_fmac_prog_rx_buf_info(fmac_dev_ctx,
 						rx_buf_ipc,
 						num_pkts);
@@ -571,6 +553,5 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 				      __func__, num_pkts);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rx_buf_ipc);
 	}
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	return status;
 }

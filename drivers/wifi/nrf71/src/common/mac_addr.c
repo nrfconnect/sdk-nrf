@@ -25,7 +25,7 @@
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #include <common/util.h>
-#include <mac_addr.h>
+#include <common/mac_addr.h>
 
 #if !DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(ficr))
 #error "The nRF71 Wi-Fi driver requires an enabled FICR node in the devicetree"

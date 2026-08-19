@@ -11,8 +11,8 @@
 
 #include <common/mem_mgmt.h>
 #include <common/lock_mgmt.h>
-#include "common/hal_api_common.h"
-#include "system/hal_api.h"
+#include <common/hal_api_common.h>
+#include <system/hal_api.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
