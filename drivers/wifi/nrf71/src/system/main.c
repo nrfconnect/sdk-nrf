@@ -45,7 +45,7 @@
 #endif /* !CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
-#include <nrf71_wifi_rf.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
