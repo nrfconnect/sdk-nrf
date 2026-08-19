@@ -623,7 +623,7 @@ void tearDown(void)
  */
 void test_dect_net_mgmt_invalid_iface_errors(void)
 {
-	struct net_if_dev invalid_if_dev;
+	struct net_if_dev invalid_if_dev = {0};
 	struct net_if invalid_iface = {
 		.if_dev = &invalid_if_dev,
 	};
