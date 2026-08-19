@@ -190,11 +190,9 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 	unsigned long start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	struct nrf_wifi_rx_buf *rx_buf_ipc = NULL, *rx_buf_info_iter = NULL;
 	unsigned int desc_id = 0;
 	unsigned int buf_addr = 0;
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
@@ -267,7 +265,6 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 		goto out;
 	}
 
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_fpriv->num_rx_bufs *
 					      sizeof(struct nrf_wifi_rx_buf));
 
@@ -302,7 +299,6 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 				      __func__, sys_fpriv->num_rx_bufs);
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rx_buf_ipc);
 	}
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	status = NRF_WIFI_STATUS_SUCCESS;
 
 out:
@@ -3763,7 +3759,6 @@ out:
 #endif /* NRF71_UTIL */
 
 
-#ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
 #define MAX_BUFS_PER_CMD 32
 enum nrf_wifi_status nrf_wifi_fmac_prog_rx_buf_info(void *dev_ctx,
 						struct nrf_wifi_rx_buf *rx_buf,
@@ -3840,4 +3835,3 @@ enum nrf_wifi_status nrf_wifi_fmac_prog_rx_buf_info(void *dev_ctx,
 out:
 	return status;
 }
-#endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
