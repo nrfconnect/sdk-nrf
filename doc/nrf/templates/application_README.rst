@@ -1,16 +1,15 @@
 .. _application:
 
-Template: Application
-#####################
-
-.. contents::
-   :local:
-   :depth: 2
+.. ncs-sample::
+   :title: Template: Application
 
 .. note::
+   * Each application must include the ``.. ncs-sample::`` directive with the ``:title:`` parameter set to the application name.
+     This adds an `Open in VS Code` button to the application page, allowing you to quickly open the application and install the required version of the |NCS| toolchain.
    * Provide a concise name to the application, which corresponds to the folder name.
      If the application targets a specific device, add it in the title before the application name (for example, "nRF5340:").
      Do not include the word "application" in the title.
+   * Include a short description of the application with the indent matching the ``ncs-sample`` parameter.
    * Place the documentation inside the :file:`applications` folder and use the file name :file:`README.rst`.
    * Use the provided stock phrases and includes when possible.
    * Sections with * are optional and can be left out.
@@ -21,7 +20,7 @@ Template: Application
 The XYZ application demonstrates some functionality for the Nordic XX hardware.
 
 .. tip::
-   Explain what this application demonstrates in one or two sentences maximum (full sentences, not sentence fragments).
+   In the short description, explain what this application demonstrates in one or two sentences maximum (full sentences, not sentence fragments).
    This introduction must be concise and clear, highlighting the features of the application.
 
 Application overview
@@ -54,7 +53,7 @@ Requirements
 .. note::
    * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
      Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all board targets specified in the :file:`sample.yaml` file.
-   * If only one kit is supported, replace the introduction text with "The application supports the following development kit:".
+   * If only one kit is supported, replace the introduction text with the "The application supports the following development kit:" sentence.
    * If several kits are required to test the application, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
    * Mention additional requirements after the table.
    * If TFM is included in the application, add ``.. include:: /includes/tfm.txt`` to include the standard text that states this.
@@ -112,7 +111,7 @@ Configuration options*
 Check and configure the following Kconfig options:
 
 .. note::
-   * Use the following syntax to list all the sample-specific configuration options in the :file:`Kconfig` file.
+   * Use the following syntax to list all the application-specific configuration options in the :file:`Kconfig` file.
 
      .. code-block::
 
@@ -122,8 +121,8 @@ Check and configure the following Kconfig options:
      Make sure all other configuration options are listed in the section at the bottom of the page.
    * The syntax allows application configuration options to link to the option descriptions in the same way as the library configuration options link to the corresponding Kconfig descriptions (``:kconfig:option:`CONFIG_APPLICATION```, which results in :kconfig:option:`CONFIG_APPLICATION`).
    * For the |nRFVSC| instructions, list the configuration options as they are stated on the **Generate Configuration** screen.
-   * Use ``:option:`SAMPLE_CONFIG``` to link to sample specific option.
-   * The tech writer team needs to review the :file:`Kconfig` file, where the sample-specific Kconfig options are defined.
+   * Use ``:option:`SAMPLE_CONFIG``` to link to application-specific option.
+   * The tech writer team needs to review the :file:`Kconfig` file, where the application-specific Kconfig options are defined.
 
 Additional configuration*
 =========================
