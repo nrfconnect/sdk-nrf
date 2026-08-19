@@ -17,7 +17,7 @@
 #include <common/mem_mgmt.h>
 #include <system/core.h>
 #include <system/wifi_util.h>
-#include <mac_addr.h>
+#include <common/mac_addr.h>
 
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
