@@ -157,7 +157,8 @@ Mbed TLS
 Trusted Firmware-M (TF-M)
 -------------------------
 
-|no_changes_yet_note|
+* Removed the "TF-M: Platform security architecture test" from the list of samples.
+  The test is still available as a standalone test in the :file:`tests/tfm/tfm_psa_test` directory.
 
 Protocols
 =========
