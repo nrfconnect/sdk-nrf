@@ -1,32 +1,29 @@
 .. _sample:
 
-Template: Sample
-################
+.. ncs-sample::
+   :title: Template: Sample
 
-.. contents::
-   :local:
-   :depth: 2
+   The TF-M secure peripheral sample demonstrates the configuration and usage of secure peripherals in a Trusted Firmware-M (TF-M) partition.
 
 .. note::
+   * Each sample must include the ``.. ncs-sample::`` directive with the ``:title:`` parameter set to the sample name.
    * Give the sample a concise name that corresponds to the folder name.
      If the sample targets a specific protocol or device, add it in the title before the sample name (for example, "NFC:" or "Cellular:").
      Do not include the word "sample" in the title.
+   * Include a short description of the sample with the indent matching the ``ncs-sample`` parameter.
    * Put the documentation inside the sample folder and use the file name :file:`README.rst`.
    * Use the provided stock phrases and includes when possible.
    * Sections with * are optional and can be left out.
      All other sections are required for all samples.
      Do not add new sections (unless in the sections that allow for further subsections) without discussion with the tech writer team.
 
-The Sample sample demonstrates how to blink LEDs in the rhythm of the music that is played.
-
 .. tip::
-   Explain what this sample demonstrates in one, max two sentences (full sentences, not sentence fragments).
+   In the short description, explain what this sample demonstrates in one, max two sentences (full sentences, not sentence fragments).
    This introduction should give users a clear idea of what the sample can be used for.
 
    Think about use cases:
    "The XYZ sample shows how to use the XYZ library" is not a good introduction, because customers do not want to use the XYZ library, but they want to get a task done.
    Instead, write something like "The XYZ sample shows how to do this awesome task. It uses the XYZ library."
-
 
 Requirements
 ************
