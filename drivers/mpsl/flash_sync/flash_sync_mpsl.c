@@ -45,6 +45,12 @@ struct mpsl_context {
 	/* The flash operation may be split into multiple requests.
 	 * This represents the length of such a request. */
 	uint32_t request_length_us;
+	/* Minimum spacing to enforce between the end of one timeslot and the
+	 * start of the next, requested by nrf_flash_sync_set_delay() to realize
+	 * flash-write throttling. Zero means "next timeslot as early as
+	 * possible".
+	 */
+	uint32_t request_delay_us;
 	/* Argument passed to nrf_flash_sync_exe(). */
 	struct flash_op_desc *op_desc;
 	mpsl_timeslot_request_t timeslot_request;
@@ -75,6 +81,17 @@ static uint32_t get_timeslot_time_us(void)
 
 static void reschedule_next_timeslot(void)
 {
+	/* Fall back to an EARLIEST high-priority request. This fully repopulates
+	 * the request because the throttling path may have left it configured as
+	 * a NORMAL (distance-based) request, whose union layout differs. Dropping
+	 * the throttling delay here is intentional: under scheduling contention
+	 * getting the write done takes precedence over the current-spreading gap.
+	 */
+	_context.timeslot_request.request_type = MPSL_TIMESLOT_REQ_TYPE_EARLIEST;
+	_context.timeslot_request.params.earliest.hfclk =
+		MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE;
+	_context.timeslot_request.params.earliest.length_us =
+		_context.request_length_us + TIMESLOT_LENGTH_SLACK_US;
 	_context.timeslot_request.params.earliest.priority =
 		MPSL_TIMESLOT_PRIORITY_HIGH;
 	_context.timeslot_request.params.earliest.timeout_us =
@@ -104,12 +121,37 @@ timeslot_callback(mpsl_timeslot_session_id_t session_id, uint32_t signal)
 			_context.return_param.callback_action =
 				MPSL_TIMESLOT_SIGNAL_ACTION_END;
 		} else if (rc == FLASH_OP_ONGOING) {
-			/* Reset the priority back to normal after a successful
-			 * timeslot. */
-			_context.timeslot_request.params.earliest.priority =
-				MPSL_TIMESLOT_PRIORITY_NORMAL;
-			_context.timeslot_request.params.earliest.timeout_us =
-				TIMESLOT_TIMEOUT_PRIORITY_NORMAL_US;
+			if (_context.request_delay_us > 0) {
+				/* Throttling: enforce a minimum gap after this
+				 * timeslot before the next one. A NORMAL request
+				 * is the only way to schedule with a start offset
+				 * from within a timeslot; its distance_us is
+				 * measured from the start of the current timeslot,
+				 * so add this timeslot's length to turn the
+				 * requested delay into an end-to-start gap.
+				 */
+				_context.timeslot_request.request_type =
+					MPSL_TIMESLOT_REQ_TYPE_NORMAL;
+				_context.timeslot_request.params.normal.hfclk =
+					MPSL_TIMESLOT_HFCLK_CFG_NO_GUARANTEE;
+				_context.timeslot_request.params.normal.priority =
+					MPSL_TIMESLOT_PRIORITY_NORMAL;
+				_context.timeslot_request.params.normal.length_us =
+					_context.request_length_us + TIMESLOT_LENGTH_SLACK_US;
+				_context.timeslot_request.params.normal.distance_us =
+					_context.request_length_us + TIMESLOT_LENGTH_SLACK_US +
+					_context.request_delay_us;
+			} else {
+				/* Reset the priority back to normal after a
+				 * successful timeslot.
+				 */
+				_context.timeslot_request.request_type =
+					MPSL_TIMESLOT_REQ_TYPE_EARLIEST;
+				_context.timeslot_request.params.earliest.priority =
+					MPSL_TIMESLOT_PRIORITY_NORMAL;
+				_context.timeslot_request.params.earliest.timeout_us =
+					TIMESLOT_TIMEOUT_PRIORITY_NORMAL_US;
+			}
 
 			_context.return_param.callback_action =
 				MPSL_TIMESLOT_SIGNAL_ACTION_REQUEST;
@@ -159,6 +201,11 @@ void nrf_flash_sync_set_context(uint32_t duration)
 	_context.request_length_us = duration;
 }
 
+void nrf_flash_sync_set_delay(uint32_t delay_us)
+{
+	_context.request_delay_us = delay_us;
+}
+
 static bool is_in_fault_isr(void)
 {
 #if defined(CONFIG_ARM)
@@ -205,6 +252,11 @@ int nrf_flash_sync_exe(struct flash_op_desc *op_desc)
 
 	_context.op_desc = op_desc;
 	_context.status = -ETIMEDOUT;
+	/* Start throttling fresh: the first timeslot of an operation must be an
+	 * EARLIEST request, so no inter-timeslot delay applies until the flash
+	 * driver sets one between blocks via nrf_flash_sync_set_delay().
+	 */
+	_context.request_delay_us = 0;
 	atomic_clear(&_context.timeout_occured);
 
 	__ASSERT_NO_MSG(k_sem_count_get(&_context.timeout_sem) == 0);
