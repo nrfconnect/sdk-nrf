@@ -87,6 +87,14 @@ enum bt_mgmt_evt_type {
 
 struct bt_mgmt_msg {
 	enum bt_mgmt_evt_type event;
+	/**
+	 * Valid only in a ZBUS_OBSERVER_LISTENER_TYPE callback. ZBUS_OBSERVER_SUBSCRIBER_TYPE,
+	 * ZBUS_OBSERVER_MSG_SUBSCRIBER_TYPE and ZBUS_OBSERVER_ASYNC_LISTENER_TYPE must NOT use this
+	 * pointer, as bt_mgmt may release its reference before the observer processes the message.
+	 *
+	 * A ZBUS_OBSERVER_LISTENER_TYPE that needs to keep this pointer beyond its callback must
+	 * call bt_conn_ref() before returning, and bt_conn_unref() when done.
+	 */
 	struct bt_conn *conn;
 	uint8_t index;
 	struct bt_le_ext_adv *ext_adv;

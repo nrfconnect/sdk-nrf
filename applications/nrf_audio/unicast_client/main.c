@@ -519,6 +519,11 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
+		if (msg->conn == NULL) {
+			LOG_ERR("Disconnected event with NULL conn");
+			return;
+		}
+
 		unicast_client_conn_disconnected(msg->conn);
 
 		/* Update the locations / number of encoder channels */
