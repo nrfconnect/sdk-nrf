@@ -16,7 +16,7 @@
 #ifndef __FMAC_STRUCTS_COMMON_H__
 #define __FMAC_STRUCTS_COMMON_H__
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 
 #define NRF_WIFI_FW_CHUNK_ID_STR_LEN 16
 

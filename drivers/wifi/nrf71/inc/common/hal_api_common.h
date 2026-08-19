@@ -14,7 +14,7 @@
 #define __HAL_API_COMMON_H__
 
 #include <common/log_cfg.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/ipc_bus.h>
 
 /**

@@ -15,7 +15,7 @@
 #ifndef __FMAC_API_H__
 #define __FMAC_API_H__
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_api_common.h>
 #include <offload_raw_tx/fmac_structs.h>
 #include <common/util.h>

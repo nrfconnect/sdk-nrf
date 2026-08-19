@@ -9,7 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/mem_mgmt.h>
 #include <radio_test/fmac_api.h>
 #include <radio_test/hal_api.h>

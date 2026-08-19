@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include "system/fmac_vif.h"
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "common/util.h"
 #include <zephyr/logging/log.h>
 

@@ -15,7 +15,7 @@
 #include <common/mem_mgmt.h>
 #include <common/work_mgmt.h>
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "system/fmac_rx.h"
 #include "system/fmac_tx.h"
 #include "system/fmac_peer.h"

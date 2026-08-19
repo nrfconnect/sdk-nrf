@@ -9,7 +9,7 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <zephyr/sys/sys_heap.h>
 #include <common/util.h>
 #include <system/fmac_api.h>

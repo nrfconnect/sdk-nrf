@@ -16,7 +16,7 @@
 #define __FMAC_API_COMMON_H__
 
 #include "common/hal_api_common.h"
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "fmac_cmd_common.h"
 #include "fmac_structs_common.h"
 

@@ -12,7 +12,7 @@
 #ifndef __FMAC_RX_H__
 #define __FMAC_RX_H__
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "system/fmac_structs.h"
 #define RX_BUF_HEADROOM 4
 

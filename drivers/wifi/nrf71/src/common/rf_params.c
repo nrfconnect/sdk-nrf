@@ -14,7 +14,7 @@
 #include <zephyr/logging/log.h>
 
 #include <common/mem_mgmt.h>
-#include <nrf71_wifi_rf.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
 #include <common/util.h>
 

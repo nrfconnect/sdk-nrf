@@ -13,8 +13,8 @@
 #define __UTIL_H__
 
 #include <common/log_cfg.h>
-#include <nrf71_wifi_ctrl.h>
-#include <pack_def.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/fw_if/pack_def.h>
 
 /* Convert power from mBm to dBm */
 #define MBM_TO_DBM(gain) ((gain) / 100)

@@ -14,7 +14,7 @@
 #ifndef __FMAC_TX_H__
 #define __FMAC_TX_H__
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "system/fmac_structs.h"
 
 /**

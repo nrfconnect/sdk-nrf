@@ -10,7 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "common/fmac_api_common.h"
 #include "common/util.h"
 #include "common/fmac_cmd_common.h"

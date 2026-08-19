@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include "common/hal_api_common.h"
 
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include "common/fmac_structs_common.h"
 #include "common/util.h"
 #include <zephyr/logging/log.h>
