@@ -4,14 +4,15 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-# bl_storage.c needs an nrfx storage backend (NVMC or RRAMC) for its OTP/UICR
-# accesses, and nrf_nv_counters.c is a shim layered on top of bl_storage.c, so it
-# needs the same backend. On SoCs whose storage peripheral is secure-only (e.g.
-# the nRF54L RRAMC) that backend is not selected for the non-secure image, where
-# the application instead reaches boot storage through TF-M services. Only build
-# the library when a backend is available so the non-secure image does not pull
-# in the (uncompilable) secure-only driver.
-if(CONFIG_NRFX_NVMC OR CONFIG_NRFX_RRAMC)
+# bl_storage.c needs an nrfx storage backend (NVMC, RRAMC or MRAMC) for its
+# OTP/UICR accesses, and nrf_nv_counters.c is a shim layered on top of
+# bl_storage.c, so it needs the same backend. On SoCs whose storage peripheral
+# is secure-only (e.g. the nRF54L RRAMC, nRF7120 MRAMC) that backend is not
+# selected for the non-secure image, where the application instead reaches
+# boot storage through TF-M services. Only build the library when a backend
+# is available so the non-secure image does not pull in the (uncompilable)
+# secure-only driver.
+if(CONFIG_NRFX_NVMC OR CONFIG_NRFX_RRAMC OR CONFIG_NRFX_MRAMC)
   zephyr_library()
   zephyr_library_sources(bl_storage.c)
 
@@ -30,6 +31,6 @@ if(CONFIG_NRFX_NVMC OR CONFIG_NRFX_RRAMC)
 elseif(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION)
   message(WARNING
     "CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION requires the bl_storage backend, but "
-    "neither CONFIG_NRFX_NVMC nor CONFIG_NRFX_RRAMC is enabled."
+    "none of CONFIG_NRFX_NVMC, CONFIG_NRFX_RRAMC or CONFIG_NRFX_MRAMC is enabled."
   )
 endif()
