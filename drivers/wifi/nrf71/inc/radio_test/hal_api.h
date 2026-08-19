@@ -14,9 +14,8 @@
 #ifndef __HAL_API_RT_H__
 #define __HAL_API_RT__H__
 
-#include <nrf71_wifi_ctrl.h>
-#include "common/hal_structs_common.h"
-#include "common/hal_api_common.h"
+#include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/hal_api_common.h>
 
 struct nrf_wifi_hal_dev_ctx *nrf_wifi_rt_hal_dev_add(struct nrf_wifi_hal_priv *hpriv,
 						     void *mac_dev_ctx);

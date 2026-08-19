@@ -23,7 +23,7 @@ function(nrf71_wifi_setup_include_and_sources)
 
   # ---- Sources: osal (fw_if, hw_if) and common ----
   zephyr_library_sources(
-    ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
+    src/common/hal_api_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
     src/common/rf_params.c
@@ -48,7 +48,7 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_api.c
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_cmd.c
       ${nrf71_osal_base}/fw_if/umac_if/src/radio_test/fmac_event.c
-      ${nrf71_osal_base}/hw_if/hal/src/radio_test/hal_api.c
+      src/radio_test/hal_api.c
       src/radio_test/main.c
       src/radio_test/api.c
     )
@@ -72,7 +72,7 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_api.c
       ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_cmd.c
       ${nrf71_osal_base}/fw_if/umac_if/src/offload_raw_tx/fmac_event.c
-      ${nrf71_osal_base}/hw_if/hal/src/offload_raw_tx/hal_api.c
+      src/offload_raw_tx/hal_api.c
       src/offload_raw_tx/api.c
     )
   endif()
@@ -84,7 +84,7 @@ function(nrf71_wifi_setup_include_and_sources)
       ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_api.c
       ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_cmd.c
       ${nrf71_osal_base}/fw_if/umac_if/src/system/fmac_event.c
-      ${nrf71_osal_base}/hw_if/hal/src/system/hal_api.c
+      src/system/hal_api.c
     )
     if(CONFIG_NRF71_DATA_TX)
       zephyr_library_sources(
