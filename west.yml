@@ -246,8 +246,11 @@ manifest:
       path: modules/lib/nrf_wifi
     - name: hal_nordic
       repo-path: sdk-hal_nordic
-      path: modules/hal/nordic
-      revision: 18da0cc9726f8759c627dba3180b3ba9294e433c
+      path: modules/hal/nor
+      revision: nrfx-removed-4.3.x
+    - name: nrfx
+      revision: nrfx-release-4.3.x
+      path: modules/hal/nor/nrfx
 
     # Other third-party repositories.
     - name: cmock
