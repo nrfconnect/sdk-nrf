@@ -2538,12 +2538,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - CCM* no tag
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                  - --
                  - --
                * - Stream cipher
@@ -2846,6 +2846,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
 
          .. tab:: nrf_oberon
