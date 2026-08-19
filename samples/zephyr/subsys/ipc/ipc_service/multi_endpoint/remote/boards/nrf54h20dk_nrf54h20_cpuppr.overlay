@@ -35,8 +35,8 @@
 			dcache-alignment = <32>;
 			mboxes = <&cpuapp_bellboard 12>,
 				 <&cpuppr_vevif 15>;
-			tx-blocks = <32>;
-			rx-blocks = <32>;
+			tx-blocks = <15>;
+			rx-blocks = <15>;
 		};
 	};
 };
@@ -54,8 +54,8 @@ ipc0: &cpuapp_cpuppr_ipc {
 	compatible = "zephyr,ipc-icbmsg";
 	tx-region = <&cpuppr_cpuapp_ipc_shm_a>;
 	rx-region = <&cpuapp_cpuppr_ipc_shm_a>;
-	tx-blocks = <32>;
-	rx-blocks = <32>;
+	tx-blocks = <15>;
+	rx-blocks = <15>;
 };
 
 ipc1: &cpuapp_cpuppr_ipc_b {
