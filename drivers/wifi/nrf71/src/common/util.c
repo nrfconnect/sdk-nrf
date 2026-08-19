@@ -14,7 +14,7 @@
 #include <zephyr/sys/util.h>
 #include <common/util.h>
 #include <common/fmac_structs_common.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #ifdef NRF71_SYSTEM_MODE
 #include <common/nbuf_mgmt.h>
 #include <system/fmac_api.h>
