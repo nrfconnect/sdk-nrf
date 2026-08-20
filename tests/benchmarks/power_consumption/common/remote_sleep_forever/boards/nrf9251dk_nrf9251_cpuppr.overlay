@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led1;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		/* Move to other GPIO. */
+		led1: led_1 {
+			gpios = <&gpio2 1 GPIO_ACTIVE_HIGH>;
+			label = "Custom GPIO";
+		};
+	};
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+};
+
+&uart132 {
+	status = "disabled";
+	/delete-property/ memory-regions;
+};
