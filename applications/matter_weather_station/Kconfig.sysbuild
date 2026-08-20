@@ -28,9 +28,6 @@ config NETCORE_APP_UPDATE
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
-
 endif
 
 #### DFU multi-image support
@@ -42,9 +39,6 @@ config DFU_MULTI_IMAGE_PACKAGE_APP
 
 # Internal flash only for nRF54L15 tag with compression
 if BOARD_NRF54L15TAG
-
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
 
 config MCUBOOT_COMPRESSED_IMAGE_SUPPORT
 	default y
