@@ -326,6 +326,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
   * Fixed an issue on nRF52 and nRF53 Series devices where timed LED toggling did not work due to incorrect GPPI group setup after the nrfx 4.0 API migration.
