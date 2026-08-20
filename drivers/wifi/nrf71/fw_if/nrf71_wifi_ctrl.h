@@ -2788,14 +2788,6 @@ struct umac_display_results {
 	unsigned char ftm_capabilities;
 	/** reserved */
 	unsigned char reserved4;
-	/** PASN enable/disable */
-	unsigned int pasn_support;
-	/** FTM enable/disable */
-	unsigned char ftm_support;
-	/** Ranging enable/disable */
-	unsigned char ranging_support;
-	/** Sensing enable/disable */
-	unsigned char sensing_support;
 } __NRF_WIFI_PKD;
 
 #define DISPLAY_BSS_TOHOST_PEREVNT 8
