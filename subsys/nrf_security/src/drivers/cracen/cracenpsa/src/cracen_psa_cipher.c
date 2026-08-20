@@ -32,6 +32,16 @@
 #include <cracen_sw_aes_ctr.h>
 #endif
 
+/* CCM* is only defined for L = 2, so its nonce is 15 - L octets and the counter
+ * field it leaves inside the 16-octet block is exactly 16 bits wide
+ * (IEEE P802.15-4/0537r2 clause 2.2.2 and clause 2.3.1).
+ *
+ * PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS not needed because CCM* wants precisely the hardware CTR
+ * width. Adding CCM* to those blocks would replace working hardware with software.
+ */
+#define CCM_STAR_L	      2
+#define CCM_STAR_NONCE_LENGTH (SX_BLKCIPHER_IV_SZ - 1 - CCM_STAR_L)
+
 static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
 {
 	bool is_supported = false;
@@ -58,6 +68,10 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 		break;
 	case PSA_ALG_CTR:
 		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	case PSA_ALG_CCM_STAR_NO_TAG:
+		IF_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES,
 			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_ECB_NO_PADDING:
@@ -240,6 +254,22 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 			   output_length);
 }
 
+static size_t single_part_iv_size(psa_algorithm_t alg)
+{
+	if (alg == PSA_ALG_STREAM_CIPHER) {
+		return 12;
+	}
+
+	/* CCM* has a 13-octet nonce because L is fixed at 2; everything else prepends a full cipher
+	 * block.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) && alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		return CCM_STAR_NONCE_LENGTH;
+	}
+
+	return SX_BLKCIPHER_IV_SZ;
+}
+
 psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 				   const uint8_t *key_buffer, size_t key_buffer_size,
 				   psa_algorithm_t alg, const uint8_t *input, size_t input_length,
@@ -251,8 +281,7 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 
 	cracen_cipher_operation_t operation = {0};
 	psa_status_t status;
-	/* ChaCha20 only supports 12 bytes IV in the single part decryption function */
-	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
+	const size_t iv_size = single_part_iv_size(alg);
 	*output_length = 0;
 
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
@@ -353,6 +382,17 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 									     operation->iv);
 		}
 		break;
+	case PSA_ALG_CCM_STAR_NO_TAG:
+		if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES)) {
+			sx_status = operation->dir == CRACEN_DECRYPT
+					    ? sx_blkcipher_create_aesctr_dec(&operation->cipher,
+									     &operation->keyref,
+									     operation->iv)
+					    : sx_blkcipher_create_aesctr_enc(&operation->cipher,
+									     &operation->keyref,
+									     operation->iv);
+		}
+		break;
 	case PSA_ALG_STREAM_CIPHER:
 		if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)) {
 			sx_status = operation->dir == CRACEN_DECRYPT
@@ -438,6 +478,26 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 				       ? PSA_ERROR_NOT_SUPPORTED
 				       : PSA_ERROR_INVALID_ARGUMENT;
 		}
+	}
+
+	/* CCM* with a zero-length authentication field is AES-CTR over the
+	 * counter blocks A_i = Flags || Nonce || i, starting at i = 1, where
+	 * Flags holds L-1 in its low three bits and zero elsewhere (IEEE
+	 * P802.15-4/0537r2 clause 2.3.1.3). CCM* fixes L = 2, hence the
+	 * 13-octet nonce that PSA_CIPHER_IV_LENGTH reports for this algorithm.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) &&
+	    operation->alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		if (iv_length != CCM_STAR_NONCE_LENGTH) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		operation->iv[0] = CCM_STAR_L - 1;
+		memcpy(&operation->iv[1], iv, CCM_STAR_NONCE_LENGTH);
+		operation->iv[14] = 0;
+		operation->iv[15] = 1;
+
+		return PSA_SUCCESS;
 	}
 
 	if (iv_length != SX_BLKCIPHER_IV_SZ) {
