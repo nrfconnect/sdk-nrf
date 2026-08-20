@@ -9,3 +9,7 @@
 		led = &led0;
 	};
 };
+
+&cpuppr_vpr {
+	status = "okay";
+};

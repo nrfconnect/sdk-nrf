@@ -12,3 +12,7 @@
 };
 
 /delete-node/ &led1;
+
+&cpuppr_vpr {
+	status = "okay";
+};
