@@ -36,6 +36,7 @@ static struct bt_ras_rrsp {
 	struct k_work send_data_work;
 	struct k_work rascp_work;
 	struct k_work status_work;
+	struct k_work teardown_work;
 	struct k_timer rascp_timeout;
 
 	struct bt_gatt_indicate_params ranging_data_ind_params;
@@ -51,6 +52,7 @@ static struct bt_ras_rrsp {
 	uint16_t active_buf_read_cursor;
 
 	bool streaming;
+	bool disconnecting;
 	bool notify_ready;
 	bool notify_overwritten;
 	bool handle_rascp_timeout;
@@ -63,6 +65,7 @@ static uint32_t ras_optional_features = RAS_FEAT_REALTIME_RD;
 static void send_data_work_handler(struct k_work *work);
 static void rascp_work_handler(struct k_work *work);
 static void status_work_handler(struct k_work *work);
+static void teardown_work_handler(struct k_work *work);
 static void rascp_timeout_handler(struct k_timer *timer);
 
 static int ranging_data_notify_or_indicate(struct bt_conn *conn, struct net_buf_simple *buf);
@@ -117,28 +120,53 @@ int bt_ras_rrsp_alloc(struct bt_conn *conn)
 	k_work_init(&rrsp->send_data_work, send_data_work_handler);
 	k_work_init(&rrsp->rascp_work, rascp_work_handler);
 	k_work_init(&rrsp->status_work, status_work_handler);
+	k_work_init(&rrsp->teardown_work, teardown_work_handler);
 	k_timer_init(&rrsp->rascp_timeout, rascp_timeout_handler, NULL);
 
 	return 0;
+}
+
+static void teardown_work_handler(struct k_work *work)
+{
+	struct bt_ras_rrsp *rrsp = CONTAINER_OF(work, struct bt_ras_rrsp, teardown_work);
+
+	if (!rrsp->disconnecting) {
+		return;
+	}
+
+	LOG_DBG("rrsp %p", (void *)rrsp);
+
+	(void)k_work_cancel(&rrsp->send_data_work);
+	(void)k_work_cancel(&rrsp->rascp_work);
+	(void)k_work_cancel(&rrsp->status_work);
+	k_timer_stop(&rrsp->rascp_timeout);
+
+	rrsp->active_buf = NULL;
+	rrsp->active_buf_read_cursor = 0;
+
+	bt_conn_unref(rrsp->conn);
+	rrsp->conn = NULL;
+	rrsp->disconnecting = false;
 }
 
 void bt_ras_rrsp_free(struct bt_conn *conn)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
-	if (rrsp) {
-		LOG_DBG("conn %p rrsp %p", (void *)rrsp->conn, (void *)rrsp);
-
-		(void)k_work_cancel(&rrsp->send_data_work);
-		(void)k_work_cancel(&rrsp->rascp_work);
-		(void)k_work_cancel(&rrsp->status_work);
-		k_timer_stop(&rrsp->rascp_timeout);
-
-		k_work_queue_drain(&rrsp_wq, false);
-
-		bt_conn_unref(rrsp->conn);
-		rrsp->conn = NULL;
+	if (!rrsp || rrsp->disconnecting) {
+		return;
 	}
+
+	LOG_DBG("conn %p rrsp %p", (void *)rrsp->conn, (void *)rrsp);
+
+	rrsp->disconnecting = true;
+	rrsp->streaming = false;
+
+	(void)k_work_cancel(&rrsp->send_data_work);
+	(void)k_work_cancel(&rrsp->rascp_work);
+	(void)k_work_cancel(&rrsp->status_work);
+
+	(void)k_work_submit_to_queue(&rrsp_wq, &rrsp->teardown_work);
 }
 
 static ssize_t ras_features_read(struct bt_conn *conn, const struct bt_gatt_attr *attr, void *buf,
@@ -418,7 +446,7 @@ static void send_data_work_handler(struct k_work *work)
 {
 	struct bt_ras_rrsp *rrsp = CONTAINER_OF(work, struct bt_ras_rrsp, send_data_work);
 
-	if (!rrsp->streaming || !rrsp->active_buf) {
+	if (rrsp->disconnecting || !rrsp->streaming || !rrsp->active_buf) {
 		return;
 	}
 
@@ -441,6 +469,10 @@ static void rascp_work_handler(struct k_work *work)
 {
 	struct bt_ras_rrsp *rrsp = CONTAINER_OF(work, struct bt_ras_rrsp, rascp_work);
 
+	if (rrsp->disconnecting) {
+		return;
+	}
+
 	LOG_DBG("rrsp %p", rrsp);
 
 	rascp_cmd_handle(rrsp);
@@ -449,6 +481,10 @@ static void rascp_work_handler(struct k_work *work)
 static void status_work_handler(struct k_work *work)
 {
 	struct bt_ras_rrsp *rrsp = CONTAINER_OF(work, struct bt_ras_rrsp, status_work);
+
+	if (rrsp->disconnecting) {
+		return;
+	}
 
 	LOG_DBG("rrsp %p", rrsp);
 
@@ -487,6 +523,10 @@ static void rascp_timeout_handler(struct k_timer *timer)
 {
 	struct bt_ras_rrsp *rrsp = CONTAINER_OF(timer, struct bt_ras_rrsp, rascp_timeout);
 
+	if (rrsp->disconnecting) {
+		return;
+	}
+
 	LOG_DBG("rrsp %p", rrsp);
 
 	LOG_WRN("RAS-CP timeout");
@@ -499,32 +539,34 @@ static void new_rd_handle(struct bt_conn *conn, uint16_t ranging_counter)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
-	if (rrsp) {
-		struct bt_gatt_attr *ondemand_rd_attr =
-			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+	if (!rrsp || rrsp->disconnecting) {
+		return;
+	}
 
-		if (bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+	struct bt_gatt_attr *ondemand_rd_attr =
+		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
+
+	if (bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+				  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
+		rrsp->ready_ranging_counter = ranging_counter;
+		rrsp->notify_ready = true;
+		k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
+	} else {
+		struct bt_gatt_attr *realtime_rd_attr =
+			bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+
+		if (bt_gatt_is_subscribed(conn, realtime_rd_attr,
 					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
-			rrsp->ready_ranging_counter = ranging_counter;
-			rrsp->notify_ready = true;
-			k_work_submit_to_queue(&rrsp_wq, &rrsp->status_work);
-		} else {
-			struct bt_gatt_attr *realtime_rd_attr =
-				bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_REALTIME_RD);
+			if (!rrsp->streaming) {
+				rrsp->active_buf =
+					bt_ras_rd_buffer_claim(conn, ranging_counter);
+				rrsp->active_buf_read_cursor = 0;
+				rrsp->segment_counter = 0;
+				rrsp->streaming = true;
 
-			if (bt_gatt_is_subscribed(conn, realtime_rd_attr,
-						  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
-				if (!rrsp->streaming) {
-					rrsp->active_buf =
-						bt_ras_rd_buffer_claim(conn, ranging_counter);
-					rrsp->active_buf_read_cursor = 0;
-					rrsp->segment_counter = 0;
-					rrsp->streaming = true;
-
-					k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
-				} else {
-					LOG_DBG("Dropped new ranging data.");
-				}
+				k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
+			} else {
+				LOG_DBG("Dropped new ranging data.");
 			}
 		}
 	}
@@ -536,7 +578,11 @@ static void rd_overwritten_handle(struct bt_conn *conn, uint16_t ranging_counter
 	struct bt_gatt_attr *ondemand_rd_attr =
 		bt_gatt_find_by_uuid(rrsp_svc.attrs, 0, BT_UUID_RAS_ONDEMAND_RD);
 
-	if (rrsp && bt_gatt_is_subscribed(conn, ondemand_rd_attr,
+	if (!rrsp || rrsp->disconnecting) {
+		return;
+	}
+
+	if (bt_gatt_is_subscribed(conn, ondemand_rd_attr,
 					  BT_GATT_CCC_NOTIFY | BT_GATT_CCC_INDICATE)) {
 		rrsp->overwritten_ranging_counter = ranging_counter;
 		rrsp->notify_overwritten = true;
@@ -568,7 +614,7 @@ static void ranging_data_notify_sent_cb(struct bt_conn *conn, void *user_data)
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
-	if (rrsp) {
+	if (rrsp && !rrsp->disconnecting) {
 		LOG_DBG("");
 		k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
 	}
@@ -579,7 +625,7 @@ static void ranging_data_indicate_sent_cb(struct bt_conn *conn,
 {
 	struct bt_ras_rrsp *rrsp = rrsp_find(conn);
 
-	if (rrsp) {
+	if (rrsp && !rrsp->disconnecting) {
 		LOG_DBG("");
 		k_work_submit_to_queue(&rrsp_wq, &rrsp->send_data_work);
 	}
