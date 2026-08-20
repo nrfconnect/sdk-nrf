@@ -142,6 +142,8 @@ Security
 
   * Oberon PSA Crypto from v2.0.0 to v2.1.0.
     The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
+  * nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto libraries to version v0.9.23.
+    Improved PSA driver error reporting and fixed an issue that caused incorrect authentication tag generation in GCM when multiple calls to :c:func:`psa_aead_update_ad` were made.
 
 Security libraries
 ------------------
