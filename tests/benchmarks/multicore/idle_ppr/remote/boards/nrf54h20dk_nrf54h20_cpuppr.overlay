@@ -27,3 +27,8 @@
 	status = "okay";
 	owned-channels = <2>;
 };
+
+/* UART135 is owned by Radio core. */
+&uart135 {
+	status = "disabled";
+};
