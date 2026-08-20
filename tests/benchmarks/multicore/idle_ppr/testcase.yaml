@@ -3,10 +3,6 @@ common:
   tags:
     - ci_build
     - ci_tests_benchmarks_multicore
-  platform_allow:
-    - nrf54h20dk/nrf54h20/cpuapp
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
 
 tests:
   benchmarks.multicore.idle_ppr.no_sleep:
@@ -21,6 +17,10 @@ tests:
         - "Multicore idle_ppr test on"
         - "idle_ppr: Run 0"
         - "idle_ppr: Run 1"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_ppr.idle_retained:
     tags: ppk_power_measure
@@ -34,6 +34,11 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_ppr_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_ppr.idle:
     tags: ppk_power_measure
@@ -47,6 +52,11 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_ppr_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_ppr.s2ram:
     tags: ppk_power_measure
@@ -55,6 +65,11 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_ppr_and_s2ram"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_ppr.s2ram.mcuboot:
     tags: ppk_power_measure
@@ -65,3 +80,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_ppr_and_s2ram"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
