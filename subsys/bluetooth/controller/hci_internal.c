@@ -90,6 +90,9 @@ static bool command_generates_command_complete_event(uint16_t hci_opcode)
 #if defined(CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS)
 	case SDC_HCI_OPCODE_CMD_LE_CONN_RATE_REQUEST:
 #endif /* CONFIG_BT_CTLR_SHORTER_CONNECTION_INTERVALS */
+#if defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION)
+	case SDC_HCI_OPCODE_CMD_VS_CHANNEL_REPORTING_ENABLE:
+#endif /* CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION */
 		return false;
 	default:
 		return true;
@@ -421,7 +424,8 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_le_connection_update = 1;
 #endif
 
-#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_CTLR_ADV_EXT)
+#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_CTLR_ADV_EXT) ||                               \
+	defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION)
 	cmds->hci_le_set_host_channel_classification = 1;
 #endif
 
@@ -715,6 +719,11 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_read_automatic_flush_timeout = 1;
 	cmds->hci_write_automatic_flush_timeout = 1;
 #endif /* CONFIG_BT_CTLR_LE_FLUSHABLE_ACL_DATA */
+
+#if defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION)
+	cmds->hci_read_afh_channel_assessment_mode = 1;
+	cmds->hci_write_afh_channel_assessment_mode = 1;
+#endif
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -896,6 +905,15 @@ static uint8_t controller_and_baseband_cmd_put(uint8_t const * const cmd,
 								    (void *)event_out_params);
 #endif
 
+#if defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION)
+	case SDC_HCI_OPCODE_CMD_CB_READ_AFH_CHANNEL_ASSESSMENT_MODE:
+		*param_length_out +=
+			sizeof(sdc_hci_cmd_cb_read_afh_channel_assessment_mode_return_t);
+		return sdc_hci_cmd_cb_read_afh_channel_assessment_mode((void *)event_out_params);
+	case SDC_HCI_OPCODE_CMD_CB_WRITE_AFH_CHANNEL_ASSESSMENT_MODE:
+		return sdc_hci_cmd_cb_write_afh_channel_assessment_mode((void *)cmd_params);
+#endif
+
 	default:
 		return BT_HCI_ERR_UNKNOWN_CMD;
 	}
@@ -1037,7 +1055,8 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 		return sdc_hci_cmd_le_conn_update((void *)cmd_params);
 #endif
 
-#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_CTLR_ADV_EXT)
+#if defined(CONFIG_BT_CENTRAL) || defined(CONFIG_BT_CTLR_ADV_EXT) ||                               \
+	defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION)
 	case SDC_HCI_OPCODE_CMD_LE_SET_HOST_CHANNEL_CLASSIFICATION:
 		return sdc_hci_cmd_le_set_host_channel_classification((void *)cmd_params);
 #endif
@@ -1831,6 +1850,11 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 	case SDC_HCI_OPCODE_CMD_VS_CONN_ANCHOR_POINT_UPDATE_EVENT_REPORT_ENABLE:
 		return sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable(
 		(sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t const *)cmd_params);
+#endif
+#if defined(CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION) && defined(CONFIG_BT_CENTRAL)
+	case SDC_HCI_OPCODE_CMD_VS_CHANNEL_REPORTING_ENABLE:
+		return sdc_hci_cmd_vs_channel_reporting_enable(
+			(sdc_hci_cmd_vs_channel_reporting_enable_t const *)cmd_params);
 #endif
 #if defined(CONFIG_BT_PER_ADV)
 	case SDC_HCI_OPCODE_CMD_VS_ENABLE_PERIODIC_ADV_EVENT_COUNTER_REPORTS:
