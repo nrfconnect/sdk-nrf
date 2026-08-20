@@ -3,10 +3,6 @@ common:
   tags:
     - ci_build
     - ci_tests_benchmarks_multicore
-  platform_allow:
-    - nrf54h20dk/nrf54h20/cpuapp
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
 
 tests:
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.no_sleep:
@@ -22,6 +18,10 @@ tests:
         - "Multicore idle_pwm_led test on"
         - "Multicore idle_pwm_led test iteration 0"
         - "Multicore idle_pwm_led test iteration 1"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_retained:
     filter: not CONFIG_COVERAGE
@@ -35,6 +35,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle:
     filter: not CONFIG_COVERAGE
@@ -48,6 +52,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram:
     filter: not CONFIG_COVERAGE
@@ -57,6 +65,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_retained_fast:
     filter: not CONFIG_COVERAGE
@@ -71,6 +83,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram.mcuboot:
     filter: not CONFIG_COVERAGE
@@ -83,6 +99,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.idle_fast:
     filter: not CONFIG_COVERAGE
@@ -97,6 +117,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram_fast:
     filter: not CONFIG_COVERAGE
@@ -108,6 +132,10 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.coverage:
     filter: CONFIG_COVERAGE
@@ -123,3 +151,54 @@ tests:
         - ".*Coverage analysis enabled.*"
         - ".*Coverage analysis start.*"
     timeout: 90
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  benchmarks.multicore.idle_pwm_led.nrf9251dk_cpuapp_cpuppr.idle_retained:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_led_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  benchmarks.multicore.idle_pwm_led.nrf9251dk_cpuapp_cpuppr.idle:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    extra_args:
+      - idle_pwm_led_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
+      - idle_pwm_led_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+
+  benchmarks.multicore.idle_pwm_led.nrf9251dk_cpuapp_cpuppr.s2ram:
+    filter: not CONFIG_COVERAGE
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp

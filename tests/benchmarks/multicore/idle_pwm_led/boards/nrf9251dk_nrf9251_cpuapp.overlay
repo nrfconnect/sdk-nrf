@@ -1,0 +1,45 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/pwm/pwm.h>
+
+/ {
+	aliases {
+		led = &led0;
+	};
+};
+
+/* Move PWM LED0 to unused GPIO P1.03. */
+&pinctrl {
+	pwm130_default_alt: pwm130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 3)>;
+		};
+	};
+
+	pwm130_sleep_alt: pwm130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 1, 3)>;
+			low-power-enable;
+		};
+	};
+};
+
+&pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm130_default_alt>;
+	pinctrl-1 = <&pwm130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
