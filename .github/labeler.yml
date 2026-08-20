@@ -23,6 +23,11 @@
   - any-glob-to-any-file:
     - "doc/nrf/releases_and_maturity/releases/release-notes-changelog.rst"
 
+"no-changelog":
+- changed-files:
+  - all-globs-to-all-files:
+    - ".github/**/*"
+
 "ble mesh":
 - changed-files:
   - any-glob-to-any-file:
