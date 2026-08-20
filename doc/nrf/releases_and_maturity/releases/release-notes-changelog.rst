@@ -335,6 +335,8 @@ Bluetooth samples
   * Updated the minimum supported connection interval from 875 µs to 750 µs in the HID SCI configuration.
   * Enabled the Frame Space Update feature in the single peripheral HID SCI configuration.
 
+* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel map updates and central reception of channel classification reports.
+
 Bluetooth Mesh samples
 ----------------------
 
