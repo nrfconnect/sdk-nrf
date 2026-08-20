@@ -211,6 +211,7 @@ config NRF71_MAX_TX_PENDING_QLEN
 config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
 	depends on SHELL
+	select SYS_HEAP_RUNTIME_STATS
 
 config NRF71_PCB_LOSS_2G
 	int "PCB loss for 2.4 GHz band"
