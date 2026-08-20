@@ -2040,3 +2040,10 @@ ci_samples_pulse_meas:
     - nrf/drivers/pulse_meas
     - nrf/dts/bindings/pulse_meas/
     - nrf/include/drivers/pulse_meas.h
+
+ci_tests_drivers_pulse_meas:
+  files:
+    - nrf/tests/drivers/pulse_meas/
+    - nrf/drivers/pulse_meas/
+    - nrf/dts/bindings/pulse_meas/
+    - nrf/include/drivers/pulse_meas.h
