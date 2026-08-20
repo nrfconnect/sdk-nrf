@@ -175,8 +175,11 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-* Added the :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
-  The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
+* Added:
+
+  * The :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
+    The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
+  * Support for Channel Classification in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION` Kconfig option.
 
 Bluetooth Mesh
 --------------
