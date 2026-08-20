@@ -254,6 +254,9 @@ int bt_ras_rrsp_alloc(struct bt_conn *conn);
  *  the given connection, if one has been allocated.
  *  If the connection has no instance allocated, this method has no effect.
  *
+ *  Teardown is performed asynchronously on the RRSP work queue. The instance
+ *  must not be re-allocated for the same connection until teardown completes.
+ *
  *  @note This method must not be called if CONFIG_BT_RAS_RRSP_AUTO_ALLOC_INSTANCE is enabled.
  *
  *  @param conn Connection instance.
