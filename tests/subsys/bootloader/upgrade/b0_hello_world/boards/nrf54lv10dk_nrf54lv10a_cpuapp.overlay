@@ -46,3 +46,7 @@
 		reg = <0x500 0x460>;
 	};
 };
+
+&xo {
+	status = "disabled";
+};
