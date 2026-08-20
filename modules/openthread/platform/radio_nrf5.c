@@ -1309,6 +1309,10 @@ otError otPlatRadioSleep(otInstance *aInstance)
 {
 	ARG_UNUSED(aInstance);
 
+	if (nrf5_data.state == OT_RADIO_STATE_TRANSMIT) {
+		return OT_ERROR_BUSY;
+	}
+
 	if (nrf5_data.state != OT_RADIO_STATE_SLEEP && nrf5_data.state != OT_RADIO_STATE_RECEIVE) {
 		return OT_ERROR_INVALID_STATE;
 	}
