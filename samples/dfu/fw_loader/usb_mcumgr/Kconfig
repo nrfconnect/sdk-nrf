@@ -1,0 +1,20 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "USB MCUmgr firmware loader sample"
+
+config SAMPLE_USB_MCUMGR_LED_THREAD
+	bool "LED thread"
+	default y if BOARD_NRF54LM20DONGLE
+	depends on $(dt_alias_enabled,led0)
+	select GPIO
+	help
+	  Start a low-priority thread that blinks the LED selected with the
+	  devicetree alias "led0".
+
+endmenu
+
+source "Kconfig.zephyr"
