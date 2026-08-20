@@ -1,0 +1,27 @@
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+&cpuapp_rram {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0 DT_SIZE_K(54)>;
+		};
+
+		storage_partition: partition@175000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x175000 DT_SIZE_K(32)>;
+		};
+	};
+};

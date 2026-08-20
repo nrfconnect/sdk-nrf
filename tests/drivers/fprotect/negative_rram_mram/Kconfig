@@ -1,0 +1,22 @@
+mainmenu "Negative RRAM/MRAM fprotect tests"
+
+choice TEST_FPROTECT_NEGATIVE_RRAM_MRAM_GROUP
+	prompt "Test group to build"
+	default TEST_FPROTECT_NEGATIVE_RRAM_MRAM_BASIC
+	help
+	  Select which ztest group to include in the image. Twister runs each
+	  group as a separate scenario so tests do not depend on execution order
+	  across groups.
+
+config TEST_FPROTECT_NEGATIVE_RRAM_MRAM_BASIC
+	bool "Basic checks (misaligned address, writable unprotected zones)"
+
+config TEST_FPROTECT_NEGATIVE_RRAM_MRAM_BOUNDARY
+	bool "Boundary fault tests (direct store across protection edges)"
+
+config TEST_FPROTECT_NEGATIVE_RRAM_MRAM_FLASH_WRITE
+	bool "Flash driver write fault on protected zone"
+
+endchoice
+
+source "Kconfig.zephyr"
