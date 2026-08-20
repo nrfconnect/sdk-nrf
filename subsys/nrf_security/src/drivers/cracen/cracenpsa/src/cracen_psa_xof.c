@@ -100,7 +100,7 @@ psa_status_t cracen_xof_setup(cracen_xof_operation_t *operation, psa_algorithm_t
 {
 	psa_status_t status;
 
-	status = xof_get_algo(alg, &operation->hash_op.sx_hash_algo);
+	status = cracen_xof_get_algo(alg, &operation->hash_op.sx_hash_algo);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

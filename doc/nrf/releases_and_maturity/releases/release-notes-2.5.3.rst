@@ -119,7 +119,7 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Matter samples
 --------------
 
-* :ref:`matter_lock_sample` sample:
+* Matter Lock sample:
 
   * Added support for emulation of the nRF7001 Wi-Fi companion IC on the nRF7002 DK.
 

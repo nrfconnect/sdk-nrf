@@ -13,35 +13,19 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
 
 - scenarios:
-    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
+    - benchmarks.bootup_time.mcuboot
     - drivers.grtc.test_mcuboot_grtc_no_uninit
     - drivers.grtc.test_mcuboot_grtc_uninit
+    - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - nrf.extended.drivers.spi.direct_xfer
-    - nrf.extended.drivers.spi.direct_xfer.no_prealloc
-    - nrf.extended.drivers.clock.clock_control_onoff
-    - nrf.extended.drivers.clock.nrf5_clock_calibration
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_rc_stable
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_synth_stable
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_available
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_no_wait
-    - nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable
-    - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
-    - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
-    - nrf.extended.sample.bluetooth.*
-    - sample.bluetooth.*
-    - sample.mpsl.timeslot
+    - all
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "no TFM for nrf54lc10 at the moment"
+  comment: "Unsupported TFM_PLATFORM"
 
 - scenarios:
     - nrf.extended.drivers.counter.basic_api
@@ -77,31 +61,8 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40469"
 
 - scenarios:
-    - mcuboot.external_flash.upgrade.netcore
-    - nsib.mcuboot.external_flash.upgrade.netcore_and_mcuboot
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40472"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.ext_xip
-    - sample.mcumgr.smp_svr.ext_xip.no_network_core
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
-    - nrf5340dk/nrf5340/cpuapp/ns
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
     - mcuboot.external_flash
   platforms:
-    - thingy53/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
-
-- scenarios:
-    - sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip
-  platforms:
-    - nrf5340dk/nrf5340/cpuapp
     - thingy53/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
 
@@ -111,3 +72,61 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
+
+- scenarios:
+    - sample.bluetooth.peripheral_nsms_no_security
+  platforms:
+    - thingy53/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
+
+- scenarios:
+    - drivers.timer.grtc_multiple_access
+  platforms:
+    - nrf9251dk/nrf9251/cpuflpr
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9987"
+
+- scenarios:
+    - nrf.extended.kernel.timer.timer
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+  comment: "Overflow"
+
+- scenarios:
+    - nrf.extended.drivers.counter.basic_api
+    - nrf.extended.drivers.uart.uart_elementary_dual.pm
+  platforms:
+    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
+    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr
+  comment: "RAM Overflow"
+
+- scenarios:
+    - sample.bluetooth.central_and_peripheral_hrs
+    - sample.bluetooth.central_bas
+    - sample.bluetooth.central_uart
+    - sample.bluetooth.multiple_adv_sets
+    - sample.bluetooth.peripheral_ams_client.build
+    - sample.bluetooth.peripheral_ancs_client.build
+    - sample.bluetooth.peripheral_cgm
+    - sample.bluetooth.peripheral_cts_client
+    - sample.bluetooth.peripheral_gatt_dm
+    - sample.bluetooth.peripheral_mds
+    - sample.bluetooth.peripheral_nfc_pairing
+    - sample.bluetooth.peripheral_nsms
+    - sample.bluetooth.peripheral_nsms_no_security
+    - sample.bluetooth.peripheral_power_profiling
+    - sample.bluetooth.peripheral_rscs
+    - sample.bluetooth.shell_bt_nus
+    - sample.bluetooth.throughput
+    - sample.nrf7002_ns.shell
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+    - nrf7002dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40844"
+
+- scenarios:
+    - benchmarks.current_consumption.nfc_idle
+  platforms:
+    - nrf9251dk/nrf9251/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NRFX-10000"

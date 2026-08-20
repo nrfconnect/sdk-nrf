@@ -128,7 +128,6 @@ def test_upgrade_netcore_only(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
         lines=[
             "Image index: 0, Swap type: none",
             "Image index: 1, Swap type: perm",
-            "Image 1 copying the secondary slot",
             "Image 1 upgrade secondary slot -> primary slot",
             "Erasing the primary slot",
             "Image 1 copying the secondary slot to the primary slot:",

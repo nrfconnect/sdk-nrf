@@ -28,8 +28,8 @@
  * @param[in] label		        Optional label. Use NULL for an empty label.
  * @param[out] output		    Buffer to store the ciphertext. Must be at least
  *				                the size of the RSA modulus.
- * @param[in,out] output_length On input, size of the output buffer in bytes.
- *                              On output, length of the generated ciphertext.
+ * @param[in] output_size	    Size of the output buffer in bytes.
+ * @param[out] output_length    Length of the generated ciphertext.
  *
  * @retval 0 (::SX_OK)                       Operation completed successfully.
  * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
@@ -39,7 +39,7 @@
  */
 int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_key *rsa_key,
 			    struct cracen_crypt_text *text, struct sx_const_buf *label,
-			    uint8_t *output, size_t *output_length);
+			    uint8_t *output, size_t output_size, size_t *output_length);
 
 /** @brief Decrypt data using RSA OAEP.
  *
@@ -50,10 +50,11 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
  *				                RSA modulus size.
  * @param[in] label		        Optional label. Use NULL for an empty label.
  * @param[out] output		    Buffer to store the plaintext.
- * @param[in,out] output_length On input, size of the output buffer in bytes.
- *                              On output, length of the decrypted plaintext.
+ * @param[in] output_size	    Size of the output buffer in bytes.
+ * @param[out] output_length    Length of the decrypted plaintext.
  *
  * @retval 0 (::SX_OK)                       Operation completed successfully.
+ * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
  * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small for the hash algorithm.
  * @retval ::SX_ERR_TOO_BIG                  Ciphertext larger than the RSA modulus.
  * @retval ::SX_ERR_INVALID_CIPHERTEXT       Decryption failed: invalid ciphertext, wrong key,
@@ -63,7 +64,7 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
  */
 int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_key *rsa_key,
 			    struct cracen_crypt_text *text, struct sx_const_buf *label,
-			    uint8_t *output, size_t *output_length);
+			    uint8_t *output, size_t output_size, size_t *output_length);
 
 /** @brief Decrypt data using RSA PKCS#1 v1.5.
  *
@@ -72,10 +73,11 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
  *				             RSA modulus size. Ciphertext smaller than the modulus
  *				             is implicitly zero-padded.
  * @param[out] output		 Buffer to store the plaintext.
- * @param[out] output_length On input, size of the output buffer in bytes.
- *                           On output, length of the decrypted plaintext.
+ * @param[in] output_size	 Size of the output buffer in bytes.
+ * @param[out] output_length Length of the decrypted plaintext.
  *
  * @retval 0 (::SX_OK)                       Operation completed successfully.
+ * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
  * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small (must be > 11 bytes).
  * @retval ::SX_ERR_TOO_BIG                  Ciphertext larger than the RSA modulus.
  * @retval ::SX_ERR_INVALID_CIPHERTEXT	     Ciphertext is invalid or decryption failed.
@@ -84,7 +86,7 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
  * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
  */
 int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
-				uint8_t *output, size_t *output_length);
+				uint8_t *output, size_t output_size, size_t *output_length);
 
 /** @brief Encrypt data using RSA PKCS#1 v1.5.
  *
@@ -92,10 +94,11 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
  * @param[in] text		        Plaintext to encrypt. Must not be NULL.
  * @param[out] output		    Buffer to store the ciphertext. Must be at least
  *				                the size of the RSA modulus.
- * @param[out] output_length	On input, size of the output buffer in bytes.
- *                              On output, length of the generated ciphertext.
+ * @param[in] output_size	    Size of the output buffer in bytes.
+ * @param[out] output_length	Length of the generated ciphertext.
  *
  * @retval 0 (::SX_OK)                       Operation completed successfully.
+ * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
  * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small (must be > 11 bytes).
  * @retval ::SX_ERR_TOO_BIG                  Plaintext too large (max: modulussz - 11 bytes).
  * @retval ::SX_ERR_TOO_MANY_ATTEMPTS        Random padding generation failed after maximum retries.
@@ -103,7 +106,7 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
  * @retval ::SX_ERR_WORKMEM_BUFFER_TOO_SMALL Internal work memory insufficient for key size.
  */
 int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
-				uint8_t *output, size_t *output_length);
+				uint8_t *output, size_t output_size, size_t *output_length);
 
 /** @} */
 

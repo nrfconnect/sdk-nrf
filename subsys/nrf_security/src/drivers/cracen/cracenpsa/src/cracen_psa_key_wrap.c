@@ -41,21 +41,20 @@ psa_status_t cracen_wrap_key(const psa_key_attributes_t *wrapping_key_attributes
 psa_status_t cracen_unwrap_key(const psa_key_attributes_t *attributes,
 			       const psa_key_attributes_t *wrapping_key_attributes,
 			       const uint8_t *wrapping_key_data, size_t wrapping_key_size,
-			       psa_algorithm_t alg,
-			       const uint8_t *data, size_t data_length,
-			       uint8_t *key, size_t key_size, size_t *key_length)
+			       psa_algorithm_t alg, const uint8_t *data, size_t data_length,
+			       uint8_t *key, size_t key_size, size_t *key_length, size_t *bits)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_AES_KW) && alg == PSA_ALG_KW) {
 		status = cracen_key_wrap_kw_unwrap(wrapping_key_attributes, wrapping_key_data,
 						   wrapping_key_size, data, data_length, key,
-						   key_size, key_length);
+						   key_size, key_length, bits);
 
 	} else if (IS_ENABLED(CONFIG_PSA_NEED_CRACEN_AES_KWP) && alg == PSA_ALG_KWP) {
 		status = cracen_key_wrap_kwp_unwrap(wrapping_key_attributes, wrapping_key_data,
 						    wrapping_key_size, data, data_length, key,
-						    key_size, key_length);
+						    key_size, key_length, bits);
 	} else {
 		status = PSA_ERROR_NOT_SUPPORTED;
 	}

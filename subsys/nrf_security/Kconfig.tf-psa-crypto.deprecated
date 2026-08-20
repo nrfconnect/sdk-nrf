@@ -9,103 +9,18 @@ config MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 
 if MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS
 
-config MBEDTLS_AES_C
-	bool "AES - Advanced Encryption Standard [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_KEY_TYPE_AES
-	imply PSA_WANT_ALG_CBC_PKCS7 if !OPENTHREAD
-	imply MBEDTLS_CIPHER_MODE_CBC if !OPENTHREAD
-	imply MBEDTLS_CIPHER_MODE_CTR
-
-if MBEDTLS_AES_C
-
-config MBEDTLS_CIPHER_MODE_CBC
-	bool "AES-CBC - AES Cipher Block Chaining mode [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_CBC_NO_PADDING
-
-config MBEDTLS_CIPHER_MODE_CTR
-	bool "AES-CTR - AES Counter Block Cipher mode [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_CTR
-
-endif # MBEDTLS_AES_C
-
-config MBEDTLS_CCM_C
-	bool "AES-CCM - AES Counter with CBC-MAC mode [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_CCM
-	select PSA_WANT_KEY_TYPE_AES
-
-config MBEDTLS_GCM_C
-	bool "AES-GCM - AES Galois/Counter Mode support [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_GCM
-	select PSA_WANT_KEY_TYPE_AES
-
-config MBEDTLS_SHA256_C
-	bool "SHA-256 hash functionality [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_SHA_256
-
-config MBEDTLS_SHA256_SMALLER
-	bool "Use smaller SHA-256 implementation"
-	depends on PSA_WANT_ALG_SHA_256
-	default y
-
-config MBEDTLS_SHA512_C
-	bool "SHA-512 hash functionality [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_ALG_SHA_512
-
 config MBEDTLS_ECP_C
 	bool "ECC - Elliptic Curve Cryptography [DEPRECATED]"
 	select DEPRECATED
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_BASIC
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
 	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE
 	select MBEDTLS_BIGNUM_C
 
-if MBEDTLS_ECP_C
-
-config MBEDTLS_ECDSA_C
-	bool "ECDSA - Elliptic Curve Digital Signature Algorithm"
-	select PSA_WANT_ALG_ECDSA
-
-endif # MBEDTLS_ECP_C
-
 config MBEDTLS_BIGNUM_C
 	bool "Prime number generation [DEPRECATED]"
 	select DEPRECATED
-
-config MBEDTLS_RSA_C
-	bool "RSA - Rivest-Shamir-Adleman cryptosystem [DEPRECATED]"
-	select DEPRECATED
-	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT
-	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT
-	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE
-	select PSA_WANT_RSA_KEY_SIZE_2048
-
-if MBEDTLS_RSA_C
-
-config MBEDTLS_GENPRIME
-	bool
-	default y
-	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE
-
-config MBEDTLS_PKCS1_V15
-	bool "PKCS1 v1.5 support"
-	default y
-	select PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
-	select PSA_WANT_ALG_RSA_PKCS1V15_SIGN
-
-config MBEDTLS_PKCS1_V21
-	bool "PKCS1 v2.1 support"
-	default y
-	select PSA_WANT_ALG_RSA_PSS
-	select PSA_WANT_ALG_RSA_OAEP
-
-endif # MBEDTLS_RSA_C
 
 endif # MBEDTLS_DECLARE_PRIVATE_IDENTIFIERS

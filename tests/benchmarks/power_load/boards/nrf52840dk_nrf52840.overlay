@@ -1,0 +1,201 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		dut-flash = &mx25r64;
+		test-gpio = &led0;
+		watchdog0 = &wdt;
+		/delete-property/ pwm_led1;
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>;
+		pwms = <&pwm0 0 PWM_MSEC(10) PWM_POLARITY_NORMAL>,
+		       <&pwm1 0 PWM_MSEC(10) PWM_POLARITY_NORMAL>,
+		       <&pwm2 0 PWM_MSEC(10) PWM_POLARITY_NORMAL>;
+	};
+};
+
+&pinctrl {
+	i2c0_default_alt: i2c0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 7)>,
+				<NRF_PSEL(TWIM_SCL, 1, 10)>;
+		};
+	};
+
+	i2c0_sleep_alt: i2c0_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 7)>,
+				<NRF_PSEL(TWIM_SCL, 1, 10)>;
+			low-power-enable;
+		};
+	};
+
+	i2c1_default_alt: i2c1_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 8)>,
+				<NRF_PSEL(TWIS_SCL, 1, 11)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c1_sleep_alt: i2c1_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 8)>,
+				<NRF_PSEL(TWIS_SCL, 1, 11)>;
+			low-power-enable;
+		};
+	};
+
+	pwm0_default_alt: pwm0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 14)>;
+		};
+	};
+
+	pwm0_sleep_alt: pwm0_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 14)>;
+			low-power-enable;
+		};
+	};
+
+	pwm1_default_alt: pwm1_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 15)>;
+		};
+	};
+
+	pwm1_sleep_alt: pwm1_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 15)>;
+			low-power-enable;
+		};
+	};
+
+	pwm2_default_alt: pwm2_default_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 16)>;
+		};
+	};
+
+	pwm2_sleep_alt: pwm2_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 16)>;
+			low-power-enable;
+		};
+	};
+
+	i2s0_default_alt: i2s0_default_alt {
+		group1 {
+			psels = <NRF_PSEL(I2S_SCK_M, 1, 5)>,
+				<NRF_PSEL(I2S_LRCK_M, 1, 6)>,
+				<NRF_PSEL(I2S_SDOUT, 1, 1)>,
+				<NRF_PSEL(I2S_SDIN, 1, 2)>;
+		};
+	};
+};
+
+dut_twim: &i2c0 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c0_default_alt>;
+	pinctrl-1 = <&i2c0_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+
+	sensor: sensor@54 {
+		reg = <0x54>;
+	};
+};
+
+dut_twis: &i2c1 {
+	compatible = "nordic,nrf-twis";
+	status = "okay";
+	pinctrl-0 = <&i2c1_default_alt>;
+	pinctrl-1 = <&i2c1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&mx25r64 {
+	status = "okay";
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>; /* P0.03 */
+		zephyr,resolution = <10>;
+	};
+};
+
+&timer1 {
+	status = "okay";
+};
+
+&timer2 {
+	status = "okay";
+};
+
+&timer3 {
+	status = "okay";
+};
+
+&timer4 {
+	status = "okay";
+};
+
+&pwm0 {
+	status = "okay";
+	pinctrl-0 = <&pwm0_default_alt>;
+	pinctrl-1 = <&pwm0_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm1 {
+	status = "okay";
+	pinctrl-0 = <&pwm1_default_alt>;
+	pinctrl-1 = <&pwm1_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&pwm2 {
+	status = "okay";
+	pinctrl-0 = <&pwm2_default_alt>;
+	pinctrl-1 = <&pwm2_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+temp_sensor: &temp {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+dut_i2s: &i2s0 {
+	status = "okay";
+	pinctrl-0 = <&i2s0_default_alt>;
+	pinctrl-names = "default";
+};
+
+&wdt {
+	status = "okay";
+};
+
+&zephyr_udc0 {
+	cdc_acm_uart0 {
+		compatible = "zephyr,cdc-acm-uart";
+	};
+};

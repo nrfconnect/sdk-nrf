@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	chosen {
+		nordic,vtf-region = &vtf_region_user;
+	};
+
+	/* Last 32 bytes of RAM00 reserved for VTF region */
+	vtf_region_user: memory@2007ffe0 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007ffe0 0x20>;
+		zephyr,memory-region = "NRF_VTF_REGION_USER";
+		status = "okay";
+	};
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 (DT_SIZE_K(512) - 0x20)>;
+	ranges = <0x0 0x20000000 (DT_SIZE_K(512) - 0x20)>;
+};
+
+&ram00_sram {
+	reg = <0x0 (DT_SIZE_K(512) - 0x20)>;
+	ranges = <0x0 0x0 (DT_SIZE_K(512) - 0x20)>;
+};

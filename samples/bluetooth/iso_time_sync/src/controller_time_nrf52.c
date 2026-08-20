@@ -166,12 +166,6 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 		return ret;
 	}
 
-	ret = nrfx_gppi_group_ep_add(group, eep0);
-	if (ret < 0) {
-		printk("Failed attaching an event to the group\n");
-		return ret;
-	}
-
 	ret = nrfx_gppi_conn_alloc(eep0, nrfx_gppi_group_task_en_addr(group), &ppi_on_rtc_match);
 	if (ret < 0) {
 		printk("Failed allocating for RTC match\n");
@@ -184,6 +178,18 @@ int config_egu_trigger_on_rtc_and_timer_match(void)
 		return ret;
 	}
 	(void)nrfx_gppi_ep_attach(nrfx_gppi_group_task_dis_addr(group), ppi_on_timer_match);
+
+	ret = nrfx_gppi_group_ep_add(group, eep0);
+	if (ret < 0) {
+		printk("Failed attaching an event to the group\n");
+		return ret;
+	}
+
+	ret = nrfx_gppi_group_ep_add(group, eep1);
+	if (ret < 0) {
+		printk("Failed attaching an event to the group\n");
+		return ret;
+	}
 
 	return 0;
 }

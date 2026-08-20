@@ -19,7 +19,7 @@ common:
       - "Test suite 'Platform Service Non-Secure interface tests.*' has.*PASSED"
 
 tests:
-  nrf.extended.tf-m.regression.ipc.lvl1:
+  nrf.extended.tfm.regression.ipc.lvl1:
     tags:
       - tfm_lvl1
     extra_args:
@@ -42,7 +42,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tf-m.regression.ipc.lvl2.cc3xx:
+  nrf.extended.tfm.regression.ipc.lvl2.cc3xx:
     tags:
       - tfm_lvl2
     extra_args:
@@ -57,7 +57,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tf-m.regression.ipc.lvl2.oberon:
+  nrf.extended.tfm.regression.ipc.lvl2.oberon:
     tags:
       - tfm_lvl2
     extra_args:
@@ -72,7 +72,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tf-m.regression.ipc.lvl2.cc3xx.oberon:
+  nrf.extended.tfm.regression.ipc.lvl2.cc3xx.oberon:
     tags:
       - tfm_lvl2
     extra_args:
@@ -87,7 +87,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tf-m.regression.ipc.lvl2.cracen:
+  nrf.extended.tfm.regression.ipc.lvl2.cracen:
     tags:
       - tfm_lvl2
     extra_args:
@@ -104,7 +104,7 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp/ns
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
-  nrf.extended.tf-m.regression.sfn:
+  nrf.extended.tfm.regression.sfn:
     tags:
       - tfm_lvl1
     extra_args:
@@ -127,7 +127,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tf-m.regression.fp.hardabi:
+  nrf.extended.tfm.regression.fp.hardabi:
     tags:
       - tfm_fp
     extra_args:

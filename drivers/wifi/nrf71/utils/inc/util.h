@@ -12,8 +12,8 @@
 #ifndef __UTIL_H__
 #define __UTIL_H__
 
-#include "osal_api.h"
-#include "nrf71_wifi_ctrl.h"
+#include <osal_api.h>
+#include <nrf71_wifi_ctrl.h>
 
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(array) (sizeof(array) / sizeof((array)[0]))
@@ -30,4 +30,7 @@ bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr);
 
 int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 				unsigned short chan);
+
+unsigned char nrf_wifi_utils_get_op_band(void);
+
 #endif /* __UTIL_H__ */

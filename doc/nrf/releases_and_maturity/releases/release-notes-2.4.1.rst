@@ -121,7 +121,7 @@ Samples
 Matter samples
 --------------
 
-* :ref:`matter_lock_sample` sample:
+* Matter Lock sample:
 
   * Fixed the feature map for software diagnostic cluster.
     Previously, it was set incorrectly.

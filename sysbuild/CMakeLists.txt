@@ -884,22 +884,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF70 n)
   endif()
 
-  if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE)
-    if(SB_CONFIG_MATTER)
-      set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP y)
-
-      if(SB_CONFIG_MATTER_OTA)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_REQUESTOR y)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_IMAGE_BUILD y)
-      else()
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_REQUESTOR n)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP_OTA_IMAGE_BUILD n)
-      endif()
-    else()
-      set_config_bool(${DEFAULT_IMAGE} CONFIG_CHIP n)
-    endif()
-  endif()
-
   if(SB_CONFIG_HPF)
     include_hpf()
   endif()
@@ -1077,22 +1061,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/generate_default_keyfile.cmake)
   endif()
 
-  # Matter related configurations
-  if(SB_CONFIG_ZEPHYR_CONNECTEDHOMEIP_MODULE AND SB_CONFIG_MATTER)
-    if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
-      include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/nrfconnect/chip-module/generate_factory_data.cmake)
-      nrfconnect_generate_factory_data()
-    endif()
-
-    if(SB_CONFIG_MATTER_OTA AND SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_BUILD)
-      include(${ZEPHYR_CONNECTEDHOMEIP_MODULE_DIR}/config/zephyr/ota-image_sysbuild.cmake)
-      chip_ota_image(chip-ota-image
-        INPUT_FILES ${CMAKE_BINARY_DIR}/dfu_multi_image.bin
-        OUTPUT_FILE ${CMAKE_BINARY_DIR}/${SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME}
-      )
-    endif()
-  endif()
-
   if(SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
   endif()
@@ -1146,11 +1114,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     if(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP OR SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT)
       get_property(PM_MCUBOOT_PRIMARY_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_PRIMARY_ADDRESS)
       get_property(PM_MCUBOOT_SECONDARY_ADDRESS TARGET partition_manager PROPERTY PM_MCUBOOT_SECONDARY_ADDRESS)
-    endif()
-
-    if(SB_CONFIG_MATTER_FACTORY_DATA_GENERATE)
-      get_property(PM_FACTORY_DATA_ADDRESS TARGET partition_manager PROPERTY PM_FACTORY_DATA_ADDRESS)
-      get_property(PM_FACTORY_DATA_OFFSET TARGET partition_manager PROPERTY PM_FACTORY_DATA_OFFSET)
     endif()
 
     if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_EMPTY)
@@ -1254,6 +1217,5 @@ include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_installer.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/nrf70.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/dfu_extra_images.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/bt_fast_pair.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/matter.cmake)
 
 store_ncs_vars()

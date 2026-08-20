@@ -8,7 +8,7 @@
 
 &hpf_mspi {
 	mx25r64: mx25r6435f@0 {
-		compatible = "mxicy,mx25r", "jedec,mspi-nor";
+		compatible = "mxicy,mx25r", "jedec,nor";
 		status = "okay";
 		reg = <0>;
 		jedec-id = [c2 28 17];

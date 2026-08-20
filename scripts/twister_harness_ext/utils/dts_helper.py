@@ -68,17 +68,17 @@ def get_node_address(node: Node, absolute: bool = False) -> int:
         parent_addresses: list[int] = []
         while current_node:
             if len(current_node.regs) > 0:
-                parent_addresses.append(current_node.regs[0].addr)
+                parent_addresses.append(current_node.regs[0].addr)  # type: ignore
             current_node = current_node.parent
         if parent_addresses:
             candidate_references = [
                 parent_address
                 for parent_address in parent_addresses
-                if 0 < parent_address <= address
+                if 0 < parent_address <= address  # type: ignore
             ]
             reference_address = min(candidate_references) if candidate_references else 0
             if reference_address:
-                address -= reference_address
+                address -= reference_address  # type: ignore
             else:
                 logger.debug(
                     f"Partition {partition_label} address 0x{address:x} is already relative to "
@@ -89,7 +89,7 @@ def get_node_address(node: Node, absolute: bool = False) -> int:
                 "No parent addresses found for partition %s - probably it is top level partition.",
                 partition_label,
             )
-    return address
+    return address  # type: ignore
 
 
 def get_partition_address(edt_data: Path, partition_label: str, absolute: bool = False) -> int:
@@ -114,7 +114,7 @@ def get_partition_size(edt_data: Path, partition_label: str) -> int:
     :raises KeyError: If the partition label is not found
     """
     node = get_edt_node(edt_data, partition_label)
-    return node.regs[0].size
+    return node.regs[0].size  # type: ignore
 
 
 def get_code_partition_address(edt_data: Path, absolute: bool = True) -> str:
@@ -141,7 +141,7 @@ def get_code_slot(edt_data: Path) -> Node:
             test_partition_size = test_partition.regs[0].size
             if (
                 test_partition_addr <= code_addr
-                and test_partition_addr + test_partition_size >= code_addr + code_size
+                and test_partition_addr + test_partition_size >= code_addr + code_size  # type: ignore
             ):
                 return test_partition
         except KeyError:

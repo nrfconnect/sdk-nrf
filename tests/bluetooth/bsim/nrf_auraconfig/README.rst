@@ -1,15 +1,11 @@
 .. _nrf_auraconfig_test:
 
-nRF Auraconfig test
-###################
+.. ncs-sample::
+   :title: nRF Auraconfig test
 
-.. contents::
-   :local:
-   :depth: 2
-
-This test code is a shim to allow for Zephyr's :ref:`zephyr:bsim` testing of the :ref:`nrf_auraconfig` sample.
-It is not intended for use in production code.
-Compared to other tests, these run as integration tests involving the Controller, the Host, and the application layer.
+   This test code is a shim to allow for Zephyr's :ref:`zephyr:bsim` testing of the :ref:`nrf_auraconfig` sample.
+   It is not intended for use in production code.
+   Compared to other tests, these run as integration tests involving the Controller, the Host, and the application layer.
 
 Requirements
 ************

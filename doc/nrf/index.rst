@@ -18,7 +18,7 @@ Middleware and security
   In addition to that, the |NCS| adds extra libraries and drivers, such as CoAP, LwM2M, a secure bootloader (MCUboot), Mbed TLS, nRF 802.15.4 Radio Driver, nRF Security, nRF Profiler, nRF Remote procedure call libraries, and many more.
 
 Pre-certified libraries
-  The |NCS| provides pre-certified, optimized libraries, including for SoftDevice, Matter, and Thread.
+  The |NCS| provides pre-certified, optimized libraries, including for SoftDevice and Thread.
 
 Robust connectivity support
   The |NCS| supports a wide range of connectivity technologies.

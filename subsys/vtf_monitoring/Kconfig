@@ -1,0 +1,75 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+
+# Workaround for not being able to have commas in macro arguments
+DT_CHOSEN_VTF_REGION := nordic,vtf-region
+
+menuconfig VTF_MONITORING
+	bool "Subsystem to monitor VTF"
+	depends on $(dt_chosen_enabled,$(DT_CHOSEN_VTF_REGION))
+	help
+	  Enable the VTF (Voltage-Temperature-Frequency) monitoring.
+	  Each enabled channel collects live data through its own
+	  work item.
+
+if VTF_MONITORING
+
+menuconfig VTF_DIE_TEMP_MONITOR
+	bool "Monitor die temperature"
+	depends on HAS_HW_NRF_TEMP
+	select SENSOR
+	select TEMP_NRF5
+
+if VTF_DIE_TEMP_MONITOR
+
+config VTF_DIE_TEMP_MONITOR_INTERVAL_MS
+	int "Die temperature measurement interval (ms)"
+	default 10000
+	help
+	  Interval between die temperature measurements in milliseconds.
+
+endif # VTF_DIE_TEMP_MONITOR
+
+config VTF_FREQ_OFFSET_MONITOR
+	bool "Monitor frequency offset"
+
+config VTF_BATTERY_VOLTAGE_MONITOR
+	bool "Monitor battery voltage"
+
+config VTF_LOG_LEVEL
+	int "Logging level in VTF monitoring system"
+	default LOG_DEFAULT_LEVEL
+	depends on LOG
+	help
+	  Sets the logging level for VTF monitoring.
+
+config VTF_DIE_TEMP_DEFAULT_VALUE
+	int "Die temperature default value (degC)"
+	default 25
+	help
+	  Default value when VTF_DIE_TEMP_MONITOR=n. 25 = 25 C.
+
+config VTF_BATTERY_VOLTAGE_DEFAULT_VALUE
+	int "Battery voltage default value (0.100V)"
+	default 35
+	help
+	  Default value when VTF_BATTERY_VOLTAGE_MONITOR=n. 35 = 3.5 V.
+
+config VTF_FREQ_OFFSET_DEFAULT_VALUE
+	int "Frequency offset default value (ppm)"
+	default 0
+	help
+	  Default value when VTF_FREQ_OFFSET_MONITOR=n. 0 = 0 ppm.
+
+config VTF_SNAPSHOT_INTERVAL_MS
+	int "Snapshot interval (ms)"
+	default 10000
+	help
+	  How often a snapshot is captured from every
+	  enabled channel.
+
+endif # VTF_MONITORING

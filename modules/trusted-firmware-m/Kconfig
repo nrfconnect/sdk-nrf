@@ -104,7 +104,7 @@ config TFM_CRYPTO_CONC_OPER_NUM
 	int
 	prompt "TF-M Crypto - Number of concurrent operations" if !TFM_PROFILE_TYPE_MINIMAL
 	default 1 if TFM_PROFILE_TYPE_MINIMAL
-	default 8
+	default 6
 	help
 	  This parameter defines the maximum number of possible
 	  concurrent operation contexts (cipher, MAC, hash and key derivation)
@@ -203,7 +203,7 @@ config TFM_ITS_MAX_ASSET_SIZE
 	help
 	  The maximum asset size to be stored in the Internal Trusted Storage. The maximum value
 	  is limited by the memory block size and by the bookkeeping data that may be stored
-	  in the same memory block when PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE is minimal.
+	  in the same memory block when the tfm_its_partition devicetree partition is minimal.
 	  The actual size of the stored asset is not affected by this configuration.
 
 config TFM_ITS_NUM_ASSETS
@@ -212,8 +212,8 @@ config TFM_ITS_NUM_ASSETS
 	help
 	  The maximum number of assets to be stored in the Internal Trusted Storage.
 	  (TF-M does not guarantee that the Internal Trusted Storage is large
-	  enough to store the maximum amount of assets with the maximum size.) Set
-	  PM_PARTITION_SIZE_TFM_INTERNAL_TRUSTED_STORAGE according to the needs of the
+	  enough to store the maximum amount of assets with the maximum size.) Size the
+	  tfm_its_partition devicetree partition according to the needs of the
 	  application.
 
 config TFM_ITS_BUF_SIZE
@@ -235,6 +235,7 @@ config TFM_ITS_ENCRYPTED
 	bool
 	prompt "PSA Internal Trusted Storage with encryption"
 	default y if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
+	depends on TFM_PARTITION_CRYPTO
 	select PSA_WANT_KEY_TYPE_CHACHA20 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	select PSA_WANT_ALG_CHACHA20_POLY1305 if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	select PSA_WANT_GENERATE_RANDOM
@@ -281,8 +282,8 @@ config TFM_PS_NUM_ASSETS
 	help
 	  The maximum number of assets to be stored in the Protected Storage area.
 	  (TF-M does not guarantee that the Protected Storage area is large
-	  enough to store the maximum amount of assets with the maximum size.) Set
-	  PM_PARTITION_SIZE_TFM_PROTECTED_STORAGE according to the needs of the
+	  enough to store the maximum amount of assets with the maximum size.) Size the
+	  tfm_ps_partition devicetree partition according to the needs of the
 	  application.
 
 config TFM_PS_STACK_SIZE
@@ -319,8 +320,6 @@ config TFM_DOORBELL_API
 
 endmenu
 
-rsource "Kconfig.tfm.pm"
-
 # Pull in full list of peripherals
 rsource "Kconfig.peripheral_secure"
 
@@ -328,8 +327,8 @@ choice TFM_PROFILE_TYPE
 
 config TFM_PROFILE_TYPE_MINIMAL
 	bool "TF-M build profile: minimal"
-	select PSA_WANT_GENERATE_RANDOM
-	select PSA_WANT_ALG_HMAC_DRBG
+	select PSA_WANT_GENERATE_RANDOM if PSA_CRYPTO
+	select PSA_WANT_ALG_HMAC_DRBG if PSA_CRYPTO
 	help
 	  Minimal TF-M build profile. This will make the TF-M image fit within 32kB.
 	  No configuration of the size of the partition nor the features of the
@@ -563,14 +562,14 @@ config TFM_NRF_SYSTEM_OFF_SERVICE
 	depends on TFM_ISOLATION_LEVEL = 1
 	depends on TFM_SFN
 	depends on SOC_SERIES_NRF54L || SOC_SERIES_NRF71
-	depends on !RETAINED_MEM_NRF_RAM_CTRL
+	depends on !RETAINED_MEM_NRF_RAM_CTRL || SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE
 	select EXPERIMENTAL
 	help
-	  Provide a System OFF service for the nRF54L Series SoCs.
+	  Provide a System OFF service for the nRF54L and nRF71 Series SoCs.
 	  This service allows the non-secure application to request
 	  the system to enter the System OFF mode using a secure service call.
-	  This service disables RAM retention for all RAM blocks
-	  before entering the System OFF mode.
+	  Unless the RAM-control service is enabled, this service disables RAM
+	  retention for all RAM blocks before entering the System OFF mode.
 
 config TFM_HAS_B0N
 	bool "Network core bootloader present (informative only, do not change)"

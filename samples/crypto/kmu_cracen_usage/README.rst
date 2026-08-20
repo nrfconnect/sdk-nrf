@@ -1,16 +1,12 @@
 .. _crypto_kmu_cracen_usage:
 
-Crypto: KMU usage with CRACEN
-#############################
+.. ncs-sample::
+   :title: Crypto: KMU usage with CRACEN
 
-.. contents::
-   :local:
-   :depth: 2
+   The KMU usage with CRACEN sample demonstrates how to generate cryptographic keys and securely store them in the Key Management Unit (KMU) on devices with the CRACEN hardware peripheral.
 
-The KMU usage with CRACEN sample demonstrates how to generate cryptographic keys and securely store them in the Key Management Unit (KMU) on devices with the CRACEN hardware peripheral.
-
-The sample also demonstrates how to use the :ref:`generate_psa_key_attributes_script` to generate the :file:`keys.json` file and then provision it to the KMU using `nRF Util`_.
-This provisioning operation can be done before the sample generates the keys.
+   The sample also demonstrates how to use the :ref:`generate_psa_key_attributes_script` to generate the :file:`keys.json` file and then provision it to the KMU using `nRF Util`_.
+   This provisioning operation can be done before the sample generates the keys.
 
 Requirements
 ************
@@ -208,7 +204,7 @@ Before you program the sample to your development kit, complete the following st
 1. |connect_kit|
 #. |connect_terminal|
 #. Perform a full erase of the device.
-   You can use nRF Util's `device command <Erasing the device_>`_ for this purpose:
+   You can use `nrfutil device erase`_ command for this purpose:
 
    .. code-block:: console
 

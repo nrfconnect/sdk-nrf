@@ -114,8 +114,8 @@ static int modular_reduction_run(sx_pk_req *req, uint8_t *workmem,
 	return SX_OK;
 }
 
-int coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const uint8_t *a,
-		      size_t asz, const uint8_t *b, size_t bsz)
+int cracen_coprime_check_run(sx_pk_req *req, uint8_t *workmem, size_t workmemsz, const uint8_t *a,
+			     size_t asz, const uint8_t *b, size_t bsz)
 {
 	int status;
 	int a_is_odd;
@@ -188,7 +188,7 @@ int cracen_coprime_check(uint8_t *workmem, size_t workmemsz, const uint8_t *a, s
 	sx_pk_acquire_hw(&req);
 	sx_pk_set_cmd(&req, SX_PK_CMD_ODD_MOD_INV);
 
-	status = coprime_check_run(&req, workmem, workmemsz, a, asz, b, bsz);
+	status = cracen_coprime_check_run(&req, workmem, workmemsz, a, asz, b, bsz);
 
 	sx_pk_release_req(&req);
 

@@ -31,7 +31,7 @@ Before you start the |NCS| integration with Memfault, make sure that the followi
 * `Create a Memfault project <create a new project in Memfault_>`_.
   You will be directed to the Integration guide for Memfault.
 
-  You receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+  You receive the ``project key`` here to set in the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.
   After registration, you can connect up to 100 devices for free.
 
 Solution architecture
@@ -79,14 +79,14 @@ To include Memfault in your build, add the following Kconfig options in your :fi
 .. code-block:: console
 
    CONFIG_MEMFAULT=y
-   CONFIG_MEMFAULT_NCS_PROJECT_KEY=""
+   CONFIG_MEMFAULT_PROJECT_KEY=""
 
 The APIs in the Memfault SDK can then be linked into your application.
 You can get your project key after signing up with Memfault.
 
 .. note::
    For the |NCS| samples that use Memfault, the Memfault configurations are already included in their folders.
-   Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+   Make sure to add your project key in the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.
 
 You can also add the configurations using a Kconfig configuration fragment file.
 See the following example on how to set an overlay configuration for Memfault integration on an nRF9160 DK:

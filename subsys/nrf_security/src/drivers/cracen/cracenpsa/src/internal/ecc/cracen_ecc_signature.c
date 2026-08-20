@@ -76,7 +76,7 @@ static psa_status_t handle_ikg_sign(bool is_message, const uint8_t *key_buffer,
 	struct sxhashalg hashalg = {0};
 	const struct sxhashalg *hashalgpointer = &hashalg;
 
-	status = hash_get_algo(alg, &hashalgpointer);
+	status = cracen_hash_get_algo(alg, &hashalgpointer);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
@@ -110,7 +110,7 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 
 	if (PSA_ALG_IS_DETERMINISTIC_ECDSA(alg) &&
 	    IS_ENABLED(PSA_NEED_CRACEN_DETERMINISTIC_ECDSA)) {
-		status = hash_get_algo(alg, &hashalgpointer);
+		status = cracen_hash_get_algo(alg, &hashalgpointer);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -124,7 +124,7 @@ static psa_status_t handle_ecdsa_sign(bool is_message, const uint8_t *key_buffer
 	} else if ((PSA_ALG_IS_ECDSA(alg) && IS_ENABLED(PSA_NEED_CRACEN_ECDSA)) &&
 		   !PSA_ALG_IS_DETERMINISTIC_ECDSA(alg)) {
 		if (is_message) {
-			status = hash_get_algo(alg, &hashalgpointer);
+			status = cracen_hash_get_algo(alg, &hashalgpointer);
 			if (status != PSA_SUCCESS) {
 				return status;
 			}
@@ -158,7 +158,7 @@ static psa_status_t validate_signing_conditions(bool is_message, psa_algorithm_t
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if ((int)signature_size < 2 * ecurve_sz) {
+	if (signature_size < 2 * ecurve_sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
@@ -218,7 +218,7 @@ psa_status_t cracen_signature_ecc_sign(bool is_message,
 		return status;
 	}
 
-	if ((int)signature_size < 2 * ecurve->sz) {
+	if (signature_size < 2 * ecurve->sz) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
@@ -328,7 +328,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 			return PSA_SUCCESS;
 
 		} else {
-			sx_status = ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
+			sx_status = cracen_ecc_genpubkey(key_buffer, pubkey_buffer, *sicurve);
 		}
 	}
 	return silex_statuscodes_to_psa(sx_status);
@@ -398,7 +398,7 @@ psa_status_t cracen_signature_ecc_verify(bool is_message,
 			return psa_status;
 		}
 		if (is_message) {
-			psa_status = hash_get_algo(alg, &hash_algorithm_ptr);
+			psa_status = cracen_hash_get_algo(alg, &hash_algorithm_ptr);
 			if (psa_status != PSA_SUCCESS) {
 				return psa_status;
 			}

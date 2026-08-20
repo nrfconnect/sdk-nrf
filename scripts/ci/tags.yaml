@@ -158,15 +158,16 @@ ci_tests_subsys_net_openthread:
 ci_samples_wifi:
   files:
     - modules/lib/hostap/
-    - modules/lib/matter/
     - modules/lib/nrf_wifi/
     - nrf/boards/shields/nrf7002eb2/
+    - nrf/samples/peripheral/radio_test
     - nrf/samples/wifi/
     - nrf/subsys/net/lib/hostap_crypto/
     - nrf/subsys/net/lib/nrf70_fw_ext/
     - nrf/subsys/net/openthread/
     - nrf/subsys/nrf_security/
     - nrfxlib/nrf_wifi/
+    - zephyr/boards/shields/nrf7002*
     - zephyr/drivers/wifi/
     - zephyr/modules/hostap/
     - zephyr/modules/nrf_wifi/
@@ -182,63 +183,6 @@ ci_samples_nrf71_wifi:
     - zephyr/boards/nordic/nrf7120dk/
     - zephyr/modules/hostap/
     - zephyr/soc/nordic/nrf71/
-
-ci_applications_matter: &ci_matter
-  files:
-    - bootloader/mcuboot/
-    - modules/hal_nordic/nrf_802154/
-    - modules/lib/hostap/
-    - modules/lib/matter/
-    - modules/lib/nrf_wifi/
-    - modules/lib/suit-generator/
-    - nrf/applications/ipc_radio/
-    - nrf/applications/matter_bridge/
-    - nrf/applications/matter_weather_station/
-    - nrf/boards/shields/nrf7002eb2/
-    - nrf/cmake/
-    - nrf/drivers/hw_cc3xx/
-    - nrf/drivers/mpsl/
-    - nrf/modules/mcuboot/
-    - nrf/modules/nrfxlib/nrf_802154/
-    - nrf/samples/matter/
-    - nrf/snippets/matter-diagnostic-logs/
-    - nrf/subsys/bluetooth/controller/
-    - nrf/subsys/bootloader/
-    - nrf/subsys/dfu/
-    - nrf/subsys/fw_info/
-    - nrf/subsys/ieee802154/
-    - nrf/subsys/mpsl/
-    - nrf/subsys/net/lib/hostap_crypto/
-    - nrf/subsys/net/lib/nrf70_fw_ext/
-    - nrf/subsys/net/openthread/
-    - nrf/subsys/nrf_security/
-    - nrf/subsys/partition_manager/
-    - nrf/subsys/pcd/
-    - nrf/sysbuild/
-    - nrfxlib/crypto/
-    - nrfxlib/nrf_802154/driver/
-    - nrfxlib/nrf_802154/serialization/
-    - nrfxlib/nrf_802154/sl/
-    - nrfxlib/nrf_wifi/
-    - nrfxlib/openthread/
-    - zephyr/cmake/
-    - zephyr/drivers/net/
-    - zephyr/drivers/wifi/
-    - zephyr/include/dfu/
-    - zephyr/include/mgmt/mcumgr/
-    - zephyr/modules/hostap/
-    - zephyr/modules/nrf_wifi/
-    - zephyr/samples/bluetooth/hci_ipc/
-    - zephyr/share/
-    - zephyr/soc/nordic/
-    - zephyr/subsys/bluetooth/
-    - zephyr/subsys/dfu/
-    - zephyr/subsys/fs/
-    - zephyr/subsys/mgmt/mcumgr/
-    - zephyr/subsys/net/
-    - zephyr/subsys/settings/
-
-ci_samples_matter: *ci_matter
 
 ci_samples_crypto: &ci_crypto
   files:
@@ -318,6 +262,12 @@ ci_samples_tfm: &ci_tfm
     - zephyr/share/
 
 ci_tests_tfm: *ci_tfm
+
+ci_samples_vtf_monitoring:
+  files:
+    - nrf/include/vtf_monitoring
+    - nrf/samples/vtf_monitoring
+    - nrf/subsys/vtf_monitoring
 
 ci_tests_subsys_sd:
   files:
@@ -894,17 +844,6 @@ ci_samples_zephyr_bluetooth:
     - zephyr/samples/bluetooth/hci_uart/
     - zephyr/samples/bluetooth/peripheral_hr/
 
-ci_samples_mcuboot:
-  files:
-    - nrf/include/bluetooth/
-    - nrf/samples/mcuboot/
-    - nrf/subsys/bluetooth/
-    - zephyr/drivers/bluetooth/
-    - zephyr/include/mgmt/mcumgr/
-    - zephyr/include/zephyr/bluetooth/
-    - zephyr/subsys/bluetooth/
-    - zephyr/subsys/mgmt/mcumgr/
-
 ci_tests_bluetooth_tester:
   files:
     - nrf/include/bluetooth/mesh/
@@ -1310,6 +1249,7 @@ ci_tests_benchmarks_peripheral_load:
   files:
     - modules/hal/nordic/nrfx/
     - nrf/tests/benchmarks/peripheral_load/
+    - nrf/tests/benchmarks/power_load/
     - zephyr/drivers/sensor/adi/adxl362/
     - zephyr/drivers/sensor/bosch/bme680/
     - zephyr/drivers/sensor/nordic/temp/
@@ -1345,6 +1285,23 @@ ci_tests_benchmarks_spi_performance:
     - zephyr/dts/vendor/nordic/
     - zephyr/boards/nordic/nrf54*
     - nrf/tests/benchmarks/xspi_performance/
+
+ci_tests_benchmarks_can_performance:
+  files:
+    - zephyr/drivers/can/
+    - zephyr/dts/vendor/nordic/
+    - zephyr/boards/nordic/nrf54*
+    - nrf/tests/benchmarks/can_performance/
+
+ci_tests_benchmarks_sdmmc_performance:
+  files:
+    - modules/hal/nordic/nrfx/
+    - zephyr/subsys/sd/
+    - zephyr/drivers/sdhc/
+    - zephyr/soc/nordic/
+    - zephyr/dts/vendor/nordic/
+    - zephyr/boards/nordic/nrf54*
+    - nrf/tests/benchmarks/sdmmc_performance/
 
 ci_tests_benchmarks_current_consumption:
   files:
@@ -2004,7 +1961,9 @@ ci_samples_dfu:
     - bootloader/mcuboot/
     - nrf/samples/dfu/
     - zephyr/drivers/flash/
+    - zephyr/include/mgmt/mcumgr/
     - zephyr/subsys/dfu/
+    - zephyr/subsys/mgmt/mcumgr/
 
 ci_samples_nrf54h20:
   files:
@@ -2066,3 +2025,11 @@ ci_tests_zephyr_drivers_disk:
   files:
     - nrf/tests/zephyr/drivers/disk/
     - zephyr/tests/drivers/disk/
+
+ci_tests_lib_wifi_kmu:
+  files:
+    - modules/hal/nordic/nrfx/drivers/include/nrfx_kmu.h
+    - modules/hal/nordic/nrfx/drivers/src/nrfx_kmu.c
+    - nrf/include/wifi_kmu/
+    - nrf/lib/wifi_kmu/
+    - nrf/tests/lib/wifi_kmu/

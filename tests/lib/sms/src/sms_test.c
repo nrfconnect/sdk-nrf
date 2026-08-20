@@ -2091,6 +2091,20 @@ void test_recv_invalid_udl_shorter_than_ud_8bit(void)
 	sms_unreg_helper();
 }
 
+/** Receive too long message with 161 bytes in 8bit encoding. */
+void test_recv_fail_len161_8bit(void)
+{
+	sms_reg_helper();
+
+	__cmock_nrf_modem_at_cmd_async_ExpectAndReturn(sms_ack_resp_handler, "AT+CNMA=1", 0);
+	sms_callback_called_expected = false;
+	at_monitor_dispatch("+CMT: \"+1234567890\",22\r\n"
+		"00040091000412201232054480A10102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A0102030405060708090A01\r\n");
+	k_sleep(K_MSEC(1));
+
+	sms_unreg_helper();
+}
+
 /** Tests User-Data-Header Length that is longer than User-Data-Length. */
 void test_recv_fail_udhl_longer_than_udh(void)
 {

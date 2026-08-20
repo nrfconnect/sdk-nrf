@@ -1,0 +1,14 @@
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+cmake_minimum_required(VERSION 3.20.0)
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(nrf71_sr_coex)
+
+target_sources(app PRIVATE src/main.c)
+
+# The coexistence API contract (coex_cd_* / CD2CM types) is declared in the
+# Wi-Fi firmware interface header.
+target_include_directories(app PRIVATE
+  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/fw_if
+  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/osal/hw_if/hal/inc
+)

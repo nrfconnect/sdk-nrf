@@ -1,18 +1,14 @@
 .. _hpf_mspi_example:
 
-High-Performance Framework MSPI
-###############################
+.. ncs-sample::
+   :title: High-Performance Framework MSPI
 
-.. contents::
-   :local:
-   :depth: 2
+   .. caution::
 
-.. caution::
+      The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20A/B, nRF54LC10A, and nRF54LV10A devices.
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20A/B, nRF54LC10A, and nRF54LV10A devices.
-
-This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application and communicate with it.
-The application implements a subset of the Zephyr MSPI API.
+   This application demonstrates how to write a :ref:`High-Performance Framework (HPF) <hpf_index>` application and communicate with it.
+   The application implements a subset of the Zephyr MSPI API.
 
 Application overview
 ********************

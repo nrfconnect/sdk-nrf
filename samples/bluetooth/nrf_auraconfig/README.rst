@@ -1,19 +1,15 @@
 .. _nrf_auraconfig:
 
-nRF Auraconfig
-##############
+.. ncs-sample::
+   :title: nRF Auraconfig
 
-.. contents::
-   :local:
-   :depth: 2
+   The nRF Auraconfig sample implements the :ref:`BIS gateway mode <nrf_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
+   The sample features a shell interface that allows you to configure the broadcast source in many different ways.
 
-The nRF Auraconfig sample implements the :ref:`BIS gateway mode <nrf_audio_app_overview>` and may act as an `Auracast™`_ broadcaster if you are using a preset compatible with Auracast.
-The sample features a shell interface that allows you to configure the broadcast source in many different ways.
+   In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
 
-In the BIS gateway mode, transmitting audio from the broadcast source happens using Broadcast Isochronous Stream (BIS) and Broadcast Isochronous Group (BIG).
-
-.. note::
-     This sample is meant to be used with maximum two BIG with four BIS streams each.
+   .. note::
+        This sample is meant to be used with maximum two BIG with four BIS streams each.
 
 .. _nrf_auraconfig_requirements:
 

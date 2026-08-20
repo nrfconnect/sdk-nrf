@@ -189,7 +189,7 @@ Gazell
 Matter
 ------
 
-* Updated the :ref:`matter_test_event_triggers_default_test_event_triggers` section with the new Closure Control cluster test event triggers.
+* Updated the Matter Test Event Triggers default test event triggers section with the new Closure Control cluster test event triggers.
 
 Matter fork
 +++++++++++
@@ -394,19 +394,19 @@ Matter samples
 
 * Refactored documentation for all Matter samples and applications to make it more consistent and easier to maintain and read.
 
-* :ref:`matter_manufacturer_specific_sample`:
+* Matter Manufacturer Specific sample:
 
   * Added support for the ``NRF_MATTER_CLUSTER_INIT`` macro.
 
-* :ref:`matter_closure_sample`:
+* Matter Closure sample:
 
   * Added support for the Closure Control cluster test event triggers.
 
-* :ref:`matter_lock_sample`:
+* Matter Lock sample:
 
   * Added support for the Thread and Wi-Fi switching section in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
-* :ref:`matter_light_bulb_sample`:
+* Matter Light Bulb sample:
 
   * Added support for the AWS IoT integration in the nRF54LM20 DK with the nRF7002-EB II shield attached.
 
@@ -602,7 +602,7 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-* Added the :ref:`matter_sample_checker` script to check the consistency of Matter samples in the |NCS|.
+* Added the Matter Sample Checker script to check the consistency of Matter samples in the |NCS|.
 
 Integrations
 ============

@@ -15,7 +15,7 @@ from constant import APP_KEYS_FOR_KMU
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.fixtures import determine_scope
 from twister_harness.helpers.utils import find_in_config, match_lines, match_no_lines
-from twister_harness_ext.utils.helpers import reset_board
+from twister_harness_ext.utils.common import reset_board
 from twister_harness_ext.utils.key_provisioning import (
     get_keyname_for_mcuboot,
     provision_keys_for_kmu,

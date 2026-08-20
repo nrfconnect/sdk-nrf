@@ -1,16 +1,12 @@
 .. _peripheral_mds:
 
-Bluetooth: Peripheral Memfault Diagnostic Service (MDS)
-#######################################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral Memfault Diagnostic Service (MDS)
 
-.. contents::
-   :local:
-   :depth: 2
+   The Peripheral Memfault Diagnostic Service sample demonstrates how to use the :ref:`mds_readme` with the `Memfault SDK`_ in an |NCS| Bluetooth application to collect core dumps and metrics.
+   The Memfault diagnostic data is sent through a Bluetooth gateway.
 
-The Peripheral Memfault Diagnostic Service sample demonstrates how to use the :ref:`mds_readme` with the `Memfault SDK`_ in an |NCS| Bluetooth application to collect core dumps and metrics.
-The Memfault diagnostic data is sent through a Bluetooth gateway.
-
-To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
+   To get started with Memfault integration in |NCS|, see :ref:`ug_memfault`.
 
 Requirements
 ************
@@ -209,7 +205,7 @@ The Memfault SDK allows configuring some of its options using Kconfig.
 For the options not configurable using Kconfig, use the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_platform_config.h` file.
 See `Memfault SDK`_ for more information.
 
-To send data to the Memfault cloud through a Bluetooth gateway, you must configure a project key using the :kconfig:option:`CONFIG_MEMFAULT_NCS_PROJECT_KEY` Kconfig option.
+To send data to the Memfault cloud through a Bluetooth gateway, you must configure a project key using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.
 You can find your project key in the project settings at `Memfault Dashboards`_.
 Use the :kconfig:option:`CONFIG_MEMFAULT_NCS_DEVICE_ID` Kconfig option to set a static device ID.
 For this sample, the device ID is ``ncs-ble-testdevice`` by default.

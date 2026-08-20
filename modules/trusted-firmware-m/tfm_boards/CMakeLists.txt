@@ -49,6 +49,7 @@ target_sources(platform_s
   common/assert.c
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_OTP}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_otp.c>
   $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_SYSTEM_RESET_HALT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/tfm_hal_reset_halt.c>
+  $<$<NOT:$<BOOL:${PLATFORM_DEFAULT_UART_STDOUT}>>:${CMAKE_CURRENT_SOURCE_DIR}/common/dummy_uart_stdout.c>
 )
 
 target_link_libraries(platform_s
@@ -113,6 +114,17 @@ if(${TFM_PARTITION_CRYPTO})
         ${ZEPHYR_NRF_MODULE_DIR}/lib/hw_unique_key/hw_unique_key_cc3xx_kmu.c
       )
     endif()
+  endif()
+
+  if(CONFIG_NRF_WIFI_KMU)
+    target_compile_definitions(platform_s PUBLIC
+      CONFIG_NRF_WIFI_KMU=1
+    )
+
+    target_sources(platform_s
+      PRIVATE
+      ${ZEPHYR_NRF_MODULE_DIR}/lib/wifi_kmu/wifi_kmu.c
+    )
   endif()
 
   target_link_libraries(platform_crypto_keys

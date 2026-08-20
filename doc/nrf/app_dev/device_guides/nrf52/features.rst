@@ -89,16 +89,6 @@ Gazell
 See the :ref:`ug_gzll` user guide and the :ref:`ug_gzp` user guide for information about how to work with Gazell.
 To start developing, check out the :ref:`gazell_samples`.
 
-Matter
-======
-
-.. include:: /protocols/matter/index.rst
-   :start-after: matter_intro_start
-   :end-before: matter_intro_end
-
-See the :ref:`ug_matter` user guide for information about how to work with Matter applications.
-To start developing, check out :ref:`matter_samples`.
-
 Near Field Communication
 ========================
 

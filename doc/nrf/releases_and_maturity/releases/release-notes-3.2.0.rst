@@ -20,13 +20,13 @@ Added the following features as supported:
 
 * Matter:
 
-  * Integration of `Matter 1.5.0 <CSA press release for Matter 1.5_>`_ with dedicated sample for closures:
+  * Integration of Matter 1.5.0 with dedicated sample for closures:
 
     * Better closures - Supporting different motion types (sliding, rotating, opening), configurations (single/dual panels, nested mechanisms), and improved safety features (through precise position reporting).
     * Soil sensors - Introducing soil sensors that enable Matter-based valves and irrigation systems to optimize water use for plants.
     * Energy management - Providing real-time data on energy prices, carbon data, and advanced smart metering, thereby improving tracking, enabling grid coordination, and supporting EV charging features.
 
-  * Introduced the `Matter Quick Start app`_ as part of `nRF Connect for Desktop`_.
+  * Introduced the Matter Quick Start app as part of `nRF Connect for Desktop`_.
     This tool allows you to set up and configure Matter accessory devices and evaluate Matter samples without installing the |NCS| and setting up the development environment.
 
 * Bluetooth®:
@@ -354,9 +354,9 @@ Matter
 
 * Added:
 
-  * The `Matter Quick Start app`_ v1.0.0 as part of nRF Connect for Desktop.
+  * The Matter Quick Start app v1.0.0 as part of nRF Connect for Desktop.
   * Documentation for leveraging Matter Compliant Platform certification through the Derived Matter Product (DMP) process.
-    See :ref:`ug_matter_platform_and_dmp`.
+    See Matter Platform and DMP.
 
 * Updated to use the :kconfig:option:`CONFIG_PICOLIBC` Kconfig option as the C library instead of :kconfig:option:`CONFIG_NEWLIB_LIBC`, in compliance with Zephyr requirements.
 
@@ -401,11 +401,11 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
     The code-driven approach is not yet fully implemented for all the available clusters, but the coverage will be increasing and it is used for the newly created clusters.
     The new model is meant to be backward compatible with the previous configuration based on the ZAP files and the ZAP-generated code, until the code-driven approach is fully implemented for all the available clusters.
     See the `migration notes <Migration notes for nRF Connect SDK v3.2.0_>`_ for more information.
-  * The :ref:`ug_matter_gs_tools_matter_west_commands_sync` to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
-  * The check to all :ref:`ug_matter_gs_tools_matter_west_commands_zap_tool` that verify whether ZAP tool sandbox permissions are correctly set.
+  * The Matter GS Tools Matter West Commands Sync to synchronize the ZAP and :file:`zcl.json` files after updating the ZAP tool version.
+  * The check to all Matter GS Tools Matter West Commands Zap Tool that verify whether ZAP tool sandbox permissions are correctly set.
     In case of detecting incorrect permissions, the command prompts the user to accept automatically updating the permissions to required ones.
 
-* Updated the :ref:`ug_matter_gs_tools_matter_west_commands_append` to accept ``--clusters`` argument instead of ``new_clusters`` argument.
+* Updated the Matter GS Tools Matter West Commands Append to accept ``--clusters`` argument instead of ``new_clusters`` argument.
 
 * Removed dependencies on Nordic DK-specific configurations in Matter configurations.
   See the `Migration notes for nRF Connect SDK v3.2.0`_ for more information.
@@ -439,7 +439,7 @@ Matter bridge
 
   * Support for the nRF54LM20 DK working with both Thread and Wi-Fi protocol variants.
     For the Wi-Fi protocol variant, the nRF54LM20 DK works with the nRF7002-EB II shield attached.
-  * The ``matter_bridge list`` command to show a list of all bridged devices and their endpoints.
+  * The Matter Bridge list command to show a list of all bridged devices and their endpoints.
 
 * Updated:
 
@@ -879,10 +879,10 @@ Matter samples
 
 * Added:
 
-  * The :ref:`matter_temperature_sensor_sample` sample that demonstrates how to implement and test a Matter temperature sensor device.
-  * The :ref:`matter_contact_sensor_sample` sample that demonstrates how to implement and test a Matter contact sensor device.
-  * The :ref:`matter_closure_sample` sample that demonstrates how to implement and test a Matter closure device.
-  * The ``matter_custom_board`` toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
+  * The Matter Temperature Sensor sample that demonstrates how to implement and test a Matter temperature sensor device.
+  * The Matter Contact Sensor sample that demonstrates how to implement and test a Matter contact sensor device.
+  * The Matter Closure sample that demonstrates how to implement and test a Matter closure device.
+  * The Matter Custom Board toggle paragraph in the Matter advanced configuration section of all Matter samples that demonstrates how add and configure a custom board.
   * Support for the Matter over Wi-Fi on the nRF54LM20 DK with the nRF7002-EB II shield attached to all Matter over Wi-Fi samples.
   * Enabled deprecated warnings for all Matter over Wi-Fi samples that are using nRF5340 SoC.
 
@@ -896,7 +896,7 @@ Matter samples
     This change resulted in decreasing the sleep current consumption by more than 2 µA.
   * All Matter samples to use the code-driven approach for the Identify cluster implementation instead of the zap-driven approach.
 
-* :ref:`matter_lock_sample` sample:
+* Matter Lock sample:
 
    * Added a callback for the auto-relock feature.
      This resolves the `known issue <known issues for nRF Connect SDK v3.2.0_>`_ KRKNWK-20691.

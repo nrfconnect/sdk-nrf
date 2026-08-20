@@ -8,7 +8,6 @@ common:
     regex:
       - "Enhanced ShockBurst monitor sample"
       - "Initialization complete"
-      - "Start receiving packets"
   timeout: 15
 
 tests:

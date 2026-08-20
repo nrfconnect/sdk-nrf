@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	/* Test requirements:
+	 * NFC antenna connected to the DK.
+	 */
+	test_gpios {
+		compatible = "gpio-leds";
+
+		out_gpios: out_gpios {
+			gpios = <&gpio1 8 GPIO_ACTIVE_HIGH>;
+		};
+
+		in_gpios: in_gpios {
+			gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		};
+	};
+};
+
+&nfct {
+	status = "disabled";
+	nfct-pins-as-gpios;
+};
+
+&gpiote130 {
+	status = "okay";
+	owned-channels = <7>;
+};
+
+&gpio1 {
+	status = "okay";
+};

@@ -1114,12 +1114,6 @@ struct rpu_lmac_stats {
 	unsigned int warmBootCnt;
 } __NRF_WIFI_PKD;
 
-/*! LMAC error event status */
-enum LMAC_ERROR_ID {
-	/*! LMAC internal memory full */
-	LMAC_FW_PEER_DATA_BASE_FULL = 0,
-};
-
 /**
  * @brief This structure defines the PHY (Physical Layer) debug statistics.
  *
@@ -1173,58 +1167,12 @@ struct pool_data_to_host {
  * @struct nrf_wifi_rf_get_rx_debug_stats
  * @brief Holds debug statistics related to the RX.
  */
+#define NRF_WIFI_RF_RX_PHY_DBG_STATS_LEN 40
 struct nrf_wifi_rf_get_rx_debug_stats {
 	unsigned char test;
 
-	/**
-	 * @todo Refactor the code to use the WLAN_PHY_RX_STATS_T structure.
-	 *
-	 * The current implementation uses individual structure members that are
-	 * already present in WLAN_PHY_RX_STATS_T. To improve maintainability
-	 * and reduce redundancy, consider replacing the individual members with
-	 * this unified structure.
-	 */
-
-	unsigned int edCnt;
-	unsigned int ofdmCrc32PassCnt;
-	unsigned int ofdmCrc32FailCnt;
-	unsigned int dsssCrc32PassCnt;
-	unsigned int dsssCrc32FailCnt;
-	unsigned int ofdmCorrPassCnt;
-	unsigned int dsssCorrPassCnt;
-	unsigned int ofdmLtfCorrFailCnt;
-	unsigned int ofdmLsigFailCnt;
-	unsigned int ofdmHtsigAFailCnt;
-	unsigned int ofdmVhtsigAFailCnt;
-	unsigned int ofdmVhtsigBFailCnt;
-	unsigned int ofdmHesigAFailCnt;
-	unsigned int ofdmHesigBFailCnt;
-	unsigned int ofdmUsigFailCnt;
-	unsigned int ofdmEhtsigFailCnt;
-	unsigned int ofdmzeroLenMpduCnt;
-	unsigned int ofdminvalidDelimiterCnt;
-	unsigned int dsssSyncFailCnt;
-	unsigned int dsssFsyncFailCnt;
-	unsigned int dsssSfdFailCnt;
-	unsigned int dsssHdrFailCnt;
-	unsigned int lgPktCnt;
-	unsigned int htPktCnt;
-	unsigned int vhtPktCnt;
-	unsigned int heSuPktCnt;
-	unsigned int heMuPktCnt;
-	unsigned int heErSuPktCnt;
-	unsigned int heTbPktCnt;
-	unsigned int ehtMuPktCnt;
-	unsigned int popCnt;
-	unsigned int midPacketCnt;
-	unsigned int lowEnergyEventCnt;
-	unsigned int unSupportedCnt;
-	unsigned int otherStaPktCnt;
-	unsigned int vhtNdpCnt;
-	unsigned int hesuNdpCnt;
-	unsigned int ehtNdpCnt;
-	unsigned int ofdmS2lTimeOutFailCnt;
-	unsigned int spatialReuseCnt;
+	/** PHY RX debug counters */
+	unsigned int phy_rx_dbg_stats[NRF_WIFI_RF_RX_PHY_DBG_STATS_LEN];
 } __NRF_WIFI_PKD;
 
 struct phy_debug_stats {

@@ -124,11 +124,11 @@ Matter samples
 
 * Added support for the :ref:`nRF54L15 PDK <ug_nrf54l15_gs>` with build targets ``nrf54l15pdk_nrf54l15_cpuapp`` and ``nrf54l15pdk_nrf54l15_cpuapp@0.3.0`` in the following Matter samples:
 
-  * :ref:`matter_template_sample` sample
-  * :ref:`matter_light_bulb_sample` sample
-  * :ref:`matter_light_switch_sample` sample
-  * :ref:`matter_thermostat_sample` sample
-  * :ref:`matter_window_covering_sample` sample
+  * Matter Template sample
+  * Matter Light Bulb sample
+  * Matter Light Switch sample
+  * Matter Thermostat sample
+  * Matter Window Covering sample
 
   DFU support for the nRF54L15 PDK is available only for the ``release`` build type.
 

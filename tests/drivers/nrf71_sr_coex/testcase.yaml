@@ -1,0 +1,14 @@
+common:
+  depends_on: wifi
+  tags:
+    - ci_build
+    - sysbuild
+    - drivers
+    - ci_tests_drivers_nrf_wifi
+tests:
+  drivers.nrf71_sr_coex.build:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow: nrf7120dk/nrf7120/cpuapp

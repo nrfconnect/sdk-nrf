@@ -8,4 +8,4 @@
  * nrf/sysbuild/overlays/s0-partition.overlay (applied as EXTRA_DTC_OVERLAY_FILE
  * on top of this file) resolves correctly.
  */
-#include <samples/matter/nrf5340_cpunet_partitions.dtsi>
+#include <samples/wifi/nrf5340_cpunet_partitions.dtsi>

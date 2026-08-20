@@ -85,7 +85,14 @@ static void wifi_ipc_busyq_init(wifi_ipc_busyq_t *busyq, const ipc_device_wrappe
 	busyq->ipc_inst = ipc_inst;
 	busyq->ipc_ep_cfg.cb.bound = wifi_ipc_ep_bound;
 	busyq->recv_cb = rx_cb;
-	busyq->ipc_ready = false;
+	/* Never clear a bind that already completed: the ICMsg endpoint stays
+	 * bound for the lifetime of the Wi-Fi core, and its bound callback only
+	 * fires once. Clearing this on a re-bind would latch the endpoint as
+	 * not-ready forever and wedge every subsequent send.
+	 */
+	if (!busyq->ipc_bound) {
+		busyq->ipc_ready = false;
+	}
 	busyq->priv = priv;
 	busyq->ipc_ep_cfg.cb.received = wifi_ipc_recv_callback;
 }
@@ -94,6 +101,19 @@ static wifi_ipc_status_t wifi_ipc_busyq_register(wifi_ipc_t *context)
 {
 	int ret;
 	const struct device *ipc_instance = GET_IPC_INSTANCE(context->busy_q.ipc_inst);
+
+	if (context->busy_q.ipc_bound) {
+		/* Already bound, only the RX consumer was re-armed. This holds while the
+		 * Wi-Fi core stays powered; interface down/up never crosses it.
+		 *
+		 * TODO(WZN-10457): a power cycle reboots the core and resets the peer
+		 * ICMsg state, so the bind goes stale. Once power management can power
+		 * the core down, clear ipc_bound (and ipc_ready) on that leg so the next
+		 * bring-up re-opens the instance and re-runs the handshake here.
+		 */
+		LOG_DBG("IPC busy queue already registered");
+		return WIFI_IPC_STATUS_OK;
+	}
 
 	k_sem_reset(&wifi_ipc_bind_sem);
 
@@ -114,6 +134,8 @@ static wifi_ipc_status_t wifi_ipc_busyq_register(wifi_ipc_t *context)
 	if (wifi_ipc_wait_bound(context) != 0) {
 		return WIFI_IPC_STATUS_INIT_ERR;
 	}
+
+	context->busy_q.ipc_bound = true;
 
 	LOG_INF("IPC busy queue registered");
 
@@ -145,6 +167,13 @@ wifi_ipc_status_t wifi_ipc_bind_ipc_service_tx_rx(wifi_ipc_t *tx_context,
 
 	ret = wifi_ipc_busyq_register(tx_context);
 	wifi_ipc_rx_ctx_shared = NULL;
+
+	if (ret == WIFI_IPC_STATUS_OK) {
+		/* Only the TX context owns the endpoint registration, but both
+		 * share its bound state.
+		 */
+		rx_context->busy_q.ipc_bound = true;
+	}
 
 	return ret;
 }

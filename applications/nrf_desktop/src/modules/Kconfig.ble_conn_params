@@ -10,21 +10,26 @@ menuconfig DESKTOP_BLE_CONN_PARAMS_ENABLE
 	help
 	  The module updates the Bluetooth connection parameters after the
 	  peripheral discovery, handles connection parameter update requests
-	  from the connected peripherals and increases connection interval for
-	  peripherals while USB is suspended to reduce power consumption.
+	  from the connected peripherals and reduces power consumption while
+	  USB is suspended. This is done by increasing the Bluetooth connection
+	  interval for non-HID SCI connections, or by switching HID SCI
+	  connections to the LOW_POWER mode.
 
 if DESKTOP_BLE_CONN_PARAMS_ENABLE
 
 config DESKTOP_BLE_USB_MANAGED_CI
-	bool "Manage connection intervals on the USB state change"
+	bool "Manage BLE connection parameters on USB state change"
 	default y
 	depends on DESKTOP_USB_ENABLE
 	help
-	  Manage BLE connection intervals depending on the USB state. Allows
-	  reduced power consumption of the USB dongle device by setting a larger
-	  connection intervals while the USB enters suspended state. After the
-	  USB resumes normal operation, connection interval is set to the
-	  previous value.
+	  Manage BLE connection parameters depending on the USB state. Allows
+	  reduced power consumption of the USB dongle device while the USB
+	  enters suspended state. For standard (non-SCI) connections, the module
+	  sets a larger connection interval and non-zero peripheral latency.
+	  For HID SCI connections, the module requests the LOW_POWER HID SCI
+	  mode instead. After the USB resumes normal operation, the module
+	  restores the previous connection parameters or requests the FAST
+	  HID SCI mode, respectively.
 
 config DESKTOP_BLE_USB_MANAGED_CI_VALUE
 	int "BLE connection interval when USB is suspended"
@@ -32,8 +37,9 @@ config DESKTOP_BLE_USB_MANAGED_CI_VALUE
 	depends on DESKTOP_BLE_USB_MANAGED_CI
 	range 10 100
 	help
-	  Connection interval used for all connected peers while the USB is
-	  in suspended state.
+	  Connection interval used for standard (non-SCI) connections while the
+	  USB is in suspended state. This option does not apply to HID SCI
+	  connections.
 
 config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 	int "BLE peripheral latency when USB is suspended"
@@ -41,8 +47,9 @@ config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 	depends on DESKTOP_BLE_USB_MANAGED_CI
 	range 1 10
 	help
-	  Peripheral latency used for all connected peers while the USB is in
-	  suspended state.
+	  Peripheral latency used for standard (non-SCI) connections while the
+	  USB is in suspended state. This option does not apply to HID SCI
+	  connections.
 
 if !DESKTOP_BLE_USB_MANAGED_CI
 
@@ -55,6 +62,17 @@ config DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE
 	default 0
 
 endif # !DESKTOP_BLE_USB_MANAGED_CI
+
+config DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+	bool
+	depends on DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+	default y
+
+if DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
+
+rsource "Kconfig.ble_conn_params.sci"
+
+endif # DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE
 
 module = DESKTOP_BLE_CONN_PARAMS
 module-str = BLE connection parameters

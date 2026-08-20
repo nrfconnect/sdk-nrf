@@ -1,0 +1,39 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF71_SR_COEX_DRIVER
+	bool "nRF71 Wi-Fi / Short-Range coexistence driver"
+	depends on WIFI_NRF71 && BT
+	default y
+	help
+	  Standalone coexistence coordination driver for the nRF71 combo SoC.
+
+	  The driver configures the on-chip Coexistence Controller (COEXC),
+	  forwards CD2CM commands to the Coexistence Manager over the Wi-Fi FMAC
+	  control path, and coordinates with the Wi-Fi and Short-Range drivers.
+
+	  Coexistence only makes sense when both radios are present, so this
+	  depends on both the nRF71 Wi-Fi driver (WIFI_NRF71) and Bluetooth (BT):
+	  the CD<->CM messaging is carried over the Wi-Fi host<->RPU path, and the
+	  Short-Range (BLE) radio is the other party being arbitrated. At runtime
+	  the driver additionally disables coexistence whenever either radio is
+	  powered down.
+
+if NRF71_SR_COEX_DRIVER
+
+config NRF71_SR_COEX_DRIVER_INIT_PRIORITY
+	int "Coexistence driver init priority"
+	default 90
+	help
+	  Initialisation priority of the coexistence driver within the
+	  APPLICATION init level. Kept after the Wi-Fi driver so the FMAC
+	  transport used for CD<->CM messaging is available.
+
+module = NRF71_SR_COEX_DRIVER
+module-str = Log level for the nRF71 SR coexistence driver
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NRF71_SR_COEX_DRIVER

@@ -1014,8 +1014,13 @@ out:
 
 static void zep_shim_bus_qspi_intr_unreg(void *os_qspi_dev_ctx)
 {
-
 	ARG_UNUSED(os_qspi_dev_ctx);
+
+	/* Detach the event consumer before the HAL context is torn down. The IPC
+	 * endpoint itself stays bound: it is the control plane and its lifetime
+	 * follows the Wi-Fi core, not the interface.
+	 */
+	ipc_unregister_rx_cb();
 }
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER

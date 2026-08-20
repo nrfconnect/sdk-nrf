@@ -9,12 +9,29 @@ Building and configuring TF-M
 
 TF-M is one of the images that are built as part of a :ref:`multi-image application <ug_tfm_building_secure_services>`.
 
-To add TF-M to your build, enable the :kconfig:option:`CONFIG_BUILD_WITH_TFM` configuration option by adding it to your :file:`prj.conf` file.
+To build with TF-M, complete the following steps:
 
-.. note::
-   If you use menuconfig to enable :kconfig:option:`CONFIG_BUILD_WITH_TFM`, you must also enable its dependencies.
+1. Select a :ref:`board target supported by TF-M <ug_tfm_building_board_targets>`.
+   The board files for these board targets have the :kconfig:option:`CONFIG_BUILD_WITH_TFM` Kconfig option enabled by default.
+#. Configure the TF-M build to use the configurable or minimal version.
+   By default, TF-M is built with the :ref:`configurable version <tfm_configurable_build>` on most devices.
+   The exceptions are :ref:`Thingy:91 <ug_thingy91>` and the :ref:`Thingy:91 X <ug_thingy91x>`, which default to the :ref:`minimal version <tfm_minimal_build>`.
+#. If you are using custom devicetree partitions, make sure to update the devicetree files to reflect the custom memory region sizes.
+#. Build your application using :ref:`standard building instructions <building>` for the development environment of your choice.
 
-By default, TF-M is built with the :ref:`configurable version <tfm_configurable_build>` on all devices except the :ref:`Thingy:91 <ug_thingy91>` and the :ref:`Thingy:91 X <ug_thingy91x>` which default to the :ref:`minimal version <tfm_minimal_build>`.
+When building with TF-M, the |NCS| build system defines memory regions for the TF-M partitions using Zephyr's :ref:`devicetree-based partitioning <zephyr:dt-guide>`.
+The |NCS| build system then calls the :ref:`TF-M build system <tfm_build_system>` to define the TF-M partitions within these memory regions.
+
+The following figure shows a generalized overview of the pre-build configuration and the build-time dependency between the |NCS| and TF-M build systems.
+
+.. figure:: ../images/tfm_building_overview.svg
+   :alt: TF-M build overview
+   :width: 800
+
+   TF-M build overview
+
+For more information about the devicetree memory regions and TF-M partitions, see :ref:`ug_tfm_partitioning`.
+For the description of the build output files, see :ref:`app_build_output_files`.
 
 .. _ug_tfm_building_board_targets:
 
@@ -145,6 +162,8 @@ To enable the configurable, full TF-M build, make sure the following Kconfig opt
 For description of the build profiles, see :ref:`tf-m_profiles`.
 It is not recommended to use predefined TF-M profiles as they might result in a larger memory footprint than necessary.
 
+.. _ug_tfm_building_configuring_tfm:
+
 Configuring TF-M profile type and partitions
 ============================================
 
@@ -155,14 +174,15 @@ It also provides more control over the build process and allows for a more fine-
 To configure the features of the TF-M secure image, you must choose which TF-M partitions and which secure services to include in the build.
 
 .. note::
-     A "TF-M partition" in this context refers to a secure partition within the Trusted Firmware-M architecture.
+     A "TF-M partition" in this context refers to partitions specific to TF-M and located within the secure devicetree memory region (devicetree partition).
      These partitions are isolated from each other and from the non-secure application code.
      A service running inside TF-M would typically be implemented within one of these secure partitions.
 
-     For more information about the TF-M partitions, see :ref:`ug_tfm_partitioning`.
+     For more information about the relationship between TF-M partitions and devicetree memory regions, see :ref:`ug_tfm_partitioning`.
 
-Each service can be a separate partition, or multiple related services might be grouped into a single partition.
-The partition provides the execution environment for the service.
+.. tfm_partitions_configuration_start
+
+Each service is implemented as a separate TF-M partition, which provides the execution environment for the service.
 It handles secure function calls and ensures that the service's code and data are protected from unauthorized access.
 
 Following are the available Kconfig options for TF-M partitions:
@@ -195,6 +215,8 @@ Following are the available Kconfig options for TF-M partitions:
      - Disabled
      - CRYPTO
 
+.. tfm_partitions_configuration_end
+
 Configuring Secure Partition Manager backend
 ============================================
 
@@ -203,13 +225,15 @@ TF-M's Secure Partition Manager (SPM) is responsible for managing the secure par
 Depending on the isolation requirements of the application, you can configure the SPM backend to use.
 The following table lists the available SPM backends and the isolation levels they support:
 
+.. configuring_spm_backend_start
+
 .. list-table:: SPM backends
    :header-rows: 1
 
    * - Backend
      - Option
      - Description
-     - Allowed isolation levels
+     - Allowed :ref:`isolation levels <ug_tfm_architecture_isolation_lvls>`
    * - Secure Function (SFN)
      - :kconfig:option:`CONFIG_TFM_SFN`
      - With SFN, the Secure Partition is made up of a collection of callback functions that implement secure services.
@@ -219,8 +243,33 @@ The following table lists the available SPM backends and the isolation levels th
      - With IPC, each Secure Partition processes signals in any order, and can defer responding to a message while continuing to process other signals.
      - Levels 1, 2 and 3
 
+.. configuring_spm_backend_end
+
 Configuring SPM logging
 -----------------------
 
 To control the number of logging messages, set the :kconfig:option:`CONFIG_TFM_SPM_LOG_LEVEL` Kconfig option.
 To disable logging, set the :kconfig:option:`CONFIG_TFM_LOG_LEVEL_SILENCE` option.
+
+.. _ug_tfm_building_secure_peripheral_gpio:
+
+Configuring GPIO pin security for secure peripherals
+====================================================
+
+When building with TF-M, the GPIO controller implements security by separation at the pin level.
+Each pin on a GPIO port is marked either secure or non-secure.
+The :kconfig:option:`CONFIG_NRF_GPIO0_PIN_MASK_SECURE`, :kconfig:option:`CONFIG_NRF_GPIO1_PIN_MASK_SECURE`, and :kconfig:option:`CONFIG_NRF_GPIO2_PIN_MASK_SECURE` Kconfig options set a bitmask that defines which pins on each port are secure.
+These options default to ``0x00000000``, meaning every pin is non-secure unless you configure them explicitly.
+
+.. caution::
+   Marking a peripheral as secure (for example, with ``CONFIG_NRF_*_SECURE=y``) or assigning it in a partition manifest does not automatically mark its GPIO pins as secure.
+   If a secure peripheral uses a pin that remains non-secure, the peripheral continues to operate, but the non-secure application can read the pin state and potentially snoop on secrets carried over that signal.
+
+If your secure peripheral uses GPIO pins, you must explicitly include those pins in the appropriate GPIO pin mask Kconfig option in your application's :file:`prj.conf` file (for example, :kconfig:option:`CONFIG_NRF_GPIO0_PIN_MASK_SECURE`).
+Include every pin used directly by the peripheral, and any pin used indirectly (for example, chip-select or interrupt lines).
+
+TF-M automatically adds GPIO pins to the secure mask for secure UART and SPIM instances from the devicetree pinctrl definitions.
+For all other secure peripherals, TF-M does not derive pin security from devicetree.
+Do not rely on devicetree pin assignments alone to protect GPIO lines used by other secure peripherals.
+
+See the :ref:`tfm_secure_peripheral_partition` sample for an example configuration.

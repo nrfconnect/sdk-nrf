@@ -44,7 +44,8 @@ Which files you are going to use depends on the application configuration and no
 |                                            | In multi-core builds, several :file:`merged_<board_target>.hex` files are generated.                   | * Testing DFU procedure with nRF Util (programming directly to device).             |
 |                                            | This requires that the :kconfig:option:`SB_CONFIG_MERGED_HEX_FILES` sysbuild Kconfig is enabled.       |                                                                                     |
 +--------------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
-| :file:`tfm_s.hex`                          | Secure firmware image created by the TF-M build system in the background of the Zephyr build.          | Programming :ref:`SPE-only <app_boards_spe_nspe>` and multi-core board targets.     |
+| :file:`tfm_s.hex`                          | Secure firmware image created by the :ref:`TF-M build system <tfm_build_system>`                       | Programming :ref:`SPE-only <app_boards_spe_nspe>` and multi-core board targets.     |
+|                                            | in the background of the Zephyr build.                                                                 |                                                                                     |
 |                                            | It is used together with the :file:`zephyr.hex` file, which is intended for the Non-Secure             |                                                                                     |
 |                                            | Processing Environment (NSPE). Located in :file:`build/tfm/bin`.                                       |                                                                                     |
 +--------------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
@@ -113,10 +114,6 @@ Which files you are going to use depends on the application configuration and no
 +--------------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 | :file:`dfu_application.zip`                | Zip file containing both the MCUboot-compatible update images for one or more cores and a manifest     | DFU process for both single-core and multi-core applications.                       |
 |                                            | describing its contents.                                                                               |                                                                                     |
-+--------------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
-| :file:`matter.ota`                         | :ref:`ug_matter`-specific OTA image that contains a Matter-compliant header and a DFU multi-image      | DFU over Matter for both single-core and multi-core applications.                   |
-|                                            | package that bundles user-selected firmware images.                                                    |                                                                                     |
-|                                            | ``matter.ota`` is the value of :kconfig:option:`SB_CONFIG_MATTER_OTA_IMAGE_FILE_NAME`.                 |                                                                                     |
 +--------------------------------------------+--------------------------------------------------------------------------------------------------------+-------------------------------------------------------------------------------------+
 | :file:`<file_name>.zigbee`                 | :ref:`ug_zigbee`-specific OTA image that contains the Zigbee application with the Zigbee OTA header    | DFU over Zigbee for both single-core and multi-core applications                    |
 |                                            | used for providing information about the image to the OTA server.                                      | in the |NCS| v2.0.0 and later.                                                      |
@@ -201,7 +198,7 @@ The following table lists secondary build files that can be generated when build
 +-----------------------------------+------------------------------------------------------------------------------------------------------+
 | :file:`dfu_multi_image.bin`       | Multi-image package that contains a CBOR manifest and a set of user-selected update images,          |
 |                                   | such as firmware images for different cores.                                                         |
-|                                   | Used for DFU purposes by :ref:`ug_matter` and :ref:`ug_zigbee` protocols.                            |
+|                                   | Used for DFU purposes by the :ref:`ug_zigbee` protocol.                                              |
 +-----------------------------------+------------------------------------------------------------------------------------------------------+
 | :file:`signed_by_b0_mcuboot.bin`  | Intermediate file only signed by NSIB.                                                               |
 +-----------------------------------+------------------------------------------------------------------------------------------------------+

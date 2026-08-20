@@ -30,7 +30,7 @@
 #define NUMBER_OF_SLOTS 6
 
 int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
-				uint8_t *output, size_t *output_length)
+				uint8_t *output, size_t output_size, size_t *output_length)
 {
 	int sx_status;
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
@@ -90,12 +90,18 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 
 	/* step 3 of RSAES-PKCS1-V1_5-DECRYPT in RFC 8017 */
 	if (r != 0) {
+		safe_memzero(workmem, sizeof(workmem));
 		return SX_ERR_INVALID_CIPHERTEXT;
 	}
 
 	/* update the cracen_crypt_text structure to point to the decrypted message */
 	text->addr = paddingstr + 1;
 	text->sz = encodedmsgend - text->addr;
+
+	if ((size_t)(encodedmsgend - text->addr) > output_size) {
+		safe_memzero(workmem, sizeof(workmem));
+		return SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
+	}
 
 	memcpy(output, text->addr, encodedmsgend - text->addr);
 	*output_length = encodedmsgend - text->addr;
@@ -104,7 +110,7 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 }
 
 int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
-				uint8_t *output, size_t *output_length)
+				uint8_t *output, size_t output_size, size_t *output_length)
 {
 	int sx_status;
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
@@ -210,6 +216,11 @@ int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 
 	sx_rdpkmem(workmem, outputs[0], opsz);
 	sx_pk_release_req(&req);
+
+	if ((size_t)opsz > output_size) {
+		safe_memzero(workmem, sizeof(workmem));
+		return SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
+	}
 
 	memcpy(output, workmem, opsz);
 	*output_length = opsz;

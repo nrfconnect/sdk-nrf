@@ -39,7 +39,7 @@ Added the following features as supported:
 * Matter:
 
   * Matter 1.2, bringing support for nine new device types such as refrigerators, robotic vacuums, air quality sensors, and more.
-  * The :ref:`matter_bridge_app` application that was introduced in |NCS| 2.5.0 as experimental is now supported.
+  * The Matter Bridge application that was introduced in |NCS| 2.5.0 as experimental is now supported.
   * Matter over Thread now uses PSA Certified Secure Storage API to enable secure storage of keys and certificates.
 
 * Power Management (nPM1300):
@@ -286,20 +286,20 @@ Matter
 ------
 
 * For devices that use Matter over Thread, the default cryptography backend is now Arm PSA Crypto API instead of Mbed TLS, which was used in earlier versions.
-  You can still build all examples with deprecated Mbed TLS support by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``, but you must build the Thread libraries from sources.
-  To :ref:`inherit Thread certification <ug_matter_device_certification_reqs_dependent>` from Nordic Semiconductor, you must use the PSA Crypto API backend.
+  You can still build all examples with deprecated Mbed TLS support by setting the ``CONFIG_CHIP_CRYPTO_PSA`` Kconfig option to ``n``, but you must build the Thread libraries from sources.
+  To get Matter certification from Nordic Semiconductor, you must use the PSA Crypto API backend.
 
 * Added:
 
-  * The Kconfig option :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` for disabling or enabling :ref:`ug_matter_configuring_read_client`.
+  * The Kconfig option ``CONFIG_CHIP_ENABLE_READ_CLIENT`` for disabling or enabling Matter Configuring Read Client.
   * Support for PSA Crypto API for devices that use Matter over Thread.
-    It is enabled by default and can be disabled by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA` Kconfig option to ``n``.
+    It is enabled by default and can be disabled by setting the ``CONFIG_CHIP_CRYPTO_PSA`` Kconfig option to ``n``.
   * :file:`VERSION` file implementation to manage versioning for DFU over SMP as well as Matter OTA.
     Backward compatibility is maintained for users who use the :file:`prj.conf` file for versioning.
   * Migration of the Device Attestation Certificate (DAC) private key from the factory data set to the PSA ITS secure storage.
 
     The DAC private key can be removed from the factory data set after the migration.
-    You can enable this experimental functionality by setting the :kconfig:option:`CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY` Kconfig option to ``y``.
+    You can enable this experimental functionality by setting the ``CONFIG_CHIP_CRYPTO_PSA_MIGRATE_DAC_PRIV_KEY`` Kconfig option to ``y``.
   * Redefinition of thermostat sample measurement process, deleted ``CONFIG_THERMOSTAT_EXTERNAL_SENSOR``.
     By default, the thermostat sample generates simulated temperature measurements.
     The generated measurements simulate local temperature changes.
@@ -308,17 +308,17 @@ Matter
   * Migration of the Node Operational Key Pair (NOK) from the generic Matter persistent storage to the PSA ITS secure storage.
     All existing NOKs for all Matter fabrics will be migrated to the PSA ITS secure storage at boot.
     After the migration, generic Matter persistent storage entries in the settings storage will be removed and are no longer available.
-    To enable operational keys migration, set the :option:`CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS` Kconfig option to ``y``.
+    To enable operational keys migration, set the ``CONFIG_NCS_SAMPLE_MATTER_OPERATIONAL_KEYS_MIGRATION_TO_ITS`` Kconfig option to ``y``.
 
     In |NCS| Matter samples, the default reaction to migration failure is a factory reset of the device.
-    To change the default reaction, set the :option:`CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE` Kconfig option to ``n``.
+    To change the default reaction, set the ``CONFIG_NCS_SAMPLE_MATTER_FACTORY_RESET_ON_KEY_MIGRATION_FAILURE`` Kconfig option to ``n``.
   * Experimental support for building Matter samples and applications with Link Time Optimization (LTO).
     To enable it, set the :kconfig:option:`CONFIG_LTO` and :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION` Kconfig options to ``y``.
-  * Documentation page about :ref:`ug_matter_gs_matter_api`.
+  * Documentation page about Matter GS Matter API.
 
 * Updated:
 
-  * The :ref:`ug_matter_device_low_power_configuration` page with the information about Intermittently Connected Devices (ICD) configuration.
+  * The Matter Device Low Power Configuration page with the information about Intermittently Connected Devices (ICD) configuration.
 
 Matter fork
 +++++++++++
@@ -330,9 +330,9 @@ The following list summarizes the most important changes inherited from the upst
 * Added:
 
    * Support for the Intermittently Connected Devices (ICD) Management cluster.
-   * The Default Kconfig values and developing aspects section to the :doc:`matter:nrfconnect_factory_data_configuration` page.
+   * The Default Kconfig values and developing aspects section to the Configuring factory data for the nRF Connect examples page.
      The section contains useful developer tricks and device configurations.
-   * The Kconfig options :kconfig:option:`CONFIG_CHIP_ICD_IDLE_MODE_DURATION`, :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION`, and :kconfig:option:`CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC` to manage ICD configuration.
+   * The Kconfig options ``CONFIG_CHIP_ICD_IDLE_MODE_DURATION``, ``CONFIG_CHIP_ICD_ACTIVE_MODE_DURATION``, and ``CONFIG_CHIP_ICD_CLIENTS_PER_FABRIC`` to manage ICD configuration.
    * New device types:
 
      * Refrigerator
@@ -351,10 +351,10 @@ The following list summarizes the most important changes inherited from the upst
 
   * The following Kconfig options have been renamed:
 
-   * ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to :kconfig:option:`CONFIG_CHIP_ENABLE_ICD_SUPPORT`.
-   * ``CONFIG_CHIP_SED_IDLE_INTERVAL`` to :kconfig:option:`CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL`.
-   * ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` to :kconfig:option:`CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL`.
-   * ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` to :kconfig:option:`CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD`.
+   * ``CONFIG_CHIP_ENABLE_SLEEPY_END_DEVICE_SUPPORT`` to ``CONFIG_CHIP_ENABLE_ICD_SUPPORT``.
+   * ``CONFIG_CHIP_SED_IDLE_INTERVAL`` to ``CONFIG_CHIP_ICD_SLOW_POLL_INTERVAL``.
+   * ``CONFIG_CHIP_SED_ACTIVE_INTERVAL`` to ``CONFIG_CHIP_ICD_FAST_POLLING_INTERVAL``.
+   * ``CONFIG_CHIP_SED_ACTIVE_THRESHOLD`` to ``CONFIG_CHIP_ICD_ACTIVE_MODE_THRESHOLD``.
 
    * zcbor 0.7.0 to 0.8.1.
 
@@ -366,7 +366,7 @@ The following list summarizes the most important changes inherited from the upst
   * The SPAKE2+ verifier is now generated by default with each build, and it will change if any of the related Kconfig options are modified.
     This resolves the :ref:`known issue <known_issues>` related to the SPAKE2+ verifier not regenerating (KRKNWK-18315).
   * The Test Certification Declaration can now be generated independently from the generation of the DAC and PAI certificates.
-  * The Unique ID for Rotating Device ID can now only be generated if the :kconfig:option:`CONFIG_CHIP_ROTATING_DEVICE_ID` Kconfig option is set to ``y``.
+  * The Unique ID for Rotating Device ID can now only be generated if the ``CONFIG_CHIP_ROTATING_DEVICE_ID`` Kconfig option is set to ``y``.
 
 Thread
 ------
@@ -844,25 +844,25 @@ Matter samples
 
 * Disabled the following features:
 
-  * :ref:`ug_matter_configuring_read_client` in most Matter samples using the new :kconfig:option:`CONFIG_CHIP_ENABLE_READ_CLIENT` Kconfig option.
+  * Matter Configuring Read Client in most Matter samples using the new ``CONFIG_CHIP_ENABLE_READ_CLIENT`` Kconfig option.
   * WPA supplicant advanced features in all Matter samples using the ``CONFIG_WPA_SUPP_ADVANCED_FEATURES`` Kconfig option.
     This saves roughly 25 KB of flash memory for firmware images with Wi-Fi support.
 
-* Added ``matter_shell`` shell commands set to gather the current information about the NVS settings backend, such as current usage, free space, and peak usage value.
+* Added Matter Shell shell commands set to gather the current information about the NVS settings backend, such as current usage, free space, and peak usage value.
   You can enable them by setting the :kconfig:option:`NCS_SAMPLE_MATTER_SETTINGS_SHELL` Kconfig option to ``y``.
-  To read more, see the :ref:`ug_matter_configuring_settings_shell` section.
+  To read more, see the Matter Configuration section.
 
-* :ref:`matter_light_bulb_sample` sample:
+* Matter Light Bulb sample:
 
   * Added support for `AWS IoT Core`_.
 
-* :ref:`matter_template_sample` sample:
+* Matter Template sample:
 
   * Added support for DFU over Bluetooth LE SMP.
     The functionality is disabled by default.
-    To enable it, set the :kconfig:option:`CONFIG_CHIP_DFU_OVER_BT_SMP` Kconfig option to ``y``.
+    To enable it, set the ``CONFIG_CHIP_DFU_OVER_BT_SMP`` Kconfig option to ``y``.
 
-* :ref:`matter_lock_sample` sample:
+* Matter Lock sample:
 
   * Added support for Wi-Fi firmware patch upgrade on external memory, only for the combination of the nRF5340 DK with the nRF7002 EK.
   * Updated the design of the Thread and Wi-Fi switching section feature so that support for both Matter over Thread and Matter over Wi-Fi is included in a single firmware image.

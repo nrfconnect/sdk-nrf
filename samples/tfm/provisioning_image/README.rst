@@ -1,20 +1,16 @@
 .. _provisioning_image:
 
-TF-M: Provisioning image
-########################
+.. ncs-sample::
+   :title: TF-M: Provisioning image
 
-.. contents::
-   :local:
-   :depth: 2
+   Running the provisioning image sample will initialize the provisioning process of a device in a manner compatible with Trusted Firmware-M (TF-M).
+   This sample does not include a TF-M image, it is a Zephyr image intended to be flashed, run, and erased before the TF-M image is flashed.
 
-Running the provisioning image sample will initialize the provisioning process of a device in a manner compatible with Trusted Firmware-M (TF-M).
-This sample does not include a TF-M image, it is a Zephyr image intended to be flashed, run, and erased before the TF-M image is flashed.
+   After completion, the device is in the Platform Root-of-Trust (PRoT) security lifecycle state called **PRoT Provisioning**.
+   For more information about the PRoT security lifecycle, see `ARM Platform Security Model 1.1`_.
 
-After completion, the device is in the Platform Root-of-Trust (PRoT) security lifecycle state called **PRoT Provisioning**.
-For more information about the PRoT security lifecycle, see `ARM Platform Security Model 1.1`_.
-
-When built for the ``nrf5340dk/nrf5340/cpuapp`` board target, this image by default also includes the :ref:`provisioning_image_net_core` sample as an image for the network core (``nrf5340dk/nrf5340/cpunet`` board target).
-The image demonstrates how to disable the debugging access on the network core by writing to the ``UICR.APPROTECT`` register.
+   When built for the ``nrf5340dk/nrf5340/cpuapp`` board target, this image by default also includes the :ref:`provisioning_image_net_core` sample as an image for the network core (``nrf5340dk/nrf5340/cpunet`` board target).
+   The image demonstrates how to disable the debugging access on the network core by writing to the ``UICR.APPROTECT`` register.
 
 Requirements
 ************

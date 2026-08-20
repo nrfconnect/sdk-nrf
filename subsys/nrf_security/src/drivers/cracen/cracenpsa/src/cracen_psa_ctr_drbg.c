@@ -50,6 +50,19 @@
 #define CRACEN_ENTROPY_AND_NONCE_SIZE (CRACEN_PRNG_ENTROPY_SIZE + CRACEN_PRNG_NONCE_SIZE)
 
 /*
+ * CRACEN writes to these stack buffers via DMA. On targets with a data cache the
+ * buffers must be cache-line aligned so that the cache maintenance performed
+ * around the DMA transfer does not corrupt adjacent stack data. On targets
+ * without a data cache CONFIG_DCACHE_LINE_SIZE is not defined (or is 0) and no
+ * cache-line alignment is required, so fall back to word alignment.
+ */
+#if defined(CONFIG_DCACHE_LINE_SIZE) && (CONFIG_DCACHE_LINE_SIZE > 0)
+#define CRACEN_STACK_BUF_ALIGN CONFIG_DCACHE_LINE_SIZE
+#else
+#define CRACEN_STACK_BUF_ALIGN sizeof(uint32_t)
+#endif
+
+/*
  * This driver uses a global context and discards the context passed from the user. We do that
  * because we are not aware of a requirement for multiple PRNG contexts from the users of the
  * driver. PRNG initialization is slow and consumes a lot of power, even though we don't have clear
@@ -125,7 +138,7 @@ static psa_status_t ctr_drbg_update(uint8_t *data)
 {
 	int sx_status;
 
-	ALIGN_ON_STACK(uint8_t, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CONFIG_DCACHE_LINE_SIZE);
+	ALIGN_ON_STACK(uint8_t, temp, CRACEN_ENTROPY_AND_NONCE_SIZE, CRACEN_STACK_BUF_ALIGN);
 
 	size_t temp_length = 0;
 	_Static_assert(CRACEN_ENTROPY_AND_NONCE_SIZE % SX_BLKCIPHER_AES_BLK_SZ == 0, "");
@@ -271,7 +284,8 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 
 	while (len_left > 0) {
 		size_t cur_len = MIN(len_left, SX_BLKCIPHER_AES_BLK_SZ);
-		ALIGN_ON_STACK(uint8_t, temp, SX_BLKCIPHER_AES_BLK_SZ, CONFIG_DCACHE_LINE_SIZE);
+
+		ALIGN_ON_STACK(uint8_t, temp, SX_BLKCIPHER_AES_BLK_SZ, CRACEN_STACK_BUF_ALIGN);
 
 		cracen_be_add(prng.V, SX_BLKCIPHER_AES_BLK_SZ, 1);
 		sx_status = sx_blkcipher_ecb_simple(prng.key, sizeof(prng.key), prng.V,
@@ -283,7 +297,7 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 			return silex_statuscodes_to_psa(sx_status);
 		}
 
-		for (int i = 0; i < cur_len; i++) {
+		for (size_t i = 0; i < cur_len; i++) {
 			output[i] = temp[i];
 		}
 
@@ -302,6 +316,11 @@ psa_status_t cracen_get_random(cracen_prng_context_t *context, uint8_t *output, 
 psa_status_t cracen_free_random(cracen_prng_context_t *context)
 {
 	(void)context;
+
+	nrf_security_mutex_lock(cracen_prng_trng_mutex);
+	safe_memset(&prng, sizeof(prng), 0, sizeof(prng));
+	nrf_security_mutex_unlock(cracen_prng_trng_mutex);
+
 	return PSA_SUCCESS;
 }
 

@@ -12,6 +12,7 @@
 #include <arm_cmse.h>
 
 #include "tfm_ioctl_api.h"
+#include "tfm_ioctl_core_api.h"
 #include "tfm_platform_hal_ioctl.h"
 #include <tfm_hal_isolation.h>
 
@@ -36,7 +37,9 @@ enum tfm_platform_err_t tfm_platform_hal_system_off(void)
 {
 	__disable_irq();
 
+#if !defined(TFM_NRF_RAM_CTRL_SERVICE)
 	nrfx_ram_ctrl_retention_enable_all_set(false);
+#endif
 
 	nrf_regulators_system_off(NRF_REGULATORS);
 
@@ -147,15 +150,25 @@ enum tfm_platform_err_t tfm_platform_hal_ioctl(tfm_platform_ioctl_req_t request,
 		return tfm_platform_hal_read_service(in_vec, out_vec);
 	case TFM_PLATFORM_IOCTL_WRITE32_SERVICE:
 		return tfm_platform_hal_write32_service(in_vec, out_vec);
-#if defined(GPIO_PIN_CNF_MCUSEL_Msk)
+#if NRF_GPIO_HAS_SEL
 	case TFM_PLATFORM_IOCTL_GPIO_SERVICE:
 		return tfm_platform_hal_gpio_service(in_vec, out_vec);
-#endif /* defined(GPIO_PIN_CNF_MCUSEL_Msk) */
+#endif /* NRF_GPIO_HAS_SEL */
 #if SOC_NRF7120_TFM_MRAMC_SERVICE
 	case TFM_PLATFORM_IOCTL_MRAMC_INIT_SERVICE:
 		return tfm_platform_hal_mramc_init_service();
 	case TFM_PLATFORM_IOCTL_MRAMC_SET_WEN_SERVICE:
 		return tfm_platform_hal_mramc_set_wen_service(in_vec);
+#endif
+#if CONFIG_NRF_WIFI_KMU
+	case TFM_PLATFORM_IOCTL_WIFI_KMU_WRITE_KEY_SERVICE:
+		return tfm_platform_hal_wifi_kmu_write_key_service(in_vec);
+	case TFM_PLATFORM_IOCTL_WIFI_KMU_ERASE_KEYS_SERVICE:
+		return tfm_platform_hal_wifi_kmu_erase_keys_service();
+#endif
+#if defined(TFM_NRF_RAM_CTRL_SERVICE)
+	case TFM_PLATFORM_IOCTL_RAM_CTRL_SERVICE:
+		return tfm_platform_hal_ram_ctrl_service(in_vec, out_vec);
 #endif
 
 		/* Board specific IOCTL services */

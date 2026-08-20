@@ -25,7 +25,6 @@ zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net)
 zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include/)
 zephyr_include_directories(${ZEPHYR_BASE}/include/zephyr/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
-
 if(KCONFIG_OVERRIDE_FILE)
   add_definitions(-include ${KCONFIG_OVERRIDE_FILE})
 elseif(CONFIG_HW_ID_OVERRIDE_FILE)

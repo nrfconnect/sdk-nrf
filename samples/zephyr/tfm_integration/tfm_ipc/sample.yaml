@@ -9,7 +9,7 @@ common:
     - ci_samples_zephyr_tfm_integration
 
 tests:
-  nrf.extended.sample.tfm_ipc:
+  nrf.extended.sample.tfm.tfm_ipc:
     tags:
       - mcuboot
     platform_allow:
@@ -25,7 +25,7 @@ tests:
         - "The version of the PSA Framework API is"
         - "The PSA Crypto service minor version is"
         - "Generating 256 bytes of random data"
-  nrf.extended.sample.tfm_ipc.no_bl2:
+  nrf.extended.sample.tfm.tfm_ipc.no_bl2:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp/ns
       - nrf54l15dk/nrf54l10/cpuapp/ns

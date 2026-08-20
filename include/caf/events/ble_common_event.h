@@ -205,6 +205,40 @@ struct ble_peer_sci_conn_rate_event {
 	struct bt_conn_le_conn_rate_changed params;
 };
 
+/** @brief Bluetooth LE peer frame space updated event.
+ *
+ * The Bluetooth LE peer frame space updated event is submitted to inform that frame space
+ * parameters have changed or that a frame space update request failed.
+ * The params field members other than status are valid only if params.status is
+ * BT_HCI_ERR_SUCCESS and must be ignored otherwise.
+ */
+struct ble_peer_frame_space_updated_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
+	void *id;
+
+	/** Frame space update parameters. */
+	struct bt_conn_le_frame_space_updated params;
+};
+
+/** @brief Bluetooth LE peer PHY updated event.
+ *
+ * The Bluetooth LE peer PHY updated event is submitted to inform that connection PHY
+ * parameters have changed.
+ */
+struct ble_peer_phy_updated_event {
+	/** Event header. */
+	struct app_event_header header;
+
+	/** ID used to identify Bluetooth connection - pointer to the bt_conn. */
+	void *id;
+
+	/** Connection PHY information. */
+	struct bt_conn_le_phy_info params;
+};
+
 /** @brief Bluetooth LE peer search event.
  *
  * The Bluetooth LE peer search event is submitted to inform if application is currently looking for
@@ -244,6 +278,8 @@ APP_EVENT_TYPE_DECLARE(ble_peer_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_operation_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_conn_params_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_sci_conn_rate_event);
+APP_EVENT_TYPE_DECLARE(ble_peer_frame_space_updated_event);
+APP_EVENT_TYPE_DECLARE(ble_peer_phy_updated_event);
 APP_EVENT_TYPE_DECLARE(ble_peer_search_event);
 APP_EVENT_TYPE_DECLARE(ble_adv_data_update_event);
 

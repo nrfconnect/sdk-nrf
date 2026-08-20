@@ -368,11 +368,15 @@ static void transport_task(void)
 	 * This workqueue can be used to offload tasks and/or as a timer when wanting to
 	 * schedule functionality using the 'k_work' API.
 	 */
+	const struct k_work_queue_config queue_cfg = {
+		.name = "transport_work_q",
+	};
+
 	k_work_queue_init(&transport_queue);
 	k_work_queue_start(&transport_queue, stack_area,
 			   K_THREAD_STACK_SIZEOF(stack_area),
 			   K_HIGHEST_APPLICATION_THREAD_PRIO,
-			   NULL);
+			   &queue_cfg);
 
 	err = mqtt_helper_init(&cfg);
 	if (err) {

@@ -613,8 +613,8 @@ static int decode_pdu_ud_7bit(struct parser *parser, uint8_t *buf)
 	int length_udh_skipped;
 
 	if (pdata->udl > SMS_MAX_PAYLOAD_LEN_CHARS) {
-		LOG_ERR("User Data Length exceeds maximum number of characters (%d) in SMS spec",
-			SMS_MAX_PAYLOAD_LEN_CHARS);
+		LOG_ERR("User Data Length (%d) exceeds maximum length (%d) in SMS spec",
+			pdata->udl, SMS_MAX_PAYLOAD_LEN_CHARS);
 		return -EMSGSIZE;
 	}
 
@@ -674,6 +674,13 @@ static int decode_pdu_ud_7bit(struct parser *parser, uint8_t *buf)
 static int decode_pdu_ud_8bit(struct parser *parser, uint8_t *buf)
 {
 	struct pdu_deliver_data * const pdata = parser->data;
+
+	if (pdata->udl > SMS_MAX_PAYLOAD_LEN_CHARS) {
+		LOG_ERR("User Data Length (%d) exceeds maximum length (%d) in SMS spec",
+			pdata->udl, SMS_MAX_PAYLOAD_LEN_CHARS);
+		return -EMSGSIZE;
+	}
+
 	/* Data length to be used is the minimum from the remaining bytes in the input buffer and
 	 * length indicated by User-Data-Length taking into account User-Data-Header-Length.
 	 */

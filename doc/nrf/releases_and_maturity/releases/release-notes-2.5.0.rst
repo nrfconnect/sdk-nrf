@@ -67,7 +67,7 @@ The following list includes the summary of the most relevant changes introduced 
 
   * Matter:
 
-    * :ref:`matter_bridge_app` application for nRF7002 DK (nRF5340 + nRF7002).
+    * Matter Bridge application for nRF7002 DK (nRF5340 + nRF7002).
 
 * Improved:
 
@@ -239,25 +239,25 @@ Matter
 
 * Added:
 
-  * Page about :ref:`ug_matter_device_optimizing_memory`.
+  * Page about Matter Device Optimizing Memory.
   * Shell commands for printing and resetting the peak usage of critical system resources used by Matter.
-    These shell commands are available when both :kconfig:option:`CONFIG_CHIP_LIB_SHELL` and :kconfig:option:`CONFIG_CHIP_STATISTICS` Kconfig options are set.
+    These shell commands are available when both ``CONFIG_CHIP_LIB_SHELL`` and ``CONFIG_CHIP_STATISTICS`` Kconfig options are set.
   * Reaction to removing the last fabric.
     The user now decides what happens after the removal:
 
-    * Do nothing (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE`).
-    * Perform a factory reset of the device (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY`).
-    * Perform a factory reset of the device and start Bluetooth LE advertising (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START`).
-    * Perform a factory reset of the device and then reboot the device (:kconfig:option:`CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT`).
-  * Page about :ref:`ug_matter_ecosystems_certification`.
-  * Page about :ref:`ug_matter_overview_bridge`.
+    * Do nothing (``CONFIG_CHIP_LAST_FABRIC_REMOVED_NONE``).
+    * Perform a factory reset of the device (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_ONLY``).
+    * Perform a factory reset of the device and start Bluetooth LE advertising (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_PAIRING_START``).
+    * Perform a factory reset of the device and then reboot the device (``CONFIG_CHIP_LAST_FABRIC_REMOVED_ERASE_AND_REBOOT``).
+  * Page about Matter Ecosystems Certification.
+  * Page about Matter Overview Bridge.
 
 * Updated:
 
   * Matter over Thread samples so that the OpenThread shell is disabled by default.
-  * The :kconfig:option:`CONFIG_CHIP_FACTORY_RESET_ERASE_NVS` Kconfig option to be enabled by default, including for builds without factory data support.
+  * The ``CONFIG_CHIP_FACTORY_RESET_ERASE_NVS`` Kconfig option to be enabled by default, including for builds without factory data support.
     The firmware now erases all flash pages in the non-volatile storage during a factory reset, instead of just clearing Matter-related settings.
-  * The :kconfig:option:`CONFIG_CHIP_EXTENDED_DISCOVERY` Kconfig option to be disabled by default.
+  * The ``CONFIG_CHIP_EXTENDED_DISCOVERY`` Kconfig option to be disabled by default.
     The commissionable node now does not advertise a commissioning service when it does not have the commissioning window open.
   * The RAM usage based on test measurements.
     After the following optimizations, the RAM usage decreased by around 12-20% on all supported boards:
@@ -269,7 +269,7 @@ Matter
     * Improved the buffer usage of the nRF700X driver for Matter.
     * Reduced the size of the Matter event queue.
 
-  * Page about :ref:`ug_matter_device_certification` with the information about :ref:`ug_matter_device_certification_matter_samples`.
+  * Page about Matter Device Certification with the information about Matter Device Certification Matter Samples.
 
 * Fixed:
 
@@ -286,12 +286,12 @@ The Matter fork in the |NCS| (``sdk-connectedhomeip``) contains all commits from
 
 The following is the most important change inherited from the upstream Matter:
 
-* Added the :kconfig:option:`CONFIG_CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT` Kconfig option to manage watermark support.
+* Added the ``CONFIG_CHIP_MALLOC_SYS_HEAP_WATERMARKS_SUPPORT`` Kconfig option to manage watermark support.
 
 * Updated:
 
   * The factory data guide with an additional rotating ID information.
-  * Set onboarding code generation to be enabled by default if the :kconfig:option:`CONFIG_CHIP_FACTORY_DATA_BUILD` Kconfig is set.
+  * Set onboarding code generation to be enabled by default if the ``CONFIG_CHIP_FACTORY_DATA_BUILD`` Kconfig is set.
 
 * Fixed RAM and ROM reports.
 
@@ -327,7 +327,7 @@ Applications
 
 This section provides detailed lists of changes by :ref:`application <applications>`.
 
-* Added new application :ref:`Matter bridge <matter_bridge_app>` that provides support for the following:
+* Added new application Matter Bridge application that provides support for the following:
 
   * Bluetooth LE bridged devices
   * Bridging of the Bluetooth LE Environmental Sensor (ESP)
@@ -699,21 +699,21 @@ Thread samples
 Matter samples
 --------------
 
-* Added the :ref:`Matter thermostat <matter_thermostat_sample>` sample.
+* Added the Matter Thermostat sample.
 
 * Updated:
 
   * Matter over Thread samples by disabling OpenThread shell by default.
   * All samples to have build with factory data enabled.
 
-* :ref:`matter_lock_sample` sample:
+* Matter Lock sample:
 
   * Fixed the feature map for software diagnostic cluster.
     Previously, it was set incorrectly.
   * Fixed the cluster revision for basic information cluster.
     Previously, it was set incorrectly.
 
-* :ref:`matter_template_sample`:
+* Matter Template sample:
 
   * Removed support for the Thread, Wi-Fi, and software diagnostics clusters from the ZAP file.
 

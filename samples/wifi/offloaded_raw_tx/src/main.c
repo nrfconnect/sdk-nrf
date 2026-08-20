@@ -83,7 +83,7 @@ static int build_wifi_beacon(unsigned short beacon_interval,
 	memset(&bcn_frm[pos], 0xff, 6);
 	pos += 6;
 
-	if (nrf70_off_raw_tx_mac_addr_get(bssid)) {
+	if (nrf_wifi_off_raw_tx_mac_addr_get(bssid)) {
 		printf("Failed to get MAC address\n");
 		return -1;
 	}
@@ -163,7 +163,7 @@ int main(void)
 	}
 
 	strncpy((char *)country_code, "US", NRF_WIFI_COUNTRY_CODE_LEN + 1);
-	nrf70_off_raw_tx_init(mac_addr, country_code);
+	nrf_wifi_off_raw_tx_init(mac_addr, country_code);
 
 	/* Build a beacon frame */
 	len = build_wifi_beacon(CONFIG_BEACON_INTERVAL,
@@ -198,12 +198,12 @@ int main(void)
 	printf("\tRate: %s\n", rate[conf.rate]);
 	printf("\tHE GI: %d\n", conf.he_gi);
 	printf("\tHE LTF: %d\n", conf.he_ltf);
-	nrf70_off_raw_tx_start(&conf);
+	nrf_wifi_off_raw_tx_start(&conf);
 
 	k_sleep(K_SECONDS(30));
 
 	memset(&stats, 0, sizeof(stats));
-	nrf70_off_raw_tx_stats(&stats);
+	nrf_wifi_off_raw_tx_stats(&stats);
 	printf("-----  Statistics -----\n");
 	printf("\tPacket sent: %u\n", stats.off_raw_tx_pkt_sent);
 
@@ -234,19 +234,19 @@ int main(void)
 	printf("\tRate: %s\n", rate[conf.rate]);
 	printf("\tHE GI: %d\n", conf.he_gi);
 	printf("\tHE LTF: %d\n", conf.he_ltf);
-	nrf70_off_raw_tx_conf_update(&conf);
+	nrf_wifi_off_raw_tx_conf_update(&conf);
 
 	k_sleep(K_SECONDS(30));
 
-	nrf70_off_raw_tx_stats(&stats);
+	nrf_wifi_off_raw_tx_stats(&stats);
 	printf("-----  Statistics -----\n");
 	printf("\tPacket sent: %u\n", stats.off_raw_tx_pkt_sent);
 
 	printf("----- Stopping transmission -----\n");
-	nrf70_off_raw_tx_stop();
+	nrf_wifi_off_raw_tx_stop();
 
 	printf("----- Deinitializing nRF70 -----\n");
-	nrf70_off_raw_tx_deinit();
+	nrf_wifi_off_raw_tx_deinit();
 
 	if (mac_addr) {
 		free(mac_addr);

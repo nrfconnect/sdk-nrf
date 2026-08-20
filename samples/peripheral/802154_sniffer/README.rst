@@ -1,13 +1,9 @@
 .. _802154_sniffer:
 
-IEEE 802.15.4 Sniffer
-#####################
+.. ncs-sample::
+   :title: IEEE 802.15.4 Sniffer
 
-.. contents::
-   :local:
-   :depth: 2
-
-The IEEE 802.15.4 Sniffer listens to a selected IEEE 802.15.4 channel (2.4GHz O-QPSK with DSSS) and integrates with the nRF 802.15.4 sniffer extcap for Wireshark.
+   The IEEE 802.15.4 Sniffer listens to a selected IEEE 802.15.4 channel (2.4GHz O-QPSK with DSSS) and integrates with the nRF 802.15.4 sniffer extcap for Wireshark.
 
 Requirements
 ************

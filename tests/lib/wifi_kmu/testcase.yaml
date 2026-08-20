@@ -1,0 +1,14 @@
+common:
+  sysbuild: true
+  platform_allow:
+    - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120/cpuapp/ns
+  integration_platforms:
+    - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120/cpuapp/ns
+  tags:
+    - sysbuild
+    - ci_tests_lib_wifi_kmu
+
+tests:
+  lib.wifi_kmu: {}

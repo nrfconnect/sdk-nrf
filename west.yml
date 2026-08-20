@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 0765ab67c8749cd878d40bd06f8d1d1582885417
+      revision: aa605a14b6fe5f2d988babeb56990a46d1d18d01
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: e2f01b851b921d4d0db6b5e6c32fe9032b2faf46
+      revision: 2516f19e1b88e5787338029aa1d37c35b729f7ae
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -146,49 +146,30 @@ manifest:
     - name: oberon-psa-crypto
       path: modules/crypto/oberon-psa-crypto
       repo-path: sdk-oberon-psa-crypto
-      revision: 87917371cc6f3883dbdf0c7751c48a358ab8920a
+      revision: e8db62ed0fba5028e7ae0eba7b1fb63436ae6416
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 72e3ee2b034a513640713155e188f890044c1536
+      revision: dbeb418f40ea6f06b5789d02758db3d0375ba555
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 0287e435067334db021469da413ced0406c4cfb8
+      revision: b2dc08d416bef316c7464356be96699e9a6f24c1
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
       revision: 2deff6bec6560a250c62c2def6531fe6937356d3
-    - name: matter
-      repo-path: sdk-connectedhomeip
-      path: modules/lib/matter
-      revision: 6add52db053a9050f91604acc356b9dfba0ffbce
-      west-commands: scripts/west/west-commands.yml
-      submodules:
-        - name: nlio
-          path: third_party/nlio/repo
-        - name: nlassert
-          path: third_party/nlassert/repo
-        - name: pigweed
-          path: third_party/pigweed/repo
-        - name: jsoncpp
-          path: third_party/jsoncpp/repo
-      userdata:
-        ncs:
-          upstream-url: https://github.com/project-chip/connectedhomeip
-          upstream-sha: 181b0cb14ff007ec912f2ba6627e05dfb066c008
-          compare-by-default: false
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 9306243073e63159d78929c43166f5aba8b342a1
+      revision: 7ad5733047dd7d9d449fdf79f260fdcd69033747
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: d0b7c6f56ef62ae49d4cd4c5befc006621fee5c1
+      revision: 81ec68319b3f7d09efcbf2a1a16aeb8cb39edc85
       groups:
         - dragoon
     - name: cjson
@@ -202,7 +183,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 3594e242e4d0c65da726a028cfc0989d1f603ba7
+      revision: 3ecdc40bc0a75cd5607bc357f578b494ab39317f
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -243,7 +224,7 @@ manifest:
       groups:
         - doc-internal
     - name: nrf_wifi
-      revision: 5046744cb4c9640eb8b11cb92f1ea0b9554c20cf
+      revision: 4def032de959a5dcf6f804739ca67aef3b6bb187
       path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
@@ -254,7 +235,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.42.0
+      revision: 1.43.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west
@@ -285,7 +266,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: dc22e8cf8dd03c8ff2bdde68002a4496525f6eb2
+      revision: 09cf9bf998b9e70c2926203447f620c01d68a064
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

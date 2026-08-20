@@ -444,8 +444,8 @@ static int rsagenpq_get_random(sx_pk_req *req, uint8_t *workmem, struct cracen_r
 	 */
 	size_t candidatesz = rsacheckpq.candidatesz;
 
-	sx_status = coprime_check_run(req, workmem, WORKMEM_SIZE, candprime, candidatesz,
-				      product_small_primes, sizeof(product_small_primes));
+	sx_status = cracen_coprime_check_run(req, workmem, WORKMEM_SIZE, candprime, candidatesz,
+					     product_small_primes, sizeof(product_small_primes));
 	if (sx_status != SX_OK) {
 		return sx_status;
 	}
@@ -462,8 +462,8 @@ static int rsagenpq_get_random(sx_pk_req *req, uint8_t *workmem, struct cracen_r
 
 	/* step 4.5 (or 5.6): candprime - 1 and public exponent must be coprime
 	 */
-	sx_status = coprime_check_run(req, workmem, WORKMEM_SIZE, wmem, candidatesz,
-				      rsacheckpq.pubexp, rsacheckpq.pubexpsz);
+	sx_status = cracen_coprime_check_run(req, workmem, WORKMEM_SIZE, wmem, candidatesz,
+					     rsacheckpq.pubexp, rsacheckpq.pubexpsz);
 	/* the status code value here is SX_ERR_NOT_INVERTIBLE if
 	 * (candidate prime - 1) and the public exponent are not coprime
 	 */

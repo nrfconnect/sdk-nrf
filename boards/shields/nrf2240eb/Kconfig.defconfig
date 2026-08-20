@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SHIELD_NRF2240EB
+
+if $(dt_nodelabel_enabled,nrf2240eb_pmic)
+
+# Options related to the nPM13XX regulator and the workaround
+# against voltage drops on the nRF2240 power supply pin VDDPALDO.
+config NPM13XX_CHARGER
+	default y if $(dt_nodelabel_enabled,nrf2240eb_pmic_charger)
+
+config SENSOR
+	default y
+
+config SENSOR_INIT_PRIORITY
+	default 90
+
+# Ensure that FEM is initialized after the nPM13XX current limit on the nRF2240-EB is set.
+config MPSL_FEM_INIT_PRIORITY
+	default 91
+
+endif # $(dt_nodelabel_enabled,nrf2240eb_pmic)
+
+endif # SHIELD_NRF2240EB

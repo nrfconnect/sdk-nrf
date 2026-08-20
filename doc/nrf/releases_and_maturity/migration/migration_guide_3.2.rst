@@ -232,10 +232,10 @@ Matter
        The configuration system will now automatically enable these options when the corresponding SPI or QSPI device is specified in the devicetree.
        This change ensures more consistent configuration by relying on the standard Kconfig options when external NOR flash devices are present.
 
-    * All Matter over Wi-Fi samples and applications now enable the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options, depending on the board used.
-      Previously, :kconfig:option:`CONFIG_CHIP_WIFI` was enabled in the Matter stack configuration if the nRF7002 DK or nRF7002 EK was used, which caused issues when building the application with custom boards.
+    * All Matter over Wi-Fi samples and applications now enable the ``CONFIG_CHIP_WIFI`` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options, depending on the board used.
+      Previously, ``CONFIG_CHIP_WIFI`` was enabled in the Matter stack configuration if the nRF7002 DK or nRF7002 EK was used, which caused issues when building the application with custom boards.
 
-      To build your custom board with Wi-Fi support, set both the :kconfig:option:`CONFIG_CHIP_WIFI` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
+      To build your custom board with Wi-Fi support, set both the ``CONFIG_CHIP_WIFI`` and :kconfig:option:`CONFIG_WIFI_NRF70` Kconfig options to ``y``.
 
     * The Matter build system is transitioning to a code-driven approach for Data Model and Cluster configuration handling.
       This approach assumes gradual replacement of the configuration based on the ZAP files and the ZAP-generated code, and handling the configuration in the source code.
@@ -271,7 +271,7 @@ Matter
         * User Label
         * Wi-Fi Network Diagnostics
 
-        For the full list of clusters and their migration status, see the `Matter Clusters Code-Driven support`_ file.
+        For the full list of clusters and their migration status, see the Matter Clusters Code-Driven support file.
 
       * By default, all the mandatory attributes are enabled for the cluster.
         To enable an optional attribute or set an optional feature in the feature map, you must do that in the source code by calling dedicated methods.
@@ -304,7 +304,7 @@ Matter
         * Unregister the original cluster delegate and register the customized one.
           See the ``AppTask::StartApp`` function in the :file:`samples/matter/manufacturer_specific/src/app_task.cpp` file for an example.
 
-    * :ref:`matter_lock_sample` sample:
+    * Matter Lock sample:
 
       * The :kconfig:option:`CONFIG_BT_FIXED_PASSKEY` Kconfig option has been deprecated, replace it with the :kconfig:option:`CONFIG_BT_APP_PASSKEY` Kconfig option.
         Now, if you want to use a fixed passkey for the Matter Lock NUS service, register the :c:member:`bt_conn_auth_cb.app_passkey` callback in the :c:struct:`bt_conn_auth_cb` structure.

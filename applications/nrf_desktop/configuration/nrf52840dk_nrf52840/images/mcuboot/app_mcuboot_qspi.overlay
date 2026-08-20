@@ -11,10 +11,6 @@
  */
 / {
 	chosen {
-		/* Used by the Partition Manager (when enabled through sysbuild).
-		 * Unused when the DTS-based memory map is used.
-		 */
-		nordic,pm-ext-flash = &mx25r64;
 		zephyr,code-partition = &boot_partition;
 	};
 };

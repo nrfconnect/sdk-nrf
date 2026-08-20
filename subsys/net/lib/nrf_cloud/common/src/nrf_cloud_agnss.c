@@ -23,9 +23,8 @@ LOG_MODULE_REGISTER(nrf_cloud_agnss, CONFIG_NRF_CLOUD_GPS_LOG_LEVEL);
 
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_transport.h"
+#include "nrf_cloud_agnss_internal.h"
 #include "nrf_cloud_agnss_schema_v1.h"
-
-extern void agnss_print(enum nrf_cloud_agnss_type type, void *data);
 
 static K_SEM_DEFINE(agnss_injection_active, 1, 1);
 
@@ -199,30 +198,6 @@ static void copy_location(struct nrf_modem_gnss_agnss_data_location *dst,
 	dst->orientation_major = src->location->orientation_major;
 	dst->unc_altitude = src->location->unc_altitude;
 	dst->confidence = src->location->confidence;
-}
-
-static void copy_time_and_tow(struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow *dst,
-			      struct nrf_cloud_agnss_element *src)
-{
-	__ASSERT_NO_MSG(dst != NULL);
-	__ASSERT_NO_MSG(src != NULL);
-
-	dst->date_day = src->time_and_tow->date_day;
-	dst->time_full_s = src->time_and_tow->time_full_s;
-	dst->time_frac_ms = src->time_and_tow->time_frac_ms;
-	dst->sv_mask = src->time_and_tow->sv_mask;
-
-	if (src->time_and_tow->sv_mask == 0U) {
-		LOG_DBG("SW TOW mask is zero, not copying TOW array");
-		memset(dst->sv_tow, 0, sizeof(dst->sv_tow));
-
-		return;
-	}
-
-	for (size_t i = 0; i < NRF_CLOUD_AGNSS_MAX_SV_TOW; i++) {
-		dst->sv_tow[i].flags = src->time_and_tow->sv_tow[i].flags;
-		dst->sv_tow[i].tlm = src->time_and_tow->sv_tow[i].tlm;
-	}
 }
 
 static void copy_integrity_gps(struct nrf_modem_gnss_agps_data_integrity *dst,
@@ -405,16 +380,6 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 		return send_to_modem(&nequick, sizeof(nequick),
 				     NRF_MODEM_GNSS_AGNSS_NEQUICK_IONOSPHERIC_CORRECTION);
 	}
-	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK: {
-		struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow time_and_tow;
-
-		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST;
-		copy_time_and_tow(&time_and_tow, agnss_data);
-		LOG_DBG("A-GNSS type: NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK");
-
-		return send_to_modem(&time_and_tow, sizeof(time_and_tow),
-				     NRF_MODEM_GNSS_AGNSS_GPS_SYSTEM_CLOCK_AND_TOWS);
-	}
 	case NRF_CLOUD_AGNSS_LOCATION: {
 		struct nrf_modem_gnss_agnss_data_location location = {0};
 
@@ -495,163 +460,86 @@ static int agnss_send_to_modem(struct nrf_cloud_agnss_element *agnss_data)
 	return 0;
 }
 
-static size_t get_next_agnss_element(struct nrf_cloud_agnss_element *element, const char *buf,
-				     size_t buf_len)
+struct agnss_parse_state {
+	struct nrf_modem_gnss_agnss_gps_data_system_time_and_sv_tow sys_time;
+	uint32_t sv_mask;
+	int last_send_err;
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
+	bool ephemerides_processed;
+#endif
+};
+
+static struct agnss_parse_state parse_state;
+
+static int agnss_process_element(const struct nrf_cloud_agnss_element *element)
 {
-	static uint16_t elements_left_to_process;
-	static enum nrf_cloud_agnss_type element_type;
-	size_t len = 0;
+	int err;
 
-	/* Check if there are more elements left in the array to process.
-	 * The element type is only given once before the array, and not for
-	 * each element.
-	 */
-	if (elements_left_to_process == 0) {
-		element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
-
-		if (buf_len == 0) {
-			/* No more data to parse. */
+	if (element->type == NRF_CLOUD_AGNSS_GPS_TOWS) {
+		/* Validate sv_id is within valid range */
+		if (element->tow->sv_id == 0 ||
+		    element->tow->sv_id > NRF_CLOUD_AGNSS_MAX_SV_TOW) {
+			LOG_WRN("Invalid TOW sv_id: %u", element->tow->sv_id);
 			return 0;
 		}
 
-		/* Check that there's enough data for type and count. */
-		if (buf_len < NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE) {
-			goto data_truncated;
+		parse_state.sys_time.sv_tow[element->tow->sv_id - 1].flags = element->tow->flags;
+		parse_state.sys_time.sv_tow[element->tow->sv_id - 1].tlm = element->tow->tlm;
+		if (element->tow->flags || element->tow->tlm) {
+			parse_state.sv_mask |= 1U << (element->tow->sv_id - 1);
 		}
 
-		element->type = (enum nrf_cloud_agnss_type)buf[NRF_CLOUD_AGNSS_BIN_TYPE_OFFSET];
-		element_type = element->type;
-		elements_left_to_process = *(uint16_t *)&buf[NRF_CLOUD_AGNSS_BIN_COUNT_OFFSET] - 1;
-		len += NRF_CLOUD_AGNSS_BIN_TYPE_SIZE + NRF_CLOUD_AGNSS_BIN_COUNT_SIZE;
-	} else {
-		element->type = element_type;
-		elements_left_to_process -= 1;
-	}
+		LOG_DBG("TOW %d copied", element->tow->sv_id - 1);
 
-	switch (element->type) {
-	case NRF_CLOUD_AGNSS_GPS_UTC_PARAMETERS:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_utc))) {
-			goto data_truncated;
-		}
-		element->utc = (struct nrf_cloud_agnss_utc *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_utc);
-		break;
-	case NRF_CLOUD_AGNSS_GPS_EPHEMERIDES:
-	case NRF_CLOUD_AGNSS_QZSS_EPHEMERIDES:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ephemeris))) {
-			goto data_truncated;
-		}
-		element->ephemeris = (struct nrf_cloud_agnss_ephemeris *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_ephemeris);
-		break;
-	case NRF_CLOUD_AGNSS_GPS_ALMANAC:
-	case NRF_CLOUD_AGNSS_QZSS_ALMANAC:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_almanac))) {
-			goto data_truncated;
-		}
-		element->almanac = (struct nrf_cloud_agnss_almanac *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_almanac);
-		break;
-	case NRF_CLOUD_AGNSS_KLOBUCHAR_CORRECTION:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_klobuchar))) {
-			goto data_truncated;
-		}
-		element->ion_correction.klobuchar = (struct nrf_cloud_agnss_klobuchar *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_klobuchar);
-		break;
-	case NRF_CLOUD_AGNSS_NEQUICK_CORRECTION:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_nequick))) {
-			goto data_truncated;
-		}
-		element->ion_correction.nequick = (struct nrf_cloud_agnss_nequick *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_nequick);
-		break;
-	case NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_system_time) -
-			       sizeof(element->time_and_tow->sv_tow) + 4)) {
-			goto data_truncated;
-		}
-		element->time_and_tow = (struct nrf_cloud_agnss_system_time *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_system_time) -
-		       sizeof(element->time_and_tow->sv_tow) + 4;
-		break;
-	case NRF_CLOUD_AGNSS_GPS_TOWS:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_tow_element))) {
-			goto data_truncated;
-		}
-		element->tow = (struct nrf_cloud_agnss_tow_element *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_tow_element);
-		break;
-	case NRF_CLOUD_AGNSS_LOCATION:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_location))) {
-			goto data_truncated;
-		}
-		element->location = (struct nrf_cloud_agnss_location *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_location);
-		break;
-	case NRF_CLOUD_AGNSS_GPS_INTEGRITY:
-	case NRF_CLOUD_AGNSS_QZSS_INTEGRITY:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_integrity))) {
-			goto data_truncated;
-		}
-		element->integrity = (struct nrf_cloud_agnss_integrity *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_integrity);
-		break;
-	case NRF_CLOUD_AGNSS_GAL_INTEGRITY:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_integrity))) {
-			goto data_truncated;
-		}
-		element->gal_integrity = (struct nrf_cloud_agnss_gal_integrity *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_gal_integrity);
-		break;
-	case NRF_CLOUD_AGNSS_GAL_EPHEMERIDES:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_ephemeris))) {
-			goto data_truncated;
-		}
-		element->gal_ephemeris = (struct nrf_cloud_agnss_gal_ephemeris *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_gal_ephemeris);
-		break;
-	case NRF_CLOUD_AGNSS_GAL_ALMANAC:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_gal_almanac))) {
-			goto data_truncated;
-		}
-		element->gal_almanac = (struct nrf_cloud_agnss_gal_almanac *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_gal_almanac);
-		break;
-	case NRF_CLOUD_AGNSS_GGTO:
-		if (buf_len < (len + sizeof(struct nrf_cloud_agnss_ggto))) {
-			goto data_truncated;
-		}
-		element->ggto = (struct nrf_cloud_agnss_ggto *)(buf + len);
-		len += sizeof(struct nrf_cloud_agnss_ggto);
-		break;
-	default:
-		LOG_DBG("Unhandled A-GNSS data type: %d", element->type);
-		elements_left_to_process = 0;
-		element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+		/* TOWs are not forwarded directly, they are accumulated into sys_time. */
 		return 0;
 	}
 
-	return len;
+	if (element->type == NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK) {
+		parse_state.sys_time.date_day = element->system_clock->date_day;
+		parse_state.sys_time.time_full_s = element->system_clock->time_full_s;
+		parse_state.sys_time.time_frac_ms = element->system_clock->time_frac_ms;
+		parse_state.sys_time.sv_mask = parse_state.sv_mask | element->system_clock->sv_mask;
+		LOG_DBG("TOWs copied, bitmask: 0x%08x", parse_state.sys_time.sv_mask);
 
-data_truncated:
-	LOG_ERR("Unexpected end of data");
-	elements_left_to_process = 0;
-	element_type = NRF_CLOUD_AGNSS__TYPE_INVALID;
+		/* Combined TOWs and system time are sent in a special way. */
+		k_mutex_lock(&processed_lock, K_FOREVER);
+		err = send_to_modem(&parse_state.sys_time, sizeof(parse_state.sys_time),
+				    NRF_MODEM_GNSS_AGNSS_GPS_SYSTEM_CLOCK_AND_TOWS);
+		processed.data_flags |= NRF_MODEM_GNSS_AGNSS_GPS_SYS_TIME_AND_SV_TOW_REQUEST;
+		k_mutex_unlock(&processed_lock);
+		if (err) {
+			LOG_WRN("Failed to send sysclock to modem, error: %d", err);
+		}
+		parse_state.last_send_err = err;
+		return 0;
+	}
+
+#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
+	if (element->type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
+		parse_state.ephemerides_processed = true;
+	}
+#endif
+
+	/* The processed variable is read/written by agnss_send_to_modem() and
+	 * nrf_cloud_agnss_processed() which can be called from different contexts.
+	 */
+	k_mutex_lock(&processed_lock, K_FOREVER);
+	err = agnss_send_to_modem((struct nrf_cloud_agnss_element *)element);
+	k_mutex_unlock(&processed_lock);
+	if (err) {
+		LOG_WRN("Failed to send data to modem, error: %d", err);
+	}
+	parse_state.last_send_err = err;
+
 	return 0;
 }
 
 int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 {
 	int err;
-	struct nrf_cloud_agnss_element element = {0};
-	struct nrf_cloud_agnss_system_time sys_time = {0};
-	uint32_t sv_mask = 0;
 	size_t parsed_len = 0;
 	uint8_t version;
-#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
-	bool ephemerides_processed = false;
-#endif
 
 	if (!buf || (buf_len == 0)) {
 		return -EINVAL;
@@ -688,78 +576,11 @@ int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 	}
 
 	LOG_DBG("A-GNSS_injection_active LOCKED");
-
-	while (parsed_len <= buf_len) {
-		/* get_next_agnss_element() is called once more when the data ends to detect
-		 * that parsing has been finished.
-		 */
-		size_t element_size =
-			get_next_agnss_element(&element, &buf[parsed_len], buf_len - parsed_len);
-
-		if (element_size == 0) {
-			LOG_DBG("Parsing finished");
-			break;
-		}
-
-		parsed_len += element_size;
-
-		LOG_DBG("Parsed_len: %d", parsed_len);
-
-		/**
-		 * The else clause below was incorrectly flagged by Coverity as a copy of
-		 * overlapped memory bug.
-		 *
-		 * This is by design. The cloud will transmit 0 or more, up to 32,
-		 * nrf_cloud_agnss_tow_element structs, which will be copied into the local
-		 * sys_time struct's sv_tow array. The cloud side does this to conserve data
-		 * bandwidth, as quite often there are few if any TOW elements.
-		 *
-		 * In the same data buffer, there will be exactly one
-		 * nrf_cloud_agnss_system_time element struct (the first 12 bytes only),
-		 * which will then be copied into the local sys_time struct before the
-		 * sv_tow array.
-		 *
-		 * This locally-assembled sys_time struct will then be passed to
-		 * agnss_send_to_modem(), which expects this combined structure.
-		 */
-		if (element.type == NRF_CLOUD_AGNSS_GPS_TOWS) {
-			/* Validate sv_id is within valid range */
-			if (element.tow->sv_id == 0 ||
-			    element.tow->sv_id > NRF_CLOUD_AGNSS_MAX_SV_TOW) {
-				LOG_WRN("Invalid TOW sv_id: %u", element.tow->sv_id);
-				continue;
-			}
-
-			memcpy(&sys_time.sv_tow[element.tow->sv_id - 1], element.tow,
-			       sizeof(sys_time.sv_tow[0]));
-			if (element.tow->flags || element.tow->tlm) {
-				sv_mask |= 1 << (element.tow->sv_id - 1);
-			}
-
-			LOG_DBG("TOW %d copied", element.tow->sv_id - 1);
-
-			continue;
-		} else if (element.type == NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK) {
-			memcpy(&sys_time, element.time_and_tow,
-			       sizeof(sys_time) - sizeof(sys_time.sv_tow));
-			sys_time.sv_mask = sv_mask | element.time_and_tow->sv_mask;
-			LOG_DBG("TOWs copied, bitmask: 0x%08x", sys_time.sv_mask);
-			element.time_and_tow = &sys_time;
-#if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
-		} else if (element.type == NRF_CLOUD_AGNSS_GPS_EPHEMERIDES) {
-			ephemerides_processed = true;
-#endif
-		}
-
-		/* The processed variable is read/written by agnss_send_to_modem() and
-		 * nrf_cloud_agnss_processed() which can be called from different contexts.
-		 */
-		k_mutex_lock(&processed_lock, K_FOREVER);
-		err = agnss_send_to_modem(&element);
-		k_mutex_unlock(&processed_lock);
-		if (err) {
-			LOG_WRN("Failed to send data to modem, error: %d", err);
-		}
+	memset(&parse_state, 0, sizeof(parse_state));
+	err = parse_agnss_block(&buf[parsed_len], buf_len - parsed_len, agnss_process_element);
+	if (!err) {
+		LOG_DBG("Parsing finished");
+		err = parse_state.last_send_err;
 	}
 
 #if defined(CONFIG_NRF_CLOUD_AGNSS_FILTERED)
@@ -768,7 +589,7 @@ int nrf_cloud_agnss_process(const char *buf, size_t buf_len)
 	 * the modem, determine here if we correctly received them from the cloud and
 	 * sent them to the modem.
 	 */
-	if (!err && ephemerides_processed) {
+	if (!err && parse_state.ephemerides_processed) {
 		last_request_timestamp = k_uptime_get();
 	}
 #endif

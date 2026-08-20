@@ -19,8 +19,10 @@
 #include <../subsys/bluetooth/audio/cap_internal.h>
 #include "server_store.h"
 
-#define TEST_UNICAST_GROUP(name)                                                                   \
-	struct bt_bap_unicast_group bap_group_##name = {0};                                        \
+#define TEST_UNICAST_GROUP(name, sink_pd_in, source_pd_in)                           \
+	struct bt_bap_unicast_group bap_group_##name __aligned(4) = {0};                           \
+	bap_group_##name.sink_pd = sink_pd_in;                                                \
+	bap_group_##name.source_pd = source_pd_in;                                              \
 	struct bt_cap_unicast_group name;                                                          \
 	sys_slist_init(&bap_group_##name.streams);                                                 \
 	name.bap_unicast_group = &bap_group_##name;
@@ -254,23 +256,25 @@ ZTEST(suite_server_store, test_find_srv_from_stream)
 	ret = srv_store_from_conn_get(&test_1_conn, &retr_server);
 	zassert_equal(ret, 0);
 
+	TEST_UNICAST_GROUP(group_0, BT_BAP_PD_UNSET, BT_BAP_PD_UNSET);
+
 	retr_server->name = "Test Server 1";
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[0], &TCS_1_existing, sizeof(TCS_1_existing));
-	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[1], &TCS_2_existing, sizeof(TCS_2_existing));
-	TEST_CAP_STREAM(TCS_3_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_3_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[2], &TCS_3_existing, sizeof(TCS_3_existing));
 
 	ret = srv_store_from_conn_get(&test_2_conn, &retr_server);
 	zassert_equal(ret, 0);
 
 	retr_server->name = "Test Server 2";
-	TEST_CAP_STREAM(TCS_4_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_4_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[0], &TCS_4_existing, sizeof(TCS_4_existing));
-	TEST_CAP_STREAM(TCS_5_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_5_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[1], &TCS_5_existing, sizeof(TCS_5_existing));
-	TEST_CAP_STREAM(TCS_6_existing, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_CAP_STREAM(TCS_6_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
 	memcpy(&retr_server->snk.cap_streams[2], &TCS_6_existing, sizeof(TCS_6_existing));
 
 	struct bt_bap_stream *stream_pointer = &retr_server->snk.cap_streams[1].bap_stream;
@@ -305,7 +309,8 @@ ZTEST(suite_server_store, test_pres_dly_simple)
 {
 	int ret;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 40000, 0x1111);
+	TEST_UNICAST_GROUP(group_0, BT_BAP_PD_UNSET, BT_BAP_PD_UNSET);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 40000, &group_0);
 
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
@@ -314,7 +319,7 @@ ZTEST(suite_server_store, test_pres_dly_simple)
 	server_qos_pref.pref_pd_max = 3000;
 	server_qos_pref.pd_max = 4000;
 
-	TEST_UNICAST_GROUP(cap_group);
+	TEST_UNICAST_GROUP(cap_group, 40000, BT_BAP_PD_UNSET);
 
 	/* For this test, we have no other endpoints or streams stored
 	 * This simulates getting the first call to find the presentation delay
@@ -344,8 +349,8 @@ ZTEST(suite_server_store, test_pres_dly_simple)
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 1000,
 		      "Computed presentation delay should be equal to preferred min");
-	zassert_equal(existing_pres_dly_us, 0,
-		      "Computed presentation delay should be equal to preferred min");
+	zassert_equal(existing_pres_dly_us, 40000,
+		      "Existing presentation delay should be equal to group sink PD");
 
 	/* Removing min, should return error*/
 	server_qos_pref.pd_min = 0;
@@ -353,8 +358,6 @@ ZTEST(suite_server_store, test_pres_dly_simple)
 				      &existing_pres_dly_us, &server_qos_pref,
 				      &group_reconfig_needed, &cap_group);
 	zassert_equal(ret, -EINVAL, "Finding presentation delay should return -EINVAL %d ", ret);
-	zassert_equal(existing_pres_dly_us, 0,
-		      "Computed presentation delay should be equal to preferred min");
 
 	srv_store_unlock();
 }
@@ -367,22 +370,22 @@ ZTEST(suite_server_store, test_pres_dly_not_found)
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
 
-	TEST_UNICAST_GROUP(unicast_group);
+	TEST_UNICAST_GROUP(group_0, BT_BAP_PD_UNSET, BT_BAP_PD_UNSET);
 
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 1100, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 1100, &group_0);
 	TCS_1_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 1000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 2000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 4000;
 
-	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
 
 	uint32_t computed_pres_dly_us = 0;
 	uint32_t existing_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, &group_0);
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
 	/*  Min outside existing group range */
@@ -393,7 +396,7 @@ ZTEST(suite_server_store, test_pres_dly_not_found)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, -ESPIPE);
 
@@ -416,22 +419,22 @@ ZTEST(suite_server_store, test_pres_dly_ignored)
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
 
-	TEST_UNICAST_GROUP(unicast_group);
+	TEST_UNICAST_GROUP(group_0, BT_BAP_PD_UNSET, BT_BAP_PD_UNSET);
 
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 4000, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 4000, &group_0);
 	TCS_1_existing.bap_stream.ep->state = BT_BAP_EP_STATE_IDLE;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 4000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 5000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 6000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 7000;
 
-	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
 
 	uint32_t computed_pres_dly_us = 0;
 	uint32_t existing_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, &group_0);
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
 	server_qos_pref.pd_min = 1000;
@@ -441,7 +444,7 @@ ZTEST(suite_server_store, test_pres_dly_ignored)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 2000,
@@ -454,20 +457,20 @@ ZTEST(suite_server_store, test_pres_delay_advanced)
 {
 	int ret;
 
-	TEST_UNICAST_GROUP(unicast_group);
+	TEST_UNICAST_GROUP(group_0, 2500, BT_BAP_PD_UNSET);
 
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
 
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 2500, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 2500, &group_0);
 	TCS_1_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 1001;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 2000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 4000;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, 0xAAAA);
-	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, &group_0);
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
 
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
@@ -482,7 +485,7 @@ ZTEST(suite_server_store, test_pres_delay_advanced)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
 	zassert_equal(computed_pres_dly_us, 2500, "Presentation delay should be unchanged %d",
 		      computed_pres_dly_us);
@@ -494,7 +497,7 @@ ZTEST(suite_server_store, test_pres_delay_advanced)
 	server_qos_pref.pref_pd_min = 2600;
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
 	zassert_equal(computed_pres_dly_us, 2500, "Presentation delay should be unchanged %d",
 		      computed_pres_dly_us);
@@ -504,7 +507,7 @@ ZTEST(suite_server_store, test_pres_delay_advanced)
 	server_qos_pref.pd_min = 2600;
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 	zassert_equal(ret, 0, "Finding presentation delay did not return zero %d", ret);
 	zassert_equal(computed_pres_dly_us, 2600, "Presentation delay should be unchanged %d",
 		      computed_pres_dly_us);
@@ -518,37 +521,37 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 {
 	int ret;
 
-	TEST_UNICAST_GROUP(unicast_group);
+	TEST_UNICAST_GROUP(group_0, 1800, BT_BAP_PD_UNSET);
 
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
 
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 1800, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 1800, &group_0);
 	TCS_1_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 1000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 2300;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 4000;
 
-	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
 
-	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 1800, 0xAAAA);
+	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 1800, &group_0);
 	TCS_2_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_2_existing.bap_stream.ep->qos_pref.pd_min = 1500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_min = 2500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_2_existing.bap_stream.ep->qos_pref.pd_max = 4000;
 
-	mock_add_stream_to_group(&TCS_2_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_2_existing.bap_stream, &group_0);
 
-	TEST_CAP_STREAM(TCS_3_existing, BT_AUDIO_DIR_SINK, 1800, 0xAAAA);
+	TEST_CAP_STREAM(TCS_3_existing, BT_AUDIO_DIR_SINK, 1800, &group_0);
 	TCS_3_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_3_existing.bap_stream.ep->qos_pref.pd_min = 1800;
 	TCS_3_existing.bap_stream.ep->qos_pref.pref_pd_min = 2500;
 	TCS_3_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_3_existing.bap_stream.ep->qos_pref.pd_max = 3800;
 
-	mock_add_stream_to_group(&TCS_3_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_3_existing.bap_stream, &group_0);
 
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
@@ -557,7 +560,7 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 	server_qos_pref.pref_pd_max = 3000;
 	server_qos_pref.pd_max = 3000;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 2600, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 2600, &group_0);
 
 	uint32_t computed_pres_dly_us = 0;
 	uint32_t existing_pres_dly_us = 0;
@@ -567,7 +570,7 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 1800, "Presentation delay should be unchanged %d",
@@ -583,7 +586,7 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 2600, "Presentation delay pref min %d",
@@ -599,7 +602,7 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 2500, "Presentation delay pref min %d",
@@ -615,7 +618,7 @@ ZTEST(suite_server_store, test_pres_delay_multiple_streams)
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 
 	zassert_equal(ret, 0);
 	zassert_equal(computed_pres_dly_us, 3800, "Presentation delay pref min %d",
@@ -630,29 +633,30 @@ ZTEST(suite_server_store, test_pres_delay_multi_group)
 {
 	int ret;
 
-	TEST_UNICAST_GROUP(unicast_group);
+	TEST_UNICAST_GROUP(group_0, 2000, BT_BAP_PD_UNSET);
+	TEST_UNICAST_GROUP(group_1, 2000, BT_BAP_PD_UNSET);
 
 	ret = srv_store_lock(K_NO_WAIT);
 	zassert_equal(ret, 0);
 
-	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 2000, 0xAAAA);
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 2000, &group_0);
 	TCS_1_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 1000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 2000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 3000;
 	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 4000;
 
-	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
 
 	/* Add stream in another group */
-	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 500, 0xBBBB);
+	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 500, &group_1);
 	TCS_2_existing.bap_stream.ep->state = BT_BAP_EP_STATE_STREAMING;
 	TCS_2_existing.bap_stream.ep->qos_pref.pd_min = 500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_min = 500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_max = 500;
 	TCS_2_existing.bap_stream.ep->qos_pref.pd_max = 500;
 
-	mock_add_stream_to_group(&TCS_2_existing.bap_stream, &unicast_group);
+	mock_add_stream_to_group(&TCS_2_existing.bap_stream, &group_0);
 
 	struct bt_bap_qos_cfg_pref server_qos_pref;
 
@@ -665,11 +669,11 @@ ZTEST(suite_server_store, test_pres_delay_multi_group)
 	uint32_t existing_pres_dly_us = 0;
 	bool group_reconfig_needed = false;
 
-	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, 0xBBBB);
+	TEST_CAP_STREAM(TCS_1_new, BT_AUDIO_DIR_SINK, 0, &group_1);
 
 	ret = srv_store_pres_dly_find(&TCS_1_new.bap_stream, &computed_pres_dly_us,
 				      &existing_pres_dly_us, &server_qos_pref,
-				      &group_reconfig_needed, &unicast_group);
+				      &group_reconfig_needed, &group_0);
 	zassert_equal(ret, -EINVAL,
 		      "Should return -EINVAL as two streams of differing groups are submitted %d",
 		      ret);

@@ -25,7 +25,7 @@
  *
  * @param[in,out] u Byte array containing a coordinate of size 32 bytes.
  */
-void decode_u_coordinate_25519(uint8_t *u);
+void cracen_decode_u_coordinate_25519(uint8_t *u);
 
 /**
  * @brief Decode a byte array containing a scalar in place.
@@ -34,7 +34,7 @@ void decode_u_coordinate_25519(uint8_t *u);
  *
  * @param[in,out] k Byte array containing a scalar of size 32.
  */
-void decode_scalar_25519(uint8_t *k);
+void cracen_decode_scalar_25519(uint8_t *k);
 
 /**
  * @brief Decode a byte array containing a scalar in place.
@@ -43,6 +43,6 @@ void decode_scalar_25519(uint8_t *k);
  *
  * @param[in,out] k Byte array containing a scalar of size 56.
  */
-void decode_scalar_448(uint8_t *k);
+void cracen_decode_scalar_448(uint8_t *k);
 
 /** @} */

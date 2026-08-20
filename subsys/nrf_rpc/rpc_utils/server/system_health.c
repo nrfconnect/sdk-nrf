@@ -33,10 +33,7 @@ static void kick_system_workq(struct k_work *work)
 #ifdef CONFIG_OPENTHREAD
 static void kick_openthread(struct k_work *work)
 {
-	k_tid_t tid = openthread_thread_id_get();
-	struct k_work_q *queue = CONTAINER_OF(tid, struct k_work_q, thread);
-
-	(void)k_work_submit_to_queue(queue, work);
+	(void)k_work_submit_to_queue(openthread_work_q_get(), work);
 }
 #endif
 

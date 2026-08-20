@@ -55,7 +55,6 @@ RELEASE_TAG_SUFFIX=""
 CORE_REPOSITORIES=(
     nrfxlib
     find-my
-    matter
     nrf-802154
 )
 

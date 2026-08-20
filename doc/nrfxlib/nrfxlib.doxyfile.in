@@ -2440,10 +2440,6 @@ PREDEFINED             = __DOXYGEN__ \
                          "NRF9160_XXAA=" \
                          "NRF5340_XXAA_APPLICATION=" \
                          "NRF52840_XXAA=" \
-                         "MBEDTLS_AES_C=" \
-                         "MBEDTLS_CCM_C=" \
-                         "MBEDTLS_GCM_C=" \
-                         "MBEDTLS_CONFIG_FILE=" \
                          "OSALCALL="
 
 # If the MACRO_EXPANSION and EXPAND_ONLY_PREDEF tags are set to YES then this

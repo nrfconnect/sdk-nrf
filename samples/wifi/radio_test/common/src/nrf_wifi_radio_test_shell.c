@@ -9,7 +9,7 @@
  */
 
 #ifdef CONFIG_NRF71_RADIO_TEST
-#include <nrf71_radio_test.h>
+#include <radio_test/main.h>
 #else
 #include <fmac_main.h>
 #include <util.h>
@@ -22,8 +22,11 @@
 
 #ifndef CONFIG_NRF71_RADIO_TEST
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-#endif
 struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
+#else
+struct nrf_wifi_rt_drv_ctx *ctx = &rt_drv_priv.drv_ctx;
+#endif
+
 
 #define NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS 5000
 
@@ -1327,7 +1330,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH) || defined(CONFIG_NRF71_SR_COEX_RF_SWITCH)
+#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
 static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 					     size_t argc,
 					     const char *argv[])
@@ -1345,7 +1348,7 @@ static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
 
 	return sr_ant_switch(val);
 }
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH || CONFIG_NRF71_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
 #if defined(CONFIG_NRF70_SR_COEX)
 static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
@@ -3048,7 +3051,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH) || defined(CONFIG_NRF71_SR_COEX_RF_SWITCH)
+#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
 	SHELL_CMD_ARG(sr_ant_switch_ctrl,
 		      NULL,
 		      "0 - Switch set to use the BLE antenna\n"
@@ -3056,7 +3059,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_sr_ant_switch_ctrl,
 		      2,
 		      0),
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH || CONFIG_NRF71_SR_COEX_RF_SWITCH */
+#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
 #if defined(CONFIG_NRF70_SR_COEX)
 	SHELL_CMD_ARG(config_pta,

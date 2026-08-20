@@ -1,14 +1,10 @@
 .. _idle_relocated_tcm_sample:
 
-Multicore idle test with firmware relocated to radio core TCM
-#############################################################
+.. ncs-sample::
+   :title: Multicore idle test with firmware relocated to radio core TCM
 
-.. contents::
-   :local:
-   :depth: 2
-
-The test benchmarks the idle behavior of an application that runs on multiple cores.
-It demonstrates a radio loader pattern where the radio core firmware is loaded from MRAM into Tightly Coupled Memory (TCM) at runtime.
+   The test benchmarks the idle behavior of an application that runs on multiple cores.
+   It demonstrates a radio loader pattern where the radio core firmware is loaded from MRAM into Tightly Coupled Memory (TCM) at runtime.
 
 Requirements
 ************

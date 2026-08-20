@@ -80,4 +80,6 @@ SysbuildKconfigBasic.txt
 SysbuildKconfigBasicNoModules.txt
 TextEncoding.txt
 YAMLLint.txt
+CMakeStyle.txt
+KconfigFormat.txt
 **/.DS_Store

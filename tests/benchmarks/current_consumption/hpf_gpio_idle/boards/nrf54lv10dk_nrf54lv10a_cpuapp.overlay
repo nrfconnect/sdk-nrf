@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires GPIO loopback:
+ * - between P1.20 and P1.21,
+ */
+
+/delete-node/ &led1;
+
+/ {
+	zephyr,user {
+		out-gpios = <&hpf_gpio 20 GPIO_ACTIVE_HIGH>;
+		in-gpios = <&gpio1 21 GPIO_ACTIVE_HIGH>;
+	};
+
+	aliases {
+		led = &led0;
+		/delete-property/ led1;
+	};
+};
+
+&gpiote20 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};

@@ -22,6 +22,7 @@ MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_rx_kilobytes, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_band, kMemfaultMetricType_Unsigned)
 #endif /* defined(CONFIG_MODEM_INFO) */
 
+#if defined(CONFIG_LTE_LINK_CONTROL)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_time_to_connect_ms, kMemfaultMetricType_Timer)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_connection_loss_count, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_psm_tau_seconds, kMemfaultMetricType_Signed)
@@ -33,6 +34,7 @@ MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_on_time_ms, kMemfaultMetricType_Timer)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_reset_loop_detected_count, kMemfaultMetricType_Unsigned)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_cell_id, kMemfaultMetricType_Signed)
 MEMFAULT_METRICS_KEY_DEFINE(ncs_lte_tracking_area_code, kMemfaultMetricType_Signed)
+#endif /* defined(CONFIG_LTE_LINK_CONTROL) */
 #endif /* CONFIG_MEMFAULT_NCS_LTE_METRICS */
 
 #ifdef CONFIG_MEMFAULT_NCS_BT_METRICS

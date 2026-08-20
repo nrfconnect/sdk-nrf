@@ -309,6 +309,8 @@ if(NOT HW_FEATURES)
 endif()
 
 add_docset(zephyr ${Zephyr_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
+configure_file(${ZEPHYR_BASE}/doc/zephyr.doxyfile.in ${CMAKE_BINARY_DIR}/upstream.doxyfile)
+file(READ ${CMAKE_BINARY_DIR}/upstream.doxyfile ZEPHYR_UPSTREAM_DOXYFILE)
 add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)
@@ -340,11 +342,6 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 add_docset(tfm "2.3.0")
 
 #-------------------------------------------------------------------------------
-# docset: matter
-
-add_docset(matter "1.5.0")
-
-#-------------------------------------------------------------------------------
 # docset: nrfxlib
 
 add_docset(nrfxlib ${NRF_VERSION})
@@ -354,6 +351,11 @@ add_doxygen_docset(nrfxlib ${ZEPHYR_NRFXLIB_MODULE_DIR} ${NRF_VERSION})
 # docset: wifi
 
 add_doxygen_docset(wifi ${ZEPHYR_NRF_WIFI_MODULE_DIR} "" STANDALONE)
+
+#-------------------------------------------------------------------------------
+# docset: api
+
+add_docset(api "")
 
 #-------------------------------------------------------------------------------
 # docset: internal
@@ -402,6 +404,7 @@ add_dependencies(merge-search-indexes
     mcuboot-all
     tfm-all
     kconfig-all
+    api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(merge-search-indexes internal-all)
@@ -418,8 +421,9 @@ endfunction()
 add_dependencies(nrfxlib-inventory-all kconfig-all zephyr-all)
 add_doc_dependencies(zephyr kconfig-all)
 add_doc_dependencies(mcuboot kconfig-all)
-add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all matter-all tfm-all kconfig-all wifi)
+add_doc_dependencies(nrf zephyr-all nrfxlib-inventory-all mcuboot-all tfm-all kconfig-all wifi)
 add_doc_dependencies(nrfxlib nrf-all)
+add_doc_dependencies(api nrf-doxygen zephyr-doxygen nrfxlib-doxygen nrfx wifi)
 
 add_custom_target(build-all ALL)
 add_dependencies(build-all
@@ -431,9 +435,9 @@ add_dependencies(build-all
     zephyr-all
     mcuboot-all
     tfm-all
-    matter-all
     kconfig-all
     wifi
+    api-all
 )
 if(EXISTS "${ZEPHYR_DOC_INTERNAL_MODULE_DIR}" )
   add_dependencies(build-all internal-all)

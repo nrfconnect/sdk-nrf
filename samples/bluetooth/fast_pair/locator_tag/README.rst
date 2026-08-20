@@ -1,21 +1,17 @@
 .. _fast_pair_locator_tag:
 
-Bluetooth Fast Pair: Locator tag
-################################
+.. ncs-sample::
+   :title: Bluetooth Fast Pair: Locator tag
 
-.. contents::
-   :local:
-   :depth: 2
+   This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>` to create a locator tag device that is compatible with the Android `Find Hub app`_.
+   Locator tag is a small electronic device that can be attached to an object or a person, and is designed to help locate them in case they are missing.
 
-This sample demonstrates :ref:`how to use Google Fast Pair with the nRF Connect SDK <ug_bt_fast_pair>` to create a locator tag device that is compatible with the Android `Find Hub app`_.
-Locator tag is a small electronic device that can be attached to an object or a person, and is designed to help locate them in case they are missing.
+   Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
+   Google Fast Pair standard also supports the Find Hub Network (FHN) extension that is the main focus of this sample demonstration.
+   For detailed information, see the official `Fast Pair Find Hub Network extension`_ documentation.
 
-Google Fast Pair Service (GFPS) is a standard for pairing Bluetooth® and Bluetooth LE devices with as little user interaction required as possible.
-Google Fast Pair standard also supports the Find Hub Network (FHN) extension that is the main focus of this sample demonstration.
-For detailed information, see the official `Fast Pair Find Hub Network extension`_ documentation.
-
-This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
-The software maturity level for the locator tag use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
+   This sample follows the `Fast Pair Device Feature Requirements for Locator Tags`_ documentation and uses the Fast Pair configuration for the locator tag use case.
+   The software maturity level for the locator tag use case is outlined in the :ref:`Google Fast Pair use case support <software_maturity_fast_pair_use_case>` table.
 
 Requirements
 ************
@@ -222,6 +218,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
 |              |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |
+|              |                                | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) |
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 
@@ -238,8 +235,8 @@ The configuration of the signature algorithm and the public key storage solution
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 | Signature algorithm            | Board targets                                                        | Public key storage        | Properties                |
 +================================+======================================================================+===========================+===========================+
-| ECDSA-P256                     | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) | Bootloader partition      | SW calculation,           |
-|                                |                                                                      |                           | Signature derived from    |
+| ECDSA-P256                     | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) | Bootloader partition      | SW calculation,           |
+|                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |                           | Signature derived from    |
 |                                |                                                                      |                           | image hash                |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 | ED25519                        | * ``nrf54l15dk/nrf54l05/cpuapp`` (only ``release`` configuration)    | Key Management Unit (KMU) | HW-accelerated (CRACEN),  |

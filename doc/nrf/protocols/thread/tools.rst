@@ -112,7 +112,7 @@ To program the nRF device with the RCP application, complete the following steps
 
                nrfutil install nrf5sdk-tools
 
-            See `nrf5sdk-tools command overview`_ for more information.
+            See `nrfutil nrf5sdk-tools`_ command page for more information.
          #. Generate the RCP firmware package:
 
             .. code-block:: console
@@ -184,7 +184,7 @@ Running OTBR using Docker
 
 For development purposes, you can run the OpenThread Border Router on any Linux-based system using a Docker container that already has the Border Router installed.
 This solution can be used when you are only interested in direct communication between your Border Router and the Thread network.
-For example, you can use the Docker container when you want to establish IP communication between an application running on Linux (such as the :ref:`CHIP Tool Matter controller <ug_matter_configuring>`) and an application running on a Thread node.
+For example, you can use the Docker container when you want to establish IP communication between an application running on Linux, and an application running on a Thread node.
 
 To install and configure the OpenThread Border Router using the Docker container on an Ubuntu operating system, complete the following steps:
 

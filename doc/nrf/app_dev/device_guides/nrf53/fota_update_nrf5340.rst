@@ -61,9 +61,7 @@ FOTA in Bluetooth Mesh
 FOTA in Matter
 **************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_matter_start
-   :end-before: fota_upgrades_matter_end
+See the `Matter Add-on`_ documentation for more information about FOTA in Matter.
 
 FOTA over Thread
 ****************

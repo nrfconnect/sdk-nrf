@@ -77,6 +77,7 @@ The peripheral discovery consists of the following steps:
 #. HIDS (Human Interface Device Service) discovery.
    The central discovers HIDS and forwards the information to other application modules using ``ble_discovery_complete`` event.
    The :ref:`nrf_desktop_hid_forward` uses the event to register a new subscriber.
+   If HID SCI is supported by the peripheral, the |hid_forward| enriches the event with :c:member:`ble_discovery_complete_event.peer_sci_support` set to ``true`` for the remaining subscribers.
 
 .. note::
    Only one peripheral can be discovered at a time.

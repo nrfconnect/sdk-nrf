@@ -1,13 +1,9 @@
 .. _sms_sample:
 
-Cellular: SMS
-#############
+.. ncs-sample::
+   :title: Cellular: SMS
 
-.. contents::
-   :local:
-   :depth: 2
-
-The SMS sample demonstrates how you can send and receive SMS messages with your nRF91 Series device.
+   The SMS sample demonstrates how you can send and receive SMS messages with your nRF91 Series device.
 
 Requirements
 ************

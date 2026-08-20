@@ -272,6 +272,49 @@ out:
 }
 #endif /* NRF71_UTIL */
 
+#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
+struct error_stats_log_entry {
+	unsigned int status_code;
+	const char *msg;
+};
+
+static const struct error_stats_log_entry umac_error_stats_log[] = {
+	{ UMAC_MEM_ALLOC_FAIL, "memory allocation failed" },
+};
+
+static const struct error_stats_log_entry lmac_error_stats_log[] = {
+	{ RX_INT_MEM_UNDERRUN, "RX internal memory underrun" },
+	{ DATA_PATH_STUCK, "data path stuck" },
+	{ WIFI_REQ_TO_PTA_FAIL, "Wi-Fi request to PTA failed" },
+	{ HW_DATA_PATH_DEACTIVATE_FAIL, "HW data path deactivation failed" },
+	{ HW_DATA_PATH_ACTIVATE_FAIL, "HW data path activation failed" },
+	{ CAPTURE_DMA_NOT_FINISHING, "capture DMA not finishing" },
+	{ FEED_DMA_NOT_FINISHING, "feed DMA not finishing" },
+	{ RF_PLL_RECOVERY_FAILED, "RF PLL recovery failed" },
+	{ DEVICE_IS_ACTIVE_FOR_TOO_LONG, "device active for too long" },
+};
+
+static void log_error_stats(const char *func,
+			    const char *type,
+			    unsigned int status_code,
+			    const struct error_stats_log_entry *table,
+			    size_t table_size)
+{
+	size_t i;
+
+	for (i = 0; i < table_size; i++) {
+		if (table[i].status_code == status_code) {
+			nrf_wifi_osal_log_info("%s: %s error: %s", func, type,
+					       table[i].msg);
+			return;
+		}
+	}
+
+	nrf_wifi_osal_log_info("%s: %s error stats: status_code=%u", func, type,
+			       status_code);
+}
+#endif /* WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
+
 
 static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       struct host_rpu_msg *rpu_msg)
@@ -373,12 +416,42 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 #if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 		struct nrf_wifi_umac_event_error_stats *err_ev =
 			(struct nrf_wifi_umac_event_error_stats *)sys_head;
-#endif
 
-		nrf_wifi_osal_log_info("%s: Error stats event: stats_type=%d status_code=%u",
-				       __func__,
-				       err_ev->stats_type,
-				       err_ev->status_code);
+		switch (err_ev->stats_type) {
+		case RPU_STATS_TYPE_UMAC:
+			log_error_stats(__func__, "UMAC", err_ev->status_code,
+					umac_error_stats_log,
+					sizeof(umac_error_stats_log) /
+					sizeof(umac_error_stats_log[0]));
+			break;
+		case RPU_STATS_TYPE_LMAC:
+			log_error_stats(__func__, "LMAC", err_ev->status_code,
+					lmac_error_stats_log,
+					sizeof(lmac_error_stats_log) /
+					sizeof(lmac_error_stats_log[0]));
+			break;
+		default:
+			nrf_wifi_osal_log_info("%s: Error stats event: "
+					       "stats_type=%d status_code=%u",
+					       __func__,
+					       err_ev->stats_type,
+					       err_ev->status_code);
+			break;
+		}
+#endif /* WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF */
+		status = NRF_WIFI_STATUS_SUCCESS;
+		break;
+	}
+	case NRF_WIFI_EVENT_COEX_CONFIG: {
+		struct nrf_wifi_event_coex_config *coex_event =
+			(struct nrf_wifi_event_coex_config *)sys_head;
+		struct nrf_wifi_sys_fmac_priv *sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+
+		if (sys_fpriv->callbk_fns.coex_event_callbk_fn) {
+			sys_fpriv->callbk_fns.coex_event_callbk_fn(
+				fmac_dev_ctx->os_dev_ctx, coex_event->coex_config_info.coex_event,
+				coex_event->coex_config_info.len);
+		}
 		status = NRF_WIFI_STATUS_SUCCESS;
 		break;
 	}

@@ -224,12 +224,12 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
          * - **Matter**
-           - --
-           - --
-           - --
-           - --
-           - --
-           - Supported
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
          * - **NFC**
            - --
            - --
@@ -285,7 +285,7 @@ The following table indicates the software maturity levels of the support for ea
          * - **LTE**
            - --
          * - **Matter**
-           - Supported
+           - --\ :sup:`8`
          * - **NFC**
            - Supported
          * - **Amazon Sidewalk**
@@ -316,7 +316,7 @@ The following table indicates the software maturity levels of the support for ea
          * - **LTE**
            - --
          * - **Matter**
-           - --
+           - --\ :sup:`8`
          * - **NFC**
            - Experimental
          * - **Amazon Sidewalk**
@@ -389,14 +389,14 @@ The following table indicates the software maturity levels of the support for ea
            - --
            - --
          * - **Matter**
-           - --
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - --
-           - --
-           - --
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
+           - --\ :sup:`8`
          * - **NFC**
            - Supported
            - Supported
@@ -480,10 +480,10 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
             * - **Matter**
-              - --
-              - --
-              - --
-              - --
+              - --\ :sup:`8`
+              - --\ :sup:`8`
+              - --\ :sup:`8`
+              - --\ :sup:`8`
             * - **NFC**
               - --
               - --
@@ -517,6 +517,7 @@ The following table indicates the software maturity levels of the support for ea
 | [5]: The software maturity levels for Zigbee can be found on the `Zigbee R23`_ add-on page
 | [6]: ESB APIs can be used directly by code running on the network core
 | [7]: ESB APIs can be used directly by code running on the radio core
+| [8]: The software maturity levels for Matter can be found on the `Matter Add-on`_ documentation.
 
 Amazon Sidewalk features support
 ********************************
@@ -1399,215 +1400,7 @@ The following table indicates the software maturity levels of the support for ea
 Matter features support
 ***********************
 
-The following table indicates the software maturity levels of the support for each Matter feature:
-
-.. toggle::
-
-   .. tabs::
-
-      .. tab:: nRF52 Series
-         .. list-table:: Matter features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Matter - OTA DFU over Bluetooth LE**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter Intermittently Connected Device**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter commissioning over Bluetooth LE with NFC onboarding**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter commissioning over Bluetooth LE with QR code onboarding**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter commissioning over IP**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter over Thread**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Matter over Wi-Fi**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **OTA DFU over Matter**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-
-      .. tab:: nRF53 Series
-         .. list-table:: Matter features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF5340
-            * - **Matter - OTA DFU over Bluetooth LE**
-              - Supported
-            * - **Matter Intermittently Connected Device**
-              - Supported
-            * - **Matter commissioning over Bluetooth LE with NFC onboarding**
-              - Supported
-            * - **Matter commissioning over Bluetooth LE with QR code onboarding**
-              - Supported
-            * - **Matter commissioning over IP**
-              - Supported
-            * - **Matter over Thread**
-              - Supported
-            * - **Matter over Wi-Fi**
-              - Supported
-            * - **OTA DFU over Matter**
-              - Supported
-
-      .. tab:: nRF54H Series
-         .. list-table:: Matter features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF54H20
-            * - **Matter - OTA DFU over Bluetooth LE**
-              - --
-            * - **Matter Intermittently Connected Device**
-              - --
-            * - **Matter commissioning over Bluetooth LE with NFC onboarding**
-              - --
-            * - **Matter commissioning over Bluetooth LE with QR code onboarding**
-              - --
-            * - **Matter commissioning over IP**
-              - --
-            * - **Matter over Thread**
-              - --
-            * - **Matter over Wi-Fi**
-              - --
-            * - **OTA DFU over Matter**
-              - --
-
-      .. tab:: nRF54L Series
-         .. list-table:: Matter features support
-            :widths: auto
-            :header-rows: 1
-
-            * - Feature
-              - nRF54L05
-              - nRF54L10
-              - nRF54L15
-              - nRF54LM20A
-              - nRF54LM20B
-              - nRF54LV10A
-              - nRF54LS05A
-              - nRF54LS05B
-            * - **Matter - OTA DFU over Bluetooth LE**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter Intermittently Connected Device**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter commissioning over Bluetooth LE with NFC onboarding**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter commissioning over Bluetooth LE with QR code onboarding**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter commissioning over IP**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter over Thread**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **Matter over Wi-Fi**
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
-            * - **OTA DFU over Matter**
-              - --
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - --
-              - --
-              - --
+The software maturity levels of the support for each Matter feature can be found in the `Matter Add-on`_ documentation.
 
 NFC features support
 ********************
@@ -2237,7 +2030,7 @@ The following table indicates the software maturity levels of the support for Go
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Locator tag**
               - :ref:`fast_pair_locator_tag`
@@ -2247,7 +2040,7 @@ The following table indicates the software maturity levels of the support for Go
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
 
 The following table indicates the software maturity levels of the support for each Fast Pair feature:
@@ -2367,7 +2160,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Subsequent pairing**
               - Experimental
@@ -2376,7 +2169,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Battery Notification extension**
               - Experimental
@@ -2385,7 +2178,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Personalized Name extension**
               - Experimental
@@ -2394,7 +2187,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Find Hub Network extension**
               - Supported
@@ -2403,7 +2196,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
 
 Find Hub Network extension
@@ -2491,7 +2284,7 @@ The following table indicates the software maturity levels of the support for th
               - Experimental
               - Experimental
               - --
-              - --
+              - Experimental
               - Experimental
             * - **Precision Finding with Bluetooth LE Channel Sounding**
               - Experimental

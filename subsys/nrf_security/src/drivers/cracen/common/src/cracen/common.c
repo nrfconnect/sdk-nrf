@@ -88,7 +88,7 @@ psa_status_t silex_statuscodes_to_psa(int sx_status)
 	}
 }
 
-psa_status_t hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
+psa_status_t cracen_hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash_algo)
 {
 	*sx_hash_algo = NOT_ENABLED_HASH_ALG;
 
@@ -130,7 +130,7 @@ psa_status_t hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_hash
 	return (*sx_hash_algo == NOT_ENABLED_HASH_ALG) ? PSA_ERROR_NOT_SUPPORTED : PSA_SUCCESS;
 }
 
-psa_status_t xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_xof_algo)
+psa_status_t cracen_xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **sx_xof_algo)
 {
 	*sx_xof_algo = NOT_ENABLED_XOF_ALG;
 
@@ -177,7 +177,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 #if defined(CONFIG_CRACEN_IKG)
 	return sx_pk_ik_derive_keys(&cfg);
 #else
-	return PSA_ERROR_NOT_SUPPORTED;
+	return SX_ERR_INCOMPATIBLE_HW;
 #endif
 }
 
@@ -248,12 +248,13 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 			k->key = kmu_push_area;
 
 			return PSA_SUCCESS;
+#if defined(CONFIG_CRACEN_KMU_PROTECTED_RAM)
 		case CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED:
 			k->sz = PSA_BITS_TO_BYTES(psa_get_key_bits(attributes));
 			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
 
 			return PSA_SUCCESS;
-
+#endif
 		default:
 			return PSA_ERROR_NOT_PERMITTED;
 		}
@@ -275,24 +276,24 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		k->prepare_key = NULL;
 		k->clean_key = NULL;
 
-		switch (MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes))) {
-		case CRACEN_PROTECTED_RAM_AES_KEY0_ID:
+#if defined(CONFIG_CRACEN_KMU_PROTECTED_RAM)
+		uint32_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes));
+
+		if (key_id == CRACEN_PROTECTED_RAM_AES_KEY0_ID) {
 			k->sz = 32;
 			k->key = (const uint8_t *)CRACEN_PROTECTED_RAM_AES_KEY0;
-			break;
-		default:
-			if (key_buffer_size == 0) {
-				return PSA_ERROR_CORRUPTION_DETECTED;
-			}
 
-			/* Normal transparent key. */
-			k->key = key_buffer;
-			k->sz = key_buffer_size;
+			return PSA_SUCCESS;
 		}
-	} else {
-		k->key = key_buffer;
-		k->sz = key_buffer_size;
+#endif
+
+		if (key_buffer_size == 0) {
+			return PSA_ERROR_CORRUPTION_DETECTED;
+		}
 	}
+
+	k->key = key_buffer;
+	k->sz = key_buffer_size;
 
 	return PSA_SUCCESS;
 }

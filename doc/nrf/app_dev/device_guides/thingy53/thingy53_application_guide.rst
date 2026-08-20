@@ -138,11 +138,7 @@ The Thingy:53 board automatically configures external flash storage and QSPI dri
 Samples and applications for Thingy:53 with FOTA out of the box
 ***************************************************************
 
-The following samples and applications in the |NCS| enable FOTA for Thingy:53 by default:
-
-* Applications:
-
-  * :ref:`matter_weather_station_app`
+The following samples in the |NCS| enable FOTA for Thingy:53 by default:
 
 * Samples:
 

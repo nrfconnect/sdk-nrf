@@ -16,9 +16,16 @@ config MCUBOOT_GENERATE_DEFAULT_KEY_FILE
 config MCUBOOT_IMAGES_ROM_END_OFFSET_AUTO
 	default "single_slot;fw_loader_ipc_radio" if MCUBOOT_SIGN_MERGED_BINARY && SUPPORT_NETCORE
 
+# The pure variant requires ED25519 and both slots in internal storage, so targets outside these
+# SoC series keep the MCUboot default signature type.
+config BOOT_SIGNATURE_TYPE_PURE
+	default y if (SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || SOC_SERIES_NRF71) && \
+		BOOT_SIGNATURE_TYPE_ED25519
+
 choice BOOT_SIGNATURE_TYPE
 	default BOOT_SIGNATURE_TYPE_ECDSA_P256 if SOC_NRF54LS05B
-	default BOOT_SIGNATURE_TYPE_ED25519 if !SOC_NRF54LS05B
+	default BOOT_SIGNATURE_TYPE_ED25519 if SOC_SERIES_NRF54L || SOC_SERIES_NRF54H || \
+		SOC_SERIES_NRF71
 endchoice
 
 source "share/sysbuild/Kconfig"

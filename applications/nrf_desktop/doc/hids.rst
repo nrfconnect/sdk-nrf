@@ -45,6 +45,15 @@ For more details, see the :file:`src/modules/Kconfig.hids` file.
    If the HID report configuration is identical to the default configuration of either nRF Desktop mouse or keyboard, you do not need to modify the |GATT_HID| configuration.
    Otherwise, see :ref:`hids_readme` documentation for configuration details.
 
+HID SCI support
+---------------
+
+The :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` option selects :kconfig:option:`CONFIG_BT_HIDS_SCI` and the required Bluetooth LE Host and Controller features for support of shorter connection intervals.
+The option cannot be used together with :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`.
+It depends on Bluetooth Controller support for shorter connection intervals.
+By default, the GATT pool sizes defined in :file:`Kconfig.ble` and the maximum number of HIDS attributes defined in :file:`src/modules/Kconfig.hids` are automatically aligned to nRF Desktop application needs, including HID SCI support.
+If you need adjustments, for example due to changing the set of supported HID reports, make sure that these values remain sufficient.
+
 HID subscriber configuration
 ============================
 
@@ -128,7 +137,7 @@ The HID Service application module translates these writes into dedicated applic
   The :c:member:`hid_host_suspend_event.suspended` field indicates whether the host entered or exited suspend.
 * :c:struct:`hid_sci_mode_request_event` - Submitted when the host requests an SCI mode update.
   The :c:member:`hid_sci_mode_request_event.mode` field contains the requested :c:enum:`bt_hids_sci_mode_value`.
-  This event is submitted only if the :kconfig:option:`CONFIG_BT_HIDS_SCI` Kconfig option is enabled.
+  This event is submitted only if the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled.
 
 Transport for configuration channel
 ===================================

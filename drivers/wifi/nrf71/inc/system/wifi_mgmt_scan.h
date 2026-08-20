@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2024 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/**
+ * @brief Header containing display scan specific declarations for the
+ * Zephyr OS layer of the Wi-Fi driver.
+ */
+
+#ifndef __ZEPHYR_DISP_SCAN_H__
+#define __ZEPHYR_DISP_SCAN_H__
+#include <zephyr/device.h>
+#include <zephyr/net/wifi_mgmt.h>
+
+#include <osal_api.h>
+
+/* Fallback RSSI (dBm) for scan results with no valid signal info
+ */
+#define NRF_WIFI_RSSI_INVALID -127
+
+int nrf_wifi_disp_scan_zep(const struct device *dev, struct net_if *iface,
+			   struct wifi_scan_params *params, scan_result_cb_t cb);
+
+void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
+				struct nrf_wifi_umac_event_scan_done *scan_done_event,
+				unsigned int event_len);
+
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
+void nrf_wifi_rx_bcn_prb_resp_frm(void *vif_ctx,
+				  void *frm,
+				  unsigned short frequency,
+				  signed short signal);
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
+#endif /* __ZEPHYR_DISP_SCAN_H__ */

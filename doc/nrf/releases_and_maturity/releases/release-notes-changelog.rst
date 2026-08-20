@@ -85,7 +85,8 @@ Developing with nRF54H Series
 Developing with nRF53 Series
 ============================
 
-|no_changes_yet_note|
+* Added a workaround for anomaly 166 on the nRF5340 devices and the :kconfig:option:`CONFIG_SOC_NRF53_ANOMALY_166_WORKAROUND` Kconfig option, which allows enabling the workaround.
+  You can use the option also in builds with TF-M.
 
 Developing with nRF52 Series
 ============================
@@ -130,6 +131,12 @@ Security
   * The :kconfig:option:`CONFIG_TFM_LOG_NS_MEMORY_LAYOUT` Kconfig option, which allows printing the configuration of the Secure Attribution Unit (SAU) and the Memory Protection Controller (MPC) during the initialization of TF-M on the nRF54L Series devices.
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
+  * Support for signature verification with ML-DSA-44, ML-DSA-65, and ML-DSA-87 when using the CRACEN driver.
+
+* Updated:
+
+  * Oberon PSA Crypto from v2.0.0 to v2.1.0.
+    The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
 
 Security libraries
 ------------------
@@ -161,7 +168,8 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-|no_changes_yet_note|
+* Added the :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
+  The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
 
 Bluetooth Mesh
 --------------
@@ -186,7 +194,9 @@ Gazell
 Matter
 ------
 
-* Replaced the tables on the :ref:`ug_matter_hw_requirements_ram_flash` and :ref:`ug_matter_hw_requirements_layouts` pages with memory layout charts.
+* Moved all Matter samples, shared sample infrastructure, devicetree partition files, and Matter-specific snippets from ``sdk-nrf`` to the separate `Matter add-on <ncs-matter add-on repository_>`_ repository (``ncs-matter``).
+  The Matter bridge and Thingy:53 weather station reference applications are also relocated into the add-on.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the migration guide.
 
 Matter fork
 +++++++++++
@@ -232,7 +242,8 @@ IPC radio firmware
 Matter bridge
 -------------
 
-|no_changes_yet_note|
+* Moved the Matter bridge application to the `Matter add-on <ncs-matter add-on repository_>`_ repository.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the migration guide.
 
 nRF Audio (formerly nRF5340 Audio)
 ----------------------------------
@@ -262,11 +273,25 @@ nRF Desktop
   * The ``release_fast_pair`` build type for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
     The configuration acts as a HID mouse with Fast Pair support.
     It uses MCUboot in direct-xip mode with software-based image signature verification.
+  * Optional support for dongles with HID SCI, configurable through the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option.
+    The :ref:`nrf_desktop_hid_forward` module now uses :c:macro:`APP_EVENT_SUBSCRIBE_FIRST` to subscribe to the :c:struct:`ble_discovery_complete_event` event.
+    The module updates event data to ensure all other modules are notified about the SCI support.
+  * HID Shorter Connection Intervals (SCI) support on the peripheral side.
+    The :ref:`nrf_desktop_hids` module enables support for the feature in the underlying HID GATT Service.
+    The :ref:`nrf_desktop_ble_latency` module handles HID SCI mode change requests and the related connection parameter updates.
+    Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
+  * The ``hid_sci`` and ``release_hid_sci`` build types for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
+    The configurations act as a HID mouse peripheral with HID SCI support.
+
+* Removed:
+
+  * Partition Manager support from the :ref:`nrf_desktop` application.
 
 Thingy:53: Matter weather station
 ---------------------------------
 
-|no_changes_yet_note|
+* Moved the Thingy:53 Matter Weather Station application to the `Matter add-on <ncs-matter add-on repository_>`_ repository.
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for migration instructions.
 
 Installer (MCUboot Firmware Loader installer)
 -----------------------------------------------
@@ -280,6 +305,10 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 
 Bluetooth samples
 -----------------
+
+* :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
+
+  * Fixed an issue on nRF52 and nRF53 Series devices where timed LED toggling did not work due to incorrect GPPI group setup after the nrfx 4.0 API migration.
 
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
@@ -303,6 +332,8 @@ Bluetooth Mesh samples
 
 Bluetooth Fast Pair samples
 ---------------------------
+
+* Added experimental support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target in all Bluetooth Fast Pair samples.
 
 * Removed support for the nRF52 and nRF53 Series devices from the :ref:`fast_pair_locator_tag` and :ref:`fast_pair_input_device` samples.
   The following board targets have been removed from both samples:
@@ -328,7 +359,7 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_input_device` sample:
 
-    * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54ls05b/cpuapp``, and ``nrf54lc10dk/nrf54lc10a/cpuapp`` board targets.
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
 
 Cellular samples
 ----------------
@@ -361,6 +392,12 @@ DFU samples
 * Updated:
 
   * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
+  * The :ref:`single_slot_sample` sample with support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
+    This is a buttonless DFU enter mechanism.
+  * The :ref:`single_slot_sample` sample with support for the ``nrf52840dk/nrf52840`` board target.
+
+* Removed the Firmware loader entrance sample from the :file:`samples/mcuboot` directory.
+  Its functionality has been consolidated into the :ref:`single_slot_sample` sample, which now covers all supported MCUmgr transports for the MCUboot firmware updater mode.
 
 DECT NR+ samples
 ----------------
@@ -391,13 +428,21 @@ Keys samples
 Matter samples
 --------------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
+* Moved all Matter samples from :file:`nrf/samples/matter/` to the `Matter add-on <ncs-matter add-on repository_>`_ repository under :file:`ncs-matter/samples/`.
+  Sample paths no longer use the ``samples/matter/`` prefix (for example, :file:`ncs-matter/samples/template` replaces :file:`nrf/samples/matter/template`).
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the full list of path changes, Kconfig renames, and build instructions.
 
-  * :ref:`matter_template_sample`
-  * :ref:`matter_temperature_sensor_sample`
+* Renamed Matter-specific Zephyr snippets in the add-on:
 
-  DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
-  See :ref:`ug_matter_hw_requirements_external_flash` for more information.
+  * ``matter-debug`` → ``debug``
+  * ``matter-diagnostic-logs`` → ``diagnostic-logs``
+
+* Updated Matter sample CMake integration to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
+
+* Moved shared Matter sample code from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
+
+* Moved Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
+  Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
 
 Networking samples
 ------------------
@@ -431,7 +476,13 @@ Networking samples
     * Support for mutual TLS (client X.509 certificate authentication), using the new :option:`CONFIG_SAMPLE_PROVISION_CLIENT_CERT` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
 
-  * Updated the sample to enable CoAP by default so that the sample now always builds in support for both HTTP and CoAP, selecting the transport automatically at runtime.
+  * Updated:
+
+    * Enabled CoAP by default so that the sample always builds with support for both HTTP and CoAP.
+      The transport is selected automatically at runtime.
+    * Enabled the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
+
+  * Fixed the HTTP file link, which was previously broken.
 
 * :ref:`net_coap_client_sample` sample:
 
@@ -439,6 +490,8 @@ Networking samples
 
     * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
+
+  * Fixed an issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
 
 NFC samples
 -----------
@@ -501,6 +554,23 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* :ref:`wifi_nrf_cloud` sample:
+
+  * Added:
+
+    * Support for FOTA and device monitoring through `Memfault`_, using the CoAP transport.
+    * Support for dual-slot MCUboot (with FOTA support) on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, and ``nrf7120dk/nrf7120/cpuapp`` board targets.
+
+  * Updated:
+
+    * Transport selection.
+      The sample no longer defaults to MQTT.
+      You must now explicitly select either the MQTT or the CoAP transport, using the new :file:`mqtt.conf` or the existing :file:`coap.conf` configuration file, respectively.
+
+  * Removed:
+
+    * Networking shell support from nRF7002 DK and nRF54LM20 DK.
+
 * Removed support from the following Zephyr samples:
 
   * :zephyr:code-sample:`dns-resolve`
@@ -528,7 +598,7 @@ Wi-Fi samples
 Other samples
 -------------
 
-|no_changes_yet_note|
+* Added the :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
 
 Drivers
 =======
@@ -540,6 +610,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
   * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
   * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
   * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
+  * The :ref:`nrf71_sr_coex` driver, which coordinates Wi-Fi and short-range coexistence on an nRF71 Series device.
 
 SPI drivers
 -----------
@@ -553,12 +624,14 @@ Wi-Fi drivers
 -------------
 
 * Added the :ref:`nRF71 Series Wi-Fi driver <nrf71_wifi_fw_if>` page documenting its firmware interface.
-* Updated the :ref:`wifi_drivers` page by restructuring it into separate nRF70 Series and nRF71 Series sections.
-* Updated the default values of the following Kconfig options to reduce the default RAM footprint of the Wi-Fi drivers for the nRF70 and nRF71 Series:
 
-  * :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS` (or :kconfig:option:`CONFIG_NRF71_RX_NUM_BUFS`) from ``48`` to ``16``.
-  * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
-  * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
+* Updated:
+
+  * The :ref:`wifi_drivers` page by restructuring it into separate nRF70 Series and nRF71 Series sections.
+  * The default values of the following Kconfig options to reduce the default RAM footprint of the Wi-Fi drivers for the nRF70 and nRF71 Series:
+    * :kconfig:option:`CONFIG_NRF70_RX_NUM_BUFS` (or :kconfig:option:`CONFIG_NRF71_RX_NUM_BUFS`) from ``48`` to ``16``.
+    * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
+    * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
 
   See :ref:`migration_3.5` for more information.
 
@@ -593,7 +666,11 @@ Common Application Framework
 
 * :ref:`caf_ble_state`:
 
-  * Added the :c:struct:`ble_peer_sci_conn_rate_event` event to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
+* Added:
+
+  * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
+  * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
+  * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
 
 Debug libraries
 ---------------
@@ -631,11 +708,11 @@ Libraries for networking
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
-  * Fixed an issue with parsing invalid payloads.
+  * Updated to use a new parser for assistance data.
 
 * :ref:`lib_nrf_cloud_agnss` library:
 
-  * Fixed an issue with parsing invalid payloads.
+  * Updated to use a new parser for assistance data.
 
 * :ref:`lib_nrf_cloud` library:
 
@@ -662,9 +739,15 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
+
 * :ref:`lib_ram_pwrdn` library:
 
   * Added support for the nRF54LC10A SoC.
+
+* :ref:`lib_hw_id` library:
+
+  * Added UUID support for the nRF54L Series and the nRF5340 SoC.
 
 Shell libraries
 ---------------
@@ -708,7 +791,7 @@ Memfault integration
 
 * Added support for setting the Memfault project key at runtime using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS` Kconfig option.
 
-* Updated Memfault to version 1.42.0.
+* Updated Memfault to version 1.42.1.
   See the `Memfault firmware SDK changelog`_ for details.
 
 * Removed the ``CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`` Kconfig option from nRF91x targets.
@@ -764,21 +847,21 @@ Zephyr
 
 .. NOTE TO MAINTAINERS: All the Zephyr commits in the below git commands must be handled specially after each upmerge and each nRF Connect SDK release.
 
-The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``684c9e8f32e4373a21098559f748f06915f950c9``, with some |NCS| specific additions.
+The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream Zephyr repository up to and including ``7d46db352251f85a6bc7b5961fb8a86e2f3125e4``, with some |NCS| specific additions.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into |NCS| since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 
 .. code-block:: none
 
-   git log --oneline 684c9e8f32 ^911b3da139
+   git log --oneline 7d46db3522 ^684c9e8f32
 
 For the list of |NCS| specific commits, including commits cherry-picked from upstream, run:
 
 .. code-block:: none
 
-   git log --oneline manifest-rev ^684c9e8f32
+   git log --oneline manifest-rev ^7d46db3522
 
-The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
+The current |NCS| main branch is based on revision ``7d46db3522`` of Zephyr.
 
 .. note::
    For possible breaking changes and changes between the latest Zephyr release and the current Zephyr version, refer to the :ref:`Zephyr release notes <zephyr_release_notes>`.
@@ -797,5 +880,9 @@ zcbor
 Documentation
 =============
 
-* Added the :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
-  To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+* Added:
+
+  *  The :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
+     To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+  * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
+  * The page for each sample now contains an `Open in VS Code` button allowing to quickly open the sample and install required version of the |NCS| toolchain.

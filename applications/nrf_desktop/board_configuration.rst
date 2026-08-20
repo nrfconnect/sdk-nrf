@@ -93,10 +93,6 @@ nRF52840 USB Dongle (``nrf52840dongle/nrf52840``) and nRF52833 USB Dongle (``nrf
       * Bluetooth uses Nordic Semiconductor's SoftDevice link layer and is configured to act as a central.
         Input data comes from Bluetooth and is retransmitted to USB.
       * The configuration with the B0 bootloader is set as default for the ``nrf52840dongle/nrf52840`` board and with the MCUboot bootloader is set as default for the ``nrf52833dongle`` board.
-      * If building with Partition Manager, the nRF5 MBR partition (``nrf5_mbr``) is, by default, automatically added for the ``nrf52840dongle/nrf52840`` board.
-        The partition is not used by the nRF Desktop application.
-        Because of that, application configurations statically define the partition with address and size both set to zero to prevent Partition Manager from trying to place it dynamically.
-        The application did not switch to the ``bare`` board variant to keep backwards compatibility.
 
 nRF52820 USB Dongle (``nrf52820dongle``)
       * The application is configured to act as a dongle that forwards data from both mouse and keyboard.
@@ -159,7 +155,9 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
         You can still use these LEDs with the PWM LED driver, but you must set the LED color to ``LED_COLOR(255, 255, 255)`` or ``LED_COLOR(0, 0, 0)``.
         This ensures the PWM peripheral is not used for the mentioned LEDs.
       * Only Bluetooth LE transport is enabled.
-        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
+        Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
+        Most of the configurations use the Low Latency Packet Mode (LLPM).
+        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
@@ -170,19 +168,23 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * The board supports the ``debug`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``fast_pair`` file suffix).
         The configuration uses the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``), and supports firmware updates using the :ref:`nrf_desktop_dfu` and :ref:`nrf_desktop_dfu_mcumgr`.
 
-Sample mouse (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``)
+Sample mouse or HID SCI dongle (``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``)
       * The configuration uses the nRF54LM20 DK.
-      * The build types allow to build the application as a mouse.
-      * Inputs are simulated based on the hardware button presses.
-      * Bluetooth LE and USB High-Speed transports are enabled.
+      * The build types allow to build the application as a mouse or an HID SCI (Shorter Connection Intervals) supporting dongle.
+      * In mouse configurations, inputs are simulated based on the hardware button presses.
+        Bluetooth LE and USB High-Speed transports are enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
         USB High-Speed is configured to use the USB next stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK_NEXT`).
         The :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_ENABLE` and :option:`CONFIG_DESKTOP_BLE_ADV_CTRL_SUSPEND_ON_USB` Kconfig options are enabled in mouse configurations to improve the HID report rate over USB.
-      * In ``debug``, ``ram_load``, and ``llvm`` configurations, logs are provided through the UART.
+      * In ``hid_sci_dongle`` and ``release_hid_sci_dongle`` configurations, the application is configured to act as a dongle that forwards data from both mouse and keyboard.
+        Bluetooth uses Nordic Semiconductor's SoftDevice Link Layer and is configured to act as a central.
+        Input data comes from Bluetooth and is retransmitted to USB.
+        HID Shorter Connection Intervals (SCI) are used to negotiate the connection parameters with the nRF Desktop peripheral.
+      * In ``debug``, ``ram_load``, ``llvm``, and ``hid_sci_dongle`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54LM20 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * In ``llvm`` configurations, the partition layout is different to accommodate for the higher memory footprint of the ``llvm``  toolchain.
-      * The ``debug``, ``release``, and ``llvm`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
-        All of the configurations enable hardware cryptography for the MCUboot bootloader.
+      * The ``debug``, ``release``, ``llvm``, ``hid_sci_dongle``, and ``release_hid_sci_dongle`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        These configurations enable hardware cryptography using KMU for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
         For more details about KMU, see :ref:`ug_kmu_guides`.

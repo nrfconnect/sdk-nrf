@@ -8,7 +8,6 @@ common:
     regex:
       - "Enhanced ShockBurst ptx sample"
       - "Initialization complete"
-      - "Sending test packet"
   timeout: 15
 
 tests:

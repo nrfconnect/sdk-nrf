@@ -64,6 +64,11 @@ typedef struct {
 	void (*recv_cb)(void *data, size_t len, void *priv);
 	void *priv;
 	volatile bool ipc_ready;
+	/* Endpoint registration has completed at least once. The ICMsg endpoint
+	 * is bound for the lifetime of the Wi-Fi core, so a re-bind must not
+	 * re-run the handshake nor clear @ref ipc_ready.
+	 */
+	bool ipc_bound;
 } wifi_ipc_busyq_t;
 
 typedef struct {

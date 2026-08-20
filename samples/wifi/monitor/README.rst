@@ -1,13 +1,9 @@
 .. _wifi_monitor_sample:
 
-Wi-Fi: Monitor
-##############
+.. ncs-sample::
+   :title: Wi-Fi: Monitor
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Monitor sample demonstrates how to set monitor mode, analyze incoming Wi-Fi® packets, and print packet statistics.
+   The Monitor sample demonstrates how to set monitor mode, analyze incoming Wi-Fi® packets, and print packet statistics.
 
 Requirements
 ************

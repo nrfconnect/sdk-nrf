@@ -7,11 +7,13 @@ Bluetooth LE latency module
    :local:
    :depth: 2
 
-Use the Bluetooth® LE latency module for the following purposes:
+The Bluetooth® LE latency module manages Bluetooth LE connection parameters to regulate data exchange latencies and power consumption.
+Use the Bluetooth LE latency module for the following purposes:
 
 * Lower the Bluetooth LE connection latency when the :ref:`nrf_desktop_config_channel` is in use or when a firmware update is received either by the :ref:`nrf_desktop_ble_smp` or :ref:`nrf_desktop_dfu_mcumgr` (low latency ensures quick data exchange).
 * Request setting the initial connection parameters for a new Bluetooth connection.
 * Keep the connection latency low for the LLPM (Low Latency Packet Mode) connections to improve performance.
+* Handle mode change requests for HID Shorter Connection Intervals (SCI) and adjust the peripheral latency within the active SCI mode.
 * Disconnect the Bluetooth Central if the connection has not been secured in the predefined amount of time after the connection occurred.
 
 Module events
@@ -36,11 +38,18 @@ You can use the option :option:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S` to d
 If the connection is not secured during this period of time, the peripheral device disconnects.
 
 You can set the option :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` to keep the connection latency low for the LLPM connections.
+The option requires :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`.
 This speeds up sending the first HID report after not sending a report for some connection intervals.
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
 
 You can use the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
-The option is enabled by default and depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+The option depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
+It is enabled by default when either :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` or :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` is selected.
+Without one of these options, there is no power-management behavior for the module to apply to these events.
+
+When the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled in the :ref:`nrf_desktop_hids`, the |ble_latency| sets the promptless :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` Kconfig option.
+With this option set, the module handles HID SCI mode change requests and adjusts connection latency using the connection rate API.
+See the :ref:`nrf_desktop_hids` documentation for details about enabling HID SCI support on the peripheral.
 
 Implementation details
 **********************
@@ -75,3 +84,101 @@ The module does not register itself using the ``GEN_CONFIG_EVENT_HANDLERS`` macr
    * The nRF Desktop central ignores the requested connection interval, and only the connection latency is updated.
 
    For more detailed information, see the :ref:`nrf_desktop_ble_conn_params` documentation page.
+
+HID Shorter Connection Intervals
+==================================
+
+When the :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` Kconfig option is enabled, the module can handle connection latency using the connection rate API (:c:func:`bt_conn_le_conn_rate_request`) instead of the standard connection parameter update API (:c:func:`bt_conn_le_param_update`).
+The connection rate API is used for Bluetooth LE peers that support HID SCI.
+
+Connection parameter API selection
+-----------------------------------
+
+By default, the module uses the standard connection parameter update API (:c:func:`bt_conn_le_param_update`) to handle connection parameters.
+Once a :c:struct:`hid_sci_mode_request_event` or a :c:struct:`ble_peer_sci_conn_rate_event` is received, the module marks the peer as SCI capable.
+All the subsequent connection parameter adjustments for the peer rely on :c:func:`bt_conn_le_conn_rate_request` and :c:func:`bt_conn_le_param_update` is no longer used.
+
+Module events
+-------------
+
+The module listens for the following SCI-related events:
+
+* :c:struct:`hid_sci_mode_request_event` - Submitted by the :ref:`nrf_desktop_hids` when the connected Bluetooth host requests an SCI mode change through the HID control point characteristic.
+  The Bluetooth LE latency module requests a connection rate update that matches the requested mode.
+* :c:struct:`ble_peer_sci_conn_rate_event` - Submitted by the :ref:`nrf_desktop_ble_state` when a connection rate update completes or fails.
+  The Bluetooth LE latency module validates the new connection rate parameters against the requested or current SCI mode.
+  If the parameters are not valid for the requested nor current mode, the module attempts to find a valid SCI mode, starting from the most restrictive mode (FAST) and ending with the least restrictive mode (FULL_RANGE).
+  If no valid SCI mode is found, the module defaults to the NONE mode.
+
+When an SCI mode other than NONE is active, the module adjusts the peripheral latency within the limits of the active mode in response to the same data transfer events as in the non-SCI case (:c:struct:`config_event` and :c:struct:`ble_smp_transfer_event`).
+The module skips the latency update request if the maximum latency configured for the active SCI mode is zero, because such a request would have no effect.
+
+Power down and wake up
+----------------------
+
+When the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option is enabled, the module reacts to the power management events.
+
+On a :c:struct:`power_down_event`, the module requests the LOW_POWER mode.
+On a :c:struct:`wake_up_event`, the module restores the last SCI mode requested by the host through the HID Control Point characteristic.
+If the connection is in the out-of-spec state described in :ref:`nrf_desktop_ble_latency_sci_host_updates`, the module does not change SCI mode in response to power management events.
+
+If the host requests a mode other than LOW_POWER while the device is suspended, the module will save the requested mode but will remain in the LOW_POWER SCI mode.
+On wake up, the module will restore the saved mode.
+
+Pending SCI mode and latency updates
+------------------------------------
+
+The module allows only one connection rate update to be in flight at a time.
+When a connection rate change is already in progress, further SCI-related actions are deferred instead of issuing another request immediately.
+
+A pending state is set when:
+
+* A HID SCI mode is requested while a connection rate update is already in progress.
+* A low-latency or high-latency adjustment requested while a connection rate update is already in progress.
+
+In both cases, the module stores the most recently requested SCI mode and latency preference and sets the pending flag.
+If a pending state was already set, the module overrides the previous HID SCI mode and latency preference with the new one.
+
+When the in-flight connection rate update completes, the module checks whether a deferred mode change or latency change is still needed.
+If so, it submits a new connection rate request that applies the stored preferences.
+
+The pending flag is cleared after this check, even when no follow-up request is sent.
+This prevents cyclic connection rate requests when a previous update failed or did not take effect.
+
+.. _nrf_desktop_ble_latency_sci_host_updates:
+
+Out-of-spec host-initiated transport parameter updates
+------------------------------------------------------
+
+The HID over GATT Profile specification defines how HID SCI transport parameters must be negotiated.
+According to `HID Over GATT Profile Specification`_, Section 7.5.2 (*HID Host-initiated transport parameter updates*):
+
+   The HID Host **must** negotiate transport parameters by writing to the HID Control Point characteristic to initiate a new negotiation.
+
+Section 7.5.1 defines the complementary device-initiated path:
+
+   The HID Device must initiate the transport parameters update by initiating the Connection Update Request with the HID Host.
+
+The nRF Desktop peripheral follows the device-initiated path when it adjusts peripheral latency within the active SCI mode.
+It expects the connected HID host to use the HID Control Point characteristic when requesting an SCI mode change.
+
+If the connected host updates transport parameters directly at the Link Layer (for example, by initiating a connection rate update instead of writing to the HID Control Point characteristic), the peripheral treats this as out-of-spec behavior.
+When a :c:struct:`ble_peer_sci_conn_rate_event` is received without a prior HID SCI mode request, the module:
+
+* Attempts to determine a matching SCI mode for the received parameters, starting from the current mode and then trying modes in the order of FAST, DEFAULT, LOW_POWER, and FULL_RANGE.
+  If no SCI mode matches the parameters, the HID SCI mode is set to NONE.
+* From this point on, the module will not attempt to update the latency until it returns to normal operation.
+* The module drops any pending HID SCI mode or latency update requests.
+
+This recovery behavior is application-specific and is not mandated by the specification.
+It allows the peripheral to remain connected and usable with hosts that do not follow the Control Point negotiation procedure.
+In order to return to the normal operation, the host must:
+
+1. Update the connection rate parameters to a range allowing to support all the HID SCI modes.
+2. Request an HID SCI mode change through the HID Control Point characteristic.
+   As a result, the Bluetooth LE latency module requests a matching connection rate update and clears the out-of-spec host-initiated transport parameter update state if the request succeeds.
+   If the current connection parameters are already valid for the requested mode, the module clears the out-of-spec state but no connection rate update is requested.
+
+   .. note::
+      If the peripheral is in suspended/power-down state, the module will save the requested mode and attempt to request LOW_POWER mode parameters.
+      Only if this succeeds, the peripheral will exit the out-of-spec state.

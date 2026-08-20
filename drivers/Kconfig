@@ -26,13 +26,13 @@ rsource "mpsl/Kconfig"
 endif
 
 rsource "mspi/Kconfig"
+rsource "nrf71_sr_coex/Kconfig"
 rsource "net/Kconfig"
 rsource "ppi_seq/Kconfig"
 rsource "regulator/Kconfig"
 rsource "sdhc/Kconfig"
 rsource "sensor/Kconfig"
 rsource "serial/Kconfig"
-rsource "vtf_monitoring/Kconfig"
 rsource "wifi/Kconfig"
 
 config HPF

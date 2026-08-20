@@ -1,13 +1,9 @@
 .. _npm2100_fuel_gauge:
 
-nPM2100: Fuel gauge
-###################
+.. ncs-sample::
+   :title: nPM2100: Fuel gauge
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Fuel gauge sample demonstrates how to calculate the state of charge of a supported primary cell battery using the `nPM2100 <nPM2100 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
+   The Fuel gauge sample demonstrates how to calculate the state of charge of a supported primary cell battery using the `nPM2100 <nPM2100 product website_>`_ and the :ref:`nrfxlib:nrf_fuel_gauge`.
 
 Requirements
 ************

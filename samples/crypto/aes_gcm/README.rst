@@ -1,13 +1,9 @@
 .. _crypto_aes_gcm:
 
-Crypto: AES GCM
-###############
+.. ncs-sample::
+   :title: Crypto: AES GCM
 
-.. contents::
-   :local:
-   :depth: 2
-
-The AES GCM sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the GCM AEAD algorithm with a 128-bit AES key.
+   The AES GCM sample demonstrates how to use the :ref:`PSA Crypto API <ug_psa_certified_api_overview_crypto>` to perform authenticated encryption and decryption operations using the GCM AEAD algorithm with a 128-bit AES key.
 
 Requirements
 ************

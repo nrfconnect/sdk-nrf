@@ -22,7 +22,9 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -40,9 +42,11 @@ tests:
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -58,9 +62,11 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_mcuboot"
 
@@ -77,6 +83,7 @@ tests:
     extra_args:
       - CONFIG_FLASH=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
 
@@ -90,6 +97,20 @@ tests:
       - SB_CONFIG_PPRCORE_TESTAPP=y
       - SB_CONFIG_FLPRCORE_TESTAPP=y
     harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_all_cores"
+
+  benchmarks.bootup_time.all_cores.nrf92:
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - SB_CONFIG_PPRCORE_TESTAPP=y
+      - SB_CONFIG_FLPRCORE_TESTAPP=y
+    harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_all_cores"
 
@@ -119,6 +140,7 @@ tests:
     extra_args:
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
     harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time_lfrc_54l"
 
@@ -132,5 +154,19 @@ tests:
       - CONFIG_POWEROFF=y
       - SB_CONFIG_NETCORE_TESTAPP=y
     harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"
+
+  benchmarks.bootup_time.pm.nrf92:
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_PM=y
+      - CONFIG_POWEROFF=y
+    harness_config:
+      fixture: gpio_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_bootup_time"

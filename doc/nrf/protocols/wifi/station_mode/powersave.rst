@@ -384,6 +384,27 @@ The following figure illustrates the two key parameters of TWT:
 
    TWT Wake Duration and Interval
 
+.. _ug_nrf70_developing_powersave_keepalive:
+
+Connection keep-alive
+*********************
+
+Certain access points disconnect a station device that has been idle for a period of time, without performing any explicit reachability check.
+When operating in Power Save mode, the nRF70 Series device can remain idle for extended periods, which may cause such access points to silently drop the connection.
+
+To interoperate with these access points, the nRF Wi-Fi driver periodically sends a Null data frame to the AP to keep the connection alive and to signal that the station is still reachable.
+The null data frame is an IEEE 802.11 MAC data frame with no payload that is generated and transmitted by the nRF70 Series firmware.
+This feature is enabled by default and slightly increases the average power consumption, because the device wakes up periodically to transmit the keep-alive frame.
+
+You can configure the feature using the following Kconfig options:
+
+* :kconfig:option:`CONFIG_NRF_WIFI_FEAT_KEEPALIVE` - Enables the keep-alive feature.
+  This option is enabled by default.
+  Disable it to avoid the additional power consumption when the connected AP does not disconnect idle clients.
+* :kconfig:option:`CONFIG_NRF_WIFI_KEEPALIVE_PERIOD_S` - Sets the interval, in seconds, between successive keep-alive frames.
+  The default value is 30 seconds and the valid range is 30 to 3600 seconds.
+  Use a longer period to reduce power consumption, provided the AP tolerates the longer idle interval.
+
 .. _ug_nrf70_developing_powersave_usage:
 
 Usage

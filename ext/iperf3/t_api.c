@@ -36,7 +36,9 @@
 #include "iperf.h"
 #include "iperf_api.h"
 
+#if !defined(CONFIG_NRF_IPERF3_INTEGRATION)
 #include "version.h"
+#endif
 
 #include "units.h"
 

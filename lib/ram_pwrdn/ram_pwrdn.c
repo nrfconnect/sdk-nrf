@@ -7,217 +7,110 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
-#include <zephyr/kernel.h>
 #include <stdint.h>
 
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-#include <hal/nrf_power.h>
-#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
-#include <hal/nrf_vmc.h>
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
-#include <hal/nrf_memconf.h>
-#else
-#error "RAM power-down library is not supported on the current platform"
+#include <helpers/nrfx_ram_ctrl.h>
+
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+#include "tfm_ioctl_core_api.h"
 #endif
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
+#if !defined(NRF_MEMORY_RAM_BASE) && defined(NRF_MEMORY_RAM0_BASE)
+#define NRF_MEMORY_RAM_BASE NRF_MEMORY_RAM0_BASE
 #endif
 
 #define RAM_IMAGE_END_ADDR ((uintptr_t)_image_ram_end)
-#define RAM_BANK_COUNT ARRAY_SIZE(banks)
+
+#define RAM_UNIFORM_REGION_SIZE                                                                    \
+	((uintptr_t)RAM_UNIFORM_SECTIONS_TOTAL * (uintptr_t)RAM_SECTION_UNIT_SIZE)
 
 LOG_MODULE_REGISTER(ram_pwrdn, CONFIG_RAM_POWERDOWN_LOG_LEVEL);
 
-struct ram_bank {
-	uintptr_t start;
-	uint8_t section_count;
-	uint16_t section_size;
-};
-
 extern char _image_ram_end[];
 
-static const struct ram_bank banks[] = {
-#if defined(CONFIG_SOC_NRF54L15_CPUAPP)
-	/* Section numbers for RAM00 are 0-3 and for RAM01 are 4-7 within
-	 * the same bank.
-	 */
-	{ .start = 0x20000000UL, .section_count = 8, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF54L10_CPUAPP) || defined(CONFIG_SOC_NRF54LC10A_CPUAPP)
-	/* Section numbers for RAM00 are 0-3 and for RAM01 are 4-5 within
-	 * the same bank.
-	 */
-	{ .start = 0x20000000UL, .section_count = 6, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF54L05_CPUAPP)
-	{ .start = 0x20000000UL, .section_count = 3, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF54LM20A_CPUAPP) || defined(CONFIG_SOC_NRF54LM20B_CPUAPP)
-	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x8000 },
-#elif defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-	{ .start = 0x20000000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x20002000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x20004000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x20006000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x20008000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x2000A000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x2000C000UL, .section_count = 2, .section_size = 0x1000 },
-	{ .start = 0x2000E000UL, .section_count = 2, .section_size = 0x1000 },
-#if CONFIG_SOC_NRF52833
-	{ .start = 0x20010000UL, .section_count = 2, .section_size = 0x8000 },
-#else
-	{ .start = 0x20010000UL, .section_count = 6, .section_size = 0x8000 },
-#endif
-#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
-	{ .start = 0x20000000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20010000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20020000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20030000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20040000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20050000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20060000UL, .section_count = 16, .section_size = 0x1000 },
-	{ .start = 0x20070000UL, .section_count = 16, .section_size = 0x1000 },
+/* Contiguous RAM range in which every power-controllable section has the same size. */
+struct ram_region {
+	uintptr_t start;
+	uintptr_t size;
+	uintptr_t section_size;
+};
+
+static const struct ram_region ram_regions[] = {
+	{
+		.start = NRF_MEMORY_RAM_BASE,
+		.size = RAM_UNIFORM_REGION_SIZE,
+		.section_size = RAM_SECTION_UNIT_SIZE,
+	},
+#if defined(RAM_NON_UNIFORM_SECTIONS)
+	{
+		.start = NRF_MEMORY_RAM_BASE + RAM_UNIFORM_REGION_SIZE,
+		.size = (uintptr_t)NRF_MEMORY_RAM_SIZE - RAM_UNIFORM_REGION_SIZE,
+		.section_size =
+			(uintptr_t)RAM_NON_UNIFORM_BLOCK_UNITS * (uintptr_t)RAM_SECTION_UNIT_SIZE,
+	},
 #endif
 };
 
 /*
- * Power down selected RAM sections of the given bank.
+ * When powering down, only sections that fall entirely within the range are affected, so that
+ * a section still holding part of the application image is never turned off. When powering up,
+ * every section that overlaps the range is affected.
  */
-static void ram_bank_power_down(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
+static void ram_sections_power_set(uintptr_t start_address, uintptr_t end_address, bool power_up)
 {
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER_POS + last_section_id,
-				NRF_POWER_RAMPOWER_S0POWER_POS + first_section_id);
-	nrf_power_rampower_mask_off(NRF_POWER, bank_id, mask);
-#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
-	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
-				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
-	nrf_vmc_ram_block_power_clear(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
-	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
-				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
-	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, false);
+	for (size_t i = 0; i < ARRAY_SIZE(ram_regions); ++i) {
+		const struct ram_region *region = &ram_regions[i];
+		uintptr_t region_end = region->start + region->size;
+		uintptr_t range_start = MAX(start_address, region->start);
+		uintptr_t range_end = MIN(end_address, region_end);
+		uintptr_t section_start;
+		uintptr_t section_end;
+
+		if (range_start >= range_end) {
+			continue;
+		}
+
+		if (power_up) {
+			section_start = ROUND_DOWN(range_start, region->section_size);
+			section_end = ROUND_UP(range_end, region->section_size);
+		} else {
+			section_start = ROUND_UP(range_start, region->section_size);
+			section_end = ROUND_DOWN(range_end, region->section_size);
+		}
+
+		if (section_start < section_end) {
+			LOG_DBG("%s RAM 0x%08lx-0x%08lx",
+				power_up ? "Powering up" : "Powering down",
+				(unsigned long)section_start, (unsigned long)section_end);
+#if defined(CONFIG_SOC_SERIES_NRF71_TFM_RAM_CTRL_SERVICE)
+			if (tfm_platform_ram_ctrl_power_set((uint32_t)section_start,
+							    (uint32_t)(section_end - section_start),
+							    power_up) != TFM_PLATFORM_ERR_SUCCESS) {
+				LOG_ERR("TF-M rejected RAM power-%s range 0x%08lx-0x%08lx",
+					power_up ? "up" : "down", (unsigned long)section_start,
+					(unsigned long)section_end);
+			}
+#else
+			nrfx_ram_ctrl_power_enable_set((void const *)section_start,
+						       section_end - section_start, power_up);
 #endif
-}
-
-/*
- * Power up selected RAM sections of the given bank.
- */
-static void ram_bank_power_up(uint8_t bank_id, uint8_t first_section_id, uint8_t last_section_id)
-{
-#if defined(CONFIG_SOC_NRF52840) || defined(CONFIG_SOC_NRF52833)
-	uint32_t mask = GENMASK(NRF_POWER_RAMPOWER_S0POWER_POS + last_section_id,
-				NRF_POWER_RAMPOWER_S0POWER_POS + first_section_id);
-	nrf_power_rampower_mask_on(NRF_POWER, bank_id, mask);
-#elif defined(CONFIG_SOC_NRF5340_CPUAPP)
-	uint32_t mask = GENMASK(VMC_RAM_POWER_S0POWER_Pos + last_section_id,
-				VMC_RAM_POWER_S0POWER_Pos + first_section_id);
-	nrf_vmc_ram_block_power_set(NRF_VMC, bank_id, mask);
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
-	uint32_t mask = GENMASK(MEMCONF_POWER_CONTROL_MEM0_Pos + last_section_id,
-				MEMCONF_POWER_CONTROL_MEM0_Pos + first_section_id);
-	nrf_memconf_ramblock_control_mask_enable_set(NRF_MEMCONF, bank_id, mask, true);
-#endif
-}
-
-/*
- * Calculate size of the RAM bank.
- */
-static uintptr_t ram_bank_size(const struct ram_bank *bank)
-{
-	return (uintptr_t)bank->section_count * (uintptr_t)bank->section_size;
-}
-
-/*
- * Return ID of the nearest RAM section with start address less or equal to the given address.
- *
- * If the address points before or after the RAM bank then 0 or the number of bank sections
- * is returned, respectively.
- */
-static uint8_t ram_bank_section_id_floor(uintptr_t address, const struct ram_bank *bank)
-{
-	if (address < bank->start) {
-		return 0;
+		}
 	}
-
-	if (address >= bank->start + ram_bank_size(bank)) {
-		return bank->section_count;
-	}
-
-	return (uint8_t)((address - bank->start) / bank->section_size);
 }
 
-/*
- * Returns ID of the nearest RAM section with start address greater or equal to the given address.
- *
- * If the address points before or after the RAM bank then 0 or the number of bank sections
- * is returned, respectively.
- */
-static uint8_t ram_bank_section_id_ceil(uintptr_t address, const struct ram_bank *bank)
-{
-	if (address < bank->start) {
-		return 0;
-	}
-
-	if (address >= bank->start + ram_bank_size(bank)) {
-		return bank->section_count;
-	}
-
-	return (uint8_t)(ROUND_UP(address - bank->start, bank->section_size) / bank->section_size);
-}
-
-/*
- * Returns end address of RAM managed by the Power Down library
- */
 static uintptr_t ram_end_addr(void)
 {
-#if !defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	const struct ram_bank *last_bank = &banks[RAM_BANK_COUNT - 1];
-	uintptr_t bank_table_end = last_bank->start + ram_bank_size(last_bank);
-
-#if DT_HAS_CHOSEN(zephyr_sram)
-	uintptr_t sram_chosen_end =
-		DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) + DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
-
-	return MIN(bank_table_end, sram_chosen_end);
-#else
-	return bank_table_end;
-#endif
-#else
-	return PM_SRAM_PRIMARY_END_ADDRESS;
-#endif
+	return DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) + DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
 }
 
 void power_down_ram(uintptr_t start_address, uintptr_t end_address)
 {
-	for (uint8_t bank_id = 0; bank_id < RAM_BANK_COUNT; ++bank_id) {
-		const struct ram_bank *bank = &banks[bank_id];
-
-		/* Determine bank sections which fully fall within the input address range */
-		uint8_t section_begin = ram_bank_section_id_ceil(start_address, bank);
-		uint8_t section_end = ram_bank_section_id_floor(end_address, bank);
-
-		if (section_begin < section_end) {
-			LOG_DBG("Powering down sections %u-%u of bank %u", section_begin,
-				section_end - 1, bank_id);
-			ram_bank_power_down(bank_id, section_begin, section_end - 1);
-		}
-	}
+	ram_sections_power_set(start_address, end_address, false);
 }
 
 void power_up_ram(uintptr_t start_address, uintptr_t end_address)
 {
-	for (uint8_t bank_id = 0; bank_id < RAM_BANK_COUNT; ++bank_id) {
-		const struct ram_bank *bank = &banks[bank_id];
-
-		/* Determine bank sections which overlap with the input address range */
-		uint8_t section_begin = ram_bank_section_id_floor(start_address, bank);
-		uint8_t section_end = ram_bank_section_id_ceil(end_address, bank);
-
-		if (section_begin < section_end) {
-			LOG_DBG("Powering up sections %u-%u of bank %u", section_begin,
-				section_end - 1, bank_id);
-			ram_bank_power_up(bank_id, section_begin, section_end - 1);
-		}
-	}
+	ram_sections_power_set(start_address, end_address, true);
 }
 
 void power_down_unused_ram(void)

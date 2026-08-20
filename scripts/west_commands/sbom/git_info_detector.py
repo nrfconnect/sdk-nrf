@@ -15,7 +15,9 @@ from west import log
                                                     # FileInfo is used.
 
 _manifest_projects: 'dict[Path, object]' = {}
+_manifest_path_index: 'list[tuple[Path, object]]' = []
 _self_repo_path: 'Path|None' = None
+_self_repo_name: 'str|None' = None
 _self_repo_version: 'str|None' = None
 
 
@@ -186,9 +188,12 @@ def read_version(version_file: Path, include_dev: bool = False) -> 'str|None':
 
 def load_manifest():
     '''Populate the module-level manifest caches consulted by detect_dir.'''
-    global _manifest_projects, _self_repo_path, _self_repo_version
+    global _manifest_projects, _manifest_path_index
+    global _self_repo_path, _self_repo_name, _self_repo_version
     _manifest_projects = {}
+    _manifest_path_index = []
     _self_repo_path = None
+    _self_repo_name = None
     _self_repo_version = None
     try:
         from west.manifest import Manifest
@@ -203,13 +208,31 @@ def load_manifest():
             key = Path(abspath).resolve()
         except OSError:
             continue
+        _manifest_path_index.append((key, project))
         if getattr(project, 'url', None):
             _manifest_projects[key] = project
         elif _self_repo_path is None:
             # by west convention projects[0] is the manifest repo.
             _self_repo_path = key
+            _self_repo_name = getattr(project, 'name', None) or key.name
     if _self_repo_path is not None:
         _self_repo_version = read_version(_self_repo_path / 'VERSION')
+
+    _manifest_path_index.sort(key=lambda item: len(item[0].parts), reverse=True)
+
+
+def match_manifest_project(absolute_path: Path) -> 'tuple[Path, object]|None':
+    '''Return (project_root, project) for the manifest project whose directory is the
+    longest prefix of absolute_path, or None.'''
+    try:
+        target = absolute_path.resolve()
+    except OSError:
+        target = absolute_path
+    parents = set(target.parents)
+    for key, project in _manifest_path_index:
+        if target == key or key in parents:
+            return (key, project)
+    return None
 
 
 def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
@@ -238,8 +261,24 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         git_sha = project.revision or git_sha
     elif _self_repo_version is not None and repo == _self_repo_path:
         git_sha = _self_repo_version
-    if (git_sha is not None) and (git_origin is not None):
-        package_id = f'git#{git_origin}#{git_sha}'.upper()
+    # Fall back to the west manifest when git provided no origin.
+    # This resolves package identity from the manifest without any git remote.
+    package_name = None
+    if git_origin is None:
+        match = match_manifest_project(absolute_path)
+        if match is not None:
+            project_root, mproject = match
+            git_origin = getattr(mproject, 'url', None) or None
+            git_sha = git_sha or getattr(mproject, 'revision', None)
+            if git_origin is None:
+                # The url-less self/manifest repo: resolve it by name only.
+                package_name = getattr(mproject, 'name', None) or project_root.name
+                if project_root == _self_repo_path and _self_repo_version is not None:
+                    git_sha = _self_repo_version
+            if project is None:
+                project = mproject
+
+    if repo is not None:
         output, error_code = command_execute(args.git, 'status', '--porcelain', '--ignored',
                                              '--untracked-files=all', '*', cwd=absolute_path,
                                              return_error_code=True, allow_stderr=True)
@@ -253,6 +292,11 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
                 untracked_files.add(Path(line[3:]).name.upper())
                 continue
             modified_files.add(Path(line[3:]).name.upper())
+    if (git_origin is not None) and (git_sha is not None):
+        package_id = f'git#{git_origin}#{git_sha}'.upper()
+    elif package_name is not None:
+        version_tag = git_sha if git_sha is not None else 'NONE'
+        package_id = f'pkg#{package_name}#{version_tag}'.upper()
     else:
         package_id = ''
     if package_id not in data.packages:
@@ -260,6 +304,8 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package.id = package_id
         package.url = git_origin
         package.version = git_sha
+        if git_origin is None and package_name is not None:
+            package.name = package_name
         if git_origin and git_sha:
             package.purl = git_url_to_purl(git_origin, git_sha)
             package.supplier = args.package_supplier or extract_supplier_from_url(git_origin)

@@ -248,7 +248,7 @@ static psa_status_t check_wstr_publ_key_for_ecdh(psa_ecc_family_t curve_family, 
 	return cracen_ecc_check_public_key(curve, &publ_key_pnt);
 }
 
-psa_status_t check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_family_t curve,
+psa_status_t cracen_check_wstr_pub_key_data(psa_algorithm_t key_alg, psa_ecc_family_t curve,
 				     size_t key_bits, const uint8_t *data,
 				     size_t data_length)
 {

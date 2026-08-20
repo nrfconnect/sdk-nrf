@@ -126,11 +126,25 @@ static void host_tx_ack_slot_free(uint32_t *ack_addr)
 static void host_rx_recv(void *data, size_t len, void *priv)
 {
 	struct nrf_wifi_bus_qspi_dev_ctx *dev_ctx = (struct nrf_wifi_bus_qspi_dev_ctx *)priv;
-	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = dev_ctx->bal_dev_ctx;
-	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = bal_dev_ctx->hal_dev_ctx;
+	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx;
+	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx;
 	wifi_ipc_buf_desc_t msg_info = *(wifi_ipc_buf_desc_t *)data;
 
 	LOG_DBG("Host RX IPC received");
+
+	/* The endpoint stays bound across device teardown, so events can arrive
+	 * with no consumer attached. Drop them, but always release the ring slot
+	 * or the UMAC event ring fills up and wedges the next bring-up.
+	 */
+	if ((callback_func == NULL) || (dev_ctx == NULL)) {
+		LOG_DBG("Host RX IPC event dropped, no consumer");
+		wifi_ipc_host_rx_free_event(&msg_info);
+		return;
+	}
+
+	bal_dev_ctx = dev_ctx->bal_dev_ctx;
+	hal_dev_ctx = bal_dev_ctx->hal_dev_ctx;
+
 	hal_dev_ctx->ipc_msg = (void *)msg_info.addr;
 	callback_func(priv);
 	wifi_ipc_host_rx_free_event(&msg_info);
@@ -153,14 +167,22 @@ void wifi_ipc_host_rx_free_event(const wifi_ipc_buf_desc_t *event_info)
 
 int ipc_init(void)
 {
+	static bool slots_initialized;
 	int i;
 
 	wifi_ipc_host_tx_init(&wifi_host_tx, 0);
 	wifi_ipc_host_rx_init(&wifi_host_rx, 0);
 
-	for (i = 0; i < IPC_TX_ACK_SLOTS; i++) {
-		host_tx_ack_slots[i] = 0U;
-		host_tx_pending_bufs[i] = NULL;
+	/* The ack slots track buffers the UMAC may still be reading. Clearing
+	 * them on a re-init would leak every in-flight buffer, so initialize
+	 * them only once.
+	 */
+	if (!slots_initialized) {
+		for (i = 0; i < IPC_TX_ACK_SLOTS; i++) {
+			host_tx_ack_slots[i] = 0U;
+			host_tx_pending_bufs[i] = NULL;
+		}
+		slots_initialized = true;
 	}
 
 	LOG_DBG("IPC host single endpoint (ipc0) TX+RX initialized");
@@ -169,6 +191,17 @@ int ipc_init(void)
 
 int ipc_deinit(void)
 {
+	/* Reclaim whatever the UMAC has already acknowledged. Buffers still in
+	 * flight stay owned by the ack slots and are reclaimed on a later send.
+	 */
+	host_tx_reclaim_completed();
+
+	/* TODO(WZN-10457): this runs on interface teardown, where the core stays
+	 * powered and the IPC endpoint stays bound. When power management gains a
+	 * real core power-down, tear the endpoint down here (clear the bind latch
+	 * so the next power-up re-runs the handshake) rather than leaving it armed
+	 * against a core that has rebooted.
+	 */
 	return 0;
 }
 
@@ -254,8 +287,18 @@ int ipc_register_rx_cb(int (*rx_handler)(void *priv), void *data)
 					     host_rx_recv, data);
 	if (ret != WIFI_IPC_STATUS_OK) {
 		LOG_ERR("Failed to bind IPC host TX+RX (ipc0): %d", ret);
+		callback_func = NULL;
 		return -1;
 	}
 
 	return 0;
+}
+
+void ipc_unregister_rx_cb(void)
+{
+	/* Detach the consumer only. The endpoint stays bound for the lifetime of
+	 * the Wi-Fi core; events arriving from now on are dropped in
+	 * host_rx_recv() with their ring slot released.
+	 */
+	callback_func = NULL;
 }

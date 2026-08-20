@@ -22,6 +22,8 @@ from .helpers import run_command, timer
 
 logger = logging.getLogger(__name__)
 
+BUILD_COMPLETE_MARKER = ".build_complete"
+
 
 class RequiredBuildException(Exception):
     """Exception raised for errors in required build operations."""
@@ -96,6 +98,8 @@ class RequiredBuild:
     @timer
     def west_build(self):
         """Run west build for the required build configuration."""
+        # Clear any stale completion marker so an interrupted build is not reused.
+        (self.build_dir / BUILD_COMPLETE_MARKER).unlink(missing_ok=True)
         command = [
             "west",
             "build",
@@ -122,6 +126,7 @@ class RequiredBuild:
             logger.error("Timeout building required app")
             shutil.rmtree(self.build_dir)
             raise RequiredBuildException("Timeout building required app") from None
+        (self.build_dir / BUILD_COMPLETE_MARKER).touch()
 
     def get_ready_build(self):
         """Get or create a ready build directory, using file locking to avoid conflicts."""
@@ -169,10 +174,7 @@ class BuildInfo:
 
     build_dir: Path
     is_ready: bool = False
-    pm: bool = False
-    sysbuild: bool = False
     default_domain: str = ""
-    network_core: str = ""
 
     @classmethod
     def create_from_req_build(cls, req_build: RequiredBuild):
@@ -180,24 +182,14 @@ class BuildInfo:
         return cls(build_dir=req_build.build_dir)
 
     def __post_init__(self):
-        """Post-initialization to set build info flags and check readiness."""
-        if (self.build_dir / "pm.config").exists():
-            self.pm = True
-        if (self.build_dir / "domains.yaml").exists():
-            self.sysbuild = True
-            self.default_domain = get_default_domain_name(self.build_dir / "domains.yaml")  # type: ignore
+        """Post-initialization to check readiness and read build metadata."""
         self.is_ready = self.check_build_ready()
+        if self.is_ready and (self.build_dir / "domains.yaml").exists():
+            self.default_domain = get_default_domain_name(self.build_dir / "domains.yaml")  # type: ignore
 
     def check_build_ready(self) -> bool:
-        """Check if the build is ready based on build info flags and files."""
-        if self.pm:
-            if self.sysbuild:
-                return (self.build_dir / "merged.hex").exists()
-            else:
-                return (self.build_dir / "zephyr" / "merged.hex").exists()
-        if self.sysbuild:
-            return (self.build_dir / self.default_domain / "zephyr" / "zephyr.hex").exists()
-        return (self.build_dir / "zephyr" / "zephyr.hex").exists()
+        """Check if the build is ready based on the build complete marker file."""
+        return (self.build_dir / BUILD_COMPLETE_MARKER).exists()
 
 
 def get_required_build(dut: DeviceAdapter, **kwargs) -> Path:

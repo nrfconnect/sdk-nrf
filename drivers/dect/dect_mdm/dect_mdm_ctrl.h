@@ -51,7 +51,7 @@
 struct dect_mdm_ctrl_api_tx_cmd_params {
 	uint8_t flow_id;
 
-	uint8_t data[DECT_MTU];
+	uint8_t *data;
 	uint32_t data_len;
 	uint32_t long_rd_id;
 	uint32_t transaction_id;

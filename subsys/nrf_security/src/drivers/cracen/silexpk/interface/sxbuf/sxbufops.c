@@ -76,12 +76,12 @@ void sx_pk_op2vmem(const sx_const_op *op, uint8_t *mem)
 	sx_pk_op2vmem_be(op, mem);
 }
 
-int sx_op_size(sx_op *op)
+size_t sx_op_size(sx_op *op)
 {
 	return op->sz;
 }
 
-int sx_const_op_size(sx_const_op *op)
+size_t sx_const_op_size(sx_const_op *op)
 {
 	return op->sz;
 }

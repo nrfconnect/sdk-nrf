@@ -11,6 +11,11 @@ config DESKTOP_HID_REPORT_PROVIDER_EVENT
 	help
 	  Enable HID report provider events in nRF Desktop application.
 
+config DESKTOP_HOGP_EVENTS
+	bool "HOGP events"
+	help
+	  Enable HOGP events in nRF Desktop application.
+
 rsource "Kconfig.log"
 
 endmenu

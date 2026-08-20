@@ -23,6 +23,7 @@
 #include <memfault/core/platform/device_info.h>
 #include <memfault/core/data_packetizer.h>
 #include <memfault/http/http_client.h>
+#include <memfault/core/project_key.h>
 
 LOG_MODULE_REGISTER(mds, CONFIG_BT_MDS_LOG_LEVEL);
 

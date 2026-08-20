@@ -1,13 +1,9 @@
 .. _peripheral_bms:
 
-Bluetooth: Peripheral Bond Management Service (BMS)
-###################################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral Bond Management Service (BMS)
 
-.. contents::
-   :local:
-   :depth: 2
-
-The peripheral BMS sample demonstrates how to use the :ref:`bms_readme`.
+   The peripheral BMS sample demonstrates how to use the :ref:`bms_readme`.
 
 Requirements
 ************

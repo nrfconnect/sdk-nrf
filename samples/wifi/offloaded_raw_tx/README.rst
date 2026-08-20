@@ -1,13 +1,9 @@
 .. _wifi_offloaded_raw_tx_packet_sample:
 
-Wi-Fi: Offloaded raw TX
-#######################
+.. ncs-sample::
+   :title: Wi-Fi: Offloaded raw TX
 
-.. contents::
-   :local:
-   :depth: 2
-
-The Offloaded raw TX sample demonstrates how to use the offloaded raw transmit APIs provided by the nRF Wi-Fi driver for transmitting raw packets.
+   The Offloaded raw TX sample demonstrates how to use the offloaded raw transmit APIs provided by the nRF Wi-Fi driver for transmitting raw packets.
 
 Requirements
 ************

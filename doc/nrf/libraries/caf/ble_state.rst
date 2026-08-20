@@ -39,6 +39,14 @@ The following Kconfig options are also available for this module:
   The device disconnects if establishing the connection security level 2 fails.
 * :kconfig:option:`CONFIG_CAF_BLE_STATE_MAX_LOCAL_ID_BONDS` - This option allows to specify the maximum number of allowed bonds per Bluetooth local identity for a Bluetooth Peripheral (:kconfig:option:`CONFIG_BT_PERIPHERAL`).
   If a local identity is already bonded with the maximum number of allowed bonds, new peers are disconnected right after Bluetooth connection is established.
+* :kconfig:option:`CONFIG_CAF_BLE_FRAME_SPACE_EVENTS` - This option causes the module to emit the :c:struct:`ble_peer_frame_space_updated_event`.
+  This event is used to inform other application modules about frame space changes and failed frame space update requests.
+  It depends on :kconfig:option:`CONFIG_BT_FRAME_SPACE_UPDATE`.
+  This option is enabled by default.
+* :kconfig:option:`CONFIG_CAF_BLE_PHY_UPDATED_EVENTS` - This option causes the module to emit the :c:struct:`ble_peer_phy_updated_event`.
+  This event is used to inform other application modules about PHY changes.
+  It depends on :kconfig:option:`CONFIG_BT_USER_PHY_UPDATE`.
+  This option is enabled by default.
 
 Implementation details
 **********************

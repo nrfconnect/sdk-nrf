@@ -21,6 +21,9 @@
 /* https://github.com/zephyrproject-rtos/zephyr/issues/72359 */
 #include <../subsys/bluetooth/audio/bap_endpoint.h>
 
+/* TODO: Remove when group configuration is properly addressed: OCT-3787 */
+#include <../subsys/bluetooth/audio/cap_internal.h>
+
 #include "macros_common.h"
 #include "zbus_common.h"
 #include "bt_le_audio_tx.h"
@@ -954,14 +957,6 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 }
 #endif /* CONFIG_BT_AUDIO_TX */
 
-static bool new_pres_dly_us_set(struct bt_cap_stream *stream, void *user_data)
-{
-	uint32_t *new_pres_dly_us = (uint32_t *)user_data;
-
-	stream->bap_stream.qos->pd = *new_pres_dly_us;
-
-	return true;
-}
 
 static void stream_configured_cb(struct bt_bap_stream *stream,
 				 const struct bt_bap_qos_cfg_pref *server_pref)
@@ -1024,16 +1019,25 @@ static void stream_configured_cb(struct bt_bap_stream *stream,
 
 	srv_store_unlock();
 
-	if (((new_pres_dly_us != stream->qos->pd) &&
-	     le_audio_ep_state_check(stream->ep, BT_BAP_EP_STATE_CODEC_CONFIGURED)) ||
-	    group_reconfigure_needed) {
+	LOG_INF("Group PD sink: %u, source PD: %u", unicast_group->bap_unicast_group->sink_pd,
+		unicast_group->bap_unicast_group->source_pd);
+
+	/* TODO: This part is temporary, see OCT-3787. It only works for PD as this is not part of
+	 * the CIG, and relies on the internal headers.
+	 */
+	uint32_t group_pres_dly_us = (dir == BT_AUDIO_DIR_SINK) ?
+		unicast_group->bap_unicast_group->sink_pd :
+		unicast_group->bap_unicast_group->source_pd;
+
+	if ((new_pres_dly_us != group_pres_dly_us) || group_reconfigure_needed) {
 		LOG_INF("Stream QoS PD: %d, prev group PD: %d, new PD %d", stream->qos->pd,
 			existing_pres_dly_us, new_pres_dly_us);
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, new_pres_dly_us_set,
-							  &new_pres_dly_us);
-		if (ret) {
-			LOG_ERR("Failed to update presentation delay for unicast group: %d", ret);
-			return;
+		if (dir == BT_AUDIO_DIR_SINK) {
+			unicast_group->bap_unicast_group->sink_pd = new_pres_dly_us;
+		}
+
+		if (dir == BT_AUDIO_DIR_SOURCE) {
+			unicast_group->bap_unicast_group->source_pd = new_pres_dly_us;
 		}
 	}
 

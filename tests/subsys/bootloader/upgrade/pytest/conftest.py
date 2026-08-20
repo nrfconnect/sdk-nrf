@@ -9,7 +9,7 @@ import logging
 import pytest
 from twister_harness.device.device_adapter import DeviceAdapter
 from twister_harness.fixtures import determine_scope
-from twister_harness_ext.utils.helpers import reset_board
+from twister_harness_ext.utils.common import reset_board
 from twister_harness_ext.utils.key_provisioning import provision_mcuboot, provision_nsib
 
 logger = logging.getLogger(__name__)

@@ -128,7 +128,7 @@ static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	decode_scalar_25519(area_1);
+	cracen_decode_scalar_25519(area_1);
 
 	/* Clear second half of private key digest: sx_ed25519_ptmult()
 	 * works on an input of SX_ED25519_DGST_SZ bytes.
@@ -275,7 +275,7 @@ int cracen_ed25519_create_pubkey(const uint8_t *priv_key, uint8_t *pub_key)
 	/* The secret scalar s is computed in place from the first half of the
 	 * private key digest.
 	 */
-	decode_scalar_25519(digest);
+	cracen_decode_scalar_25519(digest);
 
 	/* Clear second half of private key digest: ed25519_ptmult()
 	 * works on an input of SX_ED25519_DGST_SZ bytes.

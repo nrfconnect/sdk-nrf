@@ -133,6 +133,18 @@ struct nrf_cloud_agnss_tow_element {
 	uint8_t flags;
 } __packed;
 
+/* Wire format for NRF_CLOUD_AGNSS_GPS_SYSTEM_CLOCK. The sv_tow array is
+ * transmitted separately as individual NRF_CLOUD_AGNSS_GPS_TOWS elements
+ * and assembled locally before being passed to the modem.
+ */
+struct nrf_cloud_agnss_system_clock {
+	uint16_t date_day;
+	uint32_t time_full_s;
+	uint16_t time_frac_ms;
+	uint32_t sv_mask;
+	uint32_t pad; /* reserved; present in wire format */
+} __packed;
+
 struct nrf_cloud_agnss_system_time {
 	uint16_t date_day;
 	uint32_t time_full_s;
@@ -221,13 +233,14 @@ struct nrf_cloud_agnss_element {
 			struct nrf_cloud_agnss_nequick *nequick;
 		} ion_correction;
 		struct nrf_cloud_agnss_tow_element *tow;
-		struct nrf_cloud_agnss_system_time *time_and_tow;
+		struct nrf_cloud_agnss_system_clock *system_clock;
 		struct nrf_cloud_agnss_location *location;
 		struct nrf_cloud_agnss_integrity *integrity;
 		struct nrf_cloud_agnss_gal_ephemeris *gal_ephemeris;
 		struct nrf_cloud_agnss_gal_almanac *gal_almanac;
 		struct nrf_cloud_agnss_gal_integrity *gal_integrity;
 		struct nrf_cloud_agnss_ggto *ggto;
+		void *raw;
 	};
 };
 

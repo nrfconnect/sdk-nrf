@@ -8,7 +8,7 @@
 #include <stddef.h>
 #include <string.h>
 #include <errno.h>
-#include <zephyr/sys/printk.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
@@ -25,6 +25,8 @@
 #include <zephyr/settings/settings.h>
 
 #include <dk_buttons_and_leds.h>
+
+LOG_MODULE_REGISTER(peripheral_lbs, LOG_LEVEL_INF);
 
 #define DEVICE_NAME             CONFIG_BT_DEVICE_NAME
 #define DEVICE_NAME_LEN         (sizeof(DEVICE_NAME) - 1)
@@ -55,11 +57,11 @@ static void adv_work_handler(struct k_work *work)
 	int err = bt_le_adv_start(BT_LE_ADV_CONN_FAST_2, ad, ARRAY_SIZE(ad), sd, ARRAY_SIZE(sd));
 
 	if (err) {
-		printk("Advertising failed to start (err %d)\n", err);
+		LOG_WRN("Advertising failed to start (err %d)", err);
 		return;
 	}
 
-	printk("Advertising successfully started\n");
+	LOG_INF("Advertising successfully started");
 }
 
 static void advertising_start(void)
@@ -70,25 +72,25 @@ static void advertising_start(void)
 static void connected(struct bt_conn *conn, uint8_t err)
 {
 	if (err) {
-		printk("Connection failed, err 0x%02x %s\n", err, bt_hci_err_to_str(err));
+		LOG_WRN("Connection failed, err 0x%02x %s", err, bt_hci_err_to_str(err));
 		return;
 	}
 
-	printk("Connected\n");
+	LOG_INF("Connected");
 
 	dk_set_led_on(CON_STATUS_LED);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)
 {
-	printk("Disconnected, reason 0x%02x %s\n", reason, bt_hci_err_to_str(reason));
+	LOG_INF("Disconnected, reason 0x%02x %s", reason, bt_hci_err_to_str(reason));
 
 	dk_set_led_off(CON_STATUS_LED);
 }
 
 static void recycled_cb(void)
 {
-	printk("Connection object available from previous conn. Disconnect is complete!\n");
+	LOG_INF("Connection object available from previous conn. Disconnect is complete!");
 	advertising_start();
 }
 
@@ -96,15 +98,13 @@ static void recycled_cb(void)
 static void security_changed(struct bt_conn *conn, bt_security_t level,
 			     enum bt_security_err err)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
 	if (!err) {
-		printk("Security changed: %s level %u\n", addr, level);
+		LOG_INF("Security changed: %s level %u", bt_addr_le_str(bt_conn_get_dst(conn)),
+			level);
 	} else {
-		printk("Security failed: %s level %u err %d %s\n", addr, level, err,
-		       bt_security_err_to_str(err));
+		LOG_WRN("Security failed: %s level %u err %d %s",
+			bt_addr_le_str(bt_conn_get_dst(conn)), level, err,
+			bt_security_err_to_str(err));
 	}
 }
 #endif
@@ -121,39 +121,23 @@ BT_CONN_CB_DEFINE(conn_callbacks) = {
 #if defined(CONFIG_BT_LBS_SECURITY_ENABLED)
 static void auth_passkey_display(struct bt_conn *conn, unsigned int passkey)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Passkey for %s: %06u\n", addr, passkey);
+	LOG_INF("Passkey for %s: %06u", bt_addr_le_str(bt_conn_get_dst(conn)), passkey);
 }
 
 static void auth_cancel(struct bt_conn *conn)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Pairing cancelled: %s\n", addr);
+	LOG_INF("Pairing cancelled: %s", bt_addr_le_str(bt_conn_get_dst(conn)));
 }
 
 static void pairing_complete(struct bt_conn *conn, bool bonded)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Pairing completed: %s, bonded: %d\n", addr, bonded);
+	LOG_INF("Pairing completed: %s, bonded: %d", bt_addr_le_str(bt_conn_get_dst(conn)), bonded);
 }
 
 static void pairing_failed(struct bt_conn *conn, enum bt_security_err reason)
 {
-	char addr[BT_ADDR_LE_STR_LEN];
-
-	bt_addr_le_to_str(bt_conn_get_dst(conn), addr, sizeof(addr));
-
-	printk("Pairing failed conn: %s, reason %d %s\n", addr, reason,
-	       bt_security_err_to_str(reason));
+	LOG_WRN("Pairing failed conn: %s, reason %d %s", bt_addr_le_str(bt_conn_get_dst(conn)),
+		reason, bt_security_err_to_str(reason));
 }
 
 static struct bt_conn_auth_cb conn_auth_callbacks = {
@@ -201,7 +185,7 @@ static int init_button(void)
 
 	err = dk_buttons_init(button_changed);
 	if (err) {
-		printk("Cannot init buttons (err: %d)\n", err);
+		LOG_WRN("Cannot init buttons (err: %d)", err);
 	}
 
 	return err;
@@ -212,41 +196,41 @@ int main(void)
 	int blink_status = 0;
 	int err;
 
-	printk("Starting Bluetooth Peripheral LBS sample\n");
+	LOG_INF("Starting Bluetooth Peripheral LBS sample");
 
 	err = dk_leds_init();
 	if (err) {
-		printk("LEDs init failed (err %d)\n", err);
+		LOG_WRN("LEDs init failed (err %d)", err);
 		return 0;
 	}
 
 	err = init_button();
 	if (err) {
-		printk("Button init failed (err %d)\n", err);
+		LOG_WRN("Button init failed (err %d)", err);
 		return 0;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_LBS_SECURITY_ENABLED)) {
 		err = bt_conn_auth_cb_register(&conn_auth_callbacks);
 		if (err) {
-			printk("Failed to register authorization callbacks.\n");
+			LOG_WRN("Failed to register authorization callbacks.");
 			return 0;
 		}
 
 		err = bt_conn_auth_info_cb_register(&conn_auth_info_callbacks);
 		if (err) {
-			printk("Failed to register authorization info callbacks.\n");
+			LOG_WRN("Failed to register authorization info callbacks.");
 			return 0;
 		}
 	}
 
 	err = bt_enable(NULL);
 	if (err) {
-		printk("Bluetooth init failed (err %d)\n", err);
+		LOG_WRN("Bluetooth init failed (err %d)", err);
 		return 0;
 	}
 
-	printk("Bluetooth initialized\n");
+	LOG_INF("Bluetooth initialized");
 
 	if (IS_ENABLED(CONFIG_SETTINGS)) {
 		settings_load();
@@ -254,7 +238,7 @@ int main(void)
 
 	err = bt_lbs_init(&lbs_callbacs);
 	if (err) {
-		printk("Failed to init LBS (err:%d)\n", err);
+		LOG_WRN("Failed to init LBS (err:%d)", err);
 		return 0;
 	}
 

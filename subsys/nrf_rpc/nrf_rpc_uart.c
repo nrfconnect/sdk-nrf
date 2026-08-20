@@ -303,7 +303,13 @@ static void serial_cb(const struct device *uart, void *user_data)
 	uint8_t *rx_buffer;
 	bool new_data = false;
 
-	while (uart_irq_update(uart) && uart_irq_rx_ready(uart)) {
+	while (true) {
+		uart_irq_update(uart);
+
+		if (!uart_irq_rx_ready(uart)) {
+			break;
+		}
+
 		rx_len = ring_buf_put_claim(&uart_tr->rx_ringbuf, &rx_buffer,
 					    uart_tr->rx_ringbuf.size);
 		if (rx_len > 0) {

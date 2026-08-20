@@ -1,13 +1,9 @@
 .. _smp_svr_ext_xip:
 
-nRF5340: SMP Server with external XIP
-#####################################
+.. ncs-sample::
+   :title: nRF5340: SMP Server with external XIP
 
-.. contents::
-   :local:
-   :depth: 2
-
-This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using Execute in place (XIP) and the Simple Management Protocol (SMP) server.
+   This sample demonstrates how to split an application that partially resides on internal flash and Quad Serial Peripheral Interface (QSPI) flash by using Execute in place (XIP) and the Simple Management Protocol (SMP) server.
 
 Requirements
 ************
@@ -34,7 +30,7 @@ The sample enables the splitting by:
 * Using the project's CMake file which describes relocation of certain libraries or objects to an external XIP area.
 * Using a linker script that describes the external QSPI area.
   (The execution code from the external memory should link to it.)
-* Using the static partition manager description for appropriate memory mapping.
+* Using devicetree memory maps in the :file:`dts` folder for appropriate flash partitioning.
 
 For details on SMP features implemented by the sample, see the Zephyr :zephyr:code-sample:`smp-svr` documentation.
 
@@ -95,17 +91,17 @@ For this sample configuration, MCUmgr supports the uploading of three target ima
 The MCUmgr ``image upload`` command has the optional ``-e -n <image>`` parameter, which lets you select the target image for upload.
 When this parameter is not provided, ``0`` is assumed (interpreted as the default behavior), and MCUmgr uploads to ``image-1`` (MCUboot's secondary slot).
 
-See the Partition manager (PM) label for slot-to-``<image>`` translation:
+Use the partition node to map MCUboot slots to ``<image>`` for MCUmgr:
 
-    +-------------------------+--------+-------------+---------------------------+
-    | PM label                | Slot   | -n <image>  |       Firmware part       |
-    +=========================+========+=============+===========================+
-    | ``mcuboot_secondary``   | slot-1 |     0       | Internal application part |
-    +-------------------------+--------+-------------+---------------------------+
-    | ``mcuboot_secondary_1`` | slot-3 |     1       | Networking                |
-    +-------------------------+--------+-------------+---------------------------+
-    | ``mcuboot_secondary_2`` | slot-5 |     2       | QSPI application part     |
-    +-------------------------+--------+-------------+---------------------------+
+    +---------------------+--------+-------------+------------------------------+
+    | Partition node      | Slot   | -n <image>  |       Firmware part          |
+    +=====================+========+=============+==============================+
+    | ``slot1_partition`` | slot-1 |     0       | Internal application part    |
+    +---------------------+--------+-------------+------------------------------+
+    | ``slot3_partition`` | slot-3 |     1       | Networking                   |
+    +---------------------+--------+-------------+------------------------------+
+    | ``slot5_partition`` | slot-5 |     2       | QSPI application part        |
+    +---------------------+--------+-------------+------------------------------+
 
 .. note::
 
@@ -172,6 +168,5 @@ The sample uses the following Zephyr library:
 
 * :ref:`zephyr:mcu_mgr`
 
-It also uses the following |NCS| library:
-
-* :ref:`partition_manager`
+The memory layout is defined in the sample devicetree files located in the :file:`dts` folder.
+See :ref:`devicetree-based partitioning <zephyr:dt-guide>` for more information.

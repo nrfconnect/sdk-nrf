@@ -207,7 +207,7 @@ From the power optimization point of view, the most important functions are:
 Matter
 ======
 
-To optimize the power consumption of your Matter application, complete the actions listed on the :ref:`ug_matter_device_low_power_configuration` page.
+Refer to the `Matter Add-on`_ documentation for more information about power optimization for Matter applications.
 
 NFC
 ===

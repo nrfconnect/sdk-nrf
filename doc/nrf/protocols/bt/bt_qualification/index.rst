@@ -149,7 +149,7 @@ Bluetooth QDID inheritance in Matter certification
 When applying for Matter certification, you must present a self-attestation that confirms you have applied for and obtained the certification for the transport platform you are using for your Matter component.
 If your product uses a qualified Bluetooth stack provided as part of the |NCS|, you can inherit this certification from Nordic Semiconductor, provided that you do not introduce any changes to the stack.
 
-See the :ref:`ug_matter_device_certification_reqs_dependent` section for details.
+See the `Matter certification`_ section for details.
 
 Support
 *******

@@ -424,6 +424,14 @@ The application supports the following build types:
      - ``keyboard``
      - ``nrf52840dk/nrf52840``
      - Debug version of the application that lets you generate the application with the keyboard role.
+   * - HID SCI mouse
+     - ``hid_sci``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Debug version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
+   * - Release HID SCI mouse
+     - ``release_hid_sci``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Release version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
    * - MCUboot QSPI
      - ``mcuboot_qspi``
      - ``nrf52840dk/nrf52840``
@@ -449,6 +457,14 @@ The application supports the following build types:
      - ``release_4llpmconn``
      - ``nrf52840dongle/nrf52840``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
+   * - HID SCI dongle
+     - ``hid_sci_dongle``
+     - ``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``
+     - Debug version of the application that acts as a BLE HID SCI dongle bridging radio connected HID peripherals.
+   * - Release HID SCI dongle
+     - ``release_hid_sci_dongle``
+     - ``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``
+     - Release version of the application that acts as a BLE HID SCI dongle.
    * - LLVM
      - ``llvm``
      - ``nrf54lm20dk/nrf54lm20a/cpuapp``

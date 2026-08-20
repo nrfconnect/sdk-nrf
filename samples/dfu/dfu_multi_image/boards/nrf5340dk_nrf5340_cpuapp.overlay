@@ -39,10 +39,11 @@
 			reg = <0x44000 DT_SIZE_K(208)>;
 		};
 
+		/* 256 KB to match the default network-core primary slot (slot2/RAM flash). */
 		slot3_partition: partition@78000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-3";
-			reg = <0x78000 DT_SIZE_K(208)>;
+			reg = <0x78000 DT_SIZE_K(256)>;
 		};
 
 		dfu_multi_image_helper_partition: partition@b8000 {

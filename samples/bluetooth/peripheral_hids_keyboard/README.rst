@@ -1,18 +1,14 @@
 .. _peripheral_hids_keyboard:
 
-Bluetooth: Peripheral HIDS keyboard
-###################################
+.. ncs-sample::
+   :title: Bluetooth: Peripheral HIDS keyboard
 
-.. contents::
-   :local:
-   :depth: 2
+   The Peripheral HIDS keyboard sample demonstrates how to use the :ref:`hids_readme` to implement a keyboard input device that you can connect to your computer.
 
-The Peripheral HIDS keyboard sample demonstrates how to use the :ref:`hids_readme` to implement a keyboard input device that you can connect to your computer.
+   The sample also shows how to perform LE Secure Connections Out-of-Band pairing using NFC.
 
-The sample also shows how to perform LE Secure Connections Out-of-Band pairing using NFC.
-
-.. note::
-   |nrf_desktop_HID_ref|
+   .. note::
+      |nrf_desktop_HID_ref|
 
 Requirements
 ************

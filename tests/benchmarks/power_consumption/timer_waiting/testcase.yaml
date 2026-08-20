@@ -43,8 +43,9 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_16M.overlay"
+      - FILE_SUFFIX=16M
 
   benchmarks.power_consumption.timer_waiting_32M_nrf54l:
     integration_platforms:
@@ -66,5 +67,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_320M.overlay"
+      - FILE_SUFFIX=320M

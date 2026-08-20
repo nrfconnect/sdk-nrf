@@ -1,14 +1,10 @@
 .. _http_modem_full_update_sample:
 
-Cellular: HTTP full modem update
-################################
+.. ncs-sample::
+   :title: Cellular: HTTP full modem update
 
-.. contents::
-   :local:
-   :depth: 2
-
-The HTTP full modem update sample shows how to perform a full firmware update of the modem.
-The sample downloads the modem firmware signed by Nordic Semiconductor and updates the firmware.
+   The HTTP full modem update sample shows how to perform a full firmware update of the modem.
+   The sample downloads the modem firmware signed by Nordic Semiconductor and updates the firmware.
 
 Requirements
 ************

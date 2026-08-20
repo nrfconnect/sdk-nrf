@@ -1,14 +1,10 @@
 .. _multicore_idle_test:
 
-Multicore idle test
-###################
+.. ncs-sample::
+   :title: Multicore idle test
 
-.. contents::
-   :local:
-   :depth: 2
-
-The test benchmarks the idle behavior of an application that runs on multiple cores.
-It uses a system timer as a wake-up source.
+   The test benchmarks the idle behavior of an application that runs on multiple cores.
+   It uses a system timer as a wake-up source.
 
 Requirements
 ************

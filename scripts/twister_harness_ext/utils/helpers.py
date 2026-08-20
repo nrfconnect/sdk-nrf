@@ -9,6 +9,7 @@ from __future__ import annotations
 import functools
 import logging
 import os
+import re
 import shlex
 import subprocess
 import time
@@ -79,16 +80,6 @@ def run_command(command: list[str], timeout: int = 30) -> subprocess.CompletedPr
     return ret
 
 
-def reset_board(dev_id: str | None = None, reset_kind: str | None = None):
-    """Reset a board using nrfutil, optionally specifying a device ID."""
-    command = ["nrfutil", "device", "reset"]
-    if reset_kind:
-        command.extend(["--reset-kind", reset_kind])
-    if dev_id:
-        command.extend(["--serial-number", dev_id])
-    run_command(command)
-
-
 def nrfutil_write(
     address: str, value: str, dev_id: str | None = None, core: str | None = None
 ) -> None:
@@ -115,3 +106,50 @@ def nrfutil_write(
         cmd.extend(["--core", core])
 
     run_command(cmd)
+
+
+def nrfutil_read(
+    address: str | int, bytes_count: int, dev_id: str | None = None, core: str | None = None
+) -> str:
+    """Read data from a specific address on the device.
+
+    :param address: memory address to read from (can be hex string like "0x1000" or int)
+    :param bytes_count: number of bytes to read
+    :param dev_id: serial number of the device
+    :param core: core to target (optional)
+    :return: the data read from the device as a hex string (e.g., "0x12345678")
+    """
+    cmd = [
+        "nrfutil",
+        "device",
+        "read",
+        "--address",
+        str(address),
+        "--bytes",
+        str(bytes_count),
+    ]
+
+    if dev_id:
+        cmd.extend(["--serial-number", dev_id])
+    if core:
+        cmd.extend(["--core", core])
+
+    result = run_command(cmd)
+    logger.debug(f"nrfutil read output: {result.stdout}")
+
+    # Parse the address from the input to create the regex pattern
+    if isinstance(address, str) and address.startswith("0x"):
+        addr_int = int(address, 16)
+    else:
+        addr_int = int(address, 0)  # Handle both hex and decimal  # type: ignore
+
+    # Create regex pattern to match the output format: "0xADDRESS: DATA"
+    hex_pattern = rf"0x{addr_int:08X}:\s+(\S+)"
+    match = re.search(hex_pattern, result.stdout, re.IGNORECASE)
+
+    if match:
+        hex_data = f"0x{match.group(1).lower()}"
+        logger.info(f"Parsed hex data: {hex_data}")
+        return hex_data
+    else:
+        raise ValueError(f"Could not parse hex data from nrfutil output: {result.stdout}")

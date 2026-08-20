@@ -33,10 +33,10 @@ Enable the following sysbuild options in a ``sysbuild.conf`` file:
       .. code-block:: cfg
 
          SB_CONFIG_BOOTLOADER_MCUBOOT=y
-         SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
          SB_CONFIG_NETCORE_APP_UPDATE=y
          SB_CONFIG_SECURE_BOOT_NETCORE=y
          SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+         SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE=y
 
          # This will enable the hci_ipc image for the network core, change to the desired image
          SB_CONFIG_NETCORE_HCI_IPC=y
@@ -46,8 +46,9 @@ Enable the following sysbuild options in a ``sysbuild.conf`` file:
       .. code-block:: cfg
 
          SB_CONFIG_BOOTLOADER_MCUBOOT=y
-         SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY=y
          SB_CONFIG_QSPI_XIP_SPLIT_IMAGE=y
+         SB_CONFIG_NETCORE_NONE=y
+         SB_CONFIG_SECURE_BOOT_NETCORE=n
 
 Additionally, set the following application options:
 
@@ -95,48 +96,34 @@ See the following snippet for an example of the Nordic Thingy:53 configuration t
     Due to QSPI peripheral product anomaly, the QSPI peripheral must be run with the ``HFCLK192MCTRL=0`` setting.
     Any other value may cause undefined operation of the device.
 
-Add the following to the DTS overlay for your board:
+Setting up NVM memory layout with devicetree
+********************************************
 
-.. code-block:: devicetree
-
-    / {
-        chosen {
-                nordic,pm-ext-flash = &mx25r64;
-        };
-    };
-
-Setting up static partition manager
-***********************************
-
-.. include:: ../../../includes/pm_deprecation.txt
-
-You need to complete the setup in order to use a static partitioning in your project.
+Complete a setup to use the expected NVM memory layout with devicetree partitioning.
 The configuration must have 3 images with 2 slots each:
 
-.. figure:: images/nrf5340_static_partition_manager_slots.svg
-   :alt: Static partitioning slots in the nRF5340 SoC
+.. figure:: images/nrf5340_extxip_partitions.svg
+   :alt: Partitioning slots in the nRF5340 SoC
 
-   Static partitioning slots in the nRF5340 SoC.
+   Partitioning slots in the nRF5340 SoC.
 
 * The first set of slots is for the internal flash part of the application.
-  These slots should be named ``mcuboot_primary`` and ``mcuboot_secondary``.
+  Use the partition nodes ``slot0_partition`` and ``slot1_partition``.
 * The second set of slots is for the network core update.
-  These slots should be named ``mcuboot_primary_1`` and ``mcuboot_secondary_1``.
+  Use the partition nodes ``slot2_partition`` and ``slot3_partition``.
+  The partition node ``slot2_partition`` is defined in the MCUboot flash simulator devicetree overlay.
+  You only need to align its size with ``slot3_partition`` to match the expected NVM memory layout.
+  Both slots should be the same size as the ``s0_partition`` partition node in the ``cpunet`` images.
 * The third set of slots is for the QSPI XIP part of the application.
-  These slots should be named ``mcuboot_primary_2`` and ``mcuboot_secondary_2``.
-  There should also be ``mcuboot_primary_2_pad`` (which should be the same size as ``mcuboot_pad``) and ``mcuboot_primary_2_app``.
+  Use the partition nodes ``slot4_partition`` and ``slot5_partition``.
 
-This means a basic dual image configuration for the nRF5340 DK needs to describe an external QSPI XIP code partition as ``mcuboot_primary_2`` partition.
-Additionally, ensure that:
+See the following snippet for an example of the memory layout configuration for devicetree:
 
-* The ``mcuboot_primary_2`` address is expressed as the QSPI flash physical address.
-* The ``device`` field is the QSPI device name.
-* The ``region`` field is set as ``external_flash``.
+.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/boards/nrf5340dk_nrf5340_cpuapp.overlay
+    :language: dts
 
-See the following snippet for an example of the static configuration for partition manager:
-
-.. literalinclude:: ../../../../../samples/nrf5340/extxip_smp_svr/pm_static.yml
-    :language: yaml
+Partitioning for the ``cpunet`` images (``b0n`` and ``hci_ipc``) is expected to follow the nRF5340 SoC configuration.
+See :file:`sysbuild/b0n.overlay` in the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample.
 
 Configuring linker script
 *************************
@@ -147,7 +134,7 @@ The ``ORIGIN`` of the area can be calculated using following elements:
 
 * The QSPI memory starting with the 0x10000000 internal memory address.
 * The offset of an external application part image within the QSPI flash.
-  The external application code partition is mapped by the ``mcuboot_primary_2`` PM partition.
+  The external application code is mapped by the partition node ``slot4_partition``.
 * The image header size of the MCUboot image (0x200).
 
 See the following example of the calculation:
@@ -161,12 +148,12 @@ See the following example of the calculation:
 
     MEMORY
     {
-        /* This maps in mcuboot_primary_2 partition defined in pm_static.yaml
+        /* This maps the partition node slot4_partition from the application devicetree overlay.
         * components for ORIGIN calculation:
         *  - 0x10000000: offset of QSPI external memory in SoC memory mapping.
-        *  - 0x120000: mcuboot_primary_2 offset in QSPI external memory
+        *  - 0x120000: slot4_partition offset in QSPI external memory
         *  - 0x200: image header size.
-        * The size of this region is size of mcuboot_primary_2 reduced by the
+        * The size of this region is size of slot4_partition reduced by the
         * image header size.
         */
         EXTFLASH (wx) : ORIGIN = 0x10120200, LENGTH = 0x3FE00

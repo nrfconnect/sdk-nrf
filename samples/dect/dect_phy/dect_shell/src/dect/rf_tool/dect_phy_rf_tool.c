@@ -61,6 +61,8 @@ struct dect_phy_rf_tool_rx_metrics {
 	uint32_t rx_pcc_header_not_valid_count;
 
 	uint32_t rx_pdc_crc_error_count;
+	/** Count of PCCs with valid header (used for 1st/2nd packet logic in find_rx_sync). */
+	uint32_t rx_valid_pcc_count;
 
 	int32_t rx_rssi_avg_q3; /* Q3 fixed-point RSSI average (value * 8) */
 	bool rx_rssi_avg_initialized;
@@ -287,14 +289,15 @@ static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_even
 		if (evt->header_status != NRF_MODEM_DECT_PHY_HDR_STATUS_VALID) {
 			rf_tool_data.rx_metrics.rx_pcc_header_not_valid_count++;
 		} else {
-			/* Handle RX synch logic directly in ISR context */
-			uint32_t pkt_count = atomic_get(
-				&rf_tool_data.rx_metrics.rx_total_pkt_count);
+			/* Handle RX synch logic directly in ISR context.
+			 * Use count of valid PCCs for a synch detection on RX.
+			 */
+			uint32_t valid_pcc_count = rf_tool_data.rx_metrics.rx_valid_pcc_count;
 			struct dect_phy_rf_tool_params *cmd_params = &(rf_tool_data.cmd_params);
 
 			if (cmd_params->find_rx_sync) {
-				if (pkt_count == 0) {
-					/* 1st pkt, we got synch */
+				if (valid_pcc_count == 0) {
+					/* 1st valid PCC, we got synch */
 					rf_tool_data.rx_metrics.last_synch_pcc_stf_time =
 						evt->stf_start_time;
 
@@ -308,35 +311,45 @@ static void dect_phy_rf_tool_mdm_pcc_cb(const struct nrf_modem_dect_phy_pcc_even
 						 */
 						need_thread_processing = true;
 					}
-				} else if (pkt_count == 1) {
-					/* 2nd pkt: calculate frame count for synch rx restart */
-					int frame_count_for_synch_rx_restart =
-						((evt->stf_start_time -
-						  rf_tool_data.rx_metrics.last_synch_pcc_stf_time) /
-						 rf_tool_data.frame_len_mdmticks) - 1;
+				} else if (valid_pcc_count == 1) {
+					/* 2nd valid PCC: calculate frame count for synch rx
+					 * restart.
+					 * Only compute when:
+					 * stf_start_time >= last_synch_pcc_stf_time
+					 * to avoid unsigned underflow; otherwise use 0.
+					 */
+					uint64_t last_stf =
+						rf_tool_data.rx_metrics.last_synch_pcc_stf_time;
+					int frame_count = 0;
 
-					if (frame_count_for_synch_rx_restart < 0) {
-						frame_count_for_synch_rx_restart = 0;
+					if (evt->stf_start_time >= last_stf) {
+						int n = (evt->stf_start_time - last_stf) /
+							rf_tool_data.frame_len_mdmticks - 1;
+
+						frame_count = (n < 0) ? 0 : n;
 					}
-					rf_tool_data.frame_count_for_synch_rx_restart =
-						frame_count_for_synch_rx_restart;
+					rf_tool_data.frame_count_for_synch_rx_restart = frame_count;
 				}
 			} else if (cmd_params->mode == DECT_PHY_RF_TOOL_MODE_RX_TX) {
-				if (pkt_count == 0) {
-					/* Synch is from our 1st RX frame time sent to modem */
-					int frame_count_for_synch_rx_restart =
-						((evt->stf_start_time -
-							rf_tool_data.rx_metrics
-								.first_rx_mdm_op_frame_time) /
-							rf_tool_data.frame_len_mdmticks);
+				if (valid_pcc_count == 0) {
+					/* Synch is from our 1st RX frame time sent to modem. */
+					uint64_t first =
+						rf_tool_data.rx_metrics.first_rx_mdm_op_frame_time;
+					int frame_count = 0;
 
-					if (frame_count_for_synch_rx_restart < 0) {
-						frame_count_for_synch_rx_restart = 0;
+					/* Only compute when we have first RX op time and
+					 * STF >= first; if STF before RX op start, keep 0.
+					 */
+					if (first != 0 && evt->stf_start_time >= first) {
+						int n = (evt->stf_start_time - first) /
+							rf_tool_data.frame_len_mdmticks;
+
+						frame_count = (n < 0) ? 0 : n;
 					}
-					rf_tool_data.frame_count_for_synch_rx_restart =
-						frame_count_for_synch_rx_restart;
+					rf_tool_data.frame_count_for_synch_rx_restart = frame_count;
 				}
 			}
+			rf_tool_data.rx_metrics.rx_valid_pcc_count++;
 		}
 	}
 
@@ -805,7 +818,7 @@ static uint64_t dect_phy_rf_tool_next_frame_time_get(bool restart)
 		uint64_t offset = cmd_params->rx_frame_start_offset *
 				  DECT_RADIO_SUBSLOT_DURATION_IN_MODEM_TICKS;
 		uint64_t last_frame_start_time = last_rx - offset;
-		uint64_t next_frame_start = last_frame_start_time;
+		uint64_t next_frame_start = last_frame_start_time + frame_len;
 
 		while (next_frame_start < first_possible_start) {
 			next_frame_start += frame_len;

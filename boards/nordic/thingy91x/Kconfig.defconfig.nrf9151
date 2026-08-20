@@ -22,10 +22,6 @@ choice TFM_PROFILE_TYPE
 	default TFM_PROFILE_TYPE_MINIMAL
 endchoice
 
-config PM_PARTITION_SIZE_TFM_SRAM
-	hex
-	default 0x4000
-
 endif # BUILD_WITH_TFM
 
 config BT_HCI_VS

@@ -13,71 +13,86 @@ from license_utils import get_license, get_spdx_license_expr_info, is_spdx_licen
 DEPENDENCY_PLACEHOLDER_ID = 'DEPENDENCY-INFORMATION-UNAVAILABLE'
 
 
+def make_license_expression(licenses: 'set[str]') -> str:
+    '''Convert a set of licenses to a single SPDX license expression.'''
+    if len(licenses) == 0:
+        return ''
+    simple_expr_items = set()
+    or_expr_items = set()
+    repeated_expr_items = set()
+    for license in licenses:
+        license = license.upper()
+        info = get_spdx_license_expr_info(license)
+        if info.valid and not info.is_id_only and len(info.licenses) > 1:
+            repeated_expr_items.update(info.licenses)
+        if not info.valid or info.or_present:
+            or_expr_items.add(license)
+        else:
+            simple_expr_items.add(license)
+    simple_expr_items -= repeated_expr_items
+    if len(or_expr_items) > 1 or len(simple_expr_items) > 0:
+        or_expr_items = {f'({x})' for x in or_expr_items}
+    return ' AND '.join(sorted(simple_expr_items.union(or_expr_items)))
+
+
 def pre_process(data: Data, built_date: 'str|None' = None):
     '''Do pre-processing of data for simpler usage by the output modules.
     built_date (UTC ISO 8601 or None) is stamped on application packages.
     '''
     # Sort files
     data.files.sort(key=lambda f: f.file_path)
-    # Convert list of licenses to license expression for each file
+    # Convert concluded licenses to a single SPDX license expression for each file.
     for file in data.files:
-        licenses = file.licenses if len(file.licenses) > 0 else ['']
-        simple_expr_items = set()
-        or_expr_items = set()
-        repeated_expr_items = set()
-        for license in licenses:
-            license = license.upper()
-            info = get_spdx_license_expr_info(license)
-            if info.valid and not info.is_id_only and len(info.licenses) > 1:
-                repeated_expr_items.update(info.licenses)
-            if not info.valid or info.or_present:
-                or_expr_items.add(license)
-            else:
-                simple_expr_items.add(license)
-        simple_expr_items -= repeated_expr_items
-        if len(or_expr_items) > 1 or len(simple_expr_items) > 0:
-            or_expr_items = { f'({x})' for x in or_expr_items }
-        file.license_expr = ' AND '.join(sorted(simple_expr_items.union(or_expr_items)))
+        file.license_expr = make_license_expression(file.licenses)
     # Collect all used detectors
     for file in data.files:
         data.detectors.update(file.detectors)
     # Collect all used licenses and license expressions and put them into data.licenses
     used_licenses = dict()
     for file in data.files:
-        if file.license_expr in used_licenses:
-            continue
-        info = get_spdx_license_expr_info(file.license_expr)
-        if not info.valid or not info.is_id_only:
-            expr = LicenseExpr()
-            expr.valid = info.valid
-            expr.id = file.license_expr
-            expr.friendly_id = info.friendly_expr
-            expr.licenses = sorted(info.licenses)
-            expr.custom = not info.valid
-            for id in expr.licenses:
-                if not is_spdx_license(id):
-                    expr.custom = True
-                    break
-            used_licenses[file.license_expr] = expr
-        for id in info.licenses:
-            if id in used_licenses:
+        expressions = [file.license_expr, *file.licenses_in_file]
+        for license_expr in expressions:
+            if license_expr in used_licenses:
                 continue
-            elif is_spdx_license(id):
-                used_licenses[id] = get_license(id)
-            elif id in data.licenses:
-                used_licenses[id] = data.licenses[id]
-            else:
-                lic = get_license(id)
-                if lic is None:
-                    lic = License()
-                    lic.id = id
-                    lic.friendly_id = id
-                used_licenses[id] = lic
+            info = get_spdx_license_expr_info(license_expr)
+            if not info.valid or not info.is_id_only:
+                expr = LicenseExpr()
+                expr.valid = info.valid
+                expr.id = license_expr
+                expr.friendly_id = info.friendly_expr
+                expr.licenses = sorted(info.licenses)
+                expr.custom = not info.valid
+                for id in expr.licenses:
+                    if not is_spdx_license(id):
+                        expr.custom = True
+                        break
+                used_licenses[license_expr] = expr
+            for id in info.licenses:
+                if id in used_licenses:
+                    continue
+                if is_spdx_license(id):
+                    used_licenses[id] = get_license(id)
+                elif id in data.licenses:
+                    used_licenses[id] = data.licenses[id]
+                else:
+                    lic = get_license(id)
+                    if lic is None:
+                        lic = License()
+                        lic.id = id
+                        lic.friendly_id = id
+                    used_licenses[id] = lic
     data.licenses = used_licenses
     # Pre-compute friendly-cased license expression so the SPDX LicenseConcluded matches the casing
     for file in data.files:
         lic = data.licenses.get(file.license_expr)
         file.license_expr_friendly = lic.friendly_id if lic is not None else file.license_expr
+        file.infile_lics = list()
+        for license_expr in file.licenses_in_file:
+            lic = data.licenses.get(license_expr)
+            file.infile_lics.append(
+                lic.friendly_id if lic is not None else license_expr
+            )
+        file.infile_lics.sort()
     # Sort licenses
     def lic_reorder(id: str):
         lic: License | LicenseExpr = data.licenses[id]
@@ -120,6 +135,10 @@ def pre_process(data: Data, built_date: 'str|None' = None):
         if (package.browser_url is None) and (package.url.startswith('http')):
             package.browser_url = package.url
     files_by_package = group_files_by_package(data)
+    # Drop the always-present empty catch-all package when nothing landed in it,
+    # so a fully resolved run does not emit a stray "unknown-package" entry.
+    if '' in data.packages and not files_by_package.get(''):
+        del data.packages['']
     assign_application_dependencies(data, files_by_package)
     add_dependency_placeholder_if_needed(data)
     assign_primary_package_purpose(data, files_by_package, built_date)
@@ -165,19 +184,35 @@ def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
     return packages
 
 
+def application_packages(data: Data, files_by_package: dict) -> 'set[str]':
+    '''Treat the non-empty '' catch-all (this build's generated artifacts) as the
+    application package rather than leaving it unnamed as "unknown-package".'''
+    packages = packages_for_roots(data.application_roots, files_by_package)
+    if data.application_roots and files_by_package.get(''):
+        packages = packages | {''}
+    return packages
+
+
 def assign_primary_package_purpose(data: Data, files_by_package: dict,
                                    built_date: 'str|None' = None):
     '''Set Package.primary_package_purpose and (for APPLICATION) Package.built_date.
       DEPENDENCY_PLACEHOLDER_ID                                -> OTHER
       no-URL package with files under data.application_roots   -> APPLICATION
+      the unknown-package when an application is known         -> APPLICATION
       package.purl set (git-resolved)                          -> SOURCE
       otherwise                                                -> omit (left as None)
 
     Only no-URL packages can be APPLICATION: they hold the build-specific
-    generated artifacts that uniquely identify this build.
+    generated artifacts that uniquely identify this build. The empty-id ('')
+    catch-all collects those generated artifacts, so when an application is
+    known (build mode always sets application_roots) that catch-all is the
+    application rather than an "unknown-package".
     '''
-    application_pkgs = packages_for_roots(data.application_roots, files_by_package)
-    app_name = application_name(data.application_roots)
+    application_pkgs = application_packages(data, files_by_package)
+    # Prefer the sysbuild domain name (e.g. "mcuboot") over the application source
+    # directory basename, which can be misleading. e.g: MCUboot's application
+    # lives in boot/zephyr, so the basename would be the colliding name "zephyr".
+    app_name = data.domain or application_name(data.application_roots)
     for pkg_id, package in data.packages.items():
         if pkg_id == DEPENDENCY_PLACEHOLDER_ID:
             package.primary_package_purpose = 'OTHER'

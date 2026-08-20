@@ -215,7 +215,6 @@ Related projects and applications*
 
 .. note::
    Add links to projects and/or applications that demonstrate or implement some or all of the features of this application.
-   For example, the :ref:`matter_weather_station_app` application is part of the `Matter`_ project.
 
 Related samples*
 ================

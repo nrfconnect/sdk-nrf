@@ -292,7 +292,8 @@ psa_status_t psa_driver_wrapper_verify_message_with_context(
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_verify_message(attributes, key_buffer, key_buffer_size, alg, input,
-					       input_length, signature, signature_length);
+					       input_length, context, context_length, signature,
+					       signature_length);
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
 			return status;
@@ -421,7 +422,8 @@ psa_status_t psa_driver_wrapper_verify_hash_with_context(
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 		status = cracen_verify_hash(attributes, key_buffer, key_buffer_size, alg, hash,
-					    hash_length, signature, signature_length);
+					    hash_length, context, context_length, signature,
+					    signature_length);
 
 		/* Declared with fallback == true */
 		if (status != PSA_ERROR_NOT_SUPPORTED) {
@@ -738,6 +740,7 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 	case PSA_KEY_LOCATION_CRACEN_KMU:
 #endif /* defined(PSA_NEED_CRACEN_KMU_DRIVER) */
 #if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
 		status = cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
 						  data_size, data_length);
 		/* Declared with fallback == true */
@@ -761,11 +764,6 @@ psa_status_t psa_driver_wrapper_export_public_key(const psa_key_attributes_t *at
 			return status;
 		}
 #endif /* PSA_NEED_OBERON_KEY_MANAGEMENT_DRIVER */
-#if defined(PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER)
-	case PSA_KEY_LOCATION_CRACEN:
-		return cracen_export_public_key(attributes, key_buffer, key_buffer_size, data,
-						data_size, data_length);
-#endif /* PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER*/
 		/* Fell through, meaning no accelerator supports this operation.
 		 * The CryptoCell driver doesn't support export public keys when
 		 * the key is a public key itself, so this is necessary.
@@ -918,6 +916,9 @@ psa_status_t psa_driver_wrapper_cipher_encrypt(const psa_key_attributes_t *attri
 		 */
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif
+#if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
 #endif
 #if defined(PSA_NEED_CRACEN_CIPHER_DRIVER)
 		status = cracen_cipher_encrypt(attributes, key_buffer, key_buffer_size, alg, iv,
@@ -1598,6 +1599,9 @@ psa_status_t psa_driver_wrapper_aead_encrypt(const psa_key_attributes_t *attribu
 #endif /* defined(PSA_CRYPTO_DRIVER_TFM_BUILTIN_KEY_LOADER) */
 #if defined(PSA_NEED_CRACEN_KMU_DRIVER)
 	case PSA_KEY_LOCATION_CRACEN_KMU:
+#endif
+#if defined(PSA_NEED_CRACEN_AEAD_DRIVER)
+	case PSA_KEY_LOCATION_CRACEN:
 #endif
 		/* Key is stored in the slot in export representation, so
 		 * cycle through all known transparent accelerators
@@ -2365,12 +2369,13 @@ psa_status_t psa_driver_wrapper_mac_abort(psa_mac_operation_t *operation)
  * Key derivation functions
  */
 psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operation_t *operation,
+						     const psa_key_attributes_t *key_attributes,
 						     psa_algorithm_t alg)
 {
 	psa_status_t status = PSA_ERROR_NOT_SUPPORTED;
 
 #if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
-	status = cracen_key_derivation_setup(&operation->ctx.cracen_kdf_ctx, alg);
+	status = cracen_key_derivation_setup(&operation->ctx.cracen_kdf_ctx, NULL, alg);
 	if (status == PSA_SUCCESS) {
 		operation->id = PSA_CRYPTO_CRACEN_DRIVER_ID;
 	}
@@ -2380,7 +2385,7 @@ psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operatio
 	}
 #endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
-	status = oberon_key_derivation_setup(&operation->ctx.oberon_kdf_ctx, alg);
+	status = oberon_key_derivation_setup(&operation->ctx.oberon_kdf_ctx, NULL, alg);
 	if (status == PSA_SUCCESS) {
 		operation->id = PSA_CRYPTO_OBERON_DRIVER_ID;
 	}
@@ -2389,6 +2394,7 @@ psa_status_t psa_driver_wrapper_key_derivation_setup(psa_key_derivation_operatio
 
 	(void)status;
 	(void)operation;
+	(void)key_attributes;
 	(void)alg;
 	return status;
 }
@@ -2440,25 +2446,25 @@ psa_driver_wrapper_key_derivation_input_bytes(psa_key_derivation_operation_t *op
 
 psa_status_t psa_driver_wrapper_key_derivation_input_key(psa_key_derivation_operation_t *operation,
 							 psa_key_derivation_step_t step,
-							 psa_key_attributes_t *attributes,
-							 const uint8_t *data, size_t data_length)
+							 const psa_key_attributes_t *attributes,
+							 const uint8_t *key, size_t key_length)
 {
 	switch (operation->id) {
 #if defined(PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_CRACEN_DRIVER_ID:
 		return cracen_key_derivation_input_key(&operation->ctx.cracen_kdf_ctx, step,
-						       attributes, data, data_length);
+						       attributes, key, key_length);
 #endif /* PSA_NEED_CRACEN_KEY_DERIVATION_DRIVER */
 #if defined(PSA_NEED_OBERON_KEY_DERIVATION_DRIVER)
 	case PSA_CRYPTO_OBERON_DRIVER_ID:
-		return oberon_key_derivation_input_bytes(&operation->ctx.oberon_kdf_ctx, step, data,
-							 data_length);
+		return oberon_key_derivation_input_bytes(&operation->ctx.oberon_kdf_ctx, step, key,
+							 key_length);
 #endif /* PSA_NEED_OBERON_KEY_DERIVATION_DRIVER */
-
 	default:
 		(void)step;
-		(void)data;
-		(void)data_length;
+		(void)key;
+		(void)attributes;
+		(void)key_length;
 		return PSA_ERROR_BAD_STATE;
 	}
 }
@@ -2507,6 +2513,31 @@ psa_driver_wrapper_key_derivation_output_bytes(psa_key_derivation_operation_t *o
 		(void)output_length;
 		return PSA_ERROR_BAD_STATE;
 	}
+}
+
+psa_status_t
+psa_driver_wrapper_key_derivation_output_key(psa_key_derivation_operation_t *operation,
+					     const psa_key_attributes_t *key_attributes,
+					     uint8_t *key, size_t key_size, size_t *key_length)
+{
+	(void)operation;
+	(void)key_attributes;
+	(void)key;
+	(void)key_size;
+	(void)key_length;
+	return PSA_ERROR_NOT_SUPPORTED;
+}
+
+psa_status_t
+psa_driver_wrapper_key_derivation_verify_key(psa_key_derivation_operation_t *operation,
+					     const psa_key_attributes_t *key_attributes,
+					     const uint8_t *key, size_t key_length)
+{
+	(void)operation;
+	(void)key_attributes;
+	(void)key;
+	(void)key_length;
+	return PSA_ERROR_NOT_SUPPORTED;
 }
 
 psa_status_t psa_driver_wrapper_key_derivation_abort(psa_key_derivation_operation_t *operation)
@@ -2593,6 +2624,20 @@ psa_status_t psa_driver_wrapper_key_agreement(const psa_key_attributes_t *attrib
 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+}
+
+psa_status_t psa_driver_wrapper_key_agreement_to_key(const psa_key_attributes_t *attributes,
+						     const uint8_t *key, size_t key_length,
+						     psa_algorithm_t alg, const uint8_t *peer_key,
+						     size_t peer_key_length,
+						     const psa_key_attributes_t *output_attributes,
+						     uint8_t *output, size_t output_size,
+						     size_t *output_length)
+{
+	(void)output_attributes;
+	return psa_driver_wrapper_key_agreement(attributes, key, key_length, alg, peer_key,
+						peer_key_length, output, output_size,
+						output_length);
 }
 
 #if defined(CONFIG_PSA_CORE_OBERON)
@@ -3160,7 +3205,7 @@ psa_status_t psa_driver_wrapper_unwrap_key(const psa_key_attributes_t *attribute
 					   const uint8_t *wrapping_key_data,
 					   size_t wrapping_key_size, psa_algorithm_t alg,
 					   const uint8_t *data, size_t data_length, uint8_t *key,
-					   size_t key_size, size_t *key_length)
+					   size_t key_size, size_t *key_length, size_t *bits)
 {
 
 	psa_key_location_t location =
@@ -3175,13 +3220,13 @@ psa_status_t psa_driver_wrapper_unwrap_key(const psa_key_attributes_t *attribute
 #ifdef PSA_NEED_CRACEN_KEY_WRAP_DRIVER
 		return cracen_unwrap_key(attributes, wrapping_key_attributes, wrapping_key_data,
 					 wrapping_key_size, alg, data, data_length, key, key_size,
-					 key_length);
+					 key_length, bits);
 #endif /* PSA_NEED_CRACEN_KEY_WRAP_DRIVER */
 
 #ifdef PSA_NEED_OBERON_KEY_WRAP_DRIVER
 		return oberon_unwrap_key(attributes, wrapping_key_attributes, wrapping_key_data,
 					 wrapping_key_size, alg, data, data_length, key, key_size,
-					 key_length);
+					 key_length, bits);
 #endif /* PSA_NEED_OBERON_KEY_WRAP_DRIVER */
 		return PSA_ERROR_NOT_SUPPORTED;
 
@@ -3199,6 +3244,7 @@ psa_status_t psa_driver_wrapper_unwrap_key(const psa_key_attributes_t *attribute
 		(void)key;
 		(void)key_size;
 		(void)key_length;
+		(void)bits;
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 }
@@ -3326,7 +3372,8 @@ psa_status_t psa_driver_wrapper_get_entropy(uint32_t flags, size_t *estimate_bit
 	return PSA_ERROR_INSUFFICIENT_ENTROPY;
 }
 
-psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *attributes)
+psa_status_t psa_driver_wrapper_destroy_key(const psa_key_attributes_t *attributes,
+					    const uint8_t *key_buffer, size_t key_buffer_size)
 {
 	psa_key_location_t location =
 		 PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes));
@@ -3341,9 +3388,13 @@ psa_status_t psa_driver_wrapper_destroy_builtin_key(const psa_key_attributes_t *
 		return cracen_destroy_key(attributes);
 #endif
 	default:
-		/* For compliance */
+		(void)location;
+		(void)attributes;
 		break;
 	}
+
+	(void)key_buffer;
+	(void)key_buffer_size;
 
 	return PSA_ERROR_NOT_SUPPORTED;
 }

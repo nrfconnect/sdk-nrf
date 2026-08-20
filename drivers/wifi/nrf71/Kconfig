@@ -14,7 +14,7 @@ menuconfig WIFI_NRF71
 	select IPC_SERVICE
 	select MBOX
 	select SPSC_PBUF
-	select SOC_NRF71_WIFI_BOOT if BUILD_WITH_TFM
+	select SOC_NRF71_WIFI_BOOT
 	default y
 	depends on DT_HAS_NORDIC_NRF7120_WIFI_ENABLED
 	help
@@ -158,6 +158,12 @@ config NRF_WIFI_LOW_POWER
 	depends on !NRF71_RADIO_TEST && !NRF71_AP_MODE
 	default y
 
+config NRF_WIFI_LP_RX
+	bool "Low power RF mode in nRF Wi-Fi chipsets"
+	depends on NRF_WIFI_LOW_POWER
+	help
+	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
+
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool "TCP/IP checksum offload"
 	default y if !NRF71_RADIO_TEST
@@ -190,34 +196,6 @@ config WIFI_NRF71_LOG_LEVEL
 	# Enable error by default
 	default 1
 
-# Wi-Fi and SR Coexistence Hardware configuration.
-config NRF71_SR_COEX
-	bool "Wi-Fi and SR coexistence support"
-
-if NRF71_SR_COEX
-
-config NRF71_SR_COEX_RF_SWITCH
-	bool "GPIO configuration to control SR side RF switch position"
-	depends on $(dt_nodelabel_has_prop,nrf70,srrf-switch-gpios)
-	help
-	  Select this option to enable GPIO configuration to control SR side RF switch position.
-	  If this GPIO is asserted (1), the SR side RF switch is connected to the Wi-Fi side (shared antenna).
-	  If this GPIO is de-asserted (0), the SR side RF switch is connected to the SR side (separate antenna).
-
-config NRF71_SR_COEX_SLEEP_CTRL_GPIO_CTRL
-	bool "Configuration of GPIO control for coexistence"
-	default y
-
-config NRF71_SR_COEX_SWCTRL1_OUTPUT
-	int "Configure SWCTRIL1 as output"
-	default 0
-
-config NRF71_SR_COEX_BT_GRANT_ACTIVE_LOW
-	int "Configure BT grant active low"
-	default 1
-
-endif # NRF71_SR_COEX
-
 config NRF71_WORKQ_STACK_SIZE
 	int "Stack size for workqueue"
 	default 4096
@@ -232,10 +210,6 @@ config NRF71_MAX_TX_PENDING_QLEN
 
 config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
-	depends on SHELL
-
-config NRF71_DEBUG_SHELL
-	bool "Debug shell in nRF71 driver"
 	depends on SHELL
 
 config NRF71_PCB_LOSS_2G
@@ -676,7 +650,7 @@ config WIFI_NRF71_SCAN_TIMEOUT_S
 
 choice NRF_WIFI_OP_BAND
 	prompt "nRF Wi-Fi operation bands"
-	default NRF_WIFI_ALL_BAND
+	default NRF_WIFI_DUAL_BAND
 
 config NRF_WIFI_ALL_BAND
 	bool "Set operation band to all supported bands"
@@ -877,6 +851,7 @@ config NRF_WIFI_MGMT_BUFF_OFFLOAD
 config NRF_WIFI_FEAT_KEEPALIVE
 	bool "Wi-Fi keepalive feature for connection maintenance"
 	depends on NRF71_STA_MODE
+	default y
 	help
 	  Enable the Wi-Fi keepalive feature to keep the connection alive by sending
 	  keepalive packets to the AP. This feature is primarily intended to interoperate with APs
@@ -1016,8 +991,12 @@ config NRF_WIFI_TWT_SETUP_TIMEOUT_MS
 	  received before the timeout expires, the TWT setup is considered failed.
 
 config NRF_WIFI_USE_KMU
-	bool "Use CRACEN KMU for key installation"
-	depends on CRACEN_KMU
+	bool "Use KMU for key installation"
+	depends on NRF_WIFI_KMU
+	default y
+	help
+	  Use KMU for key installation. This is the default KMU for the
+	  nRF71 Wi-Fi chip.
 
 config NRF_WIFI_CMD_EVENT_LOG
 	bool "Log HAL command/events (debug)"

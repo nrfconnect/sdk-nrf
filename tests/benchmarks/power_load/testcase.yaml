@@ -1,0 +1,71 @@
+sample:
+  name: DUT power load stress test
+
+common:
+  tags:
+    - adc
+    - bluetooth
+    - gpio
+    - i2c
+    - spi
+    - sensor
+    - uart
+    - watchdog
+    - ci_tests_benchmarks_peripheral_load
+    - ppk_power_measure
+  harness: pytest
+  harness_config:
+    fixture: gpio_loopback
+    pytest_root:
+      - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_current_power_load"
+
+tests:
+  benchmarks.power_load.nrf54h:
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - power_load_SNIPPET='nordic-flpr;nordic-ppr'
+      - SB_CONFIG_FLPR_VPR_TEST_APP=y
+      - SB_CONFIG_PPR_VPR_TEST_APP=y
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+
+  benchmarks.power_load.nrf54l:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    extra_args:
+      - power_load_SNIPPET=nordic-flpr
+      - SB_CONFIG_FLPR_VPR_TEST_APP=y
+
+  benchmarks.power_load.nrf52:
+    platform_allow:
+      - nrf52840dk/nrf52840
+    integration_platforms:
+      - nrf52840dk/nrf52840
+
+  benchmarks.power_load.nrf53:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    extra_args:
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+
+  benchmarks.power_load.nrf92:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - power_load_SNIPPET='nordic-flpr;nordic-ppr'
+      - SB_CONFIG_FLPR_VPR_TEST_APP=y
+      - SB_CONFIG_PPR_VPR_TEST_APP=y

@@ -18,6 +18,9 @@ The following categories of samples are available:
 
 |filter_samples_by_board|
 
+.. note::
+   The :ref:`nrf_smp_svr_sample` sample shows the default settings for DFU, and is recommended as a starting point.
+
 .. toctree::
    :maxdepth: 1
    :caption: DFU samples:
@@ -42,7 +45,6 @@ The following categories of samples are available:
    :caption: MCuboot configurations:
    :glob:
 
-   ../../../samples/mcuboot/*/README
    ../../../samples/dfu/mcuboot_with_encryption/README
    ../../../samples/dfu/encrypted_bootloader/README
    ../../../samples/dfu/smp_svr_mini_boot/README

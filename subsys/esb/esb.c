@@ -2326,6 +2326,8 @@ static void esb_irq_disable(void)
 int esb_init(const struct esb_config *config)
 {
 	int err;
+	bool esb_clock_initialized = false;
+	bool sys_timer_initialized = false;
 
 	if (!config) {
 		return -EINVAL;
@@ -2341,6 +2343,7 @@ int esb_init(const struct esb_config *config)
 			LOG_ERR("Failed to start clocks: %d", err);
 			return err;
 		}
+		esb_clock_initialized = true;
 	}
 
 	event_handler = config->event_handler;
@@ -2353,7 +2356,8 @@ int esb_init(const struct esb_config *config)
 
 	if (fast_switching) {
 		if (!esb_cfg.use_fast_ramp_up) {
-			return -EINVAL;
+			err = -EINVAL;
+			goto error_cleanup;
 		}
 	}
 
@@ -2368,13 +2372,15 @@ int esb_init(const struct esb_config *config)
 		LOG_ERR("Configured retransmission delay is below the required minimum of %d us",
 			RETRANSMIT_DELAY_MIN);
 
-		return -EINVAL;
+		err = -EINVAL;
+		goto error_cleanup;
 	}
 
 	if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
 		if (!update_radio_parameters()) {
 			LOG_ERR("Failed to update radio parameters");
-			return -EINVAL;
+			err = -EINVAL;
+			goto error_cleanup;
 		}
 
 		/* Configure radio address registers according to ESB default values */
@@ -2386,13 +2392,14 @@ int esb_init(const struct esb_config *config)
 		err = sys_timer_init();
 		if (err) {
 			LOG_ERR("Failed to initialize ESB system timer");
-			return err;
+			goto error_cleanup;
 		}
+		sys_timer_initialized = true;
 
 		err = esb_ppi_init();
 		if (err) {
 			LOG_ERR("Failed to initialize PPI");
-			return err;
+			goto error_cleanup;
 		}
 
 		disable_event.event.generic.event = esb_ppi_radio_disabled_get();
@@ -2411,13 +2418,15 @@ int esb_init(const struct esb_config *config)
 	} else { /* IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) */
 		if (esb_cfg.mode == ESB_MODE_MONITOR) {
 			LOG_ERR("Primary monitor mode is not supported in Timeslots");
-			return -EPERM;
+			err = -EPERM;
+			goto error_cleanup;
 		}
 
 		if (!(update_radio_bitrate(esb_cfg.bitrate) && verify_radio_protocol() &&
 		      verify_radio_crc())) {
 			LOG_ERR("Failed to update radio parameters");
-			return -EINVAL;
+			err = -EINVAL;
+			goto error_cleanup;
 		}
 
 		multithreading_lock_acquire(K_FOREVER);
@@ -2425,7 +2434,7 @@ int esb_init(const struct esb_config *config)
 		multithreading_lock_release();
 		if (err) {
 			LOG_ERR("Failed to open MPSL Timeslot session (%u)", err);
-			return err;
+			goto error_cleanup;
 		}
 
 		update_ts_duration_params();
@@ -2480,6 +2489,25 @@ int esb_init(const struct esb_config *config)
 	}
 
 	return 0;
+
+error_cleanup:
+	/* Undo partial init tracked by the flags above. esb_disable() cannot be
+	 * used here because it returns immediately while esb_state is still
+	 * ESB_STATE_UNINITIALIZED.
+	 */
+	if (sys_timer_initialized) {
+		sys_timer_deinit();
+	}
+
+	if (esb_clock_initialized) {
+		int stop_err = esb_clocks_stop();
+
+		if (stop_err) {
+			LOG_ERR("Failed to stop clocks: %d", stop_err);
+		}
+	}
+
+	return err;
 }
 
 int esb_suspend(void)
