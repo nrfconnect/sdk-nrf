@@ -14,9 +14,3 @@ ipc0: &cpuapp_cpuppr_ipc {
 &cpuapp_bellboard {
 	status = "okay";
 };
-
-/ {
-	chosen {
-		/delete-property/ zephyr,bt-hci;
-	};
-};

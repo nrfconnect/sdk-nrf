@@ -15,8 +15,6 @@ ipc0: &cpuapp_cpuppr_ipc {
 	status = "okay";
 };
 
-/ {
-	chosen {
-		/delete-property/ zephyr,bt-hci;
-	};
+&uart132 {
+	/delete-property/ hw-flow-control;
 };
