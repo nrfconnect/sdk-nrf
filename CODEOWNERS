@@ -521,6 +521,7 @@
 /samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-blenders
 /samples/bluetooth/central_smp_client/    @nrfconnect/ncs-eris
 /samples/bluetooth/central_uart/          @nrfconnect/ncs-blenders
+/samples/bluetooth/channel_classification/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_central/ @nrfconnect/ncs-dragoon
@@ -647,6 +648,7 @@
 /samples/bluetooth/central_nfc_pairing/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_smp_client/*.rst @nrfconnect/ncs-eris-doc
 /samples/bluetooth/central_uart/*.rst     @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/channel_classification/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ras_initiator/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ras_reflector/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ipt_initiator/*.rst @nrfconnect/ncs-dragoon-doc
