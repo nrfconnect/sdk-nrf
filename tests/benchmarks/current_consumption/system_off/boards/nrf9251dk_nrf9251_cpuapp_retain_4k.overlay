@@ -1,0 +1,27 @@
+#include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+/ {
+	cpuapp_ram0x_sram@2f056000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2f056000 DT_SIZE_K(4)>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem0: retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		retainedmemdevice = &retainedmem0;
+	};
+};
+
+&cpuapp_ram0x_sram {
+	/* Shrink SRAM size to avoid overlap with retained memory region:
+	 * 348 - 4 = 344 (0x56000)
+	 */
+	reg = <0x2f000000 DT_SIZE_K(344)>;
+	ranges = <0x0 0x2f000000 DT_SIZE_K(344)>;
+};

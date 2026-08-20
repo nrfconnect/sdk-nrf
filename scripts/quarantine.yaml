@@ -115,3 +115,14 @@
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "Waiting for nrf7120 DK"
+
+- scenarios:
+    - benchmarks.current_consumption.multicore_system_off
+    - benchmarks.current_consumption.systemoff.grtc_wakeup
+    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_16k
+    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_32k
+    - nrf.extended.sample.boards.nrf.system_off.grtc_wakeup
+    - nrf.extended.sample.boards.nrf.system_off.retained_mem.grtc_wakeup
+  platforms:
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40914"
