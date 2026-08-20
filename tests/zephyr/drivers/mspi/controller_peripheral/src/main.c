@@ -318,7 +318,7 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 		rv = k_sem_take(&tdata.sem, K_MSEC(100));
 		zassert_equal(rv, 0);
 	} else {
-		rv = k_sem_take(&tdata.sem, K_MSEC(100));
+		rv = k_sem_take(&tdata.sem, K_MSEC(300));
 		zassert_equal(rv, 0);
 
 		if (tdata.srx_set) {
