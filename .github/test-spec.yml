@@ -465,6 +465,13 @@
   - "subsys/net/lib/mqtt_helper/**/*"
   - "subsys/net/lib/hostap_crypto/**/*"
 
+"CI-wifi-7120dk":
+  - "drivers/wifi/nrf71/**/*"
+  - "include/drivers/wifi/nrf71/**/*"
+  - "tests/drivers/nrf71*/**/*"
+  - "samples/wifi/**/*7120*"
+  - "samples/wifi/wfa_qt_app/nrf7120*"
+
 "CI-cloud-test":
   - "include/caf/**/*"
   - "include/date_time.h"
