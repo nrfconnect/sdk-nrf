@@ -95,3 +95,9 @@
 		};
 	};
 };
+
+&clock {
+	xo24m {
+		status = "disabled";
+	};
+};
