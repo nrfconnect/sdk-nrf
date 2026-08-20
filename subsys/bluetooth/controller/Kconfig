@@ -782,6 +782,14 @@ config BT_CTLR_LE_FLUSHABLE_ACL_DATA
 	help
 	  Enable support for Bluetooth 6.2 LE Flushable ACL Data in the Controller.
 
+config BT_CTLR_CHANNEL_CLASSIFICATION
+	bool "Channel Classification [EXPERIMENTAL]"
+	depends on BT_CONN
+	select EXPERIMENTAL
+	help
+	  Enable support for the Bluetooth Channel Classification feature
+	  in the controller.
+
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int
 	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL

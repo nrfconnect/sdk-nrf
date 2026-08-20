@@ -404,6 +404,16 @@ int hci_vs_sdc_set_event_start_task(const sdc_hci_cmd_vs_set_event_start_task_t 
 int hci_vs_sdc_conn_anchor_point_update_event_report_enable(
 	const sdc_hci_cmd_vs_conn_anchor_point_update_event_report_enable_t *params);
 
+/** @brief Enable channel classification reporting on a connection.
+ *
+ * For the complete API description, see sdc_hci_cmd_vs_channel_reporting_enable().
+ *
+ * @param[in]  params Input parameters.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int hci_vs_sdc_channel_reporting_enable(const sdc_hci_cmd_vs_channel_reporting_enable_t *params);
+
 /** @brief Enable Periodic Adv Event Counter Reports.
  *
  * For the complete API description,
