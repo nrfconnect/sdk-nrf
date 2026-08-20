@@ -18,10 +18,13 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 static const struct pwm_dt_spec pwm_led = PWM_DT_SPEC_GET(DT_ALIAS(pwm_led0));
 
 #define PWM_STEPS_PER_SEC	(50)
+
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 #define SHM_START_ADDR		(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
 volatile static uint32_t *shared_var = (volatile uint32_t *) SHM_START_ADDR;
 #define HOST_IS_READY	(1)
 #define REMOTE_IS_READY	(2)
+#endif /* defined(CONFIG_TEST_SYNCHRONIZE_CORES) */
 
 int main(void)
 {
@@ -74,12 +77,15 @@ int main(void)
 
 	LOG_INF("Multicore idle_pwm_led test on %s", CONFIG_BOARD_TARGET);
 	LOG_INF("Core will sleep for %d ms", CONFIG_TEST_SLEEP_DURATION_MS);
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 	LOG_INF("Shared memory at %p", (void *) shared_var);
+#endif
 
 #if defined(CONFIG_PM_DEVICE_RUNTIME)
 	pm_device_runtime_enable(pwm_led.dev);
 #endif
 
+#if defined(CONFIG_TEST_SYNCHRONIZE_CORES)
 	/* Synchronize Remote core with Host core */
 #if !defined(CONFIG_TEST_ROLE_REMOTE)
 	LOG_DBG("HOST starts");
@@ -105,6 +111,7 @@ int main(void)
 	LOG_DBG("REMOTE wrote REMOTE_IS_READY: %u", *shared_var);
 	LOG_DBG("REMOTE continues");
 #endif
+#endif /* defined(CONFIG_TEST_SYNCHRONIZE_CORES) */
 
 #if defined(CONFIG_COVERAGE)
 	printk("Coverage analysis enabled\n");
