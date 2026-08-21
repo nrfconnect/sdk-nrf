@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * The throughput sample's default app.overlay puts the shell on uart0 with
+ * hardware flow control. On the nRF7120 DK the console/VCOM is exposed on
+ * uart20 and the onboard debugger does not wire RTS/CTS, so route the shell to
+ * uart20 and drop the hardware-flow-control requirement.
+ */
+/ {
+	chosen {
+		zephyr,shell-uart = &uart20;
+	};
+};
+
+&uart20 {
+	/delete-property/ hw-flow-control;
+};
