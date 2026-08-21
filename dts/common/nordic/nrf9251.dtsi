@@ -475,8 +475,6 @@
 			dppic120: dppic@8e1000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x8e1000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
@@ -555,8 +553,6 @@
 			dppic130: dppic@922000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x922000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
@@ -684,8 +680,6 @@
 			dppic131: dppic@981000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x981000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
@@ -723,8 +717,6 @@
 			dppic132: dppic@991000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x991000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
@@ -758,8 +750,6 @@
 			dppic133: dppic@9a1000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x9a1000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
@@ -890,8 +880,6 @@
 			dppic134: dppic@9b1000 {
 				compatible = "nordic,nrf-dppic-global";
 				reg = <0x9b1000 0x1000>;
-				channels = <8>;
-				groups = <2>;
 				status = "disabled";
 				channels = <8>;
 				groups = <2>;
