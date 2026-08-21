@@ -10,12 +10,16 @@ rsource "subsys/net/openthread/Kconfig.defconfig"
 rsource "subsys/net/lib/hostap_crypto/Kconfig.defconfig"
 
 if TFM_PROFILE_TYPE_MINIMAL
+
 rsource "modules/trusted-firmware-m/Kconfig.mbedtls_minimal.defconfig"
 rsource "modules/trusted-firmware-m/Kconfig.tfm_minimal.defconfig"
+
 endif # TFM_PROFILE_TYPE_MINIMAL
 
 if BUILD_WITH_TFM
+
 rsource "modules/trusted-firmware-m/Kconfig.psa.defconfig"
+
 endif # BUILD_WITH_TFM
 
 menu "Nordic nRF Connect"
@@ -76,6 +80,7 @@ config INIT_ARCH_HW_AT_BOOT
 
 DT_ZEPHYR_FLASH := zephyr,flash
 DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
+
 config NORDIC_QSPI_NOR_FLASH_LAYOUT_PAGE_SIZE
 	default $(dt_node_int_prop_int,$(DT_CHOSEN_ZEPHYR_FLASH),erase-block-size)
 	help
@@ -87,7 +92,8 @@ config NRF_SECURITY_ENABLER
 	def_bool y
 	depends on !SOC_NRF5340_CPUNET
 	depends on SOC_FAMILY_NORDIC_NRF && ARM
-	imply PSA_CRYPTO if BT_CRYPTO || BT_HOST_CRYPTO || BT_MESH_CRYPTO_LIB || BT_FAST_PAIR_CRYPTO_PSA
+	imply PSA_CRYPTO if BT_CRYPTO || BT_HOST_CRYPTO || BT_MESH_CRYPTO_LIB || \
+		BT_FAST_PAIR_CRYPTO_PSA
 	imply ENTROPY_GENERATOR if BT_HOST_CRYPTO_PRNG || BT_ECC || BT_GATT_CACHING
 	imply PSA_WANT_GENERATE_RANDOM if BT_HOST_CRYPTO_PRNG || BT_ECC || BT_GATT_CACHING || \
 		BT_MESH_CRYPTO_LIB
@@ -113,9 +119,11 @@ configdefault BT_TX_PROCESSOR_STACK_SIZE
 	default 900 if SOC_NRF54LM20A_CPUAPP || SOC_NRF54LM20B_CPUAPP
 
 if SOC_SERIES_BSIM_NRFXX && ENTROPY_GENERATOR
+
 config MBEDTLS_HEAP_SIZE
 	int
 	default 2048
+
 endif
 
 rsource "samples/Kconfig"

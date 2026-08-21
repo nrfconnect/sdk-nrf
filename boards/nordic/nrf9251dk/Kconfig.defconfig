@@ -11,13 +11,13 @@ if !USE_DT_CODE_PARTITION
 DT_CHOSEN_Z_FLASH := zephyr,flash
 
 config FLASH_LOAD_OFFSET
-	default $(sub_hex, $(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition), \
+	default $(sub_hex,$(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition), \
 		$(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_FLASH)))
 
 config FLASH_LOAD_SIZE
-	default $(add_hex, $(dt_nodelabel_reg_addr_hex,cpuapp_slot0_partition), \
-			   $(dt_nodelabel_reg_size_hex,cpuapp_slot0_partition), \
-			   -$(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition))
+	default $(add_hex,$(dt_nodelabel_reg_addr_hex,cpuapp_slot0_partition), \
+		$(dt_nodelabel_reg_size_hex,cpuapp_slot0_partition), \
+		-$(dt_nodelabel_reg_addr_hex,cpuapp_boot_partition))
 
 endif # !DT_USE_CODE_PARTITION
 

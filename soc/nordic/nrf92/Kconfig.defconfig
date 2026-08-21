@@ -5,4 +5,4 @@ if SOC_SERIES_NRF92
 
 rsource "Kconfig.defconfig.nrf92*"
 
-endif #SOC_SERIES_NRF92
+endif # SOC_SERIES_NRF92
