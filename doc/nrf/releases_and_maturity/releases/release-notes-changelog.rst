@@ -130,7 +130,8 @@ Mbed TLS
 Trusted Firmware-M (TF-M)
 -------------------------
 
-|no_changes_yet_note|
+* Updated TF-M to v2.3.1 (from v2.3.0).
+  For more information, see the upstream `TF-M 2.3.1 release notes`_.
 
 Protocols
 =========
