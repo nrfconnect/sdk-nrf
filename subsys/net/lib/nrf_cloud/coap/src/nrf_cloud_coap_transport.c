@@ -24,6 +24,7 @@
 #if defined(CONFIG_NRF_MODEM_LIB)
 #include <nrf_socket.h>
 #include <nrf_modem_at.h>
+#include <modem/nrf_modem_lib.h>
 #endif
 #include <date_time.h>
 #include <net/nrf_cloud.h>
@@ -1127,3 +1128,18 @@ int nrf_cloud_coap_transport_proxy_dl_uri_get(char *const uri, size_t uri_len,
 
 	return 0;
 }
+
+#if defined(CONFIG_NRF_MODEM_LIB)
+/* Close the CoAP socket before the modem is shut down so the shared
+ * coap_client recv thread is released from poll() rather than left wedged.
+ */
+static void on_modem_lib_shutdown(void *ctx)
+{
+	ARG_UNUSED(ctx);
+
+	if (internal_cc.initialized) {
+		nrf_cloud_coap_transport_disconnect(&internal_cc);
+	}
+}
+NRF_MODEM_LIB_ON_SHUTDOWN(nrf_cloud_coap_shutdown, on_modem_lib_shutdown, NULL);
+#endif
