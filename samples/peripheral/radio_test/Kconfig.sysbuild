@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2023 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_NRF5340_CPUNET
+
+choice APPCORE
+	default APPCORE_NONE if BOARD_NRF7002DK
+	default APPCORE_REMOTE_SHELL
+
+config APPCORE_REMOTE_SHELL
+	bool "remote_shell image"
+
+endchoice
+
+config APPCORE_IMAGE_NAME
+	default "remote_shell" if APPCORE_REMOTE_SHELL
+
+config APPCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/samples/nrf5340/remote_shell" if APPCORE_REMOTE_SHELL
+
+endif # SOC_NRF5340_CPUNET
+
+source "share/sysbuild/Kconfig"
