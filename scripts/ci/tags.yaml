@@ -2033,3 +2033,10 @@ ci_tests_lib_wifi_kmu:
     - nrf/include/wifi_kmu/
     - nrf/lib/wifi_kmu/
     - nrf/tests/lib/wifi_kmu/
+
+ci_samples_nrf_saadct:
+  files:
+    - nrf/samples/saadct/
+    - nrf/drivers/saadct/
+    - nrf/include/drivers/saadct.h
+    - nrf/dts/bindings/saadct/

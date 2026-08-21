@@ -31,4 +31,5 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../tests/benchmarks/multicore/*/README
    ../../../samples/basic/*/README
    ../../../samples/nrf54h20/*/README
+   ../../../samples/saadct/README
    ../../../samples/vtf_monitoring/README
