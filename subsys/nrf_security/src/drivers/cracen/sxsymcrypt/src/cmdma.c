@@ -13,6 +13,78 @@
 #include <cracen/hardware.h>
 #include <nrf_security_core.h>
 
+#if defined(CONFIG_CRACEN_DMA_REJECT_PERIPHERAL_ACCESS)
+
+static bool sx_cmdma_range_overlaps(uintptr_t address, size_t size, uintptr_t range_start,
+				    uintptr_t range_end)
+{
+	uintptr_t end;
+
+	if (size == 0) {
+		return false;
+	}
+	if (size > UINTPTR_MAX - address) {
+		return true;
+	}
+
+	end = address + size;
+	return (address < range_end) && (end > range_start);
+}
+
+static bool sx_cmdma_address_is_forbidden(uintptr_t address, size_t size)
+{
+#if defined(NRF_MEMORY_PERIPHERALSAPBNS_BASE) && defined(NRF_MEMORY_PERIPHERALSAPBNS_SIZE)
+	if (sx_cmdma_range_overlaps(address, size, NRF_MEMORY_PERIPHERALSAPBNS_BASE,
+					    NRF_MEMORY_PERIPHERALSAPBNS_BASE +
+					    NRF_MEMORY_PERIPHERALSAPBNS_SIZE)) {
+		return true;
+	}
+#endif
+#if defined(NRF_MEMORY_PERIPHERALSAPBS_BASE) && defined(NRF_MEMORY_PERIPHERALSAPBS_SIZE)
+	if (sx_cmdma_range_overlaps(address, size, NRF_MEMORY_PERIPHERALSAPBS_BASE,
+					    NRF_MEMORY_PERIPHERALSAPBS_BASE +
+					    NRF_MEMORY_PERIPHERALSAPBS_SIZE)) {
+		return true;
+	}
+#endif
+#if defined(NRF_MEMORY_PERIPHERALSAHB_BASE) && defined(NRF_MEMORY_PERIPHERALSAHB_SIZE)
+	if (sx_cmdma_range_overlaps(address, size, NRF_MEMORY_PERIPHERALSAHB_BASE,
+					    NRF_MEMORY_PERIPHERALSAHB_BASE +
+					    NRF_MEMORY_PERIPHERALSAHB_SIZE)) {
+		return true;
+	}
+#endif
+#if defined(NRF_MEMORY_SYSTEMSFR_BASE) && defined(NRF_MEMORY_SYSTEMSFR_SIZE)
+	if (sx_cmdma_range_overlaps(address, size, NRF_MEMORY_SYSTEMSFR_BASE,
+					    NRF_MEMORY_SYSTEMSFR_BASE + NRF_MEMORY_SYSTEMSFR_SIZE)) {
+		return true;
+	}
+#endif
+
+	return false;
+}
+
+static int sx_cmdma_validate_descs(const struct sxdesc *start, const struct sxdesc *end)
+{
+	const struct sxdesc *desc;
+
+	for (desc = start; desc < end; desc++) {
+		uintptr_t address = (uintptr_t)desc->addr;
+		size_t size = desc->sz & DMA_SZ_MASK;
+
+		if (desc->addr == NULL || size == 0) {
+			continue;
+		}
+
+		if (sx_cmdma_address_is_forbidden(address, size)) {
+			return SX_ERR_INVALID_PARAM;
+		}
+	}
+
+	return SX_OK;
+}
+#endif
+
 void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *desc_ptr, uint32_t cmd, uint32_t tag)
 {
 	dma->d = desc_ptr;
@@ -45,9 +117,16 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 #endif
 }
 
-void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
+int sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 {
 	struct sxdesc *desc;
+
+#if defined(CONFIG_CRACEN_DMA_REJECT_PERIPHERAL_ACCESS)
+	if (sx_cmdma_validate_descs(indescs, dma->d) != SX_OK ||
+	    sx_cmdma_validate_descs(dma->dmamem.outdescs, dma->out) != SX_OK) {
+		return SX_ERR_INVALID_PARAM;
+	}
+#endif
 
 	sx_cmdma_finalize_descs(indescs, dma->d - 1);
 	sx_cmdma_finalize_descs(dma->dmamem.outdescs, dma->out - 1);
@@ -71,6 +150,8 @@ void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs
 	sx_wrreg_addr(REG_PUSH_ADDR, desc);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
 	sx_wrreg(REG_START, REG_START_ALL);
+
+	return SX_OK;
 }
 
 #ifdef CONFIG_DCACHE

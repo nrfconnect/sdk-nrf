@@ -322,8 +322,14 @@ int sx_aead_crypt(struct sxaead *aead_ctx, const uint8_t *datain, size_t datains
 
 static int sx_aead_run(struct sxaead *aead_ctx)
 {
-	sx_cmdma_start(&aead_ctx->dma, sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
-		       aead_ctx->descs);
+	int status;
+
+	status = sx_cmdma_start(&aead_ctx->dma,
+				 sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
+				 aead_ctx->descs);
+	if (status != SX_OK) {
+		return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+	}
 
 	return SX_OK;
 }
@@ -431,6 +437,8 @@ int sx_aead_resume_state(struct sxaead *aead_ctx)
 
 int sx_aead_save_state(struct sxaead *aead_ctx)
 {
+	int status;
+
 	if (!aead_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
@@ -449,8 +457,12 @@ int sx_aead_save_state(struct sxaead *aead_ctx)
 
 	aead_ctx->dma.dmamem.cfg |= aead_ctx->cfg->ctxsave;
 
-	sx_cmdma_start(&aead_ctx->dma, sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
-		       aead_ctx->descs);
+	status = sx_cmdma_start(&aead_ctx->dma,
+				 sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
+				 aead_ctx->descs);
+	if (status != SX_OK) {
+		return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+	}
 
 	return SX_OK;
 }
