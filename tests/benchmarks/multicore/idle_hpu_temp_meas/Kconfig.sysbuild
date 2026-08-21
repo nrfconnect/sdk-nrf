@@ -4,7 +4,41 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config REMOTE_BOARD
-	string "The board used for remote target"
+if SUPPORT_NETCORE
+
+choice NETCORE
+	default NETCORE_REMOTE_SLEEP_FOREVER
+
+config NETCORE_REMOTE_SLEEP_FOREVER
+	bool "remote_sleep_forever image"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
+
+config NETCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/power_consumption/common/remote_sleep_forever" if NETCORE_REMOTE_SLEEP_FOREVER
+
+endif # SUPPORT_NETCORE
+
+if SUPPORT_PPRCORE
+
+choice PPRCORE
+	default PPRCORE_REMOTE_SLEEP_FOREVER if SOC_NRF9251_CPUAPP
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE_SLEEP_FOREVER
+	bool "Remote sleep forever image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+
+config PPRCORE_IMAGE_PATH
+	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+
+endif # SUPPORT_PPRCORE
 
 source "share/sysbuild/Kconfig"
