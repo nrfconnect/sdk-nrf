@@ -21,6 +21,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 
 #define SECURITY_FAIL_TIMEOUT_MS \
 	K_SECONDS(CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S)
+#define INIT_CONN_PARAMS_UPDATE_TIMEOUT_MS K_SECONDS(5)
 #define LOW_LATENCY_CHECK_PERIOD_MS	K_SECONDS(5)
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_LATENCY
 #define DEFAULT_TIMEOUT			CONFIG_BT_PERIPHERAL_PREF_TIMEOUT
@@ -30,9 +31,15 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 #define REG_CONN_INTERVAL_LLPM_MASK	0x0d00
 #define REG_CONN_INTERVAL_BLE_DEFAULT	0x0006
 
+BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_GAP_AUTO_UPDATE_CONN_PARAMS),
+	     "CONFIG_BT_GAP_AUTO_UPDATE_CONN_PARAMS must be disabled for "
+	     "nRF Desktop peripherals");
+
 static struct bt_conn *active_conn;
 static struct k_work_delayable security_timeout;
 static struct k_work_delayable low_latency_check;
+static struct k_work_delayable init_conn_params;
+static struct k_work_delayable init_conn_params_update_timeout;
 
 enum {
 	CONN_LOW_LATENCY_ENABLED	= BIT(0),
@@ -45,6 +52,7 @@ enum {
 	CONN_IS_SCI_OUT_OF_SPEC	= BIT(7),
 	CONN_IS_POWER_DOWN		= BIT(8),
 	CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN = BIT(9),
+	CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS = BIT(10),
 };
 
 static uint16_t latency_state;
@@ -82,15 +90,38 @@ static void set_init_conn_params(void)
 		.timeout = DEFAULT_TIMEOUT
 	};
 
+	int err = bt_conn_le_param_update(active_conn, &param);
 	last_requested_latency_is_low = true;
 
-	int err = bt_conn_le_param_update(active_conn, &param);
+	if (!err) {
+		latency_state |= CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS;
+		/* The conn_params_update_rejected callback was not
+		 * available on NCS 3.4.0 which this code needs to be based on.
+		 * To avoid the CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS being set
+		 * permanently locking connection rate updates, treat the update
+		 * as rejected/failed after the INIT_CONN_PARAMS_UPDATE_TIMEOUT_MS
+		 * timeout expires.
+		 * This workaround should be removed when the callback is available
+		 * to nRF Desktop.
+		 */
+		(void)k_work_schedule(&init_conn_params_update_timeout,
+				      INIT_CONN_PARAMS_UPDATE_TIMEOUT_MS);
+	}
 
 	if (!err || (err == -EALREADY)) {
 		LOG_INF("Init connection parameters are set");
 	} else {
 		LOG_WRN("Failed to update conn parameters (err %d)", err);
 	}
+}
+
+static void init_conn_params_fn(struct k_work *w)
+{
+	ARG_UNUSED(w);
+
+	__ASSERT_NO_MSG(active_conn);
+
+	set_init_conn_params();
 }
 
 static void set_conn_latency_non_sci(bool low_latency)
@@ -310,6 +341,43 @@ static void latency_updated(bool low_latency)
 	}
 }
 
+static void pending_sci_conn_rate_update_handle(void);
+
+static void conn_params_update_finished_sci_conn(void)
+{
+	if (latency_state & CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS) {
+		if (latency_state & CONN_IS_SCI_PARAM_UPDATE_PENDING) {
+			pending_sci_conn_rate_update_handle();
+		}
+	} else {
+		LOG_WRN("Unexpected non-SCI connection parameters update while SCI is active");
+
+		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
+		(void)k_work_cancel_delayable(&low_latency_check);
+	}
+
+	latency_state &= ~CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS;
+}
+
+static void init_conn_params_update_timeout_fn(struct k_work *w)
+{
+	ARG_UNUSED(w);
+
+	__ASSERT_NO_MSG(active_conn);
+	__ASSERT_NO_MSG(latency_state & CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS);
+
+	LOG_WRN("Connection parameter update timed out");
+
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+	    (latency_state & CONN_IS_SCI)) {
+		conn_params_update_finished_sci_conn();
+		return;
+	}
+
+	latency_state &= ~CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS;
+}
+
 static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 {
 	if (!event->updated) {
@@ -317,16 +385,14 @@ static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 		return;
 	}
 
+	(void)k_work_cancel_delayable(&init_conn_params_update_timeout);
+
 	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
 	    (latency_state & CONN_IS_SCI)) {
-		LOG_WRN("Unexpected non-SCI connection parameters update while SCI is active");
-
-		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
-		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
-		(void)k_work_cancel_delayable(&low_latency_check);
-
+		conn_params_update_finished_sci_conn();
 		return;
 	}
+	latency_state &= ~CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS;
 
 	__ASSERT_NO_MSG(event->interval_min == event->interval_max);
 
@@ -391,9 +457,11 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 	 * After that point, the non-SCI connection parameters API is no longer used.
 	 */
 	latency_state |= CONN_IS_SCI;
+	(void)k_work_cancel_delayable(&init_conn_params);
 
-	if (processed_sci_mode != BT_HIDS_SCI_MODE_NONE) {
-		/* A connection rate update is already in progress */
+	if ((processed_sci_mode != BT_HIDS_SCI_MODE_NONE) ||
+	    (latency_state & CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS)) {
+		/* A connection rate/params update is already in progress */
 		latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
 		return;
 	}
@@ -503,11 +571,23 @@ get_new_sci_mode(const struct bt_conn_le_conn_rate_changed *params,
 	return mode;
 }
 
-static void pending_sci_conn_rate_update_handle(bool is_low_latency)
+static void pending_sci_conn_rate_update_handle(void)
 {
+	struct bt_conn_info info;
+	int err = bt_conn_get_info(active_conn, &info);
+	bool is_low_latency;
+
+	if (err) {
+		LOG_ERR("Failed to get connection info: %d", err);
+		return;
+	}
+
+	is_low_latency = (info.le.latency == 0);
+
 	bool latency_request_pending = (last_requested_latency_is_low != is_low_latency);
 	enum bt_hids_sci_mode_value current_mode = BT_HIDS_SCI_MODE_NONE;
-	int err = bt_hids_sci_mode_get(active_conn, &current_mode);
+
+	err = bt_hids_sci_mode_get(active_conn, &current_mode);
 
 	if (err) {
 		LOG_ERR("Failed to get current SCI mode: %d", err);
@@ -622,6 +702,7 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 		LOG_WRN("Connection rate API used without a prior SCI mode request");
 		LOG_WRN("Peripheral will start using SCI and attempt to find a valid SCI mode");
 		latency_state |= CONN_IS_SCI;
+		(void)k_work_cancel_delayable(&init_conn_params);
 	}
 
 	if (event->status == BT_HCI_ERR_SUCCESS) {
@@ -665,7 +746,7 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 		latency_updated(is_low_latency);
 
 		if (latency_state & CONN_IS_SCI_PARAM_UPDATE_PENDING) {
-			pending_sci_conn_rate_update_handle(is_low_latency);
+			pending_sci_conn_rate_update_handle();
 		}
 	} else {
 		LOG_ERR("Failed to get connection info: %d", err);
@@ -697,6 +778,9 @@ static void init(void)
 {
 	k_work_init_delayable(&security_timeout, security_timeout_fn);
 	k_work_init_delayable(&low_latency_check, low_latency_check_fn);
+	k_work_init_delayable(&init_conn_params, init_conn_params_fn);
+	k_work_init_delayable(&init_conn_params_update_timeout,
+			      init_conn_params_update_timeout_fn);
 }
 
 static void use_low_latency(void)
@@ -738,7 +822,16 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)) {
 				latency_state |= CONN_LOW_LATENCY_LOCKED;
 			}
-			set_init_conn_params();
+
+			(void)k_work_schedule(&init_conn_params,
+						  K_MSEC(CONFIG_BT_CONN_PARAM_UPDATE_TIMEOUT));
+			/* This is needed so that low latency is used if the remote
+			 * requests a HID SCI mode before the init conn params work
+			 * is executed.
+			 * Low latency speeds up security establishment and GATT discovery.
+			 */
+			last_requested_latency_is_low = true;
+
 			k_work_reschedule(&security_timeout,
 					      SECURITY_FAIL_TIMEOUT_MS);
 			break;
@@ -758,6 +851,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 			}
 
 			/* Cancel cannot fail if executed from another work's context. */
+			(void)k_work_cancel_delayable(&init_conn_params);
+			(void)k_work_cancel_delayable(&init_conn_params_update_timeout);
 			(void)k_work_cancel_delayable(&low_latency_check);
 			(void)k_work_cancel_delayable(&security_timeout);
 			break;

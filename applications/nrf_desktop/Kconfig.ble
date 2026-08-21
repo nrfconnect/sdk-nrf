@@ -116,6 +116,14 @@ config BT_CONN_PARAM_UPDATE_TIMEOUT
 	  nRF Desktop peripherals update connection parameters earlier to lower
 	  HID data latency.
 
+configdefault BT_GAP_AUTO_UPDATE_CONN_PARAMS
+	default n
+	help
+	  nRF Desktop peripherals disable the automatic connection parameters
+	  update to avoid conflicts with connection initial parameters update
+	  initiated by the peripheral as well as connection rate updates initiated
+	  by the central.
+
 config BT_BUF_ACL_TX_COUNT
 	default 4
 	help
