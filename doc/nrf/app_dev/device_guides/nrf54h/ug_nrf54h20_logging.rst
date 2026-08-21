@@ -37,7 +37,7 @@ For more information on STM, see :ref:`zephyr:logging_cs_stm`.
 
 .. note::
    The STM logging feature for the nRF54H20 SoC underwent testing with the J-Trace PRO V2 Cortex-M, using firmware compiled on ``Mar 28 2024 15:14:04``.
-   Using this feature also requires ``nrfutil-trace`` version 2.10.0 or later.
+   Using this feature also requires `nrfutil trace command`_ version 2.10.0 or later.
 
 Embedded Trace Router (ETR)
 ===========================
@@ -185,7 +185,7 @@ The following are the prefixes used to indicate the cores:
    Fast Lightweight Processor (FLPR), ``flpr``, 0x2d
    Peripheral Processor (PPR), ``ppr``, 0x2e
 
-For more information, see `Capturing STM trace data`_ in the nRF Util documentation.
+For more information, see `nrfutil trace stm`_ command page.
 
 Additional considerations
 -------------------------

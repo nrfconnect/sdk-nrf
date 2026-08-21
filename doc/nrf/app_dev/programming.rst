@@ -149,4 +149,4 @@ Programming with ``--recover``
 
      * ``nrfjprog --recover`` for devices from nRF52, nRF53, and nRF91 Series.
      * ``nrfutil device recover`` for devices from nRF54H and nRF54L Series.
-       For more information about how ``nrfutil device recover`` works, see the `nRF Util documentation <Recovering the device_>`_.
+       For more information, see `nrfutil device recover`_ command page.

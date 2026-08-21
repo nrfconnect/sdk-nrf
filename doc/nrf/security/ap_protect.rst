@@ -291,7 +291,7 @@ nRF91 Series
 
       On the nRF9160, AP-Protect and Secure AP-Protect are *hardware-only*; there are no |NCS| Kconfig options for this device.
       Both mechanisms are controlled solely by writing to the UICR using nRF Util.
-      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       **Enabling AP-Protect on the hardware side:**
 
@@ -443,7 +443,7 @@ nRF91 Series
 
       This command enables Secure AP-Protect on the hardware side and hard resets the device.
 
-      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       .. note::
          With devices that use AP-Protect controlled by software, nRF Util cannot enable Secure AP-Protect on the hardware side if the Secure AP-Protect on the software side is already enabled.
@@ -659,7 +659,7 @@ nRF54L Series
 
       This command enables Secure AP-Protect on the hardware side and hard resets the device.
 
-      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       .. note::
          With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
@@ -859,7 +859,7 @@ nRF54L Series
 
       This set of commands enables AP-Protect on the hardware side and hard resets the device.
 
-      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       **Disabling AP-Protect:**
 
@@ -1058,7 +1058,7 @@ nRF53 Series
       nRF5340 only supports Secure AP-Protect for the application core.
       You can check the serial number of your device by running the ``nrfutil device list`` command.
 
-      For more information about the ``nrfutil device protection-set`` command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       .. note::
          With devices that use software AP-Protect, nRF Util cannot enable hardware Secure AP-Protect if the software Secure AP-Protect is already enabled.
@@ -1170,7 +1170,7 @@ nRF52 Series
          nrfutil device protection-set All
 
       This command enables AP-Protect on the hardware side and hard resets the device.
-      For more information about this command, see `Configuring readback protection`_ in the nRF Util documentation.
+      For more information, see `device protection-set <Configuring readback protection_>`_ command page in the nRF Util documentation.
 
       **Keeping AP-Protect disabled after hard reset:**
 

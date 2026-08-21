@@ -7,7 +7,7 @@ Recovering the Thingy:91 X to factory firmware
    :local:
    :depth: 2
 
-You can recover the Thingy:91 X to factory firmware using the ``nrfutil device`` command in the `nRF Util commands <Device command overview_>`_.
+You can recover the Thingy:91 X to factory firmware using `nRF Util's device command <Device command overview_>`_.
 
 If your Thingy:91 X is powered on and connected using a USB cable, it shows up as a USB device.
 Else, something is preventing the :ref:`connectivity_bridge` application on the nRF5340 from running.
