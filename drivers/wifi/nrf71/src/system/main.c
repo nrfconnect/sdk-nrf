@@ -42,7 +42,6 @@
 #endif /* !CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
-#include <nrf71_wifi_rf.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -573,7 +572,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 		sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+		0, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
 		&tx_pwr_ctrl_params, &tx_pwr_ceil_params, &board_params,
 		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
 			  rpu_ctx_zep->vtf_buffer_start_address);

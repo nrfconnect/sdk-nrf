@@ -327,8 +327,7 @@ struct rpu_conf_rx_radio_test_params {
 	struct chan_params chan;
 	/** Copy OTP params to this memory */
 	signed char phy_threshold;
-	/** Calibration bit map value. More information can be found in the phy_rf_params.h file.
-	 */
+	/** Deprecated on nRF71; retained for API compatibility. */
 	unsigned int phy_calib;
 	/** Start Rx : 1, Stop Rx :0 */
 	unsigned char rx;
@@ -439,7 +438,7 @@ struct nrf_wifi_sys_params {
 	unsigned int bcn_time_out;
 	/** Set to 1 if rpu is expected to perform sleep clock calibration */
 	unsigned int calib_sleep_clk;
-	/** calib bit map value. More info can be found in phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
+	/** Deprecated on nRF71; retained for API compatibility. */
 	unsigned int phy_calib;
 	/** MAC address of the interface. Not applicable to Radio Test mode */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
@@ -738,7 +737,7 @@ struct rpu_conf_params {
 	signed char tx_pkt_rate;
 	/** Copy OTP params to this memory */
 	signed char phy_threshold;
-	/** Calibration bit map value. refer NRF_WIFI_DEF_PHY_CALIB */
+	/** Deprecated on nRF71; retained for API compatibility. */
 	unsigned int phy_calib;
 	/** Radio test mode or System mode selection */
 	signed int op_mode;
@@ -868,7 +867,7 @@ struct nrf_wifi_radio_test_init_info {
 	struct chan_params chan;
 	/** Phy threshold value to be sent to LMAC in channel programming */
 	signed char phy_threshold;
-	/** Calibration bit map value. refer phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
+	/** Deprecated on nRF71; retained for API compatibility. */
 	unsigned int phy_calib;
 	/** Receive BSS color value (1 to 63) */
 	unsigned char rx_bss_color;
