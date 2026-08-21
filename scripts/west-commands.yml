@@ -49,3 +49,8 @@ west-commands:
       - name: ncs-cherry-pick
         class: NcsCherryPick
         help: NCS cherry-pick utility
+  - file: scripts/west_commands/ncs_mergehex.py
+    commands:
+      - name: ncs-mergehex
+        class: NcsMergeHex
+        help: Merge sysbuild output hex files based on mergehex.yaml file.
