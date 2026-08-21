@@ -274,6 +274,7 @@ FAKE_VALUE_FUNC(int, coap_packet_parse, struct coap_packet *, uint8_t *, uint16_
 FAKE_VALUE_FUNC(uint16_t, coap_header_get_id, const struct coap_packet *);
 FAKE_VALUE_FUNC(uint8_t, coap_header_get_type, const struct coap_packet *);
 FAKE_VALUE_FUNC(uint8_t, coap_header_get_code, const struct coap_packet *);
+FAKE_VALUE_FUNC(uint8_t, coap_header_get_token, const struct coap_packet *, uint8_t *);
 FAKE_VALUE_FUNC(const uint8_t *, coap_packet_get_payload, const struct coap_packet *, uint16_t *);
 FAKE_VALUE_FUNC(int, coap_packet_init, struct coap_packet *, uint8_t *, uint16_t, uint8_t, uint8_t,
 		uint8_t, const uint8_t *, uint8_t, uint16_t);
@@ -1278,6 +1279,45 @@ uint8_t *coap_next_token_ok(void)
 	static uint8_t token[COAP_TOKEN_MAX_LEN];
 
 	return token;
+}
+
+uint8_t coap_header_get_token_ok(const struct coap_packet *cpkt, uint8_t *token)
+{
+	/* Return the same (zeroed) token that coap_next_token_ok() provided when
+	 * the request was built, so the transport's token validation passes.
+	 */
+	memset(token, 0, COAP_TOKEN_MAX_LEN);
+	return COAP_TOKEN_MAX_LEN;
+}
+
+uint8_t coap_header_get_type_separate(const struct coap_packet *cpkt)
+{
+	/* The first response is the empty ACK, the second is the separate
+	 * response delivered as a confirmable message (RFC 7252 5.2.2).
+	 */
+	return (coap_header_get_type_fake.call_count == 1) ? COAP_TYPE_ACK : COAP_TYPE_CON;
+}
+
+uint8_t coap_header_get_code_empty_then_content(const struct coap_packet *cpkt)
+{
+	/* Empty ACK first (code 0.00), then the actual content response. */
+	return (coap_header_get_code_fake.call_count == 1) ? COAP_CODE_EMPTY
+							   : COAP_RESPONSE_CODE_CONTENT;
+}
+
+/* Message ID chosen by the server for the separate response. Deliberately
+ * different from the request's (pending) message ID, which is 0 in these tests.
+ */
+#define COAP_SEPARATE_RESPONSE_MSG_ID 0x1234
+
+uint16_t coap_header_get_id_separate(const struct coap_packet *cpkt)
+{
+	/* First lookup is for the empty ACK, which must match the pending
+	 * request ID (0). The second is for the separate response, which
+	 * carries the server-chosen ID that the empty ACK back to the server
+	 * must echo.
+	 */
+	return (coap_header_get_id_fake.call_count == 1) ? 0 : COAP_SEPARATE_RESPONSE_MSG_ID;
 }
 int coap_packet_append_option_ok(struct coap_packet *cpkt, uint16_t code,
 			      const uint8_t *value, uint16_t len)
@@ -2318,6 +2358,66 @@ void test_downloader_get_coap_unauthorized_response(void)
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
+/* RFC 7252 5.2.2: the server may answer a confirmable request with an empty
+ * ACK and deliver the payload later in a separate confirmable message. The
+ * downloader must wait for that separate response, acknowledge it, and complete
+ * the download. See NCSDK-25747.
+ */
+void test_downloader_get_coap_separate_response(void)
+{
+	int err;
+	struct downloader_evt evt;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	/* First received message is an empty ACK, the second is the separate
+	 * (confirmable) response carrying the content.
+	 */
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_separate;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_empty_then_content;
+	/* The separate response carries a server-chosen message ID that differs
+	 * from the request's pending ID; the transport must match it by token and
+	 * acknowledge it using that ID.
+	 */
+	coap_header_get_id_fake.custom_fake = coap_header_get_id_separate;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(DOWNLOADER_EVT_DONE, evt.id);
+
+	/* The separate response was confirmable, so the downloader must have
+	 * acknowledged it with an empty ACK, i.e. sent more than just the
+	 * initial GET request.
+	 */
+	TEST_ASSERT_GREATER_THAN(1, z_impl_zsock_sendto_fake.call_count);
+
+	/* The most recent coap_packet_init() call must be that empty ACK: an
+	 * ACK-type, empty-code message addressed with the separate response's
+	 * server-chosen message ID (arguments are ver, type, token_len, token,
+	 * code, id).
+	 */
+	TEST_ASSERT_EQUAL(COAP_TYPE_ACK, coap_packet_init_fake.arg4_val);
+	TEST_ASSERT_EQUAL(COAP_CODE_EMPTY, coap_packet_init_fake.arg7_val);
+	TEST_ASSERT_EQUAL(COAP_SEPARATE_RESPONSE_MSG_ID, coap_packet_init_fake.arg8_val);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
 void test_downloader_get_einval(void)
 {
 	int err;
@@ -2915,6 +3015,7 @@ void setUp(void)
 	RESET_FAKE(coap_header_get_id);
 	RESET_FAKE(coap_header_get_type);
 	RESET_FAKE(coap_header_get_code);
+	RESET_FAKE(coap_header_get_token);
 	RESET_FAKE(coap_packet_get_payload);
 	RESET_FAKE(coap_packet_init);
 	RESET_FAKE(coap_next_token);
@@ -2923,6 +3024,13 @@ void setUp(void)
 	RESET_FAKE(coap_append_size2_option);
 	RESET_FAKE(coap_get_transmission_parameters);
 	RESET_FAKE(coap_pending_init);
+
+	/* Provide a stable request token and a matching response token by
+	 * default so that CoAP tests pass the transport's token validation
+	 * (RFC 7252 5.3.2).
+	 */
+	coap_next_token_fake.custom_fake = coap_next_token_ok;
+	coap_header_get_token_fake.custom_fake = coap_header_get_token_ok;
 
 	pipe_reset(&event_pipe);
 }
