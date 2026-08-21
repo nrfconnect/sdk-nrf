@@ -8,10 +8,17 @@
 #include <bl_validation.h>
 #include <fw_info.h>
 #include <zephyr/sys/util.h>
-#include <nrfx_nvmc.h>
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/storage/flash_map.h>
+
+#if defined(CONFIG_NRFX_RRAMC)
+#include <nrfx_rramc.h>
+#define PROTECTION_BLOCK_SIZE 0x800
+#else
+#include <nrfx_nvmc.h>
+#define PROTECTION_BLOCK_SIZE 0x8000
+#endif
 
 #define S0_SLOT_ADDRESS		PARTITION_ADDRESS(s0_partition)
 #define S1_SLOT_ADDRESS		PARTITION_ADDRESS(s1_partition)
@@ -22,6 +29,26 @@ ZTEST(bl_validation_test, test_key_looping)
 	 * list, so the bootloader looped through all to validate this app.
 	 */
 }
+
+#if defined(CONFIG_SOC_SERIES_NRF54L)
+
+/* On the nRF54L series the bootloader blocks the KMU slots holding its
+ * signature keys before booting this image, so firmware signatures can no
+ * longer be verified from the application. The test cases are still defined
+ * here because Twister builds its expected test case list by scanning this
+ * file, and a case that never reports a result is counted as a failure.
+ */
+ZTEST(bl_validation_test, test_validation)
+{
+	ztest_test_skip();
+}
+
+ZTEST(bl_validation_test, test_s1)
+{
+	ztest_test_skip();
+}
+
+#else
 
 /* 1. Validate current app in place. Expect success.
  * 2. Validate current app without first 0x200 bytes. Expect failure.
@@ -39,9 +66,14 @@ ZTEST(bl_validation_test, test_validation)
 	/* 0x1000 to account for validation info. */
 	uint32_t copy_len = (uint32_t)_flash_used + 1000;
 
-	/* Round up to at least the next SPU region. */
-	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + copy_len, 0x8000);
+	/* Round up to at least the next protection region. */
+	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + copy_len, PROTECTION_BLOCK_SIZE);
 
+#if defined(CONFIG_SOC_SERIES_NRF54L)
+	nrfx_rramc_write_enable_set(true, 0);
+	nrfx_rramc_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
+		(copy_len + 3) / 4);
+#else
 	for (uint32_t erase_addr = new_addr; erase_addr < (new_addr + copy_len);
 	     erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash), erase_block_size)) {
 		int ret = nrfx_nvmc_page_erase(erase_addr);
@@ -50,6 +82,7 @@ ZTEST(bl_validation_test, test_validation)
 	}
 	nrfx_nvmc_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
 		(copy_len + 3) / 4);
+#endif
 
 	zassert_true(bl_validate_firmware(S0_SLOT_ADDRESS, new_addr),
 		"Fail 3. Failed to validate displaced app.\r\n");
@@ -62,7 +95,11 @@ ZTEST(bl_validation_test, test_validation)
 	zassert_not_equal(0, *(uint32_t *)mangle_addr,
 		"Unable to mangle, word is 0. \r\n");
 
+#if defined(CONFIG_SOC_SERIES_NRF54L)
+	nrfx_rramc_word_write(mangle_addr, 0);
+#else
 	nrfx_nvmc_word_write(mangle_addr, 0);
+#endif
 
 	zassert_equal(0, *(uint32_t *)mangle_addr,
 		"Unable to mangle, word was not written to 0. \r\n");
@@ -81,5 +118,6 @@ ZTEST(bl_validation_test, test_s1)
 	zassert_true(bl_validate_firmware(S1_SLOT_ADDRESS, S1_SLOT_ADDRESS), NULL);
 }
 
+#endif /* CONFIG_SOC_SERIES_NRF54L */
 
 ZTEST_SUITE(bl_validation_test, NULL, NULL, NULL, NULL, NULL);

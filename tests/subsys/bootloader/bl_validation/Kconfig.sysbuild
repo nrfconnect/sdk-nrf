@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_SERIES_NRF54L
+
+config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	default y if SECURE_BOOT_APPCORE
+
+endif
+
+source "share/sysbuild/Kconfig"
