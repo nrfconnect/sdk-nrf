@@ -1419,6 +1419,19 @@ static int hci_driver_open(const struct device *dev)
 	}
 #endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
 
+#if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
+	sdc_hci_cmd_vs_cs_params_set_t cs_params_set_vreg_mode_ldo = {
+		.cs_param_type = SDC_HCI_VS_CS_PARAM_TYPE_CS_VREG_MODE_SET,
+		.cs_param_data.cs_vreg_mode_params.cs_vreg_mode_enable_ldo =
+			IS_ENABLED(CONFIG_BT_CTLR_SDC_CS_USE_LDO),
+	};
+	err = sdc_hci_cmd_vs_cs_params_set(&cs_params_set_vreg_mode_ldo);
+	if (err) {
+		MULTITHREADING_LOCK_RELEASE();
+		return -ENOTSUP;
+	}
+#endif /* CONFIG_BT_CTLR_CHANNEL_SOUNDING */
+
 #if defined(CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US)
 	sdc_hci_cmd_vs_big_reserved_time_set_t big_reserved_time_params = {
 		.reserved_time_us = CONFIG_BT_CTLR_SDC_BIG_RESERVED_TIME_US
