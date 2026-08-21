@@ -25,7 +25,7 @@ DT_CHOSEN_Z_CODE = zephyr,code-partition
 config BUILD_OUTPUT_ADJUST_LMA
 	depends on !XIP
 	default "$(dt_chosen_partition_addr_hex,$(DT_CHOSEN_Z_CODE)) - \
-		 $(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_SRAM))"
+		$(dt_chosen_reg_addr_hex,$(DT_CHOSEN_Z_SRAM))"
 
 endif # RISCV
 
