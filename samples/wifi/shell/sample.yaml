@@ -568,8 +568,10 @@ tests:
       - shell_SNIPPET=wifi-sap
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -582,8 +584,10 @@ tests:
       - shell_SNIPPET=wifi-monitor-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -596,8 +600,10 @@ tests:
       - shell_SNIPPET=wifi-promiscuous-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -610,8 +616,10 @@ tests:
       - shell_SNIPPET=wifi-raw-tx
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -625,8 +633,10 @@ tests:
       - CONFIG_NET_DHCPV4_SERVER=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
       - sysbuild
@@ -670,15 +680,13 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_nrf71_wifi
+  # Used by QA and also acts as a memory stress test for nRF71
   sample.nrf7120.superset:
     sysbuild: true
     build_only: true
     extra_args:
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_CONF_FILE=nrf71-zperf.conf
-      - CONFIG_WPA_CLI=y
-      - CONFIG_NET_IPV4_FRAGMENT=y
-      - CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
+      - EXTRA_CONF_FILE=nrf71-superset.conf
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp
