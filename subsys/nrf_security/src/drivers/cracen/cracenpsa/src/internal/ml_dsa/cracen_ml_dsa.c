@@ -14,7 +14,6 @@
 #include <cracen_psa_xof.h>
 #include <cracen_psa_primitives.h>
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
 
 #include <string.h>
 #include <zephyr/sys/util.h>

@@ -13,8 +13,6 @@
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
-#include <cracen/statuscodes.h>
 
 #define AES_BLOCK_SIZE (16)
 

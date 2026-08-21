@@ -10,7 +10,6 @@
 #include <cracen_psa_cipher.h>
 
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <stdbool.h>
@@ -20,7 +19,6 @@
 #include <sxsymcrypt/chachapoly.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
-#include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 
 #include "cracen_psa_primitives.h"

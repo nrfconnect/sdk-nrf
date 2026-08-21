@@ -7,7 +7,6 @@
 #include <cracen_psa_key_management.h>
 
 #include <cracen/common.h>
-#include <cracen/statuscodes.h>
 #include <cracen/cracen_kmu.h>
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>

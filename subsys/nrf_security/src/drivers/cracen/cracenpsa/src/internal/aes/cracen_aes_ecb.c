@@ -9,7 +9,6 @@
 #include <stdbool.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/blkcipher.h>
-#include <cracen/statuscodes.h>
 #include <cracen/common.h>
 
 /* The AES ECB does not support multipart operations in Cracen. This means that keeping

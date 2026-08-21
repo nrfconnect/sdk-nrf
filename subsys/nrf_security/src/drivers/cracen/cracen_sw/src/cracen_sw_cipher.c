@@ -8,7 +8,6 @@
  */
 
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <zephyr/sys/util.h>
@@ -19,7 +18,6 @@
 #include <sxsymcrypt/chachapoly.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
-#include <cracen/statuscodes.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen_sw_aes_ctr.h>
 #include <cracen_sw_aes_cbc.h>
