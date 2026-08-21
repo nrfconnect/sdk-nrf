@@ -15,6 +15,7 @@ if(NOT extra_paths)
 endif()
 
 include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
+include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/mcuboot_imgtool_args.cmake)
 
 function(dt_get_parent node)
   string(FIND "${${node}}" "/" pos REVERSE)
@@ -157,6 +158,8 @@ if(num_binaries GREATER 0)
     if(NOT "${keyfile}" STREQUAL "")
       list(APPEND imgtool_extra -k "${keyfile}")
     endif()
+
+    ncs_mcuboot_imgtool_append_pad_value_args(imgtool_extra)
 
     if(SB_CONFIG_BOOT_SIGNATURE_TYPE_PURE)
       list(APPEND imgtool_extra --pure)
