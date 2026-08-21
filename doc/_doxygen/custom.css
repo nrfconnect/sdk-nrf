@@ -1,0 +1,154 @@
+/*
+ * nRF Connect SDK Doxygen theme.
+ *
+ * This file is loaded after doxygen-awesome.css (see HTML_EXTRA_STYLESHEET in the
+ * doxyfiles) and holds every Nordic-specific tweak. Keeping doxygen-awesome.css a
+ * verbatim copy of https://github.com/jothepro/doxygen-awesome-css so that it can
+ * be updated from upstream without merging local changes.
+ */
+
+html {
+  /* primary theme color. This will affect the entire websites color scheme: links, arrows, labels, ... */
+  --primary-color: #00a9ce;
+  --primary-dark-color: #0056b3;
+  --primary-light-color: #5cc8e0;
+
+  /* page base colors */
+  --page-background-color: #ffffff;
+  --page-foreground-color: #323e48;
+  --page-secondary-foreground-color: #6b7280;
+
+  /* color for all separators on the website: hr, borders, ... */
+  --separator-color: #e2e8f0;
+  --font-family: "Noto Sans", Carlito, sans-serif;
+  --font-family-monospace: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+
+  /* font sizes and text layout */
+  --page-font-size: 16px;
+  --code-font-size: inherit;
+  --content-line-height: 23px;
+
+  /* @note boxes follow the primary color */
+  --note-color-dark: #00a9ce;
+
+  /* table colors */
+  --tablehead-background: #eaeded;
+  --tablehead-foreground: #333f48;
+
+  /* Dark header bar with white text. Covers the preview commit's
+   * `#top { background: #333f48 }`, `#projectname { color: white }`,
+   * `.sm-dox a { color: #ffffff !important }` and the white submenu arrows. */
+  --header-background: #333f48;
+  --header-foreground: #ffffff;
+
+  /* Menu hover/focus: light blue background, Nordic blue text. Used by
+   * doxygen-awesome for both the top menu and its dropdowns, including the
+   * dropdown arrows. */
+  --menu-focus-foreground: #0033a0;
+  --menu-focus-background: #e0f4f9;
+
+  /* searchbar */
+  --searchbar-background: var(--side-nav-background);
+  --searchbar-foreground: #666f7b;
+  --searchbar-height: 36px;
+  --searchbar-width: 100%;
+  --searchbar-border-radius: 4px;
+
+  /* fragment colors */
+  --fragment-link: #00a9ce;
+
+  /* sidebar navigation (treeview) colors */
+  --side-nav-background: #ffffff;
+
+  /* The preview commit also deleted --code-font-size, which left every
+   * `font-size: var(--code-font-size)` invalid and made code inherit the page
+   * font size. Uncomment to get that behavior back. */
+  /* --code-font-size: inherit; */
+}
+
+/*
+Title and top navigation
+*/
+
+#main-nav {
+  margin-bottom: 18px;
+}
+
+#titlearea {
+  padding: 0 15px 23px 16px;
+}
+
+#projectlogo img {
+  max-height: 93px;
+  max-width: 200px;
+  width: auto;
+}
+
+@media screen and (max-width: 767px) {
+  #titlearea {
+    padding-bottom: var(--spacing-small);
+  }
+  #main-menu a.has-submenu:hover span.sub-arrow {
+      color: var(--menu-focus-foreground);
+  }
+}
+
+@media screen and (min-width: 768px) {
+  /* Keep the arrow of an open menu in the hover color. doxygen-awesome only
+   * styles the :hover state, and smartmenus drops :hover from the parent item
+   * once the pointer moves into the submenu. */
+  .sm-dox a.highlighted span.sub-arrow,
+  .sm-dox a[aria-expanded="true"] span.sub-arrow,
+  .sm-dox ul a.highlighted span.sub-arrow,
+  .sm-dox ul a[aria-expanded="true"] span.sub-arrow {
+      border-color: var(--menu-focus-foreground);
+  }
+}
+
+/*
+Search box
+*/
+
+li#searchBoxPos2 {
+  right: 1.5rem;
+}
+
+#MSearchBox {
+  background: #ffffff !important;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+}
+
+#MSearchBox.MSearchBoxActive {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 1px var(--primary-color);
+}
+
+#MSearchField {
+  color: var(--searchbar-foreground);
+  /* padding-left: 2.25rem !important; */
+}
+
+#MSearchField::placeholder {
+  color: var(--searchbar-foreground);
+  opacity: 1;
+}
+
+/*
+Dark mode toggle
+*/
+
+doxygen-awesome-dark-mode-toggle svg {
+  /* white icon on the dark header bar */
+  color: #ffffff;
+  transform: scale(0.75);
+  transform-origin: center;
+}
+
+doxygen-awesome-dark-mode-toggle svg path,
+doxygen-awesome-dark-mode-toggle svg circle,
+doxygen-awesome-dark-mode-toggle svg line,
+doxygen-awesome-dark-mode-toggle svg g {
+  fill: #ffffff !important;
+  stroke: #ffffff !important;
+}
