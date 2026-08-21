@@ -10,7 +10,6 @@ from itertools import chain
 import yaml
 from docutils import io, statemachine
 from docutils.parsers.rst import directives
-from docutils.utils.error_reporting import ErrorString
 from sphinx.util.docutils import SphinxDirective
 
 __version__ = '0.0.2'
@@ -97,7 +96,9 @@ class TableFromRows(SphinxDirective):
             self.state.document.settings.record_dependencies.add(source_path)
             include_file = io.FileInput(source_path=source_path)
         except OSError as error:
-            raise self.severe(f'Problems with "{self.name}" directive path:\n{ErrorString(error)}.')
+            raise self.severe(
+                    f'Problems with "{self.name}" directive path:\n{io.error_string(error)}.'
+                )
         lines = include_file.readlines()
         header_lines = self._load_section(lines, header_section)
         rows = [self._load_section(lines, section) for section in rows_sections]

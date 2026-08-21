@@ -30,7 +30,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 os.environ["ZEPHYR_BASE"] = str(ZEPHYR_BASE)
 os.environ["OUTPUT_DIR"] = str(utils.get_builddir() / "html" / "zephyr")
 
-conf = eval_config_file(str(ZEPHYR_BASE / "doc" / "conf.py"), tags)
+conf = eval_config_file(ZEPHYR_BASE / "doc" / "conf.py", tags)
 locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
