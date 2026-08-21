@@ -2,12 +2,22 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config PARTITION_MANAGER
-	default n
+if SUPPORT_NETCORE
 
-config REMOTE_BOARD
-	string
-	default "$(BOARD)/nrf5340/cpunet" if SOC_NRF5340_CPUAPP
-	default "$(BOARD)/nrf54h20/cpurad" if SOC_NRF54H20_CPUAPP
+choice NETCORE
+	default NETCORE_REMOTE
+
+config NETCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if NETCORE_REMOTE
+
+endif # SUPPORT_NETCORE
 
 source "share/sysbuild/Kconfig"
