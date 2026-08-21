@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * This overlay defines modem and DCDC power domain for the FLPR core.
+ * These are only defined for the application core in the Zephyr board files
+ */
+
+/ {
+	modem_dcdc: modem_dcdc {
+		compatible = "power-domain-gpio";
+		enable-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
+		#power-domain-cells = <0>;
+		startup-delay-us = <100000>; /* wait for 100ms to stabilize dcdc supply */
+		off-on-delay-us = <500000>; /* wait for 500ms to stabilize main supply */
+	};
+};
+
+&gpio1 {
+	status = "okay";
+
+	modem-usb-boot {
+		gpio-hog;
+		gpios = <0 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+};
+
+&gpio2 {
+	status = "okay";
+
+	modem_uart_switch: modem-uart-switch {
+		gpio-hog;
+		gpios = <6 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+};
+
+&uart30 {
+	modem: modem {
+		status = "okay";
+		compatible = "nordic,nrf93m1";
+		power-domains = <&modem_dcdc>;
+		mdm-power-gpios = <&gpio1 13 GPIO_ACTIVE_HIGH>;
+		mdm-reset-gpios = <&gpio1 12 GPIO_ACTIVE_HIGH>;
+	};
+};

@@ -14,3 +14,17 @@ tests:
     tags:
       - ci_build
       - ci_samples_nrf93m1dk
+
+  sample.nrf93m1dk.modem_bypass.radio_test:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - SB_CONFIG_APPCORE_RADIO_TEST=y
+    integration_platforms:
+      - nrf93m1dk/nrf54l15/cpuflpr
+    platform_allow:
+      - nrf93m1dk/nrf54l15/cpuflpr
+    tags:
+      - ci_build
+      - ci_samples_nrf93m1dk
