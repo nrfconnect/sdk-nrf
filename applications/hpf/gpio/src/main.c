@@ -25,6 +25,22 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
+#if defined(NRF9220_XXAA)
+    #define FLPR_VIO_PORT 2
+    #define FLPR_VIO_PIN_OFFSET 0
+    #define FLPR_VIO_PIN_INDICES \
+	4,  \
+	5,  \
+	6,  \
+	7,  \
+	0, /* not connected to VIO */ \
+	8,  \
+	9,  \
+	10, \
+	11, \
+	12,
+#endif
+
 #if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
 #error "Unsupported SoC"
 #endif
@@ -127,7 +143,10 @@ static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 
 	nrfy_gpio_reconfigure(abs_pin, &dir, &input, &pull, &drive, NULL);
 
+#if !defined(CONFIG_SOC_NRF9251)
+	/* On nRF9251 the pin is routed to the VPR using UICR. */
 	nrfy_gpio_pin_control_select(abs_pin, NRF_GPIO_PIN_SEL_VPR);
+#endif
 
 	if (dir == NRF_GPIO_PIN_DIR_OUTPUT) {
 		nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() | (BIT(pin_vio_index)));

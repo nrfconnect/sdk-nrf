@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../../hpf-gpio-app.overlay"
+
+ipc0: &cpuapp_cpuflpr_ipc {
+	status = "okay";
+};
+
+&pinctrl {
+	/* Route only the LED pin (P2.2, VIO index 6) for now. */
+	vpr_flpr_vio_default: vpr_flpr_vio_default {
+		group1 {
+			psels = <NRF_PSEL(VPR_VIO, 2, 2)>; /* P2.2 -> VIO 6 (LED0) */
+		};
+	};
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&vpr_flpr_vio_default>;
+	pinctrl-names = "default";
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};
+
+&hpf_gpio {
+	status = "okay";
+	ngpios = <10>;
+	port = <2>;
+};
+
+&gpio2 {
+	status = "disabled";
+};
+
+/* Free pin P2.2. */
+&pwm130 {
+	status = "disabled";
+};
