@@ -38,14 +38,8 @@ config DFU_MULTI_IMAGE_PACKAGE_BUILD
 config DFU_MULTI_IMAGE_PACKAGE_APP
 	default y
 
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
-
 #### DFU network core configuration
 if SOC_SERIES_NRF53
-
-config MCUBOOT_UPDATEABLE_IMAGES
-	default 2
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY
@@ -66,19 +60,8 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 
 endif # SOC_SERIES_NRF53
 
-if BOARD_NRF54L15DK || BOARD_NRF54LM20DK
-
-# Disable checking the external drivers for nRF54L15 and nRF54LM20 DKs.
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
-
-endif # BOARD_NRF54L15DK || BOARD_NRF54LM20DK
-
 # Internal flash only for nRF54L15 tag with compression
 if BOARD_NRF54L15TAG
-
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
 
 choice MCUBOOT_MODE
 	default MCUBOOT_MODE_OVERWRITE_ONLY

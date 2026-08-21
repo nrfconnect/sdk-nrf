@@ -31,9 +31,6 @@ config DFU_MULTI_IMAGE_PACKAGE_BUILD
 config DFU_MULTI_IMAGE_PACKAGE_APP
 	default y
 
-config PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY
-	default y
-
 #### DFU network core configuration
 if SOC_SERIES_NRF53
 
@@ -55,14 +52,6 @@ config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
 endif # SOC_SERIES_NRF53
-
-if BOARD_NRF54LM20DK
-
-# Disable checking the external drivers for nRF54LM20 DK.
-config PM_OVERRIDE_EXTERNAL_DRIVER_CHECK
-	default y
-
-endif # BOARD_NRF54LM20DK
 
 endif # BOOTLOADER_MCUBOOT
 
