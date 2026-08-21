@@ -1,7 +1,5 @@
 common:
   sysbuild: true
-  extra_args:
-    - CONFIG_SOC_NRF54H20_CPURAD_ENABLE=y
 
 tests:
   benchmarks.multicore.idle_ipc.nrf54h20dk_cpuapp_cpurad.s2ram:
@@ -81,3 +79,39 @@ tests:
       regex:
         - ".*Coverage analysis enabled.*"
         - ".*Coverage analysis start.*"
+
+  benchmarks.multicore.idle_ipc.nrf9251dk_cpuapp_cpuppr.s2ram:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ipc
+      - ppk_power_measure
+    filter: not CONFIG_COVERAGE
+    harness: pytest
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_ipc"
+
+  benchmarks.multicore.idle_ipc.shifted.nrf9251dk_cpuapp_cpuppr.s2ram:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ipc
+      - ppk_power_measure
+    filter: not CONFIG_COVERAGE
+    harness: pytest
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - remote_TEST_START_DELAY_MS=1000
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_ipc"
