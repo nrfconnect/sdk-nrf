@@ -50,6 +50,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     extra_args:
       - cli_SNIPPET="ot-ci;ot-logging"
       - EXTRA_CONF_FILE="extra_conf/multiprotocol.conf;extra_conf/tcp.conf"
@@ -66,6 +67,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
   sample.openthread.cli.singleprotocol:
     sysbuild: true
     build_only: true
