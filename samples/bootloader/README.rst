@@ -176,7 +176,6 @@ Dependencies
 
 The following |NCS| libraries are used:
 
-* :ref:`partition_manager`
 * :ref:`doc_fw_info`
 * :ref:`fprotect_readme`
 * :ref:`doc_bl_crypto`

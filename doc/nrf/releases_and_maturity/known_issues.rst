@@ -3080,7 +3080,7 @@ The issues in this section are related to :ref:`samples`.
 
 NCSDK-18263: |NCS| samples might fail to boot on Thingy:53
   |NCS| samples and applications that are not listed under :ref:`thingy53_compatible_applications` fail to boot on Nordic Thingy:53.
-  The MCUboot bootloader is not built together with these samples, but the Thingy:53's :ref:`static Partition Manager memory map <ug_pm_static>` requires it (the application image does not start at the beginning of the internal ``FLASH``.)
+  The MCUboot bootloader is not built together with these samples, but the Thingy:53's ``deprecated_ug_pm_static`` requires it (the application image does not start at the beginning of the internal ``FLASH``.)
 
   **Affected platforms:** Thingy:53
 
@@ -4303,14 +4303,14 @@ NCSDK-28462: MCUboot signing configuration cannot be updated without pristine bu
 .. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
 
 NCSDK-28461: Sysbuild partition manager file changes cannot be propagated to builds unless they are pristine
-  When using :ref:`configuration_system_overview_sysbuild` and a :ref:`partition_manager` file, the Partition Manager configuration for things such as MCUboot signing will not be updated if the Partition Manager configuration is changed in an already configured project.
+  When using :ref:`configuration_system_overview_sysbuild` and a ``deprecated_partition_manager`` file, the Partition Manager configuration for things such as MCUboot signing will not be updated if the Partition Manager configuration is changed in an already configured project.
 
   **Workaround:** Perform a :ref:`pristine build <zephyr:west-building-pristine>` after changing configuration in Partition Manager files.
 
 .. rst-class:: v2-7-0
 
 NCSDK-28451: Sysbuild silently does not use relative path (relative to application config dir) user-specified (PM_STATIC_YML_FILE) static PM files
-  When building an application using :ref:`configuration_system_overview_sysbuild` with a :ref:`static partition file <ug_pm_static_providing>` specified using ``PM_STATIC_YML_FILE`` with a relative path, the relative path will be relative to the sysbuild folder in Zephyr, not to the application configuration directory, and the file will silently be ignored.
+  When building an application using :ref:`configuration_system_overview_sysbuild` with a   static partition file ``deprecated_ug_pm_static`` specified using ``PM_STATIC_YML_FILE`` with a relative path, the relative path will be relative to the sysbuild folder in Zephyr, not to the application configuration directory, and the file will silently be ignored.
 
   **Workaround:** Use an absolute path when specifying the static partition file and ensure that the output shows the file as being used.
 
@@ -4386,7 +4386,7 @@ KRKNWK-7827: Application build system is not aware of the settings partition
   **Workaround:** Define and use a code partition to shrink the effective flash memory available for the application.
   You can use one of the following solutions:
 
-  * :ref:`partition_manager` from |NCS| - see the page for all configuration options.
+  * ``deprecated_partition_manager`` from |NCS| - see the page for all configuration options.
   * :ref:`Devicetree code partition <zephyr:flash_map_api>` from Zephyr.
     Set :kconfig:option:`CONFIG_USE_DT_CODE_PARTITION` Kconfig option to ``y``.
     Make sure that the code partition is defined and chosen correctly (``offset`` and ``size``).
@@ -6672,7 +6672,7 @@ NCSDK-18321: TF-M PSA architecture tests do not build with CMake v3.25.x
 .. rst-class:: v2-3-0
 
 NCSDK-20864: TF-M unaligned partitions when MCUboot padding and debug optimizations are enabled
-  When building TF-M using the :ref:`partition_manager` with the MCUboot bootloader enabled (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`), with either :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` or :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` also enabled, the resulting partitions are not aligned with :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE` as required by the :ref:`ug_tfm_partition_alignment_requirements`.
+  When building TF-M using the ``deprecated_partition_manager`` with the MCUboot bootloader enabled (:kconfig:option:`CONFIG_BOOTLOADER_MCUBOOT`), with either :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` or :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` also enabled, the resulting partitions are not aligned with :kconfig:option:`CONFIG_NRF_SPU_FLASH_REGION_SIZE` as required by the :ref:`ug_tfm_partition_alignment_requirements`.
   This will cause the build to fail.
 
   **Workaround:** Disable the :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` and :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_DEBUG` options, or subtract 0x200 from the current value of the :kconfig:option:`CONFIG_PM_PARTITION_SIZE_TFM` option, to comply with the :ref:`ug_tfm_partition_alignment_requirements`.
@@ -6815,7 +6815,7 @@ NCSDK-14015: Execution halts during boot
 
   **Affected platforms:** nRF5340
 
-  **Workaround:** Place the ``rpmsg_nrf53_sram`` partition inside the ``sram_nonsecure`` partition using :ref:`partition_manager`.
+  **Workaround:** Place the ``rpmsg_nrf53_sram`` partition inside the ``sram_nonsecure`` partition using ``deprecated_partition_manager``.
 
 .. rst-class:: v1-9-0
 

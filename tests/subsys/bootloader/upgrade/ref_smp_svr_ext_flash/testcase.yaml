@@ -44,7 +44,6 @@ tests:
     extra_args:
       - FILE_SUFFIX=tfm
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
-      - mcuboot_CONFIG_PM_PARTITION_SIZE_MCUBOOT=0xfe00
 
   mcuboot.external_flash.upgrade.hw_downgrade_prevention:
     tags:

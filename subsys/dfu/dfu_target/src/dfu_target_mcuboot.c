@@ -17,11 +17,7 @@
 #include <string.h>
 
 #include <zephyr/kernel.h>
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#else
 #include <zephyr/storage/flash_map.h>
-#endif
 #include <zephyr/logging/log.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <dfu/dfu_target.h>
@@ -34,39 +30,6 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define MCUBOOT_HEADER_MAGIC 0x96f3b83d
 
 #define IS_ALIGNED_32(POINTER) (((uintptr_t)(const void *)(POINTER)) % 4 == 0)
-
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-
-#define _MB_SEC_PAT(i, x) PM_MCUBOOT_SECONDARY_ ## i ## _ ## x
-
-#define _MB_SEC_PAT_STRING(i, x) STRINGIFY(PM_MCUBOOT_SECONDARY_ ## i ## _ ## x)
-
-#define _MB_SEC_PAT_DEV(i, x) COND_CODE_1(DT_NODE_EXISTS(PM_MCUBOOT_SECONDARY_##i##_##x), \
-			      (DEVICE_DT_GET_OR_NULL(PM_MCUBOOT_SECONDARY_##i##_##x)), \
-			      (DEVICE_DT_GET_OR_NULL(DT_NODELABEL(PM_MCUBOOT_SECONDARY_##i##_##x))))
-
-#define _H_MB_SEC_LA(i) (PM_MCUBOOT_SECONDARY_## i ##_ADDRESS + \
-			 PM_MCUBOOT_SECONDARY_## i ##_SIZE - 1)
-
-#define _MB_SEC_LA(i, _) _H_MB_SEC_LA(i)
-
-#ifdef PM_MCUBOOT_SECONDARY_2_ID
-	#define TARGET_IMAGE_COUNT 3
-#elif defined(PM_MCUBOOT_SECONDARY_1_ID)
-	#define TARGET_IMAGE_COUNT 2
-#else
-	#define TARGET_IMAGE_COUNT 1
-#endif
-
-/* For the first image the Partition Managed doesen't us 0 indice.
- * Let's define liberal macros with 0 for making code more generic.
- */
-#define PM_MCUBOOT_SECONDARY_0_SIZE	PM_MCUBOOT_SECONDARY_SIZE
-#define PM_MCUBOOT_SECONDARY_0_ADDRESS	PM_MCUBOOT_SECONDARY_ADDRESS
-#define PM_MCUBOOT_SECONDARY_0_NAME	STRINGIFY(PM_MCUBOOT_SECONDARY_NAME)
-#define PM_MCUBOOT_SECONDARY_0_DEV	PM_MCUBOOT_SECONDARY_DEV
-
-#else /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /**
  * These definitions are named to align with those used when Partition Manager
@@ -91,8 +54,6 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 #define _MB_SEC_PAT_STRING(i, x) STRINGIFY(SEC_PAT_NODELABEL(i))
 
 #define TARGET_IMAGE_COUNT CONFIG_UPDATEABLE_IMAGE_NUMBER
-
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 #define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i)
 

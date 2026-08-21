@@ -7,11 +7,7 @@
 #include <zephyr/types.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
-#if USE_PARTITION_MANAGER
-#include <pm_config.h>
-#else
 #include <zephyr/storage/flash_map.h>
-#endif
 #include <fw_info.h>
 #if defined(CONFIG_FPROTECT)
 #include <fprotect.h>
@@ -48,30 +44,16 @@
  * for platform for Secure Bootloader via CONFIG_SB_IMAGE_BOOT_OFFSET,
  * or take it from Partition Manager padding.
  */
-#if USE_PARTITION_MANAGER
-/* S0/S1 both have the same pad size */
-#ifdef PM_S0_PAD_SIZE
-#define APP_HEADER_SKIP	PM_S0_PAD_SIZE
-#else
-#define APP_HEADER_SKIP	0
-#endif
-#else
 #if CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER == -1
 #define APP_HEADER_SKIP	0
 #else
 #define APP_HEADER_SKIP	CONFIG_SB_IMAGE_BOOT_OFFSET
 #endif
-#endif
 
 #if defined(CONFIG_FPROTECT)
 /* Invoked from B0, FPROTECT will only protect B0 partition */
-#if USE_PARTITION_MANAGER
-static const uint32_t b0_offset = PM_B0_ADDRESS;
-static const uint32_t b0_size = PM_B0_SIZE;
-#else
 static const uint32_t b0_offset = PARTITION_OFFSET(b0_partition);
 static const uint32_t b0_size = PARTITION_SIZE(b0_partition);
-#endif
 #endif
 
 #if defined(CONFIG_HW_UNIQUE_KEY_LOAD)
@@ -83,11 +65,7 @@ static const uint32_t b0_size = PARTITION_SIZE(b0_partition);
 /* huk_flag_addr is actually address in CPU address space, not offset within
  * flash device.
  */
-#if USE_PARTITION_MANAGER
-static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_FLAG_OFFSET;
-#else
 static const uint32_t huk_flag_addr = PARTITION_ADDRESS(hw_unique_key_partition);
-#endif
 
 
 int load_huk(void)

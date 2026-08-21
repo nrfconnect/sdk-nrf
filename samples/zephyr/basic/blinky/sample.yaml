@@ -45,7 +45,6 @@ tests:
       - SB_CONFIG_HPF=y
       - SB_CONFIG_HPF_GPIO=y
       - SB_CONFIG_HPF_GPIO_BACKEND_ICMSG=y
-      - SB_CONFIG_PARTITION_MANAGER=n
       - FILE_SUFFIX=hpf_gpio
 
   nrf.extended.sample.basic.blinky.hpf.gpio.mbox:
@@ -62,7 +61,6 @@ tests:
       - SB_CONFIG_HPF=y
       - SB_CONFIG_HPF_GPIO=y
       - SB_CONFIG_HPF_GPIO_BACKEND_MBOX=y
-      - SB_CONFIG_PARTITION_MANAGER=n
       - FILE_SUFFIX=hpf_gpio
 
   nrf.extended.sample.basic.blinky.hpf.gpio.icbmsg:
@@ -79,5 +77,4 @@ tests:
       - SB_CONFIG_HPF=y
       - SB_CONFIG_HPF_GPIO=y
       - SB_CONFIG_HPF_GPIO_BACKEND_ICBMSG=y
-      - SB_CONFIG_PARTITION_MANAGER=n
       - FILE_SUFFIX=hpf_gpio

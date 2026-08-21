@@ -11,14 +11,12 @@ Partitioning device memory is a crucial aspect of managing how a device's storag
 By default, the Partition Manager in the system dynamically generates a partition map, which is suitable for most applications that do not use Device Firmware Upgrades (DFU).
 For scenarios involving DFU, read the following sections.
 
-.. include:: ../../../includes/pm_deprecation.txt
-
 .. _bootloader_partitioning_partitions_file:
 
 Partition map file
 ******************
 
-After you enable the Partition Manager, it will :ref:`start generating <pm_build_system>` the :file:`partitions.yml` file in the build folder directory.
+After you enable the Partition Manager, it will ``deprecated_start generating`` the :file:`partitions.yml` file in the build folder directory.
 In this file, you will see detailed information about the memory layout used for the build.
 
 The :file:`partitions.yml` file is present also if the Partition Manager generates the partition map dynamically.
@@ -46,7 +44,7 @@ Depending on your development environment, you can use one of the following opti
 
    .. group-tab:: Command line
 
-      Use the Partition Manager's :ref:`pm_partition_reports` feature.
+      Use the Partition Manager's ``deprecated_pm_partition_reports`` feature.
       Run the following command:
 
       .. code-block:: console
@@ -60,7 +58,7 @@ Depending on your development environment, you can use one of the following opti
 Static partition requirement for DFU
 ************************************
 
-If you want to perform DFU, you must :ref:`define a static partition map <ug_pm_static>` to ensure compatibility across different builds.
+If you want to perform DFU, you must define a static partition map ``deprecated_ug_pm_static`` to ensure compatibility across different builds.
 The dynamically generated partitions can change between builds.
 
 The memory partitions that must be defined in the static partition map depend on the selected bootloader chain.
@@ -97,7 +95,7 @@ This is particularly useful in memory-constrained devices to avoid providing spa
 
 See the *Image Slots* section in the :doc:`MCUboot documentation <mcuboot:design>` for more information.
 
-The |NCS| variant of MCUboot uses the :ref:`partition_manager` to configure the flash memory partitions for these image slots.
+The |NCS| variant of MCUboot uses the ``deprecated_partition_manager`` to configure the flash memory partitions for these image slots.
 In the default configuration, defined in :file:`bootloader/mcuboot/boot/zephyr/pm.yml`, the Partition Manager dynamically sets up the partitions as required for MCUboot.
 For example, the partition layout for :file:`zephyr/samples/hello_world` using MCUboot on the ``nrf52840dk`` board would look like the following:
 
@@ -128,7 +126,7 @@ When using MCUboot, you can store the storage partition for the secondary slot i
 
 To enable external flash with MCUboot, complete the following steps:
 
-1. Follow the instructions in :ref:`pm_external_flash`, which enables external flash use in the nRF5340 DK's DTS file.
+1. Follow the instructions in ``deprecated_pm_external_flash``, which enables external flash use in the nRF5340 DK's DTS file.
 
 #. Enable the :kconfig:option:`SB_CONFIG_PM_EXTERNAL_FLASH_MCUBOOT_SECONDARY` sysbuild Kconfig option.
 
@@ -143,7 +141,7 @@ To enable external flash with MCUboot, complete the following steps:
    The Partition Manager will only support run-time access to flash partitions defined in regions placed on external flash devices that have drivers compiled in.
    The Partition Manager cannot determine which partitions will be used at runtime, but only those that have drivers enabled, and those are included into the partition map.
    Lack of partition access will cause MCUboot to fail at runtime.
-   For more details on configuring and enabling access to external flash devices, see :ref:`pm_external_flash`.
+   For more details on configuring and enabling access to external flash devices, see ``deprecated_pm_external_flash``.
 
 The Quad Serial Peripheral Interface (QSPI) NOR flash memory driver supports these features, and it can access the QSPI external flash memory of the nRF52840 DK and nRF5340 DK.
 
@@ -172,10 +170,10 @@ MCUboot could fail, reporting the following error:
 This error could be caused by the following issues:
 
   * The external flash driver for the application image partitions used by MCUboot is not enabled or an incorrect Kconfig option has been given to the ``DEFAULT_DRIVER_KCONFIG`` of the Partition Manager external region definition.
-    See :ref:`pm_external_flash` for details.
+    See ``deprecated_pm_external_flash`` for details.
 
   * An out-of-tree external flash driver is not selecting :kconfig:option:`CONFIG_PM_EXTERNAL_FLASH_HAS_DRIVER`, resulting in partitions for images located in the external flash memory being not accessible.
-    See :ref:`pm_external_flash` for details.
+    See ``deprecated_pm_external_flash`` for details.
 
   * Insufficient value set for the ``CONFIG_BOOT_MAX_IMG_SECTORS`` Kconfig option, as MCUboot typically increases slot sizes when external flash is enabled.
     See `MCUboot's Kconfig options used in Zephyr <https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370>`_ for details.
@@ -193,7 +191,7 @@ This error could be caused by the following issues:
 
   * :kconfig:option:`SB_CONFIG_PM_OVERRIDE_EXTERNAL_DRIVER_CHECK` sysbuild Kconfig has been used to override the driver check for the external flash driver, but no driver is actually compiled for the region.
     Disabling the option removes partitions without device drivers from the flash map, which may cause runtime failures.
-    See :ref:`pm_external_flash` for details.
+    See ``deprecated_pm_external_flash`` for details.
 
   * ``DEFAULT_DRIVER_KCONFIG`` is given a Kconfig that neither controls nor indicates whether a flash device driver is compiled in.
-    See :ref:`pm_external_flash` for details.
+    See ``deprecated_pm_external_flash`` for details.

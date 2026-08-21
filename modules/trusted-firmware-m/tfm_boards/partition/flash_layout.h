@@ -9,9 +9,6 @@
 
 #include <zephyr/autoconf.h>
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
-#else
 /*
  * When not using Partition Manager, get partition info from devicetree.
  * We can't use <zephyr/devicetree.h> directly because this header is included
@@ -32,7 +29,6 @@
 #define TFM_DT_REG_ADDR(node_id) TFM_DT_CAT4(node_id, _REG_IDX_, 0, _VAL_ADDRESS)
 #define TFM_DT_REG_SIZE(node_id) TFM_DT_CAT4(node_id, _REG_IDX_, 0, _VAL_SIZE)
 #define TFM_DT_NODE_EXISTS(node_id) TFM_DT_CAT(node_id, _EXISTS)
-#endif
 
 /* This header file is included from linker scatter file as well, where only a
  * limited C constructs are allowed. Therefore it is not possible to include
@@ -49,10 +45,6 @@
 #endif
 
 /* Size of a Secure and of a Non-secure image */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define FLASH_S_PARTITION_SIZE	(PM_TFM_SECURE_SIZE)
-#define FLASH_NS_PARTITION_SIZE (PM_TFM_NONSECURE_SIZE)
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(slot0_s_partition))
 /* When slot0_partition is the combined MCUboot slot, use slot0_s_partition
  * for the size of the secure-only sub-partition.
@@ -62,7 +54,6 @@
 #define FLASH_S_PARTITION_SIZE	TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_partition))
 #endif
 #define FLASH_NS_PARTITION_SIZE TFM_DT_REG_SIZE(TFM_DT_NODELABEL(slot0_ns_partition))
-#endif
 #define FLASH_MAX_PARTITION_SIZE                                                                   \
 	((FLASH_S_PARTITION_SIZE > FLASH_NS_PARTITION_SIZE) ? FLASH_S_PARTITION_SIZE               \
 							    : FLASH_NS_PARTITION_SIZE)
@@ -77,33 +68,6 @@
  */
 #define FLASH_TOTAL_SIZE (CONFIG_FLASH_SIZE * 1024)
 
-/* MCUboot partition definitions - only available when using partition manager */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#if !defined(MCUBOOT_IMAGE_NUMBER) || (MCUBOOT_IMAGE_NUMBER == 1)
-/* Secure image primary slot */
-#define FLASH_AREA_0_ID	    (1)
-#define FLASH_AREA_0_OFFSET (PM_MCUBOOT_PRIMARY_ADDRESS)
-#define FLASH_AREA_0_SIZE   (PM_MCUBOOT_PRIMARY_SIZE)
-/* Secure image secondary slot */
-#define FLASH_AREA_2_ID	    (FLASH_AREA_0_ID + 1)
-#define FLASH_AREA_2_OFFSET (PM_MCUBOOT_SECONDARY_ADDRESS)
-#define FLASH_AREA_2_SIZE   (PM_MCUBOOT_SECONDARY_SIZE)
-
-/* Not used, only the Non-swapping firmware upgrade operation
- * is supported on NRF5340 Application MCU.
- */
-#define FLASH_AREA_SCRATCH_ID	  (FLASH_AREA_2_ID + 1)
-#define FLASH_AREA_SCRATCH_OFFSET (FLASH_AREA_2_OFFSET + FLASH_AREA_2_SIZE)
-#define FLASH_AREA_SCRATCH_SIZE	  (0)
-
-/* Maximum number of image sectors supported by the bootloader. */
-#define MCUBOOT_MAX_IMG_SECTORS                                                                    \
-	((FLASH_S_PARTITION_SIZE + FLASH_NS_PARTITION_SIZE) / FLASH_AREA_IMAGE_SECTOR_SIZE)
-#else
-#error "Only MCUBOOT_IMAGE_NUMBER 1 is supported!"
-#endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
-
 /* Not used, only the Non-swapping firmware upgrade operation
  * is supported on nRF5340. The maximum number of status entries
  * supported by the bootloader.
@@ -111,57 +75,29 @@
 #define MCUBOOT_STATUS_MAX_ENTRIES (0)
 
 /* Protected Storage (PS) partition */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef PM_TFM_PS_ADDRESS
-#define FLASH_PS_AREA_OFFSET (PM_TFM_PS_ADDRESS)
-#define FLASH_PS_AREA_SIZE   (PM_TFM_PS_SIZE)
-#endif
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(tfm_ps_partition))
 #define FLASH_PS_AREA_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(tfm_ps_partition))
 #define FLASH_PS_AREA_SIZE   TFM_DT_REG_SIZE(TFM_DT_NODELABEL(tfm_ps_partition))
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /* Internal Trusted Storage (ITS) Service definitions */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef PM_TFM_ITS_ADDRESS
-#define FLASH_ITS_AREA_OFFSET (PM_TFM_ITS_ADDRESS)
-#define FLASH_ITS_AREA_SIZE   (PM_TFM_ITS_SIZE)
-#endif
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(tfm_its_partition))
 #define FLASH_ITS_AREA_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(tfm_its_partition))
 #define FLASH_ITS_AREA_SIZE   TFM_DT_REG_SIZE(TFM_DT_NODELABEL(tfm_its_partition))
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /* OTP / NV counters partition */
 #define FLASH_OTP_NV_COUNTERS_SECTOR_SIZE (FLASH_AREA_IMAGE_SECTOR_SIZE)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#ifdef PM_TFM_OTP_NV_COUNTERS_ADDRESS
-#define FLASH_OTP_NV_COUNTERS_AREA_OFFSET (PM_TFM_OTP_NV_COUNTERS_ADDRESS)
-#define FLASH_OTP_NV_COUNTERS_AREA_SIZE	  (PM_TFM_OTP_NV_COUNTERS_SIZE)
-#endif
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(tfm_otp_partition))
 #define FLASH_OTP_NV_COUNTERS_AREA_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(tfm_otp_partition))
 #define FLASH_OTP_NV_COUNTERS_AREA_SIZE	  TFM_DT_REG_SIZE(TFM_DT_NODELABEL(tfm_otp_partition))
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /* Non-secure storage region */
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#if defined(PM_NONSECURE_STORAGE_ADDRESS)
-#define NRF_FLASH_NS_STORAGE_AREA_OFFSET (PM_NONSECURE_STORAGE_ADDRESS)
-#define NRF_FLASH_NS_STORAGE_AREA_SIZE	 (PM_NONSECURE_STORAGE_SIZE)
-#endif
-#else
 #if TFM_DT_NODE_EXISTS(TFM_DT_NODELABEL(storage_partition))
 #define NRF_FLASH_NS_STORAGE_AREA_OFFSET TFM_DT_REG_ADDR(TFM_DT_NODELABEL(storage_partition))
 #define NRF_FLASH_NS_STORAGE_AREA_SIZE	 TFM_DT_REG_SIZE(TFM_DT_NODELABEL(storage_partition))
 #endif
-#endif /* CONFIG_PARTITION_MANAGER_ENABLED */
 
 /* Offset and size definition in flash area used by assemble.py */
 #define SECURE_IMAGE_OFFSET   (0x0)
@@ -233,12 +169,8 @@
 
 #define TOTAL_ROM_SIZE FLASH_TOTAL_SIZE
 
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#define TOTAL_RAM_SIZE (CONFIG_PM_SRAM_SIZE)
-#else
 /* When not using partition manager, get SRAM size from DTS */
 #define TOTAL_RAM_SIZE                                                                             \
 	(TFM_DT_REG_SIZE(TFM_DT_NODELABEL(sram0_s)) + TFM_DT_REG_SIZE(TFM_DT_NODELABEL(sram0_ns)))
-#endif
 
 #endif /* __FLASH_LAYOUT_H__ */
