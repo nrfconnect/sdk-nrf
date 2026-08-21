@@ -267,7 +267,10 @@ You can specify the format of the report output using the ``output`` argument.
   * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages; use ``--package-download-format github-archive`` to emit a GitHub archive zip URL instead)
   * ``PackageHomePage`` for browsable project links
   * Package URLs (PURLs) for unique package identification
-  * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
+  * Upstream ``ExternalRef`` entries taken from each Zephyr module's ``zephyr/module.yml``
+    (see `Upstream external references`_)
+  * A Common Platform Enumeration (CPE) identifier for the application package when specified
+    via ``--package-cpe``
   * Dependency relationships showing supply chain connections
   * File checksums and license information
   * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
@@ -401,15 +404,56 @@ The following options enhance SBOM compliance with CRA, EO 14028, and FDA requir
 
   If not specified, the supplier is auto-detected from git repository owner/organization names.
 
-* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier:
+* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier of the application:
 
   .. code-block:: bash
 
      --package-cpe "cpe:2.3:a:nordicsemi:nrf_connect_sdk:2.0.0:*:*:*:*:*:*:*"
 
   CPE identifiers follow the CPE 2.3 specification and help identify software packages in vulnerability databases.
+  A CPE names one product so this option applies to the application package only.
+
+  The identifiers of the components you build on come from their Zephyr modules instead
+  as described in `Upstream external references`_.
 
 These options ensure that generated SBOMs include all required fields for regulatory compliance.
+
+.. _Upstream external references:
+
+Upstream external references
+============================
+
+Most |NCS| components are redistributed rather than taken from the project that develops them.
+Some are Nordic forks under ``nrfconnect`` some are hosted under ``zephyrproject-rtos`` and a
+few come straight from their original project. A package is reported under the name and revision
+that was actually built, for example ``nrfconnect/sdk-mbedtls`` or ``zephyrproject-rtos/cmsis``.
+Vulnerability databases carry entries for the originating project.
+
+Zephyr modules declare the upstream project they are derived from in ``zephyr/module.yml``:
+
+.. code-block:: yaml
+
+   security:
+     external-references:
+       - cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+       - pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+When a repository declares that block the entries are emitted as additional ``ExternalRef``
+records on its package next to the fork's own package URL::
+
+   PackageName: nrfconnect/sdk-mbedtls
+   PackageVersion: v3.6.3-ncs1
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/nrfconnect/sdk-mbedtls@<commit>
+   ExternalRef: SECURITY cpe23Type cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+The fork keeps describing what was built and the upstream references say which product the
+code came from. Only the module at the root of a repository is read and a reference that is
+neither a CPE 2.3 name nor a package URL is skipped with a warning.
+
+An upstream reference describes the product a fork is derived from.
+Where a fix has been backported the upstream version does not change so a scanner can
+still report an issue that is already fixed.
 
 .. _west_sbom HTML report overview:
 
