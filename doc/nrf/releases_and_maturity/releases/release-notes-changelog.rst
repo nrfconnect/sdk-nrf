@@ -291,6 +291,12 @@ nRF Desktop
     Enable the feature with the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option.
   * The ``hid_sci`` and ``release_hid_sci`` build types for the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
     The configurations act as a HID mouse peripheral with HID SCI support.
+  * Added :kconfig:option:`CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT` that allows to drop MCUboot image header, in secondary MCUboot image update, when the update is installed to desingated slot, by MCUboot.
+    The option if off, for compatibility, because MCUboot built prior to the option existence is not capable of updating itself with MCUboot that was built with the option enabled.
+    Same condition applies to NSIB, that will not be able boot MCUboot built with the option enabled, as it has been hardcoded to skip the header, so it expects it to exist.
+    For NSIB to work with MCUboot built with the option enabled, NSIB has to be built with :kconfig:option:`CONFIG_SB_IMAGE_BOOT_OFFSET` set to 0, which would turn off the header skipping.
+    NSIB + MCUboot setup, that will discard the header, canbe built with Sysbuild :kconfig:option:`SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER`.
+    Note that the header is still added for DFU, as MCUboot requires it for processing the image, but will be minimal allowed header; this slightly reduces DFU size of MCUboot image, for example by 2016 bytes for nRF54L, and increases partition size available for MCUBoot executable.
 
 * Removed:
 
