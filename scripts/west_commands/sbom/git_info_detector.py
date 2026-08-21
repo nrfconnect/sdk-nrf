@@ -7,6 +7,7 @@ import sys
 import re
 from pathlib import Path
 
+import zephyr_module
 from args import args
 from common import SbomException, command_execute, concurrent_pool_iter
 from data_structure import Data, FileInfo, Package
@@ -14,11 +15,13 @@ from west import log
 
                                                     # FileInfo is used.
 
+
 _manifest_projects: 'dict[Path, object]' = {}
 _manifest_path_index: 'list[tuple[Path, object]]' = []
 _self_repo_path: 'Path|None' = None
 _self_repo_name: 'str|None' = None
 _self_repo_version: 'str|None' = None
+_module_refs_cache: 'dict[Path, list]' = {}
 
 
 def split_lines(text: str) -> 'tuple[str]':
@@ -161,6 +164,56 @@ def upstream_url(project) -> 'str|None':
     return url.strip() if isinstance(url, str) and url.strip() else None
 
 
+def classify_external_ref(locator: str) -> 'tuple[str,str,str]|None':
+    '''Return the SPDX (category, type, locator) triple for a supported locator.'''
+    locator = locator.strip()
+    if locator.startswith('cpe:2.3:'):
+        return ('SECURITY', 'cpe23Type', locator)
+    if locator.startswith('pkg:'):
+        return ('PACKAGE-MANAGER', 'purl', locator)
+    return None
+
+
+def read_module_external_refs(module_root: 'Path|None') -> 'list[tuple[str,str,str]]':
+    '''Returns the external references the Zephyr module declares.
+
+    Uses Zephyr's module metadata API to read "security: external-references:". A Nordic fork
+    keeps its own name and revision which no vulnerability database knows. That block names
+    the upstream project the fork is derived from which is the identity a scanner can match.
+
+    Only the module at the root of the repository is read.
+    '''
+    if module_root is None:
+        return []
+    if module_root in _module_refs_cache:
+        return _module_refs_cache[module_root]
+    module_file = module_root / Path(zephyr_module.MODULE_YML_PATH)
+    yaml_module_file = module_file.with_suffix('.yaml')
+    if not module_file.is_file() and yaml_module_file.is_file():
+        module_file = yaml_module_file
+    try:
+        meta = zephyr_module.process_module(module_root, require_yaml_validation=False)
+    except SystemExit as ex:
+        log.wrn(f'Cannot parse "{module_file}": {ex}')
+        meta = None
+    except Exception as ex:
+        log.wrn(f'Cannot parse "{module_file}": {ex}')
+        meta = None
+    security = meta.get('security') if isinstance(meta, dict) else None
+    locators = security.get('external-references') if isinstance(security, dict) else None
+    refs = []
+    for locator in locators or tuple():
+        if not isinstance(locator, str):
+            continue
+        ref = classify_external_ref(locator)
+        if ref is None:
+            log.wrn(f'Ignoring unknown external reference "{locator}" in "{module_file}".')
+        elif ref not in refs:
+            refs.append(ref)
+    _module_refs_cache[module_root] = refs
+    return refs
+
+
 def read_version(version_file: Path, include_dev: bool = False) -> 'str|None':
     '''Returns the NCS version from `version_file` when PATCHLEVEL != 99.
 
@@ -195,6 +248,7 @@ def load_manifest():
     _self_repo_path = None
     _self_repo_name = None
     _self_repo_version = None
+    _module_refs_cache.clear()
     try:
         from west.manifest import Manifest
         manifest = Manifest.from_topdir()
@@ -247,6 +301,7 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     absolute_path = Path(files_to_assign[0].file_path).parent
     relative_path = Path(files_to_assign[0].file_rel_path).parent
     repo = get_toplevel(absolute_path)
+    module_root = repo
     if repo is None:
         log.wrn(f'Directory "{relative_path}" is not a git repository. '
                 'Files will be included without git-info detector information.')
@@ -268,6 +323,7 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         match = match_manifest_project(absolute_path)
         if match is not None:
             project_root, mproject = match
+            module_root = module_root or project_root
             git_origin = getattr(mproject, 'url', None) or None
             git_sha = git_sha or getattr(mproject, 'revision', None)
             if git_origin is None:
@@ -311,8 +367,7 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
             package.supplier = args.package_supplier or extract_supplier_from_url(git_origin)
         if project is not None:
             package.browser_url = upstream_url(project)
-        if args.package_cpe:
-            package.cpe = args.package_cpe
+        package.external_refs = read_module_external_refs(module_root)
         data.packages[package_id] = package
     for file in files_to_assign:
         file.package = package_id

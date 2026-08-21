@@ -85,6 +85,8 @@ class Package(DataBaseClass):
         supplier                Supplier name
         purl                    Package URL (PURL) identifier
         cpe                     Common Platform Enumeration (CPE) identifier
+        external_refs           Additional SPDX external references as
+                                (category, type, locator) tuples.
         dependencies            List of package IDs this package depends on
         primary_package_purpose Estimate of the most likely package usage; None to omit
         built_date              Actual date the package was built; None to omit
@@ -97,6 +99,7 @@ class Package(DataBaseClass):
     supplier: 'str|None' = None
     purl: 'str|None' = None
     cpe: 'str|None' = None
+    external_refs: 'list[tuple[str,str,str]]' = list()
     dependencies: 'list[str]' = list()
     primary_package_purpose: 'str|None' = None
     built_date: 'str|None' = None
