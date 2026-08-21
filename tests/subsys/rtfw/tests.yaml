@@ -1,0 +1,34 @@
+tests:
+  subsys.rtfw:
+    platform_allow:
+      - native_sim
+    tags:
+      - rtfw
+      - unit
+
+  subsys.rtfw.preinit:
+    platform_allow:
+      - native_sim
+    extra_configs:
+      - CONFIG_RTFW_TEST_PREINIT=y
+    tags:
+      - rtfw
+      - unit
+
+  subsys.rtfw.no_queue_stats:
+    platform_allow:
+      - native_sim
+    extra_configs:
+      - CONFIG_RTFW_QUEUE_USAGE_STATS=n
+    tags:
+      - rtfw
+      - unit
+
+  subsys.rtfw.no_event_handler:
+    platform_allow:
+      - native_sim
+    extra_configs:
+      - CONFIG_RTFW_TEST_NO_EVENT_HANDLER=y
+    tags:
+      - rtfw
+      - unit
