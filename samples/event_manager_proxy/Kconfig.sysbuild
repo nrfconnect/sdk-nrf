@@ -4,9 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config PARTITION_MANAGER
-	default n
-
 config REMOTE_BOARD
 	string
 	default "nrf5340dk/nrf5340/cpunet" if BOARD_NRF5340DK_NRF5340_CPUAPP
