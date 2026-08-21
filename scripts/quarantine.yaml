@@ -100,3 +100,18 @@
     - nrf9251dk/nrf9251/cpuapp
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-10000"
+
+- scenarios:
+    - drivers.adc.adc_latency
+    - drivers.grtc.grtc_clk_out.fast
+    - drivers.grtc.grtc_clk_out.slow
+    - drivers.timer.lfclk_accuracy
+    - drivers.timer.lfclk_accuracy.lfrc_nrf54l
+    - drivers.uart.uart_instances
+    - nrf.extended.drivers.adc
+    - nrf.extended.drivers.adc.accuracy.ref_volt
+    - nrf.extended.sample.drivers.adc.adc_dt
+    - nrf.extended.sample.drivers.adc.adc_sequence
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp
+  comment: "Waiting for nrf7120 DK"
