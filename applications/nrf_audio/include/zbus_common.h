@@ -87,6 +87,14 @@ enum bt_mgmt_evt_type {
 
 struct bt_mgmt_msg {
 	enum bt_mgmt_evt_type event;
+	/**
+	 * For some events (e.g. BT_MGMT_DISCONNECTED when CONFIG_BT_CENTRAL is enabled), bt_mgmt
+	 * may drop its reference to this connection immediately after publishing the zbus message.
+	 *
+	 * If a listener needs to keep using this pointer beyond the immediate zbus listener
+	 * callback, it must take its own reference with bt_conn_ref() while the pointer is still
+	 * valid and call bt_conn_unref() when done.
+	 */
 	struct bt_conn *conn;
 	uint8_t index;
 	struct bt_le_ext_adv *ext_adv;

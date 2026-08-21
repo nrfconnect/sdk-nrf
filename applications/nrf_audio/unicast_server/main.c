@@ -362,10 +362,26 @@ static void bt_mgmt_evt_handler(const struct zbus_channel *chan)
 		/* NOTE: The string below is used by the Nordic CI system */
 		LOG_INF("Disconnection event. Num connections: %u", num_conn);
 
+		if (msg->conn == NULL) {
+			LOG_ERR("Disconnected event with NULL conn");
+			return;
+		}
+
+		struct bt_conn *current_conn;
+
+		current_conn = bt_conn_ref(msg->conn);
+
+		if (current_conn == NULL) {
+			LOG_ERR("Failed to reference connection");
+			return;
+		}
+
 		ret = bt_content_ctrl_conn_disconnected(msg->conn);
 		if (ret) {
 			LOG_ERR("Failed to handle disconnection in content control: %d", ret);
 		}
+
+		bt_conn_unref(msg->conn);
 
 		break;
 
