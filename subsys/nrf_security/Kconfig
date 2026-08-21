@@ -29,6 +29,9 @@ config NRF_SECURITY
 # Include Nordic-only PSA configurations
 rsource "Kconfig.psa.nordic"
 
+# Include platform capability configurations
+rsource "Kconfig.platform"
+
 if NRF_SECURITY
 
 # Include TLS/DTLS and x509 configurations
