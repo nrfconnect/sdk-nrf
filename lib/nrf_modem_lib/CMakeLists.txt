@@ -25,4 +25,4 @@ zephyr_library_sources(fault.c)
 zephyr_library_sources(sanity.c)
 
 zephyr_linker_sources(RODATA nrf_modem_lib.ld)
-zephyr_linker_sources_IFDEF(CONFIG_NRF_MODEM_LIB_CFUN_HOOKS RODATA cfun_hooks.ld)
+zephyr_linker_sources_ifdef(CONFIG_NRF_MODEM_LIB_CFUN_HOOKS RODATA cfun_hooks.ld)
