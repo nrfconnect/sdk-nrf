@@ -131,6 +131,13 @@ int bt_content_ctrl_uuid_populate(struct net_buf_simple *uuid_buf)
 	return 0;
 }
 
+void bt_content_ctrl_state_override(bool playing)
+{
+	if (IS_ENABLED(CONFIG_BT_MCS)) {
+		bt_content_ctrl_media_state_override(playing);
+	}
+}
+
 int bt_content_ctrl_init(void)
 {
 	int ret;

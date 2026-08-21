@@ -332,6 +332,17 @@ static int mpl_cmd_send(struct bt_conn *conn, struct mpl_cmd *cmd)
 	return 0;
 }
 
+void bt_content_ctrl_media_state_override(bool playing)
+{
+	if (IS_ENABLED(CONFIG_BT_MCS)) {
+		if (playing) {
+			media_player_state = BT_MCS_MEDIA_STATE_PLAYING;
+		} else {
+			media_player_state = BT_MCS_MEDIA_STATE_PAUSED;
+		}
+	}
+}
+
 int bt_content_ctrl_media_discover(struct bt_conn *conn)
 {
 	int ret;

@@ -2904,6 +2904,13 @@ OCT-3248: A race condition between capturing timers and the RTC tick resetting t
 
   **Affected platforms:** nRF5340 Audio DK
 
+.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+OCT-3775: Deadlock on the unicast client when a unicast server is reset at the same time as a pause command is sent
+  This is because the unicast client is waiting for a response from the unicast server, which is reset and cannot respond.
+
+  **Affected platforms:** nRF5340 Audio DK
+
 Controller subsystem for nRF Audio
 ----------------------------------
 
