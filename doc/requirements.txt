@@ -10,14 +10,14 @@ anytree                         # |     |         |         |         |      |  
 azure-storage-blob              # |  X  |         |         |         |      |        |
 beautifulsoup4                  # |     |         |         |         |      |        |
 doxmlparser                     # |     |         |         |         |      |    X   |
-myst-parser>=4,<5               # |     |         |         |         |  X   |        |
+myst-parser>=5,<6               # |     |         |         |         |  X   |        |
 natsort                         # |     |         |         |         |      |    x   |
 PyYAML                          # |  X  |         |         |         |      |    X   |
 pykwalify                       # |     |         |         |         |      |    X   |
 pytest                          # |     |         |         |         |      |    X   |
 recommonmark                    # |     |         |   X     |    X    |      |        |
 snowballstemmer<3.0.0           # https://github.com/snowballstem/snowball/issues/229
-sphinx>=8.1,<8.2                # |  X  |    X    |   X     |    X    |   X   |   X   |
+sphinx>=9.1,<9.2                # |  X  |    X    |   X     |    X    |   X   |   X   |
 sphinx-autobuild                # |  X  |    X    |   X     |    X    |   X   |   X   |
 sphinx-copybutton               # |  X  |         |         |         |       |   X   |
 sphinx-ncs-theme<2.1            # |  X  |         |         |         |       |       |
