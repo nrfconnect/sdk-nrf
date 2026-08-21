@@ -255,10 +255,10 @@
 
 		cpuflpr_tcm_sram: sram@2f890000 {
 			compatible = "mmio-sram";
-			reg = <0x2f890000 DT_SIZE_K(64)>;
+			reg = <0x2f890000 DT_SIZE_K(46)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2f890000 0x10000>;
+			ranges = <0x0 0x2f890000 0xb800>;
 		};
 
 		cpuppr_tcm_sram: sram@2fc00000 {
@@ -478,8 +478,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			timer120: timer@8e2000 {
@@ -558,8 +556,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			ppib130: ppib@925000 {
@@ -687,8 +683,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			adc: adc@982000 {
@@ -726,8 +720,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			pdm0: pdm@993000 {
@@ -761,8 +753,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			timer130: timer@9a2000 {
@@ -893,8 +883,6 @@
 				channels = <8>;
 				groups = <2>;
 				status = "disabled";
-				channels = <8>;
-				groups = <2>;
 			};
 
 			timer132: timer@9b2000 {
