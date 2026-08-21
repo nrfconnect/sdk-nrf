@@ -53,6 +53,9 @@ ExternalRef: PACKAGE-MANAGER purl {{package.purl}}
 {% if package.cpe -%}
 ExternalRef: SECURITY cpe23Type {{package.cpe}}
 {% endif -%}
+{% for category, ref_type, locator in package.external_refs -%}
+ExternalRef: {{category}} {{ref_type}} {{locator}}
+{% endfor -%}
 {% if package.primary_package_purpose -%}
 PrimaryPackagePurpose: {{package.primary_package_purpose}}
 {% endif -%}
