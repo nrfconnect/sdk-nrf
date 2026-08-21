@@ -74,6 +74,8 @@ Removal of legacy PSA Crypto API
 Build and configuration system
 ==============================
 
+.. _migration_3.4_hal_global_defines:
+
 HAL global define deprecation
 -----------------------------
 
