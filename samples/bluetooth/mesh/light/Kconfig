@@ -1,0 +1,3 @@
+source "Kconfig.zephyr"
+
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/bluetooth/mesh/common/Kconfig"

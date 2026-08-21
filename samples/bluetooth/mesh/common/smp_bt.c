@@ -5,7 +5,9 @@
  */
 
 #include <zephyr/init.h>
+#include <zephyr/sys/printk.h>
 
+#if IS_ENABLED(CONFIG_NCS_SAMPLE_MESH_COMMON_SMP_BT_DEDICATED_ADV_SET)
 /* .. include_startingpoint_mesh_smp_dfu_rst_1 */
 #include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/conn.h>
@@ -146,30 +148,40 @@ int smp_service_adv_init(void)
 	return err;
 }
 /* .. include_endpoint_mesh_smp_dfu_rst_1 */
+#endif /* CONFIG_NCS_SAMPLE_MESH_COMMON_SMP_BT_DEDICATED_ADV_SET */
 
 int smp_dfu_init(void)
 {
-	if (IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN) &&
-	    IS_ENABLED(CONFIG_BT_MESH_LE_PAIR_RESP)) {
-		int err;
+	int err = 0;
 
-		err = smp_bt_auth_init();
-		if (err) {
-			printk("Can't enable authentication for SMP (err: %d)\n", err);
-			return err;
-		}
-	} else {
-		printk("Authentication for SMP over BLE is disabled\n");
+#if IS_ENABLED(CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN) && \
+	IS_ENABLED(CONFIG_BT_MESH_LE_PAIR_RESP)
+
+	err = smp_bt_auth_init();
+	if (err) {
+		printk("Can't enable authentication for SMP (err: %d)\n", err);
+		return err;
 	}
+#else
+	printk("Authentication for SMP over BLE is not enabled\n");
+#endif /* CONFIG_MCUMGR_TRANSPORT_BT_PERM_RW_AUTHEN && CONFIG_BT_MESH_LE_PAIR_RESP */
 
+#if IS_ENABLED(CONFIG_NCS_SAMPLE_MESH_COMMON_SMP_BT_DEDICATED_ADV_SET)
 /* .. include_startingpoint_mesh_smp_dfu_rst_2 */
 	bt_conn_cb_register(&conn_callbacks);
 
 	/**
-	 * Since Bluetooth Mesh utilizes the advertiser as the main channel of
-	 * communication, a secondary advertising set is necessary to broadcast
-	 * the SMP service.
-	 */
-	return smp_service_adv_init();
+	* Since Bluetooth Mesh utilizes the advertiser as the main channel of
+	* communication, a secondary advertising set is necessary to broadcast
+	* the SMP service.
+	*/
+	err = smp_service_adv_init();
+	if (err) {
+		printk("Starting advertising of SMP service failed (err %d)\n", err);
+		return err;
+	}
 /* .. include_endpoint_mesh_smp_dfu_rst_2 */
+#endif /* CONFIG_NCS_SAMPLE_MESH_COMMON_SMP_BT_DEDICATED_ADV_SET */
+
+	return err;
 }
