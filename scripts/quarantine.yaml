@@ -106,12 +106,6 @@
   comment: "no HPF for nrf54lc10 at the moment"
 
 - scenarios:
-    - all
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns
-  comment: "Unsupported TFM_PLATFORM"
-
-- scenarios:
     - drivers.timer.delay_accuracy
     - drivers.timer.delay_accuracy.hfxo
   platforms:

@@ -153,11 +153,11 @@ manifest:
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: ncs-v3.4.0
+      revision: 30161e6cd8ad6896f3f7fbe9abd327cf5086cee5
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
-      revision: 2deff6bec6560a250c62c2def6531fe6937356d3
+      revision: 2caaea3f7ccd87fad4644bf6e07d197f77257aa7
     - name: matter
       repo-path: sdk-connectedhomeip
       path: modules/lib/matter

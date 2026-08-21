@@ -18,7 +18,7 @@ The sample supports the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf54l15dk_nrf54l05_cpuapp, nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp_ns, nrf54lv10dk_nrf54lv10a_cpuapp, nrf54lv10dk_nrf54lv10a_cpuapp_ns
+   :rows: nrf54l15dk_nrf54l05_cpuapp, nrf54l15dk_nrf54l10_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp_ns, nrf54lv10dk_nrf54lv10a_cpuapp, nrf54lv10dk_nrf54lv10a_cpuapp_ns, nrf54lc10dk_nrf54lc10a_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp_ns
 
 .. note::
    If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set, ``*/ns`` board targets are not supported by this sample.
@@ -93,7 +93,7 @@ Once built and run, the sample performs the following operations:
    a. The sample removes both the Key Encryption Key and the unwrapped plain key from the PSA crypto keystore using :c:func:`psa_destroy_key`.
 
 .. note::
-   192-bit AES keys are not supported by the CRACEN driver for nRF54LM20 and nRF54LV10A devices.
+   192-bit AES keys are not supported by the CRACEN driver for nRF54LM20, nRF54LV10A, and nRF54LC10A devices.
    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
    If :kconfig:option:`CONFIG_SAMPLE_AES_KW_KMU_DEMO` is set and the Key Encryption Key is blocked, it cannot be removed from the KMU.
