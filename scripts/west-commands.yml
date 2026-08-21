@@ -54,3 +54,8 @@ west-commands:
       - name: ncs-contains-commit
         class: NcsContainsCommit
         help: Show which NCS releases contain given commit(s)
+  - file: scripts/west_commands/ncs_mergehex.py
+    commands:
+      - name: ncs-mergehex
+        class: NcsMergeHex
+        help: Merge sysbuild output hex files based on mergehex.yaml file.
