@@ -1,13 +1,18 @@
 # Copyright (c) 2025 Nordic Semiconductor ASA
 # SPDX-License-Identifier: Apache-2.0
 
-config PARTITION_MANAGER
-	default n
+choice FLPRCORE
+	default FLPRCORE_HELLO_WORLD_CPUFLPR
 
-config REMOTE_BOARD
-	string
-	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_CPUAPP
-	default "$(BOARD)/nrf54lc10a/cpuflpr" if SOC_NRF54LC10A_CPUAPP
-	default "$(BOARD)/nrf7120/cpuflpr" if SOC_NRF7120_ENGA_CPUAPP
+config FLPRCORE_HELLO_WORLD_CPUFLPR
+	bool "hello_world image"
 
-source "${ZEPHYR_BASE}/share/sysbuild/Kconfig"
+endchoice
+
+config FLPRCORE_IMAGE_NAME
+	default "hello_world_cpuflpr" if FLPRCORE_HELLO_WORLD_CPUFLPR
+
+config FLPRCORE_IMAGE_PATH
+	default "${ZEPHYR_BASE}/samples/sysbuild/hello_world" if FLPRCORE_HELLO_WORLD_CPUFLPR
+
+source "share/sysbuild/Kconfig"
