@@ -88,6 +88,8 @@ class Package(DataBaseClass):
         dependencies            List of package IDs this package depends on
         primary_package_purpose Estimate of the most likely package usage; None to omit
         built_date              Actual date the package was built; None to omit
+        root_path               Absolute path of the package root directory. SPDX file names are
+                                relative to it. None if the root is unknown.
     '''
     id: str = ''
     name: 'str|None' = None
@@ -100,6 +102,7 @@ class Package(DataBaseClass):
     dependencies: 'list[str]' = list()
     primary_package_purpose: 'str|None' = None
     built_date: 'str|None' = None
+    root_path: 'Path|None' = None
 
 
 class LicenseExpr(DataBaseClass):
