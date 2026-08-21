@@ -1,0 +1,37 @@
+/* Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Important:
+ * On the nRF54LC10 Development Kit pins P0.00...P0.03 are
+ * connected to the debugger chip and by default connect UART0 of the
+ * debugger chip to the nRF54LC10. The UART0 function (VCOM0) of the debugger
+ * chip must be disabled to allow the pins to be used as FEM control signals
+ * and FEM I2C interface. The "Board Configurator" tool (v0.3.7) being part of
+ * "nRF Connect for Desktop" bundle can be used for this purpose.
+ *
+ * On the nRF54LC10 Development Kit pin P0.04 is connected also to "Button 3".
+ * Please do not press this button while firmware that uses this shield
+ * is running.
+ */
+
+#include "../common/nrf54l_common.overlay"
+
+/ {
+	chosen {
+		zephyr,uart-mcumgr = &uart20;
+		zephyr,console = &uart20;
+		zephyr,shell-uart = &uart20;
+		zephyr,bt-mon-uart = &uart20;
+		zephyr,bt-c2h-uart = &uart20;
+	};
+};
+
+&uart20 {
+	status = "okay";
+};
+
+&uart30 {
+	status = "disabled";
+};
