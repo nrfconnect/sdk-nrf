@@ -2033,3 +2033,10 @@ ci_tests_lib_wifi_kmu:
     - nrf/include/wifi_kmu/
     - nrf/lib/wifi_kmu/
     - nrf/tests/lib/wifi_kmu/
+
+ci_samples_pulse_meas:
+  files:
+    - nrf/samples/pulse_meas/
+    - nrf/drivers/pulse_meas
+    - nrf/dts/bindings/pulse_meas/
+    - nrf/include/drivers/pulse_meas.h

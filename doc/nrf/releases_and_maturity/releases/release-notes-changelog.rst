@@ -618,7 +618,10 @@ Wi-Fi samples
 Other samples
 -------------
 
-* Added the :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
+* Added:
+
+  * The :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
+  * The :ref:`pulse_meas` sample that checks the pulse width of an externally provided signal.
 
 Drivers
 =======
