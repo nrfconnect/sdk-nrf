@@ -586,6 +586,8 @@ Wi-Fi samples
     * Transport selection.
       The sample no longer defaults to MQTT.
       You must now explicitly select either the MQTT or the CoAP transport, using the new :file:`mqtt.conf` or the existing :file:`coap.conf` configuration file, respectively.
+    * Re-enabled :kconfig:option:`CONFIG_NET_IPV6` in :file:`coap.conf`.
+      It was previously disabled to work around the slow IPv6-to-IPv4 fallback fixed in :ref:`lib_nrf_cloud` (see above).
 
   * Removed:
 
@@ -743,6 +745,10 @@ Libraries for networking
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option adds the ``nrf_cloud_cred`` shell commands (``keygen``, ``csr``, ``delete``, and ``pubkey``).
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option (enabled by default) exports the on-device public key so that host tooling can verify the key against the device certificate.
       See :ref:`lib_nrf_cloud_credentials_keygen` for more information.
+
+  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+    This led to delays in seconds or tens of seconds, as well as unnecessary traffic and warnings.
+    The library now checks for an own IPv6 (or IPv4) address before attempting a connection over that address family.
 
 * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
