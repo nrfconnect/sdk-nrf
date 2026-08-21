@@ -7,6 +7,7 @@
 Pre-processing of data before it goes to the output.
 '''
 
+from args import args
 from data_structure import Data, License, LicenseExpr, Package
 from license_utils import get_license, get_spdx_license_expr_info, is_spdx_license
 
@@ -222,6 +223,10 @@ def assign_primary_package_purpose(data: Data, files_by_package: dict,
                 package.built_date = built_date
             if package.name is None and app_name:
                 package.name = app_name
+            # The CPE names one product so it can only describe the application itself.
+            # Every other package is a dependency with an identity of its own.
+            if getattr(args, 'package_cpe', None):
+                package.cpe = args.package_cpe
         elif package.purl:
             package.primary_package_purpose = 'SOURCE'
 

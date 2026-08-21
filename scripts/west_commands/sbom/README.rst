@@ -22,15 +22,15 @@ The process of using the ``ncs-sbom`` command involves the following steps:
 
 #. Create a list of input files based on provided command-line arguments,
    for example, all source files used for building a specific application.
-   For details, see :ref:`west_sbom Specifying input`.
+   For details, see :ref:`west_sbom_specifying_input`.
 
 #. Detect the license applied to each file,
    for example, read `SPDX identifier`_ from ``SPDX-License-Identifier`` tag.
-   For details, see :ref:`west_sbom Detectors`.
+   For details, see :ref:`west_sbom_detectors`.
 
 #. Create an output report containing all the files and license information related to them.
    Depending on the selected output format, the command can also group files into packages and include package metadata in the report, for example, write a report file in HTML format.
-   For details, see :ref:`west_sbom Specifying output`.
+   For details, see :ref:`west_sbom_specifying_output`.
 
 When the input is a build directory, the command starts from the linked target, walks the Ninja dependency graph to collect build inputs, validates the result against the :file:`.map` file, and checks archive contents with the GNU ar tool.
 
@@ -124,7 +124,7 @@ The input options and output options can be combined as needed.
 
      west ncs-sbom --input-files *file1* *file2* --output-spdx *file-name.spdx*
 
-.. _west_sbom Specifying input:
+.. _west_sbom_specifying_input:
 
 Specifying input
 ================
@@ -144,7 +144,7 @@ You can also mix them, for example, to generate a report for the application and
 
   You can skip this option if you are in the application directory and you have a default :file:`build` directory there - the same way as in ``west build`` command.
 
-  The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
+  The :ref:`west_sbom_extracting_from_build` section describes in detail how to extract a list of files from a build directory.
 
   You can use the ``-d`` option multiple times.
   For example, to include both the ``mcuboot`` child image and the main application, use the following command:
@@ -234,7 +234,7 @@ You can also mix them, for example, to generate a report for the application and
   Comments starting with a ``#`` character are allowed.
 
 
-.. _west_sbom Specifying output:
+.. _west_sbom_specifying_output:
 
 Specifying output
 =================
@@ -248,7 +248,7 @@ You can specify the format of the report output using the ``output`` argument.
 
      --output-html *file-name.html*
 
-  The :ref:`west_sbom HTML report overview` section provides more details about the report.
+  The :ref:`west_sbom_HTML_report_overview` section provides more details about the report.
 
   If you use the ``-d`` option, you do not need to specify any output argument.
   The :file:`sbom_report.html` file is generated in your build directory
@@ -267,7 +267,9 @@ You can specify the format of the report output using the ``output`` argument.
   * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages; use ``--package-download-format github-archive`` to emit a GitHub archive zip URL instead)
   * ``PackageHomePage`` for browsable project links
   * Package URLs (PURLs) for unique package identification
-  * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
+  * Upstream ``ExternalRef`` entries taken from each Zephyr module's :file:`zephyr/module.yml`
+    (see :ref:`upstream_external_references`)
+  * A Common Platform Enumeration (CPE) identifier for the application package when specified using ``--package-cpe``
   * Dependency relationships showing supply chain connections
   * File checksums and license information
   * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
@@ -290,7 +292,7 @@ You can specify the format of the report output using the ``output`` argument.
 
   For details, see ``cache-database`` detector.
 
-.. _west_sbom Detectors:
+.. _west_sbom_detectors:
 
 Detectors
 =========
@@ -401,17 +403,53 @@ The following options enhance SBOM compliance with CRA, EO 14028, and FDA requir
 
   If not specified, the supplier is auto-detected from git repository owner/organization names.
 
-* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier:
+* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier of the application:
 
   .. code-block:: bash
 
      --package-cpe "cpe:2.3:a:nordicsemi:nrf_connect_sdk:2.0.0:*:*:*:*:*:*:*"
 
   CPE identifiers follow the CPE 2.3 specification and help identify software packages in vulnerability databases.
+  A CPE names one product so this option applies to the application package only.
+
+  The identifiers of the components you build on come from their Zephyr modules instead as described in :ref:`upstream_external_references`.
 
 These options ensure that generated SBOMs include all required fields for regulatory compliance.
 
-.. _west_sbom HTML report overview:
+.. _upstream_external_references:
+
+Upstream external references
+============================
+
+Most |NCS| components are redistributed rather than taken from the project that develops them.
+Some are Nordic forks under ``nrfconnect`` some are hosted under ``zephyrproject-rtos`` and a few come straight from their original project.
+A package is reported under the name and revision that was actually built, for example ``nrfconnect/sdk-mbedtls`` or ``zephyrproject-rtos/cmsis``.
+Vulnerability databases carry entries for the originating project.
+
+Zephyr modules declare the upstream project they are derived from in :file:`zephyr/module.yml`:
+
+.. code-block:: yaml
+
+   security:
+     external-references:
+       - cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+       - pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+When a repository declares that block the entries are emitted as additional ``ExternalRef`` records on its package next to the fork's own package URL::
+
+   PackageName: nrfconnect/sdk-mbedtls
+   PackageVersion: v3.6.3-ncs1
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/nrfconnect/sdk-mbedtls@<commit>
+   ExternalRef: SECURITY cpe23Type cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+The fork keeps describing what was built and the upstream references say which product the code came from.
+Only the module at the root of a repository is read and a reference that is neither a CPE 2.3 name nor a package URL is skipped with a warning.
+
+An upstream reference describes the product a fork is derived from.
+Where a fix has been backported the upstream version does not change so a scanner can still report an issue that is already fixed.
+
+.. _west_sbom_HTML_report_overview:
 
 HTML report overview
 ********************
@@ -456,12 +494,12 @@ The HTML report has following structure:
 
 * License texts added to this report.
 
-.. _west_sbom Extracting from build:
+.. _west_sbom_extracting_from_build:
 
 Extracting a list of files from a build directory
 *************************************************
 
-The ``ncs-sbom`` extracts a list of files from a build directory.
+The ``ncs-sbom`` command extracts a list of files from a build directory.
 It queries ninja for the targets and dependencies.
 
 The entry point is the :file:`zephyr/zephyr.elf` target file.
@@ -484,7 +522,7 @@ There are two additional methods for improving the correctness of the above algo
   If the list of files returned by the GNU ar tool is covered by the list returned from the ninja, the list is assumed to be valid.
   Otherwise, the library is assumed to be a leaf, so it is shown in the report and its inputs are not analyzed further.
 
-* The ``ncs-sbom`` parses the :file:`.map` file created during the :file:`zephyr/zephyr.elf` linking.
+* The ``ncs-sbom`` command parses the :file:`.map` file created during the :file:`zephyr/zephyr.elf` linking.
 
   It provides a list of all object files and libraries linked to the :file:`zephyr/zephyr.elf` file.
   The script ends with a fatal error if any file in the :file:`.map` file is not visible by ninja.
