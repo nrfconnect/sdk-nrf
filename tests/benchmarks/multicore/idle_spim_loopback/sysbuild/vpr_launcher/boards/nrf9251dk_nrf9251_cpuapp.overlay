@@ -1,0 +1,24 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		/delete-property/ led0;
+		/delete-property/ mcuboot-led0;
+	};
+};
+
+/delete-node/ &led0;
+
+&spi130 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&gpiote130 {
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
+};

@@ -43,6 +43,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -59,6 +60,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -72,6 +74,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -85,6 +88,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram_ppr"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuppr
+      - nrf9251dk/nrf9251/cpuppr
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuppr
 
@@ -213,6 +217,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -230,6 +235,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -245,6 +251,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -260,6 +267,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram_ppr"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuppr
+      - nrf9251dk/nrf9251/cpuppr
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuppr
 
@@ -418,6 +426,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -434,6 +443,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -543,6 +553,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_idle"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
@@ -560,6 +571,7 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_spim_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
 
