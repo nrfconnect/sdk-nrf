@@ -26,6 +26,27 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
 
+  sample.mcuboot_with_encryption.nrf54ls05a:
+    build_only: true
+    extra_args:
+      - mcuboot_CONFIG_FPROTECT=n
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+
+  sample.mcuboot_with_encryption.nrf54ls05a.psa:
+    build_only: true
+    extra_args:
+      - mcuboot_CONFIG_FPROTECT=n
+      - mcuboot_CONFIG_PSA_CRYPTO=y
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+
   sample.mcuboot_with_encryption.multicore:
     build_only: true
     extra_args:
