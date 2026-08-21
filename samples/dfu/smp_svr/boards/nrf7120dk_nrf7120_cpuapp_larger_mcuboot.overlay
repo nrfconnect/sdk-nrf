@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Single-stage MCUboot layout for nRF7120 with a larger MCUboot partition, used
+ * by the encryption and nrf_compress configurations (RSA / ECDSA / compressed
+ * images need a bigger bootloader). Mirrors the nRF54L reference
+ * (boards/nrf54l15dk_nrf54l15_cpuapp_larger_mcuboot.overlay) but targets
+ * &cpuapp_mram (MRAM, not RRAM) and preserves the nRF7120 Wi-Fi ROM-patch
+ * partitions (wifi_lmac_patch_partition / wifi_umac_patch_partition at/above
+ * 0x2e0000, referenced by phandle) by not deleting the whole partitions node.
+ *
+ *   boot_partition   0x000000   96K     MCUboot (larger)
+ *   slot0_partition  0x018000   1424K   application image-0 (MCUboot primary)
+ *   slot1_partition  0x17c000   1424K   application image-1 (MCUboot secondary)
+ *   storage_partition 0x300000  36K     settings storage (after the Wi-Fi gap)
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_mram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(96)>;
+		};
+
+		slot0_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x18000 DT_SIZE_K(1424)>;
+		};
+
+		slot1_partition: partition@17c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x17c000 DT_SIZE_K(1424)>;
+		};
+
+		storage_partition: partition@300000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x300000 DT_SIZE_K(36)>;
+		};
+	};
+};

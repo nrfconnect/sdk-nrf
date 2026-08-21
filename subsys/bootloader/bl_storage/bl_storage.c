@@ -23,7 +23,8 @@
 #define BL_STORAGE_ADDRESS	TFM_BL_STORAGE_ADDR
 #else
 /* Address of storage as seen in processor address space */
-#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr) || \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf71_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
 #else
 #include <zephyr/storage/flash_map.h>
@@ -42,7 +43,7 @@ const volatile struct bl_storage_data *const BL_STORAGE =
 #if defined(CONFIG_NRFX_NVMC)
 #define STATE_ENTERED 0x0000
 #define STATE_NOT_ENTERED 0xFFFF
-#elif defined(CONFIG_NRFX_RRAMC)
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
 #define STATE_ENTERED 0x00000000
 #define STATE_NOT_ENTERED 0xFFFFFFFF
 #else
@@ -58,7 +59,7 @@ BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
 void tfm_core_panic(void);
 #endif
 
-#if defined(CONFIG_NRFX_RRAMC)
+#if defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
 static uint32_t index_from_address(uint32_t address)
 {
 	return ((address - (uint32_t)BL_STORAGE)/sizeof(uint32_t));
@@ -71,6 +72,8 @@ static counter_t bl_storage_counter_get(uint32_t address)
 	return ~nrfx_nvmc_otp_halfword_read(address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return ~nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(CONFIG_NRFX_MRAMC)
+	return ~nrfx_mramc_otp_word_read(index_from_address(address));
 #endif
 }
 
@@ -80,6 +83,8 @@ static void bl_storage_counter_set(uint32_t address, counter_t value)
 	nrfx_nvmc_halfword_write((uint32_t)address, ~value);
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
+#elif defined(CONFIG_NRFX_MRAMC)
+	nrfx_mramc_otp_word_write(index_from_address((uint32_t)address), ~value);
 #endif
 }
 
@@ -89,6 +94,8 @@ static uint32_t bl_storage_word_read(uint32_t address)
 	return nrfx_nvmc_uicr_word_read((uint32_t *)address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return nrfx_rramc_word_read(address);
+#elif defined(CONFIG_NRFX_MRAMC)
+	return nrfx_mramc_otp_word_read(index_from_address(address));
 #endif
 }
 
@@ -100,6 +107,9 @@ static uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
 #elif defined(CONFIG_NRFX_RRAMC)
 	nrfx_rramc_word_write(address, value);
 	return 0;
+#elif defined(CONFIG_NRFX_MRAMC)
+	nrfx_mramc_otp_word_write(index_from_address(address), value);
+	return 0;
 #endif
 }
 
@@ -108,8 +118,12 @@ static uint16_t bl_storage_otp_halfword_read(uint32_t address)
 	uint16_t halfword;
 #if defined(CONFIG_NRFX_NVMC)
 	halfword = nrfx_nvmc_otp_halfword_read(address);
-#elif defined(CONFIG_NRFX_RRAMC)
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
+#if defined(CONFIG_NRFX_RRAMC)
 	uint32_t word = nrfx_rramc_otp_word_read(index_from_address(address));
+#else
+	uint32_t word = nrfx_mramc_otp_word_read(index_from_address(address));
+#endif
 
 	if (!ALIGN_TO_WORD(address)) {
 		halfword = (uint16_t)(word & 0x0000FFFF); /* C truncates the upper bits */
@@ -440,6 +454,8 @@ static lcs_data_t bl_storage_lcs_get(uint32_t address)
 	return nrfx_nvmc_otp_halfword_read(address);
 #elif defined(CONFIG_NRFX_RRAMC)
 	return nrfx_rramc_otp_word_read(index_from_address(address));
+#elif defined(CONFIG_NRFX_MRAMC)
+	return nrfx_mramc_otp_word_read(index_from_address(address));
 #endif
 }
 
@@ -447,7 +463,7 @@ static int bl_storage_lcs_set(uint32_t address, lcs_data_t state)
 {
 #if defined(CONFIG_NRFX_NVMC)
 	nrfx_nvmc_halfword_write(address, state);
-#elif defined(CONFIG_NRFX_RRAMC)
+#elif defined(CONFIG_NRFX_RRAMC) || defined(CONFIG_NRFX_MRAMC)
 	bl_storage_word_write(address, state);
 #endif
 	return 0;

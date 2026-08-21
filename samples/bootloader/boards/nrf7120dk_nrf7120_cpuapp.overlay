@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * NSIB partition setup for nrf7120 (no Partition Manager). Replaces the
+ * sample's app.overlay, so it also defines b0_partition + the code-partition.
+ * b0 is sized to 30K to fit the NSIB lock region.
+ */
+
+/ {
+	chosen {
+		zephyr,code-partition = &b0_partition;
+	};
+};
+
+b0_partition: &boot_partition {
+	reg = <0x0 0x7800>;
+};
