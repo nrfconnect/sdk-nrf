@@ -181,6 +181,8 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=cpuppr
+      - SB_CONFIG_PPRCORE_REMOTE=y
+      - SB_CONFIG_NETCORE_NONE=y
       - ipc_service_SNIPPET=nordic-ppr
     timeout: 20
   sample.ipc.ipc_service.nrf54l_cpuapp_cpuflpr_icmsg:
