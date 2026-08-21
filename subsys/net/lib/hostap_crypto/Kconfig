@@ -128,6 +128,47 @@ config HOSTAP_CRYPTO_WPA3_PSA
 	select PSA_WANT_KEY_TYPE_WPA3_SAE
 	select PSA_WANT_ECC_SECP_R1_256
 
+if HOSTAP_CRYPTO_WPA3_PSA
+
+config WPA3_PSA_HEAP_SIZE
+	int "Supplicant heap reserved for the WPA3 SAE PSA context"
+	default 4096
+	help
+	  Extra supplicant heap needed by the SAE-over-PSA implementation in
+	  wpa3_psa.c. sae_set_group() allocates a single contiguous
+	  struct wpa3_psa_operation (2696 bytes, dominated by the embedded
+	  1456-byte psa_pake_operation_t), plus a 24-byte sae_pt and a 32-byte
+	  PMK buffer. The default leaves headroom for sys_heap chunk overhead
+	  and fragmentation. Zephyr's baseline supplicant heap predates this
+	  implementation and does not account for it, so it is added here.
+
+config HEAP_MEM_POOL_ADD_SIZE_WPA3_PSA
+	int
+	depends on WIFI_NM_WPA_SUPPLICANT_GLOBAL_HEAP
+	# Only top up configurations sized for Zephyr's plain-STA baseline.
+	# The supplicant heap is one shared, peak-sized pool, and anything
+	# asking for more already carries slack: enterprise for EAP-TLS and
+	# certificate buffers, AP/P2P for their extra state. SAE is
+	# WPA3-Personal and EAP is Enterprise, so an association exercises one
+	# path or the other and the peaks do not coincide. Adding to those
+	# budgets instead overflowed RAM on nRF5340 enterprise builds. Keying
+	# off the resolved baseline rather than restating Zephyr's def_int
+	# conditions keeps this correct if Zephyr adds cases.
+	depends on HEAP_MEM_POOL_ADD_SIZE_HOSTAP <= 30000
+	default WPA3_PSA_HEAP_SIZE
+	help
+	  Reserve the WPA3-PSA context on the kernel system heap, which is
+	  where the supplicant allocates from when
+	  WIFI_NM_WPA_SUPPLICANT_GLOBAL_HEAP is set. Zephyr sums every
+	  HEAP_MEM_POOL_ADD_SIZE_* symbol into the final system heap size, so
+	  this composes with the other requesters instead of overriding them.
+
+	  With WIFI_NM_WPA_SUPPLICANT_GLOBAL_HEAP=n the supplicant uses its own
+	  pool, which has no equivalent summing mechanism; size that build's
+	  WIFI_NM_WPA_SUPPLICANT_HEAP to include WPA3_PSA_HEAP_SIZE.
+
+endif # HOSTAP_CRYPTO_WPA3_PSA
+
 endif
 
 endif

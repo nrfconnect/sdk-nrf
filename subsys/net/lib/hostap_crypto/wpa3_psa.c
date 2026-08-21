@@ -91,6 +91,16 @@ struct wpa3_psa_operation {
 	u16 rc;
 };
 
+/*
+ * init_psa_op() allocates this in one contiguous chunk from the supplicant
+ * heap, which CONFIG_WPA3_PSA_HEAP_SIZE reserves for. Most of the struct is the
+ * embedded psa_pake_operation_t, so a PSA driver change can grow it without
+ * anything in this file changing -- fail the build rather than fail to connect.
+ */
+BUILD_ASSERT(sizeof(struct wpa3_psa_operation) <= CONFIG_WPA3_PSA_HEAP_SIZE,
+	     "CONFIG_WPA3_PSA_HEAP_SIZE is too small to hold "
+	     "struct wpa3_psa_operation");
+
 /* Forward declarations */
 
 static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
