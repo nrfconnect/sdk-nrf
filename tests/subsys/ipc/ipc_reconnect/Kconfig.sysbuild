@@ -2,19 +2,40 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-config PARTITION_MANAGER
-	default n
+if SUPPORT_NETCORE
 
-config REMOTE_BOARD
-	string
-	default "$(BOARD)/nrf5340/cpunet" if SOC_NRF5340_CPUAPP
-	default "$(BOARD)/nrf54h20/cpurad" if SOC_NRF54H20_CPUAPP
-	default "$(BOARD)/nrf54l15/cpuflpr" if SOC_NRF54L15_CPUAPP
-	default "$(BOARD)/nrf54lm20a/cpuflpr" if SOC_NRF54LM20A_CPUAPP
-	default "$(BOARD)/nrf54lm20b/cpuflpr" if SOC_NRF54LM20B_CPUAPP
-	default "$(BOARD)/nrf54lv10a/cpuflpr" if SOC_NRF54LV10A_CPUAPP
-	default "$(BOARD)/nrf54lc10a/cpuflpr" if SOC_NRF54LC10A_CPUAPP
-	default "$(BOARD)/nrf7120/cpuflpr" if SOC_NRF7120_ENGA_CPUAPP
-	default "$(BOARD)/nrf9251/cpuflpr" if SOC_NRF9251_CPUAPP
+choice NETCORE
+	default NETCORE_REMOTE
+
+config NETCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "remote" if NETCORE_REMOTE
+
+config NETCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if NETCORE_REMOTE
+
+endif # SUPPORT_NETCORE
+
+if SUPPORT_FLPRCORE && !SUPPORT_NETCORE
+
+choice FLPRCORE
+	default FLPRCORE_REMOTE
+
+config FLPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config FLPRCORE_IMAGE_NAME
+	default "remote" if FLPRCORE_REMOTE
+
+config FLPRCORE_IMAGE_PATH
+	default "${APP_DIR}/remote" if FLPRCORE_REMOTE
+
+endif # SUPPORT_FLPRCORE && !SUPPORT_NETCORE
 
 source "share/sysbuild/Kconfig"
