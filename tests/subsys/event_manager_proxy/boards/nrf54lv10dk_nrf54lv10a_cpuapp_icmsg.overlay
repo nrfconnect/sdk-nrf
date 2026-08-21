@@ -31,6 +31,13 @@
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
 			mbox-names = "rx", "tx";
+			/* Session-ID handshake so a warm restart of one core
+			 * forces a fresh rebind instead of trusting stale
+			 * shared-memory magic, which otherwise causes
+			 * intermittent IPC bind timeouts. Must match the remote
+			 * overlay.
+			 */
+			unbound = "enable";
 			status = "okay";
 		};
 	};
