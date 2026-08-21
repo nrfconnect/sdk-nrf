@@ -34,4 +34,5 @@
 
 &mx25r64 {
 	mspi-io-mode = "MSPI_IO_MODE_SINGLE";
+	mspi-max-frequency = <DT_FREQ_M(8)>;
 };

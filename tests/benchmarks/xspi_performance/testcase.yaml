@@ -10,7 +10,6 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=spi_single
-      - CONFIG_CPU_LOAD=y
     platform_allow: &spi_single_platform_allow
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -28,7 +27,6 @@ tests:
       - SB_CONFIG_HPF_MSPI=y
       - SB_CONFIG_VPR_LAUNCHER=n
       - EXTRA_DTC_OVERLAY_FILE='boards/nrf54l_hpf_single.overlay'
-      - CONFIG_CPU_LOAD=y
     platform_allow: &spi_hpf_single_platform_allow
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -38,8 +36,6 @@ tests:
 
   benchmarks.xspi_performance.quad.manual:
     build_only: true
-    extra_args:
-      - CONFIG_CPU_LOAD=y
     platform_allow: &spi_quad_platform_allow
       - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
@@ -51,7 +47,6 @@ tests:
     build_only: true
     extra_args:
       - FILE_SUFFIX=sqspi
-      - CONFIG_CPU_LOAD=y
     platform_allow: &spi_sqspi_platform_allow
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -65,7 +60,7 @@ tests:
       - SB_CONFIG_HPF=y
       - SB_CONFIG_HPF_MSPI=y
       - SB_CONFIG_VPR_LAUNCHER=n
-      - CONFIG_CPU_LOAD=y
+      - EXTRA_DTC_OVERLAY_FILE='boards/nrf54l_hpf_quad.overlay'
     platform_allow: &spi_hpf_quad_platform_allow
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -75,8 +70,6 @@ tests:
 
   benchmarks.xspi_performance.octal.manual:
     build_only: true
-    extra_args:
-      - CONFIG_CPU_LOAD=y
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -134,6 +127,7 @@ tests:
       - SB_CONFIG_HPF_MSPI=y
       - SB_CONFIG_VPR_LAUNCHER=n
       - CONFIG_TEST_FIXED_OPERATION_SIZE=y
+      - EXTRA_DTC_OVERLAY_FILE='boards/nrf54l_hpf_quad.overlay'
     platform_allow: *spi_hpf_quad_platform_allow
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
