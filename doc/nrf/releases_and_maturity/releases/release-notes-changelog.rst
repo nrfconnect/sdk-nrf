@@ -718,6 +718,10 @@ Modem libraries
 
   * Added the :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Fixed RTT channel allocation after warm boot.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
