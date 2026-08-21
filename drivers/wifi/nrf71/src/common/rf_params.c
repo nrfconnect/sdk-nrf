@@ -13,9 +13,10 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include <nrf71_wifi_rf.h>
+#include <common/mem_mgmt.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
-#include <util.h>
+#include <common/util.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -43,7 +44,7 @@ enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int 
 			continue;
 		}
 		str_len = strlen(rf_params[index].hex_str);
-		rf_params[index].bytes = nrf_wifi_osal_mem_alloc(str_len);
+		rf_params[index].bytes = nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, str_len);
 		if (!rf_params[index].bytes) {
 			LOG_ERR("%s: Unable to allocate %zu bytes", __func__, str_len);
 			goto cleanup;
@@ -53,7 +54,7 @@ enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int 
 						    (unsigned char *)rf_params[index].hex_str);
 		if (ret < 0) {
 			LOG_ERR("%s: hex_str_to_val failed", __func__);
-			nrf_wifi_osal_mem_free(rf_params[index].bytes);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rf_params[index].bytes);
 			rf_params[index].bytes = NULL;
 			goto cleanup;
 		}
@@ -66,7 +67,8 @@ enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int 
 cleanup:
 	for (cleanup_idx = 0; cleanup_idx < index; cleanup_idx++) {
 		if (rf_params[cleanup_idx].bytes) {
-			nrf_wifi_osal_mem_free(rf_params[cleanup_idx].bytes);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					  rf_params[cleanup_idx].bytes);
 			rf_params[cleanup_idx].bytes = NULL;
 		}
 	}

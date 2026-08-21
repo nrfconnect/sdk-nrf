@@ -323,10 +323,10 @@
 /drivers/sensor/sensor_stub/              @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /drivers/wifi/nrf92/                      @nrfconnect/ncs-modem-tre
 /drivers/wifi/nrf71/                      @nrfconnect/ncs-wcg-drivers
-/drivers/wifi/nrf71/fw_if/nrf71_wifi_common.h   @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac @nrfconnect/ncs-wcg-phy
-/drivers/wifi/nrf71/fw_if/nrf71_wifi_debug_stats.h @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac
-/drivers/wifi/nrf71/fw_if/nrf71_wifi_ctrl.h     @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac
-/drivers/wifi/nrf71/fw_if/nrf71_wifi_rf.h       @nrfconnect/ncs-wcg-phy
+/drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_common.h   @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac @nrfconnect/ncs-wcg-phy
+/drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_debug_stats.h @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac
+/drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_ctrl.h     @nrfconnect/ncs-wcg-umac @nrfconnect/ncs-wcg-lmac
+/drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_rf.h       @nrfconnect/ncs-wcg-phy
 /drivers/wifi/nrf71/osal/fw_if/           @nrfconnect/ncs-wcg-umac
 /include/drivers/wifi/nrf71/              @nrfconnect/ncs-wcg-drivers
 

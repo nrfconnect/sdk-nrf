@@ -8,6 +8,7 @@
  * @brief File containing API definitions for the Offloaded raw TX feature.
  */
 
+#include <common/mem_mgmt.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -15,15 +16,14 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h>
 #include <offload_raw_tx/fmac_api.h>
-#include <nrf71_wifi_ctrl.h>
-#include <nrf71_wifi_rf.h>
-#include <util.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
+#include <common/util.h>
 #include <offload_raw_tx/api.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
-extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 
 static const int valid_data_rates[] = { 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54,
@@ -84,11 +84,6 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
 	struct nrf_wifi_board_params board_params;
 	unsigned int fw_ver = 0;
-
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 
@@ -240,12 +235,14 @@ void nrf_wifi_off_raw_tx_deinit(void)
 
 	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
 		if (drv_ctx->phy_rf_params_addr[i]) {
-			nrf_wifi_osal_mem_free((void *)drv_ctx->phy_rf_params_addr[i]);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					   (void *)drv_ctx->phy_rf_params_addr[i]);
 			drv_ctx->phy_rf_params_addr[i] = 0;
 		}
 	}
 	if (drv_ctx->vtf_buffer_start_address) {
-		nrf_wifi_osal_mem_free((void *)drv_ctx->vtf_buffer_start_address);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)drv_ctx->vtf_buffer_start_address);
 		drv_ctx->vtf_buffer_start_address = 0;
 	}
 
@@ -330,19 +327,22 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 	struct nrf_wifi_offload_tx_ctrl *off_tx_params = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	k_spinlock_key_t key;
+	bool locked = false;
 
 	if (!conf) {
 		LOG_ERR("%s: Config params is NULL", __func__);
-		goto out;
+		return -1;
 	}
 
-	off_ctrl_params = nrf_wifi_osal_mem_zalloc(sizeof(*off_ctrl_params));
+	off_ctrl_params = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					      sizeof(*off_ctrl_params));
 	if (!off_ctrl_params) {
 		LOG_ERR("%s: Failed to allocate memory for off_ctrl_params", __func__);
-		goto out;
+		return -1;
 	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
+	locked = true;
 
 	fmac_dev_ctx = drv_ctx->rpu_ctx;
 
@@ -351,7 +351,7 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 		goto out;
 	}
 
-	off_tx_params = nrf_wifi_osal_mem_zalloc(sizeof(*off_tx_params));
+	off_tx_params = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*off_tx_params));
 	if (!off_tx_params) {
 		LOG_ERR("%s Failed to allocate memory for off_tx_params: ", __func__);
 		goto out;
@@ -402,9 +402,11 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 
 	ret = 0;
 out:
-	nrf_wifi_osal_mem_free(off_ctrl_params);
-	nrf_wifi_osal_mem_free(off_tx_params);
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_ctrl_params);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_tx_params);
+	if (locked) {
+		k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+	}
 	return ret;
 }
 

@@ -9,6 +9,5 @@ target_sources(app PRIVATE src/main.c)
 # The coexistence API contract (coex_cd_* / CD2CM types) is declared in the
 # Wi-Fi firmware interface header.
 target_include_directories(app PRIVATE
-  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/fw_if
-  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/osal/hw_if/hal/inc
+  ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/inc/common/fw_if
 )
