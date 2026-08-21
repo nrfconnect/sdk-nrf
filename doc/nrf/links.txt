@@ -185,8 +185,12 @@
 .. _`Matter SDK tagged as v1.0.0`: https://github.com/project-chip/connectedhomeip/releases/tag/v1.0.0
 .. _`Testing with Apple Devices`: https://github.com/project-chip/connectedhomeip/blob/master/docs/guides/darwin.md
 .. _`chip-tool`: https://docs.nordicsemi.com/bundle/ncs-latest/page/matter/chip_tool_guide.html
-.. _`Matter nRF Connect SDK Platform Certificate_1_4_2`: https://csa-iot.org/csa_product/nrf-connect-sdk/
-.. _`Matter nRF Connect SDK Platform Certificate_1_5_0`: https://csa-iot.org/csa_product/nrf-connect-sdk-with-nrf52-nrf53-and-nrf54l-series-socs/
+.. _`Matter CIDs for nRF54LM20B`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_matter_cids.html
+.. _`Matter CIDs for nRF54LM20A`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_matter_cids.html
+.. _`Matter CIDs for nRF54L15`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_matter_cids.html
+.. _`Matter CIDs for nRF54L10`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l10/page/COMP/nrf54l10/nrf54l10_matter_cids.html
+.. _`Matter CIDs for nRF5340`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf5340/page/COMP/nrf5340/nrf5340_matter_cids.html
+.. _`Matter CIDs for nRF52840`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf52840/page/COMP/nrf52840/nrf52840_matter_cids.html
 
 .. _`CoreMark GitHub`: https://github.com/eembc/coremark
 
@@ -929,6 +933,7 @@
 .. _`nRF54LM20A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LM20A/page/keyfeatures_html5.html
 .. _`nRF54LM20 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lm20_dk/page/UG/nRF54LM20_DK/intro/intro.html
 .. _`nRF54LM20A Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_comp_matrix.html
+.. _`nRF54LM20B Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54lm20a/page/COMP/nrf54lm20a/nrf54lm20a_comp_matrix.html
 
 .. _`nRF54LV10A Datasheet`: https://docs.nordicsemi.com/bundle/ps_nrf54LV10A/page/keyfeatures_html5.html
 .. _`nRF54LV10 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf54lv10_dk/page/UG/nRF54LV10_DK/intro/intro.html
@@ -2082,8 +2087,8 @@
 .. _`Personal Access Token (PAT)`: https://github.com/settings/tokens
 .. _`Homebrew`: https://brew.sh/
 .. _`nRF54L05 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l05/page/COMP/nrf54l05/nrf54l05_nrf_connect_sdk.html
-.. _`nRF54L10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l10/page/COMP/nrf54l10/nrf54l10_nrf_connect_sdk.html
-.. _`nRF54L15 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_nrf_connect_sdk.html
+.. _`nRF54L10 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l10/page/COMP/nrf54l10/nrf54l10_comp_matrix.html
+.. _`nRF54L15 Compatibility Matrix`: https://docs.nordicsemi.com/bundle/comp_matrix_nrf54l15/page/COMP/nrf54l15/nrf54l15_comp_matrix.html
 
 .. _`10.23.3_ec 64-bit Windows, executable`: https://res.developer.nordicsemi.com/res/nrf-command-line-tools-10.23.3/nRF-Command-Line-Tools-10.23.3-x64.exe
 

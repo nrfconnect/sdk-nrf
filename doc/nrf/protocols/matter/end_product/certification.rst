@@ -287,11 +287,16 @@ Nordic Semiconductor provides the following certification identifiers:
 * Bluetooth Qualified Design IDs (Bluetooth QDIDs) - Obtained in accordance with `Bluetooth SIG's Qualification Process`_.
 * Thread Certification IDs (Thread CIDs) - Obtained in accordance with `Thread Group's certification information`_.
 
-You can visit the following pages to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
+You can visit the following compatibility matrices to check the Bluetooth QDIDs and Thread CIDs valid for SoCs that support Matter applications:
 
-* `nRF52840 Compatibility Matrix <nRF52840 Compatibility Matrix_>`_
-* `nRF5340 Compatibility Matrix <nRF5340 Compatibility Matrix_>`_
-* `nRF54L15 Compatibility Matrix <nRF54L15 SoC Compatibility Matrix_>`_
+* `nRF52840 Compatibility Matrix`_
+* `nRF5340 Compatibility Matrix`_
+* `nRF54L10 Compatibility Matrix`_
+* `nRF54L15 Compatibility Matrix`_
+* `nRF54LM20A Compatibility Matrix`_
+* `nRF54LM20B Compatibility Matrix`_
+
+For Matter Compliant Platform Certification IDs and |NCS| release mappings, see :ref:`ug_matter_platform_and_dmp_matrix`.
 
 Matter certification process variants
 =====================================
