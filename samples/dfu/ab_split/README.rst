@@ -86,19 +86,15 @@ To enable the persistence of a preferred slot, define a backup region for the bo
 Identifying the active slot
 ---------------------------
 
-If the project uses the Partition Manager, the currently running slot can be identified by checking if ``CONFIG_NCS_IS_VARIANT_IMAGE`` is defined.
-If it is defined, the application is running from slot B.
-Otherwise, it is running from slot A.
+This sample uses devicetree partitions on ``nrf54h20dk/nrf54h20/cpuapp`` (see :file:`sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi` and board overlays).
+To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the application slot nodes, as in :file:`src/ab_utils.c`:
 
-If the project does not use the Partition Manager (a configuration currently supported only on the nRF54H20 SoC), you can identify the currently running slot by comparing the address referenced by ``zephyr,code-partition`` with the specific node addresses defined in the devicetree.
-The following node partitions are used by default:
+* ``cpuapp_slot0_partition`` — application core, slot A
+* ``cpuapp_slot1_partition`` — application core, slot B
+* ``cpurad_slot0_partition`` — radio core, slot A
+* ``cpurad_slot1_partition`` — radio core, slot B
 
-* ``cpuapp_slot0_partition`` - Application core, slot A
-* ``cpuapp_slot1_partition`` - Application core, slot B
-* ``cpurad_slot0_partition`` - Radio core, slot A
-* ``cpurad_slot1_partition`` - Radio core, slot B
-
-For example, verifying that the application is running from slot A can be done by using the following macro:
+Example (application running from slot A):
 
 .. code-block:: c
 

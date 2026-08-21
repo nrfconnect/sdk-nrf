@@ -64,5 +64,8 @@ See :ref:`sysbuild` for more information about customizing images using this met
 Customizing partitions
 **********************
 
-With the Partition Manager, you can further customize it if a dynamic partition map has been set.
-For more information, see the :ref:`Configuration <pm_configuration>` section of the :ref:`partition_manager` page.
+Bootloader and DFU partition layout is configured in devicetree.
+Partition nodes, with matching layouts, can be defined in board overlays, project overlays, or shared ``*.dtsi`` files, and applied to every sysbuild image that is supposed to use those regions (for example the application, MCUboot, and |NSIB| images).
+
+See :ref:`bootloader_partitioning` for required node labels, sysbuild overlay locations, and :ref:`bootloader_partitioning_partition_inspection`.
+For migrating from the deprecated Partition Manager, see :ref:`migration_partitions`.
