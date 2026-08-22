@@ -8,6 +8,7 @@ on:
       - 'v*-branch'
     paths:
       - 'scripts/requirements*.txt'
+      - 'scripts/requirements-fixed.in'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
 permissions:
@@ -70,12 +71,9 @@ jobs:
             pip3 install \
               --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
               pip-compile-cross-platform==1.4.2+nordic.3 --upgrade
+            # Expand requirements-fixed.in to CLI args (paths are west-topdir-relative).
             pip-compile-cross-platform \
-              bootloader/mcuboot/scripts/requirements.txt \
-              zephyr/scripts/requirements.txt \
-              nrf/scripts/requirements-ci.txt \
-              nrf/scripts/requirements-extra.txt \
-              nrf/scripts/requirements.txt \
+              $(grep -Ev '^\s*(#|$)' nrf/scripts/requirements-fixed.in | xargs) \
               --output-file nrf/scripts/requirements-fixed.txt \
               --min-python-version 3.12 \
               --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
