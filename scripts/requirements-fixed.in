@@ -1,0 +1,12 @@
+# Compile input for nrf/scripts/requirements-fixed.txt
+#
+# Paths are west-topdir-relative. Used by ncs-tool-pip-compile (read-requirements-fixed-in.sh).
+# Later entries win on conflicting constraints; keep nrf/scripts/requirements-extra.txt last.
+#
+#   https://github.com/nrfconnect/ncs-tool-pip-compile
+
+bootloader/mcuboot/scripts/requirements.txt
+zephyr/scripts/requirements.txt
+nrf/scripts/requirements-ci.txt
+nrf/scripts/requirements.txt
+nrf/scripts/requirements-extra.txt
