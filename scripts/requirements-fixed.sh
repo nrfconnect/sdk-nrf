@@ -16,7 +16,7 @@ Usage: requirements-fixed.sh [-i|--interactive]
   Run from the west workspace root, or from nrf/scripts (paths are resolved).
 
   Environment: OUT_FILE, INDEX_URL, PYTHON_VERSION, PIP_COMPILE_DOCKER_IMAGE,
-               DOCKER_PLATFORM
+               DOCKER_PLATFORM, CONTAINER_CMD (default: docker; e.g. podman)
 EOF
 }
 
@@ -48,6 +48,7 @@ PYTHON_VERSION="${PYTHON_VERSION:-3.12.4}"
 IMAGE="${PIP_COMPILE_DOCKER_IMAGE:-python:${PYTHON_VERSION}}"
 
 DOCKER_PLATFORM="${DOCKER_PLATFORM:-linux/amd64}"
+CONTAINER_CMD="${CONTAINER_CMD:-docker}"
 
 echo "NCS workspace: $NCS_TOP"
 echo "Docker image:  $IMAGE (platform: $DOCKER_PLATFORM)"
@@ -71,7 +72,7 @@ if [[ "$INTERACTIVE" == 1 ]]; then
   DOCKER_ARGS+=(-it)
 fi
 
-exec docker run "${DOCKER_ARGS[@]}" "$IMAGE" -lc '
+exec "$CONTAINER_CMD" run "${DOCKER_ARGS[@]}" "$IMAGE" -lc '
   set -euo pipefail
   echo "Python: $(python --version) ($(which python))"
 

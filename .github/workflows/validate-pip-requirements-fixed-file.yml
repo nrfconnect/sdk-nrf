@@ -9,6 +9,7 @@ on:
     paths:
       - 'scripts/requirements*.txt'
       - 'scripts/requirements-fixed.sh'
+      - 'scripts/requirements-fixed.in'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
 permissions:
