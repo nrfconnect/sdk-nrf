@@ -214,6 +214,9 @@ function(nrf71_wifi_setup_include_and_sources)
 
   # ---- Sources: driver (Zephyr shim, net_if, mgmt, wpa, etc.) ----
 
+  # Wi-Fi power management API shared by nRF71 operation modes.
+  zephyr_library_sources(src/system/wifi_pm.c)
+
   # Coexistence transport used by the standalone nRF71 SR coexistence driver
   # (drivers/nrf71_sr_coex) to reach the Coexistence Manager over FMAC.
   zephyr_library_sources_ifdef(CONFIG_NRF71_SR_COEX_DRIVER
