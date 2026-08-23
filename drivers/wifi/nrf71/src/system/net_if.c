@@ -31,6 +31,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/main.h>
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
+#include <system/wifi_pm.h>
 
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
@@ -834,6 +835,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 	unsigned int mac_addr_len = 0;
 	int ret = -1;
 	bool fmac_dev_added = false;
+	bool wifi_powered_on = false;
 	bool locked = false;
 
 	if (!dev) {
@@ -880,13 +882,21 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 	locked = true;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
+		ret = nrf_wifi_power_on();
+		if (ret) {
+			LOG_ERR("%s: nrf_wifi_power_on failed: %d",
+				__func__, ret);
+			goto out;
+		}
+		wifi_powered_on = true;
+
 		status = nrf_wifi_sys_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed",
 				__func__);
 			ret = -EIO;
-			goto out;
+			goto dev_rem;
 		}
 		fmac_dev_added = true;
 		LOG_DBG("%s: FMAC device added", __func__);
@@ -1005,6 +1015,9 @@ dev_rem:
 	if (fmac_dev_added) {
 		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
 	}
+	if (wifi_powered_on) {
+		nrf_wifi_power_off();
+	}
 out:
 	if (locked) {
 		k_mutex_unlock(&vif_ctx_zep->vif_lock);
@@ -1093,6 +1106,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 
 	if (nrf_wifi_fmac_get_num_vifs(rpu_ctx_zep->rpu_ctx) == 0) {
 		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
+		nrf_wifi_power_off();
 	}
 	ret = 0;
 unlock:
