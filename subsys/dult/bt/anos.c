@@ -177,9 +177,9 @@ static int anos_cb_set(const struct dult_user *user, const struct dult_bt_anos_c
  * dult_multi_user_conn_claim(); the claim is dropped by this layer's own
  * Bluetooth disconnected callback (see disconnected()), so users never release
  * connections explicitly. This keeps the DULT core free of any Bluetooth
- * connection dependency. The table is only exercised in multi-user builds; in
- * single-user builds the accessors are reached exclusively from
- * IS_ENABLED(CONFIG_DULT_MULTI_USER) guarded paths.
+ * connection dependency. The table is only exercised with the v2 API; the
+ * accessors are reached exclusively from IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)
+ * guarded paths.
  */
 static const struct dult_user *conn_claims[CONFIG_BT_MAX_CONN];
 
@@ -194,7 +194,7 @@ int dult_multi_user_conn_claim(const struct dult_user *user, struct bt_conn *con
 	uint8_t idx;
 	struct bt_conn_info conn_info;
 
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		return -ENOTSUP;
 	}
 
@@ -773,14 +773,14 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 	bool anos_access_verify_cb_present;
 
 	/* Lazily cache the ANOS attribute so writes arriving during the
-	 * multi-user pre-association window can be handled. In single-user
-	 * builds the not-enabled guard below rejects pre-enable writes anyway.
+	 * pre-association window can be handled. With the v1 API the not-enabled
+	 * guard below rejects pre-enable writes anyway.
 	 */
 	if (!anos_chrc_indicate_attr) {
 		anos_chrc_indicate_attr = attr;
 	}
 
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER) && !dult_is_any_associated()) {
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) && !dult_is_any_associated()) {
 		res = BT_GATT_ERR(BT_ATT_ERR_UNLIKELY);
 		LOG_INF("Accessory non-owner write: res=%d conn=%p, "
 			"Return error because DULT is not enabled", res, (void *)conn);
@@ -803,12 +803,12 @@ static ssize_t write_accessory_non_owner(struct bt_conn *conn,
 		return res;
 	}
 
-	/* Resolve the user: the associated user first, then (multi-user only) the
-	 * connection lookup for the pre-association window. Single-user always has
-	 * an associated user here thanks to the not-enabled guard above.
+	/* Resolve the user: the associated user first, then (v2 only) the
+	 * connection lookup for the pre-association window. With the v1 API there
+	 * is always an associated user here thanks to the not-enabled guard above.
 	 */
 	dult_user = dult_user_get_associated();
-	if (!dult_user && IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (!dult_user && IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		dult_user = conn_user_lookup(conn);
 	}
 
@@ -923,7 +923,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		sound_state_reset();
 	}
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		/* Drop any per-connection user claim recorded for ANOS routing so
 		 * the connection index can be safely reused. This is the single
 		 * cleanup point for the conn_claims table; DULT users only claim
@@ -1063,8 +1063,8 @@ int dult_bt_anos_cb_register(const struct dult_user *user, const struct dult_bt_
 		return -EACCES;
 	}
 
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
-		/* Single-user: callbacks may only be registered while DULT is disabled. */
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
+		/* v1 API: callbacks may only be registered while DULT is disabled. */
 		if (dult_is_any_associated()) {
 			LOG_ERR("DULT ANOS: module must be disabled to register callbacks");
 			return -EACCES;

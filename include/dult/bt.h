@@ -188,10 +188,10 @@ struct dult_bt_anos_cb {
  *  This function must be called after registering the DULT user with @ref dult_user_register
  *  and before enabling DULT with @ref dult_enable.
  *
- *  In single-user builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the callback is cleared
- *  by @ref dult_reset, which is the terminal teardown for that configuration; it must be
- *  registered again after a subsequent @ref dult_user_register. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) the callback is preserved across @ref dult_reset calls
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the callback is cleared
+ *  by @ref dult_reset, which is the terminal teardown for that variant; it must be
+ *  registered again after a subsequent @ref dult_user_register. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) the callback is preserved across @ref dult_reset calls
  *  and cleared only by @ref dult_user_unregister.
  *
  *  @param[in] user	User structure used to authenticate the user.

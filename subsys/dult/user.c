@@ -27,8 +27,8 @@ LOG_MODULE_REGISTER(dult_user, CONFIG_DULT_LOG_LEVEL);
 static const struct dult_user *associated_user;
 
 /* Per-user memory reference holding the multi-user coexistence callback.
- * Only used in multi-user builds; the accessors below are reached exclusively
- * from IS_ENABLED(CONFIG_DULT_MULTI_USER) guarded paths.
+ * Only used with the v2 API; the accessors below are reached exclusively
+ * from IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) guarded paths.
  */
 static size_t multi_user_cb_id = DULT_USER_SLOT_MEM_REF_ID_UNSET;
 
@@ -103,9 +103,9 @@ int dult_user_register(const struct dult_user *user)
 
 	err = dult_user_slot_claim(user);
 	if (err) {
-		/* Single-user: slot taken by another user (legacy -EALREADY). */
+		/* v1 API: slot taken by another user maps to the legacy -EALREADY. */
 		LOG_ERR("DULT user registration failed: %d", err);
-		return IS_ENABLED(CONFIG_DULT_MULTI_USER) ? err : -EALREADY;
+		return IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) ? err : -EALREADY;
 	}
 
 	return 0;
@@ -250,13 +250,13 @@ static void arb_notify_schedule(const struct dult_user *user, bool claimed)
 
 static void ownership_claimed_notify(const struct dult_user *winner)
 {
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DULT_MULTI_USER));
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DULT_API_VARIANT_V2));
 	arb_notify_schedule(winner, true);
 }
 
 static void ownership_released_notify(const struct dult_user *released)
 {
-	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DULT_MULTI_USER));
+	__ASSERT_NO_MSG(IS_ENABLED(CONFIG_DULT_API_VARIANT_V2));
 	arb_notify_schedule(released, false);
 }
 
@@ -266,7 +266,7 @@ int dult_multi_user_cb_register(const struct dult_user *user,
 	int err;
 	void *ref = NULL;
 
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		return -ENOTSUP;
 	}
 
@@ -351,7 +351,7 @@ static int associated_release(const struct dult_user *user)
 
 int dult_user_unregister(const struct dult_user *user)
 {
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		return -ENOTSUP;
 	}
 
@@ -445,7 +445,7 @@ int dult_enable(const struct dult_user *user)
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		/* Announce the arbitration outcome: winner claimed, others evicted. */
 		ownership_claimed_notify(user);
 	}
@@ -463,7 +463,7 @@ int dult_reset(const struct dult_user *user)
 	__ASSERT_NO_MSG(!k_is_preempt_thread());
 	__ASSERT_NO_MSG(!k_is_in_isr());
 
-	user_authorized = IS_ENABLED(CONFIG_DULT_MULTI_USER) ?
+	user_authorized = IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) ?
 			  (associated_user == user) : dult_user_is_registered(user);
 	if (!user_authorized) {
 		return -EACCES;
@@ -476,7 +476,7 @@ int dult_reset(const struct dult_user *user)
 
 	associated_user = NULL;
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		ownership_released_notify(user);
 		LOG_INF("DULT reset (slot retained)");
 	} else {

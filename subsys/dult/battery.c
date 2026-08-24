@@ -141,11 +141,11 @@ int dult_battery_enable(void)
 		return -EALREADY;
 	}
 
-	/* Single-user requires the battery level before enable (legacy behavior).
-	 * Multi-user relies on the ANOS read-time verify instead, so enable may
+	/* The v1 API requires the battery level before enable (legacy behavior).
+	 * The v2 API relies on the ANOS read-time verify instead, so enable may
 	 * proceed before the level is set.
 	 */
-	if (!IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+	if (!IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) &&
 	    !dult_battery_level_is_set(dult_user_get_associated())) {
 		LOG_ERR("DULT Battery: battery level unset before the enable operation");
 		return -EINVAL;

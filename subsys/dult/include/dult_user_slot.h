@@ -17,11 +17,11 @@
  * @defgroup dult_user_slot Detecting Unwanted Location Trackers user slots
  * @brief Private API for the DULT user slot table.
  *
- * The slot table is the storage backend shared by the single-user and
- * multi-user lifecycle flows implemented in user.c. In legacy single-user
- * builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the table degenerates to
- * a single slot, which makes the pre-feature single-user state map onto the
- * same storage without any behavioral change.
+ * The slot table is the storage backend shared by the v1 and v2 lifecycle
+ * flows implemented in user.c. When only one user slot is configured
+ * (@kconfig{CONFIG_DULT_USER_MAX} equal to 1) the table degenerates to a
+ * single slot, which makes the single-user state map onto the same storage
+ * without any behavioral change.
  *
  * Feature modules keep their per-user memory local to the module and reference it
  * through the memory references of this table. Each module registers one

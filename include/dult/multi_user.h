@@ -21,7 +21,7 @@
  * Lets several accessory-locating networks register with DULT at once during the
  * pre-association window.
  *
- * Used only when @kconfig{CONFIG_DULT_MULTI_USER} is enabled.
+ * Used only with the v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}).
  *
  * @{
  */

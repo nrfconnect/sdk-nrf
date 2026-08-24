@@ -27,7 +27,7 @@
 	 IS_ENABLED(CONFIG_DULT_MOTION_DETECTOR) +	\
 	 IS_ENABLED(CONFIG_DULT_BATTERY) +		\
 	 IS_ENABLED(CONFIG_DULT_NEAR_OWNER_STATE) +	\
-	 IS_ENABLED(CONFIG_DULT_MULTI_USER))
+	 IS_ENABLED(CONFIG_DULT_API_VARIANT_V2))
 
 BUILD_ASSERT((MEM_REF_COUNT > 0) && (MEM_REF_COUNT < DULT_USER_SLOT_MEM_REF_ID_UNSET),
 	"MEM_REF_COUNT must be greater than 0 and less than DULT_USER_SLOT_MEM_REF_ID_UNSET");
@@ -42,7 +42,7 @@ struct dult_user_slot {
 };
 
 /* The slot table. */
-static struct dult_user_slot slots[CONFIG_DULT_MULTI_USER_MAX];
+static struct dult_user_slot slots[CONFIG_DULT_USER_MAX];
 
 /* Number of memory references registered so far. */
 static size_t mem_ref_count;
@@ -118,7 +118,7 @@ void dult_user_slot_foreach(void (*cb)(const struct dult_user *user, void *user_
 	 */
 	static bool in_foreach;
 
-	const struct dult_user *snapshot[CONFIG_DULT_MULTI_USER_MAX];
+	const struct dult_user *snapshot[CONFIG_DULT_USER_MAX];
 	size_t count = 0;
 
 	__ASSERT_NO_MSG(cb);

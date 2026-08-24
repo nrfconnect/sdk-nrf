@@ -109,13 +109,13 @@ struct dult_user {
  *
  *  The function must be called before calling any other functions from the DULT user API.
  *
- *  By default (@kconfig{CONFIG_DULT_MULTI_USER} disabled), the DULT subsystem supports only one
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}), the DULT subsystem supports only one
  *  user at the time.
  *  The lifetime of the registered user is limited by the @ref dult_reset API.
  *
- *  When the @kconfig{CONFIG_DULT_MULTI_USER} Kconfig is enabled, the DULT subsystem supports
- *  up to @kconfig{CONFIG_DULT_MULTI_USER_MAX} users that can be registered at the same time.
- *  The lifetime of the registered user when there is a multi-user support is limited by
+ *  With the v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}), the DULT subsystem supports
+ *  up to @kconfig{CONFIG_DULT_USER_MAX} users that can be registered at the same time.
+ *  The lifetime of the registered user is then limited by
  *  the @ref dult_user_unregister API.
  *
  *  @param user	Structure containing user information.
@@ -126,7 +126,7 @@ int dult_user_register(const struct dult_user *user);
 
 /** @brief Unregister a DULT user.
  *
- *  Used only in the multi-user (@kconfig{CONFIG_DULT_MULTI_USER}) configurations.
+ *  Used only with the v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}).
  *  Calling this function unregisters the registered DULT user structure and callbacks.
  *
  *  @param user	User structure used to authenticate the user.
@@ -142,10 +142,10 @@ int dult_user_unregister(const struct dult_user *user);
  *  @kconfig{CONFIG_DULT_BATTERY} Kconfig is disabled.
  *
  *  If the @kconfig{CONFIG_DULT_BATTERY} Kconfig is enabled, call this function after registering
- *  the DULT user with @ref dult_user_register. In single-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the battery level is mandatory and must be set
- *  before the first @ref dult_enable that follows registration. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) setting it is optional; until it is set, the ANOS
+ *  the DULT user with @ref dult_user_register. With the v1 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the battery level is mandatory and must be set
+ *  before the first @ref dult_enable that follows registration. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) setting it is optional; until it is set, the ANOS
  *  Get_Battery_Level operation is answered as invalid. Subsequent calls to update the battery
  *  level are allowed in the enabled mode.
  *
@@ -154,9 +154,9 @@ int dult_user_unregister(const struct dult_user *user);
  *
  *  The battery level is stored per registered user, so it can be set during the pre-association
  *  window and each locator network keeps its own value. The accessory reports the currently
- *  associated user's value. In single-user builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) it
- *  is cleared by @ref dult_reset, which is the terminal teardown for that configuration. In
- *  multi-user builds (@kconfig{CONFIG_DULT_MULTI_USER}) it is preserved across @ref dult_reset so
+ *  associated user's value. With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) it
+ *  is cleared by @ref dult_reset, which is the terminal teardown for that variant. With the
+ *  v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}) it is preserved across @ref dult_reset so
  *  it does not have to be set again before each subsequent @ref dult_enable, and it is cleared by
  *  @ref dult_user_unregister.
  *
@@ -204,10 +204,10 @@ struct dult_id_read_state_cb {
  *  This function must be called after registering the DULT user with @ref dult_user_register and
  *  before enabling DULT with @ref dult_enable function.
  *
- *  In single-user builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the callback is cleared
- *  by @ref dult_reset, which is the terminal teardown for that configuration; it must be
- *  registered again after a subsequent @ref dult_user_register. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) the callback is preserved across @ref dult_reset calls
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the callback is cleared
+ *  by @ref dult_reset, which is the terminal teardown for that variant; it must be
+ *  registered again after a subsequent @ref dult_user_register. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) the callback is preserved across @ref dult_reset calls
  *  and cleared only by @ref dult_user_unregister.
  *
  *  @param user	User structure used to authenticate the user.
@@ -282,10 +282,10 @@ struct dult_sound_cb {
  *  This function must be called after registering the DULT user with @ref dult_user_register
  *  and before enabling DULT with @ref dult_enable function.
  *
- *  In single-user builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the callback is cleared
- *  by @ref dult_reset, which is the terminal teardown for that configuration; it must be
- *  registered again after a subsequent @ref dult_user_register. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) the callback is preserved across @ref dult_reset calls
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the callback is cleared
+ *  by @ref dult_reset, which is the terminal teardown for that variant; it must be
+ *  registered again after a subsequent @ref dult_user_register. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) the callback is preserved across @ref dult_reset calls
  *  and cleared only by @ref dult_user_unregister.
  *
  *  @param user	User structure used to authenticate the user.
@@ -390,10 +390,10 @@ struct dult_motion_detector_cb {
  *  registering the DULT user with @ref dult_user_register and before enabling
  *  DULT with @ref dult_enable function.
  *
- *  In single-user builds (@kconfig{CONFIG_DULT_MULTI_USER} disabled) the callback is cleared
- *  by @ref dult_reset, which is the terminal teardown for that configuration; it must be
- *  registered again after a subsequent @ref dult_user_register. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) the callback is preserved across @ref dult_reset calls
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}) the callback is cleared
+ *  by @ref dult_reset, which is the terminal teardown for that variant; it must be
+ *  registered again after a subsequent @ref dult_user_register. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) the callback is preserved across @ref dult_reset calls
  *  and cleared only by @ref dult_user_unregister.
  *
  *  @param user	User structure used to authenticate the user.
@@ -424,10 +424,10 @@ enum dult_near_owner_state_mode {
  *  user's value.
  *
  *  Until set, the near-owner state defaults to "near-owner"
- *  (see @ref DULT_NEAR_OWNER_STATE_MODE_NEAR_OWNER). In single-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER} disabled) it is cleared by @ref dult_reset, which is the
- *  terminal teardown for that configuration. In multi-user builds
- *  (@kconfig{CONFIG_DULT_MULTI_USER}) it is preserved across @ref dult_reset and cleared by
+ *  (see @ref DULT_NEAR_OWNER_STATE_MODE_NEAR_OWNER). With the v1 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V1}) it is cleared by @ref dult_reset, which is the
+ *  terminal teardown for that variant. With the v2 API
+ *  (@kconfig{CONFIG_DULT_API_VARIANT_V2}) it is preserved across @ref dult_reset and cleared by
  *  @ref dult_user_unregister; the user is responsible for setting it as needed after a subsequent
  *  association.
  *
@@ -443,7 +443,7 @@ int dult_near_owner_state_set(const struct dult_user *user, enum dult_near_owner
  *  This function shall be used only after calling the @ref dult_user_register
  *  and registering all of the required callbacks.
  *
- *  When the @kconfig{CONFIG_DULT_MULTI_USER} Kconfig is enabled, enabling one user first
+ *  With the v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}), enabling one user first
  *  evicts every other registered user. This is done to ensure that only one user is enabled at a
  *  time. The DULT notifies every registered user about the arbitration outcome (including the
  *  evicted ones) via the @ref dult_multi_user_cb.ownership_claimed callback.
@@ -468,15 +468,15 @@ int dult_enable(const struct dult_user *user);
  *  This function can only be called by the DULT user previously registered with the
  *  @ref dult_user_register function.
  *
- *  By default (@kconfig{CONFIG_DULT_MULTI_USER} disabled), calling this function unregisters
+ *  With the v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}), calling this function unregisters
  *  the registered DULT user structure and callbacks.
  *
- *  When the @kconfig{CONFIG_DULT_MULTI_USER} Kconfig is enabled, releases the currently associated
+ *  With the v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}), releases the currently associated
  *  user but keeps the DULT user and its callbacks registered, so the @ref dult_enable function can
  *  be called again to re-enable the user. Use the @ref dult_user_unregister function to fully
  *  unregister the DULT user and return it to the unregistered state.
  *
- *  In multi-user builds, releasing the association triggers the
+ *  With the v2 API, releasing the association triggers the
  *  @ref dult_multi_user_cb.ownership_released notification for every registered user, mirroring
  *  the @ref dult_multi_user_cb.ownership_claimed notification emitted by @ref dult_enable.
  *  These notifications are delivered asynchronously. Toggling the association

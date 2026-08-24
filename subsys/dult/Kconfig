@@ -37,24 +37,68 @@ config DULT_ACCESSORY_TYPE_LARGE
 
 endchoice
 
-config DULT_MULTI_USER
-	bool "Multi-user coexistence support"
+choice DULT_API_VARIANT
+	prompt "DULT API variant"
+	default DULT_API_VARIANT_V1
 	help
-	  Allow multiple locator networks (DULT users) to be registered at the
-	  same time and arbitrate which one is the associated user. When disabled
-	  (default), DULT supports a single user. See the DULT API documentation
-	  for the resulting lifecycle contract.
+	  Selects the DULT API contract.
 
-config DULT_MULTI_USER_MAX
+config DULT_API_VARIANT_V1
+	bool "DULT API v1 [DEPRECATED]"
+	select DEPRECATED
+	help
+	  Legacy DULT API contract. Supports only a single DULT user.
+
+	  Only one DULT user can be registered at a time using the dult_user_register() function.
+	  The DULT module can be enabled only by this registered user using the dult_enable()
+	  function. The DULT user lifecycle is limited by dult_reset() that performs a terminal
+	  teardown that also unregisters the user. Per-user state is cleared by dult_reset(), as it
+	  is the terminal teardown. See the DULT API documentation for more details.
+
+	  Typical integration scenario:
+	  The accessory-locating network enables the DULT module when enabling the stack
+	  and resets it when disabling the stack.
+
+config DULT_API_VARIANT_V2
+	bool "DULT API v2"
+	help
+	  New DULT API contract. Supports one or more DULT users.
+
+	  Multiple users can be registered at the same time using the dult_user_register() function
+	  depending on the DULT_USER_MAX configuration. The DULT module can be enabled by any of the
+	  registered users using the dult_enable() function when not already enabled by another user
+	  to claim the ownership of the DULT module. Performing the dult_reset() releases the
+	  ownership of the DULT module but keeps the user registered. The user can be unregistered
+	  using the dult_user_unregister() function. Per-user state is preserved across dult_reset()
+	  and cleared by dult_user_unregister(). See the DULT API documentation for more details.
+
+	  Typical integration scenario:
+	  The accessory-locating network claims the ownership of the DULT module either when
+	  enabling the stack when the accessory is already associated with the accessory-locating
+	  network or on association with it. It releases the ownership of the DULT module on
+	  disassociation from the accessory-locating network or when the accessory-locating network
+	  is disabled.
+
+endchoice
+
+config DULT_USER_MAX
 	int "Maximum number of registered DULT users"
-	range 1 8 if DULT_MULTI_USER
+	range 1 8 if DULT_API_VARIANT_V2
 	range 1 1
 	default 1
 	help
-	  Number of locator networks that can register with DULT at the same
-	  time. 1 keeps a single slot (no coexistence callbacks needed); 2 or
-	  more require them so the associated user can be arbitrated. Once a
-	  network calls dult_enable(), the others are evicted.
+	  Number of accessory-locating networks that can register with DULT at the same
+	  time. With a single slot (1) the ownership coexistence callback is optional,
+	  as there is no arbitration between users. With 2 or more it is mandatory so the
+	  associated user can be arbitrated: once a network calls dult_enable(), the
+	  others are evicted. Values greater than 1 require the v2 API
+	  (CONFIG_DULT_API_VARIANT_V2).
+
+config DULT_MULTI_USER
+	bool
+	default y if DULT_USER_MAX > 1
+	help
+	  Indicates that the DULT module supports multiple users.
 
 config DULT_BATTERY
 	bool "DULT battery information"
