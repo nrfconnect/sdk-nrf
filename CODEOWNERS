@@ -331,6 +331,7 @@
 /drivers/wifi/nrf71/fw_if/nrf71_wifi_rf.h       @nrfconnect/ncs-wcg-phy
 /drivers/wifi/nrf71/osal/fw_if/           @nrfconnect/ncs-wcg-umac
 /include/drivers/wifi/nrf71/              @nrfconnect/ncs-wcg-drivers
+/drivers/pulse_meas/                      @nrfconnect/ncs-ll-izera
 
 # Devicetree
 /dts/                                     @nrfconnect/ncs-co-drivers
