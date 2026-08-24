@@ -1,0 +1,2 @@
+target_sources(app PRIVATE asymmetric_encryption_test_logic.c)
+target_sources(app PRIVATE asymmetric_encryption_test_data.c)
