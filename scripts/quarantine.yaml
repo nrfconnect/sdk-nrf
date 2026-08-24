@@ -128,3 +128,13 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40914"
+
+- scenarios:
+    - drivers.ppi_seq_i2c_spi.i2c_timer_notifier_counter
+    - drivers.ppi_seq_i2c_spi.spi_timer_extra_op
+    - drivers.ppi_seq_i2c_spi.spi_timer_notifier
+    - drivers.ppi_seq_i2c_spi.spi_timer_trigger
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
+    - nrf9251dk@0.1.0/nrf9251/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40944"
