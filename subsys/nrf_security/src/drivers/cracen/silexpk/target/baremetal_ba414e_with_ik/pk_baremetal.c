@@ -229,7 +229,7 @@ int sx_pk_init(void)
 
 	cnx->instance.slot_sz = op_offset;
 
-	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+	if (IS_ENABLED(CONFIG_CRACEN_CLEAR_PKE_MEMORY)) {
 		/* Clear PK data memory via acquire_hw/release_req. */
 		sx_pk_acquire_hw(&silex_pk_engine.instance);
 		(void)sx_pk_clear_memory(&silex_pk_engine.instance);
@@ -288,7 +288,7 @@ void *sx_pk_get_user_context(sx_pk_req *req)
 
 void sx_pk_release_req(sx_pk_req *req)
 {
-	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+	if (IS_ENABLED(CONFIG_CRACEN_CLEAR_PKE_MEMORY)) {
 		/* Clear PK data memory */
 		(void)sx_pk_clear_memory(req);
 	}
@@ -323,8 +323,16 @@ const struct sx_pk_cmd_def *sx_pk_get_cmd(sx_pk_req *req)
 
 int sx_pk_clear_memory(sx_pk_req *req)
 {
-	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
+	if (IS_ENABLED(CONFIG_CRACEN_CLEAR_PKE_MEMORY)) {
 		sx_pk_set_cmd(req, SX_PK_CMD_CLEAR_MEMORY);
+
+		/* The clear operation has no operands, so it does not go through
+		 * the input slot setup that normally programs the command
+		 * register. Write it here, with an operand size of 1 and no
+		 * flags, so that neither the operand size nor the flags of the
+		 * previous operation are reused.
+		 */
+		sx_pk_write_command(req, 1, 0);
 
 		sx_pk_run(req);
 
