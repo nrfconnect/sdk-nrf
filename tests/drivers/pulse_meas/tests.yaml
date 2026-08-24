@@ -1,0 +1,26 @@
+common:
+  tags:
+    - drivers
+    - ci_tests_drivers_pulse_meas
+  harness: ztest
+  harness_config:
+    fixture: gpio_loopback
+  timeout: 20
+
+tests:
+  drivers.pulse_meas:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  drivers.pulse_meas.use_hfclk:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    extra_configs:
+      - CONFIG_PULSE_MEAS_USE_HFCLK=y
