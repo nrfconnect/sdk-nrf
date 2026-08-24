@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&timer131 {
+	status = "reserved";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&pinctrl {
+	pwm130_default: pwm130_default {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 3)>,
+				<NRF_PSEL(PWM_OUT1, 0, 6)>;
+		};
+	};
+
+	pwm130_sleep: pwm130_sleep {
+		group1 {
+			psels = <NRF_PSEL(PWM_OUT0, 0, 3)>,
+				<NRF_PSEL(PWM_OUT1, 0, 6)>;
+			low-power-enable;
+		};
+	};
+};
+
+tester_pwm: &pwm130 {
+	status = "okay";
+	pinctrl-0 = <&pwm130_default>;
+	pinctrl-1 = <&pwm130_sleep>;
+	pinctrl-names = "default", "sleep";
+};
+
+/ {
+	pulse_meas: pulse-meas {
+		compatible = "nordic,pulse-meas";
+		status = "okay";
+		timer-instance = <&timer131>;
+		assert-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
+		deassert-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+	};
+};
