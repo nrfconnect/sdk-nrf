@@ -122,6 +122,7 @@
     - benchmarks.current_consumption.systemoff.grtc_wakeup
     - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_16k
     - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_32k
+    - benchmarks.current_consumption.systemoff.grtc_wakeup.retained_mem_4k
     - nrf.extended.sample.boards.nrf.system_off.grtc_wakeup
     - nrf.extended.sample.boards.nrf.system_off.retained_mem.grtc_wakeup
   platforms:
