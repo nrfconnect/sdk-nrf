@@ -173,6 +173,18 @@ config CRACEN_XOF_OUT_POOL_BUF_SIZE
 	  per squeeze chain.
 	  The default 1008 = 6 x 168 bytes (six SHAKE-128 rate blocks).
 
+config CRACEN_CLEAR_PKE_MEMORY
+	bool "Clear CRACEN PKE data memory"
+	depends on !CRACEN_HW_VERSION_BASE
+	default y
+	help
+	  Clear the PKE data memory after every public key operation, so that
+	  operands and intermediate results do not stay in the crypto RAM once
+	  CRACEN is released.
+
+	  This has an impact on runtime, but it is minimal on
+	  CRACEN_HW_VERSION_LITE devices.
+
 config CRACEN_ECC_COUNTERMEASURES
 	bool "CRACEN ECC countermeasures"
 	default y
