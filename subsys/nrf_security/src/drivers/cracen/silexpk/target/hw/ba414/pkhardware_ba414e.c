@@ -125,7 +125,7 @@ static int sx_pk_ik_mode(sx_pk_req *pk)
 	return pk->ik_mode;
 }
 
-static void write_command(sx_pk_req *req, int op_size, uint32_t flags)
+void sx_pk_write_command(sx_pk_req *req, int op_size, uint32_t flags)
 {
 	uint32_t command = sx_pk_get_cmd(req)->cmdcode | ((op_size - 1) << 8) | flags;
 
@@ -198,7 +198,7 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	if (cmd->blind_flags) {
 		flags |= cmd->blind_flags;
 	}
-	write_command(req, curve->sz, curve->curveflags | flags);
+	sx_pk_write_command(req, curve->sz, curve->curveflags | flags);
 	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.
@@ -265,7 +265,7 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	if (cmd->blind_flags) {
 		flags |= cmd->blind_flags;
 	}
-	write_command(req, req->op_size, flags);
+	sx_pk_write_command(req, req->op_size, flags);
 	if (cmd->cmdcode & SX_PK_OP_FLAGS_BIGENDIAN) {
 		/* In big endian mode, the operands should be put at the end
 		 * of the slot.

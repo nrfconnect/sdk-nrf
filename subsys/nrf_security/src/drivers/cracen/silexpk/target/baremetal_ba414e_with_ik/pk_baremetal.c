@@ -326,6 +326,14 @@ int sx_pk_clear_memory(sx_pk_req *req)
 	if (!IS_ENABLED(CONFIG_CRACEN_HW_VERSION_BASE)) {
 		sx_pk_set_cmd(req, SX_PK_CMD_CLEAR_MEMORY);
 
+		/* The clear operation has no operands, so it does not go through
+		 * the input slot setup that normally programs the command
+		 * register. Write it here, with an operand size of 1 and no
+		 * flags, so that neither the operand size nor the flags of the
+		 * previous operation are reused.
+		 */
+		sx_pk_write_command(req, 1, 0);
+
 		sx_pk_run(req);
 
 		return sx_pk_wait(req);
