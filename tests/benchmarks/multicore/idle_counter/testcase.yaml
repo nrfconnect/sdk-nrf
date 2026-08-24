@@ -1,9 +1,5 @@
 common:
   sysbuild: true
-  integration_platforms:
-    - nrf54h20dk/nrf54h20/cpuapp
-  platform_allow:
-    - nrf54h20dk/nrf54h20/cpuapp
   tags:
     - ppk_power_measure
     - ci_tests_benchmarks_current_consumption
@@ -14,6 +10,11 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
 
   benchmarks.power_consumption.counter.mcuboot:
     extra_args:
@@ -24,3 +25,7 @@ tests:
       fixture: ppk_power_measure
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_fast_counter_and_s2ram_with_clock_control"
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp

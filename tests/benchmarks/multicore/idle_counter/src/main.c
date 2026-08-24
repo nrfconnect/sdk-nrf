@@ -12,7 +12,11 @@
 
 LOG_MODULE_REGISTER(idle_counter);
 
+#if defined(SOC_NRF54H20)
 #define SHM_START_ADDR (DT_REG_ADDR(DT_NODELABEL(cpuapp_cpurad_ipc_shm)))
+#else
+#define SHM_START_ADDR (DT_REG_ADDR(DT_NODELABEL(cpuapp_cpuppr_ipc_shm)))
+#endif
 volatile static uint32_t *shared_var = (volatile uint32_t *)SHM_START_ADDR;
 #define HOST_IS_READY	(1)
 #define REMOTE_IS_READY (2)
