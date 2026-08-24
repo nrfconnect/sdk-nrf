@@ -874,6 +874,12 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
   Use their PSA Crypto counterparts instead.
 
+* Added support for multiple image verification keys compiled into MCUboot.
+  The :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option accepts a comma-separated list of PEM files.
+  Only public key material is embedded in the bootloader image.
+  This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
+  MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
+
 Zephyr
 ======
 
