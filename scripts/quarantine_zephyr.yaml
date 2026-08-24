@@ -237,6 +237,20 @@
     - nrf7120dk/nrf7120/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-31980"
 
+- scenarios:
+    - libraries.cmsis_dsp.matrix.binary_f32.fpu
+    - libraries.cmsis_dsp.matrix.binary_q31.fpu
+    - net.socket.misc.v4_mapping_to_v6_enabled
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40945"
+
+- scenarios:
+    - sample.net.promiscuous_mode
+  platforms:
+    - nrf9160dk@0.14.0/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40945"
+
 # ---------------------------------   Won't fix section -----------------------------------
 
 - scenarios:
