@@ -623,6 +623,7 @@
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
+/samples/pulse_meas/                      @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
@@ -747,6 +748,7 @@
 /samples/peripheral/ppi_seq_spi/*.rst     @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
+/samples/pulse_meas/README.rst            @nrfconnect/ncs-lowlevel-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
