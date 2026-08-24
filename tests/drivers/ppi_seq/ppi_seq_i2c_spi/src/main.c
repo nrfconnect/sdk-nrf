@@ -397,16 +397,18 @@ static void test_single_run(void)
 
 	/* If TIMER is used for triggering then enable HFXO to ensure clock accuracy. */
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
-#if defined(CONFIG_CLOCK_CONTROL_NRF) || NRF_CLOCK_HAS_HFCLK || NRF_CLOCK_HAS_XO
 	struct onoff_client cli;
 
 	sys_notify_init_spinwait(&cli.notify);
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 	rv = onoff_request(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF), &cli);
 #else
-	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
-								(nordic_nrf_clock_hfclk),
-								(nordic_nrf_clock_xo)));
+	const struct device *dev =
+		COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
+			    (DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk)),
+			    (COND_CODE_1(NRF_CLOCK_HAS_XO,
+					 (DEVICE_DT_GET_ONE(nordic_nrf_clock_xo)),
+					 (DEVICE_DT_GET(DT_NODELABEL(hfxo))))));
 
 	rv = nrf_clock_control_request(dev, NULL, &cli);
 #endif
@@ -417,14 +419,6 @@ static void test_single_run(void)
 		/* pend until clock is up and running */
 	}
 	zassert_ok(rv);
-#elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
-	const struct device *hfxo = DEVICE_DT_GET(DT_NODELABEL(hfxo));
-
-	rv = nrf_clock_control_request_sync(hfxo, NULL, K_MSEC(1000));
-	zassert_ok(rv);
-#else
-	zassert_ok(false, "Should not get here.");
-#endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
 #endif /* DT_NODE_HAS_PROP(DUT_NODE, timer) */
 
 	if (DT_NODE_HAS_PROP(DUT_NODE, timer_notifier)) {
@@ -484,8 +478,6 @@ static void test_single_run(void)
 #if DT_NODE_HAS_PROP(DUT_NODE, timer)
 #ifdef CONFIG_CLOCK_CONTROL_NRF
 	rv = onoff_release(z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF));
-#elif CONFIG_CLOCK_CONTROL_NRF54H_HFXO
-	rv = nrf_clock_control_release(hfxo, NULL);
 #else
 	rv = nrf_clock_control_release(dev, NULL);
 #endif /* CONFIG_CLOCK_CONTROL_NRF / CONFIG_CLOCK_CONTROL_NRF54H_HFXO */
