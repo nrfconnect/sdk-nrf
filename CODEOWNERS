@@ -440,6 +440,7 @@
 /include/accel_to_angle/                  @nrfconnect/ncs-si-bluebagel
 /include/wave_gen.h                       @nrfconnect/ncs-si-muffin
 /include/wifi_kmu/                        @adrianiainlam
+/include/drivers/pulse_meas.h          @nrfconnect/ncs-ll-izera
 
 # Libraries
 /lib/accel_to_angle/                      @nrfconnect/ncs-si-bluebagel
