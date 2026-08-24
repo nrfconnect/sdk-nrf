@@ -4146,6 +4146,13 @@ CIA-351: Connectivity issues with :ref:`lib_azure_iot_hub`
 Bluetooth libraries and services
 ================================
 
+.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0
+
+DRGN-29635: The :ref:`rrsp_readme` might deadlock when a link is lost while ranging data is in flight
+  When the :kconfig:option:`CONFIG_BT_RAS_RRSP_AUTO_ALLOC_INSTANCE` Kconfig option is enabled, the Ranging Responder might deadlock if the link is lost abruptly while ranging data is in flight.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``59b903f2a4bcedcd4dbf57f6b923a334b7df915b``).
+
 .. _ncsdk_30288:
 
 .. rst-class:: v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2 v1-9-1 v1-9-0 v1-8-0 v1-7-1 v1-7-0 v1-6-1 v1-6-0 v1-5-2 v1-5-1 v1-5-0 v1-4-2 v1-4-1 v1-4-0 v1-3-2 v1-3-1 v1-3-0 v1-2-1 v1-2-0 v1-1-0 v1-0-0 v0-4-0
