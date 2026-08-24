@@ -26,7 +26,8 @@
 
 psa_status_t cracen_sw_aes_ctr_setup(cracen_cipher_operation_t *operation,
 				     const psa_key_attributes_t *attributes,
-				     const uint8_t *key_buffer, size_t key_buffer_size)
+				     const uint8_t *key_buffer, size_t key_buffer_size,
+				     psa_algorithm_t alg)
 {
 	psa_status_t status;
 
@@ -45,11 +46,14 @@ psa_status_t cracen_sw_aes_ctr_setup(cracen_cipher_operation_t *operation,
 		return status;
 	}
 
-	/* Initialize the operation */
-	operation->alg = PSA_ALG_CTR;
+	/* Initialize the operation. PSA_ALG_CCM_STAR_NO_TAG runs here too: it is CTR
+	 * over the counter blocks A_i, and only set_iv() differs.
+	 */
+	operation->alg = alg;
 	operation->dir = CRACEN_ENCRYPT; /* CTR mode is identical for encrypt/decrypt */
 	operation->blk_size = SX_BLKCIPHER_AES_BLK_SZ;
 	operation->unprocessed_input_bytes = 0;
+	operation->processed_length = 0;
 	/* We don't consider the initalization finalized until IV is set */
 	operation->initialized = false;
 
@@ -59,16 +63,24 @@ psa_status_t cracen_sw_aes_ctr_setup(cracen_cipher_operation_t *operation,
 psa_status_t cracen_sw_aes_ctr_set_iv(cracen_cipher_operation_t *operation, const uint8_t *iv,
 				      size_t iv_length)
 {
-	if (operation->alg != PSA_ALG_CTR) {
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) &&
+	    operation->alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		if (iv_length != CCM_STAR_NONCE_LENGTH) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		/* Seed with A_1; the counter walk below derives A_2, A_3, ... */
+		cracen_ccm_star_build_a1(operation->iv, iv);
+	} else if (operation->alg == PSA_ALG_CTR) {
+		if (iv_length != SX_BLKCIPHER_AES_BLK_SZ) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		/* Copy the IV (which includes the initial counter) */
+		memcpy(operation->iv, iv, iv_length);
+	} else {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	if (iv_length != SX_BLKCIPHER_AES_BLK_SZ) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
 	operation->unprocessed_input_bytes = 0;
-	/* Copy the IV (which includes the initial counter) */
-	memcpy(operation->iv, iv, iv_length);
 	operation->initialized = true;
 
 	return PSA_SUCCESS;
@@ -102,6 +114,17 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 	/* CTR is a stream mode operation so output must be same length as input */
 	if (output == NULL || output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	/* Counted only once every earlier check has passed, so a rejected call leaves
+	 * the operation untouched.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) &&
+	    operation->alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		if (input_length > CCM_STAR_MAX_MESSAGE_LEN - operation->processed_length) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		operation->processed_length += input_length;
 	}
 
 	remaining_input = input_length;
@@ -176,10 +199,10 @@ psa_status_t cracen_sw_aes_ctr_finish(cracen_cipher_operation_t *operation,
 
 /* Single Shot Crypt which handles both encryption and decryption */
 psa_status_t cracen_sw_aes_ctr_crypt(const psa_key_attributes_t *attributes,
-				      const uint8_t *key_buffer, size_t key_buffer_size,
-				      const uint8_t *iv, size_t iv_length, const uint8_t *input,
-				      size_t input_length, uint8_t *output, size_t output_size,
-				      size_t *output_length)
+				     const uint8_t *key_buffer, size_t key_buffer_size,
+				     psa_algorithm_t alg, const uint8_t *iv, size_t iv_length,
+				     const uint8_t *input, size_t input_length, uint8_t *output,
+				     size_t output_size, size_t *output_length)
 {
 	psa_status_t status;
 	cracen_cipher_operation_t operation = {0};
@@ -195,7 +218,7 @@ psa_status_t cracen_sw_aes_ctr_crypt(const psa_key_attributes_t *attributes,
 
 	*output_length = 0;
 
-	status = cracen_sw_aes_ctr_setup(&operation, attributes, key_buffer, key_buffer_size);
+	status = cracen_sw_aes_ctr_setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}

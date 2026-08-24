@@ -209,9 +209,9 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 			memmove(output, input, input_length);
 			input = output;
 		}
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
-					       iv_length, input, input_length, output, output_size,
-					       output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, PSA_ALG_CTR,
+					       iv, iv_length, input, input_length, output,
+					       output_size, output_length);
 	}
 #endif
 
@@ -274,9 +274,10 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
-					       iv_size, input + iv_size, input_length - iv_size,
-					       output, output_size, output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, PSA_ALG_CTR,
+					       input, iv_size, input + iv_size,
+					       input_length - iv_size, output, output_size,
+					       output_length);
 	}
 #endif
 
@@ -407,7 +408,8 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       PSA_ALG_CTR);
 	}
 #endif
 
@@ -423,7 +425,8 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       PSA_ALG_CTR);
 	}
 #endif
 

@@ -55,6 +55,10 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
 			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
+	case PSA_ALG_CCM_STAR_NO_TAG:
+		IF_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
 	case PSA_ALG_ECB_NO_PADDING:
 		IF_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES,
 			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
@@ -65,6 +69,16 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 	}
 
 	return is_supported;
+}
+
+/* PSA_ALG_CCM_STAR_NO_TAG is CTR over the CCM* counter blocks A_i, so it shares every
+ * stage of the CTR path here; only cracen_sw_aes_ctr_set_iv() differs. See the
+ * CCM_STAR_* definitions in cracen_psa_primitives.h.
+ */
+static bool is_ctr_based(psa_algorithm_t alg)
+{
+	return (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES) && alg == PSA_ALG_CTR) ||
+	       (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) && alg == PSA_ALG_CCM_STAR_NO_TAG);
 }
 
 static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *operation,
@@ -138,28 +152,25 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	*output_length = 0;
 	cracen_cipher_operation_t operation = {0};
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (alg == PSA_ALG_CTR) {
-			if (output_size < input_length) {
-				return PSA_ERROR_BUFFER_TOO_SMALL;
-			}
-
-			/* Handle inplace encryption by moving plaintext to the right by iv_length
-			 * bytes. This is done because in inplace encryption the input and output
-			 * should point to the same data so that the output can overwrite its own
-			 * input. If they are not in sync the output will overwrite the input of
-			 * another operation which is of course wrong.
-			 *
-			 */
-			if (output == input + iv_length) {
-				memmove(output, input, input_length);
-				input = output;
-			}
-
-			return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
-						       iv_length, input, input_length, output,
-						       output_size, output_length);
+	if (is_ctr_based(alg)) {
+		if (output_size < input_length) {
+			return PSA_ERROR_BUFFER_TOO_SMALL;
 		}
+
+		/* Handle inplace encryption by moving plaintext to the right by iv_length
+		 * bytes. This is done because in inplace encryption the input and output
+		 * should point to the same data so that the output can overwrite its own
+		 * input. If they are not in sync the output will overwrite the input of
+		 * another operation which is of course wrong.
+		 */
+		if (output == input + iv_length) {
+			memmove(output, input, input_length);
+			input = output;
+		}
+
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, alg, iv,
+					       iv_length, input, input_length, output, output_size,
+					       output_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
@@ -240,21 +251,24 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 
 	cracen_cipher_operation_t operation = {0};
 	psa_status_t status;
-	/* ChaCha20 only supports 12 bytes IV in the single part decryption function */
-	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
+	/* 16 for the AES block modes, 13 for CCM*, 12 for ChaCha20, and 0 for ECB, whose
+	 * branch below never looks at it.
+	 */
+	const size_t iv_size = PSA_CIPHER_IV_LENGTH(psa_get_key_type(attributes), alg);
 	*output_length = 0;
+
+	if (input_length < iv_size) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	if (input_length == 0) {
 		return PSA_SUCCESS;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size,
-						       input, iv_size, input + iv_size,
-						       input_length - iv_size, output, output_size,
-						       output_length);
-		}
+	if (is_ctr_based(alg)) {
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, alg, input,
+					       iv_size, input + iv_size, input_length - iv_size,
+					       output, output_size, output_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES)) {
@@ -286,10 +300,6 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 							 input_length - iv_size, output,
 							 output_size, output_length);
 		}
-	}
-
-	if (input_length < iv_size) {
-		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
@@ -340,11 +350,9 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer,
-						       key_buffer_size);
-		}
+	if (is_ctr_based(alg)) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       alg);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
@@ -373,11 +381,9 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer,
-						       key_buffer_size);
-		}
+	if (is_ctr_based(alg)) {
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       alg);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES)) {
@@ -402,10 +408,8 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 {
 	__ASSERT_NO_MSG(iv != NULL);
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (operation->alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
-		}
+	if (is_ctr_based(operation->alg)) {
+		return cracen_sw_aes_ctr_set_iv(operation, iv, iv_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
@@ -460,11 +464,9 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		return PSA_SUCCESS;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (operation->alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_update(operation, input, input_length, output,
-							output_size, output_length);
-		}
+	if (is_ctr_based(operation->alg)) {
+		return cracen_sw_aes_ctr_update(operation, input, input_length, output, output_size,
+						output_length);
 	}
 
 	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
@@ -646,10 +648,8 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 
 	__ASSERT_NO_MSG(output != NULL);
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
-		if (operation->alg == PSA_ALG_CTR) {
-			return cracen_sw_aes_ctr_finish(operation, output_length);
-		}
+	if (is_ctr_based(operation->alg)) {
+		return cracen_sw_aes_ctr_finish(operation, output_length);
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CBC_NO_PADDING_AES) ||
