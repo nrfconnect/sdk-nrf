@@ -17,45 +17,108 @@ common:
 tests:
   nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_available:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
-
-  nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_no_wait:
-    extra_configs:
-      - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_rc_stable:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series.overlay"
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series.overlay"
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_rc_no_wait:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series.overlay"
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_synth_stable:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series_synth.overlay"
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_synth_available:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series_synth.overlay"
 
   nrf.extended.drivers.clock.nrf_lf_clock_start_synth_no_wait:
     extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+      - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_BASE}/tests/drivers/clock_control/nrf_lf_clock_start/boards/nrf5x_series_synth.overlay"
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_stable.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_xtal_available.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_rc_stable.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_rc_available.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_rc_no_wait.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_synth_stable.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_STABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_synth_available.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_SYSTEM_CLOCK_WAIT_FOR_AVAILABILITY=y
+      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH=y
+
+  nrf.extended.drivers.clock.nrf_lf_clock_start_synth_no_wait.legacy:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
       - CONFIG_SYSTEM_CLOCK_NO_WAIT=y
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_SYNTH=y
