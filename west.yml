@@ -247,7 +247,7 @@ manifest:
     - name: hal_nordic
       repo-path: sdk-hal_nordic
       path: modules/hal/nordic
-      revision: 18da0cc9726f8759c627dba3180b3ba9294e433c
+      revision: 5fc6670d72d5004020fd6948ee3af9dc2572ab9f
 
     # Other third-party repositories.
     - name: cmock
