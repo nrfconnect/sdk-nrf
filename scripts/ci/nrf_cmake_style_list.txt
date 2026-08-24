@@ -1,0 +1,4 @@
+UpdateableImage_Add
+UpdateableImage_Get
+ExternalNcsVariantProject_Add
+FirmwareUpdaterImage_Get

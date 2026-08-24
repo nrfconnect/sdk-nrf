@@ -76,6 +76,7 @@ jobs:
         run: |
           export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
           export UNDEF_KCONFIG_OUTSIDE_ALLOWLIST_FILE="$(dirname "$(pwd)")/nrf/scripts/ci/nrf_undef_kconfig_allowlist.txt"
+          export CMAKE_STYLE_MIXED_CASE_FILE="$(dirname "$(pwd)")/nrf/scripts/ci/nrf_cmake_style_list.txt"
           # debug
           ls -la
           git log --pretty=oneline | head -n 10

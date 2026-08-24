@@ -852,6 +852,7 @@
 /scripts/runners/nrf_common_next.py       @nrfconnect/ncs-ci
 /scripts/runners/nrfutil_next.py          @nrfconnect/ncs-ci
 /scripts/ci/nrf_undef_kconfig_allowlist.txt @nrfconnect/ncs-co-build-system
+/scripts/ci/nrf_cmake_style_list.txt      @nrfconnect/ncs-co-build-system
 
 /scripts/docker/*.rst                     @nrfconnect/ncs-doc-leads
 /scripts/hid_configurator/*.rst           @nrfconnect/ncs-si-xcake-doc
