@@ -575,11 +575,14 @@ struct bt_fast_pair_fhn_info_cb {
 	 *    association just ended, false if FHN was an uninvolved bystander
 	 *    that can now re-arbitrate.
 	 *
-	 *  Registering this callback is mandatory only in builds where more than
-	 *  one DULT user can be registered concurrently, that is with
-	 *  @kconfig{CONFIG_DULT_MULTI_USER} enabled and
-	 *  @kconfig{CONFIG_DULT_MULTI_USER_MAX} greater than one. In single-user
-	 *  builds the callback is not used.
+	 *  This callback relates to the DULT v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}).
+	 *  Its role depends on the configuration:
+	 *  - v2 with more than one DULT user (@kconfig{CONFIG_DULT_USER_MAX} greater than
+	 *    one): mandatory; it is the only way to learn about eviction and re-arbitration.
+	 *  - v2 with a single DULT user: optional; it still fires on every ownership
+	 *    transition (claimed on enable, released on reset).
+	 *  - v1 API (@kconfig{CONFIG_DULT_API_VARIANT_V1}): unused; DULT emits no ownership
+	 *    transitions, so the callback is never invoked even if registered.
 	 *
 	 *  When @p state is true and @p owner is false, another network won the
 	 *  association and the callback signals the application to disable the FHN

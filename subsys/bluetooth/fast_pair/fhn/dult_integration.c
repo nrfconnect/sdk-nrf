@@ -101,7 +101,7 @@ static int dult_init(void)
 		return err;
 	}
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		err = dult_multi_user_cb_register(&dult_user, &fhn_multi_user_cb);
 		if (err) {
 			LOG_ERR("FHN: dult_multi_user_cb_register returned error: %d", err);
@@ -121,7 +121,7 @@ static int dult_uninit(void)
 {
 	int err;
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		/* Full teardown so the next bring-up re-establishes state. */
 		err = dult_user_unregister(&dult_user);
 		if (err) {

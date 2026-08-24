@@ -43,8 +43,12 @@ void fp_fhn_callbacks_conn_authenticated_notify(struct bt_conn *conn);
  */
 void fp_fhn_callbacks_provisioning_state_changed_notify(bool provisioned);
 
-/** Notify the callback layer about a DULT ownership state change. Only fires in
- *  multi-user builds (see @kconfig{CONFIG_DULT_MULTI_USER_MAX}).
+/** Notify the callback layer about a DULT ownership state change. Relates to the
+ *  DULT v2 API (@kconfig{CONFIG_DULT_API_VARIANT_V2}) only and fires on every DULT
+ *  ownership transition. A registered listener is mandatory only when more than one
+ *  DULT user is configured (@kconfig{CONFIG_DULT_USER_MAX} greater than one) and
+ *  optional with a single user. With the v1 API this is never called, as DULT emits
+ *  no ownership transitions.
  *
  *  @param state    true if ownership was claimed, false if released.
  *  @param is_owner When @p state is true, true if the FHN stack became the owner.

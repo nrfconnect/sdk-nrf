@@ -132,9 +132,12 @@ static int cb_register(sys_slist_t *slist, struct bt_fast_pair_fhn_info_cb *cb)
 		return -EINVAL;
 	}
 
-	if ((CONFIG_DULT_MULTI_USER_MAX <= 1) && cb->dult_ownership_state_changed) {
+	if (cb->dult_ownership_state_changed && !IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		LOG_DBG("FHN Callbacks: dult_ownership_state_changed callback is unused "
-			"when CONFIG_DULT_MULTI_USER_MAX <= 1");
+			"with the DULT v1 API; it is never invoked");
+	} else if (cb->dult_ownership_state_changed && !IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+		LOG_DBG("FHN Callbacks: dult_ownership_state_changed callback is optional "
+			"when a single DULT user is configured");
 	}
 
 	if (sys_slist_find(slist, &cb->node, NULL)) {
@@ -162,10 +165,10 @@ static int fp_fhn_callbacks_init(void)
 	 * user can be registered concurrently, since it is the only way to learn
 	 * about eviction and re-arbitration.
 	 */
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER) && (CONFIG_DULT_MULTI_USER_MAX > 1) &&
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
 	    !dult_ownership_state_changed_cb_is_registered()) {
 		LOG_ERR("FHN Callbacks: dult_ownership_state_changed callback is mandatory "
-			"when CONFIG_DULT_MULTI_USER_MAX > 1");
+			"when more than one DULT user is configured");
 		return -EINVAL;
 	}
 

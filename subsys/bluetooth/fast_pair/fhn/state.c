@@ -1043,7 +1043,7 @@ static int fhn_unprovision(void)
 	fp_fhn_callbacks_provisioning_state_changed_notify(false);
 
 	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
-	    IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	    IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		/* Release the DULT association when leaving the provisioned state.
 		 * The association is acquired before the EIK is committed to the
 		 * storage, so release it here for symmetry.
@@ -1139,7 +1139,7 @@ static int fhn_provision(const uint8_t *eik)
 	__ASSERT_NO_MSG(eik);
 
 	if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
-	    IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+	    IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) &&
 	    !was_provisioned) {
 		/* Acquire the DULT association before committing the EIK: the FHN stack
 		 * must not enter the provisioned state without it, and the provisioning
@@ -1167,7 +1167,7 @@ static int fhn_provision(const uint8_t *eik)
 		LOG_ERR("FHN State: fhn_storage_provision failed: %d", err);
 
 		if (IS_ENABLED(CONFIG_BT_FAST_PAIR_FHN_DULT_INTEGRATION) &&
-		    IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+		    IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) &&
 		    !was_provisioned) {
 			(void) dult_reset(fp_fhn_dult_integration_user_get());
 		}
@@ -1388,7 +1388,7 @@ static int fp_fhn_state_dult_init(void)
 		return 0;
 	}
 
-	if (IS_ENABLED(CONFIG_DULT_MULTI_USER)) {
+	if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2)) {
 		/* The initial DULT association on stack enable based on the provisioning state. */
 		if (is_provisioned()) {
 			err = dult_enable(fp_fhn_dult_integration_user_get());
@@ -1433,7 +1433,7 @@ static int fp_fhn_state_dult_uninit(void)
 
 	err = dult_reset(fp_fhn_dult_integration_user_get());
 	if (err) {
-		if (IS_ENABLED(CONFIG_DULT_MULTI_USER) && (err == -EACCES)) {
+		if (IS_ENABLED(CONFIG_DULT_API_VARIANT_V2) && (err == -EACCES)) {
 			/* The DULT association is already released. */
 			err = 0;
 		} else {
