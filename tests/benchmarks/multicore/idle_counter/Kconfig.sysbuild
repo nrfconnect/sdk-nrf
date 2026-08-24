@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if SUPPORT_NETCORE
+
 choice NETCORE
 	default NETCORE_REMOTE
 
@@ -16,6 +18,27 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_counter/remote" if NETCORE_REMOTE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_counter/remote" if NETCORE_REMOTE
+
+endif # SUPPORT_NETCORE
+
+if SUPPORT_PPRCORE
+
+choice PPRCORE
+	default PPRCORE_REMOTE if SOC_NRF9251_CPUAPP
+	default PPRCORE_NONE
+
+config PPRCORE_REMOTE
+	bool "Remote image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote_ppr" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_counter/remote" if PPRCORE_REMOTE
+
+endif # SUPPORT_PPRCORE
 
 source "share/sysbuild/Kconfig"
