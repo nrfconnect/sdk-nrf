@@ -117,6 +117,21 @@ config NRF_PROVISIONING_INITIAL_BACKOFF
 	  after each failed (busy or timeout) attempt to connect to the server.
 	  The maximum time is 86400 seconds (24 hours).
 
+choice NRF_PROVISIONING_HEAP
+	prompt "Memory allocator"
+	default NRF_PROVISIONING_HEAP_KERNEL
+	help
+	  Select the heap allocator used for dynamic allocations inside the
+	  nRF Provisioning library.
+
+config NRF_PROVISIONING_HEAP_KERNEL
+	bool "Zephyr kernel heap (k_malloc/k_free)"
+
+config NRF_PROVISIONING_HEAP_SYSTEM
+	bool "System heap (malloc/free)"
+
+endchoice
+
 rsource "Kconfig.nrf_provisioning_http"
 
 rsource "Kconfig.nrf_provisioning_coap"
