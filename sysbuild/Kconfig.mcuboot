@@ -128,6 +128,18 @@ config MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT
 	default y if NETCORE_APP_UPDATE && !MCUBOOT_MODE_SINGLE_APP && MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	default y if !NETCORE_NONE && (SOC_NRF54H20 && !MCUBOOT_SIGN_MERGED_BINARY)
 
+config MCUBOOT_NETWORK_CORE_IMAGE_NUMBER_ASSIGNED
+	bool
+	default y if MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT
+	default y if NETCORE_APP_UPDATE
+	help
+	  Sysbuild assigns :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` when
+	  this is enabled. This is separate from
+	  :kconfig:option:`SB_CONFIG_MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT`, which controls
+	  whether MCUboot is built with a dedicated network-core update slot (multi-image DFU).
+	  Serial recovery of the network core in single-application-slot mode requires the image
+	  number without enabling multi-image update.
+
 config MCUBOOT_MIN_UPDATEABLE_IMAGES
 	int
 	default 3 if MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT && QSPI_XIP_SPLIT_IMAGE
