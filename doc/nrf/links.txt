@@ -2140,6 +2140,7 @@
 .. _`Zephyr's sensor driver API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/sensor.h
 .. _`Zephyr's nRF clock control API extensions`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/drivers/clock_control/nrf_clock_control.h
 .. _`Zephyr's SPI driver twister test`: https://github.com/nrfconnect/sdk-zephyr/tree/main/tests/drivers/spi/spi_loopback
+.. _`Zephyr's SPI RTIO loopback sample`: https://github.com/nrfconnect/sdk-zephyr/tree/main/samples/drivers/spi/rtio_loopback
 .. _`Zephyr's pressure sensor sample`: https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/sensor/pressure_interrupt
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
 
