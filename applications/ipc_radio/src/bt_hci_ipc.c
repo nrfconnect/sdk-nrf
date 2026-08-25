@@ -32,6 +32,10 @@
 
 #include "ipc_bt.h"
 
+#if defined(CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK)
+#include "fatal_error_test_hook.h"
+#endif /* CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK */
+
 #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_ipc_openamp_static_vrings)
 #include <openamp/rpmsg_virtio.h>
 #define IPC_BUF_SIZE DT_PROP_OR(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_buffer_size, RPMSG_BUFFER_SIZE)
@@ -287,6 +291,17 @@ static void tx_thread(void)
 
 	while (1) {
 		buf = k_fifo_get(&tx_queue, K_FOREVER);
+
+#if defined(CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK)
+		/* The controller does not know the fault injection opcode, so the hook has to
+		 * take the buffer out of the stream before it is forwarded.
+		 */
+		if (fatal_error_test_hook_cmd(buf)) {
+			net_buf_unref(buf);
+			continue;
+		}
+#endif /* CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK */
+
 		err = bt_send(buf);
 		if (err) {
 			LOG_ERR("bt_send failed err: %d.", err);
@@ -321,7 +336,8 @@ __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 		struct net_buf *buf;
 
 		buf = hci_vs_err_assert(file, line);
-		if (!buf) {
+		if (buf) {
+			LOG_WRN("Send from bt ctlr assert handler over ipc.");
 			send(buf, HCI_FATAL_MSG);
 		} else {
 			LOG_ERR("Can't send Fatal Error HCI event.");
@@ -355,11 +371,13 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 
 	(void)irq_lock();
 
-	if ((!esf) && (ipc_ept_ready)) {
+	/* The report carries the stack frame, so there is nothing to send without one. */
+	if ((esf != NULL) && (ipc_ept_ready)) {
 		struct net_buf *buf;
 
 		buf = hci_vs_err_stack_frame(reason, esf);
-		if (!buf) {
+		if (buf) {
+			LOG_WRN("Send from fatal error handler over ipc.");
 			send(buf, HCI_FATAL_MSG);
 		} else {
 			LOG_ERR("Can't create Fatal Error HCI event.");
@@ -407,11 +425,39 @@ int ipc_bt_init(void)
 	return 0;
 }
 
+#if defined(CONFIG_BT_WAIT_NOP)
+/* Announce that the controller is ready to receive commands. The host has no other way of
+ * telling that the network core has booted, since the IPC endpoint binds before that.
+ */
+static void send_nop(void)
+{
+	struct bt_hci_evt_cmd_complete *cc;
+	struct bt_hci_evt_hdr *hdr;
+	struct net_buf *buf;
+
+	buf = bt_buf_get_rx(BT_BUF_EVT, K_FOREVER);
+
+	hdr = net_buf_add(buf, sizeof(*hdr));
+	hdr->evt = BT_HCI_EVT_CMD_COMPLETE;
+	hdr->len = sizeof(*cc);
+
+	cc = net_buf_add(buf, sizeof(*cc));
+	cc->ncmd = 1U;
+	cc->opcode = sys_cpu_to_le16(BT_OP_NOP);
+
+	send(buf, HCI_REGULAR_MSG);
+}
+#endif /* CONFIG_BT_WAIT_NOP */
+
 int ipc_bt_process(void)
 {
 	struct net_buf *buf;
 
 	k_sem_take(&ipc_bound_sem, K_FOREVER);
+
+#if defined(CONFIG_BT_WAIT_NOP)
+	send_nop();
+#endif /* CONFIG_BT_WAIT_NOP */
 
 	while (1) {
 		buf = k_fifo_get(&rx_queue, K_FOREVER);

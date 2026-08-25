@@ -205,6 +205,7 @@
   - "subsys/mpsl/**/*"
   - "subsys/nrf_security/**/*"
   - "drivers/mpsl/**/*"
+  - "tests/bluetooth/hci_vs_fatal_error/**/*"
 
 "CI-ble-samples-test":
   - "samples/bluetooth/central_hids/*"
