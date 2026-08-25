@@ -351,6 +351,10 @@ Bluetooth Mesh samples
   * :ref:`bluetooth_mesh_light_switch`
   * :ref:`bluetooth_mesh_sensor_server`
 
+* :ref:`bluetooth_mesh_light_switch` sample:
+
+  * Added support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target in the LPN configuration.
+
 Bluetooth Fast Pair samples
 ---------------------------
 
