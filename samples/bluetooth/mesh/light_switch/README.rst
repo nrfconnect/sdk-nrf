@@ -17,6 +17,9 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
+.. note::
+   Use the nRF54L15 Tag only in the Low Power Node (LPN) configuration.
+
 You need at least two development kits:
 
 * One development kit where you program this sample application (the client)
@@ -121,6 +124,12 @@ The mesh light switch sample can also be run as a Low Power node (LPN), giving t
       Instead, the user can manually enable the Node ID advertisement for a period of 30 seconds by pressing **Button 3** on the device.
       This will give the user a short period of time to connect directly to the LPN, and thus perform necessary configuration of the device.
 
+   .. group-tab:: nRF54 TAG
+
+      When you run the sample using the LPN configuration, Node ID advertisements are disabled.
+      You cannot manually enable the Node ID advertisements on the nRF54L15 Tag because it has only one button, which is used for the :ref:`bt_mesh_onoff_cli_readme`.
+      After friendship is established, all Bluetooth Mesh communication must go through the friendship.
+
 After the connection to the LPN is terminated, and the Node ID advertisement has stopped, the LPN will return to its previous state.
 
 Friendship establishment will happen automatically after provisioning the LPN light switch, given that a :ref:`bluetooth_mesh_light` sample is running and is provisioned into the same mesh network.
@@ -136,13 +145,14 @@ The following table shows a list of the supported boards for the LPN configurati
 .. table::
    :align: center
 
-   ===================  ========================  ====================
-   Board                Avg. consumption non-LPN  Avg. consumption LPN
-   ===================  ========================  ====================
-   nrf52dk/nrf52832     7.14 mA                    13.69 µA
-   nrf52840dk/nrf52840  6.71 mA                    14.63 µA
-   nrf52833dk/nrf52833  6.10 mA                    14.43 µA
-   ===================  ========================  ====================
+   ====================  ========================  ====================
+   Board                 Avg. consumption non-LPN  Avg. consumption LPN
+   ====================  ========================  ====================
+   nrf52dk/nrf52832      7.14 mA                   13.69 µA
+   nrf52840dk/nrf52840   6.71 mA                   14.63 µA
+   nrf52833dk/nrf52833   6.10 mA                   14.43 µA
+   nrf54l15tag/nrf54l15  -                         12.42 µA
+   ====================  ========================  ====================
 
 The following applies to the LPN measurements presented in this table:
 
