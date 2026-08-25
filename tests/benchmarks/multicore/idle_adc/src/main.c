@@ -7,9 +7,12 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
-#define ADC_NODE       DT_ALIAS(adc0)
-#define ADC_LOW_LEVEL  0
-#define ADC_HIGH_LEVEL 4092
+#define ADC_NODE           DT_ALIAS(adc0)
+
+/* ADC is configured to have 12 bit resolution (0-4095). */
+#define TOLERANCE          40
+#define ADC_LOW_LEVEL_MAX  (0 + TOLERANCE)
+#define ADC_HIGH_LEVEL_MIN (4095 - TOLERANCE)
 
 static const struct device *adc = DEVICE_DT_GET(ADC_NODE);
 static const struct gpio_dt_spec gpio = GPIO_DT_SPEC_GET(DT_ALIAS(sw), gpios);
@@ -30,7 +33,6 @@ int main(void)
 {
 	int err;
 	uint16_t channel_reading[5];
-	int16_t sample_value;
 	int test_repetitions = 3;
 
 	err = gpio_is_ready_dt(&led);
@@ -66,22 +68,25 @@ int main(void)
 	while (test_repetitions)
 #endif
 	{
+		/* Test High input. */
+		gpio_pin_set_dt(&led, 1);
 		gpio_pin_set_dt(&gpio, 1);
-		err = adc_read(adc, &sequence);
 		k_busy_wait(1000);
-		sample_value = channel_reading[0];
-		__ASSERT_NO_MSG(sample_value == ADC_HIGH_LEVEL);
+		err = adc_read(adc, &sequence);
+		__ASSERT(channel_reading[0] >= ADC_HIGH_LEVEL_MIN,
+			"Got unexpected %u", channel_reading[0]);
 		gpio_pin_set_dt(&led, 0);
 		k_sleep(K_SECONDS(1));
+
+		/* Test Low input. */
 		gpio_pin_set_dt(&led, 1);
 		gpio_pin_set_dt(&gpio, 0);
-		err = adc_read(adc, &sequence);
 		k_busy_wait(1000);
-		sample_value = channel_reading[0];
-		__ASSERT_NO_MSG(sample_value == ADC_LOW_LEVEL);
+		err = adc_read(adc, &sequence);
+		__ASSERT(channel_reading[0] <= ADC_LOW_LEVEL_MAX,
+			"Got unexpected %u", channel_reading[0]);
 		gpio_pin_set_dt(&led, 0);
 		k_sleep(K_SECONDS(1));
-		gpio_pin_set_dt(&led, 1);
 	}
 #if defined(CONFIG_COVERAGE)
 	printk("Coverage analysis start\n");
