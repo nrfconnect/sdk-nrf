@@ -19,7 +19,9 @@
 #include <bl_storage.h>
 #include <bl_boot.h>
 #include <bl_validation.h>
-#if defined(CONFIG_NRFX_NVMC)
+#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#include <zephyr/drivers/flash.h>
+#elif defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
@@ -67,6 +69,23 @@ static const uint32_t b0_size = PARTITION_SIZE(b0_partition);
  */
 static const uint32_t huk_flag_addr = PARTITION_ADDRESS(hw_unique_key_partition);
 
+#if defined(CONFIG_NRFX_RRAMC) && !defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+static bool rramc_configure(void)
+{
+	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(0);
+
+	config.preload_timeout_enable = false;
+	config.preload_timeout = 0;
+
+	int err = nrfx_rramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return false;
+	}
+
+	return true;
+}
+#endif
 
 int load_huk(void)
 {
@@ -75,10 +94,28 @@ int load_huk(void)
 		if (*(uint32_t *)huk_flag_addr == 0xFFFFFFFF) {
 			printk("First boot, expecting app to write HUK.\n");
 			/* Write done via NRFX API */
-#if defined(CONFIG_NRFX_NVMC)
+#if defined(CONFIG_SOC_FLASH_NRF_UICR) || defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+			const uint32_t data = 0;
+			const struct device *dev =
+				DEVICE_DT_GET(DT_CHOSEN(zephyr_flash_controller));
+
+			if (device_is_ready(dev)) {
+				flash_write(dev, huk_flag_addr, &data, 4);
+			} else {
+				printk("Error: Unable to set Hardware Unique Key.\n");
+				k_panic();
+				return -1;
+			}
+#elif defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
-			nrfx_rramc_word_write(huk_flag_addr, 0);
+			if (rramc_configure()) {
+				nrfx_rramc_word_write(huk_flag_addr, 0);
+			} else {
+				printk("Error: Unable to set Hardware Unique Key.\n");
+				k_panic();
+				return -1;
+			}
 #endif
 			return 0;
 		}
