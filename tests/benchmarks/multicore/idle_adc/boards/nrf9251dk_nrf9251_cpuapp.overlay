@@ -1,10 +1,11 @@
 /*
- * Copyright (c) 2025 Nordic Semiconductor ASA
+ * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* Required GPIO loopback: P1.02 - P1.03 */
+/* Required GPIO loopback: P1.00 - P1.01 */
+
 / {
 	aliases {
 		adc0 = &adc;
@@ -16,15 +17,7 @@
 		compatible = "gpio-keys";
 
 		loopback: loopback {
-			gpios = <&gpio1 3 GPIO_ACTIVE_HIGH>;
-		};
-	};
-
-	leds {
-		compatible = "gpio-leds";
-
-		led0: led_0 {
-			gpios = <&gpio9 0x0 0x0>;
+			gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;
 		};
 	};
 };
@@ -32,14 +25,13 @@
 &adc {
 	#address-cells = <1>;
 	#size-cells = <0>;
-	status = "okay";
 
 	channel@0 {
 		reg = <0>;
 		zephyr,gain = "ADC_GAIN_1";
 		zephyr,reference = "ADC_REF_INTERNAL";
 		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
-		zephyr,input-positive = <NRF_SAADC_AIN2>;
+		zephyr,input-positive = <NRF_SAADC_AIN0>;
 	};
 };
 
@@ -47,10 +39,11 @@
 	status = "okay";
 };
 
-&gpio9 {
+&cpuppr_vpr {
 	status = "okay";
 };
 
-&gpiote130 {
-	status = "okay";
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
 };
