@@ -598,6 +598,7 @@ Wi-Fi samples
   * Removed:
 
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
+    * Unused button functionality that only printed a log message.
 
 * Removed support from the following Zephyr samples:
 
