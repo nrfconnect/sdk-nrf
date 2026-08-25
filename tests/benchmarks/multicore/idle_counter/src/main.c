@@ -28,6 +28,9 @@ const struct device *const counter_dev = DEVICE_DT_GET(DT_ALIAS(counter));
 
 static K_SEM_DEFINE(my_sem, 0, 1);
 
+#define ALLOWED_SLEEP_MIN (CONFIG_TEST_SLEEP_DURATION_MS - CONFIG_TEST_SLEEP_ERROR_MS)
+#define ALLOWED_SLEEP_MAX (CONFIG_TEST_SLEEP_DURATION_MS + CONFIG_TEST_SLEEP_ERROR_MS)
+
 void counter_handler(const struct device *counter_dev, uint8_t chan_id, uint32_t ticks,
 		     void *user_data)
 {
@@ -67,8 +70,8 @@ void verify_timer(uint32_t start_time)
 	ret = gpio_pin_set_dt(&led, 1);
 	__ASSERT(ret == 0, "Unable to turn on LED");
 	LOG_INF("Elapsed %u cycles (%uus)", elapsed, k_cyc_to_us_ceil32(elapsed));
-	__ASSERT(elapsed > k_ms_to_cyc_ceil32(CONFIG_TEST_SLEEP_DURATION_MS - 10) &&
-			 elapsed < k_ms_to_cyc_ceil32(CONFIG_TEST_SLEEP_DURATION_MS + 10),
+	__ASSERT(elapsed > k_ms_to_cyc_ceil32(ALLOWED_SLEEP_MIN) &&
+		 elapsed < k_ms_to_cyc_ceil32(ALLOWED_SLEEP_MAX),
 		 "expected time to elapse is 1s");
 }
 
