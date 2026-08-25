@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_rram {
+	/* Redefine the "partitions" DTS node. */
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(384)>;
+		};
+
+		tfm_ps_partition: partition@60000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-ps";
+			reg = <0x60000 DT_SIZE_K(16)>;
+		};
+
+		tfm_its_partition: partition@64000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-its";
+			reg = <0x64000 DT_SIZE_K(16)>;
+		};
+
+		tfm_otp_partition: partition@68000 {
+			compatible = "zephyr,mapped-partition";
+			label = "tfm-otp";
+			reg = <0x68000 DT_SIZE_K(8)>;
+		};
+
+		slot0_ns_partition: partition@6a000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0-nonsecure";
+			reg = <0x6a000 DT_SIZE_K(556)>;
+		};
+
+		bt_fast_pair_partition: partition@f5000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0xf5000 DT_SIZE_K(4)>;
+		};
+
+		storage_partition: partition@f6000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xf6000 DT_SIZE_K(28)>;
+		};
+	};
+};
