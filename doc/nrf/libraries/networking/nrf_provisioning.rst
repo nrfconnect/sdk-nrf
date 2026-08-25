@@ -42,6 +42,9 @@ To enable the library, set the :kconfig:option:`CONFIG_NRF_CLOUD` and :kconfig:o
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_STACK_SIZE` - Stack size for the nRF Provisioning thread.
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_SHELL` - Enables shell module, which allows you to control the client over UART.
 * :kconfig:option:`CONFIG_NRF_PROVISIONING_SETTINGS_STORAGE_PATH` - Sets the path for provisioning settings storage.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` - Uses the Zephyr kernel heap (:c:func:`k_malloc` and :c:func:`k_free`) for the library's dynamic allocations.
+  This is the default allocator.
+* :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` - Uses the system heap (:c:func:`malloc` and :c:func:`free`) for the library's dynamic allocations.
 
 Configuration options for HTTP
 ==============================
