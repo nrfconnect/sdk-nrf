@@ -227,7 +227,7 @@ static void copy_integrity_gal(struct nrf_modem_gnss_agnss_data_integrity *dst,
 	__ASSERT_NO_MSG(src != NULL);
 
 	dst->signal[dst->signal_count].signal_id = NRF_MODEM_GNSS_SIGNAL_GAL_E1_OS;
-	dst->signal[dst->signal_count].integrity_mask = src->integrity->integrity_mask;
+	dst->signal[dst->signal_count].integrity_mask = src->gal_integrity->integrity_mask;
 	dst->signal_count++;
 }
 
