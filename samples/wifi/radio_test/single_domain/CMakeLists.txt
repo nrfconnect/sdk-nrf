@@ -20,9 +20,15 @@ target_sources(app PRIVATE
   ${PERIP_RT_DIR}/src/radio_test.c
   ${PERIP_RT_DIR}/src/radio_cmd.c
   ${MULTI_DOMAIN_RT_DIR}/src/nrf_wifi_radio_test_shell.c
-  ${MULTI_DOMAIN_RT_DIR}/src/nrf_wifi_radio_ficr_shell.c
-  ${MULTI_DOMAIN_RT_DIR}/src/ficr_prog.c
 )
-# NORDIC SDK APP END
 
-target_link_libraries(app PRIVATE nrf-wifi-osal)
+if(CONFIG_NRF71_RADIO_TEST)
+  target_link_libraries(app PRIVATE nrf71_wifi_radio_test_headers)
+else()
+  target_sources(app PRIVATE
+    ${MULTI_DOMAIN_RT_DIR}/src/nrf_wifi_radio_ficr_shell.c
+    ${MULTI_DOMAIN_RT_DIR}/src/ficr_prog.c
+  )
+  target_link_libraries(app PRIVATE nrf-wifi-osal)
+endif()
+# NORDIC SDK APP END
