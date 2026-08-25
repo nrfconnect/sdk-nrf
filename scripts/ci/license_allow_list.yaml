@@ -56,7 +56,9 @@ Apache-2.0: |
   ^nrf/tests/zephyr/subsys/settings/
   ^nrf/samples/zephyr/
 curl: "^nrf/ext/"
-MIT: "^nrf/ext/"
+MIT: |
+  "^nrf/ext/"
+  ^nrf/doc/_doxygen/doxygen-awesome.css
 BSD-3-CLAUSE: |
   ^nrf/ext/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
