@@ -18,7 +18,6 @@
 #include <modem/location.h>
 #include "location_tracking.h"
 #endif
-#include <dk_buttons_and_leds.h>
 #include "application.h"
 #include "temperature.h"
 #include "cloud_connection.h"
@@ -141,17 +140,6 @@ static void test_counter_send(void)
 	}
 }
 
-#if defined(CONFIG_DK_LIBRARY)
-static void button_handler(uint32_t button_state, uint32_t has_changed)
-{
-	if (has_changed & DK_BTN1_MSK) {
-		if ((button_state & DK_BTN1_MSK) == DK_BTN1_MSK) {
-			LOG_INF("Button pressed");
-		}
-	}
-}
-#endif
-
 static void print_reset_reason(void)
 {
 	uint32_t reset_reason;
@@ -164,10 +152,6 @@ static void print_reset_reason(void)
 void main_application_thread_fn(void)
 {
 	print_reset_reason();
-
-#if defined(CONFIG_DK_LIBRARY)
-	dk_buttons_init(button_handler);
-#endif
 
 	/* Wait for first connection before starting the application. */
 	(void)await_cloud_ready(K_FOREVER);
