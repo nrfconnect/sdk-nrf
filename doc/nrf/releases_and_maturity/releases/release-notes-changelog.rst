@@ -785,6 +785,10 @@ Libraries for networking
     This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
     The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
 
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
+
 Libraries for NFC
 -----------------
 
