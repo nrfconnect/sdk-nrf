@@ -45,7 +45,7 @@ This section describes the changes related to the build and configuration system
    .. _migration_3.5_hal_global_defines:
 
    * The HAL preprocessor symbols listed in :ref:`migration_3.4_hal_global_defines` are no longer defined globally.
-     In application code, replace references to the deprecated symbols with the corresponding Kconfig symbols or devicetree properties shown below.
+     In the application code, replace references to the deprecated symbols with the corresponding Kconfig symbols or devicetree properties shown in the table.
 
      .. list-table:: HAL preprocessor symbols replacements
         :widths: 35 45 20
@@ -191,7 +191,7 @@ This section describes the changes related to the build and configuration system
           - Kconfig
         * - ``NRF_SKIP_FICR_NS_COPY_TO_RAM``
           - :kconfig:option:`CONFIG_SOC_NRF5340_CPUAPP` or :kconfig:option:`CONFIG_SOC_SERIES_NRF91`
-          - Implicit for these targets; use Kconfig checks instead of the define
+          - Implicit for these targets, use Kconfig checks instead of the define
         * - ``NRF_SKIP_CLOCK_CONFIGURATION``
           - :kconfig:option:`CONFIG_NRF_SKIP_CLOCK_CONFIG`
           - Kconfig
@@ -206,7 +206,7 @@ This section describes the changes related to the build and configuration system
           - Kconfig
         * - ``NRF54L_CONFIGURATION_56_ENABLE``
           - :kconfig:option:`CONFIG_SOC_NRF54L_ANOMALY_56_WORKAROUND`
-          - Kconfig; enabled by default on nRF54L Series SoCs
+          - Kconfig, enabled by default on nRF54L Series SoCs
         * - ``NRF91_ERRATA_36_ENABLE_WORKAROUND``
           - ``CONFIG_NRF91_ANOMALY_36_WORKAROUND``
           - TF-M build configuration
@@ -222,6 +222,9 @@ This section describes the changes related to the build and configuration system
         * - ``NRF_CONFIG_CPU_FREQ_MHZ``
           - Devicetree ``clock-frequency`` on the ``hfpll`` or ``cpuapp`` node, or :kconfig:option:`CONFIG_TFM_CPU_FREQ_MHZ` in TF-M builds
           - Derived from devicetree or TF-M Kconfig
+
+     Alternatively, include :file:`mdk_config.h` in the source files that still need the HAL preprocessor symbols.
+     The header provides mapping between the Kconfig symbols or devicetree properties and corresponding HAL preprocessor symbols.
 
 Samples and applications
 ========================
