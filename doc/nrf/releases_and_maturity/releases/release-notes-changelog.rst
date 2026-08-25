@@ -376,7 +376,7 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_input_device` sample:
 
-  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` and ``nrf54lc10dk/nrf54lc10a/cpuapp/ns`` board targets.
 
 Cellular samples
 ----------------
