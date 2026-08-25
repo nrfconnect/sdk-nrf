@@ -4158,7 +4158,7 @@ Bluetooth libraries and services
 DRGN-29635: The :ref:`rrsp_readme` might deadlock when a link is lost while ranging data is in flight
   When the :kconfig:option:`CONFIG_BT_RAS_RRSP_AUTO_ALLOC_INSTANCE` Kconfig option is enabled, the Ranging Responder might deadlock if the link is lost abruptly while ranging data is in flight.
 
-  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``59b903f2a4bcedcd4dbf57f6b923a334b7df915b``).
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``8e05c69dcd75d36ddff6e854dfd6201ad947c22c``).
 
 .. _ncsdk_30288:
 
