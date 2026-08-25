@@ -59,6 +59,32 @@ void tfm_core_panic(void);
 #endif
 
 #if defined(CONFIG_NRFX_RRAMC)
+#if CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE > 0
+#define WRITE_BUFFER_SIZE CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE
+#else
+#define WRITE_BUFFER_SIZE 0
+
+static bool rramc_configure(void)
+{
+	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(WRITE_BUFFER_SIZE);
+
+#if defined(CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE) && CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE > 0
+	config.preload_timeout_enable = true;
+	config.preload_timeout = CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE;
+#else
+	config.preload_timeout_enable = false;
+	config.preload_timeout = 0;
+#endif
+
+	int err = nrfx_rramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return false;
+	}
+
+	return true;
+}
+
 static uint32_t index_from_address(uint32_t address)
 {
 	return ((address - (uint32_t)BL_STORAGE)/sizeof(uint32_t));
@@ -79,7 +105,9 @@ static void bl_storage_counter_set(uint32_t address, counter_t value)
 #if defined(CONFIG_NRFX_NVMC)
 	nrfx_nvmc_halfword_write((uint32_t)address, ~value);
 #elif defined(CONFIG_NRFX_RRAMC)
-	nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
+	if (rramc_configure()) {
+		nrfx_rramc_otp_word_write(index_from_address((uint32_t)address), ~value);
+	}
 #endif
 }
 
@@ -98,7 +126,9 @@ static uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
 	nrfx_nvmc_word_write(address, value);
 	return 0;
 #elif defined(CONFIG_NRFX_RRAMC)
-	nrfx_rramc_word_write(address, value);
+	if (rramc_configure()) {
+		nrfx_rramc_word_write(address, value);
+	}
 	return 0;
 #endif
 }

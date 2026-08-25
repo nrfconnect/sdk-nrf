@@ -63,6 +63,14 @@
 #endif
 #endif
 
+#ifdef CONFIG_NRFX_RRAMC
+#if CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE > 0
+#define WRITE_BUFFER_SIZE CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE
+#else
+#define WRITE_BUFFER_SIZE 0
+#endif
+#endif
+
 #if defined(CONFIG_FPROTECT)
 /* Invoked from B0, FPROTECT will only protect B0 partition */
 #if USE_PARTITION_MANAGER
@@ -89,6 +97,28 @@ static const uint32_t huk_flag_addr = PM_HW_UNIQUE_KEY_PARTITION_ADDRESS + HUK_F
 static const uint32_t huk_flag_addr = PARTITION_ADDRESS(hw_unique_key_partition);
 #endif
 
+#if defined(CONFIG_NRFX_RRAMC)
+static bool rramc_configure(void)
+{
+	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(WRITE_BUFFER_SIZE);
+
+#if defined(CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE) && CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE > 0
+	config.preload_timeout_enable = true;
+	config.preload_timeout = CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE;
+#else
+	config.preload_timeout_enable = false;
+	config.preload_timeout = 0;
+#endif
+
+	int err = nrfx_rramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return false;
+	}
+
+	return true;
+}
+#endif
 
 int load_huk(void)
 {
@@ -100,7 +130,13 @@ int load_huk(void)
 #if defined(CONFIG_NRFX_NVMC)
 			nrfx_nvmc_word_write(huk_flag_addr, 0);
 #elif defined(CONFIG_NRFX_RRAMC)
-			nrfx_rramc_word_write(huk_flag_addr, 0);
+			if (rramc_configure()) {
+				nrfx_rramc_word_write(huk_flag_addr, 0);
+			} else {
+				printk("Error: Unable to set Hardware Unique Key.\n");
+				k_panic();
+				return -1;
+			}
 #endif
 			return 0;
 		}
