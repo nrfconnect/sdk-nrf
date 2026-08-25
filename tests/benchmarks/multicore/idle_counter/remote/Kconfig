@@ -9,8 +9,15 @@ config TEST_SLEEP_DURATION_MS
 	default 1000
 	help
 	  Set sleep duration to TEST_SLEEP_DURATION_MS miliseconds.
-	  Based on the value of 'min-residency-us' specified for each power state defined in the DTS,
-	  core enters the lowest possible power state.
+	  Based on the value of 'min-residency-us' specified for each power state
+	  defined in the DTS, core enters the lowest possible power state.
+
+config TEST_SLEEP_ERROR_MS
+	int "Allowed error (miliseconds)"
+	default 10
+	help
+	  Test will pass if actual Alarm arrives within
+	  TEST_SLEEP_DURATION_MS +/- TEST_SLEEP_ERROR_MS.
 
 config TEST_ROLE_REMOTE
 	bool "Execute test variant for Remote core"
