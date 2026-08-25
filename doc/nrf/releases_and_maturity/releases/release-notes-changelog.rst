@@ -597,6 +597,10 @@ Wi-Fi samples
     * By re-enabling the :kconfig:option:`CONFIG_NET_IPV6` Kconfig option in the :file:`coap.conf` file.
       The option was previously disabled as a workaround for the slow IPv6-to-IPv4 fallback issue that has been fixed in :ref:`lib_nrf_cloud`.
 
+  * Fixed:
+
+    * An issue where the sample entered a reboot loop after Wi-Fi credentials were installed, caused by a workqueue stack that was too small for the Wi-Fi connect call.
+
   * Removed:
 
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
