@@ -46,7 +46,6 @@ static psa_status_t get_key_buffer(mbedtls_svc_key_id_t key_id,
 	psa_core_lite_key_slot_t *temp_slot;
 
 	if (psa_core_lite_key_id_is_volatile(key_id)) {
-		/* The key is an RSA key imported and stored in volatile key store */
 		status = psa_core_lite_get_key_slot(&key_id, &temp_slot);
 		if (status != PSA_SUCCESS) {
 			return status;
@@ -380,6 +379,47 @@ psa_status_t psa_cipher_finish(
 	return status;
 }
 
+psa_status_t psa_cipher_decrypt(mbedtls_svc_key_id_t key,
+				psa_algorithm_t alg,
+				const uint8_t *input,
+				size_t input_length,
+				uint8_t *output,
+				size_t output_size,
+				size_t *output_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	psa_core_lite_key_slot_t *key_slot;
+	psa_key_type_t key_type;
+	size_t iv_length;
+
+	if (input == NULL || output == NULL || output_length == NULL) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = get_enc_key(key, alg, &key_slot);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	key_type = psa_get_key_type(&key_slot->key_attributes);
+	iv_length = PSA_CIPHER_IV_LENGTH(key_type, alg);
+	if (input_length < iv_length) {
+		clear_all_volatile_keys();
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_driver_wrapper_cipher_decrypt(&key_slot->key_attributes,
+						   key_slot->key, key_slot->key_size,
+						   alg, input, input_length,
+						   output, output_size, output_length);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+	}
+
+	return status;
+}
+
 psa_status_t psa_cipher_abort(psa_cipher_operation_t *operation)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
@@ -505,7 +545,25 @@ void psa_reset_key_attributes(psa_key_attributes_t *attributes)
 	safe_memzero(attributes, sizeof(psa_key_attributes_t));
 }
 
-#if CONFIG_PSA_CORE_LITE_HAS_RSA
+#if CONFIG_PSA_CORE_LITE_HAS_RSA || CONFIG_PSA_CORE_LITE_HAS_ECDSA
+
+static void psa_core_lite_infer_key_bits(psa_key_attributes_t *attributes,
+					  const uint8_t *data, size_t data_length)
+{
+	psa_key_type_t type;
+
+	if (psa_get_key_bits(attributes) != 0 || data == NULL) {
+		return;
+	}
+
+	type = psa_get_key_type(attributes);
+
+	if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(type) && data_length >= 3 && data[0] == 0x04) {
+		psa_set_key_bits(attributes, PSA_BYTES_TO_BITS((data_length - 1) / 2));
+	} else if (PSA_KEY_TYPE_IS_ECC_KEY_PAIR(type)) {
+		psa_set_key_bits(attributes, PSA_BYTES_TO_BITS(data_length));
+	}
+}
 
 psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 				const uint8_t *data, size_t data_length,
@@ -516,11 +574,13 @@ psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 	psa_algorithm_t alg = psa_get_key_algorithm(attributes);
 	*key = MBEDTLS_SVC_KEY_ID_INIT;
 
-	/* Key import is limited to RSA keys which can't be stored in KMU */
 	if (!UTIL_CONCAT_OR(VERIFY_ALG_RSA_PSS(alg),
 			    VERIFY_ALG_RSA_PKCS1V15(alg),
 			    VERIFY_ALG_RSA_OAEP(alg),
-			    VERIFY_ALG_CTR(alg))) {
+			    VERIFY_ALG_ECDSA_VERIFY(alg),
+			    VERIFY_ALG_CTR(alg),
+			    VERIFY_ALG_ECDH(alg),
+			    VERIFY_ALG_HMAC(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -530,14 +590,21 @@ psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
 		return status;
 	}
 
+	if (data_length > sizeof(key_slot->key)) {
+		clear_all_volatile_keys();
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	memcpy(&key_slot->key_attributes, attributes, sizeof(psa_key_attributes_t));
+	psa_core_lite_infer_key_bits(&key_slot->key_attributes, data, data_length);
 	memcpy(&key_slot->key, data, data_length);
 	key_slot->key_size = data_length;
+	psa_set_key_id(&key_slot->key_attributes, *key);
 
 	return PSA_SUCCESS;
 }
 
-#endif /* CONFIG_PSA_CORE_LITE_HAS_RSA */
+#endif /* CONFIG_PSA_CORE_LITE_HAS_RSA || CONFIG_PSA_CORE_LITE_HAS_ECDSA */
 
 psa_status_t psa_destroy_key(mbedtls_svc_key_id_t key_id)
 {
@@ -893,6 +960,39 @@ psa_status_t psa_key_derivation_output_key(const psa_key_attributes_t *attribute
 	return status;
 error:
 	clear_all_volatile_keys();
+	return status;
+}
+
+psa_status_t psa_key_derivation_output_bytes(psa_key_derivation_operation_t *operation,
+					     uint8_t *output,
+					     size_t output_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+
+	if (operation == NULL || output == NULL || output_length == 0) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = psa_key_derivation_check_state(operation, PSA_CORE_LITE_KEY_DERIVATION_OUTPUT);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	if (output_length > operation->MBEDTLS_PRIVATE(capacity)) {
+		clear_all_volatile_keys();
+		return PSA_ERROR_INSUFFICIENT_DATA;
+	}
+
+	status = psa_driver_wrapper_key_derivation_output_bytes(operation, output,
+								output_length);
+	if (status != PSA_SUCCESS) {
+		clear_all_volatile_keys();
+		return status;
+	}
+
+	operation->MBEDTLS_PRIVATE(capacity) -= output_length;
+
 	return status;
 }
 

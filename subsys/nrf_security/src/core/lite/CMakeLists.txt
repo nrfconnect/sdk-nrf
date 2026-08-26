@@ -31,6 +31,14 @@ if(CONFIG_PSA_CRYPTO_DRIVER_OBERON)
   )
 endif()
 
+if(CONFIG_MBEDTLS_MEMORY_BUFFER_ALLOC_C)
+  target_sources(psa_core
+    PRIVATE
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/platform.c
+      ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/platform/platform_util.c
+  )
+endif()
+
 target_link_libraries(psa_core
   PRIVATE
     psa_crypto_library_config
