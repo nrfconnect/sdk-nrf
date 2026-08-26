@@ -61,10 +61,16 @@ int sx_mac_feed(struct sxmac *mac_ctx, const uint8_t *datain, size_t sz)
 
 static int sx_mac_run(struct sxmac *mac_ctx)
 {
+	int status;
+
 	if ((mac_ctx->feedsz == 0) && (mac_ctx->dma.dmamem.cfg & mac_ctx->cfg->loadstate)) {
 		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
-	sx_cmdma_start(&mac_ctx->dma, sizeof(mac_ctx->descs), mac_ctx->descs);
+
+	status = sx_cmdma_start(&mac_ctx->dma, sizeof(mac_ctx->descs), mac_ctx->descs);
+	if (status != SX_OK) {
+		return sx_handle_nested_error(sx_mac_free(mac_ctx), status);
+	}
 
 	return SX_OK;
 }

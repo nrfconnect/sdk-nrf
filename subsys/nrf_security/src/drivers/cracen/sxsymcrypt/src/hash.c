@@ -189,10 +189,8 @@ int sx_hash_feed(struct sxhash *hash_ctx, const uint8_t *msg, size_t sz)
 
 static int start_hash_hw(struct sxhash *hash_ctx)
 {
-	sx_cmdma_start(&hash_ctx->dma, sizeof(hash_ctx->descs) + sizeof(hash_ctx->extramem),
-		       hash_ctx->descs);
-
-	return 0;
+	return sx_cmdma_start(&hash_ctx->dma, sizeof(hash_ctx->descs) + sizeof(hash_ctx->extramem),
+			      hash_ctx->descs);
 }
 
 int sx_hash_save_state(struct sxhash *hash_ctx)
