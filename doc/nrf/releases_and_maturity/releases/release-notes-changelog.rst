@@ -475,6 +475,9 @@ Matter samples
 Networking samples
 ------------------
 
+* Updated the TF-M configuration in nRF7002 DK networking samples by removing :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` (as it is not supported by the |NCS|).
+  Instead, use the configurable profile (:kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET`), select the SFN backend (:kconfig:option:`CONFIG_TFM_SFN`) to save RAM and select memory-mapped iovecs (:kconfig:option:`CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC`) to reduce copying of client vectors during TLS handshakes.
+
 * Removed support for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target from the following samples:
 
   * :ref:`mqtt_sample`
