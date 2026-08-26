@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* TIMER120, 320MHz */
+/* TIMER120, 256MHz */
 
 / {
 	aliases {

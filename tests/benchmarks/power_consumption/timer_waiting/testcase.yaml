@@ -61,12 +61,20 @@ tests:
     extra_args:
       - EXTRA_DTC_OVERLAY_FILE="boards/nrf54l_128M.overlay"
 
+  benchmarks.power_consumption.timer_waiting_256M_nrf92:
+    sysbuild: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=256M
+
   benchmarks.power_consumption.timer_waiting_320M_nrf54h:
     sysbuild: true
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - FILE_SUFFIX=320M
