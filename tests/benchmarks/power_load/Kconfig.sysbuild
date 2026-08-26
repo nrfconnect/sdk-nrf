@@ -17,7 +17,7 @@ config FLPRCORE_IMAGE_NAME
 	default "flpr_vpr_test_app" if FLPR_VPR_TEST_APP
 
 config FLPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_load/vpr_test_app" if FLPR_VPR_TEST_APP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/power_load/vpr_test_app" if FLPR_VPR_TEST_APP
 
 endif # !FLPRCORE_NONE
 
@@ -34,7 +34,7 @@ config PPRCORE_IMAGE_NAME
 	default "ppr_vpr_test_app" if PPR_VPR_TEST_APP
 
 config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_load/vpr_test_app" if PPR_VPR_TEST_APP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/power_load/vpr_test_app" if PPR_VPR_TEST_APP
 
 endif # !PPRCORE_NONE
 

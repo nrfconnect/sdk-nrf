@@ -13,6 +13,6 @@ config FLPRCORE_IMAGE_NAME
 	default "hello_world_cpuflpr" if FLPRCORE_HELLO_WORLD_CPUFLPR
 
 config FLPRCORE_IMAGE_PATH
-	default "${ZEPHYR_BASE}/samples/sysbuild/hello_world" if FLPRCORE_HELLO_WORLD_CPUFLPR
+	default "$(ZEPHYR_BASE)/samples/sysbuild/hello_world" if FLPRCORE_HELLO_WORLD_CPUFLPR
 
 source "share/sysbuild/Kconfig"

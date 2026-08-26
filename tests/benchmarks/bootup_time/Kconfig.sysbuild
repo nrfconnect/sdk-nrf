@@ -21,7 +21,7 @@ config NETCORE_IMAGE_NAME
 	default "testapp_cpunet" if NETCORE_TESTAPP
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if NETCORE_TESTAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/bootup_time/testapp" if NETCORE_TESTAPP
 
 endif # !NETCORE_NONE
 
@@ -42,7 +42,7 @@ config PPRCORE_IMAGE_NAME
 	default "testapp_cpuppr" if PPRCORE_TESTAPP
 
 config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if PPRCORE_TESTAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/bootup_time/testapp" if PPRCORE_TESTAPP
 
 endif # !PPRCORE_NONE
 
@@ -63,7 +63,7 @@ config FLPRCORE_IMAGE_NAME
 	default "testapp_cpuflpr" if FLPRCORE_TESTAPP
 
 config FLPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/bootup_time/testapp" if FLPRCORE_TESTAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/bootup_time/testapp" if FLPRCORE_TESTAPP
 
 endif # !FLPRCORE_NONE
 

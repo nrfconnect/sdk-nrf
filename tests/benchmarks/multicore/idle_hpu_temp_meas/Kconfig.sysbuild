@@ -37,7 +37,7 @@ config PPRCORE_IMAGE_NAME
 	default "remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
 
 config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
 
 endif # SUPPORT_PPRCORE
 
