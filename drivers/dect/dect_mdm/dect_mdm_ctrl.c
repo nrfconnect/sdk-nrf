@@ -389,6 +389,29 @@ int dect_mdm_ctrl_internal_msgq_data_op_add(enum dect_mdm_ctrl_op event_id, void
 	}
 	return 0;
 }
+
+int dect_mdm_ctrl_queue_net_l2_settings_changed(struct net_if *iface)
+{
+	int ret;
+	struct dect_mdm_settings *current_settings;
+
+	if (iface == NULL) {
+		return -EINVAL;
+	}
+
+	ret = dect_mdm_ctrl_internal_msgq_data_op_add(DECT_MDM_CTRL_OP_NET_L2_SETTINGS_CHANGED,
+						      &iface, sizeof(struct net_if *));
+	if (ret != 0) {
+		/* Fallback on caller's stack. */
+		LOG_WRN("DECT NRF91 CTRL: msgq full or OOM (%d), "
+			"applying L2 settings synchronously", ret);
+		current_settings = dect_mdm_settings_ref_get();
+		dect_net_l2_settings_changed(iface, &current_settings->net_mgmt_common);
+	}
+
+	return 0;
+}
+
 struct dect_mdm_ctrl_data *dect_mdm_ctrl_internal_data_get(void)
 {
 	return &ctrl_data;
@@ -925,6 +948,19 @@ static void handle_mdm_ipv6_config_changed(struct dect_mdm_common_op_event_msgq_
 	} else {
 		LOG_WRN("IPv6 config changed. Not associated - ignored ");
 	}
+}
+
+static void handle_net_l2_settings_changed(struct dect_mdm_common_op_event_msgq_item *event)
+{
+	struct net_if *iface;
+
+	if (event->data == NULL) {
+		return;
+	}
+
+	iface = *(struct net_if **)event->data;
+	/* Read latest settings at dispatch time (coalesces repeated writes). */
+	dect_net_l2_settings_changed(iface, &dect_mdm_settings_ref_get()->net_mgmt_common);
 }
 
 static void handle_cluster_ch_load_changed(struct dect_mdm_common_op_event_msgq_item *event)
@@ -2924,6 +2960,9 @@ static void dect_mdm_ctrl_msgq_thread_handler(void)
 			break;
 		case DECT_MDM_CTRL_OP_MDM_IPV6_CONFIG_CHANGED:
 			handle_mdm_ipv6_config_changed(&event);
+			break;
+		case DECT_MDM_CTRL_OP_NET_L2_SETTINGS_CHANGED:
+			handle_net_l2_settings_changed(&event);
 			break;
 
 		default:
