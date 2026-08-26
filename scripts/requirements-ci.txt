@@ -2,7 +2,7 @@ aenum
 bitarray
 chardet
 gitlint-core==0.19.1
-GitPython>=3.1.59
+GitPython>=3.1.61
 jsonschema
 milksnake
 py
