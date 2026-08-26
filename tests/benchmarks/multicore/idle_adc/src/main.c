@@ -8,6 +8,7 @@
 #include <zephyr/drivers/adc.h>
 #include <zephyr/drivers/gpio.h>
 #define ADC_NODE           DT_ALIAS(adc0)
+#define SAMPLES_COUNT      5
 
 /* ADC is configured to have 12 bit resolution (0-4095). */
 #define TOLERANCE          40
@@ -32,7 +33,7 @@ int adc_setup(void)
 int main(void)
 {
 	int err;
-	uint16_t channel_reading[5];
+	uint16_t channel_reading[SAMPLES_COUNT];
 	int test_repetitions = 3;
 
 	err = gpio_is_ready_dt(&led);
@@ -43,7 +44,7 @@ int main(void)
 
 	/* Options for the sequence sampling. */
 	const struct adc_sequence_options options = {
-		.extra_samplings = 1,
+		.extra_samplings = SAMPLES_COUNT - 1,
 		.interval_us = 0,
 	};
 
@@ -73,8 +74,10 @@ int main(void)
 		gpio_pin_set_dt(&gpio, 1);
 		k_busy_wait(1000);
 		err = adc_read(adc, &sequence);
-		__ASSERT(channel_reading[0] >= ADC_HIGH_LEVEL_MIN,
-			"Got unexpected %u", channel_reading[0]);
+		for (int i = 0; i < SAMPLES_COUNT; i++)	{
+			__ASSERT(channel_reading[i] >= ADC_HIGH_LEVEL_MIN,
+				"%u: Got unexpected %u", i, channel_reading[i]);
+		}
 		gpio_pin_set_dt(&led, 0);
 		k_sleep(K_SECONDS(1));
 
@@ -83,8 +86,10 @@ int main(void)
 		gpio_pin_set_dt(&gpio, 0);
 		k_busy_wait(1000);
 		err = adc_read(adc, &sequence);
-		__ASSERT(channel_reading[0] <= ADC_LOW_LEVEL_MAX,
-			"Got unexpected %u", channel_reading[0]);
+		for (int i = 0; i < SAMPLES_COUNT; i++)	{
+			__ASSERT(channel_reading[i] <= ADC_LOW_LEVEL_MAX,
+				"%u: Got unexpected %u", i, channel_reading[i]);
+		}
 		gpio_pin_set_dt(&led, 0);
 		k_sleep(K_SECONDS(1));
 	}
