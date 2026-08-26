@@ -16,7 +16,7 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${APP_DIR}/remote" if NETCORE_REMOTE
+	default "$(APP_DIR)/remote" if NETCORE_REMOTE
 
 endif # SUPPORT_NETCORE
 
@@ -34,7 +34,7 @@ config FLPRCORE_IMAGE_NAME
 	default "remote" if FLPRCORE_REMOTE
 
 config FLPRCORE_IMAGE_PATH
-	default "${APP_DIR}/remote" if FLPRCORE_REMOTE
+	default "$(APP_DIR)/remote" if FLPRCORE_REMOTE
 
 endif # SUPPORT_FLPRCORE && !SUPPORT_NETCORE
 
