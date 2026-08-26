@@ -16,7 +16,7 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_pwm_loopback/remote" if NETCORE_REMOTE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_pwm_loopback/remote" if NETCORE_REMOTE
 
 choice PPRCORE
 	default PPRCORE_REMOTE_SLEEP_FOREVER if SOC_NRF9251_CPUAPP
@@ -31,6 +31,6 @@ config PPRCORE_IMAGE_NAME
 	default "remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
 
 config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/power_consumption/common/remote_sleep_forever" if PPRCORE_REMOTE_SLEEP_FOREVER
 
 source "share/sysbuild/Kconfig"

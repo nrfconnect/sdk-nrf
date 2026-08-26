@@ -21,7 +21,7 @@ config FLPRCORE_IMAGE_NAME
 	default "flpr_test_app" if FLPRCORE_TESTAPP
 
 config FLPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_flpr/flpr_test_app" if FLPRCORE_TESTAPP
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_flpr/flpr_test_app" if FLPRCORE_TESTAPP
 
 endif # !FLPRCORE_NONE
 

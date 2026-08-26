@@ -16,7 +16,7 @@ config NETCORE_IMAGE_NAME
 	default "remote" if NETCORE_REMOTE
 
 config NETCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_outside_of_main/remote" if NETCORE_REMOTE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_outside_of_main/remote" if NETCORE_REMOTE
 
 choice PPRCORE
 	default PPRCORE_REMOTE
@@ -30,6 +30,6 @@ config PPRCORE_IMAGE_NAME
 	default "remote_ppr" if PPRCORE_REMOTE
 
 config PPRCORE_IMAGE_PATH
-	default "${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_outside_of_main/remote" if PPRCORE_REMOTE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_outside_of_main/remote" if PPRCORE_REMOTE
 
 source "share/sysbuild/Kconfig"
