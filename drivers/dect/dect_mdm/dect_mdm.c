@@ -615,12 +615,9 @@ static int dect_mdm_hal_settings_write(const struct device *dev, struct dect_set
 		ret_status = dect_mdm_settings_write(&settings);
 	}
 	if (ret_status.status == 0) {
-		struct dect_mdm_settings *current_settings = dect_mdm_settings_ref_get();
-
-		/* Inform L2 about new settings */
-		dect_net_l2_settings_changed(
-			dect_mdm_mac_dev_context_data.iface,
-			&current_settings->net_mgmt_common);
+		/* Deferred to ctrl thread; reactivate below may run before L2 sees it. */
+		(void)dect_mdm_ctrl_queue_net_l2_settings_changed(
+			dect_mdm_mac_dev_context_data.iface);
 		if (ret_status.reactivate && dect_mdm_ctrl_api_mdm_reactivate()) {
 			LOG_DBG("Couldn't reconfigure/activate modem to apply new settings - "
 				"reactivate is needed");
