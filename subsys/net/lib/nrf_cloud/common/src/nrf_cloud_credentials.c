@@ -79,7 +79,8 @@ int nrf_cloud_credentials_provision(void)
 	LOG_WRN("CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES is not secure and should be used only for "
 		"testing purposes");
 
-	LOG_DBG("Updating credentials in sec tag %u", sec_tag);
+	LOG_DBG("Updating credentials in sec tag %u; "
+		"this may block for several seconds", sec_tag);
 
 #if defined(CONFIG_NRF_CLOUD_PROVISION_CA_CERT)
 	(void)delete_cred(sec_tag, CA_CERT);

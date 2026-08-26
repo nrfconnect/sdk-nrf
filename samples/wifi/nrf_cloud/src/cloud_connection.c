@@ -595,12 +595,11 @@ void cloud_connection_thread_fn(void)
 	net_mgmt_init_event_callback(&l4_callback, l4_event_handler, L4_EVENT_MASK);
 	net_mgmt_add_event_callback(&l4_callback);
 
-	/* Enable the connection manager for all interfaces and allow them to connect. */
-	conn_mgr_all_if_up(true);
-
-	LOG_INF("Enabling connectivity...");
-	conn_mgr_all_if_connect(true);
-
+	/*
+	 * Set up the nRF Cloud library before bringing up Wi-Fi connectivity. Provisioning
+	 * (CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES) can block for a long time and will
+	 * starve the Wi-Fi driver if it has started connecting already.
+	 */
 	LOG_INF("Setting up nRF Cloud library...");
 	if (setup_cloud()) {
 		LOG_ERR("Fatal: nRF Cloud library setup failed");
@@ -612,6 +611,12 @@ void cloud_connection_thread_fn(void)
 	if (IS_ENABLED(CONFIG_NRF_CLOUD_CHECK_CREDENTIALS)) {
 		check_credentials();
 	}
+
+	/* Enable the connection manager for all interfaces and allow them to connect. */
+	conn_mgr_all_if_up(true);
+
+	LOG_INF("Enabling connectivity...");
+	conn_mgr_all_if_connect(true);
 
 	/* Indefinitely maintain a connection to nRF Cloud whenever the network is reachable. */
 	while (true) {

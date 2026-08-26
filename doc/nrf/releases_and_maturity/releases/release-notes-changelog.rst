@@ -600,6 +600,7 @@ Wi-Fi samples
   * Fixed:
 
     * An issue where the sample entered a reboot loop after Wi-Fi credentials were installed, caused by a workqueue stack that was too small for the Wi-Fi connect call.
+    * An issue where enabling :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` could permanently wedge the Wi-Fi connection when the device boots with stored Wi-Fi credentials.
 
   * Removed:
 
