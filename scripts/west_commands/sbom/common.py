@@ -24,7 +24,7 @@ from sbom_exceptions import SbomException
 def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
                     return_path: bool = False, allow_stderr: bool = False,
                     return_error_code: bool = False, shell: bool = False,
-                    log_stderr: bool = True) -> 'Path|str':
+                    log_stderr: bool = True, env: 'dict|None' = None) -> 'Path|str':
     '''Execute subprocess wrapper that handles errors and output redirections.'''
     cmd_args = tuple(str(x) for x in cmd_args)
     if cwd is not None:
@@ -34,7 +34,8 @@ def command_execute(*cmd_args: 'tuple[str|Path]', cwd: 'str|Path|None' = None,
         try:
             t = dbg_time(f'Starting {cmd_args} in {cwd or "current directory"}',
                          level=log.VERBOSE_VERY)
-            cp = subprocess.run(cmd_args, stdout=out_file, stderr=err_file, cwd=cwd, shell=shell)
+            cp = subprocess.run(cmd_args, stdout=out_file, stderr=err_file, cwd=cwd, shell=shell,
+                                env=env)
             log.dbg(f'Subprocess done in {t}s', level=log.VERBOSE_VERY)
         except Exception as e:
             log.err(f'Running command "{cmd_args[0]}" failed!')

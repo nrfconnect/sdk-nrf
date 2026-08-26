@@ -9,11 +9,13 @@ For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 '''
 
 import concurrent.futures
+import importlib.util
 import json
 import os
 import re
 import shutil
 from contextlib import suppress
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from time import sleep
 
@@ -27,6 +29,37 @@ SCANCODE_DEFAULT_PARALLEL_WORKERS = 4
 SCANCODE_RUN_RETRIES = 2
 
 
+def _scancode_env() -> dict:
+    '''Environment for the scancode subprocesses.'''
+    env = dict(os.environ)
+    # Scancode typecode dependency needs libmagic. On architectures where the
+    # typecode-libmagic is not available the requirements file installs
+    # pylibmagic instead which typecode cannot discover on its own.
+    # The library and its compiled magic database only work as a matching pair, so inject
+    # both or neither.
+    if 'TYPECODE_LIBMAGIC_PATH' not in env and 'TYPECODE_LIBMAGIC_DB_PATH' not in env:
+        spec = importlib.util.find_spec('pylibmagic')
+        if spec is not None and spec.origin is not None:
+            pylibmagic_dir = Path(spec.origin).parent
+            db = pylibmagic_dir / 'magic.mgc'
+            for lib_name in ('libmagic.dylib', 'libmagic.so'):
+                lib = pylibmagic_dir / lib_name
+                if lib.is_file() and db.is_file():
+                    env['TYPECODE_LIBMAGIC_PATH'] = str(lib)
+                    env['TYPECODE_LIBMAGIC_DB_PATH'] = str(db)
+                    break
+    # When libmagic comes from a fallback location (like Homebrew) typecode warns about it
+    # on stderr for every scancode invocation. The warning is harmless for license detection
+    # so silence that one.
+    ignore = 'ignore:System libmagic found:UserWarning:typecode.magic2'
+    existing = env.get('PYTHONWARNINGS')
+    env['PYTHONWARNINGS'] = f'{existing},{ignore}' if existing else ignore
+    return env
+
+
+SCANCODE_ENV = _scancode_env()
+
+
 def check_scancode():
     '''Checks if "scancode --version" works correctly. If not, raises exception with information
     for user.'''
@@ -35,10 +68,10 @@ def check_scancode():
             'Install the SBOM requirements with:\n'
             '  pip3 install -r scripts/requirements-west-ncs-sbom.txt\n'
             'Use --force-reinstall --no-cache-dir options if it still fails\n'
-            'Pass "--scancode=/path/to/scancode" if the scancode executable is'
+            'Pass "--scancode=/path/to/scancode" if the scancode executable is '
             'not available on PATH.')
     try:
-        command_execute(args.scancode, '--version', allow_stderr=True)
+        command_execute(args.scancode, '--version', allow_stderr=True, env=SCANCODE_ENV)
     except Exception as ex:
         raise SbomException(f'Cannot execute scancode command "{args.scancode}".\n'
             f'Make sure that you have scancode-toolkit installed.\n'
@@ -73,7 +106,8 @@ def run_scancode(file: FileInfo) -> 'dict|None':
                                              '--processes', '1',
                                              file.file_path,
                                              allow_stderr=True,
-                                             return_error_code=True)
+                                             return_error_code=True,
+                                             env=SCANCODE_ENV)
             if return_code == 0:
                 try:
                     with open(output_path, encoding='utf-8') as fd:
