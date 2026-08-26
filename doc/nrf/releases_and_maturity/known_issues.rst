@@ -7034,7 +7034,7 @@ KRKNWK-31038: Instruction trace reliability issues during ETM debugging on the n
 
   **Affected platforms:** nRF54H20
 
-.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
+.. rst-class:: wontfix v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
 NCSDK-28152: TPIU Trace Signal Skew on the nRF54H20 SoC
   Segger TPIU tracing on the nRF54H20 DK encounters instability due to a minimal skew between clock and data signals.
