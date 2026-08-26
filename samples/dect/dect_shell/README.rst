@@ -64,6 +64,7 @@ Main command structure:
        disconnect
        rx
        tx
+       discover (mdns-discover.conf)
      hostname
        read
        write
@@ -110,6 +111,35 @@ To set and read the hostname of the DECT NR+ device, use the following commands:
 
      desh:~$ hostname write dect-ft-device
      desh:~$ hostname read
+
+Discover DECT NR+ peers (mDNS)
+==============================
+
+DeSh command ``dect discover``.
+
+Lists peers that advertise the DNS-SD service ``_dect-nr._udp`` on the DECT NR+ network.
+Requires :file:`mdns-discover.conf` in the west build command (see :ref:`dect_shell_mdns_discover_build`).
+
+* Usage example:
+
+  .. code-block:: console
+
+     desh:~$ dect discover
+
+     dect discover: browse _dect-nr._udp (PTR), then AAAA for IPv6 addresses
+       this device: dect-nr+-device.local
+       local _dect-nr._udp advertise: advertising
+       (Browse may take up to ~8 s.)
+       browse _dect-nr._udp.local (1/2)
+       Browse done, 1 peer(s) — AAAA for IPv6 addresses
+       IPv6 addresses (1 peer(s)):
+      # | host                     | kind | ipv6 (mDNS)                             | long_rd_id
+      ----------------------------------------------------------------------------------------------------
+      1 | pt-device.local          | LL   | fe80::e64c:7945:1c99:a829               | 479832105 (0x1c99a829)
+      1 | pt-device.local          | GUA  | 2001:14bb:ac:3e22:aca7:d08a:ecd9:2e32   | 3973656114 (0xecd92e32)
+      1 | pt-device.local          | ULA  | fdde:ad00::aca7:d08a:ecd9:2e32          | 3973656114 (0xecd92e32)
+
+     dect discover: finished (1 peer(s))
 
 Application settings
 ====================
@@ -706,6 +736,17 @@ LTE with `Serial Modem <ncs-serial-modem_>`_ running on external nRF9151 DK
 
 .. note::
    Change VDD (nPM VOUT1) from 1.8V to 3.3V using the `Board Configurator app`_ in both DKs.
+
+.. _dect_shell_mdns_discover_build:
+
+mDNS discover
+=============
+
+To build the DeSh sample with DNS-SD advertisement and the ``dect discover`` command:
+
+.. code-block:: console
+
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=mdns-discover.conf
 
 iperf3 support
 ==============

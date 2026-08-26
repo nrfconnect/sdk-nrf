@@ -448,7 +448,11 @@ DECT NR+ samples
 
 * :ref:`dect_shell_application` sample:
 
-* Added configurable auto-connect with L4-driven trigger.
+* Added:
+
+  * Configurable auto-connect with L4-driven trigger.
+  * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
+
 * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
 * Fixed the routing logs.
   They are now available through the shell backend only.

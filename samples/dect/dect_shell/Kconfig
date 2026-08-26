@@ -43,6 +43,39 @@ config SAMPLE_DESH_CLOUD_COAP
 	help
 	  CoAP connection to nRF Cloud.
 
+config SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE
+	bool "Advertise _dect-nr._udp using DNS-SD on dect0"
+	depends on MDNS_RESPONDER_DNS_SD
+	depends on NET_MGMT && NET_MGMT_EVENT
+	help
+	  Register a DNS-SD service record for _dect-nr._udp so that peers
+	  browsing through mDNS see this device. Zephyr's mdns_responder answers
+	  PTR/SRV/TXT/AAAA queries using the record; this sample does not run
+	  an application-level service on the advertised SRV port, and the
+	  TXT record carries "status=not-implemented" to signal that.
+
+if SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE
+
+config SAMPLE_DESH_MDNS_DNS_SD_PORT
+	int "DNS-SD service port on dect0"
+	default 4700
+	range 1 65535
+	help
+	  UDP port placed in the SRV record advertised for _dect-nr._udp.
+	  Reserved for a future application service (info/telemetry/CoAP/...);
+	  the sample binds a placeholder UDP socket on this port so DNS-SD SRV
+	  records are advertised, but no application-level service is implemented.
+
+endif # SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE
+
+config SAMPLE_DESH_MDNS_DISCOVER
+	bool "dect discover shell command"
+	depends on MDNS_RESOLVER
+	help
+	  Discover nearby DECT NR+ devices through mDNS: browses _dect-nr._udp
+	  (PTR) to find peer instances and resolves their .local hostnames
+	  (AAAA) to list IPv6 addresses.
+
 config SAMPLE_DESH_L2_SHELL
 	bool "DECT NR+ Shell for nRF91 Modem MAC"
 	default y
