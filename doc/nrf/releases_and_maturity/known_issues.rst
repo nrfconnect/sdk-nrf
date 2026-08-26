@@ -4978,10 +4978,10 @@ NCSDK-33207: MCUboot has its NVM protection disabled
 
   **Workaround:** Enable protection manually using the :kconfig:option:`CONFIG_FPROTECT` and  :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig options of MCUboot.
 
-.. rst-class:: wontfix v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0
+.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0
 
 NCSDK-29460: Encryption: Build error for default configuration on the ``nrf52840dk/nrf52840`` board target (ECDSA_P256)
-  This happens because of inconsistency in the configuration of the signature check and the encryption key extraction: both must use the same base encryption algorithm.
+  ECDSA P-256 signature verification, in MCUboot, defaults to cc310 crypto backend driver that lacks support for key exchange, key derivation and AES, required by firmware image encryption.
 
   **Affected platforms:** nRF52840
 

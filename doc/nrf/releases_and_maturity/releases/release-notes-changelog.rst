@@ -58,6 +58,9 @@ Bootloaders and DFU
 
 * Added the :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explaining the memory protection features of the bootloader on the nRF54L Series.
 
+* Fixed  MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as nRF52840 and nRF9160 SoCs.
+  These configurations will now use PSA Crypto instead of the cc310 backend that supports signature verification only.
+
 Developing with nRF91 Series
 ============================
 
