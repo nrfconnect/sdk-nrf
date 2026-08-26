@@ -23,7 +23,7 @@ static const struct device *const uart_dev = DEVICE_DT_GET(DT_NODELABEL(dut));
 
 static const uint8_t tx_buf[] = {0x00, 0x00, 0x00, 0x00};
 
-#define PIN_STATE_SIZE 32768
+#define PIN_STATE_SIZE CONFIG_TEST_PIN_STATE_SAMPLES
 static uint8_t pin_state[PIN_STATE_SIZE] = {};
 
 #define REPEAT_NUMBER 3
@@ -167,6 +167,17 @@ static void check_timing(uint32_t baudrate)
 			}
 		}
 		TC_PRINT("Start index: %d, stop index: %d\n", start_index, stop_index);
+
+		if ((start_index == -1) || (stop_index == -1)) {
+			TC_PRINT("[%d] Sampling window of %.2f us is too short "
+				 "to capture a full symbol.\n",
+				 baudrate, PIN_STATE_SIZE * gpio_read_time_us_mean);
+			TC_PRINT("Increase CONFIG_TEST_PIN_STATE_SAMPLES to at least %d.\n",
+				 PIN_STATE_SIZE * 2);
+			ztest_test_fail();
+			return;
+		}
+
 		double measured_period_us = (stop_index - start_index) * gpio_read_time_us_mean;
 		double measured_bit_us = measured_period_us / (double)number_of_bits;
 

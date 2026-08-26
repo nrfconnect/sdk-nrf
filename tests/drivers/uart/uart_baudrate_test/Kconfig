@@ -6,6 +6,16 @@
 
 source "Kconfig.zephyr"
 
+config TEST_PIN_STATE_SAMPLES
+	int "Number of GPIO samples captured per transmitted symbol"
+	default 32768
+	range 1024 262144
+	help
+	  Size of the buffer holding the sampled state of the loopback pin. The buffer
+	  must be large enough to hold one full UART symbol, otherwise the low baudrate
+	  tests are skipped. The needed size depends on how fast the CPU can sample the
+	  GPIO port, so it scales with the CPU frequency and inversely with the baudrate.
+
 config TEST_ALLOWED_DEVIATION
 	int "Allowed deviation (%) for UART timing checks"
 	default 5
