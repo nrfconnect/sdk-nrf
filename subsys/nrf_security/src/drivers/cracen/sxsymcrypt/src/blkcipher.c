@@ -265,6 +265,8 @@ int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const uint8_t *datain, si
 
 int sx_blkcipher_run(struct sxblkcipher *cipher_ctx)
 {
+	int status;
+
 	if (!cipher_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
@@ -282,8 +284,12 @@ int sx_blkcipher_run(struct sxblkcipher *cipher_ctx)
 		cipher_ctx->dma.dmamem.cfg &= ~cipher_ctx->cfg->ctxsave;
 	}
 
-	sx_cmdma_start(&cipher_ctx->dma, sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
-		       cipher_ctx->descs);
+	status = sx_cmdma_start(&cipher_ctx->dma,
+				 sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
+				 cipher_ctx->descs);
+	if (status != SX_OK) {
+		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+	}
 
 	return SX_OK;
 }
@@ -328,6 +334,8 @@ int sx_blkcipher_resume_state(struct sxblkcipher *cipher_ctx)
 
 int sx_blkcipher_save_state(struct sxblkcipher *cipher_ctx)
 {
+	int status;
+
 	if (!cipher_ctx->dma.hw_acquired) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
@@ -350,8 +358,12 @@ int sx_blkcipher_save_state(struct sxblkcipher *cipher_ctx)
 
 	ADD_OUTDESC_PRIV(cipher_ctx->dma, OFFSET_EXTRAMEM(cipher_ctx), 16, 0x0F);
 
-	sx_cmdma_start(&cipher_ctx->dma, sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
-		       cipher_ctx->descs);
+	status = sx_cmdma_start(&cipher_ctx->dma,
+				 sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
+				 cipher_ctx->descs);
+	if (status != SX_OK) {
+		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+	}
 
 	return SX_OK;
 }
