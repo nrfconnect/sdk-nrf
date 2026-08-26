@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-source "Kconfig.zephyr"
-
 config SOC_NRF53_CPUNET_ENABLE
 	bool
 	depends on BOARD_NRF5340DK_NRF5340_CPUAPP || BOARD_NRF5340DK_NRF5340_CPUAPP_NS
@@ -14,3 +12,5 @@ config SOC_NRF53_CPUNET_ENABLE
 config FIRST_SLEEP_OFFSET
 	bool "Enable the time shift before first sleep in a loop"
 	default n
+
+source "Kconfig.zephyr"
