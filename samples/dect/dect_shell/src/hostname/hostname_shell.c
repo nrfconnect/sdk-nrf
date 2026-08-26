@@ -18,6 +18,11 @@
 
 #include "desh_print.h"
 
+#if IS_ENABLED(CONFIG_SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE)
+/* mdns/dns_sd_advertise.c — sync DNS-SD instance name with net_hostname_get() */
+void dect_shell_dns_sd_refresh(void);
+#endif
+
 struct hostname_settings {
 	char hostname_str[NET_HOSTNAME_MAX_LEN];
 };
@@ -85,6 +90,9 @@ int hostname_settings_init(void)
 		printk("%s: failed to set hostname\n", __func__);
 		return -EINVAL;
 	}
+#if IS_ENABLED(CONFIG_SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE)
+	dect_shell_dns_sd_refresh();
+#endif
 	return 0;
 }
 
@@ -96,6 +104,9 @@ static int cmd_hostname_write(const struct shell *shell, size_t argc, char **arg
 		desh_error("Failed to set hostname");
 		return -EINVAL;
 	}
+#if IS_ENABLED(CONFIG_SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE)
+	dect_shell_dns_sd_refresh();
+#endif
 	/* Store also to RAM settings */
 	strcpy(settings_data.hostname_str, argv[1]);
 
