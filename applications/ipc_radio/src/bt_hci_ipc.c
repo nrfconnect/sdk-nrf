@@ -20,8 +20,13 @@
 #include <zephyr/bluetooth/hci.h>
 #include <zephyr/bluetooth/buf.h>
 #include <zephyr/bluetooth/hci_raw.h>
+#include <zephyr/bluetooth/hci_vs.h>
 
 #include <zephyr/ipc/ipc_service.h>
+
+#if defined(CONFIG_BT_HCI_FATAL_REPORT)
+#include <zephyr/bluetooth/hci_fatal_report.h>
+#endif /* CONFIG_BT_HCI_FATAL_REPORT */
 
 #if defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
 #include <zephyr/logging/log_ctrl.h>
@@ -30,6 +35,10 @@
 #include <zephyr/logging/log.h>
 
 #include "ipc_bt.h"
+
+#if defined(CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK)
+#include "fatal_error_test_hook.h"
+#endif /* CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK */
 
 #if DT_NODE_HAS_COMPAT(DT_CHOSEN(zephyr_bt_hci_ipc), zephyr_ipc_openamp_static_vrings)
 #include <openamp/rpmsg_virtio.h>
@@ -286,6 +295,17 @@ static void tx_thread(void)
 
 	while (1) {
 		buf = k_fifo_get(&tx_queue, K_FOREVER);
+
+#if defined(CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK)
+		/* The controller does not know the fault injection opcode, so the hook has to
+		 * take the buffer out of the stream before it is forwarded.
+		 */
+		if (fatal_error_test_hook_cmd(buf)) {
+			net_buf_unref(buf);
+			continue;
+		}
+#endif /* CONFIG_IPC_RADIO_FATAL_ERROR_TEST_HOOK */
+
 		err = bt_send(buf);
 		if (err) {
 			LOG_ERR("bt_send failed err: %d.", err);
@@ -308,6 +328,69 @@ static struct ipc_ept_cfg hci_ept_cfg = {
 	},
 };
 
+#if defined(CONFIG_BT_HCI_FATAL_REPORT)
+/* A fatal error is reported with interrupts locked, and possibly from an interrupt or a
+ * zero-latency interrupt context. The HCI endpoint cannot carry the report from there, because its
+ * backend takes a mutex and may hand the message to a thread on the way to the shared memory.
+ * The dedicated channel is a shared memory write followed by a mailbox signal and nothing else,
+ * so it works wherever the fault happens to be raised.
+ */
+static bool fatal_report_enabled;
+
+#if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
+static bool fatal_report_ready(void)
+{
+	return fatal_report_enabled;
+}
+
+static void fatal_report_send(struct net_buf *buf)
+{
+	int ret;
+
+	ret = bt_hci_fatal_report_send(buf->data, buf->len);
+	if (ret < 0) {
+		LOG_ERR("Fatal error report send failed: %d.", ret);
+	}
+
+	net_buf_unref(buf);
+}
+#endif /* CONFIG_BT_CTLR_ASSERT_HANDLER || CONFIG_BT_HCI_VS_FATAL_ERROR */
+
+static int fatal_report_init(void)
+{
+	int err;
+
+	err = bt_hci_fatal_report_tx_enable();
+	if (err) {
+		return err;
+	}
+
+	fatal_report_enabled = true;
+
+	return 0;
+}
+#else /* !CONFIG_BT_HCI_FATAL_REPORT */
+/* Without a channel of its own the report has to take the HCI endpoint, which is only safe from
+ * a thread context.
+ */
+#if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
+static bool fatal_report_ready(void)
+{
+	return ipc_ept_ready;
+}
+
+static void fatal_report_send(struct net_buf *buf)
+{
+	send(buf, HCI_FATAL_MSG);
+}
+#endif /* CONFIG_BT_CTLR_ASSERT_HANDLER || CONFIG_BT_HCI_VS_FATAL_ERROR */
+
+static int fatal_report_init(void)
+{
+	return 0;
+}
+#endif /* !CONFIG_BT_HCI_FATAL_REPORT */
+
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER)
 __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 {
@@ -316,17 +399,18 @@ __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 	LOG_ERR("HCI Fatal error in: %s at %d.", file, line);
 
 #if defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
-	if (ipc_ept_ready) {
+	if (fatal_report_ready()) {
 		struct net_buf *buf;
 
 		buf = hci_vs_err_assert(file, line);
-		if (!buf) {
-			send(buf, HCI_FATAL_MSG);
+		if (buf) {
+			LOG_WRN("Send from bt ctlr assert handler over ipc.");
+			fatal_report_send(buf);
 		} else {
 			LOG_ERR("Can't send Fatal Error HCI event.");
 		}
 	} else {
-		LOG_ERR("HCI Fatal error before IPC endpoint is ready.");
+		LOG_ERR("HCI Fatal error before the report channel is ready.");
 	}
 
 #else /* !CONFIG_BT_HCI_VS_FATAL_ERROR */
@@ -334,8 +418,16 @@ __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
 
 #endif /* !CONFIG_BT_HCI_VS_FATAL_ERROR */
 
+#if defined(CONFIG_RESET_ON_FATAL_ERROR)
+	extern void fatal_error_reset(void);
+
+	fatal_error_reset();
+#else /* !CONFIG_RESET_ON_FATAL_ERROR */
 	for (;;) {
 	};
+#endif /* !CONFIG_RESET_ON_FATAL_ERROR */
+
+	CODE_UNREACHABLE;
 }
 #endif /* CONFIG_BT_CTLR_ASSERT_HANDLER */
 
@@ -346,19 +438,27 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 
 	(void)irq_lock();
 
-	if ((!esf) && (ipc_ept_ready)) {
+	/* The report carries the stack frame, so there is nothing to send without one. */
+	if ((esf != NULL) && fatal_report_ready()) {
 		struct net_buf *buf;
 
 		buf = hci_vs_err_stack_frame(reason, esf);
-		if (!buf) {
-			send(buf, HCI_FATAL_MSG);
+		if (buf) {
+			LOG_WRN("Send from fatal error handler over ipc.");
+			fatal_report_send(buf);
 		} else {
 			LOG_ERR("Can't create Fatal Error HCI event.");
 		}
 	}
 
+#if defined(CONFIG_RESET_ON_FATAL_ERROR)
+	extern void fatal_error_reset(void);
+
+	fatal_error_reset();
+#else /* !CONFIG_RESET_ON_FATAL_ERROR */
 	for (;;) {
 	};
+#endif /* !CONFIG_RESET_ON_FATAL_ERROR */
 
 	CODE_UNREACHABLE;
 }
@@ -389,14 +489,48 @@ int ipc_bt_init(void)
 		return err;
 	}
 
+	err = fatal_report_init();
+	if (err) {
+		LOG_ERR("Preparing the fatal error report channel failed: %d.", err);
+		return err;
+	}
+
 	return 0;
 }
+
+#if defined(CONFIG_BT_WAIT_NOP)
+/* Announce that the controller is ready to receive commands. The host has no other way of
+ * telling that the network core has booted, since the IPC endpoint binds before that.
+ */
+static void send_nop(void)
+{
+	struct bt_hci_evt_cmd_complete *cc;
+	struct bt_hci_evt_hdr *hdr;
+	struct net_buf *buf;
+
+	buf = bt_buf_get_rx(BT_BUF_EVT, K_FOREVER);
+
+	hdr = net_buf_add(buf, sizeof(*hdr));
+	hdr->evt = BT_HCI_EVT_CMD_COMPLETE;
+	hdr->len = sizeof(*cc);
+
+	cc = net_buf_add(buf, sizeof(*cc));
+	cc->ncmd = 1U;
+	cc->opcode = sys_cpu_to_le16(BT_OP_NOP);
+
+	send(buf, HCI_REGULAR_MSG);
+}
+#endif /* CONFIG_BT_WAIT_NOP */
 
 int ipc_bt_process(void)
 {
 	struct net_buf *buf;
 
 	k_sem_take(&ipc_bound_sem, K_FOREVER);
+
+#if defined(CONFIG_BT_WAIT_NOP)
+	send_nop();
+#endif /* CONFIG_BT_WAIT_NOP */
 
 	while (1) {
 		buf = k_fifo_get(&rx_queue, K_FOREVER);

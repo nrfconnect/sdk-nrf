@@ -22,6 +22,11 @@ zephyr_library_sources_ifdef(
   cs_antenna_switch.c
 )
 
+zephyr_library_sources_ifdef(
+  CONFIG_BT_HCI_VS_FATAL_ERROR
+  ${ZEPHYR_BASE}/subsys/bluetooth/controller/hci/hci_vs_err.c
+)
+
 zephyr_library_link_libraries(subsys__bluetooth)
 
 zephyr_include_directories(.)

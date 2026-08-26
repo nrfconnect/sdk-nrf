@@ -1,0 +1,26 @@
+common:
+  sysbuild: true
+  harness: ztest
+  tags:
+    - bluetooth
+    - ci_build
+    - sysbuild
+    - ci_tests_bluetooth_hci_vs_fatal_error
+tests:
+  bluetooth.hci_vs_fatal_error:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+  # The same test against the hci_ipc sample running the open source Zephyr Controller. Only
+  # the nRF5340 network core has a Zephyr Controller, the nRF54H20 radio core is SoftDevice
+  # Controller only, so this variant is limited to the nRF5340.
+  bluetooth.hci_vs_fatal_error.hci_ipc:
+    extra_args:
+      - SB_CONF_FILE=sysbuild_hci_ipc.conf
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp

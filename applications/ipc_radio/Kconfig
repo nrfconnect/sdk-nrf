@@ -55,6 +55,38 @@ config QUEUE_THREAD_PRIO
 	help
 	  Priority for the queue thread.
 
+config IPC_RADIO_FATAL_ERROR_TEST_HOOK
+	bool "Fatal error test hook"
+	depends on IRQ_OFFLOAD
+	help
+	  Implement a Vendor Specific HCI command that raises a fatal error in the requested
+	  execution context. It is meant for the tests of the fatal error reporting and must
+	  never be enabled in a production image. Raising the fatal error from an interrupt
+	  context relies on irq_offload(), so the image also has to be marked as a test with
+	  the TEST Kconfig option.
+
+if IPC_RADIO_FATAL_ERROR_TEST_HOOK
+
+config IPC_RADIO_FATAL_ERROR_TEST_HOOK_ZLI
+	bool "Fatal error test hook zero latency interrupt context"
+	default y
+	depends on ZERO_LATENCY_IRQS
+	depends on SOC_COMPATIBLE_NRF53X || SOC_SERIES_NRF54H
+	help
+	  Allow injecting the fatal error from a zero-latency interrupt context.
+
+config IPC_RADIO_FATAL_ERROR_TEST_HOOK_ZLI_IRQN
+	int "Zero latency interrupt line used by the fatal error test hook"
+	depends on IPC_RADIO_FATAL_ERROR_TEST_HOOK_ZLI
+	default 27 if SOC_COMPATIBLE_NRF53X # SWI1
+	default 89 if SOC_SERIES_NRF54H # SWI1
+	help
+	  Software interrupt line used to raise the fatal error from a zero-latency interrupt
+	  context. It must not be used by any other component, in particular not by the
+	  MPSL_LOW_PRIO_IRQN interrupt line.
+
+endif # IPC_RADIO_FATAL_ERROR_TEST_HOOK
+
 endif # IPC_RADIO_BT_HCI_IPC
 
 config SETTINGS

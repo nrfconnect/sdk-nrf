@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The fatal error report channel, as seen by both cores. The controller writes a report and
+ * signals the mailbox; the host reads it. There is no reverse direction and no handshake, so the
+ * two cores need nothing more than the same region and the same mailbox channel, and both get
+ * that by including this file.
+ *
+ * Channel 2 is free: the IPC instance carrying HCI uses channels 0 and 1.
+ */
+
+#include "nrf5340_ipc_fatal.dtsi"
+
+/ {
+	bt_hci_fatal_report: bt_hci_fatal_report {
+		compatible = "zephyr,bt-hci-fatal-report";
+		memory-region = <&sram_ipc_fatal>;
+		mboxes = <&mbox 2>;
+		mbox-names = "report";
+		status = "okay";
+	};
+};
