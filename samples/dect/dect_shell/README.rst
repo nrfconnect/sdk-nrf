@@ -811,7 +811,7 @@ nrf9151dk:
 
 .. code-block:: console
 
-   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="nrf_cloud_coap.conf -DDTC_OVERLAY_FILE="nrf_cloud_coap.overlay""
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="nrf_cloud_coap.conf" -DDTC_OVERLAY_FILE="nrf_cloud_coap.overlay"
 
 .. note::
    System time is retrieved by using NTP.
