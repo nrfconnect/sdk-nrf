@@ -55,16 +55,12 @@ The following samples and tests use the SPIM peripheral and can serve as a usage
    :header-rows: 1
 
    * - Application
-     - Link
      - Comment
-   * - Zephyr ``spi`` driver twister loopback test
-     - `Zephyr's SPI driver twister test`_
+   * - `Zephyr's SPI driver twister test`_
      - Test utilizing `Zephyr's SPI driver API`_ to send data between MOSI and MISO pins connected using a jumper wire
-   * - Zephyr ``spi_rtio`` loopback sample
-     - `Zephyr's SPI RTIO loopback sample`_
+   * - `Zephyr's SPI RTIO loopback sample`_
      - Sample utilizing the RTIO-based SPI API to perform transfers between two SPI controllers, one acting as controller and the other as peripheral
-   * - Zephyr ``sensor`` driver sample for pressure sensor
-     - `Zephyr's pressure sensor sample`_
+   * - `Zephyr's pressure sensor sample`_
      - Sample utilizing `Zephyr's sensor driver API`_ to communicate with external pressure sensor over SPI bus.
 
 Usage guides
