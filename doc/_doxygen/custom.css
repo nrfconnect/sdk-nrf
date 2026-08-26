@@ -6,6 +6,7 @@
  * verbatim copy of https://github.com/jothepro/doxygen-awesome-css so that it can
  * be updated from upstream without merging local changes.
  */
+@import url("https://fonts.googleapis.com/css2?family=Carlito:ital,wght@0,400;0,700;1,400&family=Noto+Sans:wght@300;400;500;600;700&display=swap"); 
 
 html {
   /* primary theme color. This will affect the entire websites color scheme: links, arrows, labels, ... */
@@ -20,12 +21,12 @@ html {
 
   /* color for all separators on the website: hr, borders, ... */
   --separator-color: #e2e8f0;
-  --font-family: "Noto Sans", Carlito, sans-serif;
+  --font-family: Carlito, "Noto Sans", sans-serif;
   --font-family-monospace: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
 
   /* font sizes and text layout */
   --page-font-size: 16px;
-  --code-font-size: inherit;
+  --code-font-size: 16px;
   --content-line-height: 23px;
 
   /* @note boxes follow the primary color */
@@ -151,4 +152,183 @@ doxygen-awesome-dark-mode-toggle svg line,
 doxygen-awesome-dark-mode-toggle svg g {
   fill: #ffffff !important;
   stroke: #ffffff !important;
+}
+a.el {
+  font-weight: 600;
+}
+dl.reflist dt {
+  font-weight: 600;
+}
+/*
+ * Topics / directory expand arrows — black solid triangles 
+ */
+
+.arrow,
+.contents .arrow {
+  color: inherit !important;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 2px;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  user-select: none;
+  font-size: 0;        /* hide any text fallback */
+  line-height: 0;
+}
+
+/* Closed: black triangle pointing right */
+table.directory span.arrowhead {
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0;
+  margin: 0 6px 0 2px;
+  border: none;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #323e48;
+  transform: none !important;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Open: black triangle pointing down */
+table.directory span.arrowhead.opened {
+  border: none;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #323e48;
+  margin-top: 2px;
+}
+/*
+ * Topics / directory expand arrows — black solid triangles (production style)
+ */
+
+.arrow,
+.contents .arrow {
+  color: inherit !important;
+  cursor: pointer;
+  vertical-align: middle;
+  margin-right: 2px;
+  height: auto;
+  width: auto;
+  display: inline-block;
+  user-select: none;
+  font-size: 0;        /* hide any text fallback */
+  line-height: 0;
+}
+
+/* Closed: black triangle pointing right */
+table.directory span.arrowhead {
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0;
+  margin: 0 6px 0 2px;
+  border: none;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #323e48;
+  transform: none !important;
+  vertical-align: middle;
+  display: inline-block;
+}
+
+/* Open: black triangle pointing down */
+table.directory span.arrowhead.opened {
+  border: none;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #323e48;
+  margin-top: 2px;
+}
+/* Topics list — always visible black triangles */
+table.directory span.arrowhead { ... }
+table.directory span.arrowhead.opened { ... }
+
+/* Left nav — same black triangles, visibility from upstream hover rules */
+#nav-tree span.arrowhead {
+  width: 0 !important;
+  height: 0 !important;
+  border: none;
+  border-top: 5px solid transparent;
+  border-bottom: 5px solid transparent;
+  border-left: 6px solid #323e48;
+  transform: none !important;
+  margin: 0 6px 0 2px;
+}
+
+#nav-tree span.arrowhead.opened {
+  border: none;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid #323e48;
+}
+
+/* Override v2.4.2 teal on selected nav item — keep black */
+#nav-tree .selected span.arrowhead,
+.selected span.arrowhead {
+  border-left-color: #323e48 !important;
+  border-top-color: #323e48 !important;
+  border-right-color: transparent !important;
+  border-bottom-color: transparent !important;
+}
+
+/* Do NOT set --side-nav-arrow-opacity: 1 */
+/*
+ * Header menu dropdown arrows — solid triangles (production style)
+ */
+
+@media screen and (min-width: 768px) {
+  /* Hide smartmenus +/- fallback */
+  .sm-dox a span.sub-arrow:before {
+    display: none !important;
+  }
+
+  /* Top row: solid down-pointing triangle (white on dark header) */
+  .sm-dox a span.sub-arrow,
+  #main-menu a.has-submenu span.sub-arrow {
+    width: 0 !important;
+    height: 0 !important;
+    padding: 0;
+    margin: 0;
+    border: none;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-top: 5px solid var(--header-foreground);
+    transform: none !important;
+    background: none !important;
+    top: 50%;
+    margin-top: -2px;
+    right: 10px;
+    box-sizing: content-box;
+    display: inline-block;
+  }
+
+  /* Hover / open: Nordic blue */
+  .sm-dox a:hover span.sub-arrow,
+  #main-menu a.has-submenu:hover span.sub-arrow,
+  .sm-dox a.highlighted span.sub-arrow,
+  .sm-dox a[aria-expanded="true"] span.sub-arrow {
+    border-top-color: var(--menu-focus-foreground) !important;
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-bottom: none !important;
+  }
+
+  /* Submenu rows: solid right-pointing triangle */
+  .sm-dox ul a span.sub-arrow {
+    border: none;
+    border-top: 4px solid transparent;
+    border-bottom: 4px solid transparent;
+    border-left: 5px solid var(--page-foreground-color);
+    transform: none !important;
+  }
+
+  .sm-dox ul a:hover span.sub-arrow,
+  .sm-dox ul a.highlighted span.sub-arrow,
+  .sm-dox ul a[aria-expanded="true"] span.sub-arrow {
+    border-left-color: var(--menu-focus-foreground) !important;
+    border-top-color: transparent !important;
+    border-bottom-color: transparent !important;
+  }
 }
