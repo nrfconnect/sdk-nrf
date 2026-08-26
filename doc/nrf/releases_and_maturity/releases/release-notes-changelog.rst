@@ -49,14 +49,16 @@ Build and configuration system
 
 Bootloaders and DFU
 ===================
-* Added the hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
-  The option is hidden and requires addition of Kconfig override in your project.
-  This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
+* Added:
+
+  * The hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` Kconfig option to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
+    The option is hidden and requires addition of a Kconfig override in your project.
+    This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
+  * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explaining the memory protection features of the bootloader on the nRF54L Series.
+  * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` for details.
-
-* Added the :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explaining the memory protection features of the bootloader on the nRF54L Series.
 
 * Fixed  MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as nRF52840 and nRF9160 SoCs.
   These configurations will now use PSA Crypto instead of the cc310 backend that supports signature verification only.
@@ -416,7 +418,17 @@ Debug samples
 DFU samples
 -----------
 
-* Added the :ref:`encrypted_bootloader` sample that demonstrates how to secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
+* Added:
+
+  * The :ref:`encrypted_bootloader` sample that demonstrates how to secure device firmware update (DFU) with image encryption enabled for both the application and MCUboot.
+  * Support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets to the following samples:
+
+    * :ref:`single_slot_sample`
+    * :ref:`nrf_smp_svr_sample`
+    * :ref:`mcuboot_minimal_configuration`
+    * :ref:`mcuboot_with_decompression`
+    * :ref:`mcuboot_with_encryption`, with ECIES-P-256 image encryption using :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` or :kconfig:option:`CONFIG_BOOT_ECDSA_PSA`.
+
 * :ref:`single_slot_sample` sample:
 
   * Added support for buttonless entry into firmware loader mode over Bluetooth LE by using the SMP MCUmgr reset command with boot-mode selection.
@@ -903,9 +915,25 @@ The code for integrating MCUboot into |NCS| is located in the :file:`ncs/nrf/mod
 
 The following list summarizes both the main changes inherited from upstream MCUboot and the main changes applied to the |NCS| specific additions:
 
-* Added support for the nRF54LC10A SoC.
+* Added:
 
-* The following non-PSA Crypto implementations were deprecated:
+  * Support for the nRF54LC10A and nRF54LS05A SoCs.
+  * ECIES-P-256 encrypted image support when using :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON`, with the ocrypto software backend used instead of TinyCrypt.
+  * ECIES-P-256 encrypted image support for the :kconfig:option:`CONFIG_BOOT_ECDSA_PSA` path by auto-selecting the required PSA algorithms.
+  * Support for multiple image verification keys compiled into MCUboot.
+    The :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option accepts a comma-separated list of PEM files.
+    Only public key material is embedded in the bootloader image.
+    This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
+    MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
+
+* Updated:
+
+  * Made :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` the default ECDSA P-256 implementation for nRF54LS05A and nRF54LS05B.
+  * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
+  * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
+    The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
+
+* Deprecated the following non-PSA Crypto implementations:
 
   * :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON`
   * :kconfig:option:`CONFIG_BOOT_ECDSA_TINYCRYPT`
@@ -914,18 +942,6 @@ The following list summarizes both the main changes inherited from upstream MCUb
   * :kconfig:option:`CONFIG_BOOT_ED25519_MBEDTLS`
 
   Use their PSA Crypto counterparts instead.
-
-* Added support for multiple image verification keys compiled into MCUboot.
-  The :kconfig:option:`CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option accepts a comma-separated list of PEM files.
-  Only public key material is embedded in the bootloader image.
-  This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
-  MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
-
-* Updated:
-
-  * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
-  * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
-    The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
 
 Zephyr
 ======
