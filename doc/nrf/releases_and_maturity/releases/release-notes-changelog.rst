@@ -478,27 +478,29 @@ Networking samples
 * Updated the TF-M configuration in nRF7002 DK networking samples by removing :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` (as it is not supported by the |NCS|).
   Instead, use the configurable profile (:kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET`), select the SFN backend (:kconfig:option:`CONFIG_TFM_SFN`) to save RAM and select memory-mapped iovecs (:kconfig:option:`CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC`) to reduce copying of client vectors during TLS handshakes.
 
-* Removed support for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target from the following samples:
+* Removed:
 
-  * :ref:`mqtt_sample`
-  * :ref:`udp_sample`
-  * :ref:`net_coap_client_sample`
-  * :ref:`https_client`
-  * :ref:`http_server`
-  * :ref:`download_sample`
+  * Support for the ``nrf5340dk/nrf5340/cpuapp/ns`` board target from the following samples:
 
-* Removed support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from the following samples:
+    * :ref:`mqtt_sample`
+    * :ref:`udp_sample`
+    * :ref:`net_coap_client_sample`
+    * :ref:`https_client`
+    * :ref:`http_server`
+    * :ref:`download_sample`
 
-  * :ref:`mqtt_sample`
-  * :ref:`net_coap_client_sample`
-  * :ref:`http_server`
-  * :ref:`download_sample`
-  * :ref:`aws_iot`
+  * Support for the ``nrf54l15dk/nrf54l15/cpuapp`` board target from the following samples:
 
-* Removed the ``nrf54l15dk/nrf54l15/cpuapp`` with nRF7002 EB shield from the following samples, keeping only the nRF7002-EB II shield for the ``nrf54l15dk/nrf54l15/cpuapp`` board target:
+    * :ref:`mqtt_sample`
+    * :ref:`net_coap_client_sample`
+    * :ref:`http_server`
+    * :ref:`download_sample`
+    * :ref:`aws_iot`
 
-  * :ref:`https_client`
-  * :ref:`udp_sample`
+  * The ``nrf54l15dk/nrf54l15/cpuapp`` with nRF7002 EB shield from the following samples, keeping only the nRF7002-EB II shield for the ``nrf54l15dk/nrf54l15/cpuapp`` board target:
+
+    * :ref:`https_client`
+    * :ref:`udp_sample`
 
 * :ref:`download_sample` sample:
 
