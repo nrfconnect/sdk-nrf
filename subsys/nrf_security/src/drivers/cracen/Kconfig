@@ -36,6 +36,14 @@ module = CRACEN
 module-str = CRACEN
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 
+config CRACEN_DMA_REJECT_PERIPHERAL_ACCESS
+	bool "Reject peripheral addresses in CRACEN DMA descriptors"
+	default y if BUILD_WITH_TFM
+	help
+	  Reject DMA input and output buffers that overlap device peripheral or
+	  system control register regions. This prevents caller-controlled CRACEN
+	  DMA descriptors from accessing peripheral registers.
+
 config PSA_NEED_CRACEN_ECC_KEY_GEN_PKE
 	bool
 	default y if PSA_NEED_CRACEN_KEY_TYPE_ECC_KEY_PAIR_GENERATE_SECP_R1 || \
