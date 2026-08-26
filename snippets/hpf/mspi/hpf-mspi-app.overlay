@@ -10,6 +10,7 @@
 	hpf_mspi: hpf_mspi {
 		compatible = "nordic,hpf-mspi-controller";
 		software-multiperipheral;
+		zephyr,pm-device-runtime-auto;
 		#address-cells = <1>;
 		#size-cells = <0>;
 	};
