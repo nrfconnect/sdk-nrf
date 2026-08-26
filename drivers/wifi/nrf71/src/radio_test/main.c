@@ -83,7 +83,7 @@ static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 					   SLEEP_DISABLE,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-					   NRF_WIFI_DEF_PHY_CALIB,
+					   0,
 					   op_band,
 					   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
 					   &tx_pwr_ctrl_params,

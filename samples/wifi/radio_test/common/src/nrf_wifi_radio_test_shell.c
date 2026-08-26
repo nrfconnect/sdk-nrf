@@ -384,7 +384,11 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->ru_tone = 26;
 	conf_params->ru_index = 1;
 	conf_params->tx_pkt_cw = 15;
+#ifdef CONFIG_NRF71_RADIO_TEST
+	conf_params->phy_calib = 0;
+#else
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
+#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	/* Store back the currently set country code */
 	if (strlen(country_code)) {

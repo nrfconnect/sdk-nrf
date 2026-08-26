@@ -156,7 +156,7 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 						   HW_SLEEP_ENABLE,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-						   NRF_WIFI_DEF_PHY_CALIB,
+						   0,
 						   op_band,
 						   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
 						   &tx_pwr_ctrl_params,
