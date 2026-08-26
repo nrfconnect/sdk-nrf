@@ -150,8 +150,16 @@ choice BOOT_SIGNATURE_TYPE
 
 endchoice
 
+# cc310 (nrf_cc310_bl) backend driver provides ECDSA verification only, so image
+# encryption, which additionally needs ECDH, HKDF/HMAC and AES, has to be
+# provided with use of PSA crypto.
+configdefault PSA_CRYPTO
+	default y if BOOT_SIGNATURE_TYPE_ECDSA_P256 && BOOT_ENCRYPT_IMAGE && \
+		HAS_HW_NRF_CC310 && !SECURE_BOOT
+
 choice BOOT_ECDSA_IMPLEMENTATION
 	default BOOT_NRF_EXTERNAL_CRYPTO if SECURE_BOOT
+	default BOOT_ECDSA_PSA if PSA_CRYPTO
 	default BOOT_ECDSA_CC310 if HAS_HW_NRF_CC310
 
 config BOOT_NRF_EXTERNAL_CRYPTO
