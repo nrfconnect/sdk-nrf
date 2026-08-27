@@ -736,6 +736,7 @@ Modem libraries
 * :ref:`modem_key_mgmt` library:
 
   * Added the :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
+  * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -766,8 +767,6 @@ Libraries for networking
   * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
     This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
     The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
-
-* Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
 Libraries for NFC
 -----------------
