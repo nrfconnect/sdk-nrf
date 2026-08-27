@@ -14,3 +14,5 @@ The following pages describe peripheral custom drivers in the |NCS| that can be 
    :maxdepth: 1
    :caption: Subpages:
    :glob:
+
+   peripherals_custom_drivers/pulse_meas
