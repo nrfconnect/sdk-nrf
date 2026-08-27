@@ -34,12 +34,17 @@ choice PPRCORE
 config PPRCORE_REMOTE
 	bool "Remote image"
 
+config PPRCORE_WAKEUP_TRIGGER
+	bool "Wakeup trigger image"
+
 endchoice
 
 config PPRCORE_IMAGE_NAME
 	default "remote" if PPRCORE_REMOTE
+	default "wakeup_trigger" if PPRCORE_WAKEUP_TRIGGER
 
 config PPRCORE_IMAGE_PATH
 	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_gpio/remote" if PPRCORE_REMOTE
+	default "$(ZEPHYR_NRF_MODULE_DIR)/tests/benchmarks/multicore/idle_gpio/wakeup_trigger" if PPRCORE_WAKEUP_TRIGGER
 
 source "share/sysbuild/Kconfig"
