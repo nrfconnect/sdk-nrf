@@ -1,0 +1,51 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91
+
+config SECURE_BOOT
+	bool
+	default y
+
+config BL_ROT_VERIFY_EXT_API_AT_LEAST_REQUIRED
+	default y
+
+choice SB_CRYPTO_HASH
+	default  SB_CRYPTO_CLIENT_SHA256
+endchoice
+
+choice SB_CRYPTO_SIG
+	default  SB_CRYPTO_CLIENT_ECDSA_SECP256R1
+endchoice
+
+# To test FW_INFO_PROVIDE_EXT_API.
+config BOOTLOADER_MCUBOOT
+	bool
+	default y
+
+config FW_INFO
+	bool
+	default y
+
+endif
+
+if SOC_SERIES_NRF54L
+
+choice SB_CRYPTO_SIG
+	default SB_CRYPTO_CC310_ECDSA_SECP256R1 if HAS_HW_NRF_CC310
+	default SB_CRYPTO_OBERON_ECDSA_SECP256R1
+endchoice
+
+choice SB_CRYPTO_HASH
+	prompt "Hashing Implementation"
+	default SB_CRYPTO_NONE if SB_CRYPTO_PSA_ED25519
+	default SB_CRYPTO_CC310_SHA256 if HAS_HW_NRF_CC310
+	default SB_CRYPTO_OBERON_SHA256
+endchoice
+
+endif
+
+source "Kconfig.zephyr"
