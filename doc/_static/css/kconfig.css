@@ -11,6 +11,39 @@ dl.kconfig {
 }
 
 div#__kconfig-search .input-container {
-    border: 2.5px solid rgb(0 0 0 / 60%);
-    box-shadow: rgb(149 157 165 / 90%) 0px 8px 24px !important;
+    border: 1px solid rgba(149, 157, 165, 0.2);
+    margin-bottom: 0.5rem;
+    width: 100%;
+    height: 60px;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px !important;
+}
+#__kconfig-search .input-container button {
+    font-size: px;
+    border-radius: 0px 5px 5px 0px;
+    float: right;
+    width: 10%;
+    height: 100%;
+    border: none;
+    background-color: white !important;
+}
+dl.kconfig dl.field-list {
+    line-height: 30px !important;
+    margin-left: -17px;
+}
+dl.kconfig dl.field-list>dt {
+    margin-bottom:1em !important;
+    font: size 14px;
+}
+#__kconfig-search dl.kconfig dt.sig-object {
+    background: #e6f6f9;
+    border-top: 3px solid #00a9ce;
+    color: #0077c8;
+    font-size: 14px;
+    margin: 6px 0;
+    padding: 6px;
+    width: fit-content;
+}
+.kconfig ul {
+    margin-bottom: 0 !important;
+    margin-left:0em;
 }
