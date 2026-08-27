@@ -8,10 +8,71 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/net/net_if.h>
 
 #include "nrf_cloud_dns.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_dns, CONFIG_NRF_CLOUD_LOG_LEVEL);
+
+#if defined(CONFIG_NRF_MODEM_LIB)
+
+#include <nrf_modem_at.h>
+
+/* On the nRF91 modem-offloaded stack, ask the modem itself as the Zephyr
+ * net interfaces only get populated at a later stage.
+ */
+static bool modem_has_addr(bool ipv6)
+{
+	char addr1[NET_IPV6_ADDR_LEN] = {0};
+	char addr2[NET_IPV6_ADDR_LEN] = {0};
+	char tmp[sizeof(struct net_in6_addr)];
+	int ret;
+
+	ret = nrf_modem_at_scanf("AT+CGPADDR=0",
+				  "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
+				  addr1, addr2);
+	if (ret <= 0) {
+		return false;
+	}
+
+	if (!ipv6) {
+		/* IPv4 address, if present, is always at slot 1 */
+		return zsock_inet_pton(AF_INET, addr1, tmp) == 1;
+	}
+
+	/* IPv6 address, can be at slot 1 or 2 */
+	return zsock_inet_pton(AF_INET6, addr1, tmp) == 1 ||
+	       zsock_inet_pton(AF_INET6, addr2, tmp) == 1;
+}
+
+static bool ipv6_ready(void)
+{
+	return modem_has_addr(true);
+}
+
+static bool ipv4_ready(void)
+{
+	return modem_has_addr(false);
+}
+
+#else
+
+static bool ipv6_ready(void)
+{
+	struct net_if *iface = NULL;
+
+	return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &iface) != NULL;
+}
+
+static bool ipv4_ready(void)
+{
+	struct net_if *iface = net_if_get_default();
+
+	return (iface != NULL) &&
+	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
+}
+
+#endif /* defined(CONFIG_NRF_MODEM_LIB) */
 
 static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 				   struct zsock_addrinfo *hints,
@@ -47,8 +108,11 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 			break;
 		}
 
-		zsock_inet_ntop(sa->sa_family, (void *)&((struct sockaddr_in *)sa)->sin_addr, ip,
-				sizeof(ip));
+		const void *const sin_addr = (sa->sa_family == AF_INET6) ?
+			(void *)&((struct sockaddr_in6 *)sa)->sin6_addr :
+			(void *)&((struct sockaddr_in *)sa)->sin_addr;
+
+		zsock_inet_ntop(sa->sa_family, sin_addr, ip, sizeof(ip));
 
 		LOG_DBG("Trying IP address and port for server %s: %s, port: %d", host_name, ip,
 			port);
@@ -64,6 +128,9 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 			continue;
 		}
 
+		LOG_INF("Connected to server %s via %s address %s, port %d", host_name,
+				(sa->sa_family == AF_INET6) ? "IPv6" : "IPv4", ip, port);
+
 		/* Pass the socket back to the initial caller, if creating/connecting it was
 		 * successful.
 		 */
@@ -78,7 +145,7 @@ static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_addrinfo *hints,
 			   nrf_cloud_connect_host_cb connect_cb)
 {
-	int sock;
+	int sock = -ENETUNREACH;
 
 	if (hints == NULL) {
 		return -EINVAL;
@@ -103,7 +170,7 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 		goto out;
 	}
 
-	LOG_DBG("Failed to connect to static IP address %s", CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR);
+	LOG_WRN("Failed to connect to static IP address %s", CONFIG_NRF_CLOUD_STATIC_IPV4_ADDR);
 
 	/* Do not fall back to DNS if static IP address is set. */
 	goto out;
@@ -115,33 +182,44 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 	 */
 
 #if defined(CONFIG_NET_IPV6)
-	LOG_DBG("Trying IPv6 addresses for %s", hostname);
+	if (!ipv6_ready()) {
+		LOG_DBG("Skipping IPv6 for %s; no local IPv6 address", hostname);
+	} else {
+		LOG_DBG("Trying IPv6 addresses for %s", hostname);
 
-	hints->ai_family = AF_INET6;
-	sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
+		hints->ai_family = AF_INET6;
+		sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
 
-	if (sock >= 0) {
-		goto out;
+		if (sock >= 0) {
+			goto out;
+		} else {
+			LOG_DBG("Could not connect over IPv6 to %s, falling back to IPv4",
+				hostname);
+		}
 	}
-
 #endif /* defined (CONFIG_NET_IPV6) */
 
 #if defined(CONFIG_NET_IPV4) && !defined(CONFIG_NRF_CLOUD_IPV6)
-	LOG_DBG("Trying IPv4 addresses for %s", hostname);
+	if (!ipv4_ready()) {
+		LOG_DBG("Skipping IPv4 for %s; no local IPv4 address", hostname);
+	} else {
+		LOG_DBG("Trying IPv4 addresses for %s", hostname);
 
-	hints->ai_family = AF_INET;
-	sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
+		hints->ai_family = AF_INET;
+		sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
 
-	if (sock >= 0) {
-		goto out;
+		if (sock >= 0) {
+			goto out;
+		} else {
+			LOG_DBG("Could not connect over IPv4 to %s", hostname);
+		}
 	}
-
 #endif /* defined (CONFIG_NET_IPV4) */
 
 out:
 	if (sock < 0) {
-		LOG_DBG("Cannot connect to nRF Cloud host: %s, error: %d", hostname, sock);
-		return -ECONNREFUSED;
+		LOG_WRN("Cannot connect to nRF Cloud host: %s, error: %d", hostname, sock);
+		return sock;
 	}
 
 	LOG_DBG("Connected to nRF Cloud host: %s. Socket ID: %d", hostname, sock);

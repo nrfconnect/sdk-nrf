@@ -42,6 +42,190 @@ This section describes the changes related to the build and configuration system
      If you set the :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` Kconfig option or a static partition layout explicitly for a firmware-patch build, reduce the number of updatable images by one and remove the now-unused update-slot partitions.
      Storing the nRF70 Series firmware patch in external flash using the :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_XIP` or :kconfig:option:`SB_CONFIG_WIFI_PATCHES_EXT_FLASH_STORE` Kconfig option is not affected.
 
+   .. _migration_3.5_hal_global_defines:
+
+   * The HAL preprocessor symbols listed in :ref:`migration_3.4_hal_global_defines` are no longer defined globally.
+     In the application code, replace references to the deprecated symbols with the corresponding Kconfig symbols or devicetree properties shown in the table.
+
+     .. list-table:: HAL preprocessor symbols replacements
+        :widths: 35 45 20
+        :header-rows: 1
+
+        * - Deprecated symbol
+          - Replacement symbol
+          - Notes
+        * - ``NRF51``
+          - :kconfig:option:`CONFIG_SOC_SERIES_NRF51`
+          - Board-selected
+        * - ``NRF51422_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF51822_QFAA`
+          - Board-selected
+        * - ``NRF51422_XXAB``
+          - :kconfig:option:`CONFIG_SOC_NRF51822_QFAB`
+          - Board-selected
+        * - ``NRF51422_XXAC``
+          - :kconfig:option:`CONFIG_SOC_NRF51822_QFAC`
+          - Board-selected
+        * - ``NRF52805_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52805`
+          - Board-selected
+        * - ``NRF52810_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52810`
+          - Board-selected
+        * - ``NRF52811_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52811`
+          - Board-selected
+        * - ``NRF52820_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52820`
+          - Board-selected
+        * - ``NRF52832_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52832`
+          - Board-selected
+        * - ``NRF52833_XXAA``
+          - :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF52833`
+          - Board-selected
+        * - ``NRF52840_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF52840`
+          - Board-selected
+        * - ``NRF5340_XXAA_APPLICATION``
+          - :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF5340_CPUAPP`
+          - Board-selected
+        * - ``NRF5340_XXAA_NETWORK``
+          - :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF5340_CPUNET`
+          - Board-selected
+        * - ``NRF54H20_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF54H20_CPURAD`, :kconfig:option:`CONFIG_SOC_NRF54H20_CPUPPR`, or :kconfig:option:`CONFIG_SOC_NRF54H20_CPUFLPR`
+          - Board-selected
+        * - ``NRF54L05_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54L05_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF54L05_CPUFLPR`
+          - Board-selected
+        * - ``DEVELOP_IN_NRF54L15``
+          - :kconfig:option:`CONFIG_SOC_NRF54L05_DEVELOP_IN_NRF54L15` or :kconfig:option:`CONFIG_SOC_NRF54L10_DEVELOP_IN_NRF54L15`
+          - Board-selected
+        * - ``NRF54L10_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54L10_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF54L10_CPUFLPR`
+          - Board-selected
+        * - ``NRF54L15_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54L15_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF54L15_CPUFLPR`, or :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF54L15`
+          - Board-selected
+        * - ``NRF54LC10A_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUFLPR`
+          - Board-selected
+        * - ``DEVELOP_IN_NRF54LM20B``
+          - :kconfig:option:`CONFIG_SOC_NRF54LM20A_DEVELOP_IN_NRF54LM20B`
+          - Board-selected
+        * - ``NRF54LM20A_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LM20A_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF54LM20A_CPUFLPR`, or :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF54LM20A`
+          - Board-selected
+        * - ``NRF7120_ENGA_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF7120_ENGA_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF7120_ENGA_CPUFLPR`, or :kconfig:option:`CONFIG_SOC_COMPATIBLE_NRF7120_ENGA`
+          - Board-selected
+        * - ``NRF54LM20B_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LM20B_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF54LM20B_CPUFLPR`
+          - Board-selected
+        * - ``NRF54LS05A_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LS05A_CPUAPP`
+          - Board-selected
+        * - ``DEVELOP_IN_NRF54LS05B``
+          - :kconfig:option:`CONFIG_SOC_NRF54LS05A_DEVELOP_IN_NRF54LS05B`
+          - Board-selected
+        * - ``NRF54LS05B_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LS05B_CPUAPP`
+          - Board-selected
+        * - ``NRF54LV10A_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF54LV10A_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF54LV10A_CPUFLPR`
+          - Board-selected
+        * - ``NRF9120_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF9120`
+          - Board-selected
+        * - ``NRF9160_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF9160`
+          - Board-selected
+        * - ``NRF9220_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF9251_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF9251_CPUPPR`, or :kconfig:option:`CONFIG_SOC_NRF9251_CPUFLPR`
+          - Board-selected
+        * - ``NRF9230_ENGB_XXAA``
+          - :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPURAD`, or :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUPPR`
+          - Board-selected
+        * - ``NRF_APPLICATION``
+          - Matching ``CONFIG_SOC_*_CPUAPP`` symbol for your board target (for example, :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF9251_CPUAPP`)
+          - Board-selected
+        * - ``NRF_FLPR``
+          - Matching ``CONFIG_SOC_*_CPUFLPR`` symbol for your board target (for example, :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUFLPR` or :kconfig:option:`CONFIG_SOC_NRF9251_CPUFLPR`)
+          - Board-selected
+        * - ``NRF_RADIOCORE``
+          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPURAD` or :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPURAD`
+          - Board-selected
+        * - ``NRF_PPR``
+          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPUPPR`, :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUPPR`, or :kconfig:option:`CONFIG_SOC_NRF9251_CPUPPR`
+          - Board-selected
+        * - ``NRF_TRUSTZONE_NONSECURE``
+          - :kconfig:option:`CONFIG_ARM_NONSECURE_FIRMWARE`
+          - Board-selected for non-secure firmware images
+        * - ``ENABLE_APPROTECT``
+          - :kconfig:option:`CONFIG_NRF_APPROTECT_LOCK`
+          - Kconfig
+        * - ``ENABLE_APPROTECT_USER_HANDLING``
+          - :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING`
+          - Kconfig
+        * - ``ENABLE_AUTHENTICATED_APPROTECT``
+          - :kconfig:option:`CONFIG_NRF_APPROTECT_USER_HANDLING`
+          - Set together with ``ENABLE_APPROTECT_USER_HANDLING``
+        * - ``ENABLE_SECURE_APPROTECT``
+          - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
+          - Kconfig
+        * - ``ENABLE_SECUREAPPROTECT``
+          - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_LOCK`
+          - Alias of ``ENABLE_SECURE_APPROTECT``
+        * - ``ENABLE_SECURE_APPROTECT_USER_HANDLING``
+          - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
+          - Kconfig
+        * - ``ENABLE_AUTHENTICATED_SECUREAPPROTECT``
+          - :kconfig:option:`CONFIG_NRF_SECURE_APPROTECT_USER_HANDLING`
+          - Set together with ``ENABLE_SECURE_APPROTECT_USER_HANDLING``
+        * - ``ENABLE_TRACE``
+          - :kconfig:option:`CONFIG_NRF_TRACE_PORT`
+          - Kconfig
+        * - ``ENABLE_SWO``
+          - :kconfig:option:`CONFIG_LOG_BACKEND_SWO`
+          - Kconfig
+        * - ``NRF_SKIP_FICR_NS_COPY_TO_RAM``
+          - :kconfig:option:`CONFIG_SOC_NRF5340_CPUAPP` or :kconfig:option:`CONFIG_SOC_SERIES_NRF91`
+          - Implicit for these targets, use Kconfig checks instead of the define
+        * - ``NRF_SKIP_CLOCK_CONFIGURATION``
+          - :kconfig:option:`CONFIG_NRF_SKIP_CLOCK_CONFIG`
+          - Kconfig
+        * - ``NRF_DISABLE_FICR_TRIMCNF``
+          - :kconfig:option:`CONFIG_SOC_NRF54LX_DISABLE_FICR_TRIMCNF`
+          - Kconfig
+        * - ``NRF_SKIP_TAMPC_SETUP``
+          - :kconfig:option:`CONFIG_SOC_NRF54LX_SKIP_TAMPC_SETUP`
+          - Kconfig
+        * - ``NRF_SKIP_GLITCHDETECTOR_DISABLE``
+          - :kconfig:option:`CONFIG_SOC_NRF54LX_SKIP_GLITCHDETECTOR_DISABLE`
+          - Kconfig
+        * - ``NRF54L_CONFIGURATION_56_ENABLE``
+          - :kconfig:option:`CONFIG_SOC_NRF54L_ANOMALY_56_WORKAROUND`
+          - Kconfig, enabled by default on nRF54L Series SoCs
+        * - ``NRF91_ERRATA_36_ENABLE_WORKAROUND``
+          - ``CONFIG_NRF91_ANOMALY_36_WORKAROUND``
+          - TF-M build configuration
+        * - ``NRF_CONFIG_NFCT_PINS_AS_GPIOS``
+          - ``nfct-pins-as-gpios`` property on the ``uicr`` or ``nfct`` devicetree node
+          - Devicetree
+        * - ``NRF_CONFIG_GPIO_AS_PINRESET``
+          - ``gpio-as-nreset`` property on the ``uicr`` devicetree node
+          - Devicetree
+        * - ``NRF_CONFIG_SWD_PINS_AS_GPIOS``
+          - ``swd-pins-as-gpios`` property on the ``tampc`` devicetree node
+          - Devicetree
+        * - ``NRF_CONFIG_CPU_FREQ_MHZ``
+          - Devicetree ``clock-frequency`` on the ``hfpll`` or ``cpuapp`` node, or :kconfig:option:`CONFIG_TFM_CPU_FREQ_MHZ` in TF-M builds
+          - Derived from devicetree or TF-M Kconfig
+
+     Alternatively, include :file:`mdk_config.h` in the source files that still need the HAL preprocessor symbols.
+     The header provides mapping between the Kconfig symbols or devicetree properties and corresponding HAL preprocessor symbols.
+
 Samples and applications
 ========================
 

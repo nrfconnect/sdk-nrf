@@ -17,6 +17,14 @@ static const struct gpio_dt_spec gpio_clk_spec =
 	GPIO_DT_SPEC_GET_BY_IDX(DT_PATH(zephyr_user), gpios, 0);
 
 #define GRTC_NODE DT_NODELABEL(grtc)
+
+/* SoCs without an fll16m instance take the HFCLK from the nordic,nrf-clock block,
+ * exposed as either an hfclk or an xo node depending on the SoC.
+ */
+#define HAS_NRF_CLOCK_HFCLK                                                                        \
+	(DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_clock_hfclk) ||                                      \
+	 DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf_clock_xo))
+
 #if DT_NODE_HAS_PROP(GRTC_NODE, clkout_fast_frequency_hz)
 static struct onoff_client clk_cli;
 static volatile bool clock_requested;
@@ -43,7 +51,7 @@ static const struct nrf_clock_spec fll16m_spec = {
 };
 static const struct nrf_clock_spec *clk_spec = &fll16m_spec;
 
-#elif defined(CONFIG_SOC_SERIES_NRF54L)
+#elif HAS_NRF_CLOCK_HFCLK
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 static struct onoff_manager *clk_mgr;
 #else
@@ -57,7 +65,7 @@ static const struct nrf_clock_spec *clk_spec;
 static int hf_clock_request(void)
 {
 	sys_notify_init_callback(&clk_cli.notify, clock_started_callback);
-#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || defined(CONFIG_SOC_SERIES_NRF54L)
+#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || HAS_NRF_CLOCK_HFCLK
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 	clock_control_subsys_t subsys = CLOCK_CONTROL_NRF_SUBSYS_HF;
 
@@ -72,7 +80,7 @@ static int hf_clock_request(void)
 
 static int hf_clock_release(void)
 {
-#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || defined(CONFIG_SOC_SERIES_NRF54L)
+#if DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(fll16m)) || HAS_NRF_CLOCK_HFCLK
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 	return onoff_release(clk_mgr);
 #else

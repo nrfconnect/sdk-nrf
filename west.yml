@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 8be6f7028a5d85affa45525d796b5c39a505744e
+      revision: f47f38b0b787ee6bc791e24df80f5c6f35c5c794
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 97ed202eb2b2969be6f18189f0871014c4a6d135
+      revision: 452b100ca9b5820ef177043df7e7eab450729ba3
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -183,7 +183,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 3ecdc40bc0a75cd5607bc357f578b494ab39317f
+      revision: e12fc2c422a3265f540761739118c5ade02bc69a
       groups:
         - find-my
     - name: azure-sdk-for-c

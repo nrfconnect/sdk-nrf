@@ -121,7 +121,7 @@ Developing with PMICs
 Developing with Front-End Modules
 =================================
 
-|no_changes_yet_note|
+* Removed support for the nRF2220 Front-End Module (FEM).
 
 Developing with custom boards
 =============================
@@ -142,6 +142,8 @@ Security
 
   * Oberon PSA Crypto from v2.0.0 to v2.1.0.
     The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
+  * nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto libraries to version v0.9.23.
+    Improved PSA driver error reporting and fixed an issue that caused incorrect authentication tag generation in GCM when multiple calls to :c:func:`psa_aead_update_ad` were made.
 
 Security libraries
 ------------------
@@ -592,10 +594,13 @@ Wi-Fi samples
     * Transport selection.
       The sample no longer defaults to MQTT.
       You must now explicitly select either the MQTT or the CoAP transport, using the new :file:`mqtt.conf` or the existing :file:`coap.conf` configuration file, respectively.
+    * By re-enabling the :kconfig:option:`CONFIG_NET_IPV6` Kconfig option in the :file:`coap.conf` file.
+      The option was previously disabled as a workaround for the slow IPv6-to-IPv4 fallback issue that has been fixed in :ref:`lib_nrf_cloud`.
 
   * Removed:
 
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
+    * Unused button functionality that only printed a log message.
 
 * Removed support from the following Zephyr samples:
 
@@ -624,7 +629,10 @@ Wi-Fi samples
 Other samples
 -------------
 
-* Added the :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
+* Added:
+
+  * The :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
+  * The :ref:`pulse_meas` sample that checks the pulse width of an externally provided signal.
 
 Drivers
 =======
@@ -749,6 +757,10 @@ Libraries for networking
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option adds the ``nrf_cloud_cred`` shell commands (``keygen``, ``csr``, ``delete``, and ``pubkey``).
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option (enabled by default) exports the on-device public key so that host tooling can verify the key against the device certificate.
       See :ref:`lib_nrf_cloud_credentials_keygen` for more information.
+
+  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+    This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
+    The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
 
 * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
@@ -879,6 +891,12 @@ The following list summarizes both the main changes inherited from upstream MCUb
   Only public key material is embedded in the bootloader image.
   This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
   MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
+
+* Updated:
+
+  * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
+  * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
+    The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
 
 Zephyr
 ======

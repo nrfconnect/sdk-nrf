@@ -14,12 +14,6 @@ function(b0_gen_keys)
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem)
   set(SIGNATURE_PUBLIC_KEY_FILE ${GENERATED_PATH}/public.pem PARENT_SCOPE)
 
-  if(CONFIG_PARTITION_MANAGER_ENABLED)
-    set(skip_size 0)
-  else()
-    set(skip_size ${CONFIG_SB_IMAGE_BOOT_OFFSET})
-  endif()
-
   if(SB_CONFIG_SECURE_BOOT_SIGNATURE_TYPE_ED25519)
     set(keygen_algorithm --algorithm ed25519)
   else()

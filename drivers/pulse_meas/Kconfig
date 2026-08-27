@@ -1,0 +1,37 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+DT_COMPAT_NORDIC_PULSE_MEAS := nordic,pulse-meas
+
+config PULSE_MEAS
+	bool "nRF pulse width measurement driver"
+	default y
+	depends on DT_HAS_NORDIC_PULSE_MEAS_ENABLED
+	select NRFX_GPIOTE
+	select NRFX_TIMER
+	select NRFX_GPPI
+	help
+	  Enable the pulse width measurement shim that uses GPIOTE, TIMER, and
+	  GPPI to measure pulse widths on two GPIO inputs.
+
+if PULSE_MEAS
+
+config PULSE_MEAS_INIT_PRIORITY
+	int "Pulse width measurement driver init priority"
+	default 50
+	help
+	  Device driver initialization priority.
+
+config PULSE_MEAS_USE_HFCLK
+	bool "Use HFCLK for pulse measurement"
+	help
+	  Use HFCLK for pulse measurement.
+
+module = PULSE_MEAS
+module-str = pulse measurement
+source "subsys/logging/Kconfig.template.log_config"
+
+endif

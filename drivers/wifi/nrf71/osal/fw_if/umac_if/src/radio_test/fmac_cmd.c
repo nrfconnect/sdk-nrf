@@ -23,7 +23,6 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 				      unsigned char op_band,
 				      bool beamforming,
 				      struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
-				      struct nrf_wifi_board_params *board_params,
 				      unsigned char *country_code)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;

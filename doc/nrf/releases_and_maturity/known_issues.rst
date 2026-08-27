@@ -3791,6 +3791,15 @@ NCSDK-20967: The :ref:`nrf_rpc_entropy_nrf53` sample does not work on the networ
 
   **Affected platforms:** nRF5340
 
+.. rst-class:: wontfix v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0
+
+NCSDK-34106: DFU malfunction if the application core is activated before network core
+  If you activate the application core image before the network core image when performing a firmware update using MCUmgr, MCUboot skips the network core update.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Maintain the correct order in which the boot flags are applied.
+
 Peripheral samples
 ==================
 
@@ -4152,6 +4161,13 @@ CIA-351: Connectivity issues with :ref:`lib_azure_iot_hub`
 
 Bluetooth libraries and services
 ================================
+
+.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0
+
+DRGN-29635: The :ref:`rrsp_readme` might deadlock when a link is lost while ranging data is in flight
+  When the :kconfig:option:`CONFIG_BT_RAS_RRSP_AUTO_ALLOC_INSTANCE` Kconfig option is enabled, the Ranging Responder might deadlock if the link is lost abruptly while ranging data is in flight.
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch (commit hash: ``8e05c69dcd75d36ddff6e854dfd6201ad947c22c``).
 
 .. _ncsdk_30288:
 
@@ -5613,6 +5629,11 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
+
+DRGN-29446: The controller could assert when an ACL connection was terminated or lost while a CIS connection was active
+  This would only occur when ``NSE > 1`` and high CPU load delayed fetching the disconnection complete event for the CIS.
+
 .. rst-class:: v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0
 
 DRGN-29306: Starting a high duty cycle directed advertiser causes subsequent undirected advertising events on the same advertising set to not use a random delay
@@ -7013,7 +7034,7 @@ KRKNWK-31038: Instruction trace reliability issues during ETM debugging on the n
 
   **Affected platforms:** nRF54H20
 
-.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
+.. rst-class:: wontfix v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
 NCSDK-28152: TPIU Trace Signal Skew on the nRF54H20 SoC
   Segger TPIU tracing on the nRF54H20 DK encounters instability due to a minimal skew between clock and data signals.

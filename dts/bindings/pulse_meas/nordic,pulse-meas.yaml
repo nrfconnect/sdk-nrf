@@ -1,0 +1,27 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: Nordic nRF pulse width measurement
+
+compatible: "nordic,pulse-meas"
+
+include: base.yaml
+
+properties:
+
+  timer-instance:
+    required: true
+    type: phandle
+    description: TIMER instance used for pulse width capture.
+
+  assert-gpios:
+    type: phandle-array
+    required: true
+    description:
+      GPIO for detectiong start of impulse.
+
+  deassert-gpios:
+    type: phandle-array
+    required: true
+    description:
+      GPIO for detecting end of impulse.

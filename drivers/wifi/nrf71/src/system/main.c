@@ -28,6 +28,8 @@
 
 #include <util.h>
 #include <common/fmac_util.h>
+#include <common/rf_params.h>
+#include <common/vtf.h>
 #include <system/main.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
@@ -49,7 +51,6 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
-
 
 /* 3 bytes for addreess, 3 bytes for length */
 #define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
@@ -100,7 +101,6 @@ static const unsigned int rx3_buf_sz = CONFIG_NRF71_RX_MAX_DATA_SIZE;
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 static K_MUTEX_DEFINE(reg_lock);
 
-
 static void nrf_wifi_event_proc_scan_start_zep(
 	void *if_priv,
 	struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
@@ -118,7 +118,6 @@ static void nrf_wifi_event_proc_scan_start_zep(
 	nrf_wifi_wpa_supp_event_proc_scan_start(if_priv);
 #endif /* CONFIG_NRF71_STA_MODE */
 }
-
 
 void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 				       struct nrf_wifi_umac_event_scan_done *scan_done_event,
@@ -268,7 +267,6 @@ static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
 }
 #endif /* CONFIG_NRF71_STA_MODE */
 
-
 void nrf_wifi_event_get_reg_zep(void *vif_ctx,
 				struct nrf_wifi_reg *get_reg_event,
 				unsigned int event_len)
@@ -399,7 +397,6 @@ out:
 	return ret;
 }
 
-
 #ifdef CONFIG_NRF71_STA_MODE
 void nrf_wifi_event_proc_cookie_rsp(void *vif_ctx,
 				    struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp_event,
@@ -510,6 +507,29 @@ void nrf_wifi_event_proc_channel_set_done_zep(void *os_vif_ctx,
 }
 #endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
 
+/**
+ * @brief Get operating band bitmap from Kconfig (see NRF_WIFI_OP_BAND_* in
+ * nrf71_wifi_ctrl.h / nrf71_wifi_common.h).
+ *
+ * @return Bitmap of bands (NRF_WIFI_OP_BAND_2GHZ, NRF_WIFI_OP_BAND_5GHZ,
+ *         NRF_WIFI_OP_BAND_6GHZ).
+ */
+unsigned char get_nrf_wifi_op_band(void)
+{
+	if (IS_ENABLED(CONFIG_NRF_WIFI_2G_BAND)) {
+		return NRF_WIFI_OP_BAND_2GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_5G_BAND)) {
+		return NRF_WIFI_OP_BAND_5GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_6G_BAND)) {
+		return NRF_WIFI_OP_BAND_6GHZ;
+	}
+	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
+		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
+	}
+	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
+}
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
 {
@@ -522,7 +542,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
-	struct nrf_wifi_board_params board_params;
 	unsigned int fw_ver = 0;
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
@@ -553,6 +572,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 		NRF_WIFI_UMAC_VER_MIN(fw_ver),
 		NRF_WIFI_UMAC_VER_EXTRA(fw_ver));
 
+	configure_tx_pwr_settings(&tx_pwr_ctrl_params,
+				  &tx_pwr_ceil_params);
+
 	status = nrf_wifi_fmac_config_rf_params(rpu_ctx_zep->rpu_ctx,
 						rpu_ctx_zep->phy_rf_params_addr);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -574,7 +596,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 		sleep_type,
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
 		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
-		&tx_pwr_ctrl_params, &tx_pwr_ceil_params, &board_params,
+		&tx_pwr_ctrl_params, &tx_pwr_ceil_params,
 		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
 			  rpu_ctx_zep->vtf_buffer_start_address);
 
@@ -792,8 +814,6 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 };
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
-
-
 #ifdef CONFIG_NRF71_STA_MODE
 static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.init = nrf_wifi_wpa_supp_dev_init,
@@ -831,7 +851,6 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 #endif /* CONFIG_NRF71_AP_MODE */
 };
 #endif /* CONFIG_NRF71_STA_MODE */
-
 
 #ifdef CONFIG_NET_L2_ETHERNET
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
