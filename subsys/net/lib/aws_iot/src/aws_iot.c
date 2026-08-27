@@ -209,8 +209,9 @@ static void aws_fota_cb_handler(struct aws_fota_event *fota_evt)
 		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERASE_DONE;
 		break;
 	case AWS_FOTA_EVT_ERROR:
-		LOG_ERR("AWS_FOTA_EVT_ERROR");
+		LOG_ERR("AWS_FOTA_EVT_ERROR, cause: %d", fota_evt->cause);
 		aws_iot_evt.type = AWS_IOT_EVT_FOTA_ERROR;
+		aws_iot_evt.data.err = (int)fota_evt->cause;
 		break;
 	case AWS_FOTA_EVT_DL_PROGRESS:
 		LOG_DBG("AWS_FOTA_EVT_DL_PROGRESS, (%d%%)", fota_evt->dl.progress);
