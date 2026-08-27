@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&led1 {
+	/* Move to other GPIO. */
+	gpios = <&gpio2 1 (GPIO_PULL_DOWN | GPIO_ACTIVE_HIGH)>;
+};
+
+&gpiote130 {
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
+};
