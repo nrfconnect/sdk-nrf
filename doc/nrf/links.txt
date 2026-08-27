@@ -141,6 +141,7 @@
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 .. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
 .. _`nrfx 4.0 migration note`: https://docs.nordicsemi.com/bundle/nrfx_4.0.1/page/md_doc_nrfx_4_0_migration_guide.html
+.. _`nrfx_gppi helper layer`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__gppi.html
 .. _`nrfx NVMC driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__nvmc.html
 .. _`nrfx SPIM driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__spim.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
