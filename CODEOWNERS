@@ -236,6 +236,8 @@
 /doc/nrf/libraries/security/trusted_storage.rst @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/shell/                 @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/index.rst              @nrfconnect/ncs-doc-leads
+/doc/nrf/peripherals_custom_drivers.rst   @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/peripherals_custom_drivers/*     @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/peripherals_drivers.rst          @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/peripherals_drivers/*            @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/protocols/aliro/                 @annwoj @b-gent
