@@ -167,3 +167,57 @@ tests:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups_two_cores_ppr"
     timeout: 120
     tags: ppk_power_measure
+
+  #
+  # nrf9251dk
+  #
+
+  benchmarks.multicore.idle_gpio.nrf9251dk_cpuapp_cpuppr.s2ram:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram
+      - SB_CONFIG_PPRCORE_REMOTE=y
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_simple"
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle_gpio.nrf9251dk_cpuapp_cpuppr.s2ram.wakeup_from_spi_mosi:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram
+      - EXTRA_DTC_OVERLAY_FILE="nrf9251dk_wakeup_from_spi_mosi_pin.overlay"
+      - SB_CONFIG_PPRCORE_WAKEUP_TRIGGER=y
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_consumption_with_spi_wakeups"
+    timeout: 120
+    tags: ppk_power_measure
+
+  benchmarks.multicore.idle_gpio.nrf9251dk_cpuapp_cpuppr.s2ram.wakeup_from_uart_pins:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=s2ram
+      - EXTRA_DTC_OVERLAY_FILE="nrf9251dk_wakeup_from_uart_pins.overlay"
+      - SB_CONFIG_PPRCORE_REMOTE=y
+      - remote_EXTRA_DTC_OVERLAY_FILE="nrf9251dk_wakeup_from_uart_pins.overlay"
+    harness: pytest
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups_two_cores_ppr"
+    timeout: 120
+    tags: ppk_power_measure
