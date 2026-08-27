@@ -4,7 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../boards/nrf9151dk_nrf9151.overlay"
+#include "../../app.overlay"
 
 / {
 	chosen {
