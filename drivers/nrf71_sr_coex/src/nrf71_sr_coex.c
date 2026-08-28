@@ -35,8 +35,8 @@
 #include <zephyr/logging/log.h>
 
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
-#include <nrf71_coex_if.h>
-#include <nrf71_cd_sr_if.h>
+#include <common/fw_if/nrf71_coex_if.h>
+#include <common/fw_if/nrf71_cd_sr_if.h>
 
 #include "nrf71_sr_coex_internal.h"
 

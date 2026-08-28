@@ -15,7 +15,7 @@
 #ifndef __NRF71_WIFI_DEBUG_STATS_H__
 #define __NRF71_WIFI_DEBUG_STATS_H__
 
-#include "common/pack_def.h"
+#include <common/fw_if/pack_def.h>
 
 /**
  *  @brief This enum defines various types of statistics.
