@@ -9,6 +9,7 @@
  * HAL Layer of the Wi-Fi driver in the system mode of operation.
  */
 
+#include <common/mem_mgmt.h>
 #include "queue.h"
 #include "common/hal_structs_common.h"
 #include "common/hal_api_common.h"
@@ -49,7 +50,7 @@ struct nrf_wifi_hal_dev_ctx *nrf_wifi_sys_hal_dev_add(struct nrf_wifi_hal_priv *
 {
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
 
-	hal_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*hal_dev_ctx));
+	hal_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*hal_dev_ctx));
 
 	if (!hal_dev_ctx) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate hal_dev_ctx",
@@ -131,7 +132,7 @@ event_q_free:
 cmd_q_free:
 	nrf_wifi_utils_ctrl_q_free(hal_dev_ctx->cmd_q);
 hal_dev_free:
-	nrf_wifi_osal_mem_free(hal_dev_ctx);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hal_dev_ctx);
 	hal_dev_ctx = NULL;
 err:
 	return NULL;

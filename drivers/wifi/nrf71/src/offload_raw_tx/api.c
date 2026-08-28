@@ -8,6 +8,7 @@
  * @brief File containing API definitions for the Offloaded raw TX feature.
  */
 
+#include <common/mem_mgmt.h>
 #include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
@@ -219,12 +220,14 @@ void nrf_wifi_off_raw_tx_deinit(void)
 
 	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
 		if (drv_ctx->phy_rf_params_addr[i]) {
-			nrf_wifi_osal_mem_free((void *)drv_ctx->phy_rf_params_addr[i]);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					   (void *)drv_ctx->phy_rf_params_addr[i]);
 			drv_ctx->phy_rf_params_addr[i] = 0;
 		}
 	}
 	if (drv_ctx->vtf_buffer_start_address) {
-		nrf_wifi_osal_mem_free((void *)drv_ctx->vtf_buffer_start_address);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)drv_ctx->vtf_buffer_start_address);
 		drv_ctx->vtf_buffer_start_address = 0;
 	}
 
@@ -309,19 +312,22 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 	struct nrf_wifi_offload_tx_ctrl *off_tx_params = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	k_spinlock_key_t key;
+	bool locked = false;
 
 	if (!conf) {
 		LOG_ERR("%s: Config params is NULL", __func__);
-		goto out;
+		return -1;
 	}
 
-	off_ctrl_params = nrf_wifi_osal_mem_zalloc(sizeof(*off_ctrl_params));
+	off_ctrl_params = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					      sizeof(*off_ctrl_params));
 	if (!off_ctrl_params) {
 		LOG_ERR("%s: Failed to allocate memory for off_ctrl_params", __func__);
-		goto out;
+		return -1;
 	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
+	locked = true;
 
 	fmac_dev_ctx = drv_ctx->rpu_ctx;
 
@@ -330,7 +336,7 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 		goto out;
 	}
 
-	off_tx_params = nrf_wifi_osal_mem_zalloc(sizeof(*off_tx_params));
+	off_tx_params = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*off_tx_params));
 	if (!off_tx_params) {
 		LOG_ERR("%s Failed to allocate memory for off_tx_params: ", __func__);
 		goto out;
@@ -381,9 +387,11 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 
 	ret = 0;
 out:
-	nrf_wifi_osal_mem_free(off_ctrl_params);
-	nrf_wifi_osal_mem_free(off_tx_params);
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_ctrl_params);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_tx_params);
+	if (locked) {
+		k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+	}
 	return ret;
 }
 

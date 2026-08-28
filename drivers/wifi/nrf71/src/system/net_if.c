@@ -9,6 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <stdlib.h>
 
 #ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
@@ -28,7 +29,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <common/fmac_util.h>
 #include <system/fmac_peer.h>
 #include <shim.h>
-#include <system/main.h>
+#include <system/core.h>
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
 #include <mac_addr.h>
@@ -563,7 +564,7 @@ static void ip_maddr_event_handler(struct net_if *iface,
 		goto unlock;
 	}
 
-	mcast_info = nrf_wifi_osal_mem_zalloc(sizeof(*mcast_info));
+	mcast_info = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*mcast_info));
 
 	if (!mcast_info) {
 		LOG_ERR("%s: Unable to allocate memory of size %d "
@@ -606,7 +607,7 @@ static void ip_maddr_event_handler(struct net_if *iface,
 					       mac_string_buf, sizeof(mac_string_buf)));
 	}
 unlock:
-	nrf_wifi_osal_mem_free(mcast_info);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, mcast_info);
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
 #endif /* CONFIG_NRF71_STA_MODE */
@@ -826,7 +827,8 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 	vif_ctx_zep->cookie_resp_received = false;
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	if (vif_ctx_zep->connect_scan_db_addr) {
-		nrf_wifi_osal_mem_free((void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 		vif_ctx_zep->connect_scan_db_addr = 0;
 	}
 	vif_ctx_zep->connect_scan_res_cnt = 0;
@@ -1477,7 +1479,7 @@ int nrf_wifi_stats_get(const struct device *dev,
 
 	memset(&stats, 0, sizeof(struct rpu_sys_op_stats));
 	/* Host statistics */
-	nrf_wifi_osal_mem_cpy(&stats.host,
+	nrf_wifi_mem_cpy(&stats.host,
 			      &sys_dev_ctx->host_stats,
 			      sizeof(sys_dev_ctx->host_stats));
 	zstats->pkts.tx = stats.host.total_tx_pkts;

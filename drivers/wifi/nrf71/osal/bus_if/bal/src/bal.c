@@ -10,6 +10,7 @@
  */
 
 
+#include <common/mem_mgmt.h>
 #include "bal_api.h"
 
 #ifdef NRF_WIFI_LOW_POWER
@@ -54,7 +55,7 @@ struct nrf_wifi_bal_dev_ctx *nrf_wifi_bal_dev_add(struct nrf_wifi_bal_priv *bpri
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_bal_dev_ctx *bal_dev_ctx = NULL;
 
-	bal_dev_ctx = nrf_wifi_osal_mem_zalloc(sizeof(*bal_dev_ctx));
+	bal_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*bal_dev_ctx));
 
 	if (!bal_dev_ctx) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate bal_dev_ctx", __func__);
@@ -76,7 +77,7 @@ struct nrf_wifi_bal_dev_ctx *nrf_wifi_bal_dev_add(struct nrf_wifi_bal_priv *bpri
 out:
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		if (bal_dev_ctx) {
-			nrf_wifi_osal_mem_free(bal_dev_ctx);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bal_dev_ctx);
 			bal_dev_ctx = NULL;
 		}
 	}
@@ -89,7 +90,7 @@ void nrf_wifi_bal_dev_rem(struct nrf_wifi_bal_dev_ctx *bal_dev_ctx)
 {
 	bal_dev_ctx->bpriv->ops->dev_rem(bal_dev_ctx->bus_dev_ctx);
 
-	nrf_wifi_osal_mem_free(bal_dev_ctx);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bal_dev_ctx);
 }
 
 
@@ -137,7 +138,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 {
 	struct nrf_wifi_bal_priv *bpriv = NULL;
 
-	bpriv = nrf_wifi_osal_mem_zalloc(sizeof(*bpriv));
+	bpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*bpriv));
 
 	if (!bpriv) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory for bpriv", __func__);
@@ -149,7 +150,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 	bpriv->ops = get_bus_ops();
 	if (!bpriv->ops) {
 		nrf_wifi_osal_log_err("%s: Bus ops not available", __func__);
-		nrf_wifi_osal_mem_free(bpriv);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bpriv);
 		bpriv = NULL;
 		goto out;
 	}
@@ -159,7 +160,7 @@ nrf_wifi_bal_init(struct nrf_wifi_bal_cfg_params *cfg_params,
 
 	if (!bpriv->bus_priv) {
 		nrf_wifi_osal_log_err("%s: Failed", __func__);
-		nrf_wifi_osal_mem_free(bpriv);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bpriv);
 		bpriv = NULL;
 	}
 
@@ -172,7 +173,7 @@ void nrf_wifi_bal_deinit(struct nrf_wifi_bal_priv *bpriv)
 {
 	bpriv->ops->deinit(bpriv->bus_priv);
 
-	nrf_wifi_osal_mem_free(bpriv);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, bpriv);
 }
 
 
