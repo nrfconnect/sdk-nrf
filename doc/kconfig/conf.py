@@ -30,7 +30,7 @@ version = "&nbsp;"
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions = ["zephyr.kconfig", "zephyr.external_content", "kconfigdiff"]
+extensions = ["zephyr.kconfig", "zephyr.external_content", "kconfigdiff", "sphinx_sitemap"]
 
 # Options for HTML output ------------------------------------------------------
 
@@ -40,6 +40,7 @@ html_title = project
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_baseurl = utils.get_baseurl("kconfig")
 
 html_theme_options = {
     "docset": "kconfig", "docsets": utils.ALL_DOCSETS,
@@ -63,6 +64,10 @@ kconfig_ext_paths = [ZEPHYR_BASE, NRF_BASE]
 kconfigdiff_should_build = False
 kconfigdiff_is_release = False
 kconfigdiff_versions = None
+
+# Options for sphinx_sitemap ---------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 # Adding NCS_ specific entries. Can be removed when the NCSDK-14227 improvement
 # task has been completed.

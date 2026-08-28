@@ -276,6 +276,8 @@ They can all be installed using the ``doc/requirements.txt`` file using ``pip``.
      - :ncs-tool-version:`SPHINX_NCS_THEME_VERSION`
    * - sphinx-notfound-page
      - :ncs-tool-version:`SPHINX_NOTFOUND_PAGE_VERSION`
+   * - sphinx-sitemap
+     - :ncs-tool-version:`SPHINX_SITEMAP_VERSION`
    * - sphinx-tabs
      - :ncs-tool-version:`SPHINX_TABS_VERSION`
    * - sphinx-togglebutton

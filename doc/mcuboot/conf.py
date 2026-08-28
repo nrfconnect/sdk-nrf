@@ -35,7 +35,8 @@ extensions = [
     "recommonmark",
     "sphinx_markdown_tables",
     "sphinxcontrib.jquery",
-    "zephyr.external_content"
+    "zephyr.external_content",
+    "sphinx_sitemap",
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
@@ -55,6 +56,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
 html_title = "MCUBoot (nRF Connect SDK)"
+html_baseurl = utils.get_baseurl("mcuboot")
 
 html_theme_options = {
     "docset": "mcuboot",
@@ -93,6 +95,10 @@ external_content_contents = [
     (MCUBOOT_BASE / "docs", "compression_format.md"),
     (MCUBOOT_BASE / "docs", "images/decomp.png"),
 ]
+
+# Options for sphinx_sitemap ---------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 
 def setup(app):
