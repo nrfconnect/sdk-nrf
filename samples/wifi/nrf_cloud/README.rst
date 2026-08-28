@@ -366,6 +366,12 @@ If you are certain you understand the inherent security risks, you can use this 
 
    Now, these certificates are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
 
+   .. note::
+      This works through the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option, which defaults to the :file:`nrf_cloud-certs.h` file found in the :file:`subsys/net/lib/nrf_cloud/common/include` folder.
+      That header pulls in :file:`ca-cert.pem`, :file:`client-cert.pem`, and :file:`private-key.pem` files using unqualified, quoted ``#include`` directives, so the preprocessor looks in its own directory first before falling back to the sample's :file:`certs` folder.
+      Because of this, if you ever place :file:`.pem` files directly in :file:`subsys/net/lib/nrf_cloud/common/include` (for example, while experimenting), they will silently take precedence over the ones in the sample's :file:`certs` folder.
+      Keep your :file:`.pem` files only in the sample's :file:`certs` folder, or point the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option at a header file of your own instead.
+
 #. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
 
    This is required for onboarding to succeed.
