@@ -71,9 +71,6 @@ static int send_request(const struct device *dev,
 {
 	struct sdhc_semmc_data *dev_data = dev->data;
 	const struct sdhc_semmc_config *dev_config = dev->config;
-	nrf_semmc_transfer_desc_t no_transfer = {
-		.buffer = NULL,
-	};
 	k_timeout_t timeout;
 	nrf_semmc_error_t err;
 	int rc;
@@ -82,10 +79,6 @@ static int send_request(const struct device *dev,
 		timeout = K_FOREVER;
 	} else {
 		timeout = K_MSEC(timeout_ms);
-	}
-
-	if (semmc_transfer == NULL) {
-		semmc_transfer = &no_transfer;
 	}
 
 	k_sem_reset(&dev_data->finished);
@@ -180,15 +173,17 @@ static int _api_request(const struct device *dev,
 	}
 
 	if (data) {
+		bool write = cmd->opcode == SD_WRITE_SINGLE_BLOCK ||
+			     cmd->opcode == SD_WRITE_MULTIPLE_BLOCK;
 		nrf_semmc_transfer_desc_t transfer = {
 			.block_size = data->block_size,
 			.num_blocks = data->blocks,
+			.transfer_direction = write ? NRF_SEMMC_WRITE
+						    : NRF_SEMMC_READ,
 		};
 		uint32_t buf_size = data->blocks * data->block_size;
-		bool out_buf = cmd->opcode == SD_WRITE_SINGLE_BLOCK ||
-			       cmd->opcode == SD_WRITE_MULTIPLE_BLOCK;
 
-		if (out_buf) {
+		if (write) {
 			rc = dmm_buffer_out_prepare(dev_config->mem_reg,
 						    data->data,
 						    buf_size,
@@ -206,7 +201,7 @@ static int _api_request(const struct device *dev,
 
 		rc = send_request(dev, &semmc_cmd, &transfer, data->timeout_ms);
 
-		if (out_buf) {
+		if (write) {
 			(void)dmm_buffer_out_release(dev_config->mem_reg,
 						     transfer.buffer);
 		} else {
