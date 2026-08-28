@@ -11,6 +11,11 @@ Updating |ISE|
 .. caution::
    You cannot update |ISE| from a SUIT-based (up to 0.9.6) to an |ISE|-based (20.0.0 and onwards) version.
 
+.. caution::
+   Do not update |ISE| Recovery on a snapshot-enabled device.
+   Updating |ISE| Recovery unintentionally triggers snapshot recovery and restores the device to its pre-update state.
+   For more information, see :ref:`ug_nrf54h20_ironside_se_snapshot_limitation_se3`.
+
 The application initiates the update operation at runtime through the |ISE|'s :ref:`update service <ug_nrf54h20_ironside_se_update_service>`.
 
 .. _ug_nrf54h20_ironside_se_deliverables:
@@ -37,7 +42,10 @@ The archive is used to update the existing |ISE| firmware on the nRF54H20 and co
      - Used when updating |ISE|.
    * - IronSide SE Recovery update firmware
      - :file:`ironside_se_recovery_update.hex`
-     - The recovery firmware, reserved for future recovery operations. Currently, it does not provide user-facing functionality. Used when updating the recovery firmware.
+     - The recovery firmware, reserved for future recovery operations.
+       Currently, it does not provide user-facing functionality.
+       This file is used when updating the recovery firmware.
+       Do not use this file on a snapshot-enabled device.
    * - Update application
      - :file:`update_application.hex`
      - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
@@ -87,6 +95,7 @@ Manual update
     The |NCS| defines the west ``ncs-ironside-se-update`` command to update |ISE| firmware on a device via the debugger.
 
     This command takes the nRF54H20 IronSide SE binaries ZIP file and uses the |ISE| update service to update both the |ISE| and |ISE| Recovery (or optionally just one of them):
+    On a snapshot-enabled device, update only |ISE|.
 
     .. code-block:: console
 
@@ -141,7 +150,7 @@ Manual update
 
           nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
-    #. If you are updating both slots, complete the following additional steps:
+    #. If snapshot is not enabled and you are updating both slots, complete the following additional steps:
 
        a. Program the |ISE| Recovery update firmware:
 

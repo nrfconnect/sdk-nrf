@@ -22,37 +22,39 @@ Additional details about the UICR error are written to the :ref:`boot report <ug
 
 The following UICR fields are supported:
 
-+----------------------+---------------------------------------------------------------------+
-| UICR Field           | Description                                                         |
-+======================+=====================================================================+
-| UICR.VERSION         | A 32-bit value that encodes the UICR format version (16-bit major   |
-|                      | and 16-bit minor).                                                  |
-+----------------------+---------------------------------------------------------------------+
-| UICR.LOCK            | Locks all contents of NVR0, preventing any further writes without   |
-|                      | performing an ERASEALL operation.                                   |
-+----------------------+---------------------------------------------------------------------+
-| UICR.APPROTECT       | Configures debugger and access-port permissions for each AP via the |
-|                      | TAMPC peripheral.                                                   |
-+----------------------+---------------------------------------------------------------------+
-| UICR.ERASEPROTECT    | Blocks ERASEALL commands to NVR0.                                   |
-+----------------------+---------------------------------------------------------------------+
-| UICR.PROTECTEDMEM    | Defines the size (in 4 KiB blocks) of an integrity-checked memory   |
-|                      | region at the start of the application-owned part of MRAM.          |
-+----------------------+---------------------------------------------------------------------+
-| UICR.PERIPHCONF      | Points to an array of key-value entries used to initialize approved |
-|                      | global peripherals.                                                 |
-+----------------------+---------------------------------------------------------------------+
-| UICR.MPCCONF         | Not supported yet.                                                  |
-+----------------------+---------------------------------------------------------------------+
-| UICR.WDTSTART        | Configures automatic start of a local watchdog timer before the     |
-|                      | application core is booted, providing early system protection.      |
-+----------------------+---------------------------------------------------------------------+
-| UICR.SECURESTORAGE   | Defines secure storage configuration including address, and         |
-|                      | partition sizes for cryptographic and ITS services.                 |
-+----------------------+---------------------------------------------------------------------+
-| UICR.SECONDARY       | Configures secondary firmware boot settings including processor     |
-|                      | selection, triggers, memory protection, and peripheral access.      |
-+----------------------+---------------------------------------------------------------------+
++-----------------------+---------------------------------------------------------------------+
+| UICR Field            | Description                                                         |
++=======================+=====================================================================+
+| UICR.VERSION          | A 32-bit value that encodes the UICR format version (16-bit major   |
+|                       | and 16-bit minor).                                                  |
++-----------------------+---------------------------------------------------------------------+
+| UICR.LOCK             | Locks all contents of NVR0, preventing any further writes without   |
+|                       | performing an ERASEALL operation.                                   |
++-----------------------+---------------------------------------------------------------------+
+| UICR.APPROTECT        | Configures debugger and access-port permissions for each AP via the |
+|                       | TAMPC peripheral.                                                   |
++-----------------------+---------------------------------------------------------------------+
+| UICR.ERASEPROTECT     | Blocks ERASEALL commands to NVR0.                                   |
++-----------------------+---------------------------------------------------------------------+
+| UICR.PROTECTEDMEM     | Defines the size (in 4 KiB blocks) of an integrity-checked memory   |
+|                       | region at the start of the application-owned part of MRAM.          |
++-----------------------+---------------------------------------------------------------------+
+| UICR.PERIPHCONF       | Points to an array of key-value entries used to initialize approved |
+|                       | global peripherals.                                                 |
++-----------------------+---------------------------------------------------------------------+
+| UICR.MPCCONF          | Not supported yet.                                                  |
++-----------------------+---------------------------------------------------------------------+
+| UICR.WDTSTART         | Configures automatic start of a local watchdog timer before the     |
+|                       | application core is booted, providing early system protection.      |
++-----------------------+---------------------------------------------------------------------+
+| UICR.SECURESTORAGE    | Defines secure storage configuration including address, and         |
+|                       | partition sizes for cryptographic and ITS services.                 |
++-----------------------+---------------------------------------------------------------------+
+| UICR.SNAPSHOT_REGIONS | Defines up to seven application-defined MRAM snapshot regions.      |
++-----------------------+---------------------------------------------------------------------+
+| UICR.SECONDARY        | Configures secondary firmware boot settings including processor     |
+|                       | selection, triggers, memory protection, and peripheral access.      |
++-----------------------+---------------------------------------------------------------------+
 
 .. note::
    If no UICR values are programmed, |ISE| applies a set of :ref:`default configurations <ug_nrf54h20_ironside_se_protecting>`.
@@ -174,6 +176,8 @@ The UICR Kconfig options are listed below, and are defined with more detailed Kc
      - Generate a PERIPHCONF hex in addition to the UICR hex
    * - :kconfig:option:`CONFIG_GEN_UICR_SECURESTORAGE`
      - Enable UICR.SECURESTORAGE
+   * - :kconfig:option:`CONFIG_GEN_UICR_SNAPSHOT_REGIONS`
+     - Enable UICR.SNAPSHOT_REGIONS
    * - :kconfig:option:`CONFIG_GEN_UICR_LOCK`
      - Enable UICR.LOCK
    * - :kconfig:option:`CONFIG_GEN_UICR_ERASEPROTECT`
@@ -652,3 +656,22 @@ UICR.SECURESTORAGE.ITS
 
   UICR.SECURESTORAGE.ITS.RADIOCORESIZE1KB
     Sets the size of the ``RADIOCORE`` domain partition for ITS, specified in 1 kiB blocks.
+
+.. _ug_nrf54h20_ironside_se_uicr_snapshot_regions:
+
+UICR.SNAPSHOT_REGIONS
+---------------------
+
+Enable :kconfig:option:`CONFIG_GEN_UICR_SNAPSHOT_REGIONS` to configure application-defined snapshot regions in the generated UICR image.
+You can configure up to seven regions, using indices ``0`` through ``6``.
+
+For each region index ``<n>``, configure the following options:
+
+* ``CONFIG_GEN_UICR_SNAPSHOT_REGION_<n>`` enables the region entry.
+* ``CONFIG_GEN_UICR_SNAPSHOT_REGION_<n>_ADDRESS`` specifies its start address.
+* ``CONFIG_GEN_UICR_SNAPSHOT_REGION_<n>_SIZE_BYTES`` specifies its size in bytes.
+
+The start address and size of each region must be aligned to 1 KiB.
+Configure one, three, five, or seven regions to avoid the boot loop described in :ref:`ug_nrf54h20_ironside_se_snapshot_limitation_se4`.
+For all region requirements and provisioning limitations, see :ref:`ug_nrf54h20_ironside_se_snapshot_regions`.
+For a complete configuration example, see :ref:`ironside_se_snapshot_capture_recover`.
