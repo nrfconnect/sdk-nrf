@@ -1104,7 +1104,9 @@ static int nrf9x_socket_offload_close(void *obj)
 	int retval;
 
 	retval = nrf_close(ctx->nrf_fd);
-	if (retval == 0) {
+
+	/* Do not keep the context if the library is no longer aware of the fd. */
+	if ((retval == 0) || (errno == EBADF)) {
 		release_ctx(ctx);
 	}
 
