@@ -27,42 +27,9 @@
 #include "osal_ops.h"
 #include "common/hal_structs_common.h"
 
-LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct zep_shim_intr_priv *intr_priv;
-
-static int zep_shim_pr_dbg(const char *fmt, va_list args)
-{
-	static char buf[80];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_DBG("%s", buf);
-
-	return 0;
-}
-
-static int zep_shim_pr_info(const char *fmt, va_list args)
-{
-	static char buf[80];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_INF("%s", buf);
-
-	return 0;
-}
-
-static int zep_shim_pr_err(const char *fmt, va_list args)
-{
-	static char buf[256];
-
-	vsnprintf(buf, sizeof(buf), fmt, args);
-
-	LOG_ERR("%s", buf);
-
-	return 0;
-}
 
 static unsigned long zep_shim_time_get_curr_us(void)
 {
@@ -128,13 +95,13 @@ static int ipc_send_msg(unsigned int msg_type, void *msg, unsigned int len)
 		ctx.ept = IPC_EPT_LMAC;
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s: Invalid msg_type (%d)", __func__, msg_type);
+		LOG_ERR("%s: Invalid msg_type (%d)", __func__, msg_type);
 		goto out;
 	};
 
 	ret = dev->send(ctx, msg, len);
 	if (ret < 0) {
-		nrf_wifi_osal_log_err("%s: Sending message to RPU failed\n", __func__);
+		LOG_ERR("%s: Sending message to RPU failed\n", __func__);
 		goto out;
 	}
 
@@ -281,10 +248,6 @@ static unsigned int zep_shim_strlen(const void *str)
 }
 
 const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops = {
-	.log_dbg = zep_shim_pr_dbg,
-	.log_info = zep_shim_pr_info,
-	.log_err = zep_shim_pr_err,
-
 	.delay_us = k_usleep,
 	.time_get_curr_us = zep_shim_time_get_curr_us,
 	.time_elapsed_us = zep_shim_time_elapsed_us,

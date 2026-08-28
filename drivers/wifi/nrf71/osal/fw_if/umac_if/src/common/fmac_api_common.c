@@ -16,6 +16,9 @@
 #include "common/fmac_cmd_common.h"
 #include "util.h"
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 
 void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv)
@@ -53,17 +56,17 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	unsigned int count = 0;
 
 	if (!fmac_dev_ctx || !reg_info) {
-		nrf_wifi_osal_log_err("%s: Invalid parameters",
+		LOG_ERR("%s: Invalid parameters",
 				      __func__);
 		goto err;
 	}
 
-	nrf_wifi_osal_log_dbg("%s: Get regulatory information", __func__);
+	LOG_DBG("%s: Get regulatory information", __func__);
 
 	get_reg_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*get_reg_cmd));
 
 	if (!get_reg_cmd) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
+		LOG_ERR("%s: Unable to allocate memory",
 				      __func__);
 		goto err;
 	}
@@ -79,7 +82,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 			      sizeof(*get_reg_cmd));
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Failed to get regulatory information",	__func__);
+		LOG_ERR("%s: Failed to get regulatory information",	__func__);
 		goto err;
 	}
 
@@ -88,7 +91,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	} while (count++ < 100 && !fmac_dev_ctx->alpha2_valid);
 
 	if (!fmac_dev_ctx->alpha2_valid) {
-		nrf_wifi_osal_log_err("%s: Failed to get regulatory information",
+		LOG_ERR("%s: Failed to get regulatory information",
 				      __func__);
 		goto err;
 	}
@@ -123,7 +126,7 @@ enum nrf_wifi_status nrf_wifi_fmac_stats_reset(struct nrf_wifi_fmac_dev_ctx *fma
 		 (count++ < NRF_WIFI_FMAC_STATS_RECV_TIMEOUT));
 
 	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
-		nrf_wifi_osal_log_err("%s: Timed out",
+		LOG_ERR("%s: Timed out",
 				      __func__);
 		goto out;
 	}
@@ -158,19 +161,19 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	struct nrf_wifi_event_regulatory_change *reg_change = NULL;
 
 	if (!fmac_dev_ctx || !reg_info) {
-		nrf_wifi_osal_log_err("%s: Invalid parameters",
+		LOG_ERR("%s: Invalid parameters",
 				      __func__);
 		goto out;
 	}
 
-	nrf_wifi_osal_log_dbg("%s: Setting regulatory information: %c%c", __func__,
+	LOG_DBG("%s: Setting regulatory information: %c%c", __func__,
 			      reg_info->alpha2[0],
 			      reg_info->alpha2[1]);
 
 	/* No change event from UMAC for same regd */
 	status = nrf_wifi_fmac_get_reg(fmac_dev_ctx, &cur_reg_info);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Failed to get current regulatory information",
+		LOG_ERR("%s: Failed to get current regulatory information",
 				      __func__);
 		goto out;
 	}
@@ -178,7 +181,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	if (nrf_wifi_mem_cmp(cur_reg_info.alpha2,
 				  reg_info->alpha2,
 				  NRF_WIFI_COUNTRY_CODE_LEN) == 0) {
-		nrf_wifi_osal_log_dbg("%s: Regulatory domain already set to %c%c",
+		LOG_DBG("%s: Regulatory domain already set to %c%c",
 				      __func__,
 				      reg_info->alpha2[0],
 				      reg_info->alpha2[1]);
@@ -189,7 +192,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	set_reg_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*set_reg_cmd));
 
 	if (!set_reg_cmd) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
+		LOG_ERR("%s: Unable to allocate memory",
 				      __func__);
 		goto out;
 	}
@@ -222,19 +225,19 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 			      set_reg_cmd,
 			      sizeof(*set_reg_cmd));
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Failed to set regulatory information",
+		LOG_ERR("%s: Failed to set regulatory information",
 				      __func__);
 		goto out;
 	}
 
 	fmac_dev_ctx->reg_set_status = false;
-	nrf_wifi_osal_log_dbg("%s: Waiting for regulatory domain change event", __func__);
+	LOG_DBG("%s: Waiting for regulatory domain change event", __func__);
 	while (!fmac_dev_ctx->reg_set_status && count++ <= max_count) {
 		k_msleep(100);
 	}
 
 	if (!fmac_dev_ctx->reg_set_status) {
-		nrf_wifi_osal_log_err("%s: Failed to set regulatory information",
+		LOG_ERR("%s: Failed to set regulatory information",
 				      __func__);
 		status = NRF_WIFI_STATUS_FAIL;
 		goto out;
@@ -244,7 +247,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	reg_change = fmac_dev_ctx->reg_change;
 
 	if (reg_change->intr != exp_initiator) {
-		nrf_wifi_osal_log_err("%s: Non-user initiated reg domain change: exp: %d, got: %d",
+		LOG_ERR("%s: Non-user initiated reg domain change: exp: %d, got: %d",
 				      __func__,
 				      exp_initiator,
 				      reg_change->intr);
@@ -253,7 +256,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	}
 
 	if (reg_change->regulatory_type != exp_reg_type) {
-		nrf_wifi_osal_log_err("%s: Unexpected reg domain change: exp: %d, got: %d",
+		LOG_ERR("%s: Unexpected reg domain change: exp: %d, got: %d",
 				      __func__,
 				      exp_reg_type,
 				      reg_change->regulatory_type);
@@ -265,7 +268,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		 nrf_wifi_mem_cmp(reg_change->nrf_wifi_alpha2,
 				       exp_alpha2,
 				       NRF_WIFI_COUNTRY_CODE_LEN) != 0) {
-		nrf_wifi_osal_log_err("%s: Unexpected alpha2 reg domain change: "
+		LOG_ERR("%s: Unexpected alpha2 reg domain change: "
 				      "exp: %c%c, got: %c%c",
 				      __func__,
 				      exp_alpha2[0],
