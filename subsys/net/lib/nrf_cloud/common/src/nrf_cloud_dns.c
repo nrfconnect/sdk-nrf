@@ -181,40 +181,40 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 	 * IPv6 address, even if both IPv4 and IPv6 are available.
 	 */
 
-#if defined(CONFIG_NET_IPV6)
-	if (!ipv6_ready()) {
-		LOG_DBG("Skipping IPv6 for %s; no local IPv6 address", hostname);
-	} else {
-		LOG_DBG("Trying IPv6 addresses for %s", hostname);
-
-		hints->ai_family = AF_INET6;
-		sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
-
-		if (sock >= 0) {
-			goto out;
+	if (IS_ENABLED(CONFIG_NET_IPV6)) {
+		if (!ipv6_ready()) {
+			LOG_DBG("Skipping IPv6 for %s; no local IPv6 address", hostname);
 		} else {
-			LOG_DBG("Could not connect over IPv6 to %s, falling back to IPv4",
-				hostname);
+			LOG_DBG("Trying IPv6 addresses for %s", hostname);
+
+			hints->ai_family = AF_INET6;
+			sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
+
+			if (sock >= 0) {
+				goto out;
+			} else {
+				LOG_DBG("Could not connect over IPv6 to %s, falling back to IPv4",
+					hostname);
+			}
 		}
 	}
-#endif /* defined (CONFIG_NET_IPV6) */
 
-#if defined(CONFIG_NET_IPV4) && !defined(CONFIG_NRF_CLOUD_IPV6)
-	if (!ipv4_ready()) {
-		LOG_DBG("Skipping IPv4 for %s; no local IPv4 address", hostname);
-	} else {
-		LOG_DBG("Trying IPv4 addresses for %s", hostname);
-
-		hints->ai_family = AF_INET;
-		sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
-
-		if (sock >= 0) {
-			goto out;
+	if (IS_ENABLED(CONFIG_NET_IPV4) && !IS_ENABLED(CONFIG_NRF_CLOUD_IPV6)) {
+		if (!ipv4_ready()) {
+			LOG_DBG("Skipping IPv4 for %s; no local IPv4 address", hostname);
 		} else {
-			LOG_DBG("Could not connect over IPv4 to %s", hostname);
+			LOG_DBG("Trying IPv4 addresses for %s", hostname);
+
+			hints->ai_family = AF_INET;
+			sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
+
+			if (sock >= 0) {
+				goto out;
+			} else {
+				LOG_DBG("Could not connect over IPv4 to %s", hostname);
+			}
 		}
 	}
-#endif /* defined (CONFIG_NET_IPV4) */
 
 out:
 	if (sock < 0) {
