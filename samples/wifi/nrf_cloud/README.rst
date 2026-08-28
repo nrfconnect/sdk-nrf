@@ -360,9 +360,9 @@ If you are certain you understand the inherent security risks, you can use this 
 
 1. Follow the instructions under :ref:`wifi_nrf_cloud_onboard_hardcoded`.
 
-#. Create a :file:`certs` folder directly in the :file:`wifi_nrf_cloud` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem`, and :file:`ca-cert.pem` files into it.
+#. Create a :file:`certs` folder directly in the :file:`samples/wifi/nrf_cloud` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem`, and :file:`ca-cert.pem` files into it.
 
-   Make sure not to place the new folder in the :file:`wifi_nrf_cloud/src` folder by accident.
+   Make sure not to place the new folder in the :file:`samples/wifi/nrf_cloud/src` folder by accident.
 
    Now, these certificates are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
 
