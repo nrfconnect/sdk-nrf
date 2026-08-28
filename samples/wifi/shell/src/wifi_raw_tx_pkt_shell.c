@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(raw_tx_pkt, CONFIG_LOG_DEFAULT_LEVEL);
 #define IEEE80211_SEQ_CTRL_SEQ_NUM_MASK 0xFFF0
 #define IEEE80211_SEQ_NUMBER_INC BIT(4) /* 0-3 is fragment number */
 #define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678
+#define AGGR_DISABLE 0
+#define AGGR_ENABLE  1
+#define RAW_TX_MAX_AGG_FRAMES 16
 
 /* TODO: Copied from nRF70 Wi-Fi driver, need to be moved to a common place */
 
@@ -52,7 +55,9 @@ struct raw_tx_pkt_header {
 	unsigned short packet_length;
 	unsigned char tx_mode;
 	unsigned char queue;
-	unsigned char reserved[3];
+	unsigned char aggregation;
+	unsigned char num_frames;
+	unsigned char reserved;
 } __packed;
 
 struct raw_tx_pkt_header raw_tx_pkt;
@@ -101,14 +106,17 @@ static struct beacon test_beacon_frame = {
 	}
 };
 
-void fill_raw_tx_pkt_hdr(int rate_flags, int data_rate, int queue_num)
+void fill_raw_tx_pkt_hdr(int rate_flags, int data_rate, int queue_num,
+			 int aggregation, int num_frames)
 {
 	raw_tx_pkt.magic_num = NRF_WIFI_MAGIC_NUM_RAWTX;
 	raw_tx_pkt.data_rate = data_rate;
 	raw_tx_pkt.packet_length = sizeof(test_beacon_frame);
 	raw_tx_pkt.tx_mode = rate_flags;
 	raw_tx_pkt.queue = queue_num;
-	memset(raw_tx_pkt.reserved, 0, sizeof(raw_tx_pkt.reserved));
+	raw_tx_pkt.aggregation = (unsigned char)aggregation;
+	raw_tx_pkt.num_frames = (unsigned char)num_frames;
+	raw_tx_pkt.reserved = 0;
 }
 
 int validate(int value, int min, int max, const char *param)
@@ -235,7 +243,8 @@ static void send_packet(const char *transmission_mode,
 static int parse_raw_tx_configure_args(const struct shell *sh,
 				       size_t argc,
 				       char *argv[],
-				       int *flags, int *rate, int *queue)
+				       int *flags, int *rate, int *queue,
+				       int *aggregation, int *num_frames)
 {
 	struct sys_getopt_state *state;
 	int opt;
@@ -243,12 +252,22 @@ static int parse_raw_tx_configure_args(const struct shell *sh,
 		{"rate-flags", sys_getopt_required_argument, 0, 'f'},
 		{"data-rate", sys_getopt_required_argument, 0, 'd'},
 		{"queue-number", sys_getopt_required_argument, 0, 'q'},
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+		{"aggregation", sys_getopt_required_argument, 0, 'g'},
+		{"num-frames", sys_getopt_required_argument, 0, 'F'},
+#endif
 		{"help", sys_getopt_no_argument, 0, 'h'},
 		{0, 0, 0, 0}};
 	int opt_index = 0;
 	int opt_num = 0;
 
-	while ((opt = sys_getopt_long(argc, argv, "f:d:q:h", long_options, &opt_index)) != -1) {
+	while ((opt = sys_getopt_long(argc, argv,
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+				     "f:d:q:g:F:h",
+#else
+				     "f:d:q:h",
+#endif
+				     long_options, &opt_index)) != -1) {
 		state = sys_getopt_state_get();
 		switch (opt) {
 		case 'f':
@@ -273,6 +292,22 @@ static int parse_raw_tx_configure_args(const struct shell *sh,
 			}
 			opt_num++;
 			break;
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+		case 'g':
+			*aggregation = atoi(state->optarg);
+			if (!validate(*aggregation, AGGR_DISABLE, AGGR_ENABLE, "Aggregation")) {
+				return -ENOEXEC;
+			}
+			opt_num++;
+			break;
+		case 'F':
+			*num_frames = atoi(state->optarg);
+			if (!validate(*num_frames, 1, RAW_TX_MAX_AGG_FRAMES, "Num Frames")) {
+				return -ENOEXEC;
+			}
+			opt_num++;
+			break;
+#endif
 		case'h':
 			shell_help(sh);
 			opt_num++;
@@ -293,11 +328,17 @@ static int cmd_configure_raw_tx_pkt(
 		size_t argc,
 		char *argv[])
 {
-	int opt_num, rate_flags = -1, data_rate = -1, queue_num = -1;
+	int opt_num;
+	int rate_flags = raw_tx_pkt.tx_mode;
+	int data_rate = raw_tx_pkt.data_rate;
+	int queue_num = raw_tx_pkt.queue;
+	int aggregation = raw_tx_pkt.aggregation;
+	int num_frames = raw_tx_pkt.num_frames;
 
-	if (argc == 7) {
+	if (argc > 1) {
 		opt_num = parse_raw_tx_configure_args(sh, argc, argv, &rate_flags,
-						      &data_rate, &queue_num);
+						      &data_rate, &queue_num,
+						      &aggregation, &num_frames);
 		if (opt_num < 0) {
 			shell_help(sh);
 			return -ENOEXEC;
@@ -307,10 +348,26 @@ static int cmd_configure_raw_tx_pkt(
 		}
 	}
 
+#ifndef CONFIG_NRF70_RAW_DATA_TX
+	aggregation = AGGR_DISABLE;
+	num_frames = 1;
+#else
+	if (aggregation == AGGR_DISABLE) {
+		num_frames = 1;
+	} else if (num_frames < 1) {
+		num_frames = 4;
+	}
+#endif
+
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+	LOG_INF("Rate-flags: %d Data-rate:%d queue-num:%d aggregation:%d num-frames:%d",
+		rate_flags, data_rate, queue_num, aggregation, num_frames);
+#else
 	LOG_INF("Rate-flags: %d Data-rate:%d queue-num:%d",
 		rate_flags, data_rate, queue_num);
+#endif
 
-	fill_raw_tx_pkt_hdr(rate_flags, data_rate, queue_num);
+	fill_raw_tx_pkt_hdr(rate_flags, data_rate, queue_num, aggregation, num_frames);
 
 	return 0;
 }
@@ -462,10 +519,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      "[-f, --rate-flags] : Rate flag value.\n"
 		      "[-d, --data-rate] : Data rate value.\n"
 		      "[-q, --queue-number] : Queue number.\n"
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+		      "[-g, --aggregation] : Aggregation (0=disable, 1=enable, nRF70 only).\n"
+		      "[-F, --num-frames] : MPDUs to aggregate when enabled (1-16, nRF70 only).\n"
+#endif
 		      "[-h, --help] : Print out the help for the configure command\n"
-		      "Usage: raw_tx configure -f 0 -d 9 -q 1\n",
+		      "Usage: raw_tx configure -f 1 -d 7 -q 1"
+#ifdef CONFIG_NRF70_RAW_DATA_TX
+		      " -g 1 -F 4"
+#endif
+		      "\n",
 		      cmd_configure_raw_tx_pkt,
-		      7, 0),
+		      1, 10),
 	SHELL_CMD_ARG(send, NULL,
 		      "Send raw TX packet\n"
 		      "This command may be used to send raw TX packets\n"

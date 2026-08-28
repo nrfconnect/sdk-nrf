@@ -35,6 +35,8 @@ LOG_MODULE_REGISTER(raw_tx_packet, CONFIG_LOG_DEFAULT_LEVEL);
 #define IEEE80211_SEQ_CTRL_SEQ_NUM_MASK 0xFFF0
 #define IEEE80211_SEQ_NUMBER_INC BIT(4) /* 0-3 is fragment number */
 #define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678
+#define AGGR_DISABLE 0
+#define AGGR_ENABLE  1
 
 static struct net_mgmt_event_callback net_iface_mgmt_cb;
 K_SEM_DEFINE(wait_for_oper_up, 0, 1);
@@ -91,7 +93,9 @@ struct raw_tx_pkt_header {
 	unsigned short packet_length;
 	unsigned char tx_mode;
 	unsigned char queue;
-	unsigned char reserved[3];
+	unsigned char aggregation;
+	unsigned char num_frames;
+	unsigned char reserved;
 } __packed;
 
 #ifdef CONFIG_RAW_TX_PKT_SAMPLE_NON_CONNECTED_MODE
@@ -312,8 +316,15 @@ static void fill_raw_tx_pkt_hdr(struct raw_tx_pkt_header *raw_tx_pkt)
 	raw_tx_pkt->packet_length = calculate_beacon_frame_length(&test_beacon_frame);
 	raw_tx_pkt->tx_mode = CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS;
 	raw_tx_pkt->queue = CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM;
-	/* The byte is reserved and used by the driver */
-	memset(raw_tx_pkt->reserved, 0, sizeof(raw_tx_pkt->reserved));
+#if defined(CONFIG_RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE)
+	raw_tx_pkt->aggregation = AGGR_ENABLE;
+	raw_tx_pkt->num_frames = CONFIG_RAW_TX_PKT_SAMPLE_NUM_FRAMES;
+#else
+	/* nRF71 ignores bytes 9-11 (driver reserved[]); keep disabled. */
+	raw_tx_pkt->aggregation = AGGR_DISABLE;
+	raw_tx_pkt->num_frames = 1;
+#endif
+	raw_tx_pkt->reserved = 0;
 }
 
 int wifi_send_raw_tx_pkt(int sockfd, char *test_frame,
@@ -370,6 +381,10 @@ static void wifi_send_raw_tx_packets(void)
 	}
 
 	fill_raw_tx_pkt_hdr(&packet);
+
+	LOG_INF("Raw TX header: aggregation=%u num_frames=%u inter_frame_delay=%d ms",
+		packet.aggregation, packet.num_frames,
+		CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS);
 
 	ret = get_pkt_transmit_count(&transmission_mode, &num_pkts);
 	if (ret < 0) {
