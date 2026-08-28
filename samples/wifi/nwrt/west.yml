@@ -1,0 +1,22 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  version: 0.13
+
+  remotes:
+    - name: ncs
+      url-base: https://github.com/nrfconnect
+
+    - name: nordic-bb
+      url-base: ssh://git@bitbucket.nordicsemi.no:7999
+
+  self:
+    path: nWRT
+
+  projects:
+    - name: nrf
+      remote: ncs
+      repo-path: sdk-nrf
+      revision: main
+      import: true

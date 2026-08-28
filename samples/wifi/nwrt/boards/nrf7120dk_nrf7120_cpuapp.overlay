@@ -1,0 +1,43 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * nwrt_rx_cap @ 0x2007b000 (16 KiB).
+ * Shadow blocks @ 0x2007f000, 0x2007f100, 0x2007f200 (0x100 stride each, 4 KiB area).
+ */
+
+/ {
+	nwrt_rx_cap_sram: memory@2007b000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007b000 DT_SIZE_K(16)>;
+		zephyr,memory-region = "NWRT_RX_CAP";
+		status = "okay";
+	};
+
+	nwrt_shadow_common_sram: memory@2007f000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007f000 0x100>;
+		zephyr,memory-region = "NWRT_SHADOW_COMMON";
+		status = "okay";
+	};
+
+	nwrt_shadow_tx_sram: memory@2007f100 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007f100 0x100>;
+		zephyr,memory-region = "NWRT_SHADOW_TX";
+		status = "okay";
+	};
+
+	nwrt_shadow_rx_sram: memory@2007f200 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x2007f200 0x100>;
+		zephyr,memory-region = "NWRT_SHADOW_RX";
+		status = "okay";
+	};
+};
+
+&cpuapp_sram {
+	reg = <0x20000000 DT_SIZE_K(492)>;
+	ranges = <0x0 0x20000000 DT_SIZE_K(492)>;
+};

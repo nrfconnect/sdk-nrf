@@ -1,0 +1,13 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+mainmenu "nWRT application"
+
+config NWRT_SWD_ONLY
+	bool "SWD-only mode (no Wi-Fi driver init)"
+	help
+	  Skip nRF71 Wi-Fi driver bring-up. main() runs the shadow poll loop
+	  immediately so the host can exercise submit/ack/result over J-Link.
+	  RF commands complete with result -19 (NODEV); invalid submits return -22.
+
+source "Kconfig.zephyr"
