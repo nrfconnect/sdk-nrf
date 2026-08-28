@@ -427,7 +427,8 @@ You must select either MQTT or CoAP by adding one of the following parameters to
 * For MQTT, add ``-DEXTRA_CONF_FILE=mqtt.conf``.
 * For CoAP, add ``-DEXTRA_CONF_FILE=coap.conf``.
 
-On board targets that can enable :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA` (currently only ``nrf7120dk/nrf7120/cpuapp``, see :ref:`wifi_nrf_cloud_fota`), also merge in the :file:`coap-fota.conf` file:
+If you also want to enable :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :file:`coap-fota.conf` file in addition to the :file:`coap.conf` file.
+The :file:`coap-fota.conf` file only extends the CoAP transport and cannot be used on its own:
 
 ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
 
