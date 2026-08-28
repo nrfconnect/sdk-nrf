@@ -48,6 +48,9 @@ config SECURE_BOOT_NETCORE
 config NETCORE_APP_UPDATE
 	default y
 
+config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
+	default y if NETCORE_APP_UPDATE
+
 config DFU_MULTI_IMAGE_PACKAGE_NET
 	default y
 
