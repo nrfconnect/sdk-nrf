@@ -14,18 +14,6 @@
 
 #include "osal_structs.h"
 
-/* Have to match zephyr/include/zephyr/logging/log_core.h */
-#define NRF_WIFI_LOG_LEVEL_ERR 1U
-#define NRF_WIFI_LOG_LEVEL_INF 3U
-#define NRF_WIFI_LOG_LEVEL_DBG 4U
-
-#ifndef WIFI_NRF71_LOG_LEVEL
-#define WIFI_NRF71_LOG_LEVEL NRF_WIFI_LOG_LEVEL_ERR
-#endif
-
-#ifndef NRF71_LOG_VERBOSE
-#define __func__ "<snipped>"
-#endif /* NRF71_LOG_VERBOSE */
 
 /**
  * @brief Initialize the OSAL layer.
@@ -109,51 +97,6 @@ void nrf_wifi_osal_iomem_cpy_to(volatile void *dest,
 				const void *src,
 				size_t count);
 
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
-/**
- * @brief Log a debug message.
- * @param fmt: Format string.
- * @param ...: Variable arguments.
- *
- * Logs a debug message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_dbg(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_dbg(fmt, ...)
-#endif
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
-/**
- * @brief Logs an informational message.
- * @param fmt Format string.
- * @param ... Variable arguments.
- *
- * Logs an informational message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_info(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_info(fmt, ...)
-#endif
-
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_ERR
-/**
- * @brief Logs an error message.
- * @param fmt Format string.
- * @param ... Variable arguments.
- *
- * Logs an error message.
- *
- * @return Number of characters of the message logged.
- */
-int nrf_wifi_osal_log_err(const char *fmt, ...);
-#else
-#define nrf_wifi_osal_log_err(fmt, ...)
-#endif
 
 /**
  * @brief Delay for a specified duration in microseconds.

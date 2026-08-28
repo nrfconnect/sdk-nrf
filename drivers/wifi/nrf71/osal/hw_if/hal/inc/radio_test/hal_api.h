@@ -14,7 +14,6 @@
 #ifndef __HAL_API_RT_H__
 #define __HAL_API_RT__H__
 
-#include "osal_api.h"
 #include <nrf71_wifi_ctrl.h>
 #include "bal_api.h"
 #include "common/hal_structs_common.h"

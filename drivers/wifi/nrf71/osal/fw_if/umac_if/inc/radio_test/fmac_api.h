@@ -16,7 +16,6 @@
 #ifndef __FMAC_API_RT_H__
 #define __FMAC_API_RT_H__
 
-#include <osal_api.h>
 #include <nrf71_wifi_ctrl.h>
 
 #include <radio_test/fmac_structs.h>

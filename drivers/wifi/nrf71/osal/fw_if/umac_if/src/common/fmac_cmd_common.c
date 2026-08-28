@@ -15,6 +15,9 @@
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_structs_common.h"
 #include "common/fmac_util.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct host_rpu_msg *umac_cmd_alloc(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				    int type,
@@ -25,7 +28,7 @@ struct host_rpu_msg *umac_cmd_alloc(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*umac_cmd) + len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: Failed to allocate UMAC cmd",
+		LOG_ERR("%s: Failed to allocate UMAC cmd",
 				      __func__);
 		goto out;
 	}
@@ -49,7 +52,7 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		struct nrf_wifi_umac_hdr *umac_hdr = NULL;
 
 		umac_hdr = (struct nrf_wifi_umac_hdr *)params;
-		nrf_wifi_osal_log_err("%s: UMAC buff config not yet done(%d)",
+		LOG_ERR("%s: UMAC buff config not yet done(%d)",
 				      __func__,
 				      umac_hdr->cmd_evnt);
 		goto out;
@@ -60,7 +63,7 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -73,7 +76,7 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					    umac_cmd,
 					    (sizeof(*umac_cmd) + len));
 
-	nrf_wifi_osal_log_dbg("%s: Command %d sent to RPU",
+	LOG_DBG("%s: Command %d sent to RPU",
 			      __func__,
 			      ((struct nrf_wifi_umac_hdr *)params)->cmd_evnt);
 
@@ -94,7 +97,7 @@ enum nrf_wifi_status umac_cmd_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
 				  len);
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -124,7 +127,7 @@ enum nrf_wifi_status umac_cmd_srcoex(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				  len);
 
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}
@@ -162,7 +165,7 @@ enum nrf_wifi_status umac_cmd_prog_stats_reset(struct nrf_wifi_fmac_dev_ctx *fma
 				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
 				  len);
 	if (!umac_cmd) {
-		nrf_wifi_osal_log_err("%s: umac_cmd_alloc failed",
+		LOG_ERR("%s: umac_cmd_alloc failed",
 				      __func__);
 		goto out;
 	}

@@ -12,6 +12,9 @@
 #include <common/mem_mgmt.h>
 #include <zephyr/sys/util.h>
 #include <util.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,
@@ -27,7 +30,7 @@ int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 	len = nrf_wifi_osal_strlen(str);
 
 	if (len / 2 > hex_arr_sz) {
-		nrf_wifi_osal_log_err("%s: String length (%d) greater than array size (%d)",
+		LOG_ERR("%s: String length (%d) greater than array size (%d)",
 				      __func__,
 				      len,
 				      hex_arr_sz);
@@ -35,7 +38,7 @@ int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 	}
 
 	if (len % 2) {
-		nrf_wifi_osal_log_err("%s:String length = %d, is not a multiple of 2",
+		LOG_ERR("%s:String length = %d, is not a multiple of 2",
 				      __func__,
 				      len);
 		goto out;
@@ -46,7 +49,7 @@ int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 		ch = ((str[i] >= 'A' && str[i] <= 'Z') ? str[i] + 32 : str[i]);
 
 		if ((ch < '0' || ch > '9') && (ch < 'a' || ch > 'f')) {
-			nrf_wifi_osal_log_err("%s: Invalid hex character in string %d",
+			LOG_ERR("%s: Invalid hex character in string %d",
 					      __func__,
 					      ch);
 			goto out;
@@ -103,7 +106,7 @@ int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 		} else if (chan == 14) {
 			freq = 2484;
 		} else {
-			nrf_wifi_osal_log_err("%s: Invalid channel value %d",
+			LOG_ERR("%s: Invalid channel value %d",
 					      __func__,
 					      chan);
 			goto out;
@@ -129,15 +132,15 @@ int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 		} else if ((chan >= 1) && (chan <= 233) && ((chan % 4) == 1)) {
 			freq = 5950 + (chan * 5);
 		} else {
-			nrf_wifi_osal_log_err("%s: 6GHz: Invalid channel value %d",
-					      __func__,
-					      chan);
+			LOG_ERR("%s: 6GHz: Invalid channel value %d",
+				__func__,
+				chan);
 			goto out;
 		}
 
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s: Invalid band value %d",
+		LOG_ERR("%s: Invalid band value %d",
 				      __func__,
 				      band);
 		goto out;

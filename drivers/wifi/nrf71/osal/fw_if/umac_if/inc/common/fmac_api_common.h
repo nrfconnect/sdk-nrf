@@ -15,7 +15,6 @@
 #ifndef __FMAC_API_COMMON_H__
 #define __FMAC_API_COMMON_H__
 
-#include "osal_api.h"
 #include "common/hal_api_common.h"
 #include <nrf71_wifi_ctrl.h>
 #include "fmac_cmd_common.h"

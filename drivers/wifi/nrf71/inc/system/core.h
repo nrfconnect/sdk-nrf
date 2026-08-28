@@ -11,6 +11,7 @@
 #ifndef __SYSTEM_CORE_H__
 #define __SYSTEM_CORE_H__
 
+#include <common/log_cfg.h>
 #include <stdio.h>
 
 #include <zephyr/version.h>

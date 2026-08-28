@@ -13,6 +13,9 @@
 #include "bal_structs.h"
 #include "qspi.h"
 #include "osal_api.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 
 static int nrf_wifi_bus_qspi_irq_handler(void *data)
@@ -42,7 +45,7 @@ static void *nrf_wifi_bus_qspi_dev_add(void *bus_priv,
 	qspi_dev_ctx = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*qspi_dev_ctx));
 
 	if (!qspi_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate qspi_dev_ctx", __func__);
+		LOG_ERR("%s: Unable to allocate qspi_dev_ctx", __func__);
 		goto out;
 	}
 
@@ -53,7 +56,7 @@ static void *nrf_wifi_bus_qspi_dev_add(void *bus_priv,
 								       qspi_dev_ctx);
 
 	if (!qspi_dev_ctx->os_qspi_dev_ctx) {
-		nrf_wifi_osal_log_err("%s: nrf_wifi_osal_bus_qspi_dev_add failed", __func__);
+		LOG_ERR("%s: nrf_wifi_osal_bus_qspi_dev_add failed", __func__);
 
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, qspi_dev_ctx);
 
@@ -100,7 +103,7 @@ static enum nrf_wifi_status nrf_wifi_bus_qspi_dev_init(void *bus_dev_ctx)
 						     &nrf_wifi_bus_qspi_irq_handler);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: Unable to register interrupt to the OS",
+		LOG_ERR("%s: Unable to register interrupt to the OS",
 				      __func__);
 		qspi_dev_ctx = NULL;
 
@@ -110,7 +113,7 @@ static enum nrf_wifi_status nrf_wifi_bus_qspi_dev_init(void *bus_dev_ctx)
 	status = nrf_wifi_osal_bus_qspi_dev_init(qspi_dev_ctx->os_qspi_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		nrf_wifi_osal_log_err("%s: nrf_wifi_osal_qspi_dev_init failed", __func__);
+		LOG_ERR("%s: nrf_wifi_osal_qspi_dev_init failed", __func__);
 
 		nrf_wifi_osal_bus_qspi_dev_intr_unreg(qspi_dev_ctx->os_qspi_dev_ctx);
 		goto out;
@@ -140,7 +143,7 @@ static void *nrf_wifi_bus_qspi_init(void *params,
 	qspi_priv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*qspi_priv));
 
 	if (!qspi_priv) {
-		nrf_wifi_osal_log_err("%s: Unable to allocate memory for qspi_priv",
+		LOG_ERR("%s: Unable to allocate memory for qspi_priv",
 				      __func__);
 		goto out;
 	}
@@ -154,7 +157,7 @@ static void *nrf_wifi_bus_qspi_init(void *params,
 	qspi_priv->os_qspi_priv = nrf_wifi_osal_bus_qspi_init();
 
 	if (!qspi_priv->os_qspi_priv) {
-		nrf_wifi_osal_log_err("%s: Unable to register QSPI driver",
+		LOG_ERR("%s: Unable to register QSPI driver",
 				      __func__);
 
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, qspi_priv);
