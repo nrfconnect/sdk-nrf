@@ -43,6 +43,7 @@ extensions = [
     "zephyr.doxybridge",
     "zephyr.domain",
     "zephyr.gh_utils",
+    "sphinx_sitemap",
 ]
 master_doc = "README"
 
@@ -59,6 +60,7 @@ html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_baseurl = utils.get_baseurl("nrfxlib")
 
 html_theme_options = {"docset": "nrfxlib", "docsets": utils.ALL_DOCSETS, "logo_url": "https://docs.nordicsemi.com/"}
 
@@ -114,6 +116,10 @@ external_content_contents = [(NRFXLIB_BASE, "**/*.rst"), (NRFXLIB_BASE, "**/doc/
 
 gh_link_version = "main" if version.endswith("99") else f"v{version}"
 gh_link_base_url = "https://github.com/nrfconnect/sdk-nrfxlib"
+
+# -- Options for sphinx_sitemap ------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 
 def setup(app):
