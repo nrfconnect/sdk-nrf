@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "list.h"
 #include "queue.h"
 #include "system/hal_api.h"
@@ -815,11 +816,11 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 	config->tx_desc_num = desc;
 
-	nrf_wifi_osal_mem_cpy(config->mac_hdr_info.dest,
+	nrf_wifi_mem_cpy(config->mac_hdr_info.dest,
 			      nrf_wifi_get_dest(nwb),
 			      NRF_WIFI_ETH_ADDR_LEN);
 
-	nrf_wifi_osal_mem_cpy(config->mac_hdr_info.src,
+	nrf_wifi_mem_cpy(config->mac_hdr_info.src,
 			      nrf_wifi_get_src(nwb),
 			      NRF_WIFI_ETH_ADDR_LEN);
 
@@ -1351,7 +1352,7 @@ static void tx_done_tasklet_fn(unsigned long data)
 
 	(void) nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx, config);
 
-	nrf_wifi_osal_mem_free(config);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 out:
 	nrf_wifi_sys_hal_unlock_rx(fmac_dev_ctx->hal_dev_ctx);
 }
@@ -1517,7 +1518,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	sys_fpriv = wifi_fmac_priv(fpriv);
 
 	sys_dev_ctx->tx_config.send_pkt_coalesce_count_p =
-		nrf_wifi_osal_mem_zalloc((sizeof(unsigned int) *
+		nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, (sizeof(unsigned int) *
 					  sys_fpriv->num_tx_tokens));
 
 	if (!sys_dev_ctx->tx_config.send_pkt_coalesce_count_p) {
@@ -1544,8 +1545,10 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	/* Used to store the address of tx'ed skb and len of 802.11 hdr
 	 * it will be used in tx complete.
 	 */
-	sys_dev_ctx->tx_config.pkt_info_p = nrf_wifi_osal_mem_zalloc((sizeof(struct tx_pkt_info) *
-								     sys_fpriv->num_tx_tokens));
+	sys_dev_ctx->tx_config.pkt_info_p =
+		nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				    (sizeof(struct tx_pkt_info) *
+				     sys_fpriv->num_tx_tokens));
 
 	if (!sys_dev_ctx->tx_config.pkt_info_p) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate pkt_info_p",
@@ -1568,7 +1571,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	}
 
 	sys_dev_ctx->tx_config.buf_pool_bmp_p =
-		nrf_wifi_osal_mem_zalloc((sizeof(unsigned long) *
+		nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, (sizeof(unsigned long) *
 					 (sys_fpriv->num_tx_tokens/TX_DESC_BUCKET_BOUND) + 1));
 
 	if (!sys_dev_ctx->tx_config.buf_pool_bmp_p) {
@@ -1577,7 +1580,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		goto tx_pkt_info_free;
 	}
 
-	nrf_wifi_osal_mem_set(sys_dev_ctx->tx_config.buf_pool_bmp_p,
+	nrf_wifi_mem_set(sys_dev_ctx->tx_config.buf_pool_bmp_p,
 			      0,
 			      sizeof(long)*((sys_fpriv->num_tx_tokens/TX_DESC_BUCKET_BOUND) + 1));
 
@@ -1633,13 +1636,13 @@ wakeup_client_q_free:
 tx_spin_lock_free:
 	nrf_wifi_osal_spinlock_free(sys_dev_ctx->tx_config.tx_lock);
 tx_buff_map_free:
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.buf_pool_bmp_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 tx_pkt_info_free:
 	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
 		nrf_wifi_utils_list_free(sys_dev_ctx->tx_config.pkt_info_p[i].pkt);
 	}
 tx_q_setup_free:
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.pkt_info_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.pkt_info_p);
 tx_q_free:
 	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
 		for (j = 0; j < MAX_SW_PEERS; j++) {
@@ -1649,7 +1652,8 @@ tx_q_free:
 		}
 	}
 coal_q_free:
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.send_pkt_coalesce_count_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+			  sys_dev_ctx->tx_config.send_pkt_coalesce_count_p);
 out:
 	return NRF_WIFI_STATUS_FAIL;
 }
@@ -1677,7 +1681,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 	nrf_wifi_osal_spinlock_free(sys_dev_ctx->tx_config.tx_lock);
 
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.buf_pool_bmp_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 
 	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
 		if (sys_dev_ctx->tx_config.pkt_info_p) {
@@ -1690,7 +1694,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		}
 	}
 
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.pkt_info_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.pkt_info_p);
 
 	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
 		for (j = 0; j < MAX_SW_PEERS; j++) {
@@ -1705,9 +1709,10 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		}
 	}
 
-	nrf_wifi_osal_mem_free(sys_dev_ctx->tx_config.send_pkt_coalesce_count_p);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+			  sys_dev_ctx->tx_config.send_pkt_coalesce_count_p);
 
-	nrf_wifi_osal_mem_set(&sys_dev_ctx->tx_config,
+	nrf_wifi_mem_set(&sys_dev_ctx->tx_config,
 			      0,
 			      sizeof(struct tx_config));
 }

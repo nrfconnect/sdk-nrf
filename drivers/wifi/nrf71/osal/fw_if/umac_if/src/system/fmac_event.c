@@ -11,6 +11,7 @@
  */
 
 #include "queue.h"
+#include <common/mem_mgmt.h>
 
 #include <nrf71_wifi_ctrl.h>
 #include "system/fmac_rx.h"
@@ -194,7 +195,7 @@ static enum nrf_wifi_status umac_event_sys_stats_process(
 
 	stats = ((struct nrf_wifi_sys_umac_event_stats *)event);
 
-	nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fw_stats,
+	nrf_wifi_mem_cpy(fmac_dev_ctx->fw_stats,
 			      &stats->fw,
 			      sizeof(stats->fw));
 
@@ -230,7 +231,7 @@ static enum nrf_wifi_status umac_event_sys_debug_stats_process(
 
 	dst = (struct nrf_wifi_rpu_debug_stats *)fmac_dev_ctx->debug_stats;
 	if (dst) {
-		nrf_wifi_osal_mem_cpy(dst, &ev->stats, sizeof(ev->stats));
+		nrf_wifi_mem_cpy(dst, &ev->stats, sizeof(ev->stats));
 	}
 	fmac_dev_ctx->debug_stats_req = false;
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -262,7 +263,7 @@ static enum nrf_wifi_status umac_event_sys_umac_int_stats_process(
 
 	dst = (struct umac_int_stats *)fmac_dev_ctx->umac_int_stats;
 	if (dst) {
-		nrf_wifi_osal_mem_cpy(dst, ev, sizeof(*ev));
+		nrf_wifi_mem_cpy(dst, ev, sizeof(*ev));
 	}
 	fmac_dev_ctx->umac_int_stats_req = false;
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -500,15 +501,16 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	switch (event) {
 	case NRF_WIFI_CMD_RX_BUFF:
 #ifdef NRF71_RX_DONE_WQ_ENABLED
-		struct nrf_wifi_rx_buff *config = nrf_wifi_osal_mem_zalloc(
-			sizeof(struct nrf_wifi_rx_buff));
+		struct nrf_wifi_rx_buff *config =
+			nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					    sizeof(struct nrf_wifi_rx_buff));
 		if (!config) {
 			nrf_wifi_osal_log_err("%s: Failed to allocate memory (RX)",
 					      __func__);
 			status = NRF_WIFI_STATUS_FAIL;
 			break;
 		}
-		nrf_wifi_osal_mem_cpy(config,
+		nrf_wifi_mem_cpy(config,
 				      umac_head,
 				      sizeof(struct nrf_wifi_rx_buff));
 		status = nrf_wifi_utils_q_enqueue(sys_dev_ctx->rx_config.rx_tasklet_event_q,
@@ -516,7 +518,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			nrf_wifi_osal_log_err("%s: Failed to enqueue RX buffer",
 					      __func__);
-			nrf_wifi_osal_mem_free(config);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 			break;
 		}
 		nrf_wifi_osal_tasklet_schedule(sys_dev_ctx->rx_tasklet);
@@ -528,15 +530,16 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #ifdef NRF71_DATA_TX
 	case NRF_WIFI_CMD_TX_BUFF_DONE:
 #ifdef NRF71_TX_DONE_WQ_ENABLED
-		struct nrf_wifi_tx_buff_done *config = nrf_wifi_osal_mem_zalloc(
-					sizeof(struct nrf_wifi_tx_buff_done));
+		struct nrf_wifi_tx_buff_done *config =
+			nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					    sizeof(struct nrf_wifi_tx_buff_done));
 		if (!config) {
 			nrf_wifi_osal_log_err("%s: Failed to allocate memory (TX)",
 					      __func__);
 			status = NRF_WIFI_STATUS_FAIL;
 			break;
 		}
-		nrf_wifi_osal_mem_cpy(config,
+		nrf_wifi_mem_cpy(config,
 				      umac_head,
 				      sizeof(struct nrf_wifi_tx_buff_done));
 		status = nrf_wifi_utils_q_enqueue(sys_dev_ctx->tx_config.tx_done_tasklet_event_q,
@@ -544,7 +547,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			nrf_wifi_osal_log_err("%s: Failed to enqueue TX buffer",
 					      __func__);
-			nrf_wifi_osal_mem_free(config);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 			break;
 		}
 		nrf_wifi_osal_tasklet_schedule(sys_dev_ctx->tx_done_tasklet);
@@ -647,7 +650,7 @@ static void umac_event_connect(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 
 	if (event->umac_hdr.cmd_evnt == NRF_WIFI_UMAC_EVENT_NEW_STATION) {
 		if (vif_ctx->if_type == 2) {
-			nrf_wifi_osal_mem_cpy(vif_ctx->bssid,
+			nrf_wifi_mem_cpy(vif_ctx->bssid,
 					      event->mac_addr,
 					      NRF_WIFI_ETH_ADDR_LEN);
 		}
