@@ -145,10 +145,3 @@
   platforms:
     - nrf9151dk/nrf9151/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41027"
-
-- scenarios:
-    - sample.mcuboot_with_encryption.nrf54ls05a
-    - sample.mcuboot_with_encryption.nrf54ls05a.psa
-  platforms:
-    - nrf54ls05dk@0.2.0/nrf54ls05b/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41028"
