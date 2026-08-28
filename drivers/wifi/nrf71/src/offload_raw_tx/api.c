@@ -16,8 +16,8 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h>
 #include <offload_raw_tx/fmac_api.h>
-#include <nrf71_wifi_ctrl.h>
-#include <nrf71_wifi_rf.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
 #include <util.h>
 #include <common/rf_params.h>
 #include <offload_raw_tx/api.h>

@@ -12,7 +12,7 @@
 
 #include <zephyr/kernel.h>
 #include <common/mem_mgmt.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 
 /* Memory pool management - unified pool-based API */
 #if defined(CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM)

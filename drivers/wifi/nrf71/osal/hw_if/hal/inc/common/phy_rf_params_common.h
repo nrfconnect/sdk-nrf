@@ -10,7 +10,7 @@
 
 #ifndef _PHY_RF_PARAMS_COMMON_H_
 #define _PHY_RF_PARAMS_COMMON_H_
-#include "pack_def.h"
+#include <common/fw_if/pack_def.h>
 
 #define NRF_WIFI_RF_PARAMS_SIZE 200
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42

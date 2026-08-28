@@ -16,7 +16,7 @@
 #ifdef NRF71_SYSTEM_MODE
 #include "system/fmac_structs.h"
 #endif /* NRF71_SYSTEM_MODE */
-#include "common/pack_def.h"
+#include <common/fw_if/pack_def.h>
 
 
 #define NRF_WIFI_FMAC_ETH_ADDR_LEN 6

@@ -12,7 +12,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
 #include <common/vtf.h>
 
