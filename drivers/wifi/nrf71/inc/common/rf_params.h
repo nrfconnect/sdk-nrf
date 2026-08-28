@@ -13,7 +13,7 @@
 
 #include <stdint.h>
 
-#include <nrf71_wifi_common.h>
+#include <common/fw_if/nrf71_wifi_common.h>
 
 #define NUM_RF_PARAM_ADDRS 22
 

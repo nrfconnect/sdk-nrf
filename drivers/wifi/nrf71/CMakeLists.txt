@@ -18,13 +18,14 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../bus
-    ${CMAKE_CURRENT_SOURCE_DIR}/fw_if
+    ${CMAKE_CURRENT_SOURCE_DIR}/inc/common/fw_if
     ${nrf71_utils_base}/utils/inc
     ${nrf71_osal_base}/os_if/inc
     ${nrf71_osal_base}/bus_if/bus/qspi/inc
     ${nrf71_osal_base}/bus_if/bal/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
     ${nrf71_osal_base}/hw_if/hal/inc
+    ${nrf71_osal_base}/os_if/inc
     ${nrf71_os_shim_dir}
     ${nrf71_bus_dir}
     ${ZEPHYR_BASE}/subsys/net/ip
@@ -76,10 +77,9 @@ function(nrf71_wifi_setup_include_and_sources)
     zephyr_interface_library_named(nrf71_wifi_radio_test_headers)
     target_include_directories(nrf71_wifi_radio_test_headers INTERFACE
       ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
-      ${CMAKE_CURRENT_SOURCE_DIR}/fw_if
+      ${CMAKE_CURRENT_SOURCE_DIR}/inc/common/fw_if
       ${CMAKE_CURRENT_SOURCE_DIR}/inc
       ${nrf71_osal_base}/fw_if/umac_if/inc
-      ${nrf71_osal_base}/hw_if/hal/inc
       ${nrf71_osal_base}/os_if/inc
       ${nrf71_osal_base}/bus_if/bal/inc
       ${nrf71_osal_base}/bus_if/bus/qspi/inc

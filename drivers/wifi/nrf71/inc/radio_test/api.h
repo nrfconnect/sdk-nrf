@@ -12,7 +12,7 @@
 #define __RADIO_TEST_API_H__
 
 #include <zephyr/kernel.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
 #include <radio_test/fmac_api.h>
 #include <common/vtf.h>
