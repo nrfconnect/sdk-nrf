@@ -15,8 +15,8 @@
 #ifndef __NRF71_WIFI_CTRL_H
 #define __NRF71_WIFI_CTRL_H
 
-#include "nrf71_wifi_rf.h"
-#include "nrf71_wifi_common.h"
+#include <common/fw_if/nrf71_wifi_rf.h>
+#include <common/fw_if/nrf71_wifi_common.h>
 
 #define RPU_DATA_CMD_SIZE_MAX_TX 148
 /**

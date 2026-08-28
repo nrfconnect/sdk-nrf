@@ -12,10 +12,10 @@ This firmware interface defines the message headers, commands, events, and contr
 
 The interface is split across the following header files:
 
-* :file:`drivers/wifi/nrf71/fw_if/nrf71_wifi_common.h` - Common message headers, system-level commands, and events.
-* :file:`drivers/wifi/nrf71/fw_if/nrf71_wifi_ctrl.h` - Control path commands and events (UMAC interface).
-* :file:`drivers/wifi/nrf71/fw_if/nrf71_wifi_rf.h` - RF and baseband control parameters.
-* :file:`drivers/wifi/nrf71/fw_if/nrf71_wifi_debug_stats.h` - Debug and statistics interface.
+* :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_common.h` - Common message headers, system-level commands, and events.
+* :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_ctrl.h` - Control path commands and events (UMAC interface).
+* :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_rf.h` - RF and baseband control parameters.
+* :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_wifi_debug_stats.h` - Debug and statistics interface.
 
 API documentation
 *****************

@@ -15,7 +15,7 @@
 #ifndef __NRF71_COEX_IF_H__
 #define __NRF71_COEX_IF_H__
 
-#include "common/pack_def.h"
+#include <common/fw_if/pack_def.h>
 
 /*
  * The shared SR priority-range structure (struct coex_sr_priority_range_t) and
@@ -23,7 +23,7 @@
  * header. The Coexistence Manager uses only the regular Rx/Tx ranges from it;
  * the critical ranges are consumed by the Short-Range driver.
  */
-#include "nrf71_cd_sr_if.h"
+#include <common/fw_if/nrf71_cd_sr_if.h>
 
 /** Number of elements in SW priority range buffers (min, max, step). */
 #define NUM_ELEMENTS_IN_SW_PTI_RANGE 3U

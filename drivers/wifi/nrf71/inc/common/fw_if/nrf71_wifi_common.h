@@ -15,9 +15,9 @@
 #ifndef __NRF71_WIFI_COMMON_H__
 #define __NRF71_WIFI_COMMON_H__
 
-#include "nrf71_wifi_rf.h"
-#include "common/pack_def.h"
-#include "nrf71_wifi_debug_stats.h"
+#include <common/fw_if/nrf71_wifi_rf.h>
+#include <common/fw_if/pack_def.h>
+#include <common/fw_if/nrf71_wifi_debug_stats.h>
 
 #define NRF_WIFI_RF_PARAMS_CONF_SIZE 42
 
@@ -327,7 +327,7 @@ struct rpu_conf_rx_radio_test_params {
 	struct chan_params chan;
 	/** Copy OTP params to this memory */
 	signed char phy_threshold;
-	/** Calibration bit map value. More information can be found in the phy_rf_params.h file.
+	/** Calibration bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB.
 	 */
 	unsigned int phy_calib;
 	/** Start Rx : 1, Stop Rx :0 */
@@ -439,7 +439,7 @@ struct nrf_wifi_sys_params {
 	unsigned int bcn_time_out;
 	/** Set to 1 if rpu is expected to perform sleep clock calibration */
 	unsigned int calib_sleep_clk;
-	/** calib bit map value. More info can be found in phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
+	/** calib bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB */
 	unsigned int phy_calib;
 	/** MAC address of the interface. Not applicable to Radio Test mode */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
@@ -868,7 +868,7 @@ struct nrf_wifi_radio_test_init_info {
 	struct chan_params chan;
 	/** Phy threshold value to be sent to LMAC in channel programming */
 	signed char phy_threshold;
-	/** Calibration bit map value. refer phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
+	/** Calibration bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB */
 	unsigned int phy_calib;
 	/** Receive BSS color value (1 to 63) */
 	unsigned char rx_bss_color;

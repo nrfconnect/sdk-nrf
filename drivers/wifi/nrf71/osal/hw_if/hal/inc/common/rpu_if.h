@@ -10,7 +10,7 @@
 
 #ifndef __RPU_IF_H__
 #define __RPU_IF_H__
-#include "pack_def.h"
+#include <common/fw_if/pack_def.h>
 
 /* Beginning address of the global RAM */
 #define RPU_ADDR_GRAM_START 0xB7000000

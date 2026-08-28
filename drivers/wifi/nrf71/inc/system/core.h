@@ -30,7 +30,7 @@
 #endif /* CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
 #include <common/vtf.h>
 

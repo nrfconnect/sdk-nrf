@@ -14,7 +14,7 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/init.h>
 #include <ctype.h>
-#include <nrf71_wifi_ctrl.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
 #include <common/llist_mgmt.h>
 
