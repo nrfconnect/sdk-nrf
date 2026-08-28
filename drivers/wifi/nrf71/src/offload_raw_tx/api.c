@@ -20,13 +20,11 @@
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
 #include <common/util.h>
-#include <osal_api.h>
 #include <offload_raw_tx/api.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
-extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 
 static const int valid_data_rates[] = { 1, 2, 55, 11, 6, 9, 12, 18, 24, 36, 48, 54,
@@ -68,11 +66,6 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
 	unsigned int fw_ver = 0;
-
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 
