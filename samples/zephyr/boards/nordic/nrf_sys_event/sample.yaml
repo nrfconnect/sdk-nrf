@@ -1,3 +1,6 @@
+sample:
+  name: nRF System Event sample
+  description: Sample for the nRF System Event driver.
 common:
   tags:
     - ci_samples_zephyr_boards_nordic_nrf_sys_event
