@@ -25,66 +25,6 @@ void nrf_wifi_osal_deinit(void)
 }
 
 
-void *nrf_wifi_osal_mem_alloc(size_t size)
-{
-	return os_ops->mem_alloc(size);
-}
-
-
-void *nrf_wifi_osal_mem_zalloc(size_t size)
-{
-	return os_ops->mem_zalloc(size);
-}
-
-
-void *nrf_wifi_osal_data_mem_zalloc(size_t size)
-{
-	return os_ops->data_mem_zalloc(size);
-}
-
-
-void nrf_wifi_osal_mem_free(void *buf)
-{
-	os_ops->mem_free(buf);
-}
-
-
-void nrf_wifi_osal_data_mem_free(void *buf)
-{
-	os_ops->data_mem_free(buf);
-}
-
-
-void *nrf_wifi_osal_mem_cpy(void *dest,
-			    const void *src,
-			    size_t count)
-{
-	return os_ops->mem_cpy(dest,
-			       src,
-			       count);
-}
-
-
-void *nrf_wifi_osal_mem_set(void *start,
-			    int val,
-			    size_t size)
-{
-	return os_ops->mem_set(start,
-			       val,
-			       size);
-}
-
-
-int nrf_wifi_osal_mem_cmp(const void *addr1,
-			  const void *addr2,
-			  size_t size)
-{
-	return os_ops->mem_cmp(addr1,
-			       addr2,
-			       size);
-}
-
-
 void *nrf_wifi_osal_iomem_mmap(unsigned long addr,
 			       unsigned long size)
 {

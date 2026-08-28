@@ -13,8 +13,8 @@
 #include <zephyr/sys/sys_heap.h>
 #include <common/fmac_util.h>
 #include <system/fmac_api.h>
-#include <system/main.h>
-#include <shim.h>
+#include <common/mem_mgmt.h>
+#include <system/core.h>
 #include <system/wifi_util.h>
 #include <mac_addr.h>
 
@@ -1273,7 +1273,7 @@ static int nrf_wifi_util_heap(const struct shell *sh, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	nrf_wifi_shim_get_heaps(&ctrl_pool, &data_pool);
+	nrf_wifi_mem_get_heaps(&ctrl_pool, &data_pool);
 
 	err = sys_heap_runtime_stats_get(&ctrl_pool->heap, &stats);
 	if (err) {

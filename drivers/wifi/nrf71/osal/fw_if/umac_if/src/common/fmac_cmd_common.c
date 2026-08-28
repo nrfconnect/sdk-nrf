@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "common/hal_api_common.h"
 
 #include <nrf71_wifi_ctrl.h>
@@ -21,7 +22,7 @@ struct host_rpu_msg *umac_cmd_alloc(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 {
 	struct host_rpu_msg *umac_cmd = NULL;
 
-	umac_cmd = nrf_wifi_osal_mem_zalloc(sizeof(*umac_cmd) + len);
+	umac_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*umac_cmd) + len);
 
 	if (!umac_cmd) {
 		nrf_wifi_osal_log_err("%s: Failed to allocate UMAC cmd",
@@ -64,7 +65,7 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	nrf_wifi_osal_mem_cpy(umac_cmd->msg,
+	nrf_wifi_mem_cpy(umac_cmd->msg,
 			      params,
 			      len);
 
@@ -134,7 +135,7 @@ enum nrf_wifi_status umac_cmd_srcoex(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	umac_cmd_data->sys_head.len = len;
 	umac_cmd_data->coex_config_info.len = cmd_len;
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->coex_config_info.coex_cmd,
+	nrf_wifi_mem_cpy(umac_cmd_data->coex_config_info.coex_cmd,
 			      cmd,
 			      cmd_len);
 

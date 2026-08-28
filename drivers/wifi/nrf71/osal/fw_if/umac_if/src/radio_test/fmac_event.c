@@ -10,6 +10,7 @@
  */
 
 #include "queue.h"
+#include <common/mem_mgmt.h>
 
 #include <nrf71_wifi_ctrl.h>
 #include "radio_test/fmac_structs.h"
@@ -35,7 +36,7 @@ static enum nrf_wifi_status umac_event_rt_stats_process(struct nrf_wifi_fmac_dev
 
 	stats = ((struct nrf_wifi_rt_umac_event_stats *)event);
 
-	nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fw_stats,
+	nrf_wifi_mem_cpy(fmac_dev_ctx->fw_stats,
 			      &stats->fw,
 			      sizeof(stats->fw));
 
@@ -81,7 +82,7 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 	case NRF_WIFI_RF_TEST_EVENT_RX_STAT_PKT_CAP:
 	case NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP:
 
-		nrf_wifi_osal_mem_cpy(&rf_test_capture_params,
+		nrf_wifi_mem_cpy(&rf_test_capture_params,
 				      (const unsigned char *)
 					  &rf_test_event->rf_test_info.rfevent[0],
 				      sizeof(rf_test_capture_params));
@@ -93,7 +94,7 @@ static enum nrf_wifi_status umac_event_rt_rf_test_process(
 		break;
 
 	case NRF_WIFI_RF_TEST_EVENT_XO_TUNE:
-		nrf_wifi_osal_mem_cpy(&rf_get_xo_value_params,
+		nrf_wifi_mem_cpy(&rf_get_xo_value_params,
 				(const unsigned char *)&rf_test_event->rf_test_info.rfevent[0],
 				sizeof(rf_get_xo_value_params));
 
@@ -228,13 +229,13 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_GET_REG:
 		get_reg_event = (struct nrf_wifi_reg *)event_data;
 
-		nrf_wifi_osal_mem_cpy(&fmac_dev_ctx->alpha2,
+		nrf_wifi_mem_cpy(&fmac_dev_ctx->alpha2,
 				      &get_reg_event->nrf_wifi_alpha2,
 				      sizeof(get_reg_event->nrf_wifi_alpha2));
 
 		fmac_dev_ctx->reg_chan_count = get_reg_event->num_channels;
 
-		nrf_wifi_osal_mem_cpy(fmac_dev_ctx->reg_chan_info,
+		nrf_wifi_mem_cpy(fmac_dev_ctx->reg_chan_info,
 				      &get_reg_event->chn_info,
 				      fmac_dev_ctx->reg_chan_count *
 				      sizeof(struct nrf_wifi_get_reg_chn_info));
@@ -244,7 +245,8 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_REG_CHANGE:
 		reg_change_event = (struct nrf_wifi_event_regulatory_change *)event_data;
 
-		fmac_dev_ctx->reg_change = nrf_wifi_osal_mem_zalloc(sizeof(*reg_change_event));
+		fmac_dev_ctx->reg_change = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+							       sizeof(*reg_change_event));
 
 		if (!fmac_dev_ctx->reg_change) {
 			nrf_wifi_osal_log_err("%s: Failed to allocate memory for reg_change",
@@ -252,7 +254,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 			goto out;
 		}
 
-		nrf_wifi_osal_mem_cpy(fmac_dev_ctx->reg_change,
+		nrf_wifi_mem_cpy(fmac_dev_ctx->reg_change,
 				      reg_change_event,
 				      sizeof(*reg_change_event));
 		fmac_dev_ctx->reg_set_status = true;

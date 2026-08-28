@@ -9,6 +9,7 @@
  * Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <zephyr/sys/util.h>
 #include <util.h>
 
@@ -79,7 +80,7 @@ bool nrf_wifi_utils_is_mac_addr_valid(const char *mac_addr)
 	unsigned char zero_addr[NRF_WIFI_ETH_ADDR_LEN] = {0};
 
 	return (mac_addr &&
-		(nrf_wifi_osal_mem_cmp(mac_addr,
+		(nrf_wifi_mem_cmp(mac_addr,
 				       zero_addr,
 				       sizeof(zero_addr)) != 0) &&
 		!(mac_addr[0] & 0x1));

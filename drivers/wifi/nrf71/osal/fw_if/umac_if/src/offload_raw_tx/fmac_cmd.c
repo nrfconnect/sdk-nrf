@@ -9,6 +9,7 @@
  * offloaded raw TX mode in the FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "offload_raw_tx/fmac_cmd.h"
 #include "common/hal_api_common.h"
 
@@ -46,7 +47,7 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 
 	umac_cmd_data->sys_params.vtf_buffer_addr = vtf_buffer_start_address;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.rf_params_addr, rf_params_addr,
+	nrf_wifi_mem_cpy(&umac_cmd_data->sys_params.rf_params_addr, rf_params_addr,
 			      sizeof(umac_cmd_data->sys_params.rf_params_addr));
 
 	umac_cmd_data->sys_params.phy_calib = phy_calib;
@@ -83,12 +84,12 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 
 	umac_cmd_data->op_band = op_band;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
-			      &tx_pwr_ctrl_params->ant_gain_2g,
-			      10 * sizeof(unsigned char));
+	nrf_wifi_mem_cpy(&umac_cmd_data->sys_params.tx_pwr_ctrl_params,
+			 &tx_pwr_ctrl_params->ant_gain_2g,
+			 10 * sizeof(unsigned char));
 
 
-	nrf_wifi_osal_mem_cpy(umac_cmd_data->country_code,
+	nrf_wifi_mem_cpy(umac_cmd_data->country_code,
 			      country_code,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
 
@@ -199,11 +200,11 @@ enum nrf_wifi_status umac_cmd_off_raw_tx_conf(struct nrf_wifi_fmac_dev_ctx *fmac
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_OFFLOAD_RAW_TX_PARAMS;
 	umac_cmd_data->sys_head.len = len;
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->ctrl_info,
+	nrf_wifi_mem_cpy(&umac_cmd_data->ctrl_info,
 			      off_ctrl_params,
 			      sizeof(*off_ctrl_params));
 
-	nrf_wifi_osal_mem_cpy(&umac_cmd_data->tx_params,
+	nrf_wifi_mem_cpy(&umac_cmd_data->tx_params,
 			      offload_tx_params,
 			      sizeof(*offload_tx_params));
 

@@ -10,6 +10,7 @@
  */
 
 #include <queue.h>
+#include <common/mem_mgmt.h>
 #include <nrf71_wifi_ctrl.h>
 #include <offload_raw_tx/fmac_structs.h>
 #include <common/fmac_util.h>
@@ -34,7 +35,7 @@ static enum nrf_wifi_status umac_event_off_raw_tx_stats_process(
 
 	stats = ((struct nrf_wifi_off_raw_tx_umac_event_stats *)event);
 
-	nrf_wifi_osal_mem_cpy(fmac_dev_ctx->fw_stats,
+	nrf_wifi_mem_cpy(fmac_dev_ctx->fw_stats,
 			      &stats->fw,
 			      sizeof(stats->fw));
 
@@ -136,13 +137,13 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_GET_REG:
 		get_reg_event = (struct nrf_wifi_reg *)event_data;
 
-		nrf_wifi_osal_mem_cpy(&fmac_dev_ctx->alpha2,
+		nrf_wifi_mem_cpy(&fmac_dev_ctx->alpha2,
 				      &get_reg_event->nrf_wifi_alpha2,
 				      sizeof(get_reg_event->nrf_wifi_alpha2));
 
 		fmac_dev_ctx->reg_chan_count = get_reg_event->num_channels;
 
-		nrf_wifi_osal_mem_cpy(fmac_dev_ctx->reg_chan_info,
+		nrf_wifi_mem_cpy(fmac_dev_ctx->reg_chan_info,
 				      &get_reg_event->chn_info,
 				      fmac_dev_ctx->reg_chan_count *
 				      sizeof(struct nrf_wifi_get_reg_chn_info));

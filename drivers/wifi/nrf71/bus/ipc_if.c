@@ -19,6 +19,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include <common/mem_mgmt.h>
+
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #include "ipc_if.h"
@@ -68,7 +70,7 @@ static void host_tx_reclaim_completed(void)
 			continue;
 		}
 
-		nrf_wifi_osal_mem_free((void *)host_tx_pending_bufs[i]);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, (void *)host_tx_pending_bufs[i]);
 		host_tx_pending_bufs[i] = NULL;
 		host_tx_ack_slots[i] = 0U;
 	}

@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_api_common.h"
 #include "common/fmac_util.h"
@@ -20,7 +21,7 @@ void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv)
 {
 	nrf_wifi_hal_deinit(fpriv->hpriv);
 
-	nrf_wifi_osal_mem_free(fpriv);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
 }
 
 
@@ -28,7 +29,7 @@ void nrf_wifi_fmac_dev_rem(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	nrf_wifi_hal_dev_rem(fmac_dev_ctx->hal_dev_ctx);
 
-	nrf_wifi_osal_mem_free(fmac_dev_ctx);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx);
 }
 
 
@@ -58,7 +59,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 	nrf_wifi_osal_log_dbg("%s: Get regulatory information", __func__);
 
-	get_reg_cmd = nrf_wifi_osal_mem_zalloc(sizeof(*get_reg_cmd));
+	get_reg_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*get_reg_cmd));
 
 	if (!get_reg_cmd) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
@@ -91,7 +92,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		goto err;
 	}
 
-	nrf_wifi_osal_mem_cpy(reg_info->alpha2,
+	nrf_wifi_mem_cpy(reg_info->alpha2,
 			      fmac_dev_ctx->alpha2,
 			      sizeof(reg_info->alpha2));
 
@@ -100,7 +101,7 @@ enum nrf_wifi_status nrf_wifi_fmac_get_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	status = NRF_WIFI_STATUS_SUCCESS;
 err:
 	if (get_reg_cmd) {
-		nrf_wifi_osal_mem_free(get_reg_cmd);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, get_reg_cmd);
 	}
 	return status;
 }
@@ -173,7 +174,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		goto out;
 	}
 
-	if (nrf_wifi_osal_mem_cmp(cur_reg_info.alpha2,
+	if (nrf_wifi_mem_cmp(cur_reg_info.alpha2,
 				  reg_info->alpha2,
 				  NRF_WIFI_COUNTRY_CODE_LEN) == 0) {
 		nrf_wifi_osal_log_dbg("%s: Regulatory domain already set to %c%c",
@@ -184,7 +185,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		goto out;
 	}
 
-	set_reg_cmd = nrf_wifi_osal_mem_zalloc(sizeof(*set_reg_cmd));
+	set_reg_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*set_reg_cmd));
 
 	if (!set_reg_cmd) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
@@ -195,7 +196,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	set_reg_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_REQ_SET_REG;
 	set_reg_cmd->umac_hdr.ids.valid_fields = 0;
 
-	nrf_wifi_osal_mem_cpy(set_reg_cmd->nrf_wifi_alpha2,
+	nrf_wifi_mem_cpy(set_reg_cmd->nrf_wifi_alpha2,
 			      reg_info->alpha2,
 			      NRF_WIFI_COUNTRY_CODE_LEN);
 
@@ -260,7 +261,7 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	}
 
 	if ((reg_change->regulatory_type == NRF_WIFI_REGDOM_TYPE_COUNTRY) &&
-		 nrf_wifi_osal_mem_cmp(reg_change->nrf_wifi_alpha2,
+		 nrf_wifi_mem_cmp(reg_change->nrf_wifi_alpha2,
 				       exp_alpha2,
 				       NRF_WIFI_COUNTRY_CODE_LEN) != 0) {
 		nrf_wifi_osal_log_err("%s: Unexpected alpha2 reg domain change: "
@@ -276,11 +277,11 @@ enum nrf_wifi_status nrf_wifi_fmac_set_reg(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 out:
 	if (set_reg_cmd) {
-		nrf_wifi_osal_mem_free(set_reg_cmd);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, set_reg_cmd);
 	}
 
 	if (reg_change) {
-		nrf_wifi_osal_mem_free(reg_change);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, reg_change);
 		fmac_dev_ctx->reg_change = NULL;
 	}
 
