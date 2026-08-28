@@ -8,7 +8,6 @@ function(nrf71_wifi_setup_include_and_sources)
   zephyr_library_named(nrf71_wifi)
 
   set(nrf71_osal_base ${CMAKE_CURRENT_SOURCE_DIR}/osal)
-  set(nrf71_os_shim_dir ${CMAKE_CURRENT_SOURCE_DIR}/os)
   set(os_agnostic_base ${ZEPHYR_NRF_WIFI_MODULE_DIR})
   set(fw_bins_base ${ZEPHYR_NRF_WIFI_MODULE_DIR}/zephyr/blobs/wifi_fw_bins)
 
@@ -16,20 +15,17 @@ function(nrf71_wifi_setup_include_and_sources)
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/inc
     ${CMAKE_CURRENT_SOURCE_DIR}/inc/common/fw_if
-    ${nrf71_osal_base}/os_if/inc
     ${nrf71_osal_base}/fw_if/umac_if/inc
     ${nrf71_osal_base}/hw_if/hal/inc
-    ${nrf71_os_shim_dir}
+    ${nrf71_osal_base}/fw_if/umac_if/inc
     ${ZEPHYR_BASE}/subsys/net/ip
   )
 
   # ---- Sources: osal (fw_if, hw_if) and common ----
   zephyr_library_sources(
-    ${nrf71_osal_base}/os_if/src/osal.c
     ${nrf71_osal_base}/hw_if/hal/src/common/hal_api_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_cmd_common.c
     ${nrf71_osal_base}/fw_if/umac_if/src/common/fmac_api_common.c
-    ${nrf71_os_shim_dir}/shim.c
     src/common/rf_params.c
     src/common/util.c
     src/common/vtf.c
