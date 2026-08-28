@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "system/fmac_vif.h"
 
 #include <nrf71_wifi_ctrl.h>
@@ -107,7 +108,7 @@ void nrf_wifi_fmac_vif_clear_ctx(void *dev_ctx,
 
 	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
 
-	nrf_wifi_osal_mem_free(vif_ctx);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, vif_ctx);
 	sys_dev_ctx->vif_ctx[if_idx] = NULL;
 }
 

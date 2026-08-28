@@ -9,6 +9,7 @@
  * HAL Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "queue.h"
 
 #include "common/hal_api_common.h"
@@ -68,7 +69,7 @@ enum nrf_wifi_status hal_rpu_eventq_process(struct nrf_wifi_hal_dev_ctx *hal_dev
 		}
 
 		/* Free up the local buffer */
-		nrf_wifi_osal_mem_free(event);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, event);
 		event = NULL;
 	}
 
@@ -95,7 +96,7 @@ static void hal_rpu_eventq_drain(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 		}
 
 		/* Free up the local buffer */
-		nrf_wifi_osal_mem_free(event);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, event);
 		event = NULL;
 	}
 
@@ -141,7 +142,7 @@ void nrf_wifi_hal_dev_rem(struct nrf_wifi_hal_dev_ctx *hal_dev_ctx)
 
 	hal_dev_ctx->hpriv->num_devs--;
 
-	nrf_wifi_osal_mem_free(hal_dev_ctx);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hal_dev_ctx);
 }
 
 
@@ -204,7 +205,7 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 	struct nrf_wifi_hal_priv *hpriv = NULL;
 	struct nrf_wifi_bal_cfg_params bal_cfg_params;
 
-	hpriv = nrf_wifi_osal_mem_zalloc(sizeof(*hpriv));
+	hpriv = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*hpriv));
 
 	if (!hpriv) {
 		nrf_wifi_osal_log_err("%s: Unable to allocate memory for hpriv",
@@ -212,7 +213,7 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 		goto out;
 	}
 
-	nrf_wifi_osal_mem_cpy(&hpriv->cfg_params,
+	nrf_wifi_mem_cpy(&hpriv->cfg_params,
 			      cfg_params,
 			      sizeof(hpriv->cfg_params));
 
@@ -226,7 +227,7 @@ nrf_wifi_hal_init(struct nrf_wifi_hal_cfg_params *cfg_params,
 	if (!hpriv->bpriv) {
 		nrf_wifi_osal_log_err("%s: Failed",
 				      __func__);
-		nrf_wifi_osal_mem_free(hpriv);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hpriv);
 		hpriv = NULL;
 	}
 out:
@@ -238,7 +239,7 @@ void nrf_wifi_hal_deinit(struct nrf_wifi_hal_priv *hpriv)
 {
 	nrf_wifi_bal_deinit(hpriv->bpriv);
 
-	nrf_wifi_osal_mem_free(hpriv);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, hpriv);
 }
 
 

@@ -45,92 +45,6 @@ void nrf_wifi_osal_init(const struct nrf_wifi_osal_ops *ops);
 void nrf_wifi_osal_deinit(void);
 
 /**
- * @brief Allocate memory for control path requests.
- * @param size Size of the memory to be allocated in bytes.
- *
- * Allocates memory of @p size bytes and returns a pointer to the start
- * of the memory allocated.
- *
- * @return Pointer to start of allocated memory on success, NULL on error.
- */
-void *nrf_wifi_osal_mem_alloc(size_t size);
-
-/**
- * @brief Allocated zero-initialized memory for control path requests.
- * @param size Size of the memory to be allocated in bytes.
- *
- * Allocates zero-initialized memory of @p size bytes and returns a pointer to the start
- * of the memory allocated.
- *
- * @return Pointer to start of allocated memory on success, NULL on error.
- */
-void *nrf_wifi_osal_mem_zalloc(size_t size);
-
-/**
- * @brief Allocated zero-initialized memory for data.
- *
- * @param size Size of the memory to be allocated in bytes.
- *
- * Allocates memory of @p size bytes, zeroes it out and returns a pointer to the
- * start of the memory allocated.
- *
- * @return: Pointer to start of allocated memory or NULL.
- */
-void *nrf_wifi_osal_data_mem_zalloc(size_t size);
-
-/**
- * @brief Free previously allocated memory for control path requests.
- * @param buf Pointer to the memory to be freed.
- *
- * Free up memory which has been allocated using  @ref nrf_wifi_osal_mem_alloc or
- * @ref nrf_wifi_osal_mem_zalloc.
- */
-void nrf_wifi_osal_mem_free(void *buf);
-
-/**
- * @brief Free previously allocated memory for data.
- *
- * @param buf Pointer to the memory to be freed.
- *
- * Free up memory which has been allocated using @ref nrf_wifi_osal_mem_alloc or
- * @ref nrf_wifi_osal_mem_zalloc.
- *
- */
-void nrf_wifi_osal_data_mem_free(void *buf);
-
-/**
- * @brief Copy contents from one memory location to another.
- *
- * @param dest Pointer to the memory location where contents are to be copied.
- * @param src Pointer to the memory location from where contents are to be copied.
- * @param count Number of bytes to be copied.
- *
- * Copies @p count number of bytes from @p src location in memory to @p dest
- * location in memory.
- *
- * @return Pointer to destination memory if successful, NULL otherwise.
- */
-void *nrf_wifi_osal_mem_cpy(void *dest,
-			    const void *src,
-			    size_t count);
-
-/**
- * @brief Fill a block of memory with a particular value.
- * @param start Pointer to the memory location whose contents are to be set.
- * @param val Value to be set.
- * @param size Number of bytes to be set.
- *
- * Fills a block of memory of @p size bytes, starting at @p start with a value
- * specified by @p val.
- *
- * @return Pointer to memory location which was set on success, NULL on error.
- */
-void *nrf_wifi_osal_mem_set(void *start,
-			    int val,
-			    size_t size);
-
-
-/**
  * @brief Memory map IO memory into CPU space.
  * @param addr Address of the IO memory to be mapped.
  * @param size Size of the IO memory in bytes.
@@ -1316,21 +1230,6 @@ void nrf_wifi_osal_assert(int test,
  * @return The number of bytes of the string str.
  */
 unsigned int nrf_wifi_osal_strlen(const void *str);
-
-/**
- * @brief Compare contents from one memory location to another.
- * @param addr1 Pointer to the memory location of first address.
- * @param addr2 Pointer to the memory location of second address.
- * @param count Number of bytes to be compared.
- *
- * Compares count number of bytes from addr1 location in memory to addr2
- * location in memory.
- *
- * @return An integer less than, equal to, or greater than zero.
- */
-int nrf_wifi_osal_mem_cmp(const void *addr1,
-			  const void *addr2,
-			  size_t count);
 
 /**
  * nrf_wifi_osal_rand8_get() - Get a random 8 bit number.

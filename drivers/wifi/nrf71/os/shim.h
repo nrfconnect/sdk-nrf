@@ -15,6 +15,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/net/net_pkt.h>
+#include <common/mem_mgmt.h>
 
 #define NRF_WIFI_EXTRA_TX_HEADROOM 100
 
@@ -62,8 +63,6 @@ struct zep_shim_llist {
  * @param ctrl If non-NULL, set to the control heap (for small/control allocations).
  * @param data If non-NULL, set to the data heap (for data-path allocations).
  */
-void nrf_wifi_shim_get_heaps(struct k_heap **ctrl, struct k_heap **data);
-
 void *net_pkt_to_nbuf(struct net_pkt *pkt);
 void *net_pkt_from_nbuf(void *iface, void *frm);
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)

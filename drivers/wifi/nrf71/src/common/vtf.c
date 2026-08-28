@@ -11,6 +11,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
+#include <common/mem_mgmt.h>
 #include <common/vtf.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -32,7 +33,7 @@ enum nrf_wifi_status nrf_wifi_fmac_config_vtf_params(struct nrf_wifi_fmac_dev_ct
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
-	vtf_buf = nrf_wifi_osal_mem_alloc(sizeof(*vtf_buf));
+	vtf_buf = nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*vtf_buf));
 	if (!vtf_buf) {
 		LOG_ERR("%s: Unable to allocate memory for VTF params", __func__);
 		return NRF_WIFI_STATUS_FAIL;

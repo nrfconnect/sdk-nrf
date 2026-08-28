@@ -9,6 +9,7 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include "system/hal_api.h"
 #include "system/fmac_rx.h"
 #include "common/fmac_util.h"
@@ -113,7 +114,7 @@ static void nrf_wifi_convert_amsdu_to_eth(void *nwb)
 
 	amsdu_hdr_len = sizeof(struct nrf_wifi_fmac_amsdu_hdr);
 
-	nrf_wifi_osal_mem_cpy(&amsdu_hdr,
+	nrf_wifi_mem_cpy(&amsdu_hdr,
 				  nrf_wifi_osal_nbuf_data_get(nwb),
 				  amsdu_hdr_len);
 
@@ -131,11 +132,11 @@ static void nrf_wifi_convert_amsdu_to_eth(void *nwb)
 		nrf_wifi_osal_nbuf_data_push(nwb,
 						 sizeof(struct nrf_wifi_fmac_eth_hdr));
 
-	nrf_wifi_osal_mem_cpy(ehdr->src,
+	nrf_wifi_mem_cpy(ehdr->src,
 				  amsdu_hdr.src,
 				  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 
-	nrf_wifi_osal_mem_cpy(ehdr->dst,
+	nrf_wifi_mem_cpy(ehdr->dst,
 				  amsdu_hdr.dst,
 				  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 
@@ -162,36 +163,36 @@ static void nrf_wifi_convert_to_eth(void *nwb,
 
 	switch (hdr->fc & (NRF_WIFI_FCTL_TODS | NRF_WIFI_FCTL_FROMDS)) {
 	case (NRF_WIFI_FCTL_TODS | NRF_WIFI_FCTL_FROMDS):
-		nrf_wifi_osal_mem_cpy(ehdr->src,
+		nrf_wifi_mem_cpy(ehdr->src,
 					  hdr->addr_4,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 
-		nrf_wifi_osal_mem_cpy(ehdr->dst,
+		nrf_wifi_mem_cpy(ehdr->dst,
 					  hdr->addr_1,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 		break;
 	case (NRF_WIFI_FCTL_FROMDS):
-		nrf_wifi_osal_mem_cpy(ehdr->src,
+		nrf_wifi_mem_cpy(ehdr->src,
 					  hdr->addr_3,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
-		nrf_wifi_osal_mem_cpy(ehdr->dst,
+		nrf_wifi_mem_cpy(ehdr->dst,
 					  hdr->addr_1,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 		break;
 	case (NRF_WIFI_FCTL_TODS):
-		nrf_wifi_osal_mem_cpy(ehdr->src,
+		nrf_wifi_mem_cpy(ehdr->src,
 					  hdr->addr_2,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
-		nrf_wifi_osal_mem_cpy(ehdr->dst,
+		nrf_wifi_mem_cpy(ehdr->dst,
 					  hdr->addr_3,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 		break;
 	default:
 		/* Both FROM and TO DS bit is zero*/
-		nrf_wifi_osal_mem_cpy(ehdr->src,
+		nrf_wifi_mem_cpy(ehdr->src,
 					  hdr->addr_2,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
-		nrf_wifi_osal_mem_cpy(ehdr->dst,
+		nrf_wifi_mem_cpy(ehdr->dst,
 					  hdr->addr_1,
 					  NRF_WIFI_FMAC_ETH_ADDR_LEN);
 
@@ -328,7 +329,7 @@ void nrf_wifi_fmac_rx_tasklet(void *data)
 		goto out;
 	}
 out:
-	nrf_wifi_osal_mem_free(config);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 	nrf_wifi_sys_hal_unlock_rx(fmac_dev_ctx->hal_dev_ctx);
 }
 #endif /* NRF71_RX_WQ_ENABLED */
@@ -377,7 +378,8 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 #endif /* NRF71_STA_MODE */
 	num_pkts = config->rx_pkt_cnt;
 #ifdef NRF_WIFI_RX_BUFF_PROG_UMAC
-	rx_buf_ipc = nrf_wifi_osal_mem_zalloc(num_pkts * sizeof(struct nrf_wifi_rx_buf));
+	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					 num_pkts * sizeof(struct nrf_wifi_rx_buf));
 	rx_buf_info_iter = rx_buf_ipc;
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 
@@ -417,7 +419,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 		rx_buf_info->mapped = false;
 
 #ifdef NRF71_PROMISC_DATA_RX
-		nrf_wifi_osal_mem_cpy(&frame_control,
+		nrf_wifi_mem_cpy(&frame_control,
 					  nwb_data,
 					  sizeof(unsigned short));
 #endif
@@ -440,7 +442,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 #ifdef NRF71_STA_MODE
 			switch (config->rx_buff_info[i].pkt_type) {
 			case PKT_TYPE_MPDU:
-				nrf_wifi_osal_mem_cpy(&hdr,
+				nrf_wifi_mem_cpy(&hdr,
 					nwb_data,
 					sizeof(struct nrf_wifi_fmac_ieee80211_hdr));
 
@@ -562,7 +564,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 	} else {
 		nrf_wifi_osal_log_dbg("%s: UMAC rx buff refill programmed for num_buffs= %d\n",
 				      __func__, num_pkts);
-		nrf_wifi_osal_mem_free(rx_buf_ipc);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rx_buf_ipc);
 	}
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
 	return status;

@@ -17,7 +17,7 @@
 
 #include <util.h>
 #include <common/rf_params.h>
-#include <radio_test/main.h>
+#include <radio_test/core.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
