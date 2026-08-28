@@ -3812,12 +3812,14 @@ NCSDK-38043: The :ref:`radio_test` sample cannot allocate a DPPI channel on nRF5
 
   **Workaround:** Explicitly disable the :kconfig:option:`CONFIG_NRFX_GPPI_V1` Kconfig option in the :file:`nrf54h20dk_nrf54h20_cpurad.conf` board configuration file.
 
-.. rst-class:: v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0
+.. rst-class:: v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0
 
-NCSDK-30519: The :ref:`radio_test` sample reports high packet error rate on the long-range data rates
-  Packet error rate is very high in the receive mode when using the ``BLE_LR125KBIT`` and ``BLE_LR500KBIT`` data rates.
+NCSDK-30519: The :ref:`radio_test` sample misses some packets when receiving on the long-range data rates if another device transmits in modulated TX mode
+  The packet error rate is very high in receive mode when using the ``BLE_LR125KBIT`` and ``BLE_LR500KBIT`` data rates.
 
-  **Affected platforms:** nRF54L15, nRF54L10, nRF54L05
+  **Affected platforms:** nRF54L15, nRF54L10, nRF54L05, nRF54LV10A, nRF54LM20, nRF54LS05, nRF54H20
+
+  **Workaround:** Cherry-pick the fix from `sdk-nrf PR #28131`_, which adds a direct Radio peripheral DISABLE task between packet receptions, so that the receiver misses every second packet instead of experiencing a high, random packet error rate.
 
 .. rst-class:: v3-0-2 v3-0-1 v3-0-0
 

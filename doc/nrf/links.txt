@@ -111,6 +111,7 @@
 .. _`sdk-nrf PR #26153`: https://github.com/nrfconnect/sdk-nrf/pull/26153
 .. _`sdk-nrf PR #26152`: https://github.com/nrfconnect/sdk-nrf/pull/26152
 .. _`sdk-nrf PR #26139`: https://github.com/nrfconnect/sdk-nrf/pull/26139
+.. _`sdk-nrf PR #28131`: https://github.com/nrfconnect/sdk-nrf/pull/28131
 .. _`sdk-nrf PR #28434`: https://github.com/nrfconnect/sdk-nrf/pull/28434
 .. _`sdk-nrf PR #28440`: https://github.com/nrfconnect/sdk-nrf/pull/28440
 
