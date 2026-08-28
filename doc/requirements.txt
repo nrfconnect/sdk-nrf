@@ -22,6 +22,7 @@ sphinx-autobuild                # |  X  |    X    |   X     |    X    |   X   | 
 sphinx-copybutton               # |  X  |         |         |         |       |   X   |
 sphinx-ncs-theme<2.1            # |  X  |         |         |         |       |       |
 sphinx-notfound-page>=1.0.0     # |  X  |         |         |         |       |   X   |
+sphinx-sitemap                  # |  X  |    X    |   X     |    X    |   X   |   X   |
 sphinx_markdown_tables          # |     |         |   X     |         |       |   X   |
 sphinxcontrib-mermaid           # |     |         |         |         |       |   X   |
 sphinx-tabs>=3.4                # |  X  |         |         |         |       |   X   |

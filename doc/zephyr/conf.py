@@ -35,7 +35,6 @@ locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
 
-extensions.remove("sphinx_sitemap")
 extensions = ["sphinx.ext.intersphinx"] + extensions
 
 # Options for HTML output ------------------------------------------------------
@@ -49,6 +48,7 @@ html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_logo = None
 html_title = "Zephyr Project documentation (nRF Connect SDK)"
+html_baseurl = utils.get_baseurl("zephyr")
 
 html_context = {
     "show_license": True,
@@ -117,6 +117,10 @@ zephyr_hw_features_vendor_filter = ["nordic"]
 
 gh_link_version = Manifest.from_topdir().get_projects(["zephyr"])[0].revision
 gh_link_base_url = "https://github.com/nrfconnect/sdk-zephyr"
+
+# -- Options for sphinx_sitemap ------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 # pylint: enable=undefined-variable,used-before-assignment
 

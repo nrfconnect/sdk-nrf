@@ -59,6 +59,7 @@ extensions = [
     "sphinxcontrib.programoutput",
     "sphinxcontrib.jquery",
     "samples",
+    "sphinx_sitemap",
 ]
 
 linkcheck_ignore = [
@@ -92,6 +93,7 @@ html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_baseurl = utils.get_baseurl("nrf")
 
 html_theme_options = {"docset": "nrf", "docsets": utils.ALL_DOCSETS, "logo_url": "https://docs.nordicsemi.com/"}
 
@@ -218,6 +220,10 @@ manifest_revisions_table_manifest = NRF_BASE / "west.yml"
 notfound_urls_prefix = "/nRF_Connect_SDK/doc/{}/nrf/".format(
     "latest" if version.endswith("99") else version
 )
+
+# Options for sphinx_sitemap ---------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 # -- Options for zephyr.gh_utils -----------------------------------------------
 

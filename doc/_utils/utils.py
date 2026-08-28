@@ -9,6 +9,7 @@ from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx.cmd.build import get_parser
+from versions import Versions
 from west.manifest import Manifest
 
 _NRF_BASE = Path(__file__).parents[2]
@@ -16,6 +17,9 @@ _NRF_BASE = Path(__file__).parents[2]
 
 _MANIFEST = Manifest.from_file(_NRF_BASE / "west.yml")
 """Manifest instance"""
+
+_DOCS_BASEURL = "https://nrfconnectdocs.nordicsemi.com/ncs/{version}/{docset}/"
+"""Public URL of a docset, as served by docs.nordicsemi.com."""
 
 ALL_DOCSETS = {
     "nrf": ("nRF Connect SDK", "index", "manifest"),
@@ -98,6 +102,23 @@ def get_srcdir(docset: str) -> PathLike:
     """
 
     return get_builddir() / docset / "src"
+
+
+def get_baseurl(docset: str) -> str:
+    """
+    Returns the base url for given docset.
+
+    Args:
+        docset: Target docset.
+
+    Returns:
+        Public base URL of the given docset.
+    """
+
+    latest = Versions.from_topdir().latest()
+    version = "latest" if not latest or Versions.is_placeholder(latest) else latest
+
+    return _DOCS_BASEURL.format(version=version, docset=docset)
 
 
 def get_intersphinx_mapping(docset: str) -> tuple[str, str] | None:

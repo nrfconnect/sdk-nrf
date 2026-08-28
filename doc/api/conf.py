@@ -23,6 +23,7 @@ extensions = [
     "zephyr.external_content",
     "notfound.extension",
     "sphinx_copybutton",
+    "sphinx_sitemap",
 ]
 
 # Options for HTML output ------------------------------------------------------
@@ -32,6 +33,7 @@ html_static_path = [str(NRF_BASE / "doc" / "_static")]
 html_last_updated_fmt = "%b %d, %Y"
 html_show_sourcelink = True
 html_show_sphinx = False
+html_baseurl = utils.get_baseurl("api")
 
 html_theme_options = {"docset": "api", "docsets": utils.ALL_DOCSETS}
 
@@ -40,6 +42,10 @@ html_theme_options = {"docset": "api", "docsets": utils.ALL_DOCSETS}
 external_content_contents = [
     (NRF_BASE / "doc" / "api", "*"),
 ]
+
+# Options for sphinx_sitemap ---------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 
 def setup(app):

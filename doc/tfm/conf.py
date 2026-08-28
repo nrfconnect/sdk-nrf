@@ -38,6 +38,7 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinx_tabs.tabs",
     "zephyr.external_content",
+    "sphinx_sitemap",
 ]
 source_suffix = [".rst", ".md"]
 master_doc = "wrapper"
@@ -63,6 +64,7 @@ html_show_sourcelink = True
 html_show_sphinx = False
 html_show_copyright = False
 html_title = "Trusted Firmware-M documentation (nRF Connect SDK)"
+html_baseurl = utils.get_baseurl("tfm")
 
 html_theme_options = {
     "docset": "tfm",
@@ -95,6 +97,10 @@ external_content_contents = [
     (NRF_BASE / "doc" / "tfm", "wrapper.rst"),
     (TFM_BASE / "docs", "**/*"),
 ]
+
+# Options for sphinx_sitemap ---------------------------------------------------
+
+sitemap_url_scheme = "{link}"
 
 
 def setup(app):
