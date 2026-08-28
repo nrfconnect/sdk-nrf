@@ -85,6 +85,24 @@ config RAW_TX_PKT_SAMPLE_QUEUE_NUM
 	  3 - Voice
 	  4 - Beacon.
 
+config RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE
+	bool "Raw packets TX aggregation"
+	default n
+	depends on NRF70_RAW_DATA_TX
+	help
+	  When enabled, sets the raw TX header aggregation field so the nRF70
+	  driver may coalesce multiple MPDUs per RAW_TX command (up to
+	  num_frames).
+
+config RAW_TX_PKT_SAMPLE_NUM_FRAMES
+	int "Number of frames to aggregate"
+	default 4
+	range 1 16
+	depends on RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE
+	help
+	  Maximum number of MPDUs to aggregate per TX command when aggregation
+	  is enabled. Must not exceed CONFIG_NRF70_MAX_TX_AGGREGATION.
+
 choice
 	prompt "Select transmission mode"
 	default RAW_TX_PKT_SAMPLE_TX_MODE_CONTINUOUS

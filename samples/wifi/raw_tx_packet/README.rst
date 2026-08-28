@@ -69,6 +69,8 @@ The following configuration options are available for the raw TX packet header:
 * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_RATE_VALUE`: Specifies the data transmission PHY rate.
 * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_RATE_FLAGS`: Specifies the data transmission mode.
 * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_QUEUE_NUM`: Specifies the transmission queue to which raw TX packets are assigned for sending.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE`: Enables TX aggregation in the raw TX packet header.
+* :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_NUM_FRAMES`: Specifies the maximum number of MPDUs to aggregate per TX command when aggregation is enabled.
 
 Additionally, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS` Kconfig option in the :file:`prj.conf` file to define the time delay between raw TX packets.
 
