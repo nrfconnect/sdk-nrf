@@ -15,6 +15,9 @@
 #include "system/fmac_tx.h"
 #include "common/fmac_util.h"
 #include <common/lock_mgmt.h>
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					      struct nrf_wifi_sap_ps_get_frames *config)
@@ -29,7 +32,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	struct nrf_wifi_sys_fmac_priv *sys_priv = NULL;
 
 	if (!fmac_dev_ctx || !config) {
-		nrf_wifi_osal_log_err("%s: Invalid params",
+		LOG_ERR("%s: Invalid params",
 				      __func__);
 		goto out;
 	}
@@ -42,7 +45,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx, config->mac_addr);
 
 	if (id == -1) {
-		nrf_wifi_osal_log_err("%s: Invalid Peer_ID, Mac Addr =%pM",
+		LOG_ERR("%s: Invalid Peer_ID, Mac Addr =%pM",
 				      __func__,
 				      config->mac_addr);
 
@@ -90,7 +93,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 	struct nrf_wifi_sys_fmac_priv *sys_priv = NULL;
 
 	if (!fmac_dev_ctx || !config) {
-		nrf_wifi_osal_log_err("%s: Invalid params",
+		LOG_ERR("%s: Invalid params",
 				      __func__);
 		goto out;
 	}
@@ -104,7 +107,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 				       config->mac_addr);
 
 	if (id == -1) {
-		nrf_wifi_osal_log_err("%s: Invalid Peer_ID, Mac address = %pM",
+		LOG_ERR("%s: Invalid Peer_ID, Mac address = %pM",
 				      __func__,
 				      config->mac_addr);
 
