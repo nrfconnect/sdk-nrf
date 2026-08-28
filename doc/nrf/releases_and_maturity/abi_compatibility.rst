@@ -41,6 +41,92 @@ Updating the nRF54H20 SoC
 
 To update the nRF54H20 IronSide SE binaries to the latest version, see :ref:`ug_nrf54h20_ironside_se_update`.
 
+.. _abi_compatibility_ise_known_issues:
+
+|ISE| known issues
+******************
+
+The following known issues affect |ISE|.
+
+.. page-filter::
+  :name: ise-versions
+  :default: v23-8-0-33
+  :container: dl/dt
+
+  v23-8-0-33  v23.8.0+33
+  v23-7-0-30  v23.7.0+30
+  v23-6-0-29  v23.6.0+29
+  v23-5-0-28  v23.5.0+28
+
+.. _ug_nrf54h20_ironside_se_snapshot_limitation_se0:
+
+.. rst-class:: v23-6-0-29 v23-5-0-28
+
+SE0: BICR CRC is not populated or recalculated
+  Some versions of the BICR generator do not populate ``BICR.CRC``.
+  In addition, |ISE| v23.6.0+29 does not recalculate ``BICR.CRC`` when it writes to BICR.
+  If a strong magnetic field corrupts a BICR that was generated without the `Zephyr BICR CRC fix <https://github.com/zephyrproject-rtos/zephyr/commit/a6d085d891e28d229cd6c1157bf4a823ec2bac48>`_, the device does not detect the corruption, attempts to use an invalid BICR configuration, and does not boot.
+
+  **Affected versions:** |ISE| v23.5.0+28 and v23.6.0+29 are affected by the |ISE| behavior.
+  Devices that use a BICR generated without CRC support are also affected.
+  This includes BICR files generated with |NCS| v3.3.0.
+
+  **Workaround:** Keep strong magnets at a distance from the device.
+  Use |ISE| v23.7.0+30 or later and populate ``BICR.CRC`` with a valid CRC.
+  Use a BICR generator that includes the Zephyr BICR CRC fix, or apply the fix to the generator.
+  For information about generating BICR, see :ref:`ug_nrf54h20_custom_pcb_bicr`.
+
+.. _ug_nrf54h20_ironside_se_snapshot_limitation_se1:
+
+.. rst-class:: v23-6-0-29 v23-5-0-28
+
+SE1: Some MRAM corruption scenarios are not detected by |ISE|
+  A strong magnetic field can corrupt MRAM in a way that is not detected by the affected |ISE| version.
+  |ISE| can then read the corrupted MRAM and crash before booting the application core.
+
+  **Affected versions:** |ISE| v23.5.0+28 and v23.6.0+29 are affected.
+
+  **Workaround:** Keep strong magnets at a distance from the device, and update to |ISE| v23.7.0+30 or later.
+
+.. _ug_nrf54h20_ironside_se_snapshot_limitation_se2:
+
+.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29
+
+SE2: Initial provisioning clears SICR snapshot regions
+  Initial provisioning clears configurable snapshot regions that were programmed directly in SICR before |ISE| was provisioned.
+  DFU does not clear this configuration.
+  As a result, the wrong set of MRAM regions is captured, and the device is not resilient against corruption in the intended regions.
+
+  **Affected versions:** |ISE| v23.6.0+29 or later is affected.
+
+  **Workaround:** Configure snapshot regions through ``UICR.SNAPSHOT_REGIONS``.
+  If you program SICR directly, provision |ISE| first, and then configure the regions while the device is still in lifecycle state ``EMPTY``.
+
+.. _ug_nrf54h20_ironside_se_snapshot_limitation_se3:
+
+.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29 v23-5-0-28
+
+SE3: Updating |ISE| Recovery triggers snapshot recovery
+  Updating the :ref:`IronSide SE Recovery component <ug_nrf54h20_ironside_se_deliverables>` on a snapshot-enabled device unintentionally triggers snapshot recovery and restores the device to its pre-update state.
+  |ISE| Recovery is therefore effectively immutable on a snapshot-enabled device.
+
+  **Affected versions:** All |ISE| releases are affected.
+
+  **Workaround:** Do not update |ISE| Recovery on a snapshot-enabled device.
+
+.. _ug_nrf54h20_ironside_se_snapshot_limitation_se4:
+
+.. rst-class:: v23-8-0-33 v23-7-0-30
+
+SE4: An even UICR snapshot region count causes a boot loop
+  When an even number of snapshot regions is configured through ``UICR.SNAPSHOT_REGIONS``, snapshot recovery is triggered unintentionally, and the device enters a boot loop.
+
+  **Affected versions:** |ISE| v23.7.0+30 or later is affected.
+
+  **Workaround:** Configure one, three, five, or seven snapshot regions through UICR.
+  Alternatively, configure the regions directly in SICR after provisioning |ISE| and before leaving lifecycle state ``EMPTY``.
+  Apply the workaround before transitioning the device from lifecycle state ``EMPTY`` to ``RoT``, because this transition is permanent and cannot be reversed.
+
 .. _abi_compatibility_ise_changelog:
 
 nRF54H20 IronSide SE binaries changelog
