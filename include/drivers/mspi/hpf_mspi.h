@@ -10,16 +10,13 @@
 #include <zephyr/drivers/pinctrl.h>
 #include <zephyr/drivers/mspi.h>
 #include <hal/nrf_timer.h>
+#include <helpers/nrfx_vpr_vio_pins.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
-#error "Unsupported SoC"
-#endif
-
-#define HPF_MSPI_PIN_COUNT NUM_VA_ARGS_LESS_1(FLPR_VIO_PIN_INDICES)
+#define HPF_MSPI_PIN_COUNT NRFX_VPR_VIO_PRESENT_COUNT_GET(NRF_VPR_IDX_FLPR)
 
 /** @brief eMSPI opcodes. */
 typedef enum {
