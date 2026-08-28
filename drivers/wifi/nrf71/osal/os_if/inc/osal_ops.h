@@ -151,34 +151,6 @@ struct nrf_wifi_osal_ops {
 	 */
 	void (*spi_cpy_to)(void *priv, unsigned long addr, const void *src, size_t count);
 
-
-	/**
-	 * @brief Log a debug message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_dbg)(const char *fmt, va_list args);
-
-	/**
-	 * @brief Log an informational message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_info)(const char *fmt, va_list args);
-
-	/**
-	 * @brief Log an error message.
-	 *
-	 * @param fmt The format string of the message.
-	 * @param args The arguments for the format string.
-	 * @return The number of characters written.
-	 */
-	int (*log_err)(const char *fmt, va_list args);
-
 	/**
 	 * @brief Delay for a specified number of microseconds.
 	 *

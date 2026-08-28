@@ -14,6 +14,9 @@
 
 #include <nrf71_wifi_ctrl.h>
 #include "common/fmac_util.h"
+#include <zephyr/logging/log.h>
+
+LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 
 int nrf_wifi_fmac_vif_check_if_limit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -27,7 +30,7 @@ int nrf_wifi_fmac_vif_check_if_limit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
 		if (sys_dev_ctx->num_sta > MAX_NUM_STAS) {
-			nrf_wifi_osal_log_err("%s: Maximum STA Interface type exceeded",
+			LOG_ERR("%s: Maximum STA Interface type exceeded",
 					      __func__);
 			return -1;
 		}
@@ -35,13 +38,13 @@ int nrf_wifi_fmac_vif_check_if_limit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		if (sys_dev_ctx->num_ap > MAX_NUM_APS) {
-			nrf_wifi_osal_log_err("%s: Maximum AP Interface type exceeded",
+			LOG_ERR("%s: Maximum AP Interface type exceeded",
 					      __func__);
 			return -1;
 		}
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s: Interface type not supported",
+		LOG_ERR("%s: Interface type not supported",
 				      __func__);
 		return -1;
 	}
@@ -67,7 +70,7 @@ void nrf_wifi_fmac_vif_incr_if_type(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		sys_dev_ctx->num_ap++;
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s:Unsupported VIF type",
+		LOG_ERR("%s:Unsupported VIF type",
 				      __func__);
 	}
 }
@@ -90,7 +93,7 @@ void nrf_wifi_fmac_vif_decr_if_type(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		sys_dev_ctx->num_ap--;
 		break;
 	default:
-		nrf_wifi_osal_log_err("%s:Unsupported VIF type",
+		LOG_ERR("%s:Unsupported VIF type",
 				      __func__);
 	}
 }

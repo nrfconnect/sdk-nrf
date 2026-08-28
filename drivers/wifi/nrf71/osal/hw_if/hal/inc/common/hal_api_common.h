@@ -13,7 +13,7 @@
 #ifndef __HAL_API_COMMON_H__
 #define __HAL_API_COMMON_H__
 
-#include "osal_api.h"
+#include <common/log_cfg.h>
 #include <nrf71_wifi_ctrl.h>
 
 #include "bal_api.h"

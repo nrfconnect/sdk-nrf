@@ -9,7 +9,6 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include "osal_api.h"
 #include <common/nbuf_mgmt.h>
 #include "common/fmac_api_common.h"
 #include "common/fmac_util.h"

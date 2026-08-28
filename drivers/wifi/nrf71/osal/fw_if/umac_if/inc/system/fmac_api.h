@@ -16,8 +16,6 @@
 #ifndef __FMAC_API_H__
 #define __FMAC_API_H__
 
-#include "osal_api.h"
-
 #include <nrf71_wifi_ctrl.h>
 
 

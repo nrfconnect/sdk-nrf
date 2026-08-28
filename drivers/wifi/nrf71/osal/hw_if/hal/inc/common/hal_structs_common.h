@@ -14,7 +14,6 @@
 #define __HAL_STRUCTS_COMMON_H__
 
 #include <nrf71_wifi_ctrl.h>
-#include "osal_api.h"
 #include "bal_api.h"
 
 /** 1 sec */

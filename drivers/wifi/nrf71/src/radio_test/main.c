@@ -20,7 +20,7 @@
 #include <radio_test/core.h>
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_rt_drv_priv rt_drv_priv;
 extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;

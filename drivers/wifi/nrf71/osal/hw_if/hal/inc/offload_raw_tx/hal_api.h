@@ -13,7 +13,6 @@
 #ifndef __HAL_API_OFF_RAW_TX_H__
 #define __HAL_API_OFF_RAW_TX_H__
 
-#include <osal_api.h>
 #include <bal_api.h>
 #include <common/hal_structs_common.h>
 #include <common/hal_api_common.h>
