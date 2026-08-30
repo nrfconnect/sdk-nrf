@@ -15,8 +15,8 @@ config DTM_TWOWIRE_TO_HCI_RECEIVER_TEST_VERSION
 	default 3 if BT_CTLR_DTM_HCI_RX_V3
 	default 2
 	help
-		Selects the version of the HCI_LE_Receiver_Test command to generate,
-		as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.28.
+	  Selects the version of the HCI_LE_Receiver_Test command to generate,
+	  as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.28.
 
 config DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION
 	int "HCI_LE_Transmitter_Test command version"
@@ -25,8 +25,17 @@ config DTM_TWOWIRE_TO_HCI_TRANSMITTER_TEST_VERSION
 	default 3 if BT_CTLR_DTM_HCI_TX_V3
 	default 2
 	help
-		Selects the version of the HCI_LE_Transmitter_Test command to generate,
-		as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.29.
+	  Selects the version of the HCI_LE_Transmitter_Test command to generate,
+	  as specified in the Bluetooth Core Specification 6.2 Vol 4, Part E, 7.8.29.
+
+config DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS
+	bool "SDC vendor-specific commands"
+	depends on BT_HCI_VS
+	default y
+	help
+	  Enable support for the vendor-specific commands listed in the DTM 2-wire to HCI
+	  conversion library documentation, utilizing vendor-specific HCI commands from
+	  the SoftDevice Controller (SDC).
 
 module=DTM_TWOWIRE_TO_HCI
 module-dep=LOG

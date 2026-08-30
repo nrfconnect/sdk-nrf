@@ -406,7 +406,13 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`dtm_twowire_to_hci_readme` library:
+
+  * Added:
+
+    * The :kconfig:option:`CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS` Kconfig option to support vendor-specific DTM 2-wire commands.
+      The option is enabled by default if :kconfig:option:`CONFIG_BT_HCI_VS` is enabled.
+    * A vendor-specific DTM 2-wire command for constant carrier transmission.
 
 Common Application Framework
 ----------------------------
