@@ -10,6 +10,10 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/bluetooth/hci_types.h>
 
+#if defined(CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS)
+#include <sdc_hci_vs.h>
+#endif /* CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS */
+
 #include <bluetooth/dtm_twowire/dtm_twowire_types.h>
 #include <bluetooth/dtm_twowire/dtm_twowire_to_hci.h>
 
@@ -58,6 +62,17 @@ struct {
 	uint8_t modulation_index;   /**< Modulation index for Receiver Test HCI command */
 	int8_t transmit_power;      /**< Transmit power for Transmitter Test HCI command */
 } dtm_hci_parameters;
+
+#if defined(CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS)
+/* Vendor Specific DTM subcommand for the 2-wire Transmitter Test command.
+ * It replaces Length field and must be combined with DTM_TW_PKT_0XFF_OR_VS
+ * packet type.
+ */
+enum dtm_vs_subcmd {
+	/* Length=0 indicates a constant, unmodulated carrier until an LE Test End command. */
+	CARRIER_TEST = 0,
+};
+#endif /* CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS */
 
 static uint16_t reset_dtm(uint8_t parameter)
 {
@@ -276,15 +291,8 @@ static int get_hci_param_pkt_payload(enum dtm_tw_pkt_type pkt_type_tw, uint8_t *
 		break;
 
 	case DTM_TW_PKT_0XFF_OR_VS:
-		if (dtm_hci_parameters.tx_phy == BT_HCI_LE_TX_PHY_CODED_S8 ||
-		    dtm_hci_parameters.tx_phy == BT_HCI_LE_TX_PHY_CODED_S2) {
-			*pkt_payload_hci = BT_HCI_TEST_PKT_PAYLOAD_11111111;
-		} else {
-			/* For non-Coded PHY, the 0xFF packet type is vendor specific.
-			 * We do not support vendor specific packet types in this implementation.
-			 */
-			return -EINVAL;
-		}
+		/* Assume the caller has verified that the packet is not vendor-specific */
+		*pkt_payload_hci = BT_HCI_TEST_PKT_PAYLOAD_11111111;
 		break;
 
 	default:
@@ -292,6 +300,43 @@ static int get_hci_param_pkt_payload(enum dtm_tw_pkt_type pkt_type_tw, uint8_t *
 	}
 
 	return 0;
+}
+
+static uint16_t on_vendor_specific_cmd(uint8_t channel, uint8_t length, struct net_buf *hci_cmd)
+{
+#if defined(CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS)
+	/* In this VS command implementation, we use the length parameter as a VS subcommand code,
+	 * and the channel parameter as a subcommand parameter.
+	 */
+	switch (length) {
+	case CARRIER_TEST:
+		/* Generate HCI command to send constant, unmodulated carrier */
+		uint8_t hci_param_channel;
+
+		if (get_hci_param_channel(channel, &hci_param_channel)) {
+			return DTM_TW_EVENT_TEST_STATUS_ERROR;
+		}
+
+		struct bt_hci_cmd_hdr *cmd_hdr = net_buf_add(hci_cmd, BT_HCI_CMD_HDR_SIZE);
+
+		cmd_hdr->opcode = SDC_HCI_OPCODE_CMD_VS_DTM_COMMAND;
+		cmd_hdr->param_len = sizeof(sdc_hci_cmd_vs_dtm_transmitter_carrier_test_t);
+		sdc_hci_cmd_vs_dtm_transmitter_carrier_test_t *cp = net_buf_add(
+			hci_cmd, sizeof(sdc_hci_cmd_vs_dtm_transmitter_carrier_test_t));
+		cp->header.sub_opcode = SDC_HCI_VS_DTM_COMMAND_OPCODE_TRANSMITTER_CARRIER_TEST;
+		cp->tx_channel = hci_param_channel;
+		cp->tx_power_level = dtm_hci_parameters.transmit_power;
+
+		return HCI_GENERATED;
+
+	default:
+		return DTM_TW_EVENT_TEST_STATUS_ERROR;
+	}
+#else
+	ARG_UNUSED(channel);
+	ARG_UNUSED(length);
+	return DTM_TW_EVENT_TEST_STATUS_ERROR;
+#endif /* CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS */
 }
 
 static uint16_t on_test_rx_cmd(uint8_t channel, struct net_buf *hci_cmd)
@@ -346,6 +391,14 @@ static uint16_t on_test_rx_cmd(uint8_t channel, struct net_buf *hci_cmd)
 static uint16_t on_test_tx_cmd(uint8_t channel, uint8_t length, enum dtm_tw_pkt_type type,
 			       struct net_buf *hci_cmd)
 {
+
+	if (type == DTM_TW_PKT_0XFF_OR_VS &&
+	    !(dtm_hci_parameters.tx_phy == BT_HCI_LE_TX_PHY_CODED_S8 ||
+	      dtm_hci_parameters.tx_phy == BT_HCI_LE_TX_PHY_CODED_S2)) {
+		/* For non-coded PHY, this payload type is vendor-specific. */
+		return on_vendor_specific_cmd(channel, length, hci_cmd);
+	}
+
 	uint8_t hci_param_channel, hci_param_pkt_payload;
 
 	if (get_hci_param_channel(channel, &hci_param_channel) ||
@@ -686,6 +739,9 @@ dtm_tw_to_hci_status_t dtm_tw_to_hci_process_hci_event(const uint16_t tw_cmd,
 	case BT_HCI_OP_LE_ENH_TX_TEST:
 	case BT_HCI_OP_LE_TX_TEST_V3:
 	case BT_HCI_OP_LE_TX_TEST_V4:
+#if defined(CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS)
+	case SDC_HCI_OPCODE_CMD_VS_DTM_COMMAND:
+#endif /* CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS */
 		__ASSERT_NO_MSG(param_len == sizeof(struct bt_hci_evt_cc_status));
 		const struct bt_hci_evt_cc_status *status_rp = cc_event_return_params;
 
