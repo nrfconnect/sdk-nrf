@@ -52,6 +52,9 @@ Check and adjust the following Kconfig options:
 Also configure the chosen Bluetooth LE Controller to support DTM HCI commands.
 For the SoftDevice Controller and Zephyr Bluetooth LE Controller, use the :kconfig:option:`CONFIG_BT_CTLR_DTM_HCI` Kconfig option.
 
+To enable support for vendor-specific commands using the SoftDevice Controller, use the :kconfig:option:`CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS` Kconfig option.
+See the `Vendor-specific packet payload`_ section for more information.
+
 Usage
 *****
 
@@ -71,6 +74,25 @@ The flow of the application could look like this:
      #. Call the :c:func:`dtm_tw_to_hci_process_hci_event` function to process the resulting HCI event.
      #. Send the generated 2-wire UART event to the tester.
      #. Return to **Step 1**.
+
+Vendor-specific packet payload
+******************************
+
+For non-coded PHYs, the Bluetooth Low Energy 2-wire UART DTM interface standard reserves the Packet Type with binary value ``11`` for vendor-specific commands.
+
+The DTM command is interpreted as vendor-specific when all of the following conditions are met:
+
+* Its **CMD** field is set to Transmitter Test, binary ``10``.
+* Its **PKT** field is set to vendor-specific, binary ``11``.
+* The test has not been set up to use coded PHY.
+
+When the :kconfig:option:`CONFIG_DTM_TWOWIRE_TO_HCI_SDC_VS_COMMANDS` Kconfig option is enabled, the library implements vendor-specific DTM 2-wire commands using the SoftDevice Controller vendor-specific HCI commands.
+The **Length** field of the DTM command is used as a vendor-specific subcommand code and the **Frequency** field as the command's parameter.
+
+The following vendor-specific subcommands are supported:
+
+* If the **Length** field is set to ``0``, an unmodulated carrier is turned on at the channel indicated by the **Frequency** field.
+  It remains turned on until a ``TEST_END`` command is issued.
 
 Limitations
 ***********
