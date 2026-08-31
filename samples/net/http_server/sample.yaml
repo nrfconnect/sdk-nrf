@@ -30,6 +30,23 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_net
+  sample.net.http_server.wifi.tls.mtls:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
+    # Enables peer verification (mutual TLS); see the README "Security" section.
+    extra_configs:
+      - CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE=y
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
   sample.net.http_server.lte:
     sysbuild: true
     build_only: true
