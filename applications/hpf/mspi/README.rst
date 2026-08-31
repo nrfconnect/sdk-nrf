@@ -35,18 +35,129 @@ The application supports the following development kits:
 
 .. table-from-sample-yaml::
 
+Configuration
+*************
+
+|config|
+
+Configuration options
+=====================
+
+The following FLPR application-specific Kconfig options are located in the :file:`applications/hpf/mspi/Kconfig` file:
+
+.. options-from-kconfig::
+   :show-type:
+
 Configuration and data transfer management
 ******************************************
 
 Data transfer between the MSPI driver and the HPF application is done through the ICMsg.
 Data can be configured to be passed either by copy or by reference.
 By default, data is passed by reference.
-To enable data passing by copy, disable the :kconfig:option:`SB_CONFIG_HPF_MSPI_IPC_NO_COPY` sysbuild Kconfig option.
-It sets both the ``CONFIG_HPF_MSPI_IPC_NO_COPY`` Kconfig option of the HPF application and the equivalent ``CONFIG_MSPI_HPF_IPC_NO_COPY`` option on the MSPI driver side, as both images must use the same IPC message format.
-The HPF application rejects the following types of messages and responds with the ``HPF_MSPI_WRONG_OPCODE`` opcode:
+The MSPI driver and the HPF application exchange data through ICMsg.
+You can pass the data either by reference or by copy.
+By default, data is passed by reference.
+To pass data by copy, disable both the :option:`CONFIG_HPF_MSPI_IPC_NO_COPY` Kconfig option and its driver-side equivalent, :kconfig:option:`CONFIG_MSPI_HPF_IPC_NO_COPY`.
 
-* Messages whose length does not match the size defined by the application's IPC message format.
-* Receive requests whose response exceeds the size set by the ``CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE`` Kconfig option, when data is passed by copy.
+IPC shared memory
+=================
+
+The HPF MSPI snippet reserves ``sram_tx`` and ``sram_rx`` regions for ICMsg packet buffers between the application core and FLPR.
+The regions must still meet the minimum ICMsg pbuf size, which is 128 bytes in each direction in the snippet.
+With the default :option:`CONFIG_HPF_MSPI_IPC_NO_COPY` enabled, ICMsg does not copy transfer payloads into these regions.
+It carries only a pointer to the application memory, and the FLPR reply is a 4-byte opcode.
+The FLPR accesses the data by reference, so the data must be word-aligned.
+Data in an unaligned buffer is copied through a 256-byte bounce buffer on the stack of the calling thread, so unaligned transfers are limited to 256 bytes.
+
+Data passed by copy
+-------------------
+
+With :option:`CONFIG_HPF_MSPI_IPC_NO_COPY` disabled, TX and RX data are copied through the shared regions.
+Each copy must fit every buffer on its way.
+ICMsg drops a message that does not fit the read buffer of the receiving core, which is set by the :kconfig:option:`CONFIG_PBUF_RX_READ_BUF_SIZE` Kconfig option.
+Configure both cores according to the following limits:
+
+.. list-table:: Limits for data passed by copy
+   :header-rows: 1
+   :widths: 15 40 40
+
+   * - Direction
+     - Application core
+     - FLPR
+   * - TX
+     - ``sram_tx`` of at least the largest TX packet plus 16 bytes, and at most 1024 bytes.
+     - ``sram_rx`` of the same size, and :kconfig:option:`CONFIG_PBUF_RX_READ_BUF_SIZE` of at least the largest TX packet plus 16 bytes.
+   * - RX
+     - ``sram_rx``, and :kconfig:option:`CONFIG_PBUF_RX_READ_BUF_SIZE` of at least the largest RX packet plus 4 bytes.
+     - ``sram_tx`` of the same size, and :option:`CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE` of at least the largest RX packet plus 4 bytes.
+
+Keep the following in mind when sizing the buffers:
+
+* The application core builds each TX message in a buffer of the ``sram_tx`` size.
+  This buffer is on the stack of the thread that starts the transfer.
+  That thread can be the system workqueue when the memory device uses runtime power management.
+* Size the application core ``sram_tx`` for the largest TX packet only, because RX data does not pass through it.
+* The application core read buffer is allocated on the ICMsg workqueue stack, whose size is set by the :kconfig:option:`CONFIG_IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE` Kconfig option.
+* To split reads into smaller packets, set ``packet-data-limit`` in the MSPI controller node.
+* Writes to flash memory are split into page programs, so the TX limit must hold a full page, for example 256 bytes.
+
+Example configuration
+---------------------
+
+The following settings for the nRF54L15 DK allow 2 KiB RX packets and 256-byte TX packets:
+
+* Application core:
+
+  * ``sram_tx`` of 0x140 bytes and ``sram_rx`` of 0x900 bytes.
+  * :kconfig:option:`CONFIG_PBUF_RX_READ_BUF_SIZE` set to ``2052``.
+  * :kconfig:option:`CONFIG_IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE` set to ``3072``.
+
+* FLPR:
+
+  * ``sram_tx`` of 0x900 bytes and ``sram_rx`` of 0x140 bytes.
+  * :option:`CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE` set to ``2052``.
+  * :kconfig:option:`CONFIG_PBUF_RX_READ_BUF_SIZE` of 768 bytes.
+  * Devicetree: ``packet-data-limit = <2048>`` in the ``hpf_mspi`` node.
+
+With these settings, the FLPR uses about 97% of its 15 KB of RAM.
+
+Transfer timeouts
+=================
+
+Pin configuration, device configuration, and other driver-init IPC use a fixed internal wait in the driver.
+Memory communication timeouts are configured in the devicetree instead.
+Set ``transfer-timeout``, in milliseconds, in the MSPI flash node.
+
+Adjust ``transfer-timeout`` whenever you change ``mspi-max-frequency`` or the IO mode, or the packet size.
+The following minimum values apply to an MSPI data packet in quad SPI mode:
+
+.. list-table:: Recommended transfer-timeout (ms) for a quad-SPI communication and 64KiB maximum packet size.
+   :header-rows: 1
+   :widths: 20 30
+
+   * - MSPI frequency
+     - Minimum ``transfer-timeout`` (ms)
+   * - 8 MHz and more
+     - 25
+   * - 4 MHz
+     - 50
+   * - 1 MHz
+     - 200
+   * - 500 kHz
+     - 400
+   * - 250 kHz
+     - 800
+
+Failure handling
+================
+
+The MSPI driver reports failures to the user application as negative error codes.
+
+* If the driver cannot send a message to the FLPR core, it returns the error code.
+* If the FLPR core does not respond within the timeout, the driver stops the FLPR core and returns ``-ETIMEDOUT``.
+  The timeout is ``transfer-timeout`` for data packets, and a fixed internal value for configuration messages.
+* After the FLPR core is stopped, the driver is disabled.
+  All later calls return ``-EIO`` without contacting the FLPR core, and resuming the device. Only a reset of the application core brings the driver back.
 
 Initialization phase
 ====================
@@ -138,7 +249,7 @@ The following diagram illustrates the interactions between the user application 
   activate a
   a -> d : api_config()
   activate d
-  d -> d : send_config(HPF_MSPI_CONFIG_PINS)
+  d -> d : send_data(HPF_MSPI_CONFIG_PINS)
   note right d: Shared mem and/or IRQ num
   d -> f : HPF_MSPI_CONFIG_PINS
   activate f
@@ -157,7 +268,7 @@ The following diagram illustrates the interactions between the user application 
   activate a
   a -> d : api_dev_config()
   activate d
-  d -> d : send_config(HPF_MSPI_CONFIG_DEV)
+  d -> d : send_data(HPF_MSPI_CONFIG_DEV)
   note right d: Shared mem and/or IRQ num
   d -> f : HPF_MSPI_CONFIG_DEV
   activate f
@@ -178,7 +289,7 @@ The following diagram illustrates the interactions between the user application 
   activate a
   a -> d : api_transceive()
   activate d
-  d -> d : send_config(HPF_MSPI_CONFIG_XFER)
+  d -> d : send_data(HPF_MSPI_CONFIG_XFER)
   note right d: Shared mem and/or IRQ num
   d -> f : HPF_MSPI_CONFIG_XFER
   activate f
@@ -186,8 +297,7 @@ The following diagram illustrates the interactions between the user application 
   return
   deactivate f
   loop for each packet
-  d -> d ++ : start_next_packet()
-  d -> d ++ : xfer_packet()
+  d -> d ++ : send_packet()
   note right d: Shared mem and/or IRQ num
   d -> f : HPF_MSPI_TX or HPF_MSPI_TXRX
   activate f
@@ -232,7 +342,6 @@ The following diagram illustrates the interactions between the user application 
   end
   return
   return
-  deactivate d
   deactivate d
   d --> a
   deactivate d
@@ -294,7 +403,7 @@ These structures are crucial for configuring and executing data transfers effici
   * ``ce_vio`` - Index of the VIO pin used as CE.
   * ``ce_hold`` - Whether CE remains asserted after the transfer.
   * ``ce_polarity`` - Active polarity of the CE pin.
-  * ``tx_direction_mask`` and ``rx_direction_mask`` - Configure GPIO directions for data transmission.
+  * ``used_pins_mask`` - Mask of pins used by the transfer, applied to the CSR DIR register.
   * ``cpp_mode`` - SPI mode 0 or 3
 
 * Transfer data
