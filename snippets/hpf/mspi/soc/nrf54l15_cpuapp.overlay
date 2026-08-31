@@ -10,12 +10,12 @@
 		#size-cells = <1>;
 		ranges;
 
-		sram_rx: memory@2003b400 {
-			reg = <0x2003b400 0x07f0>;
+		sram_rx: memory@2003c2e0 {
+			reg = <0x2003c2e0 0x80>;
 		};
 
-		sram_tx: memory@2003bbf0 {
-			reg = <0x2003bbf0 0x07f0>;
+		sram_tx: memory@2003c360 {
+			reg = <0x2003c360 0x80>;
 		};
 
 		cpuflpr_error_code: memory@2003c3e0 {
@@ -68,7 +68,7 @@
 
 &cpuapp_sram {
 	reg = <0x20000000 DT_SIZE_K(237)>;
-	ranges = <0x0 0x20000000 0x3b400>;
+	ranges = <0x0 0x20000000 0x3c2e0>;
 };
 
 &cpuflpr_vpr {
