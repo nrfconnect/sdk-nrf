@@ -9,12 +9,12 @@
 		#address-cells = <1>;
 		#size-cells = <1>;
 
-		sram_tx: memory@2002b000 {
-			reg = <0x2002b000 0x07f0>;
+		sram_tx: memory@2002bee0 {
+			reg = <0x2002bee0 0x80>;
 		};
 
-		sram_rx: memory@2002b7f0 {
-			reg = <0x2002b7f0 0x07f0>;
+		sram_rx: memory@2002bf60 {
+			reg = <0x2002bf60 0x80>;
 		};
 
 		cpuflpr_error_code: memory@2002bfe0 {
