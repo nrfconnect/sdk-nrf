@@ -5,7 +5,6 @@
  */
 
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 
 #ifndef __MAIN_H_
 #define __MAIN_H_

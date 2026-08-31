@@ -9,7 +9,6 @@
 #include <zephyr/logging/log.h>
 #include <stdio.h>
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 
 #ifdef CONFIG_BUILD_WITH_TFM
 #include <tfm_ns_interface.h>

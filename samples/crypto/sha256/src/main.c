@@ -11,7 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_BUILD_WITH_TFM

@@ -9,7 +9,6 @@
 #include <zephyr/logging/log.h>
 #include <stdio.h>
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 
 #include <cracen_psa_kmu.h>
 #include <cracen_psa_key_ids.h>
