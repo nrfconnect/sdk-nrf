@@ -841,7 +841,7 @@ Memfault integration
 
 * Added support for setting the Memfault project key at runtime using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS` Kconfig option.
 
-* Updated Memfault to version 1.42.1.
+* Updated Memfault to version 1.44.0.
   See the `Memfault firmware SDK changelog`_ for details.
 
 * Removed the ``CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`` Kconfig option from nRF91x targets.
