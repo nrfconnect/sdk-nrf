@@ -7,7 +7,6 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 
 #include "ml_dsa_65_vectors.h"
 
