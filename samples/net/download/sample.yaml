@@ -43,6 +43,25 @@ tests:
       - ci_samples_net
     extra_args:
       - download_EXTRA_CONF_FILE="wifi.conf;wifi-mutual-dtls.conf"
+  sample.net.downloader.wifi.tls_cert:
+    sysbuild: true
+    build_only: true
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp/ns
+      - nrf7120dk/nrf7120/cpuapp/ns
+    extra_args:
+      - download_EXTRA_CONF_FILE=wifi.conf
+    # No real mutual-TLS-enabled HTTPS server is used; this reuses the sample's
+    # example Californium client certificate purely for Twister build coverage.
+    extra_configs:
+      - CONFIG_SAMPLE_PROVISION_CLIENT_CERT=y
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
   sample.net.downloader.nrf54lm20_nrf7002eb2.wifi:
     sysbuild: true
     tags:
@@ -77,3 +96,24 @@ tests:
       - download_SHIELD="nrf7002eb2"
       - download_SNIPPET=wifi-credentials
       - download_EXTRA_CONF_FILE="wifi.conf;wifi-mutual-dtls.conf"
+  sample.net.downloader.nrf54lm20_nrf7002eb2.wifi.tls_cert:
+    sysbuild: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_net
+    build_only: true
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    extra_args:
+      - download_SHIELD="nrf7002eb2"
+      - download_SNIPPET=wifi-credentials
+      - download_EXTRA_CONF_FILE=wifi.conf
+    # No real mutual-TLS-enabled HTTPS server is used; this reuses the sample's
+    # example Californium client certificate purely for Twister build coverage.
+    extra_configs:
+      - CONFIG_SAMPLE_PROVISION_CLIENT_CERT=y
