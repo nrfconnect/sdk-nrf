@@ -5,7 +5,6 @@
  */
 
 #include <psa/crypto.h>
-#include <psa/crypto_extra.h>
 
 #ifndef __KEY_OPERATIONS_H_
 #define __KEY_OPERATIONS_H_
