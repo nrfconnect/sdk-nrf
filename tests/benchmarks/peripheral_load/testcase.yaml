@@ -1,6 +1,3 @@
-sample:
-  name: Peripheral stress test
-
 common:
   depends_on:
     - adc
