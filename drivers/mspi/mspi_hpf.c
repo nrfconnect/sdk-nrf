@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
-#define IPC_TIMEOUT_MS		     100
+#define HPF_MSPI_IPC_CONFIG_TIMEOUT_MS 100
 #define IPC_BOUND_TIMEOUT_MS	     100
 #define IPC_BOUND_RETRY_COUNT	     10
 #define IPC_BOUND_RETRY_DELAY_MS	     10
@@ -385,10 +385,12 @@ static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instan
  * @param opcode The configuration packet opcode to send.
  * @param data The data to send.
  * @param len The length of the data to send.
+ * @param timeout_ms Maximum time to wait for the FLPR response, in milliseconds.
  *
  * @return 0 on success, negative errno code on failure.
  */
-static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
+static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len,
+		     uint32_t timeout_ms)
 {
 	LOG_DBG("Sending msg with opcode: %d", (uint8_t)opcode);
 
@@ -428,7 +430,7 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
 		return rc;
 	}
 
-	rc = hpf_mspi_wait_for_response(opcode, IPC_TIMEOUT_MS);
+	rc = hpf_mspi_wait_for_response(opcode, timeout_ms);
 	if (rc < 0) {
 		LOG_ERR("Data transfer: %d response timeout: %d!", opcode, rc);
 	}
@@ -604,7 +606,8 @@ static int api_config(const struct mspi_dt_spec *spec)
 
 	/* Send pinout configuration to FLPR */
 	return send_data(HPF_MSPI_CONFIG_PINS, (const void *)&mspi_pin_config,
-			 sizeof(hpf_mspi_pinctrl_soc_pin_msg_t));
+			 sizeof(hpf_mspi_pinctrl_soc_pin_msg_t),
+			 HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 }
 
 static int check_io_mode(enum mspi_io_mode io_mode)
@@ -811,7 +814,8 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	((struct mspi_hpf_data *)dev->data)->io_mode = cfg->io_mode;
 
 	return send_data(HPF_MSPI_CONFIG_DEV, (void *)&mspi_dev_config_msg,
-			 sizeof(hpf_mspi_dev_config_msg_t));
+			 sizeof(hpf_mspi_dev_config_msg_t),
+			 HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 }
 
 static int api_get_channel_status(const struct device *dev, uint8_t ch)
@@ -904,7 +908,7 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	memcpy((void *)xfer_packet->data, (void *)packet->data_buf, packet->num_bytes);
 #endif
 
-	rc = send_data(xfer_packet->opcode, xfer_packet, len);
+	rc = send_data(xfer_packet->opcode, xfer_packet, len, timeout);
 
 	/* Wait for the transfer to complete and receive data. */
 	if (packet->dir == MSPI_RX) {
@@ -998,8 +1002,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 		return -ENOTSUP;
 	}
 
-	if (req->num_packet == 0 || !req->packets ||
-	    req->timeout > CONFIG_MSPI_COMPLETION_TIMEOUT_TOLERANCE) {
+	if (req->num_packet == 0 || !req->packets) {
 		return -EFAULT;
 	}
 
@@ -1017,7 +1020,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	}
 
 	rc = send_data(HPF_MSPI_CONFIG_XFER, (void *)&drv_data->xfer_config_msg,
-		       sizeof(hpf_mspi_xfer_config_msg_t));
+		       sizeof(hpf_mspi_xfer_config_msg_t), req->timeout);
 
 	if (rc < 0) {
 		LOG_ERR("Send xfer config error: %d", rc);
@@ -1173,7 +1176,7 @@ static int hpf_mspi_init(const struct device *dev)
 	};
 
 	ret = send_data(HPF_MSPI_CONFIG_TIMER_PTR, (const void *)&timer_data.opcode,
-			sizeof(hpf_mspi_flpr_timer_msg_t));
+			sizeof(hpf_mspi_flpr_timer_msg_t), HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 	if (ret < 0) {
 		LOG_ERR("Send timer configuration failure");
 		return ret;
