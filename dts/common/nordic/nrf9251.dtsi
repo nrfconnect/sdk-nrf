@@ -255,7 +255,7 @@
 
 		cpuflpr_tcm_sram: sram@2f890000 {
 			compatible = "mmio-sram";
-			reg = <0x2f890000 DT_SIZE_K(64)>;
+			reg = <0x2f890000 DT_SIZE_K(46)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 			ranges = <0x0 0x2f890000 0x10000>;
@@ -263,7 +263,7 @@
 
 		cpuppr_tcm_sram: sram@2fc00000 {
 			compatible = "mmio-sram";
-			reg = <0x2fc00000 DT_SIZE_K(64)>;
+			reg = <0x2fc00000 DT_SIZE_K(62)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 			ranges = <0x0 0x2fc00000 0x10000>;
