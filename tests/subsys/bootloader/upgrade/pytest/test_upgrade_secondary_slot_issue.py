@@ -9,6 +9,7 @@ from __future__ import annotations
 import logging
 from pathlib import Path
 
+import pytest
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness_ext.utils.required_build import get_required_build
 from upgrade_test_manager import UpgradeTestWithMCUmgr
@@ -16,6 +17,7 @@ from upgrade_test_manager import UpgradeTestWithMCUmgr
 logger = logging.getLogger(__name__)
 
 
+@pytest.mark.usefixtures("kmu_provision")
 def test_upgrade_with_unusable_secondary_slot(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
     """Verify that the application is not upgraded to the secondary slot if it is not usable.
 
