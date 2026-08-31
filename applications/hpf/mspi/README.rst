@@ -43,6 +43,44 @@ Data can be configured to be passed either by copy or by reference.
 By default, data is passed by reference.
 To enable data passing by copy, you must disable the ``HPF_MSPI_IPC_NO_COPY`` and its MSPI driver-side equivalent ``MSPI_HPF_IPC_NO_COPY`` Kconfig options.
 
+IPC shared memory
+=================
+
+The HPF MSPI snippet reserves ``sram_tx`` and ``sram_rx`` regions for ICMsg packet buffers between the application core and FLPR.
+With the default **NO_COPY** mode, transfer payloads are **not** copied into these regions; ICMsg carries only a pointer to application memory (and the FLPR reply is a 4-byte opcode).
+The regions must still satisfy the ICMsg pbuf minimum size (128 bytes per direction in the snippet).
+
+If **NO_COPY** is disabled, the full packet must fit in the shared regions (about 2 KiB per direction on nRF54L15).
+In that case, increase ``sram_tx`` / ``sram_rx`` in the SoC overlay or reduce ``packet-data-limit``.
+
+Transfer timeouts
+=================
+
+Pin configuration, device configuration, and other driver-init IPC use a fixed internal wait in the driver.
+Memory communication timeouts are configured through devicetree. Set ``transfer-timeout`` (milliseconds) in the MSPI flash node.
+
+Tune ``transfer-timeout`` in devicetree when you change ``mspi-max-frequency``, IO mode, or packet size (in case of having ``HPF_MSPI_IPC_NO_COPY`` disabled).
+The values below are a recommended value for a MSPI data packet in quad SPI and ``HPF_MSPI_IPC_NO_COPY`` enabled.
+
+.. list-table:: Recommended transfer-timeout (ms) for a quad-SPI communication with ``HPF_MSPI_IPC_NO_COPY`` option enabled.
+   :header-rows: 1
+   :widths: 20 30
+
+   * - MSPI frequency
+     - Minimum transfer-timeout (ms)
+   * - ≥ 8 MHz
+     - 50
+   * - 4 MHz
+     - 100
+   * - 1 MHz
+     - 200
+   * - 500 kHz
+     - 500
+   * - ≤ 250 kHz
+     - 1000
+
+The HPF MSPI snippet overlays set ``transfer-timeout`` to ``500`` ms, which meets the minimum for frequencies down to 500 kHz.
+
 Initialization phase
 ====================
 
