@@ -1,0 +1,4 @@
+name: rtt-shell-split
+description: Shell on RTT up-buffer 0, logging on RTT up-buffer 1.
+append:
+  EXTRA_CONF_FILE: rtt-shell-split.conf

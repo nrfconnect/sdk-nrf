@@ -1,0 +1,4 @@
+name: rtt-shell
+description: Run the interactive shell (and logging) over SEGGER RTT.
+append:
+  EXTRA_CONF_FILE: rtt-shell.conf
