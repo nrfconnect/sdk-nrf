@@ -19,6 +19,10 @@ config TFM_BOARD
 	default "${ZEPHYR_NRF_MODULE_DIR}/modules/trusted-firmware-m/tfm_boards/nrf7120_cpuapp" if SOC_NRF7120_ENGA_CPUAPP
 	depends on TRUSTED_EXECUTION_NONSECURE
 
+config BUILD_WITH_TFM
+	# NCS uses its own fork of MCUboot (CONFIG_BOOTLOADER_MCUBOOT) instead of TF-M's BL2.
+	select TFM_BL2_NOT_SUPPORTED
+
 if BUILD_WITH_TFM
 
 config TFM_BL2
