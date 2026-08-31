@@ -45,7 +45,7 @@ OFFSET_CHECK(struct fw_info_ext_api, ext_api_version, 24);
  * the number of struct fw_info_ext_api instances.
  */
 #define EXT_API(ext_api_name, type, name) \
-	Z_GENERIC_SECTION(.ext_apis) \
+	Z_GENERIC_SECTION(.ext_apis) __attribute__((used)) \
 	const uint8_t _CONCAT(name, _ext_api_counter) = 0xFF; \
 	BUILD_ASSERT((sizeof(type) % 4) == 0, \
 			"Size of EXT_API " #type " is not word-aligned"); \
