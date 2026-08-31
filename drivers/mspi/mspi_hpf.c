@@ -966,10 +966,12 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
 {
 	struct mspi_xfer_packet *packet = (struct mspi_xfer_packet *)&xfer->packets[packets_done];
 
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
 	if (packet->num_bytes >= MAX_TX_MSG_SIZE) {
 		LOG_ERR("Packet size to large: %u. Increase SRAM data region.", packet->num_bytes);
 		return -EINVAL;
 	}
+#endif
 
 	return send_packet(packet, xfer->timeout);
 }
