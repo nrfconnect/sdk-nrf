@@ -43,6 +43,77 @@ Data can be configured to be passed either by copy or by reference.
 By default, data is passed by reference.
 To enable data passing by copy, you must disable the ``HPF_MSPI_IPC_NO_COPY`` and its MSPI driver-side equivalent ``MSPI_HPF_IPC_NO_COPY`` Kconfig options.
 
+IPC shared memory
+=================
+
+The HPF MSPI snippet reserves ``sram_tx`` and ``sram_rx`` regions for ICMsg packet buffers between the application core and FLPR.
+With the default ``HPF_MSPI_IPC_NO_COPY`` enabled, ICMsg does not copy transfer payloads into these regions.
+It carries only a pointer to the application memory, and the FLPR reply is a 4-byte opcode.
+The FLPR accesses the data by reference and requires it to be word-aligned.
+Data in an unaligned buffer is copied through a 256-byte bounce buffer on the stack of the calling thread, so unaligned transfers are limited to 256 bytes.
+The regions must still meet the minimum ICMsg pbuf size, which is 128 bytes in each direction in the snippet.
+
+With ``HPF_MSPI_IPC_NO_COPY`` disabled, TX and RX data are copied through the shared regions, and each copy must fit every buffer on its way.
+ICMsg drops a message that does not fit the read buffer of the receiving core, set by the ``PBUF_RX_READ_BUF_SIZE`` Kconfig option, so configure both cores:
+
+.. list-table:: Limits for data passed by copy
+   :header-rows: 1
+   :widths: 15 40 40
+
+   * - Direction
+     - Application core
+     - FLPR
+   * - TX
+     - ``sram_tx`` of at least the largest TX packet plus 16 bytes, and at most 1024 bytes.
+     - ``sram_rx`` of the same size, and ``PBUF_RX_READ_BUF_SIZE`` of at least the largest TX packet plus 16 bytes.
+   * - RX
+     - ``sram_rx``, and ``PBUF_RX_READ_BUF_SIZE`` of at least the largest RX packet plus 4 bytes.
+     - ``sram_tx`` of the same size, and ``HPF_MSPI_MAX_RESPONSE_SIZE`` of at least the largest RX packet plus 4 bytes.
+
+The application core builds each TX message in a buffer of the ``sram_tx`` size on the stack of the thread that starts the transfer, which can be the system workqueue when the memory device uses runtime power management.
+Size ``sram_tx`` for the largest TX packet only, because RX data does not pass through it.
+The application core read buffer is allocated on the ICMsg workqueue stack, set by the ``IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE`` Kconfig option.
+Use ``packet-data-limit`` in the MSPI controller node to split reads into smaller packets.
+Writes to a flash memory are split into page programs, so the TX limit must hold a full page, for example 256 bytes.
+
+For example, on the nRF54L15 DK, the following settings allow 2 KiB RX packets and 256-byte TX packets:
+
+* Application core ``sram_tx`` of 0x140 bytes and ``sram_rx`` of 0x900 bytes, with the FLPR regions swapped accordingly.
+* ``packet-data-limit = <2048>`` in the ``hpf_mspi`` node.
+* Application core: ``PBUF_RX_READ_BUF_SIZE=2052`` and ``IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE=3072``.
+* FLPR: ``HPF_MSPI_MAX_RESPONSE_SIZE=2052``, and the default ``PBUF_RX_READ_BUF_SIZE`` of 768 bytes.
+
+With these settings, the FLPR uses about 97% of its 15 KB of RAM.
+
+Transfer timeouts
+=================
+
+Pin configuration, device configuration, and other driver-init IPC use a fixed internal wait in the driver.
+Memory communication timeouts are configured in the devicetree instead.
+Set ``transfer-timeout``, in milliseconds, in the MSPI flash node.
+
+Retune ``transfer-timeout`` whenever you change ``mspi-max-frequency`` or the IO mode, or the packet size if you have disabled the ``HPF_MSPI_IPC_NO_COPY`` Kconfig option.
+The following minimum values apply to an MSPI data packet in quad SPI mode, with ``HPF_MSPI_IPC_NO_COPY`` enabled:
+
+.. list-table:: Recommended transfer-timeout (ms) for a quad-SPI communication with ``HPF_MSPI_IPC_NO_COPY`` option enabled.
+   :header-rows: 1
+   :widths: 20 30
+
+   * - MSPI frequency
+     - Minimum ``transfer-timeout`` (ms)
+   * - 8 MHz and more
+     - 50
+   * - 4 MHz
+     - 100
+   * - 1 MHz
+     - 200
+   * - 500 kHz
+     - 500
+   * - 250 kHz and below
+     - 1000
+
+The HPF MSPI snippet overlays set ``transfer-timeout`` to ``500`` ms, which covers all frequencies down to 500 kHz.
+
 Initialization phase
 ====================
 
