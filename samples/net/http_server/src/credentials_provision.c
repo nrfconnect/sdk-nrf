@@ -33,44 +33,56 @@ static const unsigned char server_private_key[] = {
 
 LOG_MODULE_REGISTER(http_server_credentials_provision, CONFIG_HTTP_SERVER_SAMPLE_LOG_LEVEL);
 
+static int credential_add_or_replace(sec_tag_t tag, enum tls_credential_type type,
+				      const void *cred, size_t credlen, const char *name)
+{
+	int ret;
+
+	ret = tls_credential_add(tag, type, cred, credlen);
+	if (ret == -EEXIST) {
+		LOG_DBG("%s already exists, sec tag: %d, replacing", name, tag);
+
+		ret = tls_credential_delete(tag, type);
+		if (ret < 0) {
+			LOG_ERR("Failed to delete stale %s: %d", name, ret);
+			return ret;
+		}
+
+		ret = tls_credential_add(tag, type, cred, credlen);
+	}
+
+	if (ret < 0) {
+		LOG_ERR("Failed to register %s: %d", name, ret);
+	}
+
+	return ret;
+}
+
 int credentials_provision(void)
 {
 	int ret;
 
-	ret = tls_credential_add(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
-				 TLS_CREDENTIAL_CA_CERTIFICATE,
-				 server_certificate,
-				 sizeof(server_certificate));
-
-	if (ret == -EEXIST) {
-		LOG_DBG("CA certificate already exists, sec tag: %d",
-			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
-	} else if (ret < 0) {
-		LOG_ERR("Failed to register CA certificate: %d", ret);
+	ret = credential_add_or_replace(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
+					 TLS_CREDENTIAL_CA_CERTIFICATE,
+					 server_certificate, sizeof(server_certificate),
+					 "CA certificate");
+	if (ret < 0) {
 		return ret;
 	}
 
-	ret = tls_credential_add(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
-				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-				 server_certificate,
-				 sizeof(server_certificate));
-	if (ret == -EEXIST) {
-		LOG_DBG("Public certificate already exists, sec tag: %d",
-			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
-	} else if (ret < 0) {
-		LOG_ERR("Failed to register public certificate: %d", ret);
+	ret = credential_add_or_replace(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
+					 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+					 server_certificate, sizeof(server_certificate),
+					 "public certificate");
+	if (ret < 0) {
 		return ret;
 	}
 
-	ret = tls_credential_add(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
-				 TLS_CREDENTIAL_PRIVATE_KEY,
-				 server_private_key, sizeof(server_private_key));
-
-	if (ret == -EEXIST) {
-		LOG_DBG("Private key already exists, sec tag: %d",
-			CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG);
-	} else if (ret < 0) {
-		LOG_ERR("Failed to register private key: %d", ret);
+	ret = credential_add_or_replace(CONFIG_HTTP_SERVER_SAMPLE_SERVER_CERTIFICATE_SEC_TAG,
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 server_private_key, sizeof(server_private_key),
+					 "private key");
+	if (ret < 0) {
 		return ret;
 	}
 
