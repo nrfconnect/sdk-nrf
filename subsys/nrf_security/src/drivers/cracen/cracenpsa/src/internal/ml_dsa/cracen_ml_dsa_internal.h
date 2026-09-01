@@ -109,7 +109,7 @@ struct ml_dsa_params_s {
 	uint8_t rows_k;		/* rows of A / size of t1, w, h vectors */
 	uint8_t columns_l;	/* columns of A / size of z vector */
 	uint8_t tau;		/* Hamming weight (# of +-1 coefficients in the challenge c) */
-	uint8_t eta;		/* coefficient range of the secret vectors s1, s2 */
+	uint32_t (*coeff_from_half_byte)(uint8_t b, int32_t *out); /* FIPS 204, Algorithm 15 */
 	uint16_t lambda;	/* collision strength (also the PSA key bits) */
 	uint32_t beta;		/* beta = tau * eta */
 	uint32_t gamma1;	/* coefficient range of signer's response z */
