@@ -212,6 +212,12 @@ config NRF71_MAX_TX_PENDING_QLEN
 config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
 	depends on SHELL
+	depends on NRF71_SYSTEM_MODE || NRF71_SCAN_ONLY
+	help
+	  Enable the "nrf71 util" shell commands. These operate on the system
+	  FMAC (rate, HE LTF/GI, stats, and so on), so they are only available
+	  in system and scan-only modes. Radio test builds provide their own
+	  shell and do not use this option.
 
 config NRF71_DEBUG_SHELL
 	bool "Debug shell in nRF71 driver"
