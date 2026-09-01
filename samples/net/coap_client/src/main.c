@@ -26,8 +26,19 @@
 #include <zephyr/net/coap_client.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
-#if defined(CONFIG_COAP_SAMPLE_DTLS)
 #include <zephyr/net/tls_credentials.h>
+
+/* CONFIG_COAP_SAMPLE_DTLS_SEC_TAG and CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS
+ * are defined in Kconfig under "if COAP_SAMPLE_DTLS", so they don't exist at all when
+ * CONFIG_COAP_SAMPLE_DTLS is disabled. Provide fallback values so the code referencing
+ * them below compiles unconditionally; the IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS) runtime
+ * check ensures they are never actually used in that case.
+ */
+#ifndef CONFIG_COAP_SAMPLE_DTLS_SEC_TAG
+#define CONFIG_COAP_SAMPLE_DTLS_SEC_TAG 0
+#endif
+#ifndef CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS
+#define CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS 0
 #endif
 
 LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
@@ -68,7 +79,6 @@ static void server_addr_set_ipv4(struct sockaddr_storage *server, struct addrinf
 	LOG_INF("IPv4 Address found %s", addr_str);
 }
 
-#if defined(CONFIG_NET_IPV6)
 static void server_addr_set_ipv6(struct sockaddr_storage *server, struct addrinfo *result)
 {
 	struct sockaddr_in6 *server6 = (struct sockaddr_in6 *)server;
@@ -83,7 +93,6 @@ static void server_addr_set_ipv6(struct sockaddr_storage *server, struct addrinf
 	inet_ntop(AF_INET6, &server6->sin6_addr, addr_str, sizeof(addr_str));
 	LOG_INF("IPv6 Address found %s", addr_str);
 }
-#endif /* CONFIG_NET_IPV6 */
 
 static int server_resolve(struct sockaddr_storage *server)
 {
@@ -110,11 +119,12 @@ static int server_resolve(struct sockaddr_storage *server)
 	case AF_INET:
 		server_addr_set_ipv4(server, result);
 		break;
-#if defined(CONFIG_NET_IPV6)
 	case AF_INET6:
-		server_addr_set_ipv6(server, result);
-		break;
-#endif /* CONFIG_NET_IPV6 */
+		if (IS_ENABLED(CONFIG_NET_IPV6)) {
+			server_addr_set_ipv6(server, result);
+			break;
+		}
+		__fallthrough;
 	default:
 		LOG_ERR("Unexpected address family: %d", result->ai_family);
 		freeaddrinfo(result);
@@ -171,113 +181,120 @@ static int periodic_coap_request_loop(void)
 		return err;
 	}
 
+	if (IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS)) {
+		static const char ca_cert[] = {
 #if defined(CONFIG_COAP_SAMPLE_DTLS)
-	static const char ca_cert[] = {
-		#include "coap_sample_ca_cert.inc"
-		'\0'
-	};
-	static const char client_cert[] = {
-		#include "coap_sample_client_cert.inc"
-		'\0'
-	};
-	static const char client_key[] = {
-		#include "coap_sample_client_key.inc"
-		'\0'
-	};
-
-	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
-				 TLS_CREDENTIAL_CA_CERTIFICATE,
-				 ca_cert, sizeof(ca_cert));
-	if ((err < 0) && (err != -EEXIST)) {
-		LOG_ERR("Failed to register CA certificate: %d", err);
-		return err;
-	}
-
-	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
-				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-				 client_cert, sizeof(client_cert));
-	if ((err < 0) && (err != -EEXIST)) {
-		LOG_ERR("Failed to register client certificate: %d", err);
-		return err;
-	}
-
-	err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
-				 TLS_CREDENTIAL_PRIVATE_KEY,
-				 client_key, sizeof(client_key));
-	if ((err < 0) && (err != -EEXIST)) {
-		LOG_ERR("Failed to register private key: %d", err);
-		return err;
-	}
-
-	sock = socket(server.ss_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
-#else
-	sock = socket(server.ss_family, SOCK_DGRAM, IPPROTO_UDP);
+			#include "coap_sample_ca_cert.inc"
+			'\0'
 #endif
+		};
+		static const char client_cert[] = {
+#if defined(CONFIG_COAP_SAMPLE_DTLS)
+			#include "coap_sample_client_cert.inc"
+			'\0'
+#endif
+		};
+		static const char client_key[] = {
+#if defined(CONFIG_COAP_SAMPLE_DTLS)
+			#include "coap_sample_client_key.inc"
+			'\0'
+#endif
+		};
+
+		err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+					 TLS_CREDENTIAL_CA_CERTIFICATE,
+					 ca_cert, sizeof(ca_cert));
+		if ((err < 0) && (err != -EEXIST)) {
+			LOG_ERR("Failed to register CA certificate: %d", err);
+			return err;
+		}
+
+		err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+					 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+					 client_cert, sizeof(client_cert));
+		if ((err < 0) && (err != -EEXIST)) {
+			LOG_ERR("Failed to register client certificate: %d", err);
+			return err;
+		}
+
+		err = tls_credential_add(CONFIG_COAP_SAMPLE_DTLS_SEC_TAG,
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 client_key, sizeof(client_key));
+		if ((err < 0) && (err != -EEXIST)) {
+			LOG_ERR("Failed to register private key: %d", err);
+			return err;
+		}
+	}
+
+	sock = socket(server.ss_family, SOCK_DGRAM,
+		      IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS) ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
 	if (sock < 0) {
 		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
 		return -errno;
 	}
 
-#if defined(CONFIG_COAP_SAMPLE_DTLS)
-	sec_tag_t sec_tag_list[] = { CONFIG_COAP_SAMPLE_DTLS_SEC_TAG };
+	if (IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS)) {
+		sec_tag_t sec_tag_list[] = { CONFIG_COAP_SAMPLE_DTLS_SEC_TAG };
 
-	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST,
-			 sec_tag_list, sizeof(sec_tag_list));
-	if (err < 0) {
-		LOG_ERR("Failed to set TLS_SEC_TAG_LIST: %d", -errno);
-		(void)zsock_close(sock);
-		return -errno;
+		err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST,
+				 sec_tag_list, sizeof(sec_tag_list));
+		if (err < 0) {
+			LOG_ERR("Failed to set TLS_SEC_TAG_LIST: %d", -errno);
+			(void)zsock_close(sock);
+			return -errno;
+		}
+
+		uint32_t handshake_timeout_ms = CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS;
+
+		err = setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEOUT_MAX,
+				 &handshake_timeout_ms, sizeof(handshake_timeout_ms));
+		if (err < 0) {
+			LOG_ERR("Failed to set TLS_DTLS_HANDSHAKE_TIMEOUT_MAX: %d", -errno);
+			(void)zsock_close(sock);
+			return -errno;
+		}
+
+		/* Set the expected server hostname for SNI and server certificate
+		 * CN/SAN verification.
+		 */
+		err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME,
+				 CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+				 sizeof(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME) - 1);
+		if (err < 0) {
+			LOG_ERR("Failed to set TLS_HOSTNAME: %d", -errno);
+			(void)zsock_close(sock);
+			return -errno;
+		}
+
+		/* Explicitly connect to trigger the DTLS handshake now so we can log
+		 * the outcome and negotiated ciphersuite before handing the socket to
+		 * the CoAP client.
+		 */
+		LOG_INF("Performing DTLS handshake with %s:%d (mutual TLS)...",
+			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+			CONFIG_COAP_SAMPLE_SERVER_PORT);
+
+		err = zsock_connect(sock, (struct sockaddr *)&server,
+				    server.ss_family == AF_INET6 ?
+					    sizeof(struct sockaddr_in6) :
+					    sizeof(struct sockaddr_in));
+		if (err < 0) {
+			LOG_ERR("DTLS handshake failed: %d", -errno);
+			(void)zsock_close(sock);
+			return -errno;
+		}
+
+		int cipher_id;
+		socklen_t cipher_id_len = sizeof(cipher_id);
+
+		err = getsockopt(sock, SOL_TLS, TLS_CIPHERSUITE_USED, &cipher_id, &cipher_id_len);
+		if (err == 0) {
+			LOG_INF("DTLS handshake complete, ciphersuite: 0x%04x", cipher_id);
+		} else {
+			LOG_INF("DTLS handshake complete (ciphersuite unknown, getsockopt err %d)",
+				err);
+		}
 	}
-
-	uint32_t handshake_timeout_ms = CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS;
-
-	err = setsockopt(sock, SOL_TLS, TLS_DTLS_HANDSHAKE_TIMEOUT_MAX,
-			 &handshake_timeout_ms, sizeof(handshake_timeout_ms));
-	if (err < 0) {
-		LOG_ERR("Failed to set TLS_DTLS_HANDSHAKE_TIMEOUT_MAX: %d", -errno);
-		(void)zsock_close(sock);
-		return -errno;
-	}
-
-	/* Set the expected server hostname for SNI and server certificate
-	 * CN/SAN verification.
-	 */
-	err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME,
-			 CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
-			 sizeof(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME) - 1);
-	if (err < 0) {
-		LOG_ERR("Failed to set TLS_HOSTNAME: %d", -errno);
-		(void)zsock_close(sock);
-		return -errno;
-	}
-
-	/* Explicitly connect to trigger the DTLS handshake now so we can log
-	 * the outcome and negotiated ciphersuite before handing the socket to
-	 * the CoAP client.
-	 */
-	LOG_INF("Performing DTLS handshake with %s:%d (mutual TLS)...",
-		CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
-		CONFIG_COAP_SAMPLE_SERVER_PORT);
-
-	err = zsock_connect(sock, (struct sockaddr *)&server,
-			    server.ss_family == AF_INET6 ?
-				    sizeof(struct sockaddr_in6) : sizeof(struct sockaddr_in));
-	if (err < 0) {
-		LOG_ERR("DTLS handshake failed: %d", -errno);
-		(void)zsock_close(sock);
-		return -errno;
-	}
-
-	int cipher_id;
-	socklen_t cipher_id_len = sizeof(cipher_id);
-
-	err = getsockopt(sock, SOL_TLS, TLS_CIPHERSUITE_USED, &cipher_id, &cipher_id_len);
-	if (err == 0) {
-		LOG_INF("DTLS handshake complete, ciphersuite: 0x%04x", cipher_id);
-	} else {
-		LOG_INF("DTLS handshake complete (ciphersuite unknown, getsockopt err %d)", err);
-	}
-#endif
 
 	err = coap_client_init(&coap_client, NULL);
 	if (err) {
