@@ -266,10 +266,7 @@ void sae_clear_data(struct sae_data *sae)
 
 	sae_clear_temp_data(sae);
 
-	if (sae->tmp) {
-		os_free(sae->tmp);
-		sae->tmp = NULL;
-	}
+	os_memset(sae, 0, sizeof(*sae));
 }
 
 /**
@@ -306,6 +303,9 @@ int sae_prepare_commit(const u8 *addr1, const u8 *addr2, const u8 *password, siz
 		wpa_printf(MSG_ERROR, "WPA3-PSA: sae_prepare_commit failed - init_psa_op failed");
 		return -1;
 	}
+
+	sae->h2e = 0;
+	sae->pk = 0;
 
 	op = get_psa_op(sae);
 	if (!op) {
