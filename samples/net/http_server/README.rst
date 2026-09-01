@@ -247,7 +247,7 @@ Testing
 
          .. code-block:: console
 
-            http PUT 'http://[2001:8c0:5140:895:f7ce:37ff:fe00:1971]:81/led/1' --raw="1"
+            http PUT 'http://[2001:8c0:5140:895:f7ce:37ff:fe00:1971]:80/led/1' --raw="1"
 
    .. group-tab:: Cellular
 
