@@ -196,9 +196,9 @@ static void on_aws_iot_evt_connected(const struct aws_iot_evt *const evt)
 	}
 
 	/* Mark image as working to avoid reverting to the former image after a reboot. */
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
-	boot_write_img_confirmed();
-#endif
+	if (IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT)) {
+		boot_write_img_confirmed();
+	}
 
 	/* Start sequential updates to AWS IoT. */
 	(void)k_work_reschedule(&shadow_update_work, K_NO_WAIT);
@@ -387,17 +387,17 @@ int main(void)
 		return err;
 	}
 
-#if defined(CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID)
-	/* Get unique hardware ID, can be used as AWS IoT MQTT broker device/client ID. */
-	err = hw_id_get(hw_id, ARRAY_SIZE(hw_id));
-	if (err) {
-		LOG_ERR("Failed to retrieve hardware ID, error: %d", err);
-		FATAL_ERROR();
-		return err;
-	}
+	if (IS_ENABLED(CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID)) {
+		/* Get unique hardware ID, can be used as AWS IoT MQTT broker device/client ID. */
+		err = hw_id_get(hw_id, ARRAY_SIZE(hw_id));
+		if (err) {
+			LOG_ERR("Failed to retrieve hardware ID, error: %d", err);
+			FATAL_ERROR();
+			return err;
+		}
 
-	LOG_INF("Hardware ID: %s", hw_id);
-#endif /* CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID */
+		LOG_INF("Hardware ID: %s", hw_id);
+	}
 
 	err = aws_iot_client_init();
 	if (err) {
