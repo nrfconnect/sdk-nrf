@@ -137,7 +137,7 @@ The following tables summarize the partitions by target.
      - Network core firmware.
      - Network core flash
 
-**nRF54L15 & nRF54L10 & nRF54LM20 DKs**
+**nRF54L15, nRF54L10, nRF54LM20, and nRF54LC10 DKs**
 
 .. list-table::
    :header-rows: 1

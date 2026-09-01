@@ -97,7 +97,7 @@ This is a reference configuration that can be modified in the production firmwar
      - Oberon + CryptoCell [1]_
      - Yes
      - Trusted Storage library + Hardware Unique Key (HUK)
-   * - nRF54L15 SoC
+   * - nRF54L15
      - Thread
      - PSA Crypto API
      - CRACEN [2]_
@@ -110,6 +110,12 @@ This is a reference configuration that can be modified in the production firmwar
      - Yes
      - Trusted Firmware-M (TF-M) + Key Management Unit (KMU)
    * - nRF54L10 SoC
+     - Thread
+     - PSA Crypto API
+     - CRACEN [2]_
+     - Yes
+     - Hardware Unique Key (HUK) + Key Management Unit (KMU)
+   * - nRF54LC10 SoC
      - Thread
      - PSA Crypto API
      - CRACEN [2]_
@@ -288,7 +294,7 @@ See the following table to learn about the default secure storage backends for t
      - Trusted Storage library + Hardware Unique Key (Zephyr Settings)
      - | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
        | Trusted Storage library + SHA-256 hash (Zephyr Settings)
-   * - nRF54L15 SoC
+   * - nRF54L15
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
        | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
@@ -298,6 +304,11 @@ See the following table to learn about the default secure storage backends for t
      - | Key Management Unit (KMU),
        | Trusted Firmware-M Storage (TF-M)
    * - nRF54L10 SoC
+     - Key Management Unit (KMU)
+     - | Key Management Unit (KMU),
+       | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
+       | Trusted Storage library + SHA-256 hash (Zephyr Settings)
+   * - nRF54LC10 SoC
      - Key Management Unit (KMU)
      - | Key Management Unit (KMU),
        | Trusted Storage library + Hardware Unique Key (Zephyr Settings),
