@@ -545,4 +545,4 @@ cJSON
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated the ref:`abi_compatibility` page to link to the `IronSide SE binaries changelog on the main branch`_ for the full list of changes to |ISE|.
