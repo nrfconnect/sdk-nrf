@@ -24,7 +24,11 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #endif
 
 #define URL CONFIG_SAMPLE_FILE_URL
+#if defined(CONFIG_SAMPLE_SEC_TAG)
 #define SEC_TAG CONFIG_SAMPLE_SEC_TAG
+#else
+#define SEC_TAG 0
+#endif
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
 #define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
@@ -40,34 +44,41 @@ static struct net_if *net_if;
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
 
-#if CONFIG_SAMPLE_SECURE_SOCKET
 static int sec_tag_list[] = { SEC_TAG };
-#if CONFIG_SAMPLE_PROVISION_CERT
 static const char cert[] = {
+#if defined(CONFIG_SAMPLE_PROVISION_CERT)
 	#include "sample_cert.inc"
 
 	/* Null terminate certificate if running Mbed TLS on the application core.
 	 * Required by TLS credentials API.
 	 */
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
+#else
+	0x00
+#endif
 };
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 
-#if CONFIG_SAMPLE_PROVISION_CLIENT_CERT
 static const char client_cert[] = {
+#if defined(CONFIG_SAMPLE_PROVISION_CLIENT_CERT)
 	#include "sample_client_cert.inc"
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
+#else
+	0x00
+#endif
 };
-BUILD_ASSERT(sizeof(client_cert) < KB(4), "Client certificate too large");
+BUILD_ASSERT(!IS_ENABLED(CONFIG_SAMPLE_PROVISION_CLIENT_CERT) || sizeof(client_cert) < KB(4),
+	     "Client certificate too large");
 static const char client_key[] = {
+#if defined(CONFIG_SAMPLE_PROVISION_CLIENT_CERT)
 	#include "sample_client_key.inc"
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
+#else
+	0x00
+#endif
 };
-BUILD_ASSERT(sizeof(client_key) < KB(4), "Client private key too large");
-#endif /* CONFIG_SAMPLE_PROVISION_CLIENT_CERT */
-#endif /* CONFIG_SAMPLE_PROVISION_CERT */
-
-#endif /* CONFIG_SAMPLE_SECURE_SOCKET */
+BUILD_ASSERT(!IS_ENABLED(CONFIG_SAMPLE_PROVISION_CLIENT_CERT) || sizeof(client_key) < KB(4),
+	     "Client private key too large");
 
 static char dl_buf[2048];
 
@@ -80,10 +91,8 @@ static struct downloader_cfg dl_cfg = {
 	.buf_size = sizeof(dl_buf),
 };
 static struct downloader_host_cfg host_dl_cfg = {
-#if CONFIG_SAMPLE_SECURE_SOCKET
-	.sec_tag_list = sec_tag_list,
-	.sec_tag_count = ARRAY_SIZE(sec_tag_list),
-#endif
+	.sec_tag_list = IS_ENABLED(CONFIG_SAMPLE_SECURE_SOCKET) ? sec_tag_list : 0,
+	.sec_tag_count = IS_ENABLED(CONFIG_SAMPLE_SECURE_SOCKET) ? ARRAY_SIZE(sec_tag_list) : 0,
 	.range_override = 0,
 };
 
@@ -91,15 +100,16 @@ static struct downloader_host_cfg host_dl_cfg = {
 #include <psa/crypto.h>
 static psa_hash_operation_t hash_ctx;
 
-#if CONFIG_SAMPLE_COMPARE_HASH
+#if defined(CONFIG_SAMPLE_COMPARE_HASH)
 BUILD_ASSERT(sizeof(CONFIG_SAMPLE_SHA256_HASH) == 65,
 	     "CONFIG_SAMPLE_SHA256_HASH is not set or wrong length");
-#endif
+#else
+#define CONFIG_SAMPLE_SHA256_HASH 0
+#endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif
 
 static int64_t ref_time;
 
-#if CONFIG_SAMPLE_PROVISION_CERT
 static int cert_provision(void)
 {
 	int err;
@@ -155,34 +165,33 @@ static int cert_provision(void)
 		return err;
 	}
 
-#if CONFIG_SAMPLE_PROVISION_CLIENT_CERT
-	err = tls_credential_add(SEC_TAG,
-				 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
-				 client_cert,
-				 sizeof(client_cert));
-	if (err == -EEXIST) {
-		printk("Client certificate already exists, sec tag: %d\n", SEC_TAG);
-	} else if (err < 0) {
-		printk("Failed to register client certificate: %d\n", err);
-		return err;
-	}
+	if (IS_ENABLED(CONFIG_SAMPLE_PROVISION_CLIENT_CERT)) {
+		err = tls_credential_add(SEC_TAG,
+					 TLS_CREDENTIAL_PUBLIC_CERTIFICATE,
+					 client_cert,
+					 sizeof(client_cert));
+		if (err == -EEXIST) {
+			printk("Client certificate already exists, sec tag: %d\n", SEC_TAG);
+		} else if (err < 0) {
+			printk("Failed to register client certificate: %d\n", err);
+			return err;
+		}
 
-	err = tls_credential_add(SEC_TAG,
-				 TLS_CREDENTIAL_PRIVATE_KEY,
-				 client_key,
-				 sizeof(client_key));
-	if (err == -EEXIST) {
-		printk("Client private key already exists, sec tag: %d\n", SEC_TAG);
-	} else if (err < 0) {
-		printk("Failed to register client private key: %d\n", err);
-		return err;
+		err = tls_credential_add(SEC_TAG,
+					 TLS_CREDENTIAL_PRIVATE_KEY,
+					 client_key,
+					 sizeof(client_key));
+		if (err == -EEXIST) {
+			printk("Client private key already exists, sec tag: %d\n", SEC_TAG);
+		} else if (err < 0) {
+			printk("Failed to register client private key: %d\n", err);
+			return err;
+		}
 	}
-#endif /* CONFIG_SAMPLE_PROVISION_CLIENT_CERT */
 #endif /* !CONFIG_MODEM_KEY_MGMT */
 
 	return 0;
 }
-#endif
 
 static void on_net_event_l4_disconnected(void)
 {
@@ -309,12 +318,11 @@ static int callback(const struct downloader_evt *event)
 
 		printk("SHA256: %s\n", hash_str);
 
-#if CONFIG_SAMPLE_COMPARE_HASH
-		if (strcmp(hash_str, CONFIG_SAMPLE_SHA256_HASH)) {
+		if (IS_ENABLED(CONFIG_SAMPLE_COMPARE_HASH) &&
+		    strcmp(hash_str, CONFIG_SAMPLE_SHA256_HASH)) {
 			printk("Expect: %s\n", CONFIG_SAMPLE_SHA256_HASH);
 			printk("SHA256 mismatch!\n");
 		}
-#endif /* CONFIG_SAMPLE_COMPARE_HASH */
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
 		(void)conn_mgr_if_disconnect(net_if);
@@ -362,13 +370,14 @@ int main(void)
 		return err;
 	}
 
-#if CONFIG_SAMPLE_PROVISION_CERT
-	/* Provision certificates before connecting to the network */
-	err = cert_provision();
-	if (err) {
-		return 0;
+	if (IS_ENABLED(CONFIG_SAMPLE_PROVISION_CERT)) {
+		/* Provision certificates before connecting to the network */
+		err = cert_provision();
+		if (err) {
+			return 0;
+		}
 	}
-#endif
+
 #if CONFIG_SAMPLE_COMPUTE_HASH
 	psa_status_t status = psa_hash_setup(&hash_ctx, PSA_ALG_SHA_256);
 
