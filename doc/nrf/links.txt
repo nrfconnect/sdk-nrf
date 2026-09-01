@@ -769,6 +769,7 @@
 .. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.6.99-cs2 users`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.6.99-cs2_to_2.7_application.html
 .. _`Migrate your application for the nRF54H20 DK to nRF Connect SDK v2.7.0 for v2.4.99-cs3 users`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/releases_and_maturity/migration/nRF54H20_migration_2.7/migration_guide_2.4.99-cs3_to_2.7_application.html
 .. _`Migrating from Secure Partition Manager to Trusted Firmware-M`: https://nrfconnectdocs.nordicsemi.com/ncs/2.0.0/nrf/ug_tfm.html#migrating_from_secure_partition_manager_to_trusted_firmware-m
+.. _`IronSide SE binaries changelog on the main branch`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/releases_and_maturity/abi_compatibility.html#nrf54h20-ironside-se-binaries-changelog
 
 .. _`migration_guide_3.3_fp_locator_tag`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/releases_and_maturity/migration/migration_guide_3.3.html#fast_pair_locator_tag_sample
 
