@@ -139,28 +139,29 @@ exit:
 	return status;
 }
 
-/** FIPS 204, Algorithm 15 (CoeffFromHalfByte).
- *  Maps a half-byte b in [0, 15] to a coefficient in [-eta, eta],
- *  or returns the INT32_MIN value on rejection.
+/** Append @p value to the polynomial at index *@p j, gated by @p mask
+ *  (all-ones to append, zero to drop).
  */
-static int32_t coeff_from_half_byte(uint8_t b, uint8_t eta)
+static void poly_append_masked(ml_dsa_poly_vector_t *out, uint32_t *j, int32_t value, uint32_t mask)
 {
-	if (eta == 2 && b < 15) {
-		return 2 - (int32_t)(b % 5);
-	}
+	_Static_assert((ML_DSA_POLY_COEFFS_COUNT & (ML_DSA_POLY_COEFFS_COUNT - 1)) == 0,
+		     "The coefficient count must be a power of two for the index masking below");
 
-	if (eta == 4 && b < 9) {
-		return 4 - (int32_t)b;
-	}
+	/* All-ones while there is still room for one more coefficient. */
+	uint32_t room = 0u - ((*j - ML_DSA_POLY_COEFFS_COUNT) >> 31);
+	uint32_t save = mask & room;
+	uint32_t k = *j & (ML_DSA_POLY_COEFFS_COUNT - 1);
 
-	return INT32_MIN;
+	out->coeffs[k] = (int32_t)(((uint32_t)value & save) | ((uint32_t)out->coeffs[k] & ~save));
+	*j += save & 1u;
 }
 
 /** FIPS 204, Algorithm 31 (RejBoundedPoly).
  *  Samples one polynomial with coefficients in [-eta, eta]
  *  from a 66-byte seed (rho' || 2-byte nonce).
  */
-static psa_status_t rej_bounded_poly(const uint8_t *seed, uint8_t eta, ml_dsa_poly_vector_t *out)
+static psa_status_t rej_bounded_poly(const ml_dsa_params_t *alg_params, const uint8_t *seed,
+				     ml_dsa_poly_vector_t *out)
 {
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	cracen_xof_operation_t operation;
@@ -176,26 +177,24 @@ static psa_status_t rej_bounded_poly(const uint8_t *seed, uint8_t eta, ml_dsa_po
 		goto exit;
 	}
 
+	safe_memzero(out, sizeof(*out));
 	while (j < ML_DSA_POLY_COEFFS_COUNT) {
 		uint8_t z;
 		int32_t z0;
 		int32_t z1;
+		uint32_t mask0;
+		uint32_t mask1;
 
 		status = cracen_xof_output(&operation, &z, 1);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
 
-		z0 = coeff_from_half_byte(z & 0x0Fu, eta);
-		z1 = coeff_from_half_byte(z >> 4, eta);
+		mask0 = alg_params->coeff_from_half_byte(z & 0x0Fu, &z0);
+		mask1 = alg_params->coeff_from_half_byte(z >> 4, &z1);
 
-		if (z0 != INT32_MIN) {
-			out->coeffs[j++] = z0;
-		}
-
-		if (z1 != INT32_MIN && j < ML_DSA_POLY_COEFFS_COUNT) {
-			out->coeffs[j++] = z1;
-		}
+		poly_append_masked(out, &j, z0, mask0);
+		poly_append_masked(out, &j, z1, mask1);
 	}
 
 exit:
@@ -215,7 +214,7 @@ psa_status_t cracen_ml_dsa_expand_s(const ml_dsa_params_t *alg_params, const uin
 
 	for (uint32_t r = 0; r < alg_params->columns_l; r++) {
 		sys_put_le16(nonce, &seed[ML_DSA_RHO_PRIME_SZ_BYTES]);
-		status = rej_bounded_poly(seed, alg_params->eta, &s1[r]);
+		status = rej_bounded_poly(alg_params, seed, &s1[r]);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
@@ -224,7 +223,7 @@ psa_status_t cracen_ml_dsa_expand_s(const ml_dsa_params_t *alg_params, const uin
 
 	for (uint32_t r = 0; r < alg_params->rows_k; r++) {
 		sys_put_le16(nonce, &seed[ML_DSA_RHO_PRIME_SZ_BYTES]);
-		status = rej_bounded_poly(seed, alg_params->eta, &s2[r]);
+		status = rej_bounded_poly(alg_params, seed, &s2[r]);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
