@@ -20,8 +20,10 @@
 #include <cJSON.h>
 #include <cJSON_os.h>
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
 #include <hw_id.h>
+
+#ifndef CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC
+#define CONFIG_AZURE_IOT_HUB_DPS_TIMEOUT_SEC 0
 #endif
 
 LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL);
@@ -58,9 +60,7 @@ static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(recv_buf_sem, 1, 1);
 static atomic_t event_interval = EVENT_INTERVAL;
 
-#ifdef CONFIG_AZURE_IOT_HUB_DPS
 static bool dps_was_successful;
-#endif
 
 /* A work queue is created to execute potentially blocking calls from.
  * This is done to avoid blocking for example the system work queue for extended
@@ -198,9 +198,9 @@ static void azure_event_handler(struct azure_iot_hub_evt *const evt)
 		/* All initializations and cloud connection were successful, now mark
 		 * image as working so that we will not revert upon reboot.
 		 */
-#if defined(CONFIG_BOOTLOADER_MCUBOOT)
-		boot_write_img_confirmed();
-#endif
+		if (IS_ENABLED(CONFIG_BOOTLOADER_MCUBOOT)) {
+			boot_write_img_confirmed();
+		}
 
 		/* The AZURE_IOT_HUB_EVT_READY event indicates that the
 		 * IoT hub connection is established and interaction with the
@@ -332,15 +332,15 @@ static void direct_method_handler(struct k_work *work)
 		return;
 	}
 
-#if defined(CONFIG_DK_LIBRARY)
-	err = dk_set_led(DK_LED1, led_state);
-	if (err) {
-		LOG_ERR("Failed to set LED, error: %d", err);
-		return;
+	if (IS_ENABLED(CONFIG_DK_LIBRARY)) {
+		err = dk_set_led(DK_LED1, led_state);
+		if (err) {
+			LOG_ERR("Failed to set LED, error: %d", err);
+			return;
+		}
+	} else {
+		LOG_INF("No hardware interface to set LED state to %d", led_state);
 	}
-#else
-	LOG_INF("No hardware interface to set LED state to %d", led_state);
-#endif
 
 	err = azure_iot_hub_method_respond(&result);
 	if (err) {
@@ -447,7 +447,6 @@ static void work_init(void)
 		       K_HIGHEST_APPLICATION_THREAD_PRIO, &cfg);
 }
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
 static K_SEM_DEFINE(dps_done_sem, 0, 1);
 
 static void dps_handler(enum azure_iot_hub_dps_reg_status status)
@@ -544,7 +543,6 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 
 	return 0;
 }
-#endif /* CONFIG_AZURE_IOT_HUB_DPS */
 
 int main(void)
 {
@@ -592,14 +590,14 @@ int main(void)
 		return err;
 	}
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)
-	err = hw_id_get(device_id, ARRAY_SIZE(device_id));
-	if (err) {
-		LOG_ERR("Failed to retrieve device ID");
-		return 0;
+	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID)) {
+		err = hw_id_get(device_id, ARRAY_SIZE(device_id));
+		if (err) {
+			LOG_ERR("Failed to retrieve device ID");
+			return 0;
+		}
+		cfg.device_id.size = strlen(device_id);
 	}
-	cfg.device_id.size = strlen(device_id);
-#endif
 
 	LOG_INF("Device ID: %s", device_id);
 
@@ -607,9 +605,9 @@ int main(void)
 		LOG_INF("Host name: %s", hostname);
 	}
 
-#if IS_ENABLED(CONFIG_DK_LIBRARY)
-	dk_leds_init();
-#endif
+	if (IS_ENABLED(CONFIG_DK_LIBRARY)) {
+		dk_leds_init();
+	}
 
 	work_init();
 	cJSON_Init();
@@ -628,14 +626,15 @@ int main(void)
 
 	LOG_INF("Connected to network");
 
-#if IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)
-	/* Using the device ID as DPS registration ID. */
-	err = dps_run(&cfg.hostname, &cfg.device_id);
-	if (err) {
-		LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt", err);
-		return 0;
+	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
+		/* Using the device ID as DPS registration ID. */
+		err = dps_run(&cfg.hostname, &cfg.device_id);
+		if (err) {
+			LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt",
+				err);
+			return 0;
+		}
 	}
-#endif
 
 	err = azure_iot_hub_init(azure_event_handler);
 	if (err) {
