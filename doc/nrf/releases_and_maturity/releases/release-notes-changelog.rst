@@ -555,6 +555,21 @@ Networking samples
 
   * Fixed an issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
 
+* :ref:`http_server` sample:
+
+  * Fixed:
+
+    * The pregenerated server and client TLS certificates.
+      They had only a Common Name (CN) and no Subject Alternative Name (SAN).
+      This caused hostname verification to fail with strict TLS clients (for example, Python's ``ssl``/``requests``, used by ``httpie``) even though the certificate chain itself was valid.
+      The certificates were regenerated with a SAN entry for ``httpserver.local``.
+    * The sample's TLS credential provisioning.
+      It silently kept stale credentials in persistent storage if they already existed, so replacing the certificate files and reflashing had no effect on the device.
+      Credentials are now re-added if they already exist.
+    * IPv6 address and multicast group limits.
+      When the access point advertised both SLAAC and stateful DHCPv6, the default :kconfig:option:`CONFIG_NET_IF_UNICAST_IPV6_ADDR_COUNT` and :kconfig:option:`CONFIG_NET_IF_MCAST_IPV6_ADDR_COUNT` values were too low to hold all resulting addresses, causing ``Failed to configure DHCPv6 address`` and ``Cannot join solicit node address ... (-12)`` errors.
+      Both Kconfig option values were increased.
+
 NFC samples
 -----------
 
