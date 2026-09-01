@@ -1062,89 +1062,89 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - ML-KEM-512
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM-768
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM-1024
                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM Key Pair Import
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM Key Pair Export
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM Key Pair Generate
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
               * - ML-KEM Public Key
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
                 - --
@@ -2234,6 +2234,9 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
                    | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
+                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
 
          .. tab:: nrf_oberon
 
@@ -3382,6 +3385,33 @@ The options are grouped by Series and drivers available for the device Series, a
 
       .. tabs::
 
+         .. tab:: CRACEN
+
+            .. list-table:: Key encapsulation algorithm support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Key encapsulation algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+               * - ML-KEM
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+
          .. tab:: nrf_oberon
 
             .. list-table:: Key encapsulation algorithm support (nrf_oberon driver) - nRF54L Series
@@ -3481,6 +3511,17 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
       The following tables list the key encapsulation driver support for nRF54L Series devices.
 
       .. tabs::
+
+         .. tab:: CRACEN
+
+            .. list-table:: Key encapsulation driver support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - Kconfig option
+                 - Supported key encapsulation algorithms
+               * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_KEY_ENCAPSULATION_DRIVER`
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
 
          .. tab:: nrf_oberon
 
