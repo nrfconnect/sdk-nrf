@@ -27,7 +27,11 @@ namespace Nrf::Matter
 		VerifyOrReturn(bindingData->InvokeCommandFunc != nullptr,
 			       LOG_ERR("No valid InvokeCommandFunc assigned"););
 
+	CHIP_ERROR err =
 		DeviceLayer::PlatformMgr().ScheduleWork(DeviceWorkerHandler, reinterpret_cast<intptr_t>(bindingData));
+		if (CHIP_NO_ERROR != err) {
+			LOG_ERR("ScheduleWork failed due to: %" CHIP_ERROR_FORMAT, err.Format());
+		}
 	}
 
 	void BindingHandler::OnInvokeCommandSucces(BindingData *bindingData)
@@ -122,11 +126,14 @@ namespace Nrf::Matter
 				LOG_INF("[%d] UNICAST:", i++);
 				LOG_INF("\t\t+ Fabric: %d\n \
             \t+ LocalEndpoint %d \n \
-            \t+ ClusterId %d \n \
             \t+ RemoteEndpointId %d \n \
             \t+ NodeId %d",
-					(int)entry.fabricIndex, (int)entry.local, (int)entry.clusterId.value(),
-					(int)entry.remote, (int)entry.nodeId);
+				(int)entry.fabricIndex, (int)entry.local, (int)entry.remote, (int)entry.nodeId);
+				if (entry.clusterId.has_value()) {
+					LOG_INF("\t\t+ ClusterId %d", (int)*entry.clusterId);
+				} else {
+					LOG_INF("\t\t+ ClusterId: none");
+				}
 				break;
 			case Binding::MATTER_MULTICAST_BINDING:
 				LOG_INF("[%d] GROUP:", i++);

@@ -330,6 +330,8 @@ Matter samples
   DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
   See :ref:`ug_matter_hw_requirements_external_flash` for more information.
 
+* Fixed an issue where the binding table was not printed correctly when the cluster ID was not set.
+
 Networking samples
 ------------------
 
