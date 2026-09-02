@@ -31,6 +31,10 @@
 #include "route_ipv6.h"
 #include "ipv6.h"
 
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+#include "icmpv6.h" /* NET_ICMPV6_NA_FLAG_OVERRIDE */
+#endif
+
 #include <net/dect/dect_utils.h>
 
 #include "dect_net_l2_internal.h"
@@ -112,6 +116,11 @@ static struct k_work_delayable lte_ipv6_router_nbr_deleted_work;
 
 #endif
 static struct k_work_delayable dect_sink_rs_work;
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+/** After ADDR_ADD, wait so IPv6 addr state and related events can propagate before NA. */
+#define SINK_ETH_UNSOL_NA_ADDR_ADD_DELAY_MS 100
+static struct k_work_delayable sink_eth_unsol_na_work;
+#endif
 static struct net_mgmt_event_callback dect_net_l2_net_mgmt_ipv6_event_cb;
 
 static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callback *cb,
@@ -278,7 +287,14 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				&new_prefix);
 
 			dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+		/* Schedule uplink unsolicited NA after global ADDR_ADD. */
+		if (iface && net_if_is_up(iface) &&
+		    net_ipv6_is_global_addr((struct net_in6_addr *)ipv6_addr)) {
+			(void)k_work_reschedule(&sink_eth_unsol_na_work,
+					       K_MSEC(SINK_ETH_UNSOL_NA_ADDR_ADD_DELAY_MS));
 		}
+#endif
 		break;
 	}
 	case NET_EVENT_IPV6_ADDR_DEL: {
@@ -403,6 +419,10 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 		dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
 		sink_clear_prefix();
 
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+		(void)k_work_cancel_delayable(&sink_eth_unsol_na_work);
+#endif
+
 		/* Update our addressing */
 		dect_net_l2_sink_ipv6_config_changed(
 			iface_for_dect,
@@ -458,12 +478,97 @@ static void dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker(struct k_work *w
 }
 #endif
 
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+/**
+ * RFC 4861 7.2.6 unsolicited NA (ff02::1) for each usable uplink unicast.
+ */
+static void sink_eth_send_unsolicited_na(struct net_if *iface)
+{
+	struct net_if_ipv6 *ipv6;
+	struct net_in6_addr allnodes;
+
+	if (iface == NULL || !net_if_is_up(iface)) {
+		return;
+	}
+
+	if (net_if_flag_is_set(iface, NET_IF_IPV6_NO_ND)) {
+		return;
+	}
+
+	ipv6 = iface->config.ip.ipv6;
+	if (ipv6 == NULL) {
+		return;
+	}
+
+	net_ipv6_addr_create_ll_allnodes_mcast(&allnodes);
+
+	ARRAY_FOR_EACH(ipv6->unicast, i)
+	{
+		struct net_if_addr *ifa = &ipv6->unicast[i];
+		const struct net_in6_addr *addr = &ifa->address.in6_addr;
+
+		if (!ifa->is_used || ifa->address.family != AF_INET6) {
+			continue;
+		}
+
+		if (ifa->addr_state == NET_ADDR_TENTATIVE) {
+			continue;
+		}
+
+		if (net_ipv6_is_addr_unspecified(addr) || net_ipv6_is_addr_mcast(addr)) {
+			continue;
+		}
+
+		if (net_ipv6_send_na(iface, addr, &allnodes, addr,
+				     NET_ICMPV6_NA_FLAG_OVERRIDE) < 0) {
+			LOG_WRN("SINK: unsolicited NA failed for %s",
+				net_sprint_ipv6_addr(addr));
+		} else {
+			LOG_INF("SINK: unsolicited NA sent for %s (iface %d)",
+				net_sprint_ipv6_addr(addr),
+				net_if_get_by_iface(iface));
+		}
+	}
+}
+
+static void sink_eth_unsol_na_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	LOG_INF("SINK: unsolicited NA work for iface %p", iface_for_prefix);
+	sink_eth_send_unsolicited_na(iface_for_prefix);
+}
+#endif /* CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA */
+
 static void dect_net_l2_sink_rs_work_handler(struct k_work *work)
 {
-	if (iface_for_prefix && net_if_is_up(iface_for_prefix) && !sink_prefix_addr_set) {
+	ARG_UNUSED(work);
+
+	if (iface_for_prefix && net_if_is_up(iface_for_prefix) &&
+	    !atomic_get(&sink_prefix_addr_set)) {
 		LOG_INF("SINK: RS work: starting RS for iface %p", iface_for_prefix);
+#if CONFIG_NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS > 0
+		k_msleep(CONFIG_NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS);
+#endif
 		net_if_start_rs(iface_for_prefix);
 	}
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+	if (iface_for_prefix && net_if_is_up(iface_for_prefix)) {
+		if (atomic_get(&sink_prefix_addr_set)) {
+			LOG_INF("SINK: RS work: prefix set, schedule unsolicited NA work "
+				"for iface %p", iface_for_prefix);
+			(void)k_work_reschedule(&sink_eth_unsol_na_work, K_NO_WAIT);
+		} else {
+			LOG_INF("SINK: RS work: no prefix set, schedule unsolicited NA work "
+				"for iface %p", iface_for_prefix);
+			(void)k_work_reschedule(&sink_eth_unsol_na_work, K_SECONDS(20));
+		}
+	}
+#endif
 }
 
 #define NET_IF_EVENT_MASK (NET_EVENT_IF_UP | NET_EVENT_IF_DOWN)
@@ -519,6 +624,9 @@ static int dect_net_l2_sink_init(void)
 			      dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker);
 #endif
 	k_work_init_delayable(&dect_sink_rs_work, dect_net_l2_sink_rs_work_handler);
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
+	k_work_init_delayable(&sink_eth_unsol_na_work, sink_eth_unsol_na_work_handler);
+#endif
 
 	return 0;
 }
