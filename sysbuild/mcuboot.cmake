@@ -51,7 +51,7 @@ if(NOT SB_CONFIG_PARTITION_MANAGER AND SB_CONFIG_BOOTLOADER_MCUBOOT AND
   sysbuild_add_dependencies(FLASH mcuboot app_provision)
 endif()
 
-if(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES AND SB_CONFIG_SOC_SERIES_NRF54L)
+if(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
   include(image_flasher.cmake)
   add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE mcuboot)
   sysbuild_add_dependencies(FLASH bootconf mcuboot)
