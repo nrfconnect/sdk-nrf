@@ -6,10 +6,10 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/device.h>
 
-static const struct gpio_dt_spec led_blue = GPIO_DT_SPEC_GET(DT_ALIAS(led0), gpios);
+static const struct gpio_dt_spec led_green = GPIO_DT_SPEC_GET(DT_ALIAS(led2), gpios);
 
 int main(void)
 {
-	/* LED4 blue */
-	gpio_pin_set_dt(&led_blue, 1);	return 0;
+	gpio_pin_configure_dt(&led_green, GPIO_OUTPUT_ACTIVE);
+	return 0;
 }
