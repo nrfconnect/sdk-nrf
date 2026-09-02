@@ -75,6 +75,16 @@ const uint8_t *cracen_ml_dsa_hash_oid(psa_algorithm_t alg)
 	return NULL;
 }
 
+/** Returns its argument, but hides the value from the optimizer.
+ *
+ * Inspired by mldsa-native (mld_value_barrier_u32).
+ */
+static inline int32_t value_barrier_i32(int32_t v)
+{
+	__asm__ volatile("" : "+r"(v));
+	return v;
+}
+
 size_t cracen_ml_dsa_calc_vector_sz_bytes(uint32_t bit_len)
 {
 	return (size_t)ML_DSA_POLY_COEFFS_COUNT * bit_len / 8;
@@ -92,23 +102,21 @@ uint32_t cracen_ml_dsa_bit_length(uint32_t x)
 int32_t cracen_ml_dsa_reduce_to_zq(int32_t a)
 {
 	a += (a >> 31) & ML_DSA_PRIME_NUM;
-	if (a >= ML_DSA_PRIME_NUM) {
-		a -= ML_DSA_PRIME_NUM;
-	}
+	a -= ((ML_DSA_PRIME_NUM - a - 1) >> 31) & ML_DSA_PRIME_NUM;
 
 	return a;
 }
 
 int32_t cracen_ml_dsa_abs_coeff(int32_t coeff)
 {
-	int32_t sign_mask = coeff >> 31;
+	int32_t sign_mask = value_barrier_i32(coeff >> 31);
 
 	return coeff - (sign_mask & (2 * coeff));
 }
 
 int32_t cracen_ml_dsa_ge_bound_mask(int32_t magnitude, int32_t bound)
 {
-	return ~(magnitude - bound) >> 31;
+	return value_barrier_i32(~(magnitude - bound) >> 31);
 }
 
 psa_status_t cracen_ml_dsa_shake256_digest(const uint8_t *in, size_t in_len,

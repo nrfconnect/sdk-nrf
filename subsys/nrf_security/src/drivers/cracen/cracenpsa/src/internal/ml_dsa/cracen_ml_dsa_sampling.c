@@ -117,6 +117,7 @@ psa_status_t cracen_ml_dsa_sample_in_ball(const uint8_t *seed, size_t seed_len,
 	safe_memzero(out_vec, sizeof(ml_dsa_poly_vector_t));
 	for (uint32_t i = start_index; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 		uint8_t pos;
+		uint32_t mask;
 
 		do {
 			status = cracen_xof_output(&operation, &pos, 1);
@@ -126,11 +127,10 @@ psa_status_t cracen_ml_dsa_sample_in_ball(const uint8_t *seed, size_t seed_len,
 		} while (pos > i);
 
 		out_vec->coeffs[i] = out_vec->coeffs[pos];
-		if ((signs >> (i - start_index)) & 1u) {
-			out_vec->coeffs[pos] = ML_DSA_PRIME_NUM - 1; /* -1 mod q */
-		} else {
-			out_vec->coeffs[pos] = 1;
-		}
+
+		mask = ((signs >> (i - start_index)) & 1u) - 1;
+		out_vec->coeffs[pos] = ML_DSA_PRIME_NUM;
+		out_vec->coeffs[pos] -= (~mask & 1) | (mask & (ML_DSA_PRIME_NUM - 1));
 	}
 
 exit:
