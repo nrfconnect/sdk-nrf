@@ -226,6 +226,19 @@ config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
 	  will use the key set for the mode that MCUboot is used in (non-immutable slots when b0
 	  is enabled, or immutable slots when b0 is not enabled).
 
+config MCUBOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
+	bool
+	default y if SECURE_BOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
+
+config MCUBOOT_BOOTCONF_LOCK_WRITES
+	bool "Protect MCUboot NVM from writes using bootconf.hex"
+	depends on MCUBOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
+	depends on !SECURE_BOOT_APPCORE
+	help
+	  When MCUboot is the immutable first-stage bootloader (no NSIB), generate and flash
+	  :file:`bootconf.hex` to program UICR BOOTCONF for the MCUboot partition size.
+	  This enables write protection for the bootloader region from reset.
+
 config MCUBOOT_SIGNATURE_USING_ITS
 	bool "Use ITS stored keys for signature verification [EXPERIMENTAL]"
 	depends on SOC_SERIES_NRF54H

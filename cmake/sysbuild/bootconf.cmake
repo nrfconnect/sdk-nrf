@@ -8,15 +8,23 @@ include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 set(bootconf_hex ${CMAKE_BINARY_DIR}/bootconf.hex)
 set(bootconf_dependency)
 
-if(SB_CONFIG_PARTITION_MANAGER)
-  set(bootconf_size $<TARGET_PROPERTY:partition_manager,PM_B0_SIZE>)
-  set(bootconf_dependency ${APPLICATION_BINARY_DIR}/pm.config)
+if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
+  set(bootconf_image b0)
+  if(SB_CONFIG_PARTITION_MANAGER)
+    set(bootconf_size $<TARGET_PROPERTY:partition_manager,PM_B0_SIZE>)
+    set(bootconf_dependency ${APPLICATION_BINARY_DIR}/pm.config)
+  else()
+    dt_partition_size(bootconf_size LABEL b0_partition TARGET b0 REQUIRED)
+  endif()
+elseif(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
+  set(bootconf_image mcuboot)
+  dt_partition_size(bootconf_size LABEL boot_partition TARGET mcuboot REQUIRED)
 else()
-  dt_partition_size(bootconf_size LABEL b0_partition TARGET b0 REQUIRED)
+  message(FATAL_ERROR "bootconf.cmake included without bootconf Kconfig enabled")
 endif()
 
-# bootconf.hex is only created when there is b0_partition, which
-# indicates that b0 is used.
+# bootconf.hex is only created when there are b0_partition or boot_partition, and
+# sysbuild kconfig enables it.
 if(NOT bootconf_size EQUAL 0)
   add_custom_command(OUTPUT ${bootconf_hex}
     COMMAND ${Python3_EXECUTABLE}
@@ -29,8 +37,8 @@ if(NOT bootconf_size EQUAL 0)
   )
 else()
   # Whether we have this CMake invoked or not is controlled by paths in
-  # scripts that invoke; it is expected to be called when Secure Bootloader is
-  # build, which means that the B0 partition for it also exists. If these
+  # scripts that invoke; it is expected to be called when an Immutable Bootloader is
+  # build, which means that a partition for it also exists. If these
   # expectations are not met and somehow we have this part invoked, this means
   # that bootconf build has been invoked for something it can not handle.
   message(FATAL_ERROR "bootconf.hex has nothing to protect."
@@ -44,7 +52,7 @@ add_custom_target(bootconf_target
 
 if(SB_CONFIG_MERGED_HEX_FILES)
   set(board_target)
-  sysbuild_get(board_target IMAGE b0 VAR CONFIG_BOARD_TARGET KCONFIG)
+  sysbuild_get(board_target IMAGE ${bootconf_image} VAR CONFIG_BOARD_TARGET KCONFIG)
   string(REPLACE "/" "_" board_target ${board_target})
   string(REPLACE "@" "_" board_target ${board_target})
 
@@ -68,6 +76,5 @@ if(SB_CONFIG_PARTITION_MANAGER)
     bootconf_target
   )
 else()
-  # Add the bootconf with b0 as bootconf is supposed to protect it.
-  add_dependencies(b0 bootconf_target)
+  add_dependencies(${bootconf_image} bootconf_target)
 endif()
