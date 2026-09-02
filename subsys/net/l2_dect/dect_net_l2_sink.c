@@ -35,6 +35,10 @@
 #include "icmpv6.h" /* NET_ICMPV6_NA_FLAG_OVERRIDE */
 #endif
 
+#if defined(CONFIG_NET_DHCPV6)
+#include <zephyr/net/dhcpv6.h>
+#endif
+
 #include <net/dect/dect_utils.h>
 
 #include "dect_net_l2_internal.h"
@@ -116,6 +120,11 @@ static struct k_work_delayable lte_ipv6_router_nbr_deleted_work;
 
 #endif
 static struct k_work_delayable dect_sink_rs_work;
+#if defined(CONFIG_NET_DHCPV6)
+/* Delay DHCPv6 start so IPv6 link-local DAD completes before the first Solicit. */
+#define SINK_DHCPV6_START_DELAY_MS 5000
+static struct k_work_delayable sink_dhcpv6_start_work;
+#endif
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 /** After ADDR_ADD, wait so IPv6 addr state and related events can propagate before NA. */
 #define SINK_ETH_UNSOL_NA_ADDR_ADD_DELAY_MS 100
@@ -363,6 +372,23 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 		LOG_DBG("NET_EVENT_IPV6_ROUTE_DEL: iface %p", iface);
 		break;
 
+#if defined(CONFIG_NET_DHCPV6)
+	case NET_EVENT_IPV6_DAD_SUCCEED: {
+		struct net_event_ipv6_addr *evt = (struct net_event_ipv6_addr *)cb->info;
+
+		/* Start DHCPv6 only once the link-local address has passed DAD —
+		 * that is the source address DHCPv6 needs for its exchanges.
+		 */
+		if (evt && net_ipv6_is_ll_addr((struct net_in6_addr *)&evt->addr)) {
+			LOG_DBG("NET_EVENT_IPV6_DAD_SUCCEED: link-local DAD done on iface %p, "
+				"scheduling DHCPv6 start", iface);
+			k_work_reschedule(&sink_dhcpv6_start_work,
+					  K_MSEC(SINK_DHCPV6_START_DELAY_MS));
+		}
+		break;
+	}
+#endif
+
 	default:
 		LOG_WRN("Unknown event %llu", mgmt_event);
 		break;
@@ -418,6 +444,12 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 		LOG_WRN("NET_EVENT_IF_DOWN: Sink networking iface (%p) is down", iface_for_prefix);
 		dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
 		sink_clear_prefix();
+
+#if defined(CONFIG_NET_DHCPV6)
+		(void)k_work_cancel_delayable(&sink_dhcpv6_start_work);
+		net_dhcpv6_stop(iface);
+		LOG_INF("DHCPv6 client stopped on iface %p", iface);
+#endif
 
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 		(void)k_work_cancel_delayable(&sink_eth_unsol_na_work);
@@ -544,6 +576,30 @@ static void sink_eth_unsol_na_work_handler(struct k_work *work)
 }
 #endif /* CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA */
 
+#if defined(CONFIG_NET_DHCPV6)
+static void sink_dhcpv6_start_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	if (!iface_for_prefix || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	if (atomic_get(&sink_prefix_addr_set)) {
+		LOG_INF("DHCPv6 client: prefix already set, skipping start");
+		return;
+	}
+
+	struct net_dhcpv6_params dhcpv6_params = {
+		.request_addr = true,
+		.request_prefix = false,
+	};
+
+	net_dhcpv6_start(iface_for_prefix, &dhcpv6_params);
+	LOG_INF("DHCPv6 client started on iface %p", iface_for_prefix);
+}
+#endif
+
 static void dect_net_l2_sink_rs_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
@@ -572,11 +628,20 @@ static void dect_net_l2_sink_rs_work_handler(struct k_work *work)
 }
 
 #define NET_IF_EVENT_MASK (NET_EVENT_IF_UP | NET_EVENT_IF_DOWN)
-#define IPV6_LAYER_EVENT_MASK                                                                      \
-	(NET_EVENT_IPV6_PREFIX_ADD | NET_EVENT_IPV6_PREFIX_DEL | NET_EVENT_IPV6_ADDR_ADD |         \
-	 NET_EVENT_IPV6_ADDR_DEL | NET_EVENT_IPV6_ROUTER_ADD | NET_EVENT_IPV6_ROUTER_DEL |         \
-	NET_EVENT_IPV6_NBR_DEL | NET_EVENT_IPV6_NBR_ADD | NET_EVENT_IPV6_ROUTE_ADD |               \
-	 NET_EVENT_IPV6_ROUTE_DEL)
+
+#if defined(CONFIG_NET_DHCPV6)
+#define IPV6_LAYER_EVENT_MASK_DHCPV6 (NET_EVENT_IPV6_DAD_SUCCEED)
+#else
+#define IPV6_LAYER_EVENT_MASK_DHCPV6 0
+#endif
+
+#define IPV6_LAYER_EVENT_MASK							\
+	(NET_EVENT_IPV6_PREFIX_ADD | NET_EVENT_IPV6_PREFIX_DEL |		\
+	 NET_EVENT_IPV6_ADDR_ADD | NET_EVENT_IPV6_ADDR_DEL |			\
+	 NET_EVENT_IPV6_ROUTER_ADD | NET_EVENT_IPV6_ROUTER_DEL |		\
+	 NET_EVENT_IPV6_NBR_ADD | NET_EVENT_IPV6_NBR_DEL |			\
+	 NET_EVENT_IPV6_ROUTE_ADD | NET_EVENT_IPV6_ROUTE_DEL |			\
+	 IPV6_LAYER_EVENT_MASK_DHCPV6)
 
 static int dect_net_l2_sink_init(void)
 {
@@ -624,6 +689,9 @@ static int dect_net_l2_sink_init(void)
 			      dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker);
 #endif
 	k_work_init_delayable(&dect_sink_rs_work, dect_net_l2_sink_rs_work_handler);
+#if defined(CONFIG_NET_DHCPV6)
+	k_work_init_delayable(&sink_dhcpv6_start_work, sink_dhcpv6_start_work_handler);
+#endif
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 	k_work_init_delayable(&sink_eth_unsol_na_work, sink_eth_unsol_na_work_handler);
 #endif
