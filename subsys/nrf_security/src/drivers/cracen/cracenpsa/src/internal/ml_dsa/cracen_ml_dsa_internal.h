@@ -20,6 +20,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/** The constant-time properties of this implementation are claimed for Cortex-M33 only.
+ *
+ *  - On Cortex-M33 MUL, MLA and UMULL are fixed latency, which is what lets the Montgomery
+ *    reduction run in constant time.
+ *  - Division operations (UDIV and SDIV) terminate early on all Cortex-M cores that
+ *    implement them, so these are omitted.
+ */
+#ifndef CONFIG_CPU_CORTEX_M33
+#error "ML-DSA is currently supported on Cortex-M33 devices only."
+#endif
+
 /* FIPS 204, Section 4, global parameters (shared by all parameter sets). */
 
 /* n: the number of coefficients in a polynomial vector */

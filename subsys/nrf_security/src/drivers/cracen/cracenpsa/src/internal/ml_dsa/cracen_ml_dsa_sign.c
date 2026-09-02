@@ -33,7 +33,10 @@ _Static_assert(ML_DSA_MATRIX_ROWS_MAX != 1 && ML_DSA_MATRIX_COLS_MAX != 1,
 /* Map a coefficient in [0, q) to its centered representative in (-q/2, q/2]. */
 static int32_t to_signed(int32_t a)
 {
-	return a > (ML_DSA_PRIME_NUM - 1) / 2 ? a - ML_DSA_PRIME_NUM : a;
+	/* 0xFFFFFFFF if a > (q-1)/2 */
+	int32_t mask = ((ML_DSA_PRIME_NUM - 1) / 2 - a) >> 31;
+
+	return a - (mask & ML_DSA_PRIME_NUM);
 }
 
 /* Returns true when every coefficient satisfies |coeff| < bound. Runs in constant time. */
@@ -251,6 +254,15 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 	/** Computing verifier's challenge and transforming it to the NTT domain:
 	 *  1. c = SampleInBall(c_tilde);
 	 *  2. c_hat = NTT(c)
+	 *
+	 * Note: Constant time: Leaking commitment_hash does not reveal any information
+	 * about the secret key.
+	 *
+	 * This also applies to challenges for rejected signatures, which reveal information about
+	 * H(mu || w1_encoded), but not about the secret key.
+	 *
+	 * See Section 5.5 of
+	 * https://pq-crystals.org/dilithium/data/dilithium-specification-round3-20210208.pdf.
 	 */
 	status = cracen_ml_dsa_sample_in_ball(commitment_hash, commitment_hash_len,
 					      alg_params->tau, &verifiers_challenge);
@@ -275,6 +287,9 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 	/** Note: Inspired by the implementation of mldsa-native, which also does not
 	 *        perform validity checks for z (signer's response) and r0
 	 *        at the same place (as FIPS 204, Algorithm 7, line 23 specifies).
+	 *
+	 *  The bound check result is still considered as constant time
+	 *  as a part of rejection sampling loop.
 	 */
 	if (!const_poly_vec_within_bound(mask_or_signers_resp, alg_params->columns_l,
 					 signers_response_bound)) {
@@ -308,12 +323,17 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 		}
 	}
 
-	/* Note: constant time check */
+	/* Note: constant time check, part of rejection sampling loop. */
 	if (reject_mask != 0 || hint_weight > alg_params->omega) {
 		/* Rejected: retry required. */
 		goto exit;
 	}
 
+	/** All required norm checks (lines 23 and 28 of algorithm 7, FIPS 204) are passed
+	 *  by that moment, so the signature does not leak any secret information and
+	 *  any value computed from it could be considered as public (including the hint) and
+	 *  there is no need to execute the following function in constant time.
+	 */
 	sig_encode(alg_params, commitment_hash, mask_or_signers_resp, hint, sig);
 	*signature_produced = true;
 	status = PSA_SUCCESS;
