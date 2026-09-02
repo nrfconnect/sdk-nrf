@@ -89,7 +89,7 @@ config CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
 	  This option indicates that the protected RAM invalidation slots are provisioned
 	  using nrfutil. When enabled, the manual provisioning options below are hidden because
 	  provisioning is expected to be handled through sysbuild/nrfutil instead.
-	  This option is controlled by the KMU_INVALIDATE_PROTECTED_RAM_SLOTS sysbuild
+	  This option is controlled by the CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS sysbuild
 	  configuration option, so enable it in your sysbuild
 	  configuration rather than setting this symbol manually.
 
