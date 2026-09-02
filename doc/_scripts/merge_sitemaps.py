@@ -12,7 +12,7 @@ from pathlib import Path
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-_BASE_URL = "https://nrfconnectdocs.nordicsemi.com/ncs/latest/{docset}/"
+_BASE_URL = "https://nrfconnectdocs.nordicsemi.com/ncs/latest/{docset}/sitemap.xml"
 
 
 def create_urlset(soup: BeautifulSoup) -> Tag:
