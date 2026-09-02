@@ -774,6 +774,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endforeach()
   endif()
 
+  if(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
+    # ensure MCUboot will select right RRAMC.REGION for self-rwx
+    set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_BOOTCONF_LOCK_WRITES y)
+  endif()
+
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
     if(NOT SB_CONFIG_NETCORE_NONE)
       set_config_bool(${SB_CONFIG_NETCORE_IMAGE_NAME} CONFIG_SECURE_BOOT y)
