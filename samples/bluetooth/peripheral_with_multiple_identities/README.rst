@@ -234,7 +234,7 @@ Dependencies
 The sample uses the following Zephyr libraries:
 
 * :file:`include/kernel.h`
-* :file:`include/sys/printk.h`
+* :file:`include/logging/log.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
