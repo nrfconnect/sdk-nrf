@@ -62,6 +62,31 @@ config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
 	  prefix on the uplink. Sink-agnostic (Ethernet and cellular). Disable
 	  if you supply your own routes or use a flat /64 layout.
 
+if NET_L2_DECT_BR && NET_L2_ETHERNET
+
+config NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS
+	int "Pacing delay (ms) between consecutive Ethernet sends on the sink uplink"
+	default 10
+	range 0 100
+	help
+	  Short sleep inserted between consecutive Ethernet TX frames on the sink
+	  uplink to avoid per-frame TX-complete IRQ timeouts on low-end SPI MAC/PHYs
+	  (e.g. W5500). Used before RS and, when enabled later, between PT ND proxy
+	  sends. 10 ms matches the upstream w5500 driver timeout; 0 disables.
+
+config NET_L2_DECT_BR_UNSOLICITED_NA
+	bool "Send unsolicited Neighbor Advertisements on Ethernet sink uplink"
+	default y
+	depends on NET_NATIVE_IPV6 && NET_IPV6_ND && NET_IPV6_NBR_CACHE
+	help
+	  Send RFC 4861 unsolicited NA (dst ff02::1, one per usable uplink unicast,
+	  src = that address) after the post-up work item and on global ADDR_ADD.
+	  Refreshes LAN peer neighbor caches after boot, relevant when the uplink MAC
+	  can change between resets (zephyr,random-mac-address). Disable to suppress
+	  the extra multicast ND traffic.
+
+endif # NET_L2_DECT_BR && NET_L2_ETHERNET
+
 config NET_L2_DECT_ULA
 	bool "ULA /64 on DECT (prefix + derived address)"
 	default y
