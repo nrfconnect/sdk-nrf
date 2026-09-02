@@ -26,6 +26,13 @@ config TEST_B0_LOCK_USE_S1
 config TEST_MCUBOOT_ALONE
 	bool "b0 absent"
 
+config TEST_MCUBOOT_BOOTCONF_LOCK_WRITES
+	bool "MCUboot uses bootconf.hex for immutable region"
+	depends on TEST_MCUBOOT_ALONE
+	help
+	  When set, the test expects BOOTCONF to use the immutable RRAMC region
+	  rather than the additional region used by CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX alone.
+
 menu "Zephyr"
 source "Kconfig.zephyr"
 endmenu

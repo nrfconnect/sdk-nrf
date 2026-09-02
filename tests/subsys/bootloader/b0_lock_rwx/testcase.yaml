@@ -56,9 +56,60 @@ tests:
       - SB_CONFIG_SECURE_BOOT_APPCORE=n
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
       - SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES=n
+      - SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES=n
       - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
       - CONFIG_TEST_MCUBOOT_ALONE=y
+      - CONFIG_NRFX_RRAMC=y
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+  mcuboot.w:
+    extra_args:
+      - FILE_SUFFIX=mcuboot
+      - SB_CONFIG_SECURE_BOOT_APPCORE=n
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
+      - SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_TEST_MCUBOOT_ALONE=y
+      - CONFIG_TEST_MCUBOOT_BOOTCONF_LOCK_WRITES=y
+      - CONFIG_NRFX_RRAMC=y
+    platform_allow:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    integration_platforms:
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+  mcuboot.bootconf.rwx:
+    extra_args:
+      - FILE_SUFFIX=mcuboot
+      - SB_CONFIG_SECURE_BOOT_APPCORE=n
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
+      - SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES=y
+      - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_TEST_MCUBOOT_ALONE=y
+      - CONFIG_TEST_MCUBOOT_BOOTCONF_LOCK_WRITES=y
+      - CONFIG_TEST_B0_LOCK_READS=y
       - CONFIG_NRFX_RRAMC=y
     platform_allow:
       - nrf54lv10dk/nrf54lv10a/cpuapp
