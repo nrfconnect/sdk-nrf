@@ -1200,3 +1200,97 @@ int nrf_wifi_set_bss_max_idle_period(const struct device *dev,
 
 	return ret;
 }
+
+#ifdef CONFIG_WIFI_MGMT_RANGING
+int nrf_wifi_ranging_get_caps(const struct device *dev,
+			      struct wifi_ranging_caps *caps)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	int ret = -1;
+
+	if (!dev || !caps) {
+		LOG_ERR("%s: dev or caps is NULL", __func__);
+		return ret;
+	}
+
+	vif_ctx_zep = dev->data;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+
+	if (!rpu_ctx_zep) {
+		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
+		return ret;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+
+	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		goto out;
+	}
+
+	memset(caps, 0, sizeof(*caps));
+
+	caps->initiator = IS_ENABLED(CONFIG_WIFI_MGMT_RANGING_INITIATOR);
+	caps->responder = IS_ENABLED(CONFIG_WIFI_MGMT_RANGING_RESPONDER);
+	caps->lci = IS_ENABLED(CONFIG_WIFI_MGMT_LOCATION_LCI);
+	caps->civic = IS_ENABLED(CONFIG_WIFI_MGMT_LOCATION_CIVIC);
+	caps->max_peers = CONFIG_WIFI_MGMT_RANGING_MAX_PEERS;
+
+	/* Firmware reports no 802.11az, secure LTF, unassociated or
+	 * off-channel ranging capability yet; these stay false until it does.
+	 */
+
+	ret = 0;
+
+out:
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	return ret;
+}
+
+void nrf_wifi_ranging_session_close(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+				    int status)
+{
+	wifi_ranging_result_cb_t cb = NULL;
+	uint32_t session_id = 0;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+
+	if (!vif_ctx_zep->ranging_in_progress) {
+		k_mutex_unlock(&vif_ctx_zep->vif_lock);
+		return;
+	}
+
+	cb = vif_ctx_zep->ranging_cb;
+	session_id = vif_ctx_zep->ranging_session_id;
+
+	vif_ctx_zep->ranging_in_progress = false;
+	vif_ctx_zep->ranging_cb = NULL;
+	vif_ctx_zep->ranging_num_peers = 0;
+	vif_ctx_zep->ranging_res_cnt = 0;
+
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	k_work_cancel_delayable(&vif_ctx_zep->ranging_timeout_work);
+
+	/* Invoked with vif_lock released: the callback raises a net_mgmt event,
+	 * which may block, and a ranging_cancel from that context would
+	 * otherwise deadlock on vif_lock.
+	 */
+	if (cb) {
+		cb(vif_ctx_zep->zep_net_if_ctx, session_id, status, NULL);
+	}
+}
+#endif /* CONFIG_WIFI_MGMT_RANGING */

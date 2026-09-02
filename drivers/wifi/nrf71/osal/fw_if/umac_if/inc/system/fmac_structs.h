@@ -145,6 +145,13 @@ struct nrf_wifi_fmac_callbk_fns {
 		struct nrf_wifi_reg *get_reg,
 		unsigned int event_len);
 
+#if defined(NRF71_RANGING) || defined(__DOXYGEN__)
+	/** Callback function to be called when FTM peer measurement results are received. */
+	void (*peer_meas_results_callbk_fn)(void *os_vif_ctx,
+			struct nrf_wifi_umac_event_peer_meas_results *meas_results,
+			unsigned int event_len);
+#endif /* NRF71_RANGING */
+
 #if defined(NRF71_STA_MODE) || defined(NRF71_RAW_DATA_RX) || defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
