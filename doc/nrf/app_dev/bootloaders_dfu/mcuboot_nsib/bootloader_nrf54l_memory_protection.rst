@@ -35,11 +35,12 @@ You cannot combine them per stage.
 At reset (before bootloader software runs)
 ==========================================
 
-When you use |NSIB| as the first-stage bootloader, the build can produce a small Intel HEX file named :file:`bootconf.hex` (as described in :ref:`ug_bootloader_nrf54l_memory_protection_hw_background`).
+When you use |NSIB| or MCUboot as the first-stage bootloader, the build can produce a small Intel HEX file named :file:`bootconf.hex` (as described in :ref:`ug_bootloader_nrf54l_memory_protection_hw_background`).
 This image programs the UICR BOOTCONF value so that RRAMC applies an immutable boot region as soon as the device leaves reset, before any of your bootloader code executes.
 You typically flash :file:`bootconf.hex` together with the rest of the programmed images (for example using ``west flash``), so the protection configuration is deployed with the project.
 
-Sysbuild exposes this behavior in the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` Kconfig option.
+For |NSIB|, Sysbuild exposes this behavior in the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` Kconfig option.
+For MCUboot, Sysbuild exposes this behavior in the :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` Kconfig option.
 On SoCs that support the feature, it is enabled by default.
 The UICR-based lock then blocks all writes to the immutable bootloader region except through a full chip erase - the strongest form of immutability for the NSIB partition.
 
@@ -130,6 +131,9 @@ Summary
    * - UICR programmed at flash time
      - :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` and :file:`bootconf.hex`
      - Immutable boot region from reset; true write-once locking of NSIB span in RRAMC.
+   * - UICR programmed at flash time
+     - :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` and :file:`bootconf.hex`
+     - Immutable boot region from reset; true write-once locking of standalone MCUboot span in RRAMC.
    * - During NSIB, before chaining
      - :kconfig:option:`CONFIG_SB_DISABLE_NEXT_W`
      - Write-disables the next bootloader partition (typically MCUboot), within region size limits.

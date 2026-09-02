@@ -768,10 +768,15 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
+  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES OR SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
     foreach(image ${PRE_CMAKE_IMAGES})
       set_config_bool(${image} CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS n)
     endforeach()
+  endif()
+
+  if(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
+    # ensure MCUboot will select right RRAMC.REGION for self-rwx
+    set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_BOOTCONF_LOCK_WRITES y)
   endif()
 
   if(SB_CONFIG_SECURE_BOOT_NETCORE)
@@ -1065,7 +1070,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_post_cmake)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/nrf700x.cmake)
   endif()
 
-  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES)
+  if(SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES OR SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
     include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootconf.cmake)
   endif()
 
