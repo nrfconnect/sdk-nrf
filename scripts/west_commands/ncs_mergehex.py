@@ -1,35 +1,16 @@
 # Copyright (c) 2026 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-import os
-import sys
-from argparse import ArgumentParser, BooleanOptionalAction, Namespace
-from collections.abc import Callable
-from functools import cached_property
-from pathlib import Path
-from subprocess import CalledProcessError
-from typing import Any, TypeAlias, cast, override
+"""
+West command responsible for merging hex files based on a mergehex.yaml file.
+The file should be in the following format:
 
-import yaml
-from intelhex import IntelHexError
-from west.commands import WestCommand
-
-_MERGEHEX_FILENAME = "mergehex.yaml"
-
-MergeConfig: TypeAlias = dict[str, list[str]]
-
-
-class NcsMergeHex(WestCommand):
-    """
-    West command responsible for merging hex files based on a mergehex.yaml file.
-    The file should be in the following format:
-    ```
     output_name:
     - path/to/file1.hex
     - file2.hex
-    ```
-    Example:
-    ```
+
+Example:
+
     merged_thingy91x_nrf9151_s_ns.hex:
     - merged_thingy91x_nrf9151_ns.hex
     - merged_thingy91x_nrf9151.hex
@@ -39,21 +20,51 @@ class NcsMergeHex(WestCommand):
     - signed_by_b0_mcuboot_s1_variant.hex
     - app/zephyr/zephyr.signed.hex
     - app_provision.hex
-    ```
 
-    The provided paths should be relative to the build directory.
-    """
+The provided paths should be relative to the build directory.
+"""
 
+import os
+import sys
+from argparse import ArgumentParser, BooleanOptionalAction, Namespace, RawDescriptionHelpFormatter
+from collections.abc import Callable
+from functools import cached_property
+from pathlib import Path
+from subprocess import CalledProcessError
+from typing import Any, TypeAlias, cast, override
+
+import yaml
+from intelhex import IntelHexError
+from jsonschema import ValidationError, validate
+from west.commands import WestCommand
+
+_MERGEHEX_FILENAME = "mergehex.yaml"
+
+MergeConfig: TypeAlias = dict[str, list[str]]
+
+_SCHEMA = {
+    "type": "object",
+    "propertyNames": {"type": "string", "minLength": 1},
+    "additionalProperties": {"type": "array", "items": {"type": "string"}},
+}
+
+
+class NcsMergeHex(WestCommand):
     def __init__(self) -> None:
         super().__init__(
             name="ncs-mergehex",
             help="Merge sysbuild output hex files based on mergehex.yaml file.",
-            description="Merge sysbuild output hex files based on mergehex.yaml file.",
+            description=__doc__,
         )
 
     @override
     def do_add_parser(self, parser_adder: Any) -> ArgumentParser:
-        parser = parser_adder.add_parser(self.name, help=self.help, description=self.description)
+        parser = parser_adder.add_parser(
+            self.name,
+            help=self.help,
+            description=self.description,
+            formatter_class=RawDescriptionHelpFormatter,
+        )
 
         parser.add_argument(
             "-d",
@@ -106,18 +117,15 @@ class NcsMergeHex(WestCommand):
         merged_any = False
         for output, inputs in config.items():
             output_path = build_dir / output
-            inputs_paths = set(build_dir / hex_file for hex_file in inputs)
-            existing = set(filter(lambda path: path.is_file(), inputs_paths))
 
-            if args.fail_on_missing and (missing := inputs_paths - existing):
-                missing_strs = map(str, missing)
+            existing, missing = self._split_out_missing(inputs, build_dir)
+
+            if args.fail_on_missing and missing:
                 self.die(
-                    f"Not enough files to produce {output}, missing files: "
-                    f"{', '.join(missing_strs)}."
+                    f"Not enough files to produce {output}, missing files: {', '.join(missing)}."
                 )
 
-            as_string = list(map(str, existing))
-            if not as_string:
+            if not existing:
                 self.dbg(f"Couldn't find any files for {output}, skipping")
                 continue
 
@@ -126,13 +134,13 @@ class NcsMergeHex(WestCommand):
             output_dir = output_path.parent
             output_dir.mkdir(parents=True, exist_ok=True)
 
-            self.inf(f"[*] Generating {output} from {self._format_input_source(as_string)}")
+            self.inf(f"[*] Generating {output_path} from {self._format_input_source(existing)}")
             try:
-                self._merge_hex_files(output_path, as_string)
+                self._merge_hex_files(output_path, existing)
             except IntelHexError as e:
                 self.die(str(e))
 
-            self.inf(f"Merged file generated: {output_path}")
+            self.inf("Merged file generated.")
 
         if not merged_any:
             self.die(f"Couldn't find files matching any configuration from {mergehex_file}.")
@@ -146,30 +154,15 @@ class NcsMergeHex(WestCommand):
     def _load_config(self, path: str | os.PathLike[str]) -> MergeConfig:
         try:
             with open(path, "rb") as f:
-                return self._validate_config(yaml.safe_load(f))
+                config = yaml.safe_load(f)
+            validate(config, schema=_SCHEMA)
+            return cast(MergeConfig, config)
         except yaml.YAMLError:
             self.die(f"Error parsing yaml in {path}")
         except OSError:
             self.die(f"File {path} doesn't exist or couldn't have been opened.")
-        except ValueError as e:
-            self.die(f"Failed parsing mergehex.yaml file:\n{e.args[0]}")
-
-    def _validate_config(self, config: Any) -> MergeConfig:
-        if not isinstance(config, dict):
-            raise ValueError(f"Expected top level yaml entries to be a dict, found {type(config)}")
-
-        for k, v in config.items():
-            if not isinstance(k, str):
-                raise ValueError(f"Expected keys to be strings, found {type(k)}")
-            if not isinstance(v, list):
-                raise ValueError(f"Expected values to be lists of file paths, found {type(v)}")
-            if wrong := set(map(type, v)) - {str}:
-                wrong_out = ", ".join(map(str, wrong))
-                raise ValueError(
-                    f"Expected dict individual entries to be paths, found: {wrong_out}"
-                )
-
-        return cast(MergeConfig, config)
+        except ValidationError as e:
+            self.die(f"Failed parsing mergehex.yaml file:\n{e.message}")
 
     def _get_build_dir(self) -> Path:
         if self._is_zephyr_build("."):
@@ -177,6 +170,19 @@ class NcsMergeHex(WestCommand):
         if (path := Path("build/")).exists() and self._is_zephyr_build(str(path)):
             return path
         self.die("Couldn't find build dir, provide one using --build-dir.")
+
+    def _split_out_missing(self, inputs: list[str], build_dir: Path) -> tuple[list[str], list[str]]:
+        existing = []
+        missing = []
+
+        for file in inputs:
+            path = build_dir / file
+            if path.is_file():
+                existing.append(str(path))
+                continue
+            missing.append(str(path))
+
+        return existing, missing
 
     def _insert_paths(self) -> None:
         env_base = os.getenv("ZEPHYR_BASE")
