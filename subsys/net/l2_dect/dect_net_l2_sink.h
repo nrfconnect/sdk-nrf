@@ -45,4 +45,22 @@ static inline void dect_net_l2_sink_reapply_prefix_for_tx_rd(struct net_if *dect
 }
 #endif /* CONFIG_NET_L2_DECT_BR */
 
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA) && \
+	defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT)
+/** RFC 4861 7.2.6 multicast unsolicited NA on Ethernet for PT GUA (ND proxy). */
+void dect_net_l2_sink_eth_unsol_na_pt_nd_proxy(const struct in6_addr *tgt);
+#endif
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_PRIME)
+/** RFC 4861 7.2.3 NS from PT GUA toward default router (ND cache prime). @p ctx tags logs. */
+void dect_net_l2_sink_eth_pt_nd_proxy_ns_prime(const struct in6_addr *pt_global,
+					    const char *ctx);
+#endif
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NA_UNICAST_REFRESH)
+/** RFC 4861 7.2.4 unicast NA to default router for PT GUA. @p ctx tags logs. */
+void dect_net_l2_sink_eth_pt_nd_proxy_na_unicast(const struct in6_addr *pt_global,
+					      const char *ctx);
+#endif
+
 #endif /* DECT_NET_L2_SINK_H */
