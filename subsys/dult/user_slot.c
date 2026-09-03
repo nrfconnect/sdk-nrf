@@ -118,7 +118,7 @@ void dult_user_slot_foreach(void (*cb)(const struct dult_user *user, const void 
 	 */
 	static bool in_foreach;
 
-	const struct dult_user *snapshot[CONFIG_DULT_USER_MAX];
+	const struct dult_user *snapshot[CONFIG_DULT_USER_MAX] = {0};
 	size_t count = 0;
 
 	__ASSERT_NO_MSG(cb);
