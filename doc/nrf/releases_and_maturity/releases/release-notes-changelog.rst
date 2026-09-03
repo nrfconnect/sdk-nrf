@@ -837,7 +837,10 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* :ref:`nfc_ndef_parser_readme`:
+
+  * Fixed an issue where parsing a malformed long-format NDEF record could produce an incorrect payload length.
+    The parser now validates type, ID, and payload lengths against the remaining input buffer.
 
 nRF RPC libraries
 -----------------
