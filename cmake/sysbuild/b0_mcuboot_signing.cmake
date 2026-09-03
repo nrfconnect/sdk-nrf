@@ -98,7 +98,15 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     set(pad_header)
   endif()
 
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --header-size ${header_size} ${pad_header} --rom-fixed ${slot_address})
+  set(sign_version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION})
+  if("${prefix}" STREQUAL "CPUNET_")
+    sysbuild_get(net_fw_version IMAGE ${application} VAR CONFIG_FW_INFO_FIRMWARE_VERSION KCONFIG)
+    if(net_fw_version)
+      set(sign_version "0.0.0+${net_fw_version}")
+    endif()
+  endif()
+
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${sign_version} --align 4 --slot-size ${slot_size} --header-size ${header_size} ${pad_header} --rom-fixed ${slot_address})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})

@@ -25,6 +25,24 @@
 #include <dfu/pcd.h>
 #if defined(CONFIG_PCD_APP) && defined(CONFIG_PCD_READ_NETCORE_APP_VERSION)
 #include <fw_info_bare.h>
+#ifdef MCUBOOT_ENC_IMAGES
+#include <bootutil/enc_key_public.h>
+#endif
+
+#ifdef MCUBOOT_ENC_IMAGES
+static bool net_image_is_encrypted(const struct flash_area *fap, struct image_header *hdr)
+{
+	struct image_tlv_iter it;
+	uint32_t off;
+	uint16_t len;
+
+	if (bootutil_tlv_iter_begin(&it, hdr, fap, BOOT_ENC_TLV, false) != 0) {
+		return false;
+	}
+
+	return bootutil_tlv_iter_next(&it, &off, &len, NULL) == 0;
+}
+#endif
 
 /** @brief Compare image version numbers of network core and network core update.
  *
@@ -41,6 +59,8 @@ int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
 	int err;
 	const struct fw_info *firmware_info;
 	uint32_t version = 0;
+	uint32_t candidate_version = 0;
+	bool have_candidate = false;
 	uint32_t read_buf[CONFIG_PCD_VERSION_PAGE_BUF_SIZE];
 
 	err = pcd_network_core_app_version((uint8_t *)&version, sizeof(version));
@@ -56,18 +76,31 @@ int pcd_version_cmp_net(const struct flash_area *fap, struct image_header *hdr)
 
 	firmware_info = fw_info_find((uint32_t)&read_buf);
 	if (firmware_info != NULL) {
-		if (firmware_info->version > version) {
-			return 1;
-		}
-
-		if (firmware_info->version < version) {
-			return -1;
-		}
-
-		return 0;
+		candidate_version = firmware_info->version;
+		have_candidate = true;
+#ifdef MCUBOOT_ENC_IMAGES
+	} else if (net_image_is_encrypted(fap, hdr)) {
+		/* fw_info is inside the encrypted payload; the monotonic version is
+		 * carried in the plaintext image header (see b0 signing).
+		 */
+		candidate_version = hdr->ih_ver.iv_build_num;
+		have_candidate = true;
+#endif
 	}
 
-	return -EFAULT;
+	if (!have_candidate) {
+		return -EFAULT;
+	}
+
+	if (candidate_version > version) {
+		return 1;
+	}
+
+	if (candidate_version < version) {
+		return -1;
+	}
+
+	return 0;
 }
 #endif
 
@@ -159,18 +192,35 @@ int network_core_update(bool wait)
 		uint32_t vtable_addr = (uint32_t)hdr + hdr->ih_hdr_size;
 		uint32_t *vtable = (uint32_t *)(vtable_addr);
 		uint32_t reset_addr = vtable[1];
+		bool valid_net_update = false;
 
 #ifdef CONFIG_PARTITION_MANAGER_ENABLED
-		if (reset_addr > PM_CPUNET_B0N_ADDRESS) {
+#define NET_CORE_IMAGE_ADDR_MIN PM_CPUNET_B0N_ADDRESS
 #else
-		if (reset_addr > PCD_NET_CORE_APP_ADDRESS) {
+#define NET_CORE_IMAGE_ADDR_MIN PCD_NET_CORE_APP_ADDRESS
 #endif
+
+#ifdef MCUBOOT_ENC_IMAGES
+		/* Encrypted images do not expose a readable reset vector before
+		 * decryption; ih_load_addr in the plaintext header is authoritative.
+		 */
+		if ((hdr->ih_flags & IMAGE_F_ROM_FIXED) != 0 &&
+		    hdr->ih_load_addr > NET_CORE_IMAGE_ADDR_MIN) {
+			valid_net_update = true;
+		} else
+#endif
+		if (reset_addr > NET_CORE_IMAGE_ADDR_MIN) {
+			valid_net_update = true;
+		}
+
+		if (valid_net_update) {
 			if (wait) {
 				return pcd_network_core_update(vtable, fw_size);
 			} else {
 				return pcd_network_core_update_initiate(vtable, fw_size);
 			}
 		}
+#undef NET_CORE_IMAGE_ADDR_MIN
 	}
 
 	/* No IMAGE_MAGIC no valid image */
