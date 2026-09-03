@@ -63,6 +63,16 @@ Bootloaders and DFU
 * Fixed  MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as nRF52840 and nRF9160 SoCs.
   These configurations will now use PSA Crypto instead of the cc310 backend that supports signature verification only.
 
+* Fixed MCUboot's serial recovery issue on nRF5340 SoCs where direct upload of the networking core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
+
+* Updated:
+
+  * Mcuboot now feeds the watchdog more aggresssively during time-consuming procedures to prevent watchdog timeout during long operations:
+
+    * Full slot erase procedures.
+    * Swap-move algorithm in the move sectors up loop and in the sectors swap loop.
+    * Image hash calculation procedure in the hash calculation loop.
+
 Developing with nRF91 Series
 ============================
 
