@@ -557,7 +557,7 @@ static psa_status_t cracen_check_commit_msg(cracen_wpa3_sae_operation_t *op,
 	/**
 	 * Peer commit message = peer-scalar | peer-COMMIT_ELEMENT
 	 */
-	const uint8_t *peer_scalar = cracen_wpa3_sae_get_cmt_element_const(commit_msg);
+	const uint8_t *peer_scalar = cracen_wpa3_sae_get_cmt_scalar_const(commit_msg);
 	const uint8_t *peer_commit_element = cracen_wpa3_sae_get_cmt_element_const(commit_msg);
 
 	/* Verify both the peer-commit-scalar and PEER-COMMIT-ELEMENT */
