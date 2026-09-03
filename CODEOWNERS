@@ -424,6 +424,7 @@
 /include/power/                           @nrfconnect/ncs-co-drivers
 /include/qos.h                            @nrfconnect/ncs-cia
 /include/ram_pwrdn.h                      @nrfconnect/ncs-protocols-serialization
+/include/rtfw/rtfw.h                      @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /include/sample_rate_converter.h          @nrfconnect/ncs-audio
 /include/sfloat.h                         @nrfconnect/ncs-blenders
 /include/st25r3911b_nfca.h                @nrfconnect/ncs-radio-sw
@@ -627,6 +628,7 @@
 /samples/pulse_meas/                      @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
+/samples/subsys/rtfw/                     @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/tfm/                             @nrfconnect/ncs-aegir
 /samples/vtf_monitoring/                  @nrfconnect/ncs-malago
 /samples/wifi/                            @nrfconnect/ncs-wcg-samples
@@ -751,6 +753,7 @@
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/pulse_meas/README.rst            @nrfconnect/ncs-lowlevel-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
+/samples/subsys/rtfw/*.rst                @nrfconnect/ncs-lowlevel-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
 /samples/wifi/**/*.rst                    @nrfconnect/ncs-wifi-doc
@@ -980,6 +983,7 @@
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
 /subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-eris
+/subsys/rtfw/                             @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-eris @rghaddab
 /subsys/shell/                            @nordic-krch
@@ -1111,6 +1115,7 @@
 /tests/subsys/nrf_security/               @nrfconnect/ncs-aegir
 /tests/subsys/partition_manager/region/   @nordicjm @tejlmand
 /tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
+/tests/subsys/rtfw/                       @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus @nrfconnect/ncs-ll-izera
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test
