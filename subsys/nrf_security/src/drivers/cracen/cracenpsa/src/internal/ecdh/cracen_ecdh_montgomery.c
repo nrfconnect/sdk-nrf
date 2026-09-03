@@ -67,6 +67,11 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		/* For compliance */
 	}
 
+	if (constant_memcmp_is_zero(output, curve_op_sz)) {
+		sx_status = SX_ERR_INVALID_ARG;
+		goto exit;
+	}
+
 	*output_length = curve_op_sz;
 exit:
 	sx_pk_release_req(&req);
