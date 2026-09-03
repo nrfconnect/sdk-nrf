@@ -9,14 +9,15 @@
  */
 #include <stdlib.h>
 #include <string.h>
-#include <nrf71_wifi_ctrl.h>
+#include <zephyr/kernel.h>
 #include <zephyr/sys/sys_heap.h>
-#include <common/fmac_util.h>
+#include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/util.h>
 #include <system/fmac_api.h>
-#include <system/main.h>
-#include <shim.h>
+#include <common/mem_mgmt.h>
+#include <system/core.h>
 #include <system/wifi_util.h>
-#include <mac_addr.h>
+#include <common/mac_addr.h>
 
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
@@ -310,7 +311,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 
 	for (int i = 0; i < NRF_WIFI_FMAC_AC_MAX ; i++) {
 		queue = sys_dev_ctx->tx_config.data_pending_txq[peer_index][i];
-		tx_pending_pkts = nrf_wifi_utils_q_len(queue);
+		tx_pending_pkts = nrf_wifi_llist_len(queue);
 
 		shell_fprintf(
 			sh,
@@ -925,7 +926,7 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
-	unsigned long current_time_ms = nrf_wifi_osal_time_get_curr_ms();
+	unsigned long current_time_ms = k_uptime_get();
 	int ret;
 
 	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
@@ -1273,7 +1274,7 @@ static int nrf_wifi_util_heap(const struct shell *sh, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
-	nrf_wifi_shim_get_heaps(&ctrl_pool, &data_pool);
+	nrf_wifi_mem_get_heaps(&ctrl_pool, &data_pool);
 
 	err = sys_heap_runtime_stats_get(&ctrl_pool->heap, &stats);
 	if (err) {

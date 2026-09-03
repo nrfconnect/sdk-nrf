@@ -9,6 +9,7 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 
+#include <common/mem_mgmt.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -26,11 +27,11 @@
 #include <zephyr/net/conn_mgr/connectivity_wifi_mgmt.h>
 #endif /* CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT */
 
-#include <util.h>
-#include <common/fmac_util.h>
+#include <common/status.h>
 #include <common/rf_params.h>
 #include <common/vtf.h>
-#include <system/main.h>
+#include <common/util.h>
+#include <system/core.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
 #ifdef CONFIG_NRF71_STA_MODE
@@ -44,13 +45,12 @@
 #endif /* !CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
-#include <nrf71_wifi_rf.h>
+#include <common/fw_if/nrf71_wifi_rf.h>
 
 #define DT_DRV_COMPAT nordic_wlan
-LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 
 /* 3 bytes for addreess, 3 bytes for length */
 #define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
@@ -64,8 +64,8 @@ extern const struct nrf_wifi_osal_ops nrf_wifi_os_zep_ops;
 #define TOTAL_RX_SIZE \
 	(CONFIG_NRF71_RX_NUM_BUFS * CONFIG_NRF71_RX_MAX_DATA_SIZE)
 
-BUILD_ASSERT(CONFIG_NRF71_MAX_TX_TOKENS >= 1,
-	"At least one TX token is required");
+BUILD_ASSERT(CONFIG_NRF71_MAX_TX_TOKENS >= NRF_WIFI_FMAC_AC_MAX,
+	"At least one TX token per access category is required");
 BUILD_ASSERT(CONFIG_NRF71_MAX_TX_AGGREGATION <= 15,
 	"Max TX aggregation is 15");
 BUILD_ASSERT(CONFIG_NRF71_TX_MAX_DATA_SIZE >= MAX_TX_FRAME_SIZE,
@@ -151,7 +151,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		 */
 		k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
 		if (vif_ctx_zep->connect_scan_db_addr) {
-			nrf_wifi_osal_mem_free(
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 				(void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 		}
 		vif_ctx_zep->connect_scan_db_addr = scan_done_event->scan_db_addr;
@@ -263,7 +263,7 @@ static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
 
 	vif_ctx_zep->rssi = MBM_TO_DBM(signal);
 	vif_ctx_zep->rssi_record_timestamp_us =
-		nrf_wifi_osal_time_get_curr_us();
+		k_ticks_to_us_floor64(k_uptime_ticks());
 }
 #endif /* CONFIG_NRF71_STA_MODE */
 
@@ -473,7 +473,7 @@ void reg_change_callbk_fn(void *vif_ctx,
 		return;
 	}
 
-	fmac_dev_ctx->reg_change = nrf_wifi_osal_mem_alloc(sizeof(struct
+	fmac_dev_ctx->reg_change = nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(struct
 							   nrf_wifi_event_regulatory_change));
 	if (!fmac_dev_ctx->reg_change) {
 		LOG_ERR("%s: Failed to allocate memory for reg_change", __func__);
@@ -625,14 +625,16 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
 	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->phy_rf_params_addr[i]);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				   (void *)rpu_ctx_zep->phy_rf_params_addr[i]);
 		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
 	}
-	nrf_wifi_osal_mem_free((void *)rpu_ctx_zep->vtf_buffer_start_address);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+			  (void *)rpu_ctx_zep->vtf_buffer_start_address);
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
-	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa);
 	rpu_ctx_zep->extended_capa = NULL;
-	nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa_mask);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa_mask);
 	rpu_ctx_zep->extended_capa_mask = NULL;
 
 	rpu_ctx_zep->rpu_ctx = NULL;
@@ -743,11 +745,6 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 #if defined(CONFIG_NRF71_SR_COEX_DRIVER)
 	callbk_fns.coex_event_callbk_fn = nrf_wifi_coex_event_cb;
 #endif
-
-	/* The OSAL layer needs to be initialized before any other initialization
-	 * so that other layers (like FW IF,HW IF etc) have access to OS ops
-	 */
-	nrf_wifi_osal_init(&nrf_wifi_os_zep_ops);
 
 	rpu_drv_priv_zep.fmac_priv = nrf_wifi_sys_fmac_init(&data_config,
 							    rx_buf_pools,

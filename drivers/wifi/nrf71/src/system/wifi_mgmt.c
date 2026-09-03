@@ -14,12 +14,12 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-#include <util.h>
+#include <common/util.h>
+#include <common/lock_mgmt.h>
 #include <system/fmac_api.h>
 #include <system/fmac_tx.h>
-#include <common/fmac_util.h>
 #include <common/fmac_structs_common.h>
-#include <system/main.h>
+#include <system/core.h>
 #include <system/wifi_mgmt.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -220,13 +220,13 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 	}
 
 	do {
-		nrf_wifi_osal_sleep_ms(1);
+		k_msleep(1);
 		 count++;
 	} while ((vif_ctx_zep->ps_config_info_evnt == false) &&
 		 (count < NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT));
 
 	if (count == NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
-		nrf_wifi_osal_log_err("%s: Timed out",
+		LOG_ERR("%s: Timed out",
 				      __func__);
 		goto out;
 	}
@@ -717,16 +717,16 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 
 	switch (sleep_evnt->info.type) {
 	case TWT_BLOCK_TX:
-		nrf_wifi_osal_spinlock_take(sys_dev_ctx->tx_config.tx_lock);
+		nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
 
 		sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_SLEEP;
 
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_SLEEP);
-		nrf_wifi_osal_spinlock_rel(sys_dev_ctx->tx_config.tx_lock);
+		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
-		nrf_wifi_osal_spinlock_take(sys_dev_ctx->tx_config.tx_lock);
+		nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
 		sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_AWAKE);
@@ -739,7 +739,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 			}
 		}
 #endif
-		nrf_wifi_osal_spinlock_rel(sys_dev_ctx->tx_config.tx_lock);
+		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
 	break;
 	default:
 	break;
