@@ -11,4 +11,7 @@
 
 #include <dult/dult.h>
 
+/* Deprecated type aliases. */
+#define dult_firmware_version dult_version
+
 #endif /* _DULT_H_ */
