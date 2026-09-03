@@ -138,6 +138,10 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 	uint8_t k1[SX_BLKCIPHER_AES_BLK_SZ]; /* k1 is defined in RFC 4493 */
 	uint8_t k2[SX_BLKCIPHER_AES_BLK_SZ]; /* k2 is defined in RFC 4493 */
 
+	if (operation->mac_size > SX_BLKCIPHER_AES_BLK_SZ) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	psa_status = cracen_cmac_derive_subkeys(operation, k1, k2);
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
@@ -165,8 +169,7 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 		return psa_status;
 	}
 
-	memcpy(operation->input_buffer, operation->cmac.sw_ctx.mac_state, SX_BLKCIPHER_AES_BLK_SZ);
-	operation->mac_size = SX_BLKCIPHER_AES_BLK_SZ;
+	memcpy(operation->input_buffer, operation->cmac.sw_ctx.mac_state, operation->mac_size);
 
 	return PSA_SUCCESS;
 }
