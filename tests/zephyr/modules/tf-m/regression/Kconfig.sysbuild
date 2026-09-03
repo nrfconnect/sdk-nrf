@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_PROVISIONING_IMAGE
+	bool "Build the TF-M provisioning image as a build-only image"
+	depends on SOC_SERIES_NRF54L
+	default y
+	help
+	  The nRF54L board configurations for this test enable
+	  CONFIG_TFM_NRF_PROVISIONING, so TF-M only boots on a provisioned device.
+	  This test does not provision the device itself, so the provisioning_image
+	  sample is built alongside it as a build-only image, which excludes it from
+	  "west flash" and from any merged hex. The pytest harness programs and runs
+	  it before the test image.
+
+source "share/sysbuild/Kconfig"
