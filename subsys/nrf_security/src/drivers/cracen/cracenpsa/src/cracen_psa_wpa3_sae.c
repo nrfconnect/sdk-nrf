@@ -270,7 +270,7 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 		sx_op y_sqr_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_sqr};
 
 		sx_status = cracen_ec_pt_calc_y_sqr(&req, op->curve, &x_cand_op, &y_sqr_op);
-		if (status != SX_OK) {
+		if (sx_status != SX_OK) {
 			sx_pk_release_req(&req);
 			return silex_statuscodes_to_psa(sx_status);
 		}
