@@ -64,6 +64,8 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
     "sphinxcontrib.jquery",
+    "vscode_open_sample",
+    "vscode_install_sdk",
     "ncs_file",
     "external_sw_versions",
 ]
