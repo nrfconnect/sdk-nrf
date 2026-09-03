@@ -60,8 +60,17 @@ Bootloaders and DFU
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` for details.
 
-* Fixed  MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as nRF52840 and nRF9160 SoCs.
-  These configurations will now use PSA Crypto instead of the cc310 backend that supports signature verification only.
+* Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
+
+  * Full slot erase procedures.
+  * Swap-move algorithm in the move sectors up loop and in the sectors swap loop.
+  * Image hash calculation procedure in the hash calculation loop.
+
+* Fixed:
+
+  * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
+    These configurations now use PSA Crypto instead of the cc310 backend, which supports only signature verification.
+  * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
 
 Developing with nRF91 Series
 ============================
