@@ -375,3 +375,14 @@ nRF Cloud library
 
      The :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options are deprecated but kept functional for fleet operators with IMEI-provisioned devices already in the field.
      New applications should use the UUID default to match the device ID that the nRF Cloud provisioning tools generate.
+
+Detecting Unwanted Location Trackers (DULT) library
+---------------------------------------------------
+
+.. toggle::
+
+   * The following changes are recommended since the v3.4.1 release:
+
+   .. include:: migration_guide_3.5.rst
+      :start-after: migration_3.5_dult_start
+      :end-before: migration_3.5_dult_end
