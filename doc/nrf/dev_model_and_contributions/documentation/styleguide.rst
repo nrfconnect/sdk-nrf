@@ -107,6 +107,18 @@ For example, on this page, the ``|gl|`` tag is defined for local usage and will 
 This tag is not available on other pages.
 The page is also using the ``|NCS|`` tag that is defined in :file:`shortcuts.txt` and can be used on all documentation pages in the |NCS| project.
 
+Links inside replacements
+^^^^^^^^^^^^^^^^^^^^^^^^^
+
+If a ``.. |tag| replace::`` text contains a hyperlink, use the anonymous reference syntax (double trailing underscore) instead of a named reference (single trailing underscore)::
+
+   .. |example_tag| replace:: Contact `Technical Support team <DevZone_>`__ if you need assistance.
+
+.. note::
+   Do not use a single trailing underscore (```link text <target_>`_``) for links inside a ``replace::`` substitution.
+   Newer versions of docutils parse references differently within substitutions, and the single-underscore form causes a documentation build failure.
+   This does not apply to normal, non-substituted links elsewhere in an RST file, where the single-underscore form is still correct.
+
 Doxybridge
 ----------
 
