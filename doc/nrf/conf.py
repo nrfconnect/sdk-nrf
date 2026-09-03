@@ -58,7 +58,8 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
     "sphinxcontrib.jquery",
-    "samples",
+    "vscode_open_sample",
+    "vscode_install_sdk",
     "sphinx_sitemap",
 ]
 

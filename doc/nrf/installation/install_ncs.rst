@@ -120,8 +120,11 @@ Depending on your preferred development environment, complete the following step
 
    .. group-tab:: nRF Connect for VS Code
 
-      .. note::
-         If you prefer, you can now `start VS Code walkthrough`_ and install the toolchain and the SDK from there.
+      Click the following button to install the toolchain and the SDK for the latest stable release:
+
+      .. ncs-install-vscode::
+
+      If you prefer to install the toolchain and the SDK manually, complete the following steps:
 
       1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
          The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.
