@@ -39,6 +39,7 @@ DT_CHOSEN_ZEPHYR_FLASH := $(dt_chosen_path,$(DT_ZEPHYR_FLASH))
 # This option is used even when FPROTECT is disabled so we add it unconditionally.
 config FPROTECT_BLOCK_SIZE
 	hex
+	depends on SOC_FLASH_NRF_RRAM if SOC_SERIES_NRF54L
 	default NRF_SPU_FLASH_REGION_SIZE if CPU_HAS_NRF_IDAU
 	default NRF_MPU_FLASH_REGION_SIZE if HAS_HW_NRF_MPU
 	default NRF_BPROT_FLASH_REGION_SIZE if HAS_HW_NRF_BPROT
@@ -53,6 +54,7 @@ menuconfig FPROTECT
 	depends on !(SOC_SERIES_NRF54L && IS_SECURE_BOOTLOADER)
 	depends on !SOC_SERIES_NRF54H
 	depends on !SOC_SERIES_NRF92
+	depends on !IRONSIDE_TE_CLIENT
 	default y if MCUBOOT && !SOC_SERIES_NRF54L
 	#enabled for nRF54L SoC's when MCUboot is the only one bootloader
 	select NRFX_RRAMC if SOC_SERIES_NRF54L
