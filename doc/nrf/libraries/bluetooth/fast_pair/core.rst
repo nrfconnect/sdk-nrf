@@ -187,6 +187,10 @@ The FHN extension implementation also acts as middleware between the user applic
 The DULT module integration is required for small and not easily discoverable accessories.
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled by default.
 
+The FHN extension supports both DULT API variants.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, it ties the DULT association to its provisioning state and reports the association arbitration outcome through the :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback, which allows coexistence with other accessory-locating networks during the pre-association window.
+For more details, see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_dult_integration`.
+
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option of the FHN extension selects the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to enable the motion detector feature of the DULT module.
 With this option enabled, the FHN extension passes the DULT motion detector callbacks from the DULT module to application.
 To learn more about the DULT motion detector, see :ref:`ug_dult_motion_detector`.

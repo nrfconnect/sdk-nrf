@@ -360,7 +360,7 @@ You can use the following API functions only in the *unready* state of the FHN e
 
 * API functions used to register callbacks:
 
-  * The :c:func:`bt_fast_pair_fhn_info_cb_register` function (optional)
+  * The :c:func:`bt_fast_pair_fhn_info_cb_register` function (optional, but mandatory if the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option is set to a value greater than ``1``)
   * The :c:func:`bt_fast_pair_fhn_ring_cb_register` function (mandatory with the Kconfig configuration for at least one ringing component)
   * The :c:func:`bt_fast_pair_fhn_read_mode_cb_register` function (optional)
   * The :c:func:`bt_fast_pair_fhn_motion_detector_cb_register` function (mandatory if the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option is enabled)
@@ -405,8 +405,25 @@ The DULT support for the FHN extension is controlled by the :kconfig:option:`CON
 This option is enabled by default.
 The DULT support is required for small and not easily discoverable accessories, and is recommended for large accessories.
 
-The FHN extension registers itself as a DULT user during the :c:func:`bt_fast_pair_enable` function call and unregisters itself during :c:func:`bt_fast_pair_disable` function call.
-If you have multiple DULT users in your application, you must ensure that there is only one DULT user registered at a time.
+The FHN extension registers itself as a DULT user during the :c:func:`bt_fast_pair_enable` function call and unregisters itself during the :c:func:`bt_fast_pair_disable` function call.
+
+When the accessory becomes the associated DULT user depends on the selected DULT API variant (see the :ref:`DULT API variant <ug_dult_api_variant>` section of the DULT integration guide):
+
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, the FHN extension enables the DULT module during the :c:func:`bt_fast_pair_enable` function call and keeps it enabled for the whole Fast Pair lifetime.
+  In this configuration, you must ensure that there is only one DULT user in your application.
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, the FHN extension ties the DULT association to its provisioning state.
+  It claims the association during the :c:func:`bt_fast_pair_enable` function call when the accessory is already provisioned, and on provisioning otherwise.
+  It releases the association on unprovisioning and during the :c:func:`bt_fast_pair_disable` function call.
+  This lets the FHN extension coexist with other accessory-locating networks during the pre-association window.
+
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, register the :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback to learn about the outcome of the DULT association arbitration.
+The callback is mandatory when the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option is set to a value greater than ``1``, because it is the only way to learn that the FHN extension was evicted by another accessory-locating network.
+When the callback reports that another network claimed the association, disable the FHN stack so that the winning network can operate exclusively.
+The callback is delivered from the system workqueue, so you can disable the stack directly from it.
+
+.. note::
+   Provisioning the FHN extension fails if another accessory-locating network holds the DULT association.
+   Your application must not keep two accessory-locating networks paired at the same time.
 
 The FHN extension passes accessory information parameters to the DULT module during the registration process.
 These parameters are used for the FHN extension in the DULT module and are configured by the following Kconfig options:
@@ -418,7 +435,7 @@ These parameters are used for the FHN extension in the DULT module and are confi
 
 For more details on how to set these Kconfig options, refer to the `Fast Pair Unwanted Tracking Prevention Guidelines`_ documentation.
 
-Subsequent sections for the FHN extension describe further steps for integrating the DULT module once the DULT user is registered and the DULT module is successfully enabled during the :c:func:`bt_fast_pair_enable` function call.
+Subsequent sections for the FHN extension describe further steps for integrating the DULT module once the DULT user is registered during the :c:func:`bt_fast_pair_enable` function call and the FHN extension holds the DULT association.
 
 .. _ug_bt_fast_pair_prerequisite_ops_fhn_pf:
 
@@ -791,6 +808,7 @@ This function supports the following callbacks:
 * :c:member:`bt_fast_pair_fhn_info_cb.provisioning_state_changed` -  Notification about the provisioning state update
 * :c:member:`bt_fast_pair_fhn_info_cb.clock_synced` - Notification about the beacon clock synchronization event
 * :c:member:`bt_fast_pair_fhn_info_cb.conn_authenticated` - Notification about the connected peer authentication event
+* :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` - Notification about the DULT association arbitration outcome (see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_dult_integration`)
 
 .. _ug_bt_fast_pair_gatt_service_fhn_info_callbacks_provisioning_state:
 
