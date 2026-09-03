@@ -64,6 +64,64 @@ config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
 
 if NET_L2_DECT_BR && NET_L2_ETHERNET
 
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	bool "IPv6 PT globals on Ethernet for LAN neighbor discovery (BR) [EXPERIMENTAL]"
+	default y
+	depends on NET_IPV6_NBR_CACHE
+	select EXPERIMENTAL
+	help
+	  Publish each PT global IPv6 address learned on DECT NR+ as a neighbor entry on
+	  the first Ethernet iface mapped to this device's MAC, so LAN NS for a PT
+	  GUA is answered locally. With NET_IPV6_MLD, also join the solicited-node
+	  group per PT so those NS are received on Ethernet. NA replies are gated by
+	  NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS
+	bool "Answer Neighbor Solicitation for PT globals on Ethernet (ND proxy NS)"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	help
+	  Send a solicited NA on behalf of the PT when a LAN router or host sends NS
+	  for a PT global published on Ethernet. Without this, the router may drop
+	  its ND cache entry and stop returning traffic toward the PT. Disable to
+	  keep only the static neighbor + MLD behavior of the parent option.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_UNICAST_INTERCEPT
+	bool "Intercept unicast NS for PT GUA before IPv6 forwarding (NUD)"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS
+	select NET_PKT_FILTER
+	select NET_PKT_FILTER_IPV6_HOOK
+	help
+	  Some routers send NUD NS with the PT GUA as unicast dst instead of the
+	  solicited-node multicast; with NET_ROUTING, Zephyr forwards those to DECT NR+
+	  before the ND proxy NS ICMP handler runs, so no NA is sent and the router
+	  entry expires. An IPv6 recv packet-filter rule matches these on Ethernet,
+	  queues the same deferred proxy NA, and drops the packet.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_PRIME
+	bool "Prime upstream router ND cache by sending NS-from-PT on Ethernet"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	help
+	  Send one NS on PT publish (src = PT GUA, dst = target = default router,
+	  SLLAO = Ethernet MAC). Per RFC 4861 7.2.3 the router creates or refreshes
+	  a NCE (PT GUA -> sink MAC), so return traffic to the PT reaches this device.
+	  No-op when no default router is known; NUD refresh is then reactive via
+	  NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_UNICAST_INTERCEPT.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NA_UNICAST_REFRESH
+	bool "Refresh upstream router ND cache by sending unicast NA-from-PT"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	depends on NET_L2_DECT_BR_UNSOLICITED_NA
+	help
+	  In addition to the ff02::1 unsolicited NA from NET_L2_DECT_BR_UNSOLICITED_NA,
+	  send a unicast NA (src = target = PT GUA) to the default router per PT GUA.
+	  Both only update an existing NCE (RFC 4861 7.2.5), but router-targeted
+	  unicast is less likely to be rate-limited or dropped on shared segments.
+	  No-op without a default router. Sent once on add.
+
 config NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE
 	bool "Install /N route on upstream Ethernet iface via default router LL"
 	default y
