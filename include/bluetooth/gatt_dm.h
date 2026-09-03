@@ -9,6 +9,9 @@
 
 /**
  * @file
+ */
+
+/**
  * @defgroup bt_gatt_dm GATT Discovery Manager API
  * @{
  * @brief Module for GATT Discovery Manager.
@@ -145,29 +148,30 @@ size_t bt_gatt_dm_attr_cnt(const struct bt_gatt_dm *dm);
 
 /** @brief Get service value
  *
- * Function returns the value that contains UUID and attribute
- * end handler of the service found
+ * The function returns the value containing the service UUID and the end
+ * handle of the discovered service.
  *
- * @param[in] dm Discovery Manager instance
+ * @param[in] dm Discovery Manager instance.
  *
- * @returns The pointer service value structure
+ * @return Pointer to the service value structure.
  */
 const struct bt_gatt_dm_attr *bt_gatt_dm_service_get(
 	const struct bt_gatt_dm *dm);
 
-/** @brief Get next characteristic
+/** @brief Getting the next characteristic
  *
  * @note Search starts from the previous attribute when provided
+ * @note NULL means search from the first characteristic in the service
  *
- * @param[in] dm Discovery Manager instance
- * @param[in] prev An attribute where start to search
+ * @param dm Discovery Manager instance
+ * @param prev An attribute where start to search
  *            If NULL - the first characteristic in the service would be found
  *            Note: It can be the previous characteristic attribute or the
  *            last descriptor inside the previous attribute
  *            Function would start searching for the next characteristic
  *            from that point
  *
- * @return The pointer for an attribute that describes the characteristic
+ * @returns The pointer for an attribute that describes the characteristic
  *         or NULL if no more characteristic is present
  */
 const struct bt_gatt_dm_attr *bt_gatt_dm_char_next(
