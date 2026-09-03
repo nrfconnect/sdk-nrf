@@ -108,7 +108,12 @@
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/wifi/*.rst               @nrfconnect/ncs-wifi-doc
-/doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
+/doc/nrf/wifi_coexistence_drivers.rst     @nrfconnect/ncs-wifi-doc
+/doc/nrf/sensor_drivers.rst               @nrfconnect/ncs-cia-doc
+/doc/nrf/uart_drivers.rst                 @nrfconnect/ncs-doc-leads
+/doc/nrf/ppi_sequencer_drivers.rst        @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/crypto_drivers.rst               @nrfconnect/ncs-aegir-doc
+/doc/nrf/other_drivers.rst                @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart.rst                 @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
 /doc/nrf/drivers/nrf71_sr_coex.rst        @nrfconnect/ncs-wifi-doc
