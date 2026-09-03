@@ -117,6 +117,24 @@ int nrf_wifi_utils_chan_to_freq(enum nrf_wifi_band band,
 		}
 
 		break;
+	case NRF_WIFI_BAND_6GHZ:
+		/* IEEE 802.11ax 6 GHz channelization (global operating classes).
+		 * Channel 2 is a special case at 5935 MHz. The 20 MHz channels
+		 * are 1, 5, 9, ... 233 (i.e. chan % 4 == 1) and map to
+		 * 5950 + (chan * 5) MHz.
+		 */
+		if (chan == 2) {
+			freq = 5935;
+		} else if ((chan >= 1) && (chan <= 233) && ((chan % 4) == 1)) {
+			freq = 5950 + (chan * 5);
+		} else {
+			nrf_wifi_osal_log_err("%s: 6GHz: Invalid channel value %d",
+					      __func__,
+					      chan);
+			goto out;
+		}
+
+		break;
 	default:
 		nrf_wifi_osal_log_err("%s: Invalid band value %d",
 				      __func__,

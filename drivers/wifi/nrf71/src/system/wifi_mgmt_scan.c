@@ -31,6 +31,8 @@ static enum nrf_wifi_band nrf_wifi_map_zep_band_to_rpu(enum wifi_frequency_bands
 		return NRF_WIFI_BAND_2GHZ;
 	case WIFI_FREQ_BAND_5_GHZ:
 		return NRF_WIFI_BAND_5GHZ;
+	case WIFI_FREQ_BAND_6_GHZ:
+		return NRF_WIFI_BAND_6GHZ;
 	default:
 		return NRF_WIFI_BAND_INVALID;
 	}
@@ -91,6 +93,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	if (params) {
 		band_flags &= (~(1 << WIFI_FREQ_BAND_2_4_GHZ));
 		band_flags &= (~(1 << WIFI_FREQ_BAND_5_GHZ));
+		band_flags &= (~(1 << WIFI_FREQ_BAND_6_GHZ));
 
 		if (params->bands & band_flags) {
 			LOG_ERR("%s: Unsupported band(s) (0x%X)", __func__, params->bands);
