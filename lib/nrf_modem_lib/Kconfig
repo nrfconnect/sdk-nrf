@@ -14,7 +14,7 @@ menuconfig NRF_MODEM_LIB
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW
 	# resource-conflicts with NRF_MODEM_LIB.
-	default y if !ZTEST
+	default y if !ZTEST && !MCUBOOT
 	help
 	  Use Nordic Modem library.
 
