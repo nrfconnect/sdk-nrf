@@ -28,6 +28,7 @@ NIGHTLY:
   - nrf5340dk/nrf5340/cpunet
   - nrf9160dk/nrf9160
   - nrf9160dk/nrf9160/ns
+  - nrf54lm20dk/nrf54lm20a/cpuapp/ite
   - mps2/an521/cpu0
 # Platforms tested on TOOLCHAIN runs
 TOOLCHAIN:

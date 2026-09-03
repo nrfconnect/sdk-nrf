@@ -2123,3 +2123,18 @@ ci_samples_nrf_saadct:
     - nrf/drivers/saadct/
     - nrf/include/drivers/saadct.h
     - nrf/dts/bindings/saadct/
+
+ironside_te:
+  files:
+    - ironsdk/
+    - nrf/subsys/nrf_security/Kconfig
+    - zephyr/boards/common/ironside_te.board.cmake
+    - zephyr/boards/nordic/nrf54lm20dk/
+    - zephyr/drivers/flash/Kconfig.ironside_te_rram
+    - zephyr/drivers/flash/flash_ironside_te_rram.c
+    - zephyr/dts/bindings/flash_controller/nordic,ironside-te-rram-controller.yaml
+    - zephyr/dts/vendor/nordic/*_ite_partition.dtsi
+    - zephyr/modules/hal_nordic/ironside/te
+    - zephyr/samples/boards/nordic/ironside_te
+    - zephyr/scripts/west_commands/runners/ironside_te.py
+    - zephyr/soc/nordic/nrf54l/Kconfig.sysbuild
