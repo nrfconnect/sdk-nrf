@@ -999,6 +999,66 @@ void dect_net_l2_sink_ipv6_config_changed(struct net_if *iface,
 			}
 		}
 	}
-
 	k_mutex_unlock(&associations_mutex);
+}
+
+bool dect_net_l2_child_global_ipv6_match(const struct in6_addr *addr)
+{
+	bool match = false;
+
+	if (addr == NULL) {
+		return false;
+	}
+
+	k_mutex_lock(&associations_mutex, K_FOREVER);
+	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
+		if (!child_associations[i].in_use ||
+		    !child_associations[i].global_ipv6_addr_set) {
+			continue;
+		}
+
+		if (net_ipv6_addr_cmp(&child_associations[i].global_ipv6_addr, addr)) {
+			match = true;
+			break;
+		}
+	}
+	k_mutex_unlock(&associations_mutex);
+
+	return match;
+}
+
+/*
+ * Child global IPv6 membership test intended for use from Zephyr
+ * net_pkt_filter rule callbacks. The pkt_filter framework evaluates
+ * rule tests with a k_spinlock held (IRQs disabled), which forbids any
+ * blocking call inside the test. This helper is therefore implemented
+ * without taking associations_mutex: reads are unsynchronised and a
+ * slot mutation concurrent with this read may at most yield a single
+ * false-negative result for the in-flight call. Writers in this file
+ * continue to serialise on associations_mutex among themselves.
+ *
+ * Do not reuse from other call sites; use dect_net_l2_child_global_ipv6_match()
+ * when an exact answer is required.
+ */
+bool dect_net_l2_npf_child_global_ipv6_match(const struct in6_addr *addr)
+{
+	if (addr == NULL) {
+		return false;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
+		const volatile struct dect_net_l2_association_data *slot =
+			&child_associations[i];
+
+		if (!slot->in_use || !slot->global_ipv6_addr_set) {
+			continue;
+		}
+
+		if (net_ipv6_addr_cmp((const struct in6_addr *)&slot->global_ipv6_addr,
+				      addr)) {
+			return true;
+		}
+	}
+
+	return false;
 }

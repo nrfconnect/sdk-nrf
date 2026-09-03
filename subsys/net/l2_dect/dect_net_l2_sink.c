@@ -663,7 +663,141 @@ static void sink_eth_send_unsolicited_na(struct net_if *iface)
 		}
 	}
 }
+#endif /* CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA */
 
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_PRIME)
+void dect_net_l2_sink_eth_pt_nd_proxy_ns_prime(const struct in6_addr *pt_global,
+					    const char *ctx)
+{
+	const struct net_in6_addr *src = (const struct net_in6_addr *)pt_global;
+	struct net_if_router *router;
+	struct net_in6_addr router_addr;
+	bool router_known;
+	const char *ctx_tag = (ctx != NULL) ? ctx : "?";
+	int ret;
+
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	if (net_if_flag_is_set(iface_for_prefix, NET_IF_IPV6_NO_ND)) {
+		return;
+	}
+
+	if (pt_global == NULL || net_ipv6_is_addr_unspecified(src) ||
+	    net_ipv6_is_addr_mcast(src) || !net_ipv6_is_global_addr(src)) {
+		return;
+	}
+
+	router = net_if_ipv6_router_find_default(iface_for_prefix, NULL);
+	router_known = (router != NULL);
+	if (router_known) {
+		net_ipv6_addr_copy_raw(router_addr.s6_addr,
+				       router->address.in6_addr.s6_addr);
+	}
+
+	/*
+	 * RFC 4861 7.2.3: NS from PT GUA, SLLAO = Ethernet MAC; seeds router NCE.
+	 */
+	if (router_known) {
+		ret = net_ipv6_send_ns(iface_for_prefix, NULL, src,
+				       &router_addr,
+				       (const struct net_in6_addr *)&router_addr,
+				       false);
+		if (ret < 0) {
+			LOG_WRN("SINK: PT ND proxy NS prime (target=router, %s) "
+				"failed for %s (ret=%d)",
+				ctx_tag, net_sprint_ipv6_addr(src), ret);
+		} else {
+			LOG_INF("SINK: PT ND proxy NS prime (target=router, %s) "
+				"for %s -> %s (iface %d)",
+				ctx_tag, net_sprint_ipv6_addr(src),
+				net_sprint_ipv6_addr(&router_addr),
+				net_if_get_by_iface(iface_for_prefix));
+		}
+	}
+}
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_PRIME */
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NA_UNICAST_REFRESH)
+void dect_net_l2_sink_eth_pt_nd_proxy_na_unicast(const struct in6_addr *pt_global,
+					      const char *ctx)
+{
+	const struct net_in6_addr *tgt = (const struct net_in6_addr *)pt_global;
+	struct net_if_router *router;
+	struct net_in6_addr router_addr;
+	const char *ctx_tag = (ctx != NULL) ? ctx : "?";
+
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	if (net_if_flag_is_set(iface_for_prefix, NET_IF_IPV6_NO_ND)) {
+		return;
+	}
+
+	if (pt_global == NULL || net_ipv6_is_addr_unspecified(tgt) ||
+	    net_ipv6_is_addr_mcast(tgt) || !net_ipv6_is_global_addr(tgt)) {
+		return;
+	}
+
+	router = net_if_ipv6_router_find_default(iface_for_prefix, NULL);
+	if (router == NULL) {
+		return;
+	}
+
+	net_ipv6_addr_copy_raw(router_addr.s6_addr, router->address.in6_addr.s6_addr);
+
+	/* RFC 4861 7.2.4: unicast NA to router, source and target = PT GUA. */
+	if (net_ipv6_send_na(iface_for_prefix, tgt, &router_addr, tgt,
+			     NET_ICMPV6_NA_FLAG_OVERRIDE) < 0) {
+		LOG_WRN("SINK: PT ND proxy unicast NA (%s) failed for %s",
+			ctx_tag, net_sprint_ipv6_addr(tgt));
+	} else {
+		LOG_INF("SINK: PT ND proxy unicast NA (%s) for %s -> %s (iface %d)",
+			ctx_tag,
+			net_sprint_ipv6_addr(tgt),
+			net_sprint_ipv6_addr(&router_addr),
+			net_if_get_by_iface(iface_for_prefix));
+	}
+}
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NA_UNICAST_REFRESH */
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT)
+void dect_net_l2_sink_eth_unsol_na_pt_nd_proxy(const struct in6_addr *pt_global)
+{
+	const struct net_in6_addr *tgt = (const struct net_in6_addr *)pt_global;
+	struct net_in6_addr allnodes;
+
+	if (iface_for_prefix == NULL || !net_if_is_up(iface_for_prefix)) {
+		return;
+	}
+
+	if (net_if_flag_is_set(iface_for_prefix, NET_IF_IPV6_NO_ND)) {
+		return;
+	}
+
+	if (pt_global == NULL || net_ipv6_is_addr_unspecified(tgt) ||
+	    net_ipv6_is_addr_mcast(tgt) || !net_ipv6_is_global_addr(tgt)) {
+		return;
+	}
+
+	net_ipv6_addr_create_ll_allnodes_mcast(&allnodes);
+
+	/* RFC 4861 7.2.6: multicast unsolicited NA, src = target = PT GUA, Override. */
+	if (net_ipv6_send_na(iface_for_prefix, tgt, &allnodes, tgt,
+			     NET_ICMPV6_NA_FLAG_OVERRIDE) < 0) {
+		LOG_WRN("SINK: PT ND proxy unsolicited NA failed for %s",
+			net_sprint_ipv6_addr(tgt));
+	} else {
+		LOG_INF("SINK: PT ND proxy unsolicited NA for %s (iface %d)",
+			net_sprint_ipv6_addr(tgt),
+			net_if_get_by_iface(iface_for_prefix));
+	}
+}
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT */
+
+#if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 static void sink_eth_unsol_na_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
