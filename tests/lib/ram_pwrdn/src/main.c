@@ -41,15 +41,21 @@ static void exercise_ram(void)
 	printk("ram_pwrdn: RAM check sum=%u\n", sum);
 }
 
-/* Word at the top of RAM, which the library powers down (the image never
- * reaches this far).
+/* Word in RAM that the library powers down (the image never reaches this far).
  */
 static volatile uint32_t *unused_ram_word(void)
 {
 	uintptr_t ram_end = DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) +
 			    DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
+	uintptr_t probe = ram_end - sizeof(uint32_t);
 
-	return (volatile uint32_t *)(ram_end - sizeof(uint32_t));
+#if defined(CONFIG_SOC_NRF7120)
+	/* RAM03 cannot be fully powered down, so probe the top of RAM02. */
+	probe = DT_REG_ADDR(DT_NODELABEL(ram02_sram)) +
+		DT_REG_SIZE(DT_NODELABEL(ram02_sram)) - sizeof(uint32_t);
+#endif
+
+	return (volatile uint32_t *)probe;
 }
 
 /* Returns true if the unused RAM was confirmed to be powered down. */
