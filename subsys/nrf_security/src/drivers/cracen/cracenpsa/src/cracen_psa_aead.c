@@ -933,6 +933,11 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 		goto error_exit;
 	}
 
+	if (ciphertext_length < operation.tag_size) {
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto error_exit;
+	}
+
 	*plaintext_length = ciphertext_length - operation.tag_size;
 
 	if (plaintext_size < *plaintext_length) {
