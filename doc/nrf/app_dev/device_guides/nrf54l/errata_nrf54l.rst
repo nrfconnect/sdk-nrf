@@ -61,6 +61,10 @@ Refer to the following table for the current workaround list:
            - **Enabled**
          * - 8
            - **Enabled**
+         * - 10
+           - Not implemented
+         * - 13
+           - **Enabled**
          * - 16
            - **Enabled**
          * - 17
@@ -102,19 +106,31 @@ Refer to the following table for the current workaround list:
          * - 49
            - Not implemented
          * - 50
-           - Not applicable
+           - Not implemented
+         * - 54
+           - Not implemented
+         * - 58
+           - Not implemented
          * - 59
-           - Not applicable
+           - Not implemented
          * - 63
-           - Not applicable
+           - Not implemented
          * - 69
            - Not applicable
+         * - 100
+           - Not implemented
          * - 102
            - Not applicable
+         * - 103
+           - Not implemented
          * - 104
            - Not applicable
          * - 105
-           - Not applicable
+           - Not implemented
+         * - 111
+           - Not implemented
+         * - 114
+           - Not implemented
 
    .. tab:: nRF54L10
 
@@ -133,6 +149,10 @@ Refer to the following table for the current workaround list:
            - **Enabled**
          * - 8
            - **Enabled**
+         * - 10
+           - Not implemented
+         * - 13
+           - **Enabled**
          * - 16
            - **Enabled**
          * - 17
@@ -174,19 +194,31 @@ Refer to the following table for the current workaround list:
          * - 49
            - Not implemented
          * - 50
-           - Not applicable
+           - Not implemented
+         * - 54
+           - Not implemented
+         * - 58
+           - Not implemented
          * - 59
-           - Not applicable
+           - Not implemented
          * - 63
-           - Not applicable
+           - Not implemented
          * - 69
            - Not applicable
+         * - 100
+           - Not implemented
          * - 102
            - Not applicable
+         * - 103
+           - Not implemented
          * - 104
            - Not applicable
          * - 105
-           - Not applicable
+           - Not implemented
+         * - 111
+           - Not implemented
+         * - 114
+           - Not implemented
 
    .. tab:: nRF54L15
 
@@ -205,6 +237,10 @@ Refer to the following table for the current workaround list:
            - **Enabled**
          * - 8
            - **Enabled**
+         * - 10
+           - Not implemented
+         * - 13
+           - **Enabled**
          * - 16
            - **Enabled**
          * - 17
@@ -246,19 +282,31 @@ Refer to the following table for the current workaround list:
          * - 49
            - Not implemented
          * - 50
-           - Not applicable
+           - Not implemented
+         * - 54
+           - Not implemented
+         * - 58
+           - Not implemented
          * - 59
-           - Not applicable
+           - Not implemented
          * - 63
-           - Not applicable
+           - Not implemented
          * - 69
            - Not applicable
+         * - 100
+           - Not implemented
          * - 102
            - Not applicable
+         * - 103
+           - Not implemented
          * - 104
            - Not applicable
          * - 105
-           - Not applicable
+           - Not implemented
+         * - 111
+           - Not implemented
+         * - 114
+           - Not implemented
 
    .. tab:: nRF54LM20A / nRF54LM20B
 
@@ -282,6 +330,12 @@ Refer to the following table for the current workaround list:
          * - 8
            - **Enabled**
            - **Enabled**
+         * - 10
+           - Not applicable
+           - Not applicable
+         * - 13
+           - Not applicable
+           - Not applicable
          * - 16
            - Not applicable
            - Not applicable
@@ -292,8 +346,8 @@ Refer to the following table for the current workaround list:
            - Not applicable
            - Not applicable
          * - 20
-           - Not applicable
-           - Not applicable
+           - Not implemented
+           - Not implemented
          * - 21
            - Not applicable
            - Not applicable
@@ -316,11 +370,11 @@ Refer to the following table for the current workaround list:
            - Available when ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y`` :sup:`1`
            - Available when ``CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y`` :sup:`1`
          * - 31
-           - **Enabled**
-           - **Enabled**
+           - Not applicable
+           - Not applicable
          * - 32
-           - **Enabled**
-           - **Enabled**
+           - Not applicable
+           - Not applicable
          * - 37
            - **Enabled**
            - **Enabled**
@@ -345,6 +399,12 @@ Refer to the following table for the current workaround list:
          * - 50
            - Not implemented
            - Not implemented
+         * - 54
+           - Not implemented
+           - Not implemented
+         * - 58
+           - Not applicable
+           - Not applicable
          * - 59
            - Not implemented
            - Not implemented
@@ -354,13 +414,25 @@ Refer to the following table for the current workaround list:
          * - 69
            - **Enabled**
            - **Enabled**
+         * - 100
+           - Not applicable
+           - Not applicable
          * - 102
            - Not implemented
            - Not implemented
+         * - 103
+           - Not applicable
+           - Not applicable
          * - 104
            - Not implemented
            - Not implemented
          * - 105
+           - Not implemented
+           - Not implemented
+         * - 111
+           - Not implemented
+           - Not implemented
+         * - 114
            - Not implemented
            - Not implemented
 
@@ -381,6 +453,10 @@ Refer to the following table for the current workaround list:
            - **Enabled**
          * - 8
            - **Enabled**
+         * - 10
+           - Not applicable
+         * - 13
+           - Not applicable
          * - 16
            - Not applicable
          * - 17
@@ -423,18 +499,30 @@ Refer to the following table for the current workaround list:
            - Not implemented
          * - 50
            - Not applicable
+         * - 54
+           - Not implemented
+         * - 58
+           - Not applicable
          * - 59
            - Not applicable
          * - 63
            - Not implemented
          * - 69
            - **Enabled**
+         * - 100
+           - Not applicable
          * - 102
            - Not implemented
+         * - 103
+           - Not applicable
          * - 104
            - Not applicable
          * - 105
            - Not applicable
+         * - 111
+           - Not applicable
+         * - 114
+           - Not implemented
 
    .. tab:: nRF54LS05A / nRF54LS05B
 
@@ -458,6 +546,12 @@ Refer to the following table for the current workaround list:
          * - 8
            - **Enabled**
            - **Enabled**
+         * - 10
+           - Not applicable
+           - Not applicable
+         * - 13
+           - Not applicable
+           - Not applicable
          * - 16
            - Not applicable
            - Not applicable
@@ -521,6 +615,12 @@ Refer to the following table for the current workaround list:
          * - 50
            - Not applicable
            - Not applicable
+         * - 54
+           - Not implemented
+           - Not implemented
+         * - 58
+           - Not applicable
+           - Not applicable
          * - 59
            - Not implemented
            - Not implemented
@@ -530,13 +630,25 @@ Refer to the following table for the current workaround list:
          * - 69
            - **Enabled**
            - **Enabled**
+         * - 100
+           - Not applicable
+           - Not applicable
          * - 102
+           - Not applicable
+           - Not applicable
+         * - 103
            - Not applicable
            - Not applicable
          * - 104
            - Not applicable
            - Not applicable
          * - 105
+           - Not implemented
+           - Not implemented
+         * - 111
+           - Not applicable
+           - Not applicable
+         * - 114
            - Not implemented
            - Not implemented
 
