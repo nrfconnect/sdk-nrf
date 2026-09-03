@@ -393,6 +393,7 @@ Bluetooth Fast Pair samples
     * The location of the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options.
       The options were moved from the sample-wide configuration files to the board configuration files in the :file:`configuration/boards` directory, as the TX power correction is hardware-specific.
       Every supported board target now declares its own calibration.
+    * The sample configuration to use the DULT API variant v2 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V2`).
 
 * :ref:`fast_pair_input_device` sample:
 
@@ -752,6 +753,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added integration with the DULT API variant v2 to the Find Hub Network (FHN) extension, allowing it to coexist during the pre-association window with other accessory-locating networks that are registered as DULT users.
+    The FHN extension now ties the DULT association to its provisioning state and reports the DULT ownership (association) state through the new :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback.
+
   * Removed the nRF52 and nRF53 Series support.
 
 * :ref:`dtm_twowire_to_hci_readme` library:
@@ -860,6 +864,34 @@ Other libraries
 
   * Added UUID support for the nRF54L Series and the nRF5340 SoC.
 
+* :ref:`dult_readme` library:
+
+  * Added:
+
+    * The DULT API variant v2 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V2`), which supports registering more than one accessory-locating network at the same time, sized by the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option.
+      See the :ref:`ug_dult` guide for details.
+      The following API is exclusive to this variant:
+
+      * The :c:func:`dult_user_unregister` function that performs the terminal teardown of a registered user, while the :c:func:`dult_reset` function only releases the association and keeps the user registered.
+      * The :c:func:`dult_multi_user_cb_register` function for notifying the registered users about the DULT association arbitration outcome.
+      * The :c:func:`dult_multi_user_conn_claim` function for routing the accessory non-owner service operations that arrive before the DULT association to the DULT user that owns the Bluetooth connection.
+
+    * The :c:func:`dult_user_is_associated` and :c:func:`dult_is_any_associated` functions for checking the DULT association state.
+    * The :c:func:`dult_bt_adv_data_fill` function and the :c:struct:`dult_bt_adv_data` structure for serializing the DULT location-enabled advertising payload.
+    * The :c:struct:`dult_bt_anos_cb` callback structure and the :c:func:`dult_bt_anos_cb_register` function that let a network layered on top of DULT override the default separated-state access gate for the Accessory Information operations.
+    * Support for the optional Get_Network_Version operation through the new ``network_version`` field of the :c:struct:`dult_user` structure.
+    * The :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_SMALL` and :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_LARGE` Kconfig choice for declaring the accessory size, which controls whether the mandatory accessory capabilities are enforced during the DULT user registration.
+    * A runtime override of the motion detector test timing through the :c:func:`dult_test_motion_detector_separated_ut_period_set` function, available with the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option.
+
+  * Updated:
+
+    * The DULT public headers were moved to a dedicated :file:`include/dult/` directory.
+      Include :file:`dult/dult.h` instead of the deprecated :file:`dult.h`.
+    * The ``struct dult_firmware_version`` structure was renamed to :c:struct:`dult_version`.
+      The deprecated :file:`dult.h` header still provides the ``dult_firmware_version`` alias to maintain the backward compatibility.
+
+  * Deprecated the DULT API variant v1 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V1`), which remains the default for backward compatibility.
+
 Shell libraries
 ---------------
 
@@ -894,6 +926,8 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 
 Google Fast Pair integration
 ----------------------------
+
+* Updated the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide to describe how the FHN extension claims and releases the DULT association in each DULT API variant, and how to handle the new :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback when your product registers multiple accessory-locating networks.
 
 * Removed the nRF53 Series-specific information from the :ref:`Google Fast Pair integration <ug_bt_fast_pair_integration>` guide, following the removal of the nRF52 and nRF53 Series support from the Fast Pair samples.
 
@@ -936,7 +970,7 @@ CoreMark integration
 DULT integration
 ----------------
 
-|no_changes_yet_note|
+* Updated the :ref:`ug_dult` guide to describe both DULT API variants, the multi-user coexistence workflow, the location-enabled advertising payload serialization, and the accessory non-owner service access policy, including the access before the accessory is associated with an accessory-locating network.
 
 MCUboot
 =======
