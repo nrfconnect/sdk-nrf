@@ -1,0 +1,29 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Drive LED0 (P2.2) through the port-2 HPF GPIO controller. */
+&led0 {
+	gpios = <&hpf_gpio2 2 GPIO_ACTIVE_HIGH>;
+};
+
+/* Route this pin to the FLPR VPR. */
+&pinctrl {
+	flpr_vio_default: flpr_vio_default {
+		group1 {
+			psels = <NRF_PSEL(VPR_VIO, 2, 2)>; /* P2.2 (LED0) */
+		};
+	};
+};
+
+&cpuflpr_vpr {
+	pinctrl-0 = <&flpr_vio_default>;
+	pinctrl-names = "default";
+};
+
+/* Free P2.2 from its default peripheral so it can be driven as LED0. */
+&pwm130 {
+	status = "disabled";
+};

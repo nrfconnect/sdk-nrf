@@ -4,4 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf54lv10a_cpuapp.overlay"
+ipc0: &cpuapp_cpuflpr_ipc {
+	status = "okay";
+};
