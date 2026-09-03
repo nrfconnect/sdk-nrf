@@ -1,0 +1,40 @@
+common:
+  sysbuild: true
+  timeout: 600
+  slow: true
+  tags:
+    - pytest
+    - mcuboot
+    - mcumgr
+    - external_flash
+  harness: pytest
+  integration_platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  platform_allow:
+    - nrf5340dk/nrf5340/cpuapp
+tests:
+  test.mcumgr.smp_svr.ext_xip:
+    build: false
+    required_applications:
+      - application: sample.mcumgr.smp_svr.ext_xip
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/nrf5340
+    harness_config:
+      pytest_root:
+        - "../pytest/test_external_xip.py::test_upgrade_extxip"
+        - "../pytest/test_external_xip.py::test_sw_downgrade_prevention_extxip"
+  test.mcumgr.smp_svr.ext_xip.no_network_core:
+    build: false
+    required_applications:
+      - application: sample.mcumgr.smp_svr.ext_xip.no_network_core
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/nrf5340
+    harness_config:
+      pytest_root:
+        - "../pytest/test_external_xip.py::test_upgrade_extxip"
+  test.mcumgr.smp_svr.ext_xip.no_network_core.directxip:
+    build: false
+    required_applications:
+      - application: sample.mcumgr.smp_svr.ext_xip.no_network_core.directxip
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/nrf5340
+    harness_config:
+      pytest_root:
+        - "../pytest/test_external_xip.py::test_upgrade_extxip_with_direct_xip"
