@@ -24,6 +24,8 @@ tests:
       - nrf5340dk/nrf5340/cpuapp/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
   sample.mcumgr.smp_svr.ext_xip.no_network_core:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
