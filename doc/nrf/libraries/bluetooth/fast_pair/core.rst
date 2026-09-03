@@ -60,7 +60,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` - These options configure the firmware version parameter.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` - The option enables the DULT motion detector functionality support in the FHN extension (see :ref:`ug_bt_fast_pair_gatt_service_fhn_dult_motion_detector`).
 
-  * There are following advertising configuration options for the FHN extension (see :ref:`ug_bt_fast_pair_advertising_fhn`):
+  * The following advertising configuration options are available for the FHN extension (see :ref:`ug_bt_fast_pair_advertising_fhn`):
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER` - The option sets the TX power (dBm) in the Bluetooth LE controller for FHN advertising and connections.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` - The value of this option is added to the TX power readout from the Bluetooth LE controller to calculate the calibrated TX power reported in the Read Beacon Parameters response.
@@ -69,18 +69,18 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_ECC_SECP160R1` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_ECC_SECP256R1` - These options are used to select the elliptic curve for calculating the FHN advertising payload.
       The secp160r1 elliptic curve is enabled by default.
 
-  * There are following battery configuration options for the FHN extension (see :ref:`ug_bt_fast_pair_advertising_fhn_battery` and :ref:`ug_bt_fast_pair_gatt_service_fhn_battery_dult`):
+  * The following battery configuration options are available for the FHN extension (see :ref:`ug_bt_fast_pair_advertising_fhn_battery` and :ref:`ug_bt_fast_pair_gatt_service_fhn_battery_dult`):
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_LOW_THR` - The option configures the threshold percentage value for entering the low battery state as defined in the FHN extension.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_LEVEL_CRITICAL_THR` - The option configures the threshold percentage value for entering the critically low battery state as defined in the FHN extension.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_BATTERY_DULT` - The option configures the FHN module to pass the battery information to the DULT module and to support its mechanism for providing battery information to the connected peers.
       You can only use this option when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled.
 
-  * There are following read mode configuration options for the FHN extension (see :ref:`ug_bt_fast_pair_gatt_service_fhn_read_mode_callbacks`):
+  * The following read mode configuration options are available for the FHN extension (see :ref:`ug_bt_fast_pair_gatt_service_fhn_read_mode_callbacks`):
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_READ_MODE_FHN_RECOVERY_TIMEOUT` - The option configures the Ephemeral Identity Key (EIK) recovery mode timeout in minutes.
 
-  * There are following ringing configuration options for the FHN extension (see :ref:`ug_bt_fast_pair_gatt_service_fhn_ring_callbacks`):
+  * The following ringing configuration options are available for the FHN extension (see :ref:`ug_bt_fast_pair_gatt_service_fhn_ring_callbacks`):
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_NONE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_ONE`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_TWO`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_COMP_THREE` - These options are used to select the set of ringing components.
       The option with no ringing component is enabled by default.
@@ -90,7 +90,7 @@ With the :kconfig:option:`CONFIG_BT_FAST_PAIR` Kconfig option enabled, the follo
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_RING_REQ_TIMEOUT_DULT_MOTION_DETECTOR` - The option configures the ringing timeout for ringing requests from the DULT motion detector.
       You can only use this option when the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option is enabled.
 
-  * There are following beacon clock service configuration options for the FHN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_clock_svc`):
+  * The following beacon clock service configuration options are available for the FHN extension (see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_clock_svc`):
 
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_CLOCK_NVM_UPDATE_TIME` - The option configures the time interval (in minutes) of periodic beacon clock writes to the non-volatile memory.
     * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_CLOCK_NVM_UPDATE_RETRY_TIME` - The option configures the retry time (in seconds) when the beacon clock write to the non-volatile memory fails.
@@ -186,6 +186,11 @@ The :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option of the FHN ext
 The FHN extension implementation also acts as middleware between the user application and the DULT module.
 The DULT module integration is required for small and not easily discoverable accessories.
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT` Kconfig option is enabled by default.
+
+The FHN extension supports both DULT API variants.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option enabled, it ties the DULT association to the Fast Pair stack state.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option enabled, it ties the DULT association to its provisioning state and reports the DULT ownership (association) state through the :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback, which allows coexistence with other accessory-locating networks during the pre-association window.
+For more details, see :ref:`ug_bt_fast_pair_prerequisite_ops_fhn_dult_integration`.
 
 The :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_MOTION_DETECTOR` Kconfig option of the FHN extension selects the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option to enable the motion detector feature of the DULT module.
 With this option enabled, the FHN extension passes the DULT motion detector callbacks from the DULT module to application.
