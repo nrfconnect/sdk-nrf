@@ -47,7 +47,7 @@ int dult_bt_adv_data_fill(const struct dult_user *user, struct bt_data *bt_adv_d
 		return -EINVAL;
 	}
 
-	if (!dult_user_is_registered(user)) {
+	if (!dult_user_is_associated(user)) {
 		return -EACCES;
 	}
 
