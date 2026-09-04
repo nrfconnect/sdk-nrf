@@ -247,7 +247,7 @@ config MCUBOOT_SIGNATURE_KMU_UROT_MAPPING
 
 config MCUBOOT_SIGNATURE_USING_ITS
 	bool "Use ITS stored keys for signature verification [EXPERIMENTAL]"
-	depends on SOC_SERIES_NRF54H
+	depends on SOC_SERIES_NRF54H || SOC_SERIES_NRF92
 	select EXPERIMENTAL
 	help
 	  The device needs to be provisioned with proper set of keys.
