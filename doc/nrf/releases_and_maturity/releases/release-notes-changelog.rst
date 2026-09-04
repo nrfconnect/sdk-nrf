@@ -383,6 +383,8 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
+  * Added experimental support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
+
   * Updated:
 
     * The references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
