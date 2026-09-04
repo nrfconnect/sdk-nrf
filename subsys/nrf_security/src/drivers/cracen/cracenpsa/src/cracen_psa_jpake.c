@@ -498,11 +498,11 @@ static psa_status_t cracen_read_zk_proof(cracen_jpake_operation_t *operation, co
 				status = PSA_ERROR_INVALID_ARGUMENT;
 				goto exit;
 			}
-
-			const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
-
-			memcpy(generator, curve_pt, CRACEN_P256_POINT_SIZE);
 		}
+
+		const uint8_t *curve_pt = sx_pk_generator_point(operation->curve);
+
+		memcpy(generator, curve_pt, CRACEN_P256_POINT_SIZE);
 
 	} else if (idx == 2) {
 		/* Second round of J-PAKE: Compute G_B. */
