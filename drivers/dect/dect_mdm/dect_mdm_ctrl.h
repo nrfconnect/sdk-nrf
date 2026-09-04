@@ -114,6 +114,17 @@ int dect_mdm_ctrl_api_neighbor_list_req_cmd(void);
 
 int dect_mdm_ctrl_api_init(struct net_if *iface);
 
+/**
+ * Queue L2 settings-changed on the MDM ctrl thread to keep IPv6 / BR sink work
+ * off the net_mgmt / shell stack. Latest settings are read at dispatch time.
+ * Falls back to synchronous apply if the queue is full or OOM.
+ *
+ * @param iface DECT network interface.
+ * @retval 0       Queued, or applied synchronously via fallback.
+ * @retval -EINVAL @p iface is NULL.
+ */
+int dect_mdm_ctrl_queue_net_l2_settings_changed(struct net_if *iface);
+
 /** Get a reference to the DECT modem capabilities notification callback parameters
  * @return Pointer to the capabilities notification callback parameters
  */

@@ -26,6 +26,9 @@
  * - dect_net_l2_send(): Called in application thread context
  * - Association callbacks: Called from MAC layer (various contexts)
  */
+#include <string.h>
+
+#include <zephyr/kernel.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
 
@@ -34,6 +37,9 @@
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/mld.h>
 #include <zephyr/net/dns_sd.h>
+#if defined(CONFIG_NET_L2_ETHERNET)
+#include <zephyr/net/ethernet.h>
+#endif
 
 #include <net/dect/dect_utils.h>
 
@@ -228,7 +234,7 @@ void dect_net_l2_status_info_fill_association_data(struct net_if *iface,
  *
  * Key functions:
  * - Retrieves current L2 sink IPv6 prefix configuration
- * - Validates consistency between L2 and driver prefix settings
+ * - Validates consistency between L2 and driver on delegated /64 (upper 64 bits)
  * - Reports network interface and prefix length information
  * - Logs warnings if L2 and driver prefixes don't match
  *
@@ -244,23 +250,37 @@ void dect_net_l2_status_info_fill_sink_data(struct net_if *iface,
 	struct dect_net_l2_sink_ipv6_prefix l2_sink_prefix;
 	struct in6_addr driver_ipv6_prefix = status_info_out->br_global_ipv6_addr_prefix;
 	bool driver_ipv6_prefix_set = status_info_out->br_global_ipv6_addr_prefix_set;
+	int driver_prefix_len_bytes = status_info_out->br_global_ipv6_addr_prefix_len;
 
 	if (dect_net_l2_sink_ipv6_prefix_get(&l2_sink_prefix)) {
 		struct in6_addr l2_sink_ipv6_prefix = l2_sink_prefix.prefix;
+		bool prefix_mismatch = false;
 
-		/* Print warning if not the same as driver */
-		if (!driver_ipv6_prefix_set ||
-		    !net_ipv6_addr_cmp(&l2_sink_ipv6_prefix, &driver_ipv6_prefix)) {
-			LOG_WRN("SINK: IPv6 prefix %s/%d does not match driver prefix %s/%d",
-				net_sprint_ipv6_addr(&l2_sink_ipv6_prefix),
-				(sizeof(struct in6_addr) / 2) * 8,
-				net_sprint_ipv6_addr(&driver_ipv6_prefix),
-				(sizeof(struct in6_addr) / 2) * 8);
+		if (!driver_ipv6_prefix_set || driver_prefix_len_bytes <= 0) {
+			prefix_mismatch = true;
+		} else if (!net_ipv6_is_prefix(l2_sink_ipv6_prefix.s6_addr,
+					       driver_ipv6_prefix.s6_addr, 64)) {
+			/* Delegated /64 only; L2 may use /96 on DECT with extra sink-local bits. */
+			prefix_mismatch = true;
 		}
-		/* Anyways, we report L2 sink information */
+
+		if (prefix_mismatch) {
+			LOG_WRN("SINK: IPv6 prefix %s/%u does not match driver prefix %s/%u",
+				net_sprint_ipv6_addr(&l2_sink_ipv6_prefix),
+				(unsigned int)l2_sink_prefix.len * 8U,
+				net_sprint_ipv6_addr(&driver_ipv6_prefix),
+				(unsigned int)driver_prefix_len_bytes * 8U);
+		}
+		/* Anyways, we report L2 sink information as 64 bit what is what we get from
+		 * actual BR interface.
+		 */
+		memset(&l2_sink_prefix.prefix.s6_addr[DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES], 0,
+		       sizeof(l2_sink_prefix.prefix.s6_addr) -
+				DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
 		status_info_out->br_net_iface = l2_sink_prefix.iface;
-		status_info_out->br_global_ipv6_addr_prefix = l2_sink_ipv6_prefix;
-		status_info_out->br_global_ipv6_addr_prefix_len = l2_sink_prefix.len;
+		status_info_out->br_global_ipv6_addr_prefix = l2_sink_prefix.prefix;
+		status_info_out->br_global_ipv6_addr_prefix_len =
+			DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES;
 		status_info_out->br_global_ipv6_addr_prefix_set = true;
 	}
 }
@@ -295,6 +315,11 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 	if (vtc_vhl != 0x60) {
 		goto exit;
 	}
+
+#if defined(CONFIG_NET_L2_ETHERNET)
+	/* Set type to IPV6 for Ethernet TX */
+	net_pkt_set_ll_proto_type(pkt, NET_ETH_PTYPE_IPV6);
+#endif
 
 	if (net_ipv6_is_ll_addr((struct in6_addr *)NET_IPV6_HDR(pkt)->dst)) {
 		uint32_t target_long_rd_id = dect_utils_lib_long_rd_id_from_ipv6_addr(
@@ -862,6 +887,7 @@ void dect_net_l2_settings_changed(struct net_if *iface,
 				  struct dect_settings *driver_current_settings)
 {
 	struct dect_net_l2_context *ctx = net_if_l2_data(iface);
+	uint32_t prev_tx_rd = ctx->transmitter_long_rd_id;
 
 	/* Update needed settings in our side to context.
 	 * Addressing are updated on next time when 1st association is created.
@@ -869,6 +895,10 @@ void dect_net_l2_settings_changed(struct net_if *iface,
 	ctx->network_id = driver_current_settings->identities.network_id;
 	ctx->transmitter_long_rd_id = driver_current_settings->identities.transmitter_long_rd_id;
 	ctx->device_type = driver_current_settings->device_type;
+
+	if (IS_ENABLED(CONFIG_NET_L2_DECT_BR) && prev_tx_rd != ctx->transmitter_long_rd_id) {
+		dect_net_l2_sink_reapply_prefix_for_tx_rd(iface);
+	}
 }
 
 void dect_net_l2_parent_ipv6_config_changed(struct net_if *iface, uint32_t parent_long_rd_id,
@@ -886,6 +916,42 @@ void dect_net_l2_parent_ipv6_config_changed(struct net_if *iface, uint32_t paren
 			ipv6_prefix_config);
 	}
 }
+
+#if defined(CONFIG_NET_IPV6)
+bool dect_net_l2_parent_ipv6_addr_get(struct net_in6_addr *addr)
+{
+	struct dect_net_l2_association_data *parent;
+
+	if (addr == NULL) {
+		return false;
+	}
+
+	k_mutex_lock(&associations_mutex, K_FOREVER);
+	parent = NULL;
+	for (int i = 0; i < ARRAY_SIZE(parent_associations); i++) {
+		if (parent_associations[i].in_use) {
+			parent = &parent_associations[i];
+			break;
+		}
+	}
+	if (parent == NULL) {
+		k_mutex_unlock(&associations_mutex);
+		return false;
+	}
+
+	if (parent->global_ipv6_addr_set) {
+		net_ipv6_addr_copy_raw(addr->s6_addr, parent->global_ipv6_addr.s6_addr);
+	} else if (parent->local_ipv6_addr_set) {
+		net_ipv6_addr_copy_raw(addr->s6_addr, parent->local_ipv6_addr.s6_addr);
+	} else {
+		k_mutex_unlock(&associations_mutex);
+		return false;
+	}
+
+	k_mutex_unlock(&associations_mutex);
+	return true;
+}
+#endif /* CONFIG_NET_IPV6 */
 
 /**
  * @brief Handle sink IPv6 configuration changes
@@ -941,6 +1007,66 @@ void dect_net_l2_sink_ipv6_config_changed(struct net_if *iface,
 			}
 		}
 	}
-
 	k_mutex_unlock(&associations_mutex);
+}
+
+bool dect_net_l2_child_global_ipv6_match(const struct in6_addr *addr)
+{
+	bool match = false;
+
+	if (addr == NULL) {
+		return false;
+	}
+
+	k_mutex_lock(&associations_mutex, K_FOREVER);
+	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
+		if (!child_associations[i].in_use ||
+		    !child_associations[i].global_ipv6_addr_set) {
+			continue;
+		}
+
+		if (net_ipv6_addr_cmp(&child_associations[i].global_ipv6_addr, addr)) {
+			match = true;
+			break;
+		}
+	}
+	k_mutex_unlock(&associations_mutex);
+
+	return match;
+}
+
+/*
+ * Child global IPv6 membership test intended for use from Zephyr
+ * net_pkt_filter rule callbacks. The pkt_filter framework evaluates
+ * rule tests with a k_spinlock held (IRQs disabled), which forbids any
+ * blocking call inside the test. This helper is therefore implemented
+ * without taking associations_mutex: reads are unsynchronised and a
+ * slot mutation concurrent with this read may at most yield a single
+ * false-negative result for the in-flight call. Writers in this file
+ * continue to serialise on associations_mutex among themselves.
+ *
+ * Do not reuse from other call sites; use dect_net_l2_child_global_ipv6_match()
+ * when an exact answer is required.
+ */
+bool dect_net_l2_npf_child_global_ipv6_match(const struct in6_addr *addr)
+{
+	if (addr == NULL) {
+		return false;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(child_associations); i++) {
+		const volatile struct dect_net_l2_association_data *slot =
+			&child_associations[i];
+
+		if (!slot->in_use || !slot->global_ipv6_addr_set) {
+			continue;
+		}
+
+		if (net_ipv6_addr_cmp((const struct in6_addr *)&slot->global_ipv6_addr,
+				      addr)) {
+			return true;
+		}
+	}
+
+	return false;
 }

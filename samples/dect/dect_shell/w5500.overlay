@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Arceli W5500 (-DSHIELD=arceli_eth_w5500,
+ *   -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay").
+ * Runtime MAC via zephyr,random-mac-address (locally administered).
+ * For a documented static MAC instead, use :file:`w5500-static-mac.overlay`.
+ */
+
+&eth_w5500_arceli_eth_w5500 {
+	zephyr,random-mac-address;
+	/* spi-max-frequency = <24000000>; */
+};

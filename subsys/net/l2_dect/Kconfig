@@ -33,11 +33,150 @@ config NET_L2_DECT_BR
 	default y if NET_L2_ETHERNET || MODEM_CELLULAR
 	select NET_ROUTING if NET_IPV6 && NET_ROUTE
 	help
-	  Enable Border Router (BR) support.
-	  Serial Modem running with a LTE connection in the connected nRF9151 DK accessed
-	  through PPP by using MODEM_CELLULAR feature (preferred option),
-	  or Ethernet based NET_L2_ETHERNET mode can be used as a border router.
-	  If MODEM_CELLULAR is selected, then BR has only one sink and vice versa.
+	  Fixed Terminal (FT) could act also as a DECT NR+ border router:
+	  it obtains an IPv6 delegated prefix on a "sink" uplink and extends
+	  connectivity to Portable Terminals (PTs) on DECT NR+.
+	  The sink may be cellular (PPP / MODEM_CELLULAR) or Ethernet
+	  (NET_L2_ETHERNET). Only one sink type is used at a time.
+	  When NET_IPV6 and NET_ROUTE are enabled, selects IPv6 routing support needed
+	  for forwarding between the sink and DECT NR+.
+
+config NET_L2_DECT_BR_IPV6_SINK_PREFIX96
+	bool "Promote delegated /64 sink prefix to /96 using transmitter long RD ID"
+	default y
+	depends on NET_L2_DECT_BR
+	help
+	  Append this FT's DECT transmitter long RD ID into bits 64-95 of the
+	  delegated /64 uplink prefix, so the DECT NR+ interface uses a /96
+	  (delegated /64 + RD id). The /64 handed to the modem is unaffected.
+	  Disable for a flat /64 DECT prefix layout (pre-/96 behavior).
+
+config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
+	bool "IPv6 /96 connected route on DECT NR+ Sink"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_SINK_PREFIX96 && NET_ROUTE && NET_IPV6_NBR_CACHE
+	help
+	  Install a high-preference /96 connected route + matching neighbor
+	  entry on the DECT NR+ iface for the promoted /96, so locally originated
+	  or forwarded packets to PTs egress DECT instead of matching a shorter
+	  prefix on the uplink. Sink-agnostic (Ethernet and cellular). Disable
+	  if you supply your own routes or use a flat /64 layout.
+
+if NET_L2_DECT_BR && NET_L2_ETHERNET
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	bool "IPv6 PT globals on Ethernet for LAN neighbor discovery (BR) [EXPERIMENTAL]"
+	default y
+	depends on NET_IPV6_NBR_CACHE
+	select EXPERIMENTAL
+	help
+	  Publish each PT global IPv6 address learned on DECT NR+ as a neighbor entry on
+	  the first Ethernet iface mapped to this device's MAC, so LAN NS for a PT
+	  GUA is answered locally. With NET_IPV6_MLD, also join the solicited-node
+	  group per PT so those NS are received on Ethernet. NA replies are gated by
+	  NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS
+	bool "Answer Neighbor Solicitation for PT globals on Ethernet (ND proxy NS)"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	help
+	  Send a solicited NA on behalf of the PT when a LAN router or host sends NS
+	  for a PT global published on Ethernet. Without this, the router may drop
+	  its ND cache entry and stop returning traffic toward the PT. Disable to
+	  keep only the static neighbor + MLD behavior of the parent option.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_UNICAST_INTERCEPT
+	bool "Intercept unicast NS for PT GUA before IPv6 forwarding (NUD)"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS
+	select NET_PKT_FILTER
+	select NET_PKT_FILTER_IPV6_HOOK
+	help
+	  Some routers send NUD NS with the PT GUA as unicast dst instead of the
+	  solicited-node multicast; with NET_ROUTING, Zephyr forwards those to DECT NR+
+	  before the ND proxy NS ICMP handler runs, so no NA is sent and the router
+	  entry expires. An IPv6 recv packet-filter rule matches these on Ethernet,
+	  queues the same deferred proxy NA, and drops the packet.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_PRIME
+	bool "Prime upstream router ND cache by sending NS-from-PT on Ethernet"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	help
+	  Send one NS on PT publish (src = PT GUA, dst = target = default router,
+	  SLLAO = Ethernet MAC). Per RFC 4861 7.2.3 the router creates or refreshes
+	  a NCE (PT GUA -> sink MAC), so return traffic to the PT reaches this device.
+	  No-op when no default router is known; NUD refresh is then reactive via
+	  NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_UNICAST_INTERCEPT.
+
+config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NA_UNICAST_REFRESH
+	bool "Refresh upstream router ND cache by sending unicast NA-from-PT"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT
+	depends on NET_L2_DECT_BR_UNSOLICITED_NA
+	help
+	  In addition to the ff02::1 unsolicited NA from NET_L2_DECT_BR_UNSOLICITED_NA,
+	  send a unicast NA (src = target = PT GUA) to the default router per PT GUA.
+	  Both only update an existing NCE (RFC 4861 7.2.5), but router-targeted
+	  unicast is less likely to be rate-limited or dropped on shared segments.
+	  No-op without a default router. Sent once on add.
+
+config NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE
+	bool "Install /N route on upstream Ethernet iface via default router LL"
+	default y
+	help
+	  Install a static /N route on the uplink for the RA-learned prefix with
+	  nexthop = default router link-local. The router LL is already REACHABLE
+	  from the RA SLLAO, so first packets skip destination ND (multicast NS +
+	  wait for NA, only 1 pending packet per neighbor) and are sent straight
+	  to the router's MAC. Avoids first-packet drops on flaky link layers.
+	  Disable to fall back to direct ND for in-prefix destinations on the uplink.
+
+config NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS
+	int "Pacing delay (ms) between consecutive Ethernet sends on the sink uplink"
+	default 10
+	range 0 100
+	help
+	  Short sleep inserted between consecutive Ethernet TX frames on the sink
+	  uplink to avoid per-frame TX-complete IRQ timeouts on low-end SPI MAC/PHYs
+	  (e.g. W5500). Used before RS and, when enabled later, between PT ND proxy
+	  sends. 10 ms matches the upstream w5500 driver timeout; 0 disables.
+
+config NET_L2_DECT_BR_UNSOLICITED_NA
+	bool "Send unsolicited Neighbor Advertisements on Ethernet sink uplink"
+	default y
+	depends on NET_NATIVE_IPV6 && NET_IPV6_ND && NET_IPV6_NBR_CACHE
+	help
+	  Send RFC 4861 unsolicited NA (dst ff02::1, one per usable uplink unicast,
+	  src = that address) after the post-up work item and on global ADDR_ADD.
+	  Refreshes LAN peer neighbor caches after boot, relevant when the uplink MAC
+	  can change between resets (zephyr,random-mac-address). Disable to suppress
+	  the extra multicast ND traffic.
+
+endif # NET_L2_DECT_BR && NET_L2_ETHERNET
+
+config NET_L2_DECT_ULA
+	bool "ULA /64 on DECT (prefix + derived address)"
+	default y
+	depends on NET_IPV6
+	help
+	  ULA /64 base plus on-link /96 and host address on DECT after association
+	  (NET_L2_DECT_ULA_PREFIX). Disabled: link-local and delegated globals only.
+
+config NET_L2_DECT_ULA_PREFIX
+	string "ULA /64 base"
+	default "fdde:ad00:0000::"
+	depends on NET_L2_DECT_ULA
+	depends on NET_IPV6
+	help
+	  RFC 4193 fd ULA /64, IID zero (e.g. fdde:ad00:0000::). Bytes 8..15 cleared
+	  on parse.
+	  DECT: /96 = this /64 + peer long RD id; host = /96 + link-local bytes
+	  12..15. PT: parent RD id; FT: own transmitter RD id.
+	  Ethernet RAs to the tethered PC use the upper /64 of the PT ULA on dect0,
+	  not the DECT /96.
+	  Empty string: skip. Default is lab-only; use a unique global ID in production.
 
 module=NET_L2_DECT_BR
 module-str=DECT NR+ L2 Border Router / Sink
