@@ -8,13 +8,13 @@
 #include <zephyr/drivers/flash.h>
 #include <zephyr/drivers/counter.h>
 #include <dk_buttons_and_leds.h>
-#include "cpu_load_monitor.h"
+#include <zephyr/debug/cpu_load.h>
 
-#define FLASH_TEST_DATA_OFFSET		   0x0
-#define MAX_TEST_BUFFER_SIZE		   80 * 1024
-#define MAX_CPU_LOAD_VALUES_HELD	   32
-#define TEST_TIMER_COUNT_TIME_LIMIT_MS	   10000
-#define DEAD_TIME_MS			   1000
+#define FLASH_TEST_DATA_OFFSET	       0x0
+#define MAX_TEST_BUFFER_SIZE	       80 * 1024
+#define TEST_TIMER_COUNT_TIME_LIMIT_MS 10000
+#define DEAD_TIME_MS		       1000
+#define FILL_PATTERN		       0xAB
 
 static const struct device *const flash_dev = DEVICE_DT_GET(DT_ALIAS(dut_flash));
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_NODELABEL(tst_timer));
@@ -75,10 +75,6 @@ static int test_setup(void)
 	dk_leds_init();
 	configure_test_timer(tst_timer_dev, TEST_TIMER_COUNT_TIME_LIMIT_MS);
 
-	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
-		cpu_load_monitor_init();
-	}
-
 	for (int i = 0; i < 3; i++) {
 		is_flash_ready = device_is_ready(flash_dev);
 		if (is_flash_ready) {
@@ -109,17 +105,15 @@ static int test_setup(void)
 /*
  * General flash operations test function
  * set DK_LED1 to ON state
- * start CPU load monitor
  * start timer
  * perform flahs operation(s) (read, write, erase)
  * get timer value
  * stop timer
+ * get CPU load
  * set DK_LED1 to OFF state
- * stop CPU load monitor
  * calculate operation duration in [us]
- * show measured timing
- * wait for CPU loads caluclations to finish
- * show measured CPU loads
+ * show measured timing and the rate it gives
+ * show CPU load
  * sleep for 'DEAD_TIME_MS'
  */
 static void test_flash_operation(size_t flash_operation_size, flash_operation_fn flash_operation,
@@ -130,13 +124,12 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	uint32_t tst_timer_value = 0;
 	uint64_t timer_value_us = 0;
 	uint32_t required_repetitions = flash_operation_size / page_size;
+	int32_t cpu_load;
 
 	printk("Flash %s test [size: %u bytes]\n", operation_name, flash_operation_size);
-	memset(test_buffer, 0xAB, MAX_TEST_BUFFER_SIZE);
+	memset(test_buffer, FILL_PATTERN, MAX_TEST_BUFFER_SIZE);
 
-	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
-		cpu_load_monitor_start();
-	}
+	cpu_load_get(true);
 	dk_set_led_on(DK_LED1);
 	counter_reset(tst_timer_dev);
 	counter_start(tst_timer_dev);
@@ -144,7 +137,7 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 		/* Cannot be done in one shot due to CPU RAM limitation */
 		for (int i = 0; i < required_repetitions; i++) {
 			err = flash_operation(flash_dev, FLASH_TEST_DATA_OFFSET + i * page_size,
-					       test_buffer, page_size);
+					      test_buffer, page_size);
 		}
 	} else {
 		err = flash_operation(flash_dev, FLASH_TEST_DATA_OFFSET, test_buffer,
@@ -153,9 +146,7 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	counter_get_value(tst_timer_dev, &tst_timer_value);
 	counter_stop(tst_timer_dev);
 	dk_set_led_off(DK_LED1);
-	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
-		cpu_load_monitor_stop();
-	}
+	cpu_load = cpu_load_get(true);
 
 	if (err != 0) {
 		printk("!!!! Flash operation error: %d !!!!\n", err);
@@ -166,8 +157,17 @@ static void test_flash_operation(size_t flash_operation_size, flash_operation_fn
 	printk("### Summary ###\n");
 	printk("Flash %s [size: %u bytes] took: %llu us\n", operation_name, flash_operation_size,
 	       timer_value_us);
-	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
-		cpu_load_monitor_show();
+	if ((err == 0) && (timer_value_us > 0)) {
+		uint64_t rate = (uint64_t)flash_operation_size * 1000ULL / timer_value_us;
+
+		printk("Flash %s rate: %llu.%03llu MB/s\n", operation_name, rate / 1000,
+		       rate % 1000);
+	}
+
+	if (cpu_load >= 0) {
+		printk("CPU load: %u,%u [%%]\n", cpu_load / 10, cpu_load % 10);
+	} else {
+		printk("CPU load measurement error\n: %d", cpu_load);
 	}
 	k_msleep(DEAD_TIME_MS);
 }
@@ -194,7 +194,7 @@ int main(void)
 	}
 
 #if defined(CONFIG_TEST_FIXED_OPERATION_SIZE)
-	uint32_t test_operation_size[] = { (size_t)CONFIG_TEST_FLASH_OPERATION_SIZE };
+	uint32_t test_operation_size[] = {(size_t)CONFIG_TEST_FLASH_OPERATION_SIZE};
 #else
 	uint32_t test_operation_size[] = {
 		write_block_size, 16, 256, 16384, page_size, page_size * 8, page_size * 32};
@@ -218,16 +218,6 @@ int main(void)
 		test_flash_operation(test_operation_size[i], flash_read_operation, "read");
 	}
 
-	/*
-	 * After the measurement are done
-	 * CPU shold enter idle state
-	 * with low current consumption
-	 * Terminate the CPU load monitor thread
-	 * to reduce current consumption
-	 */
-	if (IS_ENABLED(CONFIG_CPU_LOAD)) {
-		cpu_load_monitor_terminate();
-	}
 	printk("Done\n");
 
 	return 0;

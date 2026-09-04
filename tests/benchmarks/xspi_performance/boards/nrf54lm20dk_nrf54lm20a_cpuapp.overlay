@@ -12,6 +12,7 @@
 
 &mx25r64 {
 	status = "okay";
+	spi-max-frequency = <DT_FREQ_M(8)>;
 };
 
 tst_timer: &timer22 {
