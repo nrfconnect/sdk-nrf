@@ -51,6 +51,18 @@ tests:
     extra_args:
       - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
 
+  mcuboot.upgrade.basic.nrf92:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py"
+        - "../pytest/test_invalid_image.py::test_invalid_signature"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+
   mcuboot.upgrade.serial_recovery_no_bootable_app:
     tags:
       - serial_recovery
@@ -65,12 +77,14 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     harness_config:
       pytest_root:
         - "../pytest/test_serial_recovery.py::test_serial_recovery_after_damaging_app"
@@ -94,6 +108,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
     harness_config:
