@@ -126,10 +126,35 @@
 			reg = <0x40a000 DT_SIZE_K(8)>;
 		};
 
-		secure_storage_partition: partition@40c000 {
+		secondary_partition: partition@40e000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x40c000 DT_SIZE_K(8)>;
-			ranges = <0x0 0x40c000 0x2000>;
+			reg = <0x40e000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@41e000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x41e000 DT_SIZE_K(8)>;
+		};
+
+		mpcconf_partition: partition@420000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x420000 512>;
+		};
+
+		secondary_mpcconf_partition: partition@420200 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x420200 512>;
+		};
+
+		/* NB: A gap has been left here for future partitions */
+
+		/* 0x5fe000 was chosen for secure_storage_partition such that
+		 * there is no more space after secure_storage_partition.
+		 */
+		secure_storage_partition: partition@5fe000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x5fe000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x5fe000 0x2000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
