@@ -173,12 +173,22 @@ static void sink_remove_eth_upstream_prefix_route(void)
 		LOG_INF("SINK: upstream prefix route removed");
 	}
 }
+
 #endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE */
 
 #if defined(CONFIG_MODEM_CELLULAR)
 const struct device *modem = DEVICE_DT_GET(DT_ALIAS(modem));
+#endif
 
-static struct k_work_delayable lte_ipv6_router_nbr_deleted_work;
+#if defined(CONFIG_MODEM_CELLULAR) || defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+/* NUD can drop the router's neighbor cache entry (e.g. no reply while in
+ * PROBE state) even though the router itself is still valid in the router
+ * list. net_ipv6_nbr_rm() then silently deletes any route using it as
+ * nexthop (see net_route_ipv6_del_by_nexthop() in ipv6_nbr.c), taking our
+ * router-dependent route(s) down with it. This work re-adds what NUD
+ * removed, shared by both the LTE and the Ethernet sink uplink.
+ */
+static struct k_work_delayable sink_router_nbr_deleted_work;
 
 #endif
 static struct k_work_delayable dect_sink_rs_work;
@@ -428,17 +438,17 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 		LOG_DBG("NET_EVENT_IPV6_NBR_DEL: iface %p, nbr %s", iface,
 			net_addr_ntop(AF_INET6, (struct in6_addr *)&ipv6_nbr->addr, ipv6_addr_str,
 				      NET_IPV6_ADDR_LEN));
-#if defined(CONFIG_MODEM_CELLULAR)
-		/* It seems that LTE nw ipv6 router is removed from nbr table, let's add it back
-		 * to keep connection open
+#if defined(CONFIG_MODEM_CELLULAR) || defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+		/* The sink's upstream router can be dropped from the nbr table by NUD
+		 * (LTE and Ethernet uplinks both observed this) - let's add it back.
 		 */
 		if (net_if_is_up(iface_for_prefix) &&
 		    net_ipv6_addr_cmp(&ipv6_router_addr, (struct in6_addr *)&ipv6_nbr->addr)) {
-			LOG_INF("NET_EVENT_IPV6_NBR_DEL: Sink IPv6 router removed "
+			LOG_INF("NET_EVENT_IPV6_NBR_DEL: Sink upstream router removed "
 				"as nbr - let's add it back");
 
 			/* Submit a work to get it back (system queue) */
-			k_work_reschedule(&lte_ipv6_router_nbr_deleted_work, K_MSEC(100));
+			k_work_reschedule(&sink_router_nbr_deleted_work, K_MSEC(100));
 		}
 #endif
 		break;
@@ -560,9 +570,12 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 	}
 }
 
-#if defined(CONFIG_MODEM_CELLULAR)
-static void dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker(struct k_work *work_item)
+#if defined(CONFIG_MODEM_CELLULAR) || defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+static void sink_router_nbr_deleted_work_handler(struct k_work *work_item)
 {
+	ARG_UNUSED(work_item);
+
+#if defined(CONFIG_MODEM_CELLULAR)
 	struct net_route_entry *route;
 	struct net_linkaddr lte_if_mac_addr;
 
@@ -585,6 +598,16 @@ static void dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker(struct k_work *w
 	if (!route) {
 		LOG_ERR("Cannot add sink ipv6 router as a route");
 	}
+#endif /* CONFIG_MODEM_CELLULAR */
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+	/* Unlike the LTE PPP link, this is real Ethernet: no need to re-add the
+	 * nbr by hand, ND will re-resolve it on next send. The route reinstalls
+	 * right away since the router list entry itself is untouched.
+	 */
+	LOG_INF("SINK: reinstalling upstream prefix route after router nbr removal");
+	sink_install_eth_upstream_prefix_route();
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE */
 }
 #endif
 
@@ -762,11 +785,12 @@ static int dect_net_l2_sink_init(void)
 		return -1;
 	}
 	iface_for_prefix = modem_iface;
-
-	k_work_init_delayable(&lte_ipv6_router_nbr_deleted_work,
-			      dect_net_l2_sink_lte_ipv6_nbr_router_deleted_worker);
 #endif
 	k_work_init_delayable(&dect_sink_rs_work, dect_net_l2_sink_rs_work_handler);
+#if defined(CONFIG_MODEM_CELLULAR) || defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+	k_work_init_delayable(&sink_router_nbr_deleted_work,
+			      sink_router_nbr_deleted_work_handler);
+#endif
 #if defined(CONFIG_NET_DHCPV6)
 	k_work_init_delayable(&sink_dhcpv6_start_work, sink_dhcpv6_start_work_handler);
 #endif
