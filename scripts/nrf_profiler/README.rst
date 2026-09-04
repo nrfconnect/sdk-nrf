@@ -64,6 +64,18 @@ You can use the following scripts to collect the profiling data and visualize th
      python3 data_collector.py 5 test1
 
   In this command, ``5`` is the time value (in seconds) for collecting data and ``test1`` is the dataset name.
+
+  Use the ``--sync`` argument to collect profiling data from multiple devices in lockstep.
+  The argument accepts a value from ``1`` to ``10`` (default: ``1``).
+  For example:
+
+  .. code-block:: console
+
+     python3 data_collector.py 5 test1 --sync 2
+
+  In this command, profiling data is collected from two devices.
+  The script stores the data in the ``test1_0`` and ``test1_1`` datasets.
+  See :ref:`nrf_profiler_script_synchronized_collection` for details.
 * :file:`plot_from_files.py` - The script plots events from the dataset that is provided as the command-line argument.
   For example:
 
@@ -81,6 +93,16 @@ You can use the following scripts to collect the profiling data and visualize th
      python3 real_time_plot.py test1
 
   The script terminates when the window displaying the real-time plot is closed.
+
+  To plot (in separate windows) and collect data from multiple devices in lockstep, use the ``--sync`` argument.
+  For example:
+
+  .. code-block:: console
+
+     python3 real_time_plot.py test1 --sync 2
+
+  In this command, profiling data is ploted in two separate windows, collected from two devices and stored in the ``test1_0`` and ``test1_1`` datasets.
+  See :ref:`nrf_profiler_script_synchronized_collection` for details.
 
 .. _nrf_profiler_script_visualization_GUI:
 
@@ -123,6 +145,25 @@ Additionally, during a pause or when plotting data from files:
 * Click and drag with the left mouse button to pan the plot.
 * Click the left or right mouse button to place a vertical line at the cursor location.
   When two lines are present, the application measures the time between them and displays it.
+
+.. _nrf_profiler_script_synchronized_collection:
+
+Synchronized data collection from multiple devices
+==================================================
+
+The :file:`data_collector.py` and :file:`real_time_plot.py` scripts can collect profiling data from multiple embedded devices in lockstep.
+Use the ``--sync`` argument to specify the number of devices (from ``1`` to ``10``, default: ``1``).
+The scripts spawn a separate set of host processes for each device and synchronize the RTT connection and device reset before starting data collection.
+
+When collecting data from more than one device, each dataset name is extended with an ``_<index>`` suffix (for example, ``test1_0`` and ``test1_1`` for the ``test1`` dataset name and ``--sync 2``).
+Set the serial number of the device to connect to in the :file:`rtt_nordic_config.py` file (``device_snr`` field).
+The scripts connect to the devices one after another.
+When prompted in the console log, configure the next device and update the ``device_snr`` value before the script connects to it.
+
+After collecting the data, you can use the :file:`merge_data.py` script to combine datasets from multiple devices and compensate for clock drift.
+See :ref:`nrf_profiler_script_merging_data` for details.
+
+.. _nrf_profiler_script_merging_data:
 
 Merging profiling data from multiple devices
 ============================================
