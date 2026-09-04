@@ -14,7 +14,7 @@ common:
 tests:
   sample.dect.dect_shell: {}
   sample.dect.dect_shell.mdns_discover:
-    extra_args: EXTRA_CONF_FILE=mdns-discover.conf
+    extra_args: EXTRA_CONF_FILE=mdns-common.conf;mdns-discover.conf
   sample.dect.dect_shell.ft_sink:
     extra_args: FILE_SUFFIX=sm
   sample.dect.dect_shell.iperf3_tx:
@@ -32,14 +32,32 @@ tests:
       - EXTRA_CONF_FILE="nrf_cloud_coap.conf"
       - DTC_OVERLAY_FILE="nrf_cloud_coap.overlay"
   sample.dect.dect_shell.arceli_eth_w5500:
-    extra_args: SHIELD=arceli_eth_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
   sample.dect.dect_shell.arceli_eth_w5500_random_mac:
-    extra_args: SHIELD=arceli_eth_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
   sample.dect.dect_shell.seeed_eth_w5500:
-    extra_args: SHIELD=seeed_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
   sample.dect.dect_shell.seeed_eth_w5500_random_mac:
-    extra_args: SHIELD=seeed_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed.overlay"
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed.overlay"
   sample.dect.dect_shell.arceli_eth_w5500_mdns:
-    extra_args: SHIELD=arceli_eth_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf;eth_sink_mdns-discover.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf;eth_sink_mdns-discover.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
   sample.dect.dect_shell.seeed_eth_w5500_mdns:
-    extra_args: SHIELD=seeed_w5500 EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf" EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"

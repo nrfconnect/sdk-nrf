@@ -751,14 +751,16 @@ Ethernet sink builds forward DECT uplink (PT TX → FT RX) to eth0 and need a la
 :file:`eth_common.conf` sets :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE`.
 Keep these Kconfig values aligned with :file:`eth-rx.overlay` region sizes).
 
-Pass ``-DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay`` on every Ethernet build below (semicolon-separated list; ``eth-rx.overlay`` first).
+Pass ``-DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;<shield-mac.overlay>"`` on every Ethernet build below (semicolon-separated list;
+``eth-rx.overlay`` first).
+Use ``EXTRA_DTC_OVERLAY_FILE``, not ``DTC_OVERLAY_FILE``: setting ``DTC_OVERLAY_FILE`` replaces the auto-applied :file:`boards/nrf9151dk_nrf9151_ns.overlay`, which both overlays layer on top of.
 
 Ethernet with W5500 shield (Arceli)
 -----------------------------------
 
 Use this when the DECT sink (FT with BR) should reach the Internet over Ethernet.
 The sample adds :file:`eth_common.conf` and :file:`eth_w5500.conf` (Kconfig), :file:`eth-rx.overlay` (modem shared memory), and an Arceli tuning overlay: default :file:`w5500-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
-For mDNS, append :file:`mdns-common.conf` and :file:`eth_mdns.conf` in that order (add :file:`mdns-discover.conf` before :file:`eth_mdns.conf` for ``dect discover``).
+For mDNS advertisement (PT discovers the sink), append :file:`mdns-common.conf` and :file:`mdns-discover.conf`. To also run ``dect discover`` on the sink, add :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf`.
 The pinout and SPI node come from the Zephyr shield devicetree: :file:`zephyr/boards/shields/arceli_eth_w5500/arceli_eth_w5500.overlay`.
 
 .. note::
@@ -772,46 +774,58 @@ The pinout and SPI node come from the Zephyr shield devicetree: :file:`zephyr/bo
      nrf/samples/dect/dect_shell:
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
 
-   * Edit ``local-mac-address`` in :file:`w5500-static-mac.overlay` so each board on the same LAN has a unique MAC.
+* With mDNS advertisement (PT discovers the sink):
 
-   * For a **random** Ethernet MAC each boot (``zephyr,random-mac-address``), use :file:`w5500.overlay` instead:
+  .. code-block:: console
 
-     .. code-block:: console
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
 
-        west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
+* Edit ``local-mac-address`` in :file:`w5500-static-mac.overlay` so each board on the same LAN has a unique MAC.
 
-   * To also obtain an IPv6 address via DHCPv6 (in addition to SLAAC), append
-     :file:`eth_dhcpv6_client.conf` to the configuration file list.  The DHCPv6
-     client starts automatically when the Ethernet interface comes up, but only
-     if SLAAC has not already provided a prefix:
+* For a **random** Ethernet MAC each boot (``zephyr,random-mac-address``), use :file:`w5500.overlay` instead:
 
-     .. code-block:: console
+  .. code-block:: console
 
-        west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_dhcpv6_client.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
 
-   * Wiring as in the Arceli ETH W5500 shield overlay. Connect the RJ45 port to your LAN (router/switch).
+  With mDNS advertisement:
+
+  .. code-block:: console
+
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
+
+* To also obtain an IPv6 address via DHCPv6 (in addition to SLAAC), append
+  :file:`eth_dhcpv6_client.conf` to the configuration file list.  The DHCPv6
+  client starts automatically when the Ethernet interface comes up, but only
+  if SLAAC has not already provided a prefix:
+
+  .. code-block:: console
+
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_dhcpv6_client.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+
+* Wiring as in the Arceli ETH W5500 shield overlay. Connect the RJ45 port to your LAN (router/switch).
 
   .. table:: nRF9151 DK + Arceli ETH W5500 (Arduino header).
 
-      +-----------------------------+------------------------------------------+
-      | W5500 / shield signal       | nRF9151 DK (Arduino / GPIO)              |
-      +=============================+==========================================+
-      | **SCS**                      | **D10** (**P0.10**)                     |
-      +-----------------------------+------------------------------------------+
-      | **MOSI**                    | **D11** (**P0.11**)                      |
-      +-----------------------------+------------------------------------------+
-      | **MISO**                    | **D12** (**P0.12**)                      |
-      +-----------------------------+------------------------------------------+
-      | **SCK/CLK**                 | **D13** (**P0.13**)                      |
-      +-----------------------------+------------------------------------------+
-      | **INT**                     | **D9** (**P0.09**)                       |
-      +-----------------------------+------------------------------------------+
-      | **RESET**                   | **D8** (**P0.08**)                       |
-      +-----------------------------+------------------------------------------+
-      | **3.3V**                    | Arduino **3.3V** or DK **VDD** (3.3 V)   |
-      +-----------------------------+------------------------------------------+
-      | **GND**                     | **GND**                                  |
-      +-----------------------------+------------------------------------------+
+     +-----------------------------+------------------------------------------+
+     | W5500 / shield signal       | nRF9151 DK (Arduino / GPIO)              |
+     +=============================+==========================================+
+     | **SCS**                     | **D10** (**P0.10**)                      |
+     +-----------------------------+------------------------------------------+
+     | **MOSI**                    | **D11** (**P0.11**)                      |
+     +-----------------------------+------------------------------------------+
+     | **MISO**                    | **D12** (**P0.12**)                      |
+     +-----------------------------+------------------------------------------+
+     | **SCK/CLK**                 | **D13** (**P0.13**)                      |
+     +-----------------------------+------------------------------------------+
+     | **INT**                     | **D9** (**P0.09**)                       |
+     +-----------------------------+------------------------------------------+
+     | **RESET**                   | **D8** (**P0.08**)                       |
+     +-----------------------------+------------------------------------------+
+     | **3.3V**                    | Arduino **3.3V** or DK **VDD** (3.3 V)   |
+     +-----------------------------+------------------------------------------+
+     | **GND**                     | **GND**                                  |
+     +-----------------------------+------------------------------------------+
 
 Ethernet with W5500 shield (Seeed / Wiznet mapping)
 -----------------------------------------------------
@@ -819,7 +833,7 @@ Ethernet with W5500 shield (Seeed / Wiznet mapping)
 WARNING: Wiznet w5500 shield (red one) is not working correctly and can burn your DK!
 
 Use this when the DECT sink (FT with BR) should reach the Internet over Ethernet via the Zephyr :ref:`seeed_w5500` shield on the nRF9151 DK.
-Merge :file:`eth_common.conf`, :file:`eth_w5500.conf` and :file:`eth_w5500_seeed.conf` for Ethernet sink without mDNS (plus :file:`eth-rx.overlay` for modem shared memory). For mDNS, append :file:`mdns-common.conf` and :file:`eth_mdns.conf` in that order (add :file:`mdns-discover.conf` before :file:`eth_mdns.conf` for ``dect discover``).
+Merge :file:`eth_common.conf`, :file:`eth_w5500.conf` and :file:`eth_w5500_seeed.conf` for Ethernet sink without mDNS (plus :file:`eth-rx.overlay` for modem shared memory). For mDNS advertisement (PT discovers the sink), append :file:`mdns-common.conf` and :file:`mdns-discover.conf`. To also run ``dect discover`` on the sink, add :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf`.
 The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster :kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`.
 Devicetree comes from :file:`zephyr/boards/shields/seeed_w5500/seeed_w5500.overlay`
 plus a sample overlay: default :file:`w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
@@ -835,13 +849,25 @@ plus a sample overlay: default :file:`w5500-seeed-static-mac.overlay` (fixed loc
      cd nrf/samples/dect/dect_shell
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
 
-   * Edit ``local-mac-address`` in :file:`w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
+* With mDNS advertisement (PT discovers the sink):
 
-   * For a **random** Ethernet MAC each boot, use :file:`w5500-seeed.overlay` instead:
+  .. code-block:: console
 
-     .. code-block:: console
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
 
-        west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed.overlay"
+* Edit ``local-mac-address`` in :file:`w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
+
+* For a **random** Ethernet MAC each boot, use :file:`w5500-seeed.overlay` instead:
+
+  .. code-block:: console
+
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed.overlay"
+
+  With mDNS advertisement:
+
+  .. code-block:: console
+
+     west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed.overlay"
 
 .. _dect_shell_mdns_discover_build:
 
@@ -852,7 +878,9 @@ To build the DeSh sample with DNS-SD advertisement and the ``dect discover`` com
 
 .. code-block:: console
 
-   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=mdns-discover.conf
+   $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="mdns-common.conf;mdns-discover.conf"
+
+On an Ethernet sink that itself needs to run ``dect discover`` (as opposed to just being discovered by a PT), also merge :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf` (see the Ethernet W5500 sections above for full examples).
 
 iperf3 support
 ==============
