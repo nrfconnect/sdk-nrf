@@ -60,6 +60,7 @@ extensions = [
     "sphinxcontrib.jquery",
     "samples",
     "sphinx_sitemap",
+    "ncs_file",
 ]
 
 linkcheck_ignore = [
