@@ -4,14 +4,19 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <string.h>
+
+#include <zephyr/kernel.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
+#include <zephyr/sys/byteorder.h>
 #include <zephyr/sys/util.h>
 
 #include "ipv6.h"
-#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
 #include "route_ipv6.h"
+#endif
 #endif
 
 #include <net/dect/dect_net_l2.h>
@@ -28,17 +33,41 @@ LOG_MODULE_DECLARE(net_l2_dect, CONFIG_NET_L2_DECT_LOG_LEVEL);
 
 #define IPV6_LINK_LOCAL_PREFIX_BE32  0xfe800000
 
+/** On-link ULA on DECT: common /64 from Kconfig + 32-bit peer RD id (bits 64–95), /96. */
+#define DECT_L2_ULA_DECT_ONLINK_PLEN_BITS 96
+
 /** On-DECT delegated /64 prefix length in struct dect_net_ipv6_prefix_config::prefix (bytes). */
 #define DECT_IPV6_PREFIX_LEN_64_BYTES 8
 /** On-DECT /96-style prefix length (delegated /64 + 32-bit sink scope) in bytes. */
 #define DECT_IPV6_PREFIX_LEN_96_BYTES 12
+/** Last bytes of a 128-bit address after the /96 prefix (IID fragment from link-local). */
+#define DECT_IPV6_IID_TAIL_BYTES (NET_IPV6_ADDR_SIZE - DECT_IPV6_PREFIX_LEN_96_BYTES)
 
-#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#if defined(CONFIG_NET_L2_DECT_ULA)
+static void dect_net_l2_ipv6_ula_remove(struct net_if *iface, struct dect_net_l2_context *ctx)
+{
+	if (!ctx->ula_ipv6_configured) {
+		return;
+	}
+
+	(void)net_if_ipv6_addr_rm(iface, &ctx->ula_ipv6_addr);
+	if (ctx->ula_iface_plen_bits > 0U) {
+		(void)net_if_ipv6_prefix_rm(
+			iface, &ctx->ula_iface_prefix, ctx->ula_iface_plen_bits);
+	}
+	ctx->ula_ipv6_configured = false;
+	ctx->ula_iface_plen_bits = 0U;
+	memset(&ctx->ula_ipv6_addr, 0, sizeof(ctx->ula_ipv6_addr));
+	memset(&ctx->ula_iface_prefix, 0, sizeof(ctx->ula_iface_prefix));
+}
+#endif
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
 static void dect_net_l2_ipv6_sink_route96_normalize(const struct dect_net_ipv6_prefix_config *cfg,
 						    struct net_in6_addr *out)
 {
 	memcpy(out->s6_addr, cfg->prefix.s6_addr, DECT_IPV6_PREFIX_LEN_96_BYTES);
-	memset(out->s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, 0, 4);
+	memset(out->s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, 0, DECT_IPV6_IID_TAIL_BYTES);
 }
 
 static void dect_net_l2_ipv6_sink_route96_remove(struct net_if *dect_iface,
@@ -203,6 +232,139 @@ static void dect_net_l2_ipv6_util_nbr_remove(struct net_if *iface,
 }
 #endif
 
+#if defined(CONFIG_NET_L2_DECT_ULA)
+static bool dect_net_l2_ipv6_ula_parse_base_prefix(struct net_in6_addr *base_pfx)
+{
+	if (sizeof(CONFIG_NET_L2_DECT_ULA_PREFIX) <= 1U ||
+	    CONFIG_NET_L2_DECT_ULA_PREFIX[0] == '\0') {
+		return false;
+	}
+
+	if (net_addr_pton(AF_INET6, CONFIG_NET_L2_DECT_ULA_PREFIX, base_pfx) != 0) {
+		LOG_WRN("NET_L2_DECT_ULA_PREFIX: parse failed");
+		return false;
+	}
+
+	if (!net_ipv6_is_ula_addr(base_pfx)) {
+		LOG_WRN("NET_L2_DECT_ULA_PREFIX: not a ULA (fc00::/7)");
+		return false;
+	}
+
+	memset(base_pfx->s6_addr + 8, 0, 8);
+	return true;
+}
+#endif
+
+void dect_net_l2_ipv6_ula_sync_for_peer(struct net_if *iface,
+					const struct in6_addr *link_local_addr,
+					uint32_t peer_long_rd_id)
+{
+#if !defined(CONFIG_NET_L2_DECT_ULA)
+	ARG_UNUSED(iface);
+	ARG_UNUSED(link_local_addr);
+	ARG_UNUSED(peer_long_rd_id);
+#else /* CONFIG_NET_L2_DECT_ULA */
+	struct dect_net_l2_context *ctx = net_if_l2_data(iface);
+	struct net_in6_addr base_pfx;
+	struct net_in6_addr pfx;
+	struct in6_addr ula;
+	struct net_if_addr *ifaddr;
+	uint32_t id = peer_long_rd_id;
+
+	if (id == DECT_NET_L2_LONG_RD_ID_NOT_SET) {
+		dect_net_l2_ipv6_ula_remove(iface, ctx);
+		LOG_WRN("%s: RD id not known yet - not building a ULA", __func__);
+		return;
+	}
+
+	/* No valid base prefix configured (parse_base_prefix already warns on
+	 * misconfiguration): leave ULA removed.
+	 */
+	if (!dect_net_l2_ipv6_ula_parse_base_prefix(&base_pfx)) {
+		dect_net_l2_ipv6_ula_remove(iface, ctx);
+		return;
+	}
+
+	/* 96-bit ULA prefix: full common 64-bit prefix from Kconfig + BE32(peer)
+	 * in bytes 8–11 (e.g. fdde:ad00:0000:0000:0000:0001::/96 when peer long RD id is 1).
+	 */
+	memcpy(pfx.s6_addr, base_pfx.s6_addr, DECT_IPV6_PREFIX_LEN_64_BYTES);
+	sys_put_be32(id, pfx.s6_addr + DECT_IPV6_PREFIX_LEN_64_BYTES);
+	memset(pfx.s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, 0, DECT_IPV6_IID_TAIL_BYTES);
+
+	memcpy(ula.s6_addr, pfx.s6_addr, DECT_IPV6_PREFIX_LEN_96_BYTES);
+	memcpy(ula.s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES,
+	       link_local_addr->s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, DECT_IPV6_IID_TAIL_BYTES);
+
+	/* Same prefix + host already configured (e.g. FT gaining another child, or a sink
+	 * prefix replace that did not change the peer id): skip the remove/add flap.
+	 */
+	if (ctx->ula_ipv6_configured &&
+	    ctx->ula_iface_plen_bits == DECT_L2_ULA_DECT_ONLINK_PLEN_BITS &&
+	    memcmp(ctx->ula_iface_prefix.s6_addr, pfx.s6_addr, NET_IPV6_ADDR_SIZE) == 0 &&
+	    memcmp(ctx->ula_ipv6_addr.s6_addr, ula.s6_addr, NET_IPV6_ADDR_SIZE) == 0) {
+		return;
+	}
+
+	dect_net_l2_ipv6_ula_remove(iface, ctx);
+
+	ifaddr = net_if_ipv6_addr_add(iface, &ula, NET_ADDR_AUTOCONF, 0);
+	if (ifaddr == NULL) {
+		LOG_WRN("%s: cannot add ULA %s on DECT", __func__,
+			net_sprint_ipv6_addr(&ula));
+		return;
+	}
+	ifaddr->addr_state = NET_ADDR_PREFERRED;
+
+	if (!net_if_ipv6_prefix_add(iface, &pfx, DECT_L2_ULA_DECT_ONLINK_PLEN_BITS,
+				    NET_IPV6_ND_INFINITE_LIFETIME)) {
+		LOG_WRN("%s: cannot add ULA /%u prefix on DECT", __func__,
+			(unsigned int)DECT_L2_ULA_DECT_ONLINK_PLEN_BITS);
+		(void)net_if_ipv6_addr_rm(iface, &ula);
+		return;
+	}
+#if defined(CONFIG_NET_L2_DECT_BR)
+	if (!net_if_ipv6_prefix_add(iface, &base_pfx, DECT_IPV6_PREFIX_LEN_64_BYTES * 8,
+				    NET_IPV6_ND_INFINITE_LIFETIME)) {
+		LOG_WRN("%s: cannot add ULA /64 prefix %s on DECT", __func__,
+			net_sprint_ipv6_addr(&base_pfx));
+		(void)net_if_ipv6_prefix_rm(iface, &pfx, DECT_L2_ULA_DECT_ONLINK_PLEN_BITS);
+		(void)net_if_ipv6_addr_rm(iface, &ula);
+		return;
+	}
+#endif
+	ctx->ula_ipv6_configured = true;
+	ctx->ula_ipv6_addr = ula;
+	ctx->ula_iface_plen_bits = DECT_L2_ULA_DECT_ONLINK_PLEN_BITS;
+	net_ipv6_addr_copy_raw(ctx->ula_iface_prefix.s6_addr, pfx.s6_addr);
+	LOG_INF("DECT ULA %s (on-link /%u on iface, peer RD id %u)", net_sprint_ipv6_addr(&ula),
+		(unsigned int)DECT_L2_ULA_DECT_ONLINK_PLEN_BITS, peer_long_rd_id);
+#endif
+}
+
+#if defined(CONFIG_NET_L2_DECT_ULA)
+bool dect_net_l2_ipv6_dect_ula_onlink_prefix_get(struct net_if *dect_iface,
+						 struct net_in6_addr *pfx_out,
+						 uint8_t *prefix_len_bits_out)
+{
+	struct dect_net_l2_context *ctx;
+
+	if (dect_iface == NULL || pfx_out == NULL || prefix_len_bits_out == NULL) {
+		return false;
+	}
+
+	ctx = net_if_l2_data(dect_iface);
+	if (!ctx->ula_ipv6_configured || ctx->ula_iface_plen_bits == 0U) {
+		return false;
+	}
+
+	net_ipv6_addr_copy_raw(pfx_out->s6_addr, ctx->ula_iface_prefix.s6_addr);
+	memset(pfx_out->s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, 0, DECT_IPV6_IID_TAIL_BYTES);
+	*prefix_len_bits_out = ctx->ula_iface_plen_bits;
+	return true;
+}
+#endif /* CONFIG_NET_L2_DECT_ULA */
+
 static bool dect_net_l2_ipv6_util_link_local_addr_create_add(struct net_if *iface,
 							     struct in6_addr *link_local_addr_out)
 {
@@ -364,6 +526,10 @@ void dect_net_l2_ipv6_addressing_parent_added_handle(
 		iface, ipv6_prefix_config,
 		&ctx->global_ipv6_addr);
 
+#if defined(CONFIG_NET_L2_DECT_ULA)
+	dect_net_l2_ipv6_ula_sync_for_peer(iface, &ctx->local_ipv6_addr, parent_long_rd_id);
+#endif
+
 	/* Add parent as a neighbor and also in association list as nbr */
 #if defined(CONFIG_NET_IPV6_NBR_CACHE)
 	dect_net_l2_ipv6_util_nbr_add(iface, ipv6_prefix_config,
@@ -400,6 +566,11 @@ void dect_net_l2_ipv6_addressing_child_added_handle(
 			LOG_WRN("%s: cannot add our link local address to interface %p", (__func__),
 				iface);
 		}
+#if defined(CONFIG_NET_L2_DECT_ULA)
+		/* FT: DECT ULA /64 uses common base + our long RD id (not the child's). */
+		dect_net_l2_ipv6_ula_sync_for_peer(iface, &ctx->local_ipv6_addr,
+						   ctx->transmitter_long_rd_id);
+#endif
 		/* Update also our global address */
 		dect_net_l2_ipv6_global_addressing_replace(iface);
 	}
@@ -473,6 +644,9 @@ void dect_net_l2_ipv6_parent_addressing_removed_handle(
 		iface,
 		ass_list_item);
 #endif
+#if defined(CONFIG_NET_L2_DECT_ULA)
+	dect_net_l2_ipv6_ula_remove(iface, ctx);
+#endif
 	removed = net_if_ipv6_addr_rm(iface, &ctx->local_ipv6_addr);
 	if (!removed) {
 		LOG_WRN("%s: cannot remove our local address %s from interface %p",
@@ -534,7 +708,7 @@ void dect_net_l2_addr_util_prefix_replace(struct dect_net_l2_context *ctx,
 	__ASSERT_NO_MSG(dect_iface != NULL);
 	__ASSERT_NO_MSG(new_ipv6_prefix_config != NULL);
 
-#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
 	if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
 		dect_net_l2_ipv6_sink_route96_remove(dect_iface, &ctx->ipv6_prefix_cfg);
 	}
@@ -562,7 +736,7 @@ void dect_net_l2_addr_util_prefix_replace(struct dect_net_l2_context *ctx,
 			LOG_INF("IPv6 prefix %s/%d added to dect nr+ iface %p",
 				net_sprint_ipv6_addr(&ctx->ipv6_prefix_cfg.prefix),
 				ctx->ipv6_prefix_cfg.prefix_len * 8, dect_iface);
-#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
 			if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
 				dect_net_l2_ipv6_sink_route96_add(
 					dect_iface, &ctx->ipv6_prefix_cfg);
@@ -570,6 +744,11 @@ void dect_net_l2_addr_util_prefix_replace(struct dect_net_l2_context *ctx,
 #endif
 		}
 	}
+#if defined(CONFIG_NET_L2_DECT_ULA)
+	/* Replacing sink prefixes removes every on-net prefix, including the ULA /64. */
+	dect_net_l2_ipv6_ula_sync_for_peer(dect_iface, &ctx->local_ipv6_addr,
+					   ctx->transmitter_long_rd_id);
+#endif
 }
 
 bool dect_net_l2_ipv6_addressing_sink_changed_handle(struct net_if *iface,
@@ -595,7 +774,7 @@ bool dect_net_l2_ipv6_addressing_sink_changed_handle(struct net_if *iface,
 			net_sprint_ipv6_addr(&ctx->ipv6_prefix_cfg.prefix),
 			ctx->ipv6_prefix_cfg.prefix_len * 8, iface);
 
-#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
 		if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
 			dect_net_l2_ipv6_sink_route96_remove(iface, &ctx->ipv6_prefix_cfg);
 		}
