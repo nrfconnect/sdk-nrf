@@ -1051,6 +1051,19 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	case NRF_WIFI_UMAC_EVENT_DISCONNECT:
 		/* Nothing to be done */
 		break;
+#ifdef NRF71_RANGING
+	case NRF_WIFI_UMAC_EVENT_PEER_MEAS_RESULTS:
+		if (callbk_fns->peer_meas_results_callbk_fn) {
+			callbk_fns->peer_meas_results_callbk_fn(vif_ctx->os_vif_ctx,
+							       event_data,
+							       event_len);
+		} else {
+			nrf_wifi_osal_log_err("%s: No callback registered for event %d",
+					      __func__,
+					      umac_hdr->cmd_evnt);
+		}
+		break;
+#endif /* NRF71_RANGING */
 	case NRF_WIFI_UMAC_EVENT_GET_POWER_SAVE_INFO:
 		if (callbk_fns->event_get_ps_info) {
 			callbk_fns->event_get_ps_info(vif_ctx->os_vif_ctx,

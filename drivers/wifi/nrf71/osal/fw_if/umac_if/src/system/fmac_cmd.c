@@ -164,6 +164,31 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		umac_cmd_data->dynamic_ed = 1;
 	#endif /* NRF_WIFI_DYNAMIC_ED */
 
+#ifdef NRF71_RANGING
+	/* FTM has to be enabled here: the firmware rejects MEAS_START unless the
+	 * feature was turned on at init. The capability bits fix which roles and
+	 * which location elements the firmware advertises, and they cannot be
+	 * changed afterwards without a re-init.
+	 */
+	umac_cmd_data->ftm_loc_params.ftm_enable = 1;
+
+#ifdef NRF71_RANGING_INITIATOR
+	umac_cmd_data->ftm_loc_params.capabilities |= NRF_WIFI_FTM_INITIATOR_ENABLE;
+#endif /* NRF71_RANGING_INITIATOR */
+#ifdef NRF71_RANGING_RESPONDER
+	umac_cmd_data->ftm_loc_params.capabilities |= NRF_WIFI_FTM_RESPONDER_ENABLE;
+#endif /* NRF71_RANGING_RESPONDER */
+#ifdef NRF71_RANGING_LCI
+	umac_cmd_data->ftm_loc_params.capabilities |= NRF_WIFI_LCI_ENABLE;
+#endif /* NRF71_RANGING_LCI */
+#ifdef NRF71_RANGING_CIVIC
+	umac_cmd_data->ftm_loc_params.capabilities |= NRF_WIFI_CIVILOC_ENABLE;
+#endif /* NRF71_RANGING_CIVIC */
+
+	nrf_wifi_osal_log_dbg("FTM enabled, capabilities 0x%x",
+			      umac_cmd_data->ftm_loc_params.capabilities);
+#endif /* NRF71_RANGING */
+
 	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
 					    umac_cmd,
 					    (sizeof(*umac_cmd) + len));

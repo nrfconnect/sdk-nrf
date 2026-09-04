@@ -172,6 +172,20 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 	status = NRF_WIFI_STATUS_SUCCESS;
 }
 
+#ifdef CONFIG_WIFI_MGMT_RANGING
+void nrf_wifi_ranging_timeout_work(struct k_work *work)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
+
+	vif_ctx_zep = CONTAINER_OF(work, struct nrf_wifi_vif_ctx_zep,
+				   ranging_timeout_work.work);
+
+	LOG_INF("%s: Ranging session timed out", __func__);
+
+	nrf_wifi_ranging_session_close(vif_ctx_zep, -ETIMEDOUT);
+}
+#endif /* CONFIG_WIFI_MGMT_RANGING */
+
 static void nrf_wifi_scan_timeout_work(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -811,6 +825,9 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	.filter = nrf_wifi_filter,
 #endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#ifdef CONFIG_WIFI_MGMT_RANGING
+	.ranging_get_caps = nrf_wifi_ranging_get_caps,
+#endif /* CONFIG_WIFI_MGMT_RANGING */
 };
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 

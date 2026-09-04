@@ -89,4 +89,13 @@ int nrf_wifi_get_rts_threshold(const struct device *dev,
 int nrf_wifi_set_bss_max_idle_period(const struct device *dev,
 				     struct net_if *iface,
 				     unsigned short bss_max_idle_period);
+
+#ifdef CONFIG_WIFI_MGMT_RANGING
+int nrf_wifi_ranging_get_caps(const struct device *dev,
+			      struct wifi_ranging_caps *caps);
+
+void nrf_wifi_ranging_session_close(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
+				    int status);
+#endif /* CONFIG_WIFI_MGMT_RANGING */
+
 #endif /*  __ZEPHYR_WIFI_MGMT_H__ */

@@ -3846,3 +3846,80 @@ out:
 	return status;
 }
 #endif /*NRF_WIFI_RX_BUFF_PROG_UMAC */
+
+#ifdef NRF71_RANGING
+enum nrf_wifi_status nrf_wifi_sys_fmac_ranging_start(void *dev_ctx,
+					    unsigned char if_idx,
+					    unsigned long long host_cookie,
+					    struct nrf_wifi_umac_meas_req_info *meas_req_info)
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	struct nrf_wifi_umac_cmd_meas_start *meas_cmd = NULL;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+
+	if (!dev_ctx || !meas_req_info) {
+		nrf_wifi_osal_log_err("%s: Invalid parameters",
+				      __func__);
+		goto out;
+	}
+
+	fmac_dev_ctx = dev_ctx;
+
+	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
+		nrf_wifi_osal_log_err("%s: Invalid op mode",
+				      __func__);
+		goto out;
+	}
+
+	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	if (!sys_dev_ctx) {
+		nrf_wifi_osal_log_err("%s: Invalid device context",
+				      __func__);
+		goto out;
+	}
+
+	/* The peer requests travel in a fixed-size array, so a count beyond
+	 * MAX_NUM_PEERS cannot be expressed in the command at all.
+	 */
+	if (!meas_req_info->n_peers ||
+	    (meas_req_info->n_peers > MAX_NUM_PEERS)) {
+		nrf_wifi_osal_log_err("%s: Invalid peer count %u (max %d)",
+				      __func__,
+				      meas_req_info->n_peers,
+				      MAX_NUM_PEERS);
+		goto out;
+	}
+
+	meas_cmd = nrf_wifi_osal_mem_zalloc(sizeof(*meas_cmd));
+
+	if (!meas_cmd) {
+		nrf_wifi_osal_log_err("%s: Unable to allocate memory",
+				      __func__);
+		goto out;
+	}
+
+	meas_cmd->umac_hdr.cmd_evnt = NRF_WIFI_UMAC_CMD_MEAS_START;
+	meas_cmd->umac_hdr.ids.wdev_id = if_idx;
+	meas_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
+
+	/* Echoed back as cookie_id in NRF_WIFI_UMAC_EVENT_PEER_MEAS_RESULTS,
+	 * so the host can match results to the session that asked for them.
+	 */
+	meas_cmd->host_cookie = host_cookie;
+
+	nrf_wifi_osal_mem_cpy(&meas_cmd->info,
+			      meas_req_info,
+			      sizeof(meas_cmd->info));
+
+	status = umac_cmd_cfg(fmac_dev_ctx,
+			      meas_cmd,
+			      sizeof(*meas_cmd));
+out:
+	if (meas_cmd) {
+		nrf_wifi_osal_mem_free(meas_cmd);
+	}
+
+	return status;
+}
+#endif /* NRF71_RANGING */

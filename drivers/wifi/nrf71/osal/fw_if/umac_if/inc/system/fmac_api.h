@@ -870,6 +870,37 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_twt_teardown(void *fmac_dev_ctx,
 enum nrf_wifi_status nrf_wifi_sys_fmac_get_conn_info(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
+#if defined(NRF71_RANGING) || defined(__DOXYGEN__)
+/**
+ * @brief Start an FTM ranging session with one or more peers.
+ * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param if_idx Index of the interface on which the session is to be run.
+ * @param host_cookie Identifier echoed back as the cookie_id of the
+ *		      NRF_WIFI_UMAC_EVENT_PEER_MEAS_RESULTS event, allowing the
+ *		      host to match results to the session that requested them.
+ * @param meas_req_info Measurement request parameters, @ref
+ *			nrf_wifi_umac_meas_req_info. Must describe between 1 and
+ *			MAX_NUM_PEERS peers.
+ *
+ * This function is used to send a command to instruct the RPU firmware to run
+ * an FTM measurement exchange against the peers described in \p meas_req_info.
+ * The command completes as soon as the request is accepted; the measurement
+ * results arrive asynchronously through the peer_meas_results_callbk_fn
+ * callback. There is no command to abort a session once it has started, so the
+ * caller must be prepared to receive results for a session it has abandoned.
+ *
+ * The contents of \p meas_req_info are copied into the command, so the caller
+ * may free or reuse it once this function returns.
+ *
+ *@retval	NRF_WIFI_STATUS_SUCCESS On success
+ *@retval	NRF_WIFI_STATUS_FAIL On failure to execute command
+ */
+enum nrf_wifi_status nrf_wifi_sys_fmac_ranging_start(void *fmac_dev_ctx,
+						unsigned char if_idx,
+						unsigned long long host_cookie,
+						struct nrf_wifi_umac_meas_req_info *meas_req_info);
+#endif /* NRF71_RANGING */
+
 /**
  * @brief Adds a RPU instance.
  * @param fpriv Pointer to the context of the UMAC IF layer.

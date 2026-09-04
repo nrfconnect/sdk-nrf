@@ -56,6 +56,15 @@ struct nrf_wifi_vif_ctx_zep {
 	struct k_work_delayable scan_timeout_work;
 	struct k_work disp_scan_res_work;
 
+#ifdef CONFIG_WIFI_MGMT_RANGING
+	wifi_ranging_result_cb_t ranging_cb;
+	uint32_t ranging_session_id;
+	uint8_t ranging_num_peers;
+	uint8_t ranging_res_cnt;
+	bool ranging_in_progress;
+	struct k_work_delayable ranging_timeout_work;
+#endif /* CONFIG_WIFI_MGMT_RANGING */
+
 	struct net_eth_addr mac_addr;
 	int if_type;
 	char ifname[16];
@@ -161,6 +170,10 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		void *event_data,
 		unsigned int event_len);
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+
+#ifdef CONFIG_WIFI_MGMT_RANGING
+void nrf_wifi_ranging_timeout_work(struct k_work *work);
+#endif /* CONFIG_WIFI_MGMT_RANGING */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);

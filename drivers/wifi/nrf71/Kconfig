@@ -858,4 +858,62 @@ config NRF_WIFI_CMD_EVENT_LOG
 	help
 	  When enabled, log HAL command/events (debug only).
 
+config NRF71_RANGING
+	bool "Ranging/location (FTM) support in the nRF71 driver"
+	depends on WIFI_MGMT_RANGING
+	help
+	  Enable the FTM ranging/location glue in the nRF71 driver. Maps the
+	  generic wifi_mgmt ranging ops onto the UMAC MEAS_START/PEER_MEAS_RESULTS
+	  contract.
+if NRF71_RANGING
+# Boot-time FTM feature enables -> struct nrf_wifi_ftm_loc_params @ INIT
+config NRF71_RANGING_INITIATOR
+	bool "Enable FTM initiator role at init"
+	default y
+config NRF71_RANGING_RESPONDER
+	bool "Enable FTM responder role at init"
+config NRF71_RANGING_LCI
+	bool "Enable LCI reporting at init"
+	default y
+config NRF71_RANGING_CIVIC
+	bool "Enable civic location reporting at init"
+config NRF71_RANGING_MAX_PEERS
+	int "Maximum peers per session (firmware limit)"
+	default 4
+	range 1 4
+	help
+	  Hardware/firmware ceiling for peers in one MEAS_START. Do not raise
+	  above the firmware limit (currently 4).
+# Per-peer defaults, applied when the app leaves the tuning field zero
+config NRF71_RANGING_DEF_BURSTS_EXP
+	int "Default bursts exponent (0 = no preference)"
+	default 0
+config NRF71_RANGING_DEF_FTMS_PER_BURST
+	int "Default measurements per burst"
+	default 4
+config NRF71_RANGING_DEF_BURST_DURATION
+	int "Default burst duration (Table 9-257 encoding, 0 = no preference)"
+	default 0
+config NRF71_RANGING_DEF_BURST_PERIOD
+	int "Default inter-burst period (units of 100 ms, 0 = no preference)"
+	default 0
+config NRF71_RANGING_DEF_LTF_REPS
+	int "Default HE-LTF repetitions for 802.11az (ignored for 11mc)"
+	default 3
+	help
+	  Used only when an 802.11az mode is selected and the app leaves
+	  tuning.ltf_reps zero. Kept here rather than hardcoded so it can be
+	  tuned once 802.11az is enabled.
+# LMAC timing trims -> struct lmac_tuning_params via LMAC_TUNING_PARAMS
+config NRF71_RANGING_FTM_DELAY
+	int "FTM delay trim"
+	default 0
+config NRF71_RANGING_TOD_OFFSET
+	int "Time-of-departure offset trim"
+	default 0
+config NRF71_RANGING_TOA_OFFSET
+	int "Time-of-arrival offset trim"
+	default 0
+endif # NRF71_RANGING
+
 endif # WIFI_NRF71
