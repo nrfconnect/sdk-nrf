@@ -287,7 +287,9 @@
 /doc/nrf/samples/wifi_radiotest.rst       @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_provisioning.rst    @nrfconnect/ncs-wifi-doc
 /doc/nrf/samples/wifi_zephyr.rst          @nrfconnect/ncs-wifi-doc
+/doc/nrf/samples/zephyr_nordic_boards.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/samples/zigbee.rst               @nrfconnect/ncs-terahertz-doc
+/scripts/doc/gen_zephyr_nordic_sample_boards.py @nrfconnect/ncs-doc-leads
 /doc/nrf/security/                        @nrfconnect/ncs-aegir-doc
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
