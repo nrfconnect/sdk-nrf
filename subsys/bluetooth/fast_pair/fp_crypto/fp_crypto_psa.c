@@ -5,10 +5,15 @@
  */
 
 #include <errno.h>
+#include <string.h>
 #include <zephyr/init.h>
 #include <psa/crypto.h>
+#if defined(CONFIG_PSA_EXT_ECC_SECP_R1_160)
+#include <psa/psa_ext_ecc.h>
+#endif
 
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(fp_crypto, CONFIG_FP_CRYPTO_LOG_LEVEL);
 
@@ -101,10 +106,8 @@ int fp_crypto_hmac_sha256(uint8_t *out, const uint8_t *in, size_t data_len, cons
 	return err;
 }
 
-static psa_key_id_t import_aes128_key(const uint8_t *data)
+static psa_key_id_t import_aes_key(const uint8_t *data, size_t len)
 {
-	static const size_t len = FP_CRYPTO_AES128_KEY_LEN;
-
 	psa_status_t status;
 	psa_key_id_t key_id = PSA_KEY_ID_NULL;
 	psa_key_attributes_t key_attr = PSA_KEY_ATTRIBUTES_INIT;
@@ -126,20 +129,18 @@ static psa_key_id_t import_aes128_key(const uint8_t *data)
 	return key_id;
 }
 
-static int fp_crypto_psa_aes128_ecb_crypt(uint8_t *out, const uint8_t *in, psa_key_id_t key_id,
-					  bool encrypt)
+static int fp_crypto_psa_aes_ecb_crypt(uint8_t *out, const uint8_t *in, size_t data_len,
+				       psa_key_id_t key_id, bool encrypt)
 {
 	size_t olen = 0;
 	psa_status_t status;
 
 	if (encrypt) {
-		status = psa_cipher_encrypt(key_id, PSA_ALG_ECB_NO_PADDING,
-					    in, FP_CRYPTO_AES128_BLOCK_LEN,
-					    out, FP_CRYPTO_AES128_BLOCK_LEN, &olen);
+		status = psa_cipher_encrypt(key_id, PSA_ALG_ECB_NO_PADDING, in, data_len,
+					    out, data_len, &olen);
 	} else {
-		status = psa_cipher_decrypt(key_id, PSA_ALG_ECB_NO_PADDING,
-					    in, FP_CRYPTO_AES128_BLOCK_LEN,
-					    out, FP_CRYPTO_AES128_BLOCK_LEN, &olen);
+		status = psa_cipher_decrypt(key_id, PSA_ALG_ECB_NO_PADDING, in, data_len,
+					    out, data_len, &olen);
 	}
 
 	if (status != PSA_SUCCESS) {
@@ -147,7 +148,7 @@ static int fp_crypto_psa_aes128_ecb_crypt(uint8_t *out, const uint8_t *in, psa_k
 		return -EIO;
 	}
 
-	if (olen != FP_CRYPTO_AES128_BLOCK_LEN) {
+	if (olen != data_len) {
 		LOG_ERR("Invalid psa_cipher_%scrypt output length: %zu",
 			encrypt ? "en" : "de", olen);
 		return -EIO;
@@ -156,20 +157,20 @@ static int fp_crypto_psa_aes128_ecb_crypt(uint8_t *out, const uint8_t *in, psa_k
 	return 0;
 }
 
-static int fp_crypto_aes128_ecb_crypt(uint8_t *out, const uint8_t *in, const uint8_t *k,
-				      bool encrypt)
+static int fp_crypto_aes_ecb_crypt(uint8_t *out, const uint8_t *in, size_t data_len,
+				   const uint8_t *k, size_t key_len, bool encrypt)
 {
 	int err = 0;
 	psa_key_id_t key_id;
 	psa_status_t status;
 
-	key_id = import_aes128_key(k);
+	key_id = import_aes_key(k, key_len);
 	if (key_id == PSA_KEY_ID_NULL) {
-		LOG_ERR("import_aes128_key failed");
+		LOG_ERR("import_aes_key failed");
 		return -EIO;
 	}
 
-	err = fp_crypto_psa_aes128_ecb_crypt(out, in, key_id, encrypt);
+	err = fp_crypto_psa_aes_ecb_crypt(out, in, data_len, key_id, encrypt);
 
 	status = psa_destroy_key(key_id);
 	if (status != PSA_SUCCESS) {
@@ -183,12 +184,26 @@ static int fp_crypto_aes128_ecb_crypt(uint8_t *out, const uint8_t *in, const uin
 
 int fp_crypto_aes128_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
-	return fp_crypto_aes128_ecb_crypt(out, in, k, true);
+	return fp_crypto_aes_ecb_crypt(out, in, FP_CRYPTO_AES128_BLOCK_LEN, k,
+				       FP_CRYPTO_AES128_KEY_LEN, true);
 }
 
 int fp_crypto_aes128_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
 {
-	return fp_crypto_aes128_ecb_crypt(out, in, k, false);
+	return fp_crypto_aes_ecb_crypt(out, in, FP_CRYPTO_AES128_BLOCK_LEN, k,
+				       FP_CRYPTO_AES128_KEY_LEN, false);
+}
+
+int fp_crypto_aes256_ecb_encrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+{
+	return fp_crypto_aes_ecb_crypt(out, in, FP_CRYPTO_AES256_BLOCK_LEN, k,
+				       FP_CRYPTO_AES256_KEY_LEN, true);
+}
+
+int fp_crypto_aes256_ecb_decrypt(uint8_t *out, const uint8_t *in, const uint8_t *k)
+{
+	return fp_crypto_aes_ecb_crypt(out, in, FP_CRYPTO_AES256_BLOCK_LEN, k,
+				       FP_CRYPTO_AES256_KEY_LEN, false);
 }
 
 static psa_key_id_t import_ecdh_priv_key(const uint8_t *data)
@@ -272,6 +287,52 @@ int fp_crypto_ecdh_shared_secret(uint8_t *secret_key, const uint8_t *public_key,
 
 	return err;
 }
+
+#if defined(CONFIG_PSA_EXT_ECC_SECP_R1_160)
+int fp_crypto_ecc_secp160r1_calculate(uint8_t *out,
+				      uint8_t *mod,
+				      const uint8_t *in,
+				      size_t datalen)
+{
+	/* The reduced scalar needs 21 bytes: the secp160r1 group order is 161
+	 * bits wide, so (in mod n) does not always fit the 160-bit curve size.
+	 */
+	uint8_t scalar[PSA_EXT_ECC_SECP160R1_SCALAR_SIZE];
+	psa_status_t status;
+
+	BUILD_ASSERT(FP_CRYPTO_ECC_SECP160R1_KEY_LEN == PSA_EXT_ECC_SECP160R1_COORD_SIZE);
+	BUILD_ASSERT(FP_CRYPTO_ECC_SECP160R1_MOD_LEN < PSA_EXT_ECC_SECP160R1_SCALAR_SIZE);
+
+	status = psa_ext_ecc_secp160r1_scalar_reduce(in, datalen, scalar, sizeof(scalar));
+	if (status == PSA_ERROR_INVALID_ARGUMENT) {
+		/* Preserve the -ENOTSUP that the API documents for a bad input
+		 * length, so callers see the same error as on other backends.
+		 */
+		LOG_ERR("Unsupported secp160r1 input length: %zu", datalen);
+		return -ENOTSUP;
+	}
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("psa_ext_ecc_secp160r1_scalar_reduce failed (err: %d)", status);
+		return -EIO;
+	}
+
+	/* The Fast Pair API reports the reduction truncated to the curve size,
+	 * dropping bit 160. The scalar fed to the multiplication is the
+	 * untruncated value.
+	 */
+	memcpy(mod, &scalar[PSA_EXT_ECC_SECP160R1_SCALAR_SIZE - FP_CRYPTO_ECC_SECP160R1_MOD_LEN],
+	       FP_CRYPTO_ECC_SECP160R1_MOD_LEN);
+
+	status = psa_ext_ecc_secp160r1_scalar_mult_base(scalar, sizeof(scalar), out,
+							FP_CRYPTO_ECC_SECP160R1_KEY_LEN);
+	if (status != PSA_SUCCESS) {
+		LOG_ERR("psa_ext_ecc_secp160r1_scalar_mult_base failed (err: %d)", status);
+		return -EIO;
+	}
+
+	return 0;
+}
+#endif /* CONFIG_PSA_EXT_ECC_SECP_R1_160 */
 
 static int fp_crypto_psa_init(void)
 {
