@@ -14,6 +14,7 @@
 #include <cracen_psa_ikg.h>
 #include <internal/ecc/cracen_ecc_key_management.h>
 #include <internal/ml_dsa/cracen_ml_dsa_key_management.h>
+#include <internal/ml_kem/cracen_ml_kem_key_management.h>
 #include <internal/rsa/cracen_rsa_key_management.h>
 #include <internal/pake/cracen_wpa3_key_management.h>
 #include <internal/pake/cracen_spake2p_key_management.h>
@@ -82,6 +83,19 @@ psa_status_t cracen_export_public_key(const psa_key_attributes_t *attributes,
 	    key_type == PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY) {
 		return cracen_export_ml_dsa_public_key(key_buffer, key_buffer_size, data, data_size,
 						       data_length);
+	}
+
+	if (key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR &&
+	    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT)) {
+		return cracen_export_ml_kem_public_key_from_keypair(attributes,
+								    key_buffer, key_buffer_size,
+								    data, data_size, data_length);
+	} else if (key_type == PSA_KEY_TYPE_ML_KEM_PUBLIC_KEY &&
+		   IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_PUBLIC_KEY)) {
+		return cracen_export_ml_kem_public_key(attributes, key_buffer, key_buffer_size,
+						       data, data_size, data_length);
+	} else {
+		/* For compliance */
 	}
 
 	return PSA_ERROR_NOT_SUPPORTED;
@@ -189,6 +203,19 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_PUBLIC_KEY) &&
 	    key_type == PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY) {
 		return cracen_import_ml_dsa_public_key(attributes, data, data_length,
+						       key_buffer, key_buffer_size,
+						       key_buffer_length, key_bits);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT) &&
+	    key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR) {
+		return cracen_import_ml_kem_private_key(attributes, data, data_length, key_buffer,
+						key_buffer_size, key_buffer_length, key_bits);
+	}
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_PUBLIC_KEY) &&
+	    key_type == PSA_KEY_TYPE_ML_KEM_PUBLIC_KEY) {
+		return cracen_import_ml_kem_public_key(attributes, data, data_length,
 						       key_buffer, key_buffer_size,
 						       key_buffer_length, key_bits);
 	}
@@ -395,6 +422,12 @@ psa_status_t cracen_export_key(const psa_key_attributes_t *attributes, const uin
 	 */
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	psa_ecc_family_t ecc_fam = PSA_KEY_TYPE_ECC_GET_FAMILY(key_type);
+
+	if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT) &&
+	    key_type == PSA_KEY_TYPE_ML_KEM_KEY_PAIR) {
+		return cracen_export_ml_kem_key(attributes, key_buffer, key_buffer_size,
+						data, data_size, data_length);
+	}
 
 	if (ecc_fam == PSA_ECC_FAMILY_TWISTED_EDWARDS ||
 	    ecc_fam == PSA_ECC_FAMILY_MONTGOMERY ||

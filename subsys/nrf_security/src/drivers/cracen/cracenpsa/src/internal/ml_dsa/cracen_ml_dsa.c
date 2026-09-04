@@ -11,8 +11,8 @@
 #include "cracen_ml_dsa_rounding.h"
 #include "cracen_ml_dsa_sampling.h"
 
-#include <cracen_psa_xof.h>
-#include <cracen_psa_primitives.h>
+#include <internal/pqc/cracen_pqc_bits.h>
+#include <internal/pqc/cracen_pqc_xof.h>
 #include <cracen/common.h>
 #include <nrf_security_mem_helpers.h>
 
@@ -101,24 +101,16 @@ static size_t calc_vector_sz_bytes(uint32_t bit_len)
 /* SHAKE256 of a single buffer (the H function of FIPS 204 with a fixed length). */
 static psa_status_t shake256_digest(const uint8_t *in, size_t in_len, uint8_t *out, size_t out_len)
 {
-	cracen_xof_operation_t operation;
-	psa_status_t status;
+	const uint8_t *const data_chunks[] = {in};
+	const size_t data_chunk_lengths[]  = {in_len};
 
-	status = cracen_xof_setup(&operation, PSA_ALG_SHAKE256);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+	_Static_assert(ARRAY_SIZE(data_chunks) == ARRAY_SIZE(data_chunk_lengths),
+		       "XOF data chunks count does not match with the number "
+		       "of their respective lengths");
 
-	status = cracen_xof_update(&operation, in, in_len);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
-	status = cracen_xof_output(&operation, out, out_len);
-
-exit:
-	(void)cracen_xof_abort(&operation);
-	return status;
+	return cracen_pqc_xof_compute(PSA_ALG_SHAKE256,
+				      data_chunks, data_chunk_lengths, ARRAY_SIZE(data_chunks),
+				      out, out_len);
 }
 
 /** FIPS 204, Algorithm 23 (pkDecode): split public key pk into seed (rho)
@@ -165,7 +157,7 @@ static bool sig_decode(const ml_dsa_params_t *alg_params, const uint8_t *sig,
 	 *  (see FIPS 204, Alg. 17).
 	 */
 	signers_response_sz =
-		calc_vector_sz_bytes(cracen_ml_dsa_bit_length(2u * alg_params->gamma1 - 1u));
+		calc_vector_sz_bytes(cracen_pqc_bit_length(2u * alg_params->gamma1 - 1u));
 
 	/* signature = signers_commitment_hash || signers_response_packed || hint_packed */
 	*signers_commitment_hash = sig;
@@ -226,54 +218,34 @@ static psa_status_t compute_msg_representative(const uint8_t *pk_digest, uint8_t
 					       const uint8_t *msg, size_t msg_len,
 					       uint8_t *msg_representative)
 {
-	cracen_xof_operation_t operation;
-	psa_status_t status;
 	uint8_t prefix[2];
 
 	prefix[0] = domain;
 	prefix[1] = (uint8_t)ctx_len;
 
-	status = cracen_xof_setup(&operation, PSA_ALG_SHAKE256);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+	const uint8_t *const data_chunks[] = {
+		pk_digest,
+		prefix,
+		ctx,
+		oid,
+		msg
+	};
 
-	status = cracen_xof_update(&operation, pk_digest, ML_DSA_PK_DIGEST_SZ_BYTES);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
+	const size_t data_chunk_lengths[] = {
+		ML_DSA_PK_DIGEST_SZ_BYTES,
+		sizeof(prefix),
+		ctx_len,
+		oid_len,
+		msg_len
+	};
 
-	status = cracen_xof_update(&operation, prefix, sizeof(prefix));
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
+	_Static_assert(ARRAY_SIZE(data_chunks) == ARRAY_SIZE(data_chunk_lengths),
+		       "XOF data chunks count does not match with the number "
+		       "of their respective lengths");
 
-	if (ctx_len > 0) {
-		status = cracen_xof_update(&operation, ctx, ctx_len);
-		if (status != PSA_SUCCESS) {
-			goto exit;
-		}
-	}
-
-	if (oid_len > 0) {
-		status = cracen_xof_update(&operation, oid, oid_len);
-		if (status != PSA_SUCCESS) {
-			goto exit;
-		}
-	}
-
-	if (msg_len > 0) {
-		status = cracen_xof_update(&operation, msg, msg_len);
-		if (status != PSA_SUCCESS) {
-			goto exit;
-		}
-	}
-
-	status = cracen_xof_output(&operation, msg_representative, ML_DSA_MSG_RPZTV_SZ_BYTES);
-
-exit:
-	(void)cracen_xof_abort(&operation);
-	return status;
+	return cracen_pqc_xof_compute(PSA_ALG_SHAKE256,
+				      data_chunks, data_chunk_lengths, ARRAY_SIZE(data_chunks),
+				      msg_representative, ML_DSA_MSG_RPZTV_SZ_BYTES);
 }
 
 /* FIPS 204, Algorithm 8, line 8 combined with w1Encode (Algorithm 28):
@@ -367,29 +339,23 @@ static psa_status_t compute_commitment_hash(const uint8_t *msg_representative,
 					    const uint8_t *commitment, size_t commitment_len,
 					    uint8_t *commitment_hash, size_t commitment_hash_len)
 {
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	cracen_xof_operation_t operation;
+	const uint8_t *const data_chunks[] = {
+		msg_representative,
+		commitment
+	};
 
-	status = cracen_xof_setup(&operation, PSA_ALG_SHAKE256);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
+	const size_t data_chunk_lengths[] = {
+		ML_DSA_MSG_RPZTV_SZ_BYTES,
+		commitment_len
+	};
 
-	status = cracen_xof_update(&operation, msg_representative, ML_DSA_MSG_RPZTV_SZ_BYTES);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
+	_Static_assert(ARRAY_SIZE(data_chunks) == ARRAY_SIZE(data_chunk_lengths),
+		       "XOF data chunks count does not match with the number "
+		       "of their respective lengths");
 
-	status = cracen_xof_update(&operation, commitment, commitment_len);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
-	status = cracen_xof_output(&operation, commitment_hash, commitment_hash_len);
-
-exit:
-	(void)cracen_xof_abort(&operation);
-	return status;
+	return cracen_pqc_xof_compute(PSA_ALG_SHAKE256,
+				      data_chunks, data_chunk_lengths, ARRAY_SIZE(data_chunks),
+				      commitment_hash, commitment_hash_len);
 }
 
 /* FIPS 204, Algorithm 8 (ML-DSA.Verify_internal). The message representative is
@@ -423,7 +389,7 @@ static psa_status_t ml_dsa_verify_internal(const ml_dsa_params_t *alg_params, co
 	/* c_tilde_prime */
 	uint8_t commitment_hash[ML_DSA_C_TILDE_MAX_BYTES];
 	size_t commitment_sz_bytes =
-		calc_vector_sz_bytes(cracen_ml_dsa_bit_length(alg_params->w1_max));
+		calc_vector_sz_bytes(cracen_pqc_bit_length(alg_params->w1_max));
 	int hash_cmp_res;
 
 	pk_decode(alg_params, pk, seed, pk_polynomial);

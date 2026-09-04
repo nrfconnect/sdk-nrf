@@ -97,15 +97,4 @@ typedef struct ml_dsa_params_s ml_dsa_params_t;
  */
 const ml_dsa_params_t *cracen_ml_dsa_params_get(size_t bits);
 
-/**
- * @brief Computes the bit length of a positive integer x
- *	  (see bitlen - FIPS 204, Section 2.3).
- *
- * @param[in] x Positive integer.
- *
- * @return The number of digits that would appear in a base-2 representation of x,
- *	   where the most significant digit in the representation is assumed to be a 1.
- */
-uint32_t cracen_ml_dsa_bit_length(uint32_t x);
-
 #endif /* CRACEN_ML_DSA_INTERNAL_H */
