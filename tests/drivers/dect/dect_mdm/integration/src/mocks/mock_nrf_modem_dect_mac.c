@@ -75,7 +75,8 @@ static void async_callback_timer_handler(struct k_timer *timer)
 }
 
 /* Helper function to simulate asynchronous callback with timer-based delay */
-void simulate_async_callback(void (*callback_func)(void *), void *params)
+static void simulate_async_callback_impl(void (*callback_func)(void *), void *params,
+					   size_t param_size)
 {
 	/* Use dynamic memory allocation to avoid static variable conflicts */
 	struct async_callback_work_item *work_item =
@@ -83,44 +84,23 @@ void simulate_async_callback(void (*callback_func)(void *), void *params)
 	struct k_timer *async_timer = k_malloc(sizeof(struct k_timer));
 
 	if (callback_func && params && work_item && async_timer) {
-		/* Store callback and params for timer handler */
 		work_item->callback_func = callback_func;
 
-		/* Copy parameters to our buffer - use actual size for capability_ntf or max size */
-		size_t param_size;
-
-		if (callback_func == (void (*)(void *))mock_ntf_callbacks.capability_ntf) {
-			/* capability_ntf_cb_params is larger, use sizeof */
-			param_size = sizeof(struct nrf_modem_dect_mac_capability_ntf_cb_params);
-		} else if (callback_func == (void (*)(void *))mock_op_callbacks.cluster_info) {
-			param_size = sizeof(struct nrf_modem_dect_mac_cluster_info_cb_params);
-		} else if (callback_func ==
-			   (void (*)(void *))mock_op_callbacks.association_release) {
-			param_size =
-				sizeof(struct nrf_modem_dect_mac_association_release_cb_params);
-		} else {
-			/* Default size for other callback parameter structures */
-			param_size = 64;
-		}
-
-		if (param_size <= sizeof(work_item->param_data)) {
-			memcpy(work_item->param_data, params, param_size);
-			work_item->params = (void *)work_item->param_data;
-
-			/* Initialize timer with work item as user data */
-			k_timer_init(async_timer, async_callback_timer_handler, NULL);
-			k_timer_user_data_set(async_timer, work_item);
-
-			/* Schedule callback execution after short delay to simulate async behavior
-			 */
-			k_timer_start(async_timer, K_MSEC(5), K_NO_WAIT);
-		} else {
-			/* Cleanup on parameter size error */
+		if (param_size > sizeof(work_item->param_data)) {
+			LOG_ERR("MOCK: async cb param size %zu exceeds buffer %zu",
+				param_size, sizeof(work_item->param_data));
 			k_free(work_item);
 			k_free(async_timer);
+			return;
 		}
+
+		memcpy(work_item->param_data, params, param_size);
+		work_item->params = (void *)work_item->param_data;
+
+		k_timer_init(async_timer, async_callback_timer_handler, NULL);
+		k_timer_user_data_set(async_timer, work_item);
+		k_timer_start(async_timer, K_MSEC(5), K_NO_WAIT);
 	} else {
-		/* Cleanup on allocation failure */
 		if (!work_item || !async_timer) {
 			LOG_ERR("MOCK: Failed to allocate memory for async callback simulation");
 		}
@@ -132,6 +112,9 @@ void simulate_async_callback(void (*callback_func)(void *), void *params)
 		}
 	}
 }
+
+#define simulate_async_callback(cb, params) \
+	simulate_async_callback_impl((void (*)(void *))(cb), (params), sizeof(*(params)))
 
 /* Note: We don't access driver semaphores directly - the driver's own callbacks handle that */
 

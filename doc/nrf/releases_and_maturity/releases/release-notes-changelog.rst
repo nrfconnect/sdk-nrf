@@ -201,6 +201,8 @@ DECT NR+
 
 * Fixed the DLC TX transaction ID wrap on retry and made the cluster RACH response window length configurable through ``dect sett``.
 
+* Added DECT NR+ L2 Ethernet sink mode for IPv6 bridging over an Ethernet uplink: delegated /96 prefix and ULA on DECT NR+, ND proxy on behalf of associated PT devices, optional DHCPv6 client, and upstream routing via the default router link-local address.
+
 Enhanced ShockBurst (ESB)
 -------------------------
 
@@ -462,6 +464,8 @@ DECT NR+ samples
 
   * Configurable auto-connect with L4-driven trigger.
   * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
+  * Ethernet border-router sink variant using a W5500 shield (``arceli_eth_w5500`` or ``seeed_w5500``), with configuration and devicetree overlays for modem shared memory, static or random MAC, and optional DHCPv6.
+  * Shared mDNS configuration overlay (:file:`mdns-common.conf`) and Ethernet mDNS overlay (:file:`eth_mdns.conf`) for DNS-SD on both ``dect0`` and ``eth0``.
 
 * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
 * Fixed the routing logs.
