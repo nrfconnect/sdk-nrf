@@ -921,7 +921,7 @@ Additions specific to |NCS|
 
 The following list contains |NCS| specific additions:
 
-* Added support for the |NCS|'s :ref:`partition_manager`, which can be used for flash partitioning.
+* Added support for the |NCS|'s Partition Manager, which can be used for flash partitioning.
 * Added the following network socket and address extensions to the :ref:`zephyr:bsd_sockets_interface` interface to support the functionality provided by the BSD library:
 
   * AF_LTE family.

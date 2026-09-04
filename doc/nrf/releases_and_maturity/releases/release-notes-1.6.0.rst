@@ -583,7 +583,7 @@ In addition to documentation related to the changes listed above, the following 
    * ``Immutable bootloader`` references have been changed to ``|NSIB|``.
 
 * Multi-image builds - Added more information regarding child image usage, configuration options, and image-specific variables.
-* :ref:`partition_manager` - Added section about partition reports.
+* Partition Manager - Added section about partition reports.
 * :ref:`ug_tfm` - Added references to new crypto samples that utilize TF-M and information about the TF-M minimal build.
 * :ref:`ug_thread` - The following sections were added or changed considerably:
 

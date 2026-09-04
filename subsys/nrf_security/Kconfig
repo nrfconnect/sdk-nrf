@@ -4,27 +4,30 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menu "nRF Security"
-
 config PSA_CRYPTO
 	default y if DT_HAS_ZEPHYR_PSA_CRYPTO_RNG_ENABLED \
 		&& !IS_BOOTLOADER_IMG && GEN_ISR_TABLES
 
 choice PSA_CRYPTO_PROVIDER
+	default PSA_CRYPTO_PROVIDER_SSF if HAS_IRONSIDE_SE_CALL
 	default PSA_CRYPTO_PROVIDER_CUSTOM if SOC_FAMILY_NORDIC_NRF && ARM
-endchoice
+
+config PSA_CRYPTO_PROVIDER_SSF
+	bool "SDFW Service Framework (SSF)"
+	depends on HAS_IRONSIDE_SE_CALL
+
+endchoice # PSA_CRYPTO_PROVIDER
 
 config PSA_CRYPTO_PROVIDER_CUSTOM
 	depends on !BUILD_WITH_TFM
-	select MBEDTLS_PSA_CRYPTO_C if !PSA_SSF_CRYPTO_CLIENT
+	select MBEDTLS_PSA_CRYPTO_C
+
+menu "nRF Security"
 
 config NRF_SECURITY
 	def_bool y
-	depends on PSA_CRYPTO_PROVIDER_CUSTOM || BUILD_WITH_TFM
+	depends on PSA_CRYPTO_PROVIDER_CUSTOM || BUILD_WITH_TFM || PSA_CRYPTO_PROVIDER_SSF
 	depends on SOC_FAMILY_NORDIC_NRF && ARM
-	# NCS does not use TF-M's BL2 bootloader, but uses it's own fork
-	# of MCUBoot instead (CONFIG_BOOTLOADER_MCUBOOT).
-	select TFM_BL2_NOT_SUPPORTED if BUILD_WITH_TFM
 
 # Include Nordic-only PSA configurations
 rsource "Kconfig.psa.nordic"

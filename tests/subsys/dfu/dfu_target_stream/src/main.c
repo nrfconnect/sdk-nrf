@@ -108,7 +108,9 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	size_t first_offset;
 	size_t second_offset;
 	const struct stream_flash_ctx *ctx = NULL;
+#ifdef CONFIG_STREAM_FLASH_ERASE
 	off_t erased_page_offset;
+#endif
 
 	/* Reset state to avoid failure when initializing */
 	err = dfu_target_stream_done(true);
@@ -215,8 +217,10 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	/* Check that last erased page offset was set correctly when loading */
 	ctx = dfu_target_stream_get_stream();
 	zassert_not_null(ctx, "Expected non-null ctx.");
+#ifdef CONFIG_STREAM_FLASH_ERASE
 	zassert_equal(0, ctx->erased_up_to,
 		      "Expected last erased page offset to be unchanged.");
+#endif
 
 	/* Next, check that writes that end up right after a page boundary
 	 * result in a correct start offset for the last page erased.
@@ -226,13 +230,15 @@ ZTEST(dfu_target_stream_test, test_dfu_target_stream_save_progress)
 	err = dfu_target_stream_write(write_buf, page_size);
 	zassert_equal(err, 0, "Unexpected failure: %d", err);
 
-	/* Storea how far the erase went so far */
+	/* Store how far the erase went so far */
 	ctx = dfu_target_stream_get_stream();
 	zassert_not_null(ctx, "Expected non-null ctx.");
+#ifdef CONFIG_STREAM_FLASH_ERASE
 	erased_page_offset = ctx->erased_up_to;
 
 	/* Verify that at least one page was erased. */
 	zassert_true(erased_page_offset >= 0, "Expected pages to be erased.");
+#endif
 
 	/* Re-initialize to reload the progress */
 	err = dfu_target_stream_done(false);

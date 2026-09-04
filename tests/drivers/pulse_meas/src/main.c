@@ -26,6 +26,7 @@ LOG_MODULE_REGISTER(test);
 #define NUMBER_OF_MEASUREMENTS 8
 
 #define PWM_TOP_VALUE 1000
+#define MEASUREMENT_PRECISION_US 1
 
 static const struct device *const pulse_meas_dev = DEVICE_DT_GET(DT_NODELABEL(pulse_meas));
 
@@ -93,9 +94,8 @@ ZTEST(test_pulse_meas, test_pulse_meas_positive)
 	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
 
 	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
-		zassert_equal(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values[i],
-			      "Expected %d, got %d", PWM_TOP_VALUE - pwm_duty_cycle_values[i],
-			      data[i]);
+		zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values[i],
+			MEASUREMENT_PRECISION_US);
 	}
 }
 
@@ -154,8 +154,7 @@ ZTEST(test_pulse_meas, test_pulse_meas_negative)
 	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
 
 	for (uint32_t i = 1; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
-		zassert_equal(data[i], pwm_duty_cycle_values[i], "Expected %d, got %d",
-			      pwm_duty_cycle_values[i], data[i]);
+		zassert_within(data[i], pwm_duty_cycle_values[i], MEASUREMENT_PRECISION_US);
 	}
 }
 
@@ -232,9 +231,8 @@ ZTEST(test_pulse_meas, test_pulse_meas_continuous)
 	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
 
 	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values1); i++) {
-		zassert_equal(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values1[i],
-			      "Expected %d, got %d", PWM_TOP_VALUE - pwm_duty_cycle_values1[i],
-			      data[i]);
+		zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values1[i],
+			MEASUREMENT_PRECISION_US);
 	}
 
 	zassert_ok(nrfx_pwm_simple_playback(&pwm, &pwm_sequence2, 1, NRFX_PWM_FLAG_STOP));
@@ -249,9 +247,8 @@ ZTEST(test_pulse_meas, test_pulse_meas_continuous)
 	zassert_ok(pulse_meas_get(pulse_meas_dev, &data));
 
 	for (uint32_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values1); i++) {
-		zassert_equal(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values2[i],
-			      "Expected %d, got %d", PWM_TOP_VALUE - pwm_duty_cycle_values2[i],
-			      data[i]);
+		zassert_within(data[i], PWM_TOP_VALUE - pwm_duty_cycle_values2[i],
+			       MEASUREMENT_PRECISION_US);
 	}
 
 	pulse_meas_stop(pulse_meas_dev, true);

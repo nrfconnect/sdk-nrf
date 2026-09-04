@@ -399,7 +399,7 @@ nRF Desktop
 Build system
 ============
 
-* Fixed a bug where a user-defined HEX file that was provided in the static configuration of the :ref:`partition_manager` was not included in the merge operation.
+* Fixed a bug where a user-defined HEX file that was provided in the static configuration of the Partition Manager was not included in the merge operation.
 
 nrfx
 ====
@@ -497,7 +497,7 @@ Documentation
     * :ref:`fprotect_readme` - added
     * :ref:`lib_dfu_target` - updated
     * :ref:`doc_fw_info` - updated
-    * :ref:`partition_manager` - updated
+    * Partition Manager - updated
 
 
 * Added or updated the following documentation:

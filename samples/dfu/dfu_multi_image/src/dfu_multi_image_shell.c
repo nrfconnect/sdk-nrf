@@ -13,19 +13,10 @@
 #include <dfu/dfu_multi_image.h>
 #include <zephyr/dfu/mcuboot.h>
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#include <pm_config.h>
-#endif
-
 #include "dfu_multi_image_sample_common.h"
 
-#ifdef CONFIG_PARTITION_MANAGER_ENABLED
-#define DFU_MULTI_IMAGE_HELPER_ADDRESS PM_DFU_MULTI_IMAGE_HELPER_ADDRESS
-#define DFU_MULTI_IMAGE_HELPER_SIZE    PM_DFU_MULTI_IMAGE_HELPER_SIZE
-#else
 #define DFU_MULTI_IMAGE_HELPER_ADDRESS ((uint32_t)DT_REG_ADDR(DT_ALIAS(dfu_multi_image_helper)))
 #define DFU_MULTI_IMAGE_HELPER_SIZE    DT_REG_SIZE(DT_ALIAS(dfu_multi_image_helper))
-#endif
 
 static int cmd_dfu_multi_image_write(const struct shell *shell, size_t argc, char **argv)
 {

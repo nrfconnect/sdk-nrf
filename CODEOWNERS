@@ -207,7 +207,6 @@
 /doc/nrf/libraries/others/esb.rst         @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/event_manager_proxy.rst @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/others/fem_al.rst      @nrfconnect/ncs-dragoon
-/doc/nrf/libraries/others/flash_map_pm.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/hw_id.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
@@ -522,6 +521,7 @@
 /samples/bluetooth/central_nfc_pairing/   @nrfconnect/ncs-blenders
 /samples/bluetooth/central_smp_client/    @nrfconnect/ncs-eris
 /samples/bluetooth/central_uart/          @nrfconnect/ncs-blenders
+/samples/bluetooth/channel_classification/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/channel_sounding/      @nrfconnect/ncs-dragoon
 /samples/bluetooth/conn_time_sync/        @nrfconnect/ncs-dragoon
 /samples/bluetooth/direction_finding_central/ @nrfconnect/ncs-dragoon
@@ -568,7 +568,6 @@
 /samples/bluetooth/subrating/             @nrfconnect/ncs-dragoon
 /samples/bluetooth/throughput/            @nrfconnect/ncs-blenders
 /samples/bootloader/                      @nrfconnect/ncs-eris
-/samples/bootloader_deprecated_pm/        @nrfconnect/ncs-eris
 /samples/caf/                             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /samples/caf_sensor_manager/              @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin
 /samples/cellular/                        @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
@@ -604,7 +603,6 @@
 /samples/nfc/                             @nrfconnect/ncs-radio-sw
 /samples/nrf5340/empty_app_core/          @nrfconnect/ncs-si-muffin
 /samples/nrf5340/netboot/                 @nrfconnect/ncs-eris
-/samples/nrf5340/netboot_deprecated_pm/   @nrfconnect/ncs-eris
 /samples/nrf5340/extxip_smp_svr/          @nrfconnect/ncs-eris
 /samples/nrf5340/remote_shell/            @nrfconnect/ncs-si-muffin
 /samples/nrf_rpc/                         @nrfconnect/ncs-blenders
@@ -648,6 +646,7 @@
 /samples/bluetooth/central_nfc_pairing/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_smp_client/*.rst @nrfconnect/ncs-eris-doc
 /samples/bluetooth/central_uart/*.rst     @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/channel_classification/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ras_initiator/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ras_reflector/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/channel_sounding/ipt_initiator/*.rst @nrfconnect/ncs-dragoon-doc
@@ -807,9 +806,6 @@
 /scripts/memfault/mds_ble_gateway.py      @nrfconnect/ncs-memfault
 /scripts/memfault/requirements.txt        @nrfconnect/ncs-memfault
 /scripts/memory-threshold-list.yaml       @nrfconnect/ncs-co-verification
-/scripts/partition_manager.py             @nrfconnect/ncs-co-build-system
-/scripts/partition_manager_output.py      @nrfconnect/ncs-co-build-system
-/scripts/partition_manager_report.py      @nrfconnect/ncs-co-build-system
 /scripts/requirements.txt                 @carlescufi
 /scripts/tag_west_repos.sh                @nrfconnect/ncs-code-owners
 /scripts/tools-versions-darwin.yml        @jangalda-nsc @thst-nordic
@@ -840,6 +836,7 @@
 /scripts/west_commands/thingy91x_dfu.py   @nrfconnect/ncs-cia
 /scripts/west_commands/ncs_cherry_pick.py @nrfconnect/ncs-co-scripts
 /scripts/west_commands/ncs_contains_commit.py @nrfconnect/ncs-co-scripts
+/scripts/west_commands/ncs_mergehex.py    @nrfconnect/ncs-co-scripts
 /scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-eris
 /scripts/west_commands/tests/test_ncs_cherry_pick.py @nrfconnect/ncs-co-scripts
@@ -864,7 +861,6 @@
 /scripts/nrf_profiler/*.rst               @nrfconnect/ncs-si-xcake-doc
 /scripts/nrf_provision/fast_pair/         @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-xcake
 /scripts/nrf_provision/fast_pair/*.rst    @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
-/scripts/partition_manager/*.rst          @nrfconnect/ncs-aurora-doc
 /scripts/pm_to_dts.py                     @nordicjm @rghaddab
 /scripts/generate_psa_key_attributes/*.rst @nrfconnect/ncs-aegir-doc
 /scripts/shell/*.rst                      @nrfconnect/ncs-blenders-doc
@@ -977,7 +973,6 @@
 /subsys/nrf_profiler/                     @nrfconnect/ncs-si-xcake
 /subsys/nrf_rpc/                          @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
 /subsys/nrf_security/                     @nrfconnect/ncs-aegir
-/subsys/partition_manager/                @nordicjm @tejlmand
 /subsys/pcd/                              @nrfconnect/ncs-eris
 /subsys/secure_storage/                   @nrfconnect/ncs-aegir
 /subsys/settings/                         @nrfconnect/ncs-eris @rghaddab
@@ -1108,8 +1103,6 @@
 /tests/subsys/nrf_profiler/               @nrfconnect/ncs-si-xcake
 /tests/subsys/nrf_rpc/                    @nrfconnect/ncs-protocols-serialization
 /tests/subsys/nrf_security/               @nrfconnect/ncs-aegir
-/tests/subsys/partition_manager/region/   @nordicjm @tejlmand
-/tests/subsys/partition_manager/static_pm_file/ @nordicjm @tejlmand
 /tests/subsys/rtt/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/swo/                        @nrfconnect/ncs-low-level-test
 /tests/subsys/usb/negotiated_speed/       @nrfconnect/ncs-low-level-test

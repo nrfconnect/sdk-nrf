@@ -160,8 +160,13 @@ struct sx_dmactl;
 /** Prepare for a new command/operation over DMA */
 void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint32_t tag);
 
-/** Start input/fetcher DMA at indescs and output/pusher DMA at outdescs */
-void sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
+/**
+ * Start input/fetcher DMA at indescs and output/pusher DMA at outdescs.
+ *
+ * @retval SX_ERR_INVALID_PARAM when a descriptor buffer overlaps a forbidden
+ * peripheral or system-register address range.
+ */
+int sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
 
 #ifdef CONFIG_DCACHE
 /** Invalidate the D-cache lines backing the output descriptor buffers.

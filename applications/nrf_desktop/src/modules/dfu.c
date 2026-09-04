@@ -73,43 +73,38 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_CONFIG_CHANNEL_DFU_LOG_LEVEL);
 	  !IS_ENABLED(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)) || \
 	 IS_ENABLED(CONFIG_SECURE_BOOT))
 
-#if CONFIG_USE_DT_CODE_PARTITION
-	BUILD_ASSERT(DT_HAS_CHOSEN(zephyr_code_partition),
-		     "Missing 'zephyr,code-partition' in /chosen.");
+BUILD_ASSERT(DT_HAS_CHOSEN(zephyr_code_partition),
+	     "Missing 'zephyr,code-partition' in /chosen.");
 
-	#define CODE_PARTITION_NODE DT_CHOSEN(zephyr_code_partition)
+#define CODE_PARTITION_NODE DT_CHOSEN(zephyr_code_partition)
 
-	#if CONFIG_SECURE_BOOT
-		#define SLOT_0_DT_NODELABEL s0_partition
-		#define SLOT_1_DT_NODELABEL s1_partition
-	#elif CONFIG_BOOTLOADER_MCUBOOT
-		#define SLOT_0_DT_NODELABEL slot0_partition
-		#define SLOT_1_DT_NODELABEL slot1_partition
-	#else
-		#error Bootloader not supported.
-	#endif
-
-	#define SLOT_0_NODE DT_NODELABEL(SLOT_0_DT_NODELABEL)
-	#define SLOT_1_NODE DT_NODELABEL(SLOT_1_DT_NODELABEL)
-
-	BUILD_ASSERT(DT_PARTITION_EXISTS(CODE_PARTITION_NODE),
-		     "The 'zephyr,code-partition' node is not a valid partition.");
-	BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_0_NODE),
-		     "Missing '" STRINGIFY(SLOT_0_DT_NODELABEL) "' partition definition in DTS.");
-	BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_1_NODE),
-		     "Missing '" STRINGIFY(SLOT_1_DT_NODELABEL) "' partition definition in DTS.");
-
-	#define CODE_PARTITION_ADDR      DT_PARTITION_ADDR(CODE_PARTITION_NODE)
-	#define SLOT_0_ADDR              DT_PARTITION_ADDR(SLOT_0_NODE)
-	#define SLOT_1_ADDR              DT_PARTITION_ADDR(SLOT_1_NODE)
-	#define SLOT_0_END               (DT_PARTITION_ADDR(SLOT_0_NODE) + DT_REG_SIZE(SLOT_0_NODE))
-	#define SLOT_1_END               (DT_PARTITION_ADDR(SLOT_1_NODE) + DT_REG_SIZE(SLOT_1_NODE))
-	#define SLOT_0_ID                DT_PARTITION_ID(SLOT_0_NODE)
-	#define SLOT_1_ID                DT_PARTITION_ID(SLOT_1_NODE)
-
+#if CONFIG_SECURE_BOOT
+	#define SLOT_0_DT_NODELABEL s0_partition
+	#define SLOT_1_DT_NODELABEL s1_partition
+#elif CONFIG_BOOTLOADER_MCUBOOT
+	#define SLOT_0_DT_NODELABEL slot0_partition
+	#define SLOT_1_DT_NODELABEL slot1_partition
 #else
-	#error Unsupported partitioning scheme.
+	#error Bootloader not supported.
 #endif
+
+#define SLOT_0_NODE DT_NODELABEL(SLOT_0_DT_NODELABEL)
+#define SLOT_1_NODE DT_NODELABEL(SLOT_1_DT_NODELABEL)
+
+BUILD_ASSERT(DT_PARTITION_EXISTS(CODE_PARTITION_NODE),
+	     "The 'zephyr,code-partition' node is not a valid partition.");
+BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_0_NODE),
+	     "Missing '" STRINGIFY(SLOT_0_DT_NODELABEL) "' partition definition in DTS.");
+BUILD_ASSERT(DT_PARTITION_EXISTS(SLOT_1_NODE),
+	     "Missing '" STRINGIFY(SLOT_1_DT_NODELABEL) "' partition definition in DTS.");
+
+#define CODE_PARTITION_ADDR      DT_PARTITION_ADDR(CODE_PARTITION_NODE)
+#define SLOT_0_ADDR              DT_PARTITION_ADDR(SLOT_0_NODE)
+#define SLOT_1_ADDR              DT_PARTITION_ADDR(SLOT_1_NODE)
+#define SLOT_0_END               (DT_PARTITION_ADDR(SLOT_0_NODE) + DT_REG_SIZE(SLOT_0_NODE))
+#define SLOT_1_END               (DT_PARTITION_ADDR(SLOT_1_NODE) + DT_REG_SIZE(SLOT_1_NODE))
+#define SLOT_0_ID                DT_PARTITION_ID(SLOT_0_NODE)
+#define SLOT_1_ID                DT_PARTITION_ID(SLOT_1_NODE)
 
 #if CONFIG_SECURE_BOOT
 	#include <fw_info.h>

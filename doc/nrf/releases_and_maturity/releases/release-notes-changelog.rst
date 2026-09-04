@@ -181,8 +181,11 @@ See `Samples`_ for lists of changes for the protocol-related samples.
 Bluetooth® LE
 -------------
 
-* Added the :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
-  The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
+* Added:
+
+  * The :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
+    The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
+  * Support for Channel Classification in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION` Kconfig option.
 
 Bluetooth Mesh
 --------------
@@ -323,6 +326,8 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
   * Fixed an issue on nRF52 and nRF53 Series devices where timed LED toggling did not work due to incorrect GPPI group setup after the nrfx 4.0 API migration.
@@ -383,6 +388,11 @@ Bluetooth Fast Pair samples
     * The references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
     * The TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
       The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
+    * The TX power calibration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets.
+      The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-15`` dBm to ``-2`` dBm to meet the Fast Pair distance certification requirements.
+    * The location of the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options.
+      The options were moved from the sample-wide configuration files to the board configuration files in the :file:`configuration/boards` directory, as the TX power correction is hardware-specific.
+      Every supported board target now declares its own calibration.
 
 * :ref:`fast_pair_input_device` sample:
 
@@ -549,6 +559,21 @@ Networking samples
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
 
   * Fixed an issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
+
+* :ref:`http_server` sample:
+
+  * Fixed:
+
+    * The pregenerated server and client TLS certificates.
+      They had only a Common Name (CN) and no Subject Alternative Name (SAN).
+      This caused hostname verification to fail with strict TLS clients (for example, Python's ``ssl``/``requests``, used by ``httpie``) even though the certificate chain itself was valid.
+      The certificates were regenerated with a SAN entry for ``httpserver.local``.
+    * The sample's TLS credential provisioning.
+      It silently kept stale credentials in persistent storage if they already existed, so replacing the certificate files and reflashing had no effect on the device.
+      Credentials are now re-added if they already exist.
+    * IPv6 address and multicast group limits.
+      When the access point advertised both SLAAC and stateful DHCPv6, the default :kconfig:option:`CONFIG_NET_IF_UNICAST_IPV6_ADDR_COUNT` and :kconfig:option:`CONFIG_NET_IF_MCAST_IPV6_ADDR_COUNT` values were too low to hold all resulting addresses, causing ``Failed to configure DHCPv6 address`` and ``Cannot join solicit node address ... (-12)`` errors.
+      Both Kconfig option values were increased.
 
 NFC samples
 -----------
@@ -812,7 +837,10 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-|no_changes_yet_note|
+* :ref:`nfc_ndef_parser_readme`:
+
+  * Fixed an issue where parsing a malformed long-format NDEF record could produce an incorrect payload length.
+    The parser now validates type, ID, and payload lengths against the remaining input buffer.
 
 nRF RPC libraries
 -----------------
@@ -874,7 +902,7 @@ Memfault integration
 
 * Added support for setting the Memfault project key at runtime using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY_SETTINGS` Kconfig option.
 
-* Updated Memfault to version 1.42.1.
+* Updated Memfault to version 1.44.0.
   See the `Memfault firmware SDK changelog`_ for details.
 
 * Removed the ``CONFIG_MEMFAULT_NCS_PROVISION_CERTIFICATES`` Kconfig option from nRF91x targets.

@@ -404,7 +404,7 @@ Build system
 * Added support for multi-image builds for multi-core projects.
 * Facilitated defining non-secure boards out of tree.
   Any board that matches ``*_ns`` or ``*ns`` is now considered non-secure, and its child images board is set to the secure variant.
-* Added support for defining external flash in the :ref:`partition_manager`.
+* Added support for defining external flash in the Partition Manager.
 
 Zephyr
 ======

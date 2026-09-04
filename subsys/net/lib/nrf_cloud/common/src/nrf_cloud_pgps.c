@@ -18,10 +18,6 @@
 #include "nrf_cloud_pgps_internal.h"
 #include <net/nrf_cloud_codec.h>
 #include <zephyr/logging/log_ctrl.h>
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-#include <pm_config.h>
-#include <flash_map_pm.h>
-#endif
 
 #include <zephyr/logging/log.h>
 
@@ -101,11 +97,6 @@ static uint32_t storage_size;
 static pgps_event_handler_t evt_handler;
 static uint8_t *write_buf;
 
-#if defined(CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL)
-static off_t prediction_cache_flash_offset = UINT32_MAX;
-static uint8_t prediction_cache[PGPS_PREDICTION_STORAGE_SIZE];
-#endif
-
 static uint8_t prediction_buf[PGPS_PREDICTION_STORAGE_SIZE];
 static volatile bool accept_packets;
 static volatile bool loading_in_progress;
@@ -124,55 +115,21 @@ static void print_time_details(const char *info, int64_t sec, uint16_t day, uint
 K_WORK_DEFINE(prediction_work, prediction_work_handler);
 K_TIMER_DEFINE(prediction_timer, prediction_timer_handler, NULL);
 
-static void discard_prediction_buffer(void)
-{
-#if defined(CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL)
-	prediction_cache_flash_offset = UINT32_MAX;
-#endif
-}
-
 static int get_prediction_block(int pnum)
 {
 	return npgps_pointer_to_block((uint8_t *)index.predictions[pnum]);
 }
 
 /**
- * @brief When using external flash, ensure the prediction at the requested flash device offset
- * is available via the prediction cache.  When using internal flash, just the flash device offset
- * as a direct pointer to the location of the prediction in flash.
+ * @brief The parameter off is really the address in built-in flash for the prediction.
  *
- * @param off Offset from the start of the flash device, when using external flash, or offset from
- * the start of application processor memory space when using internal flash.
+ * @param off Offset from the start of application processor memory space.
  *
- * @return struct nrf_cloud_pgps_prediction* Pointer to a cached copy of the prediction when
- * using external flash, or a direct pointer the prediction when using internal flash.
+ * @return struct nrf_cloud_pgps_prediction* Direct pointer to the prediction.
  */
 static struct nrf_cloud_pgps_prediction *get_cached_prediction(off_t off)
 {
-#if defined(CONFIG_PM_PARTITION_REGION_PGPS_EXTERNAL)
-	/* Check if the cached prediction is the one we want; if not, read it now */
-	if (prediction_cache_flash_offset != off) {
-		int err;
-
-		/* Subtract fa_off from off to convert from flash device address space
-		 * to partition address space.
-		 */
-		err = flash_area_read(prediction_flash_area, off - prediction_flash_area->fa_off,
-				      prediction_cache, sizeof(prediction_cache));
-
-		if (err) {
-			LOG_ERR("Error %d reading prediction from flash offset 0x%lx", err, off);
-			return NULL;
-		}
-		prediction_cache_flash_offset = off;
-		LOG_DBG("Caching offset 0x%X", (uint32_t)(off - prediction_flash_area->fa_off));
-	}
-
-	return (struct nrf_cloud_pgps_prediction *)prediction_cache;
-#else
-	/* The parameter off is really the address in built-in flash for the prediction */
 	return (struct nrf_cloud_pgps_prediction *)off;
-#endif
 }
 
 static struct nrf_cloud_pgps_prediction *get_prediction(int pnum)
@@ -309,7 +266,6 @@ static int validate_stored_predictions(uint16_t *first_bad_day, uint32_t *first_
 	int64_t gps_sec;
 
 	/* reset catalog of predictions */
-	discard_prediction_buffer();
 	for (pnum = 0; pnum < count; pnum++) {
 		index.predictions[pnum] = NULL;
 	}
@@ -408,9 +364,6 @@ static void discard_oldest_predictions(int num)
 	int pnum;
 	int block;
 	int last = MIN(num, index.header.prediction_count);
-
-	/* assume cache is no longer valid */
-	discard_prediction_buffer();
 
 	/* ensure 'last' oldest predictions are free; we can already
 	 * have some free, if a previous attempt to replace expired
@@ -1108,11 +1061,7 @@ static int open_flash(void)
 	int err;
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	/* Partition Manager manages the PGPS partition. */
-	prediction_flash_dev = FLASH_AREA_DEVICE(PGPS);
-	flash_area_id = FLASH_AREA_ID(PGPS);
-#elif DT_HAS_CHOSEN(nordic_pgps_partition)
+#if DT_HAS_CHOSEN(nordic_pgps_partition)
 	/* DTS-managed partition via nordic,pgps-partition chosen node. */
 	prediction_flash_dev = DEVICE_DT_GET(PARTITION_NODE_MTD(DT_CHOSEN(nordic_pgps_partition)));
 	flash_area_id = DT_PARTITION_ID(DT_CHOSEN(nordic_pgps_partition));
@@ -1120,13 +1069,8 @@ static int open_flash(void)
 #error "NRF_CLOUD_PGPS_STORAGE_PARTITION requires a DTS nordic,pgps-partition chosen node"
 #endif
 #elif defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_MCUBOOT_SECONDARY)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	prediction_flash_dev = FLASH_AREA_DEVICE(MCUBOOT_SECONDARY);
-	flash_area_id = FLASH_AREA_ID(MCUBOOT_SECONDARY);
-#else
 	prediction_flash_dev = DEVICE_DT_GET(PARTITION_NODE_MTD(DT_NODELABEL(slot1_partition)));
 	flash_area_id = DT_PARTITION_ID(DT_NODELABEL(slot1_partition));
-#endif
 #else
 	prediction_flash_dev = FLASH_AREA_DEVICE(APP);
 	flash_area_id = FLASH_AREA_ID(APP);
@@ -1156,9 +1100,6 @@ static int open_storage(uint32_t offset, bool preserve)
 {
 	int err;
 	uint32_t block_offset = offset % flash_page_size;
-
-	/* assume cache is no longer valid */
-	discard_prediction_buffer();
 
 #if PGPS_DEBUG
 	LOG_DBG("flash_page_size:%u, block_offset:%u, offset:%u, preserve:%d", flash_page_size,
@@ -1301,9 +1242,6 @@ int nrf_cloud_pgps_process_update(uint8_t *buf, size_t len)
 		index.dl_pnum = index.pnum_offset;
 		index.pred_offset = 0;
 	}
-
-	/* assume cache is no longer valid */
-	discard_prediction_buffer();
 
 	need = MIN((PGPS_PREDICTION_DL_SIZE - index.pred_offset), len);
 	memcpy(&prediction_buf[index.pred_offset], buf, need);
@@ -1515,9 +1453,6 @@ int nrf_cloud_pgps_begin_update(void)
 		return err;
 	}
 
-	/* assume cache is no longer valid */
-	discard_prediction_buffer();
-
 	index.loading_count = 0;
 	index.store_block = npgps_alloc_block();
 	if (index.store_block == NO_BLOCK) {
@@ -1589,17 +1524,7 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	};
 
 #if defined(CONFIG_NRF_CLOUD_PGPS_STORAGE_PARTITION)
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	/* Partition Manager build: addresses come from pm_config.h. */
-	BUILD_ASSERT(CONFIG_NRF_CLOUD_PGPS_PARTITION_SIZE >=
-			     (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS * BLOCK_SIZE),
-		     "P-GPS partition size is too small");
-	if (param->storage_base || param->storage_size) {
-		LOG_WRN("Overriding P-GPS storage with P-GPS partition");
-	}
-	param->storage_base = PM_PGPS_ADDRESS;
-	param->storage_size = PM_PGPS_SIZE;
-#elif DT_HAS_CHOSEN(nordic_pgps_partition)
+#if DT_HAS_CHOSEN(nordic_pgps_partition)
 	/* DTS build: addresses come from the nordic,pgps-partition chosen node. */
 	BUILD_ASSERT(PARTITION_NODE_SIZE(DT_CHOSEN(nordic_pgps_partition)) >=
 			     (CONFIG_NRF_CLOUD_PGPS_NUM_PREDICTIONS * BLOCK_SIZE),
@@ -1616,13 +1541,8 @@ int nrf_cloud_pgps_init(struct nrf_cloud_pgps_init_param *param)
 	if (param->storage_base || param->storage_size) {
 		LOG_WRN("Overriding P-GPS storage with MCUboot secondary partition");
 	}
-#if defined(CONFIG_PARTITION_MANAGER_ENABLED)
-	param->storage_base = PM_MCUBOOT_SECONDARY_ADDRESS;
-	param->storage_size = PM_MCUBOOT_SECONDARY_SIZE;
-#else
 	param->storage_base = PARTITION_NODE_OFFSET(DT_NODELABEL(slot1_partition));
 	param->storage_size = PARTITION_NODE_SIZE(DT_NODELABEL(slot1_partition));
-#endif
 #endif
 
 	__ASSERT((param->storage_size >= (NUM_BLOCKS * BLOCK_SIZE)),

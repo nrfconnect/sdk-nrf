@@ -343,7 +343,7 @@ Bluetooth samples
 Bluetooth mesh samples
 ----------------------
 
-* Updated all samples to use the :ref:`partition_manager`, replacing the use of the Device Tree Source flash partitions.
+* Updated all samples to use the Partition Manager, replacing the use of the Device Tree Source flash partitions.
 * :ref:`bluetooth_mesh_sensor_server` sample:
 
   * Definitions for sensor callbacks now include the :c:struct:`bt_mesh_sensor_srv` context.
@@ -950,7 +950,7 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
 * Added new ``west ncs-sbom`` command that generates :ref:`Software Bill of Materials <west_sbom>`.
 * Added :ref:`bt_fast_pair_provision_script`.
 
-* :ref:`partition_manager`:
+* Partition Manager:
 
   * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.pgps` file.
   * Added the :file:`ncs/nrf/subsys/partition_manager/pm.yml.emds` file.

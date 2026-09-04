@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SECURE_BOOT_APPCORE
+	default y if SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91
+
+config SECURE_BOOT_MONOTONIC_COUNTER
+	default n if SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF91
+
+choice SECURE_BOOT_SIGNATURE_TYPE
+	default SECURE_BOOT_SIGNATURE_TYPE_ECDSA if SOC_SERIES_NRF52 || SOC_SERIES_NRF53
+	default SECURE_BOOT_SIGNATURE_TYPE_ECDSA if SOC_SERIES_NRF91
+endchoice
+
+source "share/sysbuild/Kconfig"

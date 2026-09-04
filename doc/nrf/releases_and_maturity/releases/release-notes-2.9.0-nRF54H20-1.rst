@@ -400,7 +400,7 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
-  * Added support in the build system for devices that do not support the :ref:`partition_manager`.
+  * Added support in the build system for devices that do not support the Partition Manager.
     The :zephyr:board:`nrf54h20dk` board target is the only example of such a device.
 
   * Updated the :c:func:`bt_fast_pair_info_cb_register` API to allow registration of multiple callbacks.
@@ -423,7 +423,7 @@ This section provides detailed lists of changes by :ref:`integration <integratio
 Google Fast Pair integration
 ----------------------------
 
-* Added instructions on how to provision the Fast Pair data onto devices without the :ref:`partition_manager` support, specifically for the :zephyr:board:`nrf54h20dk`.
+* Added instructions on how to provision the Fast Pair data onto devices without the Partition Manager support, specifically for the :zephyr:board:`nrf54h20dk`.
 
 Zephyr
 ======

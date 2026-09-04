@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 2f1d55e1625cb3a3d1711e0d65ea9609cfd569ff
+      revision: cc917d7a40ae9c3ad9fcd7bcb66cc97aa595c902
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 5b4186f1380da3455138dfbadd3e9aafb2a0ae63
+      revision: 5ec3a71ae3c8aae6620cd8def588d1c5c886e4e5
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -150,7 +150,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 1927bc545c4a6491c0ffa2ce812d6261a45df198
+      revision: 27c2bd9a637dfcef31fdc68f9b1560395c39dde1
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -162,14 +162,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 7ad5733047dd7d9d449fdf79f260fdcd69033747
+      revision: 43bdae6feed8ce18d7cfce8bdfe54b5d89dfb424
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: 52891bec4168229ef8bb64f54a4dcbac159f2e69
+      revision: fc284aa8628a201517a1b3bbca9b7cab6854172c
       groups:
         - dragoon
     - name: cjson
@@ -183,7 +183,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: e55b7ce2223b93ea0f0d35c6f57f317c66d25d06
+      revision: 5833beaf6f164c7ff67b2ea736f3fb30133a7b65
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -235,7 +235,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.43.0
+      revision: 1.44.0
       remote: memfault
     - name: bsim
       repo-path: bsim_west

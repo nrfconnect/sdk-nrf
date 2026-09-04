@@ -24,13 +24,17 @@ int sx_cm_load_mask(uint32_t csprng_value)
 
 	ADD_OUTDESCA(channel.dma, NULL, 0, 0xf);
 
-	sx_cmdma_start(&channel.dma, sizeof(channel.descs), channel.descs);
+	status = sx_cmdma_start(&channel.dma, sizeof(channel.descs), channel.descs);
+	if (status != SX_OK) {
+		goto exit;
+	}
 
 	status = SX_ERR_HW_PROCESSING;
 	while (status == SX_ERR_HW_PROCESSING) {
 		status = sx_cmdma_check();
 	}
 
+exit:
 	safe_memzero(&channel, sizeof(channel));
 	return status;
 }

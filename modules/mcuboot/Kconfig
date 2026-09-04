@@ -108,7 +108,6 @@ config NRF_MCUBOOT_BOOT_REQUEST_IMPL_FLASH
 	bool "NVM partition"
 	depends on FLASH
 	depends on CRC
-	depends on !PARTITION_MANAGER_ENABLED # Partition manager uses an incompatible flash_map.h
 	help
 	  Use zephyr,bootloader-request chosen node compatible with the
 	  flash driver as the memory area to store and read from the bootloader

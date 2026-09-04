@@ -89,8 +89,6 @@ For information how to erase the entire flash memory when flashing, see :ref:`pr
 Flash memory layout
 ===================
 
-.. include:: ../../doc/nrf/includes/pm_deprecation.txt
-
 Flash memory layout for |NSIB| is defined in devicetree.
 Partition nodes are placed under the non-volatile memory device for the sysbuild image (for example ``&flash0`` or ``&cpuapp_rram``).
 See :ref:`bootloader_partitioning` for overlay placement, inspection in :file:`zephyr.dts`, and migration from Partition Manager.
