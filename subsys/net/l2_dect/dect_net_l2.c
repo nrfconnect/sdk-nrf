@@ -26,6 +26,9 @@
  * - dect_net_l2_send(): Called in application thread context
  * - Association callbacks: Called from MAC layer (various contexts)
  */
+#include <string.h>
+
+#include <zephyr/kernel.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
 
@@ -905,6 +908,42 @@ void dect_net_l2_parent_ipv6_config_changed(struct net_if *iface, uint32_t paren
 			ipv6_prefix_config);
 	}
 }
+
+#if defined(CONFIG_NET_IPV6)
+bool dect_net_l2_parent_ipv6_addr_get(struct net_in6_addr *addr)
+{
+	struct dect_net_l2_association_data *parent;
+
+	if (addr == NULL) {
+		return false;
+	}
+
+	k_mutex_lock(&associations_mutex, K_FOREVER);
+	parent = NULL;
+	for (int i = 0; i < ARRAY_SIZE(parent_associations); i++) {
+		if (parent_associations[i].in_use) {
+			parent = &parent_associations[i];
+			break;
+		}
+	}
+	if (parent == NULL) {
+		k_mutex_unlock(&associations_mutex);
+		return false;
+	}
+
+	if (parent->global_ipv6_addr_set) {
+		net_ipv6_addr_copy_raw(addr->s6_addr, parent->global_ipv6_addr.s6_addr);
+	} else if (parent->local_ipv6_addr_set) {
+		net_ipv6_addr_copy_raw(addr->s6_addr, parent->local_ipv6_addr.s6_addr);
+	} else {
+		k_mutex_unlock(&associations_mutex);
+		return false;
+	}
+
+	k_mutex_unlock(&associations_mutex);
+	return true;
+}
+#endif /* CONFIG_NET_IPV6 */
 
 /**
  * @brief Handle sink IPv6 configuration changes
