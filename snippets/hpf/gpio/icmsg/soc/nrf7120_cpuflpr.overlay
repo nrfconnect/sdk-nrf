@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+/delete-node/ &sram_tx;
+/delete-node/ &sram_rx;
+
 / {
 	reserved-memory {
 		#address-cells = <1>;
@@ -26,6 +29,8 @@
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuflpr_vevif_rx 16>, <&cpuflpr_vevif_tx 20>;
 			mbox-names = "rx", "tx";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			status = "okay";
 		};
 	};
