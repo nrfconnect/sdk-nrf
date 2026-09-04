@@ -1,0 +1,104 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config PSA_CORE_LITE_SUPPORTED
+	def_bool \
+		SOC_SERIES_NRF52 || \
+		SOC_SERIES_NRF53 || \
+		SOC_SERIES_NRF54L || \
+		SOC_SERIES_NRF71 || \
+		SOC_SERIES_NRF91
+	help
+	  Promptless Kconfig option indicating support for the PSA core lite implementation.
+
+config HAS_HW_NRF_CRACEN
+	def_bool \
+		(SOC_SERIES_NRF54L && !SOC_NRF54LS05A && !SOC_NRF54LS05B) || \
+		SOC_SERIES_NRF71
+	help
+	  Promptless Kconfig option indicating that the full CRACEN accelerator is available.
+
+config HAS_HW_NRF_CRACEN_TRNG
+	def_bool \
+		HAS_HW_NRF_CRACEN || \
+		SOC_NRF54LS05A || \
+		SOC_NRF54LS05B
+	help
+	  Promptless Kconfig option indicating that the CRACEN TRNG is available,
+	  including for devices that do not expose the full CRACEN accelerator.
+
+config CRACEN_HW_VERSION_BASE
+	def_bool \
+		SOC_SERIES_NRF54H || \
+		SOC_NRF54L15 || \
+		SOC_NRF54L10 || \
+		SOC_NRF54L05
+	help
+	  Promptless Kconfig option indicating the base CRACEN hardware implementation.
+
+config CRACEN_HW_VERSION_LITE
+	def_bool \
+		SOC_NRF54LM20A || \
+		SOC_NRF54LM20B || \
+		SOC_NRF54LC10A || \
+		SOC_NRF54LV10A || \
+		SOC_NRF7120_ENGA
+	help
+	  Promptless Kconfig option indicating the lite CRACEN hardware implementation.
+
+config CRACEN_KMU_USES_RRAMC
+	def_bool SOC_SERIES_NRF54L
+	help
+	  Promptless Kconfig option indicating that CRACEN KMU provisioning uses RRAMC.
+
+config CRACEN_KMU_USES_MRAMC
+	def_bool SOC_SERIES_NRF71
+	help
+	  Promptless Kconfig option indicating that CRACEN KMU provisioning uses MRAMC.
+
+config CRACEN_SMALL_PRNG_POOL
+	bool
+	help
+	  Promptless Kconfig option enabling the reduced-memory CRACEN PRNG pool.
+
+config PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS
+	def_bool \
+		SOC_NRF54LM20A || \
+		SOC_NRF54LM20B
+	help
+	  Promptless Kconfig option enabling CRACEN multipart operation workarounds.
+
+config PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS
+	def_bool \
+		PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS || \
+		SOC_NRF54LC10A || \
+		SOC_NRF54LV10A
+	help
+	  Promptless Kconfig option enabling CRACEN CTR size workarounds.
+
+config PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND
+	def_bool \
+		SOC_NRF54LM20A || \
+		SOC_NRF54LM20B || \
+		SOC_NRF54LC10A || \
+		SOC_NRF54LV10A || \
+		SOC_NRF7120_ENGA
+	help
+	  Promptless Kconfig option enabling the CRACEN IKG interrupt workaround.
+
+config PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND
+	def_bool \
+		SOC_NRF54LM20A || \
+		SOC_NRF54LM20B
+	help
+	  Promptless Kconfig option enabling CRACEN memory access workarounds.
+
+config PSA_NEED_CRACEN_RNG_NO_ENTROPY_WORKAROUND
+	bool
+	help
+	  Promptless Kconfig option enabling the CRACEN no-entropy workaround.
+	  Selected by platforms without an entropy source, such as emulator
+	  targets used for platform testing.
