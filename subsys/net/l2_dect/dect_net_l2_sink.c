@@ -14,10 +14,12 @@
  */
 
 #include <stdlib.h>
+#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/net_mgmt.h>
+#include <net/dect/dect_net_l2.h>
 #include <net/dect/dect_net_l2_mgmt.h>
 
 #if defined(CONFIG_MODEM_CELLULAR)
@@ -38,15 +40,70 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(net_l2_dect_br, CONFIG_NET_L2_DECT_BR_LOG_LEVEL);
 
-#include "net_private.h" /* For net_sprint_ipv6_addr */
+#include "net_private.h"
 
 static struct net_if *iface_for_prefix;
 static struct net_if *iface_for_dect;
 
 struct in6_addr sink_prefix_addr;
 static bool sink_prefix_addr_set;
+/** Bytes of on-DECT prefix: 8 (/64) or 12 (/96 with transmitter long RD after delegated /64). */
+static uint8_t sink_dect_prefix_len_bytes;
 
 static struct in6_addr ipv6_router_addr;
+
+/**
+ * After learning delegated /64 from uplink, set DECT netiface prefix to that /64 plus
+ * this device's DECT transmitter long RD ID in the next 32 bits (/96), when TX RD != 0.
+ */
+static void sink_apply_learned_delegated_prefix(const struct in6_addr *delegated_ra64)
+{
+	struct dect_net_l2_context *ctx;
+	uint32_t tx_rd;
+
+	if (iface_for_dect == NULL || delegated_ra64 == NULL) {
+		return;
+	}
+
+	ctx = net_if_l2_data(iface_for_dect);
+	tx_rd = ctx->transmitter_long_rd_id;
+
+	memcpy(sink_prefix_addr.s6_addr, delegated_ra64->s6_addr,
+	       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
+	if (IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_PREFIX96) &&
+	    tx_rd != DECT_NET_L2_LONG_RD_ID_NOT_SET) {
+		sink_prefix_addr.s6_addr32[2] = htonl(tx_rd);
+		sink_prefix_addr.s6_addr32[3] = 0;
+		sink_dect_prefix_len_bytes = DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES + 4;
+	} else {
+		memset(&sink_prefix_addr.s6_addr[8], 0, 8);
+		sink_dect_prefix_len_bytes = DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES;
+	}
+	sink_prefix_addr_set = true;
+}
+
+void dect_net_l2_sink_reapply_prefix_for_tx_rd(struct net_if *dect_iface)
+{
+	struct dect_net_ipv6_prefix_config new_prefix;
+	struct in6_addr delegated_ra64;
+
+	if (dect_iface == NULL || dect_iface != iface_for_dect || !sink_prefix_addr_set) {
+		return;
+	}
+
+	memcpy(delegated_ra64.s6_addr, sink_prefix_addr.s6_addr, 8);
+	sink_apply_learned_delegated_prefix(&delegated_ra64);
+	new_prefix.prefix = sink_prefix_addr;
+	new_prefix.prefix_len = sink_dect_prefix_len_bytes;
+	dect_net_l2_sink_ipv6_config_changed(dect_iface, &new_prefix);
+}
+
+static void sink_clear_prefix(void)
+{
+	sink_prefix_addr_set = false;
+	sink_dect_prefix_len_bytes = 0;
+	memset(&sink_prefix_addr, 0, sizeof(sink_prefix_addr));
+}
 
 #if defined(CONFIG_MODEM_CELLULAR)
 const struct device *modem = DEVICE_DT_GET(DT_ALIAS(modem));
@@ -107,7 +164,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 					      NET_IPV6_ADDR_LEN),
 				iface_for_prefix);
 
-			sink_prefix_addr_set = false;
+			sink_clear_prefix();
 			dect_net_l2_sink_ipv6_config_changed(
 				iface_for_dect,
 				&empty_prefix);
@@ -122,6 +179,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 	case NET_EVENT_IPV6_ROUTER_ADD: {
 		struct in6_addr *router_addr = (struct in6_addr *)cb->info;
 		bool prefix_found = false;
+		struct in6_addr delegated_ra64 = {};
 
 		LOG_DBG("NET_EVENT_IPV6_ROUTER_ADD: iface %p, router %s", iface,
 			net_addr_ntop(AF_INET6, router_addr, ipv6_addr_str, NET_IPV6_ADDR_LEN));
@@ -142,13 +200,21 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				continue;
 			}
 
-			/* Check if this is a global address and has the same prefix as our
-			 * sink prefix
-			 */
-			if (net_ipv6_is_global_addr(ipv6_addr) &&
-			    net_ipv6_is_prefix(ipv6_addr->s6_addr,
-					       sink_prefix_addr.s6_addr,
-					       sizeof(struct in6_addr) / 2)) {
+			if (!net_ipv6_is_global_addr(ipv6_addr)) {
+				continue;
+			}
+
+			if (sink_prefix_addr_set) {
+				if (net_ipv6_is_prefix(
+					ipv6_addr->s6_addr,
+					sink_prefix_addr.s6_addr,
+					DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES * 8U)) {
+					prefix_found = true;
+					break;
+				}
+			} else {
+				memcpy(delegated_ra64.s6_addr, ipv6_addr->s6_addr,
+				       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
 				prefix_found = true;
 				break;
 			}
@@ -166,12 +232,12 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				.sink_status = DECT_SINK_STATUS_CONNECTED,
 				.br_iface = iface_for_prefix,
 			};
-			struct dect_net_ipv6_prefix_config new_prefix = {
-				.prefix = sink_prefix_addr,
-				.prefix_len = 8,
-			};
+			struct dect_net_ipv6_prefix_config new_prefix;
 
-			sink_prefix_addr_set = true;
+			sink_apply_learned_delegated_prefix(&delegated_ra64);
+			new_prefix.prefix = sink_prefix_addr;
+			new_prefix.prefix_len = sink_dect_prefix_len_bytes;
+
 			dect_net_l2_sink_ipv6_config_changed(
 				iface_for_dect,
 				&new_prefix);
@@ -195,17 +261,17 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				.br_iface = iface_for_prefix,
 			};
 			struct dect_net_ipv6_prefix_config new_prefix;
+			struct in6_addr delegated_ra64;
 
-			/* So, we take 1st public address, and take 1st 64bits/8 bytes as
-			 * a prefix for our usage
-			 */
-			memcpy(&sink_prefix_addr, ipv6_addr->s6_addr, 8);
-			sink_prefix_addr_set = true;
+			memcpy(delegated_ra64.s6_addr, ipv6_addr->s6_addr,
+			       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
+			sink_apply_learned_delegated_prefix(&delegated_ra64);
 			new_prefix.prefix = sink_prefix_addr;
-			new_prefix.prefix_len = 8;
+			new_prefix.prefix_len = sink_dect_prefix_len_bytes;
 
-			LOG_DBG("SINK: IPv6 addr %s/%d added for dect nr+ prefix usage",
-				net_sprint_ipv6_addr(ipv6_addr), (sizeof(struct in6_addr) / 2) * 8);
+			LOG_DBG("SINK: IPv6 addr %s added for dect nr+ prefix usage (DECT /%u)",
+				net_sprint_ipv6_addr(ipv6_addr),
+				(unsigned int)new_prefix.prefix_len * 8U);
 
 			dect_net_l2_sink_ipv6_config_changed(
 				iface_for_dect,
@@ -223,8 +289,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 			net_addr_ntop(AF_INET6, ipv6_addr, ipv6_addr_str, NET_IPV6_ADDR_LEN));
 
 		if (sink_prefix_addr_set == true &&
-		    net_ipv6_is_prefix(ipv6_addr->s6_addr, sink_prefix_addr.s6_addr,
-				       sizeof(struct in6_addr) / 2)) {
+		    net_ipv6_is_prefix(ipv6_addr->s6_addr, sink_prefix_addr.s6_addr, 64)) {
 			struct dect_sink_status_evt sink_status_data = {
 				.sink_status = DECT_SINK_STATUS_DISCONNECTED,
 				.br_iface = iface_for_prefix,
@@ -236,7 +301,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 			LOG_WRN("SINK: IPv6 addr with our prefix %s/%d removed from iface %p",
 				net_sprint_ipv6_addr(ipv6_addr), sizeof(struct in6_addr) / 2,
 				iface);
-			sink_prefix_addr_set = false;
+			sink_clear_prefix();
 
 			dect_net_l2_sink_ipv6_config_changed(
 				iface_for_dect,
@@ -293,7 +358,7 @@ bool dect_net_l2_sink_ipv6_prefix_get(struct dect_net_l2_sink_ipv6_prefix *prefi
 	if (sink_prefix_addr_set == false || iface_for_prefix == NULL) {
 		return false;
 	}
-	prefix_out->len = sizeof(struct in6_addr) / 2;
+	prefix_out->len = sink_dect_prefix_len_bytes;
 	net_ipaddr_copy(&prefix_out->prefix, &sink_prefix_addr);
 	prefix_out->iface = iface_for_prefix;
 
@@ -336,7 +401,7 @@ static void dect_net_l2_sink_net_if_mgmt_event_handler(struct net_mgmt_event_cal
 
 		LOG_WRN("NET_EVENT_IF_DOWN: Sink networking iface (%p) is down", iface_for_prefix);
 		dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
-		sink_prefix_addr_set = false;
+		sink_clear_prefix();
 
 		/* Update our addressing */
 		dect_net_l2_sink_ipv6_config_changed(
