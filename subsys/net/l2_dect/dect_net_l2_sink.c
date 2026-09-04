@@ -16,6 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/net_mgmt.h>
@@ -54,11 +55,16 @@ static struct net_if *iface_for_prefix;
 static struct net_if *iface_for_dect;
 
 struct in6_addr sink_prefix_addr;
-static bool sink_prefix_addr_set;
+static atomic_t sink_prefix_addr_set;
 /** Bytes of on-DECT prefix: 8 (/64) or 12 (/96 with transmitter long RD after delegated /64). */
 static uint8_t sink_dect_prefix_len_bytes;
 
 static struct in6_addr ipv6_router_addr;
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+/* Static upstream /N route on Ethernet (RA prefix, nexthop = default router LL). */
+static struct net_route_entry *eth_upstream_prefix_route;
+#endif
 
 /**
  * After learning delegated /64 from uplink, set DECT netiface prefix to that /64 plus
@@ -87,7 +93,7 @@ static void sink_apply_learned_delegated_prefix(const struct in6_addr *delegated
 		memset(&sink_prefix_addr.s6_addr[8], 0, 8);
 		sink_dect_prefix_len_bytes = DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES;
 	}
-	sink_prefix_addr_set = true;
+	atomic_set(&sink_prefix_addr_set, 1);
 }
 
 void dect_net_l2_sink_reapply_prefix_for_tx_rd(struct net_if *dect_iface)
@@ -95,7 +101,8 @@ void dect_net_l2_sink_reapply_prefix_for_tx_rd(struct net_if *dect_iface)
 	struct dect_net_ipv6_prefix_config new_prefix;
 	struct in6_addr delegated_ra64;
 
-	if (dect_iface == NULL || dect_iface != iface_for_dect || !sink_prefix_addr_set) {
+	if (dect_iface == NULL || dect_iface != iface_for_dect ||
+	    !atomic_get(&sink_prefix_addr_set)) {
 		return;
 	}
 
@@ -108,10 +115,65 @@ void dect_net_l2_sink_reapply_prefix_for_tx_rd(struct net_if *dect_iface)
 
 static void sink_clear_prefix(void)
 {
-	sink_prefix_addr_set = false;
+	atomic_set(&sink_prefix_addr_set, 0);
 	sink_dect_prefix_len_bytes = 0;
 	memset(&sink_prefix_addr, 0, sizeof(sink_prefix_addr));
 }
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+/* Install upstream /N route: RA prefix via default router link-local nexthop. */
+static void sink_install_eth_upstream_prefix_route(void)
+{
+	struct net_if_router *router;
+	struct in6_addr upstream_prefix;
+	struct in6_addr router_addr;
+
+	if (iface_for_prefix == NULL || !atomic_get(&sink_prefix_addr_set)) {
+		return;
+	}
+
+	/* Default router LL from live router list (handles late iface_for_prefix init). */
+	router = net_if_ipv6_router_find_default(iface_for_prefix, NULL);
+	if (router == NULL) {
+		LOG_WRN("SINK: no default router found for iface %p", iface_for_prefix);
+		return;
+	}
+	net_ipv6_addr_copy_raw(router_addr.s6_addr, router->address.in6_addr.s6_addr);
+
+	memset(&upstream_prefix, 0, sizeof(upstream_prefix));
+	memcpy(upstream_prefix.s6_addr, sink_prefix_addr.s6_addr,
+	       DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
+
+	if (eth_upstream_prefix_route != NULL) {
+		(void)net_route_ipv6_del(eth_upstream_prefix_route);
+		eth_upstream_prefix_route = NULL;
+	}
+
+	eth_upstream_prefix_route = net_route_ipv6_add(iface_for_prefix,
+		&upstream_prefix,
+		DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES * 8U,
+		&router_addr,
+		NET_IPV6_ND_INFINITE_LIFETIME,
+		NET_ROUTE_PREFERENCE_HIGH);
+	if (eth_upstream_prefix_route == NULL) {
+		LOG_ERR("SINK: failed to install upstream /%u route via router LL",
+			(unsigned int)DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES * 8U);
+	} else {
+		LOG_INF("SINK: upstream /%u route installed via router LL %s",
+			(unsigned int)DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES * 8U,
+			net_sprint_ipv6_addr(&router_addr));
+	}
+}
+
+static void sink_remove_eth_upstream_prefix_route(void)
+{
+	if (eth_upstream_prefix_route != NULL) {
+		(void)net_route_ipv6_del(eth_upstream_prefix_route);
+		eth_upstream_prefix_route = NULL;
+		LOG_INF("SINK: upstream prefix route removed");
+	}
+}
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE */
 
 #if defined(CONFIG_MODEM_CELLULAR)
 const struct device *modem = DEVICE_DT_GET(DT_ALIAS(modem));
@@ -182,6 +244,9 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 					      NET_IPV6_ADDR_LEN),
 				iface_for_prefix);
 
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+			sink_remove_eth_upstream_prefix_route();
+#endif
 			sink_clear_prefix();
 			dect_net_l2_sink_ipv6_config_changed(
 				iface_for_dect,
@@ -222,7 +287,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				continue;
 			}
 
-			if (sink_prefix_addr_set) {
+			if (atomic_get(&sink_prefix_addr_set)) {
 				if (net_ipv6_is_prefix(
 					ipv6_addr->s6_addr,
 					sink_prefix_addr.s6_addr,
@@ -245,21 +310,27 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				net_addr_ntop(AF_INET6, router_addr, ipv6_addr_str,
 					      NET_IPV6_ADDR_LEN),
 				iface_for_prefix);
-		} else if (sink_prefix_addr_set == false) {
-			struct dect_sink_status_evt sink_status_data = {
-				.sink_status = DECT_SINK_STATUS_CONNECTED,
-				.br_iface = iface_for_prefix,
-			};
-			struct dect_net_ipv6_prefix_config new_prefix;
+		} else {
+			if (!atomic_get(&sink_prefix_addr_set)) {
+				struct dect_sink_status_evt sink_status_data = {
+					.sink_status = DECT_SINK_STATUS_CONNECTED,
+					.br_iface = iface_for_prefix,
+				};
+				struct dect_net_ipv6_prefix_config new_prefix;
 
-			sink_apply_learned_delegated_prefix(&delegated_ra64);
-			new_prefix.prefix = sink_prefix_addr;
-			new_prefix.prefix_len = sink_dect_prefix_len_bytes;
+				sink_apply_learned_delegated_prefix(&delegated_ra64);
+				new_prefix.prefix = sink_prefix_addr;
+				new_prefix.prefix_len = sink_dect_prefix_len_bytes;
 
-			dect_net_l2_sink_ipv6_config_changed(
-				iface_for_dect,
-				&new_prefix);
-			dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+				dect_net_l2_sink_ipv6_config_changed(
+					iface_for_dect,
+					&new_prefix);
+				dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+			}
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+			/* Install upstream /N route now that prefix is known. */
+			sink_install_eth_upstream_prefix_route();
+#endif
 		}
 		break;
 	}
@@ -273,7 +344,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 		/* This is the trick: we get the 8 bytes as a prefix for
 		 * dect nr+ network usage from 1st added public address.
 		 */
-		if (sink_prefix_addr_set == false && net_ipv6_is_global_addr(ipv6_addr)) {
+		if (!atomic_get(&sink_prefix_addr_set) && net_ipv6_is_global_addr(ipv6_addr)) {
 			struct dect_sink_status_evt sink_status_data = {
 				.sink_status = DECT_SINK_STATUS_CONNECTED,
 				.br_iface = iface_for_prefix,
@@ -296,6 +367,13 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 				&new_prefix);
 
 			dect_mgmt_sink_status_evt(iface_for_dect, sink_status_data);
+
+#if defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE)
+			/* Retry upstream /N route if ROUTER_ADD ran before iface was ready. */
+			sink_install_eth_upstream_prefix_route();
+#endif
+		}
+
 #if defined(CONFIG_NET_L2_DECT_BR_UNSOLICITED_NA)
 		/* Schedule uplink unsolicited NA after global ADDR_ADD. */
 		if (iface && net_if_is_up(iface) &&
@@ -313,7 +391,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 		LOG_DBG("NET_EVENT_IPV6_ADDR_DEL: iface %p, addr %s", iface,
 			net_addr_ntop(AF_INET6, ipv6_addr, ipv6_addr_str, NET_IPV6_ADDR_LEN));
 
-		if (sink_prefix_addr_set == true &&
+		if (atomic_get(&sink_prefix_addr_set) &&
 		    net_ipv6_is_prefix(ipv6_addr->s6_addr, sink_prefix_addr.s6_addr, 64)) {
 			struct dect_sink_status_evt sink_status_data = {
 				.sink_status = DECT_SINK_STATUS_DISCONNECTED,
@@ -397,7 +475,7 @@ static void dect_net_l2_net_mgmt_ipv6_event_handler(struct net_mgmt_event_callba
 
 bool dect_net_l2_sink_ipv6_prefix_get(struct dect_net_l2_sink_ipv6_prefix *prefix_out)
 {
-	if (sink_prefix_addr_set == false || iface_for_prefix == NULL) {
+	if (!atomic_get(&sink_prefix_addr_set) || iface_for_prefix == NULL) {
 		return false;
 	}
 	prefix_out->len = sink_dect_prefix_len_bytes;
