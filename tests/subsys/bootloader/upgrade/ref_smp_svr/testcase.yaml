@@ -218,6 +218,27 @@ tests:
       - mcuboot_CONFIG_MCUBOOT_CLEANUP_UNUSABLE_SECONDARY=y
       - FILE_SUFFIX=nsib
 
+  nsib.mcuboot.upgrade.encryption.ecdsa_p256:
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+    tags:
+      - nsib
+      - encryption
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade_encrypted_secondary_slot.py"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_BOOT_ENCRYPTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      # With NSIB, MCUboot defaults to the crypto shared with the immutable
+      # bootloader, which offers no AES-CTR. Pick a backend that provides it.
+      - mcuboot_CONFIG_BOOT_ECDSA_NRF_OBERON=y
+      - mcuboot_CONFIG_MCUBOOT_CLEANUP_UNUSABLE_SECONDARY=y
+      - FILE_SUFFIX=nsib
+
   # Encryption test cases
   mcuboot.upgrade.encryption.rsa:
     platform_allow:
