@@ -98,6 +98,25 @@ By default, the module uses the standard connection parameter update API (:c:fun
 Once a :c:struct:`hid_sci_mode_request_event` or a :c:struct:`ble_peer_sci_conn_rate_event` is received, the module marks the peer as SCI capable.
 All the subsequent connection parameter adjustments for the peer rely on :c:func:`bt_conn_le_conn_rate_request` and :c:func:`bt_conn_le_param_update` is no longer used.
 
+Initial connection parameters on HID SCI peripherals
+----------------------------------------------------
+
+The module uses :c:func:`bt_conn_le_param_update` to request zero peripheral latency as the initial connection parameters.
+Usually, after a new connection is established, the Zephyr Bluetooth LE Host does not send this request immediately.
+If the API is called during that post-connect window, the stack stores the parameters and sends the Connection Parameter Update Request only after the time (in milliseconds) set in the :kconfig:option:`CONFIG_BT_CONN_PARAM_UPDATE_TIMEOUT` Kconfig option from connect.
+
+nRF Desktop peripherals instead use an application-level delay before calling :c:func:`bt_conn_le_param_update`.
+The module schedules a delayed work item that invokes the API after the same time set in the :kconfig:option:`CONFIG_BT_CONN_PARAM_UPDATE_TIMEOUT` Kconfig option.
+This keeps the update out of the Bluetooth stack until that timeout elapses, so it can be canceled if the host switches to HID SCI first.
+Without this delay, the stack already holds a pending connection parameter update that would still be sent after the timeout even if the host had moved the link to HID SCI.
+The peer might switch the link to HID SCI during this window.
+After the link uses HID SCI, only the connection rate API might be used to adjust transport parameters.
+
+If a HID SCI mode request through the HID Control Point characteristic or Connection Rate Update Request is received before the delayed work runs, the module cancels the scheduled initial connection parameter request and switches to the connection rate API instead.
+If a HID SCI mode request arrives while the initial connection parameter update is already in progress, the requested SCI mode is made pending and applied after that update completes or fails.
+As of NCS 3.4.0, no connection parameter update rejection callback was available.
+As a workaround, a timeout is scheduled that treats the update as failed if a completion callback is not received within 5 seconds after the update is requested.
+
 Module events
 -------------
 
@@ -134,9 +153,10 @@ When a connection rate change is already in progress, further SCI-related action
 A pending state is set when:
 
 * A HID SCI mode is requested while a connection rate update is already in progress.
+* A HID SCI mode is requested while the initial connection parameter update is still in progress.
 * A low-latency or high-latency adjustment requested while a connection rate update is already in progress.
 
-In both cases, the module stores the most recently requested SCI mode and latency preference and sets the pending flag.
+In these cases, the module stores the most recently requested SCI mode and latency preference and sets the pending flag.
 If a pending state was already set, the module overrides the previous HID SCI mode and latency preference with the new one.
 
 When the in-flight connection rate update completes, the module checks whether a deferred mode change or latency change is still needed.
