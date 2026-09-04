@@ -118,8 +118,8 @@ struct dult_bt_adv_data {
 
 /** @brief Encode the DULT location-enabled Bluetooth advertising payload.
  *
- *  This function can only be called if the DULT user was previously registered with the
- *  @ref dult_user_register API.
+ *  This function can only be called by the currently associated DULT user, that is the
+ *  user that has enabled DULT with the @ref dult_enable API and has not yet been reset.
  *
  *  Serializes the DULT data (UUID, network ID, near-owner byte, and optional
  *  proprietary data from @p adv_data) into @p buf and populates @p bt_adv_data to
