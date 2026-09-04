@@ -9,12 +9,11 @@
 #include "tfm_platform_system.h"
 #include "tfm_attest_hal.h"
 #include "hw_unique_key.h"
-#include "nrfx_nvmc.h"
 #include <nrfx.h>
-#include <nrf_cc3xx_platform.h>
-#include <nrf_cc3xx_platform_identity_key.h>
 #include "nrf_provisioning.h"
+#if defined(CONFIG_IDENTITY_KEY_TFM)
 #include <identity_key.h>
+#endif
 #include <tfm_log.h>
 #if defined(NRF53_SERIES) && (defined(PM_CPUNET_APP_ADDRESS) || defined(CONFIG_TFM_HAS_B0N))
 #include <dfu/pcd_common.h>
@@ -65,6 +64,48 @@ static enum tfm_plat_err_t disable_netcore_debug(void)
 }
 #endif /* NRF53_SERIES && PM_CPUNET_APP_ADDRESS */
 
+#if defined(CONFIG_SOC_SERIES_NRF54L) || defined(CONFIG_SOC_SERIES_NRF71)
+/* On nRF54L/nRF71 the debug policy that firmware can observe is the TAMPC PROTECT
+ * signals, not a UICR register. UICR.APPROTECT and UICR.SECUREAPPROTECT hold the
+ * persistent policy, but nothing in the boot chain programs them and they are not
+ * readable as a proxy for the current state, so the signals are what gets checked
+ * here.
+ *
+ * The signals are re-evaluated on every reset by nrf54l_handle_approtect() in
+ * SystemInit: the hardware pre-locks them when UICR is Protected, and otherwise
+ * the firmware branch selected by CONFIG_NRF_APPROTECT_LOCK and
+ * CONFIG_NRF_SECURE_APPROTECT_LOCK locks them. CONFIG_TFM_NRF_PROVISIONING depends
+ * on both of those options, so that branch is always built in here. They also have
+ * to be set in the first image of the boot chain for the state to survive into this
+ * one, which is out of this image's control, so the signal state is verified below.
+ */
+
+/* A debug signal is disabled when its value is driven low and the lock is enabled,
+ * so that nothing can drive it high again before the next reset.
+ */
+#define TAMPC_SIGNAL_IS_DISABLED(group, signal)                                                    \
+	((NRF_TAMPC_S->PROTECT.group[0].signal.CTRL &                                              \
+	  (TAMPC_PROTECT_##group##_##signal##_CTRL_VALUE_Msk |                                     \
+	   TAMPC_PROTECT_##group##_##signal##_CTRL_LOCK_Msk)) ==                                   \
+	 ((TAMPC_PROTECT_##group##_##signal##_CTRL_VALUE_Low                                       \
+	   << TAMPC_PROTECT_##group##_##signal##_CTRL_VALUE_Pos) |                                 \
+	  (TAMPC_PROTECT_##group##_##signal##_CTRL_LOCK_Enabled                                    \
+	   << TAMPC_PROTECT_##group##_##signal##_CTRL_LOCK_Pos)))
+
+static enum tfm_plat_err_t verify_debug_disabled(void)
+{
+	/* Check the same set of signals that nrf54l_handle_approtect() locks. */
+	if (!TAMPC_SIGNAL_IS_DISABLED(DOMAIN, DBGEN) ||
+	    !TAMPC_SIGNAL_IS_DISABLED(DOMAIN, NIDEN) ||
+	    !TAMPC_SIGNAL_IS_DISABLED(DOMAIN, SPIDEN) ||
+	    !TAMPC_SIGNAL_IS_DISABLED(DOMAIN, SPNIDEN) ||
+	    !TAMPC_SIGNAL_IS_DISABLED(AP, DBGEN)) {
+		return TFM_PLAT_ERR_SYSTEM_ERR;
+	}
+
+	return TFM_PLAT_ERR_SUCCESS;
+}
+#else
 static enum tfm_plat_err_t verify_debug_disabled(void)
 {
 	/* Ensures that APPROTECT and SECUREAPPROTECT are enabled upon the next reset */
@@ -75,6 +116,7 @@ static enum tfm_plat_err_t verify_debug_disabled(void)
 
 	return TFM_PLAT_ERR_SUCCESS;
 }
+#endif
 
 enum tfm_plat_err_t tfm_plat_provisioning_is_required(bool *provisioning_required)
 {
@@ -110,8 +152,8 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 		return TFM_PLAT_ERR_SYSTEM_ERR;
 	}
 
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
-	/* The Initial Attestation key should be already written */
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && defined(CONFIG_IDENTITY_KEY_TFM)
+	/* The Initial Attestation key should be already written. */
 	if (!identity_key_is_written()) {
 		ERROR(
 			"This device has not been provisioned with an Initial Attestation Key.");
@@ -159,7 +201,7 @@ enum tfm_plat_err_t tfm_plat_provisioning_perform(void)
 
 static bool dummy_key_is_present(void)
 {
-#ifdef TFM_PARTITION_INITIAL_ATTESTATION
+#if defined(TFM_PARTITION_INITIAL_ATTESTATION) && defined(CONFIG_IDENTITY_KEY_TFM)
 	uint8_t key[IDENTITY_KEY_SIZE_BYTES];
 	int err;
 

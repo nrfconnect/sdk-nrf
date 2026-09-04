@@ -17,3 +17,25 @@
 	status = "disabled";
 	hw-flow-control;
 };
+
+/* Expose the bl_storage node needed by the TF-M secure build; the non-secure
+ * DTS removes UICR (USE_NON_SECURE_ADDRESS_MAP).
+ */
+/ {
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		uicr_tfm: uicr@ffd000 {
+			compatible = "nordic,nrf-uicr";
+			reg = <0xffd000 0x1000>;
+			ranges = <0x0 0xffd000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			bl_storage: uicr@500 {
+				reg = <0x500 0x460>;
+			};
+		};
+	};
+};
