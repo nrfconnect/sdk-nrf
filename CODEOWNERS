@@ -104,6 +104,7 @@
 /doc/nrf/drivers/ppi_seq.rst              @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/ppi_seq_i2c_spi.rst      @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/drivers/saadct.rst               @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
 /doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
@@ -314,6 +315,7 @@
 /drivers/nrf71_sr_coex/                   @nrfconnect/ncs-wcg-coex
 /drivers/ppi_seq/                             @nrfconnect/ncs-ll-izera
 /drivers/regulator/                       @nrfconnect/ncs-co-drivers
+/drivers/saadct/                          @nrfconnect/ncs-ll-izera
 /drivers/sdhc/                            @nrfconnect/ncs-co-drivers
 /drivers/serial/                          @nrfconnect/ncs-co-drivers @nordic-krch
 /drivers/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
@@ -388,6 +390,7 @@
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
+/include/drivers/saadct.h                 @nrfconnect/ncs-ll-izera
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/sensor_stub.h            @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/dt-bindings/misc/nordic-domain-id-nrf9220.h @tervonenja
@@ -623,6 +626,7 @@
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
 /samples/pmic/native/                     @nordic-auko
 /samples/pulse_meas/                      @nrfconnect/ncs-ll-izera
+/samples/saadct/                          @nrfconnect/ncs-ll-izera
 /samples/sensor/bh1749/                   @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/sensor/bme68x_iaq/               @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /samples/tfm/                             @nrfconnect/ncs-aegir
@@ -749,6 +753,7 @@
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc
 /samples/pmic/**/*.rst                    @nrfconnect/ncs-pmic-doc
 /samples/pulse_meas/README.rst            @nrfconnect/ncs-lowlevel-doc
+/samples/saadct/*.rst                     @nrfconnect/ncs-lowlevel-doc
 /samples/sensor/**/*.rst                  @nrfconnect/ncs-cia-doc
 /samples/tfm/**/*.rst                     @nrfconnect/ncs-aegir-doc
 /samples/vtf_monitoring/*.rst             @nrfconnect/ncs-wifi-doc
