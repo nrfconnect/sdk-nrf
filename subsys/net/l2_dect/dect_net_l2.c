@@ -37,6 +37,9 @@
 #include <zephyr/net/net_pkt.h>
 #include <zephyr/net/mld.h>
 #include <zephyr/net/dns_sd.h>
+#if defined(CONFIG_NET_L2_ETHERNET)
+#include <zephyr/net/ethernet.h>
+#endif
 
 #include <net/dect/dect_utils.h>
 
@@ -312,6 +315,11 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 	if (vtc_vhl != 0x60) {
 		goto exit;
 	}
+
+#if defined(CONFIG_NET_L2_ETHERNET)
+	/* Set type to IPV6 for Ethernet TX */
+	net_pkt_set_ll_proto_type(pkt, NET_ETH_PTYPE_IPV6);
+#endif
 
 	if (net_ipv6_is_ll_addr((struct in6_addr *)NET_IPV6_HDR(pkt)->dst)) {
 		uint32_t target_long_rd_id = dect_utils_lib_long_rd_id_from_ipv6_addr(
