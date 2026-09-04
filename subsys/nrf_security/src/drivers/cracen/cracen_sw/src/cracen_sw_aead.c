@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf_security_mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <stdbool.h>
@@ -35,7 +34,6 @@
 #include <sxsymcrypt/chachapoly.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
-#include <cracen/statuscodes.h>
 #endif
 
 psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,

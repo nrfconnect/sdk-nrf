@@ -5,8 +5,6 @@
  */
 
 #include <zephyr/kernel.h>
-#include <nrf_security_mem_helpers.h>
-#include <cracen/statuscodes.h>
 #include <nrf_security_mutexes.h>
 #include <psa/crypto.h>
 #include <stdint.h>

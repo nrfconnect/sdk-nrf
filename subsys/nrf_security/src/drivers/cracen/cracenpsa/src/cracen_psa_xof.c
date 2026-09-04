@@ -13,11 +13,9 @@
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/hashdefs.h>
-#include <cracen/statuscodes.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>
 #include <cracen/common.h>
-#include <nrf_security_mem_helpers.h>
 #include "cracen_psa_primitives.h"
 
 _Static_assert(SX_XOF_POOL_BUF_SZ != 1,

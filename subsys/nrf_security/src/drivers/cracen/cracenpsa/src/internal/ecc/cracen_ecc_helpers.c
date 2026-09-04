@@ -8,8 +8,6 @@
 
 #include <cracen/common.h>
 #include <hal/nrf_cracen.h>
-#include <nrf_security_mem_helpers.h>
-#include <cracen/statuscodes.h>
 #include <nrfx.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>

@@ -10,7 +10,6 @@
 
 #include <string.h>
 #include <silexpk/core.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include <cracen/common.h>
 #include <zephyr/sys/byteorder.h>

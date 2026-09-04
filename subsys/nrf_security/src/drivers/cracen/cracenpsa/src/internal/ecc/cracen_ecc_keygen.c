@@ -12,7 +12,6 @@
 #include <silexpk/iomem.h>
 #include <silexpk/cmddefs/ecc.h>
 #include <silexpk/ec_curves.h>
-#include <cracen/statuscodes.h>
 #include <cracen_psa.h>
 #include "cracen_ecc_keygen.h"
 #include <cracen/common.h>

@@ -6,7 +6,6 @@
 #include <stdint.h>
 #include <string.h>
 #include <psa/crypto.h>
-#include <cracen/statuscodes.h>
 #include <sxsymcrypt/blkcipher.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>

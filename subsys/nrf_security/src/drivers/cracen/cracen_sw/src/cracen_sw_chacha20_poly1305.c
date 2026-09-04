@@ -4,7 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <nrf_security_mem_helpers.h>
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
 #include <stdbool.h>
@@ -16,7 +15,6 @@
 #include <sxsymcrypt/aead.h>
 #include <sxsymcrypt/chachapoly.h>
 
-#include <cracen/statuscodes.h>
 #include <zephyr/sys/util.h>
 #include <zephyr/sys/__assert.h>
 
