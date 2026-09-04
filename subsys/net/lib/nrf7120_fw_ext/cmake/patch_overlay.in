@@ -1,0 +1,11 @@
+/* Auto-generated from the nRF7120 Wi-Fi patch manifest. */
+
+/ {
+	soc {
+@OVERLAY_NODES@
+	};
+};
+
+&wicr {
+@OVERLAY_WICR@
+};
