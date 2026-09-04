@@ -48,30 +48,68 @@
 #define VEVIF_IRQN(vevif)   VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
-#error "Unsupported SoC"
-#endif
-
-static const uint8_t pin_to_vio_map[] = {
-	FLPR_VIO_PIN_INDICES
-};
-
 #define DATA_LINE_INDEX(pinctr_fun) (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 
 #ifndef CONFIG_HPF_MSPI_IPC_NO_COPY
 BUILD_ASSERT(CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE > 0, "Response max size should be greater that 0");
 #endif
 
-static uint8_t gpio_pin_to_vio_index(uint16_t pin)
+BUILD_ASSERT(NRFX_VPR_VIO_MAPPING_DEFINED_CHECK(NRF_VPR_IDX_FLPR),
+	     "VIO pin mapping not defined for FLPR");
+
+#define _GEN_VIO_PORT_LIST(port_idx, _)						    \
+	COND_CODE_1(NRFX_VPR_VIO_PORT_ACCESSIBLE_CHECK(NRF_VPR_IDX_FLPR, port_idx), \
+		    (, port_idx), ())
+
+/* Comma separated list of ports which can be accessed by the VIO */
+#define VIO_PORT_LIST GET_ARGS_LESS_N(1, LISTIFY(32, _GEN_VIO_PORT_LIST, ()))
+
+#define VIO_PORT_COUNT NUM_VA_ARGS(VIO_PORT_LIST)
+
+/* Use the first available VIO port */
+#define VIO_PORT GET_ARG_N(1, VIO_PORT_LIST)
+
+#define _GEN_VIO_PIN_LUT_LIST(pin, vpr_idx, port) \
+	NRFX_VPR_VIO_PIN_INDEX_GET(vpr_idx, port, pin)
+
+#define GEN_VIO_PIN_LUT(vpr_idx, port)						    \
+	GET_ARGS_LESS_N(							    \
+		NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(vpr_idx, port),		    \
+		LISTIFY(							    \
+			UTIL_INC(NRFX_VPR_VIO_PORT_PIN_NUM_HIGHEST(vpr_idx, port)), \
+			_GEN_VIO_PIN_LUT_LIST, (,), vpr_idx, port		    \
+		)								    \
+	)
+
+#if VIO_PORT_COUNT == 1
+static const uint8_t pin_to_vio_map[] = {
+	GEN_VIO_PIN_LUT(NRF_VPR_IDX_FLPR, VIO_PORT)
+};
+
+/* Check if the LUT size is correct */
+BUILD_ASSERT(ARRAY_SIZE(pin_to_vio_map) ==
+	     (NRFX_VPR_VIO_PORT_PIN_NUM_HIGHEST(NRF_VPR_IDX_FLPR, VIO_PORT) -
+	      NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(NRF_VPR_IDX_FLPR, VIO_PORT) + 1));
+
+#define VIO_PIN_OFFSET NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(NRF_VPR_IDX_FLPR, VIO_PORT)
+#define VIO_VALID_PIN_MASK NRFX_VPR_VIO_PORT_MASK_GET(NRF_VPR_IDX_FLPR, VIO_PORT)
+
+static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin)
 {
-	size_t map_index = pin - FLPR_VIO_PIN_OFFSET;
+	(void)port;
+
+	size_t map_index = pin - VIO_PIN_OFFSET;
 
 	/* Check if the pin and the port can be accessed by VIO. */
-	if (map_index < HPF_MSPI_PIN_COUNT) {
+	if (map_index < ARRAY_SIZE(pin_to_vio_map)) {
 		return pin_to_vio_map[map_index];
 	}
 	return INVALID_VIO;
 }
+#else
+// implement multi-port mapping
+#error "Multi-port mapping not implemented"
+#endif
 
 static const hrt_xfer_bus_widths_t io_modes[SUPPORTED_IO_MODES_COUNT] = {
 	{1, 1, 1, 1}, /* MSPI_IO_MODE_SINGLE */
@@ -373,8 +411,9 @@ static void config_pins(hpf_mspi_pinctrl_soc_pin_msg_t *pins_cfg)
 			continue;
 		}
 
+		uint8_t port_number = NRF_PIN_NUMBER_TO_PORT(psel);
 		uint8_t pin_number = NRF_PIN_NUMBER_TO_PIN(psel);
-		uint8_t vio_pin = gpio_pin_to_vio_index(pin_number);
+		uint8_t vio_pin = gpio_pin_port_to_vio_index(port_number, pin_number);
 
 		NRFX_ASSERT(vio_pin != INVALID_VIO);
 
