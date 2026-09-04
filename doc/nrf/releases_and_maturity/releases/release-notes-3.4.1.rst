@@ -151,12 +151,19 @@ Bluetooth Fast Pair samples
 
 * :ref:`fast_pair_locator_tag` sample:
 
-  * Updated the TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
-    The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
+  * Updated:
+
+    * The TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
+      The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
+    * The TX power calibration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets.
+      The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-15`` dBm to ``-2`` dBm to meet the Fast Pair distance certification requirements.
+    * The location of the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options.
+      The options were moved from the sample-wide configuration files to the board configuration files in the :file:`configuration/boards` directory, as the TX power correction is hardware-specific.
+      Every supported board target now declares its own calibration.
 
 * :ref:`fast_pair_input_device` sample:
 
-  * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54ls05b/cpuapp``, and ``nrf54lc10dk/nrf54lc10a/cpuapp`` board targets.
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp``, and ``nrf54lc10dk/nrf54lc10a/cpuapp/ns`` board targets.
 
 Cryptography samples
 --------------------
@@ -179,7 +186,7 @@ DFU samples
 Enhanced ShockBurst samples
 ---------------------------
 
-* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` and ``nrf54ls05dk/nrf54ls05a/cpuapp`` board targets in all samples.
+* Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp``, ``nrf54lc10dk/nrf54lc10a/cpuapp/ns``, and ``nrf54ls05dk/nrf54ls05a/cpuapp`` board targets in all samples.
 
 Matter samples
 --------------
@@ -214,6 +221,14 @@ Bluetooth libraries and services
 
   * Added support for runtime customization of connection parameters for a given HID SCI mode through the newly added :c:func:`bt_hids_sci_mode_conn_rate_param_get` API.
 
+Libraries for networking
+------------------------
+
+* :ref:`lib_nrf_provisioning` library:
+
+  * Added a configurable heap allocator for the library's dynamic allocations.
+    You can select the allocator using the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) or :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig option.
+
 Other libraries
 ---------------
 
@@ -244,9 +259,17 @@ The following list summarizes both the main changes inherited from upstream MCUb
     This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key, while a production bootloader embeds only the production verification key.
     MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and the ``--name-suffix`` option for ``getpub`` and ``getpubhash`` to support multiple keys embedded in the bootloader image.
 
-* Updated the :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` Kconfig option.
-  This option has been reinstated and is no longer deprecated.
-  It has also been configured as the default ECDSA P-256 implementation for the nRF54LS05A and nRF54LS05B SoCs.
+* Updated:
+
+  * The :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` Kconfig option.
+    This option has been reinstated and is no longer deprecated.
+    It has also been configured as the default ECDSA P-256 implementation for the nRF54LS05A and nRF54LS05B SoCs.
+
+  * MCUboot now feeds the watchdog more frequently during time-consuming procedures to prevent watchdog timeouts during long-running operations, including the following:
+
+    * Full slot erase procedures
+    * The move-sectors-up loop and sectors-swap loop of the swap-move algorithm
+    * The hash calculation loop during image hash calculation
 
 * Fixed an issue where UICR was not provisioned with monotonic counter structures when :kconfig:option:`SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION` was enabled, MCUboot was the only bootloader, and Partition Manager was disabled.
 
