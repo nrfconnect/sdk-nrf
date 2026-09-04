@@ -196,7 +196,7 @@
    Also, different platforms have different methods of connecting, pairing, and streaming.
    For these reasons, providing a general guide on how to test with external devices is challenging.
    The suggested approach is to test with Nordic Semiconductor devices on both sides first to verify basic functionalities and get familiar with the solution before using custom devices.
-   Contact `Technical Support team <DevZone_>`_ if you need assistance.
+   Contact `Technical Support team <DevZone_>`__ if you need assistance.
 
 .. |usb_known_issues| replace:: Make sure to check the :ref:`nRF Audio application known issue OCT-2154 <known_issues_nrf_audio>` related to intermittent audio stream on the headset when using USB audio interface on macOS.
 
@@ -243,7 +243,7 @@
 .. |ATv2_maintenance_note| replace:: The Asset Tracker v2 application is in maintenance mode.
    For new projects, it is recommended to use one of the cellular nRF Cloud samples instead: :ref:`nrf_cloud_mqtt_device_message`, :ref:`nrf_cloud_mqtt_cell_location`, :ref:`nrf_cloud_mqtt_fota`, :ref:`nrf_cloud_coap_device_message`, :ref:`nrf_cloud_coap_cell_location`, or :ref:`nrf_cloud_coap_fota_sample`.
 
-.. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`_.
+.. |filter_samples_by_board| replace:: If you want to list samples available for one or more specific boards, `use the nRF Connect for Visual Studio Code extension to filter them <Browse samples_>`__.
 
 .. |devicetree_bindings| replace:: The devicetree bindings provide the structure for the content of the devicetree nodes.
    The :ref:`compatible <zephyr:dt-bindings-compatible>` property defines the compatibility of a devicetree node with a devicetree binding.
