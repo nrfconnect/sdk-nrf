@@ -45,12 +45,6 @@ endchoice
 
 if NRF_RPC_IPC_SERVICE
 
-# Redefine this symbol here and give it a non-zero default value
-# so that the Zephyr system heap is enabled, the nRF IPC IPC service
-# depends on it
-config HEAP_MEM_POOL_SIZE
-	default 2048
-
 config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
 	int "Timeout while waiting for the endpoint to bind in ms"
 	range 1 1000
@@ -96,6 +90,26 @@ config NRF_RPC_IPC_SERVICE_RX_QUEUE_SIZE
 	  processing by the RX thread.
 
 endif # NRF_RPC_IPC_SERVICE_RX_THREAD
+
+config NRF_RPC_IPC_SERVICE_TX_ZERO_COPY
+	bool "Use zero-copy IPC Service TX buffers"
+	depends on IPC_SERVICE_BACKEND_ICBMSG || IPC_SERVICE_BACKEND_RPMSG
+	default y
+	help
+	  Allocate TX buffers from the IPC Service backend instead of the system heap.
+	  Packets are sent with ipc_service_send_nocopy() and buffers that are not sent
+	  are released with ipc_service_drop_tx_buffer(). This avoids using heap and copying
+	  packet data into IPC-owned buffers before transmission.
+
+if !NRF_RPC_IPC_SERVICE_TX_ZERO_COPY
+
+# Redefine this symbol here and give it a non-zero default value
+# so that the Zephyr system heap is enabled, the nRF IPC IPC service
+# depends on it if TX buffers are allocated from the system heap.
+config HEAP_MEM_POOL_SIZE
+	default 2048
+
+endif # !NRF_RPC_IPC_SERVICE_TX_ZERO_COPY
 
 endif # NRF_RPC_IPC_SERVICE
 
