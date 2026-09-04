@@ -252,6 +252,29 @@ static int init(const struct nrf_rpc_tr *transport, nrf_rpc_tr_receive_handler_t
 	return 0;
 }
 
+static int send_packet(struct nrf_rpc_ipc_endpoint *endpoint, const uint8_t *data, size_t length)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_TX_ZERO_COPY)) {
+		err = ipc_service_send_nocopy(&endpoint->ept, data, length);
+	} else {
+		err = ipc_service_send(&endpoint->ept, data, length);
+		k_free((void *)data);
+	}
+	if (err < 0) {
+		LOG_ERR("ipc_service_send_nocopy returned err: %d", err);
+		if (IS_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_TX_ZERO_COPY)) {
+			(void)ipc_service_drop_tx_buffer(&endpoint->ept, data);
+		}
+	} else if (err > 0) {
+		LOG_DBG("Sent %u bytes", err);
+		err = 0;
+	}
+
+	return err;
+}
+
 static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t length)
 {
 	int err;
@@ -280,15 +303,7 @@ static int send(const struct nrf_rpc_tr *transport, const uint8_t *data, size_t 
 	LOG_DBG("Sending %u bytes", length);
 	DUMP_LIMITED_DBG(data, length, "Data: ");
 
-	err = ipc_service_send(&endpoint->ept, data, length);
-	if (err < 0) {
-		LOG_ERR("ipc_service_send returned err: %d", err);
-	} else if (err > 0) {
-		LOG_DBG("Sent %u bytes", err);
-		err = 0;
-	}
-
-	k_free((void *)data);
+	err = send_packet(endpoint, data, length);
 
 	return translate_error(err);
 }
@@ -297,17 +312,39 @@ static void *tx_buf_alloc(const struct nrf_rpc_tr *transport, size_t *size)
 {
 	void *data = NULL;
 	struct nrf_rpc_ipc *ipc_config = transport->ctx;
+	struct nrf_rpc_ipc_endpoint *endpoint = &ipc_config->endpoint;
+	uint32_t buf_size = *size;
+	int err;
 
 	if (ipc_config->state == NRF_RPC_IPC_STATE_UNINITIALIZED) {
 		LOG_ERR("nRF RPC transport is not initialized");
 		goto error;
 	}
 
-	data = k_malloc(*size);
-	if (!data) {
-		LOG_ERR("Failed to allocate Tx buffer.");
+	if (!IS_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_TX_ZERO_COPY)) {
+		data = k_malloc(*size);
+		if (!data) {
+			LOG_ERR("Failed to allocate Tx buffer.");
+			goto error;
+		}
+		return data;
+	}
+
+	/* Ensure the endpoint is bonded before getting the TX buffer. */
+	err = k_event_wait(&endpoint->ept_bond, 0x01, false, endpoint->timeout);
+	if (err < 0) {
+		LOG_ERR("IPC endpoint bond timeout");
+		err = -NRF_EPIPE;
 		goto error;
 	}
+
+	err = ipc_service_get_tx_buffer(&endpoint->ept, &data, &buf_size, K_FOREVER);
+	if (err < 0) {
+		LOG_ERR("Failed to get Tx buffer: %d", err);
+		goto error;
+	}
+
+	*size = buf_size;
 
 	return data;
 
@@ -327,7 +364,11 @@ static void tx_buf_free(const struct nrf_rpc_tr *transport, void *buf)
 		return;
 	}
 
-	k_free(buf);
+	if (IS_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_TX_ZERO_COPY)) {
+		(void)ipc_service_drop_tx_buffer(&ipc_config->endpoint.ept, buf);
+	} else {
+		k_free(buf);
+	}
 }
 
 const struct nrf_rpc_tr_api nrf_rpc_ipc_service_api = {
