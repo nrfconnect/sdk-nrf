@@ -15,6 +15,9 @@
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
+#include <helpers/nrfx_vpr_vio_pins.h>
+
+#include <nrfx.h>
 
 #define HRT_IRQ_PRIORITY          2
 #define HRT_VEVIF_IDX_GPIO_CLEAR  17
@@ -25,47 +28,91 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
-#error "Unsupported SoC"
-#endif
+volatile uint16_t irq_arg;
+volatile uint16_t irq_arg2;
 
-static const uint8_t pin_to_vio_map[] = {
-	FLPR_VIO_PIN_INDICES
-};
+BUILD_ASSERT(NRFX_VPR_VIO_MAPPING_DEFINED_CHECK(NRF_VPR_IDX_FLPR),
+	     "VIO pin mapping not defined for FLPR");
 
 #define VIO_INDEX_INVALID UINT8_MAX
 #define VIO_PIN_MASK_INVALID UINT16_MAX
 
-#define VIO_PIN_COUNT ARRAY_SIZE(pin_to_vio_map)
-#define VIO_VALID_PIN_MASK ((BIT(VIO_PIN_COUNT) - 1) << FLPR_VIO_PIN_OFFSET)
+/* Number of GPIO ports reachable through the FLPR VIO (resolved by the preprocessor). */
+#define VIO_PORT_ACCESSIBLE(port) NRFX_VPR_VIO_PORT_ACCESSIBLE_CHECK(NRF_VPR_IDX_FLPR, port)
+#define VIO_PORT_COUNT                                                                      \
+	(VIO_PORT_ACCESSIBLE(0) + VIO_PORT_ACCESSIBLE(1) + VIO_PORT_ACCESSIBLE(2) +         \
+	 VIO_PORT_ACCESSIBLE(3) + VIO_PORT_ACCESSIBLE(4) + VIO_PORT_ACCESSIBLE(5) +         \
+	 VIO_PORT_ACCESSIBLE(6) + VIO_PORT_ACCESSIBLE(7) + VIO_PORT_ACCESSIBLE(8) +         \
+	 VIO_PORT_ACCESSIBLE(9) + VIO_PORT_ACCESSIBLE(10) + VIO_PORT_ACCESSIBLE(11) +       \
+	 VIO_PORT_ACCESSIBLE(12) + VIO_PORT_ACCESSIBLE(13) + VIO_PORT_ACCESSIBLE(14) +      \
+	 VIO_PORT_ACCESSIBLE(15))
 
-volatile uint16_t irq_arg;
-volatile uint16_t irq_arg2;
+/* Create tables matching GPIO (port and) pin to VIO index. */
+#define GEN_VIO_PIN_NUM(vpr_idx, port, pin)   (pin)
+static const uint8_t vio_pin_num[] = {
+	NRFX_VPR_VIO_FOR_EACH_PIN(NRF_VPR_IDX_FLPR, GEN_VIO_PIN_NUM, (,))
+};
+
+#define GEN_VIO_PIN_INDEX(vpr_idx, port, pin) NRFX_VPR_VIO_PIN_INDEX_GET(vpr_idx, port, pin)
+static const uint8_t vio_pin_index[] = {
+	NRFX_VPR_VIO_FOR_EACH_PIN(NRF_VPR_IDX_FLPR, GEN_VIO_PIN_INDEX, (,))
+};
+BUILD_ASSERT(ARRAY_SIZE(vio_pin_num) == ARRAY_SIZE(vio_pin_index));
+
+#if VIO_PORT_COUNT > 1
+#define GEN_VIO_PIN_PORT(vpr_idx, port, pin) (port)
+static const uint8_t vio_pin_port[] = {
+	NRFX_VPR_VIO_FOR_EACH_PIN(NRF_VPR_IDX_FLPR, GEN_VIO_PIN_PORT, (,))
+};
+BUILD_ASSERT(ARRAY_SIZE(vio_pin_port) == ARRAY_SIZE(vio_pin_num));
+#endif
 
 static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin)
 {
-	size_t map_index = pin - FLPR_VIO_PIN_OFFSET;
+#if VIO_PORT_COUNT <= 1
+	ARG_UNUSED(port);
+#endif
 
-	/* Check if the pin and the port can be accessed by VIO. */
-	if ((port != FLPR_VIO_PORT) || (map_index >= VIO_PIN_COUNT)) {
-		return VIO_INDEX_INVALID;
-	}
-	return pin_to_vio_map[map_index];
-}
-
-static uint16_t gpio_pin_mask_to_vio_mask(uint32_t gpio_pin_mask)
-{
-	/* Check if all of the pins specified by the mask can be accessed by VIO. */
-	if ((gpio_pin_mask & (~VIO_VALID_PIN_MASK)) != 0) {
-		return VIO_PIN_MASK_INVALID;
-	}
-	uint16_t vio_mask = 0;
-
-	for (int i = 0; i < VIO_PIN_COUNT; i++) {
-		if (gpio_pin_mask & BIT(i + FLPR_VIO_PIN_OFFSET)) {
-			vio_mask |= BIT(pin_to_vio_map[i]);
+	for (size_t i = 0; i < ARRAY_SIZE(vio_pin_num); i++) {
+#if VIO_PORT_COUNT > 1
+		if (vio_pin_port[i] != port) {
+			continue;
+		}
+#endif
+		if (vio_pin_num[i] == pin) {
+			return vio_pin_index[i];
 		}
 	}
+
+	return VIO_INDEX_INVALID;
+}
+
+static uint16_t gpio_pin_mask_to_vio_mask(uint8_t port, uint32_t gpio_pin_mask)
+{
+	uint16_t vio_mask = 0;
+	uint32_t accessible_mask = 0;
+
+#if VIO_PORT_COUNT <= 1
+	ARG_UNUSED(port);
+#endif
+
+	for (size_t i = 0; i < ARRAY_SIZE(vio_pin_num); i++) {
+#if VIO_PORT_COUNT > 1
+		if (vio_pin_port[i] != port) {
+			continue;
+		}
+#endif
+		accessible_mask |= BIT(vio_pin_num[i]);
+		if (gpio_pin_mask & BIT(vio_pin_num[i])) {
+			vio_mask |= BIT(vio_pin_index[i]);
+		}
+	}
+
+	/* Reject the request if any pin in the mask cannot be accessed by the VIO. */
+	if ((gpio_pin_mask & ~accessible_mask) != 0) {
+		return VIO_PIN_MASK_INVALID;
+	}
+
 	return vio_mask;
 }
 
@@ -127,7 +174,10 @@ static int gpio_hpf_pin_configure(uint8_t port, uint16_t pin, uint32_t flags)
 
 	nrfy_gpio_reconfigure(abs_pin, &dir, &input, &pull, &drive, NULL);
 
+#if !defined(CONFIG_SOC_NRF9251)
+	/* On nRF9251 the pin is routed to the VPR using UICR. */
 	nrfy_gpio_pin_control_select(abs_pin, NRF_GPIO_PIN_SEL_VPR);
+#endif
 
 	if (dir == NRF_GPIO_PIN_DIR_OUTPUT) {
 		nrf_vpr_csr_vio_dir_set(nrf_vpr_csr_vio_dir_get() | (BIT(pin_vio_index)));
@@ -155,9 +205,9 @@ void process_packet(hpf_gpio_data_packet_t *packet)
 		(void)ret;
 		__ASSERT_NO_MSG(ret == 0);
 	} else {
-		uint16_t vio_mask = gpio_pin_mask_to_vio_mask(packet->pin);
+		uint16_t vio_mask = gpio_pin_mask_to_vio_mask(packet->port, packet->pin);
 
-		__ASSERT_NO_MSG((packet->port == VIO_PORT) && vio_mask != VIO_PIN_MASK_INVALID);
+		__ASSERT_NO_MSG(vio_mask != VIO_PIN_MASK_INVALID);
 
 		irq_arg = vio_mask;
 		switch (packet->opcode) {
@@ -174,7 +224,8 @@ void process_packet(hpf_gpio_data_packet_t *packet)
 						     VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_TOGGLE));
 			break;
 		case HPF_GPIO_PORT_SET_MASKED:
-			irq_arg2 = gpio_pin_mask_to_vio_mask(packet->flags & packet->pin);
+			irq_arg2 = gpio_pin_mask_to_vio_mask(packet->port,
+							     packet->flags & packet->pin);
 			nrf_vpr_clic_int_pending_set(NRF_VPRCLIC,
 						     VEVIF_IRQN(HRT_VEVIF_IDX_GPIO_SET_MASKED));
 			break;

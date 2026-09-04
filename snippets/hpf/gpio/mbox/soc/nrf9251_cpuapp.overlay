@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/memory-attr/memory-attr-arm.h>
+/* Reuse cpuapp-cpuflpr shared-memory regions and disable cache as mbox does not flush. */
+sram_tx: &cpuapp_cpuflpr_ipc_shm {
+	compatible = "zephyr,memory-region", "mmio-sram";
+	zephyr,memory-region = "IPC_SHM_TX";
+	zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+	#memory-region-cells = <0>;
+};
+
+sram_rx: &cpuflpr_cpuapp_ipc_shm {
+	compatible = "zephyr,memory-region", "mmio-sram";
+	zephyr,memory-region = "IPC_SHM_RX";
+	zephyr,memory-attr = <DT_MEM_ARM(ATTR_MPU_RAM_NOCACHE)>;
+	#memory-region-cells = <0>;
+};
+
+/ {
+	mbox_consumer {
+		compatible = "vnd,mbox-consumer";
+		mboxes = <&cpuapp_bellboard 14>, <&cpuflpr_vevif 16>;
+		mbox-names = "rx", "tx";
+	};
+};
+
+&cpuflpr_vpr {
+	status = "okay";
+
+	/* HPF GPIO controller driving port 2. */
+	hpf_gpio2: gpio2 {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <10>;
+		port = <2>;
+		status = "okay";
+	};
+
+	/* HPF GPIO controller driving port 5. */
+	hpf_gpio5: gpio5 {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <6>;
+		port = <5>;
+		status = "okay";
+	};
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};

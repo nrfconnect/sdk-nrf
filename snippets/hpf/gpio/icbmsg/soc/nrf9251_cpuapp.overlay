@@ -1,0 +1,40 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+ipc0: &cpuapp_cpuflpr_ipc {
+	compatible = "zephyr,ipc-icbmsg";
+	tx-blocks = <8>;
+	rx-blocks = <8>;
+	status = "okay";
+};
+
+&cpuflpr_vpr {
+	status = "okay";
+
+	/* HPF GPIO controller driving port 2. */
+	hpf_gpio2: gpio2 {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <10>;
+		port = <2>;
+		status = "okay";
+	};
+
+	/* HPF GPIO controller driving port 5. */
+	hpf_gpio5: gpio5 {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <6>;
+		port = <5>;
+		status = "okay";
+	};
+};
+
+&cpuflpr_vevif {
+	status = "okay";
+};

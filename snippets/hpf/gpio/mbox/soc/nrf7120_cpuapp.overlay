@@ -4,8 +4,6 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../hpf-gpio-app.overlay"
-
 / {
 	reserved-memory {
 		#address-cells = <1>;
@@ -46,8 +44,18 @@
 };
 
 &cpuflpr_vpr {
+	status = "okay";
 	execution-memory = <&cpuflpr_sram_code_data>;
 	source-memory = <&cpuflpr_code_partition>;
+
+	hpf_gpio: gpio {
+		compatible = "nordic,hpf-gpio";
+		gpio-controller;
+		#gpio-cells = <0x2>;
+		ngpios = <12>;
+		port = <2>;
+		status = "okay";
+	};
 };
 
 &gpio2 {
@@ -60,10 +68,4 @@
 
 &cpuapp_vevif_tx {
 	status = "okay";
-};
-
-&hpf_gpio {
-	status = "okay";
-	ngpios = <12>;
-	port = <2>;
 };

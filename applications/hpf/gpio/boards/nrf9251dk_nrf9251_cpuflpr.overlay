@@ -1,0 +1,44 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuflpr_vevif_rx {
+	status = "okay";
+	interrupts = <16 NRF_DEFAULT_IRQ_PRIORITY>;
+	nordic,tasks = <1>;
+	nordic,tasks-mask = <0x00010000>;
+};
+
+&cpuapp_bellboard {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "disabled";
+};
+
+&gpio1 {
+	status = "disabled";
+};
+
+&gpio2 {
+	status = "disabled";
+};
+
+&gpiote130 {
+	status = "disabled";
+};
+
+&grtc {
+	status = "disabled";
+};
+
+&uart120 {
+	status = "disabled";
+};
+
+&dma_fast_region {
+	status = "disabled";
+};
