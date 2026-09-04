@@ -56,6 +56,14 @@ extern "C" {
 #define DECT_MTU CONFIG_NET_L2_DECT_MTU
 
 /**
+ * @brief Sentinel value for an unassigned transmitter (own) long RD ID.
+ * @details Mirrors the driver-side "not set" sentinel (DECT_MDM_LONG_RD_ID_ID_NOT_SET).
+ * Per @ref DECT-MAC-SPEC 4.2.3.2, valid long RD IDs are in range
+ * 0x00000001-0xFFFFFFFD, so 0 is never a legitimately assigned value.
+ */
+#define DECT_NET_L2_LONG_RD_ID_NOT_SET 0U
+
+/**
  * INTERNAL_HIDDEN @endcond
  */
 

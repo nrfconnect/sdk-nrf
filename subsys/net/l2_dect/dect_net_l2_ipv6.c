@@ -6,8 +6,13 @@
 
 #include <zephyr/net/net_core.h>
 #include <zephyr/net/net_if.h>
+#include <zephyr/net/net_ip.h>
+#include <zephyr/sys/util.h>
 
 #include "ipv6.h"
+#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+#include "route_ipv6.h"
+#endif
 
 #include <net/dect/dect_net_l2.h>
 #include <net/dect/dect_net_l2_mgmt.h>
@@ -22,8 +27,79 @@ LOG_MODULE_DECLARE(net_l2_dect, CONFIG_NET_L2_DECT_LOG_LEVEL);
 #include "net_private.h" /* For net_sprint_ipv6_addr */
 
 #define IPV6_LINK_LOCAL_PREFIX_BE32  0xfe800000
-#define DECT_IPV6_PREFIX_LEN_BYTES   8
-#define IPV6_PREFIX_COMPARISON_BITS  64
+
+/** On-DECT delegated /64 prefix length in struct dect_net_ipv6_prefix_config::prefix (bytes). */
+#define DECT_IPV6_PREFIX_LEN_64_BYTES 8
+/** On-DECT /96-style prefix length (delegated /64 + 32-bit sink scope) in bytes. */
+#define DECT_IPV6_PREFIX_LEN_96_BYTES 12
+
+#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+static void dect_net_l2_ipv6_sink_route96_normalize(const struct dect_net_ipv6_prefix_config *cfg,
+						    struct net_in6_addr *out)
+{
+	memcpy(out->s6_addr, cfg->prefix.s6_addr, DECT_IPV6_PREFIX_LEN_96_BYTES);
+	memset(out->s6_addr + DECT_IPV6_PREFIX_LEN_96_BYTES, 0, 4);
+}
+
+static void dect_net_l2_ipv6_sink_route96_remove(struct net_if *dect_iface,
+						 const struct dect_net_ipv6_prefix_config *cfg)
+{
+	struct net_in6_addr p96;
+	struct net_route_entry *re;
+
+	if (cfg->prefix_len != DECT_IPV6_PREFIX_LEN_96_BYTES) {
+		return;
+	}
+
+	dect_net_l2_ipv6_sink_route96_normalize(cfg, &p96);
+
+	re = net_route_ipv6_lookup(dect_iface, &p96);
+	if (re != NULL) {
+		(void)net_route_ipv6_del(re);
+	}
+
+	(void)net_ipv6_nbr_rm(dect_iface, &p96);
+}
+
+static void dect_net_l2_ipv6_sink_route96_add(struct net_if *dect_iface,
+					      const struct dect_net_ipv6_prefix_config *cfg)
+{
+	struct net_in6_addr p96;
+	struct net_route_entry *re;
+
+	if (cfg->prefix_len != DECT_IPV6_PREFIX_LEN_96_BYTES) {
+		return;
+	}
+
+	dect_net_l2_ipv6_sink_route96_normalize(cfg, &p96);
+
+	if (!net_ipv6_nbr_add(dect_iface, &p96, net_if_get_link_addr(dect_iface), false,
+			      NET_IPV6_NBR_STATE_REACHABLE)) {
+		LOG_ERR("(%s): cannot add nbr for %s (/96 sink route nexthop)",
+			__func__, net_sprint_ipv6_addr(&p96));
+		return;
+	}
+
+	/*
+	 * nexthop == p96 on purpose (standard Zephyr "connected route" idiom, cf.
+	 * add_route() in ipv6.c): only wins longest-prefix-match onto DECT. The
+	 * resolved lladdr is never used to reach a PT - dect_net_l2_send() always
+	 * re-derives the real target long RD ID from the packet's IPv6 dst addr.
+	 */
+	re = net_route_ipv6_add(dect_iface, &p96, 96, &p96, NET_IPV6_ND_INFINITE_LIFETIME,
+		NET_ROUTE_PREFERENCE_HIGH);
+	if (re == NULL) {
+		LOG_ERR("(%s): failed to add /96 route for %s/96",
+			__func__, net_sprint_ipv6_addr(&p96));
+		(void)net_ipv6_nbr_rm(dect_iface, &p96);
+		return;
+	}
+
+	LOG_INF("(%s): /96 route %s/96 on iface %p",
+		__func__, net_sprint_ipv6_addr(&p96), dect_iface);
+}
+#endif /* CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96 */
+
 
 #if defined(CONFIG_NET_IPV6_NBR_CACHE)
 static void dect_net_l2_ipv6_util_global_nbr_add(
@@ -44,6 +120,7 @@ static void dect_net_l2_ipv6_util_global_nbr_add(
 			dect_utils_lib_net_ipv6_addr_create_from_sink_and_long_rd_id(
 				ipv6_prefix_cfg->prefix, sink_long_rd_id, nbr_long_rd_id,
 				&nbr_addr);
+
 		if (nbr_addr_generated) {
 			/* global: add a parent as a neighbor to dect iface */
 			if (!net_ipv6_nbr_add(iface, &nbr_addr, net_if_get_link_addr(iface), false,
@@ -229,7 +306,9 @@ void dect_net_l2_ipv6_addressing_parent_changed_handle(
 		   ipv6_prefix_config->prefix_len > 0 &&
 		   !net_ipv6_is_prefix(ctx->ipv6_prefix_cfg.prefix.s6_addr,
 				       ipv6_prefix_config->prefix.s6_addr,
-				       IPV6_PREFIX_COMPARISON_BITS)) {
+				       MIN(ctx->ipv6_prefix_cfg.prefix_len,
+					   ipv6_prefix_config->prefix_len) *
+					       8U)) {
 		/* Prefix changed */
 		LOG_WRN("Parent IPv6 prefix changed from %s/%d to %s/%d",
 			net_sprint_ipv6_addr(&ctx->ipv6_prefix_cfg.prefix),
@@ -422,7 +501,8 @@ void dect_net_l2_ipv6_global_addressing_replace(struct net_if *dect_iface)
 	struct dect_net_l2_sink_ipv6_prefix sink_global_prefix;
 
 	if (dect_net_l2_sink_ipv6_prefix_get(&sink_global_prefix)) {
-		__ASSERT_NO_MSG(sink_global_prefix.len == 8);
+		__ASSERT_NO_MSG(sink_global_prefix.len == DECT_IPV6_PREFIX_LEN_64_BYTES ||
+				sink_global_prefix.len == DECT_IPV6_PREFIX_LEN_96_BYTES);
 		ctx->ipv6_prefix_cfg.prefix = sink_global_prefix.prefix;
 		ctx->ipv6_prefix_cfg.prefix_len = sink_global_prefix.len;
 	} else {
@@ -454,6 +534,12 @@ void dect_net_l2_addr_util_prefix_replace(struct dect_net_l2_context *ctx,
 	__ASSERT_NO_MSG(dect_iface != NULL);
 	__ASSERT_NO_MSG(new_ipv6_prefix_config != NULL);
 
+#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+	if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
+		dect_net_l2_ipv6_sink_route96_remove(dect_iface, &ctx->ipv6_prefix_cfg);
+	}
+#endif
+
 	ctx->ipv6_prefix_cfg = *new_ipv6_prefix_config;
 
 	/* Remove all prefixes*/
@@ -476,6 +562,12 @@ void dect_net_l2_addr_util_prefix_replace(struct dect_net_l2_context *ctx,
 			LOG_INF("IPv6 prefix %s/%d added to dect nr+ iface %p",
 				net_sprint_ipv6_addr(&ctx->ipv6_prefix_cfg.prefix),
 				ctx->ipv6_prefix_cfg.prefix_len * 8, dect_iface);
+#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+			if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
+				dect_net_l2_ipv6_sink_route96_add(
+					dect_iface, &ctx->ipv6_prefix_cfg);
+			}
+#endif
 		}
 	}
 }
@@ -503,6 +595,12 @@ bool dect_net_l2_ipv6_addressing_sink_changed_handle(struct net_if *iface,
 			net_sprint_ipv6_addr(&ctx->ipv6_prefix_cfg.prefix),
 			ctx->ipv6_prefix_cfg.prefix_len * 8, iface);
 
+#if IS_ENABLED(CONFIG_NET_L2_DECT_BR_IPV6_SINK_ROUTE96)
+		if (ctx->ipv6_prefix_cfg.prefix_len == DECT_IPV6_PREFIX_LEN_96_BYTES) {
+			dect_net_l2_ipv6_sink_route96_remove(iface, &ctx->ipv6_prefix_cfg);
+		}
+#endif
+
 		/* Remove prefix */
 		if (!net_if_ipv6_prefix_rm(
 			iface, &ctx->ipv6_prefix_cfg.prefix, ctx->ipv6_prefix_cfg.prefix_len * 8)) {
@@ -518,9 +616,12 @@ bool dect_net_l2_ipv6_addressing_sink_changed_handle(struct net_if *iface,
 		memset(&ctx->ipv6_prefix_cfg.prefix, 0, sizeof(ctx->ipv6_prefix_cfg.prefix));
 	} else if (ctx->ipv6_prefix_cfg.prefix_len > 0 &&
 		   ipv6_prefix_config->prefix_len > 0 &&
-		   !net_ipv6_is_prefix(ctx->ipv6_prefix_cfg.prefix.s6_addr,
-				       ipv6_prefix_config->prefix.s6_addr,
-				       IPV6_PREFIX_COMPARISON_BITS)) {
+		   (ctx->ipv6_prefix_cfg.prefix_len != ipv6_prefix_config->prefix_len ||
+		    !net_ipv6_is_prefix(ctx->ipv6_prefix_cfg.prefix.s6_addr,
+					ipv6_prefix_config->prefix.s6_addr,
+					MIN(ctx->ipv6_prefix_cfg.prefix_len,
+					    ipv6_prefix_config->prefix_len) *
+						8U))) {
 
 		/* Prefix changed */
 		LOG_WRN("Sink IPv6 prefix changed from %s/%d to %s/%d",
