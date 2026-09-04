@@ -680,6 +680,9 @@ static inline int sx_ecp_ptadd(sx_pk_req *req, const struct sx_pk_ecurve *curve,
 	sx_pk_run(req);
 
 	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
 	const uint8_t **outputs = sx_pk_get_output_ops(req);
 
