@@ -47,7 +47,7 @@ ITS_KEY_POLICIES: dict[str, str] = {
 }
 
 KMU_KEY_STORAGE_SOC_PREFIXES = ("nrf54l", "nrf7120")
-ITS_KEY_STORAGE_SOC_PREFIXES = ("nrf54h",)
+ITS_KEY_STORAGE_SOC_PREFIXES = ("nrf54h", "nrf92")
 
 
 def uses_kmu_key_storage(soc: str) -> bool:
@@ -229,7 +229,8 @@ class NcsProvision(WestCommand):
                 "nrf54lv10a", "nrf54lc10a",
                 "nrf54ls05b",
                 "nrf7120",
-                "nrf54h20"
+                "nrf54h20",
+                "nrf9251",
             ],
             default="nrf54l15",
             help="SoC"
