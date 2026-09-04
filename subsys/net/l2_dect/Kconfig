@@ -64,6 +64,17 @@ config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
 
 if NET_L2_DECT_BR && NET_L2_ETHERNET
 
+config NET_L2_DECT_BR_IPV6_ETH_UPSTREAM_PREFIX_ROUTE
+	bool "Install /N route on upstream Ethernet iface via default router LL"
+	default y
+	help
+	  Install a static /N route on the uplink for the RA-learned prefix with
+	  nexthop = default router link-local. The router LL is already REACHABLE
+	  from the RA SLLAO, so first packets skip destination ND (multicast NS +
+	  wait for NA, only 1 pending packet per neighbor) and are sent straight
+	  to the router's MAC. Avoids first-packet drops on flaky link layers.
+	  Disable to fall back to direct ND for in-prefix destinations on the uplink.
+
 config NET_L2_DECT_BR_IPV6_ETH_TX_PACING_MS
 	int "Pacing delay (ms) between consecutive Ethernet sends on the sink uplink"
 	default 10
