@@ -18,6 +18,13 @@
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
 
+#ifdef CONFIG_NRFX_RRAMC
+#if CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE > 0
+#define WRITE_BUFFER_SIZE CONFIG_NRF_RRAM_WRITE_BUFFER_SIZE
+#else
+#define WRITE_BUFFER_SIZE 0
+#endif
+#endif
 
 /* These symbols are defined in linker scripts. */
 extern const uint32_t __rom_region_start[];
@@ -216,6 +223,24 @@ BUILD_ASSERT((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
 
 void fw_info_invalidate(const struct fw_info *fw_info)
 {
+#ifdef CONFIG_NRFX_RRAMC
+	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(WRITE_BUFFER_SIZE);
+
+#if defined(CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE) && CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE > 0
+	config.preload_timeout_enable = true;
+	config.preload_timeout = CONFIG_NRF_RRAM_READYNEXT_TIMEOUT_VALUE;
+#else
+	config.preload_timeout_enable = false;
+	config.preload_timeout = 0;
+#endif
+
+	int err = nrfx_rramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return;
+	}
+#endif
+
 	/* Check if value has been written. */
 	if (fw_info->valid == CONFIG_FW_INFO_VALID_VAL) {
 #ifdef CONFIG_NRFX_NVMC
