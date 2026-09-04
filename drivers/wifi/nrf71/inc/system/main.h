@@ -31,7 +31,6 @@
 #include <system/fmac_api.h>
 #include <nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
-#include <common/vtf.h>
 
 #define NRF71_DRIVER_VERSION "1."KERNEL_VERSION_STRING
 

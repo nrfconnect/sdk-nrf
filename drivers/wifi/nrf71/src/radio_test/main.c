@@ -18,6 +18,7 @@
 #include <util.h>
 #include <common/rf_params.h>
 #include <radio_test/main.h>
+#include <vtf_monitoring/vtf_monitoring.h>
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -71,13 +72,14 @@ static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv 
 		goto err;
 	}
 
-	/* TODO: Remove hardcodes once we hook in sensor readings */
-	status = nrf_wifi_fmac_config_vtf_params(rpu_ctx, 243, 25, 0,
-						 &drv_ctx->vtf_buffer_start_address);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: Failed to configure VTF params", __func__);
-		goto err;
-	}
+	/* Point the firmware at the live VTF snapshot region maintained by the
+	 * vtf_monitoring subsystem (selected by the driver). The battery-voltage
+	 * entry is the first of the three consecutive words (voltage,
+	 * temperature, frequency) the firmware reads; the preceding
+	 * initialization word is not included.
+	 */
+	drv_ctx->vtf_buffer_start_address =
+		(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
 
 	memset(&tx_pwr_ctrl_params, 0, sizeof(tx_pwr_ctrl_params));
 	memset(&tx_pwr_ceil_params, 0, sizeof(tx_pwr_ceil_params));

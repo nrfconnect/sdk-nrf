@@ -28,7 +28,9 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_rem(struct nrf_wifi_rt_drv_priv *drv_p
 		drv_ctx->phy_rf_params_addr[i] = 0;
 	}
 
-	nrf_wifi_osal_mem_free((void *)drv_ctx->vtf_buffer_start_address);
+	/* vtf_buffer_start_address points at the static vtf_snapshots region,
+	 * not heap memory, so it must not be freed.
+	 */
 	drv_ctx->vtf_buffer_start_address = 0;
 
 	drv_ctx->rpu_ctx = NULL;
