@@ -81,6 +81,8 @@ class Package(DataBaseClass):
         name                    User friendly name
         url                     URL pointing to the source of this package
         version                 Version string of this package
+        revision                Commit SHA this package was taken from. "version" may hold
+                                a release tag. This keeps the exact source revision
         browser_url             URL that can be opened in a web browser
         supplier                Supplier name
         purl                    Package URL (PURL) identifier
@@ -93,6 +95,7 @@ class Package(DataBaseClass):
     name: 'str|None' = None
     url: 'str|None' = None
     version: 'str|None' = None
+    revision: 'str|None' = None
     browser_url: 'str|None' = None
     supplier: 'str|None' = None
     purl: 'str|None' = None
