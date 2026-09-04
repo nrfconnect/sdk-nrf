@@ -794,6 +794,16 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF70 n)
   endif()
 
+  if(SB_CONFIG_WIFI_NRF71)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF71 y)
+
+    if(SB_CONFIG_WIFI_NRF71_PATCH)
+      include(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/nrf7120_fw_ext/cmake/patch_overlay.cmake)
+    else()
+      set_config_bool(${DEFAULT_IMAGE} CONFIG_WIFI_NRF71_PATCH n)
+    endif()
+  endif()
+
   if(SB_CONFIG_HPF)
     include_hpf()
   endif()

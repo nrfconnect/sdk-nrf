@@ -65,4 +65,25 @@ endchoice
 
 endif # WIFI_NRF70
 
+menuconfig WIFI_NRF71
+	bool "nRF71 driver"
+	depends on SOC_SERIES_NRF71
+
+menuconfig WIFI_NRF71_PATCH
+	bool "nRF7120 Wi-Fi ROM patches"
+	depends on SOC_SERIES_NRF71
+	select WIFI_NRF71
+	help
+	  Merge nRF7120 Wi-Fi ROM patches into the application image.
+
+if WIFI_NRF71_PATCH
+
+config WIFI_NRF71_PATCH_VERSION
+	string "Patch version directory"
+	help
+	  Release directory under nrf71_wifi/bins in nrfxlib, containing
+	  manifest.json and the patch binaries.
+
+endif # WIFI_NRF71_PATCH
+
 endmenu
