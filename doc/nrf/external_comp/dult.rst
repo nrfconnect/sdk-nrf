@@ -17,7 +17,7 @@ For detailed information about supported functionalities, see the official `DULT
 
    The DULT support in the |NCS| is :ref:`experimental <software_maturity>`.
    Breaking updates in the DULT support might be implemented in response to changes in the `DULT`_ specification.
-   The optional features are not fully supported.
+   Not all optional features are supported.
 
 Integration prerequisites
 *************************
@@ -43,7 +43,9 @@ The DULT integration in the |NCS| consists of the following steps:
 
 1. :ref:`Registering the device <ug_dult_registering>`
 #. :ref:`Performing prerequisite operations <ug_dult_prerequisite_ops>`
+#. :ref:`Handling multiple accessory-locating networks <ug_dult_multi_user>`
 #. :ref:`Managing the near-owner state <ug_dult_near_owner_state>`
+#. :ref:`Building the location-enabled advertising payload <ug_dult_advertising>`
 #. :ref:`Managing the identification process <ug_dult_identifier>`
 #. :ref:`Using the sound callbacks and managing the sound state <ug_dult_sound>`
 #. :ref:`Interacting with the motion detector <ug_dult_motion_detector>`
@@ -76,6 +78,8 @@ After registration, you should have the following data:
 * Network ID - Accessory-locating network ID.
   See the `DULT Manufacturer Network ID Registry`_ from the DULT specification for a list of network IDs.
 * Knowledge on how to construct the Identifier Payload - The accessory-locating network defines its own identifier that allows the network to identify the accessory in case of unwanted tracking, and to share obfuscated accessory owner information with a tracked individual.
+* Network version (optional) - The version of the accessory-locating network implementation running on the accessory.
+  Check with the network provider whether the network defines this value.
 
 .. rst-class:: numbered-step
 
@@ -89,11 +93,41 @@ You must enable the :kconfig:option:`CONFIG_DULT` Kconfig option to support the 
 Several Kconfig options are available to configure the DULT integration.
 For more details, see the :ref:`Configuration <dult_configuration>` section of the :ref:`dult_readme`.
 
+.. _ug_dult_api_variant:
+
+DULT API variant
+================
+
+The DULT subsystem provides two API contracts that differ in the number of supported DULT users and in the user lifecycle.
+Select one with the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` or the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option.
+
+API variant v1 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V1`):
+
+* Only one DULT user can be registered at a time.
+* The :c:func:`dult_reset` function is the terminal teardown.
+  It releases the DULT subsystem, unregisters the DULT user together with its callbacks, and clears the preset configuration.
+* The :c:func:`dult_user_unregister`, :c:func:`dult_multi_user_cb_register`, and :c:func:`dult_multi_user_conn_claim` functions are not supported.
+* Typical integration: the accessory-locating network enables the DULT subsystem when it enables its own stack and resets it when it disables the stack.
+
+API variant v2 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V2`):
+
+* Up to :kconfig:option:`CONFIG_DULT_USER_MAX` DULT users can be registered at the same time, but at most one of them is the associated user.
+* The :c:func:`dult_reset` function is not terminal.
+  It releases the association and keeps the DULT user registered, so the user can be enabled again with the :c:func:`dult_enable` function.
+* The :c:func:`dult_user_unregister` function is the terminal teardown that frees the user.
+* The registered callbacks, the battery level, and the near-owner state are preserved across the :c:func:`dult_reset` function call and cleared by the :c:func:`dult_user_unregister` function call.
+* Typical integration: the accessory-locating network claims the association when the accessory is associated with it (or when it enables its stack with the accessory already associated), and releases the association on disassociation or when it disables its stack.
+
+.. note::
+   The :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` option is selected by default for backwards compatibility, but it is deprecated.
+   Use the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` option for new integrations.
+
 DULT user
 =========
 
 The DULT subsystem introduces the concept of a DULT user.
-The DULT subsystem can be used by only one DULT user at a time.
+Each DULT user represents one accessory-locating network.
+The number of users that can be registered at the same time depends on the selected :ref:`DULT API variant <ug_dult_api_variant>`.
 To use the DULT subsystem, you must register a DULT user by calling the :c:func:`dult_user_register` function before you can call any other function from the DULT API.
 Upon registration, you must provide the DULT user configuration to the DULT subsystem.
 The DULT user configuration includes the following data:
@@ -101,6 +135,8 @@ The DULT user configuration includes the following data:
 * Registration data - The data obtained during :ref:`registering the device <ug_dult_registering>`.
 * Accessory capabilities - Capabilities of your accessory.
   Set appropriate bits in the bitmask to indicate the supported capabilities.
+  The requirements listed below apply to accessories declared with the :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_SMALL` Kconfig option.
+  With the :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_LARGE` Kconfig option, all capabilities are optional and the DULT subsystem does not validate them during the registration.
   There are following capabilities available:
 
   * Play sound (:c:enum:`DULT_ACCESSORY_CAPABILITY_PLAY_SOUND_BIT_POS`) - A mandatory feature that enables the accessory to emit sound signals.
@@ -110,10 +146,20 @@ The DULT user configuration includes the following data:
   * Identifier lookup by Bluetooth LE (:c:enum:`DULT_ACCESSORY_CAPABILITY_ID_LOOKUP_BLE_BIT_POS`) - A feature supporting identifier lookup by Bluetooth LE functionality.
     It is optional, but becomes mandatory if identifier lookup by NFC is not supported.
 
-* Firmware version - The firmware version of your accessory.
+  The DULT user registration fails if a mandatory capability is missing.
+  The accessory non-owner service rejects operations that depend on a capability that is not declared.
 
-To change the DULT user, you must reset the DULT subsystem by calling the :c:func:`dult_reset` function.
-This function unregisters the registered DULT user information and callbacks.
+* Firmware version - The firmware version of your accessory.
+* Network version - The version of the accessory-locating network implementation, provided through the :c:member:`dult_user.network_version` field.
+  This field is optional.
+  Leave it as ``NULL`` if the accessory-locating network does not define a network version.
+
+How you release a registered DULT user depends on the selected :ref:`DULT API variant <ug_dult_api_variant>`:
+
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, call the :c:func:`dult_reset` function.
+  This function unregisters the registered DULT user information and callbacks, so you must register them again to change the DULT user.
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, call the :c:func:`dult_user_unregister` function.
+  The :c:func:`dult_reset` function only releases the association and keeps the user registered.
 
 Callback registration
 =====================
@@ -127,9 +173,14 @@ Set your application-specific callback functions in the callback structure, whic
 The callback structure must persist in the application memory (static declaration), as during the registration, the DULT subsystem stores only the memory pointer to it.
 Use the following functions to register callbacks:
 
-  * :c:func:`dult_id_read_state_cb_register` (mandatory)
-  * :c:func:`dult_sound_cb_register` (mandatory)
+  * :c:func:`dult_id_read_state_cb_register` (mandatory if the identifier lookup by Bluetooth LE capability is declared)
+  * :c:func:`dult_sound_cb_register` (mandatory if the play sound capability is declared)
   * :c:func:`dult_motion_detector_cb_register` (mandatory if the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR` Kconfig option is enabled)
+  * :c:func:`dult_multi_user_cb_register` (mandatory if the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option is set to a value greater than ``1``, optional otherwise; requires the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option)
+  * :c:func:`dult_bt_anos_cb_register` (optional)
+
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, the callbacks are cleared by the :c:func:`dult_reset` function and must be registered again after each subsequent DULT user registration.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, the callbacks are preserved across the :c:func:`dult_reset` function call and cleared only by the :c:func:`dult_user_unregister` function call.
 
 Preset configuration
 ====================
@@ -144,9 +195,50 @@ Enabling the DULT subsystem
 ===========================
 
 After the DULT user registration, callbacks registration and preset configuration, you must enable the DULT subsystem with the :c:func:`dult_enable` function.
-To unregister the current DULT user and callbacks, reset the preset configuration, and disable the DULT subsystem, use the :c:func:`dult_reset` function.
-No additional steps are required to integrate the DULT implementation.
+The DULT user that successfully calls this function becomes the associated user.
 In the DULT subsystem disabled state, most of the DULT APIs are not available.
+
+The teardown depends on the selected :ref:`DULT API variant <ug_dult_api_variant>`:
+
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, the :c:func:`dult_reset` function unregisters the current DULT user and callbacks, resets the preset configuration, and disables the DULT subsystem.
+* With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, the :c:func:`dult_reset` function releases the association and keeps the DULT user, its callbacks, and its preset configuration registered.
+  Use the :c:func:`dult_user_unregister` function to complete the teardown.
+
+Use the :c:func:`dult_user_is_associated` and :c:func:`dult_is_any_associated` functions to query the current association state.
+
+No additional steps are required to integrate the DULT implementation.
+
+.. rst-class:: numbered-step
+
+.. _ug_dult_multi_user:
+
+Handling multiple accessory-locating networks
+*********************************************
+
+This step applies only to the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option.
+Skip it if you use the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, which supports a single DULT user and emits no association notifications.
+
+Set the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option to the number of accessory-locating networks that can be registered at the same time.
+All registered users share the DULT subsystem during the pre-association window, but at most one of them is the associated user.
+
+The associated user is arbitrated by the :c:func:`dult_enable` function.
+Calling it evicts every other registered user, and the DULT subsystem notifies all registered users about the outcome through the :c:member:`dult_multi_user_cb.ownership_claimed` callback.
+Releasing the association with the :c:func:`dult_reset` function notifies all registered users through the :c:member:`dult_multi_user_cb.ownership_released` callback.
+An evicted user stays registered until it calls the :c:func:`dult_user_unregister` function as part of its own teardown.
+
+Both notifications are delivered from the system workqueue, so you can drive the DULT user lifecycle directly from the callback.
+Transitions are delivered in order, but toggling the association repeatedly within a single execution context without yielding may collapse cancelling transitions and lose intermediate states.
+The final association state is always reported correctly, and two consecutive notifications of the same kind are never delivered.
+
+If an accessory-locating network must serve accessory non-owner service operations before it becomes the associated user, it has to do the following:
+
+* Claim its Bluetooth LE connections with the :c:func:`dult_multi_user_conn_claim` function, called from its own connected callback.
+  The claim is released automatically when the connection is disconnected.
+* Register the :c:struct:`dult_bt_anos_cb` structure with the :c:func:`dult_bt_anos_cb_register` function to grant access to the Accessory Information operations outside the separated near-owner state.
+
+.. note::
+   Granting access to the accessory non-owner service operations outside the separated near-owner state is a deviation from the DULT specification.
+   Make sure that the policy implemented by the :c:member:`dult_bt_anos_cb.access_verify` callback matches the specification of the accessory-locating network layered on top of DULT.
 
 .. rst-class:: numbered-step
 
@@ -162,9 +254,34 @@ The location-tracking accessory can be in one of the two modes of the DULT near-
 
 Check with your accessory-locating network provider for information on how to switch between the two modes.
 Call the :c:func:`dult_near_owner_state_set` function to set the appropriate DULT near-owner state after registering the DULT user and whenever the state changes.
-By default, the DULT near-owner state is set to the near-owner mode on boot and when the :c:func:`dult_reset` function is called.
+By default, the DULT near-owner state is set to the near-owner mode on boot.
+The state is stored per DULT user, and the accessory reports the value of the currently associated user.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, the state is also reset to the near-owner mode when the :c:func:`dult_reset` function is called.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, the state is preserved across the :c:func:`dult_reset` function call and cleared by the :c:func:`dult_user_unregister` function call.
 
 In the near-owner mode, most of the DULT functionalities are unavailable to protect the owner's privacy.
+
+.. rst-class:: numbered-step
+
+.. _ug_dult_advertising:
+
+Building the location-enabled advertising payload
+*************************************************
+
+The DULT specification defines a location-enabled advertising payload with a fixed part that is common to every accessory-locating network.
+Integrating this payload is up to the accessory-locating network, and not every network uses it.
+Some networks define their own advertising payload structure instead.
+Check with your accessory-locating network provider whether the network relies on the DULT payload, and skip this step if it does not.
+
+If your accessory-locating network does integrate the DULT location-enabled advertising payload, the network is responsible for advertising it.
+Use the :c:func:`dult_bt_adv_data_fill` function to serialize the fixed part of the payload, and pass the network-specific proprietary data through the :c:struct:`dult_bt_adv_data` structure.
+Initialize the structure with one of the :c:macro:`DULT_BT_ADV_DATA_INIT`, :c:macro:`DULT_BT_ADV_DATA_PROPRIETARY_INIT`, or :c:macro:`DULT_BT_ADV_DATA_NO_PROPRIETARY_INIT` macros.
+
+Set the :c:member:`dult_bt_adv_data.flags_present` field according to whether the surrounding advertising payload includes the optional Flags AD type.
+The field selects the proprietary data length limit, because omitting the Flags AD type frees three additional bytes for the proprietary payload.
+
+Only the currently associated DULT user can call this function, because the location-enabled advertising payload is defined only for an associated accessory.
+A user that is registered but not associated cannot call this function, so build the payload after the :c:func:`dult_enable` function call succeeds and stop advertising it once the association is released.
 
 .. rst-class:: numbered-step
 

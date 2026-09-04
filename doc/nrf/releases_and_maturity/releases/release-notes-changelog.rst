@@ -752,6 +752,9 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added integration with the DULT API variant v2 to the Find Hub Network (FHN) extension, allowing it to coexist during the pre-association window with other accessory-locating networks that are registered as DULT users.
+    The FHN extension now ties the DULT association to its provisioning state and reports the association arbitration outcome through the new :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback.
+
   * Removed the nRF52 and nRF53 Series support.
 
 * :ref:`dtm_twowire_to_hci_readme` library:
@@ -860,6 +863,28 @@ Other libraries
 
   * Added UUID support for the nRF54L Series and the nRF5340 SoC.
 
+* :ref:`dult_readme` library:
+
+  * Added:
+
+    * The DULT API variant v2 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V2`), which supports registering more than one accessory-locating network at the same time, sized by the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option.
+      In this variant, the :c:func:`dult_reset` function only releases the association and keeps the user registered, and the new :c:func:`dult_user_unregister` function performs the terminal teardown.
+      See the :ref:`ug_dult` guide for details.
+    * The multi-user coexistence API (:c:func:`dult_multi_user_cb_register` and :c:func:`dult_multi_user_conn_claim`) for arbitrating the associated user during the pre-association window, together with the :c:func:`dult_user_is_associated` and :c:func:`dult_is_any_associated` helper functions.
+    * The :c:func:`dult_bt_adv_data_fill` function and the :c:struct:`dult_bt_adv_data` structure for serializing the DULT location-enabled advertising payload.
+    * The :c:struct:`dult_bt_anos_cb` callback structure and the :c:func:`dult_bt_anos_cb_register` function that let a network layered on top of DULT override the default separated-state access gate for the Accessory Information operations.
+    * Support for the optional Get_Network_Version operation through the new ``network_version`` field of the :c:struct:`dult_user` structure.
+    * The :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_SMALL` and :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_LARGE` Kconfig choice for declaring the accessory size, which controls whether the mandatory accessory capabilities are enforced during the DULT user registration.
+    * A runtime override of the motion detector test timing through the :c:func:`dult_test_motion_detector_separated_ut_period_set` function, available with the :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` Kconfig option.
+
+  * Updated:
+
+    * The DULT public headers were moved to a dedicated :file:`include/dult/` directory.
+      Include :file:`dult/dult.h` instead of the deprecated :file:`dult.h`.
+    * The ``struct dult_firmware_version`` structure was renamed to :c:struct:`dult_version`.
+
+  * Deprecated the DULT API variant v1 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V1`), which remains the default for backward compatibility.
+
 Shell libraries
 ---------------
 
@@ -936,7 +961,7 @@ CoreMark integration
 DULT integration
 ----------------
 
-|no_changes_yet_note|
+* Updated the :ref:`ug_dult` guide to describe both DULT API variants, the multi-user coexistence workflow, and the location-enabled advertising payload serialization.
 
 MCUboot
 =======

@@ -444,4 +444,16 @@ Libraries
 
 This section describes the changes related to libraries.
 
-|no_changes_yet_note|
+* :ref:`dult_readme` library:
+
+  * The top-level :file:`dult.h` header is deprecated and now only includes :file:`dult/dult.h`, emitting a warning.
+    Update your includes to use ``#include <dult/dult.h>``.
+    As part of this move, rename the ``struct dult_firmware_version`` structure to :c:struct:`dult_version`.
+    The compatibility alias for the old name exists only in the deprecated :file:`dult.h`, so code that keeps including it needs no change; setting the ``firmware_version`` field of the :c:struct:`dult_user` structure with a designated initializer needs no change either.
+
+  * The DULT API variant v1 (:kconfig:option:`CONFIG_DULT_API_VARIANT_V1`) is deprecated, but remains the default.
+    For new designs, switch to the DULT API variant v2 by enabling the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option.
+    Variant v2 lets multiple accessory-locating networks register with DULT and share it during the pre-association window, while only one of them can hold the DULT association at a time.
+    In variant v2, the :c:func:`dult_reset` function is no longer terminal: it releases the association but keeps the user registered.
+    Use the :c:func:`dult_user_unregister` function for the terminal teardown.
+    See the :ref:`DULT API variant <ug_dult_api_variant>` section of the DULT integration guide for details.
