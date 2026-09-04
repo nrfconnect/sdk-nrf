@@ -1,0 +1,34 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+if WIFI_NRF71
+
+config WIFI_NRF71_PATCH
+	bool "Include nRF7120 Wi-Fi ROM patches in the application image"
+	depends on !IS_BOOTLOADER_IMG
+	help
+	  Controlled by the SB_CONFIG_WIFI_NRF71_PATCH sysbuild option, which
+	  validates the patch release, generates the matching devicetree
+	  overlay, and overrides any value assigned to this symbol directly.
+
+	  The Wi-Fi ROM patches are placed at fixed internal NVM addresses
+	  required by the Wi-Fi Core. When MCUboot is enabled, the merged
+	  image including the application and the Wi-Fi ROM patches is
+	  signed and delivered as part of standard firmware updates.
+
+	  Note: The regular ELF-derived artifacts do not contain Wi-Fi patch
+	  data. Only the merged output used for programming and signing
+	  includes the patches.
+
+config WIFI_NRF71_PATCH_VERSION
+	string "nRF7120 Wi-Fi ROM patch version directory"
+	depends on WIFI_NRF71_PATCH
+	help
+	  Controlled by the SB_CONFIG_WIFI_NRF71_PATCH_VERSION sysbuild option;
+	  only takes effect once sysbuild enables WIFI_NRF71_PATCH above.
+
+	  Version string selecting which patch release to use. Must match a
+	  subdirectory under nrf71_wifi/bins in nrfxlib containing
+	  manifest.json and the patch binaries.
+
+endif # WIFI_NRF71
