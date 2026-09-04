@@ -842,7 +842,13 @@ Libraries for NFC
 nRF RPC libraries
 -----------------
 
-|no_changes_yet_note|
+* :ref:`nrf_rpc_ipc_readme` library:
+
+  * Added:
+
+    * Support for deferred processing of received IPC Service packets in a dedicated thread.
+      This is required for the IPC Service backends that invoke the receive callback from an interrupt context, like ICBMSG, because the nRF RPC core expects to be called from a thread context.
+      The :kconfig:option:`CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD` Kconfig option is used to enable this feature.
 
 Other libraries
 ---------------
