@@ -16,7 +16,7 @@ jobs:
     if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - name: Publish
-        uses: nrfconnect/action-docpublish@a272d73b3f083e41287e32068a0e4c3aef622c21
+        uses: nrfconnect/action-docpublish@f3e4ee63779fb629bbdd48243349ef2843ff6b0b
         with:
           storage-url: ${{ vars.NCS_DOC_STORAGE_URL }}
           storage-url-pr: ${{ vars.NCS_DOC_PR_STORAGE_URL }}
