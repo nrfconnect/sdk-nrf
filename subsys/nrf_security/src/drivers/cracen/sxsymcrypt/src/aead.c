@@ -24,6 +24,12 @@
 
 /** Size of AEAD block size, in bytes */
 #define AEAD_BLOCK_SZ	      (16)
+
+/* A zero-length authentication field selects CCM* (IEEE Std 802.15.4, Annex B),
+ * which is defined only for a length field of L = 2 and therefore only for a
+ * 15 - L octet nonce.
+ */
+#define AEAD_CCM_STAR_L	      (2)
 /** Size of AEAD GCM and CCM context saving state, in bytes */
 #define AES_AEAD_CTX_STATE_SZ (32)
 /** Size of AEAD lenAlenC, in bytes */
@@ -207,7 +213,7 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 			return SX_ERR_INVALID_KEY_SZ;
 		}
 	}
-	if ((tagsz & 1) || (tagsz < 4) || (tagsz > 16)) {
+	if ((tagsz != 0) && ((tagsz & 1) || (tagsz < 4) || (tagsz > 16))) {
 		return SX_ERR_INVALID_TAG_SIZE;
 	}
 
@@ -215,9 +221,13 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 		return SX_ERR_INVALID_NONCE_SIZE;
 	}
 
-	/* datasz must ensure  0 <= datasz < 2^(8L) */
 	uint8_t l = 15 - noncesz;
 
+	if ((tagsz == 0) && (l != AEAD_CCM_STAR_L)) {
+		return SX_ERR_INVALID_NONCE_SIZE;
+	}
+
+	/* datasz must ensure  0 <= datasz < 2^(8L) */
 	if ((l < 8U) && (datasz >= (1ULL << (l * 8)))) {
 		/* message too long to encode the size in the CCM header */
 		return SX_ERR_TOO_BIG;
@@ -251,8 +261,11 @@ static int sx_aead_create_aesccm(struct sxaead *aead_ctx, const struct sxkeyref 
 	 * identical, the outputted tag will be an array of zeros with tagsz
 	 * length. For encryption, expectedtag will be set to NULL by
 	 * sx_aead_crypt() to disable verification.
+	 *
+	 * CCM* (tagsz == 0) has no authentication field at all, so expectedtag
+	 * stays NULL and sx_aead_status() skips the comparison.
 	 */
-	aead_ctx->expectedtag = aead_ctx->cfg->verifier;
+	aead_ctx->expectedtag = tagsz ? aead_ctx->cfg->verifier : NULL;
 
 	return SX_OK;
 }
@@ -358,7 +371,10 @@ int sx_aead_produce_tag(struct sxaead *aead_ctx, uint8_t *tagout)
 
 	sx_aead_discard_aad(aead_ctx);
 
-	ADD_OUTDESCA(aead_ctx->dma, tagout, aead_ctx->tagsz, 0xf);
+	/* With Tlen=0 the engine does not generate the tag block */
+	if (aead_ctx->tagsz) {
+		ADD_OUTDESCA(aead_ctx->dma, tagout, aead_ctx->tagsz, 0xf);
+	}
 
 	aead_ctx->expectedtag = NULL;
 
@@ -379,6 +395,12 @@ int sx_aead_verify_tag(struct sxaead *aead_ctx, const uint8_t *tagin)
 	}
 	if ((aead_ctx->dataintotalsz + aead_ctx->totalaadsz) < aead_ctx->cfg->inputminsz) {
 		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_INCOMPATIBLE_HW);
+	}
+
+	/* CCM*: no authentication field to feed and no verification */
+	if (aead_ctx->tagsz == 0) {
+		sx_aead_discard_aad(aead_ctx);
+		return sx_aead_run(aead_ctx);
 	}
 
 	if (aead_ctx->cfg->lenAlenC(aead_ctx->totalaadsz, aead_ctx->dataintotalsz,

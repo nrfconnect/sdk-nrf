@@ -32,6 +32,15 @@
 #include <cracen_sw_aes_ctr.h>
 #endif
 
+/* ChaCha20 accepts only a 12-octet nonce in the single-part functions. The internal
+ * operation->iv is always one cipher block, laid out as
+ *
+ *	octets 0..3		: block counter, zero for a fresh operation
+ *	octets 4..15		: nonce
+ */
+#define CHACHA20_NONCE_LENGTH PSA_CIPHER_IV_LENGTH(PSA_KEY_TYPE_CHACHA20, PSA_ALG_STREAM_CIPHER)
+#define CHACHA20_NONCE_OFFSET (SX_BLKCIPHER_IV_SZ - CHACHA20_NONCE_LENGTH)
+
 static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *attributes)
 {
 	bool is_supported = false;
@@ -58,6 +67,10 @@ static bool is_alg_supported(psa_algorithm_t alg, const psa_key_attributes_t *at
 		break;
 	case PSA_ALG_CTR:
 		IF_ENABLED(PSA_NEED_CRACEN_CTR_AES,
+			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
+		break;
+	case PSA_ALG_CCM_STAR_NO_TAG:
+		IF_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES,
 			   (is_supported = psa_get_key_type(attributes) == PSA_KEY_TYPE_AES));
 		break;
 	case PSA_ALG_ECB_NO_PADDING:
@@ -105,6 +118,7 @@ static psa_status_t setup(enum cipher_operation dir, cracen_cipher_operation_t *
 
 	operation->alg = alg;
 	operation->dir = dir;
+	operation->processed_length = 0;
 	operation->blk_size =
 		(alg == PSA_ALG_STREAM_CIPHER) ? SX_BLKCIPHER_MAX_BLK_SZ : SX_BLKCIPHER_AES_BLK_SZ;
 
@@ -195,9 +209,9 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 			memmove(output, input, input_length);
 			input = output;
 		}
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, iv,
-					       iv_length, input, input_length, output, output_size,
-					       output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, PSA_ALG_CTR,
+					       iv, iv_length, input, input_length, output,
+					       output_size, output_length);
 	}
 #endif
 
@@ -251,16 +265,19 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 
 	cracen_cipher_operation_t operation = {0};
 	psa_status_t status;
-	/* ChaCha20 only supports 12 bytes IV in the single part decryption function */
-	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
+	/* 16 for the AES block modes, 13 for CCM*, 12 for ChaCha20, and 0 for ECB, whose
+	 * branch below never looks at it.
+	 */
+	const size_t iv_size = PSA_CIPHER_IV_LENGTH(psa_get_key_type(attributes), alg);
 	*output_length = 0;
 
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, input,
-					       iv_size, input + iv_size, input_length - iv_size,
-					       output, output_size, output_length);
+		return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size, PSA_ALG_CTR,
+					       input, iv_size, input + iv_size,
+					       input_length - iv_size, output, output_size,
+					       output_length);
 	}
 #endif
 
@@ -343,7 +360,13 @@ static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)
 		}
 		break;
 	case PSA_ALG_CTR:
-		if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
+		/* CCM* is AES-CTR seeded with A_1, so it shares the primitive below.
+		 * PSA_ALG_CTR is diverted to software before it reaches here when
+		 * PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS is set, CCM* never is.
+		 */
+		IF_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES, (case PSA_ALG_CCM_STAR_NO_TAG:))
+		if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES) ||
+		    IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES)) {
 			sx_status = operation->dir == CRACEN_DECRYPT
 					    ? sx_blkcipher_create_aesctr_dec(&operation->cipher,
 									     &operation->keyref,
@@ -385,7 +408,8 @@ psa_status_t cracen_cipher_encrypt_setup(cracen_cipher_operation_t *operation,
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       PSA_ALG_CTR);
 	}
 #endif
 
@@ -401,7 +425,8 @@ psa_status_t cracen_cipher_decrypt_setup(cracen_cipher_operation_t *operation,
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
-		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size);
+		return cracen_sw_aes_ctr_setup(operation, attributes, key_buffer, key_buffer_size,
+					       PSA_ALG_CTR);
 	}
 #endif
 
@@ -422,22 +447,35 @@ psa_status_t cracen_cipher_set_iv(cracen_cipher_operation_t *operation, const ui
 
 	/* Set IV is called after the encrypt/decrypt setup functions thus we
 	 * know that we have CHACHA20 as the stream cipher here. Chacha20
-	 * supports IV length of 12 bytes which uses a zero counter.
-	 * The internal operation->iv is always 16 bytes where the first
-	 * 4 bytes contain the counter. Since the operation is always
-	 * initialized with 0s we can just place the IV in the correct offset.
+	 * supports IV length of CHACHA20_NONCE_LENGTH which uses a zero counter.
+	 * Since the operation is always initialized with 0s we can just place
+	 * the IV at CHACHA20_NONCE_OFFSET and leave the counter alone.
 	 */
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20) &&
 	    operation->alg == PSA_ALG_STREAM_CIPHER) {
-		if (iv_length == 12) {
-			memcpy(&operation->iv[4], iv, iv_length);
+		if (iv_length == CHACHA20_NONCE_LENGTH) {
+			memcpy(&operation->iv[CHACHA20_NONCE_OFFSET], iv, iv_length);
 			return PSA_SUCCESS;
 		} else {
 			return (iv_length == 8 || iv_length == 16)
 				       ? PSA_ERROR_NOT_SUPPORTED
 				       : PSA_ERROR_INVALID_ARGUMENT;
 		}
+	}
+
+	/* Seed the AES-CTR primitive with A_1; it derives A_2, A_3, ... itself. See the
+	 * CCM_STAR_* definitions in cracen_psa_primitives.h.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) &&
+	    operation->alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		if (iv_length != CCM_STAR_NONCE_LENGTH) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
+		cracen_ccm_star_build_a1(operation->iv, iv);
+
+		return PSA_SUCCESS;
 	}
 
 	if (iv_length != SX_BLKCIPHER_IV_SZ) {
@@ -473,6 +511,19 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 
 	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	/* The one-shot entry points funnel through here as well, so bounding the
+	 * accumulated length here covers both single-part and multipart CCM*. Counted
+	 * only once every earlier check has passed, so a rejected call leaves the
+	 * operation untouched.
+	 */
+	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) &&
+	    operation->alg == PSA_ALG_CCM_STAR_NO_TAG) {
+		if (input_length > CCM_STAR_MAX_MESSAGE_LEN - operation->processed_length) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		operation->processed_length += input_length;
 	}
 
 	if (operation->unprocessed_input_bytes > 0) {
