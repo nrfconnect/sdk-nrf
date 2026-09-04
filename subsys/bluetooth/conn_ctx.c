@@ -123,7 +123,7 @@ void *bt_conn_ctx_get(struct bt_conn_ctx_lib *ctx_lib, struct bt_conn *conn)
 		}
 	}
 
-	LOG_WRN("No memory block for connection");
+	LOG_DBG("No context allocated for connection");
 
 	k_mutex_unlock(ctx_lib->mutex);
 
