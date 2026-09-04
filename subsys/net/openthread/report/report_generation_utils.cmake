@@ -16,13 +16,13 @@
 # output: Output variable that will contain the read revision.
 #
 function(ot_report_git_version output directory)
-    execute_process(
-        COMMAND git describe --dirty --always
-        WORKING_DIRECTORY ${directory}
-        OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-    )
-    set(${output} "${GIT_REV}" PARENT_SCOPE)
+  execute_process(
+    COMMAND git describe --dirty --always
+    WORKING_DIRECTORY ${directory}
+    OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  set(${output} "${GIT_REV}" PARENT_SCOPE)
 endfunction()
 
 # Usage:
@@ -37,13 +37,13 @@ endfunction()
 # output: Output variable that will contain the read revision SHA.
 #
 function(ot_report_git_head_sha output directory)
-    execute_process(
-        COMMAND git rev-parse --short HEAD
-        WORKING_DIRECTORY ${directory}
-        OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-    )
-    set(${output} "${GIT_REV}" PARENT_SCOPE)
+  execute_process(
+    COMMAND git rev-parse --short HEAD
+    WORKING_DIRECTORY ${directory}
+    OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  set(${output} "${GIT_REV}" PARENT_SCOPE)
 endfunction()
 
 # Usage:
@@ -63,13 +63,13 @@ endfunction()
 #            std console.
 #
 function(ot_report_add_message message to_stdout)
-    if(NOT ${message} STREQUAL "")
-        set(ARTEFACT ${CMAKE_BINARY_DIR}/${CONFIG_OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME})
-        file(APPEND ${ARTEFACT} ${message}\n)
-        if(${to_stdout})
-            message(${message})
-        endif()
+  if(NOT ${message} STREQUAL "")
+    set(ARTEFACT ${CMAKE_BINARY_DIR}/${CONFIG_OPENTHREAD_REPORT_BUILD_ARTEFACT_NAME})
+    file(APPEND ${ARTEFACT} ${message}\n)
+    if(${to_stdout})
+      message(${message})
     endif()
+  endif()
 endfunction()
 
 # Usage:
@@ -94,11 +94,11 @@ endfunction()
 #               diff command.
 #
 function(ot_report_git_diff output base_revision base_directory subdirectory)
-    execute_process(
-        COMMAND git diff ${base_revision} -- ":${subdirectory}/*.a" ":${subdirectory}/*.h"
-        WORKING_DIRECTORY ${base_directory}
-        OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
-        ERROR_QUIET
-    )
-    set(${output} "${GIT_REV}" PARENT_SCOPE)
+  execute_process(
+    COMMAND git diff ${base_revision} -- ":${subdirectory}/*.a" ":${subdirectory}/*.h"
+    WORKING_DIRECTORY ${base_directory}
+    OUTPUT_VARIABLE GIT_REV OUTPUT_STRIP_TRAILING_WHITESPACE
+    ERROR_QUIET
+  )
+  set(${output} "${GIT_REV}" PARENT_SCOPE)
 endfunction()
