@@ -9,6 +9,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/ipc/ipc_service.h>
+#include <zephyr/kernel.h>
 
 #include <nrf_rpc.h>
 #include <nrf_rpc_tr.h>
@@ -59,9 +60,36 @@ struct nrf_rpc_ipc {
 	/** User context. */
 	void *context;
 
+#if defined(CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD)
+	/** Queue of the received packets waiting for processing by the Rx thread. */
+	struct k_msgq *rx_msgq;
+
+	/** Rx thread object. */
+	struct k_thread *rx_thread;
+
+	/** Rx thread stack. */
+	k_thread_stack_t *rx_stack;
+#endif
+
 	/** Current transport state. */
 	uint8_t state;
 };
+
+#if defined(CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD)
+
+/** @brief Descriptor of a received packet queued for processing by the Rx thread.
+ *
+ * For internal use only.
+ */
+struct nrf_rpc_ipc_rx_packet {
+	/** Packet data located in the held IPC Service Rx buffer. */
+	const void *data;
+
+	/** Packet length. */
+	size_t len;
+};
+
+#endif /* CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD */
 
 /** @brief Extern nRF RPC IPC Service transport declaration.
  *
@@ -108,15 +136,33 @@ struct nrf_rpc_ipc {
  *      NRF_RPC_GROUP_DEFINE(group_1, "Group_1", &nrf_rpc_1, NULL, NULL, NULL);
  *      NRF_RPC_GROUP_DEFINE(group_2, "Group_2", &nrf_rpc_2, NULL, NULL, NULL);
  *
+ * If @kconfig{CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD} is enabled, this macro also allocates
+ * the RX packet queue, and the RX thread object and stack for the transport instance.
+ * The thread is created when the transport is initialized.
+ *
  * @param[in] _name nRF RPC IPC Service transport instance name.
  * @param[in] _ipc The instance used for the IPC Service to transfer data between CPUs.
  * @param[in] _ept_name IPC Service endpoint name. The endpoint must have the same name on the
  *                      corresponding remote CPU.
  */
 #define NRF_RPC_IPC_TRANSPORT(_name, _ipc, _ept_name)                        \
+	IF_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD, (                   \
+		K_MSGQ_DEFINE(_name##_rx_msgq,                               \
+			      sizeof(struct nrf_rpc_ipc_rx_packet),          \
+			      CONFIG_NRF_RPC_IPC_SERVICE_RX_QUEUE_SIZE,      \
+			      sizeof(void *));                               \
+		static K_THREAD_STACK_DEFINE(_name##_rx_stack,               \
+			CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD_STACK_SIZE);    \
+		static struct k_thread _name##_rx_thread;                    \
+	))                                                                   \
+									     \
 	static struct nrf_rpc_ipc _name##_instance = {                       \
 	       .ipc = _ipc,                                                  \
 	       .endpoint.ept_cfg.name = _ept_name,                           \
+	       IF_ENABLED(CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD,              \
+			  (.rx_msgq = &_name##_rx_msgq,                      \
+			   .rx_thread = &_name##_rx_thread,                  \
+			   .rx_stack = _name##_rx_stack,))                   \
 	};                                                                   \
 									     \
 	const struct nrf_rpc_tr _name = {                                    \
