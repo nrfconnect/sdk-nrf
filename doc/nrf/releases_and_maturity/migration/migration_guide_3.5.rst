@@ -226,6 +226,10 @@ This section describes the changes related to the build and configuration system
      Alternatively, include :file:`mdk_config.h` in the source files that still need the HAL preprocessor symbols.
      The header provides mapping between the Kconfig symbols or devicetree properties and corresponding HAL preprocessor symbols.
 
+   * Partition Manager, which was deprecated in the |NCS| v3.3.0, has been removed.
+     All boards and applications must now use DTS partitioning.
+     For details about porting from |NCS| 3.3, see the :ref:`migration_partitions` page.
+
 Samples and applications
 ========================
 

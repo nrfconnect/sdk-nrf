@@ -45,7 +45,9 @@ Board support
 Build and configuration system
 ==============================
 
-|no_changes_yet_note|
+* Removed Partition Manager, which was deprecated in the |NCS| v3.3.0.
+  All boards and applications must now use DTS partitioning.
+  For details about porting from |NCS| 3.3, see the :ref:`migration_partitions` page.
 
 Bootloaders and DFU
 ===================
