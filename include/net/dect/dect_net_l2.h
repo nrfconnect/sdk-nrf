@@ -1264,7 +1264,50 @@ struct dect_net_l2_context {
 	struct in6_addr local_ipv6_addr;
 	bool global_ipv6_addr_set;
 	struct in6_addr global_ipv6_addr;
+#if defined(CONFIG_NET_L2_DECT_ULA)
+	/** ULA address + on-link prefix when CONFIG_NET_L2_DECT_ULA_PREFIX is set. */
+	bool ula_ipv6_configured;
+	struct in6_addr ula_ipv6_addr;
+	/** On-link ULA prefix. */
+	struct in6_addr ula_iface_prefix;
+	/** On-link prefix length in bits . */
+	uint8_t ula_iface_plen_bits;
+#endif
 };
+
+#if defined(CONFIG_NET_L2_DECT) && defined(CONFIG_NET_IPV6)
+/**
+ * @brief PT: IPv6 address to use as default router on DECT (parent global, else link-local).
+ *
+ * @param addr Out: parent's global IPv6 if known, otherwise parent's link-local.
+ * @return true if a parent association exists with addressing, false otherwise.
+ */
+bool dect_net_l2_parent_ipv6_addr_get(struct net_in6_addr *addr);
+
+#if defined(CONFIG_NET_L2_DECT_ULA)
+/**
+ * @brief On-link ULA prefix currently configured on the DECT interface (if any).
+ *
+ * @param dect_iface DECT network interface
+ * @param pfx_out Out: prefix (bits beyond @p prefix_len_bits_out are zero)
+ * @param prefix_len_bits_out Out: prefix length in bits (96)
+ * @return true if ULA is configured on this interface
+ */
+bool dect_net_l2_ipv6_dect_ula_onlink_prefix_get(struct net_if *dect_iface,
+						 struct net_in6_addr *pfx_out,
+						 uint8_t *prefix_len_bits_out);
+#else
+static inline bool dect_net_l2_ipv6_dect_ula_onlink_prefix_get(struct net_if *dect_iface,
+							       struct net_in6_addr *pfx_out,
+							       uint8_t *prefix_len_bits_out)
+{
+	ARG_UNUSED(dect_iface);
+	ARG_UNUSED(pfx_out);
+	ARG_UNUSED(prefix_len_bits_out);
+	return false;
+}
+#endif
+#endif
 
 #define DECT_L2 DECT
 NET_L2_DECLARE_PUBLIC(DECT_L2);
@@ -1339,7 +1382,7 @@ void dect_net_l2_parent_ipv6_config_changed(struct net_if *iface, uint32_t paren
 /**
  * @}
  */
- #ifdef __cplusplus
+#ifdef __cplusplus
 }
 #endif
 

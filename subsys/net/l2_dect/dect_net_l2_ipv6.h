@@ -18,9 +18,24 @@
 
 #include "dect_net_l2_internal.h"
 
+#include <zephyr/net/net_if.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+/**
+ * @brief When CONFIG_NET_L2_DECT_ULA is enabled, apply ULA on DECT after a peer exists.
+ *
+ * On-link /96: full common /64 from CONFIG_NET_L2_DECT_ULA_PREFIX, then 32 bits from
+ * @p peer_long_rd_id (big-endian). Host address matches the first 96 bits of that
+ * prefix; the last 32 bits are taken from @p link_local_addr (bytes 12..15).
+ * PT passes parent long RD id; FT passes own transmitter long RD id; sink prefix
+ * replace uses transmitter id.
+ */
+void dect_net_l2_ipv6_ula_sync_for_peer(struct net_if *iface,
+					const struct in6_addr *link_local_addr,
+					uint32_t peer_long_rd_id);
 /**
  * @brief Setup IPv6 addressing after parent association created
  *
