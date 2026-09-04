@@ -33,11 +33,34 @@ config NET_L2_DECT_BR
 	default y if NET_L2_ETHERNET || MODEM_CELLULAR
 	select NET_ROUTING if NET_IPV6 && NET_ROUTE
 	help
-	  Enable Border Router (BR) support.
-	  Serial Modem running with a LTE connection in the connected nRF9151 DK accessed
-	  through PPP by using MODEM_CELLULAR feature (preferred option),
-	  or Ethernet based NET_L2_ETHERNET mode can be used as a border router.
-	  If MODEM_CELLULAR is selected, then BR has only one sink and vice versa.
+	  Fixed Terminal (FT) could act also as a DECT NR+ border router:
+	  it obtains an IPv6 delegated prefix on a "sink" uplink and extends
+	  connectivity to Portable Terminals (PTs) on DECT NR+.
+	  The sink may be cellular (PPP / MODEM_CELLULAR) or Ethernet
+	  (NET_L2_ETHERNET). Only one sink type is used at a time.
+	  When NET_IPV6 and NET_ROUTE are enabled, selects IPv6 routing support needed
+	  for forwarding between the sink and DECT NR+.
+
+config NET_L2_DECT_BR_IPV6_SINK_PREFIX96
+	bool "Promote delegated /64 sink prefix to /96 using transmitter long RD ID"
+	default y
+	depends on NET_L2_DECT_BR
+	help
+	  Append this FT's DECT transmitter long RD ID into bits 64-95 of the
+	  delegated /64 uplink prefix, so the DECT NR+ interface uses a /96
+	  (delegated /64 + RD id). The /64 handed to the modem is unaffected.
+	  Disable for a flat /64 DECT prefix layout (pre-/96 behavior).
+
+config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
+	bool "IPv6 /96 connected route on DECT NR+ Sink"
+	default y
+	depends on NET_L2_DECT_BR_IPV6_SINK_PREFIX96 && NET_ROUTE && NET_IPV6_NBR_CACHE
+	help
+	  Install a high-preference /96 connected route + matching neighbor
+	  entry on the DECT NR+ iface for the promoted /96, so locally originated
+	  or forwarded packets to PTs egress DECT instead of matching a shorter
+	  prefix on the uplink. Sink-agnostic (Ethernet and cellular). Disable
+	  if you supply your own routes or use a flat /64 layout.
 
 module=NET_L2_DECT_BR
 module-str=DECT NR+ L2 Border Router / Sink

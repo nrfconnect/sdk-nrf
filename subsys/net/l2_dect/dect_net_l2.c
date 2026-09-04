@@ -228,7 +228,7 @@ void dect_net_l2_status_info_fill_association_data(struct net_if *iface,
  *
  * Key functions:
  * - Retrieves current L2 sink IPv6 prefix configuration
- * - Validates consistency between L2 and driver prefix settings
+ * - Validates consistency between L2 and driver on delegated /64 (upper 64 bits)
  * - Reports network interface and prefix length information
  * - Logs warnings if L2 and driver prefixes don't match
  *
@@ -244,23 +244,37 @@ void dect_net_l2_status_info_fill_sink_data(struct net_if *iface,
 	struct dect_net_l2_sink_ipv6_prefix l2_sink_prefix;
 	struct in6_addr driver_ipv6_prefix = status_info_out->br_global_ipv6_addr_prefix;
 	bool driver_ipv6_prefix_set = status_info_out->br_global_ipv6_addr_prefix_set;
+	int driver_prefix_len_bytes = status_info_out->br_global_ipv6_addr_prefix_len;
 
 	if (dect_net_l2_sink_ipv6_prefix_get(&l2_sink_prefix)) {
 		struct in6_addr l2_sink_ipv6_prefix = l2_sink_prefix.prefix;
+		bool prefix_mismatch = false;
 
-		/* Print warning if not the same as driver */
-		if (!driver_ipv6_prefix_set ||
-		    !net_ipv6_addr_cmp(&l2_sink_ipv6_prefix, &driver_ipv6_prefix)) {
-			LOG_WRN("SINK: IPv6 prefix %s/%d does not match driver prefix %s/%d",
-				net_sprint_ipv6_addr(&l2_sink_ipv6_prefix),
-				(sizeof(struct in6_addr) / 2) * 8,
-				net_sprint_ipv6_addr(&driver_ipv6_prefix),
-				(sizeof(struct in6_addr) / 2) * 8);
+		if (!driver_ipv6_prefix_set || driver_prefix_len_bytes <= 0) {
+			prefix_mismatch = true;
+		} else if (!net_ipv6_is_prefix(l2_sink_ipv6_prefix.s6_addr,
+					       driver_ipv6_prefix.s6_addr, 64)) {
+			/* Delegated /64 only; L2 may use /96 on DECT with extra sink-local bits. */
+			prefix_mismatch = true;
 		}
-		/* Anyways, we report L2 sink information */
+
+		if (prefix_mismatch) {
+			LOG_WRN("SINK: IPv6 prefix %s/%u does not match driver prefix %s/%u",
+				net_sprint_ipv6_addr(&l2_sink_ipv6_prefix),
+				(unsigned int)l2_sink_prefix.len * 8U,
+				net_sprint_ipv6_addr(&driver_ipv6_prefix),
+				(unsigned int)driver_prefix_len_bytes * 8U);
+		}
+		/* Anyways, we report L2 sink information as 64 bit what is what we get from
+		 * actual BR interface.
+		 */
+		memset(&l2_sink_prefix.prefix.s6_addr[DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES], 0,
+		       sizeof(l2_sink_prefix.prefix.s6_addr) -
+				DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES);
 		status_info_out->br_net_iface = l2_sink_prefix.iface;
-		status_info_out->br_global_ipv6_addr_prefix = l2_sink_ipv6_prefix;
-		status_info_out->br_global_ipv6_addr_prefix_len = l2_sink_prefix.len;
+		status_info_out->br_global_ipv6_addr_prefix = l2_sink_prefix.prefix;
+		status_info_out->br_global_ipv6_addr_prefix_len =
+			DECT_NET_L2_SINK_IPV6_PREFIX_LEN_BYTES;
 		status_info_out->br_global_ipv6_addr_prefix_set = true;
 	}
 }
@@ -862,6 +876,7 @@ void dect_net_l2_settings_changed(struct net_if *iface,
 				  struct dect_settings *driver_current_settings)
 {
 	struct dect_net_l2_context *ctx = net_if_l2_data(iface);
+	uint32_t prev_tx_rd = ctx->transmitter_long_rd_id;
 
 	/* Update needed settings in our side to context.
 	 * Addressing are updated on next time when 1st association is created.
@@ -869,6 +884,10 @@ void dect_net_l2_settings_changed(struct net_if *iface,
 	ctx->network_id = driver_current_settings->identities.network_id;
 	ctx->transmitter_long_rd_id = driver_current_settings->identities.transmitter_long_rd_id;
 	ctx->device_type = driver_current_settings->device_type;
+
+	if (IS_ENABLED(CONFIG_NET_L2_DECT_BR) && prev_tx_rd != ctx->transmitter_long_rd_id) {
+		dect_net_l2_sink_reapply_prefix_for_tx_rd(iface);
+	}
 }
 
 void dect_net_l2_parent_ipv6_config_changed(struct net_if *iface, uint32_t parent_long_rd_id,
