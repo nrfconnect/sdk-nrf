@@ -72,15 +72,15 @@ Use the following command to install the requirements.
 
 .. note::
    The ``scancode-toolkit`` detector relies on the `Scancode-Toolkit`_, which is not part of the standard |NCS| toolchain bundle.
-   On Windows and Linux, the :file:`requirements-west-ncs-sbom.txt` file installs ScanCode Toolkit together with its Python dependencies.
+   The :file:`requirements-west-ncs-sbom.txt` file installs ``scancode-toolkit-mini``, a Python build of the ScanCode Toolkit that uses the same license detection engine and license database on all supported platforms, including macOS on ARM64.
 
-   On Linux, ScanCode Toolkit requires installation of additional system dependencies.
-   To install the required tools on Ubuntu, run::
+   The ``mini`` build ships the same Python code as the full ScanCode Toolkit, but without the pre-built native plugins.
+   Those plugins add archive extraction, through ``extractcode``, and file type identification, through ``libmagic``.
+   License and copyright detection is unaffected, so both builds report the same results for the same files.
+   The ``ncs-sbom`` command scans files that are already unpacked and never extracts archives, so it does not use the omitted plugins.
 
-      sudo apt install python-dev bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev libpopt0
-
-   On macOS with Apple Silicon installing ScanCode Toolkit with ``pip`` is not supported.
-   Install ScanCode Toolkit separately from a release archive and use ``--scancode`` to point to the executable if needed.
+   The ScanCode Toolkit also requires the libmagic library.
+   The requirements file installs this library as well, so no additional installation steps are needed.
 
    For more details, see `Scancode-Toolkit Installation`_.
 
