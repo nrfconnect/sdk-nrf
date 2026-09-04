@@ -800,6 +800,10 @@ Modem libraries
   * Added the :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
   * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
+* :ref:`nrf_modem_lib_readme` library:
+
+  * Fixed RTT channel allocation after warm boot.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 
