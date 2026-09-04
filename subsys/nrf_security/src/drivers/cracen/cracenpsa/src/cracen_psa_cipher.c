@@ -255,6 +255,10 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 	const size_t iv_size = (alg == PSA_ALG_STREAM_CIPHER) ? 12 : SX_BLKCIPHER_IV_SZ;
 	*output_length = 0;
 
+	if (input_length != 0 && input_length < iv_size) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
@@ -289,10 +293,6 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return cracen_aes_cbc_decrypt(&operation.keyref, input + iv_size,
 					      input_length - iv_size, output, output_size,
 					      output_length, input);
-	}
-
-	if (input_length < iv_size) {
-		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
