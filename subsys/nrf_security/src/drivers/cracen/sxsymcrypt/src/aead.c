@@ -280,6 +280,11 @@ int sx_aead_feed_aad(struct sxaead *aead_ctx, const uint8_t *aad, size_t aadsz)
 	if (aadsz >= DMA_MAX_SZ) {
 		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
 	}
+
+	if (aadsz > SX_GCM_MAX_BITLEN_BYTES - aead_ctx->totalaadsz) {
+		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+	}
+
 	if (aead_ctx->dataintotalsz) {
 		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_FEED_AFTER_DATA);
 	}
@@ -306,6 +311,10 @@ int sx_aead_crypt(struct sxaead *aead_ctx, const uint8_t *datain, size_t datains
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (datainsz >= DMA_MAX_SZ) {
+		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+	}
+
+	if (datainsz > SX_GCM_MAX_BITLEN_BYTES - aead_ctx->dataintotalsz) {
 		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
 	}
 
