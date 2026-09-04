@@ -43,6 +43,16 @@ config BT_FAST_PAIR_CRYPTO_PSA
 	select PSA_WANT_ECC_SECP_R1_256
 	select PSA_WANT_KEY_TYPE_AES
 	select PSA_WANT_ALG_ECB_NO_PADDING
+	# The AES-ECB drivers gate on an explicit key size, so both widths this
+	# backend uses have to be requested: AES-128 for Fast Pair, AES-256 for
+	# the FHN Ephemeral ID.
+	select PSA_WANT_AES_KEY_SIZE_128
+	select PSA_WANT_AES_KEY_SIZE_256
+	select BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT
+	# secp160r1 is not expressible in PSA, so it comes from the Nordic PSA
+	# extension API, which is CRACEN-only.
+	select PSA_EXT_ECC_SECP_R1_160 if HAS_HW_NRF_CRACEN && !BUILD_WITH_TFM
+	select BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT if HAS_HW_NRF_CRACEN && !BUILD_WITH_TFM
 	depends on !TFM_PROFILE_TYPE_MINIMAL
 	help
 	  Select PSA cryptographic backend for Fast Pair. The backend relies on
