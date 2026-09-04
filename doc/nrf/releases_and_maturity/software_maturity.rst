@@ -2017,6 +2017,7 @@ The following table indicates the software maturity levels of the support for Go
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -2024,6 +2025,7 @@ The following table indicates the software maturity levels of the support for Go
               - nRF54LS05B
             * - **Input device**
               - :ref:`fast_pair_input_device`
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2037,6 +2039,7 @@ The following table indicates the software maturity levels of the support for Go
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Experimental
               - --
@@ -2148,6 +2151,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -2157,12 +2161,14 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Experimental
               - --
               - Experimental
               - Experimental
             * - **Subsequent pairing**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2177,10 +2183,12 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - Experimental
               - Experimental
             * - **Personalized Name extension**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
@@ -2193,6 +2201,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Experimental
               - --
@@ -2272,6 +2281,7 @@ The following table indicates the software maturity levels of the support for th
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -2283,10 +2293,12 @@ The following table indicates the software maturity levels of the support for th
               - Experimental
               - Experimental
               - Experimental
+              - Experimental
               - --
               - Experimental
               - Experimental
             * - **Precision Finding with Bluetooth LE Channel Sounding**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
