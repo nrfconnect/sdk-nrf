@@ -138,6 +138,7 @@
 /doc/nrf/libraries/bluetooth/mesh.rst     @nrfconnect/ncs-paladin-doc
 /doc/nrf/libraries/bluetooth/services/ams_client.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/services/ancs_client.rst @nrfconnect/ncs-blenders-doc
+/doc/nrf/libraries/bluetooth/services/sap.rst @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/bluetooth/fast_pair/   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/libraries/bluetooth/services/wifi_prov_ble.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/caf/                   @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
@@ -562,6 +563,7 @@
 /samples/bluetooth/radio_notification_cb/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/path_loss_monitoring/   @nrfconnect/ncs-dragoon
 /samples/bluetooth/rpc_host/              @nrfconnect/ncs-blenders
+/samples/bluetooth/sap_demo/              @nrfconnect/ncs-blenders
 /samples/bluetooth/scanning_while_connecting/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/shell_bt_nus/          @nrfconnect/ncs-blenders
 /samples/bluetooth/shorter_conn_intervals/ @nrfconnect/ncs-dragoon
@@ -690,6 +692,7 @@
 /samples/bluetooth/radio_coex_1wire/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/radio_notification_cb/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/rpc_host/*.rst         @nrfconnect/ncs-blenders-doc
+/samples/bluetooth/sap_demo/*.rst         @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/scanning_while_connecting/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/shell_bt_nus/*.rst     @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/shorter_conn_intervals/*.rst @nrfconnect/ncs-dragoon-doc
@@ -1075,6 +1078,7 @@
 /tests/subsys/bluetooth/fast_pair/locator_tag_legacy/ @nrfconnect/ncs-si-bluebagel
 /tests/subsys/bluetooth/mesh/             @nrfconnect/ncs-paladin
 /tests/subsys/bluetooth/rpc_gatt_service/  @nrfconnect/ncs-protocols-serialization
+/tests/subsys/bluetooth/services/sap/      @nrfconnect/ncs-blenders
 /tests/subsys/bootloader/                 @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /tests/subsys/caf/                        @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
 /tests/subsys/debug/cpu_load/             @nordic-krch

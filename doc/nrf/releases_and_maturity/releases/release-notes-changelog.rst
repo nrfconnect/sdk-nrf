@@ -153,7 +153,7 @@ Security
 Security libraries
 ------------------
 
-|no_changes_yet_note|
+* Added the :ref:`bt_sap_readme` library for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
 
 * :ref:`trusted_storage_readme` library:
 
@@ -331,6 +331,8 @@ Bluetooth samples
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
   * Fixed an issue on nRF52 and nRF53 Series devices where timed LED toggling did not work due to incorrect GPPI group setup after the nrfx 4.0 API migration.
+
+* Added the :ref:`secure_application_pairing_sample` sample for certificate-backed Bluetooth LE application peer authentication and protected application payload transport.
 
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 

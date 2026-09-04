@@ -1,0 +1,78 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Secure Application Pairing sample configuration"
+
+choice SAMPLE_BT_SAP_ROLE
+	prompt "SAP role"
+	default SAMPLE_BT_SAP_ROLE_CENTRAL
+
+config SAMPLE_BT_SAP_ROLE_CENTRAL
+	bool "Central"
+	select BT_CENTRAL
+	select BT_OBSERVER
+	select BT_GATT_CLIENT
+	select BT_GATT_DM
+
+config SAMPLE_BT_SAP_ROLE_PERIPHERAL
+	bool "Peripheral"
+	select BT_PERIPHERAL
+
+endchoice
+
+config SAMPLE_BT_SAP_EXPECTED_GROUP_ID
+	hex "Expected SAP group identifier"
+	default 0x2A
+	help
+	  Set the group identifier required in the peer's SAP certificate.
+
+config SAMPLE_BT_SAP_ALLOWED_CENTRAL_ID
+	int "Allowed central device identifier"
+	range 0 255
+	default 0
+	help
+	  Set the device identifier required when authenticating a central.
+
+config SAMPLE_BT_SAP_PERIPHERAL_ID
+	int "Hardware peripheral device identifier"
+	depends on SAMPLE_BT_SAP_ROLE_PERIPHERAL
+	range 1 4
+	default 1
+	help
+	  Select which demo peripheral credential this hardware build should use.
+	  The sample contains four provisioned peripheral identities with device
+	  IDs 1..4. Build each real peripheral with a different value so the
+	  central can authenticate and track them as distinct SAP peers.
+
+config SAMPLE_BT_SAP_USE_CUSTOM_CREDENTIALS
+	bool "Use custom SAP credential files"
+	help
+	  Embed a raw P-256 private key, SAP device certificate, and P-256 CA
+	  public key from the files selected below.
+	  This option is only for demonstration and testing.
+
+if SAMPLE_BT_SAP_USE_CUSTOM_CREDENTIALS
+
+config SAMPLE_BT_SAP_PRIVATE_KEY_FILE
+	string "Raw P-256 private key file"
+	help
+	  Path to the 32-byte big-endian P-256 private key file.
+
+config SAMPLE_BT_SAP_CERTIFICATE_FILE
+	string "Raw SAP device certificate file"
+	help
+	  Path to the 133-byte serialized SAP device certificate file.
+
+config SAMPLE_BT_SAP_CA_PUBLIC_KEY_FILE
+	string "Raw P-256 CA public key file"
+	help
+	  Path to the 65-byte uncompressed P-256 CA public key file.
+
+endif
+
+endmenu
+
+source "Kconfig.zephyr"
