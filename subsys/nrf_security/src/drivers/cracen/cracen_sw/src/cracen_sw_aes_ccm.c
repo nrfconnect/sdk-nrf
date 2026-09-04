@@ -205,6 +205,11 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
+
+	if (input_length > SIZE_MAX - ccm_ctx->total_ad_fed) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	/* Complete any partial AD block from previous call */
 	if (ccm_ctx->has_partial_ad_block) {
 		size_t position_in_block = ccm_ctx->total_ad_fed % SX_BLKCIPHER_AES_BLK_SZ;
