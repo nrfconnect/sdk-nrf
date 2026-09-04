@@ -121,12 +121,12 @@ struct bt_gatt_service_val *bt_gatt_dm_attr_service_val(
 struct bt_gatt_chrc *bt_gatt_dm_attr_chrc_val(
 	const struct bt_gatt_dm_attr *attr);
 
-/** @brief Get the connection object
+/** @brief Getting the connection object
  *
  * Function returns connection object that is used by given
  * discovery manager instance.
  *
- * @param[in] dm Discovery Manager instance
+ * @param dm Discovery Manager instance
  *
  * @return Connection object.
  */
@@ -137,7 +137,7 @@ struct bt_conn *bt_gatt_dm_conn_get(struct bt_gatt_dm *dm);
  * The number of attributes including the service attribute.
  * It means that service without any attribute would return 1 here.
  *
- * @param[in] dm Discovery Manager instance.
+ * @param dm Discovery Manager instance
  *
  * @return Total number of attributes parsed.
  */
@@ -148,7 +148,7 @@ size_t bt_gatt_dm_attr_cnt(const struct bt_gatt_dm *dm);
  * Function returns the value that contains UUID and attribute
  * end handler of the service found.
  *
- * @param[in] dm Discovery Manager instance.
+ * @param dm Discovery Manager instance
  *
  * @return The pointer service value structure.
  */
@@ -157,16 +157,14 @@ const struct bt_gatt_dm_attr *bt_gatt_dm_service_get(
 
 /** @brief Get next characteristic
  *
- * @param[in] dm Discovery Manager instance.
- * @param[in] prev An attribute where start to search.
- *            If NULL - the first characteristic in the service would be found.
- *            Note: It can be the previous characteristic attribute or the
- *            last descriptor inside the previous attribute.
- *            Function would start searching for the next characteristic
- *            from that point.
+ * Search starts from the previous attribute when @p prev is provided.
  *
- * @return The pointer for an attribute that describes the characteristic
- *         or NULL if no more characteristic is present.
+ * @param dm Discovery Manager instance
+ * @param[in] prev Previous characteristic attribute, or the last descriptor in
+ *                 the previous attribute.
+ *
+ * @retval Pointer to the next characteristic attribute.
+ * @retval NULL When no more characteristics are present.
  */
 const struct bt_gatt_dm_attr *bt_gatt_dm_char_next(
 	const struct bt_gatt_dm *dm,
