@@ -1,0 +1,15 @@
+sample:
+  name: VPR VIO toggle
+  description: Toggle a GPIO pin directly from a VPR coprocessor using its VIO interface.
+tests:
+  sample.vpr.vio_toggle.build:
+    build_only: true
+    sysbuild: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuflpr
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuflpr
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf54l15dk/nrf54l15/cpuflpr
+    tags:
+      - ci_build
