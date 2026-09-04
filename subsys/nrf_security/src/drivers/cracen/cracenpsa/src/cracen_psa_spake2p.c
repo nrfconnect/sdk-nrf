@@ -211,7 +211,10 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 	uint8_t V[CRACEN_P256_POINT_SIZE];
 	size_t hash_len;
 
-	cracen_get_ZV(operation, Z, V);
+	status = cracen_get_ZV(operation, Z, V);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	status = cracen_update_hash_with_length(&operation->hash_op, Z, CRACEN_P256_POINT_SIZE,
 						UNCOMPRESSED_POINT_TYPE);
@@ -351,12 +354,23 @@ static psa_status_t cracen_p256_reduce(cracen_spake2p_operation_t *operation,
 static psa_status_t cracen_read_key_share(cracen_spake2p_operation_t *operation,
 					  const uint8_t *input, size_t input_length)
 {
+	psa_status_t status;
+
 	if (input_length != (CRACEN_P256_POINT_SIZE + 1) || input[0] != UNCOMPRESSED_POINT_TYPE) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	/* RFC9383 section 6: peer public values MUST be checked for group membership. */
+	MAKE_SX_CONST_POINT(peer_pt, input + 1, CRACEN_P256_POINT_SIZE);
+	status = cracen_ecc_check_public_key(operation->curve, &peer_pt);
+
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
 	memcpy(operation->YX, input, CRACEN_P256_POINT_SIZE + 1);
 	if (operation->role == PSA_PAKE_ROLE_SERVER) {
-		psa_status_t status = cracen_update_transcript(operation);
+		status = cracen_update_transcript(operation);
 
 		if (status != PSA_SUCCESS) {
 			return status;
