@@ -20,7 +20,7 @@
 
 #include <stdbool.h>
 
-#include <nrf71_coex_if.h>
+#include <common/fw_if/nrf71_coex_if.h>
 
 /** Build and post @c CD2CM_ENABLE_COEXISTENCE. */
 int coex_cm_enable(bool enable);

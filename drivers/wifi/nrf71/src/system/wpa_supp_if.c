@@ -9,16 +9,18 @@
  * Zephyr OS layer of the Wi-Fi driver.
  */
 #include <stdlib.h>
+#include <common/mem_mgmt.h>
 
 #include <zephyr/device.h>
+#include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 #include <net_private.h>
 
-#include <system/main.h>
-#include <common/fmac_util.h>
+#include <system/core.h>
+#include <common/util.h>
 #include <system/wifi_mgmt.h>
 #include <system/wpa_supp_if.h>
 #include <system/fmac_peer.h>
@@ -181,7 +183,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_res(void *if_priv,
 		beacon_ie_len = scan_res->beacon_ies_len;
 	}
 
-	r = nrf_wifi_osal_mem_zalloc(sizeof(*r) + ie_len + beacon_ie_len);
+	r = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*r) + ie_len + beacon_ie_len);
 
 	if (!r) {
 		LOG_ERR("%s: Unable to allocate memory for scan result", __func__);
@@ -261,7 +263,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_res(void *if_priv,
 		vif_ctx_zep->scan_in_progress = false;
 	}
 
-	nrf_wifi_osal_mem_free(r);
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, r);
 }
 
 void nrf_wifi_wpa_supp_event_proc_auth_resp(void *if_priv,
@@ -533,7 +535,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 		}
 	}
 
-	scan_info = nrf_wifi_osal_mem_zalloc(sizeof(*scan_info) +
+	scan_info = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*scan_info) +
 					    (num_freqs * sizeof(unsigned int)));
 
 	if (!scan_info) {
@@ -584,7 +586,8 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	/* Free any database left unread from a previous scan. */
 	if (vif_ctx_zep->connect_scan_db_addr) {
-		nrf_wifi_osal_mem_free((void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 		vif_ctx_zep->connect_scan_db_addr = 0;
 		vif_ctx_zep->connect_scan_res_cnt = 0;
 	}
@@ -619,7 +622,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	ret = 0;
 out:
 	if (scan_info) {
-		nrf_wifi_osal_mem_free(scan_info);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, scan_info);
 	}
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
@@ -732,7 +735,8 @@ static void nrf_wifi_wpa_supp_scan_res_relay(struct nrf_wifi_vif_ctx_zep *vif_ct
 	}
 
 	if (vif_ctx_zep->connect_scan_db_addr) {
-		nrf_wifi_osal_mem_free((void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 	}
 	vif_ctx_zep->connect_scan_db_addr = 0;
 	vif_ctx_zep->connect_scan_res_cnt = 0;
@@ -1410,7 +1414,8 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	vif_ctx_zep->signal_info = si;
 
 	rssi_record_elapsed_time_ms =
-		nrf_wifi_osal_time_elapsed_us(vif_ctx_zep->rssi_record_timestamp_us) / 1000;
+		(k_ticks_to_us_floor64(k_uptime_ticks()) -
+		 vif_ctx_zep->rssi_record_timestamp_us) / 1000;
 
 	if (rssi_record_elapsed_time_ms > CONFIG_NRF71_RSSI_STALE_TIMEOUT_MS) {
 		ret = nrf_wifi_sys_fmac_get_station(rpu_ctx_zep->rpu_ctx,
@@ -1647,7 +1652,7 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 
 	k_mutex_lock(&mgmt_tx_lock, K_FOREVER);
 
-	mgmt_tx_info = nrf_wifi_osal_mem_zalloc(sizeof(*mgmt_tx_info));
+	mgmt_tx_info = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*mgmt_tx_info));
 
 	if (!mgmt_tx_info) {
 		LOG_ERR("%s: Unable to allocate memory", __func__);
@@ -1728,7 +1733,7 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 
 out:
 	if (mgmt_tx_info) {
-		nrf_wifi_osal_mem_free(mgmt_tx_info);
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, mgmt_tx_info);
 	}
 	k_mutex_unlock(&mgmt_tx_lock);
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
@@ -1863,21 +1868,23 @@ void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 		/* To avoid overflowing the 100 column limit */
 		unsigned char ec_len = wiphy_info->extended_capabilities_len;
 
-		rpu_ctx_zep->extended_capa = nrf_wifi_osal_mem_alloc(ec_len);
+		rpu_ctx_zep->extended_capa =
+			nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, ec_len);
 
 		if (rpu_ctx_zep->extended_capa) {
 			memcpy(rpu_ctx_zep->extended_capa, wiphy_info->extended_capabilities,
 			       ec_len);
 		}
 
-		rpu_ctx_zep->extended_capa_mask = nrf_wifi_osal_mem_alloc(ec_len);
+		rpu_ctx_zep->extended_capa_mask =
+			nrf_wifi_mem_alloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, ec_len);
 
 		if (rpu_ctx_zep->extended_capa_mask) {
 			memcpy(rpu_ctx_zep->extended_capa_mask,
 			       wiphy_info->extended_capabilities_mask,
 			       ec_len);
 		} else {
-			nrf_wifi_osal_mem_free(rpu_ctx_zep->extended_capa);
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa);
 			rpu_ctx_zep->extended_capa = NULL;
 			rpu_ctx_zep->extended_capa_len = 0;
 		}

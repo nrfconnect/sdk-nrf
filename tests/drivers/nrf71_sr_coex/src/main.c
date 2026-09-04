@@ -9,8 +9,8 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
-#include <nrf71_coex_if.h>
-#include <nrf71_cd_sr_if.h>
+#include <common/fw_if/nrf71_coex_if.h>
+#include <common/fw_if/nrf71_cd_sr_if.h>
 
 /*
  * This test builds the standalone nRF71 SR coexistence driver together with the
