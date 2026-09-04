@@ -455,3 +455,21 @@ CRACEN driver API
 | Header files: :file:`subsys/nrf_security/src/drivers/cracen/`
 
 .. doxygengroup:: cracen_driver_apis
+
+Nordic PSA extension APIs
+=========================
+
+Some operations that Nordic hardware supports cannot be expressed through the
+PSA Crypto API, either because the curve has no ``psa_ecc_family_t`` encoding or
+because the operation is raw curve arithmetic with no matching PSA algorithm.
+These are provided as a Nordic extension instead.
+
+Despite the ``psa_ext_`` prefix and the ``psa_status_t`` return type, these
+functions do not go through the PSA core: there is no key object, no policy, and
+no driver wrapper entry. They call the CRACEN PK engine directly, and are
+therefore only available on devices with CRACEN in the application image, and
+not to a non-secure image under TF-M.
+
+| Header files: :file:`subsys/nrf_security/include/psa/psa_ext_ecc.h`
+
+.. doxygengroup:: psa_ext_ecc
