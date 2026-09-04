@@ -171,6 +171,8 @@ Trusted Firmware-M (TF-M)
 
 * Updated TF-M to v2.3.1 (from v2.3.0).
   For more information, see the upstream `TF-M 2.3.1 release notes`_.
+* Removed the "TF-M: Platform security architecture test" documentation page from the sample documentation section.
+  The test is still available as a standalone test in the :file:`tests/tfm/tfm_psa_test` directory.
 
 Protocols
 =========
