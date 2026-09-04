@@ -294,7 +294,7 @@ config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 
 config NCS_MCUBOOT_LOAD_PERIPHCONF
 	bool "Initialize global peripherals from MCUboot [EXPERIMENTAL]"
-	depends on SOC_SERIES_NRF54H
+	depends on SOC_SERIES_NRF54H || SOC_SERIES_NRF92
 	select EXPERIMENTAL
 	help
 	  If enabled, MCUboot loads global peripheral configuration (PERIPHCONF) blobs

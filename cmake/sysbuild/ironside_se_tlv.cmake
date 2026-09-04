@@ -2,6 +2,28 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+# Resolve the IronSide SE PERIPHCONF register allow-list for the target SoC.
+# The allow-list names every register that IronSide SE will accept in a PERIPHCONF
+# entry, and it differs per SoC, so periphconf-check needs the matching one.
+function(get_ironside_se_periphconf_registers_file support_dir out_var)
+  if(SB_CONFIG_SOC_NRF54H20)
+    set(registers_file
+      "${support_dir}/se/resources/periphconf_registers-nrf54h20_xxaa-v23.4.0+27.json"
+    )
+  elseif(SB_CONFIG_SOC_NRF9220)
+    set(registers_file
+      "${support_dir}/se/resources/periphconf_registers-nrf9220_xxaa-v23.7.1+32.json"
+    )
+  else()
+    message(FATAL_ERROR
+      "No IronSide SE PERIPHCONF register allow-list is known for this SoC. "
+      "Add one before enabling SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF."
+    )
+  endif()
+
+  set(${out_var} "${registers_file}" PARENT_SCOPE)
+endfunction()
+
 # Generate IronSide SE TLV artifacts to be included in the image metadata.
 # Expects to be called from an image signing script.
 function(generate_ironside_se_tlvs out_extra_imgtool_args)
@@ -150,8 +172,8 @@ function(add_ironside_se_tlv_conf_validate_targets prefix images)
 
   if(input_file_args)
     sysbuild_get(IRONSIDE_SUPPORT_DIR IMAGE ${DEFAULT_IMAGE} VAR IRONSIDE_SUPPORT_DIR CACHE)
-    set(IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE
-      "${IRONSIDE_SUPPORT_DIR}/se/resources/periphconf_registers-nrf54h20_xxaa-v23.4.0+27.json"
+    get_ironside_se_periphconf_registers_file(
+      "${IRONSIDE_SUPPORT_DIR}" IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE
     )
 
     set(periphconf_check_cmd
@@ -226,8 +248,8 @@ function(add_ironside_se_tlv_conf_validate_targets_merged
   endif()
 
   sysbuild_get(IRONSIDE_SUPPORT_DIR IMAGE ${DEFAULT_IMAGE} VAR IRONSIDE_SUPPORT_DIR CACHE)
-  set(IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE
-    "${IRONSIDE_SUPPORT_DIR}/se/resources/periphconf_registers-nrf54h20_xxaa-v23.4.0+27.json"
+  get_ironside_se_periphconf_registers_file(
+    "${IRONSIDE_SUPPORT_DIR}" IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE
   )
 
   # When signing merged binaries, the PERIPHCONF TLV is generated in Sysbuild based on
