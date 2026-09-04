@@ -150,9 +150,24 @@ function(add_ironside_se_tlv_conf_validate_targets prefix images)
 
   if(input_file_args)
     sysbuild_get(IRONSIDE_SUPPORT_DIR IMAGE ${DEFAULT_IMAGE} VAR IRONSIDE_SUPPORT_DIR CACHE)
-    set(IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE
-      "${IRONSIDE_SUPPORT_DIR}/se/resources/periphconf_registers-nrf54h20_xxaa-v23.4.0+27.json"
-    )
+
+    # The UICR generator image owns the allow-list for the SoC, so take it from there
+    # rather than keeping a second copy that can drift.
+    set(registers_file)
+    if(SB_CONFIG_NRF_GENERATE_UICR)
+      sysbuild_get(registers_file IMAGE uicr
+        VAR CONFIG_GEN_UICR_IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE KCONFIG
+      )
+    endif()
+    string(CONFIGURE "${registers_file}" IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE)
+
+    if(NOT IRONSIDE_SE_PERIPHCONF_REGISTERS_FILE)
+      message(WARNING
+        "No IronSide SE PERIPHCONF register allow-list is set. "
+        "PERIPHCONF entries will not be validated."
+      )
+      return()
+    endif()
 
     set(periphconf_check_cmd
       ${CMAKE_COMMAND} -E env ZEPHYR_BASE=${ZEPHYR_BASE}
