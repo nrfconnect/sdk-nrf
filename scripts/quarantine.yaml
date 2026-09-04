@@ -138,10 +138,3 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40944"
-
-- scenarios:
-    - sample.mcuboot_with_encryption
-  platforms:
-    - nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41152"
