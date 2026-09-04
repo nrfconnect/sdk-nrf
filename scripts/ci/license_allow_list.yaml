@@ -96,6 +96,9 @@ curl: "^nrf/ext/"
 MIT: |
   "^nrf/ext/"
   ^nrf/doc/_doxygen/doxygen-awesome.css
+  ^nrf/doc/_doxygen/doxygen-awesome-darkmode-toggle.js
+  ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
+  ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
 BSD-3-CLAUSE: |
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
