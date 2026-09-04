@@ -103,12 +103,8 @@ Alternatively, add the shield in the project's :file:`CMakeLists.txt` file by us
 To build an application with support for Wi-Fi using the nRF7002-EB II with the nRF54LM20 DK, use the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb2``.
 To build an application with support for Wi-Fi for a custom target, set ``-DSHIELD="nrf7002eb2"`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 
-Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD nrf7002eb2)`` command.
-
 To build an application with support for Wi-Fi using the nRF7002-EB II with the nRF54L15 DK, use the ``nrf54l15dk/nrf54l15/cpuapp`` board target with the CMake ``SHIELD`` variable set to ``nrf7002eb2``.
 To build for a custom target, set ``-DSHIELD="nrf7002eb2"`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
-
-Alternatively, you can add the shield in the project's :file:`CMakeLists.txt` file by using the ``set(SHIELD  nrf7002eb2)`` command.
 
 To build with coexistence mode enabled, set ``-DSHIELD="nrf7002eb2;nrf7002eb2_coex"`` when you invoke ``west build`` or ``cmake`` in your |NCS| application.
 For optimal build configuration, use the ``nrf70-wifi`` snippet.
