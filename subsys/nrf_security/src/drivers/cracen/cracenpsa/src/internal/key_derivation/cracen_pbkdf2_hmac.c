@@ -131,8 +131,7 @@ psa_status_t cracen_pbkdf2_hmac_input_bytes(cracen_key_derivation_operation_t *o
 
 	switch (step) {
 	case PSA_KEY_DERIVATION_INPUT_SALT:
-		if ((data_length + operation->pbkdf2.salt_length) >
-		    sizeof(operation->pbkdf2.salt)) {
+		if (data_length > sizeof(operation->pbkdf2.salt) - operation->pbkdf2.salt_length) {
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 		/* Must provided one or more times. If used multiple times, the
