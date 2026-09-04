@@ -61,6 +61,42 @@ config NRF_RPC_IPC_SERVICE_BIND_TIMEOUT_MS
 	  This timeout depends on the time to initialize all the remote devices
 	  the nRF RPC is going to communicate with.
 
+config NRF_RPC_IPC_SERVICE_RX_THREAD
+	bool "Process received packets in a dedicated thread"
+	default y if IPC_SERVICE_BACKEND_ICBMSG
+	help
+	  Defer processing of packets received on an IPC Service endpoint to a thread dedicated.
+	  This is required for the IPC Service backends that invoke the receive callback from
+	  an interrupt context, like ICBMSG, because the nRF RPC core expects to be called
+	  from a thread context. Received packets are not copied: the transport holds the
+	  RX buffer until the thread finishes processing the packet. Packets received
+	  on an endpoint of a backend that does not support holding the RX buffer are processed
+	  in the receive callback.
+
+if NRF_RPC_IPC_SERVICE_RX_THREAD
+
+config NRF_RPC_IPC_SERVICE_RX_THREAD_STACK_SIZE
+	int "RX thread stack size"
+	default 768
+	help
+	  Defines the stack size of the RX thread that is created for each nRF RPC IPC
+	  Service transport instance.
+
+config NRF_RPC_IPC_SERVICE_RX_THREAD_PRIORITY
+	int "RX thread priority"
+	default 0
+	help
+	  Defines the priority of the RX thread.
+
+config NRF_RPC_IPC_SERVICE_RX_QUEUE_SIZE
+	int "RX queue size"
+	default 8
+	help
+	  Defines the maximum number of the received packets that can be queued for
+	  processing by the RX thread.
+
+endif # NRF_RPC_IPC_SERVICE_RX_THREAD
+
 endif # NRF_RPC_IPC_SERVICE
 
 
