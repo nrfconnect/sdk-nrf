@@ -142,8 +142,11 @@
 .. _`nrfx`: https://github.com/NordicSemiconductor/nrfx/
 .. _`nrfx API documentation`: https://docs.nordicsemi.com/bundle/nrfx-apis-latest/page/index.html
 .. _`nrfx 4.0 migration note`: https://docs.nordicsemi.com/bundle/nrfx_4.0.1/page/md_doc_nrfx_4_0_migration_guide.html
+.. _`nrfx_gppi helper layer`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__gppi.html
+.. _`nrfx GPIOTE driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__gpiote.html
 .. _`nrfx NVMC driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__nvmc.html
 .. _`nrfx SPIM driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__spim.html
+.. _`nrfx TIMER driver`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrfx/html/group__nrfx__timer.html
 .. _`Changelog for nrfx 2.2.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-220---2020-04-28
 .. _`Changelog for nrfx 2.3.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-230---2020-08-19
 .. _`Changelog for nrfx 2.4.0`: https://github.com/NordicSemiconductor/nrfx/blob/master/CHANGELOG.md#user-content-240---2020-11-13
@@ -2145,6 +2148,8 @@
 .. _`Zephyr's SPI RTIO loopback sample`: https://github.com/nrfconnect/sdk-zephyr/tree/main/samples/drivers/spi/rtio_loopback
 .. _`Zephyr's pressure sensor sample`: https://github.com/zephyrproject-rtos/zephyr/tree/main/samples/sensor/pressure_interrupt
 .. _`clocks devicetree macro API`: https://github.com/nrfconnect/sdk-zephyr/blob/main/include/zephyr/devicetree/clocks.h
+
+.. _`pulse_meas driver twister test`: https://github.com/nrfconnect/sdk-nrf/tree/main/tests/drivers/pulse_meas
 
 .. _`nRF54H20 DK memory map`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi
 .. _`DFU with custom keys`: https://academy.nordicsemi.com/courses/nrf-connect-sdk-intermediate/lessons/lesson-9-bootloaders-and-dfu-fota/topic/exercise-2-dfu-over-usb-adding-external-flash
