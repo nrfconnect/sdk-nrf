@@ -849,6 +849,9 @@ nRF RPC libraries
     * Support for deferred processing of received IPC Service packets in a dedicated thread.
       This is required for the IPC Service backends that invoke the receive callback from an interrupt context, like ICBMSG, because the nRF RPC core expects to be called from a thread context.
       The :kconfig:option:`CONFIG_NRF_RPC_IPC_SERVICE_RX_THREAD` Kconfig option is used to enable this feature.
+    * Support for zero-copy IPC Service TX buffers, selected with the :kconfig:option:`CONFIG_NRF_RPC_IPC_SERVICE_TX_ZERO_COPY` Kconfig option.
+      This is used to avoid using heap and copying packet data into IPC-owned buffers before transmission.
+      You can use this feature with IPC service backends that support zero-copy transmission, like ICBMSG.
 
 Other libraries
 ---------------
