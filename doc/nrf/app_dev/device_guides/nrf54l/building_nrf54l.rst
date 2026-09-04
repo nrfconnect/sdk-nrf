@@ -33,15 +33,11 @@ Building for the application and FLPR core
 Building for both the application and the FLPR cores is different from the default |NCS| procedure.
 Using the FLPR core also requires additional configuration to enable it.
 This section outlines how to build and program for both the application and FLPR core, covering separate builds and sysbuild configurations.
-The FLPR core supports two variants:
+The FLPR core supports variant:
 
 * ``<board target>/cpuflpr``, where *board target* depends on the device you are using.
   In this variant, FLPR runs from SRAM, which is the recommended method.
   To build FLPR image with this variant, the application core image must include the ``nordic-flpr`` :ref:`snippet <app_build_snippets>`.
-
-* ``<board target>/cpuflpr/xip``, where *board target* depends on the device you are using.
-  In this variant, FLPR runs from RRAM.
-  To build FLPR image with this variant, the application core image must include the ``nordic-flpr-xip`` snippet.
 
 Standard build
 --------------
@@ -101,14 +97,14 @@ Depending on the selected method, complete the following steps:
       3. Build the application image by setting the following options:
 
          * Appropriate board target, depending on the device you are using.
-         * Choose either ``nordic-flpr`` or ``nordic-flpr-xip`` snippet depending on the FLPR image target.
+         * Choose ``nordic-flpr`` snippet depending on the FLPR image target.
          * System build to :guilabel:`No sysbuild`.
 
          For more information, see :ref:`cmake_options`.
 
       #. Build the FLPR image by setting the following options:
 
-         * Board target to ``board target/cpuflpr`` (recommended) or ``board target/cpuflpr/xip``.
+         * Board target to ``board target/cpuflpr``.
          * System build to :guilabel:`No sysbuild`.
 
          For more information, see :ref:`cmake_options`.
