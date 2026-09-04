@@ -122,6 +122,7 @@ The following board targets support the ranging module:
 * ``nrf54l15tag/nrf54l15/cpuapp``
 * ``nrf54lm20dk/nrf54lm20a/cpuapp``
 * ``nrf54lm20dk/nrf54lm20b/cpuapp``
+* ``nrf54lc10dk/nrf54lc10a/cpuapp``
 
 .. note::
    The :ref:`CONFIG_APP_RANGING <CONFIG_APP_RANGING>` Kconfig option is explicitly disabled for CS-capable board targets with limited memory to avoid memory overflow.
@@ -218,6 +219,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
 |              |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |
+|              |                                | * ``nrf54lc10dk/nrf54lc10a/cpuapp``                                  |
 |              |                                | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) |
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
@@ -245,6 +247,7 @@ The configuration of the signature algorithm and the public key storage solution
 |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |                           |                           |
+|                                | * ``nrf54lc10dk/nrf54lc10a/cpuapp``                                  |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
 
 Each supported board target has the signature key file (the :kconfig:option:`SB_CONFIG_BOOT_SIGNATURE_KEY_FILE` Kconfig option) defined in the :file:`sysbuild/configuration` directory that is part of the sample directory.
