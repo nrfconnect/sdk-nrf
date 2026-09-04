@@ -423,6 +423,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       else()
         set_config_bool(mcuboot CONFIG_NCS_BOOT_SIGNATURE_USING_ITS n)
       endif()
+    endif()
+
+    # PERIPHCONF loading applies to every SoC with IronSide SE, not just nRF54H.
+    if(SB_CONFIG_SOC_SERIES_NRF54H OR SB_CONFIG_SOC_SERIES_NRF92)
       if(SB_CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF)
         set_config_bool(mcuboot CONFIG_NCS_MCUBOOT_LOAD_PERIPHCONF y)
         set_config_bool(mcuboot CONFIG_NRF_PERIPHCONF_GENERATE_ENTRIES_LOCK n)
