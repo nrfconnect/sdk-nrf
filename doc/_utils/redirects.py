@@ -528,7 +528,10 @@ NRF = (
     ("protocols/wifi/raw_tx_operation", "protocols/wifi/advanced_modes/raw_tx_operation"),
     ("protocols/wifi/sniffer_rx_operation", "protocols/wifi/advanced_modes/sniffer_rx_operation"), # Raw IEEE 802.11 packet reception using Monitor mode
     ("device_guides/working_with_nrf/nrf70/developing/regulatory_support", "protocols/wifi/regulatory_support"), # Operating with regulatory support
-    ("device_guides/working_with_nrf/nrf70/developing/debugging", "protocols/wifi/debugging"), # Debugging
+    ("device_guides/working_with_nrf/nrf70/developing/debugging", "app_dev/device_guides/nrf70/wifi_debugging"), # Debugging
+    ("protocols/wifi/debugging", "app_dev/device_guides/nrf70/wifi_debugging"), # Wi-Fi debugging moved to Developing with nRF70 Series
+    ("protocols/wifi/stack_configuration", "app_dev/device_guides/nrf70/wifi_stack_configuration"), # Wi-Fi stack configuration and performance moved to Developing with nRF70 Series
+    ("protocols/wifi/wifi_certification", "app_dev/device_guides/nrf70/wifi_certification"), # Wi-Fi certification moved to Developing with nRF70 Series
     ("ug_zigbee", "protocols/zigbee/index"), # Zigbee (landing)
     ("ug_zigbee_qsg", "protocols/zigbee/index"), # Zigbee quick start guide (removed after v3.0.0)
     ("protocols/zigbee/qsg", "protocols/zigbee/index"),
