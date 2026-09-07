@@ -44,6 +44,23 @@ int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz)
 	return r;
 }
 
+size_t constant_count(const uint8_t *a, size_t sz, uint8_t val, enum constant_count_match match)
+{
+	volatile size_t count = 0;
+	volatile int still_matching = 1;
+
+	for (size_t i = 0; i < sz; i++) {
+		int matches = (match == MATCH_EQUAL) ? (a[i] == val) : (a[i] != val);
+		int increment = still_matching & matches;
+		size_t mask = (size_t)0 - (size_t)increment;
+
+		count = (count & ~mask) | ((count + 1) & mask);
+		still_matching &= matches;
+	}
+
+	return count;
+}
+
 void constant_select_bin(bool select, const uint8_t *true_val, const uint8_t *false_val,
 			 uint8_t *dst, size_t sz)
 {
