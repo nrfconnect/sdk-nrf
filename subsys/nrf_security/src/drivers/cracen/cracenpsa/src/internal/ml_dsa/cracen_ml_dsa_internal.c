@@ -46,23 +46,33 @@ const uint8_t *cracen_ml_dsa_hash_oid(psa_algorithm_t alg)
 	switch (PSA_ALG_GET_HASH(alg)) {
 	case PSA_ALG_SHA_256:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA_256, (return oid_sha256));
+		break;
 	case PSA_ALG_SHA_384:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA_384, (return oid_sha384));
+		break;
 	case PSA_ALG_SHA_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA_512, (return oid_sha512));
+		break;
 	case PSA_ALG_SHA3_256:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_256, (return oid_sha3_256));
+		break;
 	case PSA_ALG_SHA3_384:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_384, (return oid_sha3_384));
+		break;
 	case PSA_ALG_SHA3_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_512, (return oid_sha3_512));
+		break;
 	case PSA_ALG_SHAKE128:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE128, (return oid_shake128));
+		break;
 	case PSA_ALG_SHAKE256:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256, (return oid_shake256));
+		break;
 	default:
 		return NULL;
 	}
+
+	return NULL;
 }
 
 size_t cracen_ml_dsa_calc_vector_sz_bytes(uint32_t bit_len)
