@@ -598,6 +598,33 @@ NRF = (
     ("samples/nrf5340/empty_network_core/README", "samples/basic/empty/README"),
     ("samples/nrf_compress/mcuboot_update/README", "samples/dfu/compressed_update/README"),
     ("samples/zephyr/smp_svr_mini_boot/README", "samples/dfu/smp_svr_mini_boot/README"), # MCUboot minimal SMP server sample
+    ("peripherals_drivers", "drivers/peripheral_drivers/index"), # Peripheral drivers (landing)
+    ("peripherals_drivers/spim", "drivers/peripheral_drivers/spim"), # SPIM
+    ("peripherals_drivers/spim_zephyr_spi", "drivers/peripheral_drivers/spim_zephyr_spi"), # SPIM Zephyr SPI driver
+    ("peripherals_drivers/spim_zephyr_spi_rtio", "drivers/peripheral_drivers/spim_zephyr_spi_rtio"), # SPIM Zephyr RTIO driver
+    ("drivers/uart", "drivers/peripheral_drivers/uart"), # UART/UARTE driver
+    ("peripherals_custom_drivers", "drivers/peripheral_custom_drivers/index"), # Peripheral custom drivers (landing)
+    ("peripherals_custom_drivers/pulse_meas", "drivers/peripheral_custom_drivers/pulse_meas"), # Pulse width measurement driver
+    ("drivers/ppi_seq", "drivers/peripheral_custom_drivers/ppi_seq"), # PPI Sequencer
+    ("drivers/ppi_seq_i2c_spi", "drivers/peripheral_custom_drivers/ppi_seq_i2c_spi"), # PPI Sequencer for I2C/SPI
+    ("drivers/bh1749", "drivers/other_drivers/bh1749"), # BH1749 sensor driver
+    ("drivers/bme68x_iaq", "drivers/other_drivers/bme68x_iaq"), # BME68X IAQ driver
+    ("drivers/entropy_cc3xx", "drivers/other_drivers/entropy_cc3xx"), # CC3XX entropy driver
+    ("drivers/eth_rtt", "drivers/other_drivers/eth_rtt"), # Ethernet over RTT driver
+    ("drivers/hw_cc3xx", "drivers/other_drivers/hw_cc3xx"), # CC3XX hardware driver
+    ("drivers/mspi_sqspi", "drivers/other_drivers/mspi_sqspi"), # sQSPI MSPI shim driver
+    ("drivers/nrf71_sr_coex", "drivers/other_drivers/nrf71_sr_coex"), # nRF71 short-range coexistence driver
+    ("drivers/paw3212", "drivers/other_drivers/paw3212"), # PAW3212 sensor driver
+    ("drivers/pmw3360", "drivers/other_drivers/pmw3360"), # PMW3360 sensor driver
+    ("drivers/sensor_sim", "drivers/other_drivers/sensor_sim"), # Sensor simulator
+    ("drivers/sensor_stub", "drivers/other_drivers/sensor_stub"), # Sensor stub
+    ("drivers/uart_ipc", "drivers/other_drivers/uart_ipc"), # IPC UART driver
+    ("drivers/uart_nrf_sw_lpuart", "drivers/other_drivers/uart_nrf_sw_lpuart"), # Low power UART driver
+    ("drivers/wifi", "drivers/other_drivers/wifi"), # Wi-Fi drivers (landing)
+    ("drivers/wifi/low_level_api", "drivers/other_drivers/wifi/low_level_api"), # nRF Wi-Fi low-level API
+    ("drivers/wifi/nrf70_native", "drivers/other_drivers/wifi/nrf70_native"), # nRF70 Wi-Fi driver
+    ("drivers/wifi/nrf70_portable", "drivers/other_drivers/wifi/nrf70_portable"), # nRF70 portable driver
+    ("drivers/wifi/nrf71_fw_if", "drivers/other_drivers/wifi/nrf71_fw_if"), # nRF71 Wi-Fi driver
     ("libraries/bluetooth_services/index", "libraries/bluetooth/index"), # Changed the folder name libraries/bluetooth_services to libraries/bluetooth to better match the include folder structure
     ("libraries/bluetooth_services/adv_prov", "libraries/bluetooth/adv_prov"),
     ("libraries/bluetooth_services/conn_ctx", "libraries/bluetooth/conn_ctx"),
