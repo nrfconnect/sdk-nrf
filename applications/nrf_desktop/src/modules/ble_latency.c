@@ -332,8 +332,15 @@ static void conn_params_updated(const struct ble_peer_conn_params_event *event)
 
 	if (event->interval_min & REG_CONN_INTERVAL_LLPM_MASK) {
 		latency_state |= CONN_IS_LLPM;
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)
+		    && !(latency_state & CONN_IS_POWER_DOWN)) {
+			latency_state |= CONN_LOW_LATENCY_LOCKED;
+		}
 	} else {
 		latency_state &= ~CONN_IS_LLPM;
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)) {
+			latency_state &= ~CONN_LOW_LATENCY_LOCKED;
+		}
 	}
 
 	latency_updated(event->latency == 0);
@@ -391,6 +398,7 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 	 * After that point, the non-SCI connection parameters API is no longer used.
 	 */
 	latency_state |= CONN_IS_SCI;
+	latency_state &= ~CONN_IS_LLPM;
 
 	if (processed_sci_mode != BT_HIDS_SCI_MODE_NONE) {
 		/* A connection rate update is already in progress */
@@ -622,6 +630,7 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 		LOG_WRN("Connection rate API used without a prior SCI mode request");
 		LOG_WRN("Peripheral will start using SCI and attempt to find a valid SCI mode");
 		latency_state |= CONN_IS_SCI;
+		latency_state &= ~CONN_IS_LLPM;
 	}
 
 	if (event->status == BT_HCI_ERR_SUCCESS) {
@@ -735,9 +744,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 		switch (event->state) {
 		case PEER_STATE_CONNECTED:
 			active_conn = event->id;
-			if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK)) {
-				latency_state |= CONN_LOW_LATENCY_LOCKED;
-			}
 			set_init_conn_params();
 			k_work_reschedule(&security_timeout,
 					      SECURITY_FAIL_TIMEOUT_MS);
@@ -830,13 +836,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		latency_state |= CONN_IS_POWER_DOWN;
 
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-		    !(latency_state & CONN_IS_SCI)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+		    (latency_state & CONN_IS_SCI)) {
+			sci_power_event_handle();
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
+			   (latency_state & CONN_IS_LLPM)) {
 			latency_state &= ~CONN_LOW_LATENCY_LOCKED;
 			update_llpm_conn_latency_lock();
-		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
-			   (latency_state & CONN_IS_SCI)) {
-			sci_power_event_handle();
 		} else {
 			/* No handling of the power down event is needed. */
 		}
@@ -849,13 +855,13 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 		latency_state &= ~CONN_IS_POWER_DOWN;
 
-		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
-		    !(latency_state & CONN_IS_SCI)) {
+		if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
+		    (latency_state & CONN_IS_SCI)) {
+			sci_power_event_handle();
+		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK) &&
+			   (latency_state & CONN_IS_LLPM)) {
 			latency_state |= CONN_LOW_LATENCY_LOCKED;
 			update_llpm_conn_latency_lock();
-		} else if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE) &&
-			   (latency_state & CONN_IS_SCI)) {
-			sci_power_event_handle();
 		} else {
 			/* No handling of the wake up event is needed. */
 		}
