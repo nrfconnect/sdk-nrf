@@ -29,7 +29,6 @@ If you want to go through an online training course to familiarize yourself with
    :caption: Subpages:
 
    wifi.rst
-   wifi_certification
    station_mode/index
    scan_mode/index
    sap_mode/index
@@ -37,6 +36,4 @@ If you want to go through an online training course to familiarize yourself with
    advanced_modes/index
    provisioning/index
    regulatory_support
-   debugging
-   stack_configuration
    regulatory_certification/index
