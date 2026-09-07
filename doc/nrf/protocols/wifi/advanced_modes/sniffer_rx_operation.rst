@@ -1,4 +1,5 @@
-﻿.. _ug_nrf70_developing_raw_ieee_80211_packet_reception:
+﻿.. _ug_wifi_developing_raw_ieee_80211_packet_reception:
+.. _ug_nrf70_developing_raw_ieee_80211_packet_reception:
 
 Raw IEEE 802.11 packet reception using Monitor mode
 ###################################################

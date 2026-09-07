@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_offloaded_raw_tx:
 .. _ug_nrf70_developing_offloaded_raw_tx:
 
 Offloaded raw transmit operation

@@ -1,3 +1,5 @@
+.. _ug_wifi_developing_powersave:
+.. _ug_wifi_powersave:
 .. _ug_nrf70_developing_powersave:
 .. _ug_nrf70_powersave:
 

@@ -1,3 +1,4 @@
+.. _wifi_soft_ap_mode:
 .. _nRF70_soft_ap_mode:
 
 SoftAP mode

@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_promiscuous_packet_reception:
 .. _ug_nrf70_developing_promiscuous_packet_reception:
 
 Raw IEEE 802.11 packet reception using Promiscuous mode
