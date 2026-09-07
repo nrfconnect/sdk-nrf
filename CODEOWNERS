@@ -95,24 +95,27 @@
 /doc/nrf/app_dev/device_guides/nrf54h/    @FrancescoSer
 /doc/nrf/app_dev/device_guides/wifi_coex.rst @nrfconnect/ncs-doc-leads
 /doc/nrf/dev_model_and_contributions/     @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
-/doc/nrf/drivers/bh1749.rst               @nrfconnect/ncs-cia-doc
-/doc/nrf/drivers/bme68x_iaq.rst           @nrfconnect/ncs-cia-doc
-/doc/nrf/drivers/entropy_cc3xx.rst        @nrfconnect/ncs-aegir-doc
-/doc/nrf/drivers/eth_rtt.rst              @nrfconnect/ncs-si-muffin-doc
-/doc/nrf/drivers/hw_cc3xx.rst             @nrfconnect/ncs-aegir-doc
-/doc/nrf/drivers/mspi_sqspi.rst           @nrfconnect/ncs-lowlevel-doc
-/doc/nrf/drivers/paw3212.rst              @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/drivers/ppi_seq.rst              @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
-/doc/nrf/drivers/ppi_seq_i2c_spi.rst      @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
-/doc/nrf/drivers/pmw3360.rst              @nrfconnect/ncs-si-xcake-doc
-/doc/nrf/drivers/sensor_sim.rst           @nrfconnect/ncs-cia-doc
-/doc/nrf/drivers/sensor_stub.rst          @nrfconnect/ncs-cia-doc
-/doc/nrf/drivers/uart_ipc.rst             @nrfconnect/ncs-doc-leads
-/doc/nrf/drivers/wifi/*.rst               @nrfconnect/ncs-wifi-doc
-/doc/nrf/drivers/wifi.rst                 @nrfconnect/ncs-wifi-doc
-/doc/nrf/drivers/uart.rst                 @nrfconnect/ncs-doc-leads
-/doc/nrf/drivers/uart_nrf_sw_lpuart.rst   @nrfconnect/ncs-doc-leads
-/doc/nrf/drivers/nrf71_sr_coex.rst        @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/other_drivers/index.rst                       @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/drivers/other_drivers/bh1749.rst                      @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/other_drivers/bme68x_iaq.rst                  @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/other_drivers/entropy_cc3xx.rst               @nrfconnect/ncs-aegir-doc
+/doc/nrf/drivers/other_drivers/eth_rtt.rst                     @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/drivers/other_drivers/hw_cc3xx.rst                    @nrfconnect/ncs-aegir-doc
+/doc/nrf/drivers/other_drivers/mspi_sqspi.rst                  @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/drivers/other_drivers/paw3212.rst                     @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/drivers/other_drivers/pmw3360.rst                     @nrfconnect/ncs-si-xcake-doc
+/doc/nrf/drivers/other_drivers/sensor_sim.rst                  @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/other_drivers/sensor_stub.rst                 @nrfconnect/ncs-cia-doc
+/doc/nrf/drivers/other_drivers/uart_ipc.rst                    @nrfconnect/ncs-doc-leads
+/doc/nrf/drivers/other_drivers/uart_nrf_sw_lpuart.rst          @nrfconnect/ncs-doc-leads
+/doc/nrf/drivers/other_drivers/wifi/*.rst                      @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/other_drivers/wifi.rst                        @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/other_drivers/nrf71_sr_coex.rst               @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/peripheral_custom_drivers/                    @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/drivers/peripheral_custom_drivers/ppi_seq.rst         @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
+/doc/nrf/drivers/peripheral_custom_drivers/ppi_seq_i2c_spi.rst @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
+/doc/nrf/drivers/peripheral_drivers/                           @nrfconnect/ncs-lowlevel-doc
+/doc/nrf/drivers/peripheral_drivers/uart.rst                   @nrfconnect/ncs-doc-leads
 /doc/nrf/external_comp/avsystem.rst       @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/external_comp/bt_fast_pair/      @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-xcake-doc
 /doc/nrf/external_comp/coremark.rst       @nrfconnect/ncs-blenders-doc
@@ -236,10 +239,6 @@
 /doc/nrf/libraries/security/trusted_storage.rst @nrfconnect/ncs-aegir-doc
 /doc/nrf/libraries/shell/                 @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/index.rst              @nrfconnect/ncs-doc-leads
-/doc/nrf/peripherals_custom_drivers.rst   @nrfconnect/ncs-lowlevel-doc
-/doc/nrf/peripherals_custom_drivers/*     @nrfconnect/ncs-lowlevel-doc
-/doc/nrf/peripherals_drivers.rst          @nrfconnect/ncs-lowlevel-doc
-/doc/nrf/peripherals_drivers/*            @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/protocols/aliro/                 @annwoj @b-gent
 /doc/nrf/protocols/amazon_sidewalk/       @nrfconnect/ncs-sidewalk-doc
 /doc/nrf/protocols/bt/                    @nrfconnect/ncs-dragoon-doc
