@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_debugging:
 .. _ug_nrf70_developing_debugging:
 
 Debugging
