@@ -135,7 +135,7 @@ When there is at least one device in Power Save mode in the Basic Service Set (B
 The buffered group traffic is delivered immediately after a DTIM beacon.
 The following figure illustrates the group frame data retrieval mechanism in DTIM-based Power Save mode:
 
-.. figure:: images/nRF70_ug_group_frames.svg
+.. figure:: images/wifi_group_frames.svg
    :alt: Group frames
 
    Group frames
@@ -166,7 +166,7 @@ It then goes back into the sleep state after retrieving all the buffered frames.
 
 The following figure illustrates the unicast frame data retrieval mechanism in Legacy Power Save mode:
 
-.. figure:: images/nRF70_ug_legacy_power_save.svg
+.. figure:: images/wifi_legacy_power_save.svg
    :alt: Legacy Power Save mode
 
    Legacy Power Save mode
@@ -183,7 +183,7 @@ The device remains active until the AP ends the SP by setting the End Of Service
 
 The following figure illustrates the unicast frame data retrieval mechanism in WMM Power Save mode:
 
-.. figure:: images/nRF70_ug_wmm_power_save.svg
+.. figure:: images/wifi_wmm_power_save.svg
    :alt: WMM Power Save mode
 
    WMM Power Save mode
@@ -237,14 +237,14 @@ The device can switch from the DTIM to the Listen interval-based power save at r
 
 The following figure illustrates the change in wakeup mode from the DTIM to the Listen interval.
 
-.. figure:: images/nRF70_ug_change_wakeup_mode_from_dtim_to_li.png
+.. figure:: images/wifi_change_wakeup_mode_from_dtim_to_li.png
    :alt: Change Power Save wakeup mode from DTIM to Listen interval
 
    Change Power Save wakeup mode form DTIM to Listen interval
 
 The following figure illustrates the change in wakeup mode from the Listen interval to DTIM.
 
-.. figure:: images/nRF70_ug_change_wakeup_mode_from_li_to_dtim.png
+.. figure:: images/wifi_change_wakeup_mode_from_li_to_dtim.png
    :alt: Change Power Save wakeup mode from Listen interval to DTIM
 
    Change Power Save wakeup mode from Listen interval to DTIM
@@ -278,7 +278,7 @@ Therefore, TWT offers more efficient scheduling of transmissions.
 The figure below illustrates the initiation of two independent TWT sessions.
 The TWT session starts with a trigger frame from the AP at a time determined during the TWT establishment frame exchange (TWT1 and TWT2 for devices 1 and 2 respectively).
 
-.. figure:: images/nRF70_ug_twt.svg
+.. figure:: images/wifi_twt.svg
    :alt: TWT wakeup sequence
 
    TWT wakeup sequence
@@ -381,7 +381,7 @@ The application must choose the right interval based on the expected traffic.
 
 The following figure illustrates the two key parameters of TWT:
 
-.. figure:: images/nRF70_ug_twt_wake_interval.svg
+.. figure:: images/wifi_twt_wake_interval.svg
    :alt: TWT Wake Duration and Interval
 
    TWT Wake Duration and Interval
