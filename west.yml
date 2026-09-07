@@ -150,7 +150,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 0710c7a199d8d8979ae238fd1a22d5b1bfc00f3e
+      revision: pull/2271/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -162,7 +162,7 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 43bdae6feed8ce18d7cfce8bdfe54b5d89dfb424
+      revision: 102986843857ed5f0a61cb7c1159fd912a41a6e7
       groups:
         - nrf-802154
     - name: dragoon
