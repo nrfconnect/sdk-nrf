@@ -179,7 +179,8 @@ extern uint8_t nwrt_rx_cap_buf[NWRT_RX_CAP_SIZE];
  * @brief Initialize all shadow blocks and capture buffer defaults.
  *
  * Clears structures, fills param defaults, sets @c magic and @c version on common.
- * Called at @c PRE_KERNEL_2 and again from @c main(). Does not touch the Wi-Fi driver.
+ * Called once at @c PRE_KERNEL_2 (see @c nwrt_shadow_boot_init), before @c main()
+ * starts polling. Does not touch the Wi-Fi driver.
  */
 void nwrt_shadow_init(void);
 

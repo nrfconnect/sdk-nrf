@@ -261,8 +261,8 @@ static int32_t shadow_do_tx_tone(uint32_t enable)
     }
 
     if (enable && !nwrt_conf_idle())
-    return NWRT_SHADOW_ERR_BUSY;
     {
+        return NWRT_SHADOW_ERR_BUSY;
     }
 
     status =

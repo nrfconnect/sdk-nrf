@@ -6,6 +6,11 @@ Three **fixed** RAM blocks (`common`, `TX`, `RX`), each **`0x100` bytes** apart,
 
 Host access is **`w4` only** (32-bit words). RX capture samples: **`0x2007b000`**, 16 KiB.
 
+> **J-Link takes hex.** J-Link Commander reads every numeric argument to `w4` and
+> `mem32` (addresses, values, and counts) as **hexadecimal**, with or without a
+> `0x` prefix. `w4 <addr>, 12` writes `0x12` (decimal 18), not decimal 12. Every
+> value in the examples below is hex.
+
 ---
 
 ## Fixed base addresses (for board `nrf7120dk/nrf7120/cpuapp`)
@@ -159,7 +164,7 @@ mem32 0x2007f00C, 1
 **CW tone, power 12**
 
 ```text
-w4 0x2007f10C, 12    # tx_power = 12
+w4 0x2007f10C, 0xC   # tx_power = 12
 w4 0x2007f12C, 1     # tx_tone = 1
 w4 0x2007f100, 5     # APPLY|TONE (1|4)
 mem32 0x2007f100, 1
@@ -178,9 +183,9 @@ mem32 0x2007f104, 1
 **Packet TX, `tx_power = 12`, start** (not working)
 
 ```text
-w4 0x2007f10C, 12    # tx_power = 12
+w4 0x2007f10C, 0xC   # tx_power = 12
 w4 0x2007f128, 1     # enable_tx = 1
-w4 0x2007f100, 3     # APPLE|PROG (1|2)
+w4 0x2007f100, 3     # APPLY|PROG (1|2)
 mem32 0x2007f100, 1
 mem32 0x2007f104, 1
 ```
@@ -226,7 +231,7 @@ mem32 0x2007f20C, 1
 **Read **3072 (1024 * 3)** bytes from `0x2007b000`**
 
 ```text
-mem32 0x2007b000 768    # 768 = (1024 * 3) / 4
+mem32 0x2007b000 0x300    # 0x300 = 768 words = (1024 * 3) / 4
 ```
 
 ---
@@ -254,7 +259,7 @@ mem32 0x2007f00C, 1
 **CW tone (seq = 2)** (`APPLY|TONE` = 5)
 
 ```text
-w4 0x2007f10C, 12
+w4 0x2007f10C, 0xC
 w4 0x2007f12C, 1
 w4 0x2007f100, 0x00020005
 mem32 0x2007f108, 1
@@ -273,7 +278,7 @@ mem32 0x2007f104, 1
 **Start Packet TX (seq = 4)** (`APPLY|PROG` = 3)
 
 ```text
-w4 0x2007f10C, 12
+w4 0x2007f10C, 0xC
 w4 0x2007f128, 1
 w4 0x2007f100, 0x00040003
 mem32 0x2007f108, 1
@@ -318,7 +323,7 @@ mem32 0x2007f204, 1
 mem32 0x2007f20C, 1
 ```
 
-Then read **768** bytes from **`0x2007b000`**.
+Then read **768** words (`0x300`, 3072 bytes) from **`0x2007b000`**.
 
 ---
 
@@ -348,6 +353,32 @@ mem32 0x2007f00C, 1
 ```
 
 (`0x2007f010` (ack) = `1`, `0x2007f00C` (result) = `-19`)
+
+---
+
+### Debug logging over RTT
+
+The production build keeps logging off (`prj.conf`) so the shadow protocol owns
+the debug port. When a command returns a bare driver error such as `result = -5`
+and you need the FMAC/RPU log to see why, build with the logging overlay:
+
+```bash
+west build -p -b nrf7120dk/nrf7120/cpuapp app -- -DEXTRA_CONF_FILE=overlay-rtt.conf
+```
+
+View the log over RTT with the GUI viewer:
+
+```bash
+JLinkRTTViewer
+```
+
+Or from the CLI: hold the SWD connection in one terminal, stream RTT channel 0
+in another:
+
+```bash
+JLinkExe -device nRF7120 -if SWD -speed 4000 -autoconnect 1
+JLinkRTTClient
+```
 
 ---
 

@@ -18,9 +18,9 @@ project(nwrt)
 
 set(NRF71_WIFI ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71)
 
-if(NOT CONFIG_NWRT_SWD_ONLY)
-  include(${WEST_TOPDIR}/test_utilities/nrf71/phy/radio_test/extn_cmds/CMakeLists.txt)
-endif()
+# if(NOT CONFIG_NWRT_SWD_ONLY)
+#   include(${WEST_TOPDIR}/test_utilities/nrf71/phy/radio_test/extn_cmds/CMakeLists.txt)
+# endif()
 
 target_include_directories(app PRIVATE include)
 
@@ -45,6 +45,6 @@ else()
   target_sources(app PRIVATE src/nwrt_conf.c)
   target_link_libraries(app PRIVATE
     nrf71_wifi_radio_test_headers
-    test_utilities_radio_test_extn_headers
+#    test_utilities_radio_test_extn_headers
   )
 endif()
