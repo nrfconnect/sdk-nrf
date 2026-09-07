@@ -22,6 +22,14 @@
 #include <stdbool.h>
 
 /*!
+ * \brief Whether constant_count() should count elements equal or not equal to val.
+ */
+enum constant_count_match {
+	MATCH_EQUAL,
+	MATCH_NOT_EQUAL
+};
+
+/*!
  * \brief compare memory areas in constant time.
  *
  * \param[in] s1 Pointer first memory area.
@@ -55,6 +63,21 @@ bool constant_memcmp_is_zero(const void *s1, size_t n);
  * \return 0 if all elements in a are equal to val, non-zero otherwise.
  */
 int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz);
+
+/*!
+ * \brief Count leading array elements matching (or not matching) a value, in constant time.
+ *
+ * Scans the whole array unconditionally, counting how many elements starting at index 0
+ * satisfy the match condition before the first element that does not.
+ *
+ * \param[in] a	    Pointer to the array.
+ * \param[in] sz	Number of elements in the array.
+ * \param[in] val	The value to compare each element against.
+ * \param[in] match Whether to count elements equal or not equal to val.
+ *
+ * \return Number of leading matching elements. Equal to sz if all elements matched.
+ */
+size_t constant_count(const uint8_t *a, size_t sz, uint8_t val, enum constant_count_match match);
 
 /**
  * @brief Copy binary buffer based on mask.
