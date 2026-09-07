@@ -129,6 +129,8 @@ static void prv_location_method_fallback_record(enum location_method method,
  *
  * @param request pointer to cloud location request data
  */
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
+	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
 static void prv_cloud_location_request_record(const struct location_data_cloud *request)
 {
 	s_cloud_request_captured = true;
@@ -151,6 +153,7 @@ static void prv_cloud_location_request_record(const struct location_data_cloud *
 	}
 #endif
 }
+#endif /* CONFIG_LOCATION_SERVICE_EXTERNAL && (CELLULAR || WIFI) */
 
 /**
  * @brief Start a location session.
@@ -234,8 +237,11 @@ static void prv_location_event_handler(const struct location_event_data *event_d
 		prv_location_metrics_session_start();
 	} else if (event_data->id == LOCATION_EVT_FALLBACK) {
 		prv_location_method_fallback_record(event_data->method, &event_data->fallback);
+#if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && \
+	(defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI))
 	} else if (event_data->id == LOCATION_EVT_CLOUD_LOCATION_EXT_REQUEST) {
 		prv_cloud_location_request_record(&event_data->cloud_location_request);
+#endif
 	} else if (event_data->id == LOCATION_EVT_LOCATION ||
 		   event_data->id == LOCATION_EVT_TIMEOUT || event_data->id == LOCATION_EVT_ERROR ||
 		   event_data->id == LOCATION_EVT_RESULT_UNKNOWN ||
