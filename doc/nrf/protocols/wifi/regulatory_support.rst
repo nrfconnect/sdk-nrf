@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_regulatory_support:
 .. _ug_nrf70_developing_regulatory_support:
 
 Operating with regulatory support

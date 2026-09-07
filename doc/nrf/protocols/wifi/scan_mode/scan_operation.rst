@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_scan_operation:
 .. _ug_nrf70_developing_scan_operation:
 
 Optimizing scan operation
