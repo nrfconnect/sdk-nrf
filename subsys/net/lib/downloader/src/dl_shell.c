@@ -6,6 +6,7 @@
 
 #include <zephyr/init.h>
 #include <zephyr/device.h>
+#include <zephyr/fs/fs.h>
 #include <stdlib.h>
 #include <string.h>
 #include <zephyr/shell/shell.h>
@@ -31,7 +32,8 @@ static struct downloader_host_cfg dl_host_cfg = {
 
 static char url[CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE + CONFIG_DOWNLOADER_MAX_FILENAME_SIZE + 1];
 static bool in_progress;
-
+static __maybe_unused struct fs_file_t output_file;
+static __maybe_unused bool output_file_open;
 static const struct shell *shell_instance;
 
 static int dl_callback(const struct downloader_evt *event)
@@ -45,6 +47,20 @@ static int dl_callback(const struct downloader_evt *event)
 
 	switch (event->id) {
 	case DOWNLOADER_EVT_FRAGMENT:
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			ssize_t ret =
+				fs_write(&output_file, event->fragment.buf, event->fragment.len);
+
+			if (ret < 0 || (size_t)ret != event->fragment.len) {
+				shell_error(shell_instance,
+					    "failed to write fragment to file (len %zu, ret %zd)",
+					    event->fragment.len, ret);
+				fs_close(&output_file);
+				output_file_open = false;
+				in_progress = false;
+				return -EIO;
+			}
+		}
 		downloaded += event->fragment.len;
 		if (file_size) {
 			shell_fprintf(shell_instance, SHELL_NORMAL, "\r[ %d%% ] ",
@@ -54,11 +70,19 @@ static int dl_callback(const struct downloader_evt *event)
 		}
 		break;
 	case DOWNLOADER_EVT_DONE:
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			fs_close(&output_file);
+			output_file_open = false;
+		}
 		shell_print(shell_instance, "done (%d bytes)", downloaded);
 		in_progress = false;
 		downloaded = 0;
 		break;
 	case DOWNLOADER_EVT_ERROR:
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			fs_close(&output_file);
+			output_file_open = false;
+		}
 		shell_error(shell_instance, "error %d during download", event->error);
 		if (event->error == -ECONNRESET) {
 			/* Allow the downloader to retry. */
@@ -68,11 +92,19 @@ static int dl_callback(const struct downloader_evt *event)
 		/* Abort the download by returning an error. */
 		return event->error;
 	case DOWNLOADER_EVT_STOPPED:
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			fs_close(&output_file);
+			output_file_open = false;
+		}
 		shell_print(shell_instance, "download client closed");
 		in_progress = false;
 		downloaded = 0;
 		break;
 	case DOWNLOADER_EVT_DEINITIALIZED:
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			fs_close(&output_file);
+			output_file_open = false;
+		}
 		shell_print(shell_instance, "client deinitialized");
 		in_progress = false;
 		break;
@@ -169,28 +201,77 @@ static int cmd_download_get(const struct shell *shell, size_t argc, char **argv)
 {
 	int err;
 	size_t from = 0;
+	bool from_set = false;
+	const char *dl_url = NULL;
+	const char *output_path = NULL;
 
 	shell_instance = shell;
 
-	if (argc < 2 || argc > 3) {
-		shell_warn(shell, "usage: dc get <url> [offset]");
-		return -EINVAL;
+	for (size_t i = 1; i < argc; i++) {
+		if (strcmp(argv[i], "-o") == 0) {
+			if (i + 1 >= argc) {
+				shell_warn(shell,
+					   "usage: dl download get <url> [offset] [-o <path>]");
+				return -EINVAL;
+			}
+			output_path = argv[++i];
+		} else if (argv[i][0] == '-') {
+			shell_warn(shell, "unknown option: %s", argv[i]);
+			return -EINVAL;
+		} else if (dl_url == NULL) {
+			dl_url = argv[i];
+		} else if (!from_set) {
+			char *endptr;
+
+			from = (size_t)strtoul(argv[i], &endptr, 0);
+			if (endptr == argv[i] || *endptr != '\0') {
+				shell_warn(shell, "invalid offset: %s", argv[i]);
+				return -EINVAL;
+			}
+			from_set = true;
+		} else {
+			shell_warn(shell, "usage: dl download get <url> [offset] [-o <path>]");
+			return -EINVAL;
+		}
 	}
 
-	if (argc == 3) {
-		from = atoi(argv[2]);
+	if (dl_url == NULL) {
+		shell_warn(shell, "usage: dl download get <url> [offset] [-o <path>]");
+		return -EINVAL;
 	}
 
 	if (in_progress) {
 		return -EALREADY;
 	}
 
-	strncpy(url, argv[1], sizeof(url));
+	if (output_path) {
+		int ret;
+
+		if (!IS_ENABLED(CONFIG_FILE_SYSTEM)) {
+			shell_error(shell, "file system support not enabled (CONFIG_FILE_SYSTEM)");
+			return -ENOTSUP;
+		}
+
+		fs_file_t_init(&output_file);
+		ret = fs_open(&output_file, output_path, FS_O_WRITE | FS_O_CREATE | FS_O_TRUNC);
+		if (ret < 0) {
+			shell_warn(shell, "Failed to open output file: %s (%d)", output_path, ret);
+			return -EIO;
+		}
+		output_file_open = true;
+		shell_print(shell, "Downloading to file: %s", output_path);
+	}
+
+	strncpy(url, dl_url, sizeof(url));
 	url[sizeof(url) - 1] = '\0';
 
 	err = downloader_get(&downloader, &dl_host_cfg, url, from);
 
 	if (err) {
+		if (IS_ENABLED(CONFIG_FILE_SYSTEM) && output_file_open) {
+			fs_close(&output_file);
+			output_file_open = false;
+		}
 		shell_warn(shell, "downloader_get() failed, err %d", err);
 		return -ENOEXEC;
 	}
