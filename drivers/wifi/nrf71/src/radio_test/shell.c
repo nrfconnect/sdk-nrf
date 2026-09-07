@@ -5,39 +5,38 @@
  */
 
 /* @file
- * @brief NRF Wi-Fi radio test shell module
+ * @brief nRF71 Wi-Fi radio test shell module
  */
 
-#ifdef CONFIG_NRF71_RADIO_TEST
+#include <zephyr/kernel.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <zephyr/shell/shell.h>
+#include <zephyr/init.h>
+#include <ctype.h>
 #include <radio_test/core.h>
-#include <vtf_monitoring/vtf_monitoring.h>
-#else
-#include <fmac_main.h>
-#include <util.h>
-#if defined(CONFIG_NRF70_SR_COEX)
-#include <coex.h>
-#endif
-#endif /* CONFIG_NRF71_RADIO_TEST */
-#include "nrf_wifi_radio_test_shell.h"
-#include "common/fmac_api_common.h"
+#include <radio_test/fmac_api.h>
+#include <radio_test/fmac_structs.h>
+#include <common/status.h>
 
-#ifndef CONFIG_NRF71_RADIO_TEST
-extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
-struct nrf_wifi_ctx_zep *ctx = &rpu_drv_priv_zep.rpu_ctx_zep;
-#else
+#define RX_CAP_BYTES_PER_SAMPLE 3
+#define SAMPLES_PER_LINE 16
+#define BYTES_PER_SAMPLE RX_CAP_BYTES_PER_SAMPLE
+#define BYTES_PER_LINE (SAMPLES_PER_LINE * BYTES_PER_SAMPLE)
+
+struct rx_cap_iq_sample {
+	uint8_t bytes[RX_CAP_BYTES_PER_SAMPLE];
+} __packed;
+
+enum nrf_wifi_frequency_bands {
+	NRF_WIFI_FREQ_BAND_2_4_GHZ = 0,
+	NRF_WIFI_FREQ_BAND_5_GHZ,
+	NRF_WIFI_FREQ_BAND_6_GHZ,
+};
+
 struct nrf_wifi_rt_drv_ctx *ctx = &rt_drv_priv.drv_ctx;
-#endif
-
 
 #define NRF_WIFI_RADIO_TEST_INIT_TIMEOUT_MS 5000
-
-#ifdef CONFIG_NRF71_RADIO_TEST
-#define rt_mem_alloc(size) k_malloc(size)
-#define rt_mem_free(ptr) k_free(ptr)
-#else
-#define rt_mem_alloc(size) nrf_wifi_osal_mem_zalloc(size)
-#define rt_mem_free(ptr) nrf_wifi_osal_mem_free(ptr)
-#endif
 
 static bool check_test_in_prog(const struct shell *shell)
 {
@@ -182,7 +181,6 @@ static bool check_valid_chan_2g(unsigned char chan_num)
 }
 
 
-#ifndef CONFIG_NRF70_2_4G_ONLY
 static bool check_valid_chan_5g(unsigned char chan_num)
 {
 	if ((chan_num == 32) ||
@@ -258,7 +256,6 @@ static bool check_valid_chan_6g(unsigned char chan_num)
 
 	return false;
 }
-#endif /* CONFIG_NRF70_2_4G_ONLY */
 
 static int check_channel_settings(const struct shell *shell,
 				  unsigned char tput_mode,
@@ -337,7 +334,6 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	/* Initialize values which are other than 0 */
 	conf_params->op_mode = RPU_OP_MODE_RADIO_TEST;
 
-#ifdef CONFIG_NRF71_RADIO_TEST
 	{
 		unsigned int rf_params_tmp[NUM_WIFI_PARAMS];
 
@@ -357,14 +353,6 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 		conf_params->vtf_buffer_addr =
 			(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];
 	}
-#else
-	status = nrf_wifi_rt_fmac_rf_params_get(
-			ctx->rpu_ctx,
-			(struct nrf_wifi_phy_rf_params *)conf_params->rf_params);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		goto out;
-	}
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_gap_us = 0;
@@ -1023,27 +1011,8 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	char *ptr = NULL;
 	unsigned long band, chan_num = 0;
 
-#ifdef CONFIG_NRF71_RADIO_TEST
 	band = strtoul(argv[1], &ptr, 10);
 	chan_num = strtoul(argv[2], &ptr, 10);
-#else
-	chan_num = strtoul(argv[1], &ptr, 10);
-	if (check_valid_chan_2g(chan_num)) {
-		band = NRF_WIFI_FREQ_BAND_2_4_GHZ;
-#ifndef CONFIG_NRF70_2_4G_ONLY
-	} else if (check_valid_chan_5g(chan_num)) {
-		band = NRF_WIFI_FREQ_BAND_5_GHZ;
-	} else if (check_valid_chan_6g(chan_num)) {
-		band = NRF_WIFI_FREQ_BAND_6_GHZ;
-#endif /* CONFIG_NRF70_2_4G_ONLY */
-	} else {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid channel number %lu\n",
-			      chan_num);
-		return -ENOEXEC;
-	}
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	switch (band) {
 	case NRF_WIFI_FREQ_BAND_2_4_GHZ:
@@ -1055,7 +1024,6 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 			return -ENOEXEC;
 		}
 	break;
-#ifndef CONFIG_NRF70_2_4G_ONLY
 	case NRF_WIFI_FREQ_BAND_5_GHZ:
 		if (!check_valid_chan_5g(chan_num)) {
 			shell_fprintf(shell,
@@ -1074,7 +1042,6 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 			return -ENOEXEC;
 		}
 	break;
-#endif /* CONFIG_NRF70_2_4G_ONLY */
 	default:
 		shell_fprintf(shell,
 			      SHELL_ERROR,
@@ -1137,12 +1104,10 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 						       0,
 						       ctx->conf_params.tx_tone_freq,
 						       ctx->conf_params.tx_power
-#ifdef CONFIG_NRF71_RADIO_TEST
 						       ,
 						       ctx->conf_params.tx_tone_type,
 						       ctx->conf_params.tx_tone_dc_offset_i,
 						       ctx->conf_params.tx_tone_dc_offset_q
-#endif /* CONFIG_NRF71_RADIO_TEST */
 						       );
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -1166,9 +1131,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 		return -ENOEXEC;
 	}
 
-#ifdef CONFIG_NRF71_RADIO_TEST
 	ctx->conf_params.chan.op_band = (1 << band);
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	ctx->conf_params.chan.primary_num = chan_num;
 
 	status = nrf_wifi_rt_fmac_radio_test_init(ctx->rpu_ctx,
@@ -1253,24 +1216,6 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 			return -ENOEXEC;
 		}
 
-#ifndef CONFIG_NRF71_RADIO_TEST
-		/** Max TX power values differ based on the test being performed.
-		 * For TX EVM Vs Power, Max TX power required is
-		 * "MAX_TX_PWR_RADIO_TEST" (24dB) whereas for testing the
-		 * Max TX power for which both EVM and spectrum mask are passing
-		 * for specific band and MCS/rate, TX power values will be read from
-		 * RF params string.
-		 */
-		if (ctx->conf_params.tx_power != MAX_TX_PWR_SYS_TEST) {
-			/** Max TX power is represented in 0.25dB resolution
-			 * So,multiply 4 to MAX_TX_PWR_RADIO_TEST and
-			 * configure the RF params corresponding to Max TX power.
-			 */
-			memset(&ctx->conf_params.rf_params[NRF_WIFI_TX_PWR_CEIL_BYTE_OFFSET],
-			(MAX_TX_PWR_RADIO_TEST << 2),
-			sizeof(struct nrf_wifi_tx_pwr_ceil));
-		}
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	}
 
 	ctx->conf_params.tx = val;
@@ -1329,100 +1274,7 @@ static int nrf_wifi_radio_test_set_rx(const struct shell *shell,
 	return 0;
 }
 
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
-static int nrf_wifi_radio_test_sr_ant_switch_ctrl(const struct shell *shell,
-					     size_t argc,
-					     const char *argv[])
-{
-	unsigned int val;
 
-	if (argc < 2) {
-		shell_fprintf(shell, SHELL_ERROR, "invalid # of args : %d\n", argc);
-		return -ENOEXEC;
-	}
-
-	val  = strtoul(argv[1], NULL, 0);
-
-	ctx->conf_params.sr_ant_switch_ctrl = val;
-
-	return sr_ant_switch(val);
-}
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
-
-#if defined(CONFIG_NRF70_SR_COEX)
-static int nrf_wifi_radio_test_config_pta(const struct shell *shell,
-					  size_t argc,
-					  const char *argv[])
-{
-	bool wlan_band;
-	bool separate_antennas;
-	bool is_sr_protocol_ble;
-	int result_non_pta = 0;
-	int result_pta = 0;
-	int result = 0;
-
-	if (argc < 4) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "invalid # of args : %d\n", argc);
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Usage: config_pta wlan_band");
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      " separate_antennas is_sr_protocol_ble\n");
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "wlan_band: 0 for 2.4GHz, 1 for 5GHz\n");
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "is_sep_antennas: 0 for shared antenna,");
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      " 1 for separate antennas\n");
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "is_sr_ble: 0 for Thread, 1 for Bluetooth\n");
-		return -ENOEXEC;
-	}
-
-	wlan_band  = strtoul(argv[1], NULL, 0);
-	separate_antennas  = strtoul(argv[2], NULL, 0);
-	is_sr_protocol_ble  = strtoul(argv[3], NULL, 0);
-
-	if ((int)wlan_band > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid wlan_band(%d).\n",
-			      (int)wlan_band);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if ((int)separate_antennas > 1) {
-		shell_fprintf(shell,
-			     SHELL_ERROR,
-			    "Invalid separate_antennas(%d).\n",
-			    (int)separate_antennas);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if ((int)is_sr_protocol_ble > 1) {
-		shell_fprintf(shell,
-			     SHELL_ERROR,
-			    "Invalid is_sr_protocol_ble(%d).\n",
-			    (int)is_sr_protocol_ble);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	result_non_pta = nrf_wifi_coex_config_non_pta(separate_antennas, is_sr_protocol_ble);
-	result_pta = nrf_wifi_coex_config_pta(wlan_band, separate_antennas, is_sr_protocol_ble);
-	result = result_non_pta & result_pta;
-	return result;
-}
-#endif /* CONFIG_NRF70_SR_COEX */
 
 static void rx_cap_print_iq_sample(const struct shell *shell,
 				   const struct rx_cap_iq_sample *sample)
@@ -1485,8 +1337,8 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 		goto out;
 	}
 
-	rx_cap_buf = rt_mem_alloc(ctx->conf_params.capture_length *
-				  RX_CAP_BYTES_PER_SAMPLE);
+	rx_cap_buf = k_malloc(ctx->conf_params.capture_length *
+			      RX_CAP_BYTES_PER_SAMPLE);
 
 	if (!rx_cap_buf) {
 		shell_fprintf(shell,
@@ -1508,10 +1360,8 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 					      ctx->conf_params.capture_timeout,
 					      ctx->conf_params.lna_gain,
 					      ctx->conf_params.bb_gain,
-#ifdef CONFIG_NRF71_RADIO_TEST
 					      ctx->conf_params.ed_thresh_ofdm,
 					      ctx->conf_params.ed_thresh_dsss,
-#endif /* CONFIG_NRF71_RADIO_TEST */
 					      &capture_status);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -1561,7 +1411,7 @@ static int nrf_wifi_radio_test_rx_cap(const struct shell *shell,
 	ret = 0;
 out:
 	if (rx_cap_buf) {
-		rt_mem_free(rx_cap_buf);
+		k_free(rx_cap_buf);
 	}
 	ctx->rf_test_run = false;
 	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
@@ -1602,12 +1452,10 @@ static int nrf_wifi_radio_test_tx_tone(const struct shell *shell,
 					       (unsigned char)val,
 					       ctx->conf_params.tx_tone_freq,
 					       ctx->conf_params.tx_power
-#ifdef CONFIG_NRF71_RADIO_TEST
 					       ,
 					       ctx->conf_params.tx_tone_type,
 					       ctx->conf_params.tx_tone_dc_offset_i,
 					       ctx->conf_params.tx_tone_dc_offset_q
-#endif /* CONFIG_NRF71_RADIO_TEST */
 					       );
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -1631,469 +1479,6 @@ out:
 }
 
 
-#ifndef CONFIG_NRF71_RADIO_TEST
-static int nrf_wifi_radio_test_set_phy_calib_rxdc(const struct shell *shell,
-						  size_t argc,
-						  const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long phy_calib_rxdc = 0;
-
-	phy_calib_rxdc = strtoul(argv[1], &ptr, 10);
-
-	if (phy_calib_rxdc > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid PHY RX DC calibration value(%lu).\n",
-			      phy_calib_rxdc);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (phy_calib_rxdc) {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib |
-					     NRF_WIFI_PHY_CALIB_FLAG_RXDC);
-	} else {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib &
-					     ~(NRF_WIFI_PHY_CALIB_FLAG_RXDC));
-	}
-
-	return 0;
-}
-
-static int nrf_wifi_radio_test_set_phy_calib_txdc(const struct shell *shell,
-						  size_t argc,
-						  const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long phy_calib_txdc = 0;
-
-	phy_calib_txdc = strtoul(argv[1], &ptr, 10);
-
-	if (phy_calib_txdc > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid PHY TX DC calibration value(%lu).\n",
-			      phy_calib_txdc);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (phy_calib_txdc) {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib |
-					     NRF_WIFI_PHY_CALIB_FLAG_TXDC);
-	} else {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib &
-					     ~(NRF_WIFI_PHY_CALIB_FLAG_TXDC));
-	}
-
-	return 0;
-}
-
-static int nrf_wifi_radio_test_set_phy_calib_txpow(const struct shell *shell,
-						   size_t argc,
-						   const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long phy_calib_txpow = 0;
-
-	phy_calib_txpow = strtoul(argv[1], &ptr, 10);
-
-	if (phy_calib_txpow > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid PHY TX power calibration value(%lu).\n",
-			      phy_calib_txpow);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (phy_calib_txpow) {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib |
-					     NRF_WIFI_PHY_CALIB_FLAG_TXPOW);
-	} else {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib &
-					     ~(NRF_WIFI_PHY_CALIB_FLAG_TXPOW));
-	}
-
-	return 0;
-}
-
-static int nrf_wifi_radio_test_set_phy_calib_rxiq(const struct shell *shell,
-						  size_t argc,
-						  const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long phy_calib_rxiq = 0;
-
-	phy_calib_rxiq = strtoul(argv[1], &ptr, 10);
-
-	if (phy_calib_rxiq > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid PHY RX IQ calibration value(%lu).\n",
-			      phy_calib_rxiq);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (phy_calib_rxiq) {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib |
-					     NRF_WIFI_PHY_CALIB_FLAG_RXIQ);
-	} else {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib &
-					     ~(NRF_WIFI_PHY_CALIB_FLAG_RXIQ));
-	}
-
-	return 0;
-}
-
-static int nrf_wifi_radio_test_set_phy_calib_txiq(const struct shell *shell,
-						  size_t argc,
-						  const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long phy_calib_txiq = 0;
-
-	phy_calib_txiq = strtoul(argv[1], &ptr, 10);
-
-	if (phy_calib_txiq > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid PHY TX IQ calibration value(%lu).\n",
-			      phy_calib_txiq);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	if (phy_calib_txiq) {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib |
-					     NRF_WIFI_PHY_CALIB_FLAG_TXIQ);
-	} else {
-		ctx->conf_params.phy_calib = (ctx->conf_params.phy_calib &
-					     ~(NRF_WIFI_PHY_CALIB_FLAG_TXIQ));
-	}
-
-	return 0;
-}
-
-static int nrf_wifi_radio_set_dpd(const struct shell *shell,
-				  size_t argc,
-				  const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	char *ptr = NULL;
-	unsigned long val = 0;
-	int ret = -ENOEXEC;
-
-	val = strtoul(argv[1], &ptr, 10);
-
-	if (val > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid value %lu\n",
-			      val);
-		shell_help(shell);
-		goto out;
-	}
-
-	if (val == 1) {
-		if (!check_test_in_prog(shell)) {
-			goto out;
-		}
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_DPD;
-
-	status = nrf_wifi_rt_fmac_rf_test_dpd(ctx->rpu_ctx,
-					   val);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "DPD programming failed\n");
-		goto out;
-	}
-
-	ret = 0;
-out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-static int nrf_wifi_radio_get_temperature(const struct shell *shell,
-					  size_t argc,
-					  const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret = -ENOEXEC;
-
-	if (!check_test_in_prog(shell)) {
-		goto out;
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_GET_TEMPERATURE;
-
-	status = nrf_wifi_rt_fmac_rf_get_temp(ctx->rpu_ctx);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Temperature read failed\n");
-		goto out;
-	}
-
-	ret = 0;
-out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-static int nrf_wifi_radio_get_bat_volt(const struct shell *shell,
-					  size_t argc,
-					  const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret = -ENOEXEC;
-
-	if (!check_test_in_prog(shell)) {
-		goto out;
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_GET_BAT_VOLT;
-
-	status = nrf_wifi_rt_fmac_rf_get_bat_volt(ctx->rpu_ctx);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Voltage read failed\n");
-		goto out;
-	}
-
-	ret = 0;
-out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-
-static int nrf_wifi_radio_get_rf_rssi(const struct shell *shell,
-				      size_t argc,
-				      const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	int ret = -ENOEXEC;
-
-	if (!check_test_in_prog(shell)) {
-		goto out;
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_RF_RSSI;
-
-	status = nrf_wifi_rt_fmac_rf_get_rf_rssi(ctx->rpu_ctx);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "RF RSSI get failed\n");
-		goto out;
-	}
-
-	ret = 0;
-out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-
-static int nrf_wifi_radio_set_xo_val(const struct shell *shell,
-				     size_t argc,
-				     const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	char *ptr = NULL;
-	unsigned long val = 0;
-	int ret = -ENOEXEC;
-
-	val = strtoul(argv[1], &ptr, 10);
-
-	if (val > 0x7f) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid value XO value should be <= 0x7f\n");
-		shell_help(shell);
-		goto out;
-	}
-
-	if (val < 0) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid value XO value should be >= 0\n");
-		shell_help(shell);
-		goto out;
-	}
-
-	if (val == 1) {
-		if (!check_test_in_prog(shell)) {
-			goto out;
-		}
-	}
-
-	ctx->rf_test_run = true;
-	ctx->rf_test = NRF_WIFI_RF_TEST_XO_CALIB;
-
-	status = nrf_wifi_rt_fmac_set_xo_val(ctx->rpu_ctx,
-					       (unsigned char)val);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "XO value programming failed\n");
-		goto out;
-	}
-
-	ctx->conf_params.rf_params[NRF_WIFI_XO_FREQ_BYTE_OFFSET] = val;
-
-	ret = 0;
-out:
-	ctx->rf_test_run = false;
-	ctx->rf_test = NRF_WIFI_RF_TEST_MAX;
-
-	return ret;
-}
-
-static int nrf_wifi_radio_test_set_ant_gain(const struct shell *shell,
-					    size_t argc,
-					    const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long ant_gain = 0;
-
-	ant_gain = strtoul(argv[1], &ptr, 10);
-
-	if ((ant_gain < 0) || (ant_gain > 6)) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid antenna gain setting\n");
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	memset(&ctx->conf_params.rf_params[ANT_GAIN_2G_OFST],
-	       ant_gain,
-	       NUM_ANT_GAIN);
-
-	return 0;
-}
-
-static int nrf_wifi_radio_test_set_edge_bo(const struct shell *shell,
-					   size_t argc,
-					   const char *argv[])
-{
-	char *ptr = NULL;
-	unsigned long edge_bo = 0;
-
-	edge_bo = strtoul(argv[1], &ptr, 10);
-
-	if ((edge_bo < 0) || (edge_bo > 10)) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid edge backoff setting\n");
-		return -ENOEXEC;
-	}
-
-	if (!check_test_in_prog(shell)) {
-		return -ENOEXEC;
-	}
-
-	memset(&ctx->conf_params.rf_params[BAND_2G_LW_ED_BKF_DSSS_OFST],
-	       edge_bo,
-	       NUM_EDGE_BACKOFF);
-
-	return 0;
-}
-
-/* See enum CD2CM_MSG_ID_T in RPU Coexistence Manager API */
-#define CD2CM_UPDATE_SWITCH_CONFIG 0x7
-static int nrf_wifi_radio_test_wlan_switch_ctrl(const struct shell *shell,
-						size_t argc,
-						const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	char *ptr = NULL;
-	struct coex_wlan_switch_ctrl params = { 0 };
-
-	if (argc < 2) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid number of parameters\n");
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	params.rpu_msg_id = CD2CM_UPDATE_SWITCH_CONFIG;
-	params.switch_A = strtoul(argv[1], &ptr, 10);
-
-	if (params.switch_A > 1) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "Invalid WLAN switch config (%d)\n",
-			      params.switch_A);
-		shell_help(shell);
-		return -ENOEXEC;
-	}
-
-	ctx->conf_params.wlan_ant_switch_ctrl = params.switch_A;
-
-	status = nrf_wifi_fmac_conf_srcoex(ctx->rpu_ctx,
-					   &params, sizeof(params));
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(shell,
-			      SHELL_ERROR,
-			      "WLAN switch configuration failed\n");
-		return -ENOEXEC;
-	}
-
-	return 0;
-}
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 static int nrf_wifi_radio_comp_opt_xo_val(const struct shell *shell,
 					  size_t argc,
@@ -2127,7 +1512,6 @@ out:
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_RADIO_TEST
 static int nrf_wifi_radio_test_set_rx_bss_color(const struct shell *shell,
 						size_t argc,
 						const char *argv[])
@@ -2528,7 +1912,6 @@ static int nrf_wifi_radio_test_set_rx_bss_check(const struct shell *shell,
 
 	return 0;
 }
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 					size_t argc,
@@ -2605,47 +1988,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "he_gi = %d\n",
 		      conf_params->he_gi);
 
-#ifndef CONFIG_NRF71_RADIO_TEST
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "phy_calib_rxdc = %d\n",
-		      (conf_params->phy_calib &
-		       NRF_WIFI_PHY_CALIB_FLAG_RXDC) ? 1:0);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "phy_calib_txdc = %d\n",
-		      (conf_params->phy_calib &
-		       NRF_WIFI_PHY_CALIB_FLAG_TXDC) ? 1:0);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "phy_calib_txpow = %d\n",
-		      (conf_params->phy_calib &
-		       NRF_WIFI_PHY_CALIB_FLAG_TXPOW) ? 1:0);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "phy_calib_rxiq = %d\n",
-		      (conf_params->phy_calib &
-		       NRF_WIFI_PHY_CALIB_FLAG_RXIQ) ? 1:0);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "phy_calib_txiq = %d\n",
-		      (conf_params->phy_calib &
-		       NRF_WIFI_PHY_CALIB_FLAG_TXIQ) ? 1:0);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "xo_val = %d\n",
-		      conf_params->rf_params[NRF_WIFI_XO_FREQ_BYTE_OFFSET]);
-
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "wlan_ant_switch_ctrl = %d\n",
-		      conf_params->wlan_ant_switch_ctrl);
-#endif /* CONFIG_NRF71_RADIO_TEST */
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
@@ -2687,14 +2029,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "rx_capture_timeout = %d\n",
 		      conf_params->capture_timeout);
 
-#if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001) || \
-	defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP)
-	shell_fprintf(shell,
-		      SHELL_INFO,
-		      "sr_ant_switch_ctrl = %d\n",
-		      conf_params->sr_ant_switch_ctrl);
-#endif /* CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001 || CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP */
-
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "tx_pkt_cw = %d\n",
@@ -2721,7 +2055,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      "ru_index = %d\n",
 		      conf_params->ru_index);
 
-#ifdef CONFIG_NRF71_RADIO_TEST
 	shell_fprintf(shell,
 		      SHELL_INFO,
 		      "rx_bss_color = %d\n",
@@ -2796,7 +2129,6 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 		      SHELL_INFO,
 		      "rx_bss_check = %d\n",
 		      conf_params->bss_check_enable);
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	return 0;
 }
 
@@ -2959,9 +2291,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "0 - Legacy mode\n"
 		      "1 - HT mode\n"
-#ifndef CONFIG_NRF70_2_4G_ONLY
 		      "2 - VHT mode\n"
-#endif /* CONFIG_NRF70_2_4G_ONLY */
 		      "3 - HE(SU) mode\n"
 		      "4 - HE(ER SU) mode\n"
 		      "5 - HE (TB) mode                                   ",
@@ -3039,7 +2369,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_ru_index,
 		      2,
 		      0),
-#ifdef CONFIG_NRF71_RADIO_TEST
 	SHELL_CMD_ARG(init,
 		      NULL,
 		      "<val> - Band\n"
@@ -3047,14 +2376,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_init,
 		      3,
 		      0),
-#else
-	SHELL_CMD_ARG(init,
-		      NULL,
-		      "<val> - Primary channel number",
-		      nrf_wifi_radio_test_init,
-		      2,
-		      0),
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	SHELL_CMD_ARG(tx,
 		      NULL,
 		      "0 - Disable TX\n"
@@ -3069,26 +2390,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx,
 		      2,
 		      0),
-#if defined(CONFIG_NRF70_SR_COEX_RF_SWITCH)
-	SHELL_CMD_ARG(sr_ant_switch_ctrl,
-		      NULL,
-		      "0 - Switch set to use the BLE antenna\n"
-		      "1 - Switch set to use the shared Wi-Fi antenna",
-		      nrf_wifi_radio_test_sr_ant_switch_ctrl,
-		      2,
-		      0),
-#endif /* CONFIG_NRF70_SR_COEX_RF_SWITCH */
 
-#if defined(CONFIG_NRF70_SR_COEX)
-	SHELL_CMD_ARG(config_pta,
-		      NULL,
-		      " - <val> - Wi-Fi operating band 0: 2.4GHz, 1: 5GHz\n"
-		      " - <val> - Antenna mode 0: Shared, 1: Separate\n"
-		      " - <val> - SR protocol  0: Thread, 1: Bluetooth LE\n",
-		      nrf_wifi_radio_test_config_pta,
-		      4,
-		      0),
-#endif /* CONFIG_NRF70_SR_COEX */
 
 	SHELL_CMD_ARG(rx_lna_gain,
 		      NULL,
@@ -3144,92 +2446,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_tx_tone,
 		      2,
 		      0),
-#ifndef CONFIG_NRF71_RADIO_TEST
-	SHELL_CMD_ARG(phy_calib_rxdc,
-		      NULL,
-		      "0 - Disable RX DC calibration\n"
-		      "1 - Enable RX DC calibration",
-		      nrf_wifi_radio_test_set_phy_calib_rxdc,
-		      2,
-		      0),
-	SHELL_CMD_ARG(phy_calib_txdc,
-		      NULL,
-		      "0 - Disable TX DC calibration\n"
-		      "1 - Enable TX DC calibration",
-		      nrf_wifi_radio_test_set_phy_calib_txdc,
-		      2,
-		      0),
-	SHELL_CMD_ARG(phy_calib_txpow,
-		      NULL,
-		      "0 - Disable TX power calibration\n"
-		      "1 - Enable TX power calibration",
-		      nrf_wifi_radio_test_set_phy_calib_txpow,
-		      2,
-		      0),
-	SHELL_CMD_ARG(phy_calib_rxiq,
-		      NULL,
-		      "0 - Disable RX IQ calibration\n"
-		      "1 - Enable RX IQ calibration",
-		      nrf_wifi_radio_test_set_phy_calib_rxiq,
-		      2,
-		      0),
-	SHELL_CMD_ARG(phy_calib_txiq,
-		      NULL,
-		      "0 - Disable TX IQ calibration\n"
-		      "1 - Enable TX IQ calibration",
-		      nrf_wifi_radio_test_set_phy_calib_txiq,
-		      2,
-		      0),
-	SHELL_CMD_ARG(dpd,
-		      NULL,
-		      "0 - Bypass DPD\n"
-		      "1 - Enable DPD",
-		      nrf_wifi_radio_set_dpd,
-		      2,
-		      0),
-	SHELL_CMD_ARG(get_temperature,
-		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_get_temperature,
-		      1,
-		      0),
-	SHELL_CMD_ARG(get_voltage,
-		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_get_bat_volt,
-		      1,
-		      0),
-	SHELL_CMD_ARG(get_rf_rssi,
-		      NULL,
-		      "No arguments required",
-		      nrf_wifi_radio_get_rf_rssi,
-		      1,
-		      0),
-	SHELL_CMD_ARG(set_xo_val,
-		      NULL,
-		      "<val> - XO value in the range 0 to 127",
-		      nrf_wifi_radio_set_xo_val,
-		      2,
-		      0),
-	SHELL_CMD_ARG(set_ant_gain,
-		      NULL,
-		      "<val> - Antenna gain in dB (Min: 0, Max: 6)",
-		      nrf_wifi_radio_test_set_ant_gain,
-		      2,
-		      0),
-	SHELL_CMD_ARG(set_edge_bo,
-		      NULL,
-		      "<val> - Edge backoff in dB (Min: 0, Max: 10)",
-		      nrf_wifi_radio_test_set_edge_bo,
-		      2,
-		      0),
-	SHELL_CMD_ARG(wlan_ant_switch_ctrl,
-		      NULL,
-		      "Configure WLAN antenna switch (0-separate/1-shared)",
-		      nrf_wifi_radio_test_wlan_switch_ctrl,
-		      2,
-		      0),
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	SHELL_CMD_ARG(compute_optimal_xo_val,
 		      NULL,
 		      "Compute optimal XO trim value",
@@ -3270,7 +2486,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_bypass_reg,
 		      2,
 		      0),
-#ifdef CONFIG_NRF71_RADIO_TEST
 	SHELL_CMD_ARG(rx_bss_color,
 		      NULL,
 		      "<val> - bss color (1 to 63)",
@@ -3362,7 +2577,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_radio_test_set_rx_bss_check,
 		      2,
 		      0),
-#endif /* CONFIG_NRF71_RADIO_TEST */
 	SHELL_SUBCMD_SET_END);
 
 

@@ -83,6 +83,14 @@ config NRF71_RADIO_TEST
 	  compliance. It provides direct control of the radio hardware
 	  for transmitting test patterns and measuring RF parameters.
 
+config NRF71_RADIO_TEST_SHELL
+	bool "Radio test shell commands"
+	default y
+	depends on NRF71_RADIO_TEST && SHELL
+	help
+	  Register the wifi_radio_test shell command set for nRF71 radio test
+	  mode. Disable to provide a custom shell integration in the application.
+
 config NRF71_OFFLOADED_RAW_TX
 	bool "Offloaded raw TX mode of the nRF70 driver"
 	help

@@ -42,10 +42,8 @@ if(CONFIG_NRF71_RADIO_TEST)
     ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
   )
 
-  zephyr_interface_library_named(nrf71_wifi_radio_test_headers)
-  target_include_directories(nrf71_wifi_radio_test_headers INTERFACE
-    ${ZEPHYR_NRF_MODULE_DIR}/include/drivers/wifi/nrf71
-    ${nrf71_inc}
+  zephyr_library_sources_ifdef(CONFIG_NRF71_RADIO_TEST_SHELL
+    src/radio_test/shell.c
   )
 endif()
 
