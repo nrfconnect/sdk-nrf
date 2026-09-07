@@ -8,8 +8,8 @@ Raw IEEE 802.11 packet reception using Monitor mode
    :local:
    :depth: 2
 
-The nRF70 Series devices support Monitor mode.
-You must configure the nRF70 device in Monitor mode to operate it as an 802.11 wireless packet sniffer.
+The nRF Wi-Fi devices support Monitor mode.
+You must configure the nRF Wi-Fi device in Monitor mode to operate it as an 802.11 wireless packet sniffer.
 
 In this mode, the device listens on a configured channel and receives all IEEE 802.11 traffic, including traffic from all BSSIDs operating on that channel.
 The device then prepends the captured traffic with metadata before passing it to the application layer using raw sockets.
@@ -21,22 +21,23 @@ Enabling Monitor mode
 *********************
 
 To use the Monitor mode in your application, you need to enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_RX` Kconfig option in the project configuration.
+This Kconfig option applies to the nRF70 companion ICs.
 
 .. _ug_nrf70_developing_monitor_mode_operation:
 
 Monitor mode operation
 **********************
 
-Monitor mode can be enabled or disabled on the nRF70 Series device at runtime, using the ``NET_REQUEST_WIFI_MODE`` network management runtime API.
+Monitor mode can be enabled or disabled on the nRF Wi-Fi device at runtime, using the ``NET_REQUEST_WIFI_MODE`` network management runtime API.
 This runtime API can be used to disable the Monitor mode in the nRF Wi-Fi driver, when the packet sniffer operation is no longer required in the user application.
 
-Monitor mode on the nRF70 device cannot operate concurrently with other modes, such as Station mode or SoftAP mode.
+Monitor mode on the nRF Wi-Fi device cannot operate concurrently with other modes, such as Station mode or SoftAP mode.
 
-You must configure the operating Wi-Fi® channel on which the nRF70 device will monitor and receive 802.11 packets.
-When the device operates in Monitor mode, all 802.11 packets received on the configured channel will be sent up the stack by the nRF70 Series device and the nRF Wi-Fi driver.
+You must configure the operating Wi-Fi® channel on which the nRF Wi-Fi device will monitor and receive 802.11 packets.
+When the device operates in Monitor mode, all 802.11 packets received on the configured channel will be sent up the stack by the nRF Wi-Fi device and the nRF Wi-Fi driver.
 
 To set the desired channel for 802.11 packet reception, use the ``NET_REQUEST_WIFI_CHANNEL`` runtime network management API.
-The channel configuration runtime network management API can be used to set the channel after setting the nRF70 Series device in Monitor mode.
+The channel configuration runtime network management API can be used to set the channel after setting the nRF Wi-Fi device in Monitor mode.
 
 See the :ref:`wifi_shell_sample` sample for more information on configuring the mode and channel settings for raw packet reception through shell commands.
 
@@ -67,7 +68,7 @@ The following table lists the shell commands and network management APIs that ar
 Monitor mode receive packet metadata
 ************************************
 
-The IEEE 802.11 packet that is captured by the nRF70 Series device will prepend a proprietary header ``raw_rx_pkt_header``, which contains the following information about the received 802.11 packet:
+The IEEE 802.11 packet that is captured by the nRF Wi-Fi device will prepend a proprietary header ``raw_rx_pkt_header``, which contains the following information about the received 802.11 packet:
 
 .. list-table:: Wi-Fi packet reception header elements
    :header-rows: 1
@@ -97,7 +98,7 @@ You can refer to the relevant structure at :file:`nrfxlib/nrf_wifi/fw_if/umac_if
 Monitor mode receive operation
 ******************************
 
-An IEEE 802.11 packet captured by the nRF70 Series device in Monitor mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
+An IEEE 802.11 packet captured by the nRF Wi-Fi device in Monitor mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
 To receive the captured traffic in Monitor mode, the user application layer needs to open a raw socket to the nRF Wi-Fi driver.
 
 The following figure illustrates the packet structure and IEEE 802.11 packet sniffer operational flow:
@@ -149,10 +150,10 @@ The following table lists example shell commands and a network management API th
 Monitor mode receive operation in conjunction with TX injection
 ***************************************************************
 
-TX injection mode can be enabled for operation when the nRF70 Series device is configured to operate in Monitor mode.
+TX injection mode can be enabled for operation when the nRF Wi-Fi device is configured to operate in Monitor mode.
 
 TX injection mode allows the transmission of a raw 802.11 transmit packet.
-Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF70 Series device.
+Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF Wi-Fi device.
 
 To use the TX injection mode in your application, you need to enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_TX` Kconfig option in the project configuration.
 

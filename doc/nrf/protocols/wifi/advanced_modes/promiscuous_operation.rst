@@ -8,7 +8,7 @@ Raw IEEE 802.11 packet reception using Promiscuous mode
    :local:
    :depth: 2
 
-The nRF70 Series devices support Promiscuous mode.
+The nRF Wi-Fi devices support Promiscuous mode.
 Promiscuous mode of operation is only supported in connected Station mode.
 In Promiscuous mode of operation, all received IEEE 802.11 packets that belong to the connected Basic Service Set (BSS) are sent to the receiving application by the nRF Wi-Fi driver.
 
@@ -18,14 +18,15 @@ Enabling Promiscuous mode
 *************************
 
 To use the Promiscuous mode feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF70_PROMISC_DATA_RX` Kconfig option in the project configuration.
+This Kconfig option applies to the nRF70 companion ICs.
 
 .. _ug_nrf70_developing_promiscuous_mode_operation:
 
 Promiscuous mode operation
 **************************
 
-The nRF70 Series device supports raw 802.11 packet reception from a specific BSSID to which the device is connected in Station mode, when Promiscuous mode is enabled for the nRF Wi-Fi driver.
-Promiscuous mode setting can be enabled when the nRF70 Series device operates in Station mode, however, raw IEEE 802.11 packets in Promiscuous mode are only received when the nRF70 Series device connects to a specific BSSID and operates as a connected station.
+The nRF Wi-Fi device supports raw 802.11 packet reception from a specific BSSID to which the device is connected in Station mode, when Promiscuous mode is enabled for the nRF Wi-Fi driver.
+Promiscuous mode setting can be enabled when the nRF Wi-Fi device operates in Station mode, however, raw IEEE 802.11 packets in Promiscuous mode are only received when the nRF Wi-Fi device connects to a specific BSSID and operates as a connected station.
 
 The ``net_eth_promisc_mode`` functional API can be used to enable or disable Promiscuous mode in the nRF Wi-Fi driver as required by the application.
 The ``NET_REQUEST_ETHERNET_SET_PROMISC_MODE`` network management API can also be used to enable or disable Promiscuous mode.
@@ -54,7 +55,7 @@ You can refer to the relevant structure in the following header file:
 Promiscuous mode receive packet metadata
 ****************************************
 
-The IEEE 802.11 packet that is captured by the nRF70 Series device will be prepended with a proprietary header ``raw_rx_pkt_header``, which contains the following information about the received 802.11 packet:
+The IEEE 802.11 packet that is captured by the nRF Wi-Fi device will be prepended with a proprietary header ``raw_rx_pkt_header``, which contains the following information about the received 802.11 packet:
 
 .. list-table:: Wi-Fi packet reception header elements
    :header-rows: 1
@@ -82,7 +83,7 @@ The IEEE 802.11 packet that is captured by the nRF70 Series device will be prepe
 Promiscuous mode receive operation
 **********************************
 
-An IEEE 802.11 packet captured by the nRF70 Series device in Promiscuous mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
+An IEEE 802.11 packet captured by the nRF Wi-Fi device in Promiscuous mode will be sent up to the nRF Wi-Fi driver, which will prepend a radio information header to the received packet and present the resulting set to the user application.
 To receive the captured traffic in Promiscuous mode, the user application layer needs to open a raw socket to the nRF Wi-Fi driver.
 
 The following figure illustrates the packet structure and IEEE 802.11 packet sniffer operational flow:
@@ -134,10 +135,10 @@ The following table lists example shell commands and a network management API th
 Promiscuous mode receive operation in conjunction with TX injection
 *******************************************************************
 
-TX injection mode can be enabled concurrently with Promiscuous mode on the nRF70 Series device.
+TX injection mode can be enabled concurrently with Promiscuous mode on the nRF Wi-Fi device.
 
 TX injection mode allows the transmission of a raw 802.11 transmit packet.
-Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF70 Series device.
+Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF Wi-Fi device.
 
 To use the TX injection mode in your application, you need to enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_TX` Kconfig option in the project configuration.
 

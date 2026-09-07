@@ -10,19 +10,19 @@ Operating in power save modes
    :local:
    :depth: 2
 
-The nRF70 Series device supports multiple power save modes, enabling the device to minimize power consumption by shutting down most of the digital logic and RF circuits.
+The nRF Wi-Fi device supports multiple power save modes, enabling the device to minimize power consumption by shutting down most of the digital logic and RF circuits.
 
 .. _ug_nrf70_developing_powersave_device_states:
 
-nRF70 Series device states
-**************************
+nRF Wi-Fi device states
+***********************
 
-The power save state of the nRF70 Series device is described through a combination of the physical power state of the logic or circuits and the logical functional state as observed by the access point (AP).
+The power save state of the nRF Wi-Fi device is described through a combination of the physical power state of the logic or circuits and the logical functional state as observed by the access point (AP).
 
 Power state
 ===========
 
-The nRF70 Series device can be in one of the following power states:
+The nRF Wi-Fi device can be in one of the following power states:
 
 * **Active:** The device is **ON** constantly so that it can receive and transmit the data.
 * **Sleep:** The device is **OFF** to the majority of the blocks that cannot receive and transmit the data.
@@ -32,9 +32,9 @@ The nRF70 Series device can be in one of the following power states:
   In this state, the device consumes very low power (~2 µA) and does not retain any state information (apart from the values in the OTP memory).
   The device will only respond to a BUCKEN assertion to wake from the Shutdown state.
 
-The nRF70 Series transition to and from the Shutdown state is automatically managed by the nRF Wi-Fi driver.
-When the network interface is brought down, the nRF Wi-Fi driver puts the nRF70 Series device in Shutdown state.
-When the network interface is brought up, the nRF Wi-Fi driver puts the nRF70 Series device in Active state.
+The transitions of the nRF Wi-Fi device to and from the Shutdown state are automatically managed by the nRF Wi-Fi driver.
+When the network interface is brought down, the nRF Wi-Fi driver puts the nRF Wi-Fi device in Shutdown state.
+When the network interface is brought up, the nRF Wi-Fi driver puts the nRF Wi-Fi device in Active state.
 
 .. note::
    The application needs to reinitialize the Wi-Fi® association after the network interface is brought up.
@@ -42,7 +42,7 @@ When the network interface is brought up, the nRF Wi-Fi driver puts the nRF70 Se
 Functional state
 ================
 
-The functional state information of the nRF70 Series device at the AP database can be either Active or Power Save.
+The functional state information of the nRF Wi-Fi device at the AP database can be either Active or Power Save.
 The device is automatically in the Active state after the connection to a network.
 
 The state change information must be given to an AP by a successful frame exchange.
@@ -59,7 +59,7 @@ The two functional states are described as follows:
 Power Save mode
 ***************
 
-The nRF70 Series device can be configured in one of the following Power Save modes:
+The nRF Wi-Fi device can be configured in one of the following Power Save modes:
 
 * **Delivery Traffic Indication Message (DTIM) Power Save:** DTIM-based Power Save mode.
   DTIM-based Power Save mode is the default configuration and is enabled by the application based on the traffic profile.
@@ -93,7 +93,7 @@ After transmissions or receptions are completed and if the MAC layer is idle for
 
 You must keep the following in mind while choosing the inactivity timer:
 
-* The default value for the nRF70 Series device is 100 ms.
+* The default value for the nRF Wi-Fi device is 100 ms.
 * Configuring a lower value will add switching overheads, whereas configuring a higher value will consume more power.
 * Programming a value of ``0`` in the inactivity timer is valid, which basically disables the dynamic power save feature.
   Therefore, the device stays in Power Save mode even during the transmission.
@@ -107,7 +107,7 @@ You must keep the following in mind while choosing the inactivity timer:
 .. note::
 
   The inactivity timer can be configured using the ``NET_REQUEST_WIFI_PS`` network management API.
-  The nRF70 Series device consumes less power in Power Save mode, that is, when the inactivity timer value is ``0``, in low traffic scenarios.
+  The nRF Wi-Fi device consumes less power in Power Save mode, that is, when the inactivity timer value is ``0``, in low traffic scenarios.
 
   However, the downlink throughput is significantly lower in this mode.
   The application only needs to enable this in cases where the downlink traffic rate is relatively low, such as a few packets per second.
@@ -117,7 +117,7 @@ You must keep the following in mind while choosing the inactivity timer:
 Delivery Traffic Indication Message (DTIM)
 ******************************************
 
-The nRF70 Series devices use DTIM-based Power Save mode by default.
+The nRF Wi-Fi devices use DTIM-based Power Save mode by default.
 Devices in DTIM-based Power Save mode can wake at any time to transmit uplink traffic.
 However, they can only receive downlink traffic (broadcast, multicast, or unicast) immediately after receiving a DTIM beacon.
 To make the device in Power Save mode aware that the AP has buffered downlink traffic, the AP uses the Traffic Indication Map (TIM) element present in the beacon frames.
@@ -152,7 +152,7 @@ There are two types of Power Save modes that use unicast frames, Legacy Power Sa
 Legacy Power Save mode
 ----------------------
 
-The Legacy Power Save mode is the default option in the nRF70 Series devices.
+The Legacy Power Save mode is the default option in the nRF Wi-Fi devices.
 The mechanism of this mode is based on the Power Save-Poll frame retrieving the buffered frames from the AP.
 The Power Save-Poll frame is a short Control Frame containing the Association Identifier (AID) value of the device.
 
@@ -359,12 +359,12 @@ Uplink traffic
 
 Uplink traffic can be set to be either Trigger Enabled or Non-trigger Enabled mode.
 
-When operating in Trigger Enabled mode, the nRF70 Series device:
+When operating in Trigger Enabled mode, the nRF Wi-Fi device:
 
 * schedules uplink traffic as a response to trigger frames from the AP.
 * expects the AP to schedule trigger frames in the wake duration.
 
-When operating in Non-trigger Enabled mode, the nRF70 Series device:
+When operating in Non-trigger Enabled mode, the nRF Wi-Fi device:
 
 * schedules uplink traffic using the legacy channel contention.
 * tries to schedule all uplink traffic in the wake duration and discard pending frames.
@@ -392,10 +392,10 @@ Connection keep-alive
 *********************
 
 Certain access points disconnect a station device that has been idle for a period of time, without performing any explicit reachability check.
-When operating in Power Save mode, the nRF70 Series device can remain idle for extended periods, which may cause such access points to silently drop the connection.
+When operating in Power Save mode, the nRF Wi-Fi device can remain idle for extended periods, which may cause such access points to silently drop the connection.
 
 To interoperate with these access points, the nRF Wi-Fi driver periodically sends a Null data frame to the AP to keep the connection alive and to signal that the station is still reachable.
-The null data frame is an IEEE 802.11 MAC data frame with no payload that is generated and transmitted by the nRF70 Series firmware.
+The null data frame is an IEEE 802.11 MAC data frame with no payload that is generated and transmitted by the nRF Wi-Fi device firmware.
 This feature is enabled by default and slightly increases the average power consumption, because the device wakes up periodically to transmit the keep-alive frame.
 
 You can configure the feature using the following Kconfig options:
@@ -421,7 +421,7 @@ A higher DTIM period provides higher power saving in devices, but it adds latenc
 The latency of the DTIM period is seen in the device for the initial downlink traffic.
 A device can wake up and schedule uplink traffic at any time, with a latency of a few milliseconds observed.
 
-When operating in DTIM-based Power Save mode, the nRF70 Series device:
+When operating in DTIM-based Power Save mode, the nRF Wi-Fi device:
 
 * wakes up to receive DTIM beacons and decode TIM.
 * receives all broadcast or multicast frames after the DTIM beacon.

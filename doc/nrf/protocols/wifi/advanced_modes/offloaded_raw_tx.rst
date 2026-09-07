@@ -8,10 +8,10 @@ Offloaded raw transmit operation
    :local:
    :depth: 2
 
-The nRF70 Series ICs can be used as offloaded raw transmit devices, where the nRF70 Series device can transmit frames at regular intervals utilizing very low power.
+The nRF Wi-Fi devices can be used as offloaded raw transmit devices, where the nRF Wi-Fi device can transmit frames at regular intervals utilizing very low power.
 The contents of the frame as well as parameters such as frequency and channel of transmission are programmable.
 
-The major functionality of transmitting the frames is offloaded to the nRF70 device, thereby placing minimal requirements on the host (mainly programming capability).
+The major functionality of transmitting the frames is offloaded to the nRF Wi-Fi device, thereby placing minimal requirements on the host (mainly programming capability).
 This results in minimal host memory requirements (RAM and flash memory).
 
 This can be used for applications such as indoor navigation and tracking, where it is essential for anchor nodes to perform low-power beaconing.
@@ -40,7 +40,7 @@ In addition to providing start or stop control over the offloaded raw transmit o
 Offloaded raw transmit API
 **************************
 
-The offloaded raw transmit functionality of nRF70 Series ICs can be utilized by using the APIs provided by the driver.
+The offloaded raw transmit functionality of nRF Wi-Fi devices can be utilized by using the APIs provided by the driver.
 The API reference can be found at:
 
 | Header file: :file:`zephyr/drivers/wifi/nrf_wifi/off_raw_tx/off_raw_tx_api.h`
@@ -53,7 +53,7 @@ See the :ref:`Offloaded raw transmit sample <wifi_offloaded_raw_tx_packet_sample
 Power consumption
 *****************
 
-The power consumed by the nRF70 Series device during the offloaded raw TX operation depends on the following parameters:
+The power consumed by the nRF Wi-Fi device during the offloaded raw TX operation depends on the following parameters:
 
 * Operating data rate (for example, 6 Mbps, MCS0) : Power consumption decreases as the data rate increases.
 * Payload length : Power consumption increases with the payload length.

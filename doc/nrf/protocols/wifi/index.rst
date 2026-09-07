@@ -15,7 +15,11 @@ These standards operate in the unlicensed spectrum of the 2.4 GHz and 5 GHz band
 However, 11b and 11g are only applicable in the 2.4 GHz band, while 11a and 11ac are only applicable in the 5 GHz band.
 The IEEE 802.11ax standard is also specified for operation in the 6 GHz band, with this variant being branded Wi-Fi 6E to signify extension to the 2.4 and 5 GHz bands used in Wi-Fi 6.
 
-For nRF70 series documentation, see the following:
+The |NCS| Wi-Fi documentation is written to be agnostic to the specific nRF Wi-Fi device family.
+Content that applies to all nRF Wi-Fi devices is kept generic, while content that is specific to a device family is generally documented in the corresponding device guide.
+Some device family-specific reference material, such as the memory requirements and the regulatory certification testing, is currently kept in this section.
+
+For device family-specific documentation, see the following:
 
 * :ref:`ug_nrf70` for the information related to Wi-Fi support in the |NCS| and using the development kit (DK).
 * :ref:`wifi_samples` for the available samples.

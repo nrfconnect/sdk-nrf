@@ -8,7 +8,7 @@ Optimizing scan operation
    :local:
    :depth: 2
 
-This guide demonstrates how the scan operation can be optimized on the nRF70 Series ICs.
+This guide demonstrates how the scan operation can be optimized on nRF Wi-Fi devices.
 
 Wi-Fi scanning
 **************
@@ -32,7 +32,7 @@ Active scans are quicker than passive scans.
 However, active scans require more instantaneous power for transmitting probe requests.
 
 Regulatory domain rules enforce what channels can be scanned as well as whether an active scan can be performed on a particular channel.
-For more information on regulatory support, see :ref:`ug_nrf70_developing_regulatory_support`.
+For more information on regulatory support, see :ref:`ug_wifi_developing_regulatory_support`.
 
 An Active scan on a channel is preferable if:
 
@@ -42,13 +42,13 @@ An Active scan on a channel is preferable if:
 
 If either of the above conditions cannot be met, then passive scans must be used.
 
-Scan operation with nRF70 Series ICs
-************************************
+Scan operation with nRF Wi-Fi devices
+*************************************
 
-The nRF70 Series ICs can be used as scan-only devices and are an ideal solution for applications that require accurate location information based on Wi-Fi network scanning.
+nRF Wi-Fi devices can be used as scan-only devices and are an ideal solution for applications that require accurate location information based on Wi-Fi network scanning.
 They provide a reduced and more deterministic code memory footprint by limiting the functionality to only scanning.
 
-The nRF70 Series ICs control the scan operation using various controls, such as:
+nRF Wi-Fi devices control the scan operation using various controls, such as:
 
 * Band filtering: Controls the Wi-Fi frequency bands to be scanned (for example, 2.4 GHz, 5 GHz, or both) on the nRF7000 and nRF7002 ICs.
 
@@ -77,7 +77,7 @@ The above controls can be used individually or in combination to achieve:
 Scan API
 ********
 
-The scan API can be used to implement features such as scan functionality and controlled scan provided by the nRF70 Series ICs.
+The scan API can be used to implement features such as scan functionality and controlled scan provided by nRF Wi-Fi devices.
 
 You can find the scan API reference, :c:member:`wifi_mgmt_ops.scan`, in :ref:`zephyr:wifi_mgmt` in the Zephyr documentation.
 
@@ -101,7 +101,7 @@ This option can set the maximum number of SSIDs that can be specified for SSID f
 Power and Timing optimizations
 ******************************
 
-The scan controls can be used to achieve power and scan time optimizations on the nRF70 Series ICs.
+The scan controls can be used to achieve power and scan time optimizations on nRF Wi-Fi devices.
 The default scan operation is a wildcard scan (all SSIDs) across all supported bands and all regulatory allowed channels.
 
 For world regulatory domain (default), a typical scan (defined below) takes around 4.6 s and draws around 55 mA current.
@@ -292,7 +292,7 @@ The following formula shows the calculation of energy consumption:
 
   E = i * t * V / 1000
 
-where ``V = 3.6 V`` denotes the voltage for the nRF70 Series devices.
+where ``V = 3.6 V`` denotes the voltage for the nRF70 companion ICs.
 
 The following figures show the comparison of energy consumption and scan time for different profiles.
 
