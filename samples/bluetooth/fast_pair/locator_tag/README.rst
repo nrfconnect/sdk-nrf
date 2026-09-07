@@ -120,6 +120,7 @@ The following board targets support the ranging module:
 * ``nrf54l15dk/nrf54l10/cpuapp``
 * ``nrf54l15dk/nrf54l15/cpuapp``
 * ``nrf54l15tag/nrf54l15/cpuapp``
+* ``nrf54lc10dk/nrf54lc10a/cpuapp``
 * ``nrf54lm20dk/nrf54lm20a/cpuapp``
 * ``nrf54lm20dk/nrf54lm20b/cpuapp``
 
@@ -216,6 +217,7 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |
 |              |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |
 |              |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |
+|              |                                | * ``nrf54lc10dk/nrf54lc10a/cpuapp``                                  |
 |              |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |
 |              |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |
 |              |                                | * ``nrf54ls05dk/nrf54ls05a/cpuapp`` (only ``release`` configuration) |
@@ -243,6 +245,7 @@ The configuration of the signature algorithm and the public key storage solution
 |                                | * ``nrf54l15dk/nrf54l10/cpuapp``                                     |                           | Signature derived from    |
 |                                | * ``nrf54l15dk/nrf54l15/cpuapp``                                     |                           | image (pure)              |
 |                                | * ``nrf54l15tag/nrf54l15/cpuapp``                                    |                           |                           |
+|                                | * ``nrf54lc10dk/nrf54lc10a/cpuapp``                                  |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20a/cpuapp``                                  |                           |                           |
 |                                | * ``nrf54lm20dk/nrf54lm20b/cpuapp``                                  |                           |                           |
 +--------------------------------+----------------------------------------------------------------------+---------------------------+---------------------------+
