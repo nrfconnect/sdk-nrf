@@ -24,6 +24,7 @@
 #include <cracen_psa.h>
 #include <cracen_psa_ctr_drbg.h>
 #include <cracen_psa_primitives.h>
+#include <nrf_security_mem_helpers.h>
 
 #define WORKMEM_SIZE	PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
 #define HEADER_BYTES	2
@@ -79,9 +80,8 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 
 	/* scan the padding string and find the 0x00 octet that marks it end */
 	paddingstr = workmem + HEADER_BYTES;
-	while ((paddingstr < encodedmsgend) && (*paddingstr != 0)) {
-		paddingstr++;
-	}
+	paddingstr += constant_count(paddingstr, (size_t)(encodedmsgend - paddingstr), 0x00,
+				     MATCH_NOT_EQUAL);
 
 	r |= (paddingstr == encodedmsgend); /* 0x00 octet not found */
 
