@@ -136,3 +136,6 @@ The following subpages cover topics related to developing applications with the 
    nrf7002eb_dev_guide
    nrf7002eb2_dev_guide
    wifi_advanced_security_modes
+   wifi_stack_configuration
+   wifi_debugging
+   wifi_certification
