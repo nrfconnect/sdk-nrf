@@ -147,7 +147,7 @@ All 802.11 MAC layer rules for the 802.11 packet (such as, link-layer acknowledg
 
 The following figure illustrates the packet structure and raw packet operation flow:
 
-.. figure:: images/nrf7000_packet_injection_tx_flow.png
+.. figure:: images/wifi_packet_injection_tx_flow.png
    :alt: Raw packet transmit packet structure and raw packet operation flow
 
    Raw packet transmit packet structure and raw packet operation flow

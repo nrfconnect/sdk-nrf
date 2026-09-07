@@ -88,7 +88,7 @@ To receive the captured traffic in Promiscuous mode, the user application layer 
 
 The following figure illustrates the packet structure and IEEE 802.11 packet sniffer operational flow:
 
-.. figure:: images/nrf7000_packet_promiscuous_operation.png
+.. figure:: images/wifi_packet_promiscuous_operation.png
    :alt: IEEE 802.11 packet sniffer operational flow
 
    IEEE 802.11 packet sniffer operational flow
