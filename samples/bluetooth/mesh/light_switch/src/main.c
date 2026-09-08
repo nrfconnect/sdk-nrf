@@ -11,6 +11,7 @@
 #include <bluetooth/mesh/models.h>
 #include <bluetooth/mesh/dk_prov.h>
 #include <dk_buttons_and_leds.h>
+#include <ram_pwrdn.h>
 #include "model_handler.h"
 
 static void bt_ready(int err)
@@ -57,6 +58,10 @@ static void bt_ready(int err)
 int main(void)
 {
 	int err;
+
+	if (IS_ENABLED(CONFIG_RAM_POWER_DOWN_LIBRARY) && IS_ENABLED(CONFIG_BT_MESH_LOW_POWER)) {
+		power_down_unused_ram();
+	}
 
 	printk("Initializing...\n");
 

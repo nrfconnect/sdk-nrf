@@ -140,7 +140,7 @@ Friendship establishment will happen automatically after provisioning the LPN li
 Power consumption measurements
 ------------------------------
 
-The following table shows a list of the supported boards for the LPN configuration, the average power consumption running as a standard (non-LPN) node, and the average power consumption running as an LPN node:
+The following table shows a selection of supported boards for the LPN configuration, the average power consumption running as a standard (non-LPN) node where applicable, and the average power consumption running as an LPN node:
 
 .. table::
    :align: center
@@ -149,16 +149,16 @@ The following table shows a list of the supported boards for the LPN configurati
    Board                 Avg. consumption non-LPN  Avg. consumption LPN
    ====================  ========================  ====================
    nrf52dk/nrf52832      7.14 mA                   13.69 µA
-   nrf52840dk/nrf52840   6.71 mA                   14.63 µA
-   nrf52833dk/nrf52833   6.10 mA                   14.43 µA
-   nrf54l15tag/nrf54l15  --                        15.59 µA
+   nrf52840dk/nrf52840   6.31 mA                   7.21 µA
+   nrf54l15dk/nrf54l15   5.60 mA                   7.12 µA
+   nrf54l15tag/nrf54l15  --                        13.45 µA
    ====================  ========================  ====================
 
 The following applies to the LPN measurements presented in this table:
 
 * They are taken after the provisioning and configuration have completed, and after the LPN has established a friendship to a neighboring node.
 
-* The measurement period is approximately ten minutes, and without any light switch events (for example when idle).
+* The measurement period is approximately five minutes, and without any light switch events (for example when idle).
 
 * The current consumption is measured using the `Power Profiler Kit II (PPK2)`_.
 
@@ -236,6 +236,13 @@ For example, when building from the command line, use the following command, whe
 The configuration overlay :file:`overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
 To review the specific alterations, open and inspect the :file:`overlay-lpn.conf` file.
 
+On supported boards, the sample also powers down RAM that is not used by the application while running as an LPN, further reducing power consumption.
+See :ref:`lib_ram_pwrdn` for more information.
+
+.. note::
+   The RAM power-down described above powers down the default C library malloc arena along with the rest of unused RAM, so the malloc arena is disabled in the LPN configuration.
+   If your application needs a heap, configure a positive, fixed :kconfig:option:`CONFIG_COMMON_LIBC_MALLOC_ARENA_SIZE` instead of the default of zero, since a statically sized arena is placed within the application image and is therefore not affected by the RAM power-down.
+
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 FEM support
@@ -309,6 +316,7 @@ This sample uses the following |NCS| libraries:
 * :ref:`bt_mesh_onoff_cli_readme`
 * :ref:`bt_mesh_dk_prov`
 * :ref:`dk_buttons_and_leds_readme`
+* :ref:`lib_ram_pwrdn`
 
 In addition, it uses the following Zephyr libraries:
 
