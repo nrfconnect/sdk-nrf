@@ -1,6 +1,6 @@
 	.file	"hrt.c"
 	.option nopic
-	.attribute arch, "rv32e2p0_m2p0_c2p0_zicsr2p0"
+	.attribute arch, "rv32e2p0_m2p0_c2p0_zicsr2p0_zca1p0_zcb1p0_zba1p0_zbb1p0_zbc1p0_zbs1p0"
 	.attribute unaligned_access, 0
 	.attribute stack_align, 4
 	.text
@@ -15,8 +15,7 @@ hrt_set_bits:
 	lui	a5,%hi(irq_arg)
 	lhu	a5,%lo(irq_arg)(a5)
 	or	a5,a5,a4
-	slli	a5,a5,16
-	srli	a5,a5,16
+	zext.h	a5,a5
  #APP
 	csrw 3008, a5
  #NO_APP
@@ -32,10 +31,8 @@ hrt_clear_bits:
  #NO_APP
 	lui	a5,%hi(irq_arg)
 	lhu	a5,%lo(irq_arg)(a5)
-	not	a5,a5
-	and	a5,a5,a4
-	slli	a5,a5,16
-	srli	a5,a5,16
+	andn	a5,a4,a5
+	zext.h	a5,a5
  #APP
 	csrw 3008, a5
  #NO_APP
@@ -62,16 +59,14 @@ hrt_set_masked_bits:
 	csrr a2, 3008
  #NO_APP
 	lui	a3,%hi(irq_arg)
-	lhu	a5,%lo(irq_arg)(a3)
 	lui	a4,%hi(irq_arg2)
+	lhu	a5,%lo(irq_arg)(a3)
 	lhu	a4,%lo(irq_arg2)(a4)
 	lhu	a3,%lo(irq_arg)(a3)
-	not	a5,a5
-	and	a5,a5,a2
+	andn	a5,a2,a5
 	and	a4,a4,a3
 	or	a5,a5,a4
-	slli	a5,a5,16
-	srli	a5,a5,16
+	zext.h	a5,a5
  #APP
 	csrw 3008, a5
  #NO_APP
