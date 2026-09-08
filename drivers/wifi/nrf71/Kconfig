@@ -157,7 +157,6 @@ config NRF_WIFI_IF_AUTO_START
 config NRF_WIFI_LOW_POWER
 	bool "Low power mode in nRF Wi-Fi chipsets"
 	depends on !NRF71_RADIO_TEST && !NRF71_AP_MODE
-	default y
 
 config NRF_WIFI_LP_RX
 	bool "Low power RF mode in nRF Wi-Fi chipsets"
