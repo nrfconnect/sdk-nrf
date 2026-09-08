@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Arceli W5500 with fixed Ethernet MAC (alternative to w5500.overlay).
+ *
+ * Build: same as default Arceli Ethernet build but replace the devicetree overlay:
+ *   -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+ *
+ * MAC F6:CE:36:04:73:B1 — locally administered unicast (first octet F6 = Nordic MA-L
+ * F4:CE:36 with U/L bit set). Change the last four octets per board if several units
+ * share one broadcast domain.
+ */
+
+&eth_w5500_arceli_eth_w5500 {
+	local-mac-address = [f6 ce 36 04 73 b1];
+	/* spi-max-frequency = <24000000>; */
+};
