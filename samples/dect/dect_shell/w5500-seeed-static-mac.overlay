@@ -1,0 +1,30 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Seeed W5500 Ethernet shield on nRF9151 DK (Zephyr shield seeed_w5500).
+ *
+ * Build:
+ *   west build -b nrf9151dk/nrf9151/ns --
+ *     -DSHIELD=seeed_w5500
+ *     -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf"
+ *     -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
+ *
+ * MAC below is locally administered unicast (U/L bit set). Replace all six octets
+ * per unit if several boards share one broadcast domain.
+ *
+ * INT pin: the WIZnet/Seeed W5500 shield routes the W5500 INTn to Arduino D2
+ * through R25, and Rev 1.01 ships with R25 removed, so INTn never reaches a
+ * header pin (and cannot be jumpered without soldering). Remove int-gpios so
+ * the W5500 driver uses devicetree polling mode (see wiznet,w5500 binding).
+ * Pair with eth_w5500_seeed.conf for a faster poll period. If your unit has R25
+ * populated (real INTn on D2), omit this overlay to keep interrupt mode.
+ */
+
+&eth_w5500 {
+	local-mac-address = [f6 ce 36 04 73 b1];
+	/delete-property/ int-gpios;
+};

@@ -1,0 +1,69 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Larger RX buffer for DECT uplink (PT TX -> FT RX) to Ethernet sink.
+ * Matches eth_common.conf:
+ *   CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE=12288  (0x3000)
+ *   CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE=30720  (0x7800)
+ *
+ * Layers on boards/nrf9151dk_nrf9151_ns.overlay (32 kB secure RAM and flash
+ * partitions come from there). Pass with a shield MAC overlay, e.g.:
+ *   -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+ */
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&sram0 {
+	/*
+	 * 0x2000_0000  Secure RAM                      (   32 kB)
+	 * 0x2000_8000  Non-secure RAM area             (  224 kB)
+	 *   0x2000_8000  Modem shared area             ( 44840 B)
+	 *     0x2000_8000  control                     (  1832 B)
+	 *     0x2000_8728  app -> cell                 (   12 kB)
+	 *     0x2000_b728  cell -> app                 (   30 kB)
+	 *   0x2000_cf28  Application RAM               (184536 B)
+	 */
+	sram0_s: sram@0 {
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		/* Must be in first 128 kB of RAM. */
+		sram0_ns_modem: sram0_ns@0 {
+			/* Modem (shared) memory */
+			reg = <0x0 0xaf28>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0xaf28>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				/* Modem IPC control */
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				/* Modem IPC transmit */
+				reg = <0x728 0x3000>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@3728 {
+				/* Modem IPC receive */
+				reg = <0x3728 0x7800>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@af28 {
+			/* Non-Secure application memory */
+			reg = <0xaf28 0x2d0d8>;
+		};
+	};
+};
