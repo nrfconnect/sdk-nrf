@@ -45,6 +45,7 @@ supported_socs = [
     "nrf54lm20b",
     "nrf54lv10a",
     "nrf54lc10a",
+    "nrf54ls05a",
     "nrf54ls05b",
 ]
 
@@ -53,7 +54,7 @@ def get_max_size_kb(soc):
         return 31
     elif soc in ["nrf54lm20a", "nrf54lm20b", "nrf54lv10a", "nrf54lc10a"]:
         return 127
-    elif soc in ["nrf54ls05b"]:
+    elif soc in ["nrf54ls05a", "nrf54ls05b"]:
         return 1023
     else:
         sys.exit("error: unsupported SoC")
@@ -61,7 +62,7 @@ def get_max_size_kb(soc):
 def get_bootconf_reg_32bit_value(soc, size):
     value = READ_ALLOWED | EXECUTE_ALLOWED | LOCK
 
-    if soc not in ["nrf54ls05b"]:
+    if soc not in ["nrf54ls05a", "nrf54ls05b"]:
         value |= SECURE
 
     size_kb = size // 1024
