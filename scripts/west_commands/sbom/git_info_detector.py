@@ -264,10 +264,12 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     # Fall back to the west manifest when git provided no origin.
     # This resolves package identity from the manifest without any git remote.
     package_name = None
+    manifest_root = None
     if git_origin is None:
         match = match_manifest_project(absolute_path)
         if match is not None:
             project_root, mproject = match
+            manifest_root = project_root
             git_origin = getattr(mproject, 'url', None) or None
             git_sha = git_sha or getattr(mproject, 'revision', None)
             if git_origin is None:
@@ -304,6 +306,7 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package.id = package_id
         package.url = git_origin
         package.version = git_sha
+        package.root_path = repo or manifest_root
         if git_origin is None and package_name is not None:
             package.name = package_name
         if git_origin and git_sha:
