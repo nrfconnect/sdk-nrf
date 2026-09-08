@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The MQTT sample communicates with an MQTT broker either over LTE using an nRF91 Series device, or over Wi-Fi® using an nRF70 Series device or an nRF54LM20 DK connected with nRF7002 EB2 as a shield.
+The MQTT sample communicates with an MQTT broker either over LTE using an nRF91 Series device, or over Wi-Fi® using an nRF71 Series device, or an nRF70 Series device combined with a compatible host platform (for example, an nRF54LM20 DK connected with an nRF7002-EB II as a shield).
 
 .. |wifi| replace:: Wi-Fi
 
