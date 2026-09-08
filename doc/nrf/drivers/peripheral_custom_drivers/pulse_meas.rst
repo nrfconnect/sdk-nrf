@@ -25,7 +25,7 @@ The driver operates as follows:
 #. When the configured number of pulse widths has been collected, the buffer is queued for the application and the optional callback is called.
 
 The edge detection and TIMER operations are performed entirely in hardware, so the accuracy of a single measurement does not depend on interrupt latency.
-The CPU still wakes up once per measured pulse to copy the latched value, which limits the pulse repetition rate that the driver can handle.
+The CPU still wakes up once for each measured pulse to copy the latched value, which limits the pulse repetition rate that the driver can handle.
 See :ref:`pulse_meas_limitations` for details.
 
 Related software components
@@ -126,13 +126,8 @@ The devicetree configuration is subject to the following constraints:
 Kconfig configuration
 =====================
 
-To enable the driver, set the following Kconfig option:
-
-.. code-block:: kconfig
-
-   CONFIG_PULSE_MEAS=y
-
-The :kconfig:option:`CONFIG_PULSE_MEAS` option is enabled by default when at least one ``nordic,pulse-meas`` devicetree node is enabled.
+To enable the driver, set the :kconfig:option:`CONFIG_PULSE_MEAS` Kconfig option to ``y``.
+It is enabled by default when at least one ``nordic,pulse-meas`` devicetree node is enabled.
 It also selects the required ``nrfx`` drivers automatically.
 
 You can configure the following additional options:
@@ -162,7 +157,7 @@ Runtime configuration
 =====================
 
 At runtime, configure the measurement using the :c:struct:`pulse_meas_config` structure.
-Pass this structure to :c:func:`pulse_meas_configure` before starting the measurement.
+Pass this structure to the :c:func:`pulse_meas_configure` function before starting the measurement.
 
 Configure the following fields:
 
@@ -233,20 +228,20 @@ Define the slab with the :c:macro:`K_MEM_SLAB_DEFINE` macro, using the :c:macro:
        }
    }
 
-:c:func:`pulse_meas_configure` reconfigures the GPIOTE channels, the TIMER instance, and the (D)PPI connections, so it must not be called while a measurement is running.
+The :c:func:`pulse_meas_configure` function reconfigures the GPIOTE channels, the TIMER instance, and the (D)PPI connections, so it must not be called while a measurement is running.
 
 See :ref:`pulse_meas_memory_slab_requirements` for the memory slab constraints.
 
 Measurement
 ***********
 
-After configuring the device, control the measurement with :c:func:`pulse_meas_start` and :c:func:`pulse_meas_stop`.
+After configuring the device, control the measurement with the :c:func:`pulse_meas_start` and :c:func:`pulse_meas_stop` functions.
 Collect the results with :c:func:`pulse_meas_get` and :c:func:`pulse_meas_put`.
 
 Starting a measurement
 ======================
 
-:c:func:`pulse_meas_start` allocates the first buffer from the supplied memory slab and enables the hardware:
+The :c:func:`pulse_meas_start` function allocates the first buffer from the supplied memory slab and enables the hardware:
 
 .. code-block:: c
 
@@ -263,9 +258,9 @@ To avoid this, either start the measurement while the input is in its idle state
 Reading the results
 ===================
 
-:c:func:`pulse_meas_get` returns a pointer to the pulse widths of the oldest completed series.
+The :c:func:`pulse_meas_get` function returns a pointer to the pulse widths of the oldest completed series.
 The buffer holds ``num_of_meas`` values of type ``uint32_t``, each representing a pulse width in microseconds.
-After processing the values, return the buffer to the memory slab with :c:func:`pulse_meas_put`:
+After processing the values, return the buffer to the memory slab using the :c:func:`pulse_meas_put` function:
 
 .. code-block:: c
 
@@ -295,13 +290,13 @@ After processing the values, return the buffer to the memory slab with :c:func:`
    * - ``-EIO``
      - No completed series is available and none is being captured.
 
-Use :c:func:`pulse_meas_pending` to check how many completed series are waiting to be read, for example to drain the remaining series after the measurement has been stopped.
+Use the :c:func:`pulse_meas_pending` function to check how many completed series are waiting to be read, for example to drain the remaining series after the measurement has been stopped.
 
 .. note::
 
    The ``user_handler`` callback is invoked from the GPIOTE interrupt context.
    Only ISR-safe Zephyr kernel APIs may be used inside the callback.
-   Do not call :c:func:`pulse_meas_get` from the callback.
+   Do not call the :c:func:`pulse_meas_get` function from the callback.
    Instead, signal a waiting thread with the :c:func:`k_sem_give` function and read the results from that thread:
 
    .. code-block:: c
@@ -332,7 +327,7 @@ Stopping a measurement
 
 In the :c:enumerator:`PULSE_MEAS_MODE_ONE_SHOT` mode, the driver stops the hardware automatically once the first series is complete.
 
-In the :c:enumerator:`PULSE_MEAS_MODE_CONTINUOUS` mode, the measurement runs until it is stopped with :c:func:`pulse_meas_stop`.
+In the :c:enumerator:`PULSE_MEAS_MODE_CONTINUOUS` mode, the measurement runs until it is stopped with the :c:func:`pulse_meas_stop` function.
 The function is non-blocking, and its ``immediate`` parameter selects one of the following behaviors:
 
 * Set ``immediate`` to ``false`` to let the driver complete the series that is currently being captured before stopping the hardware.
@@ -350,13 +345,13 @@ The driver stores each measurement series in a single memory slab block.
 Each block starts with a small header that the driver uses to queue completed series.
 The :c:macro:`PULSE_MEAS_BLOCK_SIZE` macro accounts for this header, so the memory slab must be defined with the following parameters:
 
-* Block size of at least ``PULSE_MEAS_BLOCK_SIZE(num_of_meas)`` bytes, where ``num_of_meas`` matches the value in :c:struct:`pulse_meas_config`.
+* Block size of at least ``PULSE_MEAS_BLOCK_SIZE(num_of_meas)`` bytes, where ``num_of_meas`` matches the value in the :c:struct:`pulse_meas_config` structure.
 * Block alignment of at least ``4`` bytes, because the pulse widths are stored as 32-bit words.
 
 The number of blocks determines how much data the application can leave unprocessed:
 
 * One block is held by the driver for the series that is currently being captured.
-* Each completed series occupies one block until the application releases it with :c:func:`pulse_meas_put`.
+* Each completed series occupies one block until the application releases it with the :c:func:`pulse_meas_put` function.
 
 In the :c:enumerator:`PULSE_MEAS_MODE_CONTINUOUS` mode, the driver allocates the block for the next series from the interrupt context, immediately after the previous series completes.
 If no block is free at that moment, the driver stops the measurement and no further series are captured.
@@ -373,14 +368,14 @@ The driver has the following limitations:
 * Fixed resolution and range - The TIMER instance is always configured to count at 1 MHz in 32-bit mode, so the resolution is fixed at 1 µs and cannot be changed.
   This limits the longest measurable pulse to approximately 4295 seconds.
 
-* Pulse repetition rate -The driver takes one GPIOTE interrupt per measured pulse to copy the latched value out of the ``CC[0]`` register.
+* Pulse repetition rate - The driver takes one GPIOTE interrupt for each measured pulse to copy the latched value out of the ``CC[0]`` register.
   If the next pulse ends before that interrupt has been serviced, the previously latched value is overwritten and the measurement is silently lost.
-  The shortest usable pulse period therefore depends on the interrupt latency and interrupt activity of the application.
+  The shortest usable pulse period depends on the interrupt latency and interrupt activity of the application.
 
-* Single driver instance - The queue of completed series is defined once for the whole driver instead of per device.
+* Single driver instance - The queue of completed series is defined once for the whole driver instead of once for each device.
   For this reason, only one ``nordic,pulse-meas`` devicetree node can be enabled at a time.
 
-* No runtime reconfiguration - :c:func:`pulse_meas_configure` reinitializes the underlying hardware, so the measurement must be stopped before the configuration is changed.
+* No runtime reconfiguration - The :c:func:`pulse_meas_configure` function reinitializes the underlying hardware, so the measurement must be stopped before the configuration is changed.
 
 Dependencies
 ************
