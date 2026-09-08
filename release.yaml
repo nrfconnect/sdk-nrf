@@ -45,11 +45,11 @@ devices:
 - soc: nrf54lm20b
   status: active
 - soc: nrf54lv10a
-  status: pre-release
+  status: active
 - soc: nrf54ls05a
-  status: pre-release
+  status: active
 - soc: nrf54ls05b
-  status: pre-release
+  status: active
 - soc: nrf7120
   status: active
 - soc: nrf9131
