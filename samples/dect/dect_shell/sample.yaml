@@ -14,7 +14,7 @@ common:
 tests:
   sample.dect.dect_shell: {}
   sample.dect.dect_shell.mdns_discover:
-    extra_args: EXTRA_CONF_FILE=mdns-discover.conf
+    extra_args: EXTRA_CONF_FILE=mdns-common.conf;mdns-discover.conf
   sample.dect.dect_shell.ft_sink:
     extra_args: FILE_SUFFIX=sm
   sample.dect.dect_shell.iperf3_tx:
