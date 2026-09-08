@@ -55,23 +55,10 @@ Subscribers use its thread primarily to monitor and process incoming messages fr
 When a channel that a module subscribes to, is invoked, the subscriber will handle the incoming message depending on its content.
 The following code snippet shows how a module thread polls for incoming messages on a subscribed channel:
 
-.. code-block:: c
-
-    static void sampler_task(void)
-    {
-    	const struct zbus_channel *chan;
-
-    	while (!zbus_sub_wait(&sampler, &chan, K_FOREVER)) {
-
-    		if (&TRIGGER_CHAN == chan) {
-    			sample();
-    		}
-    	}
-    }
-
-    K_THREAD_DEFINE(sampler_task_id,
-		    CONFIG_MQTT_SAMPLE_SAMPLER_THREAD_STACK_SIZE,
-		    sampler_task, NULL, NULL, NULL, 3, 0, 0);
+.. literalinclude:: ../src/modules/sampler/sampler.c
+   :language: c
+   :start-after: include_startingpoint_architecture_rst_3
+   :end-before: include_endpoint_architecture_rst_3
 
 .. note::
    Zbus implements internal message queues for subscribers.
@@ -84,52 +71,18 @@ The difference between a listener and a subscriber is that listeners do not requ
 The callbacks are called in the context of the thread that published the message.
 The following code snippet shows how a listener is set up in order to listen to changes to the ``NETWORK`` channel:
 
-.. code-block:: c
-
-    void led_callback(const struct zbus_channel *chan)
-    {
-    	int err = 0;
-    	const enum network_status *status;
-
-    	if (&NETWORK_CHAN == chan) {
-
-    		/* Get network status from channel. */
-    		status = zbus_chan_const_msg(chan);
-
-    		switch (*status) {
-    		case NETWORK_CONNECTED:
-    			err = led_on(led_device, LED_1_GREEN);
-    			if (err) {
-    				LOG_ERR("led_on, error: %d", err);
-    			}
-    			break;
-    		case NETWORK_DISCONNECTED:
-    			err = led_off(led_device, LED_1_GREEN);
-    			if (err) {
-    				LOG_ERR("led_off, error: %d", err);
-    			}
-    			break;
-    		default:
-    			LOG_ERR("Unknown event: %d", *status);
-    			break;
-    		}
-    	}
-    }
-
-    ZBUS_LISTENER_DEFINE(led, led_callback);
+.. literalinclude:: ../src/modules/led/led.c
+   :language: c
+   :start-after: include_startingpoint_architecture_rst_1
+   :end-before: include_endpoint_architecture_rst_1
 
 A module publishes a message to a channel by calling the :c:func:`zbus_chan_pub` function.
 The following code snippet shows how this is typically carried out throughout the sample:
 
-.. code-block:: c
-
-    int err;
-    struct payload payload = "Some payload";
-
-    err = zbus_chan_pub(&PAYLOAD_CHAN, &payload, K_SECONDS(1));
-    if (err) {
-    	LOG_ERR("zbus_chan_pub, error: %d", err);
-    }
+.. literalinclude:: ../src/modules/sampler/sampler.c
+   :language: c
+   :start-after: include_startingpoint_architecture_rst_2
+   :end-before: include_endpoint_architecture_rst_2
 
 
 .. _mqtt_sample_module_list:
