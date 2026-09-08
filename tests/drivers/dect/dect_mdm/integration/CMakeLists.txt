@@ -10,19 +10,26 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(dect_mdm_integration_test)
 
-# Add test source files for Unity-based integration testing
-# Test source files
 target_sources(app PRIVATE
     src/main.c
     src/test_dect_integration.c
+    src/test_dect_eth_integration.c
     src/test_dect_utils.c
+    src/test_dect_sink_uplink.c
     src/mocks/mock_nrf_modem_dect_mac.c
+)
+
+target_sources_ifdef(CONFIG_MODEM_CELLULAR app PRIVATE
     src/mocks/mock_modem_device.c
     src/mocks/mock_ppp_net_if.c
 )
 
-# Include all necessary directories for DECT stack
+target_sources_ifdef(CONFIG_NET_L2_ETHERNET app PRIVATE
+    src/mocks/mock_eth_net_if.c
+)
+
 target_include_directories(app PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/src
     ${CMAKE_CURRENT_SOURCE_DIR}/src/mocks
     ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include
     ${ZEPHYR_NRF_MODULE_DIR}/drivers/dect/dect_mdm
@@ -32,16 +39,21 @@ target_include_directories(app PRIVATE
     ${ZEPHYR_BASE}/subsys/net/ip
 )
 
-# Add nrfxlib include directories globally so DECT stack can find headers
 target_include_directories(zephyr_interface INTERFACE
     ${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include
 )
 
-# Mock PPP net_if via linker wrap (wrap symbol provided in mock_ppp_net_if.c).
-# pm_device_action_run is provided directly in the mock (no wrap) so it links when PM is not built in.
-target_link_options(app PUBLIC
+if(CONFIG_MODEM_CELLULAR)
+  target_link_options(app PUBLIC
     -Wl,--wrap=net_if_get_first_by_type
     -Wl,--wrap=net_if_start_rs
-)
+  )
+endif()
 
-# Coverage workflow is documented in README and run via Twister commands.
+if(CONFIG_NET_L2_ETHERNET)
+  target_link_options(app PUBLIC
+    -Wl,--wrap=net_if_start_rs
+    -Wl,--wrap=net_ipv6_send_na
+    -Wl,--wrap=net_ipv6_send_ns
+  )
+endif()

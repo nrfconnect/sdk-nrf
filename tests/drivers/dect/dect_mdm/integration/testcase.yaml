@@ -12,3 +12,15 @@ tests:
       - native_sim
     integration_platforms:
       - native_sim
+
+  unity.dect_integration_test.eth_sink:
+    sysbuild: true
+    tags:
+      - sysbuild
+      - ci_tests_drivers_dect
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    extra_args:
+      - EXTRA_CONF_FILE=eth_sink.conf

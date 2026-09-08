@@ -28,6 +28,7 @@
 #include "unity.h"
 #include "mock_nrf_modem_dect_mac.h"
 #include "test_dect_utils.h"
+#include "test_dect_sink_uplink.h"
 
 /* Real DECT API includes for integration testing */
 #include <zephyr/net/net_if.h>
@@ -92,7 +93,7 @@ static const uint8_t test_ipv6_addr_sink_new_64[16] = {0x20, 0x01, 0x0d, 0xb8, 0
 						       0x00, 0x00, 0x00, 0x01};
 
 /* Network interface for testing */
-static struct net_if *test_iface;
+struct net_if *test_iface;
 
 /* Forward declaration for DECT driver initialization function (now non-static for tests) */
 extern void dect_mdm_ctrl_mdm_on_modem_lib_init(int ret, void *ctx);
@@ -159,6 +160,7 @@ static enum dect_status_values dect_nw_beacon_stop_status;
 bool dect_sink_status_received;
 struct dect_sink_status_evt received_sink_status_data;
 
+#if defined(CONFIG_MODEM_CELLULAR)
 /* Event tracking for NET_EVENT_IPV6_NBR_ADD (sink router re-added by worker) */
 static bool dect_sink_router_nbr_add_received;
 static struct net_mgmt_event_callback test_nbr_add_cb;
@@ -176,6 +178,7 @@ static void test_nbr_add_handler(struct net_mgmt_event_callback *cb, uint64_t mg
 		dect_sink_router_nbr_add_received = true;
 	}
 }
+#endif
 
 #if defined(CONFIG_NET_CONNECTION_MANAGER)
 /* Event tracking for NET_EVENT_L4_IPV6_CONNECTED (conn_mgr when iface gets global IPv6).
@@ -185,7 +188,7 @@ static void test_nbr_add_handler(struct net_mgmt_event_callback *cb, uint64_t mg
 static bool dect_l4_ipv6_connected_received;
 static bool dect_l4_disconnected_received;
 static bool dect_l4_ipv6_disconnected_received;
-static struct net_if *test_l4_expected_iface; /* NULL = any; set by test (e.g. ppp_if for FT) */
+static struct net_if *test_l4_expected_iface; /* NULL = any; set by test (e.g. uplink_if for FT) */
 static struct net_mgmt_event_callback test_l4_cb;
 
 #define TEST_L4_EVENT_MASK                                                                         \
@@ -1710,9 +1713,9 @@ void test_dect_pt_conn_mgr_connect(void)
 	 * L4 callback is only registered when CONFIG_MODEM_CELLULAR is set
 	 * (in ft_conn_mgr_connect).
 	 */
-	if (IS_ENABLED(CONFIG_MODEM_CELLULAR)) {
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
 		test_l4_expected_iface = test_iface;
-	}
+#endif
 	dect_l4_ipv6_connected_received = false;
 
 	mock_nrf_modem_dect_mac_cluster_beacon_receive_ExpectAndReturn(0);
@@ -1812,15 +1815,14 @@ void test_dect_pt_conn_mgr_connect(void)
 	 * L4 callback is registered (it is added in test_dect_ft_conn_mgr_connect when
 	 * CONFIG_MODEM_CELLULAR is set).
 	 */
-	if (IS_ENABLED(CONFIG_MODEM_CELLULAR)) {
-		TEST_ASSERT_TRUE_MESSAGE(
-			dect_l4_ipv6_connected_received,
-			"NET_EVENT_L4_IPV6_CONNECTED should be received for PT DECT iface "
-			"when association response includes IPv6 prefix");
-		test_l4_expected_iface = NULL;
-	}
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	TEST_ASSERT_TRUE_MESSAGE(
+		dect_l4_ipv6_connected_received,
+		"NET_EVENT_L4_IPV6_CONNECTED should be received for PT DECT iface "
+		"when association response includes IPv6 prefix");
+	test_l4_expected_iface = NULL;
+#endif
 
-#if defined(CONFIG_NET_IPV6)
 	/* Verify PT own global address on DECT iface: prefix (2001:db8:1::/64) + FT long RD ID
 	 * + PT own long RD ID. Same validation as test_dect_pt_global_address_removal:
 	 * direct net_if lookup + status_info parent global.
@@ -1868,7 +1870,6 @@ void test_dect_pt_conn_mgr_connect(void)
 			"Parent global IPv6 address in status should match expected FT-derived "
 			"address");
 	}
-#endif
 
 	LOG_INF("test_dect_pt_conn_mgr_connect: PT conn_mgr connect and events verified");
 #endif
@@ -1912,11 +1913,11 @@ void test_dect_pt_conn_mgr_disconnect(void)
 	/* Expect L4 disconnect events for PT DECT iface when CONFIG_MODEM_CELLULAR
 	 * (L4 cb registered in ft_conn_mgr_connect).
 	 */
-	if (IS_ENABLED(CONFIG_MODEM_CELLULAR)) {
-		test_l4_expected_iface = test_iface;
-		dect_l4_disconnected_received = false;
-		dect_l4_ipv6_disconnected_received = false;
-	}
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	test_l4_expected_iface = test_iface;
+	dect_l4_disconnected_received = false;
+	dect_l4_ipv6_disconnected_received = false;
+#endif
 
 	LOG_INF("PT conn mgr disconnect (NET_REQUEST_DECT_NETWORK_UNJOIN), releasing parent");
 	result = conn_mgr_if_disconnect(test_iface);
@@ -1942,15 +1943,15 @@ void test_dect_pt_conn_mgr_disconnect(void)
 				  received_network_status_data.network_status,
 				  "Network status should be DECT_NETWORK_STATUS_UNJOINED");
 
-	if (IS_ENABLED(CONFIG_MODEM_CELLULAR)) {
-		TEST_ASSERT_TRUE_MESSAGE(dect_l4_disconnected_received,
-					 "NET_EVENT_L4_DISCONNECTED should be received for PT DECT "
-					 "iface after disconnect");
-		TEST_ASSERT_TRUE_MESSAGE(dect_l4_ipv6_disconnected_received,
-					 "NET_EVENT_L4_IPV6_DISCONNECTED should be received for PT "
-					 "DECT iface after disconnect");
-		test_l4_expected_iface = NULL;
-	}
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	TEST_ASSERT_TRUE_MESSAGE(dect_l4_disconnected_received,
+				 "NET_EVENT_L4_DISCONNECTED should be received for PT DECT "
+				 "iface after disconnect");
+	TEST_ASSERT_TRUE_MESSAGE(dect_l4_ipv6_disconnected_received,
+				 "NET_EVENT_L4_IPV6_DISCONNECTED should be received for PT "
+				 "DECT iface after disconnect");
+	test_l4_expected_iface = NULL;
+#endif
 
 	LOG_INF("test_dect_pt_conn_mgr_disconnect: PT conn_mgr disconnect and events verified");
 #endif
@@ -3280,50 +3281,6 @@ void test_dect_ft_cluster_reconfigure(void)
 		"Cluster reconfigure event should contain the reconfigured channel");
 }
 
-#if defined(CONFIG_MODEM_CELLULAR)
-extern struct net_if *dect_test_get_mock_ppp_net_if(void);
-extern int test_net_if_start_rs_call_count;
-#if defined(CONFIG_NET_IPV6)
-extern int dect_test_mock_ppp_ipv6_unicast_used_count(void);
-extern void dect_test_mock_ppp_restore_ipv6_unicast(void);
-#endif
-#endif
-
-#if defined(CONFIG_MODEM_CELLULAR) && defined(CONFIG_NET_IPV6)
-/** Notify mock PPP sink with standard prefix, router, and NBR (2001:db8::/64, 2001:db8::1). */
-static void test_mock_ppp_sink_notify_prefix_router_nbr(struct net_if *ppp_if)
-{
-	struct net_event_ipv6_prefix prefix_evt = {
-		.len = 64,
-		.lifetime = 7200,
-	};
-
-	memcpy(prefix_evt.addr.s6_addr, test_ipv6_addr_sink_router,
-	       sizeof(test_ipv6_addr_sink_router));
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_PREFIX_ADD, ppp_if, &prefix_evt,
-					sizeof(prefix_evt));
-	k_sleep(K_MSEC(50));
-	{
-		struct in6_addr router_addr;
-
-		memcpy(router_addr.s6_addr, test_ipv6_addr_sink_router,
-		       sizeof(test_ipv6_addr_sink_router));
-		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTER_ADD, ppp_if, &router_addr,
-						sizeof(router_addr));
-	}
-	k_sleep(K_MSEC(50));
-	{
-		struct net_event_ipv6_nbr nbr_evt = {.idx = 0};
-
-		memcpy(nbr_evt.addr.s6_addr, test_ipv6_addr_sink_router,
-		       sizeof(test_ipv6_addr_sink_router));
-		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_NBR_ADD, ppp_if, &nbr_evt,
-						sizeof(nbr_evt));
-	}
-	k_sleep(K_MSEC(50));
-}
-#endif
-
 /**
  * @brief Test FT sink global address assign (simulate PPP prefix)
  *
@@ -3338,12 +3295,12 @@ static void test_mock_ppp_sink_notify_prefix_router_nbr(struct net_if *ppp_if)
  */
 void test_dect_ft_sink_global_address_assign(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
-	struct net_if *ppp_if;
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	struct net_if *uplink_if;
 	struct net_event_ipv6_addr addr_evt;
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
 	int baseline_cluster_configure = mock_nrf_modem_dect_mac_cluster_configure_call_count;
 
@@ -3352,9 +3309,9 @@ void test_dect_ft_sink_global_address_assign(void)
 	dect_cluster_created_received = false;
 	memset(&received_cluster_created_data, 0, sizeof(received_cluster_created_data));
 
-	/* Bring PPP net_if up so sink gets NET_EVENT_IF_UP */
-	net_if_flag_set(ppp_if, NET_IF_UP);
-	net_mgmt_event_notify(NET_EVENT_IF_UP, ppp_if);
+	/* Bring sink uplink net_if up so sink gets NET_EVENT_IF_UP */
+	net_if_flag_set(uplink_if, NET_IF_UP);
+	net_mgmt_event_notify(NET_EVENT_IF_UP, uplink_if);
 
 	k_sleep(K_MSEC(150));
 
@@ -3364,15 +3321,15 @@ void test_dect_ft_sink_global_address_assign(void)
 		"NET_EVENT_DECT_SINK_STATUS should be received after NET_EVENT_IF_UP");
 	TEST_ASSERT_EQUAL_MESSAGE(
 		DECT_SINK_STATUS_DISCONNECTED, received_sink_status_data.sink_status,
-		"First sink status should be DISCONNECTED when PPP iface comes up");
-	TEST_ASSERT_EQUAL_PTR_MESSAGE(ppp_if, received_sink_status_data.br_iface,
-				      "Sink status br_iface should be the PPP iface");
+		"First sink status should be DISCONNECTED when sink uplink iface comes up");
+	TEST_ASSERT_EQUAL_PTR_MESSAGE(uplink_if, received_sink_status_data.br_iface,
+				      "Sink status br_iface should be the sink uplink iface");
 
-	/* Now simulate global address add on PPP iface (e.g. from PPP/PPP carrier) */
+	/* Now simulate global address add on sink uplink iface (e.g. from PPP/PPP carrier) */
 	dect_sink_status_received = false;
 	memcpy(addr_evt.addr.s6_addr, test_ipv6_addr_sink_router,
 	       sizeof(test_ipv6_addr_sink_router));
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, ppp_if, &addr_evt,
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, uplink_if, &addr_evt,
 					sizeof(addr_evt));
 
 	k_sleep(K_MSEC(150));
@@ -3384,12 +3341,10 @@ void test_dect_ft_sink_global_address_assign(void)
 	TEST_ASSERT_EQUAL_MESSAGE(
 		DECT_SINK_STATUS_CONNECTED, received_sink_status_data.sink_status,
 		"Second sink status should be CONNECTED after global address add");
-	TEST_ASSERT_EQUAL_PTR_MESSAGE(ppp_if, received_sink_status_data.br_iface,
-				      "Sink status br_iface should be the PPP iface");
+	TEST_ASSERT_EQUAL_PTR_MESSAGE(uplink_if, received_sink_status_data.br_iface,
+				      "Sink status br_iface should be the sink uplink iface");
 
-#if defined(CONFIG_NET_IPV6)
-	test_mock_ppp_sink_notify_prefix_router_nbr(ppp_if);
-#endif
+	test_mock_sink_notify_prefix_router_nbr(uplink_if);
 
 	/* Verify from DECT status that our sink has the global prefix set (2001:db8::/64) */
 	{
@@ -3434,7 +3389,7 @@ void test_dect_ft_sink_global_address_assign(void)
 	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, received_cluster_created_data.cluster_channel,
 				      "Cluster reconfig result should report cluster channel");
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled, skip sink PPP simulation");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -3449,27 +3404,27 @@ void test_dect_ft_sink_global_address_assign(void)
  */
 void test_dect_ft_sink_router_del(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
-	struct net_if *ppp_if;
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	struct net_if *uplink_if;
 	struct in6_addr router_addr;
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
 	memcpy(router_addr.s6_addr, test_ipv6_addr_sink_router, sizeof(test_ipv6_addr_sink_router));
 
-	/* Ensure mock PPP iface is considered "up" so sink ROUTER_DEL handler runs
+	/* Ensure mock sink uplink iface is considered "up" so sink ROUTER_DEL handler runs
 	 * (it requires net_if_is_up() which needs both NET_IF_UP and NET_IF_RUNNING).
 	 */
-	net_if_flag_set(ppp_if, NET_IF_UP);
-	net_if_flag_set(ppp_if, NET_IF_RUNNING);
+	net_if_flag_set(uplink_if, NET_IF_UP);
+	net_if_flag_set(uplink_if, NET_IF_RUNNING);
 
 	dect_sink_status_received = false;
 	memset(&received_sink_status_data, 0, sizeof(received_sink_status_data));
 	int rs_calls_before = test_net_if_start_rs_call_count;
 
 	/* Simulate router deleted (our sink router 2001:db8::1) */
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTER_DEL, ppp_if, &router_addr,
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTER_DEL, uplink_if, &router_addr,
 					sizeof(router_addr));
 
 	k_sleep(K_MSEC(100));
@@ -3484,7 +3439,10 @@ void test_dect_ft_sink_router_del(void)
 
 	/* Simulate router back (ROUTER_ADD) so sink becomes CONNECTED again */
 	dect_sink_status_received = false;
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTER_ADD, ppp_if, &router_addr,
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	test_sink_uplink_restore_ipv6_unicast(uplink_if);
+#endif
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTER_ADD, uplink_if, &router_addr,
 					sizeof(router_addr));
 
 	k_sleep(K_MSEC(100));
@@ -3494,7 +3452,7 @@ void test_dect_ft_sink_router_del(void)
 	TEST_ASSERT_EQUAL_MESSAGE(DECT_SINK_STATUS_CONNECTED, received_sink_status_data.sink_status,
 				  "Sink status should be CONNECTED after router re-added");
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled, skip sink router_del test");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -3510,18 +3468,18 @@ void test_dect_ft_sink_router_del(void)
 void test_dect_ft_sink_router_nbr_del(void)
 {
 #if defined(CONFIG_MODEM_CELLULAR)
-	struct net_if *ppp_if;
+	struct net_if *uplink_if;
 	struct net_event_ipv6_nbr nbr_evt;
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
 	memcpy(nbr_evt.addr.s6_addr, test_ipv6_addr_sink_router,
 	       sizeof(test_ipv6_addr_sink_router));
 	nbr_evt.idx = -1;
 
-	net_if_flag_set(ppp_if, NET_IF_UP);
-	net_if_flag_set(ppp_if, NET_IF_RUNNING);
+	net_if_flag_set(uplink_if, NET_IF_UP);
+	net_if_flag_set(uplink_if, NET_IF_RUNNING);
 
 	dect_sink_router_nbr_add_received = false;
 	net_mgmt_init_event_callback(&test_nbr_add_cb, test_nbr_add_handler,
@@ -3529,7 +3487,8 @@ void test_dect_ft_sink_router_nbr_del(void)
 	net_mgmt_add_event_callback(&test_nbr_add_cb);
 
 	/* Simulate router removed from nbr table -> sink schedules worker to add it back */
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_NBR_DEL, ppp_if, &nbr_evt, sizeof(nbr_evt));
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_NBR_DEL, uplink_if, &nbr_evt,
+					sizeof(nbr_evt));
 
 	/* Worker is rescheduled with K_MSEC(100) */
 	k_sleep(K_MSEC(150));
@@ -3556,8 +3515,19 @@ void test_dect_ft_sink_router_nbr_del(void)
  */
 void test_dect_ft_cluster_associate_child_with_global_address(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
 	LOG_DBG("=== Testing DECT FT cluster associate child with global address ===");
+
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	struct net_if *uplink_if;
+
+	/* Runs before eth_sink_bring_connected(); restore uplink prefix state after
+	 * prior sink/router tests (ROUTER_DEL clears sink prefix on dect0).
+	 */
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
+	test_eth_sink_bring_connected(uplink_if);
+#endif
 
 	/* Prerequisites: FT cluster running, sink has global prefix (from previous test).
 	 * Interface should be DORMANT (no children yet after dissociate/network create path).
@@ -3695,7 +3665,7 @@ void test_dect_ft_cluster_associate_child_with_global_address(void)
 	LOG_DBG("- Child Long RD ID: 0x%08X", pt_long_rd_id);
 	LOG_DBG("- Child has local and global address: YES");
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -3709,7 +3679,7 @@ void test_dect_ft_cluster_associate_child_with_global_address(void)
  */
 void test_dect_ft_cluster_associate_child_with_global_address_2(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
 	LOG_DBG("=== Testing DECT FT cluster associate second child with global address ===");
 
 	TEST_ASSERT_NOT_NULL_MESSAGE(test_iface, "DECT test iface should be set");
@@ -3751,8 +3721,15 @@ void test_dect_ft_cluster_associate_child_with_global_address_2(void)
 	int result = test_dect_status_info_get(test_iface, &status_info);
 
 	TEST_ASSERT_EQUAL_MESSAGE(0, result, "DECT status info get should succeed");
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR) && \
+	defined(CONFIG_NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT)
+	/* eth ND proxy pt_add runs before this test and adds 0xB00B1E5. */
+	TEST_ASSERT_EQUAL_MESSAGE(3, status_info.child_count,
+				  "FT should have three children (CAFEBABE, B00B1E5, DEADBEEF)");
+#else
 	TEST_ASSERT_EQUAL_MESSAGE(2, status_info.child_count,
 				  "FT should have exactly two children");
+#endif
 
 	/* Find the second child by long_rd_id */
 	struct dect_association_data *child = NULL;
@@ -3777,7 +3754,7 @@ void test_dect_ft_cluster_associate_child_with_global_address_2(void)
 	LOG_DBG("=== Second child associate test completed - Child Long RD ID: 0x%08X ===",
 		pt_long_rd_id);
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -3785,7 +3762,7 @@ void test_dect_ft_cluster_associate_child_with_global_address_2(void)
  * @brief Test FT sink global address change (prefix removal and new prefix)
  *
  * Runs after test_dect_ft_sink_global_address_assign (sink has 2001:db8::/64).
- * 1. Send NET_EVENT_IPV6_ADDR_DEL for our prefix (2001:db8::1) on PPP iface ->
+ * 1. Send NET_EVENT_IPV6_ADDR_DEL for our prefix (2001:db8::1) on sink uplink iface ->
  *    verify DECT_SINK_STATUS_DISCONNECTED is received.
  * 2. Send NET_EVENT_IPV6_PREFIX_DEL for old prefix 2001:db8::/64.
  * 3. Send NET_EVENT_IPV6_ADDR_ADD with new prefix (2001:db8:1::1) ->
@@ -3796,13 +3773,13 @@ void test_dect_ft_cluster_associate_child_with_global_address_2(void)
  */
 void test_dect_ft_sink_global_address_change(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
-	struct net_if *ppp_if;
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	struct net_if *uplink_if;
 	/* Old address/prefix from test_dect_ft_sink_global_address_assign */
 	/* New prefix 2001:db8:1::/64, address 2001:db8:1::1 */
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
 	int baseline_cluster_configure = mock_nrf_modem_dect_mac_cluster_configure_call_count;
 
@@ -3815,7 +3792,7 @@ void test_dect_ft_sink_global_address_change(void)
 
 		memcpy(addr_del_evt.addr.s6_addr, test_ipv6_addr_sink_router,
 		       sizeof(test_ipv6_addr_sink_router));
-		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_DEL, ppp_if, &addr_del_evt,
+		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_DEL, uplink_if, &addr_del_evt,
 						sizeof(addr_del_evt));
 	}
 	k_sleep(K_MSEC(150));
@@ -3834,8 +3811,8 @@ void test_dect_ft_sink_global_address_change(void)
 		};
 
 		memcpy(prefix_del_evt.addr.s6_addr, test_ipv6_addr_sink_router, 8);
-		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_PREFIX_DEL, ppp_if, &prefix_del_evt,
-						sizeof(prefix_del_evt));
+		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_PREFIX_DEL, uplink_if,
+						&prefix_del_evt, sizeof(prefix_del_evt));
 	}
 	k_sleep(K_MSEC(50));
 
@@ -3849,7 +3826,7 @@ void test_dect_ft_sink_global_address_change(void)
 
 		memcpy(addr_add_evt.addr.s6_addr, test_ipv6_addr_sink_new_64,
 		       sizeof(test_ipv6_addr_sink_new_64));
-		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, ppp_if, &addr_add_evt,
+		net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, uplink_if, &addr_add_evt,
 						sizeof(addr_add_evt));
 	}
 	k_sleep(K_MSEC(150));
@@ -3933,7 +3910,7 @@ void test_dect_ft_sink_global_address_change(void)
 	TEST_ASSERT_NOT_EQUAL_MESSAGE(0, received_cluster_created_data.cluster_channel,
 				      "Cluster reconfig result should report cluster channel");
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -4060,7 +4037,7 @@ void test_dect_ft_sckt_packet_rx_tx(void)
  */
 void test_dect_ft_local_multicast_tx(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
+#if defined(CONFIG_NET_SOCKETS)
 	struct sockaddr_in6 bind_addr = {0};
 	struct sockaddr_in6 mcast_dst = {0};
 	int sockfd;
@@ -4088,14 +4065,31 @@ void test_dect_ft_local_multicast_tx(void)
 	bind_addr.sin6_family = AF_INET6;
 	memcpy(&bind_addr.sin6_addr, ll_addr, sizeof(struct in6_addr));
 	bind_addr.sin6_port = 0;
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	/* With eth + DECT ifaces up, scope the socket to the DECT interface. */
+	bind_addr.sin6_scope_id = net_if_get_by_iface(test_iface);
+#endif
 
 	ret = zsock_bind(sockfd, (struct sockaddr *)&bind_addr, sizeof(bind_addr));
 	TEST_ASSERT_EQUAL_MESSAGE(0, ret, "Bind to DECT link-local should succeed");
+
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	{
+		unsigned int ifindex = net_if_get_by_iface(test_iface);
+		int opt_ret = zsock_setsockopt(sockfd, IPPROTO_IPV6, IPV6_MULTICAST_IF, &ifindex,
+					       sizeof(ifindex));
+
+		TEST_ASSERT_EQUAL_MESSAGE(0, opt_ret, "IPV6_MULTICAST_IF should succeed");
+	}
+#endif
 
 	/* Destination: link-local all-nodes multicast ff02::1 */
 	mcast_dst.sin6_family = AF_INET6;
 	net_ipv6_addr_create_ll_allnodes_mcast(&mcast_dst.sin6_addr);
 	mcast_dst.sin6_port = htons(12345);
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	mcast_dst.sin6_scope_id = net_if_get_by_iface(test_iface);
+#endif
 
 	ret = zsock_sendto(sockfd, mcast_payload, mcast_len, 0, (const struct sockaddr *)&mcast_dst,
 			   sizeof(mcast_dst));
@@ -4105,7 +4099,11 @@ void test_dect_ft_local_multicast_tx(void)
 	zsock_close(sockfd);
 
 	/* Allow stack to forward multicast to both children */
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	k_sleep(K_MSEC(500));
+#else
 	k_sleep(K_MSEC(200));
+#endif
 
 	/* TX path: FT multicast is sent to all children. Verify at least 2 dlc_data_tx
 	 * (one per child); more may occur depending on stack/loopback.
@@ -4145,7 +4143,7 @@ void test_dect_ft_local_multicast_tx(void)
 #undef UDP_HDR_LEN
 #undef IPV6_HDR_LEN
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled");
+	TEST_IGNORE_MESSAGE("CONFIG_NET_SOCKETS required for multicast test");
 #endif
 }
 
@@ -4237,16 +4235,16 @@ void test_dect_ft_network_remove(void)
  * NET_EVENT_IF_DOWN to simulate the PPP modem iface going down. The sink's
  * IF_DOWN handler (CONFIG_MODEM_CELLULAR) flushes IPv6 addresses on the PPP
  * iface via net_if_ipv6_addr_rm. Verifies that no IPv6 unicast addresses
- * remain on the PPP iface after IF_DOWN.
+ * remain on the sink uplink iface after IF_DOWN.
  */
 void test_dect_ft_sink_down(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR)
-	struct net_if *ppp_if;
+#if defined(DECT_TEST_HAVE_SINK_UPLINK)
+	struct net_if *uplink_if;
 	struct net_event_ipv6_route route_evt;
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
 	/* Simulate route removal then iface down (order as might happen in practice) */
 	memcpy(route_evt.nexthop.s6_addr, test_ipv6_addr_sink_router,
@@ -4254,18 +4252,29 @@ void test_dect_ft_sink_down(void)
 	memcpy(route_evt.addr.s6_addr, test_ipv6_addr_sink_router,
 	       sizeof(test_ipv6_addr_sink_router));
 	route_evt.prefix_len = 64;
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTE_DEL, ppp_if, &route_evt,
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ROUTE_DEL, uplink_if, &route_evt,
 					sizeof(route_evt));
 
-	net_mgmt_event_notify(NET_EVENT_IF_DOWN, ppp_if);
+	net_mgmt_event_notify(NET_EVENT_IF_DOWN, uplink_if);
 
 	k_sleep(K_MSEC(100));
 
-	/* Sink IF_DOWN handler flushes all IPv6 addrs on PPP iface; verify none set */
-	TEST_ASSERT_EQUAL_MESSAGE(0, dect_test_mock_ppp_ipv6_unicast_used_count(),
-				  "PPP iface should have no IPv6 unicast addresses after IF_DOWN");
+#if defined(CONFIG_MODEM_CELLULAR)
+	/* Cellular mock: IF_DOWN handler explicitly flushes unicast addresses. */
+	TEST_ASSERT_EQUAL_MESSAGE(0, test_sink_uplink_ipv6_unicast_used_count(uplink_if),
+				  "sink uplink iface should have no IPv6 unicast addresses after IF_DOWN");
+#elif defined(CONFIG_NET_L2_ETHERNET)
+	{
+		struct dect_status_info status_info = {0};
+
+		TEST_ASSERT_EQUAL_MESSAGE(0, test_dect_status_info_get(test_iface, &status_info),
+					  "DECT status info get should succeed after sink IF_DOWN");
+		TEST_ASSERT_FALSE_MESSAGE(status_info.br_global_ipv6_addr_prefix_set,
+					  "Sink prefix should be cleared after Ethernet IF_DOWN");
+	}
+#endif
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR not enabled, skip sink_down test");
+	TEST_IGNORE_MESSAGE("No sink uplink configured");
 #endif
 }
 
@@ -4282,28 +4291,26 @@ void test_dect_ft_sink_down(void)
  */
 void test_dect_ft_conn_mgr_connect(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR) && defined(CONFIG_NET_CONNECTION_MANAGER)
-	struct net_if *ppp_if;
+#if defined(DECT_TEST_HAVE_SINK_UPLINK) && defined(CONFIG_NET_CONNECTION_MANAGER)
+	struct net_if *uplink_if;
 	struct net_event_ipv6_addr addr_evt;
 
 	LOG_DBG("=== Testing DECT FT connection manager connect ===");
 
 	TEST_ASSERT_NOT_NULL_MESSAGE(test_iface, "DECT test iface should be set");
 
-	ppp_if = dect_test_get_mock_ppp_net_if();
-	TEST_ASSERT_NOT_NULL_MESSAGE(ppp_if, "Mock PPP net_if should be available");
+	uplink_if = test_sink_uplink_if();
+	TEST_ASSERT_NOT_NULL_MESSAGE(uplink_if, "Sink uplink net_if should be available");
 
-	/* When PPP iface is the mock it is not in the net_if list; conn_mgr does not track it
-	 * and DECT iface may not reach conn_mgr "connected" (no L4 for PPP). Skip those assertions.
-	 */
-	const bool mock_ppp = (net_if_get_by_iface(ppp_if) < 0);
-
-#if defined(CONFIG_NET_IPV6)
-	dect_test_mock_ppp_restore_ipv6_unicast();
+#if defined(CONFIG_MODEM_CELLULAR)
+	/* Mock PPP is not in the net_if list; conn_mgr does not track it. */
+	const bool mock_uplink = (net_if_get_by_iface(uplink_if) < 0);
 #endif
 
-	/* FT+sink: L4 events are for PPP iface (sink/backhaul), not DECT iface. */
-	test_l4_expected_iface = ppp_if;
+	test_sink_uplink_restore_ipv6_unicast(uplink_if);
+
+	/* FT+sink: L4 events are for sink uplink iface (sink/backhaul), not DECT iface. */
+	test_l4_expected_iface = uplink_if;
 
 	net_mgmt_init_event_callback(&test_l4_cb, test_l4_ipv6_connected_handler,
 				     TEST_L4_EVENT_MASK);
@@ -4313,19 +4320,17 @@ void test_dect_ft_conn_mgr_connect(void)
 	 * Use same pattern as test_dect_ft_sink_global_address_assign: set NET_IF_UP and
 	 * notify NET_EVENT_IF_UP directly so we avoid notify_iface_up() (mock has no link_addr).
 	 */
-	net_if_down(ppp_if);
+	net_if_down(uplink_if);
 	k_sleep(K_MSEC(50));
-	net_if_flag_set(ppp_if, NET_IF_UP);
-	net_mgmt_event_notify(NET_EVENT_IF_UP, ppp_if);
+	net_if_flag_set(uplink_if, NET_IF_UP);
+	net_mgmt_event_notify(NET_EVENT_IF_UP, uplink_if);
 	k_sleep(K_MSEC(50));
 	/* Sink IF_DOWN cleared mock unicast; restore so conn_mgr sees global addr on ADDR_ADD. */
-#if defined(CONFIG_NET_IPV6)
-	dect_test_mock_ppp_restore_ipv6_unicast();
-#endif
+	test_sink_uplink_restore_ipv6_unicast(uplink_if);
 	/* Sink gets global prefix from ADDR_ADD; conn_mgr sees global addr -> L4 events for PPP. */
 	memcpy(addr_evt.addr.s6_addr, test_ipv6_addr_sink_router,
 	       sizeof(test_ipv6_addr_sink_router));
-	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, ppp_if, &addr_evt,
+	net_mgmt_event_notify_with_info(NET_EVENT_IPV6_ADDR_ADD, uplink_if, &addr_evt,
 					sizeof(addr_evt));
 	k_sleep(K_MSEC(100));
 	TEST_ASSERT_TRUE_MESSAGE(dect_sink_status_received,
@@ -4333,41 +4338,40 @@ void test_dect_ft_conn_mgr_connect(void)
 	TEST_ASSERT_EQUAL_MESSAGE(DECT_SINK_STATUS_CONNECTED, received_sink_status_data.sink_status,
 				  "Sink should be CONNECTED after global address add");
 	LOG_INF("NET_EVENT_DECT_SINK_STATUS - Sink is connected, iface towards Internet %p",
-		(void *)ppp_if);
+		(void *)uplink_if);
 
-#if defined(CONFIG_NET_IPV6)
-	test_mock_ppp_sink_notify_prefix_router_nbr(ppp_if);
-#endif
+	test_mock_sink_notify_prefix_router_nbr(uplink_if);
 	k_sleep(K_MSEC(100));
 
-	/* Verify PPP iface conn_mgr status when it is tracked (mock is not in net_if
-	 * section so net_if_get_by_iface(ppp_if) < 0; skip conn_mgr assertions then).
+	/* Verify sink uplink iface conn_mgr status when it is tracked (mock is not in net_if
+	 * section so net_if_get_by_iface(uplink_if) < 0; skip conn_mgr assertions then).
 	 */
 	{
-		int ppp_idx = net_if_get_by_iface(ppp_if);
-		uint16_t ppp_state = conn_mgr_if_state(ppp_if);
+		int ppp_idx = net_if_get_by_iface(uplink_if);
+		uint16_t ppp_state = conn_mgr_if_state(uplink_if);
 
-		LOG_INF("iface %d (%p) status: %s, %s, %s, %s, IPv6, %s.", ppp_idx, (void *)ppp_if,
+		LOG_INF("iface %d (%p) status: %s, %s, %s, %s, IPv6, %s.",
+			ppp_idx, (void *)uplink_if,
 			(ppp_state & CONN_MGR_IF_IGNORED_BIT) ? "ignored" : "watched",
-			conn_mgr_if_is_bound(ppp_if) ? "bound" : "not bound",
-			net_if_is_admin_up(ppp_if) ? "admin-up" : "admin-down",
+			conn_mgr_if_is_bound(uplink_if) ? "bound" : "not bound",
+			net_if_is_admin_up(uplink_if) ? "admin-up" : "admin-down",
 			(ppp_state & CONN_MGR_IF_UP_BIT) ? "oper-up" : "oper-down",
 			(ppp_state & CONN_MGR_IF_READY_BIT) ? "connected" : "not connected");
-		TEST_ASSERT_TRUE_MESSAGE(net_if_is_admin_up(ppp_if),
-					 "PPP iface should be admin-up");
+		TEST_ASSERT_TRUE_MESSAGE(net_if_is_admin_up(uplink_if),
+					 "sink uplink iface should be admin-up");
 		if (ppp_idx >= 0) {
 			TEST_ASSERT_TRUE_MESSAGE(ppp_state != CONN_MGR_IF_STATE_INVALID,
-						 "PPP iface should be tracked by conn_mgr");
+						 "sink uplink iface should be tracked by conn_mgr");
 			TEST_ASSERT_FALSE_MESSAGE(ppp_state & CONN_MGR_IF_IGNORED_BIT,
-						  "PPP iface should be watched");
-			TEST_ASSERT_FALSE_MESSAGE(conn_mgr_if_is_bound(ppp_if),
-						  "PPP iface should be not bound");
+						  "sink uplink iface should be watched");
+			TEST_ASSERT_FALSE_MESSAGE(conn_mgr_if_is_bound(uplink_if),
+						  "sink uplink iface should be not bound");
 			TEST_ASSERT_TRUE_MESSAGE((ppp_state & CONN_MGR_IF_UP_BIT) != 0,
-						 "PPP iface should be oper-up");
+						 "sink uplink iface should be oper-up");
 			TEST_ASSERT_TRUE_MESSAGE((ppp_state & CONN_MGR_IF_IPV6_SET_BIT) != 0,
-						 "PPP iface should have IPv6");
+						 "sink uplink iface should have IPv6");
 			TEST_ASSERT_TRUE_MESSAGE((ppp_state & CONN_MGR_IF_READY_BIT) != 0,
-						 "PPP iface should be connected");
+						 "sink uplink iface should be connected");
 		}
 	}
 
@@ -4487,27 +4491,31 @@ void test_dect_ft_conn_mgr_connect(void)
 			net_if_is_admin_up(test_iface) ? "admin-up" : "admin-down",
 			(state & CONN_MGR_IF_UP_BIT) ? "oper-up" : "oper-down",
 			(state & CONN_MGR_IF_READY_BIT) ? "connected" : "not connected");
-		if (!mock_ppp) {
+#if defined(CONFIG_MODEM_CELLULAR)
+		if (!mock_uplink) {
 			TEST_ASSERT_TRUE_MESSAGE(state != CONN_MGR_IF_STATE_INVALID &&
-							 (state & CONN_MGR_IF_READY_BIT) != 0,
+						 (state & CONN_MGR_IF_READY_BIT) != 0,
 						 "DECT iface should be connected in conn_mgr "
 						 "status (oper-up, IPv6, connected)");
 		}
+#endif
 	}
 
 	/* L4 events are sent when conn_mgr marks iface ready; allow callback to run */
 	k_sleep(K_MSEC(100));
-	if (!mock_ppp) {
+#if defined(CONFIG_MODEM_CELLULAR)
+	if (!mock_uplink) {
 		TEST_ASSERT_TRUE_MESSAGE(
 			dect_l4_ipv6_connected_received,
 			"NET_EVENT_L4_IPV6_CONNECTED (L4 event) should be received");
 	}
+#endif
 
 	LOG_DBG("Conn mgr connect test completed: cluster created, network status CREATED, "
 		"L4 IPv6 connected");
 	test_l4_expected_iface = NULL;
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR and CONFIG_NET_CONNECTION_MANAGER required");
+	TEST_IGNORE_MESSAGE("Sink uplink and CONFIG_NET_CONNECTION_MANAGER required");
 #endif
 }
 
@@ -4521,7 +4529,7 @@ void test_dect_ft_conn_mgr_connect(void)
  */
 void test_dect_ft_conn_mgr_disconnect(void)
 {
-#if defined(CONFIG_MODEM_CELLULAR) && defined(CONFIG_NET_CONNECTION_MANAGER)
+#if defined(DECT_TEST_HAVE_SINK_UPLINK) && defined(CONFIG_NET_CONNECTION_MANAGER)
 	struct dect_status_info status_info;
 	int result;
 
@@ -4573,7 +4581,7 @@ void test_dect_ft_conn_mgr_disconnect(void)
 				  received_network_status_data.network_status,
 				  "Network status should be DECT_NETWORK_STATUS_REMOVED");
 #else
-	TEST_IGNORE_MESSAGE("CONFIG_MODEM_CELLULAR and CONFIG_NET_CONNECTION_MANAGER required");
+	TEST_IGNORE_MESSAGE("Sink uplink and CONFIG_NET_CONNECTION_MANAGER required");
 #endif
 }
 

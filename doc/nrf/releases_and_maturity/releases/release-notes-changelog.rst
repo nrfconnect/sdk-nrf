@@ -206,6 +206,13 @@ Bluetooth Mesh
 DECT NR+
 --------
 
+* Added DECT NR+ L2 Ethernet sink mode for IPv6 bridging over an Ethernet uplink:
+
+  * Delegated ``/96`` prefix and ULA on DECT NR+
+  * ND proxy on behalf of associated PT devices
+  * Optional DHCPv6 client
+  * Upstream routing through the default router link-local address
+
 * Updated by improving half-closed association recovery in the nRF91 DECT driver and L2 stack (DLC discard timer, ``RD_NOT_FOUND``, L2 table full).
   The :c:func:`dect_net_l2_child_association_created` function now returns ``int``; check for ``-ENOSPC`` and release the MAC association.
   The :c:struct:`dect_settings` structure is extended with ``DECT_SETTINGS_WRITE_SCOPE_DLC`` write scope and ``rach_conf_resp_win_length`` field.
@@ -471,14 +478,16 @@ DECT NR+ samples
 
 * :ref:`dect_shell_application` sample:
 
-* Added:
+  * Added:
 
-  * Configurable auto-connect with L4-driven trigger.
-  * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
+    * Configurable auto-connect with L4-driven trigger.
+    * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
+    * Ethernet border router sink variant using a W5500 shield (``arceli_eth_w5500`` or ``seeed_w5500``), with configuration and devicetree overlays for modem shared memory, static or random MAC, and optional DHCPv6.
+    * Shared mDNS configuration overlay (:file:`mdns-common.conf`) and Ethernet mDNS overlay (:file:`eth_mdns.conf`) for DNS-SD on both ``dect0`` and ``eth0``.
 
-* Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
-* Fixed the routing logs.
-  They are now available through the shell backend only.
+  * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
+  * Fixed the routing logs.
+    They are now available through the shell backend only.
 
 Enhanced ShockBurst samples
 ---------------------------
