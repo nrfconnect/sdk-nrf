@@ -6,7 +6,18 @@
 
 #include <zephyr/ztest.h>
 #include <fw_info.h>
+#if defined(CONFIG_NRFX_RRAMC)
+#include <haly/nrfy_rramc.h>
+#define PROTECTION_BLOCK_SIZE 0x800
+
+static void rram_words_write(uint32_t address, const void *src, uint32_t num_words)
+{
+	nrfy_rramc_words_write(NRF_RRAMC, address, src, num_words);
+}
+#else
 #include <nrfx_nvmc.h>
+#define PROTECTION_BLOCK_SIZE 0x8000
+#endif
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/sys/util.h>
@@ -31,8 +42,15 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 {
 	uint32_t copy_len = ROUND_UP((uint32_t)_flash_used, 4);
 
-	/* Round up to at least the next SPU region. */
-	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + (S0_SLOT_SIZE / 2), 0x8000);
+#if defined(CONFIG_NRFX_RRAMC)
+	/* b0 write-protects the active slot (s0); place the displaced image in s1. */
+	uint32_t new_addr = ROUND_UP(S1_SLOT_ADDRESS + CONFIG_SB_IMAGE_BOOT_OFFSET,
+				     PROTECTION_BLOCK_SIZE);
+#else
+	/* Round up to at least the next protection region. */
+	uint32_t new_addr = ROUND_UP(S0_SLOT_ADDRESS + (S0_SLOT_SIZE / 2),
+				     PROTECTION_BLOCK_SIZE);
+#endif
 
 	const struct fw_info s1_info = {
 		.magic = {FIRMWARE_INFO_MAGIC},
@@ -55,13 +73,22 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 			s1_info_copied->valid, "Failed to invalidate S1.\r\n");
 		zassert_equal((uint32_t)s1_info_copied, S1_SLOT_ADDRESS,
 			"S1 info found at wrong address.\r\n");
+#if defined(CONFIG_NRFX_RRAMC)
+		rram_words_write(S1_SLOT_ADDRESS, (const uint32_t *)&(uint32_t){0},
+			ROUND_UP(sizeof(struct fw_info), 4) / 4);
+#else
 		int ret = nrfx_nvmc_page_erase(S1_SLOT_ADDRESS);
 
 		zassert_equal(0, ret, "Erase failed.\r\n");
+#endif
 	} else {
 		/* First boot */
 
 		/* Copy app */
+#if defined(CONFIG_NRFX_RRAMC)
+		rram_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
+			copy_len / 4);
+#else
 		for (uint32_t erase_addr = new_addr;
 			erase_addr < (new_addr + copy_len);
 			erase_addr += DT_PROP(DT_CHOSEN(zephyr_flash),
@@ -72,10 +99,16 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 		}
 		nrfx_nvmc_words_write(new_addr, (const uint32_t *)S0_SLOT_ADDRESS,
 			copy_len / 4);
+#endif
 
 		/* Write to S1 */
+#if defined(CONFIG_NRFX_RRAMC)
+		rram_words_write(S1_SLOT_ADDRESS, (const uint32_t *)&s1_info,
+			ROUND_UP(sizeof(s1_info), 4) / 4);
+#else
 		nrfx_nvmc_words_write(S1_SLOT_ADDRESS, &s1_info,
 			ROUND_UP(sizeof(s1_info), 4) / 4);
+#endif
 
 		zassert_mem_equal(&s1_info, (void *)S1_SLOT_ADDRESS,
 			sizeof(s1_info), "Failed to copy S1 info.\r\n");
@@ -100,8 +133,13 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 			"Could not find validation info.\r\n");
 
 		val_info->address = s1_info.address;
+#if defined(CONFIG_NRFX_RRAMC)
+		rram_words_write(s1_info.address + ROUND_UP(s1_info.size, 4), val_info,
+			VAL_INFO_MAX_SIZE);
+#else
 		nrfx_nvmc_words_write(s1_info.address + ROUND_UP(s1_info.size, 4), val_info,
 			VAL_INFO_MAX_SIZE);
+#endif
 
 		/* Reboot */
 		printk("Rebooting. Should fail to validate slot 1.");
@@ -113,8 +151,10 @@ ZTEST(test_bl_validation_neg, test_validation_neg1)
 
 ZTEST(test_bl_validation_neg, test_validation_neg2)
 {
-	/* testcase.yaml nrf52 variant of test does not catch below regex */
-#ifndef CONFIG_SOC_SERIES_NRF52
+	/* Skipped on platforms in bootloader.bl_validation.negative.no_otp_keys. */
+#if defined(CONFIG_SOC_SERIES_NRF52) || defined(CONFIG_SOC_SERIES_NRF54L)
+	ztest_test_skip();
+#else
 	uint32_t num_public_keys = num_public_keys_read();
 	bool any_valid = false;
 
@@ -136,8 +176,6 @@ ZTEST(test_bl_validation_neg, test_validation_neg2)
 		"keys.");
 	sys_reboot(0);
 	zassert_true(false, "should not come here.");
-#else
-	ztest_test_skip();
 #endif
 }
 

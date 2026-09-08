@@ -4,6 +4,13 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if SOC_SERIES_NRF54L
+
+config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
+	default y if SECURE_BOOT_APPCORE
+
+endif
+
 config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 	bool
 	default n

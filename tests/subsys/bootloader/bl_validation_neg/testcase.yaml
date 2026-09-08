@@ -36,13 +36,15 @@ tests:
         - "Failed to validate signature."
         - "Failed to validate, permanently invalidating!"
         - "No bootable image found. Aborting boot."
-  bootloader.bl_validation.negative.nrf52:
+  bootloader.bl_validation.negative.no_otp_keys:
     sysbuild: true
     platform_allow:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - b0
       - bl_validation
