@@ -310,3 +310,4 @@ This sample uses the following |NCS| and Zephyr libraries:
 * :ref:`mqtt_socket_interface`
 * :ref:`net_mgmt_interface`
 * :ref:`lib_hw_id`
+* :ref:`conn_mgr_overview`
