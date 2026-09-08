@@ -60,6 +60,17 @@ extern void test_dect_ft_cluster_associated_child_dissociates(void);
 extern void test_dect_settings_write_scopes_and_reset(void);
 extern void test_dect_association_callback_failure(void);
 extern void test_dect_association_rejected(void);
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+extern void test_dect_ft_eth_sink_init(void);
+extern void test_dect_ft_eth_upstream_prefix_route(void);
+extern void test_dect_ft_eth_cross_l2_route_packet_ll_src(void);
+extern void test_dect_ft_eth_cross_l2_forward_unknown_ll_nbr(void);
+extern void test_dect_ft_eth_cross_l2_forward_router_nd_pending(void);
+extern void test_dect_ft_eth_unsol_na(void);
+extern void test_dect_ft_eth_nd_proxy_pt_add(void);
+extern void test_dect_ft_eth_nd_proxy_ns_reply(void);
+extern void test_dect_ft_eth_nd_proxy_unicast_ns_intercept(void);
+#endif
 
 /* Test result tracking structure */
 typedef struct {
@@ -114,11 +125,23 @@ static test_result_t test_results[] = {
 	{"test_dect_ft_local_multicast_tx", false},
 	{"test_dect_ft_network_remove", false},
 	{"test_dect_ft_sink_down", false},
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	{"test_dect_ft_eth_sink_init", false},
+	{"test_dect_ft_eth_upstream_prefix_route", false},
+	{"test_dect_ft_eth_unsol_na", false},
+	{"test_dect_ft_eth_nd_proxy_pt_add", false},
+	{"test_dect_ft_eth_cross_l2_route_packet_ll_src", false},
+	{"test_dect_ft_eth_cross_l2_forward_unknown_ll_nbr", false},
+	{"test_dect_ft_eth_cross_l2_forward_router_nd_pending", false},
+	{"test_dect_ft_eth_nd_proxy_ns_reply", false},
+	{"test_dect_ft_eth_nd_proxy_unicast_ns_intercept", false},
+#endif
 	{"test_dect_ft_conn_mgr_connect", false},
 	{"test_dect_ft_conn_mgr_disconnect", false},
 	{"test_dect_ft_sink_down_before_pt", false},
 	{"test_dect_pt_conn_mgr_connect", false},
-	{"test_dect_pt_conn_mgr_disconnect", false}};
+	{"test_dect_pt_conn_mgr_disconnect", false}
+};
 
 #define NUM_TESTS ARRAY_SIZE(test_results)
 
@@ -185,15 +208,41 @@ int main(void)
 	RUN_TEST_AND_TRACK(test_dect_ft_network_create, 33);
 	RUN_TEST_AND_TRACK(test_dect_ft_cluster_reconfigure, 34);
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_global_address_assign, 35);
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	/* Bring fake eth up early so ND proxy can run when PT gets GUA (tests 38–39). */
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_sink_init, 45);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_upstream_prefix_route, 46);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_unsol_na, 47);
+#endif
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_router_del, 36);
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_router_nbr_del, 37);
 	RUN_TEST_AND_TRACK(test_dect_ft_cluster_associate_child_with_global_address, 38);
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	/* ND proxy pt_add needs free nbr slots; run before second child (39). */
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_nd_proxy_pt_add, 48);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_cross_l2_route_packet_ll_src, 49);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_cross_l2_forward_unknown_ll_nbr, 50);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_cross_l2_forward_router_nd_pending, 51);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_nd_proxy_ns_reply, 52);
+	RUN_TEST_AND_TRACK(test_dect_ft_eth_nd_proxy_unicast_ns_intercept, 53);
+#endif
 	RUN_TEST_AND_TRACK(test_dect_ft_cluster_associate_child_with_global_address_2, 39);
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_global_address_change, 40);
 	RUN_TEST_AND_TRACK(test_dect_ft_sckt_packet_rx_tx, 41);
 	RUN_TEST_AND_TRACK(test_dect_ft_local_multicast_tx, 42);
 	RUN_TEST_AND_TRACK(test_dect_ft_network_remove, 43);
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_down, 44);
+#if defined(CONFIG_NET_L2_ETHERNET) && !defined(CONFIG_MODEM_CELLULAR)
+	RUN_TEST_AND_TRACK(test_dect_ft_conn_mgr_connect, 54);
+	RUN_TEST_AND_TRACK(test_dect_ft_conn_mgr_disconnect, 55);
+	/* Rerun sink_down so L2 removes FT global from DECT iface
+	 * (NET_EVENT_IF_DOWN → prefix removed);
+	 * then PT conn_mgr_connect sees no stale global.
+	 */
+	RUN_TEST_AND_TRACK(test_dect_ft_sink_down, 56);
+	RUN_TEST_AND_TRACK(test_dect_pt_conn_mgr_connect, 57);
+	RUN_TEST_AND_TRACK(test_dect_pt_conn_mgr_disconnect, 58);
+#else
 	RUN_TEST_AND_TRACK(test_dect_ft_conn_mgr_connect, 45);
 	RUN_TEST_AND_TRACK(test_dect_ft_conn_mgr_disconnect, 46);
 	/* Rerun sink_down so L2 removes FT global from DECT iface
@@ -203,6 +252,7 @@ int main(void)
 	RUN_TEST_AND_TRACK(test_dect_ft_sink_down, 47);
 	RUN_TEST_AND_TRACK(test_dect_pt_conn_mgr_connect, 48);
 	RUN_TEST_AND_TRACK(test_dect_pt_conn_mgr_disconnect, 49);
+#endif
 	/* TODO more tests & coverity */
 
 	/* Capture Unity statistics before UNITY_END() */
