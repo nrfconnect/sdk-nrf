@@ -7,7 +7,6 @@
 menuconfig NRF71_SR_COEX_DRIVER
 	bool "nRF71 Wi-Fi / Short-Range coexistence driver"
 	depends on WIFI_NRF71 && BT
-	default y
 	help
 	  Standalone coexistence coordination driver for the nRF71 combo SoC.
 
