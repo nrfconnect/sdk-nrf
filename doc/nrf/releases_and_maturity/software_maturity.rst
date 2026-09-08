@@ -1566,6 +1566,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -1575,6 +1576,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1584,6 +1586,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1598,10 +1601,12 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
             * - **NFC ISO-DEP protocol (ISO/IEC 14443-4)**
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1611,6 +1616,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1620,6 +1626,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1629,6 +1636,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - --
               - Supported
               - Supported
               - --
@@ -1638,6 +1646,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
+              - --
               - Supported\ :sup:`1`
               - Supported\ :sup:`1`
               - --
@@ -3489,6 +3498,7 @@ The following table indicates the software maturity levels of the support for Fr
             - nRF54L05
             - nRF54L10
             - nRF54L15
+            - nRF54LC10A
             - nRF54LM20A
             - nRF54LM20B
             - nRF54LV10A
@@ -3504,11 +3514,13 @@ The following table indicates the software maturity levels of the support for Fr
             - --
             - --
             - --
+            - --
           * - nRF21540
             - nRF21540 GPIO+SPI
             - Supported
             - Supported
             - Supported
+            - --
             - Supported
             - Supported
             - --
@@ -3519,6 +3531,7 @@ The following table indicates the software maturity levels of the support for Fr
             - Supported
             - Supported
             - Supported
+            - --
             - --
             - --
             - --
