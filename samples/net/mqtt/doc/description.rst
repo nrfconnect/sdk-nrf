@@ -149,6 +149,17 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+Wi-Fi with TLS
+==============
+
+For |wifi| builds with TLS enabled, set the ``mqtt_EXTRA_CONF_FILE`` sysbuild variable to include both :file:`wifi.conf` and :file:`wifi-tls.conf`.
+
+For example, use the following command for the nRF7120 DK:
+
+.. code-block:: console
+
+   west build -b nrf7120dk/nrf5340/cpuapp/ns samples/net/mqtt --sysbuild -- -Dmqtt_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
+
 Testing
 =======
 
