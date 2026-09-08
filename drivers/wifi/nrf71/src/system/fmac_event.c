@@ -739,6 +739,22 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		goto out;
 	}
 
+	/* CMD_STATUS is a generic command-ack, not tied to a VIF's state,
+	 * so it can arrive (with wdev_id = 0 by convention) before the
+	 * default VIF is registered in vif_ctx[].
+	 */
+	if (event_num == NRF_WIFI_UMAC_EVENT_CMD_STATUS) {
+#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
+		struct nrf_wifi_umac_event_cmd_status *cmd_status = event_data;
+
+		LOG_DBG("%s: Command %d -> status %d",
+			__func__,
+			cmd_status->cmd_id,
+			cmd_status->cmd_status);
+#endif
+		goto out;
+	}
+
 	vif_ctx = sys_dev_ctx->vif_ctx[if_id];
 	if (!vif_ctx) {
 		LOG_ERR("%s: Invalid vif_ctx: vif_id = %d",
@@ -1043,19 +1059,6 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 					      __func__,
 					      umac_hdr->cmd_evnt);
 		}
-		break;
-	case NRF_WIFI_UMAC_EVENT_CMD_STATUS:
-#if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_DBG
-	{
-		struct nrf_wifi_umac_event_cmd_status *cmd_status =
-			(struct nrf_wifi_umac_event_cmd_status *)event_data;
-
-		LOG_DBG("%s: Command %d -> status %d",
-			__func__,
-			cmd_status->cmd_id,
-			cmd_status->cmd_status);
-	}
-#endif
 		break;
 	case NRF_WIFI_UMAC_EVENT_BEACON_HINT:
 	case NRF_WIFI_UMAC_EVENT_CONNECT:
