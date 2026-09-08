@@ -7,9 +7,24 @@
 if SOC_SERIES_NRF54L
 
 config SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE
-	default y if SECURE_BOOT_APPCORE
+	default y if SECURE_BOOT_APPCORE && !(SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP)
 
 endif
+
+choice SECURE_BOOT_SIGNATURE_TYPE
+	default SECURE_BOOT_SIGNATURE_TYPE_ECDSA if SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP
+endchoice
+
+# nRF54LS05 has no CRACEN/KMU. Use a single signing key at index 0.
+# Multi-key debug provisioning causes b0 to hang when invalidating older
+# keys in UICR after a successful signature check.
+config SECURE_BOOT_PUBLIC_KEY_FILES
+	default "" if SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP
+	default "debug"
+
+config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
+	default n if SOC_NRF54LS05A_CPUAPP || SOC_NRF54LS05B_CPUAPP
+	default y
 
 config SECURE_BOOT_BUILD_S1_VARIANT_IMAGE
 	bool
