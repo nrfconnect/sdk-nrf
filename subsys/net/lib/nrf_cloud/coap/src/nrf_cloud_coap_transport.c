@@ -489,6 +489,11 @@ static void client_callback(const struct coap_client_response_data *data, void *
 	if (data->result_code == COAP_RESPONSE_CODE_UNAUTHORIZED) {
 		LOG_ERR("Device not authenticated; reconnection required.");
 		xfer->nrfc_cc->authenticated = false;
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_TIMEOUT) &&
+		   (data->result_code == -ETIMEDOUT)) {
+		/* No response after all retransmissions; the session is no longer usable. */
+		LOG_WRN("CoAP request timed out; reconnection required.");
+		xfer->nrfc_cc->authenticated = false;
 	} else if ((data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && data->payload_len) {
 		LOG_ERR("Unexpected response: %*s", data->payload_len, data->payload);
 	}
@@ -538,7 +543,8 @@ static int client_transfer(enum coap_method method,
 		.cb = client_callback,
 		.user_data = xfer
 	};
-	struct coap_client *const cc = &xfer->nrfc_cc->cc;
+	struct nrf_cloud_coap_client *const nrfc_cc = xfer->nrfc_cc;
+	struct coap_client *const cc = &nrfc_cc->cc;
 
 	size_t num_internal_options = 0;
 	if (response_expected) {
@@ -629,13 +635,21 @@ static int client_transfer(enum coap_method method,
 		 * so make sure a bad result is not ignored.
 		 */
 		err = xfer->result_code;
+	} else if (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_TIMEOUT) && !err &&
+		   (xfer->result_code == -ETIMEDOUT)) {
+		/* A timed out CON transfer completes the semaphore normally, so the
+		 * failure is only visible in the result code.
+		 */
+		err = xfer->result_code;
 	}
 
 transfer_end:
 	xfer_ctx_release(xfer);
 	coap_client_cancel_request(cc, &request);
-	if (err == -ETIMEDOUT && IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST)) {
-		nrf_cloud_coap_disconnect();
+	if ((err == -ETIMEDOUT) &&
+	    (IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST) ||
+	     IS_ENABLED(CONFIG_NRF_CLOUD_COAP_DISCONNECT_ON_TIMEOUT))) {
+		nrf_cloud_coap_transport_disconnect(nrfc_cc);
 	}
 	return err;
 }
