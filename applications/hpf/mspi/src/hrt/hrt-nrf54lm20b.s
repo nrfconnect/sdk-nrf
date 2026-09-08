@@ -14,157 +14,169 @@ hrt_tx:
 	sw	s1,12(sp)
 	sw	a2,4(sp)
 	beq	a5,zero,.L1
-	li	a4,32
-	div	a4,a4,a1
-	lui	t1,%hi(xfer_shift_ctrl)
-	addi	a2,t1,%lo(xfer_shift_ctrl)
-	lbu	a5,2(a2)
-	sb	a1,2(a2)
+	li	a2,32
+	div	a2,a2,a1
+	lui	a5,%hi(xfer_shift_ctrl)
+	addi	t1,a5,%lo(xfer_shift_ctrl)
+	lbu	a4,2(t1)
+	lbu	t0,3(t1)
+	sb	a1,2(t1)
+	sw	a4,0(sp)
+	lbu	a4,1(t1)
+	li	t2,251658240
+	slli	t0,t0,24
+	slli	a4,a4,8
+	and	t0,t0,t2
+	andi	a4,a4,1792
+	or	a4,a4,t0
 	li	t0,3145728
-	sw	a5,0(sp)
-	lbu	a5,1(a2)
-	lbu	a2,3(a2)
-	slli	a5,a5,8
-	slli	a2,a2,20
-	and	a2,a2,t0
-	andi	a5,a5,1792
-	or	a5,a5,a2
+	addi	a2,a2,-1
+	andi	a2,a2,0xff
+	sb	a2,0(t1)
+	lbu	t1,4(t1)
+	andi	a2,a2,63
+	slli	t1,t1,20
+	and	t1,t1,t0
+	or	a4,a4,t1
 	li	t0,126976
-	slli	a2,a1,12
-	and	a2,a2,t0
-	or	a5,a5,a2
-	addi	a4,a4,-1
-	andi	a4,a4,0xff
-	sb	a4,%lo(xfer_shift_ctrl)(t1)
-	andi	a4,a4,63
-	or	a5,a5,a4
+	slli	t1,a1,12
+	and	t1,t1,t0
+	or	a4,a4,t1
+	or	a4,a4,a2
  #APP
-	csrw 3019, a5
+	csrw 3019, a4
  #NO_APP
-	li	a4,2031616
-	slli	a5,a1,16
-	and	a5,a5,a4
-	ori	a5,a5,4
-	li	a2,0
+	li	a2,2031616
+	slli	a4,a1,16
+	and	a4,a4,a2
+	ori	a4,a4,4
+	li	t1,0
+	addi	a5,a5,%lo(xfer_shift_ctrl)
 	li	t2,1
-	sw	a5,8(sp)
+	sw	a4,8(sp)
 .L3:
-	lw	a5,4(a0)
-	bltu	a2,a5,.L14
+	lw	a4,4(a0)
+	bltu	t1,a4,.L14
 .L1:
 	lw	s0,16(sp)
 	lw	s1,12(sp)
 	addi	sp,sp,20
 	jr	ra
 .L14:
-	lw	a5,4(a0)
-	sub	a5,a5,a2
-	beq	a5,t2,.L4
-	li	a4,2
-	beq	a5,a4,.L5
+	lw	a4,4(a0)
+	sub	a4,a4,t1
+	beq	a4,t2,.L4
+	li	a2,2
+	beq	a4,a2,.L5
 .L6:
+	lw	a2,0(a0)
+	li	a4,0
+	beq	a2,zero,.L7
 	lw	a4,0(a0)
-	li	a5,0
-	beq	a4,zero,.L7
-	lw	a5,0(a0)
-	slli	a4,a2,2
-	add	a5,a5,a4
-	lw	a5,0(a5)
+	slli	a2,t1,2
+	add	a4,a4,a2
+	lw	a4,0(a4)
 	j	.L7
 .L4:
-	addi	s0,t1,%lo(xfer_shift_ctrl)
-	lbu	t0,1(s0)
-	lbu	a4,2(s0)
-	li	s1,126976
-	slli	t0,t0,8
-	slli	a4,a4,12
-	andi	t0,t0,1792
+	lbu	a4,1(a5)
+	lbu	s0,2(a5)
+	li	s1,251658240
+	slli	a4,a4,8
+	slli	s0,s0,12
+	and	s0,s0,t0
+	andi	a4,a4,1792
+	or	a4,a4,s0
+	lbu	s0,3(a5)
+	lbu	a2,8(a0)
+	slli	s0,s0,24
+	and	s0,s0,s1
+	or	s0,a4,s0
+	lbu	a4,4(a5)
+	li	s1,3145728
+	addi	a2,a2,-1
+	slli	a4,a4,20
+	andi	a2,a2,0xff
 	and	a4,a4,s1
-	or	a4,t0,a4
-	lbu	a5,8(a0)
-	lbu	t0,3(s0)
-	li	s0,3145728
-	addi	a5,a5,-1
-	slli	t0,t0,20
-	andi	a5,a5,0xff
-	and	t0,t0,s0
-	sb	a5,%lo(xfer_shift_ctrl)(t1)
-	or	t0,a4,t0
-	andi	a5,a5,63
-	or	t0,t0,a5
+	sb	a2,0(a5)
+	or	a4,s0,a4
+	andi	a2,a2,63
+	or	a4,a4,a2
  #APP
-	csrw 3019, t0
+	csrw 3019, a4
  #NO_APP
-	lw	a5,12(a0)
+	lw	a4,12(a0)
 .L7:
-	lw	a4,0(sp)
-	beq	a1,a4,.L8
+	lw	a2,0(sp)
+	beq	a1,a2,.L8
 .L9:
  #APP
-	csrr a4, 3022
+	csrr a2, 3022
  #NO_APP
-	andi	a4,a4,0xff
-	bne	a4,zero,.L9
-	lw	a4,8(sp)
+	andi	a2,a2,0xff
+	bne	a2,zero,.L9
+	lw	a2,8(sp)
  #APP
-	csrw 3043, a4
+	csrw 3043, a2
  #NO_APP
 .L8:
-	lbu	a4,16(a0)
-	andi	t0,a4,0xff
-	beq	a4,zero,.L10
-	bne	t0,t2,.L11
+	lbu	a2,16(a0)
+	andi	s0,a2,0xff
+	beq	a2,zero,.L10
+	bne	s0,t2,.L11
  #APP
-	csrw 3017, a5
+	csrw 3017, a4
  #NO_APP
 .L11:
-	bne	a2,zero,.L12
-	lw	a5,4(sp)
-	lbu	a5,0(a5)
-	bne	a5,zero,.L12
-	mv	a5,a3
+	bne	t1,zero,.L12
+	lw	a4,4(sp)
+	lbu	a4,0(a4)
+	bne	a4,zero,.L12
+	mv	a4,a3
 	bne	a3,zero,.L13
-	li	a5,1
+	li	a4,1
 .L13:
-	slli	a3,a5,16
+	slli	a3,a4,16
 	srli	a3,a3,16
  #APP
 	csrw 2005, a3
  #NO_APP
-	lw	a5,4(sp)
-	sb	t2,0(a5)
+	lw	a4,4(sp)
+	sb	t2,0(a4)
 .L12:
-	addi	a2,a2,1
+	addi	t1,t1,1
 	sw	a1,0(sp)
 	j	.L3
 .L5:
-	addi	s0,t1,%lo(xfer_shift_ctrl)
-	lbu	t0,1(s0)
-	lbu	a4,2(s0)
-	li	s1,126976
-	slli	t0,t0,8
-	slli	a4,a4,12
-	andi	t0,t0,1792
+	lbu	a4,1(a5)
+	lbu	s0,2(a5)
+	li	s1,251658240
+	slli	a4,a4,8
+	slli	s0,s0,12
+	and	s0,s0,t0
+	andi	a4,a4,1792
+	or	a4,a4,s0
+	lbu	s0,3(a5)
+	lbu	a2,9(a0)
+	slli	s0,s0,24
+	and	s0,s0,s1
+	or	s0,a4,s0
+	lbu	a4,4(a5)
+	li	s1,3145728
+	addi	a2,a2,-1
+	slli	a4,a4,20
+	andi	a2,a2,0xff
 	and	a4,a4,s1
-	or	a4,t0,a4
-	lbu	a5,9(a0)
-	lbu	t0,3(s0)
-	li	s0,3145728
-	addi	a5,a5,-1
-	slli	t0,t0,20
-	andi	a5,a5,0xff
-	and	t0,t0,s0
-	sb	a5,%lo(xfer_shift_ctrl)(t1)
-	or	t0,a4,t0
-	andi	a5,a5,63
-	or	t0,t0,a5
+	sb	a2,0(a5)
+	or	a4,s0,a4
+	andi	a2,a2,63
+	or	a4,a4,a2
  #APP
-	csrw 3019, t0
+	csrw 3019, a4
  #NO_APP
 	j	.L6
 .L10:
  #APP
-	csrw 3016, a5
+	csrw 3016, a4
  #NO_APP
 	j	.L11
 	.size	hrt_tx, .-hrt_tx
@@ -198,60 +210,56 @@ hrt_write:
 	lbu	a4,83(s0)
 	j	.L42
 .L20:
-	andi	a4,a5,0xff
-	li	a3,1
-	beq	a4,a3,.L23
-	li	a3,3
-	beq	a4,a3,.L22
-	bne	a4,zero,.L36
+	andi	a3,a5,0xff
+	li	a4,1
+	beq	a3,a4,.L23
+	li	a4,3
+	beq	a3,a4,.L22
+	li	a4,0
+	bne	a3,zero,.L24
 	lbu	a4,80(s0)
 .L42:
 	andi	a4,a4,0xff
-	mv	a3,a4
 .L24:
-	lui	a2,%hi(xfer_shift_ctrl+2)
-	sb	a4,%lo(xfer_shift_ctrl+2)(a2)
+	lui	a3,%hi(xfer_shift_ctrl+2)
+	sb	a4,%lo(xfer_shift_ctrl+2)(a3)
  #APP
 	csrw 2000, 2
  #NO_APP
-	lhu	a4,84(s0)
-	slli	a4,a4,16
-	srli	a4,a4,16
+	lhu	a3,84(s0)
+	slli	a3,a3,16
+	srli	a3,a3,16
  #APP
 	csrr a2, 2003
  #NO_APP
 	li	a1,-65536
 	and	a2,a2,a1
-	or	a4,a4,a2
+	or	a3,a3,a2
  #APP
-	csrw 2003, a4
+	csrw 2003, a3
 	csrw 3011, 0
  #NO_APP
 	li	a2,2031616
-	slli	a4,a3,16
-	and	a4,a4,a2
-	ori	a4,a4,4
+	slli	a3,a4,16
+	and	a3,a3,a2
+	ori	a3,a3,4
  #APP
-	csrw 3043, a4
+	csrw 3043, a3
  #NO_APP
-	li	a4,20
-	mul	a5,a5,a4
+	li	a3,20
+	mul	a5,a5,a3
 	li	a2,1
 	add	a5,s0,a5
-	lw	a4,4(a5)
-	beq	a4,a2,.L25
+	lw	a3,4(a5)
+	beq	a3,a2,.L25
 	li	a2,2
-	beq	a4,a2,.L26
+	beq	a3,a2,.L26
 	li	a5,32
-	div	a5,a5,a3
+	div	a5,a5,a4
 	j	.L43
 .L23:
 	lbu	a4,81(s0)
 	j	.L42
-.L36:
-	li	a4,0
-	li	a3,0
-	j	.L24
 .L25:
 	lbu	a5,8(a5)
 .L43:
@@ -651,10 +659,11 @@ hrt_read:
 	.section	.data.xfer_shift_ctrl,"aw"
 	.align	2
 	.type	xfer_shift_ctrl, @object
-	.size	xfer_shift_ctrl, 4
+	.size	xfer_shift_ctrl, 5
 xfer_shift_ctrl:
 	.byte	31
 	.byte	4
 	.byte	1
+	.zero	1
 	.byte	0
 	.section	.note.GNU-stack,"",@progbits
