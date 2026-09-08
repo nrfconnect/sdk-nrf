@@ -39,7 +39,7 @@ devices:
 - soc: nrf54l15
   status: active
 - soc: nrf54lc10a
-  status: active
+  status: pre-release
 - soc: nrf54lm20a
   status: active
 - soc: nrf54lm20b
