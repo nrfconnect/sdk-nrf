@@ -107,25 +107,23 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
-* :file:`nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
+* :file:`boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
-Files that are located under the :file:`/boards` folder is automatically merged with the :file:`prj.conf` file when you build for corresponding target.
+Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
 
-In addition, the sample provides the following overlay configuration files, which are used to enable additional features in the sample:
+In addition, the sample provides the following configuration overlay files, which are used to enable additional features in the sample:
 
-* :file:`overlay-tls-nrf91.conf` - TLS overlay configuration file for nRF91 Series devices.
-* :file:`tls-nrf7002.conf` - TLS overlay configuration file for nRF70 Series devices.
-* :file:`tls-nrf54l-nrf70.conf` - TLS overlay configuration file for nRF54L Series devices.
-* :file:`overlay-tls-native_sim.conf` - TLS overlay configuration file for the native simulator board.
-* :file:`tls-nrf7120.conf` - TLS overlay configuration file for nRF71 Series devices.
+* :file:`overlay-tls-nrf91.conf` - TLS configuration overlay file for nRF91 Series devices.
+* :file:`overlay-tls-native_sim.conf` - TLS configuration overlay file for the native simulator board.
+* :file:`wifi.conf` - Configuration overlay file for Wi-Fi devices.
+* :file:`wifi-tls.conf` - TLS configuration overlay file for Wi-Fi devices.
 
 They are located in :file:`samples/net/mqtt` folder.
 
-To add a specific overlay configuration file to the build, add the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build.
+To add a specific configuration overlay file to the build, add the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build.
 
 See :ref:`cmake_options` for instructions on how to add this option to your build.
 For example, when building with the command line, the following commands can be used for the nRF9160 DK:
@@ -169,7 +167,7 @@ Testing
 Sample output
 =============
 
-The following serial UART output is displayed in the terminal emulator using a Wi-Fi connection, with the TLS overlay:
+The following serial UART output is displayed in the terminal emulator on a Wi-Fi device, with the TLS configuration overlay file:
 
 .. code-block:: console
 
@@ -189,7 +187,7 @@ The following serial UART output is displayed in the terminal emulator using a W
 
 .. _mqtt_sample_output_IPv6:
 
-The sample output showing IPv6, but for a different build configuration using LTE on the Thingy:91 with the TLS overlay, and debug logging enabled for the :ref:`lib_mqtt_helper` library:
+The sample output showing IPv6, but for a different build configuration using LTE on the Thingy:91 with the TLS configuration overlay file, and debug logging enabled for the :ref:`lib_mqtt_helper` library:
 
 .. code-block:: console
 
