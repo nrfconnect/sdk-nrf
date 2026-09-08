@@ -41,3 +41,4 @@ The following subpages cover topics related to developing applications on the nR
    features
    stack_partitioning
    building_nrf71
+   zms
