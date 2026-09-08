@@ -39,4 +39,5 @@ The following subpages cover topics related to developing applications on the nR
    :caption: Subpages:
 
    features
+   stack_partitioning
    building_nrf71
