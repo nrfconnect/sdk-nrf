@@ -3327,6 +3327,8 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Configuration automatically generated based on the enabled key agreement algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH` (limited to curve types secp224r1, secp256r1, secp384r1, and Curve25519)
 
+.. _ug_crypto_supported_features_key_encapsulation_algorithms:
+
 Key encapsulation algorithms
 ============================
 
