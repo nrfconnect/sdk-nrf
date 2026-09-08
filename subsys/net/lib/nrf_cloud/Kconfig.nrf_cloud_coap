@@ -81,6 +81,16 @@ config NRF_CLOUD_COAP_DISCONNECT_ON_FAILED_REQUEST
 	  Enabling this option will ensure that the CoAP client is disconnected when a request
 	  fails to be sent. (Maximum retransmissions reached).
 
+config NRF_CLOUD_COAP_DISCONNECT_ON_TIMEOUT
+	bool "Disconnect when a confirmable request times out"
+	default y
+	help
+	  When a confirmable request receives no response after all retransmissions, the
+	  server-side session is most likely no longer valid; without this option the device
+	  keeps issuing requests that can never succeed. Enabling this option marks the
+	  connection as unauthenticated, closes the socket and propagates -ETIMEDOUT to the
+	  caller, so that the application reconnects and re-authenticates.
+
 # Increase the maximum path length to have enough room
 config COAP_CLIENT_MAX_PATH_LENGTH
 	default 128
