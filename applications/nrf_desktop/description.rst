@@ -418,8 +418,12 @@ The application supports the following build types:
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
      - ``dongle``
-     - ``nrf52840dk/nrf52840``
+     - ``nrf54lm20dk/nrf54lm20b/cpuapp``
      - Debug version of the application that lets you generate the application with the dongle role.
+   * - Release dongle
+     - ``release_dongle``
+     - ``nrf54lm20dk/nrf54lm20b/cpuapp``
+     - Release version of the application that acts as a BLE LLPM dongle bridging radio connected HID peripherals.
    * - Keyboard
      - ``keyboard``
      - ``nrf52840dk/nrf52840``
@@ -456,6 +460,14 @@ The application supports the following build types:
    * - Release quadruple LLPM connection
      - ``release_4llpmconn``
      - ``nrf52840dongle/nrf52840``
+     - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
+   * - Dongle quadruple LLPM connection
+     - ``dongle_4llpmconn``
+     - ``nrf54lm20dk/nrf54lm20b/cpuapp``
+     - Debug version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
+   * - Release dongle quadruple LLPM connection
+     - ``release_dongle_4llpmconn``
+     - ``nrf54lm20dk/nrf54lm20b/cpuapp``
      - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
    * - HID SCI dongle
      - ``hid_sci_dongle``
