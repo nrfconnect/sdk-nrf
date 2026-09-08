@@ -19,6 +19,7 @@ const static struct device *led_device = DEVICE_DT_GET_ANY(gpio_leds);
 /* LED 1, green on Thingy:91 boards. */
 #define LED_1_GREEN 1
 
+/* include_startingpoint_architecture_rst_1 (used by docs; keep this marker) */
 void led_callback(const struct zbus_channel *chan)
 {
 	int err = 0;
@@ -58,3 +59,4 @@ void led_callback(const struct zbus_channel *chan)
  * receives a new message.
  */
 ZBUS_LISTENER_DEFINE(led, led_callback);
+/* include_endpoint_architecture_rst_1 (used by docs; keep this marker) */

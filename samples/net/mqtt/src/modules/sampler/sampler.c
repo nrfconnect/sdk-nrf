@@ -18,6 +18,7 @@ LOG_MODULE_REGISTER(sampler, CONFIG_MQTT_SAMPLE_SAMPLER_LOG_LEVEL);
 /* Register subscriber */
 ZBUS_SUBSCRIBER_DEFINE(sampler, CONFIG_MQTT_SAMPLE_SAMPLER_MESSAGE_QUEUE_SIZE);
 
+/* include_startingpoint_architecture_rst_2 (used by docs; keep this marker) */
 static void sample(void)
 {
 	struct payload payload = { 0 };
@@ -41,7 +42,9 @@ static void sample(void)
 		SEND_FATAL_ERROR();
 	}
 }
+/* include_endpoint_architecture_rst_2 (used by docs; keep this marker) */
 
+/* include_startingpoint_architecture_rst_3 (used by docs; keep this marker) */
 static void sampler_task(void)
 {
 	const struct zbus_channel *chan;
@@ -56,3 +59,4 @@ static void sampler_task(void)
 K_THREAD_DEFINE(sampler_task_id,
 		CONFIG_MQTT_SAMPLE_SAMPLER_THREAD_STACK_SIZE,
 		sampler_task, NULL, NULL, NULL, 3, 0, 0);
+/* include_endpoint_architecture_rst_3 (used by docs; keep this marker) */
