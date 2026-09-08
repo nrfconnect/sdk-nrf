@@ -281,12 +281,21 @@ static enum nrf_wifi_status rf_params_apply_board_values(void)
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
-enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr)
+/* The hex_str strings are compile-time constants, so decoding them into
+ * rf_params[].bytes only has to happen once: repeating it on every radio
+ * test init would leak the previous allocation from the CTRL pool.
+ */
+static enum nrf_wifi_status rf_params_bytes_init(void)
 {
+	static bool initialized;
 	int index;
 	int cleanup_idx;
 	size_t str_len;
 	int ret;
+
+	if (initialized) {
+		return NRF_WIFI_STATUS_SUCCESS;
+	}
 
 	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
 		if (!rf_params[index].hex_str) {
@@ -309,11 +318,9 @@ enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int 
 		}
 
 		rf_params[index].bytes_len = ret;
-		rf_params_addr[index] = (unsigned int)rf_params[index].bytes;
 	}
-	if (rf_params_apply_board_values() != NRF_WIFI_STATUS_SUCCESS) {
-		goto cleanup;
-	}
+
+	initialized = true;
 
 	return NRF_WIFI_STATUS_SUCCESS;
 
@@ -326,4 +333,19 @@ cleanup:
 		}
 	}
 	return NRF_WIFI_STATUS_FAIL;
+}
+
+enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr)
+{
+	int index;
+
+	if (rf_params_bytes_init() != NRF_WIFI_STATUS_SUCCESS) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	for (index = 0; index < NUM_WIFI_PARAMS; index++) {
+		rf_params_addr[index] = (unsigned int)rf_params[index].bytes;
+	}
+
+	return rf_params_apply_board_values();
 }
