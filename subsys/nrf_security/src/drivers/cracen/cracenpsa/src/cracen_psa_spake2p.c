@@ -242,22 +242,22 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 		operation->shared_len = hash_len;
 		status = psa_driver_wrapper_key_derivation_setup(&kdf_op, NULL,
 								 PSA_ALG_HKDF(PSA_ALG_SHA_256));
-		if (status != SX_OK) {
+		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
 		status = psa_driver_wrapper_key_derivation_input_bytes(
 			&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (const uint8_t *)"SharedKey", 9);
-		if (status != SX_OK) {
+		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
 		status = psa_driver_wrapper_key_derivation_input_bytes(
 			&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, hash_len);
-		if (status != SX_OK) {
+		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
 		status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, operation->shared,
 									operation->shared_len);
-		if (status != SX_OK) {
+		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
 
@@ -269,23 +269,23 @@ static psa_status_t cracen_get_confirmation_keys(cracen_spake2p_operation_t *ope
 
 	status = psa_driver_wrapper_key_derivation_setup(&kdf_op, NULL,
 							 PSA_ALG_HKDF(PSA_ALG_SHA_256));
-	if (status != SX_OK) {
+	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	status = psa_driver_wrapper_key_derivation_input_bytes(
 		&kdf_op, PSA_KEY_DERIVATION_INPUT_INFO, (const uint8_t *)"ConfirmationKeys", 16);
-	if (status != SX_OK) {
+	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 
 	status = psa_driver_wrapper_key_derivation_input_bytes(
 		&kdf_op, PSA_KEY_DERIVATION_INPUT_SECRET, V, operation->shared_len);
-	if (status != SX_OK) {
+	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfP,
 								operation->shared_len);
-	if (status != SX_OK) {
+	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	status = psa_driver_wrapper_key_derivation_output_bytes(&kdf_op, KconfV,
