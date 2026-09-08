@@ -603,11 +603,13 @@ static void panic(struct log_backend const *const backend)
 {
 	ARG_UNUSED(backend);
 
+	/* Stop processing new backend messages before sealing history state. */
+	panic_mode = true;
+
 #ifdef CONFIG_LOG_BACKEND_RPC_HISTORY_STORAGE_RAM
 	/* Stores the buffer checksum for integrity verification. */
 	log_rpc_history_save_checksum();
 #endif
-	panic_mode = true;
 }
 
 static void init(struct log_backend const *const backend)
