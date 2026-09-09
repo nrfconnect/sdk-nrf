@@ -185,6 +185,10 @@ Configuration
 
 |config|
 
+The default shell transport is UART.
+Alternative shell transports (SEGGER RTT or USB CDC ACM) are configured at build time using Zephyr snippets and the configuration fragments in the :file:`conf/` folder.
+See :ref:`radio_test_shell_transport` for details.
+
 The following sample-specific Kconfig options are used in this sample (located in :file:`samples/peripheral/radio_test/Kconfig`) :
 
 .. options-from-kconfig::
@@ -208,7 +212,7 @@ The sample can be built with an extra overlay file to enable pin debugging of RA
 
 .. code-block:: console
 
-   west build -bnrf54l15dk/nrf54l15/cpuapp -p -- -DEXTRA_DTC_OVERLAY_FILE=pin_debug_54l.overlay
+   west build -b nrf54l15dk/nrf54l15/cpuapp -p -- -DEXTRA_DTC_OVERLAY_FILE=pin_debug_54l.overlay
 
 
 With pin debugging enabled, two GPIOs will be configured to toggle on RADIO events:
@@ -219,25 +223,87 @@ With pin debugging enabled, two GPIOs will be configured to toggle on RADIO even
 The pins used for debugging are configured in :file:`samples/peripheral/radio_test/pin_debug_54l.overlay`.
 
 
-Remote USB CDC ACM Shell variant
-================================
+.. _radio_test_shell_transport:
 
-This sample can run the remote IPC Service Shell through the USB on the nRF5340 DK application core.
+Alternative shell transports
+============================
+
+Some boards require an alternative shell transport, as summarized in the following table:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Board
+     - Alternative shell transport
+     - Transport configuration
+   * - nRF54LM20 Dongle
+     - USB CDC ACM only
+     - ``radio_test_SNIPPET=cdc-acm-console`` and ``conf/usb.conf``
+   * - nRF54L15 TAG
+     - SEGGER RTT only
+     - ``-S rtt-console`` and ``conf/rtt.conf``
+
+Board-specific build commands
+-----------------------------
+
+nRF5340 DK
+----------
+
+On the nRF5340 DK, the sample runs on the network core and forwards shell traffic through the remote IPC shell on the application core.
+Sysbuild is required here to build both the network-core ``radio_test`` image and the application-core remote shell image.
+``FILE_SUFFIX=usb`` selects the USB variant of the remote shell child image.
 For example, when building on the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
+   west build -p -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build -p -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. note::
    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk/nrf5340/cpunet`` board target in the commands.
+
+nRF54LM20 DK with USB CDC ACM
+------------------------------
+
+On the nRF54LM20 DK, the sample runs on the application core and exposes the shell directly on a USB CDC ACM virtual serial port.
+Only the ``radio_test`` image is built, so use the global ``-S cdc-acm-console`` snippet option:
+
+.. code-block:: console
+
+   west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -S cdc-acm-console -- -DEXTRA_CONF_FILE=conf/usb.conf
+
+nRF54LM20 Dongle with USB CDC ACM
+---------------------------------
+
+On the nRF54LM20 Dongle, the sample runs on the application core and exposes the shell on the onboard USB CDC ACM interface.
+Sysbuild is required here to build MCUboot and the firmware-loader child images together with ``radio_test``.
+Apply the snippet to the ``radio_test`` image only with ``-Dradio_test_SNIPPET=cdc-acm-console`` after ``--``:
+
+.. code-block:: console
+
+   west build -p -b nrf54lm20dongle/nrf54lm20b/cpuapp -- -Dradio_test_SNIPPET=cdc-acm-console -DEXTRA_CONF_FILE=conf/usb.conf
+
+Connect to the nRF USB port rather than the IMCU debug port.
+Open the CDC ACM COM port in a terminal emulator and send shell commands.
+
+nRF54L15 TAG with SEGGER RTT
+----------------------------
+
+The nRF54L15 TAG has no native USB port.
+Only the ``radio_test`` image is built, so use the global ``-S rtt-console`` snippet option:
+
+.. code-block:: console
+
+   west build -p -b nrf54l15tag/nrf54l15/cpuapp -S rtt-console -- -DEXTRA_CONF_FILE=conf/rtt.conf
+
+For TAG programming and debug setup, see the `nRF54L15 TAG debug guide`_.
+Connect to the SEGGER RTT console as described in :ref:`zephyr:shell_rtt_west`.
 
 .. _radio_test_testing:
 
