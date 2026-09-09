@@ -26,3 +26,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - FILE_SUFFIX=sqspi
+  nrf.extended.sample.drivers.spi.flash:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
