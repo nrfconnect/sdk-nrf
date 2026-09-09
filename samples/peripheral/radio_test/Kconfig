@@ -6,14 +6,6 @@
 
 mainmenu "Nordic Radio test sample"
 
-config RADIO_TEST_USB
-	bool "Radio Test shell over USB CDC ACM class"
-	depends on SOC_NRF5340_CPUNET
-	select EXPERIMENTAL
-	help
-	  Selects USB instead of UART as the Radio Test shell transport.
-	  For nRF5340, the USB from application core is used as the communication interface.
-
 config RADIO_TEST_POWER_CONTROL_AUTOMATIC
 	bool "Automatic power control"
 	depends on FEM
