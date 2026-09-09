@@ -5,8 +5,6 @@ tests:
   sample.peripheral.radio_test:
     sysbuild: true
     build_only: true
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf52dk/nrf52832
       - nrf52840dk/nrf52840
@@ -15,7 +13,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -28,7 +28,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
@@ -44,8 +46,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args: SHIELD=nrf21540ek
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -57,12 +57,44 @@ tests:
   sample.peripheral.radio_test.nrf5340_usb:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=usb
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
+    extra_args:
+      - FILE_SUFFIX=usb
+      - EXTRA_CONF_FILE=conf/usb.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_peripheral_radio_test
+
+  sample.peripheral.radio_test.nrf54lm20_usb:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - radio_test_SNIPPET=cdc-acm-console
+      - EXTRA_CONF_FILE=conf/usb.conf
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_peripheral_radio_test
+
+  sample.peripheral.radio_test.nrf54l15tag_rtt:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - radio_test_SNIPPET=rtt-console
+      - EXTRA_CONF_FILE=conf/rtt.conf
+    integration_platforms:
+      - nrf54l15tag/nrf54l15/cpuapp
+    platform_allow: nrf54l15tag/nrf54l15/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -74,8 +106,7 @@ tests:
     extra_args:
       - SHIELD=nrf21540ek
       - FILE_SUFFIX=usb
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
+      - EXTRA_CONF_FILE=conf/usb.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -89,7 +120,6 @@ tests:
     build_only: true
     extra_args: SHIELD=nrf21540ek
     extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
       - CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
@@ -118,8 +148,7 @@ tests:
     extra_args:
       - SHIELD=nrf2240eb
       - FILE_SUFFIX=usb
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
+      - EXTRA_CONF_FILE=conf/usb.conf
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -132,14 +161,16 @@ tests:
     toolchain_allow: llvm
     sysbuild: true
     build_only: true
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
@@ -159,7 +190,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
     platform_allow:
@@ -170,7 +203,9 @@ tests:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54h20dk/nrf54h20/cpurad
@@ -197,7 +232,9 @@ tests:
   sample.peripheral.radio_test.nrf5340_usb.legacy:
     sysbuild: true
     build_only: true
-    extra_args: FILE_SUFFIX=usb
+    extra_args:
+      - FILE_SUFFIX=usb
+      - EXTRA_CONF_FILE=conf/usb.conf
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
       - CONFIG_DEPRECATION_TEST=y
@@ -215,6 +252,7 @@ tests:
     extra_args:
       - SHIELD=nrf21540ek
       - FILE_SUFFIX=usb
+      - EXTRA_CONF_FILE=conf/usb.conf
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
       - CONFIG_DEPRECATION_TEST=y
@@ -251,10 +289,14 @@ tests:
       - CONFIG_DEPRECATION_TEST=y
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54l15tag/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dongle/nrf54lm20b/cpuapp
     tags:
       - ci_build
       - sysbuild
