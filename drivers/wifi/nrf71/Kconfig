@@ -53,19 +53,9 @@ config NRF71_IPC_SEND_RETRY_INTERVAL_US
 
 choice NRF71_OPER_MODES
 	bool "nRF70 operating modes"
-	default NRF71_SYSTEM_MODE if !WIFI_USAGE_MODE_SCAN_ONLY
-	default NRF71_SCAN_ONLY
+	default NRF71_SYSTEM_MODE
 	help
 	  Select the operating mode of the nRF70 driver
-
-config NRF71_SCAN_ONLY
-	bool "nRF70 scan only mode"
-	help
-	  Select this option to enable scan-only mode of the nRF70 driver.
-	  In this mode, the driver can only perform scanning operations
-	  to discover nearby Wi-Fi networks, but cannot establish connections
-	  or transmit/receive data. Mainly used for location accuracy
-	  improvement.
 
 config NRF71_SYSTEM_MODE
 	bool "System mode of the nRF70 driver"
@@ -73,6 +63,7 @@ config NRF71_SYSTEM_MODE
 	  Select this option to enable system mode of the nRF70 driver.
 	  This is the normal operating mode that supports full Wi-Fi
 	  functionality including sub-modes like STA, AP, and P2P.
+	  Scan functionality is available as a sub-option of system mode.
 
 config NRF71_RADIO_TEST
 	bool "Radio test mode of the nRF70 driver"
@@ -98,31 +89,34 @@ config NET_L2_ETHERNET
 
 if NRF71_SYSTEM_MODE
 
+config NRF71_SCAN
+	bool "Wi-Fi scan support"
+	default y if WIFI_USAGE_MODE_SCAN_ONLY
+	help
+	  Enable Wi-Fi scanning functionality in system mode.
+	  Automatically enabled by STA and P2P modes.
+	  When enabled without any connection sub-mode, the driver
+	  operates in scan-only mode for discovering nearby networks.
+
 config NRF71_STA_MODE
 	bool "nRF70 STA mode"
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
 	select NRF71_DATA_TX
+	select NRF71_SCAN
 	help
 	  Select this option to enable STA mode of the nRF70 driver.
 
 config NRF71_AP_MODE
 	bool "Access point mode"
-	select NRF71_DATA_TX
 	depends on WIFI_NM_WPA_SUPPLICANT_AP
+	select NRF71_DATA_TX
 	default y if WIFI_USAGE_MODE_AP || WIFI_USAGE_MODE_STA_AP
-
-config NRF71_ENABLE_DUAL_VIF
-	bool "Dual virtual Wi-Fi interfaces"
-	default y if WIFI_NM_MAX_MANAGED_INTERFACES = 2
-	help
-	  Enable support for two virtual Wi-Fi interfaces (VIFs).
-	  When enabled, the driver can operate two VIFs simultaneously,
-	  allowing use cases such as one interface in AP mode and another in STA mode.
 
 config NRF71_P2P_MODE
 	bool "P2P support in driver"
 	default y if WIFI_NM_WPA_SUPPLICANT_P2P
+	select NRF71_SCAN
 
 config NRF71_SYSTEM_WITH_RAW_MODES
 	bool "nRF70 system mode with raw modes"
@@ -146,6 +140,20 @@ config NRF71_PROMISC_DATA_RX
 
 config NRF71_DATA_TX
 	bool
+
+config NRF71_SYSTEM_CONNECTION
+	bool
+	default y if NRF71_STA_MODE || NRF71_AP_MODE || NRF71_P2P_MODE || \
+		NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX
+
+config NRF71_ENABLE_DUAL_VIF
+	bool "Dual virtual Wi-Fi interfaces"
+	depends on NRF71_SYSTEM_CONNECTION
+	default y if WIFI_NM_MAX_MANAGED_INTERFACES = 2
+	help
+	  Enable support for two virtual Wi-Fi interfaces (VIFs).
+	  When enabled, the driver can operate two VIFs simultaneously,
+	  allowing use cases such as one interface in AP mode and another in STA mode.
 
 endif # NRF71_SYSTEM_MODE
 
@@ -396,7 +404,7 @@ config NRF_WIFI_CTRL_HEAP_SIZE
 config NRF_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
 	default 0 if NRF71_RADIO_TEST || NRF71_OFFLOADED_RAW_TX
-	default 8000 if NRF71_SCAN_ONLY
+	default 8000 if NRF71_SCAN && !NRF71_SYSTEM_CONNECTION
 	default 110000 if !SOC_FAMILY_NORDIC_NRF
 	default 65536
 
@@ -707,9 +715,9 @@ config NRF_WIFI_PS_INT_PS
 
 endchoice
 
-config NRF71_PASSIVE_SCAN_ONLY
+config NRF71_PASSIVE_SCAN
 	bool "Forced Passive scan"
-	depends on NRF71_SCAN_ONLY
+	depends on NRF71_SCAN
 	help
 	  Enable this configuration to force passive scan on all channels.
 	  This will override application-specified scan type.
@@ -718,8 +726,8 @@ config NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT
 	# Display scan BSS entries limit
 	# By default, the limit is 250 in scan-only mode and 150 in regular mode.
 	int "Display scan bss limit"
-	range 1 450 if NRF71_SCAN_ONLY
-	def_int 250 if NRF71_SCAN_ONLY
+	range 1 450 if NRF71_SCAN && !NRF71_SYSTEM_CONNECTION
+	def_int 250 if NRF71_SCAN && !NRF71_SYSTEM_CONNECTION
 	range 1 160
 	def_int 150
 	help
