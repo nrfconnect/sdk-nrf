@@ -43,3 +43,8 @@ tests:
     extra_args:
       - FILE_SUFFIX=sqspi
       - EXTRA_DTC_OVERLAY_FILE="boards/sqspi_32MHz.overlay"
+  nrf.extended.sample.drivers.jesd216:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
