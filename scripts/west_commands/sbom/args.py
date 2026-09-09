@@ -69,6 +69,8 @@ class ArgsClass:
     ninja: 'str|None'
     help_detectors: bool
     output_spdx: 'str|None'
+    sign_key: 'str|None'
+    cosign: 'str|None'
     package_supplier: 'str|None'
     package_cpe: 'str|None'
     package_download_format: str
@@ -119,6 +121,11 @@ def add_arguments(parser: argparse.ArgumentParser):
                         help='Generate output HTML report.')
     parser.add_argument('--output-spdx', default=None,
                         help='Generate output SPDX report.')
+    parser.add_argument('--sign-key', default=None,
+                        help='Sign the SPDX report with a cosign private key file or KMS URI. '
+                             'Requires --output-spdx. Installs cosign automatically if needed.')
+    parser.add_argument('--cosign', default=None,
+                        help='Path to cosign executable. By default, uses cosign on PATH.')
     parser.add_argument('--output-cache-database', default=None,
                         help='Generate a license and copyright database for the files.')
     parser.add_argument('--input-cache-database', default=None,
@@ -190,6 +197,11 @@ def init_args(allowed_detectors: dict):
         exit()
 
     # Validate and postprocess arguments
+    if args.sign_key is not None:
+        if not args.sign_key.strip():
+            raise SbomException('--sign-key must be a private key file or KMS URI')
+        if args.output_spdx is None:
+            raise SbomException('--sign-key requires --output-spdx')
     args.license_detectors = split_detectors_list(allowed_detectors, args.license_detectors)
     args.optional_license_detectors = set(split_detectors_list(allowed_detectors,
                                                                args.optional_license_detectors))

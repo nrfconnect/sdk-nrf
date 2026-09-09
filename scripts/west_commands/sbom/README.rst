@@ -84,6 +84,28 @@ Use the following command to install the requirements.
 
    For more details, see `Scancode-Toolkit Installation`_.
 
+Cosign installation
+===================
+
+Signing SPDX reports uses cosign's ``sign-blob``, ``--signing-config``, and ``--trusted-root`` options.
+When you first use ``--sign-key``, the tool looks for cosign on ``PATH``.
+If it is missing, the tool automatically runs the installer in :file:`helpers/install_cosign.py`,
+which reads the version and platform checksums from :file:`data/cosign-release.json`, downloads that official Sigstore GitHub release and verifies its SHA-256 checksum.
+To select another release, edit ``version`` and the matching ``sha256`` entries in that JSON file.
+Use the binary checksums from the selected official release's ``cosign_checksums.txt`` asset.
+
+The automatic installer supports Windows x64, macOS Intel and Apple Silicon, Linux x64 and ARM64.
+
+Use ``--cosign PATH`` to select a specific compatible executable if you have cosign installed somewhere outside system ``PATH``.
+
+To install cosign manually run this ::
+
+   python scripts/west_commands/sbom/helpers/install_cosign.py
+
+This command uses the same installation directory and prints the full executable path.
+The directory is not automatically added to ``PATH``.
+To install in a directory of your choice, use ``--install-dir DIRECTORY`` and pass the resulting executable to ``west ncs-sbom --cosign PATH``.
+
 Using the command
 *****************
 
@@ -291,6 +313,65 @@ You can specify the format of the report output using the ``output`` argument.
      --output-cache-database *cache-database.json*
 
   For details, see ``cache-database`` detector.
+
+Signing SPDX reports
+====================
+
+To sign SPDX report during generation, provide a local private key file or a cosign KMS key URI::
+
+   west ncs-sbom -d build --output-spdx output.spdx --sign-key cosign.key
+
+The ``--sign-key`` option requires ``--output-spdx``.
+The tool creates :file:`output.spdx.sigstore.json` alongside :file:`output.spdx`.
+For sysbuild, each domain's SPDX report receives its own bundle with ``.sigstore.json`` appended to the report filename.
+The same signing key and passphrase are reused for all domains in one command.
+
+Signing is private: no signature, SBOM digest, or signing identity is sent to Sigstore public services.
+The tool supplies local signing and trust configuration files that disable certificate, transparency-log, and timestamp services and avoid public trust-metadata downloads.
+These files contain no keys or passwords:
+
+* :file:`data/cosign-signing-config.json` specifies empty service lists, so signing uses no public certificate authority, identity provider, transparency log, or timestamp authority.
+* :file:`data/cosign-trusted-root.json` supplies empty trust metadata locally, preventing cosign from downloading the public trust metadata it would otherwise load when using a signing configuration.
+
+These two configurations are independent of :file:`data/cosign-release.json`, which selects the executable to install.
+Local-key signing works offline once cosign is installed.
+KMS signing requires access to the selected KMS and its authentication services.
+
+Local keys and passphrases
+--------------------------
+
+For a local key, the SBOM tool first checks whether ``COSIGN_PASSWORD`` is set in its environment.
+If it is set, that value is used, including an explicitly empty value.
+Otherwise, the tool prompts for the passphrase without echoing it.
+The prompted value is passed only in the cosign subprocess environment and is not saved to disk or added to command-line arguments.
+In non-interactive environments, like CI, supply ``COSIGN_PASSWORD`` through your environment secrets.
+
+KMS keys
+--------
+
+Pass the provider's key URI unchanged, for example::
+
+   west ncs-sbom -d build --output-spdx output.spdx --sign-key "awskms:///alias/sbom-signing"
+
+Cosign handles provider credentials and signing permissions.
+No local passphrase is requested for a KMS URI.
+See the `cosign KMS documentation <https://docs.sigstore.dev/cosign/key_management/overview/>`_ for supported URI formats and authentication.
+To export a KMS public key for recipients, use::
+
+   cosign public-key --key "awskms:///alias/sbom-signing" --outfile cosign.pub
+
+Verification
+------------
+
+Recipients need the SPDX report, its bundle and a public key obtained from a trusted source.
+Verify a private signature with::
+
+   cosign verify-blob --key cosign.pub --bundle output.spdx.sigstore.json --insecure-ignore-tlog output.spdx
+
+The ``--insecure-ignore-tlog`` option skips the transparency-log requirement because signing deliberately did not use a log.
+The signature and file contents are still checked against the supplied public key.
+Changing the SPDX file, including changing its line endings invalidates the signature.
+Verification with a local public key works offline and does not require KMS access or the private-key passphrase.
 
 .. _west_sbom_detectors:
 
