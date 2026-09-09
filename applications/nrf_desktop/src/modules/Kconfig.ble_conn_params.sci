@@ -50,7 +50,7 @@ config DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MAX
 
 config DESKTOP_BLE_CONN_PARAMS_SCI_MAX_LATENCY
 	int "Maximum peripheral latency"
-	default 100
+	default 99
 	range 0 499
 	help
 	  Maximum peripheral latency, matching struct bt_conn_le_conn_rate_param.max_latency.
