@@ -53,6 +53,9 @@ The Lightness and Light Temperature Server callbacks will pass pointers to :c:me
     The Light CTL Server will verify that its internal Light Temperature Server is instantiated on a subsequent element on startup.
     If the Light Temperature Server is missing or instantiated on the same or a preceding element, the Bluetooth® Mesh startup procedure will fail, and the device will not be responsive.
 
+To add automatic light level control to the same light, instantiate a :ref:`bt_mesh_light_ctrl_srv_readme` on an element after the ones listed, and let it control :c:member:`bt_mesh_light_ctl_srv.lightness_srv`.
+See :ref:`bt_mesh_light_ctrl_srv_composition_color` for details.
+
 States
 ======
 
