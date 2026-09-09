@@ -25,6 +25,25 @@ config DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
 	depends on DESKTOP_HIDS_SCI_ENABLE
 	default y
 
+if DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
+
+config DESKTOP_BLE_LATENCY_SCI_CONN_RATE_UPDATE_RETRY_TIMEOUT_MS
+	int "SCI connection rate update retry timeout [ms]"
+	default 1000
+	help
+	  Timeout in milliseconds after which the module retries a failed HID SCI
+	  connection rate update request.
+
+config DESKTOP_BLE_LATENCY_SCI_CONN_RATE_UPDATE_RETRY_COUNT_MAX
+	int "SCI connection rate update retry count maximum"
+	default 3
+	range 0 254
+	help
+	  Maximum number of retries for a failed HID SCI connection rate update
+	  request. The value is stored in a uint8_t counter.
+
+endif # DESKTOP_BLE_LATENCY_HID_SCI_ENABLE
+
 config DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S
 	int "Security fail timeout [s]"
 	default 10
