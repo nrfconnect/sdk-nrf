@@ -134,7 +134,6 @@ tests:
       - EXTRA_DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
