@@ -34,9 +34,8 @@ Composition data structure
 ==========================
 
 As both the Light LC Server and the Light Lightness Server extend the Generic OnOff model, the two models cannot be instantiated on the same element.
-
-.. note::
-    Due to implementation limitations, the Light LC Server is instantiated on the next element after the Light Lightness Server it is controlling.
+The Light LC Server must be instantiated on an element with a higher element index than the Light Lightness Server it controls.
+The two elements do not have to be adjacent, which allows other models to occupy the elements in between.
 
 .. figure:: images/bt_mesh_light_ctrl_composition.svg
    :alt: Light Lightness Control Server composition data structure
@@ -58,7 +57,58 @@ In the application, this composition data looks like this:
           BT_MESH_MODEL_NONE),
    };
 
-The Light LC Server will log an error during initialization if the controlled Light Lightness Server is on the same element.
+The Light LC Server will log an error during initialization if the controlled Light Lightness Server is on the same or a subsequent element.
+
+.. _bt_mesh_light_ctrl_srv_composition_color:
+
+Combining the Light LC Server with a color light server
+-------------------------------------------------------
+
+The Light LC Server does not need a Light Lightness Server of its own.
+If the device also implements a :ref:`bt_mesh_light_ctl_srv_readme`, a :ref:`bt_mesh_light_hsl_srv_readme` or a :ref:`bt_mesh_light_xyl_srv_readme`, the Light LC Server controls the same Light Lightness Server that these models extend.
+This matches the model relationship described in the Bluetooth Mesh Model Specification, where a single Light Lightness Server is extended by both the color light server and the Light LC Server.
+
+The placement of the shared Light Lightness Server depends on the color light server:
+
+* The :ref:`bt_mesh_light_ctl_srv_readme` contains its own Light Lightness Server.
+  Pass :c:member:`bt_mesh_light_ctl_srv.lightness_srv` to the Light LC Server initialization macro.
+* The :ref:`bt_mesh_light_hsl_srv_readme` and the :ref:`bt_mesh_light_xyl_srv_readme` reference an externally defined Light Lightness Server on their own element.
+  Pass the same Light Lightness Server to the Light LC Server initialization macro.
+
+The corresponding elements of the color light server, such as the Light CTL Temperature element or the Light Hue and Light Saturation elements, are placed directly after the element holding the Light Lightness Server.
+The Light Control element is placed after them.
+
+The following example combines a Light CTL Server with a Light LC Server:
+
+.. code-block:: c
+
+   static struct bt_mesh_light_ctl_srv light_ctl_srv =
+      BT_MESH_LIGHT_CTL_SRV_INIT(&lightness_handlers, &light_temp_handlers);
+
+   static struct bt_mesh_light_ctrl_srv light_ctrl_srv =
+      BT_MESH_LIGHT_CTRL_SRV_INIT(&light_ctl_srv.lightness_srv);
+
+   static struct bt_mesh_elem elements[] = {
+      /* Light CTL element, holds the shared Light Lightness Server */
+      BT_MESH_ELEM(1,
+          BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_CTL_SRV(&light_ctl_srv)),
+          BT_MESH_MODEL_NONE),
+      /* Light CTL Temperature element */
+      BT_MESH_ELEM(2,
+          BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_TEMP_SRV(&light_ctl_srv.temp_srv)),
+          BT_MESH_MODEL_NONE),
+      /* Light Control element */
+      BT_MESH_ELEM(3,
+          BT_MESH_MODEL_LIST(BT_MESH_MODEL_LIGHT_CTRL_SRV(&light_ctrl_srv)),
+          BT_MESH_MODEL_NONE),
+   };
+
+When a Light Lightness Server is controlled by a Light LC Server, the Light LC Server takes over its power-up behavior and its scene store and recall behavior for the Lightness state.
+The color light server stores and recalls only its own states, so recalling a color scene does not disturb the light level set by the controller.
+
+.. note::
+   A Light Lightness Server can be controlled by just one Light LC Server.
+   Instantiating several Light LC Servers with a pointer to the same Light Lightness Server is not supported, as the controllers would compete for the Lightness state.
 
 Relationship with other nodes
 =============================

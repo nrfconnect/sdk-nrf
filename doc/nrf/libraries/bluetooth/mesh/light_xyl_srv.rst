@@ -41,6 +41,9 @@ The extended Light Lightness Server shall be instantiated on the same element:
 
 The Light xyL Server structure does not contain a Light Lightness Server instance, so this must be instantiated separately.
 
+To add automatic light level control to the same light, instantiate a :ref:`bt_mesh_light_ctrl_srv_readme` on a subsequent element, and let it control the same Light Lightness Server.
+See :ref:`bt_mesh_light_ctrl_srv_composition_color` for details.
+
 In the application code, this would look like this:
 
 .. code-block:: c

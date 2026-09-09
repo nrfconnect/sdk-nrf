@@ -74,6 +74,9 @@ In the application code, this would look like this:
    The :c:struct:`bt_mesh_light_hsl_srv` also contains a pointer to the Light Lightness Server model.
    Pointer to this model should be passed to the Light HSL Server initialization macro.
 
+To add automatic light level control to the same light, instantiate a :ref:`bt_mesh_light_ctrl_srv_readme` on an element after the ones listed, and let it control the same Light Lightness Server.
+See :ref:`bt_mesh_light_ctrl_srv_composition_color` for details.
+
 The Light HSL Server does not contain any states on its own, but instead operates on the underlying Light Hue, Saturation and Lightness Server models' states.
 Because of this, the Light HSL Server does not have a message handler structure, but will instead defer its messages to the individual submodels' handler callbacks.
 
