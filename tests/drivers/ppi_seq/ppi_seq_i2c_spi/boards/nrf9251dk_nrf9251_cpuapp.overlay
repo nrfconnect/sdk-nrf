@@ -5,21 +5,21 @@
  */
 
 /* Test requires loopbacks:
- * - between P2.03 and P2.09
+ * - between P2.06 and P2.08
  * - between P2.01 and P2.02
  */
 
 &pinctrl {
 	i2c130_default_alt: i2c130_default_alt {
 		group1 {
-			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+			psels = <NRF_PSEL(TWIM_SDA, 2, 6)>,
 				<NRF_PSEL(TWIM_SCL, 2, 1)>;
 		};
 	};
 
 	i2c130_sleep_alt: i2c130_sleep_alt {
 		group1 {
-			psels = <NRF_PSEL(TWIM_SDA, 2, 3)>,
+			psels = <NRF_PSEL(TWIM_SDA, 2, 6)>,
 				<NRF_PSEL(TWIM_SCL, 2, 1)>;
 			low-power-enable;
 		};
@@ -30,7 +30,7 @@
 			/* Temporary workaround as it is currently not possible
 			 * to configure pins for TWIS with pinctrl.
 			 */
-			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+			psels = <NRF_PSEL(TWIM_SDA, 2, 8)>,
 				<NRF_PSEL(TWIM_SCL, 2, 2)>;
 			bias-pull-up;
 		};
@@ -38,7 +38,7 @@
 
 	i2c131_sleep_alt: i2c131_sleep_alt {
 		group1 {
-			psels = <NRF_PSEL(TWIM_SDA, 2, 9)>,
+			psels = <NRF_PSEL(TWIM_SDA, 2, 8)>,
 				<NRF_PSEL(TWIM_SCL, 2, 2)>;
 			low-power-enable;
 		};
