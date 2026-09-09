@@ -420,7 +420,6 @@ static int dev_init(const struct device *dev)
 	k_sem_init(&dev_data->cfg_lock, 1, 1);
 
 #if defined(CONFIG_SOC_SERIES_NRF54L)
-	NRF_GPIOHSPADCTRL->BIAS = 2;
 #if !defined(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	nrf_spu_periph_perm_secattr_set(NRF_SPU00,
 		nrf_address_slave_get(DT_REG_ADDR(DT_NODELABEL(cpuflpr_vpr))),

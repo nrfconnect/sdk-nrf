@@ -312,6 +312,18 @@ This section describes the changes related to drivers.
 
      * If your application relies on the previous default values, set these Kconfig options to their earlier values.
 
+   * Fast port control for the nRF54L series:
+
+     * The slew rate of the GPIO pins on **P2** in the E0 and E1 drive modes is now configured in the devicetree.
+       If not explicitly set, the slew rate defaults to the highest value (``3``), compared with ``0`` previously.
+       It is set using the optional ``hs-bias`` property of the GPIO P2 devicetree node, which has the nodelabel ``gpio2``, of nRF54L series SoCs:
+
+       .. code-block:: devicetree
+
+          &gpio2 {
+                  hs-bias = <2>;
+          };
+
 Clock control nrf deprecation
 -----------------------------
 
