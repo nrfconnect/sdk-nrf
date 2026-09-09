@@ -31,6 +31,18 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
 
   set(slot_size)        # imgtool --slot-size
   set(header_size)      # imgtool --header-size
+  set(alignment)        # imgtool --align
+
+  # imgtool needs to have proper alignment set just in case some of extra options
+  # add trailer; MCUboot is expecting flags to show up at specific alignment,
+  # and will fail or misinterpret them if they are placed ad wrong. Flags may
+  # be added, with trailer, for example when image is confirmed during build.
+  if(SB_CONFIG_SOC_SERIES_NRF54L OR SB_CONFIG_SOC_SERIES_NRF71)
+    set(alignment 16)
+  else()
+    # By default assume nrf52, nrf53 or nrf91 where alignment is 4 bytes
+    set(alignment 4)
+  endif()
 
   # Get the partition node and pick size from it.
   dt_chosen(code_partition_path PROPERTY "zephyr,code-partition" TARGET ${application})
@@ -89,7 +101,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     set(pad_header)
   endif()
 
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align 4 --slot-size ${slot_size} --header-size ${header_size} ${pad_header} --rom-fixed ${slot_address})
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${SB_CONFIG_SECURE_BOOT_MCUBOOT_VERSION} --align ${alignment} --slot-size ${slot_size} --header-size ${header_size} ${pad_header} --rom-fixed ${slot_address})
 
   if(SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION)
     set(imgtool_extra --security-counter ${SB_CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_VALUE})
