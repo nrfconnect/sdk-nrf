@@ -368,7 +368,7 @@ void *nrf_modem_os_alloc(size_t bytes)
 	extern uint32_t nrf_modem_lib_failed_allocs;
 	void * const addr = k_heap_alloc(&nrf_modem_lib_heap, bytes, K_NO_WAIT);
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC) && !addr) {
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG) && !addr) {
 		nrf_modem_lib_failed_allocs++;
 	}
 
@@ -392,7 +392,7 @@ void *nrf_modem_os_shm_tx_alloc(size_t bytes)
 	void * const addr = k_heap_alloc(&nrf_modem_lib_shmem_heap, bytes, K_NO_WAIT);
 #endif
 
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG_ALLOC) && !addr) {
+	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB_MEM_DIAG) && !addr) {
 		nrf_modem_lib_shmem_failed_allocs++;
 	}
 

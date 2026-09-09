@@ -813,6 +813,10 @@ Gazell libraries
 Modem libraries
 ---------------
 
+* :ref:`nrf_modem_lib_readme`:
+
+  * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
+
 * :ref:`lib_location` library:
 
   * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
