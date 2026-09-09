@@ -526,7 +526,6 @@ tests:
     extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
