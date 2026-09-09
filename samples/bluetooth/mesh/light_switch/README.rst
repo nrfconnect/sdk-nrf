@@ -162,7 +162,7 @@ The following table shows a list of the supported boards for the LPN configurati
    nrf52dk/nrf52832      7.14 mA                   13.69 µA
    nrf52840dk/nrf52840   6.71 mA                   14.63 µA
    nrf52833dk/nrf52833   6.10 mA                   14.43 µA
-   nrf54l15tag/nrf54l15  -                         12.42 µA
+   nrf54l15tag/nrf54l15  --                        15.59 µA
    ====================  ========================  ====================
 
 The following applies to the LPN measurements presented in this table:
@@ -174,6 +174,8 @@ The following applies to the LPN measurements presented in this table:
 * The current consumption is measured using the `Power Profiler Kit II (PPK2)`_.
 
 * The measurements are done on the SoC only (meaning the measurements do not include power consumed by development kit LEDs for example).
+
+  * The nRF54L15 Tag is an exception to this, as it cannot be measured on the SoC only.
 
 .. image:: img/standard_52840ppk.png
    :align: center
