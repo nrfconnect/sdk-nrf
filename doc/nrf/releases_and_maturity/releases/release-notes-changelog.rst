@@ -1653,6 +1653,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
     The default remains SPDX 2.3.
   * Package dependency relationships collected from Ninja build inputs and GNU linker maps, including those from nested GN and CMake builds, in both SPDX output formats.
+  * ``--sign-key`` option to sign the SPDX report with a cosign or PEM private key file.
+    The command writes a Sigstore bundle next to each generated report, appending ``.sigstore.json`` to the report file name, which `Sigstore cosign`_ can also verify.
+    Signing is private.
+    No signature, report digest, or signing identity is sent to the public Sigstore services.
+  * ``--public-key-out`` option to export the public key of the signing key.
+  * ``--verify-spdx`` and ``--verify-key`` options to verify signed SPDX reports.
 
 * Updated:
 
