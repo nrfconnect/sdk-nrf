@@ -1,7 +1,7 @@
 /* Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr/secure_storage/its/store/settings_get.h>
+#include <zephyr/secure_storage/its/store/settings.h>
 #include <zephyr/sys/util.h>
 #include <stdio.h>
 
