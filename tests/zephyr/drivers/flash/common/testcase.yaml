@@ -36,3 +36,17 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
       - FILE_SUFFIX=sqspi
+  #
+  # nrf9251dk
+  #
+  nrf.extended.drivers.flash.common.jedec_spi_nor.nrf9251:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_TEST_DRIVER_FLASH_SIZE=33554432
+  nrf.extended.drivers.flash.common.test_storage_partition.nrf9251:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - CONFIG_TEST_FORCE_STORAGE_PARTITION=y
+      - CONFIG_TEST_DRIVER_FLASH_SIZE=6291456  # mram-controller size of 6144K
