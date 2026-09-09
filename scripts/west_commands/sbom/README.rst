@@ -88,6 +88,14 @@ Use the following command to install the requirements.
    The requirements file also installs the ``spdx-python-model`` package.
    The command uses it to write SPDX 3.0 reports (``--spdx-version 3.0``).
 
+Signing
+=======
+
+Signing and verifying SPDX reports use the ``cryptography`` Python package, and signing with a cosign key file also uses the ``pynacl`` package.
+Both packages are included in the |NCS| toolchain.
+You do not need cosign.
+The command loads these packages only when you sign or verify a report, so it generates unsigned reports without them.
+
 Using the command
 *****************
 
@@ -313,6 +321,80 @@ You can specify the format of the report output using the ``output`` argument.
      --output-cache-database *cache-database.json*
 
   For details, see ``cache-database`` detector.
+
+Signing SPDX reports
+====================
+
+To sign an SPDX report during generation, provide a private key file::
+
+   west ncs-sbom -d build --output-spdx output.spdx --sign-key cosign.key
+
+The ``--sign-key`` option requires ``--output-spdx`` or ``--public-key-out``.
+The tool creates :file:`output.spdx.sigstore.json` alongside :file:`output.spdx`.
+For sysbuild, each domain's SPDX report receives its own bundle with ``.sigstore.json`` appended to the report filename.
+All domains in one command use the same signing key and passphrase.
+
+The bundle is a Sigstore bundle in the format that `Sigstore cosign`_ writes for key-based signing, so recipients can verify it either with this command or with cosign.
+
+Signing is private.
+The tool contacts no certificate authority, transparency log, or timestamp authority.
+No signature, SBOM digest, or signing identity is sent to Sigstore public services.
+Signing works offline.
+
+The supported key types are ECDSA P-256, P-384, and P-521, and RSA with 2048, 3072, or 4096 bits.
+Each key type is signed with the same hash that cosign uses.
+The hash is SHA-256 for P-256 and RSA keys, SHA-384 for P-384 keys, and SHA-512 for P-521 keys.
+Ed25519 keys are not supported.
+
+Key files and passphrases
+-------------------------
+
+The ``--sign-key`` option accepts the following key files:
+
+* A cosign key file, as created by the ``cosign generate-key-pair`` command.
+* A PEM private key in the PKCS #8 or traditional OpenSSL format, encrypted or not.
+
+To create an encrypted key without cosign, you can use OpenSSL, for example::
+
+   openssl genpkey -algorithm EC -pkeyopt ec_paramgen_curve:P-256 -aes-256-cbc -out sbom-signing.key
+
+For an encrypted key, the SBOM tool first checks whether ``COSIGN_PASSWORD`` is set in its environment.
+If it is set, that value is used, including an explicitly empty value.
+Otherwise, the tool prompts for the passphrase without echoing it.
+The passphrase is not saved to disk or added to command-line arguments.
+In non-interactive environments, such as CI, supply ``COSIGN_PASSWORD`` through your environment secrets.
+
+The tool loads the key before it generates any report, so a wrong passphrase stops the command before it writes any file.
+
+Exporting the public key
+------------------------
+
+To export the public key of a signing key for recipients, use::
+
+   west ncs-sbom --sign-key sbom-signing.key --public-key-out sbom-signing.pub
+
+Without ``--output-spdx``, the command exits after writing the public key.
+To avoid overwriting other files, the command replaces an existing file only if it already contains a PEM public key.
+
+Verification
+------------
+
+Recipients need the SPDX report, its bundle, and a public key obtained from a trusted source.
+To verify one or more reports, each stored next to its ``.sigstore.json`` bundle, use the following command::
+
+   west ncs-sbom --verify-spdx output.spdx --verify-key sbom-signing.pub
+
+The ``--verify-key`` option accepts a PEM public key file.
+The command reports the result for each report and fails if any report does not verify.
+
+Recipients without the |NCS| can verify the same bundle with the following cosign command::
+
+   cosign verify-blob --key sbom-signing.pub --bundle output.spdx.sigstore.json --insecure-ignore-tlog output.spdx
+
+The ``--insecure-ignore-tlog`` option skips the transparency-log requirement, because signing deliberately does not use a log.
+The command still checks the signature and the file contents against the supplied public key.
+Changing the SPDX file, including changing its line endings, invalidates the signature.
+Verification works offline and does not require the private key or its passphrase.
 
 .. _west_sbom_detectors:
 
