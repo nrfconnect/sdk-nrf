@@ -138,3 +138,9 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40944"
+
+- scenarios:
+    - nsib.update.invalid_image
+  platforms:
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41204"
