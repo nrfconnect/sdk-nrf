@@ -932,7 +932,7 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 #endif /* CONFIG_NRF71_DATA_TX */
 
 #ifdef CONFIG_NRF71_SCAN_ONLY
-	/* In scan only mode this interface should be ignored by the connectivity manager */
+	/* In scan-only mode this interface should be ignored by the connectivity manager */
 	conn_mgr_ignore_iface(iface);
 #endif /* CONFIG_NRF71_SCAN_ONLY */
 

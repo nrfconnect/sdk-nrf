@@ -51,7 +51,7 @@ if(CONFIG_NRF71_OFFLOADED_RAW_TX)
   )
 endif()
 
-if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
+if(CONFIG_NRF71_SYSTEM_MODE)
   zephyr_library_sources(
     src/common/nbuf_mgmt.c
     src/system/rx.c
@@ -91,7 +91,7 @@ zephyr_library_sources_ifdef(CONFIG_NET_L2_WIFI_MGMT
   src/system/wifi_mgmt_scan.c
 )
 
-if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_STA_MODE)
+if(CONFIG_NRF71_SYSTEM_MODE AND NOT CONFIG_NRF71_SCAN_ONLY)
   zephyr_library_sources(src/system/wifi_mgmt.c)
 endif()
 
