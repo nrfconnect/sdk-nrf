@@ -9,6 +9,7 @@ Main entry point for the script.
 
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 import cache_database_detector
 import external_file_detector
@@ -25,6 +26,9 @@ from args import SPDX_VERSION_3_0, args, init_args
 from common import SbomException, dbg_time
 from data_structure import Data
 from west import log
+
+if TYPE_CHECKING:
+    from sign_spdx import SpdxSigner
 
 inputs = {
     'input-build': input_build.generate_input,
@@ -47,7 +51,7 @@ generators = {
 }
 
 
-def _run_pipeline(domain: 'str|None' = None):
+def _run_pipeline(domain: 'str|None' = None, signer: 'SpdxSigner|None' = None):
     data = Data()
     data.domain = domain
 
@@ -78,6 +82,8 @@ def _run_pipeline(domain: 'str|None' = None):
                 spdx3_serializer.generate(data, output_file)
             else:
                 output_template.generate(data, output_file, Path(__file__).parent / generator)
+            if generator_name == 'spdx' and signer is not None:
+                signer.sign(output_file)
             log.dbg(f'GENERATOR: Done in {t}s')
 
 
@@ -138,10 +144,35 @@ def _domain_inputs_present(build_dir: Path, targets: list[str]) -> bool:
     return False
 
 
+def _import_signing():
+    '''Import the signing module only when signing or verifying, so that the other commands work
+    without the packages it needs.'''
+    try:
+        import sign_spdx
+    except ImportError as ex:
+        raise SbomException(
+            f'Signing and verifying SPDX reports requires a missing Python package ({ex}).\n'
+            'Install the SBOM requirements with:\n'
+            '  pip3 install -r scripts/requirements-west-ncs-sbom.txt'
+        ) from ex
+    return sign_spdx
+
+
 def main():
     '''Main entry function for the script.'''
     try:
         init_args(detectors)
+        signer = None
+        if args.verify_spdx is not None or args.sign_key is not None:
+            sign_spdx = _import_signing()
+            if args.verify_spdx is not None:
+                sign_spdx.verify_reports(args.verify_spdx, args.verify_key)
+                return
+            signer = sign_spdx.SpdxSigner(args.sign_key)
+            if args.public_key_out is not None:
+                signer.export_public_key(args.public_key_out)
+                if args.output_spdx is None:
+                    return
 
         def domain_output(
             output_path: 'str|Path|None', domain: str, default_name: str
@@ -204,14 +235,14 @@ def main():
                             base_outputs[key], domain_name, defaults[gen]
                         )
 
-                    _run_pipeline(domain_name)
+                    _run_pipeline(domain_name, signer)
                     processed_domains += 1
 
                 if processed_domains == 0:
                     raise SbomException('No sysbuild domains contain map or hex files')
                 return
 
-        _run_pipeline()
+        _run_pipeline(signer=signer)
     except SbomException as e:
         log.die(str(e), exit_code=1)
 

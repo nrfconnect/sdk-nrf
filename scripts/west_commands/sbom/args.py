@@ -78,6 +78,10 @@ class ArgsClass:
     help_detectors: bool
     output_spdx: 'str|None'
     spdx_version: str
+    sign_key: 'str|None'
+    public_key_out: 'str|None'
+    verify_spdx: 'list[str]|None'
+    verify_key: 'str|None'
     package_supplier: 'str|None'
     package_cpe: 'str|None'
     package_download_format: str
@@ -133,6 +137,19 @@ def add_arguments(parser: argparse.ArgumentParser):
                         help='SPDX specification version for "--output-spdx". '
                              '"2.3" writes the tag-value format, '
                              '"3.0" writes SPDX 3.0.1 JSON-LD.')
+    parser.add_argument('--sign-key', default=None,
+                        help='Sign the SPDX report with a private key file (cosign or PEM) or '
+                             'an AWS KMS URI (awskms://). '
+                             'Requires --output-spdx or --public-key-out.')
+    parser.add_argument('--public-key-out', default=None,
+                        help='Write the PEM public key of --sign-key to this file. Without '
+                             '--output-spdx, exit after writing it.')
+    parser.add_argument('--verify-spdx', nargs='+', default=None,
+                        help='Verify SPDX reports against their ".sigstore.json" bundles and '
+                             'exit. Requires --verify-key.')
+    parser.add_argument('--verify-key', default=None,
+                        help='PEM public key file or AWS KMS URI (awskms://) '
+                             'used by --verify-spdx.')
     parser.add_argument('--output-cache-database', default=None,
                         help='Generate a license and copyright database for the files.')
     parser.add_argument('--input-cache-database', default=None,
@@ -204,6 +221,15 @@ def init_args(allowed_detectors: dict):
         exit()
 
     # Validate and postprocess arguments
+    if (args.verify_spdx is None) != (args.verify_key is None):
+        raise SbomException('--verify-spdx and --verify-key must be used together')
+    if args.sign_key is not None:
+        if not args.sign_key.strip():
+            raise SbomException('--sign-key must be a private key file or KMS URI')
+        if args.output_spdx is None and args.public_key_out is None:
+            raise SbomException('--sign-key requires --output-spdx or --public-key-out')
+    elif args.public_key_out is not None:
+        raise SbomException('--public-key-out requires --sign-key')
     args.license_detectors = split_detectors_list(allowed_detectors, args.license_detectors)
     args.optional_license_detectors = set(split_detectors_list(allowed_detectors,
                                                                args.optional_license_detectors))
