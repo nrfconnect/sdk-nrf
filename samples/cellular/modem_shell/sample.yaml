@@ -307,7 +307,6 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     platform_allow:
       - thingy91/nrf9160/ns
