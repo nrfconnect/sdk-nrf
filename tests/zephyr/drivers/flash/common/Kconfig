@@ -11,4 +11,11 @@ config TEST_DRIVER_FLASH_SIZE
 	  Expected flash device size the test will validate against. If the flash driver does not
 	  support the get_size() API, leave this set as -1 to skip the test.
 
+config TEST_FORCE_STORAGE_PARTITION
+	bool "Force testing the storage partition area"
+	help
+	  This test prioritizes testing spi nor flash over
+	  the storage area by default. Set this config to prioritize
+	  testing the storage partition instead.
+
 source "Kconfig.zephyr"
