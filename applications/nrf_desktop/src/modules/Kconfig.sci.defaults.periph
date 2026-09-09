@@ -15,7 +15,7 @@ configdefault BT_HIDS_SCI_FAST_INTERVAL_MIN_125US
 configdefault BT_HIDS_SCI_FULL_RANGE_INTERVAL_MIN_125US
 	default BT_HIDS_SCI_FAST_INTERVAL_MIN_125US
 
-# Set the maximum peripheral latency for the FAST, DEFAULT and FULL_RANGE HID SCI modes
+# Set the maximum peripheral latency for the FAST, DEFAULT, FULL_RANGE and LOW_POWER HID SCI modes
 # to the default preferred peripheral latency (99).
 # If a lower latency is required it will be requested without changing the SCI mode.
 # This is useful for dongle-initiated communication (configuration channel or DFU).
@@ -33,7 +33,10 @@ configdefault BT_HIDS_SCI_FULL_RANGE_MAX_LATENCY
 configdefault BT_HIDS_SCI_DEFAULT_MAX_LATENCY
 	default 99
 
-# Set the supervision timeout for the FAST, DEFAULT and FULL_RANGE HID SCI modes
+configdefault BT_HIDS_SCI_LOW_POWER_MAX_LATENCY
+	default 99
+
+# Set the supervision timeout for the FAST, DEFAULT, FULL_RANGE and LOW_POWER HID SCI modes
 # to satisfy Link Layer Vol 6 Part B §4.5.2 when using the default maximum latency (99):
 #
 # connSupervisionTimeout > (1 + connPeripheralLatency) × connSubrateFactor × connInterval × 2
@@ -45,6 +48,7 @@ configdefault BT_HIDS_SCI_DEFAULT_MAX_LATENCY
 # FAST:       (1 + 99) × 4 × (40 × 125 µs) × 2 = 4000 ms  → 401
 # DEFAULT:    (1 + 99) × 4 × (120 × 125 µs) × 2 = 12000 ms → 1201
 # FULL_RANGE: (1 + 99) × 4 × (120 × 125 µs) × 2 = 12000 ms → 1201
+# LOW_POWER:  (1 + 99) × 4 × (120 × 125 µs) × 2 = 12000 ms → 1201
 
 configdefault BT_HIDS_SCI_FAST_SUPERVISION_TIMEOUT_10MS
 	default 401
@@ -53,4 +57,7 @@ configdefault BT_HIDS_SCI_FULL_RANGE_SUPERVISION_TIMEOUT_10MS
 	default 1201
 
 configdefault BT_HIDS_SCI_DEFAULT_SUPERVISION_TIMEOUT_10MS
+	default 1201
+
+configdefault BT_HIDS_SCI_LOW_POWER_SUPERVISION_TIMEOUT_10MS
 	default 1201
