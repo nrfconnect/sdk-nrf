@@ -8,7 +8,6 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - nrf9251dk/nrf9251/cpuapp
       - thingy91x/nrf9151/ns
     platform_allow:
@@ -29,7 +28,6 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     platform_allow:
@@ -52,7 +50,6 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - nrf9251dk/nrf9251/cpuapp
       - thingy91x/nrf9151/ns
     platform_allow:
@@ -74,7 +71,6 @@ tests:
     integration_platforms:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
       - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     platform_allow:
