@@ -25,7 +25,8 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 			 unsigned char *country_code);
 
 
-enum nrf_wifi_status umac_cmd_off_raw_tx_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+enum nrf_wifi_status umac_cmd_off_raw_tx_debug_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
 enum nrf_wifi_status umac_cmd_off_raw_tx_conf(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,

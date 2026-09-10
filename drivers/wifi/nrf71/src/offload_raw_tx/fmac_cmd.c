@@ -129,11 +129,12 @@ out:
 	return status;
 }
 
-enum nrf_wifi_status umac_cmd_off_raw_tx_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
+enum nrf_wifi_status umac_cmd_off_raw_tx_debug_stats_get(
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
-	struct nrf_wifi_cmd_get_stats *umac_cmd_data = NULL;
+	struct nrf_wifi_umac_cmd_debug_stats *umac_cmd_data = NULL;
 	int len = 0;
 
 	len = sizeof(*umac_cmd_data);
@@ -148,11 +149,12 @@ enum nrf_wifi_status umac_cmd_off_raw_tx_prog_stats_get(struct nrf_wifi_fmac_dev
 		goto out;
 	}
 
-	umac_cmd_data = (struct nrf_wifi_cmd_get_stats *)(umac_cmd->msg);
+	umac_cmd_data = (struct nrf_wifi_umac_cmd_debug_stats *)(umac_cmd->msg);
 
-	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_GET_STATS;
+	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_DEBUG_STATS;
 	umac_cmd_data->sys_head.len = len;
-	umac_cmd_data->stats_type = RPU_STATS_TYPE_OFFLOADED_RAW_TX;
+	umac_cmd_data->stats_type = RPU_STATS_TYPE_LMAC;
+	umac_cmd_data->stats_ctrl = OFFLOAD_RAW_TX_STATS;
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,
