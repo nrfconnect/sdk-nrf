@@ -37,7 +37,6 @@ The following table shows which devices use KMU and CRACEN peripherals.
        | nRF54LM20A
        | nRF54LM20B
        | nRF54LV10A
-       | nRF54LV10B
      - | nRF54LS05A
        | nRF54LS05B
 
