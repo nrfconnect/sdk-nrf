@@ -3346,7 +3346,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Updatable MCUboot as part of build**
               - Supported
@@ -3364,7 +3364,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - --
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Hardware cryptography acceleration**
               - Supported
@@ -3382,7 +3382,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Image encryption**
               - Experimental
@@ -3391,8 +3391,8 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Experimental
               - Experimental
-              - --
-              - --
+              - Experimental
+              - Experimental
 
       .. tab:: nRF91 Series
 
