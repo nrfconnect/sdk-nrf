@@ -28,6 +28,7 @@ struct nrf_wifi_off_raw_tx_drv_ctx {
 	uint8_t mac_addr[6];
 	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	unsigned int vtf_buffer_start_address;
+	bool tx_started;
 };
 
 
