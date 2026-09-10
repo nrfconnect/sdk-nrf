@@ -15,7 +15,6 @@ zephyr_library_include_directories(
 
 # ---- Common sources ----
 zephyr_library_sources(
-  src/common/hal_api_common.c
   src/common/fmac_cmd_common.c
   src/common/fmac_api_common.c
   src/common/rf_params.c
@@ -25,7 +24,7 @@ zephyr_library_sources(
   src/common/work_mgmt.c
   src/common/lock_mgmt.c
   src/common/llist_mgmt.c
-  src/common/ipc_bus.c
+  src/common/wifi_ipc.c
   src/common/mac_addr.c
 )
 
@@ -34,7 +33,6 @@ if(CONFIG_NRF71_RADIO_TEST)
     src/radio_test/fmac_api.c
     src/radio_test/fmac_cmd.c
     src/radio_test/fmac_event.c
-    src/radio_test/hal_api.c
     src/radio_test/main.c
     src/radio_test/api.c
   )
@@ -53,7 +51,6 @@ if(CONFIG_NRF71_OFFLOADED_RAW_TX)
     src/offload_raw_tx/fmac_api.c
     src/offload_raw_tx/fmac_cmd.c
     src/offload_raw_tx/fmac_event.c
-    src/offload_raw_tx/hal_api.c
     src/offload_raw_tx/api.c
   )
 endif()
@@ -66,7 +63,6 @@ if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_SCAN_ONLY)
     src/system/fmac_api.c
     src/system/fmac_cmd.c
     src/system/fmac_event.c
-    src/system/hal_api.c
     src/system/main.c
     src/system/net_if.c
   )
