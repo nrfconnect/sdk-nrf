@@ -726,6 +726,16 @@ void dect_net_l2_ipv6_ula_sync_for_peer(struct net_if *iface,
 
 	dect_net_l2_ipv6_ula_remove(iface, ctx);
 
+	if (IS_ENABLED(CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP)) {
+		ctx->ula_ipv6_configured = true;
+		ctx->ula_ipv6_addr = ula;
+		ctx->ula_iface_plen_bits = DECT_L2_ULA_DECT_ONLINK_PLEN_BITS;
+		net_ipv6_addr_copy_raw(ctx->ula_iface_prefix.s6_addr, pfx.s6_addr);
+		LOG_INF("DECT ULA %s (off iface, peer RD id %u)", net_sprint_ipv6_addr(&ula),
+			peer_long_rd_id);
+		return;
+	}
+
 	ifaddr = net_if_ipv6_addr_add(iface, &ula, NET_ADDR_AUTOCONF, 0);
 	if (ifaddr == NULL) {
 		LOG_WRN("%s: cannot add ULA %s on DECT", __func__,
@@ -783,6 +793,39 @@ bool dect_net_l2_ipv6_dect_ula_onlink_prefix_get(struct net_if *dect_iface,
 }
 #endif /* CONFIG_NET_L2_DECT_ULA */
 
+#if defined(CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP)
+void dect_net_l2_ipv6_off_iface_unicast_get(struct net_if *dect_iface,
+					    struct net_in6_addr *ula_out,
+					    struct net_in6_addr *gua_out,
+					    bool *have_ula, bool *have_gua)
+{
+	struct dect_net_l2_context *ctx;
+
+	if (dect_iface == NULL || ula_out == NULL || gua_out == NULL || have_ula == NULL ||
+	    have_gua == NULL) {
+		return;
+	}
+
+	ctx = net_if_l2_data(dect_iface);
+	*have_ula = false;
+	*have_gua = false;
+
+#if defined(CONFIG_NET_L2_DECT_ULA)
+	if (ctx->ula_ipv6_configured) {
+		net_ipv6_addr_copy_raw(ula_out->s6_addr, ctx->ula_ipv6_addr.s6_addr);
+		*have_ula = true;
+	}
+#else
+	ARG_UNUSED(ula_out);
+#endif
+
+	if (ctx->global_ipv6_addr_set) {
+		net_ipv6_addr_copy_raw(gua_out->s6_addr, ctx->global_ipv6_addr.s6_addr);
+		*have_gua = true;
+	}
+}
+#endif /* CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP */
+
 static bool dect_net_l2_ipv6_util_link_local_addr_create_add(struct net_if *iface,
 							     struct in6_addr *link_local_addr_out)
 {
@@ -822,21 +865,29 @@ static bool dect_net_l2_ipv6_util_global_addr_create_add(struct net_if *iface,
 		memcpy(&global_addr.s6_addr,
 		       ipv6_prefix_config->prefix.s6_addr, ipv6_prefix_config->prefix_len);
 
-		ifaddr = net_if_ipv6_addr_lookup(&global_addr, NULL);
-		if (ifaddr) {
-			LOG_WRN("IPv6 address %s already exists - continue",
-				net_sprint_ipv6_addr(&global_addr));
-			net_if_addr_set_lf(ifaddr, true);
+		if (IS_ENABLED(CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP)) {
+			*global_ipv6_addr_out = global_addr;
+			added = true;
+			LOG_INF("DECT GUA %s (off iface)", net_sprint_ipv6_addr(&global_addr));
 		} else {
-			ifaddr = net_if_ipv6_addr_add(iface, &global_addr, NET_ADDR_AUTOCONF, 0);
-			if (!ifaddr) {
-				LOG_WRN("%s: cannot add address (%s) to interface %p", (__func__),
-					net_sprint_ipv6_addr(&global_addr), iface);
+			ifaddr = net_if_ipv6_addr_lookup(&global_addr, NULL);
+			if (ifaddr) {
+				LOG_WRN("IPv6 address %s already exists - continue",
+					net_sprint_ipv6_addr(&global_addr));
+				net_if_addr_set_lf(ifaddr, true);
 			} else {
-				added = true;
-				*global_ipv6_addr_out = global_addr;
-				LOG_DBG("Global IPv6 address %s added to interface %p",
-					net_sprint_ipv6_addr(&global_addr), iface);
+				ifaddr = net_if_ipv6_addr_add(
+						iface, &global_addr, NET_ADDR_AUTOCONF, 0);
+				if (!ifaddr) {
+					LOG_WRN("%s: cannot add address (%s) to interface %p",
+						(__func__), net_sprint_ipv6_addr(&global_addr),
+						iface);
+				} else {
+					added = true;
+					*global_ipv6_addr_out = global_addr;
+					LOG_DBG("Global IPv6 address %s added to interface %p",
+						net_sprint_ipv6_addr(&global_addr), iface);
+				}
 			}
 		}
 	}
