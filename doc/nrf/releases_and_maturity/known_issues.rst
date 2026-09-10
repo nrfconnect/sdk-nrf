@@ -4584,6 +4584,17 @@ DFU and FOTA
 
 The issues in this section are related to :ref:`app_dfu`.
 
+.. rst-class:: v3-4-0
+
+NCSIDB-1950: nRF5340 serial recovery cannot update network core image in MCUboot single-slot mode (enabled with the :kconfig:option:`CONFIG_SINGLE_APPLICATION_SLOT` Kconfig option set to ``y``)
+  When MCUboot serial recovery is used on the application core of an nRF5340 device, updating the network core firmware image fails if MCUboot is configured for single-application-slot mode.
+  The build system does not assign the :kconfig:option:`CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER` Kconfig option.
+  Serial recovery needs this for direct image access, so an invalid slot number is used for the emulated flash partition in RAM.
+
+  **Affected platforms:** nRF5340
+
+  **Workaround:** Manually apply the changes from `sdk-nrf PR #31064`_ to your local ``sdk-nrf`` copy and rebuild the project.
+
 .. rst-class:: wontfix v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0
 
 NCSDK-34883: Unable to transfer image using MTU (:kconfig:option:`CONFIG_MCUMGR_TRANSPORT_NETBUF_SIZE`) lower than 104
@@ -4994,7 +5005,8 @@ NCSDK-29460: Encryption: Build error for default configuration on the ``nrf52840
 
   **Affected platforms:** nRF52840
 
-  **Workaround:** Switch the signature algorithm to RSA or change the crypto library to TinyCrypt.
+  **Workaround:** For the |NCS| v3.4.0, manually apply `sdk-nrf PR #30994`_ to your local ``sdk-nrf`` repository.
+  For previous releases, switch the signature algorithm to RSA or change the crypto library to TinyCrypt.
 
 .. rst-class:: v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
