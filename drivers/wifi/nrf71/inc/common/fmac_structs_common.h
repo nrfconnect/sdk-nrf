@@ -17,6 +17,7 @@
 #define __FMAC_STRUCTS_COMMON_H__
 
 #include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <stdbool.h>
 
 #define NRF_WIFI_FW_CHUNK_ID_STR_LEN 16
 
@@ -126,8 +127,10 @@ struct nrf_wifi_fmac_reg_info {
  *
  */
 struct nrf_wifi_fmac_priv {
-	/** Handle to the HAL layer. */
-	struct nrf_wifi_hal_priv *hpriv;
+	/** RPU event callback for this operation mode. */
+	enum nrf_wifi_status (*rpu_event_cb)(void *fmac_dev_ctx,
+					     void *event_data,
+					     unsigned int len);
 	/** Operation mode. \ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Data pointer to mode specific parameters */
@@ -143,8 +146,13 @@ struct nrf_wifi_fmac_dev_ctx {
 	struct nrf_wifi_fmac_priv *fpriv;
 	/** Handle to the OS abstraction layer. */
 	void *os_dev_ctx;
-	/** Handle to the HAL layer. */
-	void *hal_dev_ctx;
+#if defined(NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+	unsigned long wakeup_now_asserted_time_prev_ms;
+	unsigned long wakeup_now_deasserted_time_prev_ms;
+	unsigned long rpu_sleep_opp_time_prev_ms;
+	int wdt_irq_recd;
+	int wdt_irq_ignored;
+#endif /* NRF_WIFI_RPU_RECOVERY */
 	/** Operation mode. \ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Firmware statistics. */

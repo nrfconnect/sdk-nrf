@@ -12,7 +12,7 @@
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
 #include <common/llist_mgmt.h>
-#include <system/hal_api.h>
+#include <common/wifi_ipc.h>
 #include <system/fmac_rx.h>
 #include <common/util.h>
 #include <system/fmac_promisc.h>
@@ -295,11 +295,9 @@ void nrf_wifi_fmac_rx_tasklet(void *data)
 	struct nrf_wifi_rx_buff *config = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	enum NRF_WIFI_HAL_STATUS hal_status;
 
-	nrf_wifi_sys_hal_lock_rx(fmac_dev_ctx->hal_dev_ctx);
-	hal_status = nrf_wifi_hal_status_unlocked(fmac_dev_ctx->hal_dev_ctx);
-	if (hal_status != NRF_WIFI_HAL_STATUS_ENABLED) {
+	nrf_wifi_ipc_rx_lock(fmac_dev_ctx);
+	if (!nrf_wifi_ipc_rx_enabled(fmac_dev_ctx)) {
 		goto out;
 	}
 
@@ -324,7 +322,7 @@ void nrf_wifi_fmac_rx_tasklet(void *data)
 	}
 out:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
-	nrf_wifi_sys_hal_unlock_rx(fmac_dev_ctx->hal_dev_ctx);
+	nrf_wifi_ipc_rx_unlock(fmac_dev_ctx);
 }
 #endif /* NRF71_RX_WQ_ENABLED */
 
