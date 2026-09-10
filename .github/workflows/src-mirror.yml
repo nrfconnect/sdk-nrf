@@ -41,3 +41,6 @@ jobs:
           artifactory-pass: ${{ secrets.COM_NORDICSEMI_FILES_PASSWORD }}
           stable: ${{ env.STABLE }}
           repository-type: 'nrf'
+          # On tag push, use the tag as toolchain version and skip Artifactory index
+          # lookup. promote-bundle adds the alias later; src-mirror must not race it.
+          toolchain-version: ${{ github.event_name == 'push' && github.ref_type == 'tag' && github.ref_name || '' }}
