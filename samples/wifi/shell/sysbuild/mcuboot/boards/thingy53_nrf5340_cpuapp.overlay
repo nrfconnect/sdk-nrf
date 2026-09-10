@@ -11,3 +11,7 @@
 		zephyr,code-partition = &boot_partition;
 	};
 };
+
+&hfclkaudio {
+	status = "disabled";
+};
