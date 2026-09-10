@@ -184,6 +184,8 @@ static enum nrf_wifi_status umac_event_sys_stats_process(
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_umac_event_stats *stats = NULL;
+	unsigned int recvd_len;
+	unsigned int copy_len;
 
 	if (!event) {
 		LOG_ERR("%s: Invalid parameters",
@@ -200,9 +202,28 @@ static enum nrf_wifi_status umac_event_sys_stats_process(
 
 	stats = ((struct nrf_wifi_sys_umac_event_stats *)event);
 
+	if (stats->sys_head.len < sizeof(stats->sys_head)) {
+		LOG_ERR("%s: Malformed stats event, len=%u",
+				      __func__, stats->sys_head.len);
+		goto out;
+	}
+
+	recvd_len = stats->sys_head.len - sizeof(stats->sys_head);
+	copy_len = recvd_len < sizeof(stats->fw) ? recvd_len : sizeof(stats->fw);
+
+	if (copy_len < sizeof(stats->fw)) {
+		/* FW sent fewer stats fields than this driver knows about (e.g.
+		 * older FW without interface_data_stats) - zero the rest instead
+		 * of leaving stale bytes from a previous transfer in fw_stats.
+		 */
+		LOG_DBG("%s: Truncated stats event (recvd=%u, expected=%u)",
+				      __func__, recvd_len, (unsigned int)sizeof(stats->fw));
+		nrf_wifi_mem_set(fmac_dev_ctx->fw_stats, 0, sizeof(stats->fw));
+	}
+
 	nrf_wifi_mem_cpy(fmac_dev_ctx->fw_stats,
 			      &stats->fw,
-			      sizeof(stats->fw));
+			      copy_len);
 
 	fmac_dev_ctx->stats_req = false;
 
