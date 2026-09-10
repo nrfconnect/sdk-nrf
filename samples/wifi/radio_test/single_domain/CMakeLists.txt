@@ -16,5 +16,6 @@ file(GLOB perip_rt_sources ${perip_rt_dir}/src/*.c)
 # NORDIC SDK APP START
 target_sources(app PRIVATE
   ${perip_rt_sources}
+  src/early_shell_start.c
 )
 # NORDIC SDK APP END
