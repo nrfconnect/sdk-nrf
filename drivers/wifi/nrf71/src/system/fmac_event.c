@@ -762,7 +762,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 
 	vif_ctx = sys_dev_ctx->vif_ctx[if_id];
 	if (!vif_ctx) {
-		LOG_ERR("%s: Invalid vif_ctx: vif_id = %d",
+		LOG_DBG("%s: No host VIF for wdev_id %d (teardown or bring-up)",
 				      __func__,
 				      if_id);
 		goto out;
