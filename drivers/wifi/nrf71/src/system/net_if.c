@@ -27,6 +27,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <net_private.h>
 
 #include <common/util.h>
+#include <common/wifi_ipc.h>
 #include <system/fmac_peer.h>
 #include <system/core.h>
 #include <system/wpa_supp_if.h>
@@ -73,7 +74,6 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 								nrf_wifi_rpu_recovery_work);
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
 	int ret;
 
 	if (!vif_ctx_zep) {
@@ -98,9 +98,8 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 		return;
 	}
 
-	hal_dev_ctx = fmac_dev_ctx->hal_dev_ctx;
-	if (!hal_dev_ctx) {
-		LOG_ERR("%s: hal_dev_ctx is NULL", __func__);
+	if (!nrf_wifi_ipc_is_open(fmac_dev_ctx)) {
+		LOG_ERR("%s: host-RPU transport not open", __func__);
 		return;
 	}
 
@@ -148,8 +147,8 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	}
 #endif
 	rpu_ctx_zep->rpu_recovery_in_progress = true;
-	rpu_ctx_zep->wdt_irq_received += hal_dev_ctx->wdt_irq_received;
-	rpu_ctx_zep->wdt_irq_ignored += hal_dev_ctx->wdt_irq_ignored;
+	rpu_ctx_zep->wdt_irq_received += fmac_dev_ctx->wdt_irq_recd;
+	rpu_ctx_zep->wdt_irq_ignored += fmac_dev_ctx->wdt_irq_ignored;
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Bringing the interface down", __func__);
 #else
