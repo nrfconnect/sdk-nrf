@@ -32,23 +32,21 @@
 	ranges = <0x0 0x2f000000 0x53000>;
 };
 
-/ {
-	reserved-memory {
-		/* Move IPC shared memory and add trace region. */
-		cpuapp_cpucell_ipc_shm_ctrl: memory@2f053000 {
-			reg = <0x2f053000 DT_SIZE_K(4)>;
-		};
+&cpuapp_cpucell_ram0x_region {
+	/* Move IPC shared memory and add trace region. */
+	cpuapp_cpucell_ipc_shm_ctrl: memory@3000 {
+		reg = <0x3000 DT_SIZE_K(4)>;
+	};
 
-		cpuapp_cpucell_ipc_shm_heap: memory@2f054000 {
-			reg = <0x2f054000 DT_SIZE_K(16)>;
-		};
+	cpuapp_cpucell_ipc_shm_heap: memory@4000 {
+		reg = <0x4000 DT_SIZE_K(16)>;
+	};
 
-		cpucell_cpuapp_ipc_shm_heap: memory@2f058000 {
-			reg = <0x2f058000 DT_SIZE_K(16)>;
-		};
+	cpucell_cpuapp_ipc_shm_heap: memory@8000 {
+		reg = <0x8000 DT_SIZE_K(16)>;
+	};
 
-		cpucell_cpuapp_ipc_shm_trace: memory@2f05c000 {
-			reg = <0x2f05c000 DT_SIZE_K(16)>;
-		};
+	cpucell_cpuapp_ipc_shm_trace: memory@c000 {
+		reg = <0xc000 DT_SIZE_K(16)>;
 	};
 };
