@@ -69,7 +69,7 @@ static ssize_t write_callback(struct bt_conn *conn,
 		met_data->write_count++;
 		met_data->write_len += len;
 		met_data->write_rate =
-		    ((uint64_t)met_data->write_len << 3) * 1000000000 / delta;
+		    ((uint64_t)met_data->write_len * BITS_PER_BYTE) * 1000000000 / delta;
 	}
 
 	LOG_DBG("Received data.");
