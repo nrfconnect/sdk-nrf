@@ -22,9 +22,10 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample first initializes the :ref:`nrfxlib:nrf_modem` and AT communications.
-Next, it provisions a root CA certificate to the modem using the :ref:`modem_key_mgmt` library.
-When using an nRF91 Series device, the provisioning must be done before connecting to the LTE network, because the certificates can only be provisioned when the device is not connected.
+The sample first prepares TLS credentials for the HTTPS connection.
+For nRF91 Series cellular builds, it provisions a root CA certificate to modem storage using the :ref:`modem_key_mgmt` library.
+For Wi-Fi and other non-modem builds, it registers the certificate with Zephyr TLS credentials.
+On nRF91 Series devices, you must provision the modem certificate before connecting to the cellular network, because certificates can only be provisioned when the device is not connected.
 
 The sample then establishes a connection to the network, sets up the necessary TLS socket options, and connects to an HTTPS server.
 It sends an HTTP HEAD request and prints the response code in the terminal.
