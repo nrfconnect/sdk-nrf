@@ -2775,6 +2775,7 @@ The lists are organized by device Series and implementation.
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LC10A
              - nRF54LM20A
              - nRF54LM20B
              - nRF54LV10A
@@ -2784,6 +2785,7 @@ The lists are organized by device Series and implementation.
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
@@ -3118,6 +3120,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -3127,6 +3130,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
@@ -3136,6 +3140,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
@@ -3145,6 +3150,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - Supported
               - Supported
+              - Experimental
               - Supported
               - --
               - Experimental
@@ -3154,6 +3160,7 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
@@ -3163,12 +3170,14 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
               - Experimental
               - Experimental
             * - **Image encryption**
+              - Experimental
               - Experimental
               - Experimental
               - Experimental
