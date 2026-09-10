@@ -17,12 +17,14 @@
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
-static enum nrf_wifi_status umac_event_off_raw_tx_stats_process(
+static enum nrf_wifi_status umac_event_off_raw_tx_debug_stats_process(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	void *event)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	struct nrf_wifi_off_raw_tx_umac_event_stats *stats = NULL;
+	struct nrf_wifi_umac_event_debug_stats *ev = event;
+	struct lmac_offload_raw_tx_stats src;
+	struct rpu_off_raw_tx_fw_stats *dst = NULL;
 
 	if (!event) {
 		LOG_ERR("%s: Invalid parameters",
@@ -36,11 +38,30 @@ static enum nrf_wifi_status umac_event_off_raw_tx_stats_process(
 		goto out;
 	}
 
-	stats = ((struct nrf_wifi_off_raw_tx_umac_event_stats *)event);
+	nrf_wifi_mem_cpy(&src,
+			      (const char *)&ev->stats.lmac_stats +
+			      offsetof(struct lmac_debug_stats, offload_raw_tx_stats),
+			      sizeof(src));
 
-	nrf_wifi_mem_cpy(fmac_dev_ctx->fw_stats,
-			      &stats->fw,
-			      sizeof(stats->fw));
+	LOG_DBG("%s: RPU debug stats: category=0x%x state=%u tx_cnt=%u tx_complete_cnt=%u "
+		"warm_boot_cnt=%u",
+		__func__,
+		ev->stats.lmac_stats.stats_category,
+		src.offLoad_raw_tx_state,
+		src.offload_raw_tx_cnt,
+		src.offload_raw_tx_complete_cnt,
+		src.warm_boot_cnt);
+
+	if (!fmac_dev_ctx->fw_stats) {
+		LOG_ERR("%s: Stats destination is NULL", __func__);
+		goto out;
+	}
+
+	dst = (struct rpu_off_raw_tx_fw_stats *)fmac_dev_ctx->fw_stats;
+	dst->offload_raw_tx_state = src.offLoad_raw_tx_state;
+	dst->offload_raw_tx_cnt = src.offload_raw_tx_cnt;
+	dst->offload_raw_tx_complete_cnt = src.offload_raw_tx_complete_cnt;
+	dst->warm_boot_cnt = src.warm_boot_cnt;
 
 	fmac_dev_ctx->stats_req = false;
 
@@ -70,9 +91,9 @@ static enum nrf_wifi_status umac_event_off_raw_tx_proc_events(
 	sys_head = (unsigned char *)rpu_msg->msg;
 
 	switch (((struct nrf_wifi_sys_head *)sys_head)->cmd_event) {
-	case NRF_WIFI_EVENT_STATS:
-		status = umac_event_off_raw_tx_stats_process(fmac_dev_ctx,
-							     sys_head);
+	case NRF_WIFI_EVENT_DEBUG_STATS:
+		status = umac_event_off_raw_tx_debug_stats_process(fmac_dev_ctx,
+								   sys_head);
 		break;
 	case NRF_WIFI_EVENT_INIT_DONE:
 		fmac_dev_ctx->fw_init_done = 1;
@@ -214,6 +235,10 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_event_callback(void *mac_dev_ctx,
 							   rpu_msg);
 		break;
 	default:
+		LOG_DBG("%s: Unhandled message type %d (len %d), dropping",
+				      __func__,
+				      rpu_msg->type,
+				      rpu_msg->hdr.len);
 		goto out;
 	}
 

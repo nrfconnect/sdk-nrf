@@ -20,11 +20,19 @@
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
 #include <common/util.h>
+#include <common/mac_addr.h>
 #include <offload_raw_tx/api.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 
+#ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#include <zephyr/random/random.h>
+#endif /* CONFIG_WIFI_RANDOM_MAC_ADDRESS */
+
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+
+/* Offloaded raw TX transmits from a single interface. */
+#define OFF_RAW_TX_VIF_IDX 0
 
 struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 
@@ -139,29 +147,38 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	}
 
 	if (mac_addr) {
-		memcpy(drv_ctx->mac_addr, mac_addr, 6);
+		memcpy(drv_ctx->mac_addr, mac_addr, WIFI_MAC_ADDR_LEN);
 	} else {
 #ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
-		int ret = -1;
+		int ret = bytes_from_str(drv_ctx->mac_addr,
+					 WIFI_MAC_ADDR_LEN,
+					 CONFIG_WIFI_FIXED_MAC_ADDRESS);
 
-		ret = bytes_from_str(drv_ctx->mac_addr,
-				     6,
-				     CONFIG_WIFI_FIXED_MAC_ADDRESS);
 		if (ret < 0) {
 			LOG_ERR("%s: Failed to parse MAC address: %s",
 				__func__,
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
 			goto err;
 		}
-#elif CONFIG_WIFI_OTP_MAC_ADDRESS
-	/* Set dummy MAC address */
-	drv_ctx->mac_addr[0] = 0x00;
-	drv_ctx->mac_addr[1] = 0x00;
-	drv_ctx->mac_addr[2] = 0x5E;
-	drv_ctx->mac_addr[3] = 0x00;
-	drv_ctx->mac_addr[4] = 0x10;
-	drv_ctx->mac_addr[5] = 0x00;
-#endif /* CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED */
+#elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
+		sys_rand_get(drv_ctx->mac_addr, WIFI_MAC_ADDR_LEN);
+
+		drv_ctx->mac_addr[0] &= ~BIT(0);
+		drv_ctx->mac_addr[0] |= BIT(1);
+#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+		int ret = nrf_wifi_xicr_mac_addr_get(OFF_RAW_TX_VIF_IDX,
+						     drv_ctx->mac_addr,
+						     NULL);
+
+		if (ret) {
+			LOG_ERR("%s: Failed to get MAC address from xICR: %d",
+				__func__,
+				ret);
+			goto err;
+		}
+#else
+#error "No Wi-Fi MAC address type selected, see choice WIFI_MAC_ADDRESS"
+#endif
 
 		if (!nrf_wifi_utils_is_mac_addr_valid(drv_ctx->mac_addr)) {
 			LOG_ERR("%s: Invalid MAC address: %02X:%02X:%02X:%02X:%02X:%02X",
@@ -180,11 +197,7 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 
 	return 0;
 err:
-	if (drv_ctx->rpu_ctx) {
-		nrf_wifi_fmac_dev_rem(drv_ctx->rpu_ctx);
-		drv_ctx->rpu_ctx = NULL;
-	}
-
+	/* Release the lock first: the teardown blocks on mutexes. */
 	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 	nrf_wifi_off_raw_tx_deinit();
 	return -1;
@@ -195,28 +208,43 @@ void nrf_wifi_off_raw_tx_deinit(void)
 {
 	k_spinlock_key_t key;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
+	struct nrf_wifi_fmac_priv *fmac_priv;
+	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
+	void *rpu_ctx;
 	int i;
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 
-	if (!off_raw_tx_drv_priv.fmac_priv) {
-		k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
-		return;
-	}
+	fmac_priv = off_raw_tx_drv_priv.fmac_priv;
+	rpu_ctx = drv_ctx->rpu_ctx;
+	off_raw_tx_drv_priv.fmac_priv = NULL;
+	drv_ctx->rpu_ctx = NULL;
+	drv_ctx->tx_started = false;
 
-	nrf_wifi_fmac_deinit(off_raw_tx_drv_priv.fmac_priv);
+	memcpy(phy_rf_params_addr, drv_ctx->phy_rf_params_addr,
+	       sizeof(phy_rf_params_addr));
+	memset(drv_ctx->phy_rf_params_addr, 0, sizeof(drv_ctx->phy_rf_params_addr));
 
-	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		if (drv_ctx->phy_rf_params_addr[i]) {
-			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-					   (void *)drv_ctx->phy_rf_params_addr[i]);
-			drv_ctx->phy_rf_params_addr[i] = 0;
-		}
-	}
 	/* vtf_snapshots is static, not heap: never free. */
 	drv_ctx->vtf_buffer_start_address = 0;
 
 	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+
+	if (rpu_ctx) {
+		nrf_wifi_off_raw_tx_fmac_dev_deinit(rpu_ctx);
+		nrf_wifi_fmac_dev_rem(rpu_ctx);
+	}
+
+	if (fmac_priv) {
+		nrf_wifi_fmac_deinit(fmac_priv);
+	}
+
+	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
+		if (phy_rf_params_addr[i]) {
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					  (void *)phy_rf_params_addr[i]);
+		}
+	}
 }
 
 static unsigned char off_raw_tx_op_band(const struct nrf_wifi_off_raw_tx_conf *conf)
@@ -296,8 +324,8 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 	struct nrf_wifi_offload_ctrl_params *off_ctrl_params = NULL;
 	struct nrf_wifi_offload_tx_ctrl *off_tx_params = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	bool was_started;
 	k_spinlock_key_t key;
-	bool locked = false;
 
 	if (!conf) {
 		LOG_ERR("%s: Config params is NULL", __func__);
@@ -312,9 +340,9 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
-	locked = true;
-
 	fmac_dev_ctx = drv_ctx->rpu_ctx;
+	was_started = drv_ctx->tx_started;
+	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 
 	if (!fmac_dev_ctx) {
 		LOG_ERR("%s: FMAC device context is NULL", __func__);
@@ -361,6 +389,15 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 	off_tx_params->rate_preamble_type = conf->short_preamble;
 	off_tx_params->rate_retries = conf->num_retries;
 
+	if (was_started) {
+		status = nrf_wifi_off_raw_tx_fmac_stop(fmac_dev_ctx);
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: Failed to stop offload engine", __func__);
+			goto out;
+		}
+		drv_ctx->tx_started = false;
+	}
+
 	status = nrf_wifi_off_raw_tx_fmac_conf(fmac_dev_ctx,
 					       off_ctrl_params,
 					       off_tx_params);
@@ -370,13 +407,19 @@ int nrf_wifi_off_raw_tx_conf_update(struct nrf_wifi_off_raw_tx_conf *conf)
 		goto out;
 	}
 
+	if (was_started) {
+		status = nrf_wifi_off_raw_tx_fmac_start(fmac_dev_ctx);
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: Failed to restart offload engine", __func__);
+			goto out;
+		}
+		drv_ctx->tx_started = true;
+	}
+
 	ret = 0;
 out:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_ctrl_params);
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, off_tx_params);
-	if (locked) {
-		k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
-	}
 	return ret;
 }
 
@@ -386,31 +429,35 @@ int nrf_wifi_off_raw_tx_start(struct nrf_wifi_off_raw_tx_conf *conf)
 	int ret = -1;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	k_spinlock_key_t key;
 
 	ret = nrf_wifi_off_raw_tx_conf_update(conf);
 	if (ret != 0) {
 		LOG_ERR("%s: nRF71 offloaded raw TX configuration failed",
 				      __func__);
-		goto out;
+		return ret;
 	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
-	if (!drv_ctx->rpu_ctx) {
+	fmac_dev_ctx = drv_ctx->rpu_ctx;
+	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+
+	if (!fmac_dev_ctx) {
 		LOG_ERR("%s: FMAC device context is NULL", __func__);
 		goto out;
 	}
 
-	status = nrf_wifi_off_raw_tx_fmac_start(drv_ctx->rpu_ctx);
+	status = nrf_wifi_off_raw_tx_fmac_start(fmac_dev_ctx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nRF71 offloaded raw TX start failed",
 				      __func__);
 		goto out;
 	}
 
+	drv_ctx->tx_started = true;
 	ret = 0;
 out:
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 	return ret;
 }
 
@@ -420,25 +467,28 @@ int nrf_wifi_off_raw_tx_stop(void)
 	int ret = -1;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	k_spinlock_key_t key;
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
+	fmac_dev_ctx = drv_ctx->rpu_ctx;
+	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 
-	if (!drv_ctx->rpu_ctx) {
+	if (!fmac_dev_ctx) {
 		LOG_ERR("%s: FMAC device context is NULL", __func__);
 		goto out;
 	}
 
-	status = nrf_wifi_off_raw_tx_fmac_stop(drv_ctx->rpu_ctx);
+	status = nrf_wifi_off_raw_tx_fmac_stop(fmac_dev_ctx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nRF71 offloaded raw TX stop failed",
 				      __func__);
 		goto out;
 	}
 
+	drv_ctx->tx_started = false;
 	ret = 0;
 out:
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 	return ret;
 }
 
@@ -461,19 +511,22 @@ int nrf_wifi_off_raw_tx_stats(struct nrf_wifi_off_raw_tx_stats *off_raw_tx_stats
 	int ret = -1;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	struct rpu_off_raw_tx_op_stats stats;
 	k_spinlock_key_t key;
 
 	memset(&stats, 0, sizeof(stats));
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
+	fmac_dev_ctx = drv_ctx->rpu_ctx;
+	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 
-	if (!drv_ctx->rpu_ctx) {
+	if (!fmac_dev_ctx) {
 		LOG_ERR("%s: FMAC device context is NULL", __func__);
 		goto out;
 	}
 
-	status = nrf_wifi_off_raw_tx_fmac_stats_get(drv_ctx->rpu_ctx,
+	status = nrf_wifi_off_raw_tx_fmac_stats_get(fmac_dev_ctx,
 						    0,
 						    &stats);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -486,6 +539,5 @@ int nrf_wifi_off_raw_tx_stats(struct nrf_wifi_off_raw_tx_stats *off_raw_tx_stats
 
 	ret = 0;
 out:
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 	return ret;
 }
