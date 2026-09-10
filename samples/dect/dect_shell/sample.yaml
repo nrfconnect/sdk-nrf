@@ -61,3 +61,13 @@ tests:
       - SHIELD=seeed_w5500
       - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf"
       - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
+  sample.dect.dect_shell.arceli_eth_w5500_dect_rx_pool:
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;dect_rx_pool.conf;dlc_resilient.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+  sample.dect.dect_shell.seeed_eth_w5500_dect_rx_pool:
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;dect_rx_pool.conf;dlc_resilient.conf"
+      - EXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
