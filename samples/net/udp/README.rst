@@ -4,7 +4,8 @@
    :title: UDP
 
    The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
-   The sample connects to an LTE network using an nRF91 Series DK or a Thingy:91, or to Wi-Fi® using an nRF7002 DK or an nRF54L15 DK connected with nRF7002-EB II as a shield.
+   The sample connects to either an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device combined with a compatible host platform.
+
 
    .. |wifi| replace:: Wi-Fi
 
@@ -69,10 +70,12 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the nRF7002 DK.
-* :file:`nrf54l15dk_nrf54l15_cpuapp.conf` - Configuration file for the nRF54L15 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`boards/nrf7120dk_nrf7120_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`wifi.conf` - Configuration overlay file for Wi-Fi devices, common to the nRF71 Series and nRF70 Series.
+
+Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+
+To add a specific configuration overlay file to the build, add the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build.
 
 Building and running
 ********************
@@ -104,6 +107,9 @@ Troubleshooting
 If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
 This sample enables modem traces by default.
 
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic in order to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
+
 Dependencies
 ************
 
@@ -112,3 +118,4 @@ This sample uses the following |NCS| and Zephyr libraries:
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
 * :ref:`bsd_sockets_interface`
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`
