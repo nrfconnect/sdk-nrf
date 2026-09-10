@@ -28,10 +28,10 @@ struct bt_throughput_metrics {
         /** Number of GATT writes received. */
 	uint32_t write_count;
 
-        /** Number of bytes received. */
+	/** Number of ATT payload bytes received. */
 	uint32_t write_len;
 
-        /** Transfer speed in bits per second. */
+	/** Transfer speed in ATT payload bits per second. */
 	uint32_t write_rate;
 };
 
