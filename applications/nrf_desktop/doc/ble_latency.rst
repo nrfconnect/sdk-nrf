@@ -114,7 +114,7 @@ After the link uses HID SCI, only the connection rate API might be used to adjus
 
 If a HID SCI mode request through the HID Control Point characteristic or Connection Rate Update Request is received before the delayed work runs, the module cancels the scheduled initial connection parameter request and switches to the connection rate API instead.
 If a HID SCI mode request arrives while the initial connection parameter update is already in progress, the requested SCI mode is made pending and applied after that update completes or fails.
-As of |NCS| 3.4.0 (which the current code must be compatible with), no connection parameter update rejection callback was available.
+The connection parameter update rejection callback is not available in the |NCS| long term support (LTS) release v3.4.0 and the subsequent bug fix releases.
 As a workaround, a timeout is scheduled that treats the update as failed if a completion callback is not received within 5 seconds after the update is requested.
 
 Module events

@@ -98,7 +98,7 @@ static void set_init_conn_params(void)
 	if (!err) {
 		latency_state |= CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS;
 		/* The conn_params_update_rejected callback was not
-		 * available on NCS 3.4.0 which this code needs to be compatible with.
+		 * available on NCS 3.4.X which this code needs to be compatible with.
 		 * To avoid the CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS being set
 		 * permanently locking connection rate updates, treat the update
 		 * as rejected/failed after the INIT_CONN_PARAMS_UPDATE_TIMEOUT_MS
