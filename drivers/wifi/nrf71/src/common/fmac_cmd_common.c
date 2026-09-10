@@ -10,7 +10,7 @@
  */
 
 #include <common/mem_mgmt.h>
-#include <common/hal_api_common.h>
+#include <common/wifi_ipc.h>
 
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
@@ -72,9 +72,9 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			      params,
 			      len);
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 	LOG_DBG("%s: Command %d sent to RPU",
 			      __func__,
@@ -104,9 +104,9 @@ enum nrf_wifi_status umac_cmd_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	umac_cmd_data = (struct nrf_wifi_cmd_sys_deinit *)(umac_cmd->msg);
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_DEINIT;
 	umac_cmd_data->sys_head.len = len;
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -142,9 +142,9 @@ enum nrf_wifi_status umac_cmd_srcoex(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			      cmd,
 			      cmd_len);
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 
@@ -175,9 +175,9 @@ enum nrf_wifi_status umac_cmd_prog_stats_reset(struct nrf_wifi_fmac_dev_ctx *fma
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_RESET_STATISTICS;
 	umac_cmd_data->sys_head.len = len;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;

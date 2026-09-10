@@ -11,7 +11,7 @@
 
 #include <common/mem_mgmt.h>
 #include <offload_raw_tx/fmac_cmd.h>
-#include <common/hal_api_common.h>
+#include <common/wifi_ipc.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -121,9 +121,9 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 	umac_cmd_data->coex_disable_ptiwin_for_wifi_scan = 0;
 #endif /* NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN */
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -154,9 +154,9 @@ enum nrf_wifi_status umac_cmd_off_raw_tx_prog_stats_get(struct nrf_wifi_fmac_dev
 	umac_cmd_data->sys_head.len = len;
 	umac_cmd_data->stats_type = RPU_STATS_TYPE_OFFLOADED_RAW_TX;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -211,9 +211,9 @@ enum nrf_wifi_status umac_cmd_off_raw_tx_conf(struct nrf_wifi_fmac_dev_ctx *fmac
 			      offload_tx_params,
 			      sizeof(*offload_tx_params));
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -248,9 +248,9 @@ enum nrf_wifi_status umac_cmd_off_raw_tx_ctrl(struct nrf_wifi_fmac_dev_ctx *fmac
 	umac_cmd_data->sys_head.len = len;
 	umac_cmd_data->ctrl_type = ctrl_type;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }

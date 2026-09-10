@@ -14,7 +14,6 @@
 #include <common/llist_mgmt.h>
 #include <common/work_mgmt.h>
 #include <system/fmac_api.h>
-#include <system/hal_api.h>
 #include <system/fmac_structs.h>
 #include <common/util.h>
 #include <system/fmac_peer.h>
@@ -373,18 +372,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
 	fmac_dev_ctx->fpriv = fpriv;
 	fmac_dev_ctx->os_dev_ctx = os_dev_ctx;
 
-	fmac_dev_ctx->hal_dev_ctx = nrf_wifi_sys_hal_dev_add(fpriv->hpriv,
-							     fmac_dev_ctx);
-
-	if (!fmac_dev_ctx->hal_dev_ctx) {
-		LOG_ERR("%s: nrf_wifi_sys_hal_dev_add failed",
-				      __func__);
-
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx);
-		fmac_dev_ctx = NULL;
-		goto out;
-	}
-
 	fmac_dev_ctx->op_mode = NRF_WIFI_OP_MODE_SYS;
 out:
 	return fmac_dev_ctx;
@@ -415,10 +402,10 @@ nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_hal_dev_init(fmac_dev_ctx->hal_dev_ctx);
+	status = nrf_wifi_ipc_open(fmac_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_hal_dev_init failed",
+		LOG_ERR("%s: nrf_wifi_ipc_open failed",
 				      __func__);
 		goto out;
 	}
@@ -451,7 +438,7 @@ void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	 * the same transport that the HAL de-init tears down.
 	 */
 	nrf_wifi_sys_fmac_fw_deinit(fmac_dev_ctx);
-	nrf_wifi_hal_dev_deinit(fmac_dev_ctx->hal_dev_ctx);
+	nrf_wifi_ipc_close(fmac_dev_ctx);
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx->tx_pwr_ceil_params);
 }
 
@@ -554,17 +541,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_pa
 
 	sys_fpriv->num_rx_bufs = desc;
 
-	fpriv->hpriv = nrf_wifi_hal_init(&nrf_wifi_sys_fmac_event_callback);
-
-	if (!fpriv->hpriv) {
-		LOG_ERR("%s: Unable to do HAL init",
-				      __func__);
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
-		fpriv = NULL;
-		sys_fpriv = NULL;
-		goto out;
-	}
-
+	fpriv->rpu_event_cb = &nrf_wifi_sys_fmac_event_callback;
 	fpriv->op_mode = NRF_WIFI_OP_MODE_SYS;
 out:
 	return fpriv;
@@ -3485,9 +3462,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
 	umac_cmd_data->if_index = if_idx;
 	umac_cmd_data->op_mode = mode;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -3535,9 +3512,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 	umac_cmd_data->chan.op_band = op_band;
 	umac_cmd_data->chan.primary_num = channel;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -3583,9 +3560,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx, unsigned
 	umac_cmd_data->filter = filter;
 	umac_cmd_data->capture_len = buffer_size;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -3628,9 +3605,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx 
 	umac_cmd_data->rate_flags = rate_flag;
 	umac_cmd_data->fixed_rate = data_rate;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }

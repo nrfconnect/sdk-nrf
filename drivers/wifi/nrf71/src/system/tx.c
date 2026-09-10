@@ -14,11 +14,10 @@
 #include <common/llist_mgmt.h>
 #include <common/lock_mgmt.h>
 #include <common/work_mgmt.h>
-#include <system/hal_api.h>
+#include <common/wifi_ipc.h>
 #include <system/fmac_tx.h>
 #include <system/fmac_api.h>
 #include <system/fmac_peer.h>
-#include <common/hal_api_common.h>
 #include <common/util.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/logging/log.h>
@@ -931,9 +930,9 @@ enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 	while (nrf_wifi_llist_len(txq)) {
 		nwb = nrf_wifi_llist_pop_head(txq);
@@ -980,9 +979,9 @@ enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-						umac_cmd,
-						sizeof(*umac_cmd) + len);
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       sizeof(*umac_cmd) + len);
 out:
 	return status;
 }
@@ -1341,11 +1340,9 @@ static void tx_done_tasklet_fn(unsigned long data)
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = (struct nrf_wifi_fmac_dev_ctx *)data;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 	void *tx_done_tasklet_event_q;
-	enum NRF_WIFI_HAL_STATUS hal_status;
 
-	nrf_wifi_sys_hal_lock_rx(fmac_dev_ctx->hal_dev_ctx);
-	hal_status = nrf_wifi_hal_status_unlocked(fmac_dev_ctx->hal_dev_ctx);
-	if (hal_status != NRF_WIFI_HAL_STATUS_ENABLED) {
+	nrf_wifi_ipc_rx_lock(fmac_dev_ctx);
+	if (!nrf_wifi_ipc_rx_enabled(fmac_dev_ctx)) {
 		goto out;
 	}
 
@@ -1358,14 +1355,14 @@ static void tx_done_tasklet_fn(unsigned long data)
 	if (!config) {
 		LOG_ERR("%s: TX done event Q is empty",
 				      __func__);
-		return;
+		goto out;
 	}
 
 	(void) nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx, config);
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
 out:
-	nrf_wifi_sys_hal_unlock_rx(fmac_dev_ctx->hal_dev_ctx);
+	nrf_wifi_ipc_rx_unlock(fmac_dev_ctx);
 }
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 
