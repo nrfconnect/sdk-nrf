@@ -1,6 +1,9 @@
 sample:
   description: BSD Sockets API CoAP server example
   name: socket_coap_server
+common:
+  extra_args:
+    - CONF_FILE="${ZEPHYR_BASE}/samples/net/sockets/coap_server/prj.conf"
 tests:
   nrf.extended.sample.net.sockets.coap_server.wifi.nrf71dk:
     tags:
