@@ -188,7 +188,7 @@ config ESB_FAST_CHANNEL_SWITCHING
 
 config ESB_CLOCK_INIT
 	bool "Initialize clocks during ESB initialization"
-	depends on CLOCK_CONTROL_NRF_COMMON
+	depends on CLOCK_CONTROL_NRF_COMMON || CLOCK_CONTROL_NRF
 	imply NRFX_POWER
 	help
 	  When enabled, the ESB subsystem automatically starts the required
