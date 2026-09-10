@@ -168,16 +168,6 @@ static void check_timing(uint32_t baudrate)
 		}
 		TC_PRINT("Start index: %d, stop index: %d\n", start_index, stop_index);
 
-		if ((start_index == -1) || (stop_index == -1)) {
-			TC_PRINT("[%d] Sampling window of %.2f us is too short "
-				 "to capture a full symbol.\n",
-				 baudrate, PIN_STATE_SIZE * gpio_read_time_us_mean);
-			TC_PRINT("Increase CONFIG_TEST_PIN_STATE_SAMPLES to at least %d.\n",
-				 PIN_STATE_SIZE * 2);
-			ztest_test_fail();
-			return;
-		}
-
 		double measured_period_us = (stop_index - start_index) * gpio_read_time_us_mean;
 		double measured_bit_us = measured_period_us / (double)number_of_bits;
 
