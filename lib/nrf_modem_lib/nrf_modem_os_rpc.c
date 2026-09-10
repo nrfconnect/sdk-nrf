@@ -9,6 +9,7 @@
 #include <stdint.h>
 
 #include <nrf_errno.h>
+#include <nrf_modem.h>
 #include <nrf_modem_os_rpc.h>
 
 #include <zephyr/cache.h>
@@ -120,7 +121,7 @@ uintptr_t nrf_modem_os_rpc_sigdev_modem_get(void)
 	return (uintptr_t)modem_bellboard;
 }
 
-int nrf_modem_os_rpc_cellcore_boot(void)
+static int cellcore_boot(uint32_t ipc_buf_addr, uint32_t ipc_buf_size, uint32_t loader_addr)
 {
 	/* Cpuconf called only on cold boot */
 	if (ironside_se_cellcore_is_booted) {
@@ -128,9 +129,9 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 	}
 	struct boot_report_cellcore_ldc params;
 
-	params.ipc_buf_addr = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl));
-	params.ipc_buf_size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE;
-	params.loader_addr = 0;
+	params.ipc_buf_addr = ipc_buf_addr;
+	params.ipc_buf_size = ipc_buf_size;
+	params.loader_addr = loader_addr;
 	params.rfu = 0;
 
 	uint8_t *msg = (uint8_t *)&params;
@@ -145,6 +146,17 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 		ironside_se_cellcore_is_booted = true;
 	}
 	return ret;
+}
+
+int nrf_modem_os_rpc_cellcore_boot(void)
+{
+	return cellcore_boot(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
+			     CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE, 0);
+}
+
+int nrf_modem_os_rpc_cellcore_boot_bootloader(uint32_t loader_addr)
+{
+	return cellcore_boot(loader_addr, NRF_MODEM_SHMEM_BOOTLOADER_SIZE, loader_addr);
 }
 
 static inline void pbuf_configure(struct pbuf_cfg *pb_cfg, uintptr_t mem_addr, size_t size)
