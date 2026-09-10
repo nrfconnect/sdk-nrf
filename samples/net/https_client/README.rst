@@ -220,10 +220,13 @@ Sample output
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries:
+This sample uses the following |NCS| and Zephyr libraries:
 
 * :ref:`modem_key_mgmt`
 * :ref:`lte_lc_readme`
+* :ref:`net_if_interface`
+* :ref:`net_mgmt_interface`
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`
 
 It uses the following `sdk-nrfxlib`_ library:
 
