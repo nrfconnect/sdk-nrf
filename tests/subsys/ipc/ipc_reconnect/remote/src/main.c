@@ -93,7 +93,7 @@ int main(void)
 			printk("Reconnecting\n");
 			configure_ipc(&test_endpoint);
 		}
-		k_msleep(1000);
+		k_msleep(103);
 	}
 
 	return 0;
