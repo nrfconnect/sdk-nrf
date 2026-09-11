@@ -25,7 +25,7 @@
 #include "audio_system.h"
 #include "streamctrl.h"
 #include "sd_card_playback.h"
-#include "audio_clock.h"
+#include "audio_rate_control.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
@@ -297,20 +297,15 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 		int32_t err_us = DRIFT_MEAS_PERIOD_US - (ctrl_blk.prev_drift_sdu_ref_us -
 							 ctrl_blk.drift_comp.meas_start_time_us);
 
-		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
-
-		ctrl_blk.drift_comp.center_freq = APLL_FREQ_CENTER + freq_adj;
-
-		if ((ctrl_blk.drift_comp.center_freq > (APLL_FREQ_MAX)) ||
-		    (ctrl_blk.drift_comp.center_freq < (APLL_FREQ_MIN))) {
+		ret = audio_rate_control_update(AUDIO_PLL, &err_us, true);
+		if (ret == -EINVAL) {
 			LOG_DBG("Invalid center frequency, re-calculating");
 			drift_comp_state_set(DRIFT_STATE_INIT);
 			return;
 		}
 
-		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq);
 		if (ret) {
-			LOG_ERR("Failed to set audio clock frequency");
+			LOG_ERR("Failed to set audio clock frequency: %d", ret);
 			return;
 		}
 
@@ -330,11 +325,10 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 			err_us_calculate(ctrl_blk.prev_drift_sdu_ref_us, frame_start_ts_us);
 
 		err_us /= DRIFT_REGULATOR_DIV_FACTOR;
-		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
-		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		ret = audio_rate_control_update(AUDIO_PLL, &err_us, false);
 		if (ret) {
-			LOG_ERR("Failed to set audio clock frequency");
+			LOG_ERR("Failed to set audio clock frequency: %d", ret);
 			return;
 		}
 
@@ -356,11 +350,10 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 			err_us_calculate(ctrl_blk.prev_drift_sdu_ref_us, frame_start_ts_us);
 
 		err_us /= DRIFT_REGULATOR_DIV_FACTOR;
-		int32_t freq_adj = APLL_FREQ_ADJ(err_us);
 
-		ret = audio_clock_set(ctrl_blk.drift_comp.center_freq + freq_adj);
+		ret = audio_rate_control_update(AUDIO_PLL, &err_us, false);
 		if (ret) {
-			LOG_ERR("Failed to set audio clock frequency");
+			LOG_ERR("Failed to set audio clock frequency: %d", ret);
 			return;
 		}
 
