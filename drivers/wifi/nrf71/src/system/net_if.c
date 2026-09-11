@@ -762,10 +762,10 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 		    nrf_wifi_net_iface_work_handler);
 #endif /* CONFIG_NRF71_DATA_TX */
 
-#ifdef CONFIG_NRF71_SCAN_ONLY
-	/* In scan only mode this interface should be ignored by the connectivity manager */
+#if defined(CONFIG_NRF71_SCAN) && !defined(CONFIG_NRF71_SYSTEM_CONNECTION)
+	/* In scan-only mode this interface should be ignored by the connectivity manager */
 	conn_mgr_ignore_iface(iface);
-#endif /* CONFIG_NRF71_SCAN_ONLY */
+#endif /* CONFIG_NRF71_SCAN && !CONFIG_NRF71_SYSTEM_CONNECTION */
 
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
