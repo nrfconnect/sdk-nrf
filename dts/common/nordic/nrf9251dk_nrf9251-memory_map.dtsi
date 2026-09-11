@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/dt-bindings/memory-attr/memory-attr.h>
+#include <zephyr/dt-bindings/reserved-memory/nordic-owned-memory.h>
 
 / {
 	reserved-memory {
@@ -12,19 +13,30 @@
 		#size-cells = <1>;
 		ranges;
 
-		/* IPC Ctrl */
-		cpuapp_cpucell_ipc_shm_ctrl: memory@2f057000 {
-			reg = <0x2f057000 DT_SIZE_K(4)>;
-		};
+		cpuapp_cpucell_ram0x_region: memory@2f050000 {
+			compatible = "nordic,owned-memory";
+			reg = <0x2f050000 DT_SIZE_K(64)>;
+			status = "disabled";
+			nordic,access = <NRF_OWNER_ID_APPLICATION NRF_PERM_RW>,
+					<NRF_OWNER_ID_CELL NRF_PERM_RW>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x2f050000 0x10000>;
 
-		/* IPC TX heap, user defined */
-		cpuapp_cpucell_ipc_shm_heap: memory@2f058000 {
-			reg = <0x2f058000 DT_SIZE_K(16)>;
-		};
+			/* IPC Ctrl */
+			cpuapp_cpucell_ipc_shm_ctrl: memory@7000 {
+				reg = <0x7000 DT_SIZE_K(4)>;
+			};
 
-		/* IPC RX heap, user defined */
-		cpucell_cpuapp_ipc_shm_heap: memory@2f05c000 {
-			reg = <0x2f05c000 DT_SIZE_K(16)>;
+			/* IPC TX heap, user defined */
+			cpuapp_cpucell_ipc_shm_heap: memory@8000 {
+				reg = <0x8000 DT_SIZE_K(16)>;
+			};
+
+			/* IPC RX heap, user defined */
+			cpucell_cpuapp_ipc_shm_heap: memory@c000 {
+				reg = <0xc000 DT_SIZE_K(16)>;
+			};
 		};
 
 		cpuapp_cpusys_ipc_shm: memory@2f88f600 {

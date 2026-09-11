@@ -101,6 +101,10 @@
 	status = "okay";
 };
 
+&cpuapp_cpucell_ram0x_region {
+	status = "okay";
+};
+
 &cpuapp_bellboard {
 	status = "okay";
 	interrupts = <96 NRF_DEFAULT_IRQ_PRIORITY>;

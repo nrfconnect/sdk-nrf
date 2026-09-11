@@ -40,6 +40,12 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 	.fault_handler = nrf_modem_fault_handler
 };
 
+#elif CONFIG_SOC_SERIES_NRF92
+static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
+	.shmem.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ram0x_region)),
+	.shmem.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ram0x_region)),
+	.fault_handler = nrf_modem_fault_handler
+};
 #endif
 
 /* The heap implementation in `nrf_modem_os.c` require some overhead
@@ -173,11 +179,7 @@ init_callbacks:
 
 int nrf_modem_lib_bootloader_init(void)
 {
-#ifdef CONFIG_SOC_SERIES_NRF91
 	return nrf_modem_bootloader_init(&bootloader_init_params);
-#else
-	return -ENOSYS;
-#endif
 }
 
 int nrf_modem_lib_shutdown(void)
