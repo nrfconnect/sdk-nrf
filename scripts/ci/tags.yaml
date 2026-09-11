@@ -1631,6 +1631,11 @@ ci_samples_zephyr_basic_blinky_pwm:
     - nrf/samples/zephyr/basic/blinky_pwm/
     - zephyr/samples/basic/blinky_pwm/
 
+ci_samples_zephyr_basic_fade_led:
+  files:
+    - nrf/samples/zephyr/basic/fade_led/
+    - zephyr/samples/basic/fade_led/
+
 ci_samples_zephyr_sensor_accel_polling:
   files:
     - nrf/samples/zephyr/sensor/accel_polling/
