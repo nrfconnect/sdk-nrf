@@ -55,3 +55,14 @@
 	pinctrl-names = "default", "sleep";
 	memory-regions = <&dma_fast_region>;
 };
+
+/* HFXO and FLL16M are requested through LRCCONF010, which is not mapped
+ * into the FLPR address space. Only the application domain can drive them.
+ */
+&hfxo {
+	status = "disabled";
+};
+
+&fll16m {
+	status = "disabled";
+};
