@@ -758,6 +758,7 @@
 /samples/wifi/provisioning/softap/*.rst   @nrfconnect/ncs-cia-doc
 /samples/wifi/nrf_cloud/*.rst             @nrfconnect/ncs-bifrost @nrfconnect/ncs-nrf-cloud-doc
 /samples/zephyr/basic/blinky/             @nrfconnect/ncs-low-level-test @nrfconnect/ncs-ll-ursus
+/samples/zephyr/basic/blinky_pwm/         @nrfconnect/ncs-low-level-test
 /samples/zephyr/bluetooth/                @nrfconnect/ncs-low-level-test
 /samples/zephyr/boards/nordic/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/adc/              @nrfconnect/ncs-low-level-test
