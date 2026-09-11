@@ -22,6 +22,7 @@ config TEST_NRFX_HF_CLOCK_DRIVER
 config TEST_CC_HF_CLOCK_DRIVER
 	bool "Use Clock Control HF clock driver in test"
 	default y if SOC_NRF54H20
+	default y if SOC_NRF9251
 	select CLOCK_CONTROL
 
 config TEST_GRTC_TIMER_INTERVAL_US
