@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 3d2d2b855fc3515284b47b87dfa74c821e34beef
+      revision: pull/4461/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -267,6 +267,17 @@ manifest:
       repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: 09cf9bf998b9e70c2926203447f620c01d68a064
+
+    - name: hal_nordic
+      revision: nrfx-removed
+      url: https://github.com/zephyrproject-rtos/hal_nordic
+      path: modules/hal/nor
+
+    - name: nrfx
+      revision: v4.6.0
+      url: https://github.com/NordicSemiconductor/nrfx
+      path: modules/hal/nor/nrfx
+
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
