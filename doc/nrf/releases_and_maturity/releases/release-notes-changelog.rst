@@ -725,6 +725,7 @@ Other samples
 
   * The :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
   * The :ref:`pulse_meas` sample that checks the pulse width of an externally provided signal.
+  * The :ref:`saadct_sample` sample that demonstrates timer-triggered SAADC sampling using the :ref:`saadct` driver.
 
 Drivers
 =======
@@ -737,6 +738,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
   * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
   * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
   * The :ref:`nrf71_sr_coex` driver, which coordinates Wi-Fi and short-range coexistence on an nRF71 Series device.
+  * The :ref:`saadct` driver, which uses an external TIMER and GPPI to trigger SAADC sampling at a configured rate.
 
 SPI drivers
 -----------
