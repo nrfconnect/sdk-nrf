@@ -373,8 +373,8 @@
 .. _`nRF54LV10 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LV10-DK
 .. _`nRF54LV10A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LV10A
 
-.. _`nRF54LC10 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LC10-DK
-.. _`nRF54LC10A System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LC10A
+.. _`nRF54LC10 DK`: https://www.nordicsemi.com/nRF54LC10-DK
+.. _`nRF54LC10A System-on-Chip`: https://www.nordicsemi.com/nRF54LC10A
 
 .. _`nRF54LS05 DK`: https://www.nordicsemi.com/Products/Development-hardware/nRF54LS05-DK
 .. _`nRF54LS05B System-on-Chip`: https://www.nordicsemi.com/Products/nRF54LS05B
