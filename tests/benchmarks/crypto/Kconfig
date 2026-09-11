@@ -1,0 +1,231 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menu "Crypto benchmarks"
+
+choice CRYPTO_BENCHMARKS_OUTPUT_FORMAT
+	prompt "Format of the operation summary"
+	default CRYPTO_BENCHMARKS_OUTPUT_TEXT
+
+config CRYPTO_BENCHMARKS_OUTPUT_TEXT
+	bool "Human-readable table"
+	help
+	  One log line per operation, aligned into a table.
+
+config CRYPTO_BENCHMARKS_OUTPUT_JSON
+	bool "JSON, for machine consumption"
+	help
+	  One JSON document, printed between the markers
+	  ---CRYPTO-DEMO-JSON-BEGIN--- and ---CRYPTO-DEMO-JSON-END--- so that it
+	  can be cut out of a serial capture that also holds log output. Every
+	  operation carries the name of the src/suites folder it came from, so
+	  that a consumer can group the results by cryptographic family.
+
+	  The document is printed with printk() rather than logged, because the
+	  log prefix would leave it unparsable.
+
+endchoice
+
+config CRYPTO_BENCHMARKS_OP_STACK_SIZE
+	int "Stack size of the operation threads"
+	default 32768
+	help
+	  Size of the single stack that every operation thread reuses. The
+	  operations run one at a time, so this is sized for the most demanding
+	  one rather than for the sum of them.
+
+config CRYPTO_BENCHMARKS_OP_TIMEOUT_MS
+	int "Time to wait for an operation to finish, in milliseconds"
+	default 30000
+	help
+	  An operation thread does not log, so one that faults or wedges cannot
+	  report it. If it has not finished within this time the runner records
+	  it as failed and carries on.
+
+config CRYPTO_BENCHMARKS_PSA_CIPHER
+	bool "Enable all PSA cipher tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_CBC_NO_PADDING
+	select PSA_WANT_ALG_CBC_PKCS7
+	select PSA_WANT_ALG_CTR
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_STREAM_CIPHER
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_KEY_TYPE_CHACHA20
+
+config CRYPTO_BENCHMARKS_PSA_AEAD
+	bool "Enable all PSA AEAD tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_CCM
+	select PSA_WANT_ALG_GCM
+	select PSA_WANT_ALG_CHACHA20_POLY1305
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_KEY_TYPE_CHACHA20
+
+config CRYPTO_BENCHMARKS_PSA_HASH
+	bool "Enable all PSA hash tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_SHA_1
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_SHA_384
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_ALG_SHA3_224
+	select PSA_WANT_ALG_SHA3_256
+	select PSA_WANT_ALG_SHA3_384
+	select PSA_WANT_ALG_SHA3_512
+
+config CRYPTO_BENCHMARKS_PSA_XOF
+	bool "Enable all PSA XOF tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_SHAKE256_512
+	select PSA_WANT_ALG_SHAKE128
+	select PSA_WANT_ALG_SHAKE256
+
+config CRYPTO_BENCHMARKS_PSA_MAC
+	bool "Enable all PSA MAC tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_SHA_1
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_SHA_384
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_KEY_TYPE_HMAC
+	select PSA_WANT_KEY_TYPE_AES
+
+config CRYPTO_BENCHMARKS_PSA_KEY_DERIVATION
+	bool "Enable all PSA key derivation tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_PBKDF2_HMAC
+	select PSA_WANT_ALG_TLS12_PRF
+	select PSA_WANT_ALG_TLS12_PSK_TO_MS
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_KEY_TYPE_DERIVE
+	select PSA_WANT_KEY_TYPE_PASSWORD
+
+config CRYPTO_BENCHMARKS_PSA_KEY_AGREEMENT
+	bool "Enable all PSA key agreement tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_ECDH
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_256
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_384
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_512
+	select PSA_WANT_ECC_MONTGOMERY_255
+	select PSA_WANT_ECC_MONTGOMERY_448
+	select PSA_WANT_ECC_SECP_K1_256
+	select PSA_WANT_ECC_SECP_R1_224
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_ECC_SECP_R1_384
+	select PSA_WANT_ECC_SECP_R1_521
+
+config CRYPTO_BENCHMARKS_PSA_SIGNATURE
+	bool "Enable all PSA signature tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ALG_PURE_EDDSA
+	select PSA_WANT_ALG_RSA_PKCS1V15_SIGN
+	select PSA_WANT_ALG_RSA_PSS
+	select PSA_WANT_ALG_ML_DSA
+	# Only the public key type: Cracen has no ML-DSA key pair support at all,
+	# so the suite imports a known-answer public key and verifies with it.
+	select PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY
+	select PSA_WANT_ML_DSA_KEY_SIZE_65
+	# Cracen builds ML-DSA out of these.
+	select PSA_WANT_ALG_SHAKE128
+	select PSA_WANT_ALG_SHA_1
+	select PSA_WANT_ALG_SHA_224
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_SHA_384
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_ALG_SHAKE256
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_256
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_384
+	select PSA_WANT_ECC_BRAINPOOL_P_R1_512
+	select PSA_WANT_ECC_SECP_K1_256
+	select PSA_WANT_ECC_SECP_R1_224
+	select PSA_WANT_ECC_SECP_R1_256
+	select PSA_WANT_ECC_SECP_R1_384
+	select PSA_WANT_ECC_SECP_R1_521
+	select PSA_WANT_ECC_TWISTED_EDWARDS_255
+	select PSA_WANT_RSA_KEY_SIZE_4096
+	select PSA_WANT_RSA_KEY_SIZE_2048
+
+config CRYPTO_BENCHMARKS_PSA_ASYMMETRIC_ENCRYPTION
+	bool "Enable all PSA asymmetric encryption tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_RSA_OAEP
+	select PSA_WANT_ALG_RSA_PKCS1V15_CRYPT
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE
+	select PSA_WANT_RSA_KEY_SIZE_2048
+
+config CRYPTO_BENCHMARKS_PSA_PAKE
+	bool "Enable all PSA PAKE tests"
+	default y
+	select PSA_CRYPTO
+	# EC J-PAKE, the same set as samples/crypto/ecjpake.
+	select PSA_WANT_ALG_JPAKE
+	select PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_KEY_TYPE_PASSWORD
+	select PSA_WANT_KEY_TYPE_DERIVE
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
+	select PSA_WANT_ECC_SECP_R1_256
+	# SPAKE2+, the same set as samples/crypto/spake2p. Both sides import a
+	# half of a registration record, so the key pair and the public key type
+	# are both needed, and HKDF turns the agreed secret into bytes.
+	select PSA_WANT_ALG_SPAKE2P_HMAC
+	select PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_SPAKE2P_PUBLIC_KEY
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	# SRP-6. Cracen's implementation is hardwired to SHA-512 over the
+	# 3072-bit MODP group, so SHA-512 is not optional here. The client
+	# derives its private key with the SRP password hash rather than
+	# importing one, and the server imports the verifier as a public key.
+	select PSA_WANT_ALG_SRP_6
+	select PSA_WANT_ALG_SRP_PASSWORD_HASH
+	select PSA_WANT_ALG_SHA_512
+	select PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE
+	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
+
+config CRYPTO_BENCHMARKS_PSA_KEY_WRAP
+	bool "Enable all PSA key wrap tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_ALG_AES_KW
+	select PSA_WANT_ALG_AES_KWP
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_KEY_TYPE_AES
+
+config CRYPTO_BENCHMARKS_PSA_RNG
+	bool "Enable all PSA RNG tests"
+	default y
+	select PSA_CRYPTO
+	select PSA_WANT_GENERATE_RANDOM
+
+endmenu
+
+source "Kconfig.zephyr"
