@@ -1,0 +1,306 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DECT_TETHER_IPV6_LIB
+	bool "DECT IPv6 tethering (RA + optional DHCPv6 server + optional mDNS forward) [EXPERIMENTAL]"
+	depends on NET_IPV6 && NET_L2_DECT && NET_SOCKETS && NET_UDP
+	depends on NET_ROUTE && NET_ROUTING && NET_IPV6_NBR_CACHE
+	select EXPERIMENTAL
+	imply NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP
+	help
+	  Experimental library that turns this device into an IPv6 tethering gateway for a
+	  tethered host on Ethernet (typically a PC). On the Ethernet leg it sends
+	  Router Advertisements (default router lifetime, RDNSS, Managed (M) flag, no SLAAC
+	  PIO), so the tethered host installs this device as its IPv6 default gateway.
+	  An optional minimal DHCPv6 server hands out DECT-format ULA and GUA /128 addresses
+	  derived from the DECT interface. Zephyr IPv6 routing installs a default router on
+	  the DECT interface toward the parent and /128 routes plus neighbor entries on
+	  Ethernet after DHCPv6 bind. An optional AF_PACKET mDNS forwarder bridges
+	  service discovery between the Ethernet leg and the DECT NR+ leg without IID NAT.
+
+if DECT_TETHER_IPV6_LIB
+
+config DECT_TETHER_IPV6_HOST_ETH_IFACE
+	string "Host Ethernet interface name (empty = first Ethernet)"
+	default ""
+	depends on NET_L2_ETHERNET
+	help
+	  Logical name of the tethered host Ethernet interface (e.g. "eth0").
+	  When empty, the first Ethernet interface is used. A non-empty value
+	  requires CONFIG_NET_INTERFACE_NAME and a matching net_if_set_name() on
+	  that interface.
+
+config DECT_TETHER_IPV6_RA
+	bool "Send minimal ICMPv6 RAs on Ethernet (default router + RDNSS + M flag)"
+	default y
+	depends on NET_L2_ETHERNET
+	depends on NET_L2_DECT_MGMT
+	help
+	  No Prefix Information Options for ULA/GUA; addresses come from DHCPv6 when the
+	  server is enabled. Router lifetime and RDNSS are configurable.
+
+	  Requires NET_L2_DECT_MGMT (selects NET_MGMT_EVENT_INFO) so parent association
+	  create/release can trigger RA withdrawal and DHCPv6 revoke via the uplink module.
+
+config DECT_TETHER_IPV6_RA_ROUTER_LIFETIME
+	int "Router lifetime (seconds) in RA"
+	range 0 65535
+	default 1800
+	depends on DECT_TETHER_IPV6_RA
+	help
+	  Non-zero value makes this device a default IPv6 router for hosts on Ethernet.
+
+config DECT_TETHER_IPV6_RA_MANAGED
+	bool "Set Managed (M) flag in RA (use DHCPv6 for addresses)"
+	default y
+	depends on DECT_TETHER_IPV6_RA
+	help
+	  When enabled, RAs set the Managed (M) bit so tether hosts (e.g. Windows)
+	  obtain DECT NR+ ULA/GUA /128 addresses via DHCPv6 IA_NA. Prefix options use
+	  L=0 and A=0, so SLAAC is not used; disabling M leaves many hosts (observed
+	  on Windows) with no usable address, even though the RA's router lifetime
+	  still advertises this device as their IPv6 default gateway.
+
+config DECT_TETHER_IPV6_RA_PREFIX_INFO
+	bool "Include Prefix Information Option (PIO) in RA (L=0, A=0)"
+	default y
+	depends on DECT_TETHER_IPV6_RA
+	help
+	  Advertise the GUA and ULA /64 prefixes in a PIO with both the
+	  on-link flag (L) and autonomous flag (A) cleared. This informs the
+	  host of the prefix for source-address selection purposes without
+	  installing an on-link route or triggering SLAAC. All traffic to
+	  addresses within the advertised prefix continues to flow through the
+	  default gateway (this device), which is correct for this topology
+	  where the same /64 spans both the Ethernet (PC) and DECT interfaces.
+	  The PIO is omitted when the DECT uplink is absent.
+
+config DECT_TETHER_IPV6_RA_PIO_VALID_LIFETIME
+	int "PIO valid lifetime (seconds)"
+	range 120 4294967295
+	default 86400
+	depends on DECT_TETHER_IPV6_RA_PREFIX_INFO
+	help
+	  Keep in sync with DHCPV6_ADDR_VALID_LIFETIME (same prefix) and >=
+	  RA_PIO_PREFERRED_LIFETIME.
+
+config DECT_TETHER_IPV6_RA_PIO_PREFERRED_LIFETIME
+	int "PIO preferred lifetime (seconds)"
+	range 60 4294967295
+	default 7200
+	depends on DECT_TETHER_IPV6_RA_PREFIX_INFO
+	help
+	  Keep in sync with DHCPV6_ADDR_PREFERRED_LIFETIME (same prefix).
+
+config DECT_TETHER_IPV6_RA_REACHABLE_TIME_MS
+	int "Reachable time in RA (milliseconds, 0 to omit)"
+	range 0 3600000
+	default 30000
+	depends on DECT_TETHER_IPV6_RA
+
+config DECT_TETHER_IPV6_RA_RETRANS_TIMER_MS
+	int "Retrans timer in RA (milliseconds, 0 to omit)"
+	range 0 3600000
+	default 0
+	depends on DECT_TETHER_IPV6_RA
+
+config DECT_TETHER_IPV6_RA_MTU_OPTION
+	bool "Include MTU option (DECT MTU) in RA"
+	default y
+	depends on DECT_TETHER_IPV6_RA
+
+config DECT_TETHER_IPV6_RA_UNSOLICIT_MS
+	int "Periodic unsolicited RA interval (milliseconds, 0 to disable)"
+	range 0 3600000
+	default 60000
+	depends on DECT_TETHER_IPV6_RA
+
+config DECT_TETHER_IPV6_RA_RS_UNICAST
+	bool "Send unicast RA to Router Solicitation source"
+	depends on DECT_TETHER_IPV6_RA
+	help
+	  On each Router Solicitation from the tethered host, send one RA
+	  unicast to the soliciting IPv6 source (Ethernet source MAC from the
+	  RS frame) in addition to the usual multicast RA to ff02::1.
+	  Unicast-to-solicitor matches RFC 4861 RS handling. Disabled by default.
+
+config DECT_TETHER_IPV6_ETH_UNSOLICITED_NA
+	bool "Periodic unsolicited Neighbor Advertisements on host Ethernet"
+	depends on DECT_TETHER_IPV6_RA
+	depends on NET_NATIVE_IPV6 && NET_IPV6_ND && NET_IPV6_NBR_CACHE
+	help
+	  Periodically sends unsolicited Neighbor Advertisements (R+O flags, RFC 4861
+	  §7.2.6) for this device's link-local address on the host Ethernet interface
+	  (ULA/GUA belong to the tethered PC and are never advertised). Helps the PC
+	  refresh the default-router MAC mapping without relying only on NS/NA.
+
+config DECT_TETHER_IPV6_ETH_UNSOLICITED_NA_INTERVAL_MS
+	int "Unsolicited NA interval on host Ethernet (milliseconds)"
+	range 1000 3600000
+	default 60000
+	depends on DECT_TETHER_IPV6_ETH_UNSOLICITED_NA
+	help
+	  Time between unsolicited NA bursts toward all-nodes multicast on the host leg.
+
+config DECT_TETHER_IPV6_RA_RDNSS
+	bool "Include Recursive DNS Server (RDNSS) option in RA"
+	default y
+	depends on DECT_TETHER_IPV6_RA
+
+config DECT_TETHER_IPV6_RA_RDNSS_ADDR1
+	string "First RDNSS IPv6 address"
+	depends on DECT_TETHER_IPV6_RA_RDNSS
+	default "2001:4860:4860::8888"
+
+config DECT_TETHER_IPV6_RA_RDNSS_ADDR2
+	string "Second RDNSS IPv6 address (optional)"
+	depends on DECT_TETHER_IPV6_RA_RDNSS
+	default ""
+
+config DECT_TETHER_IPV6_RA_RDNSS_LIFETIME
+	int "RDNSS lifetime (seconds)"
+	range 60 4294967295
+	default 1800
+	depends on DECT_TETHER_IPV6_RA_RDNSS
+
+config DECT_TETHER_IPV6_DHCPV6_SERVER
+	bool "Minimal DHCPv6 server on Ethernet (ULA + GUA IA_NA)"
+	default y
+	depends on NET_L2_ETHERNET
+	depends on NET_L2_DECT_MGMT
+	help
+	  Listens on UDP port 547 on the host Ethernet interface. Single-client oriented:
+	  one active lease (DUID+IAID); a second host receives NoAddrsAvail or is ignored.
+	  Responds to Solicit, Request, Renew, Rebind, Confirm, and Information-request.
+
+	  Requires NET_L2_DECT_MGMT (selects NET_MGMT_EVENT_INFO) so parent association
+	  release can trigger proactive lease revoke via the uplink module.
+
+config DECT_TETHER_IPV6_DHCPV6_IAID_DEFAULT
+	int "Default IAID when a client message omits the IA_NA option (decimal)"
+	range 1 2147483647
+	default 1
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+
+config DECT_TETHER_IPV6_DHCPV6_ADDR_VALID_LIFETIME
+	int "IAADDR valid lifetime (seconds)"
+	range 120 4294967295
+	default 86400
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+
+config DECT_TETHER_IPV6_DHCPV6_ADDR_PREFERRED_LIFETIME
+	int "IAADDR preferred lifetime (seconds)"
+	range 60 4294967295
+	default 7200
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+
+config DECT_TETHER_IPV6_DHCPV6_T1
+	int "IA_NA T1 (seconds)"
+	range 60 4294967295
+	default 3600
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Time before the client should send Renew (RFC 8415 IA_NA T1). Default is
+	  3600 s (0.5 x ADDR_PREFERRED_LIFETIME 7200 s), matching the usual
+	  T1 = 0.5 x preferred lifetime guidance.
+
+config DECT_TETHER_IPV6_DHCPV6_T2
+	int "IA_NA T2 (seconds)"
+	range 120 4294967295
+	default 5400
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Time before the client should Rebind if Renew fails (RFC 8415 IA_NA T2).
+	  Default is 5400 s (0.75 x ADDR_PREFERRED_LIFETIME 7200 s). RFC guidance
+	  is often T2 = 0.8 x preferred (5760 s here); 5400 rebinds slightly
+	  earlier. Must satisfy T1 < T2 < ADDR_PREFERRED_LIFETIME.
+
+config DECT_TETHER_IPV6_DHCPV6_THREAD_STACK_SIZE
+	int "DHCPv6 server thread stack size"
+	range 1024 8192
+	default 4096
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Socket and logging call depth; large DHCP payloads use static buffers, not stack.
+
+config DECT_TETHER_IPV6_DHCPV6_THREAD_PRIO
+	int "DHCPv6 server thread cooperative priority"
+	range 0 31
+	default 7
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Lower number = higher cooperative priority (same convention as the mDNS
+	  forwarder thread).
+
+config DECT_TETHER_IPV6_DHCPV6_REVOKE_DEBOUNCE_SEC
+	int "Debounce before DHCPv6 lease revoke on DECT uplink loss (seconds)"
+	range 0 600
+	default 10
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  After DECT parent association release, wait this long before sending
+	  IAADDR lifetime-0 revoke Replies. Set 0 in tests for immediate revoke.
+
+config DECT_TETHER_IPV6_DHCPV6_RX_LOG
+	bool "Log each received DHCPv6 datagram (INF, source + type + length)"
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Enable while debugging tethered hosts: logs every UDP payload received on port 547
+	  after recvfrom(), before message validation. Disable for production (Renew noise).
+
+config DECT_TETHER_IPV6_DHCPV6_TRACE
+	bool "Verbose DHCPv6 server trace (poll/recv/send, build failures, loop exit)"
+	depends on DECT_TETHER_IPV6_DHCPV6_SERVER
+	help
+	  Logs dropped/malformed messages (short reads, missing Client ID, Server ID
+	  mismatch, other-client, unknown type), build_reply() failures, generic
+	  successful-TX, and the recv loop exit reason. Poll/recvfrom/sendto errors
+	  are always logged regardless of this option. Combine with DHCPV6_RX_LOG
+	  for full RX/TX visibility.
+
+config DECT_TETHER_IPV6_MDNS_FORWARD
+	bool "Tap: forward IPv6 mDNS (UDP 5353) between Ethernet and DECT (no NAT)"
+	depends on NET_SOCKETS
+	depends on NET_SOCKETS_PACKET
+	depends on NET_L2_ETHERNET
+	help
+	  Opens AF_PACKET + SOCK_DGRAM + ETH_P_ALL sockets on the host Ethernet and
+	  first DECT interface. A thread forwards only RFC 6762 IPv6 mDNS: UDP port
+	  5353, 40-byte IPv6 header (no extension headers), without IID masquerade.
+
+	  Ethernet -> DECT: only queries (IPv6 destination ff02::fb) whose source
+	  is ULA or global GUA are forwarded. Packets with link-local source
+	  (fe80::/10) are dropped -- they are not usable across the air without
+	  rewriting.
+
+	  DECT -> Ethernet: multicast mDNS to ff02::fb is forwarded, and unicast
+	  mDNS whose destination is ULA or GUA is forwarded (typical unicast reply
+	  to a DHCPv6-managed host). Link-local destinations are dropped.
+
+if DECT_TETHER_IPV6_MDNS_FORWARD
+
+config DECT_TETHER_IPV6_MDNS_FORWARD_STACK_SIZE
+	int "mDNS tap thread stack size"
+	range 1024 8192
+	default 3072
+	help
+	  Stack for the AF_PACKET poll/forward thread.
+
+config DECT_TETHER_IPV6_MDNS_FORWARD_THREAD_PRIO
+	int "mDNS tap thread cooperative priority"
+	range 0 31
+	default 4
+	help
+	  Lower number = higher cooperative priority (same convention as the DHCPv6
+	  server thread).
+
+endif # DECT_TETHER_IPV6_MDNS_FORWARD
+
+module = DECT_TETHER_IPV6
+module-str = DECT tether IPv6
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DECT_TETHER_IPV6_LIB

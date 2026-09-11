@@ -10,6 +10,7 @@ zephyr_library_sources(
   dect_mdm_ctrl_api.c
   dect_mdm_ctrl_mdm.c
   dect_mdm_rx.c
+  dect_mdm_rx_pool.c
   dect_mdm_settings.c
   dect_mdm_utils.c
 )
