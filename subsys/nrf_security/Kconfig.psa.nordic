@@ -377,6 +377,25 @@ config PSA_WANT_ALG_ASCON_AEAD128
 	bool "ASCON AEAD128 support [EXPERIMENTAL]" if !PSA_PROMPTLESS
 	select EXPERIMENTAL
 
+comment "Nordic PSA extension APIs"
+
+config PSA_EXT_ECC_SECP_R1_160
+	bool "secp160r1 EC operations, Nordic PSA extension [EXPERIMENTAL]" if !PSA_PROMPTLESS
+	depends on PSA_CRYPTO_DRIVER_CRACEN
+	depends on !BUILD_WITH_TFM
+	select EXPERIMENTAL
+	select CRACEN_LOAD_MICROCODE if CRACEN_HW_VERSION_BASE
+	help
+	  Enable base-point scalar multiplication and reduction modulo the group
+	  order for the secp160r1 curve, exposed as psa_ext_ecc_secp160r1_*()
+	  in <psa/psa_ext_ecc.h>. Required by Google Find Hub Network (FHN).
+
+	  This is not a PSA driver. secp160r1 has no psa_ecc_family_t encoding
+	  and neither operation maps to a PSA algorithm, so there is no
+	  PSA_WANT_* symbol and no PSA core dispatch: the calls reach the CRACEN
+	  PK engine directly. It is therefore unavailable to a non-secure image
+	  under TF-M, which can only reach crypto through the PSA service.
+
 comment "Nordic added ECC curve types"
 
 config PSA_WANT_ECC_BRAINPOOL_P_R1_224

@@ -153,6 +153,9 @@ Security
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
   * Support for signature verification with ML-DSA-44, ML-DSA-65, and ML-DSA-87 when using the CRACEN driver.
+  * Experimental support for secp160r1 elliptic curve operations in the CRACEN driver, through the Nordic PSA extension API declared in :file:`subsys/nrf_security/include/psa/psa_ext_ecc.h` and enabled with the :kconfig:option:`CONFIG_PSA_EXT_ECC_SECP_R1_160` Kconfig option.
+    The curve has no ``PSA_ECC_FAMILY_SECP_R1`` encoding at 160 bits and the operations have no matching PSA algorithm, so they are provided as an extension rather than through the PSA Crypto API.
+    See :ref:`nrf_security_driver_config` for more information.
 
 * Updated:
 
@@ -785,6 +788,8 @@ Bluetooth libraries and services
 
 * :ref:`bt_fast_pair_readme` library:
 
+  * Added AES-256-ECB and secp160r1 support to the PSA cryptographic backend (:kconfig:option:`CONFIG_BT_FAST_PAIR_CRYPTO_PSA`).
+    The Find Hub Network extension can now be built with this backend on devices with the CRACEN peripheral, which previously required the Oberon backend.
   * Removed the nRF52 and nRF53 Series support.
 
 * :ref:`dtm_twowire_to_hci_readme` library:

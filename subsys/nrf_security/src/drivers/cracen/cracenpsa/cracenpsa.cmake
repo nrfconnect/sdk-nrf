@@ -27,6 +27,14 @@ if(BUILD_INSIDE_TFM)
   )
 endif()
 
+# Nordic PSA extension APIs. These bypass the PSA core and talk to silexpk
+# directly, so they are not driven by any PSA_NEED_* symbol.
+if(CONFIG_PSA_EXT_ECC_SECP_R1_160)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/psa_ext_ecc_secp160r1.c
+  )
+endif()
+
 # Include hardware cipher implementation for all devices except nRF54LM20A,
 # which does not support multipart cipher operations.
 # nRF54LM20A uses only cracen_sw
