@@ -18,7 +18,7 @@
 #include "multithreading_lock.h"
 #include <nrfx.h>
 #include <stdlib.h>
-#if defined(NRF_TRUSTZONE_NONSECURE)
+#if defined(CONFIG_MPSL_FORCE_RRAM_ON_ALL_THE_TIME)
 #include "tfm_platform_api.h"
 #include "tfm_ioctl_core_api.h"
 #endif
@@ -520,8 +520,7 @@ static int32_t mpsl_lib_init_internal(void)
 		return err;
 	}
 #endif /* MPSL_TIMESLOT_SESSION_COUNT > 0 */
-#if defined(NRF_TRUSTZONE_NONSECURE) && \
-	defined(CONFIG_MPSL_FORCE_RRAM_ON_ALL_THE_TIME)
+#if defined(CONFIG_MPSL_FORCE_RRAM_ON_ALL_THE_TIME)
 	uint32_t result_out;
 	uint32_t result = tfm_platform_mem_write32((uint32_t)&NRF_RRAMC_S->POWER.LOWPOWERCONFIG,
 		RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos,
