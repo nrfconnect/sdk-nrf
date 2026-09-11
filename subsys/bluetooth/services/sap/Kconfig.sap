@@ -1,0 +1,81 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig BT_SAP
+	bool "Secure Application Pairing (SAP) library"
+	depends on BT
+	depends on BT_CONN
+	depends on BT_SMP
+	select BT_NRF_SERVICES
+	select MBEDTLS if !BUILD_WITH_TFM
+	select MBEDTLS_PSA_CRYPTO_C if !BUILD_WITH_TFM
+	select PSA_CRYPTO
+	select PSA_WANT_GENERATE_RANDOM
+	select PSA_WANT_ALG_SHA_256
+	select PSA_WANT_ALG_ECDSA
+	select PSA_WANT_ALG_ECDH
+	select PSA_WANT_ALG_HKDF
+	select PSA_WANT_ALG_HMAC
+	select PSA_WANT_ALG_GCM
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_KEY_TYPE_DERIVE
+	select PSA_WANT_KEY_TYPE_RAW_DATA
+	select PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT
+	select PSA_WANT_ECC_SECP_R1_256
+	help
+	  Build the Secure Application Pairing protocol library. SAP provides
+	  certificate-backed mutual authentication, ECDH/HKDF session key
+	  derivation, and AES-GCM application framing. Applications provide
+	  callbacks for authentication transport, secure frames, payload
+	  delivery, and session state events.
+
+if BT_SAP
+
+config BT_SAP_MAX_CONTEXTS
+	int "Maximum SAP context count"
+	range 1 4
+	default 2
+	help
+	  Maximum number of concurrently initialized SAP contexts. Most
+	  applications use one context for the local role, while unit tests and
+	  dual-role samples may need two contexts in one image.
+
+config BT_SAP_UNSAFE_PROTOCOL_TRACE
+	bool "Unsafe SAP protocol hexdump trace"
+	depends on LOG
+	help
+	  Enable verbose hexdumps of SAP authentication and secure transport
+	  frames. This is intended only for controlled protocol tests because it
+	  can expose authentication material and decrypted application payloads.
+
+config BT_SAP_MAX_PEERS
+	int "Maximum SAP peer count"
+	range 1 BT_MAX_CONN
+	default BT_MAX_CONN
+	help
+	  Maximum number of concurrent SAP sessions stored in one SAP context.
+	  This defaults to the configured Bluetooth connection limit so SAP
+	  does not reserve more session slots than the host can connect.
+
+config BT_SAP_MAX_APP_PAYLOAD_SIZE
+	int "Maximum SAP application payload size"
+	range 1 512
+	default 128
+	help
+	  Maximum plaintext application payload size accepted by the SAP secure
+	  frame API. SAP frames are not fragmented by the library. GATT
+	  transports must negotiate an ATT MTU of at least SAP_REQUIRED_ATT_MTU,
+	  which grows with this value when secure frames become larger than
+	  authentication frames.
+
+module = BT_SAP
+module-str = Secure Application Pairing library
+source "subsys/logging/Kconfig.template.log_config"
+
+endif
