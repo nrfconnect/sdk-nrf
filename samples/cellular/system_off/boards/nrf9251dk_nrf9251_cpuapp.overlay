@@ -1,0 +1,28 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	cpuapp_tcm_sram_ret: cpuapp_tcm_sram@22006f00 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		reg = <0x22006f00 DT_SIZE_K(4)>;
+		zephyr,memory-region = "RetainedMem";
+		status = "okay";
+
+		retainedmem0: retainedmem {
+			compatible = "zephyr,retained-ram";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		retainedmemdevice = &retainedmem0;
+	};
+};
+
+&cpuapp_tcm_region {
+	/* Shrink the app TCM region to make room for the retained memory region. */
+	reg = <0x0 0x6f00>;
+};
