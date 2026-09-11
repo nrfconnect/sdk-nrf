@@ -99,6 +99,7 @@ For each key type, the table lists the supported algorithms and indicates which 
        | - ``PSA_ALG_AES_ECB_NO_PADDING``
        | - ``PSA_ALG_AES_CBC_NO_PADDING``
        | - ``PSA_ALG_AES_CTR``
+       | - ``PSA_ALG_CCM_STAR_NO_TAG``
        | - ``PSA_ALG_CCM``
        | - ``PSA_ALG_GCM``
        | - ``PSA_ALG_CMAC*``
@@ -119,6 +120,7 @@ For each key type, the table lists the supported algorithms and indicates which 
        | - ``PSA_ALG_AES_ECB_NO_PADDING``
        | - ``PSA_ALG_AES_CBC_NO_PADDING``
        | - ``PSA_ALG_AES_CTR``
+       | - ``PSA_ALG_CCM_STAR_NO_TAG``
        | - ``PSA_ALG_CCM``
        | - ``PSA_ALG_GCM``
        | - ``PSA_ALG_CMAC*``
