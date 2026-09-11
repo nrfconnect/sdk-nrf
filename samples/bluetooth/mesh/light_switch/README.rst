@@ -151,7 +151,7 @@ The following table shows a selection of supported boards for the LPN configurat
    nrf52dk/nrf52832      7.14 mA                   13.69 µA
    nrf52840dk/nrf52840   6.31 mA                   7.21 µA
    nrf54l15dk/nrf54l15   5.60 mA                   7.12 µA
-   nrf54l15tag/nrf54l15  --                        13.45 µA
+   nrf54l15tag/nrf54l15  --                        9.38 µA
    ====================  ========================  ====================
 
 The following applies to the LPN measurements presented in this table:
