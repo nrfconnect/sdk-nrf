@@ -5,7 +5,7 @@
  */
 
 /** @file
- * @defgroup audio_clock Audio Clock
+ * @defgroup hf_audio_clock High Frequency Audio Clock
  * @{
  * @brief Audio clock management for nRF Audio application.
  *
@@ -14,41 +14,24 @@
  * required frequencies for transmission, for instance I2S or TDM.
  */
 
-#ifndef _AUDIO_CLOCK_H_
-#define _AUDIO_CLOCK_H_
+#ifndef _HF_AUDIO_CLOCK_H_
+#define _HF_AUDIO_CLOCK_H_
 
 #include <stdint.h>
 #include <nrfx_clock.h>
 
-/** @brief HFCLKAUDIO frequency value for 12.288-MHz output.
- *
- * This macro defines the frequency value for the High Frequency Clock Audio (HFCLKAUDIO)
- * to generate a 12.288-MHz output frequency. The value is calculated according to the formula
- * in the nRF5340 SoC documentation.
- */
-#define HFCLKAUDIO_12_288_MHZ 0x9BA6
-
-#define HFCLKAUDIO_12_165_MHZ 0x8FD8
-
-#define HFCLKAUDIO_12_411_MHZ 0xA774
-
-/* Audio clock - nRF5340 Analog Phase-Locked Loop (APLL) */
-#define APLL_FREQ_MIN	 HFCLKAUDIO_12_165_MHZ
-#define APLL_FREQ_CENTER HFCLKAUDIO_12_288_MHZ
-#define APLL_FREQ_MAX	 HFCLKAUDIO_12_411_MHZ
-
 /**
- * @brief Set the audio clock frequency.
+ * @brief Update the audio clock frequency.
  * This function configures the audio clock to the specified frequency value. The frequency value
  * must be within the range defined by APLL_FREQ_MIN and APLL_FREQ_MAX. The function will adjust the
  * frequency to fit within this range if necessary.
  *
- * @param[in]	freq_value	The desired frequency value for the audio clock, calculated
- *				according to the formula in the nRF5340 SoC documentation.
+ * @param[in]	control_val_u	Pointer to the control value used to adjust the audio clock
+ * frequency.
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int audio_clock_set(uint16_t freq_value);
+int hf_audio_clock_update(void *const control_val_u);
 
 /**
  * @brief Initialize the audio clock.
@@ -58,10 +41,10 @@ int audio_clock_set(uint16_t freq_value);
  *
  * @return 0 on success, or a negative error code on failure.
  */
-int audio_clock_init(void);
+int hf_audio_clock_init(void);
 
 /**
  * @}
  */
 
-#endif /* _AUDIO_CLOCK_H_ */
+#endif /* _HF_AUDIO_CLOCK_H_ */
