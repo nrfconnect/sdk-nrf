@@ -331,6 +331,13 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
+	uint8_t tag_size = get_tag_size(alg, key_buffer_size);
+
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM &&
+	    ((tag_size & 1) || tag_size < 4 || tag_size > 16)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	/*
 	 * Copy the key into the operation struct as it is not guaranteed to be
 	 * valid longer than the function call
@@ -350,7 +357,7 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 
 	operation->alg = PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg);
 	operation->dir = dir;
-	operation->tag_size = get_tag_size(alg, key_buffer_size);
+	operation->tag_size = tag_size;
 
 	/*
 	 * At this point the nonce is not known, which is required to
