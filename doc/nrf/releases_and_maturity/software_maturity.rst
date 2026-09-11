@@ -2023,12 +2023,14 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
               - nRF54LS05A
               - nRF54LS05B
             * - **Bluetooth LE Coexistence**
+              - --
               - --
               - --
               - --
@@ -2041,6 +2043,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported\ :sup:`4`
+              - --
               - Supported\ :sup:`4`
               - Supported\ :sup:`4`
               - --
@@ -2050,6 +2053,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported\ :sup:`4`
+              - --
               - Supported\ :sup:`4`
               - Supported\ :sup:`4`
               - --
@@ -2059,12 +2063,14 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported\ :sup:`4`
+              - --
               - Supported\ :sup:`4`
               - Supported\ :sup:`4`
               - --
               - --
               - --
             * - **Scan only (for location accuracy)**
+              - --
               - --
               - --
               - --
@@ -2077,6 +2083,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported\ :sup:`4`
+              - --
               - Supported\ :sup:`4`
               - Supported\ :sup:`4`
               - --
@@ -2086,6 +2093,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported\ :sup:`4`
+              - --
               - Supported\ :sup:`4`
               - Supported\ :sup:`4`
               - --
@@ -2100,7 +2108,9 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
             * - **Wi-Fi Direct (P2P)**
+              - --
               - --
               - --
               - --
