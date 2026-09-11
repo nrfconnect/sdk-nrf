@@ -10,7 +10,7 @@
 #include <zephyr/logging/log.h>
 
 #if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON))) && \
-	!(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+	!IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 
 #include <nrfx_clock.h>
 #endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRF_COMMON */
@@ -182,7 +182,7 @@ static int32_t m_lfclk_wait(void)
 }
 
 #if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON)) && \
-	 !(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+	 !IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 
 static void m_hfclk_request(void)
 {
@@ -310,8 +310,7 @@ static int32_t m_lfclk_release(void)
 	return 0;
 }
 
-#elif defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                  \
-	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#elif defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) && IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 
 /* Minimum accuracy of LFCLK that is required by Bluetooth Core Specification Version 6.1, Vol 6,
  * Part B, Section 4.2.2.
@@ -538,8 +537,7 @@ static mpsl_clock_hfclk_ctrl_source_t m_nrf_hfclk_ctrl_data = {
 	.hfclk_is_running = m_hfclk_is_running,
 };
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                    \
-	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) && IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 static int m_lfclk_accuracy_get(void)
 {
 	int err;
@@ -578,7 +576,7 @@ int32_t mpsl_clock_ctrl_init(void)
 #endif /* CONFIG_MPSL_EXT_CLK_CTRL_NVM_CLOCK_REQUEST */
 
 #if (IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON)) && \
-	 !(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+	 !IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 
 #if DT_NODE_EXISTS(DT_NODELABEL(hfxo))
 	m_nrf_hfclk_ctrl_data.startup_time_us = z_nrf_clock_bt_ctlr_hf_get_startup_time_us();
@@ -586,8 +584,7 @@ int32_t mpsl_clock_ctrl_init(void)
 	m_nrf_hfclk_ctrl_data.startup_time_us = CONFIG_MPSL_HFCLK_LATENCY;
 #endif /* DT_NODE_EXISTS(DT_NODELABEL(hfxo)) */
 
-#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                               \
-	(IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF92))
+#elif IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON) && IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 
 #if DT_NODE_HAS_STATUS(HFCLK_LABEL, okay) && DT_NODE_HAS_COMPAT(HFCLK_LABEL, nordic_nrf54h_hfxo)
 	uint32_t startup_time_us;
@@ -621,8 +618,7 @@ int32_t mpsl_clock_ctrl_init(void)
 #error "Unsupported clock control configuration"
 #endif /* CONFIG_CLOCK_CONTROL_NRF || CONFIG_CLOCK_CONTROL_NRF_COMMON */
 
-#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                    \
-	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) && IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 	m_nrf_lfclk_ctrl_data.accuracy_ppm = m_lfclk_accuracy_get();
 #endif /* CONFIG_CLOCK_CONTROL_NRF_COMMON */
 
