@@ -143,5 +143,15 @@
 				reg = <0x1000 DT_SIZE_K(4)>;
 			};
 		};
+
+		secondary_partition: partition@40e000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x40e000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@41e000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x41e000 DT_SIZE_K(8)>;
+		};
 	};
 };
