@@ -13,6 +13,7 @@
 #include <zephyr/sys/sys_heap.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/util.h>
+#include <common/wifi_ipc.h>
 #include <system/fmac_api.h>
 #include <common/mem_mgmt.h>
 #include <system/core.h>
@@ -925,7 +926,6 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 					   const char *argv[])
 {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_hal_dev_ctx *hal_dev_ctx = NULL;
 	unsigned long current_time_ms = k_uptime_get();
 	int ret;
 
@@ -945,9 +945,8 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 		goto unlock;
 	}
 
-	hal_dev_ctx = fmac_dev_ctx->hal_dev_ctx;
-	if (!hal_dev_ctx) {
-		shell_fprintf(sh, SHELL_ERROR, "HAL context not initialized\n");
+	if (!nrf_wifi_ipc_is_open(fmac_dev_ctx)) {
+		shell_fprintf(sh, SHELL_ERROR, "Host-RPU transport not open\n");
 		ret = -ENOEXEC;
 		goto unlock;
 	}
@@ -962,9 +961,9 @@ static int nrf_wifi_util_rpu_recovery_info(const struct shell *sh,
 		      "rpu_recovery_success: %d\n"
 		      "rpu_recovery_failure: %d\n\n",
 		      ctx->wdt_irq_received, ctx->wdt_irq_ignored,
-		      hal_dev_ctx->last_wakeup_now_asserted_time_ms,
-		      hal_dev_ctx->last_wakeup_now_deasserted_time_ms,
-		      hal_dev_ctx->last_rpu_sleep_opp_time_ms, current_time_ms,
+		      fmac_dev_ctx->wakeup_now_asserted_time_prev_ms,
+		      fmac_dev_ctx->wakeup_now_deasserted_time_prev_ms,
+		      fmac_dev_ctx->rpu_sleep_opp_time_prev_ms, current_time_ms,
 		      ctx->rpu_recovery_success, ctx->rpu_recovery_failure);
 
 	ret = 0;

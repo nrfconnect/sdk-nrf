@@ -11,7 +11,7 @@
 
 #include <common/mem_mgmt.h>
 #include <radio_test/fmac_cmd.h>
-#include <common/hal_api_common.h>
+#include <common/wifi_ipc.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -123,9 +123,9 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 	umac_cmd_data->coex_disable_ptiwin_for_wifi_scan = 0;
 #endif /* NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN */
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -158,9 +158,9 @@ enum nrf_wifi_status umac_cmd_rt_prog_stats_get(struct nrf_wifi_fmac_dev_ctx *fm
 	umac_cmd_data->stats_type = RPU_STATS_TYPE_PHY;
 	umac_cmd_data->op_mode = op_mode;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -196,9 +196,9 @@ enum nrf_wifi_status umac_cmd_rt_prog_init(struct nrf_wifi_fmac_dev_ctx *fmac_de
 			      init_params,
 			      sizeof(umac_cmd_data->conf));
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 out:
 	return status;
 }
@@ -233,9 +233,9 @@ enum nrf_wifi_status umac_cmd_rt_prog_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 			      params,
 			      sizeof(umac_cmd_data->conf));
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -271,9 +271,9 @@ enum nrf_wifi_status umac_cmd_rt_prog_rx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 			      rx_params,
 			      sizeof(umac_cmd_data->conf));
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;
@@ -312,9 +312,9 @@ enum nrf_wifi_status umac_cmd_rt_prog_rf_test(struct nrf_wifi_fmac_dev_ctx *fmac
 
 	umac_cmd_data->rf_test_info.len = rf_test_params_sz;
 
-	status = nrf_wifi_hal_ctrl_cmd_send(fmac_dev_ctx->hal_dev_ctx,
-					    umac_cmd,
-					    (sizeof(*umac_cmd) + len));
+	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
+				       umac_cmd,
+				       (sizeof(*umac_cmd) + len));
 
 out:
 	return status;

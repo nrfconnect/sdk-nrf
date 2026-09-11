@@ -22,7 +22,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv)
 {
-	nrf_wifi_hal_deinit(fpriv->hpriv);
+	fpriv->rpu_event_cb = NULL;
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
 }
@@ -30,7 +30,7 @@ void nrf_wifi_fmac_deinit(struct nrf_wifi_fmac_priv *fpriv)
 
 void nrf_wifi_fmac_dev_rem(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
-	nrf_wifi_hal_dev_rem(fmac_dev_ctx->hal_dev_ctx);
+	nrf_wifi_ipc_close(fmac_dev_ctx);
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx);
 }
