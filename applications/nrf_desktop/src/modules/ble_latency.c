@@ -25,6 +25,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 	K_MSEC(CONFIG_BT_CONN_PARAM_UPDATE_TIMEOUT)
 #define INIT_CONN_PARAMS_UPDATE_TIMEOUT_MS K_SECONDS(5)
 #define LOW_LATENCY_CHECK_PERIOD_MS	K_SECONDS(5)
+#define SCI_CONN_RATE_UPDATE_RETRY_TIMEOUT	K_SECONDS(1)
+#define SCI_CONN_RATE_UPDATE_RETRY_COUNT_MAX	3
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_LATENCY
 #define DEFAULT_TIMEOUT			CONFIG_BT_PERIPHERAL_PREF_TIMEOUT
 /* Connection intervals used by LLPM are out of Bluetooth LE specification.
@@ -42,6 +44,8 @@ static struct k_work_delayable security_timeout;
 static struct k_work_delayable low_latency_check;
 static struct k_work_delayable init_conn_params;
 static struct k_work_delayable init_conn_params_update_timeout;
+static struct k_work_delayable sci_conn_rate_update_retry;
+static uint8_t sci_conn_rate_update_retry_count;
 
 enum {
 	CONN_LOW_LATENCY_ENABLED	= BIT(0),
@@ -205,6 +209,11 @@ static int hid_sci_conn_rate_request(bool low_latency, enum bt_hids_sci_mode_val
 
 	if (!err) {
 		processed_sci_mode = mode;
+	} else if (err == -EACCES) {
+		LOG_WRN("HID SCI connection rate request failed due to possibly transient error "
+			"(err: %d). Scheduling retry.", err);
+		k_work_reschedule(&sci_conn_rate_update_retry,
+				  SCI_CONN_RATE_UPDATE_RETRY_TIMEOUT);
 	} else {
 		LOG_ERR("HID SCI connection rate request failed (%d)", err);
 	}
@@ -238,6 +247,9 @@ static void set_conn_latency_sci(bool low_latency)
 		latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
 		return;
 	}
+
+	(void)k_work_cancel_delayable(&sci_conn_rate_update_retry);
+	sci_conn_rate_update_retry_count = 0;
 
 	err = hid_sci_conn_rate_request(low_latency, current_mode);
 
@@ -471,6 +483,9 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 	latency_state &= ~CONN_IS_LLPM;
 	(void)k_work_cancel_delayable(&init_conn_params);
 
+	(void)k_work_cancel_delayable(&sci_conn_rate_update_retry);
+	sci_conn_rate_update_retry_count = 0;
+
 	if ((processed_sci_mode != BT_HIDS_SCI_MODE_NONE) ||
 	    (latency_state & CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS)) {
 		/* A connection rate/params update is already in progress */
@@ -627,12 +642,36 @@ static void pending_sci_conn_rate_update_handle(void)
 
 		(void)hid_sci_conn_rate_request(last_requested_latency_is_low,
 						last_requested_sci_mode);
+	} else {
+		/* The current mode and latency are already equal to the requested ones.
+		 * Clear the retry count as this can be treated as a successful request.
+		 */
+		sci_conn_rate_update_retry_count = 0;
 	}
 
 	/* Avoid cyclic requests for a pending parameters update if the previous
 	 * request failed or did not take effect.
 	 */
 	latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
+}
+
+static void sci_conn_rate_update_retry_fn(struct k_work *w)
+{
+	ARG_UNUSED(w);
+
+	if (!active_conn) {
+		return;
+	}
+
+	sci_conn_rate_update_retry_count++;
+
+	if (sci_conn_rate_update_retry_count >= SCI_CONN_RATE_UPDATE_RETRY_COUNT_MAX) {
+		LOG_ERR("Maximum number of SCI connection rate update retries reached");
+		sci_conn_rate_update_retry_count = 0;
+		return;
+	}
+
+	pending_sci_conn_rate_update_handle();
 }
 
 static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_event *event)
@@ -648,6 +687,8 @@ static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_
 	LOG_DBG(" continuation number: %" PRIu16, event->params.continuation_number);
 	LOG_DBG(" supervision timeout: %" PRIu16 " (10ms)",
 		event->params.supervision_timeout_10ms);
+
+	sci_conn_rate_update_retry_count = 0;
 
 	err = bt_hids_sci_mode_get(active_conn, &current_sci_mode);
 	if (err) {
@@ -710,6 +751,8 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 		return;
 	}
 
+	(void)k_work_cancel_delayable(&sci_conn_rate_update_retry);
+
 	if (!(latency_state & CONN_IS_SCI)) {
 		LOG_WRN("Connection rate API used without a prior SCI mode request");
 		LOG_WRN("Peripheral will start using SCI and attempt to find a valid SCI mode");
@@ -744,6 +787,14 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 			 * will be requested.
 			 */
 			latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
+		} else if ((event->status == BT_HCI_ERR_LL_PROC_COLLISION) ||
+			   (event->status == BT_HCI_ERR_DIFF_TRANS_COLLISION) ||
+			   (event->status == BT_HCI_ERR_CONTROLLER_BUSY)) {
+
+			LOG_WRN("Connection rate change failed due to possibly transient error "
+				"(status: 0x%02x). Scheduling retry.", event->status);
+			(void)k_work_reschedule(&sci_conn_rate_update_retry,
+						SCI_CONN_RATE_UPDATE_RETRY_TIMEOUT);
 		}
 	}
 
@@ -794,6 +845,10 @@ static void init(void)
 	k_work_init_delayable(&init_conn_params, init_conn_params_fn);
 	k_work_init_delayable(&init_conn_params_update_timeout,
 			      init_conn_params_update_timeout_fn);
+	if (IS_ENABLED(CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE)) {
+		k_work_init_delayable(&sci_conn_rate_update_retry,
+				      sci_conn_rate_update_retry_fn);
+	}
 }
 
 static void use_low_latency(void)
@@ -857,6 +912,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
 				last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 				host_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+				sci_conn_rate_update_retry_count = 0;
+				(void)k_work_cancel_delayable(&sci_conn_rate_update_retry);
 			}
 
 			/* Cancel cannot fail if executed from another work's context. */
