@@ -17,8 +17,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample also requires a public CoAP server IP address or URL available on the Internet.
-
 .. include:: /includes/tfm.txt
 
 Overview
@@ -26,9 +24,9 @@ Overview
 
 The CoAP Client sample performs the following actions:
 
-#. Connect to the configured public CoAP test server.
-#. Send a periodic GET request for a test resource that is available on the server.
-#. Display the received data about the resource on a terminal emulator.
+#. Connects to the configured public CoAP test server.
+#. Sends a periodic GET request for a test resource that is available on the server.
+#. Displays the received data about the resource on a terminal emulator.
 
 The public CoAP server used in this sample is Californium CoAP server (``coap://californium.eclipseprojects.io:5683``).
 This server runs Eclipse Californium, which is an open source implementation of the CoAP protocol that is targeted at the development and testing of IoT applications.
@@ -112,7 +110,7 @@ Testing
 
        The CoAP client sample started
 #. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
-#. Observe that your DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE connection.
+#. Observe that your DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE or Wi-Fi connection.
 #. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
 

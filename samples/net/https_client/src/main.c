@@ -8,8 +8,10 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/net/socket.h>
+#include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/net/tls_credentials.h>
 
 #if defined(CONFIG_POSIX_API)
@@ -36,12 +38,16 @@
 #define TLS_SEC_TAG		42
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | \
+				 NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED | \
+				 NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK	(NET_EVENT_CONN_IF_FATAL_ERROR)
 
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
+static K_SEM_DEFINE(ip_family_state_sem, 0, 1);
+static ATOMIC_DEFINE(network_state, 3);
 /* Certificate for `example.com` */
 static const char cert[] = {
 	#include "example_com_ca.pem.inc"
@@ -57,6 +63,12 @@ static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
+
+enum network_state_flag {
+	NETWORK_STATE_L4_CONNECTED = 0,
+	NETWORK_STATE_IPV4_READY,
+	NETWORK_STATE_IPV6_READY,
+};
 
 /* Provision certificate to modem */
 int cert_provision(void)
@@ -169,11 +181,78 @@ int tls_setup(int fd)
 static void on_net_event_l4_disconnected(void)
 {
 	printk("Disconnected from the network\n");
+	atomic_clear_bit(network_state, NETWORK_STATE_L4_CONNECTED);
+	atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
+	atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
 }
 
 static void on_net_event_l4_connected(void)
 {
+	atomic_set_bit(network_state, NETWORK_STATE_L4_CONNECTED);
 	k_sem_give(&network_connected_sem);
+}
+
+static bool is_ip_family_ready(int family)
+{
+	if (family == AF_INET) {
+		return atomic_test_bit(network_state, NETWORK_STATE_IPV4_READY);
+	}
+
+	if (family == AF_INET6) {
+		return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
+	}
+
+	return false;
+}
+
+static void wait_for_ip_family(int family)
+{
+	const char *family_str = (family == AF_INET6) ? "IPv6" : "IPv4";
+
+	printk("Waiting for local %s connectivity\n", family_str);
+	k_sem_take(&ip_family_state_sem, K_FOREVER);
+}
+
+static struct addrinfo *select_matching_addr(struct addrinfo *res, int *missing_family)
+{
+	int first_missing_family = AF_UNSPEC;
+	bool ipv4_dns_found = false;
+	bool ipv6_dns_found = false;
+	bool ipv4_ready = is_ip_family_ready(AF_INET);
+	bool ipv6_ready = is_ip_family_ready(AF_INET6);
+
+	for (struct addrinfo *entry = res; entry != NULL; entry = entry->ai_next) {
+		if ((entry->ai_family != AF_INET) && (entry->ai_family != AF_INET6)) {
+			continue;
+		}
+
+		if (entry->ai_family == AF_INET) {
+			ipv4_dns_found = true;
+		} else {
+			ipv6_dns_found = true;
+		}
+
+		if (is_ip_family_ready(entry->ai_family)) {
+			return entry;
+		}
+
+		if (first_missing_family == AF_UNSPEC) {
+			if ((entry->ai_family == AF_INET && IS_ENABLED(CONFIG_NET_IPV4)) ||
+			    (entry->ai_family == AF_INET6 && IS_ENABLED(CONFIG_NET_IPV6))) {
+				first_missing_family = entry->ai_family;
+			}
+		}
+	}
+
+	if (ipv4_dns_found || ipv6_dns_found) {
+		printk("Resolved families/local readiness mismatch: "
+		       "DNS(v4=%d v6=%d), local(v4=%d v6=%d)\n",
+		       ipv4_dns_found, ipv6_dns_found, ipv4_ready, ipv6_ready);
+	}
+
+	*missing_family = first_missing_family;
+
+	return NULL;
 }
 
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
@@ -188,6 +267,24 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	case NET_EVENT_L4_DISCONNECTED:
 		printk("Network connectivity lost\n");
 		on_net_event_l4_disconnected();
+		break;
+	case NET_EVENT_L4_IPV4_CONNECTED:
+		printk("IPv4 connectivity established\n");
+		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
+		k_sem_give(&ip_family_state_sem);
+		break;
+	case NET_EVENT_L4_IPV4_DISCONNECTED:
+		printk("IPv4 connectivity lost\n");
+		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
+		break;
+	case NET_EVENT_L4_IPV6_CONNECTED:
+		printk("IPv6 connectivity established\n");
+		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
+		k_sem_give(&ip_family_state_sem);
+		break;
+	case NET_EVENT_L4_IPV6_DISCONNECTED:
+		printk("IPv6 connectivity lost\n");
+		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
 		break;
 	default:
 		break;
@@ -207,11 +304,12 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 static void send_http_request(void)
 {
 	int err;
-	int fd;
+	int fd = -1;
 	char *p;
 	int bytes;
 	size_t off;
 	struct addrinfo *res;
+	struct addrinfo *selected = NULL;
 	struct addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port */
 		.ai_socktype = SOCK_STREAM,
@@ -226,14 +324,61 @@ static void send_http_request(void)
 		return;
 	}
 
-	inet_ntop(res->ai_family, &((struct sockaddr_in *)(res->ai_addr))->sin_addr, peer_addr,
-		  INET6_ADDRSTRLEN);
-	printk("Resolved %s (%s)\n", peer_addr, net_family2str(res->ai_family));
+	const void *peer_addr_ptr = NULL;
+	uint16_t peer_port = 0U;
+
+	while (selected == NULL) {
+		int missing_family = AF_UNSPEC;
+
+		selected = select_matching_addr(res, &missing_family);
+		if (selected != NULL) {
+			break;
+		}
+
+		if (missing_family == AF_INET || missing_family == AF_INET6) {
+			printk("No resolved address matches currently ready local family\n");
+			wait_for_ip_family(missing_family);
+			continue;
+		}
+
+		break;
+	}
+
+	if (selected == NULL) {
+		printk("No usable resolved IP address for %s\n", CONFIG_HTTPS_HOSTNAME);
+		goto clean_up;
+	}
+
+	switch (selected->ai_family) {
+	case AF_INET: {
+		const struct sockaddr_in *addr4 = (const struct sockaddr_in *)selected->ai_addr;
+
+		peer_addr_ptr = &addr4->sin_addr;
+		peer_port = ntohs(addr4->sin_port);
+		break;
+	}
+	case AF_INET6: {
+		const struct sockaddr_in6 *addr6 = (const struct sockaddr_in6 *)selected->ai_addr;
+
+		peer_addr_ptr = &addr6->sin6_addr;
+		peer_port = ntohs(addr6->sin6_port);
+		break;
+	}
+	default:
+		printk("Unsupported address family: %d\n", selected->ai_family);
+		goto clean_up;
+	}
+
+	if (!inet_ntop(selected->ai_family, peer_addr_ptr, peer_addr, sizeof(peer_addr))) {
+		printk("inet_ntop() failed, err %d\n", errno);
+		goto clean_up;
+	}
+	printk("Resolved %s (%s)\n", peer_addr, net_family2str(selected->ai_family));
 
 	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
-		fd = socket(res->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
+		fd = socket(selected->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
 	} else {
-		fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
+		fd = socket(selected->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
 	}
 	if (fd == -1) {
 		printk("Failed to open socket!\n");
@@ -246,9 +391,8 @@ static void send_http_request(void)
 		goto clean_up;
 	}
 
-	printk("Connecting to %s:%d\n", CONFIG_HTTPS_HOSTNAME,
-	       ntohs(((struct sockaddr_in *)(res->ai_addr))->sin_port));
-	err = connect(fd, res->ai_addr, res->ai_addrlen);
+	printk("Connecting to %s:%d\n", CONFIG_HTTPS_HOSTNAME, peer_port);
+	err = connect(fd, selected->ai_addr, selected->ai_addrlen);
 	if (err) {
 		printk("connect() failed, err: %d\n", errno);
 		goto clean_up;
@@ -297,7 +441,9 @@ static void send_http_request(void)
 
 clean_up:
 	freeaddrinfo(res);
-	(void)close(fd);
+	if (fd >= 0) {
+		(void)close(fd);
+	}
 }
 
 int main(void)
