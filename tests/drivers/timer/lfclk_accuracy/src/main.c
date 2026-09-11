@@ -6,30 +6,30 @@
 
 /* Test information
  * This test measures the GRTC timer intervals
- * with universal timer, which is clocked by precise HFCLOCK
+ * with universal timer, which is clocked by precise HFCLOCK.
  *
  * GRTC configuration:
- * GRTC timer is supplied from LFCLOCK
- * GRTC is operating in an interval mode
+ * GRTC timer is supplied from LFCLOCK.
+ * GRTC is operating in an interval mode.
  *
  * DPPI connection setup:
  * NRF_GRTC_EVENT_COMPARE_0 -> NRF_TIMER_TASK_CAPTURE0
  *
  * Test timer operation:
- * Timer is supplied from HFCLOCK (HFXO is required)
+ * Timer is supplied from HFCLOCK (HFXO is required).
  * Universal timer works in a timer mode and captures
  * the CC value (in 'test_timer_values') when NRF_GRTC_EVENT_COMPARE_0 event is generated.
  * Therefore the following timer CC values differences (stored in 'grtc_intervals')
  * holds the measured GRTC timer intervals.
  *
- * Test lasts for 'TEST_DURATION_MS'
- * within this time up to 'TEST_DURATION_MS / GRTC_TIMER_INTERVAL_US' intervals are measured.
+ * Test lasts for 'TEST_DURATION_MS'.
+ * Within this time up to 'TEST_DURATION_MS / GRTC_TIMER_INTERVAL_US' intervals are measured.
  * Each interval is assesed, intervals outside
- * of the limits (MAXIMAL_ALLOWED_ABS_TIMIMG_DEVIATION_US) are counted
- * Test is marked as FAILED is there are intervals outside of the limits
+ * of the limits (MAXIMAL_ALLOWED_ABS_TIMIMG_DEVIATION_US) are counted.
+ * Test is marked as FAILED if there are intervals outside of the limits.
  *
  * The test setup must be executed as early as possible
- * to catch possible LFCOCLK instabilities:
+ * to catch possible LFCLOCK instabilities:
  * for platfroms without System Controller it is possible in the 'EARLY' stage
  * for platform with System Controller it is possible in the 'APPLICATION' stage
  */
