@@ -248,6 +248,10 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 		return PSA_SUCCESS;
 	}
 
+	if (input_length < iv_size) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_CTR_AES)) {
 		if (alg == PSA_ALG_CTR) {
 			return cracen_sw_aes_ctr_crypt(attributes, key_buffer, key_buffer_size,
@@ -286,10 +290,6 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 							 input_length - iv_size, output,
 							 output_size, output_length);
 		}
-	}
-
-	if (input_length < iv_size) {
-		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);

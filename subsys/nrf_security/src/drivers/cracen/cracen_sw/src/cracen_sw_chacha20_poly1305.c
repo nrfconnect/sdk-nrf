@@ -268,6 +268,10 @@ psa_status_t cracen_sw_chacha20_poly1305_update_ad(cracen_aead_operation_t *oper
 		return PSA_ERROR_BAD_STATE;
 	}
 
+	if (input_length > SIZE_MAX - chacha_poly_ctx->total_ad_fed) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);
 	if (sx_status != SX_OK) {
 		return silex_statuscodes_to_psa(sx_status);
@@ -346,6 +350,10 @@ psa_status_t cracen_sw_chacha20_poly1305_update(cracen_aead_operation_t *operati
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	if (input_length > SIZE_MAX - chacha_poly_ctx->total_data_enc) {
+		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
 	sx_status = sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_DEFAULT);

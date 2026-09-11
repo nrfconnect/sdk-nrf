@@ -164,6 +164,9 @@ static inline int sx_mod_primitive_cmd(sx_pk_req *req,
 	sx_pk_run(req);
 
 	status = sx_pk_wait(req);
+	if (status != SX_OK) {
+		return status;
+	}
 
 	const uint8_t **outputs = sx_pk_get_output_ops(req);
 	const int opsz = sx_pk_get_opsize(req);

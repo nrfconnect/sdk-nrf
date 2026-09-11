@@ -93,6 +93,12 @@ extern "C" {
 /** Initialization vector (IV) size, in bytes, for CHACHA20_POLY1305 encryption/decryption */
 #define SX_CHACHAPOLY_IV_SZ (12U)
 
+/** Largest AAD/data byte count whose bit-length (value << 3) still fits in a
+ *  size_t; used to bound length accumulators before they are encoded as a bit
+ *  count (e.g. GCM's length-in-bits authentication footer).
+ */
+#define SX_GCM_MAX_BITLEN_BYTES (SIZE_MAX >> 3)
+
 struct sxaead;
 
 /** Adds AAD chunks
