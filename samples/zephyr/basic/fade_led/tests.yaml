@@ -1,0 +1,23 @@
+sample:
+  name: Fade LED
+common:
+  tags:
+    - drivers
+    - pwm
+    - ci_samples_zephyr_basic_fade_led
+  depends_on: pwm
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "PWM-based LED fade"
+      - "Using pulse width [0-9]+%"
+      - "Using pulse width [0-9]+%"
+
+tests:
+  nrf.extended.sample.basic.fade_led:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuppr
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuppr
