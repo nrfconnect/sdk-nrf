@@ -1,0 +1,60 @@
+sample:
+  name: System off sample
+tests:
+  sample.cellular.system_off:
+    sysbuild: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "System off sample"
+        - "State retention disabled"
+        - "Entering System OFF; press Button 0 to restart"
+  sample.cellular.system_off_grtc_retention:
+    sysbuild: true
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_configs:
+      - CONFIG_SAMPLE_GRTC_WAKEUP=y
+      - CONFIG_SAMPLE_GPIO_WAKEUP=n
+      - CONFIG_SAMPLE_STATE_RETENTION=y
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: true
+      regex:
+        - "System off sample"
+        - "Retained data: valid"
+        - "Boot count: 1"
+        - "Off count: 0"
+        - "Active ticks:"
+        - "Entering System OFF; wait 2 seconds to restart"
+        - "System off sample"
+        - "Wakeup from System OFF by GRTC"
+        - "Retained data: valid"
+        - "Boot count: 2"
+        - "Off count: 1"
+        - "Active ticks:"
+        - "Entering System OFF; wait 2 seconds to restart"
+        - "System off sample"
+        - "Wakeup from System OFF by GRTC"
+        - "Retained data: valid"
+        - "Boot count: 3"
+        - "Off count: 2"
+        - "Active ticks:"
+        - "Entering System OFF; wait 2 seconds to restart"
