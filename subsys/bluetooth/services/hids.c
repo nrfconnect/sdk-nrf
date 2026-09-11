@@ -363,7 +363,9 @@ static ssize_t hids_outp_rep_read(struct bt_conn *conn,
 		    .data = buf,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn, false);
+
+		if (rep->handler(&report, conn, false) < 0)
+			ret_len = BT_GATT_ERR(BT_ATT_ERR_INVALID_PDU);
 	}
 
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
@@ -408,7 +410,9 @@ static ssize_t hids_outp_rep_write(struct bt_conn *conn,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn, true);
+
+		if (rep->handler(&report, conn, true) < 0)
+			ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_PDU);
 	}
 release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
@@ -464,7 +468,9 @@ static ssize_t hids_feat_rep_read(struct bt_conn *conn,
 		    .data = buf,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn, false);
+		if (rep->handler(&report, conn, false) < 0)
+			ret_len = BT_GATT_ERR(BT_ATT_ERR_INVALID_PDU);
+
 	}
 
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
@@ -515,7 +521,9 @@ static ssize_t hids_feat_rep_write(struct bt_conn *conn,
 		    .data = rep_data,
 		    .size = rep->size,
 		};
-		rep->handler(&report, conn, true);
+
+		if (rep->handler(&report, conn, true) < 0)
+			ret = BT_GATT_ERR(BT_ATT_ERR_INVALID_PDU);
 	}
 release_ctx:
 	bt_conn_ctx_release(hids->conn_ctx, (void *)conn_data);
