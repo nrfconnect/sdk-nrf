@@ -35,7 +35,7 @@ config NRF71_IPC_BIND_TIMEOUT_MS
 	help
 	  Maximum time to wait for the IPC endpoint bound callback after
 	  registration. The Wi-Fi UMAC peer must register its endpoint before
-	  bind completes. On timeout ipc_register_rx_cb() fails.
+	  bind completes. On timeout host-RPU transport open fails.
 
 config NRF71_IPC_SEND_TIMEOUT_MS
 	int "IPC host TX send timeout (ms)"
