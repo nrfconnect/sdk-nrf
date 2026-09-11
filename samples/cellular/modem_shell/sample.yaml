@@ -134,7 +134,6 @@ tests:
       - EXTRA_DTC_OVERLAY_FILE="nrf9161dk_ext_flash.overlay"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9161dk/nrf9161/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9161dk/nrf9161/ns
@@ -308,7 +307,6 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     platform_allow:
       - thingy91/nrf9160/ns
@@ -526,7 +524,6 @@ tests:
     extra_args: modem_shell_SNIPPET="nrf91-modem-trace-uart"
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - thingy91x/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
