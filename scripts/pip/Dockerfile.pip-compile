@@ -1,0 +1,9 @@
+FROM python:3.12-slim
+
+COPY pip-compile-entrypoint.sh /usr/local/bin/pip-compile-entrypoint.sh
+RUN chmod +x /usr/local/bin/pip-compile-entrypoint.sh
+
+WORKDIR /work
+
+ENTRYPOINT ["/usr/local/bin/pip-compile-entrypoint.sh"]
+CMD ["/bin/bash"]
