@@ -11,6 +11,7 @@ import sys
 from pathlib import Path
 
 from sphinx.config import eval_config_file
+from west.manifest import Manifest
 
 # Paths ------------------------------------------------------------------------
 
@@ -107,7 +108,7 @@ zephyr_hw_features_vendor_filter = ["nordic"]
 
 # -- Options for zephyr.gh_utils -----------------------------------------------
 
-gh_link_version = "main" if version.endswith("99") else f"v{version}"
+gh_link_version = Manifest.from_topdir().get_projects(["zephyr"])[0].revision
 gh_link_base_url = "https://github.com/nrfconnect/sdk-zephyr"
 
 # pylint: enable=undefined-variable,used-before-assignment
