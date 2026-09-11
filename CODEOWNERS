@@ -176,6 +176,8 @@
 /doc/nrf/libraries/networking/aws_*.rst   @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/azure_*.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/coap_utils.rst @nrfconnect/ncs-terahertz-doc
+/doc/nrf/libraries/networking/dect_tethering.rst @nrfconnect/ncs-iot-oulu-tampere-doc
+/doc/nrf/libraries/networking/images/lib_dect_tethering_architecture.mmd @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/downloader.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/networking/icalendar_parser.rst @nrfconnect/ncs-doc-leads
@@ -593,6 +595,7 @@
 /samples/dect/dect_phy/hello_dect/        @nrfconnect/ncs-modem
 /samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_shell/                 @nrfconnect/ncs-dect-nr-plus
+/samples/dect/dect_tether_ipv6/           @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/                             @nrfconnect/ncs-eris
 /samples/esb/                             @nrfconnect/ncs-si-xcake
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
@@ -714,6 +717,7 @@
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_shell/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/dect/dect_tether_ipv6/**/*.rst   @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
 /samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc
@@ -1092,6 +1096,7 @@
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
+/tests/subsys/net/lib/dect/tether_ipv6/   @nrfconnect/ncs-dect-nr-plus
 /tests/subsys/net/lib/downloader/         @nrfconnect/ncs-modem
 /tests/subsys/net/lib/fota_download/      @nrfconnect/ncs-eris
 /tests/subsys/net/lib/lwm2m_*/            @nrfconnect/ncs-iot-oulu

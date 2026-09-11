@@ -206,12 +206,27 @@ Bluetooth Mesh
 DECT NR+
 --------
 
-* Added DECT NR+ L2 Ethernet sink mode for IPv6 bridging over an Ethernet uplink:
+* Added:
 
-  * Delegated ``/96`` prefix and ULA on DECT NR+
-  * ND proxy on behalf of associated PT devices
-  * Optional DHCPv6 client
-  * Upstream routing through the default router link-local address
+  * DECT NR+ L2 Ethernet sink mode for IPv6 bridging over an Ethernet uplink:
+
+    * Delegated ``/96`` prefix and ULA on DECT NR+
+    * ND proxy on behalf of associated PT devices
+    * Optional DHCPv6 client
+    * Upstream routing through the default router link-local address
+
+  * The :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC:
+
+    * Sends ICMPv6 Router Advertisements (default router, RDNSS, Managed flag, PIO with ``A=0``/``L=0``) so that the host uses DHCPv6 for addressing.
+    * Provides a built-in minimal DHCPv6 server (UDP 547) that offers ULA and delegated GUA ``/128`` addresses derived from the DECT NR+ interface.
+    * Optionally forwards IPv6 mDNS (UDP 5353) between the Ethernet and DECT NR+ interfaces through an ``AF_PACKET`` tap.
+
+  * The :kconfig:option:`CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP` Kconfig option to the DECT NR+ L2 to derive ULA and delegated GUA addresses without installing them (or their on-link ULA prefixes) on the DECT NR+ interface, keeping only the link-local address on the interface.
+    This is an enabler for the tethering GW use case above.
+    A new ``dect_net_l2_ipv6_off_iface_unicast_get()`` function lets upper layers read the addresses that are kept off the interface address list.
+
+  * The :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` Kconfig option to the nRF91 Series DECT modem driver to allocate DECT RX ``net_pkt``/``net_buf`` from a DECT-only pool isolated from the global RX pools, so that RX bursts on another interface (for example, the tethering GW's Ethernet host leg) cannot starve DECT NR+ RX.
+    Pool size is tunable through the ``CONFIG_DECT_MDM_RX_PRIVATE_{PKT,BUF}_COUNT`` and ``_BUF_SIZE`` Kconfig options, and pool usage can be printed with the new ``dect_mdm rx_pool`` shell command.
 
 * Updated by improving half-closed association recovery in the nRF91 DECT driver and L2 stack (DLC discard timer, ``RD_NOT_FOUND``, L2 table full).
   The :c:func:`dect_net_l2_child_association_created` function now returns ``int``; check for ``-ENOSPC`` and release the MAC association.
@@ -487,6 +502,9 @@ DFU samples
 DECT NR+ samples
 ----------------
 
+* Added the :ref:`dect_tether_ipv6_sample` sample for an nRF91x1 PT device that bridges a DECT NR+ uplink to a wired Ethernet host, acting as an IPv6 gateway (GW) using the new :ref:`lib_dect_tethering` library.
+  Ethernet connectivity uses a W5500 SPI shield (Arceli interrupt-driven or Seeed poll-mode) on the nRF9151 DK.
+
 * :ref:`dect_shell_application` sample:
 
   * Added:
@@ -495,6 +513,8 @@ DECT NR+ samples
     * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
     * Ethernet border router sink variant using a W5500 shield (``arceli_eth_w5500`` or ``seeed_w5500``), with configuration and devicetree overlays for modem shared memory, static or random MAC, and optional DHCPv6.
     * Shared mDNS configuration overlay (:file:`mdns-common.conf`) and Ethernet mDNS overlay (:file:`eth_mdns.conf`) for DNS-SD on both ``dect0`` and ``eth0``.
+    * The ``dect_rx_pool.conf`` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalanced the global TX/RX pool sizes to match observed usage.
+    * The ``dlc_resilient.conf`` configuration file for a loss-resilient DLC profile when using the Ethernet sink mode.
 
   * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
   * Fixed the routing logs.
