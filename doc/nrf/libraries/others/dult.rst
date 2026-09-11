@@ -28,6 +28,23 @@ This Kconfig option depends on the :kconfig:option:`CONFIG_BT` option that enabl
 
 The following Kconfig options are also available for this module:
 
+* :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` and :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` - These options select the DULT API contract.
+  The :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` option is chosen by default and is deprecated.
+  For details on the differences between the variants, see the :ref:`ug_dult_api_variant` section of the DULT integration guide.
+
+* :kconfig:option:`CONFIG_DULT_USER_MAX` - This option sets the maximum number of DULT users that can be registered at the same time.
+  The default value is set to ``1``.
+  Values greater than ``1`` require the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` option, as the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` option supports only a single DULT user.
+
+* :kconfig:option:`CONFIG_DULT_MULTI_USER` - This option indicates that more than one DULT user can be registered.
+  It is enabled automatically when the :kconfig:option:`CONFIG_DULT_USER_MAX` option is set to a value greater than ``1``, and cannot be set directly.
+  Use it in the application code to conditionally compile the handling of the multi-user coexistence callbacks.
+
+* :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_SMALL` and :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_LARGE` - These options declare the size and the discoverability of your accessory.
+  The :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_SMALL` option is chosen by default.
+  With this option, the module validates the mandatory accessory capabilities during the DULT user registration.
+  For details on how to choose the accessory type, see the :ref:`ug_dult_accessory_type` section of the DULT integration guide.
+
 * :kconfig:option:`CONFIG_DULT_BATTERY` - This option enables support for battery information such as battery type and battery level.
   The battery information is an optional feature in the DULT specification.
   By default, this option is disabled.
@@ -37,7 +54,7 @@ The following Kconfig options are also available for this module:
   * :kconfig:option:`CONFIG_DULT_BATTERY_TYPE_POWERED`, :kconfig:option:`CONFIG_DULT_BATTERY_TYPE_NON_RECHARGEABLE`, and :kconfig:option:`CONFIG_DULT_BATTERY_TYPE_RECHARGEABLE` - These options allow to choose the device's declared battery type.
     By default, the :kconfig:option:`CONFIG_DULT_BATTERY_TYPE_POWERED` is chosen.
 
-* There are following ANOS configuration options for the DULT module:
+* The following ANOS configuration options are available for the DULT module:
 
   * :kconfig:option:`CONFIG_DULT_BT_ANOS_ID_PAYLOAD_LEN_MAX` - This option allows to configure the maximum length of the accessory-locating network identifier.
     The default value is set to ``18``. The identifier is defined by the accessory-locating network that the accessory belongs to.
@@ -52,6 +69,9 @@ The following Kconfig options are also available for this module:
   * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` - This option allows to configure motion detector parameters for testing purposes.
     These values are defined in the DULT specification and should not be changed in the production code.
     This option is disabled by default.
+    When this option is enabled, the separated unwanted tracking timing parameters can also be overridden at runtime with the :c:func:`dult_test_motion_detector_separated_ut_period_set` function.
+    The runtime values are expressed in seconds and bounded by the :c:macro:`DULT_TEST_MOTION_DETECTOR_PERIOD_MAX` macro, while the Kconfig options below are expressed in minutes.
+    New values take effect on the next timer arm and do not restart a timer that is already running.
 
     * :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_SEPARATED_UT_BACKOFF_PERIOD` - This option allows to configure the period in minutes to disable the motion detector if the accessory is in the separated state.
       If this option is configurable, its default value is set to ``2``.
@@ -65,21 +85,36 @@ The following Kconfig options are also available for this module:
 
 See the Kconfig help for details.
 
+.. note::
+   The :kconfig:option:`CONFIG_DULT_MOTION_DETECTOR_TEST_MODE` option selects the :kconfig:option:`CONFIG_DULT_TEST` option, which enables the test-only layer of the DULT module.
+   Do not enable it in a production build.
+
 Implementation details
 **********************
 
 The implementation uses :c:macro:`BT_GATT_SERVICE_DEFINE` to statically define and register the ANOS.
 Because of that, the ANOS is still present in the GATT database after the DULT subsystem is disabled.
-In the DULT subsystem disabled state, GATT operations on the ANOS are rejected.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V1` Kconfig option, GATT operations on the ANOS are rejected until the DULT subsystem is enabled.
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, operations can also be served in the pre-association window for the DULT user that claimed the Bluetooth connection, subject to the access policy.
+For more details, see the :ref:`ug_dult_multi_user` and :ref:`ug_dult_anos_access` sections of the DULT integration guide.
 
 The ANOS handles all requests received from the outer world.
 In case of an application input needed to handle a GATT operation, the DULT subsystem calls the appropriate registered application callback.
 For more details, see the :ref:`Integration steps <ug_integrating_dult>` section of the DULT integration guide.
 
+With the :kconfig:option:`CONFIG_DULT_API_VARIANT_V2` Kconfig option, the module keeps a slot table sized by the :kconfig:option:`CONFIG_DULT_USER_MAX` Kconfig option.
+Each slot holds the per-user state, which is why callbacks, the battery level, and the near-owner state survive the :c:func:`dult_reset` function call and are only cleared by the :c:func:`dult_user_unregister` function call.
+
 API documentation
 *****************
 
-| Header file: :file:`include/dult.h`
+| Header files: :file:`include/dult/dult.h`, :file:`include/dult/bt.h`, :file:`include/dult/multi_user.h`, :file:`include/dult/test.h`
 | Source files: :file:`subsys/dult`
 
 .. doxygengroup:: dult
+
+.. doxygengroup:: dult_bt
+
+.. doxygengroup:: dult_multi_user
+
+.. doxygengroup:: dult_test
