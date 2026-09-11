@@ -4,6 +4,7 @@ common:
   harness_config:
     pytest_root:
       - "../upgrade/pytest/test_common_provision.py::test_passes_after_provisioning_all_keys"
+  # nRF54LS05 does not have KMU and CRACEN, so bootloader KMU key locking does not apply.
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
     - nrf54lv10dk/nrf54lv10a/cpuapp
