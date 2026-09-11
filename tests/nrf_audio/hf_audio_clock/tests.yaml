@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+tests:
+  nrf_audio.hf_audio_clock:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - hf_audio_clock
+      - sysbuild
+      - ci_tests_nrf_audio
+    timeout: 20
