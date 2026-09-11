@@ -235,8 +235,6 @@
 .. _`docbuild`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docbuild.yml
 .. _`docpublish`: https://github.com/nrfconnect/sdk-nrf/blob/main/.github/workflows/docpublish.yml
 
-.. _`Microsoft's debug adaptor`: https://github.com/microsoft/MIEngine/
-
 .. _`Azure SDK for Embedded C IoT client libraries`: https://github.com/nrfconnect/azure-sdk-for-c/blob/main/sdk/docs/iot/README.md
 
 .. _`cJSON`: https://github.com/nrfconnect/sdk-cjson
