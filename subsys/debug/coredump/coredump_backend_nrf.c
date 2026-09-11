@@ -131,6 +131,11 @@ static inline uint16_t calc_header_crc(const struct header *header)
 	return crc16_ccitt(0xffff, (const uint8_t *)header, offsetof(struct header, header_crc));
 }
 
+static inline bool is_within_partition(uint32_t offset, size_t size)
+{
+	return (offset < COREDUMP_PARTITION_SIZE) && (size <= COREDUMP_PARTITION_SIZE - offset);
+}
+
 static inline uint16_t calc_dump_crc(const struct header *header)
 {
 	return crc16_ccitt(0xffff, get_stored_dump(header), header->size);
@@ -139,17 +144,13 @@ static inline uint16_t calc_dump_crc(const struct header *header)
 static inline bool validate_header(const struct header *header)
 {
 	return (memcmp(header->magic, MAGIC, sizeof(MAGIC)) == 0) &&
-	       (calc_header_crc(header) == header->header_crc);
+	       (calc_header_crc(header) == header->header_crc) &&
+	       is_within_partition(header->offset, header->size);
 }
 
 static inline bool validate_dump(const struct header *header)
 {
 	return calc_dump_crc(header) == header->dump_crc;
-}
-
-static inline bool is_within_partition(uint32_t offset, size_t size)
-{
-	return (offset < COREDUMP_PARTITION_SIZE) && (size <= COREDUMP_PARTITION_SIZE - offset);
 }
 
 static void write(uint32_t offset, const uint8_t *data, size_t size)
@@ -257,12 +258,12 @@ static int copy_stored_dump(off_t offset, uint8_t *buffer, size_t size)
 		return 0;
 	}
 
-	if (offset >= header->size) {
+	if ((offset < 0) || ((size_t)offset >= header->size)) {
 		return -EINVAL;
 	}
 
-	size = MIN(size, header->size - offset);
-	memcpy(buffer, get_stored_dump(header) + offset, size);
+	size = MIN(size, header->size - (size_t)offset);
+	memcpy(buffer, get_stored_dump(header) + (size_t)offset, size);
 
 	return (int)size;
 }
