@@ -3566,6 +3566,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -3580,10 +3581,12 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
             * - **nPM1300**
               - --
               - --
               - Supported
+              - Experimental
               - Supported
               - Supported
               - --
@@ -3593,6 +3596,7 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - Supported
+              - Experimental
               - Supported
               - Supported
               - --
@@ -3607,7 +3611,9 @@ The following table indicates the software maturity levels of the support for ea
               - --
               - --
               - --
+              - --
             * - **nPM6001**
+              - --
               - --
               - --
               - --
