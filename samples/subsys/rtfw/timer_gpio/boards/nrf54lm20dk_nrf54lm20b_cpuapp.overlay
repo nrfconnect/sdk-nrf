@@ -1,0 +1,27 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		rt-timer = &timer20;
+		rt-egu = &egu20;
+	};
+
+	zephyr,user {
+		rt-gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
+		rt-debug-gpios = <&gpio1 5 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&timer20 {
+	status = "disabled";
+};
+
+&egu20 {
+	status = "disabled";
+};
