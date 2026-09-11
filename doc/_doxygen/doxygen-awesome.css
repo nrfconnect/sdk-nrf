@@ -29,17 +29,21 @@ SOFTWARE.
 
 html {
     /* primary theme color. This will affect the entire websites color scheme: links, arrows, labels, ... */
-    --primary-color: #1779c4;
-    --primary-dark-color: #335c80;
-    --primary-light-color: #70b1e9;
+
+    --primary-color: #00a9ce;
+    --primary-dark-color: #0056b3;
+    --primary-light-color: #5cc8e0;
 
     /* page base colors */
     --page-background-color: #ffffff;
-    --page-foreground-color: #2f4153;
-    --page-secondary-foreground-color: #6f7e8e;
+    --page-foreground-color: #323e48;
+    --page-secondary-foreground-color: #6b7280;
 
     /* color for all separators on the website: hr, borders, ... */
-    --separator-color: #dedede;
+    --separator-color: #e2e8f0;
+    --font-family: "Noto Sans", Carlito, sans-serif;
+    --font-family-monospace: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
+
 
     /* border radius for all rounded components. Will affect many components, like dropdowns, memitems, codeblocks, ... */
     --border-radius-large: 8px;
@@ -64,14 +68,13 @@ html {
     --font-family-monospace: ui-monospace,SFMono-Regular,SF Mono,Menlo,Consolas,Liberation Mono,monospace;
 
     /* font sizes */
-    --page-font-size: 15.6px;
+    --page-font-size: 16px;
     --navigation-font-size: 14.4px;
     --toc-font-size: 13.4px;
-    --code-font-size: 14px; /* affects code, fragment */
     --title-font-size: 22px;
 
     /* content text properties. These only affect the page content, not the navigation or any other ui elements */
-    --content-line-height: 27px;
+    --content-line-height: 23px;
     /* The content is centered and constraint in it's width. To make the content fill the whole page, set the variable to auto.*/
     --content-maxwidth: 1050px;
     --table-line-height: 24px;
@@ -84,7 +87,7 @@ html {
     --warning-color-dark: #f3a600;
     --warning-color-darker: #5f4204;
     --note-color: #e4f3ff;
-    --note-color-dark: #1879C4;
+    --note-color-dark: #00a9ce;
     --note-color-darker: #274a5c;
     --todo-color: #e4dafd;
     --todo-color-dark: #5b2bdd;
@@ -104,8 +107,9 @@ html {
     --blockquote-foreground: #636568;
 
     /* table colors */
-    --tablehead-background: #f1f1f1;
-    --tablehead-foreground: var(--page-foreground-color);
+
+    --tablehead-background: #eaeded;
+    --tablehead-foreground: #333f48;
 
     /* menu-display: block | none
      * Visibility of the top navigation on screens >= 768px. On smaller screen the menu is always visible.
@@ -113,8 +117,8 @@ html {
      */
     --menu-display: block;
 
-    --menu-focus-foreground: var(--page-background-color);
-    --menu-focus-background: var(--primary-color);
+    --menu-focus-foreground: #0033a0;
+    --menu-focus-background: #e0f4f9;
     --menu-selected-background: rgba(0,0,0,.05);
 
 
@@ -122,16 +126,37 @@ html {
     --header-foreground: var(--page-foreground-color);
 
     /* searchbar colors */
-    --searchbar-background: var(--side-nav-background);
-    --searchbar-foreground: var(--page-foreground-color);
+    --searchbar-background: #ffffff;
+    --searchbar-foreground: #666f7b;
 
     /* searchbar size
      * (`searchbar-width` is only applied on screens >= 768px.
      * on smaller screens the searchbar will always fill the entire screen width) */
-    --searchbar-height: 33px;
-    --searchbar-width: 210px;
-    --searchbar-border-radius: var(--searchbar-height);
+     --searchbar-height: 36px;
+     --searchbar-width: 100%;
+     max-width: none;
+     --searchbar-border-radius: 4px;
+    /* Nordic-like search (see sphinx nordic .ncs-search-input) */
+#MSearchBox {
+    background: #ffffff !important;
+    border: 1px solid rgba(0, 0, 0, 0.08) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06) !important;
+    border-radius: 4px !important;
+}
 
+#MSearchBox.MSearchBoxActive {
+    border-color: #00a9ce !important;
+    box-shadow: 0 0 0 1px #00a9ce !important;
+}
+
+#MSearchField {
+    color: #666f7b !important;
+}
+
+#MSearchField::placeholder {
+    color: #666f7b !important;
+    opacity: 1;
+}
     /* code block colors */
     --code-background: #f5f5f5;
     --code-foreground: var(--page-foreground-color);
@@ -144,7 +169,7 @@ html {
     --fragment-keywordflow: #d67c3b;
     --fragment-token: #438a59;
     --fragment-comment: #969696;
-    --fragment-link: #5383d6;
+    --fragment-link: #00a9ce;
     --fragment-preprocessor: #46aaa5;
     --fragment-linenumber-color: #797979;
     --fragment-linenumber-background: #f4f4f5;
@@ -152,7 +177,8 @@ html {
     --fragment-lineheight: 20px;
 
     /* sidebar navigation (treeview) colors */
-    --side-nav-background: #fbfbfb;
+
+    --side-nav-background: #ffffff;
     --side-nav-foreground: var(--page-foreground-color);
     --side-nav-arrow-opacity: 0;
     --side-nav-arrow-hover-opacity: 0.9;
@@ -347,7 +373,7 @@ a.anchor {
  */
 
 #top {
-    background: var(--header-background);
+    background:#333f48;;
     border-bottom: 1px solid var(--separator-color);
 }
 
@@ -363,14 +389,16 @@ a.anchor {
 #main-nav {
     flex-grow: 5;
     padding: var(--spacing-small) var(--spacing-medium);
+    margin-bottom: 18px;
 }
 
 #titlearea {
     width: auto;
-    padding: var(--spacing-medium) var(--spacing-large);
+    /* padding: var(--spacing-medium) var(--spacing-large); */
     background: none;
     color: var(--header-foreground);
     border-bottom: none;
+    padding: 0px 15px 23px 16px;
 }
 
 @media screen and (max-width: 767px) {
@@ -386,6 +414,7 @@ a.anchor {
 #projectname {
     font-size: var(--title-font-size);
     font-weight: 600;
+    color: white;
 }
 
 #projectnumber {
@@ -405,6 +434,9 @@ a.anchor {
 #projectlogo img {
     max-height: calc(var(--title-font-size) * 2);
     margin-right: var(--spacing-small);
+    max-height: 93px;
+    width: auto;
+    max-width: 200px;
 }
 
 .sm-dox, .tabs, .tabs2, .tabs3 {
@@ -416,7 +448,24 @@ a.anchor {
     border-bottom: 1px solid var(--separator-color);
     margin-bottom: -1px;
 }
+li#searchBoxPos2 {
+    right: 1.5rem;
+}
+doxygen-awesome-dark-mode-toggle svg {
+    color: #ffffff;
+  }
 
+  doxygen-awesome-dark-mode-toggle svg path,
+  doxygen-awesome-dark-mode-toggle svg circle,
+  doxygen-awesome-dark-mode-toggle svg line,
+  doxygen-awesome-dark-mode-toggle svg g {
+    fill: #ffffff !important;
+    stroke: #ffffff !important;
+  }
+  doxygen-awesome-dark-mode-toggle svg {
+    transform: scale(0.75);   /* try 0.65–0.9 */
+    transform-origin: center;
+  }
 .main-menu-btn-icon, .main-menu-btn-icon:before, .main-menu-btn-icon:after {
     background: var(--page-secondary-foreground-color);
 }
@@ -432,9 +481,11 @@ a.anchor {
     }
 
     #main-menu a.has-submenu:hover span.sub-arrow {
-        color: var(--page-foreground-color);
+        border-color: #0033a0 transparent transparent transparent;
+        color: #0033a0;
     }
-}
+    }
+
 
 @media screen and (min-width: 768px) {
     .sm-dox li, .tablist li {
@@ -446,7 +497,8 @@ a.anchor {
     }
 
     .sm-dox a:hover span.sub-arrow {
-        border-color: var(--menu-focus-foreground) transparent transparent transparent;
+        border-color: #0033a0 transparent transparent transparent;
+        color: #0033a0;
     }
 
     .sm-dox ul a span.sub-arrow {
@@ -454,10 +506,32 @@ a.anchor {
     }
 
     .sm-dox ul a:hover span.sub-arrow {
-        border-color: transparent transparent transparent var(--menu-focus-foreground);
+        border-color: #0033a0 transparent transparent transparent;
+        color: #0033a0;
     }
-}
+    }
+    @media screen and (min-width: 768px) {
+        /* top row: down-arrow */
+        .sm-dox a.highlighted span.sub-arrow,
+        .sm-dox a[aria-expanded="true"] span.sub-arrow {
+          border-color: var(--menu-focus-foreground) transparent transparent transparent;
+          /* or: #0033a0 */
+        }
 
+        /* submenus: right-arrow */
+        .sm-dox ul a.highlighted span.sub-arrow,
+        .sm-dox ul a[aria-expanded="true"] span.sub-arrow {
+          border-color: transparent transparent transparent var(--menu-focus-foreground);
+        }
+      }
+
+#MSearchField {
+    background-image: url(search.svg);
+    background-repeat: no-repeat;
+    background-position: 10px center;
+    background-size: 1rem;
+    padding-left: 2.25rem !important;
+}
 .sm-dox ul {
     background: var(--page-background-color);
     box-shadow: var(--box-shadow);
@@ -495,9 +569,10 @@ a.anchor {
 
 .sm-dox ul a:hover, .sm-dox ul a:active, .sm-dox ul a:focus {
     font-size: var(--navigation-font-size) !important;
-    color: var(--menu-focus-foreground) !important;
+    /* color: var(--menu-focus-foreground) !important; */
     text-shadow: none;
-    background-color: var(--menu-focus-background);
+    background-color: #e0f4f9 !important;
+    color: #0033a0 !important;
     border-radius: var(--border-radius-small) !important;
 }
 
@@ -505,7 +580,7 @@ a.anchor {
     text-shadow: none;
     background: transparent;
     background-image: none !important;
-    color: var(--header-foreground) !important;
+    color: #ffffff !important;
     font-weight: normal;
     font-size: var(--navigation-font-size);
     border-radius: var(--border-radius-small) !important;
@@ -518,10 +593,12 @@ a.anchor {
 .sm-dox a:hover, .sm-dox a:active, .tablist li a:hover {
     text-shadow: none;
     font-weight: normal;
-    background: var(--menu-focus-background);
-    color: var(--menu-focus-foreground) !important;
+    /* background: var(--menu-focus-background); */
+    /* color: var(--menu-focus-foreground) !important; */
     border-radius: var(--border-radius-small) !important;
     font-size: var(--navigation-font-size);
+    background-color: rgb(224, 244, 249) !important;
+    color: #0033a0 !important;
 }
 
 .tablist li.current {
