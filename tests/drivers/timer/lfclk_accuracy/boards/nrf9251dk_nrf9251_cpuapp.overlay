@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&grtc {
+	/delete-property/ child-owned-channels;
+};
+
+tst_timer: &timer130 {
+	status = "okay";
+};
+
+&fll16m {
+	status = "okay";
+};
+
+&lfclk {
+	status = "okay";
+};
