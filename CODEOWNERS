@@ -584,6 +584,7 @@
 /samples/cellular/nrf_device_provisioning/ @nrfconnect/ncs-iot-oulu
 /samples/cellular/modem_trace_flash/      @nrfconnect/ncs-modem
 /samples/cellular/sms/                    @nrfconnect/ncs-modem-tre
+/samples/cellular/system_off/             @nrfconnect/ncs-modem-tre
 /samples/cellular/uicc_lwm2m/             @stig-bjorlykke
 /samples/common/                          @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-bluebagel
 /samples/crypto/                          @nrfconnect/ncs-aegir
@@ -709,6 +710,7 @@
 /samples/cellular/nrf_cloud_*/**/*.rst    @nrfconnect/ncs-nrf-cloud-doc
 /samples/cellular/nrf_device_provisioning/*.rst  @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/cellular/sms/*.rst               @nrfconnect/ncs-iot-positioning-doc
+/samples/cellular/system_off/*.rst        @nrfconnect/ncs-iot-positioning-doc
 /samples/crypto/**/*.rst                  @nrfconnect/ncs-aegir-doc
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
