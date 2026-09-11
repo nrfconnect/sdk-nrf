@@ -1626,6 +1626,11 @@ ci_samples_nrf5340:
     - zephyr/subsys/shell/
     - zephyr/subsys/usb/
 
+ci_samples_zephyr_basic_blinky_pwm:
+  files:
+    - nrf/samples/zephyr/basic/blinky_pwm/
+    - zephyr/samples/basic/blinky_pwm/
+
 ci_samples_zephyr_sensor_accel_polling:
   files:
     - nrf/samples/zephyr/sensor/accel_polling/
