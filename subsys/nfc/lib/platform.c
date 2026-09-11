@@ -8,11 +8,11 @@
 #include <zephyr/linker/devicetree_regions.h>
 
 #if IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON)
-#if (defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#if IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS)
 #include <zephyr/devicetree.h>
 #else
 #include <zephyr/drivers/clock_control.h>
-#endif /* (defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)) */
+#endif /* IS_ENABLED(CONFIG_HAS_MULTI_OPTION_CLOCKS) */
 #endif /* IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF) || IS_ENABLED(CONFIG_CLOCK_CONTROL_NRF_COMMON) */
 #include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
