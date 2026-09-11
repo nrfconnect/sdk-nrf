@@ -6,6 +6,7 @@
  */
 
 #include <zephyr/sys/util_macro.h>
+#include <stdbool.h>
 #include <zephyr/toolchain.h>
 #include <string.h>
 #include <zephyr/logging/log.h>
@@ -67,6 +68,28 @@ LOG_MODULE_DECLARE(mcumgr_img_grp, CONFIG_MCUMGR_GRP_IMG_LOG_LEVEL);
 #warning "MCUmgr img mgmt only supports 1 image"
 #endif
 
+#if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
+static bool img_mgmt_is_running_application_image(int image)
+{
+	if (image == img_mgmt_active_image()) {
+		return true;
+	}
+
+	if (CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER >= 0 &&
+	    image == CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER &&
+	    img_mgmt_active_image() == CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER) {
+		return true;
+	}
+
+	return false;
+}
+#else
+static bool img_mgmt_is_running_application_image(int image)
+{
+	return image == img_mgmt_active_image();
+}
+#endif
+
 /**
  * Collects information about the specified image slot.
  */
@@ -117,7 +140,7 @@ img_mgmt_state_flags(int query_slot)
 	}
 
 	/* Only running application is active */
-	if (image == img_mgmt_active_image() && query_slot == active_slot) {
+	if (img_mgmt_is_running_application_image(image) && query_slot == active_slot) {
 		flags |= IMG_MGMT_STATE_F_ACTIVE;
 	}
 
@@ -155,7 +178,7 @@ img_mgmt_state_flags(int query_slot)
 	 * - version in that slot is higher than version of active slot.
 	 * - versions are equal but slot number is lower than the active slot.
 	 */
-	if (image == img_mgmt_active_image() && query_slot == active_slot) {
+	if (img_mgmt_is_running_application_image(image) && query_slot == active_slot) {
 		flags = IMG_MGMT_STATE_F_ACTIVE;
 #ifdef CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
 #ifdef CONFIG_NRF_MCUBOOT_BOOT_REQUEST
@@ -495,6 +518,18 @@ img_mgmt_state_confirm(void)
 	}
 
 	rc = img_mgmt_write_confirmed();
+	if (rc != 0) {
+		goto err;
+	}
+
+#if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
+	if (CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER >= 0) {
+		if (boot_write_img_confirmed_multi(CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER) != 0) {
+			rc = IMG_MGMT_ERR_FLASH_WRITE_FAILED;
+			goto err;
+		}
+	}
+#endif
 
 #if defined(CONFIG_MCUMGR_GRP_IMG_STATUS_HOOKS)
 	if (!rc) {
@@ -756,7 +791,7 @@ int img_mgmt_set_next_boot_slot(int slot, bool confirm)
 	 * image. Now the behaviour is controlled via Kconfig options.
 	 */
 #ifndef CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY
-	if (confirm && image != img_mgmt_active_image() &&
+	if (confirm && !img_mgmt_is_running_application_image(image) &&
 	    (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_SECONDARY) ||
 	     slot == active_slot)) {
 		LOG_DBG("Not allowed to confirm non-active images");
