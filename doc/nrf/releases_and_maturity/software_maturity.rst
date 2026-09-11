@@ -348,11 +348,11 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-           - --
+           - Experimental
            - Supported
            - Supported
            - Experimental
-           - --
+           - Experimental
            - Experimental
          * - **Bluetooth Mesh**
            - Supported
@@ -782,6 +782,7 @@ The following table indicates the software maturity levels of the support for ea
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LC10A
              - nRF54LM20A
              - nRF54LM20B
              - nRF54LV10A
@@ -791,15 +792,17 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
@@ -809,57 +812,64 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Data Length Extensions**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Isochronous Channels**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
              - --
-             - Experimental
+             - --
            * - **Direction Finding**\ :sup:`3`
+             - Experimental
              - Experimental
              - Experimental
              - Experimental
@@ -872,24 +882,27 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Channel Sounding**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
@@ -899,55 +912,61 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Enhanced ATT**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Shorter Connection Intervals**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Frame Space Update**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
            * - **Extended Feature Set**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
              - Experimental
-             - --
+             - Experimental
              - Experimental
 
   | [1]: Subject to RAM availability
@@ -1058,6 +1077,7 @@ The following table indicates the software maturity levels of the support for ea
               - nRF54L05
               - nRF54L10
               - nRF54L15
+              - nRF54LC10A
               - nRF54LM20A
               - nRF54LM20B
               - nRF54LV10A
@@ -1067,46 +1087,51 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Multi-protocol Support**
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **QoS Channel Survey**
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
             * - **Radio Coexistence**
               - Supported
               - Supported
               - Supported
+              - Experimental
               - Supported
               - Supported
               - Experimental
-              - --
+              - Experimental
               - Experimental
 
 Thread features support
