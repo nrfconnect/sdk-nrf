@@ -9,3 +9,7 @@
 &timer20 {
 	status = "okay";
 };
+
+&lfrc {
+	status = "okay";
+};
