@@ -12,21 +12,21 @@
 include(${NRF_DIR}/boards/deprecated.cmake)
 
 if(NOT BOARD)
-        set(BOARD $ENV{BOARD})
+  set(BOARD $ENV{BOARD})
 endif()
 
 # Check if selected board is supported.
 if(DEFINED NRF_SUPPORTED_BOARDS)
-        if(NOT BOARD IN_LIST NRF_SUPPORTED_BOARDS)
-                message(FATAL_ERROR "board ${BOARD} is not supported")
-        endif()
+  if(NOT BOARD IN_LIST NRF_SUPPORTED_BOARDS)
+    message(FATAL_ERROR "board ${BOARD} is not supported")
+  endif()
 endif()
 
 # Check if selected build type is supported.
 if(DEFINED NRF_SUPPORTED_BUILD_TYPES)
-        if(NOT CMAKE_BUILD_TYPE IN_LIST NRF_SUPPORTED_BUILD_TYPES)
-                message(FATAL_ERROR "${CMAKE_BUILD_TYPE} variant is not supported")
-        endif()
+  if(NOT CMAKE_BUILD_TYPE IN_LIST NRF_SUPPORTED_BUILD_TYPES)
+    message(FATAL_ERROR "${CMAKE_BUILD_TYPE} variant is not supported")
+  endif()
 endif()
 
 list(PREPEND CMAKE_MODULE_PATH ${NRF_DIR}/cmake/modules)

@@ -12,12 +12,12 @@ zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_GNSS method_gnss.c)
 zephyr_library_sources_ifdef(CONFIG_LOCATION_METHOD_WIFI scan_wifi.c)
 
 if(CONFIG_LOCATION_METHOD_CELLULAR OR CONFIG_LOCATION_METHOD_GNSS)
-zephyr_library_sources(scan_cellular.c)
+  zephyr_library_sources(scan_cellular.c)
 endif()
 
 if(CONFIG_LOCATION_METHOD_CELLULAR OR CONFIG_LOCATION_METHOD_WIFI)
-zephyr_library_sources(method_cloud_location.c)
-zephyr_library_sources_ifdef(CONFIG_LOCATION_SERVICE_NRF_CLOUD cloud_service.c)
+  zephyr_library_sources(method_cloud_location.c)
+  zephyr_library_sources_ifdef(CONFIG_LOCATION_SERVICE_NRF_CLOUD cloud_service.c)
 endif()
 
 zephyr_library_compile_definitions(_POSIX_C_SOURCE=200809L)
