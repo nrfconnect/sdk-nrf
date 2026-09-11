@@ -15,11 +15,11 @@
 #include "macros_common.h"
 #include "sw_codec_select.h"
 #include "audio_datapath.h"
-#include "audio_clock.h"
 #include "audio_i2s.h"
 #include "hw_codec.h"
 #include "audio_usb.h"
 #include "streamctrl.h"
+#include "audio_rate_control.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
@@ -581,8 +581,8 @@ int audio_system_init(void)
 {
 	int ret;
 
-	if (NRF_CLOCK_HAS_HFCLKAUDIO) {
-		ret = audio_clock_init();
+	if (IS_ENABLED(CONFIG_NRFX_CLOCK_HFCLKAUDIO)) {
+		ret = audio_rate_control_init(AUDIO_PLL);
 		if (ret) {
 			LOG_ERR("Failed to initialize audio clock: %d", ret);
 			return ret;
