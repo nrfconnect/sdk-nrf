@@ -1,0 +1,26 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "System off sample"
+
+config SAMPLE_STATE_RETENTION
+	bool "State retention in system off"
+	select RETAINED_MEM
+	help
+	  Enable state retention in system off using retained memory driver.
+
+config SAMPLE_GPIO_WAKEUP
+	bool "Wake up from system off using a button"
+	default y
+	help
+	  Enable wakeup from system off by pressing button 0.
+
+config SAMPLE_GRTC_WAKEUP
+	bool "Wake up from system off using GRTC"
+	help
+	  Enable wakeup from system off using General Real-Time Counter (GRTC).
+
+source "Kconfig.zephyr"
