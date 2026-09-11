@@ -91,13 +91,28 @@ endif()
 if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa.c
-    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_internal.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_params.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_poly.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_rounding.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_sampling.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_key_management.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_packing.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_ML_KEM)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem_params.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem_poly.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem_packing.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem_sampling.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA OR CONFIG_PSA_NEED_CRACEN_ML_KEM)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/pqc/cracen_pqc_xof.c
   )
 endif()
 
@@ -142,6 +157,7 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_MANAGEMENT_DRIVER OR CONFIG_PSA_NEED_CRACEN_KMU_DR
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecdsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_keygen.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ecc/cracen_ecc_key_management.c
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_kem/cracen_ml_kem_key_management.c
   )
 endif()
 
@@ -256,5 +272,11 @@ if(CONFIG_PSA_NEED_CRACEN_KEY_WRAP_DRIVER)
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kw.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/key_wrap/cracen_key_wrap_kwp.c
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_wrap.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_KEY_ENCAPSULATION_DRIVER)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_key_encapsulation.c
   )
 endif()
