@@ -51,7 +51,7 @@ enum {
 	CONN_IS_SCI			= BIT(4),
 	CONN_IS_SECURED			= BIT(5),
 	CONN_IS_SCI_PARAM_UPDATE_PENDING = BIT(6),
-	CONN_IS_SCI_OUT_OF_SPEC	= BIT(7),
+	CONN_IS_SCI_HID_HOST_ENFORCED_RATE	= BIT(7),
 	CONN_IS_POWER_DOWN		= BIT(8),
 	CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN = BIT(9),
 	CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS = BIT(10),
@@ -223,7 +223,7 @@ static void set_conn_latency_sci(bool low_latency)
 	}
 
 	if ((latency_state & CONN_LOW_LATENCY_LOCKED) ||
-		(latency_state & CONN_IS_SCI_OUT_OF_SPEC)) {
+		(latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE)) {
 		return;
 	}
 
@@ -314,7 +314,7 @@ static bool is_high_latency_supported_for_mode(enum bt_hids_sci_mode_value mode)
 {
 	const struct bt_conn_le_conn_rate_param *mode_params = NULL;
 
-	/* HID SCI mode NONE could only happen if we are in an "out-of-spec" state.
+	/* HID SCI mode NONE could only happen if we are in the HID host enforced rate state.
 	 * No latency updates are supported in this state.
 	 */
 	if (mode != BT_HIDS_SCI_MODE_NONE) {
@@ -330,7 +330,7 @@ static void latency_updated(bool low_latency)
 		latency_state |= CONN_LOW_LATENCY_ENABLED;
 		latency_state &= ~CONN_LOW_LATENCY_REQUIRED;
 		if (!(latency_state & CONN_LOW_LATENCY_LOCKED)
-			&& !(latency_state & CONN_IS_SCI_OUT_OF_SPEC)) {
+			&& !(latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE)) {
 			(void)k_work_reschedule(&low_latency_check,
 						LOW_LATENCY_CHECK_PERIOD_MS);
 		} else {
@@ -357,7 +357,7 @@ static void conn_params_update_finished_sci_conn(void)
 		LOG_WRN("Unexpected non-SCI connection parameters update while SCI is active");
 
 		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
-		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
+		latency_state |= CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
 		(void)k_work_cancel_delayable(&low_latency_check);
 	}
 
@@ -452,11 +452,11 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 		 * Usually in this case the peripheral will already be in the LOW_POWER SCI mode,
 		 * so the code below will result in no connection rate update and no SCI mode change
 		 * notification to the host.
-		 * The notable exception is if the peripheral is operating in an out-of-spec state,
+		 * The notable exception is if the peripheral is in the HID host enforced rate state,
 		 * due to a previous direct connection rate update from the host.
 		 * In this case, the current mode might be different - an attempt will be made to
 		 * switch to the LOW_POWER mode, and only if it succeeds, the peripheral will exit
-		 * the out-of-spec state.
+		 * the HID host enforced rate state.
 		 */
 		mode = BT_HIDS_SCI_MODE_LOW_POWER;
 	}
@@ -488,17 +488,17 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 
 	if (current_mode != mode) {
 		(void)hid_sci_conn_rate_request(last_requested_latency_is_low, mode);
-	} else if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+	} else if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
 		struct bt_conn_info info;
 
-		/* Mode update properly requested after out-of-spec behavior,
+		/* Mode update properly requested after HID host enforced rate,
 		 * but the requested mode matches the current mode (no connection
 		 * rate update is performed).
 		 */
-		latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+		latency_state &= ~CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
 		LOG_INF("The current connection parameters are valid for the requested mode %s",
 			sci_mode_to_string(mode));
-		LOG_INF("Clearing out-of-spec state and returning to normal operation");
+		LOG_INF("Clearing HID host enforced rate state and returning to normal operation");
 		err = bt_conn_get_info(active_conn, &info);
 
 		if (!err) {
@@ -673,7 +673,7 @@ static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_
 	}
 
 	/* Parameters update initiated directly by the host (not via SCI
-	 * mode API) is out-of-spec behavior.
+	 * mode API) puts the connection in the HID host enforced rate state.
 	 * We assume that if the host forces the parameters, it expects the peripheral
 	 * to keep them.
 	 * Thus, lock the possibility of autonomously changing connection latency.
@@ -684,22 +684,22 @@ static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_
 	if (processed_sci_mode == BT_HIDS_SCI_MODE_NONE) {
 		LOG_WRN("Direct SCI connection parameters update from the central");
 		LOG_WRN("(not through HID SCI control point characteristic).");
-		LOG_WRN("This is out-of-spec behavior.");
+		LOG_WRN("Entering HID host enforced rate state.");
 		LOG_WRN("No latency update requests will be performed by the peripheral "
 			"until a SCI mode request is received.");
 		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
-		latency_state |= CONN_IS_SCI_OUT_OF_SPEC;
+		latency_state |= CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
 		(void)k_work_cancel_delayable(&low_latency_check);
 	} else if (mode == processed_sci_mode) {
 		/* A properly requested SCI mode update has been successfully performed. */
-		if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+		if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
 			LOG_INF("Connection rate update successful for the requested mode %s",
 				sci_mode_to_string(mode));
-			LOG_INF("Clearing out-of-spec state and returning to normal operation");
-			latency_state &= ~CONN_IS_SCI_OUT_OF_SPEC;
+			LOG_INF("Clearing HID host enforced rate state and returning to normal operation");
+			latency_state &= ~CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
 		}
 	} else {
-		/* Do nothing, remain in the in-spec/out-of-spec state. */
+		/* Do nothing, remain in the current HID host enforced rate state. */
 	}
 }
 
@@ -772,7 +772,7 @@ static void sci_power_event_handle(void)
 		return;
 	}
 
-	if (latency_state & CONN_IS_SCI_OUT_OF_SPEC) {
+	if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
 		return;
 	}
 
