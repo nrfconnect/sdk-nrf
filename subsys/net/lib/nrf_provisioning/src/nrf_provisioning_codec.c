@@ -15,6 +15,7 @@
 
 #include "nrf_provisioning_at.h"
 #include "nrf_provisioning_codec.h"
+#include "nrf_provisioning_mem.h"
 #include <nrf_provisioning_cbor_decode.h>
 #include <nrf_provisioning_cbor_encode.h>
 #include "nrf_provisioning_cbor_decode_types.h"
@@ -96,7 +97,7 @@ int nrf_provisioning_codec_setup(struct cdc_context *const cdc_ctx,
 int nrf_provisioning_codec_teardown(void)
 {
 	for (int i = 0; i < CONFIG_NRF_PROVISIONING_CBOR_RECORDS; i++) {
-		k_free(o_fmt_data.msgs[i]);
+		nrf_provisioning_free(o_fmt_data.msgs[i]);
 		o_fmt_data.msgs[i] = NULL;
 	}
 
@@ -296,7 +297,7 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 	resp_sz = check_at_cmd(out->at_buff, &clear_tag, &sec_tag, &type);
 
 	while (true) {
-		resp = k_malloc(resp_sz);
+		resp = nrf_provisioning_malloc(resp_sz);
 		if (!resp) {
 			LOG_ERR("Unable to write response msg field");
 			LOG_ERR("Not enough memory for AT response, size %d", resp_sz);
@@ -309,7 +310,7 @@ static int exec_at_cmd(struct command *cmd_req, struct cdc_out_fmt_data *out)
 
 		if (ret == -E2BIG) {
 			LOG_DBG("Buffer too small for AT response, retrying");
-			k_free(resp);
+			nrf_provisioning_free(resp);
 			resp = NULL;
 
 			if (clear_tag) {
@@ -381,13 +382,13 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 		max_key_sz = MAX(max_key_sz, pair->config_properties_tstrtstr_key.len + 1);
 	}
 
-	key = k_malloc(max_key_sz);
+	key = nrf_provisioning_malloc(max_key_sz);
 	if (!key) {
 		ret = -ENOMEM;
 		goto exit;
 	}
 
-	resp = k_malloc(resp_sz);
+	resp = nrf_provisioning_malloc(resp_sz);
 	if (!resp) {
 		ret = -ENOMEM;
 		goto exit;
@@ -420,12 +421,12 @@ static int write_config(struct command *cmd_req, struct cdc_out_fmt_data *out)
 	}
 
 	/* No error to report */
-	k_free(resp);
+	nrf_provisioning_free(resp);
 	resp = NULL;
 
 exit:
 	if (key) {
-		k_free(key);
+		nrf_provisioning_free(key);
 	}
 
 	/* Keeps track of response messages to be freed once the whole responses request is send */

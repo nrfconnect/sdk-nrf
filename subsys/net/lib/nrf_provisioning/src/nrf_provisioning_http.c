@@ -38,6 +38,7 @@
 #include "nrf_provisioning_cbor_encode_types.h"
 #include "nrf_provisioning_http.h"
 #include "nrf_provisioning_jwt.h"
+#include "nrf_provisioning_mem.h"
 
 LOG_MODULE_REGISTER(nrf_provisioning_http, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
@@ -169,7 +170,7 @@ static int generate_auth_header(char **auth_hdr_out)
 	prefix_len = max_auth_prefix_len();
 
 	hdr_size = prefix_len + tok_len + postfix_len + 1;
-	*auth_hdr_out = k_malloc(hdr_size);
+	*auth_hdr_out = nrf_provisioning_malloc(hdr_size);
 	if (!*auth_hdr_out) {
 		return -ENOMEM;
 	}
@@ -197,7 +198,7 @@ static int generate_auth_header(char **auth_hdr_out)
 	return 0;
 
 fail:
-	k_free(*auth_hdr_out);
+	nrf_provisioning_free(*auth_hdr_out);
 	*auth_hdr_out = NULL;
 
 	return ret;
@@ -237,7 +238,7 @@ static int gen_result_url(struct rest_client_req_context *const req)
 	int ret;
 
 	buff_sz = sizeof(API_POST_RSLT);
-	url = k_malloc(buff_sz);
+	url = nrf_provisioning_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		return ret;
@@ -279,7 +280,7 @@ static int gen_provisioning_url(struct rest_client_req_context *const req)
 	buff_sz = sizeof(API_CMDS_TEMPLATE) +
 		strlen(after) + strlen(rx_buf_sz) + strlen(tx_buf_sz) +
 		strlen(mver) + strlen(cver) + strlen(limit);
-	url = k_malloc(buff_sz);
+	url = nrf_provisioning_malloc(buff_sz);
 	if (!url) {
 		ret = -ENOMEM;
 		return ret;
@@ -382,11 +383,11 @@ static int nrf_provisioning_responses_req(struct nrf_provisioning_http_context *
 
 clean_up:
 	if (req->url) {
-		k_free((char *)req->url);
+		nrf_provisioning_free((char *)req->url);
 		req->url = NULL;
 	}
 	if (auth_hdr) {
-		k_free(auth_hdr);
+		nrf_provisioning_free(auth_hdr);
 	}
 
 	return ret;
@@ -442,9 +443,9 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 
 		LOG_INF("Requesting commands");
 		ret = rest_client_request(&req, &resp);
-		k_free(auth_hdr);
+		nrf_provisioning_free(auth_hdr);
 		auth_hdr = NULL;
-		k_free((char *)req.url);
+		nrf_provisioning_free((char *)req.url);
 		req.url = NULL;
 
 		if (ret < 0) {
@@ -510,10 +511,10 @@ int nrf_provisioning_http_req(struct nrf_provisioning_http_context *const rest_c
 	nrf_provisioning_codec_teardown();
 
 	if (req.url) {
-		k_free((char *)req.url);
+		nrf_provisioning_free((char *)req.url);
 	}
 	if (auth_hdr) {
-		k_free(auth_hdr);
+		nrf_provisioning_free(auth_hdr);
 	}
 
 	return ret;
