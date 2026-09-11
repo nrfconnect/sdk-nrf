@@ -10,6 +10,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
 #include <zephyr/drivers/uart.h>
@@ -27,6 +28,11 @@ static const struct device *const shell_uart_dev = DEVICE_DT_GET(UART_DEVICE_NOD
 bool uart_shell_disable_during_sleep_requested;
 extern bool link_shell_msleep_notifications_subscribed;
 
+#if defined(CONFIG_SOC_SERIES_NRF92)
+extern const struct shell *mosh_shell;
+static int uart_usage_count;
+#endif
+
 static void uart_disable_handler(struct k_work *work)
 {
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
@@ -36,17 +42,41 @@ static void uart_disable_handler(struct k_work *work)
 	}
 #endif
 
-	if (device_is_ready(shell_uart_dev)) {
-		pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_SUSPEND);
+	if (!device_is_ready(shell_uart_dev)) {
+		return;
 	}
+
+	k_sleep(K_MSEC(100)); /* allow little time to flush the output buffer */
+
+#if defined(CONFIG_SOC_SERIES_NRF92)
+	/* Stop the shell to prevent it from waking up the UART device */
+	shell_stop(mosh_shell);
+
+	uart_usage_count = 0;
+
+	while (1) {
+		enum pm_device_state state;
+
+		int err = pm_device_state_get(shell_uart_dev, &state);
+
+		if (err) {
+			return;
+		}
+
+		if (state != PM_DEVICE_STATE_ACTIVE) {
+			break;
+		}
+
+		pm_device_runtime_put(shell_uart_dev);
+		uart_usage_count++;
+	}
+#else
+	pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_SUSPEND);
+#endif
 }
 
 static void uart_enable_handler(struct k_work *work)
 {
-	if (device_is_ready(shell_uart_dev)) {
-		pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_RESUME);
-	}
-
 #ifdef CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART
 	int err = nrf_modem_lib_trace_level_set(NRF_MODEM_LIB_TRACE_LEVEL_FULL);
 	if (err) {
@@ -54,7 +84,22 @@ static void uart_enable_handler(struct k_work *work)
 	}
 #endif
 
-	mosh_print("UARTs enabled\n");
+	if (!device_is_ready(shell_uart_dev)) {
+		return;
+	}
+
+#if defined(CONFIG_SOC_SERIES_NRF92)
+	while (uart_usage_count > 0) {
+		pm_device_runtime_get(shell_uart_dev);
+		uart_usage_count--;
+	}
+
+	shell_start(mosh_shell);
+#else
+	pm_device_action_run(shell_uart_dev, PM_DEVICE_ACTION_RESUME);
+#endif
+
+	mosh_print("UARTs enabled");
 }
 
 static K_WORK_DEFINE(uart_disable_work, &uart_disable_handler);
@@ -76,7 +121,6 @@ static int cmd_uart_disable(const struct shell *shell, size_t argc, char **argv)
 	} else {
 		mosh_print("disable: disabling UARTs indefinitely");
 	}
-	k_sleep(K_MSEC(500)); /* allow little time for printing the notification */
 	k_work_submit(&uart_disable_work);
 
 	if (sleep_time > 0) {
