@@ -88,7 +88,6 @@ manifest:
           - dhara
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -267,6 +266,16 @@ manifest:
       repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: 09cf9bf998b9e70c2926203447f620c01d68a064
+
+    - name: hal_nordic
+      revision: nrfx-removed
+      url: https://github.com/zephyrproject-rtos/hal_nordic
+      path: modules/hal/nor
+
+    - name: nrfx
+      revision: pull/1325/head
+      path: modules/hal/nor/nrfx
+
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

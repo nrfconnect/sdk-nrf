@@ -15,6 +15,9 @@
 #include <hal/nrf_vpr_csr.h>
 #include <hal/nrf_vpr_csr_vio.h>
 #include <haly/nrfy_gpio.h>
+#include <helpers/nrfx_vpr_vio_pins.h>
+
+#include <nrfx.h>
 
 #define HRT_IRQ_PRIORITY          2
 #define HRT_VEVIF_IDX_GPIO_CLEAR  17
@@ -25,29 +28,61 @@
 #define VEVIF_IRQN(vevif) VEVIF_IRQN_1(vevif)
 #define VEVIF_IRQN_1(vevif) VPRCLIC_##vevif##_IRQn
 
-#if !defined(FLPR_VIO_PIN_INDICES) || !defined(FLPR_VIO_PIN_OFFSET) || !defined(FLPR_VIO_PORT)
-#error "Unsupported SoC"
-#endif
+volatile uint16_t irq_arg;
+volatile uint16_t irq_arg2;
 
-static const uint8_t pin_to_vio_map[] = {
-	FLPR_VIO_PIN_INDICES
-};
+BUILD_ASSERT(NRFX_VPR_VIO_MAPPING_DEFINED_CHECK(NRF_VPR_IDX_FLPR),
+	     "VIO pin mapping not defined for FLPR");
+
+#define _GEN_VIO_PORT_LIST(port_idx, _)						    \
+	COND_CODE_1(NRFX_VPR_VIO_PORT_ACCESSIBLE_CHECK(NRF_VPR_IDX_FLPR, port_idx), \
+		    (, port_idx), ())
+
+/* Comma separated list of ports which can be accessed by the VIO */
+#define VIO_PORT_LIST GET_ARGS_LESS_N(1, LISTIFY(32, _GEN_VIO_PORT_LIST, ()))
+
+#define VIO_PORT_COUNT NUM_VA_ARGS(VIO_PORT_LIST)
+
+/* Use the first available VIO port */
+#define VIO_PORT GET_ARG_N(1, VIO_PORT_LIST)
+
+#define _GEN_VIO_PIN_LUT_LIST(pin, vpr_idx, port) \
+	NRFX_VPR_VIO_PIN_INDEX_GET(vpr_idx, port, pin)
+
+#define GEN_VIO_PIN_LUT(vpr_idx, port)						    \
+	GET_ARGS_LESS_N(							    \
+		NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(vpr_idx, port),		    \
+		LISTIFY(							    \
+			UTIL_INC(NRFX_VPR_VIO_PORT_PIN_NUM_HIGHEST(vpr_idx, port)), \
+			_GEN_VIO_PIN_LUT_LIST, (,), vpr_idx, port		    \
+		)								    \
+	)
 
 #define VIO_INDEX_INVALID UINT8_MAX
 #define VIO_PIN_MASK_INVALID UINT16_MAX
 
-#define VIO_PIN_COUNT ARRAY_SIZE(pin_to_vio_map)
-#define VIO_VALID_PIN_MASK ((BIT(VIO_PIN_COUNT) - 1) << FLPR_VIO_PIN_OFFSET)
+static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin);
+static uint16_t gpio_pin_mask_to_vio_mask(uint32_t gpio_pin_mask);
 
-volatile uint16_t irq_arg;
-volatile uint16_t irq_arg2;
+#if VIO_PORT_COUNT == 1
+static const uint8_t pin_to_vio_map[] = {
+	GEN_VIO_PIN_LUT(NRF_VPR_IDX_FLPR, VIO_PORT)
+};
+
+/* Check if the LUT size is correct */
+BUILD_ASSERT(ARRAY_SIZE(pin_to_vio_map) ==
+	     (NRFX_VPR_VIO_PORT_PIN_NUM_HIGHEST(NRF_VPR_IDX_FLPR, VIO_PORT) -
+	      NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(NRF_VPR_IDX_FLPR, VIO_PORT) + 1));
+
+#define VIO_PIN_OFFSET NRFX_VPR_VIO_PORT_PIN_NUM_LOWEST(NRF_VPR_IDX_FLPR, VIO_PORT)
+#define VIO_VALID_PIN_MASK NRFX_VPR_VIO_PORT_MASK_GET(NRF_VPR_IDX_FLPR, VIO_PORT)
 
 static uint8_t gpio_pin_port_to_vio_index(uint8_t port, uint16_t pin)
 {
-	size_t map_index = pin - FLPR_VIO_PIN_OFFSET;
+	size_t map_index = pin - VIO_PIN_OFFSET;
 
 	/* Check if the pin and the port can be accessed by VIO. */
-	if ((port != FLPR_VIO_PORT) || (map_index >= VIO_PIN_COUNT)) {
+	if ((port != VIO_PORT) || (map_index >= ARRAY_SIZE(pin_to_vio_map))) {
 		return VIO_INDEX_INVALID;
 	}
 	return pin_to_vio_map[map_index];
@@ -61,13 +96,17 @@ static uint16_t gpio_pin_mask_to_vio_mask(uint32_t gpio_pin_mask)
 	}
 	uint16_t vio_mask = 0;
 
-	for (int i = 0; i < VIO_PIN_COUNT; i++) {
-		if (gpio_pin_mask & BIT(i + FLPR_VIO_PIN_OFFSET)) {
+	for (int i = 0; i < ARRAY_SIZE(pin_to_vio_map); i++) {
+		if (gpio_pin_mask & BIT(i + VIO_PIN_OFFSET)) {
 			vio_mask |= BIT(pin_to_vio_map[i]);
 		}
 	}
 	return vio_mask;
 }
+#else
+// implement multi-port mapping
+#error "Multi-port mapping not implemented"
+#endif
 
 static nrf_gpio_pin_pull_t get_pull(gpio_flags_t flags)
 {

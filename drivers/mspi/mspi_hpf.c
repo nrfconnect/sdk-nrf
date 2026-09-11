@@ -20,6 +20,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 
 #include <hal/nrf_gpio.h>
 #include <drivers/mspi/hpf_mspi.h>
+#include <helpers/nrfx_vpr_vio_pins.h>
 
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
@@ -27,33 +28,16 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define IPC_TIMEOUT_MS		     100
 #define IPC_BOUND_TIMEOUT_MS	     100
 #define IPC_BOUND_RETRY_COUNT	     10
-#define IPC_BOUND_RETRY_DELAY_MS	     10
+#define IPC_BOUND_RETRY_DELAY_MS     10
 #define EP_SEND_TIMEOUT_MS	     10
 #define EXTREME_DRIVE_FREQ_THRESHOLD 32000000
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
 
-#if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
-	defined(CONFIG_SOC_NRF54LM20B)
-
-#define HPF_MSPI_PORT_NUMBER	2 /* Physical port number */
-#define HPF_MSPI_SCK_PIN_NUMBER 1 /* Physical pin number on port 2 */
-
 #define HPF_MSPI_DATA_LINE_CNT_MAX 8
 #define HPF_MSPI_CS_LINE_CNT_MAX 5
 #define MAX_MSPI_DUMMY_CLOCKS 59
-#elif defined(CONFIG_SOC_NRF54LV10A) || defined(CONFIG_SOC_NRF54LC10A)
-#define HPF_MSPI_PORT_NUMBER	1  /* Physical port number */
-#define HPF_MSPI_SCK_PIN_NUMBER 16 /* Physical pin number on port 1 */
-
-#define HPF_MSPI_DATA_LINE_CNT_MAX 8
-#define HPF_MSPI_CS_LINE_CNT_MAX 5
-#define MAX_MSPI_DUMMY_CLOCKS 59
-
-#else
-#error "Unsupported SoC for HPF MSPI"
-#endif
 
 #ifdef CONFIG_PINCTRL_STORE_REG
 #define HPF_MPSI_PINCTRL_DEV_CONFIG_INIT(node_id)                                                  \
@@ -119,6 +103,40 @@ static const struct mspi_hpf_config dev_config = {
 };
 
 static struct mspi_hpf_data dev_data;
+
+#define GEN_VIO_PSEL(_vpr_idx, _port, _pin) \
+	NRF_PIN_PORT_TO_PIN_NUMBER(_pin, _port)
+
+/* Array holding allowed CLK psels */
+static const uint16_t clk_allowed_psels[] = {
+	NRFX_VPR_VIO_FOR_EACH_VIO_PIN(NRF_VPR_IDX_FLPR, 0, GEN_VIO_PSEL, (,))
+};
+
+/* Array holding allowed VIO psels */
+static const uint16_t vio_allowed_psels[] = {
+	NRFX_VPR_VIO_FOR_EACH_PIN(NRF_VPR_IDX_FLPR, GEN_VIO_PSEL, (,))
+};
+
+static bool is_allowed_vio_psel(uint16_t psel)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(vio_allowed_psels); i++) {
+		if (vio_allowed_psels[i] == psel) {
+			return true;
+		}
+	}
+	return false;
+}
+
+static bool is_allowed_clk_psel(uint16_t psel)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(clk_allowed_psels); i++) {
+		if (clk_allowed_psels[i] == psel) {
+			return true;
+		}
+	}
+	return false;
+}
+
 
 static void ep_recv(const void *data, size_t len, void *priv);
 
@@ -435,26 +453,34 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
 	return rc;
 }
 
+/* I am actually wondering if this entire function could be turned into build asserts */
 static int check_pin_assignments(const struct pinctrl_state *state)
 {
-	uint8_t data_pins[HPF_MSPI_DATA_LINE_CNT_MAX];
+	uint16_t data_psels[HPF_MSPI_DATA_LINE_CNT_MAX];
 	uint8_t data_pins_cnt = 0;
-	uint8_t cs_pins[HPF_MSPI_PIN_COUNT];
+
+	uint16_t cs_psels[HPF_MSPI_PIN_COUNT];
 	uint8_t cs_pins_cnt = 0;
+
+	uint16_t clk_psel = 0;
+
 	uint32_t psel = 0;
 	uint32_t pin_fun = 0;
 
+
 	for (uint8_t i = 0; i < HPF_MSPI_DATA_LINE_CNT_MAX; i++) {
-		data_pins[i] = DATA_PIN_UNUSED;
+		data_psels[i] = DATA_PIN_UNUSED;
 	}
 
 	for (uint8_t i = 0; i < state->pin_cnt; i++) {
 		psel = NRF_GET_PIN(state->pins[i]);
-		if (NRF_PIN_NUMBER_TO_PORT(psel) != HPF_MSPI_PORT_NUMBER) {
-			LOG_ERR("Wrong port number. Only %d port is supported.",
-				HPF_MSPI_PORT_NUMBER);
+
+		if (!is_allowed_vio_psel(psel)) {
+			LOG_ERR("Wrong GPIO configuration: P%d.%02d cannot be accessed by the VIO",
+				NRF_PIN_NUMBER_TO_PORT(psel), NRF_PIN_NUMBER_TO_PIN(psel));
 			return -ENOTSUP;
 		}
+
 		pin_fun = NRF_GET_FUN(state->pins[i]);
 		switch (pin_fun) {
 		case NRF_FUN_HPF_MSPI_DQ0:
@@ -465,13 +491,13 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 		case NRF_FUN_HPF_MSPI_DQ5:
 		case NRF_FUN_HPF_MSPI_DQ6:
 		case NRF_FUN_HPF_MSPI_DQ7:
-			if (data_pins[DATA_LINE_INDEX(pin_fun)] != DATA_PIN_UNUSED) {
+			if (data_psels[DATA_LINE_INDEX(pin_fun)] != DATA_PIN_UNUSED) {
 				LOG_ERR("This pin is assigned to an already taken data line: "
-					"%d.%d.",
+					"P%d.%02d.",
 					NRF_PIN_NUMBER_TO_PORT(psel), NRF_PIN_NUMBER_TO_PIN(psel));
 				return -EINVAL;
 			}
-			data_pins[DATA_LINE_INDEX(pin_fun)] = NRF_PIN_NUMBER_TO_PIN(psel);
+			data_psels[DATA_LINE_INDEX(pin_fun)] = psel;
 			data_pins_cnt++;
 			break;
 		case NRF_FUN_HPF_MSPI_CS0:
@@ -479,15 +505,16 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 		case NRF_FUN_HPF_MSPI_CS2:
 		case NRF_FUN_HPF_MSPI_CS3:
 		case NRF_FUN_HPF_MSPI_CS4:
-			cs_pins[cs_pins_cnt] = NRF_PIN_NUMBER_TO_PIN(psel);
+			cs_psels[cs_pins_cnt] = psel;
 			cs_pins_cnt++;
 			break;
 		case NRF_FUN_HPF_MSPI_SCK:
-			if (NRF_PIN_NUMBER_TO_PIN(psel) != HPF_MSPI_SCK_PIN_NUMBER) {
-				LOG_ERR("Clock signal only supported on pin %d.%d",
-					HPF_MSPI_PORT_NUMBER, HPF_MSPI_SCK_PIN_NUMBER);
+			if (!is_allowed_clk_psel(psel)) {
+				LOG_ERR("Clock signal only supported on pins corresponding to VIO %d",
+					NRFX_VPR_VIO_CLK_IDX);
 				return -ENOTSUP;
 			}
+			clk_psel = psel;
 			break;
 		default:
 			LOG_ERR("Not supported pin function: %d", pin_fun);
@@ -499,15 +526,21 @@ static int check_pin_assignments(const struct pinctrl_state *state)
 		LOG_ERR("No CS pin defined.");
 		return -EINVAL;
 	}
+	for (uint8_t i = 0; i < data_pins_cnt; i++) {
+		if (data_psels[i] == clk_psel) {
+			LOG_ERR("Data pin cannot be the same as any data line pin.");
+			return -EINVAL;
+		}
+	}
 
 	for (uint8_t i = 0; i < cs_pins_cnt; i++) {
 		for (uint8_t j = 0; j < data_pins_cnt; j++) {
-			if (cs_pins[i] == data_pins[j]) {
+			if (cs_psels[i] == data_psels[j]) {
 				LOG_ERR("CS pin cannot be the same as any data line pin.");
 				return -EINVAL;
 			}
 		}
-		if (cs_pins[i] == HPF_MSPI_SCK_PIN_NUMBER) {
+		if (cs_psels[i] == clk_psel) {
 			LOG_ERR("CS pin cannot be the same CLK pin.");
 			return -EINVAL;
 		}
