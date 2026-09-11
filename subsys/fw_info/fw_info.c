@@ -10,14 +10,13 @@
 #include <zephyr/init.h>
 #include <errno.h>
 #include <string.h>
-#ifdef CONFIG_NRFX_NVMC
+#if defined(CONFIG_NRFX_NVMC)
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
 #endif
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-
 
 /* These symbols are defined in linker scripts. */
 extern const uint32_t __rom_region_start[];
@@ -214,14 +213,33 @@ BUILD_ASSERT((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
 		"image cannot be invalidated. Change the value so that writing "
 		"INVALID_VAL has an effect.");
 
+#ifndef CONFIG_FW_INFO_API
+#if defined(CONFIG_FLASH)
+#warning FW info structures cannot be updated using flash API. NVMC/RRAMC API will be used instead.
+#endif
+
 void fw_info_invalidate(const struct fw_info *fw_info)
 {
+#if defined(CONFIG_NRFX_RRAMC)
+	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(0);
+
+	config.preload_timeout_enable = false;
+	config.preload_timeout = 0;
+
+	int err = nrfx_rramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return;
+	}
+#endif
+
 	/* Check if value has been written. */
 	if (fw_info->valid == CONFIG_FW_INFO_VALID_VAL) {
-#ifdef CONFIG_NRFX_NVMC
+#if defined(CONFIG_NRFX_NVMC)
 		nrfx_nvmc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #elif defined(CONFIG_NRFX_RRAMC)
 		nrfx_rramc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #endif
 	}
 }
+#endif

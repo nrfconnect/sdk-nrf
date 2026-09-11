@@ -8,11 +8,13 @@ menuconfig FW_INFO
 	bool
 	prompt "Firmware Metadata"
 	imply NRFX_NVMC if !SOC_SERIES_NRF54L
+	imply NRFX_RRAMC if SOC_SERIES_NRF54L && !TRUSTED_EXECUTION_NONSECURE
 
 if FW_INFO
 
 config FW_INFO_API
 	bool "Only provide APIs to locate metadata"
+	default y if !IS_SECURE_BOOTLOADER
 	help
 	  Only provide APIs to locate metadata.
 
