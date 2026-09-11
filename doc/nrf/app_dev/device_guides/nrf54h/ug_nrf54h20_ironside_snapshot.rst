@@ -8,6 +8,7 @@ IronSide SE snapshot services
    :depth: 2
 
 The |ISE| snapshot services help recover selected MRAM content after |ISE| detects MRAM corruption.
+This guide is intended for developers of firmware that uses the snapshot services, including customer application firmware, MCUboot, |NCS| system software, and Zephyr components.
 
 Overview
 ********
@@ -17,15 +18,19 @@ When corruption is detected in a captured region, |ISE| restores the affected MR
 
 .. note::
    Snapshot services depend on device support, |ISE| support, and production-time configuration.
+   Snapshot functionality must be enabled and configured in one-time programmable (OTP) memory before the snapshot APIs can be used.
    For information about checking support on a device, see :ref:`ug_nrf54h20_ironside_se_snapshot_identify_support`.
-
-.. _ug_nrf54h20_ironside_se_snapshot_workflow:
 
 |ISE| version requirements
 **************************
 
-Use |ISE| v23.7.0+30 or later for snapshot deployments.
+Use the latest |ISE| version for snapshot deployments.
 For more information, see :ref:`abi_compatibility`.
+
+.. note::
+   For known snapshot issues related to |ISE| releases and their workarounds, see :ref:`abi_compatibility_ise_known_issues`.
+
+.. _ug_nrf54h20_ironside_se_snapshot_workflow:
 
 Snapshot workflow
 *****************
@@ -91,7 +96,10 @@ Together, these checks verify the integrity of the following areas:
 
 * FICR
 * RICR
-* |ISE| firmware
+* SICR
+* BICR
+* UICR
+* UROT, including |ISE| firmware
 * The area defined by UICR.PROTECTEDMEM or UICR.SECONDARY.PROTECTEDMEM, depending on whether secondary firmware is booted
 * The area defined by UICR.SECURESTORAGE
 * |ISE| internal storage
@@ -109,8 +117,8 @@ Region limits
 
 All snapshot regions must meet the following requirements:
 
-* The region start address must be aligned to 2 KiB.
-* The region size must be aligned to 2 KiB.
+* The region start address must be aligned to 1 KiB.
+* The region size must be aligned to 1 KiB.
 * Configurable regions must not overlap each other.
 * Configurable regions must not overlap the predefined regions.
 * A region must not cross the MRAM10 and MRAM11 boundary at ``0x0E10_0000``.
@@ -131,6 +139,7 @@ Configurable regions
 ====================
 
 Configure up to seven application-defined snapshot regions in ``UICR.SNAPSHOT_REGIONS`` during production.
+Because of :ref:`SE4 <ug_nrf54h20_ironside_se_snapshot_limitation_se4>`, configure one, three, five, or seven regions when using UICR.
 
 At minimum, include the memory protected by :ref:`UICR.PROTECTEDMEM <ug_nrf54h20_ironside_se_uicr_protectedmem>` in a configurable snapshot region.
 This memory starts at ``0x0E03_0000`` and typically contains the immutable bootloader for the application core.
@@ -192,9 +201,13 @@ Before configuring snapshot regions, ensure the following:
 * You have planned the UICR.PROTECTEDMEM and UICR.SECURESTORAGE locations.
 * You have confirmed that the selected regions satisfy the requirements in :ref:`ug_nrf54h20_ironside_se_snapshot_regions`.
 
+Use the UICR generator to configure :ref:`UICR.SNAPSHOT_REGIONS <ug_nrf54h20_ironside_se_uicr_snapshot_regions>`.
+For a complete configuration example, see :ref:`ironside_se_snapshot_capture_recover`.
+
 .. caution::
    Configure snapshot regions carefully before locking UICR.
    Configurable snapshot regions can be configured only once during production.
+   When using UICR, configure an odd number of regions to avoid the boot loop described in :ref:`ug_nrf54h20_ironside_se_snapshot_limitation_se4`.
 
 To configure snapshot regions, complete the following steps:
 
@@ -202,6 +215,9 @@ To configure snapshot regions, complete the following steps:
 #. If secure storage is enabled, add the UICR.SECURESTORAGE memory to a configurable snapshot region.
 #. Add any other application-specific MRAM regions that must be recoverable.
 #. Lock the UICR configuration as part of production provisioning.
+
+If you configure the regions directly in SICR instead of using UICR, provision |ISE| before programming the SICR region configuration.
+Program the SICR configuration while the device is still in lifecycle state ``EMPTY`` and before transitioning to ``RoT``.
 
 After the UICR is locked, capture the first snapshot.
 For more information, see :ref:`ug_nrf54h20_ironside_se_snapshot_capture`.
@@ -235,7 +251,7 @@ To capture a snapshot, complete the following steps:
 
 #. After reset, read the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>` to check the capture result.
 
-The boot report indicates whether the capture completed successfully.
+The ``snapshot.status`` field in the boot report indicates whether the capture completed successfully or failed.
 
 .. _ug_nrf54h20_ironside_se_snapshot_recovery:
 
@@ -257,7 +273,7 @@ During snapshot recovery, SDROM performs the following operations:
 #. Decrypts the captured snapshot regions from external memory.
 #. Writes the decrypted regions back to MRAM.
 
-After recovery, local domains can detect that snapshot recovery occurred by reading the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>`.
+After recovery, local domains can detect that snapshot recovery occurred by reading the ``snapshot.status`` field in the :ref:`boot report <ug_nrf54h20_ironside_se_boot_report>`.
 
 .. _ug_nrf54h20_ironside_se_snapshot_event_report:
 
@@ -300,10 +316,21 @@ To identify whether an nRF54H20 device in lifecycle state ``EMPTY`` supports the
 
 If the value is ``0x0005420B``, the device supports the |ISE| snapshot service.
 
+To identify whether a supported device is an engineering sample or a production device, read the following FICR address:
+
+.. code-block:: console
+
+   nrfutil device read --traits jlink --core secure --direct --address 0x0FFFE008 --bytes
+
+If the value is ``1``, the device is an engineering sample release 1 (Eng1) device.
+If the value is ``2``, the device is a production device.
+
 Identify support in lifecycle state RoT or DEPLOYED
 ===================================================
 
 To identify whether a device in lifecycle state ``RoT`` or ``DEPLOYED`` supports snapshot, check the |ISE| boot report in RAM.
+The ``snapshot.enabled`` field is ``0`` when snapshot is disabled and non-zero when snapshot is enabled.
+The ``snapshot.status`` field reports the result of the most recent snapshot operation.
 
 For the boot report fields that indicate snapshot support, see the :file:`zephyr/modules/hal_nordic/ironside/se/include/ironside/se/boot_report.h` header file.
 
@@ -316,4 +343,6 @@ For more information, see the following pages:
 * :ref:`ug_nrf54h20_ironside_se_protecting` for production device protection.
 * :ref:`ug_nrf54h20_ironside_se_secure_storage` for secure storage configuration.
 * :ref:`ug_nrf54h20_ironside_se_boot_report` for boot report contents.
+* :ref:`ug_nrf54h20_ironside_se_update` for |ISE| update information.
+* :ref:`ironside_se_snapshot_capture_recover` for a snapshot configuration and capture example.
 * :ref:`abi_compatibility` for |ISE| ABI and release compatibility information.
