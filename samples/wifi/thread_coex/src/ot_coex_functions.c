@@ -6,9 +6,10 @@
 
 #include "ot_coex_functions.h"
 
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock_hfclk.h>
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+
+static const uint32_t hfclk_requested_frequency = MHZ(128);
 #endif
 
 bool is_ot_device_role_client;
@@ -69,10 +70,9 @@ void wifi_mgmt_callback_functions(void)
 
 	net_mgmt_add_event_callback(&net_addr_mgmt_cb);
 
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-	/* For now hardcode to 128MHz */
-	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+	clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+			       &hfclk_requested_frequency);
 #endif
 
 	LOG_INF("Starting %s with CPU frequency: %d MHz", CONFIG_BOARD, SystemCoreClock/MHZ(1));

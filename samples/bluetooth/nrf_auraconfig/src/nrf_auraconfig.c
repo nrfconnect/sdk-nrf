@@ -12,7 +12,7 @@
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/shell/shell.h>
-#include <nrfx_clock_hfclk.h>
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 #include <audio_defines.h>
 
 #include "presets.h"
@@ -33,6 +33,7 @@ ZBUS_CHAN_DECLARE(sdu_ref_chan);
 ZBUS_CHAN_DECLARE(le_audio_chan);
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
+static const uint32_t hfclk_requested_frequency = MHZ(128);
 /* SD card detection */
 static bool sd_card_present = true;
 
@@ -789,7 +790,8 @@ void nrf_auraconfig_main(void)
 
 	LOG_DBG("Main started");
 
-	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
+	ret = clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+					     &hfclk_requested_frequency);
 
 	ret = led_init();
 	ERR_CHK_MSG(ret, "Failed to initialize LED module");
