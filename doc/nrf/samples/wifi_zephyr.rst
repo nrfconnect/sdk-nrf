@@ -32,4 +32,6 @@ The following is an example of the CLI command:
    # nRF7120 DK
    west build -b nrf7120dk/nrf7120/cpuapp -S wifi-ipv4
 
+The :zephyr:code-sample:`coap-server` sample's :file:`CMakeLists.txt` does not point to the upstream ``prj.conf`` on its own, so add the ``-DCONF_FILE=${ZEPHYR_BASE}/samples/net/sockets/coap_server/prj.conf`` argument to the command above when building this sample.
+
 For additional details about running a sample, refer to the respective sample in Zephyr’s :zephyr:code-sample-category:`samples`.
