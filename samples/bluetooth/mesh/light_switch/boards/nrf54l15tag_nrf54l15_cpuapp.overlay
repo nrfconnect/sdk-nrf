@@ -1,0 +1,37 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Drive the SKY13348 antenna switch V1 line from MPSL instead of holding it
+ * statically high, so it is only asserted around radio TX/RX windows.
+ *
+ * The nRF21540 FEM driver is reused here purely for its PDN pin, which is the
+ * only FEM output asserted for both TX and RX. No nRF21540 is present, so the
+ * PA/LNA pins are omitted and all gains are zeroed in the board .conf.
+ */
+
+/*
+ * Release P1.09 from the board's static hog and from the sky13348 node that
+ * also describes it, so GPIOTE is the only owner. V2 keeps its hog.
+ */
+/delete-node/ &sky13348;
+
+&gpio1 {
+	/delete-node/ antenna_switch_v1;
+};
+
+/ {
+	nrf_radio_fem: fem_antenna_v1 {
+		compatible = "nordic,nrf21540-fem";
+		pdn-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
+		pdn-settle-time-us = <18>;
+		trx-hold-time-us = <5>;
+	};
+};
+
+&radio {
+	fem = <&nrf_radio_fem>;
+};
