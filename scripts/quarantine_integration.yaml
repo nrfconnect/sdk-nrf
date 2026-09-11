@@ -152,3 +152,9 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "Configurations excluded to limit resources usage in integration builds"
+
+- scenarios:
+    - tfm.psa_test_initial_attestation_lvl2
+  platforms:
+    - nrf9151dk/nrf9151/ns
+  comment: "Not stable - it does git clone during build - github stability problems"
