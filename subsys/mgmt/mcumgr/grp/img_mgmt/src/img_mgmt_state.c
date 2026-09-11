@@ -90,6 +90,21 @@ static bool img_mgmt_is_running_application_image(int image)
 }
 #endif
 
+#if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
+static int img_mgmt_qspi_split_co_confirm(void)
+{
+	if (CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER < 0) {
+		return IMG_MGMT_ERR_OK;
+	}
+
+	if (boot_write_img_confirmed_multi(CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER) != 0) {
+		return IMG_MGMT_ERR_FLASH_WRITE_FAILED;
+	}
+
+	return IMG_MGMT_ERR_OK;
+}
+#endif
+
 /**
  * Collects information about the specified image slot.
  */
@@ -523,11 +538,9 @@ img_mgmt_state_confirm(void)
 	}
 
 #if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
-	if (CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER >= 0) {
-		if (boot_write_img_confirmed_multi(CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER) != 0) {
-			rc = IMG_MGMT_ERR_FLASH_WRITE_FAILED;
-			goto err;
-		}
+	rc = img_mgmt_qspi_split_co_confirm();
+	if (rc != 0) {
+		goto err;
 	}
 #endif
 
@@ -944,6 +957,16 @@ img_mgmt_state_write(struct smp_streamer *ctxt)
 		ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, rc);
 		goto end;
 	}
+
+#if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
+	if (confirm && zhash.len == 0) {
+		rc = img_mgmt_qspi_split_co_confirm();
+		if (rc != 0) {
+			ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, rc);
+			goto end;
+		}
+	}
+#endif
 
 	/* Send the current image state in the response. */
 	rc = img_mgmt_state_read(ctxt);
