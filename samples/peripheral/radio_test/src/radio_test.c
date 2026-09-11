@@ -137,6 +137,9 @@ static size_t radio_pdu_len_get(nrf_radio_mode_t mode)
 }
 
 #if NRF_RADIO_HAS_EVDMA
+/* Off-time between packets for EasyVDMA duty-cycle TX (timer ticks). */
+static uint32_t duty_cycle_off_time_ticks;
+
 static void radio_vdma_jobs_set(uint8_t *buffer, size_t size)
 {
 	/* EasyVDMA job list describing the TX and RX packet buffers, one data job followed by the
@@ -1004,9 +1007,13 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	generate_modulated_rf_packet(mode, pattern);
 
 	radio_mode_set(NRF_RADIO, mode);
+#if NRF_RADIO_HAS_EVDMA
+	nrf_radio_shorts_enable(NRF_RADIO, NRF_RADIO_SHORT_READY_START_MASK);
+#else
 	nrf_radio_shorts_enable(NRF_RADIO,
 				NRF_RADIO_SHORT_READY_START_MASK |
 				RADIO_TEST_SHORT_END_DISABLE_MASK);
+#endif /* NRF_RADIO_HAS_EVDMA */
 	radio_power_set(mode, channel, txpower);
 	radio_channel_set(mode, channel);
 	nrf_radio_event_clear(NRF_RADIO, RADIO_TEST_EVENT_END);
@@ -1026,6 +1033,11 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 	/* We let the TIMER start the radio transmission again. */
 	nrfx_timer_disable(&timer);
 
+#if NRF_RADIO_HAS_EVDMA
+	duty_cycle_off_time_ticks = nrfx_timer_us_to_ticks(&timer,
+		delay_time - total_time_per_payload);
+	radio_start(NRF_RADIO_TASK_TXEN, false);
+#else
 #if CONFIG_FEM
 	(void)fem_configure(false, mode, &fem);
 #else
@@ -1043,10 +1055,11 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 
 	unsigned int key = irq_lock();
 
-	radio_start(false, true);
+	radio_start(NRF_RADIO_TASK_TXEN, true);
 
 	radio_ppi_tx_reconfigure();
 	irq_unlock(key);
+#endif /* NRF_RADIO_HAS_EVDMA */
 }
 
 static void increment_channel_index_and_reshuffle_on_wrap(void)
@@ -1328,6 +1341,12 @@ static void timer_handler(nrf_timer_event_t event_type, void *context)
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE7) { /* HMPAN-216 errata */
 		errata_216_release();
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216) */
+#if NRF_RADIO_HAS_EVDMA
+	} else if (event_type == NRF_TIMER_EVENT_COMPARE1 &&
+		   config->type == MODULATED_TX_DUTY_CYCLE) {
+		nrfx_timer_disable(&timer);
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
+#endif /* NRF_RADIO_HAS_EVDMA */
 	} else if (event_type == NRF_TIMER_EVENT_COMPARE4) {
 		if (config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 			radio_start(NRF_RADIO_TASK_TXEN, false);
@@ -1375,6 +1394,15 @@ void on_radio_end(const struct radio_test_config *config)
 		tx_packet_cnt == config->params.modulated_tx_duty_cycle.packets_num) {
 		cancel();
 		config->params.modulated_tx_duty_cycle.cb();
+#if NRF_RADIO_HAS_EVDMA
+	} else if (config->type == MODULATED_TX_DUTY_CYCLE) {
+		nrfx_timer_disable(&timer);
+		nrf_timer_shorts_disable(timer.p_reg, ~0);
+		nrf_timer_int_disable(timer.p_reg, ~0);
+		nrfx_timer_clear(&timer);
+		nrfx_timer_compare(&timer, TIMER_CC1_MOD_TX_DUTY, duty_cycle_off_time_ticks, true);
+		nrfx_timer_enable(&timer);
+#endif /* NRF_RADIO_HAS_EVDMA */
 	} else if (config->type == MODULATED_TX ||
 			   config->type == TX_SWEEP_WITH_SLEEP_MODULATED) {
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
