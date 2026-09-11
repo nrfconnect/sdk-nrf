@@ -22,52 +22,21 @@ The following section provides a support overview for various FLPR targets:
    * - Target
      - Zephyr build target
      - Kernel support
-     - Supported drivers
    * - nRF54L15 FLPR running from SRAM
      - ``nrf54l15dk/nrf54l15/cpuflpr``
      - Supported
-     - * GPIO
-       * GPIOTE
-       * GRTC
-       * TWIM
-       * UARTE
-       * VPR
-   * - nRF54L15 FLPR running from RRAM
-     - ``nrf54l15dk/nrf54l15/cpuflpr/xip``
-     - Supported
-     - --
    * - nRF54L10 FLPR running from SRAM
-     - Not available
-     - --
-     - --
-   * - nRF54L10 FLPR running from RRAM
-     - Not available
-     - --
-     - --
+     - ``nrf54l15dk/nrf54l10/cpuflpr``
+     - Supported
    * - nRF54L05 FLPR running from SRAM
-     - Not available
-     - --
-     - --
-   * - nRF54L05 FLPR running from RRAM
-     - Not available
-     - --
-     - --
+     - ``nrf54l15dk/nrf54l10/cpuflpr``
+     - Supported
    * - nRF54LM20A FLPR running from SRAM
      - ``nrf54lm20dk/nrf54lm20a/cpuflpr``
-     - Experimental
-     - --
-   * - nRF54LM20A FLPR running from RRAM
-     - ``nrf54lm20dk/nrf54lm20a/cpuflpr/xip``
-     - Experimental
-     - --
+     - Supported
    * - nRF54LV10 FLPR running from SRAM
      - ``nrf54lv10dk/nrf54lv10a/cpuflpr``
-     - Experimental
-     - --
-   * - nRF54LV10 FLPR running from RRAM
-     - ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``
-     - Experimental
-     - --
+     - Supported
 
 .. _vpr_flpr_nrf54l_initiating:
 
@@ -84,7 +53,7 @@ Bootstrapping the FLPR core
 The |NCS| provides an FLPR snippet that adds an overlay required for bootstrapping the FLPR core.
 Snippet's primary function is to enable the code that transfers the FLPR code to the designated region (if necessary) and to initiate the FLPR core.
 
-When building for the ``<board target>/cpuflpr`` or ``<board target>/cpuflpr/xip``, where *board target* depends on the device you are using, a minimal sample is automatically loaded onto the application core.
+When building for the ``<board target>/cpuflpr``, where *board target* depends on the device you are using, a minimal sample is automatically loaded onto the application core.
 See more information on :ref:`building_nrf54l_app_flpr_core`.
 
 Peripherals emulation on FLPR
