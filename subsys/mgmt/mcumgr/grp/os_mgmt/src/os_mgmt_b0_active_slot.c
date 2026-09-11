@@ -6,10 +6,25 @@
 
 #include <zcbor_common.h>
 #include <zcbor_encode.h>
+#if USE_PARTITION_MANAGER
 #include <pm_config.h>
+#else
+#include <zephyr/storage/flash_map.h>
+#endif
 #include <fw_info.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
+
+#if USE_PARTITION_MANAGER
+/* S0/S1 both have the same pad size */
+#ifdef PM_S0_PAD_SIZE
+#define APP_HEADER_SKIP	PM_S0_PAD_SIZE
+#else
+#define APP_HEADER_SKIP	0
+#endif
+#else
+#define APP_HEADER_SKIP	CONFIG_SB_IMAGE_BOOT_OFFSET
+#endif
 
 static enum mgmt_cb_return bootloader_info_hook(uint32_t event, enum mgmt_cb_return prev_status,
 						int32_t *rc, uint16_t *group, bool *abort_more,
@@ -28,8 +43,15 @@ static enum mgmt_cb_return bootloader_info_hook(uint32_t event, enum mgmt_cb_ret
 	    bootloader_info_data->query->len && memcmp("active_b0_slot",
 						       bootloader_info_data->query->value,
 						       bootloader_info_data->query->len) == 0) {
-		const struct fw_info *s0_info = fw_info_find(PM_S0_ADDRESS);
-		const struct fw_info *s1_info = fw_info_find(PM_S1_ADDRESS);
+#if USE_PARTITION_MANAGER
+		uint32_t s0_addr = PM_S0_ADDRESS + APP_HEADER_SKIP;
+		uint32_t s1_addr = PM_S1_ADDRESS + APP_HEADER_SKIP;
+#else
+		uint32_t s0_addr = PARTITION_ADDRESS(s0_partition) + APP_HEADER_SKIP;
+		uint32_t s1_addr = PARTITION_ADDRESS(s1_partition) + APP_HEADER_SKIP;
+#endif
+		const struct fw_info *s0_info = fw_info_find(s0_addr);
+		const struct fw_info *s1_info = fw_info_find(s1_addr);
 
 		if (s0_info || s1_info) {
 			uint32_t active_slot;
