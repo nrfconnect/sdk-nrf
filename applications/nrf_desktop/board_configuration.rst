@@ -213,6 +213,7 @@ Sample mouse (``nrf54lc10dk/nrf54lc10a/cpuapp``)
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer and Low Latency Packet Mode (LLPM).
       * In ``debug`` configurations, logs are provided through the UART.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+        For detailed information on working with the nRF54LC10 DK, see the :ref:`ug_nrf54l15_gs` documentation.
         All of the configurations enable hardware cryptography for the MCUboot bootloader.
         The application image is verified using a pure ED25519 signature.
         The public key that MCUboot uses for validating the application image is securely stored in the hardware Key Management Unit (KMU).
