@@ -10,12 +10,13 @@
 
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock_hfclk.h>
-#endif
 #include <zephyr/device.h>
 #include <zephyr/net/net_config.h>
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+
+static const uint32_t hfclk_requested_frequency = MHZ(128);
+#endif
 
 #if defined(CONFIG_USB_DEVICE_STACK) && !defined(CONFIG_BOARD_THINGY91X_NRF5340_CPUAPP)
 #define USES_USB_ETH 1
@@ -50,10 +51,9 @@ int init_usb(void)
 
 int main(void)
 {
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-	/* For now hardcode to 128MHz */
-	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+	clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+			       &hfclk_requested_frequency);
 #endif
 	printk("Starting %s with CPU frequency: %d MHz\n", CONFIG_BOARD, SystemCoreClock/MHZ(1));
 

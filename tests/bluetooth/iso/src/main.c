@@ -6,15 +6,18 @@
 #include <zephyr/bluetooth/bluetooth.h>
 #include "iso_broadcast_src.h"
 #include "iso_broadcast_sink.h"
-#include "nrfx_clock_hfclk.h"
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_ISO_TEST_LOG_LEVEL);
 
+static const uint32_t hfclk_requested_frequency = MHZ(128);
+
 static int hfclock_config_and_start(void)
 {
 	/* Use this to turn on 128 MHz clock for cpu_app */
-	nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_1);
+	clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+			       &hfclk_requested_frequency);
 
 	nrf_clock_hfclk_t clk_src;
 

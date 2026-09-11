@@ -14,9 +14,11 @@
 #include <zephyr/device.h>
 #if defined(CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP) && defined(CONFIG_NORDIC_QSPI_NOR)
 #include <zephyr/drivers/flash/nrf_qspi_nor.h>
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-#include <nrfx_clock_hfclk.h>
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+#include <zephyr/drivers/clock_control/nrf_clock_control.h>
+
+static const uint32_t hfclk_max_frequency = MHZ(128);
+static const uint32_t hfclk_min_frequency = MHZ(64);
 #endif
 #endif /* CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP */
 
@@ -238,22 +240,21 @@ out:
 	return status;
 }
 #elif CONFIG_NRF_WIFI_PATCHES_EXT_FLASH_XIP
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-static nrf_clock_hfclk_div_t saved_divider = NRF_CLOCK_HFCLK_DIV_1;
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+static uint32_t saved_frequency = hfclk_max_frequency;
 #endif
 static void enable_xip_and_set_cpu_freq(void)
 {
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
-	/* Save the current divider */
-	saved_divider = nrfx_clock_hfclk_divider_get();
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
+	/* Save the current frequency */
+	clock_control_get_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL, &saved_frequency);
 
-	if (saved_divider == NRF_CLOCK_HFCLK_DIV_2) {
+	if (saved_frequency == hfclk_min_frequency) {
 		LOG_DBG("CPU frequency is already set to 64 MHz (DIV_2)");
 	} else {
 		/* Set CPU frequency to 64MHz (DIV_2) */
-		nrfx_clock_hfclk_divider_set(NRF_CLOCK_HFCLK_DIV_2);
+		clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+				       &hfclk_min_frequency);
 
 		LOG_DBG("CPU frequency set to 64 MHz");
 	}
@@ -278,13 +279,15 @@ static void disable_xip_and_restore_cpu_freq(void)
 	LOG_DBG("XIP disabled");
 #endif
 
-#if defined(CONFIG_NRFX_CLOCK_HFCLK) &&                                                            \
-	(defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT) || NRF_CLOCK_HAS_HFCLK192M)
+#if defined(CONFIG_NRFX_CLOCK_HFCLK) && defined(CLOCK_FEATURE_HFCLK_DIVIDE_PRESENT)
 	/* Restore CPU frequency to the saved value */
-	nrf_clock_hfclk_div_t current_divider = nrfx_clock_hfclk_divider_get();
+	uint32_t current_frequency;
 
-	if (current_divider != saved_divider) {
-		nrfx_clock_hfclk_divider_set(saved_divider);
+	clock_control_get_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL, &current_frequency);
+
+	if (current_frequency != saved_frequency) {
+		clock_control_set_rate(DEVICE_DT_GET_ONE(nordic_nrf_clock_hfclk), NULL,
+				       &saved_frequency);
 
 		LOG_DBG("CPU frequency restored to original value");
 	} else {
