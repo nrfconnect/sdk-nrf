@@ -51,6 +51,13 @@ static uint8_t notify_process(struct bt_conn *conn,
 			uint32_t total_len;
 			const struct bt_dfu_smp_header *header;
 
+			if (length < sizeof(struct bt_dfu_smp_header)) {
+				dfu_smp->cbs.rsp_part = NULL;
+				memset(&dfu_smp->rsp_state, 0, sizeof(dfu_smp->rsp_state));
+				dfu_smp->cbs.error_cb(dfu_smp, -EINVAL);
+				return BT_GATT_ITER_CONTINUE;
+			}
+
 			header = data;
 			total_len = (((uint16_t)header->len_h8) << 8) |
 				    header->len_l8;
