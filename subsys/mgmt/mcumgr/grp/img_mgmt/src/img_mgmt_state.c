@@ -537,13 +537,6 @@ img_mgmt_state_confirm(void)
 		goto err;
 	}
 
-#if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
-	rc = img_mgmt_qspi_split_co_confirm();
-	if (rc != 0) {
-		goto err;
-	}
-#endif
-
 #if defined(CONFIG_MCUMGR_GRP_IMG_STATUS_HOOKS)
 	if (!rc) {
 		int32_t err_rc;
@@ -952,13 +945,10 @@ img_mgmt_state_write(struct smp_streamer *ctxt)
 		}
 	}
 
-	rc = img_mgmt_set_next_boot_slot(slot, confirm);
-	if (rc != 0) {
-		ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, rc);
-		goto end;
-	}
-
 #if defined(CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM)
+	/* Confirm external QSPI half before internal image_ok so a QSPI flash
+	 * failure cannot leave only the internal image confirmed.
+	 */
 	if (confirm && zhash.len == 0) {
 		rc = img_mgmt_qspi_split_co_confirm();
 		if (rc != 0) {
@@ -967,6 +957,12 @@ img_mgmt_state_write(struct smp_streamer *ctxt)
 		}
 	}
 #endif
+
+	rc = img_mgmt_set_next_boot_slot(slot, confirm);
+	if (rc != 0) {
+		ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, rc);
+		goto end;
+	}
 
 	/* Send the current image state in the response. */
 	rc = img_mgmt_state_read(ctxt);
