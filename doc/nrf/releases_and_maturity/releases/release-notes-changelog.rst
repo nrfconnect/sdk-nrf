@@ -1052,6 +1052,7 @@ Documentation
 
 * Updated:
 
+  * The :ref:`ug_wifi` documentation to be agnostic to the Nordic Wi-Fi device family, moving the pages specific to the nRF70 Series (Wi-Fi stack configuration and performance, debugging, and certification) under :ref:`ug_nrf70`.
   * The :ref:`thingy53_app_guide` page by removing the Bluetooth Mesh samples from the list of samples that enable FOTA for Thingy:53 by default.
   * The :ref:`dfu_over_ble` page by removing the section about out-of-the-box point-to-point DFU over Bluetooth Low Energy on Thingy:53.
   * The :ref:`ug_bt_mesh_configuring` page by removing Thingy:53 as an example of a board with the Bluetooth LE Controller on a separate image.

@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_regulatory_support:
 .. _ug_nrf70_developing_regulatory_support:
 
 Operating with regulatory support
@@ -7,7 +8,7 @@ Operating with regulatory support
    :local:
    :depth: 2
 
-The nRF70 Series devices operate in the license exempt 2.4 GHz and 5 GHz radio frequency spectrum bands.
+The nRF Wi-Fi devices operate in the license exempt 2.4 GHz and 5 GHz radio frequency spectrum bands.
 However, in order to satisfy license exemption, the supported channels in each band need to adhere to regulatory operation rules.
 The regulatory rules vary based on the country.
 The rules are framed on the basis of the following key parameters:
@@ -19,17 +20,17 @@ The rules are framed on the basis of the following key parameters:
 Regulatory Database
 *******************
 
-The regulatory database used by the nRF70 Series captures regulatory rules in 173 different countries.
+The regulatory database used by the nRF70 companion ICs captures regulatory rules in 173 different countries.
 For more information about the individual country rules, see :ref:`wifi_regulatory_channel_rules`.
 In addition, the regulatory database has an entry for a world regulatory domain, which has highly restrictive transmission rules making it suitable for worldwide operation.
 
-The regulatory database is a part of the nRF70 Series ROM based firmware images.
+The regulatory database is a part of the nRF70 companion ICs ROM based firmware images.
 You can configure the country of operation and based on this configuration, the appropriate rules of operation are enforced.
 
 Supported 20 MHz channels
 *************************
 
-The nRF70 Series device supports up to 42 channels.
+The nRF70 companion ICs support up to 42 channels.
 
 The device supports the following 14 channels in the 2.4 GHz band:
 
@@ -252,7 +253,7 @@ Where the 5 GHz band is supported, the device supports the following 28 channels
 Conformance to regulatory restrictions
 **************************************
 
-Once a regulatory domain is configured, the following restrictions are imposed on the operation of the nRF70 Series device:
+Once a regulatory domain is configured, the following restrictions are imposed on the operation of the nRF Wi-Fi device:
 
 1. Channels: The device will operate only on the channels allowed in that country.
 #. Scan mode: The device will use Active scans where allowed and resort to Passive scans on channels where Active scans are not allowed.
@@ -261,7 +262,7 @@ Once a regulatory domain is configured, the following restrictions are imposed o
    Scanning will be restricted to Passive scan only on these channels.
 #. Transmit power: The maximum transmit power on each channel is restricted to a value allowed for that channel in that country.
 
-Without user configuration, the nRF70 Series device will default to operating with world regulatory rules and utilize regulatory hints extracted from the AP beacon packet in order to adjust to more appropriate regional rules.
+Without user configuration, the nRF Wi-Fi device will default to operating with world regulatory rules and utilize regulatory hints extracted from the AP beacon packet in order to adjust to more appropriate regional rules.
 
 
 Configuration options
@@ -273,6 +274,7 @@ Build time
 ==========
 
 Use the :kconfig:option:`CONFIG_NRF70_REG_DOMAIN` Kconfig option to set the regulatory region.
+This Kconfig option applies to the nRF70 companion ICs.
 The regulatory region will take an ISO/IEC alpha-2 country code for the country in which the device is expected to operate.
 The beacon's regulatory region (if present) will be given higher precedence over the Kconfig option.
 
@@ -306,7 +308,7 @@ In the automatic region setting, the beacon's regulatory region (if present) wil
 * The set region during booting and Kconfig options.
 * The user configured regulatory region (``force=false`` flag (Set option 2)).
 
-Once the nRF70 Series device disconnects from the AP, the device restores the regulatory region to world regulatory (code: 00) if automatic mode was enabled.
+Once the nRF Wi-Fi device disconnects from the AP, the device restores the regulatory region to world regulatory (code: 00) if automatic mode was enabled.
 
 Regulatory region query
 ***********************
@@ -553,5 +555,5 @@ The values in the tables show the maximum allowed transmit power (in dBm) for ea
 | :sup:`#` - Passive scan only
 
 .. note::
-   The maximum allowed transmit power values (shown in the table) may exceed the actual transmit power values for the nRF70 Series device.
+   The maximum allowed transmit power values (shown in the table) may exceed the actual transmit power values for the nRF Wi-Fi device.
    In the world regulatory domain, the non-DFS passive channel becomes active in subsequent scan operations if it finds a beacon on the first scan.

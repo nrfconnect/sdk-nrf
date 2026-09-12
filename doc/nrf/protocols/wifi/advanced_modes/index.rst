@@ -3,7 +3,7 @@
 Advanced modes
 ##############
 
-The following subpages cover topics related to the transmission and reception of raw IEEE 802.11 packets by the nRF70 Series device.
+The following subpages cover topics related to the transmission and reception of raw IEEE 802.11 packets by nRF Wi-Fi devices.
 
 .. toctree::
    :maxdepth: 1
