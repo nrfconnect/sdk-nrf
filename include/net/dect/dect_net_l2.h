@@ -1307,6 +1307,22 @@ static inline bool dect_net_l2_ipv6_dect_ula_onlink_prefix_get(struct net_if *de
 	return false;
 }
 #endif
+
+#if defined(CONFIG_NET_L2_DECT_IPV6_IFACE_UNICAST_SKIP)
+/**
+ * @brief ULA/GUA derived for DECT NR+ but not installed as iface unicast (see Kconfig).
+ *
+ * @param dect_iface DECT NR+ network interface
+ * @param ula_out Out: ULA address when @p have_ula is true
+ * @param gua_out Out: global address when @p have_gua is true
+ * @param have_ula Out: ULA present in L2 context
+ * @param have_gua Out: global present in L2 context
+ */
+void dect_net_l2_ipv6_off_iface_unicast_get(struct net_if *dect_iface,
+					    struct net_in6_addr *ula_out,
+					    struct net_in6_addr *gua_out,
+					    bool *have_ula, bool *have_gua);
+#endif
 #endif
 
 #define DECT_L2 DECT
