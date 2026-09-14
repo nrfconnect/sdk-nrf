@@ -1028,8 +1028,6 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 
 #if CONFIG_FEM
 	(void)fem_configure(false, mode, &fem);
-#else
-	radio_ppi_config(false);
 #endif /* CONFIG_FEM */
 
 	nrf_timer_shorts_disable(timer.p_reg, ~0);
@@ -1043,7 +1041,12 @@ static void radio_modulated_tx_carrier_duty_cycle(uint8_t mode, int8_t txpower,
 
 	unsigned int key = irq_lock();
 
-	radio_start(false, true);
+#if CONFIG_FEM
+	radio_start(NRF_RADIO_TASK_TXEN, true);
+#else
+	radio_start(NRF_RADIO_TASK_TXEN, false);
+	nrfx_timer_enable(&timer);
+#endif /* CONFIG_FEM */
 
 	radio_ppi_tx_reconfigure();
 	irq_unlock(key);
