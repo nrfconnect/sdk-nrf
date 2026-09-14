@@ -956,6 +956,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(${image} CONFIG_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS n)
     endforeach()
   endif()
+
+  if(SB_CONFIG_SOC_NRF9220 AND SB_CONFIG_NRF_GENERATE_UICR)
+    add_overlay_config(
+      uicr
+      ${ZEPHYR_NRF_MODULE_DIR}/soc/nordic/nrf92/gen_uicr.conf
+    )
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
