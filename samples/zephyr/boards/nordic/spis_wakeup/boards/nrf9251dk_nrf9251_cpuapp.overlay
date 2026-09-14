@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires following loopbacks:
+ * SCK:  P1.00 - P1.01
+ * MISO: P1.04 - P1.11
+ * MOSI: P2.06 - P2.08
+ * CS:   P1.08 - P1.09 (connected with antena)
+ * WAKE: P1.00 - P1.01
+ */
+
+/ {
+	aliases {
+		led = &led0;
+		spis = &spi130;
+	};
+};
+
+&pinctrl {
+	spi130_default_alt: spi130_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 0)>,
+				<NRF_PSEL(SPIS_MISO, 1, 4)>,
+				<NRF_PSEL(SPIS_MOSI, 2, 6)>,
+				<NRF_PSEL(SPIS_CSN, 1, 8)>;
+		};
+	};
+
+	spi130_sleep_alt: spi130_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIS_SCK, 1, 0)>,
+				<NRF_PSEL(SPIS_MISO, 1, 4)>,
+				<NRF_PSEL(SPIS_MOSI, 2, 6)>,
+				<NRF_PSEL(SPIS_CSN, 1, 8)>;
+			low-power-enable;
+		};
+	};
+};
+
+&spi130 {
+	compatible = "nordic,nrf-spis";
+	status = "okay";
+	def-char = <0x00>;
+	pinctrl-0 = <&spi130_default_alt>;
+	pinctrl-1 = <&spi130_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	wake-gpios = <&gpio1 0 GPIO_ACTIVE_HIGH>;
+	memory-regions = <&cpuapp_dma_region>;
+	/delete-property/ rx-delay-supported;
+	/delete-property/ rx-delay;
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpiote130 {
+	status = "okay";
+	nonsecure-channels = <6>;
+	child-owned-channels = <6>;
+};
+
+&cpuppr_vpr {
+	status = "okay";
+};
+
+&uart132 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
+
+&spi131 {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};
