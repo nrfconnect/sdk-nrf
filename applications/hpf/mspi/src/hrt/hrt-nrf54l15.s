@@ -198,60 +198,56 @@ hrt_write:
 	lbu	a4,83(s0)
 	j	.L42
 .L20:
-	andi	a4,a5,0xff
-	li	a3,1
-	beq	a4,a3,.L23
-	li	a3,3
-	beq	a4,a3,.L22
-	bne	a4,zero,.L36
+	andi	a3,a5,0xff
+	li	a4,1
+	beq	a3,a4,.L23
+	li	a4,3
+	beq	a3,a4,.L22
+	li	a4,0
+	bne	a3,zero,.L24
 	lbu	a4,80(s0)
 .L42:
 	andi	a4,a4,0xff
-	mv	a3,a4
 .L24:
-	lui	a2,%hi(xfer_shift_ctrl+2)
-	sb	a4,%lo(xfer_shift_ctrl+2)(a2)
+	lui	a3,%hi(xfer_shift_ctrl+2)
+	sb	a4,%lo(xfer_shift_ctrl+2)(a3)
  #APP
 	csrw 2000, 2
  #NO_APP
-	lhu	a4,84(s0)
-	slli	a4,a4,16
-	srli	a4,a4,16
+	lhu	a3,84(s0)
+	slli	a3,a3,16
+	srli	a3,a3,16
  #APP
 	csrr a2, 2003
  #NO_APP
 	li	a1,-65536
 	and	a2,a2,a1
-	or	a4,a4,a2
+	or	a3,a3,a2
  #APP
-	csrw 2003, a4
+	csrw 2003, a3
 	csrw 3011, 0
  #NO_APP
 	li	a2,2031616
-	slli	a4,a3,16
-	and	a4,a4,a2
-	ori	a4,a4,4
+	slli	a3,a4,16
+	and	a3,a3,a2
+	ori	a3,a3,4
  #APP
-	csrw 3043, a4
+	csrw 3043, a3
  #NO_APP
-	li	a4,20
-	mul	a5,a5,a4
+	li	a3,20
+	mul	a5,a5,a3
 	li	a2,1
 	add	a5,s0,a5
-	lw	a4,4(a5)
-	beq	a4,a2,.L25
+	lw	a3,4(a5)
+	beq	a3,a2,.L25
 	li	a2,2
-	beq	a4,a2,.L26
+	beq	a3,a2,.L26
 	li	a5,32
-	div	a5,a5,a3
+	div	a5,a5,a4
 	j	.L43
 .L23:
 	lbu	a4,81(s0)
 	j	.L42
-.L36:
-	li	a4,0
-	li	a3,0
-	j	.L24
 .L25:
 	lbu	a5,8(a5)
 .L43:
