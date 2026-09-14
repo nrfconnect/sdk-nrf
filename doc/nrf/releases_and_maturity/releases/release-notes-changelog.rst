@@ -582,7 +582,10 @@ Networking samples
       The transport is selected automatically at runtime.
     * Enabled the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
 
-  * Fixed the HTTP file link, which was previously broken.
+  * Fixed:
+
+    * The HTTP file link, which was previously broken.
+    * An issue where network interface teardown was attempted with uninitialized ``net_if``.
 
 * :ref:`net_coap_client_sample` sample:
 
