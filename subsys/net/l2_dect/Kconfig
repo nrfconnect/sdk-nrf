@@ -28,6 +28,21 @@ config NET_L2_DECT_MGMT
 	help
 	  Enable support for DECT NR+ Net Management interface.
 
+config NET_L2_DECT_IPV6_IFACE_UNICAST_INSTALL
+	bool "Install ULA/GUA unicast (and ULA prefixes) on DECT NR+ iface"
+	depends on NET_IPV6
+	default n if DECT_TETHER_IPV6_LIB
+	default y
+	help
+	  When set (the default), derived ULA and delegated global IPv6 addresses
+	  are added as IPv6 unicast addresses on the DECT NR+ interface, along
+	  with their on-link ULA prefix entries. Disable when another leg (for
+	  example, Ethernet + DHCPv6) should own those addresses: the stack
+	  still derives ULA and delegated global IPv6 addresses into the DECT
+	  NR+ L2 context, but does not add them as unicast addresses or ULA
+	  prefix entries on the DECT NR+ interface. Link-local addressing is
+	  unchanged either way.
+
 config NET_L2_DECT_BR
 	bool "Border router support for DECT NR+"
 	default y if NET_L2_ETHERNET || MODEM_CELLULAR
