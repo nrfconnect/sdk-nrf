@@ -17,6 +17,7 @@ common:
   harness_config:
     regex:
       - "Starting event-driven RTFW timer/GPIO backend"
+      - "RTFW timer/GPIO backend initialized"
     type: multi_line
 
 tests:

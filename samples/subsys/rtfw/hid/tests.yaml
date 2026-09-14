@@ -19,7 +19,7 @@ common:
     ordered: true
     regex:
       - "Starting event-driven RTFW HID/GPIOTE backend"
-      - "HID advertising start"
+      - "HID advertising start: 0"
     type: multi_line
 
 tests:

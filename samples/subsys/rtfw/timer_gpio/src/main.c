@@ -201,6 +201,7 @@ int main(void)
 	k_work_init(&advertising_work, advertising_handler);
 	k_work_submit(&advertising_work);
 #endif
+	printk("RTFW timer/GPIO backend initialized\n");
 
 	for (;;) {
 		led = !led;
