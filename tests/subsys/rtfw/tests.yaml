@@ -1,34 +1,28 @@
+common:
+  tags:
+    - rtfw
+    - unit
+    - ci_tests_subsys_rtfw
+  platform_allow:
+    - native_sim
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+  integration_platforms:
+    - native_sim
+    - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+
 tests:
-  subsys.rtfw:
-    platform_allow:
-      - native_sim
-    tags:
-      - rtfw
-      - unit
+  subsys.rtfw: {}
 
   subsys.rtfw.preinit:
-    platform_allow:
-      - native_sim
     extra_configs:
       - CONFIG_TEST_RTFW_PREINIT=y
-    tags:
-      - rtfw
-      - unit
 
   subsys.rtfw.no_queue_stats:
-    platform_allow:
-      - native_sim
     extra_configs:
       - CONFIG_RTFW_QUEUE_USAGE_STATS=n
-    tags:
-      - rtfw
-      - unit
 
   subsys.rtfw.no_event_handler:
-    platform_allow:
-      - native_sim
     extra_configs:
       - CONFIG_TEST_RTFW_NO_EVENT_HANDLER=y
-    tags:
-      - rtfw
-      - unit
