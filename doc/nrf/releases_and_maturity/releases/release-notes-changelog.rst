@@ -764,6 +764,9 @@ Wi-Fi drivers
 
   See :ref:`migration_3.5` for more information.
 
+* Fixed spurious set_key errors on the nRF71 Series when Wi-Fi keys are deleted after the RPU context has already been torn down.
+  Late key deletion is now treated as success when the RPU context was already removed.
+
 Flash drivers
 -------------
 
