@@ -1,0 +1,44 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SUPPORT_NETCORE
+
+choice NETCORE
+	default NETCORE_WAKEUP_TRIGGER
+
+config NETCORE_WAKEUP_TRIGGER
+	bool "Radio core is a wakeup trigger source"
+
+endchoice
+
+config NETCORE_IMAGE_NAME
+	default "wakeup_trigger" if NETCORE_WAKEUP_TRIGGER
+
+config NETCORE_IMAGE_PATH
+	default "$(APP_DIR)/wakeup_trigger" if NETCORE_WAKEUP_TRIGGER
+
+endif # SUPPORT_NETCORE
+
+if SUPPORT_PPRCORE
+
+choice PPRCORE
+	default PPRCORE_WAKEUP_TRIGGER if SOC_NRF9251_CPUAPP
+	default PPRCORE_NONE
+
+config PPRCORE_WAKEUP_TRIGGER
+	bool "PPR core is a wakeup trigger source"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "wakeup_trigger" if PPRCORE_WAKEUP_TRIGGER
+
+config PPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/wakeup_trigger" if PPRCORE_WAKEUP_TRIGGER
+
+endif # SUPPORT_PPRCORE
+
+source "share/sysbuild/Kconfig"
