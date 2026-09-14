@@ -3,7 +3,7 @@
 .. ncs-sample::
    :title: HTTP Server
 
-   The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE or Wi-Fi®.
+   The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE using an nRF91 Series device, or Wi-Fi® using an nRF71 or nRF70 Series device.
 
    .. |wifi| replace:: Wi-Fi
 
@@ -188,16 +188,26 @@ CONFIG_HTTP_SERVER_SAMPLE_RECEIVE_BUFFER_SIZE
 Configuration files
 ===================
 
-The sample includes pre-configured configuration files for the development kits that are supported:
+The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - For all devices.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - For the nRF7002 DK.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - For the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - For the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - For the nRF9160 DK.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - For the nRF7120 DK.
+* :file:`prj.conf` - General configuration file for all devices.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`wifi.conf` - Extra configuration file for Wi-Fi networking, common to the nRF71 Series and nRF70 Series. Must be added explicitly for Wi-Fi builds.
+* :file:`wifi-tls.conf` - Additional extra configuration file that enables TLS support (server authentication, with optional mutual authentication) for Wi-Fi builds.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+Board files under :file:`boards/` are merged automatically for the selected target.
+The :file:`wifi.conf` and :file:`wifi-tls.conf` extra configuration files are not board-specific and must be passed explicitly with ``http_server_EXTRA_CONF_FILE``.
+
+To add a specific extra configuration file to the build, add the ``-- -Dhttp_server_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
+Multiple extra configuration files can be combined by separating them with a semicolon, for example:
+
+.. code-block:: console
+
+   west build -p -b nrf7120dk/nrf7120/cpuapp --sysbuild -- -Dhttp_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
 
 Building and running
 ********************
@@ -330,6 +340,9 @@ Modem traces can be enabled by providing a snippet with the west build command a
 .. code-block:: console
 
    west build -p -b nrf9161dk/nrf9161/ns -- -Dhttp_server_SNIPPET="nrf91-modem-trace-uart"
+
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic in order to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
 
 Dependencies
 ************
