@@ -1292,7 +1292,10 @@ ci_tests_benchmarks_spi_performance:
     - zephyr/soc/nordic/
     - zephyr/dts/vendor/nordic/
     - zephyr/boards/nordic/nrf54*
+    - nrf/drivers/mspi/
+    - nrf/applications/hpf/mspi/
     - nrf/tests/benchmarks/xspi_performance/
+    - nrf/tests/benchmarks/xspi_performance_mspi_api/
 
 ci_tests_benchmarks_can_performance:
   files:
