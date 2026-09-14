@@ -5,8 +5,9 @@
 
    The Download sample demonstrates how to download a file from an HTTP or a CoAP server, with optional TLS or DTLS.
    It uses the :ref:`lib_downloader` library.
+   The sample connects to either an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device combined with a compatible host platform.
 
-   .. |wifi| replace:: Wi-Fi®
+   .. |wifi| replace:: Wi-Fi
 
    .. include:: /includes/net_connection_manager.txt
 
@@ -32,14 +33,6 @@ The sample then performs the following actions:
 1. Establishes a connection to the network
 #. Optionally sets up the secure socket options
 #. Uses the :ref:`lib_downloader` library to download a file.
-
-Selecting the HTTP(S) or CoAP(S) transport
-===========================================
-
-The :ref:`lib_downloader` library supports both HTTP(S) and CoAP(S), and this sample builds in support for both (:kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_HTTP` and :kconfig:option:`CONFIG_DOWNLOADER_TRANSPORT_COAP`, together with :kconfig:option:`CONFIG_COAP`).
-No separate build-time choice is needed to pick between them.
-The transport is selected automatically at runtime from the scheme of the URL being downloaded (``http://`` or ``https://`` for HTTP(S), ``coap://`` or ``coaps://`` for CoAP(S)).
-Set :option:`CONFIG_SAMPLE_FILE_URL` (with :option:`CONFIG_SAMPLE_FILE_CUSTOM` selected) to a URL with the appropriate scheme to exercise either transport or security level.
 
 Selecting the HTTP(S) or CoAP(S) transport
 ===========================================
@@ -110,6 +103,27 @@ The following sample-specific Kconfig options are used in this sample (located i
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
+Configuration files
+===================
+
+The sample provides predefined configuration files for the following development kits:
+
+* :file:`prj.conf` - General configuration file for all devices.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Board-specific configuration for the nRF7120 DK.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series.
+  It must be added explicitly for Wi-Fi builds.
+* :file:`wifi-mutual-dtls.conf` - Additional configuration for mutual DTLS downloads from the Californium interop server.
+
+Board files under :file:`boards/` are merged automatically for the selected target.
+The :file:`wifi.conf` and :file:`wifi-mutual-dtls.conf` files are not board-specific and must be passed with ``download_EXTRA_CONF_FILE``.
+
+To add a specific extra configuration file to the build, add the ``-- -Ddownload_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
+
 Building and running
 ********************
 
@@ -133,22 +147,33 @@ After programming the sample to your development kit, test it by performing the 
 Sample output
 =============
 
-The following output is logged on the terminal when the sample downloads a file from an HTTPS server:
+The following output is logged on the terminal when the sample downloads the default HTTPS test file over Wi-Fi:
 
 .. code-block:: console
 
    Download client sample started
-   Provisioning certificate
    Connecting to network
    IP Up
    Network connected
    Downloading https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png
-   [ 100% ] |==================================================| (102923/102923 bytes)
-   Download completed in 13679 ms @ 7524 bytes per sec, total 102923 bytes
+   Setting up TLS credentials, sec tag count 1
+
+   [ 100% ] (102923/102923 bytes)
+
+   Download completed in 25233 ms @ 4078 bytes per sec, total 102923 bytes
+   SHA256: 344577d739dc0e9f9498c13be2fbc7fb947abd291e9e57db9e9ca4a89ccd5f63
+   Bye
    IP down
    Disconnected from network
-   Socket closed
-   Bye
+
+Troubleshooting
+===============
+
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
+This sample enables modem traces by default.
+
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic in order to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
 
 Dependencies
 ************
@@ -165,3 +190,8 @@ It uses the following `sdk-nrfxlib`_ library:
 In addition, it uses the following secure firmware component:
 
 * :ref:`Trusted Firmware-M <ug_tfm>`
+
+It uses the following Zephyr libraries:
+
+* :ref:`lib_downloader`
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`
