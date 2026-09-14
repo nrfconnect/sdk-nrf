@@ -2063,3 +2063,9 @@ ci_samples_subsys_rtfw:
     - nrf/samples/subsys/rtfw/
     - nrf/include/rtfw/rtfw.h
     - nrf/subsys/rtfw/
+
+ci_tests_subsys_rtfw:
+  files:
+    - nrf/tests/subsys/rtfw/
+    - nrf/include/rtfw/rtfw.h
+    - nrf/subsys/rtfw/
