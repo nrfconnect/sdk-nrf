@@ -58,7 +58,7 @@ static int modem_configure_and_connect(void);
 /* Buffer used as temporary storage when downloading the modem firmware, and
  * when loading the modem firmware from external flash to the modem.
  */
-#define FMFU_BUF_SIZE (0x1000)
+#define FMFU_BUF_SIZE (0x200)
 static uint8_t fmfu_buf[FMFU_BUF_SIZE];
 
 BUILD_ASSERT(strlen(CONFIG_DOWNLOAD_MODEM_0_VERSION), "CONFIG_DOWNLOAD_MODEM_0_VERSION not set");
