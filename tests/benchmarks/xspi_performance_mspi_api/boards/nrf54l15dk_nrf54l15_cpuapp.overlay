@@ -1,0 +1,17 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* No loopbacks requird, overlay assumes CONFIG_TEST_BENCHMARK_SCK_DELAY=n. */
+
+/ {
+	aliases {
+		test-timer = &timer21;
+	};
+};
+
+&timer21 {
+	status = "reserved";
+};

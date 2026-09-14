@@ -1,0 +1,48 @@
+tests:
+  # Times mspi_xfer and SCK delay for HPF MSPI
+  benchmarks.xspi_performance_mspi_api.hpf:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - EXTRA_DTC_OVERLAY_FILE='boards/hpf_emul_device.overlay'
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  # Times mspi_xfer and SCK delay for sQSPI
+  benchmarks.xspi_performance_mspi_api.sqspi:
+    extra_args:
+      - FILE_SUFFIX=sqspi
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  # Times mspi_xfer for HPF MSPI, no loopback required
+  benchmarks.xspi_performance_mspi_api.hpf.no_sck_delay:
+    build_only: true
+    extra_args:
+      - CONFIG_TEST_BENCHMARK_SCK_DELAY=n
+      - SB_CONFIG_HPF=y
+      - SB_CONFIG_HPF_MSPI=y
+      - SB_CONFIG_VPR_LAUNCHER=n
+      - EXTRA_DTC_OVERLAY_FILE='boards/hpf_emul_device.overlay'
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  # Times mspi_xfer for sQSPI, no loopback required
+  benchmarks.xspi_performance_mspi_api.sqspi.no_sck_delay:
+    extra_args:
+      - CONFIG_TEST_BENCHMARK_SCK_DELAY=n
+      - FILE_SUFFIX=sqspi
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
