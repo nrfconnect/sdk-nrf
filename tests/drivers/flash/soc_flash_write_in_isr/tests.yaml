@@ -1,0 +1,12 @@
+common:
+  tags:
+    - sysbuild
+    - flash_patch
+    - ci_tests_drivers_flash
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  drivers.soc_flash_write_in_isr: {}
