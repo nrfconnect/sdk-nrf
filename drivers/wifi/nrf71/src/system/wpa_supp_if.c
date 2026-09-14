@@ -1186,21 +1186,20 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 	vif_ctx_zep = if_priv;
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	if (!rpu_ctx_zep->rpu_ctx) {
+	if (!rpu_ctx_zep) {
 		LOG_ERR("%s: rpu_ctx_zep is NULL", __func__);
 		return ret;
 	}
 
 	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
-	if (!rpu_ctx_zep->rpu_ctx) {
-		LOG_DBG("%s: RPU context not initialized", __func__);
-		goto out;
-	}
-
 	/* Can happen in a positive case where "net if down" is completed, but WPA
 	 * supplicant is still deleting keys.
 	 */
 	if (!rpu_ctx_zep->rpu_ctx) {
+		LOG_DBG("%s: RPU context not initialized", __func__);
+		if (alg == WPA_ALG_NONE) {
+			ret = 0;
+		}
 		goto out;
 	}
 
