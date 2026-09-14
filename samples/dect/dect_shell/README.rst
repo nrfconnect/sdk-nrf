@@ -906,6 +906,24 @@ Runtime inspection (with ``CONFIG_NET_BUF_POOL_USAGE=y`` and ``CONFIG_MEM_SLAB_T
    0x...           20      20      8       dect_mdm_rx_pkts (slab)
    0x...           40      40      8       dect_mdm_rx_bufs (bufs, 256 B)
 
+.. _dect_shell_dlc_resilient:
+
+Loss-resilient DLC profile (:file:`dlc_resilient.conf`)
+-------------------------------------------------------
+
+Use the :file:`dlc_resilient.conf` file when child PTs reconnect too eagerly under RF interference or link congestion.
+The modem's stock DLC defaults (60 s SDU lifetime, release on first discard) drop a PT on a single discard-timer expiry.
+The overlay trades that for a more tolerant profile on the FT's return path (see the comments in the configuration file for the exact values and rationale).
+
+Append the :file:`dlc_resilient.conf` file last in ``EXTRA_CONF_FILE``, optionally combined with :file:`dect_rx_pool.conf`:
+
+.. code-block:: console
+
+   cd nrf/samples/dect/dect_shell
+   west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;dect_rx_pool.conf;dlc_resilient.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
+
+Both knobs are also runtime-tunable through the DECT L2 shell (``dect sett --dlc_sdu_lifetime``, ``--dlc_discard_release_assoc_count``, ``--read``).
+
 .. _dect_shell_mdns_discover_build:
 
 mDNS discover
