@@ -210,6 +210,7 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
 		printk("IP Up\n");
+		net_if = iface;
 		on_net_event_l4_connected();
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
@@ -230,7 +231,7 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 		printk("Fatal error received from the connectivity layer, "
 		       "rebooting network interface\n");
 
-		(void)conn_mgr_if_disconnect(net_if);
+		(void)conn_mgr_if_disconnect(iface);
 		(void)conn_mgr_all_if_down(true);
 
 		err = conn_mgr_all_if_up(true);
