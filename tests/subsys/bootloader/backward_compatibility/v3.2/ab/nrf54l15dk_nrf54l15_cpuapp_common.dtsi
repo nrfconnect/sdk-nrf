@@ -33,3 +33,41 @@
 		};
 	};
 };
+
+/* Pin the flash map to the NCS v3.2 layout so the update image is accepted by
+ * an NCS v3.2 MCUboot: slot0 ends at 0xb8000, placing slot1 at 0xb8000. The
+ * MCUboot image trailer lives at the end of each slot, so the slot ends must
+ * match the released layout.
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0x10800>;
+		};
+
+		slot0_partition: partition@11000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x11000 0xa7000>;
+		};
+
+		slot1_partition: partition@b8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xb8000 0xa7000>;
+		};
+
+		littlefs_storage: storage_partition: partition@15f000 {
+			compatible = "zephyr,mapped-partition";
+			label = "littlefs-storage";
+			reg = <0x15f000 0x6000>;
+		};
+	};
+};
