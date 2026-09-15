@@ -1,0 +1,100 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	soc {
+		reserved-memory {
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			sram_tx: memory@2002f400 {
+				reg = <0x2002f400 DT_SIZE_K(1)>;
+			};
+
+			sram_rx: memory@2002f800 {
+				reg = <0x2002f800 DT_SIZE_K(1)>;
+			};
+		};
+	};
+
+	ipc {
+		ipc0: ipc0 {
+			compatible = "zephyr,ipc-icbmsg";
+			tx-blocks = <16>;
+			rx-blocks = <16>;
+			dcache-alignment = <32>;
+			tx-region = <&sram_tx>;
+			rx-region = <&sram_rx>;
+			mboxes = <&cpuflpr_vevif_rx 21>, <&cpuflpr_vevif_tx 20>;
+			mbox-names = "rx", "tx";
+			status = "okay";
+		};
+	};
+
+	aliases {
+		remote-temp-monitor-ipc = &ipc0;
+		remote-led-control-ipc = &ipc0;
+	};
+};
+
+&cpuflpr_sram {
+	reg = <0x2002fc00 DT_SIZE_K(64)>;
+	ranges = <0x0 0x2002fc00 DT_SIZE_K(64)>;
+};
+
+&cpuflpr_rram {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cpuflpr_code_partition: partition@0 {
+			label = "image-0";
+			reg = <0x0 DT_SIZE_K(64)>;
+		};
+	};
+};
+
+&cpuflpr_vevif_rx {
+	status = "okay";
+};
+
+&cpuflpr_vevif_tx {
+	status = "okay";
+};
+
+&uart30 {
+	/delete-property/ hw-flow-control;
+};
+
+&pinctrl {
+	spi22_default_alt: spi22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 8)>,
+				<NRF_PSEL(SPIM_MISO, 1, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 9)>;
+		};
+	};
+
+	spi22_sleep_alt: spi22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(SPIM_SCK, 1, 8)>,
+				<NRF_PSEL(SPIM_MISO, 1, 10)>,
+				<NRF_PSEL(SPIM_MOSI, 1, 9)>;
+			low-power-enable;
+		};
+	};
+};
+
+app_spi: &spi22 {
+	status = "okay";
+	pinctrl-0 = <&spi22_default_alt>;
+	pinctrl-1 = <&spi22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+	overrun-character = <0x00>;
+	cs-gpios = <&gpio1 11 GPIO_ACTIVE_LOW>;
+};
