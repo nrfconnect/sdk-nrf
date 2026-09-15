@@ -185,6 +185,13 @@ Configuration
 
 |config|
 
+The sample uses the common Nordic clock control driver (``CONFIG_CLOCK_CONTROL_NRF=n`` in:file:`prj.conf`).
+To build with the legacy clock driver instead, pass ``-DCONFIG_CLOCK_CONTROL_NRF=y`` on the command line.
+
+The default shell transport is UART.
+Alternative shell transports (USB CDC ACM or SEGGER RTT on selected boards) are configured at build time using Zephyr snippets and the configuration fragments in the :file:`conf/` folder.
+See :ref:`radio_test_shell_transport` for details.
+
 The following sample-specific Kconfig options are used in this sample (located in :file:`samples/peripheral/radio_test/Kconfig`) :
 
 .. options-from-kconfig::
@@ -208,7 +215,7 @@ The sample can be built with an extra overlay file to enable pin debugging of RA
 
 .. code-block:: console
 
-   west build -bnrf54l15dk/nrf54l15/cpuapp -p -- -DEXTRA_DTC_OVERLAY_FILE=pin_debug_54l.overlay
+   west build -b nrf54l15dk/nrf54l15/cpuapp -p -- -DEXTRA_DTC_OVERLAY_FILE=pin_debug_54l.overlay
 
 
 With pin debugging enabled two GPIOs will be configured to toggle on RADIO events:
@@ -218,25 +225,138 @@ With pin debugging enabled two GPIOs will be configured to toggle on RADIO event
 The pins used for debugging are configured in :file:`samples/peripheral/radio_test/pin_debug_54l.overlay`.
 
 
-Remote USB CDC ACM Shell variant
-================================
+.. _radio_test_shell_transport:
 
-This sample can run the remote IPC Service Shell through the USB on the nRF5340 DK application core.
+Alternative shell transports
+============================
+
+As an alternative to UART, this sample supports USB CDC ACM or SEGGER RTT shell transports on the boards listed below.
+
+Supported transports by board
+-----------------------------
+
+The default shell transport is UART on all boards listed in Requirements.
+The following table summarizes the alternative transports validated for specific boards:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Board
+     - Alternative shell transport
+   * - nRF5340 DK and |nRF7002DKnoref|
+     - USB CDC ACM (remote IPC shell, ``FILE_SUFFIX=usb``)
+   * - nRF54LM20 DK
+     - USB CDC ACM (``-S cdc-acm-console`` and ``conf/usb.conf``)
+   * - nRF54LM20 Dongle
+     - USB CDC ACM (``radio_test_SNIPPET=cdc-acm-console`` and ``conf/usb.conf``)
+   * - nRF54L15 TAG
+     - SEGGER RTT (``-S rtt-console`` and ``conf/rtt.conf``)
+
+Selecting a transport at build time
+-----------------------------------
+
+The default configuration is in the :file:`prj.conf` file.
+To select alternative shell transports, use a Zephyr snippet together with an ``EXTRA_CONF_FILE`` fragment from the :file:`conf/` folder for sample-specific options:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Transport
+     - Single-image boards
+     - Multi-image sysbuild boards
+     - Provided by snippet
+   * - USB CDC ACM
+     - ``-S cdc-acm-console`` (before ``--``) and ``-DEXTRA_CONF_FILE=conf/usb.conf``
+     - ``-Dradio_test_SNIPPET=cdc-acm-console -DEXTRA_CONF_FILE=conf/usb.conf``
+     - USB CDC ACM console backend
+   * - SEGGER RTT (nRF54L15 TAG)
+     - ``-S rtt-console`` (before ``--``) and ``-DEXTRA_CONF_FILE=conf/rtt.conf``
+     - Not applicable
+     - SEGGER RTT console backend
+
+The :file:`conf/usb.conf` file contains sample-specific USB CDC ACM settings (VID/PID, DTR handling) for the nRF54LM20 DK and Dongle.
+The :file:`conf/rtt.conf` file contains sample-specific SEGGER RTT shell settings for the nRF54L15 TAG.
+
+Pass ``-S <snippet>`` to ``west build`` **before** ``--``.
+Arguments after ``--`` are forwarded to CMake, where ``-S`` means the CMake source directory, not a snippet.
+Use ``-S <snippet>`` on boards that build only the ``radio_test`` image, such as the nRF54LM20 DK and the nRF54L15 TAG.
+On boards that use sysbuild to produce additional images, apply the snippet to ``radio_test`` only with ``-Dradio_test_SNIPPET=<snippet>`` after ``--`` so that child images (for example MCUboot on the nRF54LM20 Dongle) are not affected.
+In the |NCS|, sysbuild is enabled by default, so ``--sysbuild`` does not need to be passed explicitly unless you disabled the default west setting.
+
+On the nRF5340 DK and |nRF7002DKnoref|, USB runs on the application core through the remote IPC shell.
+Do not use the ``cdc-acm-console`` snippet there.
+Use ``FILE_SUFFIX=usb`` after ``--`` to select the remote shell USB Kconfig and devicetree files in :file:`sysbuild/remote_shell/`.
+The ``cdc-acm-console`` snippet is for a local shell on ``zephyr,shell-uart``; the remote shell uses ``ncs,remote-shell-uart`` and IPC routing instead.
+
+Connecting to the shell
+-----------------------
+
+After programming the sample, connect to the shell using the transport selected at build time:
+
+* **UART (default):** Connect to the development kit through the serial port and send shell commands, as described in Overview.
+* **USB CDC ACM:** Open the CDC ACM COM port in a terminal emulator and assert DTR in the terminal settings so that the shell prompt appears.
+  On the nRF5340 DK and |nRF7002DKnoref|, use the port named **Nordic Remote Shell sample**, not the J-Link VCOM ports.
+  On the nRF54LM20 DK, use the nRF USB port rather than the IMCU debug port.
+* **SEGGER RTT (nRF54L15 TAG):** Follow the instructions in :ref:`zephyr:shell_rtt_west` in the Zephyr shell documentation.
+
+Board-specific build commands
+-----------------------------
+
+nRF5340 DK
+----------
+
+On the nRF5340 DK, the sample runs on the network core and forwards shell traffic through the remote IPC shell on the application core.
+Sysbuild is required here to build both the network-core ``radio_test`` image and the application-core remote shell image.
+``FILE_SUFFIX=usb`` selects the USB variant of the remote shell child image.
 For example, when building on the command line, use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
+   west build -p -b nrf5340dk/nrf5340/cpunet -- -DFILE_SUFFIX=usb
 
 You can also build this sample with the remote IPC Service Shell and support for the front-end module.
 You can use the following command:
 
 .. code-block:: console
 
-   west build samples/peripheral/radio_test -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
+   west build -p -b nrf5340dk/nrf5340/cpunet -- -DSHIELD=nrf21540ek -DFILE_SUFFIX=usb
 
 .. note::
    You can also build the sample with the remote IPC Service Shell for the |nRF7002DKnoref| using the ``nrf7002dk/nrf5340/cpunet`` board target in the commands.
+
+nRF54LM20 DK
+------------
+
+On the nRF54LM20 DK, the sample runs on the application core and exposes the shell directly on a USB CDC ACM virtual serial port.
+Only the ``radio_test`` image is built, so use the global ``-S cdc-acm-console`` snippet option:
+
+.. code-block:: console
+
+   west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -S cdc-acm-console -- -DEXTRA_CONF_FILE=conf/usb.conf
+
+nRF54LM20 Dongle
+----------------
+
+On the nRF54LM20 Dongle, the sample runs on the application core and exposes the shell on the onboard USB CDC ACM interface.
+Sysbuild is required here to build MCUboot and the firmware-loader child images together with ``radio_test``.
+Apply the snippet to the ``radio_test`` image only with ``-Dradio_test_SNIPPET=cdc-acm-console`` after ``--``:
+
+.. code-block:: console
+
+   west build -p -b nrf54lm20dongle/nrf54lm20b/cpuapp -- -Dradio_test_SNIPPET=cdc-acm-console -DEXTRA_CONF_FILE=conf/usb.conf
+
+nRF54L15 TAG
+------------
+
+The nRF54L15 TAG has no native USB port.
+Only the ``radio_test`` image is built, so use the global ``-S rtt-console`` snippet option:
+
+.. code-block:: console
+
+   west build -p -b nrf54l15tag/nrf54l15/cpuapp -S rtt-console -- -DEXTRA_CONF_FILE=conf/rtt.conf
+
+For TAG programming and debug setup, see the `nRF54L15 TAG debug guide`_.
+Connect to the shell as described in :ref:`zephyr:shell_rtt_west`.
 
 .. _radio_test_testing:
 
@@ -319,3 +439,5 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:shell_api`:
 
   * :file:`include/shell/shell.h`
+
+.. _nRF54L15 TAG debug guide: https://docs.nordicsemi.com/r/bundle/ug_nrf54l15_tag/page/ug/nrf54l15_tag/nrf54l15_tag_debug.html

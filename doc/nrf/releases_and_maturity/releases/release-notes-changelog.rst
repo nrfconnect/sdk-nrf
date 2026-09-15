@@ -629,6 +629,19 @@ nRF93M1 DK samples
 Peripheral samples
 ------------------
 
+* :ref:`radio_test` sample:
+
+  * Added:
+
+    * USB CDC ACM shell support for the ``nrf54lm20dk/nrf54lm20a/cpuapp``, ``nrf54lm20dk/nrf54lm20b/cpuapp``, and ``nrf54lm20dongle/nrf54lm20b/cpuapp`` board targets.
+    * SEGGER RTT shell support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
+    * Transport-specific configuration fragments in the :file:`conf/usb.conf` and :file:`conf/rtt.conf` files, used together with the ``cdc-acm-console`` and ``rtt-console`` Zephyr snippets and the ``EXTRA_CONF_FILE`` CMake option.
+
+  * Updated:
+
+    * The sample documentation with build instructions for the USB and RTT shell variants, including ``west rtt`` usage for the nRF54L15 TAG.
+    * The nRF5340 DK USB build to use the ``EXTRA_CONF_FILE=conf/usb.conf`` configuration fragment.
+
 * Added the :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
 
 PMIC samples
