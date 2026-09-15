@@ -8,6 +8,7 @@ common:
   harness_config:
     fixture: uart_loopback
   platform_allow:
+    - nrf7120dk/nrf7120/cpuapp
     - nrf9251dk/nrf9251/cpuapp
     - nrf9251dk/nrf9251/cpuppr
 tests:
