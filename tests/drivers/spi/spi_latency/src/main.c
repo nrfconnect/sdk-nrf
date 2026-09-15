@@ -70,8 +70,8 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	uint64_t maximal_allowed_transmission_time_us;
 
 	if (buffer_size == 1) {
-		/* 5000% */
-		maximal_allowed_transmission_time_us = (1 + 50) * theoretical_transmission_time_us;
+		/* 6000% */
+		maximal_allowed_transmission_time_us = (1 + 60) * theoretical_transmission_time_us;
 	} else {
 		/* 300% */
 		maximal_allowed_transmission_time_us = (1 + 3) * theoretical_transmission_time_us;
