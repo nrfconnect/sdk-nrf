@@ -203,6 +203,8 @@ Bluetooth Mesh
 
 * Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
 
+* Fixed an issue where an LPN that terminated a friendship by sending a Friend Clear message with TTL set to ``0`` never received the Friend Clear Confirm message from the Friend node.
+
 DECT NR+
 --------
 
