@@ -156,11 +156,15 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks;
 
 static void app_led_cb(bool led_state)
 {
+	LOG_INF("LED write received: turning user LED %s", led_state ? "on" : "off");
+
 	dk_set_led(USER_LED, led_state);
 }
 
 static bool app_button_cb(void)
 {
+	LOG_INF("Button read received: state %s", app_button_state ? "pressed" : "released");
+
 	return app_button_state;
 }
 
@@ -171,8 +175,12 @@ static struct bt_lbs_cb lbs_callbacs = {
 
 static void button_changed(uint32_t button_state, uint32_t has_changed)
 {
+	LOG_INF("Button changed: state 0x%08x, changed 0x%08x", button_state, has_changed);
+
 	if (has_changed & USER_BUTTON) {
 		uint32_t user_button_state = button_state & USER_BUTTON;
+
+		LOG_INF("User button %s, notifying peer", user_button_state ? "pressed" : "released");
 
 		bt_lbs_send_button_state(user_button_state);
 		app_button_state = user_button_state ? true : false;
@@ -186,6 +194,8 @@ static int init_button(void)
 	err = dk_buttons_init(button_changed);
 	if (err) {
 		LOG_WRN("Cannot init buttons (err: %d)", err);
+	} else {
+		LOG_INF("Buttons initialized");
 	}
 
 	return err;
@@ -203,6 +213,8 @@ int main(void)
 		LOG_WRN("LEDs init failed (err %d)", err);
 		return 0;
 	}
+
+	LOG_INF("LEDs initialized");
 
 	err = init_button();
 	if (err) {

@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The DK buttons are on gpio4, which is missing the gpiote-instance property
+ * that its siblings gpio1 and gpio3 have. Without it, GPIO interrupts return
+ * -ENOTSUP and dk_buttons_init() fails.
+ */
+&gpio4 {
+	gpiote-instance = <&gpiote20>;
+};
+
+/* Replaces app.overlay, which targets uart0; this board uses uart20. */
+&uart20 {
+	/delete-property/ hw-flow-control;
+};
