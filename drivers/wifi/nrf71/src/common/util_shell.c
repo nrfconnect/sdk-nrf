@@ -429,10 +429,9 @@ static int nrf_wifi_util_show_vers(const struct shell *sh,
 	return status;
 }
 
-#if !defined(CONFIG_NRF71_RADIO_TEST) && !defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
 static int nrf_wifi_util_dump_rpu_stats(const struct shell *sh,
-					size_t argc,
-					const char *argv[])
+				size_t argc,
+				const char *argv[])
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
@@ -880,7 +879,6 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
 
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 static int nrf_wifi_util_trigger_rpu_recovery(const struct shell *sh,
@@ -974,10 +972,9 @@ unlock:
 }
 #endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
 
-#if !defined(CONFIG_NRF71_RADIO_TEST) && !defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
 static int nrf_wifi_util_clear_rpu_stats(const struct shell *sh,
-					 size_t argc,
-					 const char *argv[])
+				 size_t argc,
+				 const char *argv[])
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
@@ -1262,8 +1259,6 @@ unlock_umac:
 	return ret;
 }
 
-#endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX */
-
 static int nrf_wifi_util_heap(const struct shell *sh, size_t argc, char **argv)
 {
 	struct k_heap *ctrl_pool;
@@ -1442,7 +1437,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_heap,
 		      1,
 		      0),
-#if !defined(CONFIG_NRF71_RADIO_TEST) && !defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
 	SHELL_CMD_ARG(rpu_stats,
 		      NULL,
 		      "Display RPU stats "
@@ -1468,7 +1462,6 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_umac_int_stats,
 		      1,
 		      0),
-#endif /* !CONFIG_NRF71_RADIO_TEST && !CONFIG_NRF71_OFFLOADED_RAW_TX*/
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	SHELL_CMD_ARG(rpu_recovery_test,
 		      NULL,
