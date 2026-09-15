@@ -924,6 +924,11 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
   * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
     It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
+  * ``--sign-key`` option to sign the SPDX report with `Sigstore cosign`_, using either a local private key file or a KMS key URI.
+    It writes a Sigstore bundle next to each generated report, with ``.sigstore.json`` appended to the report file name.
+    Signing is private, as no signature, report digest, or signing identity is sent to the public Sigstore services.
+  * ``--cosign`` option to select the cosign executable.
+    By default, the command uses cosign from the ``PATH``, and installs the configured release for the current user if it is not found.
 
 * Updated:
 
