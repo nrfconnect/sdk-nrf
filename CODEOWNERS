@@ -999,6 +999,7 @@
 
 # Tests
 /tests/benchmarks/                        @nrfconnect/ncs-low-level-test
+/tests/benchmarks/crypto                  @nrfconnect/ncs-aegir
 /tests/benchmarks/multicore/              @carlescufi @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/common/       @nrfconnect/ncs-low-level-test
 /tests/benchmarks/multicore/idle*         @nrfconnect/ncs-low-level-test
