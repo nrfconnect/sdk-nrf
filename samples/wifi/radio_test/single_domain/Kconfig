@@ -6,4 +6,15 @@
 
 mainmenu "Nordic Wi-Fi Bluetooth LE Radio test sample"
 
+config WIFI_ONLY
+	bool "Wi-Fi only mode"
+	help
+	  Enable Wi-Fi only radio test mode, excluding peripheral BLE radio test
+	  functionality. WiFi radio test shell is available via the WiFi driver
+	  for nRF71. Works on both nRF70 and nRF71 (BLE radio test not available).
+
+if !WIFI_ONLY
+
 rsource "../../../../samples/peripheral/radio_test/Kconfig"
+
+endif
