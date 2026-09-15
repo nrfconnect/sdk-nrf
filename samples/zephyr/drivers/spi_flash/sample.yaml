@@ -28,6 +28,7 @@ tests:
       - FILE_SUFFIX=sqspi
   nrf.extended.sample.drivers.spi.flash:
     platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
