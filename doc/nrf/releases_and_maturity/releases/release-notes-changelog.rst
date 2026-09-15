@@ -582,7 +582,10 @@ Networking samples
       The transport is selected automatically at runtime.
     * Enabled the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
 
-  * Fixed the HTTP file link, which was previously broken.
+  * Fixed:
+
+    * The HTTP file link, which was previously broken.
+    * An issue where network interface teardown was attempted with uninitialized ``net_if``.
 
 * :ref:`net_coap_client_sample` sample:
 
@@ -763,6 +766,9 @@ Wi-Fi drivers
     * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
 
   See :ref:`migration_3.5` for more information.
+
+* Fixed spurious ``set_key`` errors on the nRF71 Series when Wi-Fi keys are deleted after the RPU context has already been torn down.
+  Late key deletion is now treated as success when the RPU context was already removed.
 
 Flash drivers
 -------------
