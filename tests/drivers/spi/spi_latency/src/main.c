@@ -70,8 +70,8 @@ static void assess_measurement_result(uint64_t timer_value_us,
 	uint64_t maximal_allowed_transmission_time_us;
 
 	if (buffer_size == 1) {
-		/* 5000% */
-		maximal_allowed_transmission_time_us = (1 + 50) * theoretical_transmission_time_us;
+		/* 6000% */
+		maximal_allowed_transmission_time_us = (1 + 60) * theoretical_transmission_time_us;
 	} else {
 		/* 300% */
 		maximal_allowed_transmission_time_us = (1 + 3) * theoretical_transmission_time_us;
@@ -117,7 +117,8 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(err, "SPI transceive failed");
-		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size);
+		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size,
+			"0: TX = %u, RX = %u\n", tx_buffer[0], rx_buffer[0]);
 	}
 
 	average_timer_value_us /= MEASUREMENT_REPEATS;

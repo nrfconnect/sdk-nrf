@@ -44,7 +44,6 @@
 	pinctrl-1 = <&dut_spi_sleep>;
 	pinctrl-names = "default", "sleep";
 	overrun-character = <0x00>;
-	memory-regions = <&cpuapp_dma_region>;
 	cs-gpios = <&gpio1 4 GPIO_ACTIVE_LOW>;
 	zephyr,pm-device-runtime-auto;
 
