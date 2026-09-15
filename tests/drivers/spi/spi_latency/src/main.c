@@ -117,7 +117,8 @@ static void test_spim_transmission_latency(size_t buffer_size)
 		average_timer_value_us += timer_value_us[repeat_counter];
 
 		zassert_ok(err, "SPI transceive failed");
-		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size);
+		zassert_mem_equal(tx_buffer, rx_buffer, buffer_size,
+			"0: TX = %u, RX = %u\n", tx_buffer[0], rx_buffer[0]);
 	}
 
 	average_timer_value_us /= MEASUREMENT_REPEATS;
