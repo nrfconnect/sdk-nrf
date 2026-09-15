@@ -11,13 +11,13 @@ zephyr_library_include_directories(${ZEPHYR_BASE}/samples/bluetooth)
 zephyr_library_include_directories(${ZEPHYR_BASE}/subsys/bluetooth/mesh)
 zephyr_library_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/bluetooth/mesh)
 target_sources(app PRIVATE
-    src/main.c
-    src/bttester.c
-    src/gap.c
-    )
+  src/main.c
+  src/bttester.c
+  src/gap.c
+)
 
 if(CONFIG_BT_MESH)
-target_sources(app PRIVATE src/mesh.c)
-target_sources(app PRIVATE src/mmdl.c)
-target_sources(app PRIVATE src/model_handler.c)
+  target_sources(app PRIVATE src/mesh.c)
+  target_sources(app PRIVATE src/mmdl.c)
+  target_sources(app PRIVATE src/model_handler.c)
 endif()
