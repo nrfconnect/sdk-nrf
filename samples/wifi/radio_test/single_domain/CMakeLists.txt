@@ -22,7 +22,7 @@ file(GLOB perip_rt_sources ${perip_rt_dir}/src/*.c)
 
 # NORDIC SDK APP START
 target_sources(app PRIVATE
-  ${perip_rt_sources}
+  #${perip_rt_sources}
   ${common_rt_dir}/src/nrf_wifi_radio_test_shell.c
   src/early_shell_start.c
 )
