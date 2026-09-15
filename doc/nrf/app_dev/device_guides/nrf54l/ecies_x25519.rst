@@ -53,12 +53,20 @@ The :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION` option enables encryption suppor
 
 The key exchange method is determined by the type of signature key selected.
 For the nRF54L15 SoC, the ED25519 signature algorithm is the default setting.
+For the nRF54LS05A and nRF54LS05B SoCs, ECDSA P-256 is selected by default, so the preceding command uses ECIES-P256 key exchange instead of ECIES-X25519.
+To build with the default ECIES-P256 configuration for these SoCs, use the following board targets:
+
+.. parsed-literal::
+   :class: highlight
+
+   west build -b nrf54ls05dk/nrf54ls05a/cpuapp -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y -DSB_CONFIG_BOOT_ENCRYPTION=y -DSB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
 
 When encryption is enabled, the encrypted image files :file:`zephyr.signed.encrypted.bin` and :file:`zephyr.signed.encrypted.hex` are generated in the application build directory.
 
 The BIN file is a binary image suitable for Device Firmware Update (DFU) operations using :ref:`MCUmgr<dfu_tools_mcumgr_cli>`.
 
-When the :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE` option is enabled, you must provide an ECIES-X25519 private key in PEM format.
+When the :kconfig:option:`SB_CONFIG_BOOT_ENCRYPTION_KEY_FILE` option is enabled, you must provide a private encryption key in PEM format that matches the selected signature algorithm.
+Use an ECIES-X25519 key with ED25519, or an ECIES-P256 key with ECDSA P-256.
 This key is built into the MCUboot image during the build process.
 See the following example:
 
