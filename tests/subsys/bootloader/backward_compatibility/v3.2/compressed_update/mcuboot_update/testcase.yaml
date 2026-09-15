@@ -5,11 +5,12 @@ common:
     - mcuboot
     - ci_tests_subsys_bootloader
 
-# Application name changed back to "mcuboot_update"
-# Partition Manager re-enabled
-# Incompatibility introduced in commit 5285dc1
-
 tests:
+  # BC-aware configuration for the compressed_update sample.
+  # Application name restored to "mcuboot_update". The v3.2 flash map is pinned
+  # via DTS board overlays (no Partition Manager) and the image header gap is
+  # signed with the erase value (see prj.conf), so an NCS v3.2 MCUboot both
+  # accepts and boots the decompressed update.
   mcuboot.backward_compatibility.compressed_update:
     platform_allow:
       - nrf52840dk/nrf52840
