@@ -153,6 +153,9 @@ Security
     See also :ref:`ug_tfm_logging` for more information.
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
   * Support for signature verification with ML-DSA-44, ML-DSA-65, and ML-DSA-87 when using the CRACEN driver.
+  * Support for the AES CCM* no tag cipher mode in the CRACEN driver.
+    The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_cipher_modes>` page has been updated accordingly.
+  * Support for storing keys used by AES CCM* no tag in the KMU.
 
 * Updated:
 
