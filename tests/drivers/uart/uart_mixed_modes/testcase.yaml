@@ -47,13 +47,14 @@ tests:
       - CONFIG_UART_134_INTERRUPT_DRIVEN=y
       - CONFIG_UART_131_INTERRUPT_DRIVEN=n
 
-  drivers.uart.async_int.nrf54l:
+  drivers.uart.async_int:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -65,13 +66,14 @@ tests:
       - CONFIG_UART_22_INTERRUPT_DRIVEN=y
       - CONFIG_UART_22_ASYNC=n
 
-  drivers.uart.async_poll.nrf54l:
+  drivers.uart.async_poll:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
@@ -81,13 +83,14 @@ tests:
       - CONFIG_UART_21_ASYNC=y
       - CONFIG_UART_22_ASYNC=n
 
-  drivers.uart.int_poll.nrf54l:
+  drivers.uart.int_poll:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
