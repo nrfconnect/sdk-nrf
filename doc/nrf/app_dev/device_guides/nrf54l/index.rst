@@ -111,7 +111,7 @@ This self-paced course introduces the hardware architecture, functionality, capa
    nrf54l_signing_with_payload
    fota_update
    dfu_config
-   ecies_x25519.rst
+   ecies.rst
    otp_map_nrf54l
    pinmap
    errata_nrf54l
