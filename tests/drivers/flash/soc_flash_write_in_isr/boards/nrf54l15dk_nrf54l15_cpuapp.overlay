@@ -1,0 +1,6 @@
+tst_timer: &timer21 {
+	status = "okay";
+};
+
+
+/delete-node/ &mx25r64;
