@@ -964,6 +964,7 @@ INPUT                  = @DOCSET_SOURCE_BASE@/applications \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_key_derivation.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/crypto_driver_contexts_primitives.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/nrf_security_api_structure.h \
+                         @DOCSET_SOURCE_BASE@/subsys/nrf_security/include/psa/psa_ext_ecc.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/src/drivers/cracen/cracen_api_structure.h \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/src/drivers/cracen/cracenpsa/include \
                          @DOCSET_SOURCE_BASE@/subsys/nrf_security/src/drivers/cracen/cracen_sw/include \

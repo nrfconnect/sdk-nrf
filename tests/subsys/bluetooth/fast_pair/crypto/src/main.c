@@ -4,7 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <string.h>
+
 #include <zephyr/ztest.h>
+#include <zephyr/sys/byteorder.h>
 #include "fp_crypto.h"
 #include "fp_common.h"
 
@@ -501,6 +504,90 @@ ZTEST(suite_crypto, test_additional_data_packet)
 							   additional_data_result,
 							   sizeof(additional_data_result), aes_key),
 			  0, "Expected error during decoding non-integral packet.");
+}
+
+/* Reproduce the full FHN Ephemeral ID derivation, as fhn_eid_calculate() in
+ * subsys/bluetooth/fast_pair/fhn/state.c performs it, and compare against a
+ * value computed independently of the device.
+ *
+ * The individual primitives are covered above. This checks their composition,
+ * including the Hashed Flags XOR operand, which nothing else exercises. Because
+ * the expected values are external constants rather than a second device run,
+ * both cryptographic backends must agree with each other *and* be right.
+ */
+ZTEST(suite_crypto, test_fhn_eid_derivation)
+{
+	/* FHN_EID_SEED_ROT_PERIOD_EXP, fixed at 10 by the specification. */
+	static const uint8_t rot_period_exp = 10;
+	/* An FHN clock value with the K lowest bits already cleared. */
+	static const uint32_t fhn_clock = 0x0001e000U;
+
+	static const uint8_t eik[] = {
+		0x20, 0x21, 0x22, 0x23, 0x24, 0x25, 0x26, 0x27,
+		0x28, 0x29, 0x2a, 0x2b, 0x2c, 0x2d, 0x2e, 0x2f,
+		0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
+		0x38, 0x39, 0x3a, 0x3b, 0x3c, 0x3d, 0x3e, 0x3f,
+	};
+	static const uint8_t expected_seed[] = {
+		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff,
+		0xff, 0xff, 0xff, 0x0a, 0x00, 0x01, 0xe0, 0x00,
+		0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+		0x00, 0x00, 0x00, 0x0a, 0x00, 0x01, 0xe0, 0x00,
+	};
+	static const uint8_t expected_eid[] = {
+		0x8b, 0xa1, 0x41, 0x93, 0xa2, 0x1d, 0x65, 0xc1,
+		0xba, 0x54, 0xe3, 0x22, 0x04, 0x0a, 0x6c, 0x62,
+		0x3e, 0x23, 0x0c, 0x18,
+	};
+	static const uint8_t expected_mod[] = {
+		0xb4, 0xb8, 0x13, 0x9a, 0x76, 0x4f, 0x76, 0x61,
+		0xcb, 0x66, 0x03, 0xe3, 0x03, 0x14, 0x6d, 0x91,
+		0xf3, 0xf3, 0x69, 0xcc,
+	};
+	static const uint8_t expected_xor_operand = 0x77;
+
+	uint8_t seed[FP_CRYPTO_AES256_BLOCK_LEN];
+	uint8_t encrypted_seed[FP_CRYPTO_AES256_BLOCK_LEN];
+	uint8_t eid[FP_CRYPTO_ECC_SECP160R1_KEY_LEN];
+	uint8_t mod[FP_CRYPTO_ECC_SECP160R1_MOD_LEN];
+	uint8_t mod_hash[FP_CRYPTO_SHA256_HASH_LEN];
+	size_t off = 0;
+
+	if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_AES256_ECB_SUPPORT) ||
+	    !IS_ENABLED(CONFIG_BT_FAST_PAIR_CRYPTO_SECP160R1_SUPPORT)) {
+		ztest_test_skip();
+		return;
+	}
+
+	/* Build the EID seed: two halves of 11 padding bytes, the rotation
+	 * period exponent, and the clock as big endian, with 0xFF padding in
+	 * the first half and 0x00 in the second.
+	 */
+	for (uint8_t padding = 0xFF; off < sizeof(seed); padding = 0x00) {
+		memset(&seed[off], padding, 11);
+		off += 11;
+		seed[off++] = rot_period_exp;
+		sys_put_be32(fhn_clock, &seed[off]);
+		off += sizeof(uint32_t);
+	}
+	zassert_equal(off, sizeof(seed), "Invalid EID seed length.");
+	zassert_mem_equal(seed, expected_seed, sizeof(expected_seed),
+			  "Invalid EID seed.");
+
+	zassert_ok(fp_crypto_aes256_ecb_encrypt(encrypted_seed, seed, eik),
+		   "Error during EID seed encryption.");
+
+	zassert_ok(fp_crypto_ecc_secp160r1_calculate(eid, mod, encrypted_seed,
+						     sizeof(encrypted_seed)),
+		   "Error during EID computing.");
+	zassert_mem_equal(mod, expected_mod, sizeof(expected_mod),
+			  "Invalid intermediate modulo result.");
+	zassert_mem_equal(eid, expected_eid, sizeof(expected_eid), "Invalid EID.");
+
+	zassert_ok(fp_crypto_sha256(mod_hash, mod, sizeof(mod)),
+		   "Error during modulo result hashing.");
+	zassert_equal(mod_hash[sizeof(mod_hash) - 1], expected_xor_operand,
+		      "Invalid Hashed Flags XOR operand.");
 }
 
 ZTEST_SUITE(suite_crypto, NULL, NULL, NULL, NULL, NULL);
