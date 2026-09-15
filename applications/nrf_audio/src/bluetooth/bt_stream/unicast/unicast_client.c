@@ -1461,6 +1461,16 @@ static void cap_start_complete_cb(int err, struct bt_conn *conn)
 	cap_proc_waiting_check();
 }
 
+static void cap_start_codec_configured_cb(void)
+{
+	LOG_WRN("CB CAP codec configured");
+}
+
+static void cap_start_qos_configured_cb(void)
+{
+	LOG_WRN("CB CAP QoS configured");
+}
+
 static void cap_update_complete_cb(int err, struct bt_conn *conn)
 {
 	if (err != 0) {
@@ -1492,6 +1502,8 @@ static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 static struct bt_cap_initiator_cb cap_cbs = {
 	.unicast_discovery_complete = cap_discovery_complete_cb,
 	.unicast_start_complete = cap_start_complete_cb,
+	.unicast_start_codec_configured = cap_start_codec_configured_cb,
+	.unicast_start_qos_configured = cap_start_qos_configured_cb,
 	.unicast_update_complete = cap_update_complete_cb,
 	.unicast_stop_complete = cap_stop_complete_cb,
 };
