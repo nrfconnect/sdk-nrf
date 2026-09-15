@@ -1614,6 +1614,7 @@ ci_samples_nrf5340:
     - nrf/modules/mcuboot/
     - nrf/samples/nrf5340/
     - nrf/subsys/bluetooth/
+    - nrf/subsys/fw_info/
     - nrf/subsys/mpsl/
     - nrf/subsys/partition_manager/
     - nrf/subsys/pcd/
