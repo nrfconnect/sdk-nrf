@@ -72,7 +72,7 @@ Authentication deals with security before association, and is typically divided 
 * Enterprise security uses the 802.1X authentication protocol, and typically involves user certificates and a centralized authentication server, for example RADIUS.
 
 Apart from WPA authentication, the supplicant performs other duties in Wi-Fi associated with joining a network such as network scanning, key exchange, and roaming support.
-The supplicant used with nRF70 Series devices is a Zephyr port of `WPA Supplicant`_.
+The supplicant used with nRF Wi-Fi devices is a Zephyr port of `WPA Supplicant`_.
 
 Wi-Fi baseband
 ==============

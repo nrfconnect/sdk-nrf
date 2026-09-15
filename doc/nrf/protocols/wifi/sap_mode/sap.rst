@@ -1,3 +1,4 @@
+.. _wifi_soft_ap_mode:
 .. _nRF70_soft_ap_mode:
 
 SoftAP mode
@@ -7,19 +8,19 @@ SoftAP mode
    :local:
    :depth: 2
 
-The nRF70 Series device supports :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
+The nRF Wi-Fi device supports :term:`Software-enabled Access Point (SoftAP or SAP)` mode.
 This mode allows a device to operate as a virtual router or temporary access point (AP) and accept connections from other Wi-Fi® station devices.
 SoftAP mode is typically used in scenarios where a Wi-Fi device wishes to share its internet connection with nearby station devices.
 For instance, smartphone Wi-Fi hotspots utilize SoftAP mode.
 The smartphone acts as a virtual router, allowing other station devices to connect to the internet through it.
 Alternatively, SoftAP mode can be used to securely provision Wi-Fi devices into an access point network.
 
-nRF70 Series devices support Wi-Fi provisioning using the SoftAP mode as one of the provisioning methods.
+nRF Wi-Fi devices support Wi-Fi provisioning using the SoftAP mode as one of the provisioning methods.
 
 Supported functionality and limitations
 ***************************************
 
-The SAP mode in the nRF70 Series devices provides SoftAP support with the following limitations:
+The SAP mode in the nRF Wi-Fi devices provides SoftAP support with the following limitations:
 
   * A network interface can operate in either SAP mode or Station mode, but not in both modes simultaneously.
   * SAP mode only supports the Wi-Fi 4 (IEEE 802.11n) mode of operation.
@@ -31,6 +32,7 @@ Enabling the SAP mode
 *********************
 
 You can enable the SAP mode by setting the :kconfig:option:`CONFIG_NRF70_AP_MODE` and :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_AP` Kconfig options in the application project configuration file.
+The :kconfig:option:`CONFIG_NRF70_AP_MODE` option applies to the nRF70 companion ICs.
 
 
 SAP mode configuration
@@ -106,12 +108,12 @@ The SAP mode generates the following events:
 
 .. note::
     The SAP mode operation is dictated by regulatory requirements.
-    For more information on regulatory support, see :ref:`ug_nrf70_developing_regulatory_support`.
+    For more information on regulatory support, see :ref:`ug_wifi_developing_regulatory_support`.
 
 Stations handling
 *****************
 
-For a typical SAP mode operation, the nRF70 Series device acts as a virtual router, allowing other station devices to connect to it.
+For a typical SAP mode operation, the nRF Wi-Fi device acts as a virtual router, allowing other station devices to connect to it.
 The SAP interface needs to be configured with a valid IP address and a subnet mask.
 Without this configuration, the Wi-Fi station device might disconnect from the SAP interface.
 But the station devices use :abbr:`DHCP (Dynamic Host Configuration Protocol)` to get an IP address from the virtual router.

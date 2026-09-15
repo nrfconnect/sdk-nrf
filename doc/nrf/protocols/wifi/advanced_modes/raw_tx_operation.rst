@@ -1,3 +1,4 @@
+.. _ug_wifi_developing_raw_ieee_80211_packet_transmission:
 .. _ug_nrf70_developing_raw_ieee_80211_packet_transmission:
 
 Raw IEEE 802.11 packet transmission
@@ -7,11 +8,11 @@ Raw IEEE 802.11 packet transmission
    :local:
    :depth: 3
 
-The nRF70 Series device supports the transmission of raw IEEE 802.11 packets.
-Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF70 Series device.
+The nRF Wi-Fi device supports the transmission of raw IEEE 802.11 packets.
+Raw IEEE 802.11 packets are packets that are not modified by the 802.11 Medium Access Control (MAC) layer during transmission by the nRF Wi-Fi device.
 
 It is the responsibility of the application that intends to send the raw 802.11 packet to construct and provide a fully-conformant 802.11 packet along with the required set of packet TX and PHY parameters.
-The MAC layer on the nRF70 Series device will transmit the raw 802.11 packets over-the-air using the provided packet data, TX, and PHY parameters.
+The MAC layer on the nRF Wi-Fi device will transmit the raw 802.11 packets over-the-air using the provided packet data, TX, and PHY parameters.
 
 .. _ug_nrf70_developing_enabling_raw_packet_transmit_feature:
 
@@ -19,16 +20,17 @@ Enabling raw packet transmit feature
 ************************************
 
 To use the raw packet transmit feature in your applications, you must enable the :kconfig:option:`CONFIG_NRF70_RAW_DATA_TX` Kconfig option in the project configuration.
+This Kconfig option applies to the nRF70 companion ICs.
 
 .. _ug_nrf70_developing_tx_injection_mode:
 
 TX injection mode
 *****************
 
-The nRF70 Series device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi driver.
+The nRF Wi-Fi device supports raw 802.11 packet transmission when TX injection mode is enabled in the nRF Wi-Fi driver.
 
-The TX injection mode can be enabled when the primary mode of operation for the nRF70 Series device is set to either Station mode or Monitor mode.
-When the nRF70 Series device is configured in Station mode, TX injection mode can be enabled regardless of whether the device is connected to an Access Point (AP) or not.
+The TX injection mode can be enabled when the primary mode of operation for the nRF Wi-Fi device is set to either Station mode or Monitor mode.
+When the nRF Wi-Fi device is configured in Station mode, TX injection mode can be enabled regardless of whether the device is connected to an Access Point (AP) or not.
 
 Use the ``net_eth_txinjection_mode`` functional API to enable or disable TX injection mode in the nRF Wi-Fi driver as required by the application.
 You can also use the ``NET_REQUEST_ETHERNET_SET_TXINJECTION_MODE`` network management API to enable or disable TX injection mode, however it is recommended to use the functional API (``net_eth_txinjection_mode``).
@@ -36,9 +38,9 @@ You can also use the ``NET_REQUEST_ETHERNET_SET_TXINJECTION_MODE`` network manag
 The network management API ``NET_REQUEST_ETHERNET_GET_TXINJECTION_MODE`` can be used to obtain the current TX injection configured setting in the nRF Wi-Fi driver.
 
 When TX injection mode is enabled, you need to configure the operating channel.
-This channel will be used as the transmit channel when the nRF70 Series device operates in Station mode, but is not connected to an AP.
-When the nRF70 Series device operates in Station mode and is connected to an AP on a given channel, the connected channel will be used for raw 802.11 packet transmission.
-When the nRF70 Series device operates in Monitor mode, the configured channel for Monitor mode will be used as the transmit channel for TX injection operation.
+This channel will be used as the transmit channel when the nRF Wi-Fi device operates in Station mode, but is not connected to an AP.
+When the nRF Wi-Fi device operates in Station mode and is connected to an AP on a given channel, the connected channel will be used for raw 802.11 packet transmission.
+When the nRF Wi-Fi device operates in Monitor mode, the configured channel for Monitor mode will be used as the transmit channel for TX injection operation.
 
 To set the desired channel for raw 802.11 packet transmission, you can use the ``NET_REQUEST_WIFI_CHANNEL`` network management API.
 
@@ -96,10 +98,10 @@ TX injection mode usage requirements
 The raw packet to be transmitted by an application must be a fully conformant IEEE 802.11 packet and must ensure that:
 
 * The packet has a valid 802.11 MAC header.
-* The Frame Check Sequence (FCS) is not added to the packet by the application and is concatenated by the nRF70 Series device.
+* The Frame Check Sequence (FCS) is not added to the packet by the application and is concatenated by the nRF Wi-Fi device.
 
 .. note::
-   If the packet is not a properly framed 802.11 packet, it will be dropped by the nRF70 Series device and will not be transmitted over-the-air.
+   If the packet is not a properly framed 802.11 packet, it will be dropped by the nRF Wi-Fi device and will not be transmitted over-the-air.
 
 Additionally, the raw packet must provide transmit parameters that inform the nRF Wi-Fi driver on how the packet must be transmitted.
 It must also provide a packet marker identifying itself as a special packet, which must be handled differently by the nRF Wi-Fi driver.
@@ -140,12 +142,12 @@ Raw 802.11 packet transmit operation
 ************************************
 
 The raw packet data has to be encompassed in an 802.11 packet and prepended with the raw transmit header before it is transmitted through raw socket to the nRF Wi-Fi driver for transmission.
-The packet is forwarded to the nRF70 Series device, which transmits the packet over-the-air.
-All 802.11 MAC layer rules for the 802.11 packet (such as, link-layer acknowledgements, retransmissions) are handled by the nRF70 Series device.
+The packet is forwarded to the nRF Wi-Fi device, which transmits the packet over-the-air.
+All 802.11 MAC layer rules for the 802.11 packet (such as, link-layer acknowledgements, retransmissions) are handled by the nRF Wi-Fi device.
 
 The following figure illustrates the packet structure and raw packet operation flow:
 
-.. figure:: images/nrf7000_packet_injection_tx_flow.png
+.. figure:: images/wifi_packet_injection_tx_flow.png
    :alt: Raw packet transmit packet structure and raw packet operation flow
 
    Raw packet transmit packet structure and raw packet operation flow
