@@ -1,0 +1,28 @@
+common:
+  sysbuild: true
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+  tags:
+    - sysbuild
+    - crypto
+    - ci_crypto
+    - ci_tests_crypto
+
+tests:
+  ml_kem.oberon:
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=n
+
+  ml_kem.cracen:
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y
