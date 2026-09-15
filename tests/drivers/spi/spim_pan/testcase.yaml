@@ -12,12 +12,13 @@ tests:
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
@@ -29,10 +30,11 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54lxx_cpuapp_fast.overlay'
+      - FILE_SUFFIX=fast
     harness_config:
       fixture: external_flash
 
@@ -42,6 +44,6 @@ tests:
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
-      - DTC_OVERLAY_FILE='boards/nrf54h20dk_nrf54h20_cpuapp_fast.overlay'
+      - FILE_SUFFIX=fast
     harness_config:
       fixture: gpio_loopback
