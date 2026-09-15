@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Pin the flash map to the NCS v3.2 layout so the update image is accepted by
+ * an NCS v3.2 MCUboot: application slot ends at 0x144000 (size 0x13e000),
+ * placing the firmware loader slot at 0x144000. Current NCS uses a larger
+ * application slot (ending at 0x15c000), which an NCS v3.2 MCUboot would reject.
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	reg = <0x0 DT_SIZE_K(1524)>;
+
+	partitions {
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 0x6000>;
+		};
+
+		slot0_partition: partition@6000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x6000 0x13e000>;
+		};
+
+		slot1_partition: partition@144000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x144000 0x1d000>;
+		};
+
+		storage_partition: partition@161000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x161000 0x4000>;
+		};
+	};
+};
+
+&spi00 {
+	status = "disabled";
+};
+
+&mx25r64 {
+	status = "disabled";
+};
