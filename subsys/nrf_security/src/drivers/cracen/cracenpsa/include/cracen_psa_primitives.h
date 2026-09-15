@@ -97,6 +97,13 @@
  */
 #define CRACEN_MAX_CIPHER_KEY_SIZE (32u)
 
+/** AES-MMO (Zigbee) block and digest size.
+ *
+ * AES-MMO uses AES-128, so both the message blocks and the digest are one AES
+ * block wide.
+ */
+#define CRACEN_AES_MMO_BLOCK_SIZE (16u)
+
 /** Maximum length of PBKDF2 salt.
  *
  * There is no set max length. For this implementation max length is set
@@ -258,6 +265,24 @@ enum cracen_context_state {
 	CRACEN_HW_RESERVED = 0x2
 };
 
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+/** AES-MMO (Zigbee) hash operation state. */
+struct cracen_aes_mmo_operation_s {
+	/** Running digest, which is also the AES key used for the next block. */
+	uint8_t digest[CRACEN_AES_MMO_BLOCK_SIZE];
+
+	/** Buffer for input data that does not fill a block yet. */
+	uint8_t block[CRACEN_AES_MMO_BLOCK_SIZE];
+
+	/** Number of valid bytes in @ref block. */
+	size_t block_length;
+
+	/** Total number of message bytes added to the operation. */
+	size_t message_length;
+};
+typedef struct cracen_aes_mmo_operation_s cracen_aes_mmo_operation_t;
+#endif /* PSA_NEED_CRACEN_AES_MMO_ZIGBEE */
+
 /** Hash operation context. */
 struct cracen_hash_operation_s {
 	const struct sxhashalg *sx_hash_algo;
@@ -275,6 +300,14 @@ struct cracen_hash_operation_s {
 
 	/* Flag indicating saved state exists that needs to be resumed */
 	bool has_saved_state;
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	/* AES-MMO is not supported by the hash hardware, so it does not use the
+	 * sxsymcrypt hash context above. It is active when is_aes_mmo is set.
+	 */
+	cracen_aes_mmo_operation_t aes_mmo;
+	bool is_aes_mmo;
+#endif
 };
 typedef struct cracen_hash_operation_s cracen_hash_operation_t;
 
