@@ -21,3 +21,40 @@ config DECT_MDM_NRF_RX_MSGQ_SIZE
 	default 100
 	help
 	  This option sets the driver's internal RX message queue size.
+
+config DECT_MDM_RX_PRIVATE_POOL
+	bool "Use a DECT-private net_pkt/net_buf pool for RX"
+	help
+	  Allocate DECT RX net_pkt and net_buf from a DECT-only pool, isolated
+	  from the global Zephyr RX pools. Prevents other interfaces (e.g. Ethernet)
+	  from starving DECT RX under heavy uplink load. When CONFIG_SHELL is also
+	  enabled, adds a "dect_mdm rx_pool" shell command to print pool usage.
+
+if DECT_MDM_RX_PRIVATE_POOL
+
+config DECT_MDM_RX_PRIVATE_PKT_COUNT
+	int "DECT-private RX net_pkt count"
+	default 8
+	range 1 256
+	help
+	  Maximum simultaneous in-flight DECT RX packets allocated from the
+	  private slab.
+
+config DECT_MDM_RX_PRIVATE_BUF_COUNT
+	int "DECT-private RX net_buf count"
+	default 16
+	range 1 1024
+	help
+	  Number of payload fragments in the DECT-private buffer pool. A max-MTU
+	  packet uses ceil(MTU / DECT_MDM_RX_PRIVATE_BUF_SIZE) fragments.
+
+config DECT_MDM_RX_PRIVATE_BUF_SIZE
+	int "DECT-private RX net_buf fragment size (bytes)"
+	default 256
+	range 64 1500
+	help
+	  Size of each DECT-private RX buffer fragment. Smaller values are more
+	  efficient for short DECT frames; larger values reduce fragment count
+	  for max-MTU frames.
+
+endif # DECT_MDM_RX_PRIVATE_POOL
