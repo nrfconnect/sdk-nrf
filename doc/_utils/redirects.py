@@ -299,6 +299,7 @@ NRF = (
     ("app_dev/device_guides/nrf54l/cryptography", "app_dev/device_guides/kmu_guides/kmu_cracen_overview"), # Cryptography (replaced after 3.2.0 with KMU guides)
     ("app_dev/device_guides/nrf54l/kmu_basics", "app_dev/device_guides/kmu_guides/kmu_cracen_overview"), # KMU basics (replaced after 3.2.0 with KMU guides)
     ("app_dev/device_guides/nrf54l/kmu_provision", "app_dev/device_guides/kmu_guides/kmu_provisioning_overview"), # KMU provisioning (replaced after 3.2.0 with KMU guides)
+    ("app_dev/device_guides/nrf54l/ecies_x25519", "app_dev/device_guides/nrf54l/ecies"),
     ("ug_nrf53", "app_dev/device_guides/nrf53/index"), # Developing with nRF53 Series (landing)
     ("nrf53", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53", "app_dev/device_guides/nrf53/index"),
