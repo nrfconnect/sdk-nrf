@@ -891,7 +891,7 @@ int nrf_cloud_coap_transport_connect(struct nrf_cloud_coap_client *const client)
 		LOG_ERR("Could not connect to nRF Cloud CoAP server %s, port: %d. err: %d",
 			host_name, port, sock);
 		nrf_cloud_coap_transport_disconnect(client);
-		return -ECONNREFUSED;
+		return sock;
 	}
 
 	client->sock = sock;
