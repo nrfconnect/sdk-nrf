@@ -25,6 +25,7 @@ Configuring NSIB with MCUboot
 .. note::
 
    The nRF54LM20A SoC currently does not support this configuration.
+   This configuration is also not supported on the nRF54LS05A and nRF54LS05B SoCs.
 
 To configure and build firmware using NSIB and MCUboot, complete the following steps:
 
@@ -90,8 +91,9 @@ There are two types of protection mechanisms:
   For sizes exceeding 31 kB, both regions 3 and 4 are used, provided that MCUboot is configured standalone (without NSIB).
   To enable the protection mechanism for sizes between 31 kB and 62 kB, configure the :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` Kconfig option.
 
-FPROTECT is enabled by default on the nRF54L platform.
-The build system automatically selects the appropriate setup based on the inclusion of NSIB and MCUboot.
+The :kconfig:option:`CONFIG_FPROTECT`, :kconfig:option:`CONFIG_SB_DISABLE_SELF_RWX`, and :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` options are not enabled by default on the nRF54L platform.
+You must select the protection mechanism appropriate for your boot chain.
+When you enable FPROTECT, the build system automatically selects the appropriate FPROTECT setup based on the inclusion of NSIB and MCUboot.
 
 For a boot-chain-oriented description of UICR :file:`bootconf.hex`, RRAMC self-RWX disabling, and when FPROTECT combined regions are still appropriate, see :ref:`ug_bootloader_nrf54l_memory_protection`.
 
@@ -106,6 +108,7 @@ Supported signatures
 
 MCUboot accommodates ed25519 and ed25519-pure signatures.
 The latter signature is recommended, but you cannot use it with external memory.
+On the nRF54LS05A and nRF54LS05B SoCs, MCUboot supports RSA, ECDSA P-256, ed25519, and ed25519-pure signatures using software-based verification, with ECDSA P-256 selected by default.
 NSIB supports only the ed25519-pure signature, which is hardcoded.
 
 Signature keys
@@ -115,6 +118,9 @@ The :ref:`Key Management Unit (KMU)<ug_kmu_guides_cracen_overview>` retains the 
 These keys must be uploaded simultaneously with the application during the flashing process.
 Currently, encryption keys are not stored in the KMU.
 In the case of nRF54LM20A SoC, keys are compiled into the bootloader.
+
+.. note::
+   The nRF54LS05A and nRF54LS05B SoCs do not include a KMU and therefore do not support KMU-based key storage or signature verification.
 
 .. note::
    NSIB regenerates its key with each build unless it is specified in the command line.
