@@ -193,6 +193,10 @@ Provisioning of keys for Hardware KMU
 
    The MCUboot bootloader does not yet support KMU for nRF54LM20.
 
+.. note::
+
+   The MCUboot bootloader does not support KMU-based signature verification on the nRF54LS05A and nRF54LS05B SoCs.
+
 In case of FOTA implementations using the MCUboot bootloader, which includes hardware cryptography and KMU, you must complete key provisioning before booting any application.
 Otherwise, the bootloader :ref:`might not boot the firmware setup and might take unwanted actions<ug_kmu_provisioning_bootloader_keys>`.
 Refer to :ref:`ug_kmu_provisioning_overview` for detailed description.
