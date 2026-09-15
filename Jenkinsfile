@@ -1,4 +1,4 @@
-@Library("CI_LIB") _
+@Library("CI_LIB@enable_downstream_override_lwm2m") _
 
 def pipeline = new ncs.sdk_nrf.Main()
 
