@@ -36,12 +36,16 @@
 #define TLS_SEC_TAG		42
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED |	\
+				 NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED |	\
+				 NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK	(NET_EVENT_CONN_IF_FATAL_ERROR)
 
 static const char send_buf[] = HTTP_HEAD;
 static char recv_buf[RECV_BUF_SIZE];
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
+static K_SEM_DEFINE(ip_family_event_sem, 0, 2);
+static ATOMIC_DEFINE(network_state, 2);
 /* Certificate for `example.com` */
 static const char cert[] = {
 	#include "example_com_ca.pem.inc"
@@ -55,6 +59,11 @@ static const char cert[] = {
 /* Zephyr NET management event callback structures. */
 static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
+
+enum network_state_flag {
+	NETWORK_STATE_IPV4_READY,
+	NETWORK_STATE_IPV6_READY,
+};
 
 BUILD_ASSERT(sizeof(cert) < KB(4), "Certificate too large");
 
@@ -189,6 +198,24 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 		printk("Network connectivity lost\n");
 		on_net_event_l4_disconnected();
 		break;
+	case NET_EVENT_L4_IPV4_CONNECTED:
+		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
+		k_sem_give(&ip_family_event_sem);
+		printk("IPv4 connectivity established\n");
+		break;
+	case NET_EVENT_L4_IPV4_DISCONNECTED:
+		printk("IPv4 connectivity lost\n");
+		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
+		break;
+	case NET_EVENT_L4_IPV6_CONNECTED:
+		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
+		k_sem_give(&ip_family_event_sem);
+		printk("IPv6 connectivity established\n");
+		break;
+	case NET_EVENT_L4_IPV6_DISCONNECTED:
+		printk("IPv6 connectivity lost\n");
+		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
+		break;
 	default:
 		break;
 	}
@@ -204,53 +231,196 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+static bool ipv4_ready(void)
+{
+	return atomic_test_bit(network_state, NETWORK_STATE_IPV4_READY);
+}
+
+static bool ipv6_ready(void)
+{
+	return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
+}
+
+static bool family_ready(int family)
+{
+	if (family == AF_INET) {
+		return ipv4_ready();
+	}
+
+	if (family == AF_INET6) {
+		return ipv6_ready();
+	}
+
+	return false;
+}
+
+static void wait_for_family_ready_event(int family)
+{
+	while (!family_ready(family)) {
+		printk("Waiting for local %s address event\n",
+		       family == AF_INET ? "IPv4" : "IPv6");
+		k_sem_take(&ip_family_event_sem, K_FOREVER);
+		if (family_ready(family)) {
+			printk("Local %s address is now ready\n",
+			       family == AF_INET ? "IPv4" : "IPv6");
+		}
+	}
+}
+
+static int connect_to_family(struct addrinfo *res, int family, int *last_err)
+{
+	int fd;
+	int err;
+	uint16_t peer_port;
+	char peer_addr[INET6_ADDRSTRLEN];
+
+	for (struct addrinfo *entry = res; entry != NULL; entry = entry->ai_next) {
+		const void *addr_ptr;
+
+		if (entry->ai_family != family) {
+			continue;
+		}
+
+		if (entry->ai_family == AF_INET6) {
+			addr_ptr = &((const struct sockaddr_in6 *)entry->ai_addr)->sin6_addr;
+			peer_port = ntohs(((const struct sockaddr_in6 *)entry->ai_addr)->sin6_port);
+		} else {
+			addr_ptr = &((const struct sockaddr_in *)entry->ai_addr)->sin_addr;
+			peer_port = ntohs(((const struct sockaddr_in *)entry->ai_addr)->sin_port);
+		}
+
+		if (inet_ntop(entry->ai_family, addr_ptr, peer_addr, sizeof(peer_addr)) == NULL) {
+			(void)snprintf(peer_addr, sizeof(peer_addr), "<inet_ntop err %d>", errno);
+		}
+
+		printk("Resolved %s (%s)\n", peer_addr, net_family2str(entry->ai_family));
+
+		if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
+			fd = socket(entry->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS,
+				    IPPROTO_TLS_1_2);
+		} else {
+			fd = socket(entry->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
+		}
+		if (fd == -1) {
+			*last_err = errno;
+			printk("Failed to open socket for %s\n", peer_addr);
+			continue;
+		}
+
+		err = tls_setup(fd);
+		if (err) {
+			*last_err = errno;
+			(void)close(fd);
+			continue;
+		}
+
+		printk("Connecting to %s:%d (%s)\n", CONFIG_HTTPS_HOSTNAME, peer_port, peer_addr);
+		err = connect(fd, entry->ai_addr, entry->ai_addrlen);
+		if (err) {
+			*last_err = errno;
+			printk("connect() failed for %s, err: %d\n", peer_addr, *last_err);
+			(void)close(fd);
+			continue;
+		}
+
+		return fd;
+	}
+
+	return -1;
+}
+
+static int connect_to_server(struct addrinfo *res, int *last_err)
+{
+	int first_family = AF_UNSPEC;
+	int second_family = AF_UNSPEC;
+	int fd = -1;
+
+	for (struct addrinfo *entry = res; entry != NULL; entry = entry->ai_next) {
+		if (IS_ENABLED(CONFIG_NET_IPV4) && entry->ai_family == AF_INET) {
+			first_family = AF_INET;
+		} else if (IS_ENABLED(CONFIG_NET_IPV6) && entry->ai_family == AF_INET6) {
+			second_family = AF_INET6;
+		}
+	}
+
+	if (first_family == AF_INET) {
+		/* If IPv4 is resolved and compiled in but not ready, then swap first and second
+		 * families to start with IPv6 if it is resolved and compiled in, otherwise, keep
+		 * IPv4 and wait for IP address.
+		 */
+		if (!ipv4_ready() && second_family == AF_INET6) {
+			first_family = AF_INET6;
+			second_family = AF_INET;
+		}
+	} else {
+		/* If IPv4 is not resolved or compiled in, select second family. Don't set AF_UNSPEC
+		 * directly, because second_family can be resolved to AF_UNSPEC if IPv6 is not
+		 * compiled in.
+		 */
+		first_family = second_family;
+	}
+
+	/* This happens if resolved families and compiled families don't match. For example, if IPv6
+	 * is resolved but not compiled in.
+	 */
+	if (first_family == AF_UNSPEC) {
+		printk("No supported address families found\n");
+		return -1;
+	}
+
+	/* It is possible that the first family is not ready yet if resolved families don't match
+	 * to device family, which device got first. Therefore we need to wait for the other family
+	 * to be ready.
+	 */
+	if (!family_ready(first_family)) {
+		wait_for_family_ready_event(first_family);
+	}
+
+	fd = connect_to_family(res, first_family, last_err);
+	if (fd >= 0) {
+		return fd;
+	}
+
+	/* Try the second family. */
+	if (second_family == AF_UNSPEC) {
+		return fd;
+	}
+
+	if (!family_ready(second_family)) {
+		wait_for_family_ready_event(second_family);
+	}
+
+	fd = connect_to_family(res, second_family, last_err);
+	return fd;
+}
+
 static void send_http_request(void)
 {
 	int err;
-	int fd;
+	int fd = -1;
 	char *p;
 	int bytes;
 	size_t off;
-	struct addrinfo *res;
+	struct addrinfo *res = NULL;
 	struct addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port */
 		.ai_socktype = SOCK_STREAM,
 	};
-	char peer_addr[INET6_ADDRSTRLEN];
+	int connect_errno = 0;
 
 	printk("Looking up %s\n", CONFIG_HTTPS_HOSTNAME);
 
 	err = getaddrinfo(CONFIG_HTTPS_HOSTNAME, HTTPS_PORT, &hints, &res);
 	if (err) {
+		connect_errno = errno;
 		printk("getaddrinfo() failed, err %d\n", errno);
-		return;
-	}
-
-	inet_ntop(res->ai_family, &((struct sockaddr_in *)(res->ai_addr))->sin_addr, peer_addr,
-		  INET6_ADDRSTRLEN);
-	printk("Resolved %s (%s)\n", peer_addr, net_family2str(res->ai_family));
-
-	if (IS_ENABLED(CONFIG_SAMPLE_TFM_MBEDTLS)) {
-		fd = socket(res->ai_family, SOCK_STREAM | SOCK_NATIVE_TLS, IPPROTO_TLS_1_2);
-	} else {
-		fd = socket(res->ai_family, SOCK_STREAM, IPPROTO_TLS_1_2);
-	}
-	if (fd == -1) {
-		printk("Failed to open socket!\n");
 		goto clean_up;
 	}
 
-	/* Setup TLS socket options */
-	err = tls_setup(fd);
-	if (err) {
-		goto clean_up;
-	}
-
-	printk("Connecting to %s:%d\n", CONFIG_HTTPS_HOSTNAME,
-	       ntohs(((struct sockaddr_in *)(res->ai_addr))->sin_port));
-	err = connect(fd, res->ai_addr, res->ai_addrlen);
-	if (err) {
-		printk("connect() failed, err: %d\n", errno);
+	fd = connect_to_server(res, &connect_errno);
+	if (fd < 0) {
+		printk("Failed to connect to any resolved address for %s, last err: %d\n",
+		       CONFIG_HTTPS_HOSTNAME, connect_errno);
 		goto clean_up;
 	}
 
@@ -296,8 +466,12 @@ static void send_http_request(void)
 	printk("Finished, closing socket.\n");
 
 clean_up:
-	freeaddrinfo(res);
-	(void)close(fd);
+	if (res != NULL) {
+		freeaddrinfo(res);
+	}
+	if (fd >= 0) {
+		(void)close(fd);
+	}
 }
 
 int main(void)
