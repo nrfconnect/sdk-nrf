@@ -54,6 +54,11 @@ if(SB_CONFIG_SUPPORT_NETCORE AND NOT SB_CONFIG_NETCORE_NONE AND DEFINED SB_CONFI
     endif()
   endif()
 
+  # Not set by the nordic-bt-rpc snippet, as snippets apply to all images of the board target.
+  if(SB_CONFIG_NETCORE_IPC_RADIO_BT_RPC OR SB_CONFIG_NETCORE_RPC_HOST)
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_BT_RPC_STACK y)
+  endif()
+
   if(SB_CONFIG_BOARD_NRF5340BSIM_NRF5340_CPUAPP)
     native_simulator_set_child_images(${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
     native_simulator_set_primary_mcu_index(${DEFAULT_IMAGE} ${SB_CONFIG_NETCORE_IMAGE_NAME})
