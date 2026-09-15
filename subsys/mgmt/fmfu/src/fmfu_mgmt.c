@@ -8,7 +8,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/mgmt/mcumgr/mgmt/mgmt.h>
 #include <zephyr/mgmt/mcumgr/smp/smp.h>
-#include <nrfx_ipc.h>
 #include <nrf_modem_bootloader.h>
 #include <mgmt/fmfu_mgmt.h>
 #include "fmfu_mgmt_internal.h"
