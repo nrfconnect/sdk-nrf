@@ -14,12 +14,13 @@
 
 LOG_MODULE_REGISTER(nrf_cloud_dns, CONFIG_NRF_CLOUD_LOG_LEVEL);
 
-#if defined(CONFIG_NRF_MODEM_LIB)
+#if defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
 
 #include <nrf_modem_at.h>
 
 /* On the nRF91 modem-offloaded stack, ask the modem itself as the Zephyr
- * net interfaces only get populated at a later stage.
+ * net interfaces only get populated at a later stage. Only valid when
+ * sockets are offloaded to the modem.
  */
 static bool modem_has_addr(bool ipv6)
 {
@@ -72,7 +73,7 @@ static bool ipv4_ready(void)
 	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
 }
 
-#endif /* defined(CONFIG_NRF_MODEM_LIB) */
+#endif /* defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_NET_SOCKETS_OFFLOAD) */
 
 static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 				   struct zsock_addrinfo *hints,
