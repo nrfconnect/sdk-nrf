@@ -89,9 +89,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
     endif()
   endif()
 
-  # Partition Manager enabled binaries are built for IMAGE partition which does not include
-  # MCUboot header, instead the header has to be added post build. Builds for DTS partitions
-  # include the header into an image so, header padding is not needed.
+  # Builds for DTS partitions include the header into an image so, header padding is not needed.
   # CPUNET targets are special case and they require padding for either configuration,
   # as the header is not included neither in PM nor DTS builds and image starts exactly at
   # partition start address.
