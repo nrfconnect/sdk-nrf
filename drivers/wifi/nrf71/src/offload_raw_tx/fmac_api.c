@@ -11,7 +11,6 @@
 
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/mem_mgmt.h>
-#include <offload_raw_tx/hal_api.h>
 #include <offload_raw_tx/fmac_api.h>
 #include <offload_raw_tx/fmac_cmd.h>
 #include <offload_raw_tx/fmac_event.h>
@@ -104,15 +103,7 @@ struct nrf_wifi_fmac_priv *nrf_wifi_off_raw_tx_fmac_init(void)
 		goto out;
 	}
 
-	fpriv->hpriv = nrf_wifi_hal_init(&nrf_wifi_off_raw_tx_fmac_event_callback);
-	if (!fpriv->hpriv) {
-		LOG_ERR("%s: Unable to do HAL init",
-				      __func__);
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fpriv);
-		fpriv = NULL;
-		goto out;
-	}
-
+	fpriv->rpu_event_cb = &nrf_wifi_off_raw_tx_fmac_event_callback;
 	fpriv->op_mode = NRF_WIFI_OP_MODE_OFF_RAW_TX;
 out:
 	return fpriv;
@@ -147,18 +138,6 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_off_raw_tx_fmac_dev_add(struct nrf_wifi_f
 	fmac_dev_ctx->fpriv = fpriv;
 	fmac_dev_ctx->os_dev_ctx = os_dev_ctx;
 
-	fmac_dev_ctx->hal_dev_ctx = nrf_wifi_off_raw_tx_hal_dev_add(fpriv->hpriv,
-								    fmac_dev_ctx);
-
-	if (!fmac_dev_ctx->hal_dev_ctx) {
-		LOG_ERR("%s: nrf_wifi_off_raw_tx_hal_dev_add failed",
-				      __func__);
-
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx);
-		fmac_dev_ctx = NULL;
-		goto out;
-	}
-
 	fmac_dev_ctx->op_mode = NRF_WIFI_OP_MODE_OFF_RAW_TX;
 out:
 	return fmac_dev_ctx;
@@ -192,9 +171,9 @@ nrf_wifi_off_raw_tx_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		goto out;
 	}
 
-	status = nrf_wifi_hal_dev_init(fmac_dev_ctx->hal_dev_ctx);
+	status = nrf_wifi_ipc_open(fmac_dev_ctx);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_hal_dev_init failed",
+		LOG_ERR("%s: nrf_wifi_ipc_open failed",
 				      __func__);
 		goto out;
 	}
