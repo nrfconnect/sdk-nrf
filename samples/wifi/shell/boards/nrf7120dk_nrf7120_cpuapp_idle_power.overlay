@@ -1,0 +1,87 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Power optimization overlay for nrf7120dk
+ * Enables low-power idle states while keeping Wi-Fi operational
+ */
+
+/ {
+	/* Idle phase marker on P0.00 for logic analysis
+	 * High while running, low while idling
+	 */
+	idle_marker {
+		compatible = "gpio-leds";
+		idle_phase: idle_phase {
+			gpios = <&gpio0 0 GPIO_ACTIVE_HIGH>;
+			label = "Idle Phase Marker";
+		};
+	};
+
+	chosen {
+		zephyr,entropy = &psa_rng;
+		/* Configure idle marker for power analysis */
+		zephyr,pm-device-runtime-auto;
+	};
+
+	psa_rng: psa-rng {
+		compatible = "zephyr,psa-crypto-rng";
+		status = "okay";
+	};
+};
+
+/* Ensure Wi-Fi is available but can power down */
+&wifi {
+	status = "okay";
+};
+
+/* UART remains available for shell but can be power-managed */
+&uart20 {
+	status = "okay";
+};
+
+/* GPIO event controller for low power wakeup */
+&gpiote20 {
+	status = "okay";
+};
+
+&gpiote30 {
+	status = "okay";
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&gpio3 {
+	status = "okay";
+};
+
+&gpio4 {
+	status = "okay";
+};
+
+/* GRTC for timing during idle */
+&grtc {
+	status = "okay";
+};
+
+/* Clock source for idle operation */
+&lfclk {
+	status = "okay";
+};
+
+&xo {
+	status = "okay";
+};
