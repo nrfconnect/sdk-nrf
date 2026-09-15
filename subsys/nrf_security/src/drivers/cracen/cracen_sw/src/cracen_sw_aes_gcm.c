@@ -17,6 +17,7 @@
 #include <psa/crypto_values.h>
 #include <stdbool.h>
 #include <string.h>
+#include <sxsymcrypt/aead.h>
 #include <sxsymcrypt/aes.h>
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/keyref.h>
@@ -181,6 +182,10 @@ psa_status_t cracen_sw_aes_gcm_update_ad(cracen_aead_operation_t *operation, con
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t processed = 0;
 
+	if (input_length > SX_GCM_MAX_BITLEN_BYTES - gcm_ctx->total_ad_fed) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	status = initialize_gcm_h(operation, &cipher);
 	if (status != PSA_SUCCESS) {
 		return status;
@@ -305,6 +310,10 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 	size_t processed = 0;
 	size_t counter_size = GCM_Q_LEN_FROM_NONCE(operation->nonce_length);
+
+	if (input_length > SX_GCM_MAX_BITLEN_BYTES - gcm_ctx->total_data_enc) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	operation->ad_finished = true;
 
