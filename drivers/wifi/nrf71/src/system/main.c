@@ -346,7 +346,8 @@ int nrf_wifi_reg_domain(const struct device *dev,
 		goto out;
 	}
 
-#if defined(CONFIG_NRF71_SCAN_ONLY) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if (defined(CONFIG_NRF71_SCAN) && !defined(CONFIG_NRF71_SYSTEM_CONNECTION)) || \
+	defined(CONFIG_NRF71_RAW_DATA_RX)
 	if (reg_domain->oper == WIFI_MGMT_SET) {
 		memcpy(reg_domain_info.alpha2, reg_domain->country_code, WIFI_COUNTRY_CODE_LEN);
 
@@ -361,7 +362,7 @@ int nrf_wifi_reg_domain(const struct device *dev,
 		ret = 0;
 		goto out;
 	}
-#endif /* CONFIG_NRF71_SCAN_ONLY || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* (CONFIG_NRF71_SCAN && !CONFIG_NRF71_SYSTEM_CONNECTION) || CONFIG_NRF71_RAW_DATA_RX */
 	if (reg_domain->oper != WIFI_MGMT_GET) {
 		LOG_ERR("%s: Invalid operation: %d", __func__, reg_domain->oper);
 		goto out;
