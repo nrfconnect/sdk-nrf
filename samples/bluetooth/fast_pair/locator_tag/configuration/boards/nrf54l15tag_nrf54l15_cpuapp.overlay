@@ -102,6 +102,7 @@ secondary_app_partition: &slot1_partition {};
 	status = "okay";
 	int1-gpios = <&gpio0 3 0>;
 	odr = <1>; /* ODR 25Hz */
+	zephyr,deferred-init;
 };
 
 /* The BME688 environmental sensor is not used by this sample. */

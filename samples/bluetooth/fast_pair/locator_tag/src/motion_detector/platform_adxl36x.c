@@ -30,6 +30,10 @@ LOG_MODULE_DECLARE(fp_fhn, LOG_LEVEL_INF);
 
 #define ACCEL_NODE    DT_ALIAS(motion_detector)
 
+/* Deferred initialization parameters for the motion detector device. */
+#define MOTION_DETECTOR_INIT_RETRY_CNT		3
+#define MOTION_DETECTOR_INIT_RETRY_DELAY_MS	1000
+
 ACCEL_TO_ANGLE_FILTER_EMA_DEFINE(ema_filter, EMA_FILTER_ODR_HZ, EMA_FILTER_TAU_S);
 static ACCEL_TO_ANGLE_CTX_DEFINE(accel_to_angle_ctx, &ema_filter);
 
@@ -297,8 +301,21 @@ int app_motion_detector_init(void)
 {
 	int err;
 
+	for (size_t i = 0; i < MOTION_DETECTOR_INIT_RETRY_CNT; i++) {
+		k_msleep(MOTION_DETECTOR_INIT_RETRY_DELAY_MS);
+
+		err = device_init(motion_detector.dev);
+		if (!err && device_is_ready(motion_detector.dev)) {
+			break;
+		}
+
+		motion_detector.dev->state->initialized = false;
+		motion_detector.dev->state->init_res = 0;
+	}
+
 	if (!device_is_ready(motion_detector.dev)) {
-		LOG_ERR("Device %s is not ready.", motion_detector.dev->name);
+		LOG_ERR("Device %s is still not ready after %d attempts",
+			motion_detector.dev->name, MOTION_DETECTOR_INIT_RETRY_CNT);
 		return -EIO;
 	}
 
