@@ -232,7 +232,9 @@ void nrf_wifi_off_raw_tx_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_
 	}
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx->tx_pwr_ceil_params);
+	fmac_dev_ctx->tx_pwr_ceil_params = NULL;
 	nrf_wifi_off_raw_tx_fmac_fw_deinit(fmac_dev_ctx);
+	nrf_wifi_hal_dev_deinit(fmac_dev_ctx->hal_dev_ctx);
 }
 
 
@@ -386,7 +388,7 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_stats_get(struct nrf_wifi_fmac_dev
 	status = umac_cmd_off_raw_tx_prog_stats_get(fmac_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		goto out;
+		goto abort;
 	}
 
 	do {
@@ -398,10 +400,14 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_stats_get(struct nrf_wifi_fmac_dev
 	if (count == NRF_WIFI_FMAC_STATS_RECV_TIMEOUT) {
 		LOG_ERR("%s: Timed out",
 				      __func__);
-		goto out;
+		status = NRF_WIFI_STATUS_FAIL;
+		goto abort;
 	}
 
-	status = NRF_WIFI_STATUS_SUCCESS;
+	return NRF_WIFI_STATUS_SUCCESS;
+abort:
+	fmac_dev_ctx->stats_req = false;
+	fmac_dev_ctx->fw_stats = NULL;
 out:
 	return status;
 }

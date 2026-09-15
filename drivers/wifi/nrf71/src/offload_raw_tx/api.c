@@ -20,10 +20,18 @@
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/rf_params.h>
 #include <common/util.h>
+#include <common/mac_addr.h>
 #include <offload_raw_tx/api.h>
+
+#ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#include <zephyr/random/random.h>
+#endif /* CONFIG_WIFI_RANDOM_MAC_ADDRESS */
 
 #define DT_DRV_COMPAT nordic_wlan
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+
+/* Offloaded raw TX transmits from a single interface. */
+#define OFF_RAW_TX_VIF_IDX 0
 
 struct nrf_wifi_off_raw_tx_drv_priv off_raw_tx_drv_priv;
 
@@ -145,29 +153,38 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	}
 
 	if (mac_addr) {
-		memcpy(drv_ctx->mac_addr, mac_addr, 6);
+		memcpy(drv_ctx->mac_addr, mac_addr, WIFI_MAC_ADDR_LEN);
 	} else {
 #ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
-		int ret = -1;
+		int ret = bytes_from_str(drv_ctx->mac_addr,
+					 WIFI_MAC_ADDR_LEN,
+					 CONFIG_WIFI_FIXED_MAC_ADDRESS);
 
-		ret = bytes_from_str(drv_ctx->mac_addr,
-				     6,
-				     CONFIG_WIFI_FIXED_MAC_ADDRESS);
 		if (ret < 0) {
 			LOG_ERR("%s: Failed to parse MAC address: %s",
 				__func__,
 				CONFIG_WIFI_FIXED_MAC_ADDRESS);
 			goto err;
 		}
-#elif CONFIG_WIFI_OTP_MAC_ADDRESS
-	/* Set dummy MAC address */
-	drv_ctx->mac_addr[0] = 0x00;
-	drv_ctx->mac_addr[1] = 0x00;
-	drv_ctx->mac_addr[2] = 0x5E;
-	drv_ctx->mac_addr[3] = 0x00;
-	drv_ctx->mac_addr[4] = 0x10;
-	drv_ctx->mac_addr[5] = 0x00;
-#endif /* CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED */
+#elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
+		sys_rand_get(drv_ctx->mac_addr, WIFI_MAC_ADDR_LEN);
+
+		drv_ctx->mac_addr[0] &= ~BIT(0);
+		drv_ctx->mac_addr[0] |= BIT(1);
+#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+		int ret = nrf_wifi_xicr_mac_addr_get(OFF_RAW_TX_VIF_IDX,
+						     drv_ctx->mac_addr,
+						     NULL);
+
+		if (ret) {
+			LOG_ERR("%s: Failed to get MAC address from xICR: %d",
+				__func__,
+				ret);
+			goto err;
+		}
+#else
+#error "No Wi-Fi MAC address type selected, see choice WIFI_MAC_ADDRESS"
+#endif
 
 		if (!nrf_wifi_utils_is_mac_addr_valid(drv_ctx->mac_addr)) {
 			LOG_ERR("%s: Invalid MAC address: %02X:%02X:%02X:%02X:%02X:%02X",
@@ -186,11 +203,7 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 
 	return 0;
 err:
-	if (drv_ctx->rpu_ctx) {
-		nrf_wifi_fmac_dev_rem(drv_ctx->rpu_ctx);
-		drv_ctx->rpu_ctx = NULL;
-	}
-
+	/* Release the lock first: the teardown blocks on mutexes. */
 	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 	nrf_wifi_off_raw_tx_deinit();
 	return -1;
@@ -201,16 +214,29 @@ void nrf_wifi_off_raw_tx_deinit(void)
 {
 	k_spinlock_key_t key;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
+	struct nrf_wifi_fmac_priv *fmac_priv;
+	void *rpu_ctx;
 	int i;
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 
-	if (!off_raw_tx_drv_priv.fmac_priv) {
-		k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+	fmac_priv = off_raw_tx_drv_priv.fmac_priv;
+	rpu_ctx = drv_ctx->rpu_ctx;
+	off_raw_tx_drv_priv.fmac_priv = NULL;
+	drv_ctx->rpu_ctx = NULL;
+
+	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
+
+	if (!fmac_priv) {
 		return;
 	}
 
-	nrf_wifi_fmac_deinit(off_raw_tx_drv_priv.fmac_priv);
+	if (rpu_ctx) {
+		nrf_wifi_off_raw_tx_fmac_dev_deinit(rpu_ctx);
+		nrf_wifi_fmac_dev_rem(rpu_ctx);
+	}
+
+	nrf_wifi_fmac_deinit(fmac_priv);
 
 	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
 		if (drv_ctx->phy_rf_params_addr[i]) {
@@ -224,8 +250,6 @@ void nrf_wifi_off_raw_tx_deinit(void)
 				  (void *)drv_ctx->vtf_buffer_start_address);
 		drv_ctx->vtf_buffer_start_address = 0;
 	}
-
-	k_spin_unlock(&off_raw_tx_drv_priv.lock, key);
 }
 
 static unsigned char off_raw_tx_op_band(const struct nrf_wifi_off_raw_tx_conf *conf)
@@ -401,7 +425,7 @@ int nrf_wifi_off_raw_tx_start(struct nrf_wifi_off_raw_tx_conf *conf)
 	if (ret != 0) {
 		LOG_ERR("%s: nRF71 offloaded raw TX configuration failed",
 				      __func__);
-		goto out;
+		return ret;
 	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);

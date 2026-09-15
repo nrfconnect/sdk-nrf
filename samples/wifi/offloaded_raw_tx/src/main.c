@@ -191,7 +191,14 @@ int main(void)
 	}
 
 	strncpy((char *)country_code, "US", NRF_WIFI_COUNTRY_CODE_LEN + 1);
-	nrf_wifi_off_raw_tx_init(mac_addr, country_code);
+	if (nrf_wifi_off_raw_tx_init(mac_addr, country_code)) {
+		printf("Failed to initialize nRF wifi offloaded raw tx\n");
+		free(country_code);
+		if (mac_addr) {
+			free(mac_addr);
+		}
+		return -EIO;
+	}
 
 	/* Build a beacon frame */
 	len = build_wifi_beacon(CONFIG_SAMPLE_OFFLOADED_RAW_TX_BEACON_INTERVAL,
@@ -201,6 +208,10 @@ int main(void)
 				sizeof(bcn_supp_rates),
 				bcn_extra_fields,
 				sizeof(bcn_extra_fields));
+	if (len <= 0) {
+		printf("Failed to build the beacon frame\n");
+		goto out;
+	}
 
 	memset(&conf, 0, sizeof(conf));
 	conf.pkt = bcn.frame;
@@ -245,6 +256,11 @@ int main(void)
 				sizeof(bcn_supp_rates),
 				bcn_extra_fields,
 				sizeof(bcn_extra_fields));
+	if (len <= 0) {
+		printf("Failed to build the beacon frame\n");
+		goto out;
+	}
+
 	conf.pkt = bcn.frame;
 	conf.pkt_len = len;
 	conf.tx_pwr = 11;
@@ -277,9 +293,11 @@ int main(void)
 	printf("----- Stopping transmission -----\n");
 	nrf_wifi_off_raw_tx_stop();
 
+out:
 	printf("----- Deinitializing nRF wifi offloaded raw tx -----\n");
 	nrf_wifi_off_raw_tx_deinit();
 
+	free(country_code);
 	if (mac_addr) {
 		free(mac_addr);
 	}
