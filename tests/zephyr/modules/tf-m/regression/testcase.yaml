@@ -28,20 +28,12 @@ tests:
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
   nrf.extended.tfm.regression.ipc.lvl2.cc3xx:
@@ -89,7 +81,7 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf9151dk/nrf9151/ns
-  nrf.extended.tfm.regression.ipc.lvl2.cracen:
+  nrf.extended.tfm.regression.ipc.lvl2.cracen.nrf71:
     tags:
       - tfm_lvl2
     extra_args:
@@ -97,16 +89,8 @@ tests:
       - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
     timeout: 200
     platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
     integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
   nrf.extended.tfm.regression.sfn:
     tags:
@@ -117,20 +101,12 @@ tests:
     timeout: 200
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
   nrf.extended.tfm.regression.fp.hardabi:
@@ -141,19 +117,109 @@ tests:
       - CONFIG_FP_HARDABI=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
-      - nrf54l15dk/nrf54l15/cpuapp/ns
-      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
-      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
       - nrf9151dk/nrf9151/ns
+  # The nRF54L targets need a provisioned device, which takes a separate image
+  # programmed before the test image, so these run from a pytest harness.
+  nrf.extended.tfm.regression.ipc.lvl1.nrf54l:
+    tags:
+      - tfm_lvl1
+      - pytest
+    extra_args:
+      - CONFIG_TFM_IPC=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
+    timeout: 600
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "pytest/test_provisioned_regression.py"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+  nrf.extended.tfm.regression.ipc.lvl2.cracen:
+    tags:
+      - tfm_lvl2
+      - pytest
+    extra_args:
+      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=y
+      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=n
+    timeout: 600
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "pytest/test_provisioned_regression.py"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+  nrf.extended.tfm.regression.sfn.nrf54l:
+    tags:
+      - tfm_lvl1
+      - pytest
+    extra_args:
+      - CONFIG_TFM_SFN=y
+      - CONFIG_TFM_ISOLATION_LEVEL=1
+    timeout: 600
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "pytest/test_provisioned_regression.py"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+  nrf.extended.tfm.regression.fp.hardabi.nrf54l:
+    tags:
+      - tfm_fp
+      - pytest
+    extra_args:
+      - CONFIG_FPU=y
+      - CONFIG_FP_HARDABI=y
+    timeout: 600
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "pytest/test_provisioned_regression.py"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp/ns
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ns
+      - nrf54lm20dk/nrf54lm20b/cpuapp/ns
