@@ -13,7 +13,6 @@
 #include "nrf5340_audio_dk_version.h"
 #include "device_location.h"
 #include "sd_card_playback.h"
-#include "audio_clock.h"
 
 #include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>

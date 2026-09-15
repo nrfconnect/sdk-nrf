@@ -13,37 +13,54 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(rate_control, CONFIG_MODULE_RATE_CONTROL_LOG_LEVEL);
 
-static int valid_entry(struct audio_rate_control_ctx const *const ctx)
+static struct audio_rate_control_ctx contexts[AUDIO_RATE_CONTROL_TYPE_COUNT] = {
+	[0 ...(AUDIO_RATE_CONTROL_TYPE_COUNT - 1)] = {.state = AUDIO_RATE_CONTROL_STATE_EMPTY}};
+
+/**
+ * @brief	Get the context for a specific rate control type.
+ *
+ * @param	type	[in]	The type of the rate control source.
+ * @param	ctx	[out]	Pointer to the context pointer to be filled.
+ *
+ * @retval	-EINVAL		If the type is invalid.
+ * @retval	-ESRCH		If the context is empty.
+ * @retval	-EACCES		If the context is registered but uninitialized.
+ * @retval	0		If the context is valid and returned successfully.
+ */
+static int ctx_by_type_get(uint8_t type, struct audio_rate_control_ctx **ctx)
 {
-	if (ctx == NULL) {
-		LOG_ERR("Rate control ctx pointer is NULL");
+	if (type >= AUDIO_RATE_CONTROL_TYPE_COUNT) {
 		return -EINVAL;
 	}
 
-	if (ctx->state == AUDIO_RATE_CONTROL_STATE_UNINITIALIZED) {
-		LOG_ERR("Rate control uninitialized");
+	*ctx = &contexts[type];
+	if ((*ctx)->state == AUDIO_RATE_CONTROL_STATE_EMPTY) {
+		return -ESRCH;
+	}
+
+	if ((*ctx)->state == AUDIO_RATE_CONTROL_STATE_UNINITIALIZED) {
 		return -EACCES;
 	}
 
 	return 0;
 }
 
-int audio_rate_control_cfg_set(struct audio_rate_control_ctx *const ctx,
-			       struct audio_rate_control_cfg const *const cfg)
+int audio_rate_control_cfg_set(uint8_t type, struct audio_rate_control_cfg const *const cfg)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	ret = valid_entry(ctx);
+	ret = ctx_by_type_get(type, &ctx);
 	if (ret != 0) {
 		return ret;
 	}
 
-	if (ctx->cb.cfg_set == NULL) {
+	if (ctx->ops.cfg_set == NULL) {
 		LOG_ERR("No configuration set callback");
 		return -ENOTSUP;
 	}
 
-	ret = ctx->cb.cfg_set(ctx->imp_ctx, cfg);
+	ret = ctx->ops.cfg_set(cfg);
 	if (ret != 0) {
 		LOG_ERR("Failed to configure the rate control implementation: %d", ret);
 		return ret;
@@ -52,22 +69,22 @@ int audio_rate_control_cfg_set(struct audio_rate_control_ctx *const ctx,
 	return 0;
 }
 
-int audio_rate_control_cfg_get(struct audio_rate_control_ctx const *const ctx,
-			       struct audio_rate_control_cfg *cfg)
+int audio_rate_control_cfg_get(uint8_t type, struct audio_rate_control_cfg *cfg)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	ret = valid_entry(ctx);
+	ret = ctx_by_type_get(type, &ctx);
 	if (ret != 0) {
 		return ret;
 	}
 
-	if (ctx->cb.cfg_get == NULL) {
+	if (ctx->ops.cfg_get == NULL) {
 		LOG_ERR("No configuration get callback");
 		return -ENOTSUP;
 	}
 
-	ret = ctx->cb.cfg_get(ctx->imp_ctx, cfg);
+	ret = ctx->ops.cfg_get(cfg);
 	if (ret != 0) {
 		LOG_ERR("Failed to get the config for the rate control implementation: %d", ret);
 		return ret;
@@ -76,11 +93,12 @@ int audio_rate_control_cfg_get(struct audio_rate_control_ctx const *const ctx,
 	return 0;
 }
 
-int audio_rate_control_update(struct audio_rate_control_ctx *const ctx, void *const control_val_u)
+int audio_rate_control_update(uint8_t type, void *const control_val_u, bool calibrate)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	ret = valid_entry(ctx);
+	ret = ctx_by_type_get(type, &ctx);
 	if (ret != 0) {
 		return ret;
 	}
@@ -90,35 +108,36 @@ int audio_rate_control_update(struct audio_rate_control_ctx *const ctx, void *co
 		return -EINVAL;
 	}
 
-	if (ctx->cb.update == NULL) {
+	if (ctx->ops.update == NULL) {
 		LOG_ERR("No update error callback");
 		return -ENOTSUP;
 	}
 
-	ret = ctx->cb.update(ctx->imp_ctx, control_val_u);
+	ret = ctx->ops.update(control_val_u, calibrate);
 	if (ret != 0) {
-		LOG_ERR("Failed to update the rate control implementation: %d", ret);
+		LOG_DBG("Failed to update the rate control implementation: %d", ret);
 		return ret;
 	}
 
 	return 0;
 }
 
-int audio_rate_control_reset(struct audio_rate_control_ctx *const ctx)
+int audio_rate_control_reset(uint8_t type)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	ret = valid_entry(ctx);
+	ret = ctx_by_type_get(type, &ctx);
 	if (ret != 0) {
 		return ret;
 	}
 
-	if (ctx->cb.reset == NULL) {
+	if (ctx->ops.reset == NULL) {
 		LOG_ERR("No reset callback");
 		return -ENOTSUP;
 	}
 
-	ret = ctx->cb.reset(ctx->imp_ctx);
+	ret = ctx->ops.reset();
 	if (ret != 0) {
 		LOG_ERR("Failed to reset the rate control implementation: %d", ret);
 		return ret;
@@ -127,17 +146,50 @@ int audio_rate_control_reset(struct audio_rate_control_ctx *const ctx)
 	return 0;
 }
 
-int audio_rate_control_uninit(struct audio_rate_control_ctx *ctx)
+int audio_rate_control_register(uint8_t type, struct audio_rate_control_ops const *const imp_ops)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	ret = valid_entry(ctx);
+	if (imp_ops == NULL) {
+		LOG_ERR("Rate control implementation ops is NULL");
+		return -EINVAL;
+	}
+
+	ret = ctx_by_type_get(type, &ctx);
+	if (ret == -EINVAL) {
+		LOG_ERR("Invalid type");
+		return ret;
+	}
+
+	if (ret != -ESRCH) {
+		LOG_ERR("Rate control type already registered");
+		return -EEXIST;
+	}
+
+	if (imp_ops->update == NULL) {
+		LOG_ERR("Rate control mandatory callback is not configured");
+		return -EINVAL;
+	}
+
+	memcpy(&ctx->ops, imp_ops, sizeof(struct audio_rate_control_ops));
+	ctx->state = AUDIO_RATE_CONTROL_STATE_UNINITIALIZED;
+
+	return 0;
+}
+
+int audio_rate_control_uninit(uint8_t type)
+{
+	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
+
+	ret = ctx_by_type_get(type, &ctx);
 	if (ret != 0) {
 		return ret;
 	}
 
-	if (ctx->cb.uninitialize != NULL) {
-		ret = ctx->cb.uninitialize(ctx->imp_ctx);
+	if (ctx->ops.uninitialize != NULL) {
+		ret = ctx->ops.uninitialize();
 		if (ret != 0) {
 			LOG_ERR("Failed to uninitialize the rate control implementation: %d", ret);
 			return ret;
@@ -151,36 +203,24 @@ int audio_rate_control_uninit(struct audio_rate_control_ctx *ctx)
 	return 0;
 }
 
-int audio_rate_control_init(struct audio_rate_control_ctx *const ctx,
-			    struct audio_rate_control_imp_ctx *const imp_ctx,
-			    struct audio_rate_control_ops const *const imp_cb)
+int audio_rate_control_init(uint8_t type)
 {
 	int ret;
+	struct audio_rate_control_ctx *ctx = NULL;
 
-	if ((ctx == NULL) || (imp_ctx == NULL) || (imp_cb == NULL)) {
-		LOG_ERR("Rate control call parameter error");
-		return -EINVAL;
+	ret = ctx_by_type_get(type, &ctx);
+	if (ret != 0 && ret != -EACCES) {
+		return ret;
 	}
 
-	if (imp_cb->update == NULL) {
-		LOG_ERR("Rate control mandatory callback is not configured");
-		return -EINVAL;
-	}
-
-	memset(ctx, 0, sizeof(struct audio_rate_control_ctx));
-
-	ctx->imp_ctx = imp_ctx;
-
-	memcpy(&ctx->cb, imp_cb, sizeof(struct audio_rate_control_ops));
-
-	if (ctx->cb.initialize != NULL) {
-		ret = ctx->cb.initialize(ctx->imp_ctx);
+	if (ctx->ops.initialize != NULL) {
+		ret = ctx->ops.initialize();
 		if (ret != 0) {
 			LOG_ERR("Failed to initialize the rate control implementation: %d", ret);
 			return ret;
 		}
 	} else {
-		LOG_DBG("No initialize callback");
+		LOG_DBG("No initialize operation");
 	}
 
 	ctx->state = AUDIO_RATE_CONTROL_STATE_INITIALIZED;
