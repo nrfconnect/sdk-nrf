@@ -1,0 +1,46 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Pin the flash map (via DTS, no Partition Manager) to the NCS v3.2 layout so
+ * the overwrite-only update image is accepted by an NCS v3.2 MCUboot: primary
+ * slot ends at 0xcf000, placing the secondary slot at 0xcf000.
+ */
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&cpuapp_rram {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		boot_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x0 DT_SIZE_K(44)>;
+		};
+
+		slot0_partition: partition@b000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0xb000 DT_SIZE_K(784)>;
+		};
+
+		slot1_partition: partition@cf000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0xcf000 DT_SIZE_K(536)>;
+		};
+
+		storage_partition: partition@155000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0x155000 DT_SIZE_K(64)>;
+		};
+	};
+};
