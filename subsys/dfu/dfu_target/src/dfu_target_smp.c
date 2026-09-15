@@ -215,7 +215,8 @@ int dfu_target_smp_schedule_update(int img_num)
 	LOG_INF("MCUBoot image-%d upgrade scheduled. Reset device to apply",
 		secondary_image->slot_num);
 
-	err = img_mgmt_client_state_write(&img_gr_client, secondary_image->hash, false, &res_buf);
+	err = img_mgmt_client_state_write(&img_gr_client, secondary_image->hash,
+					  secondary_image->hash_len, false, &res_buf);
 	if (err) {
 		image_count = 0;
 		return err;
@@ -279,7 +280,7 @@ int dfu_target_smp_confirm_image(void)
 	}
 
 	LOG_INF("Confirm Image");
-	rc = img_mgmt_client_state_write(&img_gr_client, NULL, true, &res_buf);
+	rc = img_mgmt_client_state_write(&img_gr_client, NULL, 0, true, &res_buf);
 	if (rc) {
 		LOG_INF("Confirm fault err:%d", rc);
 		return rc;
