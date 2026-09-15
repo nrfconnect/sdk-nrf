@@ -1,0 +1,11 @@
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+# Selects the one-shot test variant. When disabled, the continuous-mode
+# variant is built. The driver keeps global state and cannot be
+# re-configured within a single image, so the two operating modes are
+# built and run as separate test images.
+config SAADCT_TEST_ONE_SHOT
+	bool "Build the SAADCT one-shot mode test variant"
+	default n
+
+source "Kconfig.zephyr"
