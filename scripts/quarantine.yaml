@@ -152,10 +152,3 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41256"
-
-- scenarios:
-    - sample.nrf5340.netboot
-    - sample.nrf5340.netboot.minimal_size
-  platforms:
-    - nrf5340dk/nrf5340/cpunet
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41308"
