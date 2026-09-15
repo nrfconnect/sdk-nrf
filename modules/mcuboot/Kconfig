@@ -141,7 +141,7 @@ config NCS_MCUBOOT_BOOT_REQUEST_TEST_SETS_BOOT_PREFERENCE
 endif # NRF_MCUBOOT_BOOT_REQUEST
 
 menu "Custom TLVs"
-	depends on SOC_SERIES_NRF54H
+	depends on SOC_SERIES_NRF54H || SOC_SERIES_NRF92
 
 config NCS_MCUBOOT_PERIPHCONF_TLV
 	bool "Output PERIPHCONF TLV BIN file (informative only, do not change)"
