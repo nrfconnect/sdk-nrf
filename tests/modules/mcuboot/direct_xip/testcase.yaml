@@ -11,6 +11,17 @@ tests:
       - nrf52840dk/nrf52840
       - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
+
+  mcuboot.direct_xip.nrf54l:
+    sysbuild: true
+    tags:
+      - mcuboot
+      - direct_xip
+      - sysbuild
+      - ci_tests_modules_mcuboot
+    extra_args:
+      - FILE_SUFFIX=nrf54l
+    platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
