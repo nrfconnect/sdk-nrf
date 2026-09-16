@@ -37,6 +37,9 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 
 #define PROGRESS_WIDTH 50
 #define STARTING_OFFSET 0
+#define RETRY_BACKOFF_INITIAL_MS 1000
+#define RETRY_BACKOFF_MAX_MS 30000
+#define MAX_ATTEMPTS 8
 
 /* Zephyr NET management event callback structures. */
 static struct net_mgmt_event_callback l4_cb;
@@ -44,7 +47,9 @@ static struct net_mgmt_event_callback conn_cb;
 static struct net_if *net_if;
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
+static K_SEM_DEFINE(download_result_sem, 0, 1);
 static ATOMIC_DEFINE(network_state, 2);
+static bool download_succeeded;
 
 enum network_state_flag {
 	NETWORK_STATE_IPV4_READY,
@@ -356,6 +361,7 @@ static int callback(const struct downloader_evt *event)
 		status = psa_hash_finish(&hash_ctx, hash, sizeof(hash), &hash_length);
 		if (status != PSA_SUCCESS) {
 			printk("Error during hash finish: %d\n", status);
+			k_sem_give(&download_result_sem);
 			return status;
 		}
 
@@ -370,9 +376,9 @@ static int callback(const struct downloader_evt *event)
 		}
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
-		(void)conn_mgr_if_disconnect(net_if);
-		(void)conn_mgr_all_if_down(true);
-		printk("Bye\n");
+		printk("Done\n");
+		download_succeeded = true;
+		k_sem_give(&download_result_sem);
 		return 0;
 
 	case DOWNLOADER_EVT_ERROR:
@@ -386,6 +392,10 @@ static int callback(const struct downloader_evt *event)
 		break;
 	case DOWNLOADER_EVT_STOPPED:
 		printk("Download canceled\n");
+		downloaded = 0;
+		file_size = 0;
+		download_succeeded = false;
+		k_sem_give(&download_result_sem);
 		break;
 	case DOWNLOADER_EVT_DEINITIALIZED:
 		printk("Client deinitialized\n");
@@ -422,15 +432,6 @@ int main(void)
 			return 0;
 		}
 	}
-
-#if CONFIG_SAMPLE_COMPUTE_HASH
-	psa_status_t status = psa_hash_setup(&hash_ctx, PSA_ALG_SHA_256);
-
-	if (status != PSA_SUCCESS) {
-		printk("psa_hash_setup, error: %d\n", status);
-		return status;
-	}
-#endif
 	printk("Connecting to network\n");
 
 	err = conn_mgr_all_if_connect(true);
@@ -455,32 +456,77 @@ int main(void)
 
 	err = downloader_init(&downloader, &dl_cfg);
 	if (err) {
-		printk("Failed to initialize the client, err %d\n", err);
+		printk("Failed to initialize the client, err %d", err);
 		return 0;
 	}
 
-	const int family = select_family();
+	/* Retry the download a few times with an increasing backoff until it completes
+	 * successfully. Sometimes the device will get an IP family first then attempt
+	 * download on this family and we may need a retry on the other family.
+	 */
+	int32_t retry_backoff_ms = 0;
+	int attempt = 0;
 
-	if (family < 0) {
-		printk("Failed to select a valid address family\n");
-		return 0;
+	do {
+		attempt++;
+		if (attempt > MAX_ATTEMPTS) {
+			break;
+		}
+
+		/* Back off before retries. */
+		if (retry_backoff_ms > 0) {
+			k_sleep(K_MSEC(retry_backoff_ms));
+			retry_backoff_ms = MIN(retry_backoff_ms * 2, RETRY_BACKOFF_MAX_MS);
+		} else {
+			retry_backoff_ms = RETRY_BACKOFF_INITIAL_MS;
+		}
+
+#if CONFIG_SAMPLE_COMPUTE_HASH
+		psa_status_t status;
+
+		/* Abort any previous (possibly incomplete) operation before starting over. */
+		(void)psa_hash_abort(&hash_ctx);
+
+		status = psa_hash_setup(&hash_ctx, PSA_ALG_SHA_256);
+		if (status != PSA_SUCCESS) {
+			printk("psa_hash_setup, error: %d\n", status);
+			break;
+		}
+#endif
+
+		const int family = select_family();
+
+		if (family < 0) {
+			printk("Failed to select a valid address family\n");
+			continue;
+		}
+
+		host_dl_cfg.family = family;
+		printk("Starting download over %s\n",
+		       host_dl_cfg.family == AF_INET6 ? "IPv6" :
+		       host_dl_cfg.family == AF_INET ? "IPv4" :
+		       "IPv6/IPv4");
+
+		ref_time = k_uptime_get();
+
+		err = downloader_get(&downloader, &host_dl_cfg, URL, STARTING_OFFSET);
+		if (err) {
+			printk("Failed to start the downloader, err %d\n", err);
+			continue;
+		}
+
+		printk("Downloading %s\n", URL);
+
+		k_sem_take(&download_result_sem, K_FOREVER);
+	} while (!download_succeeded);
+
+	if (!download_succeeded) {
+		printk("Giving up after %d failed attempts\n", attempt);
 	}
 
-	host_dl_cfg.family = family;
-	printk("Starting download over %s\n",
-			host_dl_cfg.family == AF_INET6 ? "IPv6" :
-			host_dl_cfg.family == AF_INET ? "IPv4" :
-			"IPv6/IPv4");
-
-	ref_time = k_uptime_get();
-
-	err = downloader_get(&downloader, &host_dl_cfg, URL, STARTING_OFFSET);
-	if (err) {
-		printk("Failed to start the downloader, err %d\n", err);
-		return 0;
-	}
-
-	printk("Downloading %s\n", URL);
+	printk("Download finished, bringing network interfaces down\n");
+	(void)conn_mgr_if_disconnect(net_if);
+	(void)conn_mgr_all_if_down(true);
 
 	return 0;
 }
