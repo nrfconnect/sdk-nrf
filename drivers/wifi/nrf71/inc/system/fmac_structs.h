@@ -16,6 +16,7 @@
 #ifndef __FMAC_STRUCTS_H__
 #define __FMAC_STRUCTS_H__
 
+#include <zephyr/kernel.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
 
@@ -477,9 +478,9 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	/** Array of pointers to virtual interfaces created on this device. */
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
 #if defined(NRF71_RX_WQ_ENABLED)
-	/** Tasklet for RX. */
-	void *rx_tasklet;
-	/** Queue for RX tasklet. */
+	/** Deferred RX processing work item. */
+	struct k_work rx_work;
+	/** Queue of deferred RX events for @ref rx_work. */
 	void *rx_tasklet_event_q;
 #endif /* NRF71_RX_WQ_ENABLED */
 	/** Host statistics. */
@@ -498,8 +499,8 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	/** TWT state of the RPU. */
 	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #if defined(NRF71_TX_DONE_WQ_ENABLED)
-	/** Tasklet for TX done. */
-	void *tx_done_tasklet;
+	/** Deferred TX-done processing work item. */
+	struct k_work tx_done_work;
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 #endif /* NRF71_STA_MODE */
 #ifdef NRF71_RAW_DATA_TX
