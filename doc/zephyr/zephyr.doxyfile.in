@@ -15,7 +15,7 @@ STRIP_FROM_PATH        = @DOCSET_SOURCE_BASE@/include
 
 STRIP_FROM_INC_PATH    =
 
-ALIASES                = "kconfig{1}=\verbatim \1 \endverbatim" \
+ALIASES               += "kconfig{1}=\verbatim \1 \endverbatim" \
                          "req{1}=\ref ZEPH_\1 \"ZEPH-\1\"" \
                          "satisfy{1}=\xrefitem satisfy \"Satisfies requirement\" \"Requirement Implementation\" \1" \
                          "verify{1}=\xrefitem verify \"Verifies requirement\" \"Requirement Verification\" \1" \
