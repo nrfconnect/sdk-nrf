@@ -204,16 +204,17 @@ Building and running
 Pin debugging of RADIO events
 ================================
 
-The sample can be built with an extra overlay file to enable pin debugging of RADIO events for nR54L series devices with the following command:
+The sample can be built with an extra overlay file to enable pin debugging of RADIO events for nRF54L Series devices with the following command:
 
 .. code-block:: console
 
    west build -bnrf54l15dk/nrf54l15/cpuapp -p -- -DEXTRA_DTC_OVERLAY_FILE=pin_debug_54l.overlay
 
 
-With pin debugging enabled two GPIOs will be configured to toggle on RADIO events:
-- One pin is set high on the ``RADIO->EVENTS_READY`` and low on the ``RADIO->EVENTS_DISABLED``.
-- One pin is set high on the ``RADIO->EVENTS_ADDRESS`` and low on the ``RADIO->EVENTS_END``.
+With pin debugging enabled, two GPIOs will be configured to toggle on RADIO events:
+
+* One pin is set high on the ``RADIO->EVENTS_READY`` and low on the ``RADIO->EVENTS_DISABLED``.
+* One pin is set high on the ``RADIO->EVENTS_ADDRESS`` and low on the ``RADIO->EVENTS_END``.
 
 The pins used for debugging are configured in :file:`samples/peripheral/radio_test/pin_debug_54l.overlay`.
 
