@@ -590,6 +590,11 @@ Networking samples
     * An issue where the sample could try to download over an IP family for which the device had no address.
       The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
 
+* :ref:`udp_sample` sample:
+
+  * Fixed an issue where the sample did not work when configured with an IPv6 server address.
+    The sample now extracts the IP family from the :kconfig:option:`CONFIG_UDP_SAMPLE_SERVER_ADDRESS_STATIC` Kconfig option and waits for the corresponding network management connected event before transmitting.
+
 * :ref:`net_coap_client_sample` sample:
 
   * Added:
