@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Set the default page size to 4 KiB when using the SPI NOR driver to provide
+# better erase granularity for LittleFS. The QSPI NOR driver already uses this
+# page size by default.
+configdefault SPI_NOR_FLASH_LAYOUT_PAGE_SIZE
+	default 4096
+
+source "Kconfig.zephyr"
