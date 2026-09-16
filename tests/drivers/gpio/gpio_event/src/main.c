@@ -54,6 +54,8 @@ static bool generic_edge_test(int initial_value)
 	bool test_failed = false;
 
 	for (i = 0; i < npins; i++) {
+		TC_PRINT("[%d]: Port %s, pin %d\n",
+			i, out_pins[i].port->name, out_pins[i].pin);
 		/* Reset semaphore */
 		k_sem_reset(&gpio_event);
 
@@ -62,7 +64,7 @@ static bool generic_edge_test(int initial_value)
 		 * Writing any value other than 0 will set it to a high physical level.
 		 */
 		rc = gpio_pin_set_raw(out_pins[i].port, out_pins[i].pin, initial_value);
-		zassert_equal(rc, 0, "[%d]: Port %s, pin %d, set %d failed",
+		zexpect_equal(rc, 0, "[%d]: Port %s, pin %d, set %d failed",
 			i, out_pins[i].port->name, out_pins[i].pin, initial_value);
 
 		/* Configure IN event (edge) */
@@ -83,11 +85,11 @@ static bool generic_edge_test(int initial_value)
 			zassert_true(false,
 				"Unexpected value of %u", initial_value);
 		}
-		zassert_equal(rc, 0, "[%d]: failed to configure interrupt (err %d)", i, rc);
+		zexpect_equal(rc, 0, "[%d]: failed to configure interrupt (err %d)", i, rc);
 
 		gpio_init_callback(&cb_data, gpio_isr, BIT(in_pins[i].pin));
 		rc = gpio_add_callback(in_pins[i].port, &cb_data);
-		zassert_equal(rc, 0, "[%d]: failed to add calback (err %d)", i, rc);
+		zexpect_equal(rc, 0, "[%d]: failed to add calback (err %d)", i, rc);
 
 		/* Change OUT to physical opposite state */
 		if (initial_value == 0) {
@@ -96,7 +98,7 @@ static bool generic_edge_test(int initial_value)
 			opposite_value = 0;
 		}
 		rc = gpio_pin_set_raw(out_pins[i].port, out_pins[i].pin, opposite_value);
-		zassert_equal(rc, 0, "[%d]: Port %s, pin %d, set %d failed",
+		zexpect_equal(rc, 0, "[%d]: Port %s, pin %d, set %d failed",
 			i, out_pins[i].port->name, out_pins[i].pin, opposite_value);
 
 		/* Check that IN event was detected */
@@ -123,7 +125,7 @@ ZTEST(gpio_event, test_rising_edge)
 	const int initial_gpio_state = 0;
 
 	test_failed = generic_edge_test(initial_gpio_state);
-	zassert_equal(test_failed, false, "At least one event is missing");
+	zexpect_equal(test_failed, false, "At least one event is missing");
 }
 
 /**
@@ -135,7 +137,7 @@ ZTEST(gpio_event, test_falling_edge)
 	const int initial_gpio_state = 1;
 
 	test_failed = generic_edge_test(initial_gpio_state);
-	zassert_equal(test_failed, false, "At least one event is missing");
+	zexpect_equal(test_failed, false, "At least one event is missing");
 }
 
 /**
@@ -147,7 +149,7 @@ ZTEST(gpio_event, test_any_edge)
 	const int initial_gpio_state = 2;
 
 	test_failed = generic_edge_test(initial_gpio_state);
-	zassert_equal(test_failed, false, "At least one event is missing");
+	zexpect_equal(test_failed, false, "At least one event is missing");
 }
 
 static void *suite_setup(void)
@@ -172,11 +174,11 @@ static void *suite_setup(void)
 
 		/* Configure IN GPIOs */
 		rc = gpio_pin_configure_dt(&in_pins[i], GPIO_INPUT);
-		zassert_equal(rc, 0, "IN[%d] config failed (%d)", i, rc);
+		zexpect_equal(rc, 0, "IN[%d] config failed (%d)", i, rc);
 
 		/* Configure OUT GPIOs */
 		rc = gpio_pin_configure_dt(&out_pins[i], GPIO_OUTPUT);
-		zassert_equal(rc, 0, "OUT[%d] config failed (%d)", i, rc);
+		zexpect_equal(rc, 0, "OUT[%d] config failed (%d)", i, rc);
 	}
 
 	return NULL;
