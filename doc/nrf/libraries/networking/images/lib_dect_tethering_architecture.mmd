@@ -1,0 +1,37 @@
+%% DECT IPv6 tethering — data path (detail) plus system-level context (star topology + BR backhauls)
+%% Open https://mermaid.live and paste this to render. Export as PNG or SVG if needed.
+
+flowchart LR
+  PT1[PT device]
+  PC["Tethered PC\n(Ethernet)"]
+  BHA["Backhaul A: LTE\nExternal nRF9151 DK\nSerial Modem (UART)"]
+
+  subgraph DK1["nRF9151 DK — PT device + tether_ipv6 lib"]
+    ETH["nRF eth0\nRA + DHCPv6 server"]
+    FWD["fwd\nroutes + ND"]
+    DECT["nRF dect0\nDECT uplink"]
+  end
+
+  subgraph DK2["nRF9151 DK — FT/Sink + W5500 shield"]
+    FT["FT / Sink\n(Border Router)"]
+    BHB["Backhaul B: Ethernet\nW5500 shield (SPI)"]
+  end
+
+  NET((Internet))
+
+  PC -->|"RS / DHCPv6"| ETH
+  ETH -->|"Advertise ULA/GUA /128"| PC
+  FWD -->|"/128 + STATIC nbr"| ETH
+  FWD -->|"default router"| DECT
+  DECT --> FT
+  PT1 --> FT
+  FT --> DECT
+  DECT --> FWD
+  FWD --> ETH
+  ETH --> PC
+
+  FT -->|"SPI (same board)"| BHB
+  FT -.->|"UART (separate DK)"| BHA
+
+  BHB -.-> NET
+  BHA -.-> NET

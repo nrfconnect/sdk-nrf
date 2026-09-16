@@ -8,5 +8,6 @@ menu "DECT NR+ libraries"
 
 rsource "utils/Kconfig"
 rsource "l2_shell/Kconfig"
+rsource "tether_ipv6/Kconfig"
 
 endmenu
