@@ -205,14 +205,6 @@ config WIFI_NRF71_LOG_LEVEL
 	# Enable error by default
 	default 1
 
-config NRF71_WORKQ_STACK_SIZE
-	int "Stack size for workqueue"
-	default 4096
-
-config NRF71_WORKQ_MAX_ITEMS
-	int "Maximum work items for all workqueues"
-	default 100
-
 config NRF71_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
@@ -263,14 +255,6 @@ config NRF71_TX_DONE_WQ_ENABLED
 
 config NRF71_RX_WQ_ENABLED
 	bool "RX workqueue"
-
-config NRF71_BH_WQ_PRIORITY
-	int "Priority of the workqueue for handling bottom half"
-	default 0
-
-config NRF71_BH_WQ_STACK_SIZE
-	int "Stack size of the workqueue for handling bottom half"
-	default 2048
 
 if NRF71_TX_DONE_WQ_ENABLED
 
