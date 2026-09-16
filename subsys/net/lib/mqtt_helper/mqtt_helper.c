@@ -9,6 +9,7 @@
 
 #include <net/mqtt_helper.h>
 #include <zephyr/net/mqtt.h>
+#include <zephyr/net/net_if.h>
 #include <zephyr/logging/log.h>
 
 #if defined(CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES)
@@ -374,6 +375,21 @@ MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
+static bool ipv6_ready(void)
+{
+	struct net_if *iface = NULL;
+
+	return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &iface) != NULL;
+}
+
+static bool ipv4_ready(void)
+{
+	struct net_if *iface = net_if_get_default();
+
+	return (iface != NULL) &&
+	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
+}
+
 static int broker_init(struct net_sockaddr_storage *broker,
 		       struct mqtt_helper_conn_params *conn_params)
 {
@@ -411,7 +427,7 @@ static int broker_init(struct net_sockaddr_storage *broker,
 
 	while (addr != NULL) {
 #if defined(CONFIG_NET_IPV6)
-		if (addr->ai_family == NET_AF_INET6) {
+		if (addr->ai_family == NET_AF_INET6 && ipv6_ready()) {
 			struct net_sockaddr_in6 *broker6 = ((struct net_sockaddr_in6 *)broker);
 
 			net_ipaddr_copy(&broker6->sin6_addr,
@@ -430,7 +446,7 @@ static int broker_init(struct net_sockaddr_storage *broker,
 		}
 #endif /* CONFIG_NET_IPV6 */
 
-		if (addr->ai_family == NET_AF_INET) {
+		if (addr->ai_family == NET_AF_INET && ipv4_ready()) {
 			struct net_sockaddr_in *broker4 = ((struct net_sockaddr_in *)broker);
 
 			net_ipaddr_copy(&broker4->sin_addr,
@@ -449,7 +465,7 @@ static int broker_init(struct net_sockaddr_storage *broker,
 		}
 
 		LOG_DBG("Skipping unsupported address family %d",
-			(unsigned int)addr->ai_family);
+			(unsigned int)addr->ai_family == NET_AF_INET6 ? "IPv6" : "IPv4");
 
 		addr = addr->ai_next;
 	}
