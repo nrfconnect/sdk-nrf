@@ -31,7 +31,7 @@ If any boot reports are detected, the behavior depends on if they are boot mouse
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       * If a boot mouse report is detected, the sample subscribes to it.
       * If a boot keyboard report is detected, the sample subscribes to its input report, and the sample functionality of changing the CAPSLOCK LED is enabled (**Button 1** and **Button 3**).
@@ -64,7 +64,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Toggle the CAPSLOCK LED on the connected keyboard using Write without response.
@@ -161,7 +161,7 @@ Testing with another development kit
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.
@@ -255,7 +255,7 @@ Testing with Bluetooth Low Energy app
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.
@@ -356,7 +356,7 @@ To test the sample with HID SCI support, both the central and the peripheral you
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.

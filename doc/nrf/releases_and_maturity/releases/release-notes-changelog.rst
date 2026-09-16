@@ -367,6 +367,8 @@ Bluetooth samples
   * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
   * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
 
+  * Removed support for the nRF52 Series devices.
+
 * :ref:`peripheral_hids_mouse` sample:
 
   * Added a "release" HID SCI configuration that lowers the minimum connection interval from 875 µs to 750 µs.
