@@ -162,6 +162,17 @@ struct bt_dfu_smp {
 int bt_dfu_smp_init(struct bt_dfu_smp *dfu_smp,
 		    const struct bt_dfu_smp_init_params *params);
 
+/** @brief Reset the response state of the DFU SMP Client instance.
+ *
+ *  Clears any in-flight response state (including the pending response
+ *  callback). Call this when the underlying connection is lost while a
+ *  command is outstanding. Otherwise the leftover response state causes
+ *  subsequent calls to @ref bt_dfu_smp_command to fail with @c -EBUSY.
+ *
+ *  @param[in,out] dfu_smp DFU SMP Client instance.
+ */
+void bt_dfu_smp_reset(struct bt_dfu_smp *dfu_smp);
+
 /** @brief Assign handles to the DFU SMP Client instance.
  *
  *  @param[in,out] dm Discovery object.
@@ -176,6 +187,11 @@ int bt_dfu_smp_handles_assign(struct bt_gatt_dm *dm,
 			      struct bt_dfu_smp *dfu_smp);
 
 /** @brief Execute a command.
+ *
+ *  A command larger than the usable ATT payload is split into several
+ *  consecutive GATT Write Without Response PDUs. The peer reassembles them
+ *  into a single SMP request, which requires @kconfig{CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY}
+ *  to be enabled on the target. One SMP response is still expected per command.
  *
  *  @param[in,out] dfu_smp DFU SMP Client instance.
  *  @param[in]     rsp_cb    Callback function to process the response.
