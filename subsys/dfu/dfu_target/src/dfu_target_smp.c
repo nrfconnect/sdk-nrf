@@ -41,10 +41,23 @@ static const char dfu_smp_echo_str[] = "Recovery";
 
 static int dfu_target_smp_recovery_enable(void);
 
+/* Convert positive mcumgr protocol errors to -EIO. Preserve success and
+ * negative transport errors.
+ */
+static int smp_err_to_errno(int err)
+{
+	if (err <= 0) {
+		return err;
+	}
+
+	LOG_ERR("SMP command failed (MGMT_ERR %d)", err);
+
+	return -EIO;
+}
+
 static int img_state_res_update(struct mcumgr_image_state *res_buf)
 {
 	if (res_buf->status) {
-		LOG_ERR("Image state response command fail, err:%d", res_buf->status);
 		image_count = 0;
 	} else {
 		image_count = res_buf->image_list_length;
@@ -55,11 +68,10 @@ static int img_state_res_update(struct mcumgr_image_state *res_buf)
 
 static int img_upload_res_update(struct mcumgr_image_upload *res_buf)
 {
-	if (res_buf->status) {
-		LOG_ERR("Image Upload command fail err:%d", res_buf->status);
-	} else {
+	if (res_buf->status == 0) {
 		upload_state.offset = res_buf->image_upload_offset;
 	}
+
 	return res_buf->status;
 }
 
@@ -67,7 +79,10 @@ int dfu_target_smp_client_init(void)
 {
 	int rc;
 
-	rc = smp_client_object_init(&smp_client, SMP_SERIAL_TRANSPORT);
+	rc = smp_client_object_init(&smp_client,
+				    IS_ENABLED(CONFIG_DFU_TARGET_SMP_TRANSPORT_BT) ?
+					    SMP_USER_DEFINED_TRANSPORT :
+					    SMP_SERIAL_TRANSPORT);
 	if (rc) {
 		return rc;
 	}
@@ -103,7 +118,9 @@ int dfu_target_smp_init(size_t file_size, int img_num, dfu_target_callback_t cb)
 	upload_state.image_size = file_size;
 	upload_state.offset = 0;
 
-	return img_mgmt_client_upload_init(&img_gr_client, file_size, upload_state.image_num, NULL);
+	return smp_err_to_errno(
+		img_mgmt_client_upload_init(&img_gr_client, file_size,
+					    upload_state.image_num, NULL));
 }
 
 int dfu_target_smp_offset_get(size_t *out)
@@ -141,11 +158,11 @@ int dfu_target_smp_write(const void *const buf, size_t len)
 	}
 
 	err = img_mgmt_client_upload(&img_gr_client, buf, len, &upload_res);
-	if (err) {
-		return err;
+	if (!err) {
+		err = img_upload_res_update(&upload_res);
 	}
 
-	return img_upload_res_update(&upload_res);
+	return smp_err_to_errno(err);
 }
 
 int dfu_target_smp_done(bool successful)
@@ -174,7 +191,7 @@ end:
 	upload_state.image_size = 0;
 	upload_state.offset = 0;
 
-	return rc;
+	return smp_err_to_errno(rc);
 }
 
 static struct mcumgr_image_data *discover_secondary_image_info(void)
@@ -219,10 +236,10 @@ int dfu_target_smp_schedule_update(int img_num)
 					  secondary_image->hash_len, false, &res_buf);
 	if (err) {
 		image_count = 0;
-		return err;
+		return smp_err_to_errno(err);
 	}
 
-	return img_state_res_update(&res_buf);
+	return smp_err_to_errno(img_state_res_update(&res_buf));
 }
 
 int dfu_target_smp_reset(void)
@@ -244,7 +261,7 @@ int dfu_target_smp_reset(void)
 		rc = img_mgmt_client_erase(&img_gr_client, upload_state.image_num);
 	}
 
-	return rc;
+	return smp_err_to_errno(rc);
 }
 
 int dfu_target_smp_reboot(void)
@@ -262,7 +279,7 @@ int dfu_target_smp_reboot(void)
 	rc = os_mgmt_client_reset(&os_gr_client);
 	LOG_DBG("OS Reset command status:%d", rc);
 	if (rc) {
-		return rc;
+		return smp_err_to_errno(rc);
 	}
 	recovery_mode_active = false;
 
@@ -283,9 +300,9 @@ int dfu_target_smp_confirm_image(void)
 	rc = img_mgmt_client_state_write(&img_gr_client, NULL, 0, true, &res_buf);
 	if (rc) {
 		LOG_INF("Confirm fault err:%d", rc);
-		return rc;
+		return smp_err_to_errno(rc);
 	}
-	return img_state_res_update(&res_buf);
+	return smp_err_to_errno(img_state_res_update(&res_buf));
 }
 
 int dfu_target_smp_recovery_mode_enable(dfu_target_reset_cb_t cb)
@@ -307,7 +324,7 @@ int dfu_target_smp_image_list_get(struct mcumgr_image_state *res_buf)
 		img_state_res_update(res_buf);
 	}
 
-	return err;
+	return smp_err_to_errno(err);
 }
 
 static int dfu_target_smp_recovery_enable(void)

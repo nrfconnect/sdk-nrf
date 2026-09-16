@@ -305,6 +305,7 @@ void img_gr_stub_data_init(uint8_t *hash_ptr)
 	for (int i = 0; i < 2; i++) {
 		image_dummy_info[i].img_num = i;
 		image_dummy_info[i].slot_num = i;
+		image_dummy_info[i].hash_len = IMG_MGMT_DATA_SHA_LEN;
 		/* Write version */
 		snprintf(image_dummy_info[i].version, IMG_MGMT_VER_MAX_STR_LEN, "1.1.%u", i);
 		image_dummy_info[i].version[sizeof(image_dummy_info[i].version) - 1] = '\0';
