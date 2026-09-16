@@ -9,13 +9,13 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <common/llist_mgmt.h>
+#include <common/util.h>
 #include <system/fmac_ap.h>
 #include <system/fmac_peer.h>
-#include <common/llist_mgmt.h>
 #include <system/fmac_tx.h>
-#include <common/util.h>
-#include <common/lock_mgmt.h>
-#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -40,7 +40,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx, config->mac_addr);
 
@@ -49,7 +49,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 				      __func__,
 				      config->mac_addr);
 
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 		goto out;
 	}
 
@@ -72,7 +72,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 		}
 	}
 
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 out:
@@ -101,7 +101,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx,
 				       config->mac_addr);
@@ -111,7 +111,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 				      __func__,
 				      config->mac_addr);
 
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 		goto out;
 	}
@@ -137,7 +137,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 		}
 	}
 
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 
