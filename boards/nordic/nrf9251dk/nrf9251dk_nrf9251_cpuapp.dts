@@ -26,6 +26,8 @@
 		zephyr,shell-uart = &uart133;
 		zephyr,uart-mcumgr = &uart133;
 		zephyr,wifi = &cpuapp_wifi;
+		nrf,bootloader-request = &boot_request;
+		nrf,bootloader-request-backup = &boot_request_backup;
 	};
 
 	aliases {
