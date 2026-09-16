@@ -136,6 +136,13 @@ config MPSL_LOW_LATENCY_CALLBACKS
 	  These callbacks are used to acquire and release low latency settings to the system when
 	  time-critical code is executed (for example around radio activity).
 
+config MPSL_RRAM_LOW_LATENCY_MODE_IDLE
+	bool "Use RRAM Idle mode during low-latency acquire"
+	depends on MPSL_LOW_LATENCY_CALLBACKS && !NRF_SYS_EVENT_IRQ_LATENCY
+	help
+	  When enabled, RRAM low power mode is set to Idle instead of Standby when MPSL acquires
+	  low latency through the RRAM controller register interface.
+
 module=MPSL
 module-str=MPSL
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
