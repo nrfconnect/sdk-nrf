@@ -41,19 +41,19 @@ The application does not start advertising immediately, but only when the NFC ta
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       To trigger advertising without NFC, press **Button 4**.
       The NDEF message that the tag sends to the NFC device contains data required to initiate pairing.
-      To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the nRF52 device.
+      To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the development kit.
 
    .. group-tab:: nRF54 DKs
 
       To trigger advertising without NFC, press **Button 3**.
       The NDEF message that the tag sends to the NFC device contains data required to initiate pairing.
-      To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the nRF52 device.
+      To start the NFC data transfer, the NFC device must touch the NFC antenna that is connected to the development kit.
 
-After reading the tag, the device can pair with the nRF52 device which is advertising.
+After reading the tag, the device can pair with the development kit which is advertising.
 After connecting, the sample application behaves in the same way as the original HID Keyboard sample.
 Reading the NFC tag again when the application is in a connected state causes disconnection.
 When the connection is lost, advertising does not restart automatically.
@@ -63,7 +63,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Sends one character of the predefined input ("hello\\n") to the computer.
@@ -176,7 +176,7 @@ To test with a Microsoft Windows computer that has a Bluetooth radio, complete t
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Power on your development kit.
       #. Press **Button 4** on the kit if the device is not advertising.
@@ -226,7 +226,7 @@ To test with the `Bluetooth Low Energy app`_, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Power on your development kit.
       #. Press **Button 4** on the kit if the device is not advertising.
@@ -341,7 +341,7 @@ To test with an Android smartphone/tablet, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 4** is lit.
       #. Observe that the device is advertising, as indicated by blinking **LED 1**.
