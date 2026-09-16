@@ -4,10 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/*
- * Required loopbacks:
- * P1.10 <-> P1.11 (TX/RX)
- * P1.8 <-> P1.9 (RTS/CTS)
+/* Required loopbacks:
+ * P1.04 <-> P1.06
+ * P1.13 <-> P1.15
  */
 
 / {
@@ -17,21 +16,21 @@
 };
 
 &pinctrl {
-	uart21_default: uart21_default {
+	uart21_default_alt: uart21_default_alt {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 1, 10)>,
-				<NRF_PSEL(UART_RX, 1, 11)>,
-				<NRF_PSEL(UART_RTS, 1, 8)>,
-				<NRF_PSEL(UART_CTS, 1, 9)>;
+			psels = <NRF_PSEL(UART_TX, 1, 4)>,
+				<NRF_PSEL(UART_RX, 1, 6)>,
+				<NRF_PSEL(UART_RTS, 1, 13)>,
+				<NRF_PSEL(UART_CTS, 1, 15)>;
 		};
 	};
 
-	uart21_sleep: uart21_sleep {
+	uart21_sleep_alt: uart21_sleep_alt {
 		group1 {
-			psels = <NRF_PSEL(UART_TX, 1, 10)>,
-				<NRF_PSEL(UART_RX, 1, 11)>,
-				<NRF_PSEL(UART_RTS, 1, 8)>,
-				<NRF_PSEL(UART_CTS, 1, 9)>;
+			psels = <NRF_PSEL(UART_TX, 1, 4)>,
+				<NRF_PSEL(UART_RX, 1, 6)>,
+				<NRF_PSEL(UART_RTS, 1, 13)>,
+				<NRF_PSEL(UART_CTS, 1, 15)>;
 			low-power-enable;
 		};
 	};
@@ -44,8 +43,8 @@
 dut: &uart21 {
 	status = "okay";
 	current-speed = <115200>;
-	pinctrl-0 = <&uart21_default>;
-	pinctrl-1 = <&uart21_sleep>;
+	pinctrl-0 = <&uart21_default_alt>;
+	pinctrl-1 = <&uart21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
 };
