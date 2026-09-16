@@ -1,23 +1,65 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../dts/external_lfs_partition_mx25r64.dtsi"
+
+/*
+ * No bootloader is built in this configuration.
+ * The default nRF5340 partition layout reserves the first 64 KB for MCUboot.
+ * The TF-M storage and settings partitions from the board devicetree
+ * (0xf0000 onwards) are kept and still used.
+ */
 /delete-node/ &boot_partition;
 /delete-node/ &slot0_partition;
 /delete-node/ &slot1_partition;
-/delete-node/ &tfm_ps_partition;
 /delete-node/ &tfm_its_partition;
 /delete-node/ &tfm_otp_partition;
+/delete-node/ &tfm_ps_partition;
 /delete-node/ &storage_partition;
 
 &flash0 {
 	partitions {
-		slot0_s_partition: partition@0 {
+		/*
+		 * MCUboot's bootutil library expects a slot pair. This project needs no
+		 * local secondary slot, so assign both labels to slot0.
+		 */
+		slot0_partition: slot1_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0-secure";
-			reg = <0x0 0x40000>;
+			label = "image-0";
+			reg = <0x00000000 DT_SIZE_K(960)>;
+			ranges = <0x0 0x0 DT_SIZE_K(960)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_s_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-secure";
+				reg = <0x00000000 DT_SIZE_K(256)>;
+			};
+
+			slot0_ns_partition: partition@40000 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0-nonsecure";
+				reg = <0x00040000 DT_SIZE_K(704)>;
+			};
 		};
 
-		slot0_ns_partition: partition@40000 {
+		nonsecure_storage: partition@f2000 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0-nonsecure";
-			reg = <0x40000 0xb4000>;
+			label = "nonsecure-storage";
+			reg = <0xf2000 DT_SIZE_K(8)>;
+			ranges = <0x0 0xf2000 DT_SIZE_K(8)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			storage_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "storage";
+				reg = <0x0 DT_SIZE_K(8)>;
+			};
 		};
 
 		tfm_storage_partition: partition@f4000 {
@@ -49,6 +91,19 @@
 	};
 };
 
+&sram0_s {
+	reg = <0x0 DT_SIZE_K(48)>;
+};
+
+&sram0_ns {
+	reg = <0xc000 DT_SIZE_K(464)>;
+	ranges = <0x0 0xc000 DT_SIZE_K(464)>;
+};
+
+&sram0_ns_app {
+	reg = <0x0 DT_SIZE_K(400)>;
+};
+
 / {
 	/delete-node/ nordic-tz-secure;
 	/delete-node/ nordic-tz-nonsecure;
@@ -64,5 +119,6 @@
 	nordic-tz-nonsecure {
 		compatible = "nordic,tz-nonsecure";
 		code-partitions = <&slot0_ns_partition>;
+		data-partitions = <&storage_partition>;
 	};
 };
