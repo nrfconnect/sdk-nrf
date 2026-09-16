@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 400" role="img">
+  <title>DECT IPv6 tethering architecture: data path plus star topology and Border Router backhauls</title>
+  <defs>
+    <marker id="arrow-fwd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#333f48"/>
+    </marker>
+    <marker id="arrow-ret" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#768692"/>
+    </marker>
+    <style type="text/css"><![CDATA[
+      .box-host { fill:#d9e1e2; stroke:#333f48; stroke-width:1.5; }
+      .box-core { fill:#00a9ce; stroke:#333f48; stroke-width:1.5; }
+      .box-uplink { fill:#0077c8; stroke:#333f48; stroke-width:1.5; }
+      .box-device { fill:none; stroke:#768692; stroke-width:1.5; stroke-dasharray:4,3; }
+      .title { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:13px; font-weight:600; }
+      .title-light { fill:#ffffff; font-family:Calibri,Arial,sans-serif; font-size:13px; font-weight:600; }
+      .subtitle { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:11px; }
+      .subtitle-light { fill:#eef4fb; font-family:Calibri,Arial,sans-serif; font-size:11px; }
+      .device-label { fill:#768692; font-family:Calibri,Arial,sans-serif; font-size:11px; font-weight:600; }
+      .edge-label { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:10px; }
+      .edge-fwd { stroke:#333f48; stroke-width:1.5; fill:none; marker-end:url(#arrow-fwd); }
+      .edge-ret { stroke:#768692; stroke-width:1.4; fill:none; marker-end:url(#arrow-ret); stroke-dasharray:6,4; }
+    ]]></style>
+  </defs>
+
+  <!-- PT device (star topology neighbor, above the tether_ipv6 device) -->
+  <rect class="box-host" x="580" y="10" width="140" height="56" rx="6"/>
+  <text class="title" x="650" y="42" text-anchor="middle">PT device</text>
+
+  <!-- Backhaul A: separate nRF9151 DK, connected to the FT/Sink over an external UART cable -->
+  <rect class="box-core" x="930" y="10" width="220" height="76" rx="6"/>
+  <text class="title-light" x="1040" y="34" text-anchor="middle">Backhaul A: LTE</text>
+  <text class="subtitle-light" x="1040" y="52" text-anchor="middle">External nRF9151 DK</text>
+  <text class="subtitle-light" x="1040" y="68" text-anchor="middle">Serial Modem (UART)</text>
+
+  <!-- Device group 1: everything below runs on one nRF9151 DK (PT + tether_ipv6 lib) -->
+  <rect class="box-device" x="155" y="95" width="530" height="140" rx="10"/>
+  <text class="device-label" x="420" y="113" text-anchor="middle">nRF9151 DK — PT device + tether_ipv6 lib</text>
+
+  <!-- Device group 2: FT/Sink and the W5500 shield share the same nRF9151 DK -->
+  <rect class="box-device" x="700" y="95" width="385" height="140" rx="10"/>
+  <text class="device-label" x="892" y="113" text-anchor="middle">nRF9151 DK — FT/Sink + W5500 shield</text>
+
+  <!-- Main data-path row: PC -> eth0 -> fwd -> dect0 -> FT -> (SPI) -> Backhaul B -->
+  <rect class="box-host" x="20" y="135" width="120" height="72" rx="6"/>
+  <text class="title" x="80" y="162" text-anchor="middle">Tethered PC</text>
+  <text class="subtitle" x="80" y="180" text-anchor="middle">(Ethernet)</text>
+
+  <rect class="box-core" x="170" y="125" width="150" height="92" rx="6"/>
+  <text class="title-light" x="245" y="152" text-anchor="middle">nRF eth0</text>
+  <text class="subtitle-light" x="245" y="170" text-anchor="middle">RA + DHCPv6</text>
+  <text class="subtitle-light" x="245" y="186" text-anchor="middle">server</text>
+
+  <rect class="box-core" x="360" y="135" width="120" height="72" rx="6"/>
+  <text class="title-light" x="420" y="162" text-anchor="middle">fwd</text>
+  <text class="subtitle-light" x="420" y="180" text-anchor="middle">routes + ND</text>
+
+  <rect class="box-uplink" x="520" y="125" width="150" height="92" rx="6"/>
+  <text class="title-light" x="595" y="152" text-anchor="middle">nRF dect0</text>
+  <text class="subtitle-light" x="595" y="170" text-anchor="middle">DECT uplink</text>
+
+  <rect class="box-core" x="715" y="125" width="145" height="92" rx="6"/>
+  <text class="title-light" x="787" y="162" text-anchor="middle">FT / Sink</text>
+  <text class="subtitle-light" x="787" y="180" text-anchor="middle">(Border Router)</text>
+
+  <rect class="box-core" x="890" y="125" width="170" height="92" rx="6"/>
+  <text class="title-light" x="975" y="152" text-anchor="middle">Backhaul B: Ethernet</text>
+  <text class="subtitle-light" x="975" y="170" text-anchor="middle">W5500 shield</text>
+  <text class="subtitle-light" x="975" y="186" text-anchor="middle">(SPI)</text>
+
+  <!-- Internet -->
+  <circle class="box-host" cx="1290" cy="177" r="80"/>
+  <text class="title" x="1290" y="173" text-anchor="middle">Internet</text>
+  <text class="subtitle" x="1290" y="190" text-anchor="middle">(LTE / LAN)</text>
+
+  <!-- PC -> ETH: RS / DHCPv6 -->
+  <path class="edge-fwd" d="M140 171 H170"/>
+  <text class="edge-label" x="155" y="162" text-anchor="middle">RS / DHCPv6</text>
+
+  <!-- ETH -> PC: Advertise ULA/GUA /128 (top arc) -->
+  <path class="edge-fwd" d="M170 135 C170 95, 80 95, 140 135"/>
+  <text class="edge-label" x="155" y="98" text-anchor="middle">Advertise ULA/GUA /128</text>
+
+  <!-- FWD -> ETH: /128 + STATIC nbr (below main row) -->
+  <path class="edge-fwd" d="M360 195 H320"/>
+  <text class="edge-label" x="340" y="208" text-anchor="middle">/128 + STATIC nbr</text>
+
+  <!-- FWD -> DECT: default router -->
+  <path class="edge-fwd" d="M480 171 H520"/>
+  <text class="edge-label" x="500" y="162" text-anchor="middle">default router</text>
+
+  <!-- DECT -> FT (uplink forward) -->
+  <path class="edge-fwd" d="M670 171 H715"/>
+  <text class="edge-label" x="693" y="162" text-anchor="middle">IPv6</text>
+
+  <!-- PT1 -> FT: star topology (direct link) -->
+  <path class="edge-fwd" d="M680 66 L760 125"/>
+
+  <!-- FT -> Backhaul B: solid, same-board SPI bus -->
+  <path class="edge-fwd" d="M860 171 H890"/>
+  <text class="edge-label" x="875" y="162" text-anchor="middle">SPI</text>
+
+  <!-- FT -> Backhaul A: dashed, external UART cable to a separate DK -->
+  <path class="edge-ret" d="M800 125 L960 86"/>
+  <text class="edge-label" x="900" y="105" text-anchor="middle">UART (separate DK)</text>
+
+  <!-- Return path: FT -> DECT -> FWD -> ETH -> PC (bottom rail) -->
+  <path class="edge-ret" d="M787 217 L787 250 L80 250 L80 207"/>
+  <text class="edge-label" x="435" y="268" text-anchor="middle">Forwarded IPv6 (return: FT -&gt; dect0 -&gt; fwd -&gt; eth0 -&gt; PC)</text>
+
+  <!-- Backhaul A / B -> Internet (alt) -->
+  <path class="edge-ret" d="M1150 48 C 1220 48, 1250 100, 1250 140"/>
+  <path class="edge-ret" d="M1060 165 C 1150 165, 1180 170, 1210 172"/>
+
+  <text class="edge-label" x="1040" y="335" text-anchor="middle">Only one backhaul (A or B) is built into a given FT/Sink image at a time.</text>
+</svg>
