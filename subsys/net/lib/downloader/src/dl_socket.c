@@ -190,7 +190,7 @@ static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
 	err = zsock_getaddrinfo(hostname, servname, &hints, &ai);
 	if (err) {
 		/* We expect this to fail on IPv6 sometimes */
-		LOG_INF("Failed to resolve hostname %s on %s, err %d", hostname,
+		LOG_DBG("Failed to resolve hostname %s on %s, err %d", hostname,
 			str_family(hints.ai_family), err);
 		return -EHOSTUNREACH;
 	}
