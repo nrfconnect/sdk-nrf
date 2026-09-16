@@ -1,0 +1,53 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+sample:
+  name: DECT IPv6 tethering
+  description: DECT IPv6 tethering (minimal RA + DHCPv6 + optional mDNS forward) trial
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_dect
+  sysbuild: true
+  build_only: true
+  integration_platforms:
+    - nrf9151dk/nrf9151/ns
+  platform_allow:
+    - nrf9151dk/nrf9151/ns
+tests:
+  sample.dect.dect_tether_ipv6.pt_arceli_w5500:
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-static-mac.overlay
+  sample.dect.dect_tether_ipv6.pt_arceli_w5500_random_mac:
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500.overlay
+  sample.dect.dect_tether_ipv6.pt_arceli_w5500_mdns:
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns.conf;eth_mdns.conf;mdns_forward.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-static-mac.overlay
+  sample.dect.dect_tether_ipv6.pt_arceli_w5500_dect_rx_pool:
+    extra_args:
+      - SHIELD=arceli_eth_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;dect_rx_pool.conf;dlc_resilient.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-static-mac.overlay
+  sample.dect.dect_tether_ipv6.pt_seeed_w5500:
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-seeed-static-mac.overlay
+  sample.dect.dect_tether_ipv6.pt_seeed_w5500_mdns:
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns.conf;eth_mdns.conf;mdns_forward.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-seeed-static-mac.overlay
+  sample.dect.dect_tether_ipv6.pt_seeed_w5500_dect_rx_pool:
+    extra_args:
+      - SHIELD=seeed_w5500
+      - EXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;dect_rx_pool.conf;dlc_resilient.conf"
+      - EXTRA_DTC_OVERLAY_FILE=w5500-seeed-static-mac.overlay

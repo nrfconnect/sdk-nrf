@@ -1,0 +1,10 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&eth_w5500_arceli_eth_w5500 {
+	zephyr,random-mac-address;
+	/* spi-max-frequency = <24000000>; */
+};
