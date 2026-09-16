@@ -403,6 +403,10 @@ Bluetooth samples
 
   * Removed support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
 
+* :ref:`bluetooth_central_dfu_smp` sample:
+
+  * Updated the sample to use the :ref:`lib_dfu_target` library with the new Bluetooth LE transport to update a remote device over SMP.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -910,6 +914,10 @@ DFU libraries
 -------------
 
 * Added the :ref:`lib_fw_loader_settings` library to pass the firmware loader Bluetooth advertising name from the main application to the firmware loader image using Settings storage.
+
+* :ref:`lib_dfu_target` library:
+
+  * Added an experimental Bluetooth LE transport for the SMP backend.
 
 Gazell libraries
 ----------------
