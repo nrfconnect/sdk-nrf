@@ -160,16 +160,16 @@
 /doc/nrf/libraries/modem/at_shell.rst     @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/modem/gcf_sms_lib.rst  @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/index.rst        @nrfconnect/ncs-modem-doc
-/doc/nrf/libraries/modem/location.rst     @nrfconnect/ncs-iot-positioning-doc
-/doc/nrf/libraries/modem/lte_lc.rst       @nrfconnect/ncs-iot-positioning-doc
-/doc/nrf/libraries/modem/modem_antenna.rst @nrfconnect/ncs-iot-positioning-doc
+/doc/nrf/libraries/modem/location.rst     @nrfconnect/ncs-modem-tre-doc
+/doc/nrf/libraries/modem/lte_lc.rst       @nrfconnect/ncs-modem-tre-doc
+/doc/nrf/libraries/modem/modem_antenna.rst @nrfconnect/ncs-modem-tre-doc
 /doc/nrf/libraries/modem/modem_attest_token.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/modem/modem_battery.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/modem_info.rst   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/modem_jwt.rst    @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/modem/modem_key_mgmt.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/ntn.rst          @nrfconnect/ncs-iot-oulu-tampere-doc
-/doc/nrf/libraries/modem/sms.rst          @nrfconnect/ncs-iot-positioning-doc
+/doc/nrf/libraries/modem/sms.rst          @nrfconnect/ncs-modem-tre-doc
 /doc/nrf/libraries/modem/uicc_lwm2m.rst   @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/modem/zzhc.rst         @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/mpsl/                  @nrfconnect/ncs-dragoon-doc
@@ -187,7 +187,7 @@
 /doc/nrf/libraries/networking/nrf_cloud_*.rst @nrfconnect/ncs-nrf-cloud-doc
 /doc/nrf/libraries/networking/nrf_provisioning.rst @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/ot_rpc.rst  @nrfconnect/ncs-terahertz-doc @nrfconnect/ncs-protocols-serialization
-/doc/nrf/libraries/networking/rest_client.rst @nrfconnect/ncs-iot-positioning-doc
+/doc/nrf/libraries/networking/rest_client.rst @nrfconnect/ncs-modem-tre-doc
 /doc/nrf/libraries/networking/softap_wifi_provision.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_mgmt_ext.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/networking/wifi_prov_*.rst @nrfconnect/ncs-cia-doc
@@ -203,7 +203,7 @@
 /doc/nrf/libraries/others/audio_module.rst @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/contin_array.rst @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/data_fifo.rst   @nrfconnect/ncs-audio-doc
-/doc/nrf/libraries/others/date_time.rst   @nrfconnect/ncs-iot-positioning-doc
+/doc/nrf/libraries/others/date_time.rst   @nrfconnect/ncs-modem-tre-doc
 /doc/nrf/libraries/others/dk_buttons_and_leds.rst @nrfconnect/ncs-cia-doc
 /doc/nrf/libraries/others/dm.rst          @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/others/dult.rst        @nrfconnect/ncs-si-bluebagel-doc
@@ -225,7 +225,7 @@
 /doc/nrf/libraries/others/rtfw.rst        @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/libraries/others/sfloat.rst      @nrfconnect/ncs-blenders-doc
 /doc/nrf/libraries/others/st25r3911b_nfc.rst @nrfconnect/ncs-radio-sw
-/doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-iot-positioning-doc
+/doc/nrf/libraries/others/supl_os_client.rst @nrfconnect/ncs-modem-tre-doc
 /doc/nrf/libraries/others/tone.rst        @nrfconnect/ncs-audio-doc
 /doc/nrf/libraries/others/uart_async_adapter.rst @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/libraries/others/vtf_monitoring.rst @nrfconnect/ncs-wifi-doc
@@ -707,21 +707,21 @@
 /samples/caf/*.rst                        @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-si-xcake-doc
 /samples/caf_sensor_manager/*.rst         @nrfconnect/ncs-si-bluebagel-doc @nrfconnect/ncs-si-muffin-doc
 /samples/cellular/**/*.rst                @nrfconnect/ncs-modem-doc
-/samples/cellular/gnss/*.rst              @nrfconnect/ncs-iot-positioning-doc
-/samples/cellular/location/*.rst          @nrfconnect/ncs-iot-positioning-doc
+/samples/cellular/gnss/*.rst              @nrfconnect/ncs-modem-tre-doc
+/samples/cellular/location/*.rst          @nrfconnect/ncs-modem-tre-doc
 /samples/cellular/lwm2m_carrier/*.rst     @nrfconnect/ncs-carrier-doc
 /samples/cellular/lwm2m_client/*.rst      @nrfconnect/ncs-iot-oulu-tampere-doc
-/samples/cellular/modem_shell/*.rst       @nrfconnect/ncs-iot-positioning-doc
+/samples/cellular/modem_shell/*.rst       @nrfconnect/ncs-modem-tre-doc
 /samples/cellular/nrf_cloud_*/**/*.rst    @nrfconnect/ncs-nrf-cloud-doc
 /samples/cellular/nrf_device_provisioning/*.rst  @nrfconnect/ncs-iot-oulu-tampere-doc
-/samples/cellular/sms/*.rst               @nrfconnect/ncs-iot-positioning-doc
+/samples/cellular/sms/*.rst               @nrfconnect/ncs-modem-tre-doc
 /samples/cellular/system_off/*.rst        @nrfconnect/ncs-modem-tre-doc
 /samples/crypto/**/*.rst                  @nrfconnect/ncs-aegir-doc
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_shell/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
-/samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-iot-positioning-doc
+/samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-modem-tre-doc
 /samples/dect/dect_phy/hello_dect/*.rst   @nrfconnect/ncs-modem-doc
 /samples/dfu/ab/*.rst                     @nrfconnect/ncs-eris-doc
 /samples/dfu/dfu_target/*.rst             @nrfconnect/ncs-eris-doc
