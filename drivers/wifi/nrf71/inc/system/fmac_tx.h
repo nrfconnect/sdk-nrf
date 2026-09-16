@@ -55,8 +55,8 @@ enum nrf_wifi_fmac_tx_status {
  * @brief Structure containing information about a TX packet.
  */
 struct tx_pkt_info {
-	/** Pointer to the TX packet. */
-	void *pkt;
+	/** Network buffers queued for this TX descriptor. */
+	sys_dlist_t pkt_q;
 	/** Peer ID. */
 	unsigned int peer_id;
 };
@@ -104,11 +104,11 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
  * @brief Process the TX done event.
  *
  * @param fmac_dev_ctx Pointer to the FMAC device context.
- * @param config Pointer to the TX buffer done configuration.
+ * @param buff Pointer to the TX done buffer descriptor from UMAC.
  * @return The status of the event processing.
  */
 enum nrf_wifi_status nrf_wifi_fmac_tx_done_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-		struct nrf_wifi_tx_buff_done *config);
+		struct nrf_wifi_tx_buff_done *buff);
 
 #ifdef NRF71_RAW_DATA_TX
 /**
@@ -155,7 +155,7 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
  * @return The status of the command initialization.
  */
 enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-		void *txq,
+		sys_dlist_t *txq,
 		int desc,
 		int peer_id);
 
