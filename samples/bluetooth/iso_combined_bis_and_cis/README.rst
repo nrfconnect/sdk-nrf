@@ -18,8 +18,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. include:: /includes/tfm.txt
-
 To test the sample, you need two additional devices.
 You can use any of the development kits listed above and mix different development kits.
 The sample also requires a connection to a computer with a serial terminal |ANSI| for each of the development kits.
@@ -51,7 +49,7 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/iso_combined_bis_and_cis`
 
-.. include:: /includes/build_and_run_ns.txt
+.. include:: /includes/build_and_run.txt
 
 
 Testing
