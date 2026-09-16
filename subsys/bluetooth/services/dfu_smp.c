@@ -13,6 +13,9 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(dfu_smp, CONFIG_BT_DFU_SMP_LOG_LEVEL);
 
+/* ATT Write Command header: 1-byte opcode + 2-byte attribute handle. */
+#define DFU_SMP_ATT_WRITE_HEADER_SIZE 3U
+
 
 /** @brief Notification callback function
  *
@@ -92,6 +95,17 @@ int bt_dfu_smp_init(struct bt_dfu_smp *dfu_smp,
 	return 0;
 }
 
+void bt_dfu_smp_reset(struct bt_dfu_smp *dfu_smp)
+{
+	if (!dfu_smp) {
+		return;
+	}
+
+	/* Clear the response state to allow new commands after a disconnection. */
+	dfu_smp->cbs.rsp_part = NULL;
+	memset(&dfu_smp->rsp_state, 0, sizeof(dfu_smp->rsp_state));
+}
+
 
 int bt_dfu_smp_handles_assign(struct bt_gatt_dm *dm,
 			      struct bt_dfu_smp *dfu_smp)
@@ -142,6 +156,9 @@ int bt_dfu_smp_command(struct bt_dfu_smp *dfu_smp,
 			      const void *cmd_data)
 {
 	uint16_t mtu;
+	uint16_t max_frag;
+	const uint8_t *cmd_bytes;
+	size_t remaining;
 	int ret;
 
 	if (!dfu_smp || !rsp_cb || !cmd_data || cmd_size == 0) {
@@ -152,10 +169,8 @@ int bt_dfu_smp_command(struct bt_dfu_smp *dfu_smp,
 	}
 
 	mtu = bt_gatt_get_mtu(dfu_smp->conn);
-	if (cmd_size > mtu) {
-		LOG_ERR("Command size (%u) cannot fit MTU (%u)", cmd_size, mtu);
-		return -EMSGSIZE;
-	}
+	max_frag = mtu - DFU_SMP_ATT_WRITE_HEADER_SIZE;
+
 	if (dfu_smp->cbs.rsp_part) {
 		return -EBUSY;
 	}
@@ -174,17 +189,39 @@ int bt_dfu_smp_command(struct bt_dfu_smp *dfu_smp,
 		ret = bt_gatt_subscribe(dfu_smp->conn,
 					&dfu_smp->notification_params);
 		if (ret) {
+			/* Clear the callback so that the next command will
+			 * retry enabling the notification.
+			 */
+			dfu_smp->notification_params.notify = NULL;
 			return ret;
 		}
 	}
 	memset(&dfu_smp->rsp_state, 0, sizeof(dfu_smp->rsp_state));
 	dfu_smp->cbs.rsp_part = rsp_cb;
-	/* Send request */
-	ret = bt_gatt_write_without_response(dfu_smp->conn,
-					     dfu_smp->handles.smp,
-					     cmd_data,
-					     cmd_size,
-					     false);
+
+	/* A single SMP request may be larger than one ATT payload. Send it as a
+	 * stream of consecutive Write Without Response PDUs. This requires
+	 * CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY on the target.
+	 */
+	cmd_bytes = cmd_data;
+	remaining = cmd_size;
+	do {
+		uint16_t frag = (remaining > max_frag) ?
+				max_frag : (uint16_t)remaining;
+
+		ret = bt_gatt_write_without_response(dfu_smp->conn,
+						     dfu_smp->handles.smp,
+						     cmd_bytes,
+						     frag,
+						     false);
+		if (ret) {
+			break;
+		}
+
+		cmd_bytes += frag;
+		remaining -= frag;
+	} while (remaining > 0);
+
 	if (ret) {
 		dfu_smp->cbs.rsp_part = NULL;
 	}
