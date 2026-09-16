@@ -575,6 +575,7 @@ Networking samples
 
     * Support for mutual TLS (client X.509 certificate authentication), using the new :option:`CONFIG_SAMPLE_PROVISION_CLIENT_CERT` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
+    * A retry mechanism with exponential backoff, improving robustness when only one IP family becomes ready at a time.
 
   * Updated:
 
