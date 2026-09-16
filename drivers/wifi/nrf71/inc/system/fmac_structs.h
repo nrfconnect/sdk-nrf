@@ -341,8 +341,10 @@ struct peers_info {
  *
  */
 struct tx_config {
-	/** Lock used to make code portions in the TX path atomic. */
-	void *tx_lock;
+	/** Mutex for atomic sections in the TX path. */
+	struct k_mutex tx_lock;
+	/** Set after @ref tx_init completes successfully. */
+	bool tx_inited;
 	/** Context information about peers that the RPU firmware is connected to. */
 	struct peers_info peers[MAX_SW_PEERS];
 	/** Coalesce count of TX frames. */

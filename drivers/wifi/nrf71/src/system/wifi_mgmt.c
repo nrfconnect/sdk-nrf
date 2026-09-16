@@ -15,7 +15,6 @@
 #include <zephyr/logging/log.h>
 
 #include <common/util.h>
-#include <common/lock_mgmt.h>
 #include <system/fmac_api.h>
 #include <system/fmac_tx.h>
 #include <common/fmac_structs_common.h>
@@ -717,16 +716,16 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 
 	switch (sleep_evnt->info.type) {
 	case TWT_BLOCK_TX:
-		nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 		sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_SLEEP;
 
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_SLEEP);
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 	break;
 	case TWT_UNBLOCK_TX:
-		nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 		sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 		wifi_mgmt_raise_twt_sleep_state(vif_ctx_zep->zep_net_if_ctx,
 						WIFI_TWT_STATE_AWAKE);
@@ -739,7 +738,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 			}
 		}
 #endif
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 	break;
 	default:
 	break;
