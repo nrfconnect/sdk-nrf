@@ -10,3 +10,31 @@ tests:
       - mqtt_helper
       - sysbuild
       - ci_tests_subsys_net
+  net.lib.mqtt_helper.ipv4_only:
+    sysbuild: true
+    platform_allow:
+      - qemu_cortex_m3
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - mqtt_helper
+      - sysbuild
+      - ci_tests_subsys_net
+    extra_configs:
+      - CONFIG_NET_IPV4=y
+      - CONFIG_NET_IPV6=n
+  net.lib.mqtt_helper.ipv6_only:
+    sysbuild: true
+    platform_allow:
+      - qemu_cortex_m3
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - mqtt_helper
+      - sysbuild
+      - ci_tests_subsys_net
+    extra_configs:
+      - CONFIG_NET_IPV4=n
+      - CONFIG_NET_IPV6=y
