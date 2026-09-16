@@ -13,7 +13,7 @@
 
 #define NUMBER_OF_CYCLE_TO_CAPTURE 5
 
-#if !defined(CONFIG_SOC_NRF54H20_CPUFLPR)
+#if defined(CONFIG_GPIO_NRFX_INTERRUPT)
 static struct gpio_callback pwm_input_cb_data;
 static volatile uint32_t high, low;
 
@@ -31,7 +31,7 @@ void pwm_input_captured_callback(const struct device *dev, struct gpio_callback 
 		low++;
 	}
 }
-#endif /* !CONFIG_SOC_NRF54H20_CPUFLPR */
+#endif /* CONFIG_GPIO_NRFX_INTERRUPT */
 
 void get_test_devices(struct pwm_dt_spec *out, struct gpio_dt_spec *in)
 {
@@ -48,7 +48,45 @@ void get_test_devices(struct pwm_dt_spec *out, struct gpio_dt_spec *in)
 	zassert_true(gpio_is_ready_dt(in), "pwm loopback in device is not ready");
 }
 
-#if defined(CONFIG_SOC_NRF54H20_CPUFLPR)
+#if defined(CONFIG_GPIO_NRFX_INTERRUPT)
+static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
+{
+	struct pwm_dt_spec out;
+	struct gpio_dt_spec in;
+
+	int err = 0;
+
+	TC_PRINT("Pulse/period: %u/%u usec\n", pulse, period);
+
+	get_test_devices(&out, &in);
+
+	/* clear edge counters */
+	high = 0;
+	low = 0;
+
+	/* configure and enable PWM */
+	err = pwm_set(out.dev, out.channel, PWM_USEC(period), PWM_USEC(pulse),
+		      out.flags ^= (flags & PWM_POLARITY_MASK));
+	zassert_equal(err, 0, "failed to set pwm output (err %d)", err);
+
+	/* configure and enable GPIOTE */
+	err = gpio_pin_configure_dt(&in, GPIO_INPUT);
+	zassert_equal(err, 0, "failed to configure input pin (err %d)", err);
+
+	err = gpio_pin_interrupt_configure_dt(&in, GPIO_INT_EDGE_BOTH);
+	zassert_equal(err, 0, "failed to configure input pin interrupt (err %d)", err);
+
+	gpio_init_callback(&pwm_input_cb_data, pwm_input_captured_callback, BIT(in.pin));
+	gpio_add_callback(in.port, &pwm_input_cb_data);
+
+	/* NUMBER_OF_CYCLE_TO_CAPTURE periods plus 1/4 of period to catch the last edge */
+	k_usleep((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2));
+
+	TC_PRINT("PWM output -high state counter: %d -low state counter: %d\n", high, low);
+	zassert((high >= NUMBER_OF_CYCLE_TO_CAPTURE) && (low >= NUMBER_OF_CYCLE_TO_CAPTURE),
+		"PWM not captured");
+}
+#else
 /*
  * nRF54H20 FLPR has no GPIO pin interrupts; sample the loopback pin in a timed
  * busy loop and count rising/falling edges (same thresholds as the GPIOTE path).
@@ -94,45 +132,7 @@ static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
 	zassert((high_cnt >= NUMBER_OF_CYCLE_TO_CAPTURE) && (low_cnt >= NUMBER_OF_CYCLE_TO_CAPTURE),
 		"PWM not captured");
 }
-#else
-static void test_capture(uint32_t period, uint32_t pulse, pwm_flags_t flags)
-{
-	struct pwm_dt_spec out;
-	struct gpio_dt_spec in;
-
-	int err = 0;
-
-	TC_PRINT("Pulse/period: %u/%u usec\n", pulse, period);
-
-	get_test_devices(&out, &in);
-
-	/* clear edge counters */
-	high = 0;
-	low = 0;
-
-	/* configure and enable PWM */
-	err = pwm_set(out.dev, out.channel, PWM_USEC(period), PWM_USEC(pulse),
-		      out.flags ^= (flags & PWM_POLARITY_MASK));
-	zassert_equal(err, 0, "failed to set pwm output (err %d)", err);
-
-	/* configure and enable GPIOTE */
-	err = gpio_pin_configure_dt(&in, GPIO_INPUT);
-	zassert_equal(err, 0, "failed to configure input pin (err %d)", err);
-
-	err = gpio_pin_interrupt_configure_dt(&in, GPIO_INT_EDGE_BOTH);
-	zassert_equal(err, 0, "failed to configure input pin interrupt (err %d)", err);
-
-	gpio_init_callback(&pwm_input_cb_data, pwm_input_captured_callback, BIT(in.pin));
-	gpio_add_callback(in.port, &pwm_input_cb_data);
-
-	/* NUMBER_OF_CYCLE_TO_CAPTURE periods plus 1/4 of period to catch the last edge */
-	k_usleep((NUMBER_OF_CYCLE_TO_CAPTURE * period) + (period >> 2));
-
-	TC_PRINT("PWM output -high state counter: %d -low state counter: %d\n", high, low);
-	zassert((high >= NUMBER_OF_CYCLE_TO_CAPTURE) && (low >= NUMBER_OF_CYCLE_TO_CAPTURE),
-		"PWM not captured");
-}
-#endif /* CONFIG_SOC_NRF54H20_CPUFLPR */
+#endif /* CONFIG_GPIO_NRFX_INTERRUPT */
 
 ZTEST(pwm_loopback, test_pwm_polarity_normal)
 {
