@@ -12,7 +12,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
-#include <common/llist_mgmt.h>
+
 #include <common/mem_mgmt.h>
 #include <common/util.h>
 #include <system/fmac_api.h>
@@ -113,13 +113,7 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_init_rx(struct nrf_wifi_fmac_dev_c
 		}
 	}
 #ifdef NRF71_RX_WQ_ENABLED
-	sys_dev_ctx->rx_tasklet_event_q = nrf_wifi_llist_create();
-	if (!sys_dev_ctx->rx_tasklet_event_q) {
-		LOG_ERR("%s: No space for RX tasklet event queue",
-				      __func__);
-		status = NRF_WIFI_STATUS_FAIL;
-		goto out;
-	}
+	sys_dlist_init(&sys_dev_ctx->rx_event_q);
 
 	k_work_init(&sys_dev_ctx->rx_work, nrf_wifi_fmac_rx_work_handler);
 #endif /* NRF71_RX_WQ_ENABLED */
@@ -144,7 +138,6 @@ static enum nrf_wifi_status nrf_wifi_sys_fmac_deinit_rx(struct nrf_wifi_fmac_dev
 	struct k_work_sync sync;
 
 	k_work_cancel_sync(&sys_dev_ctx->rx_work, &sync);
-	nrf_wifi_llist_free(sys_dev_ctx->rx_tasklet_event_q);
 #endif /* NRF71_RX_WQ_ENABLED */
 
 	for (desc_id = 0; desc_id < sys_fpriv->num_rx_bufs; desc_id++) {

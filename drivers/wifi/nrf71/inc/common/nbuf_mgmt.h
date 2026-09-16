@@ -14,18 +14,20 @@
 #include <stdbool.h>
 
 #include <zephyr/net/net_pkt.h>
+#include <zephyr/sys/dlist.h>
 
 /** Extra headroom reserved for Wi-Fi TX headers. */
 #define NRF_WIFI_EXTRA_TX_HEADROOM 100
 
 /** Driver network buffer wrapper around a payload region. */
 struct nrf_wifi_nwb {
+	/** Link for TX pending queues (@c sys_dlist_t). */
+	sys_dnode_t queue_node;
 	unsigned char *data;
 	unsigned char *tail;
 	unsigned char *end;
 	int len;
 	int headroom;
-	void *next;
 	void *priv;
 	int iftype;
 	void *ifaddr;

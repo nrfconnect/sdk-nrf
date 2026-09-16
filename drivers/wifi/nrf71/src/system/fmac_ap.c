@@ -11,7 +11,7 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <common/llist_mgmt.h>
+#include <common/mem_mgmt.h>
 #include <common/util.h>
 #include <system/fmac_ap.h>
 #include <system/fmac_peer.h>
@@ -24,7 +24,6 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
-	void *wakeup_client_q = NULL;
 	int id = -1;
 	int ac = 0;
 	int desc = 0;
@@ -57,12 +56,8 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	peer = &sys_dev_ctx->tx_config.peers[id];
 	peer->ps_token_count = config->num_frames;
 
-	wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
-
-	if (wakeup_client_q) {
-		nrf_wifi_llist_add_tail_data(wakeup_client_q,
-					 peer);
-	}
+	sys_dnode_init(&peer->wakeup_node);
+	sys_dlist_append(&sys_dev_ctx->tx_config.wakeup_client_q, &peer->wakeup_node);
 
 	for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 		desc = tx_desc_get(fmac_dev_ctx, ac);
@@ -85,7 +80,6 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
-	void *wakeup_client_q = NULL;
 	int id = -1;
 	int ac = 0;
 	int desc = 0;
@@ -121,12 +115,8 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 	peer->ps_state = config->sta_ps_state;
 
 	if (peer->ps_state == NRF_WIFI_CLIENT_ACTIVE) {
-		wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
-
-		if (wakeup_client_q) {
-			nrf_wifi_llist_add_tail_data(wakeup_client_q,
-						 peer);
-		}
+		sys_dnode_init(&peer->wakeup_node);
+		sys_dlist_append(&sys_dev_ctx->tx_config.wakeup_client_q, &peer->wakeup_node);
 
 		for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);

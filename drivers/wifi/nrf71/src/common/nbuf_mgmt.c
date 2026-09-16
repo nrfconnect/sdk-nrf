@@ -54,7 +54,7 @@ void *nrf_wifi_nbuf_alloc(unsigned int size)
 	nbuff->end = (unsigned char *)nbuff->priv + size;
 	nbuff->len = 0;
 	nbuff->headroom = 0;
-	nbuff->next = NULL;
+	sys_dnode_init(&nbuff->queue_node);
 
 	return nbuff;
 }
