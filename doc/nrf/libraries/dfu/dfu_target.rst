@@ -46,6 +46,7 @@ Supported upgrade types
 The DFU target library supports the following types of firmware upgrades:
 
 * MCUboot-style upgrades
+* External MCU upgrades over SMP
 * Modem delta upgrades
 * Full modem firmware upgrades
 * Custom upgrades
@@ -76,6 +77,33 @@ After that, the application can call the :c:func:`dfu_target_init` function for 
 
 .. note::
    The application can schedule the upgrade of all the image pairs at once using the :c:func:`dfu_target_schedule_update` function.
+
+External MCU upgrades over SMP
+------------------------------
+
+The SMP DFU target updates firmware on a remote MCU that exposes an mcumgr SMP server.
+It forwards the firmware data supplied through the common DFU target API to the remote device using the mcumgr image management group.
+
+Before using the common DFU target API, call the :c:func:`dfu_target_smp_client_init` function to initialize the SMP client.
+To identify an image for an SMP update, call the :c:func:`dfu_target_smp_img_type_check` function and pass the returned image type to :c:func:`dfu_target_init`.
+The generic :c:func:`dfu_target_img_type` function identifies an MCUboot image as a local MCUboot-style upgrade when MCUboot target support is enabled.
+
+The SMP DFU target supports the following transports:
+
+* Serial (UART) - Updates an external MCU running in MCUboot serial recovery mode.
+  Register a callback with the :c:func:`dfu_target_smp_recovery_mode_enable` function to reset the remote MCU into recovery mode before sending SMP commands.
+* Bluetooth LE (experimental) - Updates a connected device through the SMP GATT service.
+  The application must establish a connection, discover the SMP service, assign the discovered handles to a DFU SMP Client instance, and call :c:func:`dfu_target_smp_bt_transport_register`.
+
+Enable the SMP DFU target using the :kconfig:option:`CONFIG_DFU_TARGET_SMP` Kconfig option.
+Select the transport using either the :kconfig:option:`CONFIG_DFU_TARGET_SMP_TRANSPORT_SERIAL` or :kconfig:option:`CONFIG_DFU_TARGET_SMP_TRANSPORT_BT` Kconfig option.
+Use the :kconfig:option:`CONFIG_DFU_TARGET_SMP_IMAGE_LIST_SIZE` Kconfig option to configure the number of remote image-state entries that the target caches.
+
+Calling the :c:func:`dfu_target_schedule_update` function marks the uploaded image for a test upgrade.
+Call :c:func:`dfu_target_smp_reboot` to reboot the remote device and apply the update.
+The updated firmware on the remote device must confirm the running image, for example by calling :c:func:`boot_write_img_confirmed`, to prevent MCUboot from reverting it on the next reboot.
+
+See the :ref:`bluetooth_central_dfu_smp` sample for an example that uses the Bluetooth LE transport.
 
 Modem delta upgrades
 --------------------
@@ -135,6 +163,7 @@ Disabling support for specific DFU targets
 You can disable support for specific DFU targets using the following options:
 
 * :kconfig:option:`CONFIG_DFU_TARGET_MCUBOOT`
+* :kconfig:option:`CONFIG_DFU_TARGET_SMP`
 * :kconfig:option:`CONFIG_DFU_TARGET_MODEM_DELTA`
 * :kconfig:option:`CONFIG_DFU_TARGET_FULL_MODEM`
 * :kconfig:option:`CONFIG_DFU_TARGET_CUSTOM`

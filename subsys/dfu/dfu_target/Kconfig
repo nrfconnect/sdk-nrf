@@ -37,6 +37,28 @@ config DFU_TARGET_SMP_IMAGE_LIST_SIZE
 	help
 	  Define size for Image cache list.
 
+choice DFU_TARGET_SMP_TRANSPORT
+	prompt "SMP client transport"
+	default DFU_TARGET_SMP_TRANSPORT_SERIAL
+	help
+	  Select the transport used by the SMP DFU target to reach the remote
+	  device that exposes the mcumgr SMP service.
+
+config DFU_TARGET_SMP_TRANSPORT_SERIAL
+	bool "Serial (UART) recovery"
+	help
+	  Use the serial (UART) SMP client transport. This is typically used to
+	  update an external MCU running in MCUboot serial recovery mode.
+
+config DFU_TARGET_SMP_TRANSPORT_BT
+	bool "Bluetooth LE (GATT client) [EXPERIMENTAL]"
+	depends on BT_DFU_SMP
+	select EXPERIMENTAL
+	help
+	  Use a Bluetooth LE as the transport. The remote device must expose the mcumgr SMP service.
+
+endchoice
+
 endif
 
 config DFU_TARGET_STREAM
