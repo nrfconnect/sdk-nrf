@@ -24,7 +24,7 @@ Overview
 ********
 
 The sample connects through either an LTE network or Wi-Fi, depending on the selected target board.
-Once connected, it sets up a UDP socket and continuously transmits data over the socket to a configurable IP address and port number.
+Once connected, it sets up a UDP socket and continuously transmits data over the socket to a configurable IP address (IPv4 or IPv6) and port number.
 
 Configuration
 *************
@@ -49,7 +49,7 @@ CONFIG_UDP_SAMPLE_DATA_UPLOAD_FREQUENCY_SECONDS - UDP data upload frequency
 .. _CONFIG_UDP_SAMPLE_SERVER_ADDRESS_STATIC:
 
 CONFIG_UDP_SAMPLE_SERVER_ADDRESS_STATIC - UDP Server IP Address
-   This configuration option sets the static IP address of the server.
+   This configuration option sets the static IP address of the server (either IPv4 or IPv6).
 
 .. _CONFIG_UDP_SAMPLE_SERVER_PORT:
 
