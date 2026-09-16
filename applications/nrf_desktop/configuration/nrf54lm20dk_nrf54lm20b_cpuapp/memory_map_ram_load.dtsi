@@ -94,7 +94,7 @@
 		 * (code) at the beginning of this region and the RAM section (data) right after
 		 * the ROM section.
 		 */
-		cpuapp_sram: memory@20000800 {
+		cpuapp_sram_app: memory@20000800 {
 			compatible = "mmio-sram";
 			reg = <0x20000800 DT_SIZE_K(509)>;
 			#address-cells = <1>;
