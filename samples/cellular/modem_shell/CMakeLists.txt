@@ -31,6 +31,7 @@ add_subdirectory_ifdef(CONFIG_MOSH_REST src/rest)
 add_subdirectory_ifdef(CONFIG_MOSH_STARTUP_CMDS src/startup_cmd)
 add_subdirectory_ifdef(CONFIG_MOSH_GPIO_COUNT src/gpio_count)
 add_subdirectory_ifdef(CONFIG_MOSH_NTN src/ntn)
+add_subdirectory_ifdef(CONFIG_SAMPLE_MOSH_IRONSIDE_SE_EVENT_REPORT src/ironside_se_event)
 add_subdirectory(src/cloud)
 
 if(NOT ENV{PROJECT_NAME})

@@ -106,13 +106,13 @@
 	interrupts = <96 NRF_DEFAULT_IRQ_PRIORITY>;
 	interrupt-names = "irq0";
 	/* The following bells on this bellboard are rang by these cores
-	 *  - Bell 0: cpusec
+	 *  - Bell 0, 1, 2: cpusec
 	 *  - Bell 6: cpusys
 	 *  - Bell 13: cpuppr
 	 *  - Bell 14: cpuflpr
 	 *  - Bells 24, 25, 29, 31: cpucell
 	 */
-	nordic,interrupt-mapping = <0xa3006041 0>;
+	nordic,interrupt-mapping = <0xa3006047 0>;
 };
 
 &cpuppr_vpr {
