@@ -9,13 +9,17 @@
 
 #include <zephyr/sys/byteorder.h>
 
-/* q^(-1) mod 2^32, used by the Montgomery reduction */
-#define ML_DSA_QINV	58728449
+/* -q^(-1) mod 2^32, used by the Montgomery reduction.
+ * Negating q^(-1) (58728449) is required to be able to turn the reduction's subtraction
+ * into an accumulation, and therefore makes it possible to exchange 
+ * multiply-subtract-shift tail collapses with a single SMLAL for the Montgomery reduction.
+ */
+#define ML_DSA_QINV_NEG 0xFC7FDFFFU
 
 /* zeta[k] * R mod q (Montgomery form of the bit-reversed powers of the primitive
  * root, R = 2^32), i.e. zetas[k] = 1753^brv(k) * 2^32 mod q. Pre-scaling by R
  * lets cracen_ml_dsa_ntt() and cracen_ml_dsa_ntt_inversed() multiply by a zeta
- * with a single montgomery_reduce() call.
+ * with a single montgomery_mul() call.
  */
 static const int32_t zetas[] = {
 	0x000000, 0x0064F7, 0x581103, 0x77F504, 0x039E44, 0x740119, 0x728129, 0x071E24,
@@ -63,14 +67,34 @@ static int32_t reduce32(int32_t a)
 	return a - t * ML_DSA_PRIME_NUM;
 }
 
-/* Compute a * R^(-1) mod q for R = 2^32, given |a| < 2^31 * q.
+/* Compute a * b * R^(-1) mod q for R = 2^32, given |a * b| < 2^31 * q.
  * Result lies in (-q, q).
  */
-static int32_t montgomery_reduce(int64_t a)
+static int32_t montgomery_mul(int32_t a, int32_t b)
 {
-	int32_t t = (int32_t)((uint32_t)(int32_t)a * ML_DSA_QINV);
+#if defined(__GNUC__) && defined(__ARM_ARCH) && (__ARM_ARCH >= 7)
+	uint32_t lo;
+	int32_t hi;
+	int32_t t;
 
-	return (int32_t)((a - (int64_t)t * ML_DSA_PRIME_NUM) >> 32);
+	/** 1. (hi:lo) = a * b;
+	 *  2. t = lo * (-q^(-1));
+	 *  3. (hi:lo) += t * q.
+	 */
+	__asm__ volatile ("smull	%[lo], %[hi], %[a], %[b]\n\t"
+			  "mul		%[t], %[lo], %[qinv]\n\t"
+			  "smlal	%[lo], %[hi], %[t], %[q]"
+			  : [lo] "=&r"(lo), [hi] "=&r"(hi), [t] "=&r"(t)
+			  : [a] "r"(a), [b] "r"(b), [qinv] "r"(ML_DSA_QINV_NEG),
+			    [q] "r"(ML_DSA_PRIME_NUM));
+
+	return hi;
+#else
+	int64_t p = (int64_t)a * b;
+	int32_t t = (int32_t)((uint32_t)(int32_t)p * ML_DSA_QINV_NEG);
+
+	return (int32_t)((p + (int64_t)t * ML_DSA_PRIME_NUM) >> 32);
+#endif
 }
 
 void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
@@ -83,7 +107,7 @@ void cracen_ml_dsa_ntt(ml_dsa_poly_vector_t *vec)
 			int32_t zeta = zetas[k++];
 
 			for (uint32_t j = start; j < start + len; j++) {
-				int32_t t = montgomery_reduce((int64_t)zeta * w[j + len]);
+				int32_t t = montgomery_mul(zeta, w[j + len]);
 
 				/** Lazy reduction: |t| < q, so each of the 8 stages grows
 				 *  the coefficient bound by at most q. With |input| < q the
@@ -123,13 +147,13 @@ void cracen_ml_dsa_ntt_inversed(ml_dsa_poly_vector_t *vec)
 
 				w[j] = t + w[j + len];
 				w[j + len] = t - w[j + len];
-				w[j + len] = montgomery_reduce((int64_t)zeta * w[j + len]);
+				w[j + len] = montgomery_mul(zeta, w[j + len]);
 			}
 		}
 	}
 
 	for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
-		int32_t t = montgomery_reduce((int64_t)inv_256_r2_mont * w[j]);
+		int32_t t = montgomery_mul(inv_256_r2_mont, w[j]);
 
 		w[j] = t < 0 ? t + ML_DSA_PRIME_NUM : t;
 	}
@@ -145,7 +169,7 @@ void cracen_ml_dsa_multiply_ntt(ml_dsa_poly_vector_t *out_vec,
 		 *  scaling. Valid while |a * b| < 2^31 * q, which the 9q output bound
 		 *  of cracen_ml_dsa_ntt() satisfies (81q^2 < 2^31 * q).
 		 */
-		out_vec->coeffs[i] = montgomery_reduce((int64_t)a->coeffs[i] * b->coeffs[i]);
+		out_vec->coeffs[i] = montgomery_mul(a->coeffs[i], b->coeffs[i]);
 	}
 }
 
