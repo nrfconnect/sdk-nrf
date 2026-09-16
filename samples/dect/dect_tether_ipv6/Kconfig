@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD
+	bool "Advertise _dect-nr._udp on dect0 (mDNS DNS-SD, like dect_shell)"
+	depends on MDNS_RESPONDER_DNS_SD
+	help
+	  Binds a UDP socket on the DECT interface and registers mDNS DNS-SD for
+	  _dect-nr._udp.local so peers on DECT can browse this device (e.g. avahi-browse).
+	  Enable CONFIG_NET_HOSTNAME and stack options via mdns.conf.
+
+if SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD
+
+config SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD_PORT
+	int "UDP port for mDNS DNS-SD stub socket on dect0"
+	default 4700
+	range 1 65535
+	help
+	  Port bound on dect0 so dns_sd port_in_use checks succeed. Must match dns_sd_rec.port.
+
+endif # SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD
+
+module = SAMPLE_DECT_TETHER_IPV6
+module-str = DECT IPv6 tethering sample
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
