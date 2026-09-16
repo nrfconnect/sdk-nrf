@@ -11,7 +11,7 @@
 
 #include <stddef.h>
 #include <zephyr/logging/log.h>
-#include <common/llist_mgmt.h>
+
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
 #include <common/util.h>
@@ -294,7 +294,7 @@ void nrf_wifi_fmac_rx_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
-	struct nrf_wifi_rx_buff *config = NULL;
+	struct nrf_wifi_fmac_rx_node *item = NULL;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	sys_dev_ctx = CONTAINER_OF(work, struct nrf_wifi_sys_fmac_dev_ctx, rx_work);
@@ -306,25 +306,27 @@ void nrf_wifi_fmac_rx_work_handler(struct k_work *work)
 		goto out;
 	}
 
-	config = (struct nrf_wifi_rx_buff *)nrf_wifi_llist_pop_head(
-		sys_dev_ctx->rx_tasklet_event_q);
-
-	if (!config) {
+	if (sys_dlist_is_empty(&sys_dev_ctx->rx_event_q)) {
 		LOG_ERR("%s: No RX config available",
 					  __func__);
 		goto out;
 	}
 
+	item = CONTAINER_OF(sys_dlist_peek_head(&sys_dev_ctx->rx_event_q),
+			    struct nrf_wifi_fmac_rx_node, node);
+	sys_dlist_remove(&item->node);
+
 	status = nrf_wifi_fmac_rx_event_process(fmac_dev_ctx,
-						config);
+						&item->buff);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_fmac_rx_event_process failed",
 					  __func__);
-		goto out;
 	}
 out:
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
+	if (item) {
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, item);
+	}
 	nrf_wifi_ipc_rx_unlock(fmac_dev_ctx);
 }
 #endif /* NRF71_RX_WQ_ENABLED */
