@@ -21,6 +21,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
   drivers.i2s.i2s_buffer.8bytes.aclk:
@@ -53,6 +54,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
   drivers.i2s.i2s_buffer.16bytes.aclk:
@@ -84,6 +86,7 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
   drivers.i2s.i2s_buffer.24bytes.aclk:
