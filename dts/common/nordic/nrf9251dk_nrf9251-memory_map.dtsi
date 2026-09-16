@@ -136,6 +136,16 @@
 			reg = <0x3ff000 512>;
 		};
 
+		boot_request: partition@3ff200 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff200 16>;
+		};
+
+		boot_request_backup: partition@3ff210 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff210 16>;
+		};
+
 		storage_partition: partition@400000 {
 			compatible = "zephyr,mapped-partition";
 			reg = <0x400000 DT_SIZE_K(40)>;
