@@ -20,7 +20,6 @@ zephyr_library_sources(
   src/common/rf_params.c
   src/common/util.c
   src/common/mem_mgmt.c
-  src/common/llist_mgmt.c
   src/common/wifi_ipc.c
   src/common/mac_addr.c
 )
