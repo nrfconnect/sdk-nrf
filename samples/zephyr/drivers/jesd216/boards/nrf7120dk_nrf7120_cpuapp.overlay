@@ -1,0 +1,15 @@
+&gpio1 {
+	status = "okay";
+};
+
+&spi00 {
+	status = "disabled";
+};
+
+&mspi00 {
+	status = "okay";
+};
+
+&mx25u25645g {
+	status = "okay";
+};
