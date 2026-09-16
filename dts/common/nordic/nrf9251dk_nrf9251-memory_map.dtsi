@@ -96,24 +96,44 @@
 			reg = <0x312000 DT_SIZE_K(64)>;
 		};
 
-		cpuapp_slot0_partition: partition@322000 {
+		periphconf_partition: partition@322000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x322000 DT_SIZE_K(380)>;
+			reg = <0x322000 DT_SIZE_K(8)>;
 		};
 
-		cpuapp_slot1_partition: partition@381000 {
+		mpcconf_partition: partition@324000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x381000 DT_SIZE_K(380)>;
+			reg = <0x324000 512>;
 		};
 
-		cpuppr_code_partition: partition@3e0000 {
+		cpuapp_slot0_partition: partition@325000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3e0000 DT_SIZE_K(64)>;
+			reg = <0x325000 DT_SIZE_K(652)>;
 		};
 
-		cpuflpr_code_partition: partition@3f0000 {
+		cpuppr_code_partition: partition@3cd000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3f0000 DT_SIZE_K(64)>;
+			reg = <0x3cd000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@3dd000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3dd000 DT_SIZE_K(64)>;
+		};
+
+		secondary_partition: partition@3ed000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ed000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@3fd000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3fd000 DT_SIZE_K(8)>;
+		};
+
+		secondary_mpcconf_partition: partition@3ff000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff000 512>;
 		};
 
 		storage_partition: partition@400000 {
@@ -121,15 +141,15 @@
 			reg = <0x400000 DT_SIZE_K(40)>;
 		};
 
-		periphconf_partition: partition@40a000 {
+		cpuapp_slot1_partition: partition@40a000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x40a000 DT_SIZE_K(8)>;
+			reg = <0x40a000 DT_SIZE_K(652)>;
 		};
 
-		secure_storage_partition: partition@40c000 {
+		secure_storage_partition: partition@4ad000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x40c000 DT_SIZE_K(8)>;
-			ranges = <0x0 0x40c000 0x2000>;
+			reg = <0x4ad000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x4ad000 0x2000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
