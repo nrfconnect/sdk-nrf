@@ -586,6 +586,8 @@ Networking samples
 
     * The HTTP file link, which was previously broken.
     * An issue where network interface teardown was attempted with uninitialized ``net_if``.
+    * An issue where the sample could try to download over an IP family for which the device had no address.
+      The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
 
 * :ref:`net_coap_client_sample` sample:
 
