@@ -60,9 +60,11 @@ static bool is_nonce_length_supported(psa_algorithm_t alg, size_t nonce_length)
 	switch (alg) {
 	case PSA_ALG_GCM:
 		IF_ENABLED(PSA_NEED_CRACEN_GCM_AES, (return nonce_length == SX_GCM_IV_SZ));
+		break;
 	case PSA_ALG_CHACHA20_POLY1305:
 		IF_ENABLED(PSA_NEED_CRACEN_CHACHA20_POLY1305,
 			   (return nonce_length == SX_CHACHAPOLY_IV_SZ));
+		break;
 	case PSA_ALG_CCM:
 		IF_ENABLED(PSA_NEED_CRACEN_CCM_AES,
 			   (return sx_aead_aesccm_nonce_size_is_valid(nonce_length)));
@@ -930,6 +932,11 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 
 	status = setup(&operation, CRACEN_DECRYPT, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
+		goto error_exit;
+	}
+
+	if (ciphertext_length < operation.tag_size) {
+		status = PSA_ERROR_INVALID_ARGUMENT;
 		goto error_exit;
 	}
 
