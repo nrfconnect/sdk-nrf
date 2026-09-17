@@ -1039,6 +1039,7 @@
 /tests/drivers/watchdog/                  @nrfconnect/ncs-low-level-test
 /tests/drivers/adc/                       @nrfconnect/ncs-low-level-test
 /tests/drivers/flash/multicore_soc_flash/ @nrfconnect/ncs-low-level-test
+/tests/drivers/flash/soc_flash_radio_sync/ @nrfconnect/ncs-low-level-test
 /tests/include/mock_nrf_modem_at.h        @nrfconnect/ncs-modem-tre
 /tests/include/mock_nrf_rpc_transport.h   @nrfconnect/ncs-blenders
 /tests/lib/at_cmd_custom/                 @nrfconnect/ncs-modem
