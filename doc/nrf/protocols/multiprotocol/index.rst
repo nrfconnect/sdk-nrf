@@ -28,7 +28,7 @@ Given the nature of the dynamic multiprotocol solution, take into account the fo
 * Bluetooth® LE scanning requires a lot of time to process Bluetooth LE traffic and thus blocks 802.15.4 traffic.
   When the scanning is used, it is recommended to use the Sleepy End Device role for Thread or Zigbee applications.
 * Be aware that flash operations require more time to complete.
-  A flash operation may be performed only in a free timeslot, so it has to wait until the current timeslot finishes (it may be a 802.15.4 timeslot or a Bluetooth LE one).
+  A flash operation is performed by default in a free timeslot, so it has to wait until the current timeslot finishes (it may be a 802.15.4 timeslot or a Bluetooth LE one).
   Moreover, the Thread or Zigbee stacks cannot operate while the flash operation is being performed.
   Avoid an application design that involves a continuous series of small flash operations.
   The time the stack will be blocked by such a series of operations can be estimated using the following formula:
