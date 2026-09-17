@@ -1,0 +1,3 @@
+.. note::
+   This module is part of the full nRF Desktop design, but none of the reference board configurations currently maintained in the repository enable it.
+   The module remains in the codebase and you can enable it using a Kconfig option in a custom configuration.

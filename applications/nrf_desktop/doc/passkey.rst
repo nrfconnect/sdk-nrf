@@ -41,8 +41,6 @@ To configure the passkey module, complete the following steps:
    This is to ensure that you can enter the passkey.
    The index of the key ID in the input configuration array represents the digit.
 
-The example configuration of the module can be found in the :file:`configuration/nrf52kbd_nrf52832/passkey_buttons_def.h` file.
-
 Implementation details
 **********************
 

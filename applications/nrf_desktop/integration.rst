@@ -44,7 +44,6 @@ Make sure that the following conditions are met:
 
 .. tip::
    You can define the new board by copying the nRF Desktop reference design files that are the closest match for your hardware and then aligning the configuration to your hardware.
-   For example, for gaming mouse use :file:`nrf/boards/nordic/nrf52840gmouse`.
 
 nRF Desktop support for a board
 ===============================
@@ -52,11 +51,11 @@ nRF Desktop support for a board
 Perform the following steps to add nRF Desktop application configuration for a board that is already supported in Zephyr.
 
 1. Copy the project files for the device that is the closest match for your hardware.
-   For example, for gaming mouse these are located at :file:`applications/nrf_desktop/configuration/nrf52840gmouse_nrf52840`.
 #. Optionally, depending on the reference design, edit the DTS overlay file.
    This step is not required if you have created a new reference design and its DTS files fully describe your hardware.
    In such case, the overlay file can be left empty.
-#. In Kconfig, ensure that the following hardware interface modules that are specific for gaming mouse are enabled:
+#. In Kconfig, ensure that the hardware interface modules required by your device are enabled.
+   For a gaming mouse, this typically includes:
 
    * :ref:`caf_buttons`
    * :ref:`caf_leds`
@@ -68,16 +67,13 @@ Perform the following steps to add nRF Desktop application configuration for a b
    Apply the following changes, depending on the module:
 
    Motion module
-     * The ``nrf52840gmouse`` uses the PMW3360 optical motion sensor.
-       The sensor is configured in DTS, and the sensor type is selected in the application configuration.
+     * The no longer supported ``nrf52840gmouse`` used the PMW3360 optical motion sensor.
        To add a new sensor, expand the application configuration.
    Wheel module
-     * The wheel is based on the QDEC peripheral of the nRF52840 device and the hardware-related part is configured in DTS.
+     * On the no longer supported ``nrf52840gmouse`` board, the wheel was based on the QDEC peripheral of the nRF52840 device and the hardware-related part was configured in DTS
    Buttons module
      * To simplify the configuration of arrays, the nRF Desktop application uses :file:`_def` files.
      * The :file:`_def` file of the buttons module contains pins assigned to rows and columns.
-   Battery measurement module
-     * The :file:`_def` file of the battery measurement module contains the mapping needed to match the voltage that is read from ADC to the battery level.
    LEDs module
      * The application uses two logical LEDs - one for the peers state, and one for the system state indication.
      * Each of the logical LEDs can have either one (monochromatic) or three color channels (RGB).
@@ -149,7 +145,6 @@ To define the binding, edit the DTS file that describes the board.
 For more information, see :ref:`devicetree-intro`.
 
 As an example, take a look at the PMW3360 sensor that is already available in the |NCS|.
-The following code excerpt is taken from :file:`boards/nordic/nrf52840gmouse/nrf52840gmouse_nrf52840.dts`:
 
 .. code-block:: none
 
@@ -239,11 +234,9 @@ This can be useful when :ref:`adding a new custom board <porting_guide_adding_bo
 The ``interrupts`` property is an array, where the meaning of each element is defined by the specification of the interrupt controller.
 These specification files are located at :file:`zephyr/dts/bindings/interrupt-controller/` DTS binding file directory.
 
-For example, for nRF52840, the file is :file:`arm,v7m-nvic.yaml`.
-This file defines the ``interrupts`` property in the ``interrupt-cells`` list.
-For nRF52840, it contains two elements: ``irq`` and ``priority``.
+For example, for an Arm Cortex-M device, see the corresponding devicetree binding files in :file:`zephyr/dts/bindings/interrupt-controller/`.
+The ``interrupts`` property is an array, where the meaning of each element is defined by the specification of the interrupt controller.
 The default values for these elements for the given peripheral are in the :file:`dtsi` file specific for the device.
-In the case of nRF52840, this is :file:`zephyr/dts/arm/nordic/nrf52840.dtsi`, which has the following ``interrupts``:
 
 .. code-block::
 
