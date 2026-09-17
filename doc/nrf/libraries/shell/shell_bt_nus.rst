@@ -36,7 +36,7 @@ bt_nus_shell.py
 
 .. testing_bt_nus_shell_intro_start
 
-The script file :file:`scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
+The script file :ncs-file:`/scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
 
 The script uses an additional Nordic development kit, like the PCA10040, as a Bluetooth central device.
 It connects to the specified device and forwards all NUS traffic to the network port.
@@ -94,7 +94,7 @@ See :ref:`ble_console_readme` for more information.
 API documentation
 *****************
 
-| Header file: :file:`include/shell/shell_bt_nus.h`
-| Source file: :file:`subsys/shell/shell_bt_nus.c`
+| Header file: :ncs-file:`/include/shell/shell_bt_nus.h`
+| Source file: :ncs-file:`/subsys/shell/shell_bt_nus.c`
 
 .. doxygengroup:: shell_bt_nus

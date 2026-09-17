@@ -7,7 +7,7 @@ Kconfig search
 
 :file:`Kconfig` files describe build-time configuration options (called symbols in Kconfig-speak), how they are grouped into menus and sub-menus, and dependencies between them that determine what configurations are valid.
 :file:`Kconfig` files appear throughout the directory tree.
-For example, :file:`subsys/pm/Kconfig` defines power-related options.
+For example, :ncs-file:`zephyr:/subsys/pm/Kconfig` defines power-related options.
 
 All Kconfig options can be searched using the search functionality.
 The search functionality supports searching using regular expressions.

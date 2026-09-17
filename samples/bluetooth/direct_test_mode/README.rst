@@ -43,7 +43,7 @@ Implementation
 The sample uses the :ref:`dtm_twowire_to_hci_readme` library to convert between 2-wire UART commands and events and Bluetooth LE HCI commands and events.
 It also implements a transport module that uses Zephyr UART APIs to read and write 2-wire commands and events on the UART interface.
 
-The sample application in :file:`src/main.c` runs the following loop:
+The sample application in :ncs-file:`/samples/bluetooth/direct_test_mode/src/main.c` runs the following loop:
 
 1. Wait for a 2-wire UART command using the :c:func:`dtm_tw_transport_read` function.
 #. Call the :c:func:`dtm_tw_to_hci_process_tw_cmd` function.

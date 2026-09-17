@@ -35,7 +35,7 @@ For provisioning and configuring of the mesh model instances, the sample require
 Low Power node requirements
 ===========================
 
-The configuration overlay :file:`overlay-lpn.conf` is optimized for the following boards:
+The configuration overlay :ncs-file:`/samples/bluetooth/mesh/light_switch/overlay-lpn.conf` is optimized for the following boards:
 
 * nrf52dk/nrf52832
 
@@ -93,7 +93,7 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_switch/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the development kit.
 
 If the model is configured to publish to a unicast address, the model handler calls :c:func:`bt_mesh_onoff_cli_set` to turn the LEDs of a mesh light device on or off.
 The response from the target device updates the corresponding LED on the mesh light switch device.
@@ -225,7 +225,7 @@ The light switch sample is split into the following source files:
 LPN configuration
 =================
 
-To make the light switch run as an LPN, set :makevar:`EXTRA_CONF_FILE` to :file:`overlay-lpn.conf` when building the sample using the respective :ref:`CMake option <cmake_options>`.
+To make the light switch run as an LPN, set :makevar:`EXTRA_CONF_FILE` to :ncs-file:`/samples/bluetooth/mesh/light_switch/overlay-lpn.conf` when building the sample using the respective :ref:`CMake option <cmake_options>`.
 For example, when building from the command line, use the following command, where *board_target* is the target for the development kit for which you are building:
 
 .. parsed-literal::
@@ -233,8 +233,8 @@ For example, when building from the command line, use the following command, whe
 
    west build -b *board_target* -p -- -DEXTRA_CONF_FILE="overlay-lpn.conf"
 
-The configuration overlay :file:`overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
-To review the specific alterations, open and inspect the :file:`overlay-lpn.conf` file.
+The configuration overlay :ncs-file:`/samples/bluetooth/mesh/light_switch/overlay-lpn.conf` enables the LPN feature, and alters certain configuration options to further lower the power consumption.
+To review the specific alterations, open and inspect the :ncs-file:`/samples/bluetooth/mesh/light_switch/overlay-lpn.conf` file.
 
 On supported boards, the sample also powers down RAM that is not used by the application while running as an LPN, further reducing power consumption.
 See :ref:`lib_ram_pwrdn` for more information.

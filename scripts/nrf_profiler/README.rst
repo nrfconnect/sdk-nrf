@@ -27,7 +27,7 @@ These scripts rely on locally stored files created earlier.
 Requirements
 ************
 
-To use the nRF Profiler host tools, install the required packages and libraries specified by the :file:`requirements.txt` file using the following command:
+To use the nRF Profiler host tools, install the required packages and libraries specified by the :ncs-file:`/scripts/nrf_profiler/requirements.txt` file using the following command:
 
 .. code-block:: console
 
@@ -55,7 +55,7 @@ Data collection and visualization
 
 You can use the following scripts to collect the profiling data and visualize the data:
 
-* :file:`data_collector.py` - The script connects to the device using RTT, receives profiling data, and saves it to files.
+* :ncs-file:`/scripts/nrf_profiler/data_collector.py` - The script connects to the device using RTT, receives profiling data, and saves it to files.
   When running the script from the command line, provide the time for collecting data and the dataset name.
   For example:
 
@@ -64,7 +64,7 @@ You can use the following scripts to collect the profiling data and visualize th
      python3 data_collector.py 5 test1
 
   In this command, ``5`` is the time value (in seconds) for collecting data and ``test1`` is the dataset name.
-* :file:`plot_from_files.py` - The script plots events from the dataset that is provided as the command-line argument.
+* :ncs-file:`/scripts/nrf_profiler/plot_from_files.py` - The script plots events from the dataset that is provided as the command-line argument.
   For example:
 
   .. code-block:: console
@@ -72,7 +72,7 @@ You can use the following scripts to collect the profiling data and visualize th
      python3 plot_from_files.py test1
 
   In this command, ``test1`` is the dataset name.
-* :file:`real_time_plot.py` - The script connects to the device using RTT, plots data in real-time, and saves the data.
+* :ncs-file:`/scripts/nrf_profiler/real_time_plot.py` - The script connects to the device using RTT, plots data in real-time, and saves the data.
   When running the script from the command line, provide the dataset name.
   For example:
 
@@ -112,7 +112,7 @@ Using GUI while plotting
 
 The GUI also supports the following actions:
 
-* The :guilabel:`Start/Stop` button can be used to pause or resume the real-time plot translation while plotting the data in real time (:file:`real_time_plot.py`).
+* The :guilabel:`Start/Stop` button can be used to pause or resume the real-time plot translation while plotting the data in real time (:ncs-file:`/scripts/nrf_profiler/real_time_plot.py`).
 * Scrolling on the plot using the mouse wheel zooms it in or out.
 
   * While plot translation is paused, scrolling zooms to the cursor location.
@@ -128,7 +128,7 @@ Merging profiling data from multiple devices
 ============================================
 
 The scripts allow you to analyze data propagation among multiple embedded devices.
-The :file:`merge_data.py` script combines data from ``test_p`` and ``test_c`` datasets into one dataset ``test_merged``.
+The :ncs-file:`/scripts/nrf_profiler/merge_data.py` script combines data from ``test_p`` and ``test_c`` datasets into one dataset ``test_merged``.
 It also provides clock drift compensation based on the synchronization events ``sync_event_p`` and ``sync_event_c``.
 The clock drift compensation is necessary to properly measure times between events coming from different devices as every device uses its own clock source.
 As command-line arguments, provide the names of events used for synchronization for a Peripheral (``sync_event_p``) and a Central (``sync_event_c``), as well as names of datasets for the Peripheral (``test_p``), the Central (``test_c``), and the merge result (``test_merged``).
@@ -152,7 +152,7 @@ You can use it  for visualization or calculating statistics.
 Calculating statistics
 ======================
 
-The :file:`calc_stats.py` script is used to calculate and visualize the nRF Profiler event propagation statistics (statistics for time intervals between nRF Profiler events) for a given dataset.
+The :ncs-file:`/scripts/nrf_profiler/calc_stats.py` script is used to calculate and visualize the nRF Profiler event propagation statistics (statistics for time intervals between nRF Profiler events) for a given dataset.
 A JSON file containing test presets specifies the events to be analyzed.
 The script calculates and displays the following statistics for each test preset:
 
@@ -166,7 +166,7 @@ These statistics are denoted by a ``no outliers`` suffix in the plot title and o
 Apart from displaying the statistics, the scipts also stores them as local files under the :file:`data_stats/` directory.
 The results are organized in subdirectories based on the dataset name, time range, and test preset name.
 
-When running the script from the command line, provide the dataset name (``test1``) and path to the JSON file containing test presets (:file:`stats_nordic_presets/app_event_manager_profiler_tracer.json`).
+When running the script from the command line, provide the dataset name (``test1``) and path to the JSON file containing test presets (:ncs-file:`/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
 
 .. code-block:: console
 
@@ -226,5 +226,5 @@ For examples of the test preset JSON file, see the :file:`stats_nordic_presets/`
 Dependencies
 ************
 
-The scripts depend on Python packages and libraries specified by the :file:`requirements.txt` file.
+The scripts depend on Python packages and libraries specified by the :ncs-file:`/scripts/nrf_profiler/requirements.txt` file.
 Apart from them, the scripts depend on the :ref:`nrf_profiler` library running on an embedded device to provide nRF Profiler events.

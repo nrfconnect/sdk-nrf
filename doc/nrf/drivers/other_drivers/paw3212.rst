@@ -139,7 +139,7 @@ See API documentation for details.
 API documentation
 *****************
 
-| Header file: :file:`include/sensor/paw3212.h`
-| Source file: :file:`drivers/sensor/paw3212/paw3212.c`
+| Header file: :ncs-file:`/include/sensor/paw3212.h`
+| Source file: :ncs-file:`/drivers/sensor/paw3212/paw3212.c`
 
 .. doxygengroup:: paw3212

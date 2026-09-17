@@ -113,7 +113,7 @@ The Bluetooth LE transport layer depends on:
 API documentation
 *****************
 
-| Header file: :file:`include/net/wifi_prov_core/wifi_prov_core.h`
+| Header file: :ncs-file:`/include/net/wifi_prov_core/wifi_prov_core.h`
 | Source files: :file:`subsys/bluetooth/services/wifi_prov`
 
 .. doxygengroup:: bt_wifi_prov

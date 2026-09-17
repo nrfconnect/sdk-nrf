@@ -124,7 +124,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_bas/hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
@@ -173,7 +173,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_bas/hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
@@ -225,7 +225,7 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 

@@ -28,7 +28,7 @@ The code stored in the :file:`main.c` file is compiled for both application and 
 The application core uses pwm130 to generate PWM signal on **LED2**.
 The radio core uses pwm131 to generate PWM signal on GPIO port 0, pin 7.
 
-There are three test configurations in the :file:`testcase.yaml`.
+There are three test configurations in the :ncs-file:`/tests/benchmarks/multicore/idle_pwm_led/testcase.yaml`.
 
 * ``benchmarks.multicore.idle_pwm_led.nrf54h20dk_cpuapp_cpurad.s2ram``
 
@@ -54,7 +54,7 @@ Building and running
 
 .. include:: /includes/build_and_run_test.txt
 
-To build the test, use configuration setups from the :file:`testcase.yaml` file using the ``-T`` option.
+To build the test, use configuration setups from the :ncs-file:`/tests/benchmarks/multicore/idle_pwm_led/testcase.yaml` file using the ``-T`` option.
 See the example:
 
 .. code-block:: console

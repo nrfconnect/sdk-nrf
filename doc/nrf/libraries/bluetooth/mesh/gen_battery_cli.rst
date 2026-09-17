@@ -48,7 +48,7 @@ mesh models battery get
 API documentation
 ******************
 
-| Header file: :file:`include/bluetooth/mesh/gen_battery_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_battery_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_battery_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_battery_cli.c`
 
 .. doxygengroup:: bt_mesh_battery_cli

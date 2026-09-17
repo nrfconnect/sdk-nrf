@@ -146,7 +146,7 @@ Configuration options
 =====================
 
 The following lists the application-specific configurations used in the sample.
-They are located in the :file:`samples/net/http_server/Kconfig` file.
+They are located in the :ncs-file:`/samples/net/http_server/Kconfig` file.
 
 .. _CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE:
 
@@ -191,16 +191,16 @@ Configuration files
 The sample provides predefined configuration files for the following development kits:
 
 * :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
-* :file:`wifi.conf` - Extra configuration file for Wi-Fi networking, common to the nRF71 Series and nRF70 Series. Must be added explicitly for Wi-Fi builds.
-* :file:`wifi-tls.conf` - Additional extra configuration file that enables TLS support (server authentication, with optional mutual authentication) for Wi-Fi builds.
+* :ncs-file:`/samples/net/http_server/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
+* :ncs-file:`/samples/net/http_server/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/http_server/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/http_server/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/http_server/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/http_server/wifi.conf` - Extra configuration file for Wi-Fi networking, common to the nRF71 Series and nRF70 Series. Must be added explicitly for Wi-Fi builds.
+* :ncs-file:`/samples/net/http_server/wifi-tls.conf` - Additional extra configuration file that enables TLS support (server authentication, with optional mutual authentication) for Wi-Fi builds.
 
 Board files under :file:`boards/` are merged automatically for the selected target.
-The :file:`wifi.conf` and :file:`wifi-tls.conf` extra configuration files are not board-specific and must be passed explicitly with ``http_server_EXTRA_CONF_FILE``.
+The :ncs-file:`/samples/net/http_server/wifi.conf` and :ncs-file:`/samples/net/http_server/wifi-tls.conf` extra configuration files are not board-specific and must be passed explicitly with ``http_server_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dhttp_server_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 Multiple extra configuration files can be combined by separating them with a semicolon, for example:

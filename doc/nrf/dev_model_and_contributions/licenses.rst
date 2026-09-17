@@ -10,7 +10,7 @@ Licenses
 .. licenses_start
 
 Licenses are located close to the source files.
-You can find a :file:`LICENSE` file, containing the details of the license, at the top of every |NCS| repository.
+You can find a :ncs-file:`zephyr:/LICENSE` file, containing the details of the license, at the top of every |NCS| repository.
 Each file included in the repositories also has an `SPDX identifier`_ that mentions this license.
 
 .. licenses_end
@@ -18,7 +18,7 @@ Each file included in the repositories also has an `SPDX identifier`_ that menti
 Open-source licenses
 ********************
 
-If a folder or set of files is open source and included in |NCS| under its own license (for example, any of the Apache or MIT licenses), it will have either its own :file:`LICENSE` file included in the folder or the license information embedded inside the source files themselves.
+If a folder or set of files is open source and included in |NCS| under its own license (for example, any of the Apache or MIT licenses), it will have either its own :ncs-file:`zephyr:/LICENSE` file included in the folder or the license information embedded inside the source files themselves.
 
 License report
 **************

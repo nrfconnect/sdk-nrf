@@ -257,5 +257,5 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:bluetooth_api`:
 
   * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/scan.h`
+  * :ncs-file:`/include/bluetooth/scan.h`
 * :file:`ext/hal/nordic/nrfx/hal/nrf_radio.h`

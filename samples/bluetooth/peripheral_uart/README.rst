@@ -83,7 +83,7 @@ USB CDC ACM extension
 
 For the boards with the USB device peripheral, you can build the sample with support for the USB CDC ACM class serial port instead of the physical UART.
 This build uses the sample-specific UART async adapter module that acts as a bridge between USB CDC ACM and Zephyr's UART asynchronous API used by the sample.
-See :ref:`peripheral_uart_sample_activating_variants` for details about how to build the sample with this extension using the :file:`prj_cdc.conf` file.
+See :ref:`peripheral_uart_sample_activating_variants` for details about how to build the sample with this extension using the :ncs-file:`/samples/bluetooth/peripheral_uart/prj_cdc.conf` file.
 
 Async adapter experimental module
 ---------------------------------
@@ -98,7 +98,7 @@ MCUboot with serial recovery of the networking core image
 =========================================================
 
 For the ``nrf5340dk/nrf5340/cpuapp``, it is possible to enable serial recovery of the network core while multi-image update is not enabled in the MCUboot.
-See :ref:`peripheral_uart_sample_activating_variants` for details on how to build the sample with this feature using the :file:`nrf5340dk_app_sr_net.conf` and :file:`nrf5340dk_mcuboot_sr_net.conf` files.
+See :ref:`peripheral_uart_sample_activating_variants` for details on how to build the sample with this feature using the :ncs-file:`/samples/bluetooth/peripheral_uart/nrf5340dk_app_sr_net.conf` and :ncs-file:`/samples/bluetooth/peripheral_uart/nrf5340dk_mcuboot_sr_net.conf` files.
 
 User interface
 **************
@@ -157,7 +157,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/bluetooth/peripheral_uart/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/bluetooth/peripheral_uart/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
@@ -200,11 +200,11 @@ Activating sample extensions
 
 To activate the optional extensions supported by this sample, set :makevar:`EXTRA_CONF_FILE` using the respective :ref:`CMake option <cmake_options>` in the following manner:
 
-* For the minimal build variant, set it to :file:`prj_minimal.conf`.
-* For the USB CDC ACM extension, set it to :file:`prj_cdc.conf`.
-  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to the :file:`usb.overlay` file.
-* For the MCUboot with serial recovery of the networking core image feature, set it to :file:`nrf5340dk_app_sr_net.conf`.
-  You also need to set the :makevar:`mcuboot_EXTRA_CONF_FILE` variant to the :file:`nrf5340dk_mcuboot_sr_net.conf` file.
+* For the minimal build variant, set it to :ncs-file:`/samples/bluetooth/peripheral_uart/prj_minimal.conf`.
+* For the USB CDC ACM extension, set it to :ncs-file:`/samples/bluetooth/peripheral_uart/prj_cdc.conf`.
+  Additionally, you need to set :makevar:`DTC_OVERLAY_FILE` to the :ncs-file:`/samples/bluetooth/peripheral_uart/usb.overlay` file.
+* For the MCUboot with serial recovery of the networking core image feature, set it to :ncs-file:`/samples/bluetooth/peripheral_uart/nrf5340dk_app_sr_net.conf`.
+  You also need to set the :makevar:`mcuboot_EXTRA_CONF_FILE` variant to the :ncs-file:`/samples/bluetooth/peripheral_uart/nrf5340dk_mcuboot_sr_net.conf` file.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
@@ -538,7 +538,7 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 

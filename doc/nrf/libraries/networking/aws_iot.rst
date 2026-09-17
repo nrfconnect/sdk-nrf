@@ -46,7 +46,7 @@ To complete the steps described in this document, make sure that the following p
 
 * Install `AWS Command Line Interface`_ on your system and configure AWS with the ``aws configure`` command to generate the key pair.
   See the `Authentication and access credentials`_ page for more details on AWS configuration.
-* To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+* To use the ``nrfcredstore`` tool, the dependencies in the :ncs-file:`/scripts/requirements-extra.txt` file must be installed.
   Enter the following command in a terminal window to install all the dependencies in the file:
 
   .. code-block:: console
@@ -493,7 +493,7 @@ To create a FOTA job, refer to the :ref:`lib_aws_fota` documentation.
 API documentation
 *****************
 
-| Header file: :file:`include/net/aws_iot.h`
+| Header file: :ncs-file:`/include/net/aws_iot.h`
 | Source files: :file:`subsys/net/lib/aws_iot/src/`
 
 .. doxygengroup:: aws_iot

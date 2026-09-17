@@ -107,7 +107,7 @@ It uses the following Zephyr libraries:
 * :ref:`zephyr:nvs_api`
 * :ref:`zephyr:zms_api`
 * :file:`include/zephyr/zephyr.h`
-* :file:`include/zephyr/device.h`
+* :ncs-file:`zephyr:/include/zephyr/device.h`
 
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 

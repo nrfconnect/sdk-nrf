@@ -99,7 +99,7 @@ CONFIG_LED_ENABLE
 
 CONFIG_ESB_SNIFFER
    Disable logging received packets through UART, set RTT as transport layer for the packets, and enable the shell.
-   It is intended for use together with :file:`scripts/esb_sniffer/main.py` or :file:`scripts/esb_sniffer/capture_to_pcap.py` scripts.
+   It is intended for use together with :ncs-file:`/scripts/esb_sniffer/main.py` or :ncs-file:`/scripts/esb_sniffer/capture_to_pcap.py` scripts.
    This option is disabled by default.
 
 Building and running
@@ -131,7 +131,7 @@ Complete the following steps to test the sample with the :ref:`CONFIG_ESB_SNIFFE
 
 1. Power on the DK.
 #. Read and follow the instructions in the :ref:`esb_sniffer_scripts` file to configure your environment.
-#. Run the :file:`scripts/esb_sniffer/capture_to_pcap.py` script with the name of the output file as argument.
+#. Run the :ncs-file:`/scripts/esb_sniffer/capture_to_pcap.py` script with the name of the output file as argument.
    For example:
 
    .. parsed-literal::
@@ -150,7 +150,7 @@ This sample uses the following |NCS| library:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 

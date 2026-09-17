@@ -108,7 +108,7 @@ Custom upgrades
 ---------------
 
 This firmware upgrade supports custom updates for external peripherals or other custom firmware.
-To use this feature, the application must implement the custom upgrade logic by applying the functions defined in the :file:`include/dfu/dfu_target_custom.h` file.
+To use this feature, the application must implement the custom upgrade logic by applying the functions defined in the :ncs-file:`/include/dfu/dfu_target_custom.h` file.
 
 
 Configuration
@@ -179,7 +179,7 @@ To configure a dedicated storage partition for full modem firmware updates, defi
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/dfu_target.h`
+| Header file: :ncs-file:`/include/dfu/dfu_target.h`
 | Source files: :file:`subsys/dfu/dfu_target/src/`
 
 .. doxygengroup:: dfu_target

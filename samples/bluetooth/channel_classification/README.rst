@@ -120,7 +120,7 @@ Dependencies
 
 This sample uses the following |NCS| library:
 
-* :file:`include/bluetooth/hci_vs_sdc.h`
+* :ncs-file:`/include/bluetooth/hci_vs_sdc.h`
 
 This sample uses the following `sdk-nrfxlib`_ libraries:
 

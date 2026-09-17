@@ -252,7 +252,7 @@ The empty diff means you can always use:
 * ``git rebase --onto`` or ``git cherry-pick`` to reapply any of your own patches cleanly before and after the history rewrite
 * ``git cherry`` to list any additional patches you may have applied to these projects to rewrite history as needed
 
-Additionally, both the old and new histories are committed sequentially into the ``revision`` fields for these projects in the :file:`nrf/west.yml` west manifest file.
+Additionally, both the old and new histories are committed sequentially into the ``revision`` fields for these projects in the :ncs-file:`/west.yml` west manifest file.
 This means you can always combine ``git bisect`` in the ``nrf`` repository with ``west update`` at each bisection point to diagnose regressions and the rest.
 
 .. _dm-oss-userdata:
@@ -260,7 +260,7 @@ This means you can always combine ``git bisect`` in the ``nrf`` repository with 
 Userdata associated with OSS repositories
 *****************************************
 
-The west manifest file :file:`nrf/west.yml` contains ``userdata`` values for some OSS repository projects.
+The west manifest file :ncs-file:`/west.yml` contains ``userdata`` values for some OSS repository projects.
 
 This section documents these values and their purpose.
 However, they are mainly meant for internal use and are safe to ignore.

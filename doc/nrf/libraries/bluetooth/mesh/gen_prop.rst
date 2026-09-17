@@ -32,4 +32,4 @@ Common types
 
 This section lists the types common to the Generic Property mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/gen_prop.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_prop.h`

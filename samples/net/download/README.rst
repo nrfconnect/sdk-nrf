@@ -70,17 +70,17 @@ This must match what the server you connect to expects.
 
 The sample includes an example client certificate and private key, together with a matching CA trust store, under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interop server:
 
-* :file:`cert/cf-ca.pem` - CA trust store (root + intermediate)
-* :file:`cert/cf-client.pem` - Client leaf certificate
-* :file:`cert/cf-client-key.pem` - Client private key (EC P-256)
+* :ncs-file:`/samples/net/download/cert/cf-ca.pem` - CA trust store (root + intermediate)
+* :ncs-file:`/samples/net/download/cert/cf-client.pem` - Client leaf certificate
+* :ncs-file:`/samples/net/download/cert/cf-client-key.pem` - Client private key (EC P-256)
 
-The :file:`wifi-mutual-dtls.conf` extra-conf file configures the sample to use these to perform a mutual TLS DTLS download from the Californium interop server.
+The :ncs-file:`/samples/net/download/wifi-mutual-dtls.conf` extra-conf file configures the sample to use these to perform a mutual TLS DTLS download from the Californium interop server.
 
 Wi-Fi
 =====
 
-On Wi-Fi boards, networking and TLS/DTLS support are not part of the default configuration and must be added with the :file:`wifi.conf` extra-conf file, using the ``download_EXTRA_CONF_FILE`` sysbuild variable.
-To perform a mutual DTLS download from the Californium interop server (see :ref:`Mutual TLS (client certificate authentication) <download_sample_mtls>`), add the :file:`wifi-mutual-dtls.conf` extra-conf file on top of :file:`wifi.conf`.
+On Wi-Fi boards, networking and TLS/DTLS support are not part of the default configuration and must be added with the :ncs-file:`/samples/net/download/wifi.conf` extra-conf file, using the ``download_EXTRA_CONF_FILE`` sysbuild variable.
+To perform a mutual DTLS download from the Californium interop server (see :ref:`Mutual TLS (client certificate authentication) <download_sample_mtls>`), add the :ncs-file:`/samples/net/download/wifi-mutual-dtls.conf` extra-conf file on top of :ncs-file:`/samples/net/download/wifi.conf`.
 
 Configuration
 *************
@@ -90,7 +90,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/download/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/net/download/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -109,18 +109,18 @@ Configuration files
 The sample provides predefined configuration files for the following development kits:
 
 * :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Board-specific configuration for the nRF7120 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series.
+* :ncs-file:`/samples/net/download/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/download/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/download/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/download/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
+* :ncs-file:`/samples/net/download/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Board-specific configuration for the nRF7120 DK.
+* :ncs-file:`/samples/net/download/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/download/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series.
   It must be added explicitly for Wi-Fi builds.
-* :file:`wifi-mutual-dtls.conf` - Additional configuration for mutual DTLS downloads from the Californium interop server.
+* :ncs-file:`/samples/net/download/wifi-mutual-dtls.conf` - Additional configuration for mutual DTLS downloads from the Californium interop server.
 
 Board files under :file:`boards/` are merged automatically for the selected target.
-The :file:`wifi.conf` and :file:`wifi-mutual-dtls.conf` files are not board-specific and must be passed with ``download_EXTRA_CONF_FILE``.
+The :ncs-file:`/samples/net/download/wifi.conf` and :ncs-file:`/samples/net/download/wifi-mutual-dtls.conf` files are not board-specific and must be passed with ``download_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Ddownload_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 

@@ -77,7 +77,7 @@ The Zephyr fork in |NCS| (``sdk-zephyr``) contains all commits from the upstream
   * Experimental support for a new peripheral driver SAADC.
     See the :zephyr:code-sample:`adc_sequence` and :zephyr:code-sample:`adc_dt` sample documentation for more details.
   * Experimental support for the clock control API.
-    See the :file:`include/zephyr/drivers/clock_control/nrf_clock_control.h` file for more details.
+    See the :ncs-file:`zephyr:/include/zephyr/drivers/clock_control/nrf_clock_control.h` file for more details.
 
 For the list of upstream Zephyr commits (not including cherry-picked commits) incorporated into nRF Connect SDK since the most recent release, run the following command from the :file:`ncs/zephyr` repository (after running ``west update``):
 

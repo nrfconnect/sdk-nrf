@@ -950,12 +950,12 @@ Other samples
 * :ref:`nrf_profiler_sample` sample:
 
   * Added a new testing step demonstrating how to calculate event propagation statistics.
-    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
+    Also added the related test preset for the :file:`calc_stats.py` script (:ncs-file:`/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
 
 * :ref:`app_event_manager_profiling_tracer_sample` sample:
 
   * Added a new testing step demonstrating how to calculate event propagation statistics.
-    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
+    Also added the related test preset for the :file:`calc_stats.py` script (:ncs-file:`/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
 
 * :ref:`event_manager_proxy_sample` sample:
 
@@ -980,7 +980,7 @@ nrfx
 Flash drivers
 -------------
 
-* Added a Kconfig option to configure timeout for normal priority MPSL request (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US`) in MPSL flash synchronization driver (:file:`nrf/drivers/mpsl/flash_sync/flash_sync_mpsl.c`).
+* Added a Kconfig option to configure timeout for normal priority MPSL request (:kconfig:option:`CONFIG_SOC_FLASH_NRF_RADIO_SYNC_MPSL_NORMAL_PRIORITY_TIMEOUT_US`) in MPSL flash synchronization driver (:ncs-file:`/drivers/mpsl/flash_sync/flash_sync_mpsl.c`).
   After the timeout specified by this Kconfig option, a higher timeslot priority is used to increase the priority of the flash operation.
   The default timeout has been reduced from 30 milliseconds to 10 milliseconds to speed up non-volatile memory operations.
 

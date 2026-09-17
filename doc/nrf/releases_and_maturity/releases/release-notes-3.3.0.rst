@@ -966,8 +966,8 @@ Bluetooth libraries and services
     * The naming of the Find My Device Network (FMDN) extension to Find Hub Network (FHN) to align with the updated Google specification:
 
       * All public API symbols have been renamed from ``bt_fast_pair_fmdn_*`` to ``bt_fast_pair_fhn_*``.
-        The new FHN header is located at :file:`include/bluetooth/fast_pair/fhn/fhn.h`.
-        Deprecated FMDN API aliases remain available through the :file:`include/bluetooth/services/fast_pair/fmdn.h` header.
+        The new FHN header is located at :ncs-file:`/include/bluetooth/fast_pair/fhn/fhn.h`.
+        Deprecated FMDN API aliases remain available through the :ncs-file:`/include/bluetooth/services/fast_pair/fmdn.h` header.
       * All Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
         Deprecated FMDN Kconfig options remain available under the :kconfig:option:`CONFIG_BT_FAST_PAIR_FMDN` option tree.
       * The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.

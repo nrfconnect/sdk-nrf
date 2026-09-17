@@ -65,7 +65,7 @@ It allows the Provisioners to uniquely identify the device before starting provi
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/mesh/dk_prov.h`
-| Source files: :file:`subsys/bluetooth/mesh/dk_prov.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/dk_prov.h`
+| Source files: :ncs-file:`/subsys/bluetooth/mesh/dk_prov.c`
 
 .. doxygengroup:: bt_mesh_dk_prov

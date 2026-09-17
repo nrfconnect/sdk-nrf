@@ -13,7 +13,7 @@ It is used in the :ref:`peripheral_ancs_client` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/gattp.h`
-| Source file: :file:`subsys/bluetooth/services/gattp.c`
+| Header file: :ncs-file:`/include/bluetooth/services/gattp.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/gattp.c`
 
 .. doxygengroup:: bt_gattp

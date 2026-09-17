@@ -32,7 +32,7 @@ See :file:`tests/subsys/bootloader/bl_storage/` for tests of the library.
 API documentation
 *****************
 
-| Header file: :file:`include/bl_storage.h`
+| Header file: :ncs-file:`/include/bl_storage.h`
 | Source files: :file:`subsys/bootloader/bl_storage/`
 
 .. doxygengroup:: bl_storage

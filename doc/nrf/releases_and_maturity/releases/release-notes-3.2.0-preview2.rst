@@ -242,7 +242,7 @@ nRF5340 Audio
 * Updated:
 
   * The power measurements to be disabled by default in ``debug`` builds.
-    To enable power measurements, set the :kconfig:option:`CONFIG_NRF_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+    To enable power measurements, set the :kconfig:option:`CONFIG_NRF_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
   * The audio application targeting the :zephyr:board:`nrf5340dk` to use pins **P1.5** to **P1.9** for the I2S interface instead of **P0.13** to **P0.17**.
     This change was made to avoid conflicts with the onboard peripherals on the nRF5340 DK.
   * The API documentation in the header files listed on the :ref:`audio_api` page.
@@ -569,12 +569,12 @@ Other samples
 * :ref:`nrf_profiler_sample` sample:
 
   * Added a new testing step demonstrating how to calculate event propagation statistics.
-    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
+    Also added the related test preset for the :file:`calc_stats.py` script (:ncs-file:`/scripts/nrf_profiler/stats_nordic_presets/nrf_profiler.json`).
 
 * :ref:`app_event_manager_profiling_tracer_sample` sample:
 
   * Added a new testing step demonstrating how to calculate event propagation statistics.
-    Also added the related test preset for the :file:`calc_stats.py` script (:file:`nrf/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
+    Also added the related test preset for the :file:`calc_stats.py` script (:ncs-file:`/scripts/nrf_profiler/stats_nordic_presets/app_event_manager_profiler_tracer.json`).
 
 Drivers
 =======

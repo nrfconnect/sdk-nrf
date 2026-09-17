@@ -92,7 +92,7 @@ The following code snippet shows how to retrieve the prefix, a ``uint16_t`` valu
 API documentation
 *****************
 
-| Header file: :file:`include/modem/at_parser.h`
+| Header file: :ncs-file:`/include/modem/at_parser.h`
 | Source file: :file:`lib/at_parser/src/at_parser.c`
 
 .. doxygengroup:: at_parser

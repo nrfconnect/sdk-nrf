@@ -349,7 +349,7 @@ The library also uses hardware abstraction layers from `nrfx`_.
 API documentation
 *****************
 
-| Header file: :file:`include/rtfw/rtfw.h`
+| Header file: :ncs-file:`/include/rtfw/rtfw.h`
 | Source files: :file:`subsys/rtfw/`
 
 .. doxygengroup:: rtfw
