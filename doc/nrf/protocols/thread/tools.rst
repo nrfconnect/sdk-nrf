@@ -19,6 +19,9 @@ nRF Sniffer for 802.15.4
 The nRF Sniffer for 802.15.4 is a tool for learning about and debugging applications that are using protocols based on IEEE 802.15.4, like Thread or Zigbee.
 It provides a near real-time display of 802.15.4 packets that are sent back and forth between devices, even when the link is encrypted.
 
+.. note::
+   The nRF Sniffer for 802.15.4 is intended for development and testing.
+
 See `nRF Sniffer for 802.15.4`_ for documentation.
 
 .. sniffer_shortdesc_end
@@ -32,6 +35,9 @@ nRF Thread Topology Monitor
 
 nRF Thread Topology Monitor is a desktop application that connects to a Thread network through a serial connection to visualize the topology of Thread devices.
 It allows you to scan for new devices in real time, check their parameters, and inspect network processes through the log.
+
+.. note::
+   The nRF Thread Topology Monitor is intended for development and testing.
 
 See `nRF Thread Topology Monitor`_ for documentation.
 
@@ -56,7 +62,7 @@ Typically, a Border Router solution consists of the following parts:
 * A host-side application, usually implemented on a more powerful device with an incorporated Linux-based operating system.
 
 The |NCS| does not provide a complete Thread Border Router solution.
-For development purposes, you can use the `OpenThread Border Router`_ (OTBR) released by Google, an open-source Border Router implementation that you can set up either on your PC using Docker or on a Raspberry Pi.
+For development and testing purposes, you can use the `OpenThread Border Router`_ (OTBR) released by Google, an open-source Border Router implementation that you can set up either on your PC using Docker or on a Raspberry Pi.
 
 The OpenThread Border Router is compatible with Nordic Semiconductor devices.
 It implements a number of features, including:
@@ -268,6 +274,9 @@ OpenThread provides the following applications:
 * ``ot-cli`` - Works like the :ref:`ot_cli_sample` sample for the RCP architecture.
 * ``ot-daemon`` and ``ot-ctl`` - Provides the same functionality as ``ot-cli``, but keeps the daemon running in the background all the time.
   See `OpenThread Daemon`_ for more information.
+
+.. note::
+   All the mentioned applications: ``ot-cli``, ``ot-daemon``, and ``ot-ctl`` are intended for development and testing.
 
 When working with Thread, you can use these tools to interact with the following sample:
 
