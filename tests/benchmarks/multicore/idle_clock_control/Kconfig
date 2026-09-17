@@ -4,9 +4,27 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config AT_LFRC
+config TEST_AT_LFRC
 	bool "BICR configured to use LFRC at LFCLK"
 	help
 	  Use this option if custom BICR (LFRC at LFCLK) is programmed.
+
+config TEST_HSFLL_SERVICE_SUPPORTED
+	bool "Selected if board supports Local Domain HSFLL service"
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+	default y if BOARD_NRF9251DK_NRF9251_CPUAPP
+
+config TEST_GDHSFLL_SERVICE_SUPPORTED
+	bool "Selected if board supports GD HSFLL service"
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+
+config TEST_HFXO_CONTROL_SUPPORTED
+	bool "Selected if board supports HFXO control"
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP
+	default y if BOARD_NRF9251DK_NRF9251_CPUAPP
+
+config TEST_AUXPLL_CONTROL_SUPPORTED
+	bool "Selected if board supports CANPLL or other AUDIOPLL control"
+	default y if BOARD_NRF54H20DK_NRF54H20_CPUAPP
 
 source "Kconfig.zephyr"

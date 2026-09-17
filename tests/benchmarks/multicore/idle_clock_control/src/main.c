@@ -15,10 +15,20 @@
 #define REQUEST_SERVING_WAIT_TIME_US		10000
 #define ADDITIONAL_REQUEST_SERVING_WAIT_TIME_US 350000
 #define SLEEP_TIME_MS				1000
+#define ACTIVE_TIME_MS				1000
+
+LOG_MODULE_REGISTER(idle_clock_control);
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
-LOG_MODULE_REGISTER(idle_clock_control);
+static struct k_timer my_timer;
+K_SEM_DEFINE(timer_expired_sem, 0, 1);
+
+static void my_timer_handler(struct k_timer *dummy)
+{
+	(void)dummy;
+	k_sem_give(&timer_expired_sem);
+}
 
 struct test_clk_ctx {
 	const struct device *clk_dev;
@@ -26,18 +36,20 @@ struct test_clk_ctx {
 	size_t clk_specs_size;
 };
 
-#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+#if defined(CONFIG_TEST_HSFLL_SERVICE_SUPPORTED)
 const struct nrf_clock_spec test_clk_specs_hsfll[] = {
 	{
 		.frequency = MHZ(128),
 		.accuracy = 0,
 		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 	},
+#if defined(CONFIG_SOC_NRF54H20)
 	{
 		.frequency = MHZ(320),
 		.accuracy = 0,
 		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 	},
+#endif /* CONFIG_SOC_NRF54H20 */
 	{
 		.frequency = MHZ(64),
 		.accuracy = 0,
@@ -52,8 +64,9 @@ static const struct test_clk_ctx hsfll_test_clk_ctx[] = {
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hsfll),
 	},
 };
-#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
+#endif /* CONFIG_TEST_HSFLL_SERVICE_SUPPORTED */
 
+#if defined(CONFIG_TEST_GDHSFLL_SERVICE_SUPPORTED)
 const struct nrf_clock_spec test_clk_specs_global_hsfll[] = {
 	{
 		.frequency = MHZ(320),
@@ -76,6 +89,7 @@ static const struct test_clk_ctx global_hsfll_test_clk_ctx[] = {
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_global_hsfll),
 	},
 };
+#endif /* CONFIG_TEST_GDHSFLL_SERVICE_SUPPORTED */
 
 const struct nrf_clock_spec test_clk_specs_fll16m[] = {
 	{
@@ -109,7 +123,7 @@ const struct nrf_clock_spec test_clk_specs_lfclk[] = {
 		.accuracy = 0,
 		.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 	},
-#if defined(CONFIG_AT_LFRC)
+#if defined(CONFIG_TEST_AT_LFRC)
 	{
 		.frequency = 32768,
 		.accuracy = 30,
@@ -137,7 +151,7 @@ static const struct test_clk_ctx lfclk_test_clk_ctx[] = {
 	},
 };
 
-#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+#if defined(CONFIG_TEST_AUXPLL_CONTROL_SUPPORTED)
 const struct nrf_clock_spec test_clk_specs_auxpll[] = {
 	{
 		.frequency = MHZ(80),
@@ -148,12 +162,14 @@ const struct nrf_clock_spec test_clk_specs_auxpll[] = {
 
 static const struct test_clk_ctx auxpll_test_clk_ctx[] = {
 	{
-		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(canpll)),
+		.clk_dev = DEVICE_DT_GET(DT_NODELABEL(tst_auxpll)),
 		.clk_specs = test_clk_specs_auxpll,
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_auxpll),
 	},
 };
+#endif /* CONFIG_TEST_AUXPLL_CONTROL_SUPPORTED */
 
+#if defined(CONFIG_TEST_HFXO_CONTROL_SUPPORTED)
 const struct nrf_clock_spec test_clk_specs_hfxo[] = {
 	{
 		.frequency = MHZ(32),
@@ -169,7 +185,7 @@ static const struct test_clk_ctx hfxo_test_clk_ctx[] = {
 		.clk_specs_size = ARRAY_SIZE(test_clk_specs_hfxo),
 	},
 };
-#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
+#endif /* CONFIG_TEST_HFXO_CONTROL_SUPPORTED */
 
 static void test_request_release_clock_spec(const struct device *clk_dev,
 					    const struct nrf_clock_spec *clk_spec)
@@ -227,17 +243,32 @@ static void test_clock_control_request(const struct test_clk_ctx *clk_contexts,
 
 void run_tests(void)
 {
+
+	/* start a one-shot timer that expires after 1 second */
+	k_timer_start(&my_timer, K_MSEC(ACTIVE_TIME_MS), K_NO_WAIT);
+
 	gpio_pin_set_dt(&led, 1);
-#if defined(CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP)
+#if defined(CONFIG_TEST_AUXPLL_CONTROL_SUPPORTED)
 	test_clock_control_request(auxpll_test_clk_ctx, ARRAY_SIZE(auxpll_test_clk_ctx));
+#endif /* CONFIG_TEST_AUXPLL_CONTROL_SUPPORTED */
+#if defined(CONFIG_TEST_HFXO_CONTROL_SUPPORTED)
 	test_clock_control_request(hfxo_test_clk_ctx, ARRAY_SIZE(hfxo_test_clk_ctx));
+#endif /* CONFIG_TEST_HFXO_CONTROL_SUPPORTED */
+#if defined(CONFIG_TEST_HSFLL_SERVICE_SUPPORTED)
 	test_clock_control_request(hsfll_test_clk_ctx, ARRAY_SIZE(hsfll_test_clk_ctx));
-#endif /* CONFIG_BOARD_NRF54H20DK_NRF54H20_CPUAPP */
+#endif /* CONFIG_TEST_HSFLL_SERVICE_SUPPORTED */
+#if defined(CONFIG_TEST_GDHSFLL_SERVICE_SUPPORTED)
 	test_clock_control_request(global_hsfll_test_clk_ctx,
 				   ARRAY_SIZE(global_hsfll_test_clk_ctx));
+#endif /* CONFIG_TEST_GDHSFLL_SERVICE_SUPPORTED */
 	test_clock_control_request(fll16m_test_clk_ctx, ARRAY_SIZE(fll16m_test_clk_ctx));
 	test_clock_control_request(lfclk_test_clk_ctx, ARRAY_SIZE(lfclk_test_clk_ctx));
 	k_busy_wait(ADDITIONAL_REQUEST_SERVING_WAIT_TIME_US);
+
+	while (k_sem_take(&timer_expired_sem, K_NO_WAIT) != 0) {
+		k_busy_wait(1000);
+	}
+
 	gpio_pin_set_dt(&led, 0);
 	k_msleep(SLEEP_TIME_MS);
 }
@@ -255,6 +286,8 @@ int main(void)
 	ret = gpio_pin_configure_dt(&led, GPIO_OUTPUT_ACTIVE);
 	__ASSERT(ret == 0, "Could not configure led GPIO");
 	gpio_pin_set_dt(&led, 1);
+
+	k_timer_init(&my_timer, my_timer_handler, NULL);
 
 #if defined(CONFIG_COVERAGE)
 	printk("Start testing\n");
