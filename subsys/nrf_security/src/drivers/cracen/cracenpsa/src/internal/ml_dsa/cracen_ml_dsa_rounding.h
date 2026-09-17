@@ -7,6 +7,10 @@
 /** @file
  * @brief Internal definitions for the CRACEN ML-DSA rounding and hints (FIPS 204).
  *
+ * Decompose and MakeHint are defined here as static inline functions: they are called
+ * once per coefficient from the innermost loops of signing and verification, where the
+ * call overhead - and, for Decompose, the stack traffic needed to return its two outputs
+ * through pointers - dominates their actual arithmetic.
  */
 
 #ifndef CRACEN_ML_DSA_ROUNDING_H
@@ -15,6 +19,20 @@
 #include <stdint.h>
 
 #include "cracen_ml_dsa_internal.h"
+
+/**
+ * @brief Check if the provided mask is zero.
+ *
+ * @param[in] v Mask to check.
+ *
+ * @return All-ones mask when v == 0, zero otherwise.
+ */
+static inline int32_t ml_dsa_is_zero_mask(int32_t v)
+{
+	uint32_t x = (uint32_t)v;
+
+	return (int32_t)(((x | (~x + 1u)) >> 31) - 1u);
+}
 
 /**
  * @brief Adjust the coefficient according to the provided hint
@@ -43,6 +61,78 @@ void cracen_ml_dsa_power2round(const ml_dsa_poly_vector_t *in,
 			       ml_dsa_poly_vector_t *t1,
 			       ml_dsa_poly_vector_t *t0);
 
+/** FIPS 204, Algorithm 36 (Decompose), for r already reduced into [0, q).
+ *  Splits r into high bits r1 and the centered low bits r0 in range (-gamma2, gamma2].
+ *  Note: rounding range is gamma2 in terms of the spec.
+ *
+ *  r is secret-dependent, so this function avoids data-dependent division/modulo
+ *  and branching on r: it uses the constant-time approximation inspired by the CRYSTALS-Dilithium
+ *  reference implementation, which only branches on gamma2 (a public parameter with
+ *  exactly two possible values).
+ */
+
+/**
+ * @brief Decompose a coefficient into its high and low bits around 2*gamma2
+ *        (FIPS 204, Algorithm 36 - Decompose).
+ *
+ * Splits r into high bits r1 and the centered low bits r0 in range (-gamma2, gamma2];
+ * rounding range is gamma2 in terms of the spec.
+ *
+ * r is secret-dependent, so this function avoids data-dependent division/modulo
+ * and branching on r: it uses the constant-time approximation inspired by the CRYSTALS-Dilithium
+ * reference implementation, which only branches on gamma2 (a public parameter with
+ * exactly two possible values).
+ *
+ * @note This function is for @p r already reduced into [0, q).
+ *
+ * @param[in] r       Coefficient in the range (-q, 2q); reduced mod q internally.
+ * @param[in] gamma2  Low-order rounding range of the active parameter set.
+ * @param[out] r0     The centered low-order bits of the coefficient.
+ * @param[out] r1     The high-order bits of the coefficient.
+ */
+static inline void ml_dsa_decompose_reduced(int32_t r, uint32_t gamma2, int32_t *r0, int32_t *r1)
+{
+	int32_t alpha = (int32_t)(gamma2 << 1); /* alpha = 2*gamma2, see FIPS 204, Section 2.3 */
+	int32_t high;
+	int32_t low;
+
+	high = (r + 127) >> 7;
+	/** Note: Branching on gamma2, which is a public parameter with exactly two possible values
+	 *  (depends on algorithm type).
+	 */
+	if (gamma2 == ML_DSA_GAMMA2(32)) {
+		high = (high * 1025 + (1 << 21)) >> 22;
+		high &= 15;
+	} else {
+		high = (high * 11275 + (1 << 23)) >> 24;
+		high ^= ((43 - high) >> 31) & high;
+	}
+
+	low = r - high * alpha;
+	low -= (((ML_DSA_PRIME_NUM - 1) / 2 - low) >> 31) & ML_DSA_PRIME_NUM;
+
+	*r0 = low;
+	*r1 = high;
+}
+
+/**
+ * @brief Bring a coefficient back into [0, q) range,
+ *        as required by ml_dsa_decompose_reduced().
+ *        Signing forms these coefficients as sums and differences
+ *        of inverse-NTT outputs (each already in [0, q)).
+ *
+ * @param[in] r Coefficient in the range (-q, 2q).
+ *
+ * @return Coefficient @p r in the range [0, q).
+ */
+static inline int32_t ml_dsa_center_to_zq(int32_t r)
+{
+	int32_t sum = ((r >> 31) & ML_DSA_PRIME_NUM) |
+		       (((ML_DSA_PRIME_NUM - r - 1) >> 31) & -ML_DSA_PRIME_NUM);
+
+	return r + sum;
+}
+
 /**
  * @brief Decompose a coefficient into its high and low bits around 2*gamma2
  *	  (FIPS 204, Algorithm 36 - Decompose).
@@ -52,7 +142,10 @@ void cracen_ml_dsa_power2round(const ml_dsa_poly_vector_t *in,
  * @param[out] r0     The centered low-order bits of the coefficient.
  * @param[out] r1     The high-order bits of the coefficient.
  */
-void cracen_ml_dsa_decompose(int32_t r, uint32_t gamma2, int32_t *r0, int32_t *r1);
+static inline void cracen_ml_dsa_decompose(int32_t r, uint32_t gamma2, int32_t *r0, int32_t *r1)
+{
+	ml_dsa_decompose_reduced(ml_dsa_center_to_zq(r), gamma2, r0, r1);
+}
 
 /**
  * @brief Return the high-order bits of a coefficient
@@ -79,6 +172,15 @@ int32_t cracen_ml_dsa_high_bits(int32_t r, uint32_t gamma2);
  *
  * @return 1 if adding z changes the high bits of r, 0 otherwise.
  */
-int32_t cracen_ml_dsa_make_hint(int32_t r0, int32_t r1, uint32_t gamma2);
+static inline int32_t cracen_ml_dsa_make_hint(int32_t r0, int32_t r1, uint32_t gamma2)
+{
+	int32_t bound = (int32_t)gamma2;
+	int32_t above_bound = (bound - r0) >> 31;
+	int32_t below_bound = (r0 + bound) >> 31;
+	/* All-ones if (r0 == -gamma2 && r1 != 0). */
+	int32_t at_low_edge = ml_dsa_is_zero_mask(r0 + bound) & ~ml_dsa_is_zero_mask(r1);
+
+	return (above_bound | below_bound | at_low_edge) & 1;
+}
 
 #endif /* CRACEN_ML_DSA_ROUNDING_H */
