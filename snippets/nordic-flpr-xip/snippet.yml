@@ -1,0 +1,8 @@
+name: nordic-flpr-xip
+append:
+  EXTRA_DTC_OVERLAY_FILE: nordic-flpr-xip.overlay
+
+boards:
+  /.*/nrf9251/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuapp.overlay
