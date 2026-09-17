@@ -88,7 +88,8 @@ The nRF Desktop devices use one of the following Link Layers:
     This Link Layer does not support the Low Latency Packet Mode (LLPM) and has a lower memory usage, so it can be used by memory-limited devices.
 
 * :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE`
-    This Link Layer does support the Low Latency Packet Mode (LLPM).
+    This Link Layer supports the Low Latency Packet Mode (LLPM).
+    It also supports Bluetooth Shorter Connection Intervals, which are required by HID Shorter Connection Intervals (HID SCI).
     If you opt for this Link Layer and enable the :kconfig:option:`CONFIG_BT_CTLR_SDC_LLPM`, the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` is also enabled by default and can be configured further:
 
     * When :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` is enabled, set the value for :kconfig:option:`CONFIG_BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT` to ``3000``.
@@ -132,6 +133,7 @@ The nRF Desktop peripheral devices must include additional configuration options
 The HID over GATT profile specification requires Bluetooth Peripherals to define the following GATT Services:
 
 * HID Service - Handled in the :ref:`nrf_desktop_hids`.
+  This also includes handling HID SCI as part of HID GATT Service if the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled.
 * Battery Service - Handled in the :ref:`nrf_desktop_bas`.
 * Device Information Service - Implemented in Zephyr and enabled with the :kconfig:option:`CONFIG_BT_DIS` Kconfig option.
   The device identifiers are configured according to the common :ref:`nrf_desktop_hid_device_identifiers` by default.
@@ -208,9 +210,14 @@ Bluetooth Central
 
 The nRF Desktop central must implement Bluetooth scanning and handle the GATT operations.
 The central must also control the Bluetooth connection parameters.
+For connections that do not use HID SCI, the central adjusts them directly.
+For HID SCI connections, the central requests the proper HID SCI mode from the connected peripherals.
 These features are implemented by the following application modules:
 
 * :ref:`nrf_desktop_ble_scan` - Controls the Bluetooth scanning.
 * :ref:`nrf_desktop_ble_conn_params` - Controls the Bluetooth connection parameters and reacts on latency update requests received from the connected peripherals.
+  For HID SCI connections, the module negotiates connection parameters using HID SCI modes.
 * :ref:`nrf_desktop_ble_discovery` - Handles discovering and reading the GATT Characteristics from the connected peripheral.
 * :ref:`nrf_desktop_hid_forward` - Subscribes for HID reports from the Bluetooth Peripherals (HID over GATT) and forwards data using application events.
+  When HID SCI is enabled, the module uses the HOGP client to send HID SCI mode change requests and report mode changes from peripherals.
+  The connection parameter policy is handled by the :ref:`nrf_desktop_ble_conn_params`.

@@ -32,11 +32,36 @@ Make sure that both :option:`CONFIG_DESKTOP_ROLE_HID_DONGLE` and :option:`CONFIG
 The |ble_conn_params| is enabled by the :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_ENABLE` option.
 The option is implied by :option:`CONFIG_DESKTOP_BT_CENTRAL` together with other features used by a HID dongle that forwards the HID reports received over Bluetooth LE.
 
+HID SCI configuration
+=====================
+
+Enable the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option in the :ref:`nrf_desktop_hid_forward` to use HID SCI on the dongle.
+The option sets the promptless :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE` Kconfig option in the |ble_conn_params|.
+When enabled, the module sets the default connection rate parameters on module initialization using the :c:func:`bt_conn_le_conn_rate_set_defaults` function.
+These act as limits for the connection rate parameters used by all the established connections.
+You can configure them using the following Kconfig options:
+
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MIN_125US` - Minimum connection interval in 125 µs units.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_INTERVAL_MAX_125US` - Maximum connection interval in 125 µs units.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MIN` - Minimum subrate factor.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUBRATE_MAX` - Maximum subrate factor.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_MAX_LATENCY` - Maximum peripheral latency.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_CONTINUATION_NUM` - Continuation number.
+* :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_SCI_SUPERVISION_TIMEOUT_10MS` - Link supervision timeout in 10 ms units.
+
+These options define the central's default connection rate limits for all the connections.
+They are not the same as the HID SCI mode transport parameters negotiated with the peripheral.
+For more information, see the Kconfig help and the :ref:`nrf_desktop_ble_conn_params_hid_sci` section.
+
+USB-managed connection parameters
+=================================
+
 Enable the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` Kconfig option to reduce dongle power consumption while USB is suspended by adjusting Bluetooth connection parameters based on the USB state.
 The option is enabled by default.
 For standard (non-SCI) connections, use the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` Kconfig option to set the connection interval used in suspended state (100 ms by default) and the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_LATENCY_VALUE` Kconfig option to set the peripheral latency used in suspended state (``1`` by default).
 For HID SCI connections, the module requests the appropriate HID SCI mode instead.
-See the :ref:`nrf_desktop_ble_conn_params_usb_managed_ci` section in the Implementation details for more information.
+See the :ref:`nrf_desktop_ble_conn_params_usb_managed_ci` section for more information.
+
 
 Implementation details
 **********************
@@ -82,7 +107,7 @@ When USB is disconnected or becomes active, the module restores the connection p
 HID SCI connections
 -------------------
 
-For connections that use HID SCI, the module does not update connection parameters directly, as such behavior would break the `HID Over GATT Profile Specification`_.
+For connections that use HID SCI, the module does not update connection parameters directly, as such behavior is not recommended by the `HID Over GATT Profile Specification`_.
 Instead, it requests an appropriate HID SCI mode from the peripheral:
 
 * On USB suspend, the module requests the LOW_POWER HID SCI mode.
@@ -93,16 +118,13 @@ The :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI_VALUE` and :option:`CONFIG_DESKTO
 If a peer switches out of the LOW_POWER mode while USB is suspended (for example, when the peer wakes up from power down), the module immediately requests the LOW_POWER mode again to avoid excessive power consumption.
 
 .. note::
-   Make sure that the configured peripheral's LOW_POWER HID SCI connection parameters allow for the dongle's current to remain under the required limit of 2.5 mA while USB is suspended.
-   The LOW_POWER HID SCI mode parameters configured in nrf_desktop meet this requirement.
+   Make sure that the configured peripheral's LOW_POWER HID SCI connection parameters allow for the dongle's current to remain under the required limit of 2.5 mA while USB is suspended for the maximum number of simultaneous connections.
+   The LOW_POWER HID SCI mode parameters configured in the nRF Desktop application meet this requirement.
 
 .. _nrf_desktop_ble_conn_params_hid_sci:
 
 HID SCI
 =======
-
-When the :option:`CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE` Kconfig option is enabled, the |ble_conn_params| sets the promptless :option:`CONFIG_DESKTOP_BLE_CONN_PARAMS_HID_SCI_ENABLE` Kconfig option.
-With this option set, the module sets default connection rate parameters on module initialization using :c:func:`bt_conn_le_conn_rate_set_defaults`.
 
 For HID SCI connections, the module does not perform the standard connection parameter update.
 Instead, it controls the connection parameters by requesting appropriate HID SCI modes from the peripheral, as required by the `HID Over GATT Profile Specification`_.
@@ -133,6 +155,8 @@ After the :ref:`nrf_desktop_ble_discovery` completes the peripheral discovery, t
   When the :option:`CONFIG_DESKTOP_BLE_USB_MANAGED_CI` Kconfig option is enabled and USB is suspended, HID SCI LOW_POWER mode is requested instead.
 * If the peripheral supports HID SCI and other HID SCI peripherals are already connected, the module scales the minimum connection interval for each peripheral by the number of connected HID SCI peripherals.
   The module requests the preferred HID SCI mode from a peripheral after its connection rate update completes.
+* If the peripheral supports both HID SCI and LLPM, HID SCI takes precedence.
+  No nRF Desktop peripheral nor central configuration enables both options.
 * If the central and the connected peripheral both support the Low Latency Packet Mode (LLPM), the connection interval is set to **1 ms**.
 * If neither the central nor the connected peripheral support LLPM, or if only one of them supports it, the interval is set to the following values:
 

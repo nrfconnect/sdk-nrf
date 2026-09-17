@@ -37,19 +37,21 @@ The option is implied by :option:`CONFIG_DESKTOP_BT_PERIPHERAL` together with ot
 You can use the option :option:`CONFIG_DESKTOP_BLE_SECURITY_FAIL_TIMEOUT_S` to define the maximum allowed time for establishing the connection security.
 If the connection is not secured during this period of time, the peripheral device disconnects.
 
+When the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled in the :ref:`nrf_desktop_hids`, the |ble_latency| sets the promptless :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` Kconfig option.
+With this option set, the module handles HID SCI mode change requests and adjusts connection latency using the connection rate API.
+See the :ref:`nrf_desktop_hids` documentation for details about enabling HID SCI support on the peripheral.
+
 You can set the option :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` to keep the connection latency low for the LLPM connections.
 The option requires :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`.
 This speeds up sending the first HID report after not sending a report for some connection intervals.
 Enabling this option increases the power consumption - the connection latency is kept low unless the device is in the low power mode.
 
+For HID SCI connections, you can achieve a similar result to using the :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` option by setting :kconfig:option:`CONFIG_BT_HIDS_SCI_FAST_MAX_LATENCY` to ``0``.
+
 You can use the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option to enable or disable handling of the power management events, such as :c:struct:`power_down_event` and :c:struct:`wake_up_event`.
 The option depends on the :kconfig:option:`CONFIG_CAF_PM_EVENTS` Kconfig option.
 It is enabled by default when either :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` or :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` is selected.
 Without one of these options, there is no power-management behavior for the module to apply to these events.
-
-When the :option:`CONFIG_DESKTOP_HIDS_SCI_ENABLE` Kconfig option is enabled in the :ref:`nrf_desktop_hids`, the |ble_latency| sets the promptless :option:`CONFIG_DESKTOP_BLE_LATENCY_HID_SCI_ENABLE` Kconfig option.
-With this option set, the module handles HID SCI mode change requests and adjusts connection latency using the connection rate API.
-See the :ref:`nrf_desktop_hids` documentation for details about enabling HID SCI support on the peripheral.
 
 Implementation details
 **********************
@@ -70,6 +72,10 @@ When the :ref:`nrf_desktop_config_channel` is no longer in use, and neither :ref
 
 .. note::
    If the :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` Kconfig option is enabled, the LLPM connection latency is not increased unless the device is in the low power mode.
+
+.. note::
+   For HID SCI connections, the latency is only increased to the maximum value configured for the current HID SCI mode (in the respective ``CONFIG_BT_HIDS_SCI_*_MAX_LATENCY`` Kconfig option).
+   For modes with the configured maximum latency set to ``0``, the latency is not increased.
 
    When the device is in the low power mode and the events related to data transfer are not received, the connection latency is set to higher value to reduce the power consumption.
 

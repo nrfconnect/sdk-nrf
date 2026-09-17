@@ -15,6 +15,11 @@ The device description module defines the custom GATT Service that contains:
 To support the LLPM, the peripheral must use the SoftDevice Link Layer.
 This means that you must enable both the :kconfig:option:`CONFIG_BT_LL_SOFTDEVICE` and the :kconfig:option:`CONFIG_CAF_BLE_USE_LLPM` Kconfig options.
 
+.. note::
+   HID Shorter Connection Intervals (SCI) support is not part of the device description service.
+   The nRF Desktop central determines HID SCI capability from the HID Service during GATT discovery.
+   See the :ref:`nrf_desktop_ble_discovery` and :ref:`nrf_desktop_hid_forward` documentation pages for details.
+
 The Service is mandatory for all nRF Desktop peripherals that connect to the nRF Desktop centrals.
 
 Module events

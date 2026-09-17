@@ -13,8 +13,9 @@ If this module is disabled, a startup delay of around 1.4 ms (0.85 ms in case of
 
 .. note::
    The module is deprecated.
-   Use the :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK`) Kconfig option instead.
-   Setting the peripheral latency Bluetooth LE connection parameter to ``0`` for a connection that uses Low Latency Packet Mode connection interval on peripheral leads to keeping the high frequency clock enabled.
+   Use the :option:`CONFIG_DESKTOP_BLE_LOW_LATENCY_LOCK` Kconfig option instead for LLPM connections.
+   For HID SCI connections, set :kconfig:option:`CONFIG_BT_HIDS_SCI_FAST_MAX_LATENCY` to ``0``.
+   Setting the peripheral latency Bluetooth LE connection parameter to ``0`` for a connection that uses Low Latency Packet Mode connection interval on the peripheral keeps the high frequency clock enabled.
    That mitigates the extra HID report latency caused by the high frequency clock startup delay.
 
 Module events
