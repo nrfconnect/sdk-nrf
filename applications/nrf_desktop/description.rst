@@ -493,7 +493,7 @@ If the device is disconnected from USB, it automatically switches to sending the
 Dongle USB
 ~~~~~~~~~~
 
-The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE or Low Latency Packet Mode and the host connected through USB.
+The nRF Desktop dongle works as a bridge between the devices connected through standard Bluetooth LE, Low Latency Packet Mode (LLPM), or Bluetooth with Shorter Connection Intervals (SCI) support, and the host connected through USB.
 It receives data wirelessly from the connected peripherals and forwards the data to the host.
 
 The nRF Desktop dongle is powered directly through USB.
