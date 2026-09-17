@@ -110,5 +110,15 @@ uint32_t cracen_wait_for_cm_interrupt(void)
 
 uint32_t cracen_wait_for_pke_interrupt(void)
 {
+#if !defined(__NRF_TFM__)
+	if (k_is_pre_kernel()) {
+		/* Scheduling is not available pre-kernel, so the caller has to
+		 * poll the hardware status instead. Initialization may run PKE
+		 * operations at this point.
+		 */
+		return 0;
+	}
+#endif
+
 	return cracen_wait_for_interrupt(cracen_irq_event_for_pke);
 }
