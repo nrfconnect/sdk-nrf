@@ -63,7 +63,8 @@ extensions = [
     "memory_table",
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
-    "sphinxcontrib.jquery"
+    "sphinxcontrib.jquery",
+    "ncs_file",
 ]
 
 linkcheck_ignore = [
