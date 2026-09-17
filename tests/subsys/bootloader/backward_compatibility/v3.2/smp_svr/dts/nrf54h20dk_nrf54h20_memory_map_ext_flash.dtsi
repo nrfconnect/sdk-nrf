@@ -1,0 +1,53 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Backward compatibility: pin the v3.2 ext_flash partition geometry.
+ * v3.2 used 328K (0x52000) application/radio slots, so the cpuapp slot0
+ * lives at 0x40000 (size 328K) and the cpurad slot2 at 0x92000 (size 328K),
+ * with the matching update slots in external flash at 0x0 (slot1) and
+ * 0x52000 (slot3). Current dev grew these slots to 712K; pinning the v3.2
+ * sizes keeps the update image aligned with the v3.2 MCUboot on device.
+ */
+
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpurad_slot0_partition;
+/delete-node/ &cpuapp_slot1_partition;
+/delete-node/ &cpurad_slot1_partition;
+
+&mram1x {
+	partitions {
+		cpuapp_slot0_partition: slot0_partition: partition@40000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x40000 DT_SIZE_K(328)>;
+		};
+
+		cpurad_slot0_partition: slot2_partition: partition@92000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-2";
+			reg = <0x92000 DT_SIZE_K(328)>;
+		};
+	};
+};
+
+&mx25uw63 {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		cpuapp_slot1_partition: slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(328)>;
+		};
+
+		cpurad_slot1_partition: slot3_partition: partition@52000 {
+			label = "image-3";
+			reg = <0x52000 DT_SIZE_K(328)>;
+		};
+	};
+};
