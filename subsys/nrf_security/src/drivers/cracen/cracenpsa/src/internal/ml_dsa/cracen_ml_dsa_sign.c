@@ -210,7 +210,7 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 			 *  tmp = A_row * NTT(mask_or_signers_resp)
 			 */
 			cracen_ml_dsa_multiply_ntt(&tmp, &tmp, &tmp2);
-			cracen_ml_dsa_add_ntt(&commitment[row], &commitment[row], &tmp);
+			cracen_ml_dsa_add_ntt(&commitment[row], &tmp);
 		}
 	}
 

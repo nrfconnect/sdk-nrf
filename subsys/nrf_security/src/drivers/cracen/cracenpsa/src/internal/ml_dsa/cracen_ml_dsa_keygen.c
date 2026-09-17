@@ -86,7 +86,7 @@ psa_status_t cracen_ml_dsa_keygen_internal(const ml_dsa_params_t *alg_params, co
 
 			/* for a single row: t1 = A_row * NTT(s1_hat) */
 			cracen_ml_dsa_multiply_ntt(&t1, &t1, &s1_hat[col]);
-			cracen_ml_dsa_add_ntt(&acc, &acc, &t1);
+			cracen_ml_dsa_add_ntt(&acc, &t1);
 		}
 
 		cracen_ml_dsa_ntt_inversed(&acc);

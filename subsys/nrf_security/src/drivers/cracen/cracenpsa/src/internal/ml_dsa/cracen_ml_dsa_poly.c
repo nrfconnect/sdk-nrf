@@ -176,20 +176,16 @@ void cracen_ml_dsa_multiply_ntt(ml_dsa_poly_vector_t *out_vec,
 	}
 }
 
-void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *out_vec,
-			   const ml_dsa_poly_vector_t *a,
-			   const ml_dsa_poly_vector_t *b)
+void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *a, const ml_dsa_poly_vector_t *b)
 {
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-		out_vec->coeffs[i] = a->coeffs[i] + b->coeffs[i];
+		a->coeffs[i] = a->coeffs[i] + b->coeffs[i];
 	}
 }
 
-void cracen_ml_dsa_subtract_ntt(ml_dsa_poly_vector_t *out_vec,
-				const ml_dsa_poly_vector_t *a,
-				const ml_dsa_poly_vector_t *b)
+void cracen_ml_dsa_subtract_ntt(ml_dsa_poly_vector_t *a, const ml_dsa_poly_vector_t *b)
 {
 	for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
-		out_vec->coeffs[i] = a->coeffs[i] - b->coeffs[i];
+		a->coeffs[i] = a->coeffs[i] - b->coeffs[i];
 	}
 }
