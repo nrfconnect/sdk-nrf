@@ -6,6 +6,8 @@
 
 &grtc {
 	/delete-property/ child-owned-channels;
+	owned-channels = <0 4 5 6>;
+	extended-channels = <0>;
 };
 
 tst_timer: &timer130 {
