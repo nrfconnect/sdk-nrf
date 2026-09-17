@@ -338,6 +338,109 @@ struct peers_info {
 	bool authorized;
 };
 
+#if defined(__DOXYGEN__) && !defined(NRF71_MAX_TX_TOKENS)
+/** Maximum number of TX tokens (comes from CONFIG_NRF71_MAX_TX_TOKENS). */
+#define NRF71_MAX_TX_TOKENS 12
+#endif
+
+/**
+ * @brief Structure to hold TX token (descriptor) debug statistics.
+ *
+ * These counters are purely for debugging TX performance issues: they show
+ * how the TX tokens are being used, how well packets are being aggregated
+ * into a single TX command and where packets are being held back or dropped
+ * in the host.
+ */
+/** Number of buckets in the per-command token fill level histogram. */
+#define TX_TOKEN_FILL_BUCKETS 10
+
+struct tx_token_stats {
+	/** Number of times each TX token (descriptor) was acquired from the free pool. */
+	unsigned int token_acq[NRF71_MAX_TX_TOKENS];
+	/** Number of TX commands issued on each TX token. */
+	unsigned int token_cmds[NRF71_MAX_TX_TOKENS];
+	/** Number of packets carried by each TX token. */
+	unsigned int token_pkts[NRF71_MAX_TX_TOKENS];
+	/** Occupancy (packet data + per-packet headroom) carried by each token, in bytes. */
+	unsigned long long token_bytes[NRF71_MAX_TX_TOKENS];
+	/** Highest number of packets carried by a single command, per token. */
+	unsigned int token_max_pkts[NRF71_MAX_TX_TOKENS];
+	/** Highest occupancy carried by a single command, per token, in bytes. */
+	unsigned int token_max_bytes[NRF71_MAX_TX_TOKENS];
+	/** Number of TX commands which carried (index + 1) packets. */
+	unsigned int pkts_per_cmd[MAX_TX_AGG_SIZE];
+	/** Per-command token fill level, in buckets of 10% of the per-token size cap. */
+	unsigned int fill_hist[TX_TOKEN_FILL_BUCKETS];
+	/** Number of TX commands passed to the RPU firmware. */
+	unsigned int tx_cmds;
+	/** Number of packets passed to the RPU firmware in all TX commands. */
+	unsigned int tx_cmd_pkts;
+	/** Total occupancy (data + headroom) of all TX commands, in bytes. */
+	unsigned long long tx_cmd_bytes;
+	/** Total packet data of all TX commands, in bytes. */
+	unsigned long long tx_cmd_data_bytes;
+	/** Highest occupancy of a single TX command, in bytes. */
+	unsigned int max_cmd_bytes;
+	/** Aggregation stopped because the per-token size cap was reached. */
+	unsigned int aggr_stop_size;
+	/** Aggregation stopped because the maximum aggregation count was reached. */
+	unsigned int aggr_stop_count;
+	/** Aggregation stopped because the next packet had a different SA/RA or peer is legacy. */
+	unsigned int aggr_stop_mismatch;
+	/** Aggregation stopped because the device entered TWT sleep. */
+	unsigned int aggr_stop_twt;
+	/** Aggregation stopped because the pending queue ran empty. */
+	unsigned int aggr_stop_q_empty;
+	/** Commands which had to fall back to a single packet. */
+	unsigned int aggr_forced_single;
+	/** Number of TX done events processed. */
+	unsigned int tx_dones;
+	/** Number of reserved (per-AC) token acquisitions, per AC. */
+	unsigned int reserved_token_get[NRF_WIFI_FMAC_AC_MAX];
+	/** Number of spare (shared) token acquisitions, per AC. */
+	unsigned int spare_token_get[NRF_WIFI_FMAC_AC_MAX];
+	/** Number of token requests which found all tokens busy, per AC.
+	 *
+	 * This is not an error: the packet is left on the pending queue and is
+	 * picked up when a token completes, so under sustained traffic almost
+	 * every request lands here while the tokens are in flight.
+	 */
+	unsigned int token_get_busy[NRF_WIFI_FMAC_AC_MAX];
+	/** Number of token requests which found no token while the AC had none
+	 *  in flight, per AC. Unlike @ref token_get_busy this is an anomaly:
+	 *  the AC can make no progress at all.
+	 */
+	unsigned int token_get_starved[NRF_WIFI_FMAC_AC_MAX];
+	/** Number of times a spare token was re-assigned to another AC on TX done. */
+	unsigned int spare_token_ac_switch;
+	/** Highest number of outstanding tokens seen, per AC. */
+	unsigned int max_outstanding_descs[NRF_WIFI_FMAC_AC_MAX];
+	/** Highest pending TX queue length seen, per AC. */
+	unsigned int max_pending_qlen[NRF_WIFI_FMAC_AC_MAX];
+	/** Packets dropped because the pending TX queue was full, per AC. */
+	unsigned int pend_q_full_drops[NRF_WIFI_FMAC_AC_MAX];
+	/** Packets queued in the host because no token was available. */
+	unsigned int pkts_queued;
+	/** Calls into the network interface TX entry point. */
+	unsigned int if_send_calls;
+	/** Network interface TX calls accepted by the FMAC TX path.
+	 *
+	 * Accepted only means the packet was taken over: nrf_wifi_fmac_tx()
+	 * reports a packet held on the pending queue as success, so use
+	 * @ref pkts_queued and the token counters to tell whether it was
+	 * handed to the RPU firmware straight away.
+	 */
+	unsigned int if_send_accepted;
+	/** Network interface TX drops due to network buffer allocation failure. */
+	unsigned int if_drop_no_nbuf;
+	/** Network interface TX drops due to an unknown peer. */
+	unsigned int if_drop_unknown_peer;
+	/** Network interface TX drops due to carrier down or unauthorized port. */
+	unsigned int if_drop_not_ready;
+	/** Network interface TX drops reported by the FMAC TX path. */
+	unsigned int if_drop_fmac_fail;
+};
+
 /**
  * @brief Structure to hold transmit path context information.
  *
@@ -374,6 +477,8 @@ struct tx_config {
 	/** Deferred TX-done events for the TX-done work queue. */
 	sys_dlist_t tx_done_event_q;
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
+	/** TX token debug statistics. */
+	struct tx_token_stats token_stats;
 };
 #endif /* NRF71_STA_MODE || NRF71_RAW_DATA_RX */
 
