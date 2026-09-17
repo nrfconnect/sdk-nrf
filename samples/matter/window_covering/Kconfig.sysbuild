@@ -23,6 +23,12 @@ choice BOOTLOADER
 	default BOOTLOADER_MCUBOOT if !BOARD_NRF21540DK
 endchoice
 
+# The nRF54LC10 DK keeps MCUboot but uses a single application slot:
+# it has no external flash and its RRAM cannot hold two Matter-sized slots.
+# DFU can be added by introducing external flash.
+config MATTER_OTA
+	default n if BOARD_NRF54LC10DK
+
 if BOOTLOADER_MCUBOOT
 
 #### DFU multi-image support
@@ -56,6 +62,15 @@ config MCUBOOT_NRF53_MULTI_IMAGE_UPDATE
 	default y if NETCORE_APP_UPDATE
 
 endif # SOC_SERIES_NRF53
+
+# Disable Secondary slot for nRF54LC10 DK since it lacks memory to support it.
+if BOARD_NRF54LC10DK
+
+choice MCUBOOT_MODE
+	default MCUBOOT_MODE_SINGLE_APP
+endchoice
+
+endif # BOARD_NRF54LC10DK
 
 endif # BOOTLOADER_MCUBOOT
 
