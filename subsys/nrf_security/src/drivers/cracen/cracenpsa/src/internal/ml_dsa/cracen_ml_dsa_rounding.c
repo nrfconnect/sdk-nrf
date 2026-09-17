@@ -18,6 +18,14 @@
 #define ML_DSA_HIGH_BITS_MOD_32	((ML_DSA_PRIME_NUM - 1) / (2 * ML_DSA_GAMMA2(32)))
 #define ML_DSA_HIGH_BITS_MOD_88	((ML_DSA_PRIME_NUM - 1) / (2 * ML_DSA_GAMMA2(88)))
 
+/* Returns all-ones mask when v == 0, zero otherwise. */
+static int32_t is_zero_mask(int32_t v)
+{
+	uint32_t x = (uint32_t)v;
+
+	return (int32_t)(((x | (~x + 1u)) >> 31) - 1u);
+}
+
 /** FIPS 204, Algorithm 36 (Decompose).
  *  Splits r (in [0, q)) into high bits r1 and the centered low bits r0
  *  in range (-gamma2, gamma2].
@@ -103,25 +111,27 @@ void cracen_ml_dsa_power2round(const ml_dsa_poly_vector_t *in, ml_dsa_poly_vecto
 	}
 }
 
+void cracen_ml_dsa_decompose(int32_t r, uint32_t gamma2, int32_t *r0, int32_t *r1)
+{
+	decompose(center_to_zq(r), gamma2, r0, r1);
+}
+
 int32_t cracen_ml_dsa_high_bits(int32_t r, uint32_t gamma2)
 {
 	int32_t r0;
 	int32_t r1;
 
-	decompose(center_to_zq(r), gamma2, &r0, &r1);
+	cracen_ml_dsa_decompose(r, gamma2, &r0, &r1);
 	return r1;
 }
 
-int32_t cracen_ml_dsa_low_bits(int32_t r, uint32_t gamma2)
+int32_t cracen_ml_dsa_make_hint(int32_t r0, int32_t r1, uint32_t gamma2)
 {
-	int32_t r0;
-	int32_t r1;
+	int32_t bound = (int32_t)gamma2;
+	int32_t above_bound = (bound - r0) >> 31;
+	int32_t below_bound = (r0 + bound) >> 31;
+	/* All-ones if (r0 == -gamma2 && r1 != 0). */
+	int32_t at_low_edge = is_zero_mask(r0 + bound) & ~is_zero_mask(r1);
 
-	decompose(center_to_zq(r), gamma2, &r0, &r1);
-	return r0;
-}
-
-int32_t cracen_ml_dsa_make_hint(int32_t z, int32_t r, uint32_t gamma2)
-{
-	return cracen_ml_dsa_high_bits(r, gamma2) != cracen_ml_dsa_high_bits(r + z, gamma2);
+	return (above_bound | below_bound | at_low_edge) & 1;
 }
