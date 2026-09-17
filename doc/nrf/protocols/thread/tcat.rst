@@ -22,3 +22,6 @@ After flashing the sample to the device, use the following command to enable TCA
 
 Currently, `BBTC Client`_ is the only available TCAT commissioner tool, and can be found in the OpenThread repository.
 Refer to the tool's documentation for more information.
+
+.. note::
+   The `BBTC Client`_ is intended to be used for development and testing purposes only.
