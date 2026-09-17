@@ -21,6 +21,10 @@
 #include <system/fmac_api.h>
 #include <system/fmac_peer.h>
 #include <system/fmac_tx.h>
+#include <common/util.h>
+#include <zephyr/kernel.h>
+#include <zephyr/net/net_core.h>
+#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -855,6 +859,54 @@ static void tx_cmd_stats_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	stats->token_bytes[desc] += occupancy;
 	tx_stats_track_max(&stats->token_max_pkts[desc], num_pkts);
 	tx_stats_track_max(&stats->token_max_bytes[desc], occupancy);
+
+	/* Start of the in-flight window of this command. */
+	stats->token_issue_cyc[desc] = k_cycle_get_32();
+
+	if (stats->cmds_in_flight == 0) {
+		unsigned int now = k_cycle_get_32();
+
+		if (stats->pipe_transition_cyc != 0) {
+			stats->pipe_idle_us +=
+				k_cyc_to_us_floor32(now - stats->pipe_transition_cyc);
+		}
+		stats->pipe_transition_cyc = now;
+	}
+
+	stats->cmds_in_flight++;
+	tx_stats_track_max(&stats->max_cmds_in_flight, stats->cmds_in_flight);
+}
+
+/* Close the in-flight window of the command on this token. */
+static void tx_done_stats_update(struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx,
+				 unsigned int desc)
+{
+	struct tx_token_stats *stats = &sys_dev_ctx->tx_config.token_stats;
+	unsigned int now = k_cycle_get_32();
+	unsigned int inflight_us;
+
+	if ((desc >= NRF71_MAX_TX_TOKENS) || (stats->token_issue_cyc[desc] == 0)) {
+		return;
+	}
+
+	inflight_us = k_cyc_to_us_floor32(now - stats->token_issue_cyc[desc]);
+	stats->token_issue_cyc[desc] = 0;
+	stats->token_inflight_us[desc] += inflight_us;
+	tx_stats_track_max(&stats->token_max_inflight_us[desc], inflight_us);
+
+	if (stats->cmds_in_flight == 0) {
+		return;
+	}
+
+	stats->cmds_in_flight--;
+
+	if (stats->cmds_in_flight == 0) {
+		if (stats->pipe_transition_cyc != 0) {
+			stats->pipe_busy_us +=
+				k_cyc_to_us_floor32(now - stats->pipe_transition_cyc);
+		}
+		stats->pipe_transition_cyc = now;
+	}
 }
 
 static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -1355,6 +1407,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
 
 	sys_dev_ctx->tx_config.token_stats.tx_dones++;
+	tx_done_stats_update(sys_dev_ctx, desc);
 
 	pkt = 0;
 

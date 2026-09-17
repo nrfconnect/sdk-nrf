@@ -367,6 +367,22 @@ struct tx_token_stats {
 	unsigned int token_max_pkts[NRF71_MAX_TX_TOKENS];
 	/** Highest occupancy carried by a single command, per token, in bytes. */
 	unsigned int token_max_bytes[NRF71_MAX_TX_TOKENS];
+	/** Cycle stamp of the command in flight on each token, 0 if idle. */
+	unsigned int token_issue_cyc[NRF71_MAX_TX_TOKENS];
+	/** Accumulated in-flight time (command issued to TX done), per token, in us. */
+	unsigned long long token_inflight_us[NRF71_MAX_TX_TOKENS];
+	/** Longest in-flight time of a single command, per token, in us. */
+	unsigned int token_max_inflight_us[NRF71_MAX_TX_TOKENS];
+	/** Number of commands currently in flight. */
+	unsigned int cmds_in_flight;
+	/** Highest number of commands in flight at once. */
+	unsigned int max_cmds_in_flight;
+	/** Cycle stamp of the last transition of cmds_in_flight through zero. */
+	unsigned int pipe_transition_cyc;
+	/** Time with at least one command in flight, in us. */
+	unsigned long long pipe_busy_us;
+	/** Time with no command in flight, in us. */
+	unsigned long long pipe_idle_us;
 	/** Number of TX commands which carried (index + 1) packets. */
 	unsigned int pkts_per_cmd[MAX_TX_AGG_SIZE];
 	/** Per-command token fill level, in buckets of 10% of the per-token size cap. */
