@@ -41,7 +41,7 @@ To use the module, complete the following requirements:
 
    a. Add a file that defines the following information in an array of :c:struct:`sm_sensor_config` for every sensor that you want to be handled by the |sensor_manager|:
 
-      * :c:member:`sm_sensor_config.dev_name` - Sensor device name.
+      * :c:member:`sm_sensor_config.dev` - Sensor device.
         The name must match the sensor label in the :file:`BOARD.dts` file.
       * :c:member:`sm_sensor_config.event_descr` - Sensor event description.
         The event description is used to identify the sensor in the application.
