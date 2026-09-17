@@ -142,7 +142,7 @@ enum bt_hids_flags {
  *
  * @deprecated Use @ref bt_hids_cp_evt instead
  */
-__deprecated enum bt_hids_control_point {
+enum __deprecated bt_hids_control_point {
 	/** Suspend value for Control Point.  */
 	BT_HIDS_CONTROL_POINT_SUSPEND = 0x00,
 
