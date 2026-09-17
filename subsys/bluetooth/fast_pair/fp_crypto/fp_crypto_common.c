@@ -89,7 +89,11 @@ size_t fp_crypto_account_key_filter_size(size_t n)
 	if (n == 0) {
 		return 0;
 	} else {
-		return 1.2 * n + 3;
+		/* Account Key Filter size is defined by the Fast Pair specification as
+		 * (1.2 * n + 3) truncated. The 6/5 integer form is equivalent and avoids
+		 * pulling in floating-point arithmetic.
+		 */
+		return (n * 6) / 5 + 3;
 	}
 }
 
