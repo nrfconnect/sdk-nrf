@@ -13,7 +13,10 @@ from datetime import datetime, timezone
 from pathlib import Path
 from urllib.parse import quote
 
-from data_structure import Data, FileInfo  # pylint: disable=unused-import
+from args import args
+from common import is_sha
+from data_structure import Data, FileInfo, Package  # pylint: disable=unused-import
+from git_info_detector import read_version
 from jinja2 import Template, filters
 from west import log
 
@@ -37,8 +40,14 @@ def adjust_identifier(license: str) -> str:
     return license.replace('LICENSEREF', 'LicenseRef')
 
 
+def sanitize_tagvalue_text(value: str) -> str:
+    '''Prevent copyright text from terminating an SPDX tag-value text block.'''
+    return str(value).replace('</text>', '&lt;/text&gt;')
+
+
 filters.FILTERS['verification_code'] = verification_code
 filters.FILTERS['adjust_identifier'] = adjust_identifier
+filters.FILTERS['sanitize_tagvalue_text'] = sanitize_tagvalue_text
 
 
 def group_by(files: 'list[FileInfo]', attr_name: str) -> 'dict[list[FileInfo]]':
@@ -65,6 +74,44 @@ def timestamp() -> str:
     return datetime.now(timezone.utc).isoformat(timespec='seconds').replace('+00:00', 'Z')
 
 
+def github_archive_url(git_url: str, version: str) -> 'str|None':
+    '''Convert a GitHub URL and revision to a downloadable archive zip URL.'''
+    url = git_url.strip()
+    if url.endswith('.git'):
+        url = url[:-4]
+    if 'github.com' not in url:
+        return None
+    parts = url.split('github.com', 1)[1].lstrip(':/').split('/')
+    if len(parts) < 2 or not parts[0] or not parts[1]:
+        return None
+    org, repo = parts[0], parts[1]
+    if is_sha(version):
+        return f'https://github.com/{org}/{repo}/archive/{version}.zip'
+    return f'https://github.com/{org}/{repo}/archive/refs/tags/{version}.zip'
+
+
+def download_location(package: Package) -> str:
+    '''Format the SPDX PackageDownloadLocation field for a package.'''
+    if package.purl:
+        if args.package_download_format == 'github-archive':
+            archive_url = github_archive_url(package.url, package.version)
+            if archive_url is not None:
+                return archive_url
+        return f'git+{package.url}@{package.version}'
+    return package.url or 'NONE'
+
+
+def get_ncs_version() -> 'str|None':
+    '''NCS version from the repo's root VERSION file, or None if missing.'''
+    try:
+        version_file = Path(__file__).resolve().parents[3] / 'VERSION'
+        if version_file.is_file():
+            return read_version(version_file, include_dev=True)
+    except Exception:
+        pass
+    return None
+
+
 def data_to_dict(data: Data, output_directory: Path) -> dict:
     '''Convert object to dict by copying public attributes to a new dictionary.'''
     result = dict()
@@ -76,8 +123,11 @@ def data_to_dict(data: Data, output_directory: Path) -> dict:
         'group_by': group_by,
         'counter': counter,
         'relative_path': lambda file: relative_path(file, output_directory),
-        'timestamp': timestamp
+        'timestamp': timestamp,
+        'download_location': download_location,
     }
+    ncs_version = get_ncs_version()
+    result['ncs_version_suffix'] = f'-{ncs_version}' if ncs_version else ''
     return result
 
 
@@ -85,11 +135,11 @@ def generate(data: Data, output_file: 'Path|str', template_file: Path):
     '''Generate output_file from data using template_file.'''
     output_file = Path(output_file)
     log.dbg(f'Writing output to "{output_file}" using template "{template_file}"')
-    with open(template_file) as fd:
+    with open(template_file, encoding='utf-8') as fd:
         template_source = fd.read()
     t = Template(template_source)
     out = t.render(**data_to_dict(data, output_file.parent.resolve()))
-    with open(output_file, 'w') as fd:
+    with open(output_file, 'w', encoding='utf-8') as fd:
         fd.write(out)
     escaped_path = quote(str(output_file.resolve()).replace(os.sep, '/').strip("/"))
     log.inf(f'Output written to file:///{escaped_path}')

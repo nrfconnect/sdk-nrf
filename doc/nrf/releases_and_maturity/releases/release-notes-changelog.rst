@@ -467,7 +467,18 @@ Scripts
 
 This section provides detailed lists of changes by :ref:`script <scripts>`.
 
-|no_changes_yet_note|
+* :ref:`west_sbom` script:
+
+* Added:
+
+  * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
+  * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
+    It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
+
+* Updated:
+
+  * The SPDX output format from ``SPDX-2.2`` to ``SPDX-2.3``.
+  * The ScanCode Toolkit detector to support macOS on ARM64 and Linux aarch64.
 
 Integrations
 ============
