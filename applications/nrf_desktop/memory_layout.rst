@@ -41,7 +41,7 @@ Memory layout in DTS
 ********************
 
 To configure the memory layout in devicetree, define the ``partitions`` child node under the DTS node that represents the non-volatile memory.
-For example, the nRF52 Series devices use internal non-volatile flash memory represented by the ``&flash0`` DTS node and the application core of nRF54L Series devices uses internal non-volatile RRAM memory represented by the ``&cpuapp_rram`` DTS node.
+For example, the application core of nRF54L Series devices uses internal non-volatile RRAM memory represented by the ``&cpuapp_rram`` DTS node.
 Make sure to also update the DTS chosen nodes, which represent the code partition (``zephyr,code-partition``) and flash (``zephyr,flash``), if needed.
 
 If you wish to change the default memory layout for the board without editing the board-specific files, use the DTS overlay file.
@@ -69,7 +69,4 @@ External flash configuration
 ============================
 
 Devices with smaller non-volatile memory size can use MCUboot bootloader in swap mode with secondary image partition located on an external non-volatile memory.
-For an example of the nRF Desktop application configuration that uses an external flash, see the ``mcuboot_qspi`` configuration of the nRF52840 DK.
-This configuration uses the ``MX25R64`` external flash that is part of the development kit.
-
-The memory map is defined in DTS (see :file:`memory_map_mcuboot_qspi.dtsi`), with the ``slot1_partition`` placed under the ``mx25r64`` node.
+The memory map is defined in DTS, with the ``slot1_partition`` placed under the external flash node.

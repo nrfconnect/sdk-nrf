@@ -102,7 +102,7 @@ The report is received from the Bluetooth connected host.
 The module forwards the report using :c:struct:`hid_report_event` that is handled by |hid_state|.
 
 Right now, only development kits in ``keyboard`` build type configuration display information received in the HID output report using hardware LEDs.
-The keyboard reference design (nrf52kbd) has only one LED that is used to display the Bluetooth LE peer state.
+The nRF54L15 DK keyboard configuration uses hardware LEDs to display the Bluetooth LE peer state.
 Detailed information about the usage of LEDs to display information about Bluetooth LE peer state and system state to the user is available in the :ref:`nrf_desktop_led_state` documentation.
 Detailed information about displaying state of the HID keyboard LEDs using hardware LEDs is available in :ref:`nrf_desktop_hid_state` documentation.
 

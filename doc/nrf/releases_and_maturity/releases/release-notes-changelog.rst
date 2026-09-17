@@ -341,6 +341,7 @@ nRF Desktop
 
   * Partition Manager support from the :ref:`nrf_desktop` application.
   * The deprecated Kconfig options ``CONFIG_DESKTOP_HID_REPORT_EXPIRATION`` and ``CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE``.
+  * Support for the nRF52 Series devices from the :ref:`nrf_desktop` application.
 
 Thingy:53: Matter weather station
 ---------------------------------
