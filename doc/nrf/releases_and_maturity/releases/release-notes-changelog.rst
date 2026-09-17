@@ -80,6 +80,11 @@ Developing with nRF70 Series
 
 |no_changes_yet_note|
 
+Developing with nRF71 Series
+============================
+
+* Added the :ref:`ug_nrf71` documentation.
+
 Developing with nRF54L Series
 =============================
 
