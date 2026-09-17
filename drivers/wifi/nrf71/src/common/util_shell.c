@@ -287,6 +287,104 @@ static const char *ac_str(int ac)
 	return names[ac];
 }
 
+/* One line per topic: what the tokens carried, and what stopped them. */
+static void tx_token_stats_summary(const struct shell *sh,
+				   struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx,
+				   struct nrf_wifi_sys_fmac_priv *sys_fpriv)
+{
+	struct tx_token_stats *ts = &sys_dev_ctx->tx_config.token_stats;
+	unsigned int cap = sys_fpriv->avail_ampdu_len_per_token;
+	unsigned int tokens_used = 0;
+	unsigned int max_in_flight = 0;
+	unsigned int busy = 0;
+	unsigned int starved = 0;
+	unsigned int q_full = 0;
+	unsigned int avg_pkts_x100;
+	unsigned int avg_bytes;
+	unsigned int stops;
+	const char *limiter = "none";
+	unsigned int limiter_cnt = 0;
+	unsigned int i;
+
+	for (i = 0; i < NRF71_MAX_TX_TOKENS; i++) {
+		if (ts->token_cmds[i]) {
+			tokens_used++;
+		}
+	}
+
+	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
+		if (ts->max_outstanding_descs[i] > max_in_flight) {
+			max_in_flight = ts->max_outstanding_descs[i];
+		}
+		busy += ts->token_get_busy[i];
+		starved += ts->token_get_starved[i];
+		q_full += ts->pend_q_full_drops[i];
+	}
+
+	avg_pkts_x100 = ts->tx_cmds ?
+		(unsigned int)((ts->tx_cmd_pkts * 100ULL) / ts->tx_cmds) : 0U;
+	avg_bytes = ts->tx_cmds ? (unsigned int)(ts->tx_cmd_bytes / ts->tx_cmds) : 0U;
+
+	stops = ts->aggr_stop_size + ts->aggr_stop_count + ts->aggr_stop_mismatch +
+		ts->aggr_stop_twt + ts->aggr_stop_q_empty;
+
+	if (ts->aggr_stop_q_empty > limiter_cnt) {
+		limiter_cnt = ts->aggr_stop_q_empty;
+		limiter = "host out of pkts";
+	}
+	if (ts->aggr_stop_count > limiter_cnt) {
+		limiter_cnt = ts->aggr_stop_count;
+		limiter = "aggr count cap";
+	}
+	if (ts->aggr_stop_size > limiter_cnt) {
+		limiter_cnt = ts->aggr_stop_size;
+		limiter = "token size cap";
+	}
+	if (ts->aggr_stop_mismatch > limiter_cnt) {
+		limiter_cnt = ts->aggr_stop_mismatch;
+		limiter = "SA/RA mismatch";
+	}
+	if (ts->aggr_stop_twt > limiter_cnt) {
+		limiter_cnt = ts->aggr_stop_twt;
+		limiter = "TWT sleep";
+	}
+
+	shell_fprintf(sh, SHELL_INFO,
+		      "TX: %u cmds, %u pkts, %u dones | %u.%02u pkts/cmd (cap %u), "
+		      "%u B/cmd (%u%% of %u B cap), %u B/pkt\n",
+		      ts->tx_cmds,
+		      ts->tx_cmd_pkts,
+		      ts->tx_dones,
+		      avg_pkts_x100 / 100U,
+		      avg_pkts_x100 % 100U,
+		      sys_fpriv->data_config.max_tx_aggregation,
+		      avg_bytes,
+		      cap ? ((avg_bytes * 100U) / cap) : 0U,
+		      cap,
+		      ts->tx_cmd_pkts ?
+			      (unsigned int)(ts->tx_cmd_data_bytes / ts->tx_cmd_pkts) : 0U);
+	shell_fprintf(sh, SHELL_INFO,
+		      "    tokens: %u of %u used, %u max in flight, %u busy, %u starved | "
+		      "limiter: %s (%u%%)\n",
+		      tokens_used,
+		      sys_fpriv->num_tx_tokens,
+		      max_in_flight,
+		      busy,
+		      starved,
+		      limiter,
+		      stops ? ((limiter_cnt * 100U) / stops) : 0U);
+	shell_fprintf(sh, SHELL_INFO,
+		      "    host: %u pkts in, %u held on pend_q (%u%%), drops: %u q_full, "
+		      "%u other%s\n",
+		      ts->if_send_calls,
+		      ts->pkts_queued,
+		      ts->if_send_accepted ?
+			      ((ts->pkts_queued * 100U) / ts->if_send_accepted) : 0U,
+		      q_full,
+		      ts->if_drop_no_nbuf + ts->if_drop_unknown_peer + ts->if_drop_not_ready,
+		      starved ? " | STARVED, see -v" : "");
+}
+
 static void tx_token_stats_dump(const struct shell *sh,
 				struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx,
 				struct nrf_wifi_sys_fmac_priv *sys_fpriv)
@@ -510,17 +608,22 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 	unsigned int tx_pending_pkts = 0;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	bool clear = false;
+	bool verbose = false;
 	int ret;
 
-	if ((argc > 2) && (strcmp(argv[2], "clear") == 0)) {
-		clear = true;
-	} else if (argc > 2) {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "Invalid argument \"%s\".\n",
-			      argv[2]);
-		shell_help(sh);
-		return -ENOEXEC;
+	for (size_t i = 2; i < argc; i++) {
+		if (strcmp(argv[i], "clear") == 0) {
+			clear = true;
+		} else if (strcmp(argv[i], "-v") == 0) {
+			verbose = true;
+		} else {
+			shell_fprintf(sh,
+				      SHELL_ERROR,
+				      "Invalid argument \"%s\".\n",
+				      argv[i]);
+			shell_help(sh);
+			return -ENOEXEC;
+		}
 	}
 
 	vif_index = atoi(argv[1]);
@@ -553,6 +656,12 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 		shell_fprintf(sh,
 			      SHELL_INFO,
 			      "TX token stats cleared\n");
+		ret = 0;
+		goto unlock;
+	}
+
+	if (!verbose) {
+		tx_token_stats_summary(sh, sys_dev_ctx, sys_fpriv);
 		ret = 0;
 		goto unlock;
 	}
@@ -945,15 +1054,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 #ifdef CONFIG_NRF71_STA_MODE
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
-		      "Displays transmit statistics, including TX token usage,\n"
-		      "aggregation (packets per TX command) distribution and\n"
-		      "per-AC token/queue accounting\n"
+		      "Displays a TX statistics summary: aggregation, token usage\n"
+		      "and what is limiting the TX path\n"
 		      "Parameters:\n"
 		      "    vif_index: 0 - 1\n"
+		      "    -v       : (optional) full per-token, histogram and per-AC dump\n"
 		      "    clear    : (optional) reset the TX token counters\n",
 		      nrf_wifi_util_tx_stats,
 		      2,
-		      1),
+		      2),
 #endif /* CONFIG_NRF71_STA_MODE */
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
