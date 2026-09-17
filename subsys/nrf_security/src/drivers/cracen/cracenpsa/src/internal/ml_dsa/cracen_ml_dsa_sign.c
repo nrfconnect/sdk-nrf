@@ -297,16 +297,19 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 
 		for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 			int32_t w_minus_cs2 = commitment[row].coeffs[i] - tmp.coeffs[i];
-			int32_t ct0 = tmp2.coeffs[i];
-			int32_t r0 = cracen_ml_dsa_low_bits(w_minus_cs2, gamma2);
+			int32_t ct0 = to_signed(tmp2.coeffs[i]);
+			int32_t r0; /* low order bits of w_minus_cs2 */
+			int32_t r1; /* high order bits of w_minus_cs2 */
 			int32_t hint_bit;
+
+			cracen_ml_dsa_decompose(w_minus_cs2, gamma2, &r0, &r1);
 
 			reject_mask |= cracen_ml_dsa_ge_bound_mask(
 					cracen_ml_dsa_abs_coeff(r0), r0_bound);
 			reject_mask |= cracen_ml_dsa_ge_bound_mask(
-					cracen_ml_dsa_abs_coeff(to_signed(ct0)), gamma2);
+					cracen_ml_dsa_abs_coeff(ct0), gamma2);
 
-			hint_bit = cracen_ml_dsa_make_hint(-ct0, w_minus_cs2 + ct0, gamma2);
+			hint_bit = cracen_ml_dsa_make_hint(r0 + ct0, r1, gamma2);
 			hint[row * ML_DSA_POLY_COEFFS_COUNT + i] = (uint8_t)hint_bit;
 			hint_weight += (uint32_t)hint_bit;
 		}
