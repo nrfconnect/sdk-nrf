@@ -328,10 +328,11 @@ static void tx_token_stats_summary(const struct shell *sh,
 	stops = ts->aggr_stop_size + ts->aggr_stop_count + ts->aggr_stop_mismatch +
 		ts->aggr_stop_twt + ts->aggr_stop_q_empty;
 
-	if (ts->aggr_stop_q_empty > limiter_cnt) {
-		limiter_cnt = ts->aggr_stop_q_empty;
-		limiter = "host out of pkts";
-	}
+	/* aggr_stop_q_empty only means the pending queue was drained by this
+	 * command, which is the normal case; the host is only really failing to
+	 * keep up if the token had to be returned to the free pool for lack of
+	 * packets (token_acq) or if the pipe ran idle.
+	 */
 	if (ts->aggr_stop_count > limiter_cnt) {
 		limiter_cnt = ts->aggr_stop_count;
 		limiter = "aggr count cap";
@@ -347,6 +348,14 @@ static void tx_token_stats_summary(const struct shell *sh,
 	if (ts->aggr_stop_twt > limiter_cnt) {
 		limiter_cnt = ts->aggr_stop_twt;
 		limiter = "TWT sleep";
+	}
+
+	if (ts->pipe_idle_us > ts->pipe_busy_us) {
+		limiter = "host out of pkts";
+		limiter_cnt = stops;
+	} else if (limiter_cnt == 0) {
+		limiter = "RPU turnaround";
+		limiter_cnt = stops;
 	}
 
 	shell_fprintf(sh, SHELL_INFO,
@@ -373,6 +382,28 @@ static void tx_token_stats_summary(const struct shell *sh,
 		      starved,
 		      limiter,
 		      stops ? ((limiter_cnt * 100U) / stops) : 0U);
+	if (ts->tx_cmds) {
+		unsigned long long inflight_us = 0;
+		unsigned long long pipe_us = ts->pipe_busy_us + ts->pipe_idle_us;
+
+		for (i = 0; i < NRF71_MAX_TX_TOKENS; i++) {
+			inflight_us += ts->token_inflight_us[i];
+		}
+
+		shell_fprintf(sh, SHELL_INFO,
+			      "    turnaround: %u us/cmd in flight, %u.%02u cmds in flight "
+			      "avg (max %u), pipe busy %u%%, %u KB/s through the pipe\n",
+			      (unsigned int)(inflight_us / ts->tx_cmds),
+			      pipe_us ? (unsigned int)(inflight_us / pipe_us) : 0U,
+			      pipe_us ? (unsigned int)((inflight_us * 100ULL / pipe_us) % 100U) :
+					0U,
+			      ts->max_cmds_in_flight,
+			      pipe_us ? (unsigned int)((ts->pipe_busy_us * 100ULL) / pipe_us) :
+					0U,
+			      pipe_us ? (unsigned int)((ts->tx_cmd_bytes * 1000ULL) / pipe_us) :
+					0U);
+	}
+
 	shell_fprintf(sh, SHELL_INFO,
 		      "    host: %u pkts in, %u held on pend_q (%u%%), drops: %u q_full, "
 		      "%u other%s\n",
@@ -417,9 +448,10 @@ static void tx_token_stats_dump(const struct shell *sh,
 		      TX_BUF_HEADROOM);
 
 	shell_fprintf(sh, SHELL_INFO,
-		      "%-4s %8s %9s %10s %9s %10s %5s %9s %10s %s\n",
+		      "%-4s %6s %8s %9s %8s %9s %5s %8s %9s %8s %8s %6s %s\n",
 		      "tok", "acq", "cmds", "pkts", "pkts/cmd", "bytes/cmd",
-		      "fill", "max_pkts", "max_bytes", "type");
+		      "fill", "max_pkts", "max_bytes", "us/cmd", "max_us", "KB/s",
+		      "type");
 
 	for (i = 0; i < num_tx_tokens && i < NRF71_MAX_TX_TOKENS; i++) {
 		unsigned int cmds = ts->token_cmds[i];
@@ -428,8 +460,11 @@ static void tx_token_stats_dump(const struct shell *sh,
 			(unsigned int)(ts->token_bytes[i] / cmds) : 0U;
 		bool spare = (i >= (num_tx_tokens_per_ac * NRF_WIFI_FMAC_AC_MAX));
 
+		unsigned int us_per_cmd = cmds ?
+			(unsigned int)(ts->token_inflight_us[i] / cmds) : 0U;
+
 		shell_fprintf(sh, SHELL_INFO,
-			      "%-4u %8u %9u %10u %6u.%02u %10u %4u%% %9u %10u %s\n",
+			      "%-4u %6u %8u %9u %5u.%02u %9u %4u%% %8u %9u %8u %8u %6u %s\n",
 			      i,
 			      ts->token_acq[i],
 			      cmds,
@@ -440,6 +475,11 @@ static void tx_token_stats_dump(const struct shell *sh,
 			      cap ? ((bytes_per_cmd * 100U) / cap) : 0U,
 			      ts->token_max_pkts[i],
 			      ts->token_max_bytes[i],
+			      us_per_cmd,
+			      ts->token_max_inflight_us[i],
+			      ts->token_inflight_us[i] ?
+				      (unsigned int)((ts->token_bytes[i] * 1000ULL) /
+						     ts->token_inflight_us[i]) : 0U,
 			      spare ? "spare" : ac_str(i % NRF_WIFI_FMAC_AC_MAX));
 	}
 
@@ -487,8 +527,12 @@ static void tx_token_stats_dump(const struct shell *sh,
 		      ts->tx_cmd_bytes,
 		      ts->max_cmd_bytes);
 	shell_fprintf(sh, SHELL_INFO,
-		      "TX dones: %u\n",
-		      ts->tx_dones);
+		      "TX dones: %u, pipe busy: %llu us, idle: %llu us, "
+		      "max cmds in flight: %u\n",
+		      ts->tx_dones,
+		      ts->pipe_busy_us,
+		      ts->pipe_idle_us,
+		      ts->max_cmds_in_flight);
 
 	if (ts->tx_cmds) {
 		unsigned int avg_pkts_x100 = (unsigned int)((ts->tx_cmd_pkts * 100ULL) /
