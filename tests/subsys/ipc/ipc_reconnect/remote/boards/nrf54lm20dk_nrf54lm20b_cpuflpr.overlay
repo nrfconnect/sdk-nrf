@@ -4,4 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "nrf54lm20dk_nrf54lm20a_cpuflpr.overlay"
+&ipc0 {
+	compatible = "zephyr,ipc-icmsg";
+	unbound = "enable";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
+	dcache-alignment = <32>;
+};
