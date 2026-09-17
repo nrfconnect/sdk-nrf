@@ -4584,6 +4584,13 @@ DFU and FOTA
 
 The issues in this section are related to :ref:`app_dfu`.
 
+.. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0
+
+NCSDK-41363: Compressed image DFU from the |NCS| v3.2.x or earlier fails without Partition Manager
+  Updating firmware from the |NCS| v3.2.x or earlier to the |NCS| v3.3.0 through v3.4.1 using a compressed image fails for projects that do not use Partition Manager.
+  Projects that use Partition Manager are not affected.
+  Currently, there is no workaround for this issue.
+
 .. rst-class:: v3-4-0
 
 NCSIDB-1950: nRF5340 serial recovery cannot update network core image in MCUboot single-slot mode (enabled with the :kconfig:option:`CONFIG_SINGLE_APPLICATION_SLOT` Kconfig option set to ``y``)
