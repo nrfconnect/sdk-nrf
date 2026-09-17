@@ -24,6 +24,13 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
+static void tx_stats_track_max(unsigned int *max, unsigned int val)
+{
+	if (val > *max) {
+		*max = val;
+	}
+}
+
 static bool is_twt_emergency_pkt(void *nwb)
 {
 	unsigned char priority = nrf_wifi_nbuf_get_priority(nwb);
@@ -345,6 +352,7 @@ unsigned int tx_desc_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				(1 << curr_bit);
 			desc = queue + (NRF_WIFI_FMAC_AC_MAX * cnt);
 			sys_dev_ctx->tx_config.outstanding_descs[queue]++;
+			sys_dev_ctx->tx_config.token_stats.reserved_token_get[queue]++;
 			break;
 		}
 	}
@@ -365,6 +373,7 @@ unsigned int tx_desc_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				sys_dev_ctx->tx_config.buf_pool_bmp_p[pool_id] |=
 					(1 << curr_bit);
 				sys_dev_ctx->tx_config.outstanding_descs[queue]++;
+				sys_dev_ctx->tx_config.token_stats.spare_token_get[queue]++;
 				/* Keep a note which queue has been assigned the
 				 * spare desc. Need for processing of TX_DONE
 				 * event as queue number is not being provided
@@ -384,6 +393,23 @@ unsigned int tx_desc_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		}
 	}
 
+	if (desc < NRF71_MAX_TX_TOKENS) {
+		sys_dev_ctx->tx_config.token_stats.token_acq[desc]++;
+		tx_stats_track_max(
+			&sys_dev_ctx->tx_config.token_stats.max_outstanding_descs[queue],
+			sys_dev_ctx->tx_config.outstanding_descs[queue]);
+	} else {
+		/* No token was available for this AC. This is the normal steady
+		 * state while the tokens of the AC are in flight: the packet
+		 * stays on the pending queue and is picked up from the TX done
+		 * path. It is only an anomaly if the AC has nothing in flight.
+		 */
+		sys_dev_ctx->tx_config.token_stats.token_get_busy[queue]++;
+
+		if (sys_dev_ctx->tx_config.outstanding_descs[queue] == 0) {
+			sys_dev_ctx->tx_config.token_stats.token_get_starved[queue]++;
+		}
+	}
 
 	return desc;
 }
@@ -523,6 +549,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	int ampdu_len = 0;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
+	struct tx_token_stats *stats = NULL;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
@@ -565,6 +592,8 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	 */
 	first_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, first_nwb, queue_node);
 
+	stats = &sys_dev_ctx->tx_config.token_stats;
+
 	while (!sys_dlist_is_empty(pend_pkt_q)) {
 		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, nwb, queue_node);
 
@@ -572,12 +601,26 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			nrf_wifi_nbuf_data_size(nwb);
 
 		if (ampdu_len >= avail_ampdu_len_per_token) {
+			/* The token is size limited: it cannot hold this packet
+			 * on top of what has already been added.
+			 */
+			stats->aggr_stop_size++;
 			break;
 		}
 
-		if (!can_xmit(fmac_dev_ctx, nwb) ||
-			(!tx_aggr_check(fmac_dev_ctx, first_nwb, ac, peer_id)) ||
-			(sys_dlist_len(txq) >= max_txq_len)) {
+		if (!can_xmit(fmac_dev_ctx, nwb)) {
+			stats->aggr_stop_twt++;
+			break;
+		}
+
+		if (!tx_aggr_check(fmac_dev_ctx, first_nwb, ac, peer_id)) {
+			stats->aggr_stop_mismatch++;
+			break;
+		}
+
+		if (sys_dlist_len(txq) >= max_txq_len) {
+			/* The token is count limited (CONFIG_NRF71_MAX_TX_AGGREGATION). */
+			stats->aggr_stop_count++;
 			break;
 		}
 
@@ -587,10 +630,16 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		sys_dlist_append(txq, &nwb->queue_node);
 	}
 
+	if (sys_dlist_len(pend_pkt_q) == 0) {
+		/* Nothing more to aggregate: the host simply ran out of packets. */
+		stats->aggr_stop_q_empty++;
+	}
+
 	/* If our criterion rejects all pending frames, or
 	 * pend_q is empty, send only 1
 	 */
 	if (sys_dlist_is_empty(txq)) {
+		stats->aggr_forced_single++;
 		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, nwb, queue_node);
 
 		if (!nwb || !can_xmit(fmac_dev_ctx, nwb)) {
@@ -671,6 +720,7 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	nwb_data = (unsigned long)nrf_wifi_nbuf_data_get((void *)nwb);
 
 	buf_len = nrf_wifi_nbuf_data_size((void *)nwb);
+	info->total_data_len += buf_len;
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
@@ -758,6 +808,55 @@ err:
 }
 #endif /* NRF71_RAW_DATA_TX */
 
+/* Account one TX command against the token (descriptor) that carries it.
+ *
+ * "occupancy" is what the aggregation logic in _tx_pending_process() budgets
+ * against the per-token size cap (avail_ampdu_len_per_token): the packet data
+ * plus TX_BUF_HEADROOM for every packet. Comparing it against that cap shows
+ * how well each token is filled, which is the real limit for large packets,
+ * while max_tx_aggregation is the limit for small ones.
+ */
+static void tx_cmd_stats_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+				unsigned int desc,
+				unsigned int num_pkts,
+				unsigned int data_len)
+{
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	struct nrf_wifi_sys_fmac_priv *sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+	struct tx_token_stats *stats = &sys_dev_ctx->tx_config.token_stats;
+	unsigned int occupancy = data_len + (num_pkts * TX_BUF_HEADROOM);
+	unsigned int cap = sys_fpriv->avail_ampdu_len_per_token;
+	unsigned int bucket;
+
+	stats->tx_cmds++;
+	stats->tx_cmd_pkts += num_pkts;
+	stats->tx_cmd_bytes += occupancy;
+	stats->tx_cmd_data_bytes += data_len;
+	tx_stats_track_max(&stats->max_cmd_bytes, occupancy);
+
+	if ((num_pkts > 0) && (num_pkts <= MAX_TX_AGG_SIZE)) {
+		stats->pkts_per_cmd[num_pkts - 1]++;
+	}
+
+	if (cap > 0) {
+		bucket = (occupancy * TX_TOKEN_FILL_BUCKETS) / cap;
+		if (bucket >= TX_TOKEN_FILL_BUCKETS) {
+			bucket = TX_TOKEN_FILL_BUCKETS - 1;
+		}
+		stats->fill_hist[bucket]++;
+	}
+
+	if (desc >= NRF71_MAX_TX_TOKENS) {
+		return;
+	}
+
+	stats->token_cmds[desc]++;
+	stats->token_pkts[desc] += num_pkts;
+	stats->token_bytes[desc] += occupancy;
+	tx_stats_track_max(&stats->token_max_pkts[desc], num_pkts);
+	tx_stats_track_max(&stats->token_max_bytes[desc], occupancy);
+}
+
 static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		   struct host_rpu_msg *umac_cmd,
 		   int desc,
@@ -844,6 +943,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 	info.fmac_dev_ctx = fmac_dev_ctx;
 	info.config = config;
+	info.total_data_len = 0;
 
 	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
 		status = tx_cmd_prep_callbk_fn(&info, nwb);
@@ -854,6 +954,12 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	}
 
 	sys_dev_ctx->host_stats.total_tx_pkts += config->num_tx_pkts;
+
+	tx_cmd_stats_update(fmac_dev_ctx,
+			    desc,
+			    config->num_tx_pkts,
+			    info.total_data_len);
+
 	config->wdev_id = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
 
 	if ((vif_ctx->if_type == NRF_WIFI_IFTYPE_AP ||
@@ -1044,6 +1150,7 @@ static enum nrf_wifi_status tx_enqueue(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	queue = &sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac];
 
 	if (sys_dlist_len(queue) >= NRF71_MAX_TX_PENDING_QLEN) {
+		sys_dev_ctx->tx_config.token_stats.pend_q_full_drops[ac]++;
 		goto out;
 	}
 
@@ -1054,6 +1161,9 @@ static enum nrf_wifi_status tx_enqueue(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	} else {
 		sys_dlist_append(queue, &nwb_ptr->queue_node);
 	}
+
+	tx_stats_track_max(&sys_dev_ctx->tx_config.token_stats.max_pending_qlen[ac],
+			   (unsigned int)sys_dlist_len(queue) + 1);
 
 	status = update_pend_q_bmp(fmac_dev_ctx, ac, peer_id);
 
@@ -1193,6 +1303,7 @@ unsigned int tx_buff_req_free(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				/* Adjust the counters */
 				sys_dev_ctx->tx_config.outstanding_descs[tx_done_q]--;
 				sys_dev_ctx->tx_config.outstanding_descs[*ac]++;
+				sys_dev_ctx->tx_config.token_stats.spare_token_ac_switch++;
 
 				/* Update the queue_map */
 				/* Clear the last access category. */
@@ -1242,6 +1353,8 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	}
 
 	pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
+
+	sys_dev_ctx->tx_config.token_stats.tx_dones++;
 
 	pkt = 0;
 
@@ -1456,18 +1569,26 @@ static enum nrf_wifi_fmac_tx_status nrf_wifi_fmac_tx(struct nrf_wifi_fmac_dev_ct
 			    peer_id);
 
 	if (status != NRF_WIFI_FMAC_TX_STATUS_SUCCESS) {
+		if (status == NRF_WIFI_FMAC_TX_STATUS_QUEUED) {
+			/* Held back in the host, e.g. waiting for more packets
+			 * to aggregate or peer in power save.
+			 */
+			sys_dev_ctx->tx_config.token_stats.pkts_queued++;
+		}
 		goto out;
 	}
 
 	status = NRF_WIFI_FMAC_TX_STATUS_QUEUED;
 
 	if (!can_xmit(fmac_dev_ctx, nbuf)) {
+		sys_dev_ctx->tx_config.token_stats.pkts_queued++;
 		goto out;
 	}
 
 	desc = tx_desc_get(fmac_dev_ctx, ac);
 
 	if (desc == sys_fpriv->num_tx_tokens) {
+		sys_dev_ctx->tx_config.token_stats.pkts_queued++;
 		goto out;
 	}
 
