@@ -83,6 +83,8 @@ struct tx_cmd_prep_info {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
 	/** Pointer to the TX configuration. */
 	struct nrf_wifi_tx_buff *config;
+	/** Total packet data added to the command, in bytes. */
+	unsigned int total_data_len;
 };
 
 /**

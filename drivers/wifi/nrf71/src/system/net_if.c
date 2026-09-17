@@ -29,6 +29,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <common/util.h>
 #include <common/wifi_ipc.h>
 #include <system/fmac_peer.h>
+#include <system/fmac_tx.h>
 #include <system/core.h>
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
@@ -376,6 +377,23 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev __unused,
 	return caps;
 }
 
+#if defined(CONFIG_NRF71_DATA_TX) && defined(CONFIG_NRF71_STA_MODE)
+static struct tx_token_stats *tx_token_stats_get(struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx)
+{
+	return sys_dev_ctx ? &sys_dev_ctx->tx_config.token_stats : NULL;
+}
+
+#define TX_TOKEN_STAT_INC(_sys_dev_ctx, _field)                                             \
+	do {                                                                                \
+		struct tx_token_stats *_ts = tx_token_stats_get(_sys_dev_ctx);              \
+		if (_ts != NULL) {                                                          \
+			_ts->_field++;                                                      \
+		}                                                                           \
+	} while (false)
+#else
+#define TX_TOKEN_STAT_INC(_sys_dev_ctx, _field) ((void)0)
+#endif /* CONFIG_NRF71_DATA_TX && CONFIG_NRF71_STA_MODE */
+
 int nrf_wifi_if_send(const struct device *dev,
 		     struct net_pkt *pkt)
 {
@@ -421,9 +439,12 @@ int nrf_wifi_if_send(const struct device *dev,
 	sys_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
 	host_stats = &sys_dev_ctx->host_stats;
 
+	TX_TOKEN_STAT_INC(sys_dev_ctx, if_send_calls);
+
 	if (nbuf == NULL) {
 		LOG_ERR("%s: allocation failed", __func__);
 		ret = -ENOMEM;
+		TX_TOKEN_STAT_INC(sys_dev_ctx, if_drop_no_nbuf);
 		goto drop;
 	}
 
@@ -458,6 +479,7 @@ int nrf_wifi_if_send(const struct device *dev,
 				net_sprint_ll_addr_buf(ra, NET_ETH_ADDR_LEN, ra_buf,
 						       sizeof(ra_buf)));
 #endif
+			TX_TOKEN_STAT_INC(sys_dev_ctx, if_drop_unknown_peer);
 			goto drop;
 		}
 
@@ -476,6 +498,7 @@ int nrf_wifi_if_send(const struct device *dev,
 			LOG_DBG("%s: carrier state: %d, authorized: %d, is_eapol: %d",
 				__func__, vif_ctx_zep->if_carr_state, authorized, is_eapol(pkt));
 			ret = -EPERM;
+			TX_TOKEN_STAT_INC(sys_dev_ctx, if_drop_not_ready);
 			goto drop;
 		}
 		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
@@ -487,8 +510,15 @@ int nrf_wifi_if_send(const struct device *dev,
 	if (ret == NRF_WIFI_STATUS_FAIL) {
 		/* FMAC API takes care of freeing the nbuf */
 		host_stats->total_tx_drop_pkts++;
+		TX_TOKEN_STAT_INC(sys_dev_ctx, if_drop_fmac_fail);
 		/* Could be many reasons, but likely no space in the queue */
 		ret = -ENOBUFS;
+	} else {
+		/* nrf_wifi_fmac_start_xmit() reports both "sent to the RPU" and
+		 * "queued in the host" as success, so this only tracks that the
+		 * packet was accepted.
+		 */
+		TX_TOKEN_STAT_INC(sys_dev_ctx, if_send_accepted);
 	}
 	goto unlock;
 drop:
