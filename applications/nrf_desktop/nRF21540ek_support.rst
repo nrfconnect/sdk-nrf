@@ -22,12 +22,6 @@ Building with EK shield support
 
 To build the application with the shield support, pass the ``SHIELD`` parameter to the build command.
 Make sure to also disable the LLPM support.
-For example, you can build the application for ``nrf52840dk/nrf52840`` with ``nrf21540ek`` shield using the following command:
-
-.. code-block:: console
-
-   west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek -DCONFIG_CAF_BLE_USE_LLPM=n
-
 For the multi-core build, you need to pass the ``SHIELD`` parameter to images built on both application and network core.
 The network core controls the FEM, but the application core needs to forward the needed pins to the network core.
 Use ``ipc_radio_`` as the *image_name* parameter, because in the nRF Desktop application, network core runs using :ref:`ipc_radio`.
