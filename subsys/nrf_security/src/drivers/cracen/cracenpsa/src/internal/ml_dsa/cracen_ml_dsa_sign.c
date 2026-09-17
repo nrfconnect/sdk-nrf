@@ -214,12 +214,10 @@ static psa_status_t sign_attempt(const ml_dsa_params_t *alg_params, const uint8_
 		}
 	}
 
-	for (uint32_t row = 0; row < alg_params->rows_k; row++) {
-		cracen_ml_dsa_ntt_inversed(&commitment[row]);
-	}
-
 	/* Computing encoded signer's commitment (w1_encoded) */
 	for (uint32_t row = 0; row < alg_params->rows_k; row++) {
+		cracen_ml_dsa_ntt_inversed(&commitment[row]);
+
 		/* 1. w1 = HighBits(w), which is applied componentwise */
 		for (uint32_t i = 0; i < ML_DSA_POLY_COEFFS_COUNT; i++) {
 			tmp.coeffs[i] = cracen_ml_dsa_high_bits(commitment[row].coeffs[i], gamma2);

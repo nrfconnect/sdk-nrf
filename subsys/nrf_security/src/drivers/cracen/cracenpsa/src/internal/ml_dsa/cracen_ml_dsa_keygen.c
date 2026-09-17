@@ -107,12 +107,10 @@ psa_status_t cracen_ml_dsa_keygen_internal(const ml_dsa_params_t *alg_params, co
 		 */
 		cracen_ml_dsa_simple_bit_pack(&t1, ML_DSA_T1_COEFF_MAX, packed_t1);
 		packed_t1 += ML_DSA_T1_PACKED_POLY_BYTES;
-	}
 
-	/* Return s2 and t0 in the NTT domain, ready for the signing loop
-	 * (FIPS 204, Algorithm 7, lines 3-4).
-	 */
-	for (uint32_t row = 0; row < alg_params->rows_k; row++) {
+		/* Return s2 and t0 in the NTT domain, ready for the signing loop
+		 * (FIPS 204, Algorithm 7, lines 3-4).
+		 */
 		cracen_ml_dsa_ntt(&s2_hat[row]);
 		cracen_ml_dsa_ntt(&t0_hat[row]);
 	}
