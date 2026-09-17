@@ -103,3 +103,18 @@ secondary_app_partition: &slot1_partition {};
 	int1-gpios = <&gpio0 3 0>;
 	odr = <1>; /* ODR 25Hz */
 };
+
+/* The BME688 environmental sensor is not used by this sample. */
+&bme688 {
+	status = "disabled";
+};
+
+/* The BMI270 accelerometer is not used by this sample. */
+&bmi270 {
+	status = "disabled";
+};
+
+/* SPI22 is only used by the BMI270 accelerometer. */
+&spi22 {
+	status = "disabled";
+};
