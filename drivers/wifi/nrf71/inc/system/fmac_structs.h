@@ -383,6 +383,8 @@ struct tx_token_stats {
 	unsigned long long pipe_busy_us;
 	/** Time with no command in flight, in us. */
 	unsigned long long pipe_idle_us;
+	/** Cycle stamp of the start of the measurement window (last clear). */
+	unsigned int window_start_cyc;
 	/** Number of TX commands which carried (index + 1) packets. */
 	unsigned int pkts_per_cmd[MAX_TX_AGG_SIZE];
 	/** Per-command token fill level, in buckets of 10% of the per-token size cap. */
