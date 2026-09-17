@@ -3,7 +3,7 @@
 .. ncs-sample::
    :title: HTTP Server
 
-   The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE using an nRF91 Series device, or Wi-Fi® using an nRF71 or nRF70 Series device.
+   The HTTP Server sample demonstrates how to host an HTTP server on a Nordic Semiconductor device that is connected to the Internet through LTE using an nRF91 Series device, or Wi-Fi® using an nRF71 Series or nRF70 Series device.
 
    .. |wifi| replace:: Wi-Fi
 

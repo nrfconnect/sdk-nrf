@@ -71,7 +71,7 @@ CONFIG_MQTT_SAMPLE_TRANSPORT_BROKER_HOSTNAME - MQTT broker hostname
 
 CONFIG_MQTT_SAMPLE_TRANSPORT_CLIENT_ID - MQTT client ID
 	This configuration sets the MQTT client ID name.
-	If not set, the client ID will default to the modem's IMEI number for nRF91 Series devices, MAC address for nRF70 Series devices, or a random number for native simulator.
+	If not set, the client ID will default to the modem's IMEI number for nRF91 Series devices, MAC address for nRF71 Series or nRF70 Series devices, or a random number for native simulator.
 
 .. _CONFIG_MQTT_SAMPLE_TRANSPORT_PUBLISH_TOPIC:
 
