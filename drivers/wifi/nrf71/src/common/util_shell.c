@@ -384,24 +384,37 @@ static void tx_token_stats_summary(const struct shell *sh,
 		      stops ? ((limiter_cnt * 100U) / stops) : 0U);
 	if (ts->tx_cmds) {
 		unsigned long long inflight_us = 0;
-		unsigned long long pipe_us = ts->pipe_busy_us + ts->pipe_idle_us;
+		unsigned long long busy_us = ts->pipe_busy_us;
+		unsigned int window_us = ts->window_start_cyc ?
+			k_cyc_to_us_floor32(k_cycle_get_32() - ts->window_start_cyc) : 0U;
 
 		for (i = 0; i < NRF71_MAX_TX_TOKENS; i++) {
 			inflight_us += ts->token_inflight_us[i];
 		}
 
+		/* Concurrency and rate are computed over the time the pipe was
+		 * actually busy, so an idle period before the traffic started
+		 * does not dilute them; busy%% is against the window since the
+		 * counters were cleared, so clear right before a run.
+		 */
 		shell_fprintf(sh, SHELL_INFO,
-			      "    turnaround: %u us/cmd in flight, %u.%02u cmds in flight "
-			      "avg (max %u), pipe busy %u%%, %u KB/s through the pipe\n",
+			      "    turnaround: %u us/cmd, %u.%02u cmds in flight while busy "
+			      "(max %u), %u KB/s in flight\n",
 			      (unsigned int)(inflight_us / ts->tx_cmds),
-			      pipe_us ? (unsigned int)(inflight_us / pipe_us) : 0U,
-			      pipe_us ? (unsigned int)((inflight_us * 100ULL / pipe_us) % 100U) :
+			      busy_us ? (unsigned int)(inflight_us / busy_us) : 0U,
+			      busy_us ? (unsigned int)((inflight_us * 100ULL / busy_us) % 100U) :
 					0U,
 			      ts->max_cmds_in_flight,
-			      pipe_us ? (unsigned int)((ts->pipe_busy_us * 100ULL) / pipe_us) :
-					0U,
-			      pipe_us ? (unsigned int)((ts->tx_cmd_bytes * 1000ULL) / pipe_us) :
+			      busy_us ? (unsigned int)((ts->tx_cmd_bytes * 1000ULL) / busy_us) :
 					0U);
+		shell_fprintf(sh, SHELL_INFO,
+			      "    pipe: busy %llu ms, idle %llu ms, busy %u%% of the "
+			      "%u ms window since clear\n",
+			      ts->pipe_busy_us / 1000ULL,
+			      ts->pipe_idle_us / 1000ULL,
+			      window_us ? (unsigned int)((ts->pipe_busy_us * 100ULL) /
+							 window_us) : 0U,
+			      window_us / 1000U);
 	}
 
 	shell_fprintf(sh, SHELL_INFO,
@@ -697,6 +710,7 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 		memset(&sys_dev_ctx->tx_config.token_stats,
 		       0,
 		       sizeof(sys_dev_ctx->tx_config.token_stats));
+		sys_dev_ctx->tx_config.token_stats.window_start_cyc = k_cycle_get_32();
 		shell_fprintf(sh,
 			      SHELL_INFO,
 			      "TX token stats cleared\n");

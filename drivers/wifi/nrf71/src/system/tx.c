@@ -863,6 +863,10 @@ static void tx_cmd_stats_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	/* Start of the in-flight window of this command. */
 	stats->token_issue_cyc[desc] = k_cycle_get_32();
 
+	if (stats->window_start_cyc == 0) {
+		stats->window_start_cyc = stats->token_issue_cyc[desc];
+	}
+
 	if (stats->cmds_in_flight == 0) {
 		unsigned int now = k_cycle_get_32();
 
