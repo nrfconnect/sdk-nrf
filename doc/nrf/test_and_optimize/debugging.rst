@@ -8,21 +8,21 @@ Debugging an application
    :local:
    :depth: 2
 
-The main recommended tool for debugging in the |NCS| is `nRF Debug <Debugging overview_>`_ of the |nRFVSC|.
-The tool uses `Microsoft's debug adaptor`_ and integrates custom debugging features specific for the |NCS|.
+The main recommended tool for debugging in the |NCS| is the |nRFVSC|.
+The tool uses a custom debug adapter and integrates custom debugging features specific for the |NCS|.
 
 .. tabs::
 
    .. group-tab:: nRF Connect for VS Code
 
-      Use nRF Debug after adding the required Kconfig options to the :file:`prj.conf` file.
+      Click on :guilabel:`Debug` in the extension's `Actions View`_ after adding the required Kconfig options to the :file:`prj.conf` file.
       For details, see the `How to debug an application`_ section in the |nRFVSC| documentation.
 
       Read also the `Debugging overview`_ and other guides in the debugging section of the extension documentation for more information about debugging in the |nRFVSC|, for example testing and debugging with custom options.
 
    .. group-tab:: Command line
 
-      Use west with nRF Debug.
+      Use ``west debug``.
       For details, see the :ref:`Debugging with west debug <zephyr:west-debugging>` section on the :ref:`zephyr:west-build-flash-debug` page in the Zephyr documentation.
 
 .. note::
@@ -33,9 +33,9 @@ Debug configuration
 
 When you are following the `How to debug an application`_ process in the |nRFVSC|, the following Kconfig options are set to ``y`` when you add the build configuration in the **Add Build Configuration** page:
 
-* When you select the :guilabel:`Optimize for debugging` optimization level, the corresponding :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` Kconfig option is set to ``y``.
+* When you select the :guilabel:`Optimize debugging experience` optimization level, the corresponding :kconfig:option:`CONFIG_DEBUG_OPTIMIZATIONS` Kconfig option is set to ``y``.
   This option limits the optimizations made by the compiler to only those that do not impact debugging.
-* If you also enable the :guilabel:`Include debug thread information` checkbox in addition to :guilabel:`Optimize for debugging`, the corresponding :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` Kconfig option is set to ``y``.
+* If you also enable the :guilabel:`Include debug thread information` checkbox in addition to :guilabel:`Optimize debugging experience`, the corresponding :kconfig:option:`CONFIG_DEBUG_THREAD_INFO` Kconfig option is set to ``y``.
   This option adds additional information to the thread object, so that the debugger can discover the threads.
   This will work for any debugger.
 
@@ -150,7 +150,7 @@ When using a :ref:`board target <app_boards_names>` with :ref:`CMSE enabled <app
 To debug firmware running in the secure environment, you need to build Trusted Firmware-M with debug symbols enabled and load the symbols during the debugging session.
 To build Trusted Firmware-M with debug symbols, set the :kconfig:option:`CONFIG_TFM_CMAKE_BUILD_TYPE_RELWITHDEBINFO` Kconfig option.
 
-nRF Debug in the |nRFVSC| automatically loads the Trusted Firmware-M debug symbols.
+The |nRFVSC| automatically loads the Trusted Firmware-M debug symbols in the nRF Debug panel.
 
 Enabling non-halting debugging with Cortex-M Debug Monitor
 **********************************************************
@@ -167,7 +167,7 @@ Use the following steps to enable monitor-mode debugging in the |NCS|:
 2. Attach the debugger to the application.
 3. Depending on debugger you are using, enable monitor-mode debugging:
 
-   * For nRF Debug in the |nRFVSC|, the monitor-mode is automatically enabled when you set the :kconfig:option:`CONFIG_SEGGER_DEBUGMON` Kconfig option and build your application (``-exec monitor exec SetMonModeDebug=1`` is automatically passed to the debug console).
+   * For debugging using the |nRFVSC| features, the monitor-mode is automatically enabled when you set the :kconfig:option:`CONFIG_SEGGER_DEBUGMON` Kconfig option and build your application (``-exec monitor exec SetMonModeDebug=1`` is automatically passed to the debug console).
    * For debugging using Ozone, enter ``Exec.Command("SetMonModeDebug = 1");`` in the console.
 
 For more information about monitor-mode debugging, see Zephyr's :ref:`zephyr:debugmon` documentation and SEGGER's `Monitor-mode Debugging <Monitor-mode Debugging_>`_ documentation.
@@ -188,7 +188,7 @@ For more information on enabling remote debugging with the |NCS| see :ref:`ug_me
 Debugging tools
 ***************
 
-In addition to nRF Debug, you can use several other standalone tools to debug the |NCS| applications.
+In addition to the debugging features of the nRF Connect for VS Code extension, you can use several other standalone tools to debug the |NCS| applications.
 
 The following debugging tools are most commonly used in different areas of the |NCS|:
 
