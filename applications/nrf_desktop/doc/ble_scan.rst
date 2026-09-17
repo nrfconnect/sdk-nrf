@@ -171,3 +171,9 @@ After the scan filter match, the following happens:
 .. important::
    If the dongle supports Low Latency Packet Mode (:kconfig:option:`CONFIG_CAF_BLE_USE_LLPM`) and more than one Bluetooth connection (:kconfig:option:`CONFIG_BT_MAX_CONN`), a 10-ms connection interval is used instead of 7.5 ms.
    This is done to avoid Bluetooth scheduling issues that may lead to HID input report rate drops and disconnections.
+
+.. note::
+   Unlike LLPM support, HID SCI support is not stored for bonded peers.
+   HID SCI capability is determined during GATT discovery after the connection is established.
+   See the :ref:`nrf_desktop_ble_discovery` and :ref:`nrf_desktop_hid_forward` documentation pages for details.
+   The initial connection interval of 7.5 ms is used for every new connection.
