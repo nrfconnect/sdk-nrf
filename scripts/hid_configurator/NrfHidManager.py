@@ -9,10 +9,9 @@ NORDIC_VID = 0x1915
 
 class NrfHidManager:
     TYPE2BOARDLIST = {
-        'gaming_mouse' : ['nrf52840gmouse'],
-        'dongle' : ['nrf52840dongle', 'nrf52833dongle', 'nrf52820dongle'],
-        'keyboard' : ['nrf52kbd'],
-        'desktop_mouse' : ['nrf52dmouse'],
+        'dongle' : ['nrf5340dk', 'nrf54lm20dk', 'nrf54h20dk'],
+        'keyboard' : ['nrf54l15dk', 'nrf54ls05dk'],
+        'mouse' : ['nrf54l15dk', 'nrf54lm20dk', 'nrf54ls05dk', 'nrf54lc10dk', 'nrf54h20dk'],
     }
 
     def __init__(self, vid=NORDIC_VID):
