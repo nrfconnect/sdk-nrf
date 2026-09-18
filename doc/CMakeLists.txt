@@ -339,7 +339,7 @@ add_doxygen_docset(nrfx ${ZEPHYR_HAL_NORDIC_MODULE_DIR} "" STANDALONE)
 #-------------------------------------------------------------------------------
 # docset: tfm
 
-add_docset(tfm "2.3.0")
+add_docset(tfm "2.3.1")
 
 #-------------------------------------------------------------------------------
 # docset: nrfxlib
