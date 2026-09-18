@@ -22,7 +22,7 @@ Hardware background
 The nRF54L15 Product Specification documents how RRAMC maps boot configuration to locked regions and how the UICR BOOTCONF register supplies part of that configuration at reset.
 See `nRF54L15 RRAMC regions protection`_ and `nRF54L15 UICR BOOTCONF register`_ for the authoritative hardware description.
 Other nRF54L Series SoCs use the same overall mechanism with different maximum region sizes; the build-generated :file:`bootconf.hex` file accounts for the selected SoC.
-The region size limits are roughly 31 kB per region on the nRF54L15, nRF54L10, and nRF54L05 SoC, and larger on the nRF54LV10A and nRF54LM20 SoCs.
+The region size limits are roughly 31 kB per region on the nRF54L15, nRF54L10, and nRF54L05 SoCs, and larger on the nRF54LV10A and nRF54LM20 SoCs.
 See the Kconfig help text for exact per-option limits.
 
 There are two protection families on RRAM: the RRAMC boot-configuration/RWX-disable path (described in boot order) and the older FPROTECT locking (see :ref:`ug_bootloader_nrf54l_memory_protection_fprotect`).
@@ -35,15 +35,24 @@ You cannot combine them per stage.
 At reset (before bootloader software runs)
 ==========================================
 
-When you use |NSIB| as the first-stage bootloader, the build can produce a small Intel HEX file named :file:`bootconf.hex` (as described in :ref:`ug_bootloader_nrf54l_memory_protection_hw_background`).
+When you use |NSIB| or MCUboot as the immutable first-stage bootloader, the build can produce a small Intel HEX file named :file:`bootconf.hex` (as described in :ref:`ug_bootloader_nrf54l_memory_protection_hw_background`).
 This image programs the UICR BOOTCONF value so that RRAMC applies an immutable boot region as soon as the device leaves reset, before any of your bootloader code executes.
 You typically flash :file:`bootconf.hex` together with the rest of the programmed images (for example using ``west flash``), so the protection configuration is deployed with the project.
 
-Sysbuild exposes this behavior in the :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` Kconfig option.
-On SoCs that support the feature, it is enabled by default.
-The UICR-based lock then blocks all writes to the immutable bootloader region except through a full chip erase - the strongest form of immutability for the NSIB partition.
+Sysbuild exposes this behavior through the following Kconfig options:
+* :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` for |NSIB|
+* :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` for MCUboot
 
-If the first-stage image does not fit in that span, you must combine mechanisms as described in :ref:`ug_bootloader_nrf54l_memory_protection_fprotect`.
+If you enable either option and the immutable bootloader partition is larger than the maximum BOOTCONF region size of the selected SoC, the build fails.
+
+On the nRF54L05, nRF54L10, and nRF54L15 SoCs, both options are disabled by default because the default bootloader partitions are larger than the maximum region size of approximately 31 kB.
+To enable BOOTCONF protection on these SoCs, first reduce the immutable bootloader partition to fit within the limit stated in the Kconfig help text, then enable the option for your immutable bootloader.
+
+.. note::
+   When BOOTCONF protection is active, it blocks all writes to the immutable bootloader region.
+   To restore write access, you must perform full chip erase, which erases all RRAM and UICR contents.
+
+If the immutable bootloader cannot fit within the BOOTCONF region size, use FPROTECT with combined regions instead, as described in :ref:`ug_bootloader_nrf54l_memory_protection_fprotect`.
 
 .. _ug_bootloader_nrf54l_memory_protection_nsib:
 
@@ -67,7 +76,8 @@ At |NSIB| hand-off
 ==================
 
 Before jumping to MCUboot or directly to the application, NSIB can remove its own memory from the attack surface of later stages.
-You can include this behavior by enabling the :kconfig:option:`CONFIG_SB_DISABLE_SELF_RWX` Kconfig option.
+Before MCUboot boots the next image, it can prevent later stages from reading, writing, or executing the MCUboot partition
+To enable this behavior, use the :kconfig:option:`CONFIG_SB_DISABLE_SELF_RWX` Kconfig option.
 This option configures RRAMC so the NSIB image region is no longer readable, writable, or executable after hand-off, which mitigates attacks that attempt to execute or read back first-stage code once the application is running.
 
 You cannot combine the :kconfig:option:`CONFIG_SB_DISABLE_SELF_RWX` Kconfig option with :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS` on the NSIB image, because the combined FPROTECT path is intended for different sizing and locking trade-offs on RRAM.
@@ -81,9 +91,16 @@ During MCUboot execution
 
 If MCUboot is part of the chain, it manages slots, verifies signatures, then starts the application (or another loadable image).
 
-On the nRF54L Series devices you can replace the :ref:`fprotect_readme` library for MCUboot with the :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option.
-This programs an RRAMC region (region 4 by default) so that later stages lose read, write, and execute access to the MCUboot partition.
-To use this option you must disable :kconfig:option:`CONFIG_FPROTECT` on the MCUboot image, because the two approaches are mutually exclusive in Kconfig.
+You can use the :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option to prevent later boot stages from reading, writing, or executing the MCUboot partition.
+How MCUboot applies this restriction depends on whether BOOTCONF protection is enabled:
+
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is enabled, MCUboot adds read and execute restrictions to the immutable region (RRAMC region 3), which :file:`bootconf.hex` write-locks at reset.
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is disabled, MCUboot configures RRAMC region 4.
+  In this case, you cannot enable :kconfig:option:`CONFIG_FPROTECT` for the MCUboot image.
+
+In firmware loader mode, MCUboot also uses RRAMC region 4 to write-protect the firmware loader partition before it boots either the firmware loader or the application.
+The exception is an authenticated installer image, which is marked by a protected image TLV.
+For such an image, MCUboot leaves the firmware loader partition writable so that the installer can replace the firmware loader.
 
 If MCUboot is used without NSIB and fits within a single RRAMC region, the default layout can rely on FPROTECT alone for overwrite protection, as described in :ref:`ug_nrf54l_dfu_config`.
 
@@ -128,8 +145,8 @@ Summary
      - |NCS| / Kconfig option
      - Role
    * - UICR programmed at flash time
-     - :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES` and :file:`bootconf.hex`
-     - Immutable boot region from reset; true write-once locking of NSIB span in RRAMC.
+     - :kconfig:option:`SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES`, :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES`, and :file:`bootconf.hex`
+     - Immutable boot region from reset; true write-once locking of the NSIB or MCUboot span in RRAMC.
    * - During NSIB, before chaining
      - :kconfig:option:`CONFIG_SB_DISABLE_NEXT_W`
      - Write-disables the next bootloader partition (typically MCUboot), within region size limits.
@@ -139,6 +156,9 @@ Summary
    * - End of MCUboot
      - :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX`
      - Removes read, write, and execute access to MCUboot program memory for later stages.
+   * - Firmware loader hand-off
+     - :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES`
+     - Write-protects the firmware loader partition except when booting an authenticated installer.
    * - Large standalone MCUboot on nRF54L15
      - :kconfig:option:`CONFIG_FPROTECT_ALLOW_COMBINED_REGIONS`
      - Extends hardware locking across two RRAMC regions when RWX-disable cannot cover the image alone.
