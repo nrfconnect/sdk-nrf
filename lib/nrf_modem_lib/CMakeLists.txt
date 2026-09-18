@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+if(CONFIG_SOC_POSIX AND CONFIG_UNITY)
+  # For mock tests, the modem lib is not actually used but the Kconfig is enabled
+  return()
+endif()
+
 zephyr_library()
 zephyr_library_sources(nrf_modem_lib.c)
 zephyr_library_sources(nrf_modem_os.c)

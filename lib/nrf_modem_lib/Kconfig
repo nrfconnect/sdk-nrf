@@ -5,7 +5,8 @@
 
 menuconfig NRF_MODEM_LIB
 	bool "Modem library"
-	depends on (SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP || SOC_NRF9251_CPUAPP
+	depends on (SOC_SERIES_NRF91 && TRUSTED_EXECUTION_NONSECURE) || SOC_NRF9280_CPUAPP || \
+		SOC_NRF9251_CPUAPP || UNITY
 	select NRF_MODEM
 	select EXPERIMENTAL if SOC_NRF9280_CPUAPP || SOC_NRF9251_CPUAPP
 	imply NET_SOCKETS_OFFLOAD
@@ -14,7 +15,7 @@ menuconfig NRF_MODEM_LIB
 	# The modem must be turned on to achieve low power consumption.
 	# But disable it for ZTEST's as some tests have HW
 	# resource-conflicts with NRF_MODEM_LIB.
-	default y if !ZTEST && !MCUBOOT
+	default y if !ZTEST && !MCUBOOT && !UNITY
 	help
 	  Use Nordic Modem library.
 
