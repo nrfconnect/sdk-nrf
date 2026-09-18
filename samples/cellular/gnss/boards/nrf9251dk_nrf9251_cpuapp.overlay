@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf92_no_bootloader_partitions.dtsi>
+
 / {
 	chosen {
 		ncs,at-host-uart = &uart133;
