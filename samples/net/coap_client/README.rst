@@ -4,9 +4,9 @@
 .. ncs-sample::
    :title: CoAP Client
 
-   This sample demonstrates the communication between a public CoAP server and a CoAP client application that is running on a Nordic Semiconductor SoC that enables IP networking through cellular or Wi-Fi® connectivity.
+   This sample demonstrates the communication between a public CoAP server and a CoAP client application running on a device that connects to either an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device.
 
-   .. |wifi| replace:: Wi-Fi®
+   .. |wifi| replace:: Wi-Fi
 
    .. include:: /includes/net_connection_manager.txt
 
@@ -91,6 +91,27 @@ The following sample-specific Kconfig options are used in this sample (located i
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
+Configuration files
+===================
+
+The sample provides predefined configuration files for the following development kits:
+
+* :file:`prj.conf` - General configuration file for all devices.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+  Must be added explicitly for Wi-Fi builds.
+* :file:`wifi-dtls.conf` - Additional configuration for mutual DTLS with the Californium interop server.
+
+Board files under the :file:`boards/` folder are merged automatically for the selected target.
+The :file:`wifi.conf` and :file:`wifi-dtls.conf` files are not board-specific and must be passed with ``coap_client_EXTRA_CONF_FILE``.
+
+To add a specific extra configuration file to the build, add the ``-- -Dcoap_client_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
+
 Building and running
 ********************
 
@@ -129,6 +150,15 @@ For the above sample output, the information displayed on the terminal conveys t
 
 * ``code:0x45`` -  CoAP response code (2.05 - Content), which is constant across responses
 * ``payload: 15:39:40`` - the actual message payload (current time in UTC format) from the resource that is queried in this sample
+
+Troubleshooting
+===============
+
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
+This sample enables modem traces by default.
+
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
 
 References
 **********

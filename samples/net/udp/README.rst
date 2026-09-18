@@ -6,7 +6,6 @@
    The UDP sample demonstrates how to perform sequential transmissions of UDP packets to a server using an IP-connected device.
    The sample connects to either an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device combined with a compatible host platform.
 
-
    .. |wifi| replace:: Wi-Fi
 
    .. include:: /includes/net_connection_manager.txt
@@ -71,11 +70,12 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`wifi.conf` - Configuration overlay file for Wi-Fi devices, common to the nRF71 Series and nRF70 Series.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+  Must be added explicitly for Wi-Fi builds.
 
 Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
 
-To add a specific configuration overlay file to the build, add the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build.
+To add a specific extra configuration file to the build, add the ``-- -DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your build.
 
 Building and running
 ********************
@@ -87,10 +87,11 @@ Building and running
 Testing
 =======
 
-After programming the sample to your device, test it by performing the following steps:
+|test_sample|
 
 1. |connect_kit|
 #. |connect_terminal|
+#. Power on or reset the kit.
 #. Observe that the sample shows output similar to the following in the terminal emulator:
 
    .. code-block:: console
@@ -113,7 +114,7 @@ Also verify that the Wi-Fi credentials configured for your device match your acc
 Dependencies
 ************
 
-This sample uses the following |NCS| and Zephyr libraries:
+This sample uses the following Zephyr libraries:
 
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
