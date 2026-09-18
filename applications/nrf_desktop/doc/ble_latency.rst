@@ -145,7 +145,6 @@ When the :option:`CONFIG_DESKTOP_BLE_LATENCY_PM_EVENTS` Kconfig option is enable
 
 On a :c:struct:`power_down_event`, the module requests the LOW_POWER mode.
 On a :c:struct:`wake_up_event`, the module restores the last SCI mode requested by the host through the HID Control Point characteristic.
-If the connection is in the HID host enforced rate state described in :ref:`nrf_desktop_ble_latency_sci_host_updates`, the module does not change SCI mode in response to power management events.
 
 If the host requests a mode other than LOW_POWER while the device is suspended, the module will save the requested mode but will remain in the LOW_POWER SCI mode.
 On wake up, the module will restore the saved mode.
@@ -190,8 +189,8 @@ If the connected host rejects this request, the module performs the following op
 
 .. _nrf_desktop_ble_latency_sci_host_updates:
 
-HID host enforced rate (host-initiated transport parameter updates)
--------------------------------------------------------------------
+Host-initiated transport parameter updates
+------------------------------------------
 
 The HID over GATT Profile specification defines how HID SCI transport parameters must be negotiated.
 According to `HID Over GATT Profile Specification`_, Section 7.5.2 (*HID Host-initiated transport parameter updates*):
@@ -205,23 +204,17 @@ Section 7.5.1 defines the complementary device-initiated path:
 The nRF Desktop peripheral follows the device-initiated path when it adjusts peripheral latency within the active SCI mode.
 It expects the connected HID host to use the HID Control Point characteristic when requesting an SCI mode change.
 
-If the connected host updates transport parameters directly at the Link Layer (for example, by initiating a connection rate update instead of writing to the HID Control Point characteristic), the peripheral enters the HID host enforced rate state.
-When a :c:struct:`ble_peer_sci_conn_rate_event` is received without a prior HID SCI mode request, the module:
+If the connected central updates transport parameters directly at the Link Layer (for example, by initiating a connection rate update instead of writing to the HID Control Point characteristic), the module attempts to handle it gracefully.
+Such a situation is recognized by a :c:struct:`ble_peer_sci_conn_rate_event` being received without a prior HID SCI mode request.
+In this case, the module performs the following operations:
 
-* Attempts to determine a matching SCI mode for the received parameters, starting from the current mode and then trying modes in the order of FAST, DEFAULT, LOW_POWER, and FULL_RANGE.
-  If no SCI mode matches the parameters, the HID SCI mode is set to NONE.
-* From this point on, the module will not attempt to update the latency until it returns to normal operation.
-* The module drops any pending HID SCI mode or latency update requests.
+1. Attempts to determine a matching SCI mode for the received parameters, starting from the current mode and then trying modes in the order of FAST, DEFAULT, LOW_POWER, and FULL_RANGE.
+   If no SCI mode matches the parameters, the HID SCI mode is set to NONE.
+2. Stores the updated maximum latency and supervision timeout values.
+   These values are then used as upper limits for these parameters in the connection rate update requests.
+   Using higher values might result in connection rate update failures.
+3. The module drops any pending HID SCI mode or latency update requests.
+4. If the peripheral is in suspended/power-down state, and the HID SCI mode resulting from the above steps is different from LOW_POWER, the module attempts to request LOW_POWER mode parameters.
 
-This recovery behavior is application-specific and is not mandated by the specification.
-It allows the peripheral to remain connected and usable with hosts that enforce connection rate parameters directly at the Link Layer.
-In order to return to the normal operation, the host must:
-
-1. Update the connection rate parameters to a range allowing to support all the HID SCI modes.
-2. Request an HID SCI mode change through the HID Control Point characteristic.
-   As a result, the Bluetooth LE latency module requests a matching connection rate update and clears the HID host enforced rate state if the request succeeds.
-   If the current connection parameters are already valid for the requested mode, the module clears the HID host enforced rate state but no connection rate update is requested.
-
-   .. note::
-      If the peripheral is in suspended/power-down state, the module saves the requested mode and attempts to request LOW_POWER mode parameters.
-      Only if this succeeds, the peripheral exits the HID host enforced rate state.
+.. note::
+   This behavior is application-specific and is not mandated by the specification.
