@@ -13,7 +13,7 @@
 		#size-cells = <1>;
 
 		/* In this configuration MCUboot protects itself only.
-		 * On nrf54l15 it can lock up to 31k of continuous regions.
+		 * On nRF54L05, nRF54L10, and nRF54L15 it can lock up to 31 kB.
 		 * That is why the partition is sized at 31k.
 		 * Alignment of next partition still set at the 4k boundaries,
 		 * due to how MCUboot does the update of images with page
