@@ -1,0 +1,70 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is a representation of the Skyworks SKY66409-11 Radio Front-End module.
+  It is supplementing the generic representation of FEM with settling time and
+  gain values appropriate for SKY66409-11 device.
+
+compatible: "skyworks,sky66409-11"
+
+include: radio-fem-two-ctrl-pins.yaml
+
+properties:
+  ctx-settle-time-us:
+    type: int
+    default: 23
+    description: |
+      Settling time in microseconds from activation of CTX to transmit.
+
+      The default value is based on the experimentally determined settle
+      time, that was observed on SKY66112-11 device.
+
+  crx-settle-time-us:
+    type: int
+    default: 5
+    description: |
+      Settling time in microseconds from activation of CRX to receive.
+
+      The default value is based on the experimentally determined settle
+      time, that was observed on SKY66112-11 device.
+
+  tx-gain-db:
+    type: int
+    default: 12
+    description: |
+      TX gain of the PA amplifier of SKY66409-11 in dB.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device for
+      3.3V supply voltage. The value can be changed if, instead of
+      3.3V supply voltage, another supply voltage is used. Refer to the
+      data sheet for the appropriate value.
+
+  rx-gain-db:
+    type: int
+    default: 12
+    description: |
+      RX gain of the LNA amplifier of SKY66409-11 in dB.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device.
+
+  bypass-gain-db:
+    type: int
+    default: -2
+    description: |
+      Gain of the Front End Module's bypass in dB. This parameter is
+      usually negative to express attenuation.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device rounded
+      to the nearest integer. If set to 0, the TX and RX bypass is disabled.
+
+  tx-bypass-gpios:
+    type: phandle-array
+    description: |
+      GPIO pin used to enable the TX bypass of the SKY66409-11.
+
+      The GPIO pin is used together with the ctx-gpios to enable the TX bypass.
+      If not specified, the TX bypass is disabled by default.

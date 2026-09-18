@@ -27,6 +27,8 @@
 
 #define RADIO_FEM_NODE DT_NODELABEL(nrf_radio_fem)
 
+#define RADIO_FEM_BYPASS_DISABLE 0
+
 #if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 static int fem_simple_gpio_configure(void)
 {
@@ -52,6 +54,33 @@ static int fem_simple_gpio_configure(void)
 	}
 #endif
 
+#if defined(NRF54L_SERIES)
+
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios)
+
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios) && \
+	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios) == \
+	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios))
+
+	uint8_t tx_bypass_gpiote_channel = crx_gpiote_channel;
+	nrfx_gpiote_t *tx_bypass_gpiote = crx_gpiote;
+
+#else
+
+	uint8_t tx_bypass_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
+	nrfx_gpiote_t *tx_bypass_gpiote =
+		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, tx_bypass_gpios));
+
+	if (nrfx_gpiote_channel_alloc(tx_bypass_gpiote, &tx_bypass_gpiote_channel) != 0) {
+		return -ENOMEM;
+	}
+
+#endif
+
+#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) */
+
+#endif /* defined(NRF54L_SERIES) */
+
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {
 			.pa_time_gap_us  =
@@ -65,7 +94,10 @@ static int fem_simple_gpio_configure(void)
 					tx_gain_db),
 			.lna_gain_db     =
 				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					rx_gain_db)
+					rx_gain_db),
+			.bypass_gain_db  =
+				DT_PROP_OR(DT_NODELABEL(nrf_radio_fem),
+					bypass_gain_db, RADIO_FEM_BYPASS_DISABLE)
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
@@ -100,7 +132,22 @@ static int fem_simple_gpio_configure(void)
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
-		}
+		},
+		.tx_bypass_pin_config = {
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && defined(NRF54L_SERIES)
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(tx_bypass_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(tx_bypass_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(tx_bypass_gpios),
+			},
+			.enable        = true,
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_bypass_gpios),
+			.gpiote_ch_id  = tx_bypass_gpiote_channel,
+			.p_gpiote      = tx_bypass_gpiote->p_reg,
+#else /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
+			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
+#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
+		},
 	};
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
