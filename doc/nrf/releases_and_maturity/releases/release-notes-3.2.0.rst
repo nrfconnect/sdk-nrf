@@ -511,7 +511,7 @@ nRF Desktop
     The public key used by MCUboot for validating the application image is securely stored in the KMU hardware peripheral.
     To simplify the programming procedure, the application is configured to use the automatic KMU provisioning.
     The KMU provisioning is performed by the west runner as a part of the ``west flash`` command when the ``--erase`` or ``--recover`` flag is used.
-  * Application configurations to avoid using the deprecated Kconfig options :option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` and :option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE`.
+  * Application configurations to avoid using the deprecated Kconfig options ``CONFIG_DESKTOP_HID_REPORT_EXPIRATION`` and ``CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE``.
     The configurations rely on Kconfig options specific to HID providers instead.
     The HID keypress queue sizes for HID consumer control (:option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_CONSUMER_CTRL_EVENT_QUEUE_SIZE`) and HID system control (:option:`CONFIG_DESKTOP_HID_REPORT_PROVIDER_SYSTEM_CTRL_EVENT_QUEUE_SIZE`) reports have been decreased to ``10``.
   * Application configurations integrating the USB legacy stack (:option:`CONFIG_DESKTOP_USB_STACK_LEGACY`) to suppress build warnings related to deprecated APIs of the USB legacy stack (:kconfig:option:`CONFIG_USB_DEVICE_STACK`).
