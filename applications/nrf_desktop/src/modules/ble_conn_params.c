@@ -564,9 +564,8 @@ static void ble_peer_sci_conn_rate_event_handler(const struct ble_peer_sci_conn_
 	} else {
 		/* As the Connection Rate Update Request came directly from the central
 		 * (not through the HID Control Point SCI Mode request), the peripheral
-		 * is currently in the out-of-spec state.
-		 * Request the preferred SCI mode to clear the out-of-spec state
-		 * on the peripheral so that it resumes normal operation.
+		 * might have switched out of the preferred SCI mode.
+		 * Request the preferred SCI mode to restore it and resume normal operation.
 		 */
 		preferred_sci_mode_request(peer);
 	}
