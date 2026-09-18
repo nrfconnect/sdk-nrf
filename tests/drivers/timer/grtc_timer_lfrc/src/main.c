@@ -18,7 +18,7 @@ const struct nrf_clock_spec clock_hf = {
 	.precision = NRF_CLOCK_CONTROL_PRECISION_DEFAULT,
 };
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 extern const struct device *const lfclk_dev;
 extern const struct device *const fll16m_dev;
 extern const struct nrf_clock_spec lfclk_lfrc_mode;
@@ -26,7 +26,7 @@ extern const struct nrf_clock_spec lfclk_synth_mode;
 extern const struct nrf_clock_spec fll16m_bypass_mode;
 #else
 extern const struct device *const hfclock;
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
 
 static void timer_compare_interrupt_handler(int32_t id, uint64_t expire_time, void *user_data)
 {
@@ -76,7 +76,7 @@ static int test_timer_compare(int32_t channel, const struct accuracy_test_limit 
 		return -2;
 	}
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 	if (tst_dynamic_clk_change_option == CHANGE_TO_SYNTH) {
 		printk("Changing clock source of the GRTC (LFCLK) to SYNTH while waiting for "
 		       "compare callback\n");
@@ -88,7 +88,7 @@ static int test_timer_compare(int32_t channel, const struct accuracy_test_limit 
 	} else {
 		printk("Clock source change not requested\n");
 	}
-#else /* CONFIG_SOC_NRF54H20 */
+#else /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
 	printk("Clock source change not supported\n");
 #endif
 
@@ -128,13 +128,13 @@ static int test_timer_count_in_compare_mode_lfclk_source_from_lfrc(int32_t grtc_
 						       .time_delta_abs_tolerance_us = 250};
 
 	printk("test_timer_count_in_compare_mode_lfclk_source_from_lfrc\n");
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 	request_clock_spec(lfclk_dev, &lfclk_lfrc_mode);
 	if (ret != 0) {
 		printk("Clock request failed: %d\n", ret);
 		return -1;
 	}
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
 
 	for (int i = 0; i < NUMBER_OF_REPETITIONS; i++) {
 		ret += test_timer_compare(grtc_channel, &test_limit, NO_CHANGE);
@@ -206,7 +206,7 @@ int main(void)
 	int32_t grtc_channel;
 	int ret = 0;
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 	ret = request_clock_spec(fll16m_dev, &fll16m_bypass_mode);
 #else
 	k_msleep(HFCLOCK_SETUP_TIME_MS);
@@ -215,7 +215,7 @@ int main(void)
 #else
 	ret = clock_control_on(hfclock, NULL);
 #endif
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
 	if (ret != 0) {
 		printk("Clock request failed: %d\n", ret);
 		return -1;
