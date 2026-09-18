@@ -35,16 +35,17 @@ LOG_MODULE_REGISTER(esb_glue, CONFIG_ESB_LOG_LEVEL);
 
 #if !(defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) || defined(CONFIG_CLOCK_CONTROL_NRF))
 BUILD_ASSERT(false, "No Clock Control driver");
-#elif !defined(CONFIG_SOC_SERIES_NRF54H)
+#endif
+
+#ifdef CONFIG_CLOCK_CONTROL_NRF
 
 int esb_clocks_start(void)
 {
 	int err;
 	int res;
 	struct onoff_client clk_cli;
-
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	struct onoff_manager *clk_mgr;
+
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
 	if (!clk_mgr) {
 		LOG_ERR("Unable to get the Clock manager");
@@ -54,14 +55,7 @@ int esb_clocks_start(void)
 	sys_notify_init_spinwait(&clk_cli.notify);
 
 	err = onoff_request(clk_mgr, &clk_cli);
-#else
-	const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
-							(nordic_nrf_clock_hfclk),
-							(nordic_nrf_clock_xo)));
 
-	sys_notify_init_spinwait(&clk_cli.notify);
-	err = nrf_clock_control_request(dev, NULL, &clk_cli);
-#endif
 	if (err < 0) {
 		LOG_ERR("Clock request failed: %d", err);
 		return err;
@@ -94,8 +88,6 @@ int esb_clocks_start(void)
 int esb_clocks_stop(void)
 {
 	int err;
-
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
@@ -105,13 +97,6 @@ int esb_clocks_stop(void)
 	}
 
 	err = onoff_release(clk_mgr);
-#else
-const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
-							(nordic_nrf_clock_hfclk),
-							(nordic_nrf_clock_xo)));
-
-	err = nrf_clock_control_release(dev, NULL);
-#endif
 
 	if (err < 0) {
 		LOG_ERR("Clock release failed: %d", err);
@@ -125,31 +110,38 @@ const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
 	return 0;
 }
 
+#else /* CONFIG_CLOCK_CONTROL_NRF */
+
+#ifndef CONFIG_HAS_NORDIC_MULTI_OPTION_CLOCKS
+#define CLK_DEV                                                                                    \
+	DEVICE_DT_GET_ONE(                                                                         \
+		COND_CODE_1(NRF_CLOCK_HAS_HFCLK, (nordic_nrf_clock_hfclk), (nordic_nrf_clock_xo)))
 #else
+#define CLK_DEV DEVICE_DT_GET(DT_CLOCKS_CTLR(DT_NODELABEL(radio)))
+#endif
 
 int esb_clocks_start(void)
 {
 	int err;
 	int res;
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
-	struct onoff_client radio_cli;
 
-	if (!radio_clk_dev || !device_is_ready(radio_clk_dev)) {
+	struct onoff_client clk_cli;
+
+	if (!device_is_ready(CLK_DEV)) {
 		LOG_ERR("Radio clock device not found or not ready");
 		return -ENODEV;
 	}
 
-	sys_notify_init_spinwait(&radio_cli.notify);
+	sys_notify_init_spinwait(&clk_cli.notify);
 
-	err = nrf_clock_control_request(radio_clk_dev, NULL, &radio_cli);
+	err = nrf_clock_control_request(CLK_DEV, NULL, &clk_cli);
 	if (err < 0) {
 		LOG_ERR("Clock request failed: %d", err);
 		return err;
 	}
 
 	do {
-		err = sys_notify_fetch_result(&radio_cli.notify, &res);
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
 		if (!err && res) {
 			LOG_ERR("Clock could not be started: %d", res);
 			return res;
@@ -165,10 +157,14 @@ int esb_clocks_start(void)
 		return err;
 	}
 
+#ifdef CONFIG_SOC_SERIES_NRF54H
 	/* Keep radio domain powered all the time to reduce latency. */
 	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, true);
-
 	esb_apply_nrf54h_84();
+#else
+	esb_apply_nrf54l_20();
+	esb_apply_nrf54l_39();
+#endif /* CONFIG_SOC_SERIES_NRF54H */
 
 	LOG_DBG("HF clock started");
 	return 0;
@@ -177,28 +173,30 @@ int esb_clocks_start(void)
 int esb_clocks_stop(void)
 {
 	int err;
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
 
-	if (!radio_clk_dev || !device_is_ready(radio_clk_dev)) {
+	if (!device_is_ready(CLK_DEV)) {
 		LOG_ERR("Radio clock device not found or not ready");
 		return -ENODEV;
 	}
 
-	err = nrf_clock_control_release(radio_clk_dev, NULL);
+	err = nrf_clock_control_release(CLK_DEV, NULL);
 	if (err < 0) {
 		LOG_ERR("Clock release failed: %d", err);
 		return err;
 	}
 
+#ifdef CONFIG_SOC_SERIES_NRF54H
 	esb_revert_nrf54h_84();
-
 	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, false);
+#else
+	esb_revert_nrf54l_39();
+	esb_revert_nrf54l_20();
+#endif /* CONFIG_SOC_SERIES_NRF54H */
 
 	LOG_DBG("HF clock stopped");
 	return 0;
 }
 
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) */
+#endif /* CONFIG_CLOCK_CONTROL_NRF */
 
 #endif /* defined(CONFIG_ESB_CLOCK_INIT) */
