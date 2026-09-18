@@ -27,7 +27,6 @@ if DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
 
 config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION
 	int "HID keypress expiration [ms]"
-	default DESKTOP_HID_REPORT_EXPIRATION
 	default 500
 	help
 	  If a keypress is recorded before HID subscriber connects, it is stored
@@ -37,11 +36,8 @@ config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_KEYPRESS_EXPIRATION
 	  which the module will recall pressed keys when the connection with HID
 	  host is established.
 
-	  The first default is deprecated and used for backwards compatibility.
-
 config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE
 	int "HID keypress queue size"
-	default DESKTOP_HID_EVENT_QUEUE_SIZE
 	default 12
 	range 2 255
 	help
@@ -50,8 +46,6 @@ config DESKTOP_HID_REPORT_PROVIDER_KEYBOARD_EVENT_QUEUE_SIZE
 	  connection with HID host is established. If there is no space in the
 	  queue to enqueue a new key state change, the oldest element is
 	  released.
-
-	  The first default is deprecated and used for backwards compatibility.
 
 module = DESKTOP_HID_REPORT_PROVIDER_KEYBOARD
 module-str = HID provider keyboard

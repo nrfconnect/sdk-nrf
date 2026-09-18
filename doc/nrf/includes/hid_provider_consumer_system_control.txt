@@ -52,14 +52,12 @@ Queue size
 ~~~~~~~~~~
 
 With the |config_consumer_system_crtl_event_queue_size| Kconfig option, you can set the number of elements on the queue where the keys are stored before the connection is established.
-For backwards compatibility, you can set the default value for this option using the deprecated :option:`CONFIG_DESKTOP_HID_EVENT_QUEUE_SIZE` Kconfig option.
 If there is no space in the queue to enqueue a new key state change, the oldest element is released.
 
 Report expiration
 ~~~~~~~~~~~~~~~~~
 
 With the |config_consumer_system_crtl_keypress_expiration| Kconfig option, you can set the amount of time after which a queued key will be considered expired.
-For backwards compatibility, you can set the default value for this option using the deprecated :option:`CONFIG_DESKTOP_HID_REPORT_EXPIRATION` Kconfig option.
 The higher the value, the longer the period from which the nRF Desktop application will recall pressed keys when the connection with HID host is established.
 
 Keys state
