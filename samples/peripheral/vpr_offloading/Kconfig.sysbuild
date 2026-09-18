@@ -1,0 +1,48 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice NETCORE
+	default NETCORE_EMPTY
+
+endchoice
+
+if SUPPORT_PPRCORE
+
+choice PPRCORE
+	default PPRCORE_REMOTE
+
+config PPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if PPRCORE_REMOTE
+
+endif # SUPPORT_PPRCORE
+
+if SUPPORT_FLPRCORE && !SUPPORT_PPRCORE
+
+choice FLPRCORE
+	default FLPRCORE_REMOTE
+
+config FLPRCORE_REMOTE
+	bool "remote image"
+
+endchoice
+
+config FLPRCORE_IMAGE_NAME
+	default "remote" if FLPRCORE_REMOTE
+
+config FLPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if FLPRCORE_REMOTE
+
+endif # SUPPORT_FLPRCORE && !SUPPORT_PPRCORE
+
+source "share/sysbuild/Kconfig"
