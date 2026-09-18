@@ -112,11 +112,11 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Board-specific configuration for the nRF7002 DK.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Board-specific configuration for the nRF7120 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series.
-  It must be added explicitly for Wi-Fi builds.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+  Must be added explicitly for Wi-Fi builds.
 * :file:`wifi-mutual-dtls.conf` - Additional configuration for mutual DTLS downloads from the Californium interop server.
 
 Board files under :file:`boards/` are merged automatically for the selected target.
@@ -135,11 +135,11 @@ Building and running
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. |connect_kit|
-#. Power on or reset the kit.
 #. |connect_terminal_ANSI|
+#. Power on or reset the kit.
 #. Observe that the sample starts, provisions certificates, and starts to download.
 #. Observe that the progress bar fills up as the download progresses.
 #. Observe that the sample displays the message "Download completed" on the terminal when the download completes.
@@ -179,20 +179,11 @@ Also verify that the Wi-Fi credentials configured for your device match your acc
 Dependencies
 ************
 
-This sample uses the following |NCS| libraries when using an nRF91 Series device:
+This sample uses the following |NCS| and Zephyr libraries:
 
 * :ref:`modem_key_mgmt`
 * :ref:`nrf_modem_lib_readme`
-
-It uses the following `sdk-nrfxlib`_ library:
-
-* :ref:`nrfxlib:nrf_modem`
-
-In addition, it uses the following secure firmware component:
-
-* :ref:`Trusted Firmware-M <ug_tfm>`
-
-It uses the following Zephyr libraries:
-
 * :ref:`lib_downloader`
 * :ref:`Connection Manager <zephyr:conn_mgr_overview>`
+* :ref:`nrfxlib:nrf_modem`
+* :ref:`Trusted Firmware-M <ug_tfm>`
