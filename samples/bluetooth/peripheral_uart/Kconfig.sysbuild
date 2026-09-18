@@ -5,7 +5,9 @@
 #
 
 config MERGED_HEX_FILES
-	default y if !SOC_SERIES_NRF54H
+	# On nRF71 the UICR and WICR hex files come from separate sysbuild
+	# images that the merge target cannot depend on, so merging fails.
+	default y if !SOC_SERIES_NRF54H && !SOC_SERIES_NRF71
 
 config NRF_DEFAULT_IPC_RADIO
 	default y
