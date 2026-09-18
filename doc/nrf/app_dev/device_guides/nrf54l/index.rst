@@ -70,7 +70,10 @@ Refer to the following information for the list of supported development kits (D
        | nRF54LS05B targets:
        | ``nrf54ls05dk/nrf54ls05b/cpuapp``
      - | `Datasheet <nRF54LS05A/B Datasheet_>`_
+       | `Quick Start app`_
      - | `nRF54LS05 DK product page <nRF54LS05 DK_>`_
+       | `nRF54LS05A System-on-Chip (SoC) <nRF54LS05A_>`_
+       | `nRF54LS05B System-on-Chip (SoC) <nRF54LS05B_>`_
    * - :ref:`nRF54LV10 DK <board_nrf54lv10dk>`
      - PCA10188
      - | ``nrf54lv10dk/nrf54lv10a/cpuapp``

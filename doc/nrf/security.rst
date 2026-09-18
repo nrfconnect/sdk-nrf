@@ -54,11 +54,11 @@ Expand the following section to see the table listing versions of different secu
        - |tf-m_ver|
        - |ironside_se_ver|
        - |mbed_tls_ver|
-     * - v3.4.0
+     * - v3.4.0 (incl. patch versions)
        - v2.3.0
        - |ironside_se_ver|
        - v4.1.0
-     * - v3.3.0
+     * - v3.3.0 (incl. patch versions)
        - v2.2.2
        - |ironside_se_ver|
        - 3.6.6

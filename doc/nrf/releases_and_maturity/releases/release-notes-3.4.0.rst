@@ -823,7 +823,7 @@ The current |NCS| main branch is based on revision ``684c9e8f32`` of Zephyr.
 Additions specific to |NCS|
 ---------------------------
 
-* Added the :file:`release.yaml` file with device classification support overview.
+* Added the `release.yaml file`_ with device classification support overview.
 * Updated the :file:`VERSION` file to follow the common version format structure.
   The common version file format structure is extended with a ``VERSION_METADATA`` field for |NCS|.
 
