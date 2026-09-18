@@ -41,6 +41,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
 
   sample.bluetooth.peripheral_power_profiling.auto_conn_advert_lfrc_0dBm_100ms:
     tags: &ppk_tag

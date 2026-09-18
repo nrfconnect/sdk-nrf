@@ -77,6 +77,20 @@ config BT_POWER_PROFILING_LED_DISABLED
 	help
 	  Disables the LEDs to reduce power consumption.
 
+config BT_POWER_PROFILING_BUTTONS_DISABLED
+	bool "Disable DK buttons"
+	help
+	  Disables the DK buttons library. Use this on boards where the DK buttons are not
+	  usable, for example because they are wired to a GPIO port that cannot be read.
+
+	  The DK buttons library polls the button pins every
+	  CONFIG_DK_LIBRARY_BUTTON_SCAN_INTERVAL milliseconds for as long as any button reads
+	  as pressed. On a board where a button pin is stuck in the active state, that poll
+	  never stops and the periodic wake-ups dominate the measured current consumption.
+
+	  With the buttons disabled, the sample starts connectable advertising right after
+	  boot instead of waiting for a button press.
+
 config BT_POWER_PROFILING_NFC_DISABLED
 	bool "Disable NFC"
 	default y if !HAS_HW_NRF_NFCT

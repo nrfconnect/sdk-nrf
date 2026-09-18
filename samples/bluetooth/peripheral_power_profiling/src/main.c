@@ -79,6 +79,26 @@ static int leds_init(void)
 	}
 }
 
+static int buttons_init(button_handler_t button_handler)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_BUTTONS_DISABLED)) {
+		ARG_UNUSED(button_handler);
+		return 0;
+	} else {
+		return dk_buttons_init(button_handler);
+	}
+}
+
+static void buttons_read(uint32_t *button_state, uint32_t *has_changed)
+{
+	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_BUTTONS_DISABLED)) {
+		*button_state = CONNECTABLE_ADV_BUTTON;
+		*has_changed = CONNECTABLE_ADV_BUTTON;
+	} else {
+		dk_read_buttons(button_state, has_changed);
+	}
+}
+
 static int set_led(uint8_t led_idx, uint32_t val)
 {
 	if (IS_ENABLED(CONFIG_BT_POWER_PROFILING_LED_DISABLED)) {
@@ -608,14 +628,14 @@ int main(void)
 
 	printk("Starting Bluetooth Power Profiling sample\n");
 
-	err = dk_buttons_init(button_handler);
+	err = buttons_init(button_handler);
 	if (err) {
 		printk("Failed to initialize buttons (err %d)\n", err);
 		return 0;
 	}
 
 	/* Read the button state after booting to check if advertising start is needed. */
-	dk_read_buttons(&button_state, &has_changed);
+	buttons_read(&button_state, &has_changed);
 
 	err = leds_init();
 	if (err) {
