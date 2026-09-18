@@ -11,7 +11,8 @@
 	};
 };
 
-&uicr {
+&nfct {
+	status = "disabled";
 	nfct-pins-as-gpios;
 };
 
