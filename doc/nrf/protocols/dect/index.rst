@@ -139,6 +139,7 @@ The following samples use DECT NR+ physical layer modem firmware in the |NCS|:
 The following samples use the DECT NR+ full stack with IPv6 networking capabilities for nRF91x1 devices where the DECT NR+ MAC layer is running on the modem side:
 
 * :ref:`dect_shell_application`
+* :ref:`dect_tether_ipv6_sample`
 * :ref:`hello_dect`
 
 Power optimization
