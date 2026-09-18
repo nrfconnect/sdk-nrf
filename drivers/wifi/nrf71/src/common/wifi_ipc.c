@@ -26,8 +26,6 @@
 
 #include <common/log_cfg.h>
 #include <common/mem_mgmt.h>
-#include <common/lock_mgmt.h>
-
 #include <common/fmac_structs_common.h>
 #include <common/wifi_ipc.h>
 
@@ -333,8 +331,9 @@ static nrf_wifi_ipc_t nrf_wifi_ipc_host_rx;
 /** Per-IPC-instance (ipc0) state bound to one FMAC device context at a time. */
 struct nrf_wifi_ipc_inst {
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
-	void *cmd_lock;
-	void *rx_lock;
+	struct k_mutex cmd_lock;
+	struct k_mutex rx_lock;
+	bool locks_inited;
 	bool rx_active;
 };
 
@@ -651,35 +650,18 @@ enum nrf_wifi_status nrf_wifi_ipc_open(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	ipc_inst.fmac_dev_ctx = fmac_dev_ctx;
 
-	if (!ipc_inst.cmd_lock) {
-		ipc_inst.cmd_lock = nrf_wifi_lock_alloc();
-		if (!ipc_inst.cmd_lock) {
-			LOG_ERR("%s: Unable to allocate command lock", __func__);
-			ipc_inst.fmac_dev_ctx = NULL;
-			return NRF_WIFI_STATUS_FAIL;
-		}
-		nrf_wifi_lock_init(ipc_inst.cmd_lock);
-
-		ipc_inst.rx_lock = nrf_wifi_lock_alloc();
-		if (!ipc_inst.rx_lock) {
-			LOG_ERR("%s: Unable to allocate RX lock", __func__);
-			nrf_wifi_lock_free(ipc_inst.cmd_lock);
-			ipc_inst.cmd_lock = NULL;
-			ipc_inst.fmac_dev_ctx = NULL;
-			return NRF_WIFI_STATUS_FAIL;
-		}
-		nrf_wifi_lock_init(ipc_inst.rx_lock);
+	if (!ipc_inst.locks_inited) {
+		k_mutex_init(&ipc_inst.cmd_lock);
+		k_mutex_init(&ipc_inst.rx_lock);
 
 		ret = ipc_init();
 		if (ret) {
 			LOG_ERR("%s: ipc_init failed", __func__);
-			nrf_wifi_lock_free(ipc_inst.rx_lock);
-			ipc_inst.rx_lock = NULL;
-			nrf_wifi_lock_free(ipc_inst.cmd_lock);
-			ipc_inst.cmd_lock = NULL;
 			ipc_inst.fmac_dev_ctx = NULL;
 			return NRF_WIFI_STATUS_FAIL;
 		}
+
+		ipc_inst.locks_inited = true;
 	}
 
 	ret = host_rpu_ipc_arm_rx(fmac_dev_ctx);
@@ -689,9 +671,9 @@ enum nrf_wifi_status nrf_wifi_ipc_open(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
-	nrf_wifi_lock_irq_take(ipc_inst.rx_lock, NULL);
+	k_mutex_lock(&ipc_inst.rx_lock, K_FOREVER);
 	ipc_inst.rx_active = true;
-	nrf_wifi_lock_irq_rel(ipc_inst.rx_lock, NULL);
+	k_mutex_unlock(&ipc_inst.rx_lock);
 
 	return NRF_WIFI_STATUS_SUCCESS;
 }
@@ -700,7 +682,7 @@ bool nrf_wifi_ipc_is_open(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct nrf_wifi_ipc_inst *inst = ipc_inst_bound(fmac_dev_ctx);
 
-	return inst != NULL && inst->cmd_lock != NULL;
+	return inst != NULL && inst->locks_inited;
 }
 
 void nrf_wifi_ipc_close(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
@@ -711,24 +693,16 @@ void nrf_wifi_ipc_close(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 		return;
 	}
 
-	if (inst->rx_lock) {
-		nrf_wifi_lock_irq_take(inst->rx_lock, NULL);
+	if (inst->locks_inited) {
+		k_mutex_lock(&inst->rx_lock, K_FOREVER);
 		inst->rx_active = false;
-		nrf_wifi_lock_irq_rel(inst->rx_lock, NULL);
+		k_mutex_unlock(&inst->rx_lock);
 	}
 
 	host_rpu_ipc_disarm_rx();
 	ipc_deinit();
 
-	if (inst->rx_lock) {
-		nrf_wifi_lock_free(inst->rx_lock);
-		inst->rx_lock = NULL;
-	}
-
-	if (inst->cmd_lock) {
-		nrf_wifi_lock_free(inst->cmd_lock);
-		inst->cmd_lock = NULL;
-	}
+	inst->locks_inited = false;
 
 	/* host_rpu_ipc_disarm_rx() already cleared fmac_dev_ctx; keep close idempotent. */
 	ipc_inst.fmac_dev_ctx = NULL;
@@ -745,7 +719,7 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	};
 	int ret;
 
-	if (!inst || !inst->cmd_lock) {
+	if (!inst || !inst->locks_inited) {
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
@@ -755,9 +729,9 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	LOG_DBG("%s: caller %p", __func__, __builtin_return_address(0));
 #endif
 
-	nrf_wifi_lock_take(inst->cmd_lock);
+	k_mutex_lock(&inst->cmd_lock, K_FOREVER);
 	ret = ipc_send(ctx, cmd, cmd_size);
-	nrf_wifi_lock_rel(inst->cmd_lock);
+	k_mutex_unlock(&inst->cmd_lock);
 
 	if (ret < 0) {
 		LOG_ERR("%s: Sending command to RPU failed", __func__);
@@ -770,20 +744,18 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 void nrf_wifi_ipc_rx_lock(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct nrf_wifi_ipc_inst *inst = ipc_inst_bound(fmac_dev_ctx);
-	unsigned long flags = 0;
 
-	if (inst && inst->rx_lock) {
-		nrf_wifi_lock_irq_take(inst->rx_lock, &flags);
+	if (inst && inst->locks_inited) {
+		k_mutex_lock(&inst->rx_lock, K_FOREVER);
 	}
 }
 
 void nrf_wifi_ipc_rx_unlock(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 {
 	struct nrf_wifi_ipc_inst *inst = ipc_inst_bound(fmac_dev_ctx);
-	unsigned long flags = 0;
 
-	if (inst && inst->rx_lock) {
-		nrf_wifi_lock_irq_rel(inst->rx_lock, &flags);
+	if (inst && inst->locks_inited) {
+		k_mutex_unlock(&inst->rx_lock);
 	}
 }
 

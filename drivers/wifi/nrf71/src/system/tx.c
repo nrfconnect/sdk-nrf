@@ -9,18 +9,18 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <stddef.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <zephyr/net/net_core.h>
+
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
-#include <common/llist_mgmt.h>
-#include <common/lock_mgmt.h>
-#include <common/work_mgmt.h>
+#include <common/util.h>
 #include <common/wifi_ipc.h>
-#include <system/fmac_tx.h>
 #include <system/fmac_api.h>
 #include <system/fmac_peer.h>
-#include <common/util.h>
-#include <zephyr/net/net_core.h>
-#include <zephyr/logging/log.h>
+#include <system/fmac_tx.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -234,20 +234,19 @@ static enum nrf_wifi_status check_tid_callbk_fn(void *callbk_data,
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
-static bool has_matching_tid(void *txq, int target_tid)
+static bool has_matching_tid(sys_dlist_t *txq, int target_tid)
 {
 	struct check_tid_info info;
-	enum nrf_wifi_status status;
+	struct nrf_wifi_nwb *nwb;
 
 	info.target_tid = target_tid;
 	info.tid_match_found = false;
 
-	status = nrf_wifi_llist_traverse(txq,
-					      &info,
-					      check_tid_callbk_fn);
-
-	if (status == NRF_WIFI_STATUS_SUCCESS && info.tid_match_found) {
-		return true;
+	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
+		(void)check_tid_callbk_fn(&info, nwb);
+		if (info.tid_match_found) {
+			return true;
+		}
 	}
 
 	return false;
@@ -260,14 +259,13 @@ int pending_frames_count(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 {
 	int count = 0;
 	int ac = 0;
-	void *queue = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
 	for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
-		queue = sys_dev_ctx->tx_config.data_pending_txq[peer_id][ac];
-		count += nrf_wifi_llist_len(queue);
+		count += (unsigned int)sys_dlist_len(
+			&sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac]);
 	}
 
 	return count;
@@ -396,8 +394,8 @@ static int tx_aggr_check(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		  int ac,
 		  int peer)
 {
-	void *nwb = NULL;
-	void *pending_pkt_queue = NULL;
+	struct nrf_wifi_nwb *queue_nwb = NULL;
+	sys_dlist_t *pending_pkt_queue = NULL;
 	bool aggr = true;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 
@@ -413,21 +411,21 @@ static int tx_aggr_check(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	}
 #endif /* NRF71_RAW_DATA_TX */
 
-	pending_pkt_queue = sys_dev_ctx->tx_config.data_pending_txq[peer][ac];
+	pending_pkt_queue = &sys_dev_ctx->tx_config.pend_pkt_q[peer][ac];
 
-	if (nrf_wifi_llist_len(pending_pkt_queue) == 0) {
+	if (sys_dlist_is_empty(pending_pkt_queue)) {
 		return false;
 	}
 
-	nwb = nrf_wifi_llist_peek_head(pending_pkt_queue);
+	queue_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pending_pkt_queue, queue_nwb, queue_node);
 
-	if (nwb) {
-		if (!nrf_wifi_util_ether_addr_equal(nrf_wifi_get_dest(nwb),
+	if (queue_nwb) {
+		if (!nrf_wifi_util_ether_addr_equal(nrf_wifi_get_dest(queue_nwb),
 						    nrf_wifi_get_dest(first_nwb))) {
 			aggr = false;
 		}
 
-		if (!nrf_wifi_util_ether_addr_equal(nrf_wifi_get_src(nwb),
+		if (!nrf_wifi_util_ether_addr_equal(nrf_wifi_get_src(queue_nwb),
 						    nrf_wifi_get_src(first_nwb))) {
 			aggr = false;
 		}
@@ -443,34 +441,18 @@ static int get_peer_from_wakeup_q(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 {
 	int peer_id = -1;
 	struct peers_info *peer = NULL;
-	void *pend_q = NULL;
-	unsigned int pend_q_len;
-	void *client_q = NULL;
-	void *list_node = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	client_q = sys_dev_ctx->tx_config.wakeup_client_q;
-
-	list_node = nrf_wifi_llist_get_node_head(client_q);
-
-	while (list_node) {
-		peer = nrf_wifi_llist_node_data_get(list_node);
-
-		if (peer != NULL && peer->ps_token_count) {
-
-			pend_q = sys_dev_ctx->tx_config.data_pending_txq[peer->peer_id][ac];
-			pend_q_len = nrf_wifi_llist_len(pend_q);
-
-			if (pend_q_len) {
-				peer->ps_token_count--;
-				return peer->peer_id;
-			}
+	SYS_DLIST_FOR_EACH_CONTAINER(&sys_dev_ctx->tx_config.wakeup_client_q, peer,
+				     wakeup_node) {
+		if (peer->ps_token_count &&
+		    !sys_dlist_is_empty(
+			    &sys_dev_ctx->tx_config.pend_pkt_q[peer->peer_id][ac])) {
+			peer->ps_token_count--;
+			return peer->peer_id;
 		}
-
-		list_node = nrf_wifi_llist_get_node_nxt(client_q,
-							     list_node);
 	}
 
 	return peer_id;
@@ -483,8 +465,6 @@ static int tx_curr_peer_opp_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	unsigned int i = 0;
 	unsigned int curr_peer_opp = 0;
 	unsigned int init_peer_opp = 0;
-	unsigned int pend_q_len;
-	void *pend_q = NULL;
 	int peer_id = -1;
 	unsigned char ps_state = 0;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
@@ -512,10 +492,8 @@ static int tx_curr_peer_opp_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			continue;
 		}
 
-		pend_q = sys_dev_ctx->tx_config.data_pending_txq[curr_peer_opp][ac];
-		pend_q_len = nrf_wifi_llist_len(pend_q);
-
-		if (pend_q_len) {
+		if (!sys_dlist_is_empty(
+			    &sys_dev_ctx->tx_config.pend_pkt_q[curr_peer_opp][ac])) {
 			sys_dev_ctx->tx_config.curr_peer_opp[ac] =
 				(curr_peer_opp + 1) % MAX_PEERS;
 			break;
@@ -534,12 +512,12 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			unsigned int ac)
 {
 	int len = 0;
-	void *pend_pkt_q = NULL;
-	void *txq = NULL;
+	sys_dlist_t *pend_pkt_q = NULL;
+	sys_dlist_t *txq = NULL;
 	struct tx_pkt_info *pkt_info = NULL;
 	int peer_id = -1;
-	void *nwb = NULL;
-	void *first_nwb = NULL;
+	struct nrf_wifi_nwb *nwb = NULL;
+	struct nrf_wifi_nwb *first_nwb = NULL;
 
 	int max_txq_len, avail_ampdu_len_per_token;
 	int ampdu_len = 0;
@@ -553,12 +531,15 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	avail_ampdu_len_per_token = sys_fpriv->avail_ampdu_len_per_token;
 
 #ifdef NRF71_RAW_DATA_TX
+	struct nrf_wifi_nwb *pend_head = NULL;
+
 	/* Check for Raw packets first, if not found, then check for
 	 * regular packets.
 	 */
-	pend_pkt_q = sys_dev_ctx->tx_config.data_pending_txq[MAX_PEERS][ac];
-	if (!(nrf_wifi_llist_len(pend_pkt_q) > 0 &&
-	      nrf_wifi_nbuf_is_raw_tx(nrf_wifi_llist_peek_head(pend_pkt_q)))) {
+	pend_pkt_q = &sys_dev_ctx->tx_config.pend_pkt_q[MAX_PEERS][ac];
+	pend_head = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, pend_head, queue_node);
+	if (!(sys_dlist_len(pend_pkt_q) > 0 &&
+	      nrf_wifi_nbuf_is_raw_tx(pend_head))) {
 #endif
 		peer_id = tx_curr_peer_opp_get(fmac_dev_ctx, ac);
 
@@ -567,30 +548,28 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			return 0;
 		}
 
-		pend_pkt_q = sys_dev_ctx->tx_config.data_pending_txq[peer_id][ac];
+		pend_pkt_q = &sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac];
 #ifdef NRF71_RAW_DATA_TX
 	}
 #endif
 
-	if (nrf_wifi_llist_len(pend_pkt_q) == 0) {
+	if (sys_dlist_is_empty(pend_pkt_q)) {
 		return 0;
 	}
 
 	pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
-	txq = pkt_info->pkt;
+	txq = &pkt_info->pkt_q;
 
 	/* Aggregate Only MPDU's with same RA, same Rate,
 	 * same Rate flags, same Tx Info flags
 	 */
-	if (nrf_wifi_llist_len(pend_pkt_q)) {
-		first_nwb = nrf_wifi_llist_peek_head(pend_pkt_q);
-	}
+	first_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, first_nwb, queue_node);
 
-	while (nrf_wifi_llist_len(pend_pkt_q)) {
-		nwb = nrf_wifi_llist_peek_head(pend_pkt_q);
+	while (!sys_dlist_is_empty(pend_pkt_q)) {
+		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, nwb, queue_node);
 
 		ampdu_len += TX_BUF_HEADROOM +
-			nrf_wifi_nbuf_data_size((void *)nwb);
+			nrf_wifi_nbuf_data_size(nwb);
 
 		if (ampdu_len >= avail_ampdu_len_per_token) {
 			break;
@@ -598,33 +577,33 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 
 		if (!can_xmit(fmac_dev_ctx, nwb) ||
 			(!tx_aggr_check(fmac_dev_ctx, first_nwb, ac, peer_id)) ||
-			(nrf_wifi_llist_len(txq) >= max_txq_len)) {
+			(sys_dlist_len(txq) >= max_txq_len)) {
 			break;
 		}
 
-		nwb = nrf_wifi_llist_pop_head(pend_pkt_q);
+		sys_dlist_remove(&nwb->queue_node);
 
-		nrf_wifi_llist_add_tail_data(txq,
-					     nwb);
+		sys_dnode_init(&nwb->queue_node);
+		sys_dlist_append(txq, &nwb->queue_node);
 	}
 
 	/* If our criterion rejects all pending frames, or
 	 * pend_q is empty, send only 1
 	 */
-	if (!nrf_wifi_llist_len(txq)) {
-		nwb = nrf_wifi_llist_peek_head(pend_pkt_q);
+	if (sys_dlist_is_empty(txq)) {
+		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, nwb, queue_node);
 
 		if (!nwb || !can_xmit(fmac_dev_ctx, nwb)) {
 			return 0;
 		}
 
-		nwb = nrf_wifi_llist_pop_head(pend_pkt_q);
+		sys_dlist_remove(&nwb->queue_node);
 
-		nrf_wifi_llist_add_tail_data(txq,
-					     nwb);
+		sys_dnode_init(&nwb->queue_node);
+		sys_dlist_append(txq, &nwb->queue_node);
 	}
 
-	len = nrf_wifi_llist_len(txq);
+	len = (int)sys_dlist_len(txq);
 
 	if (len > 0) {
 		sys_dev_ctx->tx_config.pkt_info_p[desc].peer_id = peer_id;
@@ -708,22 +687,24 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				       struct host_rpu_msg *umac_cmd,
 				       int desc,
-				       void *txq,
+				       sys_dlist_t *txq,
 				       int peer_id)
 {
 	struct nrf_wifi_cmd_raw_tx *config = NULL;
-	unsigned int txq_len = 0;
 	struct tx_cmd_prep_raw_info info;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	unsigned char vif_id;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct nrf_wifi_nwb *nwb;
+	unsigned int txq_len;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	vif_id = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
 	vif_ctx = sys_dev_ctx->vif_ctx[vif_id];
 
-	txq_len = nrf_wifi_llist_len(txq);
+	txq_len = (unsigned int)sys_dlist_len(txq);
+
 	if (txq_len == 0) {
 		LOG_ERR("%s: txq_len = %d",
 				      __func__,
@@ -731,7 +712,9 @@ enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		goto err;
 	}
 
-	void *first_nwb = nrf_wifi_llist_peek_head(txq);
+	struct nrf_wifi_nwb *first_nwb;
+
+	first_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(txq, first_nwb, queue_node);
 
 	sys_dev_ctx->tx_config.send_pkt_coalesce_count_p[desc] = txq_len;
 	config = (struct nrf_wifi_cmd_raw_tx *)(umac_cmd->msg);
@@ -757,14 +740,14 @@ enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	info.raw_config = config;
 	info.num_tx_pkts = 0;
 
-	status = nrf_wifi_llist_traverse(txq,
-					      &info,
-					      rawtx_cmd_prep_callbk_fn);
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: failed",
-				      __func__);
-		goto err;
+	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
+		status = rawtx_cmd_prep_callbk_fn(&info, nwb);
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: failed", __func__);
+			goto err;
+		}
 	}
+
 	config->raw_tx_info.num_frames = info.num_tx_pkts;
 	config->raw_tx_info.aggregation = AGGR_ENABLE;
 	sys_dev_ctx->host_stats.total_tx_pkts += info.num_tx_pkts;
@@ -778,14 +761,13 @@ err:
 static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		   struct host_rpu_msg *umac_cmd,
 		   int desc,
-		   void *txq,
+		   sys_dlist_t *txq,
 		   int peer_id)
 {
 	struct nrf_wifi_tx_buff *config = NULL;
 	int len = 0;
-	void *nwb = NULL;
+	struct nrf_wifi_nwb *nwb = NULL;
 	void *nwb_data = NULL;
-	unsigned int txq_len = 0;
 	unsigned char *data = NULL;
 	struct tx_cmd_prep_info info;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -793,6 +775,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	unsigned char vif_id;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
+	unsigned int txq_len;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
@@ -800,7 +783,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	vif_id = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
 	vif_ctx = sys_dev_ctx->vif_ctx[vif_id];
 
-	txq_len = nrf_wifi_llist_len(txq);
+	txq_len = (unsigned int)sys_dlist_len(txq);
 
 	if (txq_len == 0) {
 		LOG_ERR("%s: txq_len = %d",
@@ -809,7 +792,7 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		goto err;
 	}
 
-	nwb = nrf_wifi_llist_peek_head(txq);
+	nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(txq, nwb, queue_node);
 
 	sys_dev_ctx->tx_config.send_pkt_coalesce_count_p[desc] = txq_len;
 
@@ -862,14 +845,12 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	info.fmac_dev_ctx = fmac_dev_ctx;
 	info.config = config;
 
-	status = nrf_wifi_llist_traverse(txq,
-					      &info,
-					      tx_cmd_prep_callbk_fn);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: build_mac80211_hdr failed",
-				      __func__);
-		goto err;
+	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
+		status = tx_cmd_prep_callbk_fn(&info, nwb);
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			LOG_ERR("%s: build_mac80211_hdr failed", __func__);
+			goto err;
+		}
 	}
 
 	sys_dev_ctx->host_stats.total_tx_pkts += config->num_tx_pkts;
@@ -883,8 +864,11 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	}
 
 	if (sys_dev_ctx->tx_config.peers[peer_id].ps_token_count == 0) {
-		nrf_wifi_llist_del_by_data(sys_dev_ctx->tx_config.wakeup_client_q,
-					     &sys_dev_ctx->tx_config.peers[peer_id]);
+		sys_dnode_t *wakeup_node = &sys_dev_ctx->tx_config.peers[peer_id].wakeup_node;
+
+		if (sys_dnode_is_linked(wakeup_node)) {
+			sys_dlist_remove(wakeup_node);
+		}
 
 		config->mac_hdr_info.eosp = 1;
 
@@ -899,20 +883,20 @@ err:
 
 #ifdef NRF71_RAW_DATA_TX
 enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-				    void *txq,
+				    sys_dlist_t *txq,
 				    int desc,
 				    int peer_id)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
 	unsigned int len = 0;
-	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	void *nwb = NULL;
+	unsigned int txq_len;
+	struct nrf_wifi_nwb *nwb = NULL;
 
-	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	txq_len = (unsigned int)sys_dlist_len(txq);
 
 	len += sizeof(struct nrf_wifi_cmd_raw_tx);
-	len *= nrf_wifi_llist_len(txq);
+	len *= txq_len;
 
 	umac_cmd = umac_cmd_alloc(fmac_dev_ctx,
 				  NRF_WIFI_HOST_RPU_MSG_TYPE_SYSTEM,
@@ -934,13 +918,9 @@ enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				       umac_cmd,
 				       (sizeof(*umac_cmd) + len));
 
-	while (nrf_wifi_llist_len(txq)) {
-		nwb = nrf_wifi_llist_pop_head(txq);
-
-		if (!nwb) {
-			continue;
-		}
-
+	while (!sys_dlist_is_empty(txq)) {
+		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(txq, nwb, queue_node);
+		sys_dlist_remove(&nwb->queue_node);
 		nrf_wifi_nbuf_free(nwb);
 	}
 out:
@@ -949,16 +929,19 @@ out:
 #endif /* NRF71_RAW_DATA_TX */
 
 enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-				 void *txq,
+				 sys_dlist_t *txq,
 				 int desc,
 				 int peer_id)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
 	unsigned int len = 0;
+	unsigned int txq_len;
+
+	txq_len = (unsigned int)sys_dlist_len(txq);
 
 	len += sizeof(struct nrf_wifi_tx_buff_info);
-	len *= nrf_wifi_llist_len(txq);
+	len *= txq_len;
 
 	len += sizeof(struct nrf_wifi_tx_buff);
 
@@ -993,7 +976,7 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	void *first_nwb = NULL;
+	struct nrf_wifi_nwb *first_nwb = NULL;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
@@ -1004,7 +987,8 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 	}
 
 	if (_tx_pending_process(fmac_dev_ctx, desc, ac)) {
-		first_nwb = nrf_wifi_llist_peek_head(sys_dev_ctx->tx_config.pkt_info_p[desc].pkt);
+		first_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(
+			&sys_dev_ctx->tx_config.pkt_info_p[desc].pkt_q, first_nwb, queue_node);
 		/* Should never happen, but just in case */
 		if (!first_nwb) {
 			LOG_ERR("%s: No pending packets in txq",
@@ -1014,13 +998,13 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 #ifdef NRF71_RAW_DATA_TX
 		if (nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
 			status = rawtx_cmd_init(fmac_dev_ctx,
-						sys_dev_ctx->tx_config.pkt_info_p[desc].pkt,
+						&sys_dev_ctx->tx_config.pkt_info_p[desc].pkt_q,
 						desc,
 						sys_dev_ctx->tx_config.pkt_info_p[desc].peer_id);
 		} else {
 #endif
 			status = tx_cmd_init(fmac_dev_ctx,
-					     sys_dev_ctx->tx_config.pkt_info_p[desc].pkt,
+					     &sys_dev_ctx->tx_config.pkt_info_p[desc].pkt_q,
 					     desc,
 					     sys_dev_ctx->tx_config.pkt_info_p[desc].peer_id);
 #ifdef NRF71_RAW_DATA_TX
@@ -1045,9 +1029,9 @@ static enum nrf_wifi_status tx_enqueue(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 				unsigned int peer_id)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	void *queue = NULL;
-	int qlen = 0;
+	sys_dlist_t *queue = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct nrf_wifi_nwb *nwb_ptr = nwb;
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
@@ -1057,20 +1041,18 @@ static enum nrf_wifi_status tx_enqueue(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		goto out;
 	}
 
-	queue = sys_dev_ctx->tx_config.data_pending_txq[peer_id][ac];
+	queue = &sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac];
 
-	qlen = nrf_wifi_llist_len(queue);
-
-	if (qlen >= NRF71_MAX_TX_PENDING_QLEN) {
+	if (sys_dlist_len(queue) >= NRF71_MAX_TX_PENDING_QLEN) {
 		goto out;
 	}
 
+	sys_dnode_init(&nwb_ptr->queue_node);
+
 	if (is_twt_emergency_pkt(nwb)) {
-		nrf_wifi_llist_add_head_data(queue,
-					      nwb);
+		sys_dlist_prepend(queue, &nwb_ptr->queue_node);
 	} else {
-		nrf_wifi_llist_add_tail_data(queue,
-					 nwb);
+		sys_dlist_append(queue, &nwb_ptr->queue_node);
 	}
 
 	status = update_pend_q_bmp(fmac_dev_ctx, ac, peer_id);
@@ -1090,8 +1072,8 @@ static enum nrf_wifi_fmac_tx_status tx_process(struct nrf_wifi_fmac_dev_ctx *fma
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-	void *pend_pkt_q = NULL;
-	void *first_nwb = NULL;
+	sys_dlist_t *pend_pkt_q = NULL;
+	struct nrf_wifi_nwb *first_nwb = NULL;
 	unsigned char ps_state = 0;
 	bool aggr_status = false;
 	int max_cmds = 0;
@@ -1115,7 +1097,7 @@ static enum nrf_wifi_fmac_tx_status tx_process(struct nrf_wifi_fmac_dev_ctx *fma
 		goto out;
 	}
 
-	pend_pkt_q = sys_dev_ctx->tx_config.data_pending_txq[peer_id][ac];
+	pend_pkt_q = &sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac];
 
 	/* If outstanding_descs for a particular
 	 * access category >= NUM_TX_DESCS_PER_AC means there are already
@@ -1125,8 +1107,9 @@ static enum nrf_wifi_fmac_tx_status tx_process(struct nrf_wifi_fmac_dev_ctx *fma
 	 */
 
 	if ((sys_dev_ctx->tx_config.outstanding_descs[ac]) >= sys_fpriv->num_tx_tokens_per_ac) {
-		if (nrf_wifi_llist_len(pend_pkt_q)) {
-			first_nwb = nrf_wifi_llist_peek_head(pend_pkt_q);
+		if (!sys_dlist_is_empty(pend_pkt_q)) {
+			first_nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(pend_pkt_q, first_nwb,
+								  queue_node);
 
 			aggr_status = true;
 
@@ -1144,7 +1127,7 @@ static enum nrf_wifi_fmac_tx_status tx_process(struct nrf_wifi_fmac_dev_ctx *fma
 		if (aggr_status) {
 			max_cmds = sys_fpriv->data_config.max_tx_aggregation;
 
-			if (nrf_wifi_llist_len(pend_pkt_q) < max_cmds) {
+			if (sys_dlist_len(pend_pkt_q) < max_cmds) {
 				goto out;
 			}
 		}
@@ -1242,11 +1225,9 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	unsigned int pkt = 0;
 	unsigned int pkts_pending = 0;
 	unsigned char queue = 0;
-	void *txq = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
-	void *nwb = NULL;
-	void *nwb_list = NULL;
+	struct nrf_wifi_nwb *nwb = NULL;
 
 	fpriv = fmac_dev_ctx->fpriv;
 
@@ -1261,19 +1242,14 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	}
 
 	pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
-	nwb_list = pkt_info->pkt;
 
 	pkt = 0;
 
 	sys_dev_ctx->host_stats.total_tx_done_pkts += pkt;
 
-	while (nrf_wifi_llist_len(nwb_list)) {
-		nwb = nrf_wifi_llist_pop_head(nwb_list);
-
-		if (!nwb) {
-			continue;
-		}
-
+	while (!sys_dlist_is_empty(&pkt_info->pkt_q)) {
+		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(&pkt_info->pkt_q, nwb, queue_node);
+		sys_dlist_remove(&nwb->queue_node);
 		nrf_wifi_nbuf_free(nwb);
 	}
 
@@ -1283,25 +1259,22 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 #ifdef NRF71_RAW_DATA_TX
 		struct nrf_wifi_fmac_vif_ctx *vif_ctx;
 		unsigned char if_idx;
-		void *nwb = NULL;
 
 		pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
-		txq = pkt_info->pkt;
 
 		/**
 		 * we need to peek into the pending buffer to determine if
 		 * packet is a raw packet or not
 		 */
-		nwb = nrf_wifi_llist_peek_head(txq);
+		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(&pkt_info->pkt_q, nwb, queue_node);
 
 		if (!nrf_wifi_nbuf_is_raw_tx(nwb)) {
 #endif /* NRF71_RAW_DATA_TX */
 			if (sys_dev_ctx->twt_sleep_status ==
 			    NRF_WIFI_FMAC_TWT_STATE_AWAKE) {
 				pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
-				txq = pkt_info->pkt;
 				status = tx_cmd_init(fmac_dev_ctx,
-						     txq,
+						     &pkt_info->pkt_q,
 						     desc,
 						     pkt_info->peer_id);
 			} else {
@@ -1321,7 +1294,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 				status = NRF_WIFI_STATUS_SUCCESS;
 			} else {
 				status = rawtx_cmd_init(fmac_dev_ctx,
-							txq,
+							&pkt_info->pkt_q,
 							desc,
 							pkt_info->peer_id);
 			}
@@ -1335,32 +1308,34 @@ out:
 }
 
 #ifdef NRF71_TX_DONE_WQ_ENABLED
-static void tx_done_tasklet_fn(unsigned long data)
+static void tx_done_work_handler(struct k_work *work)
 {
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = (struct nrf_wifi_fmac_dev_ctx *)data;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
-	void *tx_done_tasklet_event_q;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
+	struct nrf_wifi_fmac_tx_done_node *item;
+	sys_dnode_t *node;
+
+	sys_dev_ctx = CONTAINER_OF(work, struct nrf_wifi_sys_fmac_dev_ctx, tx_done_work);
+	fmac_dev_ctx = (struct nrf_wifi_fmac_dev_ctx *)((uintptr_t)sys_dev_ctx -
+		offsetof(struct nrf_wifi_fmac_dev_ctx, priv));
 
 	nrf_wifi_ipc_rx_lock(fmac_dev_ctx);
 	if (!nrf_wifi_ipc_rx_enabled(fmac_dev_ctx)) {
 		goto out;
 	}
 
-	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	tx_done_tasklet_event_q = sys_dev_ctx->tx_done_tasklet_event_q;
-
-	struct nrf_wifi_tx_buff_done *config = nrf_wifi_llist_pop_head(
-		tx_done_tasklet_event_q);
-
-	if (!config) {
-		LOG_ERR("%s: TX done event Q is empty",
-				      __func__);
+	if (sys_dlist_is_empty(&sys_dev_ctx->tx_config.tx_done_event_q)) {
+		LOG_ERR("%s: TX done event Q is empty", __func__);
 		goto out;
 	}
 
-	(void) nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx, config);
+	node = sys_dlist_peek_head(&sys_dev_ctx->tx_config.tx_done_event_q);
+	item = CONTAINER_OF(node, struct nrf_wifi_fmac_tx_done_node, node);
+	sys_dlist_remove(node);
 
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
+	(void)nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx, &item->buff);
+
+	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, item);
 out:
 	nrf_wifi_ipc_rx_unlock(fmac_dev_ctx);
 }
@@ -1381,14 +1356,14 @@ enum nrf_wifi_status nrf_wifi_fmac_rawtx_done_event_process(
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	if (!sys_dev_ctx || !sys_dev_ctx->tx_config.tx_lock) {
+	if (!sys_dev_ctx || !sys_dev_ctx->tx_config.tx_inited) {
 		/* This is a valid case when the TX_DONE event is received
 		 * during the driver deinit, so, silently ignore the failure.
 		 */
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	if (config->status == NRF_WIFI_STATUS_FAIL) {
 		/**
@@ -1408,7 +1383,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rawtx_done_event_process(
 		goto unlock;
 	}
 unlock:
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 out:
 	return status;
 }
@@ -1416,32 +1391,31 @@ out:
 
 enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-	struct nrf_wifi_tx_buff_done *config)
+	struct nrf_wifi_tx_buff_done *buff)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 
-	if (!fmac_dev_ctx || !config) {
+	if (!fmac_dev_ctx || !buff) {
 		LOG_ERR("%s: Invalid parameters",
 				      __func__);
 		goto out;
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	if (!sys_dev_ctx || !sys_dev_ctx->tx_config.tx_lock) {
+	if (!sys_dev_ctx || !sys_dev_ctx->tx_config.tx_inited) {
 		/* This is a valid case when the TX_DONE event is received
 		 * during the driver deinit, so, silently ignore the failure.
 		 */
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
 
-
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	status = tx_done_process(fmac_dev_ctx,
-				 config->tx_desc_num);
+				 buff->tx_desc_num);
 
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 out:
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -1469,8 +1443,7 @@ static enum nrf_wifi_fmac_tx_status nrf_wifi_fmac_tx(struct nrf_wifi_fmac_dev_ct
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fpriv);
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
-
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	if (sys_fpriv->num_tx_tokens == 0) {
 		goto out;
@@ -1502,7 +1475,7 @@ static enum nrf_wifi_fmac_tx_status nrf_wifi_fmac_tx(struct nrf_wifi_fmac_dev_ct
 					desc,
 					ac);
 out:
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 	return status;
 }
@@ -1513,7 +1486,6 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	struct nrf_wifi_fmac_priv *fpriv = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-	void *q_ptr = NULL;
 	unsigned int i = 0;
 	unsigned int j = 0;
 
@@ -1537,14 +1509,7 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
 		for (j = 0; j < MAX_SW_PEERS; j++) {
-			sys_dev_ctx->tx_config.data_pending_txq[j][i] =
-				nrf_wifi_llist_create();
-
-			if (!sys_dev_ctx->tx_config.data_pending_txq[j][i]) {
-				LOG_ERR("%s: Unable to allocate data_pending_txq",
-						      __func__);
-				goto coal_q_free;
-			}
+			sys_dlist_init(&sys_dev_ctx->tx_config.pend_pkt_q[j][i]);
 		}
 
 		sys_dev_ctx->tx_config.outstanding_descs[i] = 0;
@@ -1561,17 +1526,11 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	if (!sys_dev_ctx->tx_config.pkt_info_p) {
 		LOG_ERR("%s: Unable to allocate pkt_info_p",
 				      __func__);
-		goto tx_q_free;
+		goto coal_q_free;
 	}
 
 	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
-		sys_dev_ctx->tx_config.pkt_info_p[i].pkt = nrf_wifi_llist_create();
-
-		if (!sys_dev_ctx->tx_config.pkt_info_p[i].pkt) {
-			LOG_ERR("%s: Unable to allocate pkt list",
-					      __func__);
-			goto tx_q_setup_free;
-		}
+		sys_dlist_init(&sys_dev_ctx->tx_config.pkt_info_p[i].pkt_q);
 	}
 
 	for (j = 0; j < NRF_WIFI_FMAC_AC_MAX; j++) {
@@ -1592,73 +1551,24 @@ enum nrf_wifi_status tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 			      0,
 			      sizeof(long)*((sys_fpriv->num_tx_tokens/TX_DESC_BUCKET_BOUND) + 1));
 
-	for (i = 0; i < MAX_PEERS; i++) {
+	for (i = 0; i <= MAX_PEERS; i++) {
 		sys_dev_ctx->tx_config.peers[i].peer_id = -1;
+		sys_dnode_init(&sys_dev_ctx->tx_config.peers[i].wakeup_node);
 	}
 
-	sys_dev_ctx->tx_config.tx_lock = nrf_wifi_lock_alloc();
-
-	if (!sys_dev_ctx->tx_config.tx_lock) {
-		LOG_ERR("%s: Unable to allocate TX lock",
-				      __func__);
-		goto tx_buff_map_free;
-	}
-
-	nrf_wifi_lock_init(sys_dev_ctx->tx_config.tx_lock);
-
-	sys_dev_ctx->tx_config.wakeup_client_q = nrf_wifi_llist_create();
-
-	if (!sys_dev_ctx->tx_config.wakeup_client_q) {
-		LOG_ERR("%s: Unable to allocate Wakeup Client List",
-				      __func__);
-		goto tx_spin_lock_free;
-	}
+	sys_dlist_init(&sys_dev_ctx->tx_config.wakeup_client_q);
 
 	sys_dev_ctx->twt_sleep_status = NRF_WIFI_FMAC_TWT_STATE_AWAKE;
 
 #ifdef NRF71_TX_DONE_WQ_ENABLED
-	sys_dev_ctx->tx_done_tasklet = nrf_wifi_work_alloc(ZEP_WORK_TYPE_TX_DONE);
-	if (!sys_dev_ctx->tx_done_tasklet) {
-		LOG_ERR("%s: Unable to allocate tx_done_tasklet",
-				      __func__);
-		goto wakeup_client_q_free;
-	}
-	sys_dev_ctx->tx_config.tx_done_tasklet_event_q = nrf_wifi_llist_create();
-	if (!sys_dev_ctx->tx_config.tx_done_tasklet_event_q) {
-		LOG_ERR("%s: Unable to allocate tx_done_tasklet_event_q",
-				      __func__);
-		goto tx_done_tasklet_free;
-	}
-
-	nrf_wifi_work_init(sys_dev_ctx->tx_done_tasklet,
-				   tx_done_tasklet_fn,
-				   (unsigned long)fmac_dev_ctx);
+	sys_dlist_init(&sys_dev_ctx->tx_config.tx_done_event_q);
+	k_work_init(&sys_dev_ctx->tx_done_work, tx_done_work_handler);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
+	k_mutex_init(&sys_dev_ctx->tx_config.tx_lock);
+	sys_dev_ctx->tx_config.tx_inited = true;
 	return NRF_WIFI_STATUS_SUCCESS;
-#ifdef NRF71_TX_DONE_WQ_ENABLED
-tx_done_tasklet_free:
-	nrf_wifi_work_free(sys_dev_ctx->tx_done_tasklet);
-wakeup_client_q_free:
-	nrf_wifi_llist_free(sys_dev_ctx->tx_config.wakeup_client_q);
-#endif /* NRF71_TX_DONE_WQ_ENABLED */
-tx_spin_lock_free:
-	nrf_wifi_lock_free(sys_dev_ctx->tx_config.tx_lock);
-tx_buff_map_free:
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 tx_pkt_info_free:
-	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
-		nrf_wifi_llist_free(sys_dev_ctx->tx_config.pkt_info_p[i].pkt);
-	}
-tx_q_setup_free:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.pkt_info_p);
-tx_q_free:
-	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
-		for (j = 0; j < MAX_SW_PEERS; j++) {
-			q_ptr = sys_dev_ctx->tx_config.data_pending_txq[j][i];
-
-			nrf_wifi_llist_free(q_ptr);
-		}
-	}
 coal_q_free:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 			  sys_dev_ctx->tx_config.send_pkt_coalesce_count_p);
@@ -1680,25 +1590,27 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	sys_fpriv = wifi_fmac_priv(fpriv);
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-#ifdef NRF71_TX_DONE_WQ_ENABLED
-	/* TODO: Need to deinit network buffers? */
-	nrf_wifi_work_free(sys_dev_ctx->tx_done_tasklet);
-	nrf_wifi_llist_free(sys_dev_ctx->tx_config.tx_done_tasklet_event_q);
-#endif /* NRF71_TX_DONE_WQ_ENABLED */
-	nrf_wifi_llist_free(sys_dev_ctx->tx_config.wakeup_client_q);
+	sys_dev_ctx->tx_config.tx_inited = false;
 
-	nrf_wifi_lock_free(sys_dev_ctx->tx_config.tx_lock);
+#ifdef NRF71_TX_DONE_WQ_ENABLED
+	struct k_work_sync sync;
+
+	k_work_cancel_sync(&sys_dev_ctx->tx_done_work, &sync);
+#endif /* NRF71_TX_DONE_WQ_ENABLED */
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, sys_dev_ctx->tx_config.buf_pool_bmp_p);
 
 	for (i = 0; i < sys_fpriv->num_tx_tokens; i++) {
 		if (sys_dev_ctx->tx_config.pkt_info_p) {
-			while (nrf_wifi_llist_len(sys_dev_ctx->tx_config.pkt_info_p[i].pkt)) {
-				nrf_wifi_nbuf_free(
-					nrf_wifi_llist_pop_head(
-						sys_dev_ctx->tx_config.pkt_info_p[i].pkt));
+			struct nrf_wifi_nwb *nwb;
+
+			while (!sys_dlist_is_empty(&sys_dev_ctx->tx_config.pkt_info_p[i].pkt_q)) {
+				nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(
+					&sys_dev_ctx->tx_config.pkt_info_p[i].pkt_q, nwb,
+					queue_node);
+				sys_dlist_remove(&nwb->queue_node);
+				nrf_wifi_nbuf_free(nwb);
 			}
-			nrf_wifi_llist_free(sys_dev_ctx->tx_config.pkt_info_p[i].pkt);
 		}
 	}
 
@@ -1706,14 +1618,15 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 
 	for (i = 0; i < NRF_WIFI_FMAC_AC_MAX; i++) {
 		for (j = 0; j < MAX_SW_PEERS; j++) {
-			while (nrf_wifi_llist_len(
-					sys_dev_ctx->tx_config.data_pending_txq[j][i])) {
-				nrf_wifi_nbuf_free(
-					nrf_wifi_llist_pop_head(
-						sys_dev_ctx->tx_config.data_pending_txq[j][i]));
+			struct nrf_wifi_nwb *nwb;
+
+			while (!sys_dlist_is_empty(&sys_dev_ctx->tx_config.pend_pkt_q[j][i])) {
+				nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(
+					&sys_dev_ctx->tx_config.pend_pkt_q[j][i], nwb,
+					queue_node);
+				sys_dlist_remove(&nwb->queue_node);
+				nrf_wifi_nbuf_free(nwb);
 			}
-			nrf_wifi_llist_free(
-				sys_dev_ctx->tx_config.data_pending_txq[j][i]);
 		}
 	}
 

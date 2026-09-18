@@ -9,13 +9,13 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
+#include <common/mem_mgmt.h>
+#include <common/util.h>
 #include <system/fmac_ap.h>
 #include <system/fmac_peer.h>
-#include <common/llist_mgmt.h>
 #include <system/fmac_tx.h>
-#include <common/util.h>
-#include <common/lock_mgmt.h>
-#include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -24,7 +24,6 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
-	void *wakeup_client_q = NULL;
 	int id = -1;
 	int ac = 0;
 	int desc = 0;
@@ -40,7 +39,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx, config->mac_addr);
 
@@ -49,7 +48,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 				      __func__,
 				      config->mac_addr);
 
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 		goto out;
 	}
 
@@ -57,12 +56,8 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 	peer = &sys_dev_ctx->tx_config.peers[id];
 	peer->ps_token_count = config->num_frames;
 
-	wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
-
-	if (wakeup_client_q) {
-		nrf_wifi_llist_add_tail_data(wakeup_client_q,
-					 peer);
-	}
+	sys_dnode_init(&peer->wakeup_node);
+	sys_dlist_append(&sys_dev_ctx->tx_config.wakeup_client_q, &peer->wakeup_node);
 
 	for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 		desc = tx_desc_get(fmac_dev_ctx, ac);
@@ -72,7 +67,7 @@ enum nrf_wifi_status sap_client_ps_get_frames(struct nrf_wifi_fmac_dev_ctx *fmac
 		}
 	}
 
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 out:
@@ -85,7 +80,6 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct peers_info *peer = NULL;
-	void *wakeup_client_q = NULL;
 	int id = -1;
 	int ac = 0;
 	int desc = 0;
@@ -101,7 +95,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_priv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
-	nrf_wifi_lock_take(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
 	id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx,
 				       config->mac_addr);
@@ -111,7 +105,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 				      __func__,
 				      config->mac_addr);
 
-		nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+		k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 		goto out;
 	}
@@ -121,12 +115,8 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 	peer->ps_state = config->sta_ps_state;
 
 	if (peer->ps_state == NRF_WIFI_CLIENT_ACTIVE) {
-		wakeup_client_q = sys_dev_ctx->tx_config.wakeup_client_q;
-
-		if (wakeup_client_q) {
-			nrf_wifi_llist_add_tail_data(wakeup_client_q,
-						 peer);
-		}
+		sys_dnode_init(&peer->wakeup_node);
+		sys_dlist_append(&sys_dev_ctx->tx_config.wakeup_client_q, &peer->wakeup_node);
 
 		for (ac = NRF_WIFI_FMAC_AC_VO; ac >= 0; --ac) {
 			desc = tx_desc_get(fmac_dev_ctx, ac);
@@ -137,7 +127,7 @@ enum nrf_wifi_status sap_client_update_pmmode(struct nrf_wifi_fmac_dev_ctx *fmac
 		}
 	}
 
-	nrf_wifi_lock_rel(sys_dev_ctx->tx_config.tx_lock);
+	k_mutex_unlock(&sys_dev_ctx->tx_config.tx_lock);
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 
