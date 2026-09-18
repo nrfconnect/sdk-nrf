@@ -20,7 +20,6 @@ NRF54L15 BOOTCONF generator.
 
 import argparse
 import sys
-import warnings
 import struct
 
 from intelhex import IntelHex
@@ -69,8 +68,10 @@ def get_bootconf_reg_32bit_value(soc, size):
     max_size_kb = get_max_size_kb(soc)
 
     if size_kb > max_size_kb:
-        warnings.warn("warning: requested size too big; Setting to allowed maximum")
-        size_kb = max_size_kb
+        sys.exit(
+            f"error: requested size ({size_kb} kB) exceeds the "
+            f"{soc} BOOTCONF limit ({max_size_kb} kB)"
+        )
 
     value |= size_kb << SIZE_OFFSET
     return value

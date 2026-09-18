@@ -112,6 +112,9 @@ elseif(SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512)
   set(imgtool_extra --sha 512 ${imgtool_extra})
 endif()
 
+# Mark the package as an installer so MCUboot keeps the firmware loader writable.
+set(imgtool_extra --custom-tlv 0xa0 0x01 ${imgtool_extra})
+
 if(NOT "${keyfile}" STREQUAL "")
   set(imgtool_extra -k "${keyfile}" ${imgtool_extra})
 endif()
