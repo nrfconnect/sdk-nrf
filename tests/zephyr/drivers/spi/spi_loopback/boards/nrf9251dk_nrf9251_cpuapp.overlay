@@ -47,9 +47,9 @@
 		spi-max-frequency = <DT_FREQ_K(500)>;
 	};
 
-	fast@0 {
+	fast@1 {
 		compatible = "test-spi-loopback-fast";
-		reg = <0>;
+		reg = <1>;
 		spi-max-frequency = <DT_FREQ_M(8)>;
 	};
 
