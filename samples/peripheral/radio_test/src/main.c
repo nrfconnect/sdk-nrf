@@ -11,8 +11,7 @@
 #if defined(NRF54L15_XXAA)
 #include <hal/nrf_clock.h>
 #endif /* defined(NRF54L15_XXAA) */
-#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                    \
-	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#if defined(CONFIG_HAS_NORDIC_MULTI_OPTION_CLOCKS)
 #include <hal/nrf_lrcconf.h>
 #endif
 #include <nrfx.h>
@@ -28,13 +27,15 @@
 
 #if !(defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) || defined(CONFIG_CLOCK_CONTROL_NRF))
 BUILD_ASSERT(false, "No Clock Control driver");
-#elif !defined(CONFIG_SOC_SERIES_NRF54H)
+#endif
+
+#ifdef CONFIG_CLOCK_CONTROL_NRF
+
 static void clock_init(void)
 {
 	int err;
 	int res;
 	struct onoff_client clk_cli;
-#if defined(CONFIG_CLOCK_CONTROL_NRF)
 	struct onoff_manager *clk_mgr;
 
 	clk_mgr = z_nrf_clock_control_get_onoff(CLOCK_CONTROL_NRF_SUBSYS_HF);
@@ -46,20 +47,7 @@ static void clock_init(void)
 	sys_notify_init_spinwait(&clk_cli.notify);
 
 	err = onoff_request(clk_mgr, &clk_cli);
-#else /* defined(CONFIG_CLOCK_CONTROL_NRF) */
-	static const struct device *dev = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
-								(nordic_nrf_clock_hfclk),
-								(nordic_nrf_clock_xo)));
 
-	if (!dev) {
-		printk("Unable to get the Clock device\n");
-		return;
-	}
-
-	sys_notify_init_spinwait(&clk_cli.notify);
-
-	err = nrf_clock_control_request(dev, NULL, &clk_cli);
-#endif /* defined(CONFIG_CLOCK_CONTROL_NRF) */
 	if (err < 0) {
 		printk("Clock request failed: %d\n", err);
 		return;
@@ -87,30 +75,54 @@ static void clock_init(void)
 	printk("Clock has started\n");
 }
 
-#else /* !(defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) || defined(CONFIG_CLOCK_CONTROL_NRF)) */
+#else /* CONFIG_CLOCK_CONTROL_NRF */
+
+#ifndef CONFIG_HAS_NORDIC_MULTI_OPTION_CLOCKS
+#define CLK_DEV                                                                                    \
+	DEVICE_DT_GET_ONE(                                                                         \
+		COND_CODE_1(NRF_CLOCK_HAS_HFCLK, (nordic_nrf_clock_hfclk), (nordic_nrf_clock_xo)))
+#else
+#define CLK_DEV DEVICE_DT_GET(DT_CLOCKS_CTLR(DT_NODELABEL(radio)))
+#endif
 
 static void clock_init(void)
 {
 	int err;
 	int res;
-	const struct device *radio_clk_dev =
-		DEVICE_DT_GET_OR_NULL(DT_CLOCKS_CTLR(DT_NODELABEL(radio)));
-	struct onoff_client radio_cli;
+	struct onoff_client clk_cli;
 
+#ifdef CONFIG_HAS_NORDIC_MULTI_OPTION_CLOCKS
 	/** Keep radio domain powered all the time to reduce latency. */
 	nrf_lrcconf_poweron_force_set(NRF_LRCCONF010, NRF_LRCCONF_POWER_DOMAIN_1, true);
+#endif
 
-	sys_notify_init_spinwait(&radio_cli.notify);
+	sys_notify_init_spinwait(&clk_cli.notify);
 
-	err = nrf_clock_control_request(radio_clk_dev, NULL, &radio_cli);
+	err = nrf_clock_control_request(CLK_DEV, NULL, &clk_cli);
+
+	if (err < 0) {
+		printk("Clock request failed: %d\n", err);
+		return;
+	}
 
 	do {
-		err = sys_notify_fetch_result(&radio_cli.notify, &res);
+		err = sys_notify_fetch_result(&clk_cli.notify, &res);
 		if (!err && res) {
 			printk("Clock could not be started: %d\n", res);
 			return;
 		}
 	} while (err == -EAGAIN);
+
+#if NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
+	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20) || NRF_ERRATA_DYNAMIC_CHECK(71, 20)) {
+		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+	}
+#endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20) */
+
+#if defined(NRF54LM20A_XXAA)
+	/* MLTPAN-39 */
+	nrf_clock_task_trigger(NRF_CLOCK, NRF_CLOCK_TASK_PLLSTART);
+#endif /* defined(NRF54LM20A_XXAA) */
 
 	printk("Clock has started\n");
 }
@@ -148,7 +160,7 @@ static void nrf54hx_rssi_offset_adjust(void)
 }
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 229) */
 
-#endif /* !(defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) || defined(CONFIG_CLOCK_CONTROL_NRF)) */
+#endif /* CONFIG_CLOCK_CONTROL_NRF */
 
 int main(void)
 {
