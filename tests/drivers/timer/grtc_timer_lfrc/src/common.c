@@ -6,7 +6,7 @@
 
 #include "common.h"
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 const struct device *const lfclk_dev = DEVICE_DT_GET(DT_NODELABEL(lfclk));
 const struct device *const fll16m_dev = DEVICE_DT_GET(DT_NODELABEL(fll16m));
 
@@ -34,9 +34,9 @@ const struct device *const hfclock = DEVICE_DT_GET(DT_NODELABEL(clock));
 const struct device *const hfclock = DEVICE_DT_GET_ONE(COND_CODE_1(NRF_CLOCK_HAS_HFCLK,
 								   (nordic_nrf_clock_hfclk),
 								   (nordic_nrf_clock_xo)));
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
 
-#if defined(CONFIG_SOC_NRF54H20)
+#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92)
 int request_clock_spec(const struct device *clk_dev, const struct nrf_clock_spec *clk_spec)
 {
 	int ret = 0;
@@ -74,4 +74,4 @@ int request_clock_spec(const struct device *clk_dev, const struct nrf_clock_spec
 
 	return 0;
 }
-#endif /* CONFIG_SOC_NRF54H20 */
+#endif /* defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92) */
