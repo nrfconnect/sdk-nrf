@@ -27,6 +27,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_LATENCY_LOG_LEVEL);
 #define LOW_LATENCY_CHECK_PERIOD_MS	K_SECONDS(5)
 #define DEFAULT_LATENCY			CONFIG_BT_PERIPHERAL_PREF_LATENCY
 #define DEFAULT_TIMEOUT			CONFIG_BT_PERIPHERAL_PREF_TIMEOUT
+#define SCI_LATENCY_MAX 500
+#define SCI_SUPERVISION_TIMEOUT_MAX 3200
 /* Connection intervals used by LLPM are out of Bluetooth LE specification.
  * The intervals are encoded by OR operation with a magic number of 0x0d00.
  */
@@ -51,10 +53,9 @@ enum {
 	CONN_IS_SCI			= BIT(4),
 	CONN_IS_SECURED			= BIT(5),
 	CONN_IS_SCI_PARAM_UPDATE_PENDING = BIT(6),
-	CONN_IS_SCI_HID_HOST_ENFORCED_RATE	= BIT(7),
-	CONN_IS_POWER_DOWN		= BIT(8),
-	CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN = BIT(9),
-	CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS = BIT(10),
+	CONN_IS_POWER_DOWN		= BIT(7),
+	CONN_IS_SCI_LOW_POWER_HIGH_INTERVAL_FORBIDDEN = BIT(8),
+	CONN_IS_INIT_PARAMS_UPDATE_IN_PROGRESS = BIT(9),
 };
 
 static uint16_t latency_state;
@@ -63,6 +64,9 @@ static enum bt_hids_sci_mode_value processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
 static enum bt_hids_sci_mode_value last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 static enum bt_hids_sci_mode_value host_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 static bool last_requested_latency_is_low;
+
+static uint16_t sci_latency_central_max = SCI_LATENCY_MAX;
+static uint16_t sci_supervision_timeout_central_max = SCI_SUPERVISION_TIMEOUT_MAX;
 
 static void security_timeout_fn(struct k_work *w)
 {
@@ -186,6 +190,10 @@ static int hid_sci_conn_rate_request(bool low_latency, enum bt_hids_sci_mode_val
 
 	params = *mode_params;
 
+	params.max_latency = MIN(params.max_latency, sci_latency_central_max);
+	params.supervision_timeout_10ms = MIN(params.supervision_timeout_10ms,
+					      sci_supervision_timeout_central_max);
+
 	if (low_latency) {
 		params.max_latency = 0;
 	}
@@ -222,8 +230,7 @@ static void set_conn_latency_sci(bool low_latency)
 		return;
 	}
 
-	if ((latency_state & CONN_LOW_LATENCY_LOCKED) ||
-		(latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE)) {
+	if (latency_state & CONN_LOW_LATENCY_LOCKED) {
 		return;
 	}
 
@@ -313,15 +320,21 @@ static void low_latency_check_fn(struct k_work *w)
 static bool is_high_latency_supported_for_mode(enum bt_hids_sci_mode_value mode)
 {
 	const struct bt_conn_le_conn_rate_param *mode_params = NULL;
+	uint16_t max_latency = 0;
 
-	/* HID SCI mode NONE could only happen if we are in the HID host enforced rate state.
-	 * No latency updates are supported in this state.
+	/* No latency updates are supported if the peripheral is in HID SCI mode NONE.
+	 * Such a situation is only possible if the central has forced the parameters.
+	 * In this case, it is not possible to determine which parameters are allowed.
 	 */
 	if (mode != BT_HIDS_SCI_MODE_NONE) {
 		mode_params = bt_hids_sci_mode_conn_rate_param_get(mode);
+		__ASSERT_NO_MSG(mode_params);
+
+		max_latency = MIN(mode_params->max_latency, sci_latency_central_max);
 	}
 
-	return (mode_params && (mode_params->max_latency > 0));
+
+	return (mode_params && (max_latency > 0));
 }
 
 static void latency_updated(bool low_latency)
@@ -329,8 +342,7 @@ static void latency_updated(bool low_latency)
 	if (low_latency) {
 		latency_state |= CONN_LOW_LATENCY_ENABLED;
 		latency_state &= ~CONN_LOW_LATENCY_REQUIRED;
-		if (!(latency_state & CONN_LOW_LATENCY_LOCKED)
-			&& !(latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE)) {
+		if (!(latency_state & CONN_LOW_LATENCY_LOCKED)) {
 			(void)k_work_reschedule(&low_latency_check,
 						LOW_LATENCY_CHECK_PERIOD_MS);
 		} else {
@@ -357,7 +369,6 @@ static void conn_params_update_finished_sci_conn(void)
 		LOG_WRN("Unexpected non-SCI connection parameters update while SCI is active");
 
 		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
-		latency_state |= CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
 		(void)k_work_cancel_delayable(&low_latency_check);
 	}
 
@@ -452,12 +463,9 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 		 * Usually in this case the peripheral will already be in the LOW_POWER SCI mode,
 		 * so the code below will result in no connection rate update and no SCI mode change
 		 * notification to the host.
-		 * The notable exception is if the peripheral is in the HID host
-		 * enforced rate state, due to a previous direct connection rate update
-		 * from the host.
-		 * In this case, the current mode might be different - an attempt will be made to
-		 * switch to the LOW_POWER mode, and only if it succeeds, the peripheral will exit
-		 * the HID host enforced rate state.
+		 * The notable exception is if the central directly requested a connection rate
+		 * update at the link layer.
+		 * In this case, the current mode might be different.
 		 */
 		mode = BT_HIDS_SCI_MODE_LOW_POWER;
 	}
@@ -489,24 +497,6 @@ static void hid_sci_mode_request(enum bt_hids_sci_mode_value mode)
 
 	if (current_mode != mode) {
 		(void)hid_sci_conn_rate_request(last_requested_latency_is_low, mode);
-	} else if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
-		struct bt_conn_info info;
-
-		/* Mode update properly requested after HID host enforced rate,
-		 * but the requested mode matches the current mode (no connection
-		 * rate update is performed).
-		 */
-		latency_state &= ~CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
-		LOG_INF("The current connection parameters are valid for the requested mode %s",
-			sci_mode_to_string(mode));
-		LOG_INF("Clearing HID host enforced rate state and returning to normal operation");
-		err = bt_conn_get_info(active_conn, &info);
-
-		if (!err) {
-			latency_updated(info.le.latency == 0);
-		} else {
-			LOG_ERR("Failed to get connection info: %d", err);
-		}
 	} else {
 		/* Do nothing. */
 	}
@@ -674,34 +664,33 @@ static void conn_rate_update_success_handle(const struct ble_peer_sci_conn_rate_
 	}
 
 	/* Parameters update initiated directly by the host (not via SCI
-	 * mode API) puts the connection in the HID host enforced rate state.
-	 * We assume that if the host forces the parameters, it expects the peripheral
-	 * to keep them.
-	 * Thus, lock the possibility of autonomously changing connection latency.
+	 * mode API).
+	 * Treat the resulting latency and supervision timeouts as the maximum
+	 * allowed values for the connection.
 	 * Also, drop any pending parameters update request.
 	 * If these actions are not taken, repeated failed connection rate updates
 	 * could be triggered by the peripheral.
 	 */
 	if (processed_sci_mode == BT_HIDS_SCI_MODE_NONE) {
-		LOG_WRN("Direct SCI connection parameters update from the central");
-		LOG_WRN("(not through HID SCI control point characteristic).");
-		LOG_WRN("Entering HID host enforced rate state.");
-		LOG_WRN("No latency update requests will be performed by the peripheral "
-			"until a SCI mode request is received.");
+		LOG_INF("Direct SCI connection parameters update from the central");
+		LOG_INF("(not through HID SCI control point characteristic).");
+		LOG_INF("Updating allowed maximum latency and supervision timeout "
+			"to the central's values");
+
 		latency_state &= ~CONN_IS_SCI_PARAM_UPDATE_PENDING;
-		latency_state |= CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
-		(void)k_work_cancel_delayable(&low_latency_check);
-	} else if (mode == processed_sci_mode) {
-		/* A properly requested SCI mode update has been successfully performed. */
-		if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
-			LOG_INF("Connection rate update successful for the requested mode %s",
-				sci_mode_to_string(mode));
-			LOG_INF("Clearing HID host enforced rate state and "
-				"returning to normal operation");
-			latency_state &= ~CONN_IS_SCI_HID_HOST_ENFORCED_RATE;
+
+		sci_latency_central_max = event->params.peripheral_latency;
+		sci_supervision_timeout_central_max = event->params.supervision_timeout_10ms;
+
+		if ((latency_state & CONN_IS_POWER_DOWN) && (mode != BT_HIDS_SCI_MODE_LOW_POWER)) {
+			/** The peripheral was forced to a mode different than LOW_POWER while in
+			 *  power down/suspended state.
+			 *  Attempt to return to the LOW_POWER mode.
+			 */
+			last_requested_sci_mode = BT_HIDS_SCI_MODE_LOW_POWER;
+			last_requested_latency_is_low = false;
+			latency_state |= CONN_IS_SCI_PARAM_UPDATE_PENDING;
 		}
-	} else {
-		/* Do nothing, remain in the current HID host enforced rate state. */
 	}
 }
 
@@ -771,10 +760,6 @@ static void conn_rate_updated(const struct ble_peer_sci_conn_rate_event *event)
 static void sci_power_event_handle(void)
 {
 	if (!active_conn) {
-		return;
-	}
-
-	if (latency_state & CONN_IS_SCI_HID_HOST_ENFORCED_RATE) {
 		return;
 	}
 
@@ -859,6 +844,8 @@ static bool app_event_handler(const struct app_event_header *aeh)
 				processed_sci_mode = BT_HIDS_SCI_MODE_NONE;
 				last_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
 				host_requested_sci_mode = BT_HIDS_SCI_MODE_NONE;
+				sci_latency_central_max = SCI_LATENCY_MAX;
+				sci_supervision_timeout_central_max = SCI_SUPERVISION_TIMEOUT_MAX;
 			}
 
 			/* Cancel cannot fail if executed from another work's context. */
