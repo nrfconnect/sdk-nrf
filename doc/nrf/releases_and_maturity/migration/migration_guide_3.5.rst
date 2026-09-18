@@ -376,21 +376,21 @@ Clock control nrf deprecation
 
       * Replace :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_FREQUENCY` with the ``k32src-frequency`` property.
       * Replace :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_SOURCE` choice with the ``k32src`` enum property.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_RC` and :kconfig:option:`NRFX_CLOCK_LF_SRC_RC` with the ``k32src = "rc"``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_XTAL` and :kconfig:option:`NRFX_CLOCK_LF_SRC_XTAL` with the ``k32src = "xtal"``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_SYNTH` and :kconfig:option:`NRFX_CLOCK_LF_SRC_SYNTH` with the ``k32src = "synth"``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING` and :kconfig:option:`NRFX_CLOCK_LF_SRC_LOW_SWING` with the ``k32src = "ext_low_swing"``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING` and :kconfig:option:`NRFX_CLOCK_LF_SRC_FULL_SWING` with the ``k32src = "ext_full_swing"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_RC` and :kconfig:option:`NRFX_CLOCK_LF_SRC_RC` with ``k32src = "rc"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_XTAL` and :kconfig:option:`NRFX_CLOCK_LF_SRC_XTAL` with ``k32src = "xtal"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_SYNTH` and :kconfig:option:`NRFX_CLOCK_LF_SRC_SYNTH` with ``k32src = "synth"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_EXT_LOW_SWING` and :kconfig:option:`NRFX_CLOCK_LF_SRC_LOW_SWING` with ``k32src = "ext_low_swing"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_EXT_FULL_SWING` and :kconfig:option:`NRFX_CLOCK_LF_SRC_FULL_SWING` with ``k32src = "ext_full_swing"``.
       * Replace :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY_PPM` choice with the ``k32src-accuracy-ppm`` enum property.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_500PPM` with the ``k32src-accuracy-ppm = <500>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_250PPM` with the ``k32src-accuracy-ppm = <250>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_150PPM` with the ``k32src-accuracy-ppm = <150>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_100PPM` with the ``k32src-accuracy-ppm = <100>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_75PPM` with the ``k32src-accuracy-ppm = <75>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_50PPM` with the ``k32src-accuracy-ppm = <50>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_30PPM` with the ``k32src-accuracy-ppm = <30>``.
-      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_20PPM` with the ``k32src-accuracy-ppm = <20>``.
-      * Replace :kconfig:option:`CONFIG_NRFX_CLOCK_LFXO_TWO_STAGE_ENABLED` with ``k32src = "xtal"`` or ``k32src = "ext_low_swing"`` or ``k32src = "ext_full_swing"``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_500PPM` with ``k32src-accuracy-ppm = <500>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_250PPM` with ``k32src-accuracy-ppm = <250>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_150PPM` with ``k32src-accuracy-ppm = <150>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_100PPM` with ``k32src-accuracy-ppm = <100>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_75PPM` with ``k32src-accuracy-ppm = <75>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_50PPM` with ``k32src-accuracy-ppm = <50>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_30PPM` with ``k32src-accuracy-ppm = <30>``.
+      * Replace :kconfig:option:`CLOCK_CONTROL_NRF_K32SRC_20PPM` with ``k32src-accuracy-ppm = <20>``.
+      * Replace :kconfig:option:`CONFIG_NRFX_CLOCK_LFXO_TWO_STAGE_ENABLED` with ``k32src = "xtal"``, ``k32src = "ext_low_swing"``, ``k32src = "ext_full_swing"``.
 
    #. Update your application to use the new clock control API.
 
