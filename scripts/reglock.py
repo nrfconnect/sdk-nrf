@@ -20,7 +20,6 @@ NRF54L15 BOOTCONF generator.
 
 import argparse
 import sys
-import warnings
 import struct
 
 from intelhex import IntelHex
