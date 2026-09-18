@@ -381,6 +381,10 @@ Bluetooth samples
   * Updated the minimum supported connection interval from 875 µs to 750 µs in the HID SCI configuration.
   * Enabled the Frame Space Update feature in the single peripheral HID SCI configuration.
 
+* :ref:`channel_sounding_ras_initiator` and :ref:`channel_sounding_ras_reflector` samples:
+
+  * Removed support for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
+
 Bluetooth Mesh samples
 ----------------------
 
