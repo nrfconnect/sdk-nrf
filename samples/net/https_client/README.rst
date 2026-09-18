@@ -3,10 +3,10 @@
 .. ncs-sample::
    :title: HTTPS Client
 
-   The HTTPS Client sample demonstrates a minimal implementation of HTTP communication.
+   The HTTPS Client sample demonstrates a minimal implementation of HTTP communication on a device that connects to either an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device.
    It shows how to set up a TLS session towards an HTTPS server and how to send an HTTP request.
 
-   .. |wifi| replace:: Wi-Fi®
+   .. |wifi| replace:: Wi-Fi
 
    .. include:: /includes/net_connection_manager.txt
 
@@ -61,6 +61,26 @@ Configuration
    :start-after: modem_lib_sending_traces_UART_start
    :end-before: modem_lib_sending_traces_UART_end
 
+Configuration files
+===================
+
+The sample provides predefined configuration files for the following development kits:
+
+* :file:`prj.conf` - General configuration file for all devices.
+* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+  Must be added explicitly for Wi-Fi builds.
+* :file:`overlay-tfm-nrf91.conf` - Additional configuration for Mbed TLS and TF-M on nRF91 Series DKs.
+* :file:`overlay-pdn-nrf91-ipv4.conf` - Additional configuration to force IPv4-only packet data network on nRF91 Series DKs.
+
+Board files under the :file:`boards/` folder are merged automatically for the selected target.
+The other configuration files are not board-specific and must be passed with ``EXTRA_CONF_FILE``.
+
 Building and running
 ********************
 
@@ -85,11 +105,11 @@ On the nRF91 Series DKs, for testing IPv4 only, you might need to configure the 
 Testing
 =======
 
-After programming the sample to your development kit, test it by performing the following steps:
+|test_sample|
 
 1. |connect_kit|
-#. Power on or reset the kit.
 #. |connect_terminal|
+#. Power on or reset the kit.
 #. Observe that the sample starts, provisions certificates, connects to the network and to example.com, and then sends an HTTP HEAD request.
 #. Observe that the HTTP HEAD request returns ``HTTP/1.1 200 OK``.
 
@@ -187,7 +207,7 @@ Sample output
          Network connectivity lost
          Disconnected from the net
 
-      Output where you override the default packet data network (PDN) configuration to IPv4 only, using the ``overlay-pdn-nrf91-ipv4.conf`` overlay:
+      Output where you override the default packet data network (PDN) configuration to IPv4 only, using the :file:`overlay-pdn-nrf91-ipv4.conf` configuration file:
 
       .. code-block:: console
 
@@ -217,6 +237,15 @@ Sample output
          Network connectivity lost
          Disconnected from the network
 
+Troubleshooting
+===============
+
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
+This sample enables modem traces by default.
+
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic in order to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration`_ section on this page.
+
 Dependencies
 ************
 
@@ -227,13 +256,7 @@ This sample uses the following |NCS| and Zephyr libraries:
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
 * :ref:`Connection Manager <zephyr:conn_mgr_overview>`
-
-It uses the following `sdk-nrfxlib`_ library:
-
 * :ref:`nrfxlib:nrf_modem`
-
-In addition, it uses the following secure firmware component:
-
 * :ref:`Trusted Firmware-M <ug_tfm>`
 
 This sample also offers a possibility to use the TF-M module that is at :file:`modules/tee/tfm/` in the |NCS| folder structure.
