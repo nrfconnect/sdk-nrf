@@ -28,6 +28,12 @@ static char buf[1024];
 #define S0_ADDRESS PARTITION_ADDRESS(s0_partition)
 #define S1_ADDRESS PARTITION_ADDRESS(s1_partition)
 
+#if defined(CONFIG_DFU_TARGET_MCUBOOT) && defined(CONFIG_UPDATEABLE_IMAGE_NUMBER)
+#define IMG_NUM_MAX (CONFIG_UPDATEABLE_IMAGE_NUMBER - 1)
+#else
+#define IMG_NUM_MAX 1
+#endif
+
 /* Stubs and mocks */
 static const char *downloader_get_file;
 static bool spm_s0_active_retval;
@@ -42,8 +48,13 @@ static bool download_with_offset_success;
 static downloader_callback_t downloader_event_handler;
 K_SEM_DEFINE(stop_sem, 0, 1);
 
+static int dfu_target_init_img_num;
+static int dfu_target_schedule_img_num;
+static int dfu_target_reset_calls;
+
 int dfu_target_init(int img_type, int img_num, size_t file_size, dfu_target_callback_t cb)
 {
+	dfu_target_init_img_num = img_num;
 	return 0;
 }
 
@@ -79,11 +90,13 @@ int dfu_target_done(bool successful)
 
 int dfu_target_reset(void)
 {
+	dfu_target_reset_calls++;
 	return 0;
 }
 
 int dfu_target_schedule_update(int img_num)
 {
+	dfu_target_schedule_img_num = img_num;
 	return 0;
 }
 
@@ -272,6 +285,9 @@ static void init(void)
 	fail_on_proto = false;
 	downloader_get_file = NULL;
 	spm_s0_active_retval = false;
+	dfu_target_init_img_num = -1;
+	dfu_target_schedule_img_num = -1;
+	dfu_target_reset_calls = 0;
 
 	k_sem_reset(&stop_sem);
 	k_sem_reset(&download_with_offset_sem);
@@ -328,6 +344,267 @@ ZTEST(fota_download_tests, test_fota_download_cancel_before_init)
 ZTEST(fota_download_tests, test_download_single)
 {
 	test_fota_download_any_generic(S0_A, S0_A, S1_ACTIVE);
+}
+
+/**
+ * @brief Test the MCUboot image pair index plumbing.
+ *
+ * Start a download with the given image pair index, deliver the first
+ * fragment (which triggers dfu_target_init()) and the DONE event (which
+ * triggers dfu_target_schedule_update() when autoscheduling is enabled), and
+ * verify that both dfu_target calls received the requested index.
+ */
+static void test_fota_download_img_num_generic(int img_num)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+
+	strcpy(buf, S0_A);
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = img_num,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, "start failed: %d", err);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+	zassert_equal(dfu_target_init_img_num, img_num,
+		      "dfu_target_init() got img_num %d, expected %d",
+		      dfu_target_init_img_num, img_num);
+
+	evt.id = DOWNLOADER_EVT_DONE;
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+	if (IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
+		zassert_equal(dfu_target_schedule_img_num, img_num,
+			      "dfu_target_schedule_update() got img_num %d, expected %d",
+			      dfu_target_schedule_img_num, img_num);
+	} else {
+		zassert_equal(dfu_target_schedule_img_num, -1,
+			      "dfu_target_schedule_update() called without autoschedule");
+	}
+}
+
+ZTEST(fota_download_tests, test_download_img_num_default)
+{
+	init();
+
+	/* A zero-initialized params struct selects image pair 0 */
+	test_fota_download_img_num_generic(0);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_secondary)
+{
+	if (IMG_NUM_MAX < 1) {
+		ztest_test_skip();
+	}
+
+	init();
+
+	test_fota_download_img_num_generic(1);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_not_sticky)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+
+	if (IMG_NUM_MAX < 1) {
+		ztest_test_skip();
+	}
+
+	init();
+
+	/* A download for image pair 1 must not leak into the next download,
+	 * which uses a legacy entry point and therefore expects image pair 0.
+	 */
+	test_fota_download_img_num_generic(1);
+
+	init();
+	strcpy(buf, S0_A);
+	err = fota_download_any(BASE_DOMAIN, buf, NO_TLS, 0, 0, 0);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+	zassert_equal(dfu_target_init_img_num, 0,
+		      "legacy entry point inherited img_num %d from previous download",
+		      dfu_target_init_img_num);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_change_no_resume)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+	struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = 1,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_ANY,
+	};
+
+	if (IMG_NUM_MAX < 1) {
+		ztest_test_skip();
+	}
+
+	init();
+
+	/* Interrupted download to image pair 1 */
+	strcpy(buf, S0_A);
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+
+	/* Same URI to image pair 0, whose DFU target reports progress. The progress
+	 * belongs to another download, so it must be discarded, not resumed.
+	 */
+	start_with_offset = true;
+	params.img_num = 0;
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, NULL);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, "progress of another image pair was resumed");
+	zassert_equal(dfu_target_reset_calls, 1, "DFU target not reset");
+	zassert_equal(dfu_target_init_img_num, 0, NULL);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_negative)
+{
+	int err;
+
+	init();
+
+	strcpy(buf, S0_A);
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = -1,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, -EINVAL, "negative img_num accepted: %d", err);
+
+	/* The rejected call must not leave the library in the downloading state */
+	err = fota_download_cancel();
+	zassert_equal(err, -EAGAIN, NULL);
+}
+
+#if defined(CONFIG_DFU_TARGET_MCUBOOT) && defined(CONFIG_UPDATEABLE_IMAGE_NUMBER)
+ZTEST(fota_download_tests, test_download_img_num_out_of_range)
+{
+	int err;
+
+	init();
+
+	strcpy(buf, S0_A);
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = CONFIG_UPDATEABLE_IMAGE_NUMBER,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, -EINVAL, "img_num %d accepted with %d image pairs: %d",
+		      CONFIG_UPDATEABLE_IMAGE_NUMBER, CONFIG_UPDATEABLE_IMAGE_NUMBER, err);
+
+	err = fota_download_cancel();
+	zassert_equal(err, -EAGAIN, NULL);
+}
+
+ZTEST(fota_download_tests, test_download_img_num_smp_no_local_bound)
+{
+	int err;
+	static uint8_t fragment_data[32];
+	const struct downloader_evt evt = {
+		.id = DOWNLOADER_EVT_FRAGMENT,
+		.fragment = {
+			.buf = fragment_data,
+			.len = sizeof(fragment_data),
+		},
+	};
+
+	init();
+
+	/* The SMP server has its own image count, the local one does not apply */
+	err = fota_download_util_client_init(client_callback, true);
+	zassert_equal(err, 0, NULL);
+
+	strcpy(buf, S0_A);
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = buf,
+		.img_num = CONFIG_UPDATEABLE_IMAGE_NUMBER,
+		.expected_type = DFU_TARGET_IMAGE_TYPE_SMP,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, 0, "SMP img_num %d rejected: %d", CONFIG_UPDATEABLE_IMAGE_NUMBER, err);
+
+	err = downloader_event_handler(&evt);
+	zassert_equal(err, 0, NULL);
+	zassert_equal(dfu_target_init_img_num, CONFIG_UPDATEABLE_IMAGE_NUMBER,
+		      "dfu_target_init() got img_num %d, expected %d",
+		      dfu_target_init_img_num, CONFIG_UPDATEABLE_IMAGE_NUMBER);
+
+	err = fota_download_cancel();
+	zassert_equal(err, 0, NULL);
+	k_sem_take(&stop_sem, K_FOREVER);
+}
+#endif
+
+ZTEST(fota_download_tests, test_download_params_null)
+{
+	int err;
+
+	init();
+
+	err = fota_download_start_params(NULL);
+	zassert_equal(err, -EINVAL, NULL);
+
+	const struct fota_download_params params = {
+		.host = BASE_DOMAIN,
+		.file = NULL,
+	};
+
+	err = fota_download_start_params(&params);
+	zassert_equal(err, -EINVAL, NULL);
 }
 
 ZTEST(fota_download_tests, test_download_dual_s0_active)
