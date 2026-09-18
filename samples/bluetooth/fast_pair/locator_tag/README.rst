@@ -224,6 +224,8 @@ The configuration of the DFU solution varies depending on the board target:
 |              |                                | * ``nrf54ls05dk/nrf54ls05b/cpuapp`` (only ``release`` configuration) |
 +--------------+--------------------------------+----------------------------------------------------------------------+
 
+.. _fast_pair_locator_tag_dfu_signature_algorithm:
+
 Signature algorithm
 -------------------
 
@@ -596,10 +598,8 @@ DFU build with the key storage in KMU
 =====================================
 
 The MCUboot-based targets that enable the :kconfig:option:`SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU` Kconfig option use the Key Management Unit (KMU) hardware peripheral to store the public key that is used by the bootloader to verify the application image.
-
-.. note::
-   The board targets based on the nRF54L SoC Series are currently the only targets that support the KMU-based key storage.
-   See the :ref:`fast_pair_locator_tag_dfu` section of this sample documentation for the details regarding the supported signature algorithms, public key storage location and the signature key file.
+The information in this section applies only to these board targets, which are listed in the row with the Key Management Unit (KMU) public key storage in the table of the :ref:`fast_pair_locator_tag_dfu_signature_algorithm` section of this sample documentation.
+The other public key storage solutions, such as storing the public key in the bootloader partition, do not require the KMU provisioning step.
 
 To use KMU, the public key must first be provisioned.
 This provisioning step can be performed automatically by the west runner, provided that a :file:`keyfile.json` file is present in the build directory.
