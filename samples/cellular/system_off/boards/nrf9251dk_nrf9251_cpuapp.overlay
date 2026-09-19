@@ -4,6 +4,8 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <samples/cellular/nrf92_no_bootloader_partitions.dtsi>
+
 / {
 	cpuapp_tcm_sram_ret: cpuapp_tcm_sram@22006f00 {
 		compatible = "zephyr,memory-region", "mmio-sram";

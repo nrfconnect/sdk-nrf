@@ -31,6 +31,21 @@ LOG_MODULE_REGISTER(soc, CONFIG_SOC_LOG_LEVEL);
 #define HSFLL_NODE DT_NODELABEL(cpuapp_hsfll)
 #endif
 
+#ifdef CONFIG_USE_DT_CODE_PARTITION
+#define FLASH_LOAD_ADDRESS DT_REG_ADDR(DT_CHOSEN(zephyr_code_partition))
+#elif defined(CONFIG_FLASH_LOAD_OFFSET)
+#define FLASH_LOAD_ADDRESS (CONFIG_FLASH_BASE_ADDRESS + CONFIG_FLASH_LOAD_OFFSET)
+#endif
+
+#if defined(NRF_APPLICATION) && defined(FLASH_LOAD_ADDRESS) &&                                     \
+	!defined(CONFIG_BOOTLOADER_MCUBOOT) && !CODE_PARTITION_IS_SECONDARY
+BUILD_ASSERT(FLASH_LOAD_ADDRESS == NRF_MEMORY_FLASH0_BASE,
+	     "A build without MCUboot must link the application at the start of the MRAM "
+	     "region. Point zephyr,code-partition at a partition based at "
+	     "NRF_MEMORY_FLASH0_BASE, and keep the periphconf and mpcconf partitions "
+	     "outside it.");
+#endif
+
 #define FICR_ADDR_GET(node_id, name)                                           \
 	DT_REG_ADDR(DT_PHANDLE_BY_NAME(node_id, nordic_ficrs, name)) +         \
 		DT_PHA_BY_NAME(node_id, nordic_ficrs, name, offset)

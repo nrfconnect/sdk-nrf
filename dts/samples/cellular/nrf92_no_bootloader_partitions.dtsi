@@ -1,0 +1,72 @@
+/ {
+	chosen {
+		/delete-property/ nrf,bootloader-request;
+		/delete-property/ nrf,bootloader-request-backup;
+	};
+};
+
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &periphconf_partition;
+/delete-node/ &mpcconf_partition;
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &cpuppr_code_partition;
+/delete-node/ &cpuflpr_code_partition;
+/delete-node/ &secondary_partition;
+/delete-node/ &secondary_periphconf_partition;
+/delete-node/ &secondary_mpcconf_partition;
+/delete-node/ &boot_request;
+/delete-node/ &boot_request_backup;
+/delete-node/ &storage_partition;
+/delete-node/ &cpuapp_slot1_partition;
+/delete-node/ &secure_storage_partition;
+
+&mram1x {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cpuapp_slot0_partition: partition@312000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x312000 DT_SIZE_K(944)>;
+		};
+
+		periphconf_partition: partition@3fe000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3fe000 DT_SIZE_K(8)>;
+		};
+
+		cpuppr_code_partition: partition@400000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x400000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@410000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x410000 DT_SIZE_K(64)>;
+		};
+
+		storage_partition: partition@4a3000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x4a3000 DT_SIZE_K(40)>;
+		};
+
+		secure_storage_partition: partition@4ad000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x4ad000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x4ad000 0x2000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuapp_crypto_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x0 DT_SIZE_K(4)>;
+			};
+
+			cpuapp_its_partition: partition@1000 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x1000 DT_SIZE_K(4)>;
+			};
+		};
+	};
+};
