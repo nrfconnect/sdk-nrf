@@ -163,7 +163,15 @@ enum aws_iot_evt_type {
 	 */
 	AWS_IOT_EVT_FOTA_DL_PROGRESS,
 
-	/** FOTA error. Something went wrong during the FOTA process, try again. */
+	/** FOTA error. Something went wrong during the FOTA process.
+	 *  Payload is of type int (.data.err), containing the cause of the failure as a
+	 *  value of type enum aws_fota_error_cause. For causes that describe a failure of
+	 *  the update itself, the same cause is reported to AWS IoT Jobs in the
+	 *  statusDetails field of the failed job execution. This is not the case for
+	 *  AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_REJECTED and
+	 *  AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED, which are reported precisely when no
+	 *  job execution update carrying status details was accepted or published.
+	 */
 	AWS_IOT_EVT_FOTA_ERROR,
 
 	/** Irrecoverable error, if this event is received the device should perform a reboot.
@@ -234,6 +242,9 @@ struct aws_iot_evt {
 
 		/** Error code that indicates reason of failure when receiving
 		 *  the AWS_IOT_EVT_ERROR event.
+		 *
+		 *  When receiving the AWS_IOT_EVT_FOTA_ERROR event, this is the cause of the
+		 *  FOTA failure, as a value of type enum aws_fota_error_cause.
 		 */
 		int err;
 
