@@ -39,7 +39,7 @@ Write:
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/lbs.h`
-| Source file: :file:`subsys/bluetooth/services/lbs.c`
+| Header file: :ncs-file:`/include/bluetooth/services/lbs.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/lbs.c`
 
 .. doxygengroup:: bt_lbs

@@ -35,6 +35,6 @@ Common types
 
 This section lists the types common to the Light Lightness Control mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/light_ctrl.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctrl.h`
 
 .. doxygengroup:: bt_mesh_light_ctrl

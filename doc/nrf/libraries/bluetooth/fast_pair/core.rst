@@ -222,7 +222,7 @@ The pairing flow and the set of Bluetooth authentication callbacks in use depend
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/fast_pair/fast_pair.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/fast_pair.h`
 | Source files: :file:`subsys/bluetooth/fast_pair`
 
 .. doxygengroup:: bt_fast_pair
@@ -230,7 +230,7 @@ API documentation
 Fast Pair UUID API
 ==================
 
-| Header file: :file:`include/bluetooth/fast_pair/uuid.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/uuid.h`
 | Source files: :file:`subsys/bluetooth/fast_pair`
 
 .. doxygengroup:: bt_fast_pair_uuid
@@ -238,7 +238,7 @@ Fast Pair UUID API
 FHN extension
 =============
 
-| Header file: :file:`include/bluetooth/fast_pair/fhn/fhn.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/fhn/fhn.h`
 | Source files: :file:`subsys/bluetooth/fast_pair/fhn`
 
 .. doxygengroup:: bt_fast_pair_fhn
@@ -246,7 +246,7 @@ FHN extension
 FHN Precision Finding
 =====================
 
-| Header file: :file:`include/bluetooth/fast_pair/fhn/pf/pf.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/fhn/pf/pf.h`
 | Source files: :file:`subsys/bluetooth/fast_pair/fhn/pf`
 
 .. doxygengroup:: bt_fast_pair_fhn_pf
@@ -254,7 +254,7 @@ FHN Precision Finding
 FHN Precision Finding for Bluetooth LE Channel Sounding
 =======================================================
 
-| Header file: :file:`include/bluetooth/fast_pair/fhn/pf/ble_cs.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/fhn/pf/ble_cs.h`
 | Source files: :file:`subsys/bluetooth/fast_pair/fhn/pf`
 
 .. doxygengroup:: bt_fast_pair_fhn_pf_ble_cs

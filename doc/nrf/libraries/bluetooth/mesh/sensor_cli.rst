@@ -159,7 +159,7 @@ mesh models sensor series-entries-get <SensorID> [<RngStart> <RngEnd>]
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/sensor_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/sensor_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/sensor_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/sensor_cli.c`
 
 .. doxygengroup:: bt_mesh_sensor_cli

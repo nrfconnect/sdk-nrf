@@ -117,7 +117,7 @@ For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_ligh
 Other nodes can store or recall scenes through Scene Server, by sending Scene messages.
 They can also fetch the current value of the :c:var:`bt_mesh_sensor_precise_tot_dev_energy_use` property by sending Sensor Get messages.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_ctrl/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
 User interface
 **************

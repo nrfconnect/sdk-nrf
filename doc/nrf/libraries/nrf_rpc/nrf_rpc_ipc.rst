@@ -14,7 +14,7 @@ This feature is used in the :ref:`ble_rpc` library and also in the :ref:`nrf_rpc
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_rpc/nrf_rpc_ipc.h`
-| Source file: :file:`subsys/nrf_rpc/nrf_rpc_ipc.c`
+| Header file: :ncs-file:`/include/nrf_rpc/nrf_rpc_ipc.h`
+| Source file: :ncs-file:`/subsys/nrf_rpc/nrf_rpc_ipc.c`
 
 .. doxygengroup:: nrf_rpc_ipc

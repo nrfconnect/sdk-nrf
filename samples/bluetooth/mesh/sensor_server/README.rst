@@ -108,7 +108,7 @@ The models are used for the following purposes:
 * Sensor Server instances provide sensor data to one or more :ref:`mesh sensor observers <bt_mesh_sensor_cli_readme>`.
 * Sensor Setup Server instances are used for configuration of the corresponding Sensor Server instances.
 
-The model handling is implemented in :file:`src/model_handler.c`.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/sensor_server/src/model_handler.c`.
 It uses the ``TEMP_NRF5`` temperature sensor.
 
 The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the `nRF52832 Temperature Sensor Electrical Specification`_.

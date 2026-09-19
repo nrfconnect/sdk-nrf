@@ -868,7 +868,7 @@ Libraries for NFC
   * The possibility of moving an NFC callback to a thread context.
   * Support for zero-latency interrupts for NFC.
 
-* Updated by aligning the :file:`ncs/nrf/subsys/nfc/lib/platform.c` file with new library implementation.
+* Updated by aligning the :ncs-file:`manifest:/subsys/nfc/lib/platform.c` file with new library implementation.
 
 * :ref:`nfc_ndef_ch_rec_parser_readme` library:
 
@@ -989,7 +989,7 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 * Added an option to prevent inclusion of the default nRF5340 network core DFU image hook, which allows a custom implementation by users if the :kconfig:option:`CONFIG_BOOT_IMAGE_ACCESS_HOOK_NRF5340` Kconfig option is disabled (enabled by default).
   CMake can be used to add additional hook files.
-  See :file:`modules/mcuboot/hooks/CMakeLists.txt` for an example of how to achieve this.
+  See :ncs-file:`/modules/mcuboot/hooks/CMakeLists.txt` for an example of how to achieve this.
 
 Zephyr
 ======

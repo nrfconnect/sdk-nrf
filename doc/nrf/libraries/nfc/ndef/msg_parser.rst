@@ -47,15 +47,15 @@ API documentation
 NDEF message parser API
 -----------------------
 
-| Header file: :file:`include/nfc/ndef/msg_parser.h`
-| Source file: :file:`subsys/nfc/ndef/msg_parser.c`
+| Header file: :ncs-file:`/include/nfc/ndef/msg_parser.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/msg_parser.c`
 
 .. doxygengroup:: nfc_ndef_msg_parser
 
 NDEF record parser API
 ----------------------
 
-| Header file: :file:`include/nfc/ndef/record_parser.h`
-| Source file: :file:`subsys/nfc/ndef/record_parser.c`
+| Header file: :ncs-file:`/include/nfc/ndef/record_parser.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/record_parser.c`
 
 .. doxygengroup:: nfc_ndef_record_parser

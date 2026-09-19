@@ -164,7 +164,7 @@ The current approach is to create events for each core with different codes, eve
 API documentation
 *****************
 
-| Header file: :file:`include/event_manager_proxy.h`
+| Header file: :ncs-file:`/include/event_manager_proxy.h`
 | Source files: :file:`subsys/event_manager_proxy/`
 
 .. doxygengroup:: event_manager_proxy

@@ -1024,7 +1024,7 @@ Bluetooth libraries and services
 
     * The :c:func:`bt_fast_pair_enable`, :c:func:`bt_fast_pair_disable`, :c:func:`bt_fast_pair_is_ready` functions to handle the Fast Pair subsystem readiness.
       In order to use the Fast Pair service, the Fast Pair subsystem must be enabled with the :c:func:`bt_fast_pair_enable` function.
-    * The :file:`include/bluetooth/services/fast_pair/uuid.h` header file that contains UUID definitions for the Fast Pair service and its characteristics.
+    * The :ncs-file:`/include/bluetooth/services/fast_pair/uuid.h` header file that contains UUID definitions for the Fast Pair service and its characteristics.
 
   * Updated:
 

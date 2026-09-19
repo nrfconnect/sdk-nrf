@@ -56,7 +56,7 @@ You can use this sample's board overlay as an example.
    For the ``nrf54h20dk/nrf54h20/cpurad`` target in the board's devicetree file, you must define a node with the compatible property set to ``coex-pta-grant-gpios``.
    Then set the ``coex-pta-grant-gpios`` property of that node to the desired pin.
    This is needed to properly configure the UICR register and get a pin access from the core the application is running on.
-   See the :file:`boards/nrf54h20dk_nrf54h20_cpurad.overlay` file for an example.
+   See the :ncs-file:`/samples/bluetooth/radio_coex_1wire/boards/nrf54h20dk_nrf54h20_cpurad.overlay` file for an example.
 
 Building and running
 ********************

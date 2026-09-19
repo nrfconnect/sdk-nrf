@@ -40,7 +40,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/sta/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -225,7 +225,7 @@ Performance testing and memory footprint analysis
 The sample can be used to test the performance of the Wi-Fi connection.
 The performance tuning is done to achieve a trade-off between memory usage and performance.
 
-You can use the :file:`overlay-zperf.conf` file to run the performance test.
+You can use the :ncs-file:`/samples/wifi/sta/overlay-zperf.conf` file to run the performance test.
 The default build, without the overlay, is used for memory footprint testing and analysis.
 The overlay must be enabled to run the performance test corresponding to the memory footprints.
 

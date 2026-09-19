@@ -180,9 +180,9 @@ The pin is configured with the ``mcuboot-button0`` alias.
 The ``mcuboot-led0`` alias can be used to define the LED activated in the serial recovery mode.
 You must select the ``CONFIG_MCUBOOT_INDICATION_LED`` Kconfig option to enable the LED.
 By default, both the GPIO pin and the LED are defined in the board's DTS file.
-See :file:`boards/nordic/nrf52833dongle/nrf52833dongle_nrf52833.dts` for an example of board's DTS file used by the nRF Desktop application.
+See :ncs-file:`/boards/nordic/nrf52833dongle/nrf52833dongle_nrf52833.dts` for an example of board's DTS file used by the nRF Desktop application.
 
-For an example of a bootloader Kconfig configuration file defined by the application, see the MCUboot bootloader ``debug`` configuration defined for nRF52833 dongle (:file:`applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/images/mcuboot/prj.conf`).
+For an example of a bootloader Kconfig configuration file defined by the application, see the MCUboot bootloader ``debug`` configuration defined for nRF52833 dongle (:ncs-file:`/applications/nrf_desktop/configuration/nrf52833dongle_nrf52833/images/mcuboot/prj.conf`).
 
 .. note::
   The nRF Desktop devices use either the serial recovery DFU with a single application slot or the background DFU.
@@ -218,8 +218,8 @@ Your RAM layout must define the following DTS child nodes as part of the ``cpuap
   The ``cpuapp_sram_mcuboot_ram_region`` region can be filled with the RAM section of the application image, as the application and bootloader code cannot run simultaneously.
 * ``cpuapp_sram_mcuboot_ram_region`` - This DTS node defines the RAM region for the MCUboot image and must be assigned to the MCUboot image as its chosen SRAM DTS node.
 
-For an example of the custom RAM layout that satisfies these requirements, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
-For an example of the RAM layout usage in the MCUboot bootloader image, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/images/mcuboot/app_ram_load.overlay` file.
+For an example of the custom RAM layout that satisfies these requirements, see the :ncs-file:`/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+For an example of the RAM layout usage in the MCUboot bootloader image, see the :ncs-file:`/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/images/mcuboot/app_ram_load.overlay` file.
 
 .. note::
    The application image and the MCUboot image configuration must use the same memory layout.
@@ -245,13 +245,13 @@ In the MCUboot image configuration, enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BOOT_SHARE_BACKEND_RETENTION`
 
 The Zephyr retention subsystem requires the retention partition to be defined in the devicetree.
-For an example of the retention partition definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+For an example of the retention partition definition, see the :ncs-file:`/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
 You must also assign the retention partition to the chosen DTS node ``zephyr,bootloader-info`` in both the application image configuration and the MCUboot image configuration.
 
 .. note::
    If your board target uses the Key Management Unit (KMU) feature (:kconfig:option:`CONFIG_CRACEN_KMU`), you must additionally define the ``nrf_kmu_reserved_push_area`` DTS node in your custom memory layout.
    Place this RAM section at the very beginning of the physical RAM due to the dependency on the ``nrfutil device`` tool and its KMU provisioning functionality.
-   For an example of the ``nrf_kmu_reserved_push_area`` DTS node definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+   For an example of the ``nrf_kmu_reserved_push_area`` DTS node definition, see the :ncs-file:`/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
 
    The KMU feature (:kconfig:option:`CONFIG_CRACEN_KMU`) is enabled by default for the nRF54L Series devices.
 

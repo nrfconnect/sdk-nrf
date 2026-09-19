@@ -59,7 +59,7 @@ The thread has the following configuration options:
 API documentation
 *****************
 
-| Header file: :file:`include/drivers/sensor_sim.h`
-| Source file: :file:`drivers/sensor/sensor_sim/sensor_sim.c`
+| Header file: :ncs-file:`/include/drivers/sensor_sim.h`
+| Source file: :ncs-file:`/drivers/sensor/sensor_sim/sensor_sim.c`
 
 .. doxygengroup:: sensor_sim

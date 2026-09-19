@@ -152,7 +152,7 @@ To enable it, set the ``KCONFIGDIFF`` CMake option to ``ON`` when generating the
 Testing locally
 ***************
 
-Documentation sets for different versions of the |NCS| are defined in the :file:`doc/versions.json` file.
+Documentation sets for different versions of the |NCS| are defined in the :ncs-file:`/doc/versions.json` file.
 This file is used to display the :ref:`version drop-down <doc_structure_versions>`.
 
 To test the version drop-down locally, complete the following steps:

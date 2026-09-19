@@ -149,7 +149,7 @@ To define the binding, edit the DTS file that describes the board.
 For more information, see :ref:`devicetree-intro`.
 
 As an example, take a look at the PMW3360 sensor that is already available in the |NCS|.
-The following code excerpt is taken from :file:`boards/nordic/nrf52840gmouse/nrf52840gmouse_nrf52840.dts`:
+The following code excerpt is taken from :ncs-file:`/boards/nordic/nrf52840gmouse/nrf52840gmouse_nrf52840.dts`:
 
 .. code-block:: none
 
@@ -203,13 +203,13 @@ Include sensor in the application
 
 Once the new sensor is supported by the |NCS| and the board configuration is updated, you can include it in the nRF Desktop application.
 
-The nRF Desktop application selects a sensor using the configuration options defined in :file:`src/hw_interface/Kconfig.motion`.
+The nRF Desktop application selects a sensor using the configuration options defined in :ncs-file:`/applications/nrf_desktop/src/hw_interface/Kconfig.motion`.
 Add the new sensor as a new choice option.
 
 The :ref:`nrf_desktop_motion` of the nRF Desktop application has access to several sensor attributes.
 These attributes are used to modify the sensor behavior in runtime.
 Since the names of the attributes differ for each sensor, the :ref:`nrf_desktop_motion` uses a generic abstraction of them.
-You can translate the new sensor-specific attributes to a generic abstraction by modifying the :file:`configuration/common/motion_sensor.h` file.
+You can translate the new sensor-specific attributes to a generic abstraction by modifying the :ncs-file:`/applications/nrf_desktop/configuration/common/motion_sensor.h` file.
 
 .. tip::
    If an attribute is not supported by the sensor, you do not need to define it.

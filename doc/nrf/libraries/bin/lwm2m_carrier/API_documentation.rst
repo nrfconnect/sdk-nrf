@@ -12,8 +12,8 @@ Following are the LwM2M carrier and LwM2M OS abstraction layer API elements used
 LwM2M carrier library
 *********************
 
-| Header files: :file:`lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`
-| Source files: :file:`lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`
+| Header files: :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`
+| Source files: :ncs-file:`/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`
 
 LwM2M carrier library start up
 ==============================
@@ -44,8 +44,8 @@ LwM2M carrier library objects
 OS abstraction layer
 ********************
 
-| Header file: :file:`lib/bin/lwm2m_carrier/include/lwm2m_os.h`
-| Source file: :file:`lib/bin/lwm2m_carrier/os/lwm2m_os.c`
+| Header file: :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_os.h`
+| Source file: :ncs-file:`/lib/bin/lwm2m_carrier/os/lwm2m_os.c`
 
 LwM2M OS layer
 ==============

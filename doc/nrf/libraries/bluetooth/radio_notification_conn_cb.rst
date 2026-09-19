@@ -48,7 +48,7 @@ You can use this feature only with the :ref:`SoftDevice Controller <nrfxlib:soft
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/radio_notification_cb.h`
-| Source file: :file:`subsys/bluetooth/host_extensions/radio_notification_conn_cb.c`
+| Header file: :ncs-file:`/include/bluetooth/radio_notification_cb.h`
+| Source file: :ncs-file:`/subsys/bluetooth/host_extensions/radio_notification_conn_cb.c`
 
 .. doxygengroup:: bt_radio_notification_cb

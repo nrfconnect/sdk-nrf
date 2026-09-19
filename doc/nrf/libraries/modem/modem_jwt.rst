@@ -54,7 +54,7 @@ You can configure the following values in the :c:struct:`jwt_data` structure:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/modem_jwt.h`
-| Source file: :file:`lib/modem_jwt/modem_jwt.c`
+| Header file: :ncs-file:`/include/modem/modem_jwt.h`
+| Source file: :ncs-file:`/lib/modem_jwt/modem_jwt.c`
 
 .. doxygengroup:: modem_jwt

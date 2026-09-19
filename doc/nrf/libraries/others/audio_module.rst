@@ -111,7 +111,7 @@ This library uses the following |NCS| library:
 API documentation
 *****************
 
-| Header file: :file:`include/audio_module/audio_module.h`
-| Source files: :file:`subsys/audio_module/audio_module.c`
+| Header file: :ncs-file:`/include/audio_module/audio_module.h`
+| Source files: :ncs-file:`/subsys/audio_module/audio_module.c`
 
 .. doxygengroup:: audio_module

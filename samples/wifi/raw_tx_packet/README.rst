@@ -35,7 +35,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/raw_tx_packet/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/raw_tx_packet/Kconfig`):
 
 .. options-from-kconfig::
 

@@ -105,7 +105,7 @@ The Light HSL Server does not store any data persistently, but will control the 
 API documentation
 ******************
 
-| Header file: :file:`include/bluetooth/mesh/light_hsl_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_hsl_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_hsl_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_hsl_srv.c`
 
 .. doxygengroup:: bt_mesh_light_hsl_srv

@@ -91,7 +91,7 @@ In addition, it uses the Type 2 Tag library from `sdk-nrfxlib`_:
 The sample uses the following Zephyr libraries:
 
 * :file:`include/zephyr.h`
-* :file:`include/power/reboot.h`
+* :ncs-file:`/include/power/reboot.h`
 
 The sample also uses the following secure firmware component:
 

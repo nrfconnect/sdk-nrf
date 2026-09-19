@@ -35,7 +35,7 @@ To use the driver, define an SAADCT instance in the devicetree and point its ``t
 API documentation
 *****************
 
-| Header file: :file:`include/drivers/saadct.h`
-| Source file: :file:`drivers/saadct/saadct_nrfx.c`
+| Header file: :ncs-file:`/include/drivers/saadct.h`
+| Source file: :ncs-file:`/drivers/saadct/saadct_nrfx.c`
 
 .. doxygengroup:: saadct

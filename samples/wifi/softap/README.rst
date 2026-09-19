@@ -46,7 +46,7 @@ Configuration
 Configuration options
 =====================
 
-The following Kconfig options are used in this sample (located in :file:`samples/wifi/softap/Kconfig`):
+The following Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/softap/Kconfig`):
 
 .. options-from-kconfig::
 

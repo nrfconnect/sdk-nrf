@@ -442,7 +442,7 @@ Bluetooth Fast Pair samples
 ---------------------------
 
 * Updated the DTS overlays of the Fast Pair samples to use the new ``zephyr,mapped-partition`` compatible property for each partition node.
-  The change aligns the board target overlays with the layout produced by the Partition Manager-to-DTS helper script (:file:`scripts/pm_to_dts.py`).
+  The change aligns the board target overlays with the layout produced by the Partition Manager-to-DTS helper script (:ncs-file:`/scripts/pm_to_dts.py`).
   See the :ref:`migration_3.4_google_fast_pair` guide to learn how to align the DTS partition map in your project using the new property.
 
 * Removed the remaining ``nrf54h20dk/nrf54h20/cpuapp`` board target configurations from the Fast Pair samples.

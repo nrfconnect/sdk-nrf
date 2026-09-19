@@ -79,7 +79,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_mouse/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (defined in :ncs-file:`/samples/bluetooth/peripheral_hids_mouse/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -358,9 +358,9 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/assert.h`
-* :file:`lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/assert.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
 * :file:`include/sys/printk.h`
 * :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`

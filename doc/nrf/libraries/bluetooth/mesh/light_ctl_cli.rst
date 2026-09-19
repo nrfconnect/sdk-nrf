@@ -135,7 +135,7 @@ mesh models ctl temp-range-set-unack <Min> <Max>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_ctl_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctl_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctl_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctl_cli.c`
 
 .. doxygengroup:: bt_mesh_light_ctl_cli

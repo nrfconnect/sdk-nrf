@@ -24,7 +24,7 @@ The :c:func:`bl_validate_firmware` function validates the following information:
 API documentation
 *****************
 
-| Header file: :file:`include/bl_validation.h`
+| Header file: :ncs-file:`/include/bl_validation.h`
 | Source files: :file:`subsys/bootloader/bl_validation/`
 
 .. doxygengroup:: bl_validation

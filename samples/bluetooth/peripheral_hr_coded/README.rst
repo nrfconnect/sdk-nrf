@@ -85,7 +85,7 @@ This sample uses the following |NCS| library:
 
 This sample uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :file:`include/errno.h`
 * :file:`include/zephyr.h`
 * :file:`include/sys/printk.h`

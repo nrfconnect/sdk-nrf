@@ -102,7 +102,7 @@ This split is done so the values that may change often are stored on shutdown on
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_plvl_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_plvl_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_plvl_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_plvl_srv.c`
 
 .. doxygengroup:: bt_mesh_plvl_srv
