@@ -35,8 +35,7 @@ ZTEST(dfu_target_smp, test_reboot)
 
 	/* Test timeout */
 	rc = dfu_target_smp_reboot();
-	zassert_equal(MGMT_ERR_ETIMEOUT, rc, "Expected to receive %d response %d",
-		      MGMT_ERR_ETIMEOUT, rc);
+	zassert_equal(-EIO, rc, "Expected to receive %d response %d", -EIO, rc);
 	/* Testing reset successfully handling */
 	os_reset_response();
 	rc = dfu_target_smp_reboot();
@@ -138,8 +137,7 @@ ZTEST(dfu_target_smp, test_image_upload)
 
 	/* Start upload  and test Timeout */
 	rc = dfu_target_smp_write(image_dummy, 1024);
-	zassert_equal(MGMT_ERR_ETIMEOUT, rc, "Expected to receive %d response %d",
-		      MGMT_ERR_ETIMEOUT, rc);
+	zassert_equal(-EIO, rc, "Expected to receive %d response %d", -EIO, rc);
 
 	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, TEST_IMAGE_NUM, NULL);
 	zassert_equal(rc, MGMT_ERR_EOK, "DFU target Init fail");
@@ -148,8 +146,7 @@ ZTEST(dfu_target_smp, test_image_upload)
 	/* Allocate response buf */
 	img_upload_response(0, MGMT_ERR_EINVAL);
 	rc = dfu_target_smp_write(image_dummy, 1024);
-	zassert_equal(MGMT_ERR_EINVAL, rc, "Expected to receive %d response %d", MGMT_ERR_EINVAL,
-		      rc);
+	zassert_equal(-EIO, rc, "Expected to receive %d response %d", -EIO, rc);
 	dfu_target_smp_done(false);
 
 	rc = dfu_target_smp_init(TEST_IMAGE_SIZE, TEST_IMAGE_NUM, NULL);
@@ -186,8 +183,7 @@ ZTEST(dfu_target_smp, test_list_read)
 	/* Test Timeout*/
 	smp_client_send_status_stub(MGMT_ERR_EOK);
 	ret = dfu_target_smp_image_list_get(&res_buf);
-	zassert_equal(MGMT_ERR_ETIMEOUT, ret, "Expected to receive %d response %d",
-		      MGMT_ERR_ETIMEOUT, ret);
+	zassert_equal(-EIO, ret, "Expected to receive %d response %d", -EIO, ret);
 
 	/* Testing read successfully 1 image info and print that */
 	img_read_response(1);
