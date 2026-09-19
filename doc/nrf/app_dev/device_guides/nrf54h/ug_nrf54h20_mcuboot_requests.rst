@@ -178,19 +178,31 @@ Write access is restricted to the backup copy to reduce NVM wear in the backup a
 The bootloader always starts with the initialization procedure.
 During initialization, it copies the primary copy to the backup copy if the primary copy is valid.
 
+.. figure:: images/boot_requests.png
+   :alt: Initialization procedure of bootloader requests module with NVM backend and backup copy.
+
 When the bootloader processes a slot preference request, it first checks the validity of the primary copy.
 If the primary copy is valid, it uses it as the source for the requested slot preference.
 If the primary copy is invalid and the backup copy is valid, it uses the backup copy.
 If neither copy is valid, it does not request a slot preference.
 
+.. figure:: images/boot_requests_read.png
+   :alt: Reading slot preference from bootloader requests module with NVM backend and backup copy.
+
 When the bootloader successfully processes boot mode or image confirm requests (that is, any requests other than slot preference requests), it erases the primary area, copies the slot preference values from the backup area to the primary area, and then updates the checksum of the primary area.
 After the primary area becomes valid and contains the backed-up slot preference values, the bootloader copies the primary area to the backup area.
 This ensures that both areas stay in sync after the bootloader processes requests.
+
+.. figure:: images/boot_requests_clear.png
+   :alt: Boot requests cleaning procedure after processing requests with NVM backend and backup copy.
 
 When the application creates a request, it first checks the validity of the primary copy.
 If the primary copy is invalid and the backup copy is valid, it restores the backup copy to the primary copy before proceeding.
 If neither copy is valid, it erases the primary area and processes the request as usual.
 If the primary copy is valid and already matches the requested value, it ignores the request to avoid unnecessary erase cycles.
 If the primary area initialization fails or the backup copy cannot be restored, the request fails with an error code.
+
+.. figure:: images/boot_requests_write.png
+   :alt: Setting slot preference using boot requests module with NVM backend and backup copy.
 
 This mechanism ensures that even in the event of a power loss during an update operation, the bootloader can always recover a valid slot preference from the backup copy, maintaining the integrity of the boot process.
