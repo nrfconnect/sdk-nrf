@@ -131,7 +131,8 @@ void cracen_ml_dsa_ntt_inversed(ml_dsa_poly_vector_t *vec)
 	for (uint32_t j = 0; j < ML_DSA_POLY_COEFFS_COUNT; j++) {
 		int32_t t = montgomery_reduce((int64_t)inv_256_r2_mont * w[j]);
 
-		w[j] = t < 0 ? t + ML_DSA_PRIME_NUM : t;
+		/* Constant time: w[j] = t < 0 ? t + ML_DSA_PRIME_NUM : t */
+		w[j] = t + ((t >> 31) & ML_DSA_PRIME_NUM);
 	}
 }
 

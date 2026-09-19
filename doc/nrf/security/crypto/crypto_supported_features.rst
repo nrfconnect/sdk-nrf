@@ -5923,10 +5923,6 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
-            .. note::
-
-               For ML-DSA algorithms, CRACEN only supports signature verification.
-
          .. tab:: nrf_oberon
 
             .. list-table:: Asymmetric signature algorithm support (nrf_oberon driver) - nRF54L Series
