@@ -7,12 +7,17 @@
 target_sources(app PRIVATE
   button_handler.c
   led.c
-  audio_clock.c
   current_time.c
+  audio_rate_control/audio_rate_control.c
 )
 
 zephyr_library_include_directories(
   ${ZEPHYR_BASE}/subsys/usb/device_next/class
+  audio_rate_control
+)
+
+target_sources_ifdef(CONFIG_NRFX_CLOCK_HFCLKAUDIO app PRIVATE
+  hf_audio_clock.c
 )
 
 target_sources_ifdef(CONFIG_AUDIO_SYNC_TIMER_USES_RTC app PRIVATE
