@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "nrf54l.overlay"
+
+/*
+ * Test requires loopback between P1.10 and P1.11
+ */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio1 10 GPIO_ACTIVE_HIGH>;
+		test-saadc-input = <NRF_SAADC_AIN4>; /* P1.11 */
+	};
+};
