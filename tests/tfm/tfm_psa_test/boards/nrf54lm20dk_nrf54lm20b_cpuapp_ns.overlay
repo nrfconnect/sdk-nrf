@@ -1,0 +1,32 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* TF-M's bl_storage.c reads the provisioning data address from the
+ * `bl_storage` DT nodelabel when neither Partition Manager nor a B0
+ * forwarded TFM_BL_STORAGE_ADDR provides it. The nRF54L secure-side DTS
+ * defines this node in nrf54lm20b_cpuapp_partition.dtsi, but the non-secure
+ * DTS removes UICR (USE_NON_SECURE_ADDRESS_MAP), so expose it here. The NS
+ * image never accesses UICR; this node is only used at compile time by the
+ * TF-M secure build.
+ */
+/ {
+	soc {
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		uicr_tfm: uicr@ffd000 {
+			compatible = "nordic,nrf-uicr";
+			reg = <0xffd000 0x1000>;
+			ranges = <0x0 0xffd000 0x1000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			bl_storage: uicr@500 {
+				reg = <0x500 0x460>;
+			};
+		};
+	};
+};
