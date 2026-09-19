@@ -68,5 +68,6 @@ General information about samples in the |NCS|
    samples/thread
    samples/tfm
    samples/wifi
+   samples/zephyr_nordic_boards
    samples/zigbee
    samples/other
