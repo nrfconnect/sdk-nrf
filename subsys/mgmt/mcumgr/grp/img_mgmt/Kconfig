@@ -25,6 +25,18 @@ config MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE
 	  sysbuild if needed. This enables selecting the correct slot when running a QSPI XIP
 	  split image application in DirectXIP mode.
 
+config MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_COCONFIRM
+	bool "QSPI XIP split image uses application SMP confirm policy"
+	depends on MCUMGR_GRP_IMG
+	default y if MCUBOOT_QSPI_XIP_IMAGE_NUMBER > -1
+	help
+	  When the application is split between internal flash and external QSPI XIP, MCUboot
+	  exposes the external portion as a separate updateable image. MCUmgr normally treats
+	  only the internal image (MCUBOOT_APPLICATION_IMAGE_NUMBER) as the "active" image for
+	  confirm and slot-active policy. Enable this to treat the QSPI XIP image
+	  (MCUBOOT_QSPI_XIP_IMAGE_NUMBER) as part of the running application: allow confirming
+	  its primary slot and include it in hash-less image confirm.
+
 endif # MCUMGR_GRP_IMG_NRF
 
 endmenu
