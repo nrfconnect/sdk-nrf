@@ -23,6 +23,8 @@ configdefault BT_HIDS_SCI_FULL_RANGE_INTERVAL_MIN_125US
 # the need to align the supervision timeout with the maximum latencies.
 # If the BT_PERIPHERAL_PREF_LATENCY is changed without updating the values below,
 # the supervision timeouts will remain intact with the used maximum latencies.
+# Note: to reduce first-packet latency at the cost of increased current consumption,
+# set the FAST mode maximum latency to 0.
 
 configdefault BT_HIDS_SCI_FAST_MAX_LATENCY
 	default 99
