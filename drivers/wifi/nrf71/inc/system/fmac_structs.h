@@ -16,6 +16,8 @@
 #ifndef __FMAC_STRUCTS_H__
 #define __FMAC_STRUCTS_H__
 
+#include <zephyr/kernel.h>
+#include <zephyr/sys/dlist.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
 
@@ -23,7 +25,6 @@
 #define MAX_SW_PEERS (MAX_PEERS + 1)
 #define NRF_WIFI_AC_TWT_PRIORITY_EMERGENCY 0xFF
 #define NRF_WIFI_MAGIC_NUM_RAWTX 0x12345678
-
 
 /**
  * @brief WLAN access categories.
@@ -313,6 +314,8 @@ enum nrf_wifi_fmac_twt_state {
  * connected with.
  */
 struct peers_info {
+	/** Link when peer is on @ref tx_config::wakeup_client_q. */
+	sys_dnode_t wakeup_node;
 	/** Peer ID. */
 	int peer_id;
 	/** VIF index. */
@@ -340,16 +343,18 @@ struct peers_info {
  *
  */
 struct tx_config {
-	/** Lock used to make code portions in the TX path atomic. */
-	void *tx_lock;
+	/** Mutex for atomic sections in the TX path. */
+	struct k_mutex tx_lock;
+	/** Set after @ref tx_init completes successfully. */
+	bool tx_inited;
 	/** Context information about peers that the RPU firmware is connected to. */
 	struct peers_info peers[MAX_SW_PEERS];
 	/** Coalesce count of TX frames. */
 	unsigned int *send_pkt_coalesce_count_p;
-	/** per-peer/per-AC Queue for frames waiting to be passed to the RPU firmware for TX. */
-	void *data_pending_txq[MAX_SW_PEERS][NRF_WIFI_FMAC_AC_MAX];
-	/** Queue for peers which have woken up from 802.11 power save. */
-	void *wakeup_client_q;
+	/** per-peer/per-AC queue for frames waiting to be passed to the RPU firmware for TX. */
+	sys_dlist_t pend_pkt_q[MAX_SW_PEERS][NRF_WIFI_FMAC_AC_MAX];
+	/** Peers which have woken up from 802.11 power save. */
+	sys_dlist_t wakeup_client_q;
 	/** Used to store tx descs(buff pool ids). */
 	unsigned long *buf_pool_bmp_p;
 	/** TX descriptors which have been queued to the RPU firmware. */
@@ -366,11 +371,27 @@ struct tx_config {
 	 */
 	unsigned int spare_desc_queue_map;
 #if defined(NRF71_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
-	/** Queue for TX done tasklet. */
-	void *tx_done_tasklet_event_q;
+	/** Deferred TX-done events for the TX-done work queue. */
+	sys_dlist_t tx_done_event_q;
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 };
 #endif /* NRF71_STA_MODE || NRF71_RAW_DATA_RX */
+
+#if defined(NRF71_RX_WQ_ENABLED) || defined(__DOXYGEN__)
+/** RX work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_rx_buff). */
+struct nrf_wifi_fmac_rx_node {
+	sys_dnode_t node;
+	struct nrf_wifi_rx_buff buff;
+};
+#endif /* NRF71_RX_WQ_ENABLED */
+
+#if defined(NRF71_TX_DONE_WQ_ENABLED) || defined(__DOXYGEN__)
+/** TX-done work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_tx_buff_done). */
+struct nrf_wifi_fmac_tx_done_node {
+	sys_dnode_t node;
+	struct nrf_wifi_tx_buff_done buff;
+};
+#endif /* NRF71_TX_DONE_WQ_ENABLED */
 
 /**
  * @brief Structure to hold context information for the UMAC IF layer.
@@ -477,10 +498,10 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	/** Array of pointers to virtual interfaces created on this device. */
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx[MAX_NUM_VIFS];
 #if defined(NRF71_RX_WQ_ENABLED)
-	/** Tasklet for RX. */
-	void *rx_tasklet;
-	/** Queue for RX tasklet. */
-	void *rx_tasklet_event_q;
+	/** Deferred RX processing work item. */
+	struct k_work rx_work;
+	/** Deferred RX events for @ref rx_work. */
+	sys_dlist_t rx_event_q;
 #endif /* NRF71_RX_WQ_ENABLED */
 	/** Host statistics. */
 	struct rpu_host_stats host_stats;
@@ -498,8 +519,8 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	/** TWT state of the RPU. */
 	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #if defined(NRF71_TX_DONE_WQ_ENABLED)
-	/** Tasklet for TX done. */
-	void *tx_done_tasklet;
+	/** Deferred TX-done processing work item. */
+	struct k_work tx_done_work;
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 #endif /* NRF71_STA_MODE */
 #ifdef NRF71_RAW_DATA_TX

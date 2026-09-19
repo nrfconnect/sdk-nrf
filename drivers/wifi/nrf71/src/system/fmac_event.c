@@ -10,21 +10,58 @@
  * for the FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include <common/log_cfg.h>
-#include <common/llist_mgmt.h>
-#include <common/mem_mgmt.h>
-#include <common/work_mgmt.h>
-
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
-#include <system/fmac_rx.h>
-#include <system/fmac_tx.h>
-#include <system/fmac_peer.h>
+#include <common/log_cfg.h>
+
+#include <common/mem_mgmt.h>
+#include <common/util.h>
 #include <system/fmac_ap.h>
 #include <system/fmac_event.h>
-#include <common/util.h>
-#include <zephyr/logging/log.h>
+#include <system/fmac_peer.h>
+#include <system/fmac_rx.h>
+#include <system/fmac_tx.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
+
+#if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
+K_THREAD_STACK_DEFINE(nrf_wifi_tx_done_wq_stack, CONFIG_NRF71_TX_DONE_WQ_STACK_SIZE);
+struct k_work_q nrf_wifi_tx_done_wq;
+#endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
+
+#if defined(CONFIG_NRF71_RX_WQ_ENABLED)
+K_THREAD_STACK_DEFINE(nrf_wifi_rx_wq_stack, CONFIG_NRF71_RX_WQ_STACK_SIZE);
+struct k_work_q nrf_wifi_rx_wq;
+#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+
+static int nrf_wifi_work_queues_init(void)
+{
+#if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
+	k_work_queue_init(&nrf_wifi_tx_done_wq);
+	k_work_queue_start(&nrf_wifi_tx_done_wq,
+			   nrf_wifi_tx_done_wq_stack,
+			   K_THREAD_STACK_SIZEOF(nrf_wifi_tx_done_wq_stack),
+			   CONFIG_NRF71_TX_DONE_WQ_PRIORITY,
+			   NULL);
+	k_thread_name_set(nrf_wifi_tx_done_wq.thread_id, "nrf71_tx_done_wq");
+#endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
+
+#if defined(CONFIG_NRF71_RX_WQ_ENABLED)
+	k_work_queue_init(&nrf_wifi_rx_wq);
+	k_work_queue_start(&nrf_wifi_rx_wq,
+			   nrf_wifi_rx_wq_stack,
+			   K_THREAD_STACK_SIZEOF(nrf_wifi_rx_wq_stack),
+			   CONFIG_NRF71_RX_WQ_PRIORITY,
+			   NULL);
+	k_thread_name_set(nrf_wifi_rx_wq.thread_id, "nrf71_rx_wq");
+#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
+
+	return 0;
+}
+
+SYS_INIT(nrf_wifi_work_queues_init, POST_KERNEL, 0);
 
 #ifdef NRF71_SYSTEM_WITH_RAW_MODES
 static enum nrf_wifi_status
@@ -525,63 +562,54 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 #endif /* NRF_WIFI_CMD_EVENT_LOG */
 
 	switch (event) {
-	case NRF_WIFI_CMD_RX_BUFF:
-#ifdef NRF71_RX_DONE_WQ_ENABLED
-		struct nrf_wifi_rx_buff *config =
+	case NRF_WIFI_CMD_RX_BUFF: {
+#ifdef NRF71_RX_WQ_ENABLED
+		struct nrf_wifi_fmac_rx_node *item =
 			nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-					    sizeof(struct nrf_wifi_rx_buff));
-		if (!config) {
+					    sizeof(*item));
+		if (!item) {
 			LOG_ERR("%s: Failed to allocate memory (RX)",
 					      __func__);
 			status = NRF_WIFI_STATUS_FAIL;
 			break;
 		}
-		nrf_wifi_mem_cpy(config,
+		nrf_wifi_mem_cpy(&item->buff,
 				      umac_head,
-				      sizeof(struct nrf_wifi_rx_buff));
-		status = nrf_wifi_llist_add_tail_data(sys_dev_ctx->rx_config.rx_tasklet_event_q,
-						  config);
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Failed to enqueue RX buffer",
-					      __func__);
-			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
-			break;
-		}
-		nrf_wifi_work_schedule(sys_dev_ctx->rx_tasklet);
+				      sizeof(item->buff));
+		sys_dnode_init(&item->node);
+		sys_dlist_append(&sys_dev_ctx->rx_event_q, &item->node);
+		k_work_submit_to_queue(&nrf_wifi_rx_wq, &sys_dev_ctx->rx_work);
 #else
 		status = nrf_wifi_fmac_rx_event_process(fmac_dev_ctx,
 							umac_head);
-#endif /* NRF71_RX_DONE_WQ_ENABLED */
+#endif /* NRF71_RX_WQ_ENABLED */
 		break;
+	}
 #ifdef NRF71_DATA_TX
-	case NRF_WIFI_CMD_TX_BUFF_DONE:
+	case NRF_WIFI_CMD_TX_BUFF_DONE: {
 #ifdef NRF71_TX_DONE_WQ_ENABLED
-		struct nrf_wifi_tx_buff_done *config =
+		struct nrf_wifi_fmac_tx_done_node *item =
 			nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-					    sizeof(struct nrf_wifi_tx_buff_done));
-		if (!config) {
+					    sizeof(*item));
+		if (!item) {
 			LOG_ERR("%s: Failed to allocate memory (TX)",
 					      __func__);
 			status = NRF_WIFI_STATUS_FAIL;
 			break;
 		}
-		nrf_wifi_mem_cpy(config,
+		nrf_wifi_mem_cpy(&item->buff,
 				      umac_head,
-				      sizeof(struct nrf_wifi_tx_buff_done));
-		status = nrf_wifi_llist_add_tail_data(
-			sys_dev_ctx->tx_config.tx_done_tasklet_event_q, config);
-		if (status != NRF_WIFI_STATUS_SUCCESS) {
-			LOG_ERR("%s: Failed to enqueue TX buffer",
-					      __func__);
-			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, config);
-			break;
-		}
-		nrf_wifi_work_schedule(sys_dev_ctx->tx_done_tasklet);
+				      sizeof(item->buff));
+		sys_dnode_init(&item->node);
+		sys_dlist_append(&sys_dev_ctx->tx_config.tx_done_event_q,
+				 &item->node);
+		k_work_submit_to_queue(&nrf_wifi_tx_done_wq, &sys_dev_ctx->tx_done_work);
 #else
 		status = nrf_wifi_fmac_tx_done_event_process(fmac_dev_ctx,
 								umac_head);
 #endif /* NRF71_TX_DONE_WQ_ENABLED */
 		break;
+	}
 	case NRF_WIFI_CMD_CARRIER_ON:
 		status = nrf_wifi_fmac_if_carr_state_event_proc(fmac_dev_ctx,
 								umac_head,

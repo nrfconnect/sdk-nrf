@@ -277,7 +277,6 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 	int peer_index = 0;
 	int max_vif_index = MAX(MAX_NUM_APS, MAX_NUM_STAS);
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	void *queue = NULL;
 	unsigned int tx_pending_pkts = 0;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	int ret;
@@ -311,8 +310,8 @@ static int nrf_wifi_util_tx_stats(const struct shell *sh,
 		vif_index);
 
 	for (int i = 0; i < NRF_WIFI_FMAC_AC_MAX ; i++) {
-		queue = sys_dev_ctx->tx_config.data_pending_txq[peer_index][i];
-		tx_pending_pkts = nrf_wifi_llist_len(queue);
+		tx_pending_pkts = (unsigned int)sys_dlist_len(
+			&sys_dev_ctx->tx_config.pend_pkt_q[peer_index][i]);
 
 		shell_fprintf(
 			sh,

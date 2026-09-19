@@ -9,12 +9,13 @@
  * FMAC IF Layer of the Wi-Fi driver.
  */
 
-#include <common/mem_mgmt.h>
-#include <system/fmac_peer.h>
+#include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 
 #include <common/fw_if/nrf71_wifi_ctrl.h>
+#include <common/mem_mgmt.h>
 #include <common/util.h>
-#include <zephyr/logging/log.h>
+#include <system/fmac_peer.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -82,6 +83,7 @@ int nrf_wifi_fmac_peer_add(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			peer->peer_id = i;
 			peer->is_legacy = is_legacy;
 			peer->qos_supported = qos_supported;
+			sys_dnode_init(&peer->wakeup_node);
 			return i;
 		}
 	}
