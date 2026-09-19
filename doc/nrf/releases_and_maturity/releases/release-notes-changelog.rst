@@ -913,6 +913,21 @@ Libraries for networking
 
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
 
+* :ref:`lib_aws_fota` library:
+
+  * Added:
+
+    * The :c:enum:`aws_fota_error_cause` enumeration and the ``cause`` field in the :c:struct:`aws_fota_event` structure.
+      The field is set when the :c:enumerator:`AWS_FOTA_EVT_ERROR` event is sent, and reports why the FOTA job failed.
+
+  * Updated the job execution update that marks a job as ``FAILED`` to report the failure in the AWS IoT Jobs ``statusDetails`` field, as ``{"reason":"<cause>","progress":"<percentage>"}``, instead of sending ``null``.
+    This makes it possible to diagnose a failed update from the AWS IoT Jobs console without a serial log from the device.
+
+* :ref:`lib_aws_iot` library:
+
+  * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
+    Previously, the event carried no payload.
+
 Libraries for NFC
 -----------------
 
