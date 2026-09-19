@@ -35,7 +35,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Simulate moving the mouse pointer five pixels to the left.
@@ -247,7 +247,7 @@ To test with a Microsoft Windows computer that has a Bluetooth radio, complete t
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Power on your development kit.
       #. On your Windows computer, search for Bluetooth devices and connect to the device named "NCS HIDS mouse".
@@ -286,7 +286,7 @@ To test with `Bluetooth Low Energy app`_, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Power on your development kit.
       #. Start `nRF Connect for Desktop`_.
