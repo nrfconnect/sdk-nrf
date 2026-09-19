@@ -1,0 +1,3 @@
+Minimal change to modem_shell for CI testing purposes.
+Update PR to re-trigger CI.
+This PR should not be merged.
