@@ -4,18 +4,33 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <samples/cellular/nrf91_no_bootloader_partitions.dtsi>
+#include <samples/cellular/nrf91_crypto_partitions.dtsi>
 
-#include <samples/cellular/nrf91_sram_partitions.dtsi>
+#include <samples/cellular/nrf91_sram_crypto_partitions.dtsi>
 
 /delete-node/ &gd25wb256;
+
+&gd25lb256 {
+	status = "okay";
+
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		fmfu_storage_partition: partition@0 {
+			label = "fmfu";
+			reg = <0x00000000 0x400000>;
+		};
+	};
+};
 
 / {
 	aliases {
 		ext-flash = &gd25lb256;
 	};
-};
 
-&gd25lb256 {
-	status = "okay";
+	chosen {
+		nordic,fmfu-storage-partition = &fmfu_storage_partition;
+	};
 };
