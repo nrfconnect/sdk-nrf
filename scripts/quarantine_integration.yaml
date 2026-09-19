@@ -51,19 +51,6 @@
   comment: "Configurations excluded to limit resources usage in integration builds"
 
 - scenarios:
-    - applications.nrf_desktop.zdebug_dongle_small
-  platforms:
-    - nrf52833dk/nrf52833
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - applications.nrf_desktop.zdebug_3bleconn
-    - applications.nrf_desktop.zrelease_4llpmconn
-  platforms:
-    - nrf52840dongle/nrf52840
-  comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
     - sample.bluetooth.peripheral_uart_minimal
   platforms:
     - nrf52833dk/nrf52820

@@ -94,6 +94,26 @@ Since the application architecture is uniform and the code is shared, the set of
 A different set of modules is enabled when the application is working as a mouse, keyboard, or dongle.
 In other words, not all of the :ref:`nrf_desktop_app_internal_modules` need to be enabled for a given reference design.
 
+Modules without reference board configuration
+-----------------------------------------------
+
+Some application modules are kept in the codebase as part of the full nRF Desktop design, even though none of the reference board configurations currently maintained in the repository enable them.
+These modules were previously used by nRF52 Series reference designs.
+Each affected module documentation page includes a note when the module has no enabled reference configuration.
+
+The following modules currently have no enabled reference board configuration:
+
+* :ref:`nrf_desktop_battery_charger`
+* :ref:`nrf_desktop_battery_meas`
+* :ref:`nrf_desktop_ble_passkey`
+* :ref:`nrf_desktop_ble_qos`
+* :ref:`nrf_desktop_fn_keys`
+* :ref:`nrf_desktop_led_stream`
+* :ref:`nrf_desktop_passkey`
+* :ref:`nrf_desktop_qos`
+* :ref:`nrf_desktop_selector`
+* :ref:`nrf_desktop_wheel`
+
 Gaming mouse module set
 -----------------------
 
@@ -206,7 +226,7 @@ All of these reports use predefined report format and provide the given informat
 For example, the mouse motion is forwarded as HID mouse report.
 
 An nRF Desktop device supports the selected subset of the HID input reports.
-For example, the nRF Desktop keyboard reference design (``nrf52kbd``) supports HID keyboard report, HID consumer control report and HID system control report.
+For example, an nRF54L Series DK keyboard configuration supports HID keyboard report, HID consumer control report and HID system control report.
 
 As an example, the following section describes handling HID mouse report data.
 
@@ -266,7 +286,9 @@ The nRF Desktop supports the HID keyboard LED report.
 The report is used by the host to update the state of the keyboard LEDs, for example to indicate that the Caps Lock key is active.
 
 .. note::
-   Only the ``nrf52840dk/nrf52840`` in ``keyboard`` configuration has hardware LEDs that can be used to display the Caps Lock and Num Lock state.
+   Keyboard configurations on the nRF54L15 and nRF54LS05 DKs can display HID keyboard LED state using hardware LEDs.
+   On the nRF54L15 DK, only Num Lock is mapped to a hardware LED.
+   On the nRF54LS05 DK, both Num Lock and Caps Lock are mapped to hardware LEDs.
 
 The following diagrams show the HID output report data exchange between the application modules.
 
@@ -325,50 +347,11 @@ Depending on the development kit you use, you need to select the respective conf
 
 .. tabs::
 
-   .. tab:: Gaming mouse
-
-      .. figure:: /images/nrf_desktop_gaming_mouse_top_no_captions.svg
-         :alt: nRF Desktop gaming mouse (top view)
-
-      .. table-from-rows:: /includes/sample_board_rows.txt
-         :header: heading
-         :rows: nrf52840gmouse_nrf52840
-
-   .. tab:: Desktop mouse
-
-      .. figure:: /images/nrf_desktop_desktop_mouse_side_no_captions.svg
-         :alt: nRF Desktop desktop mouse (side view)
-
-      .. table-from-rows:: /includes/sample_board_rows.txt
-         :header: heading
-         :rows: nrf52dmouse_nrf52832
-
-   .. tab:: Keyboard
-
-      .. figure:: /images/nrf_desktop_keyboard_top_no_captions.svg
-         :alt: nRF Desktop keyboard (top view)
-
-      .. table-from-rows:: /includes/sample_board_rows.txt
-         :header: heading
-         :rows: nrf52kbd_nrf52832
-
-   .. tab:: HID dongle
-
-      .. figure:: /images/nrf_desktop_dongle_no_captions.svg
-         :alt: nRF Desktop dongle (top view)
-
-      .. table-from-rows:: /includes/sample_board_rows.txt
-         :header: heading
-         :rows: nrf52840dongle_nrf52840, nrf52833dongle_nrf52833, nrf52820dongle_nrf52820
-
    .. tab:: DK
 
-      .. figure:: /images/nrf_desktop_nrf52840_dk_no_captions.svg
-         :alt: DK
-
       .. table-from-rows:: /includes/sample_board_rows.txt
          :header: heading
-         :rows: nrf52840dk_nrf52840, nrf52833dk_nrf52833, nrf52833dk_nrf52820, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp, nrf54l15dk_nrf54l10_cpuapp, nrf54l15dk_nrf54l05_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54ls05dk_nrf54ls05a_cpuapp, nrf54ls05dk_nrf54ls05b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp, nrf54h20dk_nrf54h20_cpuapp
+         :rows: nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp, nrf54l15dk_nrf54l10_cpuapp, nrf54l15dk_nrf54l05_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54ls05dk_nrf54ls05a_cpuapp, nrf54ls05dk_nrf54ls05b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp, nrf54h20dk_nrf54h20_cpuapp
 
       Depending on the configuration, a DK may act either as mouse, keyboard or dongle.
       For information about supported configurations for each board, see the :ref:`nrf_desktop_board_configuration_files` section.
@@ -410,11 +393,11 @@ The application supports the following build types:
      - Release version of the application with no debugging features.
    * - Debug Fast Pair
      - ``fast_pair``
-     - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
+     - ``nrf54l15dk/nrf54l10/cpuapp``
      - Debug version of the application with `Fast Pair`_ support.
    * - Release Fast Pair
      - ``release_fast_pair``
-     - ``nrf52kbd/nrf52832``, ``nrf52840gmouse/nrf52840``
+     - ``nrf54l15dk/nrf54l05/cpuapp``
      - Release version of the application with `Fast Pair`_ support.
    * - Dongle
      - ``dongle``
@@ -426,7 +409,7 @@ The application supports the following build types:
      - Release version of the application that acts as a Bluetooth LE LLPM dongle bridging radio connected HID peripherals.
    * - Keyboard
      - ``keyboard``
-     - ``nrf52840dk/nrf52840``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
      - Debug version of the application that lets you generate the application with the keyboard role.
    * - HID SCI mouse
      - ``hid_sci``
@@ -436,31 +419,6 @@ The application supports the following build types:
      - ``release_hid_sci``
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - Release version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
-   * - MCUboot QSPI
-     - ``mcuboot_qspi``
-     - ``nrf52840dk/nrf52840``
-     - Debug version of the application that uses MCUboot with the secondary slot in the external QSPI FLASH.
-   * - MCUboot SMP
-     - ``mcuboot_smp``
-     - ``nrf52840dk/nrf52840``, ``nrf52840gmouse/nrf52840``
-     - | Debug version of the application that enables MCUmgr with DFU support and offers support for the MCUboot DFU procedure over SMP.
-       | See the :ref:`nrf_desktop_bootloader_background_dfu` section for more information.
-   * - WWCB
-     - ``wwcb``
-     - ``nrf52840dk/nrf52840``
-     - Debug version of the application with the support for the B0 bootloader enabled for `Works With ChromeBook (WWCB)`_.
-   * - Triple Bluetooth LE connection
-     - ``3bleconn``
-     - ``nrf52840dongle/nrf52840``
-     - Debug version of the application with the support for up to three simultaneous Bluetooth LE connections.
-   * - Quadruple LLPM connection
-     - ``4llpmconn``
-     - ``nrf52840dongle/nrf52840``
-     - Debug version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
-   * - Release quadruple LLPM connection
-     - ``release_4llpmconn``
-     - ``nrf52840dongle/nrf52840``
-     - Release version of the application with the support for up to four simultaneous Bluetooth LE connections, in Low Latency Packet Mode.
    * - Dongle quadruple LLPM connection
      - ``dongle_4llpmconn``
      - ``nrf54lm20dk/nrf54lm20b/cpuapp``
@@ -502,32 +460,6 @@ Turning devices on and off
 The nRF Desktop hardware reference designs are equipped with hardware switches to turn the device on and off.
 See the following figures for the exact location of these switches:
 
-.. tabs::
-
-   .. tab:: Gaming mouse
-
-      .. figure:: /images/nrf_desktop_gaming_mouse_bottom.svg
-         :alt: nRF Desktop gaming mouse (bottom view)
-
-      The switch is located at the bottom of the gaming mouse, close to the optical sensor.
-      The mouse uses this switch also for changing dongle and Bluetooth LE peers, as described in the `Bluetooth LE peer control`_ section.
-
-   .. tab:: Desktop mouse
-
-      .. figure:: /images/nrf_desktop_desktop_mouse_bottom.svg
-         :alt: nRF Desktop desktop mouse (bottom view)
-
-      The switch is located at the bottom of the desktop mouse, close to the optical sensor.
-
-   .. tab:: Keyboard
-
-      .. figure:: /images/nrf_desktop_keyboard_back_power.svg
-         :alt: nRF Desktop keyboard (back view)
-
-      The switch is located at the back of the keyboard.
-
-..
-
 Connectability
 ==============
 
@@ -549,37 +481,14 @@ Connection through USB
 The nRF Desktop devices use the USB HID class.
 No additional software or drivers are required.
 
-.. tabs::
+The nRF54LM20 DK Mouse and Dongle configurations support the HID data transmission through USB.
 
-   .. tab:: Gaming mouse
-
-      .. figure:: /images/nrf_desktop_gaming_mouse_usb_slot.svg
-         :alt: nRF Desktop gaming mouse (top view)
-
-      The gaming mouse has the USB connector slot located below the scroll wheel.
-      The connector should slide in the socket along the cut in the mouse base.
-
-   .. tab:: HID dongle
-
-      .. figure:: /images/nrf_desktop_dongle_usb.svg
-         :alt: nRF Desktop dongle
-
-      The dongle has a USB connector located at one end of the board.
-      It should be inserted to the USB slot located on the host.
-
-..
-
-Gaming mouse, dongle, and DK support the HID data transmission through USB.
-
-Gaming mouse USB
-~~~~~~~~~~~~~~~~
+Mouse USB
+~~~~~~~~~
 
 The gaming mouse can send HID data when connected through USB.
 When the device is connected both wirelessly and through USB at the same time, it provides input only through the USB connection.
 If the device is disconnected from USB, it automatically switches to sending the data wirelessly using Bluetooth LE.
-
-The gaming mouse is a battery-powered device.
-When it is connected through USB, charging of the rechargeable batteries starts.
 
 Dongle USB
 ~~~~~~~~~~
@@ -588,12 +497,6 @@ The nRF Desktop dongle works as a bridge between the devices connected through s
 It receives data wirelessly from the connected peripherals and forwards the data to the host.
 
 The nRF Desktop dongle is powered directly through USB.
-
-DK USB
-~~~~~~
-
-The DK functionality depends on the application configuration.
-Depending on the selected configuration options, it can work as a mouse, keyboard, or a dongle.
 
 .. _nrf_desktop_ble:
 
@@ -649,123 +552,6 @@ The assignments of hardware interface elements depend on the device type.
 
 .. tabs::
 
-   .. tab:: Gaming mouse
-
-      The following predefined hardware interface elements are assigned to peer control operations for the gaming mouse:
-
-      Hardware switch
-          * The switch is located next to the optical sensor.
-
-          .. figure:: /images/nrf_desktop_gaming_mouse_bottom.svg
-             :alt: nRF Desktop gaming mouse - bottom view
-
-             nRF Desktop gaming mouse - bottom view
-
-          * You can set the switch in the following positions:
-
-            * Top position: Select the dongle peer.
-            * Middle position: Select the Bluetooth LE peers.
-            * Bottom position: Mouse turned off.
-
-          By default, when the dongle peer is selected, the peer control is disabled until the switch is set to another position.
-          You can enable the dongle peer erase in the configuration.
-          The feature is enabled in the :ref:`Fast Pair <nrf_desktop_bluetooth_guide_fast_pair>` configurations, because the dongle peer is intended to be used for all of the peers that are not Fast Pair Seekers.
-
-      Peer control button
-          * The button is located on the left side of the mouse, in the thumb area.
-
-          .. figure:: /images/nrf_desktop_gaming_mouse_led1_peer_control_button.svg
-             :alt: nRF Desktop gaming mouse - side view
-
-             nRF Desktop gaming mouse - side view
-
-          * Short-press to initialize the peer selection.
-            (The **LED1** changes color and starts blinking.)
-            During the peer selection:
-
-            1. Short-press to toggle between available peers.
-               The **LED1** changes color for each peer and keeps blinking.
-            #. Double-press to confirm the peer selection.
-               The peer is changed after the confirmation.
-               **LED1** stops blinking.
-
-               .. note::
-                  |led_note|
-
-          * Long-press to initialize the peer erase.
-            When **LED1** starts blinking rapidly, double-press to confirm the operation.
-            |nRF_Desktop_confirmation_effect|
-          * |nRF_Desktop_cancel_operation|
-
-   .. tab:: Desktop mouse
-
-      The following predefined buttons are assigned to peer control operations for the desktop mouse:
-
-      Scroll wheel button
-        * Press the scroll wheel before the mouse is powered up with the on/off switch.
-          Long-press to initialize and confirm the peer erase.
-
-          .. figure:: /images/nrf_desktop_desktop_mouse_side_scroll.svg
-             :alt: nRF Desktop desktop mouse - side view
-
-             nRF Desktop desktop mouse - side view
-
-          |nRF_Desktop_confirmation_effect|
-        * |nRF_Desktop_cancel_operation|
-
-   .. tab:: Keyboard
-
-      The following predefined buttons or button combinations are assigned to peer control operations for the keyboard:
-
-      Page Down key
-        * Press the Page Down key while keeping the Fn modifier key pressed.
-
-          .. figure:: /images/nrf_desktop_keyboard_top.svg
-             :alt: nRF Desktop keyboard - top view
-
-             nRF Desktop keyboard - top view
-
-        * Short-press the Page Down key to initialize the peer selection.
-          During the peer selection:
-
-          1. Short-press to toggle between available peers.
-             **LED1** blinks rapidly for each peer.
-             The amount of blinks corresponds to the number assigned to a peer (for example, one blink for peer 1, two blinks for peer 2), increasing incrementally with each peer.
-          #. Double-press to confirm the peer selection.
-             The peer is changed after the confirmation.
-             **LED1** becomes solid for a short time and then turns itself off.
-
-             .. note::
-                |led_note|
-
-        * Long-press to initialize the peer erase.
-          When **LED1** starts blinking rapidly, double-press to confirm the operation.
-          |nRF_Desktop_confirmation_effect|
-        * |nRF_Desktop_cancel_operation|
-
-   .. tab:: HID dongle
-
-      The following predefined buttons are assigned to peer control operations for the HID dongle:
-
-      SW1 button
-        * The **SW1** button is located on the top of the dongle, on the same side as **LED2**.
-
-          .. figure:: /images/nrf_desktop_dongle_front_led2_sw1.svg
-             :alt: nRF Desktop dongle - top view
-
-             nRF Desktop dongle - top view
-
-        * Long-press to initialize peer erase.
-          When **LED2** starts blinking rapidly, double-press to confirm the operation.
-          After the confirmation, all the Bluetooth bonds are removed for the dongle.
-        * Short-press to start scanning for both bonded and non-bonded Bluetooth Peripherals.
-          After the forced scan timeout, the scan is interrupted if another peripheral connected to the dongle is active.
-
-          .. note::
-             |led_note|
-
-        * |nRF_Desktop_cancel_operation|
-
    .. tab:: nRF54 DK
 
       The following predefined button is assigned to peer control operations for an nRF54 Series DK.
@@ -795,9 +581,9 @@ The assignments of hardware interface elements depend on the device type.
 
             * |nRF_Desktop_cancel_operation|
 
-   .. tab:: nRF52 and nRF53 DKs
+   .. tab:: nRF53 DK
 
-      The following predefined button is assigned to peer control operations for an nRF52 or nRF53 Series DK.
+      The following predefined button is assigned to peer control operations for an nRF53 Series DK.
 
       Button 1
          * If the DK acts as a dongle:
@@ -811,18 +597,18 @@ The assignments of hardware interface elements depend on the device type.
               .. note::
                  |led_note|
 
-         * |nRF_Desktop_cancel_operation|
+            * |nRF_Desktop_cancel_operation|
 
-      * If the DK acts as a peripheral:
+         * If the DK acts as a peripheral:
 
-         * Press the **Button 1** before the DK is powered up with the on/off switch.
-           Long-press to initialize and confirm the peer erase.
-           |nRF_Desktop_confirmation_effect|
+            * Press the **Button 1** before the DK is powered up with the on/off switch.
+              Long-press to initialize and confirm the peer erase.
+              |nRF_Desktop_confirmation_effect|
 
-           .. note::
-              |led_note|
+              .. note::
+                 |led_note|
 
-         * |nRF_Desktop_cancel_operation|
+            * |nRF_Desktop_cancel_operation|
 
 ..
 
@@ -834,27 +620,11 @@ This system state LED is kept lit when the device is active.
 
 .. tabs::
 
-   .. tab:: Gaming mouse
-
-      .. figure:: /images/nrf_desktop_gaming_mouse_led2.svg
-         :alt: nRF Desktop gaming mouse (top view)
-
-      The system state LED of the gaming mouse is located under the transparent section of the cover.
-      The color of the LED changes when the device's battery is being charged.
-
-   .. tab:: HID dongle
-
-      .. figure:: /images/nrf_desktop_dongle_front_led1.svg
-         :alt: nRF Desktop dongle
-
-      **LED1** is used for the system state indication.
-      It is located in the bottom right corner of the dongle, next to the USB connector.
-
    .. tab:: nRF54 DK
 
       **LED0** is used for the system state indication.
 
-   .. tab:: nRF52 and nRF53 DKs
+   .. tab:: nRF53 DK
 
       **LED1** is used for the system state indication.
 
@@ -867,63 +637,7 @@ In case of a system error, the system state LED will start to blink rapidly for 
 Debugging
 =========
 
-Each of the nRF Desktop hardware reference designs has a slot for a dedicated debug board.
-See the following figures for the exact location of these slots.
-
-.. tabs::
-
-   .. tab:: Gaming mouse
-
-      .. figure:: /images/nrf_desktop_gaming_mouse_debug_board_slot.svg
-         :alt: nRF Desktop gaming mouse (top view)
-
-      The debug slot is located at the end of the gaming mouse, below the cover.
-
-   .. tab:: Desktop mouse
-
-      .. figure:: /images/nrf_desktop_desktop_mouse_side_debug.svg
-         :alt: nRF Desktop desktop mouse (side view)
-
-      The debug slot is located on the side of the desktop mouse.
-      It is accesible through a hole in the casing.
-
-   .. tab:: Keyboard
-
-      .. figure:: /images/nrf_desktop_keyboard_back_debug.svg
-         :alt: nRF Desktop keyboard (back view)
-
-      The debug slot is located on the back of the keyboard.
-
-..
-
-The boards that you can plug into these slots are shown below.
-You can use the debug board for programming the device (and powering it).
-The bypass boards are needed to make the device work when the debug board is not used.
-Their purpose is to close the circuits, which allows the device to be powered, for example during :ref:`nrf_desktop_testing_steps`.
-
-.. tabs::
-
-   .. tab:: Debug board
-
-      .. figure:: /images/nrf_desktop_400391_jlink_debug.svg
-         :alt: nRF Desktop debug board
-
-      The device can be programmed using the J-Link.
-      The J-Link connector slot is located on the top of the debug board.
-
-   .. tab:: Short bypass board
-
-      .. figure:: /images/nrf_desktop_400398_debug.svg
-         :alt: nRF Desktop bypass board (short)
-
-      The shorter nRF desktop bypass board can be used with the desktop mouse.
-
-   .. tab:: Long bypass board
-
-      .. figure:: /images/nrf_desktop_400398_long_debug.svg
-         :alt: nRF Desktop bypass board (long)
-
-      The longer nRF desktop bypass board can be used with the gaming mouse.
+You can program and debug development kits using a J-Link debugger connected to the DK.
 
 ..
 
@@ -1111,29 +825,33 @@ Testing
 You can build and test the application in various configurations.
 
 .. note::
-   The following procedure refers to the scenario where the gaming mouse (nRF52840 Gaming Mouse) and the keyboard (nRF52832 Desktop Keyboard) are connected simultaneously to the dongle (nRF52840 USB Dongle).
+   The following procedure refers to the scenario where the mouse (nRF54L15 DK) and the keyboard (nRF54L15 DK) are connected simultaneously to the dongle (nRF54LM20 DK).
 
-   You can perform similar tests with nRF52, nRF53, or nRF54 Series DKs.
-   Depending on the selected build type, the DK can act either as HID peripheral or HID dongle.
+   Build the mouse using the default build type for the ``nrf54l15dk/nrf54l15/cpuapp`` board target, the keyboard using the ``keyboard`` build type for the same board target, and the dongle using the ``dongle`` or ``release_dongle`` build type for the ``nrf54lm20dk/nrf54lm20b/cpuapp`` board target.
+   See :ref:`nrf_desktop_requirements_build_types` for details.
 
 After building the application with or without :ref:`specifying the build type <nrf_desktop_selecting_build_types>`, test the nRF Desktop application by performing the following steps:
 
 1. Program the required firmware to each device.
-#. Insert the :ref:`debug board or bypass board <nrf_desktop_debugging>` into the mouse to make sure it is powered.
-#. Turn on both mouse and keyboard.
+
+   .. note::
+      On first programming of the nRF54L DKs, use ``west flash --recover`` to provision the MCUboot public key.
+      See `nRF54L MCUboot provisioning`_.
+
+#. Power on the mouse and keyboard DKs using the power switch.
    **LED1** on the keyboard and **LED1** on the mouse start breathing.
-#. Plug the dongle to the USB port.
-   The blue **LED2** on the dongle starts breathing.
+#. Connect the board acting as dongle to the USB port.
+   **LED1** on the dongle starts breathing.
    This indicates that the dongle is scanning for peripherals.
 #. Wait for the establishment of the Bluetooth connection, which happens automatically.
    After the Bluetooth connection is established, the LEDs stop breathing and remain turned on.
    You can now use the devices simultaneously.
 
    .. note::
-      You can manually start the scanning for new peripheral devices by pressing the **SW1** button on the dongle for a short time.
+      You can manually start the scanning for new peripheral devices by short-pressing **Button 0** on the dongle.
       This might be needed if the dongle does not connect with all the peripherals before scanning is interrupted by a timeout.
 
-#. Move the mouse and press any key on the keyboard.
+#. Press the buttons on the mouse DK to simulate motion and press any button on the keyboard DK.
    The input is reflected on the host.
 
    .. note::
@@ -1142,9 +860,9 @@ After building the application with or without :ref:`specifying the build type <
       Make sure that you use the ``release`` configurations before testing the mouse report rate.
       For the ``release`` configurations, you should observe a 500-Hz report rate when both the mouse and the keyboard are connected and a 1000-Hz rate when only the mouse is connected.
 
-#. Switch the Bluetooth peer on the gaming mouse by pressing the **Precise Aim** button (see `User interface`_).
-   The color of **LED1** changes from red to green and the LED starts blinking rapidly.
-#. Press the **Precise Aim** button twice quickly to confirm the selection.
+#. Switch the Bluetooth peer on the mouse DK by short-pressing **Button 0** (see `User interface`_).
+   **LED1** starts blinking rapidly.
+#. Press **Button 0** twice quickly to confirm the selection.
    After the confirmation, **LED1** starts breathing and the mouse starts the Bluetooth advertising.
 #. Connect to the mouse with an Android phone, a laptop, or any other Bluetooth Central.
 
@@ -1213,7 +931,7 @@ See the following list of possible scenarios and best practices:
   Set parameters are not enforced, meaning that the HID host may still eventually use a value greater than the maximum connection interval requested by a peripheral.
 * Radio frequency (RF) noise can negatively affect the HID report rate for wireless connections.
   If a HID report fails to be delivered in a given Bluetooth LE LLPM connection event, it is retransmitted in the subsequent connection event, which effectively reduces the report rate.
-  By avoiding congested RF channels, the :ref:`nrf_desktop_ble_qos` helps to achieve better connection quality and a higher report rate.
+  By avoiding congested RF channels, the :ref:`nrf_desktop_ble_qos` helps to achieve better connection quality and a higher report rate (currently not available on the supported boards).
 * For the USB device connected directly, the applicable options will vary depending on the used USB stack:
 
   * If you use the USB legacy stack, you can configure your preferred USB HID poll interval using the :kconfig:option:`CONFIG_USB_HID_POLL_INTERVAL_MS` Kconfig option.
@@ -1248,10 +966,15 @@ Testing steps
 After building the application, test the nRF Desktop by performing the following steps:
 
 1. Program the device with the built firmware.
+
+   .. note::
+      On first programming of the nRF54L15 and nRF54LM20 DKs, use ``west flash --recover`` to provision the MCUboot public key.
+      See `nRF54L MCUboot provisioning`_.
+
 #. Connect the device to the computer using a preferred transport (Bluetooth LE, USB, dongle).
 #. Turn on the device.
    If you use the motion simulated module to generate the mouse movement, the device should automatically start to draw an octagon shape on the screen.
-   Otherwise, you need to constantly keep generating motion manually, for example, by moving your mouse.
+   Otherwise, you need to constantly keep generating motion manually, for example, by pressing the buttons on the mouse DK.
 #. Turn off the device to finalize test preparations.
 #. Launch selected HID report rate measurement tool.
 #. Turn back on the device.

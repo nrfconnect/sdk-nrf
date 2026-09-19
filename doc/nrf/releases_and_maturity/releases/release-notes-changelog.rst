@@ -340,6 +340,7 @@ nRF Desktop
 * Removed:
 
   * Partition Manager support from the :ref:`nrf_desktop` application.
+  * Support for the nRF52 Series devices from the :ref:`nrf_desktop` application.
 
 Thingy:53: Matter weather station
 ---------------------------------
