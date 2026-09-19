@@ -1,0 +1,7 @@
+{
+  "mediaType": "application/vnd.dev.sigstore.signingconfig.v0.2+json",
+  "caUrls": [],
+  "oidcUrls": [],
+  "rekorTlogUrls": [],
+  "tsaUrls": []
+}
