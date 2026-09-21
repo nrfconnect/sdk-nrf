@@ -518,6 +518,7 @@
 /samples/app_jwt/                             @nrfconnect/ncs-modem @ayla-nordicsemi
 /samples/basic/                           @nrfconnect/ncs-co-build-system
 /samples/benchmarks/coremark/             @nrfconnect/ncs-blenders
+/samples/benchmarks/power_consumption/    @nrfconnect/ncs-malago
 /samples/bluetooth/nrf_auraconfig/        @nrfconnect/ncs-audio
 /samples/bluetooth/central_and_peripheral_hrs/ @nrfconnect/ncs-blenders
 /samples/bluetooth/central_bas/           @nrfconnect/ncs-blenders
@@ -647,6 +648,7 @@
 /samples/app_jwt/*.rst                        @nrfconnect/ncs-modem-doc @ayla-nordicsemi
 /samples/basic/empty/*.rst                @nrfconnect/ncs-doc-leads
 /samples/benchmarks/coremark/*.rst        @nrfconnect/ncs-blenders-doc
+/samples/benchmarks/power_consumption/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_and_peripheral_hrs/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/central_bas/*.rst      @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/nrf_auraconfig/*.rst   @nrfconnect/ncs-audio-doc

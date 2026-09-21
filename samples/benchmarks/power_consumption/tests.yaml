@@ -1,0 +1,38 @@
+sample:
+  name: Power consumption (System ON Idle)
+common:
+  tags:
+    - power
+    - ci_samples_benchmarks
+  harness: console
+  harness_config:
+    type: multi_line
+    ordered: true
+    regex:
+      - "Power consumption demo ready."
+      - 'Woken up 1 time\(s\)'
+  platform_allow:
+    - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120/cpuapp/ns
+  integration_platforms:
+    - nrf7120dk/nrf7120/cpuapp
+    - nrf7120dk/nrf7120/cpuapp/ns
+tests:
+  sample.benchmarks.power_consumption.ram_retain_full:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL=y
+  sample.benchmarks.power_consumption.ram_retain_64k:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K=y
+  sample.benchmarks.power_consumption.ram_retain_128k:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_128K=y
+  sample.benchmarks.power_consumption.ram_retain_256k:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_256K=y
+  sample.benchmarks.power_consumption.ram_retain_512k:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_512K=y
+  sample.benchmarks.power_consumption.ram_powerdown_unused:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_UNUSED_ONLY=y

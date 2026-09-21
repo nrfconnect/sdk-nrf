@@ -1,0 +1,76 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+mainmenu "nRF7120 System ON Idle power consumption benchmark"
+
+config SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS
+	int "System ON idle duration in seconds"
+	range 1 3600
+	default 10
+	help
+	  Duration of the sleep period (through k_sleep(), on this SoC's default
+	  GRTC-backed system timer) before waking up, printing the wake
+	  counter, and sleeping again.
+
+choice SAMPLE_POWER_CONSUMPTION_RAM_RETAIN
+	prompt "RAM retention level during System ON Idle"
+	default SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL
+	help
+	  Controls the amount of application RAM that remains powered during System ON
+	  Idle, using the ram_pwrdn library (see
+	  nrf/doc/nrf/libraries/others/ram_pwrdn.rst). Total amount of SRAM on
+	  nrf7120dk/nrf7120/cpuapp is 1016 KiB, not 1024 KiB -- keep this in
+	  mind when reading the option names below.
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K
+	bool "Retain only the first 64 KiB of application RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() once at boot to power down everything past
+	  the first 64 KiB of application RAM (out of 1016 KiB total).
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_128K
+	bool "Retain only the first 128 KiB of application RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() once at boot to power down everything past
+	  the first 128 KiB of application RAM (out of 1016 KiB total).
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_256K
+	bool "Retain only the first 256 KiB of application RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() once at boot to power down everything past
+	  the first 256 KiB of application RAM (out of 1016 KiB total).
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_512K
+	bool "Retain only the first 512 KiB of application RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() once at boot to power down everything past
+	  the first 512 KiB of application RAM (out of 1016 KiB total, so
+	  this leaves slightly more than half of RAM powered down, not
+	  exactly half).
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL
+	bool "Retain all RAM (default) -- nothing is powered down"
+	help
+	  No RAM power-down call is made at all. This is the default: by
+	  default, all RAM must stay retained.
+
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_UNUSED_ONLY
+	bool "Power down whatever this image itself does not use"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_unused_ram() instead of a fixed KiB boundary --
+	  the ram_pwrdn library computes the unused range itself, from the
+	  end of the running image to the end of application RAM. Whichever
+	  RAM section still holds live image/stack data is left powered,
+	  same as every other tier above.
+
+endchoice
+
+source "Kconfig.zephyr"
