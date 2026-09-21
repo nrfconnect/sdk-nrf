@@ -13,3 +13,8 @@
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;
 };
+
+&uart120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
