@@ -761,6 +761,7 @@ Other samples
 
 * Added:
 
+  * The :ref:`power_consumption_sample` sample for evaluating System ON Idle power consumption with configurable application RAM retention on the nRF7120 SoC.
   * The :ref:`vtf_monitoring_sample` sample that demonstrates how to capture voltage, temperature, and frequency data using the :ref:`vtf_monitoring` subsystem.
   * The :ref:`pulse_meas` sample that checks the pulse width of an externally provided signal.
   * The :ref:`rtfw_timer_gpio_sample` and :ref:`rtfw_hid_sample` samples demonstrating the RTFW control, fast-path, and event-delivery mechanisms.
