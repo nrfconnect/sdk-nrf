@@ -1,0 +1,20 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Replace default ipc0 instance */
+/delete-node/ &ipc0;
+
+ipc0: &cpuapp_cpuppr_ipc {
+	compatible = "zephyr,ipc-icmsg";
+	/delete-property/ tx-blocks;
+	/delete-property/ rx-blocks;
+
+};
+
+/ {
+	chosen {
+		/delete-property/ zephyr,bt-hci;
+	};
+};
