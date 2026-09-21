@@ -249,6 +249,7 @@ You must also assign the retention partition to the chosen DTS node ``zephyr,boo
    Make sure that the DTS node that you assign to the chosen DTS node ``zephyr,sram`` starts after the push area.
    The build fails if the memory layout places the application RAM over the push area.
    The build also fails if the memory layout moves the push area away from the beginning of the physical RAM.
+   If the memory layout removes the ``kmu_push_area`` DTS node, the build prints a warning, and the push area is no longer reserved.
    For an example of a custom memory layout that leaves the push area free, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
 
    The KMU feature (:kconfig:option:`CONFIG_CRACEN_KMU`) is enabled by default for the nRF54L Series devices.
