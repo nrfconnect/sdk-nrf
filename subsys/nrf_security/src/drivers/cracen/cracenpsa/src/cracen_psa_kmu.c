@@ -63,6 +63,12 @@ extern nrf_security_mutex_t cracen_mutex_symmetric;
 uint8_t kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
 	LINKER_DT_NODE_REGION_NAME(KMU_PUSH_AREA_NODE));
 
+BUILD_ASSERT(DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) >=
+		     DT_REG_ADDR(KMU_PUSH_AREA_NODE) + DT_REG_SIZE(KMU_PUSH_AREA_NODE),
+	     "The chosen zephyr,sram node overlaps the KMU push area. Resize or offset the "
+	     "node assigned to zephyr,sram (cpuapp_sram_app on nRF54L and nRF71) instead of "
+	     "cpuapp_sram, so that it starts after the kmu_push_area node.");
+
 #else
 
 /* Fallback for the builds where the kmu_push_area devicetree node is not available,
