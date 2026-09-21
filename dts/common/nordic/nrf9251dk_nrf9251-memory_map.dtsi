@@ -96,19 +96,19 @@
 			reg = <0x312000 DT_SIZE_K(64)>;
 		};
 
-		periphconf_partition: partition@322000 {
+		cpuapp_slot0_partition: partition@322000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x322000 DT_SIZE_K(8)>;
+			reg = <0x322000 DT_SIZE_K(652)>;
 		};
 
-		mpcconf_partition: partition@324000 {
+		periphconf_partition: partition@3c5000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x324000 512>;
+			reg = <0x3c5000 DT_SIZE_K(8)>;
 		};
 
-		cpuapp_slot0_partition: partition@325000 {
+		mpcconf_partition: partition@3c7000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x325000 DT_SIZE_K(652)>;
+			reg = <0x3c7000 512>;
 		};
 
 		cpuppr_code_partition: partition@3cd000 {
