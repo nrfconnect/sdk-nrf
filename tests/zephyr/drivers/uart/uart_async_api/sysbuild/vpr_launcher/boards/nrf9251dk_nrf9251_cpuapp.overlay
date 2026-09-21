@@ -10,3 +10,8 @@
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;
 };
+
+&dut2 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
