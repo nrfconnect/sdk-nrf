@@ -10,21 +10,6 @@
 	};
 };
 
-&cpuapp_cpuppr_ipc {
-	status = "okay";
-	compatible = "zephyr,ipc-icbmsg";
-	tx-blocks = <16>;
-	rx-blocks = <16>;
-};
-
-&cpuppr_vevif {
-	status = "okay";
-};
-
-&cpuapp_bellboard {
-	status = "okay";
-};
-
 &pinctrl {
 	spi130_default_alt: spi130_default_alt {
 		group1 {
