@@ -132,15 +132,10 @@ BUILD_ASSERT(sizeof(struct fw_info) == offsetof(struct fw_info, ext_apis),
 /* Find the difference between the start of the current image and the address
  * from which the firmware info offset is calculated.
  */
-#if defined(PM_S0_PAD_SIZE) && (PM_ADDRESS == PM_S0_IMAGE_ADDRESS)
-	#define FW_INFO_VECTOR_OFFSET PM_S0_PAD_SIZE
-#elif defined(PM_S1_PAD_SIZE) && (PM_ADDRESS == PM_S1_IMAGE_ADDRESS)
-	#define FW_INFO_VECTOR_OFFSET PM_S1_PAD_SIZE
-#elif defined(PM_MCUBOOT_PAD_SIZE) && \
-		(PM_ADDRESS == PM_MCUBOOT_PRIMARY_APP_ADDRESS)
-	#define FW_INFO_VECTOR_OFFSET PM_MCUBOOT_PAD_SIZE
+#ifdef CONFIG_IS_SECURE_BOOTLOADER
+#define FW_INFO_VECTOR_OFFSET 0
 #else
-	#define FW_INFO_VECTOR_OFFSET 0
+#define FW_INFO_VECTOR_OFFSET CONFIG_ROM_START_OFFSET
 #endif
 
 

@@ -5,3 +5,7 @@
  */
 
 #include <samples/cellular/nrf91_crypto_partitions.dtsi>
+
+s0_partition: &slot0_s_partition {};
+
+s1_partition: &slot0_ns_partition {};

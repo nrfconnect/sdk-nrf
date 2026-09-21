@@ -12,7 +12,6 @@ from pathlib import Path
 import pytest
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.config_reader import ConfigReader
-from twister_harness.helpers.utils import find_in_config
 from twister_harness_ext.utils.dts_helper import get_code_partition_address, get_edt_node
 from twister_harness_ext.utils.required_build import RequiredBuild
 from upgrade_test_manager import UpgradeTestWithMCUmgr
@@ -26,38 +25,28 @@ class UpgradeTestDirectXipUseMCUmgr(UpgradeTestWithMCUmgr):
     def generate_image_for_direct_xip_secondary_slot(self) -> Path:
         """Generate image for direct XIP secondary slot."""
         edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
-        if self.build_params.pm_config.exists():
-            self.build_params.imgtool_params.rom_fixed = find_in_config(
-                self.build_params.pm_config, "PM_MCUBOOT_SECONDARY_ADDRESS"
+        config = ConfigReader(f"{self.build_params.build_dir}/zephyr/.config")
+        if config.read_bool("SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT", False):
+            self.build_params.imgtool_params.rom_fixed = (
+                get_edt_node(edt_data, "secondary_app_partition").regs[0].addr
+            )  # type: ignore
+        elif config.read_bool("SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT", False):
+            slot1_variant_dir = self.build_params.app_build_dir.with_name(
+                self.build_params.app_build_dir.name + "_slot1_variant"
+            )
+            edt_variant_data = slot1_variant_dir / "zephyr" / "edt.pickle"
+            self.build_params.imgtool_params.rom_fixed = get_code_partition_address(
+                edt_variant_data
             )
         else:
-            config = ConfigReader(f"{self.build_params.build_dir}/zephyr/.config")
-            if config.read_bool("SB_CONFIG_MCUBOOT_BUILD_DIRECT_XIP_VARIANT", False):
-                self.build_params.imgtool_params.rom_fixed = (
-                    get_edt_node(edt_data, "secondary_app_partition").regs[0].addr
-                )  # type: ignore
-            elif config.read_bool("SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT", False):
-                slot1_variant_dir = self.build_params.app_build_dir.with_name(
-                    self.build_params.app_build_dir.name + "_slot1_variant"
-                )
-                edt_variant_data = slot1_variant_dir / "zephyr" / "edt.pickle"
-                self.build_params.imgtool_params.rom_fixed = get_code_partition_address(
-                    edt_variant_data
-                )
-            else:
-                raise ValueError("No direct XIP variant image found")
+            raise ValueError("No direct XIP variant image found")
         logger.info("Generate image for direct xip secondary slot")
         return self.generate_image(app_to_sign=self.build_params.mcuboot_secondary_app_to_sign)
 
     def generate_image_for_direct_xip_primary_slot(self) -> Path:
         """Generate image for direct XIP primary slot."""
         edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
-        if self.build_params.pm_config.exists():
-            self.build_params.imgtool_params.rom_fixed = find_in_config(
-                self.build_params.pm_config, "PM_MCUBOOT_PRIMARY_ADDRESS"
-            )
-        else:
-            self.build_params.imgtool_params.rom_fixed = get_code_partition_address(edt_data)
+        self.build_params.imgtool_params.rom_fixed = get_code_partition_address(edt_data)
         logger.info("Generate image for direct xip primary slot")
         return self.generate_image(app_to_sign=self.build_params.app_to_sign)
 
