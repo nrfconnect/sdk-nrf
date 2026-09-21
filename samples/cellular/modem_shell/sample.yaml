@@ -546,8 +546,8 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
-  # Configuration which will be used by the CI integration job to verify PRs
-  sample.cellular.modem_shell.integration_config:
+  # Configurations which will be used by the CI integration job to verify PRs
+  sample.cellular.modem_shell.integration_config.nrf9151:
     sysbuild: true
     build_only: true
     extra_configs:
@@ -560,6 +560,22 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.modem_shell.integration_config.nrf9251:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_LTE_NETWORK_MODE_LTE_M=y
+    extra_args:
+      - modem_shell_SNIPPET="nrf92-modem-trace-uart"
+      - SB_CONFIG_MERGED_HEX_FILES=y
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
     tags:
       - ci_build
       - sysbuild
