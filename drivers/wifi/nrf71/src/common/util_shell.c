@@ -9,6 +9,7 @@
  */
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/sys_heap.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
@@ -265,6 +266,11 @@ static int nrf_wifi_util_show_cfg(const struct shell *sh,
 		      "rate_flag = %d,  rate_val = %d\n",
 		      ctx->conf_params.tx_pkt_tput_mode,
 		      ctx->conf_params.tx_pkt_rate);
+
+	shell_fprintf(sh,
+		      SHELL_INFO,
+		      "extended_sleep_sec = %u seconds\n",
+		      ctx->extended_sleep_sec);
 	return 0;
 }
 
@@ -1362,6 +1368,68 @@ static int nrf_wifi_util_mac_addr(const struct shell *sh, size_t argc, char **ar
 	return 0;
 }
 
+static int nrf_wifi_util_req_extended_sleep(const struct shell *sh,
+					    size_t argc,
+					    const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long long val = 0;
+	int ret = 0;
+
+	if (argv[1][0] == '-') {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	val = strtoull(argv[1], &ptr, 10);
+
+	if ((ptr == argv[1]) || (*ptr != '\0') || (val > UINT_MAX)) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock_sleep;
+	}
+
+	status = nrf_wifi_fmac_req_extended_sleep(ctx->rpu_ctx,
+						  0,
+						  (unsigned int)val);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Programming extended_sleep failed\n");
+		ret = -ENOEXEC;
+		goto unlock_sleep;
+	}
+
+	ctx->extended_sleep_sec = (unsigned int)val;
+
+	shell_fprintf(sh,
+		      SHELL_INFO,
+		      "Requested extended sleep of %u seconds\n",
+		      (unsigned int)val);
+
+unlock_sleep:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
 SHELL_STATIC_SUBCMD_SET_CREATE(
 	nrf71_util,
 	SHELL_CMD_ARG(he_ltf,
@@ -1481,6 +1549,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	SHELL_CMD_ARG(extended_sleep,
+		      NULL,
+		      "<duration_sec> - Extended sleep interval in seconds.\n"
+		      "During this interval the nRF71 remains in deep sleep without\n"
+		      "waking for DTIM beacons. Inbound and outbound traffic will be lost.",
+		      nrf_wifi_util_req_extended_sleep,
+		      2,
+		      0),
 	SHELL_CMD_ARG(mac_addr,
 		      NULL,
 		      "Dump the MAC addresses programmed in the xICR registers\n"
