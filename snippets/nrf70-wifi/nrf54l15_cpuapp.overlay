@@ -10,9 +10,8 @@
 };
 
 /* Adjust the cpuapp_sram to include the freed up cpuflpr_sram */
-&cpuapp_sram {
-	reg = <0x20000000 DT_SIZE_K(256)>;
-	ranges = <0x0 0x20000000 0x20040000>;
+&cpuapp_sram_app {
+	reg = <0x60 (DT_SIZE_K(256) - 0x60)>;
 };
 
 /* Adjust the cpuapp_rram to include the freed up cpuflpr_rram */
