@@ -29,6 +29,7 @@ tests:
       - CONFIG_SAMPLE_LOCAL_LED_CONTROL=y
       - CONFIG_NRFX_SPIM=y
       - CONFIG_IPC_SERVICE=n
+      - CONFIG_MBOX=n
   sample.vpr_offloading.flpr:
     extra_args:
       - vpr_offloading_SNIPPET=nordic-flpr
