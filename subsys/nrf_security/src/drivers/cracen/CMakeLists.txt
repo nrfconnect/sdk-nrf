@@ -12,6 +12,23 @@ include(sxsymcrypt/sxsymcrypt.cmake)
 include(silexpk/silexpk.cmake)
 include(common/common.cmake)
 include(cracenpsa/cracenpsa.cmake)
+
+# The KMU pushes keys to a fixed destination address, so that area has to be
+# reserved for it. Every SoC with a CRACEN KMU reserves it with a kmu_push_area
+# node in its devicetree. Warn when it is missing, since the destination address
+# is written into the provisioned KMU slot metadata and cannot be corrected
+# afterwards. TF-M reserves the area in its own linker script.
+if(NOT BUILD_INSIDE_TFM AND NOT CONFIG_BUILD_WITH_TFM AND CONFIG_PSA_NEED_CRACEN_KMU_DRIVER)
+  dt_nodelabel(kmu_push_area_node NODELABEL kmu_push_area)
+  if(NOT kmu_push_area_node)
+    message(WARNING
+      "The CRACEN KMU driver is enabled but the devicetree has no kmu_push_area "
+      "node reserving the KMU push area. The KMU will push keys to an address "
+      "that nothing has reserved. If this board redefines the RAM layout, leave "
+      "the push area from the SoC devicetree in place.")
+  endif()
+endif()
+
 if((CONFIG_PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS AND
     (CONFIG_PSA_NEED_CRACEN_CTR_AES OR CONFIG_PSA_NEED_CRACEN_CCM_AES)) OR
    CONFIG_PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
