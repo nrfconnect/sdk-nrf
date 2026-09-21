@@ -152,7 +152,7 @@ Bluetooth Mesh
 Matter
 ------
 
-* Replaced the tables on the :ref:`ug_matter_hw_requirements_ram_flash` and :ref:`ug_matter_hw_requirements_layouts` pages with memory layout charts.
+* Replaced the tables on the *RAM and flash memory requirements* and *Reference Matter memory layouts* pages with memory layout charts.
 
 Security
 ========
@@ -262,11 +262,11 @@ Matter samples
 
 * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target for the following samples:
 
-  * :ref:`matter_template_sample`
-  * :ref:`matter_temperature_sensor_sample`
+  * *Matter template* sample
+  * *Matter temperature sensor* sample
 
   DFU is not supported on this board target, as the nRF54LC10 DK is not equipped with external flash.
-  See :ref:`ug_matter_hw_requirements_external_flash` for more information.
+  See *External flash* for more information.
 
 * Fixed an issue where the binding table was not printed correctly when the cluster ID was not set.
 
