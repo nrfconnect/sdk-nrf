@@ -27,7 +27,9 @@ struct rf_hex_param {
  * @brief Configure RF parameters in the RPU.
  *
  * @param dev_ctx Pointer to the FMAC device context.
- * @param rf_params_addr Array of RF parameter buffer addresses (NUM_RF_PARAM_ADDRS entries).
+ * @param rf_params_addr Array to receive RF parameter buffer addresses
+ *                       (NUM_RF_PARAM_ADDRS entries). The driver owns the
+ *                       buffers, and the caller must not free them.
  *
  * @retval NRF_WIFI_STATUS_SUCCESS On success.
  * @retval NRF_WIFI_STATUS_FAIL On failure.
