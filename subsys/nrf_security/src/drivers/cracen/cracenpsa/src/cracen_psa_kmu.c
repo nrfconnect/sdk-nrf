@@ -63,6 +63,25 @@ extern nrf_security_mutex_t cracen_mutex_symmetric;
 uint8_t kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
 	LINKER_DT_NODE_REGION_NAME(KMU_PUSH_AREA_NODE));
 
+/* nrfutil device provisions KMU slots with 0x20000000 as the push address, and the address
+ * cannot be changed once a slot is provisioned.
+ */
+BUILD_ASSERT(DT_REG_ADDR(KMU_PUSH_AREA_NODE) == 0x20000000,
+	     "The KMU push area (kmu_push_area) must start at 0x20000000, the push address "
+	     "that nrfutil device writes into the KMU slots it provisions.");
+BUILD_ASSERT(DT_REG_SIZE(KMU_PUSH_AREA_NODE) >= CRACEN_KMU_PUSH_AREA_SIZE,
+	     "The KMU push area (kmu_push_area) is smaller than CRACEN_KMU_PUSH_AREA_SIZE.");
+
+/* The KMU pushes keys to the kmu_push_area node, which is a linker region of its own,
+ * so the RAM of the image must start after that node.
+ */
+BUILD_ASSERT(DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) >=
+		     DT_REG_ADDR(KMU_PUSH_AREA_NODE) + DT_REG_SIZE(KMU_PUSH_AREA_NODE),
+	     "The node assigned to zephyr,sram overlaps the KMU push area (kmu_push_area). "
+	     "Assign a node that starts after the push area, such as cpuapp_sram_app on "
+	     "nRF54L and nRF71, instead of cpuapp_sram. Resize cpuapp_sram_app and not "
+	     "cpuapp_sram when you shrink the RAM of the application.");
+
 #else
 
 /* Fallback for the builds where the kmu_push_area devicetree node is not available,
