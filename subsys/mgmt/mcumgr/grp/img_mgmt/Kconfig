@@ -25,6 +25,13 @@ config MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE
 	  sysbuild if needed. This enables selecting the correct slot when running a QSPI XIP
 	  split image application in DirectXIP mode.
 
+config MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS
+	bool "Handle image slots mapped to the same flash area"
+	help
+	  Enables handling of image configurations where both logical MCUboot slots for an image
+	  map to the same physical flash area. The image state response reports the image only once,
+	  and the image erase command rejects attempts to erase its active flash area.
+
 endif # MCUMGR_GRP_IMG_NRF
 
 endmenu
