@@ -1916,6 +1916,53 @@ void test_nrf9x_socket_offload_dtls_frag_ext(void)
 	TEST_ASSERT_EQUAL(ret, 0);
 }
 
+static int stub_nrf_setsockopt_tls_versions(int fd, int level, int opt, const void *val,
+					    size_t len, int cmock_calls)
+{
+	const struct nrf_modem_tls_versions *versions = val;
+
+	TEST_ASSERT_EQUAL(NRF_FD, fd);
+	TEST_ASSERT_EQUAL(NRF_SOL_SECURE, level);
+	TEST_ASSERT_EQUAL(NRF_SO_SEC_TLS_SUPPORTED_VERSION, opt);
+	TEST_ASSERT_EQUAL(sizeof(struct nrf_modem_tls_versions), len);
+	TEST_ASSERT_EQUAL(NRF_SO_SEC_TLS_VERSION_1_2, versions->min_tls_version);
+	TEST_ASSERT_EQUAL(NRF_SO_SEC_TLS_VERSION_1_3, versions->max_tls_version);
+
+	return 0;
+}
+
+void test_nrf9x_socket_offload_setsockopt_tls_supported_version(void)
+{
+	int ret;
+	int fd;
+	int nrf_fd = NRF_FD;
+	int family = NET_AF_INET;
+	int type = NET_SOCK_STREAM;
+	int proto = NET_IPPROTO_TCP;
+	struct socket_ncs_tls_versions data = {
+		.min_tls_version = TLS_SUPPORTED_VERSION_1_2,
+		.max_tls_version = TLS_SUPPORTED_VERSION_1_3,
+	};
+
+	__cmock_nrf_socket_ExpectAndReturn(NRF_AF_INET, NRF_SOCK_STREAM, NRF_IPPROTO_TCP, nrf_fd);
+
+	fd = zsock_socket(family, type, proto);
+
+	TEST_ASSERT_EQUAL(fd, 0);
+
+	__cmock_nrf_setsockopt_Stub(stub_nrf_setsockopt_tls_versions);
+
+	ret = zsock_setsockopt(fd, ZSOCK_SOL_TLS, TLS_SUPPORTED_VERSION, &data, sizeof(data));
+
+	TEST_ASSERT_EQUAL(ret, 0);
+
+	__cmock_nrf_close_ExpectAndReturn(nrf_fd, 0);
+
+	ret = zsock_close(fd);
+
+	TEST_ASSERT_EQUAL(ret, 0);
+}
+
 /* It is required to be added to each test. That is because unity's
  * main may return nonzero, while zephyr's main currently must
  * return 0 in all cases (other values are reserved).

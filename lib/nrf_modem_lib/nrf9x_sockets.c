@@ -212,6 +212,9 @@ static int z_to_nrf_optname(int z_in_level, int z_in_optname,
 		case TLS_DTLS_FRAG_EXT:
 			*nrf_out_optname = NRF_SO_SEC_DTLS_FRAG_EXT;
 			break;
+		case TLS_SUPPORTED_VERSION:
+			*nrf_out_optname = NRF_SO_SEC_TLS_SUPPORTED_VERSION;
+			break;
 		default:
 			retval = -1;
 			break;
@@ -556,6 +559,7 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 	int nrf_level = level;
 	int nrf_optname;
 	struct nrf_timeval nrf_timeo = { 0 };
+	struct nrf_modem_tls_versions nrf_tls_versions = { 0 };
 	void *nrf_optval = (void *)optval;
 	nrf_socklen_t nrf_optlen = optlen;
 	static struct nrf_modem_sendcb offload_sendcb = {
@@ -618,6 +622,15 @@ static int nrf9x_socket_offload_setsockopt(void *obj, int level, int optname,
 			nrf_optlen = sizeof(offload_pollcb);
 		} else {
 			memset(&ctx->pollcb, 0, sizeof(ctx->pollcb));
+		}
+	} else if ((level == ZSOCK_SOL_TLS) && (optname == TLS_SUPPORTED_VERSION)) {
+		if (optval != NULL) {
+			const struct socket_ncs_tls_versions *tls_versions_opt = optval;
+
+			nrf_tls_versions.min_tls_version = tls_versions_opt->min_tls_version;
+			nrf_tls_versions.max_tls_version = tls_versions_opt->max_tls_version;
+			nrf_optval = &nrf_tls_versions;
+			nrf_optlen = sizeof(struct nrf_modem_tls_versions);
 		}
 	}
 
