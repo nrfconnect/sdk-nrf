@@ -335,6 +335,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	struct wifi_scan_result res;
 	uint16_t max_bss_cnt = 0;
 	unsigned int i = 0;
+	unsigned int scan_db_addr;
 	scan_result_cb_t cb = NULL;
 
 	vif_ctx_zep = vif_ctx;
@@ -349,8 +350,12 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
 		vif_ctx_zep->max_bss_cnt : CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT;
 
-	/* The scan results pointer is passed via scan_done_event->scan_db_addr */
-	display_results = (struct umac_display_results *)(uintptr_t)scan_done_event->scan_db_addr;
+	/* Clear the stored address before invoking callbacks that may trigger
+	 * interface teardown. This handler frees the buffer after processing.
+	 */
+	scan_db_addr = scan_done_event->scan_db_addr;
+	scan_done_event->scan_db_addr = 0;
+	display_results = (struct umac_display_results *)(uintptr_t)scan_db_addr;
 
 	LOG_DBG("%s: scan_results_cnt = %d", __func__,
 		scan_done_event->scan_results_cnt);
@@ -410,7 +415,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	vif_ctx_zep->disp_scan_cb = NULL;
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-			  (void *)(uintptr_t)scan_done_event->scan_db_addr);
+			  (void *)(uintptr_t)scan_db_addr);
 	memset(&vif_ctx_zep->scan_done_event, 0, sizeof(vif_ctx_zep->scan_done_event));
 }
 
