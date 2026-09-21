@@ -8,10 +8,6 @@
 	chosen {
 		zephyr,console = &uart131;
 	};
-
-	aliases {
-		tst-timer = &timer130;
-	};
 };
 
 /* UART device used for test
@@ -58,10 +54,6 @@
 };
 
 &dma_fast_region {
-	status = "okay";
-};
-
-&timer130 {
 	status = "okay";
 };
 

@@ -63,7 +63,3 @@ dut: &uart0 {
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
 };
-
-&timer0 {
-	status = "okay";
-};
