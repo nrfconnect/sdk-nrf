@@ -48,15 +48,13 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 };
 #endif
 
-/* The heap implementation in `nrf_modem_os.c` require some overhead
- * to allow allocating up to `NRF_MODEM_LIB_SHMEM_TX_SIZE` bytes.
- */
+/* The heap implementation in `nrf_modem_os.c` requires some overhead. */
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
 
 static const struct nrf_modem_init_params init_params = {
 	.shmem.ctrl = {
 		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
-		.size = CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE,
+		.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
 	},
 	.shmem.tx = {
 		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)),
@@ -78,9 +76,9 @@ static const struct nrf_modem_init_params init_params = {
 };
 
 BUILD_ASSERT(
-	CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE <=
+	CONFIG_NRF_MODEM_SHMEM_CTRL_SIZE <=
 		DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
-	"CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE exceeds 'cpuapp_cpucell_ipc_shm_ctrl' in devicetree");
+	"CONFIG_NRF_MODEM_SHMEM_CTRL_SIZE exceeds 'cpuapp_cpucell_ipc_shm_ctrl' in devicetree");
 
 #if CONFIG_NRF_MODEM_LIB_TRACE
 extern void nrf_modem_lib_trace_init(void);
