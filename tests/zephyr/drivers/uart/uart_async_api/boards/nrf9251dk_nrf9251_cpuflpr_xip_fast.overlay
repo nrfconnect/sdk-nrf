@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+dut: &uart120 {
+	status = "okay";
+	pinctrl-0 = <&uart120_default>;
+	pinctrl-1 = <&uart120_sleep>;
+	pinctrl-names = "default", "sleep";
+	current-speed = <4000000>;
+	zephyr,pm-device-runtime-auto;
+	/delete-property/ memory-regions;
+};

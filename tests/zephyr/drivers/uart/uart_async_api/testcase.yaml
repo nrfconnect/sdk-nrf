@@ -51,3 +51,4 @@ tests:
       - FILE_SUFFIX=fast
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuflpr/xip
