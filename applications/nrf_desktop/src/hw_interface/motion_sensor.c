@@ -34,6 +34,8 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_MOTION_LOG_LEVEL);
 
 #define NODATA_LIMIT		CONFIG_DESKTOP_MOTION_SENSOR_EMPTY_SAMPLES_COUNT
 
+#define SENSOR_DRIVER_INIT_TIMEOUT_MS	10000
+
 #define MAX_KEY_LEN 20
 
 enum state {
@@ -305,6 +307,25 @@ static void set_default_configuration(void)
 	set_option(MOTION_SENSOR_OPTION_SLEEP_ENABLE, true);
 }
 
+static int wait_for_sensor_driver_ready(void)
+{
+	int err;
+	int64_t end_time = k_uptime_get() + SENSOR_DRIVER_INIT_TIMEOUT_MS;
+
+	while (true) {
+		err = disable_trigger();
+		if (err != -EBUSY) {
+			return err;
+		}
+
+		if (k_uptime_get() >= end_time) {
+			return -ETIMEDOUT;
+		}
+
+		k_sleep(K_MSEC(1));
+	}
+}
+
 static int init(void)
 {
 	int err;
@@ -312,6 +333,19 @@ static int init(void)
 	if (!device_is_ready(sensor_dev)) {
 		LOG_ERR("Sensor device not ready");
 		return -ENODEV;
+	}
+
+	/* Stay in the disabled state until the sensor driver completes its own
+	 * asynchronous initialization.
+	 */
+	err = wait_for_sensor_driver_ready();
+	if (err) {
+		if (err == -ETIMEDOUT) {
+			LOG_ERR("Sensor driver init timed out");
+		} else {
+			LOG_ERR("Cannot access sensor (%d)", err);
+		}
+		return err;
 	}
 
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
@@ -337,14 +371,9 @@ static int init(void)
 		break;
 	}
 
-	k_spin_unlock(&state.lock, key);
+	err = enable_trigger();
 
-	do {
-		err = enable_trigger();
-		if (err == -EBUSY) {
-			k_sleep(K_MSEC(1));
-		}
-	} while (err == -EBUSY);
+	k_spin_unlock(&state.lock, key);
 
 	if (err) {
 		LOG_ERR("Cannot enable trigger");
