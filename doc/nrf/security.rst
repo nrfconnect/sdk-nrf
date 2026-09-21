@@ -19,14 +19,14 @@ The |NCS| |release| allows you to develop applications with the following versio
        - TF-M version
        - IronSide Secure Enclave version
        - Mbed TLS version
-     * - v3.4.0
-       - v2.3.0
+     * - v3.4.1
+       - v2.3.1
        - |ironside_se_ver|
-       - v4.1.0
+       - v4.1.1
      * - ``main`` branch of `sdk-nrf`_
-       - |tf-m_ver|
+       - :ext-sw-version:`trusted-firmware-m`
        - |ironside_se_ver|
-       - |mbed_tls_ver|
+       - :ext-sw-version:`mbedtls`
 
 .. security_components_ver_table_end
 
@@ -51,9 +51,13 @@ Expand the following section to see the table listing versions of different secu
        - IronSide Secure Enclave version
        - Mbed TLS version
      * - ``main`` branch of `sdk-nrf`_
-       - |tf-m_ver|
+       - :ext-sw-version:`trusted-firmware-m`
        - |ironside_se_ver|
-       - |mbed_tls_ver|
+       - :ext-sw-version:`mbedtls`
+     * - v3.4.1
+       - v2.3.1
+       - |ironside_se_ver|
+       - v4.1.1
      * - v3.4.0
        - v2.3.0
        - |ironside_se_ver|
