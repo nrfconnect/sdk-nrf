@@ -314,6 +314,21 @@ static int init(void)
 		return -ENODEV;
 	}
 
+	/* Stay in the disabled state until the sensor driver completes its own
+	 * asynchronous initialization.
+	 */
+	do {
+		err = disable_trigger();
+		if (err == -EBUSY) {
+			k_sleep(K_MSEC(1));
+		}
+	} while (err == -EBUSY);
+
+	if (err) {
+		LOG_ERR("Cannot access sensor");
+		return err;
+	}
+
 	k_spinlock_key_t key = k_spin_lock(&state.lock);
 	bool is_connected = (state.peer_count != 0);
 
@@ -337,14 +352,9 @@ static int init(void)
 		break;
 	}
 
-	k_spin_unlock(&state.lock, key);
+	err = enable_trigger();
 
-	do {
-		err = enable_trigger();
-		if (err == -EBUSY) {
-			k_sleep(K_MSEC(1));
-		}
-	} while (err == -EBUSY);
+	k_spin_unlock(&state.lock, key);
 
 	if (err) {
 		LOG_ERR("Cannot enable trigger");
