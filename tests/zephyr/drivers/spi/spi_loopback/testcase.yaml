@@ -40,3 +40,21 @@ tests:
       - nrf9251dk/nrf9251/cpuppr/xip
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+
+  nrf.extended.drivers.spi.loopback.fast:
+    harness_config:
+      fixture: spi_fast_loopback
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuflpr/xip
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuflpr/xip
+  nrf.extended.drivers.spi.nrf_pm_runtime.fast:
+    extra_configs:
+      - CONFIG_PM_DEVICE=y
+      - CONFIG_PM_DEVICE_RUNTIME=y
+    harness_config:
+      fixture: spi_fast_loopback
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuflpr/xip
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuflpr/xip
