@@ -10,6 +10,8 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuflpr
       - nrf54lc10dk/nrf54lc10a/cpuflpr
       - nrf54lv10dk/nrf54lv10a/cpuflpr
+      - nrf7120dk/nrf7120e/cpuflpr
+      - nrf7120dk/nrf7120/cpuflpr
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuflpr
     extra_args:
@@ -20,3 +22,4 @@ tests:
       ordered: true
       regex:
         - "Test PASS"
+    timeout: 20
