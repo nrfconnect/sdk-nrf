@@ -6,10 +6,13 @@
 
 #include <zcbor_common.h>
 #include <zcbor_encode.h>
-#include <pm_config.h>
 #include <fw_info.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/mgmt/mcumgr/mgmt/callbacks.h>
 #include <zephyr/mgmt/mcumgr/grp/os_mgmt/os_mgmt.h>
+
+#define S0_ADDRESS DT_REG_ADDR(DT_NODELABEL(s0_partition))
+#define S1_ADDRESS DT_REG_ADDR(DT_NODELABEL(s1_partition))
 
 static enum mgmt_cb_return bootloader_info_hook(uint32_t event, enum mgmt_cb_return prev_status,
 						int32_t *rc, uint16_t *group, bool *abort_more,
@@ -28,8 +31,8 @@ static enum mgmt_cb_return bootloader_info_hook(uint32_t event, enum mgmt_cb_ret
 	    bootloader_info_data->query->len && memcmp("active_b0_slot",
 						       bootloader_info_data->query->value,
 						       bootloader_info_data->query->len) == 0) {
-		const struct fw_info *s0_info = fw_info_find(PM_S0_ADDRESS);
-		const struct fw_info *s1_info = fw_info_find(PM_S1_ADDRESS);
+		const struct fw_info *s0_info = fw_info_find(S0_ADDRESS);
+		const struct fw_info *s1_info = fw_info_find(S1_ADDRESS);
 
 		if (s0_info || s1_info) {
 			uint32_t active_slot;

@@ -26,7 +26,6 @@ target_include_directories(app
   ${ZEPHYR_NRF_MODULE_DIR}/include/net/
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/include
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/include
-  . # To get 'pm_config.h'
   )
 
 target_compile_options(app

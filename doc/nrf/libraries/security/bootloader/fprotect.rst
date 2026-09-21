@@ -21,11 +21,14 @@ For additional configuration, see the `CONFIG_FPROTECT_*`_ Kconfig options.
 Usage example
 *************
 
-The following example shows how to protect ``PM_B0_SIZE`` bytes of the flash area starting from ``PM_B0_ADDRESS``:
+The following example shows how to protect the ``b0_partition`` flash area:
 
 .. code-block:: c
 
-   int err = fprotect_area(PM_B0_ADDRESS, PM_B0_SIZE);
+   #include <zephyr/storage/flash_map.h>
+
+   int err = fprotect_area(PARTITION_ADDRESS(b0_partition),
+			   PARTITION_SIZE(b0_partition));
 
 API documentation
 *****************
