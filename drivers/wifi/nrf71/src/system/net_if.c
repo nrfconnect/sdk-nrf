@@ -33,6 +33,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
 #include <common/mac_addr.h>
+#include <system/wifi_pm.h>
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
 #endif /* CONFIG_NRF71_STA_MODE */
@@ -793,17 +794,21 @@ __weak int nrf_wifi_if_zep_stop_board(const struct device *dev)
 	return 0;
 }
 
-/* Clear the per-VIF operational state that must not survive an interface down.
- * vif_ctx_zep lives in the device data, so anything left set here is inherited
- * by the next bring-up: a stale scan_in_progress, for instance, makes every
- * later scan fail with "Scan already in progress". Scan work and any cached
- * scan results have to go too, otherwise a display scan can run against torn
- * down state and the connect scan database leaks or returns stale results.
+/* Reset state that must not persist across an interface down/up cycle. Cancel
+ * asynchronous scan work and release cached scan data before FMAC teardown.
  */
 static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
-	k_work_cancel(&vif_ctx_zep->disp_scan_res_work);
+	struct k_work_sync work_sync;
+
+	k_work_cancel_delayable_sync(&vif_ctx_zep->scan_timeout_work, &work_sync);
+	k_work_cancel_sync(&vif_ctx_zep->disp_scan_res_work, &work_sync);
+
+	if (vif_ctx_zep->scan_done_event.scan_db_addr) {
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)(uintptr_t)vif_ctx_zep->scan_done_event.scan_db_addr);
+		vif_ctx_zep->scan_done_event.scan_db_addr = 0;
+	}
 
 	vif_ctx_zep->scan_in_progress = false;
 	vif_ctx_zep->scan_type = 0;
@@ -846,6 +851,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 	unsigned int mac_addr_len = 0;
 	int ret = -1;
 	bool fmac_dev_added = false;
+	bool wifi_powered_on = false;
 	bool locked = false;
 
 	if (!dev) {
@@ -892,13 +898,21 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 	locked = true;
 
 	if (!rpu_ctx_zep->rpu_ctx) {
+		ret = nrf_wifi_power_on();
+		if (ret) {
+			LOG_ERR("%s: nrf_wifi_power_on failed: %d",
+				__func__, ret);
+			goto out;
+		}
+		wifi_powered_on = true;
+
 		status = nrf_wifi_sys_fmac_dev_add_zep(&rpu_drv_priv_zep);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_fmac_dev_add_zep failed",
 				__func__);
 			ret = -EIO;
-			goto out;
+			goto dev_rem;
 		}
 		fmac_dev_added = true;
 		LOG_DBG("%s: FMAC device added", __func__);
@@ -1014,6 +1028,11 @@ del_vif:
 	}
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
 dev_rem:
+	if (wifi_powered_on) {
+		if (nrf_wifi_power_off()) {
+			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
+		}
+	}
 	/* Free only if we added above i.e., for 1st VIF */
 	if (fmac_dev_added) {
 		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
@@ -1104,14 +1123,14 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 			__func__);
 	}
 
-	/* Keep FMAC + IPC across net iface down/up. UMAC deinit is not wired yet
-	 * (see nrf_wifi_sys_fmac_fw_deinit), so tearing the device down here and
-	 * re-running sys_init on the next up leaves the RPU in a bad state
-	 * (SET_IFFLAGS failures / -ENODEV). Full removal happens on failed
-	 * bring-up when we added the device in this start call, or when the
-	 * platform powers the Wi-Fi core down.
-	 */
 	vif_ctx_zep->vif_idx = MAX_NUM_VIFS;
+
+	if (nrf_wifi_fmac_get_num_vifs(rpu_ctx_zep->rpu_ctx) == 0) {
+		if (nrf_wifi_power_off()) {
+			LOG_ERR("%s: nrf_wifi_power_off failed", __func__);
+		}
+		nrf_wifi_sys_fmac_dev_rem_zep(&rpu_drv_priv_zep);
+	}
 
 	ret = 0;
 unlock:
