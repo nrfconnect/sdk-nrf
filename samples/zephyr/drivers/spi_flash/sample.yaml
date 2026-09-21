@@ -30,5 +30,6 @@ tests:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuflpr
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
