@@ -13,3 +13,15 @@
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;
 };
+
+&spi120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
+
+/delete-node/ &gd25le255e;
+
+&timer120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
