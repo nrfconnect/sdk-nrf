@@ -606,6 +606,15 @@ img_mgmt_erase(struct smp_streamer *ctxt)
 
 	img_mgmt_take_lock();
 
+	if (IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS)) {
+		/* If both slots point to the same flash area, do not erase the slot. */
+		if (img_mgmt_flash_area_id(slot) ==
+		    img_mgmt_flash_area_id(img_mgmt_active_slot(img_mgmt_slot_to_image(slot)))) {
+			ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, IMG_MGMT_ERR_NO_FREE_SLOT);
+			goto end;
+		}
+	}
+
 	/*
 	 * First check if image info is valid.
 	 * This check is done incase the flash area has a corrupted image.

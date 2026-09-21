@@ -587,6 +587,39 @@ failed:
 	return ok;
 }
 
+static bool img_mgmt_slots_share_flash_area(int slot_a, int slot_b)
+{
+	int area_id;
+
+	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS)) {
+		return false;
+	}
+
+	area_id = img_mgmt_flash_area_id(slot_a);
+
+	return area_id >= 0 && area_id == img_mgmt_flash_area_id(slot_b);
+}
+
+static size_t img_mgmt_state_entry_count(void)
+{
+	size_t entry_count = 2 * CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER;
+
+	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS)) {
+		return entry_count;
+	}
+
+	for (int image = 0; image < CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER; image++) {
+		int slot_a = img_mgmt_active_slot(image);
+		int slot_o = img_mgmt_get_opposite_slot(slot_a);
+
+		if (img_mgmt_slots_share_flash_area(slot_a, slot_o)) {
+			entry_count--;
+		}
+	}
+
+	return entry_count;
+}
+
 /**
  * Command handler: image state read
  */
@@ -595,13 +628,15 @@ int
 img_mgmt_state_read(struct smp_streamer *ctxt)
 {
 	zcbor_state_t *zse = ctxt->writer->zs;
+	size_t entry_count;
 	uint32_t i;
 	bool ok;
 
-	ok = zcbor_tstr_put_lit(zse, "images") &&
-	     zcbor_list_start_encode(zse, 2 * CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER);
-
 	img_mgmt_take_lock();
+
+	entry_count = img_mgmt_state_entry_count();
+	ok = zcbor_tstr_put_lit(zse, "images") &&
+	     zcbor_list_start_encode(zse, entry_count);
 
 	for (i = 0; ok && i < CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER; i++) {
 		/* _a is active slot, _o is opposite slot */
@@ -609,6 +644,7 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		int next_boot_slot = img_mgmt_get_next_boot_slot(i, &type);
 		int slot_a = img_mgmt_active_slot(i);
 		int slot_o = img_mgmt_get_opposite_slot(slot_a);
+		bool same_flash_area = img_mgmt_slots_share_flash_area(slot_a, slot_o);
 		int flags_a = REPORT_SLOT_ACTIVE;
 		int flags_o = 0;
 
@@ -627,7 +663,9 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		}
 
 		/* Need to report slots in proper order */
-		if (slot_a < slot_o) {
+		if (same_flash_area) {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		} else if (slot_a < slot_o) {
 			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a) &&
 			     img_mgmt_state_encode_slot(ctxt, slot_o, flags_o);
 		} else {
@@ -636,8 +674,8 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		}
 	}
 
-	/* Ending list encoding for two slots per image */
-	ok = ok && zcbor_list_end_encode(zse, 2 * CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER);
+	/* Finish encoding the image list. */
+	ok = ok && zcbor_list_end_encode(zse, entry_count);
 	/* splitStatus is always 0 so in frugal list it is not present at all */
 	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST) && ok) {
 		ok = zcbor_tstr_put_lit(zse, "splitStatus") &&
@@ -653,27 +691,34 @@ int
 img_mgmt_state_read(struct smp_streamer *ctxt)
 {
 	zcbor_state_t *zse = ctxt->writer->zs;
+	size_t entry_count;
 	uint32_t i;
 	bool ok;
 
-	ok = zcbor_tstr_put_lit(zse, "images") &&
-	     zcbor_list_start_encode(zse, 2);
-
 	img_mgmt_take_lock();
+
+	entry_count = img_mgmt_state_entry_count();
+	ok = zcbor_tstr_put_lit(zse, "images") &&
+	     zcbor_list_start_encode(zse, entry_count);
 
 	for (i = 0; ok && i < CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER; i++) {
 		/* _a is active slot, _o is opposite slot */
 		int slot_a = img_mgmt_active_slot(i);
 		int slot_o = img_mgmt_get_opposite_slot(slot_a);
+		bool same_flash_area = img_mgmt_slots_share_flash_area(slot_a, slot_o);
 		int flags_a = REPORT_SLOT_ACTIVE;
 		int flags_o = REPORT_SLOT_CONFIRMED;
 
-		ok = img_mgmt_state_encode_slot(ctxt, slot_o, flags_o) &&
-		     img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		if (same_flash_area) {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		} else {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_o, flags_o) &&
+			     img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		}
 	}
 
-	/* Ending list encoding for two slots per image */
-	ok = ok && zcbor_list_end_encode(zse, 2);
+	/* Finish encoding the image list. */
+	ok = ok && zcbor_list_end_encode(zse, entry_count);
 	/* splitStatus is always 0 so in frugal list it is not present at all */
 	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST) && ok) {
 		ok = zcbor_tstr_put_lit(zse, "splitStatus") &&
