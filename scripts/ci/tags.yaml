@@ -1200,6 +1200,7 @@ ci_tests_drivers_flash:
     - nrf/tests/drivers/flash_patch/
     - nrfxlib/nrf_rpc/
     - zephyr/drivers/flash/
+    - nrf/tests/zephyr/boards/nrf/rram/
 
 ci_tests_drivers_dect:
   files:
