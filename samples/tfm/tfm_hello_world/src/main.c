@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
+#include <zephyr/devicetree.h>
 #include <zephyr/sys/printk.h>
 #include <string.h>
 #include <stdio.h>
@@ -142,18 +143,19 @@ int main(void)
 	}
 
 #if defined(CONFIG_TFM_PARTITION_PLATFORM)
-#ifdef PM_S1_ADDRESS
+#if DT_NODE_EXISTS(DT_NODELABEL(s0_partition)) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 	bool s0_active = false;
 	int ret;
 
-	ret = tfm_platform_s0_active(PM_S0_ADDRESS, PM_S1_ADDRESS, &s0_active);
+	ret = tfm_platform_s0_active(DT_REG_ADDR(DT_NODELABEL(s0_partition)),
+				     DT_REG_ADDR(DT_NODELABEL(s1_partition)), &s0_active);
 	if (ret != 0) {
-		printk("Unexpected failure from spm_s0_active: %d\n", ret);
+		printk("Unexpected failure from tfm_platform_s0_active: %d\n", ret);
 		failed = true;
 	}
 
 	printk("S0 active? %s\n", s0_active ? "True" : "False");
-#endif /*  PM_S1_ADDRESS */
+#endif /* s0_partition && s1_partition */
 #endif /* defined(CONFIG_TFM_PARTITION_PLATFORM) */
 
 	if (!failed) {
