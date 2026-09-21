@@ -749,8 +749,7 @@ Modem shared memory (:file:`eth-rx.overlay`)
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ethernet sink builds forward the DECT uplink (PT TX → FT RX) to ``eth0`` and need a larger shared-memory RX region in the modem than the default partition.
-The :file:`eth_common.conf` file sets :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE` and :kconfig:option:`CONFIG_NRF_MODEM_LIB_SHMEM_RX_SIZE` Kconfig option values.
-Keep these Kconfig values aligned with the region sizes defined in the :file:`eth-rx.overlay` file.
+The region sizes are defined in the :file:`eth-rx.overlay` file.
 
 Pass ``-DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;<shield-mac.overlay>"`` on every Ethernet build (semicolon-separated list; ``eth-rx.overlay`` first).
 Use ``EXTRA_DTC_OVERLAY_FILE`` instead of ``DTC_OVERLAY_FILE``.
