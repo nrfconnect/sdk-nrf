@@ -1,0 +1,18 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: nordic-flpr-uart13x
+
+boards:
+  /.*/nrf9251/cpuapp/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuapp.overlay
+  /.*/nrf9251/cpuflpr/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuflpr.overlay
+  /.*/nrf9251/cpuflpr/xip/:
+    append:
+      EXTRA_DTC_OVERLAY_FILE: soc/nrf9251_cpuflpr.overlay
