@@ -56,11 +56,12 @@ tests:
   drivers.spim_latency_16Mbps_fast_loopback:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuflpr/xip
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
     harness_config:
       fixture: spi_fast_loopback
     extra_args:
-      - DTC_OVERLAY_FILE="boards/nrf9251dk_nrf9251_cpuapp_fast.overlay"
+      - FILE_SUFFIX=fast
       - CONFIG_TEST_MEASUREMENT_REPEATS=200
       - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=512
