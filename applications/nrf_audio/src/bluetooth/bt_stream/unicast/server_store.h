@@ -116,6 +116,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
  * ASEs. If that is not possible, it will try to satisfy the max and min values.
  *
  * @note srv_store_lock() must be called before accessing this function.
+ * @note	This function will be deprecated, use srv_store_pres_dly_by_dir_find() instead.
  *
  * @param[in]	stream			Pointer to a new stream to be started
  * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
@@ -135,6 +136,31 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			    struct bt_bap_qos_cfg_pref const *server_qos_pref,
 			    bool *group_reconfig_needed,
 			    struct bt_cap_unicast_group *unicast_group);
+
+/**
+ * @brief	Search for a common presentation delay across all server Audio Stream Endpoints
+ * (ASEs) in a given @p unicast_group for the given direction.
+ *
+ * This function will try to satisfy the preferred presentation delay for all
+ * ASEs. If that is not possible, it will try to satisfy the max and min values.
+ *
+ * @note srv_store_lock() must be called before accessing this function.
+ * @note This function shall be called in the CAP (NOT BAP) codec configured callback, meaning all
+ * streams shall be codec configured at this point.
+ *
+ *
+ * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
+ *					microseconds.
+ * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
+ * @param[in]	unicast_group		Pointer to the unicast group to search within.
+ *
+ * @retval	0	Success, negative error code on failure.
+ * @retval	-ESPIPE	There is no common presentation delay found.
+ * @retval	-EINVAL	Illegal argument(s), or submitted streams are in different groups.
+ */
+int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
+				   bool *group_reconfig_needed,
+				   struct bt_cap_unicast_group *unicast_group);
 
 /**
  * @brief	Set the valid locations of a unicast server.

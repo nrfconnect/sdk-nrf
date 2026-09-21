@@ -29,122 +29,59 @@
 #include "server_store.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
+LOG_MODULE_REGISTER(unicast_client, 4);
+
+static struct k_thread cap_state_machine_thread_data;
+static k_tid_t cap_state_machine_thread_id;
+#define CAP_STATE_MACHINE_STACK_SIZE 2048
+K_THREAD_STACK_DEFINE(cap_state_machine_thread_stack, CAP_STATE_MACHINE_STACK_SIZE);
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
 
-#define CAP_PROCED_SEM_WAIT_TIME_MS K_MSEC(500)
-K_SEM_DEFINE(sem_cap_procedure_proceed, 1, 1);
+enum cap_action_type {
+	CAP_ACTION_STOP, /* Highest pri */
+	CAP_ACTION_STOP_THEN_START,
+	CAP_ACTION_START, /* lower pri */
+	CAP_ACTION_MAX,
+};
 
-#define CAP_PROC_SEM_WATCHDOG_TIMEOUT_PER_CONN_SEC 2U
-#define CAP_CANCEL_PROC_WAIT_TIME_MS		   K_MSEC(500)
+K_MUTEX_DEFINE(next_action_lock);
+K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
+static enum cap_action_type next_action;
 
-static void cap_proc_waiting_check(void);
+static ATOMIC_DEFINE(cap_state_machine_delay_start, 1);
+static struct k_poll_signal poll_sig = K_POLL_SIGNAL_INITIALIZER(poll_sig);
+static struct k_poll_event poll_evt =
+	K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &poll_sig);
 
-static void cap_sem_give_delayed_work_cb(struct k_work *work)
-{
-	k_sem_give(&sem_cap_procedure_proceed);
-	cap_proc_waiting_check();
-}
-
-K_WORK_DELAYABLE_DEFINE(cap_sem_give_delayed_work, cap_sem_give_delayed_work_cb);
-
+static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
 /**
- * @brief	Function to cancel the CAP procedure and give the semaphore back after a timeout.
+ * @brief	Signal that we want to start a CAP action.
  *
- * @note	This function is used as a watchdog to ensure that the CAP procedure does not block
- *		indefinitely. The timeout is based on the number of connected devices, as
- *		a CAP procedure can take longer with more devices.
+ * @param	action	The CAP action type to signal.
  */
-static void cap_cancel_delayed(struct k_work *work)
+static void cap_thread_next_evt_set(enum cap_action_type action)
 {
-	int ret;
-
-	LOG_DBG("CAP procedure aborted, cancelling CAP procedure and giving semaphore");
-
-	ret = bt_cap_initiator_unicast_audio_cancel();
-	if (ret == -EALREADY) {
-		LOG_DBG("CAP procedure not running");
-		int count = k_sem_count_get(&sem_cap_procedure_proceed);
-
-		if (count == 0) {
-			LOG_DBG("CAP procedure semaphore not available, giving it back");
-			k_sem_give(&sem_cap_procedure_proceed);
-		}
-
-		cap_proc_waiting_check();
-
-		return;
-	}
-
-	if (ret != 0) {
-		LOG_ERR("Failed to cancel CAP procedure: %d", ret);
-	}
-
-	ret = k_work_schedule(&cap_sem_give_delayed_work, CAP_CANCEL_PROC_WAIT_TIME_MS);
-
-	if (ret != 1) {
-		LOG_ERR("Failed to schedule CAP sem give: %d", ret);
-	}
-}
-
-K_WORK_DELAYABLE_DEFINE(cap_cancel_delayed_work, cap_cancel_delayed);
-
-/**
- * @brief	Function to mark the CAP procedure as active.
- *
- * @note	This function will schedule a delayed work to give the semaphore back after a
- *		timeout, as a sort of a watchdog. The timeout is based on the number of connected
- *		devices, as a CAP procedure can take longer with more devices.
- *
- * @return	0 if the semaphore was taken, -EBUSY if the semaphore was not available.
- */
-static int cap_set_proc_active(void)
-{
-	int ret;
-	uint8_t num_connected = 0;
-
-	ret = k_sem_take(&sem_cap_procedure_proceed, K_NO_WAIT);
-	if (ret != 0) {
-		LOG_DBG("CAP procedure semaphore not available, cannot start CAP procedure");
-		return -EBUSY;
-	}
-
-	bt_mgmt_num_conn_get(&num_connected);
-
-	ret = k_work_schedule(
-		&cap_cancel_delayed_work,
-		K_SECONDS(CAP_PROC_SEM_WATCHDOG_TIMEOUT_PER_CONN_SEC * MAX(num_connected, 1)));
-
-	if (ret != 1) {
-		LOG_ERR("Failed to schedule CAP procedure watchdog: %d", ret);
-		k_sem_give(&sem_cap_procedure_proceed);
-		return -EBUSY;
-	}
-
-	return 0;
+	k_mutex_lock(&next_action_lock, K_FOREVER);
+	next_action = action;
+	k_mutex_unlock(&next_action_lock);
+	k_poll_signal_raise(poll_evt.signal, 1);
 }
 
 /**
- * @brief	Function to mark the CAP procedure as inactive.
+ * @brief	Signal that a CAP action has been completed.
  *
- * @note	This function will cancel the delayed work that was scheduled to give the
- *		semaphore back after a timeout.
+ * @param	err	The error code of the completed CAP action. 0 if successful.
+ * 		If there was an failure, we give the state machine a pause before continuing.
  */
-static void cap_set_proc_inactive(void)
+static void cap_thread_cap_action_complete(int err)
 {
-	struct k_work_sync sync;
+	if (err) {
+		atomic_set_bit(cap_state_machine_delay_start, 1);
+	}
 
-	/**
-	 * If either of the two delayable works were in the middle of executing, the semaphore will
-	 * be given back by them. It is not a problem if the semaphore is given back twice, as the
-	 * max count for the semaphore is 1.
-	 */
-	LOG_DBG("Cancelling CAP procedure watchdog and giving semaphore back");
-	(void)k_work_cancel_delayable_sync(&cap_cancel_delayed_work, &sync);
-	(void)k_work_cancel_delayable_sync(&cap_sem_give_delayed_work, &sync);
-	k_sem_give(&sem_cap_procedure_proceed);
+	k_sem_give(&cap_state_machine_sem);
 }
 
 enum cap_procedure_type {
@@ -152,8 +89,6 @@ enum cap_procedure_type {
 	CAP_PROCEDURE_UPDATE,
 	CAP_PROCEDURE_STOP,
 };
-
-K_MSGQ_DEFINE(cap_proc_q, sizeof(enum cap_procedure_type), CONFIG_BT_ISO_MAX_CHAN, sizeof(void *));
 
 /* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
 #define LVL2		 0
@@ -174,84 +109,10 @@ BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
 
 static struct bt_cap_unicast_group *unicast_group;
 static bool unicast_group_created;
-
-/* All streams in a given CIG for a given direction must have these common values */
-struct group_common_qos {
-	uint32_t pres_dly_us;
-	enum bt_bap_qos_cfg_framing framing;
-	uint16_t transport_latency_ms;
-};
-
-struct group_common_qos_bidir {
-	struct group_common_qos snk;
-	struct group_common_qos src;
-};
-
-#define GROUP_COMMON_VALUES_RESET                                                                  \
-	{                                                                                          \
-		.pres_dly_us = BT_BAP_PD_UNSET,                                                    \
-		.framing = BT_BAP_QOS_CFG_FRAMING_UNFRAMED,                                        \
-		.transport_latency_ms = 0,                                                         \
-	}
-
-static struct group_common_qos_bidir group_qos = {
-	.snk = GROUP_COMMON_VALUES_RESET,
-	.src = GROUP_COMMON_VALUES_RESET,
-};
-
-static int common_qos_params_get(struct group_common_qos *common, enum bt_audio_dir dir)
-{
-	__ASSERT_NO_MSG(common != NULL);
-
-	switch (dir) {
-	case BT_AUDIO_DIR_SINK:
-		if (group_qos.snk.pres_dly_us == BT_BAP_PD_UNSET) {
-			LOG_DBG("Get common QoS params for dir %d: No entry", dir);
-			return -ENOENT;
-		}
-
-		*common = group_qos.snk;
-
-		break;
-	case BT_AUDIO_DIR_SOURCE:
-		if (group_qos.src.pres_dly_us == BT_BAP_PD_UNSET) {
-			LOG_DBG("Get common QoS params for dir %d: No entry", dir);
-			return -ENOENT;
-		}
-		*common = group_qos.src;
-		break;
-	default:
-		LOG_ERR("%s: Unknown direction: %d", __func__, dir);
-		break;
-	}
-
-	LOG_DBG("Get common QoS params for dir %d: PD %d us, framing %d, latency %d ms", dir,
-		common->pres_dly_us, common->framing, common->transport_latency_ms);
-
-	return 0;
-}
-
-static int common_qos_params_set(struct group_common_qos const *const common, enum bt_audio_dir dir)
-{
-	__ASSERT_NO_MSG(common != NULL);
-
-	switch (dir) {
-	case BT_AUDIO_DIR_SINK:
-		group_qos.snk = *common;
-		break;
-	case BT_AUDIO_DIR_SOURCE:
-		group_qos.src = *common;
-		break;
-	default:
-		LOG_ERR("%s: Unknown direction: %d", __func__, dir);
-		return -EINVAL;
-	}
-
-	LOG_DBG("Set common QoS params for dir %d: PD %d us, framing %d, latency %d ms", dir,
-		common->pres_dly_us, common->framing, common->transport_latency_ms);
-
-	return 0;
-}
+static struct bt_cap_unicast_group_stream_pair_param
+	pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
+static struct bt_cap_unicast_group_param group_param = {0};
+static struct group_streams_populate_data data;
 
 static bool in_playing_state = true;
 
@@ -286,39 +147,6 @@ static int stream_idx_get(struct bt_bap_stream *stream, struct stream_index *idx
 	idx->lvl3 = info.unicast.cis_id;
 
 	return 0;
-}
-
-/**
- * @brief	Check if there is any CAP procedure waiting, execute it if so.
- */
-static void cap_proc_waiting_check(void)
-{
-	int ret;
-	enum cap_procedure_type proc;
-
-	ret = k_msgq_get(&cap_proc_q, &proc, K_NO_WAIT);
-	if (ret == -ENOMSG) {
-		/* No procedure waiting */
-		return;
-	} else if (ret != 0) {
-		LOG_ERR("Failed to get message from cap_proc_q: %d", ret);
-		return;
-	}
-
-	switch (proc) {
-	case CAP_PROCEDURE_START:
-		unicast_client_start(0);
-		break;
-	case CAP_PROCEDURE_UPDATE:
-		LOG_ERR("Update procedure not implemented");
-		break;
-	case CAP_PROCEDURE_STOP:
-		unicast_client_stop(0);
-		break;
-	default:
-		LOG_ERR("Unknown procedure: %d", proc);
-		break;
-	}
 }
 
 struct num_eps_total {
@@ -371,10 +199,19 @@ static int group_info_print(const struct bt_cap_unicast_group *cap_unicast_group
 	}
 
 	LOG_INF("Unicast group info");
-	LOG_INF("\tSink PD:\t %d", bap_info.sink_pd);
+	if (bap_info.sink_pd == BT_BAP_PD_UNSET) {
+		LOG_INF("\tSink PD:\t Unset");
+	} else {
+		LOG_INF("\tSink PD:\t %d", bap_info.sink_pd);
+	}
+
 	LOG_INF("\tC->P interval:\t %d", bap_info.c_to_p_interval);
 	LOG_INF("\tC->P latency:\t %d", bap_info.c_to_p_latency);
-	LOG_INF("\tSource PD:\t %d", bap_info.source_pd);
+	if (bap_info.source_pd == BT_BAP_PD_UNSET) {
+		LOG_INF("\tSource PD:\t Unset");
+	} else {
+		LOG_INF("\tSource PD:\t %d", bap_info.source_pd);
+	}
 	LOG_INF("\tP->C interval:\t %d", bap_info.p_to_c_interval);
 	LOG_INF("\tP->C latency:\t %d", bap_info.p_to_c_latency);
 
@@ -392,17 +229,20 @@ struct group_streams_populate_data {
 
 static bool unicast_group_populate(struct server_store *server, void *user_data)
 {
+
+	LOG_WRN("Populating unicast group for server %s", server->name);
+
 	struct group_streams_populate_data *data = (struct group_streams_populate_data *)user_data;
 
 	if (server->snk.num_eps == 0 && server->src.num_eps == 0) {
-		LOG_DBG("Server %s has no valid sink or source EPs, skipping", server->name);
+		LOG_WRN("Server %s has no valid sink or source EPs, skipping", server->name);
 		return true;
 	}
 
 	/* Add only the streams that has a valid preset set */
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
 		if (server->snk.lc3_preset[j].qos.pd == 0) {
-			LOG_DBG("Sink EP %d has no valid preset, skipping", j);
+			LOG_WRN("Sink EP %d has no valid preset, skipping", j);
 			return true;
 		}
 
@@ -415,7 +255,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 	/* Add only the streams that has a valid preset set */
 	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
 		if (server->src.lc3_preset[j].qos.pd == 0) {
-			LOG_DBG("Source EP %d has no valid preset, skipping", j);
+			LOG_WRN("Source EP %d has no valid preset, skipping", j);
 			return true;
 		}
 
@@ -438,7 +278,7 @@ static void unicast_group_create(void)
 {
 	int ret;
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -462,8 +302,9 @@ static void unicast_group_create(void)
 	}
 
 	/* Populate the stream params arrays */
-	struct group_streams_populate_data data;
 	(void)memset(&data, 0, sizeof(data));
+	(void)memset(&group_param, 0, sizeof(group_param));
+	(void)memset(&pair_params, 0, sizeof(pair_params));
 
 	ret = srv_store_foreach_server(unicast_group_populate, &data);
 	if (ret < 0) {
@@ -472,11 +313,9 @@ static void unicast_group_create(void)
 		return;
 	}
 
-	struct bt_cap_unicast_group_stream_pair_param
-		pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-	(void)memset(&pair_params, 0, sizeof(pair_params));
-	struct bt_cap_unicast_group_param group_param = {0};
 	int stream_iterator = 0;
+
+	LOG_WRN("sink iterator is %d", data.sink_iterator);
 
 	/* Pair TX and RX from same server.
 	 * We pair in the order of sink to source because the sink stream will
@@ -649,6 +488,20 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 	return true;
 }
 
+static bool server_is_not_waiting_for_disc_check(struct server_store *server, void *user_data)
+{
+	ARG_UNUSED(user_data);
+
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		LOG_DBG("Server %s is still waiting for discovery to complete", server->name);
+		/* Stop iterating */
+		return false;
+	}
+
+	/* Continue iterating */
+	return true;
+}
+
 /**
  * @brief	Worker to start unicast streams. If a unicast group doesn't exist, it will
  *		be created. If it does exist, it will check if there is room for more streams, and
@@ -656,7 +509,7 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
  *		can be added. If the group is full, or there are no more servers to add, it will
  *		start the streams in the unicast group.
  */
-static void cap_start_worker(struct k_work *work)
+static void cap_start_worker(void)
 {
 	int ret;
 
@@ -687,9 +540,21 @@ static void cap_start_worker(struct k_work *work)
 	 * there are any waiting to join.
 	 */
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
+		return;
+	}
+
+	// If any servers are still doing discovery, return as this will be triggered again
+	ret = srv_store_foreach_server(server_is_not_waiting_for_disc_check, NULL);
+
+	if (ret == -ECANCELED) {
+		/* If any of the servers are still waiting for discovery to complete, we should not
+		 * start the streams yet
+		 */
+		LOG_WRN("Cancelling start due to discovery in progress");
+		srv_store_unlock();
 		return;
 	}
 
@@ -719,8 +584,6 @@ start_streams:
 	}
 }
 
-K_WORK_DEFINE(cap_start_work, cap_start_worker);
-
 /* bt_bap_unicast_client_cb begin ----------------------------------------------------------------*/
 
 /**
@@ -745,7 +608,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 
 	LOG_DBG("CB BAP location discovered for conn %p dir %d loc %d", conn, dir, loc);
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -837,7 +700,7 @@ static void bap_available_contexts_cb(struct bt_conn *conn, enum bt_audio_contex
 	LOG_DBG("CB BAP available contexts for conn %p snk ctx %d src ctx %d", conn, snk_ctx,
 		src_ctx);
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -874,7 +737,7 @@ static void bap_pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 		return;
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -902,7 +765,7 @@ static void bap_endpoint_cb(struct bt_conn *conn, enum bt_audio_dir dir, struct 
 
 	LOG_DBG("CB BAP endpoint discovery for conn %p, dir %d", conn, dir);
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -1094,20 +957,6 @@ static void discover_cb_source(struct bt_conn *conn, int err, struct server_stor
 	}
 }
 
-static bool server_is_not_waiting_for_disc_check(struct server_store *server, void *user_data)
-{
-	ARG_UNUSED(user_data);
-
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
-		LOG_DBG("Server %s is still waiting for discovery to complete", server->name);
-		/* Stop iterating */
-		return false;
-	}
-
-	/* Continue iterating */
-	return true;
-}
-
 static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir)
 {
 	int ret;
@@ -1121,7 +970,7 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		LOG_DBG("CB BAP discover for conn %p, dir %d", conn, dir);
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -1146,45 +995,6 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		LOG_ERR("%s: Unknown direction: %d", __func__, dir);
 		srv_store_unlock();
 		return;
-	}
-
-	/* Check if we have common values which can be populated here*/
-	struct group_common_qos common_qos;
-	LOG_DBG("--------CAlling QoS get");
-	ret = common_qos_params_get(&common_qos, dir);
-	if (ret != 0 && ret != -ENOENT) {
-		LOG_ERR("Failed to get common QoS params: %d", ret);
-		srv_store_unlock();
-		return;
-	}
-	LOG_DBG("--------Got QoS and ret is %d", ret);
-
-	if (ret == 0) {
-		LOG_INF("Setting common QoS params for server %s, dir %d: PD %d, framing %d, "
-			"latency %d",
-			server->name, dir, common_qos.pres_dly_us, common_qos.framing,
-			common_qos.transport_latency_ms);
-		switch (dir) {
-		case BT_AUDIO_DIR_SINK:
-			for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-				server->snk.lc3_preset[i].qos.pd = common_qos.pres_dly_us;
-				server->snk.lc3_preset[i].qos.framing = common_qos.framing;
-				server->snk.lc3_preset[i].qos.latency =
-					common_qos.transport_latency_ms;
-			}
-			break;
-		case BT_AUDIO_DIR_SOURCE:
-			for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-				server->src.lc3_preset[i].qos.pd = common_qos.pres_dly_us;
-				server->src.lc3_preset[i].qos.framing = common_qos.framing;
-				server->src.lc3_preset[i].qos.latency =
-					common_qos.transport_latency_ms;
-			}
-			break;
-		default:
-			LOG_ERR("Unknown direction: %d", dir);
-			break;
-		}
 	}
 
 	if (server->src.waiting_for_disc) {
@@ -1216,9 +1026,21 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		return;
 	}
 
-	ret = k_work_submit(&cap_start_work);
-	if (ret < 0) {
-		LOG_ERR("Failed to submit work to start CAP: %d", ret);
+	LOG_INF("Submitting work to start CAP");
+
+	/* Instruct the CAP state machine to perform a CAP start.
+	If the state machine is idle, we can start. If not, we need to cancel first */
+
+	if (k_sem_count_get(&cap_state_machine_sem) > 0) {
+
+		cap_thread_next_evt_set(CAP_ACTION_START);
+	} else {
+		ret = bt_cap_initiator_unicast_audio_cancel();
+		if (ret != 0) {
+			LOG_ERR("Failed to cancel ongoing CAP start: %d", ret);
+		}
+
+		cap_thread_next_evt_set(CAP_ACTION_START);
 	}
 }
 
@@ -1234,11 +1056,22 @@ static struct bt_bap_unicast_client_cb unicast_client_cbs = {
 
 /* bt_bap_stream_ops begin -----------------------------------------------------------------------*/
 
+struct qos_settings_by_dir {
+	uint32_t pres_dly_us;
+	uint32_t transport_latency_ms;
+	uint8_t framing;
+};
+
+struct qos_settings_write {
+	struct qos_settings_by_dir snk;
+	struct qos_settings_by_dir src;
+};
+
 /* Set common parameters for all existing streams */
 static bool common_params_existing_streams_set(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
-	enum bt_audio_dir *dir_to_set = (enum bt_audio_dir *)user_data;
+	struct qos_settings_write *qos_write = (struct qos_settings_write *)user_data;
 
 	struct server_store *server = NULL;
 	enum bt_audio_dir dir;
@@ -1252,46 +1085,37 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 
 	dir = (enum bt_audio_dir)ret;
 
-	if (*dir_to_set != dir) {
-		LOG_DBG("Stream %p dir %d does not match group dir %d, skipping",
-			(void *)&stream->bap_stream, dir, *dir_to_set);
-		return true;
-	}
-
 	ret = srv_store_from_stream_get(&stream->bap_stream, &server);
 	if (ret) {
 		LOG_ERR("Srv store from stream get failed: %d", ret);
 		return false;
 	}
 
-	struct group_common_qos common_qos;
-	ret = common_qos_params_get(&common_qos, dir);
-	if (ret == -ENOENT) {
-		LOG_DBG("No common QoS set yet: %d", ret);
-		return false;
-	} else if (ret) {
-		LOG_ERR("Failed to get common QoS params: %d", ret);
-		return false;
-	}
-
-	LOG_DBG("AA Setting common QoS params for existing stream %p, dir %d: PD %d, framing %d, "
-		"latency %d",
-		(void *)&stream->bap_stream, dir, common_qos.pres_dly_us, common_qos.framing,
-		common_qos.transport_latency_ms);
-
 	switch (dir) {
 	case BT_AUDIO_DIR_SINK:
+		LOG_DBG("Setting common QoS params for existing sink stream %p, PD %d, framing "
+			"%d, latency %d",
+			(void *)&stream->bap_stream, qos_write->snk.pres_dly_us,
+			qos_write->snk.framing, qos_write->snk.transport_latency_ms);
+
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-			server->snk.lc3_preset[i].qos.pd = common_qos.pres_dly_us;
-			server->snk.lc3_preset[i].qos.framing = common_qos.framing;
-			server->snk.lc3_preset[i].qos.latency = common_qos.transport_latency_ms;
+			server->snk.lc3_preset[i].qos.pd = qos_write->snk.pres_dly_us;
+			// server->snk.lc3_preset[i].qos.framing = qos_write->snk.framing;
+			// server->snk.lc3_preset[i].qos.latency =
+			// qos_write->snk.transport_latency_ms;
 		}
 		break;
 	case BT_AUDIO_DIR_SOURCE:
+		LOG_DBG("Setting common QoS params for existing source stream %p, PD %d, framing "
+			"%d, latency %d",
+			&stream->bap_stream, qos_write->src.pres_dly_us, qos_write->src.framing,
+			qos_write->src.transport_latency_ms);
+
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			server->src.lc3_preset[i].qos.pd = common_qos.pres_dly_us;
-			server->src.lc3_preset[i].qos.framing = common_qos.framing;
-			server->src.lc3_preset[i].qos.latency = common_qos.transport_latency_ms;
+			server->src.lc3_preset[i].qos.pd = qos_write->src.pres_dly_us;
+			// server->src.lc3_preset[i].qos.framing = qos_write->src.framing;
+			// server->src.lc3_preset[i].qos.latency =
+			// qos_write->src.transport_latency_ms;
 		}
 		break;
 	default:
@@ -1302,188 +1126,54 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 	return true;
 }
 
-static void stream_codec_configured_cb(struct bt_bap_stream *stream,
-				       const struct bt_bap_qos_cfg_pref *server_pref)
+static void bap_stream_codec_configured_cb(struct bt_bap_stream *stream,
+					   const struct bt_bap_qos_cfg_pref *server_pref)
 {
-	int ret;
+	LOG_DBG("CB BAP stream %p codec configured", stream);
+
+	// TODO: Optimize, get this once for all streams in each dir
 	enum bt_audio_dir dir;
-	uint32_t new_pres_dly_us = 0;
-	bool group_reconfigure_needed_due_to_pd = false;
-
-	LOG_DBG("CB stream %p codec configured: ", stream);
-	/* The group is always created at the start, so we must have group here */
-	__ASSERT(unicast_group != NULL, "Unicast group is NULL");
-
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
-	if (ret < 0) {
-		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-		return;
-	}
-
-	struct server_store *server = NULL;
-
-	ret = srv_store_from_stream_get(stream, &server);
-	if (ret != 0) {
-		LOG_ERR("Unknown stream, should not reach here");
-		srv_store_unlock();
-		return;
-	}
 
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
 		LOG_ERR("Failed to get dir of stream %p", stream);
-		srv_store_unlock();
 		return;
 	}
 
-	/* Sanity check */
-	if ((dir != BT_AUDIO_DIR_SINK && dir != BT_AUDIO_DIR_SOURCE)) {
-		LOG_ERR("Endpoint direction not recognized: %d", dir);
-		srv_store_unlock();
-		return;
-	}
-
-	/* NOTE: The string below is used by the Nordic CI system */
-	LOG_INF("%s %s stream configured", server->name,
-		(dir == BT_AUDIO_DIR_SINK) ? "sink" : "source");
-	le_audio_print_codec(stream->codec_cfg, dir);
-
-	LOG_DBG("Configured Stream info: %s, %p, dir %d", server->name, stream, dir);
-
-	bool group_reconfigure_needed = false;
-	uint32_t unused = 0;
-
-	ret = srv_store_pres_dly_find(stream, &new_pres_dly_us, &unused, server_pref,
-				      &group_reconfigure_needed, unicast_group);
-	if (ret != 0) {
-		LOG_ERR("Cannot get a valid presentation delay");
-		srv_store_unlock();
-		return;
-	}
-
-	if (server->src.waiting_for_disc) {
-		srv_store_unlock();
-		return;
-	}
-
-	struct bt_bap_unicast_group_info bap_info;
-
-	ret = group_info_get(unicast_group, &bap_info);
-	if (ret != 0) {
-		LOG_ERR("Failed to get group info: %d", ret);
-		srv_store_unlock();
-		return;
-	}
-
-	struct group_common_qos common_qos;
-	common_qos.pres_dly_us = new_pres_dly_us;
-	common_qos.transport_latency_ms = server_pref->latency;
-
-	ret = common_qos_params_set(&common_qos, dir);
-	if (ret) {
-		LOG_ERR("Failed to set common QoS params: %d", ret);
-		srv_store_unlock();
-		return;
-	}
-
-	if (dir == BT_AUDIO_DIR_SINK) {
-		if (bap_info.sink_pd != new_pres_dly_us) {
-			LOG_INF("Group recreate. Existing snk: PD %d, new PD %d", bap_info.sink_pd,
-				new_pres_dly_us);
-			group_reconfigure_needed_due_to_pd = true;
-		}
-	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		if (bap_info.source_pd != new_pres_dly_us) {
-			LOG_INF("Group recreate. Existing src: PD %d, new PD %d",
-				bap_info.source_pd, new_pres_dly_us);
-			group_reconfigure_needed_due_to_pd = true;
-		}
-	} else {
-		LOG_ERR("Endpoint direction not recognized: %d", dir);
-		srv_store_unlock();
-		return;
-	}
-
-	if (group_reconfigure_needed_due_to_pd) {
-		ret = bt_cap_unicast_group_foreach_stream(
-			unicast_group, common_params_existing_streams_set, (void *)&dir);
-		if (ret) {
-			LOG_ERR("Failed to update presentation delay for unicast group: %d", ret);
-			srv_store_unlock();
-			return;
-		}
-
-		/* Create the unicast group anew. This will happen when all streams have been
-		 * released */
-		unicast_group_created = false;
-		srv_store_unlock();
-
-		ret = bt_cap_initiator_unicast_audio_cancel();
-		if (ret != 0 && ret != -EALREADY) {
-			LOG_DBG("Audio cancel EALREADY");
-		} else if (ret != 0) {
-			LOG_ERR("Failed to cancel unicast audio: %d", ret);
-		}
-
-		LOG_INF("Group reconfigure needed stopping current CAP procedure");
-		enum cap_procedure_type proc_type;
-
-		proc_type = CAP_PROCEDURE_STOP;
-
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret) {
-			LOG_WRN("Failed to put stop procedure in queue: %d", ret);
-		}
-
-		// How do we abort the current CAP procedure? We need to stop the current streams,
-		// and then recreate the group with the new presentation delay. This will be done in
-		// the stream_released_cb when all streams have been released.
-
-		// TODO: THis publish shall not be done, as the group is not ready yet.
-		// LOG_DBG("LE_AUDIO_EVT_CONFIG_RECEIVED publish reconfig");
-		// le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, stream->conn, stream, dir);
-		return;
-	}
-
-	srv_store_unlock();
-
-	LOG_DBG("LE_AUDIO_EVT_CONFIG_RECEIVED publish NO reconfig");
-	LOG_INF("Group PD sink: %u, source PD: %u", bap_info.sink_pd, bap_info.source_pd);
-	// TODO: Check if this should be published in the enabling state instead.
 	le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED, stream->conn, stream, dir);
 }
 
-static void stream_qos_configured_cb(struct bt_bap_stream *stream)
+static void bap_stream_qos_configured_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p QoS configured", stream);
+	LOG_DBG("CB BAP stream %p QoS configured", stream);
 }
 
-static void stream_enabled_cb(struct bt_bap_stream *stream)
+static void bap_stream_enabled_cb(struct bt_bap_stream *stream)
 {
 	LOG_DBG("CB stream %p enabled", stream);
 }
 
-static void stream_metadata_updated_cb(struct bt_bap_stream *stream)
+static void bap_stream_metadata_updated_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p metadata updated", stream);
+	LOG_DBG("CB BAP stream %p metadata updated", stream);
 }
 
-static void stream_disabled_cb(struct bt_bap_stream *stream)
+static void bap_stream_disabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p disabled", stream);
+	LOG_DBG("CB BAP stream %p disabled", stream);
 }
 
-static void stream_released_cb(struct bt_bap_stream *stream)
+static void bap_stream_released_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p released", stream);
+	LOG_DBG("CB BAP stream %p released", stream);
 }
 
-static void stream_started_cb(struct bt_bap_stream *stream)
+static void bap_stream_started_cb(struct bt_bap_stream *stream)
 {
 	int ret;
 	enum bt_audio_dir dir;
 
-	LOG_DBG("CB stream %p started", stream);
+	LOG_DBG("CB BAP stream %p started", stream);
 
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
@@ -1509,16 +1199,16 @@ static void stream_started_cb(struct bt_bap_stream *stream)
 	le_audio_event_publish(LE_AUDIO_EVT_STREAMING, stream->conn, stream, dir);
 }
 
-static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
+static void bap_stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
 	int ret;
 
-	LOG_DBG("CB stream %p stopped. Reason 0x%02X", stream, reason);
+	LOG_DBG("CB BAP stream %p stopped. Reason 0x%02X", stream, reason);
 
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Stream %p stopped. Reason %d", stream, reason);
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -1545,8 +1235,8 @@ static void stream_stopped_cb(struct bt_bap_stream *stream, uint8_t reason)
 }
 
 #if (CONFIG_BT_AUDIO_RX)
-static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
-			   struct net_buf *audio_frame)
+static void bap_stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_recv_info *info,
+			       struct net_buf *audio_frame)
 {
 	int ret;
 	struct audio_metadata meta;
@@ -1575,7 +1265,7 @@ static void stream_recv_cb(struct bt_bap_stream *stream, const struct bt_iso_rec
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
 #if (CONFIG_BT_AUDIO_TX)
-static void stream_sent_cb(struct bt_bap_stream *stream)
+static void bap_stream_sent_cb(struct bt_bap_stream *stream)
 {
 	int ret;
 	struct stream_index idx;
@@ -1600,33 +1290,33 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 }
 #endif /* CONFIG_BT_AUDIO_TX */
 
-static void stream_connected_cb(struct bt_bap_stream *stream)
+static void bap_stream_connected_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p connected", stream);
+	LOG_DBG("CB BAP stream %p connected", stream);
 }
 
-static void stream_disconnected_cb(struct bt_bap_stream *stream, uint8_t reason)
+static void bap_stream_disconnected_cb(struct bt_bap_stream *stream, uint8_t reason)
 {
-	LOG_DBG("CB stream %p disconnected. Reason 0x%02X", stream, reason);
+	LOG_DBG("CB BAP stream %p disconnected. Reason 0x%02X", stream, reason);
 }
 
 static struct bt_bap_stream_ops stream_ops = {
-	.configured = stream_codec_configured_cb,
-	.qos_set = stream_qos_configured_cb,
-	.enabled = stream_enabled_cb,
-	.metadata_updated = stream_metadata_updated_cb,
-	.disabled = stream_disabled_cb,
-	.released = stream_released_cb,
-	.started = stream_started_cb,
-	.stopped = stream_stopped_cb,
+	.configured = bap_stream_codec_configured_cb,
+	.qos_set = bap_stream_qos_configured_cb,
+	.enabled = bap_stream_enabled_cb,
+	.metadata_updated = bap_stream_metadata_updated_cb,
+	.disabled = bap_stream_disabled_cb,
+	.released = bap_stream_released_cb,
+	.started = bap_stream_started_cb,
+	.stopped = bap_stream_stopped_cb,
 #if (CONFIG_BT_AUDIO_RX)
-	.recv = stream_recv_cb,
+	.recv = bap_stream_recv_cb,
 #endif /* (CONFIG_BT_AUDIO_RX) */
 #if (CONFIG_BT_AUDIO_TX)
-	.sent = stream_sent_cb,
+	.sent = bap_stream_sent_cb,
 #endif /* (CONFIG_BT_AUDIO_TX) */
-	.connected = stream_connected_cb,
-	.disconnected = stream_disconnected_cb,
+	.connected = bap_stream_connected_cb,
+	.disconnected = bap_stream_disconnected_cb,
 };
 
 /* bt_bap_stream_ops end -------------------------------------------------------------------------*/
@@ -1647,7 +1337,7 @@ static void cap_discovery_complete_cb(struct bt_conn *conn, int err,
 		LOG_DBG("CB CAP discovery complete for conn: %p", conn);
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -1684,8 +1374,6 @@ static void cap_discovery_complete_cb(struct bt_conn *conn, int err,
 	ERR_CHK(ret);
 
 	srv_store_unlock();
-
-	cap_proc_waiting_check();
 }
 
 static void cap_start_complete_cb(int err, struct bt_conn *conn)
@@ -1697,16 +1385,132 @@ static void cap_start_complete_cb(int err, struct bt_conn *conn)
 		LOG_DBG("CB CAP start complete for conn: %p", conn);
 	}
 
-	cap_set_proc_inactive();
+	// TODO: Need to look at WD issue, and check that we do not end up in a deadlock situation.
 
 	in_playing_state = true;
-
-	cap_proc_waiting_check();
+	cap_thread_cap_action_complete(err);
 }
 
 static void cap_start_codec_configured_cb(void)
 {
 	LOG_INF("CB CAP codec configured");
+
+	int ret;
+	uint32_t new_pres_dly_snk_us = BT_BAP_PD_UNSET;
+	uint32_t new_pres_dly_src_us = BT_BAP_PD_UNSET;
+	bool group_reconfigure_needed_due_to_src_pd = false;
+	bool group_reconfigure_needed_due_to_snk_pd = false;
+	bool group_reconfigure_needed = false;
+
+	/* The group is always created at the start, so we must have group here */
+	__ASSERT(unicast_group != NULL, "Unicast group is NULL");
+
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
+	if (ret < 0) {
+		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
+		return;
+	}
+
+	/* All streams have been codec configured. Hence, we need to check
+	both directions here.*/
+
+	struct bt_bap_unicast_group_info bap_info;
+
+	ret = group_info_get(unicast_group, &bap_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get group info: %d", ret);
+		srv_store_unlock();
+		return;
+	}
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &new_pres_dly_snk_us,
+					     &group_reconfigure_needed_due_to_snk_pd,
+					     unicast_group);
+	if (ret) {
+		LOG_ERR("Failed to find presentation delay for sink direction: %d", ret);
+		srv_store_unlock();
+		return;
+	}
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SOURCE, &new_pres_dly_src_us,
+					     &group_reconfigure_needed_due_to_src_pd,
+					     unicast_group);
+	if (ret) {
+		LOG_ERR("Failed to find presentation delay for source direction: %d", ret);
+		srv_store_unlock();
+		return;
+	}
+
+	group_reconfigure_needed =
+		group_reconfigure_needed_due_to_snk_pd || group_reconfigure_needed_due_to_src_pd;
+
+	if (group_reconfigure_needed) {
+		struct qos_settings_write qos_write;
+		qos_write.snk.pres_dly_us = new_pres_dly_snk_us;
+		qos_write.src.pres_dly_us = new_pres_dly_src_us;
+
+		/* Need to update all streams with the new presentation delay in this
+		   direction */
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, common_params_existing_streams_set, (void *)&qos_write);
+		if (ret) {
+			LOG_ERR("Failed to update presentation delay for unicast group: %d", ret);
+			srv_store_unlock();
+			return;
+		}
+
+		/* If the group has been connected we need to cancel and restart*/
+		if (bap_info.has_been_connected) {
+			/* Create the unicast group anew. This will happen when all streams have
+			 * been released */
+			unicast_group_created = false;
+			srv_store_unlock();
+
+			LOG_INF("calling cancel in the CAP");
+			ret = bt_cap_initiator_unicast_audio_cancel();
+			if (ret != 0 && ret != -EALREADY) {
+				LOG_DBG("Audio cancel EALREADY");
+			} else if (ret != 0) {
+				LOG_ERR("Failed to cancel unicast audio: %d", ret);
+			}
+
+			cap_thread_next_evt_set(CAP_ACTION_STOP_THEN_START);
+
+			// Signal reconfig
+
+			// How do we abort the current CAP procedure? We need to stop the
+			// current streams, and then recreate the group with the new
+			// presentation delay. This will be done in the stream_released_cb
+			// when all streams have been released.
+
+			// TODO: THis publish shall not be done, as the group is not ready
+			// yet. LOG_DBG("LE_AUDIO_EVT_CONFIG_RECEIVED publish reconfig");
+			// le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED,
+			// stream->conn, stream, dir);
+			srv_store_unlock();
+			return;
+		} else {
+			LOG_INF("Reconfiguring unicast group as it has not been connected yet");
+			ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
+			if (ret) {
+				LOG_ERR("Failed to reconfigure unicast group: %d", ret);
+				srv_store_unlock();
+				return;
+			}
+			srv_store_unlock();
+			return;
+		}
+
+	} else {
+		/* No action required, keep group settings as-is */
+	}
+
+	srv_store_unlock();
+
+	ret = group_info_print(unicast_group);
+	if (ret != 0) {
+		LOG_ERR("Failed to print unicast group info: %d", ret);
+	}
 }
 
 static void cap_start_qos_configured_cb(void)
@@ -1728,8 +1532,6 @@ static void cap_update_complete_cb(int err, struct bt_conn *conn)
 	} else {
 		LOG_DBG("CB CAP update complete for conn: %p", conn);
 	}
-
-	cap_set_proc_inactive();
 }
 
 static void cap_stop_complete_cb(int err, struct bt_conn *conn)
@@ -1741,11 +1543,7 @@ static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 		LOG_DBG("CB CAP stop complete for conn: %p", conn);
 	}
 
-	cap_set_proc_inactive();
-
 	in_playing_state = false;
-
-	cap_proc_waiting_check();
 }
 
 static void cap_stop_released_cb(void)
@@ -1765,11 +1563,7 @@ static void cap_stop_released_cb(void)
 		LOG_ERR("Failed to delete unicast group: %d", ret);
 	}
 
-	/* Create a new unicast group */
-	ret = k_work_submit(&cap_start_work);
-	if (ret < 0) {
-		LOG_ERR("Failed to submit work to start CAP: %d", ret);
-	}
+	cap_thread_cap_action_complete(0);
 }
 
 static struct bt_cap_initiator_cb cap_cbs = {
@@ -1852,7 +1646,7 @@ int unicast_client_is_streaming(bool *is_streaming)
 		return -EINVAL;
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return -EINVAL;
@@ -1946,7 +1740,7 @@ int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir)
 		return -EINVAL;
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return ret;
@@ -1977,7 +1771,7 @@ void unicast_client_conn_disconnected(struct bt_conn *conn)
 {
 	int ret;
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return;
@@ -1995,7 +1789,7 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 {
 	int ret;
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return ret;
@@ -2125,6 +1919,7 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	return true;
 }
 
+// This shall not be accessed from outside the unicast client module
 int unicast_client_start(uint8_t cig_index)
 {
 	int ret;
@@ -2132,26 +1927,6 @@ int unicast_client_start(uint8_t cig_index)
 	if (unicast_group == NULL) {
 		LOG_INF("No unicast group to start");
 		return -EIO;
-	}
-
-	ret = cap_set_proc_active();
-	if (ret == -EBUSY) {
-		LOG_DBG("Cannot start unicast client, another procedure is ongoing");
-		/* Ongoing procedure, try again later */
-		enum cap_procedure_type proc_type;
-
-		proc_type = CAP_PROCEDURE_START;
-
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret != 0) {
-			LOG_WRN("Failed to put start procedure in queue: %d", ret);
-		}
-
-		return ret;
-	} else if (ret != 0) {
-		LOG_ERR("Failed to take sem_cap_procedure_proceed: %d", ret);
-
-		return ret;
 	}
 
 	/* Start all unicast_servers with valid endpoints */
@@ -2165,10 +1940,9 @@ int unicast_client_start(uint8_t cig_index)
 	param.count = 0;
 	param.type = BT_CAP_SET_TYPE_AD_HOC;
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-		cap_set_proc_inactive();
 
 		return ret;
 	}
@@ -2177,7 +1951,6 @@ int unicast_client_start(uint8_t cig_index)
 	if (ret != 0) {
 		LOG_ERR("Failed to add streams to start params: %d", ret);
 
-		cap_set_proc_inactive();
 		srv_store_unlock();
 
 		return ret;
@@ -2186,7 +1959,6 @@ int unicast_client_start(uint8_t cig_index)
 	if (param.count == 0) {
 		LOG_DBG("No streams to start");
 
-		cap_set_proc_inactive();
 		srv_store_unlock();
 
 		return -EIO;
@@ -2195,8 +1967,6 @@ int unicast_client_start(uint8_t cig_index)
 	ret = bt_cap_initiator_unicast_audio_start(&param);
 	if (ret != 0) {
 		LOG_ERR("Failed to start unicast sink audio: %d", ret);
-
-		cap_set_proc_inactive();
 
 		srv_store_unlock();
 
@@ -2251,24 +2021,6 @@ int unicast_client_stop(uint8_t cig_index)
 				      CONFIG_BT_MAX_CONN];
 	static struct bt_cap_unicast_audio_stop_param param;
 
-	ret = cap_set_proc_active();
-	if (ret == -EBUSY) {
-		enum cap_procedure_type proc_type;
-
-		proc_type = CAP_PROCEDURE_STOP;
-
-		ret = k_msgq_put(&cap_proc_q, &proc_type, K_NO_WAIT);
-		if (ret != 0) {
-			LOG_WRN("Failed to put stop procedure in queue: %d", ret);
-		}
-
-		return ret;
-
-	} else if (ret != 0) {
-		LOG_ERR("Failed to take sem_cap_procedure_proceed: %d", ret);
-		return ret;
-	}
-
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
 		LOG_ERR("Trying to stop CIG %d out of %d", cig_index, CONFIG_BT_ISO_MAX_CIG);
 		return -EINVAL;
@@ -2276,8 +2028,6 @@ int unicast_client_stop(uint8_t cig_index)
 
 	if (unicast_group == NULL) {
 		LOG_WRN("No unicast group to stop");
-
-		cap_set_proc_inactive();
 
 		return -EIO;
 	}
@@ -2291,20 +2041,16 @@ int unicast_client_stop(uint8_t cig_index)
 	if (ret != 0) {
 		LOG_ERR("Failed to add streams to stop params: %d", ret);
 
-		cap_set_proc_inactive();
-
 		return ret;
 	}
 
 	if (param.count == 0) {
 		LOG_DBG("No streams to stop");
 
-		cap_set_proc_inactive();
-
 		/* No streams found. Check if devices are connected, if no, delete the group */
 		bool connected_server_found = false;
 
-		ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+		ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 		if (ret < 0) {
 			LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 			return ret;
@@ -2344,8 +2090,6 @@ int unicast_client_stop(uint8_t cig_index)
 	ret = bt_cap_initiator_unicast_audio_stop(&param);
 	if (ret != 0) {
 		LOG_ERR("Failed to stop unicast audio: %d", ret);
-
-		cap_set_proc_inactive();
 
 		return ret;
 	}
@@ -2411,7 +2155,7 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 		return -EINVAL;
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return ret;
@@ -2460,6 +2204,59 @@ int unicast_client_disable(uint8_t cig_index)
 	return -ENOTSUP;
 }
 
+enum cap_action_type cap_thread_next_event_get(void)
+{
+	LOG_INF("Waiting for next event");
+	(void)k_poll(&poll_evt, 1, K_FOREVER);
+	k_mutex_lock(&next_action_lock, K_FOREVER);
+	enum cap_action_type action = next_action;
+	k_mutex_unlock(&next_action_lock);
+	return action;
+}
+
+/* CAP thread for the state machine. Must be a lower priority than
+ * the system workqueue and bt_rx.
+ */
+static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
+{
+
+	while (1) {
+		/* Must wait for previous CAP procedure to complete */
+		enum cap_action_type action;
+		LOG_INF("Waiting for CAP signal");
+
+		/* State machine is IDLE */
+
+		LOG_INF("Fetch next action");
+		action = cap_thread_next_event_get();
+		LOG_INF("Waiting for CAP state machine semaphore");
+		k_sem_take(&cap_state_machine_sem, K_FOREVER);
+
+		/* State machine is processing */
+		k_poll_signal_reset(&poll_sig);
+		if (atomic_test_and_clear_bit(cap_state_machine_delay_start, 0)) {
+			LOG_INF("CAP delay start");
+			k_sleep(K_MSEC(400));
+		}
+
+		switch (action) {
+		case CAP_ACTION_STOP:
+
+			break;
+		case CAP_ACTION_STOP_THEN_START:
+			// DO start
+
+			break;
+		case CAP_ACTION_START:
+			cap_start_worker();
+			break;
+		default:
+			LOG_ERR("Unknown CAP action: %d", action);
+			break;
+		}
+	}
+}
+
 int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 {
 	int ret;
@@ -2470,7 +2267,7 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 		return -EALREADY;
 	}
 
-	ret = srv_store_lock(CAP_PROCED_SEM_WAIT_TIME_MS);
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
 		return ret;
@@ -2512,6 +2309,16 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 			srv_store_unlock();
 			return ret;
 		}
+	}
+
+	cap_state_machine_thread_id = k_thread_create(
+		&cap_state_machine_thread_data, cap_state_machine_thread_stack,
+		CAP_STATE_MACHINE_STACK_SIZE, (k_thread_entry_t)cap_state_machine_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(2), 0, K_NO_WAIT);
+	ret = k_thread_name_set(cap_state_machine_thread_id, "Cap_state_machine");
+	if (ret) {
+		LOG_ERR("Failed to create cap_state_machine thread");
+		return ret;
 	}
 
 	initialized = true;
