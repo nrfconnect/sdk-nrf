@@ -152,3 +152,10 @@
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41256"
+
+- scenarios:
+    - drivers.timer.delay_accuracy.hfxo
+  platforms:
+    - nrf54h20dk@0.9.0/nrf54h20/cpuflpr
+    - nrf54h20dk@0.9.0/nrf54h20/cpuppr
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41443"
