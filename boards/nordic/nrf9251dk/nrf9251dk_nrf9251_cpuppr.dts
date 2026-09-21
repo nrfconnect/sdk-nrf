@@ -49,3 +49,14 @@
 	pinctrl-1 = <&uart132_sleep>;
 	pinctrl-names = "default", "sleep";
 };
+
+/* HFXO and FLL16M are requested through LRCCONF010, which is not mapped
+ * into the PPR address space. Only the application domain can drive them.
+ */
+&hfxo {
+	status = "disabled";
+};
+
+&fll16m {
+	status = "disabled";
+};
