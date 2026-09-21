@@ -13,6 +13,6 @@ common:
   harness_config:
     type: one_line
     regex:
-      - "Measurement finished (.*)"
+      - "Measurement finished(.*)"
 tests:
   sample.saadct: {}
