@@ -242,9 +242,11 @@ For an example of the retention partition definition, see the :file:`nrf/applica
 You must also assign the retention partition to the chosen DTS node ``zephyr,bootloader-info`` in both the application image configuration and the MCUboot image configuration.
 
 .. note::
-   If your board target uses the Key Management Unit (KMU) feature (:kconfig:option:`CONFIG_CRACEN_KMU`), you must additionally define the ``nrf_kmu_reserved_push_area`` DTS node in your custom memory layout.
-   Place this RAM section at the very beginning of the physical RAM due to the dependency on the ``nrfutil device`` tool and its KMU provisioning functionality.
-   For an example of the ``nrf_kmu_reserved_push_area`` DTS node definition, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
+   If your board target uses the Key Management Unit (KMU) feature (:kconfig:option:`CONFIG_CRACEN_KMU`), the beginning of the physical RAM is reserved for the KMU push area by the ``kmu_push_area`` DTS node that the SoC devicetree provides.
+   You do not need to define this node in your custom memory layout, but you must leave the reserved area free, because the ``nrfutil device`` tool and its KMU provisioning functionality depend on the push area being placed at the very beginning of the physical RAM.
+   Make sure that the DTS node that you assign to the chosen DTS node ``zephyr,sram`` starts after the push area.
+   The build fails with an assertion if the memory layout places the application RAM over the push area.
+   For an example of a custom memory layout that leaves the push area free, see the :file:`nrf/applications/nrf_desktop/configuration/nrf54lm20dk_nrf54lm20a_cpuapp/memory_map_ram_load.dtsi` file.
 
    The KMU feature (:kconfig:option:`CONFIG_CRACEN_KMU`) is enabled by default for the nRF54L Series devices.
 
