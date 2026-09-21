@@ -1,0 +1,32 @@
+common:
+  tags:
+    - drivers
+    - flash
+    - ci_tests_drivers_flash
+
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lc10dk/nrf54lc10a/cpuapp
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
+    - nrf54ls05dk/nrf54ls05a/cpuapp
+    - nrf54ls05dk/nrf54ls05b/cpuapp
+  integration_platforms:
+    - nrf54lv10dk/nrf54lv10a/cpuapp
+
+tests:
+  nrf.extended.boards.nrf.rram.throttling:
+    extra_configs:
+      - CONFIG_SOC_FLASH_NRF_THROTTLING=y
+
+  nrf.extended.boards.nrf.rram.skip_if_filled:
+    extra_configs:
+      - CONFIG_SOC_FLASH_NRF_THROTTLING=y
+      - CONFIG_NRF_RRAM_FILL_SKIP_IF_FILLED=y
+
+  nrf.extended.boards.nrf.rram.radio_sync:
+    extra_args: EXTRA_CONF_FILE=radio_sync.conf
+
+  nrf.extended.boards.nrf.rram.radio_sync_skip:
+    extra_args: EXTRA_CONF_FILE=radio_sync_skip.conf
