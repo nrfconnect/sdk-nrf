@@ -32,52 +32,6 @@ config HEAP_MEM_POOL_ADD_SIZE_NRF9X_SOCKETS_GETADDRINFO
 	  Extra heap size required for getaddrinfo k_malloc. Default size
 	  is enough for two zsock_addrinfo objects.
 
-config NRF_MODEM_LIB_SHMEM_CTRL_SIZE
-	hex
-	default NRF_MODEM_SHMEM_CTRL_SIZE if NRF_MODEM
-	default 0
-	help
-	  Size of the shared memory area used for control structures.
-	  This is a constant for a given library build, and is exported
-	  by the library via NRF_MODEM_SHMEM_CTRL_SIZE.
-
-if SOC_SERIES_NRF91 || UNITY
-
-config NRF_MODEM_LIB_SHMEM_TX_SIZE
-	int "TX region size"
-	range 1024 32768
-	# Set default to 8k plus Zephyr heap overhead (128 bytes)
-	default 8320
-	help
-	  Size of the shared memory region owned by the application. This area holds all outgoing
-	  data from the application to the modem, e.g. buffers passed to `send()`, AT commands.
-	  The size must be a multiple of four to keep the memory partitions word-aligned.
-
-config NRF_MODEM_LIB_SHMEM_RX_SIZE
-	int "RX region size"
-	range 2488 32768 if SOC_NRF9160
-	range 2616 32768 if SOC_NRF9120
-	default 8192
-	help
-	  Size of the shared memory region owned by the modem.
-	  This area holds all incoming data from the modem, plus the modem's own control structures.
-	  The size must be a multiple of four to keep the memory partitions word-aligned.
-
-config NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
-	bool "Custom trace region size"
-	depends on NRF_MODEM_LIB_TRACE
-	help
-	  Override the default size of the Trace region (16384 bytes).
-
-config NRF_MODEM_LIB_SHMEM_TRACE_SIZE
-	int "Trace region size" if NRF_MODEM_LIB_SHMEM_TRACE_SIZE_OVERRIDE
-	default 16384 if NRF_MODEM_LIB_TRACE
-	default 0
-	help
-	  Size of the shared memory region used to receive modem traces.
-
-endif # SOC_SERIES_NRF91 || UNITY
-
 if SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_TRANSPORT_MBOX
@@ -134,7 +88,7 @@ menuconfig NRF_MODEM_LIB_TRACE
 	depends on SOC_SERIES_NRF91 || SOC_SERIES_NRF92 || UNITY
 	help
 	  When enabled, a portion of RAM (called Trace region) will be shared with the modem to receive modem's trace data.
-	  The size of the Trace region is defined by the NRF_MODEM_LIB_SHMEM_TRACE_SIZE option.
+	  The trace region needs to be defined in devicetree as "cpucell_cpuapp_ipc_shm_trace".
 	  Trace data is output on the chosen trace backend.
 
 if NRF_MODEM_LIB_TRACE

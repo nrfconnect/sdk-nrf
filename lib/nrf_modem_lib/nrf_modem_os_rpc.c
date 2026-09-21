@@ -151,7 +151,7 @@ static int cellcore_boot(uint32_t ipc_buf_addr, uint32_t ipc_buf_size, uint32_t 
 int nrf_modem_os_rpc_cellcore_boot(void)
 {
 	return cellcore_boot(DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
-			     CONFIG_NRF_MODEM_LIB_SHMEM_CTRL_SIZE, 0);
+			     DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)), 0);
 }
 
 int nrf_modem_os_rpc_cellcore_boot_bootloader(uint32_t loader_addr)

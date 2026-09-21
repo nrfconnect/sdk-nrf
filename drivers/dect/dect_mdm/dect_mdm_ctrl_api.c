@@ -208,11 +208,14 @@ int dect_mdm_ctrl_api_tx_cmd(struct dect_mdm_ctrl_api_tx_cmd_params *params)
 #if defined(CONFIG_DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS)
 	int arr_index = params->transaction_id - DECT_MDM_DATA_TX_HANDLE_START;
 
+/* Only check if the partition exists to allow building for native SIM. */
+#if DT_NODE_EXISTS(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap))
 	if (data->total_unacked_tx_data_amount + params->data_len >
-	    CONFIG_NRF_MODEM_LIB_SHMEM_TX_SIZE) {
+	    DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_heap)) - 128) {
 		LOG_DBG("Too much unacked TX data: %d bytes - continue but flow ctrl might occur",
 			data->total_unacked_tx_data_amount);
 	}
+#endif
 	if (data->total_unacked_req_amount >= DECT_MDM_DATA_TX_HANDLE_COUNT) {
 		LOG_WRN("Too many unacked TX requests: %d", data->total_unacked_req_amount);
 		CTRL_DATA_UNLOCK();
