@@ -4,9 +4,14 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../../../boards/nrf9251dk_nrf9251_cpuapp.overlay"
-
 &spi130 {
 	status = "reserved";
 	interrupt-parent = <&cpuppr_clic>;
 };
+
+&spi120 {
+	status = "reserved";
+	interrupt-parent = <&cpuflpr_clic>;
+};
+
+/delete-node/ &gd25le255e;
