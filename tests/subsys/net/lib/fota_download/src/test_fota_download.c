@@ -9,9 +9,9 @@
 #include <stdbool.h>
 #include <errno.h>
 #include <zephyr/ztest.h>
+#include <zephyr/storage/flash_map.h>
 #include <downloader.h>
 #include <fw_info.h>
-#include <pm_config.h>
 #include <fota_download.h>
 #include "test_fota_download_common.h"
 #include <fota_download_util.h>
@@ -24,6 +24,9 @@ static char buf[1024];
 #define BASE_DOMAIN "something.com"
 #define NO_TLS NULL
 #define ARBITRARY_IMAGE_OFFSET 512
+
+#define S0_ADDRESS PARTITION_ADDRESS(s0_partition)
+#define S1_ADDRESS PARTITION_ADDRESS(s1_partition)
 
 /* Stubs and mocks */
 static const char *downloader_get_file;
@@ -198,17 +201,17 @@ void set_s0_active(bool s0_active)
 
 	zassert_true(device_is_ready(fdev), "Flash device not ready");
 
-	err = flash_erase(fdev, PM_S0_ADDRESS, nrfx_nvmc_flash_page_size_get());
+	err = flash_erase(fdev, S0_ADDRESS, nrfx_nvmc_flash_page_size_get());
 	zassert_equal(err, 0, "flash_erase failed");
 
-	err = flash_erase(fdev, PM_S1_ADDRESS, nrfx_nvmc_flash_page_size_get());
+	err = flash_erase(fdev, S1_ADDRESS, nrfx_nvmc_flash_page_size_get());
 	zassert_equal(err, 0, "flash_erase failed");
 
-	err = flash_write(fdev, PM_S0_ADDRESS, (void *)&s0_info,
+	err = flash_write(fdev, S0_ADDRESS, (void *)&s0_info,
 			  sizeof(s0_info));
 	zassert_equal(err, 0, "Unable to write to flash");
 
-	err = flash_write(fdev, PM_S1_ADDRESS, (void *)&s1_info,
+	err = flash_write(fdev, S1_ADDRESS, (void *)&s1_info,
 			  sizeof(s1_info));
 	zassert_equal(err, 0, "Unable to write to flash");
 }

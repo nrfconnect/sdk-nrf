@@ -22,10 +22,7 @@
 #endif
 #include <dfu/dfu_target_mcuboot.h>
 
-#if defined(PM_S0_ADDRESS) && defined(PM_S1_ADDRESS)
-#define S0_ADDRESS PM_S0_ADDRESS
-#define S1_ADDRESS PM_S1_ADDRESS
-#elif DT_NODE_EXISTS(DT_NODELABEL(s0_partition)) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
+#if DT_NODE_EXISTS(DT_NODELABEL(s0_partition)) && DT_NODE_EXISTS(DT_NODELABEL(s1_partition))
 BUILD_ASSERT(DT_REG_SIZE(DT_NODELABEL(s0_partition)) != 0);
 BUILD_ASSERT(DT_REG_SIZE(DT_NODELABEL(s1_partition)) != 0);
 #define S0_ADDRESS DT_REG_ADDR(DT_NODELABEL(s0_partition))
