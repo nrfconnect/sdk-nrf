@@ -146,6 +146,23 @@ In addition, it enables the following :ref:`cryptographic features <ug_crypto_su
 * Key derivation function (KDF) support: SP800-108 CMAC in counter mode
 * Authenticated Encryption with Associated Data (AEAD) cipher: Galois Counter Mode (GCM) cipher
 
+Configuring Nordic PSA extension APIs
+=====================================
+
+A few elliptic curve operations are not expressible through the PSA Crypto API
+and are provided as a Nordic extension, declared in
+:file:`subsys/nrf_security/include/psa/psa_ext_ecc.h`.
+These are not PSA drivers, so they have no ``CONFIG_PSA_WANT_*`` option and no
+entry in the :ref:`supported features <ug_crypto_supported_features>` tables.
+
+Set :kconfig:option:`CONFIG_PSA_EXT_ECC_SECP_R1_160` to enable base-point scalar
+multiplication and reduction modulo the group order for the secp160r1 curve.
+This curve is required by Google Find Hub Network, and has no
+``PSA_ECC_FAMILY_SECP_R1`` encoding at 160 bits.
+The option depends on :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN`, and is
+unavailable in builds with TF-M, because a non-secure image can only reach
+cryptographic operations through the PSA service.
+
 Configuring countermeasures
 ===========================
 
