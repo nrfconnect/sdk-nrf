@@ -78,7 +78,7 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 
 psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm_t alg)
 {
-	int status;
+	psa_status_t psa_status;
 
 #if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
 	if (is_aes_mmo(alg)) {
@@ -91,15 +91,15 @@ psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm
 	}
 #endif
 
-	status = cracen_hash_get_algo(alg, &operation->sx_hash_algo);
-	if (status != PSA_SUCCESS) {
-		return status;
+	psa_status = cracen_hash_get_algo(alg, &operation->sx_hash_algo);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
 	}
 	operation->has_saved_state = false;
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(operation->sx_hash_algo);
 
-	return silex_statuscodes_to_psa(status);
+	return PSA_SUCCESS;
 }
 
 static int init_or_resume_context(cracen_hash_operation_t *operation)
