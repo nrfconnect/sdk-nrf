@@ -1146,6 +1146,27 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(
 enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	struct umac_int_stats *stats);
+
+/**
+ * @brief Request an extended sleep interval for the nRF71.
+ * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
+ * @param if_idx Index of the interface on which the request is issued.
+ * @param duration_sec Duration of the extended sleep interval in seconds.
+ *
+ * Requests that the RPU remain in deep sleep for @p duration_sec without
+ * waking for DTIM beacons. This allows lower power consumption at the cost
+ * of missed Wi-Fi traffic: no frames are transmitted or received when device
+ * is in extended sleep.
+ *
+ * This function sends %NRF_WIFI_UMAC_CMD_CONFIG_QUIET_PERIOD to the RPU
+ * firmware.
+ *
+ * @retval NRF_WIFI_STATUS_SUCCESS On success.
+ * @retval NRF_WIFI_STATUS_FAIL On failure to execute command.
+ */
+enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *fmac_dev_ctx,
+						      unsigned char if_idx,
+						      unsigned int duration_sec);
 #endif /* NRF71_UTIL */
 
 /**
