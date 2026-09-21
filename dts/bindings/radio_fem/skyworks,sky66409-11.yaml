@@ -68,3 +68,11 @@ properties:
 
       The GPIO pin is used together with the ctx-gpios to enable the TX bypass.
       If not specified, the TX bypass is disabled by default.
+
+  rx-bypass-gpios:
+    type: phandle-array
+    description: |
+      GPIO pin used to enable the RX bypass of the SKY66409-11.
+
+      The GPIO pin is used together with the crx-gpios to enable the RX bypass.
+      If not specified, the RX bypass is disabled by default.
