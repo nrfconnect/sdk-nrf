@@ -8,7 +8,7 @@
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -31,15 +31,15 @@ User interface
 
 The following LEDs are used by this sample:
 
-LED 1 and LED 2:
+LED 0 and LED 1:
    At the end of commissioning, blink four times to indicate that a new EnOcean device has been commissioned.
 
    After commissioning, indicate whether a button is pressed on a commissioned light switch device.
 
    .. note::
-        If you are using EnOcean switches with a single rocker, toggling the rocker is indicated on **LEDs 2** and **4**.
+        If you are using EnOcean switches with a single rocker, toggling the rocker is indicated on **LEDs 1** and **3**.
 
-LED 3 and LED 4:
+LED 2 and LED 3:
    Indicate the On/Off state of each button channel.
 
 Building and running

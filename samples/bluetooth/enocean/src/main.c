@@ -112,6 +112,12 @@ static void enocean_loaded(struct bt_enocean_device *device)
 
 int main(void)
 {
+	static const struct bt_le_scan_param scan_param = {
+		.type = BT_LE_SCAN_TYPE_PASSIVE,
+		.options = BT_LE_SCAN_OPT_NONE,
+		.interval = BT_GAP_SCAN_FAST_INTERVAL,
+		.window = BT_GAP_SCAN_FAST_WINDOW,
+	};
 	int err;
 
 	err = dk_leds_init();
@@ -140,7 +146,7 @@ int main(void)
 		settings_load();
 	}
 
-	err = bt_le_scan_start(BT_LE_SCAN_PASSIVE, NULL);
+	err = bt_le_scan_start(&scan_param, NULL);
 	if (err) {
 		printk("Bluetooth scan start failed (err %d)\n", err);
 		return 0;
