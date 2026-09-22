@@ -218,24 +218,6 @@ Consider using these features in your project to speed up the FOTA update proces
 
 .. fota_upgrades_update_end
 
-.. _ug_nrf52_developing_fota_in_mesh:
-
-FOTA in Bluetooth Mesh
-**********************
-
-.. fota_upgrades_bt_mesh_start
-
-When performing a FOTA update when working with the Bluetooth Mesh protocol, use one of the following DFU methods:
-
-* DFU over Bluetooth Mesh using the Zephyr Bluetooth Mesh DFU subsystem.
-* Point-to-point DFU over Bluetooth Low Energy as described in `FOTA over Bluetooth Low Energy`_ above.
-  The Bluetooth Mesh samples use random HCI identities.
-  See the related notes in the `Testing steps`_ section.
-
-For more information about both methods, see :ref:`ug_bt_mesh_fota`.
-
-.. fota_upgrades_bt_mesh_end
-
 FOTA over Thread
 ****************
 

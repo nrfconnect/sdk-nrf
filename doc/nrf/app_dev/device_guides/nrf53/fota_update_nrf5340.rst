@@ -50,9 +50,7 @@ FOTA update sample
 FOTA in Bluetooth Mesh
 **********************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
-   :start-after: fota_upgrades_bt_mesh_start
-   :end-before: fota_upgrades_bt_mesh_end
+.. include:: /includes/fota_upgrades_bt_mesh.txt
 
 .. note::
    Point-to-point DFU over Bluetooth Low Energy is supported by default, out-of-the-box, for all samples and applications compatible with :zephyr:board:`thingy53`.

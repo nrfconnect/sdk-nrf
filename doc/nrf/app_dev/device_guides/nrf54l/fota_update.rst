@@ -187,6 +187,11 @@ Consider using these features in your project to speed up the FOTA update proces
 
 .. fota_upgrades_update_end
 
+FOTA in Bluetooth Mesh
+**********************
+
+.. include:: /includes/fota_upgrades_bt_mesh.txt
+
 .. _ug_nrf54l_developing_ble_fota_mcuboot_kmu:
 
 Provisioning of keys for Hardware KMU
