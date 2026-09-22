@@ -887,20 +887,6 @@ static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *
 		return false;
 	}
 
-	if (ctx->existing_pres_dly_us == 0) {
-		LOG_ERR("Existing presentation delay is zero");
-		ctx->ret = -EINVAL;
-		return false;
-	}
-
-	if (IN_RANGE(ctx->existing_pres_dly_us, ep_info.qos_pref->pd_min,
-		     ep_info.qos_pref->pd_max)) {
-		*ctx->computed_pres_dly_us = ctx->existing_pres_dly_us;
-
-	} else {
-		*ctx->group_reconfig_needed = true;
-	}
-
 	ctx->streams_checked++;
 
 	ctx->ret = pres_delay_compute(&ctx->common_qos, ep_info.qos_pref);
@@ -984,6 +970,36 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 		LOG_ERR("Failed to check presentation delay for streams: %d", ret);
 		return ret;
 	}
+
+	if (foreach_data.ret != 0) {
+		LOG_ERR("Failed to compute presentation delay for direction %d: %d", dir,
+			foreach_data.ret);
+		return foreach_data.ret;
+	}
+
+	if (foreach_data.streams_checked == 0) {
+		LOG_WRN("No streams found for direction %d", dir);
+		return -ENODATA;
+	}
+
+	if (foreach_data.common_qos.pd_min > foreach_data.common_qos.pd_max) {
+		LOG_ERR("No common ground for pd_min %u and pd_max %u",
+			foreach_data.common_qos.pd_min, foreach_data.common_qos.pd_max);
+		return -ESPIPE;
+	}
+
+	if (foreach_data.common_qos.pref_pd_min == 0) {
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	} else if (foreach_data.common_qos.pref_pd_min < foreach_data.common_qos.pd_min) {
+		LOG_ERR("pref PD min is lower than min. Using min");
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	} else if (foreach_data.common_qos.pref_pd_min <= foreach_data.common_qos.pd_max) {
+		*computed_pres_dly_us = foreach_data.common_qos.pref_pd_min;
+	} else {
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	}
+
+	*group_reconfig_needed = foreach_data.existing_pres_dly_us != *computed_pres_dly_us;
 
 	LOG_INF("Presentation delay check completed for direction: %d. %d streams checked, result: "
 		"%d",

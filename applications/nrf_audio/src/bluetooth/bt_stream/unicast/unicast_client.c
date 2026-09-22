@@ -1483,10 +1483,6 @@ static void cap_start_codec_configured_cb(void)
 			// presentation delay. This will be done in the stream_released_cb
 			// when all streams have been released.
 
-			// TODO: THis publish shall not be done, as the group is not ready
-			// yet. LOG_DBG("LE_AUDIO_EVT_CONFIG_RECEIVED publish reconfig");
-			// le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED,
-			// stream->conn, stream, dir);
 			srv_store_unlock();
 			return;
 		} else {
