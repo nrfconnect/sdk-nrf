@@ -92,7 +92,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
       - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
@@ -109,7 +108,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y
       - shutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-quiet"
       - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
@@ -126,7 +124,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y
       - shutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-diag"
       - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi

@@ -51,7 +51,7 @@ The following is an example of the CLI command:
 
 .. code-block:: console
 
-   west build -b nrf7120dk/nrf7120/cpuapp -- -DSB_CONFIG_WIFI_NRF70=n
+   west build -b nrf7120dk/nrf7120/cpuapp
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
