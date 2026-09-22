@@ -70,4 +70,4 @@ LATEX_BIB_STYLE        = plain
 PREDEFINED            += CONFIG_FLASH_JESD216_API \
                          CONFIG_FLASH_PAGE_LAYOUT
 
-GENERATE_TAGFILE       =
+GENERATE_TAGFILE       = html/zephyr.tag
