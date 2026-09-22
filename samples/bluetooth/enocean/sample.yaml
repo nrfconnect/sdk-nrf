@@ -6,11 +6,9 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - bluetooth
       - ci_build
