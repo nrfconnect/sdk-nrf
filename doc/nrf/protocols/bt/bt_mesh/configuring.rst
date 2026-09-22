@@ -264,7 +264,8 @@ How much flash storage the RPL consumes and how long it lasts depends on the fol
 * The number of distinct source nodes that actively send messages to the device
 * The mechanism used to persist the RPL (Settings + ZMS/NVS vs. EMDS)
 
-For nRF52 and nRF53 Series devices, NVS backend is recommended and for the nRF54 Series devices, ZMS backend should be used.
+For nRF53 Series devices, NVS backend is recommended.
+For the nRF54 Series devices, use the ZMS backend.
 
 In the |NCS|, the settings subsystem with ZMS/NVS backend is selected as the default option for RPL persistence.
 For networks where power loss must not open a replay window, consider using EMDS instead of the settings subsystem for RPL persistence.
@@ -281,7 +282,7 @@ Depending on the selected backend, RPL entries are stored with different overhea
 
 **RPL footprint by CRPL size (NVS backend, 36 B/entry)**
 
-The total footprint for each entry (Settings + NVS backend (nRF52/nRF53)) is 36 B per occupied slot.
+The total footprint for each entry (Settings + NVS backend (nRF53)) is 36 B for each occupied slot.
 For more details see :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` and :ref:`Settings subsystem <zephyr:settings_api>`.
 
 .. note::
@@ -442,7 +443,7 @@ The timeout shortens lifetime only when it raises the long-run write rate, that 
 
 .. note::
 
-   For the Settings + NVS backend (nRF52/nRF53), the write size for each update is 12 B (value record only) rather than 16 B, and the valid footprint is 36 B rather than 64 B for each entry.
+   For the Settings + NVS backend (nRF53), the write size for each update is 12 B (value record only) rather than 16 B, and the valid footprint is 36 B rather than 64 B for each entry.
    This yields smaller bytes-per-flush (3 × 12 = 36 B at 0.1 msg/s) and lower valid footprint overhead per GC cycle, resulting in better endurance for equivalent CRPL size and partition configuration.
    NVS Backend is not recommended for RRAM based devices (nRF54 Series).
 
@@ -521,10 +522,5 @@ Secure storage
 
 :ref:`secure_storage_in_ncs` lets you securely store and manage sensitive data.
 Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
-
-.. note::
-   For the nRF52840 devices, in regards to :ref:`bt_mesh_samples` in |NCS|, AEAD keys are derived using hashes of entry UIDs (:kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_HASH_UID`).
-   This approach is less secure than using the :ref:`lib_hw_unique_key` library for key derivation as it only provides integrity of sensitive material.
-   It is also possible to implement a custom AEAD key generation method when the :kconfig:option:`CONFIG_TRUSTED_STORAGE_BACKEND_AEAD_KEY_CUSTOM` Kconfig option is selected.
 
 For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme`.
