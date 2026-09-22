@@ -116,9 +116,9 @@
 	 *  - Bell 6: cpusys
 	 *  - Bell 13: cpuppr
 	 *  - Bell 14: cpuflpr
-	 *  - Bells 24, 25, 29, 31: cpucell
+	 *  - Bells 24, 25, 29, 30, 31: cpucell
 	 */
-	nordic,interrupt-mapping = <0xa3006047 0>;
+	nordic,interrupt-mapping = <0xe3006047 0>;
 };
 
 &cpuppr_vpr {
