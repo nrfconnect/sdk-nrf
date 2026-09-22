@@ -22,7 +22,7 @@ extern "C" {
 #include <zephyr/sys/util_macro.h>
 
 /**
- * @addtogroup sys-util
+ * @addtogroup ncs-sys-util
  * @{
  */
 
