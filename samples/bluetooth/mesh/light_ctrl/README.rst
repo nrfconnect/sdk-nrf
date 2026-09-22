@@ -190,7 +190,7 @@ As a part of the interrupt routine, the Multiprotocol Service Layer (:ref:`MPSL 
 After the storing procedure has completed, the sample leaves the MPSL uninitialized until the next system reset.
 Because the EMDS "data storing completed" callback is invoked from the same interrupt service routine, it is not possible to use the MPSL API or any API that depends on MPSL within this callback.
 When using EMDS, certain considerations need to be taken regarding hardware choices in your application design.
-See :ref:`emds_readme_application_integration` in the EMDS documentation for more information.
+See :ref:`emds_readme_application_integration` in the EMDS documentation and RPL section in the configuration guide :ref:`ug_bt_mesh_configuring` for more information.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
