@@ -8,6 +8,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/shell/shell.h>
 #include <nrf_modem_dect_phy.h>
 
@@ -32,9 +33,10 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 	switch (message_type) {
 	case DECT_PHY_MAC_MESSAGE_TYPE_DATA_SDU: {
 		unsigned char ascii_data[DECT_DATA_MAX_LEN];
+		uint16_t print_len = MIN(message->data_sdu.data_length, DECT_DATA_MAX_LEN - 1);
 
-		memcpy(ascii_data, message->data_sdu.data, message->data_sdu.data_length);
-		ascii_data[message->data_sdu.data_length] = '\0';
+		memcpy(ascii_data, message->data_sdu.data, print_len);
+		ascii_data[print_len] = '\0';
 
 		desh_print("        DLC IE type: %s (0x%02x)",
 			   dect_phy_mac_dlc_pdu_ie_type_string_get(message->data_sdu.dlc_ie_type),
