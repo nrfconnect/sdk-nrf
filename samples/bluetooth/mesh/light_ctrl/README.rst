@@ -124,7 +124,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Buttons:
         Can be used to input the out-of-band (OOB) authentication value during provisioning.
@@ -135,9 +135,6 @@ User interface
         Show the OOB authentication value during provisioning if the "Push button" OOB method is used.
         **LED 1** outputs the current light level of the Light Lightness Server in the first element.
         If the :ref:`emds_readme` feature is enabled and **Button 4** is pressed **LEDs 2** to **LED 4** will light up to show that the board is halted.
-
-      .. note::
-        The :zephyr:board:`nrf52840dongle` does not support emergency data storage.
 
    .. group-tab:: nRF54 DKs
 
@@ -156,15 +153,7 @@ Configuration
 
 |config|
 
-.. tabs::
-
-   .. group-tab:: nRF52 DK (nRF52832)
-
-      Due to limited RAM on the nRF52832 device, the Friend feature is disabled for this DK.
-
-   .. group-tab:: nRF53 DKs
-
-      |nrf5340_mesh_sample_note|
+|nrf5340_mesh_sample_note|
 
 The Kconfig option :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_REG_SPEC` is set by default as it is necessary for the :ref:`bt_mesh_light_ctrl_srv_readme` model according to the `Bluetooth Mesh model specification`_.
 The option enables a separate module called illuminance regulator.
@@ -227,7 +216,7 @@ Testing consists of provisioning the device and configuring it for communication
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       When the development kit is started, it will keep its previous Light state as the ``BT_MESH_ON_POWER_UP_RESTORE`` is set for the :ref:`bt_mesh_lightness_srv_readme`.
       When :ref:`emds_readme` is enabled it is important that the **Button 4** is used to store the data before the development kit is halted and then restarted.

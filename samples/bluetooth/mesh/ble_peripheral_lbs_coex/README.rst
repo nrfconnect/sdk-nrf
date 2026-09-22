@@ -40,7 +40,7 @@ LED Button Service
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       When connected, the :ref:`lbs_readme` sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
       The mobile application on the device can display the received button state and control the state of **LED 2** on the development kit.
@@ -75,7 +75,7 @@ The models are used for the following purposes:
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       * :ref:`bt_mesh_onoff_srv_readme` instance in element 1 controls **LED 1**.
       * Config Server allows configurator devices to configure the node remotely.
@@ -96,7 +96,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Buttons (Common):
          Can be used to input the OOB authentication value during provisioning.
@@ -180,7 +180,7 @@ Configure the Generic OnOff Server model on the root element of the **Mesh and P
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Bind the model to **Application Key 1**.
          Once the model is bound to the application key, you can control **LED 1** on the device.
@@ -203,7 +203,7 @@ After programming the sample to your development kit, test it by performing the 
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
       #. Power on the development kit.
