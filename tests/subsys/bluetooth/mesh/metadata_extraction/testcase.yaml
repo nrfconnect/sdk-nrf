@@ -1,12 +1,12 @@
 common:
   build_only: true
-  platform_allow: nrf52840dk/nrf52840
+  platform_allow: nrf54l15dk/nrf54l15/cpuapp
   tags:
     - bluetooth
     - ci_build
     - ci_tests_subsys_bluetooth_mesh
   integration_platforms:
-    - nrf52840dk/nrf52840
+    - nrf54l15dk/nrf54l15/cpuapp
 tests:
   bluetooth.mesh.metadata_extraction_single:
     sysbuild: true
