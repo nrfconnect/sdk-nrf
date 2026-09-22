@@ -25,7 +25,7 @@ config FW_INFO_INVALIDATE_API
 
 config FW_INFO_OFFSET
 	hex "The location of firmware info inside this firmware"
-	default 0x600 if SOC_SERIES_NRF54L
+	default 0x600 if SOC_SERIES_NRF54L || (SOC_SERIES_NRF71 && BOOTLOADER_MCUBOOT)
 	default 0x800 if SOC_SERIES_NRF92
 	default 0xe00 if SOC_SERIES_NRF71
 	default 0x200
