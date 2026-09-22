@@ -13,11 +13,11 @@
 #include <limits.h>
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
-#include <zephyr/net/socket.h>
 #include <zephyr/sys/slist.h>
 #include <zephyr/logging/log.h>
 #include <nrf_errno.h>
 #include <nrf_modem_at.h>
+#include <nrf_socket.h>
 #include <modem/lte_lc.h>
 #include <modem/at_monitor.h>
 #include <modem/at_parser.h>
@@ -689,9 +689,9 @@ static int pdn_sa_family_from_ip_string(const char *src)
 {
 	char buf[NET_INET6_ADDRSTRLEN];
 
-	if (zsock_inet_pton(NET_AF_INET, src, buf)) {
+	if (nrf_inet_pton(NET_AF_INET, src, buf)) {
 		return NET_AF_INET;
-	} else if (zsock_inet_pton(NET_AF_INET6, src, buf)) {
+	} else if (nrf_inet_pton(NET_AF_INET6, src, buf)) {
 		return NET_AF_INET6;
 	}
 	return -1;
@@ -705,17 +705,17 @@ static void pdn_dynamic_info_dns_addr_fill(struct lte_lc_pdn_dynamic_info *pdn_i
 	const int family = pdn_sa_family_from_ip_string(dns_addr_str_primary);
 
 	if (family == NET_AF_INET) {
-		(void)zsock_inet_pton(NET_AF_INET, dns_addr_str_primary,
-				      &(pdn_info->dns_addr4_primary));
-		(void)zsock_inet_pton(NET_AF_INET, dns_addr_str_secondary,
-				      &(pdn_info->dns_addr4_secondary));
+		(void)nrf_inet_pton(NET_AF_INET, dns_addr_str_primary,
+				    &(pdn_info->dns_addr4_primary));
+		(void)nrf_inet_pton(NET_AF_INET, dns_addr_str_secondary,
+				    &(pdn_info->dns_addr4_secondary));
 
 		pdn_info->ipv4_mtu = mtu;
 	} else if (family == NET_AF_INET6) {
-		(void)zsock_inet_pton(NET_AF_INET6, dns_addr_str_primary,
-				      &(pdn_info->dns_addr6_primary));
-		(void)zsock_inet_pton(NET_AF_INET6, dns_addr_str_secondary,
-				      &(pdn_info->dns_addr6_secondary));
+		(void)nrf_inet_pton(NET_AF_INET6, dns_addr_str_primary,
+				    &(pdn_info->dns_addr6_primary));
+		(void)nrf_inet_pton(NET_AF_INET6, dns_addr_str_secondary,
+				    &(pdn_info->dns_addr6_secondary));
 		pdn_info->ipv6_mtu = mtu;
 	}
 }
