@@ -174,11 +174,11 @@ static int chip_temp_get(struct bt_mesh_sensor_srv *srv,
 	return 0;
 }
 
-/* Tolerance is based on the nRF52832's temperature sensor's accuracy and range (5/125 = 4%). */
+/* nRF54L15 die temp sensor: +/-7 C accuracy over a -40 to 105 C range (7/145, rounded up). */
 static const struct bt_mesh_sensor_descriptor chip_temp_descriptor = {
 	.tolerance = {
-		.negative = BT_MESH_SENSOR_TOLERANCE_ENCODE(4),
-		.positive = BT_MESH_SENSOR_TOLERANCE_ENCODE(4),
+		.negative = BT_MESH_SENSOR_TOLERANCE_ENCODE(5),
+		.positive = BT_MESH_SENSOR_TOLERANCE_ENCODE(5),
 	},
 	.sampling_type = BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS,
 };
