@@ -271,6 +271,14 @@ In the |NCS|, the settings subsystem with ZMS/NVS backend is selected as the def
 For networks where power loss must not open a replay window, consider using EMDS instead of the settings subsystem for RPL persistence.
 See :ref:`emds_readme`.
 
+.. important::
+
+  When using EMDS on the nRF54L Series devices, the product specification provides only typical RRAM write timing and write current values.
+  Therefore, you must leave ample margin (~2× or more) and test for your use case when sizing the capacitor that powers EMDS writes during abrupt power failure.
+  If the capacitor is insufficiently sized, the RPL snapshot might not be stored successfully during power down.
+  Upon the next reboot, the RPL will be either empty or restored from a previous snapshot (if any).
+  The device can then potentially accept replayed messages from previously seen source addresses until new legitimate messages with higher sequence numbers arrive, opening a replay attack risk.
+
 When RPL is persisted through the settings subsystem, the store timeout (:kconfig:option:`CONFIG_BT_MESH_RPL_STORE_TIMEOUT`) determines the interval at which changed RPL entries are written to storage.
 Both the NVS and ZMS backends run garbage collection automatically when a write needs free space; GC is not application-controllable, may start on any Settings write, and blocks further Settings writes until the current sector GC completes.
 
