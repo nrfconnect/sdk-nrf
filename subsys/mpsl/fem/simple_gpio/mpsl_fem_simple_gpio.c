@@ -34,7 +34,7 @@ static int fem_simple_gpio_configure(void)
 {
 	int err;
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
 	uint8_t ctx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
 	nrfx_gpiote_t *ctx_gpiote =
 		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, ctx_gpios));
@@ -44,7 +44,7 @@ static int fem_simple_gpio_configure(void)
 	}
 #endif
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
 	uint8_t crx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
 	nrfx_gpiote_t *crx_gpiote =
 		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, crx_gpios));
@@ -58,8 +58,8 @@ static int fem_simple_gpio_configure(void)
 
 #if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios)
 
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios) && \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios) == \
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios) &&                                                 \
+	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios) ==                                        \
 	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios))
 
 	uint8_t tx_bypass_gpiote_channel = crx_gpiote_channel;
@@ -81,15 +81,15 @@ static int fem_simple_gpio_configure(void)
 
 #if DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios)
 
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios) && \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, ctx_gpios) == \
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios) &&                                                 \
+	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, ctx_gpios) ==                                        \
 	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, rx_bypass_gpios))
 
 	uint8_t rx_bypass_gpiote_channel = ctx_gpiote_channel;
 	nrfx_gpiote_t *rx_bypass_gpiote = ctx_gpiote;
 
-#elif DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios) == \
+#elif DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) &&                                         \
+	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios) ==                                  \
 	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, rx_bypass_gpios))
 
 	uint8_t rx_bypass_gpiote_channel = tx_bypass_gpiote_channel;
@@ -113,32 +113,23 @@ static int fem_simple_gpio_configure(void)
 
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {
-			.pa_time_gap_us  =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					ctx_settle_time_us),
-			.lna_time_gap_us =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					crx_settle_time_us),
-			.pa_gain_db      =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					tx_gain_db),
-			.lna_gain_db     =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					rx_gain_db),
-			.bypass_gain_db  =
-				DT_PROP_OR(DT_NODELABEL(nrf_radio_fem),
-					bypass_gain_db, RADIO_FEM_BYPASS_DISABLE)
+			       .pa_time_gap_us = DT_PROP(RADIO_FEM_NODE, ctx_settle_time_us),
+			       .lna_time_gap_us = DT_PROP(RADIO_FEM_NODE, crx_settle_time_us),
+			       .pa_gain_db = DT_PROP(RADIO_FEM_NODE, tx_gain_db),
+			       .lna_gain_db = DT_PROP(RADIO_FEM_NODE, rx_gain_db),
+			       .bypass_gain_db = DT_PROP_OR(RADIO_FEM_NODE, bypass_gain_db,
+							    RADIO_FEM_BYPASS_DISABLE)
 		},
 		.pa_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
+			.gpio_pin = {
+				.p_port = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
 				.port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
 			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
-			.gpiote_ch_id  = ctx_gpiote_channel,
+			.enable = true,
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
+			.gpiote_ch_id = ctx_gpiote_channel,
 #if defined(NRF54L_SERIES)
 			.p_gpiote = ctx_gpiote->p_reg,
 #endif
@@ -147,15 +138,15 @@ static int fem_simple_gpio_configure(void)
 #endif
 		},
 		.lna_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
+			.gpio_pin = {
+				.p_port = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
 				.port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
 			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
-			.gpiote_ch_id  = crx_gpiote_channel,
+			.enable = true,
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
+			.gpiote_ch_id = crx_gpiote_channel,
 #if defined(NRF54L_SERIES)
 			.p_gpiote = crx_gpiote->p_reg,
 #endif
@@ -165,31 +156,31 @@ static int fem_simple_gpio_configure(void)
 		},
 		.tx_bypass_pin_config = {
 #if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && defined(NRF54L_SERIES)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(tx_bypass_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(tx_bypass_gpios),
+			.gpio_pin = {
+				.p_port = MPSL_FEM_GPIO_PORT_REG(tx_bypass_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(tx_bypass_gpios),
 				.port_pin = MPSL_FEM_GPIO_PIN_NO(tx_bypass_gpios),
 			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(tx_bypass_gpios),
-			.gpiote_ch_id  = tx_bypass_gpiote_channel,
-			.p_gpiote      = tx_bypass_gpiote->p_reg,
-#else /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
+			.enable = true,
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(tx_bypass_gpios),
+			.gpiote_ch_id = tx_bypass_gpiote_channel,
+			.p_gpiote = tx_bypass_gpiote->p_reg,
+#else  /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
 		},
 		.rx_bypass_pin_config = {
 #if DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && defined(NRF54L_SERIES)
-			.gpio_pin      = {
-				.p_port   = MPSL_FEM_GPIO_PORT_REG(rx_bypass_gpios),
-				.port_no  = MPSL_FEM_GPIO_PORT_NO(rx_bypass_gpios),
+			.gpio_pin = {
+				.p_port = MPSL_FEM_GPIO_PORT_REG(rx_bypass_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(rx_bypass_gpios),
 				.port_pin = MPSL_FEM_GPIO_PIN_NO(rx_bypass_gpios),
 			},
-			.enable        = true,
-			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(rx_bypass_gpios),
-			.gpiote_ch_id  = rx_bypass_gpiote_channel,
+			.enable = true,
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(rx_bypass_gpios),
+			.gpiote_ch_id = rx_bypass_gpiote_channel,
 			.p_gpiote = rx_bypass_gpiote->p_reg,
-#else /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && NRF54L_SERIES */
+#else  /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && NRF54L_SERIES */
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && NRF54L_SERIES */
 		},
@@ -212,9 +203,8 @@ static int fem_simple_gpio_configure(void)
 	}
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-		   (err = mpsl_fem_utils_egu_channel_alloc(cfg.egu_channels,
-							   ARRAY_SIZE(cfg.egu_channels),
-							   cfg.egu_instance_no);))
+		   (err = mpsl_fem_utils_egu_channel_alloc(
+			    cfg.egu_channels, ARRAY_SIZE(cfg.egu_channels), cfg.egu_instance_no);))
 	if (err) {
 		return err;
 	}
@@ -248,14 +238,14 @@ SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 static int mpsl_fem_host_init(void)
 {
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ctx_gpios);
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
+	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, ctx_gpios);
 
 	soc_secure_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-	uint8_t crx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), crx_gpios);
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
+	uint8_t crx_pin = NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios);
 
 	soc_secure_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
