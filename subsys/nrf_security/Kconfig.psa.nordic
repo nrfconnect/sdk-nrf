@@ -81,8 +81,8 @@ config PSA_HAS_HASH_SUPPORT
 		   PSA_WANT_ALG_SHAKE128_256  || \
 		   PSA_WANT_ALG_SHAKE256_192  || \
 		   PSA_WANT_ALG_SHAKE256_256  || \
-			PSA_WANT_ALG_SHAKE256_512	|| \
-			PSA_WANT_ALG_AES_MMO_ZIGBEE
+		   PSA_WANT_ALG_SHAKE256_512  || \
+		   PSA_WANT_ALG_AES_MMO_ZIGBEE
 	help
 	  Promptless configuration stating that hash is supported.
 
