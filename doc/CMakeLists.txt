@@ -60,6 +60,18 @@ file(MAKE_DIRECTORY ${KCONFIG_BINARY_DIR})
 #-------------------------------------------------------------------------------
 # Functions
 
+# locate west project
+# Args:
+# - name: Project name
+# - out: Output var for project path
+function(locate_project name out)
+  execute_process(
+    COMMAND ${WEST} list -f "{abspath}" ${name}
+    OUTPUT_VARIABLE path
+    OUTPUT_STRIP_TRAILING_WHITESPACE
+  )
+  set(${out} ${path} PARENT_SCOPE)
+endfunction()
 # Add a new Doxygen docset.
 #
 # Args:
@@ -384,6 +396,14 @@ if(NCS_RELEASE)
 endif()
 
 add_docset(kconfig "" SPHINXOPTS ${KCONFIG_SPHINXOPTS})
+
+#-------------------------------------------------------------------------------
+# docset: find-my
+set(FIND_MY_BASE)
+locate_project("find-my" FIND_MY_BASE)
+if(EXISTS ${FIND_MY_BASE})
+  include(${FIND_MY_BASE}/doc/CMakeLists.txt)
+endif()
 
 #-------------------------------------------------------------------------------
 # Global targets
