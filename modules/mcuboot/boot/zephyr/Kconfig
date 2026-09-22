@@ -84,6 +84,21 @@ config NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION_INITIAL_REGION_SIZE
 	  to write protect a PERIPHCONF partition and/or MPCCONF partition together with
 	  integrity checking the region at boot using the UICR.PROTECTEDMEM feature.
 
+config NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION_TRAILING_REGION_SIZE
+	hex "Size of the trailing write protected region"
+	default 0x0
+	help
+	  Size in bytes of an additional write protected region placed directly above the highest
+	  addressed slot, which must be a multiple of 4096 bytes. Use it to write protect
+	  partitions that are placed above the slots rather than below the first one, for example
+	  a PERIPHCONF partition and/or MPCCONF partition. Unlike the initial region, this one is
+	  not covered by the UICR.MPCCONF entries, so it is only write protected from the point
+	  where MCUboot applies the configuration for the slot it boots.
+
+	  Only the entries applied when booting an image from its first slot are covered, so this
+	  is not available together with direct XIP, where an image is booted in place from its
+	  upper slot (slot1, slot3, ...) as well.
+
 endif
 
 if NCS_MCUBOOT_LOAD_PERIPHCONF || NCS_MCUBOOT_MPCCONF_STATIC_WRITE_PROTECTION
