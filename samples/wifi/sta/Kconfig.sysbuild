@@ -4,8 +4,6 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config WIFI_NRF70
-	default n if BOARD_NRF7120DK_NRF7120_CPUAPP || BOARD_NRF7120DK_NRF7120_CPUAPP_NS
-	default y
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/Kconfig.sysbuild.nrf70"
 
 source "share/sysbuild/Kconfig"

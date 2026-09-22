@@ -4,6 +4,8 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/Kconfig.sysbuild.nrf70"
+
 config SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST
 	bool
 	default y if SOC_SERIES_NRF53 || SOC_SERIES_NRF54

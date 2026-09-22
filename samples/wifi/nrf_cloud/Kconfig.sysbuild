@@ -4,10 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-config WIFI_NRF70
-	default y if BOARD_NRF7002DK_NRF5340_CPUAPP_NS || \
-		BOARD_NRF54LM20DK_NRF54LM20A_CPUAPP_NS || \
-		BOARD_NRF54LM20DK_NRF54LM20B_CPUAPP_NS
+source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/Kconfig.sysbuild.nrf70"
 
 # MCUBoot is not fully supported on nRF7120/ns yet
 choice BOOTLOADER
