@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* TIMER20, 16MHz */
+
+/ {
+	aliases {
+		led = &led0;
+		counter = &timer20;
+	};
+};
+
+&timer20 {
+	status = "okay";
+};
+
+&gpio4 {
+	status = "disabled";
+};
