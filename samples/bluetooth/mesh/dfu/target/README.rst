@@ -100,9 +100,6 @@ Building and running
 
 .. include:: /includes/build_and_run.txt
 
-.. note::
-   For the ``nrf52840dongle/nrf52840`` board target, use the merged :file:`/build/merged_nrf52840dongle_nrf52840.hex` file and follow the instructions in the :zephyr:board:`nrf52840dongle` documentation on how to create and flash a DFU package using ``nrfutil``.
-
 Testing
 =======
 
@@ -199,9 +196,6 @@ Logging
 
 In this sample, UART and SEGGER RTT are available as logging backends.
 
-.. note::
-   With the :zephyr:board:`nrf52840dongle`, only logging over UART is available.
-
 External flash support
 ======================
 
@@ -221,7 +215,7 @@ Build the sample using the following command:
 
    west build -p -b *board_name* -- -DFILE_SUFFIX=dfu_ext_flash
 
-Currently, DFU external flash is supported on the ``nrf52840dk/nrf52840`` and ``nrf54l15dk/nrf54l15/cpuapp`` board targets.
+Currently, DFU external flash is supported on the ``nrf54l15dk/nrf54l15/cpuapp`` board target.
 
 Settings partition storage
 --------------------------
