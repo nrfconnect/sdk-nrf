@@ -17,11 +17,6 @@
 	};
 };
 
-/* Enable the trace signal on the application bellboard. */
-&cpuapp_bellboard {
-	nordic,interrupt-mapping = <0xe3042041 0>;
-};
-
 /delete-node/ &cpuapp_cpucell_ipc_shm_ctrl;
 /delete-node/ &cpuapp_cpucell_ipc_shm_heap;
 /delete-node/ &cpucell_cpuapp_ipc_shm_heap;
