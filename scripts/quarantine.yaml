@@ -3,19 +3,6 @@
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
 - scenarios:
-    - nrf.extended.drivers.uart.async_dual
-    - nrf.extended.drivers.uart.async_dual.busy_sim
-    - nrf.extended.drivers.uart.async_dual.pm_runtime
-    - nrf.extended.drivers.uart.async_dual.pm_runtime.busy_sim
-    - nrf.extended.drivers.uart.async_dual.pm_runtime.explicit
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9628"
-
-- scenarios:
-    - benchmarks.bootup_time.mcuboot
-    - drivers.grtc.test_mcuboot_grtc_no_uninit
-    - drivers.grtc.test_mcuboot_grtc_uninit
     - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuapp
@@ -96,23 +83,8 @@
   comment: "RAM Overflow"
 
 - scenarios:
-    - benchmarks.current_consumption.nfc_idle
-  platforms:
-    - nrf9251dk/nrf9251/cpuapp
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-10000"
-
-- scenarios:
-    - drivers.adc.adc_latency
-    - drivers.grtc.grtc_clk_out.fast
-    - drivers.grtc.grtc_clk_out.slow
     - drivers.timer.lfclk_accuracy
     - drivers.timer.lfclk_accuracy.lfrc_nrf54l
-    - drivers.uart.uart_instances
-    - nrf.extended.drivers.adc
-    - nrf.extended.drivers.adc.accuracy.ref_volt
-    - nrf.extended.sample.drivers.adc.adc_dt
-    - nrf.extended.sample.drivers.adc.adc_sequence
   platforms:
     - nrf7120dk/nrf7120/cpuapp
   comment: "Waiting for nrf7120 DK"
@@ -130,28 +102,10 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40914"
 
 - scenarios:
-    - drivers.ppi_seq_i2c_spi.i2c_timer_notifier_counter
-    - drivers.ppi_seq_i2c_spi.spi_timer_extra_op
-    - drivers.ppi_seq_i2c_spi.spi_timer_notifier
-    - drivers.ppi_seq_i2c_spi.spi_timer_trigger
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpuapp
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40944"
-
-- scenarios:
     - nsib.update.invalid_image
   platforms:
     - nrf54lm20dk/nrf54lm20a/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41204"
-
-- scenarios:
-    - benchmarks.power_load.nrf92
-    - drivers.audio.pdm_loopback.nrf9251.audiopll.44k1hz
-    - drivers.audio.pdm_loopback.nrf9251.audiopll.48khz
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41256"
 
 - scenarios:
     - drivers.timer.delay_accuracy.hfxo
