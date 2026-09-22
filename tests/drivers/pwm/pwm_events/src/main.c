@@ -6,18 +6,21 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/ztest.h>
+#include <dmm.h>
 #include <nrfx_pwm.h>
 #include <nrfx_timer.h>
 #include <helpers/nrfx_gppi.h>
 #include <debug/ppi_trace.h>
 
 #define PWM_OUTPUT_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(pwm_led), gpios)
+#define PWM_MEM_SECTION DMM_MEMORY_SECTION(DT_NODELABEL(dut_pwm))
 
 #if defined(CONFIG_PPI_TRACE)
 #define DEBUG_PIN NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(debug_pin), gpios)
 #endif
 
 #define SLEEP_TIME_MS 500
+#define DUTY_CYCLE_VAL_COUNT 4
 
 struct pwm_events_fixture {
 	nrfx_pwm_t *pwm;
@@ -148,7 +151,7 @@ ZTEST_F(pwm_events, test_pwm_comparematch_event)
 }
 
 /*
- * MLTPAN-115 related test
+ * MLTPAN-115/HMPAN-235 related test
  * PAN symptoms:
  * EVENT_COMPAREMATCH toggles before EVENT_STARTED/SEQSTARTED
  *
@@ -216,11 +219,16 @@ static void *test_setup(void)
 	static struct pwm_events_fixture fixture;
 	static nrfx_timer_t test_timer = NRFX_TIMER_INSTANCE(DT_REG_ADDR(DT_NODELABEL(tst_timer)));
 	static nrfx_pwm_t pwm = NRFX_PWM_INSTANCE(DT_REG_ADDR(DT_NODELABEL(dut_pwm)));
-	static nrf_pwm_values_common_t pwm_duty_cycle_values[] = {0x500, 0x600, 0x500, 0x600};
+	static nrf_pwm_values_common_t pwm_duty_cycle_values[DUTY_CYCLE_VAL_COUNT] PWM_MEM_SECTION;
 	static nrf_pwm_sequence_t pwm_sequence = {.values = {pwm_duty_cycle_values},
 						  .length = ARRAY_SIZE(pwm_duty_cycle_values),
 						  .repeats = 0,
 						  .end_delay = 0};
+
+	/* Startup code does not initialize variables placed in special memory regions. */
+	for (size_t i = 0; i < ARRAY_SIZE(pwm_duty_cycle_values); i++) {
+		pwm_duty_cycle_values[i] = (i & 0x01) ? 0x0500 : 0x0600;
+	}
 
 	fixture.pwm = &pwm;
 	fixture.pwm_sequence = &pwm_sequence;
