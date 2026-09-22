@@ -1,11 +1,9 @@
 #
-# Copyright (c) 2023 Nordic Semiconductor
+# Copyright (c) 2026 Nordic Semiconductor ASA
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
 source "${ZEPHYR_NRF_MODULE_DIR}/samples/wifi/Kconfig.sysbuild.nrf70"
-source "share/sysbuild/Kconfig"
 
-config NRF_DEFAULT_IPC_RADIO
-	default y
+source "share/sysbuild/Kconfig"

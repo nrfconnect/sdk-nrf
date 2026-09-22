@@ -70,8 +70,6 @@ tests:
   sample.nrf7120.promiscuous:
     sysbuild: true
     build_only: true
-    extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
