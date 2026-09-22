@@ -7,7 +7,7 @@
  * application overlay. Flash layout here must match
  * ``boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.overlay`` (boot, TF-M storage,
  * image-0 on RRAM, image-1 on mx25r64, storage) so the bootloader reads the
- * primary slot at 0x18000, not the default cpuapp slot at 0x10000.
+ * primary slot at 0x1a000, not the default cpuapp slot at 0x10000.
  */
 
 / {
@@ -26,14 +26,14 @@
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "mcuboot";
-			reg = <0x0 0xd800>;
+			reg = <0x0 0x10000>;
 		};
 
-		tfm_storage_partition: partition@e000 {
+		tfm_storage_partition: partition@10000 {
 			compatible = "zephyr,mapped-partition";
 			label = "tfm-storage";
-			reg = <0xe000 DT_SIZE_K(40)>;
-			ranges = <0x0 0xe000 DT_SIZE_K(40)>;
+			reg = <0x10000 DT_SIZE_K(40)>;
+			ranges = <0x0 0x10000 DT_SIZE_K(40)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -57,10 +57,10 @@
 		};
 
 		/* Single image-0 span (signed S+NS bundle); same size/offset as NS app. */
-		slot0_partition: partition@18000 {
+		slot0_partition: partition@1a000 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x18000 0x1e3000>;
+			reg = <0x1a000 0x1e1000>;
 		};
 
 		nonsecure_storage: partition@1fb000 {
@@ -90,7 +90,7 @@
 
 		slot1_partition: partition@0 {
 			label = "image-1";
-			reg = <0x0 0x1e3000>;
+			reg = <0x0 0x1e1000>;
 		};
 	};
 };
