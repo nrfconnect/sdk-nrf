@@ -624,6 +624,10 @@ Networking samples
 
 * :ref:`http_server` sample:
 
+  * Updated the number of available network connection slots for Wi-Fi builds.
+    The sample's base setup already consumed 6 of the 10 slots configured through :kconfig:option:`CONFIG_NET_MAX_CONN`, leaving only 4 for incoming client connections.
+    The value was increased from 10 to 16 for more headroom.
+
   * Fixed:
 
     * The pregenerated server and client TLS certificates.
