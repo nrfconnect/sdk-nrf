@@ -111,7 +111,7 @@ The models are used for the following purposes:
 The model handling is implemented in :file:`src/model_handler.c`.
 It uses the ``TEMP_NRF5`` temperature sensor.
 
-The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the `nRF52832 Temperature Sensor Electrical Specification`_.
+The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the die temperature sensor accuracy given in the `nRF54L15 Datasheet`_.
 The descriptor also specifies the temperature sensor's sampling type, which is :c:var:`BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS`.
 
 The :ref:`dk_buttons_and_leds_readme` library is used to detect button presses.
