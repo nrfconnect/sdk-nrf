@@ -7,7 +7,7 @@ Point-to-point DFU over Bluetooth Low Energy
    :local:
    :depth: 2
 
-Following the instructions described in :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>`, you can enable the support for and perform FOTA updates using a mobile app.
+Following the instructions described in FOTA over Bluetooth Low Energy for :ref:`nRF53 <ug_nrf53_developing_ble_fota>` or :ref:`nRF54L <ug_nrf54l_developing_ble_fota>` Series devices, you can enable the support for and perform FOTA updates using a mobile app.
 
 If the device's composition data is going to change after the FOTA update on a Bluetooth Mesh device is performed, unprovision the device before downloading the new image.
 
@@ -25,7 +25,7 @@ Otherwise, the device will be unprovisioned after the update.
 Point-to point DFU over Bluetooth Low Energy in Bluetooth Mesh samples
 **********************************************************************
 
-The :ref:`bluetooth_mesh_light`, :ref:`ble_mesh_dfu_target` and :ref:`ble_mesh_dfu_distributor` samples enable support for point-to-point DFU over Bluetooth Low Energy for nRF52 Series development kits.
+The :ref:`bluetooth_mesh_light`, :ref:`ble_mesh_dfu_target` and :ref:`ble_mesh_dfu_distributor` samples enable support for point-to-point DFU over Bluetooth Low Energy for nRF53 and nRF54 Series development kits.
 See the sample documentation for each of the above mentioned samples for more details.
 
 Discovering Bluetooth Mesh devices in nRF Connect Device Manager
@@ -49,7 +49,7 @@ You should see the device appear in the list of devices.
 Advertising SMP UUID
 ====================
 
-To make sure that your Bluetooth Mesh device advertises the SMP service UUID, in addition to the instructions described in :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>`, do the following:
+To make sure that your Bluetooth Mesh device advertises the SMP service UUID, in addition to the instructions described in FOTA over Bluetooth Low Energy for :ref:`nRF53 <ug_nrf53_developing_ble_fota>` or :ref:`nRF54L <ug_nrf54l_developing_ble_fota>` Series devices, complete the following steps:
 
 1. Add the following code to your application:
 
