@@ -73,6 +73,7 @@ Authentication deals with security before association, and is typically divided 
 
 Apart from WPA authentication, the supplicant performs other duties in Wi-Fi associated with joining a network such as network scanning, key exchange, and roaming support.
 The supplicant used with Nordic Semiconductor Wi-Fi devices is a Zephyr port of `WPA Supplicant`_.
+Refer to the :ref:`ug_nrf70_features_hostap` section for more information.
 
 Wi-Fi baseband
 ==============
@@ -139,3 +140,39 @@ The range of supported rates is vast, ranging from 86 Mbps for a single antenna 
 Wi-Fi has traditionally been single user (SU) based, which means that during any particular on-air packet transmission, the communication is between two users (excluding broadcast/multicast scenarios where the same information is delivered to multiple users).
 With the advent of Wi-Fi 6 (and to some extent Wi-Fi 5), multiuser (MU) support has been introduced.
 Through both MIMO and Orthogonal Frequency Division Multiple Access (OFDMA) techniques (and even a combination of both), it is now possible to send unique information to multiple users in the same on-air packet transmission, both in the downlink and uplink direction.
+
+.. _ug_nrf70_features_hostap:
+
+hostap (WPA Supplicant)
+***********************
+
+The nRF70 Series devices use the `WPA Supplicant`_ to implement full Wi-Fi functionality.
+The WPA supplicant is part of the ``hostap`` project and is a widely used implementation of the IEEE 802.11i standard for wireless LAN security.
+The WPA supplicant is a software component that implements the Wi-Fi Protected Access (WPA™), WPA2™ and WPA3™ security protocols.
+
+The nRF70 Series devices use `Zephyr hostap fork`_, a fork of the hostap project that is integrated with the Zephyr RTOS.
+The WPA supplicant is integrated with the Zephyr RTOS and registers as a Wi-Fi network manager in the Zephyr networking stack.
+See `Zephyr Wi-Fi NM API`_ for details.
+The `Zephyr Wi-Fi management`_ layer in Zephyr uses the Wi-Fi network manager to manage the Wi-Fi interface.
+
+The nRF70 Series driver registers as a Wi-Fi device in the Zephyr networking stack and provides the Wi-Fi interface to the WPA supplicant.
+The WPA supplicant then manages the Wi-Fi interface and provides the Wi-Fi functionality to the application.
+
+.. note::
+
+      The WPA supplicant is only used for System mode to offer full Wi-Fi functionality.
+      It is not used in other modes, for example, Scan-only mode.
+
+Supported hostap features in the |NCS|
+======================================
+
+The `Zephyr hostap fork`_ supports a wide range of Wi-Fi features and functionalities.
+The nRF70 Series devices use the Zephyr hostap fork but only implement a subset of the features supported by the fork.
+
+The nRF70 Series devices support the following features:
+
+* Wi-Fi 6 support.
+* Station mode.
+* SoftAP mode - Based on ``wpa_supplicant``.
+* WPA2-PSK and WPA3-SAE security modes.
+* WPA2-EAP-TLS security mode.
