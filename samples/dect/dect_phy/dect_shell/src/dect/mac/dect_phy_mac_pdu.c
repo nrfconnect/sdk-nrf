@@ -371,6 +371,21 @@ uint8_t dect_phy_mac_pdu_fixed_size_ie_length_get(uint8_t ie_type)
 	return length;
 }
 
+static bool dect_phy_mac_pdu_ie_type_is_data_flow(dect_phy_mac_ie_type_t ie_type)
+{
+	switch (ie_type) {
+	case DECT_PHY_MAC_IE_TYPE_USER_PLANE_DATA_FLOW1:
+	case DECT_PHY_MAC_IE_TYPE_USER_PLANE_DATA_FLOW2:
+	case DECT_PHY_MAC_IE_TYPE_USER_PLANE_DATA_FLOW3:
+	case DECT_PHY_MAC_IE_TYPE_USER_PLANE_DATA_FLOW4:
+	case DECT_PHY_MAC_IE_TYPE_HIGHER_LAYER_SIGNALING_FLOW1:
+	case DECT_PHY_MAC_IE_TYPE_HIGHER_LAYER_SIGNALING_FLOW2:
+		return true;
+	default:
+		return false;
+	}
+}
+
 /**************************************************************************************************/
 
 bool dect_phy_mac_pdu_mux_header_decode(uint8_t *header_ptr, uint32_t data_len,
@@ -436,16 +451,19 @@ bool dect_phy_mac_pdu_mux_header_decode(uint8_t *header_ptr, uint32_t data_len,
 		if (data_len < 2) {
 			return false;
 		}
-		header_size = 2;
 		mux_header_out->payload_length = *p_ptr++;
 		mux_header_out->payload_ptr = p_ptr;
 		mux_header_out->mac_ext = mac_ext;
 	} else if (mac_ext == DECT_PHY_MAC_EXT_16BIT_LEN) {
 		/* Option 'e' and 'f': variable size MAC SDU with 16bit length */
-		if (data_len < 3) {
+		uint32_t min_mux_hdr_len = 3;
+
+		if (mux_header_out->ie_type == DECT_PHY_MAC_IE_TYPE_EXTENSION) {
+			min_mux_hdr_len = 4;
+		}
+		if (data_len < min_mux_hdr_len) {
 			return false;
 		}
-		header_size = 2;
 		mux_header_out->ie_ext = 0;
 		mux_header_out->payload_length = dect_common_utils_16bit_be_read(&p_ptr);
 		if (mux_header_out->ie_type == DECT_PHY_MAC_IE_TYPE_EXTENSION) {
@@ -457,8 +475,17 @@ bool dect_phy_mac_pdu_mux_header_decode(uint8_t *header_ptr, uint32_t data_len,
 		/* Unknown mac extension */
 		return false;
 	}
-	/* Final check that payload fits to data_len excluding header_size */
-	if (mux_header_out->payload_length > data_len - header_size) {
+	/* Final check that payload fits in data_len after the MUX header */
+	{
+		uint32_t mux_hdr_len = mux_header_out->payload_ptr - header_ptr;
+
+		if (mux_header_out->payload_length > data_len - mux_hdr_len) {
+			return false;
+		}
+	}
+
+	if (mux_header_out->payload_length == 0 &&
+	    dect_phy_mac_pdu_ie_type_is_data_flow(mux_header_out->ie_type)) {
 		return false;
 	}
 
@@ -1064,19 +1091,40 @@ bool dect_phy_mac_pdu_sdus_decode(uint8_t *payload_ptr, uint32_t payload_len, sy
 		case DECT_PHY_MAC_IE_TYPE_USER_PLANE_DATA_FLOW4:
 		case DECT_PHY_MAC_IE_TYPE_HIGHER_LAYER_SIGNALING_FLOW1:
 		case DECT_PHY_MAC_IE_TYPE_HIGHER_LAYER_SIGNALING_FLOW2: {
+			uint16_t data_length;
 			uint8_t *sdu_ptr = (uint8_t *)mux_header.payload_ptr;
-			uint8_t dlc_ie_type = *sdu_ptr++ >> 4; /* DLC spec: ch. 5.3.2 */
+			uint8_t dlc_ie_type;
+
+			if (mux_header.payload_length <
+			    DECT_PHY_MAC_DLC_IE_TYPE_SERV_0_WITHOUT_ROUTING_LEN) {
+				printk("Invalid data SDU payload length\n");
+				k_free(sdu_list_item);
+				return false;
+			}
+
+			data_length = mux_header.payload_length -
+				      DECT_PHY_MAC_DLC_IE_TYPE_SERV_0_WITHOUT_ROUTING_LEN;
+			if (data_length > DECT_DATA_MAX_LEN) {
+				printk("Data SDU payload too long\n");
+				k_free(sdu_list_item);
+				return false;
+			}
+
+			if (sdu_ptr + data_length > pdu_end_ptr) {
+				printk("Data SDU payload exceeds PDU length\n");
+				k_free(sdu_list_item);
+				return false;
+			}
+
+			dlc_ie_type = *sdu_ptr++ >> 4; /* DLC spec: ch. 5.3.2 */
 
 			if (dlc_ie_type != DECT_PHY_MAC_DLC_IE_TYPE_SERV_0_WITHOUT_ROUTING) {
 				printk("Unsupported DLC IE type\n");
 			}
 			sdu_list_item->message.data_sdu.dlc_ie_type = dlc_ie_type;
 			sdu_list_item->message_type = DECT_PHY_MAC_MESSAGE_TYPE_DATA_SDU;
-			sdu_list_item->message.data_sdu.data_length =
-				mux_header.payload_length -
-				DECT_PHY_MAC_DLC_IE_TYPE_SERV_0_WITHOUT_ROUTING_LEN;
-			memcpy(sdu_list_item->message.data_sdu.data, sdu_ptr,
-			       sdu_list_item->message.data_sdu.data_length);
+			sdu_list_item->message.data_sdu.data_length = data_length;
+			memcpy(sdu_list_item->message.data_sdu.data, sdu_ptr, data_length);
 			break;
 		}
 
