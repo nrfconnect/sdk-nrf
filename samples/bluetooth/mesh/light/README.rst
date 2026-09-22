@@ -30,8 +30,6 @@ DFU requirements
 
 The configuration file :file:`prj_dfu.conf` and the :ref:`sysbuild <configuration_system_overview_sysbuild>` configuration file :file:`sysbuild_dfu.conf` enable DFU support in the application, and apply to the following platforms:
 
-* nrf52840dk/nrf52840
-* nrf21540dk/nrf52840
 * nrf54l15dk/nrf54l15/cpuapp
 * nrf5340dk/nrf5340/cpuapp
 * nrf5340dk/nrf5340/cpuapp/ns
@@ -39,7 +37,6 @@ The configuration file :file:`prj_dfu.conf` and the :ref:`sysbuild <configuratio
 While this overlay configuration is only applicable for the mentioned platforms in this sample, DFU over Bluetooth Low Energy may be used on other platforms as well.
 
 Take the flash size into consideration when using DFU over Bluetooth LE on other platforms.
-For example, both nRF52832 and nRF52833 have limited flash size.
 
 The DFU feature also requires a smartphone with Nordic Semiconductor's nRF Device Manager mobile app installed in one of the following versions:
 
@@ -186,7 +183,7 @@ Running DFU
 ===========
 
 After the sample is built with ``FILE_SUFFIX=dfu`` and programmed to your development kit, support for FOTA update is enabled.
-See :ref:`FOTA over Bluetooth Low Energy<ug_nrf52_developing_ble_fota>` for instructions on how to perform FOTA update and initiate the DFU process.
+See FOTA over Bluetooth Low Energy for :ref:`nRF53 <ug_nrf53_developing_ble_fota>` or :ref:`nRF54L <ug_nrf54l_developing_ble_fota>` Series devices for instructions on how to perform FOTA update and initiate the DFU process.
 
 External flash for settings partition
 =====================================

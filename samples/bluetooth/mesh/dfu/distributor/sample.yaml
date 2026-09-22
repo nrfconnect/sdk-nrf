@@ -11,10 +11,8 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -22,10 +20,8 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -34,20 +30,16 @@ tests:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=dfu_ext_flash
   sample.bluetooth.mesh_dfu_distributor.settings_ext_flash:
     sysbuild: true
     build_only: true
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
     extra_args: FILE_SUFFIX=settings_ext_flash
