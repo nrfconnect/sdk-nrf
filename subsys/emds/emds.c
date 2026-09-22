@@ -14,60 +14,6 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(emds, CONFIG_EMDS_LOG_LEVEL);
 
-#if NRF52_ERRATA_242_PRESENT
-#include <hal/nrf_power.h>
-/* Disable POFWARN by writing POFCON before a write or erase operation.
- * Do not attempt to write or erase if EVENTS_POFWARN is already asserted.
- */
-static bool pofcon_enabled;
-
-static int suspend_pofwarn(void)
-{
-	if (!nrf52_errata_242()) {
-		return 0;
-	}
-
-	bool enabled;
-	nrf_power_pof_thr_t pof_thr;
-
-	pof_thr = nrf_power_pofcon_get(NRF_POWER, &enabled);
-
-	if (enabled) {
-		nrf_power_pofcon_set(NRF_POWER, false, pof_thr);
-
-		/* This check need to be reworked once POFWARN event will be
-		 * served by zephyr.
-		 */
-		if (nrf_power_event_check(NRF_POWER, NRF_POWER_EVENT_POFWARN)) {
-			nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
-			return -ECANCELED;
-		}
-
-		pofcon_enabled = enabled;
-	}
-
-	return 0;
-}
-
-static void restore_pofwarn(void)
-{
-	nrf_power_pof_thr_t pof_thr;
-
-	if (pofcon_enabled) {
-		pof_thr = nrf_power_pofcon_get(NRF_POWER, NULL);
-
-		nrf_power_pofcon_set(NRF_POWER, true, pof_thr);
-		pofcon_enabled = false;
-	}
-}
-
-#define SUSPEND_POFWARN() suspend_pofwarn()
-#define RESUME_POFWARN()  restore_pofwarn()
-#else
-#define SUSPEND_POFWARN() 0
-#define RESUME_POFWARN()
-#endif /* NRF52_ERRATA_242_PRESENT */
-
 #define PARTITIONS_NUM_MAX 2
 #define CHUNK_SIZE         16
 
@@ -462,7 +408,6 @@ int emds_store(void)
 	size_t wp = 0;
 	off_t data_off = allocated_snapshot.metadata.data_instance_off;
 	int idx = allocated_snapshot.partition_index;
-	int rc = 0;
 
 	if (emds_state != EMDS_STATE_READY) {
 		return -ECANCELED;
@@ -470,11 +415,6 @@ int emds_store(void)
 
 	/* Lock all interrupts */
 	store_key = irq_lock();
-
-	if (SUSPEND_POFWARN()) {
-		rc = -ECANCELED;
-		goto unlock_and_exit;
-	}
 
 	if (flash_params_get_erase_cap(partition[idx].fp) & FLASH_ERASE_C_EXPLICIT) {
 		LOG_DBG("Writing metadata on offset: 0x%4lx, address : 0x%4lx",
@@ -516,17 +456,15 @@ int emds_store(void)
 				      offsetof(struct emds_snapshot_metadata, reserved));
 	}
 
-unlock_and_exit:
 	emds_state = EMDS_STATE_INITIALIZED;
-	RESUME_POFWARN();
 	/* Unlock all interrupts */
 	irq_unlock(store_key);
 
-	if (app_store_cb && rc == 0) {
+	if (app_store_cb) {
 		app_store_cb();
 	}
 
-	return rc;
+	return 0;
 }
 
 int emds_clear(void)

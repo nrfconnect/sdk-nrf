@@ -77,7 +77,7 @@ The EMDS never erases the partition that has the most recent snapshot found duri
 The storage is done in deterministic time, so it is possible to know how long it takes to store all registered entries.
 However, this is chip-dependent, so it is important to measure the time.
 Find timing values under the "Electrical specification" section for the non-volatile memory controller in the Product Specification for the relevant SoC or the SiP you are using.
-For example, for the nRF52840 SiP, see the `nRF52840 Product Specification`_ page.
+For example, for the nRF54L15 SoC, see the `nRF54L15 Datasheet`_ page.
 The data is stored by chunks of 16 bytes.
 The storing time is determined by the chunk preparation time and the flash writing time, and depends on both the number of stored data bytes (both data and metadata) as well as the number of chunks.
 
@@ -88,6 +88,13 @@ The following (non-public) Kconfig options are needed for the time estimation:
 
 You can tune these options to influence the estimation of the writing time (see :c:func:`emds_store_time_get`), but they do not change the actual time needed for storing the snapshot.
 It is recommended to consider the worst case scenarios when adjusting these options.
+
+.. important::
+
+  The nRF54L Series product specification provides only typical RRAM write timing and write current values.
+  Therefore, you must leave ample margin (~2× or more) and test for your use case when sizing the capacitor that powers EMDS writes during abrupt power failure.
+  If the capacitor is insufficiently sized, the data snapshot might not be stored successfully during power down.
+  In such case, upon next reboot, data will be either empty or restored from previous snapshot (if any).
 
 The application must call the :c:func:`emds_store` function to store all entries.
 This can only be done once, before the :c:func:`emds_load` and :c:func:`emds_prepare` functions must be called again.
@@ -179,10 +186,10 @@ where
 Example of time estimation
 ==========================
 
-Using the formula from the previous section, you can estimate the time required to store all entries for the :ref:`bluetooth_mesh_light_lc` sample running on the nRF52840.
+Using the formula from the previous section, you can estimate the time required to store all entries for the :ref:`bluetooth_mesh_light_lc` sample running on the nRF54L15.
 The following values can be inserted into the formula:
 
-*  Set :math:`t_\text{chunk}` = 31 µs and :math:`t_\text{word}` = 41 µs.
+*  Set :math:`t_\text{chunk}` = 8 µs and :math:`t_\text{word}` = 22 µs.
    These values are valid only for this specific chip and configuration, and should be computed for the specific configuration whenever using EMDS.
 *  The sample uses two entries, one for the RPL with 255 entries (:math:`s_i` = 2040 + 4 B) and one for the lightness state (:math:`s_i` = 3 + 4 B).
 *  The flash write block size :math:`s_\text{block}` in this case is 4 B.
@@ -193,10 +200,10 @@ This gives the following formula to compute estimated storage time:
 
 .. math::
    \begin{aligned}
-   t_\text{store} = 41{ µs}(\frac{32{ B}}{4{ B}}) + 41{ µs}(\frac{2044{ B} + 7{ B}}{4{ B}}) + 31{ µs}(\frac{2044{ B} + 7{ B}}{16{ B}}) = 25360\text{ µs}
+   t_\text{store} = 22{ µs}\left\lceil\frac{32{ B}}{4{ B}}\right\rceil + 22{ µs}(\left\lceil\frac{2044{ B}}{4{ B}}\right\rceil + \left\lceil\frac{7{ B}}{4{ B}}\right\rceil) + 8{ µs}(\left\lceil\frac{2044{ B}}{16{ B}}\right\rceil + \left\lceil\frac{7{ B}}{16{ B}}\right\rceil) = 12494\text{ µs}
    \end{aligned}
 
-Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 25360.
+Calling the :c:func:`emds_store_time_get` function in the sample automatically computes the result of the formula and returns 12494.
 
 Data storing context
 ====================
