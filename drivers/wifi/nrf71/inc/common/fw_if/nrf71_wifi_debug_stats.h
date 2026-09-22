@@ -327,6 +327,22 @@ struct umac_scan_dbg_params {
 	unsigned int scan_complete_from_lmac_6g;
 	/** Scan-done notifications toward upper layers (cfg80211) */
 	unsigned int scan_done_to_host;
+	/** Display scan: ieee80211_abort_scan when DB is at cap and a stronger new BSS arrives */
+	unsigned int display_scan_abort_bss_limit;
+	/** Host NL80211 abort-scan (rdev_abort_scan / cancel_hw_scan path) */
+	unsigned int scan_abort_req_from_host;
+	/** LMAC_CMD_SCAN_ABORT successfully queued to LMAC */
+	unsigned int scan_abort_cmd_to_lmac;
+	/** LMAC_CMD_SCAN_ABORT not sent (e.g. kmalloc failure in rpu_scan_abort) */
+	unsigned int scan_abort_cmd_alloc_fail;
+	/** wait_for_scan_abort timed out waiting for SCAN_ABORT_DONE */
+	unsigned int scan_abort_wait_timeout;
+	/** LMAC_EVENT_SCAN_ABORT_COMPLETE handled in rpu_scan_complete (IRQ path) */
+	unsigned int scan_abort_complete_lmac_irq;
+	/** cancel_hw_scan: wait succeeded; mac80211 completed from LMAC IRQ */
+	unsigned int scan_abort_cancel_scan_irq_done;
+	/** cancel_hw_scan: forced ieee80211_scan_completed after abort wait timeout */
+	unsigned int scan_abort_cancel_scan_timeout_umac;
 } __NRF_WIFI_PKD;
 
 /**

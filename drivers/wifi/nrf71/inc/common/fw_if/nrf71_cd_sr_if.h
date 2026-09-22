@@ -168,20 +168,22 @@ struct short_range_activity_info_t {
  * ranges; the critical ranges are consumed by the Short-Range driver.
  */
 struct coex_sr_priority_range_t {
-	/** SR Rx client CCCONF priority range. */
-	unsigned char sr_rx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/** SR Tx client CCCONF priority range. */
-	unsigned char sr_tx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/** Critical-activity SR Rx client CCCONF priority range. */
-	unsigned char sr_rx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/** Critical-activity SR Tx client CCCONF priority range. */
-	unsigned char sr_tx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/**
-	 * Optional index into the applicable populated priority array. When
-	 * equal to COEX_SR_PRIORITY_LEVEL_UNUSED (0xFF), the SR driver selects
-	 * a priority value according to packet type and activity criticality.
-	 */
-	unsigned char client_priority_level;
+    /** SR Rx client CCCONF priority range. */
+    unsigned char sr_rx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+    /** SR Tx client CCCONF priority range. */
+    unsigned char sr_tx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+    /**
+     * Optional index into the applicable populated priority array. When
+     * equal to COEX_SR_PRIORITY_LEVEL_UNUSED (0xFF), the SR driver selects
+     * a priority value according to packet type and activity criticality.
+     */
+    unsigned char client_priority_level;
+
+    /** Critical-activity SR Rx client CCCONF priority range. */
+    unsigned char sr_rx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+    /** Critical-activity SR Tx client CCCONF priority range. */
+    unsigned char sr_tx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+
 } __NRF_WIFI_PKD;
 
 /**
