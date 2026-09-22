@@ -48,7 +48,7 @@ These elements provide a platform for secure execution environments and secure d
 You can use :ref:`security by separation <ug_tfm_security_by_separation>` with the Cortex-M33 TrustZone® on the application core.
 When enabled, :ref:`Trusted Firmware-M (TF-M) <ug_tfm>` configures part of the memory and peripherals as non-secure and then jumps to the user application located in the non-secure area.
 
-For example, on the nRF7120 DK, the firmware on the application core is built using one of the following board targets:
+For example, on the nRF7120 DK, the firmware on the application core is built using one of the following board targets (for the nRF7120 SoC):
 
 * ``nrf7120dk/nrf7120/cpuapp`` for board targets with security by separation disabled.
 * ``nrf7120dk/nrf7120/cpuapp/ns`` for board targets with security by separation enabled.
@@ -61,7 +61,7 @@ FLPR coprocessor
 The Fast Lightweight Peripheral Processor (FLPR) is a RISC-V core that operates as a coprocessor to the application core.
 Use this core to offload processing tasks from the application core.
 
-For example, on the nRF7120 DK, the firmware on the FLPR core is built using the ``nrf7120dk/nrf7120/cpuflpr`` board target.
+For example, on the nRF7120 DK, the firmware on the FLPR core is built using the ``nrf7120dk/nrf7120/cpuflpr`` board target (for the nRF7120 SoC).
 
 Supported protocols
 *******************
