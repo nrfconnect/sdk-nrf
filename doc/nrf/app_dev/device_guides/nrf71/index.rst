@@ -21,10 +21,16 @@ Refer to the following information for the list of supported development kits (D
      - Product pages
    * - :zephyr:board:`nrf7120dk`
      - PCA10217
-     - | ``nrf7120dk/nrf7120/cpuapp``
+     - | Targets for nRF7120:
+       | ``nrf7120dk/nrf7120/cpuapp``
        | ``nrf7120dk/nrf7120/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
        | ``nrf7120dk/nrf7120/cpuflpr``
        | ``nrf7120dk/nrf7120/cpuflpr/xip``
+       | Targets for nRF7120E:
+       | ``nrf7120dk/nrf7120e/cpuapp``
+       | ``nrf7120dk/nrf7120e/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)
+       | ``nrf7120dk/nrf7120e/cpuflpr``
+       | ``nrf7120dk/nrf7120e/cpuflpr/xip``
      -
      -
 
