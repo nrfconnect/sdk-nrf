@@ -58,3 +58,76 @@ tests:
         - "Off count: 2"
         - "Active ticks:"
         - "Entering System OFF; wait 2 seconds to restart"
+  #
+  # Configurations used in Continuous Integration
+  #
+  sample.cellular.system_off.ci.gpio_wakeup.no_retention:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=gpio_wakeup
+    extra_configs:
+      - CONFIG_SAMPLE_GRTC_WAKEUP=n
+      - CONFIG_SAMPLE_GPIO_WAKEUP=y
+      - CONFIG_SAMPLE_STATE_RETENTION=n
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups"
+    timeout: 80
+  sample.cellular.system_off.ci.gpio_wakeup.retained_mem_4k:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=gpio_wakeup_retain_4k
+    extra_configs:
+      - CONFIG_SAMPLE_GRTC_WAKEUP=n
+      - CONFIG_SAMPLE_GPIO_WAKEUP=y
+      - CONFIG_SAMPLE_STATE_RETENTION=y
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_wakeups_systemoff_retention"
+    timeout: 80
+  sample.cellular.system_off.ci.grtc_wakeup.no_retention:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_configs:
+      - CONFIG_SAMPLE_GRTC_WAKEUP=y
+      - CONFIG_SAMPLE_GPIO_WAKEUP=n
+      - CONFIG_SAMPLE_STATE_RETENTION=n
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_grtc_wakeups"
+    timeout: 80
+  sample.cellular.system_off.ci.grtc_wakeup.retained_mem_8k:
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - FILE_SUFFIX=retain_8k
+    extra_configs:
+      - CONFIG_SAMPLE_GRTC_WAKEUP=y
+      - CONFIG_SAMPLE_GPIO_WAKEUP=n
+      - CONFIG_SAMPLE_STATE_RETENTION=y
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config:
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_with_grtc_wakeups"
+    timeout: 80
