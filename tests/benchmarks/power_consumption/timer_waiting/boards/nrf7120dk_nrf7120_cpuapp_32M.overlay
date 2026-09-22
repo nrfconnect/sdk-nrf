@@ -1,0 +1,22 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* TIMER10, 32MHz */
+
+/ {
+	aliases {
+		led = &led0;
+		counter = &timer10;
+	};
+};
+
+&timer10 {
+	status = "okay";
+};
+
+&gpio4 {
+	status = "disabled";
+};
