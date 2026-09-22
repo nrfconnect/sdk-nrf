@@ -422,7 +422,16 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    harness_config: *bt_harness_config
+    harness_config:
+      fixture: external_flash
+      type: multi_line
+      ordered: false
+      regex:
+        - "Starting .*bootloader"
+        - "Jumping to the .*image slot"
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
+
 
   sample.dfu.smp_svr.bt.nrf54h20dk:
     sysbuild: true
