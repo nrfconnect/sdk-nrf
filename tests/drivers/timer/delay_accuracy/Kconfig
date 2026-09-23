@@ -22,7 +22,11 @@ config TEST_TIMER_FREQUENCY_MHZ
 
 config TEST_START_HFXO
 	bool "Start HFXO to increase clock accuracy"
+	select CLOCK_CONTROL
 	help
 	  When set to 'y', clock source is switched to external crystal oscillator.
+	  Not available on the VPR cores of nRF54H and nRF92, where HFXO is
+	  requested through LRCCONF010, which only the application domain can
+	  access.
 
 source "Kconfig.zephyr"
