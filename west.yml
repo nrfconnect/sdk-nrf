@@ -35,6 +35,9 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    # Erdem's fork, tracking the nRF7120 System ON idle ULV-support work.
+    - name: erdemsimsek
+      url-base: https://github.com/erdemsimsek
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -65,7 +68,8 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 559d57a46225c95fecf9429567c591bec638f8a3
+      remote: erdemsimsek
+      revision: add-system-on-idle-sample-with-ulv-support-for-nrf7120
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
