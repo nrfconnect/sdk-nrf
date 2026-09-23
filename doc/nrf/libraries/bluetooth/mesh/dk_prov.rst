@@ -8,11 +8,11 @@ Bluetooth Mesh provisioning handler for Nordic DKs
    :depth: 2
 
 This application-side module is a basic implementation of the provisioning process handling for Development Kits from Nordic Semiconductor.
-It supports four types of out-of-band (OOB) authentication methods and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
+It supports five types of out-of-band (OOB) authentication methods and uses the Hardware Information driver to generate a deterministic UUID to uniquely represent the device.
 For more information about provisioning in Bluetooth® Mesh, see the :ref:`zephyr:bluetooth_mesh_provisioning` page in Zephyr.
 
 Used primarily in :ref:`bt_mesh_samples` applications, this handler acts as a reference implementation for the application-specific part of provisioning.
-It is enabled with the :kconfig:option:`CONFIG_BT_MESH_DK_PROV` option and by calling :c:func:`bt_mesh_dk_prov_init` in main.
+It is enabled with the :kconfig:option:`CONFIG_BT_MESH_DK_PROV` option and by calling :c:func:`bt_mesh_dk_prov_init`  or :c:func:`bt_mesh_dk_prov_init_with_static_oob` in main.
 
 The handling of the OOB authentication methods is closely tied to the hardware parameters of the Development Kits from Nordic Semiconductor.
 For deployments with custom hardware, do not extend this module.
@@ -53,6 +53,10 @@ Input: Push button
     .. note::
         It is also possible for the provisioner to select "No authentication" and skip the OOB authentication.
         This is not recommended, as it compromises the mesh network security.
+
+Static OOB
+    The Static OOB method authenticates using a fixed value known to both the device and the provisioner, instead of a value exchanged during provisioning.
+    Provide the static OOB value by calling :c:func:`bt_mesh_dk_prov_init_with_static_oob` instead of :c:func:`bt_mesh_dk_prov_init`.
 
 UUID
 ====

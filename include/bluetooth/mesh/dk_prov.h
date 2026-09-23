@@ -23,9 +23,25 @@ extern "C" {
 
 /** @brief Initialize the provisioning handler.
  *
- * @return The provisioning properties to pass to @em bt_mesh_init().
+ * @return The provisioning properties to pass to @em bt_mesh_init(), or NULL
+ *         if the provisioning handler has already been initialized.
  */
 const struct bt_mesh_prov *bt_mesh_dk_prov_init(void);
+
+/** @brief Initialize the provisioning handler with a static OOB value.
+ *
+ * @param oob_val Static OOB value, or NULL to disable static OOB. The pointer
+ *                must remain valid for as long as the device may be
+ *                provisioned.
+ * @param oob_len Length of the static OOB value, in bytes. Must be zero if
+ *                @p oob_val is NULL, otherwise non-zero.
+ *
+ * @return The provisioning properties to pass to @em bt_mesh_init(), or NULL
+ *         on invalid parameters or if the provisioning handler has already
+ *         been initialized.
+ */
+const struct bt_mesh_prov *bt_mesh_dk_prov_init_with_static_oob(const uint8_t *oob_val,
+								uint8_t oob_len);
 
 /** @brief Register a handler for node reset.
  *
