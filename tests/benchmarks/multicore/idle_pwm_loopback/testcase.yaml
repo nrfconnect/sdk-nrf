@@ -27,52 +27,53 @@ tests:
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_retained:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
     harness: pytest
-    harness_config:
+    harness_config: &pytest_idle_harness_cfg
       fixture: spi_loopback
       pytest_root:
         - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *pytest_idle_harness_cfg
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
-    harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: &pytest_s2ram_harness_cfg
+      fixture: spi_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
+
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.no_sleep_fast:
     filter: not CONFIG_COVERAGE
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_EXTRA_CONF_FILE=enable_logs.conf
       - remote_EXTRA_CONF_FILE=enable_logs.conf
@@ -86,50 +87,44 @@ tests:
         - "Multicore idle_pwm_loopback test on"
         - "Iteration 0"
         - "Iteration 1"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_retained_fast:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *pytest_idle_harness_cfg
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_fast:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
+    harness_config: *pytest_idle_harness_cfg
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.idle_fast.slow_pins:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - remote_CONFIG_TEST_SLEEP_DURATION_MS=500
@@ -137,28 +132,25 @@ tests:
       - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_slow_pins.overlay"
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     build_only: true
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.s2ram_fast.no_clock_control:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
-    extra_args:
-      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
-    harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+    extra_args:
+      - idle_pwm_loopback_DTC_OVERLAY_FILE="boards/nrf54h20dk_nrf54h20_cpuapp_fast_p7_1.overlay"
+    harness: pytest
+    harness_config: *pytest_s2ram_harness_cfg
 
   benchmarks.multicore.idle_pwm_loopback.nrf54h20dk_cpuapp_cpurad.coverage:
     filter: CONFIG_COVERAGE
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - idle_pwm_loopback_CONF_FILE=coverage.conf
       - EXTRA_DTC_OVERLAY_FILE="disable_s2ram.overlay"
@@ -171,52 +163,39 @@ tests:
       regex:
         - ".*Coverage analysis enabled.*"
         - ".*Coverage analysis start.*"
-    platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
-    integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
 
   benchmarks.multicore.idle_pwm_loopback.nrf9251dk_cpuapp_cpuppr.idle_retained:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle_retained.overlay"
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
-    platform_allow:
-      - nrf9251dk/nrf9251/cpuapp
-    integration_platforms:
-      - nrf9251dk/nrf9251/cpuapp
+    harness_config: *pytest_idle_harness_cfg
 
   benchmarks.multicore.idle_pwm_loopback.nrf9251dk_cpuapp_cpuppr.idle:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - idle_pwm_loopback_CONFIG_TEST_SLEEP_DURATION_MS=500
       - idle_pwm_loopback_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/common/workaround_idle.overlay"
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_idle"
+    harness_config: *pytest_idle_harness_cfg
+
+  benchmarks.multicore.idle_pwm_loopback.nrf9251dk_cpuapp_cpuppr.s2ram:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
-
-  benchmarks.multicore.idle_pwm_loopback.nrf9251dk_cpuapp_cpuppr.s2ram:
     filter: not CONFIG_COVERAGE
     tags: ppk_power_measure
     harness: pytest
-    harness_config:
-      fixture: spi_loopback
-      pytest_root:
-        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_pwm_and_s2ram"
-    platform_allow:
-      - nrf9251dk/nrf9251/cpuapp
-    integration_platforms:
-      - nrf9251dk/nrf9251/cpuapp
+    harness_config: *pytest_s2ram_harness_cfg
