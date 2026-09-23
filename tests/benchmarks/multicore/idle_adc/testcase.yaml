@@ -47,7 +47,7 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - SB_CONFIG_BOOTLOADER_MCUBOOT=y
-      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_adc/boards/nrf54h20dk_mcuboot.overlay"
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_adc/boards/mcuboot.overlay"
     harness_config:
       fixture: gpio_loopback
       pytest_root:
@@ -87,6 +87,25 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
     integration_platforms:
       - nrf9251dk/nrf9251/cpuapp
+    harness_config:
+      fixture: gpio_loopback
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_measure_and_data_dump_power_consumption_adc"
+
+  benchmarks.multicore.idle_adc.nrf9251dk_cpuapp.s2ram.mcuboot:
+    tags:
+      - ci_build
+      - ci_tests_benchmarks_multicore
+      - ppk_power_measure
+    filter: not CONFIG_COVERAGE
+    harness: pytest
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    extra_args:
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - mcuboot_EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_NRF_MODULE_DIR}/tests/benchmarks/multicore/idle_adc/boards/mcuboot.overlay"
     harness_config:
       fixture: gpio_loopback
       pytest_root:
