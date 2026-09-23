@@ -6,9 +6,9 @@
 .. ncs-sample::
    :title: Bluetooth: Secure Application Pairing
 
-The Secure Application Pairing sample demonstrates certificate-backed application authentication between Bluetooth® Low Energy devices.
+The Secure Application Pairing (SAP) sample demonstrates certificate-backed application authentication between Bluetooth® Low Energy (LE) devices.
 
-The sample uses a Bluetooth LE link as the carrier for the SAP handshake.
+The sample uses a Bluetooth LE link as the transport for the SAP handshake.
 After SAP authenticates both devices, the peripheral exposes a protected status service, and both roles send encrypted application messages.
 
 Requirements
@@ -34,32 +34,32 @@ Peripheral
    Advertises the SAP service, authenticates the central, and registers the protected status service only after SAP succeeds.
    It also sends a secure text payload to the central after authentication.
 
-The SAP handshake uses:
+The SAP handshake uses the following elements:
 
-* A shared SAP CA public key compiled into the image.
-* Per-device ECDSA identity keys and compact SAP certificates.
-* Signed authentication transcript messages.
-* Ephemeral ECDH over ``secp256r1``.
-* HKDF-SHA256 session key derivation.
-* AES-GCM application frames with 48-bit packet counters.
+* A shared SAP certificate authority (CA) public key compiled into the image
+* Per-device Elliptic Curve Digital Signature Algorithm (ECDSA) identity keys and compact SAP certificates
+* Signed authentication transcript messages
+* Ephemeral Elliptic Curve Diffie-Hellman (ECDH) over ``secp256r1``
+* Session key derivation with HKDF-SHA256
+* Advanced Encryption Standard in Galois/Counter Mode (AES-GCM) application frames with 48-bit packet counters
 
-SAP authentication, failure, payload, and disconnect events are delivered through the SAP callback table registered by the sample.
+The sample registers a SAP callback table that receives SAP authentication, failure, payload, and disconnect events.
 
 .. caution::
    The preset keys in :file:`src/demo_credentials.c` are insecure demonstration credentials.
    Do not reuse them in a product.
-   The :kconfig:option:`CONFIG_SAMPLE_BT_SAP_PRIVATE_KEY_FILE`, :kconfig:option:`CONFIG_SAMPLE_BT_SAP_CERTIFICATE_FILE`, and :kconfig:option:`CONFIG_SAMPLE_BT_SAP_CA_PUBLIC_KEY_FILE` options also embed raw key bytes in the built image and are intended only for demos and tests.
    Production firmware must use product provisioning and secure credential storage, such as PSA persistent keys or hardware-backed storage where available.
 
 Secure transport
 ****************
 
 SAP protects application traffic with AES-GCM.
-Each secure frame uses a 96-bit GCM nonce made from a 48-bit direction nonce base and a 48-bit monotonically increasing packet counter.
+Each secure frame uses a 96-bit AES-GCM nonce made from a 48-bit direction nonce base and a 48-bit monotonically increasing packet counter.
 
-SAP sends each GATT-carried SAP frame as one characteristic value.
-The central exchanges MTU before SAP discovery and only starts authentication if the negotiated ATT MTU is at least the value of the :c:macro:`SAP_REQUIRED_ATT_MTU` macro.
-The SAP payload size is configured with the :kconfig:option:`CONFIG_BT_SAP_MAX_APP_PAYLOAD_SIZE` option.
+SAP sends each SAP frame over Generic Attribute Profile (GATT) as one characteristic value.
+The central exchanges the maximum transmission unit (MTU) before SAP discovery.
+The central starts authentication only if the negotiated Attribute Protocol (ATT) MTU is at least the value of the :c:macro:`SAP_REQUIRED_ATT_MTU` macro.
+The :kconfig:option:`CONFIG_BT_SAP_MAX_APP_PAYLOAD_SIZE` option sets the SAP payload size.
 
 Protected service
 *****************
@@ -67,20 +67,17 @@ Protected service
 The peripheral registers the protected status service only after SAP authentication succeeds.
 The central discovers and reads this service after it receives the SAP authentication event.
 
-Firmware update flows should use encrypted images and application policy appropriate for the product.
-This sample does not implement a firmware update.
-
 Configuration
 *************
 
 |config|
 
-The sample provides role configuration fragments:
+The sample provides the following role configuration fragments:
 
-``central.conf``
+:file:`central.conf`
    Selects the central role.
 
-``peripheral.conf``
+:file:`peripheral.conf`
    Selects the peripheral role.
 
 Configuration options
@@ -90,6 +87,10 @@ The following sample-specific Kconfig options are defined in :file:`samples/blue
 
 .. options-from-kconfig::
    :show-type:
+
+.. caution::
+   The :kconfig:option:`CONFIG_SAMPLE_BT_SAP_PRIVATE_KEY_FILE`, :kconfig:option:`CONFIG_SAMPLE_BT_SAP_CERTIFICATE_FILE`, and :kconfig:option:`CONFIG_SAMPLE_BT_SAP_CA_PUBLIC_KEY_FILE` options embed raw key bytes in the built image.
+   Use these options only for demos and tests.
 
 Additional configuration
 ========================
@@ -110,15 +111,31 @@ Testing
 
 After programming the central and peripheral images to two devices, test the sample by completing the following steps:
 
-1. Connect a terminal to each device.
+1. |connect_terminal_both|
 #. Reset the peripheral device.
 #. Reset the central device.
-#. Observe that the central terminal reports that it connected to the peripheral, completed SAP authentication, read the protected status service, received the peripheral secure text payload, and sent the central secure text payload.
-#. Observe that the peripheral terminal reports that it authenticated the central, registered the protected status service, sent the peripheral secure text payload, and received the central secure text payload.
+#. Observe the output in the central terminal.
+   The central reports that it has done the following:
+
+   * Connected to the peripheral.
+   * Completed SAP authentication.
+   * Read the protected status service.
+   * Received the peripheral secure text payload.
+   * Sent the central secure text payload.
+
+#. Observe the output in the peripheral terminal.
+   The peripheral reports that it has done the following:
+
+   * Authenticated the central.
+   * Registered the protected status service.
+   * Sent the peripheral secure text payload.
+   * Received the central secure text payload.
 
 Limitations
 ***********
 
-* The sample uses preset demonstration credentials unless demo or test credential files are selected with Kconfig options.
-* The sample peripheral is intentionally single-connection so the protected service can be hidden with dynamic registration.
+* The sample uses preset demonstration credentials unless you select demo or test credential files with Kconfig options.
+* The sample peripheral supports only one connection, so that it can hide the protected service with dynamic registration.
 * The sample uses custom GATT characteristics for the SAP transport.
+* The sample does not implement a firmware update.
+  For firmware update flows, use encrypted images and application policy appropriate for the product.
