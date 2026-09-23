@@ -40,6 +40,7 @@
 
 #include <psa/crypto.h>
 #include <stdint.h>
+#include <silexpk/core.h>
 
 /** @brief Verify an ECDSA message signature.
  *
@@ -78,6 +79,42 @@ int cracen_ecdsa_verify_message(const uint8_t *pubkey, const struct sxhashalg *h
  */
 int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, size_t digestsz,
 			       const struct sx_pk_ecurve *curve, const uint8_t *signature);
+
+/** @brief Start an ECDSA verification of a pre-computed digest.
+ *
+ * Writes the operands to the PKE and starts the operation without waiting for
+ * it to complete. The operation must be completed with
+ * @ref cracen_ecdsa_verify_digest_finish, which also releases @p req. On
+ * failure the request is already released when this function returns.
+ *
+ * @param[out] req      PKE request, held until the operation is completed.
+ * @param[in] pubkey    Public key.
+ * @param[in] digest    Digest that was signed.
+ * @param[in] digestsz  Length of the digest in bytes.
+ * @param[in] curve     Elliptic curve parameters.
+ * @param[in] signature Signature to verify.
+ *
+ * @retval 0 (::SX_OK) The operation was started.
+ * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
+ */
+int cracen_ecdsa_verify_digest_start(sx_pk_req *req, const uint8_t *pubkey,
+				     const uint8_t *digest, size_t digestsz,
+				     const struct sx_pk_ecurve *curve, const uint8_t *signature);
+
+/** @brief Complete an ECDSA verification started with
+ *         @ref cracen_ecdsa_verify_digest_start.
+ *
+ * Waits for the PKE operation to complete and releases @p req.
+ *
+ * @param[in] req PKE request from @ref cracen_ecdsa_verify_digest_start.
+ *
+ * @retval 0 (::SX_OK) The signature is valid.
+ * @retval ::SX_ERR_INVALID_SIGNATURE The signature verification failed.
+ * @retval ::SX_ERR_POINT_NOT_ON_CURVE The public key point is not on the curve.
+ * @retval ::SX_ERR_OUT_OF_RANGE Signature values r or s are out of valid range.
+ * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
+ */
+int cracen_ecdsa_verify_digest_finish(sx_pk_req *req);
 
 /** @brief Sign a message using ECDSA.
  *
