@@ -142,6 +142,7 @@ Developing with PMICs
 Developing with Front-End Modules
 =================================
 
+* Added experimental support for TX/RX bypass for the SKY66409-11 FEM on the nRF54L Series devices.
 * Removed support for the nRF2220 Front-End Module (FEM).
 
 Developing with custom boards

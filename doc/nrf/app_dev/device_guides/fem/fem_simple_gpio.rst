@@ -15,7 +15,7 @@ You can use SKY66112-11 as an example on how to create bindings for different de
     :start-after: ncs_implementation_desc_start
     :end-before: ncs_implementation_desc_end
 
-The |NCS| provides also devicetree bindings for the SKY66114-11 and SKY66403-11.
+The |NCS| provides also devicetree bindings for the SKY66114-11, SKY66403-11 and SKY66409-11.
 For more details about devicetree binding, see: :ref:`Zephyr documentation <zephyr:dt-bindings>`.
 
 .. note::
@@ -114,6 +114,36 @@ The following properties are optional for use with the simple GPIO implementatio
   * ``rx-gain-db`` - Reception gain value in dB.
 
   The default values are accurate for SKY66112-11 but can be overridden when using a similar device with a different gain.
+
+Support for TX and RX bypass for SKY66409-11
+********************************************
+
+This is an :ref:`experimental <software_maturity>` feature on the nRF54L Series.
+The SKY66409-11 FEM supports TX and RX bypass modes controlled through the existing ``ctx-gpios`` and ``crx-gpios`` pins (for details, see the official documentation at the `SKY66409-11 page`_).
+The simple GPIO FEM integration can enable bypass when the devicetree node uses compatible ``skyworks,sky66409-11``:
+
+* ``tx-bypass`` - Enable TX bypass (low TX power may use the bypass path instead of the PA).
+* ``rx-bypass`` - Enable RX bypass (receive through the bypass path instead of the LNA).
+* ``bypass-gain-db`` - Bypass path gain in dB.
+  If set to 0, bypass is disabled regardless of ``tx-bypass`` or ``rx-bypass``.
+  The default value is -2 dB according to the official documentation at the `SKY66409-11 page`_.
+
+.. note::
+   The ``rx-bypass`` property disables the LNA on the reception path.
+
+Example of enabling TX and RX bypass for SKY66409-11:
+
+.. code-block::
+
+   / {
+      nrf_radio_fem: name_of_fem_node {
+         compatible = "skyworks,sky66409-11", "radio-fem-two-ctrl-pins";
+         ctx-gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+         tx-bypass;
+         crx-gpios = <&gpio0 14 GPIO_ACTIVE_HIGH>;
+         rx-bypass;
+      };
+   };
 
 .. _ug_radio_fem_sw_support_mpsl_fem_output_simple_gpio:
 
