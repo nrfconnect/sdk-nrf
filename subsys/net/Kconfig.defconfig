@@ -10,4 +10,12 @@ if NETWORKING
 config NET_SOCKETS_ENABLE_DTLS
 	select PSA_WANT_GENERATE_RANDOM if NRF_SECURITY
 
+if NET_MGMT_EVENT_QUEUE
+
+config NET_MGMT_EVENT_QUEUE_TIMEOUT
+	# Allow slow shell backends to print Wi-Fi scan results without dropping events.
+	default 50 if NET_L2_WIFI_SHELL
+
+endif # NET_MGMT_EVENT_QUEUE
+
 endif # NETWORKING
