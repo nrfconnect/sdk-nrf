@@ -12,7 +12,6 @@
 #include <nrf_modem_dect.h>
 #include <nrf_modem.h>
 #include "mock_nrf_modem_dect_mac.h"
-#include "unity.h"
 #include <string.h>
 #include <stdbool.h>
 #include <zephyr/linker/sections.h>
