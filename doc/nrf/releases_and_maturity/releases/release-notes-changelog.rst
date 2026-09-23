@@ -771,6 +771,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
   * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
   * The :ref:`nrf71_sr_coex` driver, which coordinates Wi-Fi and short-range coexistence on an nRF71 Series device.
   * The :ref:`saadct` driver, which uses an external TIMER and GPPI to trigger SAADC sampling at a configured rate.
+  * The :ref:`can_scan` device driver, which integrates the :ref:`sCAN` soft peripheral, exposing it through the :ref:`can` device driver API.
 
 SPI drivers
 -----------
