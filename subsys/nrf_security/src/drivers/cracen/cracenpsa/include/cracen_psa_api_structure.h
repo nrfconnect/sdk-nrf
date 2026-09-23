@@ -34,4 +34,8 @@
  * @defgroup cracen_psa_kmu CRACEN Key Management Unit (KMU)
  */
 
+/**
+ * @defgroup cracen_psa_hybrid_verify CRACEN Hybrid ML-DSA and ECDSA Verification
+ */
+
 /** @} */ /* cracen_psa_driver_apis */
