@@ -1,6 +1,8 @@
+:orphan:
+
 .. _migration_3.2:
 
-Migration notes for |NCS| v3.2.x
+Migration notes for |NCS| v3.2.0
 ################################
 
 .. contents::
