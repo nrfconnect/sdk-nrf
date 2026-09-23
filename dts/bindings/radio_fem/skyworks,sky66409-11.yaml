@@ -1,0 +1,85 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+description: |
+  This is a representation of the Skyworks SKY66409-11 Radio Front-End module.
+  It supplements the generic two-pin FEM binding with settling times and gain
+  values appropriate for the SKY66409-11 device. It also supports TX and RX
+  bypass using only the ctx-gpios and crx-gpios control pins, according to
+  Table 6 of the SKY66409-11 data sheet (November 12, 2025).
+  Use the tx-bypass and rx-bypass properties to enable bypass, both are
+  disabled by default.
+
+compatible: "skyworks,sky66409-11"
+
+include: radio-fem-two-ctrl-pins.yaml
+
+properties:
+  ctx-settle-time-us:
+    type: int
+    default: 23
+    description: |
+      Settling time in microseconds from activation of CTX to transmit.
+
+      The default value is based on the experimentally determined settle
+      time, that was observed on SKY66112-11 device.
+
+  crx-settle-time-us:
+    type: int
+    default: 5
+    description: |
+      Settling time in microseconds from activation of CRX to receive.
+
+      The default value is based on the experimentally determined settle
+      time that was observed on the SKY66112-11 device.
+
+  tx-gain-db:
+    type: int
+    default: 12
+    description: |
+      TX gain of the PA amplifier of SKY66409-11 in dB.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device for
+      3.3 V supply voltage. The value can be changed if, instead of
+      3.3 V supply voltage, another supply voltage is used. Refer to the
+      data sheet for the appropriate value.
+
+  rx-gain-db:
+    type: int
+    default: 12
+    description: |
+      RX gain of the LNA amplifier of SKY66409-11 in dB.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device.
+
+  bypass-gain-db:
+    type: int
+    default: -2
+    description: |
+      Gain of the Front End Module's bypass in dB. This parameter is
+      usually negative to express attenuation.
+
+      Default value is based on Table 5 of the SKY66409-11 data sheet
+      (November 12, 2025). This is a fixed parameter of the device rounded
+      to the nearest integer.
+
+  tx-bypass:
+    type: boolean
+    description: |
+      Enable the TX bypass of the SKY66409-11.
+
+      When enabled, for transmission requested with low enough power the
+      transmission occurs through the bypass circuit. For TX bypass, both
+      ctx-gpios and crx-gpios are asserted for transmission (bypass
+      mode per Table 6 of the data sheet).
+
+  rx-bypass:
+    type: boolean
+    description: |
+      Enable the RX bypass of the SKY66409-11.
+
+      The bypass is used instead of the LNA when RX is active.
+      When enabled, both ctx-gpios and crx-gpios are driven to their active
+      state for reception (with GPIO_ACTIVE_HIGH, both pins high).

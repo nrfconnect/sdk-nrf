@@ -27,6 +27,8 @@
 
 #define RADIO_FEM_NODE DT_NODELABEL(nrf_radio_fem)
 
+#define RADIO_FEM_BYPASS_GAIN_DB_DISABLED 0
+
 #if !defined(CONFIG_MPSL_FEM_PIN_FORWARDER)
 static int fem_simple_gpio_configure(void)
 {
@@ -58,6 +60,8 @@ static int fem_simple_gpio_configure(void)
 			.lna_time_gap_us = DT_PROP(RADIO_FEM_NODE, crx_settle_time_us),
 			.pa_gain_db      = DT_PROP(RADIO_FEM_NODE, tx_gain_db),
 			.lna_gain_db     = DT_PROP(RADIO_FEM_NODE, rx_gain_db),
+			.bypass_gain_db  = DT_PROP_OR(RADIO_FEM_NODE, bypass_gain_db,
+							RADIO_FEM_BYPASS_GAIN_DB_DISABLED),
 		},
 		.pa_pin_config = {
 #if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
@@ -89,6 +93,36 @@ static int fem_simple_gpio_configure(void)
 #if defined(NRF54L_SERIES)
 			.p_gpiote = crx_gpiote->p_reg,
 #endif
+#else
+			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
+#endif
+		},
+		.tx_bypass_pin_config = {
+#if DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && defined(NRF54L_SERIES)
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
+			},
+			.enable        = DT_PROP(RADIO_FEM_NODE, tx_bypass),
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
+			.gpiote_ch_id  = crx_gpiote_channel,
+			.p_gpiote      = crx_gpiote->p_reg,
+#else
+			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
+#endif
+		},
+		.rx_bypass_pin_config = {
+#if DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && defined(NRF54L_SERIES)
+			.gpio_pin      = {
+				.p_port   = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
+				.port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
+			},
+			.enable        = DT_PROP(RADIO_FEM_NODE, rx_bypass),
+			.active_high   = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
+			.gpiote_ch_id  = ctx_gpiote_channel,
+			.p_gpiote      = ctx_gpiote->p_reg,
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
