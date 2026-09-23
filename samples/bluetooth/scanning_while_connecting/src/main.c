@@ -77,6 +77,9 @@ static volatile bool connection_establishment_ongoing;
 
 static volatile uint32_t num_connections;
 
+/** Set while tearing down connections at the end of a benchmark round. */
+static volatile bool waiting_for_all_disconnected;
+
 /** This is used to store device addresses that can be connected to later.
  *
  * This function can be changed to use another data structure
@@ -159,7 +162,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 		reason, bt_hci_err_to_str(reason));
 
 	num_connections--;
-	if (num_connections == 0) {
+	if (waiting_for_all_disconnected && num_connections == 0) {
 		k_sem_give(&all_devices_disconnected_sem);
 	}
 }
@@ -466,6 +469,7 @@ int main(void)
 		active_conn_establishment_mode = conn_establishment_modes[i];
 
 		num_connections = 0;
+		waiting_for_all_disconnected = false;
 		connection_establishment_ongoing = false;
 		ring_buf_reset(&connectable_peers_ring_buf);
 
@@ -487,10 +491,12 @@ int main(void)
 			CONFIG_BT_MAX_CONN);
 
 		LOG_INF("Disconnecting connections...");
+		waiting_for_all_disconnected = true;
 		bt_conn_foreach(BT_CONN_TYPE_LE, disconnect, NULL);
 
 		/* Wait until the disconnect callback is called for all connections */
 		k_sem_take(&all_devices_disconnected_sem, K_FOREVER);
+		waiting_for_all_disconnected = false;
 		LOG_INF("---------------------------------------------------------------------");
 		LOG_INF("---------------------------------------------------------------------");
 	}
