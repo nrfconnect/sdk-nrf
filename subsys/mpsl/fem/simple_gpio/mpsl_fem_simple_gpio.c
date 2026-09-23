@@ -54,63 +54,6 @@ static int fem_simple_gpio_configure(void)
 	}
 #endif
 
-#if defined(NRF54L_SERIES)
-
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios)
-
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios) &&                                                 \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios) ==                                        \
-	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios))
-
-	uint8_t tx_bypass_gpiote_channel = crx_gpiote_channel;
-	nrfx_gpiote_t *tx_bypass_gpiote = crx_gpiote;
-
-#else
-
-	uint8_t tx_bypass_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	nrfx_gpiote_t *tx_bypass_gpiote =
-		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, tx_bypass_gpios));
-
-	if (nrfx_gpiote_channel_alloc(tx_bypass_gpiote, &tx_bypass_gpiote_channel) != 0) {
-		return -ENOMEM;
-	}
-
-#endif
-
-#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) */
-
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios)
-
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios) &&                                                 \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, ctx_gpios) ==                                        \
-	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, rx_bypass_gpios))
-
-	uint8_t rx_bypass_gpiote_channel = ctx_gpiote_channel;
-	nrfx_gpiote_t *rx_bypass_gpiote = ctx_gpiote;
-
-#elif DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) &&                                         \
-	(NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, tx_bypass_gpios) ==                                  \
-	 NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, rx_bypass_gpios))
-
-	uint8_t rx_bypass_gpiote_channel = tx_bypass_gpiote_channel;
-	nrfx_gpiote_t *rx_bypass_gpiote = tx_bypass_gpiote;
-
-#else
-
-	uint8_t rx_bypass_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
-	nrfx_gpiote_t *rx_bypass_gpiote =
-		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, rx_bypass_gpios));
-
-	if (nrfx_gpiote_channel_alloc(rx_bypass_gpiote, &rx_bypass_gpiote_channel) != 0) {
-		return -ENOMEM;
-	}
-
-#endif
-
-#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) */
-
-#endif /* defined(NRF54L_SERIES) */
-
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {
 			       .pa_time_gap_us = DT_PROP(RADIO_FEM_NODE, ctx_settle_time_us),
@@ -155,34 +98,34 @@ static int fem_simple_gpio_configure(void)
 #endif
 		},
 		.tx_bypass_pin_config = {
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && defined(NRF54L_SERIES)
+#if DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && defined(NRF54L_SERIES)
 			.gpio_pin = {
-				.p_port = MPSL_FEM_GPIO_PORT_REG(tx_bypass_gpios),
-				.port_no = MPSL_FEM_GPIO_PORT_NO(tx_bypass_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(tx_bypass_gpios),
+				.p_port = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(crx_gpios),
 			},
-			.enable = true,
-			.active_high = MPSL_FEM_GPIO_POLARITY_GET(tx_bypass_gpios),
-			.gpiote_ch_id = tx_bypass_gpiote_channel,
-			.p_gpiote = tx_bypass_gpiote->p_reg,
-#else  /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
+			.enable = DT_PROP(RADIO_FEM_NODE, tx_bypass),
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(crx_gpios),
+			.gpiote_ch_id = crx_gpiote_channel,
+			.p_gpiote = crx_gpiote->p_reg,
+#else /* DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && NRF54L_SERIES */
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
-#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, tx_bypass_gpios) && NRF54L_SERIES */
+#endif /* DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && NRF54L_SERIES */
 		},
 		.rx_bypass_pin_config = {
-#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && defined(NRF54L_SERIES)
+#if DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && defined(NRF54L_SERIES)
 			.gpio_pin = {
-				.p_port = MPSL_FEM_GPIO_PORT_REG(rx_bypass_gpios),
-				.port_no = MPSL_FEM_GPIO_PORT_NO(rx_bypass_gpios),
-				.port_pin = MPSL_FEM_GPIO_PIN_NO(rx_bypass_gpios),
+				.p_port = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
+				.port_no = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
+				.port_pin = MPSL_FEM_GPIO_PIN_NO(ctx_gpios),
 			},
-			.enable = true,
-			.active_high = MPSL_FEM_GPIO_POLARITY_GET(rx_bypass_gpios),
-			.gpiote_ch_id = rx_bypass_gpiote_channel,
-			.p_gpiote = rx_bypass_gpiote->p_reg,
-#else  /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && NRF54L_SERIES */
+			.enable = DT_PROP(RADIO_FEM_NODE, rx_bypass),
+			.active_high = MPSL_FEM_GPIO_POLARITY_GET(ctx_gpios),
+			.gpiote_ch_id = ctx_gpiote_channel,
+			.p_gpiote = ctx_gpiote->p_reg,
+#else  /* DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && NRF54L_SERIES */
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
-#endif /* DT_NODE_HAS_PROP(RADIO_FEM_NODE, rx_bypass_gpios) && NRF54L_SERIES */
+#endif /* DT_NODE_HAS_COMPAT(RADIO_FEM_NODE, skyworks_sky66409_11) && NRF54L_SERIES */
 		},
 	};
 
