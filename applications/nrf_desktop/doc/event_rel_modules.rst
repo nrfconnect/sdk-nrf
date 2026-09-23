@@ -53,8 +53,8 @@ Source modules for button_event
 Sink modules for button_event
 =============================
 
-* :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_fn_keys`
+* :ref:`nrf_desktop_buttons_sim`
 * :ref:`nrf_desktop_motion`
 * :ref:`nrf_desktop_passkey`
 * :ref:`nrf_desktop_click_detector`
