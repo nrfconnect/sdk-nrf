@@ -32,6 +32,11 @@ int nrf_security_mutex_unlock(nrf_security_mutex_t mutex)
 	return ret;
 }
 
+int nrf_security_mutex_trylock(nrf_security_mutex_t mutex)
+{
+	return k_mutex_lock(mutex, K_NO_WAIT);
+}
+
 #else
 int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
 {
@@ -40,6 +45,12 @@ int nrf_security_mutex_lock(nrf_security_mutex_t mutex)
 }
 
 int nrf_security_mutex_unlock(nrf_security_mutex_t mutex)
+{
+	(void)mutex;
+	return 0;
+}
+
+int nrf_security_mutex_trylock(nrf_security_mutex_t mutex)
 {
 	(void)mutex;
 	return 0;
