@@ -41,7 +41,6 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h zephyr/net
   WORD_EXCLUDE ".*net_if_is_wifi.*"
   WORD_EXCLUDE ".*net_if_set_name.*"
   WORD_EXCLUDE ".*net_if_ipv6_calc_reachable_time.*"
-  WORD_EXCLUDE ".*net_if_tx_lock.*"
 )
 
 # Add Unit Under Test source files
@@ -72,5 +71,4 @@ target_compile_options(app PRIVATE
   -DCONFIG_MQTT_HELPER_LAST_WILL=y
   -DCONFIG_MQTT_HELPER_LAST_WILL_MESSAGE="lastwillmessage"
   -DCONFIG_MQTT_HELPER_LAST_WILL_TOPIC="lastwilltopic"
-  -Wno-error=unused-function
 )
