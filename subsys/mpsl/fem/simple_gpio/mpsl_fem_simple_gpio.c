@@ -32,7 +32,7 @@ static int fem_simple_gpio_configure(void)
 {
 	int err;
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
 	uint8_t ctx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
 	nrfx_gpiote_t *ctx_gpiote =
 		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, ctx_gpios));
@@ -42,7 +42,7 @@ static int fem_simple_gpio_configure(void)
 	}
 #endif
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
 	uint8_t crx_gpiote_channel = MPSL_FEM_GPIOTE_INVALID_CHANNEL;
 	nrfx_gpiote_t *crx_gpiote =
 		&GPIOTE_NRFX_INST_BY_NODE(NRF_DT_GPIOTE_NODE(RADIO_FEM_NODE, crx_gpios));
@@ -54,21 +54,13 @@ static int fem_simple_gpio_configure(void)
 
 	mpsl_fem_simple_gpio_interface_config_t cfg = {
 		.fem_config = {
-			.pa_time_gap_us  =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					ctx_settle_time_us),
-			.lna_time_gap_us =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					crx_settle_time_us),
-			.pa_gain_db      =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					tx_gain_db),
-			.lna_gain_db     =
-				DT_PROP(DT_NODELABEL(nrf_radio_fem),
-					rx_gain_db)
+			.pa_time_gap_us  = DT_PROP(RADIO_FEM_NODE, ctx_settle_time_us),
+			.lna_time_gap_us = DT_PROP(RADIO_FEM_NODE, crx_settle_time_us),
+			.pa_gain_db      = DT_PROP(RADIO_FEM_NODE, tx_gain_db),
+			.lna_gain_db     = DT_PROP(RADIO_FEM_NODE, rx_gain_db),
 		},
 		.pa_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
 			.gpio_pin      = {
 				.p_port   = MPSL_FEM_GPIO_PORT_REG(ctx_gpios),
 				.port_no  = MPSL_FEM_GPIO_PORT_NO(ctx_gpios),
@@ -85,7 +77,7 @@ static int fem_simple_gpio_configure(void)
 #endif
 		},
 		.lna_pin_config = {
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
 			.gpio_pin      = {
 				.p_port   = MPSL_FEM_GPIO_PORT_REG(crx_gpios),
 				.port_no  = MPSL_FEM_GPIO_PORT_NO(crx_gpios),
@@ -100,7 +92,7 @@ static int fem_simple_gpio_configure(void)
 #else
 			MPSL_FEM_DISABLED_GPIOTE_PIN_CONFIG_INIT
 #endif
-		}
+		},
 	};
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_PPI,
@@ -120,9 +112,8 @@ static int fem_simple_gpio_configure(void)
 	}
 
 	IF_ENABLED(CONFIG_HAS_HW_NRF_DPPIC,
-		   (err = mpsl_fem_utils_egu_channel_alloc(cfg.egu_channels,
-							   ARRAY_SIZE(cfg.egu_channels),
-							   cfg.egu_instance_no);))
+		   (err = mpsl_fem_utils_egu_channel_alloc(
+			    cfg.egu_channels, ARRAY_SIZE(cfg.egu_channels), cfg.egu_instance_no);))
 	if (err) {
 		return err;
 	}
@@ -132,7 +123,6 @@ static int fem_simple_gpio_configure(void)
 
 static int mpsl_fem_init(void)
 {
-
 #if IS_ENABLED(CONFIG_MPSL_FEM_POWER_MODEL)
 	int err;
 	const mpsl_fem_power_model_t *power_model = mpsl_fem_power_model_to_use_get();
@@ -155,15 +145,14 @@ SYS_INIT(mpsl_fem_init, POST_KERNEL, CONFIG_MPSL_FEM_INIT_PRIORITY);
 
 static int mpsl_fem_host_init(void)
 {
-
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), ctx_gpios)
-	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), ctx_gpios);
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, ctx_gpios)
+	uint8_t ctx_pin = NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, ctx_gpios);
 
 	soc_secure_gpio_pin_mcu_select(ctx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
 
-#if DT_NODE_HAS_PROP(DT_NODELABEL(nrf_radio_fem), crx_gpios)
-	uint8_t crx_pin = NRF_DT_GPIOS_TO_PSEL(DT_NODELABEL(nrf_radio_fem), crx_gpios);
+#if DT_NODE_HAS_PROP(RADIO_FEM_NODE, crx_gpios)
+	uint8_t crx_pin = NRF_DT_GPIOS_TO_PSEL(RADIO_FEM_NODE, crx_gpios);
 
 	soc_secure_gpio_pin_mcu_select(crx_pin, NRF_GPIO_PIN_SEL_NETWORK);
 #endif
