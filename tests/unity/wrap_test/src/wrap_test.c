@@ -79,6 +79,24 @@ void test_multiline_def(void)
 	TEST_ASSERT_EQUAL(EXPECT_MULTILINE_DEF, call_multiline_def(1, 2));
 }
 
+void test_forward_declared_fn(void)
+{
+	const int EXPECT_FORWARD_DECLARED = 7;
+
+	__cmock_forward_declared_fn_ExpectAndReturn(1, EXPECT_FORWARD_DECLARED);
+
+	TEST_ASSERT_EQUAL(EXPECT_FORWARD_DECLARED, call_forward_declared_fn(1));
+}
+
+void test_calls_forward_declared_fn(void)
+{
+	const int EXPECT_CALLS_FORWARD_DECLARED = 8;
+
+	__cmock_calls_forward_declared_fn_ExpectAndReturn(1, EXPECT_CALLS_FORWARD_DECLARED);
+
+	TEST_ASSERT_EQUAL(EXPECT_CALLS_FORWARD_DECLARED, call_calls_forward_declared_fn(1));
+}
+
 void test_word_exclude(void)
 {
 	__cmock_exclude_word_fn_Expect();
