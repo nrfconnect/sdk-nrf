@@ -3562,6 +3562,17 @@ The following table indicates the software maturity levels of the support for Fr
             - --
             - --
             - --
+          * - SKY66409-11
+            - Simple GPIO
+            - --
+            - Experimental
+            - Experimental
+            - Experimental
+            - --
+            - Experimental
+            - --
+            - Experimental
+            - Experimental
 
     .. group-tab:: nRF91 Series
 
