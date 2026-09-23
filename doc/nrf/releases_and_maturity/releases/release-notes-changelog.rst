@@ -261,6 +261,7 @@ Wi-Fi®
 
 * Updated the Connection Manager Wi-Fi connectivity layer to defer the connect request to its dedicated work queue (``wifi_conn_wq``) instead of running it synchronously in the context of the caller of :c:func:`conn_mgr_if_connect()`.
   This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
+* Updated the default value of the :kconfig:option:`CONFIG_NET_MGMT_EVENT_QUEUE_TIMEOUT` Kconfig option to ``50`` milliseconds when :kconfig:option:`CONFIG_NET_L2_WIFI_SHELL` is enabled to prevent Wi-Fi scan events from being dropped when using slow shell backends.
 
 Applications
 ============
