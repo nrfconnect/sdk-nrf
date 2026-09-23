@@ -111,6 +111,7 @@
 /doc/nrf/drivers/other_drivers/wifi/*.rst                      @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/other_drivers/wifi.rst                        @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/other_drivers/nrf71_sr_coex.rst               @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/other_drivers/can_nrf_scan.rst                @nrfconnect/ncs-vestavind-doc
 /doc/nrf/drivers/peripheral_custom_drivers/                    @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/drivers/peripheral_custom_drivers/ppi_seq.rst         @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/peripheral_custom_drivers/ppi_seq_i2c_spi.rst @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
