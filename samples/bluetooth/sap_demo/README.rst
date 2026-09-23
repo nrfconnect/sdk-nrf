@@ -104,7 +104,46 @@ Building and running
 
 .. |sample path| replace:: :file:`samples/bluetooth/sap_demo`
 
-.. include:: /includes/build_and_run.txt
+.. include:: /includes/build_and_run_ns.txt
+
+.. |sample_or_app| replace:: sample
+.. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. include:: /includes/ipc_radio_conf.txt
+
+.. _secure_application_pairing_sample_roles:
+
+Selecting the role
+==================
+
+You must build the sample twice, once for each role, and program each image to a different development kit.
+To select the role, set :makevar:`EXTRA_CONF_FILE` to one of the role configuration fragments using the respective :ref:`CMake option <cmake_options>`:
+
+* For the central role, set it to :file:`central.conf`.
+* For the peripheral role, set it to :file:`peripheral.conf`.
+
+For example, when building on the command line for the nRF54L15 DK, use a separate build directory for each role:
+
+.. code-block:: console
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp -d build_central samples/bluetooth/sap_demo -- -DEXTRA_CONF_FILE=central.conf
+   west build -b nrf54l15dk/nrf54l15/cpuapp -d build_peripheral samples/bluetooth/sap_demo -- -DEXTRA_CONF_FILE=peripheral.conf
+
+Then program each image to its own development kit:
+
+.. code-block:: console
+
+   west flash -d build_central --dev-id <central_serial_number>
+   west flash -d build_peripheral --dev-id <peripheral_serial_number>
+
+If you build more than one peripheral, give each one a unique identity by setting the :kconfig:option:`CONFIG_SAMPLE_BT_SAP_PERIPHERAL_ID` Kconfig option to a different value from ``1`` to ``4``.
+For example:
+
+.. code-block:: console
+
+   west build -b nrf54l15dk/nrf54l15/cpuapp -d build_peripheral_2 samples/bluetooth/sap_demo -- -DEXTRA_CONF_FILE=peripheral.conf -DCONFIG_SAMPLE_BT_SAP_PERIPHERAL_ID=2
+
+For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
 Testing
 *******
