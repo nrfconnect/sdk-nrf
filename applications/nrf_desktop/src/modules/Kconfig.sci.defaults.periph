@@ -63,3 +63,15 @@ configdefault BT_HIDS_SCI_DEFAULT_SUPERVISION_TIMEOUT_10MS
 
 configdefault BT_HIDS_SCI_LOW_POWER_SUPERVISION_TIMEOUT_10MS
 	default 1201
+
+# Override the HIDS SCI default (0). With continuation number 0, subrating lowers the
+# effective HID report rate, which can make the mouse movement choppy for several seconds after
+# wake from sleep. Use 1 for smoother movement: this will result in connection intervals
+# not being skipped while motion continues.
+configdefault BT_HIDS_SCI_LOW_POWER_CONTINUATION_NUM
+	default 1 if BT_HIDS_SCI_LOW_POWER_SUBRATE_MAX > 1
+	default 0
+
+configdefault BT_HIDS_SCI_DEFAULT_CONTINUATION_NUM
+	default 1 if BT_HIDS_SCI_DEFAULT_SUBRATE_MAX > 1
+	default 0
