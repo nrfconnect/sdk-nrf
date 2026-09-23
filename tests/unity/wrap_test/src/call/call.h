@@ -14,6 +14,8 @@ int call_always_inline_fn(void);
 int call_after_macro(void);
 int call_extra_whitespace(void);
 int call_multiline_def(int arg, int len);
+int call_forward_declared_fn(int arg);
+int call_calls_forward_declared_fn(int arg);
 void call_exclude_word_fn(void);
 
 #endif /* __CALL_H */

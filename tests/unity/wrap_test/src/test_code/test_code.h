@@ -86,6 +86,16 @@ typedef struct __attribute__ ((__packed__)) {
 int multiline_def(int arg,
 					int len);
 
+/* A static inline forward declaration directly above a static inline
+ * definition. The declaration must not be merged with the definition below it.
+ */
+static inline int forward_declared_fn(int arg);
+
+static inline int calls_forward_declared_fn(int arg)
+{
+	return forward_declared_fn(arg);
+}
+
 /* Test WORD_EXCLUDE parameter for cmock_handle() */
 #define IGNORE_ME
 IGNORE_ME void exclude_word_fn(void);
