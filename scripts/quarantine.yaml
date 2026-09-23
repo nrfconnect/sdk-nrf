@@ -113,11 +113,3 @@
     - nrf54h20dk@0.9.0/nrf54h20/cpuflpr
     - nrf54h20dk@0.9.0/nrf54h20/cpuppr
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41443"
-
-- scenarios:
-    - net.lib.mqtt_helper
-    - net.lib.mqtt_helper.ipv4_only
-    - net.lib.mqtt_helper.ipv6_only
-  platforms:
-    - qemu_cortex_m3/ti_lm3s6965
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41486"
