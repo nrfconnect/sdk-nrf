@@ -625,7 +625,7 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 
 			if (!data_handled) {
 				unsigned char hex_data[128];
-				int i;
+				size_t off = 0;
 				struct nrf_modem_dect_phy_pdc_event *p_rx_status =
 					&(params->rx_status);
 				int16_t rssi_level = p_rx_status->rssi_2 / 2;
@@ -634,10 +634,16 @@ static void dect_phy_ctrl_msgq_thread_handler(void)
 				desh_print("PDC received (time %llu): snr %.2f dB, "
 					   "RSSI-2 %d dBm, len %d",
 					   params->time, snr, rssi_level, params->data_length);
-				for (i = 0; i < 128 && i < params->data_length; i++) {
-					sprintf(&hex_data[i], "%02x ", params->data[i]);
+				/* Print a prefix of the PDC:
+				 * hex_data holds only part of a long PDU.
+				 */
+				for (uint32_t i = 0;
+				     i < params->data_length && off + 4 < sizeof(hex_data); i++) {
+					off += snprintk((char *)hex_data + off,
+							sizeof(hex_data) - off, "%02x ",
+							params->data[i]);
 				}
-				hex_data[i + 1] = '\0';
+				hex_data[off] = '\0';
 				desh_warn("Received unknown data, len %d, hex data: %s\n",
 					  params->data_length, hex_data);
 			}
