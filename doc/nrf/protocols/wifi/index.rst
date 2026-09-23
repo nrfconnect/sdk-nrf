@@ -23,7 +23,7 @@ The Wi-Fi protocol documentation is device agnostic, enabling support for multip
 For more information, see the following:
 
 * :ref:`wifi_samples` for the available samples.
-* :ref:`ug_nrf70` and :ref:`ug_nrf71` for the information related to Wi-Fi support in the |NCS| and using compatible development boards such as the nRF7002 DK and nRF7120 DK.
+* :ref:`ug_nrf70` and :ref:`ug_nrf71` for the information related to developing Wi-Fi applications with the |NCS| and using compatible development boards such as the nRF7002 DK and nRF7120 DK.
 * `nRF70 Series`_ for the technical documentation on the nRF70 Series devices.
 * `Guidelines and application notes for nRF70 Series devices`_.
 
