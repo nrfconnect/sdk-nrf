@@ -101,6 +101,12 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA)
   )
 endif()
 
+if(CONFIG_CRACEN_HYBRID_VERIFY)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_hybrid_verify.c
+  )
+endif()
+
 if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_hash.c
