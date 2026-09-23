@@ -189,3 +189,40 @@ const struct {} beacon_actions_defs_include_once;
 #define DEACTIVATE_UTP_MODE_RSP_LEN  \
 	(BEACON_ACTIONS_HEADER_LEN + \
 	DEACTIVATE_UTP_MODE_RSP_PAYLOAD_LEN)
+
+/* Byte length of the largest Data Length parameter across the core Beacon Actions
+ * requests. Every operation is listed so that the value stays correct if any of them
+ * grows. Add new operations here.
+ */
+#define BEACON_ACTIONS_CORE_REQ_PAYLOAD_MAX_LEN                       \
+	MAX(BEACON_PARAMETERS_REQ_PAYLOAD_LEN,                        \
+	MAX(PROVISIONING_STATE_REQ_PAYLOAD_LEN,                       \
+	MAX(EPHEMERAL_IDENTITY_KEY_SET_REQ_UNPROVISIONED_PAYLOAD_LEN, \
+	MAX(EPHEMERAL_IDENTITY_KEY_SET_REQ_PROVISIONED_PAYLOAD_LEN,   \
+	MAX(EPHEMERAL_IDENTITY_KEY_CLEAR_REQ_PAYLOAD_LEN,             \
+	MAX(EPHEMERAL_IDENTITY_KEY_READ_REQ_PAYLOAD_LEN,              \
+	MAX(RING_REQ_PAYLOAD_LEN,                                     \
+	MAX(RINGING_STATE_READ_REQ_PAYLOAD_LEN,                       \
+	MAX(ACTIVATE_UTP_MODE_REQ_PAYLOAD_LEN,                        \
+	    DEACTIVATE_UTP_MODE_REQ_PAYLOAD_LEN)))))))))
+
+/* Byte length of the largest Data Length parameter across the core Beacon Actions
+ * responses.
+ */
+#define BEACON_ACTIONS_CORE_RSP_PAYLOAD_MAX_LEN           \
+	MAX(BEACON_PARAMETERS_RSP_PAYLOAD_LEN,            \
+	MAX(PROVISIONING_STATE_RSP_PAYLOAD_LEN,           \
+	MAX(EPHEMERAL_IDENTITY_KEY_SET_RSP_PAYLOAD_LEN,   \
+	MAX(EPHEMERAL_IDENTITY_KEY_CLEAR_RSP_PAYLOAD_LEN, \
+	MAX(EPHEMERAL_IDENTITY_KEY_READ_RSP_PAYLOAD_LEN,  \
+	MAX(RING_RSP_PAYLOAD_LEN,                         \
+	MAX(RINGING_STATE_READ_RSP_PAYLOAD_LEN,           \
+	MAX(ACTIVATE_UTP_MODE_RSP_PAYLOAD_LEN,            \
+	    DEACTIVATE_UTP_MODE_RSP_PAYLOAD_LEN))))))))
+
+/* Byte length of the largest Data Length parameter across all core Beacon Actions
+ * operations. It defines the minimum Data Length that the module must support.
+ */
+#define BEACON_ACTIONS_CORE_PAYLOAD_MAX_LEN          \
+	MAX(BEACON_ACTIONS_CORE_REQ_PAYLOAD_MAX_LEN, \
+	    BEACON_ACTIONS_CORE_RSP_PAYLOAD_MAX_LEN)
