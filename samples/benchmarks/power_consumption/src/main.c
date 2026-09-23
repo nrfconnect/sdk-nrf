@@ -9,11 +9,38 @@
 #include <zephyr/kernel.h>
 #include <zephyr/pm/device.h>
 
+#include <hal/nrf_lfxo.h>
+
 #if defined(CONFIG_RAM_POWER_DOWN_LIBRARY)
 #include <ram_pwrdn.h>
 #endif
 
 #define IDLE_TIME K_SECONDS(CONFIG_SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS)
+
+/*
+ * LFXO.TRIM.PIXO and LFXO.MIRROR are not in the public HAL struct for
+ * this SoC -- compute their addresses from the real NRF_LFXO pointer,
+ * matching the pattern already proven out in the diagnostic
+ * investigation that found this fix.
+ */
+#define LFXO_TRIM_PIXO_ADDR ((uintptr_t)NRF_LFXO + 0x44CU)
+#define LFXO_MIRROR_ADDR    ((uintptr_t)NRF_LFXO + 0x480U)
+
+static void configure_lfxo_trim(void)
+{
+	/*
+	 * TRIM.PIXO is mirrored (reset-locked); unlock, set the PIXO
+	 * pulse-injection supply trim to its maximum amplitude (+15, 2's
+	 * complement, VAL bits [4:0]), then relock. Boosting this away
+	 * from the default (0, 202 mV) makes the PIXO<->Pierce handoff
+	 * that CONFIG_PM's idle hook performs every cycle (see
+	 * soc/nordic/nrf71/soc_power.c) reliably succeed instead of
+	 * intermittently or permanently failing.
+	 */
+	*(volatile uint32_t *)LFXO_MIRROR_ADDR = 0;
+	*(volatile uint32_t *)LFXO_TRIM_PIXO_ADDR = 0x0FU;
+	*(volatile uint32_t *)LFXO_MIRROR_ADDR = 1U;
+}
 
 static void configure_ram_retention(void)
 {
@@ -59,6 +86,7 @@ int main(void)
 #endif
 
 	configure_ram_retention();
+	configure_lfxo_trim();
 
 #if defined(CONFIG_SERIAL)
 	uint32_t wakeups = 0;

@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Trim LFXO's internal load capacitance to match the DK's actual
+ * crystal (TXC 9HT11-32.768KDZC-T, 9 pF load) plus PCB stray
+ * capacitance -- part of the proven combination (with the PIXO trim in
+ * main.c and the CONFIG_PM idle hook) needed to reliably reach the
+ * SoC's lowest System ON idle current. Left unset, LFXO.CLOAD stays at
+ * its hardware reset value (0x0).
+ */
+&lfxo {
+	load-capacitors = "internal";
+	load-capacitance-femtofarad = <17000>;
+};
