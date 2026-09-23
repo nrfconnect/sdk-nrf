@@ -44,9 +44,16 @@ def header_prepare(in_file, out_file, out_wrap_file):
     # change static inline functions to normal function declaration
     static_inline_pattern = re.compile(
         r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
-        r'((?:\w+[*\s]+)+\w+?\(.*?\))\n\{.+?\n\}',
+        r'((?:\w+[*\s]+)+\w+?\([^;{}]*?\))\n\{.+?\n\}',
         re.M | re.S)
     content = static_inline_pattern.sub(r"\1;", content)
+
+    # change static inline forward declarations to normal declarations
+    static_inline_decl_pattern = re.compile(
+        r'(?:__deprecated\s+)?(?:static\s+inline\s+|inline\s+static\s+|static\s+ALWAYS_INLINE\s+|__STATIC_INLINE\s+)'
+        r'((?:\w+[*\s]+)+\w+?\([^;{}]*?\)\s*;)',
+        re.M | re.S)
+    content = static_inline_decl_pattern.sub(r"\1", content)
 
     # remove syscall include
     syscall_pattern = re.compile(r"#include <zephyr/syscalls/\w+?.h>", re.M | re.S)
