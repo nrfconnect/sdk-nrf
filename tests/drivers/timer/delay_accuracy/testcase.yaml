@@ -36,6 +36,14 @@ tests:
 
   drivers.timer.delay_accuracy.hfxo:
     platform_allow: *platform_allow
+    # On nRF54H and nRF92 the VPR cores cannot start HFXO themselves, as it is
+    # requested through LRCCONF010, which is only mapped into the application
+    # domain address space.
+    platform_exclude:
+      - nrf54h20dk/nrf54h20/cpuflpr
+      - nrf54h20dk/nrf54h20/cpuppr
+      - nrf9251dk/nrf9251/cpuflpr
+      - nrf9251dk/nrf9251/cpuppr
     integration_platforms: *integration_platforms
     extra_args:
       - CONFIG_TEST_START_HFXO=y
