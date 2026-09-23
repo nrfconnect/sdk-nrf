@@ -27,12 +27,29 @@
 
 /**************************************************************************************************/
 
+/* Format src_len bytes as hex; stop before dst_size is exhausted. */
+static void dect_phy_mac_format_hex(char *dst, size_t dst_size, const uint8_t *src,
+				    uint32_t src_len)
+{
+	size_t off = 0;
+
+	if (dst_size == 0) {
+		return;
+	}
+
+	for (uint32_t i = 0; i < src_len && off + 4 < dst_size; i++) {
+		off += snprintk(&dst[off], dst_size - off, "%02x ", src[i]);
+	}
+	dst[off] = '\0';
+}
+
 static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 				       dect_phy_mac_message_t *message)
 {
 	switch (message_type) {
 	case DECT_PHY_MAC_MESSAGE_TYPE_DATA_SDU: {
 		unsigned char ascii_data[DECT_DATA_MAX_LEN];
+		/* Reserve one byte in ascii_data for the terminating NUL. */
 		uint16_t print_len = MIN(message->data_sdu.data_length, DECT_DATA_MAX_LEN - 1);
 
 		memcpy(ascii_data, message->data_sdu.data, print_len);
@@ -260,9 +277,11 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 	}
 	case DECT_PHY_MAC_MESSAGE_ESCAPE: {
 		unsigned char ascii_data[DECT_DATA_MAX_LEN];
+		/* Reserve one byte in ascii_data for the terminating NUL. */
+		uint16_t print_len = MIN(message->common_msg.data_length, DECT_DATA_MAX_LEN - 1);
 
-		memcpy(ascii_data, message->common_msg.data, message->common_msg.data_length);
-		ascii_data[message->common_msg.data_length] = '\0';
+		memcpy(ascii_data, message->common_msg.data, print_len);
+		ascii_data[print_len] = '\0';
 
 		desh_print("      Received data, len %d, payload as ascii string print:\n"
 			   "        %s",
@@ -271,12 +290,10 @@ static void dect_phy_mac_message_print(dect_phy_mac_message_type_t message_type,
 	}
 	case DECT_PHY_MAC_MESSAGE_TYPE_NONE: {
 		unsigned char hex_data[DECT_DATA_MAX_LEN];
-		int i;
 
-		for (i = 0; i < DECT_DATA_MAX_LEN && i < message->common_msg.data_length; i++) {
-			sprintf(&hex_data[i], "%02x ", message->common_msg.data[i]);
-		}
-		hex_data[i + 1] = '\0';
+		dect_phy_mac_format_hex((char *)hex_data, sizeof(hex_data),
+					message->common_msg.data,
+					message->common_msg.data_length);
 		desh_print("      Received SDU data, len %d, payload hex data: %s\n",
 			   message->common_msg.data_length, hex_data);
 		break;
