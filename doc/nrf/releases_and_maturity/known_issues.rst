@@ -650,6 +650,14 @@ Matter
 
 The issues in this section are related to the Matter protocol.
 
+.. rst-class:: v3-4-1
+
+KRKNWK-22436: Unstable communication between Thread and Wi-Fi devices
+  In a scenario where the Matter Light Switch sample works as a Thread device and the Matter Light Bulb sample works as a Wi-Fi device, communication initiated by the switch is unstable.
+  This issue is caused by the Zephyr networking layer dropping Neighbor Advertisement and Router Advertisement packets.
+
+  **Workaround:** To fix the issue, update the `sdk-zephyr`_ repository by cherry-picking the commit with the hash ``b74e9152301a0eab3d5243a2b909c15303c9025d``.
+
 .. rst-class:: v3-4-1 v3-4-0 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0
 
 KRKNWK-22344: Printing the binding table might cause a crash
