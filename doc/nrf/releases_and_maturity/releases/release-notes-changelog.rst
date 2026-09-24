@@ -958,6 +958,8 @@ Libraries for NFC
   * Fixed an issue where parsing a malformed long-format NDEF record could produce an incorrect payload length.
     The parser now validates type, ID, and payload lengths against the remaining input buffer.
 
+* Fixed an issue where calling the NFC platform callback in the :file:`platform_internal_thread` file with zero-length data and ``copy_data`` enabled could corrupt the ring buffer and cause incorrect header parsing in the consumer thread.
+
 nRF RPC libraries
 -----------------
 

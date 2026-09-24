@@ -131,15 +131,17 @@ static void cb_work(struct k_work *work)
 		size = ring_buf_get(&nfc_cb_ring, (uint8_t *)&data, sizeof(data));
 		if (size != sizeof(data)) {
 			LOG_ERR("Tried to read data pointer: %d bytes, read %d.", sizeof(data),
-											      size);
+				size);
 			goto error;
 		}
-	} else {
+	} else if (header.data_size > 0) {
 		err = ring_buf_get_data(&nfc_cb_ring, &data, header.data_size, &is_alloc);
 		if (err) {
 			LOG_ERR("Reading nfc data failed, err %i.", err);
 			goto error;
 		}
+	} else {
+		data = NULL;
 	}
 
 	__ASSERT(nfc_cb_resolve != NULL, "nfc_cb_resolve is not set");
@@ -230,7 +232,7 @@ void nfc_platform_cb_request(const void *ctx,
 {
 	struct nfc_item_header header;
 	uint32_t size;
-	uint32_t exp_size;
+	uint32_t exp_size = 0;
 
 	header.ctx_size = ctx_len;
 	header.flags = copy_data ? NFC_HDR_FLAG_COPY : 0;
@@ -248,9 +250,13 @@ void nfc_platform_cb_request(const void *ctx,
 		goto end;
 	}
 
-	if (copy_data && (data_len > 0)) {
-		size = ring_buf_put(&nfc_cb_ring, data, header.data_size);
-		exp_size = header.data_size;
+	size = 0;
+
+	if (copy_data) {
+		if (data_len > 0) {
+			size = ring_buf_put(&nfc_cb_ring, data, header.data_size);
+			exp_size = header.data_size;
+		}
 	} else {
 		size = ring_buf_put(&nfc_cb_ring, (uint8_t *)&data, sizeof(data));
 		exp_size = sizeof(data);
