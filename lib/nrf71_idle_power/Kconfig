@@ -1,0 +1,100 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NRF71_IDLE_POWER
+	bool "nRF71 idle power optimization helpers"
+	depends on SOC_NRF7120_ENGA_CPUAPP
+	# Idle current is dominated by devices (UART/console) keeping their
+	# clocks requested; device PM is what lets them suspend during idle.
+	imply PM
+	imply PM_DEVICE
+	imply PM_DEVICE_RUNTIME
+	# Equivalent to the zephyr,pm-device-runtime-auto DT property: lets
+	# devices such as the console UART suspend themselves while idle.
+	imply PM_DEVICE_RUNTIME_DEFAULT_ENABLE
+	imply TICKLESS_KERNEL
+	imply SYSTEM_CLOCK_SLOPPY_IDLE
+	help
+	  Reusable helpers that lower nRF71 System ON idle current. Applies a
+	  Kconfig-selected RAM retention level at boot (from a SYS_INIT hook,
+	  so no application code changes are needed) and pulls in the device
+	  power management knobs that let peripherals suspend while idle.
+
+if NRF71_IDLE_POWER
+
+choice NRF71_IDLE_POWER_RAM_RETAIN
+	prompt "RAM retention level during System ON idle"
+	default NRF71_IDLE_POWER_RAM_RETAIN_FULL
+	help
+	  Controls how much application RAM stays powered during System ON
+	  idle, using the ram_pwrdn library (see
+	  nrf/doc/nrf/libraries/others/ram_pwrdn.rst). Powering down RAM the
+	  running image still uses corrupts live data, so the fixed-size tiers
+	  only make sense for a trivial image that fits below the boundary.
+	  NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY has been observed to cause
+	  issues on Wi-Fi builds; keep the default RAM_RETAIN_FULL tier there.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_FULL
+	bool "Retain all RAM (default) -- nothing is powered down"
+	help
+	  No RAM power-down call is made. This keeps every byte of application
+	  RAM retained and is the safe default.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY
+	bool "Power down whatever this image itself does not use"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_unused_ram() at boot. The ram_pwrdn library computes
+	  the unused range itself, from the end of the running image to the end
+	  of application RAM, so live image/stack/buffer memory is left powered.
+	  Has been observed to cause issues on Wi-Fi builds; do not use it
+	  there.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_64K
+	bool "Retain only the first 64 KiB of RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() at boot to power down everything past the first
+	  64 KiB of application RAM. Only safe if the whole image fits below
+	  64 KiB; a Wi-Fi build does not, so use this for controlled
+	  measurements only.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_128K
+	bool "Retain only the first 128 KiB of RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() at boot to power down everything past the first
+	  128 KiB of application RAM.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_256K
+	bool "Retain only the first 256 KiB of RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() at boot to power down everything past the first
+	  256 KiB of application RAM.
+
+config NRF71_IDLE_POWER_RAM_RETAIN_512K
+	bool "Retain only the first 512 KiB of RAM, power down the rest"
+	select RAM_POWER_DOWN_LIBRARY
+	help
+	  Calls power_down_ram() at boot to power down everything past the first
+	  512 KiB of application RAM.
+
+endchoice
+
+config NRF71_IDLE_DIAGNOSTICS
+	bool "Print power state snapshots for measurement"
+	help
+	  Enable the nrf71_idle_power_print_snapshot() helper, which dumps the
+	  raw POWER, MEMCONF, GRTC and LFXO registers so they can be correlated
+	  with a power analyzer trace. Also configures a GPIO idle-phase marker
+	  from the "idle-phase" devicetree alias, when one is present.
+
+module = NRF71_IDLE_POWER
+module-str = nRF71 idle power helpers
+source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
+
+endif # NRF71_IDLE_POWER

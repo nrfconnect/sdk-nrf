@@ -994,6 +994,11 @@ nRF RPC libraries
 Other libraries
 ---------------
 
+* Added the :ref:`lib_nrf71_idle_power` library, which lowers the System ON idle current
+  of an nRF71 Series application core by applying a configurable RAM retention level at
+  boot and enabling the device power management options needed for peripherals to
+  suspend while idle.
+
 * Added the :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
 
 * :ref:`lib_ram_pwrdn` library:
