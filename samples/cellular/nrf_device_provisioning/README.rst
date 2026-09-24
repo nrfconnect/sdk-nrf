@@ -109,8 +109,8 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
-* :file:`overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
+* :ncs-file:`/samples/cellular/nrf_device_provisioning/overlay-coap.conf` - Enables CoAP transfer protocol support.
+* :ncs-file:`/samples/cellular/nrf_device_provisioning/overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
 
 Building and running
 ********************

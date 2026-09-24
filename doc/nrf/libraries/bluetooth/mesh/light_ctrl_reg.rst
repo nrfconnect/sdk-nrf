@@ -114,7 +114,7 @@ For an example of regulator implementation, see :ref:`bt_mesh_light_ctrl_reg_spe
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_ctrl_reg.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctrl_reg.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctrl_reg.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctrl_reg.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_reg

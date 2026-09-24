@@ -89,7 +89,7 @@ Prerequisites
 
 To use hardware unique keys, you must first write them to the KMU or program them in the device firmware if no KMU is present.
 You can also write the HUKs by programming the device with a debugger.
-See :file:`tests/lib/hw_unique_key_tfm/write_kmu.py` for an example of programming the KMU with a debugger.
+See :ncs-file:`/tests/lib/hw_unique_key_tfm/write_kmu.py` for an example of programming the KMU with a debugger.
 
 Usage
 *****
@@ -112,7 +112,7 @@ You can also derive a key using :c:func:`hw_unique_key_derive_key`.
 API documentation
 *****************
 
-| Header file: :file:`include/hw_unique_key.h`
+| Header file: :ncs-file:`/include/hw_unique_key.h`
 | Source files: :file:`modules/lib/hw_unique_key/`
 
 .. doxygengroup:: hw_unique_key

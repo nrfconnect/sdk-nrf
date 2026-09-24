@@ -459,7 +459,7 @@ Modem configurations:
 Modem proprietary PSM
 ---------------------
 
-Add the :file:`overlay-aggressive-psm.conf` overlay file to enable optimized PSM setup and proprietary PSM mode.
+Add the :ncs-file:`/samples/cellular/lwm2m_client/overlay-aggressive-psm.conf` overlay file to enable optimized PSM setup and proprietary PSM mode.
 This configuration disables eDRX, because it will request 10 seconds RAT and 12 hours TAU period.
 Proprietary PSM enables power saving when network does not allow PSM.
 The modem enters the PSM state after the configured RAT period when the connection is released.
@@ -482,22 +482,22 @@ Configuration for external FOTA
 The sample supports UART2 connection on the nRF9160 SiP to onboard an nRF52840 SiP with or without MCUboot recovery mode.
 The nRF9160 SiP needs to enable UART2 on the devicetree using the following configuration files and recovery mode overlay files:
 
-* :file:`overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
-  This requires an additional devicetree overlay file :file:`nrf9160dk_mcumgr_client_uart2.overlay`.
-* :file:`overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
-  This requires an additional devicetree overlay file :file:`nrf9160dk_recovery.overlay`.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
+  This requires an additional devicetree overlay file :ncs-file:`/samples/cellular/lwm2m_client/nrf9160dk_mcumgr_client_uart2.overlay`.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
+  This requires an additional devicetree overlay file :ncs-file:`/samples/cellular/lwm2m_client/nrf9160dk_recovery.overlay`.
 
 .. _overlay_advanced_fw_object:
 
 To enable the experimental Advanced Firmware Update object for the external FOTA, use the following overlay configuration files:
 
-* :file:`overlay-adv-firmware.conf` - Enables the experimental Advanced Firmware Update object.
-* :file:`overlay-lwm2m-1.1.conf` - Enables the LwM2M version 1.1.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` - Enables the experimental Advanced Firmware Update object.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1.conf` - Enables the LwM2M version 1.1.
 
 You also need one of the following `Coiote Device Management`_ server configurations:
 
-* :file:`overlay-avsystem.conf` - For the `Coiote Device Management`_ server.
-* :file:`overlay-avsystem-bootstrap.conf` - For Coiote in bootstrap mode.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem.conf` - For the `Coiote Device Management`_ server.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem-bootstrap.conf` - For Coiote in bootstrap mode.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start
@@ -579,42 +579,42 @@ The sample provides predefined configuration files for typical use cases.
 
 LwM2M Device management server:
 
-* :file:`overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
-* :file:`overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
-* :file:`overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-leshan-bootstrap.conf` - Enables LwM2M bootstrap support with Leshan demo server.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem.conf` - Uses `Coiote Device Management`_ server.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem-bootstrap.conf` - Uses Coiote in bootstrap mode.
 
 NB-IoT:
 
-* :file:`overlay-nbiot.conf` - Enables the use of NB-IoT.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-nbiot.conf` - Enables the use of NB-IoT.
 
 LwM2M v1.1:
 
-* :file:`overlay-lwm2m-1.1.conf` - Enables LwM2M v1.1 protocol version.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1.conf` - Enables LwM2M v1.1 protocol version.
 
 Firmware update:
 
-* :file:`overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
-* :file:`overlay-fota_helper.conf` - Enables faster response for evaluating FOTA.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` - Enables experimental Advanced Firmware Update object.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-fota_helper.conf` - Enables faster response for evaluating FOTA.
 
 Location assistance:
 
-* :file:`overlay-assist-agnss.conf` - Enables A-GNSS assistance.
-* :file:`overlay-assist-cell.conf` - Enables cell-based location assistance.
-* :file:`overlay-assist-pgps.conf` - Enables P-GPS assistance.
-  Requires :file:`overlay-assist-pgps.overlay` as an extra devicetree overlay to allocate a dedicated flash partition for P-GPS data.
-* :file:`overlay-assist-wifi.conf` - Enables Wi-Fi-based location assistance using the nRF7002 EK for Wi-Fi scanning.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-assist-agnss.conf` - Enables A-GNSS assistance.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-assist-cell.conf` - Enables cell-based location assistance.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-assist-pgps.conf` - Enables P-GPS assistance.
+  Requires :ncs-file:`/samples/cellular/lwm2m_client/overlay-assist-pgps.overlay` as an extra devicetree overlay to allocate a dedicated flash partition for P-GPS data.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-assist-wifi.conf` - Enables Wi-Fi-based location assistance using the nRF7002 EK for Wi-Fi scanning.
 
 Location service requires `Coiote Device Management`_ server and LwM2M v1.1.
 
 Power savings:
 
-* :file:`overlay-aggressive-psm.conf` - Enables optimized PSM setup and proprietary PSM mode.
-* :file:`overlay-lowpower.conf` - Disables serial console to bring the power consumption down.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-aggressive-psm.conf` - Enables optimized PSM setup and proprietary PSM mode.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-lowpower.conf` - Disables serial console to bring the power consumption down.
 
 LwM2M v1.1 conformance testing:
 
-* :file:`overlay-lwm2m-1.1-core-interop.conf` - Allows running of Core Specific Objects Test cases.
-* :file:`overlay-lwm2m-1.1-object-interop.conf` - Allows running of Additional Objects Test cases.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1-core-interop.conf` - Allows running of Core Specific Objects Test cases.
+* :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1-object-interop.conf` - Allows running of Additional Objects Test cases.
 
 .. _build_lwm2m:
 
@@ -655,7 +655,7 @@ Bootstrap support
 To successfully run the bootstrap procedure, you must first register the device in the LwM2M Bootstrap Server.
 See :ref:`registering your device to an LwM2M Bootstrap Server <bootstrap_server_reg>` for instructions.
 
-To build the LwM2M Client with LwM2M bootstrap support, use the :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf` configuration overlay.
+To build the LwM2M Client with LwM2M bootstrap support, use the :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem-bootstrap.conf` or :ncs-file:`/samples/cellular/lwm2m_client/overlay-leshan-bootstrap.conf` configuration overlay.
 For example:
 
 .. parsed-literal::
@@ -776,13 +776,13 @@ The client supports Push and Pull modes for image delivery.
 Recommend transport types are CoAP or HTTP for Pull mode.
 Coiote Device Management server also supports Multi component FOTA object, which allows updating multiple instances at the same time.
 
-Use :file:`overlay-adv-firmware.conf` overlay file to enable the experimental Advanced Firmware Update object.
+Use :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` overlay file to enable the experimental Advanced Firmware Update object.
 Advanced firmware requires `Coiote Device Management`_ server that supports it.
 Refer to :ref:`lwm2m_client_fota` for more details.
 
 .. note::
 
-   You can use the :file:`overlay-fota_helper.conf` configuration file to enable faster responses when using queue mode binding.
+   You can use the :ncs-file:`/samples/cellular/lwm2m_client/overlay-fota_helper.conf` configuration file to enable faster responses when using queue mode binding.
    This configuration uses an update period of 60 seconds.
 
 To update the firmware, complete the following steps:
@@ -808,7 +808,7 @@ To update the firmware, complete the following steps:
 
       .. group-tab:: Coiote Multi-component Firmware update
 
-         Use the :file:`overlay-adv-firmware.conf` overlay file for multi component FOTA.
+         Use the :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` overlay file for multi component FOTA.
 
          1. Identify the firmware image file to be uploaded to the device.
             See :ref:`lte_modem` and :ref:`nrf91_fota` for more information.

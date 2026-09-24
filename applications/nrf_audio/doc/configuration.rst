@@ -60,9 +60,9 @@ See :ref:`nrf_audio_app_overview_modes` for detailed information about these mod
 The transport mode is selected using the following Kconfig options:
 
 * (Default mode) :option:`CONFIG_TRANSPORT_CIS` - Enables CIS mode for clients and servers (unicast applications).
-  With this option enabled, you can configure application Kconfig options specific to unicast communication (see :file:`applications/nrf_audio/src/bluetooth/bt_stream/unicast/Kconfig`).
+  With this option enabled, you can configure application Kconfig options specific to unicast communication (see :ncs-file:`/applications/nrf_audio/src/bluetooth/bt_stream/unicast/Kconfig`).
 * :option:`CONFIG_TRANSPORT_BIS` - Enables BIS mode for `Auracast™`_ sources and sinks (broadcast applications).
-  With this option enabled, you can configure application Kconfig options specific to broadcast communication (see :file:`applications/nrf_audio/src/bluetooth/bt_stream/broadcast/Kconfig`).
+  With this option enabled, you can configure application Kconfig options specific to broadcast communication (see :ncs-file:`/applications/nrf_audio/src/bluetooth/bt_stream/broadcast/Kconfig`).
 
 The transport mode selection automatically configures the appropriate Bluetooth stack components and audio processing modules.
 
@@ -71,7 +71,7 @@ The transport mode selection automatically configures the appropriate Bluetooth 
 Selecting the CIS bidirectional communication
 =============================================
 
-To switch to the bidirectional mode, set the :option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to the bidirectional mode, set the :option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_enable_walkie_talkie:
 
@@ -80,12 +80,12 @@ Enabling the walkie-talkie demo
 
 The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
 The PDM microphone is used as input on both the gateway and headset device.
-To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 
 Enabling the Auracast™ (broadcast) mode
 =======================================
 
-If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_select_bis_two_gateways:
 
@@ -95,7 +95,7 @@ Enabling the BIS mode with two gateways
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
 The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
-To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
+To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf_audio_app_building`.
@@ -182,7 +182,7 @@ USB audio source is limited to unidirectional streams due to CPU load considerat
 Selecting the analog jack input using I2S
 =========================================
 
-To switch to using the 3.5-mm jack analog input, set the :option:`CONFIG_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to using the 3.5-mm jack analog input, set the :option:`CONFIG_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
@@ -233,7 +233,7 @@ See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CO
 Configuring power measurements
 ******************************
 
-The power measurements are disabled by default in the :ref:`main configuration file of the application <nrf_audio_app_building_config_files>` (:file:`applications/nrf_audio/prj.conf`).
+The power measurements are disabled by default in the :ref:`main configuration file of the application <nrf_audio_app_building_config_files>` (:ncs-file:`/applications/nrf_audio/prj.conf`).
 
 .. note::
    Enabling power measurements together with :ref:`debug logging <ug_logging>` increases the power consumption.
@@ -362,6 +362,6 @@ You can use one of the following options, depending on how you decide to build t
 
      west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -Dnrf_audio_SHIELD=nrf21540ek -Dipc_radio_SHIELD=nrf21540ek
 
-To set the TX power output, use the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB` Kconfig options in :file:`applications/nrf_audio/sysbuild/ipc_radio/prj.conf`.
+To set the TX power output, use the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB` Kconfig options in :ncs-file:`/applications/nrf_audio/sysbuild/ipc_radio/prj.conf`.
 
 See :ref:`ug_radio_fem` for more information about FEM in the |NCS|.

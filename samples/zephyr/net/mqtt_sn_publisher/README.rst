@@ -166,4 +166,4 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
-* MQTT-SN (:file:`include/zephyr/net/mqtt_sn.h`)
+* MQTT-SN (:ncs-file:`zephyr:/include/zephyr/net/mqtt_sn.h`)

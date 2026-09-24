@@ -199,4 +199,4 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
-* CoAP and the CoAP server subsystem (:file:`include/zephyr/net/coap.h`, :file:`include/zephyr/net/coap_service.h`)
+* CoAP and the CoAP server subsystem (:ncs-file:`zephyr:/include/zephyr/net/coap.h`, :ncs-file:`zephyr:/include/zephyr/net/coap_service.h`)

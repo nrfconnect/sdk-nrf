@@ -35,9 +35,9 @@ Configuration files
 The sample supports UART1 connection for the nRF9160 DK with or without MCUboot recovery mode.
 The nRF52840 SoC needs to enable UART1 on the devicetree using the following configuration files and recovery mode overlay files:
 
-* :file:`overlay-serial.conf` - Defines the MCUmgr server configuration with SMP serial transport for UART1.
-  This requires an additional devicetree overlay file :file:`nrf9160dk_nrf52840_mcumgr_srv.overlay`.
-* :file:`nrf9160dk_nrf52840_recovery.overlay` - Devicetree overlay file that enables resetting of the MCUboot recovery mode.
+* :ncs-file:`/samples/cellular/smp_svr/overlay-serial.conf` - Defines the MCUmgr server configuration with SMP serial transport for UART1.
+  This requires an additional devicetree overlay file :ncs-file:`/samples/cellular/smp_svr/nrf9160dk_nrf52840_mcumgr_srv.overlay`.
+* :ncs-file:`/samples/cellular/smp_svr/nrf9160dk_nrf52840_recovery.overlay` - Devicetree overlay file that enables resetting of the MCUboot recovery mode.
 
 MCUboot configuration
 ---------------------

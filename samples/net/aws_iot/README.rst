@@ -89,7 +89,7 @@ The corresponding options that must be set for each of these values are:
 * :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-Set these options in the project configuration file located at :file:`samples/net/aws_iot/prj.conf`.
+Set these options in the project configuration file located at :ncs-file:`/samples/net/aws_iot/prj.conf`.
 For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
 
 .. note::
@@ -105,7 +105,7 @@ General options
 ---------------
 
 The following lists the application-specific configurations used in the sample.
-They are located in :file:`samples/net/aws_iot/Kconfig`.
+They are located in :ncs-file:`/samples/net/aws_iot/Kconfig`.
 
 .. _CONFIG_AWS_IOT_SAMPLE_APP_VERSION:
 
@@ -143,18 +143,18 @@ Configuration files
 The sample includes pre-configured configuration files for the development kits that are supported:
 
 * :file:`prj.conf` - General configuration file for all devices.
-* :file:`wifi.conf` - Common Wi-Fi and networking configuration shared by all Wi-Fi builds.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/aws_iot/wifi.conf` - Common Wi-Fi and networking configuration shared by all Wi-Fi builds.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/native_sim.conf` - Configuration file for the native simulator board.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 
 The following configuration and DTS overlay files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
 * :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
 * :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot image.
 

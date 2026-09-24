@@ -21,7 +21,7 @@ To enable the library, set the :kconfig:option:`CONFIG_CONTIN_ARRAY` Kconfig opt
 API documentation
 *****************
 
-| Header file: :file:`include/contin_array.h`
-| Source file: :file:`lib/contin_array/contin_array.c`
+| Header file: :ncs-file:`/include/contin_array.h`
+| Source file: :ncs-file:`/lib/contin_array/contin_array.c`
 
 .. doxygengroup:: contin_array

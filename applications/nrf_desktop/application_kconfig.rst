@@ -24,7 +24,7 @@ HID configuration
 *****************
 
 The nRF Desktop application introduces application-specific configuration options related to HID device configuration.
-These options are defined in :file:`Kconfig.hid`.
+These options are defined in :ncs-file:`/applications/nrf_desktop/Kconfig.hid`.
 
 The options define the nRF Desktop device role.
 The device role can be either a HID dongle (:option:`CONFIG_DESKTOP_ROLE_HID_DONGLE`) or a HID peripheral (:option:`CONFIG_DESKTOP_ROLE_HID_PERIPHERAL`).
@@ -38,7 +38,7 @@ Each role automatically implies the nRF Desktop modules needed for the role.
 For example, :ref:`nrf_desktop_hid_state` is automatically enabled for the HID peripheral role.
 
 By default, the nRF Desktop devices use a predefined format of HID reports.
-The common HID report map is defined in the :file:`configuration/common/hid_report_desc.c` file.
+The common HID report map is defined in the :ncs-file:`/applications/nrf_desktop/configuration/common/hid_report_desc.c` file.
 
 The selected role implies a set of related HID reports.
 For example, HID mouse automatically enables support for HID mouse report (:option:`CONFIG_DESKTOP_HID_REPORT_MOUSE_SUPPORT`).
@@ -89,7 +89,7 @@ Debug configuration
 *******************
 
 The nRF Desktop application introduces application-specific configuration options related to the ``debug`` configuration.
-These options are defined in the :file:`Kconfig.debug` file.
+These options are defined in the :ncs-file:`/applications/nrf_desktop/Kconfig.debug` file.
 
 The :option:`CONFIG_DESKTOP_LOG` Kconfig option enables support for logging in the nRF Desktop application.
 This option overlays Kconfig option defaults from the :ref:`zephyr:logging_api` subsystem to align them with the nRF Desktop requirements.
@@ -101,7 +101,7 @@ This option overlays Kconfig option defaults from the :ref:`zephyr:shell_api` su
 The nRF Desktop configuration uses SEGGER J-Link RTT as the shell subsystem backend.
 If both shell and logging are enabled, logger uses shell as the logging backend.
 
-See the :file:`Kconfig.debug` file content for details.
+See the :ncs-file:`/applications/nrf_desktop/Kconfig.debug` file content for details.
 
 Default common configuration
 ****************************
@@ -109,7 +109,7 @@ Default common configuration
 The nRF Desktop application aligns the configuration with the nRF Desktop use case by overlaying Kconfig defaults and selecting or implying the required Kconfig options.
 Among others, the Kconfig :ref:`app_event_manager` and :ref:`lib_caf` options are selected to ensure that they are enabled.
 The :option:`CONFIG_DESKTOP_SETTINGS_LOADER` and :option:`CONFIG_DESKTOP_POWER_MANAGER` are implied to enable the :ref:`nrf_desktop_settings_loader` and :ref:`nrf_desktop_power_manager` modules, respectively.
-See the :file:`Kconfig.defaults` file for details related to the default common configuration.
+See the :ncs-file:`/applications/nrf_desktop/Kconfig.defaults` file for details related to the default common configuration.
 
 .. _nrf_desktop_bluetooth_configuration:
 
@@ -117,7 +117,7 @@ Bluetooth® configuration
 ************************
 
 The nRF Desktop application introduces application-specific configuration options related to Bluetooth connectivity configuration.
-These options are defined in :file:`Kconfig.ble` file.
+These options are defined in :ncs-file:`/applications/nrf_desktop/Kconfig.ble` file.
 
 The :option:`CONFIG_DESKTOP_BT` Kconfig option enables support for Bluetooth connectivity in the nRF Desktop application.
 The option is enabled by default.
@@ -131,7 +131,7 @@ The nRF Desktop Bluetooth configuration options perform the following:
 * Select required functionalities in Zephyr's Bluetooth stack.
 * Overlay Bluetooth Kconfig option defaults to align them with the nRF Desktop use case.
 
-See :file:`Kconfig.ble` file content for details.
+See :ncs-file:`/applications/nrf_desktop/Kconfig.ble` file content for details.
 See the :ref:`nrf_desktop_bluetooth_guide` for more information about Bluetooth support in nRF Desktop application.
 
 CAF configuration
@@ -139,4 +139,4 @@ CAF configuration
 
 The nRF Desktop application overlays the defaults of the :ref:`lib_caf` related Kconfig options to align them with the nRF Desktop use case.
 The files that apply the overlays are located in the :file:`src/modules` directory and are named :file:`Kconfig.caf_module_name.default`.
-For example, the Kconfig defaults of :ref:`caf_settings_loader` are overlayed in the :file:`src/modules/Kconfig.caf_settings_loader.default`.
+For example, the Kconfig defaults of :ref:`caf_settings_loader` are overlayed in the :ncs-file:`/applications/nrf_desktop/src/modules/Kconfig.caf_settings_loader.default`.

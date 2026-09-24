@@ -47,7 +47,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/twt/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/twt/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:

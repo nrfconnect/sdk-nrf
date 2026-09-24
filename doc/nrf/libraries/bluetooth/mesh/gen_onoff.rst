@@ -26,6 +26,6 @@ Common types
 
 This section lists the types common to the Generic OnOff mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/gen_onoff.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_onoff.h`
 
 .. doxygengroup:: bt_mesh_onoff

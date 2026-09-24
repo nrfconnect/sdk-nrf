@@ -168,7 +168,7 @@ Following are the other important library options:
 API documentation
 *****************
 
-| Header file: :file:`include/net/lwm2m_client_utils_location.h`
-| Source file: :file:`subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`
+| Header file: :ncs-file:`/include/net/lwm2m_client_utils_location.h`
+| Source file: :ncs-file:`/subsys/net/lib/lwm2m_client_utils/location/location_assistance.c`
 
 .. doxygengroup:: lwm2m_client_utils_location

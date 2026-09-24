@@ -51,7 +51,7 @@ If you do not have an Azure account, you need to create one.
 To get started with testing the Azure IoT Hub, make sure that the following prerequisites are met:
 
 * Install the `Azure CLI`_.
-* To use the ``nrfcredstore`` tool, the dependencies in the :file:`nrf/scripts/requirements-extra.txt` file must be installed.
+* To use the ``nrfcredstore`` tool, the dependencies in the :ncs-file:`/scripts/requirements-extra.txt` file must be installed.
   Enter the following command in a terminal window to install all the dependencies in the file:
 
   .. code-block:: console
@@ -142,7 +142,7 @@ To create the device certificate, you need a Certificate Authority (CA) certific
 The CA certificate is uploaded to Azure IoT Hub, so Azure can verify that the device certificate is signed by your CA.
 If you do not have a CA certificate, you can purchase one or make a self-signed test CA certificate for testing purposes.
 
-To help generate test CA certificates and handle the device keys and certificates, you can use the :file:`nrf/scripts/cert_tool.py` Python script.
+To help generate test CA certificates and handle the device keys and certificates, you can use the :ncs-file:`/scripts/cert_tool.py` Python script.
 Either call the script relative from the current working directory or add it to the path.
 
 .. note::
@@ -811,8 +811,8 @@ API documentation
 Azure IoT Hub API
 =================
 
-| Header file: :file:`include/net/azure_iot_hub.h`
-| Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub.c`
+| Header file: :ncs-file:`/include/net/azure_iot_hub.h`
+| Source files: :ncs-file:`/subsys/net/lib/azure_iot_hub/src/azure_iot_hub.c`
 
 .. doxygengroup:: azure_iot_hub
 
@@ -821,7 +821,7 @@ Azure IoT Hub API
 Azure IoT Hub DPS API
 =====================
 
-| Header file: :file:`include/net/azure_iot_hub_dps.h`
-| Source files: :file:`subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c`
+| Header file: :ncs-file:`/include/net/azure_iot_hub_dps.h`
+| Source files: :ncs-file:`/subsys/net/lib/azure_iot_hub/src/azure_iot_hub_dps.c`
 
 .. doxygengroup:: azure_iot_hub_dps

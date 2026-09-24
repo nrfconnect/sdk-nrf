@@ -51,7 +51,7 @@ Requirements
 ************
 
 .. note::
-   * Supported kits are listed in a table, which is composed of rows from the :file:`doc/nrf/includes/sample_board_rows.txt` file.
+   * Supported kits are listed in a table, which is composed of rows from the :ncs-file:`/doc/nrf/includes/sample_board_rows.txt` file.
      Select the required rows in the ``:rows:`` configuration, or use the ``.. table-from-sample-yaml::`` directive to include all board targets specified in the :file:`sample.yaml` file.
    * If only one kit is supported, replace the introduction text with the "The application supports the following development kit:" sentence.
    * If several kits are required to test the application, state it after the table (for example, "You can use one or more of the development kits listed above and mix different development kits.").
@@ -185,7 +185,7 @@ Testing
 #. Add any additional step needed...
 
 .. note::
-   * Use the shortcuts provided in :file:`doc/nrf/shortcuts.txt` to keep the wording consistent.
+   * Use the shortcuts provided in :ncs-file:`/doc/nrf/shortcuts.txt` to keep the wording consistent.
    * If there are different ways of testing, introduce them in this section (for example, "After programming the application to your development kit, you can test it either by ...") and add subsections for the different scenarios.
 
 Application output*

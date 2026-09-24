@@ -100,12 +100,12 @@ The sample provides predefined configuration files for typical use cases.
 The following files are available:
 
 * :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
-* :file:`overlay-softbank.conf` and :file:`sysbuild-softbank.conf` - Enable configurations for SoftBank.
+* :ncs-file:`/samples/cellular/lwm2m_carrier/overlay-shell.conf` - Enables the :ref:`lwm2m_carrier_shell` and :ref:`lib_at_shell`.
+* :ncs-file:`/samples/cellular/lwm2m_carrier/overlay-softbank.conf` and :ncs-file:`/samples/cellular/lwm2m_carrier/sysbuild-softbank.conf` - Enable configurations for SoftBank.
   For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
-* :file:`overlay-lgu.conf` and :file:`sysbuild-lgu.conf` - Enable configurations for LG U+.
+* :ncs-file:`/samples/cellular/lwm2m_carrier/overlay-lgu.conf` and :ncs-file:`/samples/cellular/lwm2m_carrier/sysbuild-lgu.conf` - Enable configurations for LG U+.
   For more information, see the :ref:`lwm2m_carrier_dependent` section of the :ref:`liblwm2m_carrier_readme` documentation.
-* :file:`bootloader.overlay` - Partition changes to enable application updates.
+* :ncs-file:`/samples/cellular/lwm2m_carrier/bootloader.overlay` - Partition changes to enable application updates.
   Required for LG U+ and SoftBank.
 
 The sample can either be configured by editing the :file:`prj.conf` file and the relevant overlay files, or through menuconfig or guiconfig.
@@ -144,7 +144,7 @@ Example of building with the SoftBank configuration:
 
 |board_target|
 
-This command builds for your nRF91 Series DK using the configurations found in the :file:`overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
+This command builds for your nRF91 Series DK using the configurations found in the :ncs-file:`/samples/cellular/lwm2m_carrier/overlay-shell.conf` file, in addition to the configurations found in the :file:`prj.conf` file.
 If some options are defined in both files, the options set in the overlay take precedence.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.

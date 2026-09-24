@@ -29,7 +29,7 @@ If you are unsure about the proper values, print the statistics to see how the p
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/gatt_pool.h`
-| Source file: :file:`subsys/bluetooth/gatt_pool.c`
+| Header file: :ncs-file:`/include/bluetooth/gatt_pool.h`
+| Source file: :ncs-file:`/subsys/bluetooth/gatt_pool.c`
 
 .. doxygengroup:: bt_gatt_pool

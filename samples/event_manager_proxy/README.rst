@@ -179,5 +179,5 @@ This sample uses the following |NCS| subsystems:
 
 In addition, it uses the following Zephyr subsystems:
 
-* :file:`include/ipc/ipc_service.h`
+* :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

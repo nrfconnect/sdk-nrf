@@ -496,7 +496,7 @@ Fast Pair advertising data provider
 
 The Fast Pair :ref:`advertising data provider <bt_le_adv_prov_readme>` (:kconfig:option:`CONFIG_BT_ADV_PROV_FAST_PAIR`) can be used to manage the Fast Pair advertising data.
 See :ref:`fast_pair_input_device` for an example of using the provider in a sample.
-See :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c` for provider implementation.
+See :ncs-file:`/subsys/bluetooth/adv_prov/providers/fast_pair.c` for provider implementation.
 
 Advertising TX power
 ====================

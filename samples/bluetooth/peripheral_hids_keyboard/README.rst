@@ -129,7 +129,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_keyboard/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (defined in :ncs-file:`/samples/bluetooth/peripheral_hids_keyboard/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -385,18 +385,18 @@ When the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is en
 
 The sample uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`include/sys/printk.h`
-* :file:`include/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
   * :file:`samples/bluetooth/gatt/bas.h`
 
 References

@@ -65,7 +65,7 @@ This module uses the following |NCS| libraries and drivers:
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/dfu_multi_image.h`
+| Header file: :ncs-file:`/include/dfu/dfu_multi_image.h`
 | Source files: :file:`subsys/dfu/dfu_multi_image/src/`
 
 .. doxygengroup:: dfu_multi_image

@@ -27,7 +27,7 @@ For uploading an image to the Distributor, this sample also requires a smartphon
 Point-to-point DFU requirements
 *******************************
 
-The configuration overlay :file:`overlay-ptp_dfu.conf` enables the :ref:`dfu_over_ble` feature.
+The configuration overlay :ncs-file:`/samples/bluetooth/mesh/dfu/target/overlay-ptp_dfu.conf` enables the :ref:`dfu_over_ble` feature.
 
 This feature can be used together with Bluetooth Mesh DFU.
 If the Bluetooth Mesh DFU procedure is suspended, failing, or if the Bluetooth Mesh network is not available, the point-to-point DFU feature can be used as a backup option for the DFU process.
@@ -240,4 +240,4 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`

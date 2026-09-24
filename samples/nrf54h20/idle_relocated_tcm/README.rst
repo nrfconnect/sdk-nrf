@@ -43,16 +43,16 @@ The following changes are included in the project overlay files:
 
    .. group-tab:: Merged slot configuration
 
-      1. Entire Radio TCM RAM region is used for the remote firmware (:file:`common/memory_map_ram_cpurad.dtsi`).
-      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:file:`common/memory_map.dtsi`).
-      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:file:`common/memory_map.dtsi`).
+      1. Entire Radio TCM RAM region is used for the remote firmware (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map_ram_cpurad.dtsi`).
+      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map.dtsi`).
+      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map.dtsi`).
 
    .. group-tab:: Split slot configuration
 
-      1. Entire Radio TCM RAM region is used for the remote firmware (:file:`common/memory_map_ram_cpurad.dtsi`).
-      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:file:`common/memory_map_split_slot.dtsi`).
-      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:file:`common/memory_map_split_slot.dtsi`).
-      #. The ``pm_ramfunc`` DTS node is relocated to the end of the RAM block but before the MCUboot trailer (:file:`common/memory_map_ram_pm_cpurad.dtsi`) to make the image link properly.
+      1. Entire Radio TCM RAM region is used for the remote firmware (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map_ram_cpurad.dtsi`).
+      #. A small part of Global RAM is used for the radio loader for the firmware relocation time (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map_split_slot.dtsi`).
+      #. The MRAM is partitioned for the MCUboot, application, and radio core images (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map_split_slot.dtsi`).
+      #. The ``pm_ramfunc`` DTS node is relocated to the end of the RAM block but before the MCUboot trailer (:ncs-file:`/samples/nrf54h20/idle_relocated_tcm/common/memory_map_ram_pm_cpurad.dtsi`) to make the image link properly.
 
 Enabling the Radio Loader
 *************************
@@ -80,7 +80,7 @@ This is automatically done by the :kconfig:option:`CONFIG_BUILD_OUTPUT_ADJUST_LM
 How it works
 ============
 
-Firmware relocation is handled automatically by Zephyr's build system using the :kconfig:option:`CONFIG_BUILD_OUTPUT_ADJUST_LMA` Kconfig option, which is configured in the :file:`nrf/soc/nordic/nrf54h/Kconfig.defconfig.nrf54h20_cpurad` file for all nRF54H20 CPURAD projects.
+Firmware relocation is handled automatically by Zephyr's build system using the :kconfig:option:`CONFIG_BUILD_OUTPUT_ADJUST_LMA` Kconfig option, which is configured in the :ncs-file:`/soc/nordic/nrf54h/Kconfig.defconfig.nrf54h20_cpurad` file for all nRF54H20 CPURAD projects.
 
 The configuration automatically detects if the :kconfig:option:`CONFIG_XIP` is enabled in the remote firmware project.
 When this option is enabled, the remote firmware runs directly from the ``zephyr,code-partition`` location and no relocation is needed.

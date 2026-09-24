@@ -14,7 +14,7 @@ The CTS Client is used in the :ref:`peripheral_cts_client` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/cts_client.h`
-| Source file: :file:`subsys/bluetooth/services/cts_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/cts_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/cts_client.c`
 
 .. doxygengroup:: bt_gatt_cts_c

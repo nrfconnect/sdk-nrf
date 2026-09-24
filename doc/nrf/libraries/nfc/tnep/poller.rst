@@ -48,7 +48,7 @@ When the polling device finishes the NDEF read procedure or the NDEF write proce
 API documentation
 *****************
 
-| Header file: :file:`include/tnep/poller.h`
-| Source file: :file:`subsys/tnep/poller.c`
+| Header file: :ncs-file:`/include/nfc/tnep/poller.h`
+| Source file: :ncs-file:`/subsys/nfc/tnep/poller.c`
 
 .. doxygengroup:: nfc_tnep_poller

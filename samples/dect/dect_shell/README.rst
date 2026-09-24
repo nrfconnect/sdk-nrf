@@ -118,7 +118,7 @@ Discover DECT NR+ peers (mDNS)
 DeSh command ``dect discover``.
 
 Lists peers that advertise the DNS-SD service ``_dect-nr._udp`` on the DECT NR+ network.
-Requires :file:`mdns-discover.conf` in the west build command (see :ref:`dect_shell_mdns_discover_build`).
+Requires :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf` in the west build command (see :ref:`dect_shell_mdns_discover_build`).
 
 * Usage example:
 
@@ -745,15 +745,15 @@ LTE with `Serial Modem <ncs-serial-modem_>`_ running on external nRF9151 DK
 .. note::
    Change VDD (nPM VOUT1) from 1.8V to 3.3V using the `Board Configurator app`_ in both DKs.
 
-Modem shared memory (:file:`eth-rx.overlay`)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Modem shared memory (:ncs-file:`/samples/dect/dect_shell/eth-rx.overlay`)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Ethernet sink builds forward the DECT uplink (PT TX → FT RX) to ``eth0`` and need a larger shared-memory RX region in the modem than the default partition.
-The region sizes are defined in the :file:`eth-rx.overlay` file.
+The region sizes are defined in the :ncs-file:`/samples/dect/dect_shell/eth-rx.overlay` file.
 
 Pass ``-DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;<shield-mac.overlay>"`` on every Ethernet build (semicolon-separated list; ``eth-rx.overlay`` first).
 Use ``EXTRA_DTC_OVERLAY_FILE`` instead of ``DTC_OVERLAY_FILE``.
-Setting ``DTC_OVERLAY_FILE`` replaces the auto-applied :file:`boards/nrf9151dk_nrf9151_ns.overlay` file, on top of which both overlays layer.
+Setting ``DTC_OVERLAY_FILE`` replaces the auto-applied :ncs-file:`/samples/dect/dect_shell/boards/nrf9151dk_nrf9151_ns.overlay` file, on top of which both overlays layer.
 
 Ethernet with W5500 shield (Arceli)
 -----------------------------------
@@ -761,14 +761,14 @@ Ethernet with W5500 shield (Arceli)
 Use this when the DECT sink (FT with BR) needs to reach the Internet over Ethernet.
 The sample adds the following configuration files:
 
-* :file:`eth_common.conf`
-* :file:`eth_w5500.conf`
-* :file:`eth-rx.overlay` (modem shared memory)
-* default :file:`w5500-static-mac.overlay` for Arceli tuning (fixed locally administered Ethernet MAC)
-* :file:`w5500.overlay` for ``zephyr,random-mac-address`` (new MAC each boot)
+* :ncs-file:`/samples/dect/dect_shell/eth_common.conf`
+* :ncs-file:`/samples/dect/dect_shell/eth_w5500.conf`
+* :ncs-file:`/samples/dect/dect_shell/eth-rx.overlay` (modem shared memory)
+* default :ncs-file:`/samples/dect/dect_shell/w5500-static-mac.overlay` for Arceli tuning (fixed locally administered Ethernet MAC)
+* :ncs-file:`/samples/dect/dect_shell/w5500.overlay` for ``zephyr,random-mac-address`` (new MAC each boot)
 
-For mDNS advertisement (PT discovers the sink), append the :file:`mdns-common.conf` and :file:`mdns-discover.conf` files.
-To also run ``dect discover`` on the sink, add :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf`.
+For mDNS advertisement (PT discovers the sink), append the :ncs-file:`/samples/dect/dect_shell/mdns-common.conf` and :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf` files.
+To also run ``dect discover`` on the sink, add :ncs-file:`/samples/dect/dect_shell/eth_sink_mdns-discover.conf` after :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf`.
 The pinout and SPI node come from the Zephyr shield devicetree in :file:`zephyr/boards/shields/arceli_eth_w5500/arceli_eth_w5500.overlay`.
 
 .. note::
@@ -788,9 +788,9 @@ The pinout and SPI node come from the Zephyr shield devicetree in :file:`zephyr/
 
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-static-mac.overlay"
 
-  Edit ``local-mac-address`` in the :file:`w5500-static-mac.overlay` file so that each board on the same LAN has a unique MAC.
+  Edit ``local-mac-address`` in the :ncs-file:`/samples/dect/dect_shell/w5500-static-mac.overlay` file so that each board on the same LAN has a unique MAC.
 
-* For each **random** Ethernet MAC boot (``zephyr,random-mac-address``), use the :file:`w5500.overlay` file instead:
+* For each **random** Ethernet MAC boot (``zephyr,random-mac-address``), use the :ncs-file:`/samples/dect/dect_shell/w5500.overlay` file instead:
 
   .. code-block:: console
 
@@ -802,7 +802,7 @@ The pinout and SPI node come from the Zephyr shield devicetree in :file:`zephyr/
 
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500.overlay"
 
-* To also obtain an IPv6 address through DHCPv6 (in addition to SLAAC), append the  :file:`eth_dhcpv6_client.conf` file to the configuration file list.
+* To also obtain an IPv6 address through DHCPv6 (in addition to SLAAC), append the  :ncs-file:`/samples/dect/dect_shell/eth_dhcpv6_client.conf` file to the configuration file list.
   The DHCPv6  client starts automatically when the Ethernet interface comes up, but only if SLAAC has not already provided a prefix:
 
   .. code-block:: console
@@ -839,19 +839,19 @@ Ethernet with W5500 shield (Seeed Studio board)
 
 Use this when the DECT NR+ sink (FT with BR) needs to reach the Internet over Ethernet over the Zephyr :ref:`seeed_w5500` (seed studio v1.1 shield was used) on the nRF9151 DK.
 
-Merge the :file:`eth_common.conf`, :file:`eth_w5500.conf` and :file:`eth_w5500_seeed.conf` files for Ethernet sink without mDNS (plus :file:`eth-rx.overlay` for modem shared memory).
-For mDNS advertisement (PT discovers the sink), append the :file:`mdns-common.conf` and :file:`mdns-discover.conf` files.
+Merge the :ncs-file:`/samples/dect/dect_shell/eth_common.conf`, :ncs-file:`/samples/dect/dect_shell/eth_w5500.conf` and :ncs-file:`/samples/dect/dect_shell/eth_w5500_seeed.conf` files for Ethernet sink without mDNS (plus :ncs-file:`/samples/dect/dect_shell/eth-rx.overlay` for modem shared memory).
+For mDNS advertisement (PT discovers the sink), append the :ncs-file:`/samples/dect/dect_shell/mdns-common.conf` and :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf` files.
 
-To also run ``dect discover`` on the sink, add :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf`.
+To also run ``dect discover`` on the sink, add :ncs-file:`/samples/dect/dect_shell/eth_sink_mdns-discover.conf` after :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf`.
 
-The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster speed (:kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`).
+The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :ncs-file:`/samples/dect/dect_shell/eth_w5500_seeed.conf` sets a faster speed (:kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`).
 
 Devicetree comes from the :file:`zephyr/boards/shields/seeed_w5500/seeed_w5500.overlay` file plus a sample overlay.
-The default file is :file:`w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
+The default file is :ncs-file:`/samples/dect/dect_shell/w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :ncs-file:`/samples/dect/dect_shell/w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
 
 .. note::
-   The sample :file:`w5500.overlay` file is Arceli-specific (targets ``&eth_w5500_arceli_eth_w5500``).
-   For ``seeed_w5500``, use :file:`w5500-seeed-static-mac.overlay` or :file:`w5500-seeed.overlay` (targets ``&eth_w5500``).
+   The sample :ncs-file:`/samples/dect/dect_shell/w5500.overlay` file is Arceli-specific (targets ``&eth_w5500_arceli_eth_w5500``).
+   For ``seeed_w5500``, use :ncs-file:`/samples/dect/dect_shell/w5500-seeed-static-mac.overlay` or :ncs-file:`/samples/dect/dect_shell/w5500-seeed.overlay` (targets ``&eth_w5500``).
 
 * From the sample directory (default without mDNS):
 
@@ -866,9 +866,9 @@ The default file is :file:`w5500-seeed-static-mac.overlay` (fixed locally admini
 
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;mdns-common.conf;mdns-discover.conf" -DEXTRA_DTC_OVERLAY_FILE="eth-rx.overlay;w5500-seeed-static-mac.overlay"
 
-* Edit ``local-mac-address`` in :file:`w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
+* Edit ``local-mac-address`` in :ncs-file:`/samples/dect/dect_shell/w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
 
-* For a **random** Ethernet MAC each boot, use :file:`w5500-seeed.overlay` instead:
+* For a **random** Ethernet MAC each boot, use :ncs-file:`/samples/dect/dect_shell/w5500-seeed.overlay` instead:
 
   .. code-block:: console
 
@@ -934,7 +934,7 @@ To build the DeSh sample with DNS-SD advertisement and the ``dect discover`` com
 
    $ west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE="mdns-common.conf;mdns-discover.conf"
 
-On an Ethernet sink that itself needs to run ``dect discover`` (as opposed to just being discovered by a PT), also merge :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf` (see the Ethernet W5500 sections for full examples).
+On an Ethernet sink that itself needs to run ``dect discover`` (as opposed to just being discovered by a PT), also merge :ncs-file:`/samples/dect/dect_shell/eth_sink_mdns-discover.conf` after :ncs-file:`/samples/dect/dect_shell/mdns-discover.conf` (see the Ethernet W5500 sections for full examples).
 
 iperf3 support
 ==============
