@@ -200,11 +200,15 @@ ZTEST(saadct_api, test_continuous_acquisition)
 	ret = saadct_stop(saadct_dev, true);
 	zassert_ok(ret, "saadct_stop failed: %d", ret);
 
+	k_msleep(MEASUREMENT_TIMEOUT_MS);
+
 	while (saadct_pending(saadct_dev) > 0) {
 		ret = saadct_get(saadct_dev, &data, K_NO_WAIT);
 		zassert_ok(ret, "saadct_get while draining failed: %d",
 			   ret);
+		check_series_values(data);
 		saadct_put(saadct_dev, data);
+		collected_series++;
 	}
 
 	ret = saadct_get(saadct_dev, &data, K_NO_WAIT);
