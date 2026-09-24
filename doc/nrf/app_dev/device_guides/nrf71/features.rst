@@ -68,9 +68,9 @@ Supported protocols
 
 The nRF71 Series supports several protocols, including the following:
 
-* Wi-Fi
-* Bluetooth Low Energy
-* Thread (IEEE 802.15.4)
+* :ref:`Wi-Fi <ug_wifi>`
+* :ref:`Bluetooth Low Energy <ug_bt>`
+* :ref:`Thread <ug_thread>` (IEEE 802.15.4)
 
 Supported Wi-Fi standards and modes
 ===================================
