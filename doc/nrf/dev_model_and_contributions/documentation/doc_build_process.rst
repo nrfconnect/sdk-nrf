@@ -23,7 +23,7 @@ As with the rest of the |NCS|, this is handled by CMake.
 CMake
 -----
 CMake not only creates a generator used to build the documentation, it also checks for the required binaries and dependencies and ensures that the docsets are built in the correct order.
-:file:`nrf/doc/CMakeLists.txt` contains the function :code:`add_docset` which is used to create targets for all the docsets.
+:ncs-file:`/doc/CMakeLists.txt` contains the function :code:`add_docset` which is used to create targets for all the docsets.
 This includes the :code:`{docset}`/ :code:`{docset}-all`, :code:`{docset}-inventory`/ :code:`{docset}-inventory-all`, :code:`{docset}-linkcheck` and :code:`{docset}-clean` targets.
 The inventory targets create reference targets without building the documentation, providing a solution for any circular dependencies.
 Some docsets require additional source files to be generated before the docset can be built, like :ref:`Zephyr's device tree<devicetree-intro>`.
@@ -42,7 +42,7 @@ Intersphinx
 The |NCS| documentation consists of multiple docsets.
 The main docset is the nRF documentation, while the other docsets are pulled from their upstream versions.
 The only file that is needed to maintain for this, is a customized :file:`conf.py` file located under :file:`doc/\\{docset-name\\}/`.
-To be able to make references across docsets, the Sphinx extension Intersphinx is used, and local paths are configured under :code:`intersphinx_mapping` in :file:`doc/nrf/conf.py`.
+To be able to make references across docsets, the Sphinx extension Intersphinx is used, and local paths are configured under :code:`intersphinx_mapping` in :ncs-file:`/doc/nrf/conf.py`.
 The upstream docsets are pulled using west.
 
 Building and publishing the documentation

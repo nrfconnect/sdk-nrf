@@ -73,7 +73,7 @@ Write:
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/ddfs.h`
-| Source file: :file:`subsys/bluetooth/services/ddfs.c`
+| Header file: :ncs-file:`/include/bluetooth/services/ddfs.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/ddfs.c`
 
 .. doxygengroup:: bt_ddfs

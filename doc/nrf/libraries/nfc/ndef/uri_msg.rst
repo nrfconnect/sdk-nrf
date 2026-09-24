@@ -53,8 +53,8 @@ API documentation
 URI messages
 ============
 
-| Header file: :file:`include/nfc/ndef/uri_msg.h`
-| Source file: :file:`subsys/nfc/ndef/uri_msg.c`
+| Header file: :ncs-file:`/include/nfc/ndef/uri_msg.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/uri_msg.c`
 
 .. doxygengroup:: nfc_uri_msg
 
@@ -63,7 +63,7 @@ URI messages
 URI records
 ===========
 
-| Header file: :file:`include/nfc/ndef/uri_rec.h`
-| Source file: :file:`subsys/nfc/ndef/uri_rec.c`
+| Header file: :ncs-file:`/include/nfc/ndef/uri_rec.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/uri_rec.c`
 
 .. doxygengroup:: nfc_uri_rec

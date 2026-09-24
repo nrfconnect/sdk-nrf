@@ -81,7 +81,7 @@ API documentation
 
 Application modules can use the following API of the HID keymap:
 
-| Header file: :file:`applications/nrf_desktop/src/util/hid_keymap.h`
-| Source file: :file:`applications/nrf_desktop/src/util/hid_keymap.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/hid_keymap.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/hid_keymap.c`
 
 .. doxygengroup:: hid_keymap

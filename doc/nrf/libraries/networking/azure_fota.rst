@@ -72,7 +72,7 @@ This limitation is inherited from the :ref:`lib_downloader` library.
 API documentation
 *****************
 
-| Header file: :file:`include/net/azure_fota.h`
+| Header file: :ncs-file:`/include/net/azure_fota.h`
 | Source files: :file:`subsys/net/lib/azure_fota/`
 
 .. doxygengroup:: azure_fota

@@ -23,7 +23,7 @@ The MPSL workqueue is intended to be used by callers of the low-priority MPSL AP
 API documentation
 *****************
 
-| Header file: :file:`include/mpsl/mpsl_work.h`
+| Header file: :ncs-file:`/include/mpsl/mpsl_work.h`
 | Source files: :file:`subys/mpsl/`
 
 .. doxygengroup:: mpsl_work

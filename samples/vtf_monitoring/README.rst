@@ -26,7 +26,7 @@ The sample periodically logs the following :ref:`vtf_monitoring` channels:
   Live capture for battery voltage is not yet implemented in the subsystem, so the snapshot holds the default value of the Kconfig option.
 * Crystal oscillator (XO) frequency offset - Since the :kconfig:option:`CONFIG_VTF_FREQ_OFFSET_MONITOR` Kconfig option is disabled, the snapshot holds the default value of the Kconfig option.
 
-The sample includes a mock provider in the :file:`src/mock_battery_provider.c` file to demonstrate a custom channel monitoring backend.
+The sample includes a mock provider in the :ncs-file:`/samples/vtf_monitoring/src/mock_battery_provider.c` file to demonstrate a custom channel monitoring backend.
 It registers a channel with :c:macro:`VTF_CHANNEL_DEFINE` and simulates a battery discharging from 4200 mV to 3300 mV.
 This shows that a provider can use any data source, such as a fuel gauge library or a register read, as long as it implements the ``init()`` and ``sample()`` functions described in the subsystem documentation.
 
@@ -38,7 +38,7 @@ Configuration
 Devicetree configuration
 ========================
 
-The board overlay in the :file:`boards/nrf7120dk_nrf7120_cpuapp.overlay` file configures the following:
+The board overlay in the :ncs-file:`/samples/vtf_monitoring/boards/nrf7120dk_nrf7120_cpuapp.overlay` file configures the following:
 
 * ``nordic,vtf-region`` - Selects the SRAM region where ``vtf_snapshots`` are stored.
 

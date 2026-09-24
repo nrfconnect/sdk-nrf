@@ -24,7 +24,7 @@ Traffic generator server
 ************************
 
 When the traffic generator module is used with this sample, the traffic generator server must be running on a PC connected to the same access point.
-The server source is available in the :file:`scripts/traffic_gen_server` file.
+The server source is available in the :ncs-file:`/scripts/traffic_gen_server.py` file.
 This is a `python3` based server, so you must make sure that `python3` is installed on your PC.
 
 To start the server:
@@ -47,12 +47,12 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/twt/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/twt/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+You must configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/twt/prj.conf` file:
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -67,7 +67,7 @@ The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
 It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
 Successful DHCP handshake will override the default static IP configuration.
 
-You can change the following default static configuration in the :file:`prj.conf` file:
+You can change the following default static configuration in the :ncs-file:`/samples/wifi/twt/prj.conf` file:
 
 .. code-block:: console
 

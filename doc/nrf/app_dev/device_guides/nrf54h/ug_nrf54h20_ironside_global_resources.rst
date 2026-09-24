@@ -384,7 +384,7 @@ To determine which peripherals are in use, the build system analyzes the devicet
 
 It then generates the appropriate configuration values by reusing existing properties.
 The build system outputs the generated entries as a C file named :file:`periphconf_entries_generated.c` in the build directory, which is added as a source file to the build.
-The generated C code uses the macros defined in :file:`zephyr/modules/hal_nordic/ironside/se/include/ironside_zephyr/se/uicr_periphconf.h` to insert entries into a special PERIPHCONF section in the ELF file which can be read by the UICR image.
+The generated C code uses the macros defined in :ncs-file:`zephyr:/modules/hal_nordic/ironside/se/include/ironside_zephyr/se/uicr_periphconf.h` to insert entries into a special PERIPHCONF section in the ELF file which can be read by the UICR image.
 
 See the following table for a mapping between the devicetree input used by the PERIPHCONF entry generator script and the resulting output in the :file:`periphconf_entries_generated.c` file:
 

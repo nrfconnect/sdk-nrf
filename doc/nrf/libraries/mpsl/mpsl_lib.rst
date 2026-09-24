@@ -15,6 +15,6 @@ The :kconfig:option:`CONFIG_MPSL_DYNAMIC_INTERRUPTS` Kconfig option enables dyna
 API documentation
 *****************
 
-| Header file: :file:`include/mpsl/mpsl_lib.h`
+| Header file: :ncs-file:`/include/mpsl/mpsl_lib.h`
 
 .. doxygengroup:: mpsl_lib

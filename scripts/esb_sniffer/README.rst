@@ -59,7 +59,7 @@ Complete the following steps to set up Wireshark:
 
       .. group-tab:: Windows
 
-         Copy the :file:`esb_dissector.lua` file into the :file:`%APPDATA%\\Wireshark\\plugins` directory.
+         Copy the :ncs-file:`/scripts/esb_sniffer/esb_dissector.lua` file into the :file:`%APPDATA%\\Wireshark\\plugins` directory.
 
 #. Enable the dissector for |ESB|:
 

@@ -92,7 +92,7 @@ Similarly, ``uart0_sleep`` child node encodes the pin configurations for the ``s
 As shown in the code snippet, the pin configurations are organized in groups within each child node.
 Each group can specify a list of pin function selections in the ``psels`` property.
 The ``NRF_PSEL`` macro is used to specify a pin function selection.
-Available pin functions can be found in the :file:`include/dt-bindings/pinctrl/nrf-pinctrl.h` header file in the `Zephyr repository`_.
+Available pin functions can be found in the :ncs-file:`zephyr:/include/zephyr/dt-bindings/pinctrl/nrf-pinctrl.h` header file in the `Zephyr repository`_.
 
 A group can also specify shared pin properties common to all the specified pins, such as the ``bias-pull-up`` property in group 2.
 Here is a list of the supported standard pin properties:
@@ -108,7 +108,7 @@ Here is a list of the supported standard pin properties:
 
 The following non-standard, nRF-specific properties are also supported:
 
-* ``nordic,drive-mode`` - Pin output drive mode. Available drive modes are pre-defined in :file:`include/dt-bindings/pinctrl/nrf-pinctrl.h`. Note that extra modes might not be available on certain devices. When not specified, pin defaults to standard mode for 0 and 1 (``NRF_DRIVE_S0S1``).
+* ``nordic,drive-mode`` - Pin output drive mode. Available drive modes are pre-defined in :ncs-file:`zephyr:/include/zephyr/dt-bindings/pinctrl/nrf-pinctrl.h`. Note that extra modes might not be available on certain devices. When not specified, pin defaults to standard mode for 0 and 1 (``NRF_DRIVE_S0S1``).
 * ``nordic,invert`` - Invert pin polarity  (set active state to low). This property is valid only for PWM channel output pins.
 
 To link this pin configuration with a device, use a pinctrl-N property where N is the state index starting from zero.

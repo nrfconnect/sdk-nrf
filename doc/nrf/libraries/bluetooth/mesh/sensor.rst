@@ -467,7 +467,7 @@ The following code is an example of adding a setting to a sensor:
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/sensor.h`
-| Source file: :file:`subsys/bluetooth/mesh/sensor.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/sensor.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/sensor.c`
 
 .. doxygengroup:: bt_mesh_sensor

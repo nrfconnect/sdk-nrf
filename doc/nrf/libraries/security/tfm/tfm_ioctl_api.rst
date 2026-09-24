@@ -20,7 +20,7 @@ Functionality
 Platform-specific services are internally accessed through the :c:func:`tfm_platform_hal_ioctl` function.
 Wrapper functions for these accesses are defined in :file:`tfm_ioctl_ns_api.c` and :file:`tfm_ioctl_s_api.c`.
 
-The supported platform services are defined by :c:struct:`tfm_platform_ioctl_core_reqest_types_t` in :file:`tfm_ioctl_core_api.h`.
+The supported platform services are defined by :c:struct:`tfm_platform_ioctl_core_reqest_types_t` in :ncs-file:`trusted-firmware-m:/platform/ext/target/nordic_nrf/common/core/services/include/tfm_ioctl_core_api.h`.
 
 .. literalinclude:: ../../../../../../modules/tee/tf-m/trusted-firmware-m/platform/ext/target/nordic_nrf/common/core/services/include/tfm_ioctl_core_api.h
     :language: c
@@ -33,7 +33,7 @@ Read service
 ============
 
 The TF-M IOTCL read service allows the NSPE to access memory areas within the SPE that would otherwise be inaccessible to it.
-For a memory location to be accessible, it must be within the allowed memory areas defined by the :file:`tfm_platform_user_memory_ranges.h` file.
+For a memory location to be accessible, it must be within the allowed memory areas defined by the :ncs-file:`/modules/trusted-firmware-m/tfm_boards/services/include/tfm_platform_user_memory_ranges.h` file.
 
 .. caution::
    Adding locations to the allowed memory areas for reading might lead to major security consequences if the NSPE has access to sensitive data or code in the SPE.
@@ -65,7 +65,7 @@ Write service
 
 The TF-M IOTCL write service allows the NSPE to write words of memory to the SPE.
 
-For a memory location to be writable, it must be within the allowed memory areas defined by the :file:`tfm_platform_user_memory_ranges.h` file.
+For a memory location to be writable, it must be within the allowed memory areas defined by the :ncs-file:`/modules/trusted-firmware-m/tfm_boards/services/include/tfm_platform_user_memory_ranges.h` file.
 
 The allowed areas for writing are described by the :c:struct:`tfm_write32_service_address` structure that contains the following fields:
 
@@ -111,7 +111,7 @@ This library requires that TF-M is installed on the device.
 API documentation
 *****************
 
-| Header file: :file:`include/tfm/tfm_ioctl_api.h`
+| Header file: :ncs-file:`/include/tfm/tfm_ioctl_api.h`
 | Source files: :file:`modules/tfm/tfm/boards/src/`
 
 .. doxygengroup:: tfm_ioctl_api

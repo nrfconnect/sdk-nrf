@@ -180,7 +180,7 @@ The following example configuration for the nRF54H20 SoC sets up the necessary p
 API documentation
 *****************
 
-| Header file: :file:`include/zephyr/drivers/mspi.h`
-| Source file: :file:`drivers/mspi/mspi_sqspi.c`
+| Header file: :ncs-file:`zephyr:/include/zephyr/drivers/mspi.h`
+| Source file: :ncs-file:`/drivers/mspi/mspi_sqspi.c`
 
 .. doxygengroup:: mspi_interface

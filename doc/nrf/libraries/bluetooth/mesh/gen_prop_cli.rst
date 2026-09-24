@@ -130,7 +130,7 @@ mesh models prop mfr-prop-set-unack <ID> <Access>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_prop_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_prop_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_prop_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_prop_cli.c`
 
 .. doxygengroup:: bt_mesh_prop_cli

@@ -173,7 +173,7 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 OpenThread CoAP API is used in this sample:
 

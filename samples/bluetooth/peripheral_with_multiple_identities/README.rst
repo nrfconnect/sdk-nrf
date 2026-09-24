@@ -110,6 +110,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -229,11 +231,11 @@ Dependencies
 
 The sample uses the following Zephyr libraries:
 
-* :file:`include/kernel.h`
-* :file:`include/logging/log.h`
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`

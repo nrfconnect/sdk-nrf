@@ -59,8 +59,8 @@ The configuration files are in the |sample path| directory.
 
 The following files are available:
 
-* :file:`nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
-* :file:`pgps.conf` - Config overlay for P-GPS support.
+* :ncs-file:`/samples/cellular/location/nrf700x-wifi-scan-only.conf` - Config overlay for nRF7002 Wi-Fi chip support.
+* :ncs-file:`/samples/cellular/location/pgps.conf` - Config overlay for P-GPS support.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

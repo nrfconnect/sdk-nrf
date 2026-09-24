@@ -22,7 +22,7 @@ The UICC LwM2M library requires the :ref:`nrfxlib:nrf_modem` to use AT commands.
 API documentation
 *****************
 
-| Header file: :file:`include/modem/uicc_lwm2m.h`
-| Source file: :file:`lib/uicc_lwm2m/uicc_lwm2m.c`
+| Header file: :ncs-file:`/include/modem/uicc_lwm2m.h`
+| Source file: :ncs-file:`/lib/uicc_lwm2m/uicc_lwm2m.c`
 
 .. doxygengroup:: uicc_lwm2m

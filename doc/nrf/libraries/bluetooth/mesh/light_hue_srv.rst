@@ -95,7 +95,7 @@ This split is done so the values that may change often are stored on shutdown on
 API documentation
 ******************
 
-| Header file: :file:`include/bluetooth/mesh/light_hue_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_hue_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_hue_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_hue_srv.c`
 
 .. doxygengroup:: bt_mesh_light_hue_srv

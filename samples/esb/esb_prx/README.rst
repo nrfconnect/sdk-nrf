@@ -75,13 +75,13 @@ This sample uses the following |NCS| library:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
-  * :file:`include/irq.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/irq.h`
 
 * :ref:`zephyr:api_peripherals`:
 
-   * :file:`include/gpio.h`
+   * :ncs-file:`zephyr:/include/zephyr/drivers/gpio.h`

@@ -38,7 +38,7 @@ The HID report queue utility submits the :c:struct:`hid_report_event` to pass th
 The following sections describe how to integrate HID report queue APIs in an application module.
 
 The :ref:`nrf_desktop_hid_forward` is an example of an application module that uses the HID report queue utility.
-Refer to the module's implementation (:file:`src/modules/hid_forward.c`) for an example of HID report queue integration.
+Refer to the module's implementation (:ncs-file:`/applications/nrf_desktop/src/modules/hid_forward.c`) for an example of HID report queue integration.
 
 Allocation
 ==========
@@ -78,7 +78,7 @@ API documentation
 
 Application modules can use the following API of the HID report queue:
 
-| Header file: :file:`applications/nrf_desktop/src/util/hid_reportq.h`
-| Source file: :file:`applications/nrf_desktop/src/util/hid_reportq.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/hid_reportq.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/hid_reportq.c`
 
 .. doxygengroup:: hid_reportq

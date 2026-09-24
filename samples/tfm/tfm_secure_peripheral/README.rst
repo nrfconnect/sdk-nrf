@@ -41,11 +41,11 @@ The partition configuration and source files are in the :file:`secure_peripheral
 
 The following files are available:
 
-* :file:`tfm_secure_peripheral_partition.yaml.in` - Partition manifest template for services, MMIO regions, IRQs, and dependencies.
-* :file:`tfm_manifest_list.yaml.in` - Registers the partition with the TF-M manifest list.
-* :file:`CMakeLists.txt` - TF-M partition build configuration.
-* :file:`secure_peripheral_partition.c` - Partition implementation and IRQ handlers.
-* :file:`util.c` and :file:`util.h` - Hex-encoding helpers for SPI output.
+* :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in` - Partition manifest template for services, MMIO regions, IRQs, and dependencies.
+* :ncs-file:`secure_peripheral_partition/tfm_manifest_list.yaml.in` - Registers the partition with the TF-M manifest list.
+* :ncs-file:`secure_peripheral_partition/CMakeLists.txt` - TF-M partition build configuration.
+* :ncs-file:`secure_peripheral_partition/secure_peripheral_partition.c` - Partition implementation and IRQ handlers.
+* :ncs-file:`secure_peripheral_partition/util.c` and :ncs-file:`secure_peripheral_partition/util.h` - Hex-encoding helpers for SPI output.
 
 Configuring a secure peripheral
 ===============================
@@ -83,7 +83,7 @@ To start using a peripheral as a secure peripheral, complete the following steps
       TF-M only derives secure GPIO pins from devicetree for secure UART and SPIM instances.
       See :ref:`ug_tfm_building_secure_peripheral_gpio` for more details.
 
-#. Assign the peripheral to the specific partition in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
+#. Assign the peripheral to the specific partition in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
    This step is required when the peripheral has security attributes that can be set by the user (such as split security attributes).
    Assigning the peripheral makes sure that the TF-M configures this peripheral as secure.
 
@@ -105,7 +105,7 @@ Integrating secure interrupt
 
 If the secure peripheral generates interrupts, complete the following steps to integrate the interrupt with the TF-M interrupt mechanism:
 
-1. Define the interrupt source and handling type in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
+1. Define the interrupt source and handling type in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
 
    For example, the following IRQ definition configures the TIMER1 peripheral as secure:
 
@@ -170,7 +170,7 @@ Configuring access to other TF-M partitions
 
 You can configure the secure peripheral partition to access services from other TF-M partitions (such as Crypto or Protected Storage).
 
-For this, you must explicitly list these dependencies in the partition manifest YAML file :file:`tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
+For this, you must explicitly list these dependencies in the partition manifest YAML file :ncs-file:`secure_peripheral_partition/tfm_secure_peripheral_partition.yaml.in`, one of the `Configuration files`_ provided with the sample.
 For example, to allow access to the Protected Storage partition, add it to the ``dependencies`` section:
 
 .. code-block:: yaml
