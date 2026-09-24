@@ -35,9 +35,6 @@ Migration notes are also provided for major functionality updates.
    migration/migration_guide_2.9.0-nRF54H20-1
    migration/migration_3.1_54h_suit_ironside
    migration/migration_bicr_nRF54H20
-   migration/migration_guide_2.4.99-cs3_to_2.6.99-cs2
-   migration/migration_guide_nRF54H20_cs_to_2_7_99-cs2
-   migration/migration_guide_nRF54H20_cs_to_2_7_99-cs1
    migration/migration_guide_nRF54H20_cs_to_2_7
 
 .. toctree::

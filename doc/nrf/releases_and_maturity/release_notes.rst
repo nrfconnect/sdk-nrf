@@ -22,6 +22,7 @@ This page is included only in the latest documentation, because it might contain
    :caption: Subpages:
 
    releases/release-notes-changelog
+   releases/release-notes-3.5.0-preview2
    releases/release-notes-3.5.0-preview1
    releases/release-notes-3.4.1
    releases/release-notes-3.4.0
