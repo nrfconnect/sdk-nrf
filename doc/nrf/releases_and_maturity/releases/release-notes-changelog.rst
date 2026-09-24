@@ -635,6 +635,8 @@ Networking samples
 
   * Fixed an issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
 
+  * Updated the sample to only reboot on fatal errors and reconnect to the server on recoverable errors.
+
 * :ref:`azure_iot_hub` sample:
 
   * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
