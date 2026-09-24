@@ -230,7 +230,7 @@ The following enhancements to this library can be used to interact with `nRF Clo
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_cloud.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud.h`
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud
@@ -238,20 +238,20 @@ API documentation
 nRF Cloud codec documentation
 *****************************
 
-| Header file: :file:`include/net/nrf_cloud_codec.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_codec.h`
 
 .. doxygengroup:: nrf_cloud_codec
 
 nRF Cloud common definitions
 ****************************
 
-| Header file: :file:`include/net/nrf_cloud_defs.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_defs.h`
 
 .. doxygengroup:: nrf_cloud_defs
 
 nRF Cloud FOTA poll for CoAP
 ****************************************
 
-| Header file: :file:`include/net/nrf_cloud_fota_poll.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_fota_poll.h`
 
 .. doxygengroup:: nrf_cloud_fota_poll

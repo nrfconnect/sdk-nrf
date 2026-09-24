@@ -69,11 +69,11 @@ This sample uses the following `sdk-nrfxlib`_ libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/console.h`
+* :ncs-file:`zephyr:/include/zephyr/console/console.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
-  * :file:`include/irq.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/irq.h`
 
-* :file:`include/sys/printk.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`

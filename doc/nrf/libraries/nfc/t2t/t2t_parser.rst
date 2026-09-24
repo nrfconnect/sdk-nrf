@@ -50,14 +50,14 @@ API documentation
 NFC Type 2 Tag parser
 ---------------------
 
-| Header file: :file:`include/nfc/t2t/t2t_parser.h`
-| Source file: :file:`subsys/nfc/t2t/parser.c`
+| Header file: :ncs-file:`/include/nfc/t2t/parser.h`
+| Source file: :ncs-file:`/subsys/nfc/t2t/parser.c`
 
 .. doxygengroup:: nfc_t2t_parser
 
 Type 2 Tag TLV blocks
 ---------------------
 
-| Header file: :file:`include/nfc/t2t/tlv_block.h`
+| Header file: :ncs-file:`/include/nfc/t2t/tlv_block.h`
 
 .. doxygengroup:: nfc_t2t_tlv_block

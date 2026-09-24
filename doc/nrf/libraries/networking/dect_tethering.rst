@@ -174,7 +174,7 @@ Dependencies
 API documentation
 *****************
 
-| Header file: :file:`include/net/dect/dect_tether_ipv6.h`
+| Header file: :ncs-file:`/include/net/dect/dect_tether_ipv6.h`
 | Source files: :file:`subsys/net/lib/dect/tether_ipv6/`
 
 .. doxygengroup:: dect_tether_ipv6

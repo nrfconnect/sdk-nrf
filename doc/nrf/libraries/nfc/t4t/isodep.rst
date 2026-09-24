@@ -24,8 +24,8 @@ The library automatically decides which frame type to use and provides full prot
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/t4t/isodep.h`
-| Source file: :file:`subsys/nfc/t4t/isodep.c`
+| Header file: :ncs-file:`/include/nfc/t4t/isodep.h`
+| Source file: :ncs-file:`/subsys/nfc/t4t/isodep.c`
 
 .. doxygengroup:: nfc_t4t_isodep
 

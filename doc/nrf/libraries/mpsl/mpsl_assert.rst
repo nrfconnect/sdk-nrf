@@ -17,6 +17,6 @@ The :c:func:`mpsl_assert_handle` function is invoked whenever the MPSL code enco
 API documentation
 *****************
 
-| Header file: :file:`include/mpsl/mpsl_assert.h`
+| Header file: :ncs-file:`/include/mpsl/mpsl_assert.h`
 
 .. doxygengroup:: mpsl_assert

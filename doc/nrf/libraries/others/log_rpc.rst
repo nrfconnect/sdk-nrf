@@ -57,7 +57,7 @@ The library has the following dependencies:
 API documentation
 *****************
 
-| Header file: :file:`include/logging/log_rpc.h`
+| Header file: :ncs-file:`/include/logging/log_rpc.h`
 | Source files: :file:`subsys/logging`
 
 .. doxygengroup:: log_rpc

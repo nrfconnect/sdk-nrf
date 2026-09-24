@@ -95,7 +95,7 @@ mesh models loc local-set-unack <North> <East> <Alt> <Floor> [TimeDlt(ms) [Prec(
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_loc_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_loc_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_loc_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_loc_cli.c`
 
 .. doxygengroup:: bt_mesh_loc_cli

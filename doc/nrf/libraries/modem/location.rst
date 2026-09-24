@@ -395,7 +395,7 @@ It uses the following Zephyr libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/location.h`
+| Header file: :ncs-file:`/include/modem/location.h`
 | Source files: :file:`lib/location/`
 
 .. doxygengroup:: location

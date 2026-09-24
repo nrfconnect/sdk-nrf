@@ -30,7 +30,7 @@ Configure the following parameters when using this library:
 API documentation
 *****************
 
-| Header file: :file:`include/net/aws_jobs.h`
+| Header file: :ncs-file:`/include/net/aws_jobs.h`
 | Source files: :file:`subsys/net/lib/aws_jobs/`
 
 .. doxygengroup:: aws_jobs

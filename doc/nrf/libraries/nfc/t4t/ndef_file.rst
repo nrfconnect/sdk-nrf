@@ -21,8 +21,8 @@ The following code sample demonstrates how to encode the NDEF file for NFC Type 
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/t4t/ndef_file.h`
-| Source file: :file:`subsys/nfc/t4t/ndef_file.c`
+| Header file: :ncs-file:`/include/nfc/t4t/ndef_file.h`
+| Source file: :ncs-file:`/subsys/nfc/t4t/ndef_file.c`
 
 .. _nfc_t4t_ndef_file:
 

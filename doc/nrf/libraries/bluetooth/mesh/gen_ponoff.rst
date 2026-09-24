@@ -26,6 +26,6 @@ Common types
 
 This section lists the types common to the Generic Power OnOff mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/gen_ponoff.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_ponoff.h`
 
 .. doxygengroup:: bt_mesh_ponoff

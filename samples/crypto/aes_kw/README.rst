@@ -112,7 +112,7 @@ AES-KW algorithm overlay
 The sample allows you to use either the AES-KW or the AES-KWP algorithm.
 By default, the sample demonstrates AES-KW algorithm usage.
 
-If you want to configure the sample to work with the AES-KWP algorithm, use the :file:`aes_kwp.conf` file to extend the main configuration file.
+If you want to configure the sample to work with the AES-KWP algorithm, use the :ncs-file:`/samples/crypto/aes_kw/aes_kwp.conf` file to extend the main configuration file.
 To provide this extra overlay file, use the :ref:`EXTRA_CONF_FILE CMake option<building_overlay_files>` when building the sample (``-DEXTRA_CONF_FILE=aes_kwp.conf``).
 
 .. _kmu_demo_overlay:
@@ -124,7 +124,7 @@ The sample allows you to generate and store a Key Encryption Key in the KMU, as 
 to block the key, preventing its use in cryptographic operations.
 By default, the sample uses the PSA crypto keystore.
 
-If you want to configure the sample to work with the KMU, use the :file:`kmu_demo.conf` file to extend the main configuration file.
+If you want to configure the sample to work with the KMU, use the :ncs-file:`/samples/crypto/aes_kw/kmu_demo.conf` file to extend the main configuration file.
 To provide this extra overlay file, use the :ref:`EXTRA_CONF_FILE CMake option<building_overlay_files>` when building the sample (``-DEXTRA_CONF_FILE=kmu_demo.conf``).
 
 .. note::

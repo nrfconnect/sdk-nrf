@@ -8,7 +8,7 @@ Library wrapper
    :depth: 2
 
 The library wrapper provides an encapsulation over the core Modem library functions such as initialization and shutdown.
-The library wrapper is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib.c`.
+The library wrapper is implemented in :ncs-file:`/lib/nrf_modem_lib/nrf_modem_lib.c`.
 
 The library wrapper encapsulates the :c:func:`nrf_modem_init` and :c:func:`nrf_modem_shutdown` calls of the Modem library with :c:func:`nrf_modem_lib_init` and :c:func:`nrf_modem_lib_shutdown` calls, respectively.
 The library wrapper eases the task of initializing the Modem library by automatically passing the size and address of all the shared memory regions of the Modem library to the :c:func:`nrf_modem_init` call.

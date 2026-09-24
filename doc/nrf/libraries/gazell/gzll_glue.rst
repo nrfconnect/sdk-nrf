@@ -14,7 +14,7 @@ This module is used in the :ref:`gazell_samples`.
 API documentation
 *****************
 
-| Header file: :file:`include/gzll_glue.h`
-| Source file: :file:`subsys/gazell/gzll_glue.c`
+| Header file: :ncs-file:`/include/gzll_glue.h`
+| Source file: :ncs-file:`/subsys/gazell/gzll_glue.c`
 
 .. doxygengroup:: gzll_glue

@@ -55,14 +55,14 @@ Examples:
 
 Optional configuration files shipped with this sample:
 
-* :file:`verbose.conf` - Development-oriented options: asserts and DBG log levels for this sample and nRF RPC modules.
-* :file:`log_rpc.conf` - Enables the log forwarder part of the :ref:`Logging RPC <log_rpc>` and ``log_rpc`` shell commands.
-* :file:`ble.conf` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and ``bt`` shell commands.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/verbose.conf` - Development-oriented options: asserts and DBG log levels for this sample and nRF RPC modules.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/log_rpc.conf` - Enables the log forwarder part of the :ref:`Logging RPC <log_rpc>` and ``log_rpc`` shell commands.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/ble.conf` - Enables the client part of the :ref:`Bluetooth LE RPC <ble_rpc>` and ``bt`` shell commands.
   It also enables the :ref:`nus_service_readme` and :ref:`throughput_readme`.
-* :file:`openthread.conf` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>` and ``ot`` shell commands.
-* :file:`nfc.conf` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>` and ``nfc`` shell commands.
-* :file:`coex.conf` - Enables ``coex`` shell commands for controlling the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
-  Use together with the :file:`coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/openthread.conf` - Enables the client part of the :ref:`OpenThread RPC <ot_rpc>` and ``ot`` shell commands.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/nfc.conf` - Enables the client part of the :ref:`NFC RPC <nfc_rpc>` and ``nfc`` shell commands.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/coex.conf` - Enables ``coex`` shell commands for controlling the :ref:`MPSL software coexistence <nrfxlib:mpsl_cx>` implementation on the server device.
+  Use together with the :ncs-file:`/samples/nrf_rpc/protocols_serialization/client/coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
 
 For automated testing, CI builds might add global snippets such as ``ci-shell`` and ``zperf`` together with the configuration fragments above (see the :file:`sample.yaml` file).
 

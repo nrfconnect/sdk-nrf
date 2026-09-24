@@ -27,7 +27,7 @@ See the :ref:`single_slot_sample` sample (``FILE_SUFFIX=ble_enter`` build) for a
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/fw_loader_settings.h`
+| Header file: :ncs-file:`/include/dfu/fw_loader_settings.h`
 | Source files: :file:`subsys/dfu/fw_loader_settings/src/`
 
 .. doxygengroup:: fw_loader_settings

@@ -108,7 +108,7 @@ The models are used for the following purposes:
 * Sensor Server instances provide sensor data to one or more :ref:`mesh sensor observers <bt_mesh_sensor_cli_readme>`.
 * Sensor Setup Server instances are used for configuration of the corresponding Sensor Server instances.
 
-The model handling is implemented in :file:`src/model_handler.c`.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/sensor_server/src/model_handler.c`.
 It uses the ``TEMP_NRF5`` temperature sensor.
 
 The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the die temperature sensor accuracy given in the `nRF54L15 Datasheet`_.
@@ -245,22 +245,22 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 * :ref:`zephyr:settings_api`:
 
-  * :file:`include/settings/settings.h`
+  * :ncs-file:`zephyr:/include/zephyr/settings/settings.h`
 
 The sample also uses the following secure firmware component:
 

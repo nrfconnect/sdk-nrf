@@ -32,7 +32,7 @@ On nRF91 Series devices, you can enable the following functionalities using snip
      - ``tfm-enable-share-uart``
      - :ref:`All nRF91 Series board targets <ug_nrf91>`
 
-You can only use the four trace snippets with applications that use the RAM layout defined in :file:`nrf/dts/samples/cellular/nrf91_sram_partitions.dtsi`.
+You can only use the four trace snippets with applications that use the RAM layout defined in :ncs-file:`/dts/samples/cellular/nrf91_sram_partitions.dtsi`.
 If you are using a different RAM layout, for example, to use more TF-M functionalities, you need to add the ``cpucell_cpuapp_ipc_shm_trace`` partition yourself and copy the configurations from the :file:`.conf` file in the snippet.
 See :ref:`devicetree_integration` for more information.
 

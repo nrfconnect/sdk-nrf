@@ -113,7 +113,7 @@ Increasing this value allows for more rangings to different nodes, but also incr
 API documentation
 *****************
 
-| Header file: :file:`include/dm.h`
+| Header file: :ncs-file:`/include/dm.h`
 | Source files: :file:`subsys/dm/`
 
 .. doxygengroup:: dm

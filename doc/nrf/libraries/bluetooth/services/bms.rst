@@ -38,7 +38,7 @@ Otherwise, the Server removes the bond for a given peer when it disconnects.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/bms.h`
-| Source file: :file:`subsys/bluetooth/services/bms.c`
+| Header file: :ncs-file:`/include/bluetooth/services/bms.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/bms.c`
 
 .. doxygengroup:: bt_bms

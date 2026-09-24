@@ -46,7 +46,7 @@ Partition layout
 ================
 
 When building firmware for Nordic Thingy:91, the partition layout is defined in devicetree.
-The board provides a default layout in the :file:`nrf/boards/nordic/thingy91/thingy91_nrf9160_partition.dtsi` file in the |NCS| installation, which is included by the board devicetree and matches the factory layout.
+The board provides a default layout in the :ncs-file:`/boards/nordic/thingy91/thingy91_nrf9160_partition.dtsi` file in the |NCS| installation, which is included by the board devicetree and matches the factory layout.
 This setup ensures that when you program the firmware through USB, it works correctly without updating the MCUboot bootloader.
 You must keep the image partitions in their original place to avoid compatibility issues.
 

@@ -581,7 +581,7 @@ Release build
 =============
 
 To build the sample in a release variant, set the ``FILE_SUFFIX=release`` CMake option.
-The build will use the :file:`prj_release.conf` configuration file instead of :file:`prj.conf`.
+The build will use the :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj_release.conf` configuration file instead of :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj.conf`.
 Check the contents of both files to learn which configuration changes you should apply when preparing the production build of your end product.
 
 The release build reduces the code size and RAM usage of the sample by disabling logging functionality and performing other optimizations.
@@ -959,7 +959,7 @@ To test this feature, complete the following steps:
    a. Set the application firmware version to ``v99.99.99`` by modifying the following files:
 
       * The :file:`VERSION` file.
-      * The :file:`configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
+      * The :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
 
       The new firmware version should match the version specified in the **Firmware Version** field from the :ref:`fast_pair_locator_tag_google_device_model` section.
 

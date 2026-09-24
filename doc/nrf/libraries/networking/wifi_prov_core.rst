@@ -193,7 +193,7 @@ The core library depends on:
 API documentation
 *****************
 
-| Header file: :file:`include/net/wifi_prov_core/wifi_prov_core.h`
+| Header file: :ncs-file:`/include/net/wifi_prov_core/wifi_prov_core.h`
 | Source files: :file:`subsys/net/lib/wifi_prov_core`
 
 .. doxygengroup:: wifi_prov_core

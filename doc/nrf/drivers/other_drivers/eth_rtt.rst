@@ -57,7 +57,7 @@ Driver can then be enabled by using the :kconfig:option:`CONFIG_ETH_RTT` Kconfig
 API documentation
 *****************
 
-| Source file: :file:`drivers/net/eth_rtt.c`
+| Source file: :ncs-file:`/drivers/net/eth_rtt.c`
 
 After the eth_rtt driver has been initialized, the application will see it as an Ethernet connection.
 To use that, the application can use `Zephyr Network APIs`_.

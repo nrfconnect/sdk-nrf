@@ -69,7 +69,7 @@ None.
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/mesh/gen_loc_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_loc_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_loc_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_loc_srv.c`
 
 .. doxygengroup:: bt_mesh_loc_srv

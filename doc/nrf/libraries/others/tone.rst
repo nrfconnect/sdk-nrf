@@ -18,7 +18,7 @@ To enable the library, set the :kconfig:option:`CONFIG_TONE` Kconfig option to `
 API documentation
 *****************
 
-| Header file: :file:`include/tone.h`
-| Source file: :file:`lib/tone/tone.c`
+| Header file: :ncs-file:`/include/tone.h`
+| Source file: :ncs-file:`/lib/tone/tone.c`
 
 .. doxygengroup:: tone_gen

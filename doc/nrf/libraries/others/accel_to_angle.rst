@@ -49,7 +49,7 @@ To use the library, perform the following steps:
 
     * Use one of the already implemented filters that are delivered together with the library.
       Currently, the library only supports the exponential moving average (EMA) filter.
-      You can allocate the EMA filter instance with the help of the :c:macro:`ACCEL_TO_ANGLE_FILTER_EMA_DEFINE` macro that is available in the :file:`include/accel_to_angle/filter/ema.h` header.
+      You can allocate the EMA filter instance with the help of the :c:macro:`ACCEL_TO_ANGLE_FILTER_EMA_DEFINE` macro that is available in the :ncs-file:`/include/accel_to_angle/filter/ema.h` header.
     * Use a custom filter that is compatible with the library API.
       For an example on how to develop a custom filter, see the :ref:`lib_accel_to_angle_ema_api`.
 
@@ -90,8 +90,8 @@ The library uses the following API elements:
 Accel to angle library
 ======================
 
-| Header file: :file:`include/accel_to_angle/accel_to_angle.h`
-| Source file: :file:`lib/accel_to_angle/accel_to_angle.c`
+| Header file: :ncs-file:`/include/accel_to_angle/accel_to_angle.h`
+| Source file: :ncs-file:`/lib/accel_to_angle/accel_to_angle.c`
 
 .. doxygengroup:: accel_to_angle
 
@@ -100,7 +100,7 @@ Accel to angle library
 Accel to angle EMA filter
 =========================
 
-| Header file: :file:`include/accel_to_angle/filter/ema.h`
-| Source file: :file:`lib/accel_to_angle/filter_ema.c`
+| Header file: :ncs-file:`/include/accel_to_angle/filter/ema.h`
+| Source file: :ncs-file:`/lib/accel_to_angle/filter_ema.c`
 
 .. doxygengroup:: accel_to_angle_filter_ema

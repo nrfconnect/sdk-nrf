@@ -84,7 +84,7 @@ This library is used in the :ref:`central_nfc_pairing` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/tnep/ch.h`
+| Header file: :ncs-file:`/include/nfc/tnep/ch.h`
 | Source files: :file:`subsys/nfc/tnep/ch/`
 
 .. _nfc_tnep_ch:

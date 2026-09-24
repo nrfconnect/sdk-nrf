@@ -112,9 +112,9 @@ API documentation
 
 The coexistence API contract (the ``coex_cd_*`` and ``coex_sr_*`` functions and the ``CD2CM``/``CM2CD`` message types) is defined by the coexistence firmware interface headers, which match the interface of the ROMed nRF71 firmware.
 
-| CD-to-CM interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_coex_if.h`
-| CD-to-short-range interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_cd_sr_if.h`
-| Wi-Fi transport header: :file:`include/drivers/wifi/nrf71/nrf71_wifi_coex.h`
+| CD-to-CM interface header: :ncs-file:`/drivers/wifi/nrf71/inc/common/fw_if/nrf71_coex_if.h`
+| CD-to-short-range interface header: :ncs-file:`/drivers/wifi/nrf71/inc/common/fw_if/nrf71_cd_sr_if.h`
+| Wi-Fi transport header: :ncs-file:`/include/drivers/wifi/nrf71/nrf71_wifi_coex.h`
 | Source files: :file:`drivers/nrf71_sr_coex/src/`
 
 The following APIs are exposed by the coexistence driver to the short-range and Wi-Fi drivers:

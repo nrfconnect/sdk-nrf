@@ -19,7 +19,7 @@ Set :kconfig:option:`CONFIG_WAVE_GEN_LIB` to enable the wave generator library.
 API documentation
 *****************
 
-| Header file: :file:`include/wave_gen.h`
+| Header file: :ncs-file:`/include/wave_gen.h`
 | Source files: :file:`lib/wave_gen/`
 
 .. doxygengroup:: wave_gen

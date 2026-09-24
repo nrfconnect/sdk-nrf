@@ -19,7 +19,7 @@ The CC3XX entropy driver gathers entropy by using the CC3XX hardware through the
 API documentation
 *****************
 
-| Header file: :file:`zephyr/include/drivers/entropy.h` (in the |NCS| project)
-| Source file: :file:`drivers/entropy/entropy_cc3xx.c`
+| Header file: :ncs-file:`zephyr/include/drivers/entropy.h <zephyr:/include/zephyr/drivers/entropy.h>` (in the |NCS| project)
+| Source file: :ncs-file:`/drivers/entropy/entropy_cc3xx.c`
 
 The entropy_cc3xx driver implements the Zephyr :ref:`zephyr:entropy_api` API.

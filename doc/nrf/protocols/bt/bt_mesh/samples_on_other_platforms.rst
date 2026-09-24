@@ -29,8 +29,8 @@ For example, the :ref:`bluetooth_mesh_light_lc` sample includes board files for 
 
 1. Copy the following files from :file:`samples/bluetooth/mesh/light_ctrl/boards` to the same directory:
 
-   * :file:`samples/bluetooth/mesh/light_ctrl/boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf`
-   * :file:`samples/bluetooth/mesh/light_ctrl/boards/nrf54lm20dk_nrf54lm20a_cpuapp_emds.overlay`
+   * :ncs-file:`/samples/bluetooth/mesh/light_ctrl/boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf`
+   * :ncs-file:`/samples/bluetooth/mesh/light_ctrl/boards/nrf54lm20dk_nrf54lm20a_cpuapp_emds.overlay`
 
    Rename each copied file by replacing ``nrf54lm20a`` with ``nrf54lm20b``.
 

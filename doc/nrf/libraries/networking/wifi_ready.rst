@@ -22,7 +22,7 @@ To use this library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig 
 API documentation
 *****************
 
-| Header file: :file:`include/net/wifi_ready.h`
+| Header file: :ncs-file:`/include/net/wifi_ready.h`
 | Source files: :file:`subsys/net/lib/wifi_ready`
 
 .. doxygengroup:: wifi_ready

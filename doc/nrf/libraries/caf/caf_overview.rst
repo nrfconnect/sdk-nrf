@@ -65,7 +65,7 @@ complete the following steps:
 
       This function call submits the required :c:struct:`module_state_event`.
 
-   For an example implementation, see :file:`applications/nrf_desktop/src/main.c`.
+   For an example implementation, see :ncs-file:`/applications/nrf_desktop/src/main.c`.
 
 .. _caf_overview_modules:
 
@@ -123,110 +123,110 @@ Listed below are all available CAF events grouped by module, including details a
 CAF Bluetooth LE common events
 ==============================
 
-| Header file: :file:`include/caf/events/ble_common_event.h`
-| Source file: :file:`subsys/caf/events/ble_common_event.c`
+| Header file: :ncs-file:`/include/caf/events/ble_common_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/ble_common_event.c`
 
 .. doxygengroup:: caf_ble_common_event
 
 CAF Bluetooth LE SMP events
 ===========================
 
-| Header file: :file:`include/caf/events/ble_smp_event.h`
-| Source file: :file:`subsys/caf/events/ble_smp_event.c`
+| Header file: :ncs-file:`/include/caf/events/ble_smp_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/ble_smp_event.c`
 
 .. doxygengroup:: ble_smp_event
 
 CAF button events
 =================
 
-| Header file: :file:`include/caf/events/button_event.h`
-| Source file: :file:`subsys/caf/events/button_event.c`
+| Header file: :ncs-file:`/include/caf/events/button_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/button_event.c`
 
 .. doxygengroup:: caf_button_event
 
 CAF click events
 ================
 
-| Header file: :file:`include/caf/events/click_event.h`
-| Source file: :file:`subsys/caf/events/click_event.c`
+| Header file: :ncs-file:`/include/caf/events/click_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/click_event.c`
 
 .. doxygengroup:: caf_click_event
 
 CAF force power down events
 ===========================
 
-| Header file: :file:`include/caf/events/force_power_down_event.h`
-| Source file: :file:`subsys/caf/events/force_power_down_event.c`
+| Header file: :ncs-file:`/include/caf/events/force_power_down_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/force_power_down_event.c`
 
 .. doxygengroup:: caf_force_power_down_event
 
 CAF keep alive events
 =====================
 
-| Header file: :file:`include/caf/events/keep_alive_event.h`
-| Source file: :file:`subsys/caf/events/keep_alive_event.c`
+| Header file: :ncs-file:`/include/caf/events/keep_alive_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/keep_alive_event.c`
 
 .. doxygengroup:: caf_keep_alive_event
 
 CAF LED events
 ==============
 
-| Header file: :file:`include/caf/events/led_event.h`
-| Source file: :file:`subsys/caf/events/led_event.c`
+| Header file: :ncs-file:`/include/caf/events/led_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/led_event.c`
 
 .. doxygengroup:: caf_led_event
 
 CAF module state events
 =======================
 
-| Header file: :file:`include/caf/events/module_state_event.h`
-| Source file: :file:`subsys/caf/events/module_state_event.c`
+| Header file: :ncs-file:`/include/caf/events/module_state_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/module_state_event.c`
 
 .. doxygengroup:: caf_module_state_event
 
 CAF net state events
 ====================
 
-| Header file: :file:`include/caf/events/net_state_event.h`
-| Source file: :file:`subsys/caf/events/net_state_event.c`
+| Header file: :ncs-file:`/include/caf/events/net_state_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/net_state_event.c`
 
 .. doxygengroup:: net_state_event
 
 CAF power events
 ================
 
-| Header file: :file:`include/caf/events/power_event.h`
-| Source file: :file:`subsys/caf/events/power_event.c`
+| Header file: :ncs-file:`/include/caf/events/power_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/power_event.c`
 
 .. doxygengroup:: caf_power_event
 
 CAF power manager events
 ========================
 
-| Header file: :file:`include/caf/events/power_manager_event.h`
-| Source file: :file:`subsys/caf/events/power_manager_event.c`
+| Header file: :ncs-file:`/include/caf/events/power_manager_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/power_manager_event.c`
 
 .. doxygengroup:: caf_power_manager_event
 
 CAF sensor events
 =================
 
-| Header file: :file:`include/caf/events/sensor_event.h`
-| Source file: :file:`subsys/caf/events/sensor_event.c`
+| Header file: :ncs-file:`/include/caf/events/sensor_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/sensor_event.c`
 
 .. doxygengroup:: caf_sensor_event
 
 CAF sensor common
 =================
 
-| Header file: :file:`include/caf/caf_sensor_common.h`
+| Header file: :ncs-file:`/include/caf/caf_sensor_common.h`
 
 .. doxygengroup:: caf_sensor_common
 
 CAF sensor data aggregator events
 =================================
 
-| Header file: :file:`include/caf/events/sensor_data_aggregator_event.h`
-| Source file: :file:`subsys/caf/events/sensor_data_aggregator_event.c`
+| Header file: :ncs-file:`/include/caf/events/sensor_data_aggregator_event.h`
+| Source file: :ncs-file:`/subsys/caf/events/sensor_data_aggregator_event.c`
 
 .. doxygengroup:: caf_sensor_data_aggregator_event
