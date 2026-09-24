@@ -99,9 +99,16 @@ zephyr_library_sources_ifdef(CONFIG_NRF71_STA_MODE
   src/system/wpa_supp_if.c
 )
 
+if(CONFIG_NRF71_UTIL OR CONFIG_NRF71_DEBUG_SHELL)
+  zephyr_library_sources(src/common/shell.c)
+endif()
+
 zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL
-  src/common/shell.c
   src/common/util_shell.c
+)
+
+zephyr_library_sources_ifdef(CONFIG_NRF71_DEBUG_SHELL
+  src/common/debug_shell.c
 )
 
 # ---- Kconfig -> compile definitions ----
@@ -122,6 +129,7 @@ zephyr_library_compile_definitions(
   $<$<BOOL:${CONFIG_NRF71_TX_DONE_WQ_ENABLED}>:NRF71_TX_DONE_WQ_ENABLED>
   $<$<BOOL:${CONFIG_NRF71_RX_WQ_ENABLED}>:NRF71_RX_WQ_ENABLED>
   $<$<BOOL:${CONFIG_NRF71_UTIL}>:NRF71_UTIL>
+  $<$<BOOL:${CONFIG_NRF71_DEBUG_SHELL}>:NRF71_DEBUG_SHELL>
   $<$<BOOL:${CONFIG_NRF71_RADIO_TEST}>:NRF71_RADIO_TEST>
   $<$<BOOL:${CONFIG_NRF71_OFFLOADED_RAW_TX}>:NRF71_OFFLOADED_RAW_TX>
   $<$<BOOL:${CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD}>:NRF71_TCP_IP_CHECKSUM_OFFLOAD>
