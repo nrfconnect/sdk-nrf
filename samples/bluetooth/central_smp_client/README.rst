@@ -34,7 +34,7 @@ To allow the image to be uploaded to that storage, the sample also acts as a Blu
 
 On boot, the sample mounts the LittleFS file system and starts scanning as a central for the remote SMP server.
 The sample automatically connects to any device that advertises the SMP Service UUID.
-To connect based on other criteria, such as the device name, update the scan filter configuration in the :file:`prj.conf` and :file:`src/main.c` files.
+To connect based on other criteria, such as the device name, update the scan filter configuration in the :ncs-file:`/samples/bluetooth/central_smp_client/prj.conf` and :file:`src/main.c` files.
 For details about the available filter types, see :ref:`lib_nrf_bt_scan_readme_filters`.
 
 To upload the firmware update image for the remote target, press the following button:
@@ -164,25 +164,25 @@ This sample uses the following |NCS| libraries:
 
 It uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:kernel_api`:
 
   * ``include/kernel.h``
 
 * :ref:`zephyr:flash_map_api`:
 
-  * :file:`include/zephyr/storage/flash_map.h`
+  * :ncs-file:`zephyr:/include/zephyr/storage/flash_map.h`
 
 * :ref:`zephyr:file_system_api`:
 
-  * :file:`include/zephyr/fs/fs.h`
-  * :file:`include/zephyr/fs/littlefs.h`
+  * :ncs-file:`zephyr:/include/zephyr/fs/fs.h`
+  * :ncs-file:`zephyr:/include/zephyr/fs/littlefs.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
 
 * :ref:`zephyr:mcumgr_smp_protocol_specification`

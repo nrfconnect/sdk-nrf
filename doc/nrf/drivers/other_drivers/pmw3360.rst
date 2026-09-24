@@ -147,7 +147,7 @@ Driver uses burst mode for reading motion to improve data transfer speed.
 API documentation
 *****************
 
-| Header file: :file:`include/sensor/pmw3360.h`
-| Source file: :file:`drivers/sensor/pmw3360/pmw3360.c`
+| Header file: :ncs-file:`/include/sensor/pmw3360.h`
+| Source file: :ncs-file:`/drivers/sensor/pmw3360/pmw3360.c`
 
 .. doxygengroup:: pmw3360

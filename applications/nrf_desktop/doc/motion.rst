@@ -117,7 +117,7 @@ In these configurations, the module is a configuration channel listener and it p
     For the motion sensor, the module variant is a sensor model written in lowercase, for example ``pmw3360`` or ``paw3212``.
 
     The :ref:`nrf_desktop_config_channel_script` uses the sensor model to identify the descriptions of the configuration options.
-    These descriptions are defined in the :file:`nrf/scripts/hid_configurator/modules/module_config.py`.
+    These descriptions are defined in the :ncs-file:`/scripts/hid_configurator/modules/module_config.py`.
 * ``cpi``
     The motion sensor CPI.
 * ``downshift``, ``rest1``, ``rest2``

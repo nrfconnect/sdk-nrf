@@ -182,7 +182,7 @@ To create an EXT_API request, complete the following steps:
 API documentation
 *****************
 
-| Header file: :file:`include/fw_info.h`
+| Header file: :ncs-file:`/include/fw_info.h`
 | Source files: :file:`subsys/fw_info/`
 
 .. doxygengroup:: fw_info

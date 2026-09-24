@@ -56,7 +56,7 @@ API documentation
 
 Application modules can use the following API of the HID event queue:
 
-| Header file: :file:`applications/nrf_desktop/src/util/hid_eventq.h`
-| Source file: :file:`applications/nrf_desktop/src/util/hid_eventq.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/hid_eventq.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/hid_eventq.c`
 
 .. doxygengroup:: hid_eventq

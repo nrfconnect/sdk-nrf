@@ -108,7 +108,7 @@ Each slot holds the per-user state, which is why callbacks, the battery level, a
 API documentation
 *****************
 
-| Header files: :file:`include/dult/dult.h`, :file:`include/dult/bt.h`, :file:`include/dult/multi_user.h`, :file:`include/dult/test.h`
+| Header files: :ncs-file:`/include/dult/dult.h`, :ncs-file:`/include/dult/bt.h`, :ncs-file:`/include/dult/multi_user.h`, :ncs-file:`/include/dult/test.h`
 | Source files: :file:`subsys/dult`
 
 .. doxygengroup:: dult

@@ -90,7 +90,7 @@ The trigger configuration is a constant field of the :c:struct:`bt_fast_pair_adv
 Advertising process
 ===================
 
-The module uses the Bluetooth Extended Advertising API (:file:`include/zephyr/bluetooth/bluetooth.h`) to manage the Fast Pair advertising set.
+The module uses the Bluetooth Extended Advertising API (:ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`) to manage the Fast Pair advertising set.
 
 .. note::
    Even though the Bluetooth Extended Advertising API is used to manage the Fast Pair advertising set, the module still broadcasts advertising frames in the legacy format over-the-air.
@@ -246,7 +246,7 @@ This advertising trigger does not use a dedicated configuration structure and pa
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/fast_pair/adv_manager.h`
+| Header file: :ncs-file:`/include/bluetooth/fast_pair/adv_manager.h`
 | Source files: :file:`subsys/bluetooth/fast_pair/adv_manager`
 
 .. doxygengroup:: bt_fast_pair_adv_manager

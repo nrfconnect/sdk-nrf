@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-This sample is always built as a PT (Portable Termination) device (:kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT` in the :file:`prj.conf` file).
+This sample is always built as a PT (Portable Termination) device (:kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT` in the :ncs-file:`/samples/dect/dect_tether_ipv6/prj.conf` file).
 
 The sample enables :kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB` for a tethered host on Ethernet:
 

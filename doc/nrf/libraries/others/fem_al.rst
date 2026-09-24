@@ -35,7 +35,7 @@ Dependencies
 API documentation
 *****************
 
-| Header file: :file:`include/fem_al/fem_al.h`
+| Header file: :ncs-file:`/include/fem_al/fem_al.h`
 | Source files: :file:`lib/fem_al/`
 
 .. doxygengroup:: fem_al

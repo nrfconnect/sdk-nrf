@@ -93,11 +93,11 @@ There are no dependencies for using this library.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/ancs_client.h`
+| Header file: :ncs-file:`/include/bluetooth/services/ancs_client.h`
 | Source files:
 
-  * :file:`subsys/bluetooth/services/ancs_client.c`
-  * :file:`subsys/bluetooth/services/ancs_attr_parser.c`
-  * :file:`subsys/bluetooth/services/ancs_app_attr_get.c`
+  * :ncs-file:`/subsys/bluetooth/services/ancs_client.c`
+  * :ncs-file:`/subsys/bluetooth/services/ancs_attr_parser.c`
+  * :ncs-file:`/subsys/bluetooth/services/ancs_app_attr_get.c`
 
 .. doxygengroup:: bt_ancs_client

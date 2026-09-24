@@ -78,7 +78,7 @@ You can configure the following values in the :c:struct:`app_jwt_data` structure
 API documentation
 *****************
 
-| Header file: :file:`include/app_jwt.h`
-| Source file: :file:`lib/app_jwt/app_jwt.c`
+| Header file: :ncs-file:`/include/app_jwt.h`
+| Source file: :ncs-file:`/lib/app_jwt/app_jwt.c`
 
 .. doxygengroup:: app_jwt

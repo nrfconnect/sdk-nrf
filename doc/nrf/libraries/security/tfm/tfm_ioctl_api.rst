@@ -111,7 +111,7 @@ This library requires that TF-M is installed on the device.
 API documentation
 *****************
 
-| Header file: :file:`include/tfm/tfm_ioctl_api.h`
+| Header file: :ncs-file:`/include/tfm/tfm_ioctl_api.h`
 | Source files: :file:`modules/tfm/tfm/boards/src/`
 
 .. doxygengroup:: tfm_ioctl_api

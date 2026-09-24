@@ -446,7 +446,7 @@ Some default configurations are available to facilitate trials.
 
 This sample is using cloud service for positioning through the :ref:`lib_location` library by default.
 However, an application can also handle the cloud communication for the location services by itself.
-To enable cloud communication, use the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option and a separate configuration (:file:`cloud_mqtt.conf`) to enable nRF Cloud service over MQTT for retrieving location data.
+To enable cloud communication, use the :kconfig:option:`CONFIG_LOCATION_SERVICE_EXTERNAL` Kconfig option and a separate configuration (:ncs-file:`/samples/cellular/modem_shell/cloud_mqtt.conf`) to enable nRF Cloud service over MQTT for retrieving location data.
 Use the ``cloud`` command to establish the MQTT connection before ``location`` commands.
 
 Examples
@@ -1379,8 +1379,8 @@ To know more about the AVSystem integration with |NCS|, see :ref:`ug_avsystem`.
 You can build the MoSh sample with different LwM2M configurations:
 
   * To build the MoSh sample with the default LwM2M configuration, use the ``-DEXTRA_CONF_FILE=lwm2m.conf`` option and set the used Pre-Shared-Key (PSK) using the :kconfig:option:`CONFIG_MOSH_LWM2M_PSK` Kconfig option.
-  * To enable bootstrapping, use the optional overlay file :file:`lwm2m_bootstrap.conf`.
-  * To enable P-GPS support, use the optional overlay files :file:`lwm2m_pgps.conf` and :file:`pgps.conf`.
+  * To enable bootstrapping, use the optional overlay file :ncs-file:`/samples/cellular/modem_shell/lwm2m_bootstrap.conf`.
+  * To enable P-GPS support, use the optional overlay files :ncs-file:`/samples/cellular/modem_shell/lwm2m_pgps.conf` and :ncs-file:`/samples/cellular/modem_shell/pgps.conf`.
 
 To build the sample with LwM2M support, use the following command:
 
@@ -1449,7 +1449,7 @@ The external GNSS support requires an external GNSS module with UART interface a
 For example, you can use an nRF91 Series DK with the :ref:`gnss_sample` sample in NMEA only mode.
 
 After programming the development kit, connect the UART TX and GND pins from the external GNSS module to the UART RX and GND pins of the nRF9151 DK.
-The RX pin for UART2 is set to P0.30 in the :file:`ext_gnss_uart.overlay` file.
+The RX pin for UART2 is set to P0.30 in the :ncs-file:`/samples/cellular/modem_shell/ext_gnss_uart.overlay` file.
 The speed is set to 115200 bps by default, but you can change it by modifying the overlay file.
 
 MoSh automatically provides periodic location updates when requested by the modem.
@@ -1470,11 +1470,11 @@ Example output with NTN library debug logging enabled:
 Performance testing
 ===================
 
-For data throughput testing, increase the modemlib TX buffer size for maximum throughput by using the :file:`nrf91dk_perf_test.overlay` overlay file.
+For data throughput testing, increase the modemlib TX buffer size for maximum throughput by using the :ncs-file:`/samples/cellular/modem_shell/nrf91dk_perf_test.overlay` overlay file.
 
 .. note::
-   You cannot use the ``nrf91-modem-trace-uart`` snippet together with the :file:`nrf91dk_perf_test.overlay` overlay file.
-   Use the :file:`nrf91dk_perf_test_modem_trace_uart.overlay` overlay and :file:`nrf91dk_perf_test_modem_trace_uart.conf` config files for performance testing with modem tracing over UART instead.
+   You cannot use the ``nrf91-modem-trace-uart`` snippet together with the :ncs-file:`/samples/cellular/modem_shell/nrf91dk_perf_test.overlay` overlay file.
+   Use the :ncs-file:`/samples/cellular/modem_shell/nrf91dk_perf_test_modem_trace_uart.overlay` overlay and :ncs-file:`/samples/cellular/modem_shell/nrf91dk_perf_test_modem_trace_uart.conf` config files for performance testing with modem tracing over UART instead.
 
 To build the sample with the performance testing configuration for the nRF9151 DK, use the following command:
 

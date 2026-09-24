@@ -50,7 +50,7 @@ API documentation
 
 Application modules can use the following API of the keys state utility:
 
-| Header file: :file:`applications/nrf_desktop/src/util/keys_state.h`
-| Source file: :file:`applications/nrf_desktop/src/util/keys_state.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/keys_state.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/keys_state.c`
 
 .. doxygengroup:: keys_state

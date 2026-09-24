@@ -55,24 +55,32 @@ Examples:
 
 Optional configuration files shipped with this sample:
 
-* :file:`verbose.conf` - Development-oriented options: asserts, UART logging, and DBG log levels.
-* :file:`log_rpc.conf` - Enables Logging over RPC and core dump support used by the client to retrieve crash logs.
-* :file:`ble.conf` - Enables the server part of the :ref:`Bluetooth LE RPC <ble_rpc>`.
-* :file:`openthread.conf` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>` and required OpenThread features.
-* :file:`nfc.conf` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
-* :file:`coex.conf` - Enables MPSL Software Coexistence.
-  Use together with the :file:`coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/verbose.conf` - Development-oriented options: asserts, UART logging, and DBG log levels.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/log_rpc.conf` - Enables Logging over RPC and core dump support used by the client to retrieve crash logs.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/ble.conf` - Enables the server part of the :ref:`Bluetooth LE RPC <ble_rpc>`.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/openthread.conf` - Enables the server part of the :ref:`OpenThread RPC <ot_rpc>` and required OpenThread features.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/nfc.conf` - Enables the server part of the :ref:`NFC RPC <nfc_rpc>`.
+* :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/coex.conf` - Enables MPSL Software Coexistence.
+  Use together with the :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/coex.overlay` file (pass it via :makevar:`EXTRA_DTC_OVERLAY_FILE`).
 
 User interface
 **************
 
 .. tabs::
 
+   .. group-tab:: nRF52840 DK
+
+      Button 1:
+
+         * When the :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/log_rpc.conf` file is provided, triggers a fatal error.
+           This is used for testing the core dump feature.
+         * Otherwise: not available.
+
    .. group-tab:: nRF54L15 and nRF54LM20 DKs
 
       Button 0:
 
-         * When the :file:`log_rpc.conf` file is provided, triggers a fatal error.
+         * When the :ncs-file:`/samples/nrf_rpc/protocols_serialization/server/log_rpc.conf` file is provided, triggers a fatal error.
            This is used for testing the core dump feature.
          * Otherwise: not available.
 

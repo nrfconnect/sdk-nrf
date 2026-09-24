@@ -46,8 +46,8 @@ Read
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/throughput.h`
-| Source file: :file:`subsys/bluetooth/services/throughput.c`
+| Header file: :ncs-file:`/include/bluetooth/services/throughput.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/throughput.c`
 
 .. doxygengroup::  bt_throughput
 

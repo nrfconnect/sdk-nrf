@@ -16,5 +16,5 @@ The :ref:`bh1749` sample demonstrates how to run this library in an application.
 API documentation
 *****************
 
-| Header file: :file:`drivers/sensor/bh1749/bh1749.h`
-| Source file: :file:`drivers/sensor/bh1749/bh1749.c`
+| Header file: :ncs-file:`/drivers/sensor/bh1749/bh1749.h`
+| Source file: :ncs-file:`/drivers/sensor/bh1749/bh1749.c`

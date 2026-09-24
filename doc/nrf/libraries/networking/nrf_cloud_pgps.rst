@@ -293,7 +293,7 @@ It uses the following Zephyr subsystem:
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_cloud_pgps.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_pgps.h`
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud_pgps

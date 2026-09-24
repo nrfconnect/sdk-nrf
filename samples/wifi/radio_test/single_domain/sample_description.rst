@@ -83,4 +83,4 @@ This sample uses the following Zephyr library:
 
 * :ref:`zephyr:shell_api`:
 
-  * :file:`include/shell/shell.h`
+  * :ncs-file:`zephyr:/include/zephyr/shell/shell.h`

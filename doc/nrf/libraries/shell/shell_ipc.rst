@@ -15,7 +15,7 @@ The IPC Service shell transport is used in the :ref:`radio_test` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/shell/shell_ipc.h`
-| Source file: :file:`subsys/shell/shell_ipc.c`
+| Header file: :ncs-file:`/include/shell/shell_ipc.h`
+| Source file: :ncs-file:`/subsys/shell/shell_ipc.c`
 
 .. doxygengroup:: shell_ipc

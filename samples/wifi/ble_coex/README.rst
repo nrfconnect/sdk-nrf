@@ -46,7 +46,7 @@ The following table provides more details on the sample or application that runs
 +==============+================+====================================================================================+
 | nRF7002 DK   | Bluetooth LE   | The sample runs Wi-Fi throughput only, Bluetooth LE throughput only,               |
 | (DUT)        | coexistence    | or a combination of both based on configuration selections in the                  |
-|              | sample         | :file:`prj.conf`.                                                                  |
+|              | sample         | :ncs-file:`/samples/wifi/ble_coex/prj.conf`.                                                                  |
 +--------------+----------------+------------------------------------------------------------------------------------+
 | Test PC      | iPerf          | Wi-Fi iPerf UDP server is run on the test PC, and this acts as a peer device to    |
 |              | application    | the Wi-Fi UDP client that runs on the nRF7002 DK.                                  |
@@ -64,7 +64,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/ble_coex/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/ble_coex/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -72,7 +72,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Additional configuration
 ========================
 
-To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
+To enable different test modes, set up the following configuration parameters in the :ncs-file:`/samples/wifi/ble_coex/prj.conf` file:
 
 * Test modes: Use the following Kconfig options to select the required test case:
 
@@ -89,7 +89,7 @@ To enable different test modes, set up the following configuration parameters in
   The units are 1.25 milliseconds.
   For example, ``CONFIG_INTERVAL_MIN=80`` corresponds to an interval of 100 ms (80 x 1.25).
 
-* Wi-Fi connection: Configure the following Wi-Fi credentials in the :file:`prj.conf`: appropriately as per the credentials of the access point used for this testing:
+* Wi-Fi connection: Configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/ble_coex/prj.conf`: appropriately as per the credentials of the access point used for this testing:
 
 
 .. include:: /includes/wifi_credentials_static.txt

@@ -47,12 +47,12 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/twt/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/twt/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+You must configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/twt/prj.conf` file:
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -67,7 +67,7 @@ The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
 It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
 Successful DHCP handshake will override the default static IP configuration.
 
-You can change the following default static configuration in the :file:`prj.conf` file:
+You can change the following default static configuration in the :ncs-file:`/samples/wifi/twt/prj.conf` file:
 
 .. code-block:: console
 

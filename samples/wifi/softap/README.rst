@@ -46,7 +46,7 @@ Configuration
 Configuration options
 =====================
 
-The following Kconfig options are used in this sample (located in :file:`samples/wifi/softap/Kconfig`):
+The following Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/softap/Kconfig`):
 
 .. options-from-kconfig::
 
@@ -56,7 +56,7 @@ IP addressing
 The sample starts the DHCP server on the SoftAP interface.
 The station devices should use DHCP to get an IP address from the virtual router.
 
-To specify the DHCP pool start address, you can edit the :kconfig:option:`CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START` Kconfig option in the :file:`prj.conf` file.
+To specify the DHCP pool start address, you can edit the :kconfig:option:`CONFIG_SOFTAP_SAMPLE_DHCPV4_POOL_START` Kconfig option in the :ncs-file:`/samples/wifi/softap/prj.conf` file.
 
 Building and running
 ********************
