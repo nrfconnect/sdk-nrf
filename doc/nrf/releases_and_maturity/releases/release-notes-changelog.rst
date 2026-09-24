@@ -751,6 +751,10 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* :ref:`wifi_shutdown_sample` sample:
+
+  * Added the :file:`overlay-host-idle.conf` and :file:`overlay-host-idle-diag.conf` configuration files, which use the new :ref:`lib_nrf71_idle_power` library to measure nRF71 Series host idle current in One-shot mode.
+
 * :ref:`wifi_nrf_cloud` sample:
 
   * Added:

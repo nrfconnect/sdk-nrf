@@ -26,6 +26,8 @@ LOG_MODULE_REGISTER(shutdown, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <dk_buttons_and_leds.h>
 
+#include <nrf71_idle_power.h>
+
 #include "net_private.h"
 
 #define WIFI_SHELL_MODULE "wifi"
@@ -269,7 +271,10 @@ int main(void)
 
 #if defined(CONFIG_OPERATION_MODE_BUTTONS) || defined(CONFIG_OPERATION_MODE_ONE_SHOT)
 	exit_shutdown_mode();
+#if !defined(CONFIG_SHUTDOWN_STAY_UP)
 	enter_shutdown_mode();
+#endif /* !CONFIG_SHUTDOWN_STAY_UP */
+	nrf71_idle_power_print_snapshot("host-idle");
 	k_sleep(K_FOREVER);
 #else
 	/* Will continuously alternate between shutdown and startup modes
@@ -278,6 +283,7 @@ int main(void)
 	while (1) {
 		exit_shutdown_mode();
 		enter_shutdown_mode();
+		nrf71_idle_power_print_snapshot("host-idle");
 		k_sleep(K_SECONDS(CONFIG_SHUTDOWN_TIMEOUT_S));
 	}
 #endif /* CONFIG_OPERATION_MODE_BUTTONS */
