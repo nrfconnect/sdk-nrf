@@ -54,18 +54,6 @@
 		/* Remove the DTS node with the "cpuapp_sram" label to redefine the RAM layout. */
 		/delete-node/ memory@20000000;
 
-		/* The KMU RAM section must be placed at the very beginning of the physical
-		 * RAM due to the dependency on the nrfutil device tool and its KMU
-		 * provisioning functionality. The section must also have size of 96 bytes.
-		 * Note: this is not needed if KMU is not used.
-		 */
-		nrf_kmu_reserved_push_area: memory@20000000 {
-			reg = <0x20000000 0x60>;
-			compatible = "zephyr,memory-region", "mmio-sram";
-			zephyr,memory-region = "nrf_kmu_reserved_push_area";
-			status = "okay";
-		};
-
 		/* SRAM region that is shared by both the MCUboot image and the application code.
 		 * Currently, it is used to share the image metadata between the bootloader and
 		 * the application. This region is retained across reboots only if the
@@ -143,5 +131,11 @@
 				ranges = <0x0 0x78400 DT_SIZE_K(28)>;
 			};
 		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,sram = &cpuapp_sram;
 	};
 };
