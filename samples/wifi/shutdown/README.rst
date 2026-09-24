@@ -93,6 +93,26 @@ In Continuous mode, you can configure the timeout period between shutdown and re
 
    west build -p -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_SHUTDOWN_TIMEOUT_S=10
 
+Measure host idle current on the nRF71 Series device
+----------------------------------------------------
+
+On an nRF7120 DK, the :file:`host-idle.conf` and :file:`host-idle-diag.conf` files build a One-shot mode image that brings Wi-Fi up, scans once, shuts Wi-Fi down, and idles the host SoC forever using the :ref:`lib_nrf71_idle_power` library:
+
+* :file:`host-idle.conf` silences the console for a clean current reading:
+
+  .. code-block:: console
+
+     west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=host-idle.conf
+
+* :file:`host-idle-diag.conf` keeps logging enabled and prints a power-state register snapshot right before the host idles, to help locate where the current goes:
+
+  .. code-block:: console
+
+     west build -p -b nrf7120dk/nrf7120/cpuapp -- -DEXTRA_CONF_FILE=host-idle-diag.conf
+
+To keep the interface up and idle instead of shutting Wi-Fi down, enable
+:kconfig:option:`CONFIG_SHUTDOWN_STAY_UP`.
+
 Building and running
 ********************
 
