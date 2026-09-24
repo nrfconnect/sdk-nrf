@@ -55,4 +55,18 @@ int nrf_security_mutex_lock(nrf_security_mutex_t mutex);
  */
 int nrf_security_mutex_unlock(nrf_security_mutex_t mutex);
 
+/**
+ * @brief Try to lock a mutex without blocking.
+ *
+ * Unlike nrf_security_mutex_lock(), this returns immediately if the mutex is
+ * already held instead of waiting for it, so that a caller that needs more
+ * than one mutex can avoid holding one while blocked on another.
+ *
+ * @param[in] mutex The mutex to lock.
+ *
+ * @retval 0 The mutex was successfully locked.
+ * @retval -EBUSY The mutex is already held.
+ */
+int nrf_security_mutex_trylock(nrf_security_mutex_t mutex);
+
 #endif /* NRF_SECURITY_MUTEXES_H */

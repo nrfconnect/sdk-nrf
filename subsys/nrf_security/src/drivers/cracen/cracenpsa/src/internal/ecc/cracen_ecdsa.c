@@ -566,32 +566,50 @@ int cracen_ecdsa_verify_message(const uint8_t *pubkey, const struct sxhashalg *h
 	return cracen_ecdsa_verify_digest(pubkey, digest, digestsz, curve, signature);
 }
 
-int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, const size_t digestsz,
-			       const struct sx_pk_ecurve *curve, const uint8_t *signature)
+int cracen_ecdsa_verify_digest_start(sx_pk_req *req, const uint8_t *pubkey,
+				     const uint8_t *digest, size_t digestsz,
+				     const struct sx_pk_ecurve *curve, const uint8_t *signature)
 {
 	int status;
-	size_t opsz = sx_pk_curve_opsize(curve);
-
-	sx_pk_req req;
+	const size_t opsz = sx_pk_curve_opsize(curve);
 	struct sx_pk_inops_ecdsa_verify inputs;
 	struct cracen_const_signature internal_signature = {.r = signature, .s = signature + opsz};
 
-	sx_pk_acquire_hw(&req);
-	sx_pk_set_cmd(&req, SX_PK_CMD_ECDSA_VER);
-	status = sx_pk_list_ecc_inslots(&req, curve, 0, (struct sx_pk_slot *)&inputs);
+	sx_pk_acquire_hw(req);
+	sx_pk_set_cmd(req, SX_PK_CMD_ECDSA_VER);
+	status = sx_pk_list_ecc_inslots(req, curve, 0, (struct sx_pk_slot *)&inputs);
 	if (status != SX_OK) {
-		sx_pk_release_req(&req);
+		/* sx_pk_list_ecc_inslots() releases the request on every error path. */
 		return status;
 	}
 
-	opsz = sx_pk_curve_opsize(curve);
 	ecdsa_write_pk(pubkey, inputs.qx.addr, inputs.qy.addr, opsz);
 	ecdsa_write_sig(&internal_signature, inputs.r.addr, inputs.s.addr, opsz);
-
 	digest2op(digest, digestsz, inputs.h.addr, opsz);
-	sx_pk_run(&req);
-	status = sx_pk_wait(&req);
-	sx_pk_release_req(&req);
+	sx_pk_run(req);
+
+	return SX_OK;
+}
+
+int cracen_ecdsa_verify_digest_finish(sx_pk_req *req)
+{
+	int status = sx_pk_wait(req);
+
+	sx_pk_release_req(req);
 
 	return status;
+}
+
+int cracen_ecdsa_verify_digest(const uint8_t *pubkey, const uint8_t *digest, const size_t digestsz,
+			       const struct sx_pk_ecurve *curve, const uint8_t *signature)
+{
+	sx_pk_req req;
+	int status;
+
+	status = cracen_ecdsa_verify_digest_start(&req, pubkey, digest, digestsz, curve, signature);
+	if (status != SX_OK) {
+		return status;
+	}
+
+	return cracen_ecdsa_verify_digest_finish(&req);
 }

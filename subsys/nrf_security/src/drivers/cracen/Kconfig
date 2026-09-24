@@ -205,6 +205,17 @@ config CRACEN_BASE_RSA_COUNTERMEASURES_EXTENDED
 	  The countermeasures are available for the following operation:
 	  - RSA modular exponentiation
 
+config CRACEN_HYBRID_VERIFY
+	bool "CRACEN hybrid ML-DSA and ECDSA verification"
+	depends on !BUILD_WITH_TFM
+	depends on PSA_NEED_CRACEN_ML_DSA || PSA_NEED_CRACEN_DETERMINISTIC_ML_DSA
+	depends on PSA_NEED_CRACEN_ECDSA || PSA_NEED_CRACEN_DETERMINISTIC_ECDSA
+	help
+	  Enable cracen_hybrid_verify(), which starts an ECDSA verification
+	  before an ML-DSA verification over the same message and collects
+	  its result afterwards, so the PKE and the CryptoMaster run in
+	  parallel instead of idling one while the other runs.
+
 rsource 'psa_driver.Kconfig'
 
 endif # PSA_CRYPTO_DRIVER_CRACEN
