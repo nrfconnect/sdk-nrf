@@ -24,6 +24,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/wifi_mgmt.h>
 #include <system/wpa_supp_if.h>
 #include <system/fmac_peer.h>
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#include <system/net_if.h>
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 #ifdef CONFIG_NRF_WIFI_USE_KMU
 #include <wifi_kmu/wifi_kmu.h>
@@ -1258,6 +1261,9 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 			LOG_ERR("%s: nrf_wifi_sys_fmac_del_key failed", __func__);
 		} else {
 			ret = 0;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+			nrf_wifi_vif_key_removed(vif_ctx_zep, key_idx, addr);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 		}
 	} else {
 		status = nrf_wifi_sys_fmac_add_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
@@ -1267,6 +1273,9 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 			LOG_ERR("%s: nrf_wifi_sys_fmac_add_key failed", __func__);
 		} else {
 			ret = 0;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+			nrf_wifi_vif_key_installed(vif_ctx_zep, key_idx, addr, suite);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 		}
 	}
 
