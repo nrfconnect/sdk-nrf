@@ -36,7 +36,7 @@ bt_nus_shell.py
 
 .. testing_bt_nus_shell_intro_start
 
-The script file :file:`scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
+The script file :ncs-file:`/scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
 
 The script uses an additional Nordic development kit, like the PCA10040, as a Bluetooth central device.
 It connects to the specified device and forwards all NUS traffic to the network port.
@@ -69,10 +69,10 @@ Additionally, following parameters are option:
    The script does not support reconnections.
    Therefore, you must restart both the script and the console application after each reconnection.
 
-Perform the following steps to use the :file:`bt_nus_shell.py` script:
+Perform the following steps to use the :ncs-file:`/scripts/shell/bt_nus_shell.py` script:
 
 1. Connect a Nordic Development Kit, like the PCA10040, to your PC.
-#. Start the :file:`bt_nus_shell.py` script with the correct parameters, for example:
+#. Start the :ncs-file:`/scripts/shell/bt_nus_shell.py` script with the correct parameters, for example:
 
    .. code-block:: console
 
@@ -94,7 +94,7 @@ See :ref:`ble_console_readme` for more information.
 API documentation
 *****************
 
-| Header file: :file:`include/shell/shell_bt_nus.h`
-| Source file: :file:`subsys/shell/shell_bt_nus.c`
+| Header file: :ncs-file:`/include/shell/shell_bt_nus.h`
+| Source file: :ncs-file:`/subsys/shell/shell_bt_nus.c`
 
 .. doxygengroup:: shell_bt_nus

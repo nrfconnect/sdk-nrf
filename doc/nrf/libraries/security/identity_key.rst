@@ -37,7 +37,7 @@ To use the identity key APIs, you must first generate or provision HUK keys on t
 API documentation
 *****************
 
-| Header file: :file:`include/identity_key.h`
+| Header file: :ncs-file:`/include/identity_key.h`
 | Source files: :file:`modules/lib/identity_key/`
 
 .. doxygengroup:: identity_key

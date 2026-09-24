@@ -58,7 +58,7 @@ However, to do so, you must call an additional function that binds the TLV struc
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/t4t/cc_file.h`
-| Source file: :file:`subsys/nfc/t4t/cc_file.c`
+| Header file: :ncs-file:`/include/nfc/t4t/cc_file.h`
+| Source file: :ncs-file:`/subsys/nfc/t4t/cc_file.c`
 
 .. doxygengroup:: nfc_t4t_cc_file

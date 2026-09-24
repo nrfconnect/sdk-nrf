@@ -34,5 +34,5 @@ API documentation
 .. note::
    This library is an implementation of Zephyr's :ref:`fatal error handling API <zephyr:fatal>` and does not have a separate API documentation in the |NCS|.
 
-| Header file: :file:`zephyr/include/fatal.h`
-| Source file: :file:`lib/fatal_error/fatal_error.c`
+| Header file: :ncs-file:`zephyr/include/fatal.h <zephyr:/include/zephyr/fatal.h>`
+| Source file: :ncs-file:`/lib/fatal_error/fatal_error.c`

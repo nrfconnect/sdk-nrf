@@ -83,8 +83,8 @@ API documentation
 Launch App messages
 ===================
 
-| Header file: :file:`include/nfc/ndef/launchapp_msg.h`
-| Source file: :file:`subsys/nfc/ndef/launchapp_msg.c`
+| Header file: :ncs-file:`/include/nfc/ndef/launchapp_msg.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/launchapp_msg.c`
 
 .. doxygengroup:: nfc_launchapp_msg
 
@@ -93,7 +93,7 @@ Launch App messages
 Launch App records
 ===================
 
-| Header file: :file:`include/nfc/ndef/launchapp_rec.h`
-| Source file: :file:`subsys/nfc/ndef/launchapp_rec.c`
+| Header file: :ncs-file:`/include/nfc/ndef/launchapp_rec.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/launchapp_rec.c`
 
 .. doxygengroup:: nfc_launchapp_rec

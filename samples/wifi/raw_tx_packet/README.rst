@@ -35,7 +35,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/raw_tx_packet/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/raw_tx_packet/Kconfig`):
 
 .. options-from-kconfig::
 
@@ -46,7 +46,7 @@ By using the following Kconfig options, you can configure the sample for differe
 
 * For connected Station mode
 
-  To configure the sample in connected Station mode, you must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+  To configure the sample in connected Station mode, you must configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/raw_tx_packet/prj.conf` file:
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -57,7 +57,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 
 * For non-connected Station mode
 
-  To configure the sample in non-connected Station mode, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_CHANNEL` Kconfig option in the :file:`prj.conf` file.
+  To configure the sample in non-connected Station mode, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_CHANNEL` Kconfig option in the :ncs-file:`/samples/wifi/raw_tx_packet/prj.conf` file.
 
   This specifies the Wi-Fi channel to be used for communication on the wireless network.
 
@@ -72,7 +72,7 @@ The following configuration options are available for the raw TX packet header:
 * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_AGGREGATION_ENABLE`: Enables TX aggregation in the raw TX packet header.
 * :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_NUM_FRAMES`: Specifies the maximum number of MPDUs to aggregate per TX command when aggregation is enabled.
 
-Additionally, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS` Kconfig option in the :file:`prj.conf` file to define the time delay between raw TX packets.
+Additionally, you must configure the :kconfig:option:`CONFIG_RAW_TX_PKT_SAMPLE_INTER_FRAME_DELAY_MS` Kconfig option in the :ncs-file:`/samples/wifi/raw_tx_packet/prj.conf` file to define the time delay between raw TX packets.
 
 This sets the time duration between raw TX packets.
 
@@ -83,7 +83,7 @@ The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
 It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
 Successful DHCP handshake will override the default static IP configuration.
 
-You can change the following default static configuration in the :file:`prj.conf` file:
+You can change the following default static configuration in the :ncs-file:`/samples/wifi/raw_tx_packet/prj.conf` file:
 
 .. code-block:: console
 

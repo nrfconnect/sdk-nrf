@@ -242,6 +242,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -307,17 +309,17 @@ It uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/sys/kernel.h`
-* :file:`include/zephyr/sys/atomic.h`
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/atomic.h`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/zephyr/bluetooth/bluetooth.h`
-  * :file:`include/zephyr/bluetooth/conn.h`
-  * :file:`include/zephyr/bluetooth/uuid.h`
-  * :file:`include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
 
 * :ref:`zephyr:pm-guide`:
 
-  * :file:`include/zephyr/pm/pm.h`
-  * :file:`include/zephyr/pm/policy.h`
+  * :ncs-file:`zephyr:/include/zephyr/pm/pm.h`
+  * :ncs-file:`zephyr:/include/zephyr/pm/policy.h`

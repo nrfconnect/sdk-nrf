@@ -102,24 +102,24 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General project configuration file.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
+* :ncs-file:`/samples/net/mqtt/prj.conf` - General project configuration file.
+* :ncs-file:`/samples/net/mqtt/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/mqtt/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/mqtt/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/mqtt/boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :ncs-file:`/samples/net/mqtt/boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
+* :ncs-file:`/samples/net/mqtt/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/mqtt/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/mqtt/boards/native_sim.conf` - Configuration file for the native simulator board.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+Files that are located under the :file:`/boards` folder are automatically merged with the :ncs-file:`/samples/net/mqtt/prj.conf` file when you build for the corresponding target.
 
 In addition, the sample provides the following configuration overlay files, which are used to enable additional features in the sample:
 
-* :file:`overlay-tls-nrf91.conf` - TLS configuration overlay file for nRF91 Series devices.
-* :file:`overlay-tls-native_sim.conf` - TLS configuration overlay file for the native simulator board.
-* :file:`wifi.conf` - Configuration overlay file for Wi-Fi devices.
-* :file:`wifi-tls.conf` - TLS configuration overlay file for Wi-Fi devices.
+* :ncs-file:`/samples/net/mqtt/overlay-tls-nrf91.conf` - TLS configuration overlay file for nRF91 Series devices.
+* :ncs-file:`/samples/net/mqtt/overlay-tls-native_sim.conf` - TLS configuration overlay file for the native simulator board.
+* :ncs-file:`/samples/net/mqtt/wifi.conf` - Configuration overlay file for Wi-Fi devices.
+* :ncs-file:`/samples/net/mqtt/wifi-tls.conf` - TLS configuration overlay file for Wi-Fi devices.
 
 They are located in :file:`samples/net/mqtt` folder.
 
@@ -152,7 +152,7 @@ Building and running
 Wi-Fi with TLS
 ==============
 
-For |wifi| builds with TLS enabled, set the ``mqtt_EXTRA_CONF_FILE`` sysbuild variable to include both :file:`wifi.conf` and :file:`wifi-tls.conf`.
+For |wifi| builds with TLS enabled, set the ``mqtt_EXTRA_CONF_FILE`` sysbuild variable to include both :ncs-file:`/samples/net/mqtt/wifi.conf` and :ncs-file:`/samples/net/mqtt/wifi-tls.conf`.
 
 For example, use the following command for the nRF7120 DK:
 

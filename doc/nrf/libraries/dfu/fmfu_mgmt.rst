@@ -22,7 +22,7 @@ For more information on how to change the modem mode see :ref:`nrfxlib:nrf_modem
 API documentation
 *****************
 
-| Header file: :file:`include/mgmt/fmfu_mgmt.h` and :file:`include/mgmt/fmfu_mgmt_stat.h`
+| Header file: :ncs-file:`/include/mgmt/fmfu_mgmt.h` and :ncs-file:`/include/mgmt/fmfu_mgmt_stat.h`
 | Source files: :file:`subsys/mgmt/src/`
 
 .. doxygengroup:: fmfu_mgmt

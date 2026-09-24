@@ -33,7 +33,7 @@ The function parses the data and returns the location if it is found.
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_cloud_location.h`, :file:`include/net/wifi_location_common.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_location.h`, :ncs-file:`/include/net/wifi_location_common.h`
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/`
 
 .. doxygengroup:: nrf_cloud_location

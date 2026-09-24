@@ -37,7 +37,7 @@ The device description application module is enabled by the :option:`CONFIG_DESK
 The module selects the :option:`CONFIG_DESKTOP_HWID` option to make sure that the nRF Desktop Hardware ID utility is enabled.
 The utility uses Zephyr's :ref:`zephyr:hwinfo_api` to obtain the hardware ID and selects the :kconfig:option:`CONFIG_HWINFO` Kconfig option to automatically enable the required driver.
 
-The :file:`dev_descr.h` file contains the UUIDs used by the custom GATT Service.
+The :ncs-file:`/applications/nrf_desktop/configuration/common/dev_descr.h` file contains the UUIDs used by the custom GATT Service.
 The file is located in the :file:`configuration/common` directory.
 The UUIDs must be the same for all devices to ensure that the central can read the provided information.
 

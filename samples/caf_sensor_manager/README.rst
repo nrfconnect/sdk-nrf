@@ -26,7 +26,7 @@ The workload simulator is a custom module used by this sample only.
 This module handles the data received from the :ref:`caf_sensor_data_aggregator`, simulates workload on data using :c:func:`k_busy_wait` and notifies the aggregator module when the aggregator buffer can be freed.
 
 If you are running this sample on an SoC with multiple cores, the workload simulator module (``workload_sim``) is placed on the second core.
-All communication between the cores is done using :ref:`event_manager_proxy` and Zephyr subsystem :file:`include/ipc/ipc_service.h`.
+All communication between the cores is done using :ref:`event_manager_proxy` and Zephyr subsystem :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`.
 
 Configuration
 *************
@@ -58,6 +58,8 @@ You can build and flash all the required images by completing the following step
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`remote/`
+
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`remote/prj.conf`
 
 .. include:: /includes/ipc_radio_conf.txt
 
@@ -119,5 +121,5 @@ This sample uses the following |NCS| drivers:
 
 In addition, it uses the following Zephyr subsystems:
 
-* :file:`include/ipc/ipc_service.h`
+* :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

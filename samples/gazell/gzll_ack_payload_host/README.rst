@@ -125,11 +125,11 @@ It uses the following :ref:`nrfxlib` library:
 
 It uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
-  * ``include/irq.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/irq.h`
 
 .. gzll_ack_sample_dependencies_end

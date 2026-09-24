@@ -129,7 +129,7 @@ The serialized scene data includes 4 bytes of overhead for every stored SIG mode
 API documentation
 ==================
 
-| Header file: :file:`include/bluetooth/mesh/scene_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/scene_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/scene_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/scene_srv.c`
 
 .. doxygengroup:: bt_mesh_scene_srv

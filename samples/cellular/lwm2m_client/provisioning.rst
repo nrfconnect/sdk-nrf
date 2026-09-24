@@ -65,7 +65,7 @@ To provision the credentials, complete the following steps:
 Automated provisioning
 ----------------------
 
-For automated provisioning of credentials, you can use the script :file:`provision.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
+For automated provisioning of credentials, you can use the script :ncs-file:`scripts/provision.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
 If you use AVSystem's Coiote Device Management server, you must set your username and password for the server as environment variables when you run the script.
 See the following code:
 
@@ -104,7 +104,7 @@ Configuring and programing the sample
 To configure and program the sample, complete the following steps:
 
 1. Make the sample programmable to multiple devices by removing all hard coded credentials. This can be done by setting the :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` Kconfig option to empty value.
-#. Enable bootstrapping using the configuration overlay file :file:`overlay-avsystem-bootstrap.conf` or :file:`overlay-leshan-bootstrap.conf`.
+#. Enable bootstrapping using the configuration overlay file :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem-bootstrap.conf` or :ncs-file:`/samples/cellular/lwm2m_client/overlay-leshan-bootstrap.conf`.
    Bootstrapping is required for an LwM2M Client to rotate security credentials.
 #. Prepare the production script or steps for your nRF91 Series device.
 #. Program the sample.

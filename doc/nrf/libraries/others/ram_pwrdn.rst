@@ -22,7 +22,7 @@ To enable back unused RAM sections, call :c:func:`power_up_unused_ram`.
 API documentation
 *****************
 
-| Header file: :file:`include/ram_pwrdn.h`
+| Header file: :ncs-file:`/include/ram_pwrdn.h`
 | Source files: :file:`lib/ram_pwrdn/`
 
 .. doxygengroup:: ram_pwrdn

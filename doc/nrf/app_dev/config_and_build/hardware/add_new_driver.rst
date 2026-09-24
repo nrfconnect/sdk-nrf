@@ -45,7 +45,7 @@ You will need the following files:
 * Driver's source files - These files will include the code for your driver, such as :ref:`zephyr:device_struct` device definition through the :c:macro:`DEVICE_DT_DEFINE` macro, and other elements.
   If possible, your driver should expose a generic API to simplify integrating the driver in user application.
   For example, the driver could expose sensor driver API (:c:struct:`sensor_driver_api`).
-  See :file:`nrf/drivers/sensor/paw3212/paw3212.c` for an example.
+  See :ncs-file:`/drivers/sensor/paw3212/paw3212.c` for an example.
   See also Zephyr's :ref:`zephyr:device_model_api` for more information, in particular the "Subsystems and API structures" section.
 
 .. rst-class:: numbered-step

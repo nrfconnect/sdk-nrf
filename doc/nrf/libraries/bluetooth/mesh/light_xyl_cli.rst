@@ -117,7 +117,7 @@ mesh models xyl range-set-unack <XMin> <YMin> <XMax> <YMax>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_xyl_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_xyl_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_xyl_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_xyl_cli.c`
 
 .. doxygengroup:: bt_mesh_light_xyl_cli

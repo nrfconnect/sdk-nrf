@@ -64,7 +64,7 @@ mesh models onoff set-unack <onOff> [TransTime(ms) [Delay(ms)]]
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_onoff_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_onoff_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_onoff_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_onoff_cli.c`
 
 .. doxygengroup:: bt_mesh_onoff_cli

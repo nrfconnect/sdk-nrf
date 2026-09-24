@@ -30,7 +30,7 @@ Write
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/latency.h`
-| Source file: :file:`subsys/bluetooth/services/latency.c`
+| Header file: :ncs-file:`/include/bluetooth/services/latency.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/latency.c`
 
 .. doxygengroup::  bt_latency

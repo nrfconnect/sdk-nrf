@@ -21,7 +21,7 @@ Overview
 The sample acts directly on socket level abstraction.
 It configures a UDP socket and continuously transmits data over the socket to the modem's TCP/IP stack, where the data eventually gets transmitted to a server specified by an IP address and a port number.
 To control the LTE link, it uses the :ref:`lte_lc_readme` library and requests Power Saving Mode (PSM), :term:`extended Discontinuous Reception (eDRX)` mode and :term:`Release Assistance Indication (RAI)` parameters.
-These parameters can be set through the sample configuration file :file:`prj.conf`.
+These parameters can be set through the sample configuration file :ncs-file:`/samples/cellular/udp/prj.conf`.
 
 You can configure the frequency with which the packets are transmitted and the size of the UDP payload through the Kconfig system.
 In addition to setting of the above options, you can also set the various LTE parameters that are related to current consumption for adding low power behavior to the device.
@@ -151,7 +151,7 @@ After programming the sample to your device, test it by performing the following
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Enable logging by setting the :kconfig:option:`CONFIG_SERIAL` option to ``y`` in the :file:`prj.conf` configuration file.
+#. Enable logging by setting the :kconfig:option:`CONFIG_SERIAL` option to ``y`` in the :ncs-file:`/samples/cellular/udp/prj.conf` configuration file.
 #. Observe that the sample shows output similar to the following in the terminal emulator:
 
    .. code-block:: console
@@ -183,13 +183,13 @@ Test the RAI feature by performing the following steps:
 #. Connect the nRF91 Series DK to the `Power Profiler Kit II (PPK2)`_ and set up for current measurement.
 #. `Install the Power Profiler app`_ in the `nRF Connect for Desktop`_.
 #. Connect the Power Profiler Kit II (PPK2) to the PC using a micro-USB cable and `connect to it using the App <Using the Power Profiler app_>`_.
-#. Enable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``y`` in the :file:`prj.conf` configuration file.
-#. Update the data upload frequency by setting the :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>` option to ``30`` in the :file:`prj.conf` configuration file.
+#. Enable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``y`` in the :ncs-file:`/samples/cellular/udp/prj.conf` configuration file.
+#. Update the data upload frequency by setting the :ref:`CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS <CONFIG_UDP_DATA_UPLOAD_FREQUENCY_SECONDS>` option to ``30`` in the :ncs-file:`/samples/cellular/udp/prj.conf` configuration file.
 #. Program the sample to the device.
 #. Power on or reset your nRF91 Series DK.
 #. In the Power Profiler app choose a one minute time window.
 #. Observe that after some minutes the average power consumption will settle at around 1.7 mA (may vary depending on network conditions).
-#. Disable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``n`` in the :file:`prj.conf` configuration file.
+#. Disable RAI by setting the :ref:`CONFIG_UDP_RAI_ENABLE <CONFIG_UDP_RAI_ENABLE>` option to ``n`` in the :ncs-file:`/samples/cellular/udp/prj.conf` configuration file.
 #. Program the sample to the device.
 #. Power on or reset your nRF91 Series DK.
 #. Observe that after some minutes the average power consumption will settle at around 2.3 mA (may vary depending on network conditions).

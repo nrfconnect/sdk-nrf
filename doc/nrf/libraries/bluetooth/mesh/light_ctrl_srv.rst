@@ -449,7 +449,7 @@ When powering up, the Light LC Server behavior depends on the controlled Light L
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_ctrl_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctrl_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctrl_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctrl_srv.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_srv

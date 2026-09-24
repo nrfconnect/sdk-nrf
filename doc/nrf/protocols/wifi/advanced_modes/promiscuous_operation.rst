@@ -48,7 +48,7 @@ Promiscuous packets are only received in connected Station mode.
 Therefore, Promiscuous mode always operates in the channel where the Station mode device is connected to the BSSID.
 
 You can refer to the relevant structure in the following header file:
-:file:`nrfxlib/nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h`.
+:ncs-file:`nrf_wifi:/fw_if/umac_if/inc/system/fmac_structs.h`.
 
 .. _ug_nrf70_developing_promiscuous_mode_receive_packet_metadata:
 

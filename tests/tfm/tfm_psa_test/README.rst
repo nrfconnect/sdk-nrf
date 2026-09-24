@@ -64,7 +64,7 @@ Then run the PSA test suite with the following command, where *board_target* is 
 
 
 Not all test suites are valid on all boards.
-See the :file:`testcase.yaml` file for the list of valid test suites for each board.
+See the :ncs-file:`/tests/tfm/tfm_psa_test/testcase.yaml` file for the list of valid test suites for each board.
 
 .. note::
    The following test cases are currently failing:

@@ -96,7 +96,7 @@ Building and running
    DECT NR+ operates on free but regulated radio channels.
    The regulations and availability of the channels vary by country and region.
    It is your responsibility to operate the devices according to local regulations, both at the development site and in the device operating regions.
-   If you are in the EU or US with permission to operate on the DECT band and can ensure that access rules are met, you can use the ``overlay-eu.conf`` and ``overlay-us.conf`` Kconfig overlays, respectively.
+   If you are in the EU or US with permission to operate on the DECT band and can ensure that access rules are met, you can use the :ncs-file:`overlay-eu.conf` and :ncs-file:`overlay-us.conf` Kconfig overlays, respectively.
    If other configuration is required, set the carrier using the :ref:`CONFIG_CARRIER <CONFIG_CARRIER>` Kconfig option, and the transmission power using the :ref:`CONFIG_TX_POWER <CONFIG_TX_POWER>` Kconfig option.
    If you, as a user, are not permitted to operate on the DECT band or cannot ensure that access rules are met, you must ensure there are no radio emissions from the devices running the sample.
    This can be done with the use of an RF chamber.

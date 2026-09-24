@@ -64,13 +64,13 @@ Dependencies
 * :ref:`gatt_dm_readme`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
 
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/hrs_client.h`
-| Source file: :file:`subsys/bluetooth/services/hrs_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/hrs_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/hrs_client.c`
 
 .. doxygengroup:: bt_hrs_client

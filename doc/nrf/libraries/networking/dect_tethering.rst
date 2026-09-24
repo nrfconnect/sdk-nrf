@@ -167,14 +167,14 @@ Dependencies
 ************
 
 * :ref:`zephyr:networking_api`
-* DECT NR+ L2 helpers (:file:`net/dect/dect_net_l2.h`)
+* DECT NR+ L2 helpers (:ncs-file:`/include/net/dect/dect_net_l2.h`)
 * :kconfig:option:`CONFIG_NET_L2_ETHERNET` for the host leg
 * :kconfig:option:`CONFIG_NET_SOCKETS_PACKET` when mDNS forwarding is enabled
 
 API documentation
 *****************
 
-| Header file: :file:`include/net/dect/dect_tether_ipv6.h`
+| Header file: :ncs-file:`/include/net/dect/dect_tether_ipv6.h`
 | Source files: :file:`subsys/net/lib/dect/tether_ipv6/`
 
 .. doxygengroup:: dect_tether_ipv6

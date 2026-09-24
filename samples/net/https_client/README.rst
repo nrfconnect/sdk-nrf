@@ -66,17 +66,17 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+* :ncs-file:`/samples/net/https_client/prj.conf` - General configuration file for all devices.
+* :ncs-file:`/samples/net/https_client/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/https_client/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/https_client/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/https_client/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/https_client/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/https_client/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/https_client/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
-* :file:`overlay-tfm-nrf91.conf` - Additional configuration for Mbed TLS and TF-M on nRF91 Series DKs.
-* :file:`overlay-pdn-nrf91-ipv4.conf` - Additional configuration to force IPv4-only packet data network on nRF91 Series DKs.
+* :ncs-file:`/samples/net/https_client/overlay-tfm-nrf91.conf` - Additional configuration for Mbed TLS and TF-M on nRF91 Series DKs.
+* :ncs-file:`/samples/net/https_client/overlay-pdn-nrf91-ipv4.conf` - Additional configuration to force IPv4-only packet data network on nRF91 Series DKs.
 
 Board files under the :file:`boards/` folder are merged automatically for the selected target.
 The other configuration files are not board-specific and must be passed with ``EXTRA_CONF_FILE``.
@@ -207,7 +207,7 @@ Sample output
          Network connectivity lost
          Disconnected from the net
 
-      Output where you override the default packet data network (PDN) configuration to IPv4 only, using the :file:`overlay-pdn-nrf91-ipv4.conf` configuration file:
+      Output where you override the default packet data network (PDN) configuration to IPv4 only, using the :ncs-file:`/samples/net/https_client/overlay-pdn-nrf91-ipv4.conf` configuration file:
 
       .. code-block:: console
 

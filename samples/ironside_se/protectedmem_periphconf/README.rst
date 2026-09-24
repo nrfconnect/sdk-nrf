@@ -42,15 +42,15 @@ Configuration
 The sample uses the following key configurations:
 
 Device Tree Overlay
-  The ``app.overlay`` file relocates the ``periphconf_partition`` to be placed right after ``cpuapp_boot_partition`` at offset 0x40000.
+  The :ncs-file:`app.overlay` file relocates the ``periphconf_partition`` to be placed right after ``cpuapp_boot_partition`` at offset 0x40000.
   The ``sysbuild.cmake`` file applies this same overlay to the UICR image so both images see the same partition layout.
 
 Kconfig Configuration
-  The ``sysbuild/uicr.conf`` file configures the PROTECTEDMEM size to 72KB (73728 bytes) to cover both ``cpuapp_boot_partition`` (64KB) and ``periphconf_partition`` (8KB).
+  The :ncs-file:`sysbuild/uicr.conf` file configures the PROTECTEDMEM size to 72KB (73728 bytes) to cover both ``cpuapp_boot_partition`` (64KB) and ``periphconf_partition`` (8KB).
 
 Secondary Firmware
   The sample includes a secondary firmware (in the ``secondary/`` directory) that boots automatically when the PROTECTEDMEM integrity check fails.
-  The secondary firmware is enabled via ``CONFIG_GEN_UICR_SECONDARY=y`` in ``sysbuild/uicr.conf`` and is built as part of the sysbuild process (configured in ``sysbuild.cmake``).
+  The secondary firmware is enabled via ``CONFIG_GEN_UICR_SECONDARY=y`` in :ncs-file:`sysbuild/uicr.conf` and is built as part of the sysbuild process (configured in ``sysbuild.cmake``).
 
 Dependencies
 ************

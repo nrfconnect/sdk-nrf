@@ -198,11 +198,11 @@ The following DFU solutions are supported in this sample:
 To enable the DFU functionality use the :kconfig:option:`SB_CONFIG_APP_DFU` sysbuild Kconfig option.
 This option is enabled by default if a supported DFU solution is configured (see the following table to learn about supported configurations).
 
-To select a specific version of the application, change the :file:`VERSION` file in the sample root directory.
+To select a specific version of the application, change the :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/VERSION` file in the sample root directory.
 See the :ref:`zephyr:app-version-details` for details.
 
 .. note::
-   Ensure that the FHN firmware version defined by the following Kconfig options matches the version in the :file:`VERSION` file:
+   Ensure that the FHN firmware version defined by the following Kconfig options matches the version in the :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/VERSION` file:
 
    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`
    * :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`
@@ -581,7 +581,7 @@ Release build
 =============
 
 To build the sample in a release variant, set the ``FILE_SUFFIX=release`` CMake option.
-The build will use the :file:`prj_release.conf` configuration file instead of :file:`prj.conf`.
+The build will use the :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj_release.conf` configuration file instead of :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj.conf`.
 Check the contents of both files to learn which configuration changes you should apply when preparing the production build of your end product.
 
 The release build reduces the code size and RAM usage of the sample by disabling logging functionality and performing other optimizations.
@@ -958,8 +958,8 @@ To test this feature, complete the following steps:
 
    a. Set the application firmware version to ``v99.99.99`` by modifying the following files:
 
-      * The :file:`VERSION` file.
-      * The :file:`configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
+      * The :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/VERSION` file.
+      * The :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
 
       The new firmware version should match the version specified in the **Firmware Version** field from the :ref:`fast_pair_locator_tag_google_device_model` section.
 

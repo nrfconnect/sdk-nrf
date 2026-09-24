@@ -138,7 +138,7 @@ mesh models ctrl coeff-set-unack <ID> <Val>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_ctrl_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctrl_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctrl_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctrl_cli.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_cli

@@ -80,22 +80,22 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * ``boards/arm/nrf*/board.h``
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:api_peripherals`:
 
-   * ``include/uart.h``
-   * ``include/usb.h``
+   * :ncs-file:`zephyr:/include/zephyr/drivers/uart.h`
+   * :ncs-file:`zephyr:/include/zephyr/usb/usb_device.h`
 
 * :ref:`zephyr:usb_api`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`

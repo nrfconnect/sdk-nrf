@@ -117,5 +117,5 @@ This sample uses the following |NCS| libraries:
 
 It uses the following Zephyr libraries:
 
-* ``include/zephyr/kernel.h``
-* ``zephyr/shell/shell.h``
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`zephyr:/include/zephyr/shell/shell.h`

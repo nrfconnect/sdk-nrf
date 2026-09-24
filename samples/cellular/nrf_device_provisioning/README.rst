@@ -108,9 +108,9 @@ The sample provides predefined configuration files for typical use cases.
 
 The following files are available:
 
-* :file:`prj.conf` - Standard default configuration file.
-* :file:`overlay-coap.conf` - Enables CoAP transfer protocol support.
-* :file:`overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
+* :ncs-file:`/samples/cellular/nrf_device_provisioning/prj.conf` - Standard default configuration file.
+* :ncs-file:`/samples/cellular/nrf_device_provisioning/overlay-coap.conf` - Enables CoAP transfer protocol support.
+* :ncs-file:`/samples/cellular/nrf_device_provisioning/overlay-at_shell.conf` - Enables writing of large certificates from AT shell.
 
 Building and running
 ********************
@@ -138,7 +138,7 @@ To build the sample, you can use either HTTP or CoAP transfer protocols.
          west build -p -b *board_target* -- -DEXTRA_CONF_FILE="overlay-coap.conf"
 
 .. note::
-	To use AT shell support, consider including the ``overlay-at_shell.conf`` configuration file.
+	To use AT shell support, consider including the :ncs-file:`overlay-at_shell.conf` configuration file.
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -90,7 +90,7 @@ Usage
 
 To use this library, complete the following steps:
 
-1. Include the :file:`nrf_cloud_coap.h` file.
+1. Include the :ncs-file:`/include/net/nrf_cloud_coap.h` file.
 #. Call the :c:func:`nrf_cloud_coap_init` function once to initialize the library.
 #. Connect the device to the network.
 #. Call the :c:func:`nrf_cloud_coap_connect` function to connect to nRF Cloud and obtain authorization to access services.
@@ -147,7 +147,7 @@ It uses the following Zephyr libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_cloud_coap.h`
+| Header file: :ncs-file:`/include/net/nrf_cloud_coap.h`
 | Source files: :file:`subsys/net/lib/nrf_cloud/src/nrf_cloud_coap.c`
 
 .. doxygengroup:: nrf_cloud_coap

@@ -367,7 +367,7 @@ The available sub-commands are as follows:
   mcumgr <connection-options> stat <section-name>
 
 Statistics in ``mcumgr`` are organized into sections (also called groups), and each section can be individually queried.
-You can define new statistics sections by using macros available in the :file:`zephyr/stats/stats.h` file.
+You can define new statistics sections by using macros available in the :ncs-file:`zephyr:/include/zephyr/stats/stats.h` file.
 Each section consists of multiple variables (or counters), which are all of the same size (16, 32 or 64 bits).
 
 To create a new section named ``my_stats``, use the following:
