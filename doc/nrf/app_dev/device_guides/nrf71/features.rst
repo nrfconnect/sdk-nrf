@@ -78,19 +78,17 @@ Supported Wi-Fi standards and modes
 The nRF71 Series devices are ultra-low power SoCs that support Wi-Fi 6 or Wi-Fi 6E wireless connectivity, depending on the specific nRF71 SoC variant.
 Wi-Fi 6 and Wi-Fi 6E align with IEEE 802.11ax and all earlier versions of the IEEE 802.11 suite of wireless LAN standards.
 
+.. note::
+
+   Wi-Fi support for nRF71 Series devices is currently experimental.
+
 Currently, the nRF71 Series devices support the following modes:
 
 * :ref:`Wi-Fi mode <ug_wifi>`: Provides IEEE 802.11 protocol stack functionality.
 * :ref:`Radio test <wifi_radio_test>`: Provides support for PHY (Baseband and Radio) characterization and calibration.
-* :ref:`Offloaded raw transmission <ug_nrf70_developing_offloaded_raw_tx>`: Allows the offloading of raw IEEE 802.11 frame transmission to the nRF Wi-Fi driver.
 
 The nRF71 Series devices support the following functionalities in the Wi-Fi mode:
 
 * :ref:`Station (STA) <wifi_station_sample>`: Operates as a wireless client device.
-* :ref:`Software-enabled Access Point (SoftAP or SAP) <nRF70_soft_ap_mode>`: Operates as a virtual access point device.
 * :ref:`Scan <ug_nrf70_developing_scan_operation>`: Operates as a scan-only device.
 * :ref:`Wi-Fi advanced security <ug_nrf70_wifi_advanced_security_modes>`: Allows the use of advanced security, certificate-based Wi-Fi security, and the Platform Security Architecture (PSA) security framework.
-* :ref:`Wi-Fi Direct® (P2P) mode <ug_wifi_direct>`: Allows the establishment of direct device-to-device connections without requiring a traditional access point.
-* :ref:`ug_nrf70_developing_raw_ieee_80211_packet_transmission`: Allows the injection of raw IEEE 802.11 frames in Station and Monitor modes.
-* :ref:`Monitor <ug_nrf70_developing_raw_ieee_80211_packet_reception>`: Operates as an IEEE 802.11 wireless packet sniffer.
-* :ref:`Promiscuous reception <ug_nrf70_developing_promiscuous_packet_reception>`: Allows the reception of IEEE 802.11 packets from a connected BSSID when operating in Station mode.
