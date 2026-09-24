@@ -244,6 +244,11 @@ static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 
 void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 {
+	return nrf_wifi_net_pkt_to_nbuf_ex(pkt, true);
+}
+
+void *nrf_wifi_net_pkt_to_nbuf_ex(struct net_pkt *pkt, bool allow_zero_copy)
+{
 	struct nrf_wifi_nwb *nbuff;
 	unsigned char *data;
 	unsigned int len;
@@ -253,7 +258,7 @@ void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 	}
 
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
-	if (pkt->buffer && !pkt->buffer->frags) {
+	if (allow_zero_copy && pkt->buffer && !pkt->buffer->frags) {
 		return nrf_wifi_net_pkt_to_nbuf_zc(pkt);
 	}
 #endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */

@@ -85,6 +85,10 @@ struct tx_cmd_prep_info {
 	struct nrf_wifi_tx_buff *config;
 	/** Total packet data added to the command, in bytes. */
 	unsigned int total_data_len;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	/** TKIP: do not use LMAC TCP/IP checksum offload on this TX batch. */
+	bool no_hw_ip_checksum_offload;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 };
 
 /**

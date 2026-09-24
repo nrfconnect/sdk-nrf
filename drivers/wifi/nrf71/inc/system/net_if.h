@@ -18,6 +18,8 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <system/fmac_structs.h>
 
+struct nrf_wifi_vif_ctx_zep;
+
 #define UNICAST_MASK GENMASK(7, 1)
 #define LOCAL_BIT BIT(1)
 
@@ -70,4 +72,50 @@ void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 				      unsigned int event_len);
 
 int nrf_wifi_stats_reset(const struct device *dev, struct net_if *iface);
+
+#if defined(CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
+/**
+ * @brief Record an installed key on a VIF (used for TKIP offload policy).
+ */
+void nrf_wifi_vif_key_installed(struct nrf_wifi_vif_ctx_zep *vif,
+				unsigned char key_idx,
+				const unsigned char *mac,
+				unsigned int cipher_suite);
+
+/**
+ * @brief Record removal of a key on a VIF.
+ */
+void nrf_wifi_vif_key_removed(struct nrf_wifi_vif_ctx_zep *vif,
+			      unsigned char key_idx,
+			      const unsigned char *mac);
+
+/**
+ * @brief Clear all tracked keys on a VIF.
+ */
+void nrf_wifi_vif_key_track_reset(struct nrf_wifi_vif_ctx_zep *vif);
+
+/**
+ * @brief True when a TKIP key is installed on this VIF.
+ */
+bool nrf_wifi_vif_tkip_in_use(const struct nrf_wifi_vif_ctx_zep *vif);
+
+struct nrf_wifi_fmac_vif_ctx;
+struct nrf_wifi_sys_fmac_dev_ctx;
+
+/**
+ * @brief True when TKIP is in use on this VIF (host key track and/or FMAC ciphers).
+ *
+ * @param peer_id Peer for unicast TX, or -1 to ignore pairwise cipher.
+ */
+bool nrf_wifi_vif_tkip_crypto_active(const struct nrf_wifi_vif_ctx_zep *vif_zep,
+				     const struct nrf_wifi_sys_fmac_dev_ctx *sys_dev,
+				     const struct nrf_wifi_fmac_vif_ctx *fmac_vif,
+				     int peer_id);
+
+/**
+ * @brief Apply host/LMAC checksum policy after TKIP key install or removal.
+ */
+void nrf_wifi_vif_tkip_offload_sync(struct nrf_wifi_vif_ctx_zep *vif_zep);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+
 #endif /* __ZEPHYR_NET_IF_H__ */

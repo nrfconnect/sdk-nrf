@@ -23,6 +23,9 @@
 #include <system/fmac_structs.h>
 #include <system/fmac_tx.h>
 #include <system/fmac_vif.h>
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#include <system/net_if.h>
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -1057,6 +1060,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 			      key_cmd,
 			      sizeof(*key_cmd));
 
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (status == NRF_WIFI_STATUS_SUCCESS && vif_ctx->os_vif_ctx) {
+		nrf_wifi_vif_tkip_offload_sync(vif_ctx->os_vif_ctx);
+	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+
 out:
 	if (key_cmd) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, key_cmd);
@@ -1122,6 +1131,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 	status = umac_cmd_cfg(fmac_dev_ctx,
 			      key_cmd,
 			      sizeof(*key_cmd));
+
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (status == NRF_WIFI_STATUS_SUCCESS && vif_ctx->os_vif_ctx) {
+		nrf_wifi_vif_tkip_offload_sync(vif_ctx->os_vif_ctx);
+	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 out:
 	if (key_cmd) {

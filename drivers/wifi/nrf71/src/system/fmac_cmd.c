@@ -18,6 +18,17 @@
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+static unsigned int lmac_offload_tx_checksum = 1;
+static unsigned int lmac_offload_rx_checksum = 1;
+
+void nrf_wifi_lmac_ip_checksum_offload_enable(bool enable)
+{
+	lmac_offload_tx_checksum = enable ? 1U : 0U;
+	lmac_offload_rx_checksum = enable ? 1U : 0U;
+}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+
 enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				       unsigned int *rf_params_addr,
 				       unsigned int vtf_buffer_start_address,
@@ -167,6 +178,10 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	#ifdef NRF_WIFI_DYNAMIC_ED
 		umac_cmd_data->dynamic_ed = 1;
 	#endif /* NRF_WIFI_DYNAMIC_ED */
+
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	umac_cmd_data->tcp_ip_checksum_offload = 1;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,
@@ -481,8 +496,13 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	 * offloading even when enabled in Kconfig. Enabled by default and not
 	 * expected to require modification under normal use.
 	 */
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	umac_cmd_data->params.offloadTXChecksum = lmac_offload_tx_checksum;
+	umac_cmd_data->params.offloadRXChecksum = lmac_offload_rx_checksum;
+#else
 	umac_cmd_data->params.offloadTXChecksum = 1;
 	umac_cmd_data->params.offloadRXChecksum = 1;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	/* Parameter controlling system sleep behavior while transmitting a raw frame.
 	 * After transmitting a raw frame, the system remains active for the
