@@ -33,5 +33,5 @@ To use the driver, configure the following Kconfig option:
 API documentation
 *****************
 
-| Header file: :file:`drivers/sensor/bme68x/bme68x_iaq.h`
-| Source file: :file:`drivers/sensor/bme68x/bme68x_iaq.c`
+| Header file: :ncs-file:`/drivers/sensor/bme68x_iaq/bme68x_iaq.h`
+| Source file: :ncs-file:`/drivers/sensor/bme68x_iaq/bme68x_iaq.c`

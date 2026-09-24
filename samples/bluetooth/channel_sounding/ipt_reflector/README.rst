@@ -149,16 +149,16 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`:
 
-  * :file:`include/logging/log.h`
+  * :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-* :file:`include/bluetooth/bluetooth.h`
-* :file:`include/bluetooth/conn.h`
-* :file:`include/bluetooth/uuid.h`
-* :file:`include/bluetooth/cs.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/cs.h`

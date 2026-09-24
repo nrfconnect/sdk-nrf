@@ -85,7 +85,7 @@ Check and configure the following library options that are used by the sample:
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_DEVICE_ID` - Sets the Azure IoT Hub device ID. Alternatively, the device ID can be provided at run time.
 * :kconfig:option:`CONFIG_AZURE_IOT_HUB_HOSTNAME` - Sets the Azure IoT Hub host name. If DPS is used, the sample assumes that the IoT hub host name is unknown, and the configuration is ignored. The configuration can also be omitted and the hostname provided at run time.
 
-If DPS is used, use the Kconfig fragment found in the :file:`dps.conf` file and change the desired configurations there.
+If DPS is used, use the Kconfig fragment found in the :ncs-file:`/samples/net/azure_iot_hub/dps.conf` file and change the desired configurations there.
 As an example, the following compiles with DPS for the nRF9160 DK:
 
 .. code-block:: console

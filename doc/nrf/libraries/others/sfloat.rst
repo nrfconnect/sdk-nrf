@@ -48,12 +48,12 @@ You can get four significant figures in the converted value when the four signif
 Dependencies
 ************
 
-* :file:`include/zephyr/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
 
 API documentation
 *****************
 
-| Header file: :file:`include/sfloat.h`
-| Source file: :file:`lib/sfloat/sfloat.c`
+| Header file: :ncs-file:`/include/sfloat.h`
+| Source file: :ncs-file:`/lib/sfloat/sfloat.c`
 
 .. doxygengroup:: sfloat

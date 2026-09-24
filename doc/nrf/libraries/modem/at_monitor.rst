@@ -122,7 +122,7 @@ The following code snippet shows how to define an AT monitor that will receive a
 API documentation
 =================
 
-| Header file: :file:`include/modem/at_monitor.h`
-| Source file: :file:`lib/at_monitor/at_monitor.c`
+| Header file: :ncs-file:`/include/modem/at_monitor.h`
+| Source file: :ncs-file:`/lib/at_monitor/at_monitor.c`
 
 .. doxygengroup:: at_monitor

@@ -15,7 +15,7 @@ Also, see the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 API documentation
 *****************
 
-| Header file: :file:`include/esb.h`
+| Header file: :ncs-file:`/include/esb.h`
 | Source files: :file:`subsys/esb/`
 
 .. doxygengroup:: esb

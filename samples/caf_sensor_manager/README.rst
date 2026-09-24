@@ -59,6 +59,8 @@ You can build and flash all the required images by completing the following step
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`remote/`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`remote/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Complete the following steps to program the sample:
@@ -119,5 +121,5 @@ This sample uses the following |NCS| drivers:
 
 In addition, it uses the following Zephyr subsystems:
 
-* :file:`include/ipc/ipc_service.h`
+* :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

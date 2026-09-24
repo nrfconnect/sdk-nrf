@@ -104,10 +104,10 @@ See the following files for more options that you might want to change:
 
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.features` - OpenThread stack features.
 * :file:`zephyr/subsys/net/l2/openthread/Kconfig.thread` - Thread network configuration options.
-* :file:`nrf/modules/openthread/Kconfig.features.nrf` - Thread network configuration dedicated to nRF Connect purposes.
+* :ncs-file:`/modules/openthread/Kconfig.features.nrf` - Thread network configuration dedicated to nRF Connect purposes.
 
 .. note::
-   You can find the default configuration for all :ref:`openthread_samples` in the :file:`nrf/subsys/net/openthread/Kconfig.defconfig` file.
+   You can find the default configuration for all :ref:`openthread_samples` in the :ncs-file:`/subsys/net/openthread/Kconfig.defconfig` file.
 
 .. _thread_configuring_messagepool:
 

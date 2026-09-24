@@ -133,7 +133,7 @@ There are two functions for decompression:
 Defining compression type
 =========================
 
-Once the code is developed, the library must be defined in an iterable section using the :c:macro:`NRF_COMPRESS_IMPLEMENTATION_DEFINE` macro, located in the header file :file:`include/nrf_compress/implementation.h`.
+Once the code is developed, the library must be defined in an iterable section using the :c:macro:`NRF_COMPRESS_IMPLEMENTATION_DEFINE` macro, located in the header file :ncs-file:`/include/nrf_compress/implementation.h`.
 There are following requirements depending on the library's capabilities:
 
 * If a library only supports compression, the compression function must be defined, and two decompression functions must be set to ``NULL``.
@@ -178,7 +178,7 @@ See the following figure for the overview of the decompression flow:
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_compress/implementation.h`
+| Header file: :ncs-file:`/include/nrf_compress/implementation.h`
 | Source files: :file:`subsys/nrf_compress/src/`
 
 .. doxygengroup:: compression_decompression_subsystem

@@ -26,12 +26,12 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/promiscuous/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/promiscuous/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+You must configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/promiscuous/prj.conf` file:
 
 .. include:: /includes/wifi_credentials_static.txt
 

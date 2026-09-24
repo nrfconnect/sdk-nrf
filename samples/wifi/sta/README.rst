@@ -67,12 +67,12 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/sta/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/sta/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
 
-You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
+You must configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/sta/prj.conf` file:
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -87,7 +87,7 @@ The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
 It starts with a default static IP address to handle networks without DHCP servers, or if the DHCP server is not available.
 Successful DHCP handshake will override the default static IP configuration.
 
-You can change the following default static configuration in the :file:`prj.conf` file:
+You can change the following default static configuration in the :ncs-file:`/samples/wifi/sta/prj.conf` file:
 
 .. code-block:: console
 
@@ -237,7 +237,7 @@ Performance testing and memory footprint analysis
 The sample can be used to test the performance of the Wi-Fi connection.
 The performance tuning is done to achieve a trade-off between memory usage and performance.
 
-You can use the :file:`overlay-zperf.conf` file to run the performance test.
+You can use the :ncs-file:`/samples/wifi/sta/overlay-zperf.conf` file to run the performance test.
 The default build, without the overlay, is used for memory footprint testing and analysis.
 The overlay must be enabled to run the performance test corresponding to the memory footprints.
 

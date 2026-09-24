@@ -90,7 +90,7 @@ Enable the following Kconfig options to use advanced FOTA:
    CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE=n
    CONFIG_LWM2M_RW_OMA_TLV_SUPPORT=y
 
-The :file:`overlay-adv-firmware.conf` configuration file includes these options.
+The :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` configuration file includes these options.
 
 Initializing
 ============
@@ -117,8 +117,8 @@ Advanced Firmware Update helper script
 **************************************
 
 For working with the `AVSystem Coiote server <Coiote Device Management_>`_, a helper script has been provided.
-To automate the firmware update, you can use the script :file:`fota.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
-The :file:`fota.py` file supports ``update`` and ``upload`` commands for firmware updates.
+To automate the firmware update, you can use the script :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
+The :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` file supports ``update`` and ``upload`` commands for firmware updates.
 
 The commands can be used in the following way:
 
@@ -239,7 +239,7 @@ Following is an example of uploading a binary and updating a modem by referring 
 Testing advanced FOTA
 **********************
 
-Complete the following steps to test the advanced FOTA firmware update with the lwM2M client sample and the :file:`/scripts/fota.py` file.
+Complete the following steps to test the advanced FOTA firmware update with the lwM2M client sample and the :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` file.
 
 
    #. Download the latest released modem zip file from `nRF9151 DK Downloads`_, `nRF9161 DK Downloads`_ or `nRF9160 DK Downloads`_.
@@ -272,17 +272,17 @@ Complete the following steps to test the advanced FOTA firmware update with the 
 
    #. To use the :ref:`lwm2m_client` sample after updating the firmware, you must build the sample with the following overlays:
 
-         * :file:`overlay-avsystems.conf`
-         * :file:`overlay-lwm2m-1.1.conf`
-         * :file:`overlay-fota_helper.conf`
-         * :file:`overlay-adv-firmware.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-avsystem.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-fota_helper.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf`
 
    #. Register your device with the Coiote Device management server.
    #. Flash the compiled sample using the erase flash option.
    #. Wait for the device registration to be complete.
-   #. Open the :file:`src/prj.conf` file.
+   #. Open the :ncs-file:`/samples/cellular/lwm2m_client/prj.conf` file.
    #. Change :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``1.0.1`` and rebuild the sample.
-   #. Update the application and modem firmware by using the :file:`/scripts/fota.py` script:
+   #. Update the application and modem firmware by using the :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` script:
 
       .. tabs::
 

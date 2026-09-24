@@ -35,4 +35,4 @@ API documentation
 
 The library does not expose any API of its own.
 
-| Source files: :file:`lib/flash_patch/flash_patch.c`
+| Source files: :ncs-file:`/lib/flash_patch/flash_patch.c`

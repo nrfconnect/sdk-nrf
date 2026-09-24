@@ -131,7 +131,7 @@ This subcommand set contains the following commands:
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_profiler.h`
+| Header file: :ncs-file:`/include/nrf_profiler.h`
 | Source files: :file:`subsys/nrf_profiler/`
 
 .. doxygengroup:: nrf_profiler

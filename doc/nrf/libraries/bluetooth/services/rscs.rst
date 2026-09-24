@@ -13,7 +13,7 @@ The RSCS is used in the :ref:`peripheral_rscs` sample.
 
 API documentation
 *****************
-| Header file: :file:`include/bluetooth/services/rscs.h`
-| Source file: :file:`subsys/bluetooth/services/rscs.c`
+| Header file: :ncs-file:`/include/bluetooth/services/rscs.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/rscs.c`
 
 .. doxygengroup:: bt_rscs

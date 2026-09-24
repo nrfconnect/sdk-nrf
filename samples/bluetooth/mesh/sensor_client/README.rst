@@ -81,7 +81,7 @@ The models are used for the following purposes:
   These callbacks trigger blinking of the LEDs.
 * Sensor Client gets sensor data from one or more :ref:`Sensor Servers <bt_mesh_sensor_srv_readme>`.
 
-The model handling is implemented in :file:`src/model_handler.c`.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/sensor_client/src/model_handler.c`.
 Sensor data can be periodically requested using a :c:struct:`k_work_delayable` loop, which can be started and stopped with a button press.
 
 User interface
@@ -220,17 +220,17 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-   * :file:`include/kernel.h`
+   * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-   * :file:`include/bluetooth/bluetooth.h`
+   * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-   * :file:`include/bluetooth/mesh.h`
+   * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 * :ref:`bluetooth_mesh_shell`

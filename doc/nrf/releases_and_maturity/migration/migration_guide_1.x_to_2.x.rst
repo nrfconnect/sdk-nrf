@@ -438,7 +438,7 @@ Because this change can potentially break many applications or libraries, :kconf
 .. note::
    The :kconfig:option:`CONFIG_LEGACY_INCLUDE_PATH` Kconfig option is disabled by default and will be removed soon.
 
-In order to facilitate the migration to the new include prefix, a script to automate the process is also provided in :file:`scripts/utils/migrate_includes.py` (in Zephyr).
+In order to facilitate the migration to the new include prefix, a script to automate the process is also provided in :ncs-file:`zephyr:/scripts/utils/migrate_includes.py` (in Zephyr).
 
 Changes in PWM API
 ******************

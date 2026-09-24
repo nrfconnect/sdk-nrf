@@ -217,7 +217,7 @@ Due to internal limitations, the maximum CoAP block size is 512 bytes.
 API documentation
 *****************
 
-| Header file: :file:`include/downloader.h`, :file:`include/downloader_transport.h`, :file:`include/downloader_transport_http.h`, :file:`include/downloader_transpot_coap.h`
+| Header file: :ncs-file:`/include/net/downloader.h`, :ncs-file:`/include/net/downloader_transport.h`, :ncs-file:`/include/net/downloader_transport_http.h`, :ncs-file:`/include/net/downloader_transport_coap.h`
 | Source files: :file:`subsys/net/lib/downloader/src/`
 
 .. doxygengroup:: downloader

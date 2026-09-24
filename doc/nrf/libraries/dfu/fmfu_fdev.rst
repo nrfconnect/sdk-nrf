@@ -41,7 +41,7 @@ Prerequisites
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/fmfu_fdev.h`
+| Header file: :ncs-file:`/include/dfu/fmfu_fdev.h`
 | Source files: :file:`subsys/dfu/fmfu_fdev/src/`
 
 .. doxygengroup:: fmfu_fdev

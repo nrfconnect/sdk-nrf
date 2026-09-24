@@ -69,7 +69,7 @@ mesh models ponoff set-unack <PowUpState>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_ponoff_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_ponoff_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_ponoff_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_ponoff_cli.c`
 
 .. doxygengroup:: bt_mesh_ponoff_cli

@@ -95,7 +95,7 @@ The following code snippet shows how responses can be added to the ``+MYCOMMAND`
 API documentation
 *****************
 
-| Header file: :file:`include/modem/at_cmd_custom.h`
-| Source file: :file:`lib/at_cmd_custom/at_cmd_custom.c`
+| Header file: :ncs-file:`/include/modem/at_cmd_custom.h`
+| Source file: :ncs-file:`/lib/at_cmd_custom/at_cmd_custom.c`
 
 .. doxygengroup:: at_cmd_custom

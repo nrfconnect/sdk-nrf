@@ -26,7 +26,7 @@ The UICR.SECONDARY.TRIGGER.APPLICATIONLOCKUP configuration causes IronSide SE to
 Configuration
 *************
 
-The sample uses the following UICR configuration in the :file:`sysbuild/uicr.conf` file:
+The sample uses the following UICR configuration in the :ncs-file:`/samples/ironside_se/secondary_boot_trigger_lockup/sysbuild/uicr.conf` file:
 
 .. code-block:: kconfig
 
