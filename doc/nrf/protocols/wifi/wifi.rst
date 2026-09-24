@@ -171,7 +171,7 @@ The nRF70 Series devices use the Zephyr hostap fork but only implement a subset 
 
 The nRF70 Series devices support the following features:
 
-* Wi-Fi 6 support.
+* Wi-Fi 6.
 * Station mode.
 * SoftAP mode - Based on ``wpa_supplicant``.
 * WPA2-PSK and WPA3-SAE security modes.
