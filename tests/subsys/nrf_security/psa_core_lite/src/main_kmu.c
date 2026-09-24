@@ -321,24 +321,7 @@ extern void test_hash(void);
 psa_status_t psa_lock_key(mbedtls_svc_key_id_t key_id);
 
 #if defined(CONFIG_PSA_CORE_LITE)
-/** Give thin PSA core support for import/export for testing */
-
-/* Forward declaration of internal API to provision KMU */
-psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
-				  const uint8_t *key_buffer, size_t key_buffer_size);
-
-psa_status_t psa_import_key(const psa_key_attributes_t *attributes,
-				   const uint8_t *data, size_t data_length,
-				   mbedtls_svc_key_id_t *key)
-{
-
-	uint32_t slot_id = CRACEN_PSA_GET_KMU_SLOT(
-		MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(attributes)));
-
-	return cracen_kmu_provision(attributes, slot_id, data, data_length);
-
-	*key = psa_get_key_id(attributes);
-}
+/** Give thin PSA core support for export for testing */
 
 psa_status_t psa_export_key(mbedtls_svc_key_id_t key,
 			   uint8_t *data, size_t data_size, size_t *data_length)

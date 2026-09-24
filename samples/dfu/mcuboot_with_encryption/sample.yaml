@@ -47,6 +47,26 @@ tests:
     integration_platforms:
       - nrf54ls05dk/nrf54ls05a/cpuapp
 
+  sample.mcuboot_with_encryption.nrf54ls05a.psa_core_lite:
+    build_only: true
+    extra_args:
+      - mcuboot_CONFIG_FPROTECT=n
+      - mcuboot_EXTRA_CONF_FILE=boards/nrf54ls05dk_nrf54ls05a_cpuapp_psa_core_lite.conf
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+
+  sample.mcuboot_with_encryption.nrf54ls05b.psa_core_lite:
+    build_only: true
+    extra_args:
+      - mcuboot_CONFIG_FPROTECT=n
+      - mcuboot_EXTRA_CONF_FILE=boards/nrf54ls05dk_nrf54ls05b_cpuapp_psa_core_lite.conf
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+
   sample.mcuboot_with_encryption.multicore:
     build_only: true
     extra_args:
