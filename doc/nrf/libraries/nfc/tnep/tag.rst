@@ -137,7 +137,7 @@ The following code demonstrates how to process the TNEP library:
 API documentation
 *****************
 
-| Header file: :file:`include/tnep/tag.h`
-| Source file: :file:`subsys/tnep/tag.c`
+| Header file: :ncs-file:`/include/nfc/tnep/tag.h`
+| Source file: :ncs-file:`/subsys/nfc/tnep/tag.c`
 
 .. doxygengroup:: nfc_tnep_tag

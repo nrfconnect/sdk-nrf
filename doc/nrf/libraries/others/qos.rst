@@ -23,7 +23,7 @@ The following sequence diagram shows a typical usage of the library:
 Configuration
 *************
 
-To use this library, set the :kconfig:option:`CONFIG_QOS` Kconfig option and include the :file:`include/lib/qos.h` file to your project.
+To use this library, set the :kconfig:option:`CONFIG_QOS` Kconfig option and include the :ncs-file:`/include/qos.h` file to your project.
 
 Additionally, Configure the following options when using this library:
 
@@ -118,7 +118,7 @@ The application can use the :c:func:`qos_message_id_get_next` function to genera
 API documentation
 *****************
 
-| Header file: :file:`include/qos.h`
+| Header file: :ncs-file:`/include/qos.h`
 | Source files: :file:`lib/qos.c`
 
 .. doxygengroup:: qos

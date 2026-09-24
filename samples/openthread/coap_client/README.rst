@@ -177,6 +177,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -344,15 +346,15 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:coap_sock_interface`
 
-  * ``include/net/coap.h``
+  * :ncs-file:`zephyr:/include/zephyr/net/coap.h`
 
 * :ref:`zephyr:logging_api`:
 
-  * ``include/logging/log.h``
+  * :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 The following dependencies are added by the optional multiprotocol Bluetooth LE extension:
 
@@ -360,7 +362,7 @@ The following dependencies are added by the optional multiprotocol Bluetooth LE 
 * :ref:`nus_service_readme`
 * Zephyr's :ref:`zephyr:bluetooth_api`:
 
-  * ``include/bluetooth/bluetooth.h``
-  * ``include/bluetooth/gatt.h``
-  * ``include/bluetooth/hci.h``
-  * ``include/bluetooth/uuid.h``
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`

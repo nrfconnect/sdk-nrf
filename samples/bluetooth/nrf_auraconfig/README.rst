@@ -752,7 +752,7 @@ Configuration
 |config|
 
 The sample is pre-configured with a generous default memory allocation, suitable for a wide range of use cases.
-You can modify these default settings in the :file:`prj.conf` file.
+You can modify these default settings in the :ncs-file:`/samples/bluetooth/nrf_auraconfig/prj.conf` file.
 Using aggressive configurations can reduce air time availability for all streams, depending on the combination of options selected (like high bitrates, increased re-transmits, specific PHY settings).
 
 .. _nrf_auraconfig_configuration_sd:
@@ -779,6 +779,8 @@ Building and running
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
 
 .. include:: /includes/ipc_radio_conf.txt
 

@@ -37,8 +37,8 @@ Architecture
 The sample demonstrates the decoupled architecture:
 
 * Core Library - ``wifi_prov_core`` handles the protobuf protocol and business logic.
-* Transport Stub - ``wifi_prov_transport_stub.c`` provides mock transport functions.
-* Shell Interface - ``prov.c`` implements shell commands for testing.
+* Transport Stub - :ncs-file:`src/wifi_prov_transport_stub.c` provides mock transport functions.
+* Shell Interface - :ncs-file:`src/prov.c` implements shell commands for testing.
 * Configuration - Generated from Kconfig options at build time.
 
 Configuration
@@ -49,7 +49,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/provisioning/internal/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/provisioning/internal/Kconfig`):
 
 .. _CONFIG_WIFI_PROV_CONFIG:
 

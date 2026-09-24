@@ -91,7 +91,7 @@ Building and running
 The configuration files for this sample are located in the :file:`samples/cellular/nrf_cloud_coap_fota` folder.
 See :ref:`configure_application` on how to configure the parameters.
 
-To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :file:`VERSION` file.
+To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :ncs-file:`/samples/cellular/nrf_cloud_coap_fota/VERSION` file.
 
 To enable delta modem FOTA, add ``-DEXTRA_CONF_FILE=delta_modem_fota.conf`` to your build command and configure the modem firmware project key in one of the following ways:
 
@@ -105,10 +105,10 @@ See the `Memfault nRF Modem FOTA`_ documentation for more details on configuring
    SMP and full modem FOTA update are not currently supported by this sample.
    However, the following legacy overlay and source files for enabling those features are left for reference:
 
-   * :file:`overlays/legacy_smp_fota.conf`
-   * :file:`overlays/legacy_full_modem_fota.conf`
-   * :file:`src/smp_reset.h`
-   * :file:`src/smp_reset.c`
+   * :ncs-file:`/samples/cellular/nrf_cloud_coap_fota/overlays/legacy_smp_fota.conf`
+   * :ncs-file:`/samples/cellular/nrf_cloud_coap_fota/overlays/legacy_full_modem_fota.conf`
+   * :ncs-file:`/samples/cellular/nrf_cloud_coap_fota/src/smp_reset.h`
+   * :ncs-file:`/samples/cellular/nrf_cloud_coap_fota/src/smp_reset.c`
 
 Testing
 =======

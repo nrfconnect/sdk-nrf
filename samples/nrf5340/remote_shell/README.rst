@@ -48,9 +48,9 @@ This sample the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/device.h``
-  * ``include/drivers/uart.h``
-  * ``include/zephyr.h``
-  * ``include/sys/ring_buffer.h``
-  * ``include/sys/atomic.h``
-  * ``include/usb/usb_device.h``
+  * :ncs-file:`zephyr:/include/zephyr/device.h`
+  * :ncs-file:`zephyr:/include/zephyr/drivers/uart.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/sys/ring_buffer.h`
+  * :ncs-file:`zephyr:/include/zephyr/sys/atomic.h`
+  * :ncs-file:`zephyr:/include/zephyr/usb/usb_device.h`

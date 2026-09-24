@@ -471,7 +471,7 @@ Devicetree
 
    It is recommended to use the ``nordic,access`` property instead.
    The board files and sample overlays in the |NCS| are already updated to use it.
-   See :file:`ncs/zephyr/dts/bindings/reserved-memory/nordic,owned-memory.yaml` for more details.
+   See :ncs-file:`zephyr:/dts/bindings/reserved-memory/nordic,owned-memory.yaml` for more details.
 
    If both of the new and deprecated properties are set on the same devicetree node, then only ``nordic,access`` will take effect.
    Therefore, it may not be possible to override the default permissions of an existing memory node using the old properties.

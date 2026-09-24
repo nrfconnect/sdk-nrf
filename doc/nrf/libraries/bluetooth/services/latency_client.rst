@@ -19,7 +19,7 @@ The request sending procedure is asynchronous, so the request data to be sent mu
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/latency_client.h`
-| Source file: :file:`subsys/bluetooth/services/latency_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/latency_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/latency_client.c`
 
 .. doxygengroup::  bt_latency_c

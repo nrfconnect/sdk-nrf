@@ -52,7 +52,7 @@ There are also some metrics, which are specific to |NCS| that are enabled by def
   * ``ncs_connection_poll_unused_stack``- Stack used by the cloud libraries for :ref:`lib_nrf_cloud`, :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub`.
 
 In addition to showing the capturing of metrics provided by the Memfault SDK integration layer in |NCS|, the sample also shows how to capture an application-specific metric.
-This metric is defined in :file:`samples/debug/memfault/config/memfault_metrics_heartbeat_config.h`:
+This metric is defined in :ncs-file:`/samples/debug/memfault/config/memfault_metrics_heartbeat_config.def`:
 
 *  ``switch_1_toggle_count`` - The number of times **Switch 1** has been toggled on an nRF9160 DK.
 
@@ -86,7 +86,7 @@ Configuration
 *************
 
 The Memfault SDK allows the configuration of some of its options using Kconfig.
-To configure the options in the SDK that are not available for configuration using Kconfig, use :file:`samples/debug/memfault/config/memfault_platform_config.h`.
+To configure the options in the SDK that are not available for configuration using Kconfig, use :ncs-file:`/samples/debug/memfault/config/memfault_platform_config.h`.
 See `Memfault SDK`_ for more information.
 
 |config|

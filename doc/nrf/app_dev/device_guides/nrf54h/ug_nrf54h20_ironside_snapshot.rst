@@ -522,7 +522,7 @@ To identify whether a device in lifecycle state ``RoT`` or ``DEPLOYED`` supports
 The ``snapshot.enabled`` field is ``0`` when snapshot is disabled and non-zero when snapshot is enabled.
 The ``snapshot.status`` field reports the result of the most recent snapshot operation.
 
-For the boot report fields that indicate snapshot support, see the :file:`zephyr/modules/hal_nordic/ironside/se/include/ironside/se/boot_report.h` header file.
+For the boot report fields that indicate snapshot support, see the :ncs-file:`hal_nordic:/ironside/se/include/ironside/se/boot_report.h` header file.
 
 Related documentation
 *********************

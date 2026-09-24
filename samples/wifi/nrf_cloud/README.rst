@@ -49,21 +49,21 @@ This sample implements or demonstrates the following features:
 Structure and theory of operation
 =================================
 
-The entry point is the :file:`src/main.c` file, which starts the following threads:
+The entry point is the :ncs-file:`/samples/wifi/nrf_cloud/src/main.c` file, which starts the following threads:
 
-* ``con_thread`` (:file:`src/cloud_connection.c`) - Runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`.
-* ``app_thread`` (:file:`src/application.c`) - Runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`.
-* ``msg_thread`` (:file:`src/message_queue.c`) - Sends the messages in the :ref:`wifi_nrf_cloud_device_message_queue` while connected.
-* ``led_thread`` (:file:`src/led_control.c`) - Animates the LEDs, as described in :ref:`wifi_nrf_cloud_led_status_indication`.
-* ``coap_shadow`` (:file:`src/shadow_support_coap.c`) - Runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` (CoAP only).
-* ``mflt_buttons`` (:file:`src/memfault_buttons.c`) - Handles the :ref:`wifi_nrf_cloud_memfault_buttons`  (CoAP only).
+* ``con_thread`` (:ncs-file:`/samples/wifi/nrf_cloud/src/cloud_connection.c`) - Runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`.
+* ``app_thread`` (:ncs-file:`/samples/wifi/nrf_cloud/src/application.c`) - Runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`.
+* ``msg_thread`` (:ncs-file:`/samples/wifi/nrf_cloud/src/message_queue.c`) - Sends the messages in the :ref:`wifi_nrf_cloud_device_message_queue` while connected.
+* ``led_thread`` (:ncs-file:`/samples/wifi/nrf_cloud/src/led_control.c`) - Animates the LEDs, as described in :ref:`wifi_nrf_cloud_led_status_indication`.
+* ``coap_shadow`` (:ncs-file:`/samples/wifi/nrf_cloud/src/shadow_support_coap.c`) - Runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` (CoAP only).
+* ``mflt_buttons`` (:ncs-file:`/samples/wifi/nrf_cloud/src/memfault_buttons.c`) - Handles the :ref:`wifi_nrf_cloud_memfault_buttons`  (CoAP only).
 
 .. _wifi_nrf_cloud_cloud_connection_loop:
 
 Cloud connection loop
 ---------------------
 
-The cloud connection loop (:file:`src/cloud_connection.c`) connects to `nRF Cloud`_ whenever the Internet becomes reachable and disconnects when Internet access is lost.
+The cloud connection loop (:ncs-file:`/samples/wifi/nrf_cloud/src/cloud_connection.c`) connects to `nRF Cloud`_ whenever the Internet becomes reachable and disconnects when Internet access is lost.
 After a failed or lost connection, the loop waits for the time set by the :option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS` option before it retries.
 
 The :ref:`lib_nrf_cloud` library handles the :ref:`connection process <lib_nrf_cloud_connect>`, except for the following:
@@ -76,7 +76,7 @@ The :ref:`lib_nrf_cloud` library handles the :ref:`connection process <lib_nrf_c
 Device message queue
 --------------------
 
-Any thread can submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (:file:`src/message_queue.c`).
+Any thread can submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (:ncs-file:`/samples/wifi/nrf_cloud/src/message_queue.c`).
 The messages are sent one at a time while connected to nRF Cloud, and failed messages are re-queued.
 After more than :option:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES` consecutive failures, the connection is reset.
 
@@ -87,10 +87,10 @@ Shadow updates and ground fix requests from the :ref:`lib_location` library bypa
 Application thread and main application loop
 --------------------------------------------
 
-The application thread (:file:`src/application.c`) logs the reset reason, waits for connectivity, and starts periodic location tracking with the :ref:`lib_location` library.
+The application thread (:ncs-file:`/samples/wifi/nrf_cloud/src/application.c`) logs the reset reason, waits for connectivity, and starts periodic location tracking with the :ref:`lib_location` library.
 Then, every :option:`CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS` seconds, it performs the following operations in a loop:
 
-* Samples the temperature (:file:`src/temperature.c`) and sends it as a timestamped device message to the :ref:`wifi_nrf_cloud_device_message_queue`.
+* Samples the temperature (:ncs-file:`/samples/wifi/nrf_cloud/src/temperature.c`) and sends it as a timestamped device message to the :ref:`wifi_nrf_cloud_device_message_queue`.
 * Sends the :ref:`wifi_nrf_cloud_test_counter` value, if enabled.
 
 .. _wifi_nrf_cloud_coap_shadow_loop:
@@ -105,7 +105,7 @@ The CoAP shadow delta checking thread periodically gets the `device shadow <nRF 
 Temperature sensing
 -------------------
 
-Temperature sensing is implemented in the :file:`src/temperature.c` file.
+Temperature sensing is implemented in the :ncs-file:`/samples/wifi/nrf_cloud/src/temperature.c` file.
 If the ``temp`` devicetree node is enabled, the on-die temperature sensor is read using the :ref:`zephyr:sensor` API.
 This is the case for the nRF7120 and nRF54LM20 DKs.
 On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5340 as a host MCU, simulated temperature readings are generated instead.
@@ -115,15 +115,15 @@ On boards without an on-die temperature sensor available to the application core
 Location tracking
 -----------------
 
-The sample periodically scans nearby Wi-Fi access points and sends their MAC addresses to nRF Cloud for a location estimate (:file:`src/location_tracking.c`).
-The :file:`src/application.c` file logs the resulting location.
+The sample periodically scans nearby Wi-Fi access points and sends their MAC addresses to nRF Cloud for a location estimate (:ncs-file:`/samples/wifi/nrf_cloud/src/location_tracking.c`).
+The :ncs-file:`/samples/wifi/nrf_cloud/src/application.c` file logs the resulting location.
 
 .. _wifi_nrf_cloud_led_status_indication:
 
 LED status indication
 ---------------------
 
-On boards with LEDs, the ``led_thread`` (:file:`src/led_control.c`) shows the status of the sample.
+On boards with LEDs, the ``led_thread`` (:ncs-file:`/samples/wifi/nrf_cloud/src/led_control.c`) shows the status of the sample.
 The patterns and their conditions are as follows:
 
 +------------------------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
@@ -159,7 +159,7 @@ By default, the sample reports the following data:
 * Reboot events, including the reboot reason (:kconfig:option:`CONFIG_MEMFAULT_REBOOT_REASON_GET_HWINFO`).
 * Coredumps on crash (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
   Coredumps are stored in RAM and uploaded after the reboot (:kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`).
-  The ``nrf7002dk/nrf5340/cpuapp/ns`` board target reduces the coredump size to fit in RAM (see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+  The ``nrf7002dk/nrf5340/cpuapp/ns`` board target reduces the coredump size to fit in RAM (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
 * Recent log lines, captured along with coredumps (:kconfig:option:`CONFIG_MEMFAULT_LOGGING_ENABLE`).
 * Heartbeat metrics, collected every :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` seconds (one hour by default).
   The sample uses the built-in |NCS| metrics (:kconfig:option:`CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS`) and does not define custom metrics.
@@ -184,7 +184,7 @@ No Memfault project key is needed, because nRF Cloud forwards the data to Memfau
 See :ref:`wifi_nrf_cloud_testing_memfault` for how to view the data.
 
 The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD`), independently of the sample's own logic.
-To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
+To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :ncs-file:`/samples/wifi/nrf_cloud/src/cloud_connection.c` file).
 This same timer also drives FOTA checks when :ref:`wifi_nrf_cloud_fota` is enabled.
 
 .. _wifi_nrf_cloud_memfault_buttons:
@@ -193,7 +193,7 @@ Memfault button actions
 =======================
 
 The periodic-upload timer fires only once in :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS`, and metrics heartbeats are only captured once in :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` (one hour by default).
-To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
+To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :ncs-file:`/samples/wifi/nrf_cloud/src/memfault_buttons.c` file) to trigger these actions:
 
 * First button (``sw0`` devicetree alias) - Captures a metrics heartbeat (:c:func:`memfault_metrics_heartbeat_debug_trigger`) and posts all pending Memfault chunks (:c:func:`memfault_zephyr_port_post_data_return_size`).
 * Second button (``sw1`` devicetree alias) - Checks for a FOTA update (:c:func:`memfault_zephyr_fota_start`), requires :ref:`wifi_nrf_cloud_fota` to be enabled.
@@ -214,7 +214,7 @@ This sample optionally supports application Firmware Over-The-Air (FOTA) updates
 Enable it with :option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
 
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
-* Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
+* Confirms the running image at startup (see :ncs-file:`/samples/wifi/nrf_cloud/src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
 * Checks for updates on the Memfault periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`).
 * Lets you trigger a FOTA check on demand with a button press (see :ref:`wifi_nrf_cloud_memfault_buttons`).
 * Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
@@ -230,7 +230,7 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
    * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
 
    The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
-   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
+   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
 
    To build with FOTA enabled, see :ref:`wifi_nrf_cloud_building_coap`.
 
@@ -320,18 +320,18 @@ Configuration files
 
 The sample provides predefined configuration files for the following use cases:
 
-* :file:`prj.conf` - General configuration file for all board targets.
-* :file:`mqtt.conf` - Configuration file for the MQTT transport.
-* :file:`coap.conf` - Configuration file for the CoAP transport, including `Memfault`_ device monitoring.
-* :file:`coap-fota.conf` - Additional configuration file for :ref:`wifi_nrf_cloud_fota`.
-  Must be used together with :file:`coap.conf`.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` and :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration files for the nRF54LM20 DK with the nRF7002-EB II shield.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp.conf` and :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
+* :ncs-file:`/samples/wifi/nrf_cloud/prj.conf` - General configuration file for all board targets.
+* :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf` - Configuration file for the MQTT transport.
+* :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` - Configuration file for the CoAP transport, including `Memfault`_ device monitoring.
+* :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` - Additional configuration file for :ref:`wifi_nrf_cloud_fota`.
+  Must be used together with :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`.
+* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration files for the nRF54LM20 DK with the nRF7002-EB II shield.
+* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
 * :file:`sysbuild/mcuboot/` - Configuration of the MCUboot bootloader image used for FOTA.
 
 Board and SoC files under the :file:`boards/` and :file:`socs/` folders are merged automatically for the selected target.
-The :file:`mqtt.conf`, :file:`coap.conf`, and :file:`coap-fota.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
+The :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf`, :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`, and :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_building_and_running:
 
@@ -353,8 +353,8 @@ You must select either MQTT or CoAP by adding one of the following parameters to
 * For MQTT, add ``-DEXTRA_CONF_FILE=mqtt.conf``.
 * For CoAP, add ``-DEXTRA_CONF_FILE=coap.conf``.
 
-If you also want to enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :file:`coap-fota.conf` file in addition to the :file:`coap.conf` file.
-The :file:`coap-fota.conf` file only extends the CoAP transport and cannot be used on its own:
+If you also want to enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` file in addition to the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` file.
+The :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` file only extends the CoAP transport and cannot be used on its own:
 
 ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
 
@@ -431,7 +431,7 @@ Testing
 Testing Memfault device monitoring
 ----------------------------------
 
-To test :ref:`wifi_nrf_cloud_memfault`, build and program the sample with the :file:`coap.conf` file, and onboard the device as described in the previous section.
+To test :ref:`wifi_nrf_cloud_memfault`, build and program the sample with the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` file, and onboard the device as described in the previous section.
 Then, complete the following steps:
 
 1. Upload the :file:`build/nrf_cloud/zephyr/zephyr.elf` file as a symbol file, using the `Memfault Dashboards`_ (**Software** > **Symbol Files**) or the `Memfault CLI tool`_.
@@ -462,10 +462,10 @@ Memfault might throttle devices that upload too often, which is shown as ``Devic
 Testing FOTA
 ------------
 
-To test :ref:`wifi_nrf_cloud_fota`, build and program the sample with the :file:`coap.conf` and :file:`coap-fota.conf` files on a supported board target, and onboard the device as described in the previous section.
+To test :ref:`wifi_nrf_cloud_fota`, build and program the sample with the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` and :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` files on a supported board target, and onboard the device as described in the previous section.
 Then, complete the following steps:
 
-1. Create a new version of the sample by increasing the ``PATCHLEVEL`` value in the :file:`VERSION` file.
+1. Create a new version of the sample by increasing the ``PATCHLEVEL`` value in the :ncs-file:`/samples/wifi/nrf_cloud/VERSION` file.
 #. Build the sample again, but do not program it.
 #. Upload the :file:`build/nrf_cloud/zephyr/zephyr.signed.bin` file as a new release and deploy it to your device, using the `nRF Cloud`_ portal or the `Memfault CLI tool`_.
    See the `Memfault OTA Integration Guide`_ for details.

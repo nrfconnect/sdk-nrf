@@ -102,7 +102,7 @@ There are also samples at :file:`zephyr/samples/drivers/can/` which can be built
 API documentation
 *****************
 
-| Header file: :file:`zephyr/include/zephyr/drivers/can.h`
-| Source file: :file:`nrf/drivers/can/can_nrf_scan.c`
+| Header file: :ncs-file:`zephyr:/include/zephyr/drivers/can.h`
+| Source file: :ncs-file:`/drivers/can/can_nrf_scan.c`
 
 .. doxygengroup:: can_interface

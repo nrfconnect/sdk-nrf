@@ -84,7 +84,7 @@ To enable privacy, set the :kconfig:option:`CONFIG_BT_PRIVACY` option.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/mds.h`
-| Source file: :file:`subsys/bluetooth/services/mds.c`
+| Header file: :ncs-file:`/include/bluetooth/services/mds.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/mds.c`
 
 .. doxygengroup:: bt_mds

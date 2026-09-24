@@ -75,7 +75,7 @@ This library uses the following `sdk-nrfxlib`_ library:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/at_shell.h`
+| Header file: :ncs-file:`/include/modem/at_shell.h`
 | Source files: :file:`lib/at_shell/`
 
 .. doxygengroup:: at_shell

@@ -67,7 +67,7 @@ Complete the following steps:
    Use the bundled DLL or build it according to instructions in `HIDAPI library`_.
 
 #. Select the appropriate HIDADPI library version for the used Windows system (either ``x86`` or ``x64``).
-   Copy the :file:`hidapi.dll` file and paste it into the directory where the :file:`configurator_cli.py` script is located.
+   Copy the :file:`hidapi.dll` file and paste it into the directory where the :ncs-file:`/scripts/hid_configurator/configurator_cli.py` script is located.
 
 #. Install `pyhidapi Python wrapper`_ and other required libraries with the following command:
 
@@ -115,11 +115,11 @@ Complete the following steps:
        In versions earlier than 5.44, the HID device attached by BlueZ could obtain wrong VID and PID values (ignoring values in Device Information Service), which would stop HIDAPI from opening the device.
        In versions earlier than 5.56, the HID device attached by BlueZ might provide incomplete HID feature report on get operation.
 
-#. If you do not want to use the root access to run the Python script, copy the provided udev rule from the :file:`60-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
+#. If you do not want to use the root access to run the Python script, copy the provided udev rule from the :ncs-file:`/scripts/hid_configurator/60-hid.rules` file to the :file:`/etc/udev/rules.d` and reconnect the device.
 #. If you want to connect to a device with Vendor ID other than the one specified in the file (other than Nordic Semiconductor's Vendor ID of ``1915``), use one of the following options:
 
    * Run the script with the root permission.
-   * Add entries for your Vendor ID (and optionally Product ID) to the :file:`60-hid.rules` file.
+   * Add entries for your Vendor ID (and optionally Product ID) to the :ncs-file:`/scripts/hid_configurator/60-hid.rules` file.
      Use the existing entries as a base.
      Make sure to reconnect the HID device after updating the file.
 
@@ -228,7 +228,7 @@ Perform the selected command on the connected device by using the following comm
 
 .. note::
   The device can be identified by type, board name, or hardware ID (HW ID).
-  The mapping from device type to board list is defined in :file:`NrfHidManager.py`.
+  The mapping from device type to board list is defined in :ncs-file:`/scripts/hid_configurator/NrfHidManager.py`.
 
 A command may require additional, command-specific arguments.
 
@@ -266,7 +266,7 @@ Use the following syntax to display list of options for the given module that ca
     python3 configurator_cli.py DEVICE config MODULE_NAME -h
 
 .. tip::
-  The available configurable modules and options are defined by the :file:`nrf/scripts/hid_configurator/modules/module_config.py` file.
+  The available configurable modules and options are defined by the :ncs-file:`/scripts/hid_configurator/modules/module_config.py` file.
 
   You can add another configurable module to the file.
   Use the existing modules as examples.
@@ -310,7 +310,7 @@ When the whole image is transmitted, the update process is completed during the 
 If the DFU process is interrupted, it can be resumed using the same image, unless the device restarts.
 After the device reboots, the process always starts from the beginning.
 For more information, see nRF Desktop's :ref:`nrf_desktop_dfu`.
-The DFU functionality on the host computer is implemented in the :file:`nrf/scripts/hid_configurator/modules/dfu.py` file.
+The DFU functionality on the host computer is implemented in the :ncs-file:`/scripts/hid_configurator/modules/dfu.py` file.
 
 The ``dfu`` command reads the version of the firmware and the bootloader variant that are running on the device and compares them with the firmware version and the bootloader variant in the update image at the provided path.
 If the process is to be continued, the script uploads the image data to the device.
@@ -381,8 +381,8 @@ The LED stream is a feature of nRF Desktop that allows you to send a stream of c
 For more information about its implementation, see nRF Desktop's :ref:`nrf_desktop_led_stream`.
 The LED stream functionality on the host computer is implemented by the following files:
 
-* :file:`nrf/scripts/hid_configurator/modules/led_stream.py`
-* :file:`nrf/scripts/hid_configurator/modules/music_led_stream.py`.
+* :ncs-file:`/scripts/hid_configurator/modules/led_stream.py`
+* :ncs-file:`/scripts/hid_configurator/modules/music_led_stream.py`.
 
 HID configurator's ``led_stream`` command starts the LED stream playback on the device.
 
@@ -416,7 +416,7 @@ During the device discovery, the script asks for the nRF Desktop peripherals con
 If the currently discovered device has connected peripherals, they are discovered and prepared for configuration.
 
 The device discovery procedure is described on the :ref:`configuration channel documentation page <nrf_desktop_config_channel_device_discovery>`.
-An example of implementation is available in the :file:`scripts/hid_configurator/NrfHidDevice.py` file.
+An example of implementation is available in the :ncs-file:`/scripts/hid_configurator/NrfHidDevice.py` file.
 The device discovery is implemented in the ``__init__`` function of the ``NrfHidDevice`` class.
 
 .. note::

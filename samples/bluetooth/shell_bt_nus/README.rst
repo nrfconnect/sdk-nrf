@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-You also need an additional development kit for connecting using the :file:`bt_nus_shell.py` script.
+You also need an additional development kit for connecting using the :ncs-file:`/scripts/shell/bt_nus_shell.py` script.
 Alternatively, you can use :ref:`ble_console_readme` for connecting, using Linux only.
 
 Building and running
@@ -56,8 +56,8 @@ After programming the sample to your development kits, complete the following st
 
       pip install --user -r scripts/shell/requirements.txt
 
-#. Connect to your PC the development kit meant to use the :file:`bt_nus_shell.py` script.
-#. Start the :file:`bt_nus_shell.py` script with the correct parameters, for example:
+#. Connect to your PC the development kit meant to use the :ncs-file:`/scripts/shell/bt_nus_shell.py` script.
+#. Start the :ncs-file:`/scripts/shell/bt_nus_shell.py` script with the correct parameters, for example:
 
    .. code-block:: console
 
@@ -85,11 +85,11 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`samples/bluetooth/gatt/bas.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/services/bas.h`
 * :ref:`zephyr:logging_api`
 
 The sample also uses the following secure firmware component:

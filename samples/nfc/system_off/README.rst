@@ -133,9 +133,10 @@ In addition, it uses the Type 2 Tag library from `sdk-nrfxlib`_:
 
 The sample uses the following Zephyr libraries:
 
-* ``include/zephyr.h``
-* ``include/device.h``
-* ``include/power/power.h``
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`zephyr:/include/zephyr/device.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/poweroff.h`
+* :ncs-file:`zephyr:/include/zephyr/pm/device.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 
 The sample also uses the following secure firmware component:

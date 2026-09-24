@@ -117,7 +117,7 @@ The following limitations apply to this library:
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/dtm_twowire/dtm_twowire_to_hci.h`
-| Source file: :file:`lib/dtm_twowire/dtm_twowire_to_hci.c`
+| Header file: :ncs-file:`/include/bluetooth/dtm_twowire/dtm_twowire_to_hci.h`
+| Source file: :ncs-file:`/lib/dtm_twowire/dtm_twowire_to_hci.c`
 
 .. doxygengroup:: dtm_twowire_to_hci

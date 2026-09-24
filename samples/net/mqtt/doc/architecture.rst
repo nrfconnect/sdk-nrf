@@ -19,7 +19,7 @@ The following figure illustrates the relationship between modules, channels, and
     Architecture
 
 Definitions and payloads of the channel are owned by the system and placed in a common folder that is included by all modules.
-See the :file:`src/common/channel.c` and :file:`src/common/channel.h` files for more details.
+See the :ncs-file:`/samples/net/mqtt/src/common/message_channel.c` and :ncs-file:`/samples/net/mqtt/src/common/message_channel.h` files for more details.
 
 .. note::
    The sample does not include a :file:`main.c` file.

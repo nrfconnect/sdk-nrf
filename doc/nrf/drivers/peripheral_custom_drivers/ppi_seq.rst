@@ -250,7 +250,7 @@ The module uses the following ``nrfx`` libraries and drivers:
 API documentation
 *****************
 
-| Header file: :file:`include/drivers/ppi_seq/ppi_seq.h`
+| Header file: :ncs-file:`/include/drivers/ppi_seq/ppi_seq.h`
 | Source files: :file:`drivers/ppi_seq/`
 
 .. doxygengroup:: ppi_seq

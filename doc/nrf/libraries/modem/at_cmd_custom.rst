@@ -18,7 +18,7 @@ You can enable the custom AT commands library by setting the :kconfig:option:`CO
 Usage
 *****
 
-To add a custom AT command or overwrite an existing command, you must add the AT commands filter and callback with the :c:macro:`AT_CMD_CUSTOM` macro in the :file:`at_cmd_custom.h` file.
+To add a custom AT command or overwrite an existing command, you must add the AT commands filter and callback with the :c:macro:`AT_CMD_CUSTOM` macro in the :ncs-file:`/include/modem/at_cmd_custom.h` file.
 If the filter matches the first characters of the AT command that is sent to the :c:func:`nrf_modem_at_cmd` function, the AT command is passed to the filter callback instead of to the modem.
 When returning from the callback, the content of the provided buffer is treated as the modem response and is returned to the ``nrf_modem_at_`` API that sent the command.
 
@@ -95,7 +95,7 @@ The following code snippet shows how responses can be added to the ``+MYCOMMAND`
 API documentation
 *****************
 
-| Header file: :file:`include/modem/at_cmd_custom.h`
-| Source file: :file:`lib/at_cmd_custom/at_cmd_custom.c`
+| Header file: :ncs-file:`/include/modem/at_cmd_custom.h`
+| Source file: :ncs-file:`/lib/at_cmd_custom/at_cmd_custom.c`
 
 .. doxygengroup:: at_cmd_custom

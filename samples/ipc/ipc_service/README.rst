@@ -182,5 +182,5 @@ Dependencies
 
 The sample uses the following Zephyr subsystems:
 
-* ``include/ipc/ipc_service.h``
+* :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

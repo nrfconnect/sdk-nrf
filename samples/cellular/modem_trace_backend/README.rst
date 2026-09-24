@@ -23,7 +23,7 @@ The Modem trace backend sample implements and selects a custom trace backend to 
 For demonstration purposes, the custom trace backend counts the number of bytes received and calculates the data rate of modem traces received.
 The CPU utilization is also measured.
 The byte count, data rate, and CPU load are periodically printed to terminal using a delayable work item and the system workqueue.
-The custom trace backend is implemented in :file:`modem_trace_backend/src/trace_print_stats.c`.
+The custom trace backend is implemented in :ncs-file:`/samples/cellular/modem_trace_backend/src/trace_print_stats.c`.
 However, it is possible to add a custom modem trace backend as a library and use it in more than one application.
 See :ref:`adding_custom_modem_trace_backends` for details.
 

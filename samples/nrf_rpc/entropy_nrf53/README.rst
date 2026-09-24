@@ -50,6 +50,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`remote/`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`remote/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 .. _entropy_nrf53_testing:
