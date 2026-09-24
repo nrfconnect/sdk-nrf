@@ -67,10 +67,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     extra_args: FILE_SUFFIX=hid_sci
     harness: console
   applications.nrf_desktop.zrelease_hid_sci:
@@ -79,10 +82,13 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
     extra_args: FILE_SUFFIX=release_hid_sci
   applications.nrf_desktop.zdebug_dongle_4llpmconn.uart:
     platform_allow:
