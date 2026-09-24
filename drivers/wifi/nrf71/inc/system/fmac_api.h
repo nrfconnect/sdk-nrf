@@ -1124,7 +1124,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *f
 						 enum rpu_stats_type stats_type,
 						 struct rpu_sys_op_stats *stats);
 
-#if defined(NRF71_UTIL) || defined(__DOXYGEN__)
+#if defined(NRF71_DEBUG_SHELL) || defined(__DOXYGEN__)
 /**
  * @brief Synchronously get debug stats from RPU (UMAC/LMAC/PHY).
  * @param fmac_dev_ctx FMAC context.
@@ -1146,7 +1146,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(
 enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	struct umac_int_stats *stats);
+#endif /* NRF71_DEBUG_SHELL */
 
+#if defined(NRF71_UTIL) || defined(__DOXYGEN__)
 /**
  * @brief Request an extended sleep interval for the nRF71.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.

@@ -212,11 +212,15 @@ config NRF71_MAX_TX_PENDING_QLEN
 config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
 	depends on SHELL && (NRF71_SYSTEM_MODE || NRF71_SCAN_ONLY)
-	select SYS_HEAP_RUNTIME_STATS
 
 config NRF71_DEBUG_SHELL
 	bool "Debug shell in nRF71 driver"
-	depends on SHELL
+	depends on SHELL && (NRF71_SYSTEM_MODE || NRF71_SCAN_ONLY)
+	select SYS_HEAP_RUNTIME_STATS
+	help
+	  Register the "nrf71 dbg" shell commands to read and clear
+	  UMAC/LMAC/PHY statistics and debug statistics from the RPU,
+	  and to show host TX queue and driver heap usage statistics.
 
 # Antenna gain, band edge ceilings and the transmit power ceilings all
 # describe the board RF front-end rather than the SoC, so they come from the
