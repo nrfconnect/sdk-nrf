@@ -80,7 +80,7 @@ Minimal assistance
 GNSS satellite acquisition can also be assisted by providing factory almanac, GPS time, and coarse location to the GNSS module.
 Using this information, GNSS can calculate which satellites it should search for and what are the expected Doppler frequencies.
 
-The sample includes a factory almanac that is written to the file system when the sample starts.
+The sample includes a factory almanac in :ncs-file:`src/factory_almanac_v3.h` that is written to the file system when the sample starts.
 
 The date when the factory almanac was generated is found in the header files.
 The files are updated in the repository approximately once a month.

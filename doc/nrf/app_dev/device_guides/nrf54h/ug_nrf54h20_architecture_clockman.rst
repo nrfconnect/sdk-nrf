@@ -157,7 +157,7 @@ This policy applies to all clock parameters, including frequency and precision, 
 For more details, see the following links:
 
 * :ref:`zephyr:clock_control_api`.
-* The following calls in the `Zephyr's nRF clock control API extensions`_ (:file:`include/zephyr/drivers/clock_control/nrf_clock_control.h`):
+* The following calls in the `Zephyr's nRF clock control API extensions`_ (:ncs-file:`zephyr:/include/zephyr/drivers/clock_control/nrf_clock_control.h`):
 * The sample at :file:`zephyr/samples/boards/nordic/clock_control`.
 
   * ``nrf_clock_control_request()`` - Requests a reservation to use a given clock with specified attributes.
@@ -165,7 +165,7 @@ For more details, see the following links:
   * ``nrf_clock_control_cancel_or_release()`` - Safely cancels a reservation request.
   * ``nrf_clock_control_get_startup_time()`` - Gets the maximum time for a clock to apply specified attributes.
 
-* The following calls in the `clocks devicetree macro API`_ (:file:`include/zephyr/devicetree/clocks.h`):
+* The following calls in the `clocks devicetree macro API`_ (:ncs-file:`zephyr:/include/zephyr/devicetree/clocks.h`):
 
   * ``DT_CLOCKS_CTLR_BY_IDX()``: Gets the node identifier for the controller phandle from a *clocks* phandle-array property at an index.
   * ``DT_CLOCKS_CTLR()``: It is equivalent to ``DT_CLOCKS_CTLR_BY_IDX()`` with index (idx) set to 0.
@@ -203,4 +203,4 @@ In such cases, developers must:
    The handler then receives success or failure notifications.
 
 You can find the header files in the :file:`modules/hal/nordic/nrfs` directory.
-Within this directory, :file:`nrf_gdfs.h` and related source files define the GDFS interface.
+Within this directory, :ncs-file:`hal_nordic:/nrfs/include/services/nrfs_gdfs.h` and related source files define the GDFS interface.

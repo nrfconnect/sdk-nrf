@@ -104,6 +104,8 @@ Building and running
 
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`/applications/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -146,17 +148,17 @@ It also relies on the following Zephyr's Bluetooth and HCI layers:
 
 * :ref:`zephyr:kernel_api`:
 
-	* :file:`include/zephyr/kernel.h`
+	* :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-	* :file:`include/zephyr/bluetooth/addr.h`
-	* :file:`include/zephyr/bluetooth/bluetooth.h`
-	* :file:`include/zephyr/bluetooth/conn.h`
+	* :ncs-file:`zephyr:/include/zephyr/bluetooth/addr.h`
+	* :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+	* :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
 
 * :ref:`zephyr:logging_api`:
 
-	* :file:`include/zephyr/logging/log.h`
+	* :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 If using the optional Python plotting script, the following dependencies are required:
 

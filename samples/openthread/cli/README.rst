@@ -178,6 +178,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 To update the OpenThread libraries provided by ``nrfxlib``, use the following commands:
@@ -609,7 +611,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:thread_protocol_interface`
 
@@ -619,10 +621,10 @@ The following dependencies are added by the optional multiprotocol Bluetooth® L
 * :ref:`nus_service_readme`
 * Zephyr's :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
 
 In addition, it uses the following secure firmware component:
 

@@ -64,14 +64,14 @@ Identifying the active slot
 ---------------------------
 
 This sample defines partitions in devicetree.
-To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the devicetree slot partition nodes, as in :file:`src/ab_utils.c`.
+To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the devicetree slot partition nodes, as in :ncs-file:`/samples/dfu/ab/src/ab_utils.c`.
 
 On single-core board targets (for example ``nrf54l15dk/nrf54l15/cpuapp``):
 
 * ``slot0_partition`` — slot A
 * ``slot1_partition`` — slot B
 
-On ``nrf54h20dk/nrf54h20/cpuapp`` with merged Direct XIP slots (see :file:`sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`):
+On ``nrf54h20dk/nrf54h20/cpuapp`` with merged Direct XIP slots (see :ncs-file:`/samples/dfu/ab/sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi`):
 
 * ``cpuapp_slot0_partition`` and ``cpurad_slot0_partition`` — slot A (application and radio regions)
 * ``cpuapp_slot1_partition`` and ``cpurad_slot1_partition`` — slot B
@@ -121,7 +121,7 @@ If this option is enabled, the application image is treated as faulty and the se
 If either verification step fails, the application does not confirm the image.
 You can still confirm the image manually using the SMP command, which overrides the result of the health check.
 
-The implementation of these checks is located in :file:`src/ab_utils.c`.
+The implementation of these checks is located in :ncs-file:`/samples/dfu/ab/src/ab_utils.c`.
 
 User interface
 **************

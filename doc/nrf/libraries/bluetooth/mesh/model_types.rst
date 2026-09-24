@@ -18,6 +18,6 @@ The following section defines types that are common for all models.
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/mesh/model_types.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/model_types.h`
 
 .. doxygengroup:: bt_mesh_model_types

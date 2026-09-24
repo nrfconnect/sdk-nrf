@@ -30,6 +30,6 @@ Common types
 
 This section lists the types common to the Light CTL mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/light_ctl.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctl.h`
 
 .. doxygengroup:: bt_mesh_light_ctl

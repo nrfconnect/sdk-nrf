@@ -12,7 +12,7 @@
    The following limitations apply to this application:
 
    * One CIG, one of the two CIS streams or a mixed stereo comprising of the two (selectable).
-     See :file:`overlay-unicast_server.conf` for more information.
+     See :ncs-file:`/applications/nrf_audio/unicast_server/overlay-unicast_server.conf` for more information.
    * Audio output: I2S/Analog headset output.
    * Audio input: PDM microphone over I2S.
    * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
@@ -76,7 +76,7 @@ In this mode, the I2S output is stereo, but :zephyr:board:`nrf5340_audio_dk` sti
 
 To configure stereo, program the :ref:`correct headset location <nrf_audio_app_configuration_headset_location>` for each headset.
 
-See also :file:`overlay-unicast_server.conf` for more information.
+See also :ncs-file:`/applications/nrf_audio/unicast_server/overlay-unicast_server.conf` for more information.
 
 .. _nrf_audio_unicast_server_app_building:
 

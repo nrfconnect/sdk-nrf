@@ -53,7 +53,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Configuration files
 ====================
 
-The sample provides a default configuration file, :file:`prj.conf`, configured for a statically defined gateway, located in :file:`zephyr/samples/net/mqtt_sn_publisher`.
+The sample provides a default configuration file, :ncs-file:`zephyr:/samples/net/mqtt_sn_publisher/prj.conf`, configured for a statically defined gateway, located in :file:`zephyr/samples/net/mqtt_sn_publisher`.
 
 To add a specific extra configuration file to the build, add the ``-DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 
@@ -86,7 +86,7 @@ Alternatively, build against the predefined test case in the :file:`sample.yaml`
 
    west build -b nrf7120dk/nrf7120/cpuapp -T nrf.extended.sample.net.mqtt_sn_publisher.wifi-ipv4
 
-Before building, edit the :file:`prj.conf` file to set the ``CONFIG_NET_SAMPLE_MQTT_SN_GATEWAY_ADDRESS`` and ``CONFIG_NET_SAMPLE_MQTT_SN_BROADCAST_ADDRESS`` Kconfig options to match your network, or set up an MQTT-SN gateway reachable at the addresses already configured there.
+Before building, edit the :ncs-file:`zephyr:/samples/net/mqtt_sn_publisher/prj.conf` file to set the ``CONFIG_NET_SAMPLE_MQTT_SN_GATEWAY_ADDRESS`` and ``CONFIG_NET_SAMPLE_MQTT_SN_BROADCAST_ADDRESS`` Kconfig options to match your network, or set up an MQTT-SN gateway reachable at the addresses already configured there.
 
 Testing
 =======
@@ -94,7 +94,7 @@ Testing
 Testing this sample requires an MQTT-SN gateway and an MQTT broker reachable from the development kit's Wi-Fi network.
 Follow Zephyr's :zephyr:code-sample:`mqtt-sn-publisher` sample documentation to set up `Mosquitto`_ and the `Eclipse Paho MQTT-SN Gateway`_ .
 The same setup works unchanged, since the gateway and broker only need to be reachable over IP.
-Unlike the ``native_sim`` setup described there, set the ``CONFIG_NET_SAMPLE_MQTT_SN_GATEWAY_ADDRESS`` and ``CONFIG_NET_SAMPLE_MQTT_SN_BROADCAST_ADDRESS`` Kconfig options in the :file:`prj.conf` file to addresses on your actual Wi-Fi network instead of the ``192.0.2.x`` defaults, matching wherever you run the gateway.
+Unlike the ``native_sim`` setup described there, set the ``CONFIG_NET_SAMPLE_MQTT_SN_GATEWAY_ADDRESS`` and ``CONFIG_NET_SAMPLE_MQTT_SN_BROADCAST_ADDRESS`` Kconfig options in the :ncs-file:`zephyr:/samples/net/mqtt_sn_publisher/prj.conf` file to addresses on your actual Wi-Fi network instead of the ``192.0.2.x`` defaults, matching wherever you run the gateway.
 
 .. note::
    Mosquitto 2.x rejects anonymous clients by default once a listener is configured.
@@ -166,4 +166,4 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
-* MQTT-SN (:file:`include/zephyr/net/mqtt_sn.h`)
+* MQTT-SN (:ncs-file:`zephyr:/include/zephyr/net/mqtt_sn.h`)

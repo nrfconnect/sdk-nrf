@@ -124,7 +124,7 @@ mesh models sched action-set-unack <Idx>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/scheduler_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/scheduler_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/scheduler_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/scheduler_cli.c`
 
 .. doxygengroup:: bt_mesh_scheduler_cli

@@ -119,10 +119,10 @@ It uses the following :ref:`nrfxlib` library:
 
 It uses the following Zephyr libraries:
 
-* ``include/zephyr/types.h``
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:logging_api`
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 .. gzp_dynamic_pairing_dependencies_end

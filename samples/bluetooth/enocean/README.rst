@@ -101,8 +101,8 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`

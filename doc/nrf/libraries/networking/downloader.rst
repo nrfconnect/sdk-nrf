@@ -20,7 +20,7 @@ Protocols
 
 The library supports HTTP, HTTPS (TLS 1.2), CoAP, and CoAPS (DTLS 1.2) over IPv4 and IPv6.
 If other protocols are required, they can be added by the application.
-See :file:`downloader_transport.h` for details.
+See :ncs-file:`/include/net/downloader_transport.h` for details.
 The protocol used for the download is specified in the beginning of the ``URI`` or ``host``.
 Use ``http://`` for HTTP, ``https://`` for HTTPS, ``coap://`` for CoAP, and ``coaps://`` for CoAPS.
 If no protocol is specified, the downloader defaults to HTTP or HTTPS, depending on the server security configuration.
@@ -217,7 +217,7 @@ Due to internal limitations, the maximum CoAP block size is 512 bytes.
 API documentation
 *****************
 
-| Header file: :file:`include/downloader.h`, :file:`include/downloader_transport.h`, :file:`include/downloader_transport_http.h`, :file:`include/downloader_transpot_coap.h`
+| Header file: :ncs-file:`/include/net/downloader.h`, :ncs-file:`/include/net/downloader_transport.h`, :ncs-file:`/include/net/downloader_transport_http.h`, :ncs-file:`/include/net/downloader_transport_coap.h`
 | Source files: :file:`subsys/net/lib/downloader/src/`
 
 .. doxygengroup:: downloader

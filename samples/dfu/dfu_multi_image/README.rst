@@ -116,7 +116,7 @@ Testing
           The ``<read_offset>`` is the offset in the ``dfu_multi_image_helper`` partition from which a chunk of data is read.
           The ``<write_offset>`` is the offset to pass to the :ref:`lib_dfu_multi_image` library, representing the offset in the package.
           This is useful when skipping some of the images.
-          See the documentation of the ``dfu_multi_image_write`` function in the :file:`dfu_multi_image.h` file for more details.
+          See the documentation of the ``dfu_multi_image_write`` function in the :ncs-file:`/include/dfu/dfu_multi_image.h` file for more details.
 
      #. If the write commands for all chunks complete without errors, finish writing with ``dfu_multi_image done success`` command.
      #. Schedule the update for the next reboot using ``dfu_multi_image schedule_update`` command.

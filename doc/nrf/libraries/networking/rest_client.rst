@@ -38,7 +38,7 @@ Limitations
 API documentation
 *****************
 
-| Header file: :file:`include/net/rest_client.h`
+| Header file: :ncs-file:`/include/net/rest_client.h`
 | Source files: :file:`subsys/net/lib/rest_client`
 
 .. doxygengroup:: rest_client

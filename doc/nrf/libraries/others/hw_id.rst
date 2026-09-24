@@ -28,7 +28,7 @@ You can configure one of the following Kconfig options to choose the hardware ID
 API documentation
 *****************
 
-| Header file: :file:`include/hw_id.h`
+| Header file: :ncs-file:`/include/hw_id.h`
 | Source files: :file:`lib/hw_id/`
 
 .. doxygengroup:: hw_id

@@ -64,13 +64,13 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+* :ncs-file:`/samples/net/udp/prj.conf` - General configuration file for all devices.
+* :ncs-file:`/samples/net/udp/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/udp/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/udp/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+Files that are located under the :file:`/boards` folder are automatically merged with the :ncs-file:`/samples/net/udp/prj.conf` file when you build for the corresponding target.
 
 To add a specific extra configuration file to the build, add the ``-- -DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your build.
 

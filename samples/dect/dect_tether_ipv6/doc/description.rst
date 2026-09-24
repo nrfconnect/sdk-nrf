@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-This sample is always built as a PT (Portable Termination) device (:kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT` in the :file:`prj.conf` file).
+This sample is always built as a PT (Portable Termination) device (:kconfig:option:`CONFIG_DECT_DEFAULT_DEV_TYPE_PT` in the :ncs-file:`/samples/dect/dect_tether_ipv6/prj.conf` file).
 
 The sample enables :kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB` for a tethered host on Ethernet:
 
@@ -37,7 +37,7 @@ Overview
 This sample shows how to turn a DECT NR+ uplink into an IPv6 gateway (GW) for a host that is tethered over Ethernet, without relying on host-side SLAAC.
 It initializes the :ref:`lib_dect_tethering` library, which then sends Router Advertisements and runs a minimal DHCPv6 server on behalf of the tethered host.
 
-The sample calls :c:func:`dect_tether_ipv6_init` after :c:func:`nrf_modem_lib_init` (see :file:`src/main.c`).
+The sample calls :c:func:`dect_tether_ipv6_init` after :c:func:`nrf_modem_lib_init` (see :ncs-file:`/samples/dect/dect_tether_ipv6/src/main.c`).
 
 The following abbreviations from the DECT NR+ MAC specification (`ETSI TS 103 636-4`_) are used where relevant:
 
@@ -49,7 +49,7 @@ For the architecture diagram and system-level big picture, see :ref:`lib_dect_te
 Tethered hosts (Windows and Ubuntu)
 ===================================
 
-The same tether-gateway firmware behaves differently on Windows 11 and Ubuntu when using baseline overlays (:file:`eth_common.conf` only).
+The same tether-gateway firmware behaves differently on Windows 11 and Ubuntu when using baseline overlays (:ncs-file:`/samples/dect/dect_tether_ipv6/eth_common.conf` only).
 
 Ubuntu typically keeps an RA-learned ``::/0`` (``ip -6 route show default``) and refreshes the route expires timer when multicast RAs arrive (~every 60 s).
 DHCPv6 on the PC often completes in one round trip (Solicit → Reply when the client uses Rapid Commit).
@@ -63,7 +63,7 @@ Default route or neighbor cache are independent on the host:
 * Neighbor ``fe80::…`` - Link-layer mapping; might show Reachable, Stale, or Permanent (if you pinned it with ``netsh``).
   A Reachable neighbor does not guarantee that Windows keeps ``::/0``.
 
-RA timing is controlled by Kconfig (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_RA_ROUTER_LIFETIME` and related options in ``subsys/net/lib/dect/tether_ipv6/Kconfig``).
+RA timing is controlled by Kconfig (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_RA_ROUTER_LIFETIME` and related options in :ncs-file:`/subsys/net/lib/dect/tether_ipv6/Kconfig`).
 See :ref:`dect_tether_ipv6_windows` and :ref:`dect_tether_ipv6_ubuntu` for OS-specific monitoring commands and troubleshooting.
 
 .. _dect_tether_ipv6_building:
@@ -83,27 +83,27 @@ Configuration overlays (Ethernet)
 Baseline Kconfig (no extra overlay) provides standard tethering: Managed RA, DHCPv6 /128 leases, 60 s multicast RAs, RS-triggered RAs, and Zephyr solicited NA to host NUD.
 Ubuntu tether tests usually need only baseline.
 
-The following are optional files in this sample directory (append in this order after :file:`eth_common.conf` and shield-specific :file:`eth_*.conf`):
+The following are optional files in this sample directory (append in this order after :ncs-file:`/samples/dect/dect_tether_ipv6/eth_common.conf` and shield-specific :file:`eth_*.conf`):
 
-* :file:`mdns-common.conf` - Zephyr mDNS/DNS-SD stack (optional)
+* :ncs-file:`/samples/dect/dect_tether_ipv6/mdns-common.conf` - Zephyr mDNS/DNS-SD stack (optional)
 
-* :file:`mdns.conf` - Sample DNS-SD advertisement on ``dect0``.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/mdns.conf` - Sample DNS-SD advertisement on ``dect0``.
 
-* :file:`eth_mdns.conf`- mDNS-on-Ethernet tuning (scoped DNS, ``CONFIG_ZVFS_POLL_MAX``). After :file:`mdns-common.conf` and :file:`mdns.conf`.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/eth_mdns.conf`- mDNS-on-Ethernet tuning (scoped DNS, ``CONFIG_ZVFS_POLL_MAX``). After :ncs-file:`/samples/dect/dect_tether_ipv6/mdns-common.conf` and :ncs-file:`/samples/dect/dect_tether_ipv6/mdns.conf`.
 
-* :file:`mdns_forward.conf` -eth0 ↔ dect0 mDNS tap. After :file:`eth_mdns.conf`.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/mdns_forward.conf` -eth0 ↔ dect0 mDNS tap. After :ncs-file:`/samples/dect/dect_tether_ipv6/eth_mdns.conf`.
 
-* :file:`eth_max_connectivity.conf` - RFC-max REACHABLE_TIME (1 h), long router_lifetime, long DHCPv6 lifetimes. For long iperf / stability tests on Windows.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/eth_max_connectivity.conf` - RFC-max REACHABLE_TIME (1 h), long router_lifetime, long DHCPv6 lifetimes. For long iperf / stability tests on Windows.
 
-* :file:`eth_ra_test_short_lifetime.conf` - Lab helper: ``router_lifetime=120`` and 30 s periodic RAs.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/eth_ra_test_short_lifetime.conf` - Lab helper: ``router_lifetime=120`` and 30 s periodic RAs.
 
-* :file:`eth_unsol_na.conf` - Periodic unsolicited Neighbor Advertisements on ``eth0`` (optional ND-table aid).
+* :ncs-file:`/samples/dect/dect_tether_ipv6/eth_unsol_na.conf` - Periodic unsolicited Neighbor Advertisements on ``eth0`` (optional ND-table aid).
 
-* :file:`dect_rx_pool.conf` - Enables a DECT-private RX net_pkt / net_buf pool (see :ref:`dect_tether_ipv6_dect_rx_pool`) so eth0 RX bursts cannot starve dect0 RX.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf` - Enables a DECT-private RX net_pkt / net_buf pool (see :ref:`dect_tether_ipv6_dect_rx_pool`) so eth0 RX bursts cannot starve dect0 RX.
 
-* :file:`dhcpv6-debug.conf` - Logs each DHCPv6 datagram received on UDP 547 plus extra DHCPv6 debug output. Disable for production—Renew traffic can spam UART.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/dhcpv6-debug.conf` - Logs each DHCPv6 datagram received on UDP 547 plus extra DHCPv6 debug output. Disable for production—Renew traffic can spam UART.
 
-Both the Arceli and Seeed Studio W5500 shields are supported and equally recommended. For either one, the recommended default also appends :file:`dect_rx_pool.conf` and :file:`dlc_resilient.conf`, which keep the tether stable under sustained bidirectional load—use this combo unless you have a specific reason not to.
+Both the Arceli and Seeed Studio W5500 shields are supported and equally recommended. For either one, the recommended default also appends :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf` and :ncs-file:`/samples/dect/dect_tether_ipv6/dlc_resilient.conf`, which keep the tether stable under sustained bidirectional load—use this combo unless you have a specific reason not to.
 
 Recommended default—Arceli W5500 (from the sample directory):
 
@@ -119,7 +119,7 @@ Recommended default—Seeed Studio W5500 (from the sample directory):
    cd nrf/samples/dect/dect_tether_ipv6
    west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;dect_rx_pool.conf;dlc_resilient.conf" -DEXTRA_DTC_OVERLAY_FILE=w5500-seeed-static-mac.overlay
 
-With mDNS responder on ``eth0`` and ``dect0`` added (Arceli W5500; append :file:`mdns-common.conf`, :file:`mdns.conf`, :file:`eth_mdns.conf` after the shield conf—see :ref:`dect_tether_ipv6_mdns` below for the full mDNS overlay chain):
+With mDNS responder on ``eth0`` and ``dect0`` added (Arceli W5500; append :ncs-file:`/samples/dect/dect_tether_ipv6/mdns-common.conf`, :ncs-file:`/samples/dect/dect_tether_ipv6/mdns.conf`, :ncs-file:`/samples/dect/dect_tether_ipv6/eth_mdns.conf` after the shield conf—see :ref:`dect_tether_ipv6_mdns` below for the full mDNS overlay chain):
 
 .. code-block:: console
 
@@ -134,8 +134,8 @@ Ethernet with W5500 shield (Arceli)
 ====================================
 
 Use this when the host leg should use Ethernet through the Zephyr :ref:`arceli_eth_w5500` shield on the nRF9151 DK.
-Merge :file:`eth_common.conf` and :file:`eth_w5500.conf`; devicetree comes from :file:`w5500-static-mac.overlay` in this sample plus the Zephyr shield devicetree :file:`zephyr/boards/shields/arceli_eth_w5500/arceli_eth_w5500.overlay`.
-For tethering, also append :file:`dect_rx_pool.conf` and :file:`dlc_resilient.conf` (recommended, see :ref:`dect_tether_ipv6_dect_rx_pool` and :ref:`dect_tether_ipv6_dlc_resilient`)—without the private DECT RX pool, sustained PC traffic can starve buffers and stall eth0 in poll mode.
+Merge :ncs-file:`/samples/dect/dect_tether_ipv6/eth_common.conf` and :ncs-file:`/samples/dect/dect_tether_ipv6/eth_w5500.conf`; devicetree comes from :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-static-mac.overlay` in this sample plus the Zephyr shield devicetree :ncs-file:`zephyr:/boards/shields/arceli_eth_w5500/arceli_eth_w5500.overlay`.
+For tethering, also append :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf` and :ncs-file:`/samples/dect/dect_tether_ipv6/dlc_resilient.conf` (recommended, see :ref:`dect_tether_ipv6_dect_rx_pool` and :ref:`dect_tether_ipv6_dlc_resilient`)—without the private DECT RX pool, sustained PC traffic can starve buffers and stall eth0 in poll mode.
 
 .. note::
    Arduino D8 (reset) and D9 (interrupt) are shared with BUTTON1 and BUTTON2 on the nRF9151 DK.
@@ -150,7 +150,7 @@ For tethering, also append :file:`dect_rx_pool.conf` and :file:`dlc_resilient.co
 
 * Wiring as in the Arceli ETH W5500 shield overlay. Connect the RJ45 port to your LAN (router/switch) or directly to a PC as needed for your test.
 
-Ethernet MAC: :file:`w5500-static-mac.overlay` sets a fixed locally administered ``local-mac-address``—edit that file so each board on the same LAN is unique.
+Ethernet MAC: :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-static-mac.overlay` sets a fixed locally administered ``local-mac-address``—edit that file so each board on the same LAN is unique.
 For a random MAC each boot (``zephyr,random-mac-address``), use ``-DEXTRA_DTC_OVERLAY_FILE=w5500.overlay`` instead.
 
 .. table:: nRF9151 DK + Arceli ETH W5500 (Arduino header).
@@ -181,15 +181,15 @@ Ethernet with W5500 shield (Seeed Studio board)
 ==================================================
 
 Use this when the host leg should use Ethernet through the Zephyr :ref:`seeed_w5500` shield (Seeed Studio v1.1 shield was used) on the nRF9151 DK.
-Merge :file:`eth_common.conf`, :file:`eth_w5500.conf`, and :file:`eth_w5500_seeed.conf`.
-For tethering, also append :file:`dect_rx_pool.conf` and :file:`dlc_resilient.conf` (recommended, see :ref:`dect_tether_ipv6_dect_rx_pool` and :ref:`dect_tether_ipv6_dlc_resilient`)—without the private DECT RX pool, sustained PC traffic can starve buffers and stall eth0 in poll mode.
-The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster :kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`.
-Devicetree comes from the Zephyr shield devicetree :file:`zephyr/boards/shields/seeed_w5500/seeed_w5500.overlay`
-plus a sample overlay: default :file:`w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
+Merge :ncs-file:`/samples/dect/dect_tether_ipv6/eth_common.conf`, :ncs-file:`/samples/dect/dect_tether_ipv6/eth_w5500.conf`, and :ncs-file:`/samples/dect/dect_tether_ipv6/eth_w5500_seeed.conf`.
+For tethering, also append :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf` and :ncs-file:`/samples/dect/dect_tether_ipv6/dlc_resilient.conf` (recommended, see :ref:`dect_tether_ipv6_dect_rx_pool` and :ref:`dect_tether_ipv6_dlc_resilient`)—without the private DECT RX pool, sustained PC traffic can starve buffers and stall eth0 in poll mode.
+The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :ncs-file:`/samples/dect/dect_tether_ipv6/eth_w5500_seeed.conf` sets a faster :kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`.
+Devicetree comes from the Zephyr shield devicetree :ncs-file:`zephyr:/boards/shields/seeed_w5500/seeed_w5500.overlay`
+plus a sample overlay: default :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
 
 .. note::
-   The sample :file:`w5500.overlay` is Arceli-specific (targets ``&eth_w5500_arceli_eth_w5500``).
-   For ``seeed_w5500``, use :file:`w5500-seeed-static-mac.overlay` or :file:`w5500-seeed.overlay` (targets ``&eth_w5500``).
+   The sample :ncs-file:`/samples/dect/dect_tether_ipv6/w5500.overlay` is Arceli-specific (targets ``&eth_w5500_arceli_eth_w5500``).
+   For ``seeed_w5500``, use :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed-static-mac.overlay` or :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed.overlay` (targets ``&eth_w5500``).
 
 * From the sample directory (copy-paste each line):
 
@@ -198,9 +198,9 @@ plus a sample overlay: default :file:`w5500-seeed-static-mac.overlay` (fixed loc
      cd nrf/samples/dect/dect_tether_ipv6
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=seeed_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;eth_w5500_seeed.conf;dect_rx_pool.conf;dlc_resilient.conf" -DEXTRA_DTC_OVERLAY_FILE=w5500-seeed-static-mac.overlay
 
-  * Edit ``local-mac-address`` in :file:`w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
+  * Edit ``local-mac-address`` in :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed-static-mac.overlay` so each board on the same LAN has a unique MAC.
 
-  * For a random Ethernet MAC each boot, use :file:`w5500-seeed.overlay` instead:
+  * For a random Ethernet MAC each boot, use :ncs-file:`/samples/dect/dect_tether_ipv6/w5500-seeed.overlay` instead:
 
     .. code-block:: console
 
@@ -213,7 +213,7 @@ DECT-private RX pool (:file:`dect_rx_pool.conf`)
 
 Under sustained bidirectional load (PC → DECT uplink + downstream return traffic), eth0 RX bursts allocate from the global Zephyr pools (``CONFIG_NET_PKT_RX_COUNT`` / ``CONFIG_NET_BUF_RX_COUNT``) and can starve dect0 RX, surfacing as ``RX packet allocation failed in ISR`` drops, followed by ``nrf_modem_dect_dlc_data_tx returned NRF_ENOMEM`` on the TX side and ``eth_w5500: TX semaphore timeout`` on the sink.
 
-Append :file:`dect_rx_pool.conf` last in ``EXTRA_CONF_FILE`` to enable ``CONFIG_DECT_MDM_RX_PRIVATE_POOL``—a DECT-only ``net_pkt`` slab and ``net_buf`` pool isolated from the global RX pools:
+Append :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf` last in ``EXTRA_CONF_FILE`` to enable ``CONFIG_DECT_MDM_RX_PRIVATE_POOL``—a DECT-only ``net_pkt`` slab and ``net_buf`` pool isolated from the global RX pools:
 
 .. code-block:: console
 
@@ -237,9 +237,9 @@ Bump ``PRIVATE_PKT_COUNT`` first if ``MaxUsed == Total`` under sustained traffic
 Loss-resilient DLC profile (:file:`dlc_resilient.conf`)
 ==========================================================
 
-Use :file:`dlc_resilient.conf` when the PT reconnects too eagerly under RF interference or link congestion: the modem's stock DLC defaults (60 s SDU lifetime, release on first discard) drop the association on a single discard-timer expiry. The overlay trades that for a more tolerant profile on the PT's uplink (see the file's comments for the exact values and rationale).
+Use :ncs-file:`/samples/dect/dect_tether_ipv6/dlc_resilient.conf` when the PT reconnects too eagerly under RF interference or link congestion: the modem's stock DLC defaults (60 s SDU lifetime, release on first discard) drop the association on a single discard-timer expiry. The overlay trades that for a more tolerant profile on the PT's uplink (see the file's comments for the exact values and rationale).
 
-Append :file:`dlc_resilient.conf` last in ``EXTRA_CONF_FILE``, optionally combined with :file:`dect_rx_pool.conf`:
+Append :ncs-file:`/samples/dect/dect_tether_ipv6/dlc_resilient.conf` last in ``EXTRA_CONF_FILE``, optionally combined with :ncs-file:`/samples/dect/dect_tether_ipv6/dect_rx_pool.conf`:
 
 .. code-block:: console
 
@@ -255,7 +255,7 @@ Valid ``--dlc_sdu_lifetime`` values are ``1..31`` (0.5 ms .. 60 s, see ``enum de
 mDNS / DNS-SD
 ===============
 
-To advertise ``_dect-nr._udp`` (same service name as ``dect_shell``), merge overlays in this order: :file:`mdns-common.conf`, :file:`mdns.conf`, and (for Ethernet) :file:`eth_mdns.conf`; add :file:`mdns_forward.conf` last for the eth0 ↔ dect0 tap.
+To advertise ``_dect-nr._udp`` (same service name as ``dect_shell``), merge overlays in this order: :ncs-file:`/samples/dect/dect_tether_ipv6/mdns-common.conf`, :ncs-file:`/samples/dect/dect_tether_ipv6/mdns.conf`, and (for Ethernet) :ncs-file:`/samples/dect/dect_tether_ipv6/eth_mdns.conf`; add :ncs-file:`/samples/dect/dect_tether_ipv6/mdns_forward.conf` last for the eth0 ↔ dect0 tap.
 
 * From the sample directory (copy-paste each line):
 
@@ -273,7 +273,7 @@ To advertise ``_dect-nr._udp`` (same service name as ``dect_shell``), merge over
      cd nrf/samples/dect/dect_tether_ipv6
      west build -p -b nrf9151dk/nrf9151/ns -- -DSHIELD=arceli_eth_w5500 -DEXTRA_CONF_FILE="eth_common.conf;eth_w5500.conf;mdns-common.conf;mdns.conf;eth_mdns.conf" -DEXTRA_DTC_OVERLAY_FILE=w5500-static-mac.overlay
 
-  Arceli W5500—add :file:`mdns_forward.conf` for the eth0 ↔ dect0 mDNS tap in ``dect_tether_ipv6_lib`` (``CONFIG_DECT_TETHER_IPV6_MDNS_FORWARD``):
+  Arceli W5500—add :ncs-file:`/samples/dect/dect_tether_ipv6/mdns_forward.conf` for the eth0 ↔ dect0 mDNS tap in ``dect_tether_ipv6_lib`` (``CONFIG_DECT_TETHER_IPV6_MDNS_FORWARD``):
 
   .. code-block:: console
 
@@ -285,10 +285,10 @@ To advertise ``_dect-nr._udp`` (same service name as ``dect_shell``), merge over
 What this does:
 
 * Zephyr mDNS responder listens on UDP 5353 on each IPv6-capable interface (``eth0`` when present, and ``dect0``).
-* :file:`src/mdns_dns_sd_listen.c` binds UDP port ``CONFIG_SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD_PORT`` (default 4700) on ``dect0`` so DNS-SD sees the advertised service port as in use, matching the ``dect_shell`` pattern.
-* :file:`mdns_forward.conf` turns on ``CONFIG_DECT_TETHER_IPV6_MDNS_FORWARD`` (and ``CONFIG_NET_SOCKETS_PACKET``): an AF_PACKET tap in ``dect_tether_ipv6_lib`` (:file:`dect_tether_ipv6_mdns_fwd.c`) that forwards IPv6 mDNS between ``eth0`` and ``dect0`` without IID NAT. Queries from Ethernet are forwarded to DECT only when the IPv6 source is ULA or GUA; fe80:: sources are skipped. DECT toward Ethernet forwards multicast to ``ff02::fb`` and unicast mDNS whose destination is ULA or GUA (so unicast replies to a DHCPv6 host can return on the tether).
+* :ncs-file:`/samples/dect/dect_tether_ipv6/src/mdns_dns_sd_listen.c` binds UDP port ``CONFIG_SAMPLE_DECT_TETHER_IPV6_MDNS_DNS_SD_PORT`` (default 4700) on ``dect0`` so DNS-SD sees the advertised service port as in use, matching the ``dect_shell`` pattern.
+* :ncs-file:`/samples/dect/dect_tether_ipv6/mdns_forward.conf` turns on ``CONFIG_DECT_TETHER_IPV6_MDNS_FORWARD`` (and ``CONFIG_NET_SOCKETS_PACKET``): an AF_PACKET tap in ``dect_tether_ipv6_lib`` (:ncs-file:`/subsys/net/lib/dect/tether_ipv6/dect_tether_ipv6_mdns_fwd.c`) that forwards IPv6 mDNS between ``eth0`` and ``dect0`` without IID NAT. Queries from Ethernet are forwarded to DECT only when the IPv6 source is ULA or GUA; fe80:: sources are skipped. DECT toward Ethernet forwards multicast to ``ff02::fb`` and unicast mDNS whose destination is ULA or GUA (so unicast replies to a DHCPv6 host can return on the tether).
 
-Hostname / instance label defaults to ``CONFIG_NET_HOSTNAME`` in :file:`mdns.conf` (``dect-tether-ipv6``). Change there if several devices share a LAN.
+Hostname / instance label defaults to ``CONFIG_NET_HOSTNAME`` in :ncs-file:`/samples/dect/dect_tether_ipv6/mdns.conf` (``dect-tether-ipv6``). Change there if several devices share a LAN.
 
 Dependencies
 ************

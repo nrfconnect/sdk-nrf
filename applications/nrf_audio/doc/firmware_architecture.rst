@@ -127,7 +127,7 @@ The following figure illustrates the software layout for the nRF Audio applicati
    nRF Audio application file-level breakdown for the nRF5340 SoC
 
 Communication between modules is primarily done through Zephyr's :ref:`zephyr:zbus` to make sure that there are as few dependencies as possible.
-Each of the buses used by the applications has its message structures described in :file:`zbus_common.h`.
+Each of the buses used by the applications has its message structures described in :ncs-file:`/applications/nrf_audio/include/zbus_common.h`.
 
 .. _nrf_audio_app_overview_architecture_usb:
 
@@ -162,7 +162,7 @@ I2S-based firmware for gateway and headsets
 
 The following figure shows an overview of the modules currently included in the firmware of applications that use I2S.
 
-The Bluetooth LE RX FIFO is mainly used to make :file:`audio_datapath.c` (synchronization module) run in a separate thread.
+The Bluetooth LE RX FIFO is mainly used to make :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` (synchronization module) run in a separate thread.
 
 Broadcast source I2S-based firmware
 -----------------------------------
@@ -201,7 +201,7 @@ Unicast server I2S-based firmware
 Synchronization module overview
 ===============================
 
-The synchronization module (:file:`audio_datapath.c`) handles audio synchronization.
+The synchronization module (:ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c`) handles audio synchronization.
 To synchronize the audio, it executes the following types of adjustments:
 
 * Presentation compensation
@@ -228,11 +228,11 @@ See the following figure for an overview of the synchronization module.
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
 If the device is a gateway that is :ref:`using I2S as audio source <nrf_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
-The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send functions.
+The extraction happens inside the :ncs-file:`/applications/nrf_audio/src/bluetooth/bt_stream/unicast/unicast_client.c` and :ncs-file:`/applications/nrf_audio/src/bluetooth/bt_stream/broadcast/broadcast_source.c` files' send functions.
 The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used for drift compensation.
 
 .. note::
-   Inside the synchronization module (:file:`audio_datapath.c`), all time-related variables end with ``_us`` (for microseconds).
+   Inside the synchronization module (:ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c`), all time-related variables end with ``_us`` (for microseconds).
    This means that :c:type:`sdu_ref` becomes :c:type:`sdu_ref_us` inside the module.
 
 As the nRF5340 is a dual-core SoC, and both cores need the same concept of time, each core runs a free-running timer in an infinite loop.
@@ -274,15 +274,15 @@ The received audio data in the I2S-based firmware devices follows the following 
 #. The controller, running in the :zephyr:code-sample:`bluetooth_hci_ipc` sample on the nRF5340 SoC network core, sends the audio data to the Zephyr Bluetooth LE host running on the nRF5340 SoC application core.
 #. The host sends the data to the stream control module.
 #. The data is sent to a FIFO buffer.
-#. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.
-   The :file:`audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.
+#. The data is sent from the FIFO buffer to the :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` synchronization module.
+   The :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` module performs the audio synchronization based on the SDU reference timestamps.
    Each package sent from the gateway gets a unique SDU reference timestamp.
    These timestamps are generated on the headset Bluetooth LE controller (in the network core).
    This enables the creation of True Wireless Stereo (TWS) earbuds where the audio is synchronized in the CIS mode.
    It also keeps the speed of the inter-IC sound (I2S) interface synchronized with the sending and receiving speed of Bluetooth packets.
-#. The :file:`audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
-#. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :file:`audio_datapath.c` module.
-#. The :file:`audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
+#. The :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` module sends the compressed audio data to the LC3 audio decoder for decoding.
+#. The audio decoder decodes the data and sends the uncompressed audio data (PCM) back to the :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` module.
+#. The :ncs-file:`/applications/nrf_audio/src/audio/audio_datapath.c` module continuously feeds the uncompressed audio data to the hardware codec.
 #. The hardware codec receives the uncompressed audio data over the inter-IC sound (I2S) interface and performs the digital-to-analog (DAC) conversion to an analog audio signal.
 
 .. _nrf_audio_app_overview_architecture_sd_card_playback:
@@ -290,14 +290,14 @@ The received audio data in the I2S-based firmware devices follows the following 
 SD card playback module overview
 ================================
 
-The SD Card Playback module (:file:`sd_card_playback.c`) provides functionality to play audio files directly from an SD card.
+The SD Card Playback module (:ncs-file:`/applications/nrf_audio/src/modules/sd_card_playback.c`) provides functionality to play audio files directly from an SD card.
 This module works alongside the existing audio system and can mix SD card audio with Bluetooth audio streams.
 
 The module is compatible with all nRF Audio applications.
 
 The SD Card Playback module consists of the following components:
 
-* File system interface - Uses the SD card module (:file:`sd_card.c`) to read files from the FAT32/exFAT file system
+* File system interface - Uses the SD card module (:ncs-file:`/applications/nrf_audio/src/modules/sd_card.c`) to read files from the FAT32/exFAT file system
 * Audio format support - Handles both WAV and LC3 file formats with proper header parsing
 * Ring buffer management - Uses a ring buffer to store audio data for smooth playback
 * Thread management - Runs in a dedicated thread to handle file reading and audio processing

@@ -70,7 +70,7 @@ When the :kconfig:option:`CONFIG_SHELL` Kconfig option is enabled, it also regis
 API documentation
 *****************
 
-| Header file: :file:`include/nrf71_idle_power.h`
+| Header file: :ncs-file:`/include/nrf71_idle_power.h`
 | Source files: :file:`lib/nrf71_idle_power/`
 
 .. doxygengroup:: nrf71_idle_power

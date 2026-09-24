@@ -29,7 +29,7 @@ Another dedicated callback is triggered when your request has been completed, to
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/nus_client.h`
-| Source file: :file:`subsys/bluetooth/services/nus_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/nus_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/nus_client.c`
 
 .. doxygengroup:: bt_nus_client
