@@ -10,13 +10,14 @@ Wi-Fi: Zephyr networking samples
 In addition to |NCS| samples, it is possible to run selected networking samples with Wi-Fi®, provided and maintained as part of the upstream Zephyr project.
 The following list specifies samples that are currently supported on :zephyr:board:`nrf7002dk` and :zephyr:board:`nrf7120dk`:
 
-* :zephyr:code-sample:`mqtt-sn-publisher`
+* :ref:`nrf_mqtt_sn_publisher_sample`
 * :ref:`nrf_coap_server_sample`
 
 .. toctree::
    :maxdepth: 1
    :hidden:
 
+   ../../../samples/zephyr/net/mqtt_sn_publisher/README
    ../../../samples/zephyr/net/sockets/coap_server/README
 
 Building and running
