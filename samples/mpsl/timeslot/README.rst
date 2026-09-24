@@ -76,4 +76,4 @@ In addition, it uses the following Zephyr libraries:
   * :file:`include/irq.h`
 
 * :file:`include/sys/printk.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`

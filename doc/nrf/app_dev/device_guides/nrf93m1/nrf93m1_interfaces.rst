@@ -128,7 +128,7 @@ Zephyr modem cellular driver multiplexes the single UART into two CMUX channels:
 
 This gives you control and data over one physical UART, without a second serial port.
 
-The nRF93M1 is supported through the ``nordic,nrf93m1`` compatible, implemented by the :file:`drivers/modem/vendor_modem_cellular/cellular_nordic_nrf93m1.c` file.
+The nRF93M1 is supported through the ``nordic,nrf93m1`` compatible, implemented by the :ncs-file:`zephyr:/drivers/modem/vendor_modem_cellular/cellular_nordic_nrf93m1.c` file.
 The nRF93M1 DK board files already include the modem node, so you do not need to write it yourself.
 For a custom board, declare the module as a child of the host UART node:
 

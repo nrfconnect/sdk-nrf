@@ -192,7 +192,7 @@ Bluetooth mesh
 
   * The protocol user guide with the information about the :ref:`dfu_over_bt_mesh`.
   * The default configuration of advertising sets used by the Bluetooth mesh subsystem to improve performance of the Relay, GATT, and Friend features.
-    This configuration is specified in the :file:`ncs/nrf/subsys/bluetooth/mesh/Kconfig` file.
+    This configuration is specified in the :ncs-file:`manifest:/subsys/bluetooth/mesh/Kconfig` file.
 
 See `Bluetooth mesh samples`_ for the list of changes in the Bluetooth mesh samples.
 

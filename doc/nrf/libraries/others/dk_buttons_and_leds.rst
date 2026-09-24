@@ -27,7 +27,7 @@ To use this library on your own hardware, see :ref:`dk_buttons_and_leds_other_bo
 API documentation
 *****************
 
-| Header file: :file:`include/dk_buttons_and_leds.h`
+| Header file: :ncs-file:`/include/dk_buttons_and_leds.h`
 | Source files: :file:`lib/dk_buttons_and_leds/`
 
 .. doxygengroup:: dk_buttons_and_leds

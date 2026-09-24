@@ -146,7 +146,7 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :file:`boards/arm/nrf*/board.h`
 * :ref:`zephyr:kernel_api`:
 

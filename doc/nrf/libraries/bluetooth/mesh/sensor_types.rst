@@ -7,7 +7,7 @@ Bluetooth Mesh sensor formats and sensor types
    :local:
    :depth: 2
 
-All sensor formats and sensor types are collected in the :file:`include/bluetooth/mesh/sensor_types.h` file, and are divided into the categories listed in the page index.
+All sensor formats and sensor types are collected in the :ncs-file:`/include/bluetooth/mesh/sensor_types.h` file, and are divided into the categories listed in the page index.
 
 To keep the total flash usage down, the sensor types are only instantiated if they are referenced by the application.
 This behavior can be overridden by enabling :kconfig:option:`CONFIG_BT_MESH_SENSOR_ALL_TYPES`.

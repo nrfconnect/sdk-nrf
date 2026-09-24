@@ -103,7 +103,7 @@ If the application needs to use one of these channels beyond the requirements fo
 API documentation
 *****************
 
-| Header file: :file:`include/vtf_monitoring/vtf_monitoring.h`
+| Header file: :ncs-file:`/include/vtf_monitoring/vtf_monitoring.h`
 | Source files: :file:`subsys/vtf_monitoring/`
 
 .. doxygengroup:: vtf_monitoring

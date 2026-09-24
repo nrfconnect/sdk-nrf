@@ -217,7 +217,7 @@ All other states change with time, and are not stored.
 API documentation
 ==================
 
-| Header file: :file:`include/bluetooth/mesh/time_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/time_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/time_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/time_srv.c`
 
 .. doxygengroup:: bt_mesh_time_srv

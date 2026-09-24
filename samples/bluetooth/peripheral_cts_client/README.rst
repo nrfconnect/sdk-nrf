@@ -73,7 +73,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select **Load setup**.
-         Load the :file:`cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.
@@ -143,7 +143,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select **Load setup**.
-         Load the :file:`cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.
@@ -216,8 +216,8 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
 * :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 

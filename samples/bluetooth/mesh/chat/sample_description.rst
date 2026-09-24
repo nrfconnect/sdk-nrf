@@ -62,7 +62,7 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/chat/src/model_handler.c`.
 
 User interface
 **************

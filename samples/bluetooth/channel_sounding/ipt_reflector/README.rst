@@ -151,7 +151,7 @@ This sample uses the following Zephyr libraries:
 
   * :file:`include/logging/log.h`
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:kernel_api`:
 
   * :file:`include/kernel.h`

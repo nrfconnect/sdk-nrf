@@ -310,7 +310,7 @@ The following example shows how to create a new object type that follows the IPS
 API documentation
 *****************
 
-| Header files: :file:`include/net/lwm2m_client_utils.h`
+| Header files: :ncs-file:`/include/net/lwm2m_client_utils.h`
 | Source files: :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
 
 .. doxygengroup:: lwm2m_client_utils

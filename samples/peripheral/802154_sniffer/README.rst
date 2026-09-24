@@ -179,14 +179,14 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/zephyr/kernel.h`
-  * :file:`include/zephyr/sys/util.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/sys/util.h`
 
 * :ref:`zephyr:ieee802154_interface`:
 
-  * :file:`include/zephyr/net/ieee802154_radio.h`
+  * :ncs-file:`zephyr:/include/zephyr/net/ieee802154_radio.h`
 
 * :ref:`zephyr:shell_api`:
 
-  * :file:`include/zephyr/shell/shell.h`
-  * :file:`include/zephyr/shell/shell_uart.h`
+  * :ncs-file:`zephyr:/include/zephyr/shell/shell.h`
+  * :ncs-file:`zephyr:/include/zephyr/shell/shell_uart.h`

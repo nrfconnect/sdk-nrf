@@ -129,7 +129,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_keyboard/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (defined in :ncs-file:`/samples/bluetooth/peripheral_hids_keyboard/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -385,7 +385,7 @@ When the NFC OOB pairing feature (:option:`CONFIG_SAMPLE_NFC_OOB_PAIRING`) is en
 
 The sample uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :file:`include/sys/printk.h`
 * :file:`include/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`

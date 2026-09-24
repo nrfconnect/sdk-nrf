@@ -95,7 +95,7 @@ mesh models scene recall-unack <Scene> [TransTime(ms) [Delay(ms)]]
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/scene_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/scene_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/scene_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/scene_cli.c`
 
 .. doxygengroup:: bt_mesh_scene_cli

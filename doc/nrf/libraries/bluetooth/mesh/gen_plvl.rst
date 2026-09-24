@@ -26,6 +26,6 @@ Common types
 
 This section lists the types common to the Generic Power Level mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/gen_plvl.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_plvl.h`
 
 .. doxygengroup:: bt_mesh_plvl

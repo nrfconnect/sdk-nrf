@@ -24,8 +24,8 @@ When building with sysbuild, the build system adds images based on the options s
 This test shows how to inform the build system about dedicated sources for additional images.
 The test comes with the following additional files:
 
-* :file:`Kconfig.sysbuild` - This file is used to add :ref:`sysbuild Kconfig options <configuration_system_overview_sysbuild>` that are passed to all the images.
-* :file:`sysbuild.cmake` - The CMake file adds additional images using the :c:macro:`ExternalZephyrProject_Add` macro.
+* :ncs-file:`/tests/benchmarks/multicore/idle/Kconfig.sysbuild` - This file is used to add :ref:`sysbuild Kconfig options <configuration_system_overview_sysbuild>` that are passed to all the images.
+* :ncs-file:`/tests/benchmarks/multicore/idle/sysbuild.cmake` - The CMake file adds additional images using the :c:macro:`ExternalZephyrProject_Add` macro.
   You can also add the dependencies for the images if required.
 
 Both the application and remote cores use the same :file:`main.c` that prints the name of the DK on which the application is programmed.
@@ -37,7 +37,7 @@ Building and running
 
 .. include:: /includes/build_and_run_test.txt
 
-To build the test, use configuration setups from :file:`testcase.yaml` using the ``-T`` option.
+To build the test, use configuration setups from :ncs-file:`/tests/benchmarks/multicore/idle/testcase.yaml` using the ``-T`` option.
 See the following examples:
 
 nRF5340 DK

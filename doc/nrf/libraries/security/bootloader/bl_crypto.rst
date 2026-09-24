@@ -48,7 +48,7 @@ To configure which backend is used for firmware verification, set one of the fol
 API documentation
 *****************
 
-| Header file: :file:`include/bl_crypto.h`
+| Header file: :ncs-file:`/include/bl_crypto.h`
 | Source files: :file:`subsys/bootloader/bl_crypto/` and :file:`subsys/bootloader/bl_crypto_client/`
 
 .. doxygengroup:: bl_crypto

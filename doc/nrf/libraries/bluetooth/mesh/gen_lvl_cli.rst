@@ -96,7 +96,7 @@ mesh models lvl move-set-unack <Dlt> [TransTime(ms) [Delay(ms)]]
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_lvl_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_lvl_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_lvl_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_lvl_cli.c`
 
 .. doxygengroup:: bt_mesh_lvl_cli

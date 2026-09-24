@@ -389,7 +389,7 @@ This subcommand set contains the following commands:
 API documentation
 *****************
 
-| Header file: :file:`include/app_event_manager.h`
+| Header file: :ncs-file:`/include/app_event_manager.h`
 | Source files: :file:`subsys/app_event_manager/`
 
 .. doxygengroup:: app_event_manager
