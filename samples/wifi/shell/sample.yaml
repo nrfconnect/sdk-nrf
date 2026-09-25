@@ -545,9 +545,6 @@ tests:
   sample.nrf7120.shell:
     sysbuild: true
     build_only: true
-    extra_args:
-      # sysbuild by default is nRF70, to avoid Kconfig warns disable it
-      - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -562,7 +559,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=wifi-sap
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -576,7 +572,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=wifi-monitor-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -590,7 +585,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=wifi-promiscuous-mode
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -604,7 +598,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=wifi-raw-tx
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -618,7 +611,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET:STRING=wifi-p2p
       - CONFIG_NET_DHCPV4_SERVER=y
     integration_platforms:
@@ -645,7 +637,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - EXTRA_CONF_FILE=nrf71-zperf.conf
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -658,7 +649,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - shell_SNIPPET=nordic-wifi-enterprise
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
@@ -672,7 +662,6 @@ tests:
     sysbuild: true
     build_only: true
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
       - EXTRA_CONF_FILE=nrf71-zperf.conf
       - CONFIG_WPA_CLI=y
       - CONFIG_NET_IPV4_FRAGMENT=y
