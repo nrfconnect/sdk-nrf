@@ -3614,9 +3614,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx 
 out:
 	return status;
 }
+#endif /* NRF71_UTIL */
 
+#ifdef NRF71_DEBUG_SHELL
 enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       enum rpu_stats_type stats_type,
+						       unsigned int stats_ctrl,
 						       struct nrf_wifi_rpu_debug_stats *stats)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -3642,7 +3645,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_
 	fmac_dev_ctx->debug_stats_req = true;
 	fmac_dev_ctx->debug_stats = stats;
 
-	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type);
+	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type, stats_ctrl);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		fmac_dev_ctx->debug_stats_req = false;
 		goto out;
@@ -3717,7 +3720,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 out:
 	return status;
 }
+#endif /* NRF71_DEBUG_SHELL */
 
+#ifdef NRF71_UTIL
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec)

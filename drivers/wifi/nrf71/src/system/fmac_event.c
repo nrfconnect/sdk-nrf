@@ -271,7 +271,7 @@ out:
 }
 
 
-#ifdef NRF71_UTIL
+#ifdef NRF71_DEBUG_SHELL
 static enum nrf_wifi_status umac_event_sys_debug_stats_process(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	void *event)
@@ -334,7 +334,7 @@ static enum nrf_wifi_status umac_event_sys_umac_int_stats_process(
 out:
 	return status;
 }
-#endif /* NRF71_UTIL */
+#endif /* NRF71_DEBUG_SHELL */
 
 #if WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 struct error_stats_log_entry {
@@ -459,7 +459,7 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		break;
 #endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
 	case NRF_WIFI_EVENT_DEBUG_STATS:
-#ifdef NRF71_UTIL
+#ifdef NRF71_DEBUG_SHELL
 		status = umac_event_sys_debug_stats_process(fmac_dev_ctx,
 							    sys_head);
 #else
@@ -468,7 +468,7 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 #endif
 		break;
 	case NRF_WIFI_EVENT_INT_UMAC_STATS:
-#ifdef NRF71_UTIL
+#ifdef NRF71_DEBUG_SHELL
 		status = umac_event_sys_umac_int_stats_process(fmac_dev_ctx,
 							       sys_head);
 #else
