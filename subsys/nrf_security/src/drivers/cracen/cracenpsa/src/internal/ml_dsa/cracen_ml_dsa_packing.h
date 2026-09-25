@@ -40,6 +40,18 @@ void cracen_ml_dsa_simple_bit_unpack(const uint8_t *v, uint32_t b,
 				     ml_dsa_poly_vector_t *out_vec);
 
 /**
+ * @brief Pack one polynomial with coefficients in [-a, b] into a byte string
+ *	  (FIPS 204, Algorithm 17 - BitPack).
+ *
+ * @param[in] w        Polynomial whose coefficients are in the range [-a, b].
+ * @param[in] a        Lower bound (magnitude) on the coefficient values.
+ * @param[in] b        Upper bound on the coefficient values.
+ * @param[out] out     Output byte string holding the packed polynomial.
+ */
+void cracen_ml_dsa_bit_pack(const ml_dsa_poly_vector_t *w, uint32_t a, uint32_t b,
+			    uint8_t *out);
+
+/**
  * @brief Unpack one polynomial with coefficients in [-a, b] from a byte string
  *	  (FIPS 204, Algorithm 19 - BitUnpack).
  *
@@ -50,6 +62,16 @@ void cracen_ml_dsa_simple_bit_unpack(const uint8_t *v, uint32_t b,
  */
 void cracen_ml_dsa_bit_unpack(const uint8_t *v, uint32_t a, uint32_t b,
 			      ml_dsa_poly_vector_t *out_vec);
+
+/**
+ * @brief Encode the hint vector h into its byte string
+ *	  (FIPS 204, Algorithm 20 - HintBitPack).
+ *
+ * @param[in] alg_params Parameter set for the selected ML-DSA variant.
+ * @param[in] h          Hint vector (rows_k polynomials of 0/1 coefficients).
+ * @param[out] y         Output byte string of omega + rows_k bytes.
+ */
+void cracen_ml_dsa_hint_bit_pack(const ml_dsa_params_t *alg_params, const uint8_t *h, uint8_t *y);
 
 /**
  * @brief Decode the hint vector h from its encoded byte string
