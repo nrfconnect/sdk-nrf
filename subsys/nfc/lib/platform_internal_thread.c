@@ -134,12 +134,14 @@ static void cb_work(struct k_work *work)
 											      size);
 			goto error;
 		}
-	} else {
+	} else if (header.data_size > 0) {
 		err = ring_buf_get_data(&nfc_cb_ring, &data, header.data_size, &is_alloc);
 		if (err) {
 			LOG_ERR("Reading nfc data failed, err %i.", err);
 			goto error;
 		}
+	} else {
+		data = NULL;
 	}
 
 	__ASSERT(nfc_cb_resolve != NULL, "nfc_cb_resolve is not set");
@@ -152,7 +154,7 @@ static void cb_work(struct k_work *work)
 
 	if (is_alloc) {
 		k_free(data);
-	} else {
+	} else if (header.data_size > 0) {
 		err = ring_buf_get_finish(&nfc_cb_ring, header.data_size);
 		if (err) {
 			LOG_ERR("Tried to finish a read with %u bytes, err %i.",
@@ -248,9 +250,14 @@ void nfc_platform_cb_request(const void *ctx,
 		goto end;
 	}
 
-	if (copy_data && (data_len > 0)) {
-		size = ring_buf_put(&nfc_cb_ring, data, header.data_size);
-		exp_size = header.data_size;
+	if (copy_data) {
+		if (data_len > 0) {
+			size = ring_buf_put(&nfc_cb_ring, data, header.data_size);
+			exp_size = header.data_size;
+		} else {
+			size = 0;
+			exp_size = 0;
+		}
 	} else {
 		size = ring_buf_put(&nfc_cb_ring, (uint8_t *)&data, sizeof(data));
 		exp_size = sizeof(data);
