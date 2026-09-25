@@ -9,26 +9,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NRFX-9465"
 
 - scenarios:
-    - nrf.extended.drivers.counter.basic_api
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9630"
-
-- scenarios:
-    - drivers.timer.delay_accuracy
-    - drivers.timer.delay_accuracy.hfxo
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuflpr
-    - nrf9251dk@0.1.0/nrf9251/cpuppr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9630"
-
-- scenarios:
-    - drivers.timer.grtc_timer_lfrc.nrf54h
-  platforms:
-    - nrf9251dk@0.1.0/nrf9251/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9631"
-
-- scenarios:
     - bootloader.ppi_config_leftovers.nsib
     - bootloader.ppi_config_leftovers.mcuboot
   platforms:
@@ -60,13 +40,6 @@
   platforms:
     - thingy53/nrf5340/cpuapp/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
-
-- scenarios:
-    - drivers.timer.grtc_multiple_access
-  platforms:
-    - nrf9251dk/nrf9251/cpuflpr
-    - nrf9251dk@0.1.0/nrf9251/cpuflpr
-  comment: "https://nordicsemi.atlassian.net/browse/NRFX-9987"
 
 - scenarios:
     - nrf.extended.kernel.timer.timer
