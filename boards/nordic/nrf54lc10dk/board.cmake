@@ -1,11 +1,10 @@
 # Copyright (c) 2026 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
-# Using nRF54LV10A device until nRF54LC10A is supported in jlink.
 if(CONFIG_SOC_NRF54LC10A_CPUAPP)
-  board_runner_args(jlink "--device=NRF54LV10A_M33" "--speed=4000")
+  board_runner_args(jlink "--device=NRF54LC10A_M33" "--speed=4000")
 elseif(CONFIG_SOC_NRF54LC10A_CPUFLPR)
-  board_runner_args(jlink "--device=NRF54LV10A_RV32" "--speed=4000")
+  board_runner_args(jlink "--device=NRF54LC10A_RV32" "--speed=4000")
 endif()
 
 if(CONFIG_TRUSTED_EXECUTION_NONSECURE)
