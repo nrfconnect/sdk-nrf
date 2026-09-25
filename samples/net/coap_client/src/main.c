@@ -159,27 +159,9 @@ static void response_cb(const struct coap_client_response_data *data, void *user
 	}
 }
 
-static int periodic_coap_request_loop(void)
+static int credentials_add(void)
 {
-	int err, sock;
-	int consecutive_busy_retries = 0;
-	struct sockaddr_storage server = { 0 };
-	struct coap_client coap_client = { 0 };
-	struct coap_client_request req = {
-		.method = COAP_METHOD_GET,
-		.confirmable = true,
-		.fmt = COAP_CONTENT_FORMAT_TEXT_PLAIN,
-		.payload = NULL,
-		.cb = response_cb,
-		.len = 0,
-		.path = CONFIG_COAP_SAMPLE_RESOURCE,
-	};
-
-	err = server_resolve(&server);
-	if (err) {
-		LOG_ERR("Failed to resolve server name");
-		return err;
-	}
+	int err;
 
 	if (IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS)) {
 		static const char ca_cert[] = {
@@ -206,6 +188,7 @@ static int periodic_coap_request_loop(void)
 					 ca_cert, sizeof(ca_cert));
 		if ((err < 0) && (err != -EEXIST)) {
 			LOG_ERR("Failed to register CA certificate: %d", err);
+			FATAL_ERROR();
 			return err;
 		}
 
@@ -214,6 +197,7 @@ static int periodic_coap_request_loop(void)
 					 client_cert, sizeof(client_cert));
 		if ((err < 0) && (err != -EEXIST)) {
 			LOG_ERR("Failed to register client certificate: %d", err);
+			FATAL_ERROR();
 			return err;
 		}
 
@@ -222,14 +206,32 @@ static int periodic_coap_request_loop(void)
 					 client_key, sizeof(client_key));
 		if ((err < 0) && (err != -EEXIST)) {
 			LOG_ERR("Failed to register private key: %d", err);
+			FATAL_ERROR();
 			return err;
 		}
 	}
 
-	sock = socket(server.ss_family, SOCK_DGRAM,
+	return 0;
+}
+
+/* Resolves the server and opens a socket to it, performing the DTLS handshake if enabled.
+ * Returns the socket on success, or a negative error code on a recoverable failure.
+ */
+static int server_connect(struct sockaddr_storage *server)
+{
+	int err, sock;
+
+	err = server_resolve(server);
+	if (err) {
+		LOG_ERR("Failed to resolve server name");
+		return err;
+	}
+
+	sock = socket(server->ss_family, SOCK_DGRAM,
 		      IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS) ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
 	if (sock < 0) {
 		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
+		FATAL_ERROR();
 		return -errno;
 	}
 
@@ -241,6 +243,7 @@ static int periodic_coap_request_loop(void)
 		if (err < 0) {
 			LOG_ERR("Failed to set TLS_SEC_TAG_LIST: %d", -errno);
 			(void)zsock_close(sock);
+			FATAL_ERROR();
 			return -errno;
 		}
 
@@ -251,6 +254,7 @@ static int periodic_coap_request_loop(void)
 		if (err < 0) {
 			LOG_ERR("Failed to set TLS_DTLS_HANDSHAKE_TIMEOUT_MAX: %d", -errno);
 			(void)zsock_close(sock);
+			FATAL_ERROR();
 			return -errno;
 		}
 
@@ -263,6 +267,7 @@ static int periodic_coap_request_loop(void)
 		if (err < 0) {
 			LOG_ERR("Failed to set TLS_HOSTNAME: %d", -errno);
 			(void)zsock_close(sock);
+			FATAL_ERROR();
 			return -errno;
 		}
 
@@ -274,14 +279,15 @@ static int periodic_coap_request_loop(void)
 			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
 			CONFIG_COAP_SAMPLE_SERVER_PORT);
 
-		err = zsock_connect(sock, (struct sockaddr *)&server,
-				    server.ss_family == AF_INET6 ?
+		err = zsock_connect(sock, (struct sockaddr *)server,
+				    server->ss_family == AF_INET6 ?
 					    sizeof(struct sockaddr_in6) :
 					    sizeof(struct sockaddr_in));
 		if (err < 0) {
-			LOG_ERR("DTLS handshake failed: %d", -errno);
+			err = -errno;
+			LOG_ERR("DTLS handshake failed: %d", err);
 			(void)zsock_close(sock);
-			return -errno;
+			return err;
 		}
 
 		int cipher_id;
@@ -292,40 +298,80 @@ static int periodic_coap_request_loop(void)
 			LOG_INF("DTLS handshake complete, ciphersuite: 0x%04x", cipher_id);
 		} else {
 			LOG_INF("DTLS handshake complete (ciphersuite unknown, getsockopt err %d)",
-				err);
+				-errno);
 		}
+	}
+
+	return sock;
+}
+
+static void server_disconnect(struct coap_client *coap_client, int *sock)
+{
+	coap_client_cancel_requests(coap_client);
+	(void)zsock_close(*sock);
+	*sock = -1;
+}
+
+/* Only returns on fatal errors. Recoverable errors close the socket and reconnect. */
+static int periodic_coap_request_loop(void)
+{
+	int err;
+	int sock = -1;
+	int consecutive_busy_retries = 0;
+	struct sockaddr_storage server = { 0 };
+	struct coap_client coap_client = { 0 };
+	struct coap_client_request req = {
+		.method = COAP_METHOD_GET,
+		.confirmable = true,
+		.fmt = COAP_CONTENT_FORMAT_TEXT_PLAIN,
+		.payload = NULL,
+		.cb = response_cb,
+		.len = 0,
+		.path = CONFIG_COAP_SAMPLE_RESOURCE,
+	};
+
+	err = credentials_add();
+	if (err) {
+		return err;
 	}
 
 	err = coap_client_init(&coap_client, NULL);
 	if (err) {
 		LOG_ERR("Failed to initialize CoAP client: %d", err);
+		FATAL_ERROR();
 		return err;
 	}
 
 	while (true) {
 		wait_for_network();
 
-		/* Send request */
-		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
-		if (err) {
-			if (err == -EAGAIN) {
-				consecutive_busy_retries++;
-				if (consecutive_busy_retries >= MAX_CONSECUTIVE_BUSY_RETRIES) {
-					LOG_ERR("CoAP client busy after %d consecutive retries",
-						consecutive_busy_retries);
-					return err;
-				}
-
-				LOG_WRN("CoAP client busy, retrying later");
-				k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
+		if (sock < 0) {
+			sock = server_connect(&server);
+			if (sock < 0) {
+				LOG_WRN("Failed to connect to server: %d, retrying in %d seconds",
+					sock, CONFIG_COAP_SAMPLE_RECONNECT_DELAY_SECONDS);
+				k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_RECONNECT_DELAY_SECONDS));
 				continue;
 			}
+		}
 
-			LOG_ERR("Failed to send request: %d", err);
-			return err;
+		/* Send request */
+		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
+		if (err == -EAGAIN &&
+		    ++consecutive_busy_retries < MAX_CONSECUTIVE_BUSY_RETRIES) {
+			LOG_WRN("CoAP client busy, retrying later");
+			k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
+			continue;
 		}
 
 		consecutive_busy_retries = 0;
+
+		if (err) {
+			LOG_ERR("Failed to send request: %d, reconnecting", err);
+			server_disconnect(&coap_client, &sock);
+			k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_RECONNECT_DELAY_SECONDS));
+			continue;
+		}
 
 		LOG_INF("CoAP GET request sent to %s:%d, resource: %s",
 			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
@@ -417,9 +463,11 @@ int main(void)
 	err = periodic_coap_request_loop();
 	if (err) {
 		LOG_ERR("periodic_coap_request_loop, error: %d", err);
-		FATAL_ERROR();
-		return err;
 	}
 
-	return 0;
+	LOG_INF("Bringing network interfaces down");
+	(void)conn_mgr_all_if_disconnect(true);
+	(void)conn_mgr_all_if_down(true);
+
+	return err;
 }

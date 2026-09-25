@@ -23,6 +23,13 @@ config COAP_SAMPLE_REQUEST_INTERVAL_SECONDS
 	int "Request interval in seconds"
 	default 5
 
+config COAP_SAMPLE_RECONNECT_DELAY_SECONDS
+	int "Reconnect delay in seconds"
+	default 30
+	help
+	  Delay before reconnecting to the server after a recoverable error,
+	  such as a failed DTLS handshake or a failed request.
+
 config COAP_SAMPLE_DTLS
 	bool "Enable DTLS (CoAPS) with mutual X.509 authentication"
 	select NET_SOCKETS_SOCKOPT_TLS
