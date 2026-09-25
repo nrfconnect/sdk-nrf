@@ -6,6 +6,7 @@ Releases and maturity
 The |NCS| receives :ref:`regular releases <ncs_release_model>`, which introduce new components or fix issues in existing features.
 Every release consists of a combination of all included repositories at different revisions.
 Some releases also provide :ref:`long-term support <lts_releases>` for products that require long-term stability.
+For deprecation timelines and user workflows, see :ref:`ncs_deprecation_policy`.
 
 The versioning scheme adopted is similar to `Semantic versioning`_, but with important semantic differences:
 

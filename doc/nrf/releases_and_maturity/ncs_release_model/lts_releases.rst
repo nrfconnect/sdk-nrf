@@ -70,8 +70,8 @@ Each LTS branch receives updates for the following changes:
 * Bugs in the |NCS| that can make your products unusable, provided the fix does not break the contract with out-of-tree code and data.
 * Selected bug fixes and security updates inherited from open source projects, such as Zephyr, Trusted Firmware-M, and Mbed TLS.
 
-The ``nrfutil sdk-manager`` command provides the toolchain for an LTS major release.
-Tools that handle the lifecycle state of devices, such as ``nrfutil device``, receive security and bug fixes throughout the LTS support period.
+The ``nrfutil toolchain-manager`` command provides the toolchain for an LTS major release.
+Tools that handle the lifecycle state of devices, such as ``nrfutil-device``, receive security and bug fixes throughout the LTS support period.
 
 The following items are outside the scope of LTS maintenance:
 
@@ -163,12 +163,14 @@ Samples serve the following purposes:
 * Running internal continuous integration (CI).
 * Demonstrating new features.
 
+.. _deprecated_features_in_lts_branches:
+
 Deprecated features in LTS branches
 ===================================
 
 It is recommended that new designs avoid deprecated features.
 Existing production designs that rely on deprecated features continue to be supported.
-For general deprecation policy, see :ref:`api_deprecation`.
+For the deprecation policy, see :ref:`ncs_deprecation_policy`.
 
 LTS release usage requirements
 ******************************
