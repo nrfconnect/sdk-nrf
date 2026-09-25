@@ -19,6 +19,14 @@ The sample can perform Wi-Fi operations such as connect and disconnect in the 2.
 
 Using this sample, the development kit can connect to the specified access point in :abbr:`STA (Station)` mode.
 
+Power management
+****************
+
+On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample also enables the
+:ref:`lib_nrf71_idle_power` library and suspends the console while waiting for a
+connection state change to reduce the nRF71 Series application core's System ON idle
+current.
+
 The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi readiness.
 To use the :ref:`lib_wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig option.
 
