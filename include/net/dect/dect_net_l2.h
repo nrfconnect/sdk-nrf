@@ -511,10 +511,12 @@ struct dect_sink_status_evt {
 
  /** @cond INTERNAL_HIDDEN */
 
+#if defined(CONFIG_NET_L2_DECT) && defined(CONFIG_NET_MGMT_EVENT_INFO_DEFAULT_DATA_SIZE)
 BUILD_ASSERT(CONFIG_NET_MGMT_EVENT_INFO_DEFAULT_DATA_SIZE >=
 		     (DECT_L2_MAX_NEIGHBOR_LIST_ITEM_COUNT * sizeof(uint32_t) + sizeof(uint8_t) +
 		      sizeof(int)),
 	     "CONFIG_NET_MGMT_EVENT_INFO_DEFAULT_DATA_SIZE too small");
+#endif
 
 /**
  * INTERNAL_HIDDEN @endcond
@@ -1068,7 +1070,13 @@ struct dect_status_info {
 	/** Associated children */
 	uint8_t child_count;
 	struct dect_association_data
-		child_associations[CONFIG_DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT];
+		child_associations[
+#if defined(CONFIG_DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT)
+		CONFIG_DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT
+#else
+		1
+#endif
+];
 
 	/** Border gateway and sink info */
 	struct net_if *br_net_iface;
@@ -1246,6 +1254,7 @@ struct dect_net_ipv6_prefix_config {
 };
 
 /** @brief DECT NR+ L2 context. */
+#if defined(CONFIG_NET_L2_DECT)
 struct dect_net_l2_context {
 	/** L2 flags. */
 	enum net_l2_flags flags;
@@ -1274,6 +1283,7 @@ struct dect_net_l2_context {
 	uint8_t ula_iface_plen_bits;
 #endif
 };
+#endif
 
 #if defined(CONFIG_NET_L2_DECT) && defined(CONFIG_NET_IPV6)
 /**
@@ -1329,7 +1339,9 @@ void dect_net_l2_ipv6_off_iface_unicast_get(struct net_if *dect_iface,
 NET_L2_DECLARE_PUBLIC(DECT_L2);
 
 /** L2 context type to be used with NET_L2_GET_CTX_TYPE. */
+#if defined(CONFIG_NET_L2_DECT)
 #define DECT_L2_CTX_TYPE struct dect_net_l2_context
+#endif
 
 /** @brief Calls from driver to L2. */
 
