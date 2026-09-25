@@ -66,7 +66,7 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`dk_buttons_and_leds_readme`
-* :file:`include/bluetooth/services/ras.h`
+* :ncs-file:`/include/bluetooth/services/ras.h`
 
 This sample uses the following Zephyr libraries:
 
@@ -74,7 +74,7 @@ This sample uses the following Zephyr libraries:
 
   * :file:`include/logging/log.h`
 
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:kernel_api`:
 
   * :file:`include/kernel.h`

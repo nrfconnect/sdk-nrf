@@ -81,7 +81,7 @@ The models are used for the following purposes:
   These callbacks trigger blinking of the LEDs.
 * Sensor Client gets sensor data from one or more :ref:`Sensor Servers <bt_mesh_sensor_srv_readme>`.
 
-The model handling is implemented in :file:`src/model_handler.c`.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/sensor_client/src/model_handler.c`.
 Sensor data can be periodically requested using a :c:struct:`k_work_delayable` loop, which can be started and stopped with a button press.
 
 User interface

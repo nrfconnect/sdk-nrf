@@ -89,7 +89,7 @@ The models are used for the following purposes:
       * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
         These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/ble_peripheral_lbs_coex/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
 
 User interface
 **************
@@ -263,8 +263,8 @@ This sample uses the following |NCS| libraries:
 In addition, it uses the following Zephyr libraries:
 
 * :file:`include/drivers/hwinfo.h`
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
 * :file:`include/sys/printk.h`
 * :file:`include/sys/byteorder.h`
 * :ref:`zephyr:kernel_api`:

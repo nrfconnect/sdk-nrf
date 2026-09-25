@@ -318,7 +318,7 @@ NCSDK-30458: The Bluetooth LE applications built with the ``nordic-bt-rpc`` snip
 
   **Affected platforms:** nRF54H20
 
-  **Workaround:** Add the ``status = "disabled";`` line in the ``cpurad-rw-partitions node`` definition in the :file:`snippets/nordic-bt-rpc/boards/nrf54h20dk_nrf54h20-mem-map-move.dtsi` file.
+  **Workaround:** Add the ``status = "disabled";`` line in the ``cpurad-rw-partitions node`` definition in the :ncs-file:`/snippets/nordic-bt-rpc/boards/nrf54h20dk_nrf54h20-mem-map-move.dtsi` file.
 
 .. rst-class:: v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-4-4 v2-4-3
 
@@ -2403,7 +2403,7 @@ NCSDK-34584: The :ref:`nrf_desktop` application uses incorrect partition map for
   **Affected platforms:** nRF54L10
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch of the ``sdk-nrf`` repository (commit hash: ``2658ceea216a9020450206347ad8a08d44b53e5c``).
-  Additionally, you need to manually update the :file:`boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
+  Additionally, you need to manually update the :ncs-file:`zephyr:/boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
   Correct the ``cpuapp_rram`` DTS node in the following way:
 
   .. code-block::
@@ -3481,7 +3481,7 @@ NCSDK-34582: The :ref:`fast_pair_locator_tag` sample uses incorrect partition ma
   **Affected platforms:** nRF54L10
 
   **Workaround:** Manually cherry-pick and apply the commit with the fix from the ``main`` branch of the ``sdk-nrf`` repository (commit hash: ``43d0e2eb129bde7b0f0fc462dd4b239765c69c59``).
-  Additionally, you need to manually update the :file:`boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
+  Additionally, you need to manually update the :ncs-file:`zephyr:/boards/nordic/nrf54l15dk/nrf54l15dk_nrf54l10_cpuapp.dts` DTS file in your local copy of the ``sdk-zephyr`` repository to avoid issues with build asserts that are used for RRAM validation.
   Correct the ``cpuapp_rram`` DTS node in the following way:
 
   .. code-block::
@@ -4273,7 +4273,7 @@ NCSDK-38476: Montgomery curve (X25519 and X448) scalar blinding is disabled when
 
   **Affected platforms:** nRF54LM20A, nRF54LM20B, nRF54LV10A
 
-  **Workaround:** If the application can guarantee that all peer public keys lie on the main curve subgroup, full scalar blinding can be re-enabled by replacing ``SX_PK_OP_FLAGS_RANDPROJ`` with ``SX_PK_OP_FLAGS_ECC_CM`` in the ``CMD_MG_PTMUL`` initializer in the :file:`nrf/subsys/nrf_security/src/drivers/cracen/silexpk/target/hw/ba414/cmddefs_ecc.c` file.
+  **Workaround:** If the application can guarantee that all peer public keys lie on the main curve subgroup, full scalar blinding can be re-enabled by replacing ``SX_PK_OP_FLAGS_RANDPROJ`` with ``SX_PK_OP_FLAGS_ECC_CM`` in the ``CMD_MG_PTMUL`` initializer in the :ncs-file:`/subsys/nrf_security/src/drivers/cracen/silexpk/target/hw/ba414/cmddefs_ecc.c` file.
 
 
 .. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0

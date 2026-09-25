@@ -32,7 +32,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/p2p/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/p2p/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:

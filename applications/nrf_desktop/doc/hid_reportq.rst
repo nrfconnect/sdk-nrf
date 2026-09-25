@@ -78,7 +78,7 @@ API documentation
 
 Application modules can use the following API of the HID report queue:
 
-| Header file: :file:`applications/nrf_desktop/src/util/hid_reportq.h`
-| Source file: :file:`applications/nrf_desktop/src/util/hid_reportq.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/hid_reportq.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/hid_reportq.c`
 
 .. doxygengroup:: hid_reportq

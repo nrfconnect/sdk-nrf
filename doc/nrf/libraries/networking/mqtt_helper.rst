@@ -32,7 +32,7 @@ Additionally, configure the following options as per the needs of your applicati
 API documentation
 *****************
 
-| Header file: :file:`include/net/mqtt_helper.h`
-| Source file: :file:`subsys/net/lib/mqtt_helper/mqtt_helper.c`
+| Header file: :ncs-file:`/include/net/mqtt_helper.h`
+| Source file: :ncs-file:`/subsys/net/lib/mqtt_helper/mqtt_helper.c`
 
 .. doxygengroup:: mqtt_helper

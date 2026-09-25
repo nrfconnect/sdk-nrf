@@ -223,10 +223,10 @@ In addition, it uses the following Zephyr libraries:
   * :file:`include/kernel.h`
 
 * :file:`include/sys/printk.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:bluetooth_api`:
 
   * :file:`include/bluetooth/bluetooth.h`
   * :file:`include/bluetooth/conn.h`
   * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/scan.h`
+  * :ncs-file:`/include/bluetooth/scan.h`

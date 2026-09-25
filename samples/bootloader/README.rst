@@ -111,7 +111,7 @@ When using the ``nrf52840dk/nrf52840`` board target, a typical layout looks like
    When provisioning data is stored in the OTP region, it will not appear in the internal flash layout figure.
    See :ref:`bootloader_provisioning_otp` for more information.
 
-This sample's Twister builds use :file:`app_test.overlay` or :file:`app_test_nrf52.overlay` to alias board default partition nodes to the |NSIB| labels (for example ``b0_partition: &boot_partition``).
+This sample's Twister builds use :ncs-file:`/samples/bootloader/app_test.overlay` or :ncs-file:`/samples/bootloader/app_test_nrf52.overlay` to alias board default partition nodes to the |NSIB| labels (for example ``b0_partition: &boot_partition``).
 Projects that include |NSIB| through sysbuild define the full map in board or sysbuild overlays; see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
 .. _bootloader_pre_signed_variants:

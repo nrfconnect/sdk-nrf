@@ -29,8 +29,8 @@ For simultaneous multi-image DFU on nRF5340, the application-core map must inclu
 * ``slot2_partition`` and ``slot3_partition`` — primary and secondary slots for the network core firmware.
   MCUboot uses these devicetree node labels for the second image when :kconfig:option:`SB_CONFIG_MCUBOOT_NRF53_MULTI_IMAGE_UPDATE` is enabled.
 
-The network-core primary slot (``slot2_partition``) for the networking firmware is often provided through the RAM flash simulator devicetree overlay used for PCD (see :kconfig:option:`CONFIG_PCD_APP` and :file:`nrf/modules/mcuboot/flash_sim.overlay`).
-The secondary network-core slot may be placed in internal or external flash depending on your board overlay; see :file:`nrf/samples/dfu/smp_svr/boards/nrf5340dk_nrf5340_cpuapp_nrf5340_bt.overlay` and :ref:`ug_bootloader_external_flash`.
+The network-core primary slot (``slot2_partition``) for the networking firmware is often provided through the RAM flash simulator devicetree overlay used for PCD (see :kconfig:option:`CONFIG_PCD_APP` and :ncs-file:`/modules/mcuboot/flash_sim.overlay`).
+The secondary network-core slot may be placed in internal or external flash depending on your board overlay; see :ncs-file:`/samples/dfu/smp_svr/boards/nrf5340dk_nrf5340_cpuapp_nrf5340_bt.overlay` and :ref:`ug_bootloader_external_flash`.
 
 .. note::
 

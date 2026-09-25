@@ -138,14 +138,14 @@ In addition, it uses the following Zephyr libraries:
 
 * :file:`include/sys/printk.h`
 * :file:`include/sys/ring_buffer.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:bluetooth_api`:
 
   * :file:`include/bluetooth/bluetooth.h`
   * :file:`include/bluetooth/iso.h`
   * :file:`include/bluetooth/conn.h`
   * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/scan.h`
+  * :ncs-file:`/include/bluetooth/scan.h`
 
 References
 **********

@@ -17,7 +17,7 @@ The AMS Client is used in the :ref:`peripheral_ams_client` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/ams_client.h`
-| Source file: :file:`subsys/bluetooth/services/ams_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/ams_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/ams_client.c`
 
 .. doxygengroup:: bt_ams_client

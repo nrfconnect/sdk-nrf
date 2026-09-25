@@ -90,7 +90,7 @@ Enable the following Kconfig options to use advanced FOTA:
    CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE=n
    CONFIG_LWM2M_RW_OMA_TLV_SUPPORT=y
 
-The :file:`overlay-adv-firmware.conf` configuration file includes these options.
+The :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf` configuration file includes these options.
 
 Initializing
 ============
@@ -273,9 +273,9 @@ Complete the following steps to test the advanced FOTA firmware update with the 
    #. To use the :ref:`lwm2m_client` sample after updating the firmware, you must build the sample with the following overlays:
 
          * :file:`overlay-avsystems.conf`
-         * :file:`overlay-lwm2m-1.1.conf`
-         * :file:`overlay-fota_helper.conf`
-         * :file:`overlay-adv-firmware.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-lwm2m-1.1.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-fota_helper.conf`
+         * :ncs-file:`/samples/cellular/lwm2m_client/overlay-adv-firmware.conf`
 
    #. Register your device with the Coiote Device management server.
    #. Flash the compiled sample using the erase flash option.

@@ -91,7 +91,7 @@ The following is an example of the CLI command:
 
 To build for the Thingy:91 X using the nRF5340 as the host chip, use the ``thingy91x/nrf5340/cpuapp`` board target.
 The sample uses a partition layout in which the nRF5340 owns the external flash.
-This layout is defined in devicetree by the :file:`boards/thingy91x_nrf5340_cpuapp.overlay` file of this sample, with matching overlays for the other images built by sysbuild in the :file:`sysbuild/` directory, so no additional build options are needed.
+This layout is defined in devicetree by the :ncs-file:`/samples/wifi/shell/boards/thingy91x_nrf5340_cpuapp.overlay` file of this sample, with matching overlays for the other images built by sysbuild in the :file:`sysbuild/` directory, so no additional build options are needed.
 This requires an external debugger since the nRF9151 normally owns the buses.
 This special configuration is not compatible with nRF9151 firmware compiled for the default configuration.
 You need to erase the nRF9151 first to avoid conflicts.

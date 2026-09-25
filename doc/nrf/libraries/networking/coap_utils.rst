@@ -31,7 +31,7 @@ To enable the CoAP utils library, set the :kconfig:option:`CONFIG_COAP` and :kco
 API documentation
 *****************
 
-| Header file: :file:`include/net/coap_utils.h`
+| Header file: :ncs-file:`/include/net/coap_utils.h`
 | Source files: :file:`subsys/net/lib/coap_utils/`
 
 .. doxygengroup:: coap_utils

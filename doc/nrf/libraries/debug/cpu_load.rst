@@ -59,7 +59,7 @@ Resetting the measurement
 API documentation
 *****************
 
-| Header file: :file:`include/debug/cpu_load.h`
+| Header file: :ncs-file:`/include/debug/cpu_load.h`
 | Source files: :file:`subsys/debug/cpu_load/`
 
 .. doxygengroup:: cpu_load

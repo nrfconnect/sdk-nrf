@@ -38,7 +38,7 @@ Configure the following options when using this library:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/modem_attest_token.h`
-| Source file: :file:`lib/modem_attest_token/modem_attest_token.c`
+| Header file: :ncs-file:`/include/modem/modem_attest_token.h`
+| Source file: :ncs-file:`/lib/modem_attest_token/modem_attest_token.c`
 
 .. doxygengroup:: modem_attest_token

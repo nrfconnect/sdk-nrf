@@ -38,7 +38,7 @@ Metrics
       * ``battery_soc_pct`` - The simulated battery level.
       * ``button_elapsed_time_ms`` - The time measured between two **Button 1** presses.
 
-      These metrics are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
+      These metrics are defined in the :ncs-file:`/samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
       For more details about the metrics, see `Memfault: Collecting Device Metrics`_.
 
       There are also metrics that are specific to |NCS|.
@@ -67,7 +67,7 @@ Metrics
       * ``battery_soc_pct`` - The simulated battery level.
       * ``button_elapsed_time_ms`` - The time measured between two **Button 0** presses.
 
-      These metrics are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
+      These metrics are defined in the :ncs-file:`/samples/bluetooth/peripheral_mds/memfault_config/memfault_metrics_heartbeat_config.def` file.
       For more details about the metrics, see `Memfault: Collecting Device Metrics`_.
 
       There are also metrics that are specific to |NCS|.
@@ -99,7 +99,7 @@ Error tracking with trace events
 
       ``button_state_changed`` - Collected every time when **Button 2** changes its state.
 
-      The trace events are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_trace_reason_user_config.def` file.
+      The trace events are defined in the :ncs-file:`/samples/bluetooth/peripheral_mds/memfault_config/memfault_trace_reason_user_config.def` file.
       See `Memfault: Error Tracking with Trace Events`_ for more details about trace events.
 
    .. group-tab:: nRF54 DKs
@@ -108,7 +108,7 @@ Error tracking with trace events
 
       ``button_state_changed`` - Collected every time when **Button 1** changes its state.
 
-      The trace events are defined in the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_trace_reason_user_config.def` file.
+      The trace events are defined in the :ncs-file:`/samples/bluetooth/peripheral_mds/memfault_config/memfault_trace_reason_user_config.def` file.
       See `Memfault: Error Tracking with Trace Events`_ for more details about trace events.
 
 Core dumps
@@ -202,7 +202,7 @@ Configuration
 |config|
 
 The Memfault SDK allows configuring some of its options using Kconfig.
-For the options not configurable using Kconfig, use the :file:`samples/bluetooth/peripheral_mds/memfault_config/memfault_platform_config.h` file.
+For the options not configurable using Kconfig, use the :ncs-file:`/samples/bluetooth/peripheral_mds/memfault_config/memfault_platform_config.h` file.
 See `Memfault SDK`_ for more information.
 
 To send data to the Memfault cloud through a Bluetooth gateway, you must configure a project key using the :kconfig:option:`CONFIG_MEMFAULT_PROJECT_KEY` Kconfig option.

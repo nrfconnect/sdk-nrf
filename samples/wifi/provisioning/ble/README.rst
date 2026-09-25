@@ -44,7 +44,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/provisioning/ble/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/provisioning/ble/Kconfig`):
 
 .. _CONFIG_WIFI_PROV_ADV_DATA_UPDATE:
 

@@ -78,7 +78,7 @@ The models are used for the following purposes:
 * Config Server allows configurator devices to configure the node remotely.
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device. These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/silvair_enocean/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to detect button presses on the development kit.
 
 The response from the target device updates the corresponding LED on the mesh Silvair EnOcean device.
 When the target device is turned on or off, the corresponding LED will turn on or off accordingly.

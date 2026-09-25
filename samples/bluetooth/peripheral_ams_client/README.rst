@@ -129,7 +129,7 @@ Testing with Bluetooth Low Energy app
 
    a. Select the :guilabel:`SERVER SETUP` tab.
    #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
-   #. Load the :file:`AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
+   #. Load the :ncs-file:`/samples/bluetooth/peripheral_ams_client/AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
    #. Click :guilabel:`Apply to device`.
 
 #. Select the :guilabel:`CONNECTION MAP` tab.
@@ -469,8 +469,8 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
 * :file:`include/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 

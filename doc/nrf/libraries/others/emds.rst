@@ -218,7 +218,7 @@ The emergency data storage is dependent on these Kconfig options:
 API documentation
 *****************
 
-| Header file: :file:`include/emds/emds.h`
-| Source file: :file:`subsys/emds/emds.c`
+| Header file: :ncs-file:`/include/emds/emds.h`
+| Source file: :ncs-file:`/subsys/emds/emds.c`
 
 .. doxygengroup:: emds

@@ -563,7 +563,7 @@ Matter
              )
 
          #. Add the common :file:`Kconfig` file to the list of sourced Kconfig files.
-            To do so, edit your application :file:`Kconfig` file and add the following code one line before sourcing the :file:`Kconfig.zephyr` file:
+            To do so, edit your application :file:`Kconfig` file and add the following code one line before sourcing the :ncs-file:`zephyr:/Kconfig.zephyr` file:
 
             .. code-block:: kconfig
 
@@ -827,7 +827,7 @@ Bluetooth® Mesh
 
      * Sensor API arguments and callback parameters previously defined with :c:struct:`sensor_value` now use :c:struct:`bt_mesh_sensor_value` instead.
      * The :c:member:`bt_mesh_sensor_value.format` needs to be filled by the application for variables passed to the sensor API.
-     * There are several different types of :c:struct:`bt_mesh_sensor_format` described in the file :file:`include/bluetooth/mesh/sensor_types.h`.
+     * There are several different types of :c:struct:`bt_mesh_sensor_format` described in the file :ncs-file:`/include/bluetooth/mesh/sensor_types.h`.
      * When filling in sensor values for a channel, the format can be found through ``sensor->type.channels[i].format`` defined for the given :c:struct:`bt_mesh_sensor` sensor.
      * :c:struct:`bt_mesh_sensor_value` with a valid format can be converted to and from integer, float and :c:struct:`sensor_value` through ``bt_mesh_sensor_value_to/from*`` functions.
      * Where the applications previously just added values directly to :c:member:`sensor_value.val1` and :c:member:`sensor_value.val2`, the correct way is to use ``bt_mesh_sensor_value_to/from*`` functions to either set or extract the values.

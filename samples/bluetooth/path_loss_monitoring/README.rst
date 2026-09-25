@@ -126,12 +126,12 @@ This sample uses the following |NCS| libraries:
 
 It uses the following Zephyr libraries:
 
-* :file:`include/zephyr/bluetooth/bluetooth.h`
-* :file:`include/zephyr/bluetooth/conn.h`
-* :file:`include/zephyr/bluetooth/uuid.h`
-* :file:`include/zephyr/bluetooth/addr.h`
-* :file:`include/zephyr/bluetooth/gap.h`
-* :file:`include/zephyr/logging/log.h`
-* :file:`include/zephyr/kernel.h`
-* :file:`include/bluetooth/scan.h`
-* :file:`include/dk_buttons_and_leds.h`
+* :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+* :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+* :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+* :ncs-file:`zephyr:/include/zephyr/bluetooth/addr.h`
+* :ncs-file:`zephyr:/include/zephyr/bluetooth/gap.h`
+* :ncs-file:`zephyr:/include/zephyr/logging/log.h`
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`/include/bluetooth/scan.h`
+* :ncs-file:`/include/dk_buttons_and_leds.h`

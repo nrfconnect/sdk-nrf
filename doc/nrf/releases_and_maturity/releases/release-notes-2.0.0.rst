@@ -687,7 +687,7 @@ Modem libraries
     TinyCBOR is deprecated.
 
 * Removed the deprecated A-GPS library.
-* Fixed an issue where the compiler would generate an error when building :file:`ncs/nrf/include/modem/lte_lc.h` with C++ applications.
+* Fixed an issue where the compiler would generate an error when building :ncs-file:`manifest:/include/modem/lte_lc.h` with C++ applications.
 
 Libraries for networking
 ------------------------

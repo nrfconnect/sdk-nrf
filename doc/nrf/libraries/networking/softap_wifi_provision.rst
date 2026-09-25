@@ -220,7 +220,7 @@ This is because multicast messages in general are more unstable when the device 
 API documentation
 *****************
 
-| Header file: :file:`include/net/softap_wifi_provision.h`
+| Header file: :ncs-file:`/include/net/softap_wifi_provision.h`
 | Source files: :file:`subsys/net/lib/softap_wifi_provision`
 
 .. doxygengroup:: softap_wifi_provision_library
