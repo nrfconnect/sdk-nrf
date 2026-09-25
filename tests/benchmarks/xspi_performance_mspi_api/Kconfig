@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+source "Kconfig.zephyr"
+
+config TEST_BENCHMARK_SCK_DELAY
+	bool "Measure SCK delay"
+	default y
+	select NRFX_GPPI
+	select NRFX_GPIOTE
+	help
+	  Enables tests which measure the delay between triggering the transfer and
+	  detecting clock signal on the SCK line. This requires a physical loopback
+	  between the MSPI SCK pin and a GPIO input pin used by the tests.
