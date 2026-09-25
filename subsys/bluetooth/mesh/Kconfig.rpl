@@ -4,6 +4,11 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+# Option enabled when the NCS implementation of RPL should be used instead of
+# the Zephyr one.
+config BT_MESH_RPL_NCS
+	bool
+
 choice BT_MESH_RPL_STORAGE_MODE
 	prompt "Replay protection list storage mode"
 	default BT_MESH_RPL_STORAGE_MODE_EMDS if EMDS
@@ -11,8 +16,19 @@ choice BT_MESH_RPL_STORAGE_MODE
 config BT_MESH_RPL_STORAGE_MODE_EMDS
 	bool "Persistent storage of RPL in Emergency Data Storage"
 	depends on EMDS
+	select BT_MESH_RPL_NCS
 	help
 	  Persistent storage of RPL in Emergency Data Storage.
+
+config BT_MESH_RPL_STORAGE_MODE_ZMS
+	bool "Persistent storage of RPL in Zephyr Memory Storage"
+	depends on ZMS
+	depends on !ZMS_ID_64BIT
+	select BT_MESH_RPL_NCS
+	select EXPERIMENTAL
+	help
+	  Persistent storage of RPL directly in a dedicated ZMS partition.
+	  This approach does not use the Settings subsystem for RPL storage.
 
 endchoice
 
