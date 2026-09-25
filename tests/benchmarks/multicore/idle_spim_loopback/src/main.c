@@ -310,13 +310,13 @@ int main(void)
 		/* SPI was active for ~1 second with separate SPI CS activations
 		 * for each spi_transceive_dt() call.
 		 */
-#if !defined(CONFIG_SOC_NRF54H20_CPUPPR)
+#if !defined(CONFIG_RISCV_CORE_NORDIC_VPR)
 		/* Workaround for GPIOTE interrupts not routed to PPR (NCSDK-35979).
-		 * Skip checking number of SPI CS edges on nrf54H20 cpuppr.
+		 * Skip checking number of SPI CS edges on nrf54H20/nrf9251 cpuppr.
 		 */
 		__ASSERT_NO_MSG(high >= 100);
 		__ASSERT_NO_MSG(low >= 100);
-#endif /* !defined(CONFIG_SOC_NRF54H20_CPUPPR) */
+#endif /* !defined(CONFIG_RISCV_CORE_NORDIC_VPR) */
 		__ASSERT_NO_MSG(low == high);
 #endif
 		loop_counter++;
