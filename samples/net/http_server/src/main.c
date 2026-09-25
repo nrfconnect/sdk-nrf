@@ -240,7 +240,7 @@ static int handle_get(struct http_req *request, char *response, size_t response_
 	}
 
 	ret = snprintk(response, response_size,
-		       "%sContent-Type: text/plain\r\n\r\nContent-Length: %d\r\n\r\n%s",
+		       "%sContent-Type: text/plain\r\nContent-Length: %d\r\n\r\n%s",
 		       RESPONSE_200, strlen(body), body);
 	if ((ret < 0) || (ret >= response_size)) {
 		return -ENOBUFS;

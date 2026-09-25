@@ -662,6 +662,8 @@ Networking samples
     * IPv6 address and multicast group limits.
       When the access point advertised both SLAAC and stateful DHCPv6, the default :kconfig:option:`CONFIG_NET_IF_UNICAST_IPV6_ADDR_COUNT` and :kconfig:option:`CONFIG_NET_IF_MCAST_IPV6_ADDR_COUNT` values were too low to hold all resulting addresses, causing ``Failed to configure DHCPv6 address`` and ``Cannot join solicit node address ... (-12)`` errors.
       Both Kconfig option values were increased.
+    * The HTTP response to GET requests.
+      An extra blank line after the ``Content-Type`` header terminated the header section early, putting the ``Content-Length`` header in the response body.
 
 NFC samples
 -----------
