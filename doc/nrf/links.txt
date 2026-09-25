@@ -72,6 +72,7 @@
 .. _`JLink License Agreement`: https://github.com/nrfconnect/sdk-nrf/blob/main/scripts/docker/jlink/license.txt
 
 .. _`sdk-mcuboot`: https://github.com/nrfconnect/sdk-mcuboot
+.. _`sdk-mcuboot PR #757`: https://github.com/nrfconnect/sdk-mcuboot/pull/757
 .. _`MCUboot design`: https://github.com/mcu-tools/mcuboot/blob/main/docs/design.md
 .. _`MCUboot repository`: https://github.com/mcu-tools/mcuboot
 .. _`MCUboot Kconfig option`: https://github.com/nrfconnect/sdk-mcuboot/blob/main/boot/zephyr/Kconfig#L370
