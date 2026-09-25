@@ -80,8 +80,8 @@ def test_serial_recovery_after_pin_reset(no_reset, dut: DeviceAdapter, mcumgr: M
     tm.image_upload(updated_app)
     image_list = get_image_list(mcumgr)
     assert len(image_list) == 1, "Image list should contain one image after upload"
-    reset_board(dut.device_config.id)
     dut.connect()
+    reset_board(dut.device_config.id)
     tm.verify_after_reset()
     tm.check_with_shell_command()
     logger.info("PASSED: Application is recovered after serial recovery")
