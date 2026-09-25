@@ -27,6 +27,10 @@ LOG_MODULE_REGISTER(scan, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include "net_private.h"
 
+#if defined(CONFIG_NRF71_IDLE_POWER)
+#include <nrf71_idle_power.h>
+#endif
+
 #define WIFI_SHELL_MODULE "wifi"
 
 /* DTS node for the Wi-Fi interface - MAC address from local-mac-address property */
@@ -316,7 +320,13 @@ int main(void)
 
 	while (1) {
 		wifi_scan();
+#if defined(CONFIG_NRF71_IDLE_POWER)
+		nrf71_idle_power_suspend_console();
+#endif
 		k_sleep(K_SECONDS(CONFIG_WIFI_SCAN_INTERVAL_S));
+#if defined(CONFIG_NRF71_IDLE_POWER)
+		nrf71_idle_power_resume_console();
+#endif
 	}
 
 	return 0;
