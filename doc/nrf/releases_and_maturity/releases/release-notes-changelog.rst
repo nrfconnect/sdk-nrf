@@ -476,6 +476,7 @@ Cryptography samples
 
   * Support for the nRF54LC10A SoC (with and without TF-M) in the crypto samples.
   * The :ref:`crypto_ml_dsa` sample.
+  * The :ref:`crypto_ml_kem` sample.
 
 Debug samples
 -------------
