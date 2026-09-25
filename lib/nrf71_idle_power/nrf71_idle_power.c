@@ -9,6 +9,7 @@
 #include <zephyr/device.h>
 #include <zephyr/devicetree.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/pm/device.h>
 
 #include <nrf71_idle_power.h>
 
@@ -57,6 +58,49 @@ static int nrf71_idle_power_ram_init(void)
 }
 
 SYS_INIT(nrf71_idle_power_ram_init, PRE_KERNEL_1, 0);
+
+/* CONFIG_SERIAL=n ("quiet" builds) leaves the "zephyr,console" chosen node
+ * without a compiled-in driver instance, so DEVICE_DT_GET_OR_NULL() would
+ * reference a device ordinal that was never generated and fail to link.
+ * Gate the whole console device lookup on CONFIG_SERIAL instead of relying
+ * on the chosen-node check alone.
+ */
+#if defined(CONFIG_SERIAL)
+static const struct device *const idle_power_console =
+	DEVICE_DT_GET_OR_NULL(DT_CHOSEN(zephyr_console));
+
+static void run_console_action(enum pm_device_action action)
+{
+	int ret;
+
+	if (!idle_power_console || !device_is_ready(idle_power_console)) {
+		return;
+	}
+
+	ret = pm_device_action_run(idle_power_console, action);
+	if (ret < 0 && ret != -EALREADY) {
+		LOG_DBG("Console PM action %d failed: %d", action, ret);
+	}
+}
+
+void nrf71_idle_power_suspend_console(void)
+{
+	run_console_action(PM_DEVICE_ACTION_SUSPEND);
+}
+
+void nrf71_idle_power_resume_console(void)
+{
+	run_console_action(PM_DEVICE_ACTION_RESUME);
+}
+#else
+void nrf71_idle_power_suspend_console(void)
+{
+}
+
+void nrf71_idle_power_resume_console(void)
+{
+}
+#endif /* CONFIG_SERIAL */
 
 #if defined(CONFIG_NRF71_IDLE_DIAGNOSTICS)
 

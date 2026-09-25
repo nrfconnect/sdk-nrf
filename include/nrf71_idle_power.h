@@ -29,6 +29,29 @@
 extern "C" {
 #endif
 
+/**
+ * @brief Suspend the console/UART device to cut idle current.
+ *
+ * Polling-mode UART console backends never call pm_device_runtime_put() on
+ * their own, so @kconfig{CONFIG_PM_DEVICE_RUNTIME} alone does not suspend
+ * them: the UART (and whatever clock it requests) stays fully active for as
+ * long as the application is running, including while it is otherwise idle.
+ * Call this right before going idle (for example, right before a k_sleep()
+ * or k_sem_take() with a long or infinite timeout) to suspend the device
+ * backing the "zephyr,console" chosen node, then call
+ * nrf71_idle_power_resume_console() again before the next print.
+ *
+ * No-op if there is no "zephyr,console" chosen node, or if the device is not
+ * ready.
+ */
+void nrf71_idle_power_suspend_console(void);
+
+/**
+ * @brief Resume the console/UART device suspended by
+ * nrf71_idle_power_suspend_console().
+ */
+void nrf71_idle_power_resume_console(void);
+
 #if defined(CONFIG_NRF71_IDLE_DIAGNOSTICS)
 
 /**
