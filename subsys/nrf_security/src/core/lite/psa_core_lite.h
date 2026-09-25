@@ -86,7 +86,16 @@
 /* Macros to verify different MAC algorithms */
 
 #define VERIFY_ALG_HMAC(_alg) \
-	(IS_ENABLED(PSA_WANT_ALG_HMAC) && _alg == PSA_ALG_HMAC(PSA_ALG_SHA_512))
+	(IS_ENABLED(PSA_WANT_ALG_HMAC) && \
+	 ((IS_ENABLED(PSA_WANT_ALG_SHA_512) && (_alg) == PSA_ALG_HMAC(PSA_ALG_SHA_512)) || \
+	  (IS_ENABLED(PSA_WANT_ALG_SHA_256) && (_alg) == PSA_ALG_HMAC(PSA_ALG_SHA_256))))
+
+#define VERIFY_ALG_ECDSA_VERIFY(_alg) \
+	UTIL_CONCAT_OR( \
+		VERIFY_ALG_ECDSA_SECP_R1_256(_alg), \
+		VERIFY_ALG_ECDSA_SECP_R1_384(_alg), \
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_256(_alg), \
+		VERIFY_ALG_DETERMINISTIC_ECDSA_SECP_R1_384(_alg))
 
 /* Macros to verify configuration */
 
@@ -105,9 +114,10 @@
 #error "No valid algorithm for key agreement"
 #endif
 
-#define PSA_CORE_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,   \
-					MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE,   \
-					    CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE))
+#define PSA_CORE_LITE_KEY_MAX_SIZE	MAX(CONFIG_PSA_CORE_LITE_HMAC_KEY_MAX_SIZE,  \
+					MAX(CONFIG_PSA_CORE_LITE_AES_KEY_MAX_SIZE,   \
+					    MAX(CONFIG_PSA_CORE_LITE_PUB_KEY_MAX_SIZE, \
+						CONFIG_PSA_CORE_LITE_PRIV_KEY_MAX_SIZE)))
 
 typedef struct {
 	psa_key_attributes_t key_attributes;
