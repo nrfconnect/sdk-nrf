@@ -98,10 +98,10 @@ config MPSL_FEM_SIMPLE_GPIO
 	select MPSL_FEM_NCS_SUPPORTED_FEM_USED
 	bool "Generic front-end module with two-pin control"
 	help
-	  FEM device has a generic two-pin control interface.
-	  This option was originally designed to support the SKY66112-11,
-	  but is potentially compatible with other devices with the same
-	  control method.
+	  FEM device uses a generic two-pin GPIO control interface. For
+	  devicetree nodes that declare compatible "radio-fem-two-ctrl-pins",
+	  including Skyworks SKY66112-11, SKY66114-11, SKY66409-11 and other
+	  FEMs with the same control scheme.
 
 config MPSL_FEM_NRF2240
 	depends on MPSL_FEM_NRF2240_SUPPORT
