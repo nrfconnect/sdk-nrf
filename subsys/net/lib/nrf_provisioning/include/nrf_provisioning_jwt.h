@@ -19,14 +19,13 @@
 extern "C" {
 #endif
 
-
 /** @defgroup nrf_provisioning_jwt nRF Device Provisioning JWT API
  *  @{
  */
 
 /**
  * @brief Function to generate a JWT to be used with nRF Device provisioning service's REST API.
- *        This library's configured values for client id and sec tag (NRF_PROVISIONING_SEC_TAG)
+ *        This library's configured values for client id and sec tag (NRF_PROVISIONING_JWT_SEC_TAG)
  *        will be used for generating the JWT.
  *
  * @param[in] time_valid_s How long (seconds) the JWT will be valid.
