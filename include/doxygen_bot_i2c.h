@@ -23,7 +23,7 @@
  *
  * Configures the I2C controller for master mode operation
  *
- * @retval 0 on success.
+ * @retval 0 on success
  * @retval negative errno code on failure.
  */
 int doxy_i2c_init(void);
