@@ -35,13 +35,10 @@ For provisioning and configuring of the mesh model instances, the sample require
 Low Power node requirements
 ===========================
 
-The configuration overlay :file:`overlay-lpn.conf` is optimized for the following boards:
+The configuration overlay :file:`overlay-lpn.conf` is optimized for the following board targets:
 
-* nrf52dk/nrf52832
-
-* nrf52840dk/nrf52840
-
-* nrf52833dk/nrf52833
+* ``nrf54l15dk/nrf54l15/cpuapp``
+* ``nrf54l15tag/nrf54l15/cpuapp``
 
 However, the same configuration can be applied to other platforms that support the Bluetooth Mesh Light Switch sample, as long as the device supports at least four buttons.
 
@@ -106,7 +103,7 @@ The mesh light switch sample can also be run as a Low Power node (LPN), giving t
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       While running the sample with the LPN configuration, the fourth :ref:`bt_mesh_onoff_cli_readme` instance will be omitted.
       Instead, **Button 4** will be used to temporarily enable Node ID advertisement on the LPN device.
@@ -148,8 +145,6 @@ The following table shows a selection of supported boards for the LPN configurat
    ====================  ========================  ====================
    Board                 Avg. consumption non-LPN  Avg. consumption LPN
    ====================  ========================  ====================
-   nrf52dk/nrf52832      7.14 mA                   13.69 µA
-   nrf52840dk/nrf52840   6.31 mA                   7.21 µA
    nrf54l15dk/nrf54l15   5.60 mA                   7.12 µA
    nrf54l15tag/nrf54l15  --                        9.38 µA
    ====================  ========================  ====================
@@ -165,18 +160,6 @@ The following applies to the LPN measurements presented in this table:
 * The measurements are done on the SoC only (meaning the measurements do not include power consumed by development kit LEDs for example).
 
   * The nRF54L15 Tag is an exception to this, as it cannot be measured on the SoC only.
-
-.. image:: img/standard_52840ppk.png
-   :align: center
-   :alt: Power consumption for nRF52840 running as standard node
-
-Power consumption for nRF52840 running as standard node (Captured in nRF Connect for Desktop: Power Profiler).
-
-.. image:: img/lpn_52840ppk.png
-   :align: center
-   :alt: Power consumption for nRF52840 running as LPN
-
-Power consumption for nRF52840 running as LPN, showing consumed power over a single LPN polling period. The rightmost spike represents the LPN polling the friend node. (Captured in nRF Connect for Desktop: Power Profiler).
 
 .. _bluetooth_mesh_light_switch_user_interface:
 
@@ -197,7 +180,7 @@ The LPN assignments
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 4:
          When pressed, enables the Node ID advertisement for a short period of time.

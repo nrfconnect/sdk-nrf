@@ -111,7 +111,7 @@ The models are used for the following purposes:
 The model handling is implemented in :file:`src/model_handler.c`.
 It uses the ``TEMP_NRF5`` temperature sensor.
 
-The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the `nRF52832 Temperature Sensor Electrical Specification`_.
+The sample has a descriptor related to the :c:var:`bt_mesh_sensor_present_dev_op_temp` sensor, which specifies tolerance values for the ``TEMP_NRF5`` temperature sensor calculated based on the die temperature sensor accuracy given in the `nRF54L15 Datasheet`_.
 The descriptor also specifies the temperature sensor's sampling type, which is :c:var:`BT_MESH_SENSOR_SAMPLING_INSTANTANEOUS`.
 
 The :ref:`dk_buttons_and_leds_readme` library is used to detect button presses.
@@ -131,43 +131,21 @@ Buttons:
 
 Once the provisioning procedure has completed, the buttons will have the following functionality:
 
-.. tabs::
+Button 0:
+  Simulates different ambient light sensor values.
+  These dummy values represent raw values coming from an ambient light sensor.
 
-   .. group-tab:: nRF21 and nRF52 DKs
+Button 1:
+  Simulates presence detected.
+  For how long the button has to be pressed before the presence is detected depends on the motion threshold.
+  The motion threshold has five steps from 0 % (representing 0 seconds) to 100 % (representing 10 seconds) separated by 25 %-steps.
 
-      Button 1:
-        Simulates different ambient light sensor values.
-        These dummy values represent raw values coming from an ambient light sensor.
+Button 2:
+  Simulates motion sensed.
 
-      Button 2:
-        Simulates presence detected.
-        For how long the button has to be pressed before the presence is detected depends on the motion threshold.
-        The motion threshold has five steps from 0 % (representing 0 seconds) to 100 % (representing 10 seconds) separated by 25 %-steps.
-
-      Button 3:
-        Simulates motion sensed.
-
-      Button 4:
-        Simulates different people count sensor values.
-        These dummy values represent raw values coming from a people count sensor.
-
-   .. group-tab:: nRF54 DKs
-
-      Button 0:
-        Simulates different ambient light sensor values.
-        These dummy values represent raw values coming from an ambient light sensor.
-
-      Button 1:
-        Simulates presence detected.
-        For how long the button has to be pressed before the presence is detected depends on the motion threshold.
-        The motion threshold has five steps from 0 % (representing 0 seconds) to 100 % (representing 10 seconds) separated by 25 %-steps.
-
-      Button 2:
-        Simulates motion sensed.
-
-      Button 3:
-        Simulates different people count sensor values.
-        These dummy values represent raw values coming from a people count sensor.
+Button 3:
+  Simulates different people count sensor values.
+  These dummy values represent raw values coming from a people count sensor.
 
 Configuration
 *************
