@@ -269,11 +269,23 @@ int main(void)
 	enter_shutdown_mode();
 #endif
 
-#if defined(CONFIG_OPERATION_MODE_BUTTONS) || defined(CONFIG_OPERATION_MODE_ONE_SHOT)
+#if defined(CONFIG_OPERATION_MODE_ONE_SHOT)
 	exit_shutdown_mode();
 #if !defined(CONFIG_SHUTDOWN_STAY_UP)
 	enter_shutdown_mode();
 #endif /* !CONFIG_SHUTDOWN_STAY_UP */
+	nrf71_idle_power_print_snapshot("host-idle");
+	/* Nothing else runs from here on, so the console never needs to
+	 * resume.
+	 */
+	nrf71_idle_power_suspend_console();
+	k_sleep(K_FOREVER);
+#elif defined(CONFIG_OPERATION_MODE_BUTTONS)
+	/* Button presses print asynchronously from buttons_init()'s IRQ work,
+	 * so the console must stay resumed while this mode is active.
+	 */
+	exit_shutdown_mode();
+	enter_shutdown_mode();
 	nrf71_idle_power_print_snapshot("host-idle");
 	k_sleep(K_FOREVER);
 #else
@@ -284,8 +296,10 @@ int main(void)
 		exit_shutdown_mode();
 		enter_shutdown_mode();
 		nrf71_idle_power_print_snapshot("host-idle");
+		nrf71_idle_power_suspend_console();
 		k_sleep(K_SECONDS(CONFIG_SHUTDOWN_TIMEOUT_S));
+		nrf71_idle_power_resume_console();
 	}
-#endif /* CONFIG_OPERATION_MODE_BUTTONS */
+#endif /* CONFIG_OPERATION_MODE_ONE_SHOT */
 	return 0;
 }
