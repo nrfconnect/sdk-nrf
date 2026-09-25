@@ -26,7 +26,9 @@ LOG_MODULE_REGISTER(shutdown, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <dk_buttons_and_leds.h>
 
+#if defined(CONFIG_NRF71_IDLE_POWER)
 #include <nrf71_idle_power.h>
+#endif
 
 #include "net_private.h"
 
@@ -274,19 +276,25 @@ int main(void)
 #if !defined(CONFIG_SHUTDOWN_STAY_UP)
 	enter_shutdown_mode();
 #endif /* !CONFIG_SHUTDOWN_STAY_UP */
+#if defined(CONFIG_NRF71_IDLE_POWER)
 	nrf71_idle_power_print_snapshot("host-idle");
 	/* Nothing else runs from here on, so the console never needs to
 	 * resume.
 	 */
 	nrf71_idle_power_suspend_console();
+#endif /* CONFIG_NRF71_IDLE_POWER */
 	k_sleep(K_FOREVER);
 #elif defined(CONFIG_OPERATION_MODE_BUTTONS)
 	/* Button presses print asynchronously from buttons_init()'s IRQ work,
 	 * so the console must stay resumed while this mode is active.
 	 */
 	exit_shutdown_mode();
+#if !defined(CONFIG_SHUTDOWN_STAY_UP)
 	enter_shutdown_mode();
+#endif /* !CONFIG_SHUTDOWN_STAY_UP */
+#if defined(CONFIG_NRF71_IDLE_POWER)
 	nrf71_idle_power_print_snapshot("host-idle");
+#endif /* CONFIG_NRF71_IDLE_POWER */
 	k_sleep(K_FOREVER);
 #else
 	/* Will continuously alternate between shutdown and startup modes
@@ -295,10 +303,14 @@ int main(void)
 	while (1) {
 		exit_shutdown_mode();
 		enter_shutdown_mode();
+#if defined(CONFIG_NRF71_IDLE_POWER)
 		nrf71_idle_power_print_snapshot("host-idle");
 		nrf71_idle_power_suspend_console();
+#endif /* CONFIG_NRF71_IDLE_POWER */
 		k_sleep(K_SECONDS(CONFIG_SHUTDOWN_TIMEOUT_S));
+#if defined(CONFIG_NRF71_IDLE_POWER)
 		nrf71_idle_power_resume_console();
+#endif /* CONFIG_NRF71_IDLE_POWER */
 	}
 #endif /* CONFIG_OPERATION_MODE_ONE_SHOT */
 	return 0;

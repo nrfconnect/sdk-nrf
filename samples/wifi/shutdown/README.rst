@@ -102,13 +102,13 @@ On an nRF7120 DK, the ``nrf71-idle-power``, ``nrf71-idle-power-quiet``, and ``nr
 
   .. code-block:: console
 
-     west build -p -b nrf7120dk/nrf7120/cpuapp -- -Dshutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-quiet"
+     west build -p -b nrf7120dk/nrf7120/cpuapp -- -Dshutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y -Dshutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-quiet"
 
 * ``nrf71-idle-power`` together with ``nrf71-idle-power-diag`` keeps logging enabled and prints a power-state register snapshot right before the host idles, to help locate where the current goes:
 
   .. code-block:: console
 
-     west build -p -b nrf7120dk/nrf7120/cpuapp -- -Dshutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-diag"
+     west build -p -b nrf7120dk/nrf7120/cpuapp -- -Dshutdown_CONFIG_OPERATION_MODE_ONE_SHOT=y -Dshutdown_SNIPPET="nrf71-idle-power;nrf71-idle-power-diag"
 
 To keep the interface up and idle instead of shutting Wi-Fi down, add :kconfig:option:`CONFIG_SHUTDOWN_STAY_UP`.
 
