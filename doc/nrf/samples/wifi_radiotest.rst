@@ -16,10 +16,15 @@ The choice of configuration depends on the platform, whether the Bluetooth LE ra
 The exact definition of domain or core depends on the hardware platform.
 For example, the nRF5340 SoC has two cores, the application core and the network core, whereas the nRF54L15 SoC has a single core.
 
+.. toctree::
+   :maxdepth: 1
+   :caption: nRF70 Series
+
+   ../../../samples/wifi/radio_test/multi_domain/README
+   ../../../samples/wifi/radio_test/single_domain/README
 
 .. toctree::
    :maxdepth: 1
-   :caption: Subpages
-   :glob:
+   :caption: nRF71 Series
 
-   ../../../samples/wifi/radio_test/*/README
+   ../../../samples/wifi/radio_test/single_domain/README_nrf71
