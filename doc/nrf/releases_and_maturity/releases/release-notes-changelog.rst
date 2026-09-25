@@ -753,7 +753,12 @@ Wi-Fi samples
 
 * :ref:`wifi_shutdown_sample` sample:
 
-  * Added the :file:`overlay-host-idle.conf` and :file:`overlay-host-idle-diag.conf` configuration files, which use the new :ref:`lib_nrf71_idle_power` library to measure nRF71 Series host idle current in One-shot mode.
+  * Added the ``nrf71-idle-power``, ``nrf71-idle-power-quiet``, and ``nrf71-idle-power-diag`` snippets, which use the new :ref:`lib_nrf71_idle_power` library to measure nRF71 Series host idle current in One-shot mode.
+
+* :ref:`wifi_station_sample`, :ref:`wifi_scan_sample`, and :ref:`wifi_shell_sample` samples:
+
+  * Added the :ref:`lib_nrf71_idle_power` library to the ``nrf7120dk/nrf7120/cpuapp`` board configuration, lowering the System ON idle current.
+    The station and scan samples also suspend the console while idle between connection or scan events.
 
 * :ref:`wifi_nrf_cloud` sample:
 

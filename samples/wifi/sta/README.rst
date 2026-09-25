@@ -69,6 +69,11 @@ Power management
 This sample also enables Zephyr's power management policy by default, which sets the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
 See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
 
+On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample also enables the
+:ref:`lib_nrf71_idle_power` library and suspends the console while waiting for a
+connection state change, lowering the nRF71 Series application core's System ON
+idle current.
+
 IP addressing
 *************
 The sample uses DHCP to obtain an IP address for the Wi-Fi interface.

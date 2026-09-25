@@ -31,6 +31,13 @@ The sample allows you to perform scan based on below profiles.
 
 Using this sample, the development kit can scan for available access points in :abbr:`STA (Station)` mode.
 
+Power management
+*****************
+
+On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample enables the
+:ref:`lib_nrf71_idle_power` library and suspends the console between scans,
+lowering the nRF71 Series application core's System ON idle current.
+
 Configuration
 *************
 
