@@ -1,0 +1,282 @@
+``wifi_radio_test`` is the Wi-Fi® radio test command and it supports the following subcommands on the nRF71 Series.
+
+Wi-Fi radio test subcommands
+*****************************
+
+.. list-table:: Wi-Fi radio test subcommands
+   :header-rows: 1
+
+   * - Subcommand
+     - Argument
+     - Default value
+     - Type
+     - Description
+   * - set_defaults
+     - N/A
+     - N/A
+     - Configuration
+     - Reset all configuration parameters to their default values.
+   * - he_ltf
+     - | 0 - 1x HE LTF
+       | 1 - 2x HE LTF
+       | 2 - 4x HE LTF
+     - N/A
+     - Configuration
+     - Configure HE long training field (LTF) value while transmitting the packet.
+   * - he_gi
+     - | 0 - 0.8 µs
+       | 1 - 1.6 µs
+       | 2 - 3.2 µs
+     - N/A
+     - Configuration
+     - Configure HE guard interval (GI) while transmitting the packet.
+   * - tx_pkt_tput_mode
+     - | 0 - Legacy mode
+       | 1 - HT mode
+       | 2 - VHT mode
+       | 3 - HE (SU) mode
+       | 4 - HE (ER SU) mode
+       | 5 - HE (TB) mode
+     - N/A
+     - Configuration
+     - Throughput mode to be used for transmitting the packet.
+   * - tx_pkt_sgi
+     - | 0 - Disable
+       | 1 - Enable
+     - N/A
+     - Configuration
+     - Enable/Disable Short guard interval (GI) while transmitting the packet.
+   * - tx_pkt_preamble
+     - | 0 - Long preamble
+       | 1 - Short preamble
+       | 2 - Mixed preamble
+     - N/A
+     - Configuration
+     - Type of preamble to be used for each packet.
+   * - tx_pkt_mcs
+     - | -1 - Not being used
+       | <val> - MCS index to be used
+     - N/A
+     - Configuration
+     - MCS index at which the TX packet will be transmitted. Mutually exclusive with tx_pkt_rate.
+   * - tx_pkt_rate
+     - | -1 - Not being used
+       | <val> - Legacy rate to be used in Mbps (1, 2, 5.5, 11, 6, 9, 12, 18, 24, 36, 48, 54)
+     - N/A
+     - Configuration
+     - Legacy rate at which packets will be transmitted. Mutually exclusive with tx_pkt_mcs.
+   * - tx_pkt_gap
+     - <val> - Interval between TX packets in µs (Min: 200, Max: 200000)
+     - 200
+     - Configuration
+     - Interval between TX packets.
+   * - tx_pkt_num
+     - | -1 - Transmit infinite packets
+       | <val> - Number of packets to transmit
+     - N/A
+     - Configuration
+     - Number of packets to transmit before stopping.
+   * - tx_pkt_len
+     - <val> - Length of the packet (in bytes) to be transmitted
+     - 1400
+     - Configuration
+     - Packet data length to be used for the TX stream.
+   * - tx_power
+     - <val> - Value in dBm
+     - N/A
+     - Configuration
+     - Transmit power for frame transmission.
+   * - ru_tone
+     - <val> - Resource unit (RU) size (26, 52, 106 or 242)
+     - N/A
+     - Configuration
+     - Configure the resource unit (RU) size.
+   * - ru_index
+     - | <val> - Location of resource unit (RU) in 20 MHz spectrum. Valid values:
+       | For 26 ru_tone: 1 to 9
+       | For 52 ru_tone: 1 to 4
+       | For 106 ru_tone: 1 to 2
+       | For 242 ru_tone: 1
+     - N/A
+     - Configuration
+     - Configure the location of resource unit (RU) in 20 MHz spectrum.
+   * - init
+     - | <val> - Band
+       | <val> - Primary channel number
+     - N/A
+     - Action
+     - Initialize the radio to a default state with the configured band and channel. This will also reset all other configuration parameters to their default values.
+   * - tx
+     - | 0 - Disable TX
+       | 1 - Enable TX
+     - N/A
+     - Action
+     - Enable/Disable packet transmission. Transmits configured number of packets (tx_pkt_num) of packet length (tx_pkt_len).
+   * - rx
+     - | 0 - Disable RX
+       | 1 - Enable RX
+     - N/A
+     - Action
+     - Enable/Disable packet reception.
+   * - rx_lna_gain
+     - | <val> - LNA gain to be configured
+       | 0 = 24 dB
+       | 1 = 18 dB
+       | 2 = 12 dB
+       | 3 = 0 dB
+       | 4 = -12 dB
+     - N/A
+     - Configuration
+     - LNA gain to be configured.
+   * - rx_bb_gain
+     - | <val> - Baseband gain to be configured
+       | 5 bit value. Supports 64 dB range in steps of 2 dB
+     - N/A
+     - Configuration
+     - Baseband gain to be configured.
+   * - rx_capture_length
+     - <val> - Number of RX samples to be captured (Max: 16384 complex samples)
+     - N/A
+     - Configuration
+     - Number of RX samples to be captured.
+   * - rx_capture_timeout
+     - <val> - Wait time allowed in seconds (Max: 600 seconds)
+     - N/A
+     - Configuration
+     - Duration of packet detection. If no packets are detected, the command will timeout.
+   * - rx_cap
+     - | 0 = ADC capture
+       | 1 = Filtered ADC capture
+       | 2 = Dynamic packet capture
+     - N/A
+     - Action
+     - Capture ADC samples, capture filtered ADC samples, or capture packets dynamically after valid packet detection.
+   * - tx_tone_freq
+     - <val> - Frequency offset with respect to the center frequency, in the range of -10 MHz to 10 MHz (resolution 1 MHz)
+     - N/A
+     - Configuration
+     - Tone frequency offset from the center frequency of the selected channel.
+   * - tx_tone
+     - | <TONE CONTROL>
+       | 0 - Disable tone
+       | 1 - Enable tone
+     - N/A
+     - Action
+     - Enable/Disable transmit tone.
+   * - compute_optimal_xo_val
+     - N/A
+     - N/A
+     - Action
+     - Compute optimal XO trim value.
+   * - show_config
+     - N/A
+     - N/A
+     - Configuration
+     - Display the current configuration values.
+   * - get_stats
+     - N/A
+     - N/A
+     - Action
+     - Display statistics.
+   * - tx_pkt_cw
+     - <val> - Contention window value to be configured (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023)
+     - N/A
+     - Configuration
+     - Contention window for transmitted packets.
+   * - reg_domain
+     - <country code> - Desired country code (for example: NO, US, GB, IN)
+     - N/A
+     - Action
+     - Configure WLAN regulatory domain country code.
+   * - bypass_reg_domain
+     - | 0 - TX power of the channel will be set to the minimum between the user-configured TX power and the maximum TX power of the channel in the configured regulatory domain.
+       | 1 - The configured TX power value will be used for the channel.
+     - N/A
+     - Configuration
+     - Configure WLAN to bypass regulatory TX power limiting.
+   * - rx_bss_color
+     - <val> - BSS color (1 to 63)
+     - N/A
+     - Configuration
+     - Configure the BSS color to filter received packets.
+   * - rx_station_id
+     - <val> - Station ID (1 to 2047)
+     - N/A
+     - Configuration
+     - Configure the station ID to filter received packets.
+   * - tx_dcm
+     - <val> - DCM (0 or 1)
+     - N/A
+     - Configuration
+     - Enable/Disable Dual Carrier Modulation (DCM) for transmitted packets.
+   * - tx_doppler
+     - <val> - Doppler (0 or 1)
+     - N/A
+     - Configuration
+     - Enable/Disable Doppler mode for transmitted packets.
+   * - tx_midample_periodicity
+     - <val> - Midamble periodicity (10 or 20)
+     - N/A
+     - Configuration
+     - Configure the midamble periodicity for transmitted packets.
+   * - tx_106_tone
+     - <val> - 106 tone (0 or 1)
+     - N/A
+     - Configuration
+     - Enable/Disable 106-tone resource unit transmission.
+   * - tx_legacy_length
+     - <val> - Legacy length (up to 4095)
+     - N/A
+     - Configuration
+     - Configure the legacy length field for transmitted packets.
+   * - tx_fec_padd_factor
+     - <val> - FEC padding factor (1, 2, 3 or 4)
+     - N/A
+     - Configuration
+     - Configure the FEC padding factor for transmitted packets.
+   * - tx_num_he_ltf
+     - | <val> - Number of HE LTF symbols
+       | 0 = 1 LTF
+       | 1 = 2 LTF
+       | 2 = 4 LTF
+       | 3 = 6 LTF
+       | 4 = 8 LTF
+     - N/A
+     - Configuration
+     - Configure the number of HE long training field (LTF) symbols for transmitted packets.
+   * - tx_fec_coding
+     - | <val> - Set TX FEC coding
+       | 0 = BCC
+       | 1 = LDPC
+     - N/A
+     - Configuration
+     - Configure the FEC coding scheme for transmitted packets.
+   * - tx_tone_type
+     - | <val> - Tone type
+       | 0 = Complex
+       | 1 = Real-only
+       | 2 = Imag-only
+     - N/A
+     - Configuration
+     - Configure the transmit tone type.
+   * - tx_tone_dc_offset
+     - | <mode> <DC_offset_i> <DC_offset_q>
+       | 0 0 0 - No DC offsets
+       | 1 <DC_offset_i> 0 - I only
+       | 2 0 <DC_offset_q> - Q only
+       | 3 <DC_offset_i> <DC_offset_q> - Both
+     - N/A
+     - Configuration
+     - Configure the DC offset applied to the transmit tone.
+   * - rx_capture_ed_thresh
+     - <ofdm> <dsss> - ED thresholds for dynamic packet capture (-100 to 0)
+     - N/A
+     - Configuration
+     - Configure the energy detection thresholds used for dynamic packet capture.
+   * - rx_bss_check
+     - | <val> - BSS check
+       | 0 = Disable
+       | 1 = Enable
+     - N/A
+     - Configuration
+     - Enable/Disable BSS check for received packets.

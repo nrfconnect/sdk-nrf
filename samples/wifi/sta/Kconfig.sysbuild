@@ -1,0 +1,11 @@
+#
+# Copyright (c) 2024 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config WIFI_NRF70
+	default n if BOARD_NRF7120DK_NRF7120_CPUAPP || BOARD_NRF7120DK_NRF7120_CPUAPP_NS
+	default y
+
+source "share/sysbuild/Kconfig"

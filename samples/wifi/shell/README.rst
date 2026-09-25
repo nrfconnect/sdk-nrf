@@ -28,86 +28,16 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-Currently, the following configurations are supported:
+See the Requirements table above for the board targets and shields supported by this sample, and :ref:`cmake_options` for how to provide the ``SHIELD`` CMake option.
 
-* nRF7002 DK + QSPI
-* nRF7002 EK + SPIM
-* nRF91 Series DK + SPIM
+Enabling raw TX support
+========================
 
-
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
-The following is an example of the CLI command:
+To enable ``raw_tx`` shell support, add the following CMake option to your build command:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp
-
-To build for the nRF7002 EK with nRF5340 DK, use the ``nrf5340dk/nrf5340/cpuapp`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek``.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
-
-To build with ``raw_tx`` shell support for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target and the ``wifi-raw-tx`` snippet.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf7002dk/nrf5340/cpuapp -S wifi-raw-tx -- -DSB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES=y
-
-.. tabs::
-
-   .. group-tab:: nRF9151 DK
-
-      To build for the nRF9151 DK, use the ``nrf9151dk/nrf9151/ns`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
-      The following is an example of the CLI command:
-
-      .. code-block:: console
-
-         west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-
-   .. group-tab:: nRF9161 DK
-
-      To build for the nRF9161 DK, use the ``nrf9161dk/nrf9161/ns`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
-      The following is an example of the CLI command:
-
-      .. code-block:: console
-
-         west build -p -b nrf9161dk/nrf9161/ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-
-   .. group-tab:: nRF9160 DK
-
-      To build for the nRF9160 DK, use the ``nrf9160dk/nrf9160/ns`` board target with the ``SHIELD`` CMake option set to ``nrf7002ek`` and a scan-only overlay configuration.
-      The following is an example of the CLI command:
-
-    .. code-block:: console
-
-       west build -b nrf9160dk/nrf9160/ns -- -DEXTRA_CONF_FILE=overlay-scan-only.conf -DSHIELD=nrf7002ek -DSB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
-
-.. note::
-   The nRF91 Series supports Wi-Fi through nR70 Series shields but is limited to scan-only operation to enhance location accuracy.
-   However, it does not support full Wi-Fi operations.
-
-To build for the Thingy:91 X using the nRF5340 as the host chip, use the ``thingy91x/nrf5340/cpuapp`` board target.
-The sample uses a partition layout in which the nRF5340 owns the external flash.
-This layout is defined in devicetree by the :file:`boards/thingy91x_nrf5340_cpuapp.overlay` file of this sample, with matching overlays for the other images built by sysbuild in the :file:`sysbuild/` directory, so no additional build options are needed.
-This requires an external debugger since the nRF9151 normally owns the buses.
-This special configuration is not compatible with nRF9151 firmware compiled for the default configuration.
-You need to erase the nRF9151 first to avoid conflicts.
-The following is an example of the CLI commands:
-
-.. code-block:: console
-
-   west build -b thingy91x/nrf5340/cpuapp
-   # Set SWD switch to nRF91 and check if you are connected to an nRF91:
-   nrfutil device device-info
-   # If you see deviceVersion as NRF9120_xxAA_REV3 in the above output, proceed with erasing:
-   nrfutil device --recover
-   # Flip the SWD switch back to nRF53.
-   nrfutil device device-info
-   # If you see deviceVersion as NRF5340_xxAA_REV1 in the above output, proceed with flashing:
-   west flash --erase
+   -S wifi-raw-tx -- -DSB_CONFIG_WIFI_NRF70_SYSTEM_WITH_RAW_MODES=y
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
@@ -481,12 +411,11 @@ Testing STA mode
 Testing SAP mode
 ================
 
-To test the SAP mode, build the sample using the ``wifi-sap`` snippet.
-The following is an example of the CLI command:
+To test the SAP mode, build the sample with the ``wifi-sap`` snippet (see the Requirements table and :ref:`cmake_options` for the ``SHIELD`` required for your board target):
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -S wifi-sap
+   west build -p -b <board target> -S wifi-sap
 
 |test_sample|
 

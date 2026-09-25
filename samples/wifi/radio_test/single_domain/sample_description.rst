@@ -20,9 +20,26 @@ The sample also shows how to program the user region of FICR parameters on the d
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
-.. table-from-sample-yaml::
+.. list-table::
+   :header-rows: 1
+
+   * - Hardware platform
+     - PCA
+     - Board name
+     - Board target
+     - Shields
+   * - nRF54LM20 DK
+     - PCA10184
+     - nrf54lm20dk
+     - ``nrf54lm20dk/nrf54lm20b/cpuapp``, ``nrf54lm20dk/nrf54lm20a/cpuapp``
+     - ``"nrf7002eb2"``
+   * - nRF54L15 DK
+     - PCA10156
+     - nrf54l15dk
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - ``"nrf7002eb_interposer_p1;nrf7002eb"``, ``"nrf7002eb2"``
 
 Overview
 ********
