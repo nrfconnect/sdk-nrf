@@ -37,7 +37,7 @@ class SoCMaturityTable(SphinxDirective):
 
     @override
     def run(self) -> list[nodes.Node]:
-        table = nodes.table()
+        table = nodes.table(classes=["soc-maturity-table"])
         tgroup = nodes.tgroup(cols=3)
         table += tgroup
 
