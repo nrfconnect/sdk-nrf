@@ -36,6 +36,8 @@
 #include <sxsymcrypt/internal.h>
 #include <sxsymcrypt/trng.h>
 #include <sxsymcrypt/hashdefs.h>
+#include <string.h>
+#include <zephyr/sys/byteorder.h>
 
 #if defined(PSA_NEED_CRACEN_MULTIPART_WORKAROUNDS)
 #if defined(PSA_NEED_CRACEN_CHACHA20_POLY1305)
@@ -47,6 +49,31 @@
 #define SX_BLKCIPHER_AES_BLK_SZ (16U)
 
 #define SX_BLKCIPHER_CHACHA20_BLK_SZ (64U)
+
+/* CCM* (IEEE Std 802.15.4, Annex B) with a zero-length authentication field is
+ * AES-CTR over the counter blocks
+ *
+ *	A_i = Flags(1) || Nonce(15 - L) || i(L, big endian)
+ *
+ * with the length field L fixed at 2 and the keystream starting at A_1; A_0 would
+ * encrypt the authentication field, which this mode does not have. L = 2 gives the
+ * 13-octet nonce that PSA_CIPHER_IV_LENGTH() reports, and caps the message at
+ * 2^(8 * L) - 1 octets, which is also what keeps i from carrying into the nonce.
+ */
+#define CCM_STAR_L		 2
+#define CCM_STAR_NONCE_LENGTH	 PSA_CIPHER_IV_LENGTH(PSA_KEY_TYPE_AES, PSA_ALG_CCM_STAR_NO_TAG)
+#define CCM_STAR_MAX_MESSAGE_LEN (BIT(8 * CCM_STAR_L) - 1)
+
+BUILD_ASSERT(1 + CCM_STAR_NONCE_LENGTH + CCM_STAR_L == SX_BLKCIPHER_IV_SZ,
+	     "A_i must tile one cipher block");
+
+/** Build the CCM* counter block A_1 from @p nonce, shared by both cipher drivers. */
+static inline void cracen_ccm_star_build_a1(uint8_t iv[SX_BLKCIPHER_IV_SZ], const uint8_t *nonce)
+{
+	iv[0] = CCM_STAR_L - 1;
+	memcpy(&iv[1], nonce, CCM_STAR_NONCE_LENGTH);
+	sys_put_be16(1, &iv[1 + CCM_STAR_NONCE_LENGTH]);
+}
 
 #if defined(PSA_NEED_CRACEN_STREAM_CIPHER_CHACHA20)
 /** Maximum block cipher block size.
@@ -301,9 +328,32 @@ struct cracen_cipher_operation {
 	uint8_t unprocessed_input[SX_BLKCIPHER_MAX_BLK_SZ];
 	uint8_t unprocessed_input_bytes;
 	uint8_t blk_size;
+	/** Accumulated message length, only used by PSA_ALG_CCM_STAR_NO_TAG. */
+	uint16_t processed_length;
 	enum cipher_operation dir;
 };
 typedef struct cracen_cipher_operation cracen_cipher_operation_t;
+
+/* CCM* only: reject input that would take the message past CCM_STAR_MAX_MESSAGE_LEN.
+ * Called once the other checks on the update have passed, so a rejected update
+ * leaves the operation untouched.
+ */
+static inline psa_status_t cracen_ccm_star_add_length(cracen_cipher_operation_t *operation,
+						      size_t input_length)
+{
+	if (!IS_ENABLED(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES) ||
+	    operation->alg != PSA_ALG_CCM_STAR_NO_TAG) {
+		return PSA_SUCCESS;
+	}
+
+	if (input_length > CCM_STAR_MAX_MESSAGE_LEN - operation->processed_length) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	operation->processed_length += input_length;
+
+	return PSA_SUCCESS;
+}
 
 /** Software CCM context for CRACEN software implementations. */
 struct cracen_sw_ccm_context_s {
