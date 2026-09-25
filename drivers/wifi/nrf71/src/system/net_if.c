@@ -12,6 +12,7 @@
 #include <common/mem_mgmt.h>
 #include <common/nbuf_mgmt.h>
 #include <stdlib.h>
+#include <string.h>
 
 #ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
 #include <zephyr/random/random.h>
@@ -36,6 +37,134 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
 #endif /* CONFIG_NRF71_STA_MODE */
+
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+static void nrf_wifi_vif_key_mac_store(unsigned char mac[NRF_WIFI_ETH_ADDR_LEN],
+				       const unsigned char *addr)
+{
+	if (addr) {
+		memcpy(mac, addr, NRF_WIFI_ETH_ADDR_LEN);
+	} else {
+		memset(mac, 0, NRF_WIFI_ETH_ADDR_LEN);
+	}
+}
+
+static struct nrf_wifi_vif_key_track_entry *nrf_wifi_vif_key_find(
+	struct nrf_wifi_vif_ctx_zep *vif,
+	unsigned char key_idx,
+	const unsigned char *addr)
+{
+	for (size_t i = 0; i < NRF_WIFI_VIF_KEY_TRACK_SLOTS; i++) {
+		struct nrf_wifi_vif_key_track_entry *entry = &vif->key_track[i];
+		unsigned char mac[NRF_WIFI_ETH_ADDR_LEN];
+
+		if (!entry->active || entry->key_idx != key_idx) {
+			continue;
+		}
+
+		nrf_wifi_vif_key_mac_store(mac, addr);
+		if (!memcmp(entry->mac, mac, NRF_WIFI_ETH_ADDR_LEN)) {
+			return entry;
+		}
+	}
+
+	return NULL;
+}
+
+static struct nrf_wifi_vif_key_track_entry *nrf_wifi_vif_key_slot_alloc(
+	struct nrf_wifi_vif_ctx_zep *vif)
+{
+	for (size_t i = 0; i < NRF_WIFI_VIF_KEY_TRACK_SLOTS; i++) {
+		if (!vif->key_track[i].active) {
+			return &vif->key_track[i];
+		}
+	}
+
+	return NULL;
+}
+
+void nrf_wifi_vif_key_installed(struct nrf_wifi_vif_ctx_zep *vif,
+				unsigned char key_idx,
+				const unsigned char *mac,
+				unsigned int cipher_suite)
+{
+	struct nrf_wifi_vif_key_track_entry *entry;
+
+	if (!vif) {
+		return;
+	}
+
+	entry = nrf_wifi_vif_key_find(vif, key_idx, mac);
+	if (!entry) {
+		entry = nrf_wifi_vif_key_slot_alloc(vif);
+		if (!entry) {
+			LOG_WRN("TKIP offload policy: key track table full");
+			return;
+		}
+		entry->active = true;
+		entry->key_idx = key_idx;
+		nrf_wifi_vif_key_mac_store(entry->mac, mac);
+	}
+
+	entry->cipher_suite = cipher_suite;
+
+	if (cipher_suite == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) {
+		LOG_DBG("TKIP key installed: host TCP/IP checksum enabled on VIF %u",
+			vif->vif_idx);
+	}
+}
+
+void nrf_wifi_vif_key_removed(struct nrf_wifi_vif_ctx_zep *vif,
+			      unsigned char key_idx,
+			      const unsigned char *mac)
+{
+	struct nrf_wifi_vif_key_track_entry *entry;
+
+	if (!vif) {
+		return;
+	}
+
+	entry = nrf_wifi_vif_key_find(vif, key_idx, mac);
+	if (!entry) {
+		return;
+	}
+
+	if (entry->cipher_suite == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) {
+		memset(entry, 0, sizeof(*entry));
+		if (!nrf_wifi_vif_tkip_in_use(vif)) {
+			LOG_DBG("TKIP keys cleared: HW TCP/IP checksum restored on VIF %u",
+				vif->vif_idx);
+		}
+	} else {
+		memset(entry, 0, sizeof(*entry));
+	}
+}
+
+void nrf_wifi_vif_key_track_reset(struct nrf_wifi_vif_ctx_zep *vif)
+{
+	if (!vif) {
+		return;
+	}
+
+	memset(vif->key_track, 0, sizeof(vif->key_track));
+}
+
+bool nrf_wifi_vif_tkip_in_use(const struct nrf_wifi_vif_ctx_zep *vif)
+{
+	if (!vif) {
+		return false;
+	}
+
+	for (size_t i = 0; i < NRF_WIFI_VIF_KEY_TRACK_SLOTS; i++) {
+		if (vif->key_track[i].active &&
+		    vif->key_track[i].cipher_suite == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) {
+			return true;
+		}
+	}
+
+	return false;
+}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 						struct nrf_wifi_umac_event_set_interface *event,
@@ -363,8 +492,14 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev __unused,
 			ETHERNET_LINK_100BASE | ETHERNET_LINK_1000BASE);
 
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
-	caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
-		ETHERNET_HW_RX_CHKSUM_OFFLOAD;
+	{
+		const struct nrf_wifi_vif_ctx_zep *vif = dev->data;
+
+		if (!vif || !nrf_wifi_vif_tkip_in_use(vif)) {
+			caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
+				ETHERNET_HW_RX_CHKSUM_OFFLOAD;
+		}
+	}
 #endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 #ifdef CONFIG_NRF71_RAW_DATA_TX
@@ -832,6 +967,9 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 	vif_ctx_zep->connect_scan_res_cnt = 0;
 #endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
 #endif /* CONFIG_NRF71_STA_MODE */
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	nrf_wifi_vif_key_track_reset(vif_ctx_zep);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 }
 
 int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
@@ -1179,8 +1317,9 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 	}
 #endif
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
-	if (type  == ETHERNET_CONFIG_TYPE_TX_CHECKSUM_SUPPORT ||
-	    type == ETHERNET_CONFIG_TYPE_RX_CHECKSUM_SUPPORT) {
+	if ((type == ETHERNET_CONFIG_TYPE_TX_CHECKSUM_SUPPORT ||
+	     type == ETHERNET_CONFIG_TYPE_RX_CHECKSUM_SUPPORT) &&
+	    !nrf_wifi_vif_tkip_in_use(vif_ctx_zep)) {
 		config->chksum_support = ETHERNET_CHECKSUM_SUPPORT_IPV4_HEADER |
 					 ETHERNET_CHECKSUM_SUPPORT_IPV4_ICMP |
 					 ETHERNET_CHECKSUM_SUPPORT_IPV6_HEADER |

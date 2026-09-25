@@ -18,6 +18,8 @@
 #include <zephyr/net/wifi_mgmt.h>
 #include <system/fmac_structs.h>
 
+struct nrf_wifi_vif_ctx_zep;
+
 #define UNICAST_MASK GENMASK(7, 1)
 #define LOCAL_BIT BIT(1)
 
@@ -70,4 +72,32 @@ void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 				      unsigned int event_len);
 
 int nrf_wifi_stats_reset(const struct device *dev, struct net_if *iface);
+
+#if defined(CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD) || defined(__DOXYGEN__)
+/**
+ * @brief Record an installed key on a VIF (used for TKIP offload policy).
+ */
+void nrf_wifi_vif_key_installed(struct nrf_wifi_vif_ctx_zep *vif,
+				unsigned char key_idx,
+				const unsigned char *mac,
+				unsigned int cipher_suite);
+
+/**
+ * @brief Record removal of a key on a VIF.
+ */
+void nrf_wifi_vif_key_removed(struct nrf_wifi_vif_ctx_zep *vif,
+			      unsigned char key_idx,
+			      const unsigned char *mac);
+
+/**
+ * @brief Clear all tracked keys on a VIF.
+ */
+void nrf_wifi_vif_key_track_reset(struct nrf_wifi_vif_ctx_zep *vif);
+
+/**
+ * @brief True when a TKIP key is installed on this VIF.
+ */
+bool nrf_wifi_vif_tkip_in_use(const struct nrf_wifi_vif_ctx_zep *vif);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+
 #endif /* __ZEPHYR_NET_IF_H__ */
