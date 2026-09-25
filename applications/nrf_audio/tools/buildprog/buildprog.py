@@ -115,8 +115,7 @@ def __sirk_is_valid(sirk):
     return True
 
 
-def __build_cmd_get(core: Core, device: AudioDevice,
-                    pristine, options, sirk=""):
+def __build_cmd_get(core: Core, device: AudioDevice, options, sirk=""):
 
     build_cmd = (f"west build {TARGET_AUDIO_FOLDER} "
                  f"-b {TARGET_BOARD_NRF5340_AUDIO_DK_APP_NAME} "
@@ -155,29 +154,98 @@ def __build_cmd_get(core: Core, device: AudioDevice,
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
 
-    if pristine:
-        build_cmd += " --pristine"
-
-    dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device / core
+    # Shared by app/net: sysbuild always configures both domains in one
+    # top-level build dir regardless of --domain, so app and net builds
+    # for the same transport/device must reuse the same dest_folder.
+    dest_folder = TARGET_AUDIO_BUILD_FOLDER / options.transport / device
 
     return build_cmd, dest_folder, device_flag, overlay_flag
 
 
-def __build_module(build_config, options, sirk=""):
+def __other_core(core: Core) -> Core:
+    return Core.net if core == Core.app else Core.app
+
+
+def __is_configured(dest_folder) -> bool:
+    """True if dest_folder is an actual sysbuild root, not just an empty
+    or stale (e.g. leftover pre-migration per-core) directory."""
+    return (dest_folder / "CMakeCache.txt").is_file()
+
+
+def __domain_hex_path(dest_folder, core: Core):
+    domain = "nrf_audio" if core == Core.app else "ipc_radio"
+    return dest_folder / domain / "zephyr/zephyr.hex"
+
+
+def __legacy_domain_hex_path(dest_folder, core: Core):
+    """Hex location used by the old per-core build folder layout
+    (tools/build/{transport}/{device}/{app,net}/...), kept only so an
+    upgrade from that layout doesn't silently wipe a still-good build."""
+    domain = "nrf_audio" if core == Core.app else "ipc_radio"
+    return dest_folder / core.value / domain / "zephyr/zephyr.hex"
+
+
+def __confirm_pristine_shared_wipe(build_config, dest_folder, requested_cores):
+    """dest_folder is shared between app/net. Ask the user before a
+    single-core pristine build erases the other core's existing build."""
+
+    other_core = __other_core(build_config.core)
+
+    # The other core is already going to be (re)built later in this same
+    # run (e.g. "-c both"), so nothing will actually be lost.
+    if other_core in requested_cores:
+        return False
+
+    other_hex = __domain_hex_path(dest_folder, other_core)
+    legacy_other_hex = __legacy_domain_hex_path(dest_folder, other_core)
+
+    if not other_hex.is_file() and not legacy_other_hex.is_file():
+        return False
+
+    existing_hex = other_hex if other_hex.is_file() else legacy_other_hex
+
+    print(
+        f"WARNING: {dest_folder} is shared between the app and net cores.\n"
+        f"Pristine-building only the {build_config.core.value} core will "
+        f"immediately delete the existing {other_core.value} core build "
+        f"({existing_hex}). If the rebuild fails, that build will need to "
+        f"be redone from scratch."
+    )
+    answer = input("Rebuild BOTH cores instead of losing the existing one? [y/N]: ").strip().lower()
+
+    if answer in ("y", "yes"):
+        return True
+
+    raise SystemExit("Aborted: pristine build would have erased the other core's build.")
+
+
+def __build_module(build_config, options, cleaned_folders, requested_cores, sirk=""):
     build_cmd, dest_folder, device_flag, overlay_flag = __build_cmd_get(
         build_config.core,
         build_config.device,
-        build_config.pristine,
         options,
         sirk,
     )
+
+    also_build_other_core = False
+
+    # Only wipe (and pass --pristine for) a shared dest_folder once per
+    # run, otherwise building "both" would pristine-reconfigure the
+    # folder again for the second core, dropping the first core's just
+    # applied device/overlay flags and losing its build output.
+    if build_config.pristine and dest_folder not in cleaned_folders:
+        if dest_folder.exists():
+            also_build_other_core = __confirm_pristine_shared_wipe(build_config, dest_folder, requested_cores)
+            shutil.rmtree(dest_folder)
+        cleaned_folders.add(dest_folder)
+        build_cmd += " --pristine"
+
     west_str = f"{build_cmd} -d {dest_folder} "
 
-    if build_config.pristine and dest_folder.exists():
-        shutil.rmtree(dest_folder)
-
-    # Only add compiler flags if folder doesn't exist already
-    if not dest_folder.exists():
+    # Only add compiler flags if the folder isn't already configured
+    # (raw dest_folder.exists() would wrongly skip these for a leftover
+    # pre-migration per-core directory, breaking the fresh configure).
+    if not __is_configured(dest_folder):
         west_str = west_str + device_flag + overlay_flag
 
     print("Run: " + west_str)
@@ -186,6 +254,24 @@ def __build_module(build_config, options, sirk=""):
 
     if ret_val:
         raise Exception("cmake error: " + str(ret_val))
+
+    if also_build_other_core:
+        other_cmd, _, _, _ = __build_cmd_get(
+            __other_core(build_config.core),
+            build_config.device,
+            options,
+            sirk,
+        )
+        # Folder was just configured by the first build above, so no need
+        # to re-pass device/overlay flags for this incremental second build.
+        other_west_str = f"{other_cmd} -d {dest_folder} "
+
+        print("Run: " + other_west_str)
+
+        ret_val = os.system(other_west_str)
+
+        if ret_val:
+            raise Exception("cmake error: " + str(ret_val))
 
 
 def __find_snr():
@@ -203,10 +289,10 @@ def __find_snr():
 def __populate_hex_paths(dev, options):
     """Poplulate hex paths where relevant"""
 
-    _, temp_dest_folder, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options.pristine, options, dev.sirk)
+    _, temp_dest_folder, _, _ = __build_cmd_get(Core.app, dev.nrf5340_audio_dk_dev, options, dev.sirk)
     dev.hex_path_app = temp_dest_folder / "nrf_audio/zephyr/zephyr.hex"
 
-    _, temp_dest_folder, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options.pristine, options, dev.sirk)
+    _, temp_dest_folder, _, _ = __build_cmd_get(Core.net, dev.nrf5340_audio_dk_dev, options, dev.sirk)
     dev.hex_path_net = temp_dest_folder / "ipc_radio/zephyr/zephyr.hex"
 
 
@@ -430,8 +516,9 @@ def __main():
                     )
                 )
 
+    cleaned_folders = set()
     for build_cfg in build_configs:
-        __build_module(build_cfg, options, sirk)
+        __build_module(build_cfg, options, cleaned_folders, cores, sirk)
 
     # Build step finished
     # Program step start

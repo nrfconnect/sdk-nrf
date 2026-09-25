@@ -114,9 +114,10 @@ For example, the following command builds headset and gateway applications using
 
 The command can be run from any location, as long as the correct path to :file:`buildprog.py` is given.
 
-The build files are saved in separate subdirectories in the :file:`applications/nrf_audio/tools/build` directory.
-The script creates a directory for each transport, device type, core, and version combination.
-For example, when running the command above, the script creates the :file:`unicast/gateway/app`, :file:`unicast/gateway/net`, :file:`unicast/headset/app`, :file:`unicast/headset/net` files and directories.
+The build files are saved in subdirectories in the :file:`applications/nrf_audio/tools/build` directory.
+The script creates one shared sysbuild directory for each transport and device type combination, since sysbuild always configures both the application core (``nrf_audio``) and network core (``ipc_radio``) domains together.
+The ``-c`` parameter only selects which domain is actually built into that shared directory, so building ``app``, ``net``, or ``both`` for the same transport and device reuses the same folder instead of creating a duplicate one.
+For example, when running the command above, the script creates the :file:`unicast/gateway` and :file:`unicast/headset` directories, each containing an ``nrf_audio`` and an ``ipc_radio`` subdirectory.
 
 Script parameters for programming
 ---------------------------------
