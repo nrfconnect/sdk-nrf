@@ -908,6 +908,9 @@
 /snippets/nrf70-driver-verbose-debug/     @nrfconnect/ncs-wcg-drivers
 /snippets/nrf70-fw-patch-ext-flash/       @nrfconnect/ncs-wcg-drivers
 /snippets/nrf70-wifi/                     @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power/               @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power-diag/          @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power-quiet/         @nrfconnect/ncs-wcg-drivers
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-modem

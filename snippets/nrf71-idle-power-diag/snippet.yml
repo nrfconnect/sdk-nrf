@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+name: nrf71-idle-power-diag
+
+boards:
+  nrf7120dk/nrf7120/cpuapp:
+    append:
+      EXTRA_CONF_FILE: nrf71-idle-power-diag.conf
+  nrf7120dk/nrf7120/cpuapp/ns:
+    append:
+      EXTRA_CONF_FILE: nrf71-idle-power-diag.conf
