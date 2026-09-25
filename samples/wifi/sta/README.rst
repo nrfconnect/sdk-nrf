@@ -22,6 +22,28 @@ Using this sample, the development kit can connect to the specified access point
 The sample uses the :ref:`lib_wifi_ready` library to check Wi-Fi readiness.
 To use the :ref:`lib_wifi_ready` library, enable the :kconfig:option:`CONFIG_WIFI_READY_LIB` Kconfig option.
 
+RPU recovery
+============
+
+The RPU recovery mechanism is used to recover from the RPU hang.
+This feature performs an interface reset (down and up), which triggers an RPU cold boot.
+During recovery, the application's network connection is lost, and the application must reestablish it once recovery is complete.
+
+nRF70 Series specific features
+==============================
+
+nRF70 Series devices are companion ICs that connect to a host SoC over the Quad Serial Peripheral Interface (QSPI).
+The following feature is specific to the QSPI host interface and is available only on nRF70 Series devices.
+
+Quad Serial Peripheral Interface (QSPI) encryption
+--------------------------------------------------
+
+This sample demonstrates QSPI encryption API usage.
+You can set the key using the :kconfig:option:`CONFIG_NRF70_QSPI_ENCRYPTION_KEY` Kconfig option.
+
+If encryption of the QSPI traffic is required for the production devices, matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
+The key from non-volatile storage must be set as the encryption key using the APIs.
+
 User interface
 **************
 
@@ -54,21 +76,6 @@ You must configure the following Wi-Fi credentials in the :file:`prj.conf` file:
 
 See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how to run ``menuconfig``.
 
-Quad Serial Peripheral Interface (QSPI) encryption
-**************************************************
-
-This sample demonstrates QSPI encryption API usage.
-You can set the key using the :kconfig:option:`CONFIG_NRF70_QSPI_ENCRYPTION_KEY` Kconfig option.
-
-If encryption of the QSPI traffic is required for the production devices, matching keys must be programmed in both the nRF7002 OTP and non-volatile storage associated with the host.
-The key from non-volatile storage must be set as the encryption key using the APIs.
-
-Power management
-****************
-
-This sample also enables Zephyr's power management policy by default, which sets the nRF5340 :term:`System on Chip (SoC)` into low-power mode whenever it is idle.
-See :ref:`zephyr:pm-guide` in the Zephyr documentation for more information on power management.
-
 IP addressing
 *************
 The sample uses DHCP to obtain an IP address for the Wi-Fi interface.
@@ -92,17 +99,13 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
-The following is an example of the CLI command:
-
-.. code-block:: console
-
-   west build -b nrf7002dk/nrf5340/cpuapp
+See the Requirements section for the board targets and shields supported by this sample.
+For information about providing the ``SHIELD`` CMake option, see :ref:`cmake_options`.
 
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 
 Testing
-=======
+*******
 
 |test_sample|
 
@@ -181,17 +184,16 @@ Testing
     [00:00:07.720,245] <inf> sta: RSSI: -57
     [00:00:07.720,245] <inf> sta: Static IP address:
 
-RPU recovery
-************
 
-The RPU recovery mechanism is used to recover from the RPU (nRF70) hang.
-This feature performs an interface reset (down and up), which triggers a RPU cold boot.
-Application's network connection will be lost during the recovery process, and it is application's responsibility to reestablish the network connection.
+RPU recovery testing
+====================
 
-Testing
-=======
+To test RPU recovery functionality, follow the instructions for your specific Nordic Wi-Fi Series device.
 
-To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig options.
+nRF70 Series
+------------
+
+To test RPU recovery, you must build the sample with the :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF70_UTIL` Kconfig options.
 
 #. Trigger RPU recovery using the following command:
 
@@ -205,8 +207,43 @@ To test RPU recovery, you must build the sample with :kconfig:option:`CONFIG_SHE
 
       RPU recovery triggered
 
+nRF71 Series
+------------
+
+To test RPU recovery, you must build the sample with the :kconfig:option:`CONFIG_SHELL` and :kconfig:option:`CONFIG_NRF71_UTIL` Kconfig options.
+
+#. Trigger RPU recovery using the following command:
+
+   .. code-block:: console
+
+      nrf71 util rpu_recovery_test
+
+   If RPU recovery is triggered, you should see an output similar to the following:
+
+   .. code-block:: console
+
+      RPU recovery triggered
+
+.. _wifi_sta_performance_testing_memory_footprint:
+
+Performance testing and memory footprint analysis
+=================================================
+
+The sample can be used to test the performance of the Wi-Fi connection.
+The performance tuning is done to achieve a trade-off between memory usage and performance.
+
+You can use the :file:`overlay-zperf.conf` file to run the performance test.
+The default build, without the overlay, is used for memory footprint testing and analysis.
+The overlay must be enabled to run the performance test corresponding to the memory footprints.
+
 Power management testing
-************************
+========================
+
+You can use this sample to measure the current consumption of the host SoC and the Wi-Fi device while the sample is connected to an access point.
+The measurement setup and the expected current consumption depend on the Nordic Wi-Fi device you use.
+
+nRF70 Series
+------------
 
 You can use this sample to measure the current consumption of both the nRF5340 SoC and the nRF7002 device independently by using two separate Power Profiler Kit II (PPK2) devices.
 The nRF5340 SoC is connected to the first PPK2 and the nRF7002 DK is connected to the second PPK2.
@@ -216,18 +253,6 @@ See `Measuring current`_ for more information about how to set up and measure th
 The average current consumption in an idle case can be around ~1-2 mA in the nRF5340 SoC and ~15 µA in the nRF7002 device.
 
 See :ref:`app_power_opt` for more information on power management testing and usage of the PPK2.
-
-.. _wifi_sta_performance_testing_memory_footprint:
-
-Performance testing and memory footprint analysis
-*************************************************
-
-The sample can be used to test the performance of the Wi-Fi connection.
-The performance tuning is done to achieve a trade-off between memory usage and performance.
-
-You can use the :file:`overlay-zperf.conf` file to run the performance test.
-The default build, without the overlay, is used for memory footprint testing and analysis.
-The overlay must be enabled to run the performance test corresponding to the memory footprints.
 
 Dependencies
 ************
