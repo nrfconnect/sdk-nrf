@@ -1,9 +1,9 @@
 .. _wifi_radio_test_sd:
 
 .. ncs-sample::
-   :title: Wi-Fi: Bluetooth LE Wi-Fi Radio test (Single domain)
+   :title: Wi-Fi: Bluetooth LE Wi-Fi Radio test for nRF70 Series (Single domain)
 
-   The Bluetooth LE Wi-Fi Radio test (Single domain) sample demonstrates how to use the radio test for both Wi-Fi® and Bluetooth® LE protocols using a single domain image, that is, both running on the same core (application core).
+   The Bluetooth LE Wi-Fi Radio test for nRF70 Series (Single domain) sample demonstrates how to use the radio test for both Wi-Fi® and Bluetooth® LE protocols using a single domain image, that is, both running on the same core (application core).
    The sample shows how to use the radio test subcommands to configure the parameters and run the radio test.
 
    The sample also supports programming the Factory Information Configuration Registers (FICR) fields defined in the nRF7002 one-time programmable (OTP) memory.
