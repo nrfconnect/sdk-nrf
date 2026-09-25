@@ -355,8 +355,6 @@
   - "subsys/mpsl/**/*"
   - "subsys/nrf_security/**/*"
   - "modules/mcuboot/**/*"
-  - "modules/tfm/**/*"
-  - "modules/trusted-firmware-m/**/*"
   - any:
       - "include/bluetooth/**/*"
       - "!include/bluetooth/mesh/**/*"
