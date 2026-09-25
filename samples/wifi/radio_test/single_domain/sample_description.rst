@@ -20,9 +20,18 @@ The sample also shows how to program the user region of FICR parameters on the d
 Requirements
 ************
 
-The sample supports the following development kit:
+The sample supports the following development kits:
 
-.. table-from-sample-yaml::
+.. table-from-rows:: /includes/sample_board_rows.txt
+   :header: heading
+   :rows: nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54l15dk_nrf54l15_cpuapp
+
+.. note::
+
+   The boards require one of the following shields to be specified on the build command line:
+
+   * nRF54LM20 DK - ``nrf7002eb2``
+   * nRF54L15 DK - ``nrf7002eb_interposer_p1;nrf7002eb`` or ``nrf7002eb2``
 
 Overview
 ********
