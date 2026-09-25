@@ -4922,6 +4922,24 @@ MCUboot
 
 The issues in this section are related to :ref:`MCUboot <mcuboot_wrapper>`.
 
+.. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+NCSDK-41559: MCUboot repeatedly enters serial recovery after a bootloader recovery request
+  When the application calls ``boot_request_enter_recovery()`` (see :kconfig:option:`CONFIG_NRF_MCUBOOT_BOOT_REQUEST`) to enter MCUboot serial recovery on the next reset, MCUboot enters serial recovery but does not clear the consumed recovery request.
+  After the first use, the device enters serial recovery on every reset and the application no longer boots.
+  When the retention backend is used, the request survives software, watchdog, and non-pin resets; only a full power cycle or a true pin reset clears it.
+  Pin reset through software, watchdog reset, and reset through ``nrfutil device reset`` all re-enter serial recovery.
+
+  **Workaround:** Cherry-pick the fix from `sdk-mcuboot PR #757`_ to your local ``sdk-mcuboot`` repository and rebuild the project.
+
+.. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
+
+NCSDK-41560: The :kconfig:option:`CONFIG_NRF_BOOT_SERIAL_BOOT_REQ` Kconfig option cannot be the only serial recovery entrance method
+  Enabling only the :kconfig:option:`CONFIG_NRF_BOOT_SERIAL_BOOT_REQ` Kconfig option (together with :kconfig:option:`CONFIG_NRF_MCUBOOT_BOOT_REQUEST` and :kconfig:option:`CONFIG_MCUBOOT_SERIAL`) does not enter serial recovery when the application requests it through the bootloader-request subsystem.
+  Serial recovery through bootloader requests works only if at least one other MCUboot serial recovery entrance method is also enabled.
+
+  **Workaround:** Cherry-pick the fix from `sdk-mcuboot PR #757`_ to your local ``sdk-mcuboot`` repository and rebuild the project.
+
 .. rst-class:: v3-4-1 v3-4-0
 
 NCSDK-39664: RSA encryption fails
