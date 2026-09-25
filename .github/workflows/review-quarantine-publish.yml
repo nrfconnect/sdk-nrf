@@ -34,10 +34,22 @@ jobs:
         id: prep
         run: |
           set -euo pipefail
+
+          # A missing/empty comment means the Generate run found no quarantine
+          # configuration changes worth reporting. That is a valid outcome, so
+          # skip publishing instead of failing the workflow.
           PR_FILE="$(find ./quarantine-artifacts -type f -name 'pr_number.txt' -print -quit)"
           if [[ -z "${PR_FILE}" || ! -s "${PR_FILE}" ]]; then
-            echo "ERROR: pr_number.txt not found or empty." >&2
-            exit 1
+            echo "No pr_number.txt found; nothing to publish. Skipping."
+            echo "has_comment=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          COMMENT_FILE="$(find ./quarantine-artifacts -type f -name 'quarantine_comment.md' -print -quit)"
+          if [[ -z "${COMMENT_FILE}" || ! -s "${COMMENT_FILE}" ]]; then
+            echo "No quarantine changes to report (comment absent or empty). Skipping."
+            echo "has_comment=false" >> "$GITHUB_OUTPUT"
+            exit 0
           fi
 
           PR_NUMBER="$(head -n1 -- "$PR_FILE" | tr -d '\r\n')"
@@ -46,16 +58,12 @@ jobs:
             exit 1
           fi
 
-          COMMENT_FILE="$(find ./quarantine-artifacts -type f -name 'quarantine_comment.md' -print -quit)"
-          if [[ -z "${COMMENT_FILE}" || ! -s "${COMMENT_FILE}" ]]; then
-            echo "ERROR: Quarantine comment not found or empty." >&2
-            exit 1
-          fi
-
           cp -- "$COMMENT_FILE" quarantine_comment_body.md
           printf 'pr_number=%s\n' "$PR_NUMBER" >> "$GITHUB_OUTPUT"
+          echo "has_comment=true" >> "$GITHUB_OUTPUT"
 
       - name: Find Comment
+        if: steps.prep.outputs.has_comment == 'true'
         uses: peter-evans/find-comment@3eae4d37986fb5a8592848f6a574fdf654e61f9e # v3
         id: find_comment
         with:
@@ -64,6 +72,7 @@ jobs:
           body-includes: quarantine-notifier
 
       - name: Create or update comment
+        if: steps.prep.outputs.has_comment == 'true'
         uses: peter-evans/create-or-update-comment@71345be0265236311c031f5c7866368bd1eff043 # v4
         with:
           comment-id: ${{ steps.find_comment.outputs.comment-id }}
