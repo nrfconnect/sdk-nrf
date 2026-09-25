@@ -57,6 +57,7 @@ static struct mqtt_helper_cfg test_mqtt_helper_cfg;
 /* Variables used to expect some value being set by the UUT. */
 static enum aws_iot_evt_type event_type_expected;
 static enum aws_iot_shadow_topic_received_type topic_type_expected;
+static enum aws_fota_error_cause fota_error_cause_expected;
 static char *topic_expected = "";
 static char *hostname_expected = "";
 static char *client_id_expected = "";
@@ -71,6 +72,12 @@ static void event_handler_topic_type_check(const struct aws_iot_evt *const evt)
 {
 	TEST_ASSERT_EQUAL(evt->type, AWS_IOT_EVT_DATA_RECEIVED);
 	TEST_ASSERT_EQUAL(evt->data.msg.topic.type_received, topic_type_expected);
+}
+
+static void event_handler_fota_error_cause_check(const struct aws_iot_evt *const evt)
+{
+	TEST_ASSERT_EQUAL(AWS_IOT_EVT_FOTA_ERROR, evt->type);
+	TEST_ASSERT_EQUAL(fota_error_cause_expected, evt->data.err);
 }
 
 /* Stubs used to register test local handlers used to invoke events in the UUT. */
@@ -476,6 +483,25 @@ void test_aws_fota_events_should_be_propagated(void)
 
 	event.id = AWS_FOTA_EVT_DL_PROGRESS;
 	event_type_expected = AWS_IOT_EVT_FOTA_DL_PROGRESS;
+	test_aws_fota_handler(&event);
+}
+
+void test_aws_fota_error_cause_should_be_propagated(void)
+{
+	mqtt_helper_handlers_register(event_handler_fota_error_cause_check);
+
+	struct aws_fota_event event = {
+		.id = AWS_FOTA_EVT_ERROR,
+	};
+
+	/* A cause that originates from the fota_download library. */
+	event.cause = AWS_FOTA_ERROR_CAUSE_DOWNLOAD_FAILED;
+	fota_error_cause_expected = AWS_FOTA_ERROR_CAUSE_DOWNLOAD_FAILED;
+	test_aws_fota_handler(&event);
+
+	/* A cause that originates from the aws_fota library itself. */
+	event.cause = AWS_FOTA_ERROR_CAUSE_NO_SEC_TAG;
+	fota_error_cause_expected = AWS_FOTA_ERROR_CAUSE_NO_SEC_TAG;
 	test_aws_fota_handler(&event);
 }
 
