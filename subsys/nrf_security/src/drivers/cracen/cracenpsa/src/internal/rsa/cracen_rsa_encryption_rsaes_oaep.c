@@ -143,9 +143,7 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	/* Scan the padding string PS and find the 0x01 octet that separates PS
 	 * from the message M. Pointer datablockend points to the first octet after DB.
 	 */
-	while ((*datab == 0) && (datab < workmem.datablockend)) {
-		datab++;
-	}
+	datab += constant_count(datab, (size_t)(workmem.datablockend - datab), 0x00, MATCH_EQUAL);
 
 	r |= (datab == workmem.datablockend);
 

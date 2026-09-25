@@ -17,6 +17,8 @@
 #include <cracen_psa_primitives.h>
 #include <cracen_psa_hash.h>
 
+#define TLS12_ECJPAKE_OUTPUT_LENGTH (32)
+
 psa_status_t cracen_tls12_ecjpake_to_pms_setup(cracen_key_derivation_operation_t *operation)
 {
 	operation->capacity = PSA_TLS12_ECJPAKE_TO_PMS_DATA_SIZE;
@@ -45,13 +47,19 @@ psa_status_t cracen_tls12_ecjpake_to_pms_output_bytes(cracen_key_derivation_oper
 						      uint8_t *output, size_t output_length)
 {
 	size_t outlen;
-	psa_status_t status = cracen_hash_compute(
-		PSA_ALG_SHA_256, operation->ecjpake_to_pms.key, 32, output, 32, &outlen);
+	psa_status_t status;
+
+	if (output_length < TLS12_ECJPAKE_OUTPUT_LENGTH) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	status = cracen_hash_compute(PSA_ALG_SHA_256, operation->ecjpake_to_pms.key, 32, output,
+				     TLS12_ECJPAKE_OUTPUT_LENGTH, &outlen);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
-	if (outlen != 32) {
+	if (outlen != TLS12_ECJPAKE_OUTPUT_LENGTH) {
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
 	return PSA_SUCCESS;

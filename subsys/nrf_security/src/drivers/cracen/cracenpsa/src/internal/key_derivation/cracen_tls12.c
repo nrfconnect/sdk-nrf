@@ -39,7 +39,7 @@ static psa_status_t tls12_input_bytes(cracen_key_derivation_operation_t *operati
 		if (!PSA_ALG_IS_TLS12_PSK_TO_MS(operation->alg)) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
-		if (data_length > (sizeof(operation->tls12.secret) - 4)) {
+		if (data_length > PSA_TLS12_PSK_TO_MS_PSK_MAX_SIZE) {
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
 		/* First two bytes is uint16 that will be encoded in the mandatory
