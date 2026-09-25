@@ -6,6 +6,7 @@
 
 #include <zephyr/net_buf.h>
 #include <zephyr/random/random.h>
+#include <zephyr/sys/util.h>
 
 #include <zephyr/bluetooth/conn.h>
 #include <zephyr/bluetooth/gatt.h>
@@ -52,6 +53,18 @@ enum beacon_actions_att_err {
 	BEACON_ACTIONS_ATT_ERR_INVALID_VALUE   = 0x81,
 	BEACON_ACTIONS_ATT_ERR_NO_USER_CONSENT = 0x82,
 };
+
+/* The Beacon Actions Data Length field is one byte wide, so a longer message cannot be
+ * expressed on the wire.
+ */
+BUILD_ASSERT(CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN <= UINT8_MAX,
+	     "The Beacon Actions Data Length field is one byte wide");
+
+/* Every Beacon Actions operation must fit within the supported Data Length. */
+BUILD_ASSERT(BEACON_ACTIONS_CORE_PAYLOAD_MAX_LEN <=
+	     CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN,
+	     "CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN is too small for the "
+	     "core Beacon Actions operations");
 
 struct ring_context {
 	struct bt_conn *conn;
@@ -1329,6 +1342,15 @@ static int pf_ranging_response_send(struct bt_conn *conn,
 	/* Prepare a response. */
 	rsp_data_len = ranging_oob_msg_buf->len + BEACON_ACTIONS_RSP_AUTH_SEG_LEN;
 
+	if (rsp_data_len > CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN) {
+		LOG_ERR("Beacon Actions: Ranging Response message (0x%02X): Data Length %u "
+			"exceeds the maximum supported Data Length (%u)",
+			data_id, rsp_data_len,
+			CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN);
+
+		return -EINVAL;
+	}
+
 	net_buf_simple_add_u8(rsp_buf, data_id);
 	net_buf_simple_add_u8(rsp_buf, rsp_data_len);
 
@@ -1577,6 +1599,14 @@ ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
 	if (data_len != net_buf_simple_max_len(&fhn_beacon_actions_buf)) {
 		LOG_ERR("Beacon Actions: request with incorrect length: %d!=%d",
 			data_len, net_buf_simple_max_len(&fhn_beacon_actions_buf));
+		res = BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
+		goto finish;
+	}
+
+	if (data_len > CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN) {
+		LOG_ERR("Beacon Actions: request (0x%02X): Data Length %u exceeds "
+			"the maximum supported Data Length (%u)",
+			data_id, data_len, CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN);
 		res = BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 		goto finish;
 	}
