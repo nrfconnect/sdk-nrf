@@ -3,7 +3,7 @@
 .. ncs-sample::
    :title: Wi-Fi: Scan
 
-   The Scan sample demonstrates how to use the Nordic Semiconductor's Wi-Fi® chipset to scan for the access points without using the wpa_supplicant.
+   The Scan sample demonstrates how to use Nordic Semiconductor Wi-Fi devices to scan for access points without using the WPA supplicant.
 
 Requirements
 ************
@@ -11,6 +11,11 @@ Requirements
 The sample supports the following development kits:
 
 .. table-from-sample-yaml::
+
+.. note::
+
+   For boards listed with a shield, you must specify the shield on the build command line.
+   See `Building and running`_ for the generic build command.
 
 Overview
 ********
@@ -51,26 +56,23 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
-The following are examples of the CLI commands:
+See the Requirements section for the board targets and shields supported by this sample.
+For information about providing the ``SHIELD`` CMake option, see :ref:`cmake_options`.
 
-* Build to fetch only Device scan results
+By default, the sample fetches only Device scan results.
+To build the sample with support for Raw scan results as well, add one of the following CMake options to the build command:
 
-  .. code-block:: console
-
-   west build -b nrf7002dk/nrf5340/cpuapp
-
-* Build to fetch only Raw scan results
+* To fetch only Raw scan results, add the following option when building:
 
   .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY=y
+     -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS_ONLY=y
 
-* Build to fetch both Raw and Device scan results
+* To fetch both Raw and Device scan results, add the following option when building:
 
   .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp -- -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
+     -DCONFIG_WIFI_MGMT_RAW_SCAN_RESULTS=y
 
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 
