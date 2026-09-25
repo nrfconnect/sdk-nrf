@@ -1002,6 +1002,10 @@ Other libraries
   of an nRF71 Series application core by applying a configurable RAM retention level at
   boot and enabling the device power management options needed for peripherals to
   suspend while idle.
+  Added :c:func:`nrf71_idle_power_suspend_console` and
+  :c:func:`nrf71_idle_power_resume_console`, which suspend and resume the console/UART
+  device around an application's idle period, for use by any sample that wants the lowest
+  possible idle current.
 
 * Added the :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
 

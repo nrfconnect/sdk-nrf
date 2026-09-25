@@ -49,6 +49,21 @@ fixed-size tiers only make sense for a trivial image that fits below the selecte
 boundary. For a Wi-Fi build, use
 :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY` instead.
 
+Console suspend and resume
+***************************
+
+Enabling :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` alone does not suspend a
+polling-mode UART console backend, because such a backend never calls
+:c:func:`pm_device_runtime_put` on its own: the UART, and whatever clock it
+requests, stays fully active for as long as the application is running,
+including while it is otherwise idle.
+Call :c:func:`nrf71_idle_power_suspend_console` right before an idle
+:c:func:`k_sleep` or :c:func:`k_sem_take` call to suspend the device backing
+the ``zephyr,console`` chosen node, and :c:func:`nrf71_idle_power_resume_console`
+again before the next print. Both calls are no-ops if there is no
+``zephyr,console`` chosen node, or if the console device is not ready, so a
+sample can call them unconditionally.
+
 Diagnostics
 ***********
 
