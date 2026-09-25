@@ -19,6 +19,16 @@ The sample can perform all Wi-Fi operations in the 2.4GHz and 5GHz bands dependi
 
 Using this sample, the development kit can associate with, and ping to, any Wi-Fi capable access point in :abbr:`STA (Station)` mode.
 
+Power management
+****************
+
+On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample enables the
+:ref:`lib_nrf71_idle_power` library to reduce the nRF71 Series application core's
+System ON idle current.
+
+The console is not suspended in this sample so that the interactive shell remains
+responsive.
+
 .. _wifi_shell_sample_building_and_running:
 
 Building and running
