@@ -32,3 +32,9 @@ if(SB_CONFIG_BOOTLOADER_MCUBOOT AND SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENT
   add_image_flasher(NAME app_provision HEX_FILE "${CMAKE_BINARY_DIR}/app_provision.hex" BASE_IMAGE mcuboot)
   sysbuild_add_dependencies(FLASH mcuboot app_provision)
 endif()
+
+if(SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES)
+  include(image_flasher.cmake)
+  add_image_flasher(NAME bootconf HEX_FILE "${CMAKE_BINARY_DIR}/bootconf.hex" BASE_IMAGE mcuboot)
+  sysbuild_add_dependencies(FLASH bootconf mcuboot)
+endif()

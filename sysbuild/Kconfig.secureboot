@@ -391,6 +391,7 @@ config SECURE_BOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
 config SECURE_BOOT_BOOTCONF_LOCK_WRITES
 	bool "Protect bootloader's NVM from writes"
 	depends on SECURE_BOOT_BOOTCONF_LOCK_WRITES_SUPPORTED
+	default n if SOC_NRF54L05_CPUAPP || SOC_NRF54L10_CPUAPP || SOC_NRF54L15_CPUAPP
 	default y
 	help
 	  Sets the BOOTCONF region protection in the memory controller
