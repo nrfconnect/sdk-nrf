@@ -199,8 +199,9 @@ static void prov_reset(void)
 }
 
 static uint8_t dev_uuid[16];
+static bool initialized;
 
-static const struct bt_mesh_prov prov = {
+static struct bt_mesh_prov prov = {
 	.uuid = dev_uuid,
 #if defined(CONFIG_BT_MESH_DK_PROV_OOB_LOG) || defined(CONFIG_BT_MESH_DK_PROV_OOB_BLINK)
 	.output_size = 1,
@@ -226,7 +227,8 @@ static const struct bt_mesh_prov prov = {
 	.reset = prov_reset,
 };
 
-const struct bt_mesh_prov *bt_mesh_dk_prov_init(void)
+const struct bt_mesh_prov *bt_mesh_dk_prov_init_with_static_oob(const uint8_t *oob_val,
+								uint8_t oob_len)
 {
 	/* Generate an RFC-4122 version 4 compliant UUID.
 	 * Format:
@@ -251,7 +253,23 @@ const struct bt_mesh_prov *bt_mesh_dk_prov_init(void)
 	 *
 	 * https://tools.ietf.org/html/rfc4122
 	 */
-	size_t id_len = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
+	size_t id_len;
+
+	if (initialized) {
+		LOG_ERR("Already initialized");
+		return NULL;
+	}
+
+	/* A NULL value with a zero length disables static OOB. */
+	if ((oob_val == NULL && oob_len != 0) || (oob_val != NULL && oob_len == 0)) {
+		LOG_ERR("Invalid static OOB value or length: %u", oob_len);
+		return NULL;
+	}
+
+	prov.static_val = oob_val;
+	prov.static_val_len = oob_len;
+
+	id_len = hwinfo_get_device_id(dev_uuid, sizeof(dev_uuid));
 
 	if (!IS_ENABLED(CONFIG_BT_MESH_DK_LEGACY_UUID_GEN)) {
 		/* If device ID is shorter than UUID size, fill rest of buffer with
@@ -267,7 +285,14 @@ const struct bt_mesh_prov *bt_mesh_dk_prov_init(void)
 
 	k_work_init_delayable(&oob_work, oob_timer_handler);
 
+	initialized = true;
+
 	return &prov;
+}
+
+const struct bt_mesh_prov *bt_mesh_dk_prov_init(void)
+{
+	return bt_mesh_dk_prov_init_with_static_oob(NULL, 0);
 }
 
 void bt_mesh_dk_prov_node_reset_cb_set(void (*handler)(void))
