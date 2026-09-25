@@ -1,0 +1,7 @@
+&uart20 {
+	disable-rx;
+};
+
+&gpio4 {
+	status = "disabled";
+};

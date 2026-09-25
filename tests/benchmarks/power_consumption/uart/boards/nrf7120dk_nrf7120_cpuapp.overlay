@@ -1,0 +1,13 @@
+/ {
+	aliases {
+		led = &led0;
+	};
+};
+
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+};
+
+&gpio4 {
+	status = "disabled";
+};
