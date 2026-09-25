@@ -620,11 +620,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);
 
-	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-				   (void *)rpu_ctx_zep->phy_rf_params_addr[i]);
-		rpu_ctx_zep->phy_rf_params_addr[i] = 0;
-	}
+	memset(rpu_ctx_zep->phy_rf_params_addr, 0,
+	       sizeof(rpu_ctx_zep->phy_rf_params_addr));
 	/* vtf_snapshots is static, not heap: never free. */
 	rpu_ctx_zep->vtf_buffer_start_address = 0;
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, rpu_ctx_zep->extended_capa);
