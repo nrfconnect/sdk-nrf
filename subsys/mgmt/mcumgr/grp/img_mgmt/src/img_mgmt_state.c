@@ -609,6 +609,11 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		int next_boot_slot = img_mgmt_get_next_boot_slot(i, &type);
 		int slot_a = img_mgmt_active_slot(i);
 		int slot_o = img_mgmt_get_opposite_slot(slot_a);
+		int area_id = img_mgmt_flash_area_id(slot_a);
+		bool same_flash_area =
+			IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS) &&
+			area_id >= 0 &&
+			area_id == img_mgmt_flash_area_id(slot_o);
 		int flags_a = REPORT_SLOT_ACTIVE;
 		int flags_o = 0;
 
@@ -627,7 +632,9 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		}
 
 		/* Need to report slots in proper order */
-		if (slot_a < slot_o) {
+		if (same_flash_area) {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		} else if (slot_a < slot_o) {
 			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a) &&
 			     img_mgmt_state_encode_slot(ctxt, slot_o, flags_o);
 		} else {
@@ -636,7 +643,7 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		}
 	}
 
-	/* Ending list encoding for two slots per image */
+	/* Finish encoding the image list. */
 	ok = ok && zcbor_list_end_encode(zse, 2 * CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER);
 	/* splitStatus is always 0 so in frugal list it is not present at all */
 	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST) && ok) {
@@ -665,14 +672,23 @@ img_mgmt_state_read(struct smp_streamer *ctxt)
 		/* _a is active slot, _o is opposite slot */
 		int slot_a = img_mgmt_active_slot(i);
 		int slot_o = img_mgmt_get_opposite_slot(slot_a);
+		int area_id = img_mgmt_flash_area_id(slot_a);
+		bool same_flash_area =
+			IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS) &&
+			area_id >= 0 &&
+			area_id == img_mgmt_flash_area_id(slot_o);
 		int flags_a = REPORT_SLOT_ACTIVE;
 		int flags_o = REPORT_SLOT_CONFIRMED;
 
-		ok = img_mgmt_state_encode_slot(ctxt, slot_o, flags_o) &&
-		     img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		if (same_flash_area) {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		} else {
+			ok = img_mgmt_state_encode_slot(ctxt, slot_o, flags_o) &&
+			     img_mgmt_state_encode_slot(ctxt, slot_a, flags_a);
+		}
 	}
 
-	/* Ending list encoding for two slots per image */
+	/* Finish encoding the image list. */
 	ok = ok && zcbor_list_end_encode(zse, 2);
 	/* splitStatus is always 0 so in frugal list it is not present at all */
 	if (!IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_FRUGAL_LIST) && ok) {
