@@ -105,7 +105,7 @@
 
 /* Set the initial attestation token profile */
 /* The TF-M config_base.h configuration will do
- * #define ATTEST_TOKEN_PROFILE_PSA_IOT_1 1, if non of the token profiles are
+ * #define ATTEST_TOKEN_PROFILE_PSA_IOT_1 1, if none of the token profiles are
  * chosen. While #cmakedefine01 will define it with value 0 if the variables are
  * not set. This causes a redefine warning, so ignoring the token profile if
  * initial attestation is not enabled */
