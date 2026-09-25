@@ -487,7 +487,8 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-|no_changes_yet_note|
+* Updated Memfault to version 1.45.0.
+  See the `Memfault firmware SDK changelog`_ for details.
 
 AVSystem integration
 --------------------
