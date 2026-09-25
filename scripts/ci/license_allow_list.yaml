@@ -73,6 +73,9 @@ curl: "^nrf/ext/"
 MIT: |
   "^nrf/ext/"
   ^nrf/doc/_doxygen/doxygen-awesome.css
+  ^nrf/doc/_doxygen/doxygen-awesome-darkmode-toggle.js
+  ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
+  ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
 BSD-3-CLAUSE: |
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
