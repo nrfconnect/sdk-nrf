@@ -46,21 +46,21 @@ Usage
    All values that should be accessed have accessor functions.
    The reason that the structure is fully defined is to allow the application to allocate the memory for it.
 
-MTU negotiation
-===============
+Command fragmentation
+=====================
 
-The current DFU SMP Server implementation in the :zephyr:code-sample:`smp-svr` requires the whole command to be sent in one transfer.
-For most operations, this requires a bigger MTU size than the default one.
-This requires MTU negotiation in the MTU exchange process (see :c:func:`bt_gatt_exchange_mtu`).
-Writing long characteristic values is not supported.
+The client automatically splits an SMP command that exceeds the usable ATT payload into consecutive Write Without Response packets.
+The server reassembles the packets into one SMP request and must enable the :kconfig:option:`CONFIG_MCUMGR_TRANSPORT_BT_REASSEMBLY` Kconfig option.
 
-This is a limitation of the :zephyr:code-sample:`smp-svr`, not of the SMP Client.
+The usable payload of each packet is the negotiated ATT MTU minus the three-byte ATT header.
+A larger ATT MTU reduces the number of packets and might improve throughput.
 
 Sending a command
 =================
 
 To send a command, use the :c:func:`bt_dfu_smp_command` function.
 The command is provided as a raw binary buffer consisting of a :c:struct:`bt_dfu_smp_header` and the payload.
+The client expects one SMP response for the complete command.
 
 Processing the response
 =======================
@@ -72,6 +72,10 @@ Use the :c:func:`bt_dfu_smp_rsp_state` function to access the data of the curren
 As the response might be received in multiple notifications, use the :c:func:`bt_dfu_smp_rsp_total_check` function to verify if this is the last part of the response.
 The offset size of the current part and the total size are available in fields of the :c:struct:`bt_dfu_smp_rsp_state` structure.
 
+Resetting the client state
+==========================
+
+If the connection is lost while a command is outstanding, use the :c:func:`bt_dfu_smp_reset` function to clear the pending response state.
 
 API documentation
 *****************
