@@ -217,6 +217,7 @@ config NRF71_UTIL
 config NRF71_DEBUG_SHELL
 	bool "Debug shell in nRF71 driver"
 	depends on SHELL
+	select SYS_HEAP_RUNTIME_STATS
 
 # Antenna gain, band edge ceilings and the transmit power ceilings all
 # describe the board RF front-end rather than the SoC, so they come from the
