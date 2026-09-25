@@ -19,6 +19,37 @@
 
 LOG_MODULE_REGISTER(nrf71_idle_power, CONFIG_NRF71_IDLE_POWER_LOG_LEVEL);
 
+#if defined(CONFIG_NRF71_IDLE_DIAGNOSTICS)
+
+#include <zephyr/drivers/gpio.h>
+
+/* Idle-phase marker: driven high while running, low while idling, so a logic
+ * analyzer can line the trace up against the current measurement. Optional --
+ * absent unless the application provides an "idle-phase" alias. Toggled from
+ * nrf71_idle_power_suspend_console()/_resume_console(), the same points every
+ * sample already calls right before/after an idle wait.
+ */
+static const struct gpio_dt_spec idle_marker =
+	GPIO_DT_SPEC_GET_OR(DT_ALIAS(idle_phase), gpios, {0});
+
+static void idle_marker_set(bool running)
+{
+	if (!gpio_is_ready_dt(&idle_marker)) {
+		return;
+	}
+
+	(void)gpio_pin_set_dt(&idle_marker, running ? 1 : 0);
+}
+
+#else
+
+static inline void idle_marker_set(bool running)
+{
+	ARG_UNUSED(running);
+}
+
+#endif /* CONFIG_NRF71_IDLE_DIAGNOSTICS */
+
 static void configure_ram_retention(void)
 {
 #if defined(CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY)
@@ -86,25 +117,27 @@ static void run_console_action(enum pm_device_action action)
 void nrf71_idle_power_suspend_console(void)
 {
 	run_console_action(PM_DEVICE_ACTION_SUSPEND);
+	idle_marker_set(false);
 }
 
 void nrf71_idle_power_resume_console(void)
 {
+	idle_marker_set(true);
 	run_console_action(PM_DEVICE_ACTION_RESUME);
 }
 #else
 void nrf71_idle_power_suspend_console(void)
 {
+	idle_marker_set(false);
 }
 
 void nrf71_idle_power_resume_console(void)
 {
+	idle_marker_set(true);
 }
 #endif /* CONFIG_SERIAL */
 
 #if defined(CONFIG_NRF71_IDLE_DIAGNOSTICS)
-
-#include <zephyr/drivers/gpio.h>
 
 #include <hal/nrf_power.h>
 #include <hal/nrf_memconf.h>
@@ -113,13 +146,6 @@ void nrf71_idle_power_resume_console(void)
 
 /* Wi-Fi core local resource/clock controller (NRF_WIFICORE_LRCCONF_LRC0). */
 #include <nrfx.h>
-
-/* Idle-phase marker: driven high while running, low while idling, so a logic
- * analyzer can line the trace up against the current measurement. Optional --
- * absent unless the application provides an "idle-phase" alias.
- */
-static const struct gpio_dt_spec idle_marker =
-	GPIO_DT_SPEC_GET_OR(DT_ALIAS(idle_phase), gpios, {0});
 
 static int nrf71_idle_power_diag_init(void)
 {
