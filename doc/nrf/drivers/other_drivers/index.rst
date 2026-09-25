@@ -23,3 +23,4 @@ The following pages describe additional drivers provided by the |NCS|, including
    hw_cc3xx
    wifi
    nrf71_sr_coex
+   can_nrf_scan

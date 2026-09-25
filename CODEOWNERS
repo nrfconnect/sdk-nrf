@@ -111,6 +111,7 @@
 /doc/nrf/drivers/other_drivers/wifi/*.rst                      @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/other_drivers/wifi.rst                        @nrfconnect/ncs-wifi-doc
 /doc/nrf/drivers/other_drivers/nrf71_sr_coex.rst               @nrfconnect/ncs-wifi-doc
+/doc/nrf/drivers/other_drivers/can_nrf_scan.rst                @nrfconnect/ncs-vestavind-doc
 /doc/nrf/drivers/peripheral_custom_drivers/                    @nrfconnect/ncs-lowlevel-doc
 /doc/nrf/drivers/peripheral_custom_drivers/ppi_seq.rst         @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
 /doc/nrf/drivers/peripheral_custom_drivers/ppi_seq_i2c_spi.rst @nrfconnect/ncs-lowlevel-doc @nrfconnect/ncs-ll-izera
@@ -306,6 +307,7 @@
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
+/drivers/can/                             @nrfconnect/ncs-co-drivers
 /drivers/clock_control/clock_control_nrf92* @nrfconnect/ncs-co-drivers @tervonenja
 /drivers/dect/                            @nrfconnect/ncs-dect-nr-plus
 /drivers/entropy/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-aegir
@@ -1142,6 +1144,7 @@
 /tests/zephyr/arch/arm/                   @nrfconnect/ncs-low-level-test
 /tests/zephyr/boards/nrf/                 @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/adc/                @nrfconnect/ncs-low-level-test
+/tests/zephyr/drivers/can/                @nrfconnect/ncs-co-drivers
 /tests/zephyr/drivers/clock_control/      @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/comparator/         @nrfconnect/ncs-low-level-test
 /tests/zephyr/drivers/counter/            @nrfconnect/ncs-low-level-test
