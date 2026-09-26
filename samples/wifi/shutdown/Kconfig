@@ -35,3 +35,12 @@ config SHUTDOWN_TIMEOUT_S
 	default 5
 	help
 	  Timeout in seconds after the Wi-Fi shutdown operation.
+
+config SHUTDOWN_STAY_UP
+	bool "Keep the Wi-Fi interface up and idle (skip shutdown)"
+	help
+	  For idle-current measurement with the interface up. In one-shot or
+	  buttons mode, bring the interface up and scan once, then idle
+	  forever with the interface still up instead of bringing Wi-Fi down.
+	  Lets the driver's power save put the radio to sleep between beacons
+	  while the host idles.

@@ -37,6 +37,10 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include "net_private.h"
 
+#if defined(CONFIG_NRF71_IDLE_POWER)
+#include <nrf71_idle_power.h>
+#endif
+
 #define WIFI_SHELL_MODULE "wifi"
 
 #ifdef CONFIG_SAMPLE_STA_MAC_CONFIG_SUPPORT
@@ -365,7 +369,13 @@ int start_app(void)
 		int ret;
 
 		LOG_INF("Waiting for Wi-Fi to be ready");
+#if defined(CONFIG_NRF71_IDLE_POWER)
+		nrf71_idle_power_suspend_console();
+#endif
 		ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+#if defined(CONFIG_NRF71_IDLE_POWER)
+		nrf71_idle_power_resume_console();
+#endif
 		if (ret) {
 			LOG_ERR("Failed to take semaphore: %d", ret);
 			return ret;
@@ -390,13 +400,22 @@ check_wifi_ready:
 		if (context.connected) {
 			cmd_wifi_status();
 #ifdef CONFIG_WIFI_READY_LIB
+#if defined(CONFIG_NRF71_IDLE_POWER)
+			nrf71_idle_power_suspend_console();
+#endif
 			ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+#if defined(CONFIG_NRF71_IDLE_POWER)
+			nrf71_idle_power_resume_console();
+#endif
 			if (ret) {
 				LOG_ERR("Failed to take semaphore: %d", ret);
 				return ret;
 			}
 			goto check_wifi_ready;
 #else
+#if defined(CONFIG_NRF71_IDLE_POWER)
+			nrf71_idle_power_suspend_console();
+#endif
 			k_sleep(K_FOREVER);
 #endif /* CONFIG_WIFI_READY_LIB */
 		}

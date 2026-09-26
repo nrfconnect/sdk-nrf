@@ -217,6 +217,7 @@
 /doc/nrf/libraries/others/index.rst       @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/others/log_rpc.rst     @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/others/network_core_monitor.rst @nrfconnect/ncs-si-muffin-doc
+/doc/nrf/libraries/others/nrf71_idle_power.rst @nrfconnect/ncs-wifi-doc
 /doc/nrf/libraries/others/nrf_compression.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/nrf_lcs.rst     @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/others/nrf_profiler.rst @nrfconnect/ncs-si-xcake-doc
@@ -422,6 +423,7 @@
 /include/net/downloader*                  @nrfconnect/ncs-modem
 /include/net/nrf_cloud_*                  @nrfconnect/ncs-nrf-cloud
 /include/nfc/                             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-radio-sw
+/include/nrf71_idle_power.h               @nrfconnect/ncs-wcg-drivers
 /include/nrf_compress/                    @nrfconnect/ncs-eris
 /include/nrf_profiler.h                   @nrfconnect/ncs-si-xcake
 /include/nrf_rpc/                         @nrfconnect/ncs-co-drivers @nrfconnect/ncs-blenders @nrfconnect/ncs-protocols-serialization
@@ -485,6 +487,7 @@
 /lib/modem_jwt/                           @nrfconnect/ncs-iot-oulu @nrfconnect/ncs-modem
 /lib/modem_key_mgmt/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem
 /lib/multithreading_lock/                 @nrfconnect/ncs-dragoon
+/lib/nrf71_idle_power/                    @nrfconnect/ncs-wcg-drivers
 /lib/nrf_802154_callbacks_dispatcher/     @nrfconnect/ncs-thread
 /lib/nrf_modem_lib/                       @nrfconnect/ncs-co-networking @nrfconnect/ncs-modem @nrfconnect/ncs-modem-tre
 /lib/ntn/                                 @nrfconnect/ncs-modem-tre
@@ -905,6 +908,9 @@
 /snippets/nrf70-driver-verbose-debug/     @nrfconnect/ncs-wcg-drivers
 /snippets/nrf70-fw-patch-ext-flash/       @nrfconnect/ncs-wcg-drivers
 /snippets/nrf70-wifi/                     @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power/               @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power-diag/          @nrfconnect/ncs-wcg-drivers
+/snippets/nrf71-idle-power-quiet/         @nrfconnect/ncs-wcg-drivers
 /snippets/nrf91-modem-trace-ext-flash/    @nrfconnect/ncs-cia
 /snippets/nrf91-modem-trace-ram/          @nrfconnect/ncs-modem
 /snippets/nrf91-modem-trace-rtt/          @nrfconnect/ncs-modem
