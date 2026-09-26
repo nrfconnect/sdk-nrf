@@ -1584,7 +1584,7 @@ struct nrf_wifi_cmd_gi_config {
 #define HW_SLEEP_ENABLE 2
 #define SW_SLEEP_ENABLE 1
 #define SLEEP_DISABLE 0
-#define HW_DELAY 7200
+#define HW_DELAY 900
 #define SW_DELAY 5000
 #define BCN_TIMEOUT 20000
 #define CALIB_SLEEP_CLOCK_ENABLE 1
