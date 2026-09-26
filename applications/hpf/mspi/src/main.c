@@ -714,17 +714,18 @@ void assert_post_action(const char *file, unsigned int line)
 }
 #endif
 
+#define HRT_CONNECT(vevif, handler)                                            \
+	IRQ_DIRECT_CONNECT(vevif, HRT_IRQ_PRIORITY, handler, 0);               \
+	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(vevif), true)
+
 int main(void)
 {
 	int ret = 0;
 
 	init_trap_handler();
 
-	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_READ, HRT_IRQ_PRIORITY, hrt_handler_read, 0);
-	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_READ), true);
-
-	IRQ_DIRECT_CONNECT(HRT_VEVIF_IDX_WRITE, HRT_IRQ_PRIORITY, hrt_handler_write, 0);
-	nrf_vpr_clic_int_enable_set(NRF_VPRCLIC, VEVIF_IRQN(HRT_VEVIF_IDX_WRITE), true);
+	HRT_CONNECT(HRT_VEVIF_IDX_READ, hrt_handler_read);
+	HRT_CONNECT(HRT_VEVIF_IDX_WRITE, hrt_handler_write);
 
 	nrf_vpr_csr_rtperiph_enable_set(true);
 
