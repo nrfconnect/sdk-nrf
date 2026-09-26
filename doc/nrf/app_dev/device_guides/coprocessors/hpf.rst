@@ -18,7 +18,7 @@ It facilitates development of custom, software-defined peripherals, enhancing fu
 
 HPF is designed for optimal size and latency.
 To achieve this, the Zephyr kernel and other unnecessary components are disabled.
-For details see the configuration files :file:`nrf/applications/hpf/mspi/boards/nrf54l15dk_nrf54l15_cpuflpr.conf` or :file:`nrf/applications/hpf/mspi/boards/nrf54lm20adk_nrf54lm20a_cpuflpr.conf`.
+For details see the configuration files :file:`nrf/applications/hpf/gpio/prj.conf` or :file:`nrf/applications/hpf/mspi/prj.conf`.
 With these changes, the application runs in a simple, single-threaded, baremetal environment.
 
 High-Performance Framework, is a framework designed to facilitate the creation and integration of software peripherals using coprocessors.
