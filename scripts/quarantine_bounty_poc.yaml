@@ -1,0 +1,9 @@
+# Authorized bug bounty PoC (nordic-semiconductor-bug-bounty-program-ci-cd)
+# Minimal valid quarantine entry to trigger the quarantine PR workflows.
+# No real test scenario is affected (name below is a unique placeholder).
+
+- scenarios:
+    - bounty.poc.f2.quarantine.trigger
+  platforms:
+    - native_sim
+  comment: "Authorized bug bounty PoC - trigger file only, safe to discard"
