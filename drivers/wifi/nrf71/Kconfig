@@ -32,7 +32,7 @@ config IPC_SERVICE_BACKEND_ICMSG_WQ_STACK_SIZE
 
 config NRF71_IPC_BIND_TIMEOUT_MS
 	int "IPC endpoint bind timeout (ms)"
-	default 30000
+	default 5000
 	help
 	  Maximum time to wait for the IPC endpoint bound callback after
 	  registration. The Wi-Fi UMAC peer must register its endpoint before
