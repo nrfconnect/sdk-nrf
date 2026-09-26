@@ -395,6 +395,8 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	 */
 	umac_cmd_data->params.ofdm_sifs_value = NRF_WIFI_LMAC_OFDM_SIFS_VALUE;
 	umac_cmd_data->params.dsss_sifs_value = NRF_WIFI_LMAC_DSSS_SIFS_VALUE;
+	/* Enable internal recovery */
+	umac_cmd_data->params.internal_recovery_enable = 1;
 
 	umac_cmd_data->params.cfg_bet_enable = 0;
 #ifdef NRF_WIFI_LP_RX
