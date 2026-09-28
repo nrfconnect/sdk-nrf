@@ -329,7 +329,7 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 		}
 	}
 
-	/* This releases the MSPI controller. */
+	/* This releasses the MSPI controller. */
 	(void)mspi_get_channel_status(mspi_bus, 0);
 
 	rv = check_buffers(tdata.mtx_set, tdata.srx_set, m_same_size);
