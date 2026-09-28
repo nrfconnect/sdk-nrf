@@ -53,8 +53,6 @@ ALIASES               += "driver_ops_optional=\htmlonly<span class=\"op-badge op
 ENABLED_SECTIONS       = YES
 PAGE_OUTLINE_PANEL     = NO
 
-USE_MDFILE_AS_MAINPAGE = mainpage.md
-
 HTML_HEADER            = @NRF_BASE@/doc/_doxygen/header.html
 
 HTML_EXTRA_STYLESHEET  = @NRF_BASE@/doc/_doxygen/doxygen-awesome.css @NRF_BASE@/doc/_doxygen/custom.css
