@@ -9,7 +9,7 @@ Assembly management
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 Assembly management is a critical component in the development process, particularly when meeting the modularity and testability requirements defined in the :ref:`hpf_event_handling`.
 
