@@ -9,7 +9,7 @@ High-Performance Framework (HPF)
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 Subsequent sections explain practical aspects of using the High-Performance Framework (HPF).
 
@@ -18,16 +18,14 @@ It facilitates development of custom, software-defined peripherals, enhancing fu
 
 HPF is designed for optimal size and latency.
 To achieve this, the Zephyr kernel and other unnecessary components are disabled.
-For details see the configuration files :file:`nrf/applications/hpf/mspi/boards/nrf54l15dk_nrf54l15_cpuflpr.conf` or :file:`nrf/applications/hpf/mspi/boards/nrf54lm20adk_nrf54lm20a_cpuflpr.conf`.
+For details, see the devicetree overlay files :file:`nrf/applications/hpf/mspi/boards/nrf54l15dk_nrf54l15_cpuflpr.overlay` or :file:`nrf/applications/hpf/mspi/boards/nrf54lm20dk_nrf54lm20a_cpuflpr.overlay`.
 With these changes, the application runs in a simple, single-threaded, baremetal environment.
 
-High-Performance Framework, is a framework designed to facilitate the creation and integration of software peripherals using coprocessors.
+The High-Performance Framework (HPF) is a framework designed to facilitate the creation and integration of software peripherals using coprocessors.
 It provides the following resources:
 
 * Targeted tools - Hardware Abstraction Layers (HALs) for VPR's :ref:`Real-Time peripherals<hpf_real_time_peripherals>` and :ref:`CMake targets for assembly management<hpf_assembly_management_cmake>`.
-
 * :ref:`Application examples <hpf_applications_readme>` for the supported drivers.
-
 * Descriptions of architectural issues when creating software peripherals: :ref:`event handling<hpf_event_handling>`, :ref:`fault handling<hpf_fault_handling>`, and :ref:`power management<hpf_power_management>`.
 
 These resources are intended to serve as foundational starting points, enabling you to create customized software peripherals tailored to specific application needs.

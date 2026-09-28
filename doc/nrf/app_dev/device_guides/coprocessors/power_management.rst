@@ -9,7 +9,7 @@ Power management
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 The following page outlines the approaches and mechanisms employed to ensure efficient power management in High-Performance Framework (HPF) systems, focusing on resource allocation, system states, and interactions between different components.
 
@@ -20,17 +20,17 @@ The following page outlines the approaches and mechanisms employed to ensure eff
 Power management strategies
 ***************************
 
-Power Management in HPF should be considered from two perspectives: the Host controller and the HPF firmware.
+Power management in HPF should be considered from two perspectives: the Host controller and the HPF firmware.
 
 Host controller
 ===============
 
-The Host is responsible for managing power state of the following resources:
+The Host is responsible for managing the power states of the following resources:
 
 * FLPR core with HPF firmware running on it
 * RAM
 
-To achieve optimal power state, you must use the `Device Runtime Power Management`_ and `System Power Off`_.
+To achieve optimal power states, you must use the `Device Runtime Power Management`_ and `System Power Off`_.
 
 See an example flow of the Host power management:
 
@@ -47,7 +47,7 @@ See an example flow of the Host power management:
   BoxBackgroundColor #C1E8FF
   BoxBorderColor #C1E8FF
   GroupBackgroundColor #8DBEFF
-  GropuBorderColor #8DBEFF
+  GroupBorderColor #8DBEFF
   }
 
   skinparam note {
@@ -131,7 +131,7 @@ See an example flow of the Host power management:
   ...
 
 
-  Application -> "HPF driver" : hpf_driver_transcieve(...)
+  Application -> "HPF driver" : hpf_driver_transceive(...)
   activate "HPF driver"
   "HPF driver" -> FLPR : HPF_APP_XFER
   activate FLPR
@@ -192,9 +192,9 @@ See an example flow of the Host power management:
   @enduml
 
 .. note::
-	VPR driver is not yet implemented, it should be implemented when writing HPF software.
-	It shall run on application core.
-	Its purpose is to control basic FLPR functionalities like initialization of inter processor communication and power mode management.
+   The VPR driver is not yet implemented.
+   It should be implemented when writing HPF software and must run on the application core.
+   Its purpose is to control basic FLPR functionalities, such as the initialization of inter-processor communication and power mode management.
 
 HPF firmware
 ============
@@ -218,7 +218,7 @@ This configuration must occur in the following cases:
 * When the FLPR starts (the sleep mode setting is derived from a Kconfig option).
 * When the Host receives the ``SUSPEND`` or ``RESUME`` signal.
 
-In the main loop, the HPF firmware should call ``k_cpu_idle`` to enter sleep mode.
+In the main loop, the HPF firmware should call ``k_cpu_idle()`` to enter sleep mode.
 Ensure that ``k_cpu_idle()`` is only called within the main loop to prevent the FLPR from entering an incorrect power state.
 
 Sleep modes should be application-specific.

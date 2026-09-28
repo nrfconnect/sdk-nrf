@@ -92,7 +92,7 @@ Peripherals emulation on FLPR
 
 .. note::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 device.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 The FLPR core can emulate software peripherals using :ref:`nrfxlib:soft_peripherals` or the :ref:`HPF<hpf_index>`.
 This setup is useful in scenarios where you need additional peripheral functionality or want to optimize power consumption and performance.
