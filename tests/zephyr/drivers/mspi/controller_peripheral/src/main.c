@@ -329,7 +329,7 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 		}
 	}
 
-	/* This releasses the MSPI controller. */
+	/* This releases the MSPI controller. */
 	(void)mspi_get_channel_status(mspi_bus, 0);
 
 	rv = check_buffers(tdata.mtx_set, tdata.srx_set, m_same_size);
@@ -339,7 +339,7 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 	zassert_equal(rv, 0);
 }
 
-/** Basic test where SPI controller and SPI peripheral have RX and TX sets which contains only one
+/** Basci test where SPI controller and SPI peripheral have RX and TX sets which contains only one
  *  same size buffer.
  */
 ZTEST(mspi_controller_peripheral, test_basic)
