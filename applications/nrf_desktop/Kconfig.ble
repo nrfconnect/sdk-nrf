@@ -317,11 +317,24 @@ config BT_MAX_PAIRED
 	  to be compatible with the dongle bond count.
 
 config BT_BUF_ACL_TX_COUNT
+	default 8 if DESKTOP_HID_FORWARD_HID_SCI_ENABLE
 	default 6
 	help
 	  This number of outgoing ACL buffers allows nRF Desktop dongles to
 	  connect with a subsequent peripheral before finishing subscribing for
 	  HID reports from the previously connected peripheral.
+
+	  When HID SCI is enabled, the dongle additionally subscribes to the
+	  HID SCI Mode characteristic and issues a SCI Mode request during
+	  peripheral setup.
+
+config BT_GATT_DM_MAX_ATTRS
+	default 38 if DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+	help
+	  When HID SCI is enabled, the HID Service on the peripheral includes
+	  two additional characteristics (SCI Information and SCI Mode). The
+	  default GATT Discovery Manager attribute limit is too small for a
+	  keyboard peripheral with the configuration channel enabled.
 
 endif # DESKTOP_BT_CENTRAL
 
