@@ -3,4 +3,4 @@
 Testing
 #######
 
-.. TODO: Add nRF71 Series testing instructions.
+.. include:: /includes/wifi_radio_sample_testing_nrf71.txt
