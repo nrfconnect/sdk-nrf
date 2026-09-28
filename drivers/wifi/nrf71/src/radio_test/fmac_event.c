@@ -217,7 +217,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		goto out;
 	}
 
-#ifdef NRF_WIFI_CMD_EVENT_LOG
+#ifdef CONFIG_NRF_WIFI_CMD_EVENT_LOG
 	LOG_INF("%s: Event %d received from UMAC",
 			      __func__,
 			      event_num);
@@ -225,7 +225,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 	LOG_DBG("%s: Event %d received from UMAC",
 			      __func__,
 			      event_num);
-#endif /* NRF_WIFI_CMD_EVENT_LOG */
+#endif /* CONFIG_NRF_WIFI_CMD_EVENT_LOG */
 
 	switch (umac_hdr->cmd_evnt) {
 	case NRF_WIFI_UMAC_EVENT_GET_REG:
@@ -295,7 +295,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_event_callback(void *mac_dev_ctx,
 	umac_msg_len = rpu_msg->hdr.len;
 	umac_msg_type = umac_hdr->cmd_evnt;
 
-#ifdef NRF_WIFI_CMD_EVENT_LOG
+#ifdef CONFIG_NRF_WIFI_CMD_EVENT_LOG
 	LOG_INF("%s: Event type %d recd",
 			      __func__,
 			      rpu_msg->type);
@@ -303,7 +303,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_event_callback(void *mac_dev_ctx,
 	LOG_DBG("%s: Event type %d recd",
 			      __func__,
 			      rpu_msg->type);
-#endif /* NRF_WIFI_CMD_EVENT_LOG */
+#endif /* CONFIG_NRF_WIFI_CMD_EVENT_LOG */
 
 	switch (rpu_msg->type) {
 	case NRF_WIFI_HOST_RPU_MSG_TYPE_UMAC:

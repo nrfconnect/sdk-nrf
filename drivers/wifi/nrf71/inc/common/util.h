@@ -93,9 +93,9 @@ struct nrf_wifi_fmac_amsdu_hdr {
 
 struct nrf_wifi_fmac_priv;
 struct nrf_wifi_fmac_dev_ctx;
-#ifdef NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_SYSTEM_MODE
 struct nrf_wifi_fmac_vif_ctx;
-#endif /* NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_SYSTEM_MODE */
 
 int nrf_wifi_utils_hex_str_to_val(unsigned char *hex_arr,
 				  unsigned int hex_arr_sz,
@@ -124,8 +124,8 @@ bool nrf_wifi_util_is_arr_zero(unsigned char *arr,
 void *wifi_fmac_priv(struct nrf_wifi_fmac_priv *def);
 void *wifi_dev_priv(struct nrf_wifi_fmac_dev_ctx *def);
 
-#ifdef NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_SYSTEM_MODE
 unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif, void *nwb);
-#endif /* NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_SYSTEM_MODE */
 
 #endif /* __UTIL_H__ */

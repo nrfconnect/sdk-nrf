@@ -20,9 +20,9 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 				      unsigned int *rf_params_addr,
 				      unsigned int vtf_buffer_start_address,
 				      bool rf_params_valid,
-#ifdef NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF_WIFI_LOW_POWER
 				      int sleep_type,
-#endif /* NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 				      unsigned int phy_calib,
 				      unsigned char op_band,
 				      bool beamforming,
