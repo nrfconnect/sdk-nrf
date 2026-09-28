@@ -1,6 +1,13 @@
 / {
 	aliases {
-		led = &led0;
+		led = &led_custom0;
+	};
+
+	leds {
+		led_custom0: led_custom0 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom LED due to GPIO4 disabled";
+		};
 	};
 };
 
