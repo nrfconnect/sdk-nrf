@@ -32,7 +32,7 @@ static void on_modem_lib_init(int ret, void *ctx)
 		return;
 	}
 
-	/* Let the application write the credentials first and then bring the link up. */
+	/* Let the application write the credentials first and then bring the link up! */
 	if (m_first_init) {
 		err = carrier_cert_provision();
 		if (err) {
