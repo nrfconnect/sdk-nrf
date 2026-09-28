@@ -399,13 +399,16 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	/* Enable internal recovery */
 	umac_cmd_data->params.internal_recovery_enable = 1;
 
-	umac_cmd_data->params.cfg_bet_enable = 0;
-#ifdef NRF_WIFI_LP_RX
+#ifdef NRF_WIFI_BET
 	umac_cmd_data->params.cfg_bet_enable = 1;
+#else
+	umac_cmd_data->params.cfg_bet_enable = 0;
+#endif /* NRF_WIFI_BET */
+
+#ifdef NRF_WIFI_LP_RX
 	umac_cmd_data->params.lp_rx_enable = 1;
 #else
 	umac_cmd_data->params.lp_rx_enable = 0;
-	umac_cmd_data->params.cfg_bet_enable = 0;
 #endif /* NRF_WIFI_LP_RX */
 
 	/* Internal tuning parameter for ACK timeout in the firmware. Accounts for
