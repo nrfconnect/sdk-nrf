@@ -118,7 +118,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan_res_get(void *fmac_dev_ctx,
 enum nrf_wifi_status nrf_wifi_sys_fmac_abort_scan(void *fmac_dev_ctx,
 						unsigned char if_idx);
 
-#if defined(NRF71_STA_MODE) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(__DOXYGEN__)
 /**
  * @brief Issue an 802.11 authentication request to the RPU firmware.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -481,7 +481,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_mgmt_frame_reg(void *fmac_dev_ctx,
 						  unsigned char if_idx,
 						  struct nrf_wifi_umac_mgmt_frame_info *frame_info);
 
-#endif /* NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_MODE */
 /**
  * @brief Get unused MAC address from base mac address.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -906,9 +906,9 @@ struct nrf_wifi_fmac_dev_ctx *nrf_wifi_sys_fmac_dev_add(struct nrf_wifi_fmac_pri
  */
 enum nrf_wifi_status
 nrf_wifi_sys_fmac_dev_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
-#if defined(NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_WIFI_LOW_POWER) || defined(__DOXYGEN__)
 			   int sleep_type,
-#endif /* NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF_WIFI_LOW_POWER */
 			   unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			   struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			   struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params,
@@ -976,7 +976,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_ps_exit_strategy(
 						unsigned char if_idx,
 						unsigned int ps_exit_strategy);
 
-#ifdef NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_RAW_DATA_TX
 /**
  * @brief Transmit a raw unaltered frame to the RPU.
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1001,7 +1001,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_ps_exit_strategy(
 enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
 						     unsigned char if_idx,
 						     void *net_packet);
-#endif /* NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_RAW_DATA_TX */
 
 /**
  * @brief Check if a valid mode is being set.
@@ -1017,7 +1017,7 @@ enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
  */
 enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode);
 
-#if defined(NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
 /** @cond INTERNAL_HIDDEN */
 enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 						void *event_data,
@@ -1025,7 +1025,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 /** @endcond */
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
-#ifdef NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
 /**
  * @brief Set the current mode of operation
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1043,7 +1043,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
 						unsigned char mode);
 #endif
 
-#if defined(NRF71_RAW_DATA_TX) || defined(NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
 /**
  * @brief Set the current channel
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1063,9 +1063,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned int channel,
 						   unsigned char op_band);
 
-#endif /* NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
 
-#if defined(NRF71_RAW_DATA_RX) || defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 /**
  * @brief Set packet filter settings
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1082,13 +1082,13 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx,
 							 unsigned char filter,
 							 unsigned char if_idx,
 							 unsigned short buffer_size);
-#endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 
-#if defined(NRF71_UTIL) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_UTIL) || defined(__DOXYGEN__)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate);
-#endif /* NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL */
 
 /**
  * @brief Configure HE LTF and GI parameters.
@@ -1124,7 +1124,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *f
 						 enum rpu_stats_type stats_type,
 						 struct rpu_sys_op_stats *stats);
 
-#if defined(NRF71_DEBUG_SHELL) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_DEBUG_SHELL) || defined(__DOXYGEN__)
 /**
  * @brief Synchronously get debug stats from RPU (UMAC/LMAC/PHY).
  * @param fmac_dev_ctx FMAC context.
@@ -1150,9 +1150,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(
 enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	struct umac_int_stats *stats);
-#endif /* NRF71_DEBUG_SHELL */
+#endif /* CONFIG_NRF71_DEBUG_SHELL */
 
-#if defined(NRF71_UTIL) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_UTIL) || defined(__DOXYGEN__)
 /**
  * @brief Request an extended sleep interval for the nRF71.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1173,7 +1173,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *fmac_dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec);
-#endif /* NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL */
 
 /**
  * @brief Send  Rx buffer details to firmware.

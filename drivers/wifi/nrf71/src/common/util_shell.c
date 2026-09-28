@@ -306,7 +306,7 @@ static void tx_token_stats_summary(const struct shell *sh,
 	unsigned int limiter_cnt = 0;
 	unsigned int i;
 
-	for (i = 0; i < NRF71_MAX_TX_TOKENS; i++) {
+	for (i = 0; i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
 		if (ts->token_cmds[i]) {
 			tokens_used++;
 		}
@@ -388,7 +388,7 @@ static void tx_token_stats_summary(const struct shell *sh,
 		unsigned int window_us = ts->window_start_cyc ?
 			k_cyc_to_us_floor32(k_cycle_get_32() - ts->window_start_cyc) : 0U;
 
-		for (i = 0; i < NRF71_MAX_TX_TOKENS; i++) {
+		for (i = 0; i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
 			inflight_us += ts->token_inflight_us[i];
 		}
 
@@ -466,7 +466,7 @@ static void tx_token_stats_dump(const struct shell *sh,
 		      "fill", "max_pkts", "max_bytes", "us/cmd", "max_us", "KB/s",
 		      "type");
 
-	for (i = 0; i < num_tx_tokens && i < NRF71_MAX_TX_TOKENS; i++) {
+	for (i = 0; i < num_tx_tokens && i < CONFIG_NRF71_MAX_TX_TOKENS; i++) {
 		unsigned int cmds = ts->token_cmds[i];
 		unsigned int pkts_x100 = cmds ? ((ts->token_pkts[i] * 100U) / cmds) : 0U;
 		unsigned int bytes_per_cmd = cmds ?
