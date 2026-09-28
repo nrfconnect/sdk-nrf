@@ -48,3 +48,4 @@ The following subpages cover topics related to developing applications on the nR
    stack_partitioning
    building_nrf71
    zms
+   power_profiling
