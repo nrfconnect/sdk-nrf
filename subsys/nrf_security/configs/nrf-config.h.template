@@ -13,6 +13,7 @@
 
 /* Platform */
 #cmakedefine MBEDTLS_DEBUG_C
+#cmakedefine MBEDTLS_VERSION_C
 
 /* Legacy configurations for Mbed TLS APIs */
 #cmakedefine MBEDTLS_CIPHER_C
