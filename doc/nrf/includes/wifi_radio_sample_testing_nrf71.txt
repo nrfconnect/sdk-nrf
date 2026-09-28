@@ -1,0 +1,401 @@
+|test_sample|
+
+#. |connect_kit|
+#. |connect_terminal|
+#. Test the sample by configuring the Wi-Fi® radio.
+
+   On the nRF71 Series, the ``init`` subcommand takes the band and the primary channel number as arguments:
+
+   .. code-block:: console
+
+      wifi_radio_test init <band> <channel>
+
+   where ``<band>`` is one of the following values:
+
+   * ``0`` - 2.4 GHz
+   * ``1`` - 5 GHz
+   * ``2`` - 6 GHz
+
+   * To display the current configuration, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test show_config
+
+     The sample shows the following output:
+
+     .. code-block:: console
+
+        ************* Configured Parameters ***********
+
+        tx_pkt_tput_mode = 0
+        tx_pkt_sgi = 0
+        tx_pkt_preamble = 0
+        tx_pkt_mcs = 0
+        tx_pkt_rate = 6
+        tx_pkt_gap = 0
+        tx_pkt_num = -1
+        tx_pkt_len = 1400
+        tx_power = 30
+        he_ltf = 2
+        he_gi = 2
+        init = 1
+        tx = 0
+        rx = 0
+        tx_tone_freq = 0
+        rx_lna_gain = 0
+        rx_bb_gain = 0
+        rx_capture_length = 0
+        rx_capture_timeout = 0
+        tx_pkt_cw = 15
+        reg_domain = 00
+        bypass_reg_domain = 0
+        ru_tone = 26
+        ru_index = 1
+        rx_bss_color = 0
+        rx_station_id = 0
+        tx_dcm = 0
+        tx_doppler = 0
+        tx_midample_periodicity = 0
+        tx_106_tone = 0
+        tx_legacy_length = 0
+        tx_fec_padd_factor = 0
+        tx_num_he_ltf = 0
+        tx_tone_type = 0
+        tx_tone_dc_offset_i = 0
+        tx_tone_dc_offset_q = 0
+        ed_thresh_ofdm = 0
+        ed_thresh_dsss = 0
+        rx_bss_check = 0
+
+   * To reset all configuration parameters to their default values, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test set_defaults
+
+   * To run a continuous Orthogonal frequency-division multiplexing (OFDM) TX traffic sequence with the following configuration:
+
+     * Band: 2.4 GHz
+     * Channel: 11
+     * Frame duration: 2708 µs
+     * Inter-frame gap: 4200 µs
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 0 11
+        wifi_radio_test tx_pkt_rate 12
+        wifi_radio_test tx_pkt_len 4000
+        wifi_radio_test tx_power 4
+        wifi_radio_test tx_pkt_gap 4200
+        wifi_radio_test tx 1
+
+   * To run a continuous Direct-sequence spread spectrum (DSSS) TX traffic sequence with the following configuration:
+
+     * Band: 2.4 GHz
+     * Channel: 14
+     * Frame duration: 8500 µs
+     * Inter-frame gap: 8600 µs
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 0 14
+        wifi_radio_test tx_pkt_preamble 0
+        wifi_radio_test tx_pkt_rate 1
+        wifi_radio_test tx_pkt_len 1024
+        wifi_radio_test tx_power 10
+        wifi_radio_test tx_pkt_gap 8600
+        wifi_radio_test tx 1
+
+   * To run a continuous HE SU TX traffic sequence with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 36
+     * MCS: 7
+     * HE LTF: 4x
+     * HE GI: 3.2 µs
+     * FEC coding: LDPC
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 36
+        wifi_radio_test tx_pkt_tput_mode 3
+        wifi_radio_test tx_pkt_mcs 7
+        wifi_radio_test he_ltf 2
+        wifi_radio_test he_gi 2
+        wifi_radio_test tx_fec_coding 1
+        wifi_radio_test tx_pkt_len 1400
+        wifi_radio_test tx_power 10
+        wifi_radio_test tx 1
+
+   * To stop an ongoing packet transmission, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test tx 0
+
+   See :ref:`wifi_radio_subcommands_nrf71` for a list of available subcommands.
+
+   .. note::
+
+      * For regulatory certification, it is advisable to run the TX streams in Legacy OFDM or DSSS modes only (``wifi_radio_test tx_pkt_tput_mode 0``).
+      * The frame duration can be calculated using the formula:
+
+        .. math::
+
+           D = ((L * 8) / R ) + P
+
+        where the following parameters are used:
+
+        * ``D`` - Frame duration (µs)
+        * ``L`` - Frame length (bytes)
+        * ``R`` - Data rate (Mbps)
+        * ``P`` - PHY overhead duration (µs) (values: 20 µs - Legacy OFDM, 192 µs - DSSS)
+
+   * To run a RX test with the following configuration:
+
+     * Band: 2.4 GHz
+     * Channel: 11
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 0 11
+        wifi_radio_test rx 1
+
+   .. note::
+
+      After executing the above command sequence, start sending packets from a signal generator.
+
+   * To stop receiving packets, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test rx 0
+
+   .. note::
+
+      The above command should be executed only after the signal generator has completed transmitting packets.
+
+   * To get RX stats, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test get_stats
+
+     The sample shows an output similar to the following:
+
+     .. code-block:: console
+
+        ************* PHY STATS ***********
+        rssi_avg = -55 dBm
+        ofdm_crc32_pass_cnt=21
+        ofdm_crc32_fail_cnt=13
+        dsss_crc32_pass_cnt=449
+        dsss_crc32_fail_cnt=9
+
+   * To transmit a continuous tone with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 144
+     * TX power: 10 dBm
+     * Tone frequency: 2 MHz
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 144
+        wifi_radio_test tx_power 10
+        wifi_radio_test tx_tone_freq 2
+        wifi_radio_test tx_tone 1
+
+   * To stop ongoing transmission of a continuous tone, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test tx_tone 0
+
+     .. note::
+
+        Use ``wifi_radio_test tx_tone 0`` only if the command issued before this is ``wifi_radio_test tx_tone 1``.
+
+   * To compute the optimal XO value with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 64
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 64
+        wifi_radio_test compute_optimal_xo_val
+
+     If the tone is not detected, the sample shows the following output:
+
+     .. code-block:: console
+
+        XO value computation failed
+        <err> wifi_nrf: XO tune failed: tone not detected
+
+   .. note::
+
+      * This test requires a DUT to be connected with VSG using cabled setup.
+        VSG should be continuously generating 0.5 MHz tone.
+      * For channel 64, set the VSG frequency to 5320.5 MHz.
+        Set the signal power level between -40 dBm and -50 dBm.
+
+   * To capture ADC samples with fixed RX gain with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 144
+     * LNA gain: 2
+     * BB gain: 10
+     * Capture length: 64
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 144
+        wifi_radio_test rx_lna_gain 2
+        wifi_radio_test rx_bb_gain 10
+        wifi_radio_test rx_capture_length 64
+        wifi_radio_test rx_cap 0
+
+     The sample shows the following output:
+
+     .. code-block:: console
+
+        ************* RX capture data ***********
+        FC4FA0 FC4FAC FCCFB0 FC8FA8 FC4FA4 FC0FA8 FBCFA0 FC0FA4 FC0FA8 FC8FA8 FBCFA8 FB8FA4 FC0FA8 FC0FAC FC0FA4 FC0FA8
+        FC4FAC FC4FA8 FC4FA4 FBCFA8 FC4FA8 FBCFA4 FBCFA0 FB8FA4 FC4FAC FC0FA4 FBCFA0 FC4F9C FC8F9C FC0FA4 FBCFA8 FC0FA8
+        ......
+        FB8FB0 FBCFA4 FB8FA8 FBCFA8 FBCFA8 FBCFA8 FC0FA8 FC0FA4 FC4FA4 FC0FA8 FBCFA8 FC8FA4 FBCFAC FC0FAC FC8FA4 FB8FA4
+
+   .. note::
+
+      * This test requires a DUT to be connected with VSG using cabled setup.
+        VSG should be continuously transmitting a tone or packets.
+      * Set the signal power level between -35 dBm and -45 dBm to get non saturated samples.
+      * In the example, capture is taken for 64 samples.
+        Each complex sample is of 24 bits.
+      * The captured samples will vary from run to run.
+
+   * To capture filtered ADC (baseband) samples with fixed RX gain with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 144
+     * LNA gain: 2
+     * BB gain: 10
+     * Capture length: 64
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 144
+        wifi_radio_test rx_lna_gain 2
+        wifi_radio_test rx_bb_gain 10
+        wifi_radio_test rx_capture_length 64
+        wifi_radio_test rx_cap 1
+
+     The sample shows the following output:
+
+     .. code-block:: console
+
+        ************* RX capture data ***********
+        FC6FB4 FD6FAD FD4FB3 FCEFB9 FC9FB3 FC9FAF FCAFB1 FC4FB5 FC4FBE FCBFB5 FCFFB1 FCBFBB FD0FB2 FCFFB7 FCEFB7 FC9FB6
+        FCCFB2 FCBFBA FCBFBD FCAFB6 FC7FBA FCDFBB FC5FB8 FC2FB8 FC4FB6 FC7FB6 FC7FB9 FC8FBB FCDFB2 FCBFB8 FCEFBA FD3FB7
+        ......
+        FCEFAF FC9FAE FCEFB6 FCAFB1 FCFFB4 FCBFB4 FC6FAD FC8FB3 FC7FB9 FCCFB4 FCFFB3 FD0FBA FD1FB4 FCCFAF FC7FAC FC6FB1
+
+   .. note::
+
+      * This test requires a DUT to be connected with VSG using cabled setup.
+        VSG should be continuously transmitting a tone or packets.
+      * Set the signal power level between -35 dBm and -45 dBm to get non saturated samples.
+      * In the example, capture is taken for 64 samples.
+        Each complex sample is of 24 bits.
+      * The captured samples will vary from run to run.
+
+   * To capture packets dynamically after WLAN packet detection with the following configuration:
+
+     * Band: 5 GHz
+     * Channel: 144
+     * Capture length: 64
+     * Capture timeout: 10 seconds
+
+     Execute the following sequence of commands:
+
+     .. code-block:: console
+
+        wifi_radio_test init 1 144
+        wifi_radio_test rx_capture_length 64
+        wifi_radio_test rx_capture_timeout 10
+        wifi_radio_test rx_cap 2
+
+     If no packets are detected within the timeout period, the sample shows the following output:
+
+     .. code-block:: console
+
+        ************* Capture failed ***********
+
+   .. note::
+
+      * This test requires a DUT to be connected with VSG using cabled setup.
+        VSG should be continuously transmitting WLAN packets.
+      * The capture is taken after WLAN packet detection, so it will not have the first few samples in the first WLAN packet.
+      * Smaller packets should be used so that multiple packets can be seen in the capture.
+      * Packet detection does not take place in a clean RF environment.
+      * The command will time out if no packets are detected within set timeout period.
+
+   * To set a regulatory domain with the following configuration:
+
+     * Regulatory domain: US
+
+     Execute the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test reg_domain US
+
+     The sample shows the following output:
+
+     .. code-block:: console
+
+        wifi_radio_test show_config
+        reg_domain = US
+
+   .. note::
+
+      The default regulatory domain is ``00`` (world regulatory).
+
+   * To bypass regulatory domain, set ``bypass_reg_domain`` to ``1`` using the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test bypass_reg_domain 1
+
+     The sample shows the following output:
+
+     .. code-block:: console
+
+        wifi_radio_test show_config
+        reg_domain = US
+        bypass_reg_domain = 1
+
+   .. note::
+
+      Bypass regulatory domain is false by default.
+
+      * If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
+      * If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain maximum TX power for the channel.
