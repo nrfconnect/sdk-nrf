@@ -874,7 +874,8 @@ static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *
 		/* The existing stream is not in the same direction as the incoming stream.
 		 * Continue
 		 */
-		LOG_DBG("Existing stream not in same direction as incoming stream");
+		LOG_DBG("Existing stream dir %d not in same direction as incoming stream dir %d",
+			existing_dir, ctx->dir);
 		return true;
 	}
 
@@ -978,7 +979,12 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	}
 
 	if (foreach_data.streams_checked == 0) {
-		LOG_WRN("No streams found for direction %d", dir);
+		if (dir == BT_AUDIO_DIR_SINK) {
+			LOG_INF("No streams found for sink (P->C) dir");
+		} else if (dir == BT_AUDIO_DIR_SOURCE) {
+			LOG_INF("No streams found for source (C->P) dir");
+		}
+
 		return -ENODATA;
 	}
 
@@ -1189,10 +1195,6 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			continue;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
-
-			LOG_DBG("Checking server %d, sink stream %d %p %p", srv_idx, i,
-				&tmp_server->snk.cap_streams[i].bap_stream, stream);
-
 			if (&tmp_server->snk.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream %p at index %d", stream,
@@ -1202,7 +1204,6 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 		}
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
-			LOG_DBG("Checking server %d, source stream %d", srv_idx, i);
 			if (&tmp_server->src.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream %p at index %d", stream,

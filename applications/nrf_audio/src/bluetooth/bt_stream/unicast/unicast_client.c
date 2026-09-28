@@ -509,7 +509,7 @@ static bool server_is_not_waiting_for_disc_check(struct server_store *server, vo
  *		can be added. If the group is full, or there are no more servers to add, it will
  *		start the streams in the unicast group.
  */
-static void cap_start_worker(void)
+static void cap_action_start(void)
 {
 	int ret;
 
@@ -606,7 +606,8 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 	int ret;
 	struct server_store *server = NULL;
 
-	LOG_DBG("CB BAP location discovered for conn %p dir %d loc %d", conn, dir, loc);
+	LOG_DBG("CB BAP location discovered for conn %p dir %s loc %s", conn,
+		le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc));
 
 	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -628,8 +629,8 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 		ret = srv_store_location_set(
 			conn, dir, BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT);
 		if (ret != 0) {
-			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d", conn, dir,
-				loc, ret);
+			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
+				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}
@@ -648,8 +649,8 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 	    (loc == BT_AUDIO_LOCATION_MONO_AUDIO)) {
 		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_LEFT);
 		if (ret != 0) {
-			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d", conn, dir,
-				loc, ret);
+			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
+				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}
@@ -667,8 +668,8 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 		   (loc & BT_AUDIO_LOCATION_RIGHT_SURROUND)) {
 		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_RIGHT);
 		if (ret != 0) {
-			LOG_ERR("Failed to set location for conn %p, dir %d, loc %d: %d", conn, dir,
-				loc, ret);
+			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
+				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}
@@ -676,7 +677,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 		server->name = "RIGHT";
 
 	} else {
-		LOG_WRN("Channel location not supported: %d", loc);
+		LOG_WRN("Channel location not supported: %s", bt_audio_location_bit_to_str(loc));
 		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL, dir);
 	}
 
@@ -1093,10 +1094,8 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 
 	switch (dir) {
 	case BT_AUDIO_DIR_SINK:
-		LOG_DBG("Setting common QoS params for existing sink stream %p, PD %d, framing "
-			"%d, latency %d",
-			(void *)&stream->bap_stream, qos_write->snk.pres_dly_us,
-			qos_write->snk.framing, qos_write->snk.transport_latency_ms);
+		LOG_DBG("Setting common QoS params for existing sink stream %p, PD %d",
+			(void *)&stream->bap_stream, qos_write->snk.pres_dly_us);
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
 			server->snk.lc3_preset[i].qos.pd = qos_write->snk.pres_dly_us;
@@ -1106,10 +1105,8 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 		}
 		break;
 	case BT_AUDIO_DIR_SOURCE:
-		LOG_DBG("Setting common QoS params for existing source stream %p, PD %d, framing "
-			"%d, latency %d",
-			&stream->bap_stream, qos_write->src.pres_dly_us, qos_write->src.framing,
-			qos_write->src.transport_latency_ms);
+		LOG_DBG("Setting common QoS params for existing source stream %p, PD %d",
+			(void *)&stream->bap_stream, qos_write->src.pres_dly_us);
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
 			server->src.lc3_preset[i].qos.pd = qos_write->src.pres_dly_us;
@@ -1380,14 +1377,14 @@ static void cap_start_complete_cb(int err, struct bt_conn *conn)
 {
 	if (err != 0) {
 		LOG_ERR("CB CAP start complete for conn: %p, err: %d", conn, err);
-		return;
 	} else {
 		LOG_DBG("CB CAP start complete for conn: %p", conn);
+		in_playing_state = true;
 	}
 
-	// TODO: Need to look at WD issue, and check that we do not end up in a deadlock situation.
-
-	in_playing_state = true;
+	/* Must always release the semaphore, even on error/cancel, or the CAP state
+	 * machine thread deadlocks waiting for this procedure to complete.
+	 */
 	cap_thread_cap_action_complete(err);
 }
 
@@ -1426,7 +1423,7 @@ static void cap_start_codec_configured_cb(void)
 	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &new_pres_dly_snk_us,
 					     &group_reconfigure_needed_due_to_snk_pd,
 					     unicast_group);
-	if (ret) {
+	if (ret != 0 && ret != -ENODATA) {
 		LOG_ERR("Failed to find presentation delay for sink direction: %d", ret);
 		srv_store_unlock();
 		return;
@@ -1435,7 +1432,7 @@ static void cap_start_codec_configured_cb(void)
 	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SOURCE, &new_pres_dly_src_us,
 					     &group_reconfigure_needed_due_to_src_pd,
 					     unicast_group);
-	if (ret) {
+	if (ret != 0 && ret != -ENODATA) {
 		LOG_ERR("Failed to find presentation delay for source direction: %d", ret);
 		srv_store_unlock();
 		return;
@@ -2237,14 +2234,14 @@ static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 
 		switch (action) {
 		case CAP_ACTION_STOP:
-
+			unicast_client_stop(0);
 			break;
 		case CAP_ACTION_STOP_THEN_START:
-			// DO start
-
+			unicast_client_stop(0);
+			cap_thread_next_evt_set(CAP_ACTION_START);
 			break;
 		case CAP_ACTION_START:
-			cap_start_worker();
+			cap_action_start();
 			break;
 		default:
 			LOG_ERR("Unknown CAP action: %d", action);
