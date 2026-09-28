@@ -7,4 +7,8 @@ cmake_minimum_required(VERSION 3.20.0)
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(uart_errors)
 
-target_sources(app PRIVATE ${ZEPHYR_BASE}/tests/drivers/uart/uart_errors/src/main.c)
+target_sources(app PRIVATE
+    ${ZEPHYR_BASE}/tests/drivers/uart/uart_errors/src/uart_errors_common.c
+    ${ZEPHYR_BASE}/tests/drivers/uart/uart_errors/src/test_parity.c
+    ${ZEPHYR_BASE}/tests/drivers/uart/uart_errors/src/test_stop_bit.c
+    )
