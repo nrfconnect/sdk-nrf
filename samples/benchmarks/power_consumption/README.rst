@@ -81,6 +81,8 @@ Testing
 
 |test_sample|
 
+.. _power_consumption_sample_measuring:
+
 Measuring the power consumption
 -------------------------------
 
