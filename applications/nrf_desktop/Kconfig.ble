@@ -329,7 +329,7 @@ config BT_BUF_ACL_TX_COUNT
 	  peripheral setup.
 
 config BT_GATT_DM_MAX_ATTRS
-	default 38 if DESKTOP_HID_FORWARD_HID_SCI_ENABLE
+	default 40 if DESKTOP_HID_FORWARD_HID_SCI_ENABLE
 	help
 	  When HID SCI is enabled, the HID Service on the peripheral includes
 	  two additional characteristics (SCI Information and SCI Mode). The
