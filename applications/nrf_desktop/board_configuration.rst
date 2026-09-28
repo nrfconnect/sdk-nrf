@@ -53,7 +53,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l05/cpuapp``)
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
         Most of the configurations use the Low Latency Packet Mode (LLPM).
-        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
+        Only the ``hid_sci``, ``release_hid_sci``, ``hid_sci_keyboard``, and ``release_hid_sci_keyboard`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * The preconfigured ``debug`` configurations do not use the bootloader due to memory size limits.
         In the ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
@@ -75,7 +75,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l10/cpuapp``)
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
         Most of the configurations use the Low Latency Packet Mode (LLPM).
-        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
+        Only the ``hid_sci``, ``release_hid_sci``, ``hid_sci_keyboard``, and ``release_hid_sci_keyboard`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
@@ -97,7 +97,7 @@ Sample mouse or keyboard (``nrf54l15dk/nrf54l15/cpuapp``)
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
         Most of the configurations use the Low Latency Packet Mode (LLPM).
-        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
+        Only the ``hid_sci``, ``release_hid_sci``, ``hid_sci_keyboard``, and ``release_hid_sci_keyboard`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * In ``debug`` configurations, logs are provided through the UART.
         For detailed information on working with the nRF54L15 DK, see the :ref:`ug_nrf54l15_gs` documentation.
       * The configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
@@ -147,12 +147,12 @@ Sample mouse or keyboard (``nrf54ls05dk/nrf54ls05a/cpuapp``, ``nrf54ls05dk/nrf54
       * Only Bluetooth LE transport is enabled.
         Bluetooth LE is configured to use Nordic Semiconductor's SoftDevice Link Layer.
         Most of the configurations use the Low Latency Packet Mode (LLPM).
-        Only the ``hid_sci`` and ``release_hid_sci`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
+        Only the ``hid_sci``, ``release_hid_sci``, ``hid_sci_keyboard``, and ``release_hid_sci_keyboard`` configurations use HID SCI (Shorter Connection Intervals) and disable LLPM.
       * The nRF54LS05 SoC does not have hardware cryptography acceleration or Key Management Unit (KMU).
         Software-based cryptography is used instead.
       * The ``debug`` configurations do not use the bootloader due to memory size limits (508 KB RRAM).
         In the ``debug`` configurations, logs are provided through the UART.
-      * The ``release`` and ``release_hid_sci`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
+      * The ``release`` configurations use the MCUboot bootloader built in the direct-xip mode (``MCUBOOT+XIP``) and support firmware updates using the :ref:`nrf_desktop_dfu`.
         The application image is verified using a pure ED25519 signature with software cryptography.
       * The board supports the ``release`` :ref:`nrf_desktop_bluetooth_guide_fast_pair` configuration that acts as a mouse (``release_fast_pair`` file suffix).
 
