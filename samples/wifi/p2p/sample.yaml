@@ -47,9 +47,11 @@ tests:
       - SB_CONFIG_WIFI_NRF70=n
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
-      - nrf7120dk/nrf7120/cpuapp/ns
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+    # ns variant fails to link: Wi-Fi patch region overlaps Zephyr build
+    platform_exclude:
       - nrf7120dk/nrf7120/cpuapp/ns
     tags:
       - ci_build
