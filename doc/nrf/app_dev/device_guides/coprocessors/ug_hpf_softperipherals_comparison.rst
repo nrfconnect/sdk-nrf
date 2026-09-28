@@ -7,6 +7,10 @@ Introduction to Soft Peripherals and High-Performance Framework
    :local:
    :depth: 2
 
+.. caution::
+
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
+
 :ref:`nrfxlib:soft_peripherals` are a collection of pre-compiled binaries and API driver code designed to emulate commonly used peripherals.
 These peripherals allow application code to use the API driver to load the pre-compiled binaries onto a specific RAM location, where they are executed by the RISC-V coprocessor, named Fast Lightweight Peripheral Processor (FLPR) (see the :ref:`nRF54L15<vpr_flpr_nrf54l>` and :ref:`nRF54H20 devices<ug_nrf54h20_flpr>` pages).
 The application can then control the soft peripherals using API functions.
@@ -26,14 +30,14 @@ Choosing between the solutions depends on the specific requirements of your proj
 Implementation and use cases
 ============================
 
-The following comparison details implementation and typical use cases for Soft Peripherals and High Performance Framework:
+The following comparison details implementation and typical use cases for Soft Peripherals and High-Performance Framework:
 
 .. list-table::
    :header-rows: 1
 
    * - Comparison aspect
      - Soft Peripherals
-     - High Performance Framework
+     - High-Performance Framework
    * - Development
      - Optimized for performance and power consumption.
      - Allows for the creation of specialized or custom peripherals.
@@ -43,7 +47,7 @@ The following comparison details implementation and typical use cases for Soft P
      - - When developing a custom peripheral or when high-degree control is needed.
        - Enhances the main processor's functionality with real-time capabilities in a streamlined, bare metal environment.
        - Integrated with the Zephyr build system.
-       - Ideal for applications where the FLPR handles higher layers of the software stack (it allows to offload parts of the protocol stack to the FLPR core).
+       - Ideal for applications where the FLPR handles higher layers of the software stack (it allows you to offload parts of the protocol stack to the FLPR core).
 
 .. _nrf54l_hpf_softperi_comparison_features:
 
@@ -57,7 +61,7 @@ See the following detailed feature comparison between Soft Peripherals and High-
 
    * - Feature
      - Soft Peripherals
-     - High Performance Framework
+     - High-Performance Framework
    * - Integration
      - Pre-compiled binary for FLPR, driver for the application core
      - Built from source in Zephyr build system
@@ -88,7 +92,7 @@ See the following detailed feature comparison between Soft Peripherals and High-
 Requirements
 ************
 
-For Soft Peripherals, there is a specific memory size requirement of approximately 16 K, but there is a flexibility in placement within the FLPR execution RAM.
+For Soft Peripherals, there is a specific memory size requirement of approximately 16 K, but there is flexibility in placement within the FLPR execution RAM.
 To enter low power consumption modes, Soft Peripherals require a slot at a specific memory address, which is platform-specific, and the application code must be able to access MEMCONF registers.
 See the requirements in the :ref:`Soft Peripherals section<nrfxlib:soft_peripherals>`.
 It provides essential information for proper integration and optimization.

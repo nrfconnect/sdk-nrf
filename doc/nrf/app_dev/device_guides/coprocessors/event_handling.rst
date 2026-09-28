@@ -9,12 +9,11 @@ Event handling
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
-This page section outlines the critical requirements and implementation strategies for managing events within the system, ensuring that functionalities are both modular and precise in execution.
+This page outlines the critical requirements and implementation strategies for managing events within the system, ensuring that functionalities are both modular and precise in execution.
 
 .. note::
-
    This page outlines best practices for architecture design.
    You might need to implement some components, as they are not yet available.
 
@@ -23,14 +22,14 @@ Requirements
 
 The system must support the integration of multiple High-Performance Framework (HPF) peripherals, ensuring the following:
 
-* Modularity, allowing to combine functionalities of multiple HPF peripherals.
-* Timing accuracy, focusing on handling certain parts of the code with very accurate timings.
-* Verification, ensuring it is possible verify timing accuracy without the need to rerun an entire suite of hardware characteristic tests.
+* Modularity - Allows you to combine functionalities of multiple HPF peripherals.
+* Timing accuracy - Focuses on handling certain parts of the code with highly accurate timings.
+* Verification - Ensures that it is possible to verify timing accuracy without the need to rerun an entire suite of hardware characterization tests.
 
 Implementation
 **************
 
-To ensure precise timing, specific sections of the code should be identified and managed as Hard-Real Time (HRT) functions.
+To ensure precise timing, specific sections of the code should be identified and managed as Hard Real-Time (HRT) functions.
 These functions must be kept separate from the main application code.
 
 During the build process, HRT functions are compiled into assembly code.
@@ -46,20 +45,19 @@ This implementation ensures that these functions are executed in the correct seq
 Interaction between HRT and non-HRT code
 ****************************************
 
-Since HRT functions shall be implemented as Interrupt Service Routines (ISR) they cannot use function arguments for passing values between application and HRT.
+Since HRT functions shall be implemented as Interrupt Service Routines (ISRs), they cannot use function arguments for passing values between application and HRT.
 To facilitate this communication, you can use the following methods or their combination:
 
 * VEVIF interrupt ID - You can assign separate HRT functions to certain VEVIF IRQs.
-* Shared memory - You can store data in the pre-defined memory addresses.
+* Shared memory - You can store data in pre-defined memory addresses.
 
 The sequence flow must be designed to handle initialization, transaction requests, and error handling efficiently.
 During initialization, the system boots up and prepares for operation by entering a wait state.
 For transaction requests, the system handles transmission and reception requests through IPC mechanisms, utilizing shared memory or IRQ numbers for communication between different parts of the system.
 
-In the event of an error, such as a memory fault, the system triggers an error handler which notifies the Host of the error and then enters an infinite loop to halt further operations:
+In the event of an error, such as a memory fault, the system triggers an error handler, which notifies the Host of the error and then enters an infinite loop to halt further operations:
 
 .. uml::
-
 
   @startuml
 
@@ -73,7 +71,7 @@ In the event of an error, such as a memory fault, the system triggers an error h
   BoxBackgroundColor #C1E8FF
   BoxBorderColor #C1E8FF
   GroupBackgroundColor #8DBEFF
-  GropuBorderColor #8DBEFF
+  GroupBorderColor #8DBEFF
   }
 
   skinparam note {
@@ -123,7 +121,7 @@ In the event of an error, such as a memory fault, the system triggers an error h
   h -> h : HRT RX execution
   [-> i : TX request from host
 
-  h -> h: Mark Rx as done
+  h -> h : Mark RX as done
   return
   activate i
 

@@ -11,11 +11,7 @@ Real-time peripherals
 
    The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
-.. contents::
-   :local:
-   :depth: 2
-
-This document provides technical details and guidance on how to use the real-time (RT) peripherals integrated into the VPR CPU.
+This page provides technical details and guidance on how to use the real-time (RT) peripherals integrated into the VPR CPU.
 They are designed to enhance real-time performance and allow precise control over GPIO pads and other low-level hardware interactions.
 
 Overview
@@ -55,7 +51,7 @@ Each timer can operate in several modes to control its counting behavior, which 
 * :c:enumerator:`NRF_VPR_CSR_VTIM_COUNT_STOP` - Halts the timer when it reaches zero.
 * :c:enumerator:`NRF_VPR_CSR_VTIM_COUNT_WRAP` - Restarts the timer from its maximum value (``0xFFFF``) after reaching zero.
 * :c:enumerator:`NRF_VPR_CSR_VTIM_COUNT_RELOAD` - Reloads the timer with a pre-configured value when it reaches zero.
-  The value is set using the :c:func:`nrf_vpr_cst_vtim_simple_counter_top_set` or :c:func:`nrf_vpr_cst_vtim_combined_counter_top_set` function.
+  The value is set using the :c:func:`nrf_vpr_csr_vtim_simple_counter_top_set` or :c:func:`nrf_vpr_csr_vtim_combined_counter_top_set` function.
 * :c:enumerator:`NRF_VPR_CSR_VTIM_COUNT_TRIGGER_COMBINED` - Trigger (counter 0) or combined (counter 1) mode.
 
   * Trigger mode is set to counter 0.
@@ -69,21 +65,21 @@ Each timer can operate in several modes to control its counting behavior, which 
 Use the ``nrf_vpr_csr_vtim_simple_*`` API to set the counters in standalone mode.
 You must specify the counter index:
 
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_get`
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_set`
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_top_get`
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_top_set`
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_add_set`
-* :c:func:`nrf_vpr_cst_vtim_simple_counter_wait_set`
+* :c:func:`nrf_vpr_csr_vtim_simple_counter_get`
+* :c:func:`nrf_vpr_csr_vtim_simple_counter_set`
+* :c:func:`nrf_vpr_csr_vtim_simple_counter_top_get`
+* :c:func:`nrf_vpr_csr_vtim_simple_counter_top_set`
+* :c:func:`nrf_vpr_csr_vtim_simple_counter_add_set`
+* :c:func:`nrf_vpr_csr_vtim_simple_wait_set`
 
 Use the following functions (``nrf_vpr_csr_vtim_combined_*`` ) to adjust the combined counter:
 
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_get`
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_set`
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_top_get`
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_top_set`
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_add_set`
-* :c:func:`nrf_vpr_cst_vtim_combined_counter_wait_trigger`
+* :c:func:`nrf_vpr_csr_vtim_combined_counter_get`
+* :c:func:`nrf_vpr_csr_vtim_combined_counter_set`
+* :c:func:`nrf_vpr_csr_vtim_combined_counter_top_get`
+* :c:func:`nrf_vpr_csr_vtim_combined_counter_top_set`
+* :c:func:`nrf_vpr_csr_vtim_combined_counter_add_set`
+* :c:func:`nrf_vpr_csr_vtim_combined_wait_trigger`
 
 Operational guidelines
 ======================
@@ -107,23 +103,19 @@ The interrupt line triggered varies depending on the System on Chip (SoC):
 
    * - Target
      - IRQ line
-
    * - nRF54L15 FLPR
      - 31
-
    * - nRF54LM20 FLPR
      - 31
-
    * - nRF54LC10A FLPR
      - 31
-
    * - nRF54LV10A FLPR
      - 31
 
 CPU stalling
 ============
 
-CPU can be stalled until corresponding counter's event pulse is generated, using the :c:func:`nrf_vpr_csr_vtim_simple_wait_set` or :c:func:`nrf_vpr_csr_vtim_combined_wait_trigger` function.
+The CPU can be stalled until the corresponding counter's event pulse is generated, using the :c:func:`nrf_vpr_csr_vtim_simple_wait_set` or :c:func:`nrf_vpr_csr_vtim_combined_wait_trigger` function.
 
 VPR IO (VIO)
 ************
@@ -147,54 +139,43 @@ See the following table for pin mapping between GPIO and VIO for specific target
    * - VIO pin number
      - Corresponding GPIO pin for nRF54L15/nRF54LM20
      - Corresponding GPIO pin for nRF54LC10A/nRF54LV10A
-
    * - 0
      - P2.01
      - P1.16
-
    * - 1
      - P2.02
      - P1.17
-
    * - 2
      - P2.04
      - P1.19
-
    * - 3
      - P2.03
      - P1.18
-
    * - 4
      - P2.00
      - P1.15
-
    * - 5
      - P2.05
      - P1.20
-
    * - 6
      - P2.06
      - P1.21
-
    * - 7
      - P2.07
      - P1.22
-
    * - 8
      - P2.08
      - P1.23
-
    * - 9
      - P2.09
      - P1.24
-
    * - 10
      - P2.10
      - -
 
 .. note::
    Routing the signal between VPR and physical pins may require SoC-specific configuration.
-   For instance, on the nRF54L15/nRF54LM20 SoC, you must change the ownership of GPIO pin with ``nrf_gpio_pin_control_select(pin, NRF_GPIO_PIN_SEL_VPR);``.
+   For instance, on the nRF54L15/nRF54LM20 SoCs, you must change the ownership of the GPIO pin using ``nrf_gpio_pin_control_select(pin, NRF_GPIO_PIN_SEL_VPR);``.
 
 Direction
 =========
@@ -225,11 +206,11 @@ Buffering
 =========
 
 VIO supports queuing updates that are applied on the next timer event pulse, allowing synchronized GPIO updates.
-You can access buffered analogues using the ``nrf_vpr_csr_vio_*_buffered_*`` functions.
+You can access buffered analogs using the ``nrf_vpr_csr_vio_*_buffered_*`` functions.
 Writing to buffers will set dirty bits, which you can check with ``nrf_vpr_csr_vio_*_buffered_dirty_check``.
-A dirty buffer is transferred to its direct analogue on a counter 0 event pulse, clearing the corresponding dirty bit.
+A dirty buffer is transferred to its direct analog on a counter 0 event pulse, clearing the corresponding dirty bit.
 Writing to a dirty buffer will stall the CPU to prevent overruns.
-Additionally, writing to a direct analogue will also write to the buffer, clearing the dirty bit (if set).
+Additionally, writing to a direct analog will also write to the buffer, clearing the dirty bit (if set).
 Do not use the :c:func:`nrf_vpr_csr_vio_in_buffered_get` function in continuous or event modes, as it will stall the CPU until the next counter 1 event pulse.
 
 Shifting
@@ -254,7 +235,7 @@ You can use the following shifting modes:
 You can set the advanced configuration for output shifting with the :c:func:`nrf_vpr_csr_vio_config_set` function.
 
 .. note::
-  For more information on output shifting, see the *Shifting modes and usage* section in the VPR peripheral description.
+   For more information on output shifting, see the *Shifting modes and usage* section in the VPR peripheral description.
 
 .. _hpf_real_time_input_shifting:
 
@@ -266,7 +247,7 @@ Shifting process aligns with the serial clock and sampling point based on counte
 This mode is intended to be used in conjunction with :c:enumerator:`NRF_VPR_CSR_VIO_SHIFT_OUTB_TOGGLE` output mode.
 
 .. note::
-  For more information on input shifting, see the *Input Shifting* section in the VPR peripheral description.
+   For more information on input shifting, see the *Input shifting* section in the VPR peripheral description.
 
 Combined access
 ===============
@@ -288,10 +269,10 @@ VEVIF tasks are responsible for generating interrupts handled by the VPR interru
 You can trigger tasks in the following ways:
 
 * By calling the :c:func:`nrf_vpr_task_trigger` function, usually from other core to trigger an IRQ on VPR.
-* By calling the :c:func:`nrf_vpr_csr_tasks_set` function, which is done only locally from VPR to generate local IRQ.
+* By calling the :c:func:`nrf_vpr_csr_vevif_tasks_set` function, which is done only locally from VPR to generate local IRQ.
 * Through the DPPI system, configured with the :c:func:`nrf_vpr_csr_vevif_subscribe_set` function.
 
-The interrupt service routine must clear the task bit using the :c:func:`nrf_vpr_csr_vevif_tasks_clear`.
+The interrupt service routine must clear the task bit using the :c:func:`nrf_vpr_csr_vevif_tasks_clear` function.
 
 Events
 ======
