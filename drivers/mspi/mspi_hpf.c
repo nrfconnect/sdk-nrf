@@ -32,6 +32,8 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 /* The transfer packet message is built on the stack before ICMsg copies it into the TX region. */
 #define MAX_COPY_MSG_SIZE	     MAX_TX_MSG_SIZE
 #define MAX_STACK_MSG_SIZE	     1024
+/* ICMsg drops a received message that does not fit its read buffer. */
+#define MAX_REPLY_MSG_SIZE	     MIN(MAX_RX_MSG_SIZE, CONFIG_PBUF_RX_READ_BUF_SIZE)
 #endif
 /* Alignment the FLPR requires for data passed by reference. */
 #define DATA_BUF_ALIGNMENT	     sizeof(uint32_t)
@@ -91,8 +93,23 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 HPF_MSPI_PINCTRL_DT_DEFINE(MSPI_HPF_NODE);
 
 static struct ipc_ept ep;
-static size_t ipc_received;
-static uint8_t *ipc_receive_buffer;
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+/* ICMsg passes a received message in a buffer that is valid only during the receive callback,
+ * so the reply data is copied there straight into the buffer of the pending RX packet.
+ * The receive callback runs in an interrupt or in a cooperative thread, so the thread that sends
+ * a packet cannot preempt it. Clearing rx_dest before that thread returns is therefore enough to
+ * keep a late reply from writing into the buffer afterwards.
+ */
+BUILD_ASSERT(!IS_ENABLED(CONFIG_SMP) &&
+		     (!IS_ENABLED(CONFIG_MULTITHREADING) ||
+		      IS_ENABLED(CONFIG_IPC_SERVICE_BACKEND_ICMSG_WQ_ENABLE) ||
+		      (CONFIG_SYSTEM_WORKQUEUE_PRIORITY < 0)),
+	     "Reply handling requires a single CPU and ICMsg calling back from a cooperative "
+	     "thread");
+static uint8_t *volatile rx_dest;
+static volatile size_t rx_dest_len;
+static volatile size_t ipc_received;
+#endif
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
 	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
@@ -139,7 +156,6 @@ static void ep_recv(const void *data, size_t len, void *priv);
 
 static void ep_bound(void *priv)
 {
-	ipc_received = 0;
 #if defined(CONFIG_MULTITHREADING)
 	k_sem_give(&ipc_sem);
 #else
@@ -235,10 +251,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	}
 	case HPF_MSPI_TXRX: {
-		if (len > 0) {
-			ipc_received = len - sizeof(hpf_mspi_opcode_t);
-			ipc_receive_buffer = (uint8_t *)&response->data;
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+		uint8_t *dest = rx_dest;
+
+		ipc_received = (len >= sizeof(hpf_mspi_opcode_t)) ? len - sizeof(hpf_mspi_opcode_t)
+								   : 0;
+		if ((dest != NULL) && (ipc_received == rx_dest_len)) {
+			memcpy(dest, &response->data, ipc_received);
 		}
+#endif
 #if defined(CONFIG_MULTITHREADING)
 		k_sem_give(&ipc_sem_xfer);
 #else
@@ -881,6 +902,8 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
 BUILD_ASSERT(MAX_COPY_MSG_SIZE <= MAX_STACK_MSG_SIZE,
 	     "TX region is too large for the transfer packet message buffer on the stack. Size "
 	     "sram_tx for the largest TX packet only; RX data uses sram_rx.");
+BUILD_ASSERT(CONFIG_PBUF_RX_READ_BUF_SIZE >= sizeof(hpf_mspi_opcode_t),
+	     "ICMsg read buffer cannot hold a response opcode");
 #endif
 
 /**
@@ -902,7 +925,8 @@ static int check_packet_size(const struct mspi_xfer_packet *packet)
 		return -EINVAL;
 	}
 #else
-	if (packet->num_bytes > MAX_COPY_MSG_SIZE - sizeof(hpf_mspi_xfer_packet_msg_t)) {
+	if ((packet->dir == MSPI_TX) &&
+	    (packet->num_bytes > MAX_COPY_MSG_SIZE - sizeof(hpf_mspi_xfer_packet_msg_t))) {
 		LOG_ERR("Packet of %u bytes does not fit the %u byte TX region. Declare "
 			"packet-data-limit or increase the TX region.",
 			packet->num_bytes, (uint32_t)MAX_COPY_MSG_SIZE);
@@ -910,10 +934,11 @@ static int check_packet_size(const struct mspi_xfer_packet *packet)
 	}
 
 	if ((packet->dir == MSPI_RX) &&
-	    (packet->num_bytes > MAX_RX_MSG_SIZE - sizeof(hpf_mspi_opcode_t))) {
-		LOG_ERR("Reply of %u bytes does not fit the %u byte RX region. Declare "
-			"packet-data-limit.",
-			packet->num_bytes, (uint32_t)MAX_RX_MSG_SIZE);
+	    (packet->num_bytes > MAX_REPLY_MSG_SIZE - sizeof(hpf_mspi_opcode_t))) {
+		LOG_ERR("Reply of %u bytes does not fit the %u byte message (RX region: %u bytes, "
+			"CONFIG_PBUF_RX_READ_BUF_SIZE: %u bytes). Declare packet-data-limit.",
+			packet->num_bytes, (uint32_t)MAX_REPLY_MSG_SIZE, (uint32_t)MAX_RX_MSG_SIZE,
+			CONFIG_PBUF_RX_READ_BUF_SIZE);
 		return -EINVAL;
 	}
 #endif
@@ -971,8 +996,15 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 	}
 	len = sizeof(*xfer_packet);
 #else
-	memcpy(xfer_packet->data, packet->data_buf, packet->num_bytes);
-	len = sizeof(*xfer_packet) + packet->num_bytes;
+	if (packet->dir == MSPI_TX) {
+		memcpy(xfer_packet->data, packet->data_buf, packet->num_bytes);
+		len = sizeof(*xfer_packet) + packet->num_bytes;
+	} else {
+		len = sizeof(*xfer_packet);
+		ipc_received = 0;
+		rx_dest_len = packet->num_bytes;
+		rx_dest = packet->data_buf;
+	}
 #endif
 
 	rc = send_data(xfer_packet->opcode, xfer_packet, len, timeout);
@@ -984,22 +1016,12 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 			memcpy(packet->data_buf, bounce_buf, packet->num_bytes);
 		}
 #else
-		if ((ipc_receive_buffer != NULL) && (ipc_received > 0)) {
-			/*
-			 * It is not possible to check whether received data is valid, so
-			 * packet->num_bytes should always be equal to ipc_received. If it is not,
-			 * then something went wrong.
-			 */
-			if (packet->num_bytes != ipc_received) {
-				rc = -EIO;
-			} else {
-				memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer,
-				       ipc_received);
-			}
-
-			/* Clear the receive buffer pointer and size */
-			ipc_receive_buffer = NULL;
-			ipc_received = 0;
+		/* The reply data was copied in ep_recv(). A reply of the wrong length is not
+		 * copied, so treat it as an error.
+		 */
+		rx_dest = NULL;
+		if ((rc == 0) && (ipc_received != packet->num_bytes)) {
+			rc = -EIO;
 		}
 #endif
 	}
