@@ -723,7 +723,7 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
-#ifdef NRF_WIFI_CMD_EVENT_LOG
+#ifdef CONFIG_NRF_WIFI_CMD_EVENT_LOG
 	LOG_INF("%s: caller %p", __func__, __builtin_return_address(0));
 #else
 	LOG_DBG("%s: caller %p", __func__, __builtin_return_address(0));

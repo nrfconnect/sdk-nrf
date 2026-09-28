@@ -85,7 +85,7 @@ out:
 	return 0;
 }
 
-#ifdef NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_MODE
 int nrf_wifi_get_skip_header_bytes(unsigned short eth_type)
 {
 	/* Ethernet-II snap header (RFC1042 for most EtherTypes) */
@@ -207,7 +207,7 @@ static void nrf_wifi_convert_to_eth(void *nwb,
 		ehdr->proto = len;
 	}
 }
-#endif /* NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_MODE */
 
 enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   enum nrf_wifi_fmac_rx_cmd_type cmd_type,
@@ -289,7 +289,7 @@ out:
 }
 
 
-#ifdef NRF71_RX_WQ_ENABLED
+#ifdef CONFIG_NRF71_RX_WQ_ENABLED
 void nrf_wifi_fmac_rx_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
@@ -329,7 +329,7 @@ out:
 	}
 	nrf_wifi_ipc_rx_unlock(fmac_dev_ctx);
 }
-#endif /* NRF71_RX_WQ_ENABLED */
+#endif /* CONFIG_NRF71_RX_WQ_ENABLED */
 
 enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 							struct nrf_wifi_rx_buff *config)
@@ -338,23 +338,23 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info = NULL;
 	struct nrf_wifi_fmac_rx_pool_map_info pool_info;
-#if defined(NRF71_RAW_DATA_RX) || defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	struct raw_rx_pkt_header raw_rx_hdr;
-#if defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	unsigned short frame_control;
 #endif
-#endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 	void *nwb = NULL;
 	void *nwb_data = NULL;
 	unsigned int num_pkts = 0;
 	unsigned int desc_id = 0;
 	unsigned int i = 0;
 	unsigned int pkt_len = 0;
-#ifdef NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_MODE
 	struct nrf_wifi_fmac_ieee80211_hdr hdr;
 	unsigned short eth_type = 0;
 	unsigned int size = 0;
-#endif /* NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_MODE */
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	unsigned int buf_addr = 0;
@@ -365,12 +365,12 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 
 	vif_ctx = sys_dev_ctx->vif_ctx[config->wdev_id];
 
-#ifdef NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_MODE
 	if (config->rx_pkt_type != NRF_WIFI_RAW_RX_PKT) {
 		sys_fpriv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
 							  config->signal);
 	}
-#endif /* NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_MODE */
 	num_pkts = config->rx_pkt_cnt;
 	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 					 num_pkts * sizeof(struct nrf_wifi_rx_buf));
@@ -411,14 +411,14 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 		rx_buf_info->nwb = 0;
 		rx_buf_info->mapped = false;
 
-#ifdef NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISC_DATA_RX
 		nrf_wifi_mem_cpy(&frame_control,
 					  nwb_data,
 					  sizeof(unsigned short));
 #endif
 
 		if (config->rx_pkt_type == NRF_WIFI_RX_PKT_DATA) {
-#ifdef NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISC_DATA_RX
 			if (vif_ctx->promisc_mode) {
 				raw_rx_hdr.frequency = config->frequency;
 				raw_rx_hdr.signal = config->signal;
@@ -432,7 +432,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 				}
 			}
 #endif
-#ifdef NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_MODE
 			switch (config->rx_buff_info[i].pkt_type) {
 			case PKT_TYPE_MPDU:
 				nrf_wifi_mem_cpy(&hdr,
@@ -471,37 +471,37 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			}
 			sys_fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
-#endif /* NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_MODE */
 		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
-#ifdef WIFI_MGMT_RAW_SCAN_RESULTS
+#ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 			sys_fpriv->callbk_fns.rx_bcn_prb_resp_callbk_fn(
 							vif_ctx->os_vif_ctx,
 							nwb,
 							config->frequency,
 							config->signal);
-#endif /* WIFI_MGMT_RAW_SCAN_RESULTS */
+#endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 			nrf_wifi_nbuf_free(nwb);
-#ifdef NRF_WIFI_MGMT_BUFF_OFFLOAD
+#ifdef CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD
 			continue;
-#endif /* NRF_WIFI_MGMT_BUFF_OFFLOAD */
+#endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
 		}
-#if defined(NRF71_RAW_DATA_RX) || defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 		else if (config->rx_pkt_type == NRF_WIFI_RAW_RX_PKT) {
 			raw_rx_hdr.frequency = config->frequency;
 			raw_rx_hdr.signal = config->signal;
 			raw_rx_hdr.rate_flags = config->rate_flags;
 			raw_rx_hdr.rate = config->rate;
-#if defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
 			if (nrf_wifi_util_check_filt_setting(vif_ctx, &frame_control)) {
 #endif
 				sys_fpriv->callbk_fns.sniffer_callbk_fn(vif_ctx->os_vif_ctx,
 						nwb,
 						&raw_rx_hdr,
 						true);
-#if defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
 			}
 #endif
-#if defined(NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
 			/**
 			 * In the case of Monitor mode, the sniffer callback function
 			 * will free the packet. For promiscuous mode, if the packet
@@ -513,7 +513,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			}
 #endif
 		}
-#endif /* NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 		else {
 			LOG_ERR("%s: Invalid frame type received %d",
 						  __func__,

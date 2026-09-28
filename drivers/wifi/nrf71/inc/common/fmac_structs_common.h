@@ -146,13 +146,13 @@ struct nrf_wifi_fmac_dev_ctx {
 	struct nrf_wifi_fmac_priv *fpriv;
 	/** Handle to the OS abstraction layer. */
 	void *os_dev_ctx;
-#if defined(NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
 	unsigned long wakeup_now_asserted_time_prev_ms;
 	unsigned long wakeup_now_deasserted_time_prev_ms;
 	unsigned long rpu_sleep_opp_time_prev_ms;
 	int wdt_irq_recd;
 	int wdt_irq_ignored;
-#endif /* NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	/** Operation mode. \ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Firmware statistics. */
