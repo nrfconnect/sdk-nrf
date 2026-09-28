@@ -13,9 +13,8 @@
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
 #include <zephyr/pm/device_runtime.h>
-#if !defined(CONFIG_MULTITHREADING)
 #include <zephyr/sys/atomic.h>
-#endif
+#include <hal/nrf_vpr.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 
@@ -33,6 +32,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
+#define FLPR_VPR		     ((NRF_VPR_Type *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_vpr)))
 
 #if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
 	defined(CONFIG_SOC_NRF54LM20B)
@@ -119,6 +119,9 @@ static const struct mspi_hpf_config dev_config = {
 };
 
 static struct mspi_hpf_data dev_data;
+
+/* Set once the FLPR has been halted after a response timeout. */
+static atomic_t flpr_halted = ATOMIC_INIT(0);
 
 static void ep_recv(const void *data, size_t len, void *priv);
 
@@ -379,6 +382,37 @@ static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instan
 }
 
 /**
+ * @brief Stop the FLPR after it failed to respond in time.
+ */
+static void hpf_mspi_halt_flpr(void)
+{
+	/* CPURUN only takes effect on a core reset, so reset the core after clearing it. */
+	nrf_vpr_cpurun_set(FLPR_VPR, false);
+	nrf_vpr_debugif_dmcontrol_mask_set(
+		FLPR_VPR,
+		(VPR_DEBUGIF_DMCONTROL_NDMRESET_Active << VPR_DEBUGIF_DMCONTROL_NDMRESET_Pos) |
+			(VPR_DEBUGIF_DMCONTROL_DMACTIVE_Enabled
+			 << VPR_DEBUGIF_DMCONTROL_DMACTIVE_Pos));
+	nrf_vpr_debugif_dmcontrol_mask_set(
+		FLPR_VPR,
+		(VPR_DEBUGIF_DMCONTROL_NDMRESET_Inactive << VPR_DEBUGIF_DMCONTROL_NDMRESET_Pos) |
+			(VPR_DEBUGIF_DMCONTROL_DMACTIVE_Disabled
+			 << VPR_DEBUGIF_DMCONTROL_DMACTIVE_Pos));
+
+	atomic_set(&flpr_halted, 1);
+
+#if defined(CONFIG_MSPI_HPF_FAULT_TIMER)
+	/* The FLPR stops the fault timer only when it completes a transfer. */
+	(void)counter_stop(DEVICE_DT_GET(DT_NODELABEL(fault_timer)));
+#endif
+
+	/* Hand the pins back from the stopped FLPR, if a sleep state is defined. */
+	(void)pinctrl_apply_state(dev_config.pcfg, PINCTRL_STATE_SLEEP);
+
+	LOG_ERR("FLPR stopped after response timeout, driver disabled");
+}
+
+/**
  * @brief Send data to the FLPR core using the IPC service, and wait for FLPR response.
  *
  * @param opcode The configuration packet opcode to send.
@@ -386,7 +420,10 @@ static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instan
  * @param len The length of the data to send.
  * @param timeout_ms Maximum time to wait for the FLPR response, in milliseconds.
  *
- * @return 0 on success, negative errno code on failure.
+ * @retval 0 on success.
+ * @retval -EIO if the FLPR was stopped after an earlier response timeout.
+ * @retval -ETIMEDOUT if the FLPR did not respond in time. The FLPR is stopped before returning.
+ * @retval -errno other negative errno code on failure.
  */
 static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len,
 		     uint32_t timeout_ms)
@@ -394,6 +431,10 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len,
 	LOG_DBG("Sending msg with opcode: %d", (uint8_t)opcode);
 
 	int rc;
+
+	if (atomic_get(&flpr_halted)) {
+		return -EIO;
+	}
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
 	(void)len;
 	void *data_ptr = (void *)data;
@@ -431,6 +472,7 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len,
 
 	rc = hpf_mspi_wait_for_response(opcode, timeout_ms);
 	if (rc < 0) {
+		hpf_mspi_halt_flpr();
 		LOG_ERR("Data transfer: %d response timeout: %d!", opcode, rc);
 	}
 
@@ -944,6 +986,8 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
  * This function sends a multi-packet transfer request to the host and waits
  * for the host to complete the transfer. This function does not support
  * asynchronous transfers.
+ * The FLPR is stopped in case of timeout, so it no longer accesses
+ * the request buffers, and the driver is disabled.
  *
  * @param dev Pointer to the device structure.
  * @param dev_id Pointer to the device identification structure.
@@ -951,7 +995,9 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
  *
  * @retval 0 If successful.
  * @retval -ENOTSUP If the requested transfer configuration is not supported.
- * @retval -EIO General input / output error, failed to send over the bus.
+ * @retval -EIO General input / output error, failed to send over the bus, or the driver is
+ *              disabled after an earlier timeout.
+ * @retval -ETIMEDOUT If the FLPR did not complete the transfer in time.
  */
 static int api_transceive(const struct device *dev, const struct mspi_dev_id *dev_id,
 			  const struct mspi_xfer *req)
@@ -1029,6 +1075,10 @@ static int dev_pm_action_cb(const struct device *dev, enum pm_device_action acti
 	case PM_DEVICE_ACTION_SUSPEND:
 		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_SLEEP);
 	case PM_DEVICE_ACTION_RESUME:
+		/* Keep the pins away from a stopped FLPR. */
+		if (atomic_get(&flpr_halted)) {
+			return 0;
+		}
 		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 	default:
 		return -ENOTSUP;
