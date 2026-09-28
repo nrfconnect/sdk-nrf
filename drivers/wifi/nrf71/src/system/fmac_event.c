@@ -286,8 +286,15 @@ static enum nrf_wifi_status umac_event_sys_debug_stats_process(
 	}
 
 	if (!fmac_dev_ctx->debug_stats_req) {
-		LOG_DBG("%s: Debug stats recd when req was not sent!",
-				      __func__);
+		void (*periodic_cb)(void *priv, const struct nrf_wifi_rpu_debug_stats *stats) =
+			fmac_dev_ctx->debug_stats_periodic_cb;
+
+		if (periodic_cb) {
+			periodic_cb(fmac_dev_ctx->debug_stats_periodic_priv, &ev->stats);
+		} else {
+			LOG_DBG("%s: Debug stats recd when req was not sent!",
+				__func__);
+		}
 		status = NRF_WIFI_STATUS_SUCCESS;
 		goto out;
 	}
