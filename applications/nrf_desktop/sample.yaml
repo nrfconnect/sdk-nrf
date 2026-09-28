@@ -146,6 +146,36 @@ tests:
     integration_platforms:
       - nrf54lm20dk/nrf54lm20b/cpuapp
     extra_args: FILE_SUFFIX=release_hid_sci_dongle
+  applications.nrf_desktop.zdebug_hid_sci_keyboard.uart:
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    extra_args: FILE_SUFFIX=hid_sci_keyboard
+    harness: console
+  applications.nrf_desktop.zrelease_hid_sci_keyboard:
+    build_only: true
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    platform_allow:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l10/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l05/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+    extra_args: FILE_SUFFIX=release_hid_sci_keyboard
   applications.nrf_desktop.zdebug_keyboard.uart:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=n
