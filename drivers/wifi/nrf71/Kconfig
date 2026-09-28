@@ -173,6 +173,16 @@ config NRF_WIFI_LP_RX
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
+config NRF_WIFI_BET
+	bool "Beacon early termination (BET) in nRF Wi-Fi chipsets"
+	depends on NRF_WIFI_LOW_POWER
+	default y
+	help
+	  Enable beacon early termination in the LMAC tuning parameters sent
+	  to the RPU. BET lets the RPU stop receiving a beacon as soon as it
+	  determines that none of the fields the host cares about have
+	  changed, cutting short the RX window and saving power.
+
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool "TCP/IP checksum offload"
 	default y if !NRF71_RADIO_TEST
