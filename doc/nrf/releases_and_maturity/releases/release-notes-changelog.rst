@@ -348,6 +348,15 @@ nRF Desktop
     * ``nrf54ls05dk/nrf54ls05b/cpuapp``
 
     The configurations act as a HID mouse peripheral with HID SCI support.
+  * The ``hid_sci_keyboard`` and ``release_hid_sci_keyboard`` build types for the following board targets:
+
+    * ``nrf54l15dk/nrf54l05/cpuapp``
+    * ``nrf54l15dk/nrf54l10/cpuapp``
+    * ``nrf54l15dk/nrf54l15/cpuapp``
+    * ``nrf54ls05dk/nrf54ls05a/cpuapp``
+    * ``nrf54ls05dk/nrf54ls05b/cpuapp``
+
+    The configurations act as a HID keyboard peripheral with HID SCI support.
   * LLPM dongle application configurations for the nRF54LM20 DK (``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets).
   * The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT` Kconfig option that allows to drop the MCUboot image header in secondary MCUboot image update, when the update is installed to a designated slot by MCUboot.
     If the option is off for compatibility, MCUboot cannot update itself with MCUboot that was built with the option enabled.

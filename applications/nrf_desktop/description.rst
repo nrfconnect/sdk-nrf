@@ -419,6 +419,14 @@ The application supports the following build types:
      - ``release_hid_sci``
      - ``nrf54l15dk/nrf54l15/cpuapp``
      - Release version of the application that acts as a mouse with HID Shorter Connection Intervals (SCI) support.
+   * - HID SCI keyboard
+     - ``hid_sci_keyboard``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Debug version of the application that acts as a keyboard with HID Shorter Connection Intervals (SCI) support.
+   * - Release HID SCI keyboard
+     - ``release_hid_sci_keyboard``
+     - ``nrf54l15dk/nrf54l15/cpuapp``
+     - Release version of the application that acts as a keyboard with HID Shorter Connection Intervals (SCI) support.
    * - Dongle quadruple LLPM connection
      - ``dongle_4llpmconn``
      - ``nrf54lm20dk/nrf54lm20b/cpuapp``
