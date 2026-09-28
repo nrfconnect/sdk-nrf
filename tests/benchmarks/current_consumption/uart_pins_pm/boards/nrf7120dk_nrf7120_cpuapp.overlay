@@ -14,17 +14,14 @@
 
 / {
 	aliases {
-		led = &led0;
-		/delete-property/ led1;
+		led = &led_custom0;
 	};
-};
 
-/delete-node/ &led1;
-
-/ {
-	aliases {
-		led = &led0;
-		/delete-property/ led1;
+	leds {
+		led_custom0: led_custom0 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom LED due to GPIO4 disabled";
+		};
 	};
 
 	test_gpios {
