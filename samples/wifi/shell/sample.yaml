@@ -611,9 +611,10 @@ tests:
     extra_args:
       - shell_SNIPPET:STRING=wifi-p2p
       - CONFIG_NET_DHCPV4_SERVER=y
-    integration_platforms:
-      - nrf7120dk/nrf7120/cpuapp
     platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    # Fails to link: Wi-Fi patch region overlaps Zephyr build on nrf7120dk
+    platform_exclude:
       - nrf7120dk/nrf7120/cpuapp
     tags:
       - ci_build
