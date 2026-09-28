@@ -6,7 +6,7 @@ common:
     - ci_tests_subsys_event_manager_proxy
 
 tests:
-  event_manager_proxy.openamp:
+  event_manager_proxy.icbmsg:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
