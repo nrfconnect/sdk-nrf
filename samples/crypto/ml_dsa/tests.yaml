@@ -1,6 +1,7 @@
 sample:
   description: |
-    This sample demonstrates ML-DSA signature verification using the PSA Crypto API.
+    This sample demonstrates ML-DSA signature verification on devices
+    with the CRACEN hardware peripheral.
   name: ML-DSA sample
 common:
   sysbuild: true
@@ -25,13 +26,8 @@ common:
     type: multi_line
     regex:
       - ".*Example finished successfully!.*"
+
 tests:
   sample.ml_dsa.cracen:
     tags:
       - cracen
-  sample.ml_dsa.oberon:
-    extra_args:
-      - CONFIG_PSA_CRYPTO_DRIVER_OBERON=y
-      - CONFIG_PSA_CRYPTO_DRIVER_CRACEN=n
-    tags:
-      - oberon
