@@ -1329,7 +1329,7 @@ static int debug_stats_get_one(const struct shell *sh, enum rpu_stats_type stats
 	}
 
 	memset(&stats, 0, sizeof(stats));
-	status = nrf_wifi_sys_fmac_debug_stats_get(dbg_ctx->rpu_ctx, stats_type, cat->bit,
+	status = nrf_wifi_sys_fmac_debug_stats_get(dbg_ctx->rpu_ctx, stats_type, cat->bit, 0, 0,
 						   &stats);
 	k_mutex_unlock(&dbg_ctx->rpu_lock);
 
@@ -1385,22 +1385,57 @@ static int debug_stats_get_type(const struct shell *sh, enum rpu_stats_type stat
 	return ret;
 }
 
-static int nrf_wifi_dbg_debug_stats(const struct shell *sh,
-				     size_t argc,
-				     const char *argv[])
+static int debug_stats_check(const struct shell *sh, const char *type, const char *cat_name)
 {
-	const char *type = (argc > 1) ? argv[1] : "all";
-	const char *cat_name = (argc > 2) ? argv[2] : NULL;
-	bool all = !strcmp(type, "all");
-	int ret = 0;
+	const struct dbg_category *cats;
+	size_t num_cats;
 
-	if (all && cat_name) {
-		shell_fprintf(sh, SHELL_ERROR, "A category needs type umac, lmac or phy\n");
+	if (!strcmp(type, "all")) {
+		if (cat_name) {
+			shell_fprintf(sh, SHELL_ERROR, "A category needs type umac, lmac or phy\n");
+			return -ENOEXEC;
+		}
+		return 0;
+	}
+
+	if (!strcmp(type, "umac")) {
+		cats = umac_cats;
+		num_cats = ARRAY_SIZE(umac_cats);
+	} else if (!strcmp(type, "lmac")) {
+		cats = lmac_cats;
+		num_cats = ARRAY_SIZE(lmac_cats);
+	} else if (!strcmp(type, "phy")) {
+		cats = phy_cats;
+		num_cats = ARRAY_SIZE(phy_cats);
+	} else {
+		shell_fprintf(sh, SHELL_ERROR, "Invalid type %s (umac|lmac|phy|all)\n", type);
 		return -ENOEXEC;
 	}
 
-	if (!all && strcmp(type, "umac") && strcmp(type, "lmac") && strcmp(type, "phy")) {
-		shell_fprintf(sh, SHELL_ERROR, "Invalid type %s (umac|lmac|phy|all)\n", type);
+	if (!cat_name) {
+		return 0;
+	}
+
+	for (size_t i = 0; i < num_cats; i++) {
+		if (!strcmp(cat_name, cats[i].name)) {
+			return 0;
+		}
+	}
+
+	shell_fprintf(sh, SHELL_ERROR, "Invalid %s category %s. Valid:", type, cat_name);
+	for (size_t i = 0; i < num_cats; i++) {
+		shell_fprintf(sh, SHELL_ERROR, " %s", cats[i].name);
+	}
+	shell_fprintf(sh, SHELL_ERROR, "\n");
+	return -ENOEXEC;
+}
+
+static int debug_stats_run(const struct shell *sh, const char *type, const char *cat_name)
+{
+	bool all = !strcmp(type, "all");
+	int ret = 0;
+
+	if (debug_stats_check(sh, type, cat_name)) {
 		return -ENOEXEC;
 	}
 
@@ -1418,6 +1453,428 @@ static int nrf_wifi_dbg_debug_stats(const struct shell *sh,
 	}
 
 	return ret ? -ENOEXEC : 0;
+}
+
+#define DBG_PERIODIC_STACK_SIZE 2048
+#define DBG_PERIODIC_PRIO K_LOWEST_APPLICATION_THREAD_PRIO
+
+enum dbg_periodic_state {
+	DBG_PERIODIC_IDLE,
+	DBG_PERIODIC_ACTIVE,
+	/* The RPU may still be sending reports, "debug_stats stop" retries the cancel */
+	DBG_PERIODIC_CANCEL_PENDING,
+};
+
+enum dbg_periodic_first {
+	/* The start thread has not stored the reply to the start request yet */
+	DBG_PERIODIC_FIRST_WAITING,
+	DBG_PERIODIC_FIRST_PUBLISHED,
+	DBG_PERIODIC_FIRST_CONSUMED,
+};
+
+/*
+ * The session fields are only written by the shell thread, with dbg_periodic_lock
+ * held, while the state is DBG_PERIODIC_IDLE and the work item is idle.
+ */
+static struct {
+	const struct shell *sh;
+	enum rpu_stats_type stats_type;
+	const char *type_name;
+	const struct dbg_category *cat;
+	unsigned int count;
+	/* Only accessed by the work item while a session is in progress */
+	unsigned int printed;
+	/* Reports sent by the RPU, including the first one and dropped ones */
+	atomic_t reported;
+	atomic_t dropped;
+	atomic_t first;
+	atomic_t state;
+	struct nrf_wifi_rpu_debug_stats first_stats;
+} periodic;
+
+/* Serializes the debug_stats commands, which start, stop and query sessions */
+static K_MUTEX_DEFINE(dbg_periodic_lock);
+
+/* Reports are queued by the driver's event context and printed by a work item */
+K_MSGQ_DEFINE(dbg_periodic_q, sizeof(struct nrf_wifi_rpu_debug_stats), 2, 4);
+K_THREAD_STACK_DEFINE(dbg_periodic_stack, DBG_PERIODIC_STACK_SIZE);
+static struct k_work_q dbg_periodic_wq;
+static bool dbg_periodic_wq_started;
+static void dbg_periodic_work_fn(struct k_work *work);
+static K_WORK_DEFINE(dbg_periodic_work, dbg_periodic_work_fn);
+
+static void dbg_periodic_print(const struct nrf_wifi_rpu_debug_stats *stats)
+{
+	unsigned int category;
+
+	memcpy(&category, stats, sizeof(category));
+	if (category != periodic.cat->bit) {
+		shell_fprintf(periodic.sh, SHELL_WARNING,
+			      "Periodic %s debug stats: unexpected category 0x%x ignored\n",
+			      periodic.type_name, category);
+		return;
+	}
+
+	periodic.printed++;
+	shell_fprintf(periodic.sh, SHELL_INFO,
+		      "Periodic %s debug stats %s (category=0x%x) #%u:\n",
+		      periodic.type_name, periodic.cat->name, category, periodic.printed);
+	periodic.cat->dump(periodic.sh, (const uint8_t *)stats + sizeof(category));
+}
+
+static void dbg_periodic_print_summary(const struct shell *sh, const char *what)
+{
+	unsigned int dropped = atomic_get(&periodic.dropped);
+
+	shell_fprintf(sh, SHELL_INFO, "Periodic %s debug stats %s %s after %u reports",
+		      periodic.type_name, periodic.cat->name, what, periodic.printed);
+	if (dropped) {
+		shell_fprintf(sh, SHELL_INFO, " (%u dropped)", dropped);
+	}
+	shell_fprintf(sh, SHELL_INFO, "\n");
+}
+
+static void dbg_periodic_unregister(void)
+{
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = dbg_ctx->rpu_ctx;
+
+	if (fmac_dev_ctx) {
+		fmac_dev_ctx->debug_stats_periodic_cb = NULL;
+		fmac_dev_ctx->debug_stats_periodic_priv = NULL;
+	}
+}
+
+static void dbg_periodic_work_fn(struct k_work *work)
+{
+	static struct nrf_wifi_rpu_debug_stats stats;
+	/* Read first: dbg_periodic_cb queues a report before counting it */
+	bool done = (unsigned int)atomic_get(&periodic.reported) >= periodic.count;
+
+	ARG_UNUSED(work);
+
+	if (atomic_cas(&periodic.first, DBG_PERIODIC_FIRST_PUBLISHED,
+		       DBG_PERIODIC_FIRST_CONSUMED)) {
+		if (atomic_get(&periodic.state) == DBG_PERIODIC_ACTIVE) {
+			dbg_periodic_print(&periodic.first_stats);
+		}
+	} else if (atomic_get(&periodic.first) != DBG_PERIODIC_FIRST_CONSUMED) {
+		/* Keep later reports queued, the start thread resubmits once it publishes */
+		return;
+	}
+
+	while (!k_msgq_get(&dbg_periodic_q, &stats, K_NO_WAIT)) {
+		if (atomic_get(&periodic.state) == DBG_PERIODIC_ACTIVE) {
+			dbg_periodic_print(&stats);
+		}
+	}
+
+	/* The RPU stops by itself after count reports, so no cancel is needed */
+	if (done && atomic_cas(&periodic.state, DBG_PERIODIC_ACTIVE, DBG_PERIODIC_IDLE)) {
+		dbg_periodic_print_summary(periodic.sh, "completed");
+	}
+}
+
+static void dbg_periodic_cb(void *priv, const struct nrf_wifi_rpu_debug_stats *stats)
+{
+	ARG_UNUSED(priv);
+
+	if (atomic_get(&periodic.state) != DBG_PERIODIC_ACTIVE) {
+		return;
+	}
+
+	if (k_msgq_put(&dbg_periodic_q, stats, K_NO_WAIT)) {
+		atomic_inc(&periodic.dropped);
+	}
+	atomic_inc(&periodic.reported);
+	k_work_submit_to_queue(&dbg_periodic_wq, &dbg_periodic_work);
+}
+
+static bool dbg_periodic_busy(const struct shell *sh)
+{
+	switch (atomic_get(&periodic.state)) {
+	case DBG_PERIODIC_ACTIVE:
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Periodic debug stats already running, use \"debug_stats stop\"\n");
+		return true;
+	case DBG_PERIODIC_CANCEL_PENDING:
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Periodic debug stats not cancelled in RPU, retry \"debug_stats stop\"\n");
+		return true;
+	default:
+		return false;
+	}
+}
+
+/* Caller holds rpu_lock */
+static enum nrf_wifi_status dbg_periodic_cancel(void)
+{
+	static struct nrf_wifi_rpu_debug_stats stats;
+	enum nrf_wifi_status status;
+
+	if (!dbg_ctx->rpu_ctx) {
+		/* RPU is gone, so there are no reports left to cancel */
+		return NRF_WIFI_STATUS_SUCCESS;
+	}
+
+	/* periodic_count 0 turns the RPU's periodic reports off */
+	status = nrf_wifi_sys_fmac_debug_stats_get(dbg_ctx->rpu_ctx, periodic.stats_type,
+						   periodic.cat->bit, 0, 0, &stats);
+	if (status == NRF_WIFI_STATUS_SUCCESS) {
+		dbg_periodic_unregister();
+	}
+
+	return status;
+}
+
+static const struct dbg_category *dbg_find_category(const char *type, const char *cat_name,
+						    enum rpu_stats_type *stats_type,
+						    const char **type_name)
+{
+	const struct dbg_category *cats;
+	size_t num_cats;
+
+	if (!strcmp(type, "umac")) {
+		*stats_type = RPU_STATS_TYPE_UMAC;
+		*type_name = "UMAC";
+		cats = umac_cats;
+		num_cats = ARRAY_SIZE(umac_cats);
+	} else if (!strcmp(type, "lmac")) {
+		*stats_type = RPU_STATS_TYPE_LMAC;
+		*type_name = "LMAC";
+		cats = lmac_cats;
+		num_cats = ARRAY_SIZE(lmac_cats);
+	} else if (!strcmp(type, "phy")) {
+		*stats_type = RPU_STATS_TYPE_PHY;
+		*type_name = "PHY";
+		cats = phy_cats;
+		num_cats = ARRAY_SIZE(phy_cats);
+	} else {
+		return NULL;
+	}
+
+	for (size_t i = 0; i < num_cats; i++) {
+		if (!strcmp(cat_name, cats[i].name)) {
+			return &cats[i];
+		}
+	}
+
+	return NULL;
+}
+
+static bool dbg_is_number(const char *str)
+{
+	if (*str == '\0') {
+		return false;
+	}
+
+	for (; *str; str++) {
+		if (*str < '0' || *str > '9') {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static int dbg_periodic_start(const struct shell *sh, const char *type, const char *cat_name,
+			      const char *count_str, const char *interval)
+{
+	unsigned long count = strtoul(count_str, NULL, 10);
+	unsigned long interval_s = strtoul(interval, NULL, 10);
+	enum nrf_wifi_status cancel_status = NRF_WIFI_STATUS_SUCCESS;
+	enum nrf_wifi_status status;
+	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx;
+	struct k_work_sync sync;
+	enum rpu_stats_type stats_type;
+	const char *type_name;
+	const struct dbg_category *cat;
+
+	if (count == 0 || count > UINT16_MAX) {
+		shell_fprintf(sh, SHELL_ERROR, "Invalid count %s (1-%u)\n", count_str,
+			      UINT16_MAX);
+		return -ENOEXEC;
+	}
+
+	if (interval_s == 0 || interval_s > UINT16_MAX) {
+		shell_fprintf(sh, SHELL_ERROR, "Invalid interval_s %s (1-%u)\n", interval,
+			      UINT16_MAX);
+		return -ENOEXEC;
+	}
+
+	if (debug_stats_check(sh, type, cat_name)) {
+		return -ENOEXEC;
+	}
+
+	cat = dbg_find_category(type, cat_name, &stats_type, &type_name);
+	if (!cat) {
+		shell_fprintf(sh, SHELL_ERROR, "Periodic stats need type umac, lmac or phy\n");
+		return -ENOEXEC;
+	}
+
+	if (dbg_periodic_busy(sh)) {
+		return -ENOEXEC;
+	}
+
+	if (!dbg_periodic_wq_started) {
+		const struct k_work_queue_config cfg = { .name = "nrf71_dbg_stats" };
+
+		k_work_queue_start(&dbg_periodic_wq, dbg_periodic_stack,
+				   K_THREAD_STACK_SIZEOF(dbg_periodic_stack),
+				   DBG_PERIODIC_PRIO, &cfg);
+		dbg_periodic_wq_started = true;
+	}
+
+	/* A completed session's work item may still be printing its summary */
+	k_work_flush(&dbg_periodic_work, &sync);
+
+	k_mutex_lock(&dbg_ctx->rpu_lock, K_FOREVER);
+	fmac_dev_ctx = dbg_ctx->rpu_ctx;
+	if (!fmac_dev_ctx) {
+		k_mutex_unlock(&dbg_ctx->rpu_lock);
+		shell_fprintf(sh, SHELL_ERROR, "RPU context not initialized\n");
+		return -ENOEXEC;
+	}
+
+	k_msgq_purge(&dbg_periodic_q);
+	periodic.sh = sh;
+	periodic.stats_type = stats_type;
+	periodic.type_name = type_name;
+	periodic.cat = cat;
+	periodic.count = count;
+	periodic.printed = 0;
+	atomic_set(&periodic.reported, 0);
+	atomic_set(&periodic.dropped, 0);
+	atomic_set(&periodic.first, DBG_PERIODIC_FIRST_WAITING);
+	memset(&periodic.first_stats, 0, sizeof(periodic.first_stats));
+	fmac_dev_ctx->debug_stats_periodic_priv = &periodic;
+	fmac_dev_ctx->debug_stats_periodic_cb = dbg_periodic_cb;
+	atomic_set(&periodic.state, DBG_PERIODIC_ACTIVE);
+
+	/* The first report answers the request, later ones reach dbg_periodic_cb */
+	status = nrf_wifi_sys_fmac_debug_stats_get(fmac_dev_ctx, stats_type, cat->bit,
+						   count, interval_s, &periodic.first_stats);
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		/* The command may have reached the RPU before the failure */
+		atomic_set(&periodic.state, DBG_PERIODIC_CANCEL_PENDING);
+		cancel_status = dbg_periodic_cancel();
+	}
+	k_mutex_unlock(&dbg_ctx->rpu_lock);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		k_work_cancel_sync(&dbg_periodic_work, &sync);
+		shell_fprintf(sh, SHELL_ERROR, "Failed to start periodic %s %s debug stats\n",
+			      type_name, cat->name);
+		if (cancel_status != NRF_WIFI_STATUS_SUCCESS) {
+			shell_fprintf(sh, SHELL_ERROR,
+				      "Failed to cancel them in RPU, use \"debug_stats stop\"\n");
+			return -ENOEXEC;
+		}
+		k_msgq_purge(&dbg_periodic_q);
+		atomic_set(&periodic.state, DBG_PERIODIC_IDLE);
+		return -ENOEXEC;
+	}
+
+	shell_fprintf(sh, SHELL_INFO,
+		      "Periodic %s debug stats %s %lu times every %lu s started, "
+		      "\"debug_stats stop\" to end early\n",
+		      type_name, cat->name, count, interval_s);
+
+	/* The work item prints the first report before any queued later ones */
+	atomic_inc(&periodic.reported);
+	atomic_set(&periodic.first, DBG_PERIODIC_FIRST_PUBLISHED);
+	k_work_submit_to_queue(&dbg_periodic_wq, &dbg_periodic_work);
+	return 0;
+}
+
+static int dbg_periodic_stop(const struct shell *sh)
+{
+	struct k_work_sync sync;
+	enum nrf_wifi_status status;
+
+	if (!atomic_cas(&periodic.state, DBG_PERIODIC_ACTIVE, DBG_PERIODIC_CANCEL_PENDING) &&
+	    atomic_get(&periodic.state) != DBG_PERIODIC_CANCEL_PENDING) {
+		shell_fprintf(sh, SHELL_INFO, "No periodic debug stats running\n");
+		return 0;
+	}
+
+	/* dbg_periodic_cb no longer queues reports, so this leaves the work item idle */
+	k_work_cancel_sync(&dbg_periodic_work, &sync);
+
+	k_mutex_lock(&dbg_ctx->rpu_lock, K_FOREVER);
+	status = dbg_periodic_cancel();
+	k_mutex_unlock(&dbg_ctx->rpu_lock);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Failed to stop periodic debug stats in RPU, retry \"debug_stats stop\"\n");
+		return -ENOEXEC;
+	}
+
+	k_msgq_purge(&dbg_periodic_q);
+	dbg_periodic_print_summary(sh, "stopped");
+	atomic_set(&periodic.state, DBG_PERIODIC_IDLE);
+	return 0;
+}
+
+static int debug_stats_cmd(const struct shell *sh, size_t argc, const char *argv[])
+{
+	const char *type = (argc > 1) ? argv[1] : "all";
+
+	if (!strcmp(type, "stop")) {
+		if (argc != 2) {
+			shell_fprintf(sh, SHELL_ERROR, "Usage: debug_stats stop\n");
+			return -ENOEXEC;
+		}
+		return dbg_periodic_stop(sh);
+	}
+
+	/* debug_stats <umac|lmac|phy> <category> <count> <interval_s> */
+	if (argc == 4) {
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Periodic stats need an interval: debug_stats %s %s %s <interval_s>\n",
+			      type, argv[2], argv[3]);
+		return -ENOEXEC;
+	}
+
+	if (argc == 5) {
+		if (!dbg_is_number(argv[3])) {
+			shell_fprintf(sh, SHELL_ERROR, "Invalid count %s\n", argv[3]);
+			return -ENOEXEC;
+		}
+		if (!dbg_is_number(argv[4])) {
+			shell_fprintf(sh, SHELL_ERROR, "Invalid interval_s %s\n", argv[4]);
+			return -ENOEXEC;
+		}
+		return dbg_periodic_start(sh, type, argv[2], argv[3], argv[4]);
+	}
+
+	if (argc == 3 && dbg_is_number(argv[2])) {
+		shell_fprintf(sh, SHELL_ERROR,
+			      "Periodic stats need a category: debug_stats %s <category> %s\n",
+			      type, argv[2]);
+		return -ENOEXEC;
+	}
+
+	/* A one-shot request sends periodic_count 0, which would end the session in the RPU */
+	if (dbg_periodic_busy(sh)) {
+		return -ENOEXEC;
+	}
+
+	return debug_stats_run(sh, type, (argc > 2) ? argv[2] : NULL);
+}
+
+static int nrf_wifi_dbg_debug_stats(const struct shell *sh,
+				     size_t argc,
+				     const char *argv[])
+{
+	int ret;
+
+	/* The work item never takes this lock, so start and stop can wait for it */
+	k_mutex_lock(&dbg_periodic_lock, K_FOREVER);
+	ret = debug_stats_cmd(sh, argc, argv);
+	k_mutex_unlock(&dbg_periodic_lock);
+
+	return ret;
 }
 
 static int nrf_wifi_dbg_umac_int_stats(const struct shell *sh,
@@ -1586,14 +2043,18 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "Request debug stats from RPU.\n"
 		      "Usage: debug_stats [umac|lmac|phy|all (default)] [category]\n"
+		      "       [count interval_s]\n"
 		      "Without a category, all categories of the type are shown.\n"
+		      "With a category, count and interval_s, the RPU sends the stats\n"
+		      "count times, every interval_s seconds. \"debug_stats stop\" ends\n"
+		      "them early.\n"
 		      "umac: cmd_event tx rx sleep interface raw misc scan\n"
 		      "lmac: common phy_if tx rx scan sleep wake_sleep twt he ftm\n"
 		      "      lp_rx sqi edca crypto agg deagg mac_ctrl offload_raw_tx\n"
 		      "phy: rx_dbg sw_dbg rssi_hist dc_rssi_snr",
 		      nrf_wifi_dbg_debug_stats,
 		      1,
-		      2),
+		      4),
 	SHELL_CMD_ARG(umac_int_stats,
 		      NULL,
 		      "Request UMAC internal (memory pool) stats from RPU",
