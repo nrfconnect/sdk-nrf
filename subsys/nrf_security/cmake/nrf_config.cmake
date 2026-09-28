@@ -8,6 +8,7 @@
 
 # Platform
 kconfig_check_and_set_base(MBEDTLS_DEBUG_C)
+kconfig_check_and_set_base(MBEDTLS_VERSION_C)
 
 # Guard against setting legacy configurations in TF-M image
 if(NOT MBEDTLS_PSA_CRYPTO_SPM)
