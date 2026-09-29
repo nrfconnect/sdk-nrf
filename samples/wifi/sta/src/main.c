@@ -20,6 +20,7 @@ LOG_MODULE_REGISTER(sta, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi.h>
 #include <zephyr/net/net_event.h>
 
 #ifdef CONFIG_WIFI_READY_LIB
@@ -60,8 +61,11 @@ static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
 
 #ifdef CONFIG_WIFI_READY_LIB
+#define WIFI_READY_SYNC_TIMEOUT_S 10
+
 static K_SEM_DEFINE(wifi_ready_state_changed_sem, 0, 1);
 static bool wifi_ready_status;
+static bool skip_next_ready_wait;
 #endif /* CONFIG_WIFI_READY_LIB */
 
 static struct {
@@ -123,7 +127,12 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	}
 
 	if (status->status) {
-		LOG_ERR("Connection failed (%d)", status->status);
+		if (status->status < WIFI_STATUS_CONN_LAST_STATUS) {
+			LOG_ERR("Connection failed (%s)",
+				wifi_conn_status_txt(status->status));
+		} else {
+			LOG_ERR("Connection failed (%d)", status->status);
+		}
 	} else {
 		LOG_INF("Connected");
 		context.connected = true;
@@ -253,6 +262,22 @@ static bool is_mac_addr_set(struct net_if *iface)
 }
 #endif /* CONFIG_SAMPLE_STA_MAC_CONFIG_SUPPORT */
 
+#ifdef CONFIG_WIFI_READY_LIB
+static int sta_wifi_wait_ready_event(k_timeout_t timeout)
+{
+	int ret;
+
+	ret = k_sem_take(&wifi_ready_state_changed_sem, timeout);
+	if (ret) {
+		LOG_ERR("Failed to take Wi-Fi ready semaphore: %d", ret);
+		return ret;
+	}
+
+	return 0;
+}
+
+#endif /* CONFIG_WIFI_READY_LIB */
+
 int start_app(void)
 {
 #if defined(CONFIG_BOARD_NRF7002DK_NRF5340_CPUAPP_NRF7001) || \
@@ -316,9 +341,8 @@ int start_app(void)
 #ifdef CONFIG_WIFI_READY_LIB
 			/* Wait for Wi-Fi to be not ready (supplicant processed down event) */
 			LOG_INF("Waiting for Wi-Fi to be not ready");
-			ret = k_sem_take(&wifi_ready_state_changed_sem, K_SECONDS(10));
+			ret = sta_wifi_wait_ready_event(K_SECONDS(WIFI_READY_SYNC_TIMEOUT_S));
 			if (ret) {
-				LOG_ERR("Timeout waiting for Wi-Fi not ready: %d", ret);
 				return ret;
 			}
 			if (wifi_ready_status) {
@@ -342,20 +366,15 @@ int start_app(void)
 			return ret;
 		}
 #ifdef CONFIG_WIFI_READY_LIB
-		/* Wait for Wi-Fi to be ready (supplicant processed up event) */
 		LOG_INF("Waiting for Wi-Fi to be ready after interface up");
-		ret = k_sem_take(&wifi_ready_state_changed_sem, K_SECONDS(10));
+		ret = sta_wifi_wait_ready_event(K_SECONDS(WIFI_READY_SYNC_TIMEOUT_S));
 		if (ret) {
-			LOG_ERR("Timeout waiting for Wi-Fi ready: %d", ret);
 			return ret;
 		}
 		if (!wifi_ready_status) {
 			LOG_ERR("Wi-Fi not ready after interface up");
 			return -EIO;
 		}
-		LOG_INF("Wi-Fi is ready");
-		/* Give semaphore back so the main loop can proceed */
-		k_sem_give(&wifi_ready_state_changed_sem);
 #endif /* CONFIG_WIFI_READY_LIB */
 
 		LOG_INF("OTP not programmed, using MAC from DTS: %s", net_sprint_ll_addr(
@@ -368,27 +387,25 @@ int start_app(void)
 #ifdef CONFIG_WIFI_READY_LIB
 		int ret;
 
-		LOG_INF("Waiting for Wi-Fi to be ready");
+		if (!skip_next_ready_wait) {
+			LOG_INF("Waiting for Wi-Fi to be ready");
 #if defined(CONFIG_NRF71_IDLE_POWER)
-		nrf71_idle_power_suspend_console();
+			nrf71_idle_power_suspend_console();
 #endif
-		ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+			ret = sta_wifi_wait_ready_event(K_FOREVER);
 #if defined(CONFIG_NRF71_IDLE_POWER)
-		nrf71_idle_power_resume_console();
+			nrf71_idle_power_resume_console();
 #endif
-		if (ret) {
-			LOG_ERR("Failed to take semaphore: %d", ret);
-			return ret;
+			if (ret) {
+				return ret;
+			}
+
+			if (!wifi_ready_status) {
+				continue;
+			}
 		}
 
-check_wifi_ready:
-		if (!wifi_ready_status) {
-			LOG_INF("Wi-Fi is not ready");
-			/* Perform any cleanup and stop using Wi-Fi and wait for
-			 * Wi-Fi to be ready
-			 */
-			continue;
-		}
+		skip_next_ready_wait = false;
 #endif /* CONFIG_WIFI_READY_LIB */
 		wifi_connect();
 
@@ -403,15 +420,15 @@ check_wifi_ready:
 #if defined(CONFIG_NRF71_IDLE_POWER)
 			nrf71_idle_power_suspend_console();
 #endif
-			ret = k_sem_take(&wifi_ready_state_changed_sem, K_FOREVER);
+			ret = sta_wifi_wait_ready_event(K_FOREVER);
 #if defined(CONFIG_NRF71_IDLE_POWER)
 			nrf71_idle_power_resume_console();
 #endif
 			if (ret) {
-				LOG_ERR("Failed to take semaphore: %d", ret);
 				return ret;
 			}
-			goto check_wifi_ready;
+			/* Supplicant not-ready/ready (e.g. RPU recovery): reconnect. */
+			continue;
 #else
 #if defined(CONFIG_NRF71_IDLE_POWER)
 			nrf71_idle_power_suspend_console();
@@ -419,6 +436,13 @@ check_wifi_ready:
 			k_sleep(K_FOREVER);
 #endif /* CONFIG_WIFI_READY_LIB */
 		}
+
+		LOG_WRN("Connection failed, retrying in %d s",
+			CONFIG_STA_SAMPLE_CONNECT_RETRY_DELAY_SEC);
+#ifdef CONFIG_WIFI_READY_LIB
+		skip_next_ready_wait = wifi_ready_status;
+#endif /* CONFIG_WIFI_READY_LIB */
+		k_sleep(K_SECONDS(CONFIG_STA_SAMPLE_CONNECT_RETRY_DELAY_SEC));
 	}
 
 	return 0;
@@ -438,7 +462,10 @@ void start_wifi_thread(void)
 
 void wifi_ready_cb(bool wifi_ready)
 {
-	LOG_DBG("Is Wi-Fi ready?: %s", wifi_ready ? "yes" : "no");
+	if (wifi_ready_status != wifi_ready) {
+		LOG_INF("Wi-Fi is %sready", wifi_ready ? "" : "not ");
+	}
+
 	wifi_ready_status = wifi_ready;
 	k_sem_give(&wifi_ready_state_changed_sem);
 }
@@ -487,22 +514,29 @@ static int register_wifi_ready(void)
 
 	return ret;
 }
+
+static int sta_sample_register_wifi_ready(void)
+{
+	int ret = register_wifi_ready();
+
+	if (ret == -EALREADY) {
+		return 0;
+	}
+
+	return ret;
+}
+
+SYS_INIT(sta_sample_register_wifi_ready, APPLICATION, 94);
 #endif /* CONFIG_WIFI_READY_LIB */
 
 int main(void)
 {
-	int ret = 0;
-
 	net_mgmt_callback_init();
 
 #ifdef CONFIG_WIFI_READY_LIB
-	ret = register_wifi_ready();
-	if (ret) {
-		return ret;
-	}
 	k_thread_start(start_wifi_thread_id);
 #else
 	start_app();
 #endif /* CONFIG_WIFI_READY_LIB */
-	return ret;
+	return 0;
 }
