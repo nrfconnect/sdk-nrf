@@ -3,8 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#if defined(CONFIG_CLOCK_CONTROL_NRF_COMMON) &&                                                    \
-	(defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF92))
+#ifdef CONFIG_HAS_NORDIC_MULTI_OPTION_CLOCKS
 #include "common.h"
 
 #include <zephyr/logging/log.h>
