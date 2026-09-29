@@ -607,10 +607,24 @@ img_mgmt_erase(struct smp_streamer *ctxt)
 	img_mgmt_take_lock();
 
 	if (IS_ENABLED(CONFIG_MCUMGR_GRP_IMG_SAME_FLASH_AREA_SLOTS)) {
+		int area_id;
+		int active_slot;
+		int active_area_id;
+
+		if (slot >= (CONFIG_MCUMGR_GRP_IMG_UPDATABLE_IMAGE_NUMBER << 1)) {
+			ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE,
+					     IMG_MGMT_ERR_INVALID_SLOT);
+			goto end;
+		}
+
+		area_id = img_mgmt_flash_area_id(slot);
+		active_slot = img_mgmt_active_slot(img_mgmt_slot_to_image(slot));
+		active_area_id = img_mgmt_flash_area_id(active_slot);
+
 		/* If both slots point to the same flash area, do not erase the slot. */
-		if (img_mgmt_flash_area_id(slot) ==
-		    img_mgmt_flash_area_id(img_mgmt_active_slot(img_mgmt_slot_to_image(slot)))) {
-			ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE, IMG_MGMT_ERR_NO_FREE_SLOT);
+		if (area_id >= 0 && active_area_id >= 0 && area_id == active_area_id) {
+			ok = smp_add_cmd_err(zse, MGMT_GROUP_ID_IMAGE,
+					     IMG_MGMT_ERR_NO_FREE_SLOT);
 			goto end;
 		}
 	}
