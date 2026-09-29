@@ -298,7 +298,11 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
-|no_changes_yet_note|
+* Removed:
+
+  * Support for nRF52 Series devices from Thread in the |NCS|.
+    OpenThread cannot be enabled on nRF52 SoCs.
+  * The prebuilt OpenThread libraries for the nRF52840 device from :ref:`nrfxlib:nrfxlib`.
 
 Wi-Fi®
 ------
@@ -830,6 +834,14 @@ Thread samples
 --------------
 
 * Added experimental support for the nRF54LC10A SoC to all Thread samples.
+
+* Removed support for nRF52 Series devices from all Thread samples.
+  The following board targets are no longer supported:
+
+  * ``nrf52840dk/nrf52840``
+  * ``nrf52840dongle/nrf52840``
+  * ``nrf52833dk/nrf52833``
+  * ``nrf21540dk/nrf52840``
 
 Wi-Fi samples
 -------------
