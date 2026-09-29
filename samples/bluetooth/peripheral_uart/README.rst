@@ -16,7 +16,7 @@ The sample supports the following development kits:
 .. include:: /includes/tfm.txt
 
 .. note::
-   * The boards ``nrf52dk/nrf52810``, ``nrf52840dk/nrf52811``, and ``nrf52833dk/nrf52820`` only support the `Minimal sample variant`_.
+   * The ``nrf54ls05dk/nrf54ls05a/cpuapp`` board target supports only the `Minimal sample variant`_.
    * When used with :zephyr:board:`thingy53`, the sample supports the MCUboot bootloader with serial recovery and SMP DFU over Bluetooth.
      Thingy:53 has no built-in SEGGER chip, so the UART 0 peripheral is not gated to a USB CDC virtual serial port.
    * When used with :zephyr:board:`nrf5340dk`, the sample might support the MCUboot bootloader with serial recovery of the networking core image.
@@ -107,7 +107,7 @@ The user interface of the sample depends on the hardware platform you are using.
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
@@ -217,7 +217,7 @@ After programming the sample to your development kit, complete the following ste
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. Connect the device to the computer to access UART 0.
          If you use a development kit, UART 0 is forwarded as a serial port.
@@ -256,7 +256,7 @@ To perform the test, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF21, nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       .. tabs::
 
@@ -487,19 +487,19 @@ To perform the test, complete the following steps:
 
                Observe that **LED 1** turns off.
 
-.. _nrf52_computer_testing:
+.. _peripheral_uart_computer_testing:
 .. _peripheral_uart_testing_ble:
 
 Testing with Bluetooth Low Energy app
 -------------------------------------
 
-If you have an nRF52 Series DK with the Peripheral UART sample and either a dongle or second Nordic Semiconductor development kit that supports the `Bluetooth Low Energy app`_, you can test the sample on your computer.
+If you have a Nordic Semiconductor development kit with the Peripheral UART sample and either a dongle or second development kit that supports the `Bluetooth Low Energy app`_, you can test the sample on your computer.
 Use the `Bluetooth Low Energy app`_ in `nRF Connect for Desktop`_ for testing.
 
 To perform the test, complete the following steps:
 
 1. Install the `Bluetooth Low Energy app`_ in `nRF Connect for Desktop`_.
-#. Connect to your nRF52 Series DK.
+#. Connect to your development kit running the Peripheral UART sample.
 #. Connect the dongle or second development kit to a USB port of your computer.
 #. Open the app.
 #. Select the serial port that corresponds to the dongle or the second development kit.

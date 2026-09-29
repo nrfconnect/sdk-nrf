@@ -25,7 +25,7 @@ Every notification that is received is printed to the terminal.
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       If the device does not support notifications for the Battery Level Characteristic, press **Button 1** to request for reading the battery level.
 
@@ -38,7 +38,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Send read request for the battery level value.
@@ -68,7 +68,7 @@ Testing with another kit
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.
@@ -116,7 +116,7 @@ Testing with Bluetooth Low Energy app
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.

@@ -68,14 +68,6 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52840 DK
-
-      Button 1:
-
-         * When the :file:`log_rpc.conf` file is provided, triggers a fatal error.
-           This is used for testing the core dump feature.
-         * Otherwise: not available.
-
    .. group-tab:: nRF54L15 and nRF54LM20 DKs
 
       Button 0:
@@ -111,40 +103,6 @@ The client and server samples use two UART peripherals.
 One peripheral is used for shell and logging purposes, similarly to other applications and samples, while the other peripheral is used for sending and receiving remote procedure calls (RPCs).
 
 .. tabs::
-
-    .. group-tab:: nRF52840 DK
-
-        By default, the nRF52840 DK uses the ``uart0`` peripheral for shell and logging purposes, and the ``uart1`` peripheral for sending and receiving remote procedure calls (RPCs).
-
-        The ``uart1`` peripheral is configured to use the following pins:
-
-        .. list-table::
-           :header-rows: 1
-
-           * - Server
-             - Client
-             - Function on server
-           * - **P1.1**
-             - **P1.2**
-             - RX
-           * - **P1.2**
-             - **P1.1**
-             - TX
-           * - **P1.3**
-             - **P1.4**
-             - RTS (hardware flow control)
-           * - **P1.4**
-             - **P1.3**
-             - CTS (hardware flow control)
-           * - **GND**
-             - **GND**
-             - Ground
-
-        To enable the communication between the client and the server devices, connect the pins on the two nRF52840 DKs using jumper wires.
-        The following illustration demonstrates the pin connections:
-
-        .. figure:: /images/ps_nrf52_connections.png
-            :alt: nRF52840 DK server and client pin connections
 
     .. group-tab:: nRF54L15 DK
 

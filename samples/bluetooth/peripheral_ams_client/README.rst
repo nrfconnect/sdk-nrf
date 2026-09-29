@@ -30,7 +30,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
@@ -93,7 +93,7 @@ Testing with an iOS device
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       #. |connect_terminal_specific|
       #. Reset the kit.
@@ -152,7 +152,7 @@ Music setup
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Complete the following steps to initiate a music player setup:
 
@@ -233,10 +233,10 @@ Music setup
          | Value        | 120.000 | 120 seconds    |
          +--------------+---------+----------------+
 
-      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 33 20 53 65 72 69 65 73 20 73 6F 6E 67``.
       #. Verify that the UART output is as follows::
 
-            AMS EU: 02,02,00 nRF52 Series song
+            AMS EU: 02,02,00 nRF53 Series song
 
          The following table explains the notification.
 
@@ -249,7 +249,7 @@ Music setup
          +--------------+-------------------+--------------------+
          | Flags        | 00                |                    |
          +--------------+-------------------+--------------------+
-         | Value        | nRF52 Series song | Current song title |
+         | Value        | nRF53 Series song | Current song title |
          +--------------+-------------------+--------------------+
 
    .. group-tab:: nRF54 DKs
@@ -333,10 +333,10 @@ Music setup
          | Value        | 120.000 | 120 seconds    |
          +--------------+---------+----------------+
 
-      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 32 20 53 65 72 69 65 73 20 73 6F 6E 67``.
+      #. Set the **Apple Entity Update** value to ``02 02 00 6E 52 46 35 34 20 53 65 72 69 65 73 20 73 6F 6E 67``.
       #. Verify that the UART output is as follows::
 
-            AMS EU: 02,02,00 nRF52 Series song
+            AMS EU: 02,02,00 nRF54 Series song
 
          The following table explains the notification.
 
@@ -349,7 +349,7 @@ Music setup
          +--------------+-------------------+--------------------+
          | Flags        | 00                |                    |
          +--------------+-------------------+--------------------+
-         | Value        | nRF52 Series song | Current song title |
+         | Value        | nRF54 Series song | Current song title |
          +--------------+-------------------+--------------------+
 
 Playback
@@ -359,7 +359,7 @@ To test an audio playback, complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       #. Press **Button 2** to start audio playback.
       #. In the `Bluetooth Low Energy app`_, verify that the **Apple Remote Command** is updated to ``02``.
@@ -412,7 +412,7 @@ Next track
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       To test the next track feature, complete the following steps:
 

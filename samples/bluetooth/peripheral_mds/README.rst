@@ -32,7 +32,7 @@ Metrics
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       * ``button_press_count`` - The number of **Button 3** presses.
       * ``battery_soc_pct`` - The simulated battery level.
@@ -95,7 +95,7 @@ Error tracking with trace events
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       ``button_state_changed`` - Collected every time when **Button 2** changes its state.
 
@@ -118,7 +118,7 @@ Core dumps
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
          * **Button 4** - Triggers a hardfault exception by division by zero.
          * ``mfl crash`` shell command - Triggers an assertion fail.
@@ -154,7 +154,7 @@ You can control the sample using predefined buttons, while LEDs are used to disp
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
@@ -272,7 +272,7 @@ Testing with MDS BLE gateway script
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_ANSI|
       #. Reset your development kit.
@@ -283,7 +283,7 @@ Testing with MDS BLE gateway script
 
             pip install --user -r scripts/memfault/requirements.txt
 
-      #. Connect the nRF52 development kit to your PC that uses the :ref:`mds_ble_gateway_script`.
+      #. Connect the development kit to your PC that uses the :ref:`mds_ble_gateway_script`.
       #. Start the :file:`mds_ble_gateway.py` script with the correct parameters, for example:
 
          .. code-block:: console
@@ -329,7 +329,7 @@ Testing with MDS BLE gateway script
 
             pip install --user -r scripts/memfault/requirements.txt
 
-      #. Connect the nRF52 development kit to your PC that uses the :ref:`mds_ble_gateway_script`.
+      #. Connect the development kit to your PC that uses the :ref:`mds_ble_gateway_script`.
       #. Start the :file:`mds_ble_gateway.py` script with the correct parameters, for example:
 
          .. code-block:: console
@@ -369,7 +369,7 @@ Testing with Memfault WebBluetooth Client
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       .. note::
          The Web Bluetooth API used by the `Memfault WebBluetooth Client`_ is an experimental feature.

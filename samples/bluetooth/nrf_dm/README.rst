@@ -115,7 +115,6 @@ High-precision calculation
 The sample supports distance estimation using a more compute-intensive high-precision algorithm.
 The :kconfig:option:`CONFIG_DM_HIGH_PRECISION_CALC` Kconfig option enables high-precision calculations.
 High-precision calculation has an impact on MCPD ranging mode only.
-Due to its limited memory, the nRF52 Development Kit (``nrf52dk/nrf52832``) does not support high-precision calculations.
 
 .. _ble_nrf_dm_calibr:
 
@@ -176,7 +175,7 @@ The result should look similar to the following output:
    I: 9d d3 a2 95 88 f6 30 0a |......0.
    I: 7f 53 49 fd             |.SI.
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 63.28743 Build 1318420878
    I: Identity: C4:90:D5:4E:C2:20 (random)
    I: HCI: version 5.2 (0x0b) revision 0x125b, manufacturer 0x0059
@@ -207,7 +206,7 @@ The result should look similar to the following output:
    I: 9d d3 a2 95 88 f6 30 0a |......0.
    I: 7f 53 49 fd             |.SI.
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 63.28743 Build 1318420878
    I: Identity: C4:90:D5:4E:C2:20 (random)
    I: HCI: version 5.2 (0x0b) revision 0x125b, manufacturer 0x0059

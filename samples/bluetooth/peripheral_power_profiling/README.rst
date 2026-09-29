@@ -40,7 +40,7 @@ To wake up your development kit from the system off state, you have the followin
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       * Press the **RESET** button on your development kit.
       * Press **Button 1** to start connectable advertising.
@@ -116,7 +116,7 @@ The sample uses buttons and LEDs to provide a simple user interface.
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.

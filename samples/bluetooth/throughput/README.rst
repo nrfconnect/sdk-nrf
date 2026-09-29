@@ -101,7 +101,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 1:
          Set the board into a central (tester) role.
@@ -135,7 +135,7 @@ After programming the sample to both kits, complete following steps to test it:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_both_ANSI|
       #. Reset both kits.
