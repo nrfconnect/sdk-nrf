@@ -22,5 +22,4 @@ This snippet enables logging for the OpenThread stack.
 Development kits support
 ************************
 
-For nRF52840 Dongle board, this snippet enables UART logging for debugging Thread samples.
-For other boards, it enables RTT logging for debugging Thread samples.
+This snippet enables RTT logging for debugging Thread samples on supported development kits.

@@ -186,17 +186,17 @@ You can configure the EUI-64 for a device in the following ways depending on cho
           The extension identifier is set to the default, namely the DEVICEID from FICR.
 
         Replace the full EUI-64
-          You can provide the full EUI-64 value by programming certain user information configuration registers (UICR).
-          nRF52 Series devices use the CUSTOMER registers block, while nRF53 Series devices use the OTP registers block
+          You can provide the full EUI-64 value by programming user information configuration registers (UICR).
+          nRF53 Series and nRF54L Series devices store custom EUI-64 values in the OTP registers block.
 
           To use the EUI-64 value from the UICR, enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option and set :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
 
-          The following example shows how to replace the full EUI-64 on the nRF52840 device:
+          The following example shows how to replace the full EUI-64 on the nRF54L15 DK:
 
           1. Enable the :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_ENABLE` Kconfig option.
 
           #. Specify the offset for the UICR registers in :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`.
-             This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
+             See the device product specification for the register index to use.
 
           #. Build and program your application erasing the whole memory.
              Make sure to replace *serial_number* with the serial number of your debugger:
@@ -204,17 +204,10 @@ You can configure the EUI-64 for a device in the following ways depending on cho
               .. parsed-literal::
                :class: highlight
 
-                west build -b nrf52840dk/nrf52840 -p always
+                west build -b nrf54l15dk/nrf54l15/cpuapp -p always
                 west flash --snr *serial_number* --erase
 
-          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
-
-              .. parsed-literal::
-               :class: highlight
-
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
-                nrfutil device reset --reset-kind=RESET_PIN
+          #. Program the OTP UICR registers that store the EUI-64 value according to the device product specification (replace *serial_number* with the serial number of your debugger).
 
              If you used a different value for :kconfig:option:`CONFIG_IEEE802154_NRF5_UICR_EUI64_REG`, you must use different register addresses.
 
@@ -239,17 +232,17 @@ You can configure the EUI-64 for a device in the following ways depending on cho
           The extension identifier is set to the default, namely the DEVICEID from FICR.
 
         Replace the full EUI-64
-          You can provide the full EUI-64 value by programming certain user information configuration registers (UICR).
-          nRF52 Series devices use the CUSTOMER registers block, while nRF53 Series devices use the OTP registers block.
+          You can provide the full EUI-64 value by programming user information configuration registers (UICR).
+          nRF53 Series and nRF54L Series devices store custom EUI-64 values in the OTP registers block.
 
           To use the EUI-64 value from the UICR, enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option and set :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG` to the base of the two consecutive registers that contain your EUI-64 value.
 
-          The following example shows how to replace the full EUI-64 on the nRF52840 device:
+          The following example shows how to replace the full EUI-64 on the nRF54L15 DK:
 
           1. Enable the :kconfig:option:`CONFIG_NRF5_UICR_EUI64_ENABLE` Kconfig option.
 
           #. Specify the offset for the UICR registers in :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG`.
-             This example uses UICR->CUSTOMER[0] and UICR->CUSTOMER[1], which means that you can keep the default value ``0``.
+             See the device product specification for the register index to use.
 
           #. Build and program your application erasing the whole memory.
              Make sure to replace *serial_number* with the serial number of your debugger:
@@ -257,17 +250,10 @@ You can configure the EUI-64 for a device in the following ways depending on cho
               .. parsed-literal::
                :class: highlight
 
-               west build -b nrf52840dk/nrf52840 -p always
+               west build -b nrf54l15dk/nrf54l15/cpuapp -p always
                west flash --snr *serial_number* --erase
 
-          #. Program the registers UICR->CUSTOMER[0] and UICR->CUSTOMER[1] with your EUI-64 value (replace *serial_number* with the serial number of your debugger):
-
-              .. parsed-literal::
-                :class: highlight
-
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001080 --value 0x11223344
-                nrfutil device x-write --serial-number *serial_number* --address 0x10001084 --value 0x55667788
-                nrfutil device reset --reset-kind=RESET_PIN
+          #. Program the OTP UICR registers that store the EUI-64 value according to the device product specification (replace *serial_number* with the serial number of your debugger).
 
              If you used a different value for :kconfig:option:`CONFIG_NRF5_UICR_EUI64_REG`, you must use different register addresses.
 

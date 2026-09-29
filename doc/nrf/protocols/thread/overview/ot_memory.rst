@@ -71,12 +71,3 @@ nRF5340 DK RAM and flash memory requirements
 The following tables present memory requirements for samples running on the :zephyr:board:`nrf5340dk` with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
 
 .. include:: memory_tables/nrf5340.txt
-
-.. _thread_ot_memory_52840:
-
-nRF52840 DK RAM and flash memory requirements
-*********************************************
-
-The following tables present memory requirements for samples running on the :zephyr:board:`nrf52840dk` with the cryptography support provided by the :ref:`crypto_drivers_cracen`.
-
-.. include:: memory_tables/nrf52840.txt
