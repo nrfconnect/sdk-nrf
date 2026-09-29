@@ -48,4 +48,13 @@ config STA_SAMPLE_START_WIFI_THREAD_STACK_SIZE
 	help
 	  Set the stack size for the Wi-Fi start thread.
 
+config STA_SAMPLE_CONNECT_RETRY_DELAY_SEC
+	int "Delay before retrying a failed Wi-Fi connection"
+	default 5
+	range 1 300
+	help
+	  Seconds to wait before issuing another connect request after a
+	  failed attempt. Supplicant remains ready across connect failures;
+	  this delay avoids tight retry loops.
+
 endmenu
