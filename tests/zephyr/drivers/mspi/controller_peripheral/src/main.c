@@ -339,7 +339,7 @@ static void run_test(bool m_same_size, bool s_same_size, bool emu_spis_dev)
 	zassert_equal(rv, 0);
 }
 
-/** Basci test where SPI controller and SPI peripheral have RX and TX sets which contains only one
+/** Basic test where SPI controller and SPI peripheral have RX and TX sets which contains only one
  *  same size buffer.
  */
 ZTEST(mspi_controller_peripheral, test_basic)

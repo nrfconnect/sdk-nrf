@@ -95,7 +95,7 @@ enum dfu_target_image_type dfu_target_img_type(const void *const buf, size_t len
 enum dfu_target_image_type dfu_target_smp_img_type_check(const void *const buf, size_t len);
 
 /**
- * @brief Initialize the resources needed for the specific image type DFU
+ * @brief Initialize the resorces needed for the specific image type DFU
  *	  target.
  *
  *	  If a target update is in progress, and the same target is
