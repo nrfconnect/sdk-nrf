@@ -5,6 +5,7 @@
 #
 
 import logging
+import os
 import re
 import socket
 import subprocess
@@ -104,7 +105,22 @@ def test_west_debug(dut: DeviceAdapter):
     Start debug session by calling `west debug` command.
     Set brakepoint and check that breakpoint was hit.
     """
-    west_tester(dut, "debug", "b main.c:15\nc\ndisconnect\nq\n", r"15\s+counter\+\+;")
+    ZEPHYR_BASE = os.environ['ZEPHYR_BASE']
+
+    dbg_cmd = (
+        f"b {ZEPHYR_BASE}/../nrf/tests/subsys/west_debug/src/main.c:17\n"
+        f"b {ZEPHYR_BASE}/../nrf/tests/subsys/west_debug/src/main.c:21\n"
+        f"b {ZEPHYR_BASE}/../nrf/tests/subsys/west_debug/src/main.c:25\n"
+        "c\nwhere\nc\nwhere\nc\nwhere\nc\nwhere\n"
+        "disconnect\nq\n"
+    )
+    test_regex = (
+        r"17\s+counter\+\+;[\s\S]*main.c:17[\s\S]*"  # breakpint 1 and where
+        r"21\s+counter2\+\+;[\s\S]*main.c:21[\s\S]*"  # breakpint 2 and where
+        r"25\s+counter3\+\+;[\s\S]*main.c:25[\s\S]*"  # breakpint 3 and where
+        r"17\s+counter\+\+;[\s\S]*main.c:17"  # breakpint 1 and where
+    )
+    west_tester(dut, "debug", dbg_cmd, test_regex)
 
 
 def test_west_attach(dut: DeviceAdapter):
