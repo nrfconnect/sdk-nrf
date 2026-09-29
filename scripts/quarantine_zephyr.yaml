@@ -687,3 +687,9 @@
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41365"
+
+- scenarios:
+    - bluetooth.mesh.settings
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"
