@@ -513,14 +513,6 @@
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/74536 - overflow"
 
 - scenarios:
-    - sample.net.openthread.coprocessor
-    - sample.net.openthread.coprocessor.usb
-    - sample.openthread.coprocessor.rcp
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
-
-- scenarios:
     - buildsystem.sbom.spdx
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
 
