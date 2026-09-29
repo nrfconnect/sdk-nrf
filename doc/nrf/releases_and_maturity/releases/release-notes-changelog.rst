@@ -318,6 +318,8 @@ nRF Audio (formerly nRF5340 Audio)
     See :ref:`nrf_audio_app_configuration_select_build` for more information.
   * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` option from the unicast client and server applications.
     This option was not useful because the unicast server range settings overwrite the bitrate configuration.
+  * The application's own CS47L63 driver, with its :kconfig:option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER`, :kconfig:option:`CONFIG_CS47L63_THREAD_PRIO` and :kconfig:option:`CONFIG_CS47L63_STACK_SIZE` Kconfig options and its ``CS47L63`` log module.
+    The hardware codec on the nRF5340 Audio DK is now driven through the Zephyr audio codec API, enabled with the :kconfig:option:`CONFIG_AUDIO_CODEC_CS47L63` Kconfig option.
 
 * Updated audio_datapath to use the new audio rate control API.
 
