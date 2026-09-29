@@ -1,0 +1,93 @@
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config AUDIO_DEV
+	int
+	default 1
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 10000
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool
+	default y
+
+config AUDIO_SAMPLE_RATE_HZ
+	int
+	default 48000
+
+config AUDIO_BIT_DEPTH_16
+	bool
+	default y
+
+config AUDIO_BIT_DEPTH_BITS
+	int
+	default 16
+
+config AUDIO_BIT_DEPTH_OCTETS
+	int
+	default 2
+
+config AUDIO_INPUT_CHANNELS
+	int
+	default 1
+
+config AUDIO_OUTPUT_CHANNELS
+	int
+	default 2
+
+config AUDIO_ENCODE_CHANNELS_MAX
+	int
+	default 1
+
+config AUDIO_DECODE_CHANNELS_MAX
+	int
+	default 1
+
+config SW_CODEC_LC3
+	bool
+	default y
+
+config LC3_BITRATE_MAX
+	int
+	default 124000
+
+config AUDIO_MIN_PRES_DLY_US
+	int
+	default 3000
+
+config AUDIO_MAX_PRES_DLY_US
+	int
+	default 60000
+
+config BT_AUDIO_PRESENTATION_DELAY_US
+	int
+	default 10000
+
+config FIFO_FRAME_SPLIT_NUM
+	int
+	default 20
+
+config NRF_AUDIO_TX_LEAD_TIME_TGT_US
+	int
+	default 2500
+
+config NRF_AUDIO_TX_LEAD_TIME_MIN_US
+	int
+	default 2000
+
+config BT_BUF_EVT_RX_COUNT
+	int
+	default 10
+
+config BT_BUF_ACL_TX_COUNT
+	int
+	default 5
+
+module = AUDIO_DATAPATH
+module-str = audio-datapath
+source "subsys/logging/Kconfig.template.log_config"
+
+source "Kconfig.zephyr"
