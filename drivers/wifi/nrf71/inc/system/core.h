@@ -30,6 +30,7 @@
 #endif /* CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
+#include <common/util.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
 
@@ -72,9 +73,11 @@ struct nrf_wifi_vif_ctx_zep {
 #endif /* CONFIG_NET_STATISTICS_ETHERNET_VENDOR */
 	struct net_stats_eth eth_stats;
 #endif /* CONFIG_NET_STATISTICS_ETHERNET */
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_TX)
+#ifdef CONFIG_NRF71_DATA_TX
 	bool authorized;
-#endif
+	enum nrf_wifi_fmac_if_carr_state if_carr_state;
+	struct k_work nrf_wifi_net_iface_work;
+#endif /* CONFIG_NRF71_DATA_TX */
 #ifdef CONFIG_NRF71_RAW_DATA_TX
 	/** Last base mode from WiFi mgmt set_mode (e.g. MONITOR/STA). Used when
 	 *  building combined mode for TX injection so we send the intended base
@@ -84,7 +87,6 @@ struct nrf_wifi_vif_ctx_zep {
 #endif
 #ifdef CONFIG_NRF71_STA_MODE
 	unsigned int assoc_freq;
-	enum nrf_wifi_fmac_if_carr_state if_carr_state;
 	struct wpa_signal_info *signal_info;
 	struct wpa_conn_info *conn_info;
 	struct zep_wpa_supp_dev_callbk_fns supp_callbk_fns;
@@ -93,9 +95,6 @@ struct nrf_wifi_vif_ctx_zep {
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool cookie_resp_received;
-#ifdef CONFIG_NRF71_DATA_TX
-	struct k_work nrf_wifi_net_iface_work;
-#endif /* CONFIG_NRF71_DATA_TX */
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
@@ -149,6 +148,89 @@ struct nrf_wifi_ctx_zep {
 	volatile int channel_set_status;
 #endif
 };
+
+static inline struct nrf_wifi_fmac_vif_ctx *nrf_wifi_get_fmac_vif_ctx(
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep;
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
+
+	if (!vif_ctx_zep) {
+		return NULL;
+	}
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		return NULL;
+	}
+
+	sys_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
+
+	return sys_dev_ctx ? sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx] : NULL;
+}
+
+static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+#ifdef CONFIG_NRF71_RAW_DATA_TX
+	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+
+	return fmac_vif_ctx && fmac_vif_ctx->txinjection_mode;
+#else
+	ARG_UNUSED(vif_ctx_zep);
+
+	return false;
+#endif /* CONFIG_NRF71_RAW_DATA_TX */
+}
+
+static inline void nrf_wifi_clear_txinjection(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+#ifdef CONFIG_NRF71_RAW_DATA_TX
+	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+
+	if (fmac_vif_ctx) {
+		fmac_vif_ctx->txinjection_mode = false;
+	}
+#else
+	ARG_UNUSED(vif_ctx_zep);
+#endif /* CONFIG_NRF71_RAW_DATA_TX */
+}
+
+static inline void nrf_wifi_clear_session_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	nrf_wifi_clear_txinjection(vif_ctx_zep);
+#ifdef CONFIG_NRF71_DATA_TX
+	vif_ctx_zep->authorized = false;
+	vif_ctx_zep->if_carr_state = NRF_WIFI_FMAC_IF_CARR_STATE_OFF;
+#endif /* CONFIG_NRF71_DATA_TX */
+}
+
+static inline void nrf_wifi_refresh_oper_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+#ifdef CONFIG_NRF71_DATA_TX
+	k_work_submit(&vif_ctx_zep->nrf_wifi_net_iface_work);
+#else
+	ARG_UNUSED(vif_ctx_zep);
+#endif /* CONFIG_NRF71_DATA_TX */
+}
+
+#ifdef CONFIG_NRF71_DATA_TX
+/* Single decision point for the dormant gate. Callers must hold vif_lock: this
+ * reaches the FMAC device context through rpu_ctx, which is freed under that
+ * lock.
+ */
+static inline bool nrf_wifi_iface_operational(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
+{
+	if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+		return false;
+	}
+
+	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
+		return true;
+	}
+
+	return vif_ctx_zep->authorized || nrf_wifi_txinjection_active(vif_ctx_zep);
+}
+#endif /* CONFIG_NRF71_DATA_TX */
 
 struct nrf_wifi_drv_priv_zep {
 	struct nrf_wifi_fmac_priv *fmac_priv;
