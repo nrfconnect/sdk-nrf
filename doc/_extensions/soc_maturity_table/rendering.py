@@ -11,11 +11,7 @@ from typing import override
 import utils
 import yaml
 from docutils import nodes
-from sphinx.application import Sphinx
 from sphinx.util.docutils import SphinxDirective
-from sphinx.util.typing import ExtensionMetadata
-
-__version__ = "0.0.1"
 
 _RELEASE_PATH = utils.get_projdir("nrf") / "release.yaml"
 
@@ -37,7 +33,7 @@ class SoCMaturityTable(SphinxDirective):
 
     @override
     def run(self) -> list[nodes.Node]:
-        table = nodes.table()
+        table = nodes.table(classes=["soc-maturity-table"])
         tgroup = nodes.tgroup(cols=3)
         table += tgroup
 
@@ -99,13 +95,3 @@ class SoCMaturityTable(SphinxDirective):
             ],
             key=lambda i: self._ordering.index(i.status),
         )
-
-
-def setup(app: Sphinx) -> ExtensionMetadata:
-    app.add_directive("soc-maturity-table", SoCMaturityTable)
-
-    return {
-        "version": __version__,
-        "parallel_read_safe": True,
-        "parallel_write_safe": True,
-    }
