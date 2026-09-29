@@ -157,6 +157,17 @@ config NRF_CLOUD_JWT_SOURCE_CUSTOM
 	  JWTs are created and signed by the nRF Cloud library, not the modem.
 	  The signing key is obtained from the TLS credentials module.
 
+config NRF_CLOUD_JWT_SOURCE_APP
+	bool "Application-provided JWT creation and signing"
+	depends on !NRF_CLOUD_JWT_SOURCE_CUSTOM
+	depends on !MODEM_JWT
+	help
+	  JWTs are created and signed by the application, which must implement
+	  nrf_cloud_jwt_app_generate(). Intended for hosts that reach an nRF91
+	  Series modem over an external link (for example AT commands over UART
+	  to the Serial Modem application) rather than through nrf_modem_lib,
+	  so the signing key can stay in the modem.
+
 config NRF_CLOUD_AWS_CA_CERT_SIZE_THRESHOLD
 	int "Root CA size above which AWS cert is likely present"
 	default 1150
