@@ -41,7 +41,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.

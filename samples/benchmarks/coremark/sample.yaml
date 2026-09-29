@@ -16,9 +16,6 @@ common:
 tests:
   sample.benchmark.coremark:
     platform_allow: &coremark_platforms
-      - nrf52833dk/nrf52833
-      - nrf52840dk/nrf52840
-      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -51,20 +48,17 @@ tests:
   sample.benchmark.coremark.heap_memory:
     platform_allow: *coremark_platforms
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=heap_memory
 
   sample.benchmark.coremark.static_memory:
     platform_allow: *coremark_platforms
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=static_memory
 
   sample.benchmark.coremark.multiple_threads:
     platform_allow: *coremark_platforms
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args: FILE_SUFFIX=multiple_threads

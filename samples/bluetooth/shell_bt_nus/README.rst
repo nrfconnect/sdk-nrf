@@ -21,7 +21,7 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-You also need an additional nRF52 development kit, like the PCA10040 for connecting using the :file:`bt_nus_shell.py` script.
+You also need an additional development kit for connecting using the :file:`bt_nus_shell.py` script.
 Alternatively, you can use :ref:`ble_console_readme` for connecting, using Linux only.
 
 Building and running
@@ -56,12 +56,12 @@ After programming the sample to your development kits, complete the following st
 
       pip install --user -r scripts/shell/requirements.txt
 
-#. Connect to your PC the nRF52 development kit meant to use the :file:`bt_nus_shell.py` script.
+#. Connect to your PC the development kit meant to use the :file:`bt_nus_shell.py` script.
 #. Start the :file:`bt_nus_shell.py` script with the correct parameters, for example:
 
    .. code-block:: console
 
-      bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
+      bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF54L --snr 682560213
 
 #. Open a console application, like PuTTY, and open a new session, setting the **Connection Type** to **Raw** and the **Destination Address** to ``127.0.0.1:8889``.
 #. Press Enter in the terminal window.

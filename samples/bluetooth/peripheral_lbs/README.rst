@@ -27,7 +27,7 @@ You can use the sample to transmit the button state from your development kit to
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
       The mobile application on the device can display the received button state and control the state of **LED 3** on the development kit.
@@ -42,7 +42,7 @@ You can use the sample to transmit the button state from your development kit to
       When connected, the sample sends the state of **Button 1** on the development kit to the connected device, such as a phone or tablet.
       The mobile application on the device can display the received button state and control the state of **BLUE channel of LED 1** on the development kit.
 
-You can also use this sample to control the color of the RGB LED on the nRF52840 Dongle or Thingy:53.
+You can also use this sample to control the color of the RGB LED on Thingy:53.
 
 User interface
 **************
@@ -51,7 +51,7 @@ The user interface of the sample depends on the hardware platform you are using.
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks when the main loop is running (that is, the device is advertising) with a period of two seconds, duty cycle 50%.
@@ -103,20 +103,6 @@ The user interface of the sample depends on the hardware platform you are using.
       Button 1:
          Send a notification with the button state: "pressed" or "released".
 
-   .. group-tab:: nRF52840 Dongle
-
-      Green LED:
-         Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
-
-      RGB LED:
-         The RGB LED channels are used independently to display the following information:
-
-         * Red - If Dongle is connected.
-         * Green - If user set the LED using Nordic LED Button Service.
-
-      Button 1:
-         Send a notification with the button state: "pressed" or "released".
-
 Building and running
 ********************
 
@@ -145,7 +131,7 @@ For example, when building on the command line, you can add the option as follow
 Testing
 =======
 
-After programming the sample to your dongle or development kit, one of the LEDs starts blinking to indicate that the advertising loop is active (see `User interface`_ for details).
+After programming the sample to your development kit, one of the LEDs starts blinking to indicate that the advertising loop is active (see `User interface`_ for details).
 
 
 .. tabs::
@@ -156,10 +142,10 @@ After programming the sample to your dongle or development kit, one of the LEDs 
 
       .. tabs::
 
-         .. group-tab:: nRF52 and nRF53 DKs
+         .. group-tab:: nRF53 DKs
 
             1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-            #. Power on the development kit or insert your dongle into the USB port.
+            #. Power on the development kit.
             #. Connect to the device from the application.
                The device is advertising as ``Nordic_LBS``.
                The services of the connected device are shown.
@@ -184,13 +170,9 @@ After programming the sample to your dongle or development kit, one of the LEDs 
                +------------------------+---------+----------------------------------------------+
                | Hardware platform      | Value   | Effect                                       |
                +========================+=========+==============================================+
-               | nRF52 and nRF53 DKs    | ``OFF`` | Switch the **LED 3** off.                    |
+               | nRF53 DKs              | ``OFF`` | Switch the **LED 3** off.                    |
                +                        +---------+----------------------------------------------+
                |                        | ``ON``  | Switch the **LED 3** on.                     |
-               +------------------------+---------+----------------------------------------------+
-               | nRF52840 Dongle        | ``OFF`` | Switch the green channel of the RGB LED off. |
-               +                        +---------+----------------------------------------------+
-               |                        | ``ON``  | Switch the green channel of the RGB LED on.  |
                +------------------------+---------+----------------------------------------------+
                | Thingy:53              | ``OFF`` | Switch the blue channel of the RGB LED off.  |
                +                        +---------+----------------------------------------------+
@@ -203,7 +185,7 @@ After programming the sample to your dongle or development kit, one of the LEDs 
                |nrf54_buttons_leds_numbering|
 
             1. Install and start the `nRF Connect for Mobile`_ application on your smartphone or tablet.
-            #. Power on the development kit or insert your dongle into the USB port.
+            #. Power on the development kit.
             #. Connect to the device from the application.
                The device is advertising as ``Nordic_LBS``.
                The services of the connected device are shown.

@@ -28,7 +28,7 @@ Each characteristic has a name set in Characteristic User Description (CUD) that
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Status related to **Button 2** has configurable security settings.
       When :ref:`CONFIG_BT_STATUS_SECURITY_ENABLED <CONFIG_BT_STATUS_SECURITY_ENABLED>` is configured, the status related to **Button 2** has security enabled, thus it can be accessed only when bonded.
@@ -45,7 +45,7 @@ The user interface of the sample depends on the hardware platform you are using.
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
@@ -146,7 +146,7 @@ After programming the sample to your dongle or development kit, test it by perfo
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       .. note::
          Performing the same for **Button 2** characteristic requires a secured connection.

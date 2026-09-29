@@ -32,7 +32,7 @@ The user interface of the sample depends on the hardware platform you are using.
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
