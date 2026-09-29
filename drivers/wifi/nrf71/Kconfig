@@ -170,6 +170,7 @@ config NRF_WIFI_LOW_POWER
 config NRF_WIFI_LP_RX
 	bool "Low power RF mode in nRF Wi-Fi chipsets"
 	depends on NRF_WIFI_LOW_POWER
+	default y
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
