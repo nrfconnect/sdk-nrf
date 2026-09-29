@@ -1318,6 +1318,7 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	int ret = -1;
+	bool update_dormant = false;
 
 	if (!if_priv || !bssid) {
 		LOG_ERR("%s: Invalid params", __func__);
@@ -1373,11 +1374,16 @@ int nrf_wifi_wpa_set_supp_port(void *if_priv, int authorized, char *bssid)
 
 	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
 		sys_dev_ctx->tx_config.peers[0].authorized = authorized;
+		update_dormant = true;
 	}
 
 	ret = 0;
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	if (update_dormant) {
+		nrf_wifi_refresh_oper_state(vif_ctx_zep);
+	}
 	return ret;
 }
 
