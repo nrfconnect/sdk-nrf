@@ -356,6 +356,7 @@ static const struct error_stats_log_entry lmac_error_stats_log[] = {
 	{ FEED_DMA_NOT_FINISHING, "feed DMA not finishing" },
 	{ RF_PLL_RECOVERY_FAILED, "RF PLL recovery failed" },
 	{ DEVICE_IS_ACTIVE_FOR_TOO_LONG, "device active for too long" },
+	{ NO_RCV_FRAMES_IN_2_SECONDS, "no receive frames in 2 seconds" },
 };
 
 static void log_error_stats(const char *func,
