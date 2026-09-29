@@ -117,13 +117,11 @@ According to the crystal oscillator's datasheet, you should consider the followi
 * Operating temperature range
 * Aging effects
 
-For example, on the nRF52840 DK, the `NX3215SA-32.768K-STD-MUA-9 <NX3215SA-32.768K-STD-MUA-9 datasheet_>`_ is used, and according to the datasheet, the crystal unit has frequency tolerance of ±20 ppm.
-The datasheet also states that the frequency tolerance is provided at the operating temperature of +25°C.
-The crystal oscillator is exposed to the aging effects, which means that the frequency tolerance may change over time.
-The NX3215SA-32.768K-STD-MUA-9 specification states that the maximum aging effects are ±3 ppm/year.
+For example, on the nRF54L15 DK, the child CSL accuracy used in power measurements is ±50 ppm (see :ref:`thread_power_consumption_data`).
+The crystal oscillator is also subject to aging, which means that the frequency tolerance may change over time.
 
-Thus, the lowest possible frequency tolerance is ±20 ppm + ±3 ppm = ±23 ppm.
-The :kconfig:option:`CONFIG_NRF5_DELAY_TRX_ACC` (or :kconfig:option:`CONFIG_IEEE802154_NRF5_DELAY_TRX_ACC` while using :ref:`OpenThread with Zephyr L2 Networking Layer <ug_thread_configuring_basic>`) Kconfig value should not be lower than ``23``.
+When calculating the :kconfig:option:`CONFIG_NRF5_DELAY_TRX_ACC` (or :kconfig:option:`CONFIG_IEEE802154_NRF5_DELAY_TRX_ACC` while using :ref:`OpenThread with Zephyr L2 Networking Layer <ug_thread_configuring_basic>`) Kconfig value, include the crystal tolerance, aging, and temperature drift for your board.
+See the nRF54L15 DK user guide and crystal datasheet for the values that apply to your hardware.
 
 The total frequency tolerance is calculated as the sum of the frequency tolerance and the aging effects within the operating temperature range.
 Moreover, the following additional factors must be considered:

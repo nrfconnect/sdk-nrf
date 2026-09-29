@@ -178,11 +178,6 @@ This is a reference configuration that you can modify in the production firmware
      - Cryptography backend
      - ARM TrustZone support
      - PSA Secure Storage backend
-   * - nRF52840 SoC
-     - Thread
-     - Oberon + CryptoCell [2]_
-     - No
-     - Trusted Storage library + SHA-256 hash
    * - nRF5340 SoC
      - Thread
      - Oberon + CryptoCell [2]_
