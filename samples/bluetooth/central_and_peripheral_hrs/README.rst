@@ -52,7 +52,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
@@ -92,7 +92,7 @@ Testing with other development kits
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Program the other development kit with the :zephyr:code-sample:`ble_peripheral_hr` sample and reset it.
@@ -157,7 +157,7 @@ Testing with Bluetooth Low Energy app
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the development kit.

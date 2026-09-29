@@ -21,7 +21,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running and the device is advertising.
@@ -80,7 +80,7 @@ Testing with an iOS device
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       #. |connect_terminal_specific|
       #. Reset the kit.
@@ -183,7 +183,7 @@ The following table shows the format of the message that the application must se
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       * Press **Button 3** to perform a positive action and verify that the **Apple Control Point** value is updated to ``02 01 02 03 04 00``.
       * You can also press **Button 4** and observe that the server receives a negative action ``02 01 02 03 04 01``.
@@ -249,7 +249,7 @@ The following table shows the format of a response that contains some of the req
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       #. Press **Button 1** to request notification attributes for the iOS notification that was received.
       #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``00 01 02 03 04 00 01 20 00 02 20 00 03 20 00 04 05 06 07``.
@@ -319,7 +319,7 @@ The following table shows the format of a response that contains the requested a
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       #. Press **Button 2** to request app attributes for the app with the app identifier "com" (the last received app identifier).
       #. In the `Bluetooth Low Energy app`_, verify that the **Apple Control Point** is updated to ``01 63 6F 6D 00 00``.

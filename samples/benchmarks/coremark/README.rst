@@ -40,9 +40,6 @@ To see all logging information for the multi-core board targets, you must open a
 
 The sample configuration sets up the following board targets for standard logging:
 
-* ``nrf52840dk/nrf52840``
-* ``nrf52833dk/nrf52833``
-* ``nrf52dk/nrf52832``
 * ``nrf5340dk/nrf5340/cpuapp``
 * ``nrf54l15dk/nrf54l05/cpuapp``
 * ``nrf54l15dk/nrf54l10/cpuapp``
@@ -73,10 +70,6 @@ User interface
 Each target CPU has an assigned button responsible for starting the benchmark and LED that indicates the ``test in progress`` state:
 
 .. tabs::
-
-   .. group-tab:: nRF52 DKs
-
-      Application core: **Button 1** and **LED 1**
 
    .. group-tab:: nRF53 DKs
 
@@ -313,7 +306,7 @@ After programming the sample to your development kit, complete the following ste
             *** Using Zephyr OS v3.7.99-02718211f9a9 ***
             [00:00:00.261,383] <inf> app: Standard logging mode
 
-            [00:00:00.266,967] <inf> app: CoreMark sample for nrf52840dk/nrf52840
+            [00:00:00.266,967] <inf> app: CoreMark sample for nrf54l15dk/nrf54l15/cpuapp
             [00:00:00.274,139] <inf> app: Press Push button switch 0 to start the test ...
 
             [00:00:01.267,608] <inf> app: Push button switch 0 pressed!
