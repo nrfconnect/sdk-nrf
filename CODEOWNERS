@@ -792,6 +792,7 @@
 /samples/zephyr/drivers/spi_flash/        @nrfconnect/ncs-low-level-test
 /samples/zephyr/drivers/watchdog/         @nrfconnect/ncs-low-level-test
 /samples/zephyr/net/                      @nrfconnect/ncs-bifrost
+/samples/zephyr/net/**/*.rst              @nrfconnect/ncs-cia-doc
 /samples/zephyr/sensor/accel_polling/     @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/bme680/            @nrfconnect/ncs-low-level-test
 /samples/zephyr/sensor/qdec/              @nrfconnect/ncs-low-level-test
