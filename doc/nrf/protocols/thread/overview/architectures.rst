@@ -85,7 +85,7 @@ This design has the following advantages:
 
 It has the following disadvantages:
 
-* For some use cases, the nRF52 Series, nRF53 Series and nRF54L Series MCUs can be too slow (for example, when the application does complex data processing).
+* For some use cases, the nRF53 Series and nRF54L Series MCUs can be too slow (for example, when the application does complex data processing).
 * The application and the network share flash and RAM space, which can limit the application functionality.
 * Might require external flash for DFU if the secondary application slot does not fit in the primary memory because of increased application size.
 
@@ -96,9 +96,9 @@ Depending on integration with the Zephyr networking layer, there are two differe
    .. group-tab:: Integration with Zephyr networking layer
 
       .. figure:: images/thread_platform_design_soc.svg
-         :alt: Thread-only architecture (nRF52, nRF54L)
+         :alt: Thread-only architecture (nRF54L)
 
-         Thread-only architecture on nRF52 Series and nRF54L Series devices
+         Thread-only architecture on nRF54L Series devices
 
       .. figure:: images/thread_platform_design_nRF53.svg
          :alt: Thread-only architecture (nRF53)
@@ -108,9 +108,9 @@ Depending on integration with the Zephyr networking layer, there are two differe
    .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
 
       .. figure:: images/thread_platform_design_soc_direct.svg
-         :alt: Thread-only architecture (nRF52, nRF54L)
+         :alt: Thread-only architecture (nRF54L)
 
-         Thread-only architecture on nRF52 Series and nRF54L Series devices
+         Thread-only architecture on nRF54L Series devices
 
       .. figure:: images/thread_platform_design_nRF53_direct.svg
          :alt: Thread-only architecture (nRF53)
@@ -121,14 +121,14 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l10_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp, nrf21540dk_nrf52840
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l10_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp
 
 .. _thread_architectures_designs_soc_designs_multiprotocol:
 
 Single-chip, multiprotocol (SoC)
 ================================
 
-nRF52 Series, nRF53 Series and nRF54L Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE).
+nRF53 Series and nRF54L Series devices support multiple wireless technologies, including IEEE 802.15.4 and Bluetooth® Low Energy (Bluetooth LE).
 
 In a single-chip, multiprotocol design, the application layer and OpenThread run on the same processor.
 
@@ -148,9 +148,9 @@ Depending on integration with the Zephyr networking layer, there are two differe
    .. group-tab:: Integration with Zephyr networking layer
 
       .. figure:: images/thread_platform_design_multi.svg
-         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF54L)
 
-         Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
+         Multiprotocol Thread and Bluetooth LE architecture on nRF54L Series devices
 
       .. figure:: images/thread_platform_design_nRF53_multi.svg
          :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
@@ -160,9 +160,9 @@ Depending on integration with the Zephyr networking layer, there are two differe
    .. group-tab:: Direct IEEE 802.15.4 radio integration with OpenThread stack
 
       .. figure:: images/thread_platform_design_multi_direct.svg
-         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF52, nRF54L)
+         :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF54L)
 
-         Multiprotocol Thread and Bluetooth LE architecture on nRF52 Series and nRF54L Series devices
+         Multiprotocol Thread and Bluetooth LE architecture on nRF54L Series devices
 
       .. figure:: images/thread_platform_design_nRF53_multi_direct.svg
          :alt: Multiprotocol Thread and Bluetooth LE architecture (nRF53)
@@ -176,7 +176,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52840dk_nrf52840, nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l10_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp
+   :rows: nrf5340dk_nrf5340_cpuapp, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l10_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp
 
 .. _thread_architectures_designs_cp:
 
@@ -282,7 +282,7 @@ This platform design is suitable for the following development kits:
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf52833dk_nrf52833, nrf52840dk_nrf52840, nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l05_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp, nrf21540dk_nrf52840
+   :rows: nrf54l15dk_nrf54l15_cpuapp_and_cpuapp_ns, nrf54l15dk_nrf54l05_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp, nrf54lm20dk_nrf54lm20b_cpuapp, nrf54lc10dk_nrf54lc10a_cpuapp
 
 .. _thread_architectures_designs_cp_uart:
 
