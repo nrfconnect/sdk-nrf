@@ -2039,6 +2039,11 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	capa->flags |= WPA_DRIVER_FLAGS_SME;
 	capa->flags |= WPA_DRIVER_FLAGS_SAE;
 	capa->flags |= WPA_DRIVER_FLAGS_SET_KEYS_AFTER_ASSOC_DONE;
+	/* Route EAPOL TX through the driver control port instead of the
+	 * networking stack, so the handshake is not gated by the interface
+	 * operational (dormant) state.
+	 */
+	capa->flags |= WPA_DRIVER_FLAGS_CONTROL_PORT;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
 	if (IS_ENABLED(CONFIG_NRF71_AP_MODE)) {
