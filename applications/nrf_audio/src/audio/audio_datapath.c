@@ -222,7 +222,7 @@ static int32_t err_us_calculate(uint32_t sdu_ref_us, uint32_t frame_start_ts_us)
 {
 	bool err_neg = false;
 
-	int64_t total_err = ((int64_t)sdu_ref_us - (int64_t)frame_start_ts_us);
+	int64_t total_err = (int32_t)(sdu_ref_us - frame_start_ts_us);
 
 	/* Store sign for later use, since remainder operation is undefined for
 	 * negatives
