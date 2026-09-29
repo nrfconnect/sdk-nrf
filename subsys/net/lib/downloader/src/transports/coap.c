@@ -188,11 +188,13 @@ static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, siz
 		return new_current;
 	}
 
-	if (new_current < coap->block_ctx.current) {
-		LOG_WRN("Block out of order %d, expected %d", new_current, coap->block_ctx.current);
+	if (new_current < coap->block_ctx.current - *blk_off) {
+		LOG_WRN("Block out of order %d, expected %d", new_current,
+			coap->block_ctx.current - *blk_off);
 		return -1;
-	} else if (new_current > coap->block_ctx.current) {
-		LOG_WRN("Block out of order %d, expected %d", new_current, coap->block_ctx.current);
+	} else if (new_current > coap->block_ctx.current - *blk_off) {
+		LOG_WRN("Block out of order %d, expected %d", new_current,
+			coap->block_ctx.current - *blk_off);
 		return -1;
 	}
 
@@ -272,6 +274,16 @@ static int coap_parse(struct downloader *dl, size_t len)
 	if (!payload) {
 		LOG_WRN("No CoAP payload!");
 		return -EBADMSG;
+	}
+
+	/* Resuming from an offset inside the block; drop the bytes already downloaded. */
+	if (blk_off > 0) {
+		if (blk_off >= payload_len) {
+			LOG_ERR("Block payload %u shorter than offset %zu", payload_len, blk_off);
+			return -EBADMSG;
+		}
+		payload += blk_off;
+		payload_len -= blk_off;
 	}
 
 	/* Accumulate buffer offset */

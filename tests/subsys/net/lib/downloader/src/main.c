@@ -1170,6 +1170,47 @@ int coap_block_transfer_init_ok(struct coap_block_context *ctx,
 	return 0;
 }
 
+int coap_block_transfer_init_set_size(struct coap_block_context *ctx,
+				      enum coap_block_size block_size,
+				      size_t total_size)
+{
+	ctx->block_size = block_size;
+	ctx->total_size = total_size;
+	ctx->current = 0;
+
+	return 0;
+}
+
+#define COAP_RESUME_BLOCK_NUM 1
+#define COAP_RESUME_BLK_OFF 100
+#define COAP_RESUME_FROM (1024 * COAP_RESUME_BLOCK_NUM + COAP_RESUME_BLK_OFF)
+
+int coap_get_option_int_block2_resume(const struct coap_packet *cpkt, uint16_t code)
+{
+	/* Block2: NUM = 1, M = 0, SZX = 1024 bytes */
+	return (COAP_RESUME_BLOCK_NUM << 4) | COAP_BLOCK_1024;
+}
+
+static size_t coap_resume_requested_block;
+
+int coap_append_block2_option_record(struct coap_packet *cpkt,
+				     struct coap_block_context *ctx)
+{
+	coap_resume_requested_block =
+		ctx->current / coap_block_size_to_bytes(ctx->block_size);
+
+	return 0;
+}
+
+static uint8_t coap_block_payload[1024];
+
+const uint8_t *coap_packet_get_payload_block(const struct coap_packet *cpkt, uint16_t *len)
+{
+	*len = sizeof(coap_block_payload);
+
+	return coap_block_payload;
+}
+
 void coap_pending_clear_ok(struct coap_pending *pending)
 {
 	/* empty */
@@ -2301,6 +2342,66 @@ void test_downloader_get_coap_unauthorized_response(void)
 	 */
 	TEST_ASSERT_EQUAL(1, z_impl_zsock_sendto_fake.call_count);
 	TEST_ASSERT_EQUAL(1, z_impl_zsock_recvfrom_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* Resuming from an offset that is not a multiple of the block size, such as the offset
+ * stored by the modem for a delta image, must request the block that contains the
+ * offset and deliver only the part of it that was not downloaded yet.
+ */
+void test_downloader_get_coap_resume_mid_block(void)
+{
+	int err;
+	size_t downloaded;
+	struct downloader_evt evt;
+	struct downloader_transport_coap_cfg coap_cfg = {
+		.block_size = COAP_BLOCK_1024,
+		.max_retransmission = 4,
+	};
+
+	for (size_t i = 0; i < sizeof(coap_block_payload); i++) {
+		coap_block_payload[i] = (uint8_t)i;
+	}
+	coap_resume_requested_block = SIZE_MAX;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	err = downloader_transport_coap_set_config(&dl, &coap_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_block_transfer_init_fake.custom_fake = coap_block_transfer_init_set_size;
+	coap_append_block2_option_fake.custom_fake = coap_append_block2_option_record;
+	coap_get_option_int_fake.custom_fake = coap_get_option_int_block2_resume;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_block;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, COAP_RESUME_FROM);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_FRAGMENT, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(COAP_RESUME_BLOCK_NUM, coap_resume_requested_block);
+	TEST_ASSERT_EQUAL(sizeof(coap_block_payload) - COAP_RESUME_BLK_OFF, evt.fragment.len);
+	TEST_ASSERT_EQUAL_PTR(&coap_block_payload[COAP_RESUME_BLK_OFF], evt.fragment.buf);
+
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	err = downloader_downloaded_size_get(&dl, &downloaded);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(1024 * (COAP_RESUME_BLOCK_NUM + 1), downloaded);
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
