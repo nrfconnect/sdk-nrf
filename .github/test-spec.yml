@@ -369,14 +369,6 @@
       - "subsys/bluetooth/**/*"
       - "!subsys/bluetooth/mesh/**/*"
 
-"CI-esb-test":
-  - "include/esb.h"
-  - "samples/esb/**/*"
-  - "subsys/esb/*"
-  - "include/gz*.h"
-  - "samples/gazell/**/*"
-  - "subsys/gazell/*"
-
 "CI-rpc-test":
   - "subsys/nrf_rpc/**/*"
   - "samples/nrf_rpc/**/*"
