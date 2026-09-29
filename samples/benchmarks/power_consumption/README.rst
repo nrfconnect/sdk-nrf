@@ -97,7 +97,6 @@ To measure current with a PPK2 in source meter mode, complete the following step
 #. Connect the USB cable to the DK to flash the image (the DK's interface MCU/debugger runs on its own USB-derived supply; with the **JP601** shunt removed, the nRF7120 itself is powered only from **P601** pin 2, i.e. the PPK2, throughout).
 #. In the PPK2 app, select **Source Meter** mode and enable power output with **3.6 V** as the supply voltage.
 #. Run ``west flash`` to flash the image.
-#. Remove the USB cable.
 #. Toggle the PPK2's **Enable power output** control off and back on.
    This power-cycles the target now that the debugger is disconnected, giving an accurate measurement.
 
