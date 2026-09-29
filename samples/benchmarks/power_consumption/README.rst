@@ -86,7 +86,7 @@ Testing
 Measuring the power consumption
 -------------------------------
 
-.. important::
+.. note::
    The debugger or SWD connection used during flashing draws additional current and can leave the target in a state that does not reflect its true standalone power consumption.
    Always power-cycle the target after flashing before taking a reading, as described in **Step 8** below.
 
