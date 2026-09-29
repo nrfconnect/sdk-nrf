@@ -35,6 +35,8 @@ tests:
       - ci_samples_net
     extra_args:
       - coap_client_EXTRA_CONF_FILE="wifi.conf"
+      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.coap_client.wifi.dtls:
     sysbuild: true
     build_only: true
@@ -50,6 +52,8 @@ tests:
       - ci_samples_net
     extra_args:
       - coap_client_EXTRA_CONF_FILE="wifi.conf;wifi-dtls.conf"
+      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.coap_client.nrf54h20.wifi:
     sysbuild: true
     build_only: true

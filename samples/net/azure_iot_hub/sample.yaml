@@ -39,6 +39,8 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - azure_iot_hub_EXTRA_CONF_FILE=wifi.conf
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+      - CONFIG_WIFI_NRF71_PATCH=y
     tags:
       - ci_build
       - sysbuild
@@ -102,6 +104,8 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;dps.conf"
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+      - CONFIG_WIFI_NRF71_PATCH=y
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
