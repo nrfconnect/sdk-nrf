@@ -166,7 +166,7 @@ int dfu_target_reset(void);
  *
  * This call requests images update. Time of update depends on image type.
  *
- * @param[in] img_num For DFU_TARGET_IMAGE_TYPE_MCUBOOT
+ * @param[out] img_num For DFU_TARGET_IMAGE_TYPE_MCUBOOT
  *		      image type: given image pair index or -1 for all
  *		      of image pair indexes. Disregard otherwise.
  *
