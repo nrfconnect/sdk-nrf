@@ -30,3 +30,7 @@
 		retainedmemdevice = &retainedmem0;
 	};
 };
+
+&gpio4 {
+	gpiote-instance = <&gpiote20>;
+};
