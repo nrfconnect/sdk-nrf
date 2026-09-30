@@ -49,14 +49,14 @@ When using the registers to wake up the device, replace :c:func:`start_nfc` with
   	irq_unlock(key);
   }
 
-See the `System OFF mode`_ page in the nRF52840 Product Specification for more information.
+For more details about the System OFF mode, see the device datasheet, for example the `nRF54L15 Power and clock management`_ page.
 
 User interface
 **************
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       LED 1:
          Lit when an NFC field is present within range.
@@ -89,7 +89,7 @@ After programming the sample to your development kit, complete the following ste
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       1. Observe that **LED 2** on the Tag device turns off three seconds after the programming has completed.
          This indicates that the system is in the System OFF mode.

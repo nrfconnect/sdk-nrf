@@ -31,7 +31,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       LED 1:
          Lit when the TNEP Tag is initialized.
@@ -77,7 +77,7 @@ Complete the following steps:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       1. |connect_terminal|
       #. Reset the development kit.

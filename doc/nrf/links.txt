@@ -686,7 +686,6 @@
 .. _`RESETREAS`: https://docs.nordicsemi.com/bundle/ps_nrf5340/page/chapters/reset/doc/reset.html#ariaid-title13
 
 .. _`nRF52840 Product Specification`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/keyfeatures_html5.html
-.. _`System OFF mode`: https://docs.nordicsemi.com/bundle/ps_nrf52840/page/power.html#ariaid-title10
 .. _`nRF52840 DK User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/intro.html
 .. _`nRF52840 Dongle User Guide`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dongle/page/UG/nrf52840_Dongle/intro.html
 .. _`nRF52840 DK Debug output`: https://docs.nordicsemi.com/bundle/ug_nrf52840_dk/page/UG/dk/hw_debug_out.html
