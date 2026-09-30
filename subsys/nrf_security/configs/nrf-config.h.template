@@ -15,9 +15,6 @@
 #cmakedefine MBEDTLS_DEBUG_C
 #cmakedefine MBEDTLS_VERSION_C
 
-/* Legacy configurations for Mbed TLS APIs */
-#cmakedefine MBEDTLS_CIPHER_C
-
 /* TLS/DTLS configurations */
 #cmakedefine MBEDTLS_SSL_ALL_ALERT_MESSAGES
 #cmakedefine MBEDTLS_SSL_DTLS_CONNECTION_ID
@@ -43,7 +40,6 @@
 #cmakedefine MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE
 #cmakedefine MBEDTLS_SSL_SESSION_TICKETS
 #cmakedefine MBEDTLS_SSL_SERVER_NAME_INDICATION
-#cmakedefine MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH
 #cmakedefine MBEDTLS_SSL_CACHE_C
 #cmakedefine MBEDTLS_SSL_TICKET_C
 #cmakedefine MBEDTLS_SSL_CLI_C
