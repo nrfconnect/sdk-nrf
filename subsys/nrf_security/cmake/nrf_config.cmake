@@ -13,11 +13,7 @@ kconfig_check_and_set_base(MBEDTLS_VERSION_C)
 # Guard against setting legacy configurations in TF-M image
 if(NOT MBEDTLS_PSA_CRYPTO_SPM)
 
-  # PKI configurations
-  kconfig_check_and_set_base(MBEDTLS_CIPHER_C)
-
   # TLS/DTLS configurations
-  kconfig_check_and_set_base(MBEDTLS_SSL_ALL_ALERT_MESSAGES)
   kconfig_check_and_set_base(MBEDTLS_SSL_ALL_ALERT_MESSAGES)
   kconfig_check_and_set_base(MBEDTLS_SSL_DTLS_CONNECTION_ID)
   kconfig_check_and_set_base(MBEDTLS_SSL_CONTEXT_SERIALIZATION)
@@ -42,7 +38,6 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base(MBEDTLS_SSL_DTLS_CLIENT_PORT_REUSE)
   kconfig_check_and_set_base(MBEDTLS_SSL_SESSION_TICKETS)
   kconfig_check_and_set_base(MBEDTLS_SSL_SERVER_NAME_INDICATION)
-  kconfig_check_and_set_base(MBEDTLS_SSL_VARIABLE_BUFFER_LENGTH)
   kconfig_check_and_set_base(MBEDTLS_SSL_CACHE_C)
   kconfig_check_and_set_base(MBEDTLS_SSL_TICKET_C)
   kconfig_check_and_set_base(MBEDTLS_SSL_CLI_C)
@@ -53,7 +48,6 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base_int(MBEDTLS_SSL_IN_CONTENT_LEN)
   kconfig_check_and_set_base_int(MBEDTLS_SSL_OUT_CONTENT_LEN)
   kconfig_check_and_set_base(MBEDTLS_SSL_CIPHERSUITES)
-  kconfig_check_and_set_base(MBEDTLS_SSL_EXTENDED_MASTER_SECRET)
 
   # x509 configurations
   kconfig_check_and_set_base(MBEDTLS_X509_RSASSA_PSS_SUPPORT)
