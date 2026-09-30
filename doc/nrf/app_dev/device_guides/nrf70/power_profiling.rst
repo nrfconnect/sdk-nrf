@@ -7,7 +7,7 @@ Power profiling of nRF7002 DK
    :local:
    :depth: 2
 
-The Power Profiler Kit II (PPK2) of Nordic Semiconductor can be used in conjunction with the nRF7002 DK to evaluate the power consumption of nRF70 Series devices in Low-power mode.
+You can use the `Power Profiler Kit II (PPK2)`_ with the nRF7002 DK to evaluate the power consumption of nRF70 Series devices in Low-power mode.
 To measure the power consumption of the nRF7002 DK, complete the following steps:
 
 1. Remove the jumper on **P23** (VBAT jumper).

@@ -35,7 +35,7 @@ Communication and data exchange between the application core, the FLPR coprocess
 Application core
 ================
 
-The application core is intended to run the main application on the device, the Wi-Fi host driver and the IP networking stack, as well as the 2.4 GHz multi-protocol radio stacks, such as Bluetooth® Low Energy, Thread, Enhanced ShockBurst (ESB), and other proprietary protocols.
+The application core is intended to run the main application on the device, the Wi-Fi host driver and the IP networking stack, as well as the 2.4 GHz multi-protocol radio stacks, such as Bluetooth Low Energy, Thread, Enhanced ShockBurst (ESB), and other proprietary protocols.
 
 The application core includes several hardware security features:
 

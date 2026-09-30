@@ -39,8 +39,8 @@ Wi-Fi 6 aligns with IEEE 802.11ax and all earlier versions of the IEEE 802.11 su
 
 Currently, the nRF70 Series devices support the following modes:
 
-* :ref:`Wi-Fi mode <ug_wifi>`: For IEEE 802.11 protocol stack functionality.
-* :ref:`Radio test <wifi_radio_test>`: For PHY (Baseband and Radio) characterizations and calibrations.
+* :ref:`Wi-Fi mode <ug_wifi>`: Provides IEEE 802.11 protocol stack functionality.
+* :ref:`Radio test <wifi_radio_test>`: Provides support for PHY (Baseband and Radio) characterization and calibration.
 * :ref:`Offloaded raw transmission <ug_nrf70_developing_offloaded_raw_tx>`: Allows the offloading of raw IEEE 802.11 frame transmission to the nRF Wi-Fi driver.
 
 The nRF70 Series devices support the following functionalities in the Wi-Fi mode:
