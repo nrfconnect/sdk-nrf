@@ -7,7 +7,6 @@
 
 # PSA core
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_BUILTIN_KEYS)
-kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_DRIVERS)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_EXTERNAL_RNG)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_KEY_ID_ENCODES_OWNER)
 kconfig_check_and_set_base_to_one(MBEDTLS_PSA_CRYPTO_STORAGE_C)

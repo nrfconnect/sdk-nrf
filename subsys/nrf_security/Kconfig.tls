@@ -28,18 +28,6 @@ config MBEDTLS_X509_CREATE_C
 	help
 	  Enable X.509 core for creating certificates.
 
-config MBEDTLS_X509_CHECK_KEY_USAGE
-	bool "X.509 - check key usage"
-	default y
-	help
-	  Enable verification of the key usage extension (CA and leaf certificates).
-
-config MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE
-	bool "X.509 - check extended key usage"
-	default y
-	help
-	  Enable verification of the extendedKeyUsage extension (leaf certificates).
-
 config MBEDTLS_X509_CRL_PARSE_C
 	bool "X.509 - CRL parsing"
 	default y
@@ -213,11 +201,6 @@ config MBEDTLS_SSL_DTLS_CONNECTION_ID
 	  identify DTLS connections across changes in the underlying transport.
 	  The Connection ID extension is still in draft state.
 
-config MBEDTLS_SSL_DTLS_BADMAC_LIMIT
-	bool "SSL - DTLS bad MAC limit"
-	help
-	  Enable support for a limit of records with bad MAC.
-
 endif # MBEDTLS_SSL_PROTO_DTLS
 
 config MBEDTLS_SSL_ALL_ALERT_MESSAGES
@@ -282,12 +265,6 @@ config MBEDTLS_SSL_TICKET_C
 	bool "SSL - tickets"
 	help
 	  Enable an implementation of TLS server-side callbacks for session tickets.
-
-config MBEDTLS_SSL_EXPORT_KEYS
-	bool "Support for exporting keys"
-	default y
-	help
-	  Enables support for exporting key block and master secret.
 
 config MBEDTLS_SSL_OUT_CONTENT_LEN
 	int

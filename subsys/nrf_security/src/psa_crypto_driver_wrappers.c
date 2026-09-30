@@ -24,8 +24,6 @@
 #include <cracen_trng/cracen_trng.h>
 #endif
 
-#if defined(MBEDTLS_PSA_CRYPTO_DRIVERS)
-
 #if defined(PSA_NEED_CC3XX_AEAD_DRIVER) || defined(PSA_NEED_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER) || \
 	defined(PSA_NEED_CC3XX_CIPHER_DRIVER) || defined(PSA_NEED_CC3XX_KEY_AGREEMENT_DRIVER) ||   \
 	defined(PSA_NEED_CC3XX_HASH_DRIVER) || defined(PSA_NEED_CC3XX_KEY_MANAGEMENT_DRIVER) ||    \
@@ -140,7 +138,6 @@
 #endif
 
 /* Repeat above block for each JSON-declared driver during autogeneration */
-#endif /* MBEDTLS_PSA_CRYPTO_DRIVERS */
 
 /* Auto-generated values depending on which drivers are registered.
  * ID 0 is reserved for unallocated operations.
