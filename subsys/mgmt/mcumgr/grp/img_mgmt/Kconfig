@@ -51,3 +51,12 @@ configdefault NRF_RRAM_WRITE_BUFFER_SIZE
 	default 32
 
 endif # MCUMGR_GRP_IMG && SOC_FLASH_NRF_RRAM
+
+config MCUMGR_GRP_IMG_NRF5340_BOOTUTIL_HOOK
+	bool "nRF5340 network core bootutil hook"
+	depends on MCUMGR_GRP_IMG && SOC_NRF5340_CPUAPP && BOOT_IMAGE_ACCESS_HOOKS && \
+		MCUBOOT_NETWORK_CORE_IMAGE_NUMBER > -1
+	default y
+	help
+	  This option will enable a bootutil hook that populates the network core update image
+	  slot with dummy data to allow for uploading a firmware update to the network core.
