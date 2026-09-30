@@ -738,6 +738,16 @@ static psa_status_t cracen_srp_store_key_share(cracen_srp_operation_t *operation
 	if (input_length != CRACEN_SRP_FIELD_SIZE) {
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
+
+	/* RFC 5054: abort if A % N == 0 (2.5.4, server) or B % N == 0 (2.5.3, client).
+	 * 0 < value < N is equivalent here, since 2N does not fit in CRACEN_SRP_FIELD_SIZE
+	 * bytes.
+	 */
+	if (constant_memcmp_is_zero(input, input_length) ||
+	    cracen_be_cmp(input, cracen_N3072, sizeof(cracen_N3072), 0) >= 0) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	if (operation->role == PSA_PAKE_ROLE_CLIENT) {
 		memcpy(operation->B, input, CRACEN_SRP_FIELD_SIZE);
 	} else { /* PSA_PAKE_ROLE_SERVER */
