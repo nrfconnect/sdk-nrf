@@ -1,3 +1,5 @@
+:orphan:
+
 .. _migration_sdk_nrf_to_ncs_matter:
 
 Migrating Matter projects from sdk-nrf to Matter add-on

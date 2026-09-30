@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.4.99
-###########################
+Changelog for |NCS| v3.5.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -56,7 +53,7 @@ Bootloaders and DFU
   * The hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` Kconfig option to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
     The option is hidden and requires addition of a Kconfig override in your project.
     This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
-  * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explaining the memory protection features of the bootloader on the nRF54L Series.
+  * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explain the memory protection features of the bootloader on the nRF54L Series.
   * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
@@ -391,16 +388,16 @@ nRF Desktop
 
     The configurations act as a HID keyboard peripheral with HID SCI support.
   * LLPM dongle application configurations for the nRF54LM20 DK (``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets).
-  * The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT` Kconfig option that allows to drop the MCUboot image header in secondary MCUboot image update, when the update is installed to a designated slot by MCUboot.
+  * The :kconfig:option:`CONFIG_NCS_MCUBOOT_DISCARDS_HEADER_IN_SECONDARY_MCUBOOT` Kconfig option that allows you to drop the MCUboot image header in secondary MCUboot image update, when the update is installed to a designated slot by MCUboot.
     If the option is off for compatibility, MCUboot cannot update itself with MCUboot that was built with the option enabled.
-    Same condition applies to NSIB that cannot boot MCUboot built with the option enabled, as it has been hardcoded to skip the header.
+    The same condition applies to NSIB that cannot boot MCUboot built with the option enabled, as it has been hardcoded to skip the header.
     For NSIB to work with MCUboot built with the option enabled, you need to build NSIB with :kconfig:option:`CONFIG_SB_IMAGE_BOOT_OFFSET` set to ``0``, which would turn off the header skipping.
     An NSIB + MCUboot setup discards the header.
     You can build this setup using the sysbuild Kconfig option :kconfig:option:`SB_CONFIG_SECURE_BOOT_MCUBOOT_DISCARDS_MCUBOOT_IMAGE_HEADER`.
 
     .. note::
        The header is still added for DFU as MCUboot requires it for processing the image.
-       It is the minimum allowed header, which slightly reduces the DFU size of the MCUboot image, for example by 2016 bytes for nRF54L devices, and increases the partition size available for an MCUBoot executable.
+       It is the minimum allowed header, which slightly reduces the DFU size of the MCUboot image, for example by 2016 bytes for nRF54L devices, and increases the partition size available for an MCUboot executable.
 
 * Removed:
 
@@ -439,7 +436,6 @@ Bluetooth samples
 
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
-  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
   * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
   * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
 
@@ -566,7 +562,7 @@ DFU samples
 
   * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
   * The :ref:`single_slot_sample` sample with support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
-    This is a buttonless DFU enter mechanism.
+    This is a buttonless DFU entry mechanism.
   * The :ref:`single_slot_sample` sample with support for the ``nrf52840dk/nrf52840`` board target.
 
 * Removed the Firmware loader entrance sample from the :file:`samples/mcuboot` directory.
@@ -692,7 +688,7 @@ Networking samples
 
   * Added:
 
-    * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option
+    * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
 
   * Fixed:
@@ -912,7 +908,7 @@ This section provides detailed lists of changes by :ref:`driver <drivers>`.
 * Added:
 
   * The :ref:`ppi_seq` driver for triggering periodic hardware tasks using PPI.
-  * The :ref:`ppi_seq_i2c_spi` driver, which is using :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
+  * The :ref:`ppi_seq_i2c_spi` driver, which uses :ref:`ppi_seq` to perform batches of periodic I2C/SPI transfers without waking up the CPU.
   * The :ref:`vtf_monitoring` for battery voltage, temperature, and frequency monitoring.
   * The :ref:`nrf71_sr_coex` driver, which coordinates Wi-Fi and short-range coexistence on an nRF71 Series device.
   * The :ref:`saadct` driver, which uses an external TIMER and GPPI to trigger SAADC sampling at a configured rate.
@@ -923,8 +919,8 @@ SPI drivers
 
 * SPIM:
 
-  * RTIO based device driver for SPIM has been introduced. This device driver is selected if
-    :kconfig:option:`CONFIG_SPI_RTIO` is enabled.
+  * Added RTIO-based device driver for SPIM.
+    This device driver is selected if :kconfig:option:`CONFIG_SPI_RTIO` is enabled.
 
 Wi-Fi drivers
 -------------
@@ -1301,10 +1297,11 @@ Documentation
 
 * Added:
 
-  *  The :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
-     To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
+  * The :ref:`kconfig:kconfig_diff` page, displaying differences between available Kconfig options across releases.
+    To generate the new documentation page, set the ``KCONFIGDIFF`` CMake option to ``ON``.
   * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
-  * The page for each sample now contains an `Open in VS Code` button allowing to quickly open the sample and install required version of the |NCS| toolchain.
+  * An :guilabel:`Open in VS Code` button for each sample page.
+    It lets you quickly open the sample and install the required version of the |NCS| toolchain.
 
 * Updated:
 
