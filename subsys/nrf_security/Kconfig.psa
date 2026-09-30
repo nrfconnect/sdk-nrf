@@ -17,10 +17,6 @@ rsource "src/ssf_secdom/Kconfig"
 
 comment "PSA Driver Support"
 
-config MBEDTLS_PSA_CRYPTO_DRIVERS
-	bool
-	default y
-
 rsource "src/drivers/Kconfig"
 
 

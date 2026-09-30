@@ -52,7 +52,6 @@
 #cmakedefine PSA_WANT_ALG_ECB_NO_PADDING                        @PSA_WANT_ALG_ECB_NO_PADDING@
 #cmakedefine PSA_WANT_ALG_ECDH                                  @PSA_WANT_ALG_ECDH@
 #cmakedefine PSA_WANT_ALG_ECDSA                                 @PSA_WANT_ALG_ECDSA@
-#cmakedefine PSA_WANT_ALG_ECDSA_ANY                             @PSA_WANT_ALG_ECDSA_ANY@
 #cmakedefine PSA_WANT_ALG_ED25519PH                             @PSA_WANT_ALG_ED25519PH@
 #cmakedefine PSA_WANT_ALG_ED448PH                               @PSA_WANT_ALG_ED448PH@
 #cmakedefine PSA_WANT_ALG_GCM                                   @PSA_WANT_ALG_GCM@
@@ -105,10 +104,6 @@
 #cmakedefine PSA_WANT_ECC_SECP_R1_256                           @PSA_WANT_ECC_SECP_R1_256@
 #cmakedefine PSA_WANT_ECC_SECP_R1_384                           @PSA_WANT_ECC_SECP_R1_384@
 #cmakedefine PSA_WANT_ECC_SECP_R1_521                           @PSA_WANT_ECC_SECP_R1_521@
-#cmakedefine PSA_WANT_ECC_SECT_R1_233                           @PSA_WANT_ECC_SECT_R1_233@
-#cmakedefine PSA_WANT_ECC_SECT_R1_283                           @PSA_WANT_ECC_SECT_R1_283@
-#cmakedefine PSA_WANT_ECC_SECT_R1_409                           @PSA_WANT_ECC_SECT_R1_409@
-#cmakedefine PSA_WANT_ECC_SECT_R1_571                           @PSA_WANT_ECC_SECT_R1_571@
 #cmakedefine PSA_WANT_ECC_TWISTED_EDWARDS_255                   @PSA_WANT_ECC_TWISTED_EDWARDS_255@
 #cmakedefine PSA_WANT_ECC_TWISTED_EDWARDS_448                   @PSA_WANT_ECC_TWISTED_EDWARDS_448@
 #cmakedefine PSA_WANT_GENERATE_RANDOM                           @PSA_WANT_GENERATE_RANDOM@
@@ -124,7 +119,6 @@
 #cmakedefine PSA_WANT_KEY_TYPE_HMAC                             @PSA_WANT_KEY_TYPE_HMAC@
 #cmakedefine PSA_WANT_KEY_TYPE_PASSWORD                         @PSA_WANT_KEY_TYPE_PASSWORD@
 #cmakedefine PSA_WANT_KEY_TYPE_PASSWORD_HASH                    @PSA_WANT_KEY_TYPE_PASSWORD_HASH@
-#cmakedefine PSA_WANT_KEY_TYPE_PEPPER                           @PSA_WANT_KEY_TYPE_PEPPER@
 #cmakedefine PSA_WANT_KEY_TYPE_RAW_DATA                         @PSA_WANT_KEY_TYPE_RAW_DATA@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC               @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_BASIC@
 #cmakedefine PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE              @PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE@
