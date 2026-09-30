@@ -670,6 +670,9 @@ static int event_packet_process(const struct device *dev, uint8_t *hci_buf)
 		return -ENOBUFS;
 	}
 
+	/* NOTE: tailroom is not checked, ensure sufficient discardable buffer
+	 *       size is allocated in Kconfig option, CONFIG_BT_BUF_EVT_DISCARDABLE_SIZE.
+	 */
 	mpsl_memcpy(net_buf_add(evt_buf, hdr->len + sizeof(*hdr)), &hci_buf[0],
 		    hdr->len + sizeof(*hdr));
 
@@ -883,6 +886,10 @@ static void configure_supported_features(void)
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_QOS_CHANNEL_SURVEY)) {
 		sdc_support_qos_channel_survey();
 	}
+
+#if defined(CONFIG_BT_OBSERVER) && defined(CONFIG_BT_CTLR_SDC_CHAN_IDX_IN_ADV_REPORT)
+	sdc_support_chan_idx_in_adv_report();
+#endif
 
 	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_PAWR_ADV)) {
 		sdc_support_le_periodic_adv_with_rsp();
