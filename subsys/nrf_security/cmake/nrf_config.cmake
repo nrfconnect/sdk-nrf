@@ -65,6 +65,7 @@ if(NOT MBEDTLS_PSA_CRYPTO_SPM)
   kconfig_check_and_set_base(MBEDTLS_X509_CREATE_C)
   kconfig_check_and_set_base(MBEDTLS_X509_CRT_WRITE_C)
   kconfig_check_and_set_base(MBEDTLS_X509_CSR_WRITE_C)
+  kconfig_check_and_set_base(MBEDTLS_X509_REMOVE_INFO)
   kconfig_check_and_set_base(MBEDTLS_PKCS7_C)
 
   # TLS key exchange

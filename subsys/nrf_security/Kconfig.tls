@@ -71,7 +71,6 @@ config MBEDTLS_X509_CRT_WRITE_C
 
 config MBEDTLS_X509_REMOVE_INFO
 	bool "X.509 - Remove info"
-	default y
 	help
 	  Disable mbedtls_x509_*_info() and related APIs.
 	  This can save several KB
