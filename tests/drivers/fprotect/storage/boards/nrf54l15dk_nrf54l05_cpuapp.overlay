@@ -1,1 +1,41 @@
-#include "nrf54l15dk_nrf54l15_cpuapp.overlay"
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
+
+/delete-node/ &cpuapp_rram;
+
+&rram_controller {
+	reg = <0x5004b000 DT_SIZE_K(500)>;
+
+	cpuapp_rram: rram@0 {
+		compatible = "soc-nv-flash";
+		erase-block-size = <DT_SIZE_K(4)>;
+		write-block-size = <0x10>;
+		reg = <0 DT_SIZE_K(500)>;
+
+		partitions {
+			ranges;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			slot0_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				label = "image-0";
+				reg = <0 DT_SIZE_K(54)>;
+			};
+
+			storage_partition: partition@d800 {
+				compatible = "zephyr,mapped-partition";
+				label = "storage";
+				reg = <0xd800 DT_SIZE_K(32)>;
+			};
+		};
+	};
+};
