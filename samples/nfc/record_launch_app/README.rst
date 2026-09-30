@@ -31,7 +31,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       LED 1:
          Indicates if an NFC field is present.
@@ -58,7 +58,7 @@ After programming the sample to your development kit, complete the following ste
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 1** is lit.
       #. Observe that the smartphone or tablet launches the `nRF Toolbox`_ application.

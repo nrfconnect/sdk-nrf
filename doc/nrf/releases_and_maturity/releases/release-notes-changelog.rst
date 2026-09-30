@@ -395,6 +395,10 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
+* :ref:`central_nfc_pairing` and :ref:`peripheral_nfc_pairing` samples:
+
+  * Removed support for the nRF52 Series devices.
+
 * Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
@@ -709,7 +713,7 @@ Networking samples
 NFC samples
 -----------
 
-|no_changes_yet_note|
+* Removed support for the nRF52 Series devices in the NFC samples.
 
 nRF5340 samples
 ---------------
