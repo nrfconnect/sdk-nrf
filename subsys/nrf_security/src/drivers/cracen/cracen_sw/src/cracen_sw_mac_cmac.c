@@ -176,7 +176,7 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 
 /* Single-shot operations still use hw cmac */
 psa_status_t cracen_cmac_compute(cracen_mac_operation_t *operation, const uint8_t *input,
-				 size_t input_length, uint8_t *mac)
+				 size_t input_length)
 {
 	int sx_status;
 
@@ -195,7 +195,10 @@ psa_status_t cracen_cmac_compute(cracen_mac_operation_t *operation, const uint8_
 		goto exit;
 	}
 
-	sx_status = sx_mac_generate(&operation->cmac.ctx, mac);
+	/* Writes a full CMAC block, so it goes to the internal buffer. Same as the non-workaround
+	 * driver does in cracen_mac_cmac.c.
+	 */
+	sx_status = sx_mac_generate(&operation->cmac.ctx, operation->input_buffer);
 	if (sx_status != SX_OK) {
 		goto exit;
 	}
