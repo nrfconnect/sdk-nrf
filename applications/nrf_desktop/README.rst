@@ -8,7 +8,7 @@
    See `nRF Desktop reference design page`_ for an overview of supported features.
 
    .. note::
-      Future development of the nRF Desktop HID application reference design will move to a dedicated `nRF Connect SDK Add-on <nRF Connect SDK Add-ons_>`_ (``HID Add-on``).
+      Future development of the nRF Desktop HID application reference design will move to a dedicated `HID Add-on`_.
       Existing feature set will be maintained in the |NCS| 3.4.x Long-term support (LTS) releases, but new features will be introduced only in the Add-on.
       The Add-on will support nRF54L Series devices.
 
