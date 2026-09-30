@@ -185,6 +185,21 @@ Security
     * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
     * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
 
+* Removed:
+
+  * The following Kconfig options, which had no effect:
+
+    * ``CONFIG_MBEDTLS_SSL_EXPORT_KEYS``
+    * ``CONFIG_MBEDTLS_X509_CHECK_KEY_USAGE``
+    * ``CONFIG_MBEDTLS_X509_CHECK_EXTENDED_KEY_USAGE``
+    * ``CONFIG_MBEDTLS_SSL_DTLS_BADMAC_LIMIT``
+    * ``CONFIG_PSA_WANT_ALG_CHACHA20``
+    * ``CONFIG_PSA_WANT_ECC_SECT_R1_233``, ``CONFIG_PSA_WANT_ECC_SECT_R1_283``, ``CONFIG_PSA_WANT_ECC_SECT_R1_409``, and ``CONFIG_PSA_WANT_ECC_SECT_R1_571``
+    * ``CONFIG_PSA_WANT_KEY_TYPE_PEPPER``
+
+  * The ``CONFIG_PSA_WANT_ALG_ECDSA_ANY`` Kconfig option.
+    Use the :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` Kconfig option instead, which also enables ``PSA_ALG_ECDSA_ANY``.
+
 Security libraries
 ------------------
 
