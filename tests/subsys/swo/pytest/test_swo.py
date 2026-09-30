@@ -122,7 +122,13 @@ def test_swo_logging(dut: DeviceAdapter):
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf7120dk/nrf7120/cpuapp": {
-            "device": "CORTEX_M33",
+            "device": "Cortex-M33",
+            "cpufreq": 256000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
+        },
+        "nrf7120dk/nrf7120/cpuapp/ns": {
+            "device": "Cortex-M33",
             "cpufreq": 256000000,
             "swofreq": 1000000,
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
