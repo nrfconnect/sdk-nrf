@@ -168,6 +168,23 @@ Security
   * nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto libraries to version v0.9.23.
     Improved PSA driver error reporting and fixed an issue that caused incorrect authentication tag generation in GCM when multiple calls to :c:func:`psa_aead_update_ad` were made.
 
+* Fixed:
+
+  * The :kconfig:option:`CONFIG_MBEDTLS_X509_REMOVE_INFO` Kconfig option, which had no effect.
+    It now defaults to ``n``.
+  * The following Kconfig options, which were not passed to the PSA Crypto core:
+
+    * :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
+    * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
+    * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
+    * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
+    * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
+    * :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
+    * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
+    * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
+    * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
+    * :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
+
 Security libraries
 ------------------
 
