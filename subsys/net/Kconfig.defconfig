@@ -16,6 +16,11 @@ config NET_MGMT_EVENT_QUEUE_TIMEOUT
 	# Allow slow shell backends to print Wi-Fi scan results without dropping events.
 	default 50 if NET_L2_WIFI_SHELL
 
+config NET_MGMT_EVENT_QUEUE_SIZE
+	# Increase the default queue size to fit net_mgmt event burst during
+	# Wi-Fi disconnect teardown.
+	default 32 if WIFI_NRF71 || WIFI_NRF70
+
 endif # NET_MGMT_EVENT_QUEUE
 
 endif # NETWORKING
