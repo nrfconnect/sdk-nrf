@@ -53,9 +53,7 @@ int main(void)
 		return 0;
 	}
 
-	printk("\nPower consumption demo ready.\n"
-	       "Switch the board's power off and back on now to get correct "
-	       "power consumption readings.\n\n");
+	printk("\nPower consumption demo ready.\n");
 #endif
 
 	configure_ram_retention();
