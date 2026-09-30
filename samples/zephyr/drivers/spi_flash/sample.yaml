@@ -29,6 +29,8 @@ tests:
   nrf.extended.sample.drivers.spi.flash:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuflpr
     integration_platforms:
