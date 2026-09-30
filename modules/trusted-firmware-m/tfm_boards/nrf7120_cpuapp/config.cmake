@@ -11,6 +11,10 @@ set(NRF_SOC_VARIANT nrf7120 CACHE STRING "nRF SoC Variant")
 
 include(${PLATFORM_PATH}/common/${NRF_SOC_VARIANT}/config.cmake)
 
+if(DEVELOP_IN_NRF7120E)
+  add_compile_definitions(DEVELOP_IN_NRF7120E)
+endif()
+
 # Override PS_CRYPTO_KDF_ALG
 set(PS_CRYPTO_KDF_ALG                  PSA_ALG_SP800_108_COUNTER_CMAC CACHE STRING    "KDF Algorithm to use")
 
