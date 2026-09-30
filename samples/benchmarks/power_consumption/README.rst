@@ -21,8 +21,7 @@ Overview
 
 At boot, the sample performs the following operations:
 
-1. Prints a reminder to switch the board's power off and back on before taking a power measurement (see `Measuring the power consumption`_).
-#. Applies the user-configured RAM retention level.
+1. Applies the user-configured RAM retention level.
 #. Enters a periodic loop, where it:
 
    a. Transits to sleep (System ON Idle) for a period of :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS` (10 seconds by default).
@@ -86,10 +85,6 @@ Testing
 Measuring the power consumption
 -------------------------------
 
-.. note::
-   The debugger or SWD connection used during flashing draws additional current and can leave the target in a state that does not reflect its true standalone power consumption.
-   Always power-cycle the target after flashing before taking a reading, as described in **Step 8** below.
-
 **P601** is a 1x3 header (pin 1 ``P5V0``, pin 2 ``VBAT_5V0``, pin 3 ``GND``), normally bridged by the **JP601** shunt jumper so ``P5V0`` feeds straight through to ``VBAT_5V0``.
 To measure current with a PPK2 in source meter mode, complete the following steps:
 
@@ -99,8 +94,6 @@ To measure current with a PPK2 in source meter mode, complete the following step
 #. Connect the USB cable to the DK to flash the image (the DK's interface MCU/debugger runs on its own USB-derived supply; with the **JP601** shunt removed, the nRF7120 itself is powered only from **P601** pin 2, i.e. the PPK2, throughout).
 #. In the PPK2 app, select **Source Meter** mode and enable power output with **3.6 V** as the supply voltage.
 #. Run ``west flash`` to flash the image.
-#. Toggle the PPK2's **Enable power output** control off and back on.
-   This power-cycles the target now that the debugger is disconnected, giving an accurate measurement.
 
 Sample output
 **************
@@ -110,7 +103,6 @@ The sample shows the following output:
 .. code-block:: console
 
    Power consumption demo ready.
-   Switch the board's power off and back on now to get correct power consumption readings.
 
    Woken up 1 time(s)
    Woken up 2 time(s)
