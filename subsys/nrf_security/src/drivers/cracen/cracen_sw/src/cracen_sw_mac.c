@@ -198,10 +198,13 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 				goto error_exit;
 			}
 
-			status = cracen_cmac_compute(&operation, input, input_length, mac);
+			status = cracen_cmac_compute(&operation, input, input_length);
 			if (status != PSA_SUCCESS) {
 				goto error_exit;
 			}
+
+			/* The MAC is a full block; copy out only the requested length. */
+			memcpy(mac, operation.input_buffer, operation.mac_size);
 
 			*mac_length = operation.mac_size;
 			return PSA_SUCCESS;
