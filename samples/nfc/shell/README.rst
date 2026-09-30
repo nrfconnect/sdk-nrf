@@ -31,7 +31,7 @@ You can use the following commands:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       * The ``led on`` command lits **LED 2**.
       * The ``led off`` command dims **LED 2**.
@@ -46,7 +46,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       LED 1:
          Blinks, toggling on/off every second, when the main loop is running.
@@ -80,7 +80,7 @@ After programming the sample to your development kit, complete the following ste
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       1. |connect_terminal_ANSI|
       #. Reset your development kit.

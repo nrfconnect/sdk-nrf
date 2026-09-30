@@ -78,7 +78,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       Button 4:
          Removes all bonded devices and terminates current connections.
@@ -117,7 +117,7 @@ Testing with NFC Poller Device
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DK
 
       1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 2** is lit.
       #. Confirm pairing with :guilabel:`Nordic_NFC_pairing` in a pop-up window on the smartphone or tablet and observe that **LED 1** lights up.
@@ -132,7 +132,7 @@ Testing with NFC Poller Device
 Testing with NFC TNEP Poller Device
 -----------------------------------
 
-For nRF52 and nRF53 DKs, perform the following steps:
+For an nRF53 Series DK, perform the following steps:
 
    1. Touch the NFC antenna with the NFC Poller Device, for example :ref:`central_nfc_pairing` and observe that **LED 2** is lit.
    #. Observe the output log.
