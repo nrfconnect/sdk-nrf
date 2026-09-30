@@ -549,6 +549,7 @@
 /samples/bluetooth/hci_lpuart/            @nordic-krch
 /samples/bluetooth/iso_combined_bis_and_cis/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
+/samples/bluetooth/le_adv_report_chan_idx/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/llpm/                  @nrfconnect/ncs-dragoon
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-blenders
