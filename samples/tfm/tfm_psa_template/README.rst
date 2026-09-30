@@ -371,6 +371,8 @@ After programming the sample, the boot chain runs in this order on every support
 
 The exact console output differs between board targets because of the different boot chains and partition layouts.
 
+For more information about the PSA Attestation API and the Initial Attestation Key (IAK) on each device, see :ref:`ug_psa_certified_api_overview_attestation`.
+
 Sample output on nRF5340 DK
 ===========================
 
