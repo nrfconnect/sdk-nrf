@@ -21,7 +21,7 @@ It can be used for the following purposes:
 * `Playing LED stream`_
 
 .. note::
-   Future development of the HID configurator for nRF Desktop will move to a dedicated `nRF Connect SDK Add-on <nRF Connect SDK Add-ons_>`_ (``HID Add-on``).
+   Future development of the HID configurator for nRF Desktop will move to a dedicated `HID Add-on`_.
    Existing feature set will be maintained in the |NCS| 3.4.x Long-term support (LTS) releases, but new features will be introduced only in the Add-on.
 
 Overview
