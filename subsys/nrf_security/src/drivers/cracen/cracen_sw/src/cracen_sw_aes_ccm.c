@@ -622,7 +622,7 @@ psa_status_t cracen_sw_aes_ccm_decrypt(const psa_key_attributes_t *attributes,
 	uint8_t tag_buffer[SX_BLKCIPHER_AES_BLK_SZ];
 
 	tag_size = PSA_AEAD_TAG_LENGTH(PSA_KEY_TYPE_AES, PSA_BYTES_TO_BITS(key_buffer_size), alg);
-	if (ciphertext_length < tag_size) {
+	if (ciphertext_length < tag_size || tag_size > sizeof(tag_buffer)) {
 		*plaintext_length = 0;
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
