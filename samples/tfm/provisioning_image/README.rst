@@ -52,7 +52,7 @@ The sample requires :ref:`lib_hw_unique_key`.
 On nRF5340 and nRF91x Series devices, it also requires :ref:`lib_identity_key`.
 
 On nRF54L Series devices, no separate identity key is stored.
-The IAK is sourced from CRACEN.
+The Initial Attestation Key (IAK) is sourced from CRACEN.
 
 .. note::
    After provisioning, do not erase the OTP (for example, by using ``ERASEALL``).
@@ -81,8 +81,9 @@ The sample performs the following operations:
 #. On nRF5340 and nRF91x Series devices, the system generates a random secp256r1 identity key.
    The system stores this key in the KMU, encrypted with the MKEK, and uses it as the Initial Attestation Key (IAK).
 
-   On nRF54L Series devices, the IAK is sourced from the CRACEN IKG identity key.
+   On nRF54L Series devices, the IAK is the identity key of the :ref:`CRACEN IKG <ug_kmu_guides_cracen_ikg>`.
    The system does not write a separate identity key.
+   For more information about how TF-M uses the IAK, see :ref:`ug_psa_certified_api_overview_attestation`.
 #. The implementation ID is written to OTP.
 
 On nRF54L Series devices, |NSIB| (NSIB, also called b0) validates firmware against a key stored in the CRACEN KMU, rather than in the OTP PROVISION region used on nRF5340.

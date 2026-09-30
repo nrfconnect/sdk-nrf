@@ -94,6 +94,9 @@ IKG keys are also accessed using the standard PSA Crypto APIs, and are reference
 
 The keys are not exportable, except for the public key associated with the asymmetric key.
 
+In applications that use :ref:`Trusted Firmware-M <ug_tfm>`, the identity key serves as the Initial Attestation Key for the PSA Attestation API.
+For more information, see :ref:`ug_psa_certified_api_overview_attestation`.
+
 .. _ug_kmu_cracen_countermeasures:
 
 CRACEN side-channel countermeasures
