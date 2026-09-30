@@ -495,7 +495,7 @@ config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT
 	  SRP key pair: export key for both the private and public key.
 
 config PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE
-	bool "SRP key pair export support" if !PSA_PROMPTLESS
+	bool "SRP key pair generate support" if !PSA_PROMPTLESS
 	select PSA_WANT_KEY_TYPE_SRP_PUBLIC_KEY
 	default y if PSA_CRYPTO_ENABLE_ALL
 	help
