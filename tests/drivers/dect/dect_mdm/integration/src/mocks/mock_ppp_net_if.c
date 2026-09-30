@@ -77,7 +77,8 @@ static void mock_ppp_if_init(void)
 	memcpy(mock_ppp_ipv6.unicast[0].address.in6_addr.s6_addr, global, sizeof(global));
 	mock_ppp_ipv6.unicast[0].address.family = NET_AF_INET6;
 	mock_ppp_ipv6.unicast[0].is_used = 1U;
-	/* Refcount 1 so sink IF_DOWN net_if_ipv6_addr_rm() can unref and clear is_used */
+	mock_ppp_ipv6.unicast[0].is_added = 1U;
+	/* Added with refcount 1 so sink IF_DOWN net_if_ipv6_addr_rm() unrefs and clears is_used */
 	atomic_set(&mock_ppp_ipv6.unicast[0].atomic_ref, 1);
 #endif
 }
@@ -128,6 +129,7 @@ void dect_test_mock_ppp_restore_ipv6_unicast(void)
 	memcpy(mock_ppp_ipv6.unicast[0].address.in6_addr.s6_addr, global, sizeof(global));
 	mock_ppp_ipv6.unicast[0].address.family = NET_AF_INET6;
 	mock_ppp_ipv6.unicast[0].is_used = 1U;
+	mock_ppp_ipv6.unicast[0].is_added = 1U;
 	atomic_set(&mock_ppp_ipv6.unicast[0].atomic_ref, 1);
 }
 #endif /* CONFIG_NET_IPV6 */
