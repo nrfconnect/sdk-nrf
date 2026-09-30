@@ -932,6 +932,7 @@
 
 .. _`Edge AI Add-on for nRF Connect SDK`: https://nrfconnectdocs.nordicsemi.com/addons/addon-edge-ai/latest/index.html
 .. _`nRF Door Lock and Access Control Add-on`: https://nrfconnectdocs.nordicsemi.com/addons/door_lock_and_access_control/latest/index.html
+.. _`HID Add-on`: https://nrfconnectdocs.nordicsemi.com/addons/addon-hid/latest/index.html
 
 .. ### Source: nrfconnectdocs.nordicsemi.com
 
