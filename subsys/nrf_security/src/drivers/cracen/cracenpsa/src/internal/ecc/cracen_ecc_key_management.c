@@ -20,6 +20,15 @@
 #include <cracen/ec_helpers.h>
 
 #define DEFAULT_KEY_SIZE(bits) (bits), PSA_BITS_TO_BYTES(bits), (1 + 2 * PSA_BITS_TO_BYTES(bits))
+
+/* Key sizes of the Edwards curves, shared by the key table and the PH algorithm checks. */
+#define ED25519_BITS 255
+#define ED448_BITS   448
+
+/* True if alg_ is the prehash algorithm ph_alg_ but the key is not bits_ wide. */
+#define PH_ALG_BITS_MISMATCH(alg_, ph_alg_, key_bits_, bits_)                                      \
+	((alg_) == (ph_alg_) && (key_bits_) != (bits_))
+
 static struct {
 	psa_ecc_family_t family;
 	size_t bits;
@@ -69,9 +78,9 @@ static struct {
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_MONTGOMERY)},
 
 	/* Twisted Edwards */
-	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 255, 32, 32,
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, ED25519_BITS, 32, 32,
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
-	{PSA_ECC_FAMILY_TWISTED_EDWARDS, 448, 57, 57,
+	{PSA_ECC_FAMILY_TWISTED_EDWARDS, ED448_BITS, 57, 57,
 	 IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ECC_TWISTED_EDWARDS)},
 };
 
@@ -103,13 +112,26 @@ static psa_status_t check_ecc_key_attributes(const psa_key_attributes_t *attribu
 		}
 	}
 
-	if (status == PSA_SUCCESS &&
-	    (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) && (key_alg != PSA_ALG_PURE_EDDSA &&
-	    key_alg != PSA_ALG_ED25519PH && key_alg != PSA_ALG_ED448PH)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
-	return status;
+	/* A Twisted Edwards key must use an EdDSA algorithm, and the prehash variants are bound
+	 * to one curve each: Ed25519ph to 255 bits, Ed448ph to 448. Buffers are sized from the
+	 * key's curve but the routine is picked from the algorithm, so a mismatch overflows them.
+	 */
+	if (curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+		if (key_alg != PSA_ALG_PURE_EDDSA && key_alg != PSA_ALG_ED25519PH &&
+		    key_alg != PSA_ALG_ED448PH) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+		if (PH_ALG_BITS_MISMATCH(key_alg, PSA_ALG_ED25519PH, *key_bits, ED25519_BITS) ||
+		    PH_ALG_BITS_MISMATCH(key_alg, PSA_ALG_ED448PH, *key_bits, ED448_BITS)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+	}
+
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_generate_ecc_private_key(const psa_key_attributes_t *attributes,
