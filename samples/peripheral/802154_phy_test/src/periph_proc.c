@@ -44,7 +44,7 @@ LOG_MODULE_REGISTER(periph);
 
 #if IS_ENABLED(CONFIG_PTT_CLK_OUT)
 /* Timer instance used for HFCLK output */
-#if defined(NRF52_SERIES) || defined(NRF53_SERIES)
+#if defined(NRF53_SERIES)
 #define PTT_CLK_TIMER 2
 #elif defined(NRF54L_SERIES)
 #define PTT_CLK_TIMER 20
