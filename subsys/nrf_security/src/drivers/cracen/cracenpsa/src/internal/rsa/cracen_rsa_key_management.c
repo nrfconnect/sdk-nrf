@@ -298,6 +298,7 @@ psa_status_t cracen_import_rsa_key(const psa_key_attributes_t *attributes, const
 	size_t key_bits_attr = psa_get_key_bits(attributes);
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	bool is_public_key = key_type == PSA_KEY_TYPE_RSA_PUBLIC_KEY;
+	size_t modulus_bits;
 
 	struct cracen_rsa_key rsakey;
 	struct sx_buf n = {0};
@@ -318,21 +319,23 @@ psa_status_t cracen_import_rsa_key(const psa_key_attributes_t *attributes, const
 		goto cleanup;
 	}
 
-	/* When importing keys the PSA APIs allow for key bits to be 0 and they
-	 * expect it to be calculated based on the buffer size of the data. For
-	 * RSA keys the key size is the size of the modulus.
+	modulus_bits = PSA_BYTES_TO_BITS(n.sz);
+
+	/* When importing keys the PSA APIs the bits attribute can be 0
+	 * but if the a value is provided it needs to match the modulus size.
 	 */
-	if (key_bits_attr == 0) {
-		key_bits_attr = PSA_BYTES_TO_BITS(n.sz);
+	if ((key_bits_attr > 0) && (key_bits_attr != modulus_bits)) {
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto cleanup;
 	}
 
-	status = check_rsa_key_attributes(attributes, key_bits_attr);
+	status = check_rsa_key_attributes(attributes, modulus_bits);
 	if (status != PSA_SUCCESS) {
 		goto cleanup;
 	}
 
 	*key_buffer_length = data_length;
-	*key_bits = key_bits_attr;
+	*key_bits = modulus_bits;
 
 	return PSA_SUCCESS;
 
