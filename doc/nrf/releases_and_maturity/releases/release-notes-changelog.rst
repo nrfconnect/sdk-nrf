@@ -106,7 +106,11 @@ Developing with nRF54L Series
 Developing with nRF54H Series
 =============================
 
-|no_changes_yet_note|
+* Updated the :ref:`ug_nrf54h20_ironside_se_snapshot` page with the following information:
+
+  * Support for the snapshot services only on nRF54H20B devices.
+  * Instructions for configuring snapshot in one-time programmable (OTP) memory.
+  * The list of predefined snapshot regions.
 
 Developing with nRF53 Series
 ============================
