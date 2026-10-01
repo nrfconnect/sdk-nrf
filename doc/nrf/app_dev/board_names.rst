@@ -116,6 +116,14 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54h20dk/nrf54h20/cpuppr``                                           |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
+| nRF54LV10 DK      | PCA10188   | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>`              | ``nrf54lv10dk/nrf54lv10a/cpuapp``                                        |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuflpr``                                       |
+|                   |            |                                                        |                                                                          |
+|                   |            |                                                        | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``                                   |
++-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF54LM20 DK      | PCA10184   | :zephyr:board:`nrf54lm20dk <nrf54lm20dk>`              | ``nrf54lm20dk/nrf54lm20a/cpuapp``                                        |
 |                   |            |                                                        |                                                                          |
 |                   |            |                                                        | ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`) |
@@ -224,14 +232,6 @@ The following boards are defined in the :file:`nrf/boards/nordic/` folder.
 | nRF54LS05 DK      | PCA10214   | :ref:`nrf54ls05dk <board_nrf54ls05dk>`                   | ``nrf54ls05dk/nrf54ls05a/cpuapp``                                         |
 |                   |            |                                                          |                                                                           |
 |                   |            |                                                          | ``nrf54ls05dk/nrf54ls05b/cpuapp``                                         |
-+-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
-| nRF54LV10 DK      | PCA10188   | :ref:`nrf54lv10dk <board_nrf54lv10dk>`                   | ``nrf54lv10dk/nrf54lv10a/cpuapp``                                         |
-|                   |            |                                                          |                                                                           |
-|                   |            |                                                          | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)  |
-|                   |            |                                                          |                                                                           |
-|                   |            |                                                          | ``nrf54lv10dk/nrf54lv10a/cpuflpr``                                        |
-|                   |            |                                                          |                                                                           |
-|                   |            |                                                          | ``nrf54lv10dk/nrf54lv10a/cpuflpr/xip``                                    |
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 | nRF54LC10 DK      | PCA10226   | :ref:`nrf54lc10dk <board_nrf54lc10dk>`                   | ``nrf54lc10dk/nrf54lc10a/cpuapp``                                         |
 |                   |            |                                                          |                                                                           |
