@@ -823,6 +823,7 @@
 /scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/check_license.py              @carlescufi
 /scripts/ci/check_manifest_userdata.py    @carlescufi
+/scripts/ci/check_compliance.py           @nrfconnect/ncs-code-owners
 /scripts/ci/codeowners.py                 @carlescufi
 /scripts/ci/license_allow_list.yaml       @carlescufi
 /scripts/ci/requirements.txt              @carlescufi
