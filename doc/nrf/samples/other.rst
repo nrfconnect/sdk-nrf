@@ -21,6 +21,7 @@ This section lists single |NCS| samples for various uses that are not part of ot
    ../../../samples/app_jwt/README
    ../../../samples/caf/README
    ../../../samples/caf_sensor_manager/README
+   ../../../samples/drivers/audio/tac5112/README
    ../../../samples/event_manager_proxy/README
    ../../../samples/hw_id/README
    ../../../samples/nrf_profiler/README
