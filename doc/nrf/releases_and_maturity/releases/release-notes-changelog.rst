@@ -1029,6 +1029,8 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
+* Removed support for the nRF52 Series devices in the NFC subsystem.
+
 * :ref:`nfc_ndef_parser_readme`:
 
   * Fixed an issue where parsing a malformed long-format NDEF record could produce an incorrect payload length.
