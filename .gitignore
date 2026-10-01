@@ -82,4 +82,5 @@ TextEncoding.txt
 YAMLLint.txt
 CMakeStyle.txt
 KconfigFormat.txt
+WestLink.txt
 **/.DS_Store
