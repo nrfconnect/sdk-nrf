@@ -35,8 +35,7 @@
 
 LOG_MODULE_REGISTER(nfc_platform, CONFIG_NFC_PLATFORM_LOG_LEVEL);
 
-#if NRF53_ERRATA_70_ENABLE_WORKAROUND || NRF52_ERRATA_190_ENABLE_WORKAROUND || \
-	NRF52_ERRATA_79_ENABLE_WORKAROUND || NRF54L_ERRATA_60_ENABLE_WORKAROUND
+#if NRF53_ERRATA_70_ENABLE_WORKAROUND || NRF54L_ERRATA_60_ENABLE_WORKAROUND
 	#define NFC_PLATFORM_USE_TIMER_WORKAROUND 1
 #else
 	#define NFC_PLATFORM_USE_TIMER_WORKAROUND 0
@@ -216,13 +215,6 @@ int nfc_platform_nfcid1_default_bytes_get(uint8_t * const buf,
 			buf[8] = (uint8_t) (nfc_tag_header[2] >> 8);
 			buf[9] = (uint8_t) (nfc_tag_header[2] >> 16);
 		}
-		/* Workaround for errata 181 "NFCT: Invalid value in FICR for double-size NFCID1"
-		 * found at the Errata document for your device located at
-		 * https://infocenter.nordicsemi.com/index.jsp
-		 */
-		else if (buf[3] == 0x88) {
-			buf[3] |= 0x11;
-		}
 	}
 
 	return 0;
@@ -265,7 +257,7 @@ void nfc_platform_event_handler(nrfx_nfct_evt_t const *event)
 		 * field is lost. This avoids violating protocol timing, which can lead readers
 		 * to reject the NFC tag's response.
 		 */
-		if (!(NRF_ERRATA_DYNAMIC_CHECK(52, 218) && NRF_ERRATA_DYNAMIC_CHECK(53, 71))) {
+		if (!NRF_ERRATA_DYNAMIC_CHECK(53, 71)) {
 			nrf_nfct_frame_delay_max_set(NRF_NFCT, NRF_NFCT_FAME_DELAY_MAX_DEFAULT);
 		}
 		LOG_DBG("Field lost");
