@@ -81,6 +81,14 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 		goto out;
 	}
 
+	status = umac_cmd_lmac_tuning_params(fmac_dev_ctx);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: LMAC tuning params config failed",
+				      __func__);
+		goto out;
+	}
+
 	status = NRF_WIFI_STATUS_SUCCESS;
 
 out:
