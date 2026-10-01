@@ -126,6 +126,17 @@ config BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
 	help
 	  Quality of Service connection event report feature support
 
+config BT_CTLR_SDC_LOG
+	bool "SoftDevice Controller logging [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_BSIM_NRF54LX
+	select MPSL_LOG_HANDLER
+	select EXPERIMENTAL
+	help
+	  Contribute the SoftDevice Controller message table to the shared MPSL
+	  log handler (see MPSL_LOG_HANDLER).
+	  Can be used to simplify debugging of HCI errors or
+	  other kinds of SDC failures.
+
 config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
 	bool "Allow scanning and initiating at the same time"
 	depends on BT_CENTRAL
@@ -325,25 +336,26 @@ config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
 choice BT_LL_SOFTDEVICE_VARIANT
 	prompt "SoftDevice Controller variant"
 	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
-						     BT_CTLR_SDC_LLPM || \
-						     BT_CTLR_ADV_EXT || \
-						     BT_CTLR_PHY_CODED || \
-						     BT_CTLR_ADV_PERIODIC || \
-						     BT_CTLR_DF_CTE_TX || \
-						     BT_CTLR_SDC_MPSL_COEX || \
-						     BT_CTLR_SYNC_PERIODIC || \
-						     BT_CTLR_SCA_UPDATE || \
-						     BT_CTLR_SUBRATING || \
-						     BT_CTLR_SDC_PAWR_ADV || \
-						     BT_CTLR_SDC_PAWR_SYNC || \
-						     BT_ISO || \
-						     BT_CTLR_CHANNEL_SOUNDING || \
-						     BT_CTLR_EXTENDED_FEAT_SET || \
-						     BT_CTLR_FRAME_SPACE_UPDATE || \
-						     BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
-						     BT_CTLR_LE_FLUSHABLE_ACL_DATA || \
-						     SOC_COMPATIBLE_NRF5340_CPUNET || \
-						     SOC_SERIES_NRF71)
+		BT_CTLR_SDC_LLPM || \
+		BT_CTLR_ADV_EXT || \
+		BT_CTLR_PHY_CODED || \
+		BT_CTLR_ADV_PERIODIC || \
+		BT_CTLR_DF_CTE_TX || \
+		BT_CTLR_SDC_MPSL_COEX || \
+		BT_CTLR_SYNC_PERIODIC || \
+		BT_CTLR_SCA_UPDATE || \
+		BT_CTLR_SUBRATING || \
+		BT_CTLR_SDC_PAWR_ADV || \
+		BT_CTLR_SDC_PAWR_SYNC || \
+		BT_ISO || \
+		BT_CTLR_CHANNEL_SOUNDING || \
+		BT_CTLR_EXTENDED_FEAT_SET || \
+		BT_CTLR_FRAME_SPACE_UPDATE || \
+		BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
+		BT_CTLR_LE_FLUSHABLE_ACL_DATA || \
+		BT_CTLR_SDC_LOG || \
+		SOC_COMPATIBLE_NRF5340_CPUNET || \
+		SOC_SERIES_NRF71)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
 	help
@@ -352,6 +364,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 config BT_LL_SOFTDEVICE_PERIPHERAL
 	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
 	depends on !BT_OBSERVER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_CTLR_SDC_LOG
 	help
 	  The peripheral library variant is optimized for simpler applications only
 	  requiring the peripheral role.
@@ -359,6 +372,7 @@ config BT_LL_SOFTDEVICE_PERIPHERAL
 config BT_LL_SOFTDEVICE_CENTRAL
 	bool "SoftDevice Controller optimized for central role applications"
 	depends on !BT_BROADCASTER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_CTLR_SDC_LOG
 	help
 	  The central library variant is optimized for simpler applications only
 	  requiring the central role.
