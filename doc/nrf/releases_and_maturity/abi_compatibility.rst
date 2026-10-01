@@ -52,6 +52,7 @@ The following known issues affect |ISE|.
   :name: ise-versions
   :default: v23-8-0-33
   :container: dl/dt
+  :tags: [("v23-8-0-33", "v23.8.0+33"), ("v23-7-0-30", "v23.7.0+30"), ("v23-6-0-29", "v23.6.0+29"), ("v23-5-0-28", "v23.5.0+28")]
 
   v23-8-0-33  v23.8.0+33
   v23-7-0-30  v23.7.0+30
