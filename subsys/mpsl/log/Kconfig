@@ -1,0 +1,62 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_LOG_HANDLER
+	bool "MPSL library logging handler [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_BSIM_NRF54LX
+	depends on MPSL
+	help
+	  Enables the tokenized log handler shared by MPSL and the libraries
+	  built on top of it (for example the SoftDevice Controller).
+	  Each library contributes its own message table;
+	  this handler resolves and prints them.
+
+config MPSL_LOG
+	bool "MPSL library logging [EXPERIMENTAL]"
+	depends on MPSL
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_BSIM_NRF54LX
+	select MPSL_LOG_HANDLER
+	select EXPERIMENTAL
+	help
+	  Enable MPSL's own tokenized log message table, printed through the
+	  shared log handler (see MPSL_LOG_HANDLER).
+
+config MPSL_LOG_HANDLER_BUILTIN
+	bool "Built-in MPSL logging handler"
+	depends on MPSL_LOG_HANDLER
+	depends on LOG
+	default y
+	help
+	  Default handler using a separate thread and log FIFO, printing
+	  through the Zephyr logging subsystem (requires LOG).
+	  Disable to provide a custom handler in the application, for example
+	  for special size or performance requirements.
+	  This handler can be used as a reference.
+
+if MPSL_LOG_HANDLER_BUILTIN
+
+config MPSL_LOG_PRINT_LEVEL
+	int "MPSL log print level"
+	default 3
+	range 0 4
+	help
+	  Log message severity printed by the built-in handler.
+
+config MPSL_LOG_FIFO_SIZE
+	int "MPSL log FIFO size"
+	default 32
+	range 1 1024
+	help
+	  Number of log messages that can be enqueued before dropping.
+
+config MPSL_LOG_THREAD_STACK_SIZE
+	int "MPSL log thread stack size"
+	default 512
+	help
+	  Stack size for the thread that drains the log FIFO and prints messages.
+
+endif # MPSL_LOG_HANDLER_BUILTIN
