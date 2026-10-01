@@ -125,10 +125,6 @@ tests:
   sample.nrf7120.sta:
     sysbuild: true
     build_only: true
-    extra_args:
-      - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
