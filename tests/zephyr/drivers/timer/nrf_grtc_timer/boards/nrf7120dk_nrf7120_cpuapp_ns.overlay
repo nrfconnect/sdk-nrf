@@ -1,1 +1,5 @@
 #include "nrf7120dk_nrf7120e_cpuapp.overlay"
+
+&grtc {
+	interrupts = <227 2>;
+};
