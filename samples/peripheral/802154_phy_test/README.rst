@@ -911,10 +911,6 @@ FEM support
 
 .. include:: /includes/sample_fem_support.txt
 
-.. note::
-   The sample provides support for the *antenna diversity* feature on the nRF52840.
-   To enable the feature, set the :kconfig:option:`CONFIG_PTT_ANTENNA_DIVERSITY` option as ``enabled``.
-
 
 Building and running
 ********************
@@ -950,8 +946,8 @@ After programming the sample to your development kit, complete the following ste
 #. On the bottom side of your development kit, locate the table describing the GPIO pin assignment to the LEDs.
 #. Read the numbers of the GPIO pins assigned to all LEDs.
 
-   For example, on the nRF52840DK, the LEDs are controlled by the pins ranging between P0.13 and P0.16.
-   The LEDs on nRF5340DK and nRF52840DK are in the ``sink`` configuration.
+   For example, on the nRF5340DK, the LEDs are controlled by the pins ranging between P0.28 and P0.31.
+   The LEDs on the nRF5340DK are in the ``sink`` configuration.
 
 #. To turn the LEDs on, set the respective pin's state to low to let the current flow through the LED, using the ``custom lsetgpio <pin> 0`` command, where ``<pin>`` is the number of the pin assigned for selected LED.
 

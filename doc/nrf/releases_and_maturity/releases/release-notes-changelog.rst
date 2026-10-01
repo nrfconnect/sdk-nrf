@@ -763,6 +763,14 @@ nRF93M1 DK samples
 Peripheral samples
 ------------------
 
+* :ref:`802154_phy_test` sample:
+
+  * Removed support for the nRF52 Series devices.
+
+* :ref:`802154_sniffer` sample:
+
+  * Removed support for the nRF52 Series devices.
+
 * :ref:`radio_test` sample:
 
   * Added:
