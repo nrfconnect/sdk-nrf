@@ -39,9 +39,7 @@ Using this sample, the development kit can scan for available access points in :
 Power management
 ****************
 
-On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample enables the
-:ref:`lib_nrf71_idle_power` library and suspends the console between scans to reduce
-the nRF71 Series application core's System ON idle current.
+On the ``nrf7120dk/nrf7120/cpuapp`` board target, the sample enables the :ref:`lib_nrf71_idle_power` library and suspends the console between scans to reduce the nRF71 Series application core's System ON idle current.
 
 Configuration
 *************

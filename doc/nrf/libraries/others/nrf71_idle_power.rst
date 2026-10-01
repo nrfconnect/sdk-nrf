@@ -26,7 +26,8 @@ The :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN` choice selects how much
    * - Kconfig option
      - Behavior
    * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_FULL` (default)
-     - No RAM power-down call is made. All application RAM stays retained.
+     - No RAM power-down call is made.
+       All application RAM stays retained.
    * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY`
      - Calls :c:func:`power_down_unused_ram` at boot.
        The unused memory range is computed from the image layout, ensuring that the active image, stack, and buffer memory are never modified.
@@ -62,8 +63,8 @@ Diagnostics
 
 Enable the :kconfig:option:`CONFIG_NRF71_IDLE_DIAGNOSTICS` Kconfig option to get the :c:func:`nrf71_idle_power_print_snapshot` function, which dumps the POWER, MEMCONF, GRTC, LFXO, and Wi-Fi core LRC0 registers so that they can be correlated with a power analyzer trace.
 When the option is disabled, the function is still available as a no-op inline, so an application can call it unconditionally.
-
-The option also configures a GPIO idle-phase marker from the ``idle-phase`` devicetree alias, when the application provides one, and, when the :kconfig:option:`CONFIG_SHELL` Kconfig option is enabled, registers an ``idle_snapshot`` shell command for on-demand snapshots.
+The option also configures a GPIO idle-phase marker from the ``idle-phase`` devicetree alias, when the application provides one.
+When the :kconfig:option:`CONFIG_SHELL` Kconfig option is enabled, it also registers an ``idle_snapshot`` shell command for on-demand snapshots.
 
 API documentation
 *****************
