@@ -943,6 +943,68 @@ unlock:
 }
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
+static int nrf_wifi_util_req_extended_sleep(const struct shell *sh,
+					    size_t argc,
+					    const char *argv[])
+{
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+	char *ptr = NULL;
+	unsigned long long val = 0;
+	int ret = 0;
+
+	if (argv[1][0] == '-') {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	val = strtoull(argv[1], &ptr, 10);
+
+	if ((ptr == argv[1]) || (*ptr != '\0') || (val > UINT_MAX)) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Invalid value(%s).\n",
+			      argv[1]);
+		shell_help(sh);
+		return -ENOEXEC;
+	}
+
+	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
+	if (!ctx->rpu_ctx) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "RPU context not initialized\n");
+		ret = -ENOEXEC;
+		goto unlock_sleep;
+	}
+
+	status = nrf_wifi_fmac_req_extended_sleep(ctx->rpu_ctx,
+						  0,
+						  (unsigned int)val);
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(sh,
+			      SHELL_ERROR,
+			      "Programming extended_sleep failed\n");
+		ret = -ENOEXEC;
+		goto unlock_sleep;
+	}
+
+	ctx->extended_sleep_sec = (unsigned int)val;
+
+	shell_fprintf(sh,
+		      SHELL_INFO,
+		      "Requested extended sleep of %u seconds\n",
+		      (unsigned int)val);
+
+unlock_sleep:
+	k_mutex_unlock(&ctx->rpu_lock);
+	return ret;
+}
+
 static void nrf_wifi_util_dump_mac_addr_slots(const struct shell *sh, bool uicr)
 {
 	const char *block = uicr ? "UICR" : "FICR";
@@ -1006,68 +1068,6 @@ static int nrf_wifi_util_mac_addr(const struct shell *sh, size_t argc, char **ar
 	}
 
 	return 0;
-}
-
-static int nrf_wifi_util_req_extended_sleep(const struct shell *sh,
-					    size_t argc,
-					    const char *argv[])
-{
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	char *ptr = NULL;
-	unsigned long long val = 0;
-	int ret = 0;
-
-	if (argv[1][0] == '-') {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "Invalid value(%s).\n",
-			      argv[1]);
-		shell_help(sh);
-		return -ENOEXEC;
-	}
-
-	val = strtoull(argv[1], &ptr, 10);
-
-	if ((ptr == argv[1]) || (*ptr != '\0') || (val > UINT_MAX)) {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "Invalid value(%s).\n",
-			      argv[1]);
-		shell_help(sh);
-		return -ENOEXEC;
-	}
-
-	k_mutex_lock(&ctx->rpu_lock, K_FOREVER);
-	if (!ctx->rpu_ctx) {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "RPU context not initialized\n");
-		ret = -ENOEXEC;
-		goto unlock_sleep;
-	}
-
-	status = nrf_wifi_fmac_req_extended_sleep(ctx->rpu_ctx,
-						  0,
-						  (unsigned int)val);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		shell_fprintf(sh,
-			      SHELL_ERROR,
-			      "Programming extended_sleep failed\n");
-		ret = -ENOEXEC;
-		goto unlock_sleep;
-	}
-
-	ctx->extended_sleep_sec = (unsigned int)val;
-
-	shell_fprintf(sh,
-		      SHELL_INFO,
-		      "Requested extended sleep of %u seconds\n",
-		      (unsigned int)val);
-
-unlock_sleep:
-	k_mutex_unlock(&ctx->rpu_lock);
-	return ret;
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(
