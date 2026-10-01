@@ -86,21 +86,6 @@ The ``sleep`` command disables the radio and ends the receive process.
 
       sleep
 
-bootloader - reboot the device to the bootloader
-================================================
-
-The ``bootloader`` command reboots the device in bootloader mode.
-
-   .. parsed-literal::
-      :class: highlight
-
-      bootloader
-
-The device reboots into bootloader mode, and the red LED starts pulsing.
-
-.. note::
-   The ``bootloader`` command is available only for the ``nrf52840dongle/nrf52840`` board.
-
 Configuration
 *************
 
@@ -122,9 +107,8 @@ After programming the sample to your device, complete the following steps to tes
 
 #. Connect the device to the computer:
 
-   * For the nRF52840 DK and the nRF5340 DK, use a USB cable connected to the kit's nRF USB port (**J3**).
+   * For the nRF5340 DK, use a USB cable connected to the kit's nRF USB port (**J3**).
    * For the nRF54LM20 Dongle, use a USB cable connected to the dongle's USB-C connector.
-   * For the nRF52840 Dongle, plug the dongle directly into the computer's USB port.
 
    The devices are assigned serial ports.
    |serial_port_number_list|

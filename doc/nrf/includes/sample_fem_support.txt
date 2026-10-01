@@ -18,11 +18,11 @@ You can add support for the nRF21540 front-end module to this sample by using on
 
      .. group-tab:: Command line
 
-        To build the sample from the command line for an nRF52840 DK with the nRF21540 EK attached, use the following command within the sample directory:
+        To build the sample from the command line for an nRF5340 DK with the nRF21540 EK attached, use the following command within the sample directory:
 
         .. code-block:: console
 
-           west build -b nrf52840dk/nrf52840 -- -DSHIELD=nrf21540ek
+           west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf21540ek
 
   See :ref:`Programming nRF21540 EK <ug_radio_fem_nrf21540ek_programming>` for information about how to program when you are using a board with a network core, for example the nRF5340 DK.
 
