@@ -140,6 +140,7 @@ NRF = (
     ("app_dev/board_support/index", "app_dev/board_names"),
     ("config_and_build/board_support/board_names", "app_dev/board_names"), # Board names (moved to top of the hierarchy in v3.0.0)
     ("app_dev/board_support/board_names", "app_dev/board_names"),
+    ("boards/nordic/nrf54lv10dk/doc/index", "app_dev/board_names"), # nRF54LV10 DK (moved to Zephyr in v3.5.0)
     ("config_and_build/board_support/processing_environments", "security/tfm/processing_environments"), # Processing environments (moved under Security > TF-M in v3.0.0)
     ("app_dev/board_support/processing_environments", "security/tfm/processing_environments"),
     ("security/processing_environments", "security/tfm/processing_environments"),
