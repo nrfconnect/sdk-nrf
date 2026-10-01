@@ -28,8 +28,6 @@ tests:
       - ci_samples_net
     extra_args:
       - download_EXTRA_CONF_FILE=wifi.conf
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.downloader.wifi.dtls_cert:
     sysbuild: true
     build_only: true
@@ -45,8 +43,6 @@ tests:
       - ci_samples_net
     extra_args:
       - download_EXTRA_CONF_FILE="wifi.conf;wifi-mutual-dtls.conf"
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.downloader.wifi.tls_cert:
     sysbuild: true
     build_only: true
@@ -58,8 +54,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - download_EXTRA_CONF_FILE=wifi.conf
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
     # No real mutual-TLS-enabled HTTPS server is used; this reuses the sample's
     # example Californium client certificate purely for Twister build coverage.
     extra_configs:
