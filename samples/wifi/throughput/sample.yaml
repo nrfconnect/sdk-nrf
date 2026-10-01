@@ -168,8 +168,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=nrf71-iot-devices.conf
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -186,8 +184,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=nrf71-high-performance.conf
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -204,8 +200,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=nrf71-memory-optimized.conf
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -222,8 +216,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=nrf71-rx-prio.conf
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -240,8 +232,6 @@ tests:
     extra_args:
       - EXTRA_CONF_FILE=nrf71-tx-prio.conf
       - SB_CONFIG_WIFI_NRF70=n
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
