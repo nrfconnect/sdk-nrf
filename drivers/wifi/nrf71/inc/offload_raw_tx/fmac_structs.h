@@ -20,7 +20,7 @@
 
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
-#define NRF_WIFI_FMAC_PARAMS_RECV_TIMEOUT 100 /* ms */
+#define NRF_WIFI_FMAC_PARAMS_RECV_TIMEOUT 2000 /* ms */
 
 /**
  * @brief  Structure to hold per device context information for the UMAC IF layer.
