@@ -239,7 +239,10 @@ int main(void)
 	printf("\tRate: %s\n", rate[conf.rate]);
 	printf("\tHE GI: %d\n", conf.he_gi);
 	printf("\tHE LTF: %d\n", conf.he_ltf);
-	nrf_wifi_off_raw_tx_start(&conf);
+	if (nrf_wifi_off_raw_tx_start(&conf)) {
+		printf("Failed to start offloaded raw tx\n");
+		goto out;
+	}
 
 	k_sleep(K_SECONDS(30));
 
@@ -286,7 +289,11 @@ int main(void)
 	printf("\tRate: %s\n", rate[conf.rate]);
 	printf("\tHE GI: %d\n", conf.he_gi);
 	printf("\tHE LTF: %d\n", conf.he_ltf);
-	nrf_wifi_off_raw_tx_conf_update(&conf);
+	if (nrf_wifi_off_raw_tx_conf_update(&conf)) {
+		printf("Failed to update offloaded raw tx configuration\n");
+		nrf_wifi_off_raw_tx_stop();
+		goto out;
+	}
 
 	k_sleep(K_SECONDS(30));
 
