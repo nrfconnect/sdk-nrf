@@ -66,7 +66,6 @@ tests:
       - thingy91x/nrf9151/ns
     platform_allow: thingy91x/nrf9151/ns
     extra_args:
-      - SB_CONFIG_WIFI_NRF70=y
       - SB_CONFIG_WIFI_NRF70_SCAN_ONLY=y
     tags:
       - ci_build
