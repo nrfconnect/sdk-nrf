@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <vendor/nordic/nrf7120_wifi_patch_0_1_0.dtsi>
+#include <wifi/nrf7120_wifi_patch_0_1_0.dtsi>
