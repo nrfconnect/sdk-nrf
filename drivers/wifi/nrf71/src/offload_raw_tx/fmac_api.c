@@ -224,7 +224,7 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_conf(
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_off_raw_tx_fmac_dev_ctx *dev_ctx_off_raw_tx;
 	struct nrf_wifi_fmac_reg_info reg_domain_info = {0};
-	unsigned char count = 0;
+	unsigned int count = 0;
 
 	if (!fmac_dev_ctx) {
 		LOG_ERR("%s: Invalid device context",
@@ -262,7 +262,7 @@ enum nrf_wifi_status nrf_wifi_off_raw_tx_fmac_conf(
 	} while ((dev_ctx_off_raw_tx->off_raw_tx_cmd_done == true) &&
 		 (count < NRF_WIFI_FMAC_PARAMS_RECV_TIMEOUT));
 
-	if (count == NRF_WIFI_FMAC_PARAMS_RECV_TIMEOUT) {
+	if (dev_ctx_off_raw_tx->off_raw_tx_cmd_done) {
 		LOG_ERR("%s: Timed out",
 				      __func__);
 		status = NRF_WIFI_STATUS_FAIL;
