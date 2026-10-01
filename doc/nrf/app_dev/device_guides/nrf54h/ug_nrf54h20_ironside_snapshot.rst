@@ -10,6 +10,9 @@ IronSide SE snapshot services
 The |ISE| snapshot services help recover selected MRAM content after |ISE| detects MRAM corruption.
 This guide is intended for developers of firmware that uses the snapshot services, including customer application firmware, MCUboot, |NCS| system software, and Zephyr components.
 
+.. note::
+   The |ISE| snapshot services are supported only on nRF54H20B devices.
+
 Overview
 ********
 
@@ -19,6 +22,7 @@ When corruption is detected in a captured region, |ISE| restores the affected MR
 .. note::
    Snapshot services depend on device support, |ISE| support, and production-time configuration.
    Before using the snapshot APIs, you must first enable snapshot functionality and configure it in one-time programmable (OTP) memory.
+   For instructions, see :ref:`ug_nrf54h20_ironside_se_snapshot_otp`.
    For information about checking support on a device, see :ref:`ug_nrf54h20_ironside_se_snapshot_identify_support`.
 
 |ISE| version requirements
@@ -41,6 +45,8 @@ Configure snapshot regions before locking the UICR, and capture the first snapsh
 The following setup workflow shows the typical order of operations:
 
 1. Identify the critical MRAM regions that must be recoverable.
+#. Configure snapshot in OTP memory while the device is in lifecycle state ``EMPTY``.
+   For more information, see :ref:`ug_nrf54h20_ironside_se_snapshot_otp`.
 #. Configure snapshot regions in UICR during production.
 #. Lock the UICR configuration.
 #. Invoke the |ISE| snapshot capture service from local-domain firmware.
@@ -104,6 +110,9 @@ Together, these checks verify the integrity of the following areas:
 * The area defined by UICR.SECURESTORAGE
 * |ISE| internal storage
 
+The UICR integrity check depends on UICR being locked.
+For more information, see :ref:`ug_nrf54h20_ironside_se_uicr_lock`.
+
 .. _ug_nrf54h20_ironside_se_snapshot_regions:
 
 Snapshot region configuration
@@ -135,6 +144,43 @@ Eight predefined regions cover the four 2 KiB NVR pages, also known as informati
 The ninth predefined region covers SICR and |ISE| firmware.
 This region starts at the beginning of MRAM10, ``0x0E00_0000``, and continues until, but does not include, the immutable bootloader for the application core at ``0x0E03_0000``.
 
+The following table lists the predefined regions:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Region
+     - Start address
+     - Size
+   * - SICR and |ISE| firmware
+     - ``0x0E00_0000``
+     - 192 KiB
+   * - MRAM10 NVR page 0 (UICR and BICR)
+     - ``0x0FFF_8000``
+     - 2 KiB
+   * - MRAM10 NVR page 1
+     - ``0x0FFF_A000``
+     - 2 KiB
+   * - MRAM10 NVR page 2 (RICR)
+     - ``0x0FFF_C000``
+     - 2 KiB
+   * - MRAM10 NVR page 3 (FICR)
+     - ``0x0FFF_E000``
+     - 2 KiB
+   * - MRAM11 NVR page 0
+     - ``0x0FFF_0000``
+     - 2 KiB
+   * - MRAM11 NVR page 1
+     - ``0x0FFF_2000``
+     - 2 KiB
+   * - MRAM11 NVR page 2
+     - ``0x0FFF_4000``
+     - 2 KiB
+   * - MRAM11 NVR page 3
+     - ``0x0FFF_6000``
+     - 2 KiB
+
 Configurable regions
 ====================
 
@@ -144,8 +190,10 @@ Because of :ref:`SE4 <ug_nrf54h20_ironside_se_snapshot_limitation_se4>`, configu
 At minimum, include the memory protected by :ref:`UICR.PROTECTEDMEM <ug_nrf54h20_ironside_se_uicr_protectedmem>` in a configurable snapshot region.
 This memory starts at ``0x0E03_0000`` and typically contains the immutable bootloader for the application core.
 Place UICR.PERIPHCONF and UICR.MPCCONF data in the UICR.PROTECTEDMEM area.
+The integrity of the PERIPHCONF data must be intact for the immutable bootloader of the application core to boot.
 
 If secure storage is enabled, also include the memory configured by :ref:`UICR.SECURESTORAGE <ug_nrf54h20_ironside_uicr_securestorage>` in a configurable snapshot region.
+By default, the |NCS| places the secure storage partition at ``0x0E1F_D000``, with a size of 12 KiB.
 
 Recommended region strategies
 =============================
@@ -156,6 +204,15 @@ Common strategies include the following:
 * Capture only required immutable and secure regions, such as UICR.PROTECTEDMEM and UICR.SECURESTORAGE.
 * Cover all MRAM with the combined predefined and configurable regions to maximize recoverability.
 * Cover all MRAM except areas that contain file systems.
+
+When you plan the configurable regions, follow these recommendations:
+
+* Place adjacent partitions in a single region to use fewer configurable regions.
+* Capture the updatable application firmware in addition to the immutable bootloader.
+  The updatable firmware is more capable than the immutable bootloader and is in a better position to complete the recovery of the device.
+* If you place a file system in a snapshot region, make sure that both a failed integrity check and a failed mount of the file system result in a snapshot recovery request.
+  File system writes are more vulnerable to magnetic corruption than data at rest.
+  |ISE| detects corruption in captured file systems through the MRAMC ECC, which does not detect every corruption scenario.
 
 When a region is not covered by snapshot, you must provide your own recovery strategy.
 For example, corruption in a file system might require reformatting or another application-specific recovery action, while corruption in firmware might require device firmware update (DFU).
@@ -171,9 +228,9 @@ External memory requirements
 Snapshot stores encrypted copies of captured regions in external memory.
 The external memory chip used by snapshot must have a page size of 4 KiB.
 
-Before using snapshot, make sure that the external memory device is available and configured for your board.
-This includes the external memory interface, pin assignment, operating frequency, and any UICR configuration required to access the external memory.
-For general information about nRF54H20 devicetree and UICR configuration, see :ref:`ug_nrf54h20_configuration`.
+Snapshot accesses the external memory through the Serial Peripheral Interface master (SPIM) peripheral, using the pins and SPIM settings that you program in OTP memory.
+The External Memory Interface (EXMIF) is not supported.
+For more information, see :ref:`ug_nrf54h20_ironside_se_snapshot_otp`.
 
 Use the following formula to calculate the required external memory capacity:
 
@@ -187,6 +244,148 @@ In this formula:
 * ``round_up(region.size, 4096)`` rounds each configurable snapshot region up to a 4 KiB boundary.
 * ``snapshot.regions`` is the complete set of configurable snapshot regions.
 * ``466944`` is the constant external memory requirement for two copies of the predefined snapshot regions and snapshot metadata.
+
+.. _ug_nrf54h20_ironside_se_snapshot_otp:
+
+Configure snapshot in OTP memory
+********************************
+
+Snapshot is configured through the following fields in OTP memory:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Field
+     - Address
+     - Description
+   * - ``UROT.SNAPSHOTADDR``
+     - ``0x2F8403F8``
+     - Base address of the snapshot storage in the external memory.
+   * - ``UROT.SNAPSHOTSIZE``
+     - ``0x2F8403FC``
+     - Total size of the snapshot storage in the external memory, in bytes.
+       The snapshot storage is split into two banks.
+   * - ``UROT.EXMIF_CONFIG[0]``
+     - ``0x2F8403F0``
+     - Interface selection and the first part of the SPIM configuration.
+   * - ``UROT.EXMIF_CONFIG[1]``
+     - ``0x2F8403F4``
+     - The second part of the SPIM configuration.
+
+Snapshot storage
+================
+
+``UROT.SNAPSHOTADDR`` sets the base address of the snapshot storage in the external memory.
+For example, the value ``0`` places the snapshot storage at the first address of the external memory device.
+
+``UROT.SNAPSHOTSIZE`` sets the total size of the snapshot storage in bytes.
+For the minimum required size, see :ref:`ug_nrf54h20_ironside_se_snapshot_external_memory`.
+
+Interface configuration
+=======================
+
+During snapshot capture and recovery, the external memory is accessed through the SPIM peripheral.
+EXMIF is not supported.
+
+``UROT.EXMIF_CONFIG[0]`` and ``UROT.EXMIF_CONFIG[1]`` select the interface and configure the SPIM peripheral.
+Both words read as ``0xFFFFFFFF`` when unprogrammed, which selects EXMIF.
+You must therefore program ``UROT.EXMIF_CONFIG`` to select SPIM.
+
+When you construct the values, leave all reserved and unused bits at ``1``, and program only the bits that must be ``0``.
+
+The following table describes the fields of ``UROT.EXMIF_CONFIG[0]``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Bits
+     - Field
+     - Description
+   * - 0
+     - ``IFSEL``
+     - Interface selection.
+       Set to ``0`` to select SPIM.
+       The value ``1`` selects EXMIF, which is not supported.
+   * - 1
+     - ``USE_DEFAULTS``
+     - Set to ``0`` to use the SPIM configuration in the OTP fields.
+       Set to ``1`` to ignore the SPIM configuration in the OTP fields and use the default configuration.
+   * - 7:2
+     - Reserved
+     - Leave at ``1``.
+   * - 15:8
+     - Prescaler
+     - SPIM clock prescaler (``SPIM.PRESCALER``).
+   * - 19:16
+     - Port
+     - GPIO port index for the SPIM pins.
+   * - 20
+     - CPHA
+     - Clock phase.
+   * - 21
+     - CPOL
+     - Clock polarity.
+   * - 23:22
+     - Reserved
+     - Leave at ``1``.
+   * - 27:24
+     - SCK
+     - SCK pin number.
+   * - 31:28
+     - MOSI
+     - MOSI pin number.
+
+The following table describes the fields of ``UROT.EXMIF_CONFIG[1]``:
+
+.. list-table::
+   :header-rows: 1
+   :widths: auto
+
+   * - Bits
+     - Field
+     - Description
+   * - 3:0
+     - MISO
+     - MISO pin number.
+   * - 7:4
+     - CSN
+     - CSN pin number.
+   * - 15:8
+     - Peripheral selector
+     - SPIM instance selector.
+       The value ``0xBF`` selects SPIM130.
+   * - 23:16
+     - RX delay
+     - SPIM RX sample delay (``SPIM.IFTIMING.RXDELAY``).
+   * - 31:24
+     - Unused
+     - Leave at ``1``.
+
+When ``USE_DEFAULTS`` is ``1``, SPIM130 is used with a prescaler of ``2``, CPHA and CPOL set to ``0``, an RX delay of ``0``, and the default port and pin assignments.
+
+The following example values select SPIM130 on port P0 with a prescaler of ``4``, CPHA and CPOL set to ``0``, an RX delay of ``0``, SCK on pin 2, MOSI on pin 5, MISO on pin 8, and CSN on pin 9:
+
+.. code-block:: text
+
+   EXMIF_CONFIG[0] = 0x52C004FC
+   EXMIF_CONFIG[1] = 0xFF00BF98
+
+Use the pins and SPIM settings that match your hardware.
+
+Program the OTP fields
+======================
+
+Program the OTP fields while the device is in lifecycle state ``EMPTY``.
+Use the ``nrfutil device otp-write`` command, which is available in nRF Util ``device`` command version 2.21.0 and later.
+For the command options, see `Device command overview`_.
+
+To program the snapshot configuration, complete the following steps:
+
+1. Write the base address of the snapshot storage to ``UROT.SNAPSHOTADDR`` at ``0x2F8403F8``.
+#. Write the size of the snapshot storage to ``UROT.SNAPSHOTSIZE`` at ``0x2F8403FC``.
+#. Write the SPIM configuration to ``UROT.EXMIF_CONFIG[0]`` at ``0x2F8403F0`` and ``UROT.EXMIF_CONFIG[1]`` at ``0x2F8403F4``.
 
 .. _ug_nrf54h20_ironside_se_snapshot_configure_regions:
 
@@ -202,6 +401,8 @@ Before configuring snapshot regions, ensure the following:
 * You have confirmed that the selected regions satisfy the requirements in :ref:`ug_nrf54h20_ironside_se_snapshot_regions`.
 
 Use the UICR generator to configure :ref:`UICR.SNAPSHOT_REGIONS <ug_nrf54h20_ironside_se_uicr_snapshot_regions>`.
+Use absolute addresses for the region start addresses.
+For example, ``cpuapp_boot_partition`` at offset ``0x30000`` from ``0x0E00_0000`` has the absolute address ``0x0E03_0000``.
 For a complete configuration example, see :ref:`ironside_se_snapshot_capture_recover`.
 
 .. caution::
@@ -216,9 +417,6 @@ To configure snapshot regions, complete the following steps:
 #. Add any other application-specific MRAM regions that must be recoverable.
 #. Lock the UICR configuration as part of production provisioning.
 
-If you configure the regions directly in SICR instead of using UICR, provision |ISE| before programming the SICR region configuration.
-Program the SICR configuration while the device is still in lifecycle state ``EMPTY`` and before transitioning to ``RoT``.
-
 After the UICR is locked, capture the first snapshot.
 For more information, see :ref:`ug_nrf54h20_ironside_se_snapshot_capture`.
 
@@ -229,6 +427,7 @@ Capture a snapshot
 
 Capture a snapshot after the snapshot regions are configured and the UICR is locked.
 The capture creates the encrypted external-memory copy that |ISE| uses for recovery.
+When you update the firmware, capture a new snapshot to prevent a rollback to an old firmware version with public vulnerabilities.
 
 Before capturing a snapshot using the |ISE| snapshot capture service, make sure that the following requirements are met:
 
@@ -315,15 +514,6 @@ To identify whether an nRF54H20 device in lifecycle state ``EMPTY`` supports the
    nrfutil device read --traits jlink --core secure --direct --address 0x0FFFE054
 
 If the value is ``0x0005420B``, the device supports the |ISE| snapshot service.
-
-To identify whether a supported device is an engineering sample or a production device, read the following FICR address:
-
-.. code-block:: console
-
-   nrfutil device read --traits jlink --core secure --direct --address 0x0FFFE008 --bytes 0x4
-
-If the value is ``1``, the device is an engineering sample release 1 (Eng1) device.
-If the value is ``2``, the device is a production device.
 
 Identify support in lifecycle state RoT or DEPLOYED
 ===================================================
