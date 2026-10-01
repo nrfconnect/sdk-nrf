@@ -9,7 +9,7 @@ imagesize>=1.2.0
 intelhex
 pylint
 setuptools>=80.8.0
-zcbor~=0.8.0
+zcbor~=0.9.1
 nrf-regtool==9.2.1
 windows-curses; sys_platform == 'win32'
 unidiff
