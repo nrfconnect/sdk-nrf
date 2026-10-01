@@ -41,6 +41,13 @@ BUILD_ASSERT(sizeof(mpsl_log_msgs[0]) == sizeof(struct mpsl_log_msg_row));
 static const char mpsl_lib_name[] = "MPSL";
 #endif
 
+#if defined(CONFIG_BT_CTLR_SDC_LOG)
+#include "sdc_log_msg.h"
+#define MPSL_LOG_LIB_ID_SDC    1U /* SDC library id */
+BUILD_ASSERT(sizeof(sdc_log_msgs[0]) == sizeof(struct mpsl_log_msg_row));
+static const char sdc_lib_name[] = "SDC";
+#endif
+
 LOG_MODULE_REGISTER(mpsl_log, CONFIG_MPSL_LOG_PRINT_LEVEL);
 
 #define MPSL_LOG_MAX_ARGS      3U
@@ -85,6 +92,13 @@ static void mpsl_log_print(const struct mpsl_log_entry *entry)
 		lib_name = mpsl_lib_name;
 		msg = bsearch(&msg_id, mpsl_log_msgs, ARRAY_SIZE(mpsl_log_msgs) - 1,
 			      sizeof(mpsl_log_msgs[0]), mpsl_log_id_cmp);
+		break;
+#endif
+#if defined(CONFIG_BT_CTLR_SDC_LOG)
+	case MPSL_LOG_LIB_ID_SDC:
+		lib_name = sdc_lib_name;
+		msg = bsearch(&msg_id, sdc_log_msgs, ARRAY_SIZE(sdc_log_msgs) - 1,
+			      sizeof(sdc_log_msgs[0]), mpsl_log_id_cmp);
 		break;
 #endif
 	default:
