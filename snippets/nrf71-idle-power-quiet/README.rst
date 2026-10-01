@@ -18,7 +18,7 @@ Overview
 
 This snippet disables the console, logging, and boot banner (``CONFIG_SERIAL``, ``CONFIG_LOG``, ``CONFIG_PRINTK``, and related options) for a clean idle current measurement, where any UART activity would otherwise add noise to the reading.
 
-Apply it together with ``nrf71-idle-power`` (or an equivalent ``CONFIG_NRF71_IDLE_POWER=y`` configuration), which does not depend on this snippet on its own.
+Apply it together with ``nrf71-idle-power`` (or an equivalent ``CONFIG_NRF71_IDLE_POWER=y`` configuration), as this snippet does not enable it on its own.
 
 Supported boards
 ****************
