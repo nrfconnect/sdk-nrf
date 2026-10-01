@@ -16,7 +16,7 @@ The nRF71 idle power diagnostics snippet adds register-snapshot diagnostics to a
 Overview
 ********
 
-This snippet enables the :kconfig:option:`CONFIG_NRF71_IDLE_DIAGNOSTICS` Kconfig option, which adds the :c:func:`nrf71_idle_power_print_snapshot` function (see :ref:`lib_nrf71_idle_power`) to dump the POWER, MEMCONF, GRTC, LFXO, and Wi-Fi core LRC0 registers, for correlation with a power analyzer trace.
+This snippet enables the :kconfig:option:`CONFIG_NRF71_IDLE_DIAGNOSTICS` Kconfig option, which adds the :c:func:`nrf71_idle_power_print_snapshot` function (see :ref:`lib_nrf71_idle_power`) to dump the POWER, MEMCONF, GRTC, LFXO, and Wi-Fi core LRC0 registers for correlation with a power analyzer trace.
 It also registers an ``idle_snapshot`` shell command when the :kconfig:option:`CONFIG_SHELL` Kconfig option is enabled.
 
 Apply it together with ``nrf71-idle-power`` (or an equivalent ``CONFIG_NRF71_IDLE_POWER=y`` configuration), as this snippet does not enable it on its own.
