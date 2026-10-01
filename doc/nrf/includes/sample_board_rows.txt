@@ -273,15 +273,15 @@
 
 .. nrf54lv10dk_nrf54lv10a_cpuapp
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
 
 .. nrf54lv10dk_nrf54lv10a_cpuapp_ns
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` |
 
 .. nrf54lv10dk_nrf54lv10a_cpuflpr
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuflpr`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuflpr`` |
 
 .. nrf54lc10dk_nrf54lc10a_cpuapp
 
