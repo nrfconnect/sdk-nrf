@@ -58,7 +58,7 @@ Border Routers provide services for devices within the IEEE 802.15.4 network, in
 Typically, a Border Router solution consists of the following parts:
 
 * An application based on the :ref:`thread_architectures_designs_cp_ncp` design or its :ref:`thread_architectures_designs_cp_rcp` variant compatible with the IEEE 802.15.4 standard.
-  This application can be implemented, for example, on an nRF52 device.
+  You can implement this application on an nRF54L Series device.
 * A host-side application, usually implemented on a more powerful device with an incorporated Linux-based operating system.
 
 The |NCS| does not provide a complete Thread Border Router solution.
@@ -86,74 +86,15 @@ As neither the Linux-based PC nor the Raspberry Pi have such radio capability, y
 To program the nRF device with the RCP application, complete the following steps:
 
 #. |open_terminal_window_with_environment|
-#. Build the :ref:`ot_coprocessor_sample` sample for the hardware platform and the transport of your choice:
+#. Build the :ref:`ot_coprocessor_sample` sample for the :zephyr:board:`nrf54l15dk`:
 
-   .. tabs::
+   .. code-block:: console
 
-      .. tab:: nRF52840 Dongle (USB transport)
+      west build -p always -b nrf54l15dk/nrf54l15/cpuapp nrf/samples/openthread/coprocessor/
 
-         .. code-block:: console
-
-            west build -p always -b nrf52840dongle/nrf52840 nrf/samples/openthread/coprocessor/
-
-      .. tab:: nRF52840 Development Kit (UART transport)
-
-         .. code-block:: console
-
-            west build -p always -b nrf52840dk/nrf52840 nrf/samples/openthread/coprocessor/
-
-#. Depending on the hardware platform, complete the following steps:
-
-   .. tabs::
-
-      .. tab:: nRF52840 Dongle (USB transport)
-
-         This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
-
-         1. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
-            See `Locking nRF Util home directory`_ in the tool documentation for more information.
-         #. Install nRF Util's ``nrf5sdk-tools`` command:
-
-            .. code-block:: console
-
-               nrfutil install nrf5sdk-tools
-
-            See `nrfutil nrf5sdk-tools`_ command page for more information.
-         #. Generate the RCP firmware package:
-
-            .. code-block:: console
-
-               nrfutil nrf5sdk-tools pkg generate --hw-version 52 --sd-req=0x00 \
-                --application build/zephyr/zephyr.hex --application-version 1 build/zephyr/zephyr.zip
-
-         #. Connect the nRF52840 Dongle to the USB port.
-         #. Press the **RESET** button on the dongle to put it into the DFU mode.
-            The LED on the dongle starts blinking red.
-         #. Install the RCP firmware package onto the dongle by running the following command, with ``/dev/ttyACM0`` replaced with the device node name of your nRF52840 Dongle:
-
-            .. code-block:: console
-
-               nrfutil nrf5sdk-tools dfu usb-serial -pkg build/zephyr/zephyr.zip -p /dev/ttyACM0
-
-      .. tab:: nRF52840 Development Kit (UART transport)
-
-         a. Program the image using the :ref:`regular command <programming>`.
-         #. Disable the Mass Storage feature on the device, so that it does not interfere with the core RCP functionalities.
-            Also, force Hardware Flow Control to avoid potential race conditions related to the auto-detection:
-
-            .. parsed-literal::
-               :class: highlight
-
-               JLinkExe -device NRF52840_XXAA -if SWD -speed 4000 -autoconnect 1 -SelectEmuBySN *SEGGER_ID*
-               J-Link>MSDDisable
-               Probe configured successfully.
-               J-Link>SetHWFC Force
-               New configuration applies immediately.
-               J-Link>exit
-
-            Replace *SEGGER_ID* with the SEGGER ID of your nRF52840 Development Kit.
-            This setting remains valid even if you program another firmware onto the device.
-         #. Power-cycle the device to apply the changes.
+#. Program the image using the :ref:`regular command <programming>`.
+#. Connect the nRF54L15 DK to the host using the UART interface.
+   See :ref:`thread_architectures_designs_cp_uart` for the recommended UART settings.
 
 .. _ug_thread_tools_tbr_manual_pi:
 

@@ -61,8 +61,8 @@ A detailed description of how to assemble and configure a Thread Test Bed and ru
 Access to this information is only available to members of the Thread Group, and access to the Thread Test Harness depends on the membership tier.
 
 .. note::
-   The following procedure references the nRF52840 Development Kit.
-   The same procedure can be used to run the certification using other development kits.
+   The following procedure references the nRF54L15 Development Kit.
+   You can apply the same procedure to run the certification using other supported development kits.
 
 Complete the following steps to prepare for the certification tests:
 
@@ -77,7 +77,7 @@ Complete the following steps to prepare for the certification tests:
      .. code-block::
 
         cd ncs/nrf/samples/openthread/cli/
-        west build -b nrf52840dk/nrf52840 -- -Dcli_SNIPPET="ci;multiprotocol"  -DCONFIG_OPENTHREAD_LIBRARY=y
+        west build -b nrf54l15dk/nrf54l15/cpuapp -- -Dcli_SNIPPET="ci;multiprotocol"  -DCONFIG_OPENTHREAD_LIBRARY=y
 
    * If building using Visual Studio Code, you must first `create and build the application <How to build an application_>`_ using the CLI sample.
      Add the following lines to the **Additional CMake arguments** text field:
@@ -140,18 +140,17 @@ See the following links for more information on OpenThread:
 - `OpenThread THCI`_
 - `OpenThread acting as a new reference platform`_
 
-Thread Test Harness with nRF52840 DK
-====================================
+Thread Test Harness with Nordic development kits
+================================================
 
-Thread Test Harness does not correctly identify the nRF52840 DK (PCA10056) out-of-the-box.
+Thread Test Harness does not correctly identify Nordic development kits with a J-Link virtual COM port out-of-the-box.
 
 Due to a collision of USB PID:VID with another vendor, Nordic devices are not automatically added to the device list.
-This is valid only for Nordic Semiconductor development kits with a J-Link virtual COM port.
 
 .. note::
    |serial_port_number_list|
 
-To add an nRF52840 DK, drag the nRF52840 DK and drop it on the test bed configuration page.
+To add a development kit, drag it and drop it on the test bed configuration page.
 After that, the device is configured and the :ref:`proper baud rate (115200) <test_and_optimize>` and COM port are set.
 
 .. _ug_thread_build_report:
