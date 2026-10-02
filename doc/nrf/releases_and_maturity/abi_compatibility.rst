@@ -55,8 +55,6 @@ The following known issues affect |ISE|.
 
   v23-8-0-33  v23.8.0+33
   v23-7-0-30  v23.7.0+30
-  v23-6-0-29  v23.6.0+29
-  v23-5-0-28  v23.5.0+28
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se0:
 
@@ -90,7 +88,7 @@ SE1: Some MRAM corruption scenarios are not detected by |ISE|
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se2:
 
-.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29
+.. rst-class:: v23-8-0-33 v23-7-0-30
 
 SE2: Initial provisioning clears SICR snapshot regions
   Initial provisioning clears configurable snapshot regions that were programmed directly in SICR before |ISE| was provisioned.
@@ -104,7 +102,7 @@ SE2: Initial provisioning clears SICR snapshot regions
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se3:
 
-.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29 v23-5-0-28
+.. rst-class:: v23-8-0-33 v23-7-0-30
 
 SE3: Updating |ISE| Recovery triggers snapshot recovery
   Updating the :ref:`IronSide SE Recovery component <ug_nrf54h20_ironside_se_deliverables>` on a snapshot-enabled device unintentionally triggers snapshot recovery and restores the device to its pre-update state.
