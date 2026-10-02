@@ -3,7 +3,7 @@
 Trusted Firmware-M (TF-M) samples
 #################################
 
-This section lists the available |NCS| samples and tests for :ref:`Trusted Firmware-M <ug_tfm>`, one of the :ref:`security` features of the |NCS|.
+This section lists the available |NCS| samples for :ref:`Trusted Firmware-M <ug_tfm>`, one of the :ref:`security` features of the |NCS|.
 
 You can start by checking the :ref:`tfm_hello_world` sample, which demonstrates how to add TF-M to an application.
 
@@ -19,4 +19,3 @@ You can start by checking the :ref:`tfm_hello_world` sample, which demonstrates 
    :glob:
 
    ../../../samples/tfm/*/README
-   ../../tests/tfm/*/README
