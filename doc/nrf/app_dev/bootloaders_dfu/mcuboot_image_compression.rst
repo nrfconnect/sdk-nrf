@@ -51,9 +51,9 @@ The following shows example partitioning for image compression:
 
 .. tabs::
 
-    .. group-tab:: nRF52840
+    .. group-tab:: nRF54LS05B
 
-        .. literalinclude:: ../../../../samples/dfu/compressed_update/boards/nrf52840dk_nrf52840.overlay
+        .. literalinclude:: ../../../../samples/dfu/compressed_update/boards/nrf54ls05dk_nrf54ls05b_cpuapp.overlay
              :language: devicetree
              :lines: 12-
 
