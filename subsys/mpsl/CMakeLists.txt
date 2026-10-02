@@ -26,4 +26,6 @@ if(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
   add_subdirectory(clock_ctrl)
 endif()
 
+add_subdirectory_ifdef(CONFIG_MPSL_LOG_HANDLER_BUILTIN log)
+
 add_subdirectory_ifdef(CONFIG_MPSL_PIN_DEBUG pin_debug)
