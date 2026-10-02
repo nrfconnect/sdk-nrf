@@ -33,6 +33,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
+* Updated the required `SEGGER J-Link`_ version to v9.82.
 * Updated documentation build requirements to replace ``m2r2`` with ``myst-parser``.
   See the :ref:`gs_recommended_versions` page for the updated tool list.
 
