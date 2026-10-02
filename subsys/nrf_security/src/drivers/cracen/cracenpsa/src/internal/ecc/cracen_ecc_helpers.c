@@ -733,6 +733,7 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 		cracen_be_sub(sx_pk_curve_prime(sx_curve), zero_t_gx1_x_buf, z_buf,
 			      sx_pk_curve_opsize(sx_curve));
 	} else {
+		safe_memzero(z_buf, sx_pk_curve_opsize(sx_curve));
 		cracen_be_add(z_buf, sx_pk_curve_opsize(sx_curve), cracen_abs(z_int));
 	}
 
