@@ -39,8 +39,6 @@ tests:
   bootloader.bl_validation.negative.no_otp_keys:
     sysbuild: true
     platform_allow:
-      - nrf52840dk/nrf52840
-      - nrf52dk/nrf52832
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -51,7 +49,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
