@@ -247,10 +247,11 @@ int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *c, const struct sxkeyref 
  *                16, 24 or 32 bytes
  * @param[in] iv initialization vector, size must be 12 bytes
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be a value in the range [4, 16]
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
+ * @return ::SX_ERR_INVALID_TAG_SIZE
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *
@@ -280,10 +281,11 @@ int sx_aead_create_aesgcm_enc(struct sxaead *c, const struct sxkeyref *key, cons
  *                16, 24 or 32 bytes
  * @param[in] iv initialization vector, size must be 12 bytes
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be a value in the range [4, 16]
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEYREF
  * @return ::SX_ERR_INVALID_KEY_SZ
+ * @return ::SX_ERR_INVALID_TAG_SIZE
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *
