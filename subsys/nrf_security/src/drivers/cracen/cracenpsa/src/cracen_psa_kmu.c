@@ -1188,6 +1188,42 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	return PSA_SUCCESS;
 }
 
+psa_status_t cracen_kmu_get_slot_count(const psa_key_attributes_t *key_attr,
+				       unsigned int *slot_count)
+{
+	kmu_metadata metadata;
+	unsigned int slot_id =
+		CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
+	psa_status_t psa_status;
+
+	psa_status = read_primary_slot_metadata(slot_id, &metadata);
+
+	if (psa_status == PSA_SUCCESS) {
+		/* The slot is populated but the caller's attributes may not contain
+		 * the key_type. So just get it from the metadata.
+		 */
+		psa_key_attributes_t stored_attr = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_status = convert_to_psa_attributes(&metadata, &stored_attr);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+
+		return get_kmu_slot_count(metadata, &stored_attr, slot_count);
+
+	} else if (psa_status == PSA_ERROR_DOES_NOT_EXIST) {
+		/* The slot is not populated, fill the metadata from the key attributes. */
+		psa_status = convert_from_psa_attributes(key_attr, &metadata);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+
+		return get_kmu_slot_count(metadata, key_attr, slot_count);
+	}
+
+	return psa_status;
+}
+
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
 				  const uint8_t *key_buffer, size_t key_buffer_size)
 {
@@ -1286,8 +1322,21 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 	/* Verify that required slots are empty */
 	const size_t num_slots = DIV_ROUND_UP(key_buffer_size, CRACEN_KMU_SLOT_KEY_SIZE);
+	unsigned int expected_num_slots;
 	bool slots_empty;
 	bool slots_revoked;
+
+	/* The slot count used when reading the key back is derived from the metadata (declared
+	 * key bits), so it must match the number of slots the key material occupies.
+	 */
+	psa_status = get_kmu_slot_count(metadata, key_attr, &expected_num_slots);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
+	}
+
+	if (num_slots != expected_num_slots) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	if (nrfx_kmu_key_slots_empty_check(slot_id, num_slots, &slots_empty) != 0) {
 		return PSA_ERROR_HARDWARE_FAILURE;
