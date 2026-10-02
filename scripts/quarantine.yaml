@@ -88,3 +88,10 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41705"
+
+- scenarios:
+    - nrf.extended.drivers.clock.nrf5_clock_calibration
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41706"
