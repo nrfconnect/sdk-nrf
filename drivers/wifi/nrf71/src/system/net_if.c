@@ -237,6 +237,7 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
 								struct nrf_wifi_vif_ctx_zep,
 								nrf_wifi_net_iface_work);
+	bool operational;
 
 	if (!vif_ctx_zep) {
 		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
@@ -248,9 +249,18 @@ static void nrf_wifi_net_iface_work_handler(struct k_work *work)
 		return;
 	}
 
-	if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+	/* The FMAC device context this reads through is freed under vif_lock,
+	 * so hold it for the decision. Release it before touching the net_if:
+	 * net_if_down() holds the iface lock across nrf_wifi_if_stop_zep(),
+	 * which takes vif_lock, so keeping both here would invert that order.
+	 */
+	k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	operational = nrf_wifi_iface_operational(vif_ctx_zep);
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
+	if (operational) {
 		net_if_dormant_off(vif_ctx_zep->zep_net_if_ctx);
-	} else if (vif_ctx_zep->if_carr_state == NRF_WIFI_FMAC_IF_CARR_STATE_OFF) {
+	} else {
 		net_if_dormant_on(vif_ctx_zep->zep_net_if_ctx);
 	}
 }
@@ -304,7 +314,7 @@ enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 
 	LOG_DBG("%s: Carrier state: %d", __func__, carr_state);
 
-	k_work_submit(&vif_ctx_zep->nrf_wifi_net_iface_work);
+	nrf_wifi_refresh_oper_state(vif_ctx_zep);
 
 	status = NRF_WIFI_STATUS_SUCCESS;
 
@@ -539,6 +549,128 @@ unlock:
 #endif /* CONFIG_NRF71_DATA_TX */
 
 out:
+	return ret;
+}
+
+int nrf_wifi_wpa_tx_control_port(void *if_priv, const unsigned char *dest, unsigned short proto,
+				 const unsigned char *buf, size_t len, int no_encrypt)
+{
+	int ret = -EINVAL;
+#ifdef CONFIG_NRF71_DATA_TX
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = if_priv;
+	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct rpu_host_stats *host_stats = NULL;
+	struct net_linkaddr *link_addr = NULL;
+	struct net_if *iface = NULL;
+	struct net_eth_hdr eth_hdr;
+	struct net_pkt *pkt = NULL;
+	void *nbuf = NULL;
+	bool locked = false;
+
+	ARG_UNUSED(no_encrypt);
+
+	if (!vif_ctx_zep || !dest || !buf) {
+		LOG_ERR("%s: Invalid params", __func__);
+		goto out;
+	}
+
+	iface = vif_ctx_zep->zep_net_if_ctx;
+	if (!iface) {
+		LOG_ERR("%s: iface is NULL", __func__);
+		goto out;
+	}
+
+	link_addr = net_if_get_link_addr(iface);
+
+	/* Build the Ethernet frame and hand it straight to the FMAC TX path.
+	 * This bypasses the networking stack so the 4-way handshake is not
+	 * gated by the interface dormant state.
+	 */
+	pkt = net_pkt_alloc_with_buffer(iface, sizeof(struct net_eth_hdr) + len,
+					NET_AF_UNSPEC, 0, K_MSEC(100));
+	if (!pkt) {
+		LOG_ERR("%s: Failed to allocate net_pkt", __func__);
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	memcpy(eth_hdr.dst.addr, dest, sizeof(eth_hdr.dst.addr));
+	memcpy(eth_hdr.src.addr, link_addr->addr, sizeof(eth_hdr.src.addr));
+	eth_hdr.type = net_htons(proto);
+
+	if (net_pkt_write(pkt, &eth_hdr, sizeof(eth_hdr)) ||
+	    net_pkt_write(pkt, buf, len)) {
+		LOG_ERR("%s: Failed to write EAPOL frame", __func__);
+		net_pkt_unref(pkt);
+		ret = -ENOBUFS;
+		goto out;
+	}
+
+	net_pkt_cursor_init(pkt);
+
+	nbuf = nrf_wifi_net_pkt_to_nbuf(pkt);
+	net_pkt_unref(pkt);
+	if (!nbuf) {
+		LOG_ERR("%s: nbuf allocation failed", __func__);
+		ret = -ENOMEM;
+		goto out;
+	}
+
+	ret = k_mutex_lock(&vif_ctx_zep->vif_lock, K_FOREVER);
+	if (ret != 0) {
+		LOG_ERR("%s: Failed to lock vif_lock", __func__);
+		goto drop;
+	}
+	locked = true;
+
+	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
+	if (!rpu_ctx_zep || !rpu_ctx_zep->rpu_ctx) {
+		ret = -ENODEV;
+		goto drop;
+	}
+
+	sys_dev_ctx = wifi_dev_priv(rpu_ctx_zep->rpu_ctx);
+	host_stats = &sys_dev_ctx->host_stats;
+
+	if (vif_ctx_zep->if_carr_state != NRF_WIFI_FMAC_IF_CARR_STATE_ON) {
+		LOG_DBG("%s: Carrier not ON, dropping EAPOL frame", __func__);
+		ret = -ENETDOWN;
+		goto drop;
+	}
+
+	ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, nbuf);
+	/* FMAC owns the nbuf from here on (and frees it on failure) */
+	nbuf = NULL;
+	if (ret == NRF_WIFI_STATUS_FAIL) {
+		host_stats->total_tx_drop_pkts++;
+		ret = -ENOBUFS;
+		goto unlock;
+	}
+
+	ret = 0;
+	goto unlock;
+drop:
+	if (host_stats != NULL) {
+		host_stats->total_tx_drop_pkts++;
+	}
+	if (nbuf != NULL) {
+		nrf_wifi_nbuf_free(nbuf);
+	}
+unlock:
+	if (locked) {
+		k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	}
+out:
+#else
+	ARG_UNUSED(if_priv);
+	ARG_UNUSED(dest);
+	ARG_UNUSED(proto);
+	ARG_UNUSED(buf);
+	ARG_UNUSED(len);
+	ARG_UNUSED(no_encrypt);
+#endif /* CONFIG_NRF71_DATA_TX */
+
 	return ret;
 }
 
@@ -843,12 +975,10 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 	vif_ctx_zep->set_if_status = 0;
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_DOWN;
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_TX)
-	vif_ctx_zep->authorized = false;
-#endif
+	nrf_wifi_clear_session_state(vif_ctx_zep);
+
 #ifdef CONFIG_NRF71_STA_MODE
 	vif_ctx_zep->assoc_freq = 0;
-	vif_ctx_zep->if_carr_state = NRF_WIFI_FMAC_IF_CARR_STATE_OFF;
 	vif_ctx_zep->twt_flows_map = 0;
 	vif_ctx_zep->twt_flow_in_progress_map = 0;
 	vif_ctx_zep->ps_config_info_evnt = false;
@@ -959,6 +1089,8 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 
 	vif_ctx_zep->if_type = add_vif_info.iftype;
 
+	nrf_wifi_clear_session_state(vif_ctx_zep);
+
 	/* Check if user has provided a valid MAC address, if not
 	 * fetch it from the configured source.
 	 */
@@ -1051,6 +1183,7 @@ dev_rem:
 out:
 	if (locked) {
 		k_mutex_unlock(&vif_ctx_zep->vif_lock);
+		nrf_wifi_refresh_oper_state(vif_ctx_zep);
 	}
 	return ret;
 }
@@ -1146,6 +1279,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 	ret = 0;
 unlock:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	nrf_wifi_refresh_oper_state(vif_ctx_zep);
 
 	ret = nrf_wifi_if_zep_stop_board(dev);
 	if (ret) {
@@ -1310,6 +1444,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		    vif->txinjection_mode == config->txinjection_mode) {
 			LOG_INF("%s: Driver TX injection setting is same as configured setting",
 				__func__);
+			ret = 0;
 			goto unlock;
 		}
 		/**
@@ -1338,6 +1473,11 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 			LOG_ERR("%s: Mode set operation failed", __func__);
 			goto unlock;
 		}
+
+		vif->txinjection_mode = config->txinjection_mode;
+		nrf_wifi_refresh_oper_state(vif_ctx_zep);
+		ret = 0;
+		goto unlock;
 	}
 #endif
 #ifdef CONFIG_NRF71_PROMISC_DATA_RX
@@ -1348,7 +1488,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		    config->promisc_mode) {
 			LOG_ERR("%s: Driver promisc mode setting is same as configured setting",
 				__func__);
-			goto out;
+			goto unlock;
 		}
 
 		if (config->promisc_mode) {
@@ -1364,7 +1504,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 
 		if (ret != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: mode set operation failed", __func__);
-			goto out;
+			goto unlock;
 		}
 	}
 #endif

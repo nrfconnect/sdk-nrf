@@ -761,6 +761,7 @@ int nrf_wifi_mode(const struct device *dev,
 	struct peers_info *peer = NULL;
 	int i = 0;
 	int ret = -1;
+	bool refresh_oper_state = false;
 
 	if (!dev || !mode) {
 		LOG_ERR("%s: illegal input parameters", __func__);
@@ -828,6 +829,8 @@ int nrf_wifi_mode(const struct device *dev,
 		}
 #ifdef CONFIG_NRF71_RAW_DATA_TX
 		vif_ctx_zep->requested_wifi_mode = mode->mode;
+		nrf_wifi_clear_txinjection(vif_ctx_zep);
+		refresh_oper_state = true;
 #endif
 
 	} else {
@@ -850,6 +853,9 @@ int nrf_wifi_mode(const struct device *dev,
 	ret = 0;
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+	if (refresh_oper_state) {
+		nrf_wifi_refresh_oper_state(vif_ctx_zep);
+	}
 	return ret;
 }
 #endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
