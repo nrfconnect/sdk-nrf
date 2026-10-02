@@ -26,6 +26,7 @@
 #include "nrf_provisioning_codec.h"
 #include "nrf_provisioning_coap.h"
 #include "nrf_provisioning_jwt.h"
+#include "nrf_provisioning_mem.h"
 
 LOG_MODULE_REGISTER(nrf_provisioning_coap, CONFIG_NRF_PROVISIONING_LOG_LEVEL);
 
@@ -396,7 +397,7 @@ static int generate_auth_token(char **auth_token)
 		return -EINVAL;
 	}
 
-	*auth_token = k_malloc(tok_len);
+	*auth_token = nrf_provisioning_malloc(tok_len);
 	if (!*auth_token) {
 		return -ENOMEM;
 	}
@@ -414,7 +415,7 @@ static int generate_auth_token(char **auth_token)
 	return 0;
 
 fail:
-	k_free(*auth_token);
+	nrf_provisioning_free(*auth_token);
 	*auth_token = NULL;
 
 	return ret;
@@ -710,7 +711,7 @@ retry_response:
 	nrf_provisioning_codec_teardown();
 
 	if (auth_token) {
-		k_free(auth_token);
+		nrf_provisioning_free(auth_token);
 	}
 
 	socket_close(&coap_ctx->connect_socket);
