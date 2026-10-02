@@ -134,6 +134,7 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_KEY_IMPORT) &&
 	    location == PSA_KEY_LOCATION_CRACEN_KMU) {
+		psa_status_t status;
 
 #ifdef CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 		int slot_id = CRACEN_PSA_GET_KMU_SLOT(
@@ -145,6 +146,11 @@ psa_status_t cracen_import_key(const psa_key_attributes_t *attributes, const uin
 			return cracen_provision_prot_ram_inv_slots();
 		}
 #endif
+		status = cracen_kmu_check_attributes(attributes);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
 		if (!cracen_kmu_key_user_allowed(attributes)) {
 			return PSA_ERROR_NOT_PERMITTED;
 		}
@@ -240,6 +246,12 @@ psa_status_t cracen_generate_key(const psa_key_attributes_t *attributes, uint8_t
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_KMU_KEY_GENERATE) &&
 	    location == PSA_KEY_LOCATION_CRACEN_KMU) {
+		psa_status_t status = cracen_kmu_check_attributes(attributes);
+
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
 		if (!cracen_kmu_key_user_allowed(attributes)) {
 			return PSA_ERROR_NOT_PERMITTED;
 		}
