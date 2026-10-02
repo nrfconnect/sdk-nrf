@@ -112,7 +112,7 @@ def damage_image(dut: DeviceAdapter) -> str:
         if "nrf54" in dut.device_config.platform:
             nrfutil_write(f"{app_address}", f"0x{DAMAGE_VALUE:x}", dut.device_config.id)
         else:
-            # for nRF53 and nRF52 platforms where NVMC works
+            # for nRF53 platforms where NVMC works
             # need to erase the page to write memory
             damage_bytes = DAMAGE_VALUE.to_bytes(4, byteorder="little")
             program_app_image_page(dut, damage_bytes)
@@ -134,7 +134,7 @@ def repair_image(dut: DeviceAdapter, original_data: str):
         if "nrf54" in dut.device_config.platform:
             nrfutil_write(f"{app_address}", original_data, dut.device_config.id)
         else:
-            # for nRF53 and nRF52 platforms where NVMC works need to restore
+            # for nRF53 platforms where NVMC works need to restore
             # entire first app image page to recover
             program_app_image_page(dut)
     finally:

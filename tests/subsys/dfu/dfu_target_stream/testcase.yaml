@@ -7,7 +7,6 @@ tests:
       - sysbuild
       - ci_tests_subsys_dfu
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp
       - native_sim
@@ -21,7 +20,6 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - native_sim
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -42,7 +40,6 @@ tests:
     # Since we need the storage partition (and hence PM) allow some nRF devices
     # only.
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp
       - native_sim
@@ -56,7 +53,6 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - native_sim
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
