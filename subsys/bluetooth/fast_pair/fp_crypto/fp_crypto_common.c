@@ -89,7 +89,7 @@ size_t fp_crypto_account_key_filter_size(size_t n)
 	if (n == 0) {
 		return 0;
 	} else {
-		return 1.2 * n + 3;
+		return (n * 6) / 5 + 3;
 	}
 }
 
