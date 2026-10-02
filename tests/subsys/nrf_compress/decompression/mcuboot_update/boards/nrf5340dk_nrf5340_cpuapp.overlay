@@ -4,4 +4,4 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include "../nrf52_nrf53_partitions.dtsi"
+#include "../nrf53_partitions.dtsi"

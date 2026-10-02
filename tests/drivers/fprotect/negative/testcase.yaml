@@ -1,9 +1,7 @@
 common:
   platform_allow:
     - nrf9160dk/nrf9160
-    - nrf52dk/nrf52832
     - nrf5340dk/nrf5340/cpuapp
-    - nrf52840dk/nrf52840
   tags:
     - fprotect
     - ignore_faults
@@ -18,9 +16,7 @@ tests:
       - sysbuild
     integration_platforms:
       - nrf9160dk/nrf9160
-      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
-      - nrf52840dk/nrf52840
   drivers.fprotect.negative_and_hw_crypto:
     sysbuild: true
     tags:
@@ -34,14 +30,10 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf9160dk/nrf9160
-      - nrf52dk/nrf52832
-      - nrf52840dk/nrf52840
   drivers.fprotect.negative.standalone:
     sysbuild: false
     extra_configs:
       - CONFIG_SECURE_BOOT=n
     integration_platforms:
       - nrf9160dk/nrf9160
-      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
-      - nrf52840dk/nrf52840

@@ -30,8 +30,8 @@ def get_signature_type(sysbuild_config: Path) -> str:
 def skip_ecdsa_p256_with_compression(sysbuild_config: Path) -> None:
     """Skip test for ECDSA_P256 with compression enabled."""
     if find_in_config(sysbuild_config, "SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT"):
-        # skip tests for nrf52840, because generated signature for edcsa-p256 can have extra
-        # one byte, so we cannot copy TLVs
+        # generated signature for ecdsa-p256 can have extra one byte,
+        # so we cannot copy TLVs
         pytest.skip("ECDSA_P256 signature has random size, image header will not be the same")
 
 

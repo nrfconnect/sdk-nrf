@@ -2,9 +2,6 @@ tests:
   bootloader.bl_crypto:
     sysbuild: true
     platform_allow:
-      - nrf52833dk/nrf52833
-      - nrf52840dk/nrf52840
-      - nrf52dk/nrf52832
       - nrf5340dk/nrf5340/cpuapp
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
@@ -17,7 +14,6 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf9151dk/nrf9151
       - nrf9160dk/nrf9160
       - nrf9161dk/nrf9161
