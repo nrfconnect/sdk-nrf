@@ -100,7 +100,7 @@ The |NSIB|-specific devicetree node labels are:
 * ``s0_partition`` and ``s1_partition`` — redundant slots for the next stage in the boot chain (application or upgradable MCUboot)
 
 The default location for the next image in the boot chain is ``s0_partition``.
-When using the ``nrf52840dk/nrf52840`` board target, a typical layout looks like the following:
+When using the ``nrf54l15dk/nrf54l15/cpuapp`` board target, a typical layout looks like the following:
 
 .. figure:: ../../doc/nrf/images/b0_flash_layout.svg
    :alt: B0 flash memory layout
@@ -111,7 +111,7 @@ When using the ``nrf52840dk/nrf52840`` board target, a typical layout looks like
    When provisioning data is stored in the OTP region, it will not appear in the internal flash layout figure.
    See :ref:`bootloader_provisioning_otp` for more information.
 
-This sample's Twister builds use :file:`app_test.overlay` or :file:`app_test_nrf52.overlay` to alias board default partition nodes to the |NSIB| labels (for example ``b0_partition: &boot_partition``).
+This sample's Twister builds use :ncs-file:`/samples/bootloader/app_test.overlay` to alias board default partition nodes to the |NSIB| labels (for example ``b0_partition: &boot_partition``).
 Projects that include |NSIB| through sysbuild define the full map in board or sysbuild overlays; see :ref:`ug_bootloader_adding_sysbuild_immutable`.
 
 .. _bootloader_pre_signed_variants:
@@ -128,7 +128,7 @@ See :ref:`bootloader_monotonic_counter` for more information about versioning.
 
 If this image is faulty and cannot be booted, the other partition will always hold a working image that is booted instead.
 
-When using the ``nrf52840dk/nrf52840`` board target, this would produce a flash memory layout like the following:
+When using the ``nrf54l15dk/nrf54l15/cpuapp`` board target, this would produce a flash memory layout like the following:
 
 .. figure:: ../../doc/nrf/images/b0_mcuboot_flash_layout.svg
    :alt: B0 flash memory layout with MCUboot
