@@ -1,0 +1,14 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&flash0 {
+	partitions {
+		rpl_partition: partition@100000 {
+			label = "rpl";
+			reg = <0x00100000 0x00004000>; /* 16 KiB = 4 sectors of 4 KiB */
+		};
+	};
+};
