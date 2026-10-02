@@ -12,7 +12,7 @@
 / {
 	zephyr,user {
 		io-channels = <&adc 0>;
-		reference-mv = <1300>;
+		reference-mv = <1335>;
 		expected-accuracy = <64>;
 	};
 };
