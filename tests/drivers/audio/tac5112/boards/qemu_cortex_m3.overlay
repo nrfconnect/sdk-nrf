@@ -1,0 +1,31 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/i2c/i2c.h>
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+
+	tac5112_i2c: i2c@100 {
+		status = "okay";
+		compatible = "zephyr,i2c-emul-controller";
+		/* This binding marks reg as required. The node is not real
+		 * MMIO -- reg is only an identifier for an emulated bus -- but
+		 * it must be present and match the @unit-address above.
+		 */
+		reg = <0x100 4>;
+		clock-frequency = <I2C_BITRATE_STANDARD>;
+		#address-cells = <1>;
+		#size-cells = <0>;
+
+		tac5112_0: audio-codec@50 {
+			compatible = "ti,tac5112";
+			reg = <0x50>;
+		};
+	};
+};

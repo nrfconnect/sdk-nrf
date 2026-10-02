@@ -1,0 +1,17 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+cmake_minimum_required(VERSION 3.20.0)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(tac5112)
+
+# tac5112.h is a private driver header (not installed on the public include
+# path). The sample includes it to reach the driver-specific
+# tac5112_set_channels() call demonstrated in main.c, so add drivers/audio/
+# to the include path.
+zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/drivers/audio)
+
+target_sources(app PRIVATE src/main.c)
