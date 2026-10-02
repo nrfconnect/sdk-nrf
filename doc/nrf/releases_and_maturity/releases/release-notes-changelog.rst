@@ -1217,6 +1217,10 @@ The following list summarizes both the main changes inherited from upstream MCUb
     This enables a production or development signing custody model in which, for example, an updatable development bootloader can boot images signed with either key while a production bootloader embeds only the production verification key.
     MCUboot ``imgtool`` adds the ``keyinfo`` subcommand and ``--name-suffix`` for ``getpub`` and ``getpubhash``, which support the multiple keys embedded in the bootloader image.
 
+* Fixed:
+
+  * Issue with multi-image configuration where key revocation, in KMU enabled configurations, could fail.
+
 * Updated:
 
   * Made :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` the default ECDSA P-256 implementation for nRF54LS05A and nRF54LS05B.
