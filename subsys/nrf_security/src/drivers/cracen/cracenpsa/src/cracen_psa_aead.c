@@ -744,6 +744,10 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 				size_t plaintext_size, size_t *plaintext_length, const uint8_t *tag,
 				size_t tag_length)
 {
+	if (tag_length != operation->tag_size) {
+		return PSA_ERROR_INVALID_SIGNATURE;
+	}
+
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
