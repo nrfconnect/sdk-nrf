@@ -20,14 +20,46 @@
 #include <nrf_security_mem_helpers.h>
 #include "cracen_psa_primitives.h"
 
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+#include <internal/aes/cracen_aes_mmo.h>
+#endif
+
+/* AES-MMO does not use the hash hardware, so it is the one algorithm in this file
+ * that does not need an enabled sxsymcrypt hash algorithm.
+ */
+#if !defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
 _Static_assert(SX_HASH_MAX_ENABLED_BLOCK_SIZE != 1,
 	       "To compile this file you need at least one hash algorithm enabled in the driver "
 	       "using the PSA_WANT_* configs.");
+#endif
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+static bool is_aes_mmo(psa_algorithm_t alg)
+{
+	return alg == PSA_ALG_AES_MMO_ZIGBEE;
+}
+#endif
 
 psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size_t input_length,
 				 uint8_t *hash, size_t hash_size, size_t *hash_length)
 {
 	const struct sxhashalg *sx_hash_algo = NULL;
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	if (is_aes_mmo(alg)) {
+		cracen_aes_mmo_operation_t operation = {0};
+		psa_status_t psa_status = cracen_aes_mmo_update(&operation, input, input_length);
+
+		if (psa_status == PSA_SUCCESS) {
+			psa_status =
+				cracen_aes_mmo_finish(&operation, hash, hash_size, hash_length);
+		}
+
+		safe_memzero(&operation, sizeof(operation));
+
+		return psa_status;
+	}
+#endif
 
 	psa_status_t psa_status = cracen_hash_get_algo(alg, &sx_hash_algo);
 
@@ -46,17 +78,28 @@ psa_status_t cracen_hash_compute(psa_algorithm_t alg, const uint8_t *input, size
 
 psa_status_t cracen_hash_setup(cracen_hash_operation_t *operation, psa_algorithm_t alg)
 {
-	int status;
+	psa_status_t psa_status;
 
-	status = cracen_hash_get_algo(alg, &operation->sx_hash_algo);
-	if (status != PSA_SUCCESS) {
-		return status;
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	if (is_aes_mmo(alg)) {
+		/* The PSA core has already zeroed the operation, which is all the
+		 * state AES-MMO needs to start.
+		 */
+		operation->is_aes_mmo = true;
+
+		return PSA_SUCCESS;
+	}
+#endif
+
+	psa_status = cracen_hash_get_algo(alg, &operation->sx_hash_algo);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
 	}
 	operation->has_saved_state = false;
 
 	operation->bytes_left_for_next_block = sx_hash_get_alg_blocksz(operation->sx_hash_algo);
 
-	return silex_statuscodes_to_psa(status);
+	return PSA_SUCCESS;
 }
 
 static int init_or_resume_context(cracen_hash_operation_t *operation)
@@ -83,6 +126,12 @@ psa_status_t cracen_hash_update(cracen_hash_operation_t *operation, const uint8_
 	size_t block_sz;
 	size_t input_chunk_length = 0;
 	size_t remaining_bytes = 0;
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	if (operation->is_aes_mmo) {
+		return cracen_aes_mmo_update(&operation->aes_mmo, input, input_length);
+	}
+#endif
 
 	/* Valid PSA call, just nothing to do */
 	if (input_length == 0) {
@@ -172,6 +221,12 @@ psa_status_t cracen_hash_finish(cracen_hash_operation_t *operation, uint8_t *has
 	size_t block_sz;
 
 	__ASSERT_NO_MSG(hash_length != NULL);
+
+#if defined(PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+	if (operation->is_aes_mmo) {
+		return cracen_aes_mmo_finish(&operation->aes_mmo, hash, hash_size, hash_length);
+	}
+#endif
 
 	if (sx_hash_get_alg_digestsz(operation->sx_hash_algo) > hash_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
