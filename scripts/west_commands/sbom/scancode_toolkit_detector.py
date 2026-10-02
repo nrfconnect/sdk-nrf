@@ -9,11 +9,13 @@ For more details see: https://scancode-toolkit.readthedocs.io/en/stable/
 '''
 
 import concurrent.futures
+import importlib.util
 import json
 import os
 import re
 import shutil
 from contextlib import suppress
+from pathlib import Path
 from tempfile import NamedTemporaryFile
 from time import sleep
 
@@ -27,6 +29,37 @@ SCANCODE_DEFAULT_PARALLEL_WORKERS = 4
 SCANCODE_RUN_RETRIES = 2
 
 
+def _scancode_env() -> dict:
+    '''Environment for the scancode subprocesses.'''
+    env = dict(os.environ)
+    # Scancode typecode dependency needs libmagic. On architectures where the
+    # typecode-libmagic is not available the requirements file installs
+    # pylibmagic instead which typecode cannot discover on its own.
+    # The library and its compiled magic database only work as a matching pair, so inject
+    # both or neither.
+    if 'TYPECODE_LIBMAGIC_PATH' not in env and 'TYPECODE_LIBMAGIC_DB_PATH' not in env:
+        spec = importlib.util.find_spec('pylibmagic')
+        if spec is not None and spec.origin is not None:
+            pylibmagic_dir = Path(spec.origin).parent
+            db = pylibmagic_dir / 'magic.mgc'
+            for lib_name in ('libmagic.dylib', 'libmagic.so'):
+                lib = pylibmagic_dir / lib_name
+                if lib.is_file() and db.is_file():
+                    env['TYPECODE_LIBMAGIC_PATH'] = str(lib)
+                    env['TYPECODE_LIBMAGIC_DB_PATH'] = str(db)
+                    break
+    # When libmagic comes from a fallback location (like Homebrew) typecode warns about it
+    # on stderr for every scancode invocation. The warning is harmless for license detection
+    # so silence that one.
+    ignore = 'ignore:System libmagic found:UserWarning:typecode.magic2'
+    existing = env.get('PYTHONWARNINGS')
+    env['PYTHONWARNINGS'] = f'{existing},{ignore}' if existing else ignore
+    return env
+
+
+SCANCODE_ENV = _scancode_env()
+
+
 def check_scancode():
     '''Checks if "scancode --version" works correctly. If not, raises exception with information
     for user.'''
@@ -35,10 +68,10 @@ def check_scancode():
             'Install the SBOM requirements with:\n'
             '  pip3 install -r scripts/requirements-west-ncs-sbom.txt\n'
             'Use --force-reinstall --no-cache-dir options if it still fails\n'
-            'Pass "--scancode=/path/to/scancode" if the scancode executable is'
+            'Pass "--scancode=/path/to/scancode" if the scancode executable is '
             'not available on PATH.')
     try:
-        command_execute(args.scancode, '--version', allow_stderr=True)
+        command_execute(args.scancode, '--version', allow_stderr=True, env=SCANCODE_ENV)
     except Exception as ex:
         raise SbomException(f'Cannot execute scancode command "{args.scancode}".\n'
             f'Make sure that you have scancode-toolkit installed.\n'
@@ -73,7 +106,8 @@ def run_scancode(file: FileInfo) -> 'dict|None':
                                              '--processes', '1',
                                              file.file_path,
                                              allow_stderr=True,
-                                             return_error_code=True)
+                                             return_error_code=True,
+                                             env=SCANCODE_ENV)
             if return_code == 0:
                 try:
                     with open(output_path, encoding='utf-8') as fd:
@@ -98,37 +132,29 @@ def run_scancode(file: FileInfo) -> 'dict|None':
 def apply_scancode_result(data: Data, file: FileInfo, result: dict):
     '''Parse one ScanCode result and update file/license structures.'''
     current = result['files'][0]
-    if 'licenses' in current:
-        licenses = current['licenses']
-    elif 'license_detections' in current:
-        licenses = current['license_detections']
-    else:
-        print('No license information for {}'.format(current['path']))
-        return
+    licenses = current.get('license_detections')
+    if licenses is None:
+        licenses = current.get('licenses', [])
 
-    for i in licenses:
-
-        friendly_id = ''
-        if 'spdx_license_key' in i and i['spdx_license_key'] != '':
-            friendly_id = i['spdx_license_key']
-        elif 'key' in i and i['key'] != '':
-            friendly_id = i['key']
-        elif 'license_expression_spdx' in i and i['license_expression_spdx'] != '':
-            friendly_id = i['license_expression_spdx']
-        elif 'license_expression' in i and i['license_expression'] != '':
-            friendly_id = i['license_expression']
+    for item in licenses:
+        friendly_id = next((item.get(key) for key in (
+            'spdx_license_key',
+            'key',
+            'license_expression_spdx',
+            'license_expression',
+        ) if item.get(key)), '')
         id = friendly_id.upper()
         if id in ('UNKNOWN-SPDX', 'LICENSEREF-SCANCODE-UNKNOWN-SPDX') or id == '':
-            matched_text = None
-            if 'matched_text' in i:
-                matched_text = i['matched_text']
-            elif 'matches' in i and isinstance(i['matches'], list):
-                matched_text = next((match.get('matched_text')
-                                     for match in i['matches']
-                                     if match.get('matched_text') is not None), None)
+            matched_text = item.get('matched_text')
+            if matched_text is None:
+                matched_text = next((
+                    match.get('matched_text') for match in item.get('matches', [])
+                    if isinstance(match, dict) and match.get('matched_text') is not None
+                ), None)
             if matched_text:
-                friendly_id = re.sub(r'SPDX-License-Identifier:', '', matched_text,
-                                     flags=re.I).strip()
+                friendly_id = re.sub(
+                    r'SPDX-License-Identifier:', '', matched_text, flags=re.I
+                ).strip()
                 friendly_id = friendly_id.rstrip('*/').strip()
                 friendly_id = friendly_id.lstrip('/*').strip()
                 id = friendly_id.upper()
@@ -137,25 +163,16 @@ def apply_scancode_result(data: Data, file: FileInfo, result: dict):
             continue
 
         file.licenses.add(id)
+        file.licenses_in_file.add(id)
         file.detectors.add('scancode-toolkit')
 
         if not is_spdx_license(id):
-            if 'name' in i:
-                name = i['name']
-            elif 'short_name' in i:
-                name = i['short_name']
-            else:
-                name = None
-
-            if 'spdx_url' in i:
-                url = i['spdx_url']
-            elif 'reference_url' in i:
-                url = i['reference_url']
-            elif 'scancode_text_url' in i:
-                url = i['scancode_text_url']
-            else:
-                url = None
-
+            name = item.get('name') or item.get('short_name')
+            url = (
+                item.get('spdx_url')
+                or item.get('reference_url')
+                or item.get('scancode_text_url')
+            )
             if id in data.licenses:
                 license = data.licenses[id]
                 if license.is_expr:
@@ -171,12 +188,21 @@ def apply_scancode_result(data: Data, file: FileInfo, result: dict):
                 license.url = url
             license.detectors.add('scancode-toolkit')
 
+    for item in current.get('copyrights', []):
+        if not isinstance(item, dict):
+            log.wrn(f'Invalid copyright response from scancode-toolkit, file: {file.file_path}')
+            continue
+        copyright_text = (item.get('copyright') or item.get('value') or '').strip()
+        if copyright_text:
+            file.copyright_texts.add(copyright_text)
+            file.detectors.add('scancode-toolkit')
+
 
 def detect(data: Data, optional: bool):
     '''License detection using scancode-toolkit.'''
 
     if optional:
-        filtered = tuple(filter(lambda file: len(file.licenses) == 0, data.files))
+        filtered = tuple(filter(lambda file: len(file.licenses_in_file) == 0, data.files))
     else:
         filtered = tuple(data.files)
 
