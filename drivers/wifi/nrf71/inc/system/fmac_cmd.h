@@ -43,4 +43,11 @@ enum nrf_wifi_status umac_cmd_sys_he_ltf_gi(struct nrf_wifi_fmac_dev_ctx *fmac_d
 
 enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
+
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+/**
+ * @brief Enable or disable LMAC TX/RX IP checksum offload (applied on next tuning send).
+ */
+void nrf_wifi_lmac_ip_checksum_offload_enable(bool enable);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 #endif /* __FMAC_CMD_SYS_H__ */

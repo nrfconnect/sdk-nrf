@@ -200,6 +200,16 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf);
 void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt);
 
 /**
+ * @brief Convert a @c net_pkt into a driver network buffer.
+ *
+ * @param pkt Network packet to convert.
+ * @param allow_zero_copy When false, always copy payload (needed for TKIP SW MIC tailroom).
+ *
+ * @return Driver network buffer on success, NULL on failure.
+ */
+void *nrf_wifi_net_pkt_to_nbuf_ex(struct net_pkt *pkt, bool allow_zero_copy);
+
+/**
  * @brief Convert a driver network buffer into a Zephyr @c net_pkt.
  *
  * The network buffer is freed before this function returns.

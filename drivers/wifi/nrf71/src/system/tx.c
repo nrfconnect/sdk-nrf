@@ -25,6 +25,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_core.h>
 #include <zephyr/logging/log.h>
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#include <system/net_if.h>
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -728,9 +731,16 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (!info->no_hw_ip_checksum_offload &&
+	    !nrf_wifi_nbuf_get_chksum_done(nbuf)) {
+		config->csum_bitmap |= (1u << frame_indx);
+	}
+#else
 	if (!nrf_wifi_nbuf_get_chksum_done(nbuf)) {
 		config->csum_bitmap |= (1u << frame_indx);
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 	config->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -983,9 +993,19 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_TWT_EMERGENCY_TX;
 	}
 
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	info.no_hw_ip_checksum_offload =
+		nrf_wifi_vif_tkip_crypto_active(vif_ctx->os_vif_ctx, sys_dev_ctx, vif_ctx,
+						peer_id);
+	if (!info.no_hw_ip_checksum_offload &&
+	    nrf_wifi_nbuf_get_chksum_done(nwb)) {
+		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
+	}
+#else
 	if (nrf_wifi_nbuf_get_chksum_done(nwb)) {
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	config->csum_bitmap = 0;
 

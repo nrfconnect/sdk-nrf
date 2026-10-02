@@ -115,6 +115,15 @@ struct nrf_wifi_vif_ctx_zep {
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	int rts_threshold_value;
 	unsigned short bss_max_idle_period;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#define NRF_WIFI_VIF_KEY_TRACK_SLOTS 8
+	struct nrf_wifi_vif_key_track_entry {
+		bool active;
+		unsigned char key_idx;
+		unsigned char mac[NRF_WIFI_ETH_ADDR_LEN];
+		unsigned int cipher_suite;
+	} key_track[NRF_WIFI_VIF_KEY_TRACK_SLOTS];
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 };
 
 struct nrf_wifi_vif_ctx_map {
