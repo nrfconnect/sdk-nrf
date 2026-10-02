@@ -1,0 +1,10 @@
+/ {
+	chosen {
+		counter = &timer10;
+	};
+};
+
+&timer10 {
+	prescaler = <4>;
+	status = "okay";
+};
