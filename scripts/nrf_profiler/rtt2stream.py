@@ -20,12 +20,22 @@ class Command(Enum):
     INFO = 3
 
 class Rtt2Stream:
-    def __init__(self, out_stream, event_close, config=RttNordicConfig, log_lvl=logging.INFO):
+    def __init__(
+            self,
+            out_stream,
+            event_close,
+            own_event, prev_event, last_event,
+            process_index,
+            config = RttNordicConfig,
+            log_lvl = logging.INFO
+        ):
         self.config = config
-
         self.out_stream = out_stream
-
         self.event_close = event_close
+        self.own_event = own_event
+        self.prev_event = prev_event
+        self.last_event = last_event
+        self.process_index = process_index
 
         self.logger = logging.getLogger('rtt2stream')
         self.logger_console = logging.StreamHandler()
@@ -56,6 +66,10 @@ class Rtt2Stream:
         return family
 
     def _connect_rtt(self):
+        # wait point 1
+        if self.prev_event:
+            self.prev_event.wait()
+        self.logger.info(f'Please configure device number {self.process_index + 1}')
         snr = self.config['device_snr']
         device_family = Rtt2Stream._rtt_get_device_family(snr)
         self.logger.info('Recognized device family: ' + device_family)
@@ -66,6 +80,11 @@ class Rtt2Stream:
             self.jlink.connect_to_emu_with_snr(self.config['device_snr'])
         else:
             self.jlink.connect_to_emu_without_snr()
+
+        # wait point 2
+        self.own_event.set()
+        if self.last_event:
+            self.last_event.wait()
 
         if self.config['reset_on_start']:
             self.jlink.sys_reset()
