@@ -185,7 +185,7 @@ psa_status_t generate_ecc_private_key(const psa_key_attributes_t *attributes,
 				decode_scalar_25519(&workmem[0]);
 			} else if (key_size_bytes == 56) {
 				/* X448 */
-				decode_scalar_448(&workmem[0]);
+				decode_scalar_448(&workmem[0], key_size_bytes);
 			}
 		}
 
