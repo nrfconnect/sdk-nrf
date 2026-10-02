@@ -20,6 +20,15 @@ set_property(TARGET zephyr_property_target
   PROPERTY TFM_MBEDCRYPTO_PATH ${CMAKE_CURRENT_LIST_DIR}/../tfm
 )
 
+# Forward the KMU slot layout header selection to the CRACEN driver in TF-M
+zephyr_get(CRACEN_KMU_LAYOUT_FILE SYSBUILD GLOBAL)
+if(CRACEN_KMU_LAYOUT_FILE)
+  set_property(TARGET zephyr_property_target
+    APPEND PROPERTY TFM_CMAKE_OPTIONS
+      -DCRACEN_KMU_LAYOUT_FILE=${CRACEN_KMU_LAYOUT_FILE}
+  )
+endif()
+
 if(CONFIG_TFM_ITS_ENCRYPTED)
   set_property(TARGET zephyr_property_target
     APPEND PROPERTY TFM_CMAKE_OPTIONS
