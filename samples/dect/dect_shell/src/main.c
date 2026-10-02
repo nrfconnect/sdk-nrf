@@ -32,6 +32,9 @@
 #include "desh_defines.h"
 #include "desh_print.h"
 #include <net/dect/dect_net_l2_shell_util.h>
+#if defined(CONFIG_DECT_ICMP_PING_LIB)
+#include <net/dect/dect_icmp_ping.h>
+#endif
 #include <stdarg.h>
 
 BUILD_ASSERT(IS_ENABLED(CONFIG_SHELL_BACKEND_SERIAL),
@@ -210,13 +213,17 @@ int main(void)
 	__ASSERT(desh_shell != NULL, "Failed to get shell backend");
 
 	/* Initialize l2_shell library with custom print functions for timestamping */
-	struct dect_net_l2_shell_print_fns print_fns = {
+	struct dect_net_lib_shell_print_fns print_fns = {
 		.print_fn = dect_l2_shell_print_wrapper,
 		.error_fn = dect_l2_shell_error_wrapper,
 		.warn_fn = dect_l2_shell_warn_wrapper,
 	};
 
 	dect_net_l2_shell_init(&print_fns);
+
+#if defined(CONFIG_DECT_ICMP_PING_LIB)
+	dect_icmp_ping_init(&print_fns);
+#endif
 
 	/* Reset reason can only be read once, because the register needs to be cleared after
 	 * reading.
@@ -254,6 +261,10 @@ int main(void)
 	}
 #endif
 	k_poll_signal_init(&desh_signal);
+
+#if defined(CONFIG_DECT_ICMP_PING_LIB)
+	dect_icmp_ping_set_abort_signal(&desh_signal);
+#endif
 
 	/* Resize terminal width and height of the shell to have proper command editing. */
 	shell_execute_cmd(desh_shell, "resize");
