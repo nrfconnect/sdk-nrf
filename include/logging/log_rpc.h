@@ -50,11 +50,11 @@ struct nrf_rpc_crash_info {
 /**
  * @brief Log history handler.
  *
- * The type of a callback function that is invoked for each received log message
+ * The type of a calbak function that is invoked for each received log message
  * while fetching the log history from the remote device.
  *
- * @param level		The message level, see @ref log_rpc_level.
- * @param msg		A pointer to the message payload.
+ * @param[in] level		The message level, see @ref log_rpc_level.
+ * @param[inout] msg		A pointer to the message payload.
  * @param msg_len	The message payload length.
  */
 typedef void (*log_rpc_history_handler_t)(enum log_rpc_level level, const char *msg,
