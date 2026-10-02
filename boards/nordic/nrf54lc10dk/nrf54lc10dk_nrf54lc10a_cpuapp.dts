@@ -10,7 +10,7 @@
 
 / {
 	compatible = "nordic,nrf54lc10dk_nrf54lc10a-cpuapp";
-	model = "Nordic nRF54CV10 DK nRF54LC10A Application MCU";
+	model = "Nordic nRF54LC10 DK nRF54LC10A Application MCU";
 
 	chosen {
 		zephyr,code-partition = &slot0_partition;

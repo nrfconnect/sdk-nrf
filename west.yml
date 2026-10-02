@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 1d4682b2d4bc35c985ae3770cd3cbe3a15e1c7e7
+      revision: pull/4568/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -247,7 +247,7 @@ manifest:
     - name: hal_nordic
       repo-path: sdk-hal_nordic
       path: modules/hal/nordic
-      revision: 69865c20dc4afbdd27060ad1e81af1b62d31f7af
+      revision: pull/15/head
 
     # Other third-party repositories.
     - name: cmock
