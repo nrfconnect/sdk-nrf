@@ -187,7 +187,7 @@ Testing
 
 To perform DFU using the `nRF Connect Device Manager`_ mobile app, complete the following steps:
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /app_dev/device_guides/nrf54l/fota_update.rst
    :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
    :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 
