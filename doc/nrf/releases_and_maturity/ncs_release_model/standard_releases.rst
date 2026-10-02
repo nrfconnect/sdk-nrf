@@ -107,17 +107,11 @@ Deprecation policy
 ******************
 
 In the ``sdk-nrf`` repository, features, modules, samples, APIs, or configuration options can be deprecated as the SDK evolves.
-Deprecations are communicated in official release notes and marked in the codebase with Kconfig options or equivalent build-time indicators.
+The default deprecation period is six months (two quarters) from the announcement.
+Deprecated features on a standard release branch remain available for backward compatibility until the end of life of that SDK version series.
 
-A deprecated feature remains available for a defined transition period, typically at least two subsequent |NCS| releases.
-This gives you time to evaluate alternatives, adapt applications, and migrate to supported replacements.
-
-After the deprecation period, the feature is removed from the SDK.
-This keeps the codebase maintainable and aligned with the current architecture while minimizing long-term technical debt.
-
-This policy follows the principles of the Zephyr Project deprecation policy.
-The alignment provides consistency with upstream practices and predictable lifecycle management for users who build on the |NCS|.
-For more information about API deprecation in the |NCS|, see :ref:`api_deprecation`.
+For the full deprecation policy, including Kconfig notification requirements, exceptions, and user workflows for ``main``, standard releases, and LTS releases, see :ref:`ncs_deprecation_policy`.
+For information about how deprecated APIs are classified, see :ref:`api_deprecation`.
 
 Updating to a new release
 *************************
