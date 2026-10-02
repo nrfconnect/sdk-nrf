@@ -18,6 +18,14 @@
 LOG_MODULE_DECLARE(nrf_dm, CONFIG_DM_MODULE_LOG_LEVEL);
 NRF_RPC_GROUP_DECLARE(dm_rpc_grp);
 
+#if DT_CHILD_NUM_STATUS_OKAY(DT_PATH(ipc)) == 1
+#define IPC_NODE DT_FOREACH_CHILD_STATUS_OKAY(DT_PATH(ipc), UTIL_EVAL)
+#elif DT_NODE_HAS_STATUS_OKAY(DT_NODELABEL(ipc1))
+#define IPC_NODE DT_NODELABEL(ipc1)
+#else
+#error "No IPC node found"
+#endif
+
 static struct ipc_ept ep;
 static K_SEM_DEFINE(bound_sem, 0, 1);
 static K_SEM_DEFINE(process_sem, 0, 1);
@@ -123,7 +131,7 @@ static int ipc_init(void)
 	int err;
 	const struct device *ipc_instance;
 
-	ipc_instance = DEVICE_DT_GET(DT_NODELABEL(ipc1));
+	ipc_instance = DEVICE_DT_GET(IPC_NODE);
 
 	err = ipc_service_open_instance(ipc_instance);
 	if ((err < 0) && (err != -EALREADY)) {

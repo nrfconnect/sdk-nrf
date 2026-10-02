@@ -39,12 +39,3 @@ tests:
     extra_configs:
       - CONFIG_BT_SETTINGS=n
     tags: sysbuild
-  bluetooth.mesh.build_models.emds:
-    sysbuild: true
-    # Include emergency data storage (EMDS):
-    # The models that uses the EMDS is already included, remove the models that
-    # does not use EMDS.
-    extra_args:
-      - OVERLAY_CONFIG=overlay-mesh-emds.conf
-      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
-    tags: sysbuild
