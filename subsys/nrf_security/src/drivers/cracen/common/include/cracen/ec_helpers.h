@@ -16,6 +16,7 @@
 
 #pragma once
 
+#include <stddef.h>
 #include <stdint.h>
 
 /**
@@ -41,8 +42,9 @@ void cracen_decode_scalar_25519(uint8_t *k);
  *
  * @note Corresponds to the decodeScalar448 function in RFC 7748.
  *
- * @param[in,out] k Byte array containing a scalar of size 56.
+ * @param[in,out] k      Byte array containing the scalar.
+ * @param[in]     k_size Size of @p k: 56 for X448, 57 for Ed448.
  */
-void cracen_decode_scalar_448(uint8_t *k);
+void cracen_decode_scalar_448(uint8_t *k, size_t k_size);
 
 /** @} */
