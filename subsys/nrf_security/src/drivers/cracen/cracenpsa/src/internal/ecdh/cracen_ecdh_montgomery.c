@@ -55,7 +55,7 @@ psa_status_t cracen_ecdh_montgmr_calc_secret(const struct sx_pk_ecurve *curve,
 		struct sx_x448_op k;
 
 		memcpy(k.bytes, priv_key, CRACEN_X448_KEY_SIZE_BYTES);
-		cracen_decode_scalar_448(k.bytes);
+		cracen_decode_scalar_448(k.bytes, sizeof(k.bytes));
 
 		/* 448 % 8 = 0, so there is no need to decode pt coordinate. */
 		sx_status = sx_x448_ptmult(&req, &k, (struct sx_x448_op *)publ_key,

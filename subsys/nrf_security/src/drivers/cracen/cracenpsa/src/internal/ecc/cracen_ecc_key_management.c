@@ -185,7 +185,7 @@ psa_status_t cracen_generate_ecc_private_key(const psa_key_attributes_t *attribu
 				cracen_decode_scalar_25519(&workmem[0]);
 			} else if (key_size_bytes == 56) {
 				/* X448 */
-				cracen_decode_scalar_448(&workmem[0]);
+				cracen_decode_scalar_448(&workmem[0], key_size_bytes);
 			} else {
 				/* For compliance */
 			}
