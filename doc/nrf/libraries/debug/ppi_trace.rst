@@ -19,7 +19,7 @@ The PPI trace module is used in the :ref:`ppi_trace_sample` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/debug/ppi_trace.h`
+| Header file: :ncs-file:`/include/debug/ppi_trace.h`
 | Source files: :file:`subsys/debug/ppi_trace/`
 
 .. doxygengroup:: ppi_trace

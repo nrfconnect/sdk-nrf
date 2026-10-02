@@ -163,8 +163,8 @@ API documentation
 NDEF messages
 =============
 
-| Header file: :file:`include/nfc/ndef/msg.h`
-| Source file: :file:`subsys/nfc/ndef/msg.c`
+| Header file: :ncs-file:`/include/nfc/ndef/msg.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/msg.c`
 
 .. doxygengroup:: nfc_ndef_msg
 
@@ -173,7 +173,7 @@ NDEF messages
 NDEF records
 ============
 
-| Header file: :file:`include/nfc/ndef/record.h`
-| Source file: :file:`subsys/nfc/ndef/record.c`
+| Header file: :ncs-file:`/include/nfc/ndef/record.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/record.c`
 
 .. doxygengroup:: nfc_ndef_record

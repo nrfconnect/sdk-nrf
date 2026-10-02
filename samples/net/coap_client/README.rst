@@ -58,17 +58,17 @@ Set :option:`CONFIG_COAP_SAMPLE_CA_CERT_FILE`, :option:`CONFIG_COAP_SAMPLE_CLIEN
 
 The sample includes an example CA trust chain and client certificate and private key under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interoperability server:
 
-* :file:`cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
-* :file:`cert/cf-client.pem` — client certificate
-* :file:`cert/cf-client-key.pem` — client private key (EC P-256)
+* :ncs-file:`/samples/net/coap_client/cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
+* :ncs-file:`/samples/net/coap_client/cert/cf-client.pem` — client certificate
+* :ncs-file:`/samples/net/coap_client/cert/cf-client-key.pem` — client private key (EC P-256)
 
-The :file:`wifi-dtls.conf` extra-conf file configures the sample with mutual X.509 authentication and the cipher suite needed for the Californium interop server.
+The :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` extra-conf file configures the sample with mutual X.509 authentication and the cipher suite needed for the Californium interop server.
 
 Wi-Fi
 =====
 
-On Wi-Fi boards, use the :file:`wifi.conf` extra-conf file, using the ``coap_client_EXTRA_CONF_FILE`` sysbuild variable.
-To perform mutual DTLS (CoAPS) with the Californium interoperability server (see :ref:`Mutual DTLS (client certificate authentication) <coap_client_sample_mtls>`), add the :file:`wifi-dtls.conf` extra-conf file on top of :file:`wifi.conf`.
+On Wi-Fi boards, use the :ncs-file:`/samples/net/coap_client/wifi.conf` extra-conf file, using the ``coap_client_EXTRA_CONF_FILE`` sysbuild variable.
+To perform mutual DTLS (CoAPS) with the Californium interoperability server (see :ref:`Mutual DTLS (client certificate authentication) <coap_client_sample_mtls>`), add the :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` extra-conf file on top of :ncs-file:`/samples/net/coap_client/wifi.conf`.
 
 Configuration
 *************
@@ -78,7 +78,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/coap_client/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/net/coap_client/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:

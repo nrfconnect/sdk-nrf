@@ -98,7 +98,7 @@ mesh models time role-set <Role>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/time_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/time_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/time_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/time_cli.c`
 
 .. doxygengroup:: bt_mesh_time_cli

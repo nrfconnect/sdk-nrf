@@ -36,7 +36,7 @@ See :ref:`channel_sounding_ras_initiator`.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/cs_de.h`
+| Header file: :ncs-file:`/include/bluetooth/cs_de.h`
 | Source files: :file:`subsys/bluetooth/cs_de`
 
 .. doxygengroup:: bt_cs_de

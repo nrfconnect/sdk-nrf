@@ -60,7 +60,7 @@ An additional reset is then required for the first-stage immutable bootloader to
 API documentation
 *****************
 
-| Header file: :file:`include/net/fota_download.h`
+| Header file: :ncs-file:`/include/net/fota_download.h`
 | Source files: :file:`subsys/net/lib/fota_download/src/`
 
 .. doxygengroup:: fota_download

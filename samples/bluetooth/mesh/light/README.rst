@@ -28,7 +28,7 @@ The sample also requires a smartphone with Nordic Semiconductor's nRF Mesh mobil
 DFU requirements
 ================
 
-The configuration file :file:`prj_dfu.conf` and the :ref:`sysbuild <configuration_system_overview_sysbuild>` configuration file :file:`sysbuild_dfu.conf` enable DFU support in the application, and apply to the following platforms:
+The configuration file :ncs-file:`/samples/bluetooth/mesh/light/prj_dfu.conf` and the :ref:`sysbuild <configuration_system_overview_sysbuild>` configuration file :ncs-file:`/samples/bluetooth/mesh/light/sysbuild_dfu.conf` enable DFU support in the application, and apply to the following platforms:
 
 * nrf54l15dk/nrf54l15/cpuapp
 * nrf5340dk/nrf5340/cpuapp
@@ -85,7 +85,7 @@ The models are used for the following purposes:
 * Health Server provides ``attention`` callbacks that are used during provisioning to call your attention to the device.
   These callbacks trigger blinking of the LEDs.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control each LED on the development kit according to the matching received messages of Generic OnOff Server.
 
 User interface
 **************
@@ -124,7 +124,7 @@ For example, when building from the command line, use the following command, whe
 
    west build -b *board_target* -p -- -DFILE_SUFFIX=dfu
 
-The configuration file :file:`prj_dfu.conf` and the sysbuild configuration file :file:`sysbuild_dfu.conf` enable the DFU feature.
+The configuration file :ncs-file:`/samples/bluetooth/mesh/light/prj_dfu.conf` and the sysbuild configuration file :ncs-file:`/samples/bluetooth/mesh/light/sysbuild_dfu.conf` enable the DFU feature.
 To review the required configuration alterations, open and inspect the two files.
 
 .. note::
@@ -201,18 +201,18 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-   * :file:`include/kernel.h`
+   * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-   * :file:`include/bluetooth/bluetooth.h`
+   * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-   * :file:`include/bluetooth/mesh.h`
+   * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 

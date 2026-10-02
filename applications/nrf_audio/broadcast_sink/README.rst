@@ -9,7 +9,7 @@
    The following limitations apply to this application:
 
    * One BIG, one of the two BIS streams or a mixed stereo comprising of the two (selectable).
-     See :file:`overlay-broadcast_sink.conf` for more information.
+     See :ncs-file:`/applications/nrf_audio/broadcast_sink/overlay-broadcast_sink.conf` for more information.
    * Audio output: I2S/Analog headset output.
    * Configuration: 16-bit, several bit rates ranging from 32 kbps to 124 kbps.
 
@@ -58,7 +58,7 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-The application requires the ``CONFIG_TRANSPORT_BIS`` Kconfig option to be set to ``y`` in the :file:`applications/nrf_audio/prj.conf` file for `Building and running`_ to succeed.
+The application requires the ``CONFIG_TRANSPORT_BIS`` Kconfig option to be set to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file for `Building and running`_ to succeed.
 
 For other configuration options, see :ref:`nrf_audio_app_configuration`.
 
@@ -74,7 +74,7 @@ In this mode, the I2S output is stereo, but :zephyr:board:`nrf5340_audio_dk` sti
 
 To configure stereo, program the :ref:`correct headset location <nrf_audio_app_configuration_headset_location>` for each headset.
 
-See also :file:`overlay-broadcast_sink.conf` for more information.
+See also :ncs-file:`/applications/nrf_audio/broadcast_sink/overlay-broadcast_sink.conf` for more information.
 
 .. _nrf_audio_broadcast_sink_app_building:
 
@@ -88,7 +88,7 @@ See :ref:`nrf_audio_app_dk_testing_out_of_the_box` for more information.
 
 To build the application, complete the following steps:
 
-1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 #. Complete the steps for building and programming common to all audio applications using one of the following methods:
 
    * :ref:`nrf_audio_app_building_script`

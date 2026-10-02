@@ -959,7 +959,7 @@ To test this feature, complete the following steps:
    a. Set the application firmware version to ``v99.99.99`` by modifying the following files:
 
       * The :file:`VERSION` file.
-      * The :file:`configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
+      * The :ncs-file:`/samples/bluetooth/fast_pair/locator_tag/configuration/prj.conf` file (the :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MAJOR`, :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_MINOR`, and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_DULT_FIRMWARE_VERSION_REVISION` Kconfig option group).
 
       The new firmware version should match the version specified in the **Firmware Version** field from the :ref:`fast_pair_locator_tag_google_device_model` section.
 

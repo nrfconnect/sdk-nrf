@@ -117,7 +117,7 @@ For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_ligh
 Other nodes can store or recall scenes through Scene Server, by sending Scene messages.
 They can also fetch the current value of the :c:var:`bt_mesh_sensor_precise_tot_dev_energy_use` property by sending Sensor Get messages.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_ctrl/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
 User interface
 **************
@@ -332,10 +332,10 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:pwm_api`:
 
@@ -343,11 +343,11 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 

@@ -12,7 +12,7 @@ It can be useful if you are a software or hardware vendor that would like to aug
 
 The contents of this section is not comprehensive.
 You can rather consider it as suggestions for extending the |NCS|.
-You can use other mechanisms as long as they comply with the text in the :file:`LICENSE` file located in the root of every Git repository in the |NCS|.
+You can use other mechanisms as long as they comply with the text in the :ncs-file:`zephyr:/LICENSE` file located in the root of every Git repository in the |NCS|.
 If you need any help, reach out to Nordic Semiconductor.
 
 Getting added to the main manifest

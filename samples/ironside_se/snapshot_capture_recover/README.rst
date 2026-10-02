@@ -23,7 +23,7 @@ The sample performs multiple snapshot capture and recovery operations, followed 
 
 In each cycle, the sample validates the boot report, increments an |ISE| NV counter (:ref:`ug_nrf54h20_ironside_se_counter_service`), logs the snapshot status, and executes a *capture → recovery → cold* reboot sequence.
 
-To keep execution bounded and repeatable, the sequence stops when the counter reaches ``SNAPSHOT_MAX_CYCLES`` in :file:`src/main.c`.
+To keep execution bounded and repeatable, the sequence stops when the counter reaches ``SNAPSHOT_MAX_CYCLES`` in :ncs-file:`/samples/ironside_se/snapshot_capture_recover/src/main.c`.
 After reaching this limit, the sample enters a heartbeat loop.
 
 During the heartbeat loop, the sample periodically performs high-volume MRAM read sweeps over a large region.
@@ -36,7 +36,7 @@ UICR configuration
 
 The sample configures the following UICR settings:
 
-* **UICR.LOCK** - Not written by :file:`sysbuild/uicr.conf`.
+* **UICR.LOCK** - Not written by :ncs-file:`/samples/ironside_se/snapshot_capture_recover/sysbuild/uicr.conf`.
   After each boot, the sample reads the NV counter.
   If the value is ``0``, it calls ``uicr_deploy_lock_contents()`` and performs a cold reboot.
 
@@ -45,7 +45,7 @@ The sample configures the following UICR settings:
 
 * **UICR.SNAPSHOT.REGIONS** - Defines snapshot regions.
   Region 0 is located at physical address ``0x0E030000`` (72 KB) and covers the boot and ``periphconf`` partitions.
-  Additional regions defined in :file:`sysbuild/uicr.conf` cover secure storage and the MRAM area used by the sample stress path.
+  Additional regions defined in :ncs-file:`/samples/ironside_se/snapshot_capture_recover/sysbuild/uicr.conf` cover secure storage and the MRAM area used by the sample stress path.
 
 Building and running
 ********************
@@ -133,7 +133,7 @@ This sample uses the following |NCS| subsystems:
 * |ISE| snapshot service - Captures and recovers configured MRAM and NVR regions
 * |ISE| counter service - Tracks the boot cycle for the bounded capture/recovery flow
 * Sysbuild - Builds the application and UICR images together
-* UICR generation - Configures PROTECTEDMEM and snapshot regions in :file:`sysbuild/uicr.conf`
+* UICR generation - Configures PROTECTEDMEM and snapshot regions in :ncs-file:`/samples/ironside_se/snapshot_capture_recover/sysbuild/uicr.conf`
 
 In addition, it uses the following Zephyr subsystems:
 

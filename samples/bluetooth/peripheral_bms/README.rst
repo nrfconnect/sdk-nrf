@@ -99,13 +99,13 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
-* :file:`include/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`

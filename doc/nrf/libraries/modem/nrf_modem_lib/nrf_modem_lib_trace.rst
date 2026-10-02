@@ -7,7 +7,7 @@ Modem trace module
    :local:
    :depth: 2
 
-The module is implemented in :file:`nrf/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend.
+The module is implemented in :ncs-file:`/lib/nrf_modem_lib/nrf_modem_lib_trace.c` and consists of a thread that initializes, deinitializes, and forwards modem traces to a backend.
 The trace backend can be selected in one of the following ways:
 
 * Adding the ``nrf91-modem-trace-uart`` snippet to send modem traces over UART.
@@ -194,9 +194,9 @@ The :ref:`modem_trace_backend_sample` sample demonstrates how you can add a cust
 Complete the following steps to add a custom trace backend:
 
 1. Place the files that have the custom trace backend implementation in a library or an application you create.
-   For example, the implementation of the UART trace backend (default) can be found in the :file:`nrf/lib/nrf_modem_lib/trace_backends/uart/uart.c` file.
+   For example, the implementation of the UART trace backend (default) can be found in the :ncs-file:`/lib/nrf_modem_lib/trace_backends/uart/uart.c` file.
 
-#. Add a C file implementing the interface in the :file:`nrf/include/modem/trace_backend.h` header file.
+#. Add a C file implementing the interface in the :ncs-file:`/include/modem/trace_backend.h` header file.
 
    .. code-block:: c
 

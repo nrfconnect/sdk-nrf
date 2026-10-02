@@ -79,7 +79,7 @@ See option :kconfig:option:`CONFIG_BT_MESH_STORE_TIMEOUT`.
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/mesh/vnd/dm_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/vnd/dm_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/vnd/dm_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/vnd/dm_srv.c`
 
 .. doxygengroup:: bt_mesh_dm_srv

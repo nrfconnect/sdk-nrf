@@ -57,4 +57,4 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/init.h`
+  * :ncs-file:`zephyr:/include/zephyr/init.h`

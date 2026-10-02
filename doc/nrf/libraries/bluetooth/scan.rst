@@ -179,7 +179,7 @@ There are no dependencies for using this library.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/scan.h`
-| Source file: :file:`subsys/bluetooth/scan.c`
+| Header file: :ncs-file:`/include/bluetooth/scan.h`
+| Source file: :ncs-file:`/subsys/bluetooth/scan.c`
 
 .. doxygengroup:: nrf_bt_scan

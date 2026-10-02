@@ -183,7 +183,7 @@ The Kconfig options for :kconfig:option:`CONFIG_BT_MDS` are the following:
 API documentation
 *****************
 
-| Header file: :file:`include/memfault_ncs.h`
+| Header file: :ncs-file:`/include/memfault_ncs.h`
 | Source files: :file:`modules/memfault/`
 
 .. doxygengroup:: memfault_ncs

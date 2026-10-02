@@ -83,7 +83,7 @@ This library uses the following |NCS| libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/ntn.h`
+| Header file: :ncs-file:`/include/modem/ntn.h`
 | Source files: :file:`lib/ntn/`
 
 .. doxygengroup:: ntn

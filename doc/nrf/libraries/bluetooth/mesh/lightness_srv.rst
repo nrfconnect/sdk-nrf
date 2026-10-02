@@ -114,7 +114,7 @@ This split is done so the values that may change often are stored on shutdown on
 API documentation
 ==================
 
-| Header file: :file:`include/bluetooth/mesh/lightness_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/lightness_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/lightness_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/lightness_srv.c`
 
 .. doxygengroup:: bt_mesh_lightness_srv

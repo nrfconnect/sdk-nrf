@@ -84,7 +84,7 @@ Rebooting to bootloader
 =======================
 
 For the ``nrf52840dongle/nrf52840`` board target, the device can reboot to bootloader by triggering a GPIO pin.
-To enable this behavior, enable the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_BOOTLOADER_MODE_GPIO` Kconfig option and configure the Devicetree overlay in the :file:`boards/nrf52840dongle_nrf52840.overlay` file.
+To enable this behavior, enable the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_BOOTLOADER_MODE_GPIO` Kconfig option and configure the Devicetree overlay in the :ncs-file:`/samples/openthread/cli/boards/nrf52840dongle_nrf52840.overlay` file.
 For this sample, the ``bootloader-gpios`` property in the ``openthread_config`` node is pre-configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
 This functionality is not enabled by other commands, such as ``factoryreset``, as they can only trigger a software reset, skipping the bootloader.
 
@@ -624,7 +624,7 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:thread_protocol_interface`
 
@@ -634,10 +634,10 @@ The following dependencies are added by the optional multiprotocol Bluetooth® L
 * :ref:`nus_service_readme`
 * Zephyr's :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
 
 In addition, it uses the following secure firmware component:
 

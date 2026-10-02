@@ -114,5 +114,5 @@ This sample uses the following |NCS| libraries:
 The sample uses the following Zephyr libraries:
 
 * :file:`include/zephyr.h`
-* :file:`include/device.h`
+* :ncs-file:`zephyr:/include/zephyr/device.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
