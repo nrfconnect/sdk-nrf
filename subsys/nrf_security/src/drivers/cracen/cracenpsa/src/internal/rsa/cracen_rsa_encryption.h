@@ -56,9 +56,8 @@ int cracen_rsa_oaep_encrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
  * @retval 0 (::SX_OK)                       Operation completed successfully.
  * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
  * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small for the hash algorithm.
- * @retval ::SX_ERR_TOO_BIG                  Ciphertext larger than the RSA modulus.
  * @retval ::SX_ERR_INVALID_CIPHERTEXT       Decryption failed: invalid ciphertext, wrong key,
- *                                           or label mismatch.
+ *                                           invalid ciphertext size or label mismatch.
  * @retval ::SX_ERR_WORKMEM_BUFFER_TOO_SMALL Internal work memory insufficient for key size.
  * @retval ::SX_ERR_PK_RETRY                 Hardware resources unavailable; retry later.
  */
