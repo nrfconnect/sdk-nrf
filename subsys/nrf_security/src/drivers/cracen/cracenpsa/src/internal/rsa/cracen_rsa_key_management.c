@@ -155,8 +155,6 @@ psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, ui
 	int sx_status;
 	sx_pk_req req;
 
-	sx_pk_acquire_hw(&req);
-
 	/* RSA public exponent used in PSA is 65537. We provide this as a 3 byte
 	 * big endian array.
 	 */
@@ -210,6 +208,7 @@ psa_status_t generate_rsa_private_key(const psa_key_attributes_t *attributes, ui
 	/* Generate RSA CRT key. */
 	struct cracen_rsa_key privkey = CRACEN_KEY_INIT_RSACRT(&p, &q, &dp, &dq, &qinv);
 
+	sx_pk_acquire_hw(&req);
 	sx_status = cracen_rsa_generate_privkey(&req, pub_exponent, sizeof(pub_exponent),
 						key_size_bytes, &privkey);
 	if (sx_status != SX_OK) {
