@@ -96,7 +96,7 @@ void sx_clrpkmem(void *dst, size_t sz)
 
 	if (dst_addr % 4) {
 		const size_t first_byte_pos = dst_addr % 4;
-		const size_t byte_count = 4 - first_byte_pos;
+		const size_t byte_count = MIN(4 - first_byte_pos, sz);
 
 		write_incomplete_word((uint32_t *)(dst_addr & ~3), zero,
 				      first_byte_pos, byte_count);
@@ -115,6 +115,9 @@ void sx_clrpkmem(void *dst, size_t sz)
 
 void sx_wrpkmem(void *dst, const void *src, size_t sz)
 {
+	if (sz == 0) {
+		return;
+	}
 #ifdef SX_INSTRUMENT_MMIO_WITH_PRINTFS
 	printk("sx_wrpkmem(%p, %p, %zu)\r\n", dst, src, sz);
 #endif
@@ -122,7 +125,7 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz)
 	if ((uintptr_t)dst % 4) {
 		const uintptr_t dst_addr = (uintptr_t)dst;
 		const size_t first_byte_pos = dst_addr % 4;
-		const size_t byte_count = 4 - first_byte_pos;
+		const size_t byte_count = MIN(4 - first_byte_pos, sz);
 
 		write_incomplete_word((uint32_t *)(dst_addr & ~3), src, first_byte_pos, byte_count);
 		dst = (uint8_t *)dst + byte_count;
