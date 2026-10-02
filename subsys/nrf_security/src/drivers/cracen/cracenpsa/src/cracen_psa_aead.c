@@ -806,14 +806,18 @@ static psa_status_t feed_singlepart_ccm_aad(cracen_aead_operation_t *operation,
 	psa_status_t status;
 	/* Data fed to CRACEN needs to remain untouched until it's been consumed
 	 * (sx_aead_wait()), so don't put the CCM header buffer on the stack.
-	 * This is not thread-safe but the Silex driver functions take care of
-	 * locking and unlocking a mutex which ensures that there can be only
-	 * one active caller at the same time.
+	 * The buffer is shared, so reserve the HW (which takes the mutex)
+	 * before writing to it. It stays reserved until the operation finishes.
 	 */
 	static uint8_t ccm_header_aad[ROUND_UP(CCM_HEADER_MAX_LENGTH,
 					       PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES))];
 	size_t ccm_header_length;
 	size_t aad_fed_count;
+
+	status = initialize_or_resume_context(operation);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	create_aead_ccmheader(operation, ccm_header_aad, &ccm_header_length);
 
