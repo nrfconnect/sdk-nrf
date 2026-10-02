@@ -632,7 +632,7 @@
 /samples/nrf_rpc/protocols_serialization/ @nrfconnect/ncs-protocols-serialization
 /samples/openthread/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
-/samples/peripheral/802154_sniffer/       @e-rk
+/samples/peripheral/802154_sniffer/       @nrfconnect/ncs-radio-sw
 /samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
