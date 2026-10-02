@@ -52,6 +52,7 @@ void thread_definition(void)
 		rc = gpio_pin_set_dt(&output, 1);
 		rc = gpio_pin_set_dt(&output, 0);
 		irq_unlock(key);
+		k_usleep(1);
 		__ASSERT_NO_MSG(counter == 1);
 
 		k_msleep(10);
