@@ -826,6 +826,7 @@
 /scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/check_license.py              @carlescufi
 /scripts/ci/check_manifest_userdata.py    @carlescufi
+/scripts/ci/check_compliance.py           @nrfconnect/ncs-code-owners
 /scripts/ci/codeowners.py                 @carlescufi
 /scripts/ci/license_allow_list.yaml       @carlescufi
 /scripts/ci/requirements.txt              @carlescufi
@@ -868,6 +869,8 @@
 /scripts/west_commands/ncs_ironside_se_update.py @nrfconnect/ncs-aurora
 /scripts/west_commands/ncs_provision.py   @nrfconnect/ncs-eris
 /scripts/west_commands/tests/test_ncs_cherry_pick.py @nrfconnect/ncs-co-scripts
+/scripts/west_commands/ln.py              @nrfconnect/ncs-co-build-system
+/scripts/west_commands/west_ln.pre-commit-hook @nrfconnect/ncs-co-build-system
 /scripts/bootloader/                      @nrfconnect/ncs-eris
 /scripts/reglock.py                       @nrfconnect/ncs-eris
 /scripts/ncs-docker-version.txt           @nrfconnect/ncs-ci
