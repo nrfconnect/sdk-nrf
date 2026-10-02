@@ -95,3 +95,11 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41706"
+
+- scenarios:
+    - nrf.extended.drivers.comparator.gpio_loopback.nrf_comp
+    - nrf.extended.drivers.comparator.gpio_loopback.nrf_lpcomp
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41708"
