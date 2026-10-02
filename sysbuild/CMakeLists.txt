@@ -149,6 +149,11 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(dfu_image_index -1)
     set(manifest_image_target "none")
 
+    # Additional application-core images registered with
+    # UpdateableImage_Add(APPLICATION <name> GROUP "SECONDARY_APP").
+    UpdateableImage_Get(secondary_application_images GROUP "SECONDARY_APP")
+    list(LENGTH secondary_application_images secondary_application_count)
+
     list(LENGTH dfu_slots_sysbuild_kconfigs test_things_size)
     math(EXPR test_things_size "${test_things_size} - 1")
 
@@ -174,6 +179,22 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_int(${image} ${current_application_kconfig} ${value})
       endforeach()
 
+      if("${current_application_kconfig}" STREQUAL "CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER"
+         AND secondary_application_count GREATER 0)
+        # Each secondary application image receives its own MCUboot image pair index,
+        # placed right after the main application, and uses that index as its
+        # CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER.
+        foreach(secondary_image ${secondary_application_images})
+          math(EXPR dfu_image_index "${dfu_image_index} + 1")
+          set_config_int(${secondary_image} CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER
+            ${dfu_image_index}
+          )
+          string(APPEND dfu_slots_output_text
+            "   * Application (${secondary_image}): ${dfu_image_index}\n"
+          )
+        endforeach()
+      endif()
+
       if(SB_CONFIG_MCUBOOT_MANIFEST_UPDATES)
         if(${value} EQUAL ${SB_CONFIG_MCUBOOT_MANIFEST_IMAGE_INDEX})
           if("${current_application_kconfig}" STREQUAL "CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER")
@@ -191,6 +212,30 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
       set(${current_cache_name} ${value} CACHE INTERNAL "" FORCE)
     endforeach()
+
+    # Validate that all application-visible roles fit within
+    # SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES. Kconfig can't see how many secondary
+    # applications a project registers, so enforce the total here.
+    math(EXPR application_visible_images "${dfu_image_index} + 1")
+    if(NOT NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER EQUAL -1)
+      math(EXPR application_visible_images "${application_visible_images} - 1")
+    endif()
+    if(NOT NCS_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER EQUAL -1 AND
+       NOT SB_CONFIG_MCUBOOT_NETWORK_CORE_HAS_UPDATE_SLOT)
+      # Network core ID assigned for serial recovery only, without an update slot
+      # (see SB_CONFIG_MCUBOOT_NETWORK_CORE_IMAGE_NUMBER_ASSIGNED). Not counted.
+      math(EXPR application_visible_images "${application_visible_images} - 1")
+    endif()
+    if(application_visible_images GREATER SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES)
+      message(FATAL_ERROR "SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES=${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} "
+        "is too small: the assigned image IDs require ${application_visible_images} "
+        "updateable image(s) (${secondary_application_count} secondary application image(s) "
+        "registered in the SECONDARY_APP group). Increase SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES "
+        "and provide the matching slot<2N>_partition/slot<2N+1>_partition devicetree nodes.\n"
+        "${dfu_slots_output_text}"
+      )
+    endif()
+    set(application_visible_images)
 
     # Assign image IDs for MCUboot extra images
     set(dfu_slots_application_kconfigs CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER;CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER)
@@ -232,6 +277,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     set(dfu_slots_output_text)
     set(dfu_slots_output_text_length)
     set(dfu_image_index)
+    set(secondary_application_images)
+    set(secondary_application_count)
     set(value)
     set(current_sysbuild_kconfig)
     set(current_application_kconfig)

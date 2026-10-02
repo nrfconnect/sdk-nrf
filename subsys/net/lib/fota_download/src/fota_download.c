@@ -65,6 +65,8 @@ static uint8_t mcuboot_buf[CONFIG_FOTA_DOWNLOAD_MCUBOOT_FLASH_BUF_SZ] __aligned(
 #endif
 static enum dfu_target_image_type img_type;
 static enum dfu_target_image_type img_type_expected = DFU_TARGET_IMAGE_TYPE_ANY;
+/* MCUboot image pair index of the ongoing download */
+static int dfu_img_num;
 enum flags_t {
 	FLAG_DOWNLOADING,
 	FLAG_FIRST_FRAGMENT,
@@ -196,7 +198,7 @@ static int downloader_callback(const struct downloader_evt *event)
 				set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_TYPE_MISMATCH);
 				err = -EPROTOTYPE;
 			} else {
-				err = dfu_target_init(img_type, 0, file_size,
+				err = dfu_target_init(img_type, dfu_img_num, file_size,
 						      dfu_target_callback_handler);
 				if (err == -EFBIG) {
 					LOG_ERR("Image too big");
@@ -232,7 +234,7 @@ static int downloader_callback(const struct downloader_evt *event)
 							FOTA_DOWNLOAD_ERROR_CAUSE_DFU);
 						goto error_and_close;
 					}
-					err = dfu_target_init(img_type, 0, file_size,
+					err = dfu_target_init(img_type, dfu_img_num, file_size,
 							      dfu_target_callback_handler);
 					if (err != 0) {
 						LOG_ERR("Failed to re-initialize target, err: %d",
@@ -298,7 +300,7 @@ static int downloader_callback(const struct downloader_evt *event)
 	case DOWNLOADER_EVT_DONE:
 		err = dfu_target_done(true);
 		if (err == 0 && IS_ENABLED(CONFIG_FOTA_CLIENT_AUTOSCHEDULE_UPDATE)) {
-			err = dfu_target_schedule_update(0);
+			err = dfu_target_schedule_update(dfu_img_num);
 		}
 
 		if (err != 0) {
@@ -571,6 +573,37 @@ int fota_download(const char *host, const char *file,
 	const int *sec_tag_list, uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 	const enum dfu_target_image_type expected_type)
 {
+	const struct fota_download_params params = {
+		.host = host,
+		.file = file,
+		.sec_tag_list = sec_tag_list,
+		.sec_tag_count = sec_tag_count,
+		.pdn_id = pdn_id,
+		.fragment_size = fragment_size,
+		.expected_type = expected_type,
+	};
+
+	return fota_download_start_params(&params);
+}
+
+static bool img_num_valid(int img_num)
+{
+	if (img_num < 0) {
+		return false;
+	}
+
+#if defined(CONFIG_DFU_TARGET_MCUBOOT) && defined(CONFIG_UPDATEABLE_IMAGE_NUMBER)
+	/* dfu_target_mcuboot indexes its slot tables with img_num without a range check. */
+	if (img_num >= CONFIG_UPDATEABLE_IMAGE_NUMBER) {
+		return false;
+	}
+#endif
+
+	return true;
+}
+
+int fota_download_start_params(const struct fota_download_params *params)
+{
 
 	/* Consume the flag unconditionally so a rejected call below can't leave it set for the
 	 * next download.
@@ -579,7 +612,12 @@ int fota_download(const char *host, const char *file,
 
 	dl_host_cfg_provided = false;
 
-	if (host == NULL || file == NULL || callback == NULL) {
+	if (params == NULL || params->host == NULL || params->file == NULL || callback == NULL) {
+		return -EINVAL;
+	}
+
+	if (!img_num_valid(params->img_num)) {
+		LOG_ERR("Invalid MCUboot image pair index %d", params->img_num);
 		return -EINVAL;
 	}
 
@@ -589,6 +627,8 @@ int fota_download(const char *host, const char *file,
 
 	int err;
 	static int sec_tag_list_copy[CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX];
+
+	dfu_img_num = params->img_num;
 
 	/* Non-proxy entry points don't populate the transport-specific fields of dl_host_cfg.
 	 * Reset them to a known baseline so a previous fota_download_with_host_cfg() call can't
@@ -602,10 +642,10 @@ int fota_download(const char *host, const char *file,
 		dl_host_cfg.auth_cb = NULL;
 	}
 
-	dl_host_cfg.pdn_id = pdn_id;
-	dl_host_cfg.range_override = fragment_size;
+	dl_host_cfg.pdn_id = params->pdn_id;
+	dl_host_cfg.range_override = params->fragment_size;
 
-	if (sec_tag_count > ARRAY_SIZE(sec_tag_list_copy)) {
+	if (params->sec_tag_count > ARRAY_SIZE(sec_tag_list_copy)) {
 		return -E2BIG;
 	}
 
@@ -613,12 +653,13 @@ int fota_download(const char *host, const char *file,
 	atomic_clear_bit(&flags, FLAG_RESUME);
 	set_error_state(FOTA_DOWNLOAD_ERROR_CAUSE_NO_ERROR);
 
-	set_host_and_file(host, file);
+	set_host_and_file(params->host, params->file);
 
-	if ((sec_tag_list != NULL) && (sec_tag_count > 0)) {
-		memcpy(sec_tag_list_copy, sec_tag_list, sec_tag_count * sizeof(sec_tag_list[0]));
+	if ((params->sec_tag_list != NULL) && (params->sec_tag_count > 0)) {
+		memcpy(sec_tag_list_copy, params->sec_tag_list,
+		       params->sec_tag_count * sizeof(params->sec_tag_list[0]));
 
-		dl_host_cfg.sec_tag_count = sec_tag_count;
+		dl_host_cfg.sec_tag_count = params->sec_tag_count;
 		dl_host_cfg.sec_tag_list = sec_tag_list_copy;
 	}
 
@@ -628,7 +669,7 @@ int fota_download(const char *host, const char *file,
 	/* Need a modifiable copy of the filename for splitting */
 	static char file_buf[CONFIG_FOTA_DOWNLOAD_RESOURCE_LOCATOR_LENGTH];
 
-	strncpy(file_buf, file, sizeof(file_buf) - 1);
+	strncpy(file_buf, params->file, sizeof(file_buf) - 1);
 	file_buf[sizeof(file_buf) - 1] = '\0';
 
 	err = fota_download_b1_file_parse(file_buf);
@@ -641,7 +682,7 @@ int fota_download(const char *host, const char *file,
 	}
 #endif /* S1_ADDRESS */
 
-	img_type_expected = expected_type;
+	img_type_expected = params->expected_type;
 
 	atomic_set_bit(&flags, FLAG_FIRST_FRAGMENT);
 
