@@ -46,12 +46,11 @@ Building and running
 .. include:: /includes/build_and_run.txt
 
 To build for the nRF7120 DK, use the ``nrf7120dk/nrf7120/cpuapp`` board target.
-Since sysbuild defaults to the nRF70 Series driver, disable it using the ``SB_CONFIG_WIFI_NRF70`` sysbuild Kconfig option.
-The following is an example of the CLI command:
+For example:
 
 .. code-block:: console
 
-   west build -b nrf7120dk/nrf7120/cpuapp -- -DSB_CONFIG_WIFI_NRF70=n
+   west build -b nrf7120dk/nrf7120/cpuapp
 
 See also :ref:`cmake_options` for instructions on how to provide CMake options.
 
