@@ -172,7 +172,29 @@ PSA Attestation API in the |NCS|
 
 The Attestation API is mandatory for certification.
 
-See the :ref:`TF-M PSA template <tfm_psa_template>` for reference implementation of the PSA Attestation API in the |NCS|.
+The |NCS| implements the PSA Attestation API through the TF-M Initial Attestation service, which you can enable with the :kconfig:option:`CONFIG_TFM_PARTITION_INITIAL_ATTESTATION` Kconfig option.
+The non-secure application requests an Entity Attestation Token (EAT) from TF-M by calling the ``psa_initial_attest_get_token()`` function with a challenge.
+TF-M returns the token signed with the Initial Attestation Key (IAK).
+
+The :ref:`TF-M PSA template <tfm_psa_template>` sample for a reference implementation of the PSA Attestation API in the |NCS|.
+
+The Initial Attestation service is supported on the following devices:
+
+* nRF5340 and nRF91 Series devices - The IAK is a random secp256r1 :ref:`identity key <lib_identity_key>`.
+  During provisioning, the device generates this key, encrypts it with the :ref:`Master Key Encryption Key <lib_hw_unique_key>`, and stores it in the key management unit (KMU).
+* nRF54L Series devices - The IAK is the identity key of the :ref:`CRACEN Isolated Key Generator <ug_kmu_guides_cracen_ikg>`.
+  CRACEN derives this key on demand from a seed that provisioning writes to the :ref:`KMU slots <ug_kmu_slots>`, so the device does not store a separate identity key.
+
+Before the application can request an attestation token, you must provision the device with the PSA Root of Trust security parameters.
+To do this, you can use the :ref:`provisioning_image` sample, which requests the initial attestation public key and an attestation token, and prints both to the console.
+How you use this sample to provision the device depends on the device:
+
+* nRF5340 and nRF91 Series devices - Build and program the provisioning image sample separately from the PSA template sample, before you program the application.
+  See :ref:`tfm_psa_template_provisioning_image_setup`.
+* nRF54L Series devices - The PSA template sample build includes the provisioning image by default.
+  See :ref:`tfm_psa_template_provisioning_image_bundled`.
+
+For more information on the provisioning step and the lifecycle transitions it performs, see also :ref:`provisioning_image_workflow`.
 
 .. _ug_psa_certified_api_overview_secstorage:
 
