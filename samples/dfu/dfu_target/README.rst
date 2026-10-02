@@ -69,8 +69,6 @@ After programming the sample to your development kit, perform the following step
    +-------------------+------------------+
    | Development Kit   | Address          |
    +===================+==================+
-   | nRF52840 DK       | ``0xa8000``      |
-   +-------------------+------------------+
    | nRF54H20 DK       | ``0xe092000``    |
    +-------------------+------------------+
    | nRF54L15 DK       | ``0xf2000``      |
