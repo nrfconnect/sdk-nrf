@@ -6,7 +6,7 @@
 
 menu "nRF Cloud CoAP FOTA Sample"
 
-config COAP_FOTA_JOB_CHECK_RATE_MIN
+config COAP_FOTA_JOB_CHECK_RATE_MINUTES
 	int "Rate (minutes) at which this sample will check for FOTA updates"
 	range 1 10080
 	default 15
