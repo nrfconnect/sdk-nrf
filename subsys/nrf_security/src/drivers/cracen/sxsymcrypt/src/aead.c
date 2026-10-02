@@ -128,6 +128,10 @@ static int sx_aead_create_aesgcm(struct sxaead *aead_ctx, const struct sxkeyref 
 		return SX_ERR_INVALID_KEYREF;
 	}
 
+	if ((tagsz < 4) || (tagsz > 16)) {
+		return SX_ERR_INVALID_TAG_SIZE;
+	}
+
 	if (KEYREF_IS_USR(key)) {
 		keyszfld = sx_aes_keysz(key->sz);
 		if (keyszfld == ~0u) {
