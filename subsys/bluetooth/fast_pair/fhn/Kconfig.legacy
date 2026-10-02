@@ -210,6 +210,21 @@ config BT_FAST_PAIR_FMDN_BEACON_ACTIONS
 	help
 	  Add Fast Pair FMDN Beacon Actions source file.
 
+config BT_FAST_PAIR_FMDN_BEACON_ACTIONS_MAX_DATA_LEN
+	int
+	default 48
+	range 48 255
+	help
+	  Indicate the maximum value of the Data Length parameter that the Beacon
+	  Actions characteristic accepts in a request and generates in a response.
+	  Requests and responses that declare a larger Data Length are rejected.
+	  The value bounds the size of the authentication data buffer.
+
+	  The lower bound covers the maximum request and response lengths of all of
+	  the core Beacon Actions opcodes (Data ID 0x00 to 0x08), which a build-time
+	  assertion verifies. The upper bound follows from the Data Length field
+	  being one byte wide.
+
 config BT_FAST_PAIR_FMDN_CALLBACKS
 	bool
 	default y

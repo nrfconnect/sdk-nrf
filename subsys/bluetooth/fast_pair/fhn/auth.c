@@ -15,8 +15,28 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fp_fhn_auth, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
-#define AUTH_DATA_BUF_LEN      (100U)
-#define AUTH_DATA_RSP_END_BYTE (0x01)
+#define AUTH_DATA_RSP_END_BYTE     (0x01)
+#define AUTH_DATA_RSP_END_BYTE_LEN (1U)
+
+/* Byte length of the fixed fields that precede the Additional Data in the authentication
+ * data input: Protocol Major Version || random_nonce || Data ID || Data Length.
+ */
+#define AUTH_DATA_HDR_LEN                           \
+	(1U /* Protocol Major Version */ +          \
+	 CONFIG_BT_FAST_PAIR_FHN_RANDOM_NONCE_LEN + \
+	 1U /* Data ID */ +                         \
+	 1U /* Data Length */)
+
+/* Byte length of the buffer that holds the authentication data input. The Data Length
+ * parameter accounts for the authentication segment, which is not a part of the input,
+ * hence the subtraction. The additional byte accommodates the end byte that the response
+ * encoding appends, so that a response at the maximum supported Data Length also fits.
+ */
+#define AUTH_DATA_BUF_LEN                                       \
+	((CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN - \
+	  FP_FHN_AUTH_SEG_LEN) +                                \
+	 AUTH_DATA_HDR_LEN +                                    \
+	 AUTH_DATA_RSP_END_BYTE_LEN)
 
 #define EIK_DERIVED_KEY_SEED_END_BYTE_LEN (1U)
 #define EIK_DERIVED_KEY_SEED_BUF_LEN \
@@ -59,11 +79,32 @@ static bool account_key_find_iterator(const struct fp_account_key *account_key, 
 				account_key_find_context->auth_seg);
 }
 
-static void auth_data_encode(struct net_buf_simple *auth_data_buf,
-			     const struct fp_fhn_auth_data *auth_data)
+static int auth_data_encode(struct net_buf_simple *auth_data_buf,
+			    const struct fp_fhn_auth_data *auth_data)
 {
-	__ASSERT(auth_data->data_len >= FP_FHN_AUTH_SEG_LEN,
-		"Authentication: incorrect Data Length parameter");
+	size_t add_data_len;
+
+	if (auth_data->data_len < FP_FHN_AUTH_SEG_LEN) {
+		LOG_ERR("Authentication: Data Length parameter too small: %u",
+			auth_data->data_len);
+		__ASSERT_NO_MSG(0);
+
+		return -EINVAL;
+	}
+
+	add_data_len = auth_data->data_len - FP_FHN_AUTH_SEG_LEN;
+
+	/* The buffer is sized from CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN, and
+	 * the callers reject requests that declare a larger Data Length. Validate against the
+	 * buffer that was passed in, so that the encoder cannot overflow it regardless.
+	 */
+	if (net_buf_simple_tailroom(auth_data_buf) < (AUTH_DATA_HDR_LEN + add_data_len)) {
+		LOG_ERR("Authentication: Data Length parameter too large: %u",
+			auth_data->data_len);
+		__ASSERT_NO_MSG(0);
+
+		return -EINVAL;
+	}
 
 	/* Prepare Authentication data input for HMAC-SHA256 operation:
 	 * (Protocol Major Version || random_nonce || Data ID || Data length ||
@@ -77,19 +118,33 @@ static void auth_data_encode(struct net_buf_simple *auth_data_buf,
 	net_buf_simple_add_u8(auth_data_buf, auth_data->data_len);
 
 	if (auth_data->add_data) {
-		net_buf_simple_add_mem(auth_data_buf,
-				       auth_data->add_data,
-				       (auth_data->data_len - FP_FHN_AUTH_SEG_LEN));
+		net_buf_simple_add_mem(auth_data_buf, auth_data->add_data, add_data_len);
 	}
+
+	return 0;
 }
 
-static void auth_data_rsp_encode(struct net_buf_simple *auth_data_buf,
-				 const struct fp_fhn_auth_data *auth_data)
+static int auth_data_rsp_encode(struct net_buf_simple *auth_data_buf,
+				const struct fp_fhn_auth_data *auth_data)
 {
-	auth_data_encode(auth_data_buf, auth_data);
+	int err;
+
+	err = auth_data_encode(auth_data_buf, auth_data);
+	if (err) {
+		return err;
+	}
+
+	if (net_buf_simple_tailroom(auth_data_buf) < AUTH_DATA_RSP_END_BYTE_LEN) {
+		LOG_ERR("Authentication: no room for the response end byte");
+		__ASSERT_NO_MSG(0);
+
+		return -EINVAL;
+	}
 
 	/* Append additional end byte to authentication data segment of the response packet. */
 	net_buf_simple_add_u8(auth_data_buf, AUTH_DATA_RSP_END_BYTE);
+
+	return 0;
 }
 
 
@@ -172,10 +227,15 @@ bool fp_fhn_auth_seg_validate(const uint8_t *key, size_t key_len,
 			      const struct fp_fhn_auth_data *auth_data,
 			      const uint8_t auth_seg[FP_FHN_AUTH_SEG_LEN])
 {
+	int err;
+
 	NET_BUF_SIMPLE_DEFINE(auth_data_buf, AUTH_DATA_BUF_LEN);
 
 	/* Encode the input data for the authentication segment. */
-	auth_data_encode(&auth_data_buf, auth_data);
+	err = auth_data_encode(&auth_data_buf, auth_data);
+	if (err) {
+		return false;
+	}
 
 	return auth_seg_compare(&auth_data_buf, key, key_len, auth_seg);
 }
@@ -190,7 +250,10 @@ int fp_fhn_auth_seg_generate(const uint8_t *key, size_t key_len,
 	NET_BUF_SIMPLE_DEFINE(auth_data_buf, AUTH_DATA_BUF_LEN);
 
 	/* Encode the input data for the authentication segment. */
-	auth_data_rsp_encode(&auth_data_buf, auth_data);
+	err = auth_data_rsp_encode(&auth_data_buf, auth_data);
+	if (err) {
+		return err;
+	}
 
 	/* Generate the authentication segment. */
 	err = fp_crypto_hmac_sha256(local_auth_seg,
@@ -222,7 +285,11 @@ int fp_fhn_auth_account_key_find(const struct fp_fhn_auth_data *auth_data,
 
 	account_key_find_context.auth_data_buf = &auth_data_buf;
 	account_key_find_context.auth_seg = auth_seg;
-	auth_data_encode(account_key_find_context.auth_data_buf, auth_data);
+
+	err = auth_data_encode(account_key_find_context.auth_data_buf, auth_data);
+	if (err) {
+		return err;
+	}
 
 	err = fp_storage_ak_find(account_key,
 				 account_key_find_iterator,
