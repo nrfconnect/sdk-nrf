@@ -15,10 +15,10 @@
 #include <common/util.h>
 #include <common/fmac_structs_common.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
-#ifdef NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_SYSTEM_MODE
 #include <common/nbuf_mgmt.h>
 #include <system/fmac_api.h>
-#endif /* NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_SYSTEM_MODE */
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -219,11 +219,11 @@ enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode)
 	if ((mode ^ NRF_WIFI_STA_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#ifdef NRF71_RAW_DATA_RX
+#ifdef CONFIG_NRF71_RAW_DATA_RX
 	else if ((mode ^ NRF_WIFI_MONITOR_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#endif /* NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_RAW_DATA_RX */
 	return NRF_WIFI_STATUS_FAIL;
 }
 
@@ -239,15 +239,15 @@ bool nrf_wifi_util_is_arr_zero(unsigned char *arr,
 	return true;
 }
 
-#ifdef NRF71_SYSTEM_MODE
+#ifdef CONFIG_NRF71_SYSTEM_MODE
 unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 				    void *nwb)
 {
 	if ((vif->if_type == NRF_WIFI_IFTYPE_STATION)
-#ifdef NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_RAW_DATA_TX
 	    || (vif->if_type == NRF_WIFI_STA_TX_INJECTOR)
-#endif /* NRF71_RAW_DATA_TX */
-#ifdef NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#ifdef CONFIG_NRF71_PROMISC_DATA_RX
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC)
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC_TX_INJECTOR)
 #endif
@@ -257,7 +257,7 @@ unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 
 	return nrf_wifi_nbuf_data_get(nwb);
 }
-#endif /* NRF71_SYSTEM_MODE */
+#endif /* CONFIG_NRF71_SYSTEM_MODE */
 
 void *wifi_fmac_priv(struct nrf_wifi_fmac_priv *def)
 {
