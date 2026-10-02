@@ -380,7 +380,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	/* kg = kg' mod N*/
 	status = cracen_srp_get_multiplier(temp_value_0, sizeof(temp_value_0));
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	/* k is only a hash there only using the first bytes of the buffer */
 	sx_const_op k = {.sz = CRACEN_SRP_HASH_LENGTH, .bytes = temp_value_0};
@@ -424,7 +424,7 @@ static psa_status_t cracen_srp_calculate_client_S(cracen_srp_operation_t *operat
 	/* get u */
 	status = cracen_srp_calculate_u(operation, temp_value_0, sizeof(temp_value_0));
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	/* t_2 = (B')^u mod N */
