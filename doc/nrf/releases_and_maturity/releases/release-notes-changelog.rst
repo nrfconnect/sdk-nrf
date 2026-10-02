@@ -230,9 +230,17 @@ DECT NR+
   * The :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` Kconfig option to the nRF91 Series DECT modem driver to allocate DECT RX ``net_pkt``/``net_buf`` from a DECT-only pool isolated from the global RX pools, so that RX bursts on another interface (for example, the tethering GW's Ethernet host leg) cannot starve DECT NR+ RX.
     Pool size is tunable through the ``CONFIG_DECT_MDM_RX_PRIVATE_{PKT,BUF}_COUNT`` and ``_BUF_SIZE`` Kconfig options, and pool usage can be printed with the new ``dect_mdm rx_pool`` shell command.
 
-* Updated by improving half-closed association recovery in the nRF91 DECT driver and L2 stack (DLC discard timer, ``RD_NOT_FOUND``, L2 table full).
-  The :c:func:`dect_net_l2_child_association_created` function now returns ``int``; check for ``-ENOSPC`` and release the MAC association.
-  The :c:struct:`dect_settings` structure is extended with ``DECT_SETTINGS_WRITE_SCOPE_DLC`` write scope and ``rach_conf_resp_win_length`` field.
+  * The DECT ICMPv6 ping shell library (:kconfig:option:`CONFIG_DECT_ICMP_PING_LIB`), extracted from the :ref:`dect_shell_application` sample's ``ping`` command, that registers the same top-level ``ping`` shell for IPv6 ICMP echo on DECT NR+ interfaces.
+    A hidden :kconfig:option:`CONFIG_DECT_NET_LIBS` gate is set automatically when a DECT network library is selected.
+    It enables the shared ``subsys/net/lib/dect/`` build, while each library (including ping) still requires its own Kconfig symbol.
+
+* Updated:
+
+  * The shared DECT shell print callback type.
+    ``dect_net_l2_shell_print_fns`` was renamed to :c:struct:`dect_net_lib_shell_print_fns` and moved into the :file:`dect_net_lib_shell.h` file for :kconfig:option:`CONFIG_DECT_L2_SHELL_LIB` and :kconfig:option:`CONFIG_DECT_ICMP_PING_LIB`.
+  * By improving half-closed association recovery in the nRF91 DECT driver and L2 stack (DLC discard timer, ``RD_NOT_FOUND``, L2 table full).
+    The :c:func:`dect_net_l2_child_association_created` function now returns ``int``; check for ``-ENOSPC`` and release the MAC association.
+    The :c:struct:`dect_settings` structure is extended with ``DECT_SETTINGS_WRITE_SCOPE_DLC`` write scope and ``rach_conf_resp_win_length`` field.
 
 * Fixed the DLC TX transaction ID wrap on retry and made the cluster RACH response window length configurable through ``dect sett``.
 
@@ -557,7 +565,9 @@ DECT NR+ samples
     * The :file:`dect_rx_pool.conf` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalance the global TX/RX pool sizes to match observed usage.
     * The :file:`dlc_resilient.conf` configuration file for a loss-resilient DLC profile when using the Ethernet sink mode.
 
-  * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6).
+  * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6) and moved it into the location defined by the :kconfig:option:`CONFIG_DECT_ICMP_PING_LIB` Kconfig option.
+    The sample selects the library, wires :c:struct:`dect_net_lib_shell_print_fns`, and aborts handling.
+
   * Fixed the routing logs.
     They are now available through the shell backend only.
 
@@ -997,12 +1007,19 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* Added the :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC.
-  It performs the following operations:
+* Added:
 
-  * Sends ICMPv6 Router Advertisements (default router, RDNSS, Managed flag, PIO with ``A=0``/``L=0``) so that the host uses DHCPv6 for addressing.
-  * Provides a built-in minimal DHCPv6 server (UDP 547) that offers ULA and delegated GUA ``/128`` addresses derived from the DECT NR+ interface.
-  * Optionally forwards IPv6 mDNS (UDP 5353) between the Ethernet and DECT NR+ interfaces through an ``AF_PACKET`` tap.
+  * The :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC.
+    It performs the following operations:
+
+    * Sends ICMPv6 Router Advertisements (default router, RDNSS, Managed flag, PIO with ``A=0``/``L=0``) so that the host uses DHCPv6 for addressing.
+    * Provides a built-in minimal DHCPv6 server (UDP 547) that offers ULA and delegated GUA ``/128`` addresses derived from the DECT NR+ interface.
+    * Optionally forwards IPv6 mDNS (UDP 5353) between the Ethernet and DECT NR+ interfaces through an ``AF_PACKET`` tap.
+
+  * The DECT ICMPv6 ping shell library (:kconfig:option:`CONFIG_DECT_ICMP_PING_LIB`), which provides ICMPv6 ping functionality for use from shell commands.
+    The functionality was extracted from the ``ping`` command of the :ref:`dect_shell_application` application into a reusable library.
+    It supports hostname resolution, configurable echo request parameters (such as count, interval, and payload size), round-trip time (RTT) statistics, and cancelling an ongoing ping using a :c:struct:`k_poll_signal`.
+    Shell output is handled through the shared :c:struct:`dect_net_lib_shell_print_fns` API (:file:`dect_net_lib_shell.h`).
 
 * :ref:`lib_nrf_cloud_pgps` library:
 
