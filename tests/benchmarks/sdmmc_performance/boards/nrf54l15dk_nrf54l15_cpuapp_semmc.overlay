@@ -78,3 +78,7 @@ tst_timer: &timer22 {
 	zephyr,pm-device-runtime-auto;
 	disable-rx;
 };
+
+&gpio2 {
+	hs-bias = <2>;
+};
