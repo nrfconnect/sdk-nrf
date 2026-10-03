@@ -1044,6 +1044,12 @@ Libraries for networking
   * Provides a built-in minimal DHCPv6 server (UDP 547) that offers ULA and delegated GUA ``/128`` addresses derived from the DECT NR+ interface.
   * Optionally forwards IPv6 mDNS (UDP 5353) between the Ethernet and DECT NR+ interfaces through an ``AF_PACKET`` tap.
 
+* :ref:`lib_downloader` library:
+
+  * Added:
+
+    * The library thread priority configuration, with the :kconfig:option:`CONFIG_DOWNLOADER_THREAD_PRIORITY` Kconfig option.
+
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated to use a new parser for assistance data.
