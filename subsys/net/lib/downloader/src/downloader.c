@@ -20,6 +20,12 @@ LOG_MODULE_REGISTER(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 
 static int stopped_evt_send(struct downloader *dl);
 
+#if (CONFIG_DOWNLOADER_THREAD_PRIORITY >= CONFIG_NUM_PREEMPT_PRIORITIES)
+#define THREAD_PRIORITY (CONFIG_NUM_PREEMPT_PRIORITIES - 1)
+#else
+#define THREAD_PRIORITY CONFIG_DOWNLOADER_THREAD_PRIORITY
+#endif
+
 #define FALLBACK_HTTP  "http://"
 #define FALLBACK_HTTPS "https://"
 
@@ -366,7 +372,7 @@ int downloader_init(struct downloader *const dl, struct downloader_cfg *dl_cfg)
 	 */
 	dl->tid = k_thread_create(&dl->thread, dl->thread_stack,
 				  K_THREAD_STACK_SIZEOF(dl->thread_stack), download_thread, dl,
-				  NULL, NULL, K_LOWEST_APPLICATION_THREAD_PRIO, 0, K_NO_WAIT);
+				  NULL, NULL, THREAD_PRIORITY, 0, K_NO_WAIT);
 
 	k_thread_name_set(dl->tid, "downloader");
 

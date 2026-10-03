@@ -17,6 +17,11 @@ config DOWNLOADER_STACK_SIZE
 	default 1408 if NRF_CLOUD_PGPS
 	default 1280
 
+config DOWNLOADER_THREAD_PRIORITY
+	int "Thread priority"
+	range 0 NUM_PREEMPT_PRIORITIES
+	default NUM_PREEMPT_PRIORITIES
+
 config DOWNLOADER_MAX_HOSTNAME_SIZE
 	int "Maximum hostname length (stack)"
 	range 8 256
