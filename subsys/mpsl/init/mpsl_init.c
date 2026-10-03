@@ -236,6 +236,7 @@ static void mpsl_low_prio_work_handler(struct k_work *item)
 #endif
 
 	MULTITHREADING_LOCK_RELEASE();
+	Z_SPIN_DELAY(1);
 }
 
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
