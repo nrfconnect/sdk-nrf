@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+tests:
+  bluetooth.per_adv_restart:
+    build_only: true
+    tags:
+      - bluetooth
+    platform_allow:
+      - nrf52_bsim/native
+    harness: bsim
+    harness_config:
+      bsim_exe_name: tests_bluetooth_bsim_per_adv_restart_prj_conf
