@@ -9,30 +9,30 @@
 /delete-node/ &slot1_partition;
 /delete-node/ &storage_partition;
 
-&flash0 {
+&cpuapp_rram {
 	partitions {
 		slot0_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
 			label = "image-0";
-			reg = <0x00000000 0x000f0000>;
+			reg = <0x00000000 0x0016d000>;
 		};
 
-		storage_partition: partition@f0000 {
+		storage_partition: partition@16d000 {
 			compatible = "zephyr,mapped-partition";
 			label = "storage";
-			reg = <0x000f0000 0x00008000>;
+			reg = <0x0016d000 0x00008000>;
 		};
 
-		emds_partition_0: partition@f8000 {
+		emds_partition_0: partition@175000 {
 			compatible = "zephyr,mapped-partition";
 			label = "emds-0";
-			reg = <0x000f8000 0x00004000>;
+			reg = <0x00175000 0x00004000>;
 		};
 
-		emds_partition_1: partition@fc000 {
+		emds_partition_1: partition@179000 {
 			compatible = "zephyr,mapped-partition";
 			label = "emds-1";
-			reg = <0x000fc000 0x00004000>;
+			reg = <0x00179000 0x00004000>;
 		};
 	};
 };
