@@ -35,7 +35,7 @@ For more in-depth understanding of bootloader's capabilities, such as upgradable
 
 * Device-specific guides:
 
-  * :ref:`ug_nrf52_developing`
+  * :ref:`ug_nrf54l`
   * :ref:`ug_nrf5340`
   * :ref:`ug_nrf91_config_build`
 

@@ -27,7 +27,7 @@ For example, you can temporarily assign custom project configurations for both t
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
    -Db0_FILE_SUFFIX=immutable \
    -Dmcuboot_FILE_SUFFIX=upgradable \
    -Dapp_FILE_SUFFIX=app
@@ -43,7 +43,7 @@ For example, you can assign the :file:`my-custom-fragment.conf` fragment to the 
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
    -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
    -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
    -Db0_EXTRA_CONF_FILE=my-custom-fragment.conf
@@ -52,7 +52,7 @@ In the same way, you can replace ``b0`` with ``mcuboot`` to apply the :file:`my-
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
    -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
    -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
    -Dmcuboot_EXTRA_CONF_FILE=my-custom-fragment.conf
