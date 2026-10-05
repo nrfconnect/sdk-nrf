@@ -1,0 +1,7 @@
+#include "nrf7120dk_nrf7120_cpuflpr.overlay"
+
+&ipc0 {
+	compatible = "zephyr,ipc-icbmsg";
+	tx-blocks = <18>;
+	rx-blocks = <16>;
+};
