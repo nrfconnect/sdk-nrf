@@ -120,6 +120,9 @@ psa_status_t cracen_hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **
 	case PSA_ALG_SHA3_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_512, (*sx_hash_algo = &sxhashalg_sha3_512));
 		break;
+	case PSA_ALG_SHAKE128_256:
+		IF_ENABLED(PSA_NEED_CRACEN_SHAKE128_256, (*sx_hash_algo = &sxhashalg_shake128_32));
+		break;
 	case PSA_ALG_SHAKE256_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256_512, (*sx_hash_algo = &sxhashalg_shake256_64));
 		break;
