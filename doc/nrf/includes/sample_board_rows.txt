@@ -349,15 +349,27 @@
 
 .. nrf7120dk_nrf7120_cpuapp
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuapp`` |
 
 .. nrf7120dk_nrf7120_cpuapp_ns
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp/ns`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuapp/ns`` |
 
 .. nrf7120dk_nrf7120_cpuflpr
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuflpr`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuflpr`` |
+
+.. nrf7120dk_nrf7120e_cpuapp
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuapp`` |
+
+.. nrf7120dk_nrf7120e_cpuapp_ns
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuapp/ns`` |
+
+.. nrf7120dk_nrf7120e_cpuflpr
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuflpr`` |
 
 .. nrf9251dk_nrf9251_cpuapp
 
