@@ -12,7 +12,7 @@
 
 /* Print everything from the error handler */
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(error_handler, CONFIG_ERROR_HANDLER_LOG_LEVEL);
+LOG_MODULE_REGISTER(error_handler, CONFIG_NRF_AUDIO_ERROR_HANDLER_LOG_LEVEL);
 
 #if (CONFIG_DEBUG)
 struct error_led_setting {
