@@ -1078,7 +1078,7 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-* Removed support for the nRF52 Series devices in the NFC subsystem.
+* Removed support for the nRF52 Series devices in the NFC subsystem and library.
 
 * :ref:`nfc_ndef_parser_readme`:
 
