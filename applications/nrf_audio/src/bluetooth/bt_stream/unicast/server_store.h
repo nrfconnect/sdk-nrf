@@ -28,7 +28,7 @@ struct unicast_server_snk_vars {
 	bool waiting_for_disc;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
-	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	struct bt_audio_codec_cap codec_caps[CONFIG_NRF_AUDIO_CODEC_CAP_COUNT_MAX];
 	size_t num_codec_caps;
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	size_t num_eps;
@@ -41,7 +41,7 @@ struct unicast_server_src_vars {
 	bool waiting_for_disc;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
-	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
+	struct bt_audio_codec_cap codec_caps[CONFIG_NRF_AUDIO_CODEC_CAP_COUNT_MAX];
 	size_t num_codec_caps;
 	struct bt_bap_ep *eps[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	size_t num_eps;

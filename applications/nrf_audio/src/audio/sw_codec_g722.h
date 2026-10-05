@@ -120,9 +120,9 @@ int sw_codec_g722_dec_run(uint8_t const *const g722_data, uint16_t g722_data_siz
  *						initialize.
  * @param[in,out]	current			Non-NULL selector state; committed only on success.
  * @param[in,out]	encoder_converters	Non-NULL selector-owned array sized for
- *						CONFIG_AUDIO_ENCODE_CHANNELS_MAX contexts.
+ *						CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX contexts.
  * @param[in,out]	decoder_converters	Non-NULL selector-owned array sized for
- *						CONFIG_AUDIO_DECODE_CHANNELS_MAX contexts.
+ *						CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX contexts.
  *
  * @retval	0		Requested directions initialized.
  * @retval	-EINVAL		Invalid profile, channel count or empty direction selection.

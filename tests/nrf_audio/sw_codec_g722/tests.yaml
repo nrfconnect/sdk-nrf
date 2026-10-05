@@ -11,4 +11,4 @@ tests:
   nrf_audio.sw_codec_g722: {}
   nrf_audio.sw_codec_g722.mono_duplication:
     extra_configs:
-      - CONFIG_MONO_TO_ALL_RECEIVERS=y
+      - CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS=y

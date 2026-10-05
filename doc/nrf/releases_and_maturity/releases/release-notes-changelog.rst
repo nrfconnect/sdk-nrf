@@ -457,7 +457,10 @@ nRF Audio (formerly nRF5340 Audio)
   * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` Kconfig option from the unicast client and server applications.
     This option was not useful because the unicast server range settings overwrite the bitrate configuration.
 
-* Updated audio_datapath to use the new audio rate control API.
+* Updated:
+
+  * The :file:`audio_datapath.c` to use the new audio rate control API.
+  * The local application kconfigs to prefix ``NRF_AUDIO_*``, to signify that they belong to the nRF Audio application.
 
 nRF Desktop
 -----------

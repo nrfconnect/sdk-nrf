@@ -7,5 +7,5 @@
 module=G722
 module-str=G.722 Codec
 
-config SW_CODEC_G722
+config NRF_AUDIO_SW_CODEC_G722
 	bool

@@ -11,7 +11,7 @@ target_sources(app PRIVATE
   ${CMAKE_CURRENT_SOURCE_DIR}/le_audio_rx.c
 )
 
-if(CONFIG_SW_CODEC_G722)
+if(CONFIG_NRF_AUDIO_SW_CODEC_G722)
   if(NOT DEFINED g722_dir)
     execute_process(
       COMMAND ${WEST} list g722 -f "{abspath}"
@@ -26,7 +26,7 @@ if(CONFIG_SW_CODEC_G722)
   endif()
 
   if(NOT g722_west_result STREQUAL "0")
-    message(FATAL_ERROR "CONFIG_SW_CODEC_G722 requires the g722 west project")
+    message(FATAL_ERROR "CONFIG_NRF_AUDIO_SW_CODEC_G722 requires the g722 west project")
   endif()
 
   if(NOT EXISTS "${g722_dir}/g722_encode.c" OR NOT EXISTS "${g722_dir}/g722_decode.c")

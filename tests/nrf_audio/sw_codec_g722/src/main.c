@@ -555,7 +555,7 @@ ZTEST(g722, test_stereo_independent_state_and_interleaving)
 	zassert_ok(sw_codec_encode(pcm, coded));
 	zassert_equal(coded->len, 160);
 
-	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS)) {
 		zassert_mem_equal(coded->data, coded->data + 80, 80);
 	} else {
 		zassert_not_equal(memcmp(coded->data, coded->data + 80, 80), 0);
