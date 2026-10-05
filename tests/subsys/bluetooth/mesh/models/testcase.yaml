@@ -10,16 +10,12 @@ common:
 tests:
   bluetooth.mesh.build_models:
     sysbuild: true
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
     # Explicitly disabling settings to ensure they're not "imply"'d by anything:
     extra_configs:
       - CONFIG_BT_SETTINGS=n
     tags: sysbuild
   bluetooth.mesh.build_models.settings:
     sysbuild: true
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
     # Include persistent storage:
     # Some models depend on BT_SETTINGS, and have to be excluded from the
     # no-settings build. These should be listed here, and be wrapped
@@ -35,7 +31,6 @@ tests:
     sysbuild: true
     extra_args:
       - OVERLAY_CONFIG=overlay-mesh-shell.conf
-      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
     extra_configs:
       - CONFIG_BT_SETTINGS=n
     tags: sysbuild
@@ -46,5 +41,4 @@ tests:
     # does not use EMDS.
     extra_args:
       - OVERLAY_CONFIG=overlay-mesh-emds.conf
-      - EXTRA_DTC_OVERLAY_FILE=dm.overlay
     tags: sysbuild
