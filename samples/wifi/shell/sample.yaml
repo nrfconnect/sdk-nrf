@@ -543,9 +543,6 @@ tests:
   sample.nrf7120.shell:
     sysbuild: true
     build_only: true
-    extra_args:
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
@@ -561,8 +558,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SNIPPET=wifi-sap
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -576,8 +571,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SNIPPET=wifi-monitor-mode
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -591,8 +584,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SNIPPET=wifi-promiscuous-mode
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -606,8 +597,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SNIPPET=wifi-raw-tx
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -648,8 +637,6 @@ tests:
     build_only: true
     extra_args:
       - EXTRA_CONF_FILE=nrf71-zperf.conf
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp
@@ -662,8 +649,6 @@ tests:
     build_only: true
     extra_args:
       - shell_SNIPPET=nordic-wifi-enterprise
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow:
@@ -680,8 +665,6 @@ tests:
       - CONFIG_WPA_CLI=y
       - CONFIG_NET_IPV4_FRAGMENT=y
       - CONFIG_NET_IPV4_FRAGMENT_MAX_PKT=24
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp
