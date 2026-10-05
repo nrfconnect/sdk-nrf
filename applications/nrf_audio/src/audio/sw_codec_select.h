@@ -25,7 +25,7 @@
 #include <zephyr/net_buf.h>
 #include "device_location.h"
 
-#if (CONFIG_SW_CODEC_G722)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_G722)
 #define G722_SAMPLE_RATE_HZ	 16000
 #define G722_BITRATE_BPS	 64000
 #define G722_MAX_FRAME_SIZE_US	 10000
@@ -33,8 +33,8 @@
 
 /* PCM buffers hold audio at the application rate before/after sample rate conversion */
 #define G722_PCM_NUM_BYTES_MONO                                                                    \
-	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * G722_MAX_FRAME_SIZE_US /    \
-	 USEC_PER_SEC)
+	(CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ * CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS *                     \
+	 G722_MAX_FRAME_SIZE_US / USEC_PER_SEC)
 
 /* Per-mono-frame budgets including SRC, with margin over observed 3041/1949 us maxima.
  * Measured on nRF5340 Audio DK, 128 MHz, 48 kHz application PCM, 10 ms G.722 frames.
@@ -47,15 +47,15 @@
 #define G722_PCM_NUM_BYTES_MONO	 0
 #define G722_ENC_TIME_US	 0
 #define G722_DEC_TIME_US	 0
-#endif /* CONFIG_SW_CODEC_G722 */
+#endif /* CONFIG_NRF_AUDIO_SW_CODEC_G722 */
 
-#if (CONFIG_SW_CODEC_LC3)
-#define LC3_MAX_FRAME_SIZE_US	10000
+#if (CONFIG_NRF_AUDIO_SW_CODEC_LC3)
+#define LC3_MAX_FRAME_SIZE_US 10000
 #define LC3_ENC_MONO_FRAME_SIZE                                                                    \
-	(CONFIG_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_US / (8 * USEC_PER_SEC))
+	(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX * LC3_MAX_FRAME_SIZE_US / (8 * USEC_PER_SEC))
 #define LC3_PCM_NUM_BYTES_MONO                                                                     \
-	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * LC3_MAX_FRAME_SIZE_US /     \
-	 USEC_PER_SEC)
+	(CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ * CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS *                     \
+	 LC3_MAX_FRAME_SIZE_US / USEC_PER_SEC)
 #define LC3_ENC_TIME_US 3000
 #define LC3_DEC_TIME_US 1500
 #else
@@ -63,16 +63,17 @@
 #define LC3_PCM_NUM_BYTES_MONO	0
 #define LC3_ENC_TIME_US		0
 #define LC3_DEC_TIME_US		0
-#endif /* CONFIG_SW_CODEC_LC3 */
+#endif /* CONFIG_NRF_AUDIO_SW_CODEC_LC3 */
 
 /* Max will be used when multiple codecs are supported */
 #define ENC_MAX_FRAME_SIZE	      MAX(LC3_ENC_MONO_FRAME_SIZE, G722_ENC_MONO_FRAME_SIZE)
-#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (ENC_MAX_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX)
+#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (ENC_MAX_FRAME_SIZE * CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX)
 #define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, G722_ENC_TIME_US)
 #define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, G722_DEC_TIME_US)
 #define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, G722_PCM_NUM_BYTES_MONO)
 #define PCM_NUM_BYTES_MULTI_CHAN                                                                   \
-	(PCM_NUM_BYTES_MONO * MAX(CONFIG_AUDIO_DECODE_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS))
+	(PCM_NUM_BYTES_MONO *                                                                      \
+	 MAX(CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX, CONFIG_NRF_AUDIO_OUTPUT_CHANNELS))
 
 /**
  * @brief Software codec selection enumeration.
@@ -88,7 +89,7 @@ enum sw_codec_select {
  */
 struct lc3_encoder_context {
 	/* Array of encoder channel handles. */
-	struct lc3_encoder_handle *lc3_enc_channel[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
+	struct lc3_encoder_handle *lc3_enc_channel[CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX];
 };
 
 /**
@@ -96,7 +97,7 @@ struct lc3_encoder_context {
  */
 struct lc3_decoder_context {
 	/* Array of decoder channel handles. */
-	struct lc3_decoder_handle *lc3_dec_channel[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
+	struct lc3_decoder_handle *lc3_dec_channel[CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX];
 };
 
 /**

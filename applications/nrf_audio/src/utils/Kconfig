@@ -8,7 +8,7 @@ menu "Utils"
 
 menu "FIFO"
 
-config FIFO_FRAME_SPLIT_NUM
+config NRF_AUDIO_FIFO_FRAME_SPLIT_NUM
 	int "Number of blocks to make up one frame of audio data"
 	default 20
 	help
@@ -17,16 +17,16 @@ config FIFO_FRAME_SPLIT_NUM
 	  frame can be split into multiple blocks with this parameter. USB
 	  sends data in 1 ms blocks, so we need the split to match that.
 	  If we set frame size to 10 ms for USB, 20 is selected as
-	  FIFO_FRAME_SPLIT_NUM
+	  NRF_AUDIO_FIFO_FRAME_SPLIT_NUM
 
-config FIFO_TX_FRAME_COUNT
+config NRF_AUDIO_FIFO_TX_FRAME_COUNT
 	int "Max number of audio frames in TX slab"
 	default 3
 	help
 	  FIFO_TX is the buffer that holds decoded audio data before it
 	  is sent to either I2S or USB
 
-config FIFO_RX_FRAME_COUNT
+config NRF_AUDIO_FIFO_RX_FRAME_COUNT
 	int "Max number of audio frames in RX slab"
 	default 1
 	help
@@ -38,23 +38,23 @@ endmenu # FIFO
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-module = PERIPHERALS
+module = NRF_AUDIO_PERIPHERALS
 module-str = peripherals
 source "subsys/logging/Kconfig.template.log_config"
 
-module = NRF5340_AUDIO_DK_VERSION
+module = NRF_AUDIO_DK_VERSION
 module-str = nrf5340-audio-dk-version
 source "subsys/logging/Kconfig.template.log_config"
 
-module = DEVICE_LOCATION
+module = NRF_AUDIO_DEVICE_LOCATION
 module-str = device-location
 source "subsys/logging/Kconfig.template.log_config"
 
-module = ERROR_HANDLER
+module = NRF_AUDIO_ERROR_HANDLER
 module-str = error-handler
 source "subsys/logging/Kconfig.template.log_config"
 
-module = FW_INFO
+module = NRF_AUDIO_FW_INFO
 module-str = fw-info
 source "subsys/logging/Kconfig.template.log_config"
 

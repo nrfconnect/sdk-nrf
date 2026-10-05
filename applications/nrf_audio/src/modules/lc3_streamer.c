@@ -12,16 +12,18 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(lc3_streamer, CONFIG_MODULE_SD_CARD_LC3_STREAMER_LOG_LEVEL);
+LOG_MODULE_REGISTER(lc3_streamer, CONFIG_NRF_AUDIO_MODULE_SD_CARD_LC3_STREAMER_LOG_LEVEL);
 
-K_THREAD_STACK_DEFINE(lc3_streamer_work_q_stack_area, CONFIG_SD_CARD_LC3_STREAMER_STACK_SIZE);
+K_THREAD_STACK_DEFINE(lc3_streamer_work_q_stack_area,
+		      CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_STACK_SIZE);
 
 struct k_work_q lc3_streamer_work_q;
 
 #define LC3_STREAMER_BUFFER_NUM_FRAMES 2
 
-#if CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX
-#error "CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS must be less than or equal to UINT8_MAX"
+#if CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX
+#error "CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS must be \
+	less than or equal to UINT8_MAX "
 #endif
 
 enum lc3_stream_states {
@@ -63,12 +65,12 @@ struct lc3_stream {
 	/* Buffers used by data_fifo for allocating memory*/
 	char msgq_buffer[LC3_STREAMER_BUFFER_NUM_FRAMES * sizeof(struct data_fifo_msgq)];
 	char slab_buffer[LC3_STREAMER_BUFFER_NUM_FRAMES *
-			 CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE];
+			 CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE];
 };
 
-static struct lc3_stream streams[CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS];
-#if (CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX)
-#error "CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS is larger than UINT8_MAX"
+static struct lc3_stream streams[CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS];
+#if (CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS > UINT8_MAX)
+#error "CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS is larger than UINT8_MAX"
 #endif
 
 static bool initialized;
@@ -131,7 +133,7 @@ static int put_next_frame_to_fifo(struct lc3_stream *stream)
 	}
 
 	ret = lc3_file_frame_get(&stream->file, data_ptr,
-				 CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
+				 CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
 	if (ret) {
 		if (ret != -ENODATA) {
 			LOG_ERR("Failed to get frame from file %d", ret);
@@ -142,7 +144,7 @@ static int put_next_frame_to_fifo(struct lc3_stream *stream)
 	}
 
 	ret = data_fifo_block_lock(&stream->fifo, (void **)&data_ptr,
-				   CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
+				   CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
 	if (ret) {
 		LOG_ERR("Failed to lock block %d", ret);
 		return ret;
@@ -520,7 +522,8 @@ int lc3_streamer_init(void)
 	for (int i = 0; i < ARRAY_SIZE(streams); i++) {
 		streams[i].fifo.msgq_buffer = streams[i].msgq_buffer;
 		streams[i].fifo.slab_buffer = streams[i].slab_buffer;
-		streams[i].fifo.block_size_max = WB_UP(CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
+		streams[i].fifo.block_size_max =
+			WB_UP(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE);
 		streams[i].fifo.elements_max = LC3_STREAMER_BUFFER_NUM_FRAMES;
 		streams[i].fifo.initialized = false;
 		streams[i].active_buffer = NULL;
@@ -536,7 +539,7 @@ int lc3_streamer_init(void)
 	k_work_queue_init(&lc3_streamer_work_q);
 	k_work_queue_start(&lc3_streamer_work_q, lc3_streamer_work_q_stack_area,
 			   K_THREAD_STACK_SIZEOF(lc3_streamer_work_q_stack_area),
-			   CONFIG_SD_CARD_LC3_STREAMER_THREAD_PRIO, NULL);
+			   CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_THREAD_PRIO, NULL);
 	k_thread_name_set(lc3_streamer_work_q.thread_id, "lc3_streamer_work_q");
 
 	initialized = true;

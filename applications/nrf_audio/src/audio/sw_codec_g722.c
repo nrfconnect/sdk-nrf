@@ -14,7 +14,7 @@
 #include "sw_codec_select.h"
 #include "g722_compat.h"
 
-LOG_MODULE_REGISTER(sw_codec_g722, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
+LOG_MODULE_REGISTER(sw_codec_g722, CONFIG_NRF_AUDIO_SW_CODEC_SELECT_LOG_LEVEL);
 
 /* G722_DEFAULT: 16 kHz linear PCM in/out, one 8-bit code word per two samples at 64 kbps */
 #define G722_PCM_SAMPLES_PER_OCTET 2
@@ -22,8 +22,8 @@ LOG_MODULE_REGISTER(sw_codec_g722, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
 	(G722_ENC_MONO_FRAME_SIZE * G722_PCM_SAMPLES_PER_OCTET * sizeof(int16_t))
 
 /* The library defines both context types as void. */
-static void *g722_enc_ctx[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
-static void *g722_dec_ctx[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
+static void *g722_enc_ctx[CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX];
+static void *g722_dec_ctx[CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX];
 
 void sw_codec_g722_enc_uninit_all(void);
 void sw_codec_g722_dec_uninit_all(void);
@@ -158,7 +158,7 @@ int sw_codec_g722_metadata_check(const struct audio_metadata *pcm,
 
 	/* Validate channel locations and counts. */
 	uint8_t pcm_channels_max =
-		encoder ? CONFIG_AUDIO_INPUT_CHANNELS : CONFIG_AUDIO_OUTPUT_CHANNELS;
+		encoder ? CONFIG_NRF_AUDIO_INPUT_CHANNELS : CONFIG_NRF_AUDIO_OUTPUT_CHANNELS;
 
 	if (pcm->locations & ~BT_AUDIO_LOCATION_ANY) {
 		LOG_ERR("Unsupported G.722 PCM channel location");

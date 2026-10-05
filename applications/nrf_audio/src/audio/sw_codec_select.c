@@ -14,24 +14,24 @@
 
 #include "macros_common.h"
 
-#if (CONFIG_SW_CODEC_LC3)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_LC3)
 #include "sw_codec_lc3.h"
-#endif /* (CONFIG_SW_CODEC_LC3) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_LC3) */
 
-#if (CONFIG_SW_CODEC_G722)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_G722)
 #include "sw_codec_g722.h"
-#endif /* (CONFIG_SW_CODEC_G722) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_G722) */
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sw_codec_select, CONFIG_SW_CODEC_SELECT_LOG_LEVEL);
+LOG_MODULE_REGISTER(sw_codec_select, CONFIG_NRF_AUDIO_SW_CODEC_SELECT_LOG_LEVEL);
 
 /* Used for debugging, inserts 0 instead of packet loss concealment */
 #define SW_CODEC_OVERRIDE_PLC false
 
 static struct sw_codec_config m_config;
 
-static struct sample_rate_converter_ctx encoder_converters[CONFIG_AUDIO_ENCODE_CHANNELS_MAX];
-static struct sample_rate_converter_ctx decoder_converters[CONFIG_AUDIO_DECODE_CHANNELS_MAX];
+static struct sample_rate_converter_ctx encoder_converters[CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX];
+static struct sample_rate_converter_ctx decoder_converters[CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX];
 
 /**
  * @brief	Converts the sample rate of the uncompressed audio stream if needed.
@@ -131,7 +131,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3:
-#if (CONFIG_SW_CODEC_LC3)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_LC3)
 		codec_coding = LC3;
 		encode = sw_codec_lc3_enc_run;
 		break;
@@ -140,7 +140,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		return -ENODEV;
 #endif
 	case SW_CODEC_G722:
-#if (CONFIG_SW_CODEC_G722)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_G722)
 		codec_coding = G722;
 		encode = sw_codec_g722_enc_run;
 		break;
@@ -175,7 +175,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		return -EINVAL;
 	}
 
-#if CONFIG_SW_CODEC_G722
+#if CONFIG_NRF_AUDIO_SW_CODEC_G722
 	if (m_config.sw_codec == SW_CODEC_G722) {
 		ret = sw_codec_g722_metadata_check(meta_in, meta_out, true, &m_config);
 		if (ret) {
@@ -268,7 +268,7 @@ int sw_codec_encode(struct net_buf *audio_frame_in, struct net_buf *audio_frame_
 		loc_out >>= 1;
 	}
 
-	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS) && (chan_out_num > 1)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS) && (chan_out_num > 1)) {
 		/* Duplicate the mono encoded data to all output locations */
 		size_t single_chan_size = bytes_written;
 
@@ -508,7 +508,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3:
-#if CONFIG_SW_CODEC_LC3
+#if CONFIG_NRF_AUDIO_SW_CODEC_LC3
 	{
 		const struct sw_codec_decode_profile profile = {
 			.coding = LC3,
@@ -522,7 +522,7 @@ int sw_codec_decode(struct net_buf const *const audio_frame_in,
 		return -ENODEV;
 #endif
 	case SW_CODEC_G722:
-#if CONFIG_SW_CODEC_G722
+#if CONFIG_NRF_AUDIO_SW_CODEC_G722
 	{
 		const struct sw_codec_decode_profile profile = {
 			.coding = G722,
@@ -556,7 +556,7 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 
 	switch (m_config.sw_codec) {
 	case SW_CODEC_LC3:
-#if (CONFIG_SW_CODEC_LC3)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_LC3)
 		if (sw_codec_cfg.encoder.enabled) {
 			if (!m_config.encoder.enabled) {
 				LOG_ERR("Trying to uninit encoder, it has not been "
@@ -591,10 +591,10 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 		if (ret) {
 			return ret;
 		}
-#endif /* (CONFIG_SW_CODEC_LC3) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_LC3) */
 		break;
 	case SW_CODEC_G722:
-#if (CONFIG_SW_CODEC_G722)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_G722)
 		if ((sw_codec_cfg.encoder.enabled && !m_config.encoder.enabled) ||
 		    (sw_codec_cfg.decoder.enabled && !m_config.decoder.enabled) ||
 		    (!sw_codec_cfg.encoder.enabled && !sw_codec_cfg.decoder.enabled)) {
@@ -618,7 +618,7 @@ int sw_codec_uninit(struct sw_codec_config sw_codec_cfg)
 #else
 		LOG_ERR("G.722 is not compiled in");
 		return -ENODEV;
-#endif /* (CONFIG_SW_CODEC_G722) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_G722) */
 	default:
 		LOG_ERR("Unsupported codec: %d", m_config.sw_codec);
 		return -ENODEV;
@@ -640,7 +640,7 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 
 	switch (sw_codec_cfg.sw_codec) {
 	case SW_CODEC_LC3: {
-#if (CONFIG_SW_CODEC_LC3)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_LC3)
 		if (!m_config.initialized) {
 			/* Check if LC3 is already initialized */
 			uint16_t encoder_sample_rate = 0;
@@ -655,9 +655,8 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			}
 
 			ret = sw_codec_lc3_single_rate_init(encoder_sample_rate,
-							    decoder_sample_rate,
-							    NULL, NULL,
-							    CONFIG_AUDIO_FRAME_DURATION_US);
+							    decoder_sample_rate, NULL, NULL,
+							    CONFIG_NRF_AUDIO_FRAME_DURATION_US);
 			if (ret) {
 				return ret;
 			}
@@ -672,14 +671,15 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			uint16_t pcm_bytes_req_enc;
 
 			LOG_DBG("Encode: %dHz %dbits %dus %dbps %d channel(s)",
-				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
-				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
-				sw_codec_cfg.encoder.num_ch);
+				sw_codec_cfg.encoder.sample_rate_hz,
+				CONFIG_NRF_AUDIO_BIT_DEPTH_BITS, CONFIG_NRF_AUDIO_FRAME_DURATION_US,
+				sw_codec_cfg.encoder.bitrate, sw_codec_cfg.encoder.num_ch);
 
 			ret = sw_codec_lc3_enc_init(
-				sw_codec_cfg.encoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
-				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.encoder.bitrate,
-				sw_codec_cfg.encoder.num_ch, &pcm_bytes_req_enc);
+				sw_codec_cfg.encoder.sample_rate_hz,
+				CONFIG_NRF_AUDIO_BIT_DEPTH_BITS, CONFIG_NRF_AUDIO_FRAME_DURATION_US,
+				sw_codec_cfg.encoder.bitrate, sw_codec_cfg.encoder.num_ch,
+				&pcm_bytes_req_enc);
 			if (ret) {
 				return ret;
 			}
@@ -692,12 +692,14 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 			}
 
 			LOG_DBG("Decode: %dHz %dbits %dus %d channel(s)",
-				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
-				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
+				sw_codec_cfg.decoder.sample_rate_hz,
+				CONFIG_NRF_AUDIO_BIT_DEPTH_BITS, CONFIG_NRF_AUDIO_FRAME_DURATION_US,
+				sw_codec_cfg.decoder.num_ch);
 
-			ret = sw_codec_lc3_dec_init(
-				sw_codec_cfg.decoder.sample_rate_hz, CONFIG_AUDIO_BIT_DEPTH_BITS,
-				CONFIG_AUDIO_FRAME_DURATION_US, sw_codec_cfg.decoder.num_ch);
+			ret = sw_codec_lc3_dec_init(sw_codec_cfg.decoder.sample_rate_hz,
+						    CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
+						    CONFIG_NRF_AUDIO_FRAME_DURATION_US,
+						    sw_codec_cfg.decoder.num_ch);
 			if (ret) {
 				return ret;
 			}
@@ -707,18 +709,18 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		LOG_ERR("LC3 is not compiled in, please open menuconfig and select "
 			"LC3");
 		return -ENODEV;
-#endif /* (CONFIG_SW_CODEC_LC3) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_LC3) */
 	}
 
 	case SW_CODEC_G722: {
-#if (CONFIG_SW_CODEC_G722)
+#if (CONFIG_NRF_AUDIO_SW_CODEC_G722)
 		return sw_codec_g722_init(sw_codec_cfg, &m_config, encoder_converters,
 					  decoder_converters);
 #else
 		LOG_ERR("G.722 is not compiled in, please open menuconfig and select "
 			"G.722");
 		return -ENODEV;
-#endif /* (CONFIG_SW_CODEC_G722) */
+#endif /* (CONFIG_NRF_AUDIO_SW_CODEC_G722) */
 	}
 
 	default:
@@ -726,9 +728,9 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		return -ENODEV;
 	}
 
-	if (sw_codec_cfg.encoder.num_ch > CONFIG_AUDIO_ENCODE_CHANNELS_MAX) {
+	if (sw_codec_cfg.encoder.num_ch > CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX) {
 		LOG_ERR("Number of encoder channels %d exceeds max %d", sw_codec_cfg.encoder.num_ch,
-			CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+			CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX);
 		return -EINVAL;
 	}
 
@@ -744,9 +746,9 @@ int sw_codec_init(struct sw_codec_config sw_codec_cfg)
 		}
 	}
 
-	if (sw_codec_cfg.decoder.num_ch > CONFIG_AUDIO_DECODE_CHANNELS_MAX) {
+	if (sw_codec_cfg.decoder.num_ch > CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX) {
 		LOG_ERR("Number of decoder channels %d exceeds max %d", sw_codec_cfg.decoder.num_ch,
-			CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+			CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX);
 		return -EINVAL;
 	}
 
