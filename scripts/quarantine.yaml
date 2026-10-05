@@ -109,3 +109,9 @@
   platforms:
     - nrf54l15dk/nrf54l05/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41726"
+
+- scenarios:
+    - bluetooth.mesh.build_models.emds
+  platforms:
+    - nrf52840dk/nrf52840
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41727"
