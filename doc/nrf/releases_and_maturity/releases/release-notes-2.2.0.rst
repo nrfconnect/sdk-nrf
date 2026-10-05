@@ -25,7 +25,7 @@ The following list includes the summary of the most relevant changes introduced 
 
 * Added :ref:`experimental support <software_maturity>` for the following features:
 
-  * :ref:`Distance Measurement vendor models <bt_mesh_dm_readme>` supporting distance measurement between Bluetooth mesh devices.
+  * Distance Measurement vendor models supporting distance measurement between Bluetooth mesh devices.
   * LE Power Control Request, which enables a device to request a change in TX power to a peer device.
   * Periodic Advertising Sync Transfer (only Sending supported).
   * TCP/IP and TLS over Thread.
@@ -624,7 +624,7 @@ Bluetooth libraries and services
 
 * :ref:`bt_mesh` library:
 
-  * Added the vendor :ref:`bt_mesh_dm_readme` supporting distance measurement between Bluetooth mesh devices.
+  * Added the vendor Distance Measurement models supporting distance measurement between Bluetooth mesh devices.
   * Updated:
 
     * Bluetooth mesh client models to reflect the changed mesh shell module structure.

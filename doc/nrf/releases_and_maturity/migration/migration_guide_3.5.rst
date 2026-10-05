@@ -295,6 +295,11 @@ This section describes the changes related to libraries.
        Use the :ref:`Secure Storage subsystem <secure_storage>` instead (:kconfig:option:`CONFIG_SECURE_STORAGE`).
        If you have an existing installation that uses the Trusted Storage library with entries stored in non-volatile memory, you can switch to using Secure Storage without losing any data by enabling the :kconfig:option:`CONFIG_SECURE_STORAGE_TRUSTED_STORAGE_COMPATIBILITY` Kconfig option.
 
+   * Bluetooth Mesh Distance Measurement vendor models:
+
+     * The experimental Distance Measurement Server and Distance Measurement Client vendor models have been removed.
+       Remove the ``CONFIG_BT_MESH_DM_SRV``, ``CONFIG_BT_MESH_DM_CLI``, ``CONFIG_BT_MESH_SHELL_DM_CLI``, and ``CONFIG_BT_MESH_DM_SRV_*`` Kconfig options from your project configuration, and remove the corresponding model instances from your composition data.
+
 Drivers
 =======
 
