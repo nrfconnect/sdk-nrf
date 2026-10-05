@@ -1,16 +1,13 @@
-.. _ncs_release_notes_changelog:
+.. _ncs_release_notes_350-preview3:
 
-Changelog for |NCS| v3.4.99
-###########################
+Changelog for |NCS| v3.5.0-preview3
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes from the latest official release.
 
 .. HOWTO
 
@@ -51,14 +48,16 @@ Build and configuration system
 
 Bootloaders and DFU
 ===================
-
 * Added:
 
   * The hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` Kconfig option to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
     The option is hidden and requires addition of a Kconfig override in your project.
     This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
-  * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page explaining the memory protection features of the bootloader on the nRF54L Series.
+  * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page to explain the memory protection features of the bootloader on the nRF54L Series.
   * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC
+
+* Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
+  See the :ref:`migration_3.5` for details.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 
@@ -71,9 +70,6 @@ Bootloaders and DFU
   * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
     These configurations now use PSA Crypto instead of the cc310 backend, which supports only signature verification.
   * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
-
-* Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
-  See the :ref:`migration_3.5` for details.
 
 Developing with nRF91 Series
 ============================
@@ -98,9 +94,11 @@ Developing with nRF71 Series
 Developing with nRF54L Series
 =============================
 
-* Added the :kconfig:option:`CONFIG_SB_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS` sysbuild Kconfig option to populate the Key Management Unit (KMU) slots for invalidation of the CRACEN-protected RAM using nrfutil.
-  This option requires ``nrfutil device`` version 2.15.4 or later to work.
-  When enabled, the :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT` and :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT` Kconfig options become unavailable, as they implement the same feature through alternative provisioning paths.
+* Added:
+
+  * The :kconfig:option:`CONFIG_SB_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS` sysbuild Kconfig option to populate the Key Management Unit (KMU) slots for invalidation of the CRACEN-protected RAM using nrfutil.
+    This option requires ``nrfutil device`` version 2.15.4 or later to work.
+    When enabled, the :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT` and :kconfig:option:`CONFIG_CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT` Kconfig options become unavailable, as they implement the same feature through alternative provisioning paths.
 
 Developing with nRF54H Series
 =============================
@@ -233,7 +231,7 @@ Bluetooth® LE
 * Added:
 
   * The :kconfig:option:`CONFIG_BT_HCI_SUPPORT_DEPRECATED_COMMANDS` Kconfig option to support deprecated HCI commands.
-    The option is disabled by default, and enabling it might cause deprecation warnings or errors during compilation.
+    The option is disabled by default, and enabling it may cause deprecation warnings or errors during compilation.
   * Support for Channel Classification in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION` Kconfig option.
 
 Bluetooth Mesh
@@ -302,11 +300,9 @@ Thread
 Wi-Fi®
 ------
 
-* Updated:
-
-  * The Connection Manager Wi-Fi connectivity layer to defer the connect request to its dedicated work queue (``wifi_conn_wq``) instead of running it synchronously in the context of the caller of :c:func:`conn_mgr_if_connect()`.
-    This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
-  * The default value of the :kconfig:option:`CONFIG_NET_MGMT_EVENT_QUEUE_TIMEOUT` Kconfig option to ``50`` milliseconds when :kconfig:option:`CONFIG_NET_L2_WIFI_SHELL` is enabled to prevent Wi-Fi scan events from being dropped when using slow shell backends.
+* Updated the Connection Manager Wi-Fi connectivity layer to defer the connect request to its dedicated work queue (``wifi_conn_wq``) instead of running it synchronously in the context of the caller of :c:func:`conn_mgr_if_connect()`.
+  This allows the stacks of the application, shell, and Connection Manager monitor threads to be reduced, as they no longer need to accommodate the Wi-Fi connect call chain.
+* Updated the default value of the :kconfig:option:`CONFIG_NET_MGMT_EVENT_QUEUE_TIMEOUT` Kconfig option to ``50`` milliseconds when :kconfig:option:`CONFIG_NET_L2_WIFI_SHELL` is enabled to prevent Wi-Fi scan events from being dropped when using slow shell backends.
 
 Applications
 ============
@@ -428,10 +424,11 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 * :ref:`central_nfc_pairing` and :ref:`peripheral_nfc_pairing` samples:
 
   * Removed support for the nRF52 Series devices.
+
+* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
@@ -439,7 +436,8 @@ Bluetooth samples
 
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
-  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp``, ``nrf54ls05dk/nrf54ls05a/cpuapp``, and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
+  * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target.
+  * Added support for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
 
   * Removed support for the nRF52 Series devices.
 
@@ -562,7 +560,7 @@ DFU samples
     To build with this feature, append ``FILE_SUFFIX=ble_enter`` to the build command.
 * Updated:
 
-  * By moving the :ref:`mcuboot_minimal_configuration` to the :file:`samples/dfu` directory.
+  * The :ref:`mcuboot_minimal_configuration` has been moved to the :file:`samples/dfu` directory.
   * The :ref:`single_slot_sample` sample with support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
     This is a buttonless DFU entry mechanism.
   * The :ref:`single_slot_sample` sample with support for the ``nrf52840dk/nrf52840`` board target.
@@ -614,23 +612,21 @@ Keys samples
 Matter samples
 --------------
 
-* Updated:
+* Moved all Matter samples from :file:`nrf/samples/matter/` to the `Matter add-on <ncs-matter add-on repository_>`_ repository under :file:`ncs-matter/samples/`.
+  Sample paths no longer use the ``samples/matter/`` prefix (for example, :file:`ncs-matter/samples/template` replaces :file:`nrf/samples/matter/template`).
+  See :ref:`migration_sdk_nrf_to_ncs_matter` for the full list of path changes, Kconfig renames, and build instructions.
 
-  * By moving all Matter samples from :file:`nrf/samples/matter/` to the `Matter add-on <ncs-matter add-on repository_>`_ repository under :file:`ncs-matter/samples/`.
-    Sample paths no longer use the ``samples/matter/`` prefix (for example, :file:`ncs-matter/samples/template` replaces :file:`nrf/samples/matter/template`).
-    See :ref:`migration_sdk_nrf_to_ncs_matter` for the full list of path changes, Kconfig renames, and build instructions.
+* Renamed Matter-specific Zephyr snippets in the add-on:
 
-  * By renaming Matter-specific Zephyr snippets in the add-on:
+  * ``matter-debug`` → ``debug``
+  * ``matter-diagnostic-logs`` → ``diagnostic-logs``
 
-    * ``matter-debug`` → ``debug``
-    * ``matter-diagnostic-logs`` → ``diagnostic-logs``
+* Updated Matter sample CMake integration to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
 
-  * Matter sample CMake integration is now updated to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
+* Moved shared Matter sample code from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
 
-  * The shared Matter sample code has been moved from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
-
-  * By moving the Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
-    Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
+* Moved Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
+  Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
 
 Networking samples
 ------------------
@@ -672,9 +668,9 @@ Networking samples
 
   * Updated:
 
-    * By enabling CoAP by default so that the sample always builds with support for both HTTP and CoAP.
+    * Enabled CoAP by default so that the sample always builds with support for both HTTP and CoAP.
       The transport is selected automatically at runtime.
-    * By enabling the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
+    * Enabled the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
 
   * Fixed:
 
@@ -694,12 +690,13 @@ Networking samples
 
     * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
-  * Updated the sample to only reboot on fatal errors and reconnect to the server on recoverable errors.
+
   * Fixed:
 
     * An issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
     * An issue where the DTLS handshake failed on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target due to an under-dimensioned TF-M crypto IOVEC buffer.
 
+  * Updated the sample to only reboot on fatal errors and reconnect to the server on recoverable errors.
 
 * :ref:`azure_iot_hub` sample:
 
@@ -762,11 +759,6 @@ nRF93M1 DK samples
 Peripheral samples
 ------------------
 
-* Added:
-
-  * The :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
-  * The :ref:`vpr_offloading_sample` sample that demonstrates how to use the VPR core (PPR or FLPR) to offload the application core.
-
 * :ref:`802154_phy_test` sample:
 
   * Removed support for the nRF52 Series devices.
@@ -787,6 +779,10 @@ Peripheral samples
 
     * The sample documentation with build instructions for the USB and RTT shell variants, including ``west rtt`` usage for the nRF54L15 TAG.
     * The nRF5340 DK USB build to use the ``EXTRA_CONF_FILE=conf/usb.conf`` configuration fragment.
+
+* Added the :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
+
+* Added the :ref:`vpr_offloading_sample` sample that demonstrates how to use the VPR core (PPR or FLPR) to offload the application core.
 
 PMIC samples
 ------------
@@ -816,7 +812,6 @@ SUIT samples
 Trusted Firmware-M (TF-M) samples
 ---------------------------------
 
-* Added support for the nRF54LC10A SoC in the TF-M samples.
 * :ref:`tfm_psa_template` sample:
 
   * Added support for nRF54L Series devices.
@@ -825,6 +820,8 @@ Trusted Firmware-M (TF-M) samples
 
   * Added support for nRF54L Series devices.
 
+* Added support for the nRF54LC10A SoC in the TF-M samples.
+
 Thread samples
 --------------
 
@@ -832,11 +829,6 @@ Thread samples
 
 Wi-Fi samples
 -------------
-
-* Added support for the ``nrf7120dk/nrf7120/cpuapp`` board target in the following Zephyr samples:
-
-  * :zephyr:code-sample:`mqtt-sn-publisher`
-  * :zephyr:code-sample:`coap-server`
 
 * :ref:`wifi_shutdown_sample` sample:
 
@@ -873,26 +865,29 @@ Wi-Fi samples
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
     * Unused button functionality that only printed a log message.
 
-* Removed:
+* Removed support from the following Zephyr samples:
 
-  * Support from the following Zephyr samples:
+  * :zephyr:code-sample:`dns-resolve`
+  * :zephyr:code-sample:`ipv4-autoconf`
+  * :zephyr:code-sample:`mdns-responder`
+  * :zephyr:code-sample:`mqtt-publisher`
+  * :zephyr:code-sample:`async-sockets-echo`
+  * :zephyr:code-sample:`sockets-echo-client`
+  * :zephyr:code-sample:`sockets-echo-server`
+  * :zephyr:code-sample:`sockets-http-get`
+  * :zephyr:code-sample:`sntp-client`
+  * :zephyr:code-sample:`syslog-net`
+  * :zephyr:code-sample:`telnet-console`
 
-    * :zephyr:code-sample:`dns-resolve`
-    * :zephyr:code-sample:`ipv4-autoconf`
-    * :zephyr:code-sample:`mdns-responder`
-    * :zephyr:code-sample:`mqtt-publisher`
-    * :zephyr:code-sample:`async-sockets-echo`
-    * :zephyr:code-sample:`sockets-echo-client`
-    * :zephyr:code-sample:`sockets-echo-server`
-    * :zephyr:code-sample:`sockets-http-get`
-    * :zephyr:code-sample:`sntp-client`
-    * :zephyr:code-sample:`syslog-net`
-    * :zephyr:code-sample:`telnet-console`
+* Removed support for the ``nrf5340dk/nrf5340/cpuapp`` board target with the nRF7002 EK shield from the following Zephyr samples:
 
-  * Support for the ``nrf5340dk/nrf5340/cpuapp`` board target with the nRF7002 EK shield from the following Zephyr samples:
+  * :zephyr:code-sample:`mqtt-sn-publisher`
+  * :zephyr:code-sample:`coap-server`
 
-    * :zephyr:code-sample:`mqtt-sn-publisher`
-    * :zephyr:code-sample:`coap-server`
+* Added support for the ``nrf7120dk/nrf7120/cpuapp`` board target in the following Zephyr samples:
+
+  * :zephyr:code-sample:`mqtt-sn-publisher`
+  * :zephyr:code-sample:`coap-server`
 
 Other samples
 -------------
@@ -1027,10 +1022,8 @@ Modem libraries
 
 * :ref:`modem_key_mgmt` library:
 
-  * Added:
-
-    * The :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
-    * :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
+  * Added the :c:func:`modem_key_mgmt_certexpiry` function that would retrieve the expiry date of a credential from the modem.
+  * Added :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` support for TLS credential expiry retrieval when using the modem as TLS credentials storage.
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -1081,13 +1074,14 @@ Libraries for networking
 Libraries for NFC
 -----------------
 
-* Fixed an issue where calling the NFC platform callback in the :file:`platform_internal_thread` file with zero-length data and ``copy_data`` enabled could corrupt the ring buffer and cause incorrect header parsing in the consumer thread.
-* Removed support for the nRF52 Series devices in the NFC subsystem and library.
+* Removed support for the nRF52 Series devices in the NFC subsystem.
 
 * :ref:`nfc_ndef_parser_readme`:
 
   * Fixed an issue where parsing a malformed long-format NDEF record could produce an incorrect payload length.
     The parser now validates type, ID, and payload lengths against the remaining input buffer.
+
+* Fixed an issue where calling the NFC platform callback in the :file:`platform_internal_thread` file with zero-length data and ``copy_data`` enabled could corrupt the ring buffer and cause incorrect header parsing in the consumer thread.
 
 nRF RPC libraries
 -----------------
@@ -1102,7 +1096,6 @@ Other libraries
   * The :ref:`lib_nrf71_idle_power` library to reduce the System ON idle current of an nRF71 Series application core by applying a configurable RAM retention level at boot and enabling the device power management options needed for peripherals to suspend while idle.
     The library also provides the :c:func:`nrf71_idle_power_suspend_console` and :c:func:`nrf71_idle_power_resume_console` functions, which suspend and resume the console or UART device during an application's idle period, for use by any sample that requires the lowest possible idle current.
   * The :ref:`vtf_monitoring` subsystem for battery voltage, temperature, and frequency monitoring used by the nRF Wi-Fi subsystem.
-  * The :ref:`lib_rtfw` proof-of-concept library for executing bounded, latency-sensitive operations in an application-core zero-latency interrupt.
 
 * :ref:`lib_ram_pwrdn` library:
 
@@ -1111,6 +1104,8 @@ Other libraries
 * :ref:`lib_hw_id` library:
 
   * Added UUID support for the nRF54L Series and the nRF5340 SoC.
+
+* Added the :ref:`lib_rtfw` proof-of-concept library for executing bounded, latency-sensitive operations in an application-core zero-latency interrupt.
 
 * :ref:`dult_readme` library:
 
