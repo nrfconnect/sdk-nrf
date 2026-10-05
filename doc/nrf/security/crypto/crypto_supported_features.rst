@@ -8889,13 +8889,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                  - --
                  - --
                * - SHAKE256 192 bits
@@ -9450,6 +9450,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
 
          .. tab:: nrf_oberon

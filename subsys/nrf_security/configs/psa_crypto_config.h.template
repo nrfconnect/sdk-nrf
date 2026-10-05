@@ -385,6 +385,7 @@
 #cmakedefine PSA_NEED_CRACEN_SHA3_256                           @PSA_NEED_CRACEN_SHA3_256@
 #cmakedefine PSA_NEED_CRACEN_SHA3_384                           @PSA_NEED_CRACEN_SHA3_384@
 #cmakedefine PSA_NEED_CRACEN_SHA3_512                           @PSA_NEED_CRACEN_SHA3_512@
+#cmakedefine PSA_NEED_CRACEN_SHAKE128_256                       @PSA_NEED_CRACEN_SHAKE128_256@
 #cmakedefine PSA_NEED_CRACEN_SHAKE256_512                       @PSA_NEED_CRACEN_SHAKE256_512@
 #cmakedefine PSA_NEED_CRACEN_SHAKE128                           @PSA_NEED_CRACEN_SHAKE128@
 #cmakedefine PSA_NEED_CRACEN_SHAKE256                           @PSA_NEED_CRACEN_SHAKE256@

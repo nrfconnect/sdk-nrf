@@ -160,6 +160,7 @@ Security
   * Support for the SHAKE-128 and SHAKE-256 eXtendable Output Functions (XOF) in the CRACEN driver.
   * Support for signature generation and verification with the ML-DSA-44, ML-DSA-65, and ML-DSA-87 algorithms when using the CRACEN driver.
   * Support for key encapsulation and decapsulation with ML-KEM-512, ML-KEM-768, and ML-KEM-1024 when using the CRACEN driver.
+  * Support for the SHAKE128/256 hash algorithm in the CRACEN driver on the nRF54L Series devices.
 
 * Updated:
 

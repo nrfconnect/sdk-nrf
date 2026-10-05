@@ -40,7 +40,8 @@
 /*
  * !!! ORDER MATTERS !!!
  */
-#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#if	defined(PSA_NEED_CRACEN_SHAKE128) || \
+	defined(PSA_NEED_CRACEN_SHAKE128_256)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHAKE_128
 #elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_224
@@ -73,7 +74,8 @@
  *
  * !!! ORDER MATTERS !!!
  */
-#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#if	defined(PSA_NEED_CRACEN_SHAKE128) || \
+	defined(PSA_NEED_CRACEN_SHAKE128_256)
 #define SX_HASH_OPERATION_CONTEXT_SZ 368
 #elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_OPERATION_CONTEXT_SZ 344
@@ -196,6 +198,9 @@ extern const struct sxhashalg sxhashalg_sha3_512;
 /** Hash algorithm SHAKE256, with output size fixed to 114 bytes (for Ed448). */
 extern const struct sxhashalg sxhashalg_shake256_114;
 extern const struct sxhashalg sxhashalg_shake256_64;
+
+/** Hash algorithm SHAKE128, with output size fixed to 32 bytes. */
+extern const struct sxhashalg sxhashalg_shake128_32;
 
 extern const struct sxhashalg sxhashalg_shake128;
 extern const struct sxhashalg sxhashalg_shake256;
