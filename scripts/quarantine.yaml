@@ -103,3 +103,10 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41708"
+
+- scenarios:
+    - mcuboot.kmu.west.provision.basic
+    - mcuboot.kmu.west_flash_default_provision
+  platforms:
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41547"
