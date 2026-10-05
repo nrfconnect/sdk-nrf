@@ -847,6 +847,7 @@
 /scripts/pip-audit-whitelist.yml          @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/tools-versions-*.txt             @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/requirements-*.txt               @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
+/scripts/requirements-fixed.sh            @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/schemas/                         @nrfconnect/ncs-co-build-system @nrfconnect/ncs-ci
 /scripts/shell/ble_console/               @nrfconnect/ncs-ll-izera
 /scripts/shell/bt_nus_shell.py            @nrfconnect/ncs-ll-izera
