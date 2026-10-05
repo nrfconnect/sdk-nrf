@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: pavelvpv
+      url-base: https://github.com/pavelvpv
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -64,8 +66,9 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/introduction/index.html
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
+      remote: pavelvpv
       repo-path: sdk-zephyr
-      revision: 3bad92dfe883f4abf440d505a0f34d368da90b21
+      revision: nrf71-wifi-patch-kconfig
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -148,9 +151,10 @@ manifest:
       repo-path: sdk-oberon-psa-crypto
       revision: e8db62ed0fba5028e7ae0eba7b1fb63436ae6416
     - name: nrfxlib
+      remote: pavelvpv
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: bde613e705832c3e40212c4cfce51795cf7e426e
+      revision: nrf71-wifi-patch-kconfig
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
