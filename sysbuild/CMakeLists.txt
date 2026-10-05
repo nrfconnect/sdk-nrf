@@ -964,6 +964,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       ${ZEPHYR_NRF_MODULE_DIR}/soc/nordic/nrf92/gen_uicr.conf
     )
   endif()
+
+  if(SB_CONFIG_SOC_SERIES_NRF71)
+    forward_nrf71_wifi_patch_config(${DEFAULT_IMAGE})
+  endif()
 endfunction(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
 function(${SYSBUILD_CURRENT_MODULE_NAME}_post_image_cmake)
@@ -1092,6 +1096,7 @@ include(${CMAKE_CURRENT_LIST_DIR}/pprcore.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/radio_loader.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/secureboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/tfm_bl_storage.cmake)
+include(${CMAKE_CURRENT_LIST_DIR}/nrf71_wifi_patch.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/mcuboot.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_radio.cmake)
 include(${CMAKE_CURRENT_LIST_DIR}/firmware_loader_installer.cmake)

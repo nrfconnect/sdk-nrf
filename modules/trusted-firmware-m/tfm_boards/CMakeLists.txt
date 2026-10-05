@@ -128,6 +128,14 @@ if(${TFM_PARTITION_CRYPTO})
     )
   endif()
 
+  if(CONFIG_WIFI_NRF71_PATCH)
+    target_compile_definitions(platform_s PUBLIC
+      CONFIG_WIFI_NRF71_PATCH=1
+      CONFIG_WIFI_NRF71_PATCH_LMAC_ORIGIN=${CONFIG_WIFI_NRF71_PATCH_LMAC_ORIGIN}
+      CONFIG_WIFI_NRF71_PATCH_UMAC_ORIGIN=${CONFIG_WIFI_NRF71_PATCH_UMAC_ORIGIN}
+    )
+  endif()
+
   target_link_libraries(platform_crypto_keys
     PUBLIC
     platform_s
