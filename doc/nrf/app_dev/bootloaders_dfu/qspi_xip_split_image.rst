@@ -12,22 +12,18 @@ The QSPI XIP split image feature lets you gain more flash storage space for appl
 * Code that runs on the internal flash memory.
 * Code that runs on supported external flash memory over the Quad Serial Peripheral Interface (QSPI) using Execute in Place (XIP).
 
-This feature is supported on nRF52840 and nRF5340.
-
-.. caution::
-   On the nRF52840, do not relocate interrupts to the QSPI XIP flash.
-   Doing so can lock up or brick the device by making the debug access port inaccessible.
+This feature is supported on nRF5340.
 
 The QSPI XIP split images are supported in :doc:`MCUboot <mcuboot:index-ncs>`, which allows for updating them over-the-air.
 
-For the nRF5340 DK and Nordic Thingy:53, you can also check out the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample, which demonstrates this feature.
+For the nRF5340 DK, you can also check out the :ref:`SMP Server with external XIP <smp_svr_ext_xip>` sample, which demonstrates this feature.
 
 Requirements
 ************
 
 To use this feature, meet the following requirements:
 
-* Board based on nRF52840 or nRF5340, with file structure compatible with Hardware model v2 (HWMv2)
+* Board based on nRF5340, with file structure compatible with Hardware model v2 (HWMv2)
 * External QSPI flash chip with supported commands connected to QSPI pins
 * QSPI flash chip in always-on mode (meaning, no DPM or low-power modes)
 * :doc:`MCUboot configuration <mcuboot:design>` in the Swap using move mode (``MCUBOOT_SWAP_USING_MOVE``), the Upgrade only mode (``MCUBOOT_OVERWRITE_ONLY``), or in the direct-XIP mode
