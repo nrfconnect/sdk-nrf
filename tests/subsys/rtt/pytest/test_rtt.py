@@ -123,6 +123,13 @@ def test_rtt_logging(dut: DeviceAdapter):
         'nrf7120dk/nrf7120/cpuapp': {
             'device': 'nRF54L15_M33',
         },
+        'nrf7120dk/nrf7120/cpuapp/ns': {
+            'device': 'nRF54L15_M33',
+            'RTTSearchRanges': '0x20018000 0xE6000',
+        },
+        'nrf7120dk/nrf7120e/cpuapp': {
+            'device': 'nRF54L15_M33',
+        },
         'nrf9251dk@0.1.0/nrf9251/cpuapp': {
             'device': 'Cortex-M33',
             'RTTSearchRanges': '0x22000000 0x8000',
