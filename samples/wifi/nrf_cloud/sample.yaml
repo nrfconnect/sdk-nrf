@@ -12,8 +12,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - EXTRA_CONF_FILE="mqtt.conf"
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
     tags:
       - ci_build
       - sysbuild
@@ -27,8 +25,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - EXTRA_CONF_FILE="coap.conf"
-      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - CONFIG_WIFI_NRF71_PATCH=y
     tags:
       - ci_build
       - sysbuild
@@ -44,8 +40,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
     extra_args:
       - EXTRA_CONF_FILE="coap.conf;coap-fota.conf"
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
     tags:
       - ci_build
       - sysbuild
