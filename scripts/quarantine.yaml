@@ -103,3 +103,9 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41708"
+
+- scenarios:
+    - hybrid_verify.cracen
+  platforms:
+    - nrf54l15dk/nrf54l05/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41726"
