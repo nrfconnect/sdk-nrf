@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - can
+    - ci_tests_zephyr_drivers_can
   harness: ztest
   platform_allow:
     - nrf54l15dk/nrf54l15/cpuapp
