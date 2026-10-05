@@ -1830,6 +1830,12 @@ ci_samples_zephyr_drivers_adc:
     - nrf/samples/zephyr/drivers/adc/
     - zephyr/samples/drivers/adc/
 
+ci_tests_zephyr_drivers_can:
+  files:
+    - nrf/tests/zephyr/drivers/can/
+    - zephyr/tests/drivers/can/
+    - zephyr/drivers/can/
+
 ci_tests_zephyr_drivers_timer:
   files:
     - nrf/tests/zephyr/drivers/timer/
