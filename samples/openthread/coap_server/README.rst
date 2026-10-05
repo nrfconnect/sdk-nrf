@@ -45,7 +45,7 @@ User interface
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       Button 4:
         Pressing results in entering the pairing mode for a limited period of time.

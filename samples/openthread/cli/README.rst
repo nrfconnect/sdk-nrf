@@ -78,22 +78,6 @@ See `Testing diagnostic module`_ section for an example.
 .. note::
     If you disable the :kconfig:option:`CONFIG_OPENTHREAD_NORDIC_LIBRARY_MASTER` feature set, you can enable the diagnostic module with the :kconfig:option:`CONFIG_OPENTHREAD_DIAG` Kconfig option.
 
-.. _ot_cli_sample_bootloader:
-
-Rebooting to bootloader
-=======================
-
-For the ``nrf52840dongle/nrf52840`` board target, the device can reboot to bootloader by triggering a GPIO pin.
-To enable this behavior, enable the :kconfig:option:`CONFIG_OPENTHREAD_PLATFORM_BOOTLOADER_MODE_GPIO` Kconfig option and configure the Devicetree overlay in the :file:`boards/nrf52840dongle_nrf52840.overlay` file.
-For this sample, the ``bootloader-gpios`` property in the ``openthread_config`` node is pre-configured for the **P0.19** pin, which is connected to the **RESET** pin on the nRF52840 Dongle.
-This functionality is not enabled by other commands, such as ``factoryreset``, as they can only trigger a software reset, skipping the bootloader.
-
-To reboot to the bootloader, run the following command on the device:
-
-.. code-block:: console
-
-   uart:~$ ot reset bootloader
-
 Configuration
 *************
 
@@ -170,7 +154,8 @@ Serial transport
 ================
 
 The Thread CLI sample supports UART and USB CDC ACM as serial transports.
-By default, it uses USB CDC ACM transport for ``nrf52840dongle/nrf52840``, and UART transport for other board targets.
+Use the ``ot-usb`` snippet for USB CDC ACM transport on board targets that support it.
+UART is the default for development kit board targets.
 
 .. _ot_cli_sample_activating_variants:
 
@@ -200,7 +185,7 @@ To update the OpenThread libraries provided by ``nrfxlib``, use the following co
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840
+   west build -b nrf54l15dk/nrf54l15/cpuapp
    west build -d build/cli -t install_openthread_libraries
 
 .. _ot_cli_sample_testing:
