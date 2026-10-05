@@ -38,8 +38,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
       - aws_iot_EXTRA_CONF_FILE="wifi.conf"
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.aws_iot.nrf7002eb2.wifi:
     sysbuild: true
     tags:
