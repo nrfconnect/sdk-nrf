@@ -16,8 +16,6 @@ tests:
       - ci_samples_net
     extra_args:
       - http_server_EXTRA_CONF_FILE="wifi.conf"
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
   sample.net.http_server.wifi.tls:
     sysbuild: true
     build_only: true
@@ -27,10 +25,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
-    extra_args:
-      - http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
     tags:
       - ci_build
       - sysbuild
@@ -44,10 +39,7 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp/ns
-    extra_args:
-      - http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
-      - platform:nrf7120:CONFIG_WIFI_NRF71_PATCH=y
-      - platform:nrf7120:EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf71_wifi/bins/0.1.0/nrf7120_wifi_patch.dtsi
+    extra_args: http_server_EXTRA_CONF_FILE="wifi.conf;wifi-tls.conf"
     # Enables peer verification (mutual TLS); see the README "Security" section.
     extra_configs:
       - CONFIG_HTTP_SERVER_SAMPLE_PEER_VERIFICATION_REQUIRE=y
