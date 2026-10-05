@@ -15,10 +15,13 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample demonstrates Wi-Fi P2P functionality using the following two operating modes:
+The sample demonstrates Wi-Fi P2P functionality using the following operating modes:
 
-* Client (CLI) mode - The device discovers a peer and initiates a P2P connection.
-* Group Owner (GO) mode - The device acts as the P2P Group Owner and manages the P2P group.
+* Client (CLI) mode - The device discovers a peer and joins or negotiates a P2P connection.
+* Group Owner (GO) mode - The device forms an autonomous P2P group and manages it.
+* Persistent Group Owner mode - The device forms an autonomous persistent group and verifies, in code, that the stored group is reused (re-invoked by ID with the same credentials) across group-add cycles.
+
+Each Group Owner mode can optionally run a TCP echo server, and the client can run a matching TCP echo client, to exercise the data path over the P2P link.
 
 Wi-Fi P2P enables direct communication between devices without requiring a traditional access point.
 
@@ -37,7 +40,13 @@ The following sample-specific Kconfig options are used in this sample (located i
 .. options-from-kconfig::
    :show-type:
 
-In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to connect to a peer.
+The sample provides overlay configuration files that select a mode together with its common options:
+
+* :file:`overlay-echo-cli.conf` - Client mode with the TCP echo client.
+* :file:`overlay-echo-go.conf` - Autonomous Group Owner with the TCP echo server.
+* :file:`overlay-go-persistent.conf` - Persistent Group Owner with persistence verification.
+
+In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to the Group Owner's MAC address to connect to it.
 
 Building and running
 ********************
@@ -47,11 +56,20 @@ Building and running
 .. include:: /includes/build_and_run_ns.txt
 
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
-The following is an example of the CLI command:
+Select a mode by applying its overlay with the ``EXTRA_CONF_FILE`` option.
+
+The following examples build for the nRF7002 DK:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp
+   # Autonomous Group Owner with the echo server
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-echo-go.conf
+
+   # Client with the echo client (set CONFIG_SAMPLE_P2P_PEER_ADDRESS to the GO MAC)
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-echo-cli.conf
+
+   # Persistent Group Owner with persistence verification
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-go-persistent.conf
 
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 
@@ -146,3 +164,21 @@ Testing
         [00:00:29.505,446] <inf> wpa_supp: wlan0: CTRL-EVENT-DISCONNECTED bssid=f4:ce:36:00:d2:4c reason=3 locally_generated=1
         [00:00:29.505,648] <inf> p2p_go: P2P group remove initiated: wlan0
         [00:00:29.505,654] <inf> p2p_go: P2P group removed successfully
+
+   * Persistent GO mode:
+
+     .. code-block:: console
+
+        *** Booting nRF Connect SDK v3.2.99-aa13127d2ec2 ***
+        *** Using Zephyr OS v4.3.99-1d6a9d7577c0 ***
+        [00:00:01.359,344] <inf> p2p_go_persistent: Persistence cycle 1/3 (create)
+        [00:00:01.360,000] <inf> p2p_go_persistent: P2P group add initiated (new persistent group)
+        [00:00:03.360,000] <inf> p2p_go_persistent: Stored persistent network: id=1 ssid="DIRECT-Gb"
+        [00:00:03.400,000] <inf> p2p_go_persistent: P2P group remove initiated: wlan0
+        [00:00:05.400,000] <inf> p2p_go_persistent: Persistence cycle 2/3 (re-invoke by id)
+        [00:00:05.401,000] <inf> p2p_go_persistent: P2P group add initiated (re-invoke persistent id=1)
+        [00:00:07.401,000] <inf> p2p_go_persistent: PERSISTENCE VERIFIED: re-invoked id=1 reused ssid="DIRECT-Gb"
+        [00:00:07.440,000] <inf> p2p_go_persistent: P2P group remove initiated: wlan0
+        [00:00:09.440,000] <inf> p2p_go_persistent: Persistence cycle 3/3 (re-invoke by id)
+        [00:00:11.440,000] <inf> p2p_go_persistent: PERSISTENCE VERIFIED: re-invoked id=1 reused ssid="DIRECT-Gb"
+        [00:00:11.480,000] <inf> p2p_go_persistent: Persistence verification done: 2 verified, 0 mismatched
