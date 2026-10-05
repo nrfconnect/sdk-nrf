@@ -50,7 +50,7 @@
 static struct {
 	struct net_if *iface;
 	const struct shell *shell;
-	struct dect_net_l2_shell_print_fns print_fns;
+	struct dect_net_lib_shell_print_fns print_fns;
 	bool custom_print_enabled;
 } context = {
 	.iface = NULL,
@@ -3414,7 +3414,7 @@ SHELL_SUBCMD_ADD((dect), sett, &dect_commands,
 
 SHELL_CMD_REGISTER(dect, &dect_commands, "DECT NR+ commands", NULL);
 
-int dect_net_l2_shell_init(const struct dect_net_l2_shell_print_fns *print_fns)
+int dect_net_l2_shell_init(const struct dect_net_lib_shell_print_fns *print_fns)
 {
 	if (print_fns == NULL) {
 		context.custom_print_enabled = false;

@@ -1,0 +1,28 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+config DECT_ICMP_PING_LIB
+	bool "DECT NR+ ICMPv6 ping shell library"
+	depends on DECT
+	depends on NET_IPV6 && NET_NATIVE && NET_SOCKETS
+	depends on NET_INTERFACE_NAME
+	depends on SHELL && GETOPT_LONG
+	depends on NET_IP
+	help
+	  Registers the ping shell command for IPv6 ICMP echo on DECT NR+ interfaces using Zephyr
+	  net_icmp. Supports hostname lookup and options for count, interval, timeout, and payload
+	  size, with per-reply and summary RTT output.
+	  An application may supply a k_poll_signal to stop a run in progress.
+
+if DECT_ICMP_PING_LIB
+
+config DECT_ICMP_PING_DEFAULT_IFACE
+	string "Default network interface name for ping"
+	default DECT_MDM_DEVICE_NAME if DECT_MDM
+	default "dect0"
+	help
+	  Network interface name used when the ping command is given
+	  without -I.
+
+endif # DECT_ICMP_PING_LIB

@@ -16,7 +16,6 @@ target_include_directories(app PRIVATE
   src/cloud
   src/hostname
   src/native_tls
-  src/ping
   src/print
   src/utils
 )
@@ -38,7 +37,5 @@ target_sources_ifdef(CONFIG_SAMPLE_DESH_CLOUD_COAP app PRIVATE src/cloud/cloud_c
 target_sources_ifdef(CONFIG_NET_HOSTNAME_DYNAMIC app PRIVATE src/hostname/hostname_shell.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_NATIVE_TLS app PRIVATE src/native_tls/desh_at_cmng.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_NATIVE_TLS app PRIVATE src/native_tls/desh_native_tls.c)
-target_sources_ifdef(CONFIG_SAMPLE_DESH_DECT_ICMP_PING app PRIVATE src/ping/icmp_ping.c)
-target_sources_ifdef(CONFIG_SAMPLE_DESH_DECT_ICMP_PING app PRIVATE src/ping/icmp_ping_shell.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_MDNS_DNS_SD_ADVERTISE app PRIVATE src/mdns/dns_sd_advertise.c)
 target_sources_ifdef(CONFIG_SAMPLE_DESH_MDNS_DISCOVER app PRIVATE src/mdns/dect_discover_shell.c)

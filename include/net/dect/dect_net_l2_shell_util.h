@@ -7,41 +7,13 @@
 #ifndef DECT_NET_L2_SHELL_UTIL_H
 #define DECT_NET_L2_SHELL_UTIL_H
 
-#include <stdarg.h>
 #include <stddef.h>
 #include <stdbool.h>
 
+#include <net/dect/dect_net_lib_shell.h>
+
 /* Forward declarations */
-struct shell;
 enum dect_status_values;
-
-/**
- * @brief Print function pointer type matching shell_print signature.
- *
- * @param shell Shell instance (can be NULL if not using shell).
- * @param fmt Format string.
- * @param ... Variable arguments.
- */
-typedef void (*dect_net_l2_shell_print_fn_t)(const struct shell *shell, const char *fmt, ...);
-
-/**
- * @brief Print function pointer type for variadic arguments.
- *
- * @param shell Shell instance (can be NULL if not using shell).
- * @param fmt Format string.
- * @param args Variable arguments as va_list.
- */
-typedef void (*dect_net_l2_shell_vprint_fn_t)(const struct shell *shell, const char *fmt,
-					      va_list args);
-
-/**
- * @brief Structure for custom print functions.
- */
-struct dect_net_l2_shell_print_fns {
-	dect_net_l2_shell_print_fn_t print_fn;  /**< Print function (normal output) */
-	dect_net_l2_shell_print_fn_t error_fn;  /**< Error print function */
-	dect_net_l2_shell_print_fn_t warn_fn;   /**< Warning print function */
-};
 
 /**
  * @brief Initialize l2_shell library with custom print functions.
@@ -56,7 +28,7 @@ struct dect_net_l2_shell_print_fns {
  *
  * @return 0 on success, negative error code on failure
  */
-int dect_net_l2_shell_init(const struct dect_net_l2_shell_print_fns *print_fns);
+int dect_net_l2_shell_init(const struct dect_net_lib_shell_print_fns *print_fns);
 
 char *dect_net_l2_shell_util_mac_err_to_string(enum dect_status_values status, char *out_str_buff,
 					       size_t out_str_buff_len);
