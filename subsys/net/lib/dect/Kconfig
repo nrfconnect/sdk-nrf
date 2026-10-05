@@ -6,8 +6,15 @@
 
 menu "DECT NR+ libraries"
 
+# Build nrf/subsys/net/lib/dect/ when any library here is enabled (not only CONFIG_DECT).
+config DECT_NET_LIBS
+	bool
+	default y if DECT || DECT_UTILS_LIB || DECT_L2_SHELL_LIB || DECT_TETHER_IPV6_LIB || \
+		DECT_ICMP_PING_LIB
+
 rsource "utils/Kconfig"
 rsource "l2_shell/Kconfig"
 rsource "tether_ipv6/Kconfig"
+rsource "ping/Kconfig"
 
 endmenu
