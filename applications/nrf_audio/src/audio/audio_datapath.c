@@ -1180,7 +1180,7 @@ int audio_datapath_init(void)
 		ctrl_blk.pres_comp.enabled = true;
 	}
 
-	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
+	ctrl_blk.pres_comp.pres_delay_us = CONFIG_LE_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
 }

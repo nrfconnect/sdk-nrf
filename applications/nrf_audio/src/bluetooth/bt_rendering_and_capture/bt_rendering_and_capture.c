@@ -15,7 +15,7 @@
 #include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_r_c, CONFIG_BT_RENDERING_AND_CAPTURE_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_r_c, CONFIG_RENDERING_AND_CAPTURE_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(volume_chan, struct volume_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));

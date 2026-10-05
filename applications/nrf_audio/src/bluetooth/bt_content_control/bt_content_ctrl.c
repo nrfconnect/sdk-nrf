@@ -14,7 +14,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_content_ctrl, CONFIG_BT_CONTENT_CTRL_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_content_ctrl, CONFIG_CONTENT_CTRL_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(cont_media_chan, struct content_control_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));

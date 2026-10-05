@@ -17,7 +17,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_content_ctrl_media, CONFIG_BT_CONTENT_CTRL_MEDIA_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_content_ctrl_media, CONFIG_CONTENT_CTRL_MEDIA_LOG_LEVEL);
 
 static uint8_t media_player_state = BT_MCS_MEDIA_STATE_PLAYING;
 

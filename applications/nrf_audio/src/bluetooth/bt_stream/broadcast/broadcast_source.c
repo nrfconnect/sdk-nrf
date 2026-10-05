@@ -148,7 +148,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT)) {
 		le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
 	}
 
@@ -347,7 +347,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t
 	/* Parental rating */
 	ret = metadata_u8_add(&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX], &meta_data_buf_size,
 			      BT_AUDIO_METADATA_TYPE_PARENTAL_RATING,
-			      CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+			      CONFIG_LE_AUDIO_BROADCAST_PARENTAL_RATING);
 	if (ret) {
 		return ret;
 	}
@@ -776,31 +776,31 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
 	broadcast_param->subgroups = &subgroups;
 	broadcast_param->num_subgroups = 1;
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_PACKING_INTERLEAVED)) {
 		broadcast_param->packing = BT_ISO_PACKING_INTERLEAVED;
 	} else {
 		broadcast_param->packing = BT_ISO_PACKING_SEQUENTIAL;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_BROADCAST_ENCRYPTED)) {
 		broadcast_param->encryption = true;
 		memset(broadcast_param->broadcast_code, 0, sizeof(broadcast_param->broadcast_code));
-		memcpy(broadcast_param->broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+		memcpy(broadcast_param->broadcast_code, CONFIG_LE_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(sizeof(CONFIG_LE_AUDIO_BROADCAST_ENCRYPTION_KEY),
 			   sizeof(broadcast_param->broadcast_code)));
 	} else {
 		broadcast_param->encryption = false;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_BROADCAST_IMMEDIATE_FLAG)) {
 		bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
 			&subgroups.group_lc3_preset.codec_cfg);
 	}
 
 	bt_audio_codec_cfg_meta_set_lang(&subgroups.group_lc3_preset.codec_cfg, "eng");
 
-	memcpy(broadcast_param->broadcast_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
-	       sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME));
+	memcpy(broadcast_param->broadcast_name, CONFIG_LE_AUDIO_BROADCAST_NAME,
+	       sizeof(CONFIG_LE_AUDIO_BROADCAST_NAME));
 }
 
 void broadcast_started_cb(struct bt_cap_broadcast_source *source)

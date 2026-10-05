@@ -335,7 +335,7 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 		/* Note: May lead to connection creation */
 		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
 			if (server_sirk == NULL) {
-				if (IS_ENABLED(CONFIG_BT_MGMT_CONNECT_BY_ADDR)) {
+				if (IS_ENABLED(CONFIG_MGMT_CONNECT_BY_ADDR)) {
 					bt_data_parse(ad, addr_check, (void *)info->addr);
 				} else {
 					bt_data_parse(ad, device_name_check, (void *)info->addr);

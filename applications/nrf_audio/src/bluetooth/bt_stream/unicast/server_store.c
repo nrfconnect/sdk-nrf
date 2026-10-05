@@ -268,7 +268,7 @@ static bool sink_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
-	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
+	return pac_parse(data, preset, CONFIG_LE_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
 }
 
 /* Parse published audio capabilities (PAC) for source direction (server->client)/(headset->gateway)
@@ -277,7 +277,7 @@ static bool source_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
-	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
+	return pac_parse(data, preset, CONFIG_LE_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
 }
 
 static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
@@ -918,7 +918,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+			if (IS_ENABLED(CONFIG_LE_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Sink PAC %d:", i);
 				ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
 							  server->snk.codec_caps[i].data_len,
@@ -946,7 +946,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 			if (srv_store_preset_validated(
 				    &(preset.codec_cfg), &(server->snk.lc3_preset[0].codec_cfg),
-				    CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE)) {
+				    CONFIG_LE_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE)) {
 				memcpy(&server->snk.lc3_preset[0], &preset,
 				       sizeof(struct bt_bap_lc3_preset));
 			}
@@ -957,7 +957,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+			if (IS_ENABLED(CONFIG_LE_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Source PAC %d:", i);
 				ret = bt_audio_data_parse(server->src.codec_caps[i].data,
 							  server->src.codec_caps[i].data_len,
@@ -986,7 +986,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 			if (srv_store_preset_validated(
 				    &(preset.codec_cfg), &(server->src.lc3_preset[0].codec_cfg),
-				    CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE)) {
+				    CONFIG_LE_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE)) {
 				memcpy(&server->src.lc3_preset[0], &preset,
 				       sizeof(struct bt_bap_lc3_preset));
 			}

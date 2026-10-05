@@ -14,10 +14,10 @@
 #include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_BT_MGMT_ADV_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_MGMT_ADV_LOG_LEVEL);
 
 struct k_work_q adv_work_q;
-K_THREAD_STACK_DEFINE(adv_work_q_stack_area, CONFIG_BT_MGMT_ADV_STACK_SIZE);
+K_THREAD_STACK_DEFINE(adv_work_q_stack_area, CONFIG_MGMT_ADV_STACK_SIZE);
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
@@ -478,7 +478,7 @@ void bt_mgmt_adv_init(void)
 	k_work_init(&adv_work, advertising_process);
 	k_work_queue_init(&adv_work_q);
 	k_work_queue_start(&adv_work_q, adv_work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area), CONFIG_BT_MGMT_ADV_WQ_PRIO,
+			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area), CONFIG_MGMT_ADV_WQ_PRIO,
 			   NULL);
 	k_thread_name_set(adv_work_q.thread_id, "BT_adv_WQ");
 }

@@ -29,7 +29,7 @@ enum unicast_discover_dir {
 	UNICAST_SERVER_BIDIR = (BT_AUDIO_DIR_SINK | BT_AUDIO_DIR_SOURCE)
 };
 
-#if CONFIG_BT_BAP_UNICAST_16_2_1
+#if CONFIG_BAP_UNICAST_16_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF_AUDIO_SINK                                                   \
 	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
 					 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
@@ -38,7 +38,7 @@ enum unicast_discover_dir {
 	BT_BAP_LC3_UNICAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
 					 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
 
-#elif CONFIG_BT_BAP_UNICAST_24_2_1
+#elif CONFIG_BAP_UNICAST_24_2_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF_AUDIO_SINK                                                   \
 	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
 					 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
@@ -46,7 +46,7 @@ enum unicast_discover_dir {
 #define BT_BAP_LC3_UNICAST_PRESET_NRF_AUDIO_SOURCE                                                 \
 	BT_BAP_LC3_UNICAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT,                             \
 					 BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
-#elif CONFIG_BT_BAP_UNICAST_48_4_1
+#elif CONFIG_BAP_UNICAST_48_4_1
 #define BT_BAP_LC3_UNICAST_PRESET_NRF_AUDIO_SINK                                                   \
 	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
 
@@ -54,7 +54,7 @@ enum unicast_discover_dir {
 	BT_BAP_LC3_UNICAST_PRESET_48_4_1(BT_AUDIO_LOCATION_ANY, BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED)
 #else
 #error Unsupported LC3 codec preset for unicast
-#endif /* CONFIG_BT_BAP_UNICAST_16_2_1 */
+#endif /* CONFIG_BAP_UNICAST_16_2_1 */
 
 /**
  * @brief Check if the unicast client is currently streaming.

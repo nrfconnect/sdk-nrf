@@ -32,7 +32,7 @@ K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_S
 
 K_MSGQ_DEFINE(ble_q_rx, sizeof(struct net_buf *), CONFIG_BUF_BLE_RX_PACKET_NUM, sizeof(void *));
 NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM,
-			  (CONFIG_BT_ISO_RX_MTU * CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX),
+			  (CONFIG_BT_ISO_RX_MTU * CONFIG_LE_AUDIO_CONCURRENT_RX_STREAMS_MAX),
 			  sizeof(struct audio_metadata), NULL);
 
 static int location_to_net_buf_index(enum bt_audio_location total_loc,
@@ -102,7 +102,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 {
 	int ret;
 	static struct net_buf *audio_frame;
-	static struct rx_stats rx_stats[CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX];
+	static struct rx_stats rx_stats[CONFIG_LE_AUDIO_CONCURRENT_RX_STREAMS_MAX];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 

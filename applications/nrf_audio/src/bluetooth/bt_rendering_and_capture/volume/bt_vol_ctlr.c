@@ -12,7 +12,7 @@
 #include <zephyr/bluetooth/audio/vcp.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_vol_ctlr, CONFIG_BT_VOL_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_vol_ctlr, CONFIG_VOL_LOG_LEVEL);
 
 static struct bt_vcp_vol_ctlr *vcs_client_peer[CONFIG_BT_MAX_CONN];
 
