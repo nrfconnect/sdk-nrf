@@ -47,17 +47,6 @@ enum coexc_mode_wifi_t {
 	COEXC_MODE_WIFI_6G,
 };
 
-/**
- * Wi-Fi SW client request status.
- *
- * Indicates whether the Wi-Fi SW client request was granted or not.
- */
-enum coex_wifi_sw_client_req_status_t {
-	/** Indicates the SW client request is granted. */
-	WIFI_SW_CLIENT_REQ_SUCCESS = 0,
-	/** Indicates the SW client request is NOT granted. */
-	WIFI_SW_CLIENT_REQ_FAIL
-};
 
 /**
  * Different CM event types.
@@ -75,6 +64,11 @@ enum cm_event_to_host_t {
  * Coexistence related statistics.
  *
  * Contains coexistence related statistics for monitoring and debugging.
+ *
+ * The PPW and SW-client counters are not gated by release phase. CM firmware
+ * fills the whole structure and the host copies it verbatim out of
+ * @c STATISTICS_EVENT, so dropping a field would shift every field after
+ * it and misread the payload.
  */
 struct cm_stats_t {
 	/** Coex initialization count */
@@ -314,30 +308,6 @@ enum cd2cm_msg_id_t {
 	CD2CM_MSG_ID_COUNT
 };
 
-/**
- * PPW allocation control.
- *
- * Indicates if allocation of Periodic Priority Windows (PPWs) is to be
- * started or stopped.
- */
-enum start_stop_ppw_t {
-	/** To stop allocation of windows. */
-	STOP_ALLOC_WINDOWS = 0,
-	/** To start allocation of windows. */
-	START_ALLOC_WINDOWS
-};
-
-/**
- * Radio selection for first priority window.
- *
- * Indicates to which radio the first priority window of PPWs to be allocated.
- */
-enum coex_radios_t {
-	/** Allocate first window to Wi-Fi radio. */
-	WIFI_RADIO = 0,
-	/** Allocate first window to SR radio. */
-	SR_RADIO
-};
 
 /**
  * Antenna allocation mode.
@@ -366,90 +336,6 @@ enum coex_en_or_dis_t {
 	COEX_ENABLE
 };
 
-/**
- * Wi-Fi SW client request type.
- *
- * Indicates the type of SW client operation.
- */
-enum coex_wifi_sw_client_req_type_t {
-	/** Indicates the SW client release. */
-	WIFI_SW_CLIENT_RELEASE = 0,
-	/** Indicates the SW client request. */
-	WIFI_SW_CLIENT_REQUEST = 1
-};
-
-/**
- * Wi-Fi SW client request priority levels.
- *
- * Indicates the priority level of the SW client request.
- */
-enum coex_wifi_sw_client_req_pti_level_t {
-	/** Low priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_LOW = 0,
-	/** Medium priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_MEDIUM,
-	/** High priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_HIGH,
-	/** Highest priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_HIGHEST,
-	/** Total number of priority levels. */
-	WIFI_SW_CLIENT_REQ_PTI_COUNT
-};
-
-/**
- * Wi-Fi SW client types.
- *
- * Indicates different Wi-Fi SW clients that can request COEX resources.
- */
-enum wifi_sw_client_t {
-	/** To protect beacon reception from SR interference. */
-	WIFI_BEACON_RECEPTION = 0,
-	/** To protect connection phase from SR interference. */
-	WIFI_CONNECTION,
-	/** To protect calibrations from SR interference. */
-	WIFI_CALIBRATIONS,
-	/** To protect scan from SR interference. */
-	WIFI_SCAN,
-	/** Total number of Wi-Fi SW client types. */
-	WIFI_SW_CLIENT_COUNT
-};
-
-/**
- * Periodic priority windows generation parameters.
- *
- * This structure holds the parameters required for generating
- * Periodic Priority Windows (PPWs) for Wi-Fi and SR radios.
- * Embedded in cd2cm_genarate_ppw_t message.
- */
-struct coex_ppw_parameters_t {
-	/** Start or stop priority windows. see &enum start_stop_ppw_t */
-	unsigned int start_or_stop_ppw;
-	/** Radio to which first priority window to be allocated. see &enum coex_radios_t */
-	unsigned int first_window_to_wifi_or_sr;
-	/** Wi-Fi priority window duration in milliseconds. */
-	unsigned int wifi_pti_window_duration;
-	/** SR priority window duration in milliseconds. */
-	unsigned int sr_pti_window_duration;
-	/** Maximum time (in milliseconds) to wait for a corresponding "stop" command
-	 * after a "start" has been issued. If this timeout expires without receiving
-	 * the "stop" signal, the Coexistence Manager (CM) will automatically terminate
-	 * Priority Window (PPW) generation to prevent indefinite continuation.
-	 */
-	unsigned int ppws_timeout;
-} __NRF_WIFI_PKD;
-
-/**
- * Message to allocate PPWs to Wi-Fi and SR.
- *
- * Message from driver to CM to allocate Periodic Priority Windows
- * to Wi-Fi and SR radios.
- */
-struct cd2cm_genarate_ppw_t {
-	/** Message ID. Set to CD2CM_ALLOCATE_PPW. see &enum cd2cm_msg_id_t */
-	unsigned int message_id;
-	/** Parameters related to PPW generation. */
-	struct coex_ppw_parameters_t ppw_parameters;
-} __NRF_WIFI_PKD;
 
 /**
  * Wi-Fi SW and HW clients priority range values.
@@ -515,36 +401,6 @@ struct cd2cm_get_coex_stats_t {
 	unsigned int reserved;
 } __NRF_WIFI_PKD;
 
-/**
- * Software client request parameters
- *
- * This structure holds the parameters required to post
- * a SW client request ro request COEX resources.
- */
-struct coex_sw_client_params_t {
-	/** Wi-Fi SW client request/release. see &enum coex_wifi_sw_client_req_type_t */
-	unsigned int sw_client_request;
-	/** SW client priority level. see &enum coex_wifi_sw_client_req_pti_level_t */
-	unsigned int sw_client_pti_level;
-	/** SW client type. see &enum wifi_sw_client_t */
-	unsigned int sw_client_type;
-	/** SW request timeout in milliseconds */
-	unsigned int request_timeout_in_ms;
-	/** Wi-Fi operating band */
-	unsigned int wifi_operating_band;
-} __NRF_WIFI_PKD;
-
-/**
- * Message to post a SW client request.
- *
- * Message from CD to CM to request COEX resources.
- */
-struct cd2cm_wifi_sw_client_request_t {
-	/** Message ID. Set to CD2CM_WIFI_SW_CLIENT_REQUEST. see &enum cd2cm_msg_id_t */
-	unsigned int message_id;
-	/** SW client request parameters */
-	struct coex_sw_client_params_t sw_client_parameters;
-} __NRF_WIFI_PKD;
 
 /**
  * Wi-Fi scan puncture information.

@@ -220,24 +220,6 @@ unsigned int coex_sr_enable(unsigned int enable_coex);
 unsigned int coex_sr_set_client_priority(const struct coex_sr_priority_range_t *sr_priority_range);
 
 /**
- * Request or release an SR Single Priority Window through CD.
- *
- * Returns zero on successful command processing and a negative errno value on
- * validation, state, transport, or response-timeout failure. On a zero return,
- * grant_status contains the CM grant decision.
- */
-int coex_cd_sr_software_client_request(const struct coex_sr_sw_client_params_t *client_params,
-				       enum coex_sr_sw_client_req_status_t *grant_status);
-
-/**
- * Report SR activity information used by CD for PPW selection and generation.
- *
- * Returns zero on success or a negative errno value.
- */
-int coex_cd_update_short_range_activity_info(
-	const struct short_range_activity_info_t *activity_info);
-
-/**
  * Notify CD before SR power-down and after SR is ready following power-up.
  *
  * Returns zero on success or a negative errno value.
