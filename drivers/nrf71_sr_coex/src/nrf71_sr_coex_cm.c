@@ -139,7 +139,7 @@ int coex_cm_update_coex_params(void)
  * Post CD2CM_GET_STATS.
  *
  * The command carries only a message id. The statistics payload arrives with
- * STATISTICS_EVENT and is retained by the driver in coex_event_handler().
+ * CM2CD_STATISTICS_EVENT and is retained by the driver in coex_event_handler().
  */
 int coex_cm_get_stats(void)
 {

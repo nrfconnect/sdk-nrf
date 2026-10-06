@@ -49,16 +49,59 @@ enum coexc_mode_wifi_t {
 
 
 /**
- * Different CM event types.
+ * CM-to-CD event types (patched CM firmware, cm_fsm_host_if_patch.h).
  *
- * Indicates event (response to latest received command) of the CM.
+ * With patched CM firmware every CD2CM command completion is reported through
+ * a CM2CD event. The payload always begins with @ref cm2cd_event_status_name_t.
+ * Only @c CM2CD_STATISTICS_EVENT appends @ref cm_stats_t and, with patched
+ * firmware, a trailing @ref cm_fsm_patch_stats_t block.
+ *
+ * The enumerator values are the wire values reported by CM firmware
  */
 enum cm_event_to_host_t {
 	/** Response to CD2CM_GET_STATS command */
-	STATISTICS_EVENT = 0,
+	CM2CD_STATISTICS_EVENT = 0,
 	/** Response to CD2CM_WIFI_SW_CLIENT_REQUEST command */
-	SW_CLIENT_STATUS_EVENT
+	CM2CD_WIFI_SW_CLIENT_STATUS_EVENT,
+	/** Reserved in patch header; SR SW client response when firmware supports it */
+	CM2CD_SR_SW_CLIENT_STATUS_EVENT,
+	/** Response to CD2CM_UPDATE_COEX_PARAMS */
+	CM2CD_UPDATE_COEX_PARAMS_EVENT,
+	/** Response to CD2CM_UPDATE_COEX_USER_PARAMS */
+	CM2CD_UPDATE_COEX_USER_PARAMS_EVENT,
+	/** Response to CD2CM_ENABLE_COEXISTENCE */
+	CM2CD_ENABLE_COEXISTENCE_EVENT,
+	/** Response to CD2CM_ALLOCATE_PPW */
+	CM2CD_ALLOCATE_PPW_EVENT,
+	/** Response to CD2CM_SET_PRIORITY_RANGES */
+	CM2CD_SET_PRIORITY_RANGES_EVENT
 };
+
+/**
+ * Host to Coexistence Manager command status.
+ *
+ * Indicates whether the command from host to CM is processed or not.
+ */
+enum coex_command_processed_status_t {
+	/** Indicates the command processed successfully */
+	COMMAND_PROCESSING_SUCCESS = 0,
+	/** Indicates the command processing failed */
+	COMMAND_PROCESSING_FAIL
+};
+
+/**
+ * CM to host event status wrapper.
+ *
+ * Every CM2CD event begins with this header. @c event_name identifies the
+ * response type; @c command_status carries command-processing success/failure
+ * or SW-client grant status, depending on @c event_name.
+ */
+struct cm2cd_event_status_name_t {
+	/** CM to CD current event name. see &enum cm_event_to_host_t */
+	unsigned int event_name;
+	/** CM to CD current event status. see &enum coex_command_processed_status_t */
+	unsigned int command_status;
+} __NRF_WIFI_PKD;
 
 /**
  * Coexistence related statistics.
@@ -67,7 +110,7 @@ enum cm_event_to_host_t {
  *
  * The PPW and SW-client counters are not gated by release phase. CM firmware
  * fills the whole structure and the host copies it verbatim out of
- * @c STATISTICS_EVENT, so dropping a field would shift every field after
+ * @c CM2CD_STATISTICS_EVENT, so dropping a field would shift every field after
  * it and misread the payload.
  */
 struct cm_stats_t {
@@ -284,10 +327,38 @@ struct cm_stats_t {
 };
 
 /**
+ * Patch-local command entry and CM2CD event counters (cm_fsm_patch_stats.h).
+ *
+ * Appended after @ref cm_stats_t in @c CM2CD_STATISTICS_EVENT payloads from
+ * patched firmware.
+ */
+#define NRF71_COEX_PATCH_STATS_IN_COEX_IF 1
+struct cm_fsm_patch_stats_t {
+	/** CD2CM command entry counts */
+	unsigned int cmd_update_coex_params_cnt_patch;
+	unsigned int cmd_update_user_params_cnt_patch;
+	unsigned int cmd_enable_coex_cnt_patch;
+	unsigned int cmd_allocate_ppw_cnt_patch;
+	unsigned int cmd_set_pti_ranges_cnt_patch;
+	unsigned int cmd_get_stats_cnt_patch;
+	unsigned int cmd_wifi_sw_client_req_cnt_patch;
+	unsigned int cm_coex_process_cmd_cnt_patch;
+	/** CM2CD event counters */
+	unsigned int wifi_sw_client_event_to_host_cnt;
+	unsigned int coex_params_event_to_host_cnt;
+	unsigned int user_params_event_to_host_cnt;
+	unsigned int enable_coex_event_to_host_cnt;
+	unsigned int allocate_ppw_event_to_host_cnt;
+	unsigned int set_pti_ranges_event_to_host_cnt;
+} __NRF_WIFI_PKD;
+
+/**
  * Message IDs from Coexistence Driver to Coexistence Manager.
  *
  * IDs of different messages posted from Coexistence Driver (CD) to
  * Coexistence Manager (CM) for command routing.
+ *
+ * The enumerator values are the wire values expected by CM firmware
  */
 enum cd2cm_msg_id_t {
 	/** To enable coexistence. */
@@ -304,7 +375,7 @@ enum cd2cm_msg_id_t {
 	CD2CM_WIFI_SW_CLIENT_REQUEST,
 	/** To get all the CM stats. */
 	CD2CM_GET_STATS,
-	/** Total number of valid message IDs. */
+	/** Total number of valid ROM CM message IDs (0 through @c CD2CM_GET_STATS). */
 	CD2CM_MSG_ID_COUNT
 };
 
