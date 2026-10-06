@@ -654,20 +654,30 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		 * there is no way in hardware to distinguish between an actual failure and the slot
 		 * being blocked. Therefore we attempt to push the key here to verify if the key is
 		 * blocked or not.
+		 *
+		 * The push writes to kmu_push_area/protected RAM, which are guarded by the
+		 * symmetric mutex.
 		 */
+		nrf_security_mutex_lock(cracen_mutex_symmetric);
 		if (nrfx_kmu_key_slots_push(slot_id, slot_count) != 0) {
-			return PSA_ERROR_NOT_PERMITTED;
+			psa_status = PSA_ERROR_NOT_PERMITTED;
+		} else {
+			/* Clean the key data from the push area and protected ram to ensure it's
+			 * not exposed. We use the protected scheme since the key type is not known
+			 * at this point and that clears both.
+			 */
+			kmu_opaque_key_buffer temp_key_buffer = {
+				.key_usage_scheme = CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
+				.number_of_slots = slot_count,
+				.slot_id = slot_id};
+			cracen_kmu_clean_key((const uint8_t *)&temp_key_buffer);
+			psa_status = PSA_SUCCESS;
 		}
+		nrf_security_mutex_unlock(cracen_mutex_symmetric);
 
-		/* Clean the key data from the push area and protected ram to ensure it's not
-		 * exposed. We use the protected scheme since the key type is not known at
-		 * this point and that clears both.
-		 */
-		kmu_opaque_key_buffer temp_key_buffer = {
-			.key_usage_scheme = CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
-			.number_of_slots = slot_count,
-			.slot_id = slot_id};
-		cracen_kmu_clean_key((const uint8_t *)&temp_key_buffer);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
 
 		psa_status = set_provisioning_in_progress(slot_id, slot_count);
 		if (psa_status != PSA_SUCCESS) {
