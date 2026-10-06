@@ -458,7 +458,11 @@
 
 "CI-wifi-7120dk":
   - "drivers/wifi/nrf71/**/*"
+  - "include/drivers/wifi/nrf71/**/*"
   - "modules/trusted-firmware-m/tfm_boards/*7120*"
+  - "samples/wifi/**/soc/nrf7120*"
+  - "samples/wifi/**/boards/nrf7120*"
+  - "samples/wifi/**/*nrf71*"
 
 "CI-wifi-7120-vu19p":
   - "drivers/wifi/nrf71/**/*"
