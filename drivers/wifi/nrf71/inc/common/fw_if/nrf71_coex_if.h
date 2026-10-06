@@ -569,6 +569,11 @@ enum coex_wifi_power_event_t {
 int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event);
 
 /**
+ * Return true after a successful coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY).
+ */
+bool coex_cd_wifi_is_up(void);
+
+/**
  * @}
  */
 #endif /* __NRF71_COEX_IF_H__ */
