@@ -400,7 +400,7 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
@@ -416,7 +416,7 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
@@ -858,7 +858,7 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
 			additional_data, additional_data_length, plaintext, plaintext_length,
@@ -934,7 +934,7 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
 			additional_data, additional_data_length, ciphertext, ciphertext_length,
