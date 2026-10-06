@@ -27,3 +27,4 @@ if(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 endif()
 
 add_subdirectory_ifdef(CONFIG_MPSL_PIN_DEBUG pin_debug)
+add_subdirectory_ifdef(CONFIG_MPSL_NRF71_ANTSW antsw)
