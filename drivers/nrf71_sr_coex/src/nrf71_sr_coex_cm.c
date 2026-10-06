@@ -27,7 +27,7 @@
 #include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 
-/* Wi-Fi FMAC coexistence transport (cmd/event access). */
+/* Wi-Fi FMAC coexistence transport (cmd/event/reg access). */
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 /* CD2CM / CM2CD message structures shared with RPU firmware. */
 #include <nrf71_coex_if.h>

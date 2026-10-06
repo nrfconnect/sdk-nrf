@@ -98,6 +98,31 @@ int nrf71_wifi_coex_register_event_cb(nrf71_wifi_coex_event_cb_t cb, void *ctx);
  */
 void nrf71_wifi_coex_on_event(const void *event, size_t len);
 
+/**
+ * @brief Write a global-domain COEXC register (host CPU MMIO).
+ *
+ * On nRF71 (Wezen) COEXC lives in the  global domain and is directly
+ * memory-mapped on the application processor.
+ *
+ * @param reg_addr Global-domain COEXC register address.
+ * @param value    Value to write.
+ *
+ * @retval 0        On success.
+ * @retval -EINVAL  Invalid argument.
+ */
+int nrf71_wifi_coex_reg_write(uint32_t reg_addr, uint32_t value);
+
+/**
+ * @brief Read a global-domain COEXC register (host CPU MMIO).
+ *
+ * @param reg_addr Global-domain COEXC register address.
+ * @param value    Location to store the read value.
+ *
+ * @retval 0        On success.
+ * @retval -EINVAL  @p value is NULL.
+ */
+int nrf71_wifi_coex_reg_read(uint32_t reg_addr, uint32_t *value);
+
 #ifdef __cplusplus
 }
 #endif

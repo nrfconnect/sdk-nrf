@@ -8,6 +8,8 @@ zephyr_library_named(nrf71_sr_coex)
 
 zephyr_library_sources(src/nrf71_sr_coex.c)
 zephyr_library_sources(src/nrf71_sr_coex_cm.c)
+zephyr_library_sources(src/nrf71_sr_coex_hw.c)
+
 # Access to the coexistence firmware interface headers.
 zephyr_library_include_directories(
   include
