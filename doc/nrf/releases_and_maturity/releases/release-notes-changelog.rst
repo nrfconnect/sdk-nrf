@@ -635,8 +635,21 @@ Matter samples
 Networking samples
 ------------------
 
-* Updated the TF-M configuration in nRF7002 DK networking samples by removing :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` (as it is not supported by the |NCS|).
-  Instead, use the configurable profile (:kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET`), select the SFN backend (:kconfig:option:`CONFIG_TFM_SFN`) to save RAM and select memory-mapped iovecs (:kconfig:option:`CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC`) to reduce copying of client vectors during TLS handshakes.
+* Updated:
+
+  * The TF-M configuration in nRF7002 DK networking samples by removing :kconfig:option:`CONFIG_TFM_PROFILE_TYPE_SMALL` (as it is not supported by the |NCS|).
+    Instead, use the configurable profile (:kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET`), select the SFN backend (:kconfig:option:`CONFIG_TFM_SFN`) to save RAM and select memory-mapped iovecs (:kconfig:option:`CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC`) to reduce copying of client vectors during TLS handshakes.
+  * The following samples to explicitly select the Protected Storage backend of the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` (:kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE`) in their Wi-Fi configuration, so that TLS credentials persist across reboots:
+
+    * :ref:`aws_iot`
+    * :ref:`azure_iot_hub`
+    * :ref:`download_sample`
+    * :ref:`http_server`
+    * :ref:`https_client`
+    * :ref:`mqtt_sample`
+
+    The backend was previously selected by a Kconfig default in each sample.
+    On boards that do not use TF-M, the :ref:`Secure Storage subsystem <secure_storage>` (:kconfig:option:`CONFIG_SECURE_STORAGE`) is now explicitly enabled in the board configuration files, as it is required by this backend.
 
 * Removed:
 
