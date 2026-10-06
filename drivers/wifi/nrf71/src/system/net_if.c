@@ -34,6 +34,39 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
 #include <common/mac_addr.h>
+
+#if defined(CONFIG_NRF71_SR_COEX_DRIVER)
+#include <common/fw_if/nrf71_coex_if.h>
+
+static struct k_work_delayable coex_wifi_bringup_work;
+static bool coex_wifi_bringup_work_initialized;
+
+static void coex_wifi_bringup_work_handler(struct k_work *work)
+{
+	int ret;
+
+	ARG_UNUSED(work);
+
+	ret = coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY);
+	if (ret != 0) {
+		LOG_WRN("Coexistence Wi-Fi bring-up failed: %d", ret);
+	} else {
+		LOG_INF("Coexistence Wi-Fi bring-up complete");
+	}
+}
+
+static void coex_wifi_bringup_schedule(void)
+{
+	if (!coex_wifi_bringup_work_initialized) {
+		k_work_init_delayable(&coex_wifi_bringup_work, coex_wifi_bringup_work_handler);
+		coex_wifi_bringup_work_initialized = true;
+	}
+
+	(void)k_work_reschedule(&coex_wifi_bringup_work,
+				K_MSEC(CONFIG_NRF71_SR_COEX_WIFI_BRINGUP_DELAY_MS));
+}
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER */
+
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
 #endif /* CONFIG_NRF71_STA_MODE */
@@ -1032,6 +1065,12 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 #endif /* CONFIG_NRF71_STA_MODE */
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
+
+#if defined(CONFIG_NRF71_SR_COEX_DRIVER)
+	if (fmac_dev_added) {
+		coex_wifi_bringup_schedule();
+	}
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER */
 
 	ret = 0;
 

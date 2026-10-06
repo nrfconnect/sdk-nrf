@@ -641,6 +641,17 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 	}
 }
 
+bool coex_cd_wifi_is_up(void)
+{
+	bool wifi_up;
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	wifi_up = cd_state.wifi_up;
+	k_mutex_unlock(&cd_state.lock);
+
+	return wifi_up;
+}
+
 /* ---- Initialisation ---- */
 
 /**
@@ -649,11 +660,14 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
  *   - Initialise the cd_state mutexes and the CM event semaphore
  *   - Load the default priority ranges and user params
  *   - Register coex_event_handler() for all incoming CM2CD events
- *   - Apply the CM configuration if the Wi-Fi transport is already up
+ *
+ * CM programming is deliberately deferred until
+ * coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY) so commands are not
+ * sent while the RPU/VIF is still booting during SYS_INIT.
  */
 static int nrf71_sr_coex_init(void)
 {
-	int ret;
+	LOG_DBG("SR Coexistence initialization");
 
 	/* Synchronisation primitives for cd_state and serialized CM transactions. */
 	k_mutex_init(&cd_state.lock);
@@ -665,6 +679,11 @@ static int nrf71_sr_coex_init(void)
 	cd_state.sr_range = default_sr_range;
 	cd_state.user_params = default_user_params;
 
+	/* Radios are down until the Wi-Fi/SR drivers report power-up. */
+	cd_state.wifi_up = false;
+	cd_state.sr_up = false;
+	cd_state.sr_coex_enabled = false;
+
 	/*
 	 * Register the callback for CM2CD events arriving over the Wi-Fi FMAC path.
 	 * coex_event_handler() stores event headers/stats and signals cm_event_sem
@@ -672,28 +691,6 @@ static int nrf71_sr_coex_init(void)
 	 * the first CD2CM command is posted.
 	 */
 	(void)nrf71_wifi_coex_register_event_cb(coex_event_handler, NULL);
-
-	/*
-	 * The Wi-Fi driver initialises at POST_KERNEL; this runs at APPLICATION
-	 * level. The RPU/transport may still be brought up asynchronously, so
-	 * apply the configuration best-effort and let coex_cd_wifi_power_notify()
-	 * re-apply it once Wi-Fi signals ready.
-	 */
-	cd_state.wifi_up = nrf71_wifi_coex_is_ready();
-	cd_state.sr_up = false;
-	cd_state.sr_coex_enabled = false;
-
-	if (cd_state.wifi_up) {
-		ret = cd_apply_cm_config();
-		if (ret != 0) {
-			LOG_WRN("Deferred coex config (%d); will retry on Wi-Fi power-up", ret);
-			cd_state.wifi_up = false;
-		} else {
-			LOG_INF("nRF71 SR coexistence configured");
-		}
-	} else {
-		LOG_DBG("Wi-Fi transport not ready; coex config deferred");
-	}
 
 	return 0;
 }
