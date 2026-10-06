@@ -40,6 +40,11 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
 			signature_length);
 	}
 
+	/* Only ML-DSA supports a context */
+	if (context_length != 0) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
 	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 		return cracen_signature_ecc_sign(
@@ -55,7 +60,6 @@ psa_status_t cracen_sign_message(const psa_key_attributes_t *attributes, const u
 	}
 
 	(void)context;
-	(void)context_length;
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
@@ -72,6 +76,11 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
 			signature_length);
 	}
 
+	/* Only ML-DSA supports a context */
+	if (context_length != 0) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
 	    PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
 		return cracen_signature_ecc_sign(
@@ -87,7 +96,6 @@ psa_status_t cracen_sign_hash(const psa_key_attributes_t *attributes, const uint
 	}
 
 	(void)context;
-	(void)context_length;
 	return PSA_ERROR_NOT_SUPPORTED;
 }
 
@@ -102,6 +110,11 @@ psa_status_t cracen_verify_message(const psa_key_attributes_t *attributes,
 		return cracen_ml_dsa_verify(
 			CRACEN_IS_MESSAGE, attributes, key_buffer, key_buffer_size, alg,
 			input, input_length, context, context_length, signature, signature_length);
+	}
+
+	/* Only ML-DSA supports a context */
+	if (context_length != 0) {
+		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
@@ -132,6 +145,11 @@ psa_status_t cracen_verify_hash(const psa_key_attributes_t *attributes, const ui
 					    key_buffer_size, alg, hash, hash_length,
 					    context, context_length,
 					    signature, signature_length);
+	}
+
+	/* Only ML-DSA supports a context */
+	if (context_length != 0) {
+		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ECC) &&
