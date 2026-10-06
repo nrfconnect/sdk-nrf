@@ -20,13 +20,24 @@
  *   CD builds a CD2CM_* message and sends it -> CM processes it
  *
  * Event flow (RPU -> host):
- *   CM sends CM2CD_* event -> coex_event_handler() stores the result.
+ *   CM sends CM2CD_* event -> coex_event_handler() stores the result and wakes
+ *   up whoever was waiting for that event.
+ *
+ * Most APIs follow the same pattern:
+ *   1. Send a CD2CM command
+ *   2. Wait (up to CM2CD_EVENT_WAIT_MS) for the matching CM2CD completion event
+ *   3. Validate success/failure and return to the caller
  *
  * Statistics are special: the actual numbers are copied into cd_state inside
  * coex_event_handler() when CM2CD_STATISTICS_EVENT arrives.
  *
  * Locking rules (important when adding code):
  *   - cd_state.lock guards every cd_state field.
+ *   - cd_state.cmd_lock serializes one CD2CM/CM2CD transaction at a time.
+ *   - Lock order is cmd_lock -> lock. Never hold cd_state.lock while calling a
+ *     coex_cm_* function: those acquire cmd_lock and then take cd_state.lock
+ *     again from the wait path, which would deadlock. Take a local snapshot of
+ *     the cd_state fields you need, release the lock, then send.
  */
 
 #include <errno.h>
@@ -45,6 +56,9 @@
 #include "nrf71_sr_coex_internal.h"
 
 LOG_MODULE_REGISTER(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
+
+/* Max time (ms) to wait for a CM2CD response after posting a CD2CM command. */
+#define CM2CD_EVENT_WAIT_MS CONFIG_NRF71_SR_COEX_CM_EVENT_WAIT_MS
 
 /*
  * Default Wi-Fi priority ranges sent to the CM at startup.
@@ -98,6 +112,8 @@ static const struct coex_user_params_t default_user_params = {
  */
 static struct {
 	struct k_mutex lock;       /* Protects every cd_state field below. */
+	struct k_mutex cmd_lock;   /* Serializes post/wait CM transactions. */
+	struct k_sem cm_event_sem; /* Signaled when any CM2CD event arrives. */
 
 	bool wifi_up;              /* Wi-Fi reported powered-up and CM configured. */
 	bool sr_up;                /* SR reported powered-up. */
@@ -178,10 +194,104 @@ static const char *cd_cm2cd_event_name(enum cm_event_to_host_t event)
 }
 
 /**
+ * Drop CM2CD signals left over from an earlier transaction.
+ *
+ * cm_event_sem is a counting semaphore, so a CM2CD event that arrives after
+ * cd_wait_for_cm_event() timed out stays pending and would immediately wake the
+ * next transaction with a stale last_event. Called with cmd_lock held, so no
+ * other transaction can be waiting on a signal that is still wanted.
+ */
+static void cd_drain_cm_event_sem(void)
+{
+	while (k_sem_take(&cd_state.cm_event_sem, K_NO_WAIT) == 0) {
+		/* Discard stale signal. */
+	}
+}
+
+/**
+ * Block until event_name is received or timeout_ms elapses.
+ *
+ * After sending a CD2CM command, the caller waits here. Each time
+ * coex_event_handler() receives ANY CM2CD event, it signals cm_event_sem.
+ * This function wakes up and checks whether the event matches the expected one.
+ * If not, it logs the unexpected event and keeps waiting for the time left, so
+ * unrelated events cannot extend the total wait beyond timeout_ms.
+ */
+static int cd_wait_for_cm_event(enum cm_event_to_host_t event_name, uint32_t timeout_ms)
+{
+	const int64_t deadline_ms = k_uptime_get() + timeout_ms;
+	enum cm_event_to_host_t received;
+	unsigned int command_status;
+	int64_t remaining_ms;
+
+	/* Wake on each CM2CD event posted to cm_event_sem by coex_event_handler(). */
+	while (((remaining_ms = deadline_ms - k_uptime_get()) > 0) &&
+	       (k_sem_take(&cd_state.cm_event_sem, K_MSEC(remaining_ms)) == 0)) {
+		k_mutex_lock(&cd_state.lock, K_FOREVER);
+		received = (enum cm_event_to_host_t)cd_state.last_event.event_name;
+		command_status = cd_state.last_event.command_status;
+		k_mutex_unlock(&cd_state.lock);
+
+		if (received == event_name) {
+			return 0;
+		}
+
+		/* Unexpected CM2CD event; log it and keep waiting for the expected one. */
+		LOG_DBG("CM2CD %s (status=%u) while waiting for %s",
+			cd_cm2cd_event_name(received), command_status,
+			cd_cm2cd_event_name(event_name));
+	}
+
+	return -ETIMEDOUT;
+}
+
+/** Validate the last received CM2CD event after a successful wait. */
+static int cd_validate_last_cm_event(enum cm_event_to_host_t event_name)
+{
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+
+	switch (event_name) {
+	case CM2CD_STATISTICS_EVENT:
+		/* Statistics event must include cm_stats_t after the header. */
+		if (!cd_state.stats_valid) {
+			LOG_ERR("CM2CD %s without stats payload", cd_cm2cd_event_name(event_name));
+			k_mutex_unlock(&cd_state.lock);
+			return -EIO;
+		}
+
+		if (cd_state.last_event.command_status != COMMAND_PROCESSING_SUCCESS) {
+			LOG_ERR("CM2CD %s command processing failed (status=%u)",
+				cd_cm2cd_event_name(event_name),
+				cd_state.last_event.command_status);
+			k_mutex_unlock(&cd_state.lock);
+			return -EIO;
+		}
+
+		k_mutex_unlock(&cd_state.lock);
+		return 0;
+
+	/* Patched CM2CD command-completion events: */
+	default:
+		if (cd_state.last_event.command_status != COMMAND_PROCESSING_SUCCESS) {
+			LOG_ERR("CM2CD %s command processing FAIL (status=%u)",
+				cd_cm2cd_event_name(event_name),
+				cd_state.last_event.command_status);
+			k_mutex_unlock(&cd_state.lock);
+			return -EIO;
+		}
+
+		LOG_DBG("CM2CD %s command processing SUCCESS", cd_cm2cd_event_name(event_name));
+		k_mutex_unlock(&cd_state.lock);
+		return 0;
+	}
+}
+
+/**
  * CM2CD event callback registered with the Wi-Fi FMAC coexistence path.
  *
  * Runs in Wi-Fi driver context when the Coexistence Manager sends an event. Stores
- * the latest header and copies statistics if present.
+ * the latest header, copies statistics if present, and wakes
+ * cd_wait_for_cm_event() via cm_event_sem.
  *
  * This is the single place where CM replies are captured, including the
  * statistics carried by CM2CD_STATISTICS_EVENT.
@@ -251,16 +361,107 @@ static void coex_event_handler(void *ctx, const void *event, size_t len)
 	}
 
 	k_mutex_unlock(&cd_state.lock);
+	k_sem_give(&cd_state.cm_event_sem);
+}
+
+/**
+ * Post a CD2CM command and wait for its CM2CD completion event.
+ *
+ * Covers all CD2CM to CM2CD pairs; cmd_lock ensures only one such transaction
+ * runs at a time, so two CM commands can never interleave.
+ */
+int coex_cd_cm_send_and_wait(const void *cmd, size_t len, enum cm_event_to_host_t expected_event)
+{
+	int ret;
+
+	if ((cmd == NULL) || (len == 0U)) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&cd_state.cmd_lock, K_FOREVER);
+
+	/* Discard any CM2CD signal left over from a timed-out transaction. */
+	cd_drain_cm_event_sem();
+
+	/* Step 1: post the CD2CM command to the CM. */
+	ret = coex_cm_send(cmd, len);
+	if (ret != 0) {
+		k_mutex_unlock(&cd_state.cmd_lock);
+		return ret;
+	}
+
+	LOG_DBG("Posted CD2CM command, waiting for %s", cd_cm2cd_event_name(expected_event));
+
+	/* Step 2: block until expected_event appears (see coex_event_handler). */
+	ret = cd_wait_for_cm_event(expected_event, CM2CD_EVENT_WAIT_MS);
+	if (ret != 0) {
+		/* Expected_event did not arrive within CM2CD_EVENT_WAIT_MS. */
+		LOG_ERR("Timeout waiting for CM2CD %s", cd_cm2cd_event_name(expected_event));
+		k_mutex_unlock(&cd_state.cmd_lock);
+		return ret;
+	}
+
+	/* Step 3: check command_status / stats payload for expected_event. */
+	ret = cd_validate_last_cm_event(expected_event);
+	k_mutex_unlock(&cd_state.cmd_lock);
+	return ret;
 }
 
 /* ---- Helper functions ---- */
+
+/**
+ * Send the working priority ranges from cd_state to the CM and the SR driver.
+ *
+ * The ranges are snapshotted under cd_state.lock and the lock is released
+ * before the CM transaction, because coex_cm_* takes cmd_lock (see the locking
+ * rules at the top of this file).
+ */
+static int cd_send_priority_ranges_from_state(void)
+{
+	struct coex_wifi_priority_range_t wifi_range;
+	struct coex_sr_priority_range_t sr_range;
+	int ret;
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	wifi_range = cd_state.wifi_range;
+	sr_range = cd_state.sr_range;
+	k_mutex_unlock(&cd_state.lock);
+
+	ret = coex_cm_set_priority_ranges(&wifi_range, &sr_range);
+	if (ret != 0) {
+		return ret;
+	}
+
+	/*
+	 * Mirror the SR ranges into the SR driver so its hardware uses matching PTI
+	 * values. Non-fatal if SR rejects them: the CM already has the ranges.
+	 */
+	if (coex_sr_set_client_priority(&sr_range) == 0U) {
+		LOG_WRN("SR driver rejected priority ranges");
+	}
+
+	return 0;
+}
+
+/** Send the working user params from cd_state to the CM (snapshot, then send). */
+static int cd_send_user_params_from_state(void)
+{
+	struct coex_user_params_t user_params;
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	user_params = cd_state.user_params;
+	k_mutex_unlock(&cd_state.lock);
+
+	return coex_cm_update_user_params(&user_params);
+}
 
 /**
  * Push the current coexistence settings to the Coexistence Manager (CM).
  *
  * Full bring-up sequence, run on every
  * coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY). Order matters: CM
- * configuration first, then enable.
+ * configuration first, then enable. Each step waits for its CM2CD completion
+ * event before the next one starts.
  *
  * On failure the CM is left partially configured. The caller is responsible for
  * clearing the runtime flags (see cd_mark_wifi_runtime_down_locked()) so the
@@ -271,21 +472,13 @@ static int cd_apply_cm_config(void)
 	int ret;
 
 	/* Step 1: CD2CM_SET_PRIORITY_RANGES, plus the SR-driver mirror. */
-	ret = coex_cm_set_priority_ranges(&cd_state.wifi_range, &cd_state.sr_range);
+	ret = cd_send_priority_ranges_from_state();
 	if (ret != 0) {
 		return ret;
 	}
 
-	/*
-	 * Mirror the SR ranges into the SR driver so its hardware uses matching PTI
-	 * values. Non-fatal if SR rejects them: the CM already has the ranges.
-	 */
-	if (coex_sr_set_client_priority(&cd_state.sr_range) == 0U) {
-		LOG_WRN("SR driver rejected priority ranges");
-	}
-
 	/* Step 2: CD2CM_UPDATE_COEX_USER_PARAMS (protection probabilities, etc.). */
-	ret = coex_cm_update_user_params(&cd_state.user_params);
+	ret = cd_send_user_params_from_state();
 	if (ret != 0) {
 		return ret;
 	}
@@ -410,7 +603,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 		/*
 		 * Wi-Fi transport and RPU are back: restore the full coexistence setup.
 		 * cd_apply_cm_config() runs outside cd_state.lock because it posts
-		 * CD2CM commands.
+		 * CD2CM commands and waits for CM2CD events.
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		if (cd_state.transition_active) {
@@ -453,7 +646,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 /**
  * Driver init, run at APPLICATION level after the Wi-Fi driver.
  *
- *   - Initialise the cd_state mutex
+ *   - Initialise the cd_state mutexes and the CM event semaphore
  *   - Load the default priority ranges and user params
  *   - Register coex_event_handler() for all incoming CM2CD events
  *   - Apply the CM configuration if the Wi-Fi transport is already up
@@ -462,7 +655,10 @@ static int nrf71_sr_coex_init(void)
 {
 	int ret;
 
+	/* Synchronisation primitives for cd_state and serialized CM transactions. */
 	k_mutex_init(&cd_state.lock);
+	k_mutex_init(&cd_state.cmd_lock);
+	k_sem_init(&cd_state.cm_event_sem, 0, K_SEM_MAX_LIMIT);
 
 	/* Working copies used by cd_apply_cm_config(). */
 	cd_state.wifi_range = default_wifi_range;
@@ -471,8 +667,9 @@ static int nrf71_sr_coex_init(void)
 
 	/*
 	 * Register the callback for CM2CD events arriving over the Wi-Fi FMAC path.
-	 * coex_event_handler() stores event headers/stats. This must be in place
-	 * before the first CD2CM command is posted.
+	 * coex_event_handler() stores event headers/stats and signals cm_event_sem
+	 * so coex_cd_cm_send_and_wait() can complete. This must be in place before
+	 * the first CD2CM command is posted.
 	 */
 	(void)nrf71_wifi_coex_register_event_cb(coex_event_handler, NULL);
 

@@ -31,6 +31,14 @@ config NRF71_SR_COEX_DRIVER_INIT_PRIORITY
 	  APPLICATION init level. Kept after the Wi-Fi driver so the FMAC
 	  transport used for CD<->CM messaging is available.
 
+config NRF71_SR_COEX_CM_EVENT_WAIT_MS
+	int "CM2CD event wait timeout (ms)"
+	range 1 60000
+	default 5000
+	help
+	  Maximum time to wait for a CM2CD completion event after posting a
+	  CD2CM command. Increase on slow FPGA targets if commands are timing out.
+
 module = NRF71_SR_COEX_DRIVER
 module-str = Log level for the nRF71 SR coexistence driver
 source "subsys/logging/Kconfig.template.log_config"

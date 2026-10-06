@@ -62,6 +62,8 @@ int nrf71_wifi_coex_cmd_send(const void *cmd, size_t len)
 		return -EIO;
 	}
 
+	LOG_DBG("CD2CM command posted to RPU (%u bytes)", (unsigned int)len);
+
 	return 0;
 }
 
@@ -76,8 +78,10 @@ int nrf71_wifi_coex_register_event_cb(nrf71_wifi_coex_event_cb_t cb, void *ctx)
 void nrf71_wifi_coex_on_event(const void *event, size_t len)
 {
 	if (coex_event_cb != NULL) {
+		LOG_DBG("Forwarding CM2CD event to coex driver (%zu bytes)", len);
 		coex_event_cb(coex_event_cb_ctx, event, len);
+		LOG_DBG("Coex driver handler returned");
 	} else {
-		LOG_DBG("Coex event dropped: no handler registered");
+		LOG_WRN("Coex event dropped (%zu bytes): no handler registered", len);
 	}
 }
