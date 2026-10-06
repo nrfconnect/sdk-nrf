@@ -6,9 +6,12 @@
 
 zephyr_library_named(nrf71_sr_coex)
 
-zephyr_library_sources(src/nrf71_sr_coex.c)
-zephyr_library_sources(src/nrf71_sr_coex_cm.c)
-zephyr_library_sources(src/nrf71_sr_coex_hw.c)
+zephyr_library_sources(
+  src/nrf71_sr_coex.c
+  src/nrf71_sr_coex_cm.c
+  src/nrf71_sr_coex_hw.c
+  src/nrf71_sr_coex_ble.c
+)
 
 # Access to the coexistence firmware interface headers.
 zephyr_library_include_directories(
@@ -17,5 +20,3 @@ zephyr_library_include_directories(
   ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/inc/
   ${ZEPHYR_NRF_MODULE_DIR}/drivers/wifi/nrf71/inc/common/fw_if
 )
-
-zephyr_include_directories(include)
