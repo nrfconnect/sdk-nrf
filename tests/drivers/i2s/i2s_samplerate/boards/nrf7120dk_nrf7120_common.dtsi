@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Test requires wire connections:
+ *  - TDM_FSYNC_M with test-gpios -> P1.7 - P1.12
+ *  - TDM_SDOUT with TDM_SDIN -> P1.13 - P1.15
+ */
+
+/ {
+	aliases {
+		i2s-node0 = &tdm;
+	};
+};
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio1 12 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&pinctrl {
+	tdm_default_alt: tdm_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TDM_SCK_M, 1, 4)>,
+				<NRF_PSEL(TDM_FSYNC_M, 1, 7)>,
+				<NRF_PSEL(TDM_SDOUT, 1, 13)>,
+				<NRF_PSEL(TDM_SDIN, 1, 15)>;
+		};
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&tdm {
+	status = "okay";
+	pinctrl-0 = <&tdm_default_alt>;
+	pinctrl-names = "default";
+};
+
+&timer00 {
+	status = "okay";
+};
