@@ -105,10 +105,17 @@ static bool has_pending(struct downloader *dl)
 int coap_block_init(struct downloader *dl, size_t from)
 {
 	struct transport_params_coap *coap;
+	enum coap_block_size block_size;
 
 	coap = (struct transport_params_coap *)dl->transport_internal;
 
-	coap_block_transfer_init(&coap->block_ctx, coap->cfg.block_size, 0);
+	block_size = coap->cfg.block_size;
+	/* On a reconnect, keep a smaller block size that the server negotiated. */
+	if (coap->initialized) {
+		block_size = MIN(block_size, coap->block_ctx.block_size);
+	}
+
+	coap_block_transfer_init(&coap->block_ctx, block_size, 0);
 	coap->block_ctx.current = from;
 	coap_pending_clear(&coap->pending);
 

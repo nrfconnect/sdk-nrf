@@ -1158,6 +1158,21 @@ static ssize_t z_impl_zsock_recvfrom_coap_econnreset(int sock, void *buf, size_t
 	return -1;
 }
 
+static int econnreset_once_call_count;
+
+static ssize_t z_impl_zsock_recvfrom_coap_econnreset_once(int sock, void *buf, size_t max_len,
+							  int flags, struct net_sockaddr *src_addr,
+							  net_socklen_t *addrlen)
+{
+	/* Connection reset on the second receive only. */
+	if (econnreset_once_call_count++ == 1) {
+		errno = ECONNRESET;
+		return -1;
+	}
+
+	return z_impl_zsock_recvfrom_coap(sock, buf, max_len, flags, src_addr, addrlen);
+}
+
 int coap_get_option_int_ok(const struct coap_packet *cpkt, uint16_t code)
 {
 	return 0;
@@ -1217,8 +1232,8 @@ const uint8_t *coap_packet_get_payload_block(const struct coap_packet *cpkt, uin
 #define COAP_SMALL_RESUME_FROM 1724
 
 static int coap_small_block2;
-static size_t coap_small_req_num[4];
-static size_t coap_small_req_size[4];
+static size_t coap_small_req_num[8];
+static size_t coap_small_req_size[8];
 static size_t coap_small_req_count;
 static uint8_t coap_small_payload[COAP_SMALL_BLOCK_SIZE];
 
@@ -2534,6 +2549,71 @@ void test_downloader_get_coap_resume_smaller_block(void)
 	TEST_ASSERT_EQUAL(1024, coap_small_req_size[0]);
 	TEST_ASSERT_EQUAL(3, coap_small_req_num[1]);
 	TEST_ASSERT_EQUAL(COAP_SMALL_BLOCK_SIZE, coap_small_req_size[1]);
+
+	err = downloader_downloaded_size_get(&dl, &downloaded);
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(COAP_SMALL_FILE_SIZE, downloaded);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* A server serves 512-byte blocks when 1024 bytes are requested. After a reconnect, the client
+ * must keep requesting 512-byte blocks instead of falling back to the configured 1024 bytes.
+ */
+void test_downloader_get_coap_reconnect_keeps_block_size(void)
+{
+	int err;
+	size_t downloaded;
+	struct downloader_transport_coap_cfg coap_cfg = {
+		.block_size = COAP_BLOCK_1024,
+		.max_retransmission = 4,
+	};
+
+	coap_small_req_count = 0;
+	econnreset_once_call_count = 0;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	err = downloader_transport_coap_set_config(&dl, &coap_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap_econnreset_once;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_block_transfer_init_fake.custom_fake = coap_block_transfer_init_set_size;
+	coap_append_block2_option_fake.custom_fake = coap_append_block2_option_small_server;
+	coap_get_option_int_fake.custom_fake = coap_get_option_int_small_server;
+	coap_update_from_block_fake.custom_fake = coap_update_from_block_small_server;
+	coap_next_block_fake.custom_fake = coap_next_block_small_server;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_small_server;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	/* Block 1 is requested again after the reconnect, with the negotiated size. */
+	TEST_ASSERT_EQUAL(5, coap_small_req_count);
+	TEST_ASSERT_EQUAL(0, coap_small_req_num[0]);
+	TEST_ASSERT_EQUAL(1024, coap_small_req_size[0]);
+	for (size_t i = 1; i < 5; i++) {
+		TEST_ASSERT_EQUAL(COAP_SMALL_BLOCK_SIZE, coap_small_req_size[i]);
+	}
+	TEST_ASSERT_EQUAL(1, coap_small_req_num[1]);
+	TEST_ASSERT_EQUAL(1, coap_small_req_num[2]);
+	TEST_ASSERT_EQUAL(2, coap_small_req_num[3]);
+	TEST_ASSERT_EQUAL(3, coap_small_req_num[4]);
 
 	err = downloader_downloaded_size_get(&dl, &downloaded);
 	TEST_ASSERT_EQUAL(0, err);
