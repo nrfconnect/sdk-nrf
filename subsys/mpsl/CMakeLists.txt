@@ -29,3 +29,4 @@ endif()
 add_subdirectory_ifdef(CONFIG_MPSL_LOG_HANDLER_BUILTIN log)
 
 add_subdirectory_ifdef(CONFIG_MPSL_PIN_DEBUG pin_debug)
+add_subdirectory_ifdef(CONFIG_MPSL_NRF71_ANTSW antsw)
