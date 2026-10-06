@@ -1389,8 +1389,11 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		}
 
 		key_slot_data.revoke_policy = metadata.rpolicy;
+		/* The last slot may be partial (e.g. 192-bit keys), zero-pad it */
+		memset(key_slot_data.keyslot_value, 0, sizeof(key_slot_data.keyslot_value));
 		memcpy(key_slot_data.keyslot_value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
-		       CRACEN_KMU_SLOT_KEY_SIZE);
+		       MIN(CRACEN_KMU_SLOT_KEY_SIZE,
+			   key_buffer_size - CRACEN_KMU_SLOT_KEY_SIZE * i));
 
 		int kmu_status = cracen_kmu_key_slot_provision(&key_slot_data, slot_id + i);
 
