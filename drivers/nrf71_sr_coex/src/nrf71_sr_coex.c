@@ -23,7 +23,7 @@
  *   CM sends CM2CD_* event -> coex_event_handler() stores the result.
  *
  * Statistics are special: the actual numbers are copied into cd_state inside
- * coex_event_handler() when STATISTICS_EVENT arrives.
+ * coex_event_handler() when CM2CD_STATISTICS_EVENT arrives.
  *
  * Locking rules (important when adding code):
  *   - cd_state.lock guards every cd_state field.
@@ -93,8 +93,8 @@ static const struct coex_user_params_t default_user_params = {
  *
  *   - Radio up/down flags (wifi_up, sr_up, sr_coex_enabled)
  *   - Working copies of the CM configuration (wifi_range, sr_range, user_params)
- *   - Pending CD2CM request awaiting a CM2CD event (cm_req)
- *   - Cached statistics from the last GET_STATS (last_stats)
+ *   - Last CM2CD event received (last_event)
+ *   - Cached statistics from the last GET_STATS (last_stats, last_patch_stats)
  */
 static struct {
 	struct k_mutex lock;       /* Protects every cd_state field below. */
@@ -109,13 +109,12 @@ static struct {
 	struct coex_sr_priority_range_t sr_range;     /* Working copy of SR ranges. */
 	struct coex_user_params_t user_params;        /* Working copy of user params. */
 
-	/* Pending synchronous CD->CM request awaiting a CM2CD event. */
-	struct {
-		bool pending;
-		enum cm_event_to_host_t expected;
-	} cm_req;
+	struct cm2cd_event_status_name_t last_event;  /* Latest CM2CD event header. */
 
+	bool stats_valid;          /* last_stats filled from CM2CD_STATISTICS_EVENT. */
+	bool patch_stats_valid;    /* last_patch_stats filled from same event. */
 	struct cm_stats_t last_stats;                 /* ROM CM statistics payload. */
+	struct cm_fsm_patch_stats_t last_patch_stats; /* Patch CM statistics payload. */
 } cd_state;
 
 /* ---- Short-Range driver APIs (until the SR driver provides them) ---- */
@@ -141,39 +140,116 @@ __weak unsigned int coex_sr_set_client_priority(
 	return 1U;
 }
 
+/* ---- cd_state helpers ---- */
+
+/**
+ * Clear all Wi-Fi-side runtime state on Wi-Fi power-down and after a failed bring-up.
+ *
+ * Only state owned by the Wi-Fi/RPU session is dropped: the CM configuration is lost
+ * when the RPU resets, and the cached statistics describe that dead session.
+ */
+static void cd_mark_wifi_runtime_down_locked(void)
+{
+	cd_state.wifi_up = false;
+	cd_state.sr_coex_enabled = false;
+	cd_state.stats_valid = false;
+	cd_state.patch_stats_valid = false;
+}
+
 /* ---- CM2CD event handling ---- */
+
+/** Map CM2CD event enum to a string for debug logs. */
+static const char *cd_cm2cd_event_name(enum cm_event_to_host_t event)
+{
+	switch (event) {
+	case CM2CD_STATISTICS_EVENT:
+		return "CM2CD_STATISTICS_EVENT";
+	case CM2CD_UPDATE_COEX_PARAMS_EVENT:
+		return "CM2CD_UPDATE_COEX_PARAMS_EVENT";
+	case CM2CD_UPDATE_COEX_USER_PARAMS_EVENT:
+		return "CM2CD_UPDATE_COEX_USER_PARAMS_EVENT";
+	case CM2CD_ENABLE_COEXISTENCE_EVENT:
+		return "CM2CD_ENABLE_COEXISTENCE_EVENT";
+	case CM2CD_SET_PRIORITY_RANGES_EVENT:
+		return "CM2CD_SET_PRIORITY_RANGES_EVENT";
+	default:
+		return "CM2CD_UNKNOWN_EVENT";
+	}
+}
 
 /**
  * CM2CD event callback registered with the Wi-Fi FMAC coexistence path.
  *
- * Runs in Wi-Fi driver context when the Coexistence Manager sends an event.
- * Completes the pending request and copies statistics if present.
+ * Runs in Wi-Fi driver context when the Coexistence Manager sends an event. Stores
+ * the latest header and copies statistics if present.
+ *
+ * This is the single place where CM replies are captured, including the
+ * statistics carried by CM2CD_STATISTICS_EVENT.
  */
 static void coex_event_handler(void *ctx, const void *event, size_t len)
 {
+	const struct cm2cd_event_status_name_t *hdr;
+	enum cm_event_to_host_t event_name;
+	size_t stats_offset;
+
 	ARG_UNUSED(ctx);
 
-	k_mutex_lock(&cd_state.lock, K_FOREVER);
-
-	if (!cd_state.cm_req.pending) {
-		k_mutex_unlock(&cd_state.lock);
-		LOG_DBG("Unexpected coex event (no pending request)");
+	if (event == NULL) {
+		LOG_ERR("CM2CD event dropped: NULL payload");
 		return;
 	}
 
-	switch (cd_state.cm_req.expected) {
-	case STATISTICS_EVENT:
-		if (len >= sizeof(struct cm_stats_t)) {
-			memcpy(&cd_state.last_stats, event, sizeof(cd_state.last_stats));
+	if (len < sizeof(*hdr)) {
+		LOG_ERR("CM2CD event dropped: %zu bytes, need at least %zu for the header", len,
+			sizeof(*hdr));
+		return;
+	}
+
+	hdr = event;
+	event_name = (enum cm_event_to_host_t)hdr->event_name;
+	stats_offset = sizeof(*hdr);
+
+	LOG_DBG("CM2CD %s received (%zu bytes, raw event_name=%u, status=%u)",
+		cd_cm2cd_event_name(event_name), len, hdr->event_name, hdr->command_status);
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	cd_state.last_event = *hdr;
+
+	switch (event_name) {
+	case CM2CD_STATISTICS_EVENT:
+		cd_state.stats_valid = false;
+		cd_state.patch_stats_valid = false;
+
+		/* Payload layout: [header][cm_stats_t][optional cm_fsm_patch_stats_t]. */
+		if (len >= (stats_offset + sizeof(struct cm_stats_t))) {
+			memcpy(&cd_state.last_stats, (const uint8_t *)event + stats_offset,
+			       sizeof(cd_state.last_stats));
+			cd_state.stats_valid = true;
+
+			stats_offset += sizeof(cd_state.last_stats);
+			if (len >= (stats_offset + sizeof(cd_state.last_patch_stats))) {
+				memcpy(&cd_state.last_patch_stats,
+				       (const uint8_t *)event + stats_offset,
+				       sizeof(cd_state.last_patch_stats));
+				cd_state.patch_stats_valid = true;
+			}
 		} else {
 			LOG_WRN("Short statistics event (%zu bytes)", len);
 		}
 		break;
+
+	/* Patched CM2CD command-completion events. */
 	default:
+		if (hdr->command_status != COMMAND_PROCESSING_SUCCESS) {
+			LOG_WRN("CM2CD %s command processing FAIL (status=%u)",
+				cd_cm2cd_event_name(event_name), hdr->command_status);
+		} else {
+			LOG_DBG("CM2CD %s command processing SUCCESS",
+				cd_cm2cd_event_name(event_name));
+		}
 		break;
 	}
 
-	cd_state.cm_req.pending = false;
 	k_mutex_unlock(&cd_state.lock);
 }
 
@@ -187,7 +263,8 @@ static void coex_event_handler(void *ctx, const void *event, size_t len)
  * configuration first, then enable.
  *
  * On failure the CM is left partially configured. The caller is responsible for
- * clearing the runtime flags so the whole sequence is retried on the next Wi-Fi power-up.
+ * clearing the runtime flags (see cd_mark_wifi_runtime_down_locked()) so the
+ * whole sequence is retried on the next Wi-Fi power-up.
  */
 static int cd_apply_cm_config(void)
 {
@@ -315,7 +392,8 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 	switch (event) {
 	case COEX_WIFI_PREPARE_POWER_DOWN:
 		/*
-		 * Wi-Fi/RPU is shutting down: block new coexistence activity.
+		 * Wi-Fi/RPU is shutting down: block new coexistence activity and drop
+		 * the CM-session state (cached statistics) that dies with the RPU.
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		if (cd_state.transition_active) {
@@ -323,8 +401,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 			return -EBUSY;
 		}
 		cd_state.transition_active = true;
-		cd_state.wifi_up = false;
-		cd_state.sr_coex_enabled = false;
+		cd_mark_wifi_runtime_down_locked();
 		cd_state.transition_active = false;
 		k_mutex_unlock(&cd_state.lock);
 		return 0;
@@ -359,8 +436,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 			cd_state.sr_coex_enabled = cd_state.sr_up;
 		} else {
 			/* Partial configuration: retry the whole sequence next power-up. */
-			cd_state.wifi_up = false;
-			cd_state.sr_coex_enabled = false;
+			cd_mark_wifi_runtime_down_locked();
 		}
 		cd_state.transition_active = false;
 		k_mutex_unlock(&cd_state.lock);
@@ -395,8 +471,8 @@ static int nrf71_sr_coex_init(void)
 
 	/*
 	 * Register the callback for CM2CD events arriving over the Wi-Fi FMAC path.
-	 * coex_event_handler() completes the pending request and stores statistics.
-	 * This must be in place before the first CD2CM command is posted.
+	 * coex_event_handler() stores event headers/stats. This must be in place
+	 * before the first CD2CM command is posted.
 	 */
 	(void)nrf71_wifi_coex_register_event_cb(coex_event_handler, NULL);
 
