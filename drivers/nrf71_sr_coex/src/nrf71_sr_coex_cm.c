@@ -39,6 +39,12 @@
 
 LOG_MODULE_DECLARE(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
 
+/* Binary length of the built-in NRF_COEX_PARAMS hex string (two chars per byte). */
+#define NRF_COEX_PARAMS_BIN_LEN ((sizeof(NRF_COEX_PARAMS) - 1U) / 2U)
+
+BUILD_ASSERT(NRF_COEX_PARAMS_BIN_LEN <= CD2CM_COEX_PARAMS_MAX_BLOB_LEN,
+		 "NRF_COEX_PARAMS no longer fits the CD2CM_UPDATE_COEX_PARAMS buffer");
+
 /**
  * Post a CD2CM command to the CM over the Wi-Fi FMAC path.
  *
@@ -130,7 +136,7 @@ int coex_cm_update_user_params(const struct coex_user_params_t *user_params)
  */
 int coex_cm_update_coex_params(void)
 {
-	uint8_t cmd[sizeof(uint32_t) + (sizeof(NRF_COEX_PARAMS) / 2U)];
+	uint8_t cmd[sizeof(uint32_t) + NRF_COEX_PARAMS_BIN_LEN];
 	size_t blob_len;
 
 	/* Set the message ID in the command header. */

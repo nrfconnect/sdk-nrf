@@ -175,6 +175,18 @@ __weak unsigned int coex_sr_set_client_priority(
 /* ---- cd_state helpers ---- */
 
 /**
+ * Recompute the runtime coexistence gate. Caller must hold cd_state.lock.
+ *
+ * Coexistence commands are only allowed when both radios report powered-up and
+ * the Wi-Fi transport that carries CD2CM traffic is actually alive.
+ */
+static void cd_recompute_sr_coex_enabled_locked(void)
+{
+	cd_state.sr_coex_enabled = cd_state.wifi_up && cd_state.sr_up &&
+				   nrf71_wifi_coex_is_ready();
+}
+
+/**
  * Clear all Wi-Fi-side runtime state on Wi-Fi power-down and after a failed bring-up.
  *
  * Only state owned by the Wi-Fi/RPU session is dropped: the CM configuration is lost
@@ -762,21 +774,26 @@ int coex_cd_configure_coexc(enum coex_antenna_cfg_type antenna_cfg_type)
  */
 int coex_cd_sr_power_notify(enum coex_sr_power_event_t event)
 {
+	struct coex_sr_priority_range_t sr_range;
+
 	switch (event) {
 	case COEX_SR_PREPARE_POWER_DOWN:
 		/*
 		 * SR is about to sleep or power off. Clear the local flags so the
 		 * coexistence gate stays closed until both radios are back.
+		 *
+		 * Every update here happens inside one lock hold, so no
+		 * transition_active hand-off is needed. The -EBUSY check still rejects
+		 * this call while a POWERED_UP_READY transition is doing slow work
+		 * outside the lock.
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		if (cd_state.transition_active) {
 			k_mutex_unlock(&cd_state.lock);
 			return -EBUSY;
 		}
-		cd_state.transition_active = true;
 		cd_state.sr_up = false;
 		cd_state.sr_coex_enabled = false;
-		cd_state.transition_active = false;
 		k_mutex_unlock(&cd_state.lock);
 
 		/* Tell the SR driver to stop participating in coexistence. */
@@ -795,23 +812,30 @@ int coex_cd_sr_power_notify(enum coex_sr_power_event_t event)
 			return -EBUSY;
 		}
 		cd_state.transition_active = true;
+		sr_range = cd_state.sr_range;
 		k_mutex_unlock(&cd_state.lock);
 
 		/*
 		 * Push the retained SR priority ranges into the SR driver. Best-effort:
 		 * the CM already has them from cd_apply_cm_config().
 		 */
-		if (coex_sr_set_client_priority(&cd_state.sr_range) == 0U) {
+		if (coex_sr_set_client_priority(&sr_range) == 0U) {
 			LOG_WRN("SR driver rejected priority ranges on power-up");
 		}
 
 		/* Enable coexistence inside the SR driver. */
-		(void)coex_sr_enable(1U);
+		if (coex_sr_enable(1U) == 0U) {
+			LOG_WRN("SR driver rejected coexistence enable on power-up");
+			k_mutex_lock(&cd_state.lock, K_FOREVER);
+			cd_state.transition_active = false;
+			k_mutex_unlock(&cd_state.lock);
+			return -EIO;
+		}
 
-		/* New SR requests are accepted only when Wi-Fi/CM are also ready. */
+		/* SR is up; the gate additionally requires a configured Wi-Fi side. */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		cd_state.sr_up = true;
-		cd_state.sr_coex_enabled = cd_state.wifi_up && nrf71_wifi_coex_is_ready();
+		cd_recompute_sr_coex_enabled_locked();
 		cd_state.transition_active = false;
 		k_mutex_unlock(&cd_state.lock);
 		return 0;
@@ -843,15 +867,17 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 		 * Wi-Fi/RPU is shutting down: block new coexistence activity and drop
 		 * the CM-session state (cached statistics) that dies with the RPU.
 		 * COEXC programming is left alone; see cd_mark_wifi_runtime_down_locked().
+		 *
+		 * As with SR power-down there is no transition_active hand-off, but
+		 * -EBUSY still blocks while a POWERED_UP_READY transition is running
+		 * cd_apply_cm_config().
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		if (cd_state.transition_active) {
 			k_mutex_unlock(&cd_state.lock);
 			return -EBUSY;
 		}
-		cd_state.transition_active = true;
 		cd_mark_wifi_runtime_down_locked();
-		cd_state.transition_active = false;
 		k_mutex_unlock(&cd_state.lock);
 		return 0;
 
@@ -882,7 +908,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 		 */
 		if (ret == 0) {
 			cd_state.wifi_up = true;
-			cd_state.sr_coex_enabled = cd_state.sr_up;
+			cd_recompute_sr_coex_enabled_locked();
 		} else {
 			/* Partial configuration: retry the whole sequence next power-up. */
 			cd_mark_wifi_runtime_down_locked();
