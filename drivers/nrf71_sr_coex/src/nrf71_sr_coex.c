@@ -28,8 +28,10 @@
  *   2. Wait (up to CM2CD_EVENT_WAIT_MS) for the matching CM2CD completion event
  *   3. Validate success/failure and return to the caller
  *
- * Statistics are special: the actual numbers are copied into cd_state inside
- * coex_event_handler() when CM2CD_STATISTICS_EVENT arrives.
+ * Statistics are special: coex_cd_get_stats() triggers the round-trip, but the
+ * actual numbers are copied into cd_state inside coex_event_handler() when
+ * CM2CD_STATISTICS_EVENT arrives. coex_cd_get_last_stats() only copies out that
+ * cache.
  *
  * Locking rules (important when adding code):
  *   - cd_state.lock guards every cd_state field.
@@ -53,6 +55,7 @@
 /* CD to Short-Range driver interface. */
 #include <nrf71_cd_sr_if.h>
 
+#include <nrf71_sr_coex_api.h>
 #include "nrf71_sr_coex_internal.h"
 
 LOG_MODULE_REGISTER(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
@@ -106,7 +109,7 @@ static const struct coex_user_params_t default_user_params = {
  * All driver state in one place.
  *
  *   - Radio up/down flags (wifi_up, sr_up, sr_coex_enabled)
- *   - Working copies of the CM configuration (wifi_range, sr_range, user_params)
+ *   - Working copies of config the app can change (wifi_range, sr_range, user_params)
  *   - Last CM2CD event received (last_event)
  *   - Cached statistics from the last GET_STATS (last_stats, last_patch_stats)
  */
@@ -293,8 +296,9 @@ static int cd_validate_last_cm_event(enum cm_event_to_host_t event_name)
  * the latest header, copies statistics if present, and wakes
  * cd_wait_for_cm_event() via cm_event_sem.
  *
- * This is the single place where CM replies are captured, including the
- * statistics carried by CM2CD_STATISTICS_EVENT.
+ * This is the single place where CM replies are captured. coex_cd_get_stats()
+ * does not copy statistics itself; this handler does it when the event is
+ * CM2CD_STATISTICS_EVENT.
  */
 static void coex_event_handler(void *ctx, const void *event, size_t len)
 {
@@ -493,6 +497,163 @@ static int cd_apply_cm_config(void)
 	return coex_cm_enable(true);
 }
 
+/* ---- CM configuration / runtime APIs ---- */
+
+/**
+ * Post CD2CM_ENABLE_COEXISTENCE and wait for CM2CD_ENABLE_COEXISTENCE_EVENT.
+ *
+ * This only flips the enable state inside the CM. It deliberately does not
+ * change sr_coex_enabled, which tracks radio power state rather than CM policy,
+ * so a caller that disables the CM is expected to stop issuing coexistence
+ * commands on its own.
+ */
+int coex_cd_enable(bool enable)
+{
+	return coex_cm_enable(enable);
+}
+
+/**
+ * Post CD2CM_SET_PRIORITY_RANGES, wait for CM2CD_SET_PRIORITY_RANGES_EVENT and
+ * retain the ranges in cd_state.
+ *
+ * Retaining the ranges matters because cd_state is replayed later:
+ * cd_apply_cm_config() resends them after a Wi-Fi power-up, and
+ * coex_cd_sr_power_notify() pushes cd_state.sr_range into the SR driver on SR
+ * power-up. Without this the CM would hold the new ranges while a later
+ * power-up silently reverted the SR side to the build-time defaults.
+ */
+int coex_cd_set_priority_ranges(const struct coex_wifi_priority_range_t *wifi_range,
+				const struct coex_sr_priority_range_t *sr_range)
+{
+	int ret;
+
+	if ((wifi_range == NULL) || (sr_range == NULL)) {
+		return -EINVAL;
+	}
+
+	ret = coex_cm_set_priority_ranges(wifi_range, sr_range);
+	if (ret != 0) {
+		return ret;
+	}
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	cd_state.wifi_range = *wifi_range;
+	cd_state.sr_range = *sr_range;
+	k_mutex_unlock(&cd_state.lock);
+
+	/* Keep the SR driver in sync with the ranges the CM just accepted. */
+	if (coex_sr_set_client_priority(sr_range) == 0U) {
+		LOG_WRN("SR driver rejected priority ranges");
+	}
+
+	return 0;
+}
+
+/**
+ * Post CD2CM_UPDATE_COEX_USER_PARAMS, wait for the completion event and retain
+ * the params in cd_state so they are replayed after a Wi-Fi power-up.
+ */
+int coex_cd_update_user_params(const struct coex_user_params_t *user_params)
+{
+	int ret;
+
+	if (user_params == NULL) {
+		return -EINVAL;
+	}
+
+	ret = coex_cm_update_user_params(user_params);
+	if (ret != 0) {
+		return ret;
+	}
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	cd_state.user_params = *user_params;
+	/* The CM expects the message id inside the payload as well. */
+	cd_state.user_params.message_id = CD2CM_UPDATE_COEX_USER_PARAMS;
+	k_mutex_unlock(&cd_state.lock);
+
+	return 0;
+}
+
+/** Post CD2CM_UPDATE_COEX_PARAMS (default blob) and wait for CM2CD_UPDATE_COEX_PARAMS_EVENT. */
+int coex_cd_update_coex_params(void)
+{
+	return coex_cm_update_coex_params();
+}
+
+/**
+ * Post CD2CM_UPDATE_COEX_PARAMS with a caller-supplied blob and wait for
+ * CM2CD_UPDATE_COEX_PARAMS_EVENT.
+ *
+ * The blob is not retained, so cd_apply_cm_config() reapplies the default
+ * NRF_COEX_PARAMS blob after a Wi-Fi power-up. Callers that need a custom blob
+ * to survive an RPU reset must send it again themselves.
+ */
+int coex_cd_update_coex_params_blob(const uint8_t *blob, size_t blob_len)
+{
+	return coex_cm_update_coex_params_blob(blob, blob_len);
+}
+
+/**
+ * Post CD2CM_GET_STATS and wait for CM2CD_STATISTICS_EVENT.
+ *
+ * Asks the CM for coexistence counters (grants, denials, etc.). This function
+ * only triggers the request and waits; the numbers are stored by
+ * coex_event_handler() when the statistics event arrives. After this returns 0,
+ * call coex_cd_get_last_stats() to copy out the cached snapshot.
+ */
+int coex_cd_get_stats(void)
+{
+	return coex_cm_get_stats();
+}
+
+/**
+ * Copy the cm_stats_t retained from the last CM2CD_STATISTICS_EVENT.
+ *
+ * coex_event_handler() writes cd_state.last_stats under cd_state.lock, so
+ * copying under the same lock guarantees the caller a consistent snapshot even
+ * if another statistics event arrives at the same time.
+ */
+int coex_cd_get_last_stats(struct cm_stats_t *stats)
+{
+	int ret = -ENODATA;
+
+	if (stats == NULL) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	if (cd_state.stats_valid) {
+		*stats = cd_state.last_stats;
+		ret = 0;
+	}
+	k_mutex_unlock(&cd_state.lock);
+
+	return ret;
+}
+
+/**
+ * Copy the patch statistics retained from the last CM2CD_STATISTICS_EVENT.
+ * Same locking rules as coex_cd_get_last_stats().
+ */
+int coex_cd_get_last_patch_stats(struct cm_fsm_patch_stats_t *patch_stats)
+{
+	int ret = -ENODATA;
+
+	if (patch_stats == NULL) {
+		return -EINVAL;
+	}
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	if (cd_state.patch_stats_valid) {
+		*patch_stats = cd_state.last_patch_stats;
+		ret = 0;
+	}
+	k_mutex_unlock(&cd_state.lock);
+
+	return ret;
+}
+
 /* ---- CD APIs exposed to the Short-Range driver ---- */
 
 /**
@@ -674,7 +835,7 @@ static int nrf71_sr_coex_init(void)
 	k_mutex_init(&cd_state.cmd_lock);
 	k_sem_init(&cd_state.cm_event_sem, 0, K_SEM_MAX_LIMIT);
 
-	/* Working copies used by cd_apply_cm_config(). */
+	/* Working copies used by cd_apply_cm_config() and the coex_cd_* APIs. */
 	cd_state.wifi_range = default_wifi_range;
 	cd_state.sr_range = default_sr_range;
 	cd_state.user_params = default_user_params;
