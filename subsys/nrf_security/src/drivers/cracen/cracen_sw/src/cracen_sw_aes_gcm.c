@@ -323,7 +323,10 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 	}
 	initialize_ctr(operation);
 
-	finalize_ad_padding(operation);
+	/* Pad AD only once; afterwards the buffer holds partial data blocks */
+	if (gcm_ctx->total_data_enc == 0) {
+		finalize_ad_padding(operation);
+	}
 
 	/* Process data with CTR mode encryption/decryption */
 	if (operation->dir == CRACEN_ENCRYPT) {
