@@ -57,6 +57,15 @@ tests:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
 
+  benchmarks.power_load.nrf71:
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    extra_args:
+      - power_load_SNIPPET=nordic-flpr
+      - SB_CONFIG_FLPR_VPR_TEST_APP=y
+
   benchmarks.power_load.nrf92:
     platform_allow:
       - nrf9251dk/nrf9251/cpuapp

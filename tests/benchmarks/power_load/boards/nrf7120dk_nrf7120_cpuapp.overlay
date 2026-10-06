@@ -1,0 +1,134 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * Required loopbacks:
+ * P1.05 - P1.14
+ * P1.06 - P1.04
+ */
+
+/ {
+	aliases {
+		test-gpio = &led_custom0;
+		watchdog0 = &wdt31;
+		/delete-property/ pwm_led1;
+	};
+
+	leds {
+		led_custom0: led_custom0 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom LED due to GPIO4 disabled";
+		};
+	};
+
+	zephyr,user {
+		io-channels = <&adc 0>;
+	};
+};
+
+&pinctrl {
+	i2c22_default_alt: i2c22_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 14)>,
+				<NRF_PSEL(TWIM_SCL, 1, 4)>;
+		};
+	};
+
+	i2c22_sleep_alt: i2c22_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIM_SDA, 1, 14)>,
+				<NRF_PSEL(TWIM_SCL, 1, 4)>;
+			low-power-enable;
+		};
+	};
+
+	i2c21_default_alt: i2c21_default_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 5)>,
+				<NRF_PSEL(TWIS_SCL, 1, 6)>;
+			bias-pull-up;
+		};
+	};
+
+	i2c21_sleep_alt: i2c21_sleep_alt {
+		group1 {
+			psels = <NRF_PSEL(TWIS_SDA, 1, 5)>,
+				<NRF_PSEL(TWIS_SCL, 1, 6)>;
+			low-power-enable;
+		};
+	};
+};
+
+dut_twim: &i2c22 {
+	compatible = "nordic,nrf-twim";
+	status = "okay";
+	pinctrl-0 = <&i2c22_default_alt>;
+	pinctrl-1 = <&i2c22_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+
+	sensor: sensor@54 {
+		reg = <0x54>;
+	};
+};
+
+dut_twis: &i2c21 {
+	compatible = "nordic,nrf-twis";
+	status = "okay";
+	pinctrl-0 = <&i2c21_default_alt>;
+	pinctrl-1 = <&i2c21_sleep_alt>;
+	pinctrl-names = "default", "sleep";
+};
+
+&adc {
+	#address-cells = <1>;
+	#size-cells = <0>;
+	status = "okay";
+
+	channel@0 {
+		reg = <0>;
+		zephyr,gain = "ADC_GAIN_1";
+		zephyr,reference = "ADC_REF_INTERNAL";
+		zephyr,acquisition-time = <ADC_ACQ_TIME(ADC_ACQ_TIME_MICROSECONDS, 10)>;
+		zephyr,input-positive = <NRF_SAADC_AIN1>;
+		zephyr,resolution = <10>;
+	};
+};
+
+&timer20 {
+	status = "okay";
+};
+
+&timer21 {
+	status = "okay";
+};
+
+&timer22 {
+	status = "okay";
+};
+
+&timer23 {
+	status = "okay";
+};
+
+&timer24 {
+	status = "okay";
+};
+
+temp_sensor: &temp {
+	status = "okay";
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&wdt31 {
+	status = "okay";
+};
+
+&gpio4 {
+	status = "disabled";
+};
