@@ -86,9 +86,9 @@ static const struct coex_wifi_priority_range_t default_wifi_range = {
 static const struct coex_sr_priority_range_t default_sr_range = {
 	.sr_rx_client_ccconf_pti_range = {30, 25, 1},
 	.sr_tx_client_ccconf_pti_range = {40, 30, 2},
-	.sr_rx_client_critical_ccconf_pti_range = {20, 15, 1},
-	.sr_tx_client_critical_ccconf_pti_range = {25, 20, 1},
 	.client_priority_level = 5,
+	.sr_rx_client_critical_ccconf_pti_range = {5, 0, 1},
+	.sr_tx_client_critical_ccconf_pti_range = {5, 0, 1},
 };
 
 /*
@@ -105,7 +105,7 @@ static const struct coex_user_params_t default_user_params = {
 	.wifi_beacon_prot_prob = 100,
 	.wifi_conn_prot_prob = 100,
 	.wifi_calib_prot_prob = 100,
-	.shared_ant_control = ANT_ALLOC_STATIC_WIFI,
+	.shared_ant_control = ANT_ALLOC_DYNAMIC,
 };
 
 /**
