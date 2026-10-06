@@ -25,6 +25,7 @@ To use the module, you must enable the following Kconfig options:
 * :kconfig:option:`CONFIG_BT`
 * :kconfig:option:`CONFIG_BT_SMP` - This option enables Security Manager Protocol support.
 * :kconfig:option:`CONFIG_CAF_BLE_STATE` - This option enables the |ble_state| and selects the :kconfig:option:`CONFIG_CAF_BLE_COMMON_EVENTS` Kconfig option, which enables Bluetooth LE common events in CAF.
+  It also selects the :kconfig:option:`CONFIG_CAF_BLE_STATE_SUPPORTED` option to indicate that the |ble_state| is implemented in the application.
 
 The following Kconfig options are also available for this module:
 
@@ -50,6 +51,12 @@ The following Kconfig options are also available for this module:
 
 Implementation details
 **********************
+
+You can use the |ble_state| as a default implementation of Bluetooth LE state functionality for simple applications.
+
+.. note::
+   If your application requires an application-specific Bluetooth LE state module, you must provide your own implementation.
+   Select the :kconfig:option:`CONFIG_CAF_BLE_STATE_SUPPORTED` Kconfig option in the application Kconfig to inform CAF that the |ble_state| is supported by the application.
 
 The |ble_state| is used by both Bluetooth Peripheral and Bluetooth Central devices.
 
