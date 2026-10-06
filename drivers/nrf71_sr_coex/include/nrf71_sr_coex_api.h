@@ -29,6 +29,7 @@
 #include <stdint.h>
 
 #include <nrf71_coex_if.h>
+#include <nrf71_coex_hw_regs.h>
 
 /** Largest blob accepted by coex_cd_update_coex_params_blob(), in bytes. */
 #define CD2CM_COEX_PARAMS_MAX_BLOB_LEN 128U
@@ -84,5 +85,8 @@ int coex_cd_get_last_stats(struct cm_stats_t *stats);
  *                  statistics snapshot is retained.
  */
 int coex_cd_get_last_patch_stats(struct cm_fsm_patch_stats_t *patch_stats);
+
+/** Configure and enable COEXC hardware (host CCMALLOW / CCCONF programming). */
+int coex_cd_configure_coexc(enum coex_antenna_cfg_type antenna_cfg_type);
 
 #endif /* NRF71_SR_COEX_API_H__ */
