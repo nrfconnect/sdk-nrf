@@ -21,6 +21,7 @@
 #include <stdint.h>
 
 #include <nrf71_coex_if.h>
+#include <nrf71_coex_hw_regs.h>
 
 /**
  * Post a CD2CM command over the Wi-Fi FMAC transport.
@@ -60,5 +61,8 @@ int coex_cm_get_stats(void);
  * CM2CD_UPDATE_COEX_PARAMS_EVENT.
  */
 int coex_cm_update_coex_params_blob(const uint8_t *blob, size_t blob_len);
+
+/** Program COEXC CCMALLOW, CCCONF, and turnaround registers. */
+int cd_coexc_configuration(enum coex_antenna_cfg_type antenna_cfg_type);
 
 #endif /* NRF71_SR_COEX_INTERNAL_H__ */

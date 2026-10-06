@@ -14,12 +14,15 @@
  */
 
 #include <errno.h>
+#include <stdint.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/sys_io.h>
 
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
 #include <system/core.h>
 #include <common/fmac_api_common.h>
+#include <common/fmac_structs_common.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -29,6 +32,31 @@ static void *coex_event_cb_ctx;
 static struct nrf_wifi_ctx_zep *coex_rpu_ctx(void)
 {
 	return &rpu_drv_priv_zep.rpu_ctx_zep;
+}
+
+/**
+ * Read or write a COEXC register in the global domain.
+ *
+ * On nRF71 COEXC sits in the always-on global domain and is memory-mapped
+ * on the application processor.
+ */
+static int coex_hal_reg_access(uint32_t reg_addr, uint32_t *value, bool write)
+{
+	uintptr_t mmio_addr;
+
+	if (value == NULL) {
+		return -EINVAL;
+	}
+
+	mmio_addr = (uintptr_t)reg_addr;
+
+	if (write) {
+		sys_write32(*value, mmio_addr);
+	} else {
+		*value = sys_read32(mmio_addr);
+	}
+
+	return 0;
 }
 
 bool nrf71_wifi_coex_is_ready(void)
@@ -84,4 +112,18 @@ void nrf71_wifi_coex_on_event(const void *event, size_t len)
 	} else {
 		LOG_WRN("Coex event dropped (%zu bytes): no handler registered", len);
 	}
+}
+
+int nrf71_wifi_coex_reg_write(uint32_t reg_addr, uint32_t value)
+{
+	return coex_hal_reg_access(reg_addr, &value, true);
+}
+
+int nrf71_wifi_coex_reg_read(uint32_t reg_addr, uint32_t *value)
+{
+	if (value == NULL) {
+		return -EINVAL;
+	}
+
+	return coex_hal_reg_access(reg_addr, value, false);
 }

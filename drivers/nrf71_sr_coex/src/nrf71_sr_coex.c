@@ -48,7 +48,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 
-/* Wi-Fi FMAC coexistence transport (cmd/event access). */
+/* Wi-Fi FMAC coexistence transport (cmd/event/reg access). */
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 /* CD2CM / CM2CD message structures shared with RPU firmware. */
 #include <nrf71_coex_if.h>
@@ -62,6 +62,9 @@ LOG_MODULE_REGISTER(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
 
 /* Max time (ms) to wait for a CM2CD response after posting a CD2CM command. */
 #define CM2CD_EVENT_WAIT_MS CONFIG_NRF71_SR_COEX_CM_EVENT_WAIT_MS
+
+/* Antenna configuration assumed until coex_cd_configure_coexc() selects another one. */
+#define CD_DEFAULT_ANTENNA_CFG COEX_SHARED_ANT_CFG
 
 /*
  * Default Wi-Fi priority ranges sent to the CM at startup.
@@ -109,6 +112,8 @@ static const struct coex_user_params_t default_user_params = {
  * All driver state in one place.
  *
  *   - Radio up/down flags (wifi_up, sr_up, sr_coex_enabled)
+ *   - COEXC hardware state (coexc_configured)
+ *   - Antenna configuration (antenna_cfg)
  *   - Working copies of config the app can change (wifi_range, sr_range, user_params)
  *   - Last CM2CD event received (last_event)
  *   - Cached statistics from the last GET_STATS (last_stats, last_patch_stats)
@@ -124,6 +129,14 @@ static struct {
 
 	bool transition_active;    /* Guard against overlapping power notifications. */
 
+	/*
+	 * COEXC registers programmed. Sticky for the lifetime of the driver: COEXC
+	 * lives in the always-on global domain, so its tables outlive an RPU reset.
+	 * Cleared only when programming fails and the hardware state is unknown.
+	 */
+	bool coexc_configured;
+
+	enum coex_antenna_cfg_type antenna_cfg;       /* Working copy of antenna configuration. */
 	struct coex_wifi_priority_range_t wifi_range; /* Working copy of Wi-Fi ranges. */
 	struct coex_sr_priority_range_t sr_range;     /* Working copy of SR ranges. */
 	struct coex_user_params_t user_params;        /* Working copy of user params. */
@@ -166,6 +179,10 @@ __weak unsigned int coex_sr_set_client_priority(
  *
  * Only state owned by the Wi-Fi/RPU session is dropped: the CM configuration is lost
  * when the RPU resets, and the cached statistics describe that dead session.
+ *
+ * coexc_configured is deliberately NOT cleared. COEXC register contents are
+ * unaffected by the RPU reset because the block lives in the global domain and
+ * is programmed by host.
  */
 static void cd_mark_wifi_runtime_down_locked(void)
 {
@@ -414,6 +431,40 @@ int coex_cd_cm_send_and_wait(const void *cmd, size_t len, enum cm_event_to_host_
 /* ---- Helper functions ---- */
 
 /**
+ * Make sure COEXC hardware is configured before the first CM command is sent.
+ *
+ * Uses the antenna configuration recorded in cd_state so a product that selected
+ * COEX_SEPARATE_ANT_CFG through coex_cd_configure_coexc() is verified and, if
+ * needed, programmed against that configuration rather than the shared-antenna default.
+ */
+static int cd_configure_coexc_from_state(void)
+{
+	enum coex_antenna_cfg_type antenna_cfg;
+	int ret;
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	if (cd_state.coexc_configured) {
+		k_mutex_unlock(&cd_state.lock);
+		return 0;
+	}
+	antenna_cfg = cd_state.antenna_cfg;
+	k_mutex_unlock(&cd_state.lock);
+
+	/* Write CCMALLOW, CCCONF, TURNAROUND. */
+	ret = cd_coexc_configuration(antenna_cfg);
+	if (ret != 0) {
+		LOG_ERR("COEXC configure failed: %s (%d)", strerror(-ret), ret);
+		return ret;
+	}
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	cd_state.coexc_configured = true;
+	k_mutex_unlock(&cd_state.lock);
+
+	return 0;
+}
+
+/**
  * Send the working priority ranges from cd_state to the CM and the SR driver.
  *
  * The ranges are snapshotted under cd_state.lock and the lock is released
@@ -463,8 +514,8 @@ static int cd_send_user_params_from_state(void)
  * Push the current coexistence settings to the Coexistence Manager (CM).
  *
  * Full bring-up sequence, run on every
- * coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY). Order matters: CM
- * configuration first, then enable. Each step waits for its CM2CD completion
+ * coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY). Order matters: COEXC hardware first, then
+ * CM configuration, then enable. Each step waits for its CM2CD completion
  * event before the next one starts.
  *
  * On failure the CM is left partially configured. The caller is responsible for
@@ -475,25 +526,31 @@ static int cd_apply_cm_config(void)
 {
 	int ret;
 
-	/* Step 1: CD2CM_SET_PRIORITY_RANGES, plus the SR-driver mirror. */
+	/* Step 1: Configure COEXC registers before talking to the CM. */
+	ret = cd_configure_coexc_from_state();
+	if (ret != 0) {
+		return ret;
+	}
+
+	/* Step 2: CD2CM_SET_PRIORITY_RANGES, plus the SR-driver mirror. */
 	ret = cd_send_priority_ranges_from_state();
 	if (ret != 0) {
 		return ret;
 	}
 
-	/* Step 2: CD2CM_UPDATE_COEX_USER_PARAMS (protection probabilities, etc.). */
+	/* Step 3: CD2CM_UPDATE_COEX_USER_PARAMS (protection probabilities, etc.). */
 	ret = cd_send_user_params_from_state();
 	if (ret != 0) {
 		return ret;
 	}
 
-	/* Step 3: CD2CM_UPDATE_COEX_PARAMS with the default NRF_COEX_PARAMS blob. */
+	/* Step 4: CD2CM_UPDATE_COEX_PARAMS with the default NRF_COEX_PARAMS blob. */
 	ret = coex_cm_update_coex_params();
 	if (ret != 0) {
 		return ret;
 	}
 
-	/* Step 4: CD2CM_ENABLE_COEXISTENCE. */
+	/* Step 5: CD2CM_ENABLE_COEXISTENCE. */
 	return coex_cm_enable(true);
 }
 
@@ -654,6 +711,42 @@ int coex_cd_get_last_patch_stats(struct cm_fsm_patch_stats_t *patch_stats)
 	return ret;
 }
 
+/* ---- COEXC hardware APIs ---- */
+
+/**
+ * Program the COEXC tables for the given antenna configuration.
+ *
+ * This lets an application program the hardware explicitly for a selected antenna
+ * configuration. The selected configuration is recorded in cd_state.antenna_cfg
+ * so a later reprogram uses the same tables.
+ *
+ * COEXC is in the global domain on nRF71 and is programmed through host and
+ * the Wi-Fi transport is not involved.
+ */
+int coex_cd_configure_coexc(enum coex_antenna_cfg_type antenna_cfg_type)
+{
+	int ret;
+
+	if ((antenna_cfg_type != COEX_SHARED_ANT_CFG) &&
+	    (antenna_cfg_type != COEX_SEPARATE_ANT_CFG)) {
+		return -EINVAL;
+	}
+
+	ret = cd_coexc_configuration(antenna_cfg_type);
+
+	k_mutex_lock(&cd_state.lock, K_FOREVER);
+	if (ret == 0) {
+		cd_state.antenna_cfg = antenna_cfg_type;
+		cd_state.coexc_configured = true;
+	} else {
+		/* Hardware state is unknown; force a verify/reprogram on next bring-up. */
+		cd_state.coexc_configured = false;
+	}
+	k_mutex_unlock(&cd_state.lock);
+
+	return ret;
+}
+
 /* ---- CD APIs exposed to the Short-Range driver ---- */
 
 /**
@@ -734,7 +827,8 @@ int coex_cd_sr_power_notify(enum coex_sr_power_event_t event)
  * The Wi-Fi side owns the transport that carries CD2CM traffic, so Wi-Fi
  * power-up is what triggers the CM configuration via cd_apply_cm_config().
  * The CM runs on the RPU and loses all of its state across a reset, so priority
- * ranges, user params, coex params and the enable have to be sent again.
+ * ranges, user params, coex params and the enable have to be sent again. COEXC
+ * is unaffected: it is in the global domain and keeps the tables it was given.
  *
  * Wi-Fi power-down only clears local flags; it sends no CM disable command
  * because the transport is about to disappear anyway.
@@ -748,6 +842,7 @@ int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event)
 		/*
 		 * Wi-Fi/RPU is shutting down: block new coexistence activity and drop
 		 * the CM-session state (cached statistics) that dies with the RPU.
+		 * COEXC programming is left alone; see cd_mark_wifi_runtime_down_locked().
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
 		if (cd_state.transition_active) {
@@ -819,7 +914,7 @@ bool coex_cd_wifi_is_up(void)
  * Driver init, run at APPLICATION level after the Wi-Fi driver.
  *
  *   - Initialise the cd_state mutexes and the CM event semaphore
- *   - Load the default priority ranges and user params
+ *   - Load the default antenna configuration, priority ranges and user params
  *   - Register coex_event_handler() for all incoming CM2CD events
  *
  * CM programming is deliberately deferred until
@@ -836,6 +931,7 @@ static int nrf71_sr_coex_init(void)
 	k_sem_init(&cd_state.cm_event_sem, 0, K_SEM_MAX_LIMIT);
 
 	/* Working copies used by cd_apply_cm_config() and the coex_cd_* APIs. */
+	cd_state.antenna_cfg = CD_DEFAULT_ANTENNA_CFG;
 	cd_state.wifi_range = default_wifi_range;
 	cd_state.sr_range = default_sr_range;
 	cd_state.user_params = default_user_params;
