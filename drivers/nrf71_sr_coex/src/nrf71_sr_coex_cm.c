@@ -34,6 +34,7 @@
 /* CD to Short-Range driver interface. */
 #include <nrf71_cd_sr_if.h>
 
+#include <nrf71_sr_coex_api.h>
 #include "nrf71_sr_coex_internal.h"
 
 LOG_MODULE_DECLARE(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
@@ -125,7 +126,7 @@ int coex_cm_update_user_params(const struct coex_user_params_t *user_params)
  *
  * NRF_COEX_PARAMS is a compile-time hex string of internal CM tuning values, so
  * it is decoded to binary before sending. hex2bin() returns 0 on a malformed
- * string.
+ * string. To send modified values, use coex_cm_update_coex_params_blob().
  */
 int coex_cm_update_coex_params(void)
 {
@@ -143,6 +144,34 @@ int coex_cm_update_coex_params(void)
 		LOG_ERR("Malformed NRF_COEX_PARAMS");
 		return -EINVAL;
 	}
+
+	return coex_cd_cm_send_and_wait(cmd, sizeof(uint32_t) + blob_len,
+					CM2CD_UPDATE_COEX_PARAMS_EVENT);
+}
+
+/**
+ * Post CD2CM_UPDATE_COEX_PARAMS with a caller-supplied blob and wait for
+ * CM2CD_UPDATE_COEX_PARAMS_EVENT.
+ *
+ * Same wire format as coex_cm_update_coex_params(), but the caller provides the
+ * binary blob. Used by the application or test bench to patch individual bytes
+ * (for example the LNA switch control byte). Blobs longer than
+ * CD2CM_COEX_PARAMS_MAX_BLOB_LEN are rejected before any CM transaction starts.
+ */
+int coex_cm_update_coex_params_blob(const uint8_t *blob, size_t blob_len)
+{
+	uint8_t cmd[sizeof(uint32_t) + CD2CM_COEX_PARAMS_MAX_BLOB_LEN];
+
+	if ((blob == NULL) || (blob_len == 0U) ||
+	    (blob_len > CD2CM_COEX_PARAMS_MAX_BLOB_LEN)) {
+		return -EINVAL;
+	}
+
+	/* Set the message ID in the command header. */
+	sys_put_le32(CD2CM_UPDATE_COEX_PARAMS, cmd);
+
+	/* Copy the caller-supplied binary blob after the message ID. */
+	memcpy(&cmd[sizeof(uint32_t)], blob, blob_len);
 
 	return coex_cd_cm_send_and_wait(cmd, sizeof(uint32_t) + blob_len,
 					CM2CD_UPDATE_COEX_PARAMS_EVENT);

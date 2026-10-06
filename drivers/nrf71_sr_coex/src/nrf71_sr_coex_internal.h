@@ -55,4 +55,10 @@ int coex_cm_update_coex_params(void);
 /** Post CD2CM_GET_STATS and wait for CM2CD_STATISTICS_EVENT. */
 int coex_cm_get_stats(void);
 
+/**
+ * Post CD2CM_UPDATE_COEX_PARAMS with a caller-supplied blob and wait for
+ * CM2CD_UPDATE_COEX_PARAMS_EVENT.
+ */
+int coex_cm_update_coex_params_blob(const uint8_t *blob, size_t blob_len);
+
 #endif /* NRF71_SR_COEX_INTERNAL_H__ */
