@@ -1338,6 +1338,11 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	/* PROVISIONING_SLOT is reserved for the internal provisioning marker */
+	if (slot_id <= PROVISIONING_SLOT && slot_id + num_slots > PROVISIONING_SLOT) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
+
 	if (nrfx_kmu_key_slots_empty_check(slot_id, num_slots, &slots_empty) != 0) {
 		return PSA_ERROR_HARDWARE_FAILURE;
 	}
