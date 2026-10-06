@@ -74,8 +74,15 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	sx_pk_req req;
 	struct sxhash ctx;
 
+	/* Take the PK HW before the symmetric HW, the same order as every other user of both.
+	 * Failing to follow the same order for all users will cause deadlocks for multithreaded
+	 * applications.
+	 */
+	sx_pk_acquire_hw(&req);
+
 	status = sx_hw_reserve(&ctx.dma, SX_HW_RESERVE_DEFAULT);
 	if (status != SX_OK) {
+		sx_pk_release_req(&req);
 		return status;
 	}
 
@@ -94,7 +101,6 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 		goto exit;
 	}
 
-	sx_pk_acquire_hw(&req);
 	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_PTMUL);
 
 	/* Perform point multiplication R = [r]B. This is the encoded point R,
@@ -103,7 +109,6 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	status = sx_ed448_ptmult(&req, (const struct sx_ed448_dgst *)area_4,
 				 (struct sx_ed448_pt *)pnt_r);
 	if (status != SX_OK) {
-		sx_pk_release_req(&req);
 		goto exit;
 	}
 
@@ -123,13 +128,11 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	status = sx_ed448_ptmult(&req, (const struct sx_ed448_dgst *)area_1,
 				 (struct sx_ed448_pt *)area_2);
 	if (status != SX_OK) {
-		sx_pk_release_req(&req);
 		goto exit;
 	}
 
 	status = ed448_calculate_k(&ctx, area_2, pnt_r, message, message_length, prehash);
 	if (status != SX_OK) {
-		sx_pk_release_req(&req);
 		goto exit;
 	}
 
@@ -141,8 +144,6 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 			       (const struct sx_ed448_v *)area_1,
 			       (struct sx_ed448_v *)(pnt_r + SX_ED448_PT_SZ));
 
-	sx_pk_release_req(&req);
-
 	if (status != SX_OK) {
 		goto exit;
 	}
@@ -152,6 +153,7 @@ static int ed448_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 
 exit:
 	sx_hw_release(&ctx.dma);
+	sx_pk_release_req(&req);
 	return status;
 }
 
