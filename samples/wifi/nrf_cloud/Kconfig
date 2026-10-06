@@ -111,7 +111,7 @@ config TEMP_TRACKING
 
 config TEMP_ALERT_LIMIT
 	int "Temperature limit to print alert"
-	default 30
+	default 24
 	help
 	  Sets the temperature in degrees C over which a temperature alert will
 	  be printed through serial terminal.
