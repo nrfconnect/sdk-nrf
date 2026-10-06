@@ -21,6 +21,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_timer_trigger:
     extra_args:
@@ -35,6 +36,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_timer_extra_op:
     extra_args:
@@ -49,6 +51,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_timer_notifier:
     extra_args:
@@ -63,6 +66,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.i2c_timer_notifier_counter:
     extra_args:
@@ -78,6 +82,7 @@ tests:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
       - nrf9251dk/nrf9251/cpuapp
   drivers.ppi_seq_i2c_spi.spi_rtc:
     extra_args:
