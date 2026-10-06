@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/comparator/nrf-comp.h>
+
+/*
+ * Required loopback:
+ * P0.06 - P2.00
+ */
+
+/ {
+	aliases {
+		led = &led_custom0;
+		test-comp = &comp;
+	};
+
+	leds {
+		led_custom0: led_custom0 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom LED due to GPIO4 disabled";
+		};
+	};
+
+	zephyr,user {
+		test-gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&gpio0 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&comp {
+	compatible = "nordic,nrf-lpcomp";
+	psel = <NRF_COMP_AIN5>; /* P0.06 */
+	refsel = "VDD_4_8";
+	status = "okay";
+	zephyr,pm-device-runtime-auto;
+};
+
+&gpio4 {
+	status = "disabled";
+};
