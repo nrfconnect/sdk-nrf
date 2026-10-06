@@ -170,8 +170,20 @@ bool cmdma_is_busy(void)
 
 static int sx_cmdma_check_with_polling(void)
 {
+	uint32_t status;
+
 	while (cmdma_is_busy()) {
 	}
+
+	/* Nothing else clears the status in polling mode, so clear it here */
+	status = sx_rdreg(REG_INT_STATRAW);
+	sx_wrreg(REG_INT_STATCLR, ~0);
+
+	if (status & (DMA_BUS_FETCHER_ERROR_MASK | DMA_BUS_PUSHER_ERROR_MASK)) {
+		sx_cmdma_reset();
+		return SX_ERR_DMA_FAILED;
+	}
+
 	return SX_OK;
 }
 
