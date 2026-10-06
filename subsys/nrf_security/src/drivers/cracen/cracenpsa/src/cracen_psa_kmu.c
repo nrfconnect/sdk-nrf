@@ -1274,8 +1274,10 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			kmu_desc.metadata = SECONDARY_SLOT_METADATA_VALUE;
 		}
 		kmu_desc.rpolicy = metadata.rpolicy;
+		/* The last slot may be partial (e.g. 192-bit keys), zero-pad it */
+		memset(kmu_desc.value, 0, sizeof(kmu_desc.value));
 		memcpy(kmu_desc.value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
-		       CRACEN_KMU_SLOT_KEY_SIZE);
+		       MIN(CRACEN_KMU_SLOT_KEY_SIZE, key_buffer_size - CRACEN_KMU_SLOT_KEY_SIZE * i));
 
 		int st = lib_kmu_provision_slot(slot_id + i, &kmu_desc);
 
