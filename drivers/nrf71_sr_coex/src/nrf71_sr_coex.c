@@ -16,9 +16,6 @@
  *   - SR driver     (BLE/other radio on the same SoC)
  *   - Coexistence Manager (CM) firmware running on the RPU
  *
- * Short-Range Single Priority Window requests and Periodic Priority Window
- * generation are Phase 2 features and return -ENOTSUP.
- *
  * Command flow (host -> RPU):
  *   CD builds a CD2CM_* message and sends it -> CM processes it
  *
@@ -227,32 +224,6 @@ static int cd_apply_cm_config(void)
 }
 
 /* ---- CD APIs exposed to the Short-Range driver ---- */
-
-int coex_cd_sr_software_client_request(const struct coex_sr_sw_client_params_t *client_params,
-				       enum coex_sr_sw_client_req_status_t *grant_status)
-{
-	/*
-	 * Short-Range Single Priority Window (SPW) requests are a Phase 2
-	 * feature. The ROMed firmware interface has no CD2CM_SR_SW_CLIENT_REQUEST
-	 * message, so the request cannot be forwarded to the CM yet.
-	 */
-	ARG_UNUSED(client_params);
-	ARG_UNUSED(grant_status);
-
-	return -ENOTSUP;
-}
-
-int coex_cd_update_short_range_activity_info(
-	const struct short_range_activity_info_t *activity_info)
-{
-	/*
-	 * Periodic Priority Window (PPW) generation is a Phase 2 feature and is
-	 * not exercised against the ROMed firmware in this release.
-	 */
-	ARG_UNUSED(activity_info);
-
-	return -ENOTSUP;
-}
 
 /**
  * SR radio power lifecycle notifications from the Short-Range driver.
