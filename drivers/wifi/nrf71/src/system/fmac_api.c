@@ -974,6 +974,28 @@ out:
 	return status;
 }
 
+#ifdef CONFIG_NRF_WIFI_USE_KMU
+/**
+ * @brief Whether UMAC needs IGTK/BIP key bytes (PMF mgmt MIC), not host crypto alone.
+ */
+static bool nrf_wifi_fmac_umac_needs_mgmt_key_material(unsigned int cipher_suite,
+						       enum nrf_wifi_key_type key_type)
+{
+	if (key_type != NRF_WIFI_KEYTYPE_GROUP) {
+		return false;
+	}
+
+	switch (cipher_suite) {
+	case NRF_WIFI_FMAC_CIPHER_SUITE_AES_128_CMAC:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_GMAC_128:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_GMAC_256:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_CMAC_256:
+		return true;
+	default:
+		return false;
+	}
+}
+#endif /* CONFIG_NRF_WIFI_USE_KMU */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 					       unsigned char if_idx,
@@ -1097,6 +1119,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	int peer_id = -1;
 
 	fmac_dev_ctx = dev_ctx;
 
@@ -1139,6 +1162,19 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 
 	if (key_info->key_type == NRF_WIFI_KEYTYPE_GROUP) {
 		vif_ctx->groupwise_cipher = 0;
+	} else if (key_info->key_type == NRF_WIFI_KEYTYPE_PAIRWISE) {
+		if (mac_addr) {
+			peer_id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx,
+							    (const unsigned char *)mac_addr);
+		}
+
+		if (peer_id >= 0 && peer_id < MAX_PEERS) {
+			sys_dev_ctx->tx_config.peers[peer_id].pairwise_cipher = 0;
+		}
+	} else {
+		LOG_ERR("%s: Invalid key type %d",
+			      __func__,
+			      key_info->key_type);
 	}
 
 	status = umac_cmd_cfg(fmac_dev_ctx,
