@@ -56,6 +56,7 @@ static struct k_poll_event poll_evt =
 	K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &poll_sig);
 
 static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
+static int unicast_client_internal_start(void);
 /**
  * @brief	Signal that we want to start a CAP action.
  *
@@ -584,7 +585,7 @@ static int cap_action_start(void)
 
 start_streams:
 
-	ret = unicast_client_start(0);
+	ret = unicast_client_internal_start();
 	if (ret < 0) {
 		LOG_ERR("Failed to start unicast client: %d", ret);
 	}
@@ -1904,8 +1905,35 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	return true;
 }
 
-// This shall not be accessed from outside the unicast client module
 int unicast_client_start(uint8_t cig_index)
+{
+	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
+		return -EINVAL;
+	}
+
+	if (cap_state_machine_thread_id == NULL) {
+		return -EACCES;
+	}
+
+	cap_thread_next_evt_set(CAP_ACTION_START);
+	return 0;
+}
+
+int unicast_client_stop(uint8_t cig_index)
+{
+	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
+		return -EINVAL;
+	}
+
+	if (cap_state_machine_thread_id == NULL) {
+		return -EACCES;
+	}
+
+	cap_thread_next_evt_set(CAP_ACTION_STOP);
+	return 0;
+}
+
+static int unicast_client_internal_start(void)
 {
 	int ret;
 
@@ -1997,18 +2025,13 @@ static bool server_connected_check(struct bt_cap_stream *stream, void *user_data
 	return true;
 }
 
-int unicast_client_stop(uint8_t cig_index)
+static int unicast_client_internal_stop(void)
 {
 	int ret;
 	struct bt_cap_stream *streams[(CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT +
 				       CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT) *
 				      CONFIG_BT_MAX_CONN];
 	static struct bt_cap_unicast_audio_stop_param param;
-
-	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
-		LOG_ERR("Trying to stop CIG %d out of %d", cig_index, CONFIG_BT_ISO_MAX_CIG);
-		return -EINVAL;
-	}
 
 	if (unicast_group == NULL) {
 		LOG_WRN("No unicast group to stop");
@@ -2239,11 +2262,11 @@ static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 
 		switch (action) {
 		case CAP_ACTION_STOP:
-			ret = unicast_client_stop(0);
+			ret = unicast_client_internal_stop();
 			break;
 		case CAP_ACTION_STOP_THEN_START:
 			unicast_group_recreate_pending = true;
-			ret = unicast_client_stop(0);
+			ret = unicast_client_internal_stop();
 			if (ret == 0) {
 				k_sem_take(&cap_state_machine_sem, K_FOREVER);
 			} else if (ret != -EAGAIN) {
