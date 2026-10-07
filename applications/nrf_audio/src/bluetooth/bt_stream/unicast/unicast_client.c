@@ -548,19 +548,10 @@ static int cap_action_start(void)
 		goto start_streams;
 	}
 
-	struct bt_cap_unicast_group_info info;
-	uint8_t group_length = 0;
-
-	ret = bt_cap_unicast_group_get_info(unicast_group, &info);
-	if (ret != 0) {
-		LOG_ERR("Failed to get unicast group info: %d", ret);
-		return ret;
-	}
-
-	group_length = sys_slist_len(&info.unicast_group->streams);
-	if (group_length >= CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT) {
+	/* TODO: Emil check these lines */
+	if (group_param.params_count >= CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT) {
 		/* The group is as full as it can get, start the relevant streams */
-		LOG_DBG("Unicast group is full, cannot add more streams");
+		LOG_DBG("Unicast group is full, cannot add more CIS");
 		goto start_streams;
 	}
 
@@ -1013,6 +1004,19 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SOURCE);
 		if (ret != 0) {
 			LOG_WRN("Failed to start source discovery: %d", ret);
+			server->src.waiting_for_disc = false;
+			srv_store_unlock();
+			/* Source discovery was not started, so no completion callback will
+			 * clear its pending flag or finish the requested bidirectional setup.
+			 * Report this setup failure to the application, whose NO_VALID_CFG
+			 * handler disconnects the headset and allows disconnect cleanup to
+			 * discard partial discovery data. Do not publish DISCOVERY_COMPLETE
+			 * or request START here: that would silently accept a sink-only setup.
+			 * Publish after unlocking so disconnect handling can access the store.
+			 */
+			le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL,
+					       BT_AUDIO_DIR_SOURCE);
+			return;
 		}
 
 		srv_store_unlock();
@@ -1761,6 +1765,11 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 {
 	int ret;
 
+	if (dir != UNICAST_SERVER_SINK && dir != UNICAST_SERVER_SOURCE &&
+	    dir != UNICAST_SERVER_BIDIR) {
+		return -EINVAL;
+	}
+
 	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
@@ -1774,6 +1783,11 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 		LOG_ERR("%s: Unknown connection, should not reach here", __func__);
 		srv_store_unlock();
 		return ret;
+	}
+
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		srv_store_unlock();
+		return -EALREADY;
 	}
 
 	/* Register ops */
@@ -1803,13 +1817,14 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 	if (dir == UNICAST_SERVER_BIDIR) {
 		/* If we need to discover both source and sink, do sink first */
 		ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SINK);
-		srv_store_unlock();
-		return ret;
+	} else {
+		ret = bt_bap_unicast_client_discover(conn, dir);
 	}
 
-	ret = bt_bap_unicast_client_discover(conn, dir);
 	if (ret != 0) {
 		LOG_WRN("Failed to discover %d", ret);
+		server->snk.waiting_for_disc = false;
+		server->src.waiting_for_disc = false;
 		srv_store_unlock();
 		return ret;
 	}
