@@ -400,7 +400,15 @@ tests:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-    harness_config: *bt_harness_config
+    harness_config:
+      fixture: external_flash
+      type: multi_line
+      ordered: false
+      regex:
+        - "Starting .*bootloader"
+        - "Jumping to the .*image slot"
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
 
   sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.sqspi:
     extra_args:
