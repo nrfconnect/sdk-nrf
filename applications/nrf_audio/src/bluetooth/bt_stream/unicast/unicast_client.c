@@ -65,8 +65,8 @@ static void cap_thread_next_evt_set(enum cap_action_type action)
 {
 	k_mutex_lock(&next_action_lock, K_FOREVER);
 	next_action = action;
-	k_mutex_unlock(&next_action_lock);
 	k_poll_signal_raise(poll_evt.signal, 1);
+	k_mutex_unlock(&next_action_lock);
 }
 
 /**
@@ -78,7 +78,7 @@ static void cap_thread_next_evt_set(enum cap_action_type action)
 static void cap_thread_cap_action_complete(int err)
 {
 	if (err) {
-		atomic_set_bit(cap_state_machine_delay_start, 1);
+		atomic_set_bit(cap_state_machine_delay_start, 0);
 	}
 
 	k_sem_give(&cap_state_machine_sem);
@@ -108,7 +108,7 @@ static le_audio_receive_cb receive_cb;
 BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
 
 static struct bt_cap_unicast_group *unicast_group;
-static bool unicast_group_created;
+static bool unicast_group_recreate_pending;
 static struct bt_cap_unicast_group_stream_pair_param
 	pair_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
 static struct bt_cap_unicast_group_param group_param = {0};
@@ -234,6 +234,10 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 
 	struct group_streams_populate_data *data = (struct group_streams_populate_data *)user_data;
 
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		return true;
+	}
+
 	if (server->snk.num_eps == 0 && server->src.num_eps == 0) {
 		LOG_WRN("Server %s has no valid sink or source EPs, skipping", server->name);
 		return true;
@@ -244,6 +248,15 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 		if (server->snk.lc3_preset[j].qos.pd == 0) {
 			LOG_WRN("Sink EP %d has no valid preset, skipping", j);
 			return true;
+		}
+
+		if (data->sink_iterator >= ARRAY_SIZE(data->sink_stream_params)) {
+			LOG_ERR("Too many sink streams for unicast group");
+			return false;
+		}
+
+		if (data->sink_iterator > 0) {
+			server->snk.lc3_preset[j].qos.pd = data->sink_stream_params[0].qos_cfg->pd;
 		}
 
 		data->sink_stream_params[data->sink_iterator].qos_cfg =
@@ -257,6 +270,16 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 		if (server->src.lc3_preset[j].qos.pd == 0) {
 			LOG_WRN("Source EP %d has no valid preset, skipping", j);
 			return true;
+		}
+
+		if (data->source_iterator >= ARRAY_SIZE(data->source_stream_params)) {
+			LOG_ERR("Too many source streams for unicast group");
+			return false;
+		}
+
+		if (data->source_iterator > 0) {
+			server->src.lc3_preset[j].qos.pd =
+				data->source_stream_params[0].qos_cfg->pd;
 		}
 
 		data->source_stream_params[data->source_iterator].qos_cfg =
@@ -383,6 +406,12 @@ static void unicast_group_create(void)
 		}
 
 		LOG_DBG("Adding unpaired source EP %d", i);
+		if (stream_iterator >= ARRAY_SIZE(pair_params)) {
+			LOG_ERR("Too many CIS pairs for unicast group");
+			srv_store_unlock();
+			return;
+		}
+
 		pair_params[stream_iterator].tx_param = NULL;
 		pair_params[stream_iterator].rx_param = &data.source_stream_params[i];
 		stream_iterator++;
@@ -408,7 +437,6 @@ static void unicast_group_create(void)
 		LOG_ERR("Failed to create unicast group: %d", ret);
 	} else {
 		LOG_INF("Created unicast group");
-		unicast_group_created = true;
 	}
 
 	srv_store_unlock();
@@ -451,6 +479,10 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 
 	ARG_UNUSED(user_data);
 
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		return true;
+	}
+
 	/* Check that the server is connected */
 	struct bt_conn_info info;
 
@@ -488,20 +520,6 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 	return true;
 }
 
-static bool server_is_not_waiting_for_disc_check(struct server_store *server, void *user_data)
-{
-	ARG_UNUSED(user_data);
-
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
-		LOG_DBG("Server %s is still waiting for discovery to complete", server->name);
-		/* Stop iterating */
-		return false;
-	}
-
-	/* Continue iterating */
-	return true;
-}
-
 /**
  * @brief	Worker to start unicast streams. If a unicast group doesn't exist, it will
  *		be created. If it does exist, it will check if there is room for more streams, and
@@ -509,12 +527,19 @@ static bool server_is_not_waiting_for_disc_check(struct server_store *server, vo
  *		can be added. If the group is full, or there are no more servers to add, it will
  *		start the streams in the unicast group.
  */
-static void cap_action_start(void)
+static int cap_action_start(void)
 {
 	int ret;
 
+	/* Do not reuse a group marked for recreation or overwrite its pointer
+	 * while it still owns streams and CIG resources.
+	 */
+	if (unicast_group_recreate_pending) {
+		return -EBUSY;
+	}
+
 	/* Create a unicast group if it doesn't already exist */
-	if (unicast_group_created == false) {
+	if (unicast_group == NULL) {
 		LOG_DBG("Unicast group not created, creating unicast group");
 		unicast_group_create();
 		goto start_streams;
@@ -526,7 +551,7 @@ static void cap_action_start(void)
 	ret = bt_cap_unicast_group_get_info(unicast_group, &info);
 	if (ret != 0) {
 		LOG_ERR("Failed to get unicast group info: %d", ret);
-		return;
+		return ret;
 	}
 
 	group_length = sys_slist_len(&info.unicast_group->streams);
@@ -543,19 +568,7 @@ static void cap_action_start(void)
 	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-		return;
-	}
-
-	// If any servers are still doing discovery, return as this will be triggered again
-	ret = srv_store_foreach_server(server_is_not_waiting_for_disc_check, NULL);
-
-	if (ret == -ECANCELED) {
-		/* If any of the servers are still waiting for discovery to complete, we should not
-		 * start the streams yet
-		 */
-		LOG_WRN("Cancelling start due to discovery in progress");
-		srv_store_unlock();
-		return;
+		return ret;
 	}
 
 	/* Check if each of the connected servers in srv_store are in the unicast_group */
@@ -563,16 +576,10 @@ static void cap_action_start(void)
 	srv_store_unlock();
 
 	if (ret == -ECANCELED) {
-		/* A new group will be created after the released_cb has been called */
-		ret = unicast_client_stop(0);
-		if (ret == -EAGAIN) {
-			unicast_group_create();
-			goto start_streams;
-		}
-
-		unicast_group_created = false;
-
-		return;
+		cap_thread_next_evt_set(CAP_ACTION_STOP_THEN_START);
+		return -EAGAIN;
+	} else if (ret != 0) {
+		return ret;
 	}
 
 start_streams:
@@ -580,8 +587,9 @@ start_streams:
 	ret = unicast_client_start(0);
 	if (ret < 0) {
 		LOG_ERR("Failed to start unicast client: %d", ret);
-		return;
 	}
+
+	return ret;
 }
 
 /* bt_bap_unicast_client_cb begin ----------------------------------------------------------------*/
@@ -1008,16 +1016,6 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		return;
 	}
 
-	ret = srv_store_foreach_server(server_is_not_waiting_for_disc_check, NULL);
-
-	if (ret == -ECANCELED) {
-		/* If any of the servers are still waiting for discovery to complete, we should not
-		 * start the streams yet
-		 */
-		srv_store_unlock();
-		return;
-	}
-
 	le_audio_event_publish(LE_AUDIO_EVT_DISCOVERY_COMPLETE, conn, NULL, dir);
 
 	srv_store_unlock();
@@ -1029,20 +1027,7 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 
 	LOG_INF("Submitting work to start CAP");
 
-	/* Instruct the CAP state machine to perform a CAP start.
-	If the state machine is idle, we can start. If not, we need to cancel first */
-
-	if (k_sem_count_get(&cap_state_machine_sem) > 0) {
-
-		cap_thread_next_evt_set(CAP_ACTION_START);
-	} else {
-		ret = bt_cap_initiator_unicast_audio_cancel();
-		if (ret != 0) {
-			LOG_ERR("Failed to cancel ongoing CAP start: %d", ret);
-		}
-
-		cap_thread_next_evt_set(CAP_ACTION_START);
-	}
+	cap_thread_next_evt_set(CAP_ACTION_START);
 }
 
 static struct bt_bap_unicast_client_cb unicast_client_cbs = {
@@ -1460,27 +1445,16 @@ static void cap_start_codec_configured_cb(void)
 		if (bap_info.has_been_connected) {
 			/* Create the unicast group anew. This will happen when all streams have
 			 * been released */
-			unicast_group_created = false;
+			unicast_group_recreate_pending = true;
 			srv_store_unlock();
 
 			LOG_INF("calling cancel in the CAP");
 			ret = bt_cap_initiator_unicast_audio_cancel();
 			if (ret != 0 && ret != -EALREADY) {
-				LOG_DBG("Audio cancel EALREADY");
-			} else if (ret != 0) {
 				LOG_ERR("Failed to cancel unicast audio: %d", ret);
 			}
 
 			cap_thread_next_evt_set(CAP_ACTION_STOP_THEN_START);
-
-			// Signal reconfig
-
-			// How do we abort the current CAP procedure? We need to stop the
-			// current streams, and then recreate the group with the new
-			// presentation delay. This will be done in the stream_released_cb
-			// when all streams have been released.
-
-			srv_store_unlock();
 			return;
 		} else {
 			LOG_INF("Reconfiguring unicast group as it has not been connected yet");
@@ -1529,34 +1503,36 @@ static void cap_update_complete_cb(int err, struct bt_conn *conn)
 
 static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 {
+	int ret;
+
 	if (err != 0) {
 		LOG_ERR("CB CAP stop complete for conn: %p, err: %d", conn, err);
+		cap_thread_cap_action_complete(err);
 		return;
 	} else {
 		LOG_DBG("CB CAP stop complete for conn: %p", conn);
 	}
 
-	in_playing_state = false;
+	if (unicast_group_recreate_pending && unicast_group != NULL) {
+		ret = bt_cap_unicast_group_delete(unicast_group);
+		if (ret != 0) {
+			LOG_ERR("Failed to delete unicast group: %d", ret);
+			cap_thread_cap_action_complete(ret);
+			return;
+		}
+
+		unicast_group = NULL;
+		unicast_group_recreate_pending = false;
+	} else {
+		in_playing_state = false;
+	}
+
+	cap_thread_cap_action_complete(0);
 }
 
 static void cap_stop_released_cb(void)
 {
-	int ret;
-
 	LOG_WRN("CB CAP stop released");
-	/* Check if unicast_group_recreate has been requested.
-	 * If so, delete the group and submit work to recreate it.
-	 */
-	if (unicast_group_created) {
-		return;
-	}
-
-	ret = bt_cap_unicast_group_delete(unicast_group);
-	if (ret != 0) {
-		LOG_ERR("Failed to delete unicast group: %d", ret);
-	}
-
-	cap_thread_cap_action_complete(0);
 }
 
 static struct bt_cap_initiator_cb cap_cbs = {
@@ -1871,6 +1847,10 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	int ret;
 	struct bt_cap_unicast_audio_start_param *param = user_data;
 
+	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+		return true;
+	}
+
 	if (!is_connected(server->conn)) {
 		LOG_DBG("Server %s is not connected, skipping", server->name);
 		return true;
@@ -1879,8 +1859,14 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
 		uint8_t state;
 
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
+							  &server->snk.cap_streams[j]);
+		if (ret != -ECANCELED) {
+			continue;
+		}
+
 		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
-		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
+		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Sink endpoint is already streaming, skipping start");
 			continue;
 		}
@@ -1896,8 +1882,14 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
 		uint8_t state;
 
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
+							  &server->src.cap_streams[j]);
+		if (ret != -ECANCELED) {
+			continue;
+		}
+
 		ret = le_audio_ep_state_get(server->src.eps[j], &state);
-		if (state == BT_BAP_EP_STATE_STREAMING || ret) {
+		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
 			LOG_DBG("Source endpoint is already streaming, skipping start");
 			continue;
 		}
@@ -1924,8 +1916,7 @@ int unicast_client_start(uint8_t cig_index)
 
 	/* Start all unicast_servers with valid endpoints */
 	struct bt_cap_unicast_audio_start_stream_param
-		cap_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT +
-				  CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
+		cap_stream_params[2 * CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
 
 	struct bt_cap_unicast_audio_start_param param;
 
@@ -2040,6 +2031,18 @@ int unicast_client_stop(uint8_t cig_index)
 	if (param.count == 0) {
 		LOG_DBG("No streams to stop");
 
+		if (unicast_group_recreate_pending) {
+			ret = bt_cap_unicast_group_delete(unicast_group);
+			if (ret != 0) {
+				LOG_ERR("Failed to delete unicast group: %d", ret);
+				return ret;
+			}
+
+			unicast_group = NULL;
+			unicast_group_recreate_pending = false;
+			return -EAGAIN;
+		}
+
 		/* No streams found. Check if devices are connected, if no, delete the group */
 		bool connected_server_found = false;
 
@@ -2069,10 +2072,11 @@ int unicast_client_stop(uint8_t cig_index)
 			ret = bt_cap_unicast_group_delete(unicast_group);
 			if (ret != 0) {
 				LOG_ERR("Failed to delete unicast group: %d", ret);
+				return ret;
 			}
 
 			unicast_group = NULL;
-			unicast_group_created = false;
+			unicast_group_recreate_pending = false;
 
 			return -EAGAIN;
 		}
@@ -2201,8 +2205,11 @@ enum cap_action_type cap_thread_next_event_get(void)
 {
 	LOG_INF("Waiting for next event");
 	(void)k_poll(&poll_evt, 1, K_FOREVER);
+	LOG_INF("Waiting for CAP state machine semaphore");
+	k_sem_take(&cap_state_machine_sem, K_FOREVER);
 	k_mutex_lock(&next_action_lock, K_FOREVER);
 	enum cap_action_type action = next_action;
+	k_poll_signal_reset(&poll_sig);
 	k_mutex_unlock(&next_action_lock);
 	return action;
 }
@@ -2216,17 +2223,15 @@ static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 	while (1) {
 		/* Must wait for previous CAP procedure to complete */
 		enum cap_action_type action;
+		int ret;
 		LOG_INF("Waiting for CAP signal");
 
 		/* State machine is IDLE */
 
 		LOG_INF("Fetch next action");
 		action = cap_thread_next_event_get();
-		LOG_INF("Waiting for CAP state machine semaphore");
-		k_sem_take(&cap_state_machine_sem, K_FOREVER);
 
 		/* State machine is processing */
-		k_poll_signal_reset(&poll_sig);
 		if (atomic_test_and_clear_bit(cap_state_machine_delay_start, 0)) {
 			LOG_INF("CAP delay start");
 			k_sleep(K_MSEC(400));
@@ -2234,18 +2239,41 @@ static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 
 		switch (action) {
 		case CAP_ACTION_STOP:
-			unicast_client_stop(0);
+			ret = unicast_client_stop(0);
 			break;
 		case CAP_ACTION_STOP_THEN_START:
-			unicast_client_stop(0);
-			cap_thread_next_evt_set(CAP_ACTION_START);
+			unicast_group_recreate_pending = true;
+			ret = unicast_client_stop(0);
+			if (ret == 0) {
+				k_sem_take(&cap_state_machine_sem, K_FOREVER);
+			} else if (ret != -EAGAIN) {
+				unicast_group_recreate_pending = false;
+				break;
+			}
+
+			if (unicast_group == NULL) {
+				LOG_INF("Restarting CAP after unicast group release");
+				ret = cap_action_start();
+			} else {
+				LOG_ERR("Unicast group rebuild failed, keeping existing group");
+				unicast_group_recreate_pending = false;
+				ret = -EIO;
+			}
 			break;
 		case CAP_ACTION_START:
-			cap_action_start();
+			ret = cap_action_start();
 			break;
 		default:
 			LOG_ERR("Unknown CAP action: %d", action);
+			ret = -EINVAL;
 			break;
+		}
+
+		if (ret != 0) {
+			/* No asynchronous procedure started; release here.
+			 * Otherwise, the completion callback releases the semaphore.
+			 */
+			cap_thread_cap_action_complete(ret);
 		}
 	}
 }
