@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 9cb668044999ba55936abdc0c9a6cef9d43e5009
+      revision: pull/4576/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -88,7 +88,6 @@ manifest:
           - dhara
           - edtt
           - fatfs
-          - hal_nordic
           - hal_st # required for ST sensors (unrelated to STM32 MCUs)
           - hal_tdk # required for Invensense sensors such as ICM42670
           - hal_wurthelektronik
@@ -118,6 +117,16 @@ manifest:
     #
     # Some of these are also Zephyr modules which have NCS-specific
     # changes.
+    - name: hal_nordic
+      revision: nrfx-removed
+      remote: zephyrproject
+      path: modules/hal/nor
+    - name: nrfx
+      revision: pull/1364/head
+      path: modules/hal/nor/nrfx
+    - name: nrfx-examples
+      revision: cb846a5b3f1597f12b2c5155bdf22c48b754138d
+      path: modules/hal/nor/nrfx/samples
     - name: wfa-qt-control-app
       repo-path: sdk-wi-fiquicktrack-controlappc
       path: modules/lib/wfa-qt-control-app
