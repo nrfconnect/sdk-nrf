@@ -1013,6 +1013,28 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 			      key_info,
 			      sizeof(key_cmd->key_info));
 
+#ifdef CONFIG_NRF_WIFI_USE_KMU
+	struct nrf_wifi_key *key = &key_cmd->key_info.key;
+
+	if (!nrf_wifi_fmac_umac_needs_mgmt_key_material(key_cmd->key_info.cipher_suite,
+							key_cmd->key_info.key_type) &&
+	    key->nrf_wifi_key_len) {
+		/* Encryption keys live in KMU; do not send key bytes to UMAC. */
+		nrf_wifi_mem_set(key->nrf_wifi_key, 0, key->nrf_wifi_key_len);
+	}
+
+	/* TKIP MIC is computed in UMAC, not in HW crypto. */
+	if ((key_cmd->key_info.cipher_suite == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) &&
+	    ((key_cmd->key_info.key_type == NRF_WIFI_KEYTYPE_PAIRWISE) ||
+	     (key_cmd->key_info.key_type == NRF_WIFI_KEYTYPE_GROUP))) {
+		/* KEY (16 bytes) - TX MIC (8 bytes) - RX MIC (8 bytes) */
+		nrf_wifi_mem_cpy(&key->nrf_wifi_key[16],
+				 &key_info->key.nrf_wifi_key[16],
+				 16);
+		key->nrf_wifi_key_len = 32;
+	}
+#endif /* CONFIG_NRF_WIFI_USE_KMU */
+
 	if (mac_addr) {
 		nrf_wifi_mem_cpy(key_cmd->mac_addr,
 				      mac_addr,
