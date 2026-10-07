@@ -14,7 +14,7 @@ import pytest
 from constant import APP_KEYS_FOR_KMU
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.fixtures import determine_scope
-from twister_harness.helpers.utils import find_in_config, match_lines, match_no_lines
+from twister_harness.helpers.utils import find_in_config
 from twister_harness_ext.utils.common import reset_board
 from twister_harness_ext.utils.key_provisioning import (
     get_keyname_for_mcuboot,
@@ -26,7 +26,21 @@ logger = logging.getLogger(__name__)
 
 
 @pytest.fixture(scope=determine_scope)
-def kmu_provision_mcuboot(dut: DeviceAdapter) -> Generator[DeviceAdapter, None, None]:  # type: ignore
+def keys(dut) -> list[Path]:
+    sysbuild_config = Path(dut.device_config.build_dir) / "zephyr" / ".config"
+    key_file = find_in_config(sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_KEY_FILE")
+    keys = [
+        APP_KEYS_FOR_KMU / "root-ed25519-1.pem",
+        Path(key_file),
+        APP_KEYS_FOR_KMU / "root-ed25519-2.pem",
+    ]
+    return keys
+
+
+@pytest.fixture(scope=determine_scope)
+def kmu_provision_mcuboot(
+    dut: DeviceAdapter, keys: list[Path]
+) -> Generator[DeviceAdapter, None, None]:  # type: ignore
     """Provision MCUboot keys using west ncs-provision upload command."""
     sysbuild_config = Path(dut.device_config.build_dir) / "zephyr" / ".config"
     assert find_in_config(sysbuild_config, "SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU"), (
@@ -43,14 +57,8 @@ def kmu_provision_mcuboot(dut: DeviceAdapter) -> Generator[DeviceAdapter, None, 
     )
 
     logger.info(
-        "Provision KMU keys for MCUboot, Second key is a current key.First key should be revoked."
+        "Provision KMU keys for MCUboot, Second key is a current key. First key should be revoked."
     )
-    key_file = find_in_config(sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_KEY_FILE")
-    keys = [
-        APP_KEYS_FOR_KMU / "root-ed25519-1.pem",
-        key_file,
-        APP_KEYS_FOR_KMU / "root-ed25519-2.pem",
-    ]
 
     keyname = get_keyname_for_mcuboot(sysbuild_config)
     provision_keys_for_kmu(keys=keys, keyname=keyname, dev_id=dut.device_config.id)
@@ -60,7 +68,7 @@ def kmu_provision_mcuboot(dut: DeviceAdapter) -> Generator[DeviceAdapter, None, 
 
 @pytest.mark.usefixtures("kmu_provision_mcuboot")
 def test_kmu_revoke_old_keys(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
-    """Verify that MCUboot disables old keys when updates comes with new valid key.
+    """Verify that MCUboot disables old keys when updates come with new valid key.
 
     Upgrading with revoked keys should be rejected.
     """
@@ -77,9 +85,8 @@ def test_kmu_revoke_old_keys(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
         timeout=20,
     )
 
-    match_lines(
-        lines,
-        ["Image in the secondary slot is not valid", "Jumping to the first image slot"],
+    pytest.LineMatcher(lines).fnmatch_lines(
+        ["*Image in the secondary slot is not valid*", "*Jumping to the first image slot*"],
     )
     tm.check_with_shell_command(tm.origin_mcuboot_version)
     logger.info("Passed: MCUboot rejected image signed with revoked key")
@@ -87,19 +94,18 @@ def test_kmu_revoke_old_keys(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
 
 @pytest.mark.nightly
 @pytest.mark.usefixtures("kmu_provision_mcuboot")
-def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr):
+def test_kmu_upgrade_with_new_key_then_with_old(
+    dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, keys: list[Path]
+):
     """Verify that MCUboot accepts image signed with new key, that was previously provisioned.
 
     Then update with revoked key and verify that it is rejected.
     """
     tm = UpgradeTestWithMCUmgr(dut, shell, mcumgr)
 
-    sysbuild_config = Path(dut.device_config.build_dir) / "zephyr" / ".config"
-    default_key_file = find_in_config(sysbuild_config, "SB_CONFIG_BOOT_SIGNATURE_KEY_FILE")
-
     tm.increase_version()
     logger.info("Sign image with third key")
-    tm.build_params.imgtool_params.key_file = APP_KEYS_FOR_KMU / "root-ed25519-2.pem"
+    tm.build_params.imgtool_params.key_file = keys[2]
     updated_app = tm.generate_image()
     tm.run_upgrade(updated_app, confirm=True)
 
@@ -108,7 +114,7 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
         print_output=True,
         timeout=20,
     )
-    match_no_lines(lines, ["Unable to find bootable image"])
+    pytest.LineMatcher(lines).no_fnmatch_line("*Unable to find bootable image*")
 
     tm.check_with_shell_command()
     logger.info("Passed step 1: MCUboot accepted image signed with not revoked key")
@@ -118,12 +124,12 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
     lines = dut.readlines_until(
         regex="Jumping to the first image slot", print_output=True, timeout=20
     )
-    match_lines(lines, ["Swap type: none"])
+    pytest.LineMatcher(lines).fnmatch_lines(["*Swap type: none*"])
 
     logger.info("Sign image with second provisioned key, that should be revoked")
     mcuboot_version = tm.get_current_sign_version()
     tm.increase_version()
-    tm.build_params.imgtool_params.key_file = default_key_file  # type: ignore
+    tm.build_params.imgtool_params.key_file = keys[1]  # default key
     updated_app = tm.generate_image()
     tm.run_upgrade(updated_app)
 
@@ -133,9 +139,8 @@ def test_kmu_upgrade_with_new_key_then_with_old(dut: DeviceAdapter, shell: Shell
         timeout=20,
     )
 
-    match_lines(
-        lines,
-        ["Image in the secondary slot is not valid", "Jumping to the first image slot"],
+    pytest.LineMatcher(lines).fnmatch_lines(
+        ["*Image in the secondary slot is not valid*", "*Jumping to the first image slot*"],
     )
     tm.check_with_shell_command(mcuboot_version)
     logger.info("Passed: MCUboot rejected image signed with revoked key")
