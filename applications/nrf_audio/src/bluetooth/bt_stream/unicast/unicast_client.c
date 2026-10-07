@@ -157,14 +157,14 @@ struct num_eps_total {
 	uint16_t source;
 };
 
-static bool num_eps_count(struct server_store *server, void *user_data)
+static bool foreach_num_eps_count(struct server_store *server, void *user_data)
 {
 	struct num_eps_total *num_eps = (struct num_eps_total *)user_data;
 
 	num_eps->sink += server->snk.num_eps;
 	num_eps->source += server->src.num_eps;
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 static int group_info_get(const struct bt_cap_unicast_group *cap_unicast_group,
@@ -252,7 +252,7 @@ static int server_source_stream_count_get(const struct server_store *server)
 	return MIN(source_count, 1);
 }
 
-static bool unicast_group_populate(struct server_store *server, void *user_data)
+static bool foreach_unicast_group_populate(struct server_store *server, void *user_data)
 {
 
 	LOG_WRN("Populating unicast group for server %s", server->name);
@@ -260,12 +260,12 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 	struct group_streams_populate_data *data = (struct group_streams_populate_data *)user_data;
 
 	if (!server_discovery_ready(server)) {
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	if (server->snk.num_eps == 0 && server->src.num_eps == 0) {
 		LOG_WRN("Server %s has no valid sink or source EPs, skipping", server->name);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	/* Add only the streams that has a valid preset set */
@@ -277,7 +277,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 
 		if (data->sink_iterator >= ARRAY_SIZE(data->sink_stream_params)) {
 			LOG_ERR("Too many sink streams for unicast group");
-			return false;
+			return ITER_STOP;
 		}
 
 		if (data->sink_iterator > 0) {
@@ -299,7 +299,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 
 		if (data->source_iterator >= ARRAY_SIZE(data->source_stream_params)) {
 			LOG_ERR("Too many source streams for unicast group");
-			return false;
+			return ITER_STOP;
 		}
 
 		if (data->source_iterator > 0) {
@@ -314,7 +314,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 		data->source_iterator++;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 /**
@@ -335,7 +335,7 @@ static void unicast_group_create(void)
 	/* Find out how many valid sink EPs we have */
 	struct num_eps_total num_eps = {0, 0};
 
-	ret = srv_store_foreach_server(num_eps_count, &num_eps);
+	ret = srv_store_foreach_server(foreach_num_eps_count, &num_eps);
 	if (ret < 0) {
 		LOG_ERR("Failed to count valid EPs: %d", ret);
 		srv_store_unlock();
@@ -354,7 +354,7 @@ static void unicast_group_create(void)
 	(void)memset(&group_param, 0, sizeof(group_param));
 	(void)memset(&pair_params, 0, sizeof(pair_params));
 
-	ret = srv_store_foreach_server(unicast_group_populate, &data);
+	ret = srv_store_foreach_server(foreach_unicast_group_populate, &data);
 	if (ret < 0) {
 		LOG_ERR("Failed to populate unicast group stream params: %d", ret);
 		srv_store_unlock();
@@ -474,19 +474,19 @@ static void unicast_group_create(void)
  * @param[in] user_data	User data, in this case a pointer to the server_store to
  *			check against.
  *
- * @retval		False	The stream is in the group.
- * @retval		True	The stream is not already in the group. (stop iterating)
+ * @retval		ITER_STOP	The stream is in the group.
+ * @retval		ITER_CONTINUE	The stream is not already in the group.
  */
-static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
 {
 	struct bt_cap_stream *server_stream = (struct bt_cap_stream *)user_data;
 
 	if (stream == server_stream) {
 		/* Found the stream in the group, stop iterating */
-		return false;
+		return ITER_STOP;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 /**
@@ -495,18 +495,19 @@ static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
  * @param[in] server	Server to check.
  * @param[in] user_data	Unused.
  *
- * @retval		True	All eligible sink streams and the used source stream are
- *				present.
- * @retval		False	At least one used stream is missing from the group.
+ * @retval		ITER_CONTINUE	All eligible sink streams and the used source stream
+ *				are present.
+ * @retval		ITER_STOP	At least one used stream is missing from the group.
  */
-static bool server_stream_in_unicast_group_check(struct server_store *server, void *user_data)
+static bool foreach_server_stream_in_unicast_group_check(struct server_store *server,
+							 void *user_data)
 {
 	int ret;
 
 	ARG_UNUSED(user_data);
 
 	if (!server_discovery_ready(server)) {
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	/* Check that the server is connected */
@@ -515,12 +516,12 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 	ret = bt_conn_get_info(server->conn, &info);
 	if (ret != 0) {
 		LOG_ERR("Failed to get connection info for conn: %p", server->conn);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	if (info.state != BT_CONN_STATE_CONNECTED) {
 		LOG_DBG("Connection %p is not connected, skipping", server->conn);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	/* Check each eligible sink stream against the streams in the group. */
@@ -529,13 +530,13 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 			continue;
 		}
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
-							  &server->snk.cap_streams[i]);
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->snk.cap_streams[i]);
 		if (ret == 0) {
 			LOG_INF("Server %s sink stream %d (%p) not found in unicast group",
 				server->name, i, &server->snk.cap_streams[i]);
 			/* A stream is missing from the group, stop iterating */
-			return false;
+			return ITER_STOP;
 		}
 	}
 
@@ -545,16 +546,16 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 			continue;
 		}
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
-							  &server->src.cap_streams[i]);
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->src.cap_streams[i]);
 		if (ret == 0) {
 			LOG_INF("Server %s source stream %d (%p) not found in unicast group",
 				server->name, i, &server->src.cap_streams[i]);
-			return false;
+			return ITER_STOP;
 		}
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 /**
@@ -600,7 +601,7 @@ static int cap_action_start(void)
 	}
 
 	/* Check if each of the connected servers in srv_store are in the unicast_group */
-	ret = srv_store_foreach_server(server_stream_in_unicast_group_check, NULL);
+	ret = srv_store_foreach_server(foreach_server_stream_in_unicast_group_check, NULL);
 	srv_store_unlock();
 
 	if (ret == -ECANCELED) {
@@ -1116,7 +1117,8 @@ struct qos_settings_write {
 };
 
 /* Set common parameters for all existing streams */
-static bool common_params_existing_streams_set(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_common_params_existing_streams_set(struct bt_cap_stream *stream,
+						       void *user_data)
 {
 	int ret;
 	struct qos_settings_write *qos_write = (struct qos_settings_write *)user_data;
@@ -1128,7 +1130,7 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 	if (ret < 0) {
 		/* This stream is not yet configured */
 		LOG_DBG("Failed to get dir of stream %p", (void *)&stream->bap_stream);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	dir = (enum bt_audio_dir)ret;
@@ -1136,7 +1138,7 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 	ret = srv_store_from_stream_get(&stream->bap_stream, &server);
 	if (ret) {
 		LOG_ERR("Srv store from stream get failed: %d", ret);
-		return false;
+		return ITER_STOP;
 	}
 
 	switch (dir) {
@@ -1167,7 +1169,7 @@ static bool common_params_existing_streams_set(struct bt_cap_stream *stream, voi
 		break;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 static void bap_stream_codec_configured_cb(struct bt_bap_stream *stream,
@@ -1496,7 +1498,8 @@ static void cap_start_codec_configured_cb(void)
 		/* Need to update all streams with the new presentation delay in this
 		   direction */
 		ret = bt_cap_unicast_group_foreach_stream(
-			unicast_group, common_params_existing_streams_set, (void *)&qos_write);
+			unicast_group, foreach_common_params_existing_streams_set,
+			(void *)&qos_write);
 		if (ret) {
 			LOG_ERR("Failed to update presentation delay for unicast group: %d", ret);
 			srv_store_unlock();
@@ -1609,7 +1612,7 @@ static struct bt_cap_initiator_cb cap_cbs = {
 
 /* bt_cap_initiator_cb end -----------------------------------------------------------------------*/
 
-static bool first_source_location_get(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_first_source_location_get(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
 	enum bt_audio_dir dir;
@@ -1617,7 +1620,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 
 	if (stream == NULL || user_data == NULL) {
 		LOG_ERR("Invalid parameters");
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	enum bt_audio_location *locations = (enum bt_audio_location *)user_data;
@@ -1632,7 +1635,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 
 	if ((dir != BT_AUDIO_DIR_SOURCE) || (idx.lvl1 != 0) || (idx.lvl2 != 0) || (idx.lvl3 != 0)) {
 		/* Not the first source stream, continue searching */
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	ret = bt_audio_codec_cfg_get_chan_allocation(stream->bap_stream.codec_cfg, locations,
@@ -1643,7 +1646,7 @@ static bool first_source_location_get(struct bt_cap_stream *stream, void *user_d
 	}
 
 	/* Found the first source stream, stop iterating */
-	return false;
+	return ITER_STOP;
 }
 
 int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_location *locations)
@@ -1657,7 +1660,7 @@ int le_audio_concurrent_sync_num_get(uint8_t *num_streams, enum bt_audio_locatio
 	/* Only one stream supported at the moment */
 	*num_streams = 1;
 	/* Get location of source stream with idx 0.0.0 */
-	ret = bt_cap_unicast_group_foreach_stream(unicast_group, first_source_location_get,
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_first_source_location_get,
 						  locations);
 	if (ret != -ECANCELED) {
 		LOG_ERR("Failed to get source location: %d", ret);
@@ -1738,23 +1741,23 @@ int unicast_client_config_get(struct bt_bap_stream *stream, uint32_t *bitrate,
 }
 
 /* Get the supported sink locations from all connected unicast servers, called once per server */
-static bool sink_locations_get(struct server_store *server, void *user_data)
+static bool foreach_sink_locations_get(struct server_store *server, void *user_data)
 {
 	uint32_t *locations = (uint32_t *)user_data;
 
 	*locations |= server->snk.locations;
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 /* Get the supported source locations from all connected unicast servers, called once per server */
-static bool source_locations_get(struct server_store *server, void *user_data)
+static bool foreach_source_locations_get(struct server_store *server, void *user_data)
 {
 	uint32_t *locations = (uint32_t *)user_data;
 
 	*locations |= server->src.locations;
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir)
@@ -1778,14 +1781,14 @@ int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir)
 	}
 
 	if (dir == BT_AUDIO_DIR_SINK) {
-		ret = srv_store_foreach_server(sink_locations_get, locations);
+		ret = srv_store_foreach_server(foreach_sink_locations_get, locations);
 		if (ret != 0) {
 			LOG_ERR("Failed to get locations: %d", ret);
 			srv_store_unlock();
 			return ret;
 		}
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		ret = srv_store_foreach_server(source_locations_get, locations);
+		ret = srv_store_foreach_server(foreach_source_locations_get, locations);
 		if (ret != 0) {
 			LOG_ERR("Failed to get locations: %d", ret);
 			srv_store_unlock();
@@ -1942,25 +1945,25 @@ static bool is_connected(struct bt_conn const *const conn)
 	return false;
 }
 
-static bool add_to_start_params(struct server_store *server, void *user_data)
+static bool foreach_add_to_start_params(struct server_store *server, void *user_data)
 {
 	int ret;
 	struct bt_cap_unicast_audio_start_param *param = user_data;
 
 	if (!server_discovery_ready(server)) {
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	if (!is_connected(server->conn)) {
 		LOG_DBG("Server %s is not connected, skipping", server->name);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
 		uint8_t state;
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
-							  &server->snk.cap_streams[j]);
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->snk.cap_streams[j]);
 		if (ret != -ECANCELED) {
 			continue;
 		}
@@ -1982,8 +1985,8 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
 		uint8_t state;
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
-							  &server->src.cap_streams[j]);
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->src.cap_streams[j]);
 		if (ret != -ECANCELED) {
 			continue;
 		}
@@ -2001,7 +2004,7 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 		param->count++;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 int unicast_client_start(uint8_t cig_index)
@@ -2058,7 +2061,7 @@ static int unicast_client_internal_start(void)
 		return ret;
 	}
 
-	ret = srv_store_foreach_server(add_to_start_params, &param);
+	ret = srv_store_foreach_server(foreach_add_to_start_params, &param);
 	if (ret != 0) {
 		LOG_ERR("Failed to add streams to start params: %d", ret);
 
@@ -2089,21 +2092,21 @@ static int unicast_client_internal_start(void)
 	return 0;
 }
 
-static bool add_to_stop_params(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_add_to_stop_params(struct bt_cap_stream *stream, void *user_data)
 {
 	struct bt_cap_unicast_audio_stop_param *param = user_data;
 
 	if (stream->bap_stream.ep == NULL) {
 		/* Stream already released */
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	param->streams[param->count++] = stream;
 
-	return true;
+	return ITER_CONTINUE;
 }
 
-static bool server_connected_check(struct bt_cap_stream *stream, void *user_data)
+static bool foreach_server_connected_check(struct bt_cap_stream *stream, void *user_data)
 {
 	int ret;
 	struct server_store *server = NULL;
@@ -2112,16 +2115,16 @@ static bool server_connected_check(struct bt_cap_stream *stream, void *user_data
 	ret = srv_store_from_stream_get(&stream->bap_stream, &server);
 	if (ret != 0) {
 		LOG_ERR("Failed to get server from stream: %d", ret);
-		return true;
+		return ITER_CONTINUE;
 	}
 
 	if (server && is_connected(server->conn)) {
 		*connected_server_found = true;
 		/* Found a connected server, will stop iterating */
-		return false;
+		return ITER_STOP;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 static int unicast_client_internal_stop(void)
@@ -2143,7 +2146,8 @@ static int unicast_client_internal_stop(void)
 	param.type = BT_CAP_SET_TYPE_AD_HOC;
 	param.release = true;
 
-	ret = bt_cap_unicast_group_foreach_stream(unicast_group, add_to_stop_params, &param);
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, foreach_add_to_stop_params,
+						  &param);
 	if (ret != 0) {
 		LOG_ERR("Failed to add streams to stop params: %d", ret);
 
@@ -2174,8 +2178,8 @@ static int unicast_client_internal_stop(void)
 			return ret;
 		}
 
-		ret = bt_cap_unicast_group_foreach_stream(unicast_group, server_connected_check,
-							  &connected_server_found);
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_server_connected_check, &connected_server_found);
 
 		if (ret == -ECANCELED) {
 			/* If cancelled a connected server has been found */
@@ -2221,7 +2225,7 @@ struct unicast_send_info {
 	uint8_t num_active_streams;
 };
 
-static bool unicast_send_info_populate(struct server_store *server, void *user_data)
+static bool foreach_unicast_send_info_populate(struct server_store *server, void *user_data)
 {
 	int ret;
 	struct unicast_send_info *info = (struct unicast_send_info *)user_data;
@@ -2241,7 +2245,7 @@ static bool unicast_send_info_populate(struct server_store *server, void *user_d
 				     &info->tx[info->num_active_streams].idx);
 		if (ret != 0) {
 			LOG_ERR("Failed to get stream index: %d", ret);
-			return false;
+			return ITER_STOP;
 		}
 
 		const uint8_t *loc;
@@ -2250,7 +2254,7 @@ static bool unicast_send_info_populate(struct server_store *server, void *user_d
 						 BT_AUDIO_CODEC_CFG_CHAN_ALLOC, &loc);
 		if (ret < 0) {
 			LOG_ERR("Failed to get channel allocation: %d", ret);
-			return false;
+			return ITER_STOP;
 		}
 
 		/* Set channel location */
@@ -2261,7 +2265,7 @@ static bool unicast_send_info_populate(struct server_store *server, void *user_d
 		info->num_active_streams++;
 	}
 
-	return true;
+	return ITER_CONTINUE;
 }
 
 int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_index)
@@ -2290,7 +2294,7 @@ int unicast_client_send(struct net_buf const *const audio_frame, uint8_t cig_ind
 	};
 
 	/* Populate tx struct */
-	ret = srv_store_foreach_server(unicast_send_info_populate, &info);
+	ret = srv_store_foreach_server(foreach_unicast_send_info_populate, &info);
 	if (ret != 0) {
 		LOG_ERR("Failed to populate send info: %d", ret);
 		srv_store_unlock();
