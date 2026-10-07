@@ -2474,8 +2474,7 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 		NULL, NULL, K_PRIO_PREEMPT(2), 0, K_NO_WAIT);
 	ret = k_thread_name_set(cap_state_machine_thread_id, "Cap_state_machine");
 	if (ret) {
-		LOG_ERR("Failed to create cap_state_machine thread");
-		return ret;
+		LOG_WRN("Failed to set cap_state_machine thread name: %d", ret);
 	}
 
 	initialized = true;
