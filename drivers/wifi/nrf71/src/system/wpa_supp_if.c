@@ -1217,10 +1217,9 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 			LOG_ERR("%s: Failed to import key to crypto: %d", __func__, ret);
 			goto out;
 		}
-#else
-		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 #endif /* CONFIG_NRF_WIFI_USE_KMU */
 
+		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 		key_info.key.nrf_wifi_key_len = key_len;
 		key_info.cipher_suite = suite;
 
