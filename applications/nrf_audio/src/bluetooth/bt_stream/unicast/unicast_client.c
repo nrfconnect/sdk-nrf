@@ -48,7 +48,7 @@ enum cap_action_type {
 
 K_MUTEX_DEFINE(next_action_lock);
 K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
-static enum cap_action_type next_action;
+static enum cap_action_type next_action = CAP_ACTION_MAX;
 
 static ATOMIC_DEFINE(cap_state_machine_delay_start, 1);
 static struct k_poll_signal poll_sig = K_POLL_SIGNAL_INITIALIZER(poll_sig);
@@ -65,7 +65,9 @@ static int unicast_client_internal_start(void);
 static void cap_thread_next_evt_set(enum cap_action_type action)
 {
 	k_mutex_lock(&next_action_lock, K_FOREVER);
-	next_action = action;
+	if (action < next_action) {
+		next_action = action;
+	}
 	k_poll_signal_raise(poll_evt.signal, 1);
 	k_mutex_unlock(&next_action_lock);
 }
@@ -2232,9 +2234,76 @@ enum cap_action_type cap_thread_next_event_get(void)
 	k_sem_take(&cap_state_machine_sem, K_FOREVER);
 	k_mutex_lock(&next_action_lock, K_FOREVER);
 	enum cap_action_type action = next_action;
+	next_action = CAP_ACTION_MAX;
 	k_poll_signal_reset(&poll_sig);
 	k_mutex_unlock(&next_action_lock);
 	return action;
+}
+
+static void cap_state_machine_runner(void)
+{
+	/* Must wait for previous CAP procedure to complete */
+	enum cap_action_type action;
+	int ret;
+	LOG_INF("Waiting for CAP signal");
+
+	/* State machine is IDLE */
+
+	LOG_INF("Fetch next action");
+	action = cap_thread_next_event_get();
+
+	/* State machine is processing */
+	if (atomic_test_and_clear_bit(cap_state_machine_delay_start, 0)) {
+		LOG_INF("CAP delay start");
+		k_sleep(K_MSEC(400));
+	}
+
+	switch (action) {
+	case CAP_ACTION_STOP:
+		in_playing_state = false;
+		ret = unicast_client_internal_stop();
+		break;
+	case CAP_ACTION_STOP_THEN_START:
+		unicast_group_recreate_pending = true;
+		ret = unicast_client_internal_stop();
+		if (ret == 0) {
+			k_sem_take(&cap_state_machine_sem, K_FOREVER);
+		} else if (ret != -EAGAIN) {
+			unicast_group_recreate_pending = false;
+			break;
+		}
+
+		k_mutex_lock(&next_action_lock, K_FOREVER);
+		bool stop_pending = (next_action == CAP_ACTION_STOP);
+		k_mutex_unlock(&next_action_lock);
+
+		if (stop_pending) {
+			in_playing_state = false;
+			ret = -EAGAIN;
+		} else if (unicast_group == NULL) {
+			LOG_INF("Restarting CAP after unicast group release");
+			ret = cap_action_start();
+		} else {
+			LOG_ERR("Unicast group rebuild failed, keeping existing group");
+			unicast_group_recreate_pending = false;
+			ret = -EIO;
+		}
+		break;
+	case CAP_ACTION_START:
+		ret = cap_action_start();
+		break;
+	default:
+		LOG_ERR("Unknown CAP action: %d", action);
+		ret = -EINVAL;
+		break;
+	}
+
+	if (ret != 0) {
+		/* No asynchronous procedure started; release here.
+		 * Otherwise, the completion callback releases the semaphore.
+		 */
+		cap_thread_cap_action_complete(ret);
+	}
 }
 
 /* CAP thread for the state machine. Must be a lower priority than
@@ -2244,60 +2313,7 @@ static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 {
 
 	while (1) {
-		/* Must wait for previous CAP procedure to complete */
-		enum cap_action_type action;
-		int ret;
-		LOG_INF("Waiting for CAP signal");
-
-		/* State machine is IDLE */
-
-		LOG_INF("Fetch next action");
-		action = cap_thread_next_event_get();
-
-		/* State machine is processing */
-		if (atomic_test_and_clear_bit(cap_state_machine_delay_start, 0)) {
-			LOG_INF("CAP delay start");
-			k_sleep(K_MSEC(400));
-		}
-
-		switch (action) {
-		case CAP_ACTION_STOP:
-			ret = unicast_client_internal_stop();
-			break;
-		case CAP_ACTION_STOP_THEN_START:
-			unicast_group_recreate_pending = true;
-			ret = unicast_client_internal_stop();
-			if (ret == 0) {
-				k_sem_take(&cap_state_machine_sem, K_FOREVER);
-			} else if (ret != -EAGAIN) {
-				unicast_group_recreate_pending = false;
-				break;
-			}
-
-			if (unicast_group == NULL) {
-				LOG_INF("Restarting CAP after unicast group release");
-				ret = cap_action_start();
-			} else {
-				LOG_ERR("Unicast group rebuild failed, keeping existing group");
-				unicast_group_recreate_pending = false;
-				ret = -EIO;
-			}
-			break;
-		case CAP_ACTION_START:
-			ret = cap_action_start();
-			break;
-		default:
-			LOG_ERR("Unknown CAP action: %d", action);
-			ret = -EINVAL;
-			break;
-		}
-
-		if (ret != 0) {
-			/* No asynchronous procedure started; release here.
-			 * Otherwise, the completion callback releases the semaphore.
-			 */
-			cap_thread_cap_action_complete(ret);
-		}
+		cap_state_machine_runner();
 	}
 }
 
