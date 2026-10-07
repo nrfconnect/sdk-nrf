@@ -5683,6 +5683,13 @@ SoftDevice Controller
 The issues in this section are related to :ref:`nrfxlib:softdevice_controller`.
 In addition to the known issues listed here, see also :ref:`softdevice_controller_limitations` for permanent limitations.
 
+.. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0
+
+DRGN-30119: The controller asserts when calling the :c:func:`sdc_hci_cmd_vs_compat_mode_window_offset_set` function
+  The controller asserts when the vendor-specific HCI command for setting the compatibility mode window offset is issued while the :kconfig:option:`CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING` Kconfig option is disabled.
+
+  **Workaround:** Set the :kconfig:option:`CONFIG_BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING` Kconfig option to ``y`` if the application requires the :c:func:`sdc_hci_cmd_vs_compat_mode_window_offset_set` function.
+
 .. rst-class:: v3-4-1 v3-4-0 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0
 
 DRGN-29858: The controller could schedule Channel Sounding events with an insufficient event offset, causing scheduling conflicts with the anchoring connection event
