@@ -907,7 +907,6 @@ To perform the DFU procedure, complete the following steps:
 #. Observe that **LED 2** is blinking, which indicates that the Fast Pair advertising is enabled.
 #. Perform DFU using the `nRF Connect Device Manager`_ mobile app:
 
-   .. include:: /app_dev/device_guides/nrf52/fota_update.rst
       :start-after: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_start
       :end-before: fota_upgrades_over_ble_nrfcdm_common_dfu_steps_end
 

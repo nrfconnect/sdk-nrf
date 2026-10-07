@@ -82,7 +82,7 @@ Antenna matrix configuration for angle of arrival mode
 ======================================================
 
 To use this sample when AoA mode is enabled, additional configuration of GPIOs is required to control the antenna array.
-An example of such configuration is provided in a devicetree overlay file :file:`nrf52833dk_nrf52833.overlay`.
+An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpuapp.overlay`.
 
 The overlay file provides the information of which GPIOs should be used by the Radio peripheral to switch between antenna patches during the CTE reception in the AoA mode.
 At least two GPIOs must be provided to enable antenna switching.
@@ -96,8 +96,8 @@ To successfully use the direction finding central when the AoA mode is enabled, 
 
 .. bt_dir_finding_central_conf_list_start
 
-* The GPIO pins to ``dfegpio#-gpios`` properties in the :file:`nrf52833dk_nrf52833.overlay` file.
-* The default antenna that will be used to receive a PDU ``dfe-pdu-antenna`` property in the :file:`nrf52833dk_nrf52833.overlay` file.
+* The GPIO pins to ``dfegpio#-gpios`` properties in the :file:`nrf5340dk_nrf5340_cpuapp.overlay` file.
+* The default antenna that will be used to receive a PDU ``dfe-pdu-antenna`` property in the :file:`nrf5340dk_nrf5340_cpuapp.overlay` file.
 * Update the antenna switching patterns of the :c:member:`ant_patterns` array in the :file:`main.c` file.
 
 .. bt_dir_finding_central_conf_list_end
@@ -116,7 +116,7 @@ If the number of switch-sample periods is greater than the number of stored swit
 
 The length of the antenna switching pattern is limited by the :kconfig:option:`CONFIG_BT_CTLR_DF_MAX_ANT_SW_PATTERN_LEN` Kconfig option.
 If the required length of the antenna switching pattern is greater than the default value of that option, set it to the required value in the board configuration file.
-For example, for the :ref:`nRF52833 DK <ug_nrf52>`, set the option value to the required antenna switching pattern length in the :file:`nrf52833dk_nrf52833.conf` file.
+For example, for the :ref:`nRF5340 DK <ug_nrf5340>`, set the option value to the required antenna switching pattern length in the board configuration file.
 
 The following table presents the patterns that you can use to switch antennas on the Nordic-designed antenna matrix:
 
