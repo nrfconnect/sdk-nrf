@@ -230,6 +230,20 @@ struct group_streams_populate_data {
 		source_stream_params[CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
 };
 
+/* At least one direction must have completed discovery, and neither may be pending
+ * or failed. NONE permits an unrequested direction; COMPLETED may have no endpoints.
+ * Endpoint and codec validity are checked separately.
+ */
+static bool server_discovery_ready(const struct server_store *server)
+{
+	return (server->snk.discovery_state == DISCOVERY_STATE_COMPLETED ||
+		server->src.discovery_state == DISCOVERY_STATE_COMPLETED) &&
+	       (server->snk.discovery_state == DISCOVERY_STATE_NONE ||
+		server->snk.discovery_state == DISCOVERY_STATE_COMPLETED) &&
+	       (server->src.discovery_state == DISCOVERY_STATE_NONE ||
+		server->src.discovery_state == DISCOVERY_STATE_COMPLETED);
+}
+
 static bool unicast_group_populate(struct server_store *server, void *user_data)
 {
 
@@ -237,7 +251,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 
 	struct group_streams_populate_data *data = (struct group_streams_populate_data *)user_data;
 
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+	if (!server_discovery_ready(server)) {
 		return true;
 	}
 
@@ -482,7 +496,7 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 
 	ARG_UNUSED(user_data);
 
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+	if (!server_discovery_ready(server)) {
 		return true;
 	}
 
@@ -989,10 +1003,18 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 	}
 
 	if (dir == BT_AUDIO_DIR_SINK) {
-		server->snk.waiting_for_disc = false;
+		if (err == 0 || err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+			server->snk.discovery_state = DISCOVERY_STATE_COMPLETED;
+		} else {
+			server->snk.discovery_state = DISCOVERY_STATE_FAILED;
+		}
 		discover_cb_sink(conn, err, server);
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
-		server->src.waiting_for_disc = false;
+		if (err == 0 || err == BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+			server->src.discovery_state = DISCOVERY_STATE_COMPLETED;
+		} else {
+			server->src.discovery_state = DISCOVERY_STATE_FAILED;
+		}
 		discover_cb_source(conn, err, server);
 	} else {
 		LOG_ERR("%s: Unknown direction: %d", __func__, dir);
@@ -1000,14 +1022,27 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		return;
 	}
 
-	if (server->src.waiting_for_disc) {
+	if (err != 0 && err != BT_ATT_ERR_ATTRIBUTE_NOT_FOUND) {
+		if (server->src.discovery_state == DISCOVERY_STATE_PENDING) {
+			/* Sink discovery failed, so the queued source discovery was never
+			 * started. Clear its pending state; the sink remains FAILED.
+			 */
+			server->src.discovery_state = DISCOVERY_STATE_NONE;
+		}
+		srv_store_unlock();
+		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL, dir);
+		return;
+	}
+
+	if (server->src.discovery_state == DISCOVERY_STATE_PENDING) {
 		ret = bt_bap_unicast_client_discover(conn, BT_AUDIO_DIR_SOURCE);
 		if (ret != 0) {
 			LOG_WRN("Failed to start source discovery: %d", ret);
-			server->src.waiting_for_disc = false;
+			server->src.discovery_state = DISCOVERY_STATE_FAILED;
 			srv_store_unlock();
 			/* Source discovery was not started, so no completion callback will
-			 * clear its pending flag or finish the requested bidirectional setup.
+			 * finish the requested bidirectional setup. Keep the direction FAILED
+			 * until disconnect cleanup resets its state to NONE.
 			 * Report this setup failure to the application, whose NO_VALID_CFG
 			 * handler disconnects the headset and allows disconnect cleanup to
 			 * discard partial discovery data. Do not publish DISCOVERY_COMPLETE
@@ -1785,7 +1820,22 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 		return ret;
 	}
 
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+	if (server->snk.discovery_state == DISCOVERY_STATE_FAILED ||
+	    server->src.discovery_state == DISCOVERY_STATE_FAILED) {
+		srv_store_unlock();
+		return -EIO;
+	}
+
+	if (server->snk.discovery_state == DISCOVERY_STATE_PENDING ||
+	    server->src.discovery_state == DISCOVERY_STATE_PENDING) {
+		srv_store_unlock();
+		return -EINPROGRESS;
+	}
+
+	if (((dir & BT_AUDIO_DIR_SINK) &&
+	     server->snk.discovery_state == DISCOVERY_STATE_COMPLETED) ||
+	    ((dir & BT_AUDIO_DIR_SOURCE) &&
+	     server->src.discovery_state == DISCOVERY_STATE_COMPLETED)) {
 		srv_store_unlock();
 		return -EALREADY;
 	}
@@ -1807,11 +1857,11 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 	}
 
 	if (dir & BT_AUDIO_DIR_SOURCE) {
-		server->src.waiting_for_disc = true;
+		server->src.discovery_state = DISCOVERY_STATE_PENDING;
 	}
 
 	if (dir & BT_AUDIO_DIR_SINK) {
-		server->snk.waiting_for_disc = true;
+		server->snk.discovery_state = DISCOVERY_STATE_PENDING;
 	}
 
 	if (dir == UNICAST_SERVER_BIDIR) {
@@ -1822,10 +1872,22 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 	}
 
 	if (ret != 0) {
+		enum bt_audio_dir failed_dir;
+
 		LOG_WRN("Failed to discover %d", ret);
-		server->snk.waiting_for_disc = false;
-		server->src.waiting_for_disc = false;
+		if (dir == UNICAST_SERVER_SOURCE) {
+			server->src.discovery_state = DISCOVERY_STATE_FAILED;
+			failed_dir = BT_AUDIO_DIR_SOURCE;
+		} else {
+			server->snk.discovery_state = DISCOVERY_STATE_FAILED;
+			failed_dir = BT_AUDIO_DIR_SINK;
+			if (dir == UNICAST_SERVER_BIDIR) {
+				/* Source discovery was queued but never started. */
+				server->src.discovery_state = DISCOVERY_STATE_NONE;
+			}
+		}
 		srv_store_unlock();
+		le_audio_event_publish(LE_AUDIO_EVT_NO_VALID_CFG, conn, NULL, failed_dir);
 		return ret;
 	}
 
@@ -1865,7 +1927,7 @@ static bool add_to_start_params(struct server_store *server, void *user_data)
 	int ret;
 	struct bt_cap_unicast_audio_start_param *param = user_data;
 
-	if (server->snk.waiting_for_disc || server->src.waiting_for_disc) {
+	if (!server_discovery_ready(server)) {
 		return true;
 	}
 

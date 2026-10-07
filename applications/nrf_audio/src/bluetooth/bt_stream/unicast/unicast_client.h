@@ -94,9 +94,13 @@ int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir);
  * @param[in]	conn	Pointer to the connection.
  * @param[in]	dir	Direction of the stream.
  *
- * @retval	-EALREADY	Device has already been discovered.
+ * @retval	-EINPROGRESS	Discovery is already pending on this connection.
+ * @retval	-EALREADY	A requested direction has already been discovered on this
+ *				connection.
+ * @retval	-EIO		Discovery failed on this connection; disconnect cleanup is
+ *				required before another attempt.
  * @retval	-ENOSPC		No more room in headset list.
- * @retval	0		Success.
+ * @retval	0		Discovery request accepted; completion is reported asynchronously.
  */
 int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir);
 

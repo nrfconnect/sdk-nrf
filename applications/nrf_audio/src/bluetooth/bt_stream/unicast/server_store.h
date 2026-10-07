@@ -24,8 +24,15 @@
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/addr.h>
 
+enum discovery_state {
+	DISCOVERY_STATE_NONE,
+	DISCOVERY_STATE_PENDING,
+	DISCOVERY_STATE_FAILED,
+	DISCOVERY_STATE_COMPLETED,
+};
+
 struct unicast_server_snk_vars {
-	bool waiting_for_disc;
+	enum discovery_state discovery_state;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
@@ -38,7 +45,7 @@ struct unicast_server_snk_vars {
 };
 
 struct unicast_server_src_vars {
-	bool waiting_for_disc;
+	enum discovery_state discovery_state;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];

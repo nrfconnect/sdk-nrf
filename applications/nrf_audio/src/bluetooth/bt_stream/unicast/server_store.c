@@ -1636,8 +1636,8 @@ int srv_store_clear_by_conn(struct bt_conn const *const conn)
 	server->conn = NULL;
 	server->member = NULL;
 
-	server->snk.waiting_for_disc = false;
-	server->src.waiting_for_disc = false;
+	server->snk.discovery_state = DISCOVERY_STATE_NONE;
+	server->src.discovery_state = DISCOVERY_STATE_NONE;
 	server->snk.locations = 0;
 	server->src.locations = 0;
 	memset(&server->snk.lc3_preset, 0, sizeof(server->snk.lc3_preset));
