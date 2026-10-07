@@ -244,6 +244,14 @@ static bool server_discovery_ready(const struct server_store *server)
 		server->src.discovery_state == DISCOVERY_STATE_COMPLETED);
 }
 
+static int server_source_stream_count_get(const struct server_store *server)
+{
+	int source_count = MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations));
+
+	/* The application currently uses only source stream index 0. */
+	return MIN(source_count, 1);
+}
+
 static bool unicast_group_populate(struct server_store *server, void *user_data)
 {
 
@@ -264,7 +272,7 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
 		if (server->snk.lc3_preset[j].qos.pd == 0) {
 			LOG_WRN("Sink EP %d has no valid preset, skipping", j);
-			return true;
+			continue;
 		}
 
 		if (data->sink_iterator >= ARRAY_SIZE(data->sink_stream_params)) {
@@ -282,11 +290,11 @@ static bool unicast_group_populate(struct server_store *server, void *user_data)
 		data->sink_iterator++;
 	}
 
-	/* Add only the streams that has a valid preset set */
-	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
+	/* Add only source stream 0, which is the only source stream currently used. */
+	for (int j = 0; j < server_source_stream_count_get(server); j++) {
 		if (server->src.lc3_preset[j].qos.pd == 0) {
 			LOG_WRN("Source EP %d has no valid preset, skipping", j);
-			return true;
+			continue;
 		}
 
 		if (data->source_iterator >= ARRAY_SIZE(data->source_stream_params)) {
@@ -482,13 +490,14 @@ static bool stream_in_group_check(struct bt_cap_stream *stream, void *user_data)
 }
 
 /**
- * @brief	Function to check if a server has any streams in the unicast group.
+ * @brief	Check that all streams currently used from a server are in the group.
  *
  * @param[in] server	Server to check.
  * @param[in] user_data	Unused.
  *
- * @retval		True	All streams from the server are in the group.
- * @retval		False	At least one stream is missing from the group.
+ * @retval		True	All eligible sink streams and the used source stream are
+ *				present.
+ * @retval		False	At least one used stream is missing from the group.
  */
 static bool server_stream_in_unicast_group_check(struct server_store *server, void *user_data)
 {
@@ -514,22 +523,33 @@ static bool server_stream_in_unicast_group_check(struct server_store *server, vo
 		return true;
 	}
 
-	/* Check if the server has at least one valid preset set */
-	if (server->snk.lc3_preset[0].qos.pd == 0 && server->src.lc3_preset[0].qos.pd == 0) {
-		LOG_DBG("Server %s has no valid preset, skipping", server->name);
-		return true;
-	}
-
-	/* Check each of the streams in the unicast_group against all of the
-	 * streams in the server
-	 */
+	/* Check each eligible sink stream against the streams in the group. */
 	for (int i = 0; i < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); i++) {
+		if (server->snk.lc3_preset[i].qos.pd == 0) {
+			continue;
+		}
+
 		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
 							  &server->snk.cap_streams[i]);
 		if (ret == 0) {
 			LOG_INF("Server %s sink stream %d (%p) not found in unicast group",
 				server->name, i, &server->snk.cap_streams[i]);
 			/* A stream is missing from the group, stop iterating */
+			return false;
+		}
+	}
+
+	/* Check each eligible source stream as well. */
+	for (int i = 0; i < server_source_stream_count_get(server); i++) {
+		if (server->src.lc3_preset[i].qos.pd == 0) {
+			continue;
+		}
+
+		ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_in_group_check,
+							  &server->src.cap_streams[i]);
+		if (ret == 0) {
+			LOG_INF("Server %s source stream %d (%p) not found in unicast group",
+				server->name, i, &server->src.cap_streams[i]);
 			return false;
 		}
 	}
