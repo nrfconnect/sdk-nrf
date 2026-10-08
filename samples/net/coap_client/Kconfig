@@ -27,8 +27,10 @@ config SAMPLE_RECONNECT_DELAY_SECONDS
 	int "Reconnect delay in seconds"
 	default 30
 	help
-	  Delay before reconnecting to the server after a recoverable error,
-	  such as a failed DTLS handshake or a failed request.
+	  Delay before resolving and connecting again after all server
+	  addresses failed, either to connect, for example because of failed
+	  DTLS handshakes, or to answer requests. Connectivity changes trigger
+	  an immediate retry.
 
 config COAP_SAMPLE_DTLS
 	bool "Enable DTLS (CoAPS) with mutual X.509 authentication"
