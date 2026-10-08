@@ -869,9 +869,6 @@ static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *
 
 	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
 	if (existing_dir != ctx->dir) {
-		/* The existing stream is not in the same direction as the incoming stream.
-		 * Continue
-		 */
 		LOG_DBG("Existing stream dir %d not in same direction as incoming stream dir %d",
 			existing_dir, ctx->dir);
 		return true;
@@ -922,7 +919,7 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	}
 
 	if (*group_reconfig_needed) {
-		LOG_ERR("Group reconfiguration is already needed");
+		LOG_ERR("Group reconfig needed is already set");
 		return -EINVAL;
 	}
 
@@ -936,7 +933,6 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	}
 
 	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &bap_info);
-
 	if (ret != 0) {
 		LOG_ERR("Failed to get BAP unicast group info: %d", ret);
 		return ret;
@@ -960,6 +956,9 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 		foreach_data.existing_pres_dly_us = bap_info.sink_pd;
 	} else if (dir == BT_AUDIO_DIR_SOURCE) {
 		foreach_data.existing_pres_dly_us = bap_info.source_pd;
+	} else {
+		__ASSERT(false, "Invalid direction: %d", dir);
+		return -EINVAL;
 	}
 
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd_by_dir,
@@ -977,12 +976,7 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	}
 
 	if (foreach_data.streams_checked == 0) {
-		if (dir == BT_AUDIO_DIR_SINK) {
-			LOG_INF("No streams found for sink (P->C) dir");
-		} else if (dir == BT_AUDIO_DIR_SOURCE) {
-			LOG_INF("No streams found for source (C->P) dir");
-		}
-
+		LOG_INF("No streams found for %s dir", bt_audio_dir_to_str(dir));
 		return -ENODATA;
 	}
 

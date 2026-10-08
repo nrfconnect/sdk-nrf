@@ -253,8 +253,6 @@ int le_audio_print_qos_from_stream(struct bt_bap_stream const *const stream);
  */
 int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicast_group);
 
-const char *le_audio_dir_to_str(enum bt_audio_dir dir);
-
 /**
  * @}
  */

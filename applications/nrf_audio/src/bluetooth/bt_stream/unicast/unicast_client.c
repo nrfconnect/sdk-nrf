@@ -604,7 +604,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 	struct server_store *server = NULL;
 
 	LOG_DBG("CB BAP location discovered for conn %p dir %s loc %s", conn,
-		le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc));
+		bt_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc));
 
 	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
 	if (ret < 0) {
@@ -627,7 +627,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 			conn, dir, BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT);
 		if (ret != 0) {
 			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
-				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
+				bt_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}
@@ -647,7 +647,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_LEFT);
 		if (ret != 0) {
 			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
-				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
+				bt_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}
@@ -666,7 +666,7 @@ static void bap_location_cb(struct bt_conn *conn, enum bt_audio_dir dir, enum bt
 		ret = srv_store_location_set(conn, dir, BT_AUDIO_LOCATION_FRONT_RIGHT);
 		if (ret != 0) {
 			LOG_ERR("Failed to set location for conn %p, dir %s, loc %s: %d", conn,
-				le_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
+				bt_audio_dir_to_str(dir), bt_audio_location_bit_to_str(loc), ret);
 			srv_store_unlock();
 			return;
 		}

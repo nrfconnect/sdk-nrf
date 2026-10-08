@@ -474,15 +474,3 @@ int le_audio_print_unicast_group(struct bt_cap_unicast_group const *const unicas
 
 	return 0;
 }
-
-const char *le_audio_dir_to_str(enum bt_audio_dir dir)
-{
-	switch (dir) {
-	case BT_AUDIO_DIR_SINK:
-		return "Sink (P->C)";
-	case BT_AUDIO_DIR_SOURCE:
-		return "Source (C->P)";
-	default:
-		return "Unknown dir";
-	}
-}
