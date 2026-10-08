@@ -139,7 +139,7 @@ The sample displays the data in the following format:
 
 .. code-block:: console
 
-   CoAP GET request sent sent to californium.eclipseprojects.io, resource: obs
+   CoAP GET request sent to californium.eclipseprojects.io:5683, resource: obs
    CoAP response: code: 0x45, payload: 15:29:45
 
 Instead of displaying every single CoAP frame content, the sample displays only the essential data.
