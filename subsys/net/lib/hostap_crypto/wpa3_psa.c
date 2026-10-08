@@ -422,7 +422,6 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 		     size_t *token_len, int *allowed_groups, int h2e, int *ie_offset)
 {
 	struct wpa3_psa_operation *op;
-	u16 res = WLAN_STATUS_SUCCESS;
 
 	op = get_psa_op(sae);
 	if (!op) {
@@ -449,10 +448,13 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 	os_memcpy(op->peer_commit, data, len);
 	op->peer_commit_len = len;
 
-	/* Process the commit using PSA */
-	res = wpa3_psa_process_commit(op, op->shared_key, op->shared_key_len);
-	if (res != WLAN_STATUS_SUCCESS) {
-		return res;
+	/*
+	 * Process the commit using PSA. Do not propagate the -1 error as u16, it
+	 * would alias SAE_SILENTLY_DISCARD and keep the exchange alive.
+	 */
+	if (wpa3_psa_process_commit(op, op->shared_key, op->shared_key_len) < 0) {
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Invalid peer commit, rejecting");
+		return WLAN_STATUS_UNSPECIFIED_FAILURE;
 	}
 
 	/* Parse optional fields */
@@ -574,15 +576,15 @@ int sae_check_confirm(struct sae_data *sae, const u8 *data, size_t len, int *ie_
  * @allowed_groups: Allowed groups
  * @group: Group to check
  *
- * Returns: 0 if allowed, -1 if not allowed
+ * Returns: WLAN_STATUS_SUCCESS if allowed, WLAN_STATUS_FINITE_CYCLIC_GROUP_NOT_SUPPORTED otherwise
  */
 u16 sae_group_allowed(struct sae_data *sae, int *allowed_groups, u16 group)
 {
 	/* Only allow group 19 */
 	if (group == 19) {
-		return 0;
+		return WLAN_STATUS_SUCCESS;
 	}
-	return -1;
+	return WLAN_STATUS_FINITE_CYCLIC_GROUP_NOT_SUPPORTED;
 }
 
 /**
