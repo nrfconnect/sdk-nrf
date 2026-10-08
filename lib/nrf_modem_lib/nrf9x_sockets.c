@@ -11,8 +11,10 @@
  */
 
 #include <nrf_modem.h>
+#include <nrf_modem_at.h>
 #include <nrf_modem_os.h>
 #include <errno.h>
+#include <string.h>
 #include <fcntl.h>
 #include <zephyr/init.h>
 #include <zephyr/net/socket_offload.h>
@@ -862,22 +864,12 @@ static void nrf9x_socket_offload_freeaddrinfo(struct zsock_addrinfo *root)
 	}
 }
 
-static int nrf9x_socket_offload_getaddrinfo(const char *node,
-					    const char *service,
-					    const struct zsock_addrinfo *hints,
-					    struct zsock_addrinfo **res)
+static int getaddrinfo_query(const char *node, const char *service,
+			     const struct nrf_addrinfo *nrf_hints_ptr,
+			     struct zsock_addrinfo **res)
 {
 	int err;
-	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo *nrf_res = NULL;
-	struct nrf_addrinfo *nrf_hints_ptr = NULL;
-
-	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
-
-	if (hints != NULL) {
-		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
-		nrf_hints_ptr = &nrf_hints;
-	}
 
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
@@ -927,6 +919,87 @@ static int nrf9x_socket_offload_getaddrinfo(const char *node,
 	nrf_freeaddrinfo(nrf_res);
 
 	return retval;
+}
+
+/* Whether the default PDN has an IPv4 address but no IPv6 address.
+ * IPv6 destinations are then unusable, so they are ordered last, as the native resolver does.
+ */
+static bool modem_ipv4_only(void)
+{
+	char addr1[NRF_INET6_ADDRSTRLEN + 1];
+	char addr2[NRF_INET6_ADDRSTRLEN + 1];
+	int ret;
+
+	/* The IPv4 address, if any, comes first. A second address is always IPv6. */
+	ret = nrf_modem_at_scanf("AT+CGPADDR=0",
+				 "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
+				 addr1, addr2);
+
+	return ret == 1 && strchr(addr1, '.') != NULL;
+}
+
+static int nrf9x_socket_offload_getaddrinfo(const char *node,
+					    const char *service,
+					    const struct zsock_addrinfo *hints,
+					    struct zsock_addrinfo **res)
+{
+	struct nrf_addrinfo nrf_hints = { 0 };
+	struct zsock_addrinfo *res6 = NULL;
+	struct zsock_addrinfo *res4 = NULL;
+	struct zsock_addrinfo *first;
+	struct zsock_addrinfo *second;
+	struct zsock_addrinfo **tail;
+	int ret6 = DNS_EAI_ADDRFAMILY;
+	int ret4 = DNS_EAI_ADDRFAMILY;
+
+	/* NULL hints: keep a single modem query, which yields IPv6 only if available */
+	if (hints == NULL) {
+		return getaddrinfo_query(node, service, NULL, res);
+	}
+
+	z_to_nrf_addrinfo_hints(hints, &nrf_hints);
+
+	if (hints->ai_family != NET_AF_UNSPEC) {
+		return getaddrinfo_query(node, service, &nrf_hints, res);
+	}
+
+	/* For AF_UNSPEC, the modem returns only IPv6 addresses if any. Query both families. */
+	if (IS_ENABLED(CONFIG_NET_IPV6)) {
+		nrf_hints.ai_family = NRF_AF_INET6;
+		ret6 = getaddrinfo_query(node, service, &nrf_hints, &res6);
+	}
+
+	if (IS_ENABLED(CONFIG_NET_IPV4)) {
+		nrf_hints.ai_family = NRF_AF_INET;
+		ret4 = getaddrinfo_query(node, service, &nrf_hints, &res4);
+	}
+
+	if (ret6 != 0 && ret4 != 0) {
+		*res = NULL;
+		return ret4 != DNS_EAI_ADDRFAMILY ? ret4 : ret6;
+	}
+
+	/* IPv6 addresses first, then IPv4, unless the PDN has no IPv6 address.
+	 * Only the default PDN is checked.
+	 */
+	if (res6 != NULL && res4 != NULL &&
+	    !(hints->ai_flags & NRF_AI_PDNSERV) && modem_ipv4_only()) {
+		first = res4;
+		second = res6;
+	} else {
+		first = res6;
+		second = res4;
+	}
+
+	/* Append the second list to the end of the first */
+	*res = first;
+	tail = res;
+	while (*tail != NULL) {
+		tail = &(*tail)->ai_next;
+	}
+	*tail = second;
+
+	return 0;
 }
 
 static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
