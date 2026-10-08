@@ -24,7 +24,7 @@ Overview
 
 The CoAP Client sample performs the following actions:
 
-#. Connects to the configured public CoAP test server.
+#. Connects to the configured public CoAP test server using the :ref:`lib_connect_by_name` library, which tries the IPv6 and IPv4 addresses of the server.
 #. Sends a periodic GET request for a test resource that is available on the server.
 #. Displays the received data about the resource on a terminal emulator.
 
@@ -130,7 +130,7 @@ Testing
 #. Observe that the following output is displayed in the terminal::
 
        The CoAP client sample started
-#. Observe that the discovered IP address of the public CoAP server is displayed on the terminal emulator.
+#. Observe that the IP address of the public CoAP server that the sample connects to is displayed on the terminal emulator.
 #. Observe that your DK sends periodic CoAP GET requests to the configured server for a configured resource after it gets LTE or Wi-Fi connection.
 #. Observe that the sample either displays the response data received from the server or indicates a timeout on the terminal.
    For more information on the response codes, see `COAP response codes`_.
@@ -142,7 +142,9 @@ The sample displays the data in the following format:
 
 .. code-block:: console
 
-   CoAP GET request sent sent to californium.eclipseprojects.io, resource: obs
+   Connecting to californium.eclipseprojects.io
+   Connecting to californium.eclipseprojects.io (20.47.97.44), port 5683
+   CoAP GET request sent to californium.eclipseprojects.io:5683, resource: obs
    CoAP response: code: 0x45, payload: 15:29:45
 
 Instead of displaying every single CoAP frame content, the sample displays only the essential data.
@@ -168,8 +170,9 @@ References
 Dependencies
 ************
 
-This sample uses the following Zephyr libraries:
+This sample uses the following |NCS| and Zephyr libraries:
 
+* :ref:`lib_connect_by_name`
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
 * :ref:`CoAP client <zephyr:coap_client_interface>`
