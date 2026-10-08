@@ -101,8 +101,6 @@ static int server_remove(struct server_store *server, bool force)
 static int pres_delay_compute(struct bt_bap_qos_cfg_pref *common,
 			      struct bt_bap_qos_cfg_pref const *const in)
 {
-	LOG_DBG("Computing common presentation delay");
-
 	if (in->pd_min) {
 		common->pd_min = MAX(in->pd_min, common->pd_min);
 	} else {
