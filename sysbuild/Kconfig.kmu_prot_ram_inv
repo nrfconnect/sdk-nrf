@@ -8,3 +8,5 @@ config CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
 	help
 	  This option populates the KMU slots for invalidation of the Cracen protected RAM
 	  using the nrfutil ncs-provision command.
+	  The slots are CRACEN_KMU_PROT_RAM_INV_SLOT and the slot after it (248 and 249 by
+	  default).

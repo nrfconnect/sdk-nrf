@@ -16,6 +16,55 @@ config SUPPORT_CRACEN_MICROCODE
 	help
 	  Hidden symbol indicating if CRACEN microcode loading is supported on the device.
 
+menu "CRACEN KMU slot layout"
+
+config CRACEN_KMU_PROVISIONING_SLOT
+	int "KMU slot recording that provisioning is in progress"
+	range 0 255
+	default 186
+	help
+	  Only the metadata field of this slot is used. It is revoked again when provisioning
+	  completes. Sets CONFIG_CRACEN_KMU_PROVISIONING_SLOT in all images.
+
+config CRACEN_KMU_PROT_RAM_INV_SLOT
+	int "First KMU slot of the protected RAM invalidation data (2 slots)"
+	range 0 254
+	default 248
+	help
+	  The protected RAM invalidation data spans this slot and the next one.
+	  Sets CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT in all images.
+
+config CRACEN_IKG_SEED_KMU_SLOT
+	int "First KMU slot of the CRACEN IKG seed (3 slots)"
+	range 0 253
+	default 183
+	help
+	  The CRACEN IKG seed spans this slot and the two following ones.
+	  Sets CONFIG_CRACEN_IKG_SEED_KMU_SLOT in all images.
+
+if BOARD_IS_NON_SECURE
+
+config CRACEN_KMU_NS_SLOT_FIRST
+	int "First KMU slot the TF-M non-secure application may access"
+	range 0 255
+	default 0
+	help
+	  Sets CONFIG_CRACEN_KMU_NS_SLOT_FIRST in the main application, which builds TF-M.
+
+config CRACEN_KMU_NS_SLOT_LAST
+	int "Last KMU slot the TF-M non-secure application may access"
+	range CRACEN_KMU_NS_SLOT_FIRST 255
+	default 179
+	help
+	  Sets CONFIG_CRACEN_KMU_NS_SLOT_LAST in the main application, which builds TF-M.
+	  The range must not include any slot used by the CRACEN driver, nor the slots that the
+	  bootloaders read their public keys from: 202-207 (APP_PUBKEY), 226-231 (UROT_PUBKEY)
+	  and 242-247 (BL_PUBKEY). The build fails if it does.
+
+endif # BOARD_IS_NON_SECURE
+
+endmenu
+
 if SUPPORT_CRACEN_MICROCODE
 
 menu "CRACEN"

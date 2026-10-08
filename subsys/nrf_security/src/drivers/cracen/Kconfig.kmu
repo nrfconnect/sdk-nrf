@@ -1,0 +1,81 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# KMU slot layout of the CRACEN driver. The values are checked at compile time in
+# cracen_psa_kmu.c, and the non-secure slot range in cracen_psa_builtin_key_policy.c.
+#
+# Sysbuild sets these options in every nRF54L image, so they are defined in every nRF54L
+# image, not only in the ones that enable the CRACEN driver.
+
+if SOC_SERIES_NRF54L || HAS_HW_NRF_CRACEN
+
+config CRACEN_IKG_SEED_KMU_SLOT
+	int "KMU slot of the CRACEN IKG seed (informative only, do not change)"
+	range 0 253
+	default 183
+	help
+	  The CRACEN IKG seed spans over 3 KMU slots:
+	  the one defined here and the two subsequent ones.
+	  This defines the KMU slot (along with the two following it) to which
+	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
+	  Every image on the device must use the same value. This option is controlled by the
+	  CRACEN_IKG_SEED_KMU_SLOT sysbuild configuration option, so set it in your sysbuild
+	  configuration rather than setting this symbol manually.
+
+config CRACEN_KMU_PROVISIONING_SLOT
+	int "CRACEN KMU provisioning slot (informative only, do not change)"
+	range 0 255
+	default 186
+	help
+	  KMU slot whose metadata field records that provisioning is in progress. It is revoked
+	  again when provisioning completes. Every image on the device must use the same value.
+	  This option is controlled by the CRACEN_KMU_PROVISIONING_SLOT sysbuild configuration
+	  option, so set it in your sysbuild configuration rather than setting this symbol
+	  manually.
+
+config CRACEN_KMU_PROT_RAM_INV_SLOT
+	int "First protected RAM invalidation KMU slot (informative only, do not change)"
+	range 0 254
+	default 248
+	help
+	  The protected RAM invalidation data spans 2 KMU slots: the one defined here and the
+	  next one. Every image on the device must use the same value.
+	  This option is controlled by the CRACEN_KMU_PROT_RAM_INV_SLOT sysbuild configuration
+	  option, so set it in your sysbuild configuration rather than setting this symbol
+	  manually.
+
+if BUILD_WITH_TFM
+
+config CRACEN_KMU_NS_SLOT_FIRST
+	int "First TF-M non-secure KMU slot (informative only, do not change)"
+	range 0 255
+	default 0
+	help
+	  Lower end of the inclusive KMU slot range that PSA key IDs from the TF-M non-secure
+	  application may refer to.
+	  This option is controlled by the CRACEN_KMU_NS_SLOT_FIRST sysbuild configuration
+	  option, so set it in your sysbuild configuration rather than setting this symbol
+	  manually.
+
+config CRACEN_KMU_NS_SLOT_LAST
+	int "Last TF-M non-secure KMU slot (informative only, do not change)"
+	range CRACEN_KMU_NS_SLOT_FIRST 255
+	default 179
+	help
+	  Upper end of the inclusive KMU slot range that PSA key IDs from the TF-M non-secure
+	  application may refer to. KMU slots >= 180 are reserved for Nordic use by default.
+	  The range must not include any slot used by the CRACEN driver, nor the slots that
+	  the bootloaders read their public keys from: 202-207 (APP_PUBKEY), 226-231
+	  (UROT_PUBKEY) and 242-247 (BL_PUBKEY), as provisioned by west ncs-provision.
+	  The build fails if it does. The other slots that the documentation lists as
+	  reserved are not checked, so that a custom layout can use them.
+	  This option is controlled by the CRACEN_KMU_NS_SLOT_LAST sysbuild configuration
+	  option, so set it in your sysbuild configuration rather than setting this symbol
+	  manually.
+
+endif # BUILD_WITH_TFM
+
+endif # SOC_SERIES_NRF54L || HAS_HW_NRF_CRACEN

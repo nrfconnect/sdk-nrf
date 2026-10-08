@@ -11,6 +11,7 @@ set(json_filename "prot_ram_inv_slots.json")
 list(APPEND kmu_json_commands
   COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
     --keyname PROT_RAM_INV_SLOTS
+    --prot-ram-inv-slot ${SB_CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT}
     --build-dir ${CMAKE_BINARY_DIR}
     --dry-run
 )
