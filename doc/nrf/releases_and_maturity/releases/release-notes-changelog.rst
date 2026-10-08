@@ -357,7 +357,11 @@ Connectivity bridge
 High-Performance Framework (HPF)
 --------------------------------
 
-* Added support for the nRF54LC10A SoC.
+* Added:
+
+  * Support for the nRF54LC10A SoC.
+  * The :kconfig:option:`SB_CONFIG_HPF_MSPI_IPC_NO_COPY` sysbuild Kconfig option that sets the same IPC data passing mode for both the application image and the HPF MSPI image.
+  * Validation of the length of the received IPC message in the HPF MSPI application.
 
 IPC radio firmware
 ------------------
