@@ -862,22 +862,12 @@ static void nrf9x_socket_offload_freeaddrinfo(struct zsock_addrinfo *root)
 	}
 }
 
-static int nrf9x_socket_offload_getaddrinfo(const char *node,
-					    const char *service,
-					    const struct zsock_addrinfo *hints,
-					    struct zsock_addrinfo **res)
+static int getaddrinfo_query(const char *node, const char *service,
+			     const struct nrf_addrinfo *nrf_hints_ptr,
+			     struct zsock_addrinfo **res)
 {
 	int err;
-	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo *nrf_res = NULL;
-	struct nrf_addrinfo *nrf_hints_ptr = NULL;
-
-	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
-
-	if (hints != NULL) {
-		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
-		nrf_hints_ptr = &nrf_hints;
-	}
 
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
@@ -927,6 +917,53 @@ static int nrf9x_socket_offload_getaddrinfo(const char *node,
 	nrf_freeaddrinfo(nrf_res);
 
 	return retval;
+}
+
+static int nrf9x_socket_offload_getaddrinfo(const char *node,
+					    const char *service,
+					    const struct zsock_addrinfo *hints,
+					    struct zsock_addrinfo **res)
+{
+	struct nrf_addrinfo nrf_hints = { 0 };
+	struct zsock_addrinfo *res6 = NULL;
+	struct zsock_addrinfo *res4 = NULL;
+	struct zsock_addrinfo **tail;
+	int ret6 = DNS_EAI_ADDRFAMILY;
+	int ret4 = DNS_EAI_ADDRFAMILY;
+
+	if (hints != NULL) {
+		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
+
+		if (hints->ai_family != NET_AF_UNSPEC) {
+			return getaddrinfo_query(node, service, &nrf_hints, res);
+		}
+	}
+
+	/* For AF_UNSPEC, the modem returns only IPv6 addresses if any. Query both families. */
+	if (IS_ENABLED(CONFIG_NET_IPV6)) {
+		nrf_hints.ai_family = NRF_AF_INET6;
+		ret6 = getaddrinfo_query(node, service, &nrf_hints, &res6);
+	}
+
+	if (IS_ENABLED(CONFIG_NET_IPV4)) {
+		nrf_hints.ai_family = NRF_AF_INET;
+		ret4 = getaddrinfo_query(node, service, &nrf_hints, &res4);
+	}
+
+	if (ret6 != 0 && ret4 != 0) {
+		*res = NULL;
+		return ret4 != DNS_EAI_ADDRFAMILY ? ret4 : ret6;
+	}
+
+	/* IPv6 addresses first, then IPv4 */
+	*res = res6;
+	tail = res;
+	while (*tail != NULL) {
+		tail = &(*tail)->ai_next;
+	}
+	*tail = res4;
+
+	return 0;
 }
 
 static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
