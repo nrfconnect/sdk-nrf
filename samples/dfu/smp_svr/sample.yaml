@@ -17,7 +17,14 @@ common:
 
 tests:
   sample.dfu.smp_svr.bt:
-    harness: bluetooth
+    harness_config: &bt_harness_config
+      type: multi_line
+      ordered: false
+      regex:
+        - "Starting .*bootloader"
+        - "Jumping to the .*image slot"
+        - "smp_sample: build time"
+        - "smp_bt_sample: Advertising successfully started"
     tags: bluetooth
     extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
     platform_allow:
@@ -322,14 +329,7 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    harness_config: &bt_harness_config
-      type: multi_line
-      ordered: false
-      regex:
-        - "Starting .*bootloader"
-        - "Jumping to the .*image slot"
-        - "smp_sample: build time"
-        - "smp_bt_sample: Advertising successfully started"
+    harness_config: *bt_harness_config
 
   sample.dfu.smp_svr.bt.nrf5340dk.shared_slot:
     sysbuild: true
@@ -353,16 +353,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-    harness_config: *bt_harness_config
-
-  sample.dfu.smp_svr.bt.nrf54l15:
-    tags: bluetooth
-    extra_args: EXTRA_CONF_FILE="overlay-bt.conf"
-    platform_allow:
-      - nrf54l15dk/nrf54l15/cpuapp
-      - nrf54l15dk/nrf54l10/cpuapp
-    integration_platforms:
-      - nrf54l15dk/nrf54l15/cpuapp
     harness_config: *bt_harness_config
 
   sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash.pure_dts:
