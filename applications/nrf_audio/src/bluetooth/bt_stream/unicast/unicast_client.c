@@ -7,19 +7,14 @@
 #include "unicast_client.h"
 
 #include <zephyr/zbus/zbus.h>
-#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/sys/byteorder.h>
 #include <zephyr/bluetooth/conn.h>
+#include <zephyr/bluetooth/bluetooth.h>
 #include <zephyr/bluetooth/audio/audio.h>
 #include <zephyr/bluetooth/audio/csip.h>
 #include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
-#include <../subsys/bluetooth/audio/bap_iso.h>
-
-/* TODO: Remove when a qos_pref_get function has been added in host */
-/* https://github.com/zephyrproject-rtos/zephyr/issues/72359 */
-#include <../subsys/bluetooth/audio/bap_endpoint.h>
 
 #include "macros_common.h"
 #include "zbus_common.h"
