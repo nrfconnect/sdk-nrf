@@ -7,10 +7,16 @@
 # --- Construct the list of commands and dependencies ---
 set(kmu_json_commands "")
 set(json_filename "prot_ram_inv_slots.json")
+set(prot_ram_inv_slot_args "")
+
+if(SB_CONFIG_CRACEN_KMU_CUSTOM_LAYOUT)
+  set(prot_ram_inv_slot_args --prot-ram-inv-slot ${SB_CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT})
+endif()
 
 list(APPEND kmu_json_commands
   COMMAND ${Python3_EXECUTABLE} -m west ncs-provision upload
     --keyname PROT_RAM_INV_SLOTS
+    ${prot_ram_inv_slot_args}
     --build-dir ${CMAKE_BINARY_DIR}
     --dry-run
 )
