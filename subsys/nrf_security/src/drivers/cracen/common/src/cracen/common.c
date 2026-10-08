@@ -162,7 +162,7 @@ int cracen_prepare_ik_key(const uint8_t *user_data)
 {
 #ifdef CONFIG_CRACEN_IKG_SEED_LOAD
 	if (!nrf_cracen_seedram_lock_check(NRF_CRACEN)) {
-		if (nrfx_kmu_key_slots_push(CONFIG_CRACEN_IKG_SEED_KMU_SLOT,
+		if (nrfx_kmu_key_slots_push(CRACEN_KMU_IKG_SEED_SLOT,
 					    CRACEN_IKG_SEED_KMU_SLOT_COUNT) != 0) {
 			return SX_ERR_INVALID_KEYREF;
 		}

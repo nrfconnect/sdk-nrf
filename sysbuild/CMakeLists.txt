@@ -83,6 +83,22 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endforeach()
 
+  if(SB_CONFIG_CRACEN_KMU_CUSTOM_LAYOUT)
+    if(SB_CONFIG_CRACEN_KMU_NS_SLOT_FIRST GREATER SB_CONFIG_CRACEN_KMU_NS_SLOT_LAST)
+      message(FATAL_ERROR "Invalid non-secure KMU slot range: "
+              "${SB_CONFIG_CRACEN_KMU_NS_SLOT_FIRST}-${SB_CONFIG_CRACEN_KMU_NS_SLOT_LAST}")
+    endif()
+
+    # Give all images the same KMU slot layout
+    foreach(image ${PRE_CMAKE_IMAGES})
+      foreach(slot_option CRACEN_KMU_PROVISIONING_SLOT CRACEN_KMU_PROT_RAM_INV_SLOT
+                          CRACEN_IKG_SEED_KMU_SLOT CRACEN_KMU_NS_SLOT_FIRST
+                          CRACEN_KMU_NS_SLOT_LAST)
+        set_config_int(${image} CONFIG_${slot_option} ${SB_CONFIG_${slot_option}})
+      endforeach()
+    endforeach()
+  endif()
+
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
     set(s1_image_name mcuboot_s1_variant PARENT_SCOPE)
     set(s1_image_name mcuboot_s1_variant)
