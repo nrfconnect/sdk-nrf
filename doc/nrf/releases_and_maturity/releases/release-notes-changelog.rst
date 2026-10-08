@@ -1147,6 +1147,7 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
+  * Updated the :c:func:`getaddrinfo` function to query both IPv6 and IPv4 addresses when the address family is ``AF_UNSPEC``, returning IPv6 addresses first.
 
 * :ref:`lib_location` library:
 
