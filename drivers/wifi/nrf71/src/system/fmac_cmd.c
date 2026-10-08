@@ -130,6 +130,10 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	umac_cmd_data->feature_flags |= DISABLE_DFS_CHANNELS;
 #endif /* NRF71_SCAN_DISABLE_DFS_CHANNELS */
 
+#ifndef CONFIG_WIFI_NRF71_VHT_HT_FALLBACK
+	umac_cmd_data->nrf_wifi_11ac_downgrade_disable = 1;
+#endif /* CONFIG_WIFI_NRF71_VHT_HT_FALLBACK */
+
 	if (!beamforming) {
 		umac_cmd_data->disable_beamforming = 1;
 	}
