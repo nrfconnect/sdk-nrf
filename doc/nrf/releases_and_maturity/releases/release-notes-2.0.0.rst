@@ -328,7 +328,7 @@ Bluetooth samples
 
   * Changed the current CBOR library from TinyCBOR to `zcbor`_.
 
-* :ref:`bluetooth-hci-lpuart-sample` sample:
+* Bluetooth: HCI low power UART sample:
 
   * Added support for Thingy:91.
 
