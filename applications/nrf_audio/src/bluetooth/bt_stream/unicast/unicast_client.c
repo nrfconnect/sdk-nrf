@@ -30,7 +30,7 @@ LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
 static struct k_thread cap_state_machine_thread_data;
 static k_tid_t cap_state_machine_thread_id;
-#define CAP_STATE_MACHINE_STACK_SIZE 2048
+#define CAP_STATE_MACHINE_STACK_SIZE 1024
 K_THREAD_STACK_DEFINE(cap_state_machine_thread_stack, CAP_STATE_MACHINE_STACK_SIZE);
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
@@ -39,13 +39,13 @@ ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_
 enum cap_action_type {
 	CAP_ACTION_STOP, /* Highest pri */
 	CAP_ACTION_STOP_THEN_START,
-	CAP_ACTION_START, /* lower pri */
-	CAP_ACTION_MAX,
+	CAP_ACTION_START,
+	CAP_ACTION_NONE, /* Lowest pri */
 };
 
 K_MUTEX_DEFINE(next_action_lock);
 K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
-static enum cap_action_type next_action = CAP_ACTION_MAX;
+static enum cap_action_type next_action = CAP_ACTION_NONE;
 
 static ATOMIC_DEFINE(cap_state_machine_delay_start, 1);
 static struct k_poll_signal poll_sig = K_POLL_SIGNAL_INITIALIZER(poll_sig);
@@ -2295,7 +2295,7 @@ enum cap_action_type cap_thread_next_event_get(void)
 	k_sem_take(&cap_state_machine_sem, K_FOREVER);
 	k_mutex_lock(&next_action_lock, K_FOREVER);
 	enum cap_action_type action = next_action;
-	next_action = CAP_ACTION_MAX;
+	next_action = CAP_ACTION_NONE;
 	k_poll_signal_reset(&poll_sig);
 	k_mutex_unlock(&next_action_lock);
 	return action;
@@ -2436,7 +2436,7 @@ int unicast_client_enable(uint8_t cig_index, le_audio_receive_cb recv_cb)
 		&cap_state_machine_thread_data, cap_state_machine_thread_stack,
 		CAP_STATE_MACHINE_STACK_SIZE, (k_thread_entry_t)cap_state_machine_thread, NULL,
 		NULL, NULL, K_PRIO_PREEMPT(2), 0, K_NO_WAIT);
-	ret = k_thread_name_set(cap_state_machine_thread_id, "Cap_state_machine");
+	ret = k_thread_name_set(cap_state_machine_thread_id, "CAP state machine");
 	if (ret) {
 		LOG_WRN("Failed to set cap_state_machine thread name: %d", ret);
 	}
