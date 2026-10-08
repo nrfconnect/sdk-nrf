@@ -364,44 +364,67 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 		     const char *identifier)
 {
 	struct wpa3_psa_operation *op;
-	u8 *pos;
+	const u8 *scalar_elem;
+	u16 group = WPA3_PSA_SAE_GROUP_19;
+	u8 *start;
+	size_t commit_wire_len;
 
 	op = get_psa_op(sae);
 	if (!op || sae->state != SAE_COMMITTED) {
 		return -1;
 	}
 
-	/* Get commit data from PSA operation */
-	if (op->shared_key_len == 0) {
+	/* Own commit; shared_key may already hold the peer's commit after sae_parse_commit() */
+	if (op->local_commit_len == 0) {
 		wpa_printf(MSG_DEBUG, "WPA3-PSA: No commit data available");
 		return -1;
 	}
 
-	/* PSA outputs 96 bytes (scalar+element); wire format is 98 (group+scalar+element) */
-	size_t commit_wire_len;
-
-	if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_PSA_LEN) {
-		commit_wire_len = WPA3_PSA_SAE_COMMIT_WIRE_LEN;
-		pos = wpabuf_put(buf, commit_wire_len);
-		/* Group ID in wire format is little-endian (matches hostap wpabuf_put_le16) */
-		pos[0] = WPA3_PSA_SAE_GROUP_19 & 0xff;
-		pos[1] = (WPA3_PSA_SAE_GROUP_19 >> 8) & 0xff;
-		os_memcpy(pos + 2, op->shared_key, WPA3_PSA_SAE_COMMIT_PSA_LEN);
-	} else if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
-		commit_wire_len = op->shared_key_len;
-		pos = wpabuf_put(buf, commit_wire_len);
-		os_memcpy(pos, op->shared_key, op->shared_key_len);
+	/* PSA outputs 96 bytes (scalar+element), or 98 with the group already prepended */
+	if (op->local_commit_len == WPA3_PSA_SAE_COMMIT_PSA_LEN) {
+		scalar_elem = op->local_commit;
+	} else if (op->local_commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
+		group = WPA_GET_LE16(op->local_commit);
+		scalar_elem = op->local_commit + 2;
 	} else {
 		wpa_printf(MSG_DEBUG,
 			   "WPA3-PSA: Commit data wrong size (%zu bytes, expected %d or %d)",
-			   op->shared_key_len, WPA3_PSA_SAE_COMMIT_PSA_LEN,
+			   op->local_commit_len, WPA3_PSA_SAE_COMMIT_PSA_LEN,
 			   WPA3_PSA_SAE_COMMIT_WIRE_LEN);
 		return -1;
 	}
 
-	/* Caller (sme) may prepend 4 bytes (transaction seq + status); total frame = 4 + 98 */
+	start = wpabuf_put(buf, 0);
+
+	/* Field order follows IEEE 802.11 SAE commit and upstream sae_write_commit() */
+	wpabuf_put_le16(buf, group);
+	if (!sae->h2e && token) {
+		wpabuf_put_buf(buf, token);
+		wpa_hexdump_buf(MSG_DEBUG, "WPA3-PSA: Anti-clogging token", token);
+	}
+	wpabuf_put_data(buf, scalar_elem, WPA3_PSA_SAE_COMMIT_PSA_LEN);
+
+	if (identifier) {
+		wpabuf_put_u8(buf, WLAN_EID_EXTENSION);
+		wpabuf_put_u8(buf, 1 + os_strlen(identifier));
+		wpabuf_put_u8(buf, WLAN_EID_EXT_PASSWORD_IDENTIFIER);
+		wpabuf_put_str(buf, identifier);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: own Password Identifier: %s", identifier);
+	}
+
+	if (sae->h2e && token) {
+		wpabuf_put_u8(buf, WLAN_EID_EXTENSION);
+		wpabuf_put_u8(buf, 1 + wpabuf_len(token));
+		wpabuf_put_u8(buf, WLAN_EID_EXT_ANTI_CLOGGING_TOKEN);
+		wpabuf_put_buf(buf, token);
+		wpa_hexdump_buf(MSG_DEBUG, "WPA3-PSA: Anti-clogging token (in container)", token);
+	}
+
+	commit_wire_len = (u8 *)wpabuf_put(buf, 0) - start;
+
+	/* Caller (sme) may prepend 4 bytes (transaction seq + status) */
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit payload written (%zu bytes)", commit_wire_len);
-	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload", pos, commit_wire_len);
+	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload", start, commit_wire_len);
 	return 0;
 }
 
