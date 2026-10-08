@@ -122,10 +122,6 @@ The following table describes the available configurations.
      - Bluetooth LE
      - Swap
      - External flash
-   * - sample.dfu.smp_svr.bt.nrf54l15
-     - Bluetooth LE
-     - Swap
-     -
    * - sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash
      - Bluetooth LE
      - Swap

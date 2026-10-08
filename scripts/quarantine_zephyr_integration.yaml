@@ -205,9 +205,3 @@
     - nrf9160dk@0.14.0/nrf9160/ns
     - qemu_cortex_m3
   comment: "Configurations excluded to limit resources usage in integration builds"
-
-- scenarios:
-    - sample.dfu.smp_svr.bt
-  platforms:
-    - nrf52dk/nrf52832
-  comment: "Configurations excluded to limit resources usage in integration builds"
