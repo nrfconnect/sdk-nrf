@@ -20,7 +20,7 @@ When developing with your Thingy:91 X, it is recommended to use an external debu
    The external debug probe must support Arm Cortex-M33, such as the nRF9151 DK.
    You need a 10-pin 2x5 socket-socket 1.27 mm IDC (:term:`Serial Wire Debug (SWD)`) JTAG cable to connect to the external debug probe.
 
-Both nRF Util and the ``device`` command are part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get them when you :ref:`gs_installing_toolchain`.
+Both nRF Util and the ``device`` command are part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get them when you :ref:`install_ncs`.
 
 .. _updating_firmware_nRF5340:
 

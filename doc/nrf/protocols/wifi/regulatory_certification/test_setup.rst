@@ -139,7 +139,7 @@ This describes the flashing, running, and use of the appropriate console ports w
 Programming firmware in the nRF7002 setup
 =========================================
 
-This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
+This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`install_ncs`.
 
 To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
