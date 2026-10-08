@@ -41,6 +41,11 @@ enum cap_action_type {
 	CAP_ACTION_MAX,
 };
 
+/* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
+#define LVL2		 0
+/* Will return 1 if x == 0, due to how locations are defined in LE Audio */
+#define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
+
 K_MUTEX_DEFINE(next_action_lock);
 K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
 static enum cap_action_type next_action = CAP_ACTION_MAX;
@@ -81,17 +86,6 @@ static void cap_thread_cap_action_complete(int err)
 
 	k_sem_give(&cap_state_machine_sem);
 }
-
-enum cap_procedure_type {
-	CAP_PROCEDURE_START = 1,
-	CAP_PROCEDURE_UPDATE,
-	CAP_PROCEDURE_STOP,
-};
-
-/* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
-#define LVL2		 0
-/* Will return 1 if x == 0, due to how locations are defined in LE Audio */
-#define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
 
 struct discover_dir {
 	struct bt_conn *conn;
@@ -181,37 +175,6 @@ static int group_info_get(const struct bt_cap_unicast_group *cap_unicast_group,
 		LOG_ERR("Failed to get BAP unicast group info: %d", ret);
 		return ret;
 	}
-
-	return 0;
-}
-
-static int group_info_print(const struct bt_cap_unicast_group *cap_unicast_group)
-{
-	struct bt_bap_unicast_group_info bap_info;
-	int ret;
-
-	ret = group_info_get(cap_unicast_group, &bap_info);
-	if (ret != 0) {
-		LOG_ERR("Failed to get unicast group info: %d", ret);
-		return ret;
-	}
-
-	LOG_INF("Unicast group info");
-	if (bap_info.sink_pd == BT_BAP_PD_UNSET) {
-		LOG_INF("\tSink PD:\t Unset");
-	} else {
-		LOG_INF("\tSink PD:\t %d", bap_info.sink_pd);
-	}
-
-	LOG_INF("\tC->P interval:\t %d", bap_info.c_to_p_interval);
-	LOG_INF("\tC->P latency:\t %d", bap_info.c_to_p_latency);
-	if (bap_info.source_pd == BT_BAP_PD_UNSET) {
-		LOG_INF("\tSource PD:\t Unset");
-	} else {
-		LOG_INF("\tSource PD:\t %d", bap_info.source_pd);
-	}
-	LOG_INF("\tP->C interval:\t %d", bap_info.p_to_c_interval);
-	LOG_INF("\tP->C latency:\t %d", bap_info.p_to_c_latency);
 
 	return 0;
 }
@@ -1534,7 +1497,7 @@ static void cap_start_codec_configured_cb(void)
 
 	srv_store_unlock();
 
-	ret = group_info_print(unicast_group);
+	ret = le_audio_print_unicast_group(unicast_group);
 	if (ret != 0) {
 		LOG_ERR("Failed to print unicast group info: %d", ret);
 	}
@@ -1545,7 +1508,7 @@ static void cap_start_qos_configured_cb(void)
 	int ret;
 	LOG_INF("CB CAP QoS configured");
 
-	ret = group_info_print(unicast_group);
+	ret = le_audio_print_unicast_group(unicast_group);
 	if (ret != 0) {
 		LOG_ERR("Failed to print unicast group info: %d", ret);
 	}
