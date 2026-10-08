@@ -1322,6 +1322,8 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
+  * Updated the :c:func:`getaddrinfo` function to only query address families that are enabled, like the native resolver.
+    It returns ``DNS_EAI_ADDRFAMILY`` for an address family that is not enabled, and queries only the enabled address family for ``AF_UNSPEC`` when only one is enabled.
 
 * :ref:`lib_location` library:
 
