@@ -37,7 +37,7 @@
 	};
 };
 
-&i2c21 {
+dut_twim: &i2c21 {
 	compatible = "nordic,nrf-twim";
 	status = "okay";
 	pinctrl-0 = <&i2c21_default_alt>;
