@@ -6,6 +6,7 @@
 
 cmake_minimum_required(VERSION 3.20.0)
 
+set(ZEPHYR_TEST_DIR "\${ZEPHYR_BASE}/tests/boards/nrf/i2c/i2c_slave/")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(i2c_slave)
 
