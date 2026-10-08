@@ -989,7 +989,8 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	if (foreach_data.common_qos.pref_pd_min == 0) {
 		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
 	} else if (foreach_data.common_qos.pref_pd_min < foreach_data.common_qos.pd_min) {
-		LOG_ERR("pref PD min is lower than min. Using min");
+		LOG_INF("pref_pd_min (%u) is lower than pd_min (%u). Using min",
+			foreach_data.common_qos.pref_pd_min, foreach_data.common_qos.pd_min);
 		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
 	} else if (foreach_data.common_qos.pref_pd_min <= foreach_data.common_qos.pd_max) {
 		*computed_pres_dly_us = foreach_data.common_qos.pref_pd_min;
@@ -999,10 +1000,9 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 
 	*group_reconfig_needed = foreach_data.existing_pres_dly_us != *computed_pres_dly_us;
 
-	LOG_INF("Presentation delay check completed for direction: %d. %d streams checked, result: "
-		"%d",
-		dir, foreach_data.streams_checked, *computed_pres_dly_us);
-	LOG_INF("Common QoS: pd_min=%u, pref_pd_min=%u, pref_pd_max=%u, pd_max=%u",
+	LOG_DBG("Pres. delay check completed for direction: %s. %d streams checked, result: %d",
+		bt_audio_dir_to_str(dir), foreach_data.streams_checked, *computed_pres_dly_us);
+	LOG_DBG("Common QoS: pd_min=%u, pref_pd_min=%u, pref_pd_max=%u, pd_max=%u",
 		foreach_data.common_qos.pd_min, foreach_data.common_qos.pref_pd_min,
 		foreach_data.common_qos.pref_pd_max, foreach_data.common_qos.pd_max);
 
@@ -1081,7 +1081,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 	/* Only the sampling frequency is checked */
 	if (dir == BT_AUDIO_DIR_SINK) {
-		LOG_WRN("Discovered %d sink endpoint(s) for server", server->snk.num_eps);
+		LOG_DBG("Discovered %d sink endpoint(s) for server", server->snk.num_eps);
 
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
@@ -1187,6 +1187,10 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 			continue;
 		}
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
+
+			LOG_DBG("Checking server %d, sink stream %d %p %p", srv_idx, i,
+				&tmp_server->snk.cap_streams[i].bap_stream, stream);
+
 			if (&tmp_server->snk.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for sink stream %p at index %d", stream,
@@ -1196,6 +1200,7 @@ int srv_store_from_stream_get(struct bt_bap_stream const *const stream,
 		}
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
+			LOG_DBG("Checking server %d, source stream %d", srv_idx, i);
 			if (&tmp_server->src.cap_streams[i].bap_stream == stream) {
 				*server = tmp_server;
 				LOG_DBG("Found server for source stream %p at index %d", stream,
@@ -1506,8 +1511,7 @@ int srv_store_add_by_conn(struct bt_conn *conn)
 	/* Check if server already exists */
 	ret = srv_store_from_conn_get(conn, &temp_server);
 	if (ret == 0) {
-		/* Server already exists, no need to add again, but we update the conn
-		 * pointer */
+		/* Server already exists, no need to add again, but we update the conn pointer */
 		temp_server->conn = conn;
 		LOG_DBG("Server already exists for conn: %p", conn);
 		return -EALREADY;
