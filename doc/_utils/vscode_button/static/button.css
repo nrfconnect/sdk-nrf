@@ -77,13 +77,22 @@
 }
 
 .vscode-button a {
-  color: #ffffff !important;
-  text-decoration: none !imortant;
+  text-decoration: none !important;
   display: flex;
   justify-content: center;
   margin: .6em auto;
 }
 
-.vscode-button:not(.vscode-button-disabled):hover a {
+.vscode-button a,
+.vscode-button a:link,
+.vscode-button a:visited,
+.admonition .vscode-button p a,
+.admonition .vscode-button p a:link,
+.admonition .vscode-button p a:visited {
+  color: #ffffff !important;
+}
+
+.vscode-button:not(.vscode-button-disabled):hover a,
+.admonition .vscode-button:not(.vscode-button-disabled):hover p a {
   color: #00a2c6 !important;
 }

@@ -11,7 +11,7 @@ from sphinx.application import Sphinx
 from sphinx.config import Config
 from vscode_button import add_button_css
 
-from .rendering import VSCodeSDKInstallDirective
+from .rendering import VSCodeExtensionInstallDirective, VSCodeSDKInstallDirective
 
 __version__ = "0.0.1"
 
@@ -23,7 +23,8 @@ def add_install_css(app: Sphinx, _: Config) -> None:
 
 
 def setup(app: Sphinx) -> dict[str, Any]:
-    app.add_directive('ncs-install-vscode', VSCodeSDKInstallDirective)
+    app.add_directive('ncs-install-from-vscode', VSCodeSDKInstallDirective)
+    app.add_directive('ncs-install-vscode-ext', VSCodeExtensionInstallDirective)
     app.connect('config-inited', add_button_css)
     app.connect('config-inited', add_install_css)
     app.add_css_file("install.css")
