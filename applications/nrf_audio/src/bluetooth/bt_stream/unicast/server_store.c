@@ -904,7 +904,6 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 
 	if (computed_pres_dly_us == NULL || group_reconfig_needed == NULL) {
 		LOG_ERR("NULL parameter");
-
 		return -EINVAL;
 	}
 

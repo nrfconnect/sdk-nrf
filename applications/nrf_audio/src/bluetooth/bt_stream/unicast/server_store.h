@@ -152,7 +152,7 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
  * ASEs. If that is not possible, it will try to satisfy the max and min values.
  *
  * @note srv_store_lock() must be called before accessing this function.
- * @note This function shall be called in the CAP (NOT BAP) codec configured callback, meaning all
+ * @note This function shall be called in the CAP (not BAP) codec configured callback, meaning all
  * streams shall be codec configured at this point.
  *
  *
@@ -161,9 +161,10 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
  * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
  * @param[in]	unicast_group		Pointer to the unicast group to search within.
  *
- * @retval	0	Success, negative error code on failure.
- * @retval	-ESPIPE	There is no common presentation delay found.
- * @retval	-EINVAL	Illegal argument(s), or submitted streams are in different groups.
+ * @retval	0		Success
+ * @retval	-ESPIPE		There is no common presentation delay found.
+ * @retval 	-ENODATA 	No streams found in the unicast group for the given direction.
+ * @retval	-EINVAL		Illegal argument(s).
  */
 int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
 				   bool *group_reconfig_needed,
