@@ -44,15 +44,15 @@ The sample's own Kconfig allows the user to configure the amount of RAM that is 
      - All RAM stays retained.
        No RAM is powered down.
    * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K`
-     - Only the first 64 KiB of RAM stays retained; the rest is powered down.
+     - Only the first 64 KiB of RAM stays retained, the rest is powered down.
    * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_128K`
-     - Only the first 128 KiB of RAM stays retained; the rest is powered down.
+     - Only the first 128 KiB of RAM stays retained, the rest is powered down.
    * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_256K`
-     - Only the first 256 KiB of RAM stays retained; the rest is powered down.
+     - Only the first 256 KiB of RAM stays retained, the rest is powered down.
    * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_512K`
-     - Only the first 512 KiB of RAM stays retained; the rest is powered down.
-   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_UNUSED_ONLY`
-     - Powers down all RAM that is left unused by the sample application image, using the library's own automatic detection (``power_down_unused_ram()``), instead of a fixed KiB boundary.
+     - Only the first 512 KiB of RAM stays retained, the rest is powered down.
+   * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY`
+     - Retains only the RAM used by the sample image, the rest is powered down using ``power_down_unused_ram()`` instead of a fixed KiB boundary.
 
 Building and running
 ********************
