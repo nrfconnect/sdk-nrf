@@ -150,7 +150,10 @@ Creating application in |nRFVSC|
 ================================
 
 .. note::
-   If you prefer, you can `start VS Code walkthrough`_ and create applications and build configurations from there.
+   If you prefer, you can start the |nRFVSC| walkthrough using the following button and create applications and build configurations from there:
+
+   .. ncs-install-vscode-ext::
+      :label: Start walkthrough in VS Code
 
 Use the following steps depending on the application placement:
 
