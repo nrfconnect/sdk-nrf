@@ -1,18 +1,18 @@
+common:
+  depends_on: i2c
+  tags:
+    - drivers
+    - i2c
+    - ci_tests_zephyr_boards_nrf_i2c
+  harness: ztest
+  harness_config:
+    fixture: i2c_loopback
+
 tests:
   nrf.extended.boards.nrf.i2c.i2c_slave:
-    depends_on: i2c
-    tags:
-      - drivers
-      - i2c
-      - ci_tests_zephyr_boards_nrf_i2c
-    harness: ztest
-    harness_config:
-      fixture: i2c_loopback
     platform_allow:
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf9251dk/nrf9251/cpuapp
@@ -20,3 +20,21 @@ tests:
       - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
+  nrf.extended.boards.nrf.i2c.i2c_slave.fast:
+    platform_allow:
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/i2c_speed_fast.overlay"
+  nrf.extended.boards.nrf.i2c.i2c_slave.fast_plus:
+    depends_on:
+      - future_target
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=${ZEPHYR_TEST_DIR}/i2c_speed_fast_plus.overlay"
