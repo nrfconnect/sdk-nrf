@@ -29,7 +29,7 @@
 #include "server_store.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(unicast_client, 4);
+LOG_MODULE_REGISTER(unicast_client, CONFIG_UNICAST_CLIENT_LOG_LEVEL);
 
 static struct k_thread cap_state_machine_thread_data;
 static k_tid_t cap_state_machine_thread_id;
