@@ -6,15 +6,17 @@
 
 #include "unicast_client.h"
 
+#include <zephyr/kernel.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/zbus/zbus.h>
-#include <zephyr/sys/byteorder.h>
+#include <zephyr/bluetooth/att.h>
 #include <zephyr/bluetooth/conn.h>
-#include <zephyr/bluetooth/bluetooth.h>
+#include <zephyr/bluetooth/iso.h>
 #include <zephyr/bluetooth/audio/audio.h>
-#include <zephyr/bluetooth/audio/csip.h>
-#include <zephyr/bluetooth/audio/cap.h>
 #include <zephyr/bluetooth/audio/bap.h>
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
+#include <zephyr/bluetooth/audio/cap.h>
+#include <zephyr/bluetooth/audio/csip.h>
 
 #include "macros_common.h"
 #include "zbus_common.h"
@@ -41,11 +43,6 @@ enum cap_action_type {
 	CAP_ACTION_MAX,
 };
 
-/* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
-#define LVL2		 0
-/* Will return 1 if x == 0, due to how locations are defined in LE Audio */
-#define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
-
 K_MUTEX_DEFINE(next_action_lock);
 K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
 static enum cap_action_type next_action = CAP_ACTION_MAX;
@@ -56,6 +53,11 @@ static struct k_poll_event poll_evt =
 	K_POLL_EVENT_INITIALIZER(K_POLL_TYPE_SIGNAL, K_POLL_MODE_NOTIFY_ONLY, &poll_sig);
 
 static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
+/* For unicast (as opposed to broadcast) level 2/subgroup is not defined in the specification */
+#define LVL2		 0
+/* Will return 1 if x == 0, due to how locations are defined in LE Audio */
+#define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
+
 static int unicast_client_internal_start(void);
 /**
  * @brief	Signal that we want to start a CAP action.
