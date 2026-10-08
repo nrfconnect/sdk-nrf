@@ -83,6 +83,24 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
     endif()
   endforeach()
 
+  if(SB_CONFIG_SUPPORT_CRACEN)
+    # Give all images the same KMU slot layout
+    foreach(image ${PRE_CMAKE_IMAGES})
+      foreach(slot_option CRACEN_KMU_PROVISIONING_SLOT CRACEN_KMU_PROT_RAM_INV_SLOT
+        CRACEN_IKG_SEED_KMU_SLOT
+      )
+        set_config_int(${image} CONFIG_${slot_option} ${SB_CONFIG_${slot_option}})
+      endforeach()
+    endforeach()
+
+    # The non-secure slot range is TF-M policy, and only the main application builds TF-M
+    if(SB_CONFIG_BOARD_IS_NON_SECURE)
+      foreach(slot_option CRACEN_KMU_NS_SLOT_FIRST CRACEN_KMU_NS_SLOT_LAST)
+        set_config_int(${DEFAULT_IMAGE} CONFIG_${slot_option} ${SB_CONFIG_${slot_option}})
+      endforeach()
+    endif()
+  endif()
+
   if(SB_CONFIG_BOOTLOADER_MCUBOOT)
     set(s1_image_name mcuboot_s1_variant PARENT_SCOPE)
     set(s1_image_name mcuboot_s1_variant)
