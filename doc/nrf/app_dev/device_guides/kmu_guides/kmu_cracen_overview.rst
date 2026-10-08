@@ -215,6 +215,15 @@ The following table gives an overview of the KMU slots and their usage:
      - Reserved
      - --
 
+The CRACEN driver uses slots 183-185, 186, and 248-249.
+These slots are defaults.
+You can move them using the :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT`, :kconfig:option:`CONFIG_CRACEN_KMU_PROVISIONING_SLOT`, and :kconfig:option:`CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT` Kconfig options.
+With TF-M, the :kconfig:option:`CONFIG_CRACEN_KMU_NS_SLOT_FIRST` and :kconfig:option:`CONFIG_CRACEN_KMU_NS_SLOT_LAST` Kconfig options set the range of slots that the non-secure application can access.
+The default range is 0-179.
+All images on the device must use the same slots.
+When you build with sysbuild, set the matching ``SB_CONFIG_CRACEN_*`` sysbuild Kconfig options instead.
+Sysbuild applies them to all images.
+
 For more information about the KMU slots, see the device datasheet, for example `KMU - Key management unit <nRF54L15 Key management unit_>`_ for nRF54L15.
 
 .. _ug_kmu_metadata:

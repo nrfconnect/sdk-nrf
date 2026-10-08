@@ -248,6 +248,15 @@ class NcsProvision(WestCommand):
             action="store_true",
             help="Generate upload command and keyfile without executing the command",
         )
+        upload_parser.add_argument(
+            "--prot-ram-inv-slot",
+            metavar="SLOT",
+            type=int,
+            help="First of the two KMU slots for the protected RAM invalidation data. "
+            "Only valid with --keyname PROT_RAM_INV_SLOTS. Must match "
+            "CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT of the images on the device "
+            f"(default: {KMU_KEY_SLOTS['PROT_RAM_INV_SLOTS'][0]})",
+        )
 
         return parser
 
@@ -259,11 +268,22 @@ class NcsProvision(WestCommand):
         if args.keys is None and args.input is None and args.keyname != "PROT_RAM_INV_SLOTS":
             sys.exit("error: one of the arguments -i/--input -k/--key is required")
 
+        if args.prot_ram_inv_slot is not None:
+            if args.keyname != "PROT_RAM_INV_SLOTS":
+                sys.exit("error: --prot-ram-inv-slot requires --keyname PROT_RAM_INV_SLOTS")
+            # The invalidation data spans this slot and the next one
+            if not 0 <= args.prot_ram_inv_slot <= 254:
+                sys.exit("error: --prot-ram-inv-slot must be in the range 0-254")
+
         slots: list[SlotParams] = []
         data: list[dict[str, Any]] = []
 
         if args.keyname == "PROT_RAM_INV_SLOTS":
-            for id in KMU_KEY_SLOTS["PROT_RAM_INV_SLOTS"]:
+            if args.prot_ram_inv_slot is not None:
+                slot_ids = [args.prot_ram_inv_slot]
+            else:
+                slot_ids = KMU_KEY_SLOTS["PROT_RAM_INV_SLOTS"]
+            for id in slot_ids:
                 slots.append(SlotParams(
                     id=id,
                     keyfile=None,

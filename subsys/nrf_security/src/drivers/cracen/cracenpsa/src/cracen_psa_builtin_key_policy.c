@@ -15,6 +15,7 @@
 #include <psa_manifest/pid.h>
 #include <tfm_builtin_key_ids.h>
 #include <cracen_psa_builtin_key_policy.h>
+#include <cracen/cracen_kmu_layout.h>
 #include <drivers/nrfx_utils.h>
 
 /* 0x0 is used by internal code like the hw_unique_key library.
@@ -59,6 +60,15 @@ static const cracen_builtin_ikg_key_policy_t g_builtin_ikg_policy[] = {
 
 #ifdef PSA_NEED_CRACEN_KMU_DRIVER
 
+#if CRACEN_KMU_SLOTS_OVERLAP(CRACEN_KMU_PROVISIONING_SLOT, CRACEN_KMU_PROVISIONING_SLOT,          \
+			     CRACEN_KMU_NS_SLOT_FIRST, CRACEN_KMU_NS_SLOT_LAST) ||                \
+	CRACEN_KMU_SLOTS_OVERLAP(CRACEN_KMU_PROT_RAM_INV_SLOT, CRACEN_KMU_PROT_RAM_INV_SLOT + 1,  \
+				 CRACEN_KMU_NS_SLOT_FIRST, CRACEN_KMU_NS_SLOT_LAST) ||             \
+	CRACEN_KMU_SLOTS_OVERLAP(CRACEN_KMU_IKG_SEED_SLOT, CRACEN_KMU_IKG_SEED_SLOT + 2,          \
+				 CRACEN_KMU_NS_SLOT_FIRST, CRACEN_KMU_NS_SLOT_LAST)
+#error "Non-secure KMU slot range includes a slot reserved by the CRACEN driver"
+#endif
+
 static const cracen_builtin_kmu_key_policy_t g_builtin_kmu_policy[] = {
 	{.owner = INTERNAL_CLIENT_ID,
 	 .key_slot_start = 0,
@@ -76,10 +86,9 @@ static const cracen_builtin_kmu_key_policy_t g_builtin_kmu_policy[] = {
 	 .key_slot_end = 255,
 	 .kmu_entry_type = KMU_ENTRY_SLOT_RANGE},
 #endif /* TFM_SP_CRYPTO */
-	/* The docs have KMU slots >= 180 reserved so don't allow NS users to access them */
 	{.owner = MAPPED_TZ_NS_AGENT_DEFAULT_CLIENT_ID,
-	 .key_slot_start = 0,
-	 .key_slot_end = 179,
+	 .key_slot_start = CRACEN_KMU_NS_SLOT_FIRST,
+	 .key_slot_end = CRACEN_KMU_NS_SLOT_LAST,
 	 .kmu_entry_type = KMU_ENTRY_SLOT_RANGE}};
 
 static bool kmu_slot_allowed(mbedtls_key_owner_id_t owner_id, psa_drv_slot_number_t slot)
