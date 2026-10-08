@@ -967,15 +967,15 @@ int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pre
 	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd_by_dir,
 						  (void *)&foreach_data);
 
-	if (ret != 0) {
-		LOG_ERR("Failed to check presentation delay for streams: %d", ret);
-		return ret;
-	}
-
 	if (foreach_data.ret != 0) {
 		LOG_ERR("Failed to compute presentation delay for direction %d: %d", dir,
 			foreach_data.ret);
 		return foreach_data.ret;
+	}
+
+	if (ret != 0) {
+		LOG_ERR("Failed to check presentation delay for streams: %d", ret);
+		return ret;
 	}
 
 	if (foreach_data.streams_checked == 0) {
