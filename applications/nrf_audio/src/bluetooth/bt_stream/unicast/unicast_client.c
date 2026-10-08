@@ -80,7 +80,7 @@ static void cap_thread_next_evt_set(enum cap_action_type action)
  * @param	err	The error code of the completed CAP action. 0 if successful.
  * 		If there was an failure, we give the state machine a pause before continuing.
  */
-static void cap_thread_cap_action_complete(int err)
+static void cap_thread_mark_action_complete(int err)
 {
 	if (err) {
 		atomic_set_bit(cap_state_machine_delay_start, 0);
@@ -161,9 +161,7 @@ static bool foreach_num_eps_count(struct server_store *server, void *user_data)
 static int group_info_get(const struct bt_cap_unicast_group *cap_unicast_group,
 			  struct bt_bap_unicast_group_info *bap_info)
 {
-
 	int ret;
-
 	struct bt_cap_unicast_group_info cap_info;
 
 	ret = bt_cap_unicast_group_get_info(cap_unicast_group, &cap_info);
@@ -1394,7 +1392,7 @@ static void cap_start_complete_cb(int err, struct bt_conn *conn)
 	/* Must always release the semaphore, even on error/cancel, or the CAP state
 	 * machine thread deadlocks waiting for this procedure to complete.
 	 */
-	cap_thread_cap_action_complete(err);
+	cap_thread_mark_action_complete(err);
 }
 
 static void cap_start_codec_configured_cb(void)
@@ -1532,7 +1530,7 @@ static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 
 	if (err != 0) {
 		LOG_ERR("CB CAP stop complete for conn: %p, err: %d", conn, err);
-		cap_thread_cap_action_complete(err);
+		cap_thread_mark_action_complete(err);
 		return;
 	} else {
 		LOG_DBG("CB CAP stop complete for conn: %p", conn);
@@ -1542,7 +1540,7 @@ static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 		ret = bt_cap_unicast_group_delete(unicast_group);
 		if (ret != 0) {
 			LOG_ERR("Failed to delete unicast group: %d", ret);
-			cap_thread_cap_action_complete(ret);
+			cap_thread_mark_action_complete(ret);
 			return;
 		}
 
@@ -1552,7 +1550,7 @@ static void cap_stop_complete_cb(int err, struct bt_conn *conn)
 		in_playing_state = false;
 	}
 
-	cap_thread_cap_action_complete(0);
+	cap_thread_mark_action_complete(0);
 }
 
 static void cap_stop_released_cb(void)
@@ -2363,7 +2361,7 @@ static void cap_state_machine_runner(void)
 		/* No asynchronous procedure started; release here.
 		 * Otherwise, the completion callback releases the semaphore.
 		 */
-		cap_thread_cap_action_complete(ret);
+		cap_thread_mark_action_complete(ret);
 	}
 }
 
