@@ -5,7 +5,6 @@
 #
 
 # This file is populated with custom configuration for TF-M to state that the PSA core is built externally
-# This can be rewritten when solving NCSDK-XXXXX
 set(PSA_CRYPTO_EXTERNAL_CORE                  ON    CACHE BOOL      "Enable building PSA core externally")
 
 # This file is populated with paths needed building nrf_security with and without TF-M
@@ -18,8 +17,8 @@ set(ZEPHYR_NRFXLIB_MODULE_DIR            ${ZEPHYR_NRFXLIB_MODULE_DIR}           
 set(ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR  ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}            CACHE STRING "oberon-psa-crypto folder")
 
 # This file is populated with the Mbed TLS config file names
-set(CONFIG_TF_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "TF-PSA-Crypto config file (PSA_WANT)")
-set(CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "TF-PSA-Crypto user config file (PSA_NEED)")
+set(CONFIG_TF_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE})
+set(CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE})
 
 # This file is populated with the generated include-folders for PSA interface (for main app, ns-services) as
 # well as the include-folder for library build of the crypto toolbo with or without TF-M
