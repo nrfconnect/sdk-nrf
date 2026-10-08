@@ -871,11 +871,24 @@ static int nrf9x_socket_offload_getaddrinfo(const char *node,
 	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo *nrf_res = NULL;
 	struct nrf_addrinfo *nrf_hints_ptr = NULL;
+	int family = hints != NULL ? hints->ai_family : NET_AF_UNSPEC;
+
+	/* Like the native resolver, do not query families that are not enabled */
+	if ((family == NET_AF_INET && !IS_ENABLED(CONFIG_NET_IPV4)) ||
+	    (family == NET_AF_INET6 && !IS_ENABLED(CONFIG_NET_IPV6))) {
+		return DNS_EAI_ADDRFAMILY;
+	}
 
 	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
 
 	if (hints != NULL) {
 		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
+		nrf_hints_ptr = &nrf_hints;
+	}
+
+	/* With AF_UNSPEC and a single enabled family, query only that family */
+	if (family == NET_AF_UNSPEC && IS_ENABLED(CONFIG_NET_IPV4) != IS_ENABLED(CONFIG_NET_IPV6)) {
+		nrf_hints.ai_family = IS_ENABLED(CONFIG_NET_IPV4) ? NRF_AF_INET : NRF_AF_INET6;
 		nrf_hints_ptr = &nrf_hints;
 	}
 
