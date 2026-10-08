@@ -34,7 +34,7 @@ choice NRF71_IDLE_POWER_RAM_RETAIN
 	  nrf/doc/nrf/libraries/others/ram_pwrdn.rst). Powering down RAM the
 	  running image still uses corrupts live data, so the fixed-size tiers
 	  only make sense for a trivial image that fits below the boundary.
-	  NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY has been observed to cause
+	  NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY has been observed to cause
 	  issues on Wi-Fi builds; keep the default RAM_RETAIN_FULL tier there.
 
 config NRF71_IDLE_POWER_RAM_RETAIN_FULL
@@ -43,15 +43,14 @@ config NRF71_IDLE_POWER_RAM_RETAIN_FULL
 	  No RAM power-down call is made. This keeps every byte of application
 	  RAM retained and is the safe default.
 
-config NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY
-	bool "Power down whatever this image itself does not use"
+config NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY
+	bool "Retain only RAM used by this image (power down the rest)"
 	select RAM_POWER_DOWN_LIBRARY
 	help
-	  Calls power_down_unused_ram() at boot. The ram_pwrdn library computes
-	  the unused range itself, from the end of the running image to the end
-	  of application RAM, so live image/stack/buffer memory is left powered.
-	  Has been observed to cause issues on Wi-Fi builds; do not use it
-	  there.
+	  Calls power_down_unused_ram() at boot. Everything from _image_ram_end
+	  through the end of application RAM is powered down; libc heap or other
+	  runtime use in that range can bus fault (see ram_pwrdn docs). Do not
+	  use on Wi-Fi builds; issues have been observed there.
 
 config NRF71_IDLE_POWER_RAM_RETAIN_64K
 	bool "Retain only the first 64 KiB of RAM, power down the rest"
