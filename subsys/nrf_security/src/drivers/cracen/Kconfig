@@ -61,8 +61,9 @@ config CRACEN_KMU_PROTECTED_RAM
 	default y
 	help
 	  Enable driver support for the KMU Protected RAM key usage scheme. This
-	  scheme relies on two reserved KMU slots (248 and 249) holding invalidation data
-	  that is pushed to protected RAM after use.
+	  scheme relies on two reserved KMU slots holding invalidation data that is pushed to
+	  protected RAM after use: CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT and the slot after it
+	  (248 and 249 by default).
 
 if CRACEN_KMU_PROTECTED_RAM
 
@@ -85,16 +86,18 @@ config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_ON_INIT
 	  Provision the protected RAM invalidation data in the KMU. This will generate random
 	  data and provision the reserved KMU slots with the data that will be used to invalidate
 	  the protected RAM after a key is used.
-	  When disabled the application is expected to provision the reserved KMU slots 248 and 249
+	  When disabled the application is expected to provision the reserved KMU slots
+	  CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT and the slot after it (248 and 249 by default)
 	  manually, otherwise the protected RAM keys will not be usable.
 
 config CRACEN_PROVISION_PROT_RAM_INV_SLOTS_WITH_IMPORT
 	bool "Provision protected RAM invalidation slots using psa_import_key"
 	help
-	  Provision the protected RAM invalidation KMU slots (248,249) in the KMU using a
-	  psa_import_key call. The application is required to call psa_import_key with the
-	  KMU slot 248. The key material provided is ignored and random data is generated to
-	  populate the slots.
+	  Provision the protected RAM invalidation KMU slots (CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT
+	  and the slot after it, 248 and 249 by default) in the KMU using a psa_import_key call.
+	  The application is required to call psa_import_key with the KMU slot
+	  CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT (248 by default). The key material provided is
+	  ignored and random data is generated to populate the slots.
 	  This is meant to be used by a provisioning image that runs once before the application
 	  image is flashed. This is not meant to be used by user applications.
 
@@ -116,16 +119,6 @@ config CRACEN_IKG_SEED_LOAD
 	  If there is no seed in KMU, it is expected to be generated.
 	  Note that this is not required to be used if a bootloader is loading
 	  KMU seed.
-
-config CRACEN_IKG_SEED_KMU_SLOT
-	int "KMU slot of the CRACEN IKG seed"
-	range 0 183
-	default 183
-	help
-	  The CRACEN IKG seed spans over 3 KMU slots:
-	  the one defined here and the two subsequent ones.
-	  This defines the KMU slot (along with the two following it) to which
-	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
 
 config CRACEN_IKG_PERSONALIZED_KEYS
 	bool "CRACEN IKG personalized keys"

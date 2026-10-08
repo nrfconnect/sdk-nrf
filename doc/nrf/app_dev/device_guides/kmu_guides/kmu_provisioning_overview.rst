@@ -199,6 +199,11 @@ Once you have an unprovisioned SoC, upload keys to the board by running one of t
 
       * Parameter ``--dry-run`` specifies that a command should generate a keyfile for nRF Util without actually executing the command.
 
+      * Parameter ``--prot-ram-inv-slot`` specifies the first of the two KMU slots for the protected RAM invalidation data, and is only valid with ``--keyname PROT_RAM_INV_SLOTS``.
+        The default value is ``248``.
+        The value must match the :kconfig:option:`CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT` Kconfig option of the images on the device.
+        When the :kconfig:option:`SB_CONFIG_CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS` sysbuild Kconfig option is enabled, the build passes the :kconfig:option:`SB_CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT` value automatically.
+
       The script generates the public key for each private key and uploads them to your device.
       These public keys generate the verification keys for the application image, which are then used by MCUboot for validation.
       The first key specified in the command is used for signing the application image.
