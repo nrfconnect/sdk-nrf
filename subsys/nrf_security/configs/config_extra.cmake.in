@@ -16,10 +16,8 @@ set(NRF_SECURITY_DIR                     ${NRF_DIR}/subsys/nrf_security         
 set(TFM_BOARDS_NRF_DIR                   ${NRF_DIR}/modules/trusted-firmware-m/tfm_boards  CACHE STRING "tfm_boards folder")
 set(ZEPHYR_NRFXLIB_MODULE_DIR            ${ZEPHYR_NRFXLIB_MODULE_DIR}                      CACHE STRING "nrfxlib folder")
 set(ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR  ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}            CACHE STRING "oberon-psa-crypto folder")
-set(ZEPHYR_MBEDTLS_MODULE_DIR            ${ZEPHYR_MBEDTLS_MODULE_DIR}                      CACHE STRING "mbedtls folder")
 
 # This file is populated with the Mbed TLS config file names
-set(CONFIG_MBEDTLS_CONFIG_FILE            ${CONFIG_MBEDTLS_CONFIG_FILE}              CACHE STRING "Mbed TLS config file")
 set(CONFIG_TF_PSA_CRYPTO_CONFIG_FILE      ${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}        CACHE STRING "TF-PSA-Crypto config file (PSA_WANT)")
 set(CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE ${CONFIG_TF_PSA_CRYPTO_USER_CONFIG_FILE}   CACHE STRING "TF-PSA-Crypto user config file (PSA_NEED)")
 
