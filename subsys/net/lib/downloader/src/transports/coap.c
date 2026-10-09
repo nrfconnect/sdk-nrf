@@ -105,10 +105,17 @@ static bool has_pending(struct downloader *dl)
 int coap_block_init(struct downloader *dl, size_t from)
 {
 	struct transport_params_coap *coap;
+	enum coap_block_size block_size;
 
 	coap = (struct transport_params_coap *)dl->transport_internal;
 
-	coap_block_transfer_init(&coap->block_ctx, coap->cfg.block_size, 0);
+	block_size = coap->cfg.block_size;
+	/* On a reconnect, keep a smaller block size that the server negotiated. */
+	if (coap->initialized) {
+		block_size = MIN(block_size, coap->block_ctx.block_size);
+	}
+
+	coap_block_transfer_init(&coap->block_ctx, block_size, 0);
 	coap->block_ctx.current = from;
 	coap_pending_clear(&coap->pending);
 
@@ -168,7 +175,7 @@ int coap_initiate_retransmission(struct downloader *dl)
 	return 0;
 }
 
-static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, size_t *blk_off,
+static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, size_t *blk_start,
 			     bool *more)
 {
 	struct transport_params_coap *coap;
@@ -176,11 +183,10 @@ static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, siz
 	coap = (struct transport_params_coap *)dl->transport_internal;
 
 	int err, new_current;
+	size_t requested;
 
-	*blk_off = coap->block_ctx.current % coap_block_size_to_bytes(coap->block_ctx.block_size);
-	if (*blk_off) {
-		LOG_DBG("%d bytes of current block already downloaded", *blk_off);
-	}
+	requested = coap->block_ctx.current -
+		    coap->block_ctx.current % coap_block_size_to_bytes(coap->block_ctx.block_size);
 
 	new_current = coap_get_current_from_response_pkt(pkt);
 	if (new_current < 0) {
@@ -188,13 +194,13 @@ static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, siz
 		return new_current;
 	}
 
-	if (new_current < coap->block_ctx.current) {
-		LOG_WRN("Block out of order %d, expected %d", new_current, coap->block_ctx.current);
-		return -1;
-	} else if (new_current > coap->block_ctx.current) {
-		LOG_WRN("Block out of order %d, expected %d", new_current, coap->block_ctx.current);
+	/* A server may reduce the block size, but the block must start where requested. */
+	if ((size_t)new_current != requested) {
+		LOG_WRN("Block out of order %d, expected %zu", new_current, requested);
 		return -1;
 	}
+
+	*blk_start = new_current;
 
 	err = coap_update_from_block(pkt, &coap->block_ctx);
 	if (err) {
@@ -217,7 +223,8 @@ static int coap_block_update(struct downloader *dl, struct coap_packet *pkt, siz
 static int coap_parse(struct downloader *dl, size_t len)
 {
 	int err;
-	size_t blk_off;
+	size_t blk_start;
+	size_t skip;
 	uint8_t response_code;
 	uint16_t payload_len;
 	const uint8_t *payload;
@@ -263,7 +270,7 @@ static int coap_parse(struct downloader *dl, size_t len)
 		return -ECONNREFUSED;
 	}
 
-	err = coap_block_update(dl, &response, &blk_off, &more);
+	err = coap_block_update(dl, &response, &blk_start, &more);
 	if (err) {
 		return -EBADMSG;
 	}
@@ -273,6 +280,30 @@ static int coap_parse(struct downloader *dl, size_t len)
 		LOG_WRN("No CoAP payload!");
 		return -EBADMSG;
 	}
+
+	if (blk_start > dl->progress) {
+		LOG_ERR("Block at %zu is past the download position %zu", blk_start, dl->progress);
+		return -EBADMSG;
+	}
+
+	/* When resuming, the block may start before dl->progress; drop
+	 * what is already downloaded.
+	 */
+	skip = dl->progress - blk_start;
+	if (skip >= payload_len) {
+		if (!more) {
+			LOG_ERR("File ends at %zu, before the download position %zu",
+				blk_start + payload_len, dl->progress);
+			return -ERANGE;
+		}
+
+		LOG_DBG("Block at %zu already downloaded, requesting the next one", blk_start);
+		coap->new_data_req = true;
+		return 0;
+	}
+
+	payload += skip;
+	payload_len -= skip;
 
 	/* Accumulate buffer offset */
 	dl->progress += payload_len;
