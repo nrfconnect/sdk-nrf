@@ -14,6 +14,8 @@ INSTALL_IN_VSCODE_URL = (
     "&sdkVersion={version}"
 )
 
+INSTALL_EXTENSION_URL = "vscode://nordic-semiconductor.nrf-connect-extension-pack/quickstart"
+
 
 class VSCodeSDKInstallDirective(SphinxDirective):
     has_content = False
@@ -37,6 +39,27 @@ class VSCodeSDKInstallDirective(SphinxDirective):
             tooltip=(
                 "This starts the installation of the nRF Connect SDK and toolchain "
                 f"v{version} in VS Code."
+            ),
+            inline=True,
+        )
+
+
+class VSCodeExtensionInstallDirective(SphinxDirective):
+    has_content = False
+    required_arguments = 0
+    optional_arguments = 0
+    option_spec = {
+        "label": directives.unchanged,
+    }
+
+    def run(self) -> list:
+        return render_vscode_button(
+            self.env,
+            label=self.options.get("label", "Install nRF Connect for VS Code"),
+            uri=INSTALL_EXTENSION_URL,
+            tooltip=(
+                "This opens VS Code, installs the nRF Connect extension,"
+                "and starts the quick start walkthrough."
             ),
             inline=True,
         )

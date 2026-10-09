@@ -25,10 +25,13 @@ Complete the following steps:
          :end-before: os_table_end
 
 2. Install the latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
-3. Install the latest version of nRF Connect for VS Code by using `this direct link <start VS Code walkthrough_>`_.
+3. Click the following button to install the latest version of |nRFVSC|:
+
+   .. ncs-install-vscode-ext::
+
 4. Click the following button to install the latest stable |NCS| release (|release|):
 
-   .. ncs-install-vscode::
+   .. ncs-install-from-vscode::
 
    This starts the installation of the |NCS| source code and the |NCS| :term:`toolchain`.
    It can take several minutes.
