@@ -1066,6 +1066,12 @@ Libraries for networking
     It supports hostname resolution, configurable echo request parameters (such as count, interval, and payload size), round-trip time (RTT) statistics, and cancelling an ongoing ping using a :c:struct:`k_poll_signal`.
     Shell output is handled through the shared :c:struct:`dect_net_lib_shell_print_fns` API (:file:`dect_net_lib_shell.h`).
 
+* :ref:`lib_downloader` library:
+
+  * Added:
+
+    * The library thread priority configuration, with the :kconfig:option:`CONFIG_DOWNLOADER_THREAD_PRIORITY` Kconfig option.
+
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated to use a new parser for assistance data.
