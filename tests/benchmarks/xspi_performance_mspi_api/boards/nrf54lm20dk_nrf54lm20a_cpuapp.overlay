@@ -1,0 +1,21 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The test requires a loopback between P1.10 and P2.01. */
+
+/ {
+	zephyr,user {
+		test-gpios = <&gpio1 10 0>;
+	};
+
+	aliases {
+		test-timer = &timer21;
+	};
+};
+
+&timer21 {
+	status = "reserved";
+};
