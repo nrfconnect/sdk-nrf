@@ -16,8 +16,8 @@ Complete the following steps:
 
 1. Install available updates for your :ref:`operating system <supported_OS>` to make sure it supports the |NCS| firmware.
 
-   .. admonition:: Installing from Open VSX Registry
-      :class: dropdown
+   .. toggle:: Supported operating systems
+      :custom-hints:
 
       .. include:: ./recommended_versions.rst
          :start-after: os_table_start
@@ -33,6 +33,7 @@ Complete the following steps:
    You can follow the progress in the notification that appears in |VSC|.
 
    .. toggle:: What latest stable release means
+      :custom-hints:
 
       The latest stable release is the latest release tag in the `sdk-nrf`_ repository that is not a release candidate (``*-rc``) or a preview tag (``*-preview``).
       For each version of the |NCS|, Nordic Semiconductor provides a dedicated :ref:`requirements_toolchain`.
@@ -135,6 +136,7 @@ Complete the following steps:
 #. Install the latest stable |NCS| code and toolchain by completing the following steps:
 
    .. toggle:: What latest stable release means
+      :custom-hints:
 
       The latest stable release is the latest release tag in the `sdk-nrf`_ repository that is not a release candidate (``*-rc``) or a preview tag (``*-preview``).
       For each version of the |NCS|, Nordic Semiconductor provides a dedicated :ref:`requirements_toolchain`.
