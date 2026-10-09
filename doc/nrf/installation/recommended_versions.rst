@@ -299,10 +299,12 @@ J-Link Software and Documentation Pack
 SEGGER's `J-Link Software and Documentation Pack`_ is a package of tools that is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
 Among others, this package includes the J-Link RTT Viewer, which can be used for :ref:`test_and_optimize`.
 
-Use the J-Link |jlink_ver| when working with the |NCS|, as also listed in the :ref:`installing_vsc` section on the |NCS| installation page.
+Use the J-Link |jlink_ver| when working with the |NCS|.
+
+When working with the recommended |nRFVSC|, the extension informs you about the required version of the J-Link Software and Documentation Pack and guides you through the installation process.
 
 On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
-For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+The recommended |nRFVSC| extension has the related checkbox selected when you open the J-Link Software installation wizard.
 
 .. _toolchain_management_tools:
 .. _additional_nordic_sw_tools:
@@ -419,6 +421,8 @@ The extensions are available for download from the following websites:
 See the :ref:`install_ncs` page for information about how to use the extension to manage |NCS| toolchain installations.
 For more information about the extension and what it offers, visit the `nRF Connect for Visual Studio Code`_ documentation.
 
+|nRFVSC| comes with its own bundled version of some of the nRF Util commands.
+
 .. _requirements_nrf_util:
 
 nRF Util
@@ -430,7 +434,7 @@ Its functionality is provided through installable and upgradeable commands that 
 The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
 
 The |NCS| toolchain bundle includes the nRF Util version :ncs-tool-version:`NRFUTIL_VERSION_WIN10` and the device command version :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`, as listed in :ref:`requirements_toolchain_tools`.
-When you :ref:`gs_installing_toolchain`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
+When you :ref:`install_ncs`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
 
 .. note::
 

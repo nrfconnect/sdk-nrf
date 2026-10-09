@@ -108,7 +108,7 @@ To program the nRF device with the RCP application, complete the following steps
 
       .. tab:: nRF52840 Dongle (USB transport)
 
-         This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`gs_installing_toolchain`.
+         This procedure uses the `nRF Util`_ tool, which is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` and you get it when you :ref:`install_ncs`.
 
          1. Remove the lock on the nRF Util installation to be able to install other nRF Util commands.
             See `Locking nRF Util home directory`_ in the tool documentation for more information.

@@ -36,7 +36,7 @@ Replace ``{revision}`` with any revision you wish to obtain.
 This can be ``main`` if you want the latest state, or any released version (for example, |release_tt|).
 If you omit the ``--mr`` parameter, west defaults to ``main``.
 
-This is the procedure used for :ref:`getting the nRF Connect SDK code <cloning_the_repositories>` when :ref:`install_ncs` using the command line.
+This is the procedure used for :ref:`getting the nRF Connect SDK code <install_ncs>` when :ref:`install_ncs` using the command line.
 When you install the |NCS| using |nRFVSC|, this is handled by the extension.
 
 .. _dm-wf-update-ncs:
