@@ -32,3 +32,5 @@ nrfutil:
   version: 8.1.1
   subcommands:
     device: 2.20.0
+cosign:
+  version: 3.1.3
