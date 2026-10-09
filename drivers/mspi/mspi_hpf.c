@@ -23,12 +23,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
-#ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-/* Unaligned data is bounced through a buffer on the stack.
- * Flash page program can be max 256 bytes in this case.
- */
-#define BOUNCE_BUF_SIZE		     256
-#else
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
 /* The transfer packet message is built on the stack before ICMsg copies it into the TX region. */
 #define MAX_COPY_MSG_SIZE	     MAX_TX_MSG_SIZE
 #define MAX_STACK_MSG_SIZE	     1024
@@ -135,6 +130,9 @@ static atomic_t ipc_atomic_sem = ATOMIC_INIT(0);
 
 struct mspi_hpf_data {
 	hpf_mspi_xfer_config_msg_t xfer_config_msg;
+#if defined(CONFIG_MSPI_HPF_IPC_NO_COPY) && CONFIG_MSPI_HPF_UNALIGNED_XFER
+	uint8_t bounce_buf[CONFIG_MSPI_HPF_BOUNCE_BUF_SIZE] __aligned(DATA_BUF_ALIGNMENT);
+#endif
 };
 
 struct mspi_hpf_config {
@@ -917,12 +915,21 @@ BUILD_ASSERT(CONFIG_PBUF_RX_READ_BUF_SIZE >= sizeof(hpf_mspi_opcode_t),
 static int check_packet_size(const struct mspi_xfer_packet *packet)
 {
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-	if (!IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT) &&
-	    (packet->num_bytes > BOUNCE_BUF_SIZE)) {
-		LOG_ERR("Unaligned packet of %u bytes exceeds the %u byte bounce buffer. Use a "
-			"word-aligned buffer or declare packet-data-limit.",
-			packet->num_bytes, BOUNCE_BUF_SIZE);
+	if ((packet->num_bytes > 0) &&
+	    !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT)) {
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+		if (packet->num_bytes > CONFIG_MSPI_HPF_BOUNCE_BUF_SIZE) {
+			LOG_ERR("Unaligned packet of %u bytes exceeds the %u byte bounce buffer. "
+				"Use a word-aligned buffer or increase MSPI_HPF_BOUNCE_BUF_SIZE.",
+				packet->num_bytes, CONFIG_MSPI_HPF_BOUNCE_BUF_SIZE);
+			return -EINVAL;
+		}
+#else
+		LOG_ERR("Unaligned data buffer (%u bytes). Use a word-aligned buffer or enable "
+			"MSPI_HPF_UNALIGNED_XFER.",
+			packet->num_bytes);
 		return -EINVAL;
+#endif
 	}
 #else
 	if ((packet->dir == MSPI_TX) &&
@@ -959,7 +966,8 @@ static int check_packet_size(const struct mspi_xfer_packet *packet)
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
  */
-static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
+static int send_packet(const struct device *dev, const struct mspi_xfer_packet *packet,
+		       uint32_t timeout)
 {
 	int rc;
 	hpf_mspi_opcode_t opcode = (packet->dir == MSPI_RX) ? HPF_MSPI_TXRX : HPF_MSPI_TX;
@@ -967,8 +975,11 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 	/* Only a pointer to the message is sent. */
 	hpf_mspi_xfer_packet_msg_t msg;
 	hpf_mspi_xfer_packet_msg_t *xfer_packet = &msg;
-	uint8_t bounce_buf[BOUNCE_BUF_SIZE] __aligned(DATA_BUF_ALIGNMENT);
-	bool bounce = !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT);
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+	uint8_t *bounce_buf = ((struct mspi_hpf_data *)dev->data)->bounce_buf;
+	bool bounce = (packet->num_bytes > 0) &&
+		      !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT);
+#endif
 #else
 	uint8_t buffer[MAX_COPY_MSG_SIZE] __aligned(__alignof(hpf_mspi_xfer_packet_msg_t));
 	hpf_mspi_xfer_packet_msg_t *xfer_packet = (hpf_mspi_xfer_packet_msg_t *)buffer;
@@ -986,6 +997,7 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 	xfer_packet->num_bytes = packet->num_bytes;
 
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
 	if (bounce) {
 		if (packet->dir == MSPI_TX) {
 			memcpy(bounce_buf, packet->data_buf, packet->num_bytes);
@@ -994,6 +1006,9 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 	} else {
 		xfer_packet->data = packet->data_buf;
 	}
+#else
+	xfer_packet->data = packet->data_buf;
+#endif
 	len = sizeof(*xfer_packet);
 #else
 	if (packet->dir == MSPI_TX) {
@@ -1011,10 +1026,12 @@ static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 
 	if (packet->dir == MSPI_RX) {
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
 		/* The FLPR wrote the data by reference, into the bounce buffer if it was used. */
-		if (bounce) {
+		if ((rc == 0) && bounce) {
 			memcpy(packet->data_buf, bounce_buf, packet->num_bytes);
 		}
+#endif
 #else
 		/* The reply data was copied in ep_recv(). A reply of the wrong length is not
 		 * copied, so treat it as an error.
@@ -1087,7 +1104,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	}
 
 	while (packets_done < req->num_packet) {
-		rc = send_packet(&req->packets[packets_done], req->timeout);
+		rc = send_packet(dev, &req->packets[packets_done], req->timeout);
 		if (rc < 0) {
 			LOG_ERR("Start next packet error: %d", rc);
 			goto release;

@@ -67,7 +67,9 @@ The regions must still meet the minimum ICMsg pbuf size, which is 128 bytes in e
 With the default :option:`CONFIG_HPF_MSPI_IPC_NO_COPY` enabled, ICMsg does not copy transfer payloads into these regions.
 It carries only a pointer to the application memory, and the FLPR reply is a 4-byte opcode.
 The FLPR accesses the data by reference, so the data must be word-aligned.
-Data in an unaligned buffer is copied through a 256-byte bounce buffer on the stack of the calling thread, so unaligned transfers are limited to 256 bytes.
+To allow unaligned buffers, enable the :kconfig:option:`CONFIG_MSPI_HPF_UNALIGNED_XFER` Kconfig option on the application core.
+The data is then copied through a bounce buffer of :kconfig:option:`CONFIG_MSPI_HPF_BOUNCE_BUF_SIZE` bytes in the driver data, and unaligned packets larger than that fail.
+If :kconfig:option:`CONFIG_MSPI_HPF_UNALIGNED_XFER` is disabled, the buffers that you pass to the driver must be word-aligned.
 
 Data passed by copy
 -------------------
