@@ -1078,6 +1078,9 @@ Libraries for networking
 
   * Added:
 
+    * Application-provided JWT generation, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_JWT_SOURCE_APP` Kconfig option.
+      This allows applications communicating with an nRF91 modem over an external link to keep JWT signing in the modem.
+
     * On-device key and CSR generation, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN` Kconfig option.
       The device private key is generated in PSA as a persistent, non-exportable key and referenced for TLS by its key ID, so it never leaves the device.
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option adds the ``nrf_cloud_cred`` shell commands (``keygen``, ``csr``, ``delete``, and ``pubkey``).
