@@ -479,14 +479,17 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	 */
 	umac_cmd_data->params.beacon_wait_time = NRF_WIFI_LMAC_BEACON_WAIT_TIME_VALUE;
 
-	/* Enable TX/RX checksum offloading in the LMAC. Per-packet behavior is
-	 * still controlled by the UMAC based on Kconfig; this parameter enables
-	 * local LMAC offloading support. Setting either field to 0 disables
-	 * offloading even when enabled in Kconfig. Enabled by default and not
-	 * expected to require modification under normal use.
+	/* Enable TX/RX checksum offloading in the LMAC. Per-packet csum_bitmap on
+	 * TX and stack offload caps follow CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	 * and TKIP cipher state in the host driver.
 	 */
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	umac_cmd_data->params.offloadTXChecksum = 1;
 	umac_cmd_data->params.offloadRXChecksum = 1;
+#else
+	umac_cmd_data->params.offloadTXChecksum = 0;
+	umac_cmd_data->params.offloadRXChecksum = 0;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	/* Parameter controlling system sleep behavior while transmitting a raw frame.
 	 * After transmitting a raw frame, the system remains active for the
