@@ -1118,13 +1118,18 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 		return -EINVAL;
 	}
 
-	max_size = is_mic_cipher_suite(suite) ? 16 : 32;
+	if (is_mic_cipher_suite(suite)) {
+		max_size = 16;
+	} else if (suite == RSN_CIPHER_SUITE_TKIP) {
+		/* TKIP: only the 16-byte encryption key goes to KMU; MIC keys go to UMAC. */
+		max_size = 16;
+	} else {
+		max_size = 32;
+	}
 
 	LOG_DBG("%s: Importing key (suite: 0x%08x, type: %d, idx: %u, len: %u)", __func__, suite,
 		type, crypto_key_index, (unsigned int)key_len);
-	/* Pad/copy up to max size for type: 16 bytes for MIC, 32 for ENC.
-	 * Pad with zeros if shorter.
-	 */
+	/* Pad/copy up to max size for type: 16 bytes for MIC, 16 for TKIP ENC, 32 for others. */
 	if (key && key_len > 0) {
 		if (key_len >= max_size) {
 			memcpy(key_buf, key, max_size);
@@ -1217,10 +1222,9 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 			LOG_ERR("%s: Failed to import key to crypto: %d", __func__, ret);
 			goto out;
 		}
-#else
-		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 #endif /* CONFIG_NRF_WIFI_USE_KMU */
 
+		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 		key_info.key.nrf_wifi_key_len = key_len;
 		key_info.cipher_suite = suite;
 
