@@ -375,23 +375,23 @@ Application uses the following API elements:
 Zephyr driver
 =============
 
-* Header file: :file:`include/drivers/mspi/hpf_mspi.h`
-* Source file: :file:`drivers/mspi/mspi_hpf.c`
+* Header file: :ncs-file:`/include/drivers/mspi/hpf_mspi.h`
+* Source file: :ncs-file:`/drivers/mspi/mspi_hpf.c`
 
 FLPR application
 ================
 
-* Source file: :file:`applications/hpf/mspi/src/main.c`
+* Source file: :ncs-file:`/applications/hpf/mspi/src/main.c`
 
 FLPR application HRT
 ====================
 
-* Header file: :file:`applications/hpf/mspi/src/hrt/hrt.h`
-* Source file :file:`applications/hpf/mspi/src/hrt/hrt.c`
+* Header file: :ncs-file:`/applications/hpf/mspi/src/hrt/hrt.h`
+* Source file :ncs-file:`/applications/hpf/mspi/src/hrt/hrt.c`
 * Assembly:
 
-  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54l15.s`
-  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54lm20a.s`
-  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54lm20b.s`
-  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54lc10a.s`
-  * :file:`applications/hpf/mspi/src/hrt/hrt-nrf54lv10a.s`
+  * :ncs-file:`/applications/hpf/mspi/src/hrt/hrt-nrf54l15.s`
+  * :ncs-file:`/applications/hpf/mspi/src/hrt/hrt-nrf54lm20a.s`
+  * :ncs-file:`/applications/hpf/mspi/src/hrt/hrt-nrf54lm20b.s`
+  * :ncs-file:`/applications/hpf/mspi/src/hrt/hrt-nrf54lc10a.s`
+  * :ncs-file:`/applications/hpf/mspi/src/hrt/hrt-nrf54lv10a.s`

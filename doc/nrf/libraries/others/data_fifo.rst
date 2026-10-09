@@ -20,7 +20,7 @@ To enable the library, set the :kconfig:option:`CONFIG_DATA_FIFO` Kconfig option
 API documentation
 *****************
 
-| Header file: :file:`include/data_fifo.h`
-| Source file: :file:`lib/data_fifo/data_fifo.c`
+| Header file: :ncs-file:`/include/data_fifo.h`
+| Source file: :ncs-file:`/lib/data_fifo/data_fifo.c`
 
 .. doxygengroup:: data_fifo

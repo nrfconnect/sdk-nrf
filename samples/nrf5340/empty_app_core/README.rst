@@ -51,10 +51,10 @@ Dependencies
 
 This sample has the following `nrfx`_ dependencies:
 
-* :file:`nrfx/nrfx.h`
+* :ncs-file:`hal_nordic:/nrfx/nrfx.h`
 
 In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/init.h`
+  * :ncs-file:`zephyr:/include/zephyr/init.h`

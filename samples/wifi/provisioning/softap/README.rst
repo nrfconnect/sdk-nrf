@@ -48,7 +48,7 @@ Configuration files
 
 The sample includes the following pre-configured configuration file for the development kits that are supported:
 
-* :file:`prj.conf` - Configuration file for all build targets.
+* :ncs-file:`/samples/wifi/provisioning/softap/prj.conf` - Configuration file for all build targets.
 
 Building and running
 ********************

@@ -24,7 +24,7 @@ Partition Manager is phased out across three major |NCS| releases:
    * Built-in samples and applications are updated incrementally on the v3.3 branch to use devicetree-based partitioning.
    * A Partition Manager-to-DTS helper script helps you migrate from Partition Manager to devicetree partitions.
      The script generates devicetree overlay files based on existing Partition Manager configurations.
-     You can find the script in the :file:`scripts/pm_to_dts.py` file in your |NCS| installation.
+     You can find the script in the :ncs-file:`/scripts/pm_to_dts.py` file in your |NCS| installation.
    * Partition Manager is deprecated but remains available.
 
 * In the next |NCS| major release after v3.3, Partition Manager is disabled by default for all builds.
@@ -68,7 +68,7 @@ To migrate your project to DTS-partitioning, follow these steps:
    No object files or binaries are compiled at this stage.
 
 #. Run the Partition Manager-to-DTS helper script on the build directory.
-   Replace ``<path-to-nrf/scripts/pm_to_dts.py>`` with the path to the :file:`scripts/pm_to_dts.py` file in your |NCS| installation.
+   Replace ``<path-to-nrf/scripts/pm_to_dts.py>`` with the path to the :ncs-file:`/scripts/pm_to_dts.py` file in your |NCS| installation.
 
    .. code-block:: none
 

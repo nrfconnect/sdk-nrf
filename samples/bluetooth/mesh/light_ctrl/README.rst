@@ -117,7 +117,7 @@ For more details, see :ref:`bt_mesh_lightness_srv_readme` and :ref:`bt_mesh_ligh
 Other nodes can store or recall scenes through Scene Server, by sending Scene messages.
 They can also fetch the current value of the :c:var:`bt_mesh_sensor_precise_tot_dev_energy_use` property by sending Sensor Get messages.
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_ctrl/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library and the :ref:`zephyr:pwm_api` API to control the LEDs on the development kit.
 
 User interface
 **************
@@ -262,7 +262,7 @@ The default value of :kconfig:option:`CONFIG_BT_MESH_LIGHT_CTRL_SRV_LVL_STANDBY`
    Light level transitions over time
 
 .. note::
-   The configuration of light levels, fade time, and timeouts can be changed by altering the configuration parameters in the :file:`prj.conf` file, and rebuilding the sample.
+   The configuration of light levels, fade time, and timeouts can be changed by altering the configuration parameters in the :ncs-file:`/samples/bluetooth/mesh/light_ctrl/prj.conf` file, and rebuilding the sample.
 
 This sample can be configured to report energy usage sensor data to any device implementing the :ref:`bt_mesh_sensor_cli_readme` model by configuring the Sensor Server model on the **Mesh Light Fixture** node:
 
@@ -332,22 +332,22 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:pwm_api`:
 
-  * :file:`drivers/pwm.h`
+  * :ncs-file:`zephyr:/include/zephyr/drivers/pwm.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 

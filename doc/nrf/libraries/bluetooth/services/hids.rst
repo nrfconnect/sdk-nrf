@@ -116,7 +116,7 @@ You can configure a relevant mask for a report to specify which part of the repo
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/hids.h`
-| Source file: :file:`subsys/bluetooth/services/hids.c`
+| Header file: :ncs-file:`/include/bluetooth/services/hids.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/hids.c`
 
 .. doxygengroup:: bt_hids

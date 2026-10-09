@@ -79,7 +79,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (defined in :file:`samples/bluetooth/peripheral_hids_mouse/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (defined in :ncs-file:`/samples/bluetooth/peripheral_hids_mouse/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -358,21 +358,21 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/assert.h`
-* :file:`lib/libc/minimal/include/errno.h`
-* :file:`include/sys/printk.h`
-* :file:`include/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/assert.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
 * :ref:`GPIO Interface <zephyr:api_peripherals>`
 * :ref:`zephyr:settings_api`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`samples/bluetooth/gatt/bas.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/services/bas.h`
 
 The sample also uses the following secure firmware component:
 

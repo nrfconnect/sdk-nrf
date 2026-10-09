@@ -85,11 +85,11 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`samples/bluetooth/gatt/bas.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/services/bas.h`
 * :ref:`zephyr:logging_api`
 
 The sample also uses the following secure firmware component:

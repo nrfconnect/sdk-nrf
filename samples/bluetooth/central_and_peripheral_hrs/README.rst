@@ -165,7 +165,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
-      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
+      #. Load the :ncs-file:`/samples/bluetooth/central_and_peripheral_hrs/hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the **CONNECTION MAP** tab.
       #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
@@ -173,7 +173,7 @@ Testing with Bluetooth Low Energy app
          The current version of nRF Connect can store the advertising setup.
 
       #. Click :guilabel:`Load setup`.
-         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_and_peripheral_hrs/hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply` and :guilabel:`Close`.
       #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
       #. Wait until the development kit running the Central and Peripheral HRS connects.
@@ -211,7 +211,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the **SERVER SETUP** tab.
       #. Click the dongle configuration and select :guilabel:`Load setup`.
-      #. Load the :file:`hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
+      #. Load the :ncs-file:`/samples/bluetooth/central_and_peripheral_hrs/hr_service.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the **CONNECTION MAP** tab.
       #. Click the dongle configuration (gear icon) and select :guilabel:`Advertising setup`.
@@ -219,7 +219,7 @@ Testing with Bluetooth Low Energy app
          The current version of nRF Connect can store the advertising setup.
 
       #. Click :guilabel:`Load setup`.
-         Load the :file:`hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_and_peripheral_hrs/hrs_adv_setup.ncs` file that is located under :file:`samples/bluetooth/central_and_peripheral_hrs` in the |NCS| folder structure.
       #. Click :guilabel:`Apply` and :guilabel:`Close`.
       #. Click the gear icon to open the Adapter settings and select :guilabel:`Start advertising`.
       #. Wait until the development kit running the Central and Peripheral HRS connects.
@@ -261,16 +261,14 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr.h`
-
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/services/hrs.h`
-  * :file:`include/bluetooth/services/bas.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/services/hrs.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/services/bas.h`
 
 The sample also uses the following secure firmware component:
 

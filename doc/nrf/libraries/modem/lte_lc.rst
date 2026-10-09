@@ -511,7 +511,7 @@ This library uses the following |NCS| library:
 API documentation
 *****************
 
-| Header file: :file:`include/modem/lte_lc.h`
-| Source file: :file:`lib/lte_link_control/lte_lc.c`
+| Header file: :ncs-file:`/include/modem/lte_lc.h`
+| Source file: :ncs-file:`/lib/lte_link_control/lte_lc.c`
 
 .. doxygengroup:: lte_lc

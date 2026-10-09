@@ -58,17 +58,17 @@ Set :option:`CONFIG_COAP_SAMPLE_CA_CERT_FILE`, :option:`CONFIG_COAP_SAMPLE_CLIEN
 
 The sample includes an example CA trust chain and client certificate and private key under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interoperability server:
 
-* :file:`cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
-* :file:`cert/cf-client.pem` — client certificate
-* :file:`cert/cf-client-key.pem` — client private key (EC P-256)
+* :ncs-file:`/samples/net/coap_client/cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
+* :ncs-file:`/samples/net/coap_client/cert/cf-client.pem` — client certificate
+* :ncs-file:`/samples/net/coap_client/cert/cf-client-key.pem` — client private key (EC P-256)
 
-The :file:`wifi-dtls.conf` extra-conf file configures the sample with mutual X.509 authentication and the cipher suite needed for the Californium interop server.
+The :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` extra-conf file configures the sample with mutual X.509 authentication and the cipher suite needed for the Californium interop server.
 
 Wi-Fi
 =====
 
-On Wi-Fi boards, use the :file:`wifi.conf` extra-conf file, using the ``coap_client_EXTRA_CONF_FILE`` sysbuild variable.
-To perform mutual DTLS (CoAPS) with the Californium interoperability server (see :ref:`Mutual DTLS (client certificate authentication) <coap_client_sample_mtls>`), add the :file:`wifi-dtls.conf` extra-conf file on top of :file:`wifi.conf`.
+On Wi-Fi boards, use the :ncs-file:`/samples/net/coap_client/wifi.conf` extra-conf file, using the ``coap_client_EXTRA_CONF_FILE`` sysbuild variable.
+To perform mutual DTLS (CoAPS) with the Californium interoperability server (see :ref:`Mutual DTLS (client certificate authentication) <coap_client_sample_mtls>`), add the :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` extra-conf file on top of :ncs-file:`/samples/net/coap_client/wifi.conf`.
 
 Configuration
 *************
@@ -78,7 +78,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/coap_client/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/net/coap_client/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -96,19 +96,19 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+* :ncs-file:`/samples/net/coap_client/prj.conf` - General configuration file for all devices.
+* :ncs-file:`/samples/net/coap_client/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/coap_client/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/coap_client/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/coap_client/boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :ncs-file:`/samples/net/coap_client/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/coap_client/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/coap_client/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
-* :file:`wifi-dtls.conf` - Additional configuration for mutual DTLS with the Californium interop server.
+* :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` - Additional configuration for mutual DTLS with the Californium interop server.
 
 Board files under the :file:`boards/` folder are merged automatically for the selected target.
-The :file:`wifi.conf` and :file:`wifi-dtls.conf` files are not board-specific and must be passed with ``coap_client_EXTRA_CONF_FILE``.
+The :ncs-file:`/samples/net/coap_client/wifi.conf` and :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` files are not board-specific and must be passed with ``coap_client_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dcoap_client_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 

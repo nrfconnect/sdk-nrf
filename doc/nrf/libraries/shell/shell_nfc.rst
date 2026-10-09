@@ -120,7 +120,7 @@ You can enable the :kconfig:option:`CONFIG_SHELL_NFC_INIT_LOG_LEVEL_NONE` Kconfi
 API documentation
 *****************
 
-| Header file: :file:`include/shell/shell_nfc.h`
-| Source file: :file:`subsys/shell/shell_nfc.c`
+| Header file: :ncs-file:`/include/shell/shell_nfc.h`
+| Source file: :ncs-file:`/subsys/shell/shell_nfc.c`
 
 .. doxygengroup:: shell_nfc

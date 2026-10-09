@@ -29,7 +29,7 @@ This library uses three other libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/t4t/hl_procedure.h`
-| Source file: :file:`subsys/nfc/t4t/hl_procedure.c`
+| Header file: :ncs-file:`/include/nfc/t4t/hl_procedure.h`
+| Source file: :ncs-file:`/subsys/nfc/t4t/hl_procedure.c`
 
 .. doxygengroup:: nfc_t4t_hl_procedure

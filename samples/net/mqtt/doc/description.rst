@@ -102,7 +102,7 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General project configuration file.
+* :ncs-file:`/samples/net/mqtt/prj.conf` - General project configuration file.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
@@ -112,7 +112,7 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+Files that are located under the :file:`/boards` folder are automatically merged with the :ncs-file:`/samples/net/mqtt/prj.conf` file when you build for the corresponding target.
 
 In addition, the sample provides the following configuration overlay files, which are used to enable additional features in the sample:
 

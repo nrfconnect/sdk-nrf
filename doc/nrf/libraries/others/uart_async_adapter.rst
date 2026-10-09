@@ -94,7 +94,7 @@ This module may use :ref:`zephyr:logging_api`.
 API documentation
 *****************
 
-| Header file: :file:`include/uart_async_adapter.h`
+| Header file: :ncs-file:`/include/uart_async_adapter.h`
 | Source files: :file:`subsys/uart_async_adapter/`
 
 .. doxygengroup:: uart_async_adapter

@@ -80,7 +80,7 @@ Configuration files
 
 The sample provides predefined configuration files, located in :file:`zephyr/samples/net/sockets/coap_server`:
 
-* :file:`prj.conf` - Default configuration file, used for plain (non-secure) CoAP.
+* :ncs-file:`zephyr:/samples/net/sockets/coap_server/prj.conf` - Default configuration file, used for plain (non-secure) CoAP.
 * :file:`overlay-dtls.conf` - Additional configuration for secure CoAP (CoAPS) over DTLS.
 
 To add a specific extra configuration file to the build, add the ``-DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
@@ -199,4 +199,4 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`net_if_interface`
 * :ref:`net_mgmt_interface`
-* CoAP and the CoAP server subsystem (:file:`include/zephyr/net/coap.h`, :file:`include/zephyr/net/coap_service.h`)
+* CoAP and the CoAP server subsystem (:ncs-file:`zephyr:/include/zephyr/net/coap.h`, :ncs-file:`zephyr:/include/zephyr/net/coap_service.h`)

@@ -39,11 +39,11 @@ The application configuration source file defines a set of options used by the g
 This is a :file:`.conf` file that modifies the default Kconfig values defined in the Kconfig files.
 
 Only one :file:`.conf` file is included at a time.
-The :file:`prj.conf` file is the default configuration file and it implements the debug application version.
+The :ncs-file:`/applications/nrf_audio/prj.conf` file is the default configuration file and it implements the debug application version.
 
 Each nRF Audio application also uses its own :file:`Kconfig.default` file to change configuration defaults automatically.
 
-You need to edit :file:`prj.conf` if you want to add new functionalities to your application, but editing this file when adding a new board is not required.
+You need to edit :ncs-file:`/applications/nrf_audio/prj.conf` if you want to add new functionalities to your application, but editing this file when adding a new board is not required.
 
 .. _nrf_audio_app_porting_guide_adding_board:
 

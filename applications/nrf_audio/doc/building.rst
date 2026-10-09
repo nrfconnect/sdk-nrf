@@ -223,9 +223,9 @@ This method requires manually providing source files for building each build con
 Application configuration files
 ===============================
 
-The application uses a :file:`prj.conf` configuration file located in the application root directory for the default configuration.
+The application uses a :ncs-file:`/applications/nrf_audio/prj.conf` configuration file located in the application root directory for the default configuration.
 The application is by default built in a debug configuration.
-If you want to create a release version, you must modify the :file:`prj.conf` file to match your project requirements (for example, reduce code size, speed up execution, and avoid sensitive information being exposed over debug interfaces - see :ref:`nrf_audio_app_configuration` for some possible options.)
+If you want to create a release version, you must modify the :ncs-file:`/applications/nrf_audio/prj.conf` file to match your project requirements (for example, reduce code size, speed up execution, and avoid sensitive information being exposed over debug interfaces - see :ref:`nrf_audio_app_configuration` for some possible options.)
 Each application also uses its own application-specific overlay file and can use additional files for different custom configurations.
 When you build the application, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
 
@@ -242,7 +242,7 @@ The nRF Audio applications come with the following configuration files:
      - FILE_SUFFIX
      - Description
    * - Debug (default)
-     - :file:`prj.conf`
+     - :ncs-file:`/applications/nrf_audio/prj.conf`
      - No suffix
      - Debug version of the application. Provides full logging capabilities and debug optimizations to ease development.
    * - Application-specific overlay file
@@ -286,7 +286,7 @@ Complete the following steps to build each of the configurations you need:
          Depending on the configuration and applications you want to build, set the correct combination of :ref:`nrf_audio_app_building_config_files` in the extension UI:
 
          * :guilabel:`Base configuration files (Kconfig fragments)`: No file selected.
-           The extension will automatically select :file:`prj.conf`.
+           The extension will automatically select :ncs-file:`/applications/nrf_audio/prj.conf`.
 
          * :guilabel:`Extra Kconfig fragments`:
 
