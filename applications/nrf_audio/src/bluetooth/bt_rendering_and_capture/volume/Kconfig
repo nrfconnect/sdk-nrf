@@ -6,14 +6,14 @@
 
 menu "Volume"
 
-config BT_AUDIO_VOL_DEFAULT
+config LE_AUDIO_VOL_DEFAULT
 	int "Default volume"
 	range 0 255
 	default 195
 	help
 	  The default volume when starting a volume control renderer.
 
-config BT_AUDIO_VOL_STEP_SIZE
+config LE_AUDIO_VOL_STEP_SIZE
 	int "Volume adjust step size"
 	range 6 32
 	default 16
@@ -21,7 +21,7 @@ config BT_AUDIO_VOL_STEP_SIZE
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_VOL
+module = VOL
 module-str = bt-vol
 source "subsys/logging/Kconfig.template.log_config"
 

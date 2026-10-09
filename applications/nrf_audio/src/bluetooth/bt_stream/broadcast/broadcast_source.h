@@ -19,73 +19,73 @@
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include "bt_le_audio_tx.h"
 
-#if CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE
+#if CONFIG_LE_AUDIO_BROADCAST_CONFIGURABLE
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_PRESET_CONFIGURABLE(                                                            \
 		BT_AUDIO_LOCATION_FRONT_LEFT | BT_AUDIO_LOCATION_FRONT_RIGHT,                      \
-		BT_AUDIO_CONTEXT_TYPE_MEDIA, CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC)
+		BT_AUDIO_CONTEXT_TYPE_MEDIA, CONFIG_LE_AUDIO_BITRATE_BROADCAST_SRC)
 
-#elif CONFIG_BT_BAP_BROADCAST_16_2_1
+#elif CONFIG_BAP_BROADCAST_16_2_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_16_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_16_2_2
+#elif CONFIG_BAP_BROADCAST_16_2_2
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_16_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_24_2_1
+#elif CONFIG_BAP_BROADCAST_24_2_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_24_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_24_2_2
+#elif CONFIG_BAP_BROADCAST_24_2_2
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_24_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_48_2_1
+#elif CONFIG_BAP_BROADCAST_48_2_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_2_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
-#elif CONFIG_BT_BAP_BROADCAST_48_2_2
+#elif CONFIG_BAP_BROADCAST_48_2_2
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_2_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_48_4_1
+#elif CONFIG_BAP_BROADCAST_48_4_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_4_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_48_4_2
+#elif CONFIG_BAP_BROADCAST_48_4_2
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_4_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_48_6_1
+#elif CONFIG_BAP_BROADCAST_48_6_1
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_6_1(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 
-#elif CONFIG_BT_BAP_BROADCAST_48_6_2
+#elif CONFIG_BAP_BROADCAST_48_6_2
 #define BT_BAP_LC3_BROADCAST_PRESET_NRF_AUDIO                                                      \
 	BT_BAP_LC3_BROADCAST_PRESET_48_6_2(BT_AUDIO_LOCATION_FRONT_LEFT |                          \
 						   BT_AUDIO_LOCATION_FRONT_RIGHT,                  \
 					   BT_AUDIO_CONTEXT_TYPE_MEDIA)
 #else
 #error Unsupported LC3 codec preset for broadcast
-#endif /* CONFIG_BT_AUDIO_BROADCAST_CONFIGURABLE */
+#endif /* CONFIG_LE_AUDIO_BROADCAST_CONFIGURABLE */
 
 /* Size of the Public Broadcast Announcement header, 2-octet Service UUID followed by
  * an octet for the features and an octet for the length of the meta data field.

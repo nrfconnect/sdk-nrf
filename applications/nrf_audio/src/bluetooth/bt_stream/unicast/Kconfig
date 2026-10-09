@@ -8,30 +8,30 @@ rsource "Kconfig.defaults"
 
 menu "Unicast"
 
-choice BT_BAP_UNICAST_BAP_CONFIGURATION
+choice BAP_UNICAST_BAP_CONFIGURATION
 	prompt "Unicast codec configuration"
 	depends on TRANSPORT_CIS
-	default BT_BAP_UNICAST_48_4_1
+	default BAP_UNICAST_48_4_1
 	help
 	  Select the unicast codec configuration as given in
 	  Table 5.2 of the Bluetooth Audio Profile Specification.
 	  USB only supports 48 kHz samplig rate.
 
-config BT_BAP_UNICAST_16_2_1
+config BAP_UNICAST_16_2_1
 	bool "16_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast mandatory codec capability 16_2_1.
 	  16kHz, 32kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
-config BT_BAP_UNICAST_24_2_1
+config BAP_UNICAST_24_2_1
 	bool "24_2_1"
 	depends on TRANSPORT_CIS
 	help
 	  Unicast codec capability 24_2_1.
 	  24kHz, 48kbps, 2 retransmits, 10ms transport latency, and 40ms presentation delay.
 
-config BT_BAP_UNICAST_48_4_1
+config BAP_UNICAST_48_4_1
 	bool "48_4_1"
 	depends on TRANSPORT_CIS
 	help
@@ -39,33 +39,33 @@ config BT_BAP_UNICAST_48_4_1
 	  48kHz, 96kbps, 5 retransmits, 20ms transport latency, and 40ms presentation delay.
 endchoice
 
-choice	BT_AUDIO_PRES_DLY_SRCH
+choice	LE_AUDIO_PRES_DLY_SRCH
 	prompt "Default search mode for the presentation delay"
-	default BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
+	default LE_AUDIO_PRES_DELAY_SRCH_PREF_MIN
 	help
 	  Set the default search mode for the presentation delay.
 
-config BT_AUDIO_PRES_DELAY_SRCH_MIN
+config LE_AUDIO_PRES_DELAY_SRCH_MIN
 	bool "Largest minimum delay over all audio receivers"
 	help
 	  Search for the largest minimum delay over all audio receivers.
 
-config BT_AUDIO_PRES_DELAY_SRCH_MAX
+config LE_AUDIO_PRES_DELAY_SRCH_MAX
 	bool "Smallest maximum delay over all audio receivers"
 	help
 	  Search for the smallest maximum delay over all audio receivers.
 
-config BT_AUDIO_PRES_DELAY_SRCH_PREF_MIN
+config LE_AUDIO_PRES_DELAY_SRCH_PREF_MIN
 	bool "Largest minimum preferred delay over all audio receivers"
 	help
 	  Search for the largest minimum preferred delay over all audio receivers.
 
-config BT_AUDIO_PRES_DELAY_SRCH_PREF_MAX
+config LE_AUDIO_PRES_DELAY_SRCH_PREF_MAX
 	bool "Smallest maximum preferred delay over all audio receivers"
 	help
 	  Search for the smallest maximum preferred delay over all audio receivers.
 
-config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
+config LE_AUDIO_PRES_DELAY_SRCH_SOURCE
 	bool "Use the presentation delay of audio source or client"
 	help
 	  Use the presentation delay defined by the broadcast_source or unicast_client if it
@@ -75,7 +75,7 @@ config BT_AUDIO_PRES_DELAY_SRCH_SOURCE
 	  then it will revert to the closest supported value.
 endchoice
 
-config BT_AUDIO_PAC_REC_PRINT
+config LE_AUDIO_PAC_REC_PRINT
 	bool "Print discovered Published Audio Capabilities"
 	help
 	  Print the supported capabilities of a unicast server when it is discovered.
@@ -87,7 +87,7 @@ config CODEC_CAP_COUNT_MAX
 	help
 	  Max number of codec capabilities to store per stream.
 
-config BT_AUDIO_PREFERRED_MIN_PRES_DLY_US
+config LE_AUDIO_PREFERRED_MIN_PRES_DLY_US
 	int "The preferred minimum presentation delay"
 	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
 	default AUDIO_MIN_PRES_DLY_US
@@ -95,25 +95,25 @@ config BT_AUDIO_PREFERRED_MIN_PRES_DLY_US
 	  The preferred minimum presentation delay in microseconds. This can not
 	  be less than the absolute minimum presentation delay.
 
-config BT_AUDIO_PREFERRED_MAX_PRES_DLY_US
+config LE_AUDIO_PREFERRED_MAX_PRES_DLY_US
 	int "The preferred maximum presentation delay"
-	range BT_AUDIO_PREFERRED_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
+	range LE_AUDIO_PREFERRED_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
 	default 40000
 	help
 	  The preferred maximum presentation delay in microseconds. This can not
 	  be less than the absolute maximum presentation delay.
 
-config BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
+config SET_IDENTITY_RESOLVING_KEY_DEFAULT
 	string
 	default "NRF5340_TWS_DEMO"
 	help
 	  Default string to configure the Set Identify Resolving Key (SIRK), must
 	  be changed before production uniquely for each coordinated set.
 
-config BT_SET_IDENTITY_RESOLVING_KEY
+config SET_IDENTITY_RESOLVING_KEY
 	string "String used to configure the SIRK"
 	depends on TRANSPORT_CIS && BT_BAP_UNICAST_SERVER
-	default BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT
+	default SET_IDENTITY_RESOLVING_KEY_DEFAULT
 	help
 	  Defines a string to configure the Set Identify Resolving Key (SIRK), must
 	  be changed before production uniquely for each coordinated set. The SIRK

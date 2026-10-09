@@ -135,14 +135,14 @@ def __build_cmd_get(core: Core, device: AudioDevice, options, sirk=""):
         device_flag += " -Dipc_radio_SHIELD=nrf21540ek"
     if options.custom_bt_name is not None:
         device_flag += " -DCONFIG_BT_DEVICE_NAME=\\\"" + options.custom_bt_name + "\\\""
-        device_flag += " -DCONFIG_BT_AUDIO_BROADCAST_NAME=\\\"" + options.custom_bt_name + "\\\""
-        device_flag += " -DCONFIG_BT_AUDIO_BROADCAST_NAME_ALT=\\\"" + options.custom_bt_name + ALT_BROADCAST_NAME_SUFFIX + "\\\""
+        device_flag += " -DCONFIG_LE_AUDIO_BROADCAST_NAME=\\\"" + options.custom_bt_name + "\\\""
+        device_flag += " -DCONFIG_LE_AUDIO_BROADCAST_NAME_ALT=\\\"" + options.custom_bt_name + ALT_BROADCAST_NAME_SUFFIX + "\\\""
     if options.transport == Transport.broadcast.name:
         if device == AudioDevice.headset:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SINK_OVERLAY}"
 
             if __sirk_is_valid(sirk):
-                device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
+                device_flag += " -DCONFIG_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={BROADCAST_SOURCE_OVERLAY}"
     else:
@@ -150,7 +150,7 @@ def __build_cmd_get(core: Core, device: AudioDevice, options, sirk=""):
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_SERVER_OVERLAY}"
 
             if __sirk_is_valid(sirk):
-                device_flag += " -DCONFIG_BT_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
+                device_flag += " -DCONFIG_SET_IDENTITY_RESOLVING_KEY=\\\"" + sirk + "\\\""
         else:
             overlay_flag = f" -DEXTRA_CONF_FILE={UNICAST_CLIENT_OVERLAY}"
 

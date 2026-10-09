@@ -67,11 +67,11 @@ static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
  * meta data size.
  */
 #define BROADCAST_SRC_PBA_BUF_SIZE                                                                 \
-	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE)
+	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_LE_AUDIO_BROADCAST_PBA_METADATA_SIZE)
 
 /* Number of metadata items that can be assigned. */
 #define BROADCAST_SOURCE_PBA_METADATA_VACANT                                                       \
-	(CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
+	(CONFIG_LE_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
 
 /* Make sure pba_buf is large enough for a 16bit UUID and meta data
  * (any addition to pba_buf requires an increase of this value)
@@ -623,7 +623,7 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	ext_adv_buf_cnt++;
 
 	ret = bt_mgmt_manufacturer_uuid_populate(ext_adv_data->uuid_buf,
-						 CONFIG_BT_DEVICE_MANUFACTURER_ID);
+						 CONFIG_DEVICE_MANUFACTURER_ID);
 	if (ret) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
@@ -715,14 +715,14 @@ static void broadcast_create(uint8_t big_index)
 
 	if (brdcst_param->broadcast_name[0] == '\0') {
 		/* Name not set, using default */
-		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) > sizeof(brdcst_param->broadcast_name)) {
+		if (sizeof(CONFIG_LE_AUDIO_BROADCAST_NAME) > sizeof(brdcst_param->broadcast_name)) {
 			LOG_ERR("Broadcast name too long");
 			return;
 		}
 
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_LE_AUDIO_BROADCAST_NAME) - 1;
 
-		memcpy(brdcst_param->broadcast_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(brdcst_param->broadcast_name, CONFIG_LE_AUDIO_BROADCAST_NAME,
 		       brdcst_name_size);
 	}
 
@@ -1032,14 +1032,14 @@ static int adv_create_and_start(const struct shell *shell, uint8_t big_index)
 
 	if (broadcast_param[big_index].broadcast_name[0] == '\0') {
 		/* Name not set, using default */
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_LE_AUDIO_BROADCAST_NAME) - 1;
 
 		if (brdcst_name_size >= ARRAY_SIZE(ext_adv_data[big_index].brdcst_name_buf)) {
 			shell_error(shell, "Broadcast name too long, using parts of the name");
 			brdcst_name_size = ARRAY_SIZE(ext_adv_data[big_index].brdcst_name_buf) - 1;
 		}
 
-		memcpy(ext_adv_data[big_index].brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(ext_adv_data[big_index].brdcst_name_buf, CONFIG_LE_AUDIO_BROADCAST_NAME,
 		       brdcst_name_size);
 	} else {
 		size_t brdcst_name_size = strlen(broadcast_param[big_index].broadcast_name);
@@ -1055,9 +1055,9 @@ static int adv_create_and_start(const struct shell *shell, uint8_t big_index)
 
 	if (broadcast_param[big_index].adv_name[0] == '\0') {
 		/* Name not set, using default */
-		size_t adv_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t adv_name_size = sizeof(CONFIG_LE_AUDIO_BROADCAST_NAME) - 1;
 
-		memcpy(broadcast_param[big_index].adv_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(broadcast_param[big_index].adv_name, CONFIG_LE_AUDIO_BROADCAST_NAME,
 		       adv_name_size);
 	}
 

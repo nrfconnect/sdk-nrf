@@ -436,7 +436,7 @@ static void unicast_group_create(void)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_PACKING_INTERLEAVED)) {
 		group_param.packing = BT_ISO_PACKING_INTERLEAVED;
 	} else {
 		group_param.packing = BT_ISO_PACKING_SEQUENTIAL;

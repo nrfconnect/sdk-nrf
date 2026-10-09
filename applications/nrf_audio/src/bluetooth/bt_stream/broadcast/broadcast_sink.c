@@ -337,7 +337,7 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 		return true;
 	}
 
-	if (POPCOUNT(bis_index_bitfield) >= CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX) {
+	if (POPCOUNT(bis_index_bitfield) >= CONFIG_LE_AUDIO_CONCURRENT_RX_STREAMS_MAX) {
 		LOG_DBG("Maximum number of BISes reached, ignoring BIS index %d", bis->index);
 		return true;
 	}
@@ -636,7 +636,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 		}
 		le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 
-		if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT)) {
+		if (IS_ENABLED(CONFIG_LE_AUDIO_BROADCAST_BASE_PRINT)) {
 			base_print(sink, base);
 		}
 
@@ -673,9 +673,9 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Syncing to broadcast stream index 0x%04x (bitfield)", bis_index_bitfield);
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+	if (IS_ENABLED(CONFIG_LE_AUDIO_BROADCAST_ENCRYPTED)) {
+		memcpy(bis_encryption_key, CONFIG_LE_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(strlen(CONFIG_LE_AUDIO_BROADCAST_ENCRYPTION_KEY),
 			   ARRAY_SIZE(bis_encryption_key)));
 	} else {
 		/* If the biginfo shows the stream is encrypted, then wait until broadcast code is
@@ -1007,17 +1007,17 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_SCAN_DELEGATOR)) {
 		if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
 			LOG_WRN("CSIP test sample data is used, must be changed "
 				"before production");
 		} else {
-			if (strcmp(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
-				   CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == 0) {
+			if (strcmp(CONFIG_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
+				   CONFIG_SET_IDENTITY_RESOLVING_KEY) == 0) {
 				LOG_WRN("CSIP using the default SIRK, must be changed "
 					"before production");
 			}
-			memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY,
+			memcpy(csip_param.sirk, CONFIG_SET_IDENTITY_RESOLVING_KEY,
 			       BT_CSIP_SIRK_SIZE);
 		}
 

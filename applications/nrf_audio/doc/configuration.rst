@@ -95,8 +95,8 @@ Enabling the BIS mode with two gateways
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
 The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
-To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
-You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
+To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_LE_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
+You can provide an alternative name to the second gateway using the :option:`CONFIG_LE_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf_audio_app_building`.
 After building the first gateway, configure the required Kconfig options for the second gateway and build the second gateway firmware.
@@ -226,7 +226,7 @@ Configuring Bluetooth LE Audio
 The nRF Audio application introduces application-specific configuration options related to Bluetooth LE Audio.
 These options configure the Bluetooth stack components described in :ref:`nrf_audio_app_overview_architecture`.
 
-See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CONFIG_BT_AUDIO``.
+See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CONFIG_LE_AUDIO``.
 
 .. _nrf_audio_app_configuration_power_measurements:
 

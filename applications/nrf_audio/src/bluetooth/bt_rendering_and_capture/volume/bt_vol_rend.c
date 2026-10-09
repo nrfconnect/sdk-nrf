@@ -14,7 +14,7 @@
 #include "bt_rendering_and_capture.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_vol_rend, CONFIG_BT_VOL_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_vol_rend, CONFIG_VOL_LOG_LEVEL);
 
 /**
  * @brief	Callback handler for the volume state.
@@ -97,8 +97,8 @@ int bt_vol_rend_init(void)
 	vcs_server_callback.flags = vcs_flags_rend_cb_handler;
 	vcs_param.cb = &vcs_server_callback;
 	vcs_param.mute = BT_VCP_STATE_UNMUTED;
-	vcs_param.step = CONFIG_BT_AUDIO_VOL_STEP_SIZE;
-	vcs_param.volume = CONFIG_BT_AUDIO_VOL_DEFAULT;
+	vcs_param.step = CONFIG_LE_AUDIO_VOL_STEP_SIZE;
+	vcs_param.volume = CONFIG_LE_AUDIO_VOL_DEFAULT;
 
 	ret = bt_vcp_vol_rend_register(&vcs_param);
 	if (ret) {

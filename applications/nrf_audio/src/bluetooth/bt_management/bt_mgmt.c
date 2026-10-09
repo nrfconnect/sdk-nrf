@@ -22,7 +22,7 @@
 #include "button_assignments.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_mgmt, CONFIG_MGMT_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));

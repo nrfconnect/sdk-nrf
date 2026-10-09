@@ -26,7 +26,7 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_LE_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
 
 struct ble_iso_data {
 	uint8_t data[CONFIG_BT_ISO_RX_MTU];
@@ -60,7 +60,7 @@ static k_tid_t bt_mgmt_msg_sub_thread_id;
 
 K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(bt_mgmt_msg_sub_thread_stack, CONFIG_BT_MGMT_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(bt_mgmt_msg_sub_thread_stack, CONFIG_MGMT_MSG_SUB_STACK_SIZE);
 
 static enum stream_state strm_state = STATE_PAUSED;
 
@@ -144,7 +144,7 @@ static void button_msg_sub_thread(void)
 				break;
 			}
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+			if (IS_ENABLED(CONFIG_LE_AUDIO_SCAN_DELEGATOR)) {
 				/* If this device is a scan delegator, we depend on a broadcast
 				 * assistant to transfer the broadcast source info.
 				 * It should not scan by itself.
@@ -160,12 +160,12 @@ static void button_msg_sub_thread(void)
 
 			if (broadcast_alt) {
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-							 CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
+							 CONFIG_LE_AUDIO_BROADCAST_NAME_ALT,
 							 BRDCAST_ID_NOT_USED);
 				broadcast_alt = false;
 			} else {
 				ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-							 CONFIG_BT_AUDIO_BROADCAST_NAME,
+							 CONFIG_LE_AUDIO_BROADCAST_NAME,
 							 BRDCAST_ID_NOT_USED);
 				broadcast_alt = true;
 			}
@@ -447,8 +447,8 @@ static int zbus_subscribers_create(void)
 
 	bt_mgmt_msg_sub_thread_id = k_thread_create(
 		&bt_mgmt_msg_sub_thread_data, bt_mgmt_msg_sub_thread_stack,
-		CONFIG_BT_MGMT_MSG_SUB_STACK_SIZE, (k_thread_entry_t)bt_mgmt_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BT_MGMT_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_MGMT_MSG_SUB_STACK_SIZE, (k_thread_entry_t)bt_mgmt_msg_sub_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_MGMT_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(bt_mgmt_msg_sub_thread_id, "Msg_sub_BT_mgmt");
 	if (ret) {
 		LOG_ERR("Failed to create msg BT management thread");
@@ -521,7 +521,7 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
 	ext_adv_buf_cnt++;
 
-	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
+	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf, CONFIG_DEVICE_MANUFACTURER_ID);
 	if (ret) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
@@ -607,7 +607,7 @@ int main(void)
 	ret = broadcast_sink_enable(le_audio_rx_data_handler);
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+	if (IS_ENABLED(CONFIG_LE_AUDIO_SCAN_DELEGATOR)) {
 		static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
 		size_t ext_adv_buf_cnt = 0;
 
@@ -623,7 +623,7 @@ int main(void)
 		ERR_CHK(ret);
 	} else {
 		ret = bt_mgmt_scan_start(0, 0, BT_MGMT_SCAN_TYPE_BROADCAST,
-					 CONFIG_BT_AUDIO_BROADCAST_NAME, BRDCAST_ID_NOT_USED);
+					 CONFIG_LE_AUDIO_BROADCAST_NAME, BRDCAST_ID_NOT_USED);
 		ERR_CHK_MSG(ret, "Failed to start scanning");
 	}
 

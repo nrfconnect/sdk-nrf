@@ -9,11 +9,11 @@ menu "Media"
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_CONTENT_CTRL_MEDIA
+module = CONTENT_CTRL_MEDIA
 module-str = bt_content_ctrl_media
 source "subsys/logging/Kconfig.template.log_config"
 
-config BT_CONTENT_CTRL_MEDIA
+config CONTENT_CTRL_MEDIA
 	bool "Bluetooth content control media"
 	select BT_MCC if BT_BAP_UNICAST_SERVER
 	select BT_MCC_READ_MEDIA_STATE if BT_BAP_UNICAST_SERVER

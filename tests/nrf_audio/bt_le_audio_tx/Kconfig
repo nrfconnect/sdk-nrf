@@ -30,7 +30,7 @@ config BLE_LOG_LEVEL
 	int
 	default 4
 
-config BT_LE_AUDIO_TX_LOG_LEVEL
+config LE_AUDIO_TX_LOG_LEVEL
 	int
 	default 4
 

@@ -13,7 +13,7 @@ rsource "scanning/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_MGMT
+module = MGMT
 module-str = bt-mgmt
 source "subsys/logging/Kconfig.template.log_config"
 

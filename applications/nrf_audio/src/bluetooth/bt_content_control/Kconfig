@@ -11,7 +11,7 @@ rsource "media/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_CONTENT_CTRL
+module = CONTENT_CTRL
 module-str = bt_content_ctrl
 source "subsys/logging/Kconfig.template.log_config"
 

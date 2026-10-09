@@ -11,7 +11,7 @@ rsource "volume/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Log level"
 
-module = BT_RENDERING_AND_CAPTURE
+module = RENDERING_AND_CAPTURE
 module-str = bt-rendering-and-capture
 source "subsys/logging/Kconfig.template.log_config"
 

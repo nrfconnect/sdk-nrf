@@ -143,9 +143,9 @@ static enum bt_audio_dir caps_dirs[] = {
 };
 
 static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
-	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
+	true, BT_GAP_LE_PHY_2M, CONFIG_LE_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
 	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
-	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
+	CONFIG_LE_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_LE_AUDIO_PREFERRED_MAX_PRES_DLY_US);
 
 /* clang-format off */
 static struct bt_pacs_cap caps[] = {
@@ -722,7 +722,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		IF_ENABLED(CONFIG_BT_AUDIO_TX, (.src_loc = true,))};
 	/* clang-format on */
 
-	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
+	__ASSERT(strlen(CONFIG_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
 		 "SIRK incorrect size, must be 16 bytes");
 
 	if (initialized) {
@@ -771,13 +771,13 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		LOG_WRN("CSIP test sample data is used, must be changed "
 			"before production");
 	} else {
-		if (strcmp(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
-			   CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == 0) {
+		if (strcmp(CONFIG_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
+			   CONFIG_SET_IDENTITY_RESOLVING_KEY) == 0) {
 			LOG_WRN("CSIP using the default SIRK, must be changed "
 				"before production");
 		}
 
-		memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
+		memcpy(csip_param.sirk, CONFIG_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
 	}
 
 	ret = bt_pacs_register(&pacs_param);
