@@ -1266,8 +1266,9 @@ To build the MoSh sample with Zephyr BT shell command support, use the :file:`-D
 When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
 
 .. note::
-   This configuration uses the nRF52840 companion chip on the nRF9160 DK as a Bluetooth controller.
-   The NCS sample for programming that chip (Bluetooth: HCI low power UART) was removed with nRF52 Series support.
+   This configuration uses the nRF52840 companion chip on the nRF9160 DK as a Bluetooth® LE Controller.
+   The Bluetooth: HCI low power UART sample, which programs the nRF52840, was removed from the |NCS| together with nRF52 Series support.
+   There is no supported |NCS| sample to program the companion chip for this configuration anymore.
 
 Program the main controller as follows:
 

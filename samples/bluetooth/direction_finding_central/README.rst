@@ -223,7 +223,7 @@ Testing
 
       Bluetooth initialized
       <inf> bt_hci_core: HW Platform: Nordic Semiconductor (XxXXXX)
-      <inf> bt_hci_core: HW Variant: nRF52x (XxXXXX)
+      <inf> bt_hci_core: HW Variant: nRF53x (0x0003)
       <inf> bt_hci_core: Firmware: Standard Bluetooth controller (0xXX) Version 3.0 Build X
       <inf> bt_hci_core: Identity: XX:XX:XX:XX:XX:XX (random)
       <inf> bt_hci_core: HCI: version 5.3 (XxXX) revision XxXXXX, manufacturer XxXXXX

@@ -471,6 +471,16 @@ Bluetooth samples
 
   * Updated the sample to use the :ref:`lib_dfu_target` library with the new Bluetooth LE transport to update a remote device over SMP.
 
+* Removed support for the nRF52 Series devices from the remaining Bluetooth LE samples, including (non-exhaustive):
+  direction finding, connection/isochronous time sync, LLPM, path loss monitoring, radio coex, RSSI power control, subrating, and related test targets.
+
+* Removed the Bluetooth: HCI low power UART sample, which was used to program the nRF52840 companion chip on the nRF9160 DK.
+
+* Bluetooth tests:
+
+  * Updated the ``tests/subsys/bluetooth/gatt_dm`` test to replace the ``nrf52840dk/nrf52840`` board target with ``nrf54l15dk/nrf54l15/cpuapp``.
+  * Moved the ``tests/bluetooth/bsim/custom_ltk`` test from nRF52 BabbleSim to nRF54L BabbleSim.
+
 Bluetooth Mesh samples
 ----------------------
 
