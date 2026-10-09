@@ -23,6 +23,18 @@ tests:
     harness_config:
       pytest_root:
         - "../pytest/test_kmu_provision.py"
+  nsib.mcuboot.kmu.west.provision.basic:
+    timeout: 180
+    tags:
+      - nsib
+      - kmu
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "../pytest/test_kmu_provision.py"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
   mcuboot.kmu.west_flash_default_provision:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
