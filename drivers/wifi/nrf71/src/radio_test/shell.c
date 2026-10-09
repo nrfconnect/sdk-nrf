@@ -2129,6 +2129,39 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 }
 
 
+static int nrf_wifi_radio_test_get_temperature(const struct shell *shell,
+					       size_t argc,
+					       const char *argv[])
+{
+	int32_t temp;
+
+	if (!vtf_monitoring_is_ready()) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "VTF monitoring not ready\n");
+		return -EAGAIN;
+	}
+
+	temp = vtf_snapshots[VTF_CH_DIE_TEMP].i32;
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "Temperature reading success:\n");
+	shell_fprintf(shell,
+		      SHELL_INFO,
+		      "The temperature is = %d degree Celsius\n",
+		      temp);
+
+	if (!IS_ENABLED(CONFIG_VTF_DIE_TEMP_MONITOR)) {
+		shell_fprintf(shell,
+			      SHELL_WARNING,
+			      "Live die temperature monitoring is disabled; "
+			      "value is the VTF default, not the sensor\n");
+	}
+
+	return 0;
+}
+
 static int nrf_wifi_radio_test_get_stats(const struct shell *shell,
 					 size_t argc,
 					 const char *argv[])
@@ -2458,6 +2491,12 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      NULL,
 		      "Display statistics",
 		      nrf_wifi_radio_test_get_stats,
+		      1,
+		      0),
+	SHELL_CMD_ARG(get_temperature,
+		      NULL,
+		      "Get die temperature in degree Celsius",
+		      nrf_wifi_radio_test_get_temperature,
 		      1,
 		      0),
 	SHELL_CMD_ARG(tx_pkt_cw,
