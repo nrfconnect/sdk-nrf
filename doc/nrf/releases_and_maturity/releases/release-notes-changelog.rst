@@ -999,6 +999,10 @@ Bluetooth libraries and services
       The option is enabled by default if :kconfig:option:`CONFIG_BT_HCI_VS` is enabled.
     * A vendor-specific DTM 2-wire command for constant carrier transmission.
 
+* :ref:`ancs_client_readme` library:
+
+  * Fixed an issue where the library rejected all further Control Point requests with the ``-EBUSY`` error after an app attribute request that did not fit in the Control Point buffer.
+
 Common Application Framework
 ----------------------------
 
