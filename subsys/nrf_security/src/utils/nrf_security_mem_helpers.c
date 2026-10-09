@@ -7,6 +7,13 @@
 #include <nrf_security_mem_helpers.h>
 #include <zephyr/sys/util.h>
 
+#if defined(__GNUC__) || defined(__clang__)
+#define SAFE_MEMZERO_ASM_BARRIER
+#define SAFE_MEMZERO_QUAL
+#else
+#define SAFE_MEMZERO_QUAL volatile
+#endif
+
 int constant_memcmp(const void *s1, const void *s2, size_t n)
 {
 	const volatile uint8_t *a = s1;
@@ -111,18 +118,28 @@ void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const siz
 
 void safe_memzero(void *dest, const size_t dest_size)
 {
-	/* Solution is heavily based on the sodium_memzero function here:
-	 * https://github.com/jedisct1/libsodium/blob/18fad78494956bef63db887f5a9efcc13b89e1a7/
-	 * src/libsodium/sodium/utils.c#L125
-	 * We use the fallback solution used on this project which seems to work at the moment.
-	 * We need to note that this is not a perfect solution since compilers might still manage
-	 * to ignore this memset so we might want to check that this is working if we decide to
-	 * use another compiler than GCC.
+	/* Word-wise stores once aligned. Where GNU-style inline asm is supported,
+	 * the asm statement takes dest as input and clobbers memory, so the compiler
+	 * must assume the zeroed bytes are read and cannot remove the stores. Same
+	 * approach as the inline-asm variant of sodium_memzero in libsodium.
+	 * Otherwise, fall back to volatile stores, which must not be optimized out.
 	 */
-	volatile uint8_t *volatile byte_pnt = (volatile uint8_t *volatile)dest;
-	size_t i = (size_t)0U;
+	SAFE_MEMZERO_QUAL uint8_t *p = dest;
+	size_t n = dest_size;
 
-	for (; i < dest_size; i++) {
-		byte_pnt[i] = 0U;
+	for (; (n > 0U) && (((uintptr_t)p & 3U) != 0U); n--) {
+		*p++ = 0U;
 	}
+
+	for (; n >= sizeof(uint32_t); n -= sizeof(uint32_t), p += sizeof(uint32_t)) {
+		*(SAFE_MEMZERO_QUAL uint32_t *)p = 0U;
+	}
+
+	for (; n > 0U; n--) {
+		*p++ = 0U;
+	}
+
+#ifdef SAFE_MEMZERO_ASM_BARRIER
+	__asm__ volatile("" : : "r"(dest) : "memory");
+#endif
 }

@@ -162,7 +162,7 @@ static psa_status_t compute_w1_encoded(const ml_dsa_params_t *alg_params, const 
 			 *  tmp = A * NTT(signers_response)
 			 */
 			cracen_ml_dsa_multiply_ntt(&tmp, &tmp, &signers_response[column_s]);
-			cracen_ml_dsa_add_ntt(&acc, &acc, &tmp);
+			cracen_ml_dsa_add_ntt(&acc, &tmp);
 		}
 
 		/** The public key polynomial received from signer (t1) contains
@@ -178,7 +178,7 @@ static psa_status_t compute_w1_encoded(const ml_dsa_params_t *alg_params, const 
 		cracen_ml_dsa_multiply_ntt(&tmp, verifiers_challenge, &pk_polynomial[row_r]);
 
 		/* Calculating acc = w'Approx: */
-		cracen_ml_dsa_subtract_ntt(&acc, &acc, &tmp);
+		cracen_ml_dsa_subtract_ntt(&acc, &tmp);
 		cracen_ml_dsa_ntt_inversed(&acc);
 
 		/* FIPS 204, algorithm 40 (UseHint) for a single row of a matrix A */
