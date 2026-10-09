@@ -758,6 +758,25 @@ config NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	  Enable this configuration to disable priority window for scan
 	  in the case of coexistence with Short Range radio.
 
+config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
+	int "BT grant time during Wi-Fi scan (milliseconds)"
+	default 0
+	range 0 10000
+	help
+	  Time in milliseconds that Bluetooth coexistence logic attempts to
+	  allocate between Wi-Fi scan channel operations. Applies to 2.4 GHz scan.
+	  Use 0 for the firmware default (no explicit grant time).
+
+config NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
+	int "BT grant tolerance time during Wi-Fi scan (milliseconds)"
+	default 0
+	range 0 10000
+	help
+	  Maximum time in milliseconds Wi-Fi may operate without a BT grant during
+	  scan before Bluetooth access is required. Applies to 2.4 GHz scan.
+	  Minimum effective value when non-zero is 30 ms. Use 0 for the firmware
+	  default (no explicit tolerance).
+
 if NETWORKING
 
 config NRF_WIFI_ZERO_COPY_TX
