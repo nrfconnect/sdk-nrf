@@ -1023,6 +1023,7 @@ DFU libraries
 * :ref:`lib_dfu_target` library:
 
   * Added an experimental Bluetooth LE transport for the SMP backend.
+  * Clear the last page of the flash area when scheduling an update in case a previous image was marked as BAD.
 
 Gazell libraries
 ----------------
