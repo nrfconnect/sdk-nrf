@@ -31,8 +31,9 @@
 #define WPA3_PSA_MAX_COMMIT_LEN	 1024
 #define WPA3_PSA_MAX_CONFIRM_LEN 1024
 /* SAE commit: wire = [group(2)][scalar(32)][element(64)]; PSA/Oberon = [scalar][element] */
-#define WPA3_PSA_SAE_COMMIT_WIRE_LEN 98
+#define WPA3_PSA_SAE_GROUP_LEN       2
 #define WPA3_PSA_SAE_COMMIT_PSA_LEN  96
+#define WPA3_PSA_SAE_COMMIT_WIRE_LEN (WPA3_PSA_SAE_GROUP_LEN + WPA3_PSA_SAE_COMMIT_PSA_LEN)
 #define WPA3_PSA_SAE_GROUP_19        19
 #define WPA3_PSA_MAX_PT_PASSWORD_MAP 8
 /* Password Identifier element length octet also covers the Element ID Extension */
@@ -402,7 +403,7 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 		scalar_elem = op->local_commit;
 	} else if (op->local_commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
 		group = WPA_GET_LE16(op->local_commit);
-		scalar_elem = op->local_commit + 2;
+		scalar_elem = op->local_commit + WPA3_PSA_SAE_GROUP_LEN;
 	} else {
 		wpa_printf(MSG_DEBUG,
 			   "WPA3-PSA: Commit data wrong size (%zu bytes, expected %d or %d)",
@@ -479,6 +480,19 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 	/* SAE commit on wire is 98 bytes: [group][scalar][element] */
 	if (len != WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
 		return WLAN_STATUS_UNSPECIFIED_FAILURE;
+	}
+
+	/*
+	 * A peer commit carrying our own scalar and element is a reflection
+	 * attack. Discard it before it reaches PSA, which would otherwise
+	 * accept it and derive a confirm.
+	 */
+	if (op->local_commit_len >= WPA3_PSA_SAE_COMMIT_PSA_LEN &&
+	    os_memcmp(data + WPA3_PSA_SAE_GROUP_LEN,
+		      op->local_commit + op->local_commit_len - WPA3_PSA_SAE_COMMIT_PSA_LEN,
+		      WPA3_PSA_SAE_COMMIT_PSA_LEN) == 0) {
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Peer commit reflects own commit, discarding");
+		return SAE_SILENTLY_DISCARD;
 	}
 
 	/* Store the full commit message for PSA processing */
@@ -1509,7 +1523,7 @@ static int wpa3_psa_process_commit(struct wpa3_psa_operation *op, const u8 *comm
 
 	/* Wire format is 98 bytes [group][scalar][element]; PSA expects 96 [scalar][element] */
 	if (commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
-		commit_data += 2;
+		commit_data += WPA3_PSA_SAE_GROUP_LEN;
 		commit_len = WPA3_PSA_SAE_COMMIT_PSA_LEN;
 	} else if (commit_len != WPA3_PSA_SAE_COMMIT_PSA_LEN) {
 		wpa_printf(MSG_DEBUG,
