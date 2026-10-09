@@ -11,9 +11,11 @@ Installing the |NCS|
    :local:
    :depth: 2
 
-Complete the following steps to install the latest stable release of the |NCS| in |VSC| in the :ref:`requirements_nrfvsc`:
+The recommended method to install the |NCS| is to use the nRF Connect extension in |VSC| and install the latest stable release of the |NCS|.
 
-1. Install available updates for your operating system to make sure it supports the |NCS| firmware:
+Complete the following steps:
+
+1. Install available updates for your operating system to make sure it supports the |NCS| firmware.
 
    .. toggle:: Supported operating systems
       :custom-hints:
@@ -24,14 +26,6 @@ Complete the following steps to install the latest stable release of the |NCS| i
 
 2. Install the latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
 3. Install the latest version of nRF Connect for VS Code by using `this direct link <start VS Code walkthrough_>`_.
-
-   .. toggle:: Installing from Open VSX Registry
-      :custom-hints:
-
-      You can also use a different IDE compatible with the VSIX format and install the full set of extensions from the `Open VSX Registry`_.
-      However, Nordic Semiconductor does not test editors other than |VSC| for compatibility with |nRFVSC|.
-      While you are encouraged to report any issues you encounter on `DevZone`_, issues discovered in editors other than |VSC| and not reproducible in |VSC| will not be prioritized.
-
 4. Click the following button to install the latest stable |NCS| release (|release|):
 
    .. ncs-install-vscode::
@@ -52,38 +46,12 @@ Complete the following steps to install the latest stable release of the |NCS| i
    .. toggle:: Installing manually
       :custom-hints:
 
-      If you prefer to install the toolchain and the SDK in |VSC| manually, complete the following steps:
+      If you prefer, you can install the toolchain and the SDK in |VSC| manually.
+      Follow the steps in the `extension get started guides <How to install the extension_>`_.
+      For a more guided installation approach, see the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
 
-      1. Open the nRF Connect extension in |VSC| by clicking its icon in the :guilabel:`Activity Bar`.
-         The extension loads and the `Welcome View`_ appears with two buttons: :guilabel:`Install SDK` and :guilabel:`Install Toolchain`.
-      #. Click on :guilabel:`Install SDK`.
-      #. Select the region for download.
-
-         You only need to select the region for downloads once.
-         The selected region applies to all future SDK and toolchain downloads.
-         You can later change it in the |VSC| settings.
-
-         The list of available SDK types appears.
-
-      #. Select :guilabel:`nRF Connect SDK`.
-         The list of available stable versions for the |NCS| appears in the |VSC|'s quick pick, grouped into two categories:
-
-         * :guilabel:`Pre-packaged SDKs & Toolchains` - Available on the Nordic Semiconductor server.
-           The package downloads both the SDK and toolchain, but skips the toolchain if you have it already installed.
-           Available mostly for stable releases and some Git tags.
-           Recommended for faster and more reliable download and installation.
-         * :guilabel:`GitHub` - Taken from the `nRF Connect by Nordic Semiconductor GitHub organization <nrfconnect GitHub organization_>`_.
-           Available for stable releases, but also Git tags and branches.
-
-      #. Select an |NCS| version to install from the :guilabel:`Pre-packaged SDKs & Toolchains` category.
-         |install_latest_version|
-
-      The SDK and toolchain installation starts and it can take several minutes.
-      You can follow the progress in the notification that appears.
-
-      After the installation is complete, the extension's :guilabel:`Welcome View` is updated to feature :guilabel:`Manage toolchains` and :guilabel:`Manage SDKs` menus.
-      You can use these menus to install other versions of the |NCS| and toolchain, either together or separately.
-      See the `extension documentation <How to set up SDK and toolchain_>`_ for more information.
+After the installation is complete, the extension's :guilabel:`Welcome View` is updated to feature :guilabel:`Manage toolchains` and :guilabel:`Manage SDKs` menus.
+You can use these menus to install other versions of the |NCS| and toolchain, either together or separately.
 
 You now have everything that is required by Zephyr's :ref:`zephyr:getting_started` together with additional tools and Python dependencies that the |NCS| uses.
 
@@ -106,9 +74,6 @@ With the default locations to install the SDK code (:file:`C:/ncs` on Windows, :
 In this simplified structure preview, *<toolchain-installation>* corresponds to the toolchain version (most commonly, a SHA) and *<west-workspace>* corresponds to the SDK version name.
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
-
-.. note::
-    Using |VSC| and |nRFVSC| is also covered in the `Installing nRF Connect SDK and VS Code`_ exercise of the `nRF Connect SDK Fundamentals course`_ on Nordic Developer Academy.
 
 .. _gs_installing_tools:
 .. _cloning_the_repositories_win:

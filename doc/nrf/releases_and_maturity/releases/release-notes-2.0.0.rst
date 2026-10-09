@@ -1081,7 +1081,7 @@ Documentation
 * Removed:
 
   * Documentation on the Getting Started Assistant, as this tool is no longer in use.
-    Linux users can install the |NCS| by using the `Installing using Visual Studio Code <Installing on Linux_>`_ instructions or by following the steps on the :ref:`gs_installing` page.
+    Linux users can install the |NCS| by using the :ref:`install_ncs` instructions or by following the steps on the :ref:`gs_installing` page.
   * Documentation on the SEGGER Embedded Studio, as this tool will no longer be supported moving forward.
     The previous |NCS| releases still support SEGGER Embedded Studio (Nordic edition).
     To migrate from SEGGER Embedded Studio IDE or on the command line to |VSC|, use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
