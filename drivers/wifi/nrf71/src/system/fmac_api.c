@@ -589,6 +589,10 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	scan_cmd->umac_hdr.ids.wdev_id = if_idx;
 	scan_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
 
+	scan_info->scan_params.bt_grant_time = CONFIG_NRF_WIFI_SCAN_BT_GRANT_TIME_MS;
+	scan_info->scan_params.bt_grant_tolerance_time =
+		CONFIG_NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS;
+
 	nrf_wifi_mem_cpy(&scan_cmd->info,
 			      scan_info,
 			      (sizeof(scan_cmd->info) + channel_info_len));
