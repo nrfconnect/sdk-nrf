@@ -11,6 +11,7 @@
 #include <stdlib.h>
 
 #include <mpsl.h>
+#include <mpsl_log_types.h>
 #include "mpsl_log_config.h"
 
 /*
@@ -28,24 +29,12 @@
  * - Library message tables are sorted by id in ascending order.
  */
 
-struct mpsl_log_msg_row {
-	uint16_t id;
-	uint8_t level;
-	const char *fmt;
-};
-
 #if defined(CONFIG_MPSL_LOG)
 #include "mpsl_log_msg.h"
-#define MPSL_LOG_LIB_ID_MPSL   0U /* MPSL library id */
-BUILD_ASSERT(sizeof(mpsl_log_msgs[0]) == sizeof(struct mpsl_log_msg_row));
-static const char mpsl_lib_name[] = "MPSL";
 #endif
 
 #if defined(CONFIG_BT_CTLR_SDC_LOG)
 #include "sdc_log_msg.h"
-#define MPSL_LOG_LIB_ID_SDC    1U /* SDC library id */
-BUILD_ASSERT(sizeof(sdc_log_msgs[0]) == sizeof(struct mpsl_log_msg_row));
-static const char sdc_lib_name[] = "SDC";
 #endif
 
 LOG_MODULE_REGISTER(mpsl_log, CONFIG_MPSL_LOG_PRINT_LEVEL);
@@ -66,7 +55,7 @@ K_MSGQ_DEFINE(mpsl_log_msgq, sizeof(struct mpsl_log_entry), CONFIG_MPSL_LOG_FIFO
 static int mpsl_log_id_cmp(const void *key, const void *elem)
 {
 	uint16_t id = *(const uint16_t *)key;
-	const struct mpsl_log_msg_row *entry = elem;
+	const mpsl_log_msg_entry_t *entry = elem;
 
 	if (id < entry->id) {
 		return -1;
@@ -79,7 +68,7 @@ static int mpsl_log_id_cmp(const void *key, const void *elem)
 
 static void mpsl_log_print(const struct mpsl_log_entry *entry)
 {
-	const struct mpsl_log_msg_row *msg = NULL;
+	const mpsl_log_msg_entry_t *msg = NULL;
 	char line[MPSL_LOG_LINE_BUF_SIZE];
 	const char *lib_name = NULL;
 
@@ -88,15 +77,15 @@ static void mpsl_log_print(const struct mpsl_log_entry *entry)
 
 	switch (lib_id) {
 #if defined(CONFIG_MPSL_LOG)
-	case MPSL_LOG_LIB_ID_MPSL:
-		lib_name = mpsl_lib_name;
+	case MPSL_LOG_MSGS_LIB_ID:
+		lib_name = MPSL_LOG_MSGS_LIB_NAME;
 		msg = bsearch(&msg_id, mpsl_log_msgs, ARRAY_SIZE(mpsl_log_msgs) - 1,
 			      sizeof(mpsl_log_msgs[0]), mpsl_log_id_cmp);
 		break;
 #endif
 #if defined(CONFIG_BT_CTLR_SDC_LOG)
-	case MPSL_LOG_LIB_ID_SDC:
-		lib_name = sdc_lib_name;
+	case SDC_LOG_MSGS_LIB_ID:
+		lib_name = SDC_LOG_MSGS_LIB_NAME;
 		msg = bsearch(&msg_id, sdc_log_msgs, ARRAY_SIZE(sdc_log_msgs) - 1,
 			      sizeof(sdc_log_msgs[0]), mpsl_log_id_cmp);
 		break;
