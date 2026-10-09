@@ -74,3 +74,11 @@ module-str = caf module BLE state
 source "subsys/logging/Kconfig.template.log_config"
 
 endif # CAF_BLE_STATE
+
+config CAF_BLE_STATE_SUPPORTED
+	bool
+	default y if CAF_BLE_STATE
+	help
+	  Kconfig option used to inform that Bluetooth LE state functionality is supported by the
+	  application. This option must be selected by Kconfig option that enables Bluetooth LE
+	  state support.

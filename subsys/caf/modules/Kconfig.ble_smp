@@ -7,7 +7,7 @@
 menuconfig CAF_BLE_SMP
 	bool "SMP over Bluetooth LE module"
 	select CAF_BLE_SMP_TRANSFER_EVENTS
-	depends on CAF_BLE_STATE
+	depends on CAF_BLE_STATE_SUPPORTED
 	depends on MCUMGR_MGMT_NOTIFICATION_HOOKS
 	depends on MCUMGR_GRP_IMG_UPLOAD_CHECK_HOOK
 	depends on MCUMGR_GRP_IMG
