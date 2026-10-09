@@ -50,7 +50,8 @@ The HPF MSPI snippet reserves ``sram_tx`` and ``sram_rx`` regions for ICMsg pack
 With the default ``HPF_MSPI_IPC_NO_COPY`` enabled, ICMsg does not copy transfer payloads into these regions.
 It carries only a pointer to the application memory, and the FLPR reply is a 4-byte opcode.
 The FLPR accesses the data by reference and requires it to be word-aligned.
-Data in an unaligned buffer is copied through a 256-byte bounce buffer on the stack of the calling thread, so unaligned transfers are limited to 256 bytes.
+The FLPR requires word-aligned data passed by reference. On the application core, set ``MSPI_HPF_UNALIGNED_XFER`` to allow unaligned buffers: data is then copied
+through a bounce buffer on the stack of the calling thread. With ``MSPI_HPF_UNALIGNED_XFER`` disabled, buffer with data must be word-aligned.
 The regions must still meet the minimum ICMsg pbuf size, which is 128 bytes in each direction in the snippet.
 
 With ``HPF_MSPI_IPC_NO_COPY`` disabled, TX and RX data are copied through the shared regions, and each copy must fit every buffer on its way.
