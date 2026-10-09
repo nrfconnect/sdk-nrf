@@ -10,7 +10,7 @@ toolchain:
   - xtools
   - zephyr
 sysbuild: true
-ram: 320
+ram: 356
 flash: 652
 supported:
   - adc
