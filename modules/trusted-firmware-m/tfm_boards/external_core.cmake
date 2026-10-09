@@ -19,7 +19,6 @@ endif()
 # This file is renamed to spe/CMakeList.txt during installation phase
 #
 if(TARGET tfm_api_ns)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_API_NS True)
     target_include_directories(tfm_api_ns
             PUBLIC
                     ${ZEPHYR_OBERON_PSA_CRYPTO_MODULE_DIR}/include
@@ -28,7 +27,6 @@ if(TARGET tfm_api_ns)
 endif()
 
 if(TARGET psa_interface)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_INTERFACE True)
     include(${NRF_SECURITY_DIR}/cmake/psa_interface_include_directories.cmake)
 endif()
 
@@ -36,7 +34,6 @@ endif()
 
 # Configurations files for the users of the client interface
 if(TARGET psa_crypto_config)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_CONFIG True)
     target_compile_definitions(psa_crypto_config
         INTERFACE
             TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
@@ -56,7 +53,6 @@ endif()
 
 # This defines the configuration files for the users of the library directly
 if(TARGET psa_crypto_library_config)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_PSA_CRYPTO_LIBRARY_CONFIG True)
     target_compile_definitions(psa_crypto_library_config
         INTERFACE
             TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
@@ -79,7 +75,6 @@ if(TARGET psa_crypto_library_config)
 endif()
 
 if(TARGET tfm_psa_rot_partition_crypto)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_PSA_ROT_PARTITION_CRYPTO True)
     target_link_libraries(tfm_psa_rot_partition_crypto
         PRIVATE
             psa_crypto_library_config
@@ -97,7 +92,6 @@ if(TARGET ${MBEDTLS_TARGET_PREFIX}mbedcrypto)
 endif()
 
 if(TARGET tfm_sprt)
-    set(EXTERNAL_CRYPTO_CORE_HANDLED_TFM_SPRT True)
     target_compile_definitions(tfm_sprt
         PRIVATE
             TF_PSA_CRYPTO_CONFIG_FILE="${CONFIG_TF_PSA_CRYPTO_CONFIG_FILE}"
