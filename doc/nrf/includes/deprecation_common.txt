@@ -1,0 +1,5 @@
+All deprecated features and APIs must be notified through Kconfig.
+When a deprecated Kconfig option is enabled, the build system generates a warning.
+Following :ref:`Zephyr's guidelines for API lifecycle <zephyr:api_lifecycle>`, the API documentation informs about the deprecation, and attempts to use a deprecated API at build time log a warning to the console.
+
+Nordic Semiconductor recommends that you do not use deprecated |NCS| or Zephyr APIs and features in new designs.
