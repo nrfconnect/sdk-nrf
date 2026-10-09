@@ -15,8 +15,8 @@ Complete the following steps to install the latest stable release of the |NCS| i
 
 1. Install available updates for your operating system to make sure it supports the |NCS| firmware:
 
-   .. admonition:: Installing from Open VSX Registry
-      :class: dropdown
+   .. toggle:: Supported operating systems
+      :custom-hints:
 
       .. include:: ./recommended_versions.rst
          :start-after: os_table_start
@@ -25,8 +25,8 @@ Complete the following steps to install the latest stable release of the |NCS| i
 2. Install the latest version of |VSC| for your operating system from the `Visual Studio Code download page`_.
 3. Install the latest version of nRF Connect for VS Code by using `this direct link <start VS Code walkthrough_>`_.
 
-   .. admonition:: Installing from Open VSX Registry
-      :class: dropdown
+   .. toggle:: Installing from Open VSX Registry
+      :custom-hints:
 
       You can also use a different IDE compatible with the VSIX format and install the full set of extensions from the `Open VSX Registry`_.
       However, Nordic Semiconductor does not test editors other than |VSC| for compatibility with |nRFVSC|.
@@ -41,6 +41,7 @@ Complete the following steps to install the latest stable release of the |NCS| i
    You can follow the progress in the notification that appears in |VSC|.
 
    .. toggle:: What latest stable release means
+      :custom-hints:
 
       The latest stable release is the latest release tag in the `sdk-nrf`_ repository that is not a release candidate (``*-rc``) or a preview tag (``*-preview``).
       For each version of the |NCS|, Nordic Semiconductor provides a dedicated :ref:`requirements_toolchain`.
@@ -49,6 +50,7 @@ Complete the following steps to install the latest stable release of the |NCS| i
       For more information about the development and release model, see the :ref:`dm_code_base` and :ref:`ncs_release_model` pages, respectively.
 
    .. toggle:: Installing manually
+      :custom-hints:
 
       If you prefer to install the toolchain and the SDK in |VSC| manually, complete the following steps:
 
@@ -164,6 +166,7 @@ Complete the following steps:
 3. Install the latest stable |NCS| code and toolchain by completing the following steps:
 
    .. toggle:: What latest stable release means
+      :custom-hints:
 
       The latest stable release is the latest release tag in the `sdk-nrf`_ repository that is not a release candidate (``*-rc``) or a preview tag (``*-preview``).
       For each version of the |NCS|, Nordic Semiconductor provides a dedicated :ref:`requirements_toolchain`.
