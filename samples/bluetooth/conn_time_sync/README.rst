@@ -27,7 +27,7 @@ Overview
 ********
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       The Central and Peripheral devices toggle **LED 2** synchronously and within a few microseconds of one another.
 
@@ -97,17 +97,17 @@ See the following equations:
 Hardware resource usage
 =======================
 
-This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF52 or nRF53 Series devices.
+This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF53 Series devices.
 On an nRF54L Series device, only one GRTC channel and one PPI channel are needed to set up accurate toggling of an LED.
 On an nRF54H Series device, two local DPPI channels are used to connect the GRTC and the LED to the local PPIB instances.
 A PPIB channel is used to connect the two PPIB instances.
-On nRF52 and nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
+On nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
 
 User interface
 **************
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 2:
          Blinks simultaneously on all devices after synchronization takes place.
@@ -150,15 +150,16 @@ The result should look similar to the following output:
      Choose device role - type c (central) or p (peripheral):
      Central. Starting scanning
      I: SoftDevice Controller build revision:
-     I: 43 77 a9 de 2d 55 e0 08 |Cw..-U..
-     I: 0a c7 0f e5 07 18 61 5b |......a[
-     I: 72 dd e6 08             |r...
+     I: 2e 0b 04 cf 06 5e 2e 8f |.....^..
+     I: a8 14 89 4d b6 1b 7a 8c |...M..z.
+     I: d4 e4 bb 1f             |....
      I: HW Platform: Nordic Semiconductor (0x0002)
-     I: HW Variant: nRF52x (0x0002)
-     I: Firmware: Standard Bluetooth controller (0x00) Version 67.43383 Build 3763678686
+     I: HW Variant: nRF54Lx (0x0005)
+     I: Firmware: Standard Bluetooth controller (0x00) Version 46.1035 Build 777914063
+     I: HCI transport: SDC
      I: Identity: E8:DC:8D:B3:47:69 (random)
-     I: HCI: version 5.4 (0x0d) revision 0x1208, manufacturer 0x0059
-     I: LMP: version 5.4 (0x0d) subver 0x1208
+     I: HCI: version 6.3 (0x11) revision 0x306a, manufacturer 0x0059
+     I: LMP: version 6.3 (0x11) subver 0x306a
      Scanning started
      Device found: CF:99:32:A5:4B:11 (random) (RSSI -26)
      Connected: CF:99:32:A5:4B:11 (random)
@@ -188,15 +189,16 @@ The result should look similar to the following output:
      Choose device role - type c (central) or p (peripheral):
      Peripheral. Starting advertising
      I: SoftDevice Controller build revision:
-     I: 43 77 a9 de 2d 55 e0 08 |Cw..-U..
-     I: 0a c7 0f e5 07 18 61 5b |......a[
-     I: 72 dd e6 08             |r...
+     I: 2e 0b 04 cf 06 5e 2e 8f |.....^..
+     I: a8 14 89 4d b6 1b 7a 8c |...M..z.
+     I: d4 e4 bb 1f             |....
      I: HW Platform: Nordic Semiconductor (0x0002)
-     I: HW Variant: nRF52x (0x0002)
-     I: Firmware: Standard Bluetooth controller (0x00) Version 67.43383 Build 3763678686
+     I: HW Variant: nRF54Lx (0x0005)
+     I: Firmware: Standard Bluetooth controller (0x00) Version 46.1035 Build 777914063
+     I: HCI transport: SDC
      I: Identity: FA:BB:79:57:D6:45 (random)
-     I: HCI: version 5.4 (0x0d) revision 0x1208, manufacturer 0x0059
-     I: LMP: version 5.4 (0x0d) subver 0x1208
+     I: HCI: version 6.3 (0x11) revision 0x306a, manufacturer 0x0059
+     I: LMP: version 6.3 (0x11) subver 0x306a
      Advertising started
      Connected: E8:DC:8D:B3:47:69 (random)
      Received: c_anchor point (time=22347336, counter=16), c_trigger_time 22396862, value 0

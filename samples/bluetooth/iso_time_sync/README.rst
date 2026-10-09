@@ -33,7 +33,7 @@ The sample demonstrates the following features:
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       This sample configures a single device as a transmitter of its **Button 1** state.
       The transmitting and receiving devices toggle **LED 2** synchronously with the accuracy of a few microseconds.
@@ -48,12 +48,12 @@ The sample demonstrates the following features:
       This allows you to measure the minimal end-to-end latency.
 
 .. note::
-   This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF52 or nRF53 Series devices.
+   This sample requires fewer hardware resources when it is run on an nRF54 Series device compared to the nRF53 Series devices.
 
    * On an nRF54L Series device, only one GRTC channel and one DPPI channel are needed to set up accurate toggling of an LED.
    * On an nRF54H Series device, only one GRTC channel and two local DPPI channels are needed to connect the GRTC and the LED to the local PPIB instances.
      Additionally, a PPIB channel is used to connect the two PPIB instances.
-   * On nRF52 and nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
+   * On nRF53 Series devices, you need one RTC peripheral, one TIMER peripheral, one EGU channel, four PPI channels, and one PPI group.
 
 Configuration
 *************
@@ -68,7 +68,7 @@ Check and configure the following Kconfig options:
 .. _CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE:
 
 CONFIG_LED_TOGGLE_IMMEDIATELY_ON_SEND_OR_RECEIVE
-   This configuration option enables immediate toggling of **LED 1** (nRF52 and nRF53 DKs) or **LED 0** (nRF54 DKs) when isochronous data is sent or received.
+   This configuration option enables immediate toggling of **LED 1** (nRF53 DKs) or **LED 0** (nRF54 DKs) when isochronous data is sent or received.
    It allows for measurement of the minimum end-to-end latency.
 
 .. _CONFIG_SDU_INTERVAL_US:
@@ -133,7 +133,7 @@ The sample code is divided into multiple source files, which makes it easier to 
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
     ``main.c``
       The main entry point of the sample allows you to select the role and parameters to be used.
@@ -207,7 +207,7 @@ The sample code is divided into multiple source files, which makes it easier to 
       The SDU timestamps sent to and received from the controller are based upon the controller clock.
       These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
 
-      The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
+      The implementation for nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
       The implementation for nRF54 Series devices uses the GRTC and is simpler to use.
 
    .. group-tab:: nRF54 DKs
@@ -284,7 +284,7 @@ The sample code is divided into multiple source files, which makes it easier to 
       The SDU timestamps sent to and received from the controller are based upon the controller clock.
       These files allow the application to read the current timestamp and set up a PPI trigger at a given point in time.
 
-      The implementation for nRF52 and nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
+      The implementation for nRF53 Series devices is implemented by shadowing an RTC peripheral combined with a timer peripheral.
       The implementation for nRF54 Series devices uses the GRTC and is simpler to use.
 
 Building and running
@@ -306,7 +306,7 @@ After programming the sample to the development kits, perform the following step
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kits.
@@ -339,7 +339,7 @@ After programming the sample to the development kits, perform the following step
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kits.
@@ -375,7 +375,7 @@ Observe time-synchronized ISO data processing
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       When you press **Button 1** on the transmitting device, you can observe that **LED 2** toggles simultaneously on all devices.
       To observe the accurate toggling, use a logic analyzer or an oscilloscope.
