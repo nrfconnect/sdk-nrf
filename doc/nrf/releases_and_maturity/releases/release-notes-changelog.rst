@@ -1112,6 +1112,7 @@ DFU libraries
 
   * Added an experimental Bluetooth LE transport for the SMP backend.
   * Removed the deprecated ``CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`` Kconfig symbol.
+  * Updated the library to clear the last page of the flash area when scheduling an update, in case the page contains leftover data from a previous operation.
 
 Gazell libraries
 ----------------
