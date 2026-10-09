@@ -209,9 +209,7 @@ void nrf_wifi_off_raw_tx_deinit(void)
 	k_spinlock_key_t key;
 	struct nrf_wifi_off_raw_tx_drv_ctx *drv_ctx = &off_raw_tx_drv_priv.drv_ctx;
 	struct nrf_wifi_fmac_priv *fmac_priv;
-	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	void *rpu_ctx;
-	int i;
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 
@@ -221,8 +219,6 @@ void nrf_wifi_off_raw_tx_deinit(void)
 	drv_ctx->rpu_ctx = NULL;
 	drv_ctx->tx_started = false;
 
-	memcpy(phy_rf_params_addr, drv_ctx->phy_rf_params_addr,
-	       sizeof(phy_rf_params_addr));
 	memset(drv_ctx->phy_rf_params_addr, 0, sizeof(drv_ctx->phy_rf_params_addr));
 
 	/* vtf_snapshots is static, not heap: never free. */
@@ -237,13 +233,6 @@ void nrf_wifi_off_raw_tx_deinit(void)
 
 	if (fmac_priv) {
 		nrf_wifi_fmac_deinit(fmac_priv);
-	}
-
-	for (i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		if (phy_rf_params_addr[i]) {
-			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-					  (void *)phy_rf_params_addr[i]);
-		}
 	}
 }
 

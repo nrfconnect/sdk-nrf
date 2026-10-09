@@ -95,6 +95,8 @@ if(CONFIG_NRF71_SYSTEM_MODE OR CONFIG_NRF71_STA_MODE)
   zephyr_library_sources(src/system/wifi_mgmt.c)
 endif()
 
+zephyr_library_sources(src/system/wifi_pm.c)
+
 zephyr_library_sources_ifdef(CONFIG_NRF71_STA_MODE
   src/system/wpa_supp_if.c
 )
