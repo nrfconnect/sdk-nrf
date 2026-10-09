@@ -423,7 +423,7 @@ Drivers
     The following samples related to this driver were also added:
 
     * :ref:`lpuart_sample` - This sample demonstrates the capabilities of the low power UART driver module.
-    * Bluetooth: HCI low power UART sample - This sample demonstrates using the low power UART driver for HCI UART communication.
+    * :ref:`bluetooth-hci-lpuart-sample` - This sample demonstrates using the low power UART driver for HCI UART communication.
 
 NFC
 ---

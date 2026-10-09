@@ -439,10 +439,17 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
-* :ref:`central_nfc_pairing` and :ref:`peripheral_nfc_pairing` samples:
+* Removed:
 
-  * Removed support for the nRF52 Series devices.
+  * Support for the nRF52 Series devices in all the Bluetooth LE samples and their related test targets that had the support.
+  * The Bluetooth: HCI low power UART sample, which was used to program the nRF52840 companion chip on the nRF9160 DK.
+
+* Bluetooth tests:
+
+  * Updated the ``tests/subsys/bluetooth/gatt_dm`` test to replace the ``nrf52840dk/nrf52840`` board target with ``nrf54l15dk/nrf54l15/cpuapp``.
+  * Moved the ``tests/bluetooth/bsim/custom_ltk`` test from nRF52 BabbleSim to nRF54L BabbleSim.
+
+* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
@@ -451,8 +458,6 @@ Bluetooth samples
 * :ref:`bluetooth_central_hids`, :ref:`peripheral_hids_keyboard`, and :ref:`peripheral_hids_mouse` samples:
 
   * Added support for the ``nrf54lc10dk/nrf54lc10a/cpuapp``, ``nrf54ls05dk/nrf54ls05a/cpuapp``, and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
-
-  * Removed support for the nRF52 Series devices.
 
 * :ref:`peripheral_hids_mouse` sample:
 
@@ -470,16 +475,6 @@ Bluetooth samples
 * :ref:`bluetooth_central_dfu_smp` sample:
 
   * Updated the sample to use the :ref:`lib_dfu_target` library with the new Bluetooth LE transport to update a remote device over SMP.
-
-* Removed support for the nRF52 Series devices from the remaining Bluetooth LE samples, including (non-exhaustive):
-  direction finding, connection/isochronous time sync, LLPM, path loss monitoring, radio coex, RSSI power control, subrating, and related test targets.
-
-* Removed the Bluetooth: HCI low power UART sample, which was used to program the nRF52840 companion chip on the nRF9160 DK.
-
-* Bluetooth tests:
-
-  * Updated the ``tests/subsys/bluetooth/gatt_dm`` test to replace the ``nrf52840dk/nrf52840`` board target with ``nrf54l15dk/nrf54l15/cpuapp``.
-  * Moved the ``tests/bluetooth/bsim/custom_ltk`` test from nRF52 BabbleSim to nRF54L BabbleSim.
 
 Bluetooth Mesh samples
 ----------------------
