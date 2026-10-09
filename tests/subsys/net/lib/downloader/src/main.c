@@ -2441,6 +2441,87 @@ void test_downloader_get_coap_unauthorized_response(void)
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
+/* A socket that was never opened must not be closed. The transport state starts zeroed, and
+ * 0 is a valid descriptor that may belong to the application.
+ */
+static void check_no_close_without_socket(const char *url)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_enetunreach;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+
+	err = downloader_get(&dl, &dl_host_cfg, url, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+
+	TEST_ASSERT_EQUAL(0, z_impl_zsock_socket_fake.call_count);
+	TEST_ASSERT_EQUAL(0, z_impl_zsock_close_fake.call_count);
+}
+
+void test_downloader_coap_no_close_without_socket(void)
+{
+	check_no_close_without_socket(COAP_URL);
+}
+
+void test_downloader_http_no_close_without_socket(void)
+{
+	check_no_close_without_socket(HTTP_URL);
+}
+
+static int auth_cb_fail(int sock)
+{
+	return -EACCES;
+}
+
+/* When the auth callback fails after the socket was connected, the transport must close the
+ * socket. Otherwise the descriptor is lost when the next download resets the transport state.
+ */
+void test_downloader_get_coap_auth_cb_fail_closes_socket(void)
+{
+	int err;
+	struct downloader_evt evt;
+	struct downloader_host_cfg host_cfg = {
+		.pdn_id = 1,
+		.auth_cb = auth_cb_fail,
+	};
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+
+	err = downloader_get(&dl, &host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-EACCES, evt.error);
+
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_close_fake.call_count);
+	TEST_ASSERT_EQUAL(FD, z_impl_zsock_close_fake.arg0_val);
+
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+
+	/* The socket is not closed a second time on deinit. */
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_close_fake.call_count);
+}
+
 /* Resuming from an offset that is not a multiple of the block size, such as the offset
  * stored by the modem for a delta image, must request the block that contains the
  * offset and deliver only the part of it that was not downloaded yet.
