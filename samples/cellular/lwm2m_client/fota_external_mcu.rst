@@ -35,7 +35,7 @@ The sample supports firmware update from the nRF9160 to nRF52840.
 External FOTA SMP adds a new instance to the Advanced FOTA object and registers that to the device management server.
 
 Some additional :ref:`overlay files <overlay_advanced_fw_object>` need to be included in the sample configuration for evaluating LwM2M Advanced Firmware Update for external MCU.
-For the purpose of evaluating, the :ref:`smp_svr` sample is used.
+For the purpose of evaluating, the SMP Server sample from a previous release is used.
 It is a reference implementation that uses MCUboot recovery mode or serial SMP server mode to allow image update.
 
 Verifying image update
@@ -51,7 +51,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
       export COIOTE_PASSWD='my-password'
       export COIOTE_USER='my-username'
 
-#. Build the :ref:`smp_svr` sample and flash it to the nRF9160 DK after making sure that the **PROG/DEBUG** switch is set to **nRF52**.
+#. Build the SMP Server sample from a previous release and flash it to the nRF9160 DK after making sure that the **PROG/DEBUG** switch is set to **nRF52**.
 
    .. code-block:: console
 
