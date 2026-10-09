@@ -20,6 +20,7 @@
 #include <common/wifi_ipc.h>
 #include <system/fmac_api.h>
 #include <system/fmac_peer.h>
+#include <system/core.h>
 #include <system/fmac_tx.h>
 #include <common/util.h>
 #include <zephyr/kernel.h>
@@ -728,9 +729,11 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
-	if (!nrf_wifi_nbuf_get_chksum_done(nbuf)) {
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (info->chksum_offload_ok && !nrf_wifi_nbuf_get_chksum_done(nbuf)) {
 		config->csum_bitmap |= (1u << frame_indx);
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 	config->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -931,12 +934,18 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	unsigned char vif_id;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	unsigned int txq_len;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	bool chksum_offload_ok;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	vif_id = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
 	vif_ctx = sys_dev_ctx->vif_ctx[vif_id];
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	chksum_offload_ok = nrf_wifi_fmac_tcp_ip_chksum_offload_ok(vif_ctx);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	txq_len = (unsigned int)sys_dlist_len(txq);
 
@@ -983,9 +992,11 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_TWT_EMERGENCY_TX;
 	}
 
-	if (nrf_wifi_nbuf_get_chksum_done(nwb)) {
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (nrf_wifi_nbuf_get_chksum_done(nwb) && chksum_offload_ok) {
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	config->csum_bitmap = 0;
 
@@ -1000,6 +1011,9 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	info.fmac_dev_ctx = fmac_dev_ctx;
 	info.config = config;
 	info.total_data_len = 0;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	info.chksum_offload_ok = chksum_offload_ok;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
 		status = tx_cmd_prep_callbk_fn(&info, nwb);

@@ -287,6 +287,12 @@ void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 		return;
 	}
 
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx])) {
+		net_pkt_set_chksum_done(pkt, true);
+	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+
 	status = net_recv_data(iface, pkt);
 
 	if (status < 0) {
@@ -367,15 +373,17 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 }
 #endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
 
-enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev __unused,
+enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 					   struct net_if *iface __unused)
 {
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE |
 			ETHERNET_LINK_100BASE | ETHERNET_LINK_1000BASE);
 
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
-	caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
-		ETHERNET_HW_RX_CHKSUM_OFFLOAD;
+	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(dev->data))) {
+		caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
+			ETHERNET_HW_RX_CHKSUM_OFFLOAD;
+	}
 #endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 #ifdef CONFIG_NRF71_RAW_DATA_TX
@@ -1345,12 +1353,15 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	if (type  == ETHERNET_CONFIG_TYPE_TX_CHECKSUM_SUPPORT ||
 	    type == ETHERNET_CONFIG_TYPE_RX_CHECKSUM_SUPPORT) {
-		config->chksum_support = ETHERNET_CHECKSUM_SUPPORT_IPV4_HEADER |
-					 ETHERNET_CHECKSUM_SUPPORT_IPV4_ICMP |
-					 ETHERNET_CHECKSUM_SUPPORT_IPV6_HEADER |
-					 ETHERNET_CHECKSUM_SUPPORT_IPV6_ICMP |
-					 ETHERNET_CHECKSUM_SUPPORT_TCP |
-					 ETHERNET_CHECKSUM_SUPPORT_UDP;
+		if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(
+			    nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep))) {
+			config->chksum_support = ETHERNET_CHECKSUM_SUPPORT_IPV4_HEADER |
+						 ETHERNET_CHECKSUM_SUPPORT_IPV4_ICMP |
+						 ETHERNET_CHECKSUM_SUPPORT_IPV6_HEADER |
+						 ETHERNET_CHECKSUM_SUPPORT_IPV6_ICMP |
+						 ETHERNET_CHECKSUM_SUPPORT_TCP |
+						 ETHERNET_CHECKSUM_SUPPORT_UDP;
+		}
 	}
 #endif
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
