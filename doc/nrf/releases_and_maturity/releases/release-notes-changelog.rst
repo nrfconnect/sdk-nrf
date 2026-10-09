@@ -535,6 +535,10 @@ Cellular samples
   * :ref:`location_sample`
   * :ref:`modem_shell_application`
 
+* :ref:`modem_shell_application` sample:
+
+  * Removed support for Bluetooth shell.
+
 * :ref:`nrf_cloud_coap_fota_sample` sample:
 
   * Updated the sample to use the new nRF Cloud CoAP FOTA API.
