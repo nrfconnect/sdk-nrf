@@ -236,7 +236,7 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 		goto out;
 	}
 
-	status = umac_cmd_sys_lmac_tuning_params(fmac_dev_ctx);
+	status = umac_cmd_lmac_tuning_params(fmac_dev_ctx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: LMAC tuning params config failed",
