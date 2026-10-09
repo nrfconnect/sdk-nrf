@@ -18,6 +18,7 @@
 		timer-instance = <&timer20>;
 		assert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		zephyr,pm-device-runtime-auto;
 	};
 };
 
