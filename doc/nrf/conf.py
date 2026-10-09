@@ -54,6 +54,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",
+    "toggle_custom_hints",
     "sphinx_copybutton",
     "notfound.extension",
     "ncs_tool_versions",
