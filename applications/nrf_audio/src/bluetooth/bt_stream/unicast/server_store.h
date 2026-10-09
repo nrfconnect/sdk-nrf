@@ -24,8 +24,15 @@
 #include <zephyr/bluetooth/audio/bap_lc3_preset.h>
 #include <zephyr/bluetooth/addr.h>
 
+enum discovery_state {
+	DISCOVERY_STATE_NONE,
+	DISCOVERY_STATE_PENDING,
+	DISCOVERY_STATE_FAILED,
+	DISCOVERY_STATE_COMPLETED,
+};
+
 struct unicast_server_snk_vars {
-	bool waiting_for_disc;
+	enum discovery_state discovery_state;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
@@ -38,7 +45,7 @@ struct unicast_server_snk_vars {
 };
 
 struct unicast_server_src_vars {
-	bool waiting_for_disc;
+	enum discovery_state discovery_state;
 	uint32_t locations;
 	struct bt_bap_lc3_preset lc3_preset[CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT];
 	struct bt_audio_codec_cap codec_caps[CONFIG_CODEC_CAP_COUNT_MAX];
@@ -116,6 +123,7 @@ bool srv_store_preset_validated(struct bt_audio_codec_cfg const *const new,
  * ASEs. If that is not possible, it will try to satisfy the max and min values.
  *
  * @note srv_store_lock() must be called before accessing this function.
+ * @note	This function will be deprecated, use srv_store_pres_dly_by_dir_find() instead.
  *
  * @param[in]	stream			Pointer to a new stream to be started
  * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
@@ -135,6 +143,32 @@ int srv_store_pres_dly_find(struct bt_bap_stream *stream, uint32_t *computed_pre
 			    struct bt_bap_qos_cfg_pref const *server_qos_pref,
 			    bool *group_reconfig_needed,
 			    struct bt_cap_unicast_group *unicast_group);
+
+/**
+ * @brief	Search for a common presentation delay across all server Audio Stream Endpoints
+ * (ASEs) in a given @p unicast_group for the given direction.
+ *
+ * This function will try to satisfy the preferred presentation delay for all
+ * ASEs. If that is not possible, it will try to satisfy the max and min values.
+ *
+ * @note srv_store_lock() must be called before accessing this function.
+ * @note This function shall be called in the CAP (not BAP) codec configured callback, meaning all
+ * streams shall be codec configured at this point.
+ *
+ *
+ * @param[out]	computed_pres_dly_us	Pointer to store the computed presentation delay in
+ *					microseconds.
+ * @param[out]	group_reconfig_needed	True if a group reconfiguration is needed.
+ * @param[in]	unicast_group		Pointer to the unicast group to search within.
+ *
+ * @retval	0		Success
+ * @retval	-ESPIPE		There is no common presentation delay found.
+ * @retval 	-ENODATA 	No streams found in the unicast group for the given direction.
+ * @retval	-EINVAL		Illegal argument(s).
+ */
+int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
+				   bool *group_reconfig_needed,
+				   struct bt_cap_unicast_group *unicast_group);
 
 /**
  * @brief	Set the valid locations of a unicast server.

@@ -8,6 +8,11 @@
 #define _MACROS_H_
 
 #include <errno.h>
+#include <stdbool.h>
+
+/* Return values for boolean iterator callbacks. */
+#define ITER_CONTINUE true
+#define ITER_STOP     false
 
 /* Error check. If != 0, print err code and call _SysFatalErrorHandler in main.
  * For debug mode all LEDs are turned on in case of an error.

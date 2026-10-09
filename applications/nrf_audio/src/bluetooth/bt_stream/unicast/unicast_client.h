@@ -94,9 +94,13 @@ int unicast_client_locations_get(uint32_t *locations, enum bt_audio_dir dir);
  * @param[in]	conn	Pointer to the connection.
  * @param[in]	dir	Direction of the stream.
  *
- * @retval	-EALREADY	Device has already been discovered.
+ * @retval	-EINPROGRESS	Discovery is already pending on this connection.
+ * @retval	-EALREADY	A requested direction has already been discovered on this
+ *				connection.
+ * @retval	-EIO		Discovery failed on this connection; disconnect cleanup is
+ *				required before another attempt.
  * @retval	-ENOSPC		No more room in headset list.
- * @retval	0		Success.
+ * @retval	0		Discovery request accepted; completion is reported asynchronously.
  */
 int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir);
 
@@ -108,24 +112,28 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 void unicast_client_conn_disconnected(struct bt_conn *conn);
 
 /**
- * @brief	Start the Bluetooth LE Audio unicast (CIS) client.
+ * @brief	Request start of the Bluetooth LE Audio unicast (CIS) client.
  *
- * @note	Will start both sink and source if present.
+ * @note	Processed asynchronously by the CAP state machine. Starts both sink and source
+ *		if present.
  *
  * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to start.
  *
- * @return	0 for success, error otherwise.
+ * @return	0 if the request was accepted, error otherwise. Procedure completion is
+ *		reported asynchronously through LE Audio events and CAP logs.
  */
 int unicast_client_start(uint8_t cig_index);
 
 /**
- * @brief	Stop the Bluetooth LE Audio unicast (CIS) client.
+ * @brief	Request stop of the Bluetooth LE Audio unicast (CIS) client.
  *
- * @note	Will stop both sink and source if present.
+ * @note	Processed asynchronously by the CAP state machine. Stops both sink and source
+ *		if present.
  *
-  @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to stop.
+ * @param[in]	cig_index	Index of the Connected Isochronous Group (CIG) to stop.
  *
- * @return	0 for success, error otherwise.
+ * @return	0 if the request was accepted, error otherwise. Procedure completion is
+ *		reported asynchronously through LE Audio events and CAP logs.
  */
 int unicast_client_stop(uint8_t cig_index);
 

@@ -681,6 +681,142 @@ ZTEST(suite_server_store, test_pres_delay_multi_group)
 	srv_store_unlock();
 }
 
+ZTEST(suite_server_store, test_pres_delay_by_dir_valid)
+{
+	int ret;
+	uint32_t computed_pres_dly_us = BT_BAP_PD_UNSET;
+	bool group_reconfig_needed = false;
+
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(group_0, 40000, BT_BAP_PD_UNSET);
+
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 5000;
+	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 5000;
+	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 40000;
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 40000;
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
+
+	TEST_CAP_STREAM(TCS_2_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
+	TCS_2_existing.bap_stream.ep->qos_pref.pd_min = 4000;
+	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_min = 6000;
+	TCS_2_existing.bap_stream.ep->qos_pref.pref_pd_max = 30000;
+	TCS_2_existing.bap_stream.ep->qos_pref.pd_max = 40000;
+	mock_add_stream_to_group(&TCS_2_existing.bap_stream, &group_0);
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, 0, "Finding presentation delay failed: %d", ret);
+	zassert_equal(computed_pres_dly_us, 6000, "Computed PD should use common preferred min");
+	zassert_true(group_reconfig_needed,
+		     "Group reconfig should be needed when existing PD differs");
+
+	computed_pres_dly_us = BT_BAP_PD_UNSET;
+	group_reconfig_needed = false;
+	group_0.bap_unicast_group->sink_pd = 6000;
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, 0, "Finding presentation delay failed: %d", ret);
+	zassert_equal(computed_pres_dly_us, 6000,
+		      "Computed PD should be unchanged when existing PD matches");
+	zassert_false(group_reconfig_needed,
+		      "Group reconfig should not be needed when existing PD matches");
+
+	/* Add streams in the other direction. This shall not affect the existing results */
+	TEST_CAP_STREAM(TCS_3_existing, BT_AUDIO_DIR_SOURCE, 40000, &group_0);
+	TCS_3_existing.bap_stream.ep->qos_pref.pd_min = 80000;
+	TCS_3_existing.bap_stream.ep->qos_pref.pref_pd_min = 80000;
+	TCS_3_existing.bap_stream.ep->qos_pref.pref_pd_max = 100000;
+	TCS_3_existing.bap_stream.ep->qos_pref.pd_max = 100000;
+	mock_add_stream_to_group(&TCS_3_existing.bap_stream, &group_0);
+
+	TEST_CAP_STREAM(TCS_4_existing, BT_AUDIO_DIR_SOURCE, 40000, &group_0);
+	TCS_4_existing.bap_stream.ep->qos_pref.pd_min = 95000;
+	TCS_4_existing.bap_stream.ep->qos_pref.pref_pd_min = 90000;
+	TCS_4_existing.bap_stream.ep->qos_pref.pref_pd_max = 100000;
+	TCS_4_existing.bap_stream.ep->qos_pref.pd_max = 100000;
+	mock_add_stream_to_group(&TCS_4_existing.bap_stream, &group_0);
+
+	computed_pres_dly_us = BT_BAP_PD_UNSET;
+	group_reconfig_needed = false;
+	group_0.bap_unicast_group->sink_pd = 6000;
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, 0, "Finding presentation delay failed: %d", ret);
+	zassert_equal(computed_pres_dly_us, 6000,
+		      "Computed PD should be unchanged when existing PD matches");
+	zassert_false(group_reconfig_needed,
+		      "Group reconfig should not be needed when existing PD matches");
+
+	/* Test compute for source direction */
+	computed_pres_dly_us = BT_BAP_PD_UNSET;
+	group_reconfig_needed = false;
+	group_0.bap_unicast_group->sink_pd = 6000;
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SOURCE, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, 0, "Finding presentation delay failed: %d", ret);
+	zassert_equal(computed_pres_dly_us, 95000,
+		      "Computed PD should be set for source direction");
+	zassert_true(group_reconfig_needed,
+		     "Group reconfig should be needed when existing PD differs");
+
+	srv_store_unlock();
+}
+
+ZTEST(suite_server_store, test_pres_delay_by_dir_invalid)
+{
+	int ret;
+	uint32_t computed_pres_dly_us = BT_BAP_PD_UNSET;
+	bool group_reconfig_needed = false;
+
+	ret = srv_store_lock(K_NO_WAIT);
+	zassert_equal(ret, 0);
+
+	TEST_UNICAST_GROUP(group_0, 40000, BT_BAP_PD_UNSET);
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, -ENODATA, "No streams to search through");
+
+	TEST_CAP_STREAM(TCS_1_existing, BT_AUDIO_DIR_SINK, 40000, &group_0);
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 5000;
+	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_min = 0;
+	TCS_1_existing.bap_stream.ep->qos_pref.pref_pd_max = 0;
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 10000;
+	mock_add_stream_to_group(&TCS_1_existing.bap_stream, &group_0);
+
+	ret = srv_store_pres_dly_by_dir_find(0, &computed_pres_dly_us, &group_reconfig_needed,
+					     &group_0);
+	zassert_equal(ret, -EINVAL, "Invalid direction should fail");
+
+	computed_pres_dly_us = 5000;
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, -EINVAL, "Pre-populated computed PD should fail");
+
+	computed_pres_dly_us = BT_BAP_PD_UNSET;
+	group_reconfig_needed = true;
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, -EINVAL, "Pre-set reconfig flag should fail");
+
+	computed_pres_dly_us = BT_BAP_PD_UNSET;
+	group_reconfig_needed = false;
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_min = 10000;
+	TCS_1_existing.bap_stream.ep->qos_pref.pd_max = 9000;
+
+	ret = srv_store_pres_dly_by_dir_find(BT_AUDIO_DIR_SINK, &computed_pres_dly_us,
+					     &group_reconfig_needed, &group_0);
+	zassert_equal(ret, -ESPIPE, "Invalid common PD range should fail");
+
+	srv_store_unlock();
+}
+
 ZTEST(suite_server_store, test_cap_set)
 {
 	int ret;

@@ -841,6 +841,173 @@ print_and_return:
 	return ret;
 }
 
+struct foreach_stream_data_by_dir {
+	int ret;
+	enum bt_audio_dir dir;
+	struct bt_bap_qos_cfg_pref common_qos;
+	uint8_t streams_checked;
+	uint32_t existing_pres_dly_us;
+	uint32_t *computed_pres_dly_us;
+	bool *group_reconfig_needed;
+};
+
+static bool stream_check_pd_by_dir(struct bt_cap_stream *existing_stream, void *user_data)
+{
+	/* All already running streams in the same direction and in the
+	 * same group shall have the same presentation delay.
+	 */
+
+	int ret;
+
+	struct foreach_stream_data_by_dir *ctx = (struct foreach_stream_data_by_dir *)user_data;
+
+	if (existing_stream == NULL || existing_stream->bap_stream.group == NULL ||
+	    existing_stream->bap_stream.ep == NULL) {
+		LOG_ERR("NULL parameter");
+		return true;
+	}
+
+	int existing_dir = le_audio_stream_dir_get(&existing_stream->bap_stream);
+	if (existing_dir != ctx->dir) {
+		LOG_DBG("Existing stream dir %d not in same direction as incoming stream dir %d",
+			existing_dir, ctx->dir);
+		return true;
+	}
+
+	struct bt_bap_ep_info ep_info;
+
+	ret = bt_bap_ep_get_info(existing_stream->bap_stream.ep, &ep_info);
+	if (ret) {
+		LOG_ERR("Failed to get endpoint info: %d", ret);
+		ctx->ret = ret;
+		return false;
+	}
+
+	ctx->streams_checked++;
+
+	ctx->ret = pres_delay_compute(&ctx->common_qos, ep_info.qos_pref);
+	if (ctx->ret) {
+		LOG_ERR("Failed to compute common presentation delay: %d", ctx->ret);
+		return false;
+	}
+
+	/* Continue iteration */
+	return true;
+}
+
+int srv_store_pres_dly_by_dir_find(enum bt_audio_dir dir, uint32_t *computed_pres_dly_us,
+				   bool *group_reconfig_needed,
+				   struct bt_cap_unicast_group *unicast_group)
+{
+	int ret;
+	valid_entry_check(__func__);
+
+	if (computed_pres_dly_us == NULL || group_reconfig_needed == NULL) {
+		LOG_ERR("NULL parameter");
+		return -EINVAL;
+	}
+
+	if (*computed_pres_dly_us != BT_BAP_PD_UNSET) {
+		LOG_ERR("Computed presentation delay is already set");
+		return -EINVAL;
+	}
+
+	if (dir != BT_AUDIO_DIR_SINK && dir != BT_AUDIO_DIR_SOURCE) {
+		LOG_ERR("Invalid direction: %d", dir);
+		return -EINVAL;
+	}
+
+	if (*group_reconfig_needed) {
+		LOG_ERR("Group reconfig needed is already set");
+		return -EINVAL;
+	}
+
+	struct bt_cap_unicast_group_info cap_info;
+	struct bt_bap_unicast_group_info bap_info;
+
+	ret = bt_cap_unicast_group_get_info(unicast_group, &cap_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get CAP unicast group info: %d", ret);
+		return ret;
+	}
+
+	ret = bt_bap_unicast_group_get_info(cap_info.unicast_group, &bap_info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get BAP unicast group info: %d", ret);
+		return ret;
+	}
+
+	struct foreach_stream_data_by_dir foreach_data = {
+		.ret = 0,
+		.dir = dir,
+		.streams_checked = 0,
+		.computed_pres_dly_us = computed_pres_dly_us,
+		.group_reconfig_needed = group_reconfig_needed,
+	};
+
+	/* Common QoS with most permissive values */
+	foreach_data.common_qos.pd_min = 0;
+	foreach_data.common_qos.pref_pd_min = 0;
+	foreach_data.common_qos.pref_pd_max = UINT32_MAX;
+	foreach_data.common_qos.pd_max = UINT32_MAX;
+
+	if (dir == BT_AUDIO_DIR_SINK) {
+		foreach_data.existing_pres_dly_us = bap_info.sink_pd;
+	} else if (dir == BT_AUDIO_DIR_SOURCE) {
+		foreach_data.existing_pres_dly_us = bap_info.source_pd;
+	} else {
+		__ASSERT(false, "Invalid direction: %d", dir);
+		return -EINVAL;
+	}
+
+	ret = bt_cap_unicast_group_foreach_stream(unicast_group, stream_check_pd_by_dir,
+						  (void *)&foreach_data);
+
+	if (foreach_data.ret != 0) {
+		LOG_ERR("Failed to compute presentation delay for direction %d: %d", dir,
+			foreach_data.ret);
+		return foreach_data.ret;
+	}
+
+	if (ret != 0) {
+		LOG_ERR("Failed to check presentation delay for streams: %d", ret);
+		return ret;
+	}
+
+	if (foreach_data.streams_checked == 0) {
+		LOG_INF("No streams found for %s dir", bt_audio_dir_to_str(dir));
+		return -ENODATA;
+	}
+
+	if (foreach_data.common_qos.pd_min > foreach_data.common_qos.pd_max) {
+		LOG_ERR("No common ground for pd_min %u and pd_max %u",
+			foreach_data.common_qos.pd_min, foreach_data.common_qos.pd_max);
+		return -ESPIPE;
+	}
+
+	if (foreach_data.common_qos.pref_pd_min == 0) {
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	} else if (foreach_data.common_qos.pref_pd_min < foreach_data.common_qos.pd_min) {
+		LOG_INF("pref_pd_min (%u) is lower than pd_min (%u). Using min",
+			foreach_data.common_qos.pref_pd_min, foreach_data.common_qos.pd_min);
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	} else if (foreach_data.common_qos.pref_pd_min <= foreach_data.common_qos.pd_max) {
+		*computed_pres_dly_us = foreach_data.common_qos.pref_pd_min;
+	} else {
+		*computed_pres_dly_us = foreach_data.common_qos.pd_min;
+	}
+
+	*group_reconfig_needed = foreach_data.existing_pres_dly_us != *computed_pres_dly_us;
+
+	LOG_DBG("Pres. delay check completed for direction: %s. %d streams checked, result: %d",
+		bt_audio_dir_to_str(dir), foreach_data.streams_checked, *computed_pres_dly_us);
+	LOG_DBG("Common QoS: pd_min=%u, pref_pd_min=%u, pref_pd_max=%u, pd_max=%u",
+		foreach_data.common_qos.pd_min, foreach_data.common_qos.pref_pd_min,
+		foreach_data.common_qos.pref_pd_max, foreach_data.common_qos.pd_max);
+
+	return 0;
+}
+
 int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir dir,
 			   enum bt_audio_location loc)
 {
@@ -1464,8 +1631,8 @@ int srv_store_clear_by_conn(struct bt_conn const *const conn)
 	server->conn = NULL;
 	server->member = NULL;
 
-	server->snk.waiting_for_disc = false;
-	server->src.waiting_for_disc = false;
+	server->snk.discovery_state = DISCOVERY_STATE_NONE;
+	server->src.discovery_state = DISCOVERY_STATE_NONE;
 	server->snk.locations = 0;
 	server->src.locations = 0;
 	memset(&server->snk.lc3_preset, 0, sizeof(server->snk.lc3_preset));
