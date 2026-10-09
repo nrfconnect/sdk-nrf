@@ -22,14 +22,15 @@
  * @brief Transport data event callback.
  *
  * This function is called by the transport to notify the downloader of downloaded data.
+ * If the application refuses the fragment, the downloader stops the download and sends
+ * @c DOWNLOADER_EVT_STOPPED once the transport function that called this has returned.
+ * The transport must not treat this as an error.
  *
  * @param dl Downloader instance.
  * @param data Downloaded data.
  * @param len Length of downloaded data.
  *
- * @retval Zero if the fragment was accepted and the download can continue.
- * @return Negative errno if the fragment was refused by the application and the download
- *         should be aborted.
+ * @retval 0 Always. A refused fragment is not reported through the return value.
  */
 int dl_transport_evt_data(struct downloader *dl, void *data, size_t len);
 
