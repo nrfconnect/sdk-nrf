@@ -16,6 +16,42 @@ config SUPPORT_CRACEN_MICROCODE
 	help
 	  Hidden symbol indicating if CRACEN microcode loading is supported on the device.
 
+config CRACEN_KMU_CUSTOM_LAYOUT
+	bool "Use a custom CRACEN KMU slot layout in all images"
+	help
+	  Apply the KMU slot layout below to every image, so that all images agree on the slots
+	  reserved by the CRACEN driver. The layout is stored in the CRACEN_KMU_* Kconfig options
+	  of each image. If not enabled, each image uses its own values for these options.
+
+if CRACEN_KMU_CUSTOM_LAYOUT
+
+config CRACEN_KMU_PROVISIONING_SLOT
+	int "KMU slot recording that provisioning is in progress"
+	range 0 255
+	default 186
+
+config CRACEN_KMU_PROT_RAM_INV_SLOT
+	int "First KMU slot of the protected RAM invalidation data (2 slots)"
+	range 0 254
+	default 248
+
+config CRACEN_IKG_SEED_KMU_SLOT
+	int "First KMU slot of the CRACEN IKG seed (3 slots)"
+	range 0 253
+	default 183
+
+config CRACEN_KMU_NS_SLOT_FIRST
+	int "First KMU slot the TF-M non-secure agent may access"
+	range 0 255
+	default 0
+
+config CRACEN_KMU_NS_SLOT_LAST
+	int "Last KMU slot the TF-M non-secure agent may access"
+	range 0 255
+	default 179
+
+endif # CRACEN_KMU_CUSTOM_LAYOUT
+
 if SUPPORT_CRACEN_MICROCODE
 
 menu "CRACEN"

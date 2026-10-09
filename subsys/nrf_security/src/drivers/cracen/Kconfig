@@ -119,13 +119,48 @@ config CRACEN_IKG_SEED_LOAD
 
 config CRACEN_IKG_SEED_KMU_SLOT
 	int "KMU slot of the CRACEN IKG seed"
-	range 0 183
+	range 0 253
 	default 183
 	help
 	  The CRACEN IKG seed spans over 3 KMU slots:
 	  the one defined here and the two subsequent ones.
 	  This defines the KMU slot (along with the two following it) to which
 	  the IKG seed is provisioned and that is pushed when loading the IKG seed.
+	  Every image on the device must use the same value. When building with sysbuild,
+	  set SB_CONFIG_CRACEN_KMU_CUSTOM_LAYOUT to apply the layout to all images.
+
+config CRACEN_KMU_PROVISIONING_SLOT
+	int "KMU slot recording that provisioning is in progress"
+	range 0 255
+	default 186
+	help
+	  Only the metadata field of this slot is used. It is revoked again when provisioning
+	  completes. Every image on the device must use the same value.
+
+config CRACEN_KMU_PROT_RAM_INV_SLOT
+	int "First KMU slot of the protected RAM invalidation data"
+	range 0 254
+	default 248
+	help
+	  The protected RAM invalidation data spans 2 KMU slots: the one defined here and the
+	  next one. Every image on the device must use the same value.
+
+config CRACEN_KMU_NS_SLOT_FIRST
+	int "First KMU slot the TF-M non-secure agent may access"
+	range 0 255
+	default 0
+	help
+	  Lower end of the inclusive KMU slot range that PSA key IDs from the non-secure
+	  agent may refer to.
+
+config CRACEN_KMU_NS_SLOT_LAST
+	int "Last KMU slot the TF-M non-secure agent may access"
+	range 0 255
+	default 179
+	help
+	  Upper end of the inclusive KMU slot range that PSA key IDs from the non-secure
+	  agent may refer to. KMU slots >= 180 are reserved for Nordic use by default.
+	  The range must not include any slot used by the CRACEN driver.
 
 config CRACEN_IKG_PERSONALIZED_KEYS
 	bool "CRACEN IKG personalized keys"
