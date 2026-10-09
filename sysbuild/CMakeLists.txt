@@ -507,6 +507,12 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set(${image}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
           set_config_bool(${image} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
         endforeach()
+
+        if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+          set(${DEFAULT_IMAGE}_slot1_variant_SIGNING_SCRIPT
+            "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake"
+            CACHE INTERNAL "MCUboot signing script" FORCE)
+        endif()
       endif()
 
       if(SB_CONFIG_SECURE_BOOT_APPCORE)
