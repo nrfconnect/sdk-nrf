@@ -411,18 +411,57 @@ static void ep_bound(void *priv)
 	atomic_set_bit(&endpoint_state, HPF_MSPI_EP_BOUNDED);
 }
 
-static void ep_recv(const void *data, size_t len, void *priv)
+/* The message length must match the IPC message format of this image before any of the
+ * message content is dereferenced, as the MSPI driver may be built with a different format.
+ */
+static bool msg_len_valid(const void *data, size_t len)
 {
 #ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
-	data = *(void **)data;
-#endif
+	ARG_UNUSED(data);
 
+	return len == sizeof(void *);
+#else
+	if (len < sizeof(hpf_mspi_opcode_t)) {
+		return false;
+	}
+
+	switch (*(const hpf_mspi_opcode_t *)data) {
+	case HPF_MSPI_CONFIG_TIMER_PTR:
+		return len >= sizeof(hpf_mspi_flpr_timer_msg_t);
+	case HPF_MSPI_CONFIG_PINS:
+		return len >= sizeof(hpf_mspi_pinctrl_soc_pin_msg_t);
+	case HPF_MSPI_CONFIG_DEV:
+		return len >= sizeof(hpf_mspi_dev_config_msg_t);
+	case HPF_MSPI_CONFIG_XFER:
+		return len >= sizeof(hpf_mspi_xfer_config_msg_t);
+	case HPF_MSPI_TX:
+		return (len >= sizeof(hpf_mspi_xfer_packet_msg_t)) &&
+		       ((len - sizeof(hpf_mspi_xfer_packet_msg_t)) >=
+			((const hpf_mspi_xfer_packet_msg_t *)data)->num_bytes);
+	case HPF_MSPI_TXRX:
+		return (len >= sizeof(hpf_mspi_xfer_packet_msg_t)) &&
+		       (((const hpf_mspi_xfer_packet_msg_t *)data)->num_bytes <=
+			sizeof(response.data));
+	default:
+		return true;
+	}
+#endif
+}
+
+static void ep_recv(const void *data, size_t len, void *priv)
+{
 	(void)priv;
-	(void)len;
-	hpf_mspi_opcode_t opcode = *(hpf_mspi_opcode_t *)data;
+	hpf_mspi_opcode_t opcode = HPF_MSPI_WRONG_OPCODE;
 #ifndef CONFIG_HPF_MSPI_IPC_NO_COPY
 	uint32_t num_bytes = 0;
 #endif
+
+	if (msg_len_valid(data, len)) {
+#ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
+		data = *(void **)data;
+#endif
+		opcode = *(hpf_mspi_opcode_t *)data;
+	}
 
 #if defined(CONFIG_HPF_MSPI_FAULT_TIMER)
 	if (fault_timer != NULL) {
@@ -531,8 +570,6 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
 			xfer_execute(packet, packet->data);
 #else
-			NRFX_ASSERT(packet->num_bytes <=
-				    CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE - sizeof(hpf_mspi_opcode_t));
 			num_bytes = packet->num_bytes;
 			xfer_execute(packet, response.data);
 #endif
