@@ -20,6 +20,7 @@
 		has-dpd;
 		t-enter-dpd = <10000>;
 		t-exit-dpd = <35000>;
+		transfer-timeout = <500>;
 
 		mspi-max-frequency = <DT_FREQ_M(4)>;
 		mspi-io-mode = "MSPI_IO_MODE_QUAD_1_4_4";

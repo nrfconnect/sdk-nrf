@@ -36,6 +36,23 @@ config MSPI_HPF_IPC_NO_COPY
 	  this requires both cores to be able to access each others memory spaces.
 	  If n Data is passed through IPC by copy.
 
+config MSPI_HPF_UNALIGNED_XFER
+	bool "Support unaligned data buffers in IPC no-copy mode"
+	default y
+	depends on MSPI_HPF_IPC_NO_COPY
+	help
+	  If enabled, unaligned data buffers are copied through a bounce buffer
+	  on the stack of the thread that starts the transfer before the FLPR
+	  accesses them by reference. If disabled, data buffer must be word-aligned.
+
+config MSPI_HPF_BOUNCE_BUF_SIZE
+	int "Unaligned transfer bounce buffer size (bytes)"
+	default 512
+	depends on MSPI_HPF_IPC_NO_COPY && MSPI_HPF_UNALIGNED_XFER
+	help
+	  Maximum size of a single packet copied through the unaligned bounce
+	  buffer. Larger unaligned transfers fail.
+
 config MSPI_HPF_FAULT_TIMER
 	bool "HPF application fault timer"
 	select COUNTER
