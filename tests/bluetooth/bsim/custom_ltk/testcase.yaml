@@ -4,7 +4,7 @@ tests:
     tags:
       - bluetooth
     platform_allow:
-      - nrf52_bsim/native
+      - nrf54l15bsim/nrf54l15/cpuapp
     harness: bsim
     harness_config:
       bsim_exe_name: tests_bluetooth_bsim_custom_ltk_prj_conf

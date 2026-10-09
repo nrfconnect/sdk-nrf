@@ -1265,28 +1265,11 @@ BT shell support
 To build the MoSh sample with Zephyr BT shell command support, use the :file:`-DDTC_OVERLAY_FILE=bt.overlay` and :file:`-DEXTRA_CONF_FILE=bt.conf` options.
 When running this configuration, you can perform BT scanning and advertising using the ``bt`` command.
 
-You must program the *board controller* with the :ref:`bluetooth-hci-lpuart-sample` sample first, before programming the main controller with the :ref:`modem_shell_application` sample.
-Program the board controller as follows:
+.. note::
+   This configuration uses the nRF52840 companion chip on the nRF9160 DK as a Bluetooth® LE Controller.
+   The Bluetooth: HCI low power UART sample, which programs the nRF52840, was removed from the |NCS| together with nRF52 Series support.
+   There is no supported |NCS| sample to program the companion chip for this configuration anymore.
 
-1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF52** position.
-   On nRF9160 DK board version 0.9.0 and earlier versions, the switch was called **SW5**.
-#. Build the :ref:`bluetooth-hci-lpuart-sample` sample for the ``nrf9160dk/nrf52840`` board target and program the board controller with it.
-
-   .. note::
-      To build the sample successfully, you must specify the board version along with the board target.
-      The board version is printed on the label of your DK, just below the PCA number.
-      For example, for board version 1.1.0, build the sample as follows:
-
-      .. parsed-literal::
-         :class: highlight
-
-         west build --board nrf9160dk@1.1.0/nrf52840
-
-#. Verify that the programming was successful.
-   Use a terminal emulator, like the `Serial Terminal app`_, to connect to the second serial port and check the output.
-   See :ref:`test_and_optimize` for the required settings and steps.
-
-After programming the board controller, you must program the main controller with the :ref:`modem_shell_application` sample.
 Program the main controller as follows:
 
 1. Set the **SW10** switch, marked as *debug/prog*, in the **NRF91** position.
