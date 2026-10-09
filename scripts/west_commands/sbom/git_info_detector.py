@@ -7,12 +7,21 @@ import sys
 import re
 from pathlib import Path
 
+import zephyr_module
 from args import args
 from common import SbomException, command_execute, concurrent_pool_iter
 from data_structure import Data, FileInfo, Package
 from west import log
 
                                                     # FileInfo is used.
+
+
+_manifest_projects: 'dict[Path, object]' = {}
+_manifest_path_index: 'list[tuple[Path, object]]' = []
+_self_repo_path: 'Path|None' = None
+_self_repo_name: 'str|None' = None
+_self_repo_version: 'str|None' = None
+_module_refs_cache: 'dict[Path, list]' = {}
 
 
 def split_lines(text: str) -> 'tuple[str]':
@@ -127,6 +136,159 @@ def get_sha(absolute_path: Path) -> 'str|None':
     return output if (len(output) == 40) and (error_code == 0) else None
 
 
+def get_toplevel(absolute_path: Path) -> 'Path|None':
+    '''Returns the resolved git toplevel directory at `absolute_path`.'''
+    output, error_code = command_execute(args.git, 'rev-parse', '--show-toplevel',
+                                         cwd=absolute_path, return_error_code=True,
+                                         allow_stderr=True, log_stderr=False)
+    if error_code != 0:
+        return None
+    line = output.strip()
+    if not line:
+        return None
+    try:
+        return Path(line).resolve()
+    except OSError:
+        return None
+
+
+def upstream_url(project) -> 'str|None':
+    '''Returns userdata.ncs.upstream-url for a manifest project.'''
+    userdata = getattr(project, 'userdata', None)
+    if not isinstance(userdata, dict):
+        return None
+    ncs = userdata.get('ncs')
+    if not isinstance(ncs, dict):
+        return None
+    url = ncs.get('upstream-url')
+    return url.strip() if isinstance(url, str) and url.strip() else None
+
+
+def classify_external_ref(locator: str) -> 'tuple[str,str,str]|None':
+    '''Return the SPDX (category, type, locator) triple for a supported locator.'''
+    locator = locator.strip()
+    if locator.startswith('cpe:2.3:'):
+        return ('SECURITY', 'cpe23Type', locator)
+    if locator.startswith('pkg:'):
+        return ('PACKAGE-MANAGER', 'purl', locator)
+    return None
+
+
+def read_module_external_refs(module_root: 'Path|None') -> 'list[tuple[str,str,str]]':
+    '''Returns the external references the Zephyr module declares.
+
+    Uses Zephyr's module metadata API to read "security: external-references:". A Nordic fork
+    keeps its own name and revision which no vulnerability database knows. That block names
+    the upstream project the fork is derived from which is the identity a scanner can match.
+
+    Only the module at the root of the repository is read.
+    '''
+    if module_root is None:
+        return []
+    if module_root in _module_refs_cache:
+        return _module_refs_cache[module_root]
+    module_file = module_root / Path(zephyr_module.MODULE_YML_PATH)
+    yaml_module_file = module_file.with_suffix('.yaml')
+    if not module_file.is_file() and yaml_module_file.is_file():
+        module_file = yaml_module_file
+    try:
+        meta = zephyr_module.process_module(module_root, require_yaml_validation=False)
+    except SystemExit as ex:
+        log.wrn(f'Cannot parse "{module_file}": {ex}')
+        meta = None
+    except Exception as ex:
+        log.wrn(f'Cannot parse "{module_file}": {ex}')
+        meta = None
+    security = meta.get('security') if isinstance(meta, dict) else None
+    locators = security.get('external-references') if isinstance(security, dict) else None
+    refs = []
+    for locator in locators or tuple():
+        if not isinstance(locator, str):
+            continue
+        ref = classify_external_ref(locator)
+        if ref is None:
+            log.wrn(f'Ignoring unknown external reference "{locator}" in "{module_file}".')
+        elif ref not in refs:
+            refs.append(ref)
+    _module_refs_cache[module_root] = refs
+    return refs
+
+
+def read_version(version_file: Path, include_dev: bool = False) -> 'str|None':
+    '''Returns the NCS version from `version_file` when PATCHLEVEL != 99.
+
+    Accepts both historical single-line and common-format VERSION files.
+    PATCHLEVEL == 99 returns None unless `include_dev` is set.
+    '''
+    try:
+        text = version_file.read_text(encoding='utf-8').strip()
+    except OSError:
+        return None
+    match = re.match(r'^(\d+)\.(\d+)\.(\d+)(?:-([A-Za-z0-9.\-]+))?$', text)
+    if not match:
+        match = re.fullmatch(
+            r'VERSION_MAJOR\s*=\s*(\d+)\s+VERSION_MINOR\s*=\s*(\d+)\s+'
+            r'PATCHLEVEL\s*=\s*(\d+)\s+VERSION_TWEAK\s*=\s*\d+\s+'
+            r'EXTRAVERSION\s*=\s*([A-Za-z0-9.\-]*)'
+            r'(?:\s+VERSION_METADATA\s*=\s*[A-Za-z0-9.\-]*)?', text)
+    if not match:
+        return None
+    major, minor, patch = (int(x) for x in match.groups()[:3])
+    extra = match.group(4)
+    version = f'{major}.{minor}.{patch}' + (f'-{extra}' if extra else '')
+    return None if patch == 99 and not include_dev else version
+
+
+def load_manifest():
+    '''Populate the module-level manifest caches consulted by detect_dir.'''
+    global _manifest_projects, _manifest_path_index
+    global _self_repo_path, _self_repo_name, _self_repo_version
+    _manifest_projects = {}
+    _manifest_path_index = []
+    _self_repo_path = None
+    _self_repo_name = None
+    _self_repo_version = None
+    _module_refs_cache.clear()
+    try:
+        from west.manifest import Manifest
+        manifest = Manifest.from_topdir()
+    except Exception:
+        return
+    for project in manifest.projects:
+        abspath = getattr(project, 'abspath', None)
+        if not abspath:
+            continue
+        try:
+            key = Path(abspath).resolve()
+        except OSError:
+            continue
+        _manifest_path_index.append((key, project))
+        if getattr(project, 'url', None):
+            _manifest_projects[key] = project
+        elif _self_repo_path is None:
+            # by west convention projects[0] is the manifest repo.
+            _self_repo_path = key
+            _self_repo_name = getattr(project, 'name', None) or key.name
+    if _self_repo_path is not None:
+        _self_repo_version = read_version(_self_repo_path / 'VERSION')
+
+    _manifest_path_index.sort(key=lambda item: len(item[0].parts), reverse=True)
+
+
+def match_manifest_project(absolute_path: Path) -> 'tuple[Path, object]|None':
+    '''Return (project_root, project) for the manifest project whose directory is the
+    longest prefix of absolute_path, or None.'''
+    try:
+        target = absolute_path.resolve()
+    except OSError:
+        target = absolute_path
+    parents = set(target.parents)
+    for key, project in _manifest_path_index:
+        if target == key or key in parents:
+            return (key, project)
+    return None
+
+
 def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     '''Read input file content and try to detect licenses by its content.'''
     files = func_args[0]
@@ -138,10 +300,41 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
     untracked_files = set()
     absolute_path = Path(files_to_assign[0].file_path).parent
     relative_path = Path(files_to_assign[0].file_rel_path).parent
-    git_sha = get_sha(absolute_path)
-    git_origin = get_origin(absolute_path, relative_path)
-    if (git_sha is not None) and (git_origin is not None):
-        package_id = f'git#{git_origin}#{git_sha}'.upper()
+    repo = get_toplevel(absolute_path)
+    module_root = repo
+    if repo is None:
+        log.wrn(f'Directory "{relative_path}" is not a git repository. '
+                'Files will be included without git-info detector information.')
+        git_sha = None
+        git_origin = None
+    else:
+        git_sha = get_sha(absolute_path)
+        git_origin = get_origin(absolute_path, relative_path)
+    project = _manifest_projects.get(repo) if repo is not None else None
+    if project is not None:
+        git_origin = project.url
+        git_sha = project.revision or git_sha
+    elif _self_repo_version is not None and repo == _self_repo_path:
+        git_sha = _self_repo_version
+    # Fall back to the west manifest when git provided no origin.
+    # This resolves package identity from the manifest without any git remote.
+    package_name = None
+    if git_origin is None:
+        match = match_manifest_project(absolute_path)
+        if match is not None:
+            project_root, mproject = match
+            module_root = module_root or project_root
+            git_origin = getattr(mproject, 'url', None) or None
+            git_sha = git_sha or getattr(mproject, 'revision', None)
+            if git_origin is None:
+                # The url-less self/manifest repo: resolve it by name only.
+                package_name = getattr(mproject, 'name', None) or project_root.name
+                if project_root == _self_repo_path and _self_repo_version is not None:
+                    git_sha = _self_repo_version
+            if project is None:
+                project = mproject
+
+    if repo is not None:
         output, error_code = command_execute(args.git, 'status', '--porcelain', '--ignored',
                                              '--untracked-files=all', '*', cwd=absolute_path,
                                              return_error_code=True, allow_stderr=True)
@@ -155,6 +348,11 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
                 untracked_files.add(Path(line[3:]).name.upper())
                 continue
             modified_files.add(Path(line[3:]).name.upper())
+    if (git_origin is not None) and (git_sha is not None):
+        package_id = f'git#{git_origin}#{git_sha}'.upper()
+    elif package_name is not None:
+        version_tag = git_sha if git_sha is not None else 'NONE'
+        package_id = f'pkg#{package_name}#{version_tag}'.upper()
     else:
         package_id = ''
     if package_id not in data.packages:
@@ -162,11 +360,14 @@ def detect_dir(func_args: 'tuple[list[FileInfo],Data]') -> None:
         package.id = package_id
         package.url = git_origin
         package.version = git_sha
+        if git_origin is None and package_name is not None:
+            package.name = package_name
         if git_origin and git_sha:
             package.purl = git_url_to_purl(git_origin, git_sha)
             package.supplier = args.package_supplier or extract_supplier_from_url(git_origin)
-        if args.package_cpe:
-            package.cpe = args.package_cpe
+        if project is not None:
+            package.browser_url = upstream_url(project)
+        package.external_refs = read_module_external_refs(module_root)
         data.packages[package_id] = package
     for file in files_to_assign:
         file.package = package_id
@@ -195,9 +396,12 @@ def detect(data: Data, optional: bool):
     ''' Fill "data" with version information obtained with the "git". '''
 
     check_external_tools()
+    load_manifest()
 
     group_by_dir = {}
     for file in data.files:
+        if '.git' in file.file_rel_path.parts:
+            continue
         dir_name = str(file.file_rel_path.parent)
         if dir_name not in group_by_dir:
             group_by_dir[dir_name] = ([], data)
