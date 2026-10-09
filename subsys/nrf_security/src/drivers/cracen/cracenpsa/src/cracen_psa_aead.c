@@ -400,7 +400,7 @@ psa_status_t cracen_aead_encrypt_setup(cracen_aead_operation_t *operation,
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
@@ -416,7 +416,7 @@ psa_status_t cracen_aead_decrypt_setup(cracen_aead_operation_t *operation,
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt_setup(operation, attributes, key_buffer,
 						       key_buffer_size, alg);
 	}
@@ -744,6 +744,10 @@ psa_status_t cracen_aead_verify(cracen_aead_operation_t *operation, uint8_t *pla
 				size_t plaintext_size, size_t *plaintext_length, const uint8_t *tag,
 				size_t tag_length)
 {
+	if (tag_length != operation->tag_size) {
+		return PSA_ERROR_INVALID_SIGNATURE;
+	}
+
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	if (operation->alg == PSA_ALG_CCM) {
 		/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
@@ -802,14 +806,18 @@ static psa_status_t feed_singlepart_ccm_aad(cracen_aead_operation_t *operation,
 	psa_status_t status;
 	/* Data fed to CRACEN needs to remain untouched until it's been consumed
 	 * (sx_aead_wait()), so don't put the CCM header buffer on the stack.
-	 * This is not thread-safe but the Silex driver functions take care of
-	 * locking and unlocking a mutex which ensures that there can be only
-	 * one active caller at the same time.
+	 * The buffer is shared, so reserve the HW (which takes the mutex)
+	 * before writing to it. It stays reserved until the operation finishes.
 	 */
 	static uint8_t ccm_header_aad[ROUND_UP(CCM_HEADER_MAX_LENGTH,
 					       PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES))];
 	size_t ccm_header_length;
 	size_t aad_fed_count;
+
+	status = initialize_or_resume_context(operation);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
 
 	create_aead_ccmheader(operation, ccm_header_aad, &ccm_header_length);
 
@@ -850,7 +858,7 @@ psa_status_t cracen_aead_encrypt(const psa_key_attributes_t *attributes, const u
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_encrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
 			additional_data, additional_data_length, plaintext, plaintext_length,
@@ -926,7 +934,7 @@ psa_status_t cracen_aead_decrypt(const psa_key_attributes_t *attributes, const u
 {
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CCM_AES)
 	/* Route AES-CCM to software implementation due to HW having smaller max CTR size */
-	if (alg == PSA_ALG_CCM) {
+	if (PSA_ALG_AEAD_WITH_DEFAULT_LENGTH_TAG(alg) == PSA_ALG_CCM) {
 		return cracen_sw_aes_ccm_decrypt(
 			attributes, key_buffer, key_buffer_size, alg, nonce, nonce_length,
 			additional_data, additional_data_length, ciphertext, ciphertext_length,

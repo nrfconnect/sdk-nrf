@@ -66,7 +66,6 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 		if (!req->ik_mode) {
 			int status = cracen_prepare_ik_key((const uint8_t *)&key);
 			if (status != SX_OK) {
-				sx_pk_release_req(req);
 				return SX_ERR_INVALID_PARAM;
 			}
 			sx_pk_wrreg(&req->regs, PK_REG_CONTROL, PK_RB_CONTROL_CLEAR_IRQ);
@@ -77,7 +76,6 @@ int sx_pk_list_ik_inslots(sx_pk_req *req, unsigned int key, struct sx_pk_slot *i
 	caps = sx_pk_fetch_capabilities();
 
 	if (!caps->ik_opsz) {
-		sx_pk_release_req(req);
 		return SX_ERR_IK_NOT_READY;
 	}
 

@@ -733,6 +733,7 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 		cracen_be_sub(sx_pk_curve_prime(sx_curve), zero_t_gx1_x_buf, z_buf,
 			      sx_pk_curve_opsize(sx_curve));
 	} else {
+		safe_memzero(z_buf, sx_pk_curve_opsize(sx_curve));
 		cracen_be_add(z_buf, sx_pk_curve_opsize(sx_curve), cracen_abs(z_int));
 	}
 
@@ -837,7 +838,7 @@ psa_status_t cracen_ecc_h2e_sswu(sx_pk_req *req, psa_ecc_family_t curve_family,
 	sx_get_const_op(&gx1, &gx1_const);
 	status = cracen_ecc_is_quadratic_residue(req, &modulo, &gx1_const, &is_gx1_qr);
 	if (status != PSA_SUCCESS) {
-		return silex_statuscodes_to_psa(sx_status);
+		return status;
 	}
 
 	/* v = CSEL(l, gx1, gx2) */

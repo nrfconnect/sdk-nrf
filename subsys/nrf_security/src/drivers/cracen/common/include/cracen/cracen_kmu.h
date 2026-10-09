@@ -77,6 +77,15 @@ psa_status_t cracen_kmu_get_builtin_key(psa_drv_slot_number_t slot_number,
 					size_t key_buffer_size, size_t *key_buffer_length);
 
 /**
+ * @brief Get the number of KMU slots a key occupies.
+ *
+ * If the key exists, the count is determined from the metadata in its primary slot. Otherwise
+ * it is determined from @p key_attr, which must then be complete (type, bits, algorithm).
+ */
+psa_status_t cracen_kmu_get_slot_count(const psa_key_attributes_t *key_attr,
+				       unsigned int *slot_count);
+
+/**
  * @brief Provision a key in the KMU.
  */
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
