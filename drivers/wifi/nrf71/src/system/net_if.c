@@ -34,6 +34,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
 #include <common/mac_addr.h>
+
 #ifdef CONFIG_NRF71_STA_MODE
 static struct net_if_mcast_monitor mcast_monitor;
 #endif /* CONFIG_NRF71_STA_MODE */
