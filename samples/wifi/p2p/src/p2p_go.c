@@ -13,9 +13,12 @@
 LOG_MODULE_REGISTER(p2p_go, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/kernel.h>
+#include <errno.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/dhcpv4_server.h>
+#include <zephyr/net/socket.h>
+
 #include <string.h>
 
 #define WIFI_P2P_GO_MGMT_EVENTS (NET_EVENT_WIFI_AP_STA_CONNECTED |\
@@ -230,13 +233,120 @@ static void net_mgmt_callback_init(void)
 	k_sleep(K_SECONDS(1));
 }
 
+#ifdef CONFIG_SAMPLE_P2P_ECHO_SERVER_MODE
+static int wifi_p2p_run_echo_server(void)
+{
+	int server_sock;
+	int ret;
+	struct sockaddr_in addr = { 0 };
+	char buf[CONFIG_SAMPLE_P2P_ECHO_MSG_BUF_SIZE];
+
+	server_sock = zsock_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (server_sock < 0) {
+		LOG_ERR("Failed to create echo server socket: %d", -errno);
+		return -errno;
+	}
+
+	addr.sin_family = AF_INET;
+	addr.sin_port = net_htons(CONFIG_SAMPLE_ECHO_SERVER_PORT);
+	addr.sin_addr.s_addr = INADDR_ANY;
+
+	if (zsock_bind(server_sock, (struct sockaddr *)&addr, sizeof(addr)) < 0) {
+		LOG_ERR("Failed to bind echo server socket: %d", -errno);
+		zsock_close(server_sock);
+		return -errno;
+	}
+
+	if (zsock_listen(server_sock, 1) < 0) {
+		LOG_ERR("Failed to listen on echo server socket: %d", -errno);
+		zsock_close(server_sock);
+		return -errno;
+	}
+
+	LOG_INF("Echo server listening on port %d", CONFIG_SAMPLE_ECHO_SERVER_PORT);
+
+	/* Keep accepting clients (the echo client reconnects per request), and
+	 * poll with a timeout so a P2P disconnect ends the loop promptly.
+	 */
+	while (context.connected) {
+		struct zsock_pollfd accept_pfd = {
+			.fd = server_sock,
+			.events = ZSOCK_POLLIN,
+		};
+		int client_sock;
+
+		ret = zsock_poll(&accept_pfd, 1, CONFIG_SAMPLE_ECHO_POLL_INTERVAL_MS);
+		if (ret < 0) {
+			LOG_ERR("Poll failed while waiting for echo client: %d", -errno);
+			break;
+		} else if (ret == 0) {
+			continue;
+		}
+
+		client_sock = zsock_accept(server_sock, NULL, NULL);
+		if (client_sock < 0) {
+			LOG_ERR("Failed to accept echo client: %d", -errno);
+			k_sleep(K_MSEC(CONFIG_SAMPLE_ECHO_POLL_INTERVAL_MS));
+			continue;
+		}
+
+		LOG_INF("Echo client connected");
+
+		while (context.connected) {
+			struct zsock_pollfd recv_pfd = {
+				.fd = client_sock,
+				.events = ZSOCK_POLLIN,
+			};
+
+			ret = zsock_poll(&recv_pfd, 1, CONFIG_SAMPLE_ECHO_POLL_INTERVAL_MS);
+			if (ret < 0) {
+				LOG_ERR("Poll failed on echo client socket: %d", -errno);
+				break;
+			} else if (ret == 0) {
+				continue;
+			}
+
+			ret = zsock_recv(client_sock, buf, sizeof(buf) - 1, 0);
+			if (ret < 0) {
+				LOG_ERR("Failed to receive from echo client: %d", -errno);
+				break;
+			} else if (ret == 0) {
+				LOG_INF("Echo client closed the connection");
+				break;
+			}
+
+			buf[ret] = '\0';
+			LOG_INF("Echo server received: \"%s\"", buf);
+
+			ret = zsock_send(client_sock, buf, ret, 0);
+			if (ret < 0) {
+				LOG_ERR("Failed to send echo reply: %d", -errno);
+				break;
+			}
+		}
+
+		zsock_close(client_sock);
+	}
+
+	zsock_close(server_sock);
+	LOG_INF("Echo server stopped");
+
+	return 0;
+}
+#endif
+
 int p2p_go_run(void)
 {
 	int ret;
 
 	context.connected = false;
 
-	configure_dhcp_server();
+	ret = configure_dhcp_server();
+	if (ret < 0) {
+		LOG_ERR("Aborting: DHCPv4 server did not start");
+		return ret;
+	}
+
 	net_mgmt_callback_init();
 
 	ret = wifi_p2p_group_add();
@@ -262,6 +372,13 @@ int p2p_go_run(void)
 	}
 	LOG_INF("Peer connected");
 	k_sleep(K_SECONDS(2));
+
+#ifdef CONFIG_SAMPLE_P2P_ECHO_SERVER_MODE
+	ret = wifi_p2p_run_echo_server();
+	if (ret < 0) {
+		LOG_ERR("Echo server failed: %d", ret);
+	}
+#endif
 
 	LOG_INF("Waiting for peer to disconnect...");
 	ret = k_sem_take(&wifi_p2p_peer_disconnect_sem,

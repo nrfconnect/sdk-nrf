@@ -22,6 +22,15 @@ config SAMPLE_P2P_GO_MODE
 	help
 	  This configuration option enables the device to act as a P2P Group Owner.
 
+config SAMPLE_P2P_GO_PERSISTENT_MODE
+	bool "GO mode (Persistent: autonomous persistent group)"
+	select NRF70_AP_MODE
+	select NRF71_AP_MODE if SOC_NRF7120
+	help
+	  This configuration option enables an autonomous persistent Group Owner
+	  (P2P_GROUP_ADD with persistent_set) that verifies in code, across cycles,
+	  that the stored group is reused. GO-only; persistence is RAM-only here.
+
 endchoice
 
 if SAMPLE_P2P_CLI_MODE
@@ -87,7 +96,65 @@ config SAMPLE_P2P_DHCP_TIMEOUT_S
 	int "DHCP timeout in seconds"
 	default 20
 
+config SAMPLE_P2P_ECHO_CLI_MODE
+	bool "Echo client mode"
+	default n
+	help
+	  This configuration options helps to start a TCP echo client.
+	  Connect to Go IP address and send test strings and validates
+	  the echoed response.
+
+if SAMPLE_P2P_ECHO_CLI_MODE
+
+config SAMPLE_ECHO_SERVER_ADDR
+	string "Echo server (P2P GO) IPv4 address"
+	default "192.168.1.99"
+	help
+	  This configuration option sets the IPv4 address of the P2P Group
+	  Owner running the echo server. It must match CONFIG_NET_CONFIG_MY_IPV4_ADDR
+	  used when building the GO image, since the two are set independently.
+
+config SAMPLE_ECHO_CLI_PORT
+	int "P2P server port for echo client"
+	default 4242
+	help
+	  This configuration option sets the operating port used when creating
+	  the P2P Echo Client. It must match CONFIG_SAMPLE_ECHO_SERVER_PORT on
+	  the GO image, since the two are set independently.
+
+config SAMPLE_ECHO_CLI_COUNT
+	int "Number of echo requests to send"
+	default 10
+	help
+	  This configuration option sets how many echo request/response
+	  iterations the client performs before returning.
+
+config SAMPLE_ECHO_CLI_INTERVAL_MS
+	int "Delay between echo requests (ms)"
+	default 1000
+	help
+	  This configuration option sets the delay, in milliseconds, between
+	  successive echo requests sent by the client.
+
+config SAMPLE_ECHO_CLI_REPLY_TIMEOUT_MS
+	int "Echo reply timeout (ms)"
+	default 5000
+	help
+	  This configuration option sets how long, in milliseconds, the client
+	  waits for an echo reply before aborting the echo test.
+
 endif
+
+endif
+
+config SAMPLE_P2P_ECHO_MSG_BUF_SIZE
+	int "Echo message buffer size (bytes)"
+	depends on SAMPLE_P2P_ECHO_CLI_MODE || SAMPLE_P2P_ECHO_SERVER_MODE
+	default 128
+	help
+	  Size, in bytes, of the TCP buffer used by the echo client (to hold the
+	  reply) and the echo server (to receive and echo back). Data larger than
+	  this is handled in chunks of this size.
 
 choice SAMPLE_P2P_CONNECTION_METHODS
 	prompt "P2P connection methods"
@@ -133,7 +200,7 @@ config SAMPLE_P2P_CONNECTION_METHOD_PIN_VALUE
 
 endif
 
-if SAMPLE_P2P_GO_MODE
+if SAMPLE_P2P_GO_MODE || SAMPLE_P2P_GO_PERSISTENT_MODE
 
 config SAMPLE_P2P_DHCPV4_SERVER
 	bool "DHCPv4 server"
@@ -178,6 +245,47 @@ config SAMPLE_P2P_PEER_DISCONN_TIMEOUT_S
 	default 30
 	help
 	  This configuration option sets the timeout for waiting for a peer to disconnect.
+
+config SAMPLE_P2P_ECHO_SERVER_MODE
+	bool "Echo Server mode"
+	default n
+	help
+	  This configuration option helps to start a TCP echo server in GO mode.
+	  Listen on a fixed port and echo back whatever data is received.
+
+if SAMPLE_P2P_ECHO_SERVER_MODE
+
+config SAMPLE_ECHO_SERVER_PORT
+	int "P2P server port for echo server"
+	default 4242
+	help
+	  This configuration option sets the operating port used when creating
+	  the P2P Echo Server. It must match CONFIG_SAMPLE_ECHO_CLI_PORT on the
+	  CLI image, since the two are set independently.
+
+config SAMPLE_ECHO_POLL_INTERVAL_MS
+	int "Echo server poll interval (ms)"
+	default 1000
+	help
+	  This configuration option sets how often, in milliseconds, the echo
+	  server re-checks the P2P peer connection state while waiting for a
+	  client connection or data. It bounds how long P2P group teardown can
+	  be delayed after the peer disconnects.
+
+endif
+
+endif
+
+if SAMPLE_P2P_GO_PERSISTENT_MODE
+
+config SAMPLE_P2P_GO_PERSISTENT_CYCLES
+	int "Number of persistence-verification cycles to run in this boot"
+	range 2 100
+	default 3
+	help
+	  Number of verification cycles. Cycle 1 creates the persistent group and
+	  records its id/SSID; later cycles re-invoke it by id and check the SSID
+	  is unchanged. At least 2 are needed (create + verify).
 
 endif
 

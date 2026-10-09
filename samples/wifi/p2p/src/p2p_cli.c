@@ -13,12 +13,14 @@
 LOG_MODULE_REGISTER(p2p_cli, CONFIG_LOG_DEFAULT_LEVEL);
 
 #include <zephyr/kernel.h>
+#include <errno.h>
 #include <stdio.h>
 #include <string.h>
 
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/net_event.h>
+#include <zephyr/net/socket.h>
 
 #define WIFI_P2P_CLI_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |\
 				  NET_EVENT_WIFI_P2P_DEVICE_FOUND)
@@ -222,6 +224,81 @@ static int wifi_p2p_connect(void)
 	return 0;
 }
 
+#ifdef CONFIG_SAMPLE_P2P_ECHO_CLI_MODE
+static char echo_cli_rx_buf[CONFIG_SAMPLE_P2P_ECHO_MSG_BUF_SIZE];
+
+static char *wifi_p2p_run_echo_client(char *tx_str)
+{
+	int sock;
+	int ret;
+	int tx_len;
+	struct sockaddr_in server = { 0 };
+	struct zsock_pollfd pfd;
+
+	sock = zsock_socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+	if (sock < 0) {
+		LOG_ERR("Failed to create echo client socket: %d", -errno);
+		return NULL;
+	}
+
+	server.sin_family = AF_INET;
+	server.sin_port = net_htons(CONFIG_SAMPLE_ECHO_CLI_PORT);
+
+	if (net_addr_pton(AF_INET, CONFIG_SAMPLE_ECHO_SERVER_ADDR, &server.sin_addr) < 0) {
+		LOG_ERR("Invalid echo server address: %s", CONFIG_SAMPLE_ECHO_SERVER_ADDR);
+		zsock_close(sock);
+		return NULL;
+	}
+
+	if (zsock_connect(sock, (struct sockaddr *)&server, sizeof(server)) < 0) {
+		LOG_ERR("Failed to connect to echo server %s:%d: %d",
+			CONFIG_SAMPLE_ECHO_SERVER_ADDR, CONFIG_SAMPLE_ECHO_CLI_PORT, -errno);
+		zsock_close(sock);
+		return NULL;
+	}
+
+	tx_len = strlen(tx_str);
+
+	ret = zsock_send(sock, tx_str, tx_len, 0);
+	if (ret < 0) {
+		LOG_ERR("Failed to send echo request: %d", -errno);
+		zsock_close(sock);
+		return NULL;
+	}
+
+	pfd.fd = sock;
+	pfd.events = ZSOCK_POLLIN;
+
+	ret = zsock_poll(&pfd, 1, CONFIG_SAMPLE_ECHO_CLI_REPLY_TIMEOUT_MS);
+	if (ret <= 0) {
+		LOG_ERR("Timed out waiting for echo reply: %d", ret < 0 ? -errno : -ETIMEDOUT);
+		zsock_close(sock);
+		return NULL;
+	}
+
+	ret = zsock_recv(sock, echo_cli_rx_buf, sizeof(echo_cli_rx_buf) - 1, 0);
+	zsock_close(sock);
+
+	if (ret < 0) {
+		LOG_ERR("Failed to receive echo reply: %d", -errno);
+		return NULL;
+	} else if (ret == 0) {
+		LOG_WRN("Echo server closed the connection");
+		return NULL;
+	}
+
+	echo_cli_rx_buf[ret] = '\0';
+
+	if (ret != tx_len || memcmp(tx_str, echo_cli_rx_buf, tx_len) != 0) {
+		LOG_ERR("Echo mismatch: sent \"%s\", received \"%s\"", tx_str, echo_cli_rx_buf);
+	} else {
+		LOG_INF("Echo OK: \"%s\"", echo_cli_rx_buf);
+	}
+
+	return echo_cli_rx_buf;
+}
+#endif /* CONFIG_SAMPLE_P2P_ECHO_CLI_MODE */
+
 int p2p_cli_run(void)
 {
 	int ret;
@@ -259,6 +336,24 @@ int p2p_cli_run(void)
 			}
 
 			LOG_INF("Successfully connected to Peer");
+#ifdef CONFIG_SAMPLE_P2P_ECHO_CLI_MODE
+			{
+				char *sample_str = "P2P Hello World";
+				char *return_str;
+
+				/* Match the GO's 2s echo-server startup delay. */
+				k_sleep(K_SECONDS(2));
+
+				for (int i = 0; i < CONFIG_SAMPLE_ECHO_CLI_COUNT; i++) {
+					return_str = wifi_p2p_run_echo_client(sample_str);
+					if (!return_str) {
+						LOG_ERR("Echo request %d failed", i);
+					}
+
+					k_sleep(K_MSEC(CONFIG_SAMPLE_ECHO_CLI_INTERVAL_MS));
+				}
+			}
+#endif
 			break;
 		} else {
 			LOG_INF("No peer found, retrying in 10 seconds...");
