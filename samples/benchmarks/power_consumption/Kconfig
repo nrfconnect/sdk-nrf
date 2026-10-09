@@ -61,15 +61,14 @@ config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL
 	  No RAM power-down call is made at all. This is the default: by
 	  default, all RAM must stay retained.
 
-config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_UNUSED_ONLY
-	bool "Power down whatever this image itself does not use"
+config SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY
+	bool "Retain only RAM used by this image (power down the rest)"
 	select RAM_POWER_DOWN_LIBRARY
 	help
-	  Calls power_down_unused_ram() instead of a fixed KiB boundary --
-	  the ram_pwrdn library computes the unused range itself, from the
-	  end of the running image to the end of application RAM. Whichever
-	  RAM section still holds live image/stack data is left powered,
-	  same as every other tier above.
+	  Calls power_down_unused_ram() instead of a fixed KiB boundary.
+	  Everything from _image_ram_end through the end of application RAM is
+	  powered down; runtime heap in that range can bus fault (see ram_pwrdn
+	  docs).
 
 endchoice
 

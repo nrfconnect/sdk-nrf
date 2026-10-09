@@ -52,7 +52,7 @@ static inline void idle_marker_set(bool running)
 
 static void configure_ram_retention(void)
 {
-#if defined(CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY)
+#if defined(CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY)
 	power_down_unused_ram();
 #elif defined(CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_64K) || \
 	defined(CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_128K) || \
