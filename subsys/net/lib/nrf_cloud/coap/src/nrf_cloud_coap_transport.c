@@ -30,7 +30,7 @@
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_coap.h>
 #include <cJSON.h>
-#include <zephyr/version.h>
+#include <ncs_version.h>
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_dns.h"
 #include "nrfc_dtls.h"
@@ -47,8 +47,8 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define CDDL_VERSION "1"
 #define JWT_BUF_SZ 700
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
-#define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
-#define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
+#define VER_STRING_FMT2 "cver=" CLIENT_VERSION "&dver=" CDDL_VERSION
+#define CLIENT_VERSION NCS_VERSION_STRING
 #define NON_RESP_WAIT_S 3
 #define MAX_XFERS (CONFIG_COAP_CLIENT_MAX_INSTANCES * CONFIG_COAP_CLIENT_MAX_REQUESTS)
 #define NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS 1
@@ -959,25 +959,27 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 
 #if defined(CONFIG_MODEM_INFO) && !defined(CONFIG_DECT)
 	char mfw_string[MODEM_INFO_FWVER_SIZE];
-	char ver_string[strlen(VER_STRING_FMT) +
-			MODEM_INFO_FWVER_SIZE +
-			strlen(BUILD_VERSION_STR) +
-			strlen(CDDL_VERSION)];
+	char ver_buf[strlen(VER_STRING_FMT) +
+		     MODEM_INFO_FWVER_SIZE +
+		     strlen(CLIENT_VERSION) +
+		     strlen(CDDL_VERSION)];
+	const char *ver_string = VER_STRING_FMT2;
 
 	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
-	if (!err) {
-		err = snprintk(ver_string, sizeof(ver_string), VER_STRING_FMT,
-			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
-		if ((err < 0) || (err >= sizeof(ver_string))) {
+	if (err) {
+		LOG_WRN("Unable to obtain the modem firmware version: %d", err);
+	} else {
+		err = snprintk(ver_buf, sizeof(ver_buf), VER_STRING_FMT,
+			       mfw_string, CLIENT_VERSION, CDDL_VERSION);
+		if ((err < 0) || (err >= sizeof(ver_buf))) {
 			LOG_ERR("Could not format string");
 			err = -ETXTBSY;
 			goto fail;
 		}
-	} else {
-		LOG_ERR("Unable to obtain the modem firmware version: %d", err);
+		ver_string = ver_buf;
 	}
 #else
-	char *ver_string = VER_STRING_FMT2;
+	const char *ver_string = VER_STRING_FMT2;
 #endif
 
 	LOG_DBG("Generate JWT");
