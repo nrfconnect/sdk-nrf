@@ -3,10 +3,10 @@ tests:
     sysbuild: true
     platform_allow:
       - native_sim
-      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
     integration_platforms:
       - native_sim
-      - nrf52840dk/nrf52840
+      - nrf54l15dk/nrf54l15/cpuapp
     tags:
       - discovery_manager
       - sysbuild

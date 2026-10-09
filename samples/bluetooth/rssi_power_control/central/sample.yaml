@@ -13,10 +13,8 @@ tests:
   sample.bluetooth.central_automated_power_control:
     sysbuild: true
     integration_platforms:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf54l15dk/nrf54l15/cpuapp
     harness: console
     harness_config:

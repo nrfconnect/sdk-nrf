@@ -546,7 +546,6 @@
 /samples/bluetooth/event_trigger/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/fast_pair/input_device/ @nrfconnect/ncs-si-xcake
 /samples/bluetooth/fast_pair/locator_tag/ @nrfconnect/ncs-si-bluebagel
-/samples/bluetooth/hci_lpuart/            @nordic-krch
 /samples/bluetooth/iso_combined_bis_and_cis/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/le_adv_report_chan_idx/ @nrfconnect/ncs-dragoon
@@ -682,7 +681,6 @@
 /samples/bluetooth/fast_pair/input_device/**/*.rst @nrfconnect/ncs-si-xcake-doc
 /samples/bluetooth/fast_pair/locator_tag/**/*.rst @nrfconnect/ncs-si-bluebagel-doc
 /samples/bluetooth/mesh/**/*.rst          @nrfconnect/ncs-paladin-doc
-/samples/bluetooth/hci_lpuart/*.rst       @nrfconnect/ncs-doc-leads
 /samples/bluetooth/iso_combined_bis_and_cis/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/iso_time_sync/*.rst    @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/llpm/*.rst             @nrfconnect/ncs-dragoon-doc
