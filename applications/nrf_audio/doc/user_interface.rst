@@ -157,9 +157,7 @@ To indicate the tasks performed, the application uses the LED behavior described
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                       |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **CODEC**                | Off - No configuration loaded to the onboard hardware codec.                                              | All                                       |
-     |                          +-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     |                          | Solid green - Hardware codec configuration loaded.                                                        | All                                       |
+     | **CODEC**                | Off - The application does not drive this LED.                                                            | All                                       |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RGB**                  | Solid green - The device is programmed as the gateway.                                                    | * :ref:`nrf_audio_broadcast_source_app`   |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_client_app`     |
