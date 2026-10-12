@@ -1197,6 +1197,9 @@ Libraries for networking
 
 * Added:
 
+  * The :ref:`lib_ready_resolve` library (:kconfig:option:`CONFIG_READY_RESOLVE`) for dual-stack, connectivity-aware host name resolution.
+    It tracks IPv4, IPv6, and DNS readiness, resolves a host name for the address families that are up, and returns the resulting addresses one at a time.
+
   * The :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC.
     It performs the following operations:
 

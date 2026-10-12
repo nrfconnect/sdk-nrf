@@ -1,0 +1,24 @@
+tests:
+  net.lib.ready_resolve:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - ready_resolve
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.ready_resolve.modem_readiness:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_TEST_MODEM_READINESS=y
+      - CONFIG_READY_RESOLVE_MODEM_POLL_INTERVAL_MS=10
+    tags:
+      - ready_resolve
+      - sysbuild
+      - ci_tests_subsys_net
