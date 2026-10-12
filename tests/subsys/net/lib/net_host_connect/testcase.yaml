@@ -1,0 +1,11 @@
+tests:
+  net.lib.net_host_connect:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - net_host_connect
+      - sysbuild
+      - ci_tests_subsys_net
