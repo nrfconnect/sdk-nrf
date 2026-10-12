@@ -84,6 +84,10 @@ Use the following command to install the requirements.
 
    For more details, see `Scancode-Toolkit Installation`_.
 
+.. note::
+   The requirements file also installs the ``spdx-python-model`` package.
+   The command uses it to write SPDX 3.0 reports (``--spdx-version 3.0``).
+
 Using the command
 *****************
 
@@ -109,6 +113,13 @@ The input options and output options can be combined as needed.
      :class: highlight
 
      west ncs-sbom -d *build-directory* --output-spdx *file-name.spdx*
+
+* To analyze a build directory and generate an SPDX 3.0 report run:
+
+  .. parsed-literal::
+     :class: highlight
+
+     west ncs-sbom -d *build-directory* --output-spdx *file-name.jsonld* --spdx-version 3.0
 
 * To analyze selected files and generate an HTML report run:
 
@@ -160,6 +171,7 @@ You can also mix them, for example, to generate a report for the application and
       For example, with the default settings it generates one HTML report for each domain.
       If both HTML and SPDX outputs are requested, it generates two files for each domain.
       To adjust the output file names, append ``_<domain>`` before the extension (for example, :file:`sbom_report_with_mcuboot.html`).
+      If ``--output-spdx`` is a directory, the SPDX reports are named :file:`sbom_<domain>.spdx` (SPDX 2.3) or :file:`sbom_<domain>.jsonld` (SPDX 3.0).
       To control where ``{domain}`` appears in the filename, include ``{domain}`` in ``--output-html`` or ``--output-spdx`` (for example, ``--output-spdx sbom_{domain}_sysbuild.spdx``).
       In PS, escape the curly braces with backticks.
 
@@ -254,13 +266,14 @@ You can specify the format of the report output using the ``output`` argument.
   The :file:`sbom_report.html` file is generated in your build directory
   (the first one if you specify more than one build directory).
 
-* To generate an SPDX 2.3 format report (for CRA/EO 14028/FDA compliance):
+* To generate an SPDX report (for CRA/EO 14028/FDA compliance):
 
   .. parsed-literal::
      :class: highlight
 
      --output-spdx *file-name.spdx*
 
+  By default, the report uses the SPDX 2.3 tag-value format.
   The SPDX report groups files into packages and includes:
 
   * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
@@ -275,9 +288,18 @@ You can specify the format of the report output using the ``output`` argument.
   * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
   * ``BuiltDate`` on the application package, taken from the newest build-artifact timestamp
 
-  SPDX 2.3 is the supported machine-readable standardized output format.
+  To generate an SPDX 3.0 report instead, add the ``--spdx-version 3.0`` option:
 
-  This format meets requirements from:
+  .. parsed-literal::
+     :class: highlight
+
+     --output-spdx *file-name.jsonld* --spdx-version 3.0
+
+  The SPDX 3.0 report contains the same information in the SPDX 3.0.1 JSON-LD format, using the elements and relationships defined by SPDX 3.0.
+
+  SPDX 2.3 and SPDX 3.0 are the supported machine-readable standardized output formats.
+
+  These formats meet requirements from:
 
   * Cyber Resilience Act (CRA)
   * U.S. Executive Order 14028

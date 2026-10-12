@@ -141,5 +141,10 @@ def generate(data: Data, output_file: 'Path|str', template_file: Path):
     out = t.render(**data_to_dict(data, output_file.parent.resolve()))
     with open(output_file, 'w', encoding='utf-8') as fd:
         fd.write(out)
+    log_output_written(output_file)
+
+
+def log_output_written(output_file: Path):
+    '''Log a clickable link to the generated output file.'''
     escaped_path = quote(str(output_file.resolve()).replace(os.sep, '/').strip("/"))
     log.inf(f'Output written to file:///{escaped_path}')
