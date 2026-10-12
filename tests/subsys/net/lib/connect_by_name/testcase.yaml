@@ -1,0 +1,36 @@
+tests:
+  net.lib.connect_by_name:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - connect_by_name
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.connect_by_name.no_readiness:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_CONNECT_BY_NAME_READINESS=n
+    tags:
+      - connect_by_name
+      - sysbuild
+      - ci_tests_subsys_net
+  net.lib.connect_by_name.modem_readiness:
+    sysbuild: true
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_CONNECT_BY_NAME_READINESS=n
+      - CONFIG_TEST_MODEM_READINESS=y
+    tags:
+      - connect_by_name
+      - sysbuild
+      - ci_tests_subsys_net

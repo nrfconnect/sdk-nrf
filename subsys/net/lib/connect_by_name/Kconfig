@@ -1,0 +1,55 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig CONNECT_BY_NAME
+	bool "Host connection helper"
+	depends on NET_SOCKETS
+	help
+	  Resolve a host name and connect to it. Tries the resolved addresses
+	  in order, and resolves again when connectivity changes or all
+	  addresses were tried.
+
+if CONNECT_BY_NAME
+
+config CONNECT_BY_NAME_READINESS
+	bool "Track connectivity readiness"
+	depends on NET_CONNECTION_MANAGER
+	default n if NRF_MODEM_LIB && !NRF_MODEM_LIB_NET_IF
+	default y
+	help
+	  Track IPv4, IPv6 and DNS readiness through connection manager events.
+	  Only families that are up are resolved and tried, and connecting
+	  fails with -ENETDOWN until the network is ready. Disable when no
+	  network interface reports these events.
+
+config CONNECT_BY_NAME_MODEM_READINESS
+	bool "Query the modem for readiness"
+	depends on NRF_MODEM_LIB && NET_SOCKETS_OFFLOAD && !CONNECT_BY_NAME_READINESS
+	default y
+	help
+	  Without readiness tracking, check the IP addresses of the modem's
+	  default PDN with AT+CGPADDR. Only families that are up are resolved
+	  and tried, and waiting for a change polls the modem. Loss callbacks
+	  are not supported.
+
+config CONNECT_BY_NAME_MODEM_POLL_INTERVAL_MS
+	int "Modem readiness poll interval (ms)"
+	depends on CONNECT_BY_NAME_MODEM_READINESS
+	default 1000
+	help
+	  How often connect_by_name_wait_change() queries the modem.
+
+config CONNECT_BY_NAME_MAX_ADDRS
+	int "Maximum number of addresses tried per resolution"
+	default DNS_RESOLVER_AI_MAX_ENTRIES if DNS_RESOLVER
+	default 4
+	range 1 255
+
+module = CONNECT_BY_NAME
+module-str = Host connection helper
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # CONNECT_BY_NAME

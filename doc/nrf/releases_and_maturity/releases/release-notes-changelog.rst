@@ -1095,6 +1095,9 @@ Libraries for networking
 
 * Added:
 
+  * The :ref:`lib_connect_by_name` library (:kconfig:option:`CONFIG_CONNECT_BY_NAME`) that resolves a host name and connects to it, trying the resolved addresses in order.
+    It tracks IPv4, IPv6, and DNS readiness, so that only address families that are up are used, and notifies the application when the address family of the connection goes down.
+
   * The :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC.
     It performs the following operations:
 
