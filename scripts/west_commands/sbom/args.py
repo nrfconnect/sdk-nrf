@@ -14,6 +14,14 @@ from sbom_exceptions import SbomException
 
 DEFAULT_REPORT_NAME = 'sbom_report.html'
 
+SPDX_VERSION_2_3 = '2.3'
+SPDX_VERSION_3_0 = '3.0'
+
+SUPPORTED_SPDX_VERSIONS = (
+    SPDX_VERSION_2_3,
+    SPDX_VERSION_3_0,
+)
+
 COMMAND_DESCRIPTION = 'Create license report for application'
 
 COMMAND_HELP = '''
@@ -69,6 +77,7 @@ class ArgsClass:
     ninja: 'str|None'
     help_detectors: bool
     output_spdx: 'str|None'
+    spdx_version: str
     package_supplier: 'str|None'
     package_cpe: 'str|None'
     package_download_format: str
@@ -119,6 +128,11 @@ def add_arguments(parser: argparse.ArgumentParser):
                         help='Generate output HTML report.')
     parser.add_argument('--output-spdx', default=None,
                         help='Generate output SPDX report.')
+    parser.add_argument('--spdx-version', default=SPDX_VERSION_2_3,
+                        choices=SUPPORTED_SPDX_VERSIONS,
+                        help='SPDX specification version for "--output-spdx". '
+                             '"2.3" writes the tag-value format, '
+                             '"3.0" writes SPDX 3.0.1 JSON-LD.')
     parser.add_argument('--output-cache-database', default=None,
                         help='Generate a license and copyright database for the files.')
     parser.add_argument('--input-cache-database', default=None,
