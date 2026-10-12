@@ -191,13 +191,13 @@ static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
  */
 #if DT_NODE_EXISTS(DT_NODELABEL(rram_controller))
 #define MPSL_HW_HAS_RRAMC 1
-#endif /* DT_NODE_EXISTS(DT_NODELABEL(rram_controller)) */
 
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 static int m_nvm_low_latency_event_handle = -1;
 #else
 static uint32_t m_rram_lowpower_config;
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#endif /* DT_NODE_EXISTS(DT_NODELABEL(rram_controller)) */
 #endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) &&
 	* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 	*/
