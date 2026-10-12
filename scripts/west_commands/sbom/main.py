@@ -21,7 +21,7 @@ import output_pre_process
 import output_template
 import scancode_toolkit_detector
 import spdx_tag_detector
-from args import args, init_args
+from args import SPDX_VERSION_3_0, args, init_args
 from common import SbomException, dbg_time
 from data_structure import Data
 from west import log
@@ -71,7 +71,13 @@ def _run_pipeline(domain: 'str|None' = None):
         output_file = args.__dict__[f'output_{generator_name}']
         if output_file is not None:
             t = dbg_time(f'GENERATOR: {generator_name}')
-            output_template.generate(data, output_file, Path(__file__).parent / generator)
+            if generator_name == 'spdx' and args.spdx_version == SPDX_VERSION_3_0:
+                # Imported here so spdx-python-model is only required for SPDX 3.0 output.
+                import spdx3_serializer
+
+                spdx3_serializer.generate(data, output_file)
+            else:
+                output_template.generate(data, output_file, Path(__file__).parent / generator)
             log.dbg(f'GENERATOR: Done in {t}s')
 
 
@@ -169,7 +175,11 @@ def main():
 
                 defaults = {
                     'html': 'sbom_report_{domain}.html',
-                    'spdx': 'sbom_{domain}.spdx',
+                    'spdx': (
+                        'sbom_{domain}.jsonld'
+                        if args.spdx_version == SPDX_VERSION_3_0
+                        else 'sbom_{domain}.spdx'
+                    ),
                     'cache_database': 'sbom_cache_{domain}.json',
                 }
                 base_outputs = {f'output_{k}': args.__dict__.get(f'output_{k}') for k in generators}
