@@ -401,7 +401,10 @@ Binary libraries
 Bluetooth libraries and services
 --------------------------------
 
-|no_changes_yet_note|
+* :ref:`bt_fast_pair_readme` library:
+
+  * Fixed the validation of the Data Length parameter in requests that the Find Hub Network (FHN) extension receives on the Beacon Actions characteristic.
+    Requests that declare a Data Length above the maximum supported value are now rejected with the Invalid Value error.
 
 Common Application Framework
 ----------------------------
