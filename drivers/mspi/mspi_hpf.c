@@ -12,19 +12,31 @@
 #include <zephyr/drivers/counter.h>
 #include <zephyr/ipc/ipc_service.h>
 #include <zephyr/pm/device.h>
-#if !defined(CONFIG_MULTITHREADING)
+#include <zephyr/pm/device_runtime.h>
 #include <zephyr/sys/atomic.h>
-#endif
+#include <hal/nrf_vpr.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 
-#include <hal/nrf_gpio.h>
 #include <drivers/mspi/hpf_mspi.h>
 
 #define MSPI_HPF_NODE		     DT_DRV_INST(0)
 #define MAX_TX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_tx)))
 #define MAX_RX_MSG_SIZE		     (DT_REG_SIZE(DT_NODELABEL(sram_rx)))
-#define IPC_TIMEOUT_MS		     100
+#ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+#define BOUNCE_BUF_SIZE CONFIG_MSPI_HPF_BOUNCE_BUF_SIZE
+#endif
+#else
+/* The transfer packet message is built on the stack before ICMsg copies it into the TX region. */
+#define MAX_COPY_MSG_SIZE	     MAX_TX_MSG_SIZE
+#define MAX_STACK_MSG_SIZE	     1024
+/* ICMsg drops a received message that does not fit its read buffer. */
+#define MAX_REPLY_MSG_SIZE	     MIN(MAX_RX_MSG_SIZE, CONFIG_PBUF_RX_READ_BUF_SIZE)
+#endif
+/* Alignment the FLPR requires for data passed by reference. */
+#define DATA_BUF_ALIGNMENT	     sizeof(uint32_t)
+#define HPF_MSPI_IPC_CONFIG_TIMEOUT_MS 100
 #define IPC_BOUND_TIMEOUT_MS	     100
 #define IPC_BOUND_RETRY_COUNT	     10
 #define IPC_BOUND_RETRY_DELAY_MS	     10
@@ -33,6 +45,7 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 #define CNT0_TOP_CALCULATE(freq)     (NRFX_CEIL_DIV(SystemCoreClock, freq * 2) - 1)
 #define DATA_LINE_INDEX(pinctr_fun)  (pinctr_fun - NRF_FUN_HPF_MSPI_DQ0)
 #define DATA_PIN_UNUSED              UINT8_MAX
+#define FLPR_VPR		     ((NRF_VPR_Type *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_vpr)))
 
 #if defined(CONFIG_SOC_NRF54L15) || defined(CONFIG_SOC_NRF54LM20A) || \
 	defined(CONFIG_SOC_NRF54LM20B)
@@ -79,8 +92,23 @@ LOG_MODULE_REGISTER(mspi_hpf, CONFIG_MSPI_LOG_LEVEL);
 HPF_MSPI_PINCTRL_DT_DEFINE(MSPI_HPF_NODE);
 
 static struct ipc_ept ep;
-static size_t ipc_received;
-static uint8_t *ipc_receive_buffer;
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+/* ICMsg passes a received message in a buffer that is valid only during the receive callback,
+ * so the reply data is copied there straight into the buffer of the pending RX packet.
+ * The receive callback runs in an interrupt or in a cooperative thread, so the thread that sends
+ * a packet cannot preempt it. Clearing rx_dest before that thread returns is therefore enough to
+ * keep a late reply from writing into the buffer afterwards.
+ */
+BUILD_ASSERT(!IS_ENABLED(CONFIG_SMP) &&
+		     (!IS_ENABLED(CONFIG_MULTITHREADING) ||
+		      IS_ENABLED(CONFIG_IPC_SERVICE_BACKEND_ICMSG_WQ_ENABLE) ||
+		      (CONFIG_SYSTEM_WORKQUEUE_PRIORITY < 0)),
+	     "Reply handling requires a single CPU and ICMsg calling back from a cooperative "
+	     "thread");
+static uint8_t *volatile rx_dest;
+static volatile size_t rx_dest_len;
+static volatile size_t ipc_received;
+#endif
 static volatile uint32_t *cpuflpr_error_ctx_ptr =
 	(uint32_t *)DT_REG_ADDR(DT_NODELABEL(cpuflpr_error_code));
 
@@ -120,11 +148,13 @@ static const struct mspi_hpf_config dev_config = {
 
 static struct mspi_hpf_data dev_data;
 
+/* Set once the FLPR has been halted after a response timeout. */
+static atomic_t flpr_halted = ATOMIC_INIT(0);
+
 static void ep_recv(const void *data, size_t len, void *priv);
 
 static void ep_bound(void *priv)
 {
-	ipc_received = 0;
 #if defined(CONFIG_MULTITHREADING)
 	k_sem_give(&ipc_sem);
 #else
@@ -220,10 +250,15 @@ static void ep_recv(const void *data, size_t len, void *priv)
 		break;
 	}
 	case HPF_MSPI_TXRX: {
-		if (len > 0) {
-			ipc_received = len - sizeof(hpf_mspi_opcode_t);
-			ipc_receive_buffer = (uint8_t *)&response->data;
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+		uint8_t *dest = rx_dest;
+
+		ipc_received = (len >= sizeof(hpf_mspi_opcode_t)) ? len - sizeof(hpf_mspi_opcode_t)
+								   : 0;
+		if ((dest != NULL) && (ipc_received == rx_dest_len)) {
+			memcpy(dest, &response->data, ipc_received);
 		}
+#endif
 #if defined(CONFIG_MULTITHREADING)
 		k_sem_give(&ipc_sem_xfer);
 #else
@@ -379,19 +414,62 @@ static int hpf_mspi_register_endpoint_with_retry(const struct device *ipc_instan
 }
 
 /**
+ * @brief Stop the FLPR after it failed to respond in time.
+ */
+static void hpf_mspi_halt_flpr(void)
+{
+	/* CPURUN only takes effect on a core reset, so reset the core after clearing it. */
+	nrf_vpr_cpurun_set(FLPR_VPR, false);
+	nrf_vpr_debugif_dmcontrol_mask_set(
+		FLPR_VPR,
+		(VPR_DEBUGIF_DMCONTROL_NDMRESET_Active << VPR_DEBUGIF_DMCONTROL_NDMRESET_Pos) |
+			(VPR_DEBUGIF_DMCONTROL_DMACTIVE_Enabled
+			 << VPR_DEBUGIF_DMCONTROL_DMACTIVE_Pos));
+	nrf_vpr_debugif_dmcontrol_mask_set(
+		FLPR_VPR,
+		(VPR_DEBUGIF_DMCONTROL_NDMRESET_Inactive << VPR_DEBUGIF_DMCONTROL_NDMRESET_Pos) |
+			(VPR_DEBUGIF_DMCONTROL_DMACTIVE_Disabled
+			 << VPR_DEBUGIF_DMCONTROL_DMACTIVE_Pos));
+
+	atomic_set(&flpr_halted, 1);
+
+#if defined(CONFIG_MSPI_HPF_FAULT_TIMER)
+	/* The FLPR stops the fault timer only when it completes a transfer. */
+	(void)counter_stop(DEVICE_DT_GET(DT_NODELABEL(fault_timer)));
+#endif
+
+	/* Hand the pins back from the stopped FLPR, if a sleep state is defined. */
+	(void)pinctrl_apply_state(dev_config.pcfg, PINCTRL_STATE_SLEEP);
+
+	LOG_ERR("FLPR stopped after response timeout, driver disabled");
+}
+
+/**
  * @brief Send data to the FLPR core using the IPC service, and wait for FLPR response.
+ *
+ * The length of the data is ignored in no copy mode, where only the pointer
+ * to the data is sent.
  *
  * @param opcode The configuration packet opcode to send.
  * @param data The data to send.
  * @param len The length of the data to send.
+ * @param timeout_ms Maximum time to wait for the FLPR response, in milliseconds.
  *
- * @return 0 on success, negative errno code on failure.
+ * @retval 0 on success.
+ * @retval -EIO if the FLPR was stopped after an earlier response timeout.
+ * @retval -ETIMEDOUT if the FLPR did not respond in time. The FLPR is stopped before returning.
+ * @retval -errno other negative errno code on failure.
  */
-static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
+static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len,
+		     uint32_t timeout_ms)
 {
 	LOG_DBG("Sending msg with opcode: %d", (uint8_t)opcode);
 
 	int rc;
+
+	if (atomic_get(&flpr_halted)) {
+		return -EIO;
+	}
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
 	(void)len;
 	void *data_ptr = (void *)data;
@@ -427,8 +505,9 @@ static int send_data(hpf_mspi_opcode_t opcode, const void *data, size_t len)
 		return rc;
 	}
 
-	rc = hpf_mspi_wait_for_response(opcode, IPC_TIMEOUT_MS);
+	rc = hpf_mspi_wait_for_response(opcode, timeout_ms);
 	if (rc < 0) {
+		hpf_mspi_halt_flpr();
 		LOG_ERR("Data transfer: %d response timeout: %d!", opcode, rc);
 	}
 
@@ -603,7 +682,8 @@ static int api_config(const struct mspi_dt_spec *spec)
 
 	/* Send pinout configuration to FLPR */
 	return send_data(HPF_MSPI_CONFIG_PINS, (const void *)&mspi_pin_config,
-			 sizeof(hpf_mspi_pinctrl_soc_pin_msg_t));
+			 sizeof(hpf_mspi_pinctrl_soc_pin_msg_t),
+			 HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 }
 
 static int check_io_mode(enum mspi_io_mode io_mode)
@@ -808,11 +888,69 @@ static int api_dev_config(const struct device *dev, const struct mspi_dev_id *de
 	mspi_dev_config_msg.dev_config.ce_index = cfg->ce_num;
 
 	return send_data(HPF_MSPI_CONFIG_DEV, (void *)&mspi_dev_config_msg,
-			 sizeof(hpf_mspi_dev_config_msg_t));
+			 sizeof(hpf_mspi_dev_config_msg_t),
+			 HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 }
 
 static int api_get_channel_status(const struct device *dev, uint8_t ch)
 {
+	return 0;
+}
+
+#ifndef CONFIG_MSPI_HPF_IPC_NO_COPY
+BUILD_ASSERT(MAX_COPY_MSG_SIZE <= MAX_STACK_MSG_SIZE,
+	     "TX region is too large for the transfer packet message buffer on the stack. Size "
+	     "sram_tx for the largest TX packet only; RX data uses sram_rx.");
+BUILD_ASSERT(CONFIG_PBUF_RX_READ_BUF_SIZE >= sizeof(hpf_mspi_opcode_t),
+	     "ICMsg read buffer cannot hold a response opcode");
+#endif
+
+/**
+ * @brief Check whether a packet can be sent to the FLPR.
+ *
+ * @param packet Transfer packet to check.
+ *
+ * @retval 0 if the packet can be sent
+ * @retval -EINVAL if the packet is too large
+ */
+static int check_packet_size(const struct mspi_xfer_packet *packet)
+{
+#ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
+	if ((packet->num_bytes > 0) &&
+	    !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT)) {
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+		if (packet->num_bytes > BOUNCE_BUF_SIZE) {
+			LOG_ERR("Unaligned packet of %u bytes exceeds the %u byte bounce buffer. "
+				"Use a word-aligned buffer or increase MSPI_HPF_BOUNCE_BUF_SIZE.",
+				packet->num_bytes, BOUNCE_BUF_SIZE);
+			return -EINVAL;
+		}
+#else
+		LOG_ERR("Unaligned data buffer (%u bytes). Use a word-aligned buffer or enable "
+			"MSPI_HPF_UNALIGNED_XFER.",
+			packet->num_bytes);
+		return -EINVAL;
+#endif
+	}
+#else
+	if ((packet->dir == MSPI_TX) &&
+	    (packet->num_bytes > MAX_COPY_MSG_SIZE - sizeof(hpf_mspi_xfer_packet_msg_t))) {
+		LOG_ERR("Packet of %u bytes does not fit the %u byte TX region. Declare "
+			"packet-data-limit or increase the TX region.",
+			packet->num_bytes, (uint32_t)MAX_COPY_MSG_SIZE);
+		return -EINVAL;
+	}
+
+	if ((packet->dir == MSPI_RX) &&
+	    (packet->num_bytes > MAX_REPLY_MSG_SIZE - sizeof(hpf_mspi_opcode_t))) {
+		LOG_ERR("Reply of %u bytes does not fit the %u byte message (RX region: %u bytes, "
+			"CONFIG_PBUF_RX_READ_BUF_SIZE: %u bytes). Declare packet-data-limit.",
+			packet->num_bytes, (uint32_t)MAX_REPLY_MSG_SIZE, (uint32_t)MAX_RX_MSG_SIZE,
+			CONFIG_PBUF_RX_READ_BUF_SIZE);
+		return -EINVAL;
+	}
+#endif
+
 	return 0;
 }
 
@@ -824,25 +962,34 @@ static int api_get_channel_status(const struct device *dev, uint8_t ch)
  * @param timeout Timeout in milliseconds
  *
  * @retval 0 on success
+ * @retval -EINVAL if the packet does not fit the memory shared with the FLPR
  * @retval -ENOTSUP if the packet is not supported
  * @retval -ENOMEM if there is no space in the buffer
  * @retval -ETIMEDOUT if the transfer timed out
  */
-static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
+static int send_packet(const struct mspi_xfer_packet *packet, uint32_t timeout)
 {
 	int rc;
 	hpf_mspi_opcode_t opcode = (packet->dir == MSPI_RX) ? HPF_MSPI_TXRX : HPF_MSPI_TX;
-
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-	/* In case of buffer alignment problems: create correctly aligned temporary buffer. */
-	uint32_t len = ((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0
-			       ? sizeof(hpf_mspi_xfer_packet_msg_t) + packet->num_bytes
-			       : sizeof(hpf_mspi_xfer_packet_msg_t);
-#else
-	uint32_t len = sizeof(hpf_mspi_xfer_packet_msg_t) + packet->num_bytes;
+	/* Only a pointer to the message is sent. */
+	hpf_mspi_xfer_packet_msg_t msg;
+	hpf_mspi_xfer_packet_msg_t *xfer_packet = &msg;
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+	uint8_t bounce_buf[BOUNCE_BUF_SIZE] __aligned(DATA_BUF_ALIGNMENT);
+	bool bounce = (packet->num_bytes > 0) &&
+		      !IS_ALIGNED(packet->data_buf, DATA_BUF_ALIGNMENT);
 #endif
-	uint8_t buffer[len];
+#else
+	uint8_t buffer[MAX_COPY_MSG_SIZE] __aligned(__alignof(hpf_mspi_xfer_packet_msg_t));
 	hpf_mspi_xfer_packet_msg_t *xfer_packet = (hpf_mspi_xfer_packet_msg_t *)buffer;
+#endif
+	size_t len;
+
+	rc = check_packet_size(packet);
+	if (rc < 0) {
+		return rc;
+	}
 
 	xfer_packet->opcode = opcode;
 	xfer_packet->command = packet->cmd;
@@ -850,56 +997,48 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 	xfer_packet->num_bytes = packet->num_bytes;
 
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-	/* In case of buffer alignment problems: fill temporary buffer with TX data and
-	 * set it as packet data.
-	 */
-	if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+	if (bounce) {
 		if (packet->dir == MSPI_TX) {
-			memcpy((void *)(buffer + sizeof(hpf_mspi_xfer_packet_msg_t)),
-			       (void *)packet->data_buf, packet->num_bytes);
+			memcpy(bounce_buf, packet->data_buf, packet->num_bytes);
 		}
-		xfer_packet->data = buffer + sizeof(hpf_mspi_xfer_packet_msg_t);
+		xfer_packet->data = bounce_buf;
 	} else {
 		xfer_packet->data = packet->data_buf;
 	}
 #else
-	memcpy((void *)xfer_packet->data, (void *)packet->data_buf, packet->num_bytes);
+	xfer_packet->data = packet->data_buf;
+#endif
+	len = sizeof(*xfer_packet);
+#else
+	if (packet->dir == MSPI_TX) {
+		memcpy(xfer_packet->data, packet->data_buf, packet->num_bytes);
+		len = sizeof(*xfer_packet) + packet->num_bytes;
+	} else {
+		len = sizeof(*xfer_packet);
+		ipc_received = 0;
+		rx_dest_len = packet->num_bytes;
+		rx_dest = packet->data_buf;
+	}
 #endif
 
-	rc = send_data(xfer_packet->opcode, xfer_packet, len);
+	rc = send_data(xfer_packet->opcode, xfer_packet, len, timeout);
 
-	/* Wait for the transfer to complete and receive data. */
 	if (packet->dir == MSPI_RX) {
-
-		/* In case of CONFIG_MSPI_HPF_IPC_NO_COPY ipc_received if equal to 0 because
-		 * packet buffer address was passed to vpr and data was written directly there.
-		 * So there is no way of checking how much data was written.
-		 */
 #ifdef CONFIG_MSPI_HPF_IPC_NO_COPY
-		/* In case of buffer alignment problems: copy received data from temporary buffer
-		 * back to users buffer.
-		 */
-		if (((uint32_t)packet->data_buf) % sizeof(uint32_t) != 0) {
-			memcpy((void *)packet->data_buf, (void *)xfer_packet->data,
-			       packet->num_bytes);
+#if CONFIG_MSPI_HPF_UNALIGNED_XFER
+		/* The FLPR wrote the data by reference, into the bounce buffer if it was used. */
+		if (bounce) {
+			memcpy(packet->data_buf, bounce_buf, packet->num_bytes);
 		}
+#endif
 #else
-		if ((ipc_receive_buffer != NULL) && (ipc_received > 0)) {
-			/*
-			 * It is not possible to check whether received data is valid, so
-			 * packet->num_bytes should always be equal to ipc_received. If it is not,
-			 * then something went wrong.
-			 */
-			if (packet->num_bytes != ipc_received) {
-				rc = -EIO;
-			} else {
-				memcpy((void *)packet->data_buf, (void *)ipc_receive_buffer,
-				       ipc_received);
-			}
-
-			/* Clear the receive buffer pointer and size */
-			ipc_receive_buffer = NULL;
-			ipc_received = 0;
+		/* The reply data was copied in ep_recv(). A reply of the wrong length is not
+		 * copied, so treat it as an error.
+		 */
+		rx_dest = NULL;
+		if ((rc == 0) && (ipc_received != packet->num_bytes)) {
+			rc = -EIO;
 		}
 #endif
 	}
@@ -908,36 +1047,13 @@ static int send_packet(struct mspi_xfer_packet *packet, uint32_t timeout)
 }
 
 /**
- * @brief Initiates the transfer of the next packet in an MSPI transaction.
- *
- * This function prepares and starts the transmission of the next packet
- * specified in the MSPI transfer configuration. It checks if the packet
- * size is within the allowable limits before initiating the transfer.
- *
- * @param xfer Pointer to the mspi_xfer structure.
- * @param packets_done Number of packets that have already been processed.
- *
- * @retval 0 If the packet transfer is successfully started.
- * @retval -EINVAL If the packet size exceeds the maximum transmission size.
- */
-static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
-{
-	struct mspi_xfer_packet *packet = (struct mspi_xfer_packet *)&xfer->packets[packets_done];
-
-	if (packet->num_bytes >= MAX_TX_MSG_SIZE) {
-		LOG_ERR("Packet size to large: %u. Increase SRAM data region.", packet->num_bytes);
-		return -EINVAL;
-	}
-
-	return send_packet(packet, xfer->timeout);
-}
-
-/**
  * @brief Send a multi-packet transfer request to the host.
  *
  * This function sends a multi-packet transfer request to the host and waits
  * for the host to complete the transfer. This function does not support
  * asynchronous transfers.
+ * The FLPR is stopped in case of timeout, so it no longer accesses
+ * the request buffers, and the driver is disabled.
  *
  * @param dev Pointer to the device structure.
  * @param dev_id Pointer to the device identification structure.
@@ -945,7 +1061,9 @@ static int start_next_packet(struct mspi_xfer *xfer, uint32_t packets_done)
  *
  * @retval 0 If successful.
  * @retval -ENOTSUP If the requested transfer configuration is not supported.
- * @retval -EIO General input / output error, failed to send over the bus.
+ * @retval -EIO General input / output error, failed to send over the bus, or the driver is
+ *              disabled after an earlier timeout.
+ * @retval -ETIMEDOUT If the FLPR did not complete the transfer in time.
  */
 static int api_transceive(const struct device *dev, const struct mspi_dev_id *dev_id,
 			  const struct mspi_xfer *req)
@@ -960,8 +1078,7 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 		return -ENOTSUP;
 	}
 
-	if (req->num_packet == 0 || !req->packets ||
-	    req->timeout > CONFIG_MSPI_COMPLETION_TIMEOUT_TOLERANCE) {
+	if (req->num_packet == 0 || !req->packets) {
 		return -EFAULT;
 	}
 
@@ -973,24 +1090,32 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
 	drv_data->xfer_config_msg.xfer_config.tx_dummy = req->tx_dummy;
 	drv_data->xfer_config_msg.xfer_config.rx_dummy = req->rx_dummy;
 
-	rc = send_data(HPF_MSPI_CONFIG_XFER, (void *)&drv_data->xfer_config_msg,
-		       sizeof(hpf_mspi_xfer_config_msg_t));
-
+	rc = pm_device_runtime_get(dev);
 	if (rc < 0) {
-		LOG_ERR("Send xfer config error: %d", rc);
 		return rc;
 	}
 
+	rc = send_data(HPF_MSPI_CONFIG_XFER, (void *)&drv_data->xfer_config_msg,
+		       sizeof(hpf_mspi_xfer_config_msg_t), req->timeout);
+
+	if (rc < 0) {
+		LOG_ERR("Send xfer config error: %d", rc);
+		goto release;
+	}
+
 	while (packets_done < req->num_packet) {
-		rc = start_next_packet((struct mspi_xfer *)req, packets_done);
+		rc = send_packet(&req->packets[packets_done], req->timeout);
 		if (rc < 0) {
 			LOG_ERR("Start next packet error: %d", rc);
-			return rc;
+			goto release;
 		}
 		++packets_done;
 	}
 
-	return 0;
+release:
+	(void)pm_device_runtime_put(dev);
+
+	return rc;
 }
 
 #if CONFIG_PM_DEVICE
@@ -1010,18 +1135,20 @@ static int api_transceive(const struct device *dev, const struct mspi_dev_id *de
  */
 static int dev_pm_action_cb(const struct device *dev, enum pm_device_action action)
 {
+	const struct mspi_hpf_config *drv_cfg = dev->config;
+
 	switch (action) {
 	case PM_DEVICE_ACTION_SUSPEND:
-		/* TODO: Handle PM suspend state */
-		break;
+		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_SLEEP);
 	case PM_DEVICE_ACTION_RESUME:
-		/* TODO: Handle PM resume state */
-		break;
+		/* Keep the pins away from a stopped FLPR. */
+		if (atomic_get(&flpr_halted)) {
+			return 0;
+		}
+		return pinctrl_apply_state(drv_cfg->pcfg, PINCTRL_STATE_DEFAULT);
 	default:
 		return -ENOTSUP;
 	}
-
-	return 0;
 }
 #endif
 
@@ -1122,7 +1249,7 @@ static int hpf_mspi_init(const struct device *dev)
 	};
 
 	ret = send_data(HPF_MSPI_CONFIG_TIMER_PTR, (const void *)&timer_data.opcode,
-			sizeof(hpf_mspi_flpr_timer_msg_t));
+			sizeof(hpf_mspi_flpr_timer_msg_t), HPF_MSPI_IPC_CONFIG_TIMEOUT_MS);
 	if (ret < 0) {
 		LOG_ERR("Send timer configuration failure");
 		return ret;
