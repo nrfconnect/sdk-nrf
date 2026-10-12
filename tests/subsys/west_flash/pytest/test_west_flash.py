@@ -102,13 +102,7 @@ def test_west_flash(dut: DeviceAdapter):
         f" --dev-id {SEGGER_ID}"
         f" --gdb-port {gdb_port}"
     )
-    expected = r"Flash download: Bank \d @ 0x\d+: Skipped. Contents already match"
-    if "nrf54h20dk" in dut.device_config.platform:
-        expected = r"O\.K\."
-    if "nrf7120dk" in dut.device_config.platform:
-        expected = r"O\.K\."
-    if "nrf9251dk" in dut.device_config.platform:
-        expected = r"O\.K\."
+    expected = r"O\.K\."
     run_communicate_check(
         cmd=cmd,
         input=None,
