@@ -1,4 +1,4 @@
-# Nordic Wi-Fi driver for nRF70 series SoCs
+# Nordic Wi-Fi driver for nRF71 series SoCs
 #
 # Copyright (c) 2024 Nordic Semiconductor
 #
@@ -53,29 +53,29 @@ config NRF71_IPC_SEND_RETRY_INTERVAL_US
 	  Delay between retries when the IPC busy queue is not ready.
 
 choice NRF71_OPER_MODES
-	bool "nRF70 operating modes"
+	bool "nRF71 operating modes"
 	default NRF71_SYSTEM_MODE
 	help
-	  Select the operating mode of the nRF70 driver
+	  Select the operating mode of the nRF71 driver
 
 config NRF71_SYSTEM_MODE
-	bool "System mode of the nRF70 driver"
+	bool "System mode of the nRF71 driver"
 	help
-	  Select this option to enable system mode of the nRF70 driver.
+	  Select this option to enable system mode of the nRF71 driver.
 	  This is the normal operating mode that supports full Wi-Fi
 	  functionality including sub-modes like STA, AP, and P2P.
 	  Scan functionality is available as a sub-option of system mode.
 
 config NRF71_RADIO_TEST
-	bool "Radio test mode of the nRF70 driver"
+	bool "Radio test mode of the nRF71 driver"
 	help
-	  Select this option to enable radio test mode of the nRF70 driver.
+	  Select this option to enable radio test mode of the nRF71 driver.
 	  This mode is used for testing RF performance and regulatory
 	  compliance. It provides direct control of the radio hardware
 	  for transmitting test patterns and measuring RF parameters.
 
 config NRF71_OFFLOADED_RAW_TX
-	bool "Offloaded raw TX mode of the nRF70 driver"
+	bool "Offloaded raw TX mode of the nRF71 driver"
 	help
 	  Select this option to enable offloaded raw TX mode.
 	  In this mode, raw 802.11 frames can be transmitted directly
@@ -101,13 +101,13 @@ config NRF71_SCAN
 	  operates in scan-only mode for discovering nearby networks.
 
 config NRF71_STA_MODE
-	bool "nRF70 STA mode"
+	bool "nRF71 STA mode"
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
 	select NRF71_DATA_TX
 	select NRF71_SCAN
 	help
-	  Select this option to enable STA mode of the nRF70 driver.
+	  Select this option to enable STA mode of the nRF71 driver.
 
 config NRF71_AP_MODE
 	bool "Access point mode"
@@ -122,10 +122,10 @@ config NRF71_P2P_MODE
 	select NRF71_SCAN
 
 config NRF71_SYSTEM_WITH_RAW_MODES
-	bool "nRF70 system mode with raw modes"
+	bool "nRF71 system mode with raw modes"
 	default y if (NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX)
 	help
-	  Select this option to enable system mode of the nRF70 driver with raw modes.
+	  Select this option to enable system mode of the nRF71 driver with raw modes.
 
 config NRF71_RAW_DATA_TX
 	bool "RAW TX data path in the driver [EXPERIMENTAL]"
@@ -441,15 +441,15 @@ config NRF_WIFI_USE_VARIABLE_NET_BUFS
 	bool "Use variable network buffers"
 	default y
 	help
-	  This option enables the use of variable network buffers in the nRF70 driver.
+	  This option enables the use of variable network buffers in the nRF71 driver.
 	  Variable network buffers optimize RAM usage by allocating buffers of different sizes
 	  based on the data size. This option is enabled by default to optimize RAM usage.
 	  Samples and applications can override this option for higher performance.
 
 if NRF_WIFI_USE_VARIABLE_NET_BUFS
 
-# nRF70 now uses variable buffers as default to optimize RAM usage. Default pool sizes are used, samples/apps can override
-# for higher performance.
+# nRF71 now uses variable buffers as default to optimize RAM usage. Default pool
+# sizes are used; samples/apps can override for higher performance.
 choice NET_PKT_DATA_ALLOC_TYPE
 	default NET_BUF_VARIABLE_DATA_SIZE
 endchoice
@@ -553,7 +553,7 @@ config NRF_WIFI_RPU_RECOVERY
 	depends on NRF_WIFI_LOW_POWER
 	select EXPERIMENTAL
 	help
-	  Enable the RPU recovery mechanism to recover from an RPU (nRF70) hang.
+	  Enable the RPU recovery mechanism to recover from an RPU (nRF71) hang.
 	  This feature performs an interface reset (down and up), which triggers
 	  a RPU cold boot. The application's network connection will be lost during
 	  the recovery process, and it is the application's responsibility to
