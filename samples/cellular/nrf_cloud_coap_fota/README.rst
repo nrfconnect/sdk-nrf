@@ -106,7 +106,7 @@ See the `Memfault nRF Modem FOTA`_ documentation for more details on configuring
    However, the following legacy overlay and source files for enabling those features are left for reference:
 
    * :file:`overlays/legacy_smp_fota.conf`
-   * :file:`overlays/legacy_smp_modem_fota.conf`
+   * :file:`overlays/legacy_full_modem_fota.conf`
    * :file:`src/smp_reset.h`
    * :file:`src/smp_reset.c`
 
