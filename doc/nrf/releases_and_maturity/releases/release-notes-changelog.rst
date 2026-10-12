@@ -989,6 +989,9 @@ Bluetooth libraries and services
     The FHN extension now ties the DULT association to its provisioning state.
     It also reports the DULT ownership state, which is the association state, through the new :c:member:`bt_fast_pair_fhn_info_cb.dult_ownership_state_changed` callback.
 
+  * Fixed the validation of the Data Length parameter in the requests that the FHN extension receives on the Beacon Actions characteristic.
+    Requests that declare a Data Length above the maximum supported value are now rejected with the Invalid Value error.
+
   * Removed the nRF52 and nRF53 Series support.
 
 * :ref:`dtm_twowire_to_hci_readme` library:
