@@ -416,6 +416,7 @@ static int bt_ancs_get_notif_attrs(struct bt_ancs_client *ancs_c,
 	uint8_t *data = ancs_c->cp_data;
 
 	ancs_c->number_of_requested_attr = 0;
+	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
 	/* Encode Command ID. */
 	*(data + index++) = BT_ANCS_COMMAND_ID_GET_NOTIF_ATTRIBUTES;
@@ -461,8 +462,6 @@ int bt_ancs_request_attrs(struct bt_ancs_client *ancs_c,
 	if (err) {
 		return err;
 	}
-
-	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
 	return bt_ancs_get_notif_attrs(ancs_c, notif->notif_uid, func);
 }

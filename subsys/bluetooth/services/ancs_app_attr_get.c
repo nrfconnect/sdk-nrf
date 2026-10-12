@@ -139,6 +139,8 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 		return -EBUSY;
 	}
 
+	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
+
 	struct net_buf_simple buf;
 
 	net_buf_simple_init_with_data(&buf, ancs_c->cp_data, sizeof(ancs_c->cp_data));
@@ -184,8 +186,6 @@ int bt_ancs_app_attr_request(struct bt_ancs_client *ancs_c,
 	if (!len) {
 		return -EINVAL;
 	}
-
-	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
 	return app_attr_get(ancs_c, app_id, len, func);
 }
