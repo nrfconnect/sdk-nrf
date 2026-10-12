@@ -12,7 +12,18 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-The sample requires a connection to a computer with :file:`mcumgr` command-line tool's or a compatible MCUmgr client tool.
+To update over UART or shell, use the `nRF Util development tool`_ ``mcu-manager`` command (``nrfutil mcu-manager``).
+
+To update over Bluetooth® Low Energy, install the nRF Device Manager app:
+
+* `nRF Device Manager mobile app for Android`_
+* `nRF Device Manager mobile app for iOS`_
+
+Alternatively, you can use the `nRF Connect for Mobile`_ app for SMP over Bluetooth LE.
+See :ref:`bootloader_quick_start` for an overview of DFU tools.
+
+Do not use the deprecated Go :file:`mcumgr` command-line tool.
+For more information, see :ref:`dfu_tools_mcumgr_cli` and :ref:`zephyr:mcumgr_tools_libraries`.
 
 Overview
 ********
@@ -56,110 +67,151 @@ To upload MCUboot and a bundle of images to the nRF5340 SoC, use the ``west flas
 Testing
 =======
 
-The ``smp_svr`` app is now ready to run.
-Reset your board and test the app with the :file:`mcumgr` command-line tool's ``echo`` functionality.
-This will send a string to the remote target device and have it echo it back:
+After programming the sample, reset the board and check the serial console output.
+You should see a log line similar to the following:
 
-.. tabs::
+.. code-block:: console
 
-   .. group-tab:: Bluetooth®
+   smp_sample: build time: <BUILD TIME>
 
-      .. code-block:: console
+``<BUILD TIME>`` indicates the build time of the running firmware.
 
-         sudo mcumgr --conntype ble --connstring ctlr_name=hci0,peer_name='Zephyr' echo hello
-         hello
-
-   .. group-tab:: Shell
-
-      .. code-block:: console
-
-         mcumgr --conntype serial --connstring "/dev/ttyACM2,baud=115200" echo hello
-         hello
-
-.. note::
-   The :file:`mcumgr` command-line tool requires a connection string in order to identify the remote target device.
-   The Bluetooth version of the sample uses a Bluetooth LE-based connection string.
-   You might need to modify it depending on the Bluetooth LE controller you are using.
-
-   In the following sections, ``<connection string>`` is used to represent the ``--conntype <type>`` and ``--connstring=<string>`` :file:`mcumgr` parameters.
+The following sections describe how to update firmware over shell (UART) or Bluetooth LE.
+Both transports use the SMP server in the application.
 
 Upload and map image to MCUboot slot
 ------------------------------------
 
-For this sample configuration, MCUmgr supports the uploading of three target images, which allows you to update all parts of the firmware.
+For this sample configuration, MCUmgr supports uploading up to three target images.
+This allows you to update all parts of the firmware.
 
-The MCUmgr ``image upload`` command has the optional ``-e -n <image>`` parameter, which lets you select the target image for upload.
-When this parameter is not provided, ``0`` is assumed (interpreted as the default behavior), and MCUmgr uploads to ``image-1`` (MCUboot's secondary slot).
+When uploading to a specific image, pass the image index to the SMP client.
+If you omit the index, the client assumes image ``0``.
+The default upload target is the MCUboot secondary slot for the first image pair.
 
-Use the partition node to map MCUboot slots to ``<image>`` for MCUmgr:
+Use the partition node to map MCUboot slots to ``<image>`` for the client:
 
-    +---------------------+--------+-------------+------------------------------+
-    | Partition node      | Slot   | -n <image>  |       Firmware part          |
-    +=====================+========+=============+==============================+
-    | ``slot1_partition`` | slot-1 |     0       | Internal application part    |
-    +---------------------+--------+-------------+------------------------------+
-    | ``slot3_partition`` | slot-3 |     1       | Networking                   |
-    +---------------------+--------+-------------+------------------------------+
-    | ``slot5_partition`` | slot-5 |     2       | QSPI application part        |
-    +---------------------+--------+-------------+------------------------------+
+    +---------------------+--------+---------------+------------------------------+
+    | Partition node      | Slot   | <image> index |       Firmware part          |
+    +=====================+========+===============+==============================+
+    | ``slot1_partition`` | slot-1 |       0       | Internal application part    |
+    +---------------------+--------+---------------+------------------------------+
+    | ``slot3_partition`` | slot-3 |       1       | Networking                   |
+    +---------------------+--------+---------------+------------------------------+
+    | ``slot5_partition`` | slot-5 |       2       | QSPI application part        |
+    +---------------------+--------+---------------+------------------------------+
 
-.. note::
+When selecting a non-default image index, the client must not send a full erase of slot-1 before the upload.
+The legacy Go :file:`mcumgr` tool required the ``-e`` flag for this reason.
+``nrfutil mcu-manager`` and `nRF Connect Device Manager`_ handle image selection without that limitation.
 
-   The ``-e`` option means ``no erase``, and is provided to the MCUmgr to prevent it from sending the erase command to the target before updating the image.
-   This option is always needed when ``-n`` is used for image selection, as the erase command is hardcoded to erase slot-1 (``image-1``), regardless of which slot is uploaded at the time.
+Signed update binaries are generated in the build directory.
+See :ref:`app_build_output_files` and :ref:`child_parent_to_sysbuild_migration_filename_changes` for file names.
+For this sample, the typical paths are the following:
 
-Upload the signed image
------------------------
-
-To upload the signed image, run the following command:
-
-.. code-block:: console
-
-   sudo mcumgr <connection string> image upload build/zephyr/<signed_upload.bin> -e -n <image>
-
-Adjust the command depending on the case:
-
-* Use the :file:`internal_flash_update.bin` file and ``<image> = 0`` to update the internal application image.
-* Use the :file:`net_core_app_update.bin` file and ``<image> = 1`` to update the networking core image.
-* Use the :file:`qspi_flash_update.bin` file and ``<image> = 2`` to update the QSPI application image.
+* Internal application: :file:`build/smp_svr_ext_xip/zephyr/zephyr.internal.signed.bin`
+* Network core (when enabled): :file:`build/signed_by_mcuboot_and_b0_<net_core_app_name>.bin`
+* QSPI application part: :file:`build/smp_svr_ext_xip/zephyr/zephyr.external.signed.bin`
 
 .. note::
 
-   The ``<image>`` values correspond to the internally (``0``) and externally (``2``) linked parts of the application.
-   These two images are linked and must always be uploaded together.
+   The image indices ``0`` and ``2`` correspond to the internally and externally linked parts of the application.
+   These two images are linked.
+   You must always upload them together.
+   Skip image ``1`` when building a configuration without the network core.
 
-Test the image
-^^^^^^^^^^^^^^
+Testing over shell (UART)
+-------------------------
 
-To initiate the image swap with MCUboot, first you must test the image by obtaining its SHA with the following command:
+The sample enables SMP over the shell backend on the application core UART.
+Use ``nrfutil mcu-manager serial`` on a computer to upload images and control the device.
 
-.. code-block:: console
+#. Disconnect the serial terminal if it conflicts with SMP traffic on the same port.
+#. List images on the device.
+   Replace ``<serial_port>`` with your port (for example, :file:`/dev/ttyACM0` or :file:`COM3`).
 
-   imgtool verify build/zephyr/<signed_upload.bin>
+   .. code-block:: console
 
-Ensure it boots using the image digest fetched by running the following command:
+      nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
-.. code-block:: console
+#. Build a new version of the sample (for example, in the :file:`build_v2` directory) with a higher image version than the firmware on the device.
 
-   sudo mcumgr <connection string> image test <hash of image>
+#. Upload each signed image that is part of the update.
+   Repeat the command for every image you need to update, setting ``--image-number`` and ``--firmware`` accordingly:
 
-The selected mode in this test case must be applied to all images that constitute the complete application.
-Once applied, MCUboot will swap these images during the next reset.
+   .. code-block:: console
+
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 0 --firmware build_v2/extxip_smp_svr/zephyr/zephyr.internal.signed.bin
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 1 --firmware build_v2/signed_by_mcuboot_and_b0_<net_core_app_name>.bin
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 2 --firmware build_v2/extxip_smp_svr/zephyr/zephyr.external.signed.bin
+
+#. List the images again and note the hash of each uploaded image in the secondary slot:
+
+   .. code-block:: console
+
+      nrfutil mcu-manager serial image-list --serial-port <serial_port>
+
+   You can also print the hash of a local file with :file:`imgtool`:
+
+   .. code-block:: console
+
+      imgtool verify build_v2/smp_svr_ext_xip/zephyr/zephyr.internal.signed.bin
+
+#. Mark each uploaded image for test, using the hash from the previous step:
+
+   .. code-block:: console
+
+      nrfutil mcu-manager serial image-test --serial-port <serial_port> --hash <hash>
+
+   Apply this step to every image that constitutes the complete application.
+
+#. Reset the device:
+
+   .. code-block:: console
+
+      nrfutil mcu-manager serial reset --serial-port <serial_port>
+
+#. Reconnect to the serial terminal and verify that ``<BUILD TIME>`` in the log output reflects the new firmware.
 
 .. note::
 
-   The sample supports the MCUboot overwrite-only mode.
-   This means that regardless of how the image is marked for the update (either as ``test`` or ``confirm``), the process is not affected.
-   The old image is still overwritten by the content of the incoming image during the firmware update process.
+   The sample uses MCUboot overwrite-only mode.
+   Regardless of whether an image is marked for test or confirm, the incoming image overwrites the previous content during the update.
 
-Reset remotely
---------------
+Testing over Bluetooth® Low Energy
+----------------------------------
 
-To check how MCUboot has upgraded the images, you can reset the device remotely by running the following command:
+Use the `nRF Connect Device Manager`_ mobile app on a phone or tablet to interact with the SMP server over Bluetooth LE.
+This is the recommended method on hosts where a desktop SMP client over Bluetooth is unavailable (for example, Windows without a supported BLE SMP CLI).
 
-.. code-block:: console
+#. Install the app:
 
-   sudo mcumgr <connection string> reset
+   * `nRF Device Manager mobile app for Android`_
+   * `nRF Device Manager mobile app for iOS`_
+
+#. Copy the signed update binaries from the build directory to your mobile device.
+
+#. Open the app, scan for the device, and connect.
+   The default advertised name matches the Zephyr SMP server sample (``Zephyr`` unless you changed :kconfig:option:`CONFIG_BT_DEVICE_NAME`).
+
+#. Verify SMP connectivity using the echo feature in the app, or proceed directly with a firmware update.
+
+#. For each image you need to update:
+
+   a. Open the :guilabel:`Image` tab.
+   #. Tap :guilabel:`Advanced` in the top-right corner so you can select the target image index and upload mode.
+   #. Tap :guilabel:`Select File` and choose the signed binary for that image (internal, network core, or QSPI part).
+   #. Select image index ``0``, ``1``, or ``2`` to match the table above.
+   #. Tap :guilabel:`Start` and complete the upload.
+
+   Upload the internal (``0``) and QSPI (``2``) application parts together when updating the split application.
+   Include the network core image (``1``) only when your build includes the network core.
+
+#. Mark each uploaded image for test and reset the device from the app (or use the :guilabel:`Reset` action under basic SMP controls).
+
+#. Verify on the serial console that ``<BUILD TIME>`` reflects the new firmware.
+
+For a general walkthrough of FOTA over Bluetooth LE with the mobile app, see :ref:`ug_nrf53_developing_ble_fota_steps_testing`.
 
 Dependencies
 ************
