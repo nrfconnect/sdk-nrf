@@ -1,0 +1,28 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig NET_HOST_CONNECT
+	bool "Host connection helper"
+	depends on NET_CONNECTION_MANAGER
+	depends on NET_SOCKETS
+	help
+	  Resolve a host name and connect to it. Waits for IP connectivity and
+	  name resolution, tries the resolved addresses in order, and starts
+	  over on failure or when connectivity changes.
+
+if NET_HOST_CONNECT
+
+config NET_HOST_CONNECT_MAX_ADDRS
+	int "Maximum number of addresses tried per resolution"
+	default DNS_RESOLVER_AI_MAX_ENTRIES if DNS_RESOLVER
+	default 4
+	range 1 255
+
+module = NET_HOST_CONNECT
+module-str = Host connection helper
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # NET_HOST_CONNECT

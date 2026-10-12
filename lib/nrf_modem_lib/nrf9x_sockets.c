@@ -862,22 +862,12 @@ static void nrf9x_socket_offload_freeaddrinfo(struct zsock_addrinfo *root)
 	}
 }
 
-static int nrf9x_socket_offload_getaddrinfo(const char *node,
-					    const char *service,
-					    const struct zsock_addrinfo *hints,
-					    struct zsock_addrinfo **res)
+static int getaddrinfo_query(const char *node, const char *service,
+			     const struct nrf_addrinfo *nrf_hints_ptr,
+			     struct zsock_addrinfo **res)
 {
 	int err;
-	struct nrf_addrinfo nrf_hints;
 	struct nrf_addrinfo *nrf_res = NULL;
-	struct nrf_addrinfo *nrf_hints_ptr = NULL;
-
-	memset(&nrf_hints, 0, sizeof(struct nrf_addrinfo));
-
-	if (hints != NULL) {
-		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
-		nrf_hints_ptr = &nrf_hints;
-	}
 
 	int retval = nrf_getaddrinfo(node, service, nrf_hints_ptr, &nrf_res);
 
@@ -927,6 +917,85 @@ static int nrf9x_socket_offload_getaddrinfo(const char *node,
 	nrf_freeaddrinfo(nrf_res);
 
 	return retval;
+}
+
+static struct nrf9x_iface_data {
+	struct net_if *iface;
+} nrf9x_iface_data;
+
+/* AI_ADDRCONFIG: skip families without a global address on the LTE interface */
+static bool addrconfig_skip(int family, int ai_flags)
+{
+	struct net_if *iface = nrf9x_iface_data.iface;
+
+	if (!IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF) || !(ai_flags & ZSOCK_AI_ADDRCONFIG)) {
+		return false;
+	}
+
+	if (iface == NULL || !net_if_is_up(iface)) {
+		return true;
+	}
+
+	if (family == NET_AF_INET6) {
+		return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &iface) == NULL;
+	}
+
+	return net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) == NULL;
+}
+
+static int nrf9x_socket_offload_getaddrinfo(const char *node,
+					    const char *service,
+					    const struct zsock_addrinfo *hints,
+					    struct zsock_addrinfo **res)
+{
+	struct nrf_addrinfo nrf_hints = { 0 };
+	struct zsock_addrinfo *res6 = NULL;
+	struct zsock_addrinfo *res4 = NULL;
+	struct zsock_addrinfo **tail;
+	int ai_flags = 0;
+	int ret6 = DNS_EAI_ADDRFAMILY;
+	int ret4 = DNS_EAI_ADDRFAMILY;
+
+	if (hints != NULL) {
+		z_to_nrf_addrinfo_hints(hints, &nrf_hints);
+		/* The modem does not support AI_ADDRCONFIG, it is handled here */
+		ai_flags = hints->ai_flags;
+		nrf_hints.ai_flags &= ~ZSOCK_AI_ADDRCONFIG;
+
+		if (hints->ai_family != NET_AF_UNSPEC) {
+			if (addrconfig_skip(hints->ai_family, ai_flags)) {
+				return DNS_EAI_ADDRFAMILY;
+			}
+
+			return getaddrinfo_query(node, service, &nrf_hints, res);
+		}
+	}
+
+	/* For AF_UNSPEC, the modem returns only IPv6 addresses if any. Query both families. */
+	if (IS_ENABLED(CONFIG_NET_IPV6) && !addrconfig_skip(NET_AF_INET6, ai_flags)) {
+		nrf_hints.ai_family = NRF_AF_INET6;
+		ret6 = getaddrinfo_query(node, service, &nrf_hints, &res6);
+	}
+
+	if (IS_ENABLED(CONFIG_NET_IPV4) && !addrconfig_skip(NET_AF_INET, ai_flags)) {
+		nrf_hints.ai_family = NRF_AF_INET;
+		ret4 = getaddrinfo_query(node, service, &nrf_hints, &res4);
+	}
+
+	if (ret6 != 0 && ret4 != 0) {
+		*res = NULL;
+		return ret4 != DNS_EAI_ADDRFAMILY ? ret4 : ret6;
+	}
+
+	/* IPv6 addresses first, then IPv4 */
+	*res = res6;
+	tail = res;
+	while (*tail != NULL) {
+		tail = &(*tail)->ai_next;
+	}
+	*tail = res4;
+
+	return 0;
 }
 
 static int nrf9x_socket_offload_fcntl(int fd, int cmd, va_list args)
@@ -1231,10 +1300,6 @@ static const struct socket_dns_offload nrf9x_socket_dns_offload_ops = {
 	.getaddrinfo = nrf9x_socket_offload_getaddrinfo,
 	.freeaddrinfo = nrf9x_socket_offload_freeaddrinfo,
 };
-
-static struct nrf9x_iface_data {
-	struct net_if *iface;
-} nrf9x_iface_data;
 
 static void nrf9x_iface_api_init(struct net_if *iface)
 {
