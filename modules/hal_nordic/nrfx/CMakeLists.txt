@@ -42,6 +42,7 @@ mdk_svd_ifdef(CONFIG_SOC_NRF7120_ENGA_CPUFLPR nrf7120_enga_flpr.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUAPP nrf9220_application.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUPPR nrf9220_cpuppr.svd)
 mdk_svd_ifdef(CONFIG_SOC_NRF9251_CPUFLPR nrf9220_cpuflpr.svd)
+build_info(vendor-specific nordic svdfile VALUE ${SOC_SVD_FILE})
 
 if(CONFIG_SOC_NRF7120_ENGA_CPUAPP)
   dt_prop(clock_frequency PATH "/cpus/cpu@0" PROPERTY "clock-frequency")
