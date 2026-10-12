@@ -438,6 +438,9 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 
 Bluetooth samples
 -----------------
+* Added:
+
+  * :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 
 * Removed:
 
@@ -448,8 +451,6 @@ Bluetooth samples
 
   * Updated the ``tests/subsys/bluetooth/gatt_dm`` test to replace the ``nrf52840dk/nrf52840`` board target with ``nrf54l15dk/nrf54l15/cpuapp``.
   * Moved the ``tests/bluetooth/bsim/custom_ltk`` test from nRF52 BabbleSim to nRF54L BabbleSim.
-
-* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
 
 * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization` samples:
 
