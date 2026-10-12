@@ -451,9 +451,15 @@ static struct bt_conn_auth_info_cb conn_auth_info_callbacks = {
  */
 static void notif_print(const struct bt_ancs_evt_notif *notif)
 {
+	const char *category = "Unknown";
+
+	if (notif->category_id < BT_ANCS_CATEGORY_ID_COUNT) {
+		category = lit_catid[notif->category_id];
+	}
+
 	printk("\nNotification\n");
 	printk("Event:       %s\n", lit_eventid[notif->evt_id]);
-	printk("Category ID: %s\n", lit_catid[notif->category_id]);
+	printk("Category ID: %s\n", category);
 	printk("Category Cnt:%u\n", (unsigned int)notif->category_count);
 	printk("UID:         %u\n", (unsigned int)notif->notif_uid);
 

@@ -43,8 +43,7 @@ LOG_MODULE_REGISTER(ancs_c, CONFIG_BT_ANCS_CLIENT_LOG_LEVEL);
  */
 static int bt_ancs_verify_notification_format(const struct bt_ancs_evt_notif *notif)
 {
-	if ((notif->evt_id >= BT_ANCS_EVT_ID_COUNT) ||
-	    (notif->category_id >= BT_ANCS_CATEGORY_ID_COUNT)) {
+	if (notif->evt_id >= BT_ANCS_EVT_ID_COUNT) {
 		return -EINVAL;
 	}
 	return 0;

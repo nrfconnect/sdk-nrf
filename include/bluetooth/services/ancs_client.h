@@ -240,6 +240,7 @@ struct bt_ancs_evt_notif {
 	struct bt_ancs_notif_flags evt_flags;
 	/** Classification of the notification type. For example, email or
 	 *  location.
+	 *  Values outside this enumeration are passed through unchanged.
 	 */
 	enum bt_ancs_category_id_val category_id;
 	/** Current number of active notifications for this category ID. */
