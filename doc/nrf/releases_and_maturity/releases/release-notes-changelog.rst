@@ -1001,7 +1001,7 @@ Bluetooth libraries and services
 
 * :ref:`ancs_client_readme` library:
 
-  * Fixed an issue where the library rejected all further Control Point requests with the ``-EBUSY`` error after an app attribute request that did not fit in the Control Point buffer.
+  * Fixed an issue where the library rejected all further Control Point requests with the ``-EBUSY`` error after receiving an app attribute request that did not fit in the Control Point buffer.
 
 Common Application Framework
 ----------------------------
