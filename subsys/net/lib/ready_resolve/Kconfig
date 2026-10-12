@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig READY_RESOLVE
+	bool "Ready resolver"
+	depends on NET_SOCKETS
+	depends on NET_IPV4 || NET_IPV6
+	select NET_CONNECTION_MANAGER if !(NRF_MODEM_LIB && NET_SOCKETS_OFFLOAD)
+	help
+	  Resolve a host name for the address families that are up and
+	  iterate over the resulting addresses.
+
+if READY_RESOLVE
+
+config READY_RESOLVE_TRACK_MODEM
+	def_bool NRF_MODEM_LIB && NET_SOCKETS_OFFLOAD && !NRF_MODEM_LIB_NET_IF
+	help
+	  Track connectivity by querying the modem, on nRF91 Series devices
+	  without the modem network interface.
+
+config READY_RESOLVE_TRACK_CONN_MGR
+	def_bool NET_CONNECTION_MANAGER && !READY_RESOLVE_TRACK_MODEM
+	help
+	  Track connectivity through connection manager events.
+
+config READY_RESOLVE_MODEM_POLL_INTERVAL_MS
+	int "Modem readiness poll interval (ms)"
+	depends on READY_RESOLVE_TRACK_MODEM
+	default 1000
+	help
+	  How often ready_resolve_wait_change() queries the modem.
+
+module = READY_RESOLVE
+module-str = Ready resolver
+source "subsys/logging/Kconfig.template.log_config"
+
+endif # READY_RESOLVE
