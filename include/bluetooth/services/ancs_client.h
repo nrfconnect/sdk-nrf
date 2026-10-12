@@ -46,7 +46,7 @@ extern "C" {
 	BT_UUID_DECLARE_128(BT_UUID_ANCS_CONTROL_POINT_VAL)
 #define BT_UUID_ANCS_DATA_SOURCE BT_UUID_DECLARE_128(BT_UUID_ANCS_DATA_SOURCE_VAL)
 
-/** Maximum data length of an iOS notification attribute. */
+/** Maximum length of the app identifier stored in an attribute response. */
 #define BT_ANCS_ATTR_DATA_MAX 32
 /** Number of iOS notification categories: Other, Incoming Call, Missed Call,
  *  Voice Mail, Social, Schedule, Email, News, Health and Fitness, Business and

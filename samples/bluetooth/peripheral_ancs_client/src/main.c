@@ -34,7 +34,7 @@
 #define KEY_NEG_ACTION DK_BTN4_MSK
 
 /* Allocated size for attribute data. */
-#define ATTR_DATA_SIZE BT_ANCS_ATTR_DATA_MAX
+#define ATTR_DATA_SIZE 32
 
 enum {
 	DISCOVERY_ANCS_ONGOING,

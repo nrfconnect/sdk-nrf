@@ -475,7 +475,7 @@ int bt_ancs_register_attr(struct bt_ancs_client *ancs_c,
 		return -EINVAL;
 	}
 
-	if (!len || len > BT_ANCS_ATTR_DATA_MAX) {
+	if (!len) {
 		return -EINVAL;
 	}
 
@@ -498,7 +498,7 @@ int bt_ancs_register_app_attr(struct bt_ancs_client *ancs_c,
 		return -EINVAL;
 	}
 
-	if (!len || len > BT_ANCS_ATTR_DATA_MAX) {
+	if (!len) {
 		return -EINVAL;
 	}
 
