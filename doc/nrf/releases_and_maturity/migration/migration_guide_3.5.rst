@@ -300,6 +300,19 @@ This section describes the changes related to libraries.
      * The experimental Distance Measurement Server and Distance Measurement Client vendor models have been removed.
        Remove the ``CONFIG_BT_MESH_DM_SRV``, ``CONFIG_BT_MESH_DM_CLI``, ``CONFIG_BT_MESH_SHELL_DM_CLI``, and ``CONFIG_BT_MESH_DM_SRV_*`` Kconfig options from your project configuration, and remove the corresponding model instances from your composition data.
 
+   * Bluetooth Mesh key importer:
+
+     * The key importer functionality has been removed, together with the ``CONFIG_BT_MESH_KEY_IMPORTER`` and ``CONFIG_BT_MESH_KEY_IMPORTER_PRIO`` Kconfig options.
+       Remove these options from your project configuration.
+     * If you have provisioned devices in the field that still run an image built with the TinyCrypt-based security toolbox, an image built with the |NCS| v3.5.0 or later can no longer read their persistently stored keys.
+       To keep such devices provisioned, update them in two steps:
+
+       1. Update the device to an intermediate image built with the |NCS| v3.4.x that has the ``CONFIG_BT_MESH_KEY_IMPORTER`` Kconfig option enabled, and let the device boot once so that the keys are imported into the PSA crypto library.
+       #. Update the device to an image built with the |NCS| v3.5.0 or later.
+
+       Alternatively, unprovision the devices before the update and reprovision them afterwards.
+       For details, see the Security toolbox section in :ref:`ug_bt_mesh_configuring` page.
+
 Drivers
 =======
 

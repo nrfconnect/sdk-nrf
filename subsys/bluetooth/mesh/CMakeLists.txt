@@ -81,6 +81,4 @@ zephyr_linker_sources(SECTIONS scene_types.ld)
 
 zephyr_library_sources_ifdef(CONFIG_BT_MESH_RPL_STORAGE_MODE_EMDS rpl.c)
 
-zephyr_library_sources_ifdef(CONFIG_BT_MESH_KEY_IMPORTER key_importer.c)
-
 zephyr_library_link_libraries_ifdef(CONFIG_TF_PSA_CRYPTO_BUILTIN tfpsacrypto)
