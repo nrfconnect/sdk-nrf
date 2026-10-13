@@ -292,6 +292,30 @@ when :c:func:`location_config_defaults_set` function is called:
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_TIMEOUT`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_CELLULAR_CELL_COUNT`
 * :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_2_4_GHZ`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_5_GHZ`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_MAX_BSS_CNT`
+* :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS`
+
+Wi-Fi scan parameters
+=====================
+
+The :c:struct:`location_wifi_config` structure contains the following Wi-Fi scan parameters:
+
+* Scan type (active or passive).
+* Bands (2.4 GHz, 5 GHz, or both).
+* Active and passive dwell times per channel.
+* Maximum number of access points returned by the scan.
+* List of channels to scan.
+
+A value of zero or an empty channel list uses the default Wi‑Fi driver settings.
+Support for these parameters depends on the Wi-Fi driver.
+
+The :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS` Kconfig option uses the same format as the Zephyr Wi-Fi shell, for example ``2:1,6,11_5:36-48``.
+The :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX` Kconfig option sets the size of the channel list in the :c:struct:`location_wifi_config` structure.
 
 The following option adds more details to the :c:struct:`location_event_data` structure:
 
@@ -352,6 +376,30 @@ Use method priority list defined by Kconfig options and set custom timeout value
            config.methods[i].cellular.timeout = 15 * MSEC_PER_SEC;
        }
    }
+
+   err = location_request(&config);
+
+Use Wi-Fi positioning with passive scanning on 2.4 GHz channels 1, 6 and 11:
+
+.. code-block:: c
+
+   int err;
+   struct location_config config;
+   enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+   location_config_defaults_set(&config, ARRAY_SIZE(methods), methods);
+
+   config.methods[0].wifi.scan_type = LOCATION_WIFI_SCAN_TYPE_PASSIVE;
+   config.methods[0].wifi.bands = LOCATION_WIFI_BAND_2_4_GHZ;
+   config.methods[0].wifi.dwell_time_passive = 260;
+   /* Clear the default channel list before setting the channels manually */
+   memset(config.methods[0].wifi.channels, 0, sizeof(config.methods[0].wifi.channels));
+   config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+   config.methods[0].wifi.channels[0].channel = 1;
+   config.methods[0].wifi.channels[1].band = WIFI_FREQ_BAND_2_4_GHZ;
+   config.methods[0].wifi.channels[1].channel = 6;
+   config.methods[0].wifi.channels[2].band = WIFI_FREQ_BAND_2_4_GHZ;
+   config.methods[0].wifi.channels[2].channel = 11;
 
    err = location_request(&config);
 

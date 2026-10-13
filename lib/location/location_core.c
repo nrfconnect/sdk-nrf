@@ -104,6 +104,7 @@ static const struct location_method_api method_wifi_api = {
 	.method           = LOCATION_METHOD_WIFI,
 	.method_string    = "Wi-Fi",
 	.init             = scan_wifi_init,
+	.validate_params  = scan_wifi_validate_params,
 	.location_get     = method_cloud_location_get,
 	.cancel           = method_cloud_location_cancel,
 	.timeout          = method_cloud_location_cancel,
@@ -245,6 +246,7 @@ int location_core_init(void)
 
 int location_core_validate_params(const struct location_config *config)
 {
+	int err;
 	const struct location_method_api *method_api;
 
 	__ASSERT_NO_MSG(config != NULL);
@@ -265,6 +267,13 @@ int location_core_validate_params(const struct location_config *config)
 		if (method_api == NULL) {
 			LOG_ERR("Location method (%d) not supported", config->methods[i].method);
 			return -EINVAL;
+		}
+
+		if (method_api->validate_params != NULL) {
+			err = method_api->validate_params(&config->methods[i]);
+			if (err) {
+				return err;
+			}
 		}
 	}
 	return 0;
@@ -307,6 +316,19 @@ void location_core_config_log(const struct location_config *config)
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		} else if (type == LOCATION_METHOD_WIFI) {
 			LOG_DBG("      Timeout: %dms", config->methods[i].wifi.timeout);
+			LOG_DBG("      Scan type: %d", config->methods[i].wifi.scan_type);
+			LOG_DBG("      Bands: 0x%x", config->methods[i].wifi.bands);
+			LOG_DBG("      Dwell active: %u ms",
+				config->methods[i].wifi.dwell_time_active);
+			LOG_DBG("      Dwell passive: %u ms",
+				config->methods[i].wifi.dwell_time_passive);
+			LOG_DBG("      Max BSS count: %u", config->methods[i].wifi.max_bss_cnt);
+			for (int j = 0; j < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX &&
+			     config->methods[i].wifi.channels[j].channel != 0; j++) {
+				LOG_DBG("      Channel[%d]: band %u channel %u", j,
+					config->methods[i].wifi.channels[j].band,
+					config->methods[i].wifi.channels[j].channel);
+			}
 #endif
 		}
 	}
