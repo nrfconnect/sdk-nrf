@@ -52,6 +52,9 @@ static const struct nrf_modem_bootloader_init_params bootloader_init_params = {
 #define NRF_MODEM_LIB_SHMEM_TX_HEAP_OVERHEAD_SIZE 128
 
 static const struct nrf_modem_init_params init_params = {
+#if CONFIG_SOC_SERIES_NRF91
+	.ipc_irq_prio = CONFIG_NRF_MODEM_LIB_IPC_IRQ_PRIO,
+#endif
 	.shmem.ctrl = {
 		.base = DT_REG_ADDR(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
 		.size = DT_REG_SIZE(DT_NODELABEL(cpuapp_cpucell_ipc_shm_ctrl)),
