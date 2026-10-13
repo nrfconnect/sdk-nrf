@@ -31,6 +31,9 @@
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 
+#include <zephyr/net/wifi.h>
+#include <zephyr/sys/util.h>
+
 /* Define a dummy driver just that the linker finds it. Otherwise we get a complaint like:
  *     undefined reference to `__device_dts_ord_12'
  */
@@ -42,6 +45,8 @@ static struct net_if wifi_iface;
 static int net_mgmt_NET_REQUEST_WIFI_SCAN_retval;
 static bool net_mgmt_NET_REQUEST_WIFI_SCAN_expected;
 static bool net_mgmt_NET_REQUEST_WIFI_SCAN_occurred;
+static struct wifi_scan_params net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params;
+static bool net_mgmt_NET_REQUEST_WIFI_SCAN_check_params;
 
 /* CMock doesn't support parsing of syntax used in net_mgmt requests:
  *     extern int net_mgmt_##_mgmt_request(
@@ -50,6 +55,30 @@ static bool net_mgmt_NET_REQUEST_WIFI_SCAN_occurred;
 void __cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(int retval)
 {
 	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = retval;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = false;
+}
+
+void net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectParamsAndReturn(
+	const struct wifi_scan_params *expected, int retval)
+{
+	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = retval;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = true;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params = *expected;
+}
+
+static void assert_wifi_scan_params_equal(const struct wifi_scan_params *a,
+					  const struct wifi_scan_params *b)
+{
+	TEST_ASSERT_EQUAL(a->scan_type, b->scan_type);
+	TEST_ASSERT_EQUAL(a->bands, b->bands);
+	TEST_ASSERT_EQUAL(a->dwell_time_active, b->dwell_time_active);
+	TEST_ASSERT_EQUAL(a->dwell_time_passive, b->dwell_time_passive);
+	TEST_ASSERT_EQUAL(a->max_bss_cnt, b->max_bss_cnt);
+
+	for (int i = 0; i < ARRAY_SIZE(a->band_chan); i++) {
+		TEST_ASSERT_EQUAL(a->band_chan[i].band, b->band_chan[i].band);
+		TEST_ASSERT_EQUAL(a->band_chan[i].channel, b->band_chan[i].channel);
+	}
 }
 
 int net_mgmt_NET_REQUEST_WIFI_SCAN(
@@ -58,12 +87,24 @@ int net_mgmt_NET_REQUEST_WIFI_SCAN(
 	void *data,
 	size_t len)
 {
+	struct wifi_scan_params *params = data;
+
 	TEST_ASSERT_EQUAL(false, net_mgmt_NET_REQUEST_WIFI_SCAN_occurred);
 
 	TEST_ASSERT_EQUAL(NET_REQUEST_WIFI_SCAN, mgmt_request);
 	TEST_ASSERT_EQUAL_PTR(&wifi_iface, iface);
-	TEST_ASSERT_NULL(data);
-	TEST_ASSERT_EQUAL(0, len);
+	TEST_ASSERT_NOT_NULL(data);
+	TEST_ASSERT_EQUAL(sizeof(struct wifi_scan_params), len);
+
+	if (net_mgmt_NET_REQUEST_WIFI_SCAN_check_params) {
+		assert_wifi_scan_params_equal(params,
+					      &net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params);
+	} else {
+		struct wifi_scan_params defaults = {0};
+
+		defaults.scan_type = WIFI_SCAN_TYPE_ACTIVE;
+		assert_wifi_scan_params_equal(params, &defaults);
+	}
 
 	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = true;
 
@@ -158,6 +199,9 @@ void setUp(void)
 	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = -1;
 	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = false;
 	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = false;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = false;
+	memset(&net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params, 0,
+	       sizeof(net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params));
 #endif
 	mock_nrf_modem_at_Init();
 }
@@ -1205,7 +1249,9 @@ void test_location_cellular_timeout_during_2nd_ncellmeas_backup_timeout(void)
 /* Test successful Wi-Fi location request. */
 void test_location_wifi(void)
 {
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 	struct location_config config = { 0 };
@@ -1291,12 +1337,260 @@ void test_location_wifi(void)
 #endif
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+/* Make a Wi-Fi location request with the given configuration and verify the scan parameters
+ * passed to the Wi-Fi stack. The scan completes without results, so the request fails.
+ */
+static void wifi_scan_params_verify_and_fail(const struct location_config *config,
+					     const struct wifi_scan_params *expected)
+{
+	int err;
+	struct net_mgmt_event_callback cb;
+	const struct wifi_status status = {
+		.status = WIFI_STATUS_CONN_SUCCESS
+	};
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_STARTED;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_WIFI;
+	location_cb_expected++;
+#endif
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_ERROR;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_WIFI;
+	location_cb_expected++;
+
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectParamsAndReturn(expected, 0);
+
+	err = location_request(config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+#if defined(CONFIG_LOCATION_DATA_DETAILS)
+	err = k_sem_take(&event_handler_called_sem, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(0, err);
+#endif
+
+	cb.info = &status;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_DONE, NULL);
+	k_sleep(K_MSEC(1));
+}
+
+/* Make a Wi-Fi location request with the given configuration and verify that it is rejected. */
+static void wifi_config_invalid_verify(const struct location_config *config)
+{
+	int err;
+
+	err = location_request(config);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+}
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
+
+/* Test Wi-Fi scan parameters are passed to the Wi-Fi stack. */
+void test_location_wifi_scan_params(void)
+{
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+	struct wifi_scan_params expected = {0};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].wifi.scan_type = LOCATION_WIFI_SCAN_TYPE_PASSIVE;
+	config.methods[0].wifi.bands = LOCATION_WIFI_BAND_2_4_GHZ;
+	config.methods[0].wifi.dwell_time_active = 100;
+	config.methods[0].wifi.dwell_time_passive = 300;
+	config.methods[0].wifi.max_bss_cnt = 5;
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].channel = 6;
+
+	expected.scan_type = WIFI_SCAN_TYPE_PASSIVE;
+	expected.bands = BIT(WIFI_FREQ_BAND_2_4_GHZ);
+	expected.dwell_time_active = 100;
+	expected.dwell_time_passive = 300;
+	expected.max_bss_cnt = 5;
+	expected.band_chan[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	expected.band_chan[0].channel = 6;
+
+	wifi_scan_params_verify_and_fail(&config, &expected);
+#endif
+}
+
+/* Test a full channel list in both bands with both bands selected. */
+void test_location_wifi_scan_params_full_channel_list(void)
+{
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX != 3
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+	struct wifi_scan_params expected = {0};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].wifi.bands = LOCATION_WIFI_BAND_2_4_GHZ | LOCATION_WIFI_BAND_5_GHZ;
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].channel = 1;
+	config.methods[0].wifi.channels[1].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[1].channel = 11;
+	config.methods[0].wifi.channels[2].band = WIFI_FREQ_BAND_5_GHZ;
+	config.methods[0].wifi.channels[2].channel = 36;
+
+	expected.bands = BIT(WIFI_FREQ_BAND_2_4_GHZ) | BIT(WIFI_FREQ_BAND_5_GHZ);
+	expected.band_chan[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	expected.band_chan[0].channel = 1;
+	expected.band_chan[1].band = WIFI_FREQ_BAND_2_4_GHZ;
+	expected.band_chan[1].channel = 11;
+	expected.band_chan[2].band = WIFI_FREQ_BAND_5_GHZ;
+	expected.band_chan[2].channel = 36;
+
+	wifi_scan_params_verify_and_fail(&config, &expected);
+#endif
+}
+
+/* Test channels without a bands bitmap. Entries after the terminating zero channel are
+ * ignored.
+ */
+void test_location_wifi_scan_params_channels_without_bands(void)
+{
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX != 3
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+	struct wifi_scan_params expected = {0};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_5_GHZ;
+	config.methods[0].wifi.channels[0].channel = 36;
+	config.methods[0].wifi.channels[1].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[1].channel = 0;
+	config.methods[0].wifi.channels[2].band = 9;
+	config.methods[0].wifi.channels[2].channel = 200;
+
+	expected.band_chan[0].band = WIFI_FREQ_BAND_5_GHZ;
+	expected.band_chan[0].channel = 36;
+
+	wifi_scan_params_verify_and_fail(&config, &expected);
+#endif
+}
+
+/* Test Wi-Fi location request with an invalid scan type. */
+void test_location_wifi_scan_params_invalid_scan_type(void)
+{
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.scan_type = (enum location_wifi_scan_type)2;
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
+/* Test Wi-Fi location request with an unknown bit in the bands bitmap. */
+void test_location_wifi_scan_params_invalid_bands(void)
+{
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.bands = BIT(7);
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
+/* Test Wi-Fi location request with a channel in an unsupported band. */
+void test_location_wifi_scan_params_invalid_channel_band(void)
+{
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_6_GHZ;
+	config.methods[0].wifi.channels[0].channel = 1;
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
+/* Test Wi-Fi location request with an invalid 2.4 GHz channel. */
+void test_location_wifi_scan_params_invalid_channel_2_4_ghz(void)
+{
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].channel = 15;
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
+/* Test Wi-Fi location request with an invalid 5 GHz channel after a valid channel. */
+void test_location_wifi_scan_params_invalid_channel_5_ghz(void)
+{
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX < 2
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_5_GHZ;
+	config.methods[0].wifi.channels[0].channel = 36;
+	config.methods[0].wifi.channels[1].band = WIFI_FREQ_BAND_5_GHZ;
+	config.methods[0].wifi.channels[1].channel = 37;
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
+/* Test Wi-Fi location request with a channel in a band that is not in the bands bitmap. */
+void test_location_wifi_scan_params_channel_band_not_in_bands(void)
+{
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX < 2
+	TEST_IGNORE();
+#else
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.bands = LOCATION_WIFI_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].channel = 6;
+	config.methods[0].wifi.channels[1].band = WIFI_FREQ_BAND_5_GHZ;
+	config.methods[0].wifi.channels[1].channel = 36;
+
+	wifi_config_invalid_verify(&config);
+#endif
+}
+
 /* Test timeout during Wi-Fi scan. Only one scan result is received before the timeout and
  * hence position cannot be retrieved from the cloud.
  */
 void test_location_wifi_timeout(void)
 {
-#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_METHOD_WIFI)
+	TEST_IGNORE();
+#else
 #if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
 	int err;
 	struct location_config config = { 0 };

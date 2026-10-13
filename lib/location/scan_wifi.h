@@ -11,7 +11,8 @@
 #include <net/wifi_location_common.h>
 
 int scan_wifi_init(void);
-void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready);
+int scan_wifi_validate_params(const struct location_method_config *config);
+void scan_wifi_execute(const struct location_wifi_config *config, struct k_sem *wifi_scan_ready);
 struct wifi_scan_info *scan_wifi_results_get(void);
 int scan_wifi_cancel(void);
 #if defined(CONFIG_LOCATION_DATA_DETAILS)
