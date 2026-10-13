@@ -827,6 +827,7 @@
 /scripts/ci/twister_ignore.txt            @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_ignore_sdk_zephyr.txt @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
 /scripts/ci/twister_platforms_zephyr.yaml @nordic-piks @PerMac @katgiadla @nrfconnect/ncs-test-leads
+/scripts/ci/twister_runner.sh             @nrfconnect/ncs-ci
 /scripts/ci/check_license.py              @carlescufi
 /scripts/ci/check_manifest_userdata.py    @carlescufi
 /scripts/ci/codeowners.py                 @carlescufi
