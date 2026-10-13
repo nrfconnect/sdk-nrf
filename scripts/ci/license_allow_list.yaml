@@ -45,6 +45,7 @@ none: |
   !\.cxx$
   !\.hxx$
   !\.rs$
+  ^modules/lib/openthread/tests/.*\.(cpp|py)$
 
 # Any license information is allowed in Python scripts, but it will generate a warning.
 -any: |
@@ -101,6 +102,7 @@ MIT: |
   ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
   ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
 BSD-3-CLAUSE: |
+  ^modules/lib/openthread/
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
   ^nrf/ext/
