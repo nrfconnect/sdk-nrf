@@ -493,37 +493,19 @@ The Bluetooth Mesh security toolbox does not operate with open key values.
 After Bluetooth Mesh receives an open key value, it immediately imports the key into the crypto library and receives the unique key identifier.
 The key identifiers are used in the security toolbox and stored in the persistent memory.
 The crypto library is responsible for storing of the key values in the Internal Trusted Storage (`PSA Certified Secure Storage API 1.0`_).
-Bluetooth Mesh data structures based on TinyCrypt (now removed from the SDK) and the PSA API, as well as images of these structures stored in the persistent memory, are not compatible due to different key representations.
-When a provisioned device updates its firmware binary from the TinyCrypt-based toolbox to firmware binary that uses the PSA API based toolbox, a provisioned device must be unprovisioned first and reprovisioned after the update.
-The provisioned device cannot restore data from the persistent memory after firmware update.
+
+The TinyCrypt-based security toolbox was deprecated in the |NCS| v3.0.0 and removed in the |NCS| v3.2.0.
+Its data structures are not compatible with the ones based on the PSA API, because the key representations differ.
+The same applies to the images of these structures stored in the persistent memory.
+A provisioned device that still runs an image with the TinyCrypt-based toolbox cannot restore its data from the persistent memory after it is updated to an image that uses the toolbox based on the PSA API.
+Such a device must be unprovisioned before the update and reprovisioned after it.
 If the image is changed over Mesh DFU, it is recommended to use :c:enumerator:`BT_MESH_DFU_EFFECT_UNPROV`.
 
-A provisioned device can update its firmware image from the TinyCrypt-based toolbox to firmware image that uses the PSA API based toolbox without unprovisioning if the key importer functionality is used.
-The :kconfig:option:`CONFIG_BT_MESH_KEY_IMPORTER` Kconfig option enables the key importer functionality.
-The key importer is an application initialization functionality that is called with kernel initialization priority before starting main.
-This functionality reads out the persistently stored Bluetooth Mesh data and if it finds keys stored by the TinyCrypt-based security toolbox, it imports them over the PSA API into the crypto library and stores the key identifiers in a format based on the PSA API toolbox.
-Once the new firmware image starts Bluetooth Mesh initialization, the persistent area already has the stored data in the correct format.
-
-The device can be vulnerable to attacks while the device uses the key importer functionality.
-The following two types of security risks are possible:
-
-* If the device is provided with a new image with the key importer functionality enabled, the new image is not yet activated and the attacker can write arbitrary data in the persistent memory during this time by whichever methods.
-  The fake keys might be imported to the PSA crypto library after the next device reset (which activates the new firmware with the key importer).
-  The device gets provisioned to the attackers network and the attacker can read out the mesh state data from the device.
-
-  Mitigation:
-
-  * Ensure that the device is protected from unauthorized writes to the non-volatile storage.
-
-* Even after the key importer imports the keys to the crypto library, the plain text values are left in the flash until the next garbage collection is triggered by the storage backend.
-
-  Mitigation:
-
-  * Ensure that the device is protected from unauthorized reads (such as reading flash from programmer, or using mcumgr shell commands) from the non-volatile storage.
-  * Execute a key refresh procedure for all existing keys used on the entire network as soon as possible by excluding the compromised device, if any.
-    The mechanism to determine if the device is compromised is up to the OEM developers.
-
-Additionally, after upgrading the device firmware with the key importer functionality enabled, and once the key import is complete, it is recommended to update device firmware with the key importer functionality disabled as soon as possible.
+.. note::
+   To keep such a device provisioned across the update, use the |NCS| v3.4.x as an intermediate step.
+   The key importer functionality that converts the stored keys to the PSA API based format is available only until v3.4.x.
+   This functionality is removed in the |NCS| v3.5.0.
+   For the detailed procedure, see :ref:`migration_3.5`.
 
 Secure storage
 --------------

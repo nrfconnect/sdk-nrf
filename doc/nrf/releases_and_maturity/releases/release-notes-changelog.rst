@@ -243,7 +243,11 @@ Bluetooth Mesh
 --------------
 
 * Added the :ref:`dfu_conf` guide on how to configure DFU for Bluetooth Mesh samples.
-* Removed the experimental Distance Measurement Server and Distance Measurement Client vendor models, together with the ``CONFIG_BT_MESH_DM_SRV``, ``CONFIG_BT_MESH_DM_CLI``, and ``CONFIG_BT_MESH_SHELL_DM_CLI`` Kconfig options and the related Bluetooth Mesh shell commands.
+
+* Removed:
+
+  * The experimental Distance Measurement Server and Distance Measurement Client vendor models, together with the ``CONFIG_BT_MESH_DM_SRV``, ``CONFIG_BT_MESH_DM_CLI``, and ``CONFIG_BT_MESH_SHELL_DM_CLI`` Kconfig options and the related Bluetooth Mesh shell commands.
+  * The key importer functionality, together with the ``CONFIG_BT_MESH_KEY_IMPORTER`` and ``CONFIG_BT_MESH_KEY_IMPORTER_PRIO`` Kconfig options.
 
 DECT NR+
 --------

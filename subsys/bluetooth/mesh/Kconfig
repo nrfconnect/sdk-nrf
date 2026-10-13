@@ -174,22 +174,6 @@ config BT_MESH_PROXY_FILTER_SIZE
 	default 8 if BT_MESH_NLC_PERF_BASELINE
 	range 8 32767 if BT_MESH_NLC_PERF_BASELINE
 
-config BT_MESH_KEY_IMPORTER
-	bool "Use key importer"
-	help
-	  Use key importer to read out the keys stored in settings subsystem
-	  and import them into PSA internal trusted storage. This is required if
-	  a provisioned device is still going to stay provisioned after changing
-	  from an image using TinyCrypt to an image that uses PSA crypto.
-
-config BT_MESH_KEY_IMPORTER_PRIO
-	int "Initialization priority for key importer"
-	depends on BT_MESH_KEY_IMPORTER
-	default KERNEL_INIT_PRIORITY_DEFAULT
-	help
-	  The key importer is initialized before the main application. It is initialized
-	  using system initialization macro with application level.
-
 rsource "Kconfig.models"
 rsource "Kconfig.dk_prov"
 rsource "shell/Kconfig"
