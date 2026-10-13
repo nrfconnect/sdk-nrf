@@ -682,6 +682,7 @@
 
 - scenarios:
     - bluetooth.mesh.settings
+    - bluetooth.mesh.settings.no_bt_settings
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"
