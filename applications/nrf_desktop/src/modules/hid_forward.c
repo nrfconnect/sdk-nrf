@@ -340,7 +340,7 @@ static void update_sub_protocol_mode(const struct subscriber *sub, enum bt_hids_
 	}
 }
 
-static int register_peripheral(struct ble_discovery_complete_event *event)
+static bool handle_ble_discovery_complete_event(struct ble_discovery_complete_event *event)
 {
 	BUILD_ASSERT((ARRAY_SIZE(subscribers) == ARRAY_SIZE(peripheral_address)) ||
 		     (ARRAY_SIZE(subscribers) == 1));
@@ -388,7 +388,7 @@ static int register_peripheral(struct ble_discovery_complete_event *event)
 
 	if (err) {
 		LOG_ERR("Cannot assign handles (err:%d)", err);
-		return err;
+		return false;
 	}
 
 	per->sub_id = sub_id;
@@ -408,7 +408,7 @@ static int register_peripheral(struct ble_discovery_complete_event *event)
 	event->peer_sci_support = IS_ENABLED(CONFIG_DESKTOP_HID_FORWARD_HID_SCI_ENABLE)
 				  && bt_hogp_sci_supported(&per->hogp);
 
-	return err;
+	return false;
 }
 
 static void submit_forward_error_rsp(struct hids_peripheral *per,
@@ -1282,12 +1282,7 @@ static bool app_event_handler(const struct app_event_header *aeh)
 	}
 
 	if (is_ble_discovery_complete_event(aeh)) {
-		struct ble_discovery_complete_event *event =
-			cast_ble_discovery_complete_event(aeh);
-
-		register_peripheral(event);
-
-		return false;
+		return handle_ble_discovery_complete_event(cast_ble_discovery_complete_event(aeh));
 	}
 
 	if (is_hid_report_subscriber_event(aeh)) {
