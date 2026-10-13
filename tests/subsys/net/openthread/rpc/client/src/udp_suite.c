@@ -92,7 +92,7 @@ ZTEST(ot_rpc_udp, test_otUdpBind_invalid)
 {
 	otError error = OT_ERROR_NONE;
 	otUdpSocket socket;
-	otNetifIdentifier net_if = OT_NETIF_THREAD;
+	otNetifIdentifier net_if = OT_NETIF_THREAD_INTERNAL;
 	otSockAddr sock_addr = {.mAddress.mFields.m8 = {ADDR_1}, .mPort = 1024};
 
 	error = otUdpBind(NULL, &socket, NULL, net_if);
@@ -108,11 +108,11 @@ ZTEST(ot_rpc_udp, test_otUdpBind_correct)
 {
 	otError error = OT_ERROR_NONE;
 	otUdpSocket socket;
-	otNetifIdentifier net_if = OT_NETIF_THREAD;
+	otNetifIdentifier net_if = OT_NETIF_THREAD_INTERNAL;
 	otSockAddr sock_addr = {.mAddress.mFields.m8 = {ADDR_1}, .mPort = 1024};
 
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_UDP_BIND, CBOR_UINT32((ot_socket_key)&socket),
-					   CBOR_SOC_ADDR, OT_NETIF_THREAD),
+					   CBOR_SOC_ADDR, OT_NETIF_THREAD_INTERNAL),
 				   RPC_RSP(OT_ERROR_NONE));
 	error = otUdpBind(NULL, &socket, &sock_addr, net_if);
 	mock_nrf_rpc_tr_expect_done();
@@ -225,13 +225,13 @@ ZTEST(ot_rpc_udp, test_udp_receive)
 		RPC_RSP(OT_ERROR_NONE));
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_UDP_BIND,
 					   CBOR_UINT32((ot_socket_key)&udp_socket), CBOR_SOC_ADDR,
-					   OT_NETIF_THREAD),
+					   OT_NETIF_THREAD_INTERNAL),
 				   RPC_RSP(OT_ERROR_NONE));
 	error = otUdpOpen(NULL, &udp_socket, handle_udp_receive, NULL);
 	zassert_equal(error, OT_ERROR_NONE);
 	zassert_equal(udp_socket.mHandler, handle_udp_receive);
 
-	error = otUdpBind(NULL, &udp_socket, &listen_sock_addr, OT_NETIF_THREAD);
+	error = otUdpBind(NULL, &udp_socket, &listen_sock_addr, OT_NETIF_THREAD_INTERNAL);
 	zassert_equal(error, OT_ERROR_NONE);
 	mock_nrf_rpc_tr_expect_done();
 
