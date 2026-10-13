@@ -86,9 +86,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #define NRF5_VENDOR_OUI (uint32_t)0xF4CE36
 #endif
 
-#define CHANNEL_COUNT		       (OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX - \
-					OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN + 1)
-#define DRX_SLOT_RX		       0 /* Delayed reception window ID */
+#define CHANNEL_COUNT \
+	(OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MAX - OT_RADIO_2P4GHZ_OQPSK_CHANNEL_MIN + 1)
+#define DRX_SLOT_RX_PRIMARY	       0 /* Delayed reception window ID */
 #define PHR_DURATION_US		       32U
 #define NSEC_PER_TEN_SYMBOLS	       ((uint64_t)PHY_US_PER_SYMBOL * 1000 * 10)
 #define NRF5_BROADCAST_ADDRESS	       0xffff
@@ -98,9 +98,9 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #define IE_VENDOR_SIZE_MIN 3 /* Minimum vendor OUI size in bytes */
 
 #if defined(CONFIG_COOP_ENABLED)
-#define OT_WORKER_PRIORITY K_PRIO_COOP(CONFIG_OPENTHREAD_THREAD_PRIORITY)
+#define OT_WORKER_PRIORITY K_PRIO_COOP(CONFIG_OPENTHREAD_RADIO_WORKQUEUE_PRIORITY)
 #else
-#define OT_WORKER_PRIORITY K_PRIO_PREEMPT(CONFIG_OPENTHREAD_THREAD_PRIORITY)
+#define OT_WORKER_PRIORITY K_PRIO_PREEMPT(CONFIG_OPENTHREAD_RADIO_WORKQUEUE_PRIORITY)
 #endif
 
 #define MIN_CHANNEL_NUMBER (11)
@@ -109,8 +109,8 @@ LOG_MODULE_REGISTER(LOG_MODULE_NAME, CONFIG_OPENTHREAD_PLATFORM_LOG_LEVEL);
 #define PSDU_LENGTH(psdu) ((psdu)[0])
 #define PSDU_DATA(psdu)	  ((psdu) + 1)
 
-#define CSL_IE_SIZE (6) /* Buffer for CSL IE: 2 bytes header + 4 bytes content */
-#define LM_IE_SIZE (32) /* Buffer for LM IE: 2 bytes header + 30 bytes content */
+#define CSL_IE_SIZE (6)	 /* Buffer for CSL IE: 2 bytes header + 4 bytes content */
+#define LM_IE_SIZE  (32) /* Buffer for LM IE: 2 bytes header + 30 bytes content */
 
 enum nrf5_pending_events {
 	PENDING_EVENT_FRAME_RECEIVED,	  /* Radio has received new frame */
@@ -1176,11 +1176,13 @@ static void nrf5_key_store(uint8_t *key_value, nrf_802154_key_id_mode_t key_id_m
 		.use_global_frame_counter = true,
 	};
 
-	__ASSERT_EVAL((void)nrf_802154_security_key_store(&key),
-		nrf_802154_security_error_t err = nrf_802154_security_key_store(&key),
-		err == NRF_802154_SECURITY_ERROR_NONE ||
-		err == NRF_802154_SECURITY_ERROR_ALREADY_PRESENT,
-		"Storing key failed, err: %d", err);
+	nrf_802154_security_error_t err = nrf_802154_security_key_store(&key);
+
+	__ASSERT(err == NRF_802154_SECURITY_ERROR_NONE ||
+		 err == NRF_802154_SECURITY_ERROR_ALREADY_PRESENT,
+		 "Storing key failed, err: %d", err);
+
+	(void)err;
 }
 
 void otPlatRadioSetMacKey(otInstance *aInstance, uint8_t aKeyIdMode, uint8_t aKeyId,
@@ -1190,50 +1192,73 @@ void otPlatRadioSetMacKey(otInstance *aInstance, uint8_t aKeyIdMode, uint8_t aKe
 	ARG_UNUSED(aInstance);
 	__ASSERT_NO_MSG(aPrevKey != NULL && aCurrKey != NULL && aNextKey != NULL);
 
+	if (aKeyId == 0) {
+		nrf_802154_security_key_remove_all();
+		return;
+	}
+
 #if defined(CONFIG_OPENTHREAD_PLATFORM_KEYS_EXPORTABLE_ENABLE)
+	/* Export PSA key references into local buffers. Do NOT write into the
+	 * aPrevKey/aCurrKey/aNextKey const pointers: mKey and mKeyRef share a
+	 * union, so writing the exported bytes there would corrupt the PSA
+	 * handle and break subsequent SW RX decryption by the OT stack.
+	 */
 	__ASSERT_NO_MSG(aKeyType == OT_KEY_TYPE_KEY_REF);
+	uint8_t prev_key_bytes[OT_MAC_KEY_SIZE];
+	uint8_t curr_key_bytes[OT_MAC_KEY_SIZE];
+	uint8_t next_key_bytes[OT_MAC_KEY_SIZE];
 	size_t keyLen;
 	otError error;
 
-	error = otPlatCryptoExportKey(aPrevKey->mKeyMaterial.mKeyRef,
-				      (uint8_t *)aPrevKey->mKeyMaterial.mKey.m8, OT_MAC_KEY_SIZE,
-				      &keyLen);
+	error = otPlatCryptoExportKey(aPrevKey->mKeyMaterial.mKeyRef, prev_key_bytes,
+				      OT_MAC_KEY_SIZE, &keyLen);
 	__ASSERT_NO_MSG(error == OT_ERROR_NONE);
-	error = otPlatCryptoExportKey(aCurrKey->mKeyMaterial.mKeyRef,
-				      (uint8_t *)aCurrKey->mKeyMaterial.mKey.m8, OT_MAC_KEY_SIZE,
-				      &keyLen);
+
+	error = otPlatCryptoExportKey(aCurrKey->mKeyMaterial.mKeyRef, curr_key_bytes,
+				      OT_MAC_KEY_SIZE, &keyLen);
 	__ASSERT_NO_MSG(error == OT_ERROR_NONE);
-	error = otPlatCryptoExportKey(aNextKey->mKeyMaterial.mKeyRef,
-				      (uint8_t *)aNextKey->mKeyMaterial.mKey.m8, OT_MAC_KEY_SIZE,
-				      &keyLen);
+
+	error = otPlatCryptoExportKey(aNextKey->mKeyMaterial.mKeyRef, next_key_bytes,
+				      OT_MAC_KEY_SIZE, &keyLen);
 	__ASSERT_NO_MSG(error == OT_ERROR_NONE);
+
+	const uint8_t *prev_key_data = prev_key_bytes;
+	const uint8_t *curr_key_data = curr_key_bytes;
+	const uint8_t *next_key_data = next_key_bytes;
 #else
 	__ASSERT_NO_MSG(aKeyType == OT_KEY_TYPE_LITERAL_KEY);
+	const uint8_t *prev_key_data = aPrevKey->mKeyMaterial.mKey.m8;
+	const uint8_t *curr_key_data = aCurrKey->mKeyMaterial.mKey.m8;
+	const uint8_t *next_key_data = aNextKey->mKeyMaterial.mKey.m8;
 #endif
 
-	uint8_t key_id_mode = aKeyIdMode >> 3;
+	/* aKeyIdMode is passed as the enum value (Mac::Frame::kKeyIdMode1 = 1),
+	 * not the raw wire byte. The old >> 3 shift was for the wire format where
+	 * KeyIdMode occupied bits [5:3] of the Security Control byte. With the
+	 * new OT API the enum value is passed directly, so no shift is needed.
+	 */
+	uint8_t key_id_mode = aKeyIdMode;
 	uint8_t prev_key_id = 0;
 	uint8_t next_key_id = 0;
 
-	if (key_id_mode == 1) {
-		__ASSERT_NO_MSG(NRF_802154_SECURITY_KEY_STORAGE_SIZE >= 3);
+	__ASSERT_NO_MSG(NRF_802154_SECURITY_KEY_STORAGE_SIZE >= 3);
 
+	if (key_id_mode == 1) {
 		/* aKeyId in range: (1, 0x80) means valid keys */
 		prev_key_id = aKeyId == 1 ? 0x80 : aKeyId - 1;
 		next_key_id = aKeyId == 0x80 ? 1 : aKeyId + 1;
 
 		nrf_802154_security_key_remove_all();
 
-		nrf5_key_store((uint8_t *)aPrevKey->mKeyMaterial.mKey.m8, key_id_mode,
+		nrf5_key_store((uint8_t *)prev_key_data, (nrf_802154_key_id_mode_t)key_id_mode,
 			       &prev_key_id);
-		nrf5_key_store((uint8_t *)aCurrKey->mKeyMaterial.mKey.m8, key_id_mode, &aKeyId);
-		nrf5_key_store((uint8_t *)aNextKey->mKeyMaterial.mKey.m8, key_id_mode,
+		nrf5_key_store((uint8_t *)curr_key_data, (nrf_802154_key_id_mode_t)key_id_mode,
+			       &aKeyId);
+		nrf5_key_store((uint8_t *)next_key_data, (nrf_802154_key_id_mode_t)key_id_mode,
 			       &next_key_id);
-
 	} else {
 		/* aKeyId == 0 is used only to clear keys for stack reset in RCP */
 		__ASSERT_NO_MSG((key_id_mode == 0) && (aKeyId == 0));
-
 		nrf_802154_security_key_remove_all();
 	}
 }
@@ -1286,6 +1311,29 @@ otError otPlatRadioEnable(otInstance *aInstance)
 	return OT_ERROR_NONE;
 }
 
+#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER) || defined(CONFIG_OPENTHREAD_WAKE_LISTENER)
+static bool nrf5_is_valid_radio_channel(uint8_t channel)
+{
+	return channel >= MIN_CHANNEL_NUMBER && channel <= MAX_CHANNEL_NUMBER;
+}
+
+/**
+ * Schedule delayed RX per OpenThread otPlatRadioReceiveAt semantics using the primary DRX slot.
+ *
+ * @see otPlatRadioReceiveAt_scenario in nrf-802154 delayed TRX unit tests.
+ */
+static bool nrf5_receive_at_schedule(uint64_t rx_time_us, uint32_t duration, uint8_t channel)
+{
+	/* The window may end between the two attempts, so try once more before giving up. */
+	if (!nrf_802154_receive_at_scheduled_cancel(DRX_SLOT_RX_PRIMARY) &&
+	    !nrf_802154_receive_at_scheduled_cancel(DRX_SLOT_RX_PRIMARY)) {
+		return false;
+	}
+
+	return nrf_802154_receive_at(rx_time_us, duration, channel, DRX_SLOT_RX_PRIMARY);
+}
+#endif
+
 otError otPlatRadioDisable(otInstance *aInstance)
 {
 	ARG_UNUSED(aInstance);
@@ -1293,6 +1341,12 @@ otError otPlatRadioDisable(otInstance *aInstance)
 	if (nrf5_data.state != OT_RADIO_STATE_DISABLED && nrf5_data.state != OT_RADIO_STATE_SLEEP) {
 		return OT_ERROR_INVALID_STATE;
 	}
+
+#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER) || defined(CONFIG_OPENTHREAD_WAKE_LISTENER)
+	if (nrf5_data.capabilities & OT_RADIO_CAPS_RECEIVE_TIMING) {
+		(void)nrf_802154_receive_at_cancel(DRX_SLOT_RX_PRIMARY);
+	}
+#endif
 
 	nrf5_data.state = OT_RADIO_STATE_DISABLED;
 	return OT_ERROR_NONE;
@@ -1356,19 +1410,30 @@ otError otPlatRadioReceive(otInstance *aInstance, uint8_t aChannel)
 
 	nrf5_data.state = OT_RADIO_STATE_RECEIVE;
 
+	if (is_pending_event_set(PENDING_EVENT_TX_DONE)) {
+		reset_pending_event(PENDING_EVENT_TX_DONE);
+	}
+
 	LOG_DBG("nRF5 OT radio RX started (channel: %d)", nrf5_data.channel);
 
 	return OT_ERROR_NONE;
 }
 
-#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER) || defined(CONFIG_OPENTHREAD_WAKEUP_END_DEVICE)
+#if defined(CONFIG_OPENTHREAD_CSL_RECEIVER) || defined(CONFIG_OPENTHREAD_WAKE_LISTENER)
 otError otPlatRadioReceiveAt(otInstance *aInstance, uint8_t aChannel, uint32_t aStart,
-
 			     uint32_t aDuration)
 {
 	bool result;
 
 	ARG_UNUSED(aInstance);
+
+	if (nrf5_data.state == OT_RADIO_STATE_DISABLED) {
+		return OT_ERROR_INVALID_STATE;
+	}
+
+	if (!nrf5_is_valid_radio_channel(aChannel)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
 
 	/* Note that even if the nrf_802154_receive_at function is not called in time
 	 * (for example due to the call being blocked by higher priority threads) and
@@ -1377,8 +1442,8 @@ otError otPlatRadioReceiveAt(otInstance *aInstance, uint8_t aChannel, uint32_t a
 	 * anchor_time + n * csl_period. The previously set
 	 * anchor_time will be used for calculations.
 	 */
-	result = nrf_802154_receive_at(convert_32bit_us_wrapped_to_64bit_ns(aStart) / NSEC_PER_USEC,
-				       aDuration, aChannel, DRX_SLOT_RX);
+	result = nrf5_receive_at_schedule(
+		convert_32bit_us_wrapped_to_64bit_ns(aStart) / NSEC_PER_USEC, aDuration, aChannel);
 
 	LOG_DBG("nRF5 OT radio RX AT started (channel: %d, aStart: %u, aDuration: %u)", aChannel,
 		aStart, aDuration);
@@ -1855,7 +1920,7 @@ static void openthread_nrf_802154_received_timestamp_raw(uint8_t *data, int8_t p
 static void openthread_nrf_802154_receive_failed(nrf_802154_rx_error_t error, uint32_t id)
 {
 #if defined(CONFIG_OPENTHREAD_CSL_RECEIVER)
-	if (id == DRX_SLOT_RX && error == NRF_802154_RX_ERROR_DELAYED_TIMEOUT) {
+	if (id == DRX_SLOT_RX_PRIMARY && error == NRF_802154_RX_ERROR_DELAYED_TIMEOUT) {
 		if (!nrf5_data.rx_on_when_idle) {
 			/* Transition to RxOff done automatically by the driver */
 			return;
