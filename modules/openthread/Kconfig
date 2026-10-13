@@ -6,6 +6,13 @@ source "$(ZEPHYR_BASE)/modules/openthread/Kconfig"
 
 if OPENTHREAD
 
+# In nRF implementation we must use PSA crypto for all OpenThread purposes now.
+config OPENTHREAD_CRYPTO_PSA
+	default y
+	select PSA_CRYPTO
+	select OPENTHREAD_PLATFORM_KEY_REF
+	imply OPENTHREAD_PLATFORM_KEYS_EXPORTABLE_ENABLE
+
 # Load the nrf-specific OpenThread stack Kconfig file
 menu "OpenThread stack nrf features"
 rsource "Kconfig.features.nrf"
