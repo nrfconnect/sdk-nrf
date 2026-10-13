@@ -32,7 +32,7 @@
 /* Fake functions */
 
 FAKE_VALUE_FUNC(otMessage *, otCoapNewMessage, otInstance *, const otMessageSettings *);
-FAKE_VOID_FUNC(otCoapMessageInit, otMessage *, otCoapType, otCoapCode);
+FAKE_VALUE_FUNC(otError, otCoapMessageInit, otMessage *, otCoapType, otCoapCode);
 FAKE_VALUE_FUNC(otError, otCoapMessageInitResponse, otMessage *, const otMessage *, otCoapType,
 		otCoapCode);
 FAKE_VALUE_FUNC(otError, otCoapMessageAppendUriPathOptions, otMessage *, const char *);
@@ -47,10 +47,9 @@ FAKE_VALUE_FUNC(otError, otCoapStop, otInstance *);
 FAKE_VOID_FUNC(otCoapAddResource, otInstance *, otCoapResource *);
 FAKE_VOID_FUNC(otCoapRemoveResource, otInstance *, otCoapResource *);
 FAKE_VOID_FUNC(otCoapSetDefaultHandler, otInstance *, otCoapRequestHandler, void *)
-FAKE_VALUE_FUNC(otError, otCoapSendRequestWithParameters, otInstance *, otMessage *,
-		const otMessageInfo *, otCoapResponseHandler, void *, const otCoapTxParameters *);
-FAKE_VALUE_FUNC(otError, otCoapSendResponseWithParameters, otInstance *, otMessage *,
-		const otMessageInfo *, const otCoapTxParameters *);
+FAKE_VALUE_FUNC(otError, otCoapSendRequest, otInstance *, otMessage *, const otMessageInfo *,
+		otCoapResponseHandler, void *);
+FAKE_VALUE_FUNC(otError, otCoapSendResponse, otInstance *, otMessage *, const otMessageInfo *);
 
 #define FOREACH_FAKE(f)                                                                            \
 	f(otCoapNewMessage);                                                                       \
@@ -68,8 +67,8 @@ FAKE_VALUE_FUNC(otError, otCoapSendResponseWithParameters, otInstance *, otMessa
 	f(otCoapAddResource);                                                                      \
 	f(otCoapRemoveResource);                                                                   \
 	f(otCoapSetDefaultHandler);                                                                \
-	f(otCoapSendRequestWithParameters);                                                        \
-	f(otCoapSendResponseWithParameters);
+	f(otCoapSendRequest);                                                                      \
+	f(otCoapSendResponse);
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -134,7 +133,9 @@ ZTEST(ot_rpc_coap, test_otCoapMessageInit)
 {
 	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
-	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	otCoapMessageInit_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_MESSAGE_INIT, message_rep,
 					OT_COAP_TYPE_RESET,
 					CBOR_UINT8(OT_COAP_CODE_PROXY_NOT_SUPPORTED)));
@@ -144,6 +145,25 @@ ZTEST(ot_rpc_coap, test_otCoapMessageInit)
 	zassert_equal(otCoapMessageInit_fake.arg0_val, (otMessage *)MSG_ADDR);
 	zassert_equal(otCoapMessageInit_fake.arg1_val, OT_COAP_TYPE_RESET);
 	zassert_equal(otCoapMessageInit_fake.arg2_val, OT_COAP_CODE_PROXY_NOT_SUPPORTED);
+}
+
+/*
+ * Test reception of otCoapMessageInit() command.
+ * Test serialization of the result: OT_ERROR_INVALID_ARGS.
+ */
+ZTEST(ot_rpc_coap, test_otCoapMessageInit_failed)
+{
+	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
+
+	otCoapMessageInit_fake.return_val = OT_ERROR_INVALID_ARGS;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_ARGS), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_MESSAGE_INIT, message_rep,
+					OT_COAP_TYPE_RESET,
+					CBOR_UINT8(OT_COAP_CODE_PROXY_NOT_SUPPORTED)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otCoapMessageInit_fake.call_count, 1);
 }
 
 /*
@@ -484,26 +504,25 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest)
 		.mMulticastLoop = true,
 	};
 
-	otCoapSendRequestWithParameters_fake.return_val = OT_ERROR_NONE;
+	otCoapSendRequest_fake.return_val = OT_ERROR_NONE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(
 		RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, message_rep, CBOR_MSG_INFO, request_rep));
 	mock_nrf_rpc_tr_expect_done();
 
-	zassert_equal(otCoapSendRequestWithParameters_fake.call_count, 1);
-	zexpect_equal(otCoapSendRequestWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
-	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg2_val);
-	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg3_val);
+	zassert_equal(otCoapSendRequest_fake.call_count, 1);
+	zexpect_equal(otCoapSendRequest_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zexpect_not_null(otCoapSendRequest_fake.arg2_val);
+	zexpect_not_null(otCoapSendRequest_fake.arg3_val);
 
 	/* Test serialization of the response handler call */
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_RESPONSE_HANDLER, request_rep,
 					   response_rep, CBOR_MSG_INFO, OT_ERROR_PARSE),
 				   RPC_RSP());
 	ot_rpc_mutex_lock();
-	otCoapSendRequestWithParameters_fake.arg3_val(otCoapSendRequestWithParameters_fake.arg4_val,
-						      (otMessage *)MSG_ADDR, &message_info,
-						      OT_ERROR_PARSE);
+	otCoapSendRequest_fake.arg3_val(otCoapSendRequest_fake.arg4_val, (otMessage *)MSG_ADDR,
+					&message_info, OT_ERROR_PARSE);
 	ot_rpc_mutex_unlock();
 	mock_nrf_rpc_tr_expect_done();
 }
@@ -518,17 +537,17 @@ ZTEST(ot_rpc_coap, test_otCoapSendRequest_failed)
 	ot_rpc_coap_request_key request_rep = 3;
 	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
-	otCoapSendRequestWithParameters_fake.return_val = OT_ERROR_INVALID_STATE;
+	otCoapSendRequest_fake.return_val = OT_ERROR_INVALID_STATE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_STATE), NO_RSP);
 	mock_nrf_rpc_tr_receive(
 		RPC_CMD(OT_RPC_CMD_COAP_SEND_REQUEST, message_rep, CBOR_MSG_INFO, request_rep));
 	mock_nrf_rpc_tr_expect_done();
 
-	zassert_equal(otCoapSendRequestWithParameters_fake.call_count, 1);
-	zexpect_equal(otCoapSendRequestWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
-	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg2_val);
-	zexpect_not_null(otCoapSendRequestWithParameters_fake.arg3_val);
+	zassert_equal(otCoapSendRequest_fake.call_count, 1);
+	zexpect_equal(otCoapSendRequest_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zexpect_not_null(otCoapSendRequest_fake.arg2_val);
+	zexpect_not_null(otCoapSendRequest_fake.arg3_val);
 	zassert_not_null(ot_res_tab_msg_get(message_rep));
 }
 
@@ -541,15 +560,15 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse)
 {
 	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
-	otCoapSendResponseWithParameters_fake.return_val = OT_ERROR_NONE;
+	otCoapSendResponse_fake.return_val = OT_ERROR_NONE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_SEND_RESPONSE, message_rep, CBOR_MSG_INFO));
 	mock_nrf_rpc_tr_expect_done();
 
-	zassert_equal(otCoapSendResponseWithParameters_fake.call_count, 1);
-	zexpect_equal(otCoapSendResponseWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
-	zexpect_not_null(otCoapSendResponseWithParameters_fake.arg2_val);
+	zassert_equal(otCoapSendResponse_fake.call_count, 1);
+	zexpect_equal(otCoapSendResponse_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zexpect_not_null(otCoapSendResponse_fake.arg2_val);
 	zassert_is_null(ot_res_tab_msg_get(message_rep));
 }
 
@@ -562,15 +581,15 @@ ZTEST(ot_rpc_coap, test_otCoapSendResponse_failed)
 {
 	ot_rpc_res_tab_key message_rep = ot_res_tab_msg_alloc((otMessage *)MSG_ADDR);
 
-	otCoapSendResponseWithParameters_fake.return_val = OT_ERROR_INVALID_STATE;
+	otCoapSendResponse_fake.return_val = OT_ERROR_INVALID_STATE;
 
 	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_INVALID_STATE), NO_RSP);
 	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_COAP_SEND_RESPONSE, message_rep, CBOR_MSG_INFO));
 	mock_nrf_rpc_tr_expect_done();
 
-	zassert_equal(otCoapSendResponseWithParameters_fake.call_count, 1);
-	zexpect_equal(otCoapSendResponseWithParameters_fake.arg1_val, (otMessage *)MSG_ADDR);
-	zexpect_not_null(otCoapSendResponseWithParameters_fake.arg2_val);
+	zassert_equal(otCoapSendResponse_fake.call_count, 1);
+	zexpect_equal(otCoapSendResponse_fake.arg1_val, (otMessage *)MSG_ADDR);
+	zexpect_not_null(otCoapSendResponse_fake.arg2_val);
 	zassert_not_null(ot_res_tab_msg_get(message_rep));
 }
 
