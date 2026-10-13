@@ -310,7 +310,11 @@ static int otperf_udp_receiver_init(otInstance *instance)
 	otSockAddr bindAddr = {.mPort = udp_server_addr.mPort,
 			       .mAddress = udp_server_addr.mAddress};
 
+#if OPENTHREAD_API_VERSION >= 465
+	error = otUdpBind(instance, &current_socket, &bindAddr, OT_NETIF_THREAD_INTERNAL);
+#else
 	error = otUdpBind(instance, &current_socket, &bindAddr, OT_NETIF_THREAD);
+#endif
 	if (error != OT_ERROR_NONE) {
 		LOG_ERR("Cannot bind IPv6 UDP port %d: %d", bindAddr.mPort, error);
 
