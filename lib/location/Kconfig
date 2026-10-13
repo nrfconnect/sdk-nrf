@@ -111,9 +111,12 @@ config LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT
 	  Increasing the max number will increase the library's RAM usage.
 
 config LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
-	bool "Override Wi-Fi scan parameters"
+	bool "Override Wi-Fi scan parameters [DEPRECATED]"
+	select DEPRECATED
 	help
-	  Enable this option to override the default Wi-Fi scan parameters.
+	  Deprecated. Use CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE and
+	  CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE instead.
+	  When enabled, those default dwell times are taken from the options below.
 
 if LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
 
@@ -138,6 +141,14 @@ config LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE
 	  (102.4 ms beacon interval + ~30 ms channel contention) * 2
 
 endif # LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+
+config LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX
+	int "Max manual Wi-Fi scan channels in location_wifi_config"
+	range 0 32
+	default 3
+	help
+	  Size of the channels array in struct location_wifi_config. Set to 0 to omit the
+	  field and save RAM in the location method configuration union.
 
 endif # LOCATION_METHOD_WIFI
 
@@ -326,6 +337,72 @@ config LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT
 	help
 	  Default value used in location_config_defaults_set() function for timeout
 	  member within location_wifi_config structure.
+
+choice LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE
+	prompt "Default Wi-Fi scan type"
+	default LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE_ACTIVE
+	help
+	  Default value used in location_config_defaults_set() function for scan_type
+	  member within location_wifi_config structure.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE_ACTIVE
+	bool "Active scan"
+
+config LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE_PASSIVE
+	bool "Passive scan"
+
+endchoice
+
+config LOCATION_REQUEST_DEFAULT_WIFI_BANDS_2_4_GHZ
+	bool "Default Wi-Fi scan includes 2.4 GHz band"
+	help
+	  Default value used in location_config_defaults_set() function for bands
+	  member within location_wifi_config structure. If neither this option nor
+	  LOCATION_REQUEST_DEFAULT_WIFI_BANDS_5_GHZ is set, all supported bands are scanned.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_BANDS_5_GHZ
+	bool "Default Wi-Fi scan includes 5 GHz band"
+	help
+	  Default value used in location_config_defaults_set() function for bands
+	  member within location_wifi_config structure. If neither this option nor
+	  LOCATION_REQUEST_DEFAULT_WIFI_BANDS_2_4_GHZ is set, all supported bands are scanned.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE
+	int "Default active scan dwell time (ms)"
+	range 0 1000
+	default LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE if \
+		LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+	default 0
+	help
+	  Default value used in location_config_defaults_set() function for dwell_time_active
+	  member within location_wifi_config structure. Zero means Wi-Fi driver default.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE
+	int "Default passive scan dwell time (ms)"
+	range 0 1000
+	default LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE if \
+		LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE
+	default 0
+	help
+	  Default value used in location_config_defaults_set() function for dwell_time_passive
+	  member within location_wifi_config structure. Zero means Wi-Fi driver default.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_MAX_BSS_CNT
+	int "Default maximum Wi-Fi scan BSS count"
+	range 0 65535
+	default 0
+	help
+	  Default value used in location_config_defaults_set() function for max_bss_cnt
+	  member within location_wifi_config structure. Zero means no limit or driver default.
+
+config LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS
+	string "Default Wi-Fi scan channel list"
+	default ""
+	help
+	  Default value used in location_config_defaults_set() function for channels
+	  member within location_wifi_config structure. Uses the same format as the Zephyr
+	  Wi-Fi shell, for example "2:1,6,11" or "2:1,6,11_5:36-48". Empty string scans all
+	  channels in the selected band(s).
 
 endif # LOCATION_METHOD_WIFI
 

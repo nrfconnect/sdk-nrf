@@ -19,6 +19,11 @@
 #include "scan_cellular.h"
 #endif
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
+#include <zephyr/net/wifi.h>
+#include <zephyr/sys/util.h>
+#if defined(CONFIG_NET_L2_WIFI_UTILS)
+#include <zephyr/net/wifi_utils.h>
+#endif
 #include "scan_wifi.h"
 #endif
 #if defined(CONFIG_LOCATION_METHOD_CELLULAR) || defined(CONFIG_LOCATION_METHOD_WIFI)
@@ -243,6 +248,67 @@ int location_core_init(void)
 	return 0;
 }
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+static int location_core_wifi_config_validate(const struct location_wifi_config *wifi)
+{
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	bool channel_list_empty = true;
+#endif
+
+	if (wifi->scan_type != LOCATION_WIFI_SCAN_TYPE_ACTIVE &&
+	    wifi->scan_type != LOCATION_WIFI_SCAN_TYPE_PASSIVE) {
+		LOG_ERR("Invalid Wi-Fi scan type: %d", wifi->scan_type);
+		return -EINVAL;
+	}
+
+	if (wifi->bands & ~(LOCATION_WIFI_BAND_2_4_GHZ | LOCATION_WIFI_BAND_5_GHZ)) {
+		LOG_ERR("Invalid Wi-Fi scan bands: 0x%x", wifi->bands);
+		return -EINVAL;
+	}
+
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	for (int i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+		if (wifi->channels[i].channel == 0) {
+			break;
+		}
+
+		channel_list_empty = false;
+
+		if (wifi->channels[i].band != WIFI_FREQ_BAND_2_4_GHZ &&
+		    wifi->channels[i].band != WIFI_FREQ_BAND_5_GHZ) {
+			LOG_ERR("Invalid Wi-Fi scan channel band: %d", wifi->channels[i].band);
+			return -EINVAL;
+		}
+
+#if defined(CONFIG_NET_L2_WIFI_UTILS)
+		if (!wifi_utils_validate_chan(wifi->channels[i].band,
+					      wifi->channels[i].channel)) {
+			LOG_ERR("Invalid Wi-Fi scan channel %u for band %u",
+				wifi->channels[i].channel, wifi->channels[i].band);
+			return -EINVAL;
+		}
+#endif
+	}
+
+	if (!channel_list_empty && wifi->bands != 0) {
+		for (int i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+			if (wifi->channels[i].channel == 0) {
+				break;
+			}
+
+			if (!(wifi->bands & BIT(wifi->channels[i].band))) {
+				LOG_ERR("Wi-Fi scan channel band %u not in bands bitmap 0x%x",
+					wifi->channels[i].band, wifi->bands);
+				return -EINVAL;
+			}
+		}
+	}
+#endif
+
+	return 0;
+}
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
+
 int location_core_validate_params(const struct location_config *config)
 {
 	const struct location_method_api *method_api;
@@ -266,6 +332,16 @@ int location_core_validate_params(const struct location_config *config)
 			LOG_ERR("Location method (%d) not supported", config->methods[i].method);
 			return -EINVAL;
 		}
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		if (config->methods[i].method == LOCATION_METHOD_WIFI) {
+			int err = location_core_wifi_config_validate(&config->methods[i].wifi);
+
+			if (err) {
+				return err;
+			}
+		}
+#endif
 	}
 	return 0;
 }
@@ -307,6 +383,21 @@ void location_core_config_log(const struct location_config *config)
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		} else if (type == LOCATION_METHOD_WIFI) {
 			LOG_DBG("      Timeout: %dms", config->methods[i].wifi.timeout);
+			LOG_DBG("      Scan type: %d", config->methods[i].wifi.scan_type);
+			LOG_DBG("      Bands: 0x%x", config->methods[i].wifi.bands);
+			LOG_DBG("      Dwell active: %u ms",
+				config->methods[i].wifi.dwell_time_active);
+			LOG_DBG("      Dwell passive: %u ms",
+				config->methods[i].wifi.dwell_time_passive);
+			LOG_DBG("      Max BSS count: %u", config->methods[i].wifi.max_bss_cnt);
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+			for (int j = 0; j < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX &&
+			     config->methods[i].wifi.channels[j].channel != 0; j++) {
+				LOG_DBG("      Channel[%d]: band %u channel %u", j,
+					config->methods[i].wifi.channels[j].band,
+					config->methods[i].wifi.channels[j].channel);
+			}
+#endif
 #endif
 		}
 	}
