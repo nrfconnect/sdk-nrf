@@ -758,6 +758,7 @@ int nrf_wifi_mode(const struct device *dev,
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = NULL;
 	struct peers_info *peer = NULL;
 	int i = 0;
 	int ret = -1;
@@ -834,18 +835,24 @@ int nrf_wifi_mode(const struct device *dev,
 #endif
 
 	} else {
-		mode->mode = sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode;
+		fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+		if (!fmac_vif_ctx) {
+			LOG_DBG("%s: VIF not active", __func__);
+			goto out;
+		}
+
+		mode->mode = fmac_vif_ctx->mode;
 		/**
 		 * This is a work-around to handle current UMAC mode handling.
 		 * This might be removed in future versions when UMAC has more space.
 		 */
 #ifdef CONFIG_NRF71_RAW_DATA_TX
-		if (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode == true) {
+		if (fmac_vif_ctx->txinjection_mode == true) {
 			mode->mode ^= NRF_WIFI_TX_INJECTION_MODE;
 		}
 #endif /* CONFIG_NRF71_RAW_DATA_TX */
 #ifdef CONFIG_NRF71_PROMISC_DATA_RX
-		if (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->promisc_mode == true) {
+		if (fmac_vif_ctx->promisc_mode == true) {
 			mode->mode ^= NRF_WIFI_PROMISCUOUS_MODE;
 		}
 #endif /* CONFIG_NRF71_PROMISC_DATA_RX */
@@ -969,7 +976,14 @@ int nrf_wifi_channel(const struct device *dev,
 			goto out;
 		}
 	} else {
-		channel->channel = sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->channel;
+		struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+
+		if (!fmac_vif_ctx) {
+			LOG_DBG("%s: VIF not active", __func__);
+			goto out;
+		}
+
+		channel->channel = fmac_vif_ctx->channel;
 	}
 	ret = 0;
 out:
@@ -986,8 +1000,7 @@ int nrf_wifi_filter(const struct device *dev,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
-	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
-	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = NULL;
 	int ret = -1;
 
 	if (!dev || !filter) {
@@ -1002,8 +1015,11 @@ int nrf_wifi_filter(const struct device *dev,
 	}
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
-	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
-	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+	if (!fmac_vif_ctx) {
+		LOG_DBG("%s: VIF not active", __func__);
+		goto out;
+	}
 
 	if (filter->oper == WIFI_MGMT_SET) {
 		/**
@@ -1013,10 +1029,9 @@ int nrf_wifi_filter(const struct device *dev,
 		 * driver and filter packet type on packet receive by
 		 * checking the 802.11 header in the packet
 		 */
-		if (((sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) &
+		if (((fmac_vif_ctx->mode) &
 		    (NRF_WIFI_PROMISCUOUS_MODE)) == NRF_WIFI_PROMISCUOUS_MODE) {
-			sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->packet_filter =
-				filter->filter;
+			fmac_vif_ctx->packet_filter = filter->filter;
 			ret = 0;
 			goto out;
 		}
@@ -1033,8 +1048,7 @@ int nrf_wifi_filter(const struct device *dev,
 		    || filter->filter == WIFI_ALL_FILTER_SETTING) {
 			filter->filter = 1;
 		} else if (filter->filter == 0) {
-			filter->filter =
-				sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->packet_filter;
+			filter->filter = fmac_vif_ctx->packet_filter;
 		}
 
 		/**
@@ -1052,7 +1066,7 @@ int nrf_wifi_filter(const struct device *dev,
 			goto out;
 		}
 	} else {
-		filter->filter = sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->packet_filter;
+		filter->filter = fmac_vif_ctx->packet_filter;
 	}
 	ret = 0;
 out:
