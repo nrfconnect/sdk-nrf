@@ -14,6 +14,7 @@
 #include <openthread/thread.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
+#include <openthread/commissioner.h>
 
 LOG_MODULE_REGISTER(ot_utils, CONFIG_LOG_DEFAULT_LEVEL);
 
