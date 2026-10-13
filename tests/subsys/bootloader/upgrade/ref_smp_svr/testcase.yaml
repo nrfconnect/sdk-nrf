@@ -107,6 +107,23 @@ tests:
       - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
       - FILE_SUFFIX=larger_mcuboot
 
+  mcuboot.upgrade.serial_recovery_timeout:
+    tags:
+      - serial_recovery
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_serial_recovery.py::test_serial_recovery_timeout"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_SERIAL=y
+      - mcuboot_CONFIG_UART_CONSOLE=n
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - mcuboot_CONFIG_BOOT_SERIAL_RECOVERY_TIMEOUT_MS=2000
+      - FILE_SUFFIX=larger_mcuboot
+
   mcuboot.upgrade.nrf54l_fprotect:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
