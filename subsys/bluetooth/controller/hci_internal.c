@@ -720,6 +720,14 @@ void hci_internal_supported_commands(sdc_hci_ip_supported_commands_t *cmds)
 	cmds->hci_read_afh_channel_assessment_mode = 1;
 	cmds->hci_write_afh_channel_assessment_mode = 1;
 #endif
+
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_BROADCASTER)
+	cmds->hci_le_set_decision_data = 1;
+#endif
+
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_OBSERVER)
+	cmds->hci_le_set_decision_instructions = 1;
+#endif
 }
 
 #if defined(CONFIG_BT_HCI_VS)
@@ -1562,6 +1570,16 @@ static uint8_t le_controller_cmd_put(uint8_t const * const cmd,
 	case SDC_HCI_OPCODE_CMD_LE_SUBRATE_REQUEST:
 		return sdc_hci_cmd_le_subrate_request((void *)cmd_params);
 #endif /* CONFIG_BT_CTLR_SUBRATING */
+
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_BROADCASTER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_DECISION_DATA:
+		return sdc_hci_cmd_le_set_decision_data((void *)cmd_params);
+#endif
+
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_OBSERVER)
+	case SDC_HCI_OPCODE_CMD_LE_SET_DECISION_INSTRUCTIONS:
+		return sdc_hci_cmd_le_set_decision_instructions((void *)cmd_params);
+#endif
 
 #if defined(CONFIG_BT_CTLR_CHANNEL_SOUNDING)
 	case SDC_HCI_OPCODE_CMD_LE_CS_READ_LOCAL_SUPPORTED_CAPABILITIES:
