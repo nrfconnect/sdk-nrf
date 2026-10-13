@@ -77,6 +77,21 @@ config OPENTHREAD_PLATFORM_CSL_UNCERT
 config OPENTHREAD_CSL_RECEIVER_LOCAL_TIME_SYNC
 	default y if NRF_802154_SER_HOST
 
+# Legacy Zephyr wake Kconfig names (removed from OpenThread CMake)
+configdefault OPENTHREAD_WAKEUP_COORDINATOR
+	default n
+
+configdefault OPENTHREAD_WAKEUP_END_DEVICE
+	default n
+
+# OPENTHREAD_CONFIG_DUA_ENABLE was removed upstream
+configdefault OPENTHREAD_DUA
+	default n
+
+config OPENTHREAD_PLATFORM_USEC_TIMER
+	default y if OPENTHREAD_WAKEUP_INITIATOR || OPENTHREAD_WAKE_LISTENER
+	default y if OPENTHREAD_CSL_RECEIVER && !OPENTHREAD_THREAD_VERSION_1_1
+
 config OPENTHREAD_CSL_TIMEOUT
 	default 20
 
@@ -168,7 +183,7 @@ config MBEDTLS_HEAP_SIZE
 if OPENTHREAD_COPROCESSOR_RCP
 
 config MBEDTLS_PSA_KEY_SLOT_COUNT
-	default 1
+	default 32
 
 config ISR_STACK_SIZE
 	default 640

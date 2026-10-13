@@ -55,3 +55,158 @@ config OPENTHREAD_KMU_SLOT_START
 	  the OpenThread stack.
 
 endif # OPENTHREAD_PSA_NVM_BACKEND_KMU
+
+config OPENTHREAD_BORDER_AGENT_MESHCOP_SERVICE
+	bool "Border agent MeshCoP service"
+	default y
+	depends on OPENTHREAD_MULTICAST_DNS
+	help
+	  Enable the Border Agent to manage registering/updating of the mDNS MeshCoP
+	  service(s) on the infrastructure link.
+
+config OPENTHREAD_BORDER_AGENT_TRACKER
+	bool "Border agent tracker"
+	depends on OPENTHREAD_BORDER_AGENT
+	help
+	  Enable tracking of border agents in the Thread network.
+
+config OPENTHREAD_BORDER_AGENT_TXT_DATA_PARSER
+	bool "Border agent TXT data parser"
+	depends on OPENTHREAD_BORDER_AGENT
+	help
+	  Enable parsing of TXT record data for border agents.
+
+config OPENTHREAD_BORDER_AGENT_SERVICE_NAME
+	string "Border agent service base name"
+	default "OpenThread BR [Nordic Semiconductor ASA]"
+	depends on OPENTHREAD_BORDER_AGENT_MESHCOP_SERVICE
+	help
+	  Specifies the base name to construct the service instance name used
+	  when advertising the mDNS _meshcop._udp service by the Border Agent.
+
+config OPENTHREAD_BORDER_ROUTING_DHCP6_PD_CLIENT
+	bool "DHCPv6-PD client"
+	help
+	  Enable the Border Router's built-in OpenThread DHCPv6 Prefix Delegation
+	  (PD) client feature.
+
+config OPENTHREAD_BORDER_ROUTING_DHCP6_PD_MIN_LIFETIME
+	int "Minimum lifetime for DHCPv6-PD in seconds"
+	default 1800 # 30 minutes
+	depends on OPENTHREAD_BORDER_ROUTING_DHCP6_PD_CLIENT
+	help
+	  Set the minimum lifetime for DHCPv6 Prefix Delegation in seconds.
+
+config OPENTHREAD_BORDER_ROUTING_MULTI_AIL_DETECTION
+	bool "Multiple AIL detection for border routers"
+	help
+	  Enable detection of multiple Active Infrastructure Link (AIL)
+	  interfaces for border routers.
+
+config OPENTHREAD_CHANNEL_MONITOR_AUTO_START
+	bool "Start channel monitor with interface"
+	default y
+	help
+	  Start the Channel Monitor automatically when the Thread network interface is brought
+	  upand stop it when it is brought down.
+
+config OPENTHREAD_DNS_CLIENT_BIND_UDP_THREAD_NETIF
+	bool "Bind DNS client socket to Thread netif"
+	depends on OPENTHREAD_DNS_CLIENT
+	help
+	  Bind DNS client UDP socket to the internal Thread network interface.
+	  When set to 0, the socket is bound to the unspecified network interface,
+	  allowing it to send and receive DNS messages over any network interface.
+
+config OPENTHREAD_MDNS_VERBOSE
+	bool "mDNS verbose logging"
+	help
+	  Enable verbose logging for multicast DNS operations.
+	  When this feature is enabled, verbose logging can be dynamically turned on or
+	  off at run-time using `otMdnsSetVerboseLoggingEnabled()`
+
+config OPENTHREAD_MDNS_VERBOSE_STATE
+	bool "mDNS verbose state on start"
+	depends on OPENTHREAD_MDNS_VERBOSE
+	help
+	  Defines the default run-time state of mDNS verbose logging (turned on/off) on startup.
+
+config OPENTHREAD_PLATFORM_DNSSD
+	bool "Platform DNS-SD"
+	help
+	  Enable platform-specific DNS-SD (Service Discovery) support.
+
+config OPENTHREAD_SRP_SERVER_FAST_START_MODE
+	bool "SRP server fast start mode"
+	depends on OPENTHREAD_SRP_SERVER
+	help
+	  The Fast Start Mode is designed for scenarios where a device, often a mobile device,
+	  needs to act as a provisional SRP server (e.g., functioning as a temporary Border Router).
+	  The SRP server function is enabled only if no other Border Routers (BRs) are already
+	  providing the SRP service within the Thread network. A common use case is a mobile
+	  device joining a Thread network where it may be the first, or only, BR. Importantly,
+	  Fast Start Mode allows the device to quickly start its SRP server functionality upon
+	  joining the network, allowing other Thread devices to quickly connect and register
+	  their services without the typical delays associated with standard Border Router
+	  initialization (and SRP server startup).
+
+config OPENTHREAD_STEERING_DATA
+	bool "MeshCoP Steering Data APIs"
+	help
+	  Enable the MeshCoP Steering Data APIs for commissioner functionality.
+
+config OPENTHREAD_TREL_MANAGE_DNSSD
+	bool "TREL to manage DNS-SD and peer discovery"
+	depends on OPENTHREAD_TREL
+	help
+	  Enable the OpenThread core TREL implementation to directly manage mDNS (DNS-SD)
+	  service registration and peer discovery (browse and service/address resolution
+	  of TREL service for TREL peer discovery).
+	  When this feature is disabled, the mDNS (DNS-SD) functions are delegated to
+	  the platform layer.
+
+config OPENTHREAD_SPINEL_CP_RESET_FAIL_CALLBACK
+	bool "CP reset failure callback"
+	help
+	  Enables Co-processor reset failure callback in Spinel driver
+
+config OPENTHREAD_LOG_MAX_SIZE
+	int "Maximum log string size"
+	default 1024
+	help
+	  The maximum log string size (number of chars).
+
+config OPENTHREAD_RCP_TIME_SYNC_INTERVAL
+	int "Host-RCP time sync interval in microseconds"
+	default 60000000 # 60 seconds
+	help
+	  This setting configures the interval (in units of microseconds) for host-rcp
+	  time sync. The host will recalculate the time offset between host and RCP
+	  every interval.
+
+choice OPENTHREAD_WAKEUP_ROLE
+	prompt "Thread Direct wake role"
+	default OPENTHREAD_WAKEUP_ROLE_NONE
+	help
+	  Thread Direct (TD) wake features (OpenThread OT_WAKE_INITIATOR /
+	  OT_WAKE_LISTENER). Do not use the legacy Zephyr options
+	  OPENTHREAD_WAKEUP_COORDINATOR or OPENTHREAD_WAKEUP_END_DEVICE.
+
+config OPENTHREAD_WAKEUP_ROLE_NONE
+	bool "None"
+
+config OPENTHREAD_WAKEUP_INITIATOR
+	bool "Wake initiator"
+	select OPENTHREAD_CSL_RECEIVER
+	help
+	  Maps to OpenThread OT_WAKE_INITIATOR
+	  (OPENTHREAD_CONFIG_TD_WAKE_INITIATOR_ENABLE).
+
+config OPENTHREAD_WAKE_LISTENER
+	bool "Wake listener"
+	select OPENTHREAD_CSL_RECEIVER
+	help
+	  Maps to OpenThread OT_WAKE_LISTENER
+	  (OPENTHREAD_CONFIG_TD_WAKE_LISTENER_ENABLE).
+
+endchoice

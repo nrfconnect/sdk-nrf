@@ -40,7 +40,6 @@ if(CONFIG_OPENTHREAD)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_DNS_UPSTREAM_QUERY OT_DNS_UPSTREAM_QUERY "Enable forwarding DNS queries to upstream" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_DNSSD_DISCOVERY_PROXY OT_DNSSD_DISCOVERY_PROXY "Enable DNS-SD discovery proxy support" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_DNSSD_SERVER OT_DNSSD_SERVER "Enable DNS-SD server support" BOOL)
-  kconfig_to_ot_option(CONFIG_OPENTHREAD_DUA OT_DUA "Enable Domain Unicast Address feature for Thread 1.2" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_DYNAMIC_STORE_FRAME_AHEAD_COUNTER OT_DYNAMIC_STORE_FRAME_AHEAD_COUNTER "Enable dynamic store frame ahead counter" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_ECDSA OT_ECDSA "Enable ECDSA support" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_ENABLE_SERVICE OT_SERVICE "Enable Service entries in Thread Network Data" BOOL)
@@ -95,19 +94,47 @@ if(CONFIG_OPENTHREAD)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_UDP_FORWARD OT_UDP_FORWARD "Enable UDP forward feature" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_UPTIME OT_UPTIME "Enable support for tracking OpenThread instance's uptime" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_VERHOEFF_CHECKSUM OT_VERHOEFF_CHECKSUM "Verhoeff checksum" BOOL)
-  kconfig_to_ot_option(CONFIG_OPENTHREAD_WAKEUP_COORDINATOR OT_WAKEUP_COORDINATOR "Enable Wake-up Coordinator role" BOOL)
-  kconfig_to_ot_option(CONFIG_OPENTHREAD_WAKEUP_END_DEVICE OT_WAKEUP_END_DEVICE "Enable Wake-up End Device role" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_WAKEUP_INITIATOR OT_WAKE_INITIATOR "Enable Wake-up Initiator role" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_WAKE_LISTENER OT_WAKE_LISTENER "Enable Wake-up End Device Listener role" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_FTD OT_FTD "Enable Full Thread Device" BOOL)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_MTD OT_MTD "Enable Minimal Thread Device" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_MDNS_VERBOSE OT_MDNS_VERBOSE "Enable mDNS verbose logging" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_MDNS_VERBOSE_STATE OT_MDNS_VERBOSE_STATE "Enable mDNS verbose state on start" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_PLATFORM_DNSSD OT_PLATFORM_DNSSD "Enable platform DNS-SD" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_SRP_SERVER_FAST_START_MODE OT_SRP_SERVER_FAST_START_MODE "Enable SRP server fast start mode" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_STEERING_DATA OT_STEERING_DATA "Enable MeshCoP Steering Data APIs" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_TREL_MANAGE_DNSSD OT_TREL_MANAGE_DNSSD "Enable TREL to manage DNS-SD and peer discovery" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_SPINEL_CP_RESET_FAIL_CALLBACK OT_SPINEL_CP_RESET_FAIL_CALLBACK_ENABLE "Enable CP reset failure callback" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_AGENT_MESHCOP_SERVICE OT_BORDER_AGENT_MESHCOP_SERVICE "Enable border agent MeshCoP service" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_AGENT_TRACKER OT_BORDER_AGENT_TRACKER "Enable border agent tracker" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_AGENT_TXT_DATA_PARSER OT_BORDER_AGENT_TXT_DATA_PARSER "Enable border agent TXT data parser" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_ROUTING_DHCP6_PD_CLIENT OT_BORDER_ROUTING_DHCP6_PD_CLIENT "Enable DHCPv6-PD client" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_ROUTING_MULTI_AIL_DETECTION OT_BORDER_ROUTING_MULTI_AIL_DETECTION "Enable multiple AIL detection for border routers" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_CHANNEL_MONITOR_AUTO_START OT_CHANNEL_MONITOR_AUTO_START "Start channel monitor with interface" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_CRYPTO_PSA OT_PLATFORM_KEY_REF "Enable platform key references" BOOL)
 
-  # Register string OpenThread Kconfig options
+  # Register string & integer OpenThread Kconfig options
   kconfig_to_ot_option(CONFIG_OPENTHREAD_THREAD_VERSION OT_THREAD_VERSION "Thread stack version" STRING)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_MBEDTLS_LIB_NAME OT_EXTERNAL_MBEDTLS "External mbedtls library" STRING)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_COPROCESSOR_VENDOR_HOOK_SOURCE OT_NCP_VENDOR_HOOK_SOURCE "NCP vendor hook source" STRING)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_POWER_SUPPLY OT_POWER_SUPPLY "Power supply configuration" STRING)
   kconfig_to_ot_option(CONFIG_OPENTHREAD_CLI_VENDOR_EXTENSION OT_CLI_VENDOR_EXTENSION "CLI vendor extension" STRING)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_DNS_CLIENT_BIND_UDP_THREAD_NETIF OT_DNS_CLIENT_BIND_UDP_THREAD_NETIF "Bind DNS client socket to Thread netif" BOOL)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_AGENT_SERVICE_NAME OT_BORDER_AGENT_SERVICE_NAME "Set border agent service base name" STRING)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_BORDER_ROUTING_DHCP6_PD_MIN_LIFETIME OT_BORDER_ROUTING_DHCP6_PD_MIN_LIFETIME "Set minimum lifetime for DHCPv6-PD in seconds" INT)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_LOG_MAX_SIZE OT_LOG_MAX_SIZE "Set maximum log string size" INT)
+  kconfig_to_ot_option(CONFIG_OPENTHREAD_RCP_TIME_SYNC_INTERVAL OT_RCP_TIME_SYNC_INTERVAL "Set host-RCP time sync interval in microseconds" INT)
 
   if(CONFIG_OPENTHREAD_SOURCES)
+    if(CONFIG_OPENTHREAD_WAKEUP_COORDINATOR OR CONFIG_OPENTHREAD_WAKEUP_END_DEVICE)
+      message(WARNING
+        "CONFIG_OPENTHREAD_WAKEUP_COORDINATOR / CONFIG_OPENTHREAD_WAKEUP_END_DEVICE "
+        "are obsolete and have no effect. Use CONFIG_OPENTHREAD_WAKEUP_INITIATOR or "
+        "CONFIG_OPENTHREAD_WAKE_LISTENER "
+        "(menu: OpenThread stack nrf features -> Thread Direct wake role)."
+      )
+    endif()
+
     set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 
     # OpenThread options
