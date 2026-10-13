@@ -6,3 +6,14 @@
 
 #include "memory_map.dtsi"
 #include "app_common.dtsi"
+
+/* Enable LED 2 for keyboard lock indicators. */
+/ {
+	pwmleds2 {
+		status = "okay";
+	};
+};
+
+&pwm_led2 {
+	label = "Num Lock LED";
+};
