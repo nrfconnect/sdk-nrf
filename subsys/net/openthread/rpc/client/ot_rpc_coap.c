@@ -56,10 +56,11 @@ otMessage *otCoapNewMessage(otInstance *aInstance, const otMessageSettings *aSet
 	return (otMessage *)message_rep;
 }
 
-void otCoapMessageInit(otMessage *aMessage, otCoapType aType, otCoapCode aCode)
+otError otCoapMessageInit(otMessage *aMessage, otCoapType aType, otCoapCode aCode)
 {
 	struct nrf_rpc_cbor_ctx ctx;
 	size_t cbor_buffer_size = 0;
+	otError error = OT_ERROR_FAILED;
 
 	cbor_buffer_size += 1 + sizeof(ot_rpc_res_tab_key); /* aMessage */
 	cbor_buffer_size += 1;				    /* aType */
@@ -71,7 +72,9 @@ void otCoapMessageInit(otMessage *aMessage, otCoapType aType, otCoapCode aCode)
 	nrf_rpc_encode_uint(&ctx, aCode);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_COAP_MESSAGE_INIT, &ctx,
-				nrf_rpc_rsp_decode_void, NULL);
+				ot_rpc_decode_error, &error);
+
+	return error;
 }
 
 otError otCoapMessageInitResponse(otMessage *aResponse, const otMessage *aRequest, otCoapType aType,
@@ -498,4 +501,18 @@ otError otCoapSendResponseWithParameters(otInstance *aInstance, otMessage *aMess
 				&error);
 
 	return error;
+}
+
+otError otCoapSendRequest(otInstance *aInstance, otMessage *aMessage,
+			  const otMessageInfo *aMessageInfo, otCoapResponseHandler aHandler,
+			  void *aContext)
+{
+	return otCoapSendRequestWithParameters(aInstance, aMessage, aMessageInfo, aHandler,
+					       aContext, NULL);
+}
+
+otError otCoapSendResponse(otInstance *aInstance, otMessage *aMessage,
+			   const otMessageInfo *aMessageInfo)
+{
+	return otCoapSendResponseWithParameters(aInstance, aMessage, aMessageInfo, NULL);
 }
