@@ -5,14 +5,14 @@
  */
 
 &pinctrl {
-	i2c20_default_alt: i2c20_default_alt {
+	i2c21_default_alt: i2c21_default_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
 				<NRF_PSEL(TWIM_SCL, 1, 8)>;
 		};
 	};
 
-	i2c20_sleep_alt: i2c20_sleep_alt {
+	i2c21_sleep_alt: i2c21_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIM_SDA, 1, 4)>,
 				<NRF_PSEL(TWIM_SCL, 1, 8)>;
@@ -20,7 +20,7 @@
 		};
 	};
 
-	i2c21_default_alt: i2c21_default_alt {
+	i2c22_default_alt: i2c22_default_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIS_SDA, 1, 20)>,
 				<NRF_PSEL(TWIS_SCL, 1, 9)>;
@@ -28,7 +28,7 @@
 		};
 	};
 
-	i2c21_sleep_alt: i2c21_sleep_alt {
+	i2c22_sleep_alt: i2c22_sleep_alt {
 		group1 {
 			psels = <NRF_PSEL(TWIS_SDA, 1, 20)>,
 				<NRF_PSEL(TWIS_SCL, 1, 9)>;
@@ -37,11 +37,11 @@
 	};
 };
 
-dut_twim: &i2c20 {
+dut_twim: &i2c21 {
 	compatible = "nordic,nrf-twim";
 	status = "okay";
-	pinctrl-0 = <&i2c20_default_alt>;
-	pinctrl-1 = <&i2c20_sleep_alt>;
+	pinctrl-0 = <&i2c21_default_alt>;
+	pinctrl-1 = <&i2c21_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 
 	sensor: sensor@54 {
@@ -49,10 +49,10 @@ dut_twim: &i2c20 {
 	};
 };
 
-dut_twis: &i2c21 {
+dut_twis: &i2c22 {
 	compatible = "nordic,nrf-twis";
 	status = "okay";
-	pinctrl-0 = <&i2c21_default_alt>;
-	pinctrl-1 = <&i2c21_sleep_alt>;
+	pinctrl-0 = <&i2c22_default_alt>;
+	pinctrl-1 = <&i2c22_sleep_alt>;
 	pinctrl-names = "default", "sleep";
 };
