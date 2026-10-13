@@ -21,6 +21,8 @@ exclude:
   # - nrf/tests
   # - nrfxlib/blocked_dir
   # - modules/crypto/mbedtls
+  - modules/lib/openthread/third_party
+  - modules/lib/openthread/tests
   files:
   # - modules/crypto/oberon-psa-crypto/a_new_file.h
   patterns:
@@ -102,8 +104,10 @@ MIT: |
   ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
   ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
 BSD-3-CLAUSE: |
+  ^modules/lib/openthread/
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
+  ^nrfxlib/openthread/include/openthread/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"
