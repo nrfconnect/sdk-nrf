@@ -482,6 +482,36 @@ struct location_cellular_config {
 	uint8_t cell_count;
 };
 
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+
+#include <zephyr/sys/util.h>
+
+/** Wi-Fi scan type. Values match Zephyr @c enum wifi_scan_type. */
+enum location_wifi_scan_type {
+	/** Active scanning (default). */
+	LOCATION_WIFI_SCAN_TYPE_ACTIVE = 0,
+	/** Passive scanning. */
+	LOCATION_WIFI_SCAN_TYPE_PASSIVE,
+};
+
+/** Bit in @ref location_wifi_config.bands for the 2.4 GHz band. */
+#define LOCATION_WIFI_BAND_2_4_GHZ BIT(0)
+/** Bit in @ref location_wifi_config.bands for the 5 GHz band. */
+#define LOCATION_WIFI_BAND_5_GHZ   BIT(1)
+
+/** Wi-Fi channel specification for a manual channel list. */
+struct location_wifi_channel {
+	/**
+	 * Frequency band index: 0 for 2.4 GHz, 1 for 5 GHz (matches Zephyr
+	 * @c enum wifi_frequency_bands).
+	 */
+	uint8_t band;
+	/** Channel number; 0 terminates the list. */
+	uint8_t channel;
+};
+
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
+
 /** Wi-Fi positioning configuration. */
 struct location_wifi_config {
 	/**
@@ -501,6 +531,87 @@ struct location_wifi_config {
 	 * @ref location_config structure is still valid.
 	 */
 	int32_t timeout;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	/**
+	 * @brief Preferred Wi-Fi scan type (active or passive).
+	 *
+	 * @details This is a hint to the underlying Wi-Fi driver. Scan type may still be
+	 * passive if @kconfig{CONFIG_WIFI_MGMT_FORCED_PASSIVE_SCAN} is enabled.
+	 *
+	 * Default is @ref LOCATION_WIFI_SCAN_TYPE_ACTIVE. It is applied when
+	 * location_config_defaults_set() is called and can be changed at build time with
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE} configuration.
+	 */
+	enum location_wifi_scan_type scan_type;
+
+	/**
+	 * @brief Bitmap of frequency bands to scan.
+	 *
+	 * @details Use @ref LOCATION_WIFI_BAND_2_4_GHZ and @ref LOCATION_WIFI_BAND_5_GHZ.
+	 * Zero means all bands supported by the driver. The nRF92 integrated Wi-Fi scanner
+	 * supports the 2.4 GHz band only; 5 GHz is ignored by that driver.
+	 *
+	 * Default is 0 (all bands). It is applied when location_config_defaults_set() is called
+	 * and can be changed at build time with
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_2_4_GHZ} and
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_5_GHZ} configuration.
+	 */
+	uint8_t bands;
+
+	/**
+	 * @brief Active scan dwell time in milliseconds per channel.
+	 *
+	 * @details Zero means use the Wi-Fi driver default.
+	 *
+	 * Default is 0. It is applied when location_config_defaults_set() is called and can be
+	 * changed at build time with
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE} configuration.
+	 */
+	uint16_t dwell_time_active;
+
+	/**
+	 * @brief Passive scan dwell time in milliseconds per channel.
+	 *
+	 * @details Zero means use the Wi-Fi driver default. On nRF92, this value is passed to
+	 * the modem as the per-channel scan time; zero selects the modem default scan time.
+	 *
+	 * Default is 0. It is applied when location_config_defaults_set() is called and can be
+	 * changed at build time with
+	 * @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE} configuration.
+	 */
+	uint16_t dwell_time_passive;
+
+	/**
+	 * @brief Maximum number of BSSIDs to return from the scan.
+	 *
+	 * @details When non-zero, the driver may return only the strongest access points up to
+	 * this limit. Zero means no limit or driver default. Values greater than
+	 * @kconfig{CONFIG_LOCATION_METHOD_WIFI_SCANNING_RESULTS_MAX_CNT} have no effect on how
+	 * many results the Location library stores, because excess results are dropped in
+	 * arrival order.
+	 *
+	 * Default is 0. It is applied when location_config_defaults_set() is called and can be
+	 * changed at build time with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_MAX_BSS_CNT}
+	 * configuration.
+	 */
+	uint16_t max_bss_cnt;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX) && \
+	CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	/**
+	 * @brief Optional list of band/channel pairs to scan.
+	 *
+	 * @details Zero-terminated by a @c channel value of 0. An empty list (first entry
+	 * @c channel == 0) means all channels in the selected band(s).
+	 *
+	 * Default is empty. It is applied when location_config_defaults_set() is called and can
+	 * be changed at build time with @kconfig{CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS}
+	 * configuration.
+	 */
+	struct location_wifi_channel channels[CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX];
+#endif
+#endif /* CONFIG_LOCATION_METHOD_WIFI */
 };
 
 /** Location method configuration. */

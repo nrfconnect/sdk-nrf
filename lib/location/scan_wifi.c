@@ -6,11 +6,13 @@
 
 #include <stdio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi.h>
 #include <modem/location.h>
 #include <net/wifi_ready.h>
 
@@ -19,6 +21,11 @@
 #include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
+
+BUILD_ASSERT((int)LOCATION_WIFI_SCAN_TYPE_ACTIVE == (int)WIFI_SCAN_TYPE_ACTIVE);
+BUILD_ASSERT((int)LOCATION_WIFI_SCAN_TYPE_PASSIVE == (int)WIFI_SCAN_TYPE_PASSIVE);
+BUILD_ASSERT(LOCATION_WIFI_BAND_2_4_GHZ == BIT(WIFI_FREQ_BAND_2_4_GHZ));
+BUILD_ASSERT(LOCATION_WIFI_BAND_5_GHZ == BIT(WIFI_FREQ_BAND_5_GHZ));
 
 static struct net_if *wifi_iface;
 static struct net_mgmt_event_callback scan_wifi_net_mgmt_cb;
@@ -133,11 +140,40 @@ static int scan_wifi_startup_interface(struct net_if *iface)
 }
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
-void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
+static void scan_wifi_params_set(struct wifi_scan_params *scan_params,
+				 const struct location_wifi_config *config)
+{
+	int i;
+
+	scan_params->scan_type = (enum wifi_scan_type)config->scan_type;
+	scan_params->bands = config->bands;
+	scan_params->dwell_time_active = config->dwell_time_active;
+	scan_params->dwell_time_passive = config->dwell_time_passive;
+	scan_params->max_bss_cnt = config->max_bss_cnt;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX) && \
+	CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	for (i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+		if (config->channels[i].channel == 0) {
+			break;
+		}
+
+		scan_params->band_chan[i].band = config->channels[i].band;
+		scan_params->band_chan[i].channel = config->channels[i].channel;
+	}
+#endif
+}
+
+void scan_wifi_execute(const struct location_wifi_config *config, struct k_sem *wifi_scan_ready)
 {
 	int ret;
+	int32_t timeout;
+	struct wifi_scan_params scan_params = {0};
+
+	__ASSERT_NO_MSG(config != NULL);
 
 	scan_wifi_ready = wifi_scan_ready;
+	timeout = config->timeout;
 
 	LOG_DBG("Triggering start of Wi-Fi scanning");
 
@@ -155,25 +191,19 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 	}
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE)
-	struct wifi_scan_params scan_params = {0};
+	scan_wifi_params_set(&scan_params, config);
 
-	scan_params.dwell_time_active = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE;
-	scan_params.dwell_time_passive = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE;
-
-	LOG_DBG("Scan params: dwell_active=%d, dwell_passive=%d",
-		scan_params.dwell_time_active,
-		scan_params.dwell_time_passive);
+	LOG_DBG("Scan params: type=%d, bands=0x%x, dwell_active=%u, dwell_passive=%u, "
+		"max_bss=%u",
+		scan_params.scan_type, scan_params.bands, scan_params.dwell_time_active,
+		scan_params.dwell_time_passive, scan_params.max_bss_cnt);
 
 	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, &scan_params, sizeof(scan_params));
-#else
-	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
-#endif /* CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE */
 	if (ret) {
 		LOG_ERR("Failed to initiate Wi-Fi scanning: %d", ret);
-		ret = -EFAULT;
-		k_sem_give(wifi_scan_ready);
-		wifi_scan_ready = NULL;
+		k_sem_give(scan_wifi_ready);
+		scan_wifi_ready = NULL;
+		return;
 	}
 
 	if (timeout != SYS_FOREVER_MS && timeout > 0) {
