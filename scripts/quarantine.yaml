@@ -162,3 +162,9 @@
   platforms:
     - nrf5340dk/nrf5340/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-39901 - PM-DTS migration"
+
+- scenarios:
+    - unity.dect_integration_test
+  platforms:
+    - native_sim/native
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41877"
