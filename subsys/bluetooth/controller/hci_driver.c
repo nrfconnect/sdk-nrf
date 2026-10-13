@@ -302,6 +302,13 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 #define SDC_MEM_CS_POOL 0
 #endif
 
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_OBSERVER)
+#define SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL                                                \
+	SDC_MEM_SCAN_DECISION_INSTRUCTIONS(CONFIG_BT_CTLR_SCAN_DECISION_INSTRUCTION_COUNT)
+#else
+#define SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL 0
+#endif
+
 #define MEMPOOL_SIZE ((PERIPHERAL_COUNT * PERIPHERAL_MEM_SIZE) + \
 		      (SDC_CENTRAL_COUNT * CENTRAL_MEM_SIZE) + \
 		      (SDC_ADV_SET_MEM_SIZE) + \
@@ -326,7 +333,8 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_BT_PERIPHERAL) ||
 		      (SDC_MEM_BIS_SOURCE) + \
 		      (SDC_MEM_ISO_RX_PDU_POOL) + \
 		      (SDC_MEM_ISO_TX_POOL) + \
-		      (SDC_MEM_CS_POOL))
+		      (SDC_MEM_CS_POOL) + \
+		      (SDC_MEM_SCAN_DECISION_INSTRUCTIONS_POOL))
 
 #if defined(CONFIG_BT_SDC_ADDITIONAL_MEMORY)
 __aligned(8) uint8_t sdc_mempool[MEMPOOL_SIZE + CONFIG_BT_SDC_ADDITIONAL_MEMORY];
@@ -975,6 +983,16 @@ static void configure_supported_features(void)
 		sdc_support_flushable_acl_data();
 	}
 
+	if (IS_ENABLED(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) &&
+	    IS_ENABLED(CONFIG_BT_BROADCASTER)) {
+		sdc_support_decision_adv();
+	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) &&
+	    IS_ENABLED(CONFIG_BT_OBSERVER)) {
+		sdc_support_decision_scan();
+	}
+
 	if (IS_ENABLED(CONFIG_BT_CTLR_CHANNEL_SOUNDING_TEST)) {
 		sdc_support_channel_sounding_test();
 	}
@@ -1135,6 +1153,17 @@ static int configure_memory_usage(void)
 		return required_memory;
 	}
 #endif /* CONFIG_BT_OBSERVER */
+
+#if defined(CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING) && defined(CONFIG_BT_OBSERVER)
+	cfg.scan_decision_instructions_count = CONFIG_BT_CTLR_SCAN_DECISION_INSTRUCTION_COUNT;
+	required_memory = sdc_cfg_set(SDC_DEFAULT_RESOURCE_CFG_TAG,
+				      SDC_CFG_TYPE_SCAN_DECISION_INSTRUCTIONS_COUNT,
+				      &cfg);
+	if (required_memory < 0) {
+		return required_memory;
+	}
+#endif /* CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING && CONFIG_BT_OBSERVER */
+
 
 	if (IS_ENABLED(CONFIG_BT_PER_ADV_SYNC)) {
 		cfg.periodic_sync_count.count = SDC_PERIODIC_ADV_SYNC_COUNT;

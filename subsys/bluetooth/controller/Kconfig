@@ -804,6 +804,23 @@ config BT_CTLR_CHANNEL_CLASSIFICATION
 	  Enable support for the Bluetooth Channel Classification feature
 	  in the controller.
 
+config BT_CTLR_DECISION_BASED_ADV_FILTERING
+	bool "Decision Based Advertising Filtering [EXPERIMENTAL]"
+	depends on BT_BROADCASTER || BT_OBSERVER
+	depends on BT_CTLR_ADV_EXT
+	select EXPERIMENTAL
+	help
+	  Enables support for the Bluetooth Decision Based Advertising Filtering
+	  feature in the controller.
+
+config BT_CTLR_SCAN_DECISION_INSTRUCTION_COUNT
+	int "Number of scan decision instructions"
+	depends on BT_CTLR_DECISION_BASED_ADV_FILTERING && BT_OBSERVER
+	range 8 32
+	default 8
+	help
+	  The number of scan decision instructions the controller will support.
+
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int
 	default 53 if MPSL_USE_EXTERNAL_CLOCK_CONTROL
