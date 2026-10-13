@@ -155,7 +155,8 @@ static inline struct nrf_wifi_fmac_vif_ctx *nrf_wifi_get_fmac_vif_ctx(
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 
-	if (!vif_ctx_zep) {
+	/* "net iface down" parks vif_idx at MAX_NUM_VIFS but keeps the RPU context */
+	if (!vif_ctx_zep || vif_ctx_zep->vif_idx >= MAX_NUM_VIFS) {
 		return NULL;
 	}
 

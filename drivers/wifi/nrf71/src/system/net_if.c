@@ -288,7 +288,7 @@ void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 	}
 
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
-	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx])) {
+	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep))) {
 		net_pkt_set_chksum_done(pkt, true);
 	}
 #endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
@@ -420,6 +420,7 @@ int nrf_wifi_if_send(const struct device *dev,
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = NULL;
 	struct rpu_host_stats *host_stats = NULL;
 	void *nbuf = NULL;
 	bool locked = false;
@@ -484,7 +485,13 @@ int nrf_wifi_if_send(const struct device *dev,
 	} else {
 #endif /* CONFIG_NRF71_RAW_DATA_TX */
 
-		ra = nrf_wifi_util_get_ra(sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx], nbuf);
+		fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+		if (!fmac_vif_ctx) {
+			ret = -ENETDOWN;
+			goto drop;
+		}
+
+		ra = nrf_wifi_util_get_ra(fmac_vif_ctx, nbuf);
 		peer_id = nrf_wifi_fmac_peer_get_id(rpu_ctx_zep->rpu_ctx, ra);
 		if (peer_id == -1) {
 			/* TODO: Make this an error once we fix ping_work sending packets despite
@@ -1346,8 +1353,14 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 	memset(config, 0, sizeof(struct ethernet_config));
 #ifdef CONFIG_NRF71_RAW_DATA_TX
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
-		config->txinjection_mode =
-			sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->txinjection_mode;
+		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+
+		if (!vif) {
+			ret = -ENODEV;
+			goto unlock;
+		}
+
+		config->txinjection_mode = vif->txinjection_mode;
 	}
 #endif
 #ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
@@ -1443,8 +1456,12 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 #ifdef CONFIG_NRF71_RAW_DATA_TX
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		unsigned char mode;
-		struct nrf_wifi_fmac_vif_ctx *vif =
-			sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx];
+		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
+
+		if (!vif) {
+			ret = -ENODEV;
+			goto unlock;
+		}
 
 		/* When enabling TX injection, never skip: a pending set_mode(MONITOR)
 		 * from the same test can downgrade us to MONITOR later; we must send
@@ -1494,20 +1511,23 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 #ifdef CONFIG_NRF71_PROMISC_DATA_RX
 	else if (type == ETHERNET_CONFIG_TYPE_PROMISC_MODE) {
 		unsigned char mode;
+		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
-		if (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->promisc_mode ==
-		    config->promisc_mode) {
+		if (!vif) {
+			ret = -ENODEV;
+			goto unlock;
+		}
+
+		if (vif->promisc_mode == config->promisc_mode) {
 			LOG_ERR("%s: Driver promisc mode setting is same as configured setting",
 				__func__);
 			goto unlock;
 		}
 
 		if (config->promisc_mode) {
-			mode = (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) |
-			       (NRF_WIFI_PROMISCUOUS_MODE);
+			mode = (vif->mode) | (NRF_WIFI_PROMISCUOUS_MODE);
 		} else {
-			mode = (sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx]->mode) ^
-			       (NRF_WIFI_PROMISCUOUS_MODE);
+			mode = (vif->mode) ^ (NRF_WIFI_PROMISCUOUS_MODE);
 		}
 
 		ret = nrf_wifi_sys_fmac_set_mode(rpu_ctx_zep->rpu_ctx,
