@@ -2577,7 +2577,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(rx_capture_ed_thresh,
 		      NULL,
-		      "<ofdm> <dsss> - ED thresholds in dBm (-100 to 0)",
+		      "<ofdm> <dsss> - ED thresholds in dBm (-100 to 0, 1 dBm steps)",
 		      nrf_wifi_radio_test_set_rx_capture_ed_thresh,
 		      3,
 		      0),
