@@ -6,6 +6,7 @@
 
 menuconfig DOWNLOADER
 	bool "Download client"
+	depends on NET_SOCKETS
 
 if DOWNLOADER
 
