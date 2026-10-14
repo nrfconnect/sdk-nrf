@@ -354,7 +354,7 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_gap_us = 0;
 
-	conf_params->tx_power = MAX_TX_PWR_SYS_TEST;
+	conf_params->tx_power = MAX_TX_PWR_SYS;
 
 	conf_params->chan.primary_num = 1;
 	conf_params->tx_mode = 1;
@@ -762,7 +762,7 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 
 	val = strtoul(argv[1], &ptr, 10);
 
-	if (((val > MAX_TX_PWR_RADIO_TEST) && (val != MAX_TX_PWR_SYS_TEST))) {
+	if (((val > MAX_TX_PWR_RADIO_TEST) && (val != MAX_TX_PWR_SYS))) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Invalid TX power setting\n");
@@ -775,7 +775,7 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 
 	ctx->conf_params.tx_power = val;
 
-	if (val == MAX_TX_PWR_SYS_TEST) {
+	if (val == MAX_TX_PWR_SYS) {
 		status = rf_params_apply_board_tx_ceilings();
 	} else {
 		status = rf_params_apply_radio_test_max_tx_ceilings(MAX_TX_PWR_RADIO_TEST);
