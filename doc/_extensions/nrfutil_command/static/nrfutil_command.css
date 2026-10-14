@@ -1,0 +1,85 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The documentation button, left of the sphinx-copybutton button and styled like it */
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button {
+    position: absolute;
+    display: flex;
+    box-sizing: border-box;
+    top: .3em;
+    right: 2.3em;
+    width: 1.7em;
+    height: 1.7em;
+    opacity: 0;
+    transition: opacity .3s, border .3s, background-color .3s;
+    border: #1b1f2426 1px solid;
+    border-radius: .4em;
+    background-color: #f6f8fa;
+    text-decoration: none;
+}
+
+/* The theme sets the color of all links with !important, so the icon sets its own stroke */
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button svg {
+    stroke: #57606a;
+    width: 1.5em;
+    height: 1.5em;
+    padding: .1em;
+}
+
+.rst-content div.nrfutil-command div.highlight:hover a.nrfutil-command-docs-button,
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:focus-visible {
+    opacity: 1;
+}
+
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:active {
+    background-color: rgb(187, 187, 187);
+}
+
+/* The tooltips of both buttons, left of the buttons and centered on them. They inherit no line
+ * height from the code block, so they set one that fits the text.
+ */
+.rst-content div.nrfutil-command div.highlight .o-tooltip--left:after {
+    top: 50%;
+    line-height: 1.4;
+    transform: translateX(-102%) translateY(-50%);
+}
+
+.rst-content div.nrfutil-command div.highlight .o-tooltip--left:hover:after {
+    transform: translateX(-100%) translateY(-50%);
+}
+
+/* The copy tooltip starts left of the documentation button, so that it doesn't cover it. The
+ * offset is the width of that button and the gap, in the .8em font size of the tooltip.
+ */
+.rst-content div.nrfutil-command div.highlight:has(a.nrfutil-command-docs-button) button.copybtn:after {
+    left: -2.7em;
+}
+
+/* sphinx-copybutton sets "Copy" while idle and "Copied!" after copying */
+.rst-content div.nrfutil-command div.highlight button.copybtn[data-tooltip="Copy"]:after {
+    content: "Copy command";
+}
+
+/* The copy icon has a title, which the browser shows as a second tooltip on hover */
+.rst-content div.nrfutil-command div.highlight button.copybtn svg {
+    pointer-events: none;
+}
+
+@media (hover: none) {
+    .rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button {
+        opacity: 1;
+    }
+}
+
+@media print {
+    .rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button {
+        display: none;
+    }
+}

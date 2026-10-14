@@ -74,6 +74,11 @@ jobs:
           wget --no-verbose "https://github.com/doxygen/doxygen/releases/download/Release_${DOXYGEN_VERSION//./_}/doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz"
           tar xf doxygen-${DOXYGEN_VERSION}.linux.bin.tar.gz
           echo "${PWD}/doxygen-${DOXYGEN_VERSION}/bin" >> $GITHUB_PATH
+          # The nrfutil-command directive generates its json-args snapshot with nrfutil
+          mkdir -p nrfutil-bin
+          wget --no-verbose --max-redirect=0 -O nrfutil-bin/nrfutil "https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil"
+          chmod +x nrfutil-bin/nrfutil
+          echo "${PWD}/nrfutil-bin" >> $GITHUB_PATH
 
       - name: Set up Python
         uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
@@ -101,8 +106,25 @@ jobs:
         run: |
           west zephyr-export
 
+      - name: Test documentation extensions
+        working-directory: ncs/nrf
+        run: |
+          python -m pytest -q doc/_scripts/tests
+
+      # The build regenerates the snapshot whenever it doesn't hold the pinned versions, so a
+      # restored snapshot is never used out of date
+      - name: Cache the nrfutil json-args snapshot
+        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf # v4
+        with:
+          path: ncs/nrf/doc/_build/nrfutil-specs
+          key: nrfutil-specs-${{ hashFiles('ncs/nrf/scripts/tools-versions-linux.yml', 'ncs/nrf/doc/nrf/shortcuts.txt', 'ncs/nrf/doc/_extensions/nrfutil_command/pins.yml', 'ncs/nrf/doc/_extensions/nrfutil_command/generate.py') }}
+          restore-keys: nrfutil-specs-
+
       - name: Build documentation
         working-directory: ncs/nrf
+        env:
+          # Fail instead of skipping the validation of nrfutil commands if nrfutil can't run
+          NRFUTIL_COMMAND_REQUIRED: "1"
         run: |
           SPHINXOPTS_EXTRA="-q"
           if [[ "${{ github.event_name }}" == "push" ]]; then

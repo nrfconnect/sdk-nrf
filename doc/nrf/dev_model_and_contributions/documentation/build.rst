@@ -165,3 +165,55 @@ To test the version drop-down locally, complete the following steps:
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
 To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
+
+.. _doc_build_nrfutil_commands:
+
+nRF Util command examples
+=========================
+
+The documentation build checks the nRF Util commands in ``nrfutil-command`` directives.
+A line is treated as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
+The build reports subcommands and options that do not exist in the nRF Util versions used by the |NCS|, as warnings at the file and line of the command.
+Placeholders in angle brackets, such as ``<serial_number>``, are accepted as any value.
+
+The check needs nRF Util on your ``PATH``.
+If nRF Util is not found, the build prints a message and skips the check, and the documentation builds as usual.
+
+Snapshot of the nRF Util commands
+---------------------------------
+
+The build checks the commands against a snapshot of the ``--json-args`` output of nRF Util and its commands.
+It generates the snapshot in the :file:`nrfutil-specs` folder of the documentation build folder, using the following versions:
+
+* The nRF Util version from the :file:`scripts/tools-versions-<os>.yml` file of the operating system you build on.
+* The versions of the nRF Util commands from the same file, the ``nrfutil_<command>_ver`` replacements in :file:`doc/nrf/shortcuts.txt`, and the :file:`doc/_extensions/nrfutil_command/pins.yml` file, in that order of precedence.
+
+The build generates the snapshot again only when one of these versions changes.
+It installs nRF Util and its commands in a temporary folder, so your nRF Util installation does not change.
+Generating the snapshot needs internet access.
+
+To generate a snapshot in another folder or with other versions, for example to check the documentation against a new release of an nRF Util command before you update its version, run the following command from the :file:`nrf` directory:
+
+.. code-block:: console
+
+   python doc/_scripts/generate_nrfutil_snapshot.py --output <folder> --pin device=<version>
+
+To build the documentation against this snapshot, set the following options in :file:`doc/nrf/conf.py`:
+
+* ``nrfutil_command_specs`` to the folder of the snapshot.
+* ``nrfutil_command_ncs_root`` to an empty string, so that the build uses the snapshot as it is instead of generating it again with the pinned versions.
+
+Commands for specific operating systems
+---------------------------------------
+
+The ``--json-args`` output of nRF Util differs between operating systems.
+For this reason, commands in Windows, Linux, and macOS tabs are checked only when you build the documentation on that operating system.
+To mark a command outside of tabs as specific to an operating system, add the ``:os:`` option to the directive, for example ``:os: windows``.
+If a command must not be checked at all, add the ``:no-validate:`` option.
+
+Check in pull requests
+----------------------
+
+The documentation build workflow installs nRF Util and sets the ``NRFUTIL_COMMAND_REQUIRED`` environment variable to ``1``.
+With this variable set, the build reports a warning if it cannot generate the snapshot, instead of skipping the check, and the warning fails the build.
+The workflow caches the snapshot between builds.
