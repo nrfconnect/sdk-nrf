@@ -10,7 +10,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/aws_iot.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,10 +36,6 @@ LOG_MODULE_REGISTER(aws_iot_sample, CONFIG_AWS_IOT_SAMPLE_LOG_LEVEL);
 	LOG_ERR("Fatal error! Rebooting the device.");	\
 	LOG_PANIC();					\
 	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
-
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
 
 /* Variable used to store the device's hardware ID. */
 static char hw_id[HW_ID_LEN];
@@ -324,9 +319,8 @@ static void aws_iot_event_handler(const struct aws_iot_evt *const evt)
 	}
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
@@ -343,9 +337,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
@@ -354,19 +347,16 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
+
 int main(void)
 {
 	LOG_INF("The AWS IoT sample started, version: %s", CONFIG_AWS_IOT_SAMPLE_APP_VERSION);
 
 	int err;
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
 
 	/* Connecting to the configured connectivity layer.
 	 * Wi-Fi or LTE depending on the board that the sample was built for.
@@ -404,16 +394,6 @@ int main(void)
 		LOG_ERR("aws_iot_client_init, error: %d", err);
 		FATAL_ERROR();
 		return err;
-	}
-
-	/* Resend connection status if the sample is built for QEMU x86.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 
 	return 0;

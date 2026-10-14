@@ -14,7 +14,6 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 
 #if defined(CONFIG_POSIX_API)
 #include <zephyr/posix/arpa/inet.h>
@@ -28,8 +27,8 @@ LOG_MODULE_REGISTER(udp_sample, CONFIG_UDP_SAMPLE_LOG_LEVEL);
 #define UDP_IP_HEADER_SIZE_IPV6 48
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK_IPV4 (NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED)
-#define L4_EVENT_MASK_IPV6 (NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
+#define L4_EVENT_MASK (NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED | \
+		       NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 /* Macro called upon a fatal error, reboots the device. */
@@ -37,10 +36,6 @@ LOG_MODULE_REGISTER(udp_sample, CONFIG_UDP_SAMPLE_LOG_LEVEL);
 	LOG_ERR("Fatal error! Rebooting the device.");	\
 	LOG_PANIC();					\
 	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
-
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
 
 /* Variables used to perform socket operations. */
 static int fd;
@@ -139,10 +134,24 @@ static void on_net_event_l4_disconnected(void)
 	(void)k_work_cancel_delayable(&server_transmission_work);
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
+	bool ipv6_event = (event == NET_EVENT_L4_IPV6_CONNECTED) ||
+			  (event == NET_EVENT_L4_IPV6_DISCONNECTED);
+
+	/* Events can come before main(), so the server address is parsed here */
+	if (host_addr_family == AF_UNSPEC && server_addr_construct()) {
+		LOG_ERR("server_addr_construct failed");
+		FATAL_ERROR();
+		return;
+	}
+
+	/* Only track the address family of the server */
+	if (ipv6_event != (host_addr_family == AF_INET6)) {
+		return;
+	}
+
 	switch (event) {
 	case NET_EVENT_L4_IPV4_CONNECTED:
 	case NET_EVENT_L4_IPV6_CONNECTED:
@@ -160,9 +169,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
@@ -171,27 +179,16 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
+
 int main(void)
 {
 	int err;
 
 	LOG_INF("UDP sample has started");
-
-	err = server_addr_construct();
-	if (err) {
-		LOG_INF("server_addr_construct, error: %d", err);
-		FATAL_ERROR();
-		return err;
-	}
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler,
-		(host_addr_family == AF_INET6) ? L4_EVENT_MASK_IPV6 : L4_EVENT_MASK_IPV4);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
 
 	/* Connecting to the configured connectivity layer.
 	 * Wi-Fi or LTE depending on the board that the sample was built for.
@@ -210,16 +207,6 @@ int main(void)
 		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 		FATAL_ERROR();
 		return err;
-	}
-
-	/* Resend connection status if the sample is built for NATIVE SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that either L4 connected events fire before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 
 	return 0;
