@@ -706,7 +706,6 @@ Networking samples
 
     * Support for mutual TLS (client X.509 certificate authentication), using the new :option:`CONFIG_SAMPLE_PROVISION_CLIENT_CERT` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
-    * A retry mechanism with exponential backoff, improving robustness when only one IP family becomes ready at a time.
 
   * Updated:
 
@@ -719,7 +718,7 @@ Networking samples
     * The HTTP file link, which was previously broken.
     * An issue where network interface teardown was attempted with uninitialized ``net_if``.
     * An issue where the sample could try to download over an IP family for which the device had no address.
-      The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
+      The sample now relies on the :ref:`lib_downloader` library to wait for the network and select the address family.
 
 * :ref:`udp_sample` sample:
 
