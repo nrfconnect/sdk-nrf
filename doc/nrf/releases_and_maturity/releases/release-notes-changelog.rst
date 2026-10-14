@@ -904,13 +904,14 @@ Networking samples
     * By enabling CoAP by default so that the sample always builds with support for both HTTP and CoAP.
       The transport is selected automatically at runtime.
     * By enabling the :option:`CONFIG_SAMPLE_COMPUTE_HASH` and :option:`CONFIG_SAMPLE_COMPARE_HASH` options by default.
+    * The default test file URLs to use the dual-stack Amazon S3 endpoint, so that the sample can also download over IPv6.
 
   * Fixed:
 
     * The HTTP file link, which was previously broken.
     * An issue where network interface teardown was attempted with uninitialized ``net_if``.
     * An issue where the sample could try to download over an IP family for which the device had no address.
-      The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
+      The sample now waits for the Connection Manager to report the network as ready and relies on the :ref:`lib_downloader` library to select the address family.
 
 * :ref:`udp_sample` sample:
 
