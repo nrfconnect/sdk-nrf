@@ -76,13 +76,13 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
          .. code-block:: console
 
-            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --x-family nrf53 --core Application
+            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf53 --core Application
 
       #. Enter the following command to program the application binary to the nRF5340 network core:
 
          .. code-block:: console
 
-            nrfutil device program --firmware <name_of_network_core_binary.hex> --serial-number <J-Link Serial number> --traits jlink --x-family nrf53 --core Network
+            nrfutil device program --firmware <name_of_network_core_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf53 --core Network
 
 .. _update_nRF9151_application:
 
@@ -139,7 +139,7 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
          .. code-block:: console
 
-            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --x-family nrf91 --core Application
+            nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf91 --core Application
 
 .. _update_modem_fw_nRF9151:
 
@@ -167,4 +167,4 @@ To update the nRF9151 modem firmware using an external debug probe, complete the
 
    .. code-block:: console
 
-      nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink --x-family nrf91
+      nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink --family nrf91
