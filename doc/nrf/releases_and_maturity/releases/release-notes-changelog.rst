@@ -337,6 +337,8 @@ nRF IEEE 802.15.4 radio driver
 Thread
 ------
 
+* Updated the OpenThread stack to `OpenThread v2026.10.0`_.
+
 * Removed:
 
   * Support for nRF52 Series devices from Thread in the |NCS|.

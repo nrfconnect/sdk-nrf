@@ -271,6 +271,43 @@ Matter
      If your project is based on a Matter sample or application from ``sdk-nrf`` v3.4.0 or earlier, you must migrate to the add-on structure to continue receiving sample updates.
      See :ref:`migration_sdk_nrf_to_ncs_matter` for the full migration guide, including path mapping tables, Kconfig symbol renames, devicetree include updates, snippet name changes, and workspace setup instructions.
 
+.. _thread_migration_3.5:
+
+Thread
+------
+
+.. toggle::
+
+   * The |NCS| updates the OpenThread stack to `OpenThread v2026.10.0`_.
+
+   * nRF52 Series is no longer supported for Thread.
+     You cannot enable OpenThread on nRF52 SoCs in this release.
+     Prebuilt OpenThread libraries for nRF52840 are removed from :ref:`nrfxlib:nrfxlib`.
+     All :ref:`openthread_samples` also drop the nRF52 board targets, including ``nrf52840dk/nrf52840``, ``nrf52840dongle/nrf52840``, ``nrf52833dk/nrf52833``, and ``nrf21540dk/nrf52840``.
+
+     If your product or application uses Thread on nRF52840 or another nRF52 device, stay on |NCS| v3.4.0 or migrate the design to a supported platform, such as the nRF5340 or the nRF54L Series.
+     Remove any nRF52-specific board overlays, :file:`sample.yaml` scenarios, or memory tables from out-of-tree projects, and retarget builds to a supported board (for example, ``nrf5340dk/nrf5340/cpuapp`` or ``nrf54l15dk/nrf54l15/cpuapp``).
+
+   * The Thread Direct wake roles require building OpenThread from source.
+     The build system rejects the legacy :kconfig:option:`CONFIG_OPENTHREAD_WAKEUP_COORDINATOR` and :kconfig:option:`CONFIG_OPENTHREAD_WAKEUP_END_DEVICE` options at configure time.
+     Replace them using the new ``Thread Direct wake role`` Kconfig options as follows:
+
+     * :kconfig:option:`CONFIG_OPENTHREAD_WAKEUP_INITIATOR` instead of :kconfig:option:`CONFIG_OPENTHREAD_WAKEUP_COORDINATOR`
+     * :kconfig:option:`CONFIG_OPENTHREAD_WAKE_LISTENER` instead of :kconfig:option:`CONFIG_OPENTHREAD_WAKEUP_END_DEVICE`
+
+     Remove ``CONFIG_OPENTHREAD_WAKEUP_COORDINATOR`` and ``CONFIG_OPENTHREAD_WAKEUP_END_DEVICE`` from ``prj.conf`` and Kconfig fragments before upgrading.
+
+   * OpenThread v2026.10.0 removes upstream ``OPENTHREAD_CONFIG_DUA_ENABLE`` support for the Domain Unicast Address (DUA) feature.
+     Do not set :kconfig:option:`CONFIG_OPENTHREAD_DUA`, because the |NCS| defaults it to ``n``.
+     If your configuration still forces DUA on, delete that symbol and rebuild.
+
+  * The :c:enum:`OT_NETIF_THREAD` enum value has been extended and cannot be used in this form anymore.
+    Replace it using the one of the following new values:
+
+    * :c:enum:`OT_NETIF_THREAD_INTERNAL` - The internal Thread interface (within OpenThread).
+    * :c:enum:`OT_NETIF_THREAD_HOST` - The host Thread interface - allow use of platform UDP.
+    * :c:enum:`OT_NETIF_BACKBONE` - The Backbone interface.
+
 Libraries
 =========
 
@@ -484,6 +521,32 @@ Samples and applications
 This section describes the changes related to samples and applications.
 
 |no_changes_yet_note|
+
+.. _thread_migration_3.5_recommended:
+
+Thread
+------
+
+.. toggle::
+
+   * If you use Thread 1.4 border router or infrastructure features, review the new ``OpenThread stack nrf features`` Kconfig options after the upgrade.
+     The options added for OpenThread v2026.10.0 include the following:
+
+     * :kconfig:option:`CONFIG_OPENTHREAD_TREL` and :kconfig:option:`CONFIG_OPENTHREAD_TREL_MANAGE_DNSSD` - Thread Radio Encapsulation Link (Thread-over-Infrastructure).
+     * :kconfig:option:`CONFIG_OPENTHREAD_BORDER_ROUTING_DHCP6_PD_CLIENT` - DHCPv6 Prefix Delegation client on the border router.
+     * :kconfig:option:`CONFIG_OPENTHREAD_BORDER_AGENT_MESHCOP_SERVICE`, :kconfig:option:`CONFIG_OPENTHREAD_BORDER_AGENT_TRACKER`, and related border agent mDNS options.
+     * :kconfig:option:`CONFIG_OPENTHREAD_BORDER_ROUTING_MULTI_AIL_DETECTION` - Multiple Active Infrastructure Link detection.
+
+     To enable these symbols, you must build OpenThread from source, unless your prebuilt feature set already matches the library configuration file.
+     For more information, see :ref:`ug_thread_prebuilt_libs` and :ref:`thread_ug_customizing_prebuilt`.
+
+   * The Nordic OpenThread platform implements the HKDF helpers that newer stack features require when the :kconfig:option:`CONFIG_OPENTHREAD_CRYPTO_PSA` Kconfig option is enabled.
+     No migration step is needed unless you use a custom crypto backend.
+     In that case, verify that HKDF extract and expand are available for TREL and the related features.
+
+   * If you rely on :ref:`Thread certification by inheritance <ug_thread_cert_options>`, rebuild with the v3.5.0 prebuilt libraries.
+     You can also use a from-source configuration that is aligned with your qualification baseline.
+     Recheck the :ref:`Thread build report <ug_thread_build_report>` after you change feature sets or switch between prebuilt and source builds.
 
 Libraries
 =========
