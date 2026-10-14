@@ -8,7 +8,6 @@
 #include <zephyr/kernel.h>
 #include <stdlib.h>
 #include <zephyr/net/socket.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/net/tls_credentials.h>
 
@@ -57,10 +56,6 @@ static const char cert[] = {
 	 */
 	IF_ENABLED(CONFIG_TLS_CREDENTIALS, (0x00))
 };
-
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
 
 enum network_state_flag {
 	NETWORK_STATE_IPV4_READY,
@@ -187,9 +182,8 @@ static void on_net_event_l4_connected(void)
 	k_sem_give(&network_connected_sem);
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
@@ -225,15 +219,19 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		printk("Fatal error received from the connectivity layer\n");
 		return;
 	}
 }
+
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
 
 static bool ipv4_ready(void)
 {
@@ -508,14 +506,6 @@ int main(void)
 
 	printk("HTTPS client sample started\n\r");
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
-
 	printk("Bringing network interface up\n");
 
 	/* Connecting to the configured connectivity layer.
@@ -539,16 +529,6 @@ int main(void)
 	if (err) {
 		printk("conn_mgr_all_if_connect, error: %d\n", err);
 		return 0;
-	}
-
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);
