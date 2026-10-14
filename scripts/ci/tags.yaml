@@ -1894,6 +1894,8 @@ ci_samples_zephyr_drivers_counter:
 ci_tests_zephyr_drivers_flash_negative_tests:
   files:
     - nrf/tests/zephyr/drivers/flash/negative_tests/
+    - zephyr/drivers/flash/Kconfig.ironside_te_rram
+    - zephyr/drivers/flash/flash_ironside_te_rram.c
     - zephyr/tests/drivers/flash/negative_tests/
 
 ci_tests_zephyr_drivers_clock_control:
