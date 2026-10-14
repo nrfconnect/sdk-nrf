@@ -314,6 +314,8 @@ Thread
     OpenThread cannot be enabled on nRF52 SoCs.
   * The prebuilt OpenThread libraries for the nRF52840 device from :ref:`nrfxlib:nrfxlib`.
 
+* Updated OpenThread to the v2026.10.0 version.
+
 Wi-Fi®
 ------
 

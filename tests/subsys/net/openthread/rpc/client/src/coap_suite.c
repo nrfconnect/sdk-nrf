@@ -88,13 +88,16 @@ ZTEST(ot_rpc_coap, test_otCoapNewMessage_max)
 ZTEST(ot_rpc_coap, test_otCoapMessageInit)
 {
 	otMessage *message = (otMessage *)MSG_ADDR;
+	otError error;
 
 	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_COAP_MESSAGE_INIT, CBOR_UINT32(MSG_ADDR),
 					   OT_COAP_TYPE_RESET,
 					   CBOR_UINT8(OT_COAP_CODE_PROXY_NOT_SUPPORTED)),
-				   RPC_RSP());
-	otCoapMessageInit(message, OT_COAP_TYPE_RESET, OT_COAP_CODE_PROXY_NOT_SUPPORTED);
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otCoapMessageInit(message, OT_COAP_TYPE_RESET, OT_COAP_CODE_PROXY_NOT_SUPPORTED);
 	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(error, OT_ERROR_NONE);
 }
 
 /* Test serialization of otCoapMessageInitResponse() */

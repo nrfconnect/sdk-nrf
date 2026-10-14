@@ -179,6 +179,7 @@
 .. _`BBTC Client`: https://github.com/nrfconnect/sdk-openthread/tree/main/tools/tcat_ble_client
 .. _`OpenThread CSL issue`: https://github.com/openthread/openthread/issues/9358
 .. _`Sphinx parser issue`: https://github.com/sphinx-doc/sphinx/issues/2683
+.. _`OpenThread v2026.10.0`: https://github.com/openthread/openthread/releases/tag/v2026.10.0
 
 .. _`Leshan Demo Server`: https://github.com/eclipse/leshan/blob/master/README.md
 
