@@ -49,4 +49,7 @@ enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx,
 void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			       struct nrf_wifi_tx_pwr_ceil_params *tx_pwr_ceil_params);
 
+enum nrf_wifi_status rf_params_apply_radio_test_max_tx_ceilings(uint8_t ceil_dbm);
+enum nrf_wifi_status rf_params_apply_board_tx_ceilings(void);
+
 #endif /* __RF_PARAMS_H__ */

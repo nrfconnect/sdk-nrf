@@ -17,6 +17,7 @@
 #include <radio_test/core.h>
 #include <radio_test/fmac_api.h>
 #include <radio_test/fmac_structs.h>
+#include <common/rf_params.h>
 #include <common/status.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 
@@ -755,6 +756,7 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 					    size_t argc,
 					    const char *argv[])
 {
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
@@ -772,6 +774,19 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 	}
 
 	ctx->conf_params.tx_power = val;
+
+	if (val == MAX_TX_PWR_SYS_TEST) {
+		status = rf_params_apply_board_tx_ceilings();
+	} else {
+		status = rf_params_apply_radio_test_max_tx_ceilings(MAX_TX_PWR_RADIO_TEST);
+	}
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Failed to apply TX power ceilings\n");
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -1211,7 +1226,6 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 				      "Invalid channel settings\n");
 			return -ENOEXEC;
 		}
-
 	}
 
 	ctx->conf_params.tx = val;
