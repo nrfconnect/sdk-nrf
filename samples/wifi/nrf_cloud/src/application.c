@@ -158,7 +158,7 @@ void main_application_thread_fn(void)
 			double temp = -1;
 
 			if (get_temperature(&temp) == 0) {
-				LOG_INF("Temperature is %d degrees C", (int)temp);
+				LOG_INF("Die temperature is %.1f C", temp);
 				(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
 			}
 		}
