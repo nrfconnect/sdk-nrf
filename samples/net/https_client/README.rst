@@ -128,20 +128,16 @@ Sample output
          Bringing network interface up
          Provisioning certificate
          Connecting to the network
+         Connecting to example.com
          <add your wifi configuration using shell here if not pre-provisioned>
          <inf> wifi_mgmt_ext: Connection requested
-         Network connectivity established and IP address assigned
-         Looking up example.com
-         Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         <inf> ready_resolve: Trying 93.184.215.14, port 443
          Sent 61 bytes
          Received 377 bytes
 
          >        HTTP/1.1 200 OK
 
          Finished, closing socket.
-         Network connectivity lost
-         Disconnected from the network
 
    .. group-tab:: Cellular
 
@@ -155,15 +151,13 @@ Sample output
          Certificate mismatch
          Provisioning certificate to the modem
          Connecting to the network
+         Connecting to example.com
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
-         Looking up example.com
-         Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         <inf> ready_resolve: Trying 93.184.215.14, port 443
          Sent 61 bytes
          Received 377 bytes
 
@@ -173,8 +167,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the network
 
       Output for the default configuration, where the carrier does support IPv6:
 
@@ -185,16 +177,14 @@ Sample output
          Provisioning certificate
          Certificate match
          Connecting to the network
+         Connecting to example.com
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
-         Looking up example.com
          +CGEV: IPV6 0
-         Resolved 2606:2800:21f:cb07:6820:80da:af6b:8b2c (AF_INET6)
-         Connecting to example.com:443
+         <inf> ready_resolve: Trying 2606:2800:21f:cb07:6820:80da:af6b:8b2c, port 443
          Sent 61 bytes
          Received 377 bytes
 
@@ -204,8 +194,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the net
 
       Output where you override the default packet data network (PDN) configuration to IPv4 only, using the :file:`overlay-pdn-nrf91-ipv4.conf` configuration file:
 
@@ -216,15 +204,13 @@ Sample output
          Provisioning certificate
          Certificate match
          Connecting to the network
+         Connecting to example.com
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
-         Looking up example.com
-         Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         <inf> ready_resolve: Trying 93.184.215.14, port 443
          Sent 61 bytes
          Received 377 bytes
 
@@ -234,8 +220,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the network
 
 Troubleshooting
 ===============
@@ -251,6 +235,7 @@ Dependencies
 
 This sample uses the following |NCS| and Zephyr libraries:
 
+* :ref:`lib_ready_resolve`
 * :ref:`modem_key_mgmt`
 * :ref:`lte_lc_readme`
 * :ref:`net_if_interface`
