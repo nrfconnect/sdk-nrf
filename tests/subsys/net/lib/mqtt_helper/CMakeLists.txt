@@ -42,6 +42,11 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h zephyr/net
   WORD_EXCLUDE ".*net_if_set_name.*"
   WORD_EXCLUDE ".*net_if_ipv6_calc_reachable_time.*"
 )
+cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/conn_mgr_monitor.h zephyr/net
+  FUNC_EXCLUDE ".*_iface"
+  FUNC_EXCLUDE ".*_iface_ignored"
+  FUNC_EXCLUDE ".*_l2"
+)
 
 # Add Unit Under Test source files
 target_sources(app PRIVATE
@@ -71,4 +76,6 @@ target_compile_options(app PRIVATE
   -DCONFIG_MQTT_HELPER_LAST_WILL=y
   -DCONFIG_MQTT_HELPER_LAST_WILL_MESSAGE="lastwillmessage"
   -DCONFIG_MQTT_HELPER_LAST_WILL_TOPIC="lastwilltopic"
+  # Declare the Connection Manager functions, so they are mocked instead of inline stubs
+  -DCONFIG_NET_CONNECTION_MANAGER=1
 )
