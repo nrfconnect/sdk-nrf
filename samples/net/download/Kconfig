@@ -62,8 +62,8 @@ endchoice
 
 config SAMPLE_FILE_URL
 	string "URL of resource to download" if SAMPLE_FILE_CUSTOM
-	default "http://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png" if SAMPLE_FILE_HTTP
-	default "https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png" if SAMPLE_FILE_HTTPS
+	default "http://nrfconnectsdk.s3.dualstack.eu-central-1.amazonaws.com/sample-img-100kb.png" if SAMPLE_FILE_HTTP
+	default "https://nrfconnectsdk.s3.dualstack.eu-central-1.amazonaws.com/sample-img-100kb.png" if SAMPLE_FILE_HTTPS
 
 config SAMPLE_COMPUTE_HASH
 	bool "Compute sha256 hash"
