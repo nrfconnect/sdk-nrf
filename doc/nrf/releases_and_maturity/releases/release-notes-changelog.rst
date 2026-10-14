@@ -1307,9 +1307,12 @@ Libraries for networking
   * Updated the logging of location requests that nRF Cloud cannot resolve (error code ``40410``).
     Instead of several errors, the library now logs a single warning, as this can happen in normal circumstances, for example, with unknown Wi-Fi access points.
 
-  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
-    This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
-    The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+  * Fixed:
+
+    * An issue where the library always attempted an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+      This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
+      The library now resolves the host only for the address families that the Connection Manager reports as ready.
+    * An issue where the static IPv4 address set with the :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` Kconfig option was always used with the default port, ignoring the port given by the application.
 
 * :ref:`lib_mqtt_helper` library:
 

@@ -846,6 +846,9 @@ int nct_initialize(const struct nrf_cloud_init_param *param)
 	return nct_provision();
 }
 
+/* Broker address used by mqtt_connect() */
+static struct net_sockaddr_storage broker_addr;
+
 void nct_uninit(void)
 {
 	LOG_DBG("Uninitializing nRF Cloud transport");
@@ -888,7 +891,7 @@ static void nct_init_mqtt(void)
 	}
 }
 
-static int nct_connect_host_cb(struct sockaddr *const addr)
+static int nct_connect_host_cb(const struct net_sockaddr *addr, net_socklen_t addrlen)
 {
 	int err;
 
@@ -896,7 +899,8 @@ static int nct_connect_host_cb(struct sockaddr *const addr)
 	nct_init_mqtt();
 
 	/* Attempt to connect to the provided address */
-	nct.client.broker = addr;
+	memcpy(&broker_addr, addr, addrlen);
+	nct.client.broker = &broker_addr;
 	err = mqtt_connect(&nct.client);
 
 	if (err != 0) {
@@ -911,14 +915,13 @@ static int nct_connect_host_cb(struct sockaddr *const addr)
 int nct_connect(void)
 {
 	int err = 0;
-	const char *const host_name = NRF_CLOUD_HOSTNAME;
-	uint16_t port = NRF_CLOUD_PORT;
-	struct zsock_addrinfo hints = {.ai_socktype = SOCK_STREAM};
-	int sock = nrf_cloud_connect_host(host_name, port, &hints, &nct_connect_host_cb);
+	int sock;
 
+	sock = nrf_cloud_connect_host(NRF_CLOUD_HOSTNAME, NRF_CLOUD_PORT, NET_SOCK_STREAM,
+				      nct_connect_host_cb);
 	if (sock < 0) {
 		LOG_ERR("Could not connect to nRF Cloud MQTT Broker %s, port: %d. err: %d",
-			host_name, port, sock);
+			NRF_CLOUD_HOSTNAME, NRF_CLOUD_PORT, sock);
 		return -ECONNREFUSED;
 	}
 
