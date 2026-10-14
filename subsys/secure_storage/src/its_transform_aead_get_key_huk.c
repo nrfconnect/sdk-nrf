@@ -8,7 +8,7 @@
 
 LOG_MODULE_DECLARE(secure_storage, CONFIG_SECURE_STORAGE_LOG_LEVEL);
 
-psa_status_t secure_storage_its_transform_aead_get_key(
+psa_status_t secure_storage_its_transform_aead_get_key_material(
 		secure_storage_its_uid_t uid,
 		uint8_t key[static CONFIG_SECURE_STORAGE_ITS_TRANSFORM_AEAD_KEY_SIZE])
 {
