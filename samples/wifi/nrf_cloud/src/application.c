@@ -30,11 +30,6 @@ LOG_MODULE_REGISTER(application, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 /* Timer used to time the sensor sampling rate. */
 static K_TIMER_DEFINE(sensor_sample_timer, NULL, NULL);
 
-/* Temperature alert limits. */
-#define TEMP_ALERT_LIMIT ((double)CONFIG_TEMP_ALERT_LIMIT)
-#define TEMP_ALERT_HYSTERESIS 1.5
-#define TEMP_ALERT_LOWER_LIMIT (TEMP_ALERT_LIMIT - TEMP_ALERT_HYSTERESIS)
-
 /* State of the test counter. This can be changed using the configuration in the shadow */
 static bool test_counter_enabled;
 
@@ -102,30 +97,6 @@ static void on_location_update(const struct location_event_data * const location
 }
 #endif /* CONFIG_LOCATION_TRACKING */
 
-/** @brief Check whether temperature is acceptable.
- * If the device exceeds a temperature limit, log a warning.
- * Once the temperature falls below a lower limit, re-enable the temperature alert
- * so it will be logged if the limit is exceeded again.
- *
- * The difference between the two limits should be sufficient to prevent logging
- * a new alert if the temperature value oscillates between two nearby values.
- *
- * @param temp - The current device temperature.
- */
-static void monitor_temperature(double temp)
-{
-	static bool temperature_alert_active;
-
-	if ((temp > TEMP_ALERT_LIMIT) && !temperature_alert_active) {
-		temperature_alert_active = true;
-		LOG_INF("Temperature limit %f C exceeded: now %f C.",
-			TEMP_ALERT_LIMIT, temp);
-	} else if ((temp < TEMP_ALERT_LOWER_LIMIT) && temperature_alert_active) {
-		temperature_alert_active = false;
-		LOG_INF("Temperature now below limit: %f C.", temp);
-	}
-}
-
 /** @brief Send an incrementing test counter message to nRF Cloud.
  * If CONFIG_TEST_COUNTER_MULTIPLIER is greater than 1, the counter will be incremented
  * that many times in a row, and a separate test counter message will be sent for each increment.
@@ -189,8 +160,6 @@ void main_application_thread_fn(void)
 			if (get_temperature(&temp) == 0) {
 				LOG_INF("Temperature is %d degrees C", (int)temp);
 				(void)send_sensor_sample(NRF_CLOUD_JSON_APPID_VAL_TEMP, temp);
-
-				monitor_temperature(temp);
 			}
 		}
 
