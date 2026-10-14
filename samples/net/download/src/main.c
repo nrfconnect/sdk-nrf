@@ -10,7 +10,6 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/downloader.h>
 
 #include <zephyr/logging/log.h>
@@ -41,9 +40,6 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #define RETRY_BACKOFF_MAX_MS 30000
 #define MAX_ATTEMPTS 8
 
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
 static struct net_if *net_if;
 
 static K_SEM_DEFINE(network_connected_sem, 0, 1);
@@ -219,9 +215,8 @@ static bool ipv6_ready(void)
 	return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
 	switch (event) {
 	case NET_EVENT_L4_IPV4_CONNECTED:
@@ -249,9 +244,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	int err;
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
@@ -278,6 +272,11 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 		return;
 	}
 }
+
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
 
 /* Pick which IP family to use for the download. */
 static int select_family(void)
@@ -391,14 +390,6 @@ int main(void)
 
 	LOG_INF("Download client sample started");
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
-
 	err = conn_mgr_all_if_up(true);
 	if (err) {
 		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
@@ -418,16 +409,6 @@ int main(void)
 	if (err) {
 		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 		return err;
-	}
-
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that the per-family connected events fire before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);
