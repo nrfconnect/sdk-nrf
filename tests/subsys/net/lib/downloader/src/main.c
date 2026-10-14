@@ -40,7 +40,7 @@
 			"for/download_get_with_file_and_hostname"
 
 #define TEST_COAP_RETRIES 5
-#define TEST_EXPECTED_RECVFROM_CALLS (TEST_COAP_RETRIES - 2)
+#define TEST_EXPECTED_RECVFROM_CALLS (TEST_COAP_RETRIES - 1)
 
 #define HTTP_HDR_OK "HTTP/1.1 200 OK\r\n" \
 "Accept-Ranges: bytes\r\n" \
@@ -1318,6 +1318,8 @@ bool coap_pending_cycle_ok(struct coap_pending *pending)
 
 bool coap_pending_cycles(struct coap_pending *pending)
 {
+	/* Timeouts are relative to t0, which the faked coap_pending_init() does not set */
+	pending->t0 = k_uptime_get();
 	pending->timeout = 1000 * (TEST_COAP_RETRIES - coap_pending_cycle_fake.call_count);
 
 	if (pending->timeout) {
