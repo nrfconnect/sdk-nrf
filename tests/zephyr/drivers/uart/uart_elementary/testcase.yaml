@@ -28,12 +28,16 @@ tests:
   nrf.extended.drivers.uart.uart_elementary: {}
 
   nrf.extended.drivers.uart.uart_elementary_dual:
+    platform_exclude:
+      - nrf9251dk/nrf9251/cpuflpr
     extra_args:
       - FILE_SUFFIX="dual_uart"
     extra_configs:
       - CONFIG_DUAL_UART_TEST=y
 
   nrf.extended.drivers.uart.uart_elementary_dual_setup_mismatch:
+    platform_exclude:
+      - nrf9251dk/nrf9251/cpuflpr
     extra_args:
       - FILE_SUFFIX="dual_uart"
     extra_configs:
@@ -41,6 +45,8 @@ tests:
       - CONFIG_SETUP_MISMATCH_TEST=y
 
   nrf.extended.drivers.uart.uart_elementary_dual.pm:
+    platform_exclude:
+      - nrf9251dk/nrf9251/cpuflpr
     extra_args:
       - FILE_SUFFIX="dual_uart"
     extra_configs:
