@@ -74,15 +74,6 @@ extern char payload_buf[];
 		.ai_next = NULL,						\
 	}
 
-#if defined(CONFIG_NET_IPV4)
-static struct net_if test_iface;
-static struct net_in_addr test_ipv4_addr;
-#endif
-
-#if defined(CONFIG_NET_IPV6)
-static struct net_in6_addr test_ipv6_addr;
-#endif
-
 #if defined(CONFIG_NET_IPV4) && defined(CONFIG_NET_IPV6)
 static struct net_if test_iface_named;
 #endif
@@ -159,7 +150,6 @@ static int net_if_get_by_name_stub(const char *name, int num_calls)
 
 	return strcmp(name, "invalid0") == 0 ? 0 : 10;
 }
-
 
 /* Helper functions */
 static struct mqtt_helper_conn_params default_conn_params(void)
@@ -329,8 +319,7 @@ void test_mqtt_helper_init_when_connected(void)
 
 /* Steps:
  * 1) Resolve one IPv4 broker address.
- * 2) Report local IPv4 as ready.
- * 3) Verify first connect attempt succeeds.
+ * 2) Verify first connect attempt succeeds.
  */
 void test_mqtt_helper_connect_when_disconnected(void)
 {
@@ -345,10 +334,6 @@ void test_mqtt_helper_connect_when_disconnected(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
 
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
@@ -365,8 +350,7 @@ void test_mqtt_helper_connect_when_disconnected(void)
 
 /* Steps:
  * 1) Resolve one IPv4 broker address.
- * 2) Report local IPv4 as ready.
- * 3) Verify connect error is propagated.
+ * 2) Verify connect error is propagated.
  */
 void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 {
@@ -382,10 +366,6 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ENOENT);
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
@@ -400,82 +380,8 @@ void test_mqtt_helper_connect_when_disconnected_mqtt_api_error(void)
 }
 
 /* Steps:
- * 1) Resolve IPv6 first, then IPv4.
- * 2) Report IPv6 not ready and IPv4 ready.
- * 3) Verify IPv6 is skipped and IPv4 connects.
- */
-void test_mqtt_helper_connect_skips_unready_family(void)
-{
-#if defined(CONFIG_NET_IPV4) && defined(CONFIG_NET_IPV6)
-	struct mqtt_helper_conn_params conn_params = default_conn_params();
-
-	MAKE_ADDRINFO_NODE_V6(ai_v6);
-	MAKE_ADDRINFO_NODE_V4(ai_v4);
-	struct zsock_addrinfo *test_res = &ai_v6;
-
-	ai_v6.ai_next = &ai_v4;
-
-	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_zsock_getaddrinfo_IgnoreArg_host();
-	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
-	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL, NULL);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
-	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
-	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-
-	mqtt_state = MQTT_STATE_DISCONNECTED;
-
-	TEST_ASSERT_EQUAL(0, mqtt_helper_connect(&conn_params));
-	TEST_ASSERT_EQUAL(MQTT_STATE_CONNECTING, mqtt_state_get());
-#else
-	TEST_IGNORE_MESSAGE("Requires CONFIG_NET_IPV4 and CONFIG_NET_IPV6");
-#endif
-}
-
-/* Steps:
- * 1) Resolve only IPv6 broker address.
- * 2) Report no local IPv6 address.
- * 3) Verify no address is usable and ENETUNREACH is returned.
- */
-void test_mqtt_helper_connect_fails_on_family_mismatch(void)
-{
-#if defined(CONFIG_NET_IPV6)
-	struct mqtt_helper_conn_params conn_params = default_conn_params();
-
-	MAKE_ADDRINFO_NODE_V6(ai_v6);
-	struct zsock_addrinfo *test_res = &ai_v6;
-
-	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_zsock_getaddrinfo_IgnoreArg_host();
-	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
-	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL, NULL);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-
-	mqtt_state = MQTT_STATE_DISCONNECTED;
-
-	TEST_ASSERT_EQUAL(-ENETUNREACH, mqtt_helper_connect(&conn_params));
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
-#else
-	TEST_IGNORE_MESSAGE("Requires CONFIG_NET_IPV6");
-#endif
-}
-
-/* Steps:
  * 1) Resolve 4 addresses (IPv6, IPv4, IPv6, IPv4).
- * 2) Report both families ready.
- * 3) Verify all 4 connect attempts are made and last error is returned.
+ * 2) Verify all 4 connect attempts are made and last error is returned.
  */
 void test_mqtt_helper_connect_iterates_all_addresses_both_families_fail(void)
 {
@@ -498,19 +404,6 @@ void test_mqtt_helper_connect_iterates_all_addresses_both_families_fail(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ECONNREFUSED);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ETIMEDOUT);
@@ -529,8 +422,7 @@ void test_mqtt_helper_connect_iterates_all_addresses_both_families_fail(void)
 
 /* Steps:
  * 1) Resolve 4 addresses (IPv6, IPv6, IPv4, IPv4).
- * 2) Report both families ready.
- * 3) Verify retries continue until one address connects.
+ * 2) Verify retries continue until one address connects.
  */
 void test_mqtt_helper_connect_iterates_all_addresses_both_families_connect(void)
 {
@@ -553,16 +445,6 @@ void test_mqtt_helper_connect_iterates_all_addresses_both_families_connect(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ECONNREFUSED);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ETIMEDOUT);
@@ -579,119 +461,8 @@ void test_mqtt_helper_connect_iterates_all_addresses_both_families_connect(void)
 }
 
 /* Steps:
- * 1) Resolve mixed addresses (IPv4 then IPv6).
- * 2) Report local IPv4 not ready and IPv6 ready.
- * 3) Verify IPv4 is skipped and IPv6 is tried.
- */
-void test_mqtt_helper_connect_ipv6_only_device_mixed_resolved(void)
-{
-#if defined(CONFIG_NET_IPV4) && defined(CONFIG_NET_IPV6)
-	struct mqtt_helper_conn_params conn_params = default_conn_params();
-
-	MAKE_ADDRINFO_NODE_V4(ai_v4);
-	MAKE_ADDRINFO_NODE_V6(ai_v6);
-	struct zsock_addrinfo *test_res = &ai_v4;
-
-	ai_v4.ai_next = &ai_v6;
-
-	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_zsock_getaddrinfo_IgnoreArg_host();
-	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
-	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED, NULL);
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-
-	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
-	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-
-	mqtt_state = MQTT_STATE_DISCONNECTED;
-
-	TEST_ASSERT_EQUAL(0, mqtt_helper_connect(&conn_params));
-	TEST_ASSERT_EQUAL(MQTT_STATE_CONNECTING, mqtt_state_get());
-#else
-	TEST_IGNORE_MESSAGE("Requires CONFIG_NET_IPV4 and CONFIG_NET_IPV6");
-#endif
-}
-
-/* Steps:
- * 1) Resolve only IPv4 broker address.
- * 2) Report local IPv4 not ready (IPv6-only device state).
- * 3) Verify mismatch returns ENETUNREACH.
- */
-void test_mqtt_helper_connect_ipv4_only_resolved_ipv6_only_device_mismatch(void)
-{
-#if defined(CONFIG_NET_IPV4)
-	struct mqtt_helper_conn_params conn_params = default_conn_params();
-
-	MAKE_ADDRINFO_NODE_V4(ai_v4);
-	struct zsock_addrinfo *test_res = &ai_v4;
-
-	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_zsock_getaddrinfo_IgnoreArg_host();
-	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
-	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED, NULL);
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-
-	mqtt_state = MQTT_STATE_DISCONNECTED;
-
-	TEST_ASSERT_EQUAL(-ENETUNREACH, mqtt_helper_connect(&conn_params));
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
-#else
-	TEST_IGNORE_MESSAGE("Requires CONFIG_NET_IPV4");
-#endif
-}
-
-/* Steps:
- * 1) Resolve mixed addresses (IPv4 and IPv6).
- * 2) Report no local IPv4 and no local IPv6.
- * 3) Verify both families are skipped and ENETUNREACH is returned.
- */
-void test_mqtt_helper_connect_mixed_resolved_device_none(void)
-{
-#if defined(CONFIG_NET_IPV4) && defined(CONFIG_NET_IPV6)
-	struct mqtt_helper_conn_params conn_params = default_conn_params();
-
-	MAKE_ADDRINFO_NODE_V4(ai_v4);
-	MAKE_ADDRINFO_NODE_V6(ai_v6);
-	struct zsock_addrinfo *test_res = &ai_v4;
-
-	ai_v4.ai_next = &ai_v6;
-
-	__cmock_zsock_getaddrinfo_ExpectAndReturn(NULL, NULL, NULL, NULL, 0);
-	__cmock_zsock_getaddrinfo_IgnoreArg_host();
-	__cmock_zsock_getaddrinfo_IgnoreArg_hints();
-	__cmock_zsock_getaddrinfo_IgnoreArg_res();
-	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
-
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED, NULL);
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL, NULL);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
-
-	mqtt_state = MQTT_STATE_DISCONNECTED;
-
-	TEST_ASSERT_EQUAL(-ENETUNREACH, mqtt_helper_connect(&conn_params));
-	TEST_ASSERT_EQUAL(MQTT_STATE_DISCONNECTED, mqtt_state_get());
-#else
-	TEST_IGNORE_MESSAGE("Requires CONFIG_NET_IPV4 and CONFIG_NET_IPV6");
-#endif
-}
-
-/* Steps:
  * 1) Resolve two IPv4 addresses.
- * 2) Report local IPv4 ready for both checks.
- * 3) Verify first connect fails and second succeeds.
+ * 2) Verify first connect fails and second succeeds.
  */
 void test_mqtt_helper_connect_iterates_two_ipv4_addresses(void)
 {
@@ -710,13 +481,6 @@ void test_mqtt_helper_connect_iterates_two_ipv4_addresses(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-	__cmock_net_if_get_default_ExpectAndReturn(&test_iface);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ECONNREFUSED);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
@@ -733,8 +497,7 @@ void test_mqtt_helper_connect_iterates_two_ipv4_addresses(void)
 
 /* Steps:
  * 1) Resolve two IPv6 addresses.
- * 2) Report local IPv6 ready for both checks.
- * 3) Verify first connect fails and second succeeds.
+ * 2) Verify first connect fails and second succeeds.
  */
 void test_mqtt_helper_connect_iterates_two_ipv6_addresses(void)
 {
@@ -753,13 +516,6 @@ void test_mqtt_helper_connect_iterates_two_ipv6_addresses(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-	__cmock_net_if_ipv6_get_global_addr_ExpectAndReturn(NET_ADDR_PREFERRED, NULL,
-							    &test_ipv6_addr);
-	__cmock_net_if_ipv6_get_global_addr_IgnoreArg_iface();
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ECONNREFUSED);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
@@ -776,10 +532,10 @@ void test_mqtt_helper_connect_iterates_two_ipv6_addresses(void)
 
 /* Steps:
  * 1) Bind connection to named interface via if_name.
- * 2) Resolve IPv6 then IPv4, with IPv6 not ready on that interface.
- * 3) Verify IPv6 is skipped and IPv4 uses the named interface readiness.
+ * 2) Resolve IPv6 then IPv4, with IPv6 failing on that interface.
+ * 3) Verify IPv4 is tried next and connects.
  */
-void test_mqtt_helper_connect_if_name_ipv4_only_iface(void)
+void test_mqtt_helper_connect_if_name_tries_all_addresses(void)
 {
 #if defined(CONFIG_NET_IPV4) && defined(CONFIG_NET_IPV6)
 	struct mqtt_helper_conn_params conn_params = conn_params_with_if_name(TEST_IF_NAME);
@@ -800,11 +556,8 @@ void test_mqtt_helper_connect_if_name_ipv4_only_iface(void)
 	__cmock_zsock_getaddrinfo_IgnoreArg_res();
 	__cmock_zsock_getaddrinfo_ReturnThruPtr_res(&test_res);
 
-	__cmock_net_if_ipv6_get_global_addr_ExpectAnyArgsAndReturn(NULL);
-	__cmock_net_if_ipv4_get_global_addr_ExpectAndReturn(&test_iface_named, NET_ADDR_PREFERRED,
-							     &test_ipv4_addr);
-
 	__cmock_zsock_inet_ntop_IgnoreAndReturn(NULL);
+	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, -ENETUNREACH);
 	__cmock_mqtt_connect_ExpectAndReturn(&mqtt_client, 0);
 	__cmock_zsock_freeaddrinfo_ExpectAnyArgs();
 

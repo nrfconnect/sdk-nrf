@@ -1416,7 +1416,8 @@ Libraries for networking
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+    The library now iterates all resolved IPv4/IPv6 addresses.
+    In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
 
 * :ref:`lib_downloader` library:
 
