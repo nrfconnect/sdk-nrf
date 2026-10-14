@@ -1059,6 +1059,7 @@ DFU libraries
 * :ref:`lib_dfu_target` library:
 
   * Added an experimental Bluetooth LE transport for the SMP backend.
+  * Removed the deprecated ``CONFIG_DFU_TARGET_MCUBOOT_SAVE_PROGRESS`` Kconfig symbol.
 
 Gazell libraries
 ----------------
