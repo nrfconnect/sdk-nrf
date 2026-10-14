@@ -26,7 +26,7 @@
 #include "sd_card.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
@@ -38,7 +38,7 @@ static bool sd_card_present = true;
 
 static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t le_audio_msg_sub_thread_id;
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 NET_BUF_POOL_FIXED_DEFINE(ble_tx_pool, CONFIG_BT_ISO_TX_BUF_COUNT, CONFIG_BT_ISO_TX_MTU,
 			  sizeof(struct audio_metadata), NULL);
 
@@ -58,7 +58,7 @@ NET_BUF_SIMPLE_DEFINE_STATIC(base_data0, BASE_DATA_BUF_SIZE);
 NET_BUF_SIMPLE_DEFINE_STATIC(base_data1, BASE_DATA_BUF_SIZE);
 
 /* Extended advertising buffer. */
-static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_EXT_ADV_BUF_MAX];
+static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_NRF_AUDIO_EXT_ADV_BUF_MAX];
 
 /* Periodic advertising buffer. */
 static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
@@ -501,10 +501,11 @@ static int zbus_subscribers_create(void)
 {
 	int ret;
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");

@@ -9,22 +9,22 @@ rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf_audio/src/bluetooth/Kconfig"
 rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf_audio/src/modules/Kconfig"
 rsource "$(ZEPHYR_NRF_MODULE_DIR)/applications/nrf_audio/src/utils/Kconfig"
 
-config TRANSPORT_BIS
+config NRF_AUDIO_TRANSPORT_BIS
 	bool "Use BIS (Broadcast Isochronous Stream)"
 
 config NRF_AURACONFIG
 	bool "nRF Auraconfig"
-	depends on TRANSPORT_BIS
+	depends on NRF_AUDIO_TRANSPORT_BIS
 	select EXPERIMENTAL
 	default y
 
 menu "Logging"
 
-module = MAIN
+module = NRF_AUDIO_MAIN
 module-str = main
 source "subsys/logging/Kconfig.template.log_config"
 
-config PRINT_STACK_USAGE_MS
+config NRF_AUDIO_PRINT_STACK_USAGE_MS
 	depends on THREAD_ANALYZER && INIT_STACKS
 	int "Print stack usage every x milliseconds"
 	default 5000

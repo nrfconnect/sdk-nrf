@@ -11,7 +11,7 @@
 #include <zephyr/shell/shell.h>
 #include <zephyr/sys/util.h>
 
-LOG_MODULE_REGISTER(power_meas, CONFIG_MODULE_POWER_LOG_LEVEL);
+LOG_MODULE_REGISTER(power_meas, CONFIG_NRF_AUDIO_MODULE_POWER_LOG_LEVEL);
 
 #define POWER_RAIL_NUM 4U
 static k_tid_t pwr_meas_thread_id;
@@ -29,7 +29,7 @@ static const struct power_rail_config rail_config[POWER_RAIL_NUM] = {
 };
 static bool rail_enabled[POWER_RAIL_NUM];
 
-K_THREAD_STACK_DEFINE(meas_stack, CONFIG_POWER_MEAS_STACK_SIZE);
+K_THREAD_STACK_DEFINE(meas_stack, CONFIG_NRF_AUDIO_POWER_MEAS_STACK_SIZE);
 static struct k_thread meas_thread;
 K_SEM_DEFINE(meas_sem, 0, 1);
 static bool meas_enabled;
@@ -99,7 +99,7 @@ static void meas_thread_fn(void *dummy1, void *dummy2, void *dummy3)
 			}
 		}
 
-		k_msleep(CONFIG_POWER_MEAS_INTERVAL_MS);
+		k_msleep(CONFIG_NRF_AUDIO_POWER_MEAS_INTERVAL_MS);
 	}
 }
 
@@ -116,7 +116,7 @@ static int power_meas_init(void)
 	}
 
 	/* enable all sensors and measurement if configured */
-	if (IS_ENABLED(CONFIG_POWER_MEAS_START_ON_BOOT)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_POWER_MEAS_START_ON_BOOT)) {
 		meas_enabled = true;
 
 		for (size_t i = 0U; i < POWER_RAIL_NUM; i++) {
@@ -126,8 +126,9 @@ static int power_meas_init(void)
 
 	/* start measurement thread */
 	pwr_meas_thread_id = k_thread_create(
-		&meas_thread, meas_stack, CONFIG_POWER_MEAS_STACK_SIZE, meas_thread_fn, NULL, NULL,
-		NULL, K_PRIO_PREEMPT(CONFIG_POWER_MEAS_THREAD_PRIO), 0, K_NO_WAIT);
+		&meas_thread, meas_stack, CONFIG_NRF_AUDIO_POWER_MEAS_STACK_SIZE, meas_thread_fn,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_POWER_MEAS_THREAD_PRIO), 0,
+		K_NO_WAIT);
 	ret = k_thread_name_set(pwr_meas_thread_id, "Pwr_meas");
 	if (ret) {
 		return ret;

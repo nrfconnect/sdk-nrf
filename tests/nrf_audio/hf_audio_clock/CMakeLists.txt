@@ -17,7 +17,7 @@ target_sources(app PRIVATE
 
 target_compile_definitions(app PRIVATE
   NRFX_DECLARE_ONLY
-  CONFIG_MODULE_RATE_CONTROL_LOG_LEVEL=0
+  CONFIG_NRF_AUDIO_MODULE_RATE_CONTROL_LOG_LEVEL=0
 )
 
 target_include_directories(app PRIVATE

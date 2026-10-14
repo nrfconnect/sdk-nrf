@@ -13,19 +13,22 @@ rsource "bt_management/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Bluetooth audio"
 
-if TRANSPORT_BIS
-rsource "bt_stream/broadcast/Kconfig"
-endif # TRANSPORT_BIS
+if NRF_AUDIO_TRANSPORT_BIS
 
-if TRANSPORT_CIS
+rsource "bt_stream/broadcast/Kconfig"
+
+endif # NRF_AUDIO_TRANSPORT_BIS
+
+if NRF_AUDIO_TRANSPORT_CIS
+
 rsource "bt_stream/unicast/Kconfig"
-endif # TRANSPORT_CIS
+
+endif # NRF_AUDIO_TRANSPORT_CIS
 
 rsource "bt_stream/bt_le_audio_tx/Kconfig"
 
 config NRF_AUDIO_PACKING_INTERLEAVED
 	bool "Interleaved packing"
-	default n
 	help
 	  ISO channels can either be interleaved or sequentially packed; sequential is the default one.
 
@@ -56,7 +59,7 @@ choice NRF_AUDIO_PREF_SINK_SAMPLE_RATE
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if NRF_AUDIO_BAP_BROADCAST_16_2_1
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if NRF_AUDIO_BAP_BROADCAST_16_2_2
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ if NRF_AUDIO_BAP_UNICAST_16_2_1
-	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if NRF_AUDIO_STREAM_BIDIRECTIONAL
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if NRF_AUDIO_BAP_BROADCAST_24_2_1
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if NRF_AUDIO_BAP_BROADCAST_24_2_2
 	default NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ if NRF_AUDIO_BAP_UNICAST_24_2_1
@@ -64,19 +67,19 @@ choice NRF_AUDIO_PREF_SINK_SAMPLE_RATE
 	help
 	  Select the preferred sample rate to stream if there are more than one to choose from.
 	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
-	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
+	  CONFIG_NRF_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
 
-config  NRF_AUDIO_PREF_SINK_SAMPLE_RATE_48KHZ
+config NRF_AUDIO_PREF_SINK_SAMPLE_RATE_48KHZ
 	bool "48 kHz"
 	help
 	  Select 48000 Hz as the preferred sink sample rate.
 
-config  NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ
+config NRF_AUDIO_PREF_SINK_SAMPLE_RATE_24KHZ
 	bool "24 kHz"
 	help
 	  Select 24000 Hz as the preferred sink sample rate.
 
-config  NRF_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ
+config NRF_AUDIO_PREF_SINK_SAMPLE_RATE_16KHZ
 	bool "16 kHz"
 	help
 	  Select 16000 Hz as the preferred sink sample rate.
@@ -91,25 +94,25 @@ config NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE
 choice NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE
 	prompt "Preferred BT audio source sample rate"
 	default NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ if NRF_AUDIO_BAP_UNICAST_16_2_1
-	default NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ if STREAM_BIDIRECTIONAL
+	default NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ if NRF_AUDIO_STREAM_BIDIRECTIONAL
 	default NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ if NRF_AUDIO_BAP_UNICAST_24_2_1
 	default NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
 	help
 	  Select the preferred sample rate to stream if there are more than one to choose from.
 	  Only valid when used by unicast_client if CONFIG_SAMPLE_RATE_CONVERTER=y and
-	  CONFIG_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
+	  CONFIG_NRF_AUDIO_SAMPLE_RATE_48000_HZ=y, meaning 16, 24, and 48kHz are supported.
 
-config  NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
+config NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_48KHZ
 	bool "48 kHz"
 	help
 	  Select 48000 Hz as the preferred source sample rate.
 
-config  NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ
+config NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_24KHZ
 	bool "24 kHz"
 	help
 	  Select 24000 Hz as the preferred source sample rate.
 
-config  NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ
+config NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_16KHZ
 	bool "16 kHz"
 	help
 	  Select 16000 Hz as the preferred source sample rate.
@@ -120,11 +123,11 @@ menu "QoS"
 
 config NRF_AUDIO_PRESENTATION_DELAY_US
 	int "Presentation delay"
-	range AUDIO_MIN_PRES_DLY_US AUDIO_MAX_PRES_DLY_US
-	default AUDIO_MIN_PRES_DLY_US
+	range NRF_AUDIO_MIN_PRES_DLY_US NRF_AUDIO_MAX_PRES_DLY_US
+	default NRF_AUDIO_MIN_PRES_DLY_US
 	help
 	  The audio source/client defined presentation delay if within
-	  AUDIO_MIN_PRES_DLY_US and AUDIO_MAX_PRES_DLY_US range. This will
+	  NRF_AUDIO_MIN_PRES_DLY_US and NRF_AUDIO_MAX_PRES_DLY_US range. This will
 	  override the audio receivers presentation delay as long as it
 	  is in range of the max and min supported by the audio receivers.
 	  If it is outside this range, then it will revert to the closest
@@ -154,7 +157,7 @@ rsource "bt_content_control/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Log levels"
 
-module = BLE
+module = NRF_AUDIO_BLE
 module-str = ble
 source "subsys/logging/Kconfig.template.log_config"
 
@@ -167,9 +170,8 @@ endmenu # Log levels
 #----------------------------------------------------------------------------#
 menu "Testing"
 
-config TESTING_BLE_ADDRESS_RANDOM
+config NRF_AUDIO_TESTING_BLE_ADDRESS_RANDOM
 	bool "Random address and bonding clear on every restart [EXPERIMENTAL]"
-	default n
 	select EXPERIMENTAL
 	help
 	  If enabled the system will generate a new address on every

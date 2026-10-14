@@ -131,13 +131,13 @@ struct broadcast_source_ext_adv_data {
 	/* Broadcast name, must be between 4 and 32 UTF-8 encoded characters in length. */
 	uint8_t brdcst_name_buf[BROADCAST_SOURCE_ADV_NAME_MAX];
 
-#if (CONFIG_AURACAST)
+#if (CONFIG_NRF_AUDIO_AURACAST)
 	/* Number of free metadata items */
 	uint8_t pba_metadata_vacant_cnt;
 
 	/* Public Broadcast Announcement buffer. */
 	uint8_t *pba_buf;
-#endif /* (CONFIG_AURACAST) */
+#endif /* (CONFIG_NRF_AUDIO_AURACAST) */
 };
 
 /**

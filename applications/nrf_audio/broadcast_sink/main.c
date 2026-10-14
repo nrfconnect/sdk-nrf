@@ -24,9 +24,9 @@
 #include "fw_info_app.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX);
 
 struct ble_iso_data {
 	uint8_t data[CONFIG_BT_ISO_RX_MTU];
@@ -38,7 +38,7 @@ struct ble_iso_data {
 
 static uint32_t last_broadcast_id = BRDCAST_ID_NOT_USED;
 
-ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 ZBUS_MSG_SUBSCRIBER_DEFINE(bt_mgmt_evt_sub);
@@ -58,8 +58,8 @@ static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
 static k_tid_t bt_mgmt_msg_sub_thread_id;
 
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(bt_mgmt_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MGMT_MSG_SUB_STACK_SIZE);
 
 static enum stream_state strm_state = STATE_PAUSED;
@@ -135,7 +135,7 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_5:
-			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_MUTE)) {
 				ret = bt_r_and_c_volume_mute(false);
 				if (ret) {
 					LOG_WRN("Failed to mute, ret: %d", ret);
@@ -427,18 +427,20 @@ static int zbus_subscribers_create(void)
 
 	button_msg_sub_thread_id = k_thread_create(
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_THREAD_PRIO), 0,
+		K_NO_WAIT);
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
 	if (ret) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
 	}
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
@@ -516,7 +518,7 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 	int ret;
 	size_t ext_adv_buf_cnt = 0;
 
-	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
+	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_NRF_AUDIO_EXT_ADV_UUID_BUF_MAX);
 
 	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_ALL;
 	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
@@ -610,7 +612,7 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to enable broadcast sink");
 
 	if (IS_ENABLED(CONFIG_NRF_AUDIO_SCAN_DELEGATOR)) {
-		static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
+		static struct bt_data ext_adv_buf[CONFIG_NRF_AUDIO_EXT_ADV_BUF_MAX];
 		size_t ext_adv_buf_cnt = 0;
 
 		bt_mgmt_scan_delegator_init();

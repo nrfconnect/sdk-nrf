@@ -466,7 +466,7 @@ int bt_mgmt_init(void)
 		return ret;
 	}
 
-	if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_TESTING_BLE_ADDRESS_RANDOM)) {
 		ret = random_static_addr_set();
 		if (ret) {
 			return ret;
@@ -484,7 +484,7 @@ int bt_mgmt_init(void)
 			return ret;
 		}
 
-		if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_TESTING_BLE_ADDRESS_RANDOM)) {
 			ret = bt_mgmt_bonding_clear();
 			if (ret) {
 				return ret;

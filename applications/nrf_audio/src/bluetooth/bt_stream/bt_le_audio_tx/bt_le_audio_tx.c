@@ -608,9 +608,9 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			return -EINVAL;
 		}
 
-		if (!IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+		if (!IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS)) {
 			LOG_ERR("Num locations (%u) sent to all streams (%u)."
-				"CONFIG_MONO_TO_ALL_RECEIVERS must be enabled",
+				"CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS must be enabled",
 				num_loc, num_tx);
 			return -EINVAL;
 		}

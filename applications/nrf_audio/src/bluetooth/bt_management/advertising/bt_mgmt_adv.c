@@ -42,11 +42,11 @@ K_MSGQ_DEFINE(adv_q, sizeof(uint8_t), CONFIG_BT_EXT_ADV_MAX_ADV_SET, sizeof(void
 
 static struct bt_le_adv_param ext_adv_param = {
 	.id = BT_ID_DEFAULT,
-	.sid = CONFIG_BLE_ACL_ADV_SID,
+	.sid = CONFIG_NRF_AUDIO_BLE_ACL_ADV_SID,
 	.secondary_max_skip = 0,
 	.options = BT_LE_ADV_OPT_EXT_ADV,
-	.interval_min = CONFIG_BLE_ACL_EXT_ADV_INT_MIN,
-	.interval_max = CONFIG_BLE_ACL_EXT_ADV_INT_MAX,
+	.interval_min = CONFIG_NRF_AUDIO_BLE_ACL_EXT_ADV_INT_MIN,
+	.interval_max = CONFIG_NRF_AUDIO_BLE_ACL_EXT_ADV_INT_MAX,
 	.peer = NULL,
 };
 

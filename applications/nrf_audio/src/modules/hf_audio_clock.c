@@ -13,7 +13,7 @@
 #include "audio_rate_control.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_DECLARE(rate_control, CONFIG_MODULE_RATE_CONTROL_LOG_LEVEL);
+LOG_MODULE_DECLARE(rate_control, CONFIG_NRF_AUDIO_MODULE_RATE_CONTROL_LOG_LEVEL);
 
 /* Use nanoseconds to reduce rounding errors */
 /* clang-format off */

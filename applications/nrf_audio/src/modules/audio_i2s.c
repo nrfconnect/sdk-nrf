@@ -25,14 +25,14 @@ static enum audio_i2s_state state = AUDIO_I2S_STATE_UNINIT;
 
 PINCTRL_DT_DEFINE(I2S_NL);
 
-#if CONFIG_AUDIO_SAMPLE_RATE_16000_HZ
+#if CONFIG_NRF_AUDIO_SAMPLE_RATE_16000_HZ
 #define I2S_RATIO NRF_I2S_RATIO_384X
-#elif CONFIG_AUDIO_SAMPLE_RATE_24000_HZ
+#elif CONFIG_NRF_AUDIO_SAMPLE_RATE_24000_HZ
 #define I2S_RATIO NRF_I2S_RATIO_256X
-#elif CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
+#elif CONFIG_NRF_AUDIO_SAMPLE_RATE_48000_HZ
 #define I2S_RATIO NRF_I2S_RATIO_128X
 #else
-#error "Current AUDIO_SAMPLE_RATE_HZ setting not supported"
+#error "Current NRF_AUDIO_SAMPLE_RATE_HZ setting not supported"
 #endif
 
 static nrfx_i2s_t i2s_inst = NRFX_I2S_INSTANCE(NRF_I2S0);
@@ -45,18 +45,19 @@ static nrfx_i2s_config_t cfg = {
 	.mode = NRF_I2S_MODE_MASTER,
 	.format = NRF_I2S_FORMAT_I2S,
 	.alignment = NRF_I2S_ALIGN_LEFT,
-	.prescalers = {
-		.ratio = I2S_RATIO,
-		.mck_setup = 0x66666000,
-		.enable_bypass = false,
-	},
-#if (CONFIG_AUDIO_BIT_DEPTH_16)
+	.prescalers =
+		{
+			.ratio = I2S_RATIO,
+			.mck_setup = 0x66666000,
+			.enable_bypass = false,
+		},
+#if (CONFIG_NRF_AUDIO_BIT_DEPTH_16)
 	.sample_width = NRF_I2S_SWIDTH_16BIT,
-#elif (CONFIG_AUDIO_BIT_DEPTH_32)
+#elif (CONFIG_NRF_AUDIO_BIT_DEPTH_32)
 	.sample_width = NRF_I2S_SWIDTH_32BIT,
 #else
 #error Invalid bit depth selected
-#endif /* (CONFIG_AUDIO_BIT_DEPTH_16) */
+#endif /* (CONFIG_NRF_AUDIO_BIT_DEPTH_16) */
 	.channels = NRF_I2S_CHANNELS_STEREO,
 	.clksrc = NRF_I2S_CLKSRC_ACLK,
 };
@@ -76,11 +77,13 @@ static void i2s_comp_handler(nrfx_i2s_buffers_t const *released_bufs, uint32_t s
 void __noinline audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_STARTED);
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == GATEWAY)) {
 		__ASSERT_NO_MSG(rx_buf != NULL);
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == HEADSET)) {
 		__ASSERT_NO_MSG(tx_buf != NULL);
 	}
 
@@ -98,11 +101,13 @@ void __noinline audio_i2s_set_next_buf(const uint8_t *tx_buf, uint32_t *rx_buf)
 void __noinline audio_i2s_start(const uint8_t *tx_buf, uint32_t *rx_buf)
 {
 	__ASSERT_NO_MSG(state == AUDIO_I2S_STATE_IDLE);
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == GATEWAY)) {
 		__ASSERT_NO_MSG(rx_buf != NULL);
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == HEADSET)) {
 		__ASSERT_NO_MSG(tx_buf != NULL);
 	}
 
