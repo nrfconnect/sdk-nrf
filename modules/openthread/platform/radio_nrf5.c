@@ -503,7 +503,7 @@ static otRadioCaps nrf5_get_caps(void)
 	nrf_802154_capabilities_t radio_caps = nrf_802154_capabilities_get();
 
 	caps |= OT_RADIO_CAPS_ENERGY_SCAN | OT_RADIO_CAPS_ACK_TIMEOUT | OT_RADIO_CAPS_SLEEP_TO_TX |
-		OT_RADIO_CAPS_RX_ON_WHEN_IDLE;
+		OT_RADIO_CAPS_RX_ON_WHEN_IDLE | OT_RADIO_CAPS_ALT_SHORT_ADDR;
 
 	if (radio_caps & NRF_802154_CAPABILITY_CSMA) {
 		caps |= OT_RADIO_CAPS_CSMA_BACKOFF;
@@ -1088,6 +1088,25 @@ void otPlatRadioSetShortAddress(otInstance *aInstance, otShortAddress aShortAddr
 #ifdef CONFIG_NRF_802154_CALLBACKS_DISPATCHER
 	memcpy(radio_client_config.short_address, short_addr_le,
 	       sizeof(radio_client_config.short_address));
+#endif
+}
+
+void otPlatRadioSetAlternateShortAddress(otInstance *aInstance, otShortAddress aShortAddress)
+{
+	uint8_t short_addr_le[SHORT_ADDRESS_SIZE];
+	bool enable = (aShortAddress != OT_RADIO_INVALID_SHORT_ADDR);
+
+	ARG_UNUSED(aInstance);
+
+	LOG_DBG("Alternate Short Address: 0x%x", aShortAddress);
+
+	sys_put_le16(aShortAddress, short_addr_le);
+	nrf_802154_alternate_short_address_set(enable ? short_addr_le : NULL);
+
+#ifdef CONFIG_NRF_802154_CALLBACKS_DISPATCHER
+	memcpy(radio_client_config.alt_short_address, short_addr_le,
+	       sizeof(radio_client_config.alt_short_address));
+	radio_client_config.alt_short_address_set = enable;
 #endif
 }
 
