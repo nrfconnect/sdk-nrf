@@ -189,7 +189,7 @@ struct downloader_host_cfg {
 	bool cid;
 	/**
 	 * Address family to be used for the download, @c AF_INET6 or @c AF_INET.
-	 * Set to @c AF_UNSPEC (0) to fallback to @c AF_INET if @c AF_INET6 does not work.
+	 * Set to @c AF_UNSPEC (0) to try all resolved addresses for the ready address families.
 	 */
 	int family;
 	/**

@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include <zephyr/net/conn_mgr_monitor.h>
+
 #include "dl_socket.h"
 
 #include <zephyr/logging/log.h>
@@ -163,12 +165,11 @@ static bool is_ip_address(const char *hostname)
 }
 
 static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
-				 struct net_sockaddr *sa, int family)
+				 const char *if_name, struct zsock_addrinfo **res, int family)
 {
 	int err;
 	char pdnserv[4];
 	char *servname = NULL;
-	struct zsock_addrinfo *ai;
 	struct zsock_addrinfo hints = {
 		.ai_family = family,
 	};
@@ -185,18 +186,18 @@ static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
 		hints.ai_flags = AI_PDNSERV;
 		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
 		servname = pdnserv;
+	} else if (family == NET_AF_UNSPEC && if_name == NULL) {
+		/* Default PDN: use the conn_mgr ready families, which are not per iface */
+		hints.ai_family = conn_mgr_get_ready_addr_family();
 	}
 
-	err = zsock_getaddrinfo(hostname, servname, &hints, &ai);
+	err = zsock_getaddrinfo(hostname, servname, &hints, res);
 	if (err) {
 		/* We expect this to fail on IPv6 sometimes */
 		LOG_DBG("Failed to resolve hostname %s on %s, err %d", hostname,
 			str_family(hints.ai_family), err);
 		return -EHOSTUNREACH;
 	}
-
-	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
-	zsock_freeaddrinfo(ai);
 
 	return 0;
 }
@@ -316,48 +317,40 @@ int dl_socket_configure_and_connect(int *fd, int proto, int type, uint16_t port,
 				    struct net_sockaddr *remote_addr, const char *hostname,
 				    struct downloader_host_cfg *dl_host_cfg)
 {
-	int err = -1;
-	int fam;
+	int err;
+	struct zsock_addrinfo *res;
 
 	if (remote_addr->sa_family) {
-		goto connect;
+		err = dl_socket_create_and_connect(fd, proto, type, port, remote_addr, hostname,
+						   dl_host_cfg);
+		goto out;
 	}
 
-	fam = dl_host_cfg->family ? dl_host_cfg->family : NET_AF_INET6;
-
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, fam);
-	if (!err) {
-		goto connect;
-	} else if (dl_host_cfg->family) {
-		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
-		return err;
-	}
-
-	LOG_INF("Host lookup failed for hostname %s on IPv6 (err %d), attempting IPv4",
-		hostname, err);
-
-
-fallback_ipv4:
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, NET_AF_INET);
+	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, dl_host_cfg->if_name, &res,
+				    dl_host_cfg->family);
 	if (err) {
 		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
 		return err;
 	}
 
-connect:
-	err = dl_socket_create_and_connect(fd, proto, type, port, remote_addr, hostname,
-					   dl_host_cfg);
-	if (err) {
-		if (remote_addr->sa_family == NET_AF_INET6) {
-			LOG_INF("Failed to connect on IPv6 (err %d), attempting IPv4", err);
-			goto fallback_ipv4;
-		}
+	/* Try the resolved addresses in order */
+	err = -EHOSTUNREACH;
+	for (struct zsock_addrinfo *ai = res; ai != NULL && err; ai = ai->ai_next) {
+		memcpy(remote_addr, ai->ai_addr, ai->ai_addrlen);
+		err = dl_socket_create_and_connect(fd, proto, type, port, remote_addr, hostname,
+						   dl_host_cfg);
+	}
 
+	zsock_freeaddrinfo(res);
+
+out:
+	if (err) {
+		/* Resolve again on the next attempt */
+		remote_addr->sa_family = NET_AF_UNSPEC;
 		LOG_ERR("Failed to connect, err %d", err);
-		return err;
 	}
 
-	return 0;
+	return err;
 }
 
 int dl_socket_close(int *fd)
