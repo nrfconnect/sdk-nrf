@@ -57,3 +57,27 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_nrf71_wifi
+  sample.nrf7002.p2p.echo_cli:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="echo-cli.conf"
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
+  sample.nrf7002.p2p.echo_go:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="echo-go.conf"
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+    platform_allow: nrf7002dk/nrf5340/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_wifi
