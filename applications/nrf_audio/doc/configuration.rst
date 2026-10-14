@@ -135,7 +135,7 @@ You can set the location for each headset in the following ways, depending on th
 
   .. code-block:: console
 
-     nrfutil device x-write --address 0x00FF80F4 --value 3
+     nrfutil device write --address 0x00FF80F4 --value 3
 
 The following table lists some of the available locations and their bitfield values:
 

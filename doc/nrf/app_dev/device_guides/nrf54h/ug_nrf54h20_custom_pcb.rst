@@ -427,7 +427,7 @@ After programming the BICR binary onto the device, validate whether the BICR wor
 
 2. When in LCS ``EMPTY``, use ``nrfutil`` to validate the BICR status by reading the memory::
 
-      nrfutil device x-read --address 0x2F88FF1C --serial-number 1051164514 --core Secure
+      nrfutil device read --address 0x2F88FF1C --serial-number 1051164514 --core Secure
 
    nrfutil returns the BICR loading status using one of the following values:
 
