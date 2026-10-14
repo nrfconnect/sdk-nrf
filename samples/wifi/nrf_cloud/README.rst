@@ -210,6 +210,24 @@ The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:o
 To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
 This same timer also drives FOTA checks when :ref:`wifi_nrf_cloud_fota` is enabled.
 
+.. _wifi_nrf_cloud_memfault_buttons:
+
+Memfault button actions
+=======================
+
+The periodic-upload timer fires only once in :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS`, and metrics heartbeats are only captured once in :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` (one hour by default).
+To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
+
+* First button (``sw0`` devicetree alias) - Captures a metrics heartbeat (:c:func:`memfault_metrics_heartbeat_debug_trigger`) and posts all pending Memfault chunks (:c:func:`memfault_zephyr_port_post_data_return_size`).
+* Second button (``sw1`` devicetree alias) - Checks for a FOTA update (:c:func:`memfault_zephyr_fota_start`), requires :ref:`wifi_nrf_cloud_fota` to be enabled.
+
+Depending on the DK, these buttons are labeled as **Button 1** and **Button 2**, or **Button 0** and **Button 1**.
+The sample logs the labels of the buttons at startup.
+Button presses are ignored until the sample is connected to nRF Cloud.
+
+.. note::
+   Button actions are disabled on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+
 .. _wifi_nrf_cloud_fota:
 
 Memfault FOTA
@@ -221,6 +239,7 @@ Enable it with :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
 * Drives the actual FOTA check periodically and independently, through the Memfault SDK's own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`), only once the app has confirmed nRF Cloud connectivity (see :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`).
+* Lets you trigger a FOTA check on demand with a button press (see :ref:`wifi_nrf_cloud_memfault_buttons`).
 * Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
 
 This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud's native FOTA job-polling API, for application updates.
