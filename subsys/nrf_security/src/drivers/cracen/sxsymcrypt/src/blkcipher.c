@@ -442,7 +442,7 @@ int sx_blkcipher_ecb_simple(uint8_t *key, size_t key_size, uint8_t *input, size_
 	sx_wrreg_addr(REG_FETCH_ADDR, in_descs);
 	sx_wrreg_addr(REG_PUSH_ADDR, &out_desc);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
-	sx_wrreg(REG_START, REG_START_ALL);
+	sx_cmdma_trigger();
 
 	while (status == SX_ERR_HW_PROCESSING) {
 		status = sx_cmdma_check();

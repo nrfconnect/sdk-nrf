@@ -142,6 +142,18 @@ config CRACEN_USE_INTERRUPTS
 	  If this is turned off CRACEN uses active polling instead,
 	  which may have an impact on performance.
 
+config CRACEN_CM_POLL_BEFORE_WAIT
+	int "CRACEN CryptoMaster status polls before waiting on the interrupt"
+	default 64
+	range 0 100000
+	depends on CRACEN_USE_INTERRUPTS
+	help
+	  Number of times the CryptoMaster busy flag is polled before the driver
+	  sleeps on the CRACEN interrupt. Short jobs, like the single AES blocks
+	  issued by the software AEAD/cipher modes, finish within this window and
+	  avoid the cost of sleeping and waking up. Longer jobs sleep as before.
+	  Set to 0 to always sleep on the interrupt.
+
 config CRACEN_XOF_OUT_POOL_BUF_SIZE
 	int "CRACEN XOF output pool buffer size in bytes"
 	range 168 8192

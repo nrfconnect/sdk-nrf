@@ -111,6 +111,24 @@ static void sx_cmdma_finalize_descs(struct sxdesc *start, struct sxdesc *end)
 #endif
 }
 
+#if defined(CONFIG_CRACEN_CM_POLL_BEFORE_WAIT)
+#define CM_POLL_BEFORE_WAIT CONFIG_CRACEN_CM_POLL_BEFORE_WAIT
+#else
+#define CM_POLL_BEFORE_WAIT 0
+#endif
+
+/* Poll short jobs before sleeping on them (see sx_cmdma_check()) */
+#define CM_POLL (CM_POLL_BEFORE_WAIT > 0)
+
+void sx_cmdma_trigger(void)
+{
+	if (CM_POLL) {
+		/* Unmasked by sx_cmdma_check() only if it has to sleep on the job */
+		cracen_cm_interrupt_mask();
+	}
+	sx_wrreg(REG_START, REG_START_ALL);
+}
+
 int sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 {
 	struct sxdesc *desc;
@@ -143,7 +161,7 @@ int sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs)
 	desc = (struct sxdesc *)(dma->mapped + offsetof(struct sx_dmaslot, outdescs));
 	sx_wrreg_addr(REG_PUSH_ADDR, desc);
 	sx_wrreg(REG_CONFIG, REG_CONFIG_SG);
-	sx_wrreg(REG_START, REG_START_ALL);
+	sx_cmdma_trigger();
 
 	return SX_OK;
 }
@@ -191,10 +209,26 @@ static int sx_cmdma_check_with_interrupts(void)
 {
 	uint32_t status = 0xFF;
 	uint32_t busy;
+	bool done = false;
 
-	status = cracen_wait_for_cm_interrupt();
-	if (!status) {
+	if (CM_POLL) {
+		for (int i = 0; i < CM_POLL_BEFORE_WAIT && cmdma_is_busy(); i++) {
+		}
+		done = !cmdma_is_busy();
+	}
+
+	if (done) {
 		status = sx_rdreg(REG_INT_STATRAW);
+		sx_wrreg(REG_INT_STATCLR, ~0);
+		status |= cracen_cm_interrupt_take();
+	} else {
+		if (CM_POLL) {
+			cracen_cm_interrupt_unmask();
+		}
+		status = cracen_wait_for_cm_interrupt();
+		if (!status) {
+			status = sx_rdreg(REG_INT_STATRAW);
+		}
 	}
 	busy = sx_rdreg(REG_STATUS) & REG_STATUS_BUSY_MASK;
 
