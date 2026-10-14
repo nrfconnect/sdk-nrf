@@ -8,6 +8,7 @@
 #define NRF_802154_STUBS_H_
 
 #include <nrf_802154_const.h>
+#include <stdbool.h>
 #include <stdint.h>
 
 struct nrf_802154_stub_stats {
@@ -24,8 +25,11 @@ struct nrf_802154_stub_stats {
 	uint32_t pan_id_set_count;
 	uint32_t short_address_set_count;
 	uint32_t extended_address_set_count;
+	uint32_t alt_short_address_set_count;
+	bool alt_short_address_present;
 	uint8_t last_pan_id[PAN_ID_SIZE];
 	uint8_t last_short_address[SHORT_ADDRESS_SIZE];
+	uint8_t last_alt_short_address[SHORT_ADDRESS_SIZE];
 	uint8_t last_extended_address[EXTENDED_ADDRESS_SIZE];
 };
 

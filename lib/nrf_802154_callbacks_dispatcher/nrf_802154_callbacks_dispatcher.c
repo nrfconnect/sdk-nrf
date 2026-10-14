@@ -96,6 +96,8 @@ static void reinit_radio_driver(void)
 	nrf_802154_ack_data_remove_all(false, NRF_802154_ACK_DATA_IE);
 	nrf_802154_ack_data_remove_all(true, NRF_802154_ACK_DATA_IE);
 
+	nrf_802154_alternate_short_address_set(NULL);
+
 	nrf_802154_reinit();
 }
 
@@ -150,6 +152,9 @@ int nrf_802154_callbacks_dispatcher_switch(const char *name)
 				nrf_802154_pan_id_set(config->pan_id);
 				nrf_802154_short_address_set(config->short_address);
 				nrf_802154_extended_address_set(config->mac);
+				nrf_802154_alternate_short_address_set(
+					config->alt_short_address_set ? config->alt_short_address
+								      : NULL);
 			}
 		}
 	}

@@ -339,6 +339,10 @@ Thread
 
 * Updated the OpenThread stack to `OpenThread v2026.10.0`_.
 
+* Added support for the alternate short address in the OpenThread radio platform for nRF5 devices (``otPlatRadioSetAlternateShortAddress()``).
+  The radio continues to accept frames sent to the previous short address during the child-to-router role transition.
+  When the :kconfig:option:`CONFIG_NRF_802154_CALLBACKS_DISPATCHER` Kconfig option is enabled, the radio platform retains the alternate short address in the client configuration and restores when OpenThread reacquires the radio.
+
 * Removed:
 
   * Support for nRF52 Series devices from Thread in the |NCS|.
