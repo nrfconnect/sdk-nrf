@@ -543,7 +543,7 @@ static int parse_protocol(struct downloader *dl, const char *url)
 	}
 
 	err = dl_parse_url_port(url, &http->sock.port);
-	if (err) {
+	if (err == -ENOENT) {
 		switch (http->sock.proto) {
 		case NET_IPPROTO_TLS_1_2:
 			http->sock.port = DEFAULT_PORT_TLS;
@@ -553,6 +553,9 @@ static int parse_protocol(struct downloader *dl, const char *url)
 			break;
 		}
 		LOG_DBG("Port not specified, using default: %d", http->sock.port);
+	} else if (err) {
+		LOG_ERR("Invalid port in URL");
+		return err;
 	}
 
 	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl->host_cfg.set_native_tls) {
