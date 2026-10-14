@@ -232,39 +232,13 @@ static void initialize_ctr(cracen_aead_operation_t *operation)
 	if (gcm_ctx->ctr_initialized) {
 		return;
 	}
+	/* J0 encrypts the tag, the data starts at J0 + 1 */
 	generate_gcm_j0(operation, gcm_ctx->ctr_block);
+	(void)cracen_sw_increment_counter_be(gcm_ctx->ctr_block, SX_BLKCIPHER_AES_BLK_SZ,
+					     SX_BLKCIPHER_AES_BLK_SZ -
+						     GCM_Q_LEN_FROM_NONCE(operation->nonce_length));
 	gcm_ctx->keystream_offset = SX_BLKCIPHER_AES_BLK_SZ;
 	gcm_ctx->ctr_initialized = true;
-}
-
-/* XOR data with CTR mode keystream, managing keystream generation and counter */
-static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkcipher *cipher,
-			    const uint8_t *input, uint8_t *output, size_t length,
-			    size_t counter_size)
-{
-	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
-	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	size_t counter_start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
-
-	for (size_t i = 0; i < length; i++) {
-		/* Generate new keystream block when current one is exhausted */
-		if (gcm_ctx->keystream_offset >= SX_BLKCIPHER_AES_BLK_SZ) {
-			status = cracen_sw_increment_counter_be(gcm_ctx->ctr_block,
-								SX_BLKCIPHER_AES_BLK_SZ,
-								counter_start_pos);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-			status = cracen_sw_aes_primitive(cipher, &operation->keyref,
-							 gcm_ctx->ctr_block, gcm_ctx->keystream);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-			gcm_ctx->keystream_offset = 0;
-		}
-		output[i] = input[i] ^ gcm_ctx->keystream[gcm_ctx->keystream_offset++];
-	}
-	return PSA_SUCCESS;
 }
 
 /* Finalize any partial data block with zero-padding and update ghash */
@@ -318,7 +292,6 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 	cracen_sw_gcm_context_t *gcm_ctx = &operation->sw_gcm_ctx;
 	struct sxblkcipher cipher;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
-	size_t processed = 0;
 	size_t counter_size = GCM_Q_LEN_FROM_NONCE(operation->nonce_length);
 
 	if (input_length > SX_GCM_MAX_BITLEN_BYTES - gcm_ctx->total_data_enc) {
@@ -344,42 +317,21 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 		finalize_ad_padding(operation);
 	}
 
-	/* Process data with CTR mode encryption/decryption */
-	if (operation->dir == CRACEN_ENCRYPT) {
-		/* Encrypt: apply CTR keystream. then GHASH */
-		while (processed < input_length) {
-			size_t chunk_size =
-				MIN(input_length - processed,
-				    SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes);
-
-			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
-					 chunk_size, counter_size);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			calc_gcm_ghash(operation, &output[processed], chunk_size);
-			processed += chunk_size;
-		}
-	} else {
-		/** Decryption does the reverse of encryption, so apply GHASH first,
-		 *  then CTR keystream
-		 */
-		while (processed < input_length) {
-			size_t chunk_size =
-				MIN(input_length - processed,
-				    SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes);
-
-			calc_gcm_ghash(operation, &input[processed], chunk_size);
-			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
-					 chunk_size, counter_size);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			processed += chunk_size;
-		}
+	/* GHASH covers the ciphertext, so hash it after encrypting and before decrypting */
+	if (operation->dir != CRACEN_ENCRYPT) {
+		calc_gcm_ghash(operation, input, input_length);
 	}
-	*output_length = processed;
-	gcm_ctx->total_data_enc += processed;
+	status = cracen_sw_ctr_xor(&cipher, &operation->keyref, gcm_ctx->ctr_block,
+				   SX_BLKCIPHER_AES_BLK_SZ - counter_size, gcm_ctx->keystream,
+				   &gcm_ctx->keystream_offset, input, output, input_length);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+	if (operation->dir == CRACEN_ENCRYPT) {
+		calc_gcm_ghash(operation, output, input_length);
+	}
+	*output_length = input_length;
+	gcm_ctx->total_data_enc += input_length;
 exit:
 	sx_hw_release(&cipher.dma);
 	return status;
