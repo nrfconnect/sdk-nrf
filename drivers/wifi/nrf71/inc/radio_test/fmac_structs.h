@@ -22,8 +22,8 @@
 
 #include <common/fmac_structs_common.h>
 
-#define MAX_TX_PWR_SYS_TEST 30
-#define MAX_TX_PWR_RADIO_TEST 24
+#define MAX_TX_PWR_SYS_TEST 31
+#define MAX_TX_PWR_RADIO_TEST 30
 
 #define MAX_CAPTURE_LEN 16383
 #define MIN_CAPTURE_LEN 0
