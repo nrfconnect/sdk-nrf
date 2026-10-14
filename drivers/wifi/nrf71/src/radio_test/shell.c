@@ -1056,7 +1056,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	default:
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "Invalid band %lu\n",
+			      "Invalid band %lu (use 0=2.4 GHz, 1=5 GHz, 2=6 GHz)\n",
 			      band);
 		return -ENOEXEC;
 	}
@@ -2381,8 +2381,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(init,
 		      NULL,
-		      "<val> - Band\n"
-		      "<val> - Primary channel number",
+		      "<band> - 0=2.4 GHz, 1=5 GHz, 2=6 GHz\n"
+		      "<channel> - Primary channel number",
 		      nrf_wifi_radio_test_init,
 		      3,
 		      0),
