@@ -942,6 +942,7 @@ Wi-Fi samples
     * The MCUboot boot partition size from 48 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
     * The :ref:`Secure Storage subsystem <secure_storage>` (:kconfig:option:`CONFIG_SECURE_STORAGE`) to now explicitly enabled on the ``nrf7120dk/nrf7120/cpuapp`` board target, which does not use TF-M.
       It is required by the Protected Storage backend of the TLS Credentials subsystem, which persists TLS credentials across reboots.
+    * The settings storage on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets from :ref:`NVS <zephyr:nvs_api>` (:kconfig:option:`CONFIG_NVS`) to :ref:`ZMS <zephyr:zms_api>` (:kconfig:option:`CONFIG_ZMS`).
     * Temperature reporting to use the on-die temperature sensor instead of simulated values.
       The ``nrf7002dk/nrf5340/cpuapp/ns`` board target still reports simulated values, as no temperature sensor is available to the nRF5340 application core.
 
