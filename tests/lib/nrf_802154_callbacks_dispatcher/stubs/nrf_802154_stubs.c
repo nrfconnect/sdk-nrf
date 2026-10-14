@@ -91,6 +91,16 @@ void nrf_802154_short_address_set(const uint8_t *p_short_address)
 	nrf_802154_stub_stats.short_address_set_count++;
 }
 
+void nrf_802154_alternate_short_address_set(const uint8_t *p_short_address)
+{
+	nrf_802154_stub_stats.alt_short_address_set_count++;
+	nrf_802154_stub_stats.alt_short_address_present = (p_short_address != NULL);
+	if (p_short_address != NULL) {
+		memcpy(nrf_802154_stub_stats.last_alt_short_address, p_short_address,
+		       SHORT_ADDRESS_SIZE);
+	}
+}
+
 void nrf_802154_extended_address_set(const uint8_t *p_extended_address)
 {
 	memcpy(nrf_802154_stub_stats.last_extended_address, p_extended_address,
