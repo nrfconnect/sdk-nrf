@@ -928,6 +928,7 @@ Wi-Fi samples
 
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
     * Unused button functionality that only printed a log message.
+    * The temperature alert and the ``CONFIG_TEMP_ALERT_LIMIT`` Kconfig option, which only printed a log message.
 
 * Removed:
 

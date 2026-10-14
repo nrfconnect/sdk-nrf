@@ -109,13 +109,6 @@ config TEMP_TRACKING
 	help
 	  Sets whether to take temperature measurements.
 
-config TEMP_ALERT_LIMIT
-	int "Temperature limit to print alert"
-	default 24
-	help
-	  Sets the temperature in degrees C over which a temperature alert will
-	  be printed through serial terminal.
-
 choice
 	prompt "LED indication"
 	default LED_INDICATION_GPIO if $(dt_compat_enabled,gpio-leds)
