@@ -8,7 +8,6 @@
 #include <zephyr/logging/log.h>
 #include <zephyr/zbus/zbus.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 
 #include "message_channel.h"
 
@@ -21,13 +20,8 @@ LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
 #define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
-
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
 	int err;
 	enum network_status status;
@@ -53,9 +47,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("NET_EVENT_CONN_IF_FATAL_ERROR");
@@ -64,17 +57,14 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
+/* Registered statically to not miss events raised before the module starts */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
+
 static void network_task(void)
 {
 	int err;
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
 
 	/* Connecting to the configured connectivity layer.
 	 * Wi-Fi or LTE depending on the board that the sample was built for.
@@ -93,16 +83,6 @@ static void network_task(void)
 		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 		SEND_FATAL_ERROR();
 		return;
-	}
-
-	/* Resend connection status if the sample is built for Native Sim.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
 	}
 }
 
