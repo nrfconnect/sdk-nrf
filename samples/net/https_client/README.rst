@@ -29,6 +29,7 @@ On nRF91 Series devices, modem certificate provisioning must be done before conn
 
 The sample then establishes a connection to the network, sets up the necessary TLS socket options, and connects to an HTTPS server.
 It sends an HTTP HEAD request and prints the response code in the terminal.
+If the request fails, the sample retries after 10 seconds, or earlier if the network readiness changes.
 
 Obtaining a certificate
 =======================
@@ -126,20 +127,19 @@ Sample output
          Bringing network interface up
          Provisioning certificate
          Connecting to the network
+         Waiting for network...
          <add your wifi configuration using shell here if not pre-provisioned>
          <inf> wifi_mgmt_ext: Connection requested
-         Network connectivity established and IP address assigned
+         Network ready
          Looking up example.com
          Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         Connecting to example.com:443 (93.184.215.14)
          Sent 61 bytes
          Received 377 bytes
 
          >        HTTP/1.1 200 OK
 
          Finished, closing socket.
-         Network connectivity lost
-         Disconnected from the network
 
    .. group-tab:: Cellular
 
@@ -153,15 +153,16 @@ Sample output
          Certificate mismatch
          Provisioning certificate to the modem
          Connecting to the network
+         Waiting for network...
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
+         Network ready
          Looking up example.com
          Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         Connecting to example.com:443 (93.184.215.14)
          Sent 61 bytes
          Received 377 bytes
 
@@ -171,8 +172,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the network
 
       Output for the default configuration, where the carrier does support IPv6:
 
@@ -183,16 +182,17 @@ Sample output
          Provisioning certificate
          Certificate match
          Connecting to the network
+         Waiting for network...
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
+         Network ready
          Looking up example.com
          +CGEV: IPV6 0
          Resolved 2606:2800:21f:cb07:6820:80da:af6b:8b2c (AF_INET6)
-         Connecting to example.com:443
+         Connecting to example.com:443 (2606:2800:21f:cb07:6820:80da:af6b:8b2c)
          Sent 61 bytes
          Received 377 bytes
 
@@ -202,8 +202,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the net
 
       Output where you override the default packet data network (PDN) configuration to IPv4 only, using the :ncs-file:`/samples/net/https_client/overlay-pdn-nrf91-ipv4.conf` configuration file:
 
@@ -214,15 +212,16 @@ Sample output
          Provisioning certificate
          Certificate match
          Connecting to the network
+         Waiting for network...
          +CGEV: EXCE STATUS 0
          +CEREG: 2,"8169","0149FB00",7
          +CSCON: 1
          +CGEV: ME PDN ACT 0
          +CEREG: 1,"8169","0149FB00",7,,,"11100000","11100000"
-         Network connectivity established and IP address assigned
+         Network ready
          Looking up example.com
          Resolved 93.184.215.14 (AF_INET)
-         Connecting to example.com:443
+         Connecting to example.com:443 (93.184.215.14)
          Sent 61 bytes
          Received 377 bytes
 
@@ -232,8 +231,6 @@ Sample output
          +CEREG: 0
          +CGEV: ME DETACH
          +CSCON: 0
-         Network connectivity lost
-         Disconnected from the network
 
 Troubleshooting
 ===============
