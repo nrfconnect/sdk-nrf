@@ -46,6 +46,7 @@ cmock_handle(${ZEPHYR_BASE}/include/zephyr/net/net_if.h zephyr/net
 # Add Unit Under Test source files
 target_sources(app PRIVATE
         ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/mqtt_helper/mqtt_helper.c
+        ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/connect_by_name/connect_by_name.c
 )
 
 # Add test source file
@@ -71,4 +72,6 @@ target_compile_options(app PRIVATE
   -DCONFIG_MQTT_HELPER_LAST_WILL=y
   -DCONFIG_MQTT_HELPER_LAST_WILL_MESSAGE="lastwillmessage"
   -DCONFIG_MQTT_HELPER_LAST_WILL_TOPIC="lastwilltopic"
+  -DCONFIG_CONNECT_BY_NAME_MAX_ADDRS=4
+  -DCONFIG_CONNECT_BY_NAME_LOG_LEVEL=4
 )

@@ -6,6 +6,7 @@
 menuconfig MQTT_HELPER
 	bool "MQTT helper library"
 	select MQTT_LIB
+	select CONNECT_BY_NAME
 	help
 	  Convenience library that simplifies Zephyr MQTT API and socket handling.
 

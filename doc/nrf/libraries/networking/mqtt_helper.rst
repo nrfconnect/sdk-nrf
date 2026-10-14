@@ -9,6 +9,9 @@ MQTT helper
 
 This library simplifies Zephyr MQTT API and socket handling.
 
+The library connects to the broker using the :ref:`lib_connect_by_name` library, trying the resolved addresses in order.
+When readiness tracking is enabled and the address family of the connection goes down, the library aborts the connection.
+
 Configuration
 *************
 
