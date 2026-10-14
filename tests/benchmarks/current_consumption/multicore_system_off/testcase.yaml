@@ -12,7 +12,6 @@ common:
     - nrf7120dk/nrf7120/cpuapp
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
-    - nrf9251dk/nrf9251/cpuapp
   integration_platforms:
     - nrf54lm20dk/nrf54lm20b/cpuapp
   harness: pytest
