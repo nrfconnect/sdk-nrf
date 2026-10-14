@@ -1106,6 +1106,10 @@ Modem libraries
 
   * Fixed RTT channel allocation after warm boot.
 
+* :ref:`lte_lc_readme` library:
+
+  * Added the :kconfig:option:`CONFIG_LTE_LC_UICC_STATE_MODULE` Kconfig option to enable UICC (SIM card) state notifications, reported in the :c:enumerator:`LTE_LC_EVT_UICC_STATE` event.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

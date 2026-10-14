@@ -189,6 +189,9 @@ PDN (Packet Data Network):
   * :c:func:`lte_lc_pdn_esm_strerror`
   * :kconfig:option:`CONFIG_LTE_LC_PDN_DEFAULTS_OVERRIDE`
 
+UICC state:
+  Use the :kconfig:option:`CONFIG_LTE_LC_UICC_STATE_MODULE` Kconfig option to enable UICC (SIM card) state notifications, reported in the :c:enumerator:`LTE_LC_EVT_UICC_STATE` event.
+
 For more information on the callback events received in :c:type:`lte_lc_evt_handler_t` and data associated with each event, see the documentation on :c:struct:`lte_lc_evt`.
 For more information on the functions and data associated with each, refer to the API documentation.
 
