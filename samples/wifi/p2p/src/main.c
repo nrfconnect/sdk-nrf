@@ -22,5 +22,9 @@ int main(void)
 		p2p_go_run();
 	}
 
+	if (IS_ENABLED(CONFIG_SAMPLE_P2P_GO_PERSISTENT_MODE)) {
+		p2p_go_persistent_run();
+	}
+
 	return 0;
 }

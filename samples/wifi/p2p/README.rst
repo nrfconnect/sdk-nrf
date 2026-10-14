@@ -19,6 +19,7 @@ The sample demonstrates Wi-Fi P2P functionality using the following operating mo
 
 * Client (CLI) mode - The device discovers a peer and joins or negotiates a P2P connection.
 * Group Owner (GO) mode - The device forms and manages an autonomous P2P group.
+* Persistent Group Owner mode - The device forms an autonomous persistent group and verifies, in code, that the stored group is reused (re-invoked by ID with the same credentials) across group-add cycles.
 
 The Group Owner (GO) mode can optionally run a TCP echo server, and the client can run a matching TCP echo client, to exercise the data path over the P2P link.
 
@@ -43,6 +44,7 @@ The sample provides configuration files that select a mode together with its com
 
 * :file:`echo-cli.conf` - Client mode with the TCP echo client.
 * :file:`echo-go.conf` - Autonomous Group Owner mode with the TCP echo server.
+* :file:`go-persistent.conf` - Persistent Group Owner mode with persistence verification.
 
 In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to the Group Owner's MAC address to connect to it.
 
@@ -65,6 +67,9 @@ The following examples build the application for the nRF7002 DK:
 
    # Client with the echo client (set CONFIG_SAMPLE_P2P_PEER_ADDRESS to the GO MAC)
    west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=echo-cli.conf
+
+   # Persistent Group Owner with persistence verification
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=go-persistent.conf
 
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 
@@ -159,3 +164,21 @@ Testing
         [00:00:29.505,446] <inf> wpa_supp: wlan0: CTRL-EVENT-DISCONNECTED bssid=f4:ce:36:00:d2:4c reason=3 locally_generated=1
         [00:00:29.505,648] <inf> p2p_go: P2P group remove initiated: wlan0
         [00:00:29.505,654] <inf> p2p_go: P2P group removed successfully
+
+   * Persistent GO mode:
+
+     .. code-block:: console
+
+        *** Booting nRF Connect SDK v3.2.99-aa13127d2ec2 ***
+        *** Using Zephyr OS v4.3.99-1d6a9d7577c0 ***
+        [00:00:01.359,344] <inf> p2p_go_persistent: Persistence cycle 1/3 (create)
+        [00:00:01.360,000] <inf> p2p_go_persistent: P2P group add initiated (new persistent group)
+        [00:00:03.360,000] <inf> p2p_go_persistent: Stored persistent network: id=1 ssid="DIRECT-Gb"
+        [00:00:03.400,000] <inf> p2p_go_persistent: P2P group remove initiated: wlan0
+        [00:00:05.400,000] <inf> p2p_go_persistent: Persistence cycle 2/3 (re-invoke by id)
+        [00:00:05.401,000] <inf> p2p_go_persistent: P2P group add initiated (re-invoke persistent id=1)
+        [00:00:07.401,000] <inf> p2p_go_persistent: PERSISTENCE VERIFIED: re-invoked id=1 reused ssid="DIRECT-Gb"
+        [00:00:07.440,000] <inf> p2p_go_persistent: P2P group remove initiated: wlan0
+        [00:00:09.440,000] <inf> p2p_go_persistent: Persistence cycle 3/3 (re-invoke by id)
+        [00:00:11.440,000] <inf> p2p_go_persistent: PERSISTENCE VERIFIED: re-invoked id=1 reused ssid="DIRECT-Gb"
+        [00:00:11.480,000] <inf> p2p_go_persistent: Persistence verification done: 2 verified, 0 mismatched

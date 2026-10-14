@@ -879,6 +879,7 @@ Wi-Fi samples
   * Added:
 
     * Support for a TCP echo server in Group Owner mode and a matching TCP echo client in Client mode to exercise the data path over the P2P link.
+    * Support for an autonomous persistent Group Owner mode to verify that the stored persistent group is reused across group-add cycles.
 
 * :ref:`wifi_nrf_cloud` sample:
 

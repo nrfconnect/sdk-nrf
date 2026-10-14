@@ -21,6 +21,13 @@ config SAMPLE_P2P_GO_MODE
 	  This configuration option enables the device to act as a P2P Group Owner.
 	  AP mode is enabled per board in the sample's boards/ configuration files.
 
+config SAMPLE_P2P_GO_PERSISTENT_MODE
+	bool "GO mode (Persistent: autonomous persistent group)"
+	help
+	  This configuration option enables an autonomous persistent Group Owner
+	  (P2P_GROUP_ADD with persistent_set) that verifies in code, across cycles,
+	  that the stored group is reused. GO-only; persistence is RAM-only here.
+
 endchoice
 
 if SAMPLE_P2P_CLI_MODE
@@ -189,7 +196,7 @@ config SAMPLE_P2P_CONNECTION_METHOD_PIN_VALUE
 
 endif
 
-if SAMPLE_P2P_GO_MODE
+if SAMPLE_P2P_GO_MODE || SAMPLE_P2P_GO_PERSISTENT_MODE
 
 config SAMPLE_P2P_DHCPV4_SERVER
 	bool "DHCPv4 server"
@@ -237,9 +244,11 @@ config SAMPLE_P2P_PEER_DISCONN_TIMEOUT_S
 
 config SAMPLE_P2P_ECHO_SERVER_MODE
 	bool "Echo Server mode"
+	depends on SAMPLE_P2P_GO_MODE
 	help
 	  This configuration option helps to start a TCP echo server in GO mode.
 	  Listen on a fixed port and echo back whatever data is received.
+	  Only available in (non-persistent) GO mode, which runs the echo server.
 
 if SAMPLE_P2P_ECHO_SERVER_MODE
 
@@ -261,6 +270,19 @@ config SAMPLE_P2P_ECHO_POLL_INTERVAL_MS
 	  be delayed after the peer disconnects.
 
 endif
+
+endif
+
+if SAMPLE_P2P_GO_PERSISTENT_MODE
+
+config SAMPLE_P2P_GO_PERSISTENT_CYCLES
+	int "Number of persistence-verification cycles to run in this boot"
+	range 2 100
+	default 3
+	help
+	  Number of verification cycles. Cycle 1 creates the persistent group and
+	  records its id/SSID; later cycles re-invoke it by id and check the SSID
+	  is unchanged. At least 2 are needed (create + verify).
 
 endif
 
