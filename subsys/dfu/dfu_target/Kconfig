@@ -66,17 +66,6 @@ config DFU_TARGET_STREAM
 	depends on STREAM_FLASH
 	select STREAM_FLASH_ERASE if FLASH_HAS_EXPLICIT_ERASE
 
-config DFU_TARGET_MCUBOOT_SAVE_PROGRESS
-	bool "Store write progress to flash (MCUboot) [DEPRECATED]"
-	select DFU_TARGET_STREAM_SAVE_PROGRESS
-	help
-	  DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use
-	  DFU_TARGET_STREAM_SAVE_PROGRESS instead.
-
-if DFU_TARGET_MCUBOOT_SAVE_PROGRESS
-	comment "DFU_TARGET_MCUBOOT_SAVE_PROGRESS is deprecated, please use DFU_TARGET_STREAM_SAVE_PROGRESS instead"
-endif
-
 config DFU_TARGET_STREAM_SAVE_PROGRESS
 	bool "Store write progress to flash stream"
 	depends on DFU_TARGET_STREAM || ZTEST # ZTEST for testing purposes
