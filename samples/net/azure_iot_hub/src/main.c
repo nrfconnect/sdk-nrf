@@ -9,7 +9,6 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <net/azure_iot_hub.h>
@@ -39,10 +38,6 @@ LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL)
 #define EVENT_INTERVAL		20
 #define RECV_BUF_SIZE		1024
 #define APP_WORK_Q_STACK_SIZE	KB(8)
-
-/* Zephyr net management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
-static struct net_mgmt_event_callback conn_cb;
 
 static struct method_data {
 	struct k_work work;
@@ -402,9 +397,8 @@ static void on_net_event_l4_disconnected(void)
 
 
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
+static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
+			     size_t info_length, void *user_data)
 {
 	switch (event) {
 	case NET_EVENT_L4_CONNECTED:
@@ -420,9 +414,8 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	}
 }
 
-static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
-				       uint64_t event,
-				       struct net_if *iface)
+static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
+				       size_t info_length, void *user_data)
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("Fatal error received from the connectivity layer, rebooting");
@@ -430,6 +423,11 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 		CODE_UNREACHABLE;
 	}
 }
+
+/* Registered statically to not miss events raised before main() */
+NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
+				NULL);
 
 static void work_init(void)
 {
@@ -565,14 +563,6 @@ int main(void)
 
 	LOG_INF("Azure IoT Hub sample started");
 
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
-	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
-	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
-	net_mgmt_add_event_callback(&conn_cb);
-
 	LOG_INF("Bringing network interface up and connecting to the network");
 
 	/* Connecting to the configured connectivity layer.
@@ -611,16 +601,6 @@ int main(void)
 
 	work_init();
 	cJSON_Init();
-
-	/* Resend connection status if the sample is built for NATIVE SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
-	}
 
 	k_sem_take(&network_connected_sem, K_FOREVER);
 
