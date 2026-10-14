@@ -30,9 +30,12 @@ The certificate file name and security tag can be configured using the :option:`
 
 The sample then performs the following actions:
 
-1. Establishes a connection to the network
-#. Optionally sets up the secure socket options
+1. Requests a connection to the network.
+#. Optionally sets up the secure socket options.
 #. Uses the :ref:`lib_downloader` library to download a file.
+   The library tries the IPv6 and IPv4 addresses of the server that are reachable, resolved with the :ref:`lib_ready_resolve` library.
+   Until the network is ready, the sample retries periodically.
+   If the download fails, it retries with an increasing backoff, up to eight attempts.
 
 Selecting the HTTP(S) or CoAP(S) transport
 ===========================================
@@ -153,10 +156,8 @@ The following output is logged on the terminal when the sample downloads the def
 
    Download client sample started
    Connecting to network
-   IPv4 connectivity established
-   Network connected
-   Starting download over IPv4
    Downloading https://nrfconnectsdk.s3.eu-central-1.amazonaws.com/sample-img-100kb.png
+   <inf> ready_resolve: Trying 3.5.121.91, port 443
    Setting up TLS credentials, sec tag count 1
 
    [ 100% ] (102923/102923 bytes)
@@ -165,7 +166,6 @@ The following output is logged on the terminal when the sample downloads the def
    SHA256: 344577d739dc0e9f9498c13be2fbc7fb947abd291e9e57db9e9ca4a89ccd5f63
    Done
    Download finished, bringing network interfaces down
-   IPv4 connectivity lost
 
 Troubleshooting
 ===============

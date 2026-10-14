@@ -8,9 +8,7 @@
 #include <stdlib.h>
 #include <zephyr/kernel.h>
 #include <zephyr/net/socket.h>
-#include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/downloader.h>
 
 #include <zephyr/logging/log.h>
@@ -30,9 +28,6 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #define SEC_TAG 0
 #endif
 
-/* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED |	\
-		       NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 #define PROGRESS_WIDTH 50
@@ -40,21 +35,13 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #define RETRY_BACKOFF_INITIAL_MS 1000
 #define RETRY_BACKOFF_MAX_MS 30000
 #define MAX_ATTEMPTS 8
+#define NETWORK_POLL_MS 5000
 
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
 static struct net_mgmt_event_callback conn_cb;
-static struct net_if *net_if;
 
-static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(download_result_sem, 0, 1);
-static ATOMIC_DEFINE(network_state, 2);
 static bool download_succeeded;
-
-enum network_state_flag {
-	NETWORK_STATE_IPV4_READY,
-	NETWORK_STATE_IPV6_READY,
-};
+static int download_error;
 
 static int sec_tag_list[] = { SEC_TAG };
 static const char cert[] = {
@@ -204,51 +191,6 @@ static int cert_provision(void)
 	return 0;
 }
 
-static void on_net_event_l4_connected(void)
-{
-	k_sem_give(&network_connected_sem);
-}
-
-static bool ipv4_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV4_READY);
-}
-
-static bool ipv6_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
-}
-
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
-{
-	switch (event) {
-	case NET_EVENT_L4_IPV4_CONNECTED:
-		net_if = iface;
-		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
-		LOG_INF("IPv4 connectivity established");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_IPV4_DISCONNECTED:
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
-		LOG_INF("IPv4 connectivity lost");
-		break;
-	case NET_EVENT_L4_IPV6_CONNECTED:
-		net_if = iface;
-		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
-		LOG_INF("IPv6 connectivity established");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_IPV6_DISCONNECTED:
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
-		LOG_INF("IPv6 connectivity lost");
-		break;
-	default:
-		break;
-	}
-}
-
 static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 				       uint64_t event,
 				       struct net_if *iface)
@@ -277,27 +219,6 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 
 		return;
 	}
-}
-
-/* Pick which IP family to use for the download. */
-static int select_family(void)
-{
-	const bool v4 = ipv4_ready();
-	const bool v6 = ipv6_ready();
-
-	if (v6 && v4) {
-		return AF_UNSPEC;
-	}
-
-	if (v6) {
-		return AF_INET6;
-	}
-
-	if (v4) {
-		return AF_INET;
-	}
-
-	return -1;
 }
 
 static int callback(const struct downloader_evt *event)
@@ -365,7 +286,12 @@ static int callback(const struct downloader_evt *event)
 		if (event->error == -ECONNRESET) {
 			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
 		} else {
-			LOG_ERR("Error %d during download", event->error);
+			download_error = event->error;
+			if (event->error == -ENETDOWN) {
+				LOG_INF("Network not ready, waiting");
+			} else {
+				LOG_ERR("Error %d during download", event->error);
+			}
 			/* Stop download */
 			return -1;
 		}
@@ -390,10 +316,6 @@ int main(void)
 	int err;
 
 	LOG_INF("Download client sample started");
-
-	/* Setup handler for Zephyr NET Connection Manager events. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
 
 	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
 	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
@@ -420,46 +342,37 @@ int main(void)
 		return err;
 	}
 
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that the per-family connected events fire before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
-	}
-
-	k_sem_take(&network_connected_sem, K_FOREVER);
-
-	LOG_INF("Network connected");
-
 	err = downloader_init(&downloader, &dl_cfg);
 	if (err) {
 		LOG_ERR("Failed to initialize the client, err %d", err);
 		return 0;
 	}
 
-	/* Retry the download a few times with an increasing backoff until it completes
-	 * successfully. Sometimes the device will get an IP family first then attempt
-	 * download on this family and we may need a retry on the other family.
+	/* The downloader picks the IP family itself, but does not wait for the network.
+	 * Poll until the network is up, and retry failed downloads with an increasing backoff.
 	 */
 	int32_t retry_backoff_ms = 0;
 	int attempt = 0;
 
 	do {
-		attempt++;
-		if (attempt > MAX_ATTEMPTS) {
-			break;
-		}
-
-		/* Back off before retries. */
-		if (retry_backoff_ms > 0) {
-			k_sleep(K_MSEC(retry_backoff_ms));
-			retry_backoff_ms = MIN(retry_backoff_ms * 2, RETRY_BACKOFF_MAX_MS);
+		if (download_error == -ENETDOWN) {
+			/* Waiting for the network does not count as an attempt */
+			k_sleep(K_MSEC(NETWORK_POLL_MS));
 		} else {
-			retry_backoff_ms = RETRY_BACKOFF_INITIAL_MS;
+			attempt++;
+			if (attempt > MAX_ATTEMPTS) {
+				break;
+			}
+
+			/* Back off before retries. */
+			if (retry_backoff_ms > 0) {
+				k_sleep(K_MSEC(retry_backoff_ms));
+				retry_backoff_ms = MIN(retry_backoff_ms * 2, RETRY_BACKOFF_MAX_MS);
+			} else {
+				retry_backoff_ms = RETRY_BACKOFF_INITIAL_MS;
+			}
 		}
+		download_error = 0;
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		psa_status_t status;
@@ -473,19 +386,6 @@ int main(void)
 			break;
 		}
 #endif
-
-		const int family = select_family();
-
-		if (family < 0) {
-			LOG_ERR("Failed to select a valid address family");
-			continue;
-		}
-
-		host_dl_cfg.family = family;
-		LOG_INF("Starting download over %s",
-			host_dl_cfg.family == AF_INET6 ? "IPv6" :
-			host_dl_cfg.family == AF_INET ? "IPv4" :
-			"IPv6/IPv4");
 
 		ref_time = k_uptime_get();
 
@@ -505,7 +405,7 @@ int main(void)
 	}
 
 	LOG_INF("Download finished, bringing network interfaces down");
-	(void)conn_mgr_if_disconnect(net_if);
+	(void)conn_mgr_all_if_disconnect(true);
 	(void)conn_mgr_all_if_down(true);
 
 	return 0;
