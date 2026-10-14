@@ -406,3 +406,26 @@
 
       * If ``bypass_reg_domain`` is ``0``, then TX power of the channel will be configured to the minimum value of the user configured TX power value and maximum power supported in the configured regulatory domain.
       * If ``bypass_reg_domain`` is ``1``, then user configured TX power value will be set overriding current configured regulatory domain maximum TX power for the channel.
+
+|test_combo_sample|
+
+1. Test the Bluetooth LE radio.
+
+   The default single-domain build includes Bluetooth LE radio test shell commands provided by the :ref:`Peripheral radio test sample <radio_test>`.
+   For the complete list of commands, see :ref:`User interface for short-range Radio test <radio_test_ui>`.
+
+   .. note::
+
+      The Wi-Fi and Bluetooth LE radios share on-chip RF resources.
+      Disable Wi-Fi packet reception before you run Bluetooth LE radio test commands.
+
+#. To release the RF front end for Bluetooth LE testing, use the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test rx 0
+
+   .. note::
+
+      To build a Wi-Fi-only image without Bluetooth LE radio test shell commands, add the :file:`wifi_only.conf` overlay when building the sample.
+      See :ref:`wifi_radio_sd_nrf71_building_and_running` for build instructions.
