@@ -184,6 +184,30 @@
 "Location: https://server.com\r\n" \
 "\r\n\r\n"
 
+/* A Content-Length that does not fit in a size_t. */
+#define HTTP_HDR_HUGE_LENGTH "HTTP/1.1 200 OK\r\n" \
+"Content-Length: 99999999999999999999\r\n" \
+"Connection: keep-alive\r\n" \
+"\r\n"
+
+/* A header that only starts like Content-Length. */
+#define HTTP_HDR_LENGTH_LOOKALIKE "HTTP/1.1 200 OK\r\n" \
+"Content-Length-X: 5\r\n" \
+"Connection: keep-alive\r\n" \
+"\r\n"
+
+/* A Content-Length with text after the number. */
+#define HTTP_HDR_LENGTH_TRAILING_JUNK "HTTP/1.1 200 OK\r\n" \
+"Content-Length: 5x\r\n" \
+"Connection: keep-alive\r\n" \
+"\r\n"
+
+/* A Content-Range with text after the total size, in a ranged response. */
+#define HTTP_HDR_RANGE_TRAILING_JUNK "HTTP/1.1 206 Partial Content\r\n" \
+"Content-Range: bytes 0-4/5x\r\n" \
+"Connection: keep-alive\r\n" \
+"\r\n"
+
 #define PAYLOAD "This is the payload!"
 
 #define FD 0
@@ -1822,6 +1846,71 @@ void test_downloader_get_http_connect_enetunreach(void)
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+
+static const char *bad_length_header;
+
+static ssize_t z_impl_zsock_recvfrom_http_bad_length(
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
+{
+	memcpy(buf, bad_length_header, strlen(bad_length_header));
+	return strlen(bad_length_header);
+}
+
+/* A response without a usable Content-Length has no known file size and is rejected. */
+static void check_http_file_size_rejected(const char *header,
+					  const struct downloader_host_cfg *host_cfg)
+{
+	int err;
+	struct downloader_evt evt;
+
+	bad_length_header = header;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_bad_length;
+
+	err = downloader_get(&dl, host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-EBADMSG, evt.error);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_http_content_length_overflow(void)
+{
+	check_http_file_size_rejected(HTTP_HDR_HUGE_LENGTH, &dl_host_cfg);
+}
+
+void test_downloader_get_http_content_length_lookalike(void)
+{
+	check_http_file_size_rejected(HTTP_HDR_LENGTH_LOOKALIKE, &dl_host_cfg);
+}
+
+void test_downloader_get_http_content_length_trailing_junk(void)
+{
+	check_http_file_size_rejected(HTTP_HDR_LENGTH_TRAILING_JUNK, &dl_host_cfg);
+}
+
+void test_downloader_get_http_content_range_trailing_junk(void)
+{
+	struct downloader_host_cfg host_cfg = dl_host_cfg;
+
+	host_cfg.range_override = 32;
+
+	check_http_file_size_rejected(HTTP_HDR_RANGE_TRAILING_JUNK, &host_cfg);
 }
 
 void test_downloader_get_http_getaddr_failed(void)
