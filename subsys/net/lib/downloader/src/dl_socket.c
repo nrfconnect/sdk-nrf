@@ -11,6 +11,8 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include <zephyr/net/conn_mgr_monitor.h>
+
 #include "dl_socket.h"
 
 #include <zephyr/logging/log.h>
@@ -179,6 +181,16 @@ static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
 	}
 #endif
 
+	net_sa_family_t ready = conn_mgr_get_ready_addr_family();
+
+	/* Skip the family that is not ready, if only one is.
+	 * Readiness does not cover other PDNs.
+	 */
+	if (pdn_id == 0 && ready != NET_AF_UNSPEC && ready != family) {
+		LOG_DBG("Skipping %s, not ready", str_family(family));
+		return -EHOSTUNREACH;
+	}
+
 	LOG_DBG("host lookup %s, pdn id %d, family %d", hostname, pdn_id, family);
 
 	if (pdn_id) {
@@ -323,6 +335,10 @@ int dl_socket_configure_and_connect(int *fd, int proto, int type, uint16_t port,
 		goto connect;
 	}
 
+	/* AF_UNSPEC: query IPv6 first, then IPv4. This is necessary because some socket
+	 * backends do not return all available IP addresses, so if we just use AF_UNSPEC,
+	 * we might get only an IPv6 address, even if both IPv4 and IPv6 are available.
+	 */
 	fam = dl_host_cfg->family ? dl_host_cfg->family : NET_AF_INET6;
 
 	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, fam);

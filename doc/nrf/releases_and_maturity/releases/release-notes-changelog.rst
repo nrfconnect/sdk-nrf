@@ -1467,6 +1467,10 @@ Libraries for networking
   * Fixed an issue where the library could stop after one resolved broker address.
     The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
 
+* :ref:`lib_downloader` library:
+
+  * Updated the library to skip the host lookup for an address family that is not ready.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
