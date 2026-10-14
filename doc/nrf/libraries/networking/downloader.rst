@@ -21,6 +21,9 @@ Protocols
 The library supports HTTP, HTTPS (TLS 1.2), CoAP, and CoAPS (DTLS 1.2) over IPv4 and IPv6.
 If other protocols are required, they can be added by the application.
 See :file:`downloader_transport.h` for details.
+
+The library resolves the host with the :ref:`lib_ready_resolve` library and tries the resolved addresses in order.
+If the network is not ready or no address can be connected, the library sends a :c:enumerator:`DOWNLOADER_EVT_ERROR` event, and the application decides when to retry.
 The protocol used for the download is specified in the beginning of the ``URI`` or ``host``.
 Use ``http://`` for HTTP, ``https://`` for HTTPS, ``coap://`` for CoAP, and ``coaps://`` for CoAPS.
 If no protocol is specified, the downloader defaults to HTTP or HTTPS, depending on the server security configuration.

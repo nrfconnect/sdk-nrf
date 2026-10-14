@@ -47,7 +47,7 @@ enum downloader_evt_id {
 	 * - -ECONNREFUSED: Socket error, connection refused by server, or (CoAP)
 	 *   the server returned an error response (e.g. 4.01 Unauthorized).
 	 * - -ECONNABORTED: (CoAP) reconnect attempts exhausted, download aborted.
-	 * - -ENETDOWN: Socket error, network down.
+	 * - -ENETDOWN: Socket error, network down, or network not ready when connecting.
 	 * - -ETIMEDOUT: Socket error, connection timed out.
 	 * - -EHOSTDOWN: Host went down during download.
 	 * - -EBADMSG: HTTP response header not as expected.
@@ -57,6 +57,7 @@ enum downloader_evt_id {
 	 * - -EINVAL: Invalid configuration.
 	 * - -EAFNOSUPPORT: Unsupported address family (IPv4/IPv6).
 	 * - -EHOSTUNREACH: Failed to resolve the target address.
+	 * - -EAGAIN: Temporary DNS failure when resolving the target address.
 	 * - -EMSGSIZE: TLS packet is larger than the nRF91 Modem can handle.
 	 * - -EMLINK: Maximum number of redirects reached.
 	 *
@@ -186,7 +187,7 @@ struct downloader_host_cfg {
 	bool cid;
 	/**
 	 * Address family to be used for the download, @c AF_INET6 or @c AF_INET.
-	 * Set to @c AF_UNSPEC (0) to fallback to @c AF_INET if @c AF_INET6 does not work.
+	 * Set to @c AF_UNSPEC (0) to try all resolved addresses, in resolver order.
 	 */
 	int family;
 	/**
