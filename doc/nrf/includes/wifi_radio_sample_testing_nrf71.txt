@@ -205,7 +205,6 @@
 
      * Band: 5 GHz
      * Channel: 144
-     * TX power: 10 dBm
      * Tone frequency: 2 MHz
 
      Execute the following sequence of commands:
@@ -213,7 +212,6 @@
      .. code-block:: console
 
         wifi_radio_test init 1 144
-        wifi_radio_test tx_power 10
         wifi_radio_test tx_tone_freq 2
         wifi_radio_test tx_tone 1
 
@@ -238,6 +236,12 @@
 
         wifi_radio_test init 1 64
         wifi_radio_test compute_optimal_xo_val
+
+     If the tone is detected and tuning succeeds, the sample shows an output similar to the following:
+
+     .. code-block:: console
+
+        <inf> wifi_nrf: XO tune successful, optimal XO offset = 0
 
      If the tone is not detected, the sample shows the following output:
 
@@ -333,6 +337,8 @@
      * Channel: 144
      * Capture length: 64
      * Capture timeout: 10 seconds
+     * OFDM energy detect threshold: -85 dBm
+     * DSSS energy detect threshold: -85 dBm
 
      Execute the following sequence of commands:
 
@@ -341,6 +347,7 @@
         wifi_radio_test init 1 144
         wifi_radio_test rx_capture_length 64
         wifi_radio_test rx_capture_timeout 10
+        wifi_radio_test rx_capture_ed_thresh -85 -85
         wifi_radio_test rx_cap 2
 
      If no packets are detected within the timeout period, the sample shows the following output:

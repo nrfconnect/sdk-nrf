@@ -270,10 +270,10 @@ Wi-Fi radio test subcommands
      - Configuration
      - Configure the DC offset applied to the transmit tone.
    * - rx_capture_ed_thresh
-     - <ofdm> <dsss> - ED thresholds for dynamic packet capture (-100 to 0)
+     - | <ofdm> <dsss> - ED thresholds in dBm (-100 to 0)
      - N/A
      - Configuration
-     - Configure the energy detection thresholds used for dynamic packet capture.
+     - OFDM and DSSS energy detect thresholds for dynamic packet capture.
    * - rx_bss_check
      - | <val> - BSS check
        | 0 = Disable
