@@ -54,17 +54,19 @@ char *state_to_str(int state)
 }
 #endif
 
-static void state_set(struct downloader *dl, unsigned int before_state, unsigned int new_state)
+static bool state_set(struct downloader *dl, unsigned int before_state, unsigned int new_state)
 {
 	k_mutex_lock(&dl->mutex, K_FOREVER);
 	if ((dl->state != before_state) && (before_state != STATE_ALLOW_ANY)) {
 		k_mutex_unlock(&dl->mutex);
-		return;
+		return false;
 	}
 
 	dl->state = new_state;
 	k_mutex_unlock(&dl->mutex);
 	LOG_DBG("state = %d (%s)", new_state, state_to_str(new_state));
+
+	return true;
 }
 
 static bool is_state(struct downloader *dl, enum downloader_state state)
@@ -290,6 +292,27 @@ void download_thread(void *cli, void *a, void *b)
 			if (rc) {
 				if (rc == -ECONNRESET) {
 					goto reconnect;
+				}
+
+				if (rc == -E2BIG) {
+					/* A new connection does not help, stop whatever the
+					 * callback returns.
+					 */
+					error_evt_send(dl, rc);
+
+					/* A cancel from the callback is left to the STOPPING
+					 * handler.
+					 */
+					if (!is_state(dl, DOWNLOADER_DOWNLOADING)) {
+						continue;
+					}
+
+					transport_close(dl);
+					if (state_set(dl, DOWNLOADER_DOWNLOADING,
+						      DOWNLOADER_IDLE)) {
+						stopped_evt_send(dl);
+					}
+					continue;
 				}
 
 				rc = error_evt_send(dl, rc);
