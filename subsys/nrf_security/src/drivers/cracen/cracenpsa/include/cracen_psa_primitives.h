@@ -360,13 +360,11 @@ struct cracen_sw_ccm_context_s {
 	uint8_t cbc_mac[SX_BLKCIPHER_AES_BLK_SZ]; /* CBC-MAC state. */
 	uint8_t ctr_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Counter block for CTR mode. */
 	uint8_t keystream[SX_BLKCIPHER_AES_BLK_SZ]; /* Generated keystream. */
-	uint8_t partial_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Buffer for partial blocks. */
+	uint8_t partial_block[SX_BLKCIPHER_AES_BLK_SZ]; /* Partial CBC-MAC input block. */
 	size_t keystream_offset; /* Position in keystream buffer. */
-	size_t total_ad_fed; /* Total AD bytes processed. */
-	size_t data_partial_len; /* Partial data block length. */
+	size_t partial_len; /* Bytes in partial_block. */
 	bool cbc_mac_initialized; /* CBC-MAC initialization flag. */
 	bool ctr_initialized; /* CTR initialization flag. */
-	bool has_partial_ad_block; /* Partial AD block flag. */
 };
 typedef struct cracen_sw_ccm_context_s cracen_sw_ccm_context_t;
 

@@ -34,24 +34,12 @@
 #define CCM_AAD_SHORT_MAX		0xFF00u
 #define CCM_AAD_MARKER0			0xFFu
 #define CCM_AAD_MARKER1			0xFEu
+/* Longest AAD length encoding: the two markers and a 32-bit length */
+#define CCM_AAD_LEN_ENC_MAX_SZ		6u
 
 static bool is_nonce_length_valid(size_t nonce_length)
 {
 	return nonce_length >= CCM_NONCE_MIN_LEN && nonce_length <= CCM_NONCE_MAX_LEN;
-}
-
-static psa_status_t cbc_mac_update_block(struct sxblkcipher *cipher, const struct sxkeyref *keyref,
-					 uint8_t *mac_state, const uint8_t *block)
-{
-	uint8_t mac_input[SX_BLKCIPHER_AES_BLK_SZ];
-	psa_status_t status;
-
-	memcpy(mac_input, mac_state, SX_BLKCIPHER_AES_BLK_SZ);
-	cracen_xorbytes(mac_input, block, SX_BLKCIPHER_AES_BLK_SZ);
-	status = cracen_sw_aes_primitive(cipher, keyref, mac_input, mac_state);
-
-	safe_memzero(mac_input, sizeof(mac_input));
-	return status;
 }
 
 /* Format CCM B0 block: Flags | Nonce | Message_Length (RFC 3610) */
@@ -177,11 +165,35 @@ psa_status_t cracen_sw_aes_ccm_set_lengths(cracen_aead_operation_t *operation, s
 	return PSA_SUCCESS;
 }
 
+/* CBC-MAC over the CCM input stream of B0, the encoded AD length, the AD and the data */
+static psa_status_t mac_update(cracen_aead_operation_t *operation, struct sxblkcipher *cipher,
+			       const uint8_t *input, size_t length)
+{
+	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
+
+	return cracen_sw_cbc_mac_update(cipher, &operation->keyref, ccm_ctx->cbc_mac,
+					ccm_ctx->partial_block, &ccm_ctx->partial_len, input,
+					length, false);
+}
+
+/* Zero-pad the CBC-MAC input to a block boundary, after the AD and after the data */
+static psa_status_t mac_pad(cracen_aead_operation_t *operation, struct sxblkcipher *cipher)
+{
+	static const uint8_t zeros[SX_BLKCIPHER_AES_BLK_SZ];
+	size_t partial_len = operation->sw_ccm_ctx.partial_len;
+
+	if (partial_len == 0) {
+		return PSA_SUCCESS;
+	}
+	return mac_update(operation, cipher, zeros, SX_BLKCIPHER_AES_BLK_SZ - partial_len);
+}
+
 static psa_status_t initialize_cbc_mac(cracen_aead_operation_t *operation,
 				       struct sxblkcipher *cipher)
 {
 	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
 	uint8_t b0[SX_BLKCIPHER_AES_BLK_SZ];
+	uint8_t ad_length[CCM_AAD_LEN_ENC_MAX_SZ];
 	psa_status_t status;
 
 	if (ccm_ctx->cbc_mac_initialized) {
@@ -189,122 +201,45 @@ static psa_status_t initialize_cbc_mac(cracen_aead_operation_t *operation,
 	}
 	format_ccm_b0(b0, operation->nonce_length, operation->nonce, operation->plaintext_length,
 		      operation->ad_length, operation->tag_size);
-	status = cracen_sw_aes_primitive(cipher, &operation->keyref, b0, ccm_ctx->cbc_mac);
+	status = mac_update(operation, cipher, b0, sizeof(b0));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 	if (operation->ad_length > 0) {
-		size_t ad_len_size =
-			encode_ccm_ad_length(ccm_ctx->partial_block, operation->ad_length);
-		ccm_ctx->has_partial_ad_block = true;
-		ccm_ctx->total_ad_fed = ad_len_size;
+		status = mac_update(operation, cipher, ad_length,
+				    encode_ccm_ad_length(ad_length, operation->ad_length));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 	ccm_ctx->cbc_mac_initialized = true;
 	return PSA_SUCCESS;
 }
 
-psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
-					 size_t input_length)
+/* Pad the AD once, before the first data or the tag */
+static psa_status_t finish_ad(cracen_aead_operation_t *operation, struct sxblkcipher *cipher)
 {
-	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
-	struct sxblkcipher cipher;
-	psa_status_t status;
-	uint8_t ad_block[SX_BLKCIPHER_AES_BLK_SZ];
-	size_t processed = 0;
+	if (operation->ad_finished) {
+		return PSA_SUCCESS;
+	}
+	operation->ad_finished = true;
+	return mac_pad(operation, cipher);
+}
 
-	/* CRACEN stays reserved for all blocks of this call */
-	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+/* Complete the CBC-MAC for the tag */
+static psa_status_t finalize_mac(cracen_aead_operation_t *operation, struct sxblkcipher *cipher)
+{
+	psa_status_t status;
+
+	status = initialize_cbc_mac(operation, cipher);
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
-
-	status = initialize_cbc_mac(operation, &cipher);
+	status = finish_ad(operation, cipher);
 	if (status != PSA_SUCCESS) {
-		goto exit;
+		return status;
 	}
-
-	if (input_length > SIZE_MAX - ccm_ctx->total_ad_fed) {
-		status = PSA_ERROR_INVALID_ARGUMENT;
-		goto exit;
-	}
-
-	/* Complete any partial AD block from previous call */
-	if (ccm_ctx->has_partial_ad_block) {
-		size_t position_in_block = ccm_ctx->total_ad_fed % SX_BLKCIPHER_AES_BLK_SZ;
-		size_t space_in_block = SX_BLKCIPHER_AES_BLK_SZ - position_in_block;
-		size_t to_copy = MIN(input_length, space_in_block);
-
-		memcpy(&ccm_ctx->partial_block[position_in_block], input, to_copy);
-		processed += to_copy;
-		ccm_ctx->total_ad_fed += to_copy;
-		if (ccm_ctx->total_ad_fed % SX_BLKCIPHER_AES_BLK_SZ == 0) {
-			status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
-						      ccm_ctx->partial_block);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			ccm_ctx->has_partial_ad_block = false;
-			ccm_ctx->total_ad_fed =
-				ROUND_UP(ccm_ctx->total_ad_fed, SX_BLKCIPHER_AES_BLK_SZ);
-		}
-	}
-	/* Process complete blocks */
-	while (processed + SX_BLKCIPHER_AES_BLK_SZ <= input_length) {
-		memcpy(ad_block, &input[processed], SX_BLKCIPHER_AES_BLK_SZ);
-		status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
-					      ad_block);
-		if (status != PSA_SUCCESS) {
-			goto exit;
-		}
-		processed += SX_BLKCIPHER_AES_BLK_SZ;
-		ccm_ctx->total_ad_fed += SX_BLKCIPHER_AES_BLK_SZ;
-	}
-	/* Handle remaining bytes that don't fill a complete block */
-	if (processed < input_length) {
-		size_t remaining = input_length - processed;
-
-		memset(ad_block, 0, SX_BLKCIPHER_AES_BLK_SZ);
-		memcpy(ad_block, &input[processed], remaining);
-		/* If this completes to a block boundary, process immediately */
-		if ((ccm_ctx->total_ad_fed + remaining) % SX_BLKCIPHER_AES_BLK_SZ == 0) {
-			status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
-						      ad_block);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			ccm_ctx->has_partial_ad_block = false;
-		} else {
-			/* Save partial block for next call or finalization */
-			memcpy(ccm_ctx->partial_block, ad_block, SX_BLKCIPHER_AES_BLK_SZ);
-			ccm_ctx->has_partial_ad_block = true;
-		}
-		ccm_ctx->total_ad_fed += remaining;
-	}
-	status = PSA_SUCCESS;
-exit:
-	sx_hw_release(&cipher.dma);
-	return status;
-}
-
-static psa_status_t finalize_ad_padding(cracen_aead_operation_t *operation,
-					struct sxblkcipher *cipher)
-{
-	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
-	psa_status_t status = PSA_SUCCESS;
-
-	/* CCM requires AD to be padded to block boundary before processing plaintext */
-	if (ccm_ctx->has_partial_ad_block) {
-		/* Process partial block (already zero-padded) */
-		status = cbc_mac_update_block(cipher, &operation->keyref, ccm_ctx->cbc_mac,
-					      ccm_ctx->partial_block);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-		ccm_ctx->has_partial_ad_block = false;
-		ccm_ctx->total_ad_fed = ROUND_UP(ccm_ctx->total_ad_fed, SX_BLKCIPHER_AES_BLK_SZ);
-	}
-
-	return status;
+	return mac_pad(operation, cipher);
 }
 
 static void initialize_ctr(cracen_aead_operation_t *operation)
@@ -314,27 +249,10 @@ static void initialize_ctr(cracen_aead_operation_t *operation)
 	if (ccm_ctx->ctr_initialized) {
 		return;
 	}
-	format_ccm_ctr_block(ccm_ctx->ctr_block, operation->nonce_length, operation->nonce, 0);
+	/* A_0 encrypts the tag, the data starts at A_1 */
+	format_ccm_ctr_block(ccm_ctx->ctr_block, operation->nonce_length, operation->nonce, 1);
 	ccm_ctx->keystream_offset = SX_BLKCIPHER_AES_BLK_SZ;
 	ccm_ctx->ctr_initialized = true;
-}
-
-/* Finalize any partial data block with zero-padding and update CBC-MAC */
-static psa_status_t finalize_data_padding(cracen_aead_operation_t *operation,
-					  struct sxblkcipher *cipher)
-{
-	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
-	uint8_t padding_block[SX_BLKCIPHER_AES_BLK_SZ] = {0};
-	psa_status_t status = PSA_SUCCESS;
-
-	if (ccm_ctx->data_partial_len > 0) {
-		memcpy(padding_block, ccm_ctx->partial_block, ccm_ctx->data_partial_len);
-		status = cbc_mac_update_block(cipher, &operation->keyref, ccm_ctx->cbc_mac,
-					      padding_block);
-		ccm_ctx->data_partial_len = 0;
-		safe_memzero(padding_block, sizeof(padding_block));
-	}
-	return status;
 }
 
 /* Generate authentication tag by encrypting CBC-MAC with A0 block (counter=0) */
@@ -357,55 +275,27 @@ static psa_status_t generate_tag(cracen_aead_operation_t *operation, uint8_t *ta
 	return PSA_SUCCESS;
 }
 
-/* Accumulate plaintext bytes for CBC-MAC, processing complete blocks */
-static psa_status_t accumulate_for_mac(cracen_aead_operation_t *operation, const uint8_t *data,
-				       size_t length, struct sxblkcipher *cipher)
+psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, const uint8_t *input,
+					 size_t input_length)
 {
-	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
+	struct sxblkcipher cipher;
 	psa_status_t status;
 
-	for (size_t i = 0; i < length; i++) {
-		ccm_ctx->partial_block[ccm_ctx->data_partial_len++] = data[i];
-		if (ccm_ctx->data_partial_len == SX_BLKCIPHER_AES_BLK_SZ) {
-			status = cbc_mac_update_block(cipher, &operation->keyref, ccm_ctx->cbc_mac,
-						      ccm_ctx->partial_block);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-			ccm_ctx->data_partial_len = 0;
-		}
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
-	return PSA_SUCCESS;
-}
 
-/* XOR data with CTR mode keystream, managing keystream generation and counter */
-static psa_status_t ctr_xor(cracen_aead_operation_t *operation, struct sxblkcipher *cipher,
-			    const uint8_t *input, uint8_t *output, size_t length,
-			    size_t counter_size)
-{
-	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
-	psa_status_t status;
-	size_t counter_start_pos = SX_BLKCIPHER_AES_BLK_SZ - counter_size;
-
-	for (size_t i = 0; i < length; i++) {
-		/* Generate new keystream block when current one is exhausted */
-		if (ccm_ctx->keystream_offset >= SX_BLKCIPHER_AES_BLK_SZ) {
-			status = cracen_sw_increment_counter_be(ccm_ctx->ctr_block,
-								SX_BLKCIPHER_AES_BLK_SZ,
-								counter_start_pos);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-			status = cracen_sw_aes_primitive(cipher, &operation->keyref,
-							 ccm_ctx->ctr_block, ccm_ctx->keystream);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-			ccm_ctx->keystream_offset = 0;
-		}
-		output[i] = input[i] ^ ccm_ctx->keystream[ccm_ctx->keystream_offset++];
+	status = initialize_cbc_mac(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
-	return PSA_SUCCESS;
+	status = mac_update(operation, &cipher, input, input_length);
+
+exit:
+	sx_hw_release(&cipher.dma);
+	return status;
 }
 
 psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const uint8_t *input,
@@ -413,10 +303,10 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 				      size_t *output_length)
 {
 	cracen_sw_ccm_context_t *ccm_ctx = &operation->sw_ccm_ctx;
+	size_t counter_start_pos =
+		SX_BLKCIPHER_AES_BLK_SZ - CCM_Q_LEN_FROM_NONCE(operation->nonce_length);
 	struct sxblkcipher cipher;
 	psa_status_t status;
-	size_t processed = 0;
-	size_t counter_size = CCM_Q_LEN_FROM_NONCE(operation->nonce_length);
 
 	if (output_size < input_length) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -428,64 +318,37 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 		return status;
 	}
 
-	operation->ad_finished = true;
 	status = initialize_cbc_mac(operation, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
-	status = finalize_ad_padding(operation, &cipher);
+	status = finish_ad(operation, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	initialize_ctr(operation);
 
-	/* Process data with CTR mode encryption/decryption and CBC-MAC authentication */
+	/* The CBC-MAC covers the plaintext, so MAC it before encrypting and after decrypting */
 	if (operation->dir == CRACEN_ENCRYPT) {
-		/* Encrypt: MAC plaintext, then apply CTR keystream */
-		while (processed < input_length) {
-			size_t chunk_size =
-				MIN(input_length - processed,
-				    SX_BLKCIPHER_AES_BLK_SZ - ccm_ctx->data_partial_len);
-
-			status = accumulate_for_mac(operation, &input[processed], chunk_size,
-						    &cipher);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-
-			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
-					 chunk_size, counter_size);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			processed += chunk_size;
-		}
-	} else {
-		/*
-		 * Decryption does the reverse of encryption, so apply CTR keystream first,
-		 * then MAC plaintext
-		 */
-		while (processed < input_length) {
-			size_t chunk_size =
-				MIN(input_length - processed,
-				    SX_BLKCIPHER_AES_BLK_SZ - ccm_ctx->data_partial_len);
-
-			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
-					 chunk_size, counter_size);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-
-			status = accumulate_for_mac(operation, &output[processed], chunk_size,
-						    &cipher);
-			if (status != PSA_SUCCESS) {
-				goto exit;
-			}
-			processed += chunk_size;
+		status = mac_update(operation, &cipher, input, input_length);
+		if (status != PSA_SUCCESS) {
+			goto exit;
 		}
 	}
-	*output_length = processed;
-	status = PSA_SUCCESS;
+	status = cracen_sw_ctr_xor(&cipher, &operation->keyref, ccm_ctx->ctr_block,
+				   counter_start_pos, ccm_ctx->keystream,
+				   &ccm_ctx->keystream_offset, input, output, input_length);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+	if (operation->dir != CRACEN_ENCRYPT) {
+		status = mac_update(operation, &cipher, output, input_length);
+		if (status != PSA_SUCCESS) {
+			goto exit;
+		}
+	}
+	*output_length = input_length;
+
 exit:
 	sx_hw_release(&cipher.dma);
 	return status;
@@ -510,27 +373,16 @@ psa_status_t cracen_sw_aes_ccm_finish(cracen_aead_operation_t *operation, uint8_
 		return status;
 	}
 
-	status = initialize_cbc_mac(operation, &cipher);
+	status = finalize_mac(operation, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
-
-	status = finalize_ad_padding(operation, &cipher);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
-	status = finalize_data_padding(operation, &cipher);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
 	status = generate_tag(operation, tag, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
 	*tag_length = operation->tag_size;
-	status = PSA_SUCCESS;
+
 exit:
 	sx_hw_release(&cipher.dma);
 	return status;
@@ -551,21 +403,10 @@ psa_status_t cracen_sw_aes_ccm_verify(cracen_aead_operation_t *operation, uint8_
 		return status;
 	}
 
-	status = initialize_cbc_mac(operation, &cipher);
+	status = finalize_mac(operation, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
 	}
-
-	status = finalize_ad_padding(operation, &cipher);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
-	status = finalize_data_padding(operation, &cipher);
-	if (status != PSA_SUCCESS) {
-		goto exit;
-	}
-
 	status = generate_tag(operation, computed_tag, &cipher);
 	if (status != PSA_SUCCESS) {
 		goto exit;
