@@ -76,6 +76,10 @@ config LTE_LC_PDN_MODULE
 config LTE_LC_CELLULAR_PROFILE_MODULE
 	bool "Cellular profile module"
 
+config LTE_LC_UICC_STATE_MODULE
+	bool "UICC state module"
+	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
 	bool "DNS Fallback module"
 	default y

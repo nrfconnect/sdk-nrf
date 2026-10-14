@@ -483,6 +483,19 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE	= 15,
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+	/**
+	 * UICC state update.
+	 *
+	 * Reports the state of the UICC (SIM card), for example whether it has been initialized or
+	 * requires a PIN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.uicc_state member of type
+	 * @ref lte_lc_uicc_state_evt in the event.
+	 */
+	LTE_LC_EVT_UICC_STATE			= 16,
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 };
 
 /** @brief RRC connection state. */
@@ -1572,6 +1585,66 @@ struct lte_lc_cellular_profile_evt {
 	int8_t profile_id;
 };
 
+/**
+ * @brief UICC (SIM card) state.
+ *
+ * Reported by the modem in the `%XSIM` notification.
+ */
+enum lte_lc_uicc_state {
+	/** UICC not initialized. */
+	LTE_LC_UICC_STATE_NOT_INITIALIZED	= 0,
+	/** UICC initialization OK. */
+	LTE_LC_UICC_STATE_INITIALIZED		= 1,
+};
+
+/** @brief Cause for the UICC state if it was uninitialized. */
+enum lte_lc_uicc_state_cause {
+	/** No specific cause. */
+	LTE_LC_UICC_STATE_CAUSE_NONE			= 0,
+
+	/** PIN required. */
+	LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED		= 1,
+
+	/** PIN2 required. */
+	LTE_LC_UICC_STATE_CAUSE_PIN2_REQUIRED		= 2,
+
+	/** PUK required (PIN blocked). */
+	LTE_LC_UICC_STATE_CAUSE_PUK_REQUIRED		= 3,
+
+	/** PUK2 required (PIN2 blocked). */
+	LTE_LC_UICC_STATE_CAUSE_PUK2_REQUIRED		= 4,
+
+	/** PUK blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PUK_BLOCKED		= 5,
+
+	/** PUK2 blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PUK2_BLOCKED		= 6,
+
+	/** Device personalization blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PERSONALIZATION_BLOCKED	= 7,
+
+	/** IMEI lock blocked. */
+	LTE_LC_UICC_STATE_CAUSE_IMEI_LOCK_BLOCKED	= 8,
+
+	/** USIM card failure. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_FAILURE		= 9,
+
+	/** USIM card changed. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_CHANGED		= 10,
+
+	/** USIM profile changed. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_PROFILE_CHANGED	= 11,
+};
+
+/** @brief UICC (SIM card) state event payload. */
+struct lte_lc_uicc_state_evt {
+	/** @brief UICC state. */
+	enum lte_lc_uicc_state state;
+
+	/** @brief Cause for the UICC state. @ref LTE_LC_UICC_STATE_CAUSE_NONE if not reported. */
+	enum lte_lc_uicc_state_cause cause;
+};
+
 /** @brief LTE event. */
 struct lte_lc_evt {
 	/** @brief Event type. */
@@ -1642,6 +1715,11 @@ struct lte_lc_evt {
 		/** @brief Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
 		struct lte_lc_cellular_profile_evt cellular_profile;
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+		/** @brief Payload for event @ref LTE_LC_EVT_UICC_STATE. */
+		struct lte_lc_uicc_state_evt uicc_state;
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 	};
 };
 
