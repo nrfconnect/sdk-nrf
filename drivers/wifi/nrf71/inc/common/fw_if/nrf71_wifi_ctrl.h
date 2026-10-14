@@ -15,6 +15,7 @@
 #ifndef __NRF71_WIFI_CTRL_H
 #define __NRF71_WIFI_CTRL_H
 
+#include "pack_def.h"
 #include <common/fw_if/nrf71_wifi_rf.h>
 #include <common/fw_if/nrf71_wifi_common.h>
 
@@ -3870,6 +3871,8 @@ struct nrf_wifi_tx_buff_done {
 	unsigned char timestamp_t1[6];
 	/** Frame ack received time at Phy */
 	unsigned char timestamp_t4[6];
+	/** Last successful Tx PHY rate in kbps; 0 if unknown or no success */
+	unsigned int tx_rate_kbps;
 	/** Status of Tx packet. Maximum of MAX_TX_AGG_SIZE */
 	unsigned char tx_status_code[0];
 } __NRF_WIFI_PKD;
