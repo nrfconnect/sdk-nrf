@@ -10,6 +10,7 @@ menuconfig NRF_CLOUD_COAP
 	select COAP
 	select COAP_EXTENDED_OPTIONS_LEN
 	select COAP_CLIENT
+	select READY_RESOLVE
 	depends on NET_IPV4 || NET_IPV6
 
 if NRF_CLOUD_COAP

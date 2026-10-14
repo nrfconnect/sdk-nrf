@@ -1,0 +1,19 @@
+common:
+  sysbuild: true
+  platform_allow:
+    - native_sim
+  integration_platforms:
+    - native_sim
+  tags:
+    - nrf_cloud_test
+    - nrf_cloud_lib
+    - sysbuild
+    - ci_tests_subsys_net
+tests:
+  net.lib.nrf_cloud.dns: {}
+  net.lib.nrf_cloud.dns.ipv6:
+    extra_configs:
+      - CONFIG_TEST_NRF_CLOUD_IPV6=y
+  net.lib.nrf_cloud.dns.static_ipv4:
+    extra_configs:
+      - CONFIG_TEST_NRF_CLOUD_STATIC_IPV4=y

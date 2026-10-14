@@ -14,6 +14,7 @@ menuconfig $(module)
 	select MQTT_LIB_TLS
 	select SETTINGS if !MQTT_CLEAN_SESSION
 	select CJSON_LIB
+	select READY_RESOLVE
 	depends on NET_IPV4 || NET_IPV6
 
 if NRF_CLOUD_MQTT
