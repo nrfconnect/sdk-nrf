@@ -20,6 +20,8 @@
 
 .. |test_sample| replace:: After programming the sample to your development kit, complete the following steps to test it:
 
+.. |test_combo_sample| replace:: Complete the following steps to test the Bluetooth® LE radio on the default single-domain nRF71 Series build:
+
 .. |test_application| replace:: After programming the application to your development kit, complete the following steps to test it:
 
 .. |connect_generic| replace:: Connect the device to the computer using a USB cable.
