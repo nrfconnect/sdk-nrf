@@ -1237,9 +1237,12 @@ Libraries for networking
       Previously, when ``SO_KEEPOPEN`` was in use, a send could block indefinitely when the modem send buffer was full, for example, after losing LTE coverage.
       The default timeout is 20 seconds.
 
-  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
-    This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
-    The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+  * Fixed:
+
+    * An issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+      This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
+      The library now resolves the host with the :ref:`lib_ready_resolve` library, for the address families that are up only.
+    * An issue where the static IPv4 address set with the :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` Kconfig option was always used with the default port, ignoring the port given by the application.
 
 * :ref:`lib_mqtt_helper` library:
 
