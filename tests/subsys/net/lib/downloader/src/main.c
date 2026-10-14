@@ -9,6 +9,7 @@
 #include <net/downloader.h>
 #include <net/downloader_transport_coap.h>
 #include <net/downloader_transport_http.h>
+#include "dl_parse.h"
 #include <zephyr/net/socket.h>
 #include <zephyr/net/coap.h>
 
@@ -1663,6 +1664,31 @@ void test_downloader_get_http(void)
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
+/* A colon in the path must not end the host name, the fake checks the resolved host. */
+void test_downloader_get_http_colon_in_path(void)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ipv6_fail_ipv4_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv4_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv4_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_header_then_data;
+
+	err = downloader_get(&dl, &dl_host_cfg, "http://server.com/path/to/a:1.end", 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
 void test_downloader_get_http_partial_header(void)
 {
 	int err;
@@ -2722,6 +2748,116 @@ void test_downloader_get_coap_reconnect_keeps_block_size(void)
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+static void check_url_port(const char *url, int expected_err, uint16_t expected_port)
+{
+	uint16_t port = 0;
+
+	TEST_ASSERT_EQUAL_MESSAGE(expected_err, dl_parse_url_port(url, &port), url);
+	if (expected_err == 0) {
+		TEST_ASSERT_EQUAL_MESSAGE(expected_port, port, url);
+	}
+}
+
+/* The port is only looked for in the authority part of the URL. */
+void test_dl_parse_url_port(void)
+{
+	check_url_port("http://host:8080/file", 0, 8080);
+	check_url_port("http://host:8080", 0, 8080);
+	check_url_port("host:81/file", 0, 81);
+	check_url_port("http://[::1]:8080/file", 0, 8080);
+	check_url_port("http://host:8080/a:1.bin", 0, 8080);
+	check_url_port("http://host:8080?a=b", 0, 8080);
+	check_url_port("http://host:8080#frag", 0, 8080);
+	check_url_port("http://host:65535/file", 0, 65535);
+
+	/* A colon after the authority is not a port. */
+	check_url_port("http://host/a:1.bin", -ENOENT, 0);
+	check_url_port("http://host/file?time=10:20", -ENOENT, 0);
+	check_url_port("http://[::1]/a:1.bin", -ENOENT, 0);
+	check_url_port("http://host", -ENOENT, 0);
+
+	/* A port that is empty, zero or out of range is invalid, not absent. */
+	check_url_port("http://host:/file", -EINVAL, 0);
+	check_url_port("http://host:0/file", -EINVAL, 0);
+	check_url_port("http://host:70000/file", -EINVAL, 0);
+	check_url_port("http://host:65536/file", -EINVAL, 0);
+	check_url_port("http://host:99999999999/file", -EINVAL, 0);
+
+	/* Every character of the port must be a decimal digit. */
+	check_url_port("http://host:80junk/file", -EINVAL, 0);
+	check_url_port("http://host: 80/file", -EINVAL, 0);
+	check_url_port("http://host:80 /file", -EINVAL, 0);
+	check_url_port("http://host:+80/file", -EINVAL, 0);
+	check_url_port("http://host:-80/file", -EINVAL, 0);
+	check_url_port("http://host:0x50/file", -EINVAL, 0);
+	check_url_port("http://host:80:81/file", -EINVAL, 0);
+	check_url_port("http://[::1]:80junk/file", -EINVAL, 0);
+}
+
+/* An invalid explicit port is rejected when the download is started, not replaced by the
+ * default port.
+ */
+void test_downloader_get_invalid_port(void)
+{
+	static const char *const urls[] = {
+		"http://server.com:/path",
+		"http://server.com:0/path",
+		"http://server.com:70000/path",
+		"http://server.com:80junk/path",
+		"coap://server.com:/path",
+		"coap://server.com:0/path",
+		"coap://server.com:70000/path",
+		"coap://server.com:80junk/path",
+	};
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	for (size_t i = 0; i < ARRAY_SIZE(urls); i++) {
+		err = downloader_get(&dl, &dl_host_cfg, urls[i], 0);
+		TEST_ASSERT_EQUAL_MESSAGE(-EINVAL, err, urls[i]);
+	}
+
+	TEST_ASSERT_EQUAL(0, z_impl_zsock_socket_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+static void check_url_host(const char *url, size_t len, int expected_err, const char *expected)
+{
+	char host[32];
+
+	memset(host, 'x', sizeof(host));
+
+	TEST_ASSERT_EQUAL_MESSAGE(expected_err, dl_parse_url_host(url, host, len), url);
+	if (expected_err == 0) {
+		TEST_ASSERT_EQUAL_STRING_MESSAGE(expected, host, url);
+	}
+}
+
+/* The host ends at the first ':', '/', '?' or '#' of the authority. */
+void test_dl_parse_url_host(void)
+{
+	check_url_host("http://host", sizeof("host"), 0, "host");
+	check_url_host("http://host/file", sizeof("host"), 0, "host");
+	check_url_host("http://host:8080/file", sizeof("host"), 0, "host");
+	check_url_host("host:81/file", sizeof("host"), 0, "host");
+	check_url_host("http://[::1]:8080/file", sizeof("[::1]"), 0, "[::1]");
+
+	/* A colon after the authority is not a port separator. */
+	check_url_host("http://host/a:1.bin", sizeof("host"), 0, "host");
+	check_url_host("http://host/dir/file:2", sizeof("host"), 0, "host");
+	check_url_host("http://host?time=10:20", sizeof("host"), 0, "host");
+	check_url_host("http://host#a:b", sizeof("host"), 0, "host");
+	check_url_host("http://[::1]/a:1.bin", sizeof("[::1]"), 0, "[::1]");
+
+	/* Malformed or too long. */
+	check_url_host("http://[::1/file", sizeof("[::1]"), -EINVAL, NULL);
+	check_url_host("http://host/file", sizeof("host") - 1, -E2BIG, NULL);
 }
 
 void test_downloader_get_einval(void)

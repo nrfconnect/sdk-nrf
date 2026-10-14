@@ -6,6 +6,7 @@
 
 #include <string.h>
 #include <stdbool.h>
+#include <stdint.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/types.h>
 #include <errno.h>
@@ -47,13 +48,8 @@ int dl_parse_url_host(const char *url, char *host, size_t len)
 		}
 		++end;
 	} else {
-		end = strchr(cur, ':');
-		if (!end) {
-			end = strchr(cur, '/');
-			if (!end) {
-				end = url + strlen(url) + 1;
-			}
-		}
+		/* A colon in the path or query is not a port separator. */
+		end = cur + strcspn(cur, ":/?#");
 	}
 
 	if (end - cur + 1 > len) {
@@ -70,11 +66,9 @@ int dl_parse_url_host(const char *url, char *host, size_t len)
 
 int dl_parse_url_port(const char *url, uint16_t *port)
 {
-	int err;
 	const char *cur;
 	const char *end;
-	char aport[8];
-	size_t len;
+	uint32_t value = 0;
 
 	cur = url;
 
@@ -85,24 +79,34 @@ int dl_parse_url_port(const char *url, uint16_t *port)
 		(void)trim_to_after(&cur, "]");
 	}
 
-	err = trim_to_after(&cur, ":");
-	if (err) {
+	/* Only the authority can hold a port, a colon in the path or query is not one. */
+	end = cur + strcspn(cur, "/?#");
+	cur = memchr(cur, ':', end - cur);
+	if (!cur) {
+		return -ENOENT;
+	}
+
+	cur++;
+	if (cur == end) {
 		return -EINVAL;
 	}
 
-	end = strchr(cur, '/');
-	if (!end) {
-		len = strlen(cur);
-	} else {
-		len = end - cur;
+	for (; cur < end; cur++) {
+		if (*cur < '0' || *cur > '9') {
+			return -EINVAL;
+		}
+
+		value = value * 10 + (*cur - '0');
+		if (value > UINT16_MAX) {
+			return -EINVAL;
+		}
 	}
 
-	len = MIN(len, sizeof(aport) - 1);
+	if (value == 0) {
+		return -EINVAL;
+	}
 
-	memcpy(aport, cur, len);
-	aport[len] = '\0';
-
-	*port = atoi(aport);
+	*port = value;
 
 	return 0;
 }
