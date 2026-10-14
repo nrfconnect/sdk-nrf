@@ -8,72 +8,11 @@
 
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
-#include <zephyr/net/net_if.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 
 #include "nrf_cloud_dns.h"
 
 LOG_MODULE_REGISTER(nrf_cloud_dns, CONFIG_NRF_CLOUD_LOG_LEVEL);
-
-#if defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_NET_SOCKETS_OFFLOAD)
-
-#include <nrf_modem_at.h>
-
-/* On the nRF91 modem-offloaded stack, ask the modem itself as the Zephyr
- * net interfaces only get populated at a later stage. Only valid when
- * sockets are offloaded to the modem.
- */
-static bool modem_has_addr(bool ipv6)
-{
-	char addr1[NET_IPV6_ADDR_LEN] = {0};
-	char addr2[NET_IPV6_ADDR_LEN] = {0};
-	char tmp[sizeof(struct net_in6_addr)];
-	int ret;
-
-	ret = nrf_modem_at_scanf("AT+CGPADDR=0",
-				  "+CGPADDR: %*d,\"%46[.:0-9A-F]\",\"%46[:0-9A-F]\"",
-				  addr1, addr2);
-	if (ret <= 0) {
-		return false;
-	}
-
-	if (!ipv6) {
-		/* IPv4 address, if present, is always at slot 1 */
-		return zsock_inet_pton(AF_INET, addr1, tmp) == 1;
-	}
-
-	/* IPv6 address, can be at slot 1 or 2 */
-	return zsock_inet_pton(AF_INET6, addr1, tmp) == 1 ||
-	       zsock_inet_pton(AF_INET6, addr2, tmp) == 1;
-}
-
-static bool ipv6_ready(void)
-{
-	return modem_has_addr(true);
-}
-
-static bool ipv4_ready(void)
-{
-	return modem_has_addr(false);
-}
-
-#else
-
-static bool ipv6_ready(void)
-{
-	struct net_if *iface = NULL;
-
-	return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &iface) != NULL;
-}
-
-static bool ipv4_ready(void)
-{
-	struct net_if *iface = net_if_get_default();
-
-	return (iface != NULL) &&
-	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
-}
-
-#endif /* defined(CONFIG_NRF_MODEM_LIB) && defined(CONFIG_NET_SOCKETS_OFFLOAD) */
 
 static int nrf_cloud_try_addresses(const char *const host_name, uint16_t port,
 				   struct zsock_addrinfo *hints,
@@ -177,45 +116,10 @@ int nrf_cloud_connect_host(const char *hostname, uint16_t port, struct zsock_add
 	goto out;
 #endif
 
-	/* Query IPv6 first, then IPv4. This is necessary because some socket backends do not
-	 * return all available IP addresses, so if we just use AF_UNSPEC, we might get only an
-	 * IPv6 address, even if both IPv4 and IPv6 are available.
-	 */
-
-	if (IS_ENABLED(CONFIG_NET_IPV6)) {
-		if (!ipv6_ready()) {
-			LOG_DBG("Skipping IPv6 for %s; no local IPv6 address", hostname);
-		} else {
-			LOG_DBG("Trying IPv6 addresses for %s", hostname);
-
-			hints->ai_family = AF_INET6;
-			sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
-
-			if (sock >= 0) {
-				goto out;
-			} else {
-				LOG_DBG("Could not connect over IPv6 to %s, falling back to IPv4",
-					hostname);
-			}
-		}
-	}
-
-	if (IS_ENABLED(CONFIG_NET_IPV4) && !IS_ENABLED(CONFIG_NRF_CLOUD_IPV6)) {
-		if (!ipv4_ready()) {
-			LOG_DBG("Skipping IPv4 for %s; no local IPv4 address", hostname);
-		} else {
-			LOG_DBG("Trying IPv4 addresses for %s", hostname);
-
-			hints->ai_family = AF_INET;
-			sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
-
-			if (sock >= 0) {
-				goto out;
-			} else {
-				LOG_DBG("Could not connect over IPv4 to %s", hostname);
-			}
-		}
-	}
+	/* Only query the ready family, if only one is */
+	hints->ai_family = IS_ENABLED(CONFIG_NRF_CLOUD_IPV6) ? AF_INET6 :
+			   conn_mgr_get_ready_addr_family();
+	sock = nrf_cloud_try_addresses(hostname, port, hints, connect_cb);
 
 out:
 	if (sock < 0) {
