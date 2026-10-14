@@ -40,8 +40,6 @@ This sample implements or demonstrates the following features:
 * Transmission of sensor samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
 * Construction of valid `nRF Cloud Device Messages`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
-* Definition of a user config Trace Event (``temperature_alert``).
-* Transmission of an Alert Trace Event whenever a specified temperature limit is exceeded.
 
 .. _wifi_nrf_cloud_structure_and_theory_of_operation:
 
@@ -116,7 +114,6 @@ It performs the following major tasks:
 * Periodically samples temperature data (using the :file:`src/temperature.c` file).
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`wifi_nrf_cloud_device_message_queue`.
-* Prints temperature alerts.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
