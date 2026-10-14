@@ -119,6 +119,13 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 		return status;
 	}
 
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(
+		sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
 	remaining_input = input_length;
 	current_input = input;
 	current_output = output;
@@ -136,7 +143,7 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 			status = cracen_sw_aes_primitive(&operation->cipher, &operation->keyref,
 							 current_ctr, keystream_block);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 		}
 
@@ -167,7 +174,10 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 	operation->unprocessed_input_bytes = keystream_used;
 
 	*output_length = bytes_written;
-	return PSA_SUCCESS;
+	status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&operation->cipher.dma);
+	return status;
 }
 
 psa_status_t cracen_sw_aes_ctr_finish(cracen_cipher_operation_t *operation,

@@ -212,13 +212,20 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 	uint8_t ad_block[SX_BLKCIPHER_AES_BLK_SZ];
 	size_t processed = 0;
 
-	status = initialize_cbc_mac(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
+	status = initialize_cbc_mac(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
 	if (input_length > SIZE_MAX - ccm_ctx->total_ad_fed) {
-		return PSA_ERROR_INVALID_ARGUMENT;
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto exit;
 	}
 
 	/* Complete any partial AD block from previous call */
@@ -234,7 +241,7 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 			status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
 						      ccm_ctx->partial_block);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			ccm_ctx->has_partial_ad_block = false;
 			ccm_ctx->total_ad_fed =
@@ -247,7 +254,7 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 		status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
 					      ad_block);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto exit;
 		}
 		processed += SX_BLKCIPHER_AES_BLK_SZ;
 		ccm_ctx->total_ad_fed += SX_BLKCIPHER_AES_BLK_SZ;
@@ -263,7 +270,7 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 			status = cbc_mac_update_block(&cipher, &operation->keyref, ccm_ctx->cbc_mac,
 						      ad_block);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			ccm_ctx->has_partial_ad_block = false;
 		} else {
@@ -273,7 +280,10 @@ psa_status_t cracen_sw_aes_ccm_update_ad(cracen_aead_operation_t *operation, con
 		}
 		ccm_ctx->total_ad_fed += remaining;
 	}
-	return PSA_SUCCESS;
+	status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&cipher.dma);
+	return status;
 }
 
 static psa_status_t finalize_ad_padding(cracen_aead_operation_t *operation,
@@ -412,14 +422,20 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	operation->ad_finished = true;
-	status = initialize_cbc_mac(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
+
+	operation->ad_finished = true;
+	status = initialize_cbc_mac(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
 	status = finalize_ad_padding(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	initialize_ctr(operation);
 
@@ -434,13 +450,13 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 			status = accumulate_for_mac(operation, &input[processed], chunk_size,
 						    &cipher);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 
 			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
 					 chunk_size, counter_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			processed += chunk_size;
 		}
@@ -457,19 +473,22 @@ psa_status_t cracen_sw_aes_ccm_update(cracen_aead_operation_t *operation, const 
 			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
 					 chunk_size, counter_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 
 			status = accumulate_for_mac(operation, &output[processed], chunk_size,
 						    &cipher);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			processed += chunk_size;
 		}
 	}
 	*output_length = processed;
-	return PSA_SUCCESS;
+	status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&cipher.dma);
+	return status;
 }
 
 psa_status_t cracen_sw_aes_ccm_finish(cracen_aead_operation_t *operation, uint8_t *ciphertext,
@@ -485,27 +504,36 @@ psa_status_t cracen_sw_aes_ccm_finish(cracen_aead_operation_t *operation, uint8_
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 
-	status = initialize_cbc_mac(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
+	}
+
+	status = initialize_cbc_mac(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
 
 	status = finalize_ad_padding(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = finalize_data_padding(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = generate_tag(operation, tag, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	*tag_length = operation->tag_size;
-	return PSA_SUCCESS;
+	status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&cipher.dma);
+	return status;
 }
 
 psa_status_t cracen_sw_aes_ccm_verify(cracen_aead_operation_t *operation, uint8_t *plaintext,
@@ -517,14 +545,20 @@ psa_status_t cracen_sw_aes_ccm_verify(cracen_aead_operation_t *operation, uint8_
 	uint8_t computed_tag[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 	uint32_t tag_mismatch = 0;
 
-	status = initialize_cbc_mac(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
 	}
 
+	status = initialize_cbc_mac(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
 	status = finalize_ad_padding(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = finalize_data_padding(operation, &cipher);
@@ -546,6 +580,7 @@ psa_status_t cracen_sw_aes_ccm_verify(cracen_aead_operation_t *operation, uint8_
 	}
 
 exit:
+	sx_hw_release(&cipher.dma);
 	safe_memzero(computed_tag, sizeof(computed_tag));
 	return status;
 }

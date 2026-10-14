@@ -104,21 +104,19 @@ psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct s
 				     const uint8_t *input, uint8_t *output)
 {
 	int sx_status;
-	size_t output_size;
-
-	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
 
 	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
-	if (sx_status != SX_OK) {
-		sx_hw_release(&blkciph->dma);
-		return silex_statuscodes_to_psa(sx_status);
+	if (sx_status == SX_OK) {
+		sx_status = sx_blkcipher_crypt(blkciph, input, SX_BLKCIPHER_AES_BLK_SZ, output);
+	}
+	if (sx_status == SX_OK) {
+		sx_status = sx_blkcipher_run(blkciph);
+	}
+	if (sx_status == SX_OK) {
+		sx_status = sx_blkcipher_wait(blkciph);
 	}
 
-	return cracen_sw_aes_ecb_crypt(blkciph, input, SX_BLKCIPHER_AES_BLK_SZ, output,
-				       SX_BLKCIPHER_AES_BLK_SZ, &output_size);
+	return silex_statuscodes_to_psa(sx_status);
 }
 
 psa_status_t cracen_sw_increment_counter_be(uint8_t *ctr_buf, size_t ctr_buf_size, size_t start_pos)
