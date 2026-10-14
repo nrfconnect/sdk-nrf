@@ -186,9 +186,19 @@ psa_status_t cracen_sw_aes_gcm_update_ad(cracen_aead_operation_t *operation, con
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	status = initialize_gcm_h(operation, &cipher);
-	if (status != PSA_SUCCESS) {
-		return status;
+	if (!gcm_ctx->ghash_initialized) {
+		/* Only computing H needs CRACEN, GHASH is done in software */
+		status = silex_statuscodes_to_psa(
+			sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+
+		status = initialize_gcm_h(operation, &cipher);
+		sx_hw_release(&cipher.dma);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
 	}
 
 	while (processed < input_length) {
@@ -200,7 +210,7 @@ psa_status_t cracen_sw_aes_gcm_update_ad(cracen_aead_operation_t *operation, con
 		processed += chunk_size;
 	}
 	gcm_ctx->total_ad_fed += input_length;
-	return status;
+	return PSA_SUCCESS;
 }
 
 static void finalize_ad_padding(cracen_aead_operation_t *operation)
@@ -315,11 +325,17 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
 	operation->ad_finished = true;
 
 	status = initialize_gcm_h(operation, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	initialize_ctr(operation);
 
@@ -339,7 +355,7 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
 					 chunk_size, counter_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			calc_gcm_ghash(operation, &output[processed], chunk_size);
 			processed += chunk_size;
@@ -357,13 +373,15 @@ psa_status_t cracen_sw_aes_gcm_update(cracen_aead_operation_t *operation, const 
 			status = ctr_xor(operation, &cipher, &input[processed], &output[processed],
 					 chunk_size, counter_size);
 			if (status != PSA_SUCCESS) {
-				return status;
+				goto exit;
 			}
 			processed += chunk_size;
 		}
 	}
 	*output_length = processed;
 	gcm_ctx->total_data_enc += processed;
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 
@@ -374,9 +392,15 @@ psa_status_t cracen_sw_aes_gcm_finish(cracen_aead_operation_t *operation, uint8_
 	struct sxblkcipher cipher;
 	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	status = initialize_gcm_h(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
+	}
+
+	status = initialize_gcm_h(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
 	initialize_ctr(operation);
 
@@ -385,9 +409,11 @@ psa_status_t cracen_sw_aes_gcm_finish(cracen_aead_operation_t *operation, uint8_
 
 	status = generate_tag(operation, tag, &cipher);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	*tag_length = operation->tag_size;
+exit:
+	sx_hw_release(&cipher.dma);
 	return status;
 }
 
@@ -400,9 +426,15 @@ psa_status_t cracen_sw_aes_gcm_verify(cracen_aead_operation_t *operation, uint8_
 	uint8_t computed_tag[SX_BLKCIPHER_AES_BLK_SZ] = {0};
 	uint32_t tag_mismatch = 0;
 
-	status = initialize_gcm_h(operation, &cipher);
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (status != PSA_SUCCESS) {
 		return status;
+	}
+
+	status = initialize_gcm_h(operation, &cipher);
+	if (status != PSA_SUCCESS) {
+		goto exit;
 	}
 	initialize_ctr(operation);
 
@@ -423,6 +455,7 @@ psa_status_t cracen_sw_aes_gcm_verify(cracen_aead_operation_t *operation, uint8_
 	}
 
 exit:
+	sx_hw_release(&cipher.dma);
 	safe_memzero(computed_tag, sizeof(computed_tag));
 	return status;
 }

@@ -64,7 +64,9 @@ psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct
 /** @brief Perform a single AES block encryption operation.
  *
  * This function is designed for use as an AES primitive in CRACEN software workarounds that require
- * it.
+ * it. The caller must reserve CRACEN first, with
+ * sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED), and can then run any number of blocks
+ * before releasing it with sx_hw_release().
  *
  * @param blkciph The block cipher struct.
  * @param key The AES key reference.
