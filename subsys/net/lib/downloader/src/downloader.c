@@ -114,6 +114,7 @@ static int transport_deinit(struct downloader *dl)
 
 	err = dl->transport->deinit(dl);
 	dl->transport = NULL;
+	dl_socket_host_reset(dl);
 
 	return err;
 }
@@ -263,6 +264,9 @@ void download_thread(void *cli, void *a, void *b)
 		if (is_state(dl, DOWNLOADER_CONNECTING)) {
 			/* Client */
 			rc = transport_connect(dl);
+			if (rc == -ECANCELED) {
+				continue;
+			}
 			if (rc) {
 				rc = error_evt_send(dl, rc);
 				if (rc) {
@@ -298,9 +302,12 @@ void download_thread(void *cli, void *a, void *b)
 					continue;
 				}
 
+				/* Try another address on reconnect */
+				dl_socket_failed(dl);
+
 reconnect:
 				rc2 = reconnect(dl);
-				if (rc2 == 0) {
+				if (rc2 == 0 || rc2 == -ECANCELED) {
 					continue;
 				}
 
@@ -512,6 +519,7 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 
 	state_set(dl, DOWNLOADER_IDLE, DOWNLOADER_CONNECTING);
 
+	dl_socket_host_reset(dl);
 	err = transport_init(dl, &dl->host_cfg, url);
 	if (err) {
 		state_set(dl, DOWNLOADER_CONNECTING, DOWNLOADER_IDLE);

@@ -1137,6 +1137,13 @@ Libraries for networking
   * Fixed an issue where the library could stop after one resolved broker address.
     The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
 
+* :ref:`lib_downloader` library:
+
+  * Added the :kconfig:option:`CONFIG_DOWNLOADER_CONNECT_TIMEOUT` Kconfig option to wait for the network and retry the resolved addresses when connecting.
+    If the network is not ready when the timeout expires, the library sends a :c:enumerator:`DOWNLOADER_EVT_ERROR` event with the ``-ENETDOWN`` error.
+  * Updated the library to connect using the :ref:`lib_connect_by_name` library.
+    When the address family is ``AF_UNSPEC``, the library now tries all resolved addresses in order, instead of trying IPv6 and then falling back to IPv4.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.

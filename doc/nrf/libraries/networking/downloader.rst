@@ -21,6 +21,10 @@ Protocols
 The library supports HTTP, HTTPS (TLS 1.2), CoAP, and CoAPS (DTLS 1.2) over IPv4 and IPv6.
 If other protocols are required, they can be added by the application.
 See :file:`downloader_transport.h` for details.
+
+The library connects to the host using the :ref:`lib_connect_by_name` library.
+It tries the resolved addresses in order and, when connection manager readiness tracking is enabled, waits for the network for up to :kconfig:option:`CONFIG_DOWNLOADER_CONNECT_TIMEOUT` seconds.
+If the network is not ready when the timeout expires, the library sends a :c:enumerator:`DOWNLOADER_EVT_ERROR` event with the ``-ENETDOWN`` error.
 The protocol used for the download is specified in the beginning of the ``URI`` or ``host``.
 Use ``http://`` for HTTP, ``https://`` for HTTPS, ``coap://`` for CoAP, and ``coaps://`` for CoAPS.
 If no protocol is specified, the downloader defaults to HTTP or HTTPS, depending on the server security configuration.

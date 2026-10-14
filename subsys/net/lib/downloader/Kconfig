@@ -6,6 +6,8 @@
 
 menuconfig DOWNLOADER
 	bool "Download client"
+	depends on NET_SOCKETS
+	select CONNECT_BY_NAME
 
 if DOWNLOADER
 
@@ -33,6 +35,17 @@ config DOWNLOADER_MAX_REDIRECTS
 	default 10
 	help
 	   The maximum number of redirects can be overwritten in the host config.
+
+config DOWNLOADER_CONNECT_TIMEOUT
+	int "Connection timeout [s]"
+	default 60 if CONNECT_BY_NAME_READINESS
+	default 0
+	help
+	  Maximum time to wait for the network and to retry the resolved
+	  addresses when connecting. With 0, a single round of attempts is
+	  made, failing with -ENETDOWN if the network is not ready.
+	  Defaults to 0 without readiness tracking, as the network state is
+	  then unknown and waiting would only delay the error.
 
 config DOWNLOADER_SHELL
 	bool "Download client shell"

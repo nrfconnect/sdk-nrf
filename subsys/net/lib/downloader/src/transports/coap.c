@@ -59,8 +59,6 @@ struct transport_params_coap {
 		int type;
 		/** Port */
 		uint16_t port;
-		/** Destination address storage */
-		struct net_sockaddr remote_addr;
 	} sock;
 
 	/** Request new data */
@@ -386,7 +384,7 @@ static int coap_request_send(struct downloader *dl)
 		struct coap_transmission_parameters params = coap_get_transmission_parameters();
 
 		params.max_retransmission = coap->cfg.max_retransmission;
-		err = coap_pending_init(&coap->pending, &request, &coap->sock.remote_addr, &params);
+		err = coap_pending_init(&coap->pending, &request, dl_socket_peer(dl), &params);
 		if (err < 0) {
 			return -EINVAL;
 		}
@@ -531,9 +529,8 @@ static int dl_coap_connect(struct downloader *dl)
 
 	err = -1;
 
-	err = dl_socket_configure_and_connect(&coap->sock.fd, coap->sock.proto, coap->sock.type,
-					      coap->sock.port, &coap->sock.remote_addr,
-					      dl->hostname, &dl->host_cfg);
+	err = dl_socket_connect(dl, &coap->sock.fd, coap->sock.proto, coap->sock.type,
+				coap->sock.port);
 	if (err) {
 		goto cleanup;
 	}

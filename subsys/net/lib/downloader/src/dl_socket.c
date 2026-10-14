@@ -16,8 +16,8 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
 
-#define SIN6(A) ((struct net_sockaddr_in6 *)(A))
-#define SIN(A)	((struct net_sockaddr_in *)(A))
+/* Delay before retrying when all addresses failed, within the connection timeout */
+#define RETRY_DELAY K_SECONDS(5)
 
 #define MS_TO_TIMEVAL(ms) \
 	.tv_sec = (ms / 1000), \
@@ -162,93 +162,44 @@ static bool is_ip_address(const char *hostname)
 	return false;
 }
 
-static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
-				 struct net_sockaddr *sa, int family)
+/* connect_by_name callback, called for each resolved address */
+static int socket_create_and_connect(const struct net_sockaddr *addr, net_socklen_t addrlen,
+				     void *user_data)
 {
+	struct downloader *dl = user_data;
+	struct downloader_host_cfg *dl_host_cfg = &dl->host_cfg;
+	int proto = dl->conn.proto;
+	int fd;
 	int err;
-	char pdnserv[4];
-	char *servname = NULL;
-	struct zsock_addrinfo *ai;
-	struct zsock_addrinfo hints = {
-		.ai_family = family,
-	};
 
-#if !defined(CONFIG_NET_IPV6)
-	if (family == NET_AF_INET6) {
-		return -EINVAL;
-	}
-#endif
+	LOG_DBG("family: %s, type: %d, proto: %d", str_family(addr->sa_family), dl->conn.type,
+		proto);
 
-	LOG_DBG("host lookup %s, pdn id %d, family %d", hostname, pdn_id, family);
-
-	if (pdn_id) {
-		hints.ai_flags = AI_PDNSERV;
-		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-		servname = pdnserv;
-	}
-
-	err = zsock_getaddrinfo(hostname, servname, &hints, &ai);
-	if (err) {
-		/* We expect this to fail on IPv6 sometimes */
-		LOG_DBG("Failed to resolve hostname %s on %s, err %d", hostname,
-			str_family(hints.ai_family), err);
-		return -EHOSTUNREACH;
-	}
-
-	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
-	zsock_freeaddrinfo(ai);
-
-	return 0;
-}
-
-static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t port,
-					struct net_sockaddr *remote_addr, const char *hostname,
-					struct downloader_host_cfg *dl_host_cfg)
-{
-	int err;
-	net_socklen_t addrlen;
-
-	switch (remote_addr->sa_family) {
-	case NET_AF_INET6:
-		SIN6(remote_addr)->sin6_port = net_htons(port);
-		addrlen = sizeof(struct net_sockaddr_in6);
-		break;
-	case NET_AF_INET:
-		SIN(remote_addr)->sin_port = net_htons(port);
-		addrlen = sizeof(struct net_sockaddr_in);
-		break;
-	default:
-		err = -EAFNOSUPPORT;
-		goto cleanup;
-	}
-
-	LOG_DBG("family: %d, type: %d, proto: %d", remote_addr->sa_family, type, proto);
-
-	*fd = zsock_socket(remote_addr->sa_family, type, proto);
-	if (*fd < 0) {
+	fd = zsock_socket(addr->sa_family, dl->conn.type, proto);
+	if (fd < 0) {
 		err = -errno;
 		LOG_ERR("Failed to create socket, errno %d", -err);
-		goto cleanup;
+		return err;
 	}
 
-	LOG_DBG("Socket opened, fd %d", *fd);
+	LOG_DBG("Socket opened, fd %d", fd);
 
 	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
-		err = socket_tls_native_enable(*fd);
+		err = socket_tls_native_enable(fd);
 		if (err < 0) {
 			goto cleanup;
 		}
 	}
 
 	if (dl_host_cfg->if_name != NULL) {
-		err = socket_if_name_set(*fd, dl_host_cfg->if_name);
+		err = socket_if_name_set(fd, dl_host_cfg->if_name);
 		if (err < 0) {
 			goto cleanup;
 		}
 	}
 
 	if (dl_host_cfg->pdn_id) {
-		err = socket_pdn_id_set(*fd, dl_host_cfg->pdn_id);
+		err = socket_pdn_id_set(fd, dl_host_cfg->pdn_id);
 		if (err) {
 			goto cleanup;
 		}
@@ -256,13 +207,13 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 	if ((proto == NET_IPPROTO_TLS_1_2 || proto == NET_IPPROTO_DTLS_1_2) &&
 	    (dl_host_cfg->sec_tag_list != NULL) && (dl_host_cfg->sec_tag_count > 0)) {
-		err = socket_sectag_set(*fd, dl_host_cfg->sec_tag_list, dl_host_cfg->sec_tag_count);
+		err = socket_sectag_set(fd, dl_host_cfg->sec_tag_list, dl_host_cfg->sec_tag_count);
 		if (err) {
 			goto cleanup;
 		}
 
-		if (!is_ip_address(hostname)) {
-			err = socket_ZSOCK_TLS_HOSTNAME_set(*fd, hostname);
+		if (!is_ip_address(dl->hostname)) {
+			err = socket_ZSOCK_TLS_HOSTNAME_set(fd, dl->hostname);
 			if (err) {
 				goto cleanup;
 			}
@@ -270,30 +221,14 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 		if (proto == NET_IPPROTO_DTLS_1_2 && dl_host_cfg->cid) {
 			LOG_DBG("enabling CID");
-			err = socket_dtls_cid_enable(*fd);
+			err = socket_dtls_cid_enable(fd);
 			if (err) {
 				goto cleanup;
 			}
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_LOG)) {
-		char ip_addr_str[NET_IPV6_ADDR_LEN];
-		void *sin_addr;
-
-		if (remote_addr->sa_family == NET_AF_INET6) {
-			sin_addr = &((struct net_sockaddr_in6 *)remote_addr)->sin6_addr;
-		} else {
-			sin_addr = &((struct net_sockaddr_in *)remote_addr)->sin_addr;
-		}
-		zsock_inet_ntop(remote_addr->sa_family, sin_addr, ip_addr_str,
-				sizeof(ip_addr_str));
-		LOG_INF("Connecting to %s", ip_addr_str);
-	}
-	LOG_DBG("fd %d, addrlen %d, fam %s, port %d", *fd, addrlen,
-		str_family(remote_addr->sa_family), port);
-
-	err = zsock_connect(*fd, remote_addr, addrlen);
+	err = zsock_connect(fd, addr, addrlen);
 	if (err) {
 		err = -errno;
 		/* Make sure that ECONNRESET is not returned as it has a special meaning
@@ -306,58 +241,111 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 cleanup:
 	if (err) {
-		dl_socket_close(fd);
+		dl_socket_close(&fd);
+		return err;
 	}
+
+	return fd;
+}
+
+static int conn_name_init(struct downloader *dl, int proto, int type, uint16_t port)
+{
+	struct connect_by_name_cfg *cfg = &dl->conn.cfg;
+	int err;
+
+	*cfg = (struct connect_by_name_cfg){
+		.host = dl->hostname,
+		.port = port,
+		.socktype = type & ~SOCK_NATIVE_TLS,
+		.family = dl->host_cfg.family,
+		.connect_cb = socket_create_and_connect,
+		.user_data = dl,
+	};
+
+	if (dl->host_cfg.pdn_id) {
+		(void)snprintf(dl->conn.pdn_serv, sizeof(dl->conn.pdn_serv), "%d",
+			       dl->host_cfg.pdn_id);
+		cfg->service = dl->conn.pdn_serv;
+		cfg->ai_flags = AI_PDNSERV;
+	}
+
+	dl->conn.proto = proto;
+	dl->conn.type = type;
+	err = connect_by_name_init(&dl->conn.ctx, cfg);
+	dl->conn.initialized = (err == 0);
 
 	return err;
 }
 
-int dl_socket_configure_and_connect(int *fd, int proto, int type, uint16_t port,
-				    struct net_sockaddr *remote_addr, const char *hostname,
-				    struct downloader_host_cfg *dl_host_cfg)
+/* Called with dl->mutex held */
+static bool stopping(struct downloader *dl)
 {
-	int err = -1;
-	int fam;
+	return dl->state == DOWNLOADER_STOPPING || dl->state == DOWNLOADER_DEINITIALIZING;
+}
 
-	if (remote_addr->sa_family) {
-		goto connect;
-	}
+int dl_socket_connect(struct downloader *dl, int *fd, int proto, int type, uint16_t port)
+{
+	k_timepoint_t deadline = sys_timepoint_calc(K_SECONDS(CONFIG_DOWNLOADER_CONNECT_TIMEOUT));
+	k_timepoint_t retry;
+	int ret;
 
-	fam = dl_host_cfg->family ? dl_host_cfg->family : NET_AF_INET6;
-
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, fam);
-	if (!err) {
-		goto connect;
-	} else if (dl_host_cfg->family) {
-		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
-		return err;
-	}
-
-	LOG_INF("Host lookup failed for hostname %s on IPv6 (err %d), attempting IPv4",
-		hostname, err);
-
-
-fallback_ipv4:
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, NET_AF_INET);
-	if (err) {
-		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
-		return err;
-	}
-
-connect:
-	err = dl_socket_create_and_connect(fd, proto, type, port, remote_addr, hostname,
-					   dl_host_cfg);
-	if (err) {
-		if (remote_addr->sa_family == NET_AF_INET6) {
-			LOG_INF("Failed to connect on IPv6 (err %d), attempting IPv4", err);
-			goto fallback_ipv4;
+	while (true) {
+		k_mutex_lock(&dl->mutex, K_FOREVER);
+		if (stopping(dl)) {
+			k_mutex_unlock(&dl->mutex);
+			return -ECANCELED;
+		}
+		ret = dl->conn.initialized ? 0 : conn_name_init(dl, proto, type, port);
+		k_mutex_unlock(&dl->mutex);
+		if (ret) {
+			LOG_ERR("Invalid connection parameters, err %d", ret);
+			return ret;
 		}
 
-		LOG_ERR("Failed to connect, err %d", err);
-		return err;
+		ret = connect_by_name(&dl->conn.ctx);
+		if (ret >= 0 || sys_timepoint_expired(deadline)) {
+			break;
+		}
+
+		/* Retry on connectivity change or after the delay; also bounds cancel latency */
+		retry = sys_timepoint_calc(RETRY_DELAY);
+		if (sys_timepoint_cmp(deadline, retry) < 0) {
+			retry = deadline;
+		}
+		connect_by_name_wait_change(&dl->conn.ctx, sys_timepoint_timeout(retry));
+	}
+	if (ret < 0) {
+		LOG_ERR("Failed to connect to %s, err %d", dl->hostname, ret);
+		return ret;
 	}
 
+	*fd = ret;
+
 	return 0;
+}
+
+void dl_socket_host_reset(struct downloader *dl)
+{
+	if (dl->conn.initialized) {
+		connect_by_name_deinit(&dl->conn.ctx);
+		dl->conn.initialized = false;
+	}
+}
+
+void dl_socket_failed(struct downloader *dl)
+{
+	if (dl->conn.initialized) {
+		connect_by_name_failed(&dl->conn.ctx);
+	}
+}
+
+const struct net_sockaddr *dl_socket_peer(struct downloader *dl)
+{
+	if (!dl->conn.initialized) {
+		return NULL;
+	}
+
+	return connect_by_name_get_peer(&dl->conn.ctx, NULL);
 }
 
 int dl_socket_close(int *fd)

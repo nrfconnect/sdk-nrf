@@ -22,6 +22,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/types.h>
 #include <zephyr/net/coap.h>
+#include <net/connect_by_name.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -57,6 +58,8 @@ enum downloader_evt_id {
 	 * - -EINVAL: Invalid configuration.
 	 * - -EAFNOSUPPORT: Unsupported address family (IPv4/IPv6).
 	 * - -EHOSTUNREACH: Failed to resolve the target address.
+	 * - -ENETDOWN: Network not ready when connecting, see
+	 *   @kconfig{CONFIG_DOWNLOADER_CONNECT_TIMEOUT}.
 	 * - -EMSGSIZE: TLS packet is larger than the nRF91 Modem can handle.
 	 * - -EMLINK: Maximum number of redirects reached.
 	 *
@@ -186,7 +189,7 @@ struct downloader_host_cfg {
 	bool cid;
 	/**
 	 * Address family to be used for the download, @c AF_INET6 or @c AF_INET.
-	 * Set to @c AF_UNSPEC (0) to fallback to @c AF_INET if @c AF_INET6 does not work.
+	 * Set to @c AF_UNSPEC (0) to try all resolved addresses, in resolver order.
 	 */
 	int family;
 	/**
@@ -253,6 +256,15 @@ struct downloader {
 	const struct dl_transport *transport;
 	/** Transport parameters. */
 	uint8_t transport_internal[CONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE];
+	/** Host connection. */
+	struct {
+		struct connect_by_name ctx;
+		struct connect_by_name_cfg cfg;
+		char pdn_serv[4];
+		int proto;
+		int type;
+		bool initialized;
+	} conn;
 
 	/** Ensure that thread is ready for download. */
 	struct k_sem event_sem;

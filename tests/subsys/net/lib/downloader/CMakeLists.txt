@@ -22,6 +22,7 @@ target_sources(app
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_sanity.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/coap.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/http.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/connect_by_name/connect_by_name.c
 )
 
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net/)
@@ -38,8 +39,8 @@ target_compile_options(app
   -DCONFIG_DOWNLOADER_MAX_FILENAME_SIZE=256
   -DCONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE=256
   -DCONFIG_DOWNLOADER_STACK_SIZE=2048
-  -DCONFIG_NET_IPV6=y
-  -DCONFIG_NET_IPV4=y
+  -DCONFIG_NET_IPV6=1
+  -DCONFIG_NET_IPV4=1
   -DCONFIG_COAP_MAX_RETRANSMIT=2
   -DCONFIG_COAP_INIT_ACK_TIMEOUT_MS=100
   -DCONFIG_COAP_BACKOFF_PERCENT=5
@@ -51,4 +52,13 @@ target_compile_options(app
   -DCONFIG_NET_IF_MCAST_IPV4_ADDR_COUNT=1
   -DCONFIG_NET_IF_IPV6_PREFIX_COUNT=2
   -DCONFIG_DOWNLOADER_LOG_LEVEL=4
+  -DCONFIG_DOWNLOADER_CONNECT_TIMEOUT=test_connect_timeout
+  -DCONFIG_CONNECT_BY_NAME_MAX_ADDRS=4
+  -DCONFIG_CONNECT_BY_NAME_LOG_LEVEL=4
+)
+
+# The connection timeout is set at runtime by the tests
+set_source_files_properties(
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_socket.c
+  PROPERTIES COMPILE_OPTIONS "-include;${CMAKE_CURRENT_SOURCE_DIR}/src/test_connect_timeout.h"
 )

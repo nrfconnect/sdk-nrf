@@ -101,8 +101,6 @@ struct transport_params_http {
 		int type;
 		/** Port */
 		uint16_t port;
-		/** Destination address storage */
-		struct net_sockaddr remote_addr;
 	} sock;
 
 	/** Request new data */
@@ -302,6 +300,9 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 					LOG_ERR("Failed to parse hostname, err %d, url %s", err, p);
 					return -EBADMSG;
 				}
+
+				/* Host, port or protocol may have changed */
+				dl_socket_host_reset(dl);
 
 				err = dl_parse_url_file(p, dl->file, sizeof(dl->file));
 				if (err) {
@@ -568,9 +569,8 @@ static int dl_http_connect(struct downloader *dl)
 
 	err = -1;
 
-	err = dl_socket_configure_and_connect(&http->sock.fd, http->sock.proto, http->sock.type,
-					      http->sock.port, &http->sock.remote_addr,
-					      dl->hostname, &dl->host_cfg);
+	err = dl_socket_connect(dl, &http->sock.fd, http->sock.proto, http->sock.type,
+				http->sock.port);
 	if (err) {
 		return err;
 	}
@@ -600,8 +600,6 @@ static int dl_http_close(struct downloader *dl)
 		err = dl_socket_close(&http->sock.fd);
 		return err;
 	}
-
-	memset(&http->sock.remote_addr, 0, sizeof(http->sock.remote_addr));
 
 	return -EBADF;
 }

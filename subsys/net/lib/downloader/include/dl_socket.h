@@ -10,9 +10,13 @@
 #include <net/downloader.h>
 #include <sys/types.h>
 
-int dl_socket_configure_and_connect(
-	int *fd, int proto, int type, uint16_t port, struct net_sockaddr *remote_addr,
-	const char *hostname, struct downloader_host_cfg *dl_host_cfg);
+/* Connects to dl->hostname. Resolved addresses are kept until dl_socket_host_reset(). */
+int dl_socket_connect(struct downloader *dl, int *fd, int proto, int type, uint16_t port);
+/* Forgets the resolved addresses, call when the host, port or protocol changes. */
+void dl_socket_host_reset(struct downloader *dl);
+/* Reports that the current connection is not usable: the next connect tries another address. */
+void dl_socket_failed(struct downloader *dl);
+const struct net_sockaddr *dl_socket_peer(struct downloader *dl);
 int dl_socket_close(int *fd);
 int dl_socket_send(int fd, void *buf, size_t len);
 ssize_t dl_socket_recv(int fd, void *buf, size_t len);
