@@ -32,6 +32,20 @@ void cracen_isr_handler(void *i);
  */
 uint32_t cracen_wait_for_cm_interrupt(void);
 
+/* Mask and unmask the CryptoMaster interrupt for polling short jobs (see
+ * sx_cmdma_check()). It is masked when a job starts, so a job that ends while
+ * polled raises no interrupt, and unmasked only before sleeping on the job. A
+ * job that ended while masked still has its event latched and interrupts as
+ * soon as it is unmasked.
+ */
+void cracen_cm_interrupt_mask(void);
+void cracen_cm_interrupt_unmask(void);
+
+/* Take and clear any status the ISR posted (or 0) for a job that ended while
+ * polled, so it can't be taken for the end of a later job.
+ */
+uint32_t cracen_cm_interrupt_take(void);
+
 /**
  * @brief Blocks until interrupt for PK engine is raised.
  */
