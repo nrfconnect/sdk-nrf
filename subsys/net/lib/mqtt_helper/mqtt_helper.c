@@ -8,6 +8,7 @@
 #include <zephyr/net/socket.h>
 
 #include <net/mqtt_helper.h>
+#include <net/ready_resolve.h>
 #include <zephyr/net/mqtt.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/logging/log.h>
@@ -30,7 +31,6 @@ BUILD_ASSERT((CONFIG_MQTT_HELPER_SEC_TAG != -1), "Security tag must be configure
 #endif
 
 MQTT_HELPER_STATIC struct mqtt_client mqtt_client;
-static struct net_sockaddr_storage broker;
 static char rx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
 static char tx_buffer[CONFIG_MQTT_HELPER_RX_TX_BUFFER_SIZE];
 MQTT_HELPER_STATIC char payload_buf[CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN];
@@ -375,193 +375,89 @@ MQTT_HELPER_STATIC void mqtt_evt_handler(struct mqtt_client *const mqtt_client,
 	}
 }
 
-static bool ipv6_ready(struct net_if *iface)
+static int client_sock(void)
 {
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF)) {
-		/* If the modem library is used without the net_if support, net_if won't be able to
-		 * determine the IPv6 connectivity state. In this case, we assume that the IPv6
-		 * connectivity is ready when the modem is connected to the network.
-		 */
-		return true;
-	}
-
-	struct net_if *query_iface = iface;
-
-	return net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &query_iface) != NULL;
+#if defined(CONFIG_MQTT_LIB_TLS)
+	return mqtt_client.transport.tls.sock;
+#else
+	return mqtt_client.transport.tcp.sock;
+#endif /* CONFIG_MQTT_LIB_TLS */
 }
 
-static bool ipv4_ready(struct net_if *iface)
+/* Broker address used by mqtt_connect() */
+static struct net_sockaddr_storage broker_addr;
+
+/* Families with an address on the bound interface, as ready_resolve tracks all interfaces */
+static int iface_family(const char *if_name)
 {
-	if (IS_ENABLED(CONFIG_NRF_MODEM_LIB) && !IS_ENABLED(CONFIG_NRF_MODEM_LIB_NET_IF)) {
-		/* If the modem library is used without the net_if support, net_if won't be able to
-		 * determine the IPv4 connectivity state. In this case, we assume that the IPv4
-		 * connectivity is ready when the modem is connected to the network.
-		 */
-		return true;
-	}
+	struct net_if *iface = net_if_get_by_index(net_if_get_by_name(if_name));
+	struct net_if *iface6 = iface;
+	bool v4, v6;
 
 	if (iface == NULL) {
-		iface = net_if_get_default();
+		LOG_ERR("Could not find interface %s", if_name);
+		return -ENODEV;
 	}
 
-	return (iface != NULL) &&
-	       (net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL);
+	v4 = IS_ENABLED(CONFIG_NET_IPV4) &&
+	     net_if_ipv4_get_global_addr(iface, NET_ADDR_PREFERRED) != NULL;
+	v6 = IS_ENABLED(CONFIG_NET_IPV6) &&
+	     net_if_ipv6_get_global_addr(NET_ADDR_PREFERRED, &iface6) != NULL;
+
+	if (v4 && v6) {
+		return NET_AF_UNSPEC;
+	} else if (v4) {
+		return NET_AF_INET;
+	} else if (v6) {
+		return NET_AF_INET6;
+	}
+
+	LOG_ERR("No address on interface %s", if_name);
+	return -ENETDOWN;
 }
 
-static bool family_supported(int family)
+static int broker_connect(struct mqtt_helper_conn_params *conn_params)
 {
-	switch (family) {
-	case NET_AF_INET:
-		return IS_ENABLED(CONFIG_NET_IPV4);
-	case NET_AF_INET6:
-		return IS_ENABLED(CONFIG_NET_IPV6);
-	default:
-		return false;
-	}
-}
-
-static bool family_ready(int family, struct net_if *iface)
-{
-	switch (family) {
-	case NET_AF_INET:
-		return ipv4_ready(iface);
-	case NET_AF_INET6:
-		return ipv6_ready(iface);
-	default:
-		return false;
-	}
-}
-
-static int broker_from_addr(struct net_sockaddr_storage *broker, struct zsock_addrinfo *addr,
-			    char *addr_str, size_t addr_str_len)
-{
-	if ((broker == NULL) || (addr == NULL) || (addr->ai_addr == NULL)) {
-		return -EINVAL;
-	}
-
-	if (IS_ENABLED(CONFIG_NET_IPV6) && addr->ai_family == NET_AF_INET6) {
-		struct net_sockaddr_in6 *broker6 = ((struct net_sockaddr_in6 *)broker);
-
-		net_ipaddr_copy(&broker6->sin6_addr,
-				&((struct net_sockaddr_in6 *)addr->ai_addr)->sin6_addr);
-		broker6->sin6_family = addr->ai_family;
-		broker6->sin6_port = net_htons(CONFIG_MQTT_HELPER_PORT);
-
-		zsock_inet_ntop(addr->ai_family, &broker6->sin6_addr, addr_str, addr_str_len);
-		return 0;
-	}
-
-	if (IS_ENABLED(CONFIG_NET_IPV4) && addr->ai_family == NET_AF_INET) {
-		struct net_sockaddr_in *broker4 = ((struct net_sockaddr_in *)broker);
-
-		net_ipaddr_copy(&broker4->sin_addr,
-				&((struct net_sockaddr_in *)addr->ai_addr)->sin_addr);
-		broker4->sin_family = addr->ai_family;
-		broker4->sin_port = net_htons(CONFIG_MQTT_HELPER_PORT);
-
-		zsock_inet_ntop(addr->ai_family, &broker4->sin_addr, addr_str, addr_str_len);
-		return 0;
-	}
-
-	return -EAFNOSUPPORT;
-}
-
-static int broker_connect(struct net_sockaddr_storage *broker,
-			  struct mqtt_helper_conn_params *conn_params)
-{
-	int err;
-	int ifindex;
-	int last_err = -ENOENT;
-	bool attempted = false;
-	struct net_if *iface = NULL;
-	struct zsock_addrinfo *result;
-	struct zsock_addrinfo *addr;
 	struct zsock_addrinfo hints = {
 		.ai_socktype = NET_SOCK_STREAM,
-#if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
-		.ai_family = NET_AF_UNSPEC,
-#elif defined(CONFIG_NET_IPV6)
-		.ai_family = NET_AF_INET6,
-#else
-		.ai_family = NET_AF_INET,
-#endif
 	};
-	char addr_str[NET_IPV6_ADDR_LEN] = {0};
-
-	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
-		conn_params->hostname.ptr = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
-
-		LOG_DBG("Using static IP address: %s", CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS);
-	} else {
-		LOG_DBG("Resolving IP address for %s", conn_params->hostname.ptr);
-	}
+	const char *host = conn_params->hostname.ptr;
+	struct ready_resolve broker = {0};
+	const struct net_sockaddr *addr;
+	net_socklen_t addrlen;
+	int ret;
 
 	if (conn_params->if_name != NULL) {
-		ifindex = net_if_get_by_name(conn_params->if_name);
-		if (ifindex <= 0) {
-			LOG_ERR("Could not find interface %s", conn_params->if_name);
-			return -ENODEV;
-		}
-
-		iface = net_if_get_by_index(ifindex);
-		if (iface == NULL) {
-			LOG_ERR("Could not get interface by index %d", ifindex);
-			return -ENODEV;
+		hints.ai_family = iface_family(conn_params->if_name);
+		if (hints.ai_family < 0) {
+			return hints.ai_family;
 		}
 	}
 
-	err = zsock_getaddrinfo(conn_params->hostname.ptr, NULL, &hints, &result);
-	if (err) {
-		LOG_ERR("getaddrinfo() failed, error %d", err);
-		return -err;
+	if (sizeof(CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS) > 1) {
+		host = CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS;
+		LOG_DBG("Using static IP address: %s", CONFIG_MQTT_HELPER_STATIC_IP_ADDRESS);
 	}
 
-	for (addr = result; addr != NULL; addr = addr->ai_next) {
-		if (!family_supported(addr->ai_family)) {
-			LOG_DBG("Skipping unsupported address family %d",
-				(unsigned int)addr->ai_family);
-			continue;
+	/* One round over the resolved addresses, the application handles retries */
+	ret = ready_resolve(&broker, host, NULL, &hints, CONFIG_MQTT_HELPER_PORT);
+	if (ret == 0) {
+		ret = -EHOSTUNREACH;
+		while (ret != 0 && ready_resolve_next(&broker, &addr, &addrlen) == 0) {
+			memcpy(&broker_addr, addr, addrlen);
+			mqtt_client.broker = &broker_addr;
+
+			ret = mqtt_connect(&mqtt_client);
 		}
-
-		if (!family_ready(addr->ai_family, iface)) {
-			LOG_DBG("Skipping %s address: no local %s address",
-				net_family2str(addr->ai_family), net_family2str(addr->ai_family));
-			continue;
-		}
-
-		err = broker_from_addr(broker, addr, addr_str, sizeof(addr_str));
-		if (err) {
-			last_err = err;
-			continue;
-		}
-
-		attempted = true;
-
-		LOG_DBG("Trying address %s (%s)", addr_str, net_family2str(addr->ai_family));
-
-		err = mqtt_connect(&mqtt_client);
-		if (!err) {
-			LOG_INF("Connected to %s using %s (%s)", conn_params->hostname.ptr,
-				addr_str, net_family2str(addr->ai_family));
-			zsock_freeaddrinfo(result);
-			return 0;
-		}
-
-		last_err = err;
-		LOG_WRN("mqtt_connect failed for %s (%s), error: %d", addr_str,
-			net_family2str(addr->ai_family), err);
 	}
 
-	if (!attempted) {
-		LOG_ERR("No usable address returned for %s", conn_params->hostname.ptr);
-		last_err = -ENETUNREACH;
-	} else {
-		LOG_ERR("All usable addresses failed for %s", conn_params->hostname.ptr);
+	ready_resolve_free(&broker);
+
+	if (ret) {
+		LOG_ERR("Failed to connect to %s, error: %d", host, ret);
 	}
 
-	zsock_freeaddrinfo(result);
-
-	return last_err;
+	return ret;
 }
 
 static int client_connect(struct mqtt_helper_conn_params *conn_params)
@@ -576,7 +472,6 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 		.size = conn_params->password.size,
 	};
 
-	mqtt_client.broker	        = &broker;
 	mqtt_client.evt_cb	        = mqtt_evt_handler;
 	mqtt_client.client_id.utf8      = conn_params->device_id.ptr;
 	mqtt_client.client_id.size      = conn_params->device_id.size;
@@ -649,7 +544,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 
 	mqtt_state_set(MQTT_STATE_TRANSPORT_CONNECTING);
 
-	err = broker_connect(&broker, conn_params);
+	err = broker_connect(conn_params);
 	if (err) {
 		return err;
 	}
@@ -663,13 +558,7 @@ static int client_connect(struct mqtt_helper_conn_params *conn_params)
 			.tv_sec = CONFIG_MQTT_HELPER_SEND_TIMEOUT_SEC
 		};
 
-#if defined(CONFIG_MQTT_LIB_TLS)
-		int sock  = mqtt_client.transport.tls.sock;
-#else
-		int sock = mqtt_client.transport.tcp.sock;
-#endif /* CONFIG_MQTT_LIB_TLS */
-
-		err = zsock_setsockopt(sock, ZSOCK_SOL_SOCKET, ZSOCK_SO_SNDTIMEO, &timeout,
+		err = zsock_setsockopt(client_sock(), ZSOCK_SOL_SOCKET, ZSOCK_SO_SNDTIMEO, &timeout,
 				       sizeof(timeout));
 		if (err == -1) {
 			LOG_WRN("Failed to set timeout, errno: %d", errno);

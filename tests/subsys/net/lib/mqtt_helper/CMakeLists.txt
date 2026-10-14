@@ -49,7 +49,7 @@ target_sources(app PRIVATE
 )
 
 # Add test source file
-target_sources(app PRIVATE src/mqtt_helper_test.c)
+target_sources(app PRIVATE src/mqtt_helper_test.c src/ready_resolve_fake.c)
 
 # Include paths
 target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/zephyr/net/)

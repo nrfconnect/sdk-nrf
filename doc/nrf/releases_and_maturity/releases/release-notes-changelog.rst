@@ -1247,7 +1247,9 @@ Libraries for networking
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+    The library now resolves the broker with the :ref:`lib_ready_resolve` library, for the address families that are up only, and tries all resolved addresses.
+
+  * Updated the :c:func:`mqtt_helper_connect` function to return ``-ENETDOWN`` or ``-EHOSTUNREACH`` when the network is not ready or the broker cannot be resolved, instead of positive :c:func:`getaddrinfo` error codes.
 
 * :ref:`lib_downloader` library:
 
