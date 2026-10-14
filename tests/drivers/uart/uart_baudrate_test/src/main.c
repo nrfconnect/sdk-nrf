@@ -82,7 +82,7 @@ static void check_timing(uint32_t baudrate)
 	test_uart_config.baudrate = baudrate;
 	test_uart_config.data_bits = UART_CFG_DATA_BITS_8;
 	ret = uart_configure(uart_dev, &test_uart_config);
-	if (ret == -ENOTSUP) {
+	if ((ret == -ENOTSUP) && !IS_ENABLED(CONFIG_UARTE_USE_BAUDRATE_FORMULA)) {
 		TC_PRINT("[%d] Not supported\n", baudrate);
 		ztest_test_skip();
 	}
