@@ -814,7 +814,7 @@ Networking samples
 * :ref:`https_client` sample:
 
   * Fixed an issue where the sample could try to connect over IPv4 or IPv6 even when the device had no local address for that family.
-    The sample now uses only resolved addresses that match a ready local IPv4/IPv6 address.
+    The sample now resolves the server with the :ref:`lib_ready_resolve` library, for the address families that are up only.
 
 * :ref:`http_server` sample:
 
