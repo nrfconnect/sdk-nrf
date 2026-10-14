@@ -101,7 +101,7 @@ Wi-Fi radio test subcommands
      - Configuration
      - Configure the location of resource unit (RU) in 20 MHz spectrum.
    * - init
-     - | <val> - Band
+     - | Band ``0`` = 2.4 GHz, ``1`` = 5 GHz, ``2`` = 6 GHz
        | <val> - Primary channel number
      - N/A
      - Action
