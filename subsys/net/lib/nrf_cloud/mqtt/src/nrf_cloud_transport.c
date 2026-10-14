@@ -846,9 +846,34 @@ int nct_initialize(const struct nrf_cloud_init_param *param)
 	return nct_provision();
 }
 
+static void link_lost_work_fn(struct k_work *work)
+{
+	LOG_WRN("Network connectivity lost, aborting connection");
+	(void)mqtt_abort(&nct.client);
+}
+
+static K_WORK_DEFINE(link_lost_work, link_lost_work_fn);
+
+static void nct_lost_cb(struct connect_by_name *ctx, void *user_data)
+{
+	/* Called with the connect_by_name lock held, abort from a work item */
+	k_work_submit(&link_lost_work);
+}
+
+/* Registered from connect until disconnect. Holds the broker address for mqtt_connect(). */
+static struct connect_by_name broker_conn;
+static struct connect_by_name_cfg broker_conn_cfg;
+
+static void broker_conn_release(void)
+{
+	connect_by_name_deinit(&broker_conn);
+	(void)k_work_cancel(&link_lost_work);
+}
+
 void nct_uninit(void)
 {
 	LOG_DBG("Uninitializing nRF Cloud transport");
+	broker_conn_release();
 	dc_endpoint_free();
 	nct_reset_topics();
 
@@ -888,8 +913,12 @@ static void nct_init_mqtt(void)
 	}
 }
 
-static int nct_connect_host_cb(struct sockaddr *const addr)
+static int nct_connect_host_cb(const struct net_sockaddr *addr, net_socklen_t addrlen,
+			       void *user_data)
 {
+	ARG_UNUSED(addrlen);
+	ARG_UNUSED(user_data);
+
 	int err;
 
 	/* Initialize MQTT client if it is not already initialized. */
@@ -911,14 +940,21 @@ static int nct_connect_host_cb(struct sockaddr *const addr)
 int nct_connect(void)
 {
 	int err = 0;
-	const char *const host_name = NRF_CLOUD_HOSTNAME;
-	uint16_t port = NRF_CLOUD_PORT;
-	struct zsock_addrinfo hints = {.ai_socktype = SOCK_STREAM};
-	int sock = nrf_cloud_connect_host(host_name, port, &hints, &nct_connect_host_cb);
+	int sock;
 
+	broker_conn_release();
+	broker_conn_cfg = (struct connect_by_name_cfg) {
+		.host = NRF_CLOUD_HOSTNAME,
+		.port = NRF_CLOUD_PORT,
+		.socktype = NET_SOCK_STREAM,
+		.connect_cb = nct_connect_host_cb,
+		.lost_cb = nct_lost_cb,
+	};
+
+	sock = nrf_cloud_connect_host(&broker_conn, &broker_conn_cfg);
 	if (sock < 0) {
 		LOG_ERR("Could not connect to nRF Cloud MQTT Broker %s, port: %d. err: %d",
-			host_name, port, sock);
+			broker_conn_cfg.host, broker_conn_cfg.port, sock);
 		return -ECONNREFUSED;
 	}
 
@@ -1115,6 +1151,7 @@ int nct_disconnect(void)
 {
 	LOG_DBG("Disconnecting");
 
+	broker_conn_release();
 	dc_endpoint_free();
 	return mqtt_disconnect(&nct.client, NULL);
 }
