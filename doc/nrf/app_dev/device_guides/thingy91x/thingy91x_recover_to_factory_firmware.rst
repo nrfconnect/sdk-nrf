@@ -41,8 +41,8 @@ Complete the following steps to recover the Thingy:91 X to factory firmware:
 
    .. code-block:: none
 
-      nrfutil device recover --x-family nrf53 --core Network --traits jlink
-      nrfutil device recover --x-family nrf53 --core Application --traits jlink
+      nrfutil device recover --family nrf53 --core Network --traits jlink
+      nrfutil device recover --family nrf53 --core Application --traits jlink
 
    Even though the device shows up as unrecoverable, the soft-lock can be removed with these commands.
    You might have to repeat them for a successful result.

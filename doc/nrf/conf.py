@@ -66,6 +66,7 @@ extensions = [
     "external_sw_versions",
     "ncs_file",
     "glossary_term_tooltip",
+    "nrfutil_command",
 ]
 
 linkcheck_ignore = [
@@ -220,6 +221,10 @@ options_from_kconfig_zephyr_dir = ZEPHYR_BASE
 # Options for manifest_revisions_table -----------------------------------------
 
 manifest_revisions_table_manifest = NRF_BASE / "west.yml"
+
+# Options for nrfutil_command --------------------------------------------------
+
+nrfutil_command_specs = str(utils.get_builddir() / "nrfutil-specs")
 
 # Options for sphinx_notfound_page ---------------------------------------------
 
