@@ -134,3 +134,19 @@
 #versions-select option {
   font-weight: normal;
 }
+
+/* Glossary :term: links — italic like Nordic bundle documentation terms. */
+.rst-content a.reference.internal span.std.std-term,
+.rst-content a.reference.internal > span.xref.std.std-term {
+  font-style: italic;
+}
+
+/* The copy icon has a title, which the browser shows as a second tooltip on hover */
+.rst-content button.copybtn svg {
+  pointer-events: none;
+}
+
+/* sphinx-copybutton sets "Copy" while idle and "Copied!" after copying */
+.rst-content button.copybtn[data-tooltip="Copy"]:after {
+  content: "Copy command";
+}

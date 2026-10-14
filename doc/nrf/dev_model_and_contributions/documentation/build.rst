@@ -165,3 +165,54 @@ To test the version drop-down locally, complete the following steps:
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
 To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
+
+.. _doc_build_nrfutil_commands:
+
+nRF Util command examples
+=========================
+
+The documentation build checks the nRF Util commands in ``nrfutil-command`` directives.
+The build treats a line as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
+The build reports subcommands and options that do not exist in the nRF Util versions used by the |NCS|, as warnings at the file and line of the command.
+The build accepts any value for placeholders in angle brackets, such as ``<serial_number>``.
+
+The check is disabled by default.
+To enable it, set the ``NRFUTIL_COMMAND_CHECK`` CMake option to ``ON`` when generating the build files:
+
+.. code-block:: console
+
+   cmake -GNinja -S. -B_build -DNRFUTIL_COMMAND_CHECK=ON
+
+The check needs nRF Util on your ``PATH``.
+If the build cannot generate the snapshot of the nRF Util commands, for example because nRF Util is not found, it reports a warning.
+The buttons that open the nRF Util documentation of the commands are only added when the check is enabled.
+
+Snapshot of the nRF Util commands
+---------------------------------
+
+The build checks the commands against a snapshot of the ``--json-args`` output of nRF Util and its commands.
+It generates the snapshot in the :file:`nrfutil-specs` folder of the documentation build folder, using the following versions:
+
+* The nRF Util version from the :file:`scripts/tools-versions-<os>.yml` file of the operating system you build on.
+* The versions of the nRF Util commands from the same file, the ``nrfutil_<command>_ver`` replacements in :file:`doc/nrf/shortcuts.txt`, and the :file:`doc/_extensions/nrfutil_command/pins.yml` file, in that order of precedence.
+
+The build generates the snapshot again only when one of these versions changes.
+It installs nRF Util and its commands in a temporary folder, so your nRF Util installation does not change.
+Generating the snapshot needs internet access.
+
+To check the documentation against another release of an nRF Util command, change its version in one of these files and build the documentation again.
+
+Commands for specific operating systems
+---------------------------------------
+
+The ``--json-args`` output of nRF Util differs between operating systems.
+For this reason, the build checks the commands in the Windows, Linux, and macOS tabs only when you build the documentation on that operating system.
+To mark a command outside of tabs as specific to an operating system, add the ``:os:`` option to the directive, for example ``:os: windows``.
+If a command must not be checked at all, add the ``:no-validate:`` option.
+
+Check in pull requests
+----------------------
+
+The documentation build workflow installs nRF Util and sets the ``NRFUTIL_COMMAND_CHECK`` CMake option to ``ON``.
+Warnings from the check fail the build, including the warning that the build cannot generate the snapshot.
+The workflow caches the snapshot between builds.

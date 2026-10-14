@@ -25,6 +25,7 @@ set(SPHINXOPTS_EXTRA "" CACHE STRING "Extra Sphinx Options")
 set(DTS_BINDINGS OFF CACHE BOOL "Generate dts bindings documentation")
 set(HW_FEATURES OFF CACHE BOOL "Generate hardware features")
 set(KCONFIGDIFF OFF CACHE BOOL "Generate Kconfig diff against the previous release")
+set(NRFUTIL_COMMAND_CHECK OFF CACHE BOOL "Validate nRF Util commands against the pinned versions")
 set(NCS_RELEASE OFF CACHE BOOL "Bool specifying whether current build is release.")
 
 separate_arguments(SPHINXOPTS)
@@ -321,7 +322,12 @@ set(VERSION_TYPE "NCS")
 include(version)
 set(NRF_VERSION ${NCS_VERSION_STRING})
 
-add_docset(nrf ${NRF_VERSION})
+set(NRF_SPHINXOPTS)
+if(NRFUTIL_COMMAND_CHECK)
+  list(APPEND NRF_SPHINXOPTS "-Dnrfutil_command_check=1")
+endif()
+
+add_docset(nrf ${NRF_VERSION} SPHINXOPTS ${NRF_SPHINXOPTS})
 add_doxygen_docset(nrf ${NRF_BASE} ${NRF_VERSION})
 
 #-------------------------------------------------------------------------------
