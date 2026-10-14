@@ -106,6 +106,7 @@ endif
 config TEMP_TRACKING
 	bool "Track temperature"
 	default y
+	select SENSOR if $(dt_nodelabel_enabled,temp)
 	help
 	  Sets whether to take temperature measurements.
 
