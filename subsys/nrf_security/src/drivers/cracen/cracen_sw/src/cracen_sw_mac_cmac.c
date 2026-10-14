@@ -3,6 +3,7 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
+#include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 #include <psa/crypto.h>
@@ -94,10 +95,21 @@ psa_status_t cracen_cmac_derive_subkeys(cracen_mac_operation_t *operation, uint8
 psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *operation, const uint8_t *data,
 				   size_t data_len)
 {
-	psa_status_t psa_status;
+	psa_status_t psa_status = PSA_SUCCESS;
 	size_t bytes_to_copy;
 	size_t remaining = data_len;
 	size_t offset = 0;
+	/* A full block is encrypted only once more data follows it */
+	bool encrypts = operation->cmac.sw_ctx.partial_len + data_len > SX_BLKCIPHER_AES_BLK_SZ;
+
+	if (encrypts) {
+		/* CRACEN stays reserved for all blocks of this call */
+		psa_status = silex_statuscodes_to_psa(
+			sx_hw_reserve(&operation->cmac.cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+	}
 
 	while (remaining > 0) {
 		bytes_to_copy = SX_BLKCIPHER_AES_BLK_SZ - operation->cmac.sw_ctx.partial_len;
@@ -121,14 +133,17 @@ psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *operation, const uint
 				&operation->cmac.cipher, &operation->cmac.keyref,
 				operation->cmac.sw_ctx.mac_state, operation->cmac.sw_ctx.mac_state);
 			if (psa_status != PSA_SUCCESS) {
-				return psa_status;
+				break;
 			}
 			operation->cmac.sw_ctx.partial_len = 0;
 			memset(operation->cmac.sw_ctx.partial_block, 0, SX_BLKCIPHER_AES_BLK_SZ);
 		}
 	}
 
-	return PSA_SUCCESS;
+	if (encrypts) {
+		sx_hw_release(&operation->cmac.cipher.dma);
+	}
+	return psa_status;
 }
 
 psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
@@ -142,9 +157,16 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	psa_status = cracen_cmac_derive_subkeys(operation, k1, k2);
+	/* CRACEN stays reserved for all blocks of this call */
+	psa_status = silex_statuscodes_to_psa(
+		sx_hw_reserve(&operation->cmac.cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
+	}
+
+	psa_status = cracen_cmac_derive_subkeys(operation, k1, k2);
+	if (psa_status != PSA_SUCCESS) {
+		goto exit;
 	}
 
 	/*  If full block, XOR with K1; otherwise pad and XOR with K2 */
@@ -166,12 +188,15 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 					     operation->cmac.sw_ctx.mac_state,
 					     operation->cmac.sw_ctx.mac_state);
 	if (psa_status != PSA_SUCCESS) {
-		return psa_status;
+		goto exit;
 	}
 
 	memcpy(operation->input_buffer, operation->cmac.sw_ctx.mac_state, operation->mac_size);
 
-	return PSA_SUCCESS;
+	psa_status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&operation->cmac.cipher.dma);
+	return psa_status;
 }
 
 /* Single-shot operations still use hw cmac */
