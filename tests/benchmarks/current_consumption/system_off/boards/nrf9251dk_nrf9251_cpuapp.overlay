@@ -1,3 +1,0 @@
-&uart133 {
-	disable-rx;
-};
