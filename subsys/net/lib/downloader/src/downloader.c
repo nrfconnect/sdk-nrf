@@ -409,6 +409,8 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 	__ASSERT_NO_MSG(url != NULL);
 
 	int err;
+	char hostname[CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE];
+	const struct dl_transport *transport = NULL;
 	const struct dl_transport *transport_connected = dl->transport;
 	bool host_connected = false;
 
@@ -422,30 +424,24 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 		return -EPERM;
 	}
 
-	/* Check if we are already connected to the correct host */
-	if (is_state(dl, DOWNLOADER_CONNECTED)) {
-		char hostname[CONFIG_DOWNLOADER_MAX_HOSTNAME_SIZE];
-
-		err = dl_parse_url_host(url, hostname, sizeof(hostname));
-		if (err) {
-			LOG_ERR("Failed to parse hostname");
-			k_mutex_unlock(&dl->mutex);
-			return -EINVAL;
-		}
-		if (strncmp(hostname, dl->hostname, sizeof(hostname)) == 0) {
-			host_connected = true;
-		}
-	}
+	/* A rejected request must leave a retained connection as it was, so the host, transport
+	 * and host configuration are only stored when all checks have passed.
+	 */
 
 	/* Extract the hostname, without protocol or port */
-	err = dl_parse_url_host(url, dl->hostname, sizeof(dl->hostname));
+	err = dl_parse_url_host(url, hostname, sizeof(hostname));
 	if (err) {
 		LOG_ERR("Failed to parse hostname, err %d", err);
 		k_mutex_unlock(&dl->mutex);
 		return -EINVAL;
 	}
 
-	/* Extract the filename, without protocol or port */
+	/* Check if we are already connected to the correct host */
+	if (is_state(dl, DOWNLOADER_CONNECTED) && strcmp(hostname, dl->hostname) == 0) {
+		host_connected = true;
+	}
+
+	/* Extract the filename, without protocol or port. It is not part of the connection. */
 	err = dl_parse_url_file(url, dl->file, sizeof(dl->file));
 	if (err) {
 		LOG_ERR("Failed to parse filename, err %d, url %s", err, url);
@@ -453,26 +449,15 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 		return err;
 	}
 
-	dl->host_cfg = *dl_host_cfg;
-	dl->file_size = 0;
-	dl->progress = from;
-	dl->buf_offset = 0;
-	dl->complete = false;
-
-	if (dl->host_cfg.redirects_max == 0) {
-		dl->host_cfg.redirects_max = CONFIG_DOWNLOADER_MAX_REDIRECTS;
-	}
-
-	dl->transport = NULL;
 	STRUCT_SECTION_FOREACH(dl_transport_entry, entry)
 	{
 		if (entry->transport->proto_supported(dl, url)) {
-			dl->transport = entry->transport;
+			transport = entry->transport;
 			break;
 		}
 	}
 
-	if (!dl->transport) {
+	if (!transport) {
 		if (strstr(url, "://") == NULL) {
 			char *fallback = FALLBACK_HTTP;
 
@@ -484,18 +469,39 @@ static int downloader_start(struct downloader *dl, const struct downloader_host_
 			STRUCT_SECTION_FOREACH(dl_transport_entry, entry)
 			{
 				if (entry->transport->proto_supported(dl, fallback)) {
-					dl->transport = entry->transport;
+					transport = entry->transport;
 					break;
 				}
 			}
 		}
 
-		if (!dl->transport) {
+		if (!transport) {
 			LOG_ERR("Protocol not found for %s", url);
 			k_mutex_unlock(&dl->mutex);
 			return -EPROTONOSUPPORT;
 		}
 	};
+
+	if (transport->validate) {
+		err = transport->validate(dl, dl->file);
+		if (err) {
+			k_mutex_unlock(&dl->mutex);
+			return err;
+		}
+	}
+
+	/* The request is accepted, make it the current one. */
+	memcpy(dl->hostname, hostname, strlen(hostname) + 1);
+	dl->host_cfg = *dl_host_cfg;
+	dl->file_size = 0;
+	dl->progress = from;
+	dl->buf_offset = 0;
+	dl->complete = false;
+	dl->transport = transport;
+
+	if (dl->host_cfg.redirects_max == 0) {
+		dl->host_cfg.redirects_max = CONFIG_DOWNLOADER_MAX_REDIRECTS;
+	}
 
 	if (is_state(dl, DOWNLOADER_CONNECTED)) {
 		if (host_connected) {
