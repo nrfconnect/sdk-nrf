@@ -15,10 +15,12 @@ The sample supports the following development kits:
 Overview
 ********
 
-The sample demonstrates Wi-Fi P2P functionality using the following two operating modes:
+The sample demonstrates Wi-Fi P2P functionality using the following operating modes:
 
-* Client (CLI) mode - The device discovers a peer and initiates a P2P connection.
-* Group Owner (GO) mode - The device acts as the P2P Group Owner and manages the P2P group.
+* Client (CLI) mode - The device discovers a peer and joins or negotiates a P2P connection.
+* Group Owner (GO) mode - The device forms and manages an autonomous P2P group.
+
+The Group Owner (GO) mode can optionally run a TCP echo server, and the client can run a matching TCP echo client, to exercise the data path over the P2P link.
 
 Wi-Fi P2P enables direct communication between devices without requiring a traditional access point.
 
@@ -37,7 +39,12 @@ The following sample-specific Kconfig options are used in this sample (located i
 .. options-from-kconfig::
    :show-type:
 
-In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to connect to a peer.
+The sample provides configuration files that select a mode together with its common options:
+
+* :file:`echo-cli.conf` - Client mode with the TCP echo client.
+* :file:`echo-go.conf` - Autonomous Group Owner mode with the TCP echo server.
+
+In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to the Group Owner's MAC address to connect to it.
 
 Building and running
 ********************
@@ -47,11 +54,17 @@ Building and running
 .. include:: /includes/build_and_run_ns.txt
 
 To build for the nRF7002 DK, use the ``nrf7002dk/nrf5340/cpuapp`` board target.
-The following is an example of the CLI command:
+Select a mode by applying its overlay with the ``EXTRA_CONF_FILE`` option.
+
+The following examples build the application for the nRF7002 DK:
 
 .. code-block:: console
 
-   west build -b nrf7002dk/nrf5340/cpuapp
+   # Autonomous Group Owner with the echo server
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=echo-go.conf
+
+   # Client with the echo client (set CONFIG_SAMPLE_P2P_PEER_ADDRESS to the GO MAC)
+   west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=echo-cli.conf
 
 .. include:: /includes/wifi_refer_sample_yaml_file.txt
 

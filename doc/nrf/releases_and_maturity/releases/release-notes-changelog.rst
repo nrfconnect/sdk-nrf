@@ -874,6 +874,12 @@ Wi-Fi samples
   * Added the :ref:`lib_nrf71_idle_power` library to the ``nrf7120dk/nrf7120/cpuapp`` board configuration, reducing the System ON idle current.
     The Station and Scan samples also suspend the console while idle between connection or scan events.
 
+* :ref:`wifi_p2p_sample` sample:
+
+  * Added:
+
+    * Support for a TCP echo server in Group Owner mode and a matching TCP echo client in Client mode to exercise the data path over the P2P link.
+
 * :ref:`wifi_nrf_cloud` sample:
 
   * Added:
