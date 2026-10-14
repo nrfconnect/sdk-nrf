@@ -10,6 +10,7 @@
 #include <zephyr/net/socket.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <net/downloader.h>
 
 #include <zephyr/logging/log.h>
@@ -29,9 +30,7 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #define SEC_TAG 0
 #endif
 
-/* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_IPV4_CONNECTED | NET_EVENT_L4_IPV4_DISCONNECTED |	\
-		       NET_EVENT_L4_IPV6_CONNECTED | NET_EVENT_L4_IPV6_DISCONNECTED)
+/* Macro used to subscribe to specific Zephyr NET management events. */
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 #define PROGRESS_WIDTH 50
@@ -39,18 +38,11 @@ LOG_MODULE_REGISTER(download, LOG_LEVEL_INF);
 #define RETRY_BACKOFF_INITIAL_MS 1000
 #define RETRY_BACKOFF_MAX_MS 30000
 #define MAX_ATTEMPTS 8
+/* Any IP family, and DNS to resolve the server host name */
+#define READY_MASK (CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
 
-static struct net_if *net_if;
-
-static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(download_result_sem, 0, 1);
-static ATOMIC_DEFINE(network_state, 2);
 static bool download_succeeded;
-
-enum network_state_flag {
-	NETWORK_STATE_IPV4_READY,
-	NETWORK_STATE_IPV6_READY,
-};
 
 static int sec_tag_list[] = { SEC_TAG };
 static const char cert[] = {
@@ -200,50 +192,6 @@ static int cert_provision(void)
 	return 0;
 }
 
-static void on_net_event_l4_connected(void)
-{
-	k_sem_give(&network_connected_sem);
-}
-
-static bool ipv4_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV4_READY);
-}
-
-static bool ipv6_ready(void)
-{
-	return atomic_test_bit(network_state, NETWORK_STATE_IPV6_READY);
-}
-
-static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
-			     size_t info_length, void *user_data)
-{
-	switch (event) {
-	case NET_EVENT_L4_IPV4_CONNECTED:
-		net_if = iface;
-		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
-		LOG_INF("IPv4 connectivity established");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_IPV4_DISCONNECTED:
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
-		LOG_INF("IPv4 connectivity lost");
-		break;
-	case NET_EVENT_L4_IPV6_CONNECTED:
-		net_if = iface;
-		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
-		LOG_INF("IPv6 connectivity established");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_IPV6_DISCONNECTED:
-		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
-		LOG_INF("IPv6 connectivity lost");
-		break;
-	default:
-		break;
-	}
-}
-
 static void connectivity_event_handler(uint64_t event, struct net_if *iface, void *info,
 				       size_t info_length, void *user_data)
 {
@@ -274,30 +222,8 @@ static void connectivity_event_handler(uint64_t event, struct net_if *iface, voi
 }
 
 /* Registered statically to not miss events raised before main() */
-NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
 NET_MGMT_REGISTER_EVENT_HANDLER(conn_events, CONN_LAYER_EVENT_MASK, connectivity_event_handler,
 				NULL);
-
-/* Pick which IP family to use for the download. */
-static int select_family(void)
-{
-	const bool v4 = ipv4_ready();
-	const bool v6 = ipv6_ready();
-
-	if (v6 && v4) {
-		return AF_UNSPEC;
-	}
-
-	if (v6) {
-		return AF_INET6;
-	}
-
-	if (v4) {
-		return AF_INET;
-	}
-
-	return -1;
-}
 
 static int callback(const struct downloader_evt *event)
 {
@@ -411,9 +337,9 @@ int main(void)
 		return err;
 	}
 
-	k_sem_take(&network_connected_sem, K_FOREVER);
-
-	LOG_INF("Network connected");
+	LOG_INF("Waiting for network...");
+	(void)conn_mgr_wait_ready(READY_MASK, NULL, K_FOREVER);
+	LOG_INF("Network ready");
 
 	err = downloader_init(&downloader, &dl_cfg);
 	if (err) {
@@ -422,25 +348,23 @@ int main(void)
 	}
 
 	/* Retry the download a few times with an increasing backoff until it completes
-	 * successfully. Sometimes the device will get an IP family first then attempt
-	 * download on this family and we may need a retry on the other family.
+	 * successfully, retrying early if the network changes.
 	 */
-	int32_t retry_backoff_ms = 0;
+	int32_t retry_backoff_ms = RETRY_BACKOFF_INITIAL_MS;
 	int attempt = 0;
+	uint32_t last_seen = 0;
 
-	do {
+	while (attempt < MAX_ATTEMPTS) {
+		/* At once the first time, then after the backoff or a network change */
+		err = conn_mgr_wait_ready(READY_MASK, &last_seen, K_MSEC(retry_backoff_ms));
+		if (err == -EAGAIN) {
+			/* The network is not ready. Keep waiting. */
+			continue;
+		} else if (err != 0) {
+			return err;
+		}
+
 		attempt++;
-		if (attempt > MAX_ATTEMPTS) {
-			break;
-		}
-
-		/* Back off before retries. */
-		if (retry_backoff_ms > 0) {
-			k_sleep(K_MSEC(retry_backoff_ms));
-			retry_backoff_ms = MIN(retry_backoff_ms * 2, RETRY_BACKOFF_MAX_MS);
-		} else {
-			retry_backoff_ms = RETRY_BACKOFF_INITIAL_MS;
-		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		psa_status_t status;
@@ -455,38 +379,29 @@ int main(void)
 		}
 #endif
 
-		const int family = select_family();
-
-		if (family < 0) {
-			LOG_ERR("Failed to select a valid address family");
-			continue;
-		}
-
-		host_dl_cfg.family = family;
-		LOG_INF("Starting download over %s",
-			host_dl_cfg.family == AF_INET6 ? "IPv6" :
-			host_dl_cfg.family == AF_INET ? "IPv4" :
-			"IPv6/IPv4");
-
 		ref_time = k_uptime_get();
 
 		err = downloader_get(&downloader, &host_dl_cfg, URL, STARTING_OFFSET);
 		if (err) {
 			LOG_ERR("Failed to start the downloader, err %d", err);
-			continue;
+		} else {
+			LOG_INF("Downloading %s", URL);
+
+			k_sem_take(&download_result_sem, K_FOREVER);
+			if (download_succeeded) {
+				break;
+			}
 		}
 
-		LOG_INF("Downloading %s", URL);
-
-		k_sem_take(&download_result_sem, K_FOREVER);
-	} while (!download_succeeded);
+		retry_backoff_ms = MIN(retry_backoff_ms * 2, RETRY_BACKOFF_MAX_MS);
+	}
 
 	if (!download_succeeded) {
 		LOG_ERR("Giving up after %d failed attempts", attempt);
 	}
 
 	LOG_INF("Download finished, bringing network interfaces down");
-	(void)conn_mgr_if_disconnect(net_if);
+	(void)conn_mgr_all_if_disconnect(true);
 	(void)conn_mgr_all_if_down(true);
 
 	return 0;
