@@ -907,6 +907,7 @@ Wi-Fi samples
 
     * Support for FOTA and device monitoring through `Memfault`_, using the CoAP transport.
     * Support for dual-slot MCUboot (with FOTA support) on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, and ``nrf7120dk/nrf7120/cpuapp`` board targets.
+    * Button-triggered Memfault FOTA checks and chunk posting (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`), demonstrating how the application can drive these actions on demand.
 
   * Updated:
 
@@ -927,7 +928,6 @@ Wi-Fi samples
   * Removed:
 
     * Networking shell support from nRF7002 DK and nRF54LM20 DK.
-    * Unused button functionality that only printed a log message.
 
 * Removed:
 
