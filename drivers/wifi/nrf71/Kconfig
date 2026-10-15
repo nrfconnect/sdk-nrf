@@ -392,21 +392,18 @@ config WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM
 	  Disable this option to bring up the interface only with a MAC address
 	  that has been programmed.
 
-config NRF71_RSSI_STALE_TIMEOUT_MS
-	int "RSSI stale timeout in milliseconds"
+config NRF71_GET_STA_STALE_TIMEOUT_MS
+	int "Station info stale timeout in milliseconds"
 	default 1000
 	help
-	  RSSI stale timeout is the period after which the driver queries
-	  RPU to get the RSSI value.
-	  If data is active (for example, ping), the driver stores the RSSI value from
-	  the received frames and provides this stored information
-	  to wpa_supplicant. In this case, a higher value will be suitable
-	  as the stored RSSI value at the driver will be updated regularly.
-	  If data is not active or after the stale timeout duration,
-	  the driver queries the RPU to get the RSSI value
-	  and provides it to wpa_supplicant. The value should be set to a lower
-	  value as the driver does not store it and requires RPU to provide the
-	  information.
+	  Period after which the driver queries the RPU for station
+	  information (RSSI and TX PHY rate) on a signal poll.
+	  While data is active, the driver stores the RSSI of received
+	  frames and the TX PHY rate of successfully transmitted frames, and
+	  reports these stored values without querying the RPU, so as not to
+	  disturb the data path.
+	  If no frame has been received within this period, the driver
+	  queries the RPU instead.
 
 config NRF_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"

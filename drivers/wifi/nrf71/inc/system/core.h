@@ -97,6 +97,7 @@ struct nrf_wifi_vif_ctx_zep {
 	bool cookie_resp_received;
 	unsigned long rssi_record_timestamp_us;
 	signed short rssi;
+	unsigned int tx_rate_kbps;
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	/* Connect scan results database cached from the scan done event, read
 	 * on the supplicant's get scan results call and freed right after.
