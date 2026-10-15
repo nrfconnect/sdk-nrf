@@ -270,6 +270,10 @@ struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
 				     signed short signal);
+
+	/** Callback function to be called when TX PHY rate is to be processed from TX done. */
+	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
+					     unsigned int tx_rate_kbps);
 #endif /* CONFIG_NRF71_STA_MODE */
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
