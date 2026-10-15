@@ -1262,6 +1262,9 @@ Libraries for networking
 
   * Increased the default value of the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option from 1350 to 4096 bytes, so that a job message with a presigned URL fits in the buffer.
 
+  * Removed the variable-length arrays that were used to log the received job document and topic when the :kconfig:option:`CONFIG_AWS_FOTA_LOG_LEVEL_DBG` Kconfig option is enabled.
+    The job document is now logged as a hexdump of at most 256 bytes, which does not use the stack.
+
 * :ref:`lib_aws_iot` library:
 
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
