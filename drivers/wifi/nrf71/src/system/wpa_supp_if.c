@@ -1018,6 +1018,8 @@ int nrf_wifi_wpa_supp_associate(void *if_priv, struct wpa_driver_associate_param
 
 	memset(&assoc_info, 0, sizeof(assoc_info));
 
+	vif_ctx_zep->tx_rate_kbps = 0;
+
 	if (params->bssid) {
 		memcpy(assoc_info.nrf_wifi_bssid, params->bssid, sizeof(assoc_info.nrf_wifi_bssid));
 	}
@@ -1454,6 +1456,7 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 		}
 	} else {
 		si->data.signal = (int)vif_ctx_zep->rssi;
+		si->data.current_tx_rate = vif_ctx_zep->tx_rate_kbps;
 	}
 
 	ret = nrf_wifi_sys_fmac_get_interface(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
@@ -1526,6 +1529,7 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 	if (info->sta_info.valid_fields & NRF_WIFI_STA_INFO_TX_BITRATE_VALID) {
 		if (info->sta_info.tx_bitrate.valid_fields & NRF_WIFI_RATE_INFO_BITRATE_VALID) {
 			signal_info->data.current_tx_rate = info->sta_info.tx_bitrate.bitrate * 100;
+			vif_ctx_zep->tx_rate_kbps = signal_info->data.current_tx_rate;
 		}
 	}
 out:

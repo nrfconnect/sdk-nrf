@@ -407,6 +407,9 @@ config NRF71_RSSI_STALE_TIMEOUT_MS
 	  and provides it to wpa_supplicant. The value should be set to a lower
 	  value as the driver does not store it and requires RPU to provide the
 	  information.
+	  While the stored RSSI is used, the driver reports the last known
+	  TX PHY rate, taken from the TX done events of successfully
+	  transmitted frames or from the last RPU query.
 
 config NRF_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
