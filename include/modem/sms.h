@@ -182,6 +182,7 @@ typedef void (*sms_callback_t)(struct sms_data *const data, void *context);
  * @retval -ENOSPC List of observers is full.
  * @retval -EBUSY Indicates that one SMS client has already been registered towards the modem
  *                and SMS subscriber module is not able to do it.
+ * @retval -EFAULT AT command failed with "ERROR", "+CME ERROR" or "+CMS ERROR" response.
  * @retval -ENOMEM Out of memory.
  * @return Handle identifying the listener,
  *         or a negative value if an error occurred.

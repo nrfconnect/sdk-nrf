@@ -436,6 +436,11 @@ Modem libraries
 
 |no_changes_yet_note|
 
+* :ref:`sms_readme` library:
+
+  * Fixed an issue where the :c:func:`sms_register_listener` function returned a positive value instead of a negative error code when the modem responded with an AT error during SMS client registration.
+    The function now returns ``-EFAULT`` in this case.
+
 Multiprotocol Service Layer libraries
 -------------------------------------
 

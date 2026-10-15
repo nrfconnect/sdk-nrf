@@ -171,6 +171,17 @@ void test_sms_init_fail_cnmi_query_ret_err(void)
 	TEST_ASSERT_EQUAL(-EINVAL, handle);
 }
 
+/** Test AT error response for AT+CNMI? */
+void test_sms_init_fail_cnmi_query_ret_at_err(void)
+{
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CNMI?", 65536);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	int handle = sms_register_listener(sms_callback, NULL);
+
+	TEST_ASSERT_EQUAL(-EFAULT, handle);
+}
+
 /** Test unexpected response for AT+CNMI? */
 void test_sms_init_fail_cnmi_resp_unexpected_value(void)
 {
@@ -242,6 +253,26 @@ void test_sms_init_fail_cnmi_set_ret_err(void)
 	int handle = sms_register_listener(sms_callback, NULL);
 
 	TEST_ASSERT_EQUAL(-EIO, handle);
+}
+
+/** Test AT error response for AT+CNMI=3,2,0,x */
+void test_sms_init_fail_cnmi_set_ret_at_err(void)
+{
+	char resp[] = "+CNMI: 0,0,0,0,1\r\n";
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CNMI?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(resp, sizeof(resp));
+
+#if defined(CONFIG_SMS_STATUS_REPORT)
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,1", 196939);
+#else
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CNMI=3,2,0,0", 196939);
+#endif
+	int handle = sms_register_listener(sms_callback, NULL);
+
+	TEST_ASSERT_EQUAL(-EFAULT, handle);
 }
 
 /**
