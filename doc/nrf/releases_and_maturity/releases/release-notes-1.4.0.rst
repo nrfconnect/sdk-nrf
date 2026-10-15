@@ -37,7 +37,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.4.0**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 Supported modem firmware
 ************************
@@ -555,7 +555,7 @@ Documentation
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
 * :ref:`Documentation versions <index>` - you can now switch between different versions of the documentation by selecting the version in the upper left-hand corner
-* :ref:`gs_recommended_versions` - added
+* :ref:`Requirements reference <requirements>` - added
 * :ref:`known_issues` - added
 * :ref:`sample` - updated to include configuration information and to clarify the instructions for using the template
 * :ref:`lib_bluetooth_services` - renamed several :file:`.rst` files for Bluetooth services

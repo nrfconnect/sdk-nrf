@@ -17,7 +17,7 @@ Toolchain change
 The current default toolchain is the `Zephyr SDK`_ instead, which now supports all three main operating systems (Microsoft Windows, macOS, and GNU/Linux).
 
 Required action:
-   If you do not use the Toolchain Manager, install the Zephyr SDK by following the steps in :ref:`gs_installing_toolchain` section.
+   If you do not use the Toolchain Manager, install the Zephyr SDK by following the steps on the :ref:`install_ncs` page.
    The updated Toolchain Manager already contains it.
 
 Note that if you use the Toolchain Manager, it will now install the toolchain in a separate directory (for example :file:`toolchains/v2.0.0/`), next to the main |NCS| directory.

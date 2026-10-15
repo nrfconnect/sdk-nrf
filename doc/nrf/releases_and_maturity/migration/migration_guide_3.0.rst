@@ -33,7 +33,7 @@ IDE, OS, and tool support
 
    |nrf_CLT_deprecation_note|
 
-   It is recommended to install the latest version of `nRF Util`_, as listed in the :ref:`installing_vsc` section of the installation page.
+   It is recommended to install the latest version of `nRF Util`_, as listed on the :ref:`install_ncs` page.
 
 .. _gs_app_tcm:
 .. _gs_assistant:

@@ -32,7 +32,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v0.4.0**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`Getting the nRF Connect SDK code <cloning_the_repositories_win>` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 
 Supported boards
@@ -49,7 +49,7 @@ Supported boards
 Required tools
 **************
 
-In addition to the tools mentioned in :ref:`gs_installing`, the following tool versions are required to work with the |NCS|:
+In addition to the tools mentioned in :ref:`install_ncs`, the following tool versions are required to work with the |NCS|:
 
 .. list-table::
    :header-rows: 1
@@ -65,7 +65,7 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `nRF5x Command Line Tools`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools`
+     - :ref:`command-line installation <command_line_installation>`
 
 
 As IDE, we recommend to use SEGGER Embedded Studio (Nordic Edition), version 4.16 or later.
@@ -194,7 +194,7 @@ Documentation
 
 * Added or updated the following documentation:
 
-  * :ref:`gs_installing` - updated for west, added instructions for macOS
+  * :ref:`install_ncs` - updated for west, added instructions for macOS
   * :ref:`gs_programming` - updated for new SES version
   * :ref:`gs_modifying` - added
   * :ref:`ug_unity_testing` - added
