@@ -20,10 +20,23 @@ The library supports the updating of delta images for both the application and m
 
 See :ref:`AWS FOTA implementation <aws_fota_implementation>` for information about the download procedure, and `AWS IoT Developer Guide`_ for general information about the Amazon Web Services IoT service.
 
+.. _aws_fota_requirements:
+
 Requirements
 ************
 
 The library requires an `AWS account`_ with access to Simple Storage Service (S3) and the IoT Core service.
+
+If you use HTTPS to download the firmware, you must provision the CA certificate of the firmware host in a security tag.
+Set the :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` Kconfig option to this security tag.
+If you do not set the option, the update job fails with the ``NO_SEC_TAG`` error.
+
+The library uses the security tag only to verify the server.
+The download does not require a client certificate or a private key.
+The firmware URL, for example, a presigned Amazon S3 URL, authorizes the download (see :ref:`aws_iot_jobs`).
+
+You can use the same security tag as for the MQTT connection if its CA certificate also validates the firmware host.
+Otherwise, provision a separate security tag that contains the required CA certificate.
 
 Creating a FOTA job
 *******************

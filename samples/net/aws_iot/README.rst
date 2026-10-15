@@ -76,6 +76,11 @@ The sample supports FOTA on nRF91 Series devices, the nRF7120 DK, and the nRF700
 The sample does not support FOTA on other nRF71 Series and nRF70 Series configurations.
 The board configuration files enable it.
 
+To download the firmware over HTTPS, you must set the :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` Kconfig option to a security tag that contains the CA certificate of the firmware host.
+In this sample, the nRF7120 DK and nRF7002 DK board configuration files set the option to ``201``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, because the CA certificate provisioned for the MQTT connection also validates Amazon S3.
+If you change :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, you must also change :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` or provision the CA certificate under the FOTA security tag.
+For more information, see the :ref:`Requirements <aws_fota_requirements>` section of the :ref:`lib_aws_fota` library.
+
 On the nRF7002 DK, the primary and secondary MCUboot slots do not both fit into the internal flash.
 Therefore, the :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` file moves ``slot1_partition`` to the external flash.
 
