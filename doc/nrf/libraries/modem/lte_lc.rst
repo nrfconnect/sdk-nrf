@@ -302,6 +302,35 @@ The :c:func:`lte_lc_env_eval` function starts the environment evaluation for the
 When the environment evaluation is complete, an :c:enumerator:`LTE_LC_EVT_ENV_EVAL_RESULT` event with the evaluation results is received.
 For each found PLMN, the :c:struct:`lte_lc_conn_eval_params` structure is populated with the evaluation results.
 
+.. _lte_lc_band_lock:
+
+Band lock
+=========
+
+Band lock restricts the modem to a subset of the LTE bands it supports.
+The modem supports two band locks:
+
+* The permanent band lock (:c:enumerator:`LTE_LC_BAND_LOCK_PERMANENT`), which is stored in the modem and kept when the modem is powered off.
+* The runtime band lock (:c:enumerator:`LTE_LC_BAND_LOCK_RUNTIME`), which is lost when the modem is powered off.
+
+When both band locks are set, the modem only uses the bands that are in both.
+The second band lock must have at least one band in common with the first one, otherwise the modem rejects it.
+
+To set the band lock at build time, set the :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to ``y`` and configure the bands using the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` and :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig options.
+The configured bands are set as the runtime band lock.
+See :ref:`nrf91_ug_band_lock` for more information.
+
+To change the band lock at runtime, set the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option to ``y``, and use the following functions:
+
+* :c:func:`lte_lc_band_lock_set` - Sets the permanent or runtime band lock.
+  Bands up to 88 are set using a band mask and bands above 88 using a band list, which is not supported by all modem firmware versions.
+* :c:func:`lte_lc_band_lock_remove` - Removes both the permanent and the runtime band lock.
+
+The band lock can only be changed when the modem library is initialized and the modem is offline or powered off.
+The library stores the runtime band lock and sets it again when the modem is initialized or has been powered off.
+A runtime band lock set using the :c:func:`lte_lc_band_lock_set` function replaces the bands configured using the Kconfig options.
+After the :c:func:`lte_lc_band_lock_remove` function is called, the bands configured using the Kconfig options are not set again until the device is rebooted.
+
 .. _lte_lc_pdn:
 
 PDN management
