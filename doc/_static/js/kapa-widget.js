@@ -24,6 +24,7 @@ document.addEventListener("DOMContentLoaded", function () {
     script.setAttribute("data-user-analytics-fingerprint-enabled", "true");
     script.setAttribute("data-modal-open-on-command-k", "true");
     script.setAttribute("data-search-mode-enabled", "true");
+    script.setAttribute("data-bot-protection-mechanism", "hcaptcha");
     script.async = true;
 
     // Wire the Sphinx search bar to open the Kapa modal on the "Search" tab.
