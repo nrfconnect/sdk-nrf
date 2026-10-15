@@ -115,3 +115,10 @@
   platforms:
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41547"
+
+- scenarios:
+    - benchmarks.bootup_time.mcuboot
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
