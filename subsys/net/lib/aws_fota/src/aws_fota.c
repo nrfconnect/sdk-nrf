@@ -22,6 +22,9 @@ LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
 #define AWS_JOB_ID_DEFAULT "INVALID-JOB-ID"
 
+/* Maximum number of bytes of a job document to log. The log message length field is 12 bits. */
+#define JOB_DOC_LOG_LEN_MAX 256
+
 /* Maximum length of the status details JSON object that is reported to AWS IoT Jobs when a job
  * execution is marked as failed. Must fit {"reason":"<cause>","progress":"<0-100>"}.
  */
@@ -201,10 +204,11 @@ static void reset_library(void)
 static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_len)
 {
 #if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	char debug_log[topic_len + 1];
+	char debug_log[AWS_JOBS_TOPIC_MAX_LEN];
+	size_t debug_log_len = MIN(topic_len, sizeof(debug_log) - 1);
 
-	memcpy(debug_log, incoming_topic, topic_len);
-	debug_log[topic_len] = '\0';
+	memcpy(debug_log, incoming_topic, debug_log_len);
+	debug_log[debug_log_len] = '\0';
 	LOG_DBG("Received topic: %s", debug_log); /* Make this debug */
 #endif
 
@@ -658,13 +662,8 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 		return err;
 	}
 
-#if IS_ENABLED(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	char job_doc[payload_len + 1];
-
-	memcpy(job_doc, payload_buf, payload_len);
-	job_doc[payload_len] = '\0';
-	LOG_DBG("Job doc: %s", job_doc);
-#endif
+	/* The data is copied directly to the log buffer, not to the stack. */
+	LOG_HEXDUMP_DBG(payload_buf, MIN(payload_len, JOB_DOC_LOG_LEN_MAX), "Job doc");
 
 	/* Check if message received is a job. */
 	err = aws_fota_parse_DescribeJobExecution_rsp(payload_buf, payload_len,
