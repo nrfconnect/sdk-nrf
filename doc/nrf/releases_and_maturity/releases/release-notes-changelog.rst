@@ -797,6 +797,8 @@ Networking samples
 
 * :ref:`azure_iot_hub` sample:
 
+  * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
+
   * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
 
 * :ref:`https_client` sample:
