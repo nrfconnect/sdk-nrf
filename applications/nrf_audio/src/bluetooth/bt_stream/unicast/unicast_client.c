@@ -611,7 +611,7 @@ static bool foreach_add_to_start_params(struct server_store *server, void *user_
  *		can be added. If the group is full, or there are no more servers to add, it will
  *		start the streams in the unicast group.
  */
-static int cap_action_start(void)
+static int unicast_client_internal_start(void)
 {
 	int ret;
 
@@ -2318,7 +2318,7 @@ static void cap_state_machine_runner(void)
 			ret = -EAGAIN;
 		} else if (unicast_group == NULL) {
 			LOG_DBG("Restarting CAP after unicast group release");
-			ret = cap_action_start();
+			ret = unicast_client_internal_start();
 		} else {
 			LOG_ERR("Unicast group rebuild failed, keeping existing group");
 			unicast_group_recreate_pending = false;
@@ -2326,7 +2326,7 @@ static void cap_state_machine_runner(void)
 		}
 		break;
 	case CAP_ACTION_START:
-		ret = cap_action_start();
+		ret = unicast_client_internal_start();
 		break;
 	default:
 		LOG_ERR("Unknown CAP action: %d", action);
