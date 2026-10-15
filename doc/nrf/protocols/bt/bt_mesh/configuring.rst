@@ -15,8 +15,8 @@ The Bluetooth® Mesh support is controlled by :kconfig:option:`CONFIG_BT_MESH`, 
 
 When the Bluetooth LE Controller is located on a separate image (like on the :zephyr:board:`nrf5340dk` board), apply the following configuration:
 
-* :kconfig:option:`CONFIG_BT_EXT_ADV` =y.
-* :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET` =5.
+* :kconfig:option:`CONFIG_BT_EXT_ADV` = ``y``
+* :kconfig:option:`CONFIG_BT_EXT_ADV_MAX_ADV_SET` = ``5``
 
 Optional features configuration
 *******************************
@@ -96,13 +96,13 @@ These options are only compatible with devices supporting Bluetooth Low Energy (
 
 * The following configuration options allow fitting the full relayed mesh advertiser frame into a single Link Layer payload:
 
-  * :kconfig:option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` set to 37.
-  * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE` set to 37.
-  * :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` set to 37.
+  * :kconfig:option:`CONFIG_BT_CTLR_DATA_LENGTH_MAX` set to ``37``
+  * :kconfig:option:`CONFIG_BT_BUF_ACL_TX_SIZE` set to ``37``
+  * :kconfig:option:`CONFIG_BT_BUF_ACL_RX_SIZE` set to ``37``
 
 * The following option allows sending up to several data frames during the single connection interval:
 
-  * :kconfig:option:`CONFIG_BT_CTLR_SDC_TX_PACKET_COUNT` =10.
+  * :kconfig:option:`CONFIG_BT_CTLR_SDC_TX_PACKET_COUNT` = ``10``
 
 Bluetooth settings/performance
 ------------------------------
@@ -123,12 +123,12 @@ Disabled and unused Bluetooth features
 
 The following feature options are by default disabled in the samples, but it needs to be considered if any of them are required by the application and thus should be enabled:
 
-* :kconfig:option:`CONFIG_BT_CTLR_DUP_FILTER_LEN` =0.
-* :kconfig:option:`CONFIG_BT_CTLR_LE_ENC` =n.
-* :kconfig:option:`CONFIG_BT_CTLR_CHAN_SEL_2` =n.
-* :kconfig:option:`CONFIG_BT_CTLR_MIN_USED_CHAN` =n.
-* :kconfig:option:`CONFIG_BT_CTLR_PRIVACY` =n.
-* :kconfig:option:`CONFIG_BT_PHY_UPDATE` =n.
+* :kconfig:option:`CONFIG_BT_CTLR_DUP_FILTER_LEN` = ``0``
+* :kconfig:option:`CONFIG_BT_CTLR_LE_ENC` = ``n``
+* :kconfig:option:`CONFIG_BT_CTLR_CHAN_SEL_2` = ``n``
+* :kconfig:option:`CONFIG_BT_CTLR_MIN_USED_CHAN` = ``n``
+* :kconfig:option:`CONFIG_BT_CTLR_PRIVACY` = ``n``
+* :kconfig:option:`CONFIG_BT_PHY_UPDATE` = ``n``
 
 Emergency data storage (EMDS)
 -----------------------------
@@ -149,49 +149,49 @@ The Low Power node (LPN) is a :ref:`power optimization <app_power_opt>` feature 
 
 The following configuration options are relevant when using the LPN feature:
 
-* Serial communication consumes considerable power, and disabling it should be considered.
+* Serial communication consumes considerable amount of power, and disabling it should be considered.
 
-  * :kconfig:option:`CONFIG_SERIAL` =n.
-  * :kconfig:option:`CONFIG_UART_CONSOLE` =n.
+  * :kconfig:option:`CONFIG_SERIAL` = ``n``
+  * :kconfig:option:`CONFIG_UART_CONSOLE` = ``n``
 
 * While enabled, secure beacons will be advertised periodically.
   This consumes power, and is not required for a Low Power node.
 
-  * :kconfig:option:`CONFIG_BT_MESH_BEACON_ENABLED` =n.
+  * :kconfig:option:`CONFIG_BT_MESH_BEACON_ENABLED` = ``n``
 
 * Each LPN poll event consumes power.
   Extending the interval between the poll events will improve the power consumption.
 
-  * :kconfig:option:`CONFIG_BT_MESH_LPN_POLL_TIMEOUT` =600.
+  * :kconfig:option:`CONFIG_BT_MESH_LPN_POLL_TIMEOUT` = ``600``
 
 * While the GATT Proxy feature is enabled, the Network ID is periodically advertised.
   Disabling it will conserve the energy.
 
-  * :kconfig:option:`CONFIG_BT_MESH_GATT_PROXY_ENABLED` =n.
+  * :kconfig:option:`CONFIG_BT_MESH_GATT_PROXY_ENABLED` = ``n``
 
 * Reducing the Node ID advertisement timeout decreases the period where the device consumes power for advertising.
 
-  * :kconfig:option:`CONFIG_BT_MESH_NODE_ID_TIMEOUT` =30.
+  * :kconfig:option:`CONFIG_BT_MESH_NODE_ID_TIMEOUT` = ``30``
 
 Persistent storage
 ------------------
 
-Zephyr's Mesh implementation has been designed to use the :ref:`settings <zephyr:settings_api>` subsystem to store internal states and options in the :ref:`persistent storage <zephyr:bluetooth_mesh_persistent_storage>`.
-The settings subsystem can be used with different backends.
+Zephyr's Mesh implementation is designed to use the :ref:`settings <zephyr:settings_api>` subsystem to store internal states and options in the :ref:`persistent storage <zephyr:bluetooth_mesh_persistent_storage>`.
+You can use the settings subsystem with different backends.
 Bluetooth Mesh is configured with the :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` as the settings backend.
 
 Using the settings subsystem based on NVS can in some cases result in a significant store time increase.
 In a worst case scenario, the store time can be up to several minutes.
-This can for example happen when storing a large size replay protection list.
+This can, for example, happen when storing a large size replay protection list.
 It is recommended to configure the settings subsystem's internal caches to improve the performance.
 
 NVS lookup cache reduces the number of search loops within NVS' application table.
 
-* :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE`.
+* :kconfig:option:`CONFIG_NVS_LOOKUP_CACHE`
 
 The Settings NVS name cache reduces the number of search loops of internal parameter identifiers, keeping them in memory.
 
-* :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE`.
+* :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE`
 
 The size of the Settings NVS name cache, :kconfig:option:`CONFIG_SETTINGS_NVS_NAME_CACHE_SIZE`, is recommended to be at least equal to the number of settings entries the device is expected to store.
 
@@ -202,9 +202,9 @@ The Bluetooth Mesh stack stores the following data persistently:
 * IV index
 * Sequence number
 * Heartbeat publication information
-* Application keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
-* Network keys (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
-* Label UUIDs for virtual addressing (the amount of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`)
+* Application keys (the number of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_APP_KEY_COUNT`)
+* Network keys (the number of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_SUBNET_COUNT`)
+* Label UUIDs for virtual addressing (the number of entries is controlled by :kconfig:option:`CONFIG_BT_MESH_LABEL_COUNT`)
 * RPL entries (the RPL size is controlled by :kconfig:option:`CONFIG_BT_MESH_CRPL`)
 
 The following data is stored for each model by the Bluetooth Mesh stack:
@@ -219,16 +219,16 @@ The following data is stored for each model by the Bluetooth Mesh stack:
 
 Model data stored persistently can be found under the ``Persistent storage`` section of the corresponding model documentation.
 
-Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured according to the sample's :ref:`configuration guide <bluetooth_mesh_sensor_server_conf_models>`, results in the following list of possible entries (entries mentioned above are not included unless specifying the amount of entries):
+Using the :ref:`bluetooth_mesh_sensor_server` sample as an example, configured according to the sample's :ref:`configuration guide <bluetooth_mesh_sensor_server_conf_models>`, results in the following list of possible entries (entries mentioned above are not included unless specifying the number of entries):
 
-* 32 RPL entries - since the default Networked Lighting Control (NLC) configuration is used (:kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` is set), the RPL size is 32.
-* Application keys - three keys are used.
-* Bound application keys - each of the three Sensor Server and Sensor Setup Server models has one bound application key.
-* Network keys - only one key is used.
-* Model subscriptions - each of the three Sensor Server and Sensor Setup Server models subscribes to a group address.
-* Model publication information - each of the three Sensor Server models publishes to a group address.
+* 32 RPL entries - Since the default Networked Lighting Control (NLC) configuration is used (:kconfig:option:`CONFIG_BT_MESH_NLC_PERF_DEFAULT` is set), the RPL size is 32.
+* Application keys - Three keys are used.
+* Bound application keys - Each of the three Sensor Server and Sensor Setup Server models has one bound application key.
+* Network keys - Only one key is used.
+* Model subscriptions - Each of the three Sensor Server and Sensor Setup Server models subscribes to a group address.
+* Model publication information - Each of the three Sensor Server models publishes to a group address.
 * Virtual addressing is not used.
-* :ref:`Sensor Server model data <bt_mesh_sensor_srv_persistent_readme>` - each of the three Sensor Server models stores the following data:
+* :ref:`Sensor Server model data <bt_mesh_sensor_srv_persistent_readme>` - Each of the three Sensor Server models stores the following data:
 
   * Minimum interval
   * Delta thresholds
@@ -245,7 +245,7 @@ Adding up all entries, it is worth setting the cache size to minimum 71.
 
 To have a sufficient space for wear leveling, it is strongly recommended to set the settings partition size to a minimum of 40 KB.
 The NVM access backends (NVS and ZMS) also reserve space for the garbage collection process.
-In case of ZMS backed (used on nRF54 Series devices) set CONFIG_SETTINGS_ZMS_CUSTOM_SECTOR_COUNT correctly to cover full partition size (that is, set it to 10 for a 40 KB partition).
+In case of ZMS backed (used on nRF54 Series devices), set :kconfig:option:`CONFIG_SETTINGS_ZMS_CUSTOM_SECTOR_COUNT` correctly to cover full partition size (that is, set it to 10 for a 40 KB partition).
 
 RPL persistence
 ---------------
@@ -280,7 +280,8 @@ See :ref:`emds_readme`.
   The device can then potentially accept replayed messages from previously seen source addresses until new legitimate messages with higher sequence numbers arrive, opening a replay attack risk.
 
 When RPL is persisted through the settings subsystem, the store timeout (:kconfig:option:`CONFIG_BT_MESH_RPL_STORE_TIMEOUT`) determines the interval at which changed RPL entries are written to storage.
-Both the NVS and ZMS backends run garbage collection automatically when a write needs free space; GC is not application-controllable, may start on any Settings write, and blocks further Settings writes until the current sector GC completes.
+Both the NVS and ZMS backends run garbage collection (GC) automatically when a write needs free space.
+GC is not application-controllable, may start on any Settings write, and blocks further Settings writes until the current sector GC completes.
 
 **Per-entry storage footprint**
 
@@ -291,7 +292,7 @@ Depending on the selected backend, RPL entries are stored with different overhea
 **RPL footprint by CRPL size (NVS backend, 36 B/entry)**
 
 The total footprint for each entry (Settings + NVS backend (nRF53)) is 36 B for each occupied slot.
-For more details see :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` and :ref:`Settings subsystem <zephyr:settings_api>`.
+For more details, see :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` and :ref:`Settings subsystem <zephyr:settings_api>`.
 
 .. note::
    The per-entry layout is:
@@ -301,7 +302,7 @@ For more details see :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` and :ref
    - 8 B ATE for the value record
    - 4 B for the value data (the ``struct rpl_val``, aligned to 4 bytes and stored with its ATE in the sector data area)
 
-   On an update of an existing entry only the value record (12 B: ATE + data) is rewritten.
+   On an update of an existing entry, only the value record (12 B: ATE + data) is rewritten.
    The name record (24 B) is written once when the entry is first created.
 
 .. list-table:: Total RPL footprint in flash (Settings + NVS)
@@ -321,7 +322,7 @@ For more details see :ref:`non-volatile storage (NVS) <zephyr:nvs_api>` and :ref
 **RPL footprint by CRPL size (ZMS backend, 64 B/entry)**
 
 The total footprint for each entry (Settings + ZMS backend (nRF54L RRAM)) is 64 B for each occupied slot.
-For more details, see the ZMS storage model in :ref:`ZMS documentation in Zephyr <zephyr:zms_api>` and :ref:`zms_memory_storage`.
+For more details, see the ZMS storage model in the :ref:`ZMS documentation in Zephyr <zephyr:zms_api>` and :ref:`zms_memory_storage`.
 
 .. note::
    The per-entry layout is:
@@ -331,7 +332,8 @@ For more details, see the ZMS storage model in :ref:`ZMS documentation in Zephyr
    - 16 B Name ATE (key string overhead)
    - 16 B Name data block (16-char or shorter key ``bt/mesh/RPL/1234`` aligned to a 16-byte RRAM boundary)
 
-   On an update of an existing entry only the value ATE (16 B) is rewritten; the name and linked-list records are not touched.
+   On an update of an existing entry, only the value ATE (16 B) is rewritten.
+   The name and linked-list records are not touched.
 
 .. list-table:: Total RPL footprint in flash (Settings + ZMS)
    :header-rows: 1
@@ -349,8 +351,10 @@ For more details, see the ZMS storage model in :ref:`ZMS documentation in Zephyr
 
 **Write endurance (ZMS backend)**
 
-The write endurance of a ZMS partition is limited by the RRAM erase-block cycle count (10,000 cycles for each 16 byte wordline on nRF54L Series devices (see `nRF54L15 RRAM programming parameters`_); ZMS ``sector_size`` is configured by the :kconfig:option:`SETTINGS_ZMS_SECTOR_SIZE_MULT` Kconfig option).
-Garbage collection runs sector by sector: each GC pass copies only the still-valid entries in one closed sector forward, then reclaims that sector.
+The write endurance of a ZMS partition is limited by the RRAM erase-block cycle count (10,000 cycles for each 16 byte wordline on nRF54L Series devices (see `nRF54L15 RRAM programming parameters`_).
+ZMS ``sector_size`` is configured by the :kconfig:option:`SETTINGS_ZMS_SECTOR_SIZE_MULT` Kconfig option).
+Garbage collection runs sector by sector.
+Each GC pass copies only the still-valid entries in one closed sector forward, then reclaims that sector.
 
 The lifetime of the partition can be estimated as follows (whole-partition model):
 
@@ -363,11 +367,14 @@ The lifetime of the partition can be estimated as follows (whole-partition model
    total_flushes       = 10,000 x flushes_per_cycle
    lifetime            = total_flushes x store_timeout
 
-* ``valid_rpl_footprint`` is the total size of all live RPL records in the partition; GC must retain this data, so it is not available for new writes in a GC cycle.
-* ``sector_count`` is the number of ZMS sectors in the partition (for example 8 for a 32 KB partition with 4 KB sectors); one sector is reserved for garbage collection, so only ``sector_count - 1`` sectors contribute to ``total_usable``.
+* ``valid_rpl_footprint`` is the total size of all live RPL records in the partition.
+  GC must retain this data, so it is not available for new writes in a GC cycle.
+* ``sector_count`` is the number of ZMS sectors in the partition (for example 8 for a 32 KB partition with 4 KB sectors).
+  One sector is reserved for garbage collection, so only ``sector_count - 1`` sectors contribute to ``total_usable``.
 * ``bytes_per_flush`` equals the number of dirty entries written for each store event multiplied by 16 bytes (one value ATE for each entry).
 
-The formula treats the partition as a single pool of usable space minus live RPL data and yields a sizing estimate. Validate lifetime for your partition layout, RPL occupancy, and traffic.
+The formula treats the partition as a single pool of usable space minus live RPL data and yields a sizing estimate.
+Validate the lifetime for your partition layout, RPL occupancy, and traffic.
 
 The number of dirty entries for each flush on a mesh node is bounded by the number of distinct source nodes that send a message within one store-timeout window to that node:
 
@@ -375,12 +382,15 @@ The number of dirty entries for each flush on a mesh node is bounded by the numb
 
    dirty_entries_per_flush = ceil(message_rate_msg_per_s x store_timeout_s)
 
-For a light bulb (or a mesh node) receiving messages at an average rate of 0.1 msg/s with a 30 s store timeout: ``ceil(0.1 x 30) = 3`` dirty entries for each flush, so ``bytes_per_flush = 3 x 16 = 48 B``.
+For a light bulb (or a mesh node) receiving messages at an average rate of 0.1 msg/s with a 30 s store timeout:
+
+``ceil(0.1 x 30) = 3`` dirty entries for each flush, so ``bytes_per_flush = 3 x 16 = 48 B``
+
 Here, it is assumed that all messages are from distinct source nodes and hence all are counted as dirty entries.
 If the messages are from the same source node, only one dirty entry will get counted for each flush.
 
 The following tables show the estimated lifetime in years for Settings + ZMS at 0.1 msg/s and a 30 s store timeout (3 dirty entries for each flush, 48 B for each flush), for a partition that contains RPL data only.
-ZMS reserves one close ATE and one empty ATE at the end of each sector, so usable space per sector is ``sector_size - 2 x ate_size`` (4,064 B for 4 KB sectors).
+ZMS reserves one close ATE and one empty ATE at the end of each sector, so usable space for a sector is ``sector_size - 2 x ate_size`` (4,064 B for 4 KB sectors).
 Additionally, one sector is reserved for garbage collection.
 You can count the partition usable bytes as follows:
 
@@ -444,26 +454,33 @@ You can count the partition usable bytes as follows:
      - 13.56
      - 24.82
 
-Estimated lifetime scales proportionally with :kconfig:option:`CONFIG_BT_MESH_RPL_STORE_TIMEOUT`.
+The estimated lifetime scales proportionally with :kconfig:option:`CONFIG_BT_MESH_RPL_STORE_TIMEOUT`.
 At a fixed incoming message rate, the estimated lifetime is largely independent of this setting.
 A shorter timeout produces smaller but more frequent flushes, leaving the long-run write rate (and therefore the lifetime) essentially unchanged.
 The timeout shortens lifetime only when it raises the long-run write rate, that is, when the number of dirty entries for each flush is held fixed while flushes occur more often (which implies a proportionally higher message rate).
 
 .. note::
 
-   For the Settings + NVS backend (nRF53), the write size for each update is 12 B (value record only) rather than 16 B, and the valid footprint is 36 B rather than 64 B for each entry.
-   This yields smaller bytes-per-flush (3 × 12 = 36 B at 0.1 msg/s) and lower valid footprint overhead per GC cycle, resulting in better endurance for equivalent CRPL size and partition configuration.
+   For the Settings + NVS backend (nRF53 Series), the write size for each update is 12 B (value record only) rather than 16 B, and the valid footprint is 36 B rather than 64 B for each entry.
+   This yields smaller bytes-per-flush (3 × 12 = 36 B at 0.1 msg/s) and lower valid footprint overhead for each GC cycle, resulting in better endurance for equivalent CRPL size and partition configuration.
    NVS Backend is not recommended for RRAM based devices (nRF54 Series).
 
 **Partition sizing recommendations**
 
-* :kconfig:option:`CONFIG_BT_MESH_CRPL` = 32:
-  This is the minimum required RPL size for the `Ambient Light Sensor NLC Profile`_ (see the :ref:`bluetooth_mesh_sensor_client` sample), `Basic Scene Selector NLC Profile`_ (see the :ref:`bluetooth_mesh_light_dim` sample), `Dimming Control NLC Profile`_ (see the :ref:`bluetooth_mesh_light_dim` sample), and `Occupancy Sensor NLC Profile`_ (see the :ref:`bluetooth_mesh_sensor_server` sample).
-  For the endurance scenario in the tables (all 32 slots occupied), a 32 KB partition can be sufficient; worst-case lifetime exceeds five years under the assumptions.
+* :kconfig:option:`CONFIG_BT_MESH_CRPL` = ``32``:
+  This is the minimum required RPL size for the following profiles:
+
+  * `Ambient Light Sensor NLC Profile`_ (see the :ref:`bluetooth_mesh_sensor_client` sample)
+  * `Basic Scene Selector NLC Profile`_ (see the :ref:`bluetooth_mesh_light_dim` sample)
+  * `Dimming Control NLC Profile`_ (see the :ref:`bluetooth_mesh_light_dim` sample)
+  * `Occupancy Sensor NLC Profile`_ (see the :ref:`bluetooth_mesh_sensor_server` sample)
+
+  For the endurance scenario in the tables (all 32 slots occupied), a 32 KB partition can be sufficient.
+  The worst-case lifetime exceeds five years under the assumptions.
   Recommended: 64 KB settings partition for an estimated 11.67 years lifetime under the same assumptions.
   Evaluate the lifetime for your specific use case and consider sizing the partition as needed.
 
-* :kconfig:option:`CONFIG_BT_MESH_CRPL` = 255:
+* :kconfig:option:`CONFIG_BT_MESH_CRPL` = ``255``:
   This option is required for the `Basic Lightness Controller NLC Profile`_ (see the :ref:`bluetooth_mesh_light_lc` sample) and `HVAC Integration NLC Profile`_ (see the  :ref:`bluetooth_mesh_sensor_client` sample).
   Recommended: 72 KB settings partition for an estimated 10.45 years lifetime under the same assumptions.
   Evaluate the lifetime for your specific use case and consider sizing the partition as needed.
@@ -475,7 +492,7 @@ The timeout shortens lifetime only when it raises the long-run write rate, that 
 .. note::
 
    These figures assume that the partition contains RPL entries only.
-   Other Mesh settings (model settings or persisted model states (such as the last known non-zero Light level), network keys, application keys, sequence number, IV index) and application data (if any) share the same partition.
+   Other Mesh settings (model settings or persisted model states, such as the last known non-zero Light level, network keys, application keys, sequence number, IV index) and application data (if any) share the same partition.
    Therefore, live data copied on each sector GC is a bit larger, and thus net space for wear leveling is smaller, and effective lifetime is shorter than the RPL-only figures.
    For example, in-case of the :ref:`bluetooth_mesh_light_lc` sample when a device is provisioned, and all models are bound to appkeys, subscribed to certain group address, and two model instances are configured to publish to a certain group address, the footprint of all mesh settings related data (excluding RPL) is 2544 Bytes.
 
