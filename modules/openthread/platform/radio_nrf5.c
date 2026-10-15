@@ -461,6 +461,38 @@ static size_t create_csl_ie(uint32_t csl_period, uint8_t *ie_buffer)
 }
 #endif
 
+/* Cached CSL clock parameters. OpenThread may query accuracy/uncertainty several
+ * times per CSL window; keep platform reads (e.g. future serialized radio access)
+ * out of the hot path.
+ */
+struct nrf5_csl_clock_params {
+	uint8_t accuracy;
+#if defined(CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT)
+	uint8_t uncertainty;
+#endif
+	bool cached;
+};
+
+static struct nrf5_csl_clock_params s_csl_clock_params;
+
+static void nrf5_csl_clock_params_invalidate(void)
+{
+	s_csl_clock_params.cached = false;
+}
+
+static void nrf5_csl_clock_params_update(bool aAllowCached)
+{
+	if (aAllowCached && s_csl_clock_params.cached) {
+		return;
+	}
+
+	s_csl_clock_params.accuracy = CONFIG_NRF5_DELAY_TRX_ACC;
+#if defined(CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT)
+	s_csl_clock_params.uncertainty = CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT;
+#endif
+	s_csl_clock_params.cached = true;
+}
+
 static void nrf5_get_eui64(uint8_t *mac)
 {
 	__ASSERT(mac != NULL, "nrf5_get_eui64: mac is NULL");
@@ -1372,6 +1404,7 @@ otError otPlatRadioDisable(otInstance *aInstance)
 #endif
 
 	nrf5_data.state = OT_RADIO_STATE_DISABLED;
+	nrf5_csl_clock_params_invalidate();
 	return OT_ERROR_NONE;
 }
 
@@ -1666,6 +1699,7 @@ otError otPlatRadioResetCsl(otInstance *aInstance)
 	nrf_802154_ack_data_remove_all(false, NRF_802154_ACK_DATA_IE);
 	nrf_802154_ack_data_remove_all(true, NRF_802154_ACK_DATA_IE);
 
+	nrf5_csl_clock_params_invalidate();
 	return OT_ERROR_NONE;
 }
 
@@ -1699,7 +1733,8 @@ uint8_t otPlatRadioGetCslAccuracy(otInstance *aInstance)
 {
 	ARG_UNUSED(aInstance);
 
-	return CONFIG_NRF5_DELAY_TRX_ACC;
+	nrf5_csl_clock_params_update(true);
+	return s_csl_clock_params.accuracy;
 }
 
 #if defined(CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT)
@@ -1707,7 +1742,8 @@ uint8_t otPlatRadioGetCslUncertainty(otInstance *aInstance)
 {
 	ARG_UNUSED(aInstance);
 
-	return CONFIG_OPENTHREAD_PLATFORM_CSL_UNCERT;
+	nrf5_csl_clock_params_update(true);
+	return s_csl_clock_params.uncertainty;
 }
 #endif
 
