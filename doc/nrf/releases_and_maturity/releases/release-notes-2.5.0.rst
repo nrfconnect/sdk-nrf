@@ -41,7 +41,7 @@ The following list includes the summary of the most relevant changes introduced 
 
     * Enhanced Wi-Fi scan API, providing optimizations and high user configurability for the Wi-Fi scanning functionality on nRF70 Series.
     * Network agnostic connectivity manager, allowing seamless use of IP-based protocols regardless of underlying transport (Cellular IoT, Wi-Fi).
-    * :ref:`aws_iot`, :ref:`azure_iot_hub`, :ref:`download_sample`, :ref:`https_client`, :ref:`udp_sample`, and :ref:`wifi_zephyr_samples` are now supported on nRF7002 DK.
+    * :ref:`aws_iot_sample`, :ref:`azure_iot_hub`, :ref:`download_sample`, :ref:`https_client`, :ref:`udp_sample`, and :ref:`wifi_zephyr_samples` are now supported on nRF7002 DK.
     * New samples: :ref:`wifi_twt_sample`, :ref:`wifi_shutdown_sample`, and :ref:`wifi_wfa_qt_app_sample`.
 
   * Cellular IoT:
@@ -726,7 +726,7 @@ Networking samples
 * Removed Cellular: Azure FOTA sample.
   FOTA using Azure IoT Hub is now demonstrated in the :ref:`azure_iot_hub` sample.
 
-* :ref:`aws_iot` sample:
+* :ref:`aws_iot_sample` sample:
 
   * Added support for Wi-Fi and LTE connectivity through the connection manager API.
   * Updated by moving the sample from :file:`cellular/aws_iot` folder to :file:`net/aws_iot`.

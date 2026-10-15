@@ -63,7 +63,7 @@ nRF9160
   * :ref:`lib_azure_iot_hub` library - This library provides an API to connect to an Azure IoT Hub instance and interact with it.
   * :ref:`azure_iot_hub` sample - This sample demonstrates the communication of an nRF9160-based device with an Azure IoT Hub instance.
   * nRF9160: Azure FOTA sample - This sample demonstrates how to perform an over-the-air firmware update of an nRF9160-based device using the Azure FOTA and Azure IoT Hub libraries.
-  * :ref:`aws_iot` sample - This sample demonstrates the communication of an nRF9160-based device with the AWS IoT message broker over MQTT.
+  * :ref:`aws_iot_sample` sample - This sample demonstrates the communication of an nRF9160-based device with the AWS IoT message broker over MQTT.
   * :ref:`udp` low power sample - This sample demonstrates the sequential transmission of UDP packets to a predetermined server identified by an IP address and a port.
   * :ref:`download_sample` sample - This sample demonstrates how to download files over the Internet from HTTP, HTTPS, CoAP, and CoAPS servers.
 

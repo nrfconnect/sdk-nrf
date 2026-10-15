@@ -1,4 +1,4 @@
-.. _aws_iot:
+.. _aws_iot_sample:
 
 .. ncs-sample::
    :title: AWS IoT

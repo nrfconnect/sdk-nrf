@@ -473,7 +473,7 @@ nRF9160 samples
   The custom backend prints the amount of trace data received in bytes, trace data throughput, and CPU load.
 * Updated samples that support Thingy:91 to use :ref:`TF-M <ug_tfm>` enabled by default.
 * Removed the AWS FOTA sample.
-  The :ref:`aws_iot` sample must be used, which implements :ref:`lib_aws_fota` through :ref:`lib_aws_iot`.
+  The :ref:`aws_iot_sample` sample must be used, which implements :ref:`lib_aws_fota` through :ref:`lib_aws_iot`.
 
 * :ref:`lwm2m_client` sample:
 

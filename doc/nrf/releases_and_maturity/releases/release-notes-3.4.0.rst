@@ -535,7 +535,7 @@ Networking samples
   * :ref:`download_sample` sample
   * :ref:`https_client` sample
   * :ref:`http_server` sample
-  * :ref:`aws_iot` sample
+  * :ref:`aws_iot_sample` sample
   * :ref:`azure_iot_hub` sample
 
   Flash and SRAM partitions are supplied using devicetree overlays instead.

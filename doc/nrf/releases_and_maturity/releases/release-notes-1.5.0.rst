@@ -992,7 +992,7 @@ Applications and samples
 
   * Serial LTE modem - Added documentation for new commands.
     Fixed the syntax and examples of some existing commands.
-  * Added a note about :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot`, :ref:`azure_iot_hub`, and cloud client samples.
+  * Added a note about :kconfig:option:`CONFIG_MQTT_KEEPALIVE` option to the :ref:`aws_iot_sample`, :ref:`azure_iot_hub`, and cloud client samples.
 * Bluetooth:
 
   * Added a note about child-image overlay to the :ref:`bluetooth_central_hr_coded` and :ref:`peripheral_hr_coded` samples.

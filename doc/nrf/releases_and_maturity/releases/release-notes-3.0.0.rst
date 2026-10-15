@@ -842,7 +842,7 @@ Networking samples
 
 * Added support for nRF7002-EB II with ``nrf54l15dk/nrf54l15/cpuapp`` board target in the following samples:
 
-  * :ref:`aws_iot`
+  * :ref:`aws_iot_sample`
   * :ref:`download_sample`
   * :ref:`net_coap_client_sample`
   * :ref:`https_client`
@@ -856,7 +856,7 @@ Networking samples
     This is a requirement from Zephyr and removes a build warning.
   * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
-    * :ref:`aws_iot`
+    * :ref:`aws_iot_sample`
     * :ref:`azure_iot_hub`
     * :ref:`download_sample`
 

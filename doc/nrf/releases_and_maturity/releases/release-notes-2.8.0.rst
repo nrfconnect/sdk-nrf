@@ -889,7 +889,7 @@ Networking samples
 
 * Added support for the :zephyr:board:`nrf54l15dk` board with an nRF7002 EB device for the following samples:
 
-  * :ref:`aws_iot`
+  * :ref:`aws_iot_sample`
   * :ref:`download_sample`
   * :ref:`mqtt_sample`
   * :ref:`https_client`

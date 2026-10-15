@@ -469,7 +469,7 @@ Networking samples
     This is a requirement from zephyr and removes a build warning.
   * The following samples to use the :ref:`lib_downloader` library instead of the Download client library:
 
-    * :ref:`aws_iot`
+    * :ref:`aws_iot_sample`
     * :ref:`azure_iot_hub`
     * :ref:`download_sample`
 

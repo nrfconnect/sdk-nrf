@@ -3747,7 +3747,7 @@ NCSDK-39887: MQTT sample crashes on nRF54L15DK after reboot after being connecte
 
 .. rst-class:: v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3.2.0
 
-SHEL-3954: :ref:`aws_iot` sample not working for nRF7002 DK
+SHEL-3954: :ref:`aws_iot_sample` sample not working for nRF7002 DK
   The MQTT connection to AWS IoT may fail with error ``-116`` (``ETIMEDOUT``) due to the default socket connect timeout being too short for TLS handshake completion.
 
   **Workaround:** Increase the value of the :kconfig:option:`CONFIG_NET_SOCKETS_CONNECT_TIMEOUT` Kconfig option to 5000 ms or more in your project configuration.

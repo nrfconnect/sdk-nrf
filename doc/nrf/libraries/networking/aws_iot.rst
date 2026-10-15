@@ -337,7 +337,7 @@ MQTT helper library specific options:
 Usage
 *****
 
-The :ref:`aws_iot` sample showcases the use of this library and can be used to verify a connection to AWS IoT.
+The :ref:`aws_iot_sample` sample showcases the use of this library and can be used to verify a connection to AWS IoT.
 To configure and run the sample, complete the steps described in :ref:`aws_iot_sample_server_setup` and :ref:`aws_iot_sample_building_and_running`.
 
 Initializing the library
