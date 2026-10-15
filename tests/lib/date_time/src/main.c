@@ -753,6 +753,57 @@ void test_date_time_update_cycle_and_async(void)
 	k_sem_take(&date_time_callback_sem, K_MSEC(TEST_CB_WAIT_TIME));
 }
 
+/* Test that the update cycle continues when the scheduled update uses previously obtained time. */
+void test_date_time_update_cycle_with_previous_time(void)
+{
+#if !defined(CONFIG_DATE_TIME_MODEM)
+	TEST_IGNORE();
+#endif
+	date_time_cb_count_expected = 4;
+	test_date_time_cb_data[0].type = DATE_TIME_OBTAINED_MODEM;
+	test_date_time_cb_data[0].time_expected = 3000;
+	test_date_time_cb_data[1].type = DATE_TIME_OBTAINED_MODEM;
+	test_date_time_cb_data[1].time_expected = 5500;
+	test_date_time_cb_data[2].type = DATE_TIME_OBTAINED_MODEM;
+	test_date_time_cb_data[2].time_expected = 6000;
+	test_date_time_cb_data[3].type = DATE_TIME_OBTAINED_MODEM;
+	test_date_time_cb_data[3].time_expected = 9000;
+
+	/* Normal cycle at 3s */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT+CCLK?", "+CCLK: \"%u/%u/%u,%u:%u:%u%d", 7);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(24);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(30);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(20);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(40);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(52);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(12);
+
+	k_sem_take(&date_time_callback_sem, K_MSEC(TEST_CB_WAIT_TIME));
+
+	/* Time taken into use from %XTIME notification at 5.5s */
+	k_sleep(K_MSEC(2500));
+	strcpy(at_notif, "%XTIME: ,\"42900180919421\",\"01\"\r\n");
+	at_monitor_dispatch(at_notif);
+
+	k_sem_take(&date_time_callback_sem, K_MSEC(TEST_CB_WAIT_TIME));
+
+	/* Normal cycle with previous time at 6s */
+	k_sem_take(&date_time_callback_sem, K_MSEC(TEST_CB_WAIT_TIME));
+
+	/* Normal cycle at 9s */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT+CCLK?", "+CCLK: \"%u/%u/%u,%u:%u:%u%d", 7);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(24);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(30);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(20);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(40);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(52);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint32(12);
+
+	k_sem_take(&date_time_callback_sem, K_MSEC(TEST_CB_WAIT_TIME));
+}
+
 void test_date_time_update_cycle_with_failing_async(void)
 {
 #if !defined(CONFIG_DATE_TIME_MODEM)
