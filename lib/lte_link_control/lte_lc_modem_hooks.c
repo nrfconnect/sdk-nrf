@@ -12,32 +12,10 @@
 #include "modules/edrx.h"
 #include "modules/rai.h"
 #include "modules/dns.h"
+#include "modules/xbandlock.h"
 #include "common/helpers.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
-
-#if defined(CONFIG_LTE_LOCK_BANDS)
-BUILD_ASSERT(sizeof(CONFIG_LTE_LOCK_BAND_MASK) > 1 || sizeof(CONFIG_LTE_LOCK_BAND_LIST) > 1,
-	     "CONFIG_LTE_LOCK_BAND_MASK or CONFIG_LTE_LOCK_BAND_LIST must be set");
-static void band_lock_set(void)
-{
-	int err;
-
-	/* Set LTE band lock (volatile setting).
-	 * Has to be done every time before activating the modem.
-	 */
-	if (sizeof(CONFIG_LTE_LOCK_BAND_LIST) > 1) {
-		err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\"" CONFIG_LTE_LOCK_BAND_MASK "\",\""
-					  CONFIG_LTE_LOCK_BAND_LIST "\"");
-	} else {
-		err = nrf_modem_at_printf("AT%%XBANDLOCK=2,\"" CONFIG_LTE_LOCK_BAND_MASK "\"");
-	}
-
-	if (err) {
-		LOG_ERR("Failed to lock LTE bands, err %d", err);
-	}
-}
-#endif /* CONFIG_LTE_LOCK_BANDS */
 
 #if defined(CONFIG_UNITY)
 void on_modem_init(int err, void *ctx)
@@ -134,8 +112,8 @@ static void on_modem_init(int err, void *ctx)
 	}
 #endif
 
-#if defined(CONFIG_LTE_LOCK_BANDS)
-	band_lock_set();
+#if defined(CONFIG_LTE_LC_BAND_LOCK_MODULE)
+	xbandlock_runtime_lock_apply();
 #endif
 
 #if defined(CONFIG_LTE_LC_RAI_MODULE)
@@ -175,8 +153,8 @@ static void lte_lc_on_modem_cfun(int mode, void *ctx)
 	edrx_set();
 #endif
 
-#if defined(CONFIG_LTE_LOCK_BANDS)
-	band_lock_set();
+#if defined(CONFIG_LTE_LC_BAND_LOCK_MODULE)
+	xbandlock_runtime_lock_apply();
 #endif
 
 #if defined(CONFIG_LTE_LC_RAI_MODULE)

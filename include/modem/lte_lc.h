@@ -1873,6 +1873,14 @@ struct lte_lc_cellular_profile {
 	enum lte_lc_uicc uicc;
 };
 
+/** @brief Band lock type. */
+enum lte_lc_band_lock_type {
+	/** Permanent band lock, stored to non-volatile memory in the modem. */
+	LTE_LC_BAND_LOCK_PERMANENT		= 1,
+
+	/** Runtime band lock, reset when the modem is powered off. */
+	LTE_LC_BAND_LOCK_RUNTIME		= 2,
+};
 
 /**
  * @brief Handler for LTE events.
@@ -2688,6 +2696,66 @@ int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
  * @retval 0 on success, otherwise negative error code.
  */
 int lte_lc_cellular_profile_remove(uint8_t id);
+
+/**
+ * @brief Set the band lock.
+ *
+ * Bands up to 88 are set using a band mask and bands above 88 using a band list.
+ *
+ * The runtime band lock is stored by the library and set again when the modem is initialized
+ * or has been powered off. It replaces the bands set using `CONFIG_LTE_LOCK_BAND_MASK` and
+ * `CONFIG_LTE_LOCK_BAND_LIST`.
+ *
+ * When both the permanent and the runtime band lock are set, the modem only uses the bands that
+ * are in both. The second band lock must have at least one band in common with the first one,
+ * otherwise the modem rejects it. When `CONFIG_LTE_LOCK_BANDS` is enabled, a runtime band lock
+ * is always set, so a permanent band lock must include at least one of its bands.
+ *
+ * @note Requires `CONFIG_LTE_LC_BAND_LOCK_MODULE` to be enabled.
+ *
+ * @note The modem library must be initialized, and the band lock can only be set when the modem
+ *       is offline or powered off.
+ *
+ * @note Bands above 88 are only supported by the following modem firmware:
+ *       - mfw_nrf91x1 v2.0.3 or later
+ *       - mfw_nrf9151-ntn
+ *       - lpwa-cellular_nrf92
+ *
+ * @param[in] type Band lock type.
+ * @param[in] bands Pointer to a list of band numbers.
+ * @param[in] band_count Number of bands in the list.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -E2BIG if there are too many bands above 88.
+ * @retval -EPERM if the modem library is not initialized.
+ * @retval -EBUSY if the modem is active.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if the modem responded with an error to the AT command, for example because
+ *         the bands are not supported by the modem firmware or have no band in common with the
+ *         other band lock.
+ */
+int lte_lc_band_lock_set(enum lte_lc_band_lock_type type, const uint16_t *bands, size_t band_count);
+
+/**
+ * @brief Remove the permanent and runtime band locks.
+ *
+ * The stored runtime band lock is also removed, including the bands set using
+ * `CONFIG_LTE_LOCK_BAND_MASK` and `CONFIG_LTE_LOCK_BAND_LIST`. These bands are not set again until
+ * the device is rebooted.
+ *
+ * @note Requires `CONFIG_LTE_LC_BAND_LOCK_MODULE` to be enabled.
+ *
+ * @note The modem library must be initialized, and the band locks can only be removed when the
+ *       modem is offline or powered off.
+ *
+ * @retval 0 if successful.
+ * @retval -EPERM if the modem library is not initialized.
+ * @retval -EBUSY if the modem is active.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if the modem responded with an error to the AT command.
+ */
+int lte_lc_band_lock_remove(void);
 
 /** @} */
 
