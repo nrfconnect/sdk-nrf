@@ -161,7 +161,8 @@ The WPA supplicant then manages the Wi-Fi interface and provides the Wi-Fi funct
 .. note::
 
       The WPA supplicant is only used for System mode to offer full Wi-Fi functionality.
-      It is not used in other modes, for example, Scan-only mode.
+      It is not used in other modes, for example, Radio test mode or Offloaded raw TX mode.
+      In System mode, it is also not needed for a subset of the functionalities, for example, Scan-only functionality.
 
 Supported hostap features in the |NCS|
 ======================================
@@ -172,7 +173,7 @@ The nRF70 and nRF71 Series devices use the Zephyr hostap fork but only implement
 The nRF70 and nRF71 Series devices support the following features:
 
 * Wi-Fi 6.
-* Station mode.
-* SoftAP mode - Based on ``wpa_supplicant``.
-* WPA2-PSK and WPA3-SAE security modes.
-* WPA2-EAP-TLS security mode.
+* Station.
+* SoftAP - Based on ``wpa_supplicant``.
+* WPA2-PSK and WPA3-SAE security.
+* WPA2-EAP-TLS security.
