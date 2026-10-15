@@ -80,7 +80,7 @@ static void cap_thread_next_evt_set(enum cap_action_type action)
  * @brief	Signal that a CAP action has been completed.
  *
  * @param	err	The error code of the completed CAP action. 0 if successful.
- * 		If there was an failure, we give the state machine a pause before continuing.
+ * 		If there was a failure, we give the state machine a pause before continuing.
  */
 static void cap_thread_mark_action_complete(int err)
 {
@@ -2275,6 +2275,7 @@ enum cap_action_type cap_thread_next_event_get(void)
 	enum cap_action_type action = next_action;
 	next_action = CAP_ACTION_NONE;
 	k_poll_signal_reset(&poll_sig);
+	poll_evt.state = K_POLL_STATE_NOT_READY;
 	k_mutex_unlock(&next_action_lock);
 	return action;
 }
