@@ -36,7 +36,7 @@ See the :ref:`build system section in the v3.0.0 migration notes <migration_3.0_
    The ``west debug`` command is not affected by this change of the default runner.
 
 Runners are Zephyr-specific Python classes that wrap Zephyr's :ref:`flash and debug host tools <zephyr:flash-debug-host-tools>` and integrate them with west and the Zephyr build system to support ``west flash`` and related commands.
-Runners supported on a board are determined by the :file:`board.cmake` file in the board folder, for example `this one <nRF52840 DK board.cmake_>`_.
+Runners supported on a board are determined by the :file:`board.cmake` file in the board folder, for example `this one <nRF5340 DK board.cmake_>`_.
 In particular, the following include lines enable them, with the first ``<runner>`` listed becoming the default runner:
 
 .. code-block:: cmake
@@ -88,9 +88,6 @@ For additional information, check the :ref:`user guide for the hardware platform
 
 For example, if you are working with an nRF9160 DK, you need to select the correct position of the :ref:`board controller <nrf9160_ug_intro>` switch **SW10** before you program the application to your development kit.
 Programming to Thingy:91 also requires a :ref:`similar step <building_pgming>`, but using a different switch (**SW2**).
-
-Programming the nRF52840 Dongle
-  To program the nRF52840 Dongle instead of a development kit, follow the programming instructions in :zephyr:board:`nrf52840dongle` or use the `Programmer app <Programming the nRF52840 Dongle_>`_.
 
 Programming the nRF54H20 DK
    To program the nRF54H20 DK, follow the programming instructions in the :ref:`nRF54H20 device guide <ug_nrf54h20_gs_sample>`.
@@ -147,6 +144,6 @@ Programming with ``--recover``
 
      The ``west flash --recover`` command uses one of the following background commands:
 
-     * ``nrfjprog --recover`` for devices from nRF52, nRF53, and nRF91 Series.
+     * ``nrfjprog --recover`` for devices from nRF53 and nRF91 Series.
      * ``nrfutil device recover`` for devices from nRF54H and nRF54L Series.
        For more information, see `nrfutil device recover`_ command page.

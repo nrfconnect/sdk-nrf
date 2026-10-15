@@ -7,7 +7,7 @@ Enhanced ShockBurst (ESB)
    :local:
    :depth: 2
 
-This user guide describes what Enhanced ShockBurst (ESB) is and how to use it with an nRF5 Series device.
+This user guide describes what Enhanced ShockBurst (ESB) is and how to use it with nRF53 and nRF54 Series devices.
 
 .. esb_intro_start
 
@@ -17,7 +17,7 @@ ESB provides radio communication with low power consumption, and the implementat
 .. esb_intro_end
 
 The ESB protocol was embedded in hardware in the legacy nRF24L Series.
-The :ref:`esb_readme` module enables an nRF5 Series device to communicate with an nRF5 or nRF24L Series device using the ESB protocol.
+The :ref:`esb_readme` module enables an nRF53 or nRF54 Series device to communicate with another nRF53 or nRF54 Series device, or an nRF24L Series device, using the ESB protocol.
 
 ESB features automatic packet transaction handling for easy implementation of a reliable bidirectional data link.
 A transaction is a packet exchange between two transceivers, with one transceiver acting as the Primary Receiver (PRX) and the other transceiver acting as the Primary Transmitter (PTX).
@@ -34,7 +34,7 @@ Features
 ========
  * Supports a star network topology with typically one Primary Receiver (PRX) and up to 8 Primary Transmitters (PTX)
  * 1 to 32 bytes dynamic payload length in legacy mode
- * 1 to 252 bytes static payload length between nRF5 Series devices
+ * 1 to 252 bytes static payload length between nRF53 and nRF54 Series devices
  * Bidirectional data transfer between each PTX and the PRX
  * Packet acknowledgment and automatic packet retransmission functionality
  * Individual TX and RX FIFOs for every pipe
@@ -246,7 +246,7 @@ Therefore, you might want to check if the module is idle before disabling it.
 Frequency selection
 ===================
 
-ESB can send or receive packets using any of the channels that the nRF5 chip can use.
+ESB can send or receive packets using any of the channels that the radio on nRF53 and nRF54 Series devices can use.
 The channel is selected by calling the :c:func:`esb_set_rf_channel` function.
 
 The PTX and PRX must be configured to use the same frequency to exchange packets.
@@ -260,7 +260,7 @@ Each logical address on the nodes is termed a pipe.
 Each pipe maps to one on-air address that is used when transmitting or receiving packets.
 
 The on-air addresses are composed of a 2-4 byte long base address in addition to a 1 byte prefix address.
-Note that the nRF5 radio uses an alternating sequence of 0 and 1 as the preamble of the packet.
+Note that the radio on nRF53 and nRF54 Series devices uses an alternating sequence of 0 and 1 as the preamble of the packet.
 Therefore, for packets to be received correctly, the most significant byte of the base address must not be an alternating sequence of 0 and 1, that is, it must not be 0x55 or 0xAA.
 
 Pipe 0 has its own unique base address (base address 0), while pipes 1-7 use the same base address (base address 1).
@@ -272,7 +272,7 @@ The most significant byte of the 2-4 byte long base address is the first transmi
 Addresses cannot consist of a 0x00 prefix and an address on the format 0x00XXXXXX (length 4)/0x0000XXXX (length 5).
 Such a zero address will cause error code :c:macro:`NRF_ERROR_INVALID_PARAM` to be returned.
 
-Note that the byte ordering in ESB and the nRF5 radio peripheral are not the same, because the address bytes are rearranged in ESB to match the nRF24L radios.
+Note that the byte ordering in ESB and the radio peripheral on nRF53 and nRF54 Series devices are not the same, because the address bytes are rearranged in ESB to match the nRF24L radios.
 
 .. figure:: images/esb_packet_format.svg
    :alt: Address part of an ESB packet
@@ -357,18 +357,6 @@ Front-end module support
 The ESB protocol supports external front-end modules.
 See :ref:`ug_radio_fem` for more details.
 
-.. _esb_errata:
-
-Errata workarounds and nRF52832 chip revisions
-==============================================
-
-The module implementation on nRF52832 devices include a set of workarounds for hardware erratas.
-These erratas require a few hundred bytes of code space to determine runtime which workarounds are applicable to the device running the firmware.
-This is to ensure that firmware based on newer SDKs function as intended on both older and newer revision chips.
-If you know that your firmware will only on certain devices, you may save a few hundred bytes of code space by removing the workaround.
-If you are sure that you do not require support for revision 1 chips, you may remove all code blocks within if statements on the format ``if((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004200)``.
-If you are sure that you do not require support for revision 2 chips, you may remove all code blocks within if statements on the format ``if((NRF_FICR->INFO.VARIANT & 0x0000FF00) == 0x00004500)``.
-
 .. _esb_users_guide_examples:
 
 Examples
@@ -391,7 +379,7 @@ The ESB driver is designed for bidirectional data transfer between devices.
 This implies that the radio peripheral is continuously switching between reception and transmission mode.
 When switching to transmission or reception mode, the radio peripheral needs some time to start internal analog components.
 On the nRF51 and nRF24L Series devices, a hardware-limited 130 µs delay is implemented.
-If the ESB connection is established only between nRF52 and/or nRF53 Series devices, this delay can be reduced to 40 µs.
+If the ESB connection is established only between nRF53 and nRF54 Series devices, this delay can be reduced to 40 µs.
 
 When the value of the ``use_fast_ramp_up`` parameter is ``true``, fast ramp-up is enabled, resulting in reduced ramp-up delay of 40 µs.
 

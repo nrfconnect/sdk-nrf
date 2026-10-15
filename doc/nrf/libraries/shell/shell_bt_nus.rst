@@ -38,7 +38,7 @@ bt_nus_shell.py
 
 The script file :file:`scripts/shell/bt_nus_shell.py` contains a cross-platform example host application, written in Python 3.
 
-The script uses an additional Nordic development kit, like the PCA10040, as a Bluetooth central device.
+The script uses an additional Nordic development kit, like the nRF5340 DK, as a Bluetooth central device.
 It connects to the specified device and forwards all NUS traffic to the network port.
 You can then use a console application, like PuTTY, to connect to that port and use the shell.
 The default port is set to ``8889``.
@@ -61,7 +61,7 @@ The script requires the following parameters:
 Additionally, following parameters are option:
 
 * ``snr`` - the SEGGER board ID
-* ``family`` - the chip family of the development kit, for example, nRF52
+* ``family`` - the chip family of the development kit, for example, nRF54L
 * ``name`` - the advertising name of the device with the NUS shell
 * ``port`` - the local network port
 
@@ -71,12 +71,12 @@ Additionally, following parameters are option:
 
 Perform the following steps to use the :file:`bt_nus_shell.py` script:
 
-1. Connect a Nordic Development Kit, like the PCA10040, to your PC.
+1. Connect a Nordic Development Kit, like the nRF5340 DK, to your PC.
 #. Start the :file:`bt_nus_shell.py` script with the correct parameters, for example:
 
    .. code-block:: console
 
-      bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF52 --snr 682560213
+      bt_nus_shell.py --name BT_NUS_shell --com COM237 --family NRF54L --snr 682560213
 
 #. Open a console application, for example, PuTTY.
    Open a new session, setting the :guilabel:`Connection Type` to :guilabel:`Raw` and the :guilabel:`Destination Address` to ``127.0.0.1:8889``.

@@ -95,8 +95,6 @@ Common sample components for development
 
 |common_sample_components_desc|
 
-To learn more about how to use the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option, see the respective device guides for :ref:`nRF52 Series <ug_nrf52_developing_ble_fota>` and the :ref:`nRF5340 DK <ug_nrf53_developing_ble_fota>`.
-
 .. _optional_build_parameters:
 
 Optional build parameters
@@ -121,27 +119,27 @@ For more options, see Zephyr's :ref:`zephyr:west-building` or run the ``west --h
    * - ``--no-sysbuild``
      - Explicitly build without :ref:`configuration_system_overview_sysbuild`.
        (In the |NCS|, :ref:`building with sysbuild is enabled by default <sysbuild_enabled_ncs>`.)
-     - ``west build -b nrf52840dk/nrf52840 --no-sysbuild``
+     - ``west build -b nrf54l15dk/nrf54l15/cpuapp --no-sysbuild``
    * - ``-vvv``
      - Enable a detailed :ref:`zephyr:west-building-verbose` log, which includes the full commands used by the build system to generate the :ref:`app_build_output_files`.
-     - ``west -vvv build -b nrf52840dk/nrf52840``
+     - ``west -vvv build -b nrf54l15dk/nrf54l15/cpuapp``
    * - *directory_name*
      - Build from a directory other than the current directory.
      - ``west build -b nrf5340dk/nrf5340/cpuapp/ns nrf/samples/tfm/tfm_psa_template``
    * - ``-d``
      - Specify the build directory where the :ref:`app_build_output_files` are to be placed.
        If not specified, the build files are automatically generated in :file:`build/zephyr/`.
-     - ``west build -b nrf52840dk/nrf52840 -d local_build``
+     - ``west build -b nrf54l15dk/nrf54l15/cpuapp -d local_build``
    * - ``--domain``
      - :ref:`Build for a single domain <zephyr:west-multi-domain-builds>` in a multi-domain build.
        This parameter can also be used for :ref:`programming <zephyr:west-multi-domain-flashing>` and :ref:`debugging <zephyr:west-multi-domain-debugging>` multiple domains.
-     - ``west build -b nrf52840dk/nrf52840 --domain hello_world``
+     - ``west build -b nrf54l15dk/nrf54l15/cpuapp --domain hello_world``
    * - ``menuconfig``
      - :ref:`Start menuconfig <configuration_temporary_change>` to configure your application's Kconfig options.
      - ``west build -t menuconfig``
    * - ``-p=auto``
      - :ref:`Reuse an existing build directory <zephyr:west-building-pristine>` for building another application for another board or board target.
-     - ``west build -b nrf52840dk/nrf52840 -p=auto``
+     - ``west build -b nrf54l15dk/nrf54l15/cpuapp -p=auto``
    * - ``test``
      - :ref:`Run unit tests with the west command <running_unit_tests>` from the unit test directory (with the :file:`testcase.yaml` file).
      - ``west build -b native_sim -t run``

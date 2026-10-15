@@ -313,4 +313,3 @@ The rest of the parameters are identical to the previous measurements.
 
 LTE activity is now extended by 10 seconds with a lower duty cycle operation (RRC Idle) compared to the previous measurements.
 
-For additional information on power optimization for nRF52-based devices, see `Optimizing Power on nRF52 Designs`_.

@@ -84,7 +84,7 @@ For definitions of the PSA Crypto API functions, see `crypto.h`_.
 
 Among the advantages of the PSA Crypto API are the following:
 
-* The PSA Crypto API is a single API for all cryptographic drivers, which means that you can use the same functions for the nRF52840, nRF5340, nRF54H20, nRF54L Series and nRF91 Series devices, as well as future ones.
+* The PSA Crypto API is a single API for all cryptographic drivers, which means that you can use the same functions for the nRF5340, nRF54H20, nRF54L Series and nRF91 Series devices, as well as future ones.
   The API will work for applications with and without Trusted Firmware-M (TF-M).
 
 * The PSA Crypto API will automatically select cryptographic libraries based on project configurations.

@@ -3,7 +3,7 @@
 Enabling GPIO+SPI mode support for nRF21540
 ###########################################
 
-The `nRF21540`_ device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
+The `nRF21540`_ device is a range extender that you can use with nRF53 and nRF54L Series devices.
 The nRF21540 features an SPI interface.
 You can use it to fully control your front-end module or you can use a combination of SPI and GPIO interface.
 The SPI interface enables you, for example, to :ref:`set the output power <ug_radio_fem_sw_support_mpsl_fem_output>` of the nRF21540.

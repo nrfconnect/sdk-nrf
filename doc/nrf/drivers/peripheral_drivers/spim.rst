@@ -11,12 +11,6 @@ The SPI controller peripheral (SPIM) provides a full-duplex, 4-wire synchronous 
 
 You can find more details about the SPIM hardware peripheral in the respective Product Specification documents:
 
-* `nRF52805 SPIM`_
-* `nRF52810 SPIM`_
-* `nRF52811 SPIM`_
-* `nRF52832 SPIM`_
-* `nRF52833 SPIM`_
-* `nRF52840 SPIM`_
 * `nRF5340 SPIM`_
 * `nRF9151 SPIM`_
 * `nRF9160 SPIM`_
