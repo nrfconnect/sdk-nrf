@@ -69,7 +69,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    extra_args: EXTRA_CONF_FILE=dps.conf
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE=dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
