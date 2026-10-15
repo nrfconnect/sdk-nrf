@@ -37,7 +37,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.6.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 Supported modem firmware
 ************************
@@ -566,7 +566,7 @@ In addition to documentation related to the changes listed above, the following 
 * Project CHIP has been renamed to Matter in all occurrences throughout the documentation.
 * :ref:`glossary` - Added a new, comprehensive glossary that explains many of the terms used when working with the |NCS|.
 * :ref:`doc_build` - Added a new section on dealing with warnings during documentation builds.
-* :ref:`gs_updating` - A new section of the Getting Started that explains how to update the west tool and how to use it to update the |NCS| repositories.
+* :ref:`updating` - A new section of the Getting Started that explains how to update the west tool and how to use it to update the |NCS| repositories.
 * Restructured the bootloader-related guides into a self-contained section covering bootloader architecture, firmware updates, and user guides.
 
    * Added the following bootloader user guides:

@@ -71,7 +71,7 @@ The nRF70 Series includes the following platforms:
   The EK is compatible with the nRF52840, nRF5340, and nRF91 DKs through its Arduino connector.
 
 For hardware information, see the user guides `nRF7002 DK Hardware`_ and `nRF7002 EK Hardware`_.
-For more information on the boards in nRF Connect for Desktop, see :ref:`Getting started with nRF70 Series <ug_nrf7002_gs>`.
+For more information on the boards in nRF Connect for Desktop, see :ref:`Getting started with nRF70 Series <gsg_guides>`.
 
 .. figure:: images/nrf7002_dk_front.png
    :alt: nRF7002 DK, top view

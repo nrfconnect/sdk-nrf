@@ -51,7 +51,7 @@ The following platforms are supported:
 .. note::
 
    For nRF7002 DK, this feature does not work with tools from the `nRF Command Line Tools`_ product page and nrfjprog programming tool.
-   To program the nRF7002 DK device, you need to use the `nRF Util`_ tool that is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` when you :ref:`gs_installing_toolchain`.
+   To program the nRF7002 DK device, you need to use the `nRF Util`_ tool that is part of the :ref:`nRF Connect SDK toolchain bundle <requirements_toolchain>` when :ref:`install_ncs`.
 
 Preparing the application
 =========================

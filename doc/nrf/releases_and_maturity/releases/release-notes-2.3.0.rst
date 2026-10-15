@@ -57,7 +57,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.3.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.3.0`_.
 
@@ -107,7 +107,7 @@ IDE and tool support
 ====================
 
 * Removed the :file:`scripts/tool-version-minimum.txt` file because only one toolchain version is used for testing.
-  The table in :ref:`gs_recommended_versions` has been updated accordingly to no longer specify minimum tool versions.
+  The table in :ref:`Requirements reference <requirements>` has been updated accordingly to no longer specify minimum tool versions.
 
 MCUboot
 =======
@@ -1021,7 +1021,7 @@ Documentation
   * The :ref:`ug_nrf70_developing` user guide.
   * A page on :ref:`ug_nrf70_features`.
   * Template for :ref:`Applications <application>`.
-  * The :ref:`ug_nrf5340_gs` guide.
+  * The :ref:`Getting started with nRF5340 DK <gsg_guides>` guide.
 
 * Updated:
 

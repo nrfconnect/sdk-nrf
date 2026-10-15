@@ -126,7 +126,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.6.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.6.0`_.
 
@@ -193,8 +193,8 @@ Working with nRF91 Series
 
 * Updated:
 
-  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages so that instructions in the :ref:`nrf91_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
-  * The :ref:`ug_nrf9160_gs` by replacing the Updating the DK firmware section with a new Getting started using the Quick Start app section.
+  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages so that instructions in the :ref:`nrf91_gs_connecting_dk_to_cloud` and :ref:`thingy91_connect_to_cloud` sections, respectively, match the updated nRF Cloud workflow.
+  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` by replacing the Updating the DK firmware section with a new Getting started using the Quick Start app section.
     This new section includes steps for using the `Quick Start app`_, a new application in `nRF Connect for Desktop`_ that streamlines the getting started process with the nRF91 Series DKs.
   * :ref:`ug_nrf9160` user guide by separating the information about snippets into its own page, :ref:`ug_nrf91_snippet`.
 
@@ -209,7 +209,7 @@ Working with nRF70 Series
 * Updated:
 
   * The :ref:`nrf7002dk_nrf5340` page with a link to the `Wi-Fi Fundamentals course`_ in the `Nordic Developer Academy`_.
-  * The Getting started with nRF70 Series user guide is split into three user guides, :ref:`ug_nrf7002_gs`, :ref:`ug_nrf7002ek_gs` and :ref:`ug_nrf7002eb_gs`.
+  * The Getting started with nRF70 Series user guide is split into three user guides, :ref:`Getting started with nRF7002 DK <gsg_guides>`, :ref:`ug_nrf7002ek_gs` and :ref:`ug_nrf7002eb_gs`.
   * The Operating with a resource constrained host user guide by renaming it to :ref:`nRF70_nRF5340_constrained_host`.
     Additionally, the information about stack configuration and performance is placed into its own separate page, :ref:`ug_wifi_stack_configuration`, under :ref:`ug_wifi`.
 
@@ -1496,7 +1496,7 @@ Documentation
 * Updated:
 
   * The :ref:`installation` section by replacing two separate pages about installing the |NCS| with just one (:ref:`install_ncs`).
-  * The :ref:`requirements` page with new sections about :ref:`requirements_clt` and :ref:`toolchain_management_tools`.
+  * The :ref:`requirements` page with new sections about :ref:`requirements_clt` and :ref:`additional_nordic_sw_tools`.
   * The :ref:`configuration_and_build` section and added structural changes:
 
     * :ref:`app_build_system` gathers conceptual information about the build and configuration system previously listed on several other pages.

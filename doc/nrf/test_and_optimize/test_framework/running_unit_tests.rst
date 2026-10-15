@@ -19,7 +19,7 @@ In either case, to run the unit test, you must navigate to the test directory th
 This file includes information about available tests, their parameters, hardware requirements or dependencies, platform subsets, among others.
 For more information about these files, read the Test Cases section in :ref:`Zephyr's documentation about Twister <zephyr:twister_script>`.
 
-Because Twister is part of Zephyr, you need to provide the ``<Zephyr_path>`` to Zephyr SDK repository that was included in your |NCS| installation (in the step :ref:`cloning_the_repositories`).
+Because Twister is part of Zephyr, you need to provide the ``<Zephyr_path>`` to Zephyr SDK repository that was included in your |NCS| installation (in the step :ref:`command-line installation <command_line_installation>`).
 
 To generate the test project and run the unit tests, locate the directory with the :file:`testcase.yaml` file and run the following command:
 
