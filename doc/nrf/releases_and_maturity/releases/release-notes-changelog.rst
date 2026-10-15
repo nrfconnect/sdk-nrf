@@ -698,6 +698,10 @@ Networking samples
     * :ref:`https_client`
     * :ref:`udp_sample`
 
+* :ref:`aws_iot_sample` sample:
+
+  * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
+
 * :ref:`download_sample` sample:
 
   * Added:
