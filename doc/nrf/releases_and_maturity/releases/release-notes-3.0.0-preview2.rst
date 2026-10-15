@@ -35,7 +35,7 @@ IDE, OS, and tool support
   * The required `SEGGER J-Link`_ version to v8.18.
   * The :ref:`installation` page with the following:
 
-    * The :ref:`installing_vsc` section with a list valid for both development environments.
+    * The :ref:`install_ncs` section with a list valid for both development environments.
       The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>` for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
     * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
       You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
@@ -79,7 +79,7 @@ Developing with nRF54H Series
 =============================
 
 * Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
-  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
+  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`install_ncs` section on the :ref:`installation` page.
 
 Developing with nRF53 Series
 ============================
@@ -1126,7 +1126,7 @@ Documentation
   * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
   * The :ref:`ug_bt_mesh_configuring` page with the security toolbox section and the key importer functionality.
-  * The :ref:`ug_nrf7002_gs` documentation to use `nRF Util`_ instead of nrfjprog.
+  * The :ref:`Getting started with nRF7002 DK <gsg_guides>` documentation to use `nRF Util`_ instead of nrfjprog.
 
 * Removed:
 
