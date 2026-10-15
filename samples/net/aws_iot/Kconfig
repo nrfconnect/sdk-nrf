@@ -35,7 +35,8 @@ config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
 	select AWS_IOT_CLIENT_ID_APP
 	depends on HW_ID_LIBRARY
 	help
-	  Use the hardware ID (IMEI or MAC address) as the device ID in the MQTT connection.
+	  Use the hardware ID as the device ID in the MQTT connection.
+	  The hardware ID source is selected by the HW_ID_LIBRARY_SOURCE choice.
 
 module = AWS_IOT_SAMPLE
 module-str = AWS IoT sample
