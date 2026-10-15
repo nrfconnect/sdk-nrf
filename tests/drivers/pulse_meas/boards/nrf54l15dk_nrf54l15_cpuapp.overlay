@@ -39,7 +39,7 @@
 };
 
 tester_pwm: &pwm20 {
-	status = "okay";
+	status = "reserved";
 	pinctrl-0 = <&pwm20_default>;
 	pinctrl-1 = <&pwm20_sleep>;
 	pinctrl-names = "default", "sleep";
