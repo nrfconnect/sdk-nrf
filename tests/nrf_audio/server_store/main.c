@@ -1059,8 +1059,8 @@ ZTEST(suite_server_store, test_clear)
 	zassert_str_equal(server_out->name, "NOT_SET");
 	zassert_is_null(server_out->conn);
 	zassert_is_null(server_out->member);
-	zassert_false(server_out->snk.waiting_for_disc);
-	zassert_false(server_out->src.waiting_for_disc);
+	zassert_equal(server_out->snk.discovery_state, DISCOVERY_STATE_NONE);
+	zassert_equal(server_out->src.discovery_state, DISCOVERY_STATE_NONE);
 	zassert_equal(server_out->snk.locations, 0);
 	zassert_equal(server_out->src.locations, 0);
 	zassert_mem_equal(&server_out->snk.lc3_preset, zeros, sizeof(server_out->snk.lc3_preset));
