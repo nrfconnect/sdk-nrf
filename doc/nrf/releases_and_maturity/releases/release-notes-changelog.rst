@@ -1253,6 +1253,9 @@ Libraries for networking
   * Updated the job execution update that marks a job as ``FAILED`` to report the failure in the AWS IoT Jobs ``statusDetails`` field, as ``{"reason":"<cause>","progress":"<percentage>"}``, instead of sending ``null``.
     This makes it possible to diagnose a failed update from the AWS IoT Jobs console without a serial log from the device.
 
+  * Fixed an issue where a job message that was larger than the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option closed the MQTT connection, which made the :ref:`aws_iot_sample` reboot in a loop.
+    The library now drops the message, keeps the connection and reports the :c:enumerator:`AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE` error cause to the application.
+
 * :ref:`lib_aws_iot` library:
 
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
