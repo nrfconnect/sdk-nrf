@@ -1260,6 +1260,8 @@ Libraries for networking
     If the library can identify the job in the beginning of the message, it now sets the job execution to ``FAILED`` with the ``PAYLOAD_TOO_LARGE`` reason in the status details.
     AWS IoT Jobs then does not send the job again.
 
+  * Increased the default value of the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option from 1350 to 4096 bytes, so that a job message with a presigned URL fits in the buffer.
+
 * :ref:`lib_aws_iot` library:
 
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
