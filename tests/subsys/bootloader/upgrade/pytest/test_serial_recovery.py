@@ -87,7 +87,8 @@ def test_serial_recovery_after_pin_reset(no_reset, dut: DeviceAdapter, mcumgr: M
     logger.info("PASSED: Application is recovered after serial recovery")
 
 
-def test_serial_recovery_timeout(no_reset, dut: DeviceAdapter, mcumgr: MCUmgr):  # noqa: ARG001
+@pytest.mark.usefixtures("no_reset")
+def test_serial_recovery_timeout(dut: DeviceAdapter, mcumgr: MCUmgr):
     """Verify that MCUboot leaves serial recovery when no MCUmgr command is received."""
     # west flash uses RESET_PIN on some boards; clear that reset reason first.
     reset_board(dut.device_config.id)
