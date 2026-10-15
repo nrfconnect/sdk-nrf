@@ -17,120 +17,87 @@
 
 LOG_MODULE_DECLARE(cracen, CONFIG_CRACEN_LOG_LEVEL);
 
-static psa_status_t cracen_sw_aes_ecb_crypt(struct sxblkcipher *blkciph,
-					    const uint8_t *input, size_t input_length,
-					    uint8_t *output, size_t output_size,
-					    size_t *output_length)
+/* One AES job on a reserved CRACEN, ECB or, when iv is set, CBC encryption */
+static psa_status_t aes_job(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+			    bool decrypt, const uint8_t *iv, const uint8_t *input, uint8_t *output,
+			    size_t length)
 {
 	int sx_status;
 
-	sx_status = sx_blkcipher_crypt(blkciph, input, input_length, output);
+	if (iv != NULL) {
+		sx_status = sx_blkcipher_create_aescbc_enc(blkciph, key, iv);
+	} else if (decrypt) {
+		sx_status = sx_blkcipher_create_aesecb_dec(blkciph, key);
+	} else {
+		sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
+	}
 	if (sx_status != SX_OK) {
-		goto exit;
+		return silex_statuscodes_to_psa(sx_status);
+	}
+
+	sx_status = sx_blkcipher_crypt(blkciph, input, length, output);
+	if (sx_status != SX_OK) {
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
 	sx_status = sx_blkcipher_run(blkciph);
 	if (sx_status != SX_OK) {
-		goto exit;
+		return silex_statuscodes_to_psa(sx_status);
 	}
 
-	sx_status = sx_blkcipher_wait(blkciph);
+	return silex_statuscodes_to_psa(sx_blkcipher_wait(blkciph));
+}
 
-exit:
+/* Single-shot AES-ECB of whole blocks, reserving CRACEN for the call */
+static psa_status_t ecb_crypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
+			      bool decrypt, const uint8_t *input, size_t input_length,
+			      uint8_t *output, size_t output_size, size_t *output_length)
+{
+	psa_status_t status;
+
+	if (output_size < input_length) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	if ((input_length % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = silex_statuscodes_to_psa(sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED));
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	status = aes_job(blkciph, key, decrypt, NULL, input, output, input_length);
 	sx_hw_release(&blkciph->dma);
-	if (sx_status == SX_OK) {
-		*output_length = input_length;
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
-	return silex_statuscodes_to_psa(sx_status);
+
+	*output_length = input_length;
+	return PSA_SUCCESS;
 }
 
 psa_status_t cracen_sw_aes_ecb_encrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				       const uint8_t *input, size_t input_length, uint8_t *output,
 				       size_t output_size, size_t *output_length)
 {
-	int sx_status;
-
-	if (output_size < input_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	if ((input_length % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
-	if (sx_status != SX_OK) {
-		sx_hw_release(&blkciph->dma);
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	return cracen_sw_aes_ecb_crypt(blkciph, input, input_length, output, output_size,
-				       output_length);
+	return ecb_crypt(blkciph, key, false, input, input_length, output, output_size,
+			 output_length);
 }
 
 psa_status_t cracen_sw_aes_ecb_decrypt(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				       const uint8_t *input, size_t input_length, uint8_t *output,
 				       size_t output_size, size_t *output_length)
 {
-	int sx_status;
-
-	if (output_size < input_length) {
-		return PSA_ERROR_BUFFER_TOO_SMALL;
-	}
-
-	if ((input_length % SX_BLKCIPHER_AES_BLK_SZ) != 0) {
-		return PSA_ERROR_INVALID_ARGUMENT;
-	}
-
-	sx_status = sx_hw_reserve(&blkciph->dma, SX_HW_RESERVE_CM_ENABLED);
-	if (sx_status != SX_OK) {
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	sx_status = sx_blkcipher_create_aesecb_dec(blkciph, key);
-	if (sx_status != SX_OK) {
-		sx_hw_release(&blkciph->dma);
-		return silex_statuscodes_to_psa(sx_status);
-	}
-
-	return cracen_sw_aes_ecb_crypt(blkciph, input, input_length, output, output_size,
-				       output_length);
-}
-
-/* One AES-ECB (or, with an IV, AES-CBC) encryption job on a reserved CRACEN */
-static psa_status_t aes_encrypt_job(struct sxblkcipher *blkciph, const struct sxkeyref *key,
-				    const uint8_t *iv, const uint8_t *input, uint8_t *output,
-				    size_t length)
-{
-	int sx_status;
-
-	if (iv != NULL) {
-		sx_status = sx_blkcipher_create_aescbc_enc(blkciph, key, iv);
-	} else {
-		sx_status = sx_blkcipher_create_aesecb_enc(blkciph, key);
-	}
-	if (sx_status == SX_OK) {
-		sx_status = sx_blkcipher_crypt(blkciph, input, length, output);
-	}
-	if (sx_status == SX_OK) {
-		sx_status = sx_blkcipher_run(blkciph);
-	}
-	if (sx_status == SX_OK) {
-		sx_status = sx_blkcipher_wait(blkciph);
-	}
-
-	return silex_statuscodes_to_psa(sx_status);
+	return ecb_crypt(blkciph, key, true, input, input_length, output, output_size,
+			 output_length);
 }
 
 psa_status_t cracen_sw_aes_primitive(struct sxblkcipher *blkciph, const struct sxkeyref *key,
 				     const uint8_t *input, uint8_t *output)
 {
-	return aes_encrypt_job(blkciph, key, NULL, input, output, SX_BLKCIPHER_AES_BLK_SZ);
+	return aes_job(blkciph, key, false, NULL, input, output, SX_BLKCIPHER_AES_BLK_SZ);
 }
 
 /* output = input XOR keystream, a word at a time when all are aligned */
@@ -168,8 +135,8 @@ static psa_status_t ctr_keystream(struct sxblkcipher *blkciph, const struct sxke
 						     counter_start_pos);
 	}
 
-	return aes_encrypt_job(blkciph, key, NULL, keystream, keystream,
-			       num_blocks * SX_BLKCIPHER_AES_BLK_SZ);
+	return aes_job(blkciph, key, false, NULL, keystream, keystream,
+		       num_blocks * SX_BLKCIPHER_AES_BLK_SZ);
 }
 
 psa_status_t cracen_sw_ctr_xor(struct sxblkcipher *blkciph, const struct sxkeyref *key,
@@ -180,6 +147,7 @@ psa_status_t cracen_sw_ctr_xor(struct sxblkcipher *blkciph, const struct sxkeyre
 	/* Keystream for whole blocks, in words so it is aligned for xor_keystream() */
 	uint32_t workmem[CRACEN_SW_AES_BATCH_BLOCKS * SX_BLKCIPHER_AES_BLK_SZ / sizeof(uint32_t)];
 	size_t used = MIN(length, SX_BLKCIPHER_AES_BLK_SZ - *keystream_offset);
+	/* Not PSA_ERROR_CORRUPTION_DETECTED, as a call within the buffered keystream runs no job */
 	psa_status_t status = PSA_SUCCESS;
 
 	xor_keystream(output, input, &keystream[*keystream_offset], used);
@@ -225,6 +193,7 @@ psa_status_t cracen_sw_cbc_mac_update(struct sxblkcipher *blkciph, const struct 
 	/* CBC output; only its last block, the new MAC state, is kept */
 	uint8_t chain[CRACEN_SW_AES_BATCH_BLOCKS * SX_BLKCIPHER_AES_BLK_SZ];
 	const size_t keep = keep_last ? 1 : 0;
+	/* Not PSA_ERROR_CORRUPTION_DETECTED, as a call that only buffers input runs no job */
 	psa_status_t status = PSA_SUCCESS;
 
 	/* While a whole block is available, plus one more byte with keep_last */
@@ -250,8 +219,8 @@ psa_status_t cracen_sw_cbc_mac_update(struct sxblkcipher *blkciph, const struct 
 		}
 
 		/* Single-part CBC reads the IV as part of the job, so no context is saved */
-		status = aes_encrypt_job(blkciph, key, mac_state, blocks, chain,
-					 num_blocks * SX_BLKCIPHER_AES_BLK_SZ);
+		status = aes_job(blkciph, key, false, mac_state, blocks, chain,
+				 num_blocks * SX_BLKCIPHER_AES_BLK_SZ);
 		if (status != PSA_SUCCESS) {
 			goto exit;
 		}
