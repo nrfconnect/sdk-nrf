@@ -6679,7 +6679,7 @@ The support for Pelion Device Management and the related library and application
 
 NCSDK-10196: DFU fails for some configurations with the quick session resume feature enabled
   Enabling :kconfig:option:`CONFIG_PELION_QUICK_SESSION_RESUME` together with the OpenThread network backend leads to the quick session resume failure during the DFU packet exchange.
-  This is valid for the :ref:`nRF52840 DK <ug_nrf52>` and the :ref:`nRF5340 DK <ug_nrf5340>`.
+  This is valid for the :zephyr:board:`nrf52840dk` and the :ref:`nRF5340 DK <ug_nrf5340>`.
 
   **Affected platforms:** nRF5340, nRF52840
 

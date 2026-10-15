@@ -95,7 +95,7 @@ To enable a specific PSA Crypto API driver, set the respective Kconfig option, a
 +-----------------------+---------------------------------------------------+-----------------------------------------------------+
 | PSA Crypto API driver |               Configuration option                |                        Notes                        |
 +=======================+===================================================+=====================================================+
-| nrf_cc3xx             | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CC3XX`  | Only on nRF52840, nRF91 Series, and nRF5340 devices |
+| nrf_cc3xx             | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CC3XX`  | Only on nRF91 Series and nRF5340 devices |
 +-----------------------+---------------------------------------------------+-----------------------------------------------------+
 | CRACEN                | :kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_CRACEN` | Only on nRF54L Series devices                       |
 +-----------------------+---------------------------------------------------+-----------------------------------------------------+

@@ -76,29 +76,9 @@ The table below gives an overview of the secure storage support for the products
      - Yes
      - Yes
      - No [1]_
-   * - nRF52840
-     - :ref:`Secure Storage subsystem <secure_storage>`
-     - Yes
-     - Yes
-     - Yes
-     - No [1]_
-   * - nRF52833
-     - :ref:`Secure Storage subsystem <secure_storage>`
-     - No [2]_
-     - Yes
-     - No
-     - No [1]_
-   * - nRF52832
-     - :ref:`Secure Storage subsystem <secure_storage>`
-     - No [2]_
-     - Yes
-     - No
-     - No [1]_
 
 Notes for confidentiality partial support
   .. [1] On SoCs without the isolation feature, the confidentiality is limited to protection of data at rest in a non-volatile internal or external memory.
          This confidentiality is based on a CPU-inaccessible master key used for data encryption.
          When the data is decrypted for usage, there is no mechanism providing access control and protecting its visibility.
          Using a TrustZone-enabled SoC and building with TF-M provides stronger protection, and is recommended if available.
-  .. [2] The use of Hardware Unique Key (HUK) to provide the AEAD key is not available on nRF52833 and nRF52832 devices.
-         For those devices, the Secure Storage subsystem offers the use of SHA-256 over the device ID and/or the entry UID to generate the key, which does not guarantee security beyond the integrity check of the encrypted data.

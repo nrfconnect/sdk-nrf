@@ -3,7 +3,7 @@
 Enabling GPIO mode support for nRF21540
 #######################################
 
-The `nRF21540`_ device is a range extender that you can use with nRF52, nRF53 and nRF54L Series devices.
+The `nRF21540`_ device is a range extender that you can use with nRF53 and nRF54L Series devices.
 The nRF21540 GPIO mode implementation of FEM is compatible with the nRF21540 device and implements the 3-pin PA/LNA interface.
 
 .. ncs_implementation_desc_start

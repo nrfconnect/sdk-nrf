@@ -15,23 +15,6 @@ Zephyr and the |NCS| provides support for developing applications with the follo
 
 The FEM support on SoCs that are not listed in the table above might still work, but it is not tested and not guaranteed to work.
 
-The following hardware platforms with :term:`Front-End Module (FEM)` are supported by the |NCS|:
-
-.. list-table::
-   :header-rows: 1
-
-   * - Hardware platform
-     - PCA number
-     - Board targets
-     - Documentation
-     - Product pages
-   * - :zephyr:board:`nrf21540dk`
-     - PCA10112
-     - ``nrf21540dk/nrf52840``
-     - | `Product Specification <nRF21540 Product Specification_>`_
-       | `User Guide <nRF21540 DK User Guide_>`_
-     - `nRF21540 DK product page`_
-
 The following FEM :term:`Shield` is available and defined in the :file:`nrf/boards/shields` folder:
 
 .. list-table::
