@@ -189,7 +189,9 @@ Content range is not defined:
 Job message does not fit in the payload buffer:
    If a job message from AWS IoT Jobs is larger than :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`, the library drops the message and keeps the MQTT connection.
    The application receives the :c:enumerator:`AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE` error cause.
-   To fix this problem, increase :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
+   If the library can identify the job from the beginning of the message, it sets the job execution to ``FAILED`` with the ``PAYLOAD_TOO_LARGE`` reason in the status details.
+   AWS IoT Jobs then does not send the job again.
+   To fix this problem, increase the value of the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option and create the job again.
 
 Presigned URLs
 ==============
