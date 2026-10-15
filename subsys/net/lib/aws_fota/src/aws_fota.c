@@ -5,7 +5,10 @@
  */
 
 #include <zephyr/kernel.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <zephyr/data/json.h>
 #include <zephyr/net/tls_credentials.h>
 #include <net/fota_download.h>
@@ -224,15 +227,17 @@ static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_l
  * @brief Read out and drop the payload of a published MQTT message.
  *
  * @param[in] client  Connected MQTT client instance.
- * @param[in] length  Length of the payload received.
+ * @param[in] length  Length of the payload to drop.
  *
  * @return 0 If successful otherwise a negative error code is returned.
  */
 static int payload_discard(struct mqtt_client *client, size_t length)
 {
+	uint8_t scratch[64];
+
 	while (length > 0) {
-		int ret = mqtt_read_publish_payload_blocking(client, payload_buf,
-							     MIN(length, sizeof(payload_buf)));
+		int ret = mqtt_read_publish_payload_blocking(client, scratch,
+							     MIN(length, sizeof(scratch)));
 
 		if (ret < 0) {
 			return ret;
@@ -246,8 +251,38 @@ static int payload_discard(struct mqtt_client *client, size_t length)
 }
 
 /**
+ * @brief Read exactly the given number of payload bytes of a published MQTT message.
+ *
+ * @param[in] client  Connected MQTT client instance.
+ * @param[out] buf  Buffer where the payload is stored.
+ * @param[in] length  Number of bytes to read.
+ *
+ * @return 0 If successful otherwise a negative error code is returned.
+ */
+static int payload_read(struct mqtt_client *client, uint8_t *buf, size_t length)
+{
+	uint8_t *end = buf + length;
+
+	while (buf < end) {
+		int ret = mqtt_read_publish_payload_blocking(client, buf, end - buf);
+
+		if (ret < 0) {
+			return ret;
+		} else if (ret == 0) {
+			return -EIO;
+		}
+		buf += ret;
+	}
+
+	return 0;
+}
+
+/**
  * @brief Read the payload out of the published MQTT message from the MQTT
  *	  Client instance
+ *
+ * If the payload does not fit in the buffer, the beginning of the payload is stored as a
+ * null-terminated string, the rest is dropped and -EMSGSIZE is returned.
  *
  * @param[in] client  Connected MQTT client instance.
  * @param[out] write_buf  Buffer where the MQTT publish message's payload is
@@ -258,29 +293,27 @@ static int payload_discard(struct mqtt_client *client, size_t length)
  */
 static int get_published_payload(struct mqtt_client *client, uint8_t *write_buf, size_t length)
 {
-	uint8_t *buf = write_buf;
-	uint8_t *end = buf + length;
+	int err;
 
 	if (length > sizeof(payload_buf)) {
 		/* The payload must be read out also when it does not fit, otherwise the MQTT
 		 * client is left with an unread payload.
 		 */
-		int err = payload_discard(client, length);
+		size_t head_len = sizeof(payload_buf) - 1;
+
+		err = payload_read(client, write_buf, head_len);
+		if (err) {
+			return err;
+		}
+
+		write_buf[head_len] = '\0';
+
+		err = payload_discard(client, length - head_len);
 
 		return err ? err : -EMSGSIZE;
 	}
-	while (buf < end) {
-		int ret = mqtt_read_publish_payload_blocking(client, buf,
-							     end - buf);
 
-		if (ret < 0) {
-			return ret;
-		} else if (ret == 0) {
-			return -EIO;
-		}
-		buf += ret;
-	}
-	return 0;
+	return payload_read(client, write_buf, length);
 }
 
 /**
@@ -379,6 +412,104 @@ static int set_current_job_failed(struct mqtt_client *const client,
 				    AWS_JOBS_FAILED, "");
 }
 
+/* Return a pointer to the value of a key in a JSON object, or NULL if the key is not found.
+ * This is used on the cut-off beginning of a message, so it can not be parsed as JSON.
+ */
+static const char *json_value_find(const char *json, const char *key)
+{
+	char pattern[16];
+	const char *value;
+	int len = snprintf(pattern, sizeof(pattern), "\"%s\"", key);
+
+	if (len < 0 || (size_t)len >= sizeof(pattern)) {
+		return NULL;
+	}
+
+	value = strstr(json, pattern);
+	if (value == NULL) {
+		return NULL;
+	}
+
+	value += len;
+	value += strspn(value, " ");
+	if (*value != ':') {
+		return NULL;
+	}
+
+	value++;
+	value += strspn(value, " ");
+
+	return value;
+}
+
+/* Find the job ID and the execution version number in the beginning of a job execution message.
+ * AWS IoT Jobs places both before the job document.
+ */
+static int job_identify(const char *head, uint8_t *job_id, size_t job_id_size, int *version)
+{
+	const char *value = json_value_find(head, "jobId");
+	const char *end;
+	char *num_end;
+	long num;
+
+	if (value == NULL || *value != '"') {
+		return -ENOENT;
+	}
+
+	value++;
+	end = strchr(value, '"');
+	if (end == NULL || end == value || (size_t)(end - value) >= job_id_size) {
+		return -ENOENT;
+	}
+
+	memcpy(job_id, value, end - value);
+	job_id[end - value] = '\0';
+
+	value = json_value_find(head, "versionNumber");
+	if (value == NULL) {
+		return -ENOENT;
+	}
+
+	num = strtol(value, &num_end, 10);
+	if (num_end == value || num < 0 || num > INT_MAX) {
+		return -ENOENT;
+	}
+
+	*version = num;
+
+	return 0;
+}
+
+/**
+ * @brief Fail the job of a job execution message that did not fit in the payload buffer.
+ *
+ * The beginning of the message is in the payload buffer. If the job can be identified from it,
+ * the job execution is set to failed, so that AWS IoT Jobs does not send the job again.
+ *
+ * @param client Connected MQTT client instance
+ *
+ * @return 0 If the job was failed, -EMSGSIZE if the job could not be identified, otherwise
+ *	   a negative error code is returned.
+ */
+static int job_too_large_fail(struct mqtt_client *const client)
+{
+	uint8_t job_id_incoming[AWS_JOBS_JOB_ID_MAX_LEN];
+	int version;
+
+	if (job_identify(payload_buf, job_id_incoming, sizeof(job_id_incoming), &version)) {
+		return -EMSGSIZE;
+	}
+
+	LOG_ERR("Job %s does not fit in the payload buffer of %zu bytes. "
+		"Increase CONFIG_AWS_FOTA_PAYLOAD_SIZE.",
+		(char *)job_id_incoming, sizeof(payload_buf));
+
+	set_current_job_id(job_id_incoming);
+	execution_version_number = version;
+
+	return set_current_job_failed(client, AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE);
+}
+
 /**
  * @brief Parsing an AWS IoT Job Execution response received on $next/get MQTT
  *	  topic or notify-next. If it is a valid response the program state is
@@ -398,7 +529,9 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 	uint8_t job_id_incoming[AWS_JOBS_JOB_ID_MAX_LEN];
 
 	err = get_published_payload(client, payload_buf, payload_len);
-	if (err) {
+	if (err == -EMSGSIZE) {
+		return job_too_large_fail(client);
+	} else if (err) {
 		LOG_ERR("Error when getting the payload: %d", err);
 		return err;
 	}
