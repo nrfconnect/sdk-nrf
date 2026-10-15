@@ -68,6 +68,17 @@ In addition to publishing data to the AWS IoT shadow, the sample also subscribes
 The application-specific topics are not part of the AWS IoT shadow service and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_application_topics_set` function before connecting.
 How to add application-specific topics is documented in the :ref:`AWS IoT library usage <aws_iot_usage>` section.
 
+FOTA
+====
+
+The sample supports FOTA updates using the :ref:`lib_aws_fota` library.
+The sample supports FOTA on nRF91 Series devices, the nRF7120 DK, and the nRF7002 DK.
+The sample does not support FOTA on other nRF71 Series and nRF70 Series configurations.
+The board configuration files enable it.
+
+On the nRF7002 DK, the primary and secondary MCUboot slots do not both fit into the internal flash.
+Therefore, the :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` file moves ``slot1_partition`` to the external flash.
+
 .. _aws_iot_sample_server_setup:
 
 Setting up AWS IoT
@@ -83,7 +94,7 @@ Set the following options in the project configuration file :file:`samples/net/a
 * :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
+For information about FOTA, see the `FOTA`_ section.
 
 .. note::
    On nRF91 Series devices, you can provision certificates only when the modem is disconnected from the network.
