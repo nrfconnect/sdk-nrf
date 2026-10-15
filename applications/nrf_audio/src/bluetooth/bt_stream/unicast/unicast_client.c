@@ -43,6 +43,9 @@ enum cap_action_type {
 	CAP_ACTION_NONE, /* Lowest pri */
 };
 
+/* Potential delay before starting the CAP action. Used e.g. on an error */
+#define CAP_DELAY_START_MS 400
+
 K_MUTEX_DEFINE(next_action_lock);
 K_SEM_DEFINE(cap_state_machine_sem, 1, 1);
 static enum cap_action_type next_action = CAP_ACTION_NONE;
@@ -58,7 +61,6 @@ static const k_timeout_t LOCK_WAIT_TIME_MS = K_MSEC(10);
 /* Will return 1 if x == 0, due to how locations are defined in LE Audio */
 #define POPCOUNT_ZERO(x) ((x) == 0 ? 1 : POPCOUNT(x))
 
-static int unicast_client_internal_start(void);
 /**
  * @brief	Signal that we want to start a CAP action.
  *
@@ -202,12 +204,24 @@ static bool server_discovery_ready(const struct server_store *server)
 		server->src.discovery_state == DISCOVERY_STATE_COMPLETED);
 }
 
+// TODO: Remove or refactor
 static int server_source_stream_count_get(const struct server_store *server)
 {
 	int source_count = MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations));
 
 	/* The application currently uses only source stream index 0. */
 	return MIN(source_count, 1);
+}
+
+static bool is_pd_set(uint32_t pd)
+{
+	if (pd == 0) {
+		return false;
+	} else if (pd == BT_BAP_PD_UNSET) {
+		return false;
+	} else {
+		return true;
+	}
 }
 
 static bool foreach_unicast_group_populate(struct server_store *server, void *user_data)
@@ -228,7 +242,7 @@ static bool foreach_unicast_group_populate(struct server_store *server, void *us
 
 	/* Add only the streams that has a valid preset set */
 	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
-		if (server->snk.lc3_preset[j].qos.pd == 0) {
+		if (!is_pd_set(server->snk.lc3_preset[j].qos.pd)) {
 			LOG_WRN("Sink EP %d has no valid preset, skipping", j);
 			continue;
 		}
@@ -250,7 +264,7 @@ static bool foreach_unicast_group_populate(struct server_store *server, void *us
 
 	/* Add only source stream 0, which is the only source stream currently used. */
 	for (int j = 0; j < server_source_stream_count_get(server); j++) {
-		if (server->src.lc3_preset[j].qos.pd == 0) {
+		if (!is_pd_set(server->src.lc3_preset[j].qos.pd)) {
 			LOG_WRN("Source EP %d has no valid preset, skipping", j);
 			continue;
 		}
@@ -280,15 +294,9 @@ static bool foreach_unicast_group_populate(struct server_store *server, void *us
  *		Pair sink/source streams from the same server together to make sure they are
  *		part of the same CIS.
  */
-static void unicast_group_create(void)
+static int unicast_group_create(void)
 {
 	int ret;
-
-	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
-	if (ret < 0) {
-		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-		return;
-	}
 
 	/* Find out how many valid sink EPs we have */
 	struct num_eps_total num_eps = {0, 0};
@@ -296,15 +304,13 @@ static void unicast_group_create(void)
 	ret = srv_store_foreach_server(foreach_num_eps_count, &num_eps);
 	if (ret < 0) {
 		LOG_ERR("Failed to count valid EPs: %d", ret);
-		srv_store_unlock();
-		return;
+		return ret;
 	}
 
 	if (num_eps.sink == 0 && num_eps.source == 0) {
 		LOG_ERR("No valid sink or source EPs found, cannot create unicast "
 			"group");
-		srv_store_unlock();
-		return;
+		return -ENODEV;
 	}
 
 	/* Populate the stream params arrays */
@@ -315,13 +321,10 @@ static void unicast_group_create(void)
 	ret = srv_store_foreach_server(foreach_unicast_group_populate, &data);
 	if (ret < 0) {
 		LOG_ERR("Failed to populate unicast group stream params: %d", ret);
-		srv_store_unlock();
-		return;
+		return ret;
 	}
 
 	int stream_iterator = 0;
-
-	LOG_WRN("sink iterator is %d", data.sink_iterator);
 
 	/* Pair TX and RX from same server.
 	 * We pair in the order of sink to source because the sink stream will
@@ -339,8 +342,7 @@ static void unicast_group_create(void)
 		if (ret < 0) {
 			LOG_ERR("Failed to get server from sink stream %p: %d",
 				&data.sink_stream_params[i].stream->bap_stream, ret);
-			srv_store_unlock();
-			return;
+			return ret;
 		}
 
 		for (int j = stream_iterator; j < data.source_iterator; j++) {
@@ -352,8 +354,7 @@ static void unicast_group_create(void)
 			if (ret < 0) {
 				LOG_ERR("Failed to get server from source stream %p: %d",
 					&data.source_stream_params[j].stream->bap_stream, ret);
-				srv_store_unlock();
-				return;
+				return ret;
 			}
 
 			if (sink_server == source_server) {
@@ -390,9 +391,8 @@ static void unicast_group_create(void)
 
 		LOG_DBG("Adding unpaired source EP %d", i);
 		if (stream_iterator >= ARRAY_SIZE(pair_params)) {
-			LOG_ERR("Too many CIS pairs for unicast group");
-			srv_store_unlock();
-			return;
+			LOG_ERR("Too many stream pairs for unicast group");
+			return -ENOMEM;
 		}
 
 		pair_params[stream_iterator].tx_param = NULL;
@@ -405,8 +405,7 @@ static void unicast_group_create(void)
 
 	if (group_param.params_count == 0) {
 		LOG_ERR("No valid streams to create a unicast group");
-		srv_store_unlock();
-		return;
+		return -ENODEV;
 	}
 
 	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
@@ -422,7 +421,7 @@ static void unicast_group_create(void)
 		LOG_INF("Created unicast group");
 	}
 
-	srv_store_unlock();
+	return ret;
 }
 
 /**
@@ -484,7 +483,7 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 
 	/* Check each eligible sink stream against the streams in the group. */
 	for (int i = 0; i < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); i++) {
-		if (server->snk.lc3_preset[i].qos.pd == 0) {
+		if (!is_pd_set(server->snk.lc3_preset[i].qos.pd)) {
 			continue;
 		}
 
@@ -500,7 +499,7 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 
 	/* Check each eligible source stream as well. */
 	for (int i = 0; i < server_source_stream_count_get(server); i++) {
-		if (server->src.lc3_preset[i].qos.pd == 0) {
+		if (!is_pd_set(server->src.lc3_preset[i].qos.pd)) {
 			continue;
 		}
 
@@ -511,6 +510,95 @@ static bool foreach_server_stream_in_unicast_group_check(struct server_store *se
 				server->name, i, &server->src.cap_streams[i]);
 			return ITER_STOP;
 		}
+	}
+
+	return ITER_CONTINUE;
+}
+
+static bool is_connected(struct bt_conn const *const conn)
+{
+	int ret;
+
+	/* Check if the connection is valid */
+	struct bt_conn_info info;
+
+	if (conn == NULL) {
+		LOG_DBG("Connection is NULL, not connected");
+		return false;
+	}
+
+	ret = bt_conn_get_info(conn, &info);
+	if (ret != 0) {
+		LOG_ERR("Failed to get connection info for conn %p: %d", conn, ret);
+		return false;
+	}
+
+	if (info.state == BT_CONN_STATE_CONNECTED) {
+		LOG_DBG("Connection %p is connected", conn);
+		return true;
+	}
+
+	return false;
+}
+
+static bool foreach_add_to_start_params(struct server_store *server, void *user_data)
+{
+	int ret;
+	struct bt_cap_unicast_audio_start_param *param = user_data;
+
+	if (!server_discovery_ready(server)) {
+		LOG_DBG("Server %s, discovery not complete, skipping", server->name);
+		return ITER_CONTINUE;
+	}
+
+	if (!is_connected(server->conn)) {
+		LOG_DBG("Server %s is not connected, skipping", server->name);
+		return ITER_CONTINUE;
+	}
+
+	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
+		uint8_t state;
+
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->snk.cap_streams[j]);
+		if (ret != -ECANCELED) {
+			continue;
+		}
+
+		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
+		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
+			LOG_DBG("Sink endpoint is already streaming, skipping start");
+			continue;
+		}
+
+		param->stream_params[param->count].member.member = server->conn;
+		param->stream_params[param->count].stream = &server->snk.cap_streams[j];
+		param->stream_params[param->count].ep = server->snk.eps[j];
+		param->stream_params[param->count].codec_cfg = &server->snk.lc3_preset[j].codec_cfg;
+		param->count++;
+	}
+
+	/* Check if we have valid source endpoints to start */
+	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
+		uint8_t state;
+
+		ret = bt_cap_unicast_group_foreach_stream(
+			unicast_group, foreach_stream_in_group_check, &server->src.cap_streams[j]);
+		if (ret != -ECANCELED) {
+			continue;
+		}
+
+		ret = le_audio_ep_state_get(server->src.eps[j], &state);
+		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
+			LOG_DBG("Source endpoint is already streaming, skipping start");
+			continue;
+		}
+
+		param->stream_params[param->count].member.member = server->conn;
+		param->stream_params[param->count].stream = &server->src.cap_streams[j];
+		param->stream_params[param->count].ep = server->src.eps[j];
+		param->stream_params[param->count].codec_cfg = &server->src.lc3_preset[j].codec_cfg;
+		param->count++;
 	}
 
 	return ITER_CONTINUE;
@@ -534,17 +622,27 @@ static int cap_action_start(void)
 		return -EBUSY;
 	}
 
+	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
+	if (ret < 0) {
+		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
+		return ret;
+	}
+
 	/* Create a unicast group if it doesn't already exist */
 	if (unicast_group == NULL) {
 		LOG_DBG("Unicast group not created, creating unicast group");
-		unicast_group_create();
+		ret = unicast_group_create();
+		if (ret != 0) {
+			srv_store_unlock();
+			return ret;
+		}
 		goto start_streams;
 	}
 
 	/* TODO: Emil check these lines */
 	if (group_param.params_count >= CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT) {
 		/* The group is as full as it can get, start the relevant streams */
-		LOG_DBG("Unicast group is full, cannot add more CIS");
+		LOG_DBG("Unicast group is full, cannot add more streams");
 		goto start_streams;
 	}
 
@@ -552,31 +650,52 @@ static int cap_action_start(void)
 	 * there are any waiting to join.
 	 */
 
-	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
-	if (ret < 0) {
-		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-		return ret;
-	}
-
 	/* Check if each of the connected servers in srv_store are in the unicast_group */
 	ret = srv_store_foreach_server(foreach_server_stream_in_unicast_group_check, NULL);
-	srv_store_unlock();
 
 	if (ret == -ECANCELED) {
+		srv_store_unlock();
 		cap_thread_next_evt_set(CAP_ACTION_STOP_THEN_START);
 		return -EAGAIN;
 	} else if (ret != 0) {
+		srv_store_unlock();
 		return ret;
 	}
 
 start_streams:
 
-	ret = unicast_client_internal_start();
-	if (ret < 0) {
-		LOG_ERR("Failed to start unicast client: %d", ret);
+	/* Start all unicast_servers with valid endpoints */
+	struct bt_cap_unicast_audio_start_stream_param
+		cap_stream_params[2 * CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
+
+	struct bt_cap_unicast_audio_start_param param;
+
+	param.stream_params = cap_stream_params;
+	param.count = 0;
+	param.type = BT_CAP_SET_TYPE_AD_HOC;
+
+	ret = srv_store_foreach_server(foreach_add_to_start_params, &param);
+	if (ret != 0) {
+		LOG_ERR("Failed to add streams to start params: %d", ret);
+		srv_store_unlock();
+		return ret;
 	}
 
-	return ret;
+	if (param.count == 0) {
+		LOG_DBG("No streams to start");
+		srv_store_unlock();
+		return -EIO;
+	}
+
+	ret = bt_cap_initiator_unicast_audio_start(&param);
+	if (ret != 0) {
+		LOG_ERR("Failed to start unicast sink audio: %d", ret);
+		srv_store_unlock();
+		return ret;
+	}
+
+	srv_store_unlock();
+	return 0;
 }
 
 /* bt_bap_unicast_client_cb begin ----------------------------------------------------------------*/
@@ -1046,8 +1165,6 @@ static void bap_discover_cb(struct bt_conn *conn, int err, enum bt_audio_dir dir
 		return;
 	}
 
-	LOG_INF("Submitting work to start CAP");
-
 	cap_thread_next_evt_set(CAP_ACTION_START);
 }
 
@@ -1106,9 +1223,11 @@ static bool foreach_common_params_existing_streams_set(struct bt_cap_stream *str
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SNK_COUNT; i++) {
 			server->snk.lc3_preset[i].qos.pd = qos_write->snk.pres_dly_us;
-			// server->snk.lc3_preset[i].qos.framing = qos_write->snk.framing;
-			// server->snk.lc3_preset[i].qos.latency =
-			// qos_write->snk.transport_latency_ms;
+			/* TODO: Set framing and latency
+			 * server->snk.lc3_preset[i].qos.framing = qos_write->snk.framing;
+			 * server->snk.lc3_preset[i].qos.latency =
+			 * qos_write->snk.transport_latency_ms;
+			 */
 		}
 		break;
 	case BT_AUDIO_DIR_SOURCE:
@@ -1117,9 +1236,11 @@ static bool foreach_common_params_existing_streams_set(struct bt_cap_stream *str
 
 		for (int i = 0; i < CONFIG_BT_BAP_UNICAST_CLIENT_ASE_SRC_COUNT; i++) {
 			server->src.lc3_preset[i].qos.pd = qos_write->src.pres_dly_us;
-			// server->src.lc3_preset[i].qos.framing = qos_write->src.framing;
-			// server->src.lc3_preset[i].qos.latency =
-			// qos_write->src.transport_latency_ms;
+			/* TODO: Set framing and latency
+			 * server->src.lc3_preset[i].qos.framing = qos_write->src.framing;
+			 * server->src.lc3_preset[i].qos.latency =
+			 * qos_write->src.transport_latency_ms;
+			 */
 		}
 		break;
 	default:
@@ -1154,7 +1275,7 @@ static void bap_stream_qos_configured_cb(struct bt_bap_stream *stream)
 
 static void bap_stream_enabled_cb(struct bt_bap_stream *stream)
 {
-	LOG_DBG("CB stream %p enabled", stream);
+	LOG_DBG("CB BAP stream %p enabled", stream);
 }
 
 static void bap_stream_metadata_updated_cb(struct bt_bap_stream *stream)
@@ -1416,8 +1537,8 @@ static void cap_start_codec_configured_cb(void)
 	}
 
 	/* All streams have been codec configured. Hence, we need to check
-	both directions here.*/
-
+	 * both directions here.
+	 */
 	struct bt_bap_unicast_group_info bap_info;
 
 	ret = group_info_get(unicast_group, &bap_info);
@@ -1466,12 +1587,12 @@ static void cap_start_codec_configured_cb(void)
 
 		/* If the group has been connected we need to cancel and restart*/
 		if (bap_info.has_been_connected) {
+			LOG_DBG("Recreating unicast group as it has been connected");
 			/* Create the unicast group anew. This will happen when all streams have
 			 * been released */
 			unicast_group_recreate_pending = true;
 			srv_store_unlock();
 
-			LOG_INF("calling cancel in the CAP");
 			ret = bt_cap_initiator_unicast_audio_cancel();
 			if (ret != 0 && ret != -EALREADY) {
 				LOG_ERR("Failed to cancel unicast audio: %d", ret);
@@ -1480,7 +1601,7 @@ static void cap_start_codec_configured_cb(void)
 			cap_thread_next_evt_set(CAP_ACTION_STOP_THEN_START);
 			return;
 		} else {
-			LOG_INF("Reconfiguring unicast group as it has not been connected yet");
+			LOG_DBG("Reconfiguring unicast group as it has not been connected yet");
 			ret = bt_cap_unicast_group_reconfig(unicast_group, &group_param);
 			if (ret) {
 				LOG_ERR("Failed to reconfigure unicast group: %d", ret);
@@ -1877,101 +1998,15 @@ int unicast_client_discover(struct bt_conn *conn, enum unicast_discover_dir dir)
 	return 0;
 }
 
-static bool is_connected(struct bt_conn const *const conn)
-{
-	int ret;
-
-	/* Check if the connection is valid */
-	struct bt_conn_info info;
-
-	if (conn == NULL) {
-		LOG_DBG("Connection is NULL, not connected");
-		return false;
-	}
-
-	ret = bt_conn_get_info(conn, &info);
-	if (ret != 0) {
-		LOG_ERR("Failed to get connection info for conn %p: %d", conn, ret);
-		return false;
-	}
-
-	if (info.state == BT_CONN_STATE_CONNECTED) {
-		LOG_DBG("Connection %p is connected", conn);
-		return true;
-	}
-
-	return false;
-}
-
-static bool foreach_add_to_start_params(struct server_store *server, void *user_data)
-{
-	int ret;
-	struct bt_cap_unicast_audio_start_param *param = user_data;
-
-	if (!server_discovery_ready(server)) {
-		return ITER_CONTINUE;
-	}
-
-	if (!is_connected(server->conn)) {
-		LOG_DBG("Server %s is not connected, skipping", server->name);
-		return ITER_CONTINUE;
-	}
-
-	for (int j = 0; j < MIN(server->snk.num_eps, POPCOUNT_ZERO(server->snk.locations)); j++) {
-		uint8_t state;
-
-		ret = bt_cap_unicast_group_foreach_stream(
-			unicast_group, foreach_stream_in_group_check, &server->snk.cap_streams[j]);
-		if (ret != -ECANCELED) {
-			continue;
-		}
-
-		ret = le_audio_ep_state_get(server->snk.eps[j], &state);
-		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
-			LOG_DBG("Sink endpoint is already streaming, skipping start");
-			continue;
-		}
-
-		param->stream_params[param->count].member.member = server->conn;
-		param->stream_params[param->count].stream = &server->snk.cap_streams[j];
-		param->stream_params[param->count].ep = server->snk.eps[j];
-		param->stream_params[param->count].codec_cfg = &server->snk.lc3_preset[j].codec_cfg;
-		param->count++;
-	}
-
-	/* Check if we have valid source endpoints to start */
-	for (int j = 0; j < MIN(server->src.num_eps, POPCOUNT_ZERO(server->src.locations)); j++) {
-		uint8_t state;
-
-		ret = bt_cap_unicast_group_foreach_stream(
-			unicast_group, foreach_stream_in_group_check, &server->src.cap_streams[j]);
-		if (ret != -ECANCELED) {
-			continue;
-		}
-
-		ret = le_audio_ep_state_get(server->src.eps[j], &state);
-		if (ret || state == BT_BAP_EP_STATE_STREAMING) {
-			LOG_DBG("Source endpoint is already streaming, skipping start");
-			continue;
-		}
-
-		param->stream_params[param->count].member.member = server->conn;
-		param->stream_params[param->count].stream = &server->src.cap_streams[j];
-		param->stream_params[param->count].ep = server->src.eps[j];
-		param->stream_params[param->count].codec_cfg = &server->src.lc3_preset[j].codec_cfg;
-		param->count++;
-	}
-
-	return ITER_CONTINUE;
-}
-
 int unicast_client_start(uint8_t cig_index)
 {
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
+		LOG_ERR("Invalid CIG index: %d", cig_index);
 		return -EINVAL;
 	}
 
 	if (cap_state_machine_thread_id == NULL) {
+		LOG_ERR("CAP state machine thread not initialized");
 		return -EACCES;
 	}
 
@@ -1982,71 +2017,16 @@ int unicast_client_start(uint8_t cig_index)
 int unicast_client_stop(uint8_t cig_index)
 {
 	if (cig_index >= CONFIG_BT_ISO_MAX_CIG) {
+		LOG_ERR("Invalid CIG index: %d", cig_index);
 		return -EINVAL;
 	}
 
 	if (cap_state_machine_thread_id == NULL) {
+		LOG_ERR("CAP state machine thread not initialized");
 		return -EACCES;
 	}
 
 	cap_thread_next_evt_set(CAP_ACTION_STOP);
-	return 0;
-}
-
-static int unicast_client_internal_start(void)
-{
-	int ret;
-
-	if (unicast_group == NULL) {
-		LOG_INF("No unicast group to start");
-		return -EIO;
-	}
-
-	/* Start all unicast_servers with valid endpoints */
-	struct bt_cap_unicast_audio_start_stream_param
-		cap_stream_params[2 * CONFIG_BT_BAP_UNICAST_CLIENT_GROUP_STREAM_COUNT];
-
-	struct bt_cap_unicast_audio_start_param param;
-
-	param.stream_params = cap_stream_params;
-	param.count = 0;
-	param.type = BT_CAP_SET_TYPE_AD_HOC;
-
-	ret = srv_store_lock(LOCK_WAIT_TIME_MS);
-	if (ret < 0) {
-		LOG_ERR("%s: Failed to lock server store: %d", __func__, ret);
-
-		return ret;
-	}
-
-	ret = srv_store_foreach_server(foreach_add_to_start_params, &param);
-	if (ret != 0) {
-		LOG_ERR("Failed to add streams to start params: %d", ret);
-
-		srv_store_unlock();
-
-		return ret;
-	}
-
-	if (param.count == 0) {
-		LOG_DBG("No streams to start");
-
-		srv_store_unlock();
-
-		return -EIO;
-	}
-
-	ret = bt_cap_initiator_unicast_audio_start(&param);
-	if (ret != 0) {
-		LOG_ERR("Failed to start unicast sink audio: %d", ret);
-
-		srv_store_unlock();
-
-		return ret;
-	}
-
-	srv_store_unlock();
-
 	return 0;
 }
 
@@ -2287,9 +2267,9 @@ int unicast_client_disable(uint8_t cig_index)
 
 enum cap_action_type cap_thread_next_event_get(void)
 {
-	LOG_INF("Waiting for next event");
+	LOG_DBG("Waiting for next event");
 	(void)k_poll(&poll_evt, 1, K_FOREVER);
-	LOG_INF("Waiting for CAP state machine semaphore");
+	LOG_DBG("Waiting for CAP state machine semaphore");
 	k_sem_take(&cap_state_machine_sem, K_FOREVER);
 	k_mutex_lock(&next_action_lock, K_FOREVER);
 	enum cap_action_type action = next_action;
@@ -2304,17 +2284,14 @@ static void cap_state_machine_runner(void)
 	/* Must wait for previous CAP procedure to complete */
 	enum cap_action_type action;
 	int ret;
-	LOG_INF("Waiting for CAP signal");
-
 	/* State machine is IDLE */
-
-	LOG_INF("Fetch next action");
+	LOG_DBG("Fetch next action");
 	action = cap_thread_next_event_get();
 
 	/* State machine is processing */
 	if (atomic_test_and_clear_bit(cap_state_machine_delay_start, 0)) {
-		LOG_INF("CAP delay start");
-		k_sleep(K_MSEC(400));
+		LOG_DBG("CAP delay start");
+		k_sleep(K_MSEC(CAP_DELAY_START_MS));
 	}
 
 	switch (action) {
@@ -2340,7 +2317,7 @@ static void cap_state_machine_runner(void)
 			in_playing_state = false;
 			ret = -EAGAIN;
 		} else if (unicast_group == NULL) {
-			LOG_INF("Restarting CAP after unicast group release");
+			LOG_DBG("Restarting CAP after unicast group release");
 			ret = cap_action_start();
 		} else {
 			LOG_ERR("Unicast group rebuild failed, keeping existing group");
@@ -2370,7 +2347,6 @@ static void cap_state_machine_runner(void)
  */
 static void cap_state_machine_thread(void *dummy1, void *dummy2, void *dummy3)
 {
-
 	while (1) {
 		cap_state_machine_runner();
 	}

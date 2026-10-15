@@ -86,11 +86,17 @@ static void content_control_msg_sub_thread(void)
 
 		switch (msg.event) {
 		case MEDIA_START:
-			unicast_client_start(0);
+			ret = unicast_client_start(0);
+			if (ret != 0) {
+				LOG_ERR("Failed to start unicast client: %d", ret);
+			}
 			break;
 
 		case MEDIA_STOP:
-			unicast_client_stop(0);
+			ret = unicast_client_stop(0);
+			if (ret != 0) {
+				LOG_ERR("Failed to stop unicast client: %d", ret);
+			}
 			break;
 
 		default:
