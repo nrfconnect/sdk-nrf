@@ -16,6 +16,9 @@
 #define CLIENT_ID "test-client"
 #define TOPIC_GET_ACCEPTED "$aws/things/" CLIENT_ID "/jobs/$next/get/accepted"
 #define TOPIC_NOTIFY_NEXT "$aws/things/" CLIENT_ID "/jobs/notify-next"
+#define TOPIC_JOB_UPDATE(job_id) "$aws/things/" CLIENT_ID "/jobs/" job_id "/update"
+#define TOPIC_JOB_UPDATE_ACCEPTED(job_id) TOPIC_JOB_UPDATE(job_id) "/accepted"
+#define JOB_ID_DEFAULT "INVALID-JOB-ID"
 #define PUBLISH_MESSAGE_ID 77
 
 /* The size of the payload buffer in the library. */
@@ -54,6 +57,8 @@ static int ack_count;
 static int callback_count;
 static enum aws_fota_error_cause callback_cause;
 static int publish_count;
+static char publish_topic[128];
+static char publish_payload[256];
 
 static void fota_callback(struct aws_fota_event *evt)
 {
@@ -88,7 +93,14 @@ static int ack_stub(struct mqtt_client *c, const struct mqtt_puback_param *param
 static int publish_stub(struct mqtt_client *c, const struct mqtt_publish_param *param,
 			int num_calls)
 {
+	size_t topic_len = MIN(param->message.topic.topic.size, sizeof(publish_topic) - 1);
+	size_t payload_len = MIN(param->message.payload.len, sizeof(publish_payload) - 1);
+
 	publish_count++;
+	memset(publish_topic, 0, sizeof(publish_topic));
+	memset(publish_payload, 0, sizeof(publish_payload));
+	memcpy(publish_topic, param->message.topic.topic.utf8, topic_len);
+	memcpy(publish_payload, param->message.payload.data, payload_len);
 
 	return 0;
 }
@@ -228,6 +240,132 @@ void test_payload_read_error_is_returned(void)
 	TEST_ASSERT_EQUAL(-ECONNRESET, err);
 	TEST_ASSERT_EQUAL(0, ack_count);
 	TEST_ASSERT_EQUAL(0, callback_count);
+}
+
+/* Beginning of a job execution message from AWS IoT Jobs. The job document follows. */
+#define JOB_HEAD(job_id, version)							\
+	"{\"clientToken\":\"\",\"timestamp\":1,\"execution\":{\"jobId\":\"" job_id "\"," \
+	"\"status\":\"QUEUED\",\"queuedAt\":1,\"lastUpdatedAt\":1,\"versionNumber\":" version "," \
+	"\"executionNumber\":1,\"jobDocument\":{\"padding\":\""
+
+/* Let the library finish the update of a failed job, so that it is ready for the next test. */
+static void failed_job_complete(const char *update_accepted_topic)
+{
+	uint8_t msg[] = "{}";
+	char job_id[32];
+
+	TEST_ASSERT_EQUAL(0, publish_event(update_accepted_topic, msg, sizeof(msg) - 1));
+	TEST_ASSERT_GREATER_THAN(0, aws_fota_get_job_id(job_id, sizeof(job_id)));
+	TEST_ASSERT_EQUAL_STRING(JOB_ID_DEFAULT, job_id);
+}
+
+/* An oversized job message with a job ID and a version in the beginning fails the job, so that
+ * AWS IoT Jobs does not send the job again.
+ */
+void test_oversized_job_is_failed(void)
+{
+	static uint8_t msg[MSG_OVERSIZED];
+	char job_id[32];
+	int err;
+
+	message_build(msg, sizeof(msg), JOB_HEAD("job-big-1", "3"));
+
+	err = publish_event(TOPIC_GET_ACCEPTED, msg, sizeof(msg));
+
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(sizeof(msg), rx.pos);
+	TEST_ASSERT_EQUAL(1, ack_count);
+	TEST_ASSERT_EQUAL(1, callback_count);
+	TEST_ASSERT_EQUAL(AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE, callback_cause);
+
+	/* The job execution is updated with the right job, version, status and reason. */
+	TEST_ASSERT_EQUAL(1, publish_count);
+	TEST_ASSERT_EQUAL_STRING(TOPIC_JOB_UPDATE("job-big-1"), publish_topic);
+	TEST_ASSERT_NOT_NULL(strstr(publish_payload, "\"status\":\"FAILED\""));
+	TEST_ASSERT_NOT_NULL(strstr(publish_payload, "\"expectedVersion\": \"3\""));
+	TEST_ASSERT_NOT_NULL(strstr(publish_payload, "\"reason\":\"PAYLOAD_TOO_LARGE\""));
+
+	TEST_ASSERT_GREATER_THAN(0, aws_fota_get_job_id(job_id, sizeof(job_id)));
+	TEST_ASSERT_EQUAL_STRING("job-big-1", job_id);
+
+	failed_job_complete(TOPIC_JOB_UPDATE_ACCEPTED("job-big-1"));
+}
+
+/* The job is failed also when the message is received on the notify-next topic. */
+void test_oversized_notify_next_job_is_failed(void)
+{
+	static uint8_t msg[MSG_OVERSIZED];
+	int err;
+
+	message_build(msg, sizeof(msg), JOB_HEAD("job-big-2", "12"));
+
+	err = publish_event(TOPIC_NOTIFY_NEXT, msg, sizeof(msg));
+
+	TEST_ASSERT_EQUAL(0, err);
+	TEST_ASSERT_EQUAL(1, callback_count);
+	TEST_ASSERT_EQUAL(1, publish_count);
+	TEST_ASSERT_EQUAL_STRING(TOPIC_JOB_UPDATE("job-big-2"), publish_topic);
+	TEST_ASSERT_NOT_NULL(strstr(publish_payload, "\"expectedVersion\": \"12\""));
+
+	failed_job_complete(TOPIC_JOB_UPDATE_ACCEPTED("job-big-2"));
+}
+
+/* While a failed job is being updated, further oversized messages are dropped without telling
+ * the application about another error.
+ */
+void test_oversized_message_while_job_is_failing_is_ignored(void)
+{
+	static uint8_t msg[MSG_OVERSIZED];
+
+	message_build(msg, sizeof(msg), JOB_HEAD("job-big-3", "1"));
+	TEST_ASSERT_EQUAL(0, publish_event(TOPIC_GET_ACCEPTED, msg, sizeof(msg)));
+	TEST_ASSERT_EQUAL(1, callback_count);
+	TEST_ASSERT_EQUAL(1, publish_count);
+
+	message_build(msg, sizeof(msg), JOB_HEAD("job-big-4", "1"));
+	TEST_ASSERT_EQUAL(0, publish_event(TOPIC_NOTIFY_NEXT, msg, sizeof(msg)));
+
+	TEST_ASSERT_EQUAL(sizeof(msg), rx.pos);
+	TEST_ASSERT_EQUAL(2, ack_count);
+	TEST_ASSERT_EQUAL(1, callback_count);
+	TEST_ASSERT_EQUAL(1, publish_count);
+
+	failed_job_complete(TOPIC_JOB_UPDATE_ACCEPTED("job-big-3"));
+}
+
+/* The job is not failed if its ID or its version is not in the part of the message that was kept.
+ * The message is dropped.
+ */
+void test_oversized_job_that_can_not_be_identified_is_dropped(void)
+{
+	static uint8_t msg[MSG_OVERSIZED];
+	char job_id[32];
+
+	/* No version number. */
+	message_build(msg, sizeof(msg),
+		      "{\"execution\":{\"jobId\":\"job-big-5\",\"jobDocument\":{\"x\":\"");
+	TEST_ASSERT_EQUAL(0, publish_event(TOPIC_GET_ACCEPTED, msg, sizeof(msg)));
+	TEST_ASSERT_EQUAL(1, callback_count);
+	TEST_ASSERT_EQUAL(0, publish_count);
+
+	/* The end of the job ID is not in the kept part of the message. */
+	message_build(msg, sizeof(msg), "{\"execution\":{");
+	memcpy(&msg[PAYLOAD_BUF_SIZE - 12], "\"jobId\":\"job-big-6\",\"versionNumber\":1", 38);
+	TEST_ASSERT_EQUAL(0, publish_event(TOPIC_GET_ACCEPTED, msg, sizeof(msg)));
+	TEST_ASSERT_EQUAL(2, callback_count);
+	TEST_ASSERT_EQUAL(0, publish_count);
+
+	/* The job ID is too long. */
+	message_build(msg, sizeof(msg), "{\"execution\":{\"jobId\":\""
+		"0123456789012345678901234567890123456789012345678901234567890123456789\","
+		"\"versionNumber\":1,\"jobDocument\":{\"x\":\"");
+	TEST_ASSERT_EQUAL(0, publish_event(TOPIC_GET_ACCEPTED, msg, sizeof(msg)));
+	TEST_ASSERT_EQUAL(3, callback_count);
+	TEST_ASSERT_EQUAL(0, publish_count);
+
+	/* The library did not start to handle any job. */
+	TEST_ASSERT_GREATER_THAN(0, aws_fota_get_job_id(job_id, sizeof(job_id)));
+	TEST_ASSERT_EQUAL_STRING(JOB_ID_DEFAULT, job_id);
 }
 
 int main(void)
