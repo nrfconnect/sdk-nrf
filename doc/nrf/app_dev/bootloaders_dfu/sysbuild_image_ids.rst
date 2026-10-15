@@ -91,11 +91,11 @@ Image numbers are assigned in ascending order based on the following priority:
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 | QSPI XIP split image | 2                      | ``NCS_MCUBOOT_QSPI_XIP_IMAGE_NUMBER``        | :kconfig:option:`CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER`     |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| MCUboot              | 3                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
+| Extra image 1        | 3                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image 1        | 4                      | ``NCS_MCUBOOT_EXTRA_1_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_1_IMAGE_NUMBER`      |
+| Extra image 2        | 4                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
-| Extra image 2        | 5                      | ``NCS_MCUBOOT_EXTRA_2_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_EXTRA_2_IMAGE_NUMBER`      |
+| MCUboot              | 5                      | ``NCS_MCUBOOT_MCUBOOT_IMAGE_NUMBER``         | :kconfig:option:`CONFIG_MCUBOOT_MCUBOOT_IMAGE_NUMBER`      |
 +----------------------+------------------------+----------------------------------------------+------------------------------------------------------------+
 
 
