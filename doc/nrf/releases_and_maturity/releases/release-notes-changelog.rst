@@ -1,16 +1,13 @@
 .. _ncs_release_notes_changelog:
 
-Changelog for |NCS| v3.4.99
-###########################
+Changelog for |NCS| v3.5.0-preview4
+###################################
 
 .. contents::
    :local:
    :depth: 2
 
-The most relevant changes that are present on the main branch of the |NCS|, as compared to the latest official release, are tracked in this file.
-
-.. note::
-   This file is a work in progress and might not cover all relevant changes.
+This changelog reflects the most relevant changes since the latest official release.
 
 .. HOWTO
 
@@ -56,10 +53,10 @@ Bootloaders and DFU
 * Added:
 
   * The hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` Kconfig option to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
-    The option is hidden and requires addition of a Kconfig override in your project.
+    The option is hidden and requires the addition of a Kconfig override in your project.
     This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
   * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page explaining the memory protection features of the bootloader on the nRF54L Series.
-  * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC
+  * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 
@@ -70,11 +67,11 @@ Bootloaders and DFU
 * Fixed:
 
   * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
-    These configurations now use PSA Crypto instead of the cc310 backend, which supports only signature verification.
+    These configurations now use PSA Crypto instead of the CC310 backend, which supports only signature verification.
   * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
-  See the :ref:`migration_3.5` for details.
+  See the :ref:`migration_3.5` page for details.
 
 Developing with nRF91 Series
 ============================
@@ -203,8 +200,6 @@ Security
 
 Security libraries
 ------------------
-
-|no_changes_yet_note|
 
 * :ref:`trusted_storage_readme` library:
 
@@ -359,7 +354,7 @@ nRF Audio (formerly nRF5340 Audio)
   * A generalized audio time module that provides a unified interface for retrieving the current time in microseconds across a SoC.
     The module uses the GRTC timer on nRF54L Series devices and the audio sync timer on other devices.
   * Experimental support for the nRF54LM20 SoC in the nRF Audio applications.
-    The support is limited to the :ref:`unicast client app<nrf_audio_unicast_client_app>` application with USB as audio source, which can be built for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+    The support is limited to the :ref:`unicast client app <nrf_audio_unicast_client_app>` application with USB as audio source, which can be built for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
     The support is experimental and not yet fully tested, so it is not recommended for production use.
 
 * Removed:
@@ -367,7 +362,7 @@ nRF Audio (formerly nRF5340 Audio)
   * :file:`prj_release.conf` files from all nRF Audio applications and from the buildprog tool.
     You must now explicitly specify which configurations to include in a release build.
     See :ref:`nrf_audio_app_configuration_select_build` for more information.
-  * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` option from the unicast client and server applications.
+  * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` Kconfig option from the unicast client and server applications.
     This option was not useful because the unicast server range settings overwrite the bitrate configuration.
 
 * Updated audio_datapath to use the new audio rate control API.
@@ -517,7 +512,7 @@ Bluetooth Fast Pair samples
 
   * Updated:
 
-    * The references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
+    * References to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
     * The TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
       The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
     * The TX power calibration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets.
@@ -607,7 +602,7 @@ DECT NR+ samples
     * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
     * Ethernet border router sink variant using a W5500 shield (``arceli_eth_w5500`` or ``seeed_w5500``), with configuration and devicetree overlays for modem shared memory, static or random MAC, and optional DHCPv6.
     * Shared mDNS configuration overlay (:file:`mdns-common.conf`) and Ethernet mDNS overlay (:file:`eth_mdns.conf`) for DNS-SD on both ``dect0`` and ``eth0``.
-    * The :file:`dect_rx_pool.conf` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalance the global TX/RX pool sizes to match observed usage.
+    * The :file:`dect_rx_pool.conf` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalances the global TX/RX pool sizes to match observed usage.
     * The :file:`dlc_resilient.conf` configuration file for a loss-resilient DLC profile when using the Ethernet sink mode.
 
   * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6) and moved it into the location defined by the :kconfig:option:`CONFIG_DECT_ICMP_PING_LIB` Kconfig option.
@@ -996,7 +991,7 @@ Wi-Fi drivers
     * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
     * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
 
-  See :ref:`migration_3.5` for more information.
+  See the :ref:`migration_3.5` page for more information.
 
 * Fixed spurious ``set_key`` errors on the nRF71 Series when Wi-Fi keys are deleted after the RPU context has already been torn down.
   Late key deletion is now treated as success when the RPU context was already removed.
@@ -1048,11 +1043,11 @@ Common Application Framework
 
 * :ref:`caf_ble_state`:
 
-* Added:
+  * Added:
 
-  * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
-  * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
-  * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
+    * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
+    * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
+    * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
 
 Debug libraries
 ---------------
