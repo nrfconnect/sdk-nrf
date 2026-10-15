@@ -31,7 +31,7 @@ Highlights
 * Added production support for nRF52833 for Bluetooth® LE HomeKit accessories.
 * For Bluetooth® mesh, the choice of default Bluetooth® LE Controller changed from Zephyr Bluetooth® LE Controller to SoftDevice Controller.
 * Bluetooth® mesh profiles and models are ready for production.
-* Updated the required :ref:`minimum CMake version <gs_recommended_versions>` to 3.20.0.
+* Updated the required :ref:`minimum CMake version <requirements>` to 3.20.0.
 * Enabled a more flexible way of handling AT notifications with the modem through the new :ref:`at_monitor_readme` library on the nRF9160.
   Also added the related :ref:`at_monitor_sample` sample.
 * nRF Connect for Cloud is now nRF Cloud.
@@ -48,7 +48,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.7.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 Supported modem firmware
 ************************
@@ -509,9 +509,9 @@ In addition to documentation related to the changes listed above, the following 
   * :ref:`glossary` - Added definition for new terms, such as Attribute Protocol, CMSIS, GAP, and GATT.
   * :ref:`getting_started` section pages:
 
-    * :ref:`gs_recommended_versions` - Now includes information about the supported operating systems, previously listed on a separate page.
+    * :ref:`Requirements reference <requirements>` - Now includes information about the supported operating systems, previously listed on a separate page.
     * :ref:`gs_assistant` - Added information about Toolchain manager being available for macOS and steps for building from SEGGER Embedded Studio.
-    * :ref:`gs_installing` - Added information about the version folder created when extracting the GNU Arm Embedded Toolchain and applied minor fixes based on usability testing (for example, to the Linux installation instructions).
+    * :ref:`install_ncs` - Added information about the version folder created when extracting the GNU Arm Embedded Toolchain and applied minor fixes based on usability testing (for example, to the Linux installation instructions).
 
   * :ref:`ug_app_dev` section pages:
 

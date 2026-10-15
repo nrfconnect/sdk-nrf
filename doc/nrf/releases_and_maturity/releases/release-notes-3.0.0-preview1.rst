@@ -33,7 +33,7 @@ IDE, OS, and tool support
 * Updated:
 
   * The required `SEGGER J-Link`_ version to v8.10f.
-  * The :ref:`installing_vsc` section on the :ref:`installation` page with the Windows-only requirement to install SEGGER USB Driver for J-Link.
+  * The :ref:`install_ncs` section on the :ref:`installation` page with the Windows-only requirement to install SEGGER USB Driver for J-Link.
 
 Board support
 =============
@@ -69,7 +69,7 @@ Working with nRF54H Series
 ==========================
 
 * Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
-  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
+  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`install_ncs` section on the :ref:`installation` page.
 
 Developing with nRF54L Series
 =============================

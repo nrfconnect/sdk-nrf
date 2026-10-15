@@ -106,7 +106,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.7.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.7.0`_.
 
@@ -191,7 +191,7 @@ Working with nRF91 Series
 * Updated:
 
   * The name and the structure of the section, with :ref:`ug_nrf91` as the landing page.
-  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages have been moved to the :ref:`gsg_guides` section.
+  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages have been moved to the :ref:`gsg_guides` section.
 
 Working with nRF70 Series
 =========================
@@ -199,7 +199,7 @@ Working with nRF70 Series
 * Updated:
 
   * The name and the structure of the section, with :ref:`ug_nrf70` as the landing page.
-  * The :ref:`ug_nrf7002_gs` guide has been moved to the :ref:`gsg_guides` section.
+  * The :ref:`Getting started with nRF7002 DK <gsg_guides>` guide has been moved to the :ref:`gsg_guides` section.
 
 Working with nRF54H Series
 ==========================
@@ -222,7 +222,7 @@ Working with nRF53 Series
   * The name and the structure of the section, with :ref:`ug_nrf53` as the landing page.
   * The default value for the Kconfig option :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_ACCURACY` from ``500`` to ``250`` if :kconfig:option:`CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC` is used.
   * The nrfjprog commands in :ref:`ug_nrf5340` with commands from `nRF Util`_.
-  * The :ref:`ug_nrf5340_gs` guide has been moved to the :ref:`gsg_guides` section.
+  * The :ref:`Getting started with nRF5340 DK <gsg_guides>` guide has been moved to the :ref:`gsg_guides` section.
 
 Working with nRF52 Series
 =========================
@@ -230,7 +230,7 @@ Working with nRF52 Series
 * Updated:
 
   * The name and the structure of the section, with :ref:`ug_nrf52` as the landing page.
-  * The :ref:`ug_nrf52_gs` guide has been moved to the :ref:`gsg_guides` section.
+  * The :ref:`Getting started with nRF52 Series <gsg_guides>` guide has been moved to the :ref:`gsg_guides` section.
 
 Working with PMIC
 =================
