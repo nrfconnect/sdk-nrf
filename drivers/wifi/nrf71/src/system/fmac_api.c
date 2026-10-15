@@ -2483,10 +2483,15 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			      sizeof(chg_vif_state_cmd->info));
 
 	vif_ctx->ifflags = false;
+	vif_ctx->ifflags_status = 0;
 
 	status = umac_cmd_cfg(fmac_dev_ctx,
 			      chg_vif_state_cmd,
 			      sizeof(*chg_vif_state_cmd));
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to send set interface flags", __func__);
+		goto out;
+	}
 
 	while (!vif_ctx->ifflags && (--count > 0)) {
 		k_msleep(1);
@@ -2496,6 +2501,13 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 		status = NRF_WIFI_STATUS_FAIL;
 		LOG_ERR("%s: RPU is unresponsive for %d sec",
 				      __func__, RPU_CMD_TIMEOUT_MS / 1000);
+		goto out;
+	}
+
+	if (vif_ctx->ifflags_status < 0) {
+		status = NRF_WIFI_STATUS_FAIL;
+		LOG_ERR("%s: RPU rejected interface state %d: %d",
+			__func__, vif_info->state, vif_ctx->ifflags_status);
 		goto out;
 	}
 #ifdef CONFIG_NRF71_AP_MODE

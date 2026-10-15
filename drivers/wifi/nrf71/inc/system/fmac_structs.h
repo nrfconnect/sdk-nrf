@@ -667,8 +667,10 @@ struct nrf_wifi_fmac_vif_ctx {
 	char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	/** Groupwise cipher being used on this VIF. */
 	int groupwise_cipher;
-	/** Interface flags related to this VIF. */
+	/** Set when the RPU has answered the last set interface flags command. */
 	bool ifflags;
+	/** Status the RPU returned for the last set interface flags command. */
+	int ifflags_status;
 	/** Interface type of this VIF. */
 	int if_type;
 	/** BSSID of the AP to which this VIF is connected (applicable only in STA mode). */
