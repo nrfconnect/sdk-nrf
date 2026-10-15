@@ -80,6 +80,14 @@ config LTE_LC_UICC_STATE_MODULE
 	bool "UICC state module"
 	depends on LTE_LC_FUNCTIONAL_MODE_MODULE
 
+config LTE_LC_BAND_LOCK_MODULE
+	bool "Band lock module"
+	help
+	  Enable the lte_lc_band_lock_set() and lte_lc_band_lock_remove() functions to manage the
+	  modem band lock using the %XBANDLOCK AT command.
+	  The runtime band lock is stored by the library and set again when the modem is
+	  initialized or has been powered off.
+
 menuconfig LTE_LC_DNS_FALLBACK_MODULE
 	bool "DNS Fallback module"
 	default y
@@ -113,11 +121,14 @@ config LTE_SHELL
 
 config LTE_LOCK_BANDS
 	bool "LTE band lock"
+	select LTE_LC_BAND_LOCK_MODULE
 	help
 	  Enable LTE band lock. Only configured bands are used when this setting is enabled.
 	  The allowed bands can be configured using the CONFIG_LTE_LOCK_BAND_MASK and
 	  CONFIG_LTE_LOCK_BAND_LIST options. If both are configured, the bands are combined
 	  from both options.
+	  The configured bands are used as the initial runtime band lock, which can be changed
+	  using the lte_lc_band_lock_set() and lte_lc_band_lock_remove() functions.
 
 if LTE_LOCK_BANDS
 
