@@ -1,0 +1,15 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&led0 {
+	/* Logic is inverted to adapt to measurement methods */
+	gpios = <&gpio0 13 GPIO_ACTIVE_HIGH>;
+};
+
+&uart0 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};
