@@ -1,0 +1,17 @@
+common:
+  sysbuild: true
+  tags:
+    - pytest
+    - mcuboot
+    - ci_tests_subsys_bootloader
+
+tests:
+  mcuboot.ram_cleanup.infinite_loop:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "pytest/test_ram_cleanup.py"
