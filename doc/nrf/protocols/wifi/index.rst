@@ -16,7 +16,12 @@ However, 11b and 11g are only applicable in the 2.4 GHz band, while 11a and 11ac
 The IEEE 802.11ax standard is also specified for operation in the 6 GHz band, with this variant being branded Wi-Fi 6E to signify extension to the 2.4 and 5 GHz bands used in Wi-Fi 6.
 Wi-Fi 7, based on the IEEE 802.11be standard, operates across the 2.4 GHz, 5 GHz, and 6 GHz bands and introduces wider 320 MHz channels to support higher throughput.
 
-Wi-Fi support in |NCS| is provided by the nRF70 Series family of companion ICs.
+Wi-Fi support in |NCS| is provided by the nRF71 Series System-on-Chips (SoCs) and the nRF70 Series family of companion ICs.
+
+.. note::
+
+   Wi-Fi support for nRF71 Series devices is currently experimental.
+
 The following subsections provide an overview of Wi-Fi support in |NCS|.
 The Wi-Fi protocol documentation is device agnostic, enabling support for multiple Wi-Fi Series devices.
 
