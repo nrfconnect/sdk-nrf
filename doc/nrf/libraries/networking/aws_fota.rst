@@ -103,6 +103,7 @@ Configuration
 Configure the following parameters when using this library:
 
 * :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Sets the maximum payload size for AWS IoT job messages.
+  The default value is large enough for a job with a typical presigned URL.
 * :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` - Sets the security tag to be used in case of HTTPS downloads.
 
 Additionally, configure the :ref:`lib_downloader` library:
@@ -199,7 +200,7 @@ Presigned URLs
 When using the presigned URLs, you might need to increase the value of the following Kconfig options to accommodate the long file name and payload size of the presigned URL and the secure download of the image:
 
 * :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE`.
-* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
+* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Only if the job message is larger than the default value.
 * :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` - If running Mbed TLS on the application core (Wi-Fi® builds).
 
 Limitations
