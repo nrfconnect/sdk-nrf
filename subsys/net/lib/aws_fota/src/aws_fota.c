@@ -159,6 +159,8 @@ static const char *error_cause2str(enum aws_fota_error_cause cause)
 		return "JOB_UPDATE_REJECTED";
 	case AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED:
 		return "JOB_UPDATE_FAILED";
+	case AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE:
+		return "PAYLOAD_TOO_LARGE";
 	default:
 		return "UNKNOWN";
 	}
@@ -219,6 +221,31 @@ static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_l
 }
 
 /**
+ * @brief Read out and drop the payload of a published MQTT message.
+ *
+ * @param[in] client  Connected MQTT client instance.
+ * @param[in] length  Length of the payload received.
+ *
+ * @return 0 If successful otherwise a negative error code is returned.
+ */
+static int payload_discard(struct mqtt_client *client, size_t length)
+{
+	while (length > 0) {
+		int ret = mqtt_read_publish_payload_blocking(client, payload_buf,
+							     MIN(length, sizeof(payload_buf)));
+
+		if (ret < 0) {
+			return ret;
+		} else if (ret == 0) {
+			return -EIO;
+		}
+		length -= ret;
+	}
+
+	return 0;
+}
+
+/**
  * @brief Read the payload out of the published MQTT message from the MQTT
  *	  Client instance
  *
@@ -235,7 +262,12 @@ static int get_published_payload(struct mqtt_client *client, uint8_t *write_buf,
 	uint8_t *end = buf + length;
 
 	if (length > sizeof(payload_buf)) {
-		return -EMSGSIZE;
+		/* The payload must be read out also when it does not fit, otherwise the MQTT
+		 * client is left with an unread payload.
+		 */
+		int err = payload_discard(client, length);
+
+		return err ? err : -EMSGSIZE;
 	}
 	while (buf < end) {
 		int ret = mqtt_read_publish_payload_blocking(client, buf,
@@ -667,6 +699,23 @@ read_payload:
 	return 0;
 }
 
+/* Report that a job message was dropped because it did not fit in the payload buffer. */
+static void on_payload_too_large(void)
+{
+	struct aws_fota_event aws_fota_evt = {
+		.id = AWS_FOTA_EVT_ERROR,
+		.cause = AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE
+	};
+
+	LOG_ERR("Job message dropped, it does not fit in the payload buffer of %zu bytes. "
+		"Increase CONFIG_AWS_FOTA_PAYLOAD_SIZE.", sizeof(payload_buf));
+
+	/* Do not report an error to the application if a job is being handled. */
+	if (internal_state == STATE_INIT) {
+		callback(&aws_fota_evt);
+	}
+}
+
 static int on_connack_evt(struct mqtt_client *const client)
 {
 	int err;
@@ -791,6 +840,14 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client, const struct mqt
 				     p->message.topic.topic.utf8,
 				     p->message.topic.topic.size,
 				     p->message.payload.len);
+
+		if (err == -EMSGSIZE) {
+			/* The message was dropped. This is not a connection error, so keep the
+			 * connection and acknowledge the message.
+			 */
+			on_payload_too_large();
+			err = 0;
+		}
 
 		if (err < 0) {
 			goto cleanup;

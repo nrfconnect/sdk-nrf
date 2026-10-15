@@ -98,6 +98,10 @@ enum aws_fota_error_cause {
 	AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_REJECTED,
 	/** The job execution could not be updated after a successful download. */
 	AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED,
+	/** A job message from AWS IoT Jobs did not fit in the payload buffer and was dropped.
+	 *  See :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
+	 */
+	AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE,
 	/** Unknown or unmapped error cause. */
 	AWS_FOTA_ERROR_CAUSE_UNKNOWN,
 };
