@@ -35,6 +35,8 @@
 #define WPA3_PSA_SAE_COMMIT_PSA_LEN  96
 #define WPA3_PSA_SAE_GROUP_19        19
 #define WPA3_PSA_MAX_PT_PASSWORD_MAP 8
+/* Password Identifier element length octet also covers the Element ID Extension */
+#define WPA3_PSA_MAX_PW_ID_LEN       254
 
 /* Password storage for PT-based operations */
 struct wpa3_psa_pt_password {
@@ -43,6 +45,8 @@ struct wpa3_psa_pt_password {
 	size_t password_len;
 	u8 ssid[32];
 	size_t ssid_len;
+	char *pw_id;
+	size_t pw_id_len;
 };
 
 static struct wpa3_psa_pt_password pt_password_map[WPA3_PSA_MAX_PT_PASSWORD_MAP];
@@ -56,6 +60,8 @@ struct wpa3_psa_setup_params {
 	size_t password_len;
 	const u8 *ssid;
 	size_t ssid_len;
+	const char *pw_id;
+	size_t pw_id_len;
 	int group;
 	bool h2e;
 	bool gdh;
@@ -628,6 +634,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 			  const u8 *addr2, int *rejected_groups, const struct sae_pk *pk)
 {
 	struct wpa3_psa_operation *op;
+	const struct wpa3_psa_pt_password *pt_entry = NULL;
 	int res;
 
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Prepare commit with PT (PSA mode)");
@@ -680,6 +687,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 					op->ssid_len = pt_password_map[i].ssid_len;
 				}
 
+				pt_entry = &pt_password_map[i];
 				found = true;
 				wpa_printf(MSG_DEBUG,
 					   "WPA3-PSA: Retrieved password and SSID from PT map "
@@ -710,6 +718,8 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 		.password_len = op->password_len,
 		.ssid = op->ssid,
 		.ssid_len = op->ssid_len,
+		.pw_id = pt_entry ? pt_entry->pw_id : NULL,
+		.pw_id_len = pt_entry ? pt_entry->pw_id_len : 0,
 		.group = op->group,
 		.h2e = true, /* PT implies H2E */
 		.gdh = op->gdh_enabled,
@@ -836,8 +846,11 @@ void sae_deinit_pt(struct sae_pt *pt)
 				  sizeof(pt_password_map[i].password));
 			os_memset(pt_password_map[i].ssid, 0,
 				  sizeof(pt_password_map[i].ssid));
+			os_free(pt_password_map[i].pw_id);
+			pt_password_map[i].pw_id = NULL;
 			pt_password_map[i].password_len = 0;
 			pt_password_map[i].ssid_len = 0;
+			pt_password_map[i].pw_id_len = 0;
 			pt_password_map[i].pt = NULL;
 		}
 	}
@@ -1031,6 +1044,8 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 					       const u8 *password, size_t password_len,
 					       const char *identifier)
 {
+	size_t pw_id_len = identifier ? os_strlen(identifier) : 0;
+	char *pw_id = NULL;
 	struct sae_pt *pt;
 	int i;
 
@@ -1053,6 +1068,12 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 		return NULL;
 	}
 
+	if (pw_id_len > WPA3_PSA_MAX_PW_ID_LEN) {
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Password Identifier too long (%zu > %d)",
+			   pw_id_len, WPA3_PSA_MAX_PW_ID_LEN);
+		return NULL;
+	}
+
 	pt = os_zalloc(sizeof(*pt));
 	if (!pt) {
 		return NULL;
@@ -1060,7 +1081,16 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 
 	pt->group = group;
 
-	/* Store password and SSID for later use in sae_prepare_commit_pt */
+	/* Only allocated when an identifier is configured, as few networks use one */
+	if (pw_id_len > 0) {
+		pw_id = os_memdup(identifier, pw_id_len);
+		if (!pw_id) {
+			os_free(pt);
+			return NULL;
+		}
+	}
+
+	/* Store password, SSID and identifier for later use in sae_prepare_commit_pt */
 	if (password && password_len > 0 && password_len <= 256) {
 		/* Find empty slot or reuse existing for this PT */
 		for (i = 0; i < WPA3_PSA_MAX_PT_PASSWORD_MAP; i++) {
@@ -1074,6 +1104,9 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 				} else {
 					pt_password_map[i].ssid_len = 0;
 				}
+				pt_password_map[i].pw_id = pw_id;
+				pt_password_map[i].pw_id_len = pw_id_len;
+				pw_id = NULL;
 				if (i >= pt_password_map_count) {
 					pt_password_map_count = i + 1;
 				}
@@ -1085,6 +1118,9 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 			}
 		}
 	}
+
+	/* Not stored if the map is full or there is no password */
+	os_free(pw_id);
 
 	/* PSA PAKE handles PWE derivation internally, no need for EC/ECC structures */
 	pt->ec = NULL;
@@ -1249,6 +1285,22 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 		}
 
 		psa_destroy_key(pw_key);
+
+		/* Optional password identifier, appended to the password in the PT seed */
+		if (params->pw_id_len > 0) {
+			status = psa_key_derivation_input_bytes(&kdf,
+								PSA_KEY_DERIVATION_INPUT_INFO,
+								(const u8 *)params->pw_id,
+								params->pw_id_len);
+			if (status != PSA_SUCCESS) {
+				wpa_printf(MSG_ERROR,
+					   "WPA3-PSA: Failed to input password identifier: %d",
+					   status);
+				psa_key_derivation_abort(&kdf);
+				return -1;
+			}
+			wpa_printf(MSG_DEBUG, "WPA3-PSA: H2E PT includes password identifier");
+		}
 
 		/* PT for P-256: 32 bits from H2E KDF, Oberon derive_key expands to 64-byte PT.
 		 * Set algorithm so psa_pake_setup() policy check permits this key for PAKE.
