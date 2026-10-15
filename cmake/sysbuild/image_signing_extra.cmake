@@ -93,6 +93,14 @@ if(num_binaries GREATER 0)
 
   import_kconfig("CONFIG" ${CMAKE_BINARY_DIR}/${DEFAULT_IMAGE}/zephyr/.config)
 
+  # Use TFM_MCUBOOT_HEADER_SIZE of the default image so the correct 0x200
+  # value is used even when ROM_START_OFFSET is 0 for TF-M NS builds.
+  if(CONFIG_BUILD_WITH_TFM)
+    set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
+  else()
+    set(imgtool_header_size ${CONFIG_ROM_START_OFFSET})
+  endif()
+
   foreach(index RANGE ${last_index})
     math(EXPR extra_image_number "${index} + 1")
 
@@ -134,7 +142,7 @@ if(num_binaries GREATER 0)
       --align ${write_block_size}
       --slot-size ${slot_size}
       --pad-header
-      --header-size ${CONFIG_ROM_START_OFFSET}
+      --header-size ${imgtool_header_size}
       ${imgtool_rom_command}
     )
 
