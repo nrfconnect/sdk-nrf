@@ -7,7 +7,7 @@ Configuring Bluetooth Mesh models using the nRF Mesh mobile app
    :local:
    :depth: 2
 
-The Bluetooth® Mesh :ref:`samples <samples>` use the nRF Mesh mobile app to perform provisioning and configuration.
+The Bluetooth® Mesh :ref:`samples <samples>` use the `nRF Mesh mobile app`_ to perform provisioning and configuration.
 
 Binding a model to an application key
 *************************************
