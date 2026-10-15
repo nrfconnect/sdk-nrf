@@ -462,7 +462,9 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-|no_changes_yet_note|
+* :ref:`lib_date_time` library:
+
+  * Fixed an issue where periodic time updates stopped permanently if the time was obtained, for example, from an ``%XTIME`` notification shortly before a scheduled update.
 
 Shell libraries
 ---------------
