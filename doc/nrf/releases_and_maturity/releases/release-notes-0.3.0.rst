@@ -61,7 +61,7 @@ Supported boards
 Required tools
 **************
 
-In addition to the tools mentioned in :ref:`gs_installing`, the following tool versions are required to work with the |NCS|:
+In addition to the tools mentioned in :ref:`install_ncs`, the following tool versions are required to work with the |NCS|:
 
 .. list-table::
    :header-rows: 1
@@ -81,7 +81,7 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
        * `nRF5x Command Line Tools OSX`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools`
+     - :ref:`command-line installation <command_line_installation>`
 
 
 Changelog

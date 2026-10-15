@@ -61,7 +61,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.2.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.2.0`_.
 
@@ -982,7 +982,7 @@ Documentation
 
 * Added:
 
-  * The :ref:`ug_nrf52_gs` user guide.
+  * The :ref:`Getting started with nRF52 Series <gsg_guides>` user guide.
   * Documentation for the :ref:`lib_bh1749`.
 
 
