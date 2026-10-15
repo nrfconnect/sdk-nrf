@@ -48,7 +48,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.1.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.1.0`_.
 
@@ -100,7 +100,7 @@ Application development
 
 * Added:
 
-  * Information about :ref:`gs_supported_OS` to the :ref:`gs_recommended_versions` page.
+  * Information about :ref:`supported_OS` to the :ref:`Requirements reference <requirements>` page.
   * Information about :ref:`app_build_output_files` on the :ref:`app_build_system` page.
   * Information about :ref:`gs_debugging` on the :ref:`gs_testing` page.
     Also added links to this section in different areas of documentation.
@@ -1085,10 +1085,10 @@ Documentation
   * :ref:`ug_nrf91` with the following changes:
 
     * In the :ref:`ug_nrf91_features` page, added a section about :ref:`modem_trace`.
-    * In the :ref:`ug_nrf9160_gs` guide, Updating the modem firmware section is now moved before Updating the application firmware because updating modem firmware erases application firmware.
+    * In the :ref:`Getting started with nRF9160 DK <gsg_guides>` guide, Updating the modem firmware section is now moved before Updating the application firmware because updating modem firmware erases application firmware.
     * In the :ref:`ug_nrf9160` guide, the :ref:`build_pgm_nrf9160` section now mentions |VSC| and command-line instructions.
-    * In the :ref:`ug_thingy91_gsg` guide, Programming firmware and :ref:`connect_nRF_cloud` sections now have different structure.
-    * The instructions and images in the :ref:`ug_thingy91_gsg` and :ref:`ug_nrf9160_gs` guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
+    * In the :ref:`Getting started with Thingy:91 <gsg_guides>` guide, Programming firmware and :ref:`connect_nRF_cloud` sections now have different structure.
+    * The instructions and images in the :ref:`Getting started with Thingy:91 <gsg_guides>` and :ref:`Getting started with nRF9160 DK <gsg_guides>` guides now also mention accepting :term:`eUICC Identifier (EID)` when activating your iBasis SIM card from the `nRF Cloud`_ website.
 
   * :ref:`ug_thread_configuring` page to better indicate what is required and what is optional.
     Also added further clarifications to the page to make everything clearer.

@@ -18,7 +18,7 @@ It contains reference applications, sample source code, and libraries for develo
    Before this release, the |NCS| moved to a new GitHub organization, `nrfconnect <https://github.com/nrfconnect>`_.
    All repositories were renamed to provide clear and concise names that better reflect the composition of the codebase.
    If you are a new |NCS| user, there are no actions you need to take.
-   If you used previous releases of the |NCS|, you should :ref:`point your repositories to the right remotes <repo_move>`.
+   If you used previous releases of the |NCS|, you should :ref:`point your repositories to the right remotes <updating>`.
 
 Highlights
 **********
@@ -34,7 +34,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.2.1**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories_win` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 
 Supported modem firmware
@@ -65,7 +65,7 @@ For the full list of supported devices and boards, see :ref:`zephyr:boards` in t
 Required tools
 **************
 
-In addition to the tools mentioned in :ref:`gs_installing`, the following tool versions are required to work with the |NCS|:
+In addition to the tools mentioned in :ref:`install_ncs`, the following tool versions are required to work with the |NCS|:
 
 .. list-table::
    :header-rows: 1
@@ -84,7 +84,7 @@ In addition to the tools mentioned in :ref:`gs_installing`, the following tool v
      - `nRF Connect for Desktop`_
    * - dtc (Linux only)
      - v1.4.6 or later
-     - :ref:`gs_installing_tools`
+     - :ref:`command-line installation <command_line_installation>`
    * - GCC
      - See Install the GNU Arm Embedded Toolchain
      - `GNU Arm Embedded Toolchain`_

@@ -37,7 +37,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.8.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 Supported modem firmware
 ************************
@@ -825,7 +825,7 @@ In addition to documentation related to the changes listed above, the following 
   * Added a section describing the Git tool.
   * Expanded the existing section about the west tool.
 
-* :ref:`gs_installing` - Added a note in the Install the GNU Arm Embedded Toolchain section about TF-M sample incompatibility issue related to GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major*.
+* :ref:`install_ncs` - Added a note in the Install the GNU Arm Embedded Toolchain section about TF-M sample incompatibility issue related to GNU Arm Embedded Toolchain versions *9-2020-q2-update* and *10-2020-q4-major*.
   This was listed earlier as a known issue.
 * :ref:`gs_programming`:
 
@@ -833,7 +833,7 @@ In addition to documentation related to the changes listed above, the following 
     This was listed earlier as a known issue.
   * Updated the Building with SEGGER Embedded Studio section with a warning about a "no input files" error.
 
-* :ref:`gs_updating` - Added a section about updating SEGGER Embedded Studio packages.
+* :ref:`updating` - Added a section about updating SEGGER Embedded Studio packages.
 * :ref:`glossary` - Added new terms related to Matter and :ref:`ug_zigbee`.
 * :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
 * :ref:`ug_nrf5340`:

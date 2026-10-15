@@ -101,7 +101,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.4.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.4.0`_.
 
@@ -951,7 +951,7 @@ Documentation
     Known issues were moved around, but no changes were made to their description.
     The hardware-only sections were removed and replaced by the "Affected platforms" list.
   * The :ref:`software_maturity` page with details about Bluetooth feature support.
-  * The :ref:`ug_nrf5340_gs`, :ref:`ug_thingy53_gs`, :ref:`ug_nrf52_gs`, and :ref:`ug_ble_controller` guides by adding a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
+  * The :ref:`Getting started with nRF5340 DK <gsg_guides>`, :ref:`Getting started with Thingy:53 <gsg_guides>`, :ref:`Getting started with nRF52 Series <gsg_guides>`, and :ref:`ug_ble_controller` guides by adding a link to the `Bluetooth LE Fundamentals course`_ in the `Nordic Developer Academy`_.
   * The Zigbee weather station application documentation to match the application template.
   * The :ref:`ug_nrf9160` guide, relevant application and sample documentation with a section about :ref:`external flash <nrf9160_external_flash>`.
   * The :ref:`nrf_modem_lib_readme` library documentation with a section about :ref:`modem trace flash backend <modem_trace_flash_backend>`.
@@ -960,4 +960,4 @@ Documentation
   * The :ref:`ug_thingy53` guide by adding a section on :ref:`building Wi-Fi applications <thingy53_build_pgm_targets_wifi>`.
   * The :ref:`ug_bt_mesh_configuring` page with additional configuration options used to configure the behavior and performance of a Bluetooth mesh network.
 
-* Removed the section "Pointing the repositories to the right remotes after they were moved" from the :ref:`gs_updating` page.
+* Removed the section "Pointing the repositories to the right remotes after they were moved" from the :ref:`updating` page.

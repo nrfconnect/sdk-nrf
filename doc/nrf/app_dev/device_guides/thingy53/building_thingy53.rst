@@ -152,7 +152,7 @@ To build and program the source code from the command line, complete the followi
 
    For example, the directory path is :file:`ncs/nrf/applications/ipc_radio` when building the source code for the :ref:`ipc_radio` application.
 
-#. Pull the ``sdk-nrf`` repository on GitHub as described in the :ref:`cloning_the_repositories` and :ref:`updating_repos` sections.
+#. Pull the ``sdk-nrf`` repository on GitHub as described in the :ref:`command-line installation <command_line_installation>` and :ref:`updating_repos` sections.
    This is needed to make sure that you have the required version of the |NCS| repository.
 #. Get the rest of the dependencies using west:
 

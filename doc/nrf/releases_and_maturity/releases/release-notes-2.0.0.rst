@@ -45,7 +45,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.0.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.0.0`_.
 
@@ -1041,10 +1041,10 @@ Documentation
   * Section describing how to enable Amazon Frustration-Free Setup (FFS) support in Matter Configuring Device Identification page.
   * Notes to the :ref:`bluetooth_central_dfu_smp` sample document specifying the intended use of the sample.
   * DevAcademy links to the :ref:`index` and :ref:`getting_started` pages.
-  * Additional user guidance to the :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` pages and the corresponding Developing with pages.
+  * Additional user guidance to the :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` pages and the corresponding Developing with pages.
   * A page on :ref:`software_maturity` listing the different software maturity levels for the available features.
   * A page on :ref:`ug_pinctrl`.
-  * Documentation for :ref:`ug_thingy53_gs`.
+  * Documentation for :ref:`Getting started with Thingy:53 <gsg_guides>`.
   * Documentation page about Zigbee commissioning.
   * Documentation for Asset tracker v2 unit tests.
   * New :ref:`security` page on the top level, with a brief introduction to core security features available in Nordic Semiconductor products.
@@ -1056,7 +1056,7 @@ Documentation
   * Some samples and applications built as a non-secure firmware image for the ``_ns`` build target to reflect that the :ref:`Trusted Firmware-M <ug_tfm>` (TF-M) is automatically included instead of Secure Partition Manager (SPM).
   * :ref:`app_power_opt` guide with information on how to disable serial logging when using TF-M.
   * Replaced reference to Secure Partition Manager with reference to Trusted Firmware-M for multi-image project builds (nRF9160 samples) in :ref:`gs_programming` page.
-  * :ref:`gs_updating` page with information about updating |VSC| and the toolchain.
+  * :ref:`updating` page with information about updating |VSC| and the toolchain.
   * :ref:`ug_nrf52` and :ref:`ug_nrf5340` user guides with information about FOTA upgrades for Matter, Thread, and Zigbee.
   * Protocol architecture diagram in Matter Architecture page.
   * :ref:`app_memory` page with sections for Matter and Zigbee.
@@ -1081,7 +1081,7 @@ Documentation
 * Removed:
 
   * Documentation on the Getting Started Assistant, as this tool is no longer in use.
-    Linux users can install the |NCS| by following the steps on the :ref:`gs_installing` page.
+    Linux users can install the |NCS| by following the steps on the :ref:`install_ncs` page.
   * Documentation on the SEGGER Embedded Studio, as this tool will no longer be supported moving forward.
     The previous |NCS| releases still support SEGGER Embedded Studio (Nordic edition).
     To migrate from SEGGER Embedded Studio IDE or on the command line to |VSC|, use the `Open an existing application <Migrating IDE_>`_ option in the |nRFVSC| to migrate your application.
