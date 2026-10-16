@@ -124,7 +124,7 @@ endif # DFU_TARGET_MODEM_DELTA
 
 config DFU_TARGET_FULL_MODEM
 	bool "Full Modem update support"
-	depends on SOC_SERIES_NRF91
+	depends on SOC_SERIES_NRF91 || SOC_SERIES_NRF92
 	depends on DFU_TARGET_STREAM
 	depends on STREAM_FLASH
 	depends on FMFU_FDEV
@@ -136,7 +136,7 @@ config DFU_TARGET_FULL_MODEM
 config DFU_TARGET_FULL_MODEM_EXT_FLASH_SIZE
 	hex
 	depends on DFU_TARGET_FULL_MODEM
-	default 0x400000 if SOC_SERIES_NRF91
+	default 0x400000 if SOC_SERIES_NRF91 || SOC_SERIES_NRF92
 
 # Workaround for not being able to have commas in macro arguments
 DT_CHOSEN_NORDIC_FMFU := nordic,fmfu-storage-partition
