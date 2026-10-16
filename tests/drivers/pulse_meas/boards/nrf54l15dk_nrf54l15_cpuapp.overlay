@@ -18,6 +18,7 @@
 		timer-instance = <&timer20>;
 		assert-gpios = <&gpio1 9 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio1 11 GPIO_ACTIVE_HIGH>;
+		zephyr,pm-device-runtime-auto;
 	};
 };
 
@@ -39,7 +40,7 @@
 };
 
 tester_pwm: &pwm20 {
-	status = "okay";
+	status = "reserved";
 	pinctrl-0 = <&pwm20_default>;
 	pinctrl-1 = <&pwm20_sleep>;
 	pinctrl-names = "default", "sleep";
