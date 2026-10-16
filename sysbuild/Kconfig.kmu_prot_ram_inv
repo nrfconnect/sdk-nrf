@@ -3,8 +3,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 config CRACEN_KMU_INVALIDATE_PROTECTED_RAM_SLOTS
-	bool "Populates the KMU slots for invalidation of the protected RAM using nrfutil"
+	bool "Populates the KMU slots for invalidation of the protected RAM \
+	      using west ncs-provision"
 	depends on SOC_SERIES_NRF54L && !(SOC_NRF54LS05A || SOC_NRF54LS05B)
 	help
 	  This option populates the KMU slots for invalidation of the Cracen protected RAM
-	  using the nrfutil ncs-provision command.
+	  using the west ncs-provision command with the nrfutil runner.
