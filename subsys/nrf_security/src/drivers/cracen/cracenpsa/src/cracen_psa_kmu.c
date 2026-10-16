@@ -558,22 +558,35 @@ psa_status_t cracen_kmu_destroy_key(const psa_key_attributes_t *attributes)
 		 * there is no way in hardware to distinguish between an actual failure and the slot
 		 * being blocked. Therefore we attempt to push the key here to verify if the key is
 		 * blocked or not.
+		 *
+		 * The push writes to kmu_push_area/protected RAM, which are guarded by the
+		 * symmetric mutex.
 		 */
+		nrf_security_mutex_lock(cracen_mutex_symmetric);
+		psa_status = PSA_SUCCESS;
 		for (size_t i = 0; i < slot_count; i++) {
 			if (lib_kmu_push_slot(slot_id + i) != 0) {
-				return PSA_ERROR_NOT_PERMITTED;
+				psa_status = PSA_ERROR_NOT_PERMITTED;
+				break;
 			}
 		}
 
-		/* Clean the key data from the push area and protected ram to ensure it's not
-		 * exposed. We use the protected scheme since the key type is not known at
-		 * this point and that clears both.
-		 */
-		kmu_opaque_key_buffer temp_key_buffer = {
-			.key_usage_scheme = CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
-			.number_of_slots = slot_count,
-			.slot_id = slot_id};
-		cracen_kmu_clean_key((const uint8_t *)&temp_key_buffer);
+		if (psa_status == PSA_SUCCESS) {
+			/* Clean the key data from the push area and protected ram to ensure it's
+			 * not exposed. We use the protected scheme since the key type is not known
+			 * at this point and that clears both.
+			 */
+			kmu_opaque_key_buffer temp_key_buffer = {
+				.key_usage_scheme = CRACEN_KMU_KEY_USAGE_SCHEME_PROTECTED,
+				.number_of_slots = slot_count,
+				.slot_id = slot_id};
+			cracen_kmu_clean_key((const uint8_t *)&temp_key_buffer);
+		}
+		nrf_security_mutex_unlock(cracen_mutex_symmetric);
+
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
 
 		psa_status = set_provisioning_in_progress(slot_id, slot_count);
 		if (psa_status != PSA_SUCCESS) {
@@ -1082,6 +1095,47 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 	return PSA_SUCCESS;
 }
 
+psa_status_t cracen_kmu_get_slot_count(const psa_key_attributes_t *key_attr,
+				       unsigned int *slot_count)
+{
+	kmu_metadata metadata;
+	unsigned int slot_id =
+		CRACEN_PSA_GET_KMU_SLOT(MBEDTLS_SVC_KEY_ID_GET_KEY_ID(psa_get_key_id(key_attr)));
+	psa_status_t psa_status;
+
+	psa_status = read_primary_slot_metadata(slot_id, &metadata);
+
+	if (psa_status == PSA_SUCCESS) {
+		/* The slot is populated but the caller's attributes may not contain
+		 * the key_type. So just get it from the metadata.
+		 */
+		psa_key_attributes_t stored_attr = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_status = convert_to_psa_attributes(&metadata, &stored_attr);
+		if (psa_status != PSA_SUCCESS) {
+			return psa_status;
+		}
+
+		return get_kmu_slot_count(metadata, &stored_attr, slot_count);
+
+	}
+
+	/* No readable key (empty or revoked), fill the metadata from the key attributes. */
+	psa_status = convert_from_psa_attributes(key_attr, &metadata);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
+	}
+
+	return get_kmu_slot_count(metadata, key_attr, slot_count);
+}
+
+psa_status_t cracen_kmu_check_attributes(const psa_key_attributes_t *key_attr)
+{
+	kmu_metadata metadata;
+
+	return convert_from_psa_attributes(key_attr, &metadata);
+}
+
 psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot_id,
 				  const uint8_t *key_buffer, size_t key_buffer_size)
 {
@@ -1178,6 +1232,24 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 
 	/* Verify that required slots are empty */
 	const size_t num_slots = DIV_ROUND_UP(key_buffer_size, CRACEN_KMU_SLOT_KEY_SIZE);
+	unsigned int expected_num_slots;
+
+	/* The slot count used when reading the key back is derived from the metadata (declared
+	 * key bits), so it must match the number of slots the key material occupies.
+	 */
+	psa_status = get_kmu_slot_count(metadata, key_attr, &expected_num_slots);
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
+	}
+
+	if (num_slots != expected_num_slots) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	/* PROVISIONING_SLOT is reserved for the internal provisioning marker */
+	if (slot_id <= PROVISIONING_SLOT && slot_id + num_slots > PROVISIONING_SLOT) {
+		return PSA_ERROR_NOT_PERMITTED;
+	}
 
 	for (size_t i = 0; i < num_slots; i++) {
 		if (!lib_kmu_is_slot_empty(slot_id + i)) {
@@ -1202,8 +1274,11 @@ psa_status_t cracen_kmu_provision(const psa_key_attributes_t *key_attr, int slot
 			kmu_desc.metadata = SECONDARY_SLOT_METADATA_VALUE;
 		}
 		kmu_desc.rpolicy = metadata.rpolicy;
+		/* The last slot may be partial (e.g. 192-bit keys), zero-pad it */
+		memset(kmu_desc.value, 0, sizeof(kmu_desc.value));
 		memcpy(kmu_desc.value, key_buffer + CRACEN_KMU_SLOT_KEY_SIZE * i,
-		       CRACEN_KMU_SLOT_KEY_SIZE);
+		       MIN(CRACEN_KMU_SLOT_KEY_SIZE,
+			   key_buffer_size - CRACEN_KMU_SLOT_KEY_SIZE * i));
 
 		int st = lib_kmu_provision_slot(slot_id + i, &kmu_desc);
 

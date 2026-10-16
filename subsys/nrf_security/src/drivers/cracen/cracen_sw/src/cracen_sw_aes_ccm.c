@@ -119,6 +119,17 @@ static psa_status_t setup(cracen_aead_operation_t *operation, enum cipher_operat
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
+	/* Same checks the HW path applies in cracen_psa_aead.c setup(): CCM is AES only, and the
+	 * key must fit operation->key_buffer. Both must precede the copy.
+	 */
+	if (psa_get_key_type(attributes) != PSA_KEY_TYPE_AES) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	if (key_buffer_size > sizeof(operation->key_buffer)) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	memcpy(operation->key_buffer, key_buffer, key_buffer_size);
 	status = cracen_load_keyref(attributes, operation->key_buffer, key_buffer_size,
 				    &operation->keyref);
@@ -622,7 +633,7 @@ psa_status_t cracen_sw_aes_ccm_decrypt(const psa_key_attributes_t *attributes,
 	uint8_t tag_buffer[SX_BLKCIPHER_AES_BLK_SZ];
 
 	tag_size = PSA_AEAD_TAG_LENGTH(PSA_KEY_TYPE_AES, PSA_BYTES_TO_BITS(key_buffer_size), alg);
-	if (ciphertext_length < tag_size) {
+	if (ciphertext_length < tag_size || tag_size > sizeof(tag_buffer)) {
 		*plaintext_length = 0;
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
