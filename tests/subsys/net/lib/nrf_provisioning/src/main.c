@@ -1501,6 +1501,44 @@ void test_provisioning_event_failed_device_not_claimed_with_token(void)
 	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
 }
 
+/*
+ * - Test NRF_PROVISIONING_EVENT_FATAL_ERROR when the attestation token is missing
+ * - Verify that device not claimed error is fatal if the modem fails to provide the token
+ * - Mock REST client to return 403 and modem_attest_token_get to fail
+ */
+void test_provisioning_event_fatal_error_device_not_claimed_without_token(void)
+{
+	__cmock_settings_subsys_init_IgnoreAndReturn(0);
+	__cmock_settings_register_IgnoreAndReturn(0);
+	__cmock_settings_load_subtree_IgnoreAndReturn(0);
+	__cmock_modem_info_init_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_at_time_get_IgnoreAndReturn(0);
+	__cmock_nrf_provisioning_notify_event_and_wait_for_modem_state_IgnoreAndReturn(0);
+
+	__cmock_rest_client_request_defaults_set_Ignore();
+	__cmock_modem_info_get_fw_version_ExpectAnyArgsAndReturn(0);
+	__cmock_modem_info_get_fw_version_ReturnArrayThruPtr_buf(MFW_VER, sizeof(MFW_VER));
+
+	__cmock_nrf_provisioning_jwt_generate_ExpectAnyArgsAndReturn(0);
+	__cmock_nrf_provisioning_jwt_generate_CMockReturnMemThruPtr_jwt_buf(
+		CONFIG_NRF_PROVISIONING_JWT_MAX_VALID_TIME_S, tok_jwt_plain,
+		strlen(tok_jwt_plain) + 1);
+
+	__cmock_modem_attest_token_get_ExpectAnyArgsAndReturn(-EFAULT);
+
+	__cmock_rest_client_request_ExpectAnyArgsAndReturn(-EACCES);
+	__cmock_rest_client_request_AddCallback(rest_client_request_device_not_claimed);
+
+	int ret = nrf_provisioning_trigger_manually();
+
+	TEST_ASSERT_EQUAL_INT(0, ret);
+
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_START);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_FATAL_ERROR);
+	wait_for_provisioning_event(NRF_PROVISIONING_EVENT_STOP);
+	wait_for_no_provisioning_event(EXPECT_NO_EVENTS_TIMEOUT_SECONDS);
+}
+
 extern int unity_main(void);
 
 int main(void)
