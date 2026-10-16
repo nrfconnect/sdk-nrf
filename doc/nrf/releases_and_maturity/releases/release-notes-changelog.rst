@@ -56,10 +56,10 @@ Bootloaders and DFU
 * Added:
 
   * The hidden :kconfig:option:`CONFIG_NCS_MCUBOOT_ENCRYPTION_HMAC_SHA256` Kconfig option to select HMAC-SHA256 with X25519 for compatibility with existing projects that use it.
-    The option is hidden and requires addition of a Kconfig override in your project.
+    The option is hidden and requires the addition of a Kconfig override in your project.
     This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
   * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page explaining the memory protection features of the bootloader on the nRF54L Series.
-  * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC
+  * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 
@@ -70,11 +70,11 @@ Bootloaders and DFU
 * Fixed:
 
   * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
-    These configurations now use PSA Crypto instead of the cc310 backend, which supports only signature verification.
+    These configurations now use PSA Crypto instead of the CC310 backend, which supports only signature verification.
   * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
-  See the :ref:`migration_3.5` for details.
+  See the :ref:`migration_3.5` page for details.
 
 Developing with nRF91 Series
 ============================
@@ -363,7 +363,7 @@ nRF Audio (formerly nRF5340 Audio)
   * A generalized audio time module that provides a unified interface for retrieving the current time in microseconds across a SoC.
     The module uses the GRTC timer on nRF54L Series devices and the audio sync timer on other devices.
   * Experimental support for the nRF54LM20 SoC in the nRF Audio applications.
-    The support is limited to the :ref:`unicast client app<nrf_audio_unicast_client_app>` application with USB as audio source, which can be built for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
+    The support is limited to the :ref:`unicast client app <nrf_audio_unicast_client_app>` application with USB as audio source, which can be built for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
     The support is experimental and not yet fully tested, so it is not recommended for production use.
 
 * Removed:
@@ -371,7 +371,7 @@ nRF Audio (formerly nRF5340 Audio)
   * :file:`prj_release.conf` files from all nRF Audio applications and from the buildprog tool.
     You must now explicitly specify which configurations to include in a release build.
     See :ref:`nrf_audio_app_configuration_select_build` for more information.
-  * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` option from the unicast client and server applications.
+  * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` Kconfig option from the unicast client and server applications.
     This option was not useful because the unicast server range settings overwrite the bitrate configuration.
 
 * Updated audio_datapath to use the new audio rate control API.
@@ -521,7 +521,7 @@ Bluetooth Fast Pair samples
 
   * Updated:
 
-    * The references to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
+    * References to the deleted ``CONFIG_CRACEN_LIB_KMU`` Kconfig option to use the :kconfig:option:`CONFIG_CRACEN_KMU` replacement.
     * The TX power calibration for the ``nrf54l15tag/nrf54l15/cpuapp`` board target.
       The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``-11`` dBm to meet the Fast Pair distance certification requirements.
     * The TX power calibration for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` and ``nrf54lm20dk/nrf54lm20b/cpuapp`` board targets.
@@ -585,17 +585,18 @@ DFU samples
 
 * :ref:`single_slot_sample` sample:
 
-  * Added support for buttonless entry into firmware loader mode over Bluetooth LE by using the SMP MCUmgr reset command with boot-mode selection.
-    To build with this feature, append ``FILE_SUFFIX=ble_enter`` to the build command.
-* Updated:
+  * Added:
 
-  * By moving the :ref:`mcuboot_minimal_configuration` to the :file:`samples/dfu` directory.
-  * The :ref:`single_slot_sample` sample with support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
-    This is a buttonless DFU entry mechanism.
-  * The :ref:`single_slot_sample` sample with support for the ``nrf52840dk/nrf52840`` board target.
+    * Support for buttonless entry into firmware loader mode over Bluetooth LE by using the SMP MCUmgr reset command with boot-mode selection.
+      To build with this feature, append ``FILE_SUFFIX=ble_enter`` to the build command.
+    * Support for entering the firmware loader mode over Bluetooth LE using the SMP MCUmgr reset command with boot-mode selection, available through the ``ble_enter`` build variant.
+      This is a buttonless DFU entry mechanism.
+    * Support for the ``nrf52840dk/nrf52840`` board target.
 
-* Removed the Firmware loader entrance sample from the :file:`samples/mcuboot` directory.
-  Its functionality has been consolidated into the :ref:`single_slot_sample` sample, which now covers all supported MCUmgr transports for the MCUboot firmware updater mode.
+  * Updated by moving the :ref:`mcuboot_minimal_configuration` to the :file:`samples/dfu` directory.
+
+  * Removed the Firmware loader entrance sample from the :file:`samples/mcuboot` directory.
+    Its functionality has been consolidated into the :ref:`single_slot_sample` sample, which now covers all supported MCUmgr transports for the MCUboot firmware updater mode.
 
 DECT NR+ samples
 ----------------
@@ -611,7 +612,7 @@ DECT NR+ samples
     * Optional mDNS/DNS-SD advertise (``_dect-nr._udp``) and ``dect discover`` shell command to browse and resolve DECT NR+ peers on the network.
     * Ethernet border router sink variant using a W5500 shield (``arceli_eth_w5500`` or ``seeed_w5500``), with configuration and devicetree overlays for modem shared memory, static or random MAC, and optional DHCPv6.
     * Shared mDNS configuration overlay (:file:`mdns-common.conf`) and Ethernet mDNS overlay (:file:`eth_mdns.conf`) for DNS-SD on both ``dect0`` and ``eth0``.
-    * The :file:`dect_rx_pool.conf` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalance the global TX/RX pool sizes to match observed usage.
+    * The :file:`dect_rx_pool.conf` configuration file that enables :kconfig:option:`CONFIG_DECT_MDM_RX_PRIVATE_POOL` with sink/FT-tuned pool sizes, so that DECT NR+ uplink RX bursts no longer starve the shared global RX pools, and rebalances the global TX/RX pool sizes to match observed usage.
     * The :file:`dlc_resilient.conf` configuration file for a loss-resilient DLC profile when using the Ethernet sink mode.
 
   * Updated ``ping`` to use the Zephyr ``net_icmp`` API (IPv6) and moved it into the location defined by the :kconfig:option:`CONFIG_DECT_ICMP_PING_LIB` Kconfig option.
@@ -654,9 +655,9 @@ Matter samples
     * ``matter-debug`` → ``debug``
     * ``matter-diagnostic-logs`` → ``diagnostic-logs``
 
-  * Matter sample CMake integration is now updated to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
+  * Matter sample CMake integration to use :file:`ncs-matter/cmake/sample.cmake` and the ``ZEPHYR_NCS_MATTER_MODULE_DIR`` variable instead of :file:`nrf/samples/matter/common/cmake/` helpers and ``ZEPHYR_NRF_MODULE_DIR``.
 
-  * The shared Matter sample code has been moved from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
+  * By moving the shared Matter sample code from :file:`nrf/samples/matter/common/` to :file:`ncs-matter/subsys/`.
 
   * By moving the Matter partition devicetree include files from :file:`nrf/dts/samples/matter/` to :file:`ncs-matter/dts/`.
     Board overlays must use ``#include <nrf52840_partitions.dtsi>`` instead of ``#include <samples/matter/nrf52840_partitions.dtsi>``.
@@ -1000,7 +1001,7 @@ Wi-Fi drivers
     * :kconfig:option:`CONFIG_NRF70_MAX_TX_AGGREGATION` (or :kconfig:option:`CONFIG_NRF71_MAX_TX_AGGREGATION`) from ``12`` to ``4``.
     * :kconfig:option:`CONFIG_NRF_WIFI_DATA_HEAP_SIZE` from ``130000`` to ``65536``.
 
-  See :ref:`migration_3.5` for more information.
+  See the :ref:`migration_3.5` page for more information.
 
 * Fixed spurious ``set_key`` errors on the nRF71 Series when Wi-Fi keys are deleted after the RPU context has already been torn down.
   Late key deletion is now treated as success when the RPU context was already removed.
@@ -1052,11 +1053,11 @@ Common Application Framework
 
 * :ref:`caf_ble_state`:
 
-* Added:
+  * Added:
 
-  * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
-  * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
-  * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
+    * The :c:struct:`ble_peer_sci_conn_rate_event` to report connection rate changes or failed connection rate change requests when shorter connection intervals are enabled.
+    * The :c:struct:`ble_peer_frame_space_updated_event` to report frame space changes or failed frame space update requests.
+    * The :c:struct:`ble_peer_phy_updated_event` to report PHY changes.
 
 Debug libraries
 ---------------
@@ -1352,7 +1353,7 @@ The following list summarizes both the main changes inherited from upstream MCUb
 
 * Updated:
 
-  * Made :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` the default ECDSA P-256 implementation for nRF54LS05A and nRF54LS05B.
+  * The :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` to be the default ECDSA P-256 implementation for the nRF54LS05A and nRF54LS05B SoCs.
   * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
   * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
     The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
