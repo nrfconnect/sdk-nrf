@@ -1,7 +1,7 @@
 if(CONFIG_SOC_{{ soc | upper }}_CPUAPP)
-  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("lc", "LV") | replace("a", "A") }}_M33" "--speed=4000")
+  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("lc", "LC") | replace("a", "A") }}_M33" "--speed=4000")
 elseif(CONFIG_SOC_{{ soc | upper }}_CPUFLPR)
-  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("lc", "LV") | replace("a", "A")}}_RV32" "--speed=4000")
+  board_runner_args(jlink "--device={{ soc | replace("nrf", "nRF") | replace("lc", "LC") | replace("a", "A")}}_RV32" "--speed=4000")
 endif()
 
 if(CONFIG_TRUSTED_EXECUTION_NONSECURE)
