@@ -444,7 +444,10 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-|no_changes_yet_note|
+* :ref:`lib_nrf_provisioning` library:
+
+  * Updated the library to send the :c:enumerator:`NRF_PROVISIONING_EVENT_FATAL_ERROR` event when the modem fails to generate the attestation token for an unclaimed device.
+    Previously, the :c:enumerator:`NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED` event was sent without a token.
 
 Libraries for NFC
 -----------------
