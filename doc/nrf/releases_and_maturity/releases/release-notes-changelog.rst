@@ -1257,6 +1257,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
   * ``--package-download-format`` option to control the SPDX PackageDownloadLocation format.
   * ``--input-dir`` option to the :ref:`west ncs-sbom <west_sbom>` command.
     It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
+  * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
+    The default remains SPDX 2.3.
 
 * Updated:
 
