@@ -596,12 +596,13 @@ static int dl_http_close(struct downloader *dl)
 
 	http = (struct transport_params_http *)dl->transport_internal;
 
+	/* Resolve the host again on the next connect, for example after a redirect. */
+	memset(&http->sock.remote_addr, 0, sizeof(http->sock.remote_addr));
+
 	if (http->sock.fd != -1) {
 		err = dl_socket_close(&http->sock.fd);
 		return err;
 	}
-
-	memset(&http->sock.remote_addr, 0, sizeof(http->sock.remote_addr));
 
 	return -EBADF;
 }
