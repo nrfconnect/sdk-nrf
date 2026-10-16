@@ -12,6 +12,9 @@ config ROM_START_OFFSET
 config NRF_REGTOOL_GENERATE_UICR
 	default n
 
+config CODE_DATA_RELOCATION
+	default y if (PM || POWEROFF) && !MCUBOOT
+
 config NRF_PERIPHCONF_SECTION
 	default y if $(dt_nodelabel_exists,periphconf_partition)
 
