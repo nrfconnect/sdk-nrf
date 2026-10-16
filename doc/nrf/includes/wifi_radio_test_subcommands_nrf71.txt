@@ -178,6 +178,13 @@ Wi-Fi radio test subcommands
      - N/A
      - Action
      - Display statistics.
+   * - get_temperature
+     - N/A
+     - N/A
+     - Action
+     - Get application-core die temperature in degree Celsius from VTF monitoring.
+       Requires :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR` for a live sensor reading;
+       otherwise the VTF default value is reported.
    * - tx_pkt_cw
      - <val> - Contention window value to be configured (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023)
      - N/A
