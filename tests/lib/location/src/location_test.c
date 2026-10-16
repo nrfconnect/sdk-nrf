@@ -31,6 +31,9 @@
 
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 
+#include <zephyr/net/wifi.h>
+#include <zephyr/sys/util.h>
+
 /* Define a dummy driver just that the linker finds it. Otherwise we get a complaint like:
  *     undefined reference to `__device_dts_ord_12'
  */
@@ -42,6 +45,8 @@ static struct net_if wifi_iface;
 static int net_mgmt_NET_REQUEST_WIFI_SCAN_retval;
 static bool net_mgmt_NET_REQUEST_WIFI_SCAN_expected;
 static bool net_mgmt_NET_REQUEST_WIFI_SCAN_occurred;
+static struct wifi_scan_params net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params;
+static bool net_mgmt_NET_REQUEST_WIFI_SCAN_check_params;
 
 /* CMock doesn't support parsing of syntax used in net_mgmt requests:
  *     extern int net_mgmt_##_mgmt_request(
@@ -50,6 +55,30 @@ static bool net_mgmt_NET_REQUEST_WIFI_SCAN_occurred;
 void __cmock_net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectAndReturn(int retval)
 {
 	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = retval;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = false;
+}
+
+void net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectParamsAndReturn(
+	const struct wifi_scan_params *expected, int retval)
+{
+	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = retval;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = true;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params = *expected;
+}
+
+static void assert_wifi_scan_params_equal(const struct wifi_scan_params *a,
+					  const struct wifi_scan_params *b)
+{
+	TEST_ASSERT_EQUAL(a->scan_type, b->scan_type);
+	TEST_ASSERT_EQUAL(a->bands, b->bands);
+	TEST_ASSERT_EQUAL(a->dwell_time_active, b->dwell_time_active);
+	TEST_ASSERT_EQUAL(a->dwell_time_passive, b->dwell_time_passive);
+	TEST_ASSERT_EQUAL(a->max_bss_cnt, b->max_bss_cnt);
+
+	for (int i = 0; i < WIFI_MGMT_SCAN_CHAN_MAX_MANUAL; i++) {
+		TEST_ASSERT_EQUAL(a->band_chan[i].band, b->band_chan[i].band);
+		TEST_ASSERT_EQUAL(a->band_chan[i].channel, b->band_chan[i].channel);
+	}
 }
 
 int net_mgmt_NET_REQUEST_WIFI_SCAN(
@@ -58,12 +87,24 @@ int net_mgmt_NET_REQUEST_WIFI_SCAN(
 	void *data,
 	size_t len)
 {
+	struct wifi_scan_params *params = data;
+
 	TEST_ASSERT_EQUAL(false, net_mgmt_NET_REQUEST_WIFI_SCAN_occurred);
 
 	TEST_ASSERT_EQUAL(NET_REQUEST_WIFI_SCAN, mgmt_request);
 	TEST_ASSERT_EQUAL_PTR(&wifi_iface, iface);
-	TEST_ASSERT_NULL(data);
-	TEST_ASSERT_EQUAL(0, len);
+	TEST_ASSERT_NOT_NULL(data);
+	TEST_ASSERT_EQUAL(sizeof(struct wifi_scan_params), len);
+
+	if (net_mgmt_NET_REQUEST_WIFI_SCAN_check_params) {
+		assert_wifi_scan_params_equal(params,
+					      &net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params);
+	} else {
+		struct wifi_scan_params defaults = {0};
+
+		defaults.scan_type = WIFI_SCAN_TYPE_ACTIVE;
+		assert_wifi_scan_params_equal(params, &defaults);
+	}
 
 	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = true;
 
@@ -158,6 +199,9 @@ void setUp(void)
 	net_mgmt_NET_REQUEST_WIFI_SCAN_retval = -1;
 	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = false;
 	net_mgmt_NET_REQUEST_WIFI_SCAN_occurred = false;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_check_params = false;
+	memset(&net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params, 0,
+	       sizeof(net_mgmt_NET_REQUEST_WIFI_SCAN_expected_params));
 #endif
 	mock_nrf_modem_at_Init();
 }
@@ -1288,6 +1332,108 @@ void test_location_wifi(void)
 	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_DONE, NULL);
 	k_sleep(K_MSEC(1));
 #endif
+#endif
+}
+
+/* Test Wi-Fi scan parameters are passed to the Wi-Fi stack. */
+void test_location_wifi_scan_params(void)
+{
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#if !defined(CONFIG_LOCATION_SERVICE_EXTERNAL)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+	struct wifi_scan_params expected = {0};
+
+	location_config_defaults_set(&config, 1, methods);
+
+	config.methods[0].wifi.scan_type = LOCATION_WIFI_SCAN_TYPE_PASSIVE;
+	config.methods[0].wifi.bands = LOCATION_WIFI_BAND_2_4_GHZ;
+	config.methods[0].wifi.dwell_time_active = 100;
+	config.methods[0].wifi.dwell_time_passive = 300;
+	config.methods[0].wifi.max_bss_cnt = 5;
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	config.methods[0].wifi.channels[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	config.methods[0].wifi.channels[0].channel = 6;
+#endif
+
+	expected.scan_type = WIFI_SCAN_TYPE_PASSIVE;
+	expected.bands = BIT(WIFI_FREQ_BAND_2_4_GHZ);
+	expected.dwell_time_active = 100;
+	expected.dwell_time_passive = 300;
+	expected.max_bss_cnt = 5;
+#if CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+	expected.band_chan[0].band = WIFI_FREQ_BAND_2_4_GHZ;
+	expected.band_chan[0].channel = 6;
+#endif
+
+	test_location_event_data[location_cb_expected].id = LOCATION_EVT_LOCATION;
+	test_location_event_data[location_cb_expected].method = LOCATION_METHOD_WIFI;
+	test_location_event_data[location_cb_expected].location.latitude = 51.98765;
+	test_location_event_data[location_cb_expected].location.longitude = 13.12345;
+	test_location_event_data[location_cb_expected].location.accuracy = 50.0;
+	test_location_event_data[location_cb_expected].location.datetime.valid = false;
+	location_cb_expected++;
+
+	net_mgmt_NET_REQUEST_WIFI_SCAN_expected = true;
+	net_mgmt_NET_REQUEST_WIFI_SCAN_ExpectParamsAndReturn(&expected, 0);
+
+	__cmock_nrf_modem_at_cmd_ExpectAndReturn(NULL, 0, "AT+CGACT?", 0);
+	__cmock_nrf_modem_at_cmd_IgnoreArg_buf();
+	__cmock_nrf_modem_at_cmd_IgnoreArg_len();
+	__cmock_nrf_modem_at_cmd_ReturnArrayThruPtr_buf(
+		(char *)cgact_resp_active, sizeof(cgact_resp_active));
+
+	cellular_coap_req_resp_handle(location_cb_expected - 1);
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(0, err);
+	k_sleep(K_MSEC(1));
+
+	struct net_mgmt_event_callback cb;
+	const struct wifi_status status = {
+		.status = WIFI_STATUS_CONN_SUCCESS
+	};
+	const struct wifi_scan_result scan_result1 = {
+		.ssid = "TestAP1",
+		.ssid_length = 7,
+		.channel = 6,
+		.mac = {0x12, 0x34, 0x56, 0x78, 0x90, 0xAB},
+		.mac_length = 6
+	};
+	const struct wifi_scan_result scan_result2 = {
+		.ssid = "TestAP2",
+		.ssid_length = 7,
+		.channel = 6,
+		.mac = {0x11, 0x22, 0x33, 0x44, 0x55, 0x66},
+		.mac_length = 6
+	};
+
+	cb.info = &scan_result1;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
+	k_sleep(K_MSEC(1));
+	cb.info = &scan_result2;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_RESULT, NULL);
+	k_sleep(K_MSEC(1));
+	cb.info = &status;
+	scan_wifi_net_mgmt_event_handler(&cb, NET_EVENT_WIFI_SCAN_DONE, NULL);
+	k_sleep(K_MSEC(1));
+#endif
+#endif
+}
+
+void test_location_wifi_scan_params_invalid(void)
+{
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	int err;
+	struct location_config config = { 0 };
+	enum location_method methods[] = {LOCATION_METHOD_WIFI};
+
+	location_config_defaults_set(&config, 1, methods);
+	config.methods[0].wifi.bands = BIT(7);
+
+	err = location_request(&config);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
 #endif
 }
 

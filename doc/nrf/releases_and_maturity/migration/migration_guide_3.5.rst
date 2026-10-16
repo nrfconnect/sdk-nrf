@@ -477,6 +477,19 @@ Libraries
 
 This section describes the changes related to libraries.
 
+Location library
+----------------
+
+.. toggle::
+
+   * The :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE` Kconfig option is deprecated.
+     Replace the following Kconfig options:
+
+     * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE` with :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE`.
+     * :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE` with :kconfig:option:`CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE`.
+
+     To set the scan parameters at runtime, use the :c:struct:`location_wifi_config` structure.
+
 Detecting Unwanted Location Trackers (DULT) library
 ---------------------------------------------------
 
