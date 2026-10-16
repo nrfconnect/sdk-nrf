@@ -9,13 +9,12 @@ Kconfigdiff extension for displaying changes in kconfig
 files between releases.
 """
 
-import json
 import logging
-import re
 from pathlib import Path
 
 from sphinx.application import Sphinx
 from sphinx.util.typing import ExtensionMetadata
+from versions import Versions, get_versions
 
 from .kconfig_utils import RESOURCES_DIR
 from .legend import KconfigDiffLegendDirective
@@ -27,55 +26,37 @@ logger = logging.Logger(__name__)
 
 __version__ = "0.1.0"
 
-VERSION_REGEX = re.compile(r"^\d+\.\d+\.\d+$")
-MAJOR_VERSION_REGEX = re.compile(r"^\d+\.\d+\.0$")
 
-
-def is_major(version: str):
-    return MAJOR_VERSION_REGEX.match(version)
-
-
-def get_major_version(versions: list[str]) -> str | None:
-    return next((v for v in versions if is_major(v)), None)
-
-
-def get_versions(app) -> tuple[str, str] | None:
+def get_kconfig_versions(app: Sphinx) -> tuple[str, str] | None:
     current = "latest"
 
-    with open(VERSIONS_FILE, "rb") as f:
-        versions = json.load(f)
-        if not versions:
-            logger.error("Ill formatted versions file")
+    versions = get_versions(app).normalized().patchlevel()
+    if not versions:
+        logger.error("Ill formatted versions file")
+        return None
+
+    minor_versions = versions.minor()
+    if app.config.kconfigdiff_is_release:
+        current = versions.latest()
+        if len(minor_versions) >= 2 and Versions.is_minor(current):
+            return current, minor_versions.all()[1]
+        elif len(versions) >= 2:
+            return current, versions.all()[1]
+        else:
+            logger.error("Not enough versions to generate comparison")
             return None
 
-        if versions[0].endswith("99"):
-            # skip the placeholder .99 version
-            versions.pop(0)
+    if prev := minor_versions.latest():
+        return current, prev
 
-        # Filter out preview versions (and other -addition versions)
-        versions = [v for v in versions if VERSION_REGEX.match(v)]
-
-        if app.config.kconfigdiff_is_release:
-            current = versions[0]
-            if is_major(current) and (prev := get_major_version(versions[1:])):
-                return current, prev
-            elif len(versions) >= 2:
-                return current, versions[1]
-            else:
-                logger.error("Not enough versions to generate comparison")
-                return None
-
-        if prev := get_major_version(versions):
-            return current, prev
-
-        logger.error("Not enough versions to generate comparison")
-        return None
+    logger.error("Not enough versions to generate comparison")
+    return None
 
 
 def kconfigdiff_install(app: Sphinx) -> None:
     app.config.html_static_path.append(RESOURCES_DIR.as_posix())
 
-    versions = get_versions(app)
+    versions = get_kconfig_versions(app)
     app.config.kconfigdiff_versions = versions
 
     if versions:
