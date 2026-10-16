@@ -139,6 +139,8 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 		return -EBUSY;
 	}
 
+	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
+
 	struct net_buf_simple buf;
 
 	net_buf_simple_init_with_data(&buf, ancs_c->cp_data, sizeof(ancs_c->cp_data));
@@ -171,6 +173,7 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 		ancs_c->parse_info.expected_number_of_attrs =
 			ancs_c->number_of_requested_attr;
 	} else {
+		atomic_clear_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING);
 		err = -ENOMEM;
 	}
 
@@ -184,8 +187,6 @@ int bt_ancs_app_attr_request(struct bt_ancs_client *ancs_c,
 	if (!len) {
 		return -EINVAL;
 	}
-
-	ancs_c->parse_info.parse_state = BT_ANCS_PARSE_STATE_COMMAND_ID;
 
 	return app_attr_get(ancs_c, app_id, len, func);
 }
