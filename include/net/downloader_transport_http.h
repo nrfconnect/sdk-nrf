@@ -30,7 +30,7 @@ struct downloader_transport_http_cfg {
  * @brief Set Downloader HTTP transport settings
  *
  * @param dl downloader instance
- * @param cfg HTTP transport configuration
+ * @param cfg HTTP transport configuration.
  *
  * @return Zero on success, negative errno on failure.
  */
