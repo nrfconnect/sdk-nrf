@@ -1573,6 +1573,44 @@ out:
 }
 #endif
 
+#ifdef CONFIG_NRF71_STA_MODE
+static void tx_done_rate_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+				struct nrf_wifi_tx_buff_done *buff)
+{
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	struct nrf_wifi_sys_fmac_priv *sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
+	unsigned int peer_id;
+	unsigned char if_idx;
+
+	if (!buff->tx_rate_kbps || !sys_fpriv->callbk_fns.process_tx_rate_from_tx_done) {
+		return;
+	}
+
+	if (buff->tx_desc_num >= sys_fpriv->num_tx_tokens) {
+		return;
+	}
+
+	peer_id = sys_dev_ctx->tx_config.pkt_info_p[buff->tx_desc_num].peer_id;
+	if (peer_id >= MAX_SW_PEERS) {
+		return;
+	}
+
+	if_idx = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
+	if (if_idx >= MAX_NUM_VIFS) {
+		return;
+	}
+
+	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+	if (!vif_ctx || !vif_ctx->os_vif_ctx) {
+		return;
+	}
+
+	sys_fpriv->callbk_fns.process_tx_rate_from_tx_done(vif_ctx->os_vif_ctx,
+							   buff->tx_rate_kbps);
+}
+#endif /* CONFIG_NRF71_STA_MODE */
+
 enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	struct nrf_wifi_tx_buff_done *buff)
@@ -1595,6 +1633,11 @@ enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	}
 
 	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
+
+#ifdef CONFIG_NRF71_STA_MODE
+	/* Resolve the VIF before tx_done_process() as it may reuse the descriptor */
+	tx_done_rate_update(fmac_dev_ctx, buff);
+#endif /* CONFIG_NRF71_STA_MODE */
 
 	status = tx_done_process(fmac_dev_ctx,
 				 buff->tx_desc_num);
