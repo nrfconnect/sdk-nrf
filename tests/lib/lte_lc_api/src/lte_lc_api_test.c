@@ -319,6 +319,11 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 		}
 		break;
 
+	case LTE_LC_EVT_UICC_STATE:
+		TEST_ASSERT_EQUAL(test_event_data[index].uicc_state.state, evt->uicc_state.state);
+		TEST_ASSERT_EQUAL(test_event_data[index].uicc_state.cause, evt->uicc_state.cause);
+		break;
+
 	default:
 		TEST_FAIL_MESSAGE("Unhandled test event");
 		break;
@@ -385,6 +390,9 @@ void enable_notifications(void)
 	}
 	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
 		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
+	}
+	if (IS_ENABLED(CONFIG_LTE_LC_UICC_STATE_MODULE)) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
 	}
 }
 
@@ -2166,6 +2174,9 @@ void test_lte_lc_func_mode_set_all_modes(void)
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(modes); ++i) {
+		if (modes[i] == LTE_LC_FUNC_MODE_ACTIVATE_UICC) {
+			__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
+		}
 		sprintf(at_cmd, "AT+CFUN=%d", modes[i]);
 		__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_SUCCESS);
 		ret = lte_lc_func_mode_set(modes[i]);
@@ -2688,6 +2699,129 @@ void test_lte_lc_cscon(void)
 	/* Missing RRC mode value does not trigger event */
 	strcpy(at_notif, "+CSCON:\r\n");
 	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state(void)
+{
+	int index = 0;
+
+	/* Cause omitted */
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_NONE;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_NONE;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PUK_REQUIRED;
+	index++;
+
+	/* Highest defined cause value */
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_USIM_PROFILE_CHANGED;
+	index++;
+
+	lte_lc_callback_count_expected = index;
+
+	strcpy(at_notif, "%XSIM: 1\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0,1\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0,3\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 1,11\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_invalid(void)
+{
+	/* None of these trigger an event */
+	lte_lc_callback_count_expected = 0;
+
+	/* Invalid state */
+	strcpy(at_notif, "%XSIM: 2\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Invalid cause */
+	strcpy(at_notif, "%XSIM: 0,12\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Missing state */
+	strcpy(at_notif, "%XSIM:\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Non-numeric state */
+	strcpy(at_notif, "%XSIM: \"1\"\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_subscribe_fail_is_ignored(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,5000,1200000", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XT3412=1,5000,1200000", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
+
+	/* %XSIM not supported by the modem firmware */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_FAILURE);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
+
+	ret = lte_lc_normal();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_uicc_state_subscribe_on_uicc_activation(void)
+{
+	int ret;
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+	test_event_data[0].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[0].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[0].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED;
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
+
+	lte_lc_callback_count_expected = 1;
+
+	/* Only %XSIM is subscribed, not the LTE notifications */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=41", EXIT_SUCCESS);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_UICC);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	strcpy(at_notif, "%XSIM: 0,1\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_subscribe_fail_does_not_block_uicc_activation(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=41", EXIT_SUCCESS);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_UICC);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
 void test_lte_lc_xt3412(void)
@@ -4482,6 +4616,7 @@ void test_lte_lc_modem_events_enable_fallback(void)
 	/* Return failure to trigger fallback to legacy events */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
 
