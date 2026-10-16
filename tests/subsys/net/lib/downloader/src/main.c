@@ -23,6 +23,7 @@
 #define HTTP_URL "http://server.com:80/path/to/file.end"
 #define HTTP_URL_FILE2 "http://server.com/path/to/file2.end"
 #define HTTP_URL_HOST2 "http://server2.com/path/to/file.end"
+#define COAP_URL_HOST2 "coap://server2.com/path/to/file.end"
 #define HTTPS_URL "https://server.com/path/to/file.end"
 #define COAP_URL "coap://server.com/path/to/file.end"
 #define COAPS_URL "coaps://server.com/path/to/file.end"
@@ -1312,12 +1313,22 @@ void coap_pending_clear_ok(struct coap_pending *pending)
 
 bool coap_pending_cycle_ok(struct coap_pending *pending)
 {
+	/* coap_pending_init() is faked, so t0 would be 0 and the wait time would depend on
+	 * uptime.
+	 */
+	pending->t0 = k_uptime_get();
 	pending->timeout = 10000;
 	return true;
 }
 
+/* Time that has passed since the request, when the fake is cycled. The wait time of the cycle
+ * after the expected recvfrom calls has run out, whatever the uptime is.
+ */
+#define TEST_COAP_ELAPSED_MS (1000 * (TEST_COAP_RETRIES - TEST_EXPECTED_RECVFROM_CALLS) - 500)
+
 bool coap_pending_cycles(struct coap_pending *pending)
 {
+	pending->t0 = k_uptime_get() - TEST_COAP_ELAPSED_MS;
 	pending->timeout = 1000 * (TEST_COAP_RETRIES - coap_pending_cycle_fake.call_count);
 
 	if (pending->timeout) {
@@ -1824,6 +1835,177 @@ void test_downloader_get_http_connect_enetunreach(void)
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
+/* The GET request for HTTP_URL, byte for byte. */
+#define HTTP_GET_REQUEST \
+	"GET /path/to/file.end HTTP/1.1\r\n" \
+	"Host: server.com\r\n" \
+	"Connection: keep-alive\r\n" \
+	"\r\n"
+
+/* A request that does not fit in the buffer, including its terminating NUL, is reported as an
+ * error. It must not be truncated and sent, and a new connection does not help, whatever the
+ * callback returns.
+ */
+static void check_http_request_does_not_fit(char *buf, size_t buf_size,
+					    downloader_callback_t callback)
+{
+	int err;
+	struct downloader_evt evt;
+	struct downloader_cfg cfg = {
+		.callback = callback,
+		.buf = buf,
+		.buf_size = buf_size,
+	};
+
+	err = downloader_init(&dl, &cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	evt = dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	TEST_ASSERT_EQUAL(-E2BIG, evt.error);
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	/* Nothing was sent, and the connection was not retried. */
+	TEST_ASSERT_EQUAL(0, z_impl_zsock_sendto_fake.call_count);
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_socket_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+void test_downloader_get_http_request_fills_buffer(void)
+{
+	static char buf[sizeof(HTTP_GET_REQUEST) - 1];
+
+	check_http_request_does_not_fit(buf, sizeof(buf), dl_callback_abort);
+}
+
+void test_downloader_get_http_request_exceeds_buffer(void)
+{
+	static char buf[sizeof(HTTP_GET_REQUEST) - 2];
+
+	check_http_request_does_not_fit(buf, sizeof(buf), dl_callback_abort);
+}
+
+void test_downloader_get_http_request_too_big_callback_continues(void)
+{
+	static char buf[sizeof(HTTP_GET_REQUEST) - 1];
+
+	check_http_request_does_not_fit(buf, sizeof(buf), dl_callback);
+}
+
+static int too_big_cancel_err;
+static int too_big_stopped_count;
+
+/* Cancels the download from the error callback. */
+static int dl_callback_cancel_on_error(const struct downloader_evt *event)
+{
+	if (event->id == DOWNLOADER_EVT_ERROR) {
+		too_big_cancel_err = downloader_cancel(&dl);
+	} else if (event->id == DOWNLOADER_EVT_STOPPED) {
+		too_big_stopped_count++;
+	}
+
+	return dl_callback(event);
+}
+
+static void http_ipv6_fakes_set(void)
+{
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+}
+
+/* A cancel from the error callback is handled once, by the STOPPING state. */
+void test_downloader_get_http_request_too_big_cancel_in_callback(void)
+{
+	static char buf[sizeof(HTTP_GET_REQUEST) - 1];
+	struct downloader_cfg cfg = {
+		.callback = dl_callback_cancel_on_error,
+		.buf = buf,
+		.buf_size = sizeof(buf),
+	};
+	int err;
+
+	too_big_cancel_err = -1;
+	too_big_stopped_count = 0;
+
+	err = downloader_init(&dl, &cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	http_ipv6_fakes_set();
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_ERROR, K_SECONDS(3));
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+
+	TEST_ASSERT_EQUAL(0, too_big_cancel_err);
+	TEST_ASSERT_EQUAL(1, too_big_stopped_count);
+}
+
+static int too_big_restart_err;
+static int too_big_restart_count;
+
+/* Starts a new download from the STOPPED event, once. */
+static int dl_callback_restart_on_stopped(const struct downloader_evt *event)
+{
+	if (event->id == DOWNLOADER_EVT_STOPPED && too_big_restart_count == 0) {
+		too_big_restart_count++;
+		too_big_restart_err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	}
+
+	return dl_callback(event);
+}
+
+/* The downloader is ready for a new download when STOPPED is received. */
+void test_downloader_get_http_request_too_big_restart_from_stopped(void)
+{
+	static char buf[sizeof(HTTP_GET_REQUEST) - 1];
+	struct downloader_cfg cfg = {
+		.callback = dl_callback_restart_on_stopped,
+		.buf = buf,
+		.buf_size = sizeof(buf),
+	};
+	int err;
+
+	too_big_restart_err = -1;
+	too_big_restart_count = 0;
+
+	err = downloader_init(&dl, &cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	http_ipv6_fakes_set();
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	/* The restarted download fails the same way. */
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	TEST_ASSERT_EQUAL(0, too_big_restart_err);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
 void test_downloader_get_http_getaddr_failed(void)
 {
 	int err;
@@ -1977,6 +2159,157 @@ void test_downloader_get_coap(void)
 	TEST_ASSERT_EQUAL(0, err);
 
 	evt = dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* A file path without any path element cannot be requested, and is rejected when the download
+ * is started.
+ */
+void test_downloader_get_coap_empty_path(void)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	err = downloader_get(&dl, &dl_host_cfg, "coap://server.com/", 0);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+
+	err = downloader_get(&dl, &dl_host_cfg, "coap://server.com//", 0);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+
+	TEST_ASSERT_EQUAL(0, z_impl_zsock_socket_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* The path is also checked when the connection to the host is reused. */
+void test_downloader_get_coap_empty_path_connection_reused(void)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	/* The downloader is now connected to server.com, as keep_connection is set. */
+	err = downloader_get(&dl, &dl_host_cfg, "coap://server.com/", 0);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_socket_fake.call_count);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* A rejected request must leave the retained connection as it was, so that a following request
+ * to the rejected host does not reuse the connection of the previous host.
+ */
+void test_downloader_get_coap_rejected_request_keeps_connection(void)
+{
+	int err;
+	struct downloader_host_cfg rejected_cfg = dl_host_cfg;
+
+	rejected_cfg.pdn_id = dl_host_cfg.pdn_id + 1;
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	/* The downloader is now connected to server.com. */
+	err = downloader_get(&dl, &rejected_cfg, "coap://server2.com/", 0);
+	TEST_ASSERT_EQUAL(-EINVAL, err);
+
+	TEST_ASSERT_EQUAL_STRING(HOSTNAME, dl.hostname);
+	TEST_ASSERT_EQUAL(dl_host_cfg.pdn_id, dl.host_cfg.pdn_id);
+	TEST_ASSERT_EQUAL(1, z_impl_zsock_socket_fake.call_count);
+
+	/* server2.com must get its own connection. */
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server2_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL_HOST2, 0);
+	TEST_ASSERT_EQUAL(0, err);
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	TEST_ASSERT_EQUAL(2, z_impl_zsock_socket_fake.call_count);
+	TEST_ASSERT_EQUAL_STRING(HOSTNAME2, dl.hostname);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+/* The longest file path that fits in the downloader must be sent as is. */
+void test_downloader_get_coap_longest_path(void)
+{
+	int err;
+	char url[sizeof("coap://server.com/") + CONFIG_DOWNLOADER_MAX_FILENAME_SIZE];
+	size_t prefix_len = strlen("coap://server.com/");
+	size_t path_len = CONFIG_DOWNLOADER_MAX_FILENAME_SIZE - 1;
+
+	memcpy(url, "coap://server.com/", prefix_len);
+	memset(url + prefix_len, 'a', path_len);
+	url[prefix_len + path_len] = '\0';
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, url, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	TEST_ASSERT(coap_packet_append_option_fake.call_count > 0);
+	TEST_ASSERT_EQUAL(path_len, coap_packet_append_option_fake.arg3_val);
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
