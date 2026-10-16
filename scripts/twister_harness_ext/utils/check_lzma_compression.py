@@ -15,7 +15,8 @@ from pathlib import Path
 
 from intelhex import IntelHex
 
-from .helpers import run_command
+from twister_harness_ext.adapters.cmd import run_command
+
 from .mcuboot_image_utils import ImageHeader
 
 logger = logging.getLogger(__name__)
