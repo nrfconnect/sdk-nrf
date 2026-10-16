@@ -67,13 +67,10 @@ void cracen_ml_dsa_multiply_ntt(ml_dsa_poly_vector_t *out_vec,
  * accumulated coefficient bound within the input limit of
  * cracen_ml_dsa_ntt_inversed().
  *
- * @param[out] out_vec Output polynomial holding out_vec = a + b.
- * @param[in] a        First NTT-domain operand.
+ * @param[in, out] a   First NTT-domain operand holding a = a + b.
  * @param[in] b        Second NTT-domain operand.
  */
-void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *out_vec,
-			   const ml_dsa_poly_vector_t *a,
-			   const ml_dsa_poly_vector_t *b);
+void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *a, const ml_dsa_poly_vector_t *b);
 
 /**
  * @brief Subtract two NTT-domain polynomials.
@@ -82,12 +79,9 @@ void cracen_ml_dsa_add_ntt(ml_dsa_poly_vector_t *out_vec,
  * accumulated coefficient bound within the input limit of
  * cracen_ml_dsa_ntt_inversed().
  *
- * @param[out] out_vec Output polynomial holding out_vec = a - b.
- * @param[in] a        First NTT-domain operand.
+ * @param[in, out] a   First NTT-domain operand holding a = a - b.
  * @param[in] b        Second NTT-domain operand.
  */
-void cracen_ml_dsa_subtract_ntt(ml_dsa_poly_vector_t *out_vec,
-				const ml_dsa_poly_vector_t *a,
-				const ml_dsa_poly_vector_t *b);
+void cracen_ml_dsa_subtract_ntt(ml_dsa_poly_vector_t *a, const ml_dsa_poly_vector_t *b);
 
 #endif /* CRACEN_ML_DSA_POLY_H */
