@@ -22,7 +22,7 @@ import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.fixtures import determine_scope
 from twister_harness.helpers.utils import find_in_config
-from twister_harness_ext.utils.common import run_command
+from twister_harness_ext.adapters.cmd import run_command
 from twister_harness_ext.utils.required_build import get_required_build
 
 logger = logging.getLogger(__name__)
