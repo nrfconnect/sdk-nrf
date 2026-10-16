@@ -23,9 +23,9 @@ ipc0: &cpuapp_cpuppr_ipc {
 };
 
 &dut {
-	/delete-property/ memory-regions;
+	memory-regions = <&cpuppr_dma_region>;
 };
 
 &dut_aux {
-	/delete-property/ memory-regions;
+	memory-regions = <&cpuppr_dma_region>;
 };
