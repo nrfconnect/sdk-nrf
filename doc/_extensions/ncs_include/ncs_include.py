@@ -12,7 +12,6 @@ import os.path
 
 from docutils import io, statemachine
 from docutils.parsers.rst import directives
-from docutils.utils.error_reporting import ErrorString, SafeString
 from sphinx.util.docutils import SphinxDirective
 
 
@@ -76,10 +75,12 @@ class NcsInclude(SphinxDirective):
                                         error_handler=e_handler)
         except UnicodeEncodeError:
             raise self.severe(f'Problems with "{self.name}" directive path:\n'
-                              f'Cannot encode input file path "{SafeString(path)}" '
+                              f'Cannot encode input file path "{str(path)}" '
                               '(wrong locale?).')
         except OSError as error:
-            raise self.severe(f'Problems with "{self.name}" directive path:\n{ErrorString(error)}.')
+            raise self.severe(
+                    f'Problems with "{self.name}" directive path:\n{io.error_string(error)}.'
+                )
 
         # Get to-be-included content
         startline = self.options.get('start-line', None)
@@ -91,7 +92,7 @@ class NcsInclude(SphinxDirective):
             else:
                 rawtext = include_file.read()
         except UnicodeError as error:
-            raise self.severe(f'Problem with "{self.name}" directive:\n{ErrorString(error)}')
+            raise self.severe(f'Problem with "{self.name}" directive:\n{io.error_string(error)}')
         # start-after/end-before: no restrictions on newlines in match-text,
         # and no restrictions on matching inside lines vs. line boundaries
         start_at_text = self.options.get('start-at', None)
