@@ -71,16 +71,14 @@ int hw_codec_volume_unmute(void);
  * @brief Enable relevant settings in HW_CODEC to
  *        send and receive PCM data over I2S
  *
- * @note  FLL1 must be toggled after I2S has started to enable HW_CODEC
- *
  * @return 0 if successful, error otherwise
  */
 int hw_codec_default_conf_enable(void);
 
 /**
- * @brief Reset HW_CODEC
+ * @brief Stop HW_CODEC
  *
- * @note  This will first disable output, then do a soft reset
+ * @note  This will stop the output and, if in use, the input
  *
  * @return 0 if successful, error otherwise
  */
