@@ -36,3 +36,30 @@ tests:
   sample.benchmarks.power_consumption.ram_powerdown_used:
     extra_configs:
       - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY=y
+  #
+  # Configurations to use in CI with Power Profiler Kit
+  #
+  sample.benchmarks.power_consumption.ram_powerdown_used.ppk:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY=y
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS=1
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config: &pytest_cfg
+      fixture: ppk_power_measure
+      pytest_root:
+        - "${CUSTOM_ROOT_TEST_DIR}/test_measure_power_consumption.py::test_samples_benchmarks_power_consumption"
+  sample.benchmarks.power_consumption.ram_retain_64k.ppk:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K=y
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS=1
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config: *pytest_cfg
+  sample.benchmarks.power_consumption.ram_retain_full.ppk:
+    extra_configs:
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_FULL=y
+      - CONFIG_SAMPLE_POWER_CONSUMPTION_IDLE_SECONDS=1
+    tags: ppk_power_measure
+    harness: pytest
+    harness_config: *pytest_cfg
