@@ -165,3 +165,43 @@ To test the version drop-down locally, complete the following steps:
 #. Access http://localhost:8000/latest/index.html with your browser to see the documentation.
 
 To add other versions of the documentation to your local documentation output, build the versions from a tagged release and rename the :file:`html` folder to the respective version (for example, |release_number_tt|).
+
+nRF Util command examples
+=========================
+
+A pull request check, separate from the documentation build, checks the structure of nRF Util commands in literal blocks, ``code-block`` directives, and ``parsed-literal`` directives.
+A line is treated as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
+The check reports subcommands and options that do not exist in the nRF Util version used by the |NCS|.
+It does not check option values, so you can use placeholders such as ``<serial_number>``.
+
+To run the check locally, use the following command from the :file:`nrf` directory:
+
+.. code-block:: console
+
+   python doc/_scripts/validate_nrfutil_commands.py doc/nrf/installation/install_ncs.rst
+
+The check installs nRF Util and its commands in a temporary location, using the versions from the :file:`scripts/tools-versions-<os>.yml` files and the ``nrfutil_<command>_ver`` replacements in :file:`doc/nrf/shortcuts.txt`.
+Files in the release notes and migration guides are not checked, because they describe commands from earlier versions.
+Commands in Windows, Linux, and macOS tabs are checked only on the matching operating system.
+
+In a pull request, the check runs only on the RST files that the pull request changes.
+It checks all files if the pull request changes the check itself, :file:`doc/nrf/shortcuts.txt`, or the :file:`scripts/tools-versions-<os>.yml` files.
+
+A weekly workflow in the nRF Util repository also checks all files on the ``main`` branch, both with the pinned nRF Util versions and with the latest ones.
+For each subcommand or option that is not found, it creates a documentation task in Jira that lists the affected pages.
+
+If a command must not be checked, or is only available on some operating systems, add one of the following comments before the block that contains it:
+
+* ``.. validate command: skip next`` - Skips the next command.
+* ``.. validate command: windows``, ``linux``, ``macos``, or ``unix`` - Checks the next command only on the given operating system.
+
+The comment applies only to the next command, so add it before each command that needs it.
+For example:
+
+.. code-block:: none
+
+   .. validate command: skip next
+
+   .. code-block:: console
+
+      nrfutil device list
