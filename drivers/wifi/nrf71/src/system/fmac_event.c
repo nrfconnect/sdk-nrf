@@ -1221,7 +1221,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_event_callback(void *mac_dev_ctx,
 	case NRF_WIFI_HOST_RPU_MSG_TYPE_UMAC:
 		status = umac_event_ctrl_process(fmac_dev_ctx,
 						 rpu_msg->msg,
-						 rpu_msg->hdr.len);
+						 rpu_msg->hdr.len - sizeof(struct host_rpu_msg));
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: umac_event_ctrl_process failed",
