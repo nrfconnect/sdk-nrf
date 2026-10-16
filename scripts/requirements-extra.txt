@@ -10,5 +10,5 @@ zcbor>=0.8.0
 nrfcredstore>=2.0.6
 nrfcloud-utils>=3.0.12
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
-libusb>=1.0.26
+libusb>=1.0.30
 python-path>=0.1.3
