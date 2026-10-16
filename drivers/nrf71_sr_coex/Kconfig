@@ -7,6 +7,7 @@
 menuconfig NRF71_SR_COEX_DRIVER
 	bool "nRF71 Wi-Fi / Short-Range coexistence driver"
 	depends on WIFI_NRF71 && BT
+	default y
 	help
 	  Standalone coexistence coordination driver for the nRF71 combo SoC.
 
@@ -30,6 +31,21 @@ config NRF71_SR_COEX_DRIVER_INIT_PRIORITY
 	  Initialisation priority of the coexistence driver within the
 	  APPLICATION init level. Kept after the Wi-Fi driver so the FMAC
 	  transport used for CD<->CM messaging is available.
+
+config NRF71_SR_COEX_CM_EVENT_WAIT_MS
+	int "CM2CD event wait timeout (ms)"
+	range 1 60000
+	default 5000
+	help
+	  Maximum time to wait for a CM2CD completion event after posting a
+	  CD2CM command. Increase on slow FPGA targets if commands are timing out.
+
+config NRF71_SR_COEX_WIFI_BRINGUP_DELAY_MS
+	int "Delay before Wi-Fi CM bring-up (ms)"
+	default 2000
+	help
+	  Delay after the first Wi-Fi VIF reaches operational UP before the
+	  Wi-Fi driver posts coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY).
 
 module = NRF71_SR_COEX_DRIVER
 module-str = Log level for the nRF71 SR coexistence driver

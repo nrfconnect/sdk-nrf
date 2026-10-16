@@ -47,34 +47,71 @@ enum coexc_mode_wifi_t {
 	COEXC_MODE_WIFI_6G,
 };
 
-/**
- * Wi-Fi SW client request status.
- *
- * Indicates whether the Wi-Fi SW client request was granted or not.
- */
-enum coex_wifi_sw_client_req_status_t {
-	/** Indicates the SW client request is granted. */
-	WIFI_SW_CLIENT_REQ_SUCCESS = 0,
-	/** Indicates the SW client request is NOT granted. */
-	WIFI_SW_CLIENT_REQ_FAIL
-};
 
 /**
- * Different CM event types.
+ * CM-to-CD event types (patched CM firmware, cm_fsm_host_if_patch.h).
  *
- * Indicates event (response to latest received command) of the CM.
+ * With patched CM firmware every CD2CM command completion is reported through
+ * a CM2CD event. The payload always begins with @ref cm2cd_event_status_name_t.
+ * Only @c CM2CD_STATISTICS_EVENT appends @ref cm_stats_t and, with patched
+ * firmware, a trailing @ref cm_fsm_patch_stats_t block.
+ *
+ * The enumerator values are the wire values reported by CM firmware
  */
 enum cm_event_to_host_t {
 	/** Response to CD2CM_GET_STATS command */
-	STATISTICS_EVENT = 0,
+	CM2CD_STATISTICS_EVENT = 0,
 	/** Response to CD2CM_WIFI_SW_CLIENT_REQUEST command */
-	SW_CLIENT_STATUS_EVENT
+	CM2CD_WIFI_SW_CLIENT_STATUS_EVENT,
+	/** Reserved in patch header; SR SW client response when firmware supports it */
+	CM2CD_SR_SW_CLIENT_STATUS_EVENT,
+	/** Response to CD2CM_UPDATE_COEX_PARAMS */
+	CM2CD_UPDATE_COEX_PARAMS_EVENT,
+	/** Response to CD2CM_UPDATE_COEX_USER_PARAMS */
+	CM2CD_UPDATE_COEX_USER_PARAMS_EVENT,
+	/** Response to CD2CM_ENABLE_COEXISTENCE */
+	CM2CD_ENABLE_COEXISTENCE_EVENT,
+	/** Response to CD2CM_ALLOCATE_PPW */
+	CM2CD_ALLOCATE_PPW_EVENT,
+	/** Response to CD2CM_SET_PRIORITY_RANGES */
+	CM2CD_SET_PRIORITY_RANGES_EVENT
 };
+
+/**
+ * Host to Coexistence Manager command status.
+ *
+ * Indicates whether the command from host to CM is processed or not.
+ */
+enum coex_command_processed_status_t {
+	/** Indicates the command processed successfully */
+	COMMAND_PROCESSING_SUCCESS = 0,
+	/** Indicates the command processing failed */
+	COMMAND_PROCESSING_FAIL
+};
+
+/**
+ * CM to host event status wrapper.
+ *
+ * Every CM2CD event begins with this header. @c event_name identifies the
+ * response type; @c command_status carries command-processing success/failure
+ * or SW-client grant status, depending on @c event_name.
+ */
+struct cm2cd_event_status_name_t {
+	/** CM to CD current event name. see &enum cm_event_to_host_t */
+	unsigned int event_name;
+	/** CM to CD current event status. see &enum coex_command_processed_status_t */
+	unsigned int command_status;
+} __NRF_WIFI_PKD;
 
 /**
  * Coexistence related statistics.
  *
  * Contains coexistence related statistics for monitoring and debugging.
+ *
+ * The PPW and SW-client counters are not gated by release phase. CM firmware
+ * fills the whole structure and the host copies it verbatim out of
+ * @c CM2CD_STATISTICS_EVENT, so dropping a field would shift every field after
+ * it and misread the payload.
  */
 struct cm_stats_t {
 	/** Coex initialization count */
@@ -290,10 +327,38 @@ struct cm_stats_t {
 };
 
 /**
+ * Patch-local command entry and CM2CD event counters (cm_fsm_patch_stats.h).
+ *
+ * Appended after @ref cm_stats_t in @c CM2CD_STATISTICS_EVENT payloads from
+ * patched firmware.
+ */
+#define NRF71_COEX_PATCH_STATS_IN_COEX_IF 1
+struct cm_fsm_patch_stats_t {
+	/** CD2CM command entry counts */
+	unsigned int cmd_update_coex_params_cnt_patch;
+	unsigned int cmd_update_user_params_cnt_patch;
+	unsigned int cmd_enable_coex_cnt_patch;
+	unsigned int cmd_allocate_ppw_cnt_patch;
+	unsigned int cmd_set_pti_ranges_cnt_patch;
+	unsigned int cmd_get_stats_cnt_patch;
+	unsigned int cmd_wifi_sw_client_req_cnt_patch;
+	unsigned int cm_coex_process_cmd_cnt_patch;
+	/** CM2CD event counters */
+	unsigned int wifi_sw_client_event_to_host_cnt;
+	unsigned int coex_params_event_to_host_cnt;
+	unsigned int user_params_event_to_host_cnt;
+	unsigned int enable_coex_event_to_host_cnt;
+	unsigned int allocate_ppw_event_to_host_cnt;
+	unsigned int set_pti_ranges_event_to_host_cnt;
+} __NRF_WIFI_PKD;
+
+/**
  * Message IDs from Coexistence Driver to Coexistence Manager.
  *
  * IDs of different messages posted from Coexistence Driver (CD) to
  * Coexistence Manager (CM) for command routing.
+ *
+ * The enumerator values are the wire values expected by CM firmware
  */
 enum cd2cm_msg_id_t {
 	/** To enable coexistence. */
@@ -310,34 +375,10 @@ enum cd2cm_msg_id_t {
 	CD2CM_WIFI_SW_CLIENT_REQUEST,
 	/** To get all the CM stats. */
 	CD2CM_GET_STATS,
-	/** Total number of valid message IDs. */
+	/** Total number of valid ROM CM message IDs (0 through @c CD2CM_GET_STATS). */
 	CD2CM_MSG_ID_COUNT
 };
 
-/**
- * PPW allocation control.
- *
- * Indicates if allocation of Periodic Priority Windows (PPWs) is to be
- * started or stopped.
- */
-enum start_stop_ppw_t {
-	/** To stop allocation of windows. */
-	STOP_ALLOC_WINDOWS = 0,
-	/** To start allocation of windows. */
-	START_ALLOC_WINDOWS
-};
-
-/**
- * Radio selection for first priority window.
- *
- * Indicates to which radio the first priority window of PPWs to be allocated.
- */
-enum coex_radios_t {
-	/** Allocate first window to Wi-Fi radio. */
-	WIFI_RADIO = 0,
-	/** Allocate first window to SR radio. */
-	SR_RADIO
-};
 
 /**
  * Antenna allocation mode.
@@ -366,90 +407,6 @@ enum coex_en_or_dis_t {
 	COEX_ENABLE
 };
 
-/**
- * Wi-Fi SW client request type.
- *
- * Indicates the type of SW client operation.
- */
-enum coex_wifi_sw_client_req_type_t {
-	/** Indicates the SW client release. */
-	WIFI_SW_CLIENT_RELEASE = 0,
-	/** Indicates the SW client request. */
-	WIFI_SW_CLIENT_REQUEST = 1
-};
-
-/**
- * Wi-Fi SW client request priority levels.
- *
- * Indicates the priority level of the SW client request.
- */
-enum coex_wifi_sw_client_req_pti_level_t {
-	/** Low priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_LOW = 0,
-	/** Medium priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_MEDIUM,
-	/** High priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_HIGH,
-	/** Highest priority level. */
-	WIFI_SW_CLIENT_REQ_PTI_HIGHEST,
-	/** Total number of priority levels. */
-	WIFI_SW_CLIENT_REQ_PTI_COUNT
-};
-
-/**
- * Wi-Fi SW client types.
- *
- * Indicates different Wi-Fi SW clients that can request COEX resources.
- */
-enum wifi_sw_client_t {
-	/** To protect beacon reception from SR interference. */
-	WIFI_BEACON_RECEPTION = 0,
-	/** To protect connection phase from SR interference. */
-	WIFI_CONNECTION,
-	/** To protect calibrations from SR interference. */
-	WIFI_CALIBRATIONS,
-	/** To protect scan from SR interference. */
-	WIFI_SCAN,
-	/** Total number of Wi-Fi SW client types. */
-	WIFI_SW_CLIENT_COUNT
-};
-
-/**
- * Periodic priority windows generation parameters.
- *
- * This structure holds the parameters required for generating
- * Periodic Priority Windows (PPWs) for Wi-Fi and SR radios.
- * Embedded in cd2cm_genarate_ppw_t message.
- */
-struct coex_ppw_parameters_t {
-	/** Start or stop priority windows. see &enum start_stop_ppw_t */
-	unsigned int start_or_stop_ppw;
-	/** Radio to which first priority window to be allocated. see &enum coex_radios_t */
-	unsigned int first_window_to_wifi_or_sr;
-	/** Wi-Fi priority window duration in milliseconds. */
-	unsigned int wifi_pti_window_duration;
-	/** SR priority window duration in milliseconds. */
-	unsigned int sr_pti_window_duration;
-	/** Maximum time (in milliseconds) to wait for a corresponding "stop" command
-	 * after a "start" has been issued. If this timeout expires without receiving
-	 * the "stop" signal, the Coexistence Manager (CM) will automatically terminate
-	 * Priority Window (PPW) generation to prevent indefinite continuation.
-	 */
-	unsigned int ppws_timeout;
-} __NRF_WIFI_PKD;
-
-/**
- * Message to allocate PPWs to Wi-Fi and SR.
- *
- * Message from driver to CM to allocate Periodic Priority Windows
- * to Wi-Fi and SR radios.
- */
-struct cd2cm_genarate_ppw_t {
-	/** Message ID. Set to CD2CM_ALLOCATE_PPW. see &enum cd2cm_msg_id_t */
-	unsigned int message_id;
-	/** Parameters related to PPW generation. */
-	struct coex_ppw_parameters_t ppw_parameters;
-} __NRF_WIFI_PKD;
 
 /**
  * Wi-Fi SW and HW clients priority range values.
@@ -515,36 +472,6 @@ struct cd2cm_get_coex_stats_t {
 	unsigned int reserved;
 } __NRF_WIFI_PKD;
 
-/**
- * Software client request parameters
- *
- * This structure holds the parameters required to post
- * a SW client request ro request COEX resources.
- */
-struct coex_sw_client_params_t {
-	/** Wi-Fi SW client request/release. see &enum coex_wifi_sw_client_req_type_t */
-	unsigned int sw_client_request;
-	/** SW client priority level. see &enum coex_wifi_sw_client_req_pti_level_t */
-	unsigned int sw_client_pti_level;
-	/** SW client type. see &enum wifi_sw_client_t */
-	unsigned int sw_client_type;
-	/** SW request timeout in milliseconds */
-	unsigned int request_timeout_in_ms;
-	/** Wi-Fi operating band */
-	unsigned int wifi_operating_band;
-} __NRF_WIFI_PKD;
-
-/**
- * Message to post a SW client request.
- *
- * Message from CD to CM to request COEX resources.
- */
-struct cd2cm_wifi_sw_client_request_t {
-	/** Message ID. Set to CD2CM_WIFI_SW_CLIENT_REQUEST. see &enum cd2cm_msg_id_t */
-	unsigned int message_id;
-	/** SW client request parameters */
-	struct coex_sw_client_params_t sw_client_parameters;
-} __NRF_WIFI_PKD;
 
 /**
  * Wi-Fi scan puncture information.
@@ -640,6 +567,11 @@ enum coex_wifi_power_event_t {
  * Returns zero on success or a negative errno value.
  */
 int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event);
+
+/**
+ * Return true after a successful coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY).
+ */
+bool coex_cd_wifi_is_up(void);
 
 /**
  * @}
