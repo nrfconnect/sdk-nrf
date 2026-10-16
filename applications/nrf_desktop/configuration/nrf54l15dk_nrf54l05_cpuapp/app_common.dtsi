@@ -34,12 +34,12 @@
 
 	pwmleds2 {
 		compatible = "pwm-leds";
-		status = "okay";
+		status = "disabled";
 
 		pwm_led2: led_pwm_2 {
 			status = "okay";
 			pwms = <&pwm22 0 PWM_MSEC(20) PWM_POLARITY_NORMAL>;
-			label = "LED Num Lock";
+			label = "Unused LED 2";
 		};
 	};
 };
