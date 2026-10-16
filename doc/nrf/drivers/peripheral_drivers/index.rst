@@ -11,4 +11,5 @@ The following pages describe the supported peripheral drivers and the interfaces
    :caption: Subpages:
 
    spim
+   twim
    uart
