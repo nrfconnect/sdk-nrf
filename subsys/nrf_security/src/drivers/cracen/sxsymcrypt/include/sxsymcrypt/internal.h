@@ -114,10 +114,7 @@ struct sxblkcipher {
 	const struct sxkeyref *key;
 	uint32_t textsz;
 	struct sx_dmactl dma;
-	/* ChaCha20 needs 4 descriptors for config, key, counter and nonce, and a multi-part
-	 * update can add 2 data descriptors (buffered block and new input).
-	 */
-	struct sxdesc descs[6];
+	struct sxdesc descs[5];
 	uint8_t extramem[SX_BLKCIPHER_PRIV_SZ];
 };
 
