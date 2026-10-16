@@ -31,7 +31,7 @@ from pathlib import Path
 import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.fixtures import determine_scope
-from twister_harness_ext.utils.common import run_command
+from twister_harness_ext.adapters.cmd import run_command
 
 logger = logging.getLogger(__name__)
 

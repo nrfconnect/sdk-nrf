@@ -13,9 +13,9 @@ import logging
 import time
 
 from twister_harness import DeviceAdapter, MCUmgr, Shell
-from twister_harness_ext.utils.common import reset_board
+from twister_harness_ext.adapters.nrfutil import nrfutil_write, reset_board
 from twister_harness_ext.utils.dts_helper import get_code_partition_address
-from twister_harness_ext.utils.helpers import nrfutil_write, retry
+from twister_harness_ext.utils.helpers import retry
 from upgrade_test_manager import UpgradeTestWithMCUmgr
 
 logger = logging.getLogger(__name__)

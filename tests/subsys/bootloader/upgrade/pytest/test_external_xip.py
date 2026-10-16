@@ -14,7 +14,7 @@ from pathlib import Path
 from packaging.version import Version
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
-from twister_harness_ext.utils.common import reset_board
+from twister_harness_ext.adapters.nrfutil import reset_board
 from twister_harness_ext.utils.dts_helper import (
     get_partition_address,
     get_partition_size,
