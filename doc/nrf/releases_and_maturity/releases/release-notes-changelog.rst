@@ -1164,6 +1164,18 @@ Libraries for networking
   * Updated the job execution update that marks a job as ``FAILED`` to report the failure in the AWS IoT Jobs ``statusDetails`` field, as ``{"reason":"<cause>","progress":"<percentage>"}``, instead of sending ``null``.
     This makes it possible to diagnose a failed update from the AWS IoT Jobs console without a serial log from the device.
 
+  * Fixed an issue where a job message that was larger than the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option closed the MQTT connection, which made the :ref:`aws_iot_sample` reboot in a loop.
+    The library now drops the message, keeps the connection and reports the :c:enumerator:`AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE` error cause to the application.
+
+  * Updated the handling of a job message that is larger than the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option.
+    If the library can identify the job in the beginning of the message, it now sets the job execution to ``FAILED`` with the ``PAYLOAD_TOO_LARGE`` reason in the status details.
+    AWS IoT Jobs then does not send the job again.
+
+  * Increased the default value of the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option from 1350 to 4096 bytes, so that a job message with a presigned URL fits in the buffer.
+
+  * Removed the variable-length arrays that were used to log the received job document and topic when the :kconfig:option:`CONFIG_AWS_FOTA_LOG_LEVEL_DBG` Kconfig option is enabled.
+    The job document is now logged as a hexdump of at most 256 bytes, which does not use the stack.
+
 * :ref:`lib_aws_iot` library:
 
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.

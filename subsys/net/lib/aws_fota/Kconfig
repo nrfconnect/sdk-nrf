@@ -16,7 +16,11 @@ if AWS_FOTA
 
 config AWS_FOTA_PAYLOAD_SIZE
 	int "MQTT payload reception buffer size for AWS IoT Jobs messages"
-	default 1350
+	default 4096
+	help
+	  A job message that does not fit in this buffer is dropped and the job is failed.
+	  A job with a presigned URL needs about 2 kB or more, because the URL contains
+	  a security token.
 
 config AWS_FOTA_DOWNLOAD_SECURITY_TAG
 	int "Security tag to be used for downloads"
