@@ -86,10 +86,19 @@
 
 		cpuapp_dma_region: memory@2fc10000 {
 			compatible = "zephyr,memory-region";
-			reg = <0x2fc10000 DT_SIZE_K(15)>;
+			reg = <0x2fc10000 DT_SIZE_K(13)>;
 			status = "disabled";
 			#memory-region-cells = <0>;
 			zephyr,memory-region = "DMA_RAM31_APP";
+			zephyr,memory-attr = <DT_MEM_DMA>;
+		};
+
+		cpuppr_dma_region: memory@2fc13400 {
+			compatible = "zephyr,memory-region";
+			reg = <0x2fc13400 DT_SIZE_K(2)>;
+			status = "disabled";
+			#memory-region-cells = <0>;
+			zephyr,memory-region = "DMA_RAM31_PPR";
 			zephyr,memory-attr = <DT_MEM_DMA>;
 		};
 
