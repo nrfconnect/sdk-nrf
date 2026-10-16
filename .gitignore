@@ -6,9 +6,9 @@
 *.swp
 *.swo
 *~
-build
-build-*
-build_*
+build/
+build-*/
+build_*/
 cscope.*
 .dir
 venv
