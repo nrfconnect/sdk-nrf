@@ -5,6 +5,7 @@
  */
 
 #include <ot_rpc_ids.h>
+#include <ot_rpc_callback.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
 #include <ot_rpc_macros.h>
@@ -13,6 +14,13 @@
 #include <nrf_rpc_cbor.h>
 
 #include <openthread/instance.h>
+
+#ifndef CONFIG_OPENTHREAD_RPC_CLIENT_NUM_STATE_CHANGED_CALLBACKS
+#define CONFIG_OPENTHREAD_RPC_CLIENT_NUM_STATE_CHANGED_CALLBACKS 10
+#endif
+
+OT_RPC_CALLBACK_TABLE_DEFINE(state_changed_cb, otStateChangedCallback,
+			     CONFIG_OPENTHREAD_RPC_CLIENT_NUM_STATE_CHANGED_CALLBACKS);
 
 /*
  * The actual otInstance object resides on OT RPC server and is only accessed by OT RPC client using
@@ -100,19 +108,30 @@ void otInstanceFactoryReset(otInstance *aInstance)
 otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback aCallback,
 				  void *aContext)
 {
-	const size_t cbor_buffer_size = 10;
 	struct nrf_rpc_cbor_ctx ctx;
+	ot_rpc_callback_id cb_id;
 	otError error = OT_ERROR_FAILED;
 
 	OT_RPC_UNUSED(aInstance);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-	/* TODO: implement callback & address pseudonymization. */
-	nrf_rpc_encode_uint(&ctx, (uint32_t)aCallback);
-	nrf_rpc_encode_uint(&ctx, (uint32_t)aContext);
+	if (aCallback == NULL) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	cb_id = ot_rpc_state_changed_cb_alloc(aCallback, aContext);
+	if (cb_id == OT_RPC_CALLBACK_ID_NULL) {
+		return OT_ERROR_NO_BUFS;
+	}
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(cb_id));
+	nrf_rpc_encode_uint(&ctx, cb_id);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_SET_STATE_CHANGED_CALLBACK, &ctx,
 				ot_rpc_decode_error, &error);
+
+	if (error != OT_ERROR_NONE && error != OT_ERROR_ALREADY) {
+		ot_rpc_state_changed_cb_free(aCallback, aContext);
+	}
 
 	return error;
 }
@@ -120,15 +139,18 @@ otError otSetStateChangedCallback(otInstance *aInstance, otStateChangedCallback 
 void otRemoveStateChangeCallback(otInstance *aInstance, otStateChangedCallback aCallback,
 				 void *aContext)
 {
-	const size_t cbor_buffer_size = 10;
 	struct nrf_rpc_cbor_ctx ctx;
+	ot_rpc_callback_id cb_id;
 
 	OT_RPC_UNUSED(aInstance);
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, cbor_buffer_size);
-	/* TODO: implement callback & address pseudonymization. */
-	nrf_rpc_encode_uint(&ctx, (uint32_t)aCallback);
-	nrf_rpc_encode_uint(&ctx, (uint32_t)aContext);
+	cb_id = ot_rpc_state_changed_cb_free(aCallback, aContext);
+	if (cb_id == OT_RPC_CALLBACK_ID_NULL) {
+		return;
+	}
+
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 1 + sizeof(cb_id));
+	nrf_rpc_encode_uint(&ctx, cb_id);
 
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_REMOVE_STATE_CHANGED_CALLBACK, &ctx,
 				ot_rpc_decode_void, NULL);
@@ -138,12 +160,12 @@ static void ot_rpc_cmd_state_changed(const struct nrf_rpc_group *group,
 				     struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	struct nrf_rpc_cbor_ctx rsp_ctx;
-	uint32_t callback;
-	uint32_t context;
+	ot_rpc_callback_id cb_id;
+	otStateChangedCallback cb;
+	void *context;
 	otChangedFlags flags;
 
-	callback = nrf_rpc_decode_uint(ctx);
-	context = nrf_rpc_decode_uint(ctx);
+	cb_id = nrf_rpc_decode_uint(ctx);
 	flags = nrf_rpc_decode_uint(ctx);
 
 	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
@@ -152,8 +174,10 @@ static void ot_rpc_cmd_state_changed(const struct nrf_rpc_group *group,
 	}
 
 	ot_rpc_mutex_lock();
-	/* TODO: implement callback & address pseudonymization. */
-	((otStateChangedCallback)callback)(flags, (void *)context);
+	cb = ot_rpc_state_changed_cb_get(cb_id, &context);
+	if (cb != NULL) {
+		cb(flags, context);
+	}
 	ot_rpc_mutex_unlock();
 
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
