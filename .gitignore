@@ -53,6 +53,7 @@ scripts/hid_configurator/hidapi.dll
 
 # CI output
 compliance.xml
+ncs_compliance.xml
 
 # from check_compliance.py
 BinaryFiles.txt
@@ -82,4 +83,5 @@ TextEncoding.txt
 YAMLLint.txt
 CMakeStyle.txt
 KconfigFormat.txt
+WestLink.txt
 **/.DS_Store
