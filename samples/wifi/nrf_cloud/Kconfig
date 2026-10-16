@@ -216,6 +216,25 @@ config SAMPLE_MEMFAULT_FOTA
 	  test/confirm revert mechanism, since the sample relies on
 	  boot_write_img_confirmed() to mark an update as good.
 
+config SAMPLE_MEMFAULT_BUTTONS
+	bool "Trigger Memfault actions with DK buttons"
+	default y
+	depends on MEMFAULT
+	select DK_LIBRARY
+	help
+	  Lets the application trigger Memfault actions on demand, instead of
+	  waiting for the Memfault SDK's periodic upload timer:
+	  The first button (sw0) captures a metrics heartbeat and posts all pending chunks.
+	  The second button (sw1) checks for a FOTA update (requires SAMPLE_MEMFAULT_FOTA).
+
+config SAMPLE_MEMFAULT_BUTTONS_THREAD_STACK_SIZE
+	int "Memfault buttons thread stack size (bytes)"
+	default 4096
+	depends on SAMPLE_MEMFAULT_BUTTONS
+	help
+	  Sets the stack size (in bytes) for the thread that runs the
+	  button-triggered Memfault actions.
+
 endif
 
 endmenu
