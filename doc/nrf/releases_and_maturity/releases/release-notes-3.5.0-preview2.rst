@@ -573,7 +573,7 @@ Networking samples
     * :ref:`net_coap_client_sample`
     * :ref:`http_server`
     * :ref:`download_sample`
-    * :ref:`aws_iot`
+    * :ref:`aws_iot_sample`
 
   * The ``nrf54l15dk/nrf54l15/cpuapp`` with nRF7002 EB shield from the following samples, keeping only the nRF7002-EB II shield for the ``nrf54l15dk/nrf54l15/cpuapp`` board target:
 

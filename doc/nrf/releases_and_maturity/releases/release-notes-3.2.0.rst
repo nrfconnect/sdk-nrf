@@ -907,7 +907,7 @@ Networking samples
 
 * Added support for the nRF7002-EB II with the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target in the following samples:
 
-  * :ref:`aws_iot`
+  * :ref:`aws_iot_sample`
   * :ref:`net_coap_client_sample`
   * :ref:`download_sample`
   * :ref:`http_server`

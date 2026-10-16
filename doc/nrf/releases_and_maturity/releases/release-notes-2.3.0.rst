@@ -562,7 +562,7 @@ nRF9160 samples
 
   * Updated the sample to use the logging subsystem for console output.
 
-* :ref:`aws_iot` sample:
+* :ref:`aws_iot_sample` sample:
 
   * Updated the sample to use the logging subsystem for console output.
 

@@ -92,7 +92,7 @@ FOTA updates using other cloud services
 
 FOTA updates can alternatively be hosted from a customer-developed cloud services such as solutions based on AWS and Azure.
 If you are uploading the files to an Amazon Web Services Simple Storage Service (AWS S3) bucket, see the :ref:`lib_aws_fota` documentation for instructions.
-Samples are provided in |NCS| for AWS (:ref:`aws_iot` sample) and Azure (:ref:`azure_iot_hub` sample).
+Samples are provided in |NCS| for AWS (:ref:`aws_iot_sample` sample) and Azure (:ref:`azure_iot_hub` sample).
 
 Your application must be able to retrieve the host and file name for the binary file.
 See the :ref:`lib_fota_download` library documentation for information about the format of this information, especially when providing two files for a bootloader upgrade.
@@ -104,5 +104,5 @@ Samples and applications implementing FOTA
 * :ref:`http_modem_full_update_sample` sample - Performs a full firmware OTA update of the modem.
 * :ref:`http_modem_delta_update_sample` sample - Performs a delta OTA update of the modem firmware.
 * :ref:`http_application_update_sample` sample - Performs a basic application FOTA update.
-* :ref:`aws_iot` sample - Performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
+* :ref:`aws_iot_sample` sample - Performs a FOTA update using MQTT and HTTP, where the firmware download is triggered through an AWS IoT job.
 * :ref:`azure_iot_hub` sample - Performs a FOTA update from the Azure IoT Hub.

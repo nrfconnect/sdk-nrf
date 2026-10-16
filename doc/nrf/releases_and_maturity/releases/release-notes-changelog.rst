@@ -670,7 +670,7 @@ Networking samples
     Instead, use the configurable profile (:kconfig:option:`CONFIG_TFM_PROFILE_TYPE_NOT_SET`), select the SFN backend (:kconfig:option:`CONFIG_TFM_SFN`) to save RAM and select memory-mapped iovecs (:kconfig:option:`CONFIG_TFM_PSA_FRAMEWORK_HAS_MM_IOVEC`) to reduce copying of client vectors during TLS handshakes.
   * The following samples to explicitly select the Protected Storage backend of the :ref:`TLS Credentials Subsystem <zephyr:sockets_tls_credentials_subsys>` (:kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE`) in their Wi-Fi configuration, so that TLS credentials persist across reboots:
 
-    * :ref:`aws_iot`
+    * :ref:`aws_iot_sample`
     * :ref:`azure_iot_hub`
     * :ref:`net_coap_client_sample`
     * :ref:`download_sample`
@@ -698,12 +698,16 @@ Networking samples
     * :ref:`net_coap_client_sample`
     * :ref:`http_server`
     * :ref:`download_sample`
-    * :ref:`aws_iot`
+    * :ref:`aws_iot_sample`
 
   * The ``nrf54l15dk/nrf54l15/cpuapp`` with nRF7002 EB shield from the following samples, keeping only the nRF7002-EB II shield for the ``nrf54l15dk/nrf54l15/cpuapp`` board target:
 
     * :ref:`https_client`
     * :ref:`udp_sample`
+
+* :ref:`aws_iot_sample` sample:
+
+  * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
 * :ref:`download_sample` sample:
 

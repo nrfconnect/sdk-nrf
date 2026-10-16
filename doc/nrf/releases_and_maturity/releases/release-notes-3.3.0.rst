@@ -829,7 +829,7 @@ Networking samples
 
   * Updated the sample for the nRF7002 DK to explicitly enable ECDH/ECDSA and RSA certificate support.
 
-* :ref:`aws_iot` sample:
+* :ref:`aws_iot_sample` sample:
 
   * Updated the sample for the nRF7002 DK to explicitly enable ECDH/ECDSA and RSA certificate support.
 
