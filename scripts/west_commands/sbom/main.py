@@ -24,6 +24,7 @@ import spdx_tag_detector
 from args import args, init_args
 from common import SbomException, dbg_time
 from data_structure import Data
+from sign_spdx import SpdxSigner
 from west import log
 
 inputs = {
@@ -47,7 +48,7 @@ generators = {
 }
 
 
-def _run_pipeline(domain: 'str|None' = None):
+def _run_pipeline(domain: 'str|None' = None, signer: 'SpdxSigner|None' = None):
     data = Data()
     data.domain = domain
 
@@ -72,6 +73,8 @@ def _run_pipeline(domain: 'str|None' = None):
         if output_file is not None:
             t = dbg_time(f'GENERATOR: {generator_name}')
             output_template.generate(data, output_file, Path(__file__).parent / generator)
+            if generator_name == 'spdx' and signer is not None:
+                signer.sign(output_file)
             log.dbg(f'GENERATOR: Done in {t}s')
 
 
@@ -136,6 +139,7 @@ def main():
     '''Main entry function for the script.'''
     try:
         init_args(detectors)
+        signer = SpdxSigner(args.sign_key, args.cosign) if args.sign_key is not None else None
 
         def domain_output(
             output_path: 'str|Path|None', domain: str, default_name: str
@@ -194,14 +198,14 @@ def main():
                             base_outputs[key], domain_name, defaults[gen]
                         )
 
-                    _run_pipeline(domain_name)
+                    _run_pipeline(domain_name, signer)
                     processed_domains += 1
 
                 if processed_domains == 0:
                     raise SbomException('No sysbuild domains contain map or hex files')
                 return
 
-        _run_pipeline()
+        _run_pipeline(signer=signer)
     except SbomException as e:
         log.die(str(e), exit_code=1)
 
