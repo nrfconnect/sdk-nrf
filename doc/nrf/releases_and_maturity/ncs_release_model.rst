@@ -28,3 +28,4 @@ For more information, see the following pages:
 
    ncs_release_model/standard_releases
    ncs_release_model/lts_releases
+   ncs_release_model/deprecation_policy
