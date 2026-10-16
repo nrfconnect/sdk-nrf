@@ -446,6 +446,25 @@ Bluetooth samples
 -----------------
 
 * Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+
+* Removed:
+
+  * Support for the nRF52 Series devices from the following Bluetooth LE samples used in automated Bluetooth LE sample system tests:
+
+    * :ref:`ble_channel_classification`
+    * :ref:`bluetooth_conn_time_synchronization` and :ref:`bluetooth_isochronous_time_synchronization`
+    * :ref:`direct_test_mode`
+    * :ref:`ble_event_trigger`
+    * :ref:`bluetooth_iso_combined_bis_cis`
+    * :ref:`bt_peripheral_with_multiple_identities`
+    * :ref:`bluetooth_radio_coex_1wire_sample`
+    * :ref:`ble_radio_notification_conn_cb`
+    * :ref:`bt_scanning_while_connecting`
+    * :ref:`ble_shorter_conn_intervals`
+    * :ref:`ble_subrating`
+
+  * The nRF52 Series board targets from the :ref:`samples_test_app` Twister configuration.
+
 * :ref:`central_nfc_pairing` and :ref:`peripheral_nfc_pairing` samples:
 
   * Removed support for the nRF52 Series devices.

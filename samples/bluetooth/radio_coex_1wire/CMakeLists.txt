@@ -9,8 +9,8 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 
 project("radio_coex_1wire")
 
-if(NOT CONFIG_SOC_SERIES_NRF52 AND NOT CONFIG_SOC_SERIES_NRF54L AND NOT CONFIG_SOC_SERIES_NRF54H)
-  message(FATAL_ERROR "This sample is only supported on the nRF52, nRF54L and nRF54H series.")
+if(NOT CONFIG_SOC_SERIES_NRF54L AND NOT CONFIG_SOC_SERIES_NRF54H)
+  message(FATAL_ERROR "This sample is only supported on the nRF54L and nRF54H series.")
 endif()
 
 # NORDIC SDK APP START
