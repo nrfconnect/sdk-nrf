@@ -138,7 +138,8 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 	switch (vif_ctx_zep->scan_type) {
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	case SCAN_DISPLAY:
-		memcpy(&vif_ctx_zep->scan_done_event, scan_done_event, event_len);
+		memcpy(&vif_ctx_zep->scan_done_event, scan_done_event,
+		       MIN(event_len, sizeof(vif_ctx_zep->scan_done_event)));
 		/* Schedule scan result processing in system workqueue to avoid deadlock */
 		k_work_submit(&vif_ctx_zep->disp_scan_res_work);
 		break;
