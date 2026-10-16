@@ -336,6 +336,10 @@ NRF = (
     ("device_guides/nrf52/features", "app_dev/device_guides/nrf52/features"),
     ("device_guides/nrf52/building", "app_dev/device_guides/nrf52/building"), # Building and programming on nRF52 Series devices
     ("device_guides/nrf52/fota_update", "app_dev/device_guides/nrf52/fota_update"), # FOTA updates on nRF52 Series devices
+    ("app_dev/device_guides/nrf52/index", "app_dev"), # nRF52 guide removed from Application development toctree
+    ("app_dev/device_guides/nrf52/features", "app_dev"),
+    ("app_dev/device_guides/nrf52/building", "app_dev"),
+    ("app_dev/device_guides/nrf52/fota_update", "app_dev"),
     ("device_guides/pmic", "app_dev/device_guides/pmic/index"), # Developing with PMICs (landing)
     ("device_guides/pmic/index", "app_dev/device_guides/pmic/index"),
     ("device_guides/working_with_pmic/npm1300/developing", "app_dev/device_guides/pmic/npm1300"), # Developing with the nPM1300 PMIC

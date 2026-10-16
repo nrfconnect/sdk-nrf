@@ -990,8 +990,8 @@ Documentation
 
   * :ref:`app_memory` documentation by adding configuration options affecting memory footprint for Bluetooth mesh, which can be used to optimize the application.
   * Steps on :ref:`Installing nRF Connect SDK automatically <gs_assistant>` to reflect the fact that the |nRFVSC| is the default recommended IDE.
-  * Working with the nRF52 Series information by splitting the information into :ref:`ug_nrf52_features` and :ref:`ug_nrf52_developing` pages.
+  * Working with the nRF52 Series information by splitting the information into Features of nRF52 Series and Developing with nRF52 Series pages.
   * :ref:`ug_tfm` user guide with improved TF-M logging documentation on getting the secure output on nRF5340 DK.
   * Documentation of :ref:`nrf_bt_scan_readme`, :ref:`ancs_client_readme`, :ref:`hogp_readme` and :ref:`lib_hrs_client_readme` libraries to improve readability.
-  * :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` with sections describing FOTA in Bluetooth mesh.
+  * Developing with nRF52 Series and :ref:`ug_nrf5340` with sections describing FOTA in Bluetooth mesh.
   * :ref:`ug_thread_tools` with new nRF Util installation information when configuring radio co-processor.

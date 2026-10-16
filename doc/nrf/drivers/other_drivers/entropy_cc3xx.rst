@@ -10,7 +10,6 @@ CC3XX entropy driver
 
 You can use the CC310 entropy driver (*entropy_cc3xx*) to generate random data using the Arm CryptoCell CC3XX hardware available on the following Nordic SoCs/SiPs:
 
-* nRF52840
 * nRF5340
 * nRF91 Series
 

@@ -175,83 +175,6 @@ The following table indicates the software maturity levels of the support for ea
 
 .. tabs::
 
-   .. group-tab:: nRF52 Series
-
-      .. list-table:: Protocol support
-         :widths: auto
-         :header-rows: 1
-
-         * -
-           - nRF52810
-           - nRF52811
-           - nRF52820
-           - nRF52832
-           - nRF52833
-           - nRF52840
-         * - **Bluetooth®**
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-           - Supported
-         * - **Bluetooth Mesh**
-           - --
-           - --
-           - --
-           - Supported
-           - Supported
-           - Supported
-         * - **DECT NR+ PHY**
-           - --
-           - --
-           - --
-           - --
-           - --
-           - --
-         * - **ESB**
-           - Supported
-           - --
-           - --
-           - Supported
-           - Supported
-           - Supported
-         * - **LTE**
-           - --
-           - --
-           - --
-           - --
-           - --
-           - --
-         * - **Matter**
-           - --\ :sup:`8`
-           - --\ :sup:`8`
-           - --\ :sup:`8`
-           - --\ :sup:`8`
-           - --\ :sup:`8`
-           - --\ :sup:`8`
-         * - **Amazon Sidewalk**
-           - --\ :sup:`4`
-           - --\ :sup:`4`
-           - --\ :sup:`4`
-           - --\ :sup:`4`
-           - --\ :sup:`4`
-           - --\ :sup:`4`
-         * - **Wi-Fi®**
-           - --
-           - --
-           - --
-           - --
-           - --
-           - Supported\ :sup:`1`
-         * - **Zigbee**
-           - --\ :sup:`5`
-           - --\ :sup:`5`
-           - --\ :sup:`5`
-           - --\ :sup:`5`
-           - --\ :sup:`5`
-           - --\ :sup:`5`
-
    .. group-tab:: nRF53 Series
 
       .. list-table:: Protocol support
@@ -531,146 +454,6 @@ The following table indicates the software maturity levels of the support for ea
 
   .. tabs::
 
-     .. group-tab:: nRF52 Series
-
-        .. list-table:: Bluetooth features support
-           :widths: auto
-           :header-rows: 1
-
-           * -
-             - nRF52810
-             - nRF52811
-             - nRF52820
-             - nRF52832
-             - nRF52833
-             - nRF52840
-           * - **2 Mbps PHY**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Coded PHY (Long Range)**
-             - --
-             - Supported
-             - Supported
-             - --
-             - Supported
-             - Supported
-           * - **Concurrent Roles**\ :sup:`1`
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Data Length Extensions**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Advertising Extensions**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Periodic Advertising with Responses**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Periodic Advertising Sync Transfer**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Isochronous Channels**
-             - Supported\ :sup:`2`
-             - Supported\ :sup:`2`
-             - Supported
-             - Supported\ :sup:`2`
-             - Supported
-             - Supported\ :sup:`2`
-           * - **Direction Finding**\ :sup:`3`
-             - --
-             - Supported
-             - Supported
-             - --
-             - Supported
-             - --
-           * - **LE Power Control**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Connection Subrating**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Channel Sounding**
-             - --
-             - --
-             - --
-             - --
-             - --
-             - --
-           * - **GATT Database Hash**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Enhanced ATT**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **L2CAP Connection Oriented Channels**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Shorter Connection Intervals**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Frame Space Update**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-           * - **Extended Feature Set**
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-             - Supported
-
      .. group-tab:: nRF53 Series
 
         .. list-table:: Bluetooth features support
@@ -947,55 +730,6 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-         .. list-table:: Proprietary Bluetooth features support
-            :widths: auto
-            :header-rows: 1
-
-            * -
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Low Latency Packet Mode**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-            * - **Multi-protocol Support**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-            * - **QoS Conn Event Reports**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-            * - **QoS Channel Survey**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-            * - **Radio Coexistence**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
 
       .. tab:: nRF53 Series
 
@@ -1489,81 +1223,6 @@ The following table indicates the software maturity levels of the support for ea
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-         .. list-table:: Wi-Fi feature support
-            :header-rows: 1
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Bluetooth LE Coexistence**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Experimental
-            * - **Monitor Mode**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Promiscuous Mode**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **STA Mode**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Experimental\ :sup:`3`
-            * - **Scan only (for location accuracy)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Experimental\ :sup:`5`
-            * - **SoftAP Mode (for Wi-Fi provisioning)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **TX injection Mode**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Thread Coexistence**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Wi-Fi Direct (P2P)**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-
       .. tab:: nRF53 Series
          .. list-table:: Wi-Fi feature support
             :widths: auto
@@ -1805,37 +1464,6 @@ The following table indicates the software maturity levels of the support for Go
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-
-         .. list-table:: Google Fast Pair use case support
-            :header-rows: 1
-            :widths: auto
-
-            * - Use case
-              - |NCS| sample demonstration
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Input device**
-              - :ref:`fast_pair_input_device`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Locator tag**
-              - :ref:`fast_pair_locator_tag`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-
       .. tab:: nRF53 Series
 
          .. list-table:: Google Fast Pair use case support
@@ -1915,55 +1543,6 @@ The following table indicates the software maturity levels of the support for ea
    .. _software_maturity_fast_pair_feature:
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-         .. list-table:: Google Fast Pair feature support
-            :header-rows: 1
-            :widths: auto
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Initial pairing**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Subsequent pairing**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Battery Notification extension**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Personalized Name extension**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Find Hub Network extension**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
 
       .. tab:: nRF53 Series
 
@@ -2079,34 +1658,6 @@ The following table indicates the software maturity levels of the support for th
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-
-         .. list-table:: Google Fast Pair FHN extension feature support
-            :header-rows: 1
-            :widths: auto
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Precision Finding**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Precision Finding with Bluetooth LE Channel Sounding**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-
       .. tab:: nRF53 Series
 
          .. list-table:: Google Fast Pair FHN extension feature support
@@ -2193,34 +1744,6 @@ Trusted Firmware-M support
    .. tfm_ncs_profiles_support_table_start
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-         .. list-table:: TF-M profile support
-            :header-rows: 1
-            :widths: auto
-
-            * - TF-M profile
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - :ref:`Configurable <ug_tfm_supported_services_profiles_configurable>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - :ref:`Minimal <ug_tfm_supported_services_profiles_minimal>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
 
       .. tab:: nRF53 Series
 
@@ -2332,58 +1855,6 @@ The lists are organized by device Series and implementation.
    .. crypto_support_table_start
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-         The following tables list the cryptographic support for nRF52 Series devices.
-         The nRF52 Series devices do not support the :ref:`CRACEN <crypto_drivers_cracen>` driver.
-
-         .. list-table:: Cryptographic support by implementation - nRF52 Series
-            :header-rows: 1
-            :widths: auto
-
-            * - Implementation
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - :ref:`Oberon PSA Crypto - nrf_cc3xx <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - :ref:`Oberon PSA Crypto - CRACEN <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - :ref:`Oberon PSA Crypto - nrf_oberon <ug_crypto_architecture_implementation_standards_oberon>`
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-              - Supported
-            * - :ref:`TF-M Crypto Service <ug_crypto_architecture_implementation_standards_tfm>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - :ref:`IronSide Secure Enclave <ug_crypto_architecture_implementation_standards_ironside>`
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
 
       .. tab:: nRF53 Series
 
@@ -2550,27 +2021,6 @@ The lists are organized by device Series and implementation.
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-
-        .. list-table:: Immutable Bootloader support
-           :header-rows: 1
-           :widths: auto
-
-           * - Feature
-             - nRF52810
-             - nRF52811
-             - nRF52820
-             - nRF52832
-             - nRF52833
-             - nRF52840
-           * - **Immutable Bootloader as part of build**
-             - --
-             - --
-             - --
-             - Supported
-             - Supported
-             - Supported
-
       .. tab:: nRF53 Series
 
         .. list-table:: Immutable Bootloader support
@@ -2645,27 +2095,6 @@ Hardware Unique Key
 .. toggle::
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-        .. list-table:: Key Derivation support
-           :header-rows: 1
-           :widths: auto
-
-           * - Feature
-             - nRF52810
-             - nRF52811
-             - nRF52820
-             - nRF52832
-             - nRF52833
-             - nRF52840
-           * - **Key Derivation from Hardware Unique Key**
-             - --
-             - --
-             - --
-             - --
-             - --
-             - Supported
 
       .. tab:: nRF53 Series
 
@@ -2744,27 +2173,6 @@ The Secure Storage subsystem implements the PSA Certified Secure Storage API wit
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-
-         .. list-table:: Secure Storage support
-            :header-rows: 1
-            :widths: auto
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Secure Storage**
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-              - Supported
-
       .. tab:: nRF53 Series
 
          .. list-table:: Secure Storage support
@@ -2839,62 +2247,6 @@ The following table indicates the software maturity levels of the support for ea
 .. toggle::
 
    .. tabs::
-
-      .. tab:: nRF52 Series
-
-         .. list-table:: Bootloader and security features
-            :header-rows: 1
-            :widths: auto
-
-            * - Feature
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **Immutable MCUboot as part of build**
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-              - Supported
-            * - **Updatable MCUboot as part of build**
-              - --
-              - --
-              - --
-              - Supported
-              - Supported
-              - Supported
-            * - **Application image compression**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Hardware cryptography acceleration**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **Multiple signature keys**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **Image encryption**
-              - --
-              - --
-              - --
-              - Experimental
-              - Experimental
-              - Experimental
 
       .. tab:: nRF53 Series
 
@@ -3066,47 +2418,6 @@ The following table indicates the software maturity levels of the support for ea
 
    .. tabs::
 
-      .. tab:: nRF52 Series
-
-         .. list-table:: nPM module support
-            :header-rows: 1
-            :widths: auto
-
-            * - Module
-              - nRF52810
-              - nRF52811
-              - nRF52820
-              - nRF52832
-              - nRF52833
-              - nRF52840
-            * - **nPM1100**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
-            * - **nPM1300**
-              - --
-              - --
-              - --
-              - Supported
-              - --
-              - Supported
-            * - **nPM2100**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - Supported
-            * - **nPM6001**
-              - --
-              - --
-              - --
-              - --
-              - --
-              - --
       .. tab:: nRF53 Series
 
          .. list-table:: nPM module support
@@ -3252,45 +2563,6 @@ The following table indicates the software maturity levels of the support for Fr
   .. software_maturity_fem_support_table_start
 
   .. tabs::
-
-    .. group-tab:: nRF52 Series
-
-        .. list-table:: Front-End Module support
-          :widths: auto
-          :header-rows: 1
-
-          * - FEM device
-            - Implementation
-            - nRF52810
-            - nRF52811
-            - nRF52820
-            - nRF52832
-            - nRF52833
-            - nRF52840
-          * - nRF21540
-            - nRF21540 GPIO
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-          * - nRF21540
-            - nRF21540 GPIO+SPI
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
-          * - SKY66112-11
-            - Simple GPIO
-            - --
-            - --
-            - --
-            - --
-            - Supported
-            - Supported
 
     .. group-tab:: nRF53 Series
 
