@@ -1,0 +1,10 @@
+tests:
+  bluetooth.mesh.rpl.ncs:
+    platform_allow:
+      - native_sim
+    tags:
+      - bluetooth
+      - mesh
+      - ci_tests_subsys_bluetooth_mesh
+    integration_platforms:
+      - native_sim
