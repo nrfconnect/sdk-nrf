@@ -25,6 +25,12 @@ if(SB_CONFIG_HPF)
     endif()
   elseif(SB_CONFIG_HPF_MSPI)
     set(snippet_name "hpf-mspi")
+    set_config_bool(${SB_CONFIG_FLPRCORE_IMAGE_NAME} CONFIG_HPF_MSPI_IPC_NO_COPY
+      "${SB_CONFIG_HPF_MSPI_IPC_NO_COPY}"
+    )
+    set_config_bool(${DEFAULT_IMAGE} CONFIG_MSPI_HPF_IPC_NO_COPY
+      "${SB_CONFIG_HPF_MSPI_IPC_NO_COPY}"
+    )
     if(SB_CONFIG_HPF_FLPR_APP_FAULT_TIMER)
       hpf_apply_flpr_fault_timer_params(${SB_CONFIG_HPF_FLPR_APP_FAULT_TIMEOUT})
     endif()
