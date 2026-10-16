@@ -106,15 +106,9 @@ endif
 config TEMP_TRACKING
 	bool "Track temperature"
 	default y
+	select SENSOR if $(dt_nodelabel_enabled,temp)
 	help
 	  Sets whether to take temperature measurements.
-
-config TEMP_ALERT_LIMIT
-	int "Temperature limit to print alert"
-	default 24
-	help
-	  Sets the temperature in degrees C over which a temperature alert will
-	  be printed through serial terminal.
 
 choice
 	prompt "LED indication"
