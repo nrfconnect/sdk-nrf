@@ -221,6 +221,14 @@ endif
 endmenu
 
 if NRF_CLOUD_MQTT
+
+# Larger stack needed by nRF Cloud MQTT support for ITS
+config NRF_CLOUD_CONNECTION_POLL_THREAD_STACK_SIZE
+	default 9216 if SECURE_STORAGE
+
+endif
+
+if NRF_CLOUD_MQTT
 module-str = MQTT nRF Cloud
 endif
 if NRF_CLOUD_COAP
