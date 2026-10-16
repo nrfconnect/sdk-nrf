@@ -24,14 +24,14 @@ class Command(Enum):
 NRF_PROFILER_FATAL_ERROR_EVENT_NAME = "_nrf_profiler_fatal_error_event_"
 
 class ModelCreator:
-
-    def __init__(self, stream,
-                 event_close,
-                 sending_events=False,
-                 config=RttNordicConfig,
-                 event_filename=None,
-                 event_types_filename=None,
-                 log_lvl=logging.INFO):
+    def __init__(
+            self,
+            stream,
+            event_close, sending_events = False,
+            config = RttNordicConfig,
+            event_filename = None, event_types_filename = None,
+            log_lvl = logging.INFO
+        ):
 
         self.config = config
         self.event_filename = event_filename
