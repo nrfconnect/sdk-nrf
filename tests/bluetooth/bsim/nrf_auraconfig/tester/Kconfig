@@ -6,7 +6,7 @@
 
 menu "Logging"
 
-module = MAIN
+module = NRF_AUDIO_MAIN
 module-str = main
 source "subsys/logging/Kconfig.template.log_config"
 

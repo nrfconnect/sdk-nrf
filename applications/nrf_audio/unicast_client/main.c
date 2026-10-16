@@ -26,18 +26,19 @@
 #include "server_store.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX);
 
 static enum stream_state strm_state = STATE_PAUSED;
 
 #define CONTENT_CTRL_STATE_PLAYING true
 #define CONTENT_CTRL_STATE_PAUSED  false
 
-ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
-ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub, CONFIG_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(content_control_evt_sub,
+		       CONFIG_NRF_AUDIO_CONTENT_CONTROL_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
@@ -57,10 +58,10 @@ static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
 static k_tid_t content_control_thread_id;
 
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 K_THREAD_STACK_DEFINE(content_control_msg_sub_thread_stack,
-		      CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
+		      CONFIG_NRF_AUDIO_CONTENT_CONTROL_MSG_SUB_STACK_SIZE);
 
 #define SRV_STORE_LOCK_WAIT_TIME_MS K_MSEC(50)
 
@@ -129,12 +130,12 @@ static void button_msg_sub_thread(void)
 
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
-			if (!IS_ENABLED(CONFIG_BT_CONTENT_CTRL_MEDIA)) {
+			if (!IS_ENABLED(CONFIG_NRF_AUDIO_CONTENT_CTRL_MEDIA)) {
 				LOG_WRN("Play/pause not supported");
 				break;
 			}
 
-			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO)) {
 				LOG_WRN("Play/pause not supported in walkie-talkie mode");
 				break;
 			}
@@ -195,8 +196,8 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_4:
-			if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-				if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_TEST_TONE)) {
+				if (IS_ENABLED(CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO)) {
 					LOG_DBG("Test tone is disabled in walkie-talkie mode");
 					break;
 				}
@@ -225,7 +226,7 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_5:
-			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_MUTE)) {
 				ret = bt_r_and_c_volume_mute(false);
 				if (ret != 0) {
 					LOG_WRN("Failed to mute, ret: %d", ret);
@@ -398,14 +399,14 @@ static void le_audio_msg_sub_thread(void)
 
 			if (((IS_ENABLED(CONFIG_BT_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SINK) ||
 			     (!IS_ENABLED(CONFIG_BT_AUDIO_TX) && msg.dir == BT_AUDIO_DIR_SOURCE)) &&
-			    interval != CONFIG_BLE_ACL_CONN_INTERVAL_SLOW) {
+			    interval != CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL_SLOW) {
 				struct bt_le_conn_param param;
 
 				/* Set the ACL interval up to allow more time for ISO packets */
-				param.interval_min = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
-				param.interval_max = CONFIG_BLE_ACL_CONN_INTERVAL_SLOW;
-				param.latency = CONFIG_BLE_ACL_SLAVE_LATENCY;
-				param.timeout = CONFIG_BLE_ACL_SUP_TIMEOUT;
+				param.interval_min = CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL_SLOW;
+				param.interval_max = CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL_SLOW;
+				param.latency = CONFIG_NRF_AUDIO_BLE_ACL_SLAVE_LATENCY;
+				param.timeout = CONFIG_NRF_AUDIO_BLE_ACL_SUP_TIMEOUT;
 
 				ret = bt_conn_le_param_update(msg.conn, &param);
 				if (ret != 0) {
@@ -413,7 +414,8 @@ static void le_audio_msg_sub_thread(void)
 				}
 
 				LOG_DBG("Updated ACL conn interval to %3.2f ms for conn 0x%p",
-					1.25 * CONFIG_BLE_ACL_CONN_INTERVAL_SLOW, msg.conn);
+					1.25 * CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL_SLOW,
+					msg.conn);
 			}
 
 			break;
@@ -436,7 +438,7 @@ static void discovery_process_start(struct bt_conn *conn)
 		LOG_WRN("Failed to discover rendering services");
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL)) {
 		ret = unicast_client_discover(conn, UNICAST_SERVER_BIDIR);
 	} else {
 		ret = unicast_client_discover(conn, UNICAST_SERVER_SINK);
@@ -581,8 +583,9 @@ static int zbus_subscribers_create(void)
 
 	button_msg_sub_thread_id = k_thread_create(
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_THREAD_PRIO), 0,
+		K_NO_WAIT);
 
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
 	if (ret != 0) {
@@ -590,10 +593,11 @@ static int zbus_subscribers_create(void)
 		return ret;
 	}
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
 	if (ret != 0) {
@@ -603,9 +607,9 @@ static int zbus_subscribers_create(void)
 
 	content_control_thread_id = k_thread_create(
 		&content_control_msg_sub_thread_data, content_control_msg_sub_thread_stack,
-		CONFIG_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
+		CONFIG_NRF_AUDIO_CONTENT_CONTROL_MSG_SUB_STACK_SIZE,
 		(k_thread_entry_t)content_control_msg_sub_thread, NULL, NULL, NULL,
-		K_PRIO_PREEMPT(CONFIG_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_CONTENT_CONTROL_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 
 	ret = k_thread_name_set(content_control_thread_id, "Msg_sub_content_ctrl");
 	if (ret != 0) {

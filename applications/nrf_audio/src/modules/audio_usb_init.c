@@ -24,23 +24,24 @@ static const char *const blocklist[] = {
  * controller, the project vendor ID, and the project product ID.
  * Project vendor ID must not be used outside of this project.
  */
-USBD_DEVICE_DEFINE(audio_usbd, DEVICE_DT_GET(DT_NODELABEL(zephyr_udc0)), CONFIG_USBD_VID,
-		   CONFIG_USBD_PID);
+USBD_DEVICE_DEFINE(audio_usbd, DEVICE_DT_GET(DT_NODELABEL(zephyr_udc0)), CONFIG_NRF_AUDIO_USBD_VID,
+		   CONFIG_NRF_AUDIO_USBD_PID);
 
 USBD_DESC_LANG_DEFINE(audio_lang);
-USBD_DESC_MANUFACTURER_DEFINE(audio_mfr, CONFIG_USBD_MANUFACTURER);
-USBD_DESC_PRODUCT_DEFINE(audio_product, CONFIG_USBD_PRODUCT);
+USBD_DESC_MANUFACTURER_DEFINE(audio_mfr, CONFIG_NRF_AUDIO_USBD_MANUFACTURER);
+USBD_DESC_PRODUCT_DEFINE(audio_product, CONFIG_NRF_AUDIO_USBD_PRODUCT);
 
 IF_ENABLED(CONFIG_HWINFO, (USBD_DESC_SERIAL_NUMBER_DEFINE(audio_sn)));
 
 USBD_DESC_CONFIG_DEFINE(fs_cfg_desc, "FS Configuration");
 
 static const uint8_t attributes =
-	(IS_ENABLED(CONFIG_USBD_SELF_POWERED) ? USB_SCD_SELF_POWERED : 0) |
-	(IS_ENABLED(CONFIG_USBD_REMOTE_WAKEUP) ? USB_SCD_REMOTE_WAKEUP : 0);
+	(IS_ENABLED(CONFIG_NRF_AUDIO_USBD_SELF_POWERED) ? USB_SCD_SELF_POWERED : 0) |
+	(IS_ENABLED(CONFIG_NRF_AUDIO_USBD_REMOTE_WAKEUP) ? USB_SCD_REMOTE_WAKEUP : 0);
 
 /* Full speed configuration */
-USBD_CONFIGURATION_DEFINE(audio_fs_config, attributes, CONFIG_USBD_MAX_POWER, &fs_cfg_desc);
+USBD_CONFIGURATION_DEFINE(audio_fs_config, attributes, CONFIG_NRF_AUDIO_USBD_MAX_POWER,
+			  &fs_cfg_desc);
 
 static struct usbd_context *audio_usbd_setup_device(usbd_msg_cb_t msg_cb)
 {

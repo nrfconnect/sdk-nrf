@@ -19,7 +19,7 @@
 #include "led_assignments.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(led, CONFIG_MODULE_LED_LOG_LEVEL);
+LOG_MODULE_REGISTER(led, CONFIG_NRF_AUDIO_MODULE_LED_LOG_LEVEL);
 
 #define BLINK_FREQ_MS 1000
 

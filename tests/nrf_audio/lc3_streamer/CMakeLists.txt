@@ -19,11 +19,11 @@ target_sources(app PRIVATE
   ${ZEPHYR_NRF_MODULE_DIR}/tests/nrf_audio/fakes/k_work/k_work_fake.c
 )
 
-target_compile_definitions(app PRIVATE CONFIG_MODULE_SD_CARD_LC3_STREAMER_LOG_LEVEL=3)
-target_compile_definitions(app PRIVATE CONFIG_SD_CARD_LC3_STREAMER_STACK_SIZE=500)
-target_compile_definitions(app PRIVATE CONFIG_SD_CARD_LC3_STREAMER_THREAD_PRIO=4)
-target_compile_definitions(app PRIVATE CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS=3)
-target_compile_definitions(app PRIVATE CONFIG_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE=251)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_MODULE_SD_CARD_LC3_STREAMER_LOG_LEVEL=3)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_STACK_SIZE=500)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_THREAD_PRIO=4)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS=3)
+target_compile_definitions(app PRIVATE CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_FRAME_SIZE=251)
 target_compile_definitions(app PRIVATE CONFIG_FS_FATFS_MAX_LFN=40)
 
 target_include_directories(app PRIVATE

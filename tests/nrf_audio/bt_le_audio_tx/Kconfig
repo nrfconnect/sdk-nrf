@@ -10,27 +10,27 @@ config NRF_AUDIO_TX_LEAD_TIME_BASE_US
 	int
 	default 4700
 
-config LC3_BITRATE_MIN
+config NRF_AUDIO_LC3_BITRATE_MIN
 	int
 	default 32000
 
-config LC3_BITRATE_MAX
+config NRF_AUDIO_LC3_BITRATE_MAX
 	int
 	default 124000
 
-config AUDIO_FRAME_DURATION_US
+config NRF_AUDIO_FRAME_DURATION_US
 	int
 	default 10000
 
-config AUDIO_SAMPLE_RATE_48000_HZ
+config NRF_AUDIO_SAMPLE_RATE_48000_HZ
 	bool
 	default y
 
-config BLE_LOG_LEVEL
+config NRF_AUDIO_BLE_LOG_LEVEL
 	int
 	default 4
 
-config BT_LE_AUDIO_TX_LOG_LEVEL
+config NRF_AUDIO_TX_LOG_LEVEL
 	int
 	default 4
 
@@ -74,7 +74,7 @@ config BT_TX_PROCESSOR_THREAD_PRIO
 	int
 	default -1
 
-config AUDIO_SYNC_TIMER_USES_RTC
+config NRF_AUDIO_SYNC_TIMER_USES_RTC
 	bool
 	default y
 

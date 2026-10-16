@@ -26,7 +26,7 @@
 #include "sd_card.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 ZBUS_CHAN_DECLARE(sdu_ref_chan);
@@ -38,7 +38,7 @@ static bool sd_card_present = true;
 
 static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t le_audio_msg_sub_thread_id;
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 NET_BUF_POOL_FIXED_DEFINE(ble_tx_pool, CONFIG_BT_ISO_TX_BUF_COUNT, CONFIG_BT_ISO_TX_MTU,
 			  sizeof(struct audio_metadata), NULL);
 
@@ -58,7 +58,7 @@ NET_BUF_SIMPLE_DEFINE_STATIC(base_data0, BASE_DATA_BUF_SIZE);
 NET_BUF_SIMPLE_DEFINE_STATIC(base_data1, BASE_DATA_BUF_SIZE);
 
 /* Extended advertising buffer. */
-static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_EXT_ADV_BUF_MAX];
+static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_NRF_AUDIO_EXT_ADV_BUF_MAX];
 
 /* Periodic advertising buffer. */
 static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
@@ -67,11 +67,11 @@ static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
  * meta data size.
  */
 #define BROADCAST_SRC_PBA_BUF_SIZE                                                                 \
-	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE)
+	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_NRF_AUDIO_BROADCAST_PBA_METADATA_SIZE)
 
 /* Number of metadata items that can be assigned. */
 #define BROADCAST_SOURCE_PBA_METADATA_VACANT                                                       \
-	(CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
+	(CONFIG_NRF_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
 
 /* Make sure pba_buf is large enough for a 16bit UUID and meta data
  * (any addition to pba_buf requires an increase of this value)
@@ -501,10 +501,11 @@ static int zbus_subscribers_create(void)
 {
 	int ret;
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "LE_AUDIO_MSG_SUB");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
@@ -623,7 +624,7 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	ext_adv_buf_cnt++;
 
 	ret = bt_mgmt_manufacturer_uuid_populate(ext_adv_data->uuid_buf,
-						 CONFIG_BT_DEVICE_MANUFACTURER_ID);
+						 CONFIG_NRF_AUDIO_DEVICE_MANUFACTURER_ID);
 	if (ret) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
@@ -715,14 +716,15 @@ static void broadcast_create(uint8_t big_index)
 
 	if (brdcst_param->broadcast_name[0] == '\0') {
 		/* Name not set, using default */
-		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) > sizeof(brdcst_param->broadcast_name)) {
+		if (sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) >
+		    sizeof(brdcst_param->broadcast_name)) {
 			LOG_ERR("Broadcast name too long");
 			return;
 		}
 
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) - 1;
 
-		memcpy(brdcst_param->broadcast_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(brdcst_param->broadcast_name, CONFIG_NRF_AUDIO_BROADCAST_NAME,
 		       brdcst_name_size);
 	}
 
@@ -1032,14 +1034,14 @@ static int adv_create_and_start(const struct shell *shell, uint8_t big_index)
 
 	if (broadcast_param[big_index].broadcast_name[0] == '\0') {
 		/* Name not set, using default */
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) - 1;
 
 		if (brdcst_name_size >= ARRAY_SIZE(ext_adv_data[big_index].brdcst_name_buf)) {
 			shell_error(shell, "Broadcast name too long, using parts of the name");
 			brdcst_name_size = ARRAY_SIZE(ext_adv_data[big_index].brdcst_name_buf) - 1;
 		}
 
-		memcpy(ext_adv_data[big_index].brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(ext_adv_data[big_index].brdcst_name_buf, CONFIG_NRF_AUDIO_BROADCAST_NAME,
 		       brdcst_name_size);
 	} else {
 		size_t brdcst_name_size = strlen(broadcast_param[big_index].broadcast_name);
@@ -1055,9 +1057,9 @@ static int adv_create_and_start(const struct shell *shell, uint8_t big_index)
 
 	if (broadcast_param[big_index].adv_name[0] == '\0') {
 		/* Name not set, using default */
-		size_t adv_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t adv_name_size = sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) - 1;
 
-		memcpy(broadcast_param[big_index].adv_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(broadcast_param[big_index].adv_name, CONFIG_NRF_AUDIO_BROADCAST_NAME,
 		       adv_name_size);
 	}
 

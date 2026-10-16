@@ -19,19 +19,20 @@
 #include <zephyr/kernel.h>
 #include <zephyr/usb/usbd.h>
 
-#if (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ &&                              \
-	MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS) != 2)
+#if (CONFIG_NRF_AUDIO_SOURCE_USB && !CONFIG_NRF_AUDIO_SAMPLE_RATE_48000_HZ &&                      \
+     MAX(CONFIG_NRF_AUDIO_INPUT_CHANNELS, CONFIG_NRF_AUDIO_OUTPUT_CHANNELS) != 2)
 /* Only 48kHz stereo is supported when using USB */
 #error USB only supports 48kHz stereo
-#endif /* (CONFIG_AUDIO_SOURCE_USB && !CONFIG_AUDIO_SAMPLE_RATE_48000_HZ) */
+#endif /* (CONFIG_NRF_AUDIO_SOURCE_USB && !CONFIG_NRF_AUDIO_SAMPLE_RATE_48000_HZ) */
 
 #define USB_1MS_BLOCKS_NUM_MAX                                                                     \
-	((CONFIG_AUDIO_FRAME_DURATION_US / USEC_PER_MSEC) +                                        \
-	 (CONFIG_AUDIO_FRAME_DURATION_US % USEC_PER_MSEC ? 1 : 0))
+	((CONFIG_NRF_AUDIO_FRAME_DURATION_US / USEC_PER_MSEC) +                                    \
+	 (CONFIG_NRF_AUDIO_FRAME_DURATION_US % USEC_PER_MSEC ? 1 : 0))
 #define USB_BLOCK_1MS_MONO_SIZE                                                                    \
-	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS / MSEC_PER_SEC)
+	(CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ * CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS / MSEC_PER_SEC)
 #define USB_BLOCK_MULTI_CHAN_1MS_SIZE                                                              \
-	(USB_BLOCK_1MS_MONO_SIZE * MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS))
+	(USB_BLOCK_1MS_MONO_SIZE *                                                                 \
+	 MAX(CONFIG_NRF_AUDIO_INPUT_CHANNELS, CONFIG_NRF_AUDIO_OUTPUT_CHANNELS))
 
 struct usbd_context *audio_usbd_init_device(usbd_msg_cb_t msg_cb);
 

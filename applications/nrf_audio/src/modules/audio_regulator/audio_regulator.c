@@ -11,7 +11,7 @@
 #include <zephyr/kernel.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(regulator, CONFIG_MODULE_REGULATOR_LOG_LEVEL);
+LOG_MODULE_REGISTER(regulator, CONFIG_NRF_AUDIO_MODULE_REGULATOR_LOG_LEVEL);
 
 static int valid_entry(struct audio_regulator_ctx const *const ctx)
 {

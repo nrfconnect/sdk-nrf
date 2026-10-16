@@ -20,16 +20,16 @@ target_sources_ifdef(CONFIG_NRFX_CLOCK_HFCLKAUDIO app PRIVATE
   hf_audio_clock.c
 )
 
-target_sources_ifdef(CONFIG_AUDIO_SYNC_TIMER_USES_RTC app PRIVATE
+target_sources_ifdef(CONFIG_NRF_AUDIO_SYNC_TIMER_USES_RTC app PRIVATE
   audio_sync_timer.c
 )
 
-target_sources_ifdef(CONFIG_AUDIO_SOURCE_USB app PRIVATE
+target_sources_ifdef(CONFIG_NRF_AUDIO_SOURCE_USB app PRIVATE
   audio_usb.c
   audio_usb_init.c
 )
 
-target_sources_ifdef(CONFIG_AUDIO_SOURCE_I2S app PRIVATE
+target_sources_ifdef(CONFIG_NRF_AUDIO_SOURCE_I2S app PRIVATE
   audio_i2s.c
 )
 
@@ -37,7 +37,7 @@ target_sources_ifdef(CONFIG_NRF_AUDIO_CS47L63_DRIVER app PRIVATE
   hw_codec.c
 )
 
-target_sources_ifdef(CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT app PRIVATE
+target_sources_ifdef(CONFIG_NRF_AUDIO_POWER_MEASUREMENT app PRIVATE
   power_meas.c
 )
 
@@ -49,7 +49,7 @@ target_sources_ifdef(CONFIG_NRF_AUDIO_SD_CARD_LC3_FILE app PRIVATE
   lc3_file.c
 )
 
-target_sources_ifdef(CONFIG_SD_CARD_PLAYBACK app PRIVATE
+target_sources_ifdef(CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK app PRIVATE
   sd_card_playback.c
 )
 

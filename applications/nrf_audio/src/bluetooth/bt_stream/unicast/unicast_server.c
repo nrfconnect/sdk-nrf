@@ -23,7 +23,7 @@
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(unicast_server, CONFIG_UNICAST_SERVER_LOG_LEVEL);
+LOG_MODULE_REGISTER(unicast_server, CONFIG_NRF_AUDIO_UNICAST_SERVER_LOG_LEVEL);
 
 BT_LE_AUDIO_TX_DEFINE(bt_le_audio_tx);
 
@@ -120,8 +120,9 @@ static struct bt_audio_codec_cap lc3_codec_sink = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, AVAILABLE_SINK_CONTEXT);
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN, 10000),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX, 10000), 1u,
+	AVAILABLE_SINK_CONTEXT);
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
 #if defined(CONFIG_BT_AUDIO_TX)
@@ -129,8 +130,9 @@ static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, AVAILABLE_SOURCE_CONTEXT);
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN, 10000),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX, 10000), 1u,
+	AVAILABLE_SOURCE_CONTEXT);
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 static enum bt_audio_dir caps_dirs[] = {
@@ -143,9 +145,9 @@ static enum bt_audio_dir caps_dirs[] = {
 };
 
 static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
-	true, BT_GAP_LE_PHY_2M, CONFIG_BT_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
-	CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US,
-	CONFIG_BT_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_BT_AUDIO_PREFERRED_MAX_PRES_DLY_US);
+	true, BT_GAP_LE_PHY_2M, CONFIG_NRF_AUDIO_RETRANSMITS, BLE_ISO_LATENCY_MS,
+	CONFIG_NRF_AUDIO_MIN_PRES_DLY_US, CONFIG_NRF_AUDIO_MAX_PRES_DLY_US,
+	CONFIG_NRF_AUDIO_PREFERRED_MIN_PRES_DLY_US, CONFIG_NRF_AUDIO_PREFERRED_MAX_PRES_DLY_US);
 
 /* clang-format off */
 static struct bt_pacs_cap caps[] = {
@@ -475,9 +477,9 @@ int unicast_server_pd_min_set(uint32_t dly_min_in_us)
 		return -EINVAL;
 	}
 
-	if (dly_min_in_us < CONFIG_AUDIO_MIN_PRES_DLY_US) {
+	if (dly_min_in_us < CONFIG_NRF_AUDIO_MIN_PRES_DLY_US) {
 		LOG_WRN("Min pres delay (%u) too low, setting to %u", dly_min_in_us,
-			CONFIG_AUDIO_MIN_PRES_DLY_US);
+			CONFIG_NRF_AUDIO_MIN_PRES_DLY_US);
 		return -EINVAL;
 	}
 
@@ -722,7 +724,7 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		IF_ENABLED(CONFIG_BT_AUDIO_TX, (.src_loc = true,))};
 	/* clang-format on */
 
-	__ASSERT(strlen(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
+	__ASSERT(strlen(CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY) == BT_CSIP_SIRK_SIZE,
 		 "SIRK incorrect size, must be 16 bytes");
 
 	if (initialized) {
@@ -771,13 +773,14 @@ int unicast_server_enable(le_audio_receive_cb recv_cb, enum bt_audio_location lo
 		LOG_WRN("CSIP test sample data is used, must be changed "
 			"before production");
 	} else {
-		if (strcmp(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
-			   CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == 0) {
+		if (strcmp(CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
+			   CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY) == 0) {
 			LOG_WRN("CSIP using the default SIRK, must be changed "
 				"before production");
 		}
 
-		memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY, BT_CSIP_SIRK_SIZE);
+		memcpy(csip_param.sirk, CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY,
+		       BT_CSIP_SIRK_SIZE);
 	}
 
 	ret = bt_pacs_register(&pacs_param);
