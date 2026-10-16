@@ -543,6 +543,9 @@ static int dl_http_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 	       0,
 	       sizeof(struct transport_params_http) - ((uint8_t *)reset_ptr - (uint8_t *)http));
 
+	/* The zeroed fd is a valid descriptor, so mark the socket as not open. */
+	http->sock.fd = -1;
+
 	return parse_protocol(dl, url);
 }
 
