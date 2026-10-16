@@ -507,7 +507,7 @@
 .. _`Using the nPM2100 Fuel Gauge`: https://docs.nordicsemi.com/bundle/nan_048/page/APP/nan_048/intro.html
 
 .. _`Zigbee R22`: https://nrfconnectdocs.nordicsemi.com/addons/zigbee-r22/latest/index.html
-.. _`Zigbee R23`: https://nrfconnectdocs.nordicsemi.com/addons/zigbee-r23/latest/index.html
+.. _`Zigbee R23`: https://nrfconnectdocs.nordicsemi.com/addons/ncs-zigbee/latest/index.html
 
 .. _`Asset Tracker Template`: https://nrfconnectdocs.nordicsemi.com/ncs/latest/nrf/applications/asset_tracker_template/README.html
 .. _`Serial Modem`: https://nrfconnectdocs.nordicsemi.com/addons/addon-serial_modem/latest/index.html
