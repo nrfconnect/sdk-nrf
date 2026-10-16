@@ -352,6 +352,23 @@ static const struct counter_collection *get_counter_collection(void)
 		       : NULL;
 }
 
+static uint16_t get_num_counter_slots(const struct monotonic_counter *counter,
+				      uint16_t description)
+{
+	uint16_t provisioned_num_slots =
+		bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
+
+#ifdef CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
+	if (description == BL_MONOTONIC_COUNTERS_DESC_NSIB) {
+		__ASSERT(provisioned_num_slots == CONFIG_SB_NUM_VER_COUNTER_SLOTS,
+			 "Provisioned counter slots do not match configuration");
+		return CONFIG_SB_NUM_VER_COUNTER_SLOTS;
+	}
+#endif
+
+	return provisioned_num_slots;
+}
+
 /** Get one of the (possibly multiple) counters in the provision data.
  *
  *  param[in]  description  Which counter to get. See COUNTER_DESC_*.
@@ -368,10 +385,11 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 
 	for (size_t i = 0; i < bl_storage_otp_halfword_read(
 		(uint32_t)&counters->collection.count); i++) {
-		uint16_t num_slots = bl_storage_otp_halfword_read(
-					(uint32_t)&current->num_counter_slots);
+		uint16_t current_description =
+			bl_storage_otp_halfword_read((uint32_t)&current->description);
+		uint16_t num_slots = get_num_counter_slots(current, current_description);
 
-		if (bl_storage_otp_halfword_read((uint32_t)&current->description) == description) {
+		if (current_description == description) {
 			return current;
 		}
 
@@ -379,26 +397,6 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description)
 					&current->counter_slots[num_slots];
 	}
 	return NULL;
-}
-
-int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
-{
-	const struct monotonic_counter *counter = get_counter_struct(counter_desc);
-
-	if (counter == NULL || counter_slots == NULL) {
-		return -EINVAL;
-	}
-
-	uint16_t num_slots = bl_storage_otp_halfword_read((uint32_t)&counter->num_counter_slots);
-
-	if (num_slots == 0xFFFF) {
-		/* We consider the 0xFFFF as invalid since it is the default value of the OTP */
-		*counter_slots = 0;
-		return -EINVAL;
-	}
-
-	*counter_slots = num_slots;
-	return 0;
 }
 
 /** Function for getting the current value and the first free slot.
@@ -424,7 +422,7 @@ int get_counter(uint16_t counter_desc, counter_t *counter_value, const counter_t
 	}
 
 	slots = counter_obj->counter_slots;
-	num_counter_slots = bl_storage_otp_halfword_read((uint32_t)&counter_obj->num_counter_slots);
+	num_counter_slots = get_num_counter_slots(counter_obj, counter_desc);
 
 	for (uint16_t i = 0; i < num_counter_slots; i++) {
 		counter_t counter = bl_storage_counter_get((uint32_t)&slots[i]);

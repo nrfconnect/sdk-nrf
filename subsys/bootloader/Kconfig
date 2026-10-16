@@ -122,6 +122,13 @@ config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	  from being decremented for an image.
 	  Images that do not meet this requirement will be rejected and not booted.
 
+config SB_NUM_VER_COUNTER_SLOTS
+	int "Number of monotonic counter slots (informative only, do not change)"
+	depends on SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
+	help
+	  This option is set by sysbuild to SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS.
+	  It must match the number of firmware version counter slots in the provisioned data.
+
 endif # IS_SECURE_BOOTLOADER
 
 config IS_BOOTLOADER_IMG
