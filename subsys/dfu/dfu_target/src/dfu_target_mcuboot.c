@@ -53,6 +53,8 @@ LOG_MODULE_REGISTER(dfu_target_mcuboot, CONFIG_DFU_TARGET_LOG_LEVEL);
 /* Ignore the 'x' parameter, it is needed for compatibility with Partition Manager scenarios. */
 #define _MB_SEC_PAT_STRING(i, x) STRINGIFY(SEC_PAT_NODELABEL(i))
 
+#define _MB_SEC_LA(i, _) (SEC_PAT_ADDRESS(i) + SEC_PAT_SIZE(i) - 1)
+
 #define TARGET_IMAGE_COUNT CONFIG_UPDATEABLE_IMAGE_NUMBER
 
 #define _STR_TARGET_NAME(i, _) STRINGIFY(MCUBOOT##i)
@@ -71,6 +73,10 @@ static const struct device *const secondary_dev[] = {
 
 static const char *const secondary_name[] = {
 	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_PAT_STRING, (,), NAME))
+};
+
+static const off_t secondary_last_address[] = {
+	LIST_DROP_EMPTY(LISTIFY(TARGET_IMAGE_COUNT, _MB_SEC_LA, (,)))
 };
 
 static const char *const target_id_name[] = {
@@ -187,6 +193,13 @@ int dfu_target_mcuboot_done(bool successful)
 
 	if (successful) {
 		stream_buf_bytes = 0;
+		err = stream_flash_flatten_page(dfu_target_stream_get_stream(),
+					secondary_last_address[curr_sec_img]);
+
+		if (err != 0) {
+			LOG_ERR("Unable to delete last page: %d", err);
+			return err;
+		}
 	} else {
 		LOG_INF("MCUBoot image upgrade aborted.");
 	}
