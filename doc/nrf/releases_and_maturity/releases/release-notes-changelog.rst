@@ -572,4 +572,8 @@ zcbor
 Documentation
 =============
 
-|no_changes_yet_note|
+* Added the :guilabel:`Open in VS Code` button for each sample page.
+  It lets you quickly open the sample and install the required version of the |NCS| toolchain.
+
+* Updated the :ref:`install_ncs` page by adding a button for installing the |nRFVSC| with the latest stable release of the |NCS|.
+  This has also simplified the structure of the page.

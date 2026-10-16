@@ -152,6 +152,26 @@ They follow the ``MAJOR.MINOR.PATCH`` pattern (also further called as ``X.Y.Z``)
 All releases are accompanied by their respective :ref:`release_notes`.
 For information about release purpose and cadence, see :ref:`ncs_release_model`.
 
+Simply put, you can work with the following versions of the |NCS|:
+
+.. list-table::
+   :header-rows: 1
+
+   * - |NCS| version
+     - Required identifier of the revision
+     - Where to find the identifier
+   * - Specific release (recommended)
+     - Release tag (for example, |release_tt|)
+     - :ref:`Release_notes` of the release
+   * - :ref:`Git tag <dm_revisions_git_tags>`
+     - Development tag (for example, ``v2.8.0-rc1``)
+     - :ref:`Changelog <release_notes>` of the tag
+   * - Branch
+     - Branch name (for example, ``main``)
+     - `sdk-nrf`_ repository
+
+This is how the versions and revisions are structured:
+
 +--------------------------------+--------------------------------------------------------------------------------------------------------------------------------------+
 |        Version                 |                              Description                                                                                             |
 +================================+======================================================================================================================================+
