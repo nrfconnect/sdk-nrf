@@ -250,7 +250,9 @@ out:
 
 enum nrf_wifi_status umac_cmd_sys_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  enum rpu_stats_type stats_type,
-						  unsigned int stats_ctrl)
+						  unsigned int stats_ctrl,
+						  unsigned int periodic_count,
+						  unsigned int periodic_interval)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct host_rpu_msg *umac_cmd = NULL;
@@ -274,8 +276,8 @@ enum nrf_wifi_status umac_cmd_sys_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *
 	umac_cmd_data->sys_head.cmd_event = NRF_WIFI_CMD_DEBUG_STATS;
 	umac_cmd_data->sys_head.len = len;
 	umac_cmd_data->stats_type = stats_type;
-	umac_cmd_data->periodic_stats_enable = 0;
-	umac_cmd_data->periodic_stats_interval = 0;
+	umac_cmd_data->periodic_stats_enable = periodic_count;
+	umac_cmd_data->periodic_stats_interval = periodic_count ? periodic_interval : 0;
 	umac_cmd_data->stats_ctrl = stats_ctrl;
 	umac_cmd_data->stats_addr = 0;
 
