@@ -34,7 +34,7 @@ On the network core, the library is used by the :ref:`nc_bootloader` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/pcd.h`
+| Header file: :ncs-file:`/include/dfu/pcd.h`
 | Source files: :file:`subsys/dfu/pcd/`
 
 .. doxygengroup:: pcd

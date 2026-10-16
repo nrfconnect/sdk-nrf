@@ -74,7 +74,7 @@ Coexistence logic (when to call the :c:func:`nrf_802154_callbacks_dispatcher_swi
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_802154_callbacks_dispatcher.h`
-| Source file: :file:`lib/nrf_802154_callbacks_dispatcher/nrf_802154_callbacks_dispatcher.c`
+| Header file: :ncs-file:`/include/net/nrf_802154_callbacks_dispatcher.h`
+| Source file: :ncs-file:`/lib/nrf_802154_callbacks_dispatcher/nrf_802154_callbacks_dispatcher.c`
 
 .. doxygengroup:: nrf_802154_callbacks_dispatcher

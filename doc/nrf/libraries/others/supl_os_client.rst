@@ -223,7 +223,7 @@ See steps 3, 4 and 5 in the :ref:`SUPL session MSC description <supl_session_msc
 API documentation
 =================
 
-| Header file: :file:`include/supl_os_client.h`
+| Header file: :ncs-file:`/include/supl_os_client.h`
 | Source files: :file:`lib/supl/`
 
 .. doxygengroup:: supl_os

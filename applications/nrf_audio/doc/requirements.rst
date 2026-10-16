@@ -48,7 +48,7 @@ Each nRF Audio application also uses its own, application-specific overlay file.
 
 You need the following configuration files to :ref:`build the application <nrf_audio_app_building>`:
 
-* Application configuration file: :file:`prj.conf`.
+* Application configuration file: :ncs-file:`/applications/nrf_audio/prj.conf`.
 * Application-specific overlay file (:file:`overlay-<app_name>.conf`) from the application directory.
 
 When building using the command line, you must explicitly specify the :file:`*.conf` files that are going to be included.

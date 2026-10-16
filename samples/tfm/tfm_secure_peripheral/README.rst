@@ -62,7 +62,7 @@ Enabling secure peripheral
 
 To start using a peripheral as a secure peripheral, complete the following steps:
 
-1. In your application's :file:`prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure):
+1. In your application's :ncs-file:`/samples/tfm/tfm_secure_peripheral/prj.conf` file, enable the peripheral for use in the SPE by setting the relevant Kconfig options to ``y`` (the following example assigns the TIMER1 peripheral as secure):
 
    .. code-block:: none
 
@@ -77,7 +77,7 @@ To start using a peripheral as a secure peripheral, complete the following steps
       CONFIG_NRF_GPIO0_PIN_MASK_SECURE=0x00800000
 
    .. note::
-      If the secure peripheral uses GPIO pins, explicitly mark those pins as secure in the :file:`prj.conf` file.
+      If the secure peripheral uses GPIO pins, explicitly mark those pins as secure in the :ncs-file:`/samples/tfm/tfm_secure_peripheral/prj.conf` file.
       The GPIO controller is used to implement security by separation on Nordic devices: each pin is non-secure by default.
       Assigning a peripheral to the SPE (for example, with ``CONFIG_NRF_TIMER1_SECURE=y``) does not automatically secure its GPIO pins.
       TF-M only derives secure GPIO pins from devicetree for secure UART and SPIM instances.

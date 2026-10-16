@@ -18,7 +18,7 @@ To enable the library, set the :kconfig:option:`CONFIG_PSCM` Kconfig option to `
 API documentation
 *****************
 
-| Header file: :file:`include/pcm_stream_channel_modifier.h`
-| Source file: :file:`lib/pcm_stream_channel_modifier/pcm_stream_channel_modifier.c`
+| Header file: :ncs-file:`/include/pcm_stream_channel_modifier.h`
+| Source file: :ncs-file:`/lib/pcm_stream_channel_modifier/pcm_stream_channel_modifier.c`
 
 .. doxygengroup:: pscm

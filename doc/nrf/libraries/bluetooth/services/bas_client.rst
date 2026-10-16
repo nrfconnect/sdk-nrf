@@ -72,7 +72,7 @@ In such case, the next read period is started with the new interval.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/bas_client.h`
-| Source file: :file:`subsys/bluetooth/services/bas_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/bas_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/bas_client.c`
 
 .. doxygengroup:: bt_bas_client_api

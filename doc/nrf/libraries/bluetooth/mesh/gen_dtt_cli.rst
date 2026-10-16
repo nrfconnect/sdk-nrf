@@ -62,7 +62,7 @@ mesh models dtt set-unack <TransTime(ms)>
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/gen_dtt_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/gen_dtt_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_dtt_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/gen_dtt_cli.c`
 
 .. doxygengroup:: bt_mesh_dtt_cli

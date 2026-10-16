@@ -118,7 +118,7 @@ The application can use the :c:func:`qos_message_id_get_next` function to genera
 API documentation
 *****************
 
-| Header file: :file:`include/qos.h`
+| Header file: :ncs-file:`/include/qos.h`
 | Source files: :file:`lib/qos.c`
 
 .. doxygengroup:: qos

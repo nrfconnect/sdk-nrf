@@ -197,7 +197,7 @@ Complete the following steps:
 
 1. Enable the external flash device and declare ``slot1_partition`` (and any other needed regions) under that device's ``partitions`` node in devicetree.
    Share the same layout between the application and the MCUboot sysbuild image (for example, include a common ``*.dtsi`` from both ``boards/`` and ``sysbuild/mcuboot/boards/`` overlays).
-   See :file:`nrf/samples/dfu/smp_svr/dts/nrf54l15dk_nrf54l15_memory_map_ext_flash.dtsi` for a reference layout.
+   See :ncs-file:`/samples/dfu/smp_svr/dts/nrf54l15dk_nrf54l15_memory_map_ext_flash.dtsi` for a reference layout.
 
 #. Enable and configure the external flash driver for every image that must read or write those partitions (typically the application and MCUboot).
 

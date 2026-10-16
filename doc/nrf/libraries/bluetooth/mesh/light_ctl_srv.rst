@@ -148,7 +148,7 @@ This information is used to reestablish the correct light configuration when the
 API documentation
 ==================
 
-| Header file: :file:`include/bluetooth/mesh/light_ctl_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctl_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctl_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctl_srv.c`
 
 .. doxygengroup:: bt_mesh_light_ctl_srv

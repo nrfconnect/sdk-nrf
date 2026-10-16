@@ -43,9 +43,9 @@ The :c:func:`ncm_net_core_event_handler` function may be implemented by your app
 On the application core, the network core monitor checks the values of IPC registers written by the network core every :kconfig:option:`CONFIG_NCM_FEEDING_INTERVAL_MSEC`.
 If the network core malfunctions and fails to increment the ``COUNTER`` value, the :c:func:`ncm_net_core_event_handler` function is called on the application core.
 This function is also called when the network core is restarted.
-The network core monitor provides a ``__weak`` implementation of that function in the :file:`nrf/subsys/net_core_monitor/app_core.c` file.
+The network core monitor provides a ``__weak`` implementation of that function in the :ncs-file:`/subsys/net_core_monitor/app_core.c` file.
 
-The following events are supported and also listed in the :file:`nrf/include/net_core_monitor.h` file:
+The following events are supported and also listed in the :ncs-file:`/include/net_core_monitor.h` file:
 
 * :c:macro:`NCM_EVT_NET_CORE_RESET`
 
@@ -107,7 +107,7 @@ The module uses two general-purpose registers, ``GPMEM[0]`` and ``GPMEM[1]``, of
 API documentation
 *****************
 
-| Header file: :file:`include/net_core_monitor.h`
+| Header file: :ncs-file:`/include/net_core_monitor.h`
 | Source files: :file:`subsys/net_core_monitor/`
 
 .. doxygengroup:: net_core_monitor

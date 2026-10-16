@@ -33,7 +33,7 @@ The following example shows how to protect the ``b0_partition`` flash area:
 API documentation
 *****************
 
-| Header file: :file:`include/fprotect.h`
+| Header file: :ncs-file:`/include/fprotect.h`
 | Source files: :file:`lib/fprotect/`
 
 .. doxygengroup:: fprotect

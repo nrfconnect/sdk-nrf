@@ -44,7 +44,7 @@ The following table provides more details on the sample or application that runs
 | Device       | Application       |                             Details                                                 |
 +==============+===================+=====================================================================================+
 | nRF7002 DK   | Thread            | The sample runs Wi-Fi throughput only, Thread throughput only, or a combination     |
-| (DUT)        | coexistence sample| of both based on configuration selections in the :file:`prj.conf`.                  |
+| (DUT)        | coexistence sample| of both based on configuration selections in the :ncs-file:`/samples/wifi/thread_coex/prj.conf`.                  |
 +--------------+-------------------+-------------------------------------------------------------------------------------+
 | Test PC      | iPerf             | Wi-Fi iPerf UDP server is run on the test PC, and this acts as a peer device to     |
 |              | application       | the Wi-Fi UDP client.                                                               |
@@ -64,7 +64,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/thread_coex/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/thread_coex/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -72,7 +72,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Additional configuration
 ========================
 
-To enable different test modes, set up the following configuration parameters in the :file:`prj.conf` file:
+To enable different test modes, set up the following configuration parameters in the :ncs-file:`/samples/wifi/thread_coex/prj.conf` file:
 
 * Test modes: Use the following Kconfig options to select the required test case:
 
@@ -84,7 +84,7 @@ To enable different test modes, set up the following configuration parameters in
   The units are in milliseconds.
   For example, to set the test for 20 seconds, set this value to ``20000``.
 
-* Wi-Fi connection: Configure the following Wi-Fi credentials in the :file:`prj.conf`: appropriately as per the credentials of the access point used for this testing:
+* Wi-Fi connection: Configure the following Wi-Fi credentials in the :ncs-file:`/samples/wifi/thread_coex/prj.conf`: appropriately as per the credentials of the access point used for this testing:
 
 .. include:: /includes/wifi_credentials_static.txt
 
@@ -164,8 +164,8 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
 * Overlay files
 
-   * Use the :file:`overlay-wifi-udp-client-thread-udp-client.conf` file to build for both Wi-Fi and Thread in client roles.
-   * Use the :file:`overlay-wifi-udp-client-thread-udp-server.conf` file to build for Wi-Fi in the client role and Thread in the server role.
+   * Use the :ncs-file:`/samples/wifi/thread_coex/overlay-wifi-udp-client-thread-udp-client.conf` file to build for both Wi-Fi and Thread in client roles.
+   * Use the :ncs-file:`/samples/wifi/thread_coex/overlay-wifi-udp-client-thread-udp-server.conf` file to build for Wi-Fi in the client role and Thread in the server role.
 
 The generated HEX file to be used is :file:`thread_coex/build/merged.hex`.
 

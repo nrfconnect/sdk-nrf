@@ -157,7 +157,7 @@ The following code snippet shows how to delete all credentials associated with a
 API documentation
 *****************
 
-| Header file: :file:`include/modem/modem_key_mgmt.h`
+| Header file: :ncs-file:`/include/modem/modem_key_mgmt.h`
 | Source files: :file:`lib/modem_key_mgmt/`
 
 .. doxygengroup:: modem_key_mgmt

@@ -229,11 +229,11 @@ Dependencies
 
 The sample uses the following Zephyr libraries:
 
-* :file:`include/kernel.h`
-* :file:`include/logging/log.h`
+* :ncs-file:`zephyr:/include/zephyr/kernel.h`
+* :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`

@@ -189,7 +189,7 @@ The default shell transport is UART.
 Alternative shell transports (SEGGER RTT or USB CDC ACM) are configured at build time using Zephyr snippets and the configuration fragments in the :file:`conf/` folder.
 See :ref:`radio_test_shell_transport` for details.
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/peripheral/radio_test/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/peripheral/radio_test/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
@@ -220,7 +220,7 @@ With pin debugging enabled, two GPIOs will be configured to toggle on RADIO even
 * One pin is set high on the ``RADIO->EVENTS_READY`` and low on the ``RADIO->EVENTS_DISABLED``.
 * One pin is set high on the ``RADIO->EVENTS_ADDRESS`` and low on the ``RADIO->EVENTS_END``.
 
-The pins used for debugging are configured in :file:`samples/peripheral/radio_test/pin_debug_54l.overlay`.
+The pins used for debugging are configured in :ncs-file:`/samples/peripheral/radio_test/pin_debug_54l.overlay`.
 
 
 .. _radio_test_shell_transport:
@@ -365,9 +365,9 @@ This sample uses the following |NCS| libraries:
 
 This sample has the following nrfx dependencies:
 
-  * :file:`nrfx/drivers/include/nrfx_timer.h`
-  * :file:`nrfx/hal/nrf_power.h`
-  * :file:`nrfx/hal/nrf_radio.h`
+  * :ncs-file:`hal_nordic:/nrfx/drivers/include/nrfx_timer.h`
+  * :ncs-file:`hal_nordic:/nrfx/hal/nrf_power.h`
+  * :ncs-file:`hal_nordic:/nrfx/hal/nrf_radio.h`
 
 The sample also has the following nrfxlib dependency:
 
@@ -377,12 +377,12 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:device_model_api`:
 
-   * :file:`drivers/clock_control.h`
+   * :ncs-file:`zephyr:/include/zephyr/drivers/clock_control.h`
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/init.h`
+  * :ncs-file:`zephyr:/include/zephyr/init.h`
 
 * :ref:`zephyr:shell_api`:
 
-  * :file:`include/shell/shell.h`
+  * :ncs-file:`zephyr:/include/zephyr/shell/shell.h`

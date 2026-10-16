@@ -44,7 +44,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/provisioning/ble/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/provisioning/ble/Kconfig`):
 
 .. _CONFIG_WIFI_PROV_ADV_DATA_UPDATE:
 
@@ -158,9 +158,9 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/net/wifi.h`
-  * :file:`include/net/wifi_mgmt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/net/wifi.h`
+  * :ncs-file:`zephyr:/include/zephyr/net/wifi_mgmt.h`

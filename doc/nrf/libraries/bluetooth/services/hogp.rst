@@ -162,7 +162,7 @@ When SCI support is enabled, the :kconfig:option:`CONFIG_BT_SHORTER_CONNECTION_I
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/hogp.h`
-| Source file: :file:`subsys/bluetooth/services/hogp.c`
+| Header file: :ncs-file:`/include/bluetooth/services/hogp.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/hogp.c`
 
 .. doxygengroup:: bt_hogp

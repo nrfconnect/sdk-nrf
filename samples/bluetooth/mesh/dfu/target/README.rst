@@ -27,7 +27,7 @@ For uploading an image to the Distributor, this sample also requires a smartphon
 Point-to-point DFU requirements
 *******************************
 
-The configuration overlay :file:`overlay-ptp_dfu.conf` enables the :ref:`dfu_over_ble` feature.
+The configuration overlay :ncs-file:`/samples/bluetooth/mesh/dfu/target/overlay-ptp_dfu.conf` enables the :ref:`dfu_over_ble` feature.
 
 This feature can be used together with Bluetooth Mesh DFU.
 If the Bluetooth Mesh DFU procedure is suspended, failing, or if the Bluetooth Mesh network is not available, the point-to-point DFU feature can be used as a backup option for the DFU process.
@@ -174,7 +174,7 @@ Only 2 options are supported by this sample:
    The unprovisioning happens before the device reboots, so if the MCUboot fails to validate the new firmware, the device will boot unprovisioned anyway.
 
 .. note::
-   To create the new Composition Data and see the :c:enum:`BT_MESH_DFU_EFFECT_UNPROV` effect, you can, for example, turn off the Friend feature in the :file:`prj.conf` file by setting the :kconfig:option:`CONFIG_BT_MESH_FRIEND` option to ``n``.
+   To create the new Composition Data and see the :c:enum:`BT_MESH_DFU_EFFECT_UNPROV` effect, you can, for example, turn off the Friend feature in the :ncs-file:`/samples/bluetooth/mesh/dfu/target/prj.conf` file by setting the :kconfig:option:`CONFIG_BT_MESH_FRIEND` option to ``n``.
 
 In this sample, the device flash is split into partitions using DTS overlays.
 When the DFU transfer starts, the sample stores the new firmware at the MCUboot secondary slot using the :ref:`zephyr:flash_map_api`.
@@ -240,4 +240,4 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`

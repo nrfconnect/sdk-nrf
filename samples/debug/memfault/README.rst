@@ -86,7 +86,7 @@ Configuration
 *************
 
 The Memfault SDK allows the configuration of some of its options using Kconfig.
-To configure the options in the SDK that are not available for configuration using Kconfig, use :file:`samples/debug/memfault/config/memfault_platform_config.h`.
+To configure the options in the SDK that are not available for configuration using Kconfig, use :ncs-file:`/samples/debug/memfault/config/memfault_platform_config.h`.
 See `Memfault SDK`_ for more information.
 
 |config|

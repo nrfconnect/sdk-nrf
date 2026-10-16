@@ -86,8 +86,8 @@ To enable the persistence of a preferred slot, define a backup region for the bo
 Identifying the active slot
 ---------------------------
 
-This sample uses devicetree partitions on ``nrf54h20dk/nrf54h20/cpuapp`` (see :file:`sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi` and board overlays).
-To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the application slot nodes, as in :file:`src/ab_utils.c`:
+This sample uses devicetree partitions on ``nrf54h20dk/nrf54h20/cpuapp`` (see :ncs-file:`/samples/dfu/ab_split/sysbuild/nrf54h20dk_nrf54h20_memory_map.dtsi` and board overlays).
+To see whether the application runs from slot A or slot B, compare the ``zephyr,code-partition`` offset with the application slot nodes, as in :ncs-file:`/samples/dfu/ab_split/src/ab_utils.c`:
 
 * ``cpuapp_slot0_partition`` — application core, slot A
 * ``cpuapp_slot1_partition`` — application core, slot B
@@ -139,7 +139,7 @@ All confirmation flags that you set for the manifest image also apply to the oth
 This sample uses the bootloader request subsystem to request image confirmation instead of modifying the image trailer directly.
 This approach allows the bootloader to block all write requests to the active image partition.
 
-The implementation of these checks is located in :file:`src/ab_utils.c`.
+The implementation of these checks is located in :ncs-file:`/samples/dfu/ab_split/src/ab_utils.c`.
 
 User interface
 **************

@@ -582,7 +582,7 @@ API documentation
 The following API is used by the configuration channel transports.
 The configurable application modules (configuration channel listeners) do not use it.
 
-| Header file: :file:`applications/nrf_desktop/src/util/config_channel_transport.h`
-| Source file: :file:`applications/nrf_desktop/src/util/config_channel_transport.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/config_channel_transport.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/config_channel_transport.c`
 
 .. doxygengroup:: config_channel_transport

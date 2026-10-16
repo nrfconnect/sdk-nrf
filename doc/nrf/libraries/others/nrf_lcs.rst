@@ -28,7 +28,7 @@ You can configure one of the following Kconfig options to choose the memory back
 API documentation
 *****************
 
-| Header file: :file:`include/nrf_lcs/nrf_lcs.h`
+| Header file: :ncs-file:`/include/nrf_lcs/nrf_lcs.h`
 | Source files: :file:`subsys/nrf_lcs/`
 
 .. doxygengroup:: nrf_lcs

@@ -70,7 +70,7 @@ Dependencies
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/hrs_client.h`
-| Source file: :file:`subsys/bluetooth/services/hrs_client.c`
+| Header file: :ncs-file:`/include/bluetooth/services/hrs_client.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/hrs_client.c`
 
 .. doxygengroup:: bt_hrs_client

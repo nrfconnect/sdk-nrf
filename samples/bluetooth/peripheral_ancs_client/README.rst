@@ -113,7 +113,7 @@ Testing with Bluetooth Low Energy app
 #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
 #. Click the :guilabel:`SERVER SETUP` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the :file:`ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
+   Load the :ncs-file:`/samples/bluetooth/peripheral_ancs_client/ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Click the :guilabel:`CONNECTION MAP` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.
@@ -357,15 +357,15 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
-* :file:`include/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
 
 The sample also uses the following secure firmware component:
 

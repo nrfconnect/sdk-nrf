@@ -40,15 +40,15 @@ Build configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/wfa_qt_app/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/wfa_qt_app/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:
 
 To specify IP addresses, you can edit the following Kconfig options:
 
-* Use the :kconfig:option:`CONFIG_NET_CONFIG_USB_IPV4_ADDR` Kconfig option in the :file:`overlay-netusb.conf` file to set the IPv4 address for USB communication.
-* Use the :kconfig:option:`CONFIG_NET_CONFIG_SLIP_IPV4_ADDR` Kconfig option in the :file:`overlay-slip.conf` file to set the IPv4 address for UART communication.
+* Use the :kconfig:option:`CONFIG_NET_CONFIG_USB_IPV4_ADDR` Kconfig option in the :ncs-file:`/samples/wifi/wfa_qt_app/overlay-netusb.conf` file to set the IPv4 address for USB communication.
+* Use the :kconfig:option:`CONFIG_NET_CONFIG_SLIP_IPV4_ADDR` Kconfig option in the :ncs-file:`/samples/wifi/wfa_qt_app/overlay-slip.conf` file to set the IPv4 address for UART communication.
 
 Set the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_HEAP` Kconfig option according to the size of the certificates used.
 
@@ -78,14 +78,14 @@ The following is an example of the CLI command:
 
    west build -b nrf5340dk/nrf5340/cpuapp -- -DSHIELD=nrf7002ek
 
-To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :file:`overlay-netusb.conf`.
+To build for the nRF7002 DK with the netusb support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :ncs-file:`/samples/wifi/wfa_qt_app/overlay-netusb.conf`.
 The following is an example of the CLI command:
 
 .. code-block:: console
 
    west build -b nrf7002dk/nrf5340/cpuapp -- -DEXTRA_CONF_FILE=overlay-netusb.conf
 
-To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :file:`overlay-slip.conf` and DTC overlay :file:`nrf7002_uart_pipe.overlay`.
+To build for the nRF7002 DK with the Serial Line Internet Protocol (SLIP) support, use the ``nrf7002dk/nrf5340/cpuapp`` board target with the configuration overlay :ncs-file:`/samples/wifi/wfa_qt_app/overlay-slip.conf` and DTC overlay :ncs-file:`/samples/wifi/wfa_qt_app/nrf7002_uart_pipe.overlay`.
 The following is an example of the CLI command:
 
 .. code-block:: console

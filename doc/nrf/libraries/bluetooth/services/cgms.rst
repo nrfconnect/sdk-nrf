@@ -34,7 +34,7 @@ Then, call the :c:func:`bt_cgms_measurement_add` function to pass the measuremen
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/cgms.h`
+| Header file: :ncs-file:`/include/bluetooth/services/cgms.h`
 | Source files: :file:`subsys/bluetooth/services/cgms`
 
 .. doxygengroup:: bt_cgms

@@ -27,7 +27,7 @@ To reduce noise, the regulator has a configurable accuracy property which allows
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/light_ctrl_reg_spec.h`
-| Source file: :file:`subsys/bluetooth/mesh/light_ctrl_reg_spec.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/light_ctrl_reg_spec.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/light_ctrl_reg_spec.c`
 
 .. doxygengroup:: bt_mesh_light_ctrl_reg_spec

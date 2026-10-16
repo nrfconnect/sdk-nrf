@@ -67,7 +67,7 @@ To support encryption, set the :kconfig:option:`CONFIG_GAZELL_PAIRING_CRYPT` Kco
 API documentation
 *****************
 
-| Header file: :file:`include/gzp.h` and :file:`include/gzp_config.h`
+| Header file: :ncs-file:`/include/gzp.h` and :ncs-file:`/include/gzp_config.h`
 | Source file: :file:`subsys/gazell/`
 
 .. doxygengroup:: gzp

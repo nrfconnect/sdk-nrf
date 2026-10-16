@@ -71,7 +71,7 @@ API documentation
 
 .. _nfc_text_record:
 
-| Header file: :file:`include/nfc/ndef/text_rec.h`
-| Source file: :file:`subsys/nfc/ndef/text_rec.c`
+| Header file: :ncs-file:`/include/nfc/ndef/text_rec.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/text_rec.c`
 
 .. doxygengroup:: nfc_text_rec

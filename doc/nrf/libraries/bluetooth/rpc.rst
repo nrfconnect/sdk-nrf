@@ -30,8 +30,8 @@ The Bluetooth Low Energy RPC is a solution that consists of the following compon
 You can add support for serializing Bluetooth-related custom APIs by implementing your own client and host procedures.
 You can use the following files as examples:
 
-  * :file:`subsys/bluetooth/rpc/client/bt_rpc_conn_client.c`
-  * :file:`subsys/bluetooth/rpc/host/bt_rpc_conn_host.c`
+  * :ncs-file:`/subsys/bluetooth/rpc/client/bt_rpc_conn_client.c`
+  * :ncs-file:`/subsys/bluetooth/rpc/host/bt_rpc_conn_host.c`
 
 Supported backends
 ==================
@@ -171,7 +171,7 @@ API documentation
 This library does not define a new Bluetooth API except for ``flags`` modification.
 Instead, it uses Zephyr's :ref:`zephyr:bluetooth_api`.
 
-| Header file: :file:`include/bluetooth/bt_rpc.h`
+| Header file: :ncs-file:`/include/bluetooth/bt_rpc.h`
 | Source files: :file:`subsys/bluetooth/rpc/`
 
 .. doxygengroup:: bt_rpc

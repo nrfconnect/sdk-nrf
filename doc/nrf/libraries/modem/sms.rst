@@ -40,7 +40,7 @@ If there is already an SMS client registered in the system (for example, using A
 API documentation
 *****************
 
-| Header file: :file:`include/modem/sms.h`
-| Source file: :file:`lib/sms/sms.c`
+| Header file: :ncs-file:`/include/modem/sms.h`
+| Source file: :ncs-file:`/lib/sms/sms.c`
 
 .. doxygengroup:: sms

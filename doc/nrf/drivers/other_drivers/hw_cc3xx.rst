@@ -21,6 +21,6 @@ You can initialize the hw_cc3xx driver using the :kconfig:option:`CONFIG_HW_CC3X
 API documentation
 *****************
 
-| Source file: :file:`drivers/hw_cc3xx/hw_cc3xx.c`
+| Source file: :ncs-file:`/drivers/hw_cc3xx/hw_cc3xx.c`
 
 After the hw_cc3xx driver has been initialized, you can use the APIs from the :ref:`crypto_api_nrf_cc3xx_platform` and the :ref:`nrf_cc3xx_mbedcrypto_readme`.

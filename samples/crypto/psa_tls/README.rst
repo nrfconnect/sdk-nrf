@@ -221,11 +221,11 @@ This functionality is called *TAP adapter*.
 
    .. tab:: Linux
 
-      The TAP adapter functionality is included in the `Ethernet over RTT for Linux`_ executable, named :file:`eth_rtt_link`, located in the :file:`samples/crypto/psa_tls` folder.
+      The TAP adapter functionality is included in the `Ethernet over RTT for Linux`_ executable, named :ncs-file:`/samples/crypto/psa_tls/eth_rtt_link`, located in the :file:`samples/crypto/psa_tls` folder.
       You must pass the development kit's SEGGER ID and the TAP IPv4 as parameters when calling the executable.
       See the examples in the `Testing`_ section.
 
-      When using an nRF5340 development kit, if :file:`eth_rtt_link` cannot start the RTT connection, pass the ``_SEGGER_RTT`` RAM block address as a parameter using ``--rttcbaddr``, as shown in the following example:
+      When using an nRF5340 development kit, if :ncs-file:`/samples/crypto/psa_tls/eth_rtt_link` cannot start the RTT connection, pass the ``_SEGGER_RTT`` RAM block address as a parameter using ``--rttcbaddr``, as shown in the following example:
 
       .. code-block:: console
 
@@ -432,17 +432,17 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:logging_api`:
 
-  * :file:`include/logging/log.h`
+  * :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 * :ref:`zephyr:bsd_sockets_interface`:
 
-  * :file:`net/socket.h`
+  * :ncs-file:`zephyr:/include/zephyr/net/socket.h`
 
-* :file:`net/net_core.h`
-* :file:`net/tls_credentials.h`
+* :ncs-file:`zephyr:/include/zephyr/net/net_core.h`
+* :ncs-file:`zephyr:/include/zephyr/net/tls_credentials.h`
 
 It also uses the following TF-M libraries:
 
-* :file:`tfm_ns_interface.h`
-* :file:`psa/storage_common.h`
-* :file:`psa/protected_storage.h`
+* :ncs-file:`trusted-firmware-m:/interface/include/tfm_ns_interface.h`
+* :ncs-file:`trusted-firmware-m:/interface/include/psa/storage_common.h`
+* :ncs-file:`trusted-firmware-m:/interface/include/psa/protected_storage.h`

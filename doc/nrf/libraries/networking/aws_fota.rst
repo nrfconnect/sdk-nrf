@@ -206,7 +206,7 @@ Limitations
 API documentation
 *****************
 
-| Header file: :file:`include/net/aws_fota.h`
+| Header file: :ncs-file:`/include/net/aws_fota.h`
 | Source files: :file:`subsys/net/lib/aws_fota/`
 
 .. doxygengroup:: aws_fota

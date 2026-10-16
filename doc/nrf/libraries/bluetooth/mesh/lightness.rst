@@ -45,6 +45,6 @@ Common types
 
 This section lists the types common to the Light Lightness mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/lightness.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/lightness.h`
 
 .. doxygengroup:: bt_mesh_lightness

@@ -228,19 +228,19 @@ Dependencies
 This sample uses the following |NCS| libraries:
 
 * :ref:`dk_buttons_and_leds_readme`
-* :file:`include/bluetooth/cs_de.h`
-* :file:`include/bluetooth/scan.h`
+* :ncs-file:`/include/bluetooth/cs_de.h`
+* :ncs-file:`/include/bluetooth/scan.h`
 
 This sample uses the following Zephyr libraries:
 
-* :file:`include/sys/printk.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-* :file:`include/bluetooth/bluetooth.h`
-* :file:`include/bluetooth/conn.h`
-* :file:`include/bluetooth/cs.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/cs.h`
