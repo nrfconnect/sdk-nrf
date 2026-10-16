@@ -24,4 +24,5 @@
 	pinctrl-0 = <&pwm_default_alt>;
 	pinctrl-1 = <&pwm_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 };
