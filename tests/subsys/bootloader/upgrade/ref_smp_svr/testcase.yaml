@@ -464,6 +464,31 @@ tests:
       - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
       - mcuboot_CONFIG_BOOT_KEYS_REVOCATION=y
 
+  # Regression test for NCSIDB-1975: with NSIB and upgradable MCUboot,
+  # MCUboot manages two images (CONFIG_UPDATEABLE_IMAGE_NUMBER=2) and must
+  # still revoke the old application key in the KMU.
+  nsib.mcuboot.upgrade.kmu.revocation:
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+    tags:
+      - kmu
+      - nsib
+    harness_config:
+      pytest_root:
+        - "../pytest/test_kmu_extra.py"
+    extra_args:
+      - SB_CONFIG_SECURE_BOOT_APPCORE=y
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y
+      - SB_CONFIG_MCUBOOT_SIGNATURE_USING_KMU=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - mcuboot_CONFIG_BOOT_SIGNATURE_KMU_SLOTS=3
+      - mcuboot_CONFIG_BOOT_KEYS_REVOCATION=y
+      - FILE_SUFFIX=nsib
+
   mcuboot.nrf_compress.basic:
     tags:
       - nrf_compress
