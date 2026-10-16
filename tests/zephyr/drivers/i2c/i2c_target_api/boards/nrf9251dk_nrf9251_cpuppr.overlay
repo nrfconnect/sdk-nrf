@@ -68,6 +68,7 @@
 	pinctrl-0 = <&i2c130_default_alt>;
 	pinctrl-1 = <&i2c130_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	zephyr,concat-buf-size = <256>;
 	status = "okay";
 
@@ -85,6 +86,7 @@
 	pinctrl-0 = <&i2c131_default_alt>;
 	pinctrl-1 = <&i2c131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	status = "okay";
 
 	eeprom0: eeprom@54 {

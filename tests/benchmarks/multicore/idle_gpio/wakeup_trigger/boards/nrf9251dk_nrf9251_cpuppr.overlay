@@ -49,6 +49,7 @@
 	pinctrl-0 = <&spi131_default_alt>;
 	pinctrl-1 = <&spi131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	overrun-character = <0x00>;
 
 	spim_dt: spi-device@0 {

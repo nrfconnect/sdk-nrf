@@ -5,3 +5,7 @@
  */
 
 #include "nrf9251dk_nrf9251_cpuapp.overlay"
+
+&adc {
+	memory-regions = <&cpuppr_dma_region>;
+};

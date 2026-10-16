@@ -35,6 +35,7 @@ dut: &uart131 {
 	pinctrl-0 = <&uart131_default_alt>;
 	pinctrl-1 = <&uart131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	current-speed = <115200>;
 	hw-flow-control;
 };

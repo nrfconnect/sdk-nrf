@@ -61,6 +61,7 @@
 	pinctrl-0 = <&spi130_default_test>;
 	pinctrl-1 = <&spi130_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	overrun-character = <0x00>;
 	zephyr,pm-device-runtime-auto;
 };
@@ -70,6 +71,7 @@
 	pinctrl-0 = <&spi131_default_test>;
 	pinctrl-1 = <&spi131_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	overrun-character = <0x00>;
 };
 

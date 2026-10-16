@@ -7,7 +7,7 @@
 #include "nrf9251dk_nrf9251_cpuapp.overlay"
 
 &uart130 {
-	/delete-property/ memory-regions;
+	memory-regions = <&cpuppr_dma_region>;
 };
 
 &uart120 {
