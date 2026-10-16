@@ -116,3 +116,17 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_nrf71_wifi
+  sample.wfa_qt_app.rtt:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="rtt.conf"
+    integration_platforms:
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow:
+      - nrf7002dk/nrf5340/cpuapp
+      - nrf7120dk/nrf7120/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
