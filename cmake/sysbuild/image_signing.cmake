@@ -67,8 +67,38 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "slot0_partition write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  dt_nodelabel(slot0_flash NODELABEL "slot0_partition" REQUIRED)
-  dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
+  # Select the MCUboot slot pair this image is signed for. The chosen
+  # zephyr,code-partition must be one of slot<N>_partition, slot<N>_s_partition
+  # or slot<N>_ns_partition. The image is then signed for slot<N>_partition. If
+  # it is none of these, slot0_partition is used.
+  set(primary_slot_index)
+  dt_chosen(code_partition PROPERTY "zephyr,code-partition")
+  if(code_partition)
+    # 2 slots per image pair. MCUboot supports at most 8 image pairs.
+    foreach(slot_index RANGE 0 15)
+      foreach(slot_label_suffix "_partition" "_s_partition" "_ns_partition")
+        dt_nodelabel(slot_node NODELABEL "slot${slot_index}${slot_label_suffix}")
+        if(slot_node AND "${code_partition}" STREQUAL "${slot_node}")
+          set(primary_slot_index ${slot_index})
+          break()
+        endif()
+      endforeach()
+      if(DEFINED primary_slot_index)
+        break()
+      endif()
+    endforeach()
+    set(slot_node)
+    set(slot_index)
+    set(slot_label_suffix)
+  endif()
+
+  if(NOT DEFINED primary_slot_index)
+    set(primary_slot_index 0)
+  endif()
+  dt_nodelabel(primary_slot_node NODELABEL "slot${primary_slot_index}_partition" REQUIRED)
+  math(EXPR secondary_slot_index "${primary_slot_index} + 1")
+  set(secondary_slot_label "slot${secondary_slot_index}_partition")
+  dt_reg_size(slot_size PATH "${primary_slot_node}" REQUIRED)
 
   set(imgtool_rom_command)
   if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
@@ -80,9 +110,8 @@ function(zephyr_mcuboot_tasks)
     # RAM load requires setting the location of where to load the image to
     dt_chosen(chosen_ram PROPERTY "zephyr,sram")
     dt_reg_addr(chosen_ram_address PATH ${chosen_ram})
-    dt_nodelabel(slot0_partition NODELABEL "slot0_partition" REQUIRED)
-    dt_reg_addr(slot0_partition_address PATH ${slot0_partition})
-    dt_nodelabel(slot1_partition NODELABEL "slot1_partition" REQUIRED)
+    dt_reg_addr(slot0_partition_address PATH ${primary_slot_node})
+    dt_nodelabel(slot1_partition NODELABEL "${secondary_slot_label}" REQUIRED)
     dt_reg_addr(slot1_partition_address PATH ${slot1_partition})
 
     if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)

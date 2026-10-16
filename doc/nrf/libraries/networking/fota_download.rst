@@ -57,6 +57,21 @@ This updated path is then used to download the image.
 A device reset triggers the second-stage upgradable bootloader to copy the image from the update bank to the non-active slot.
 An additional reset is then required for the first-stage immutable bootloader to select and use the upgraded second-stage bootloader.
 
+Multi-image MCUboot updates
+***************************
+
+When MCUboot is configured with more than one updateable image pair (:kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` set to a value greater than ``1``), the library can download an upgrade candidate for any of the image pairs.
+Start the download with :c:func:`fota_download_start_params` and set the ``img_num`` field of :c:struct:`fota_download_params` to the MCUboot image pair index that the downloaded image is stored in and scheduled for.
+The index applies to that download only.
+All other start functions use image pair ``0``, which is the main application.
+
+The library rejects a negative index, or an index greater than or equal to :kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER`, with ``-EINVAL`` before the download starts.
+The index is ignored for modem image types.
+For :c:enumerator:`DFU_TARGET_IMAGE_TYPE_SMP`, the index selects the image number on the SMP server.
+
+When building with sysbuild, an image registered in the ``SECONDARY_APP`` group receives its own index from the :kconfig:option:`CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER` Kconfig option.
+See :ref:`sysbuild_assigned_images_ids` for details.
+
 API documentation
 *****************
 

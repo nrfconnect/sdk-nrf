@@ -160,6 +160,65 @@ int fota_download(const char *host, const char *file, const int *sec_tag_list,
 		  uint8_t sec_tag_count, uint8_t pdn_id, size_t fragment_size,
 		  const enum dfu_target_image_type expected_type);
 
+/**@brief Parameters for fota_download_start_params().
+ *
+ * Zero values select the defaults of the other start functions: no TLS,
+ * default PDN, no fragmentation, image pair 0.
+ * The @c host and @c file strings must be kept in scope while the download is
+ * going on.
+ */
+struct fota_download_params {
+	/** Name of host to download from. Can include scheme and port number,
+	 *  for example https://google.com:443.
+	 */
+	const char *host;
+	/** Path to the file to download. See fota_download_any() for details on
+	 *  the expected format.
+	 */
+	const char *file;
+	/** Security tags to use with TLS/DTLS, or NULL to disable TLS. */
+	const int *sec_tag_list;
+	/** Number of entries in @c sec_tag_list, or 0 to disable TLS. */
+	uint8_t sec_tag_count;
+	/** Packet Data Network ID to use for the download, or 0 for the default. */
+	uint8_t pdn_id;
+	/** Fragment size to use for the download, or 0 for no fragmentation. */
+	size_t fragment_size;
+	/** Expected type of the firmware file. Use @c DFU_TARGET_IMAGE_TYPE_ANY to
+	 *  accept any type.
+	 */
+	enum dfu_target_image_type expected_type;
+	/** MCUboot image pair index that the downloaded image is stored in and
+	 *  scheduled for. 0 selects the main application image pair.
+	 *  Ignored for modem image types. For @c DFU_TARGET_IMAGE_TYPE_SMP it selects
+	 *  the SMP server image number to upload to.
+	 */
+	int img_num;
+};
+
+/**@brief Start downloading a firmware image using explicit parameters.
+ *
+ * Use this variant to select an MCUboot image pair other than the main
+ * application when MCUboot is built with more than one updateable image pair.
+ *
+ * Validate that the file type matches the expected type before proceeding with the download.
+ * When the download is complete, the secondary slot of the selected MCUboot image
+ * pair is tagged as having valid firmware inside it. The completion is reported through
+ * an event.
+ *
+ * @param params Download parameters. Not retained after the call returns, except
+ *               for the @c host and @c file pointers.
+ *
+ * @retval 0	     If download has started successfully.
+ * @retval -EINVAL   If @p params, host, file or the registered callback is NULL,
+ *                   or @c img_num is out of range for this build.
+ * @retval -EALREADY If download is already ongoing.
+ * @retval -E2BIG    If sec_tag_count is larger than
+ *		     @kconfig{CONFIG_FOTA_DOWNLOAD_SEC_TAG_LIST_SIZE_MAX}
+ *                   Otherwise, a negative value is returned.
+ */
+int fota_download_start_params(const struct fota_download_params *params);
+
 /**@brief Download the given file with the specified image type from the given host.
  *
  * Identical to fota_download_start_with_image_type(),
