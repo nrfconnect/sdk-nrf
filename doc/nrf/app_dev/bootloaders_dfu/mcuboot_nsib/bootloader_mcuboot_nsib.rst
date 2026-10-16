@@ -27,3 +27,4 @@ Following that, you can :ref:`add an immutable bootloader<ug_bootloader_adding_s
    bootloader_config
    bootloader_signature_keys
    bootloader_downgrade_protection
+   bootloader_mcuboot_feature_support_across_nrf54l_platforms
