@@ -171,6 +171,7 @@ static int app_attr_get(struct bt_ancs_client *ancs_c, const uint8_t *app_id,
 		ancs_c->parse_info.expected_number_of_attrs =
 			ancs_c->number_of_requested_attr;
 	} else {
+		atomic_clear_bit(&ancs_c->state, ANCS_CP_WRITE_PENDING);
 		err = -ENOMEM;
 	}
 
