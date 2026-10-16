@@ -88,15 +88,13 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 				      size_t input_length, uint8_t *output, size_t output_size,
 				      size_t *output_length)
 {
-	psa_status_t status = PSA_SUCCESS;
-	size_t bytes_written = 0;
-	size_t remaining_input;
-	const uint8_t *current_input;
-	uint8_t *current_output;
-	uint8_t *keystream_block;
-	size_t keystream_used;
-	size_t remaining_keystream_bytes;
-	size_t bytes_to_process;
+	/* unprocessed_input holds the keystream block, unprocessed_input_bytes how much of it
+	 * is used (0 when none is left, as after set_iv())
+	 */
+	size_t keystream_offset = operation->unprocessed_input_bytes != 0
+					  ? operation->unprocessed_input_bytes
+					  : SX_BLKCIPHER_AES_BLK_SZ;
+	psa_status_t status;
 
 	*output_length = 0;
 
@@ -119,54 +117,24 @@ psa_status_t cracen_sw_aes_ctr_update(cracen_cipher_operation_t *operation, cons
 		return status;
 	}
 
-	remaining_input = input_length;
-	current_input = input;
-	current_output = output;
-
-	keystream_block = operation->unprocessed_input;
-	keystream_used = operation->unprocessed_input_bytes;
-
-	while (remaining_input > 0) {
-		/* Generate a keystream block when starting a new one */
-		if (keystream_used == 0) {
-			uint8_t current_ctr[SX_BLKCIPHER_AES_BLK_SZ];
-
-			memcpy(current_ctr, operation->iv, SX_BLKCIPHER_AES_BLK_SZ);
-
-			status = cracen_sw_aes_primitive(&operation->cipher, &operation->keyref,
-							 current_ctr, keystream_block);
-			if (status != PSA_SUCCESS) {
-				return status;
-			}
-		}
-
-		remaining_keystream_bytes = SX_BLKCIPHER_AES_BLK_SZ - keystream_used;
-		bytes_to_process = MIN(remaining_input, remaining_keystream_bytes);
-
-		/* XOR keystream slice with input into output */
-		for (size_t j = 0; j < bytes_to_process; j++) {
-			current_output[j] = current_input[j] ^ keystream_block[keystream_used + j];
-		}
-
-
-		current_input += bytes_to_process;
-		current_output += bytes_to_process;
-		remaining_input -= bytes_to_process;
-		bytes_written += bytes_to_process;
-		keystream_used += bytes_to_process;
-
-		/* If the keystream block was fully consumed, bump counter for next block */
-		if (keystream_used == SX_BLKCIPHER_AES_BLK_SZ) {
-			keystream_used = 0;
-			cracen_sw_increment_counter_be(operation->iv,
-						       SX_BLKCIPHER_AES_BLK_SZ,
-						       AES_CTR_COUNTER_START_BYTE);
-		}
+	/* CRACEN stays reserved for all blocks of this call */
+	status = silex_statuscodes_to_psa(
+		sx_hw_reserve(&operation->cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+	if (status != PSA_SUCCESS) {
+		return status;
 	}
 
-	operation->unprocessed_input_bytes = keystream_used;
+	status = cracen_sw_ctr_xor(&operation->cipher, &operation->keyref, operation->iv,
+				   AES_CTR_COUNTER_START_BYTE, operation->unprocessed_input,
+				   &keystream_offset, input, output, input_length);
 
-	*output_length = bytes_written;
+	sx_hw_release(&operation->cipher.dma);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	operation->unprocessed_input_bytes = keystream_offset % SX_BLKCIPHER_AES_BLK_SZ;
+	*output_length = input_length;
 	return PSA_SUCCESS;
 }
 

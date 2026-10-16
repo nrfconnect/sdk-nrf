@@ -168,6 +168,13 @@ void sx_cmdma_newcmd(struct sx_dmactl *dma, struct sxdesc *d, uint32_t cmd, uint
  */
 int sx_cmdma_start(struct sx_dmactl *dma, size_t privsz, struct sxdesc *indescs);
 
+/** Start the jobs set up in the DMA fetch and push registers.
+ *
+ * Every job must be started through this function, so that its interrupt is
+ * handled the way sx_cmdma_check() expects.
+ */
+void sx_cmdma_trigger(void);
+
 #ifdef CONFIG_DCACHE
 /** Invalidate the D-cache lines backing the output descriptor buffers.
  *

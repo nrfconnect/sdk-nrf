@@ -108,6 +108,21 @@ uint32_t cracen_wait_for_cm_interrupt(void)
 	return cracen_wait_for_interrupt(cracen_irq_event_for_cryptomaster);
 }
 
+void cracen_cm_interrupt_mask(void)
+{
+	nrf_cracen_int_disable(NRF_CRACEN, CRACEN_INTENCLR_CRYPTOMASTER_Msk);
+}
+
+void cracen_cm_interrupt_unmask(void)
+{
+	nrf_cracen_int_enable(NRF_CRACEN, CRACEN_INTENSET_CRYPTOMASTER_Msk);
+}
+
+uint32_t cracen_cm_interrupt_take(void)
+{
+	return nrf_security_event_take(cracen_irq_event_for_cryptomaster, UINT32_MAX);
+}
+
 uint32_t cracen_wait_for_pke_interrupt(void)
 {
 #if !defined(__NRF_TFM__)

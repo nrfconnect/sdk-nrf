@@ -94,41 +94,31 @@ psa_status_t cracen_cmac_derive_subkeys(cracen_mac_operation_t *operation, uint8
 psa_status_t cracen_sw_cmac_update(cracen_mac_operation_t *operation, const uint8_t *data,
 				   size_t data_len)
 {
-	psa_status_t psa_status;
-	size_t bytes_to_copy;
-	size_t remaining = data_len;
-	size_t offset = 0;
+	cracen_cmac_context_t *sw_ctx = &operation->cmac.sw_ctx;
+	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
 
-	while (remaining > 0) {
-		bytes_to_copy = SX_BLKCIPHER_AES_BLK_SZ - operation->cmac.sw_ctx.partial_len;
-		if (bytes_to_copy > remaining) {
-			bytes_to_copy = remaining;
-		}
-
-		memcpy(operation->cmac.sw_ctx.partial_block + operation->cmac.sw_ctx.partial_len,
-		       data + offset, bytes_to_copy);
-		operation->cmac.sw_ctx.partial_len += bytes_to_copy;
-		offset += bytes_to_copy;
-		remaining -= bytes_to_copy;
-
-		/* Only encrypt a full block if we know more data is coming */
-		if (operation->cmac.sw_ctx.partial_len == SX_BLKCIPHER_AES_BLK_SZ &&
-		    remaining > 0) {
-			cracen_xorbytes(operation->cmac.sw_ctx.mac_state,
-					operation->cmac.sw_ctx.partial_block,
-					SX_BLKCIPHER_AES_BLK_SZ);
-			psa_status = cracen_sw_aes_primitive(
-				&operation->cmac.cipher, &operation->cmac.keyref,
-				operation->cmac.sw_ctx.mac_state, operation->cmac.sw_ctx.mac_state);
-			if (psa_status != PSA_SUCCESS) {
-				return psa_status;
-			}
-			operation->cmac.sw_ctx.partial_len = 0;
-			memset(operation->cmac.sw_ctx.partial_block, 0, SX_BLKCIPHER_AES_BLK_SZ);
-		}
+	/* A full block is only encrypted once more data follows it, as finish() treats
+	 * the last block apart. Until then nothing needs CRACEN.
+	 */
+	if (sw_ctx->partial_len + data_len <= SX_BLKCIPHER_AES_BLK_SZ) {
+		memcpy(&sw_ctx->partial_block[sw_ctx->partial_len], data, data_len);
+		sw_ctx->partial_len += data_len;
+		return PSA_SUCCESS;
 	}
 
-	return PSA_SUCCESS;
+	/* CRACEN stays reserved for all blocks of this call */
+	psa_status = silex_statuscodes_to_psa(
+		sx_hw_reserve(&operation->cmac.cipher.dma, SX_HW_RESERVE_CM_ENABLED));
+	if (psa_status != PSA_SUCCESS) {
+		return psa_status;
+	}
+
+	psa_status = cracen_sw_cbc_mac_update(&operation->cmac.cipher, &operation->cmac.keyref,
+					      sw_ctx->mac_state, sw_ctx->partial_block,
+					      &sw_ctx->partial_len, data, data_len, true);
+
+	sx_hw_release(&operation->cmac.cipher.dma);
+	return psa_status;
 }
 
 psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
@@ -142,9 +132,16 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 		return PSA_ERROR_INVALID_ARGUMENT;
 	}
 
-	psa_status = cracen_cmac_derive_subkeys(operation, k1, k2);
+	/* CRACEN stays reserved for all blocks of this call */
+	psa_status = silex_statuscodes_to_psa(
+		sx_hw_reserve(&operation->cmac.cipher.dma, SX_HW_RESERVE_CM_ENABLED));
 	if (psa_status != PSA_SUCCESS) {
 		return psa_status;
+	}
+
+	psa_status = cracen_cmac_derive_subkeys(operation, k1, k2);
+	if (psa_status != PSA_SUCCESS) {
+		goto exit;
 	}
 
 	/*  If full block, XOR with K1; otherwise pad and XOR with K2 */
@@ -166,12 +163,15 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *operation)
 					     operation->cmac.sw_ctx.mac_state,
 					     operation->cmac.sw_ctx.mac_state);
 	if (psa_status != PSA_SUCCESS) {
-		return psa_status;
+		goto exit;
 	}
 
 	memcpy(operation->input_buffer, operation->cmac.sw_ctx.mac_state, operation->mac_size);
 
-	return PSA_SUCCESS;
+	psa_status = PSA_SUCCESS;
+exit:
+	sx_hw_release(&operation->cmac.cipher.dma);
+	return psa_status;
 }
 
 /* Single-shot operations still use hw cmac */
