@@ -5,9 +5,15 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/util.h>
 #include <modem/location.h>
+#if defined(CONFIG_LOCATION_METHOD_WIFI) && defined(CONFIG_NET_L2_WIFI_UTILS)
+#include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi_utils.h>
+#endif
 #if defined(CONFIG_LOCATION_SERVICE_EXTERNAL) && defined(CONFIG_NRF_CLOUD_AGNSS)
 #include <net/nrf_cloud_agnss.h>
 #endif
@@ -214,6 +220,54 @@ static void location_config_method_defaults_set(
 	} else if (method_type == LOCATION_METHOD_WIFI) {
 #if defined(CONFIG_LOCATION_METHOD_WIFI)
 		method->wifi.timeout = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_TIMEOUT;
+
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_SCAN_TYPE_PASSIVE)) {
+			method->wifi.scan_type = LOCATION_WIFI_SCAN_TYPE_PASSIVE;
+		} else {
+			method->wifi.scan_type = LOCATION_WIFI_SCAN_TYPE_ACTIVE;
+		}
+
+		method->wifi.bands = 0;
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_2_4_GHZ)) {
+			method->wifi.bands |= LOCATION_WIFI_BAND_2_4_GHZ;
+		}
+		if (IS_ENABLED(CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_BANDS_5_GHZ)) {
+			method->wifi.bands |= LOCATION_WIFI_BAND_5_GHZ;
+		}
+
+		method->wifi.dwell_time_active =
+			CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_ACTIVE;
+		method->wifi.dwell_time_passive =
+			CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_DWELL_TIME_PASSIVE;
+		method->wifi.max_bss_cnt = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_MAX_BSS_CNT;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX) && \
+	CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX > 0
+		memset(method->wifi.channels, 0, sizeof(method->wifi.channels));
+
+#if defined(CONFIG_NET_L2_WIFI_UTILS)
+		if (sizeof(CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS) > 1) {
+			char chan_str[] = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS;
+			struct wifi_band_channel parsed[WIFI_MGMT_SCAN_CHAN_MAX_MANUAL];
+			int ret;
+
+			memset(parsed, 0, sizeof(parsed));
+			ret = wifi_utils_parse_scan_chan(
+				chan_str, parsed, ARRAY_SIZE(parsed));
+			if (ret) {
+				LOG_ERR("Failed to parse default Wi-Fi scan channels: %d", ret);
+			} else {
+				for (int i = 0;
+				     i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX &&
+				     parsed[i].channel != 0;
+				     i++) {
+					method->wifi.channels[i].band = parsed[i].band;
+					method->wifi.channels[i].channel = parsed[i].channel;
+				}
+			}
+		}
+#endif /* CONFIG_NET_L2_WIFI_UTILS */
+#endif
 #endif
 	}
 }
