@@ -63,7 +63,7 @@
 	cpuapp_tcm_region: cpuapp_tcm_sram@0 {
 		compatible = "zephyr,memory-region";
 		reg = <0x00000000 (DT_SIZE_K(32) - 256)>;
-		zephyr,memory-region = "APP_TCM_RAM";
+		zephyr,memory-region = "TCM";
 	};
 
 	/* cache control functions - must be executed from local SRAM */
