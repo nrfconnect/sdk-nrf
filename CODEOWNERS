@@ -987,7 +987,7 @@
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
 /subsys/net/                              @nrfconnect/ncs-co-networking
-/subsys/net/l2_dect/                      @nrfconnect/ncs-dect-nr-plus
+/subsys/net/dect/l2/                      @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia

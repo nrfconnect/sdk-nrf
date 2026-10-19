@@ -301,6 +301,14 @@ void dect_net_l2_status_info_fill_sink_data(struct net_if *iface,
  */
 static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *pkt)
 {
+	uint8_t vtc_vhl = NET_IPV6_HDR(pkt)->vtc & 0xf0;
+	int ret;
+
+	/* Need IPv6 header to decide single-egress for PC-destined packets. */
+	if (vtc_vhl != 0x60) {
+		goto exit;
+	}
+
 	LOG_DBG("iface %p recv %d bytes from ipv6 addr %s", iface, net_pkt_get_len(pkt),
 		net_sprint_ipv6_addr((struct in6_addr *)NET_IPV6_HDR(pkt)->src));
 
@@ -309,12 +317,6 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 	 * OR
 	 * In case of multicast, we forward to all children (except the one who sent this)
 	 */
-	uint8_t vtc_vhl = NET_IPV6_HDR(pkt)->vtc & 0xf0;
-	int ret;
-
-	if (vtc_vhl != 0x60) {
-		goto exit;
-	}
 
 #if defined(CONFIG_NET_L2_ETHERNET)
 	/* Set type to IPV6 for Ethernet TX */

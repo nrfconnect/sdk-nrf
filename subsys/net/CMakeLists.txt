@@ -6,9 +6,9 @@
 
 add_subdirectory(lib)
 add_subdirectory_ifdef(CONFIG_OPENTHREAD_RPC openthread/rpc)
+add_subdirectory(dect)
 add_subdirectory_ifdef(CONFIG_L2_WIFI_CONNECTIVITY l2_wifi_if_conn)
 add_subdirectory_ifdef(CONFIG_OPENTHREAD_REPORT openthread/report)
 add_subdirectory_ifdef(CONFIG_OPENTHREAD openthread/settings_check)
-add_subdirectory_ifdef(CONFIG_NET_L2_DECT l2_dect)
 add_subdirectory_ifdef(CONFIG_OTPERF openthread/otperf)
 add_subdirectory_ifdef(CONFIG_OPENTHREAD_ZEPHYR_DNS_OFFLOAD openthread/dns_offload)
