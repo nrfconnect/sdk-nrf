@@ -93,6 +93,14 @@ int nrf_wifi_set_power_save(const struct device *dev,
 			goto out;
 		}
 
+		if (params->timeout_ms < 0 || params->timeout_ms == UINT32_MAX) {
+			LOG_ERR("%s: Invalid timeout value %d",
+				__func__, params->timeout_ms);
+			params->timeout_ms =
+				NRF_WIFI_PS_TIMEOUT_DEFAULT;
+
+		}
+
 		status = nrf_wifi_sys_fmac_set_power_save_timeout(
 							rpu_ctx_zep->rpu_ctx,
 							vif_ctx_zep->vif_idx,
@@ -394,6 +402,10 @@ void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 	vif_ctx_zep->ps_info->ps_params.enabled = ps_info->enabled;
 	vif_ctx_zep->ps_info->num_twt_flows = ps_info->num_twt_flows;
 	vif_ctx_zep->ps_info->ps_params.timeout_ms = ps_info->ps_timeout;
+	if (ps_info->ps_timeout < 0 || ps_info->ps_timeout == UINT32_MAX) {
+		vif_ctx_zep->ps_info->ps_params.timeout_ms =
+			NRF_WIFI_PS_TIMEOUT_DEFAULT;
+	}
 	vif_ctx_zep->ps_info->ps_params.listen_interval = ps_info->listen_interval;
 	vif_ctx_zep->ps_info->ps_params.wakeup_mode = ps_info->extended_ps;
 	if (ps_info->ps_exit_strategy == EVERY_TIM) {

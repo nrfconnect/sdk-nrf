@@ -3068,6 +3068,7 @@ struct nrf_wifi_umac_cmd_config_extended_ps {
 #define NRF_WIFI_MAX_TWT_FLOWS 8
 #define NRF_WIFI_PS_MODE_LEGACY 0
 #define NRF_WIFI_PS_MODE_WMM 1
+#define NRF_WIFI_PS_TIMEOUT_DEFAULT 100
 
 /**
  * @brief Given that most APs typically use a DTIM value of 3,
