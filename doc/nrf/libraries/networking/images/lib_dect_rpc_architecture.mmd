@@ -1,0 +1,32 @@
+%% DECT NR+ RPC - logical device (54L15 + 91) + DECT NR+ network (OTA)
+%% Rendered for docs as lib_dect_rpc_architecture.svg (hand-drawn Nordic style).
+
+flowchart LR
+    subgraph LOGICAL["Logical DECT NR+ device"]
+        subgraph DK54["nRF54L15 DK — RPC client"]
+            A[App]
+            B["net_if dect0 (mirrored)"]
+            C[RPC client]
+            A <--> B <--> C
+        end
+
+        UART["UART\nnRF RPC + HDLC"]
+
+        subgraph DK91["nRF9151 DK — RPC server"]
+            D[RPC server]
+            E[net_if dect0]
+            F[l2_dect]
+            G[Modem]
+            D --> E --> F --> G
+        end
+
+        C <-.-> UART <-.-> D
+    end
+
+    subgraph DECTNET["DECT NR+ network (OTA)"]
+        P[Peer PT / child / BR]
+        N[(IPv6)]
+        P --- N
+    end
+
+    G -. OTA IPv6 .-> N

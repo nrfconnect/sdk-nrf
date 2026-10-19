@@ -35,6 +35,7 @@
 #include "ipv6.h"
 
 #include <zephyr/net/net_pkt.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/net/mld.h>
 #include <zephyr/net/dns_sd.h>
 #if defined(CONFIG_NET_L2_ETHERNET)
@@ -62,7 +63,7 @@ static K_MUTEX_DEFINE(associations_mutex);
 #if defined(CONFIG_DECT_NR_RPC_SERVER)
 static dect_net_l2_rpc_forward_cb_t dect_net_l2_rpc_forward_cb;
 static dect_net_l2_link_state_cb_t dect_net_l2_link_state_cb;
-static bool rpc_client_connected;
+static atomic_t rpc_client_connected;
 
 void dect_net_l2_rpc_forward_register(dect_net_l2_rpc_forward_cb_t cb)
 {
@@ -76,7 +77,7 @@ void dect_net_l2_link_state_register(dect_net_l2_link_state_cb_t cb)
 
 void dect_net_l2_rpc_client_set_connected(bool connected)
 {
-	rpc_client_connected = connected;
+	atomic_set(&rpc_client_connected, connected);
 }
 #endif /* CONFIG_DECT_NR_RPC_SERVER */
 
@@ -335,7 +336,7 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 
 #if defined(CONFIG_DECT_NR_RPC_SERVER)
 	/* RPC mode: either handle only in RPC client or only locally (never both). */
-	if (rpc_client_connected && dect_net_l2_rpc_forward_cb) {
+	if (atomic_get(&rpc_client_connected) && dect_net_l2_rpc_forward_cb) {
 		dect_net_l2_rpc_forward_cb(iface, pkt);
 		/* Forward callback copies out payload; caller still owns pkt. NET_OK means
 		 * consumed here (see net_core processing_data); do not leak the buffer.
