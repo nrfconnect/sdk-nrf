@@ -668,6 +668,8 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 		goto out;
 	}
 
+	k_sem_reset(&wait_for_scan_resp_sem);
+
 	status = nrf_wifi_sys_fmac_abort_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
@@ -675,15 +677,17 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 		goto out;
 	}
 
-	k_sem_reset(&wait_for_scan_resp_sem);
+	/* The scan done event handler takes vif_lock before giving the semaphore */
+	k_mutex_unlock(&vif_ctx_zep->vif_lock);
+
 	sem_ret = k_sem_take(&wait_for_scan_resp_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
 		LOG_ERR("%s: Timedout waiting for scan abort response, ret = %d",
 			    __func__, sem_ret);
-		status = NRF_WIFI_STATUS_FAIL;
-		goto out;
+		return NRF_WIFI_STATUS_FAIL;
 	}
 
+	return status;
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return status;
