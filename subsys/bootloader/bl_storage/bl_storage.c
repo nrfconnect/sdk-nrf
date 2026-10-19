@@ -409,25 +409,6 @@ static const struct monotonic_counter *get_counter_struct(uint16_t description,
 	return NULL;
 }
 
-int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots)
-{
-	uint16_t num_slots;
-	const struct monotonic_counter *counter = get_counter_struct(counter_desc, &num_slots);
-
-	if (counter == NULL || counter_slots == NULL) {
-		return -EINVAL;
-	}
-
-	if (num_slots == 0xFFFF) {
-		/* We consider the 0xFFFF as invalid since it is the default value of the OTP */
-		*counter_slots = 0;
-		return -EINVAL;
-	}
-
-	*counter_slots = num_slots;
-	return 0;
-}
-
 /** Function for getting the current value and the first free slot.
  *
  * @param[in]   counter_desc  Counter description
