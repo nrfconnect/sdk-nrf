@@ -45,4 +45,9 @@ struct sx_blkcipher_cmdma_cfg {
 
 #define OFFSET_EXTRAMEM(c) (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
 
+struct sxblkcipher;
+
+/** On failure, releases the key and wipes \p cipher_ctx. */
+int sx_blkcipher_prepare_key(struct sxblkcipher *cipher_ctx);
+
 #endif

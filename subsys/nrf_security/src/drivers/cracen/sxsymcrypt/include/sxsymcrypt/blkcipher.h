@@ -8,6 +8,12 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
+ * When sx_blkcipher_crypt(), sx_blkcipher_run(), sx_blkcipher_resume_state(),
+ * sx_blkcipher_save_state(), sx_blkcipher_status() or sx_blkcipher_wait() returns
+ * an error other than ::SX_ERR_UNINITIALIZED_OBJ or ::SX_ERR_HW_PROCESSING, the
+ * operation has ended. The key is released and the context is wiped, apart from
+ * the hardware reservation, which the caller still releases with sx_hw_release().
+ *
  * Examples:
  * The following examples show typical sequences of function calls for
  * encryption and decryption of a message.
