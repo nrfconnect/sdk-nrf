@@ -990,7 +990,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 	}
 	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX, jwt, JWT_BUF_SZ);
 	if (err) {
-		LOG_ERR("Error generating JWT with modem: %d", err);
+		LOG_ERR("Error generating JWT: %d", err);
 		nrf_cloud_free(jwt);
 		goto fail;
 	}
