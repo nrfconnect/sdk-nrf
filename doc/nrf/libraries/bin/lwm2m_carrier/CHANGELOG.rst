@@ -18,6 +18,31 @@ For certification status of the released versions, see the following documents, 
 * `nRF9161 Mobile network operator certifications`_
 * `nRF9160 Mobile network operator certifications`_
 
+liblwm2m_carrier 3.8.0
+**********************
+
+Release for modem firmware version 2.0.4.
+
+Size
+====
+
+See :ref:`lwm2m_lib_size` for an explanation of the library size in different scenarios.
+
++-------------------------+---------------+------------+
+|                         | Flash (Bytes) | RAM (Bytes)|
++-------------------------+---------------+------------+
+| Library size            | 77707         | 18820      |
+| (binary)                |               |            |
++-------------------------+---------------+------------+
+| Library size            | 98200         | 34584      |
+| (reference application) |               |            |
++-------------------------+---------------+------------+
+
+Changes
+=======
+
+* Updated the client ID used when connecting to the LG U+ device management server.
+
 liblwm2m_carrier 3.7.0
 **********************
 

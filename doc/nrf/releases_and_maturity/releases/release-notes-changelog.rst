@@ -401,7 +401,10 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-|no_changes_yet_note|
+* :ref:`liblwm2m_carrier_readme` library:
+
+  * Updated the library to v3.8.0.
+    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
 
 Bluetooth libraries and services
 --------------------------------
