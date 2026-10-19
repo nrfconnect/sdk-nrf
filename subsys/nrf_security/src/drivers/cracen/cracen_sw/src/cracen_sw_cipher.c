@@ -225,16 +225,19 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 
 	status = setup(CRACEN_ENCRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = cracen_cipher_set_iv(&operation, iv, iv_length);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
-	return cipher_crypt(&operation, input, input_length, output, output_size,
-			   output_length);
+	status = cipher_crypt(&operation, input, input_length, output, output_size, output_length);
+
+exit:
+	safe_memzero(&operation, sizeof(operation));
+	return status;
 }
 
 psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
@@ -299,16 +302,20 @@ psa_status_t cracen_cipher_decrypt(const psa_key_attributes_t *attributes,
 
 	status = setup(CRACEN_DECRYPT, &operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = cracen_cipher_set_iv(&operation, input, iv_size);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
-	return cipher_crypt(&operation, input + iv_size, input_length - iv_size,
-			   output, output_size, output_length);
+	status = cipher_crypt(&operation, input + iv_size, input_length - iv_size, output,
+			      output_size, output_length);
+
+exit:
+	safe_memzero(&operation, sizeof(operation));
+	return status;
 }
 
 static psa_status_t initialize_cipher(cracen_cipher_operation_t *operation)

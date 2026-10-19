@@ -187,7 +187,7 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 
 	status = setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
-		goto error_exit;
+		goto exit;
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_CMAC)) {
@@ -195,35 +195,30 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 
 			if (mac_size < operation.mac_size) {
 				status = PSA_ERROR_BUFFER_TOO_SMALL;
-				goto error_exit;
+				goto exit;
 			}
 
 			status = cracen_cmac_compute(&operation, input, input_length);
 			if (status != PSA_SUCCESS) {
-				goto error_exit;
+				goto exit;
 			}
 
 			/* The MAC is a full block; copy out only the requested length. */
 			memcpy(mac, operation.input_buffer, operation.mac_size);
 
 			*mac_length = operation.mac_size;
-			return PSA_SUCCESS;
+			goto exit;
 		}
 	}
 
 	status = cracen_mac_update(&operation, input, input_length);
 	if (status != PSA_SUCCESS) {
-		goto error_exit;
+		goto exit;
 	}
 
 	status = cracen_mac_sign_finish(&operation, mac, mac_size, mac_length);
-	if (status != PSA_SUCCESS) {
-		goto error_exit;
-	}
 
-	return PSA_SUCCESS;
-
-error_exit:
+exit:
 	cracen_mac_abort(&operation);
 	return status;
 }
