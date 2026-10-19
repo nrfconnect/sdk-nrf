@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1380 270" role="img">
+  <title>DECT NR+ RPC: logical device (54L15 + 91), DECT NR+ over the air</title>
+  <defs>
+    <marker id="arrow-fwd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#333f48"/>
+    </marker>
+    <marker id="arrow-ret" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#768692"/>
+    </marker>
+    <style type="text/css"><![CDATA[
+      .box-host { fill:#d9e1e2; stroke:#333f48; stroke-width:1.5; }
+      .box-core { fill:#00a9ce; stroke:#333f48; stroke-width:1.5; }
+      .box-uplink { fill:#0077c8; stroke:#333f48; stroke-width:1.5; }
+      .box-device { fill:none; stroke:#768692; stroke-width:1.5; stroke-dasharray:4,3; }
+      .box-logical { fill:none; stroke:#333f48; stroke-width:2; stroke-dasharray:8,4; }
+      .box-network { fill:#d9e1e2; stroke:#333f48; stroke-width:1.5; }
+      .title { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:13px; font-weight:600; }
+      .title-light { fill:#ffffff; font-family:Calibri,Arial,sans-serif; font-size:13px; font-weight:600; }
+      .subtitle { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:11px; }
+      .subtitle-light { fill:#eef4fb; font-family:Calibri,Arial,sans-serif; font-size:11px; }
+      .device-label { fill:#768692; font-family:Calibri,Arial,sans-serif; font-size:11px; font-weight:600; }
+      .logical-label { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:12px; font-weight:600; }
+      .edge-label { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:10px; }
+      .edge-fwd { stroke:#333f48; stroke-width:1.5; fill:none; marker-end:url(#arrow-fwd); }
+      .edge-ret { stroke:#768692; stroke-width:1.4; fill:none; marker-end:url(#arrow-ret); stroke-dasharray:6,4; }
+      .edge-ota { stroke:#0077c8; stroke-width:1.6; fill:none; marker-end:url(#arrow-fwd); stroke-dasharray:5,3; }
+    ]]></style>
+  </defs>
+
+  <!-- Logical DECT NR+ device: product view (app MCU + modem MCU on one board) -->
+  <rect class="box-logical" x="8" y="58" width="1090" height="178" rx="12"/>
+  <text class="logical-label" x="553" y="76" text-anchor="middle">Logical DECT NR+ device</text>
+  <text class="subtitle" x="553" y="90" text-anchor="middle">(external application MCU + nRF91 modem MCU)</text>
+
+  <!-- nRF54L15 DK — external MCU / RPC client -->
+  <rect class="box-device" x="25" y="98" width="430" height="125" rx="10"/>
+  <text class="device-label" x="240" y="116" text-anchor="middle">nRF54L15 DK — DECT NR+ RPC client</text>
+
+  <rect class="box-host" x="45" y="133" width="88" height="64" rx="6"/>
+  <text class="title" x="89" y="170" text-anchor="middle">App</text>
+
+  <rect class="box-core" x="155" y="128" width="130" height="74" rx="6"/>
+  <text class="title-light" x="220" y="155" text-anchor="middle">net_if dect0</text>
+  <text class="subtitle-light" x="220" y="173" text-anchor="middle">(mirrored,</text>
+  <text class="subtitle-light" x="220" y="188" text-anchor="middle">sample name)</text>
+
+  <rect class="box-core" x="305" y="133" width="120" height="64" rx="6"/>
+  <text class="title-light" x="365" y="170" text-anchor="middle">RPC client</text>
+
+  <!-- nRF9151 DK — modem + DECT stack / RPC server -->
+  <rect class="box-device" x="520" y="98" width="560" height="125" rx="10"/>
+  <text class="device-label" x="800" y="116" text-anchor="middle">nRF9151 DK — DECT NR+ RPC server</text>
+
+  <rect class="box-core" x="540" y="133" width="120" height="64" rx="6"/>
+  <text class="title-light" x="600" y="170" text-anchor="middle">RPC server</text>
+
+  <rect class="box-uplink" x="685" y="133" width="130" height="64" rx="6"/>
+  <text class="title-light" x="750" y="162" text-anchor="middle">net_if dect0</text>
+  <text class="subtitle-light" x="750" y="180" text-anchor="middle">DECT uplink</text>
+
+  <rect class="box-core" x="840" y="133" width="110" height="64" rx="6"/>
+  <text class="title-light" x="895" y="170" text-anchor="middle">l2_dect</text>
+
+  <rect class="box-core" x="975" y="133" width="85" height="64" rx="6"/>
+  <text class="title-light" x="1017" y="170" text-anchor="middle">Modem</text>
+
+  <!-- Peer on the DECT NR+ network (outside logical device) -->
+  <rect class="box-host" x="1120" y="12" width="150" height="56" rx="6"/>
+  <text class="title" x="1195" y="36" text-anchor="middle">DECT NR+ peer</text>
+  <text class="subtitle" x="1195" y="54" text-anchor="middle">(PT / child / BR)</text>
+
+  <!-- DECT NR+ network (over the air, outside logical device) -->
+  <ellipse class="box-network" cx="1195" cy="185" rx="88" ry="52"/>
+  <text class="title" x="1195" y="178" text-anchor="middle">DECT NR+</text>
+  <text class="subtitle" x="1195" y="196" text-anchor="middle">network</text>
+
+  <!-- On-board client path -->
+  <path class="edge-fwd" d="M133 165 H155"/>
+  <path class="edge-ret" d="M155 175 H133" marker-end="url(#arrow-ret)"/>
+  <path class="edge-fwd" d="M285 165 H305"/>
+  <path class="edge-ret" d="M305 175 H285" marker-end="url(#arrow-ret)"/>
+
+  <!-- UART between MCUs (inside logical device) -->
+  <path class="edge-ret" d="M425 165 H540"/>
+  <text class="edge-label" x="482" y="156" text-anchor="middle">UART</text>
+  <text class="edge-label" x="482" y="186" text-anchor="middle">nRF RPC + HDLC</text>
+  <path class="edge-ret" d="M540 175 H425" marker-end="url(#arrow-ret)"/>
+
+  <!-- Server stack (on nRF9151) -->
+  <path class="edge-fwd" d="M660 165 H685"/>
+  <path class="edge-fwd" d="M815 165 H840"/>
+  <path class="edge-fwd" d="M950 165 H975"/>
+
+  <!-- Modem to DECT NR+ network (OTA, leaves logical device) -->
+  <path class="edge-ota" d="M1060 165 C 1095 165, 1115 178, 1110 185"/>
+  <text class="edge-label" x="1075" y="150" text-anchor="middle">DECT NR+ OTA</text>
+  <text class="edge-label" x="1075" y="162" text-anchor="middle">IPv6</text>
+
+  <!-- Peer on DECT NR+ network -->
+  <path class="edge-fwd" d="M1195 133 V68"/>
+  <path class="edge-ret" d="M1195 68 V133" marker-end="url(#arrow-ret)"/>
+</svg>

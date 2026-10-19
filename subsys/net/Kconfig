@@ -9,6 +9,7 @@ rsource "lib/Kconfig"
 rsource "openthread/Kconfig"
 rsource "l2_wifi_if_conn/Kconfig"
 rsource "dect/l2/Kconfig"
+rsource "dect/rpc/Kconfig"
 rsource "Kconfig.defconfig"
 
 endmenu

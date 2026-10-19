@@ -1517,6 +1517,7 @@ ci_samples_dect:
     - nrf/samples/dect/
     - nrf/drivers/dect/
     - nrf/subsys/net/dect/l2/
+    - nrf/subsys/net/dect/rpc/
     - nrf/subsys/net/lib/dect/
     - nrfxlib/nrf_modem/
     - zephyr/drivers/hwinfo/
