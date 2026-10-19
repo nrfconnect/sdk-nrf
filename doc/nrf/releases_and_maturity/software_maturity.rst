@@ -2962,8 +2962,8 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Supported
               - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
             * - **Updatable MCUboot as part of build**
               - Supported
               - Supported
@@ -2982,8 +2982,8 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - --
               - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
             * - **Hardware cryptography acceleration**
               - Supported
               - Supported
