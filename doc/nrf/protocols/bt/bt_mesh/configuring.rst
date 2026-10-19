@@ -73,6 +73,10 @@ The provided values are meant as suggestions only, and should be individually ad
   This improves responsiveness of a mesh node during the defragmentation of storage areas used by the settings subsystem.
 * :kconfig:option:`CONFIG_DK_LIBRARY` - Enables the :ref:`dk_buttons_and_leds_readme` library for the nRF5x development kits.
   Use this option to enable the library if the nRF5x development kits are used.
+* :kconfig:option:`CONFIG_LTO` - Enables Link-Time Optimization (LTO).
+  Use this option to reduce the flash usage of the application.
+  This option depends on :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`, which must also be enabled.
+  For the code size reduction in the Bluetooth Mesh samples, see :ref:`ug_bt_mesh_configuring_lto`.
 
 Logging
 -------
@@ -531,3 +535,40 @@ Secure storage
 Currently, all :ref:`bt_mesh_samples` in the |NCS| use the :ref:`trusted_storage_readme` library as the PSA Secure Storage API implementation for all supported platforms.
 
 For more details about AEAD key generation and backend configuration, see the :ref:`trusted_storage_readme`.
+
+.. _ug_bt_mesh_configuring_lto:
+
+Link-Time Optimization
+----------------------
+
+Link-Time Optimization lets the compiler optimize across all compilation units, helping to reduce the overall size of a binary.
+
+To enable LTO, set the following options:
+
+.. code-block:: none
+
+   CONFIG_LTO=y
+   CONFIG_ISR_TABLES_LOCAL_DECLARATION=y
+
+The :kconfig:option:`CONFIG_LTO` option depends on :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`.
+LTO cannot be enabled for builds that use the native library (:kconfig:option:`CONFIG_NATIVE_LIBRARY`), such as simulated builds.
+LTO only applies to code that is compiled as part of the application, meaning that precompiled libraries, such as the Bluetooth LE Controller, are not affected.
+
+The following table shows the size of the application image in the :ref:`bluetooth_mesh_light_lc` sample with and without LTO.
+The sizes were measured for the :zephyr:board:`nrf54l15dk` using the default configuration of the sample.
+
+.. list-table:: Application image size of the Bluetooth Mesh samples with and without LTO
+   :header-rows: 1
+   :widths: 40 20 20 20
+
+   * - Sample
+     - Without LTO (bytes)
+     - With LTO (bytes)
+     - Reduction
+   * - :ref:`bluetooth_mesh_light_lc`
+     - 386,444
+     - 355,220
+     - 8.1%
+
+The reduction depends on the application, its configuration, and the toolchain version.
+Use the values as an indication of what to expect.
