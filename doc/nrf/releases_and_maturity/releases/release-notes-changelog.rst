@@ -511,6 +511,20 @@ Bluetooth Mesh samples
   * :ref:`bluetooth_mesh_light_switch`
   * :ref:`bluetooth_mesh_sensor_server`
 
+* Added:
+
+  * Enabled LTO in the following samples to reduce flash usage.
+
+     * :ref:`bluetooth_ble_peripheral_lbs_coex`
+     * :ref:`bt_mesh_chat`
+     * :ref:`bluetooth_mesh_light`
+     * :ref:`bluetooth_mesh_light_lc`
+     * :ref:`bluetooth_mesh_light_dim`
+     * :ref:`bluetooth_mesh_light_switch`
+     * :ref:`bluetooth_mesh_sensor_client`
+     * :ref:`bluetooth_mesh_sensor_server`
+     * :ref:`bluetooth_mesh_silvair_enocean`
+
 * :ref:`bluetooth_mesh_light_switch` sample:
 
   * Added support for the ``nrf54l15tag/nrf54l15/cpuapp`` board target in the LPN configuration.
