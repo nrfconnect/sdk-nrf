@@ -1553,7 +1553,7 @@ static void dect_shell_tx_cmd_impl(const struct shell *shell, size_t argc, char 
 	int opt;
 	int sockfd, ret;
 	char tx_data_buf[DECT_TX_CMD_MAX_SEND_DATA_LEN];
-	int tx_data_len;
+	int tx_data_len = 0;
 	uint32_t target_long_rd_id = 0;
 
 	set_shell(shell); /* Store shell from command for use as default */
@@ -1602,6 +1602,11 @@ static void dect_shell_tx_cmd_impl(const struct shell *shell, size_t argc, char 
 	if (target_long_rd_id == 0) {
 		dect_l2_shell_error(
 				    "Target long RD ID needs to be given. See usage:");
+		goto show_usage;
+	}
+
+	if (tx_data_len == 0) {
+		dect_l2_shell_error("Data needs to be given. See usage:");
 		goto show_usage;
 	}
 
