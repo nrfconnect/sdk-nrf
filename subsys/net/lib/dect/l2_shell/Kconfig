@@ -13,3 +13,12 @@ config DECT_L2_SHELL_LIB
 	help
 	  DECT L2 shell library providing shell commands for DECT NR+ network
 	  management interface.
+
+config DECT_L2_SHELL_RPC
+	bool "DECT L2 shell support for RPC (session lock, exec_by_name)"
+	depends on DECT_L2_SHELL_LIB
+	help
+	  When enabled, the L2 shell can be used over DECT RPC: session lock/unlock
+	  stubs and dect_shell_exec_by_name are compiled. Selected by
+	  CONFIG_DECT_NR_RPC_SHELL on the server. Leave disabled when not using
+	  DECT shell over RPC.
