@@ -7,8 +7,10 @@
 #include <zephyr/kernel.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdarg.h>
 #include <string.h>
 #include <strings.h>
+#include <errno.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/shell/shell_uart.h>
 
@@ -59,6 +61,43 @@ static struct {
 	.custom_print_enabled = false,
 };
 static struct net_mgmt_event_callback dect_shell_mgmt_cb;
+
+#if defined(CONFIG_DECT_L2_SHELL_RPC)
+/* Session lock for RPC: when DECT RPC server is linked, it overrides these so that
+ * the local shell holds the lock while a command runs; RPC shell uses try_lock and
+ * returns BUSY if the local shell is in use (server shell always wins).
+ */
+__attribute__((weak)) void dect_rpc_shell_session_lock(void) {}
+__attribute__((weak)) void dect_rpc_shell_session_unlock(void) {}
+
+#define DECT_SHELL_SESSION_WRAP_VOID(name) \
+	static void dect_shell_##name##_cmd(const struct shell *s, size_t ac, char **av) \
+	{ \
+		dect_rpc_shell_session_lock(); dect_shell_##name##_cmd_impl(s, ac, av); \
+		dect_rpc_shell_session_unlock(); \
+	}
+#define DECT_SHELL_SESSION_WRAP_INT(name) \
+	static int dect_shell_##name##_cmd(const struct shell *s, size_t ac, char **av) \
+	{ \
+		int ret; \
+		dect_rpc_shell_session_lock(); \
+		ret = dect_shell_##name##_cmd_impl(s, ac, av); \
+		dect_rpc_shell_session_unlock(); \
+		return ret; \
+	}
+#else
+/* No RPC: wrappers just call _impl (no session lock). */
+#define DECT_SHELL_SESSION_WRAP_VOID(name) \
+	static void dect_shell_##name##_cmd(const struct shell *s, size_t ac, char **av) \
+	{ \
+		dect_shell_##name##_cmd_impl(s, ac, av); \
+	}
+#define DECT_SHELL_SESSION_WRAP_INT(name) \
+	static int dect_shell_##name##_cmd(const struct shell *s, size_t ac, char **av) \
+	{ \
+		return dect_shell_##name##_cmd_impl(s, ac, av); \
+	}
+#endif /* CONFIG_DECT_L2_SHELL_RPC */
 
 /* RSSI scan command */
 
@@ -1281,7 +1320,7 @@ static void dect_shell_net_mgmt_event_handler(struct net_mgmt_event_callback *cb
 	}
 }
 
-static void dect_shell_rssi_scan_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_rssi_scan_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_rssi_scan_params params;
 	int long_index = 0;
@@ -1369,7 +1408,7 @@ show_usage:
 	dect_l2_shell_print("%s", dect_shell_rssi_scan_usage_str);
 }
 
-static void dect_shell_scan_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_scan_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_scan_params params;
 	int long_index = 0;
@@ -1507,7 +1546,7 @@ static struct sys_getopt_option long_options_tx[] = {
 
 #define DECT_TX_CMD_MAX_SEND_DATA_LEN DECT_MTU
 
-static void dect_shell_tx_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_tx_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct sockaddr_ll dst = {0};
 	int long_index = 0;
@@ -1673,7 +1712,7 @@ void dect_shell_rx_start(void)
 	k_sem_give(&dect_shell_rx_thread_sem);
 }
 
-static void dect_shell_rx_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_rx_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	set_shell(shell); /* Store shell from command for use as default */
 	if (argv[1] != NULL && !strcmp(argv[1], "stop")) {
@@ -1685,7 +1724,7 @@ static void dect_shell_rx_cmd(const struct shell *shell, size_t argc, char **arg
 	}
 }
 
-static int dect_shell_associate_cmd(const struct shell *shell, size_t argc, char **argv)
+static int dect_shell_associate_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_associate_req_params params;
 	int long_index = 0;
@@ -1742,7 +1781,7 @@ show_usage:
 	return 0;
 }
 
-static int dect_shell_dissociate_cmd(const struct shell *shell, size_t argc, char **argv)
+static int dect_shell_dissociate_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_associate_rel_params params;
 	int long_index = 0;
@@ -2153,7 +2192,7 @@ static void dect_shell_sett_cmd_print(struct dect_settings *dect_sett)
 	}
 }
 
-static void dect_shell_sett_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_sett_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	struct dect_settings current_settings;
 	struct dect_settings newsettings;
@@ -2651,7 +2690,7 @@ show_usage:
 	dect_l2_shell_print("%s", dect_shell_sett_dlc_usage_str);
 }
 
-static void dect_shell_cluster_start_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_cluster_start_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
 	struct dect_cluster_start_req_params params;
@@ -2679,7 +2718,8 @@ static void dect_shell_cluster_start_cmd(const struct shell *shell, size_t argc,
 	}
 }
 
-static void dect_shell_cluster_reconfig_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_cluster_reconfig_cmd_impl(const struct shell *shell,
+						 size_t argc, char **argv)
 {
 	int ret = 0;
 	struct dect_cluster_reconfig_req_params params;
@@ -2782,7 +2822,7 @@ show_usage:
 	dect_l2_shell_print("%s", dect_shell_cluster_reconfig_usage_str);
 }
 
-static void dect_shell_cluster_info_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_cluster_info_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -2796,7 +2836,7 @@ static void dect_shell_cluster_info_cmd(const struct shell *shell, size_t argc, 
 	}
 }
 
-static void dect_shell_nw_beacon_start_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_beacon_start_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	struct dect_nw_beacon_start_req_params params;
@@ -2868,7 +2908,7 @@ show_usage:
 	dect_l2_shell_print("%s", dect_shell_nw_beacon_start_usage_str);
 }
 
-static void dect_shell_nw_beacon_stop_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_beacon_stop_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	struct dect_nw_beacon_stop_req_params params;
@@ -3075,7 +3115,7 @@ static void dect_shell_status_cmd_print(struct dect_status_info *dect_status)
 #endif
 }
 
-static void dect_shell_status_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_status_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	struct dect_status_info dect_status;
@@ -3090,7 +3130,8 @@ static void dect_shell_status_cmd(const struct shell *shell, size_t argc, char *
 	}
 }
 
-static void dect_shell_activate_cmd(const struct shell *shell, size_t argc, char **argv)
+
+static void dect_shell_activate_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3103,7 +3144,7 @@ static void dect_shell_activate_cmd(const struct shell *shell, size_t argc, char
 	}
 }
 
-static void dect_shell_deactivate_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_deactivate_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3116,7 +3157,7 @@ static void dect_shell_deactivate_cmd(const struct shell *shell, size_t argc, ch
 	}
 }
 
-static void dect_shell_neighbor_list_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_neighbor_list_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3129,7 +3170,7 @@ static void dect_shell_neighbor_list_cmd(const struct shell *shell, size_t argc,
 	}
 }
 
-static void dect_shell_neighbor_info_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_neighbor_info_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 	struct dect_neighbor_info_req_params params;
@@ -3155,7 +3196,7 @@ static void dect_shell_neighbor_info_cmd(const struct shell *shell, size_t argc,
 	}
 }
 
-static void dect_shell_nw_create_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_create_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3169,7 +3210,7 @@ static void dect_shell_nw_create_cmd(const struct shell *shell, size_t argc, cha
 	}
 }
 
-static void dect_shell_nw_remove_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_remove_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3183,7 +3224,7 @@ static void dect_shell_nw_remove_cmd(const struct shell *shell, size_t argc, cha
 	}
 }
 
-static void dect_shell_nw_join_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_join_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3197,7 +3238,7 @@ static void dect_shell_nw_join_cmd(const struct shell *shell, size_t argc, char 
 	}
 }
 
-static void dect_shell_nw_unjoin_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_nw_unjoin_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret;
 
@@ -3211,7 +3252,7 @@ static void dect_shell_nw_unjoin_cmd(const struct shell *shell, size_t argc, cha
 	}
 }
 
-static void dect_shell_connect_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_connect_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	set_shell(shell); /* Store shell from command for use as default */
 
@@ -3261,7 +3302,7 @@ static void dect_shell_connect_cmd(const struct shell *shell, size_t argc, char 
 #endif
 }
 
-static void dect_shell_disconnect_cmd(const struct shell *shell, size_t argc, char **argv)
+static void dect_shell_disconnect_cmd_impl(const struct shell *shell, size_t argc, char **argv)
 {
 	set_shell(shell); /* Store shell from command for use as default */
 
@@ -3308,6 +3349,119 @@ static void dect_shell_disconnect_cmd(const struct shell *shell, size_t argc, ch
 	}
 #endif
 }
+
+/* Wrappers: with RPC they hold session lock (RPC returns BUSY if in use). */
+DECT_SHELL_SESSION_WRAP_VOID(status)
+DECT_SHELL_SESSION_WRAP_VOID(activate)
+DECT_SHELL_SESSION_WRAP_VOID(deactivate)
+DECT_SHELL_SESSION_WRAP_VOID(rssi_scan)
+DECT_SHELL_SESSION_WRAP_VOID(scan)
+DECT_SHELL_SESSION_WRAP_VOID(tx)
+DECT_SHELL_SESSION_WRAP_VOID(rx)
+DECT_SHELL_SESSION_WRAP_INT(associate)
+DECT_SHELL_SESSION_WRAP_INT(dissociate)
+DECT_SHELL_SESSION_WRAP_VOID(cluster_start)
+DECT_SHELL_SESSION_WRAP_VOID(cluster_reconfig)
+DECT_SHELL_SESSION_WRAP_VOID(cluster_info)
+DECT_SHELL_SESSION_WRAP_VOID(nw_beacon_start)
+DECT_SHELL_SESSION_WRAP_VOID(nw_beacon_stop)
+DECT_SHELL_SESSION_WRAP_VOID(neighbor_list)
+DECT_SHELL_SESSION_WRAP_VOID(neighbor_info)
+DECT_SHELL_SESSION_WRAP_VOID(nw_create)
+DECT_SHELL_SESSION_WRAP_VOID(nw_remove)
+DECT_SHELL_SESSION_WRAP_VOID(nw_join)
+DECT_SHELL_SESSION_WRAP_VOID(nw_unjoin)
+DECT_SHELL_SESSION_WRAP_VOID(connect)
+DECT_SHELL_SESSION_WRAP_VOID(disconnect)
+DECT_SHELL_SESSION_WRAP_VOID(sett)
+
+#if defined(CONFIG_DECT_L2_SHELL_RPC)
+/* Run subcmd via global print_fns (dect_net_l2_shell_init). out_buf/out_len unused. */
+int dect_shell_exec_by_name(const char *subcmd, int argc, char **argv,
+			    char *out_buf, size_t out_len)
+{
+	struct dect_net_lib_shell_print_fns save_fns;
+	bool save_custom;
+	const struct shell *save_shell;
+
+	ARG_UNUSED(out_buf);
+	ARG_UNUSED(out_len);
+
+	if (!context.iface) {
+		if (context.print_fns.error_fn) {
+			context.print_fns.error_fn(context.shell, "DECT iface not available");
+		}
+		return -ENODEV;
+	}
+
+	save_fns = context.print_fns;
+	save_custom = context.custom_print_enabled;
+	save_shell = context.shell;
+	context.custom_print_enabled = true;
+	context.shell = NULL;
+
+	if (strcmp(subcmd, "status") == 0) {
+		dect_shell_status_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "activate") == 0) {
+		dect_shell_activate_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "deactivate") == 0) {
+		dect_shell_deactivate_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "rssi_scan") == 0) {
+		dect_shell_rssi_scan_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "scan") == 0) {
+		dect_shell_scan_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "tx") == 0) {
+		dect_shell_tx_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "rx") == 0) {
+		dect_shell_rx_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "associate") == 0) {
+		(void)dect_shell_associate_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "dissociate") == 0) {
+		(void)dect_shell_dissociate_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "cluster_start") == 0) {
+		dect_shell_cluster_start_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "cluster_reconfig") == 0) {
+		dect_shell_cluster_reconfig_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "cluster_info") == 0) {
+		dect_shell_cluster_info_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_beacon_start") == 0) {
+		dect_shell_nw_beacon_start_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_beacon_stop") == 0) {
+		dect_shell_nw_beacon_stop_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "neighbor_list") == 0) {
+		dect_shell_neighbor_list_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "neighbor_info") == 0) {
+		dect_shell_neighbor_info_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_create") == 0) {
+		dect_shell_nw_create_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_remove") == 0) {
+		dect_shell_nw_remove_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_join") == 0) {
+		dect_shell_nw_join_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "nw_unjoin") == 0) {
+		dect_shell_nw_unjoin_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "connect") == 0) {
+		dect_shell_connect_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "disconnect") == 0) {
+		dect_shell_disconnect_cmd_impl(NULL, (size_t)argc, argv);
+	} else if (strcmp(subcmd, "sett") == 0) {
+		dect_shell_sett_cmd_impl(NULL, (size_t)argc, argv);
+	} else {
+		if (save_fns.error_fn) {
+			save_fns.error_fn(save_shell, "Unknown subcommand: %s", subcmd);
+		}
+		context.custom_print_enabled = save_custom;
+		context.print_fns = save_fns;
+		context.shell = save_shell;
+		return -ENOENT;
+	}
+
+	context.custom_print_enabled = save_custom;
+	context.print_fns = save_fns;
+	context.shell = save_shell;
+	return 0;
+}
+#endif /* CONFIG_DECT_L2_SHELL_RPC */
 
 SHELL_SUBCMD_SET_CREATE(dect_commands, (dect));
 
