@@ -180,24 +180,27 @@ psa_status_t cracen_sw_aes_ctr_crypt(const psa_key_attributes_t *attributes,
 
 	status = cracen_sw_aes_ctr_setup(&operation, attributes, key_buffer, key_buffer_size, alg);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = cracen_sw_aes_ctr_set_iv(&operation, iv, iv_length);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	status = cracen_sw_aes_ctr_update(&operation, input, input_length, output, output_size,
 					  output_length);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 	status = cracen_sw_aes_ctr_finish(&operation, &finish_length);
 	if (status != PSA_SUCCESS) {
-		return status;
+		goto exit;
 	}
 
 	*output_length += finish_length;
-	return PSA_SUCCESS;
+
+exit:
+	safe_memzero(&operation, sizeof(operation));
+	return status;
 }

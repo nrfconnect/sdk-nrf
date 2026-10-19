@@ -207,7 +207,7 @@ psa_status_t cracen_mac_compute(const psa_key_attributes_t *attributes, const ui
 			memcpy(mac, operation.input_buffer, operation.mac_size);
 
 			*mac_length = operation.mac_size;
-			return PSA_SUCCESS;
+			return cracen_mac_abort(&operation);
 		}
 	}
 
