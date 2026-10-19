@@ -167,12 +167,9 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 	}
 
 	cipher_ctx->key = key;
-
-	if (key->prepare_key) {
-		err = key->prepare_key(key->user_data);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = sx_blkcipher_prepare_key(cipher_ctx);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	cipher_ctx->cfg = &ba417chacha20cfg;

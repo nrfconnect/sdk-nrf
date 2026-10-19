@@ -15,6 +15,7 @@
 #include "cmdma.h"
 #include "cmaes.h"
 #include <stdint.h>
+#include <nrf_security_mem_helpers.h>
 
 /** Mode Register value for context loading */
 #define BLKCIPHER_MODEID_CTX_LOAD (1u << 4)
@@ -86,14 +87,32 @@ int sx_blkcipher_free(struct sxblkcipher *cipher_ctx)
 	return sx_err;
 }
 
-static int sx_blkcipher_prepare_key(struct sxblkcipher *cipher_ctx)
+static void sx_blkcipher_wipe(struct sxblkcipher *cipher_ctx)
+{
+	/* The caller still releases the hardware with sx_hw_release(), which needs this flag */
+	bool hw_acquired = cipher_ctx->dma.hw_acquired;
+
+	safe_memzero(cipher_ctx, sizeof(*cipher_ctx));
+	cipher_ctx->dma.hw_acquired = hw_acquired;
+}
+
+static int sx_blkcipher_free_and_wipe(struct sxblkcipher *cipher_ctx)
+{
+	int err = sx_blkcipher_free(cipher_ctx);
+
+	sx_blkcipher_wipe(cipher_ctx);
+
+	return err;
+}
+
+int sx_blkcipher_prepare_key(struct sxblkcipher *cipher_ctx)
 {
 	int err = SX_OK;
 
 	if (cipher_ctx->key && cipher_ctx->key->prepare_key) {
 		err = cipher_ctx->key->prepare_key(cipher_ctx->key->user_data);
 		if (err != SX_OK) {
-			return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), err);
+			return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx), err);
 		}
 	}
 
@@ -249,11 +268,12 @@ int sx_blkcipher_create_aescbc_dec(struct sxblkcipher *cipher_ctx, const struct 
 int sx_blkcipher_crypt(struct sxblkcipher *cipher_ctx, const uint8_t *datain, size_t sz,
 		       uint8_t *dataout)
 {
-	if (!cipher_ctx->dma.hw_acquired) {
+	if (!cipher_ctx->dma.hw_acquired || !cipher_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (sz >= DMA_MAX_SZ) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
+					      SX_ERR_TOO_BIG);
 	}
 
 	cipher_ctx->textsz += sz;
@@ -267,16 +287,16 @@ int sx_blkcipher_run(struct sxblkcipher *cipher_ctx)
 {
 	int status;
 
-	if (!cipher_ctx->dma.hw_acquired) {
+	if (!cipher_ctx->dma.hw_acquired || !cipher_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	if (cipher_ctx->textsz < cipher_ctx->cfg->inminsz) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx),
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
 					      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (cipher_ctx->textsz % cipher_ctx->cfg->granularity) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx),
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
 					      SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
@@ -288,7 +308,7 @@ int sx_blkcipher_run(struct sxblkcipher *cipher_ctx)
 				 sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
 				 cipher_ctx->descs);
 	if (status != SX_OK) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx), status);
 	}
 
 	return SX_OK;
@@ -298,12 +318,13 @@ int sx_blkcipher_resume_state(struct sxblkcipher *cipher_ctx)
 {
 	int err;
 
-	if (!cipher_ctx->dma.hw_acquired) {
+	if (!cipher_ctx->dma.hw_acquired || !cipher_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	if (cipher_ctx->cfg->statesz == 0) {
-		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
+					      SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
 	err = sx_blkcipher_prepare_key(cipher_ctx);
@@ -336,21 +357,21 @@ int sx_blkcipher_save_state(struct sxblkcipher *cipher_ctx)
 {
 	int status;
 
-	if (!cipher_ctx->dma.hw_acquired) {
+	if (!cipher_ctx->dma.hw_acquired || !cipher_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	if (cipher_ctx->cfg->statesz == 0) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx),
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
 					      SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
 	if (cipher_ctx->textsz < cipher_ctx->cfg->blocksz) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx),
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
 					      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (cipher_ctx->textsz & (cipher_ctx->cfg->blocksz - 1)) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx),
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx),
 					      SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
@@ -362,7 +383,7 @@ int sx_blkcipher_save_state(struct sxblkcipher *cipher_ctx)
 				 sizeof(cipher_ctx->descs) + sizeof(cipher_ctx->extramem),
 				 cipher_ctx->descs);
 	if (status != SX_OK) {
-		return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+		return sx_handle_nested_error(sx_blkcipher_free_and_wipe(cipher_ctx), status);
 	}
 
 	return SX_OK;
@@ -372,7 +393,7 @@ int sx_blkcipher_status(struct sxblkcipher *cipher_ctx)
 {
 	int status;
 
-	if (!cipher_ctx->dma.hw_acquired) {
+	if (!cipher_ctx->dma.hw_acquired || !cipher_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
@@ -385,7 +406,12 @@ int sx_blkcipher_status(struct sxblkcipher *cipher_ctx)
 	sys_cache_data_invd_range((void *)&cipher_ctx->extramem, sizeof(cipher_ctx->extramem));
 #endif
 
-	return sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+	status = sx_handle_nested_error(sx_blkcipher_free(cipher_ctx), status);
+	if (status != SX_OK) {
+		sx_blkcipher_wipe(cipher_ctx);
+	}
+
+	return status;
 }
 
 int sx_blkcipher_wait(struct sxblkcipher *cipher_ctx)
