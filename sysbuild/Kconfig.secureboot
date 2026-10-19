@@ -152,8 +152,9 @@ config SECURE_BOOT_NUM_VER_COUNTER_SLOTS
 	  Regarding ranges: The actual maximum depends on the number of
 	  provisioned public keys, since they share the space. The same is true if
 	  other data is stored in the "OTP" region (on for example nRF91 and nRF53).
-	  This configuration should not be used in code. Instead, the header before the
-	  slots should be read at run-time.
+	  This value is propagated to the secure bootloader. The provisioned data keeps
+	  the slot count in its header for format compatibility, and the secure bootloader
+	  asserts that the provisioned and configured values match.
 
 endif # SECURE_BOOT_APPCORE
 
