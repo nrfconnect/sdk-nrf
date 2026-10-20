@@ -19,7 +19,7 @@ Overview
 The coexistence driver performs the following functions:
 
 * Exposes APIs (``coex_cd_*``) that the short-range and Wi-Fi drivers call to request short-range priority windows, report short-range activity, and notify radio power state changes.
-* Invokes APIs (``coex_sr_*``) on the short-range driver to enable coexistence and to configure the short-range priorities.
+* Invokes the callbacks registered by the short-range driver to enable coexistence and to configure the short-range priorities.
 * Forwards coexistence commands to, and processes events from, the Coexistence Manager over the Wi-Fi host-to-firmware control path.
 
 The users of the driver are the nRF71 *Wi-Fi driver* and the *short-range (Bluetooth LE) driver*.
@@ -54,7 +54,7 @@ The following diagram shows the components and the interfaces between them:
 
    WIFID --> CD : power notify\n(coex_cd_wifi_power_notify)
    SRD --> CD : coex_cd_*\n(SR request / activity / power)
-   CD --> SRD : coex_sr_*\n(enable / set priority)
+   CD --> SRD : SR driver callbacks\n(enable / set priority)
    CD --> WIFID : send CD2CM\n(nrf71_wifi_coex_cmd_send)
    WIFID --> CD : deliver CM2CD\n(nrf71_wifi_coex_on_event)
    WIFID <--> MAC : FMAC / IPC\n(host <-> RPU)
@@ -68,7 +68,7 @@ The main interfaces are:
 
 * *Wi-Fi driver ↔ CD* - Radio power state notifications (``coex_cd_wifi_power_notify()``), and the transport the CD uses to reach the Coexistence Manager (``nrf71_wifi_coex_cmd_send()`` and ``nrf71_wifi_coex_on_event()``).
 * *short-range driver ↔ CD* - The short-range driver requests priority windows, reports activity, and notifies power state changes through ``coex_cd_*``.
-  The CD configures the short-range driver through ``coex_sr_*``.
+  The CD configures the short-range driver through the callbacks it registered with the :c:func:`coex_cd_register_sr_driver_cb` API.
 * *CD ↔ Coexistence Manager* - ``CD2CM`` commands and ``CM2CD`` events, carried over the Wi-Fi control path.
   The Coexistence Manager programs the COEXC hardware and handles hardware requests from the radios.
 
@@ -110,7 +110,7 @@ The following Kconfig options configure the driver:
 API documentation
 *****************
 
-The coexistence API contract (the ``coex_cd_*`` and ``coex_sr_*`` functions and the ``CD2CM``/``CM2CD`` message types) is defined by the coexistence firmware interface headers, which match the interface of the ROMed nRF71 firmware.
+The coexistence API contract (the ``coex_cd_*`` functions and the ``CD2CM`` and ``CM2CD`` message types) is defined by the coexistence firmware interface headers, which match the interface of the ROMed nRF71 firmware.
 
 | CD-to-CM interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_coex_if.h`
 | CD-to-short-range interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_cd_sr_if.h`
@@ -123,8 +123,12 @@ The following APIs are exposed by the coexistence driver to the short-range and 
 * :c:func:`coex_cd_update_short_range_activity_info` - Reports short-range activity for Periodic Priority Window generation (Phase 2; currently returns ``-ENOTSUP``).
 * :c:func:`coex_cd_sr_power_notify` - Notifies the coexistence driver of short-range power-down and power-up events.
 * :c:func:`coex_cd_wifi_power_notify` - Notifies the coexistence driver of Wi-Fi power-down and power-up events.
+* :c:func:`coex_cd_register_sr_driver_cb` - Registers the short-range driver callbacks once at boot.
 
-The following APIs are exposed by the short-range driver and invoked by the coexistence driver:
+The short-range driver provides the following callbacks in :c:struct:`coex_sr_driver_cb`, declared in the :file:`drivers/nrf71_sr_coex/include/nrf71_sr_coex_api.h` file.
+The coexistence driver invokes these callbacks:
 
-* :c:func:`coex_sr_enable` - Enables or disables short-range coexistence.
-* :c:func:`coex_sr_set_client_priority` - Configures the short-range client priority ranges.
+* ``enable`` - Enables or disables short-range coexistence.
+* ``set_client_priority`` - Configures the short-range client priority ranges.
+
+Until the short-range driver registers its callbacks, the coexistence driver treats both requests as applied.
