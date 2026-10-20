@@ -4641,7 +4641,7 @@ void test_lte_lc_modem_events(void)
 		TEST_IGNORE();
 	}
 
-	lte_lc_callback_count_expected = 11;
+	lte_lc_callback_count_expected = 13;
 
 	strcpy(at_notif, "%MDMEV: ME OVERHEATED\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
@@ -4676,6 +4676,18 @@ void test_lte_lc_modem_events(void)
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 2\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
 	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 4\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE;
 	at_monitor_dispatch(at_notif);
 	index++;
 
@@ -4728,7 +4740,7 @@ void test_lte_lc_modem_events_unknown(void)
 {
 	/* No lte_lc event generated for these notifications */
 
-	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 5\r\n");
 	at_monitor_dispatch(at_notif);
 
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 1 and then some\r\n");
