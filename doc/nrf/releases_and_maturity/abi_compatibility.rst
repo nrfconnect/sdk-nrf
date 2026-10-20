@@ -50,10 +50,11 @@ The following known issues affect |ISE|.
 
 .. page-filter::
   :name: ise-versions
-  :default: v23-8-0-33
+  :default: v23-8-3-36
   :container: dl/dt
-  :tags: [("v23-8-0-33", "v23.8.0+33"), ("v23-7-0-30", "v23.7.0+30"), ("v23-6-0-29", "v23.6.0+29"), ("v23-5-0-28", "v23.5.0+28")]
+  :tags: [("v23-8-3-36", "v23.8.3+36"), ("v23-8-0-33", "v23.8.0+33"), ("v23-7-0-30", "v23.7.0+30"), ("v23-6-0-29", "v23.6.0+29"), ("v23-5-0-28", "v23.5.0+28")]
 
+  v23-8-3-36  v23.8.3+36
   v23-8-0-33  v23.8.0+33
   v23-7-0-30  v23.7.0+30
   v23-6-0-29  v23.6.0+29
@@ -91,7 +92,7 @@ SE1: Some MRAM corruption scenarios are not detected by |ISE|
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se2:
 
-.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29
+.. rst-class:: v23-8-3-36 v23-8-0-33 v23-7-0-30 v23-6-0-29
 
 SE2: Initial provisioning clears SICR snapshot regions
   Initial provisioning clears configurable snapshot regions that were programmed directly in SICR before |ISE| was provisioned.
@@ -105,7 +106,7 @@ SE2: Initial provisioning clears SICR snapshot regions
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se3:
 
-.. rst-class:: v23-8-0-33 v23-7-0-30 v23-6-0-29 v23-5-0-28
+.. rst-class:: v23-8-3-36 v23-8-0-33 v23-7-0-30 v23-6-0-29 v23-5-0-28
 
 SE3: Updating |ISE| Recovery triggers snapshot recovery
   Updating the :ref:`IronSide SE Recovery component <ug_nrf54h20_ironside_se_deliverables>` on a snapshot-enabled device unintentionally triggers snapshot recovery and restores the device to its pre-update state.
@@ -117,7 +118,7 @@ SE3: Updating |ISE| Recovery triggers snapshot recovery
 
 .. _ug_nrf54h20_ironside_se_snapshot_limitation_se4:
 
-.. rst-class:: v23-8-0-33 v23-7-0-30
+.. rst-class:: v23-8-3-36 v23-8-0-33 v23-7-0-30
 
 SE4: An even UICR snapshot region count causes a boot loop
   When an even number of snapshot regions is configured through ``UICR.SNAPSHOT_REGIONS``, snapshot recovery is triggered unintentionally, and the device enters a boot loop.
@@ -134,6 +135,21 @@ nRF54H20 IronSide SE binaries changelog
 ***************************************
 
 The following sections provide detailed lists of changes by component.
+
+IronSide Secure Enclave (IronSide SE) v23.8.3+36
+================================================
+
+Updated
+-------
+
+* The CRACEN driver.
+* The optimized adaptive body biasing (ABB) configuration is now applied during initialization to prevent an ABB lock timeout in certain configurations.
+  For more information, see HMPAN-282.
+
+Fixed
+-----
+
+* A race condition in the IronSide SE call server where notifying the client before dequeuing the request could cause the client to hang indefinitely. (NCSDK-39877)
 
 IronSide Secure Enclave (IronSide SE) v23.8.0+33
 ================================================
