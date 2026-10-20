@@ -407,14 +407,9 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 		return BT_GATT_ITER_STOP;
 	}
 
-	if (bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0) {
-		cur_attr = attr_store(dm, attr, sizeof(struct bt_gatt_chrc));
-		struct bt_gatt_chrc *cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+	const bool is_chrc = bt_uuid_cmp(attr->uuid, BT_UUID_GATT_CHRC) == 0;
 
-		cur_gatt_chrc->uuid = cur_attr->uuid;
-	} else {
-		cur_attr = attr_store(dm, attr, 0);
-	}
+	cur_attr = attr_store(dm, attr, is_chrc ? sizeof(struct bt_gatt_chrc) : 0);
 
 	if (!cur_attr) {
 		LOG_ERR("Not enough memory for next attribute descriptor"
@@ -422,6 +417,12 @@ static uint8_t discovery_process_attribute(struct bt_gatt_dm *dm,
 			attr->handle);
 		discovery_complete_error(dm, -ENOMEM);
 		return BT_GATT_ITER_STOP;
+	}
+
+	if (is_chrc) {
+		struct bt_gatt_chrc *cur_gatt_chrc = bt_gatt_dm_attr_chrc_val(cur_attr);
+
+		cur_gatt_chrc->uuid = cur_attr->uuid;
 	}
 
 	return BT_GATT_ITER_CONTINUE;
