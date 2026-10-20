@@ -60,11 +60,9 @@ static int sx_cmac_create_aes_ba411(struct sxmac *mac_ctx, const struct sxkeyref
 	mac_ctx->key = key;
 
 	/* Key preparation - CM setup is handled by CRACENPSA layer via sx_hw_reserve() */
-	if (key->prepare_key) {
-		err = key->prepare_key(key->user_data);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = sx_mac_prepare_key(mac_ctx);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	mac_ctx->cfg = &ba411cfg;

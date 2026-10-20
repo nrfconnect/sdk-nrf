@@ -4,6 +4,12 @@
  * @copyright Copyright (c) 2023 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * When sx_mac_feed(), sx_mac_generate(), sx_mac_resume_state(),
+ * sx_mac_save_state(), sx_mac_status() or sx_mac_wait() returns an error other
+ * than ::SX_ERR_UNINITIALIZED_OBJ or ::SX_ERR_HW_PROCESSING, the operation has
+ * ended. The key is released and the context is wiped, apart from the hardware
+ * reservation, which the caller still releases with sx_hw_release().
  */
 
 #ifndef MAC_HEADER_FILE

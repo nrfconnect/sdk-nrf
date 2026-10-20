@@ -33,4 +33,9 @@ struct sx_mac_cmdma_cfg {
 /* Can be used with BA411 or BA419 Config register -> ModeOfOperation [16:8] */
 #define CMDMA_CMAC_MODE_SET(modeid) (1 << (8 + (modeid)))
 
+struct sxmac;
+
+/** On failure, releases the key and wipes \p mac_ctx. */
+int sx_mac_prepare_key(struct sxmac *mac_ctx);
+
 #endif
