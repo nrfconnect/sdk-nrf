@@ -1,10 +1,1 @@
-/*
- * Copyright (c) 2026 Nordic Semiconductor ASA
- *
- * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
- */
-
-&uart20 {
-	zephyr,pm-device-runtime-auto;
-	disable-rx;
-};
+#include "nrf7120dk_nrf7120_cpuapp.overlay"
