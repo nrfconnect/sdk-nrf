@@ -89,6 +89,35 @@ int coex_cd_get_last_patch_stats(struct cm_fsm_patch_stats_t *patch_stats);
 /** Configure and enable COEXC hardware (host CCMALLOW / CCCONF programming). */
 int coex_cd_configure_coexc(enum coex_antenna_cfg_type antenna_cfg_type);
 
+/* ---- Short-Range driver callbacks ---- */
+
+/**
+ * Callbacks the Short-Range (SR) driver provides to the CD.
+ *
+ * Each callback returns non-zero when the SR driver applied the request and 0
+ * when it rejected it. A NULL member is treated as applied, which is also how
+ * the CD behaves before any SR driver has registered.
+ */
+struct coex_sr_driver_cb {
+	/** Enable (1) or disable (0) posting of SR hardware client requests to COEXC. */
+	unsigned int (*enable)(unsigned int enable_coex);
+	/** Replace the SR Rx/Tx priority ranges used by the SR driver. */
+	unsigned int (*set_client_priority)(
+		const struct coex_sr_priority_range_t *sr_priority_range);
+};
+
+/**
+ * Register the SR driver callbacks.
+ *
+ * Meant to be called once by the SR driver at boot, for example from its
+ * SYS_INIT handler.
+ *
+ * @retval 0         Callbacks registered.
+ * @retval -EINVAL   cb is NULL.
+ * @retval -EALREADY A callback set is already registered.
+ */
+int coex_cd_register_sr_driver_cb(const struct coex_sr_driver_cb *cb);
+
 /* ---- BLE bad-channel mapping ---- */
 
 /** Octets in a BLE Host Channel Classification map. */

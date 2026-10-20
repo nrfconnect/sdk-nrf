@@ -206,20 +206,6 @@ struct coex_sr_sw_client_params_t {
 } __NRF_WIFI_PKD;
 
 /**
- * Enable or disable posting of SR hardware client requests to COEXC.
- *
- * Returns true when the requested state was applied.
- */
-unsigned int coex_sr_enable(unsigned int enable_coex);
-
-/**
- * Replace the locally stored SR Rx/Tx priority ranges.
- *
- * Returns true when both ranges and client_priority_level are valid and stored.
- */
-unsigned int coex_sr_set_client_priority(const struct coex_sr_priority_range_t *sr_priority_range);
-
-/**
  * Notify CD before SR power-down and after SR is ready following power-up.
  *
  * Returns zero on success or a negative errno value.

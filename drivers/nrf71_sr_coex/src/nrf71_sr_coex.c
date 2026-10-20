@@ -47,6 +47,7 @@
 #include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/atomic.h>
 
 /* Wi-Fi FMAC coexistence transport (cmd/event/reg access). */
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
@@ -149,27 +150,60 @@ static struct {
 	struct cm_fsm_patch_stats_t last_patch_stats; /* Patch CM statistics payload. */
 } cd_state;
 
-/* ---- Short-Range driver APIs (until the SR driver provides them) ---- */
+/* ---- Short-Range driver callbacks ---- */
 
-/**
- * Called by the CD to enable/disable coexistence inside the SR driver.
- * Weak stub returns success until the real SR driver is linked.
+/*
+ * Callbacks registered by the SR driver. The SR driver may register before
+ * nrf71_sr_coex_init() has initialised the lock.
  */
-__weak unsigned int coex_sr_enable(unsigned int enable_coex)
+static atomic_ptr_t sr_driver_cb = ATOMIC_PTR_INIT(NULL);
+
+int coex_cd_register_sr_driver_cb(const struct coex_sr_driver_cb *cb)
 {
-	ARG_UNUSED(enable_coex);
-	return 1U;
+	if (cb == NULL) {
+		return -EINVAL;
+	}
+
+	if (!atomic_ptr_cas(&sr_driver_cb, NULL, (atomic_ptr_val_t)cb)) {
+		return -EALREADY;
+	}
+
+	return 0;
 }
 
 /**
- * Called by the CD to push SR priority ranges into the SR driver.
- * Weak stub returns success until the real SR driver is linked.
+ * Enable or disable coexistence inside the SR driver.
+ *
+ * Reports success while no SR driver has registered, so the CD runs unchanged
+ * without one.
  */
-__weak unsigned int coex_sr_set_client_priority(
+static unsigned int cd_sr_enable(unsigned int enable_coex)
+{
+	const struct coex_sr_driver_cb *cb = atomic_ptr_get(&sr_driver_cb);
+
+	if ((cb == NULL) || (cb->enable == NULL)) {
+		return 1U;
+	}
+
+	return cb->enable(enable_coex);
+}
+
+/**
+ * Push SR priority ranges into the SR driver.
+ *
+ * Reports success while no SR driver has registered, so the CD runs unchanged
+ * without one.
+ */
+static unsigned int cd_sr_set_client_priority(
 	const struct coex_sr_priority_range_t *sr_priority_range)
 {
-	ARG_UNUSED(sr_priority_range);
-	return 1U;
+	const struct coex_sr_driver_cb *cb = atomic_ptr_get(&sr_driver_cb);
+
+	if ((cb == NULL) || (cb->set_client_priority == NULL)) {
+		return 1U;
+	}
+
+	return cb->set_client_priority(sr_priority_range);
 }
 
 /* ---- cd_state helpers ---- */
@@ -503,7 +537,7 @@ static int cd_send_priority_ranges_from_state(void)
 	 * Mirror the SR ranges into the SR driver so its hardware uses matching PTI
 	 * values. Non-fatal if SR rejects them: the CM already has the ranges.
 	 */
-	if (coex_sr_set_client_priority(&sr_range) == 0U) {
+	if (cd_sr_set_client_priority(&sr_range) == 0U) {
 		LOG_WRN("SR driver rejected priority ranges");
 	}
 
@@ -611,7 +645,7 @@ int coex_cd_set_priority_ranges(const struct coex_wifi_priority_range_t *wifi_ra
 	k_mutex_unlock(&cd_state.lock);
 
 	/* Keep the SR driver in sync with the ranges the CM just accepted. */
-	if (coex_sr_set_client_priority(sr_range) == 0U) {
+	if (cd_sr_set_client_priority(sr_range) == 0U) {
 		LOG_WRN("SR driver rejected priority ranges");
 	}
 
@@ -764,9 +798,9 @@ int coex_cd_configure_coexc(enum coex_antenna_cfg_type antenna_cfg_type)
 /**
  * SR radio power lifecycle notifications from the Short-Range driver.
  *
- * Keeps cd_state in step with the SR power state and drives the coex_sr_* hooks
- * that talk to the SR radio driver. The SR driver calls this when it is about
- * to sleep and again once it has finished booting.
+ * Keeps cd_state in step with the SR power state and calls the SR driver
+ * callbacks registered through coex_cd_register_sr_driver_cb(). The SR driver
+ * calls this when it is about to sleep and again once it has finished booting.
  *
  * sr_coex_enabled is the runtime "may issue coexistence commands" gate: set
  * only while both radios are up and the Wi-Fi transport is alive, cleared on
@@ -797,13 +831,13 @@ int coex_cd_sr_power_notify(enum coex_sr_power_event_t event)
 		k_mutex_unlock(&cd_state.lock);
 
 		/* Tell the SR driver to stop participating in coexistence. */
-		(void)coex_sr_enable(0U);
+		(void)cd_sr_enable(0U);
 		return 0;
 
 	case COEX_SR_POWERED_UP_READY:
 		/*
 		 * SR is powered and ready. transition_active is held across the
-		 * coex_sr_* calls below so a concurrent power notification cannot
+		 * SR driver callbacks below so a concurrent power notification cannot
 		 * mutate cd_state mid-transition.
 		 */
 		k_mutex_lock(&cd_state.lock, K_FOREVER);
@@ -819,12 +853,12 @@ int coex_cd_sr_power_notify(enum coex_sr_power_event_t event)
 		 * Push the retained SR priority ranges into the SR driver. Best-effort:
 		 * the CM already has them from cd_apply_cm_config().
 		 */
-		if (coex_sr_set_client_priority(&sr_range) == 0U) {
+		if (cd_sr_set_client_priority(&sr_range) == 0U) {
 			LOG_WRN("SR driver rejected priority ranges on power-up");
 		}
 
 		/* Enable coexistence inside the SR driver. */
-		if (coex_sr_enable(1U) == 0U) {
+		if (cd_sr_enable(1U) == 0U) {
 			LOG_WRN("SR driver rejected coexistence enable on power-up");
 			k_mutex_lock(&cd_state.lock, K_FOREVER);
 			cd_state.transition_active = false;
