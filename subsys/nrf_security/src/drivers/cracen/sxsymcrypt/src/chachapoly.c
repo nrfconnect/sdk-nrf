@@ -119,12 +119,9 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct
 	/* ChaCha20Poly1305 doesn't use countermeasures */
 	aead_ctx->has_countermeasures = false;
 	aead_ctx->key = key;
-
-	if (key->prepare_key) {
-		err = key->prepare_key(key->user_data);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = sx_aead_prepare_key(aead_ctx);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	aead_ctx->cfg = &ba417chachapolycfg;

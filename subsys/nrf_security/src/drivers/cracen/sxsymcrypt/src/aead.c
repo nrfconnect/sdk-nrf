@@ -16,6 +16,7 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "cmaes.h"
+#include <nrf_security_mem_helpers.h>
 
 /** Mode Register value for context loading */
 #define AES_AEAD_MODEID_CTX_LOAD (1u << 4)
@@ -98,20 +99,38 @@ int sx_aead_free(struct sxaead *aead_ctx)
 {
 	int sx_err = SX_OK;
 
-	if (aead_ctx->key->clean_key) {
+	if (aead_ctx->key && aead_ctx->key->clean_key) {
 		sx_err = aead_ctx->key->clean_key(aead_ctx->key->user_data);
 	}
 	return sx_err;
 }
 
-static int sx_aead_prepare_key(struct sxaead *aead_ctx)
+static void sx_aead_wipe(struct sxaead *aead_ctx)
+{
+	/* The caller still releases the hardware with sx_hw_release(), which needs this flag */
+	bool hw_acquired = aead_ctx->dma.hw_acquired;
+
+	safe_memzero(aead_ctx, sizeof(*aead_ctx));
+	aead_ctx->dma.hw_acquired = hw_acquired;
+}
+
+static int sx_aead_free_and_wipe(struct sxaead *aead_ctx)
+{
+	int err = sx_aead_free(aead_ctx);
+
+	sx_aead_wipe(aead_ctx);
+
+	return err;
+}
+
+int sx_aead_prepare_key(struct sxaead *aead_ctx)
 {
 	int err = SX_OK;
 
 	if (aead_ctx->key->prepare_key) {
 		err = aead_ctx->key->prepare_key(aead_ctx->key->user_data);
 		if (err != SX_OK) {
-			return sx_handle_nested_error(sx_aead_free(aead_ctx), err);
+			return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), err);
 		}
 	}
 
@@ -278,19 +297,20 @@ int sx_aead_create_aesccm_dec(struct sxaead *aead_ctx, const struct sxkeyref *ke
 
 int sx_aead_feed_aad(struct sxaead *aead_ctx, const uint8_t *aad, size_t aadsz)
 {
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (aadsz >= DMA_MAX_SZ) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), SX_ERR_TOO_BIG);
 	}
 
 	if (aadsz > SX_GCM_MAX_BITLEN_BYTES - aead_ctx->totalaadsz) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), SX_ERR_TOO_BIG);
 	}
 
 	if (aead_ctx->dataintotalsz) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_FEED_AFTER_DATA);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
+					      SX_ERR_FEED_AFTER_DATA);
 	}
 
 	aead_ctx->totalaadsz += aadsz;
@@ -311,15 +331,15 @@ static void sx_aead_discard_aad(struct sxaead *aead_ctx)
 
 int sx_aead_crypt(struct sxaead *aead_ctx, const uint8_t *datain, size_t datainsz, uint8_t *dataout)
 {
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (datainsz >= DMA_MAX_SZ) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), SX_ERR_TOO_BIG);
 	}
 
 	if (datainsz > SX_GCM_MAX_BITLEN_BYTES - aead_ctx->dataintotalsz) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), SX_ERR_TOO_BIG);
 	}
 
 	sx_aead_discard_aad(aead_ctx);
@@ -341,7 +361,7 @@ static int sx_aead_run(struct sxaead *aead_ctx)
 				 sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
 				 aead_ctx->descs);
 	if (status != SX_OK) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), status);
 	}
 
 	return SX_OK;
@@ -349,18 +369,19 @@ static int sx_aead_run(struct sxaead *aead_ctx)
 
 int sx_aead_produce_tag(struct sxaead *aead_ctx, uint8_t *tagout)
 {
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (aead_ctx->cfg->mode == BA411_MODEID_CCM) {
 		if ((aead_ctx->dma.dmamem.cfg & aead_ctx->cfg->ctxload) &&
 		    (aead_ctx->datainsz == 0) && (aead_ctx->discardaadsz == 0)) {
-			return sx_handle_nested_error(sx_aead_free(aead_ctx),
+			return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
 						      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 		}
 	}
 	if ((aead_ctx->dataintotalsz + aead_ctx->totalaadsz) < aead_ctx->cfg->inputminsz) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_INCOMPATIBLE_HW);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
+					      SX_ERR_INCOMPATIBLE_HW);
 	}
 
 	if (aead_ctx->cfg->lenAlenC(aead_ctx->totalaadsz, aead_ctx->dataintotalsz,
@@ -380,18 +401,19 @@ int sx_aead_produce_tag(struct sxaead *aead_ctx, uint8_t *tagout)
 
 int sx_aead_verify_tag(struct sxaead *aead_ctx, const uint8_t *tagin)
 {
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (aead_ctx->cfg->mode == BA411_MODEID_CCM) {
 		if ((aead_ctx->dma.dmamem.cfg & aead_ctx->cfg->ctxload) &&
 		    (aead_ctx->datainsz == 0) && (aead_ctx->discardaadsz == 0)) {
-			return sx_handle_nested_error(sx_aead_free(aead_ctx),
+			return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
 						      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 		}
 	}
 	if ((aead_ctx->dataintotalsz + aead_ctx->totalaadsz) < aead_ctx->cfg->inputminsz) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), SX_ERR_INCOMPATIBLE_HW);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
+					      SX_ERR_INCOMPATIBLE_HW);
 	}
 
 	if (aead_ctx->cfg->lenAlenC(aead_ctx->totalaadsz, aead_ctx->dataintotalsz,
@@ -420,7 +442,7 @@ int sx_aead_resume_state(struct sxaead *aead_ctx)
 {
 	int err;
 
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
@@ -452,12 +474,12 @@ int sx_aead_save_state(struct sxaead *aead_ctx)
 {
 	int status;
 
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	if (aead_ctx->cfg->statesz == 0) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx),
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx),
 					      SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
@@ -474,7 +496,7 @@ int sx_aead_save_state(struct sxaead *aead_ctx)
 				 sizeof(aead_ctx->descs) + sizeof(aead_ctx->extramem),
 				 aead_ctx->descs);
 	if (status != SX_OK) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), status);
 	}
 
 	return SX_OK;
@@ -484,7 +506,7 @@ int sx_aead_status(struct sxaead *aead_ctx)
 {
 	int status;
 
-	if (!aead_ctx->dma.hw_acquired) {
+	if (!aead_ctx->dma.hw_acquired || !aead_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	status = sx_cmdma_check();
@@ -492,7 +514,7 @@ int sx_aead_status(struct sxaead *aead_ctx)
 		return status;
 	}
 	if (status) {
-		return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+		return sx_handle_nested_error(sx_aead_free_and_wipe(aead_ctx), status);
 	}
 
 #if CONFIG_DCACHE
@@ -506,7 +528,12 @@ int sx_aead_status(struct sxaead *aead_ctx)
 				 : SX_OK;
 	}
 
-	return sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+	status = sx_handle_nested_error(sx_aead_free(aead_ctx), status);
+	if (status != SX_OK) {
+		sx_aead_wipe(aead_ctx);
+	}
+
+	return status;
 }
 
 int sx_aead_wait(struct sxaead *aead_ctx)
