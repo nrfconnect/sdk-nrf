@@ -7,7 +7,6 @@ list(APPEND cracen_driver_sources
   ${CMAKE_CURRENT_LIST_DIR}/src/cmdma.c
   ${CMAKE_CURRENT_LIST_DIR}/src/cmmask.c
   ${CMAKE_CURRENT_LIST_DIR}/src/hash.c
-  ${CMAKE_CURRENT_LIST_DIR}/src/hmac.c
   ${CMAKE_CURRENT_LIST_DIR}/src/keyref.c
   ${CMAKE_CURRENT_LIST_DIR}/src/mac.c
   ${CMAKE_CURRENT_LIST_DIR}/src/sha3.c

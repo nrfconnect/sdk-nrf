@@ -12,16 +12,14 @@
 #include "cmdma.h"
 #include "macdefs.h"
 
-#define BA413_HMAC_CONF (1 << 8)
 #define HASH_HW_PAD	(1 << 9)
 #define HASH_FINAL	(1 << 10)
 #define EXPORT_STATE	(~HASH_HW_PAD & ~HASH_FINAL)
 
-static const struct sx_digesttags ba413tags = {
-	.cfg = DMATAG_BA413 | DMATAG_CONFIG(0),
-	.initialstate = DMATAG_BA413 | DMATAG_DATATYPE(1) | DMATAG_LAST,
-	.keycfg = DMATAG_BA413 | DMATAG_DATATYPE(2) | DMATAG_LAST,
-	.data = DMATAG_BA413 | DMATAG_DATATYPE(0)};
+static const struct sx_digesttags ba413tags = {.cfg = DMATAG_BA413 | DMATAG_CONFIG(0),
+					       .initialstate = DMATAG_BA413 | DMATAG_DATATYPE(1) |
+							       DMATAG_LAST,
+					       .data = DMATAG_BA413 | DMATAG_DATATYPE(0)};
 
 #define HASH_INVALID_BYTES  4 /* number of invalid bytes when empty message, required by HW */
 #define CMDMA_BA413_MODE(x) ((x) | (HASH_HW_PAD | HASH_FINAL))

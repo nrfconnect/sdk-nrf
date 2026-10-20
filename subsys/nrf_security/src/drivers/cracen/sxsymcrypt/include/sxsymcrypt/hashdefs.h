@@ -117,6 +117,7 @@
 struct sx_digesttags {
 	uint32_t cfg;
 	uint32_t initialstate;
+	/* Unused. Remove it when the layout can change for prebuilt libraries. */
 	uint32_t keycfg;
 	uint32_t data;
 };
@@ -209,10 +210,7 @@ extern const struct sxhashalg sxhashalg_shake256;
 extern const struct sxhashalg sxhashalg_sm3;
 
 #define CMDMA_BA413_BUS_MSK 3
-#define HASH_INVALID_BYTES  4 /* number of invalid bytes when empty message, required by HW */
 #define OFFSET_EXTRAMEM(c)  (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
-
-#define CMDMA_BA418_BUS_MSK (3)
 
 /**
  * @brief Checks if the provided algorithm is configured as SHAKE-128 or SHAKE-256 XOF.
