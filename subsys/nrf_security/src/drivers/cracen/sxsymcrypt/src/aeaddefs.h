@@ -42,4 +42,9 @@ struct sx_aead_cmdma_cfg {
 /* BA411 and BA419 CCM mode ID */
 #define AEAD_MODEID_CCM 5
 
+struct sxaead;
+
+/** On failure, releases the key and wipes \p aead_ctx. */
+int sx_aead_prepare_key(struct sxaead *aead_ctx);
+
 #endif
