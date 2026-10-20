@@ -46,25 +46,6 @@ function(split)
     ${CMAKE_OBJCOPY} --output-target=ihex ${exclude_param} ${SPLIT_ARG_ELF_FILE_IN} ${SPLIT_ARG_HEX_EXCLUDE_FILE_OUT})
 endfunction()
 
-# POST_BUILD runs as one /bin/sh script; imgtool -d "(index, version)" needs \( \) \"
-# escaped in dependency arguments (same rules as CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS).
-function(ncs_imgtool_shell_escape_arg out_var arg)
-  string(REPLACE "\\" "\\\\" escaped "${arg}")
-  string(REPLACE "\"" "\\\"" escaped "${escaped}")
-  string(REPLACE "(" "\\(" escaped "${escaped}")
-  string(REPLACE ")" "\\)" escaped "${escaped}")
-  set(${out_var} "${escaped}" PARENT_SCOPE)
-endfunction()
-
-function(ncs_imgtool_shell_escape_dependency_list out_var)
-  set(result)
-  foreach(arg IN LISTS ARGN)
-    ncs_imgtool_shell_escape_arg(escaped "${arg}")
-    list(APPEND result "${escaped}")
-  endforeach()
-  set(${out_var} ${result} PARENT_SCOPE)
-endfunction()
-
 function(zephyr_mcuboot_tasks)
   set(keyfile "${CONFIG_MCUBOOT_SIGNATURE_KEY_FILE}")
   set(keyfile_enc "${CONFIG_MCUBOOT_ENCRYPTION_KEY_FILE}")
@@ -204,14 +185,20 @@ function(zephyr_mcuboot_tasks)
   if(CONFIG_NCS_MCUBOOT_QSPI_XIP_IMGTOOL_DEPENDENCIES AND
      CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER GREATER_EQUAL 0 AND
      CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER GREATER_EQUAL 0)
-    set(_dep_internal "-d \"(${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER}, ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})\"")
-    separate_arguments(_dep_internal_args UNIX_COMMAND ${_dep_internal})
-    set(_dep_external "-d \"(${CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER}, ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})\"")
-    separate_arguments(_dep_external_args UNIX_COMMAND ${_dep_external})
-    set(internal_dependency ${_dep_internal_args})
-    set(external_dependency ${_dep_external_args})
-    ncs_imgtool_shell_escape_dependency_list(internal_dependency ${internal_dependency})
-    ncs_imgtool_shell_escape_dependency_list(external_dependency ${external_dependency})
+    # Pass -d and the tuple as separate COMMAND arguments (COMMAND_EXPAND_LISTS).
+    # No space after the comma keeps the tuple one shell token on Unix POST_BUILD.
+    if(WIN32)
+      set(internal_dependency
+        -d "(${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})")
+      set(external_dependency
+        -d "(${CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION})")
+    else()
+      # Ninja POST_BUILD runs through the shell on Unix; escape parentheses only.
+      set(internal_dependency
+        -d "\\(${CONFIG_MCUBOOT_QSPI_XIP_IMAGE_NUMBER},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}\\)")
+      set(external_dependency
+        -d "\\(${CONFIG_MCUBOOT_APPLICATION_IMAGE_NUMBER},${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION}\\)")
+    endif()
   endif()
 
   # Extensionless prefix of any output file.

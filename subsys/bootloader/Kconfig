@@ -214,9 +214,8 @@ config NCS_MCUBOOT_QSPI_XIP_IMGTOOL_DEPENDENCIES
 	  SB_CONFIG_QSPI_XIP_SPLIT_IMAGE so the split signing script is used.
 
 	  Do not set -d in CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS when this option is
-	  enabled. Imgtool dependency format is -d "(image_index, version)"; when
-	  passing -d via CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS, use that quoting and
-	  escape \", (, and ) for the shell if needed.
+	  enabled. Dependency tuples use the form (image_index,version) without a
+	  space after the comma.
 
 config NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS
 	bool "Set ih_load_addr using imgtool --rom-fixed when signing images"
