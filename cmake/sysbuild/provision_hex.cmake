@@ -7,8 +7,10 @@
 # This CMakeLists.txt is executed only by sysbuild
 # and generates the provision.hex file.
 
-include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
-include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
+if(SB_CONFIG_SECURE_BOOT)
+  include(${CMAKE_CURRENT_LIST_DIR}/sign.cmake)
+  include(${CMAKE_CURRENT_LIST_DIR}/debug_keys.cmake)
+endif()
 
 function(provision application prefix_name)
   ExternalProject_Get_Property(${application} BINARY_DIR)
