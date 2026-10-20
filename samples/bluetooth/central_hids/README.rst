@@ -294,8 +294,8 @@ Testing with Bluetooth Low Energy app
          Check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe in report id: 1
-            Subscribe in boot keyboard report
+            Subscribe to report id: 1
+            Subscribe to boot keyboard report
 
       #. Explore the first report inside Human Interface Device (the one with eight values).
          Change any of the values and note that the kit logs the change.
@@ -349,10 +349,15 @@ Testing with Bluetooth Low Energy app
       #. Press **Button 1** on the kit and observe that the **Protocol Mode** value changes from ``01`` to ``00``.
       #. Press **Button 0** and **Button 2** one after another and observe that the **Boot Keyboard Output Report** value toggles between ``00`` and ``02``.
 
+.. _bluetooth_central_hids_testing_hid_sci:
+
 Testing with HID SCI support
 ----------------------------
 
-To test the sample with HID SCI support, both the central and the peripheral you must build with ``-DFILE_SUFFIX=hid_sci``.
+To test the sample with HID SCI support, build both the central and the peripheral with ``-DFILE_SUFFIX=hid_sci``.
+You can use either the :ref:`peripheral_hids_keyboard` or the :ref:`peripheral_hids_mouse` sample as the peripheral.
+The following steps use the keyboard sample.
+The mouse sample follows the same SCI mode change procedure after pairing.
 
 .. tabs::
 
@@ -360,45 +365,208 @@ To test the sample with HID SCI support, both the central and the peripheral you
 
       1. |connect_terminal_specific|
       #. Reset the kit.
-      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample, using ``-DFILE_SUFFIX=hid_sci``, and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 4** on the peripheral kit to make it start start advertising.
       #. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
       #. Wait until the HIDS keyboard is detected by the central.
          Check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe in report id: 1
-            Subscribe in boot keyboard report
+            Subscribe to report id: 1
+            Subscribe to boot keyboard report
       #. Press **Button 4** on the central kit to enter the "Alternative button functions" mode.
       #. Press **Button 2** on the central kit and wait for the SCI mode to change to DEFAULT.
+         On the central kit, check for information similar to the following::
+
+            Requesting SCI mode DEFAULT on all ready devices
+            Sending SCI DEFAULT mode request
+            Sent DEFAULT SCI mode request to the device
+            SCI mode changed notification received, new mode: DEFAULT
+
+         On the peripheral kit, check for information similar to the following::
+
+            Control point event received for connection 0: SCI_DEFAULT_REQ
+
+            Connection 0: Connection rate changed:
+            interval us: ...
+            subrate factor: ...
+            peripheral latency: ...
+            continuation number: ...
+            supervision timeout (10ms units): ...
+
+         The values might differ depending on the used board and the HID SCI configuration.
+
       #. Cycle through the HID SCI modes by pressing **Button 2** on the central kit.
-         The HID SCI mode will change to FAST, LOW POWER, FULL RANGE, and DEFAULT again.
+         Each button press requests the next mode in the sequence: FAST, LOW POWER, FULL RANGE, and DEFAULT again.
          You might need to wait a few seconds for the mode to change each time.
-         You will see a message similar to the following::
+         On the central kit, you will see a message similar to the following::
 
             SCI mode changed notification received, new mode: <mode_name>
+
+         On the peripheral kit, you will see a control point event (for example, ``SCI_FAST_REQ``) followed by a connection rate change log.
 
    .. group-tab:: nRF54 DKs
 
       1. |connect_terminal_specific|
       #. Reset the kit.
-      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
+      #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample, using ``-DFILE_SUFFIX=hid_sci``, and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 3** on the peripheral kit to make it start start advertising.
       #. When connected, press **Button 0** on both devices to confirm the passkey value used for bonding, or press **Button 1** to reject it.
       #. Wait until the HIDS keyboard is detected by the central.
          Check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe in report id: 1
-            Subscribe in boot keyboard report
+            Subscribe to report id: 1
+            Subscribe to boot keyboard report
       #. Press **Button 3** on the central kit to enter the "Alternative button functions" mode.
       #. Press **Button 1** on the central kit and wait for the SCI mode to change to DEFAULT.
+         On the central kit, check for information similar to the following::
+
+            Requesting SCI mode DEFAULT on all ready devices
+            Sending SCI DEFAULT mode request
+            Sent DEFAULT SCI mode request to the device
+            SCI mode changed notification received, new mode: DEFAULT
+
+         On the peripheral kit, check for information similar to the following::
+
+            Control point event received for connection 0: SCI_DEFAULT_REQ
+
+            Connection 0: Connection rate changed:
+            interval us: ...
+            subrate factor: ...
+            peripheral latency: ...
+            continuation number: ...
+            supervision timeout (10ms units): ...
+
+         The values might differ depending on the used board and the HID SCI configuration.
+
       #. Cycle through the HID SCI modes by pressing **Button 1** on the central kit.
-         The HID SCI mode will change to FAST, LOW POWER, FULL RANGE, and DEFAULT again.
+         Each button press requests the next mode in the sequence: FAST, LOW POWER, FULL RANGE, and DEFAULT again.
          You might need to wait a few seconds for the mode to change each time.
-         You will see a message similar to the following::
+         On the central kit, you will see a message similar to the following::
 
             SCI mode changed notification received, new mode: <mode_name>
+
+         On the peripheral kit, you will see a control point event (for example, ``SCI_FAST_REQ``) followed by a connection rate change log.
+
+Testing with two HID SCI peripherals
+------------------------------------
+
+This test requires three development kits: one running the central sample and one for each of the :ref:`peripheral_hids_keyboard` and :ref:`peripheral_hids_mouse` samples.
+
+Build the samples using the following configuration:
+
+* :ref:`peripheral_hids_mouse` with ``-DFILE_SUFFIX=hid_sci``
+* :ref:`peripheral_hids_keyboard` with ``-DFILE_SUFFIX=hid_sci``
+* Central HIDS with ``-DFILE_SUFFIX=hid_sci`` and ``-DEXTRA_CONF_FILE=hid-sci-two-periphs.conf``
+
+.. tabs::
+
+   .. group-tab:: nRF53 DKs
+
+      1. Disconnect all three development kits from the computer.
+      #. Connect only the kit that will run the :ref:`peripheral_hids_mouse` sample.
+      #. Program it using the :ref:`peripheral_hids_mouse` image then disconnect it from the computer and set it aside.
+      #. Connect the kit that will run the :ref:`peripheral_hids_keyboard` sample and the kit that will run the central sample.
+      #. Program the keyboard using the :ref:`peripheral_hids_keyboard` image and the central using the :ref:`bluetooth_central_hids` image.
+      #. Connect a terminal to both the central and the keyboard kits with a terminal emulator (for example, the `Serial Terminal app`_).
+      #. Reset the central and keyboard kits.
+      #. If you see "NFC configuration done" on the keyboard kit, press **Button 4** to make it start advertising.
+      #. Wait until the central connects to the keyboard.
+      #. When prompted, press **Button 1** on both the central and the keyboard kit to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+      #. Wait until the keyboard is ready.
+         In the central terminal, check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe to report id: 1
+            Subscribe to boot keyboard report
+
+      #. Connect a terminal to the preprogrammed mouse kit, then reset or power-cycle it.
+         The mouse starts advertising automatically after reset.
+      #. Press **Button 4** on the central kit to enter the "Alternative button functions" mode.
+      #. Press **Button 1** on the central kit to resume scanning for the second peripheral.
+      #. Wait until the central connects to the mouse.
+      #. When prompted, press **Button 1** on both the central and the mouse kit to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+      #. Wait until the mouse is ready.
+         In the central terminal, check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe to boot mouse report
+
+      #. Press **Button 4** on the central kit to enter the "Alternative button functions" mode again (pairing with the mouse switched the central back to the normal button mode).
+      #. Press **Button 2** on the central kit and wait until both peripherals report the DEFAULT SCI mode.
+         The central prefixes messages with the peripheral index (for example, ``Peripheral 0:`` and ``Peripheral 1:``).
+         Check for information similar to the following on the central kit::
+
+            Requesting SCI mode DEFAULT on all ready devices
+            Sending SCI DEFAULT mode request
+            Peripheral 0: Sent DEFAULT SCI mode request to the device
+            Sending SCI DEFAULT mode request
+            Peripheral 1: Sent DEFAULT SCI mode request to the device
+            Peripheral 0: SCI mode changed notification received, new mode: DEFAULT
+            Peripheral 1: SCI mode changed notification received, new mode: DEFAULT
+
+         On each peripheral kit, check for a control point event (for example, ``SCI_DEFAULT_REQ``) and a connection rate change log.
+      #. Cycle through the remaining HID SCI modes by pressing **Button 2** on the central kit.
+         Each button press requests the next mode (FAST, LOW POWER, FULL RANGE, and DEFAULT again) on all ready HID devices.
+         You might need to wait a few seconds for the mode to change each time.
+         On the central kit, you will see a message similar to the following for each connected peripheral::
+
+            Peripheral 0: SCI mode changed notification received, new mode: <mode_name>
+            Peripheral 1: SCI mode changed notification received, new mode: <mode_name>
+
+   .. group-tab:: nRF54 DKs
+
+      1. Disconnect all three development kits from the computer.
+      #. Connect only the kit that will run the :ref:`peripheral_hids_mouse` sample.
+      #. Program it using the :ref:`peripheral_hids_mouse` image then disconnect it from the computer and set it aside.
+      #. Connect the kit that will run the :ref:`peripheral_hids_keyboard` sample and the kit that will run the central sample.
+      #. Program the keyboard using the :ref:`peripheral_hids_keyboard` image and the central using the :ref:`bluetooth_central_hids` image.
+      #. Connect a terminal to both the central and the keyboard kits with a terminal emulator (for example, the `Serial Terminal app`_).
+      #. Reset the central and keyboard kits.
+      #. If you see "NFC configuration done" on the keyboard kit, press **Button 3** to make it start advertising.
+      #. Wait until the central connects to the keyboard.
+      #. When prompted, press **Button 0** on both the central and the keyboard kit to confirm the passkey value used for bonding, or press **Button 1** to reject it.
+      #. Wait until the keyboard is ready.
+         In the central terminal, check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe to report id: 1
+            Subscribe to boot keyboard report
+
+      #. Connect a terminal to the preprogrammed mouse kit, then reset or power-cycle it.
+         The mouse starts advertising automatically after reset.
+      #. Press **Button 3** on the central kit to enter the "Alternative button functions" mode.
+      #. Press **Button 0** on the central kit to resume scanning for the second peripheral.
+      #. Wait until the central connects to the mouse.
+      #. When prompted, press **Button 0** on both the central and the mouse kit to confirm the passkey value used for bonding, or press **Button 1** to reject it.
+      #. Wait until the mouse is ready.
+         In the central terminal, check for information similar to the following::
+
+            HIDS is ready to work
+            Subscribe to boot mouse report
+
+      #. Press **Button 3** on the central kit to enter the "Alternative button functions" mode again (pairing with the mouse switched the central back to the normal button mode).
+      #. Press **Button 1** on the central kit and wait until both peripherals report the DEFAULT SCI mode.
+         The central prefixes messages with the peripheral index (for example, ``Peripheral 0:`` and ``Peripheral 1:``).
+         Check for information similar to the following on the central kit::
+
+            Requesting SCI mode DEFAULT on all ready devices
+            Sending SCI DEFAULT mode request
+            Peripheral 0: Sent DEFAULT SCI mode request to the device
+            Sending SCI DEFAULT mode request
+            Peripheral 1: Sent DEFAULT SCI mode request to the device
+            Peripheral 0: SCI mode changed notification received, new mode: DEFAULT
+            Peripheral 1: SCI mode changed notification received, new mode: DEFAULT
+
+         On each peripheral kit, check for a control point event (for example, ``SCI_DEFAULT_REQ``) and a connection rate change log.
+      #. Cycle through the remaining HID SCI modes by pressing **Button 1** on the central kit.
+         Each button press requests the next mode (FAST, LOW POWER, FULL RANGE, and DEFAULT again) on all ready HID devices.
+         You might need to wait a few seconds for the mode to change each time.
+         On the central kit, you will see a message similar to the following for each connected peripheral::
+
+            Peripheral 0: SCI mode changed notification received, new mode: <mode_name>
+            Peripheral 1: SCI mode changed notification received, new mode: <mode_name>
 
 Dependencies
 *************

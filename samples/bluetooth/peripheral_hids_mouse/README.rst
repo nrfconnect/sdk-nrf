@@ -348,6 +348,93 @@ To test with `Bluetooth Low Energy app`_, complete the following steps:
          Observe that no new notifications are received and the device is advertising.
       #. As bond information is preserved by the Bluetooth Low Energy app, you can immediately reconnect to the device by clicking the :guilabel:`Connect` button again.
 
+
+Testing with HID SCI support
+----------------------------
+
+.. include:: /samples/bluetooth/peripheral_hids_keyboard/README.rst
+   :start-after: peripheral_hids_hid_sci_testing_start
+   :end-before: peripheral_hids_hid_sci_testing_end
+
+Additionally, to test performance, you can use the :ref:`peripheral_hids_mouse_continuous_tx` feature, which is enabled by default in the ``hid_sci`` build variant.
+The paired :ref:`bluetooth_central_hids` sample enters continuous report receiving mode automatically and prints link statistics on the UART (avoid ``hid_sci_release`` and ``release`` builds, which disable this output).
+After completing the steps above, measure HID report timing in any HID SCI mode as follows:
+
+.. tabs::
+
+   .. group-tab:: nRF53 DKs
+
+      1. On the peripheral kit, press and hold any mouse movement button (**Button 1** through **Button 4**) for more than two seconds.
+         In the peripheral terminal, check for the following::
+
+            Starting continuous report sending
+
+         The central automatically enters continuous report receiving mode when notifications arrive fast enough.
+         In the central terminal, check for information similar to the following::
+
+            Continuous report receiving enabled due to short time interval between notifications.
+            Expected report interval: ... us
+
+      #. Keep the button pressed for at least a few seconds so that the central can print at least one statistics summary.
+         While continuous report receiving is active, the central no longer logs every notification payload.
+         Instead, it prints a summary for every :option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE` reports (1000 by default), for example::
+
+            Received 1000 reports, in ... us
+            HID Report rate: ... reports/s
+            Average report interval: ... us, max ... us, min ... us
+            Expected report interval: ... us
+            Intervals above ... us: ...
+            Intervals below ... us: ...
+
+      #. Release the mouse movement button.
+         In the peripheral terminal, check for the following::
+
+            Continuous report sending stopped
+
+         Peripheral continuous report sending statistics are unavailable on the nRF5340 application core.
+         They require radio notification connection callbacks, which are not supported on this target.
+
+         If you release the button for more than 500 ms, the central prints any pending statistics and disables continuous report receiving.
+
+      #. Cycle to another HID SCI mode on the central kit and repeat the button hold and release to compare report rate and jitter between modes.
+
+   .. group-tab:: nRF54 DKs
+
+      1. On the peripheral kit, press and hold any mouse movement button (**Button 0** through **Button 3**) for more than two seconds.
+         In the peripheral terminal, check for the following::
+
+            Starting continuous report sending
+
+         The central automatically enters continuous report receiving mode when notifications arrive fast enough.
+         In the central terminal, check for information similar to the following::
+
+            Continuous report receiving enabled due to short time interval between notifications.
+            Expected report interval: ... us
+
+      #. Keep the button pressed for at least a few seconds so that the central can print at least one statistics summary.
+         While continuous report receiving is active, the central no longer logs every notification payload.
+         Instead, it prints a summary for every :option:`CONFIG_SAMPLE_BT_CENTRAL_HIDS_CONTINUOUS_REPORT_RX_STATS_RATE` reports (1000 by default), for example::
+
+            Received 1000 reports, in ... us
+            HID Report rate: ... reports/s
+            Average report interval: ... us, max ... us, min ... us
+            Expected report interval: ... us
+            Intervals above ... us: ...
+            Intervals below ... us: ...
+
+      #. Release the mouse movement button.
+         In the peripheral terminal, check for the following::
+
+            Continuous report sending stopped
+            Connection 0 statistics:
+             Overall connection intervals: ...
+             Delayed HID reports (retransmissions): ...
+             Skipped connection intervals: ...
+
+         If you release the button for more than 500 ms, the central prints any pending statistics and disables continuous report receiving.
+
+      #. Cycle to another HID SCI mode on the central kit and repeat the button hold and release to compare report rate and jitter between modes.
+
 Dependencies
 ************
 
