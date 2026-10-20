@@ -11,15 +11,17 @@ import time
 from contextlib import contextmanager
 from pathlib import Path
 
+from intelhex import IntelHex
 from packaging.version import Version
 from twister_harness import DeviceAdapter, MCUmgr, Shell
 from twister_harness.helpers.utils import find_in_config
-from twister_harness_ext.adapters.nrfutil import reset_board
+from twister_harness_ext.adapters.nrfutil import flash_with_nrfutil, reset_board
 from twister_harness_ext.utils.dts_helper import (
+    get_edt_node,
     get_partition_address,
     get_partition_size,
 )
-from upgrade_test_manager import UpgradeTestWithMCUmgr
+from upgrade_test_manager import UpgradeTestWithMCUmgr, use_serial
 
 logger = logging.getLogger(__name__)
 
@@ -96,6 +98,18 @@ class UpgradeTestExtXipUseMCUmgr(UpgradeTestWithMCUmgr):
         ext_app = self.generate_external_image(self.app_to_sign_ext)
         return (int_app, ext_app)
 
+    @use_serial
+    def verify_versions_with_mcumgr(self, version: str | None = None) -> None:
+        """Verify that internal and external XIP primary slots hold the expected version."""
+        version = version or self.get_current_sign_version()
+        # MCUmgr drops "+0" and prints other build numbers after a dot
+        expected = version.replace("+0", "").replace("+", ".")
+        versions = {(img.image, img.slot): img.version for img in self.mcumgr.get_image_list()}
+        for image_number in (0, self.qspi_xip_image_number):
+            assert versions.get((image_number, 0)) == expected, (
+                f"Image {image_number} primary slot: expected {expected}, got {versions}"
+            )
+
 
 def test_upgrade_extxip(
     dut: DeviceAdapter, shell: Shell, mcumgr: MCUmgr, required_build_dirs: list[str]
@@ -130,8 +144,10 @@ def test_upgrade_extxip(
     tm.verify_after_reset(
         lines=[f"Image index: {i}, Swap type: none" for i in range(num_of_images)]
         + [f"Image version: v{current_version}"],
-        no_lines=["swap using move algorithm", "copying the secondary slot"],
+        no_lines=["copying the secondary slot"],
     )
+    shell.wait_for_prompt(timeout=3.0)
+    tm.verify_versions_with_mcumgr()
 
 
 def test_sw_downgrade_prevention_extxip(
@@ -148,17 +164,19 @@ def test_sw_downgrade_prevention_extxip(
     tm.clear_buffer()
     reset_board(dut.device_config.id)
 
-    ext_index = 1 if not tm.build_params.net_core_name else 2
     origin_version = Version(tm.origin_mcuboot_version).base_version
     tm.verify_after_reset(
         lines=[
             "Image index: 0, Swap type: perm",
-            f"Image index: {ext_index}, Swap type: perm",
+            "Insufficient version in secondary slot",
+            f"Image index: {tm.qspi_xip_image_number}, Swap type: perm",
             "Insufficient version in secondary slot",
             f"Image version: v{origin_version}",
         ],
-        no_lines=["copying the secondary slot to the primary slot", "swap using move algorithm"],
+        no_lines=["copying the secondary slot to the primary slot"],
     )
+    shell.wait_for_prompt(timeout=3.0)
+    tm.verify_versions_with_mcumgr(tm.origin_mcuboot_version)
 
 
 class UpgradeTestExtXipWithDirectXip(UpgradeTestExtXipUseMCUmgr):
@@ -188,6 +206,27 @@ class UpgradeTestExtXipWithDirectXip(UpgradeTestExtXipUseMCUmgr):
         )
         self.rom_fixed_secondary_ext = hex(
             get_partition_address(self.mcuboot_edt, self._slot_label(primary=False), absolute=True)
+        )
+        qspi_regs = get_edt_node(self.mcuboot_edt, "qspi").regs
+        self.qspi_xip_base: int = next(reg.addr for reg in qspi_regs if reg.name == "qspi_mm")  # type: ignore
+
+    def flash_images_to_primary_slot(self, int_app: Path, ext_app: Path) -> None:
+        """Program signed images directly into the primary slots.
+
+        With more than one updatable image MCUmgr always uploads to the secondary
+        slot, so the primary slot cannot be targeted through MCUmgr.
+        """
+        hex_file = int_app.with_name(f"{int_app.stem}_primary_slots.hex")
+        ih = IntelHex()
+        ih.loadbin(str(int_app), offset=int(self.rom_fixed_primary, 16))
+        ih.loadbin(str(ext_app), offset=self.qspi_xip_base + int(self.rom_fixed_primary_ext, 16))
+        ih.write_hex_file(str(hex_file))
+        logger.info(f"Flash primary slot images: {hex_file}")
+        flash_with_nrfutil(
+            hex_file,
+            self.dut.device_config.id,
+            erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
+            ext_mem_erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
         )
 
     def generate_app_images_for_direct_xip_secondary_slot(self) -> tuple[Path, Path]:
@@ -226,20 +265,24 @@ class UpgradeTestExtXipWithDirectXip(UpgradeTestExtXipUseMCUmgr):
         )
         logger.info("Verify new APP is booted")
 
-    def verify_extxip_direct_xip_primary_slot_loaded(self, version: str | None = None):
-        """Verify that Direct XIP primary slot is loaded after reset."""
+    def verify_extxip_direct_xip_primary_slot_loaded(
+        self, version: str | None = None, secondary_version: str | None = None
+    ):
+        """Verify that Direct XIP primary slot is loaded after reset.
+
+        ``secondary_version`` asserts that MCUboot saw the image in the secondary slot.
+        """
         version = version or self.get_current_sign_version()
-        self.verify_after_reset(
-            lines=[
-                "Starting Direct-XIP bootloader",
-                f"slot: version={version}",
-                f"Primary slot: version={version}",
-                "Image 0 loaded from the primary slot",
-                "Image 1 loaded from the primary slot",
-                f"Image version: v{Version(version).base_version}",
-            ],
-            no_lines=[f"Secondary slot: version={version}"],
-        )
+        # MCUboot pads the slot name ("%-9s"), so "Primary" is followed by extra spaces
+        lines = ["Starting Direct-XIP bootloader", f"Primary*slot: version={version}"]
+        if secondary_version:
+            lines.append(f"Secondary slot: version={secondary_version}")
+        lines += [
+            "Image 0 loaded from the primary slot",
+            "Image 1 loaded from the primary slot",
+            f"Image version: v{Version(version).base_version}",
+        ]
+        self.verify_after_reset(lines=lines, no_lines=[f"Secondary slot: version={version}"])
         logger.info("Verify new APP is booted")
 
 
@@ -250,24 +293,30 @@ def test_upgrade_extxip_with_direct_xip(
     dut.device_config.build_dir = Path(required_build_dirs[0])
     tm = UpgradeTestExtXipWithDirectXip(dut, shell, mcumgr)
     tm.decrease_version()
+    downgraded_version = tm.get_current_sign_version()
     int_app, ext_app = tm.generate_app_images_for_direct_xip_secondary_slot()
     tm.upload_images(int_app, app_external=ext_app)
+    tm.clear_buffer()
     reset_board(dut.device_config.id)
-    tm.verify_extxip_direct_xip_primary_slot_loaded(version=tm.origin_mcuboot_version)
+    tm.verify_extxip_direct_xip_primary_slot_loaded(
+        version=tm.origin_mcuboot_version, secondary_version=downgraded_version
+    )
     logger.info("Not downgraded from secondary slot")
 
     tm.increase_version()
     tm.increase_version()
     int_app, ext_app = tm.generate_app_images_for_direct_xip_secondary_slot()
     tm.upload_images(int_app, app_external=ext_app)
+    tm.clear_buffer()
     reset_board(dut.device_config.id)
     tm.verify_extxip_direct_xip_secondary_slot_loaded()
     logger.info("Upgraded from secondary slot")
 
-    # sign the third app and upload them to the primary slot
+    # sign the third app and flash it to the primary slot
     tm.increase_version()
     int_app, ext_app = tm.generate_app_images_for_direct_xip_primary_slot()
-    tm.upload_images(int_app, app_external=ext_app)
+    tm.clear_buffer()
+    tm.flash_images_to_primary_slot(int_app, ext_app)
     reset_board(dut.device_config.id)
     tm.verify_extxip_direct_xip_primary_slot_loaded()
     logger.info("Upgraded from primary slot")
@@ -284,6 +333,7 @@ def test_upgrade_extxip_with_direct_xip(
         / "zephyr"
         / "zephyr.external.signed.bin",
     )
+    tm.clear_buffer()
     reset_board(dut.device_config.id)
-    tm.verify_extxip_direct_xip_primary_slot_loaded()
+    tm.verify_extxip_direct_xip_primary_slot_loaded(secondary_version=tm.origin_mcuboot_version)
     logger.info("Not downgraded from secondary slot")

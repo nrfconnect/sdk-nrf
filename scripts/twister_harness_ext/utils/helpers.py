@@ -30,9 +30,9 @@ def retry(retry_num: int):
                 except Exception:
                     if attempt < retry_num:
                         attempt += 1
-                        logging.exception("Exception occurred in %s", func)
+                        logger.exception("Exception occurred in %s", func)
                         time.sleep(1)
-                        logging.info(f"Trying attempt {attempt}/{retry_num}")
+                        logger.info(f"Trying attempt {attempt}/{retry_num}")
                     else:
                         raise
 

@@ -33,15 +33,22 @@ def erase_board(dev_id: str | None):
     run_command(command)
 
 
-def flash_with_nrfutil(firmware: Path | str, dev_id: str, erase_mode: ERASE_MODE | None):
+def flash_with_nrfutil(
+    firmware: Path | str,
+    dev_id: str,
+    erase_mode: ERASE_MODE | None,
+    ext_mem_erase_mode: ERASE_MODE | None = None,
+):
     command = ['nrfutil', 'device', 'program', '--firmware', str(firmware)]
     if dev_id:
         command.extend(['--serial-number', dev_id])
     options = []
     if erase_mode:
         options += [f"chip_erase_mode={erase_mode}"]
+    if ext_mem_erase_mode:
+        options += [f"ext_mem_erase_mode={ext_mem_erase_mode}"]
     if options:
-        command += ["--options"] + options
+        command += ["--options", ",".join(options)]
     run_command(command)
 
 
