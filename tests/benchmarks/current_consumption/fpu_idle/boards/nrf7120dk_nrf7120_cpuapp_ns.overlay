@@ -1,0 +1,34 @@
+&uart20 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};
+
+/ {
+	/delete-node/ buttons;
+	/delete-node/ leds;
+
+	aliases {
+		/delete-property/ led1;
+		/delete-property/ led2;
+		/delete-property/ led3;
+		/delete-property/ sw0;
+		/delete-property/ sw1;
+		/delete-property/ sw2;
+		/delete-property/ sw3;
+		led0 = &led_custom0;
+		led = &led_custom0;
+	};
+
+	leds {
+		compatible = "gpio-leds";
+
+		led_custom0: led_custom0 {
+			gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+			label = "Custom LED due to GPIO4 disabled";
+		};
+	};
+};
+
+&gpio4 {
+	status = "disabled";
+};
