@@ -1135,7 +1135,10 @@ Modem libraries
 
 * :ref:`lte_lc_readme` library:
 
-  * Added the :kconfig:option:`CONFIG_LTE_LC_UICC_STATE_MODULE` Kconfig option to enable UICC (SIM card) state notifications, reported in the :c:enumerator:`LTE_LC_EVT_UICC_STATE` event.
+  * Added:
+
+    * The :kconfig:option:`CONFIG_LTE_LC_UICC_STATE_MODULE` Kconfig option to enable UICC (SIM card) state notifications, reported in the :c:enumerator:`LTE_LC_EVT_UICC_STATE` event.
+    * Support for the ``%MDMEV: SEARCH STATUS 3`` and ``%MDMEV: SEARCH STATUS 4`` notifications, reported in the :c:enumerator:`LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START` and :c:enumerator:`LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE` modem events.
 
 Multiprotocol Service Layer libraries
 -------------------------------------

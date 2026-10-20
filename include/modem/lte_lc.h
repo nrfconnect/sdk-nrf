@@ -850,6 +850,28 @@ enum lte_lc_modem_evt_type {
 	LTE_LC_MODEM_EVT_SEARCH_DONE,
 
 	/**
+	 * A periodic network search has started.
+	 *
+	 * This typically occurs when the device is in limited service state and the modem is
+	 * attempting to find service according to its configuration.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - lpwa-cellular_nrf92
+	 */
+	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START,
+
+	/**
+	 * A periodic network search has completed.
+	 *
+	 * This indicates that the periodic search signaled by
+	 * @ref LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START has ended.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - lpwa-cellular_nrf92
+	 */
+	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE,
+
+	/**
 	 * The modem has detected a reset loop.
 	 *
 	 * A reset loop indicates that the modem restricts network attach attempts for the next 30

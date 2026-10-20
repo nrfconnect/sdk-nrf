@@ -92,6 +92,12 @@ void link_shell_print_modem_domain_event(struct lte_lc_modem_evt modem_evt)
 	case LTE_LC_MODEM_EVT_SEARCH_DONE:
 		mosh_print("Modem domain event: Search done");
 		break;
+	case LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START:
+		mosh_print("Modem domain event: Periodic search start");
+		break;
+	case LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE:
+		mosh_print("Modem domain event: Periodic search done");
+		break;
 	case LTE_LC_MODEM_EVT_RESET_LOOP:
 		mosh_print("Modem domain event: Reset loop");
 		break;
