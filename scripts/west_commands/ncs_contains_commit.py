@@ -45,6 +45,12 @@ class NcsContainsCommit(WestCommand):
             default='v4.2',
         )
 
+        parser.add_argument(
+            '--timestamp',
+            help='Print NCS branch availability timestamps after the NCS presence table',
+            action='store_true',
+        )
+
         return parser
 
     def do_run(self, args: Namespace, _: list[str]) -> None:
@@ -62,9 +68,9 @@ class NcsContainsCommit(WestCommand):
 
         self.inf('')
         self.inf('Fetching NCS releases')
-        ncs_releases = self._get_releases_(self.nrf_upstream_url, self.args.from_ncs_tag)
-        self._fetch_releases_(self.nrf_abspath, self.nrf_upstream_url, ncs_releases)
-        ncs_releases = self._ncs_shas_to_zephyr_shas_(ncs_releases)
+        ncs_nrf_releases = self._get_releases_(self.nrf_upstream_url, self.args.from_ncs_tag)
+        self._fetch_releases_(self.nrf_abspath, self.nrf_upstream_url, ncs_nrf_releases)
+        ncs_releases = self._ncs_shas_to_zephyr_shas_(ncs_nrf_releases)
         self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, ncs_releases)
         ncs_data = self._check_releases_(ncs_releases, subjects, 'Checking NCS releases')
 
@@ -80,6 +86,21 @@ class NcsContainsCommit(WestCommand):
         zephyr_headers = ['Zephyr tag', 'Zephyr rev'] + list(range(len(subjects)))
         zephyr_table = tabulate.tabulate(zephyr_data, headers=zephyr_headers)
 
+        if self.args.timestamp:
+            self.inf('')
+            self.inf('Checking NCS commit timestamps')
+            ncs_timestamp_data, ncs_timestamps = self._resolve_ncs_timestamps_(
+                ncs_nrf_releases,
+                ncs_releases,
+                ncs_data,
+                subjects,
+            )
+            ncs_timestamp_table = self._format_ncs_timestamp_table_(
+                ncs_timestamp_data,
+                ncs_timestamps,
+                subjects,
+            )
+
         self.inf('')
         self.inf('Commit overview')
         for i, subject in enumerate(subjects):
@@ -90,6 +111,12 @@ class NcsContainsCommit(WestCommand):
 
         self.inf('')
         self.inf(zephyr_table)
+
+        if self.args.timestamp:
+            self.inf('')
+            self.inf('NCS commit timestamps')
+            self.inf('')
+            self.inf(ncs_timestamp_table)
 
     def _validate_args_(self):
         version_expr = re.compile(r'^v[0-9]+\.[0-9]+$')
@@ -222,3 +249,110 @@ class NcsContainsCommit(WestCommand):
         projects = content['manifest']['projects']
         project = [p for p in projects if p['name'] == 'zephyr'][0]
         return project['revision']
+
+    def _is_ncs_release_branch_(self, tag: str) -> bool:
+        if tag == 'main':
+            return True
+
+        return re.fullmatch(r'v[0-9]+\.[0-9]-branch', tag) is not None
+
+    def _format_ncs_timestamp_table_(
+        self,
+        ncs_timestamp_data: list[list[str]],
+        ncs_timestamps: list[list[int | None]],
+        subjects: list[str],
+    ) -> str:
+        headers = ['NCS tag', 'Zephyr rev'] + list(range(len(subjects)))
+        rows = []
+
+        for data_row, timestamp_row in zip(ncs_timestamp_data, ncs_timestamps, strict=True):
+            rows.append(
+                [data_row[0], data_row[1]]
+                + [str(ts) if ts is not None else '-' for ts in timestamp_row]
+            )
+
+        return tabulate.tabulate(rows, headers=headers)
+
+    def _resolve_ncs_timestamps_(
+        self,
+        ncs_nrf_releases: list[tuple[str, str]],
+        ncs_releases: list[tuple[str, str]],
+        ncs_data: list[list[str]],
+        subjects: list[str],
+    ) -> tuple[list[list[str]], list[list[int | None]]]:
+        ncs_timestamp_releases = [r for r in ncs_nrf_releases if self._is_ncs_release_branch_(r[1])]
+        ncs_timestamp_zephyr_releases = [
+            r for r in ncs_releases if self._is_ncs_release_branch_(r[1])
+        ]
+        ncs_timestamp_data = [d for d in ncs_data if self._is_ncs_release_branch_(d[0])]
+        ncs_timestamps: list[list[int | None]] = []
+
+        for (nrf_sha, _), (zephyr_sha, _), row in zip(
+            ncs_timestamp_releases, ncs_timestamp_zephyr_releases, ncs_timestamp_data, strict=True
+        ):
+            release_timestamps: list[int | None] = []
+
+            for subject_index, subject in enumerate(subjects):
+                if row[2 + subject_index] != 'Yes':
+                    release_timestamps.append(None)
+                    continue
+
+                commit_sha = self._run_cmd_(
+                    self.zephyr_abspath,
+                    'git',
+                    'log',
+                    '--grep',
+                    subject,
+                    '-n',
+                    '1',
+                    '--format=%H',
+                    zephyr_sha,
+                ).strip()
+
+                timestamp = self._timestamp_from_west_yml_(nrf_sha, commit_sha)
+                if timestamp is None:
+                    raise CommandError(
+                        f'{row[0]}: commit present ({subject}) but west.yml availability '
+                        f'timestamp could not be determined'
+                    )
+                release_timestamps.append(timestamp)
+
+            ncs_timestamps.append(release_timestamps)
+
+        return ncs_timestamp_data, ncs_timestamps
+
+    def _timestamp_from_west_yml_(self, nrf_ref: str, commit_sha: str) -> int | None:
+        log = self._run_cmd_(
+            self.nrf_abspath,
+            'git',
+            'log',
+            '--format=%H:%ct',
+            nrf_ref,
+            '--',
+            'west.yml',
+        )
+
+        timestamp: int | None = None
+
+        for entry in log.splitlines():
+            if not entry:
+                continue
+
+            nrf_commit, ts_str = entry.split(':', maxsplit=1)
+
+            zephyr_rev = self._get_zephyr_rev_(nrf_commit)
+            zephyr_sha = self._resolve_zephyr_sha_(zephyr_rev)
+            merge_base = self._run_cmd_(
+                self.zephyr_abspath,
+                'git',
+                'merge-base',
+                commit_sha,
+                zephyr_sha,
+            ).strip()
+
+            if merge_base != commit_sha:
+                break
+
+            timestamp = int(ts_str)
+
+        return timestamp
