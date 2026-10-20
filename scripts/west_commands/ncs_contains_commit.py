@@ -1,6 +1,7 @@
 # Copyright (c) 2026 Nordic Semiconductor ASA
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
+import json
 import re
 import subprocess
 from argparse import ArgumentParser, Namespace
@@ -63,6 +64,12 @@ class NcsContainsCommit(WestCommand):
             action='store_true',
         )
 
+        parser.add_argument(
+            '--json',
+            help='Print results as JSON instead of tables',
+            action='store_true',
+        )
+
         return parser
 
     def do_run(self, args: Namespace, _: list[str]) -> None:
@@ -79,51 +86,58 @@ class NcsContainsCommit(WestCommand):
         subjects = [subject.rstrip() for subject in args.subjects]
 
         show_ncs, show_zephyr = self._table_selection_()
+        quiet = self.args.json
 
-        ncs_table = ''
-        zephyr_table = ''
-        ncs_timestamp_table = ''
+        ncs_data: list[list[str]] | None = None
+        ncs_timestamp_data: list[list[str]] | None = None
+        ncs_timestamps: list[list[int | None]] | None = None
+        zephyr_data: list[list[str]] | None = None
 
         if show_ncs:
-            self.inf('')
-            self.inf('Fetching NCS releases')
+            if not quiet:
+                self.inf('')
+                self.inf('Fetching NCS releases')
             ncs_nrf_releases = self._get_releases_(self.nrf_upstream_url, self.args.from_ncs_tag)
             self._fetch_releases_(self.nrf_abspath, self.nrf_upstream_url, ncs_nrf_releases)
             ncs_releases = self._ncs_shas_to_zephyr_shas_(ncs_nrf_releases)
             self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, ncs_releases)
-            ncs_data = self._check_releases_(ncs_releases, subjects, 'Checking NCS releases')
-
-            ncs_headers = ['NCS tag', 'Zephyr rev'] + list(range(len(subjects)))
-            ncs_table = tabulate.tabulate(ncs_data, headers=ncs_headers)
+            ncs_data = self._check_releases_(ncs_releases, subjects, 'Checking NCS releases', quiet)
 
             if self.args.timestamp:
-                self.inf('')
-                self.inf('Checking NCS commit timestamps')
+                if not quiet:
+                    self.inf('')
+                    self.inf('Checking NCS commit timestamps')
                 ncs_timestamp_data, ncs_timestamps = self._resolve_ncs_timestamps_(
                     ncs_nrf_releases,
                     ncs_releases,
                     ncs_data,
                     subjects,
                 )
-                ncs_timestamp_table = self._format_ncs_timestamp_table_(
-                    ncs_timestamp_data,
-                    ncs_timestamps,
-                    subjects,
-                )
 
         if show_zephyr:
-            self.inf('')
-            self.inf('Fetching zephyr releases')
+            if not quiet:
+                self.inf('')
+                self.inf('Fetching zephyr releases')
             zephyr_releases = self._get_releases_(
                 self.zephyr_upstream_url, self.args.from_zephyr_tag
             )
             self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, zephyr_releases)
             zephyr_data = self._check_releases_(
-                zephyr_releases, subjects, 'Checking zephyr releases'
+                zephyr_releases, subjects, 'Checking zephyr releases', quiet
             )
 
-            zephyr_headers = ['Zephyr tag', 'Zephyr rev'] + list(range(len(subjects)))
-            zephyr_table = tabulate.tabulate(zephyr_data, headers=zephyr_headers)
+        if self.args.json:
+            report = self._build_json_report_(
+                subjects,
+                show_ncs,
+                show_zephyr,
+                ncs_data,
+                zephyr_data,
+                ncs_timestamp_data,
+                ncs_timestamps,
+            )
+            self.inf(json.dumps(report, indent=2))
+            return
 
         self.inf('')
         self.inf('Commit overview')
@@ -131,24 +145,92 @@ class NcsContainsCommit(WestCommand):
             self.inf(f'  {i}: {subject}')
 
         if show_ncs:
+            ncs_headers = ['NCS tag', 'Zephyr rev'] + list(range(len(subjects)))
             self.inf('')
-            self.inf(ncs_table)
+            self.inf(tabulate.tabulate(ncs_data, headers=ncs_headers))
 
             if self.args.timestamp:
                 self.inf('')
                 self.inf('NCS commit timestamps')
                 self.inf('')
-                self.inf(ncs_timestamp_table)
+                self.inf(
+                    self._format_ncs_timestamp_table_(
+                        ncs_timestamp_data,
+                        ncs_timestamps,
+                        subjects,
+                    )
+                )
 
         if show_zephyr:
+            zephyr_headers = ['Zephyr tag', 'Zephyr rev'] + list(range(len(subjects)))
             self.inf('')
-            self.inf(zephyr_table)
+            self.inf(tabulate.tabulate(zephyr_data, headers=zephyr_headers))
 
     def _table_selection_(self) -> tuple[bool, bool]:
         if self.args.ncs or self.args.zephyr:
             return self.args.ncs, self.args.zephyr
 
         return True, True
+
+    def _build_json_report_(
+        self,
+        subjects: list[str],
+        show_ncs: bool,
+        show_zephyr: bool,
+        ncs_data: list[list[str]] | None,
+        zephyr_data: list[list[str]] | None,
+        ncs_timestamp_data: list[list[str]] | None,
+        ncs_timestamps: list[list[int | None]] | None,
+    ) -> dict[str, Any]:
+        report: dict[str, Any] = {'subjects': subjects}
+
+        if show_ncs and ncs_data is not None:
+            report['ncs'] = self._presence_rows_to_json_(ncs_data, subjects)
+
+        if self.args.timestamp and ncs_timestamp_data is not None and ncs_timestamps is not None:
+            report['ncs_timestamps'] = self._timestamp_rows_to_json_(
+                ncs_timestamp_data,
+                ncs_timestamps,
+            )
+
+        if show_zephyr and zephyr_data is not None:
+            report['zephyr'] = self._presence_rows_to_json_(zephyr_data, subjects)
+
+        return report
+
+    def _presence_rows_to_json_(
+        self, rows: list[list[str]], subjects: list[str]
+    ) -> list[dict[str, Any]]:
+        result = []
+
+        for row in rows:
+            result.append(
+                {
+                    'tag': row[0],
+                    'zephyr_rev': row[1],
+                    'commits': row[2 : 2 + len(subjects)],
+                }
+            )
+
+        return result
+
+    def _timestamp_rows_to_json_(
+        self,
+        rows: list[list[str]],
+        timestamps: list[list[int | None]],
+    ) -> list[dict[str, Any]]:
+        result = []
+
+        for row, timestamp_row in zip(rows, timestamps, strict=True):
+            result.append(
+                {
+                    'tag': row[0],
+                    'zephyr_rev': row[1],
+                    'timestamps': timestamp_row,
+                }
+            )
+
+        return result
 
     def _validate_args_(self):
         version_expr = re.compile(r'^v[0-9]+\.[0-9]+$')
@@ -206,14 +288,17 @@ class NcsContainsCommit(WestCommand):
         releases: list[tuple[str, str]],
         subjects: list[str],
         checking_label: str,
+        quiet: bool,
     ) -> list[list[str]]:
-        self.inf('')
-        self.inf(checking_label)
+        if not quiet:
+            self.inf('')
+            self.inf(checking_label)
 
         data = []
 
         for sha, tag in releases:
-            self.inf(f'  {tag} ...')
+            if not quiet:
+                self.inf(f'  {tag} ...')
             present = [tag, sha[:8]]
             for subject in subjects:
                 present.append('Yes' if self._subject_is_in_zephyr_tree_(sha, subject) else 'No')
