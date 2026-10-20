@@ -369,6 +369,18 @@ To test with an Android smartphone/tablet, complete the following steps:
       #. Touch the NFC antenna with the same central device again.
       #. Observe that devices disconnect.
 
+
+Testing with HID SCI support
+----------------------------
+
+.. peripheral_hids_hid_sci_testing_start
+
+To test the HID SCI feature, build both this sample and the :ref:`bluetooth_central_hids` sample with ``-DFILE_SUFFIX=hid_sci``.
+Complete the test procedure in :ref:`bluetooth_central_hids_testing_hid_sci`.
+That section lists the button combinations on the central kit used to cycle through the HID SCI modes (DEFAULT, FAST, LOW POWER, and FULL RANGE).
+
+.. peripheral_hids_hid_sci_testing_end
+
 Dependencies
 ************
 
