@@ -51,6 +51,18 @@ class NcsContainsCommit(WestCommand):
             action='store_true',
         )
 
+        parser.add_argument(
+            '--ncs',
+            help='Print the NCS presence table',
+            action='store_true',
+        )
+
+        parser.add_argument(
+            '--zephyr',
+            help='Print the upstream Zephyr presence table',
+            action='store_true',
+        )
+
         return parser
 
     def do_run(self, args: Namespace, _: list[str]) -> None:
@@ -66,60 +78,84 @@ class NcsContainsCommit(WestCommand):
 
         subjects = [subject.rstrip() for subject in args.subjects]
 
-        self.inf('')
-        self.inf('Fetching NCS releases')
-        ncs_nrf_releases = self._get_releases_(self.nrf_upstream_url, self.args.from_ncs_tag)
-        self._fetch_releases_(self.nrf_abspath, self.nrf_upstream_url, ncs_nrf_releases)
-        ncs_releases = self._ncs_shas_to_zephyr_shas_(ncs_nrf_releases)
-        self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, ncs_releases)
-        ncs_data = self._check_releases_(ncs_releases, subjects, 'Checking NCS releases')
+        show_ncs, show_zephyr = self._table_selection_()
 
-        ncs_headers = ['NCS tag', 'Zephyr rev'] + list(range(len(subjects)))
-        ncs_table = tabulate.tabulate(ncs_data, headers=ncs_headers)
+        ncs_table = ''
+        zephyr_table = ''
+        ncs_timestamp_table = ''
 
-        self.inf('')
-        self.inf('Fetching zephyr releases')
-        zephyr_releases = self._get_releases_(self.zephyr_upstream_url, self.args.from_zephyr_tag)
-        self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, zephyr_releases)
-        zephyr_data = self._check_releases_(zephyr_releases, subjects, 'Checking zephyr releases')
-
-        zephyr_headers = ['Zephyr tag', 'Zephyr rev'] + list(range(len(subjects)))
-        zephyr_table = tabulate.tabulate(zephyr_data, headers=zephyr_headers)
-
-        if self.args.timestamp:
+        if show_ncs:
             self.inf('')
-            self.inf('Checking NCS commit timestamps')
-            ncs_timestamp_data, ncs_timestamps = self._resolve_ncs_timestamps_(
-                ncs_nrf_releases,
-                ncs_releases,
-                ncs_data,
-                subjects,
+            self.inf('Fetching NCS releases')
+            ncs_nrf_releases = self._get_releases_(self.nrf_upstream_url, self.args.from_ncs_tag)
+            self._fetch_releases_(self.nrf_abspath, self.nrf_upstream_url, ncs_nrf_releases)
+            ncs_releases = self._ncs_shas_to_zephyr_shas_(ncs_nrf_releases)
+            self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, ncs_releases)
+            ncs_data = self._check_releases_(ncs_releases, subjects, 'Checking NCS releases')
+
+            ncs_headers = ['NCS tag', 'Zephyr rev'] + list(range(len(subjects)))
+            ncs_table = tabulate.tabulate(ncs_data, headers=ncs_headers)
+
+            if self.args.timestamp:
+                self.inf('')
+                self.inf('Checking NCS commit timestamps')
+                ncs_timestamp_data, ncs_timestamps = self._resolve_ncs_timestamps_(
+                    ncs_nrf_releases,
+                    ncs_releases,
+                    ncs_data,
+                    subjects,
+                )
+                ncs_timestamp_table = self._format_ncs_timestamp_table_(
+                    ncs_timestamp_data,
+                    ncs_timestamps,
+                    subjects,
+                )
+
+        if show_zephyr:
+            self.inf('')
+            self.inf('Fetching zephyr releases')
+            zephyr_releases = self._get_releases_(
+                self.zephyr_upstream_url, self.args.from_zephyr_tag
             )
-            ncs_timestamp_table = self._format_ncs_timestamp_table_(
-                ncs_timestamp_data,
-                ncs_timestamps,
-                subjects,
+            self._fetch_releases_(self.zephyr_abspath, self.zephyr_upstream_url, zephyr_releases)
+            zephyr_data = self._check_releases_(
+                zephyr_releases, subjects, 'Checking zephyr releases'
             )
+
+            zephyr_headers = ['Zephyr tag', 'Zephyr rev'] + list(range(len(subjects)))
+            zephyr_table = tabulate.tabulate(zephyr_data, headers=zephyr_headers)
 
         self.inf('')
         self.inf('Commit overview')
         for i, subject in enumerate(subjects):
             self.inf(f'  {i}: {subject}')
 
-        self.inf('')
-        self.inf(ncs_table)
-
-        self.inf('')
-        self.inf(zephyr_table)
-
-        if self.args.timestamp:
+        if show_ncs:
             self.inf('')
-            self.inf('NCS commit timestamps')
+            self.inf(ncs_table)
+
+            if self.args.timestamp:
+                self.inf('')
+                self.inf('NCS commit timestamps')
+                self.inf('')
+                self.inf(ncs_timestamp_table)
+
+        if show_zephyr:
             self.inf('')
-            self.inf(ncs_timestamp_table)
+            self.inf(zephyr_table)
+
+    def _table_selection_(self) -> tuple[bool, bool]:
+        if self.args.ncs or self.args.zephyr:
+            return self.args.ncs, self.args.zephyr
+
+        return True, True
 
     def _validate_args_(self):
         version_expr = re.compile(r'^v[0-9]+\.[0-9]+$')
+
+        show_ncs, _ = self._table_selection_()
+        if self.args.timestamp and not show_ncs:
+            raise CommandError('--timestamp requires NCS output (use --ncs)')
 
         if version_expr.fullmatch(self.args.from_ncs_tag) is None:
             raise CommandError(
