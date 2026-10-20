@@ -112,6 +112,9 @@ Developing with nRF54H Series
   * Instructions for configuring snapshot in one-time programmable (OTP) memory.
   * The list of predefined snapshot regions.
 
+* Updated the nRF54H20 IronSide SE binaries to v23.8.3+36.
+  For the list of changes, see the :ref:`abi_compatibility_ise_changelog`.
+
 Developing with nRF53 Series
 ============================
 
