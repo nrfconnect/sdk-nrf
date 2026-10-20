@@ -24,6 +24,7 @@ tests:
       - ci_samples_bluetooth
     harness: console
     harness_config:
+      fixture: external_flash
       type: multi_line
       ordered: true
       regex:
