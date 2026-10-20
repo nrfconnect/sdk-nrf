@@ -42,7 +42,10 @@ struct nrf_cloud_download_data {
 	/* File download path */
 	const char *path;
 
-	/* Downloader host configuration */
+	/* Downloader host configuration.
+	 * Data referenced by pointers in this struct, such as sec_tag_list,
+	 * must remain valid until the download has ended.
+	 */
 	struct downloader_host_cfg dl_host_conf;
 
 	union {
@@ -53,9 +56,15 @@ struct nrf_cloud_download_data {
 	};
 };
 
-/** @brief Start download. Only one download at a time is allowed. FOTA downloads have priority.
- *         If a FOTA download is started while a non-FOTA download is active, the non-FOTA
- *         download is stopped.
+/** @brief Start download. Only one download at a time is allowed. FOTA
+ *         downloads have priority. If a FOTA download is started while a
+ *         non-FOTA download is active, the non-FOTA download is stopped.
+ *
+ *         The @p cloud_dl structure is copied and need only remain valid until
+ *         this function returns. The download runs asynchronously, so data
+ *         referenced by its pointer members (@c host, @c path,
+ *         @c dl_host_conf.sec_tag_list, etc.) must remain valid until the
+ *         download has ended.
  */
 int nrf_cloud_download_start(struct nrf_cloud_download_data *const cloud_dl);
 
