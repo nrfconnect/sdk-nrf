@@ -14,24 +14,44 @@
 #include "hw.h"
 #include "cmdma.h"
 #include "cmaes.h"
+#include <nrf_security_mem_helpers.h>
 
 int sx_mac_free(struct sxmac *mac_ctx)
 {
 	int sx_err = SX_OK;
-	if (mac_ctx->key->clean_key) {
+
+	if (mac_ctx->key && mac_ctx->key->clean_key) {
 		sx_err = mac_ctx->key->clean_key(mac_ctx->key->user_data);
 	}
 	return sx_err;
 }
 
-static int sx_mac_prepare_key(struct sxmac *mac_ctx)
+static void sx_mac_wipe(struct sxmac *mac_ctx)
+{
+	/* The caller still releases the hardware with sx_hw_release(), which needs this flag */
+	bool hw_acquired = mac_ctx->dma.hw_acquired;
+
+	safe_memzero(mac_ctx, sizeof(*mac_ctx));
+	mac_ctx->dma.hw_acquired = hw_acquired;
+}
+
+static int sx_mac_free_and_wipe(struct sxmac *mac_ctx)
+{
+	int err = sx_mac_free(mac_ctx);
+
+	sx_mac_wipe(mac_ctx);
+
+	return err;
+}
+
+int sx_mac_prepare_key(struct sxmac *mac_ctx)
 {
 	int err = SX_OK;
 
 	if (mac_ctx->key->prepare_key) {
 		err = mac_ctx->key->prepare_key(mac_ctx->key->user_data);
 		if (err != SX_OK) {
-			return sx_handle_nested_error(sx_mac_free(mac_ctx), err);
+			return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx), err);
 		}
 	}
 
@@ -40,14 +60,15 @@ static int sx_mac_prepare_key(struct sxmac *mac_ctx)
 
 int sx_mac_feed(struct sxmac *mac_ctx, const uint8_t *datain, size_t sz)
 {
-	if (!mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired || !mac_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	if (sz >= DMA_MAX_SZ) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_TOO_BIG);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx), SX_ERR_TOO_BIG);
 	}
 	if (mac_ctx->cntindescs >= (ARRAY_SIZE(mac_ctx->descs))) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_FEED_COUNT_EXCEEDED);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx),
+					      SX_ERR_FEED_COUNT_EXCEEDED);
 	}
 
 	if (sz != 0) {
@@ -64,12 +85,13 @@ static int sx_mac_run(struct sxmac *mac_ctx)
 	int status;
 
 	if ((mac_ctx->feedsz == 0) && (mac_ctx->dma.dmamem.cfg & mac_ctx->cfg->loadstate)) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_INPUT_BUFFER_TOO_SMALL);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx),
+					      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 
 	status = sx_cmdma_start(&mac_ctx->dma, sizeof(mac_ctx->descs), mac_ctx->descs);
 	if (status != SX_OK) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), status);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx), status);
 	}
 
 	return SX_OK;
@@ -77,7 +99,7 @@ static int sx_mac_run(struct sxmac *mac_ctx)
 
 int sx_mac_generate(struct sxmac *mac_ctx, uint8_t *mac)
 {
-	if (!mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired || !mac_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
@@ -98,12 +120,13 @@ int sx_mac_resume_state(struct sxmac *mac_ctx)
 {
 	int err;
 
-	if (!mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired || !mac_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 
 	if (!mac_ctx->cfg->statesz) {
-		return SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED;
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx),
+					      SX_ERR_CONTEXT_SAVING_NOT_SUPPORTED);
 	}
 
 	/* Key preparation - CM setup is handled by CRACENPSA layer via sx_hw_reserve() */
@@ -133,16 +156,18 @@ int sx_mac_save_state(struct sxmac *mac_ctx)
 {
 	uint32_t sz;
 
-	if (!mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired || !mac_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	sz = mac_ctx->feedsz;
 
 	if (sz < mac_ctx->cfg->blocksz) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_INPUT_BUFFER_TOO_SMALL);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx),
+					      SX_ERR_INPUT_BUFFER_TOO_SMALL);
 	}
 	if (sz % mac_ctx->cfg->granularity) {
-		return sx_handle_nested_error(sx_mac_free(mac_ctx), SX_ERR_WRONG_SIZE_GRANULARITY);
+		return sx_handle_nested_error(sx_mac_free_and_wipe(mac_ctx),
+					      SX_ERR_WRONG_SIZE_GRANULARITY);
 	}
 
 	mac_ctx->dma.dmamem.cfg |= mac_ctx->cfg->savestate;
@@ -156,7 +181,7 @@ int sx_mac_status(struct sxmac *mac_ctx)
 {
 	int status;
 
-	if (!mac_ctx->dma.hw_acquired) {
+	if (!mac_ctx->dma.hw_acquired || !mac_ctx->cfg) {
 		return SX_ERR_UNINITIALIZED_OBJ;
 	}
 	status = sx_cmdma_check();
@@ -169,7 +194,12 @@ int sx_mac_status(struct sxmac *mac_ctx)
 	sx_cmdma_invalidate_output(&mac_ctx->dma);
 #endif
 
-	return sx_handle_nested_error(sx_mac_free(mac_ctx), status);
+	status = sx_handle_nested_error(sx_mac_free(mac_ctx), status);
+	if (status != SX_OK) {
+		sx_mac_wipe(mac_ctx);
+	}
+
+	return status;
 }
 
 int sx_mac_wait(struct sxmac *mac_ctx)
