@@ -844,7 +844,7 @@ static int job_update_rejected(struct mqtt_client *const client, uint32_t payloa
 		LOG_ERR("Error %d when getting the payload", err);
 		return err;
 	}
-	LOG_ERR("%s", (char *)payload_buf);
+	LOG_ERR("%.*s", (int)payload_len, (char *)payload_buf);
 	callback(&aws_fota_evt);
 	return -EFAULT;
 }
