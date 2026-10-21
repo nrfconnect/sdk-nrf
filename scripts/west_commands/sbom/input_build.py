@@ -11,10 +11,8 @@ from __future__ import annotations
 
 import os
 import pickle
-import platform
 import re
 import shlex
-import shutil
 from pathlib import Path
 from typing import TYPE_CHECKING
 
@@ -24,6 +22,12 @@ from west import log, util
 from args import args
 from common import SbomException, command_execute
 from data_structure import Data, FileInfo, DataBaseClass, Package
+from dependency_graph import (
+    BuildDependencies,
+    build_path,
+    read_install_aliases,
+    read_link_references,
+)
 
 if TYPE_CHECKING:
     from ninja_build_extractor import BuildArchive, BuildObject
@@ -292,7 +296,7 @@ class ExternalToolDetector:
     '''
     Detects external build tools used in the project.
     Commonly they are added as CMake's ExternalProject.
-    So far, only GN is detected.
+    GN and nested CMake builds are discovered without executing their commands.
     '''
 
     GN_MATCHER_RE = re.compile(r'(^|\/|\\)gn(\.exe|\.bat|\.cmd|\.py)?"?$')
@@ -305,6 +309,7 @@ class ExternalToolDetector:
         Initialize this instance with empty results.
         '''
         self.gn_build_directories = set()
+        self.cmake_build_directories: dict[str, set[str]] = {}
 
 
     def parse_gn_command(self, command: str, current_dir: str):
@@ -326,12 +331,34 @@ class ExternalToolDetector:
 
     def parse_command(self, command: str, current_dir: str):
         '''
-        Parse a single command to check if it is a GN command.
+        Parse a single command to check if it starts a GN or nested CMake build.
         '''
-        parts = command.split(' ')
-        cmd = parts[0].strip()
+        try:
+            parts = [part.strip('"\'') for part in shlex.split(command, posix=False)]
+        except ValueError:
+            return
+        if not parts:
+            return
+        cmd = parts[0]
         if self.GN_MATCHER_RE.search(cmd) is not None:
             self.parse_gn_command(command, current_dir)
+        elif Path(cmd).name.lower() in ('cmake', 'cmake.exe') and '--build' in parts:
+            self.parse_cmake_command(parts, current_dir)
+
+
+    def parse_cmake_command(self, parts: list[str], current_dir: str):
+        '''Record the directory and requested targets of a CMake build command.'''
+        index = parts.index('--build')
+        if index + 1 >= len(parts):
+            return
+        directory = str(build_path(parts[index + 1], Path(current_dir)))
+        targets = self.cmake_build_directories.setdefault(directory, set())
+        if '--target' not in parts:
+            return
+        for target in parts[parts.index('--target') + 1:]:
+            if target.startswith('-'):
+                break
+            targets.add(target)
 
 
     def detect(self, target: str, build_dir: str):
@@ -357,15 +384,11 @@ class ExternalToolDetector:
             for command in commands:
                 command = command.strip()
                 if command.startswith('cd '):
-                    if platform.system() == 'Windows':
-                        out = command_execute(shutil.which('cmd.exe'), '/C',
-                                              f'{command} && cd', cwd=current_dir)
-                    else:
-                        out = command_execute(f'{command} && pwd', shell=True, cwd=current_dir)
-                    for out_line in out.split('\n'):
-                        out_line = out_line.strip()
-                        if out_line != '':
-                            current_dir = out_line
+                    destination = command[3:].strip()
+                    if destination.lower().startswith('/d '):
+                        destination = destination[3:].strip()
+                    destination = destination.strip('"\'')
+                    current_dir = str(build_path(destination, Path(current_dir)))
                 else:
                     self.parse_command(command, current_dir)
 
@@ -702,6 +725,13 @@ class InputBuild:
         '''
         from ninja_build_extractor import NinjaBuildExtractor
 
+        source_root = detect_application_root(self.build_dir)
+        context = BuildDependencies(
+            build_path(self.build_dir, Path.cwd()),
+            build_path(source_root, Path.cwd()) if source_root else None,
+            self.data.domain or (source_root.name if source_root else self.build_dir.name))
+        self.data.build_dependencies.append(context)
+
         # Prepare list of targets and associated map files.
         targets = []
         maps = []
@@ -725,12 +755,16 @@ class InputBuild:
                         self.data.inputs.append(f'The "{artifact}" file from the build directory '
                                     f'"{self.build_dir.resolve()}"')
                         self.add_file_info(artifact)
+                        context.targets.add(build_path(artifact, self.build_dir))
+                        context.files.update(self.seen_input_files)
+                        context.unavailable.add('hex-only image has no build dependency metadata')
                         return
                 raise SbomException(f'Cannot find map file for "{target_with_map}" '
                                     f'in build directory "{self.build_dir}". '
                                     f'Expected location "{map_file}".')
             log.dbg(f'Map file {map_file} for target "{target}"')
             targets.append(target)
+            context.targets.add(build_path(target, self.build_dir))
             maps.append(map_file)
             self.data.inputs.append(f'The "{target}" file from the build directory '
                                     f'"{self.build_dir.resolve()}"')
@@ -747,6 +781,8 @@ class InputBuild:
             try:
                 with open(args.debug_build_input_cache, 'rb') as f:
                     inputs = pickle.load(f)
+                if any(not hasattr(item, 'dependency_graph') for item in inputs):
+                    inputs = []  # Old debug caches cannot supply relationship evidence.
             except: # pylint: disable=bare-except
                 # This is a hidden debug-only option, so we can ignore all exceptions
                 pass
@@ -756,16 +792,47 @@ class InputBuild:
             log.dbg(f'Extracting files from root build directory "{self.build_dir}"')
             root_extractor = NinjaBuildExtractor(self.build_dir)
             inputs.append(root_extractor.extract(targets))
-            for directory in ext_detector.gn_build_directories:
-                log.dbg(f'Extracting files from GN build directory "{directory}"')
-                gn_extractor = NinjaBuildExtractor(directory, True)
-                gn_targets = get_ninja_default_targets(Path(directory))
-                inputs.append(gn_extractor.extract(gn_targets))
+            pending = [(Path(p), True, []) for p in ext_detector.gn_build_directories]
+            pending += [(Path(p), False, sorted(t))
+                        for p, t in ext_detector.cmake_build_directories.items()]
+            visited = {context.directory}
+            while pending:
+                directory, is_gn, nested_targets = pending.pop(0)
+                directory = build_path(directory, self.build_dir)
+                if directory in visited:
+                    continue
+                visited.add(directory)
+                if not (directory / 'build.ninja').is_file():
+                    context.unavailable.add(f'nested build metadata missing: {directory}')
+                    continue
+                log.dbg(f'Extracting files from nested build directory "{directory}"')
+                try:
+                    nested_targets = nested_targets or get_ninja_default_targets(directory)
+                    nested_extractor = NinjaBuildExtractor(directory, is_gn)
+                    nested = nested_extractor.extract(nested_targets)
+                except (SbomException, OSError) as error:
+                    context.unavailable.add(f'nested build unavailable: {directory}: {error}')
+                    continue
+                inputs.append(nested)
+                try:
+                    nested.dependency_graph.aliases.update(read_install_aliases(directory))
+                    nested_detector = ExternalToolDetector()
+                    for target in nested_targets:
+                        nested_detector.detect(target, directory)
+                    pending += [(Path(p), True, []) for p in nested_detector.gn_build_directories]
+                    pending += [(Path(p), False, sorted(t))
+                                for p, t in nested_detector.cmake_build_directories.items()]
+                except (SbomException, OSError) as error:
+                    context.unavailable.add(
+                        f'nested build metadata incomplete: {directory}: {error}')
             # Save list of files to a cache file (debug purposes only)
             if args.debug_build_input_cache is not None:
                 with open(args.debug_build_input_cache, 'wb') as f:
                     pickle.dump(inputs, f)
 
+        context.graphs = [item.dependency_graph for item in inputs]
+        for map_file in maps:
+            context.link_references.update(read_link_references(map_file, self.build_dir))
         self.merge_inputs(inputs)
 
         # Do additional validation
@@ -786,6 +853,16 @@ class InputBuild:
                 self.add_file_info(source)
             for obj in input.objects.values():
                 self.add_object_info(obj)
+        context.files = {build_path(path, self.build_dir) for path in self.seen_input_files}
+        # CMake may copy headers and source files into the build directory.
+        # Scan the originals too, when CMake identifies them, so git-info can
+        # tell which repository provides them.
+        for graph in context.graphs:
+            for installed, source in graph.aliases.items():
+                if installed in context.files and source.is_file() \
+                        and source.suffix.lower() not in {'.o', '.obj', '.a', '.lib'}:
+                    self.add_file_info(source)
+        context.files = {build_path(path, self.build_dir) for path in self.seen_input_files}
 
 
 def generate_input(data: Data):
@@ -900,6 +977,8 @@ def parse_application_dir(cache_path: Path) -> Path | None:
     except FileNotFoundError:
         return None
     match = re.search(r'^APPLICATION_SOURCE_DIR(?:[:A-Z]+)?=(.*)$', cache_content, re.M)
+    if match is None:
+        match = re.search(r'^CMAKE_HOME_DIRECTORY(?:[:A-Z]+)?=(.*)$', cache_content, re.M)
     if match is not None:
         value = match.group(1).strip()
         if value:
