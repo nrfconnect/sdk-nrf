@@ -69,6 +69,12 @@ After programming the sample to your development kit, complete the following ste
       #. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
       #. Move the smartphone or tablet away from the NFC antenna and observe that **LED 0** turns off.
 
+   .. group-tab:: nRF9251 DK
+
+      1. Touch the NFC antenna with the smartphone or tablet.
+      #. Observe that the smartphone or tablet displays the encoded text (in the most suitable language).
+      #. Move the smartphone or tablet away from the NFC antenna.
+
 Dependencies
 ************
 

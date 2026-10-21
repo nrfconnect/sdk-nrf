@@ -107,7 +107,7 @@ int nfc_ndef_record_encode(struct nfc_ndef_record_desc const *ndef_record_desc,
 
 	if (record_buffer) {
 		/* PAYLOAD LENGTH */
-		*(uint32_t *)payload_len = sys_cpu_to_be32(record_payload_len);
+		sys_put_be32(record_payload_len, payload_len);
 	}
 
 	*record_len = record_header_len + record_payload_len;

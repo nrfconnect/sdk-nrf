@@ -1,0 +1,11 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Route NFCT IRQ to PPR - NFC sample runs on CPUPPR (see cpuppr overlay). */
+&nfct {
+	status = "reserved";
+	interrupt-parent = <&cpuppr_clic>;
+};

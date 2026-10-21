@@ -14,27 +14,25 @@
  */
 
 #include <zephyr/kernel.h>
+#if defined(CONFIG_REBOOT)
 #include <zephyr/sys/reboot.h>
-#include <stdbool.h>
-#include <nfc_t4t_lib.h>
-
-#include <nfc/ndef/msg.h>
-#include <nfc/t4t/ndef_file.h>
-
-#include <dk_buttons_and_leds.h>
+#endif /* CONFIG_REBOOT */
 
 #include "ndef_file_m.h"
 
+#include <nfc_t4t_lib.h>
+#include <nfc/ndef/msg.h>
+#include <nfc/t4t/ndef_file.h>
+
+#if defined(CONFIG_DK_LIBRARY)
+#include <dk_buttons_and_leds.h>
 
 #define NFC_FIELD_LED		DK_LED1
 #define NFC_WRITE_LED		DK_LED2
-#ifdef CONFIG_BOARD_NRF9251DK
-#define NFC_READ_LED		DK_LED3
-#else /* CONFIG_BOARD_NRF9251DK */
 #define NFC_READ_LED		DK_LED4
-#endif /* CONFIG_BOARD_NRF9251DK */
 
 #define NDEF_RESTORE_BTN_MSK	DK_BTN1_MSK
+#endif /* CONFIG_DK_LIBRARY */
 
 static uint8_t ndef_msg_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for NDEF file. */
 
@@ -44,9 +42,11 @@ enum {
 	FLASH_BUF_PREP_FINISHED,
 	FLASH_WRITE_STARTED,
 };
+
 static atomic_t op_flags;
-static uint8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for flash update. */
-static uint8_t flash_buf_len; /**< Length of the flash buffer. */
+
+static uint8_t flash_buf[CONFIG_NDEF_FILE_SIZE]; /**< Buffer for storage update. */
+static uint8_t flash_buf_len; /**< Length of the storage buffer. */
 
 static K_SEM_DEFINE(nfc_write_sem, 0, 1);
 
@@ -80,20 +80,28 @@ static void nfc_callback(void *context,
 
 	switch (event) {
 	case NFC_T4T_EVENT_FIELD_ON:
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_led_on(NFC_FIELD_LED);
+#endif /* CONFIG_DK_LIBRARY */
 		break;
 
 	case NFC_T4T_EVENT_FIELD_OFF:
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_leds(DK_NO_LEDS_MSK);
+#endif /* CONFIG_DK_LIBRARY */
 		break;
 
 	case NFC_T4T_EVENT_NDEF_READ:
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_led_on(NFC_READ_LED);
+#endif /* CONFIG_DK_LIBRARY */
 		break;
 
 	case NFC_T4T_EVENT_NDEF_UPDATED:
 		if (data_length > 0) {
+#if defined(CONFIG_DK_LIBRARY)
 			dk_set_led_on(NFC_WRITE_LED);
+#endif /* CONFIG_DK_LIBRARY */
 			flash_buffer_prepare(data_length);
 		}
 		break;
@@ -105,8 +113,9 @@ static void nfc_callback(void *context,
 
 static int board_init(void)
 {
-	int err;
+	int err = 0;
 
+#if defined(CONFIG_DK_LIBRARY)
 	err = dk_buttons_init(NULL);
 	if (err) {
 		printk("Cannot init buttons (err: %d)\n", err);
@@ -117,6 +126,7 @@ static int board_init(void)
 	if (err) {
 		printk("Cannot init LEDs (err: %d)\n", err);
 	}
+#endif /* CONFIG_DK_LIBRARY */
 
 	return err;
 }
@@ -131,17 +141,20 @@ int main(void)
 		printk("Cannot initialize board!\n");
 		goto fail;
 	}
+
 	/* Initialize storage. */
 	if (ndef_file_setup() < 0) {
 		printk("Cannot setup NDEF file!\n");
 		goto fail;
 	}
-	/* Load NDEF message from the flash file. */
+
+	/* Load NDEF message. */
 	if (ndef_file_load(ndef_msg_buf, sizeof(ndef_msg_buf)) < 0) {
 		printk("Cannot load NDEF file!\n");
 		goto fail;
 	}
 
+#if defined(CONFIG_DK_LIBRARY)
 	/* Restore default NDEF message if button is pressed. */
 	uint32_t button_state;
 
@@ -154,6 +167,8 @@ int main(void)
 		}
 		printk("Default NDEF message restored!\n");
 	}
+#endif /* CONFIG_DK_LIBRARY */
+
 	/* Set up NFC */
 	int err = nfc_t4t_setup(nfc_callback, NULL);
 
@@ -179,19 +194,18 @@ int main(void)
 		if (atomic_cas(&op_flags, FLASH_BUF_PREP_FINISHED,
 				FLASH_WRITE_STARTED)) {
 			if (ndef_file_update(flash_buf, flash_buf_len) < 0) {
-				printk("Cannot flash NDEF message!\n");
+				printk("Cannot update NDEF message!\n");
 			} else {
-				printk("NDEF message successfully flashed.\n");
+				printk("NDEF message successfully updated.\n");
 			}
-
 			atomic_set(&op_flags, FLASH_WRITE_FINISHED);
 		}
 	}
 
 fail:
-	#if CONFIG_REBOOT
-		sys_reboot(SYS_REBOOT_COLD);
-	#endif /* CONFIG_REBOOT */
-		return -EIO;
+#if defined(CONFIG_REBOOT)
+	sys_reboot(SYS_REBOOT_COLD);
+#endif /* CONFIG_REBOOT */
+	return -EIO;
 }
 /** @} */
