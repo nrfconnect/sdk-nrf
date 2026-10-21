@@ -65,7 +65,15 @@ Bootloaders and DFU
 
   * Full slot erase procedures.
   * Swap-move algorithm in the move sectors up loop and in the sectors swap loop.
-  * Image hash calculation procedure in the hash calculation loop.
+* Updated:
+
+  * MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
+
+    * Full slot erase procedures.
+    * Swap-move algorithm in the move sectors up loop and in the sectors swap loop.
+    * Image hash calculation procedure in the hash calculation loop.
+
+  * The default crypto backend for ECDSA-P256 on the nRF54L Series from TinyCrypt to nRF Security.
 
 * Fixed:
 
