@@ -5,18 +5,22 @@
  */
 
 #include <zephyr/kernel.h>
+#if defined(CONFIG_REBOOT)
 #include <zephyr/sys/reboot.h>
+#endif /* CONFIG_REBOOT */
 
 #include <nfc_t2t_lib.h>
 #include <nfc/ndef/msg.h>
 #include <nfc/ndef/text_rec.h>
 
+#if defined(CONFIG_DK_LIBRARY)
 #include <dk_buttons_and_leds.h>
+
+#define NFC_FIELD_LED		DK_LED1
+#endif /* CONFIG_DK_LIBRARY */
 
 #define MAX_REC_COUNT		3
 #define NDEF_MSG_BUF_SIZE	128
-
-#define NFC_FIELD_LED		DK_LED1
 
 /* Text message in English with its language code. */
 static const uint8_t en_payload[] = {
@@ -40,7 +44,6 @@ static const uint8_t pl_code[] = {'P', 'L'};
 /* Buffer used to hold an NFC NDEF message. */
 static uint8_t ndef_msg_buf[NDEF_MSG_BUF_SIZE];
 
-
 static void nfc_callback(void *context,
 			 nfc_t2t_event_t event,
 			 const uint8_t *data,
@@ -52,16 +55,19 @@ static void nfc_callback(void *context,
 
 	switch (event) {
 	case NFC_T2T_EVENT_FIELD_ON:
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_led_on(NFC_FIELD_LED);
+#endif /* CONFIG_DK_LIBRARY */
 		break;
 	case NFC_T2T_EVENT_FIELD_OFF:
+#if defined(CONFIG_DK_LIBRARY)
 		dk_set_led_off(NFC_FIELD_LED);
+#endif /* CONFIG_DK_LIBRARY */
 		break;
 	default:
 		break;
 	}
 }
-
 
 /**
  * @brief Function for encoding the NDEF text message.
@@ -136,11 +142,13 @@ int main(void)
 
 	printk("Starting NFC Text Record sample\n");
 
+#if defined(CONFIG_DK_LIBRARY)
 	/* Configure LED-pins as outputs */
 	if (dk_leds_init() < 0) {
 		printk("Cannot init LEDs!\n");
 		goto fail;
 	}
+#endif /* CONFIG_DK_LIBRARY */
 
 	/* Set up NFC */
 	if (nfc_t2t_setup(nfc_callback, NULL) < 0) {
@@ -173,7 +181,7 @@ int main(void)
 	return 0;
 
 fail:
-#if CONFIG_REBOOT
+#if defined(CONFIG_REBOOT)
 	sys_reboot(SYS_REBOOT_COLD);
 #endif /* CONFIG_REBOOT */
 
