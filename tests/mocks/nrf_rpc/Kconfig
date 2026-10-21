@@ -16,6 +16,14 @@ config MOCK_NRF_RPC_TRANSPORT
 	help
 	  Mock nRF RPC transport for unit testing.
 
+config MOCK_DECT_RPC_TRANSPORT
+	bool "DECT NR+ RPC unit test mock transport"
+	help
+	  DECT NR+ RPC ztests only: same role as MOCK_NRF_RPC_TRANSPORT with a
+	  larger expect queue, optional wildcard slots, and cmd header matching
+	  suited to dect_rpc tests (see tests/subsys/net/dect/rpc/common/
+	  mock_dect_rpc_transport.c).
+
 endchoice # NRF_RPC_TRANSPORT
 
 config MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE
@@ -25,5 +33,14 @@ config MOCK_NRF_RPC_TR_CB_THREAD_STACK_SIZE
 config MOCK_NRF_RPC_TR_CB_THREAD_PRIO
 	int "Priority for the callback thread"
 	default 5
+
+if MOCK_DECT_RPC_TRANSPORT
+
+config MOCK_DECT_RPC_TR_MAX_EXPECTED_PKTS
+	int "Max expect/response pairs for DECT RPC mock transport"
+	default 24
+	range 5 128
+
+endif # MOCK_DECT_RPC_TRANSPORT
 
 endif # MOCK_NRF_RPC

@@ -1207,8 +1207,11 @@ ci_tests_drivers_dect:
     - nrf/include/net/dect/
     - nrf/drivers/dect/
     - nrf/subsys/net/dect/l2/
+    - nrf/subsys/net/dect/rpc/
     - nrf/subsys/net/lib/dect/
     - nrf/tests/drivers/dect/
+    - nrf/tests/subsys/net/dect/
+    - nrf/tests/subsys/net/lib/dect/
     - nrfxlib/nrf_modem/include/nrf_modem_dect.h
 
 ci_tests_unity:

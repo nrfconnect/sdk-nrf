@@ -1,0 +1,11 @@
+tests:
+  net.dect.rpc.client:
+    sysbuild: true
+    platform_allow: native_sim
+    tags:
+      - dect
+      - ci_build
+      - sysbuild
+      - ci_tests_subsys_net_dect
+    integration_platforms:
+      - native_sim
