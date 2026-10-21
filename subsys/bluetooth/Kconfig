@@ -39,6 +39,13 @@ config BT_LL_SOFTDEVICE_HEADERS_INCLUDE
 config BT_LL_SOFTDEVICE_HEADERS_INCLUDE_PATH_OVERRIDE
 	bool
 
+config BT_CTLR_SDC_CHAN_IDX_IN_ADV_REPORT
+	bool "Append channel index to standard LE Advertising Report" if !BT_HCI_ADV_REPORT_CHAN_IDX
+	default y if BT_HCI_ADV_REPORT_CHAN_IDX
+	help
+	  Enable SoftDevice Controller support for appending channel index to
+	  standard LE Advertising Report events.
+
 config BT_LONG_WQ_STACK_SIZE
 	int
 	default 2100 if (BT_ECC || BT_GATT_CACHING) && SOC_SERIES_NRF54L
