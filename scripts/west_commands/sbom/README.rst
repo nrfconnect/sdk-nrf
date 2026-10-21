@@ -471,6 +471,19 @@ Only the module at the root of a repository is read and a reference that is neit
 An upstream reference describes the product a fork is derived from.
 Where a fix has been backported the upstream version does not change so a scanner can still report an issue that is already fixed.
 
+Package dependency relationships
+================================
+
+For a build directory as input, the SPDX report records the relationships between packages using the inputs observed in that build.
+For example, ``A DEPENDS_ON B`` means that package A uses package B.
+By following ``application -> A -> B``, you can identify A as a consumer of B.
+SPDX 3.0 reports express the same graph with ``dependsOn`` relationships.
+
+The report connects the application to its observed build inputs rather than to every package it lists.
+The analysis treats each sysbuild domain independently and writes a separate output file for each domain.
+
+The report includes only the dependency relationships between identified packages.
+
 .. _west_sbom_HTML_report_overview:
 
 HTML report overview
