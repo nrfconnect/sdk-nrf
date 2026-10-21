@@ -17,6 +17,7 @@ from threading import Lock
 from args import args
 from common import SbomException, command_execute, concurrent_pool_iter, get_executor_workers
 from data_structure import DataBaseClass
+from dependency_graph import BuildGraph, BuildNode, build_path
 from west import log
 
 COMMAND_LINE_MAX_SIZE = 7000  # Size of command line parameters in Windows is limited.
@@ -90,6 +91,7 @@ class NinjaBuildExtractor:
         self.process_target_queue = list()
         self.cache = dict()
         self.query_cache = dict()
+        self.query_rules = dict()
         self.file_type_cache = dict()
         self.build_dir = Path(build_dir)
         self.include_order_only = include_order_only
@@ -160,13 +162,10 @@ class NinjaBuildExtractor:
                         rest = line[colon_index + 1 :]
                         rest_stripped = rest.lstrip()
                         target = target_part.rstrip()
-                        if (
-                            target
-                            and not any(ch.isspace() for ch in target)
-                            and (not rest_stripped or rest_stripped.startswith('#'))
-                        ):
+                        if target and (not rest_stripped or rest_stripped.startswith('#')):
                             dep = set()
-                            self.deps[target] = dep
+                            if '(STALE)' not in rest_stripped:
+                                self.deps[target] = dep
                             continue
                     if line.lstrip().startswith('#'):
                         continue
@@ -258,6 +257,7 @@ class NinjaBuildExtractor:
                 phony = phony or ('phony' in tail.split())
                 if dir == 'input':
                     inputs = True
+                    self.query_rules[target] = tail.strip()
                 else:
                     if dir != 'outputs':
                         raise SbomException(
@@ -498,5 +498,34 @@ class NinjaBuildExtractor:
             self.remove_dummy_objects(self.archives)
             self.remove_dummy_objects({'': self.root})
             self.root.archives.update(self.archives)
+            graph = BuildGraph(self.build_dir.resolve())
+            graph.targets = {build_path(target, self.build_dir) for target in targets}
+            resolved_paths = {}
+
+            def paths(inputs):
+                result = set()
+                for path in inputs:
+                    if self.should_ignore_target(path):
+                        continue
+                    if path not in resolved_paths:
+                        resolved_paths[path] = build_path(path, self.build_dir)
+                    result.add(resolved_paths[path])
+                return result
+
+            compiler_inputs = {
+                build_path(target, self.build_dir): inputs for target, inputs in self.deps.items()
+            }
+            for target, (explicit, implicit, order_only, _) in self.query_cache.items():
+                if self.should_ignore_target(target):
+                    continue
+                target_path = build_path(target, self.build_dir)
+                graph.nodes[target_path] = BuildNode(
+                    paths(explicit),
+                    paths(implicit),
+                    paths(compiler_inputs.get(target_path, set())),
+                    paths(order_only),
+                    self.query_rules.get(target, ''),
+                )
+            self.root.dependency_graph = graph
 
         return self.root
