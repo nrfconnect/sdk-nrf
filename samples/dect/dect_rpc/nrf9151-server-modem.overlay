@@ -1,0 +1,51 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ *
+ * Server-only nRF9151 layout: modem IPC SHMEM and non-secure application RAM.
+ * Apply on top of the default (client) board overlay when building server.conf:
+ *
+ *   -DEXTRA_DTC_OVERLAY_FILE=nrf9151-server-modem.overlay
+ *
+ * Flash partitions come from the default board overlay (client layout).
+ */
+
+/delete-node/ &sram0_s;
+/delete-node/ &sram0_ns;
+
+&sram0 {
+	sram0_s: sram@0 {
+		reg = <0x0 0x8000>;
+	};
+
+	sram0_ns: sram@8000 {
+		reg = <0x8000 0x38000>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges = <0x0 0x8000 0x38000>;
+
+		sram0_ns_modem: sram0_ns@0 {
+			reg = <0x0 0x47a8>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x0 0x47a8>;
+
+			cpuapp_cpucell_ipc_shm_ctrl: sram0_ns_modem@0 {
+				reg = <0x0 0x728>;
+			};
+
+			cpuapp_cpucell_ipc_shm_heap: sram0_ns_modem@728 {
+				reg = <0x728 0x2080>;
+			};
+
+			cpucell_cpuapp_ipc_shm_heap: sram0_ns_modem@27a8 {
+				reg = <0x27a8 0x2000>;
+			};
+		};
+
+		sram0_ns_app: sram0_ns@47a8 {
+			reg = <0x47a8 0x33858>;
+		};
+	};
+};
