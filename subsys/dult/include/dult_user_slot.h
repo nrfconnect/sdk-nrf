@@ -76,7 +76,7 @@ size_t dult_user_slot_claimed_count(void);
 /** @brief Call @p cb for every user that currently holds a slot.
  *
  *  The bound users are snapshotted at entry, so @p cb may release its own or another
- *  user's slot (a slot released before its turn is skipped). @p cb must not call
+ *  user's slot (a slot released before its turn is skipped). @p cb may also call
  *  @ref dult_user_slot_foreach recursively.
  *
  *  @param cb        Called once per slot bound at entry, in table order, and only if the
