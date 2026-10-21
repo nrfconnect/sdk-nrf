@@ -495,7 +495,15 @@ static void client_callback(const struct coap_client_response_data *data, void *
 		LOG_WRN("CoAP request timed out; reconnection required.");
 		xfer->nrfc_cc->authenticated = false;
 	} else if ((data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && data->payload_len) {
-		LOG_ERR("Unexpected response: %*s", data->payload_len, data->payload);
+		enum nrf_cloud_error nrf_err = NRF_CLOUD_ERROR_NONE;
+
+		/* "Data not found" is a normal outcome, e.g. with unknown Wi-Fi APs */
+		(void)coap_codec_error_resp_decode(data->payload, data->payload_len, &nrf_err);
+		if (nrf_err == NRF_CLOUD_ERROR_DATA_NOT_FOUND) {
+			LOG_DBG("Data not found. Response: %.*s", data->payload_len, data->payload);
+		} else {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
+		}
 	}
 	/* Sanitize the xfer struct to ensure callback is valid, in case transfer
 	 * was cancelled or timed out.
