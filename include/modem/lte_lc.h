@@ -856,6 +856,7 @@ enum lte_lc_modem_evt_type {
 	 * attempting to find service according to its configuration.
 	 *
 	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
 	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START,
@@ -867,6 +868,7 @@ enum lte_lc_modem_evt_type {
 	 * @ref LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START has ended.
 	 *
 	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
 	 *       - lpwa-cellular_nrf92
 	 */
 	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE,
