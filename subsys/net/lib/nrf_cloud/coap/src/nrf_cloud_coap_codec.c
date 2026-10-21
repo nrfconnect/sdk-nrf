@@ -324,6 +324,32 @@ int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_
 	return err;
 }
 
+int coap_codec_error_resp_decode(const uint8_t *buf, size_t len, enum nrf_cloud_error *err)
+{
+	__ASSERT_NO_MSG(err != NULL);
+	int ret = -ENOMSG;
+	cJSON *root_obj;
+	cJSON *code_obj;
+
+	if (!buf || !len) {
+		return -ENODATA;
+	}
+
+	root_obj = cJSON_ParseWithLength((const char *)buf, len);
+	if (!root_obj) {
+		return -ENODATA;
+	}
+
+	code_obj = cJSON_GetObjectItem(root_obj, NRF_CLOUD_ERROR_CODE_KEY);
+	if (cJSON_IsNumber(code_obj)) {
+		*err = (enum nrf_cloud_error)cJSON_GetNumberValue(code_obj);
+		ret = 0;
+	}
+
+	cJSON_Delete(root_obj);
+	return ret;
+}
+
 int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result, const uint8_t *buf,
 				      size_t len, enum coap_content_format fmt)
 {

@@ -531,9 +531,12 @@ static int loc_err;
 static void get_location_callback(const struct coap_client_response_data *data, void *user)
 {
 	if (data->result_code != COAP_RESPONSE_CODE_CONTENT) {
+		struct nrf_cloud_location_result *result = user;
+
 		loc_err = data->result_code;
 		if (data->payload_len) {
-			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
+			(void)coap_codec_error_resp_decode(data->payload, data->payload_len,
+							   &result->err);
 		}
 	} else if (data->payload_len) {
 		loc_err = coap_codec_ground_fix_resp_decode(user, data->payload, data->payload_len,
@@ -572,6 +575,7 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_coap_location_request const *co
 	(void)k_sem_take(&coap_transfer_sem, K_FOREVER);
 
 	loc_err = 0;
+	result->err = NRF_CLOUD_ERROR_NONE;
 
 	err = coap_codec_ground_fix_req_encode(request->cell_info,
 					       request->wifi_info,
@@ -600,7 +604,9 @@ int nrf_cloud_coap_location_get(struct nrf_cloud_coap_location_request const *co
 	err = loc_err;
 
 	/* Check for callback errors */
-	if (loc_err > 0) {
+	if ((loc_err > 0) && (result->err == NRF_CLOUD_ERROR_DATA_NOT_FOUND)) {
+		LOG_RESULT_CODE_WRN("Location not found by nRF Cloud, result code", loc_err);
+	} else if (loc_err > 0) {
 		LOG_RESULT_CODE_ERR("Error getting location; result code:", loc_err);
 	} else if (loc_err < 0) {
 		LOG_ERR("Location response decoding error: %d", loc_err);

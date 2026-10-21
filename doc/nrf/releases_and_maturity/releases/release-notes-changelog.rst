@@ -1239,6 +1239,9 @@ Libraries for networking
       Previously, when ``SO_KEEPOPEN`` was in use, a send could block indefinitely when the modem send buffer was full, for example, after losing LTE coverage.
       The default timeout is 20 seconds.
 
+  * Updated the logging of location requests that nRF Cloud cannot resolve (error code ``40410``).
+    Instead of several errors, the library now logs a single warning, as this can happen in normal circumstances, for example, with unknown Wi-Fi access points.
+
   * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
     This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
     The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.

@@ -30,6 +30,9 @@
 #define LOG_RESULT_CODE_ERR(msg, result_code) { \
 		LOG_ERR("%s " RC_FMT, (msg), RC_PARAM(result_code)); \
 }
+#define LOG_RESULT_CODE_WRN(msg, result_code) { \
+		LOG_WRN("%s " RC_FMT, (msg), RC_PARAM(result_code)); \
+}
 #define LOG_RESULT_CODE_INF(msg, result_code) { \
 		LOG_INF("%s " RC_FMT, (msg), RC_PARAM(result_code)); \
 }
@@ -47,6 +50,11 @@ int coap_codec_pvt_encode(const char *app_id, const struct nrf_cloud_gnss_pvt *p
 int coap_codec_ground_fix_req_encode(struct lte_lc_cells_info const *const cell_info,
 				     struct wifi_scan_info const *const wifi_info,
 				     uint8_t *buf, size_t *len, enum coap_content_format fmt);
+
+/* Decode the nRF Cloud error code from a CoAP error response payload such as
+ * {"message":"...","code":40410}.
+ */
+int coap_codec_error_resp_decode(const uint8_t *buf, size_t len, enum nrf_cloud_error *err);
 
 int coap_codec_ground_fix_resp_decode(struct nrf_cloud_location_result *result,
 				      const uint8_t *buf, size_t len, enum coap_content_format fmt);
