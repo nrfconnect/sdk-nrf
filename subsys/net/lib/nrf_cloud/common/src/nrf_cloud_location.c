@@ -35,7 +35,9 @@ int nrf_cloud_location_process(const char *buf, struct nrf_cloud_location_result
 	}
 
 	err = nrf_cloud_location_response_decode(buf, result);
-	if (err == -EFAULT) {
+	if ((err == -EFAULT) && (result->err == NRF_CLOUD_ERROR_DATA_NOT_FOUND)) {
+		LOG_WRN("Location not found by nRF Cloud, code: %d", result->err);
+	} else if (err == -EFAULT) {
 		LOG_ERR("nRF Cloud location error: %d", result->err);
 	} else if (err < 0) {
 		LOG_ERR("Error processing location result: %d", err);
