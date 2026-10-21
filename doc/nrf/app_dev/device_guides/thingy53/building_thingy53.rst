@@ -118,7 +118,7 @@ Building and programming using |VSC|
 
 Complete the following steps to build and program using |nRFVSC|:
 
-.. |sample_path_vsc| replace:: :file:`nrf/samples/bluetooth/peripheral_lbs`
+.. |sample_path_vsc| replace:: :file:`zephyr/samples/hello_world`
 
 .. |vsc_sample_board_target_line| replace:: select ``thingy53/nrf5340/cpuapp`` as the board target
 
