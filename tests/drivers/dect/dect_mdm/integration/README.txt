@@ -28,7 +28,7 @@ Architecture - What Is Tested vs Mocked
   |    (dect_net_l2_mgmt.h)                   |
   |                |                          |
   |       DECT L2 Networking                  |
-  |   (subsys/net/l2_dect/)                   |
+  |   (subsys/net/dect/l2/)                   |
   |                |                          |
   |       DECT MAC Driver                     |
   |    (drivers/dect/dect_mdm/)               |
@@ -127,7 +127,7 @@ Measuring DECT NR+ stack code coverage
 
   lcov --extract twister-out-cov-all/coverage.info \
     "*/nrf/drivers/dect/dect_mdm/*" \
-    "*/nrf/subsys/net/l2_dect/*" \
+    "*/nrf/subsys/net/dect/l2/*" \
     "*/nrf/subsys/net/lib/dect/utils/*" \
     --output-file twister-out-cov-all/dect_coverage.info \
     --rc lcov_branch_coverage=1
