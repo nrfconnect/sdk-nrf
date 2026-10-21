@@ -89,7 +89,10 @@ struct dult_user {
 	/** Accessory capabilities bitmask. See @ref dult_accessory_capability for more details. */
 	uint32_t accessory_capabilities;
 
-	/** Network ID. See @ref dult_network_id for more details. */
+	/** Network ID. See @ref dult_network_id for more details.
+	 *
+	 *  The network ID must be unique among the registered users.
+	 */
 	enum dult_network_id network_id;
 
 	/** Firmware version. */
@@ -117,6 +120,10 @@ struct dult_user {
  *  up to @kconfig{CONFIG_DULT_USER_MAX} users that can be registered at the same time.
  *  The lifetime of the registered user is then limited by
  *  the @ref dult_user_unregister API.
+ *
+ *  Each registered user represents a different accessory-locating network. The registration
+ *  fails if the same user structure is already registered or if another registered user
+ *  uses the same network ID (see the @ref dult_user::network_id field).
  *
  *  @param user	Structure containing user information.
  *
