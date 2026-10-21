@@ -1115,7 +1115,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+  * Updated:
+
+    * The library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+    * Cloud location failures to be logged as warnings instead of errors, as they can happen in normal circumstances, for example, when nRF Cloud cannot resolve a location from the reported Wi-Fi access points.
+    * The return codes of cloud location request to be consistent between MQTT and CoAP transports.
 
 * :ref:`modem_key_mgmt` library:
 
@@ -1179,6 +1183,9 @@ Libraries for networking
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option adds the ``nrf_cloud_cred`` shell commands (``keygen``, ``csr``, ``delete``, and ``pubkey``).
       The :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option (enabled by default) exports the on-device public key so that host tooling can verify the key against the device certificate.
       See :ref:`lib_nrf_cloud_credentials_keygen` for more information.
+
+  * Updated the logging of location requests that nRF Cloud cannot resolve (error code ``40410``).
+    Instead of several errors, the library now logs a single warning, as this can happen in normal circumstances, for example, with unknown Wi-Fi access points.
 
   * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
     This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.

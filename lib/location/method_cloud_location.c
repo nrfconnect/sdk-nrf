@@ -141,7 +141,7 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	/* Request location from the cloud */
 	err = cloud_service_location_get(&params, &location);
 	if (err) {
-		LOG_ERR("Failed to acquire location using cloud location, error: %d", err);
+		LOG_WRN("Failed to acquire location using cloud location, error: %d", err);
 	} else {
 		location_result.latitude = location.latitude;
 		location_result.longitude = location.longitude;
