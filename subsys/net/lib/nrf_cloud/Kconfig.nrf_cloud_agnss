@@ -5,8 +5,6 @@
 
 menuconfig NRF_CLOUD_AGNSS
 	bool "nRF Cloud Assisted GNSS (A-GNSS)"
-	depends on MODEM_INFO
-	depends on MODEM_INFO_ADD_NETWORK
 	select CJSON_LIB
 
 if NRF_CLOUD_AGNSS
