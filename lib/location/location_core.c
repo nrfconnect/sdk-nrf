@@ -742,7 +742,7 @@ static void location_core_event_cb_fn(struct k_work *work)
 			return;
 		}
 		if (loc_req_info.current_event_data.id != LOCATION_EVT_RESULT_UNKNOWN) {
-			LOG_ERR("Location acquisition failed and fallbacks are also done");
+			LOG_WRN("Location acquisition failed and fallbacks are also done");
 		} else {
 			LOG_DBG("Location acquisition completed and fallbacks are also done");
 		}
