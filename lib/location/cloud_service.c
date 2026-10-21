@@ -32,6 +32,7 @@ BUILD_ASSERT(
 	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_LOCATION must be enabled");
 
 static struct location_data cloud_location;
+static bool cloud_location_error;
 static K_SEM_DEFINE(location_ready, 0, 1);
 #endif
 
@@ -46,10 +47,7 @@ static void cloud_service_location_ready_cb(
 
 		k_sem_give(&location_ready);
 	} else {
-		if (result) {
-			LOG_ERR("Unable to determine location from cloud service, error: %d",
-				result->err);
-		}
+		cloud_location_error = true;
 		/* Reset the semaphore to unblock cloud_service_pos_get()
 		 * and make it return an error.
 		 */
@@ -69,6 +67,7 @@ static int cloud_service_pos_get(
 	int err;
 
 	k_sem_reset(&location_ready);
+	cloud_location_error = false;
 
 	LOG_DBG("Sending positioning request (MQTT)");
 	err = nrf_cloud_location_request(
@@ -84,9 +83,11 @@ static int cloud_service_pos_get(
 	LOG_DBG("Positioning request sent");
 
 	if (k_sem_take(&location_ready, K_MSEC(params->timeout_ms)) == -EAGAIN) {
-		LOG_ERR("Positioning data request timed out or "
-			"cloud did not return a location");
-		return -ETIMEDOUT;
+		if (cloud_location_error) {
+			return -EFAULT;
+		} else {
+			return -ETIMEDOUT;
+		}
 	}
 
 	*location = cloud_location;
@@ -116,6 +117,11 @@ static int cloud_service_pos_get(
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
 		location->longitude = result.lon;
+	} else if (err > 0) {
+		/* Consistent with MQTT */
+		err = -EFAULT;
+	} else if (err == -EAGAIN) {
+		err = -ETIMEDOUT;
 	}
 
 	return err;

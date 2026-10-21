@@ -1115,7 +1115,11 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
-  * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+  * Updated:
+
+    * The library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+    * Cloud location failures to be logged as warnings instead of errors, as they can happen in normal circumstances, for example, when nRF Cloud cannot resolve a location from the reported Wi-Fi access points.
+    * The return codes of cloud location request to be consistent between MQTT and CoAP transports.
 
 * :ref:`modem_key_mgmt` library:
 
