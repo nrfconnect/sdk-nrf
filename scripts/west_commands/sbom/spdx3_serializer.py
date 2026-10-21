@@ -16,7 +16,6 @@ from pathlib import Path
 
 from args import args
 from data_structure import Data, FileInfo, Package
-from output_pre_process import DEPENDENCY_PLACEHOLDER_ID
 from output_template import (
     download_location,
     get_ncs_version,
@@ -242,8 +241,6 @@ class Spdx3Builder:
         file_counter = 0
         # Numbering matches SPDXRef-package-N and SPDXRef-file-N of the SPDX 2.3 report.
         for index, package_id in enumerate(self.data.packages_sorted, start=1):
-            if package_id == DEPENDENCY_PLACEHOLDER_ID:
-                continue
             files = files_by_package.get(package_id, [])
             package = self._create_package(self.data.packages[package_id], index, files)
             packages[package_id] = package
@@ -260,16 +257,14 @@ class Spdx3Builder:
             if file_elements:
                 self._relationship(package, spdx.RelationshipType.contains, file_elements)
         for package_id, package in packages.items():
-            dependencies = self.data.packages[package_id].dependencies
-            targets = [packages[dep_id] for dep_id in dependencies if dep_id in packages]
-            if targets:
-                self._relationship(package, spdx.RelationshipType.dependsOn, targets)
-            if DEPENDENCY_PLACEHOLDER_ID in dependencies:
-                # Dependencies are unknown, SPDX 3 has a dedicated way to say it.
+            source = self.data.packages[package_id]
+            for dep_id in source.dependencies:
+                if dep_id not in packages:
+                    continue
                 self._relationship(
                     package,
                     spdx.RelationshipType.dependsOn,
-                    [spdx.IndividualElement.NoAssertionElement],
+                    [packages[dep_id]],
                     completeness=spdx.RelationshipCompleteness.noAssertion,
                 )
         return list(packages.values())
