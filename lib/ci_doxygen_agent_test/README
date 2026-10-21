@@ -1,0 +1,4 @@
+Copyright (c) 2026 Nordic Semiconductor ASA
+SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+Internal CI-only marker file. Not part of any build target.

@@ -14,7 +14,7 @@
  * This file is intentionally unused. It exists only to exercise PR checks.
  */
 
-/** Placeholder value for CI-only pull requests. */
-#define CI_DOXYGEN_AGENT_TEST_MARKER 0
+/** Placeholder value for CI-only pull requests (bump to retrigger CI). */
+#define CI_DOXYGEN_AGENT_TEST_MARKER 1
 
 #endif /* CI_DOXYGEN_AGENT_TEST_H_ */
