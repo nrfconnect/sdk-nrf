@@ -20,14 +20,14 @@ The sample also requires a smartphone or tablet with NFC Tools application (or e
 Overview
 ********
 
-When the sample starts, it initializes the NFC tag and loads the NDEF message from the file in flash memory.
-If the NDEF message file does not exist, a default message is generated.
+When the sample starts, it initializes the NFC tag and loads the NDEF message from the storage.
+If the NDEF message does not exist, a default message is generated.
 It is a URI message with a URI record containing the URL ``nordicsemi.com``.
 The sample then sets up the NFC library for the Type 4 Tag platform, which uses the NDEF message and senses the external NFC field.
 
 The library works in Read-Write emulation mode.
 In this mode, procedures for reading and updating an NDEF message are handled internally by the NFC library.
-Any changes to the NDEF message update the NDEF message file stored in flash memory.
+Any changes to the NDEF message update the NDEF message in the storage.
 
 User interface
 **************
@@ -46,7 +46,7 @@ User interface
       Button 1:
          Press during startup to restore the default NDEF message.
 
-   .. group-tab:: nRF54 and nRF9251 DKs
+   .. group-tab:: nRF54 and nRF9251 DKs (CPUAPP)
 
       LED 0:
          Indicates if an NFC field is present.
@@ -82,12 +82,20 @@ After programming the sample to your development kit, complete the following ste
       #. Restart your development kit and touch the antenna again.
          Observe that the new message is displayed.
 
-   .. group-tab:: nRF54 and nRF9251 DKs
+   .. group-tab:: nRF54 and nRF9251 DKs (CPUAPP)
 
       1. Touch the NFC antenna with the smartphone or tablet and observe that **LED 0** and **LED 3** are lit.
       #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
       #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
       #. Restart your development kit and touch the antenna again.
+         Observe that the new message is displayed.
+
+   .. group-tab:: nRF9251 DK (CPUPPR)
+
+      1. Touch the NFC antenna with the smartphone or tablet.
+      #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
+      #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
+      #. Touch the NFC antenna again.
          Observe that the new message is displayed.
 
 Dependencies

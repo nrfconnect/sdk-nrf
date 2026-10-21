@@ -18,18 +18,29 @@
 #include <zephyr/device.h>
 #include <nfc/t4t/ndef_file.h>
 #include <nfc/ndef/uri_msg.h>
+#include "ndef_file_m.h"
+
+#if !defined(CONFIG_NDEF_FILE_STORAGE_RAM)
 #include <zephyr/storage/flash_map.h>
+#endif /* !defined(CONFIG_NDEF_FILE_STORAGE_RAM) */
 #if defined(CONFIG_NVS)
 #include <zephyr/kvss/nvs.h>
 #elif defined(CONFIG_ZMS)
 #include <zephyr/kvss/zms.h>
 #endif /* defined(CONFIG_NVS) */
-#include "ndef_file_m.h"
 
 #define FLASH_URL_ADDRESS_ID 1 /**< Address of URL message in FLASH */
 
 static const uint8_t m_url[] = /**< Default NDEF message: URL "nordicsemi.com". */
 	{'n', 'o', 'r', 'd', 'i', 'c', 's', 'e', 'm', 'i', '.', 'c', 'o', 'm'};
+
+#if defined(CONFIG_NDEF_FILE_STORAGE_RAM)
+
+static uint8_t ram_ndef[CONFIG_NDEF_FILE_SIZE];
+static uint32_t ram_ndef_len;
+static bool ram_ndef_valid;
+
+#else /* CONFIG_NDEF_FILE_STORAGE_RAM */
 
 /* Flash partition for storage*/
 #define FLASH_DEVICE PARTITION_DEVICE(storage_partition)
@@ -55,9 +66,14 @@ static struct zms_fs fs = {
 #error "Please select file system."
 #endif /* defined(CONFIG_NVS) */
 
+#endif /* CONFIG_NDEF_FILE_STORAGE_RAM */
+
 int ndef_file_setup(void)
 {
-	int err;
+#if defined(CONFIG_NDEF_FILE_STORAGE_RAM)
+	return 0;
+#else /* CONFIG_NDEF_FILE_STORAGE_RAM */
+	int err = 0;
 
 	fs.flash_device = FLASH_DEVICE;
 	if (fs.flash_device == NULL) {
@@ -75,15 +91,26 @@ int ndef_file_setup(void)
 	}
 
 	return err;
+#endif /* CONFIG_NDEF_FILE_STORAGE_RAM */
 }
 
 int ndef_file_update(uint8_t const *buff, uint32_t size)
 {
-	/* Update FLASH file with new NDEF message. */
+	/* Update storage with new NDEF message. */
 #if defined(CONFIG_NVS)
 	return nvs_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
 #elif defined(CONFIG_ZMS)
 	return zms_write(&fs, FLASH_URL_ADDRESS_ID, buff, size);
+#elif defined(CONFIG_NDEF_FILE_STORAGE_RAM)
+	if (size > CONFIG_NDEF_FILE_SIZE) {
+		return -ENOMEM;
+	}
+
+	memcpy(ram_ndef, buff, size);
+	ram_ndef_len = size;
+	ram_ndef_valid = true;
+
+	return size;
 #endif /* defined(CONFIG_NVS) */
 }
 
@@ -134,7 +161,17 @@ int ndef_restore_default(uint8_t *buff, uint32_t size)
 
 int ndef_file_load(uint8_t *buff, uint32_t size)
 {
-	int err;
+#if defined(CONFIG_NDEF_FILE_STORAGE_RAM)
+	if (ram_ndef_valid && ram_ndef_len <= size) {
+		memcpy(buff, ram_ndef, ram_ndef_len);
+		printk("Found NDEF file in RAM.\n");
+		return ram_ndef_len;
+	}
+
+	printk("NDEF file not in RAM, creating default NDEF.\n");
+	return ndef_restore_default(buff, size);
+#else /* CONFIG_NDEF_FILE_STORAGE_RAM */
+	int err = 0;
 
 	/* If there is no record with given ID, create default message and store
 	 * in FLASH. FLASH_URL_ADDRESS_ID is used to store an address, lets see
@@ -156,6 +193,7 @@ int ndef_file_load(uint8_t *buff, uint32_t size)
 	}
 
 	return err;
+#endif /* CONFIG_NDEF_FILE_STORAGE_RAM */
 }
 
 /** @} */
