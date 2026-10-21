@@ -31,7 +31,7 @@ BUILD_ASSERT(
 	IS_ENABLED(CONFIG_NRF_CLOUD_LOCATION),
 	"If CONFIG_NRF_CLOUD_MQTT is enabled also CONFIG_NRF_CLOUD_LOCATION must be enabled");
 
-static struct location_data cloud_location;
+static struct nrf_cloud_location_result cloud_location;
 static K_SEM_DEFINE(location_ready, 0, 1);
 #endif
 
@@ -39,17 +39,15 @@ static K_SEM_DEFINE(location_ready, 0, 1);
 static void cloud_service_location_ready_cb(
 	const struct nrf_cloud_location_result *const result)
 {
-	if ((result != NULL) && (result->err == NRF_CLOUD_ERROR_NONE)) {
-		cloud_location.latitude = result->lat;
-		cloud_location.longitude = result->lon;
-		cloud_location.accuracy = (double)result->unc;
+	if (result != NULL) {
+		cloud_location = *result;
+	} else {
+		cloud_location.err = NRF_CLOUD_ERROR_UNKNOWN;
+	}
 
+	if (cloud_location.err == NRF_CLOUD_ERROR_NONE) {
 		k_sem_give(&location_ready);
 	} else {
-		if (result) {
-			LOG_ERR("Unable to determine location from cloud service, error: %d",
-				result->err);
-		}
 		/* Reset the semaphore to unblock cloud_service_pos_get()
 		 * and make it return an error.
 		 */
@@ -61,7 +59,8 @@ static int cloud_service_pos_get(
 	const struct cloud_service_pos_req *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
-	struct location_data *const location)
+	struct location_data *const location,
+	enum nrf_cloud_error *const cloud_err)
 {
 	ARG_UNUSED(rcv_buf);
 	ARG_UNUSED(rcv_buf_len);
@@ -69,6 +68,7 @@ static int cloud_service_pos_get(
 	int err;
 
 	k_sem_reset(&location_ready);
+	cloud_location.err = NRF_CLOUD_ERROR_NONE;
 
 	LOG_DBG("Sending positioning request (MQTT)");
 	err = nrf_cloud_location_request(
@@ -84,21 +84,26 @@ static int cloud_service_pos_get(
 	LOG_DBG("Positioning request sent");
 
 	if (k_sem_take(&location_ready, K_MSEC(params->timeout_ms)) == -EAGAIN) {
-		LOG_ERR("Positioning data request timed out or "
-			"cloud did not return a location");
-		return -ETIMEDOUT;
+		if (cloud_location.err == NRF_CLOUD_ERROR_NONE) {
+			return -ETIMEDOUT;
+		}
+		*cloud_err = cloud_location.err;
+		return -EFAULT;
 	}
 
-	*location = cloud_location;
+	location->latitude = cloud_location.lat;
+	location->longitude = cloud_location.lon;
+	location->accuracy = (double)cloud_location.unc;
 
-	return err;
+	return 0;
 }
 #else /* defined(CONFIG_NRF_CLOUD_MQTT) */
 static int cloud_service_pos_get(
 	const struct cloud_service_pos_req *params,
 	char * const rcv_buf,
 	const size_t rcv_buf_len,
-	struct location_data *const location)
+	struct location_data *const location,
+	enum nrf_cloud_error *const cloud_err)
 {
 	int err;
 
@@ -116,6 +121,8 @@ static int cloud_service_pos_get(
 		location->accuracy = (double)result.unc;
 		location->latitude = result.lat;
 		location->longitude = result.lon;
+	} else if (err > 0) {
+		*cloud_err = result.err;
 	}
 
 	return err;
@@ -124,15 +131,19 @@ static int cloud_service_pos_get(
 
 int cloud_service_location_get(
 	const struct cloud_service_pos_req *params,
-	struct location_data *location)
+	struct location_data *location,
+	enum nrf_cloud_error *cloud_err)
 {
 	__ASSERT_NO_MSG(params != NULL);
 	__ASSERT_NO_MSG(params->cell_data != NULL || params->wifi_data != NULL);
 	__ASSERT_NO_MSG(location != NULL);
+	__ASSERT_NO_MSG(cloud_err != NULL);
+
+	*cloud_err = NRF_CLOUD_ERROR_NONE;
 
 	LOG_DBG("Cloud service location parameters:");
 	LOG_DBG("  Timeout: %dms", params->timeout_ms);
 
 	return cloud_service_pos_get(
-		params, recv_buf, sizeof(recv_buf), location);
+		params, recv_buf, sizeof(recv_buf), location, cloud_err);
 }
