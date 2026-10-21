@@ -572,6 +572,7 @@ Cellular samples
 
 * :ref:`modem_shell_application` sample:
 
+  * Added Wi-Fi scan parameter options to the ``location get`` command.
   * Removed support for Bluetooth shell.
 
 * :ref:`nrf_cloud_coap_fota_sample` sample:
@@ -1115,7 +1116,18 @@ Modem libraries
 
 * :ref:`lib_location` library:
 
+  * Added runtime configuration of the following Wi-Fi scan parameters to the :c:struct:`location_wifi_config` structure:
+
+    * scan type
+    * bands
+    * active and passive dwell times
+    * maximum number of access points
+    * channels
+
+    The default values are set with the new ``CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_*`` Kconfig options.
+
   * Updated the library to always use the chosen ``zephyr,wifi`` node instead of ``ncs,location-wifi`` to find the used Wi-Fi device.
+  * Deprecated the :kconfig:option:`CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE` Kconfig option.
 
 * :ref:`modem_key_mgmt` library:
 

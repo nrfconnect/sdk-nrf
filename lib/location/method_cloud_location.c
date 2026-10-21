@@ -65,7 +65,7 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	k_sem_reset(&wifi_scan_ready);
 
 	if (wifi_config != NULL) {
-		scan_wifi_execute(wifi_config->timeout, &wifi_scan_ready);
+		scan_wifi_execute(wifi_config, &wifi_scan_ready);
 	}
 #endif
 
