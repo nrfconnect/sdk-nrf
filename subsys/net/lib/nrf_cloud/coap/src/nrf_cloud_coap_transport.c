@@ -860,6 +860,14 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 		goto out;
 	}
 
+	if (CONFIG_NRF_CLOUD_COAP_SEND_TIMEOUT_SEC > 0) {
+		struct timeval timeout = {.tv_sec = CONFIG_NRF_CLOUD_COAP_SEND_TIMEOUT_SEC};
+
+		if (zsock_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) {
+			LOG_WRN("Failed to set socket send timeout, errno: %d", errno);
+		}
+	}
+
 out:
 	if (err) {
 		if (sock >= 0) {
