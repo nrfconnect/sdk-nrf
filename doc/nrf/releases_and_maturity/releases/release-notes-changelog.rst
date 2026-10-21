@@ -60,6 +60,7 @@ Bootloaders and DFU
     This is intentional as HMAC-SHA512 is recommended over HMAC-SHA256.
   * The :ref:`ug_bootloader_nrf54l_memory_protection` documentation page explaining the memory protection features of the bootloader on the nRF54L Series.
   * Support for the application core of the nRF54LS05A SoC to MCUboot and secure boot sysbuild, including the secure boot locking and immutable region handling features aligned with the nRF54LS05B SoC.
+  * The :ref:`mcuboot_on_nrf54l_series` documentation page that summarizes MCUboot feature support across the nRF54L SoC series.
 
 * Updated MCUboot to feed the watchdog more aggressively during the following time-consuming operations, to prevent a watchdog timeout:
 
