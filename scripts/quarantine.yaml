@@ -41,12 +41,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
 
 - scenarios:
-    - sample.bluetooth.peripheral_nsms_no_security
-  platforms:
-    - thingy53/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
-
-- scenarios:
     - nrf.extended.kernel.timer.timer
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip

@@ -3109,7 +3109,7 @@ The issues in this section are related to :ref:`samples`.
 .. rst-class:: v2-2-0
 
 NCSDK-18263: |NCS| samples might fail to boot on Thingy:53
-  |NCS| samples and applications that are not listed under :ref:`thingy53_compatible_applications` fail to boot on Nordic Thingy:53.
+  |NCS| samples and applications that are not listed as compatible with Thingy:53 in the documentation fail to boot on Nordic Thingy:53.
   The MCUboot bootloader is not built together with these samples, but the Thingy:53's Static and dynamic configuration requires it (the application image does not start at the beginning of the internal ``FLASH``.)
 
   **Affected platforms:** Thingy:53

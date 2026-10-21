@@ -17,9 +17,6 @@ The sample supports the following development kits:
 The sample also requires a smartphone or tablet running a compatible application.
 The `Testing`_ instructions refer to `nRF Connect for Mobile`_, but you can also use other similar applications (for example, `nRF Toolbox`_).
 
-.. note::
-   |thingy53_sample_note|
-
 Overview
 ********
 
@@ -76,27 +73,6 @@ The user interface of the sample depends on the hardware platform you are using.
 
       Button 1 (the one hidden under the cover):
          Set **Button 1** NSMS Status Characteristic to: "Pressed" or "Released".
-         Notify the client if notification is enabled.
-         By default, this service requires the connection to be secured to read or notify.
-
-   .. group-tab:: Thingy:53
-
-      RGB LED:
-         The RGB LED channels are used independently to display the following information:
-
-         * Red - If the main loop is running (that is, the device is advertising).
-           Blinks with a period of two seconds with the duty cycle set to 50% when the main loop is running and the device is advertising.
-         * Green - If the device is connected.
-
-         For example, if Thingy:53 is connected over Bluetooth, the LED color toggles between green and yellow.
-         The green LED channel is kept on, and the red LED channel is blinking.
-
-      Button 1:
-         Set **Button 1** NSMS Status Characteristic to: "Pressed" or "Released".
-         Notify the client if notification is enabled.
-
-      Button 2 (the one hidden under the cover):
-         Set **Button 2** NSMS Status Characteristic to: "Pressed" or "Released".
          Notify the client if notification is enabled.
          By default, this service requires the connection to be secured to read or notify.
 
