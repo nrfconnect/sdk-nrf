@@ -59,6 +59,7 @@
 #define NRF_WIFI_FMAC_ETH_P_IP 0x0800 /* Internet Protocol packet */
 #define NRF_WIFI_FMAC_ETH_P_IPV6 0x86DD /* IPv6 over bluebook */
 #define NRF_WIFI_FMAC_ETH_P_80221 0x8917 /* IEEE 802.21 Media Independent Handover Protocol */
+#define NRF_WIFI_FMAC_ETH_P_PAE 0x888E /* Port Access Entity (IEEE 802.1X) */
 #define NRF_WIFI_FMAC_ETH_P_AARP 0x80F3 /* Appletalk AARP */
 #define NRF_WIFI_FMAC_ETH_P_IPX 0x8137 /* IPX over DIX */
 #define NRF_WIFI_FMAC_ETH_P_802_3_MIN 0x0600 /* If the value in the ethernet type is less than

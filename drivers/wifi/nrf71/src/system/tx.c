@@ -216,6 +216,12 @@ static int nrf_wifi_get_tid(void *nwb)
 		/* 802.21 is always network control traffic */
 		priority = 0x07;
 		break;
+	/* EAPOL must not queue behind bulk BE data: the supplicant deauths if
+	 * a 4-way or group key handshake frame cannot be queued.
+	 */
+	case NRF_WIFI_FMAC_ETH_P_PAE:
+		priority = 0x07;
+		break;
 	default:
 		priority = 0;
 	}
