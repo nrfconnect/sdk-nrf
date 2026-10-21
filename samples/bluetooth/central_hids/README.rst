@@ -155,6 +155,9 @@ Testing
 
 After programming the sample to your development kit, you can test it either by connecting to another development kit that is running the :ref:`peripheral_hids_keyboard` sample, or by using the `Bluetooth Low Energy app`_ that emulates a HIDS server.
 
+.. note::
+   You can use development kits from different SoC series for the central and peripheral roles.
+   However, button and LED numbering varies between series, so refer to the tab for the kit you are using in each role.
 
 Testing with another development kit
 ------------------------------------
