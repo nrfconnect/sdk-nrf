@@ -1,0 +1,25 @@
+common:
+  sysbuild: true
+  timeout: 600
+  slow: true
+  harness: pytest
+  tags:
+    - pytest
+    - mcuboot
+    - mcumgr
+    - ci_tests_subsys_bootloader
+    - ci_samples_zephyr_smp_svr_mini_boot
+tests:
+  mcuboot.dfu.smp_svr_mini_boot.swap_move.downgrade_prevention.build_number:
+    build: false
+    required_applications:
+      - application: sample.dfu.smp_svr_mini_boot.swap_move
+        path: $ZEPHYR_NRF_MODULE_DIR/samples/dfu/smp_svr_mini_boot
+    harness_config:
+      pytest_root:
+        - "../pytest/test_downgrade_prevention_with_build_number.py"
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

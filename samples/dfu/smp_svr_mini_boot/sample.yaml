@@ -23,6 +23,8 @@ tests:
   sample.dfu.smp_svr_mini_boot.swap_move:
     extra_args:
       - SB_CONFIG_MCUBOOT_MODE_SWAP_USING_MOVE=y
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - mcuboot_CONFIG_BOOT_VERSION_CMP_USE_BUILD_NUMBER=y
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:

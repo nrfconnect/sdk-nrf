@@ -321,7 +321,10 @@ class UpgradeTestWithMCUmgr(UpgradeTestManager):
         else:
             raise UpgradeTestManagerException("No active image found")
         # version displayed by MCUmgr does not print +0 and changes + to '.' for non-zero values
-        assert active_image.version == version.replace("+0", "").replace("+", ".")  # type: ignore
+        version_normalized = version.replace("+0", "").replace("+", ".")  # type: ignore
+        assert active_image.version == version_normalized, (
+            f"Expected version {version_normalized}, but was {active_image.version}"
+        )
 
     @use_serial
     def run_upgrade(self, image: Path, confirm: bool = False) -> None:
