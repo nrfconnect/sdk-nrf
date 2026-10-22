@@ -161,6 +161,19 @@ The following applies to the LPN measurements presented in this table:
 
   * The nRF54L15 Tag is an exception to this, as it cannot be measured on the SoC only.
 
+.. image:: img/standard_54l15ppk.png
+   :align: center
+   :alt: Power consumption for nRF54L15 DK running as standard node
+
+Power consumption for nRF54L15 DK running as standard node (Captured in nRF Connect for Desktop: Power Profiler).
+
+.. image:: img/lpn_54l15ppk.png
+   :align: center
+   :alt: Power consumption for nRF54L15 DK running as LPN
+
+Power consumption for nRF54L15 DK running as LPN, showing consumed power over a single LPN polling period.
+The highest spike represents the LPN polling the friend node. (Captured in nRF Connect for Desktop: Power Profiler).
+
 .. _bluetooth_mesh_light_switch_user_interface:
 
 User interface
