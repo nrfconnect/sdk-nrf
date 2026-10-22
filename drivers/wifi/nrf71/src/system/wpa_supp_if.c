@@ -416,9 +416,9 @@ void nrf_wifi_wpa_supp_event_proc_deauth(void *if_priv,
 		event.deauth_info.ie_len = (frame + frame_len - mgmt->u.deauth.variable);
 	}
 
-	if (!(deauth->valid_fields & NRF_WIFI_EVENT_MLME_RXDEAUTH_FROM_AP)) {
-		event.deauth_info.locally_generated = 1;
-	}
+	event.deauth_info.locally_generated =
+		ether_addr_equal(mgmt->sa,
+				 net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr);
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
 		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
@@ -451,6 +451,9 @@ void nrf_wifi_wpa_supp_event_proc_disassoc(void *if_priv,
 
 	event.disassoc_info.addr = &mgmt->sa[0];
 	event.disassoc_info.reason_code = le_to_host16(mgmt->u.disassoc.reason_code);
+	event.disassoc_info.locally_generated =
+		ether_addr_equal(mgmt->sa,
+				 net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr);
 	if (frame + frame_len > mgmt->u.disassoc.variable) {
 		event.disassoc_info.ie = mgmt->u.disassoc.variable;
 		event.disassoc_info.ie_len = (frame + frame_len - mgmt->u.disassoc.variable);
