@@ -917,6 +917,11 @@ Networking samples
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
 
+  * Updated the Wi-Fi configuration to generate the private key on the device with the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
+    In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
+    You install the certificates with the TLS credentials shell.
+    To keep the previous behavior, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option instead.
+
 * :ref:`download_sample` sample:
 
   * Added:
@@ -966,6 +971,10 @@ Networking samples
     * The sample documentation with the security tag requirements for the FOTA download over HTTPS.
     * The FOTA testing steps in the sample documentation with the version option to change and the steps to build the update image.
     * The FOTA download security tag (:kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`) in Wi-Fi builds from ``11`` to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`.
+    * The Wi-Fi configuration to generate the private key on the device with the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
+      In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
+      You install the certificates with the TLS credentials shell.
+      To keep the previous behavior, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option instead.
 
   * Fixed:
 
