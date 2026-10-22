@@ -152,14 +152,26 @@ The following table shows a selection of supported boards for the LPN configurat
 The following applies to the LPN measurements presented in this table:
 
 * They are taken after the provisioning and configuration have completed, and after the LPN has established a friendship to a neighboring node.
-
 * The measurement period is approximately five minutes, and without any light switch events (for example when idle).
-
 * The current consumption is measured using the `Power Profiler Kit II (PPK2)`_.
-
 * The measurements are done on the SoC only (meaning the measurements do not include power consumed by development kit LEDs for example).
 
   * The nRF54L15 Tag is an exception to this, as it cannot be measured on the SoC only.
+
+The following figures show the current consumption of the nRF54L15 DK, captured with the `Power Profiler app`_ in nRF Connect for Desktop.
+
+.. figure:: img/standard_54l15ppk.png
+   :align: center
+   :alt: Power consumption for the nRF54L15 DK running as a standard node
+
+   Power consumption for the nRF54L15 DK running as a standard node.
+
+.. figure:: img/lpn_54l15ppk.png
+   :align: center
+   :alt: Power consumption for the nRF54L15 DK running as an LPN
+
+   Power consumption for the nRF54L15 DK running as an LPN over a single polling period.
+   The highest spike represents the LPN polling the friend node.
 
 .. _bluetooth_mesh_light_switch_user_interface:
 
