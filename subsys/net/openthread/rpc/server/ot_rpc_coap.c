@@ -97,6 +97,7 @@ static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 	otCoapType type;
 	otCoapCode code;
 	otMessage *message;
+	otError error;
 
 	message_rep = nrf_rpc_decode_uint(ctx);
 	type = nrf_rpc_decode_uint(ctx);
@@ -115,10 +116,10 @@ static void ot_rpc_cmd_coap_message_init(const struct nrf_rpc_group *group,
 	}
 
 	ot_rpc_mutex_lock();
-	otCoapMessageInit(message, type, code);
+	error = otCoapMessageInit(message, type, code);
 	ot_rpc_mutex_unlock();
 
-	nrf_rpc_rsp_send_void(group);
+	nrf_rpc_rsp_send_uint(group, error);
 }
 
 NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_coap_message_init, OT_RPC_CMD_COAP_MESSAGE_INIT,
