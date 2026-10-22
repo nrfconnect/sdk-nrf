@@ -69,4 +69,5 @@ If you want to go through a hands-on online training to familiarize yourself wit
    nrf93m1_updating_modem_fw
    nrf93m1_power_optimization
    nrf93m1_testing
+   nrf93m1_debugging
    nrf93m1_custom_board

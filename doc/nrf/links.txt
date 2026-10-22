@@ -847,6 +847,10 @@
 .. _`nrfutil sdk-manager`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/nrfutil-sdk-manager.html
 .. _`nrfutil sdk-manager install`: https://docs.nordicsemi.com/r/bundle/nrfutil/page/nrfutil-sdk-manager/nrfutil-sdk-manager-install.html
 .. _`nrfutil trace command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
+.. _`nrfutil trace lte`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/nrfutil-trace-lte.html
+.. _`Viewing modem traces in Wireshark`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/wireshark_modem_trace.html
+.. _`Converting modem trace data`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/tracing_converting_data.html
+.. _`nRF Util Wireshark plugins`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/wireshark_plugins.html
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Logger for Bluetooth HCI`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger_wireshark.html
 .. _`nrfutil device`: https://docs.nordicsemi.com/r/bundle/nrfutil/page/nrfutil-device/nrfutil-device.html
