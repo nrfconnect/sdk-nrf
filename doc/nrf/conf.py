@@ -65,6 +65,7 @@ extensions = [
     "sphinx_sitemap",
     "external_sw_versions",
     "ncs_file",
+    "glossary_term_tooltip",
 ]
 
 linkcheck_ignore = [
