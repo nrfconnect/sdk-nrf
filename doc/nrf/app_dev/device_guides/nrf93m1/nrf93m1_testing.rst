@@ -91,7 +91,7 @@ Run it before you debug anything host side, because it isolates the module and n
 Testing throughput
 ******************
 
-Use the :ref:`nrf93m1dk_ppp_shell` sample, which etablishes a PPP connection on the nRF54L15 host and includes zperf for throughput testing.
+Use the :ref:`nrf93m1dk_ppp_shell` sample, which establishes a PPP connection on the nRF54L15 host and includes zperf for throughput testing.
 
 Bring the interface up, then check it:
 
@@ -160,6 +160,7 @@ Modem observability
 
 Once a device is connected to nRF Cloud, modem observability reports connectivity and modem state for diagnostics without a debugger attached.
 This is the practical way to diagnose intermittent field problems, where the failure does not reproduce on a bench.
+For modem traces and coredumps, see :ref:`ug_nrf93m1_debugging`.
 
 .. _ug_nrf93m1_testing_checklist:
 
