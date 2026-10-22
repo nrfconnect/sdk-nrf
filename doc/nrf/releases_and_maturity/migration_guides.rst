@@ -17,7 +17,7 @@ Migration notes are also provided for major functionality updates.
 nRF Connect SDK version migration notes
 ***************************************
 
-* `Migration notes for nRF Connect SDK v3.4.0`_
+* `Migration notes for nRF Connect SDK v3.4.x`_
 * `Migration notes for nRF Connect SDK v3.3.0`_
 * `Migration notes for nRF Connect SDK v3.2.0`_
 * `Migration notes for nRF Connect SDK v3.1.0`_
