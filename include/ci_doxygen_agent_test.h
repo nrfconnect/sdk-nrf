@@ -15,6 +15,6 @@
  */
 
 /** Placeholder value for CI-only pull requests (bump to retrigger CI). */
-#define CI_DOXYGEN_AGENT_TEST_MARKER 3
+#define CI_DOXYGEN_AGENT_TEST_MARKER 4
 
 #endif /* CI_DOXYGEN_AGENT_TEST_H_ */
