@@ -123,6 +123,9 @@ jobs:
             VERSION=${BASH_REMATCH[1]}
           elif [[ ${GITHUB_REF#refs/heads/} == "main" ]]; then
             VERSION="latest"
+          elif [[ ${GITHUB_REF#refs/heads/} == "v3.4-branch" ]]; then
+            # drop the 'v' so that versions.json doesn't need to list it
+            VERSION="3.4-branch"
           elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
             VERSION="pr-${{ github.event.number }}"
           fi
