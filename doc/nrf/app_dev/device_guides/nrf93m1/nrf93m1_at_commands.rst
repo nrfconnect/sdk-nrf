@@ -105,10 +105,10 @@ A minimal bring-up sequence is as follows:
    AT
    OK
    AT+CGMR
-   <firmware version>
+   mfw_nrf93m1_1.5.1
    OK
    AT%BAND=?
-   <supported band bitmap>
+   %BAND: (1,3,5,7,8,20,28,38,40,41)
    OK
    AT+CLAC
    <list of all supported AT commands>
@@ -121,7 +121,7 @@ A minimal bring-up sequence is as follows:
 
 * ``AT+CGMR`` returns the modem firmware version.
   Use it when reporting issues.
-* ``AT%BAND=?`` returns the variant and supported band set.
+* ``AT%BAND=?`` returns the list of bands that the module variant supports.
 * ``AT+CLAC`` lists every command the running firmware supports, which is the fastest way to check availability without cross-referencing version tags.
 * ``AT+CEREG?`` reports network registration status.
   A second parameter of ``1`` or ``5`` means the module is registered.
