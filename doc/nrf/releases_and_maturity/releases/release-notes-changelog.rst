@@ -290,7 +290,8 @@ DECT NR+
 Enhanced ShockBurst (ESB)
 -------------------------
 
-|no_changes_yet_note|
+* Fixed radio state transitions and front-end module timing when fast ramp-up is enabled.
+  ACK handling and retransmissions prepare the radio before starting the next ramp-up, while preserving the continuous PRX timer in MPSL timeslots.
 
 Gazell
 ------
