@@ -9609,6 +9609,73 @@ The options are grouped by Series and drivers available for the device Series, a
 
       .. tabs::
 
+         .. tab:: CRACEN
+
+            .. list-table:: XOF algorithm support (CRACEN driver) - nRF54L Series
+               :header-rows: 1
+               :widths: auto
+
+               * - XOF algorithm
+                 - Configuration option
+                 - nRF54L05
+                 - nRF54L10
+                 - nRF54L15
+                 - nRF54LC10A
+                 - nRF54LM20A
+                 - nRF54LM20B
+                 - nRF54LV10A
+                 - nRF54LS05A
+                 - nRF54LS05B
+               * - SHAKE128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - SHAKE256
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - --
+                 - --
+               * - ASCON XOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+               * - ASCON CXOF128
+                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+
+            .. note::
+
+               - The output of SHAKE128 and SHAKE256 is limited to 65535 bytes (summed over all calls).
+               - The CRACEN implementation of SHAKE128 and SHAKE256 is optimized for the ML-DSA and ML-KEM algorithms.
+
          .. tab:: nrf_oberon
 
             .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF54L Series
@@ -9620,6 +9687,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -9627,6 +9695,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LS05B
                * - SHAKE128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9645,6 +9714,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON XOF128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
                  - Experimental
@@ -9655,8 +9725,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON CXOF128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
