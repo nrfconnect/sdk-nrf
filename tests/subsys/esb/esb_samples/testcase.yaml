@@ -18,7 +18,6 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
     required_applications:
       - application: sample.esb.prx.build
         path: $ZEPHYR_NRF_MODULE_DIR/samples/esb/esb_prx
