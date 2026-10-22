@@ -20,5 +20,13 @@ source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
 config CLI_SAMPLE_LOW_POWER
 	bool "Low power mode for the CLI sample"
 
+config CLI_SAMPLE_LOW_POWER_KEEP_CONSOLE_ALIVE
+	bool "Keep console while using low power mode"
+	depends on CLI_SAMPLE_LOW_POWER
+	help
+	  This debug configuration keeps the console active when a CLI device connects to
+	  a Thread network. If disabled, the console automatically turns off when a device
+	  in SED or SSED mode joins the network.
+
 config CLI_SAMPLE_MULTIPROTOCOL
 	bool "Multiprotocol for the CLI sample"

@@ -14,6 +14,7 @@
 
 #include "low_power.h"
 
+#if !defined(CONFIG_CLI_SAMPLE_LOW_POWER_KEEP_CONSOLE_ALIVE)
 static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 {
 	struct otInstance *instance = openthread_get_default_instance();
@@ -36,8 +37,11 @@ static void on_thread_state_changed(otChangedFlags flags, void *user_data)
 
 static struct openthread_state_changed_callback ot_state_chaged_cb = {
 	.otCallback = on_thread_state_changed};
+#endif /* !defined(CONFIG_CLI_SAMPLE_LOW_POWER_KEEP_CONSOLE_ALIVE) */
 
 void low_power_enable(void)
 {
+#if !defined(CONFIG_CLI_SAMPLE_LOW_POWER_KEEP_CONSOLE_ALIVE)
 	openthread_state_changed_callback_register(&ot_state_chaged_cb);
+#endif /* !defined(CONFIG_CLI_SAMPLE_LOW_POWER_KEEP_CONSOLE_ALIVE) */
 }
