@@ -795,7 +795,9 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
-							 <NRF_FUN_TWIM_SCL>;
+							 <NRF_FUN_TWIM_SCL>,
+							 <NRF_FUN_TWIS_SDA>,
+							 <NRF_FUN_TWIS_SCL>;
 			};
 
 			spi130: spi@9a5000 {
@@ -837,7 +839,9 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
-							 <NRF_FUN_TWIM_SCL>;
+							 <NRF_FUN_TWIM_SCL>,
+							 <NRF_FUN_TWIS_SDA>,
+							 <NRF_FUN_TWIS_SCL>;
 			};
 
 			spi131: spi@9a6000 {
@@ -925,7 +929,9 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
-							 <NRF_FUN_TWIM_SCL>;
+							 <NRF_FUN_TWIM_SCL>,
+							 <NRF_FUN_TWIS_SDA>,
+							 <NRF_FUN_TWIS_SCL>;
 			};
 
 			spi132: spi@9b5000 {
@@ -967,7 +973,9 @@
 				#address-cells = <1>;
 				#size-cells = <0>;
 				nordic,clockpin-enable = <NRF_FUN_TWIM_SDA>,
-							 <NRF_FUN_TWIM_SCL>;
+							 <NRF_FUN_TWIM_SCL>,
+							 <NRF_FUN_TWIS_SDA>,
+							 <NRF_FUN_TWIS_SCL>;
 			};
 
 			spi133: spi@9b6000 {
