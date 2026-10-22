@@ -2,7 +2,7 @@
 
 .. _migration_3.4:
 
-Migration notes for |NCS| v3.4.0
+Migration notes for |NCS| v3.4.x
 ################################
 
 .. contents::

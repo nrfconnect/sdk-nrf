@@ -112,7 +112,7 @@ Modem-related libraries and versions
 Migration notes
 ***************
 
-See the `Migration notes for nRF Connect SDK v3.4.0`_ for the changes required or recommended when migrating your application from |NCS| v3.3.0 to |NCS| v3.4.0.
+See the `Migration notes for nRF Connect SDK v3.4.x`_ for the changes required or recommended when migrating your application from |NCS| v3.3.0 to |NCS| v3.4.0.
 
 Known issues
 ************
@@ -160,7 +160,7 @@ Build and configuration system
     * The ``HALTIUM_PLATFORM_PSA_KEY_ID()`` macro (alias for ``NRF_PLATFORM_PSA_KEY_ID()``).
     * The :file:`haltium_power.h` and :file:`haltium_pm_s2ram.h` headers, which forward to the new headers.
 
-  See `Migration notes for nRF Connect SDK v3.4.0`_ for migration instructions.
+  See `Migration notes for nRF Connect SDK v3.4.x`_ for migration instructions.
 
   The deprecated symbols, headers, and macros remain available with a deprecation warning and are scheduled for removal in a future release.
 
@@ -258,7 +258,7 @@ Mbed TLS
   * Removed outdated Kconfig options related to Mbed TLS in various files under :ref:`nrf_security`.
   * :ref:`nrf_security` now uses the Mbed TLS integration from Zephyr as-is (:kconfig:option:`CONFIG_MBEDTLS_BUILTIN`) while replacing upstream TF-PSA-Crypto with Oberon PSA Crypto (:kconfig:option:`CONFIG_TF_PSA_CRYPTO_CUSTOM`).
 
-  For more information, see the `Migration notes for nRF Connect SDK v3.4.0`_.
+  For more information, see the `Migration notes for nRF Connect SDK v3.4.x`_.
 
 Trusted Firmware-M (TF-M)
 -------------------------
@@ -292,7 +292,7 @@ Wi-Fi®
 ------
 
 * Added the ``nordic-wifi-enterprise`` snippet to be used for Wi-Fi enterprise.
-  For more information, see the `Migration notes for nRF Connect SDK v3.4.0`_.
+  For more information, see the `Migration notes for nRF Connect SDK v3.4.x`_.
 * Updated the hostap_crypto library to use a single backend, :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_PSA`, for all modes.
   The older :kconfig:option:`CONFIG_HOSTAP_CRYPTO_ALT_LEGACY_PSA` backend has been removed.
 * Removed support for DES-encrypted private keys in Wi-Fi Enterprise (EAP-TLS) following the update to Mbed TLS 4.1.0/TF-PSA-Crypto 1.1.0 in the |NCS|.
@@ -655,7 +655,7 @@ Libraries for networking
     On an nRF9160 device the default is now :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID`, which reads the UUID from the JWT ``iss`` claim and preserves compatibility with field devices provisioned through older nrfcloud-utils flows.
     On the nRF91x1 and future SoCs, the default is :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_MDM_DEVICE_UUID`, which reads the UUID using ``AT%DEVICEUUID`` without pulling in :kconfig:option:`CONFIG_MODEM_JWT`.
     Each option is constrained to its target SoC at the Kconfig level.
-    See the `Migration notes for nRF Connect SDK v3.4.0`_ for the impact on existing devices that relied on the previous IMEI default.
+    See the `Migration notes for nRF Connect SDK v3.4.x`_ for the impact on existing devices that relied on the previous IMEI default.
 
   * Deprecated the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_IMEI` and :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_HW_ID` Kconfig options.
     Use the default UUID source for new applications.
