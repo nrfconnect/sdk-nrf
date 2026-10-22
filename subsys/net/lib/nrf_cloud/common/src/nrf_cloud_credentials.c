@@ -12,7 +12,7 @@
 #endif
 
 #if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
-#include "nrf_cloud_credentials_keygen_internal.h"
+#include <zephyr/net/tls_credentials_keygen.h>
 #endif
 
 LOG_MODULE_REGISTER(nrf_cloud_credentials, CONFIG_NRF_CLOUD_LOG_LEVEL);
@@ -286,14 +286,11 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs)
 		return -EIO;
 	}
 #if defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN)
-	/* An on-device key is referenced opaquely, not stored as a raw private
-	 * key. Query PSA secure key storage directly (the source of truth) rather
-	 * than the TLS credentials module: the opaque key is only registered there
-	 * during nrf_cloud initialization, so probing it would report a false
-	 * negative for an application that checks credentials before init.
-	 */
+	/* A key generated on the device is registered as a PSA key, not as a raw key. */
 	if (!exists) {
-		exists = nrf_cloud_credentials_keygen_key_exists(cs->sec_tag);
+		psa_key_id_t key_id;
+
+		exists = tls_credential_keygen_key_id_get(cs->sec_tag, &key_id) == 0;
 	}
 #endif
 	cs->prv_key = exists;
