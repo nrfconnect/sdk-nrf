@@ -733,6 +733,7 @@ NRF = (
     ("libraries/bluetooth_services/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
     ("libraries/bluetooth/services/wifi_prov", "libraries/bluetooth/services/wifi_prov_ble"),
     ("libraries/networking/nrf_cloud_agps", "libraries/networking/nrf_cloud_agnss"), # nRF Cloud A-GNSS
+    ("libraries/networking/nrf_cloud_credentials_keygen", "libraries/networking/nrf_cloud"), # nRF Cloud on-device key generation (merged into nRF Cloud)
     ("libraries/bootloader/index", "libraries/security/bootloader/index"), # Bootloader libraries (landing)
     ("libraries/bootloader/bl_crypto", "libraries/security/bootloader/bl_crypto"), # Bootloader crypto
     ("libraries/bootloader/bl_storage", "libraries/security/bootloader/bl_storage"), # Bootloader storage
