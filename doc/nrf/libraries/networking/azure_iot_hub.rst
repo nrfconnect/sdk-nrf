@@ -331,6 +331,78 @@ The following are the ways to generate and register device certificates:
 
          |serial_port_sec_tag|
 
+   .. tab:: nRF71 and nRF70: Device generated private key
+
+      .. note::
+         Generating a key pair on the device with this method is experimental.
+
+      For nRF70 Series, this applies only to devices that are hosted by an nRF53 Series or nRF54 Series SoC.
+
+      Complete the following steps to generate a key pair and CSR on the device, which is then signed using your CA and uploaded to Azure:
+
+      1. Set the following Kconfig options in your application:
+
+         * :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` to ``y``
+         * :kconfig:option:`CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE` to ``y``
+         * :kconfig:option:`CONFIG_TLS_CREDENTIALS_SHELL_CRED_BUF_SIZE` to ``4096``
+
+         For a description of these options and of how the device stores the key, see :ref:`mqtt_helper_credentials_keygen`.
+
+      #. Build and program your application.
+
+      #. Select the device ID.
+         The common name (CN) of the certificate must be the same as the device ID that the sample uses when it connects, or the registration ID when you use DPS.
+         See :ref:`DPS configuration <dps_config>` for the options.
+         The sample prints the device ID in its log.
+
+      #. Generate a key pair and obtain a CSR using the following command:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> --cmd-type tls-shell generate <sec tag> certs/client-csr.der --attributes "CN=<device id>"
+
+         |serial_port_sec_tag|
+         The sec tag must match the :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG` Kconfig option.
+
+      #. Convert the CSR from DER format to PEM format using the following command:
+
+         .. code-block:: console
+
+            openssl req -inform DER -in certs/client-csr.der -outform PEM -out certs/client-csr.pem
+
+      #. Sign the CSR with the subordinate CA certificate by running the following command:
+
+         .. code-block:: console
+
+            cert_tool.py sign
+
+         .. note::
+            This process might vary depending on the CA you are using.
+            See the documentation for your CA for more information on how to sign a CSR.
+
+      #. Combine the device certificate and the subordinate CA certificate chain into a single file using the following command:
+
+         .. code-block:: console
+
+            cat certs/client-cert.pem ca/sub-ca-cert.pem > certs/client-cert-chain.pem
+
+         This is necessary for Azure to verify the certificate chain.
+
+      #. Provision the certificate using the following command:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> --cmd-type tls-shell write <sec tag> CLIENT_CERT certs/client-cert-chain.pem
+
+      To generate a new key pair, first delete the existing one using the following command:
+
+      .. code-block:: console
+
+         nrfcredstore <serial port> --cmd-type tls-shell delete <sec tag> CLIENT_KEY
+
+      |serial_port_sec_tag|
+      After you generate a new key pair, the previously issued device certificate no longer matches the key.
+
    .. tab:: nRF91: Script generated private key
 
       .. caution::
@@ -388,7 +460,7 @@ The following are the ways to generate and register device certificates:
 
          |serial_port_sec_tag|
 
-   .. tab:: nRF70: Script generated private key
+   .. tab:: nRF71 and nRF70: Script generated private key
 
       .. caution::
          When generating the private key on your computer, make sure to keep it secure and not share it with anyone.
@@ -501,7 +573,17 @@ To provision the certificates, use any of the following methods, depending on th
 
       .. include:: /includes/cert-flashing.txt
 
-   .. tab:: nRF70: runtime provisioning
+   .. tab:: nRF71 and nRF70: root CA through shell
+
+         For nRF70 Series, this applies only to devices that are hosted by an nRF53 Series or nRF54 Series SoC.
+
+         When the private key is generated on the device, provision the root CA certificate with the following command:
+
+         .. code-block:: console
+
+            nrfcredstore <serial port> --cmd-type tls-shell write <sec tag> ROOT_CA_CERT DigiCertGlobalRootG2.crt.pem
+
+   .. tab:: nRF71 and nRF70: hard-coded credentials
 
          Provision the certificates and private key at runtime to the Mbed TLS stack.
          This is achieved by placing the PEM files into a :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
