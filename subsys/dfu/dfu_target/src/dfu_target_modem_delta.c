@@ -6,6 +6,7 @@
 
 #include <zephyr/kernel.h>
 #include <stdio.h>
+#include <string.h>
 #include <zephyr/drivers/flash.h>
 #include <nrf_modem_delta_dfu.h>
 #include <nrf_errno.h>
@@ -125,12 +126,16 @@ int dfu_target_modem_delta_offset_get(size_t *out)
 	int err;
 
 	err = nrf_modem_delta_dfu_offset(out);
-	if (err != 0) {
-		LOG_ERR("Failed to retrieve offset in scratch area, error %d", err);
-		return -EFAULT;
+	if (err == 0) {
+		return 0;
 	}
 
-	return 0;
+	if (err == NRF_MODEM_DELTA_DFU_ERASE_PENDING) {
+		return -EAGAIN;
+	}
+
+	LOG_ERR("Failed to retrieve offset in scratch area, error %d", err);
+	return -EFAULT;
 }
 
 int dfu_target_modem_delta_write(const void *const buf, size_t len)
@@ -223,4 +228,23 @@ int dfu_target_modem_delta_reset(void)
 		}
 	}
 	return nrf_modem_delta_dfu_erase();
+}
+
+int dfu_target_modem_delta_firmware_uuid(char *uuid, size_t uuid_len)
+{
+	struct nrf_modem_delta_dfu_uuid version;
+	int err;
+
+	if (uuid == NULL || uuid_len < DFU_TARGET_MODEM_DELTA_UUID_LEN) {
+		return -EINVAL;
+	}
+
+	err = nrf_modem_delta_dfu_uuid(&version);
+	if (err != 0) {
+		return err;
+	}
+
+	memcpy(uuid, version.data, DFU_TARGET_MODEM_DELTA_UUID_LEN);
+
+	return 0;
 }
