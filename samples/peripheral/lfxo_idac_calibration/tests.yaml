@@ -1,0 +1,16 @@
+sample:
+  description: LFXO Pierce mode IDAC calibration sample
+  name: LFXO IDAC calibration
+
+common:
+  tags:
+    - ci_build
+    - ci_samples_peripheral_lfxo_idac_calibration
+  build_only: true
+
+tests:
+  sample.peripheral.lfxo_idac_calibration:
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
