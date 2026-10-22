@@ -42,6 +42,8 @@ It depends on the TLS credentials management option (:kconfig:option:`CONFIG_NRF
 It cannot be used together with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option.
 
 Generate the key for the nRF Cloud security tag (:kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG`, or :kconfig:option:`CONFIG_NRF_CLOUD_COAP_SEC_TAG` for CoAP).
+The security tag cannot be changed at run time with this option, so the :c:func:`nrf_cloud_sec_tag_set` and :c:func:`nrf_cloud_sec_tag_coap_jwt_set` functions are not available.
+A key generated for one security tag would not be found after a change to another security tag.
 
 Shell commands
 **************

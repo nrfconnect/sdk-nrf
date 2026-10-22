@@ -1177,6 +1177,7 @@ Libraries for networking
     * Support for a device private key generated on the device, enabled with the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN` Kconfig option.
       The key is generated with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`) as a persistent, non-exportable PSA key, so it never leaves the device.
       The ``cred keygen`` and ``cred csr`` commands of the TLS credentials shell generate the key and the CSR.
+      With this option, the :c:func:`nrf_cloud_sec_tag_set` and :c:func:`nrf_cloud_sec_tag_coap_jwt_set` functions are not available, because the key is registered for the sec tag that is set in Kconfig.
       See :ref:`lib_nrf_cloud_credentials_keygen` for more information.
 
   * Removed the nRF Cloud on-device key generation API (:file:`include/net/nrf_cloud_credentials_keygen.h`), the ``nrf_cloud_cred`` shell commands, and the ``CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL`` and ``CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY`` Kconfig options, which were added in the |NCS| v3.5.0 preview releases.

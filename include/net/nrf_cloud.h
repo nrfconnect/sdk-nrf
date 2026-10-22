@@ -1193,6 +1193,7 @@ int nrf_cloud_credentials_check(struct nrf_cloud_credentials_status *const cs);
  */
 int nrf_cloud_credentials_configured_check(void);
 
+#if !defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN) || defined(__DOXYGEN__)
 /**
  * @brief Set the sec tag used for nRF Cloud credentials.
  *        The default sec tag value is @kconfig{CONFIG_NRF_CLOUD_COAP_SEC_TAG} or
@@ -1205,11 +1206,14 @@ int nrf_cloud_credentials_configured_check(void);
  *       Use @ref nrf_cloud_sec_tag_coap_jwt_set to set the sec tag used for JWT signing.
  *       For normal operation, the DTLS and JWT sec tags should be the same. They should only
  *       differ for debugging purposes (network traffic decryption).
+ *       Not available when @kconfig{CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN} is enabled, because the
+ *       key generated on the device is registered for the sec tag that is set in Kconfig.
  *
  * @param sec_tag The sec tag.
  *
  */
 void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
+#endif
 
 /**
  * @brief Get the sec tag used for nRF Cloud credentials.
@@ -1218,6 +1222,7 @@ void nrf_cloud_sec_tag_set(const sec_tag_t sec_tag);
  */
 sec_tag_t nrf_cloud_sec_tag_get(void);
 
+#if !defined(CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN) || defined(__DOXYGEN__)
 /**
  * @brief Set the sec tag containing the private key used to sign CoAP JWTs for nRF Cloud
  *        authentication.
@@ -1227,11 +1232,14 @@ sec_tag_t nrf_cloud_sec_tag_get(void);
  *       This API only needs to be called if the default configured sec tag value is no
  *       longer applicable. This function does not perform any management of the
  *       device's authentication status with nRF Cloud.
+ *       Not available when @kconfig{CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN} is enabled, because the
+ *       key generated on the device is registered for the sec tag that is set in Kconfig.
  *
  * @param sec_tag The sec tag.
  *
  */
 void nrf_cloud_sec_tag_coap_jwt_set(const sec_tag_t sec_tag);
+#endif
 
 /**
  * @brief Get the sec tag containing the private key used to sign CoAP JWTs for nRF Cloud
