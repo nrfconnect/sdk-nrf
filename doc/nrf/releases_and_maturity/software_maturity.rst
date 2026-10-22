@@ -3039,7 +3039,7 @@ The lists are organized by device Series and implementation.
              - Experimental
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - --
              - --
 
@@ -3384,9 +3384,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **Updatable MCUboot as part of build**
               - Supported
               - Supported
@@ -3394,7 +3394,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - --
               - --
             * - **Application image compression**
@@ -3404,9 +3404,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - --
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **Hardware cryptography acceleration**
               - Supported
               - Supported
@@ -3414,7 +3414,7 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
+              - Supported
               - --
               - --
             * - **Multiple signature keys**
@@ -3424,9 +3424,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - --
+              - --
             * - **Image encryption**
               - Experimental
               - Experimental
