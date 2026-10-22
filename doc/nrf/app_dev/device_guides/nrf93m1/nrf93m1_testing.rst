@@ -160,6 +160,7 @@ Modem observability
 
 Once a device is connected to nRF Cloud, modem observability reports connectivity and modem state for diagnostics without a debugger attached.
 This is the practical way to diagnose intermittent field problems, where the failure does not reproduce on a bench.
+For modem traces and coredumps, see :ref:`ug_nrf93m1_debugging`.
 
 .. _ug_nrf93m1_testing_checklist:
 
