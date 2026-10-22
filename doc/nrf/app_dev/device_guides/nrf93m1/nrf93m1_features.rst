@@ -31,8 +31,8 @@ Module
 The module owns the following:
 
 * The LTE Cat 1 bis protocol stack, 3GPP Release 14 compliant.
-* IPv4 and IPv6, TCP, and UDP.
-* TLS and DTLS, including credential storage.
+* IPv4, IPv6, and Non-IP data, with up to four simultaneous PDP contexts, and TCP and UDP.
+* TLS 1.2, TLS 1.3, and DTLS 1.2 with Connection ID, including credential storage.
 * CoAP, HTTP and HTTPS, and MQTT.
 * A BSD-style socket API over AT commands, so a host without its own IP stack can still use TCP and
   UDP sockets.
@@ -40,8 +40,8 @@ The module owns the following:
 * SMS.
 * The nRF Cloud client, covering provisioning, location, firmware updates over the air, and modem
   observability.
-* SIM handling for up to two (e)UICC interfaces and the SoftSIM framework.
-* Its own power state machine.
+* SIM handling for up to two (e)UICC interfaces and, on nRF93M1-LACA, the SoftSIM framework.
+* Power saving with DRX, eDRX, and PSM, using its own power state machine.
 
 Host application
 ****************
@@ -138,6 +138,8 @@ This removes receive diversity routing from your layout while preserving Cat 1 p
      - Value
    * - 3GPP release
      - Release 14, field upgradable
+   * - LTE category
+     - Cat 1 bis, FDD and TDD
    * - Power class
      - Class 3, up to 23 dBm
    * - Channel bandwidths
@@ -154,7 +156,7 @@ This removes receive diversity routing from your layout while preserving Cat 1 p
 Module variants
 ***************
 
-The nRF93M1 is available in two variants that differ only in band support and certification coverage:
+The nRF93M1 is available in two variants that differ in band support, certification coverage, and SoftSIM support:
 
 .. list-table::
    :header-rows: 1
@@ -169,6 +171,24 @@ The nRF93M1 is available in two variants that differ only in band support and ce
      - Global
      - Comprehensive set of global LTE bands and certifications for worldwide deployments.
 
+The variants support the following LTE bands:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Variant
+     - FDD
+     - TDD
+   * - nRF93M1-LABA
+     - B1, B3, B5, B7, B8, B20, B28
+     - B38, B40, B41
+   * - nRF93M1-LACA
+     - B1, B2, B3, B4, B5, B7, B8, B12, B13, B18, B19, B20, B25, B26, B28, B66, B71
+     - B38, B40, B41
+
+Each variant has its own modem firmware image.
+Modem firmware versions 1.x.x are for nRF93M1-LABA, and versions 2.x.x are for nRF93M1-LACA.
+
 Both variants are pin, size, and software compatible.
 They share the same board target, interface, and AT commands, so moving between them requires no PCB redesign and no application changes.
 Develop and qualify on nRF93M1-LABA, then place nRF93M1-LACA for markets that need the wider band set, with no PCB change.
@@ -176,7 +196,7 @@ Develop and qualify on nRF93M1-LABA, then place nRF93M1-LACA for markets that ne
 See the `nRF93M1 Datasheet`_ for the supported bands of each variant.
 
 You can restrict the enabled band set at runtime with the ``AT%BAND`` command, which takes a list of band numbers to enable.
-The ``AT%BAND=?`` command returns the bands supported by the module and firmware you are running, allowing you to confirm the module variant.
+The ``AT%BAND=?`` command returns the list of bands that the module variant and the firmware you are running support.
 
 .. _ug_nrf93m1_features_location:
 
@@ -193,6 +213,9 @@ Wi-Fi® scan
 Cellular eCID
    The module reports serving and neighbor cell information.
    nRF Cloud resolves the cell data to a position.
+
+Wi-Fi scanning is time-multiplexed with cellular operation.
+It is available while the modem is in RRC idle (DRX or eDRX), in PSM, and when LTE is deactivated.
 
 Both are driven with AT commands.
 Neither requires a GNSS antenna, which removes an antenna, a keep-out area, and a sky-view requirement from your mechanical design.
@@ -213,14 +236,55 @@ The SIMs that are used with the nRF93M1 device have the following features:
    * - Feature
      - Support
    * - SIM interfaces
-     - Two. Both support Class B (3.0 V) and Class C (1.8 V); the voltage is auto-selected per inserted UICC. If two external SIMs are used, both must be the same class.
+     - Two ETSI TS 102 221 UICC interfaces. Both support Class B (3.0 V) and Class C (1.8 V); the voltage is auto-selected per inserted UICC. If two external SIMs are used, both must be the same class.
    * - GSMA remote SIM provisioning
      - SGP.02 M2M eSIM, SGP.22 consumer eSIM, SGP.32 IoT eSIM
    * - SoftSIM
-     - Supported
+     - Supported on nRF93M1-LACA only, through the standard SIM API.
 
 SGP.32 is the relevant profile for most IoT deployments, because it allows profile changes without a device-initiated user flow.
-SoftSIM removes the physical SIM.
+SoftSIM removes the physical SIM, and the subscription is stored securely in the module memory.
+
+To use SoftSIM, complete the following steps with the modem in minimum functionality:
+
+1. Load the subscription profile that you exported with the tools of your SoftSIM provider.
+   The profile is a hexadecimal string of up to 360 characters.
+
+   .. code-block:: console
+
+      AT+CFUN=0
+      OK
+      AT%SOFTSIMPROVISION="<profile>"
+      OK
+
+#. Select SoftSIM instead of the physical SIM.
+   The setting is kept after a restart, and you can change it only when ``AT+CFUN=0``.
+   Set it back to ``0`` to use the physical SIM again.
+
+   .. code-block:: console
+
+      AT%SIMCFG="SoftSim",1
+      OK
+
+#. Apply the profile and attach to the network:
+
+   .. code-block:: console
+
+      AT+CFUN=1
+      OK
+
+.. note::
+   The ``%SOFTSIMPROVISION`` command and the ``SoftSim`` parameter of ``%SIMCFG`` are available from modem firmware v2.1.0.
+   See the `nRF93M1 AT Commands Reference Guide`_.
+
+.. _ug_nrf93m1_features_debug:
+
+Debug and trace
+***************
+
+The module provides a real-time binary modem trace over UART0 or USB, which you capture with nRF Util.
+The module also collects modem coredumps when the modem firmware crashes, and you can upload them to nRF Cloud or export them over the serial port.
+See :ref:`ug_nrf93m1_debugging`.
 
 .. _ug_nrf93m1_features_security:
 
@@ -231,8 +295,7 @@ The module supports secure boot and firmware rollback protection, so unauthorize
 Firmware updates are signed by Nordic and delivered either over the air through nRF Cloud or locally over serial.
 See :ref:`ug_nrf93m1_updating_modem_fw`.
 
-TLS and DTLS run in the module, and credentials are stored in the module.
-TLS and DTLS run in the module, and credentials are stored in the module.
+TLS 1.2, TLS 1.3, and DTLS 1.2 run in the module, with up to six concurrent security contexts, and credentials are stored in the module file system.
 Your host sends credentials over the AT interface during provisioning and does not need to store them afterwards.
 
 .. _ug_nrf93m1_samples:
@@ -246,7 +309,7 @@ The following samples use the nRF93M1 DK in the |NCS|:
   It also handles modem power sequencing at startup.
   **Button 1** triggers ``POWER_KEY`` and **Button 2** triggers ``RESET``.
   Use the sample for bring-up, AT command exploration, and modem firmware work.
-* :ref:`nrf93m1dk_ppp_shell`, located under the :file:`samples/nrf93m1dk/modem_bypass` folder, establishes a PPP connection between the nRF54L15 host and the module over a CMUX-multiplexed UART, and exposes the AT channel through the AT command shell.
+* :ref:`nrf93m1dk_ppp_shell`, located under the :file:`samples/nrf93m1dk/ppp_shell` folder, establishes a PPP connection between the nRF54L15 host and the module over a CMUX-multiplexed UART, and exposes the AT channel through the AT command shell.
   IPv4, IPv6, DNS, TCP, UDP, and POSIX sockets are enabled, and zperf is included for throughput testing.
 
 Both samples are built for the ``nrf93m1dk/nrf54l15/cpuapp`` build target and run the UART at 115200 baud.
