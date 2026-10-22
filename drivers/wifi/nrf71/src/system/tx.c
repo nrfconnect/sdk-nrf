@@ -839,6 +839,8 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	config->mac_hdr_info.etype =
 		nrf_wifi_util_tx_get_eth_type(nwb_data);
 
+	config->mac_hdr_info.dscp_or_tos = nrf_wifi_get_tid(nwb);
+
 	config->mac_hdr_info.tx_flags =
 		nrf_wifi_get_tid(nwb) & NRF_WIFI_TX_FLAGS_DSCP_TOS_MASK;
 
