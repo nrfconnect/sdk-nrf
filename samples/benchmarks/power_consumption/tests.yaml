@@ -36,3 +36,6 @@ tests:
   sample.benchmarks.power_consumption.ram_powerdown_used:
     extra_configs:
       - CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY=y
+  sample.benchmarks.power_consumption.lfxo_pixo:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE=lfxo_pixo.overlay

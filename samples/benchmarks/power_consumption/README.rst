@@ -54,6 +54,12 @@ The sample's own Kconfig allows the user to configure the amount of RAM that is 
    * - :kconfig:option:`CONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_USED_ONLY`
      - Retains only the RAM used by the sample image, the rest is powered down using ``power_down_unused_ram()`` instead of a fixed KiB boundary.
 
+LFXO configuration
+==================
+
+By default, the low-frequency crystal oscillator (LFXO) runs in Pierce mode.
+The sample can also be built with the LFXO in PIXO mode, using the :file:`lfxo_pixo.overlay` devicetree overlay.
+
 Building and running
 ********************
 
@@ -73,7 +79,13 @@ To build the sample with any other of the supported RAM retention levels, pass t
 
    west build -p always -b nrf7120dk/nrf7120/cpuapp nrf/samples/benchmarks/power_consumption -- -DCONFIG_SAMPLE_POWER_CONSUMPTION_RAM_RETAIN_64K=y
 
-The same supported six configurations are also given in the :file:`tests.yaml` file (for example ``sample.benchmarks.power_consumption.ram_retain_64k``), for use with ``west build -T <name>`` or Twister.
+To build the sample with the LFXO in PIXO mode, pass the :file:`lfxo_pixo.overlay` devicetree overlay on the command line:
+
+.. code-block:: console
+
+   west build -p always -b nrf7120dk/nrf7120/cpuapp nrf/samples/benchmarks/power_consumption -- -DEXTRA_DTC_OVERLAY_FILE=lfxo_pixo.overlay
+
+The supported configurations are also given in the :file:`tests.yaml` file (for example ``sample.benchmarks.power_consumption.ram_retain_64k`` or ``sample.benchmarks.power_consumption.lfxo_pixo``), for use with ``west build -T <name>`` or Twister.
 
 Testing
 ========
