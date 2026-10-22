@@ -179,6 +179,12 @@ if(CONFIG_OPENTHREAD)
     # Zephyr as well, but OpenThread code still uses it, so we add it here.
     target_compile_definitions(ot-config INTERFACE -DMBEDTLS_SSL_EXPORT_KEYS)
 
+    if(CONFIG_OPENTHREAD_LINK_METRICS_ENH_ACK_VERBOSE)
+      target_compile_definitions(ot-config INTERFACE
+        -DOPENTHREAD_CONFIG_CLI_LINK_METRICS_ENH_ACK_VERBOSE_ENABLE=1
+      )
+    endif()
+
     # Zephyr compiler options
     target_include_directories(ot-config INTERFACE
       $<TARGET_PROPERTY:zephyr_interface,INTERFACE_INCLUDE_DIRECTORIES>

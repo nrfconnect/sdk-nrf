@@ -210,3 +210,6 @@ config OPENTHREAD_WAKE_LISTENER
 	  (OPENTHREAD_CONFIG_TD_WAKE_LISTENER_ENABLE).
 
 endchoice
+
+config OPENTHREAD_LINK_METRICS_ENH_ACK_VERBOSE
+	bool "Link Metrics enhacement ack verbose"
