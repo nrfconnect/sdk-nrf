@@ -456,6 +456,14 @@ ci_samples_cellular:
     - zephyr/subsys/shell/
     - zephyr/subsys/storage/
 
+ci_samples_peripheral_lfxo_idac_calibration:
+  files:
+    - modules/hal/nordic/nrfx/bsp/stable/mdk/nrf71/
+    - modules/hal/nordic/nrfx/hal/nrf_lfxo.h
+    - nrf/samples/peripheral/lfxo_idac_calibration/
+    - zephyr/dts/bindings/clock/nordic,nrf71-lfxo.yaml
+    - zephyr/soc/nordic/nrf71/
+
 ci_samples_peripheral_ppi:
   files:
     - modules/hal/nordic/nrfx/

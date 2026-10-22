@@ -634,6 +634,7 @@
 /samples/openthread/                      @nrfconnect/ncs-co-networking @nrfconnect/ncs-thread
 /samples/peripheral/802154_phy_test/      @nrfconnect/ncs-radio-sw
 /samples/peripheral/802154_sniffer/       @nrfconnect/ncs-radio-sw
+/samples/peripheral/lfxo_idac_calibration/ @nrfconnect/ncs-malago
 /samples/peripheral/lpuart/               @nordic-krch @nrfconnect/ncs-low-level-test
 /samples/peripheral/ppi_seq_spi/          @nrfconnect/ncs-ll-izera @nrfconnect/ncs-low-level-test
 /samples/peripheral/radio_test/           @nrfconnect/ncs-dragoon
@@ -766,6 +767,7 @@
 /samples/openthread/**/*.rst              @nrfconnect/ncs-terahertz-doc
 /samples/peripheral/802154_phy_test/*.rst @nrfconnect/ncs-radio-sw-doc
 /samples/peripheral/802154_sniffer/*.rst  @nrfconnect/ncs-radio-sw-doc
+/samples/peripheral/lfxo_idac_calibration/*.rst @nrfconnect/ncs-blenders-doc
 /samples/peripheral/lpuart/*.rst          @nrfconnect/ncs-doc-leads
 /samples/peripheral/ppi_seq_spi/*.rst     @nrfconnect/ncs-ll-izera @nrfconnect/ncs-lowlevel-doc
 /samples/peripheral/radio_test/*.rst      @nrfconnect/ncs-dragoon-doc

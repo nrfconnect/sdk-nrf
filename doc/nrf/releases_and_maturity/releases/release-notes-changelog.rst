@@ -804,6 +804,7 @@ Peripheral samples
 
   * The :ref:`ppi_seq_spi_sample` sample that demonstrates use of :ref:`ppi_seq_i2c_spi`.
   * The :ref:`vpr_offloading_sample` sample that demonstrates how to use the VPR core (PPR or FLPR) to offload the application core.
+  * The :ref:`lfxo_idac_calibration_sample` sample that finds the initial IDAC code for the Pierce mode of the LFXO on the nRF7120 SoC.
 
 * :ref:`802154_phy_test` sample:
 
