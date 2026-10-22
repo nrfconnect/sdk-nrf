@@ -347,6 +347,11 @@ This section describes the changes related to libraries.
        Alternatively, unprovision the devices before the update and reprovision them afterwards.
        For details, see the Security toolbox section in :ref:`ug_bt_mesh_configuring` page.
 
+   * :ref:`lib_mqtt_helper` library:
+
+     * The :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is now part of a choice and cannot be disabled on its own.
+       If your application disables it to install the TLS credentials itself, enable the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_NONE` Kconfig option instead.
+
 Drivers
 =======
 

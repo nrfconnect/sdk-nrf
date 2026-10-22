@@ -138,6 +138,8 @@
 
 .. _`nrf-udev`: https://github.com/NordicSemiconductor/nrf-udev
 
+.. _`nrfcredstore`: https://github.com/NordicSemiconductor/nrfcredstore
+
 .. _`Memfault entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L170-L173
 .. _`ANT entry in the manifest`: https://github.com/nrfconnect/sdk-nrf/blob/20f40501f69bc9bfd2b321704917da1769411936/west.yml#L182-L187
 
