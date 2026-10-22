@@ -103,8 +103,11 @@ For information about FOTA, see the `FOTA`_ section.
 
 .. note::
    On nRF91 Series devices, you can provision certificates only when the modem is disconnected from the network.
-   On nRF71 Series and nRF70 Series devices, certificates are provisioned at runtime.
-   To provision certificates, paste the PEM content into the files in the :file:`certs/` subdirectory and enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
+   For nRF71 Series and nRF70 Series devices, the :file:`wifi.conf` file enables the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
+   The device generates the private key and you install the certificates at runtime with the TLS credentials shell.
+   For nRF70 Series, this applies to an nRF70 Series device that is hosted by an nRF53 Series or nRF54 Series SoC.
+   To provision the PEM content from the :file:`certs/` subdirectory instead, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, which replaces the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` option.
+   See :ref:`generating_and_provisioning_certificates` for the steps.
 
 Configuration
 *************
