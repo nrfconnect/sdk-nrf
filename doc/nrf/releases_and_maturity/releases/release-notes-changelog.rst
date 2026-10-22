@@ -32,7 +32,7 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-* Updated the required `SEGGER J-Link`_ version to v9.82.
+|no_changes_yet_note|
 
 Board support
 =============
@@ -188,8 +188,7 @@ This section provides detailed lists of changes by :ref:`application <applicatio
 Connectivity bridge
 -------------------
 
-* Fixed an issue on the Thingy:91 X where the CMSIS-DAP interface could not connect to the nRF91 Series SiP.
-  The connection failed because the SiP was held in reset while the debug port was enabled.
+|no_changes_yet_note|
 
 High-Performance Framework (HPF)
 --------------------------------
@@ -249,12 +248,7 @@ Bluetooth Mesh samples
 Bluetooth Fast Pair samples
 ---------------------------
 
-* :ref:`fast_pair_locator_tag` sample:
-
-  * Updated:
-
-    * The TX power calibration for the ``nrf54ls05dk/nrf54ls05a/cpuapp`` and ``nrf54ls05dk/nrf54ls05b/cpuapp`` board targets.
-      The :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER_CORRECTION_VAL` and :kconfig:option:`CONFIG_BT_FAST_PAIR_FHN_TX_POWER_CORRECTION_VAL` Kconfig options were changed from ``-13`` dBm to ``0`` dBm to meet the Fast Pair distance certification requirements.
+|no_changes_yet_note|
 
 Cellular samples
 ----------------
@@ -401,18 +395,12 @@ This section provides detailed lists of changes by :ref:`library <libraries>`.
 Binary libraries
 ----------------
 
-* :ref:`liblwm2m_carrier_readme` library:
-
-  * Updated the library to v3.8.0.
-    See the :ref:`liblwm2m_carrier_changelog` for detailed information.
+|no_changes_yet_note|
 
 Bluetooth libraries and services
 --------------------------------
 
-* :ref:`bt_fast_pair_readme` library:
-
-  * Fixed the validation of the Data Length parameter in requests that the Find Hub Network (FHN) extension receives on the Beacon Actions characteristic.
-    Requests that declare a Data Length above the maximum supported value are now rejected with the Invalid Value error.
+|no_changes_yet_note|
 
 Common Application Framework
 ----------------------------
@@ -438,11 +426,7 @@ Modem libraries
 ---------------
 
 |no_changes_yet_note|
-
-* :ref:`sms_readme` library:
-
-  * Fixed an issue where the :c:func:`sms_register_listener` function returned a positive value instead of a negative error code when the modem responded with an AT error during SMS client registration.
-    The function now returns ``-EFAULT`` in this case.
+|no_changes_yet_note|
 
 Multiprotocol Service Layer libraries
 -------------------------------------
@@ -452,10 +436,7 @@ Multiprotocol Service Layer libraries
 Libraries for networking
 ------------------------
 
-* :ref:`lib_nrf_provisioning` library:
-
-  * Updated the library to send the :c:enumerator:`NRF_PROVISIONING_EVENT_FATAL_ERROR` event when the modem fails to generate the attestation token for an unclaimed device.
-    Previously, the :c:enumerator:`NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED` event was sent without a token.
+|no_changes_yet_note|
 
 Libraries for NFC
 -----------------
@@ -470,9 +451,7 @@ nRF RPC libraries
 Other libraries
 ---------------
 
-* :ref:`lib_date_time` library:
-
-  * Fixed an issue where periodic time updates stopped permanently if the time was obtained, for example, from an ``%XTIME`` notification shortly before a scheduled update.
+|no_changes_yet_note|
 
 Shell libraries
 ---------------
@@ -509,8 +488,7 @@ Edge Impulse integration
 Memfault integration
 --------------------
 
-* Updated Memfault to version 1.45.0.
-  See the `Memfault firmware SDK changelog`_ for details.
+|no_changes_yet_note|
 
 AVSystem integration
 --------------------
