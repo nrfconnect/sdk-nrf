@@ -597,7 +597,8 @@
 
 .. _`nRF93M1 Datasheet`: https://docs.nordicsemi.com/r/bundle/ps_nrf93m1/page/keyfeatures_html5.html
 .. _`nRF93M1 AT Commands Reference Guide`: https://docs.nordicsemi.com/r/bundle/ref_at_commands_nrf93m1/page/ref/at_commands_93/intro.html
-.. _`nRF93M1 DK Hardware User Guide`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/nRF93M1_DK_HW_User_Guide_v0.4.0.pdf
+.. _`nRF93M1 DK Hardware User Guide`: https://docs.nordicsemi.com/r/bundle/ug_nrf93m1_dk/page/ug/nrf93m1_dk/intro/intro.html
+.. _`nRF93M1 Hardware Design Guidelines`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/ngl_005_1427.pdf
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
