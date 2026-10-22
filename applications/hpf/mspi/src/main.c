@@ -531,8 +531,13 @@ static void ep_recv(const void *data, size_t len, void *priv)
 #ifdef CONFIG_HPF_MSPI_IPC_NO_COPY
 			xfer_execute(packet, packet->data);
 #else
-			NRFX_ASSERT(packet->num_bytes <=
-				    CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE - sizeof(hpf_mspi_opcode_t));
+			/* Reply without data if the data does not fit, the application then
+			 * reports the length mismatch.
+			 */
+			if (packet->num_bytes >
+			    CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE - sizeof(hpf_mspi_opcode_t)) {
+				break;
+			}
 			num_bytes = packet->num_bytes;
 			xfer_execute(packet, response.data);
 #endif
