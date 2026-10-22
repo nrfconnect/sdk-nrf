@@ -1810,7 +1810,7 @@ static void set_vendor_ie_header_lm(bool lqi, bool link_margin, bool rssi, uint8
 	uint8_t link_metrics_data_len = (uint8_t)lqi + (uint8_t)link_margin + (uint8_t)rssi;
 	uint8_t token_offset;
 
-	__ASSERT(link_metrics_data_len <= 2, "Thread limits to 2 metrics at most");
+	__ASSERT(link_metrics_data_len <= 3, "Thread limits to 3 metrics at most");
 	__ASSERT(ie_header, "Invalid argument");
 
 	if (link_metrics_data_len == 0) {

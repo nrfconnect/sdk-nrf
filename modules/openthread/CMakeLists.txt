@@ -158,6 +158,12 @@ if(CONFIG_OPENTHREAD)
       -DOPENTHREAD_PROJECT_CORE_CONFIG_FILE="openthread-core-zephyr-config.h"
     )
 
+    if(CONFIG_OPENTHREAD_LINK_METRICS_ENH_ACK_VERBOSE)
+      add_definitions(
+        -DOPENTHREAD_CONFIG_CLI_LINK_METRICS_ENH_ACK_VERBOSE_ENABLE=1
+      )
+    endif()
+
     # Need to specify build directory as well
     add_subdirectory(${ZEPHYR_CURRENT_MODULE_DIR} build)
 
