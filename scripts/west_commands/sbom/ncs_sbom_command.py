@@ -7,9 +7,11 @@ The "ncs-sbom" extension command.
 '''
 
 import argparse
+import os
+import sys
+from pathlib import Path
 
 import args
-import main
 from west.commands import WestCommand
 
 
@@ -28,5 +30,13 @@ class NcsSbom(WestCommand):
         return parser
 
     def do_run(self, arguments, unknown_arguments):
+        zephyr_scripts = str(Path(os.environ['ZEPHYR_BASE']) / 'scripts')
+        if zephyr_scripts not in sys.path:
+            sys.path.insert(0, zephyr_scripts)
+
+        # zephyr_module is available only after Zephyr's scripts directory is on sys.path.
+        # Delay importing the SBOM pipeline until zephyr_scripts is available.
+        import main
+
         args.copy_arguments(arguments)
         main.main()
