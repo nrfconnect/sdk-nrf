@@ -72,6 +72,13 @@ Bootloaders and DFU
   * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
     These configurations now use PSA Crypto instead of the CC310 backend, which supports only signature verification.
   * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
+  * Signing of :ref:`DFU extra images <lib_dfu_extra>` when the default image is built with TF-M.
+    The extra images were signed with the :kconfig:option:`CONFIG_ROM_START_OFFSET` value of the default image as the header size, which is ``0`` for a non-secure board target, and imgtool refused to sign them.
+    They now use the same MCUboot header size as the default image.
+  * Sysbuild-assigned MCUboot image IDs of :ref:`DFU extra images <lib_dfu_extra>` when :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` is enabled.
+    The extra images were assigned IDs after the MCUboot update image pair of the first-stage bootloader, which MCUboot expects at the last image index, and the build failed.
+    The extra images now get their IDs before that pair.
+    See :ref:`sysbuild_assigned_images_ids` for the assignment order.
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` page for details.
@@ -1221,6 +1228,12 @@ Libraries for networking
 
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
     Previously, the event carried no payload.
+
+* :ref:`lib_fota_download` library:
+
+  * Added the :c:func:`fota_download_start_params` function and the :c:struct:`fota_download_params` structure to select the MCUboot image pair that a download updates.
+    Use them when MCUboot has more than one updateable image pair (:kconfig:option:`CONFIG_UPDATEABLE_IMAGE_NUMBER` greater than ``1``).
+    The other start functions keep using image pair ``0``.
 
 Libraries for NFC
 -----------------
