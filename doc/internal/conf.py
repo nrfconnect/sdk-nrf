@@ -20,7 +20,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 # General ----------------------------------------------------------------------
 
 # Import internal configuration, override as needed later
-conf = eval_config_file(str(DOC_INTERNAL_BASE / "conf.py"), tags)
+conf = eval_config_file(DOC_INTERNAL_BASE / "conf.py", tags)
 locals().update(conf)
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
