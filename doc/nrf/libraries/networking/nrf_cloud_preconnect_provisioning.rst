@@ -100,8 +100,11 @@ In the following sections, replace *device_id* with the device ID.
 On-device key generation
 ========================
 
-In this method, the device generates its private key and certificate signing request (CSR) using the :ref:`lib_nrf_cloud_credentials_keygen` library.
+In this method, the device generates its private key and certificate signing request (CSR) using the :ref:`lib_nrf_cloud_credentials_keygen` feature.
 The ``device_credentials_installer`` script reads the CSR over the shell, signs the device certificate with your CA certificate, and installs it on the device.
+
+.. note::
+   This method requires `nRF Cloud Utils v4.0.0`_ or later.
 
 To provision the device, complete the following steps:
 
@@ -110,8 +113,16 @@ To provision the device, complete the following steps:
    .. parsed-literal::
       :class: highlight
 
+      CONFIG_NRF_CLOUD_CHECK_CREDENTIALS=y
+      CONFIG_NRF_CLOUD_CREDENTIALS_MGMT_TLS_CRED=y
+      CONFIG_TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE=y
+      CONFIG_TLS_CREDENTIALS_SHELL=y
+      CONFIG_TLS_CREDENTIALS_SHELL_CRED_BUF_SIZE=3072
       CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN=y
-      CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL=y
+
+   The TLS credentials protected storage backend needs TF-M or the :ref:`Secure Storage subsystem <secure_storage>` (:kconfig:option:`CONFIG_SECURE_STORAGE`).
+   The credentials buffer of the shell must fit the nRF Cloud root CA certificates, which can exceed the default size of 1024 bytes.
+   For CoAP, also set the :kconfig:option:`CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM` Kconfig option, so that the library signs the JSON Web Tokens with the key in PSA.
 
 #. Build and program the firmware, then read the device ID (see :ref:`nrf_cloud_preconnect_inputs`).
 #. Connect the device to your host and run the following command:
@@ -119,10 +130,10 @@ To provision the device, complete the following steps:
    .. parsed-literal::
       :class: highlight
 
-      device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --cmd-type nrf_cloud_cred_shell [--verify] [--coap] [--append]
+      device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --cmd-type tls_cred_shell [--verify] [--coap] [--append]
 
    The ``--verify`` option checks that the installed device certificate matches the on-device key.
-   It requires the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option.
+   The script reads the device public key with the ``cred pubkey`` command and compares it with the public key in the device certificate.
    See `nRF Cloud Utils: Devices without a modem <nRF Cloud Utils devices without a modem_>`_ for other script options.
 
 .. _nrf_cloud_preconnect_host_key:

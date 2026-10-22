@@ -567,7 +567,6 @@ This sample uses the following |NCS| libraries and drivers:
 
 * :ref:`lib_nrf_cloud`
 * :ref:`lib_nrf_cloud_coap`
-* :ref:`lib_nrf_cloud_credentials_keygen`
 * :ref:`lib_location`
 * :ref:`lib_date_time`
 * :ref:`lib_hw_id`
