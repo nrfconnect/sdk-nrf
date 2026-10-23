@@ -1132,6 +1132,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *f
  * @param stats_ctrl Category bit to request, from &enum UMAC_STATS_CATEGORY,
  *	  &enum LMAC_STATS_CATEGORY or &enum PHY_STATS_CATEGORY depending on
  *	  @p stats_type. The RPU returns one category per request.
+ * @param periodic_count 0 for a single report. Otherwise the RPU also sends
+ *	  the stats @p periodic_count times, every @p periodic_interval seconds,
+ *	  which are passed to nrf_wifi_fmac_dev_ctx::debug_stats_periodic_cb.
+ *	  Calling this again with 0 stops any remaining periodic reports.
+ * @param periodic_interval Interval in seconds between periodic reports.
+ *	  Ignored if @p periodic_count is 0.
  * @param stats Buffer to receive the stats (filled on NRF_WIFI_EVENT_DEBUG_STATS).
  * @return Command execution status.
  */
@@ -1139,6 +1145,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	enum rpu_stats_type stats_type,
 	unsigned int stats_ctrl,
+	unsigned int periodic_count,
+	unsigned int periodic_interval,
 	struct nrf_wifi_rpu_debug_stats *stats);
 
 /**
