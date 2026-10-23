@@ -65,6 +65,10 @@ config OPENTHREAD_RPC_CLIENT_NUM_SENT_COAP_REQUESTS
 	  Defines the number of slots for storing a callback along with its context
 	  for ongoing CoAP requests awaiting a response.
 
+config OPENTHREAD_RPC_CLIENT_NUM_STATE_CHANGED_CALLBACKS
+	int "Maximum number of registered state-changed callbacks"
+	default 10
+
 config OPENTHREAD_RPC_CLIENT_RADIO_TIME_REFRESH_PERIOD
 	int "Radio time sync period [s]"
 	default 30

@@ -4,14 +4,27 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include "mocks.h"
+
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
 #include <test_rpc_env.h>
 
+#include <zephyr/fff.h>
 #include <zephyr/ztest.h>
 #include <zephyr/kernel.h>
 
 #include <openthread/instance.h>
+
+FAKE_VOID_FUNC(state_changed_cb, otChangedFlags, void *);
+
+static void verify_state_changed_cb_locked(otChangedFlags flags, void *ctx)
+{
+	ARG_UNUSED(flags);
+	ARG_UNUSED(ctx);
+
+	zassert_true(ot_rpc_is_mutex_locked());
+}
 
 static void nrf_rpc_err_handler(const struct nrf_rpc_err_report *report)
 {
@@ -150,6 +163,64 @@ ZTEST(ot_rpc_instance, test_otGetVersionString)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_str_equal(version, exp_version);
+}
+
+/* Test state changed callback registration, invocation, and removal */
+ZTEST(ot_rpc_instance, test_state_changed_callback)
+{
+	otError error;
+	void *ctx = (void *)0xdeadbeef;
+	const otChangedFlags flags = OT_CHANGED_THREAD_ROLE | OT_CHANGED_THREAD_RLOC_ADDED;
+
+	RESET_FAKE(state_changed_cb);
+	state_changed_cb_fake.custom_fake = verify_state_changed_cb_locked;
+
+	/* NULL callback is rejected locally without RPC traffic. */
+	error = otSetStateChangedCallback(NULL, NULL, ctx);
+	zassert_equal(error, OT_ERROR_INVALID_ARGS);
+
+	/* Registering a callback allocates callback ID 1 and sends only the ID. */
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_SET_STATE_CHANGED_CALLBACK, 1),
+				   RPC_RSP(OT_ERROR_NONE));
+	error = otSetStateChangedCallback(NULL, state_changed_cb, ctx);
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(error, OT_ERROR_NONE);
+
+	/* Receiving OT_RPC_CMD_STATE_CHANGED for callback ID 1 invokes the callback. */
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_STATE_CHANGED, 1, CBOR_UINT8(flags)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(state_changed_cb_fake.call_count, 1);
+	zassert_equal(state_changed_cb_fake.arg0_val, flags);
+	zassert_equal(state_changed_cb_fake.arg1_val, ctx);
+
+	/* Receiving OT_RPC_CMD_STATE_CHANGED with an unregistered or out-of-range ID is ignored. */
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_STATE_CHANGED, 2, CBOR_UINT8(flags)));
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(state_changed_cb_fake.call_count, 1);
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(
+		RPC_CMD(OT_RPC_CMD_STATE_CHANGED, CBOR_UINT32(0x24040004), CBOR_UINT8(flags)));
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(state_changed_cb_fake.call_count, 1);
+
+	/* Removing an unregistered callback/context pair does not send an RPC command. */
+	otRemoveStateChangeCallback(NULL, state_changed_cb, NULL);
+
+	/* Removing the registered callback sends callback ID 1 and frees the entry. */
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_REMOVE_STATE_CHANGED_CALLBACK, 1),
+				   RPC_RSP());
+	otRemoveStateChangeCallback(NULL, state_changed_cb, ctx);
+	mock_nrf_rpc_tr_expect_done();
+
+	/* Subsequent OT_RPC_CMD_STATE_CHANGED for freed ID 1 does not invoke the callback. */
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_STATE_CHANGED, 1, CBOR_UINT8(flags)));
+	mock_nrf_rpc_tr_expect_done();
+	zassert_equal(state_changed_cb_fake.call_count, 1);
 }
 
 ZTEST_SUITE(ot_rpc_instance, NULL, NULL, tc_setup, NULL, NULL);
