@@ -1,0 +1,10 @@
+{
+    "ioPortPower": {
+        "p1Supply": "EXTERNAL",
+        "p2Supply": "EXTERNAL",
+        "p5Supply": "EXTERNAL"
+    },
+    "ioPortImpedance": {
+        "p5ImpedanceOhms": 50
+    }
+}
