@@ -184,6 +184,15 @@
 "Location: https://server.com\r\n" \
 "\r\n\r\n"
 
+/* Redirect to a different host. */
+#define HTTP_HDR_REDIRECT_OTHER_HOST "HTTP/1.1 308 Permanent Redirect\r\n" \
+"Date: Wed, 29 Jan 2025 11:16:09 GMT\r\n" \
+"Content-Type: text/html\r\n" \
+"Content-Length: 164\r\n" \
+"Connection: keep-alive\r\n" \
+"Location: http://server2.com/path/to/file.end\r\n" \
+"\r\n\r\n"
+
 #define PAYLOAD "This is the payload!"
 
 #define FD 0
@@ -1047,6 +1056,43 @@ static ssize_t z_impl_zsock_recvfrom_http_redirect_bad_location(
 	return strlen(HTTP_HDR_REDIRECT_BAD_LOCATION);
 }
 
+static ssize_t z_impl_zsock_recvfrom_http_redirect_other_host(
+	int sock, void *buf, size_t max_len, int flags, struct net_sockaddr *src_addr,
+	net_socklen_t *addrlen)
+{
+	memcpy(buf, HTTP_HDR_REDIRECT_OTHER_HOST, strlen(HTTP_HDR_REDIRECT_OTHER_HOST));
+	return strlen(HTTP_HDR_REDIRECT_OTHER_HOST);
+}
+
+/* Serves the redirect on the first connection and the file on the next one. */
+static int z_impl_zsock_socket_http_ipv6_redirected(int family, int type, int proto)
+{
+	if (z_impl_zsock_socket_fake.call_count > 1) {
+		RESET_FAKE(z_impl_zsock_recvfrom);
+		z_impl_zsock_recvfrom_fake.custom_fake =
+			z_impl_zsock_recvfrom_http_header_then_data;
+	}
+
+	return z_impl_zsock_socket_http_ipv6_ok(family, type, proto);
+}
+
+static char lookup_host[4][16];
+
+static int zsock_getaddrinfo_record_host(const char *host, const char *service,
+					 const struct zsock_addrinfo *hints,
+					 struct zsock_addrinfo **res)
+{
+	size_t i = zsock_getaddrinfo_fake.call_count - 1;
+
+	if (i < ARRAY_SIZE(lookup_host)) {
+		strncpy(lookup_host[i], host, sizeof(lookup_host[i]) - 1);
+	}
+
+	*res = &server_addrinfo6;
+
+	return 0;
+}
+
 /* Fills the whole receive buffer with an unterminated (no final CRLFCRLF) but
  * otherwise valid header, then delivers the terminator and payload. This drives
  * http_header_parse() with buf_len == buf_size, exercising the partial-header
@@ -1854,7 +1900,7 @@ void test_downloader_get_default_proto_http(void)
 	int err;
 	struct downloader_evt evt;
 
-	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	err = downloader_init(&dl, &dl_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 
 	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ipv6_fail_ipv4_ok;
@@ -1879,7 +1925,7 @@ void test_downloader_get_default_proto_https(void)
 	int err;
 	struct downloader_evt evt;
 
-	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	err = downloader_init(&dl, &dl_cfg);
 	TEST_ASSERT_EQUAL(0, err);
 
 	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
@@ -2441,6 +2487,107 @@ void test_downloader_get_coap_unauthorized_response(void)
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
 }
 
+/* Reads events until the downloader is deinitialized and fails if one of them is unexpected. */
+static void assert_no_event_until_deinit(enum downloader_evt_id unexpected)
+{
+	struct downloader_evt evt;
+
+	do {
+		TEST_ASSERT_EQUAL(0, pipe_get(&event_pipe, &evt, K_FOREVER));
+		TEST_ASSERT_NOT_EQUAL(unexpected, evt.id);
+	} while (evt.id != DOWNLOADER_EVT_DEINITIALIZED);
+}
+
+/* A fragment refused by the application stops the download. DONE must not follow, even when
+ * the refused fragment was the last one.
+ */
+void test_downloader_get_coap_refused_last_fragment_no_done(void)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_coap_ipv6_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_coap_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
+
+	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
+	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
+	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
+	coap_header_get_code_fake.custom_fake = coap_header_get_code_ok;
+	coap_packet_get_payload_fake.custom_fake = coap_packet_get_payload_ok;
+
+	err = downloader_get(&dl, &dl_host_cfg, COAP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	assert_no_event_until_deinit(DOWNLOADER_EVT_DONE);
+}
+
+void test_downloader_get_http_refused_last_fragment_no_done(void)
+{
+	int err;
+
+	err = downloader_init(&dl, &dl_cfg_cb_abort);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ipv6_fail_ipv4_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv4_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv4_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_header_then_data;
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	downloader_deinit(&dl);
+	assert_no_event_until_deinit(DOWNLOADER_EVT_DONE);
+}
+
+/* After a redirect to another host, the reconnect must look up the new host instead of
+ * reusing the address of the previous one.
+ */
+void test_downloader_http_redirect_to_other_host_resolves_it(void)
+{
+	int err;
+
+	memset(lookup_host, 0, sizeof(lookup_host));
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_record_host;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv6;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv6_redirected;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_ipv6_ok;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_http_redirect_other_host;
+
+	err = downloader_get(&dl, &dl_host_cfg, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_DONE, K_SECONDS(3));
+
+	TEST_ASSERT_EQUAL(2, zsock_getaddrinfo_fake.call_count);
+	TEST_ASSERT_EQUAL_STRING(HOSTNAME, lookup_host[0]);
+	TEST_ASSERT_EQUAL_STRING(HOSTNAME2, lookup_host[1]);
+
+	downloader_deinit(&dl);
+	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
 /* Resuming from an offset that is not a multiple of the block size, such as the offset
  * stored by the modem for a delta image, must request the block that contains the
  * offset and deliver only the part of it that was not downloaded yet.
@@ -2893,6 +3040,52 @@ void test_downloader_get_econnreset_reconnect_fails(void)
 
 	downloader_deinit(&dl);
 	dl_wait_for_event(DOWNLOADER_EVT_DEINITIALIZED, K_SECONDS(1));
+}
+
+static int z_impl_zsock_connect_cancel_on_reconnect(int sock, const struct net_sockaddr *addr,
+						    net_socklen_t addrlen)
+{
+	/* The second connection is the reconnect. */
+	if (z_impl_zsock_connect_fake.call_count == 2) {
+		TEST_ASSERT_EQUAL(0, downloader_cancel(&dl));
+	}
+
+	return z_impl_zsock_connect_ipv4_ok(sock, addr, addrlen);
+}
+
+/* A cancel during a reconnect stops the download when the reconnect has finished. Nothing is
+ * received on the new connection, and STOPPED is reported once.
+ */
+void test_downloader_cancel_during_reconnect(void)
+{
+	int err;
+	static struct downloader_host_cfg dl_host_conf_ipv4 = {
+		.pdn_id = 1,
+		.family = NET_AF_INET,
+	};
+
+	err = downloader_init(&dl, &dl_cfg);
+	TEST_ASSERT_EQUAL(0, err);
+
+	zsock_getaddrinfo_fake.custom_fake = zsock_getaddrinfo_server_ok;
+	zsock_freeaddrinfo_fake.custom_fake = zsock_freeaddrinfo_server_ipv4;
+	z_impl_zsock_socket_fake.custom_fake = z_impl_zsock_socket_http_ipv4_ok;
+	z_impl_zsock_connect_fake.custom_fake = z_impl_zsock_connect_cancel_on_reconnect;
+	z_impl_zsock_setsockopt_fake.custom_fake = z_impl_zsock_setsockopt_http_ok;
+	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
+	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_partial_then_econnreset;
+
+	err = downloader_get(&dl, &dl_host_conf_ipv4, HTTP_URL, 0);
+	TEST_ASSERT_EQUAL(0, err);
+
+	dl_wait_for_event(DOWNLOADER_EVT_FRAGMENT, K_SECONDS(3));
+	dl_wait_for_event(DOWNLOADER_EVT_STOPPED, K_SECONDS(3));
+
+	/* Header, data and the connection reset. Nothing is received after the reconnect. */
+	TEST_ASSERT_EQUAL(3, z_impl_zsock_recvfrom_fake.call_count);
+
+	downloader_deinit(&dl);
+	assert_no_event_until_deinit(DOWNLOADER_EVT_STOPPED);
 }
 
 void test_downloader_cancel_einval(void)
