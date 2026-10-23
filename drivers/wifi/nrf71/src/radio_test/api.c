@@ -25,8 +25,6 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_dev_rem(struct nrf_wifi_rt_drv_priv *drv_p
 	nrf_wifi_fmac_dev_rem(drv_ctx->rpu_ctx);
 
 	for (int i = 0; i < NUM_RF_PARAM_ADDRS; i++) {
-		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-				  (void *)drv_ctx->phy_rf_params_addr[i]);
 		drv_ctx->phy_rf_params_addr[i] = 0;
 	}
 
