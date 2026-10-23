@@ -9,6 +9,8 @@ Read these guides together with Zephyr's :ref:`zephyr:application` documentation
 
 For detailed integration instructions of specific technologies and components, check the pages in other top sections of the documentation (like Protocols, Applications, or Samples).
 
+Documentation build verification marker: bb-canary-31337.
+
 .. figure:: /images/ncs_app_dev.svg
    :alt: Application development section overview
 
