@@ -44,6 +44,13 @@ extern void at_monitor_dispatch(const char *at_notif);
  */
 extern void lte_lc_edrx_on_modem_cfun(int mode, void *ctx);
 
+/* xbandlock_runtime_lock_apply() and xbandlock_runtime_lock_clear() are implemented in lte_lc
+ * library and we'll call them directly to fake the modem hooks and to reset the stored runtime
+ * band lock between tests.
+ */
+extern void xbandlock_runtime_lock_apply(void);
+extern void xbandlock_runtime_lock_clear(void);
+
 static void lte_lc_connect_inprogress_work_fn(struct k_work *work)
 {
 	int ret;
@@ -346,6 +353,7 @@ void setUp(void)
 	mock_nrf_modem_at_Init();
 
 	helper_lte_lc_data_clear();
+	xbandlock_runtime_lock_clear();
 	lte_lc_register_handler(lte_lc_event_handler);
 
 	lte_lc_callback_count_occurred = 0;
@@ -5936,6 +5944,237 @@ void test_lte_lc_env_eval_cancel(void)
 
 	ret = lte_lc_env_eval_cancel();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+/* Modem responds with ERROR */
+static void band_lock_at_error_expect(const char *at_cmd)
+{
+	__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_FAILURE);
+}
+
+/* Modem responds with +CME ERROR 518: Not allowed in active state */
+static void band_lock_at_active_state_expect(const char *at_cmd)
+{
+	/* Error type in bits 16-23 and error code in bits 0-15, see nrf_modem_at_err_type() */
+	const int cme_518 = (NRF_MODEM_AT_CME_ERROR << 16) | 518;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, cme_518);
+}
+
+void test_lte_lc_band_lock_set_runtime_mask(void)
+{
+	int ret;
+	const uint16_t bands[] = { 13, 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000000001000\"",
+						   EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_runtime_mask_and_list(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4, 13, 255, 256 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XBANDLOCK=2,\"1000000001000\",\"255,256\"", EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_runtime_list_only(void)
+{
+	int ret;
+	const uint16_t bands[] = { 256, 255 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,,\"256,255\"", EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_runtime_duplicates(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4, 256, 4, 255, 256 };
+
+	/* Duplicate bands are only added once to the band list */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000\",\"256,255\"",
+						   EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_highest_mask_band(void)
+{
+	int ret;
+	const uint16_t bands[] = { 88, 1 };
+	char expected[sizeof("AT%XBANDLOCK=2,\"\"") + 88];
+
+	/* Band 88 is the MSB and band 1 the LSB of an 88 character bit string. */
+	memset(expected, 0, sizeof(expected));
+	strcpy(expected, "AT%XBANDLOCK=2,\"1");
+	memset(&expected[strlen(expected)], '0', 86);
+	strcat(expected, "1\"");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(expected, EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_runtime_applied(void)
+{
+	int ret;
+	const uint16_t runtime_bands[] = { 1, 4 };
+	const uint16_t permanent_bands[] = { 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, runtime_bands,
+				   ARRAY_SIZE(runtime_bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Permanent band lock is stored by the modem and is not applied again */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=1,\"1000\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_PERMANENT, permanent_bands,
+				   ARRAY_SIZE(permanent_bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Modem init and power off hooks apply the runtime band lock again */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=0", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* No band lock is applied after it has been removed */
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_set_runtime_before_modem_init(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+
+	/* Modem library is not initialized, the runtime band lock is stored */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", -NRF_EPERM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Modem init hook applies the stored runtime band lock */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_set_permanent_before_modem_init_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4 };
+
+	/* Permanent band lock is stored by the modem, so it can not be set before modem init */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=1,\"1000\"", -NRF_EPERM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_PERMANENT, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	/* Nothing is applied by the modem init hook */
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_set_inval(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4 };
+	const uint16_t bands_with_zero[] = { 4, 0 };
+
+	/* Erase-protected band lock is not supported */
+	ret = lte_lc_band_lock_set(3, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(0, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, NULL, 1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, 0);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands_with_zero,
+				   ARRAY_SIZE(bands_with_zero));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_band_lock_set_too_many_bands(void)
+{
+	int ret;
+	uint16_t bands[40];
+
+	/* Band list above band 88 does not fit the buffer */
+	for (size_t i = 0; i < ARRAY_SIZE(bands); i++) {
+		bands[i] = 100 + i;
+	}
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-E2BIG, ret);
+}
+
+void test_lte_lc_band_lock_set_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+	const uint16_t new_bands[] = { 13 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000000000000\"",
+						   -NRF_ENOMEM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	band_lock_at_error_expect("AT%XBANDLOCK=2,\"1000000000000\"");
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+
+	band_lock_at_active_state_expect("AT%XBANDLOCK=2,\"1000000000000\"");
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EBUSY, ret);
+
+	/* The stored runtime band lock is not changed by a failed set */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_remove_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=0", -NRF_ENOMEM);
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	band_lock_at_error_expect("AT%XBANDLOCK=0");
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+
+	band_lock_at_active_state_expect("AT%XBANDLOCK=0");
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EBUSY, ret);
+
+	/* The stored runtime band lock is not cleared by a failed removal */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
 }
 
 /* It is required to be added to each test. That is because unity's
