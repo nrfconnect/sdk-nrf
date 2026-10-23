@@ -103,7 +103,7 @@ static int leds_init(void)
 	return 0;
 }
 
-/* We use the LEDs to indicate which version of the application we have installed */
+/* We use the LEDs to indicate which version of the application we have installed. */
 static int leds_set(int num_leds)
 {
 	switch (num_leds) {
