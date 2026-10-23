@@ -3,13 +3,14 @@ config HPF_MSPI_MAX_RESPONSE_SIZE
 	default 524
 
 config HPF_MSPI_IPC_NO_COPY
-	bool "IPC no copy mode"
+	bool "IPC no copy mode (informative only, do not change)"
 	default y
 	depends on SOC_NRF54L15 || SOC_NRF54LM20A || SOC_NRF54LM20B || SOC_NRF54LV10A || SOC_NRF54LC10A
 	help
 	  If y Data is passed through IPC by reference,
 	  this requires both cores to be able to access each others memory spaces.
 	  If n Data is passed through IPC by copy.
+	  This option is set by the SB_CONFIG_HPF_MSPI_IPC_NO_COPY sysbuild option.
 
 config HPF_MSPI_FAULT_TIMER
 	bool "HPF application fault timer"

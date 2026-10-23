@@ -55,6 +55,16 @@ endif # HPF_GPIO
 
 if HPF_MSPI
 
+config HPF_MSPI_IPC_NO_COPY
+	bool "HPF MSPI IPC no copy mode"
+	default y
+	help
+	  If y, data is passed between the MSPI driver and the HPF MSPI application
+	  through IPC by reference. If n, data is passed by copy.
+	  This option sets both CONFIG_MSPI_HPF_IPC_NO_COPY in the application image
+	  and CONFIG_HPF_MSPI_IPC_NO_COPY in the FLPR image, as both images
+	  must use the same IPC message format.
+
 config HPF_FLPR_APP_FAULT_TIMER
 	bool "HPF FLPR application fault timer"
 	default y
