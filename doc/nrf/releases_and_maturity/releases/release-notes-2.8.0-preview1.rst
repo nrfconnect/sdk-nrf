@@ -33,11 +33,11 @@ The following sections provide detailed lists of changes by component.
 IDE, OS, and tool support
 =========================
 
-* Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
+* Added explicit mention of the :ref:`requirements_jlink` being required in the :ref:`install_ncs` section of the installation page.
 * Updated:
 
   * The required `SEGGER J-Link`_ version to v7.94i.
-  * The :ref:`supported_OS` table on the :ref:`gs_recommended_versions` page:
+  * The :ref:`supported_OS` table on the :ref:`Requirements reference <requirements>` page:
 
     * Linux 24.04 and macOS 15 have been added to the list.
     * macOS 10.15, macOS 11, macOS 12 have been removed from the list.

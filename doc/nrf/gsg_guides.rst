@@ -1,11 +1,4 @@
 .. _gsg_guides:
-.. _ug_nrf52_gs:
-.. _ug_nrf5340_gs:
-.. _ug_thingy53_gs:
-.. _ug_thingy91_gsg:
-.. _ug_nrf9160_gs:
-.. _ug_nrf7002_gs:
-.. _gsg_other:
 
 Quick Start
 ###########

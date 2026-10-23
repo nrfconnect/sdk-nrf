@@ -66,7 +66,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.9.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.9.0`_.
 
@@ -660,4 +660,4 @@ Documentation
 
 * Updated the structure and contents of the :ref:`gpio_pin_config` page with more detailed information.
 
-* Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`cloning_the_repositories_win` section.
+* Fixed an issue on the :ref:`install_ncs` page where an incorrect directory path was provided for Linux and macOS at the end of the :ref:`command-line installation <command_line_installation>` section.

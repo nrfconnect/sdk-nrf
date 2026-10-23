@@ -28,7 +28,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.3.2**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 
 Supported modem firmware

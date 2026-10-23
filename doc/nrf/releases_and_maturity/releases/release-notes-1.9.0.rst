@@ -36,7 +36,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.9.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions`_.
 
@@ -855,8 +855,8 @@ In addition to documentation related to the changes listed above, the following 
 
 * Added:
 
-  * :ref:`ug_thingy91_gsg` guide moved to |NCS| documentation from infocenter. Reworked and renamed the Working with Thingy:91 user guide to :ref:`ug_thingy91`.
-  * :ref:`ug_nrf9160_gs` guide moved to |NCS| documentation from infocenter. Renamed the Working with nRF9160 DK user guide to :ref:`ug_nrf9160` and removed the redundant modem firmware section from the user guide.
+  * :ref:`Getting started with Thingy:91 <gsg_guides>` guide moved to |NCS| documentation from infocenter. Reworked and renamed the Working with Thingy:91 user guide to :ref:`ug_thingy91`.
+  * :ref:`Getting started with nRF9160 DK <gsg_guides>` guide moved to |NCS| documentation from infocenter. Renamed the Working with nRF9160 DK user guide to :ref:`ug_nrf9160` and removed the redundant modem firmware section from the user guide.
 
 * Updated:
 
