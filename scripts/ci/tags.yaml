@@ -1406,7 +1406,12 @@ ci_tests_drivers_watchdog:
 
 ci_tests_drivers_audio:
   files:
+    - nrf/doc/nrf/drivers/other_drivers/tac5112.rst
+    - nrf/drivers/audio/
+    - nrf/dts/bindings/audio/ti,tac5112.yaml
+    - nrf/include/drivers/tac5112.h
     - nrf/tests/drivers/audio/pdm_loopback/
+    - nrf/tests/drivers/audio/tac5112/
     - zephyr/drivers/audio/
 
 ci_tests_drivers_fprotect:
