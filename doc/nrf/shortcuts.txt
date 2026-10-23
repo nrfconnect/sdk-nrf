@@ -186,8 +186,6 @@
 
 .. |gnss_tradeoffs| replace:: For more information on the various trade-offs of using A-GNSS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
 
-.. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
-
 .. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth Mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
 
 .. |nrf_audio_external_devices_note| replace:: Nordic Semiconductor seeks to provide seamless interoperability with as many LE Audio devices as possible.

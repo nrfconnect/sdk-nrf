@@ -512,6 +512,10 @@ Bluetooth samples
 
   * Updated the sample to use the :ref:`lib_dfu_target` library with the new Bluetooth LE transport to update a remote device over SMP.
 
+* :ref:`peripheral_lbs`, :ref:`peripheral_status`, and :ref:`peripheral_uart` samples:
+
+  * Removed support for the ``thingy53/nrf5340/cpuapp`` and ``thingy53/nrf5340/cpuapp/ns`` board targets.
+
 Bluetooth Mesh samples
 ----------------------
 
@@ -1473,7 +1477,7 @@ Documentation
   * The :ref:`install_ncs` page by adding a button for installing the |nRFVSC| with the latest stable release of the |NCS|.
     This has also simplified the structure of the page.
   * The :ref:`ug_wifi` documentation to make it agnostic to Nordic Semiconductor Wi-Fi devices by moving nRF70 Series specific pages, including Wi-Fi stack configuration and performance, Debugging, and Wi-Fi certification, under :ref:`ug_nrf70`.
-  * The :ref:`thingy53_app_guide` page by removing the Bluetooth Mesh samples from the list of samples that enable FOTA for Thingy:53 by default.
+  * The :ref:`thingy53_app_guide` page by removing the section about samples and applications that enable FOTA for Thingy:53 by default.
   * The :ref:`dfu_over_ble` page by removing the section about out-of-the-box point-to-point DFU over Bluetooth Low Energy on Thingy:53.
   * The :ref:`ug_bt_mesh_configuring` page by removing Thingy:53 as an example of a board with the Bluetooth LE Controller on a separate image.
   * The :ref:`ug_nrf54h20_ironside_se_snapshot` page by adding a note about the snapshot services limitations.

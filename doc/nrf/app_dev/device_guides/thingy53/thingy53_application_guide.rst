@@ -114,15 +114,3 @@ External flash
 
 During a FOTA update, there might not be enough space available in internal flash storage to store the existing application and network core images as well as the incoming images, so the incoming images must be stored in external flash storage.
 The Thingy:53 board automatically configures external flash storage and QSPI driver when FOTA updates are implied with the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option.
-
-.. _thingy53_compatible_applications:
-
-Samples and applications for Thingy:53 with FOTA out of the box
-***************************************************************
-
-The following samples in the |NCS| enable FOTA for Thingy:53 by default:
-
-* Samples:
-
-  * :ref:`peripheral_lbs`
-  * :ref:`peripheral_uart`
