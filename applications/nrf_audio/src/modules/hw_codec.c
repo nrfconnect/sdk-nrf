@@ -23,12 +23,12 @@
 #include "cs47l63_comm.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
+LOG_MODULE_REGISTER(hw_codec, CONFIG_NRF_AUDIO_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
 #define BASE_10		      10
 
-ZBUS_SUBSCRIBER_DEFINE(volume_evt_sub, CONFIG_VOLUME_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(volume_evt_sub, CONFIG_NRF_AUDIO_VOLUME_MSG_SUB_QUEUE_SIZE);
 
 static uint32_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
 
@@ -37,7 +37,7 @@ static cs47l63_t cs47l63_driver;
 static k_tid_t volume_msg_sub_thread_id;
 static struct k_thread volume_msg_sub_thread_data;
 
-K_THREAD_STACK_DEFINE(volume_msg_sub_thread_stack, CONFIG_VOLUME_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(volume_msg_sub_thread_stack, CONFIG_NRF_AUDIO_VOLUME_MSG_SUB_STACK_SIZE);
 
 /**
  * @brief	Convert the zbus volume to the actual volume setting for the HW codec.
@@ -311,8 +311,8 @@ int hw_codec_default_conf_enable(void)
 		return ret;
 	}
 
-#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S))
-	if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+#if ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && (CONFIG_NRF_AUDIO_SOURCE_I2S))
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO)) {
 		ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
 						  ARRAY_SIZE(pdm_mic_enable_configure));
 		if (ret) {
@@ -324,15 +324,15 @@ int hw_codec_default_conf_enable(void)
 			return ret;
 		}
 	}
-#endif /* ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S)) */
+#endif /* ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && (CONFIG_NRF_AUDIO_SOURCE_I2S)) */
 
-#if ((CONFIG_AUDIO_DEV == HEADSET) && CONFIG_STREAM_BIDIRECTIONAL)
+#if ((CONFIG_NRF_AUDIO_DEV == HEADSET) && CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL)
 	ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
 					  ARRAY_SIZE(pdm_mic_enable_configure));
 	if (ret) {
 		return ret;
 	}
-#endif /* ((CONFIG_AUDIO_DEV == HEADSET) && CONFIG_STREAM_BIDIRECTIONAL) */
+#endif /* ((CONFIG_NRF_AUDIO_DEV == HEADSET) && CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) */
 
 	/* Toggle FLL to start up CS47L63 */
 	ret = cs47l63_comm_reg_conf_write(FLL_toggle, ARRAY_SIZE(FLL_toggle));
@@ -378,8 +378,9 @@ int hw_codec_init(void)
 
 	volume_msg_sub_thread_id = k_thread_create(
 		&volume_msg_sub_thread_data, volume_msg_sub_thread_stack,
-		CONFIG_VOLUME_MSG_SUB_STACK_SIZE, (k_thread_entry_t)volume_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_VOLUME_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_VOLUME_MSG_SUB_STACK_SIZE, (k_thread_entry_t)volume_msg_sub_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_VOLUME_MSG_SUB_THREAD_PRIO), 0,
+		K_NO_WAIT);
 	ret = k_thread_name_set(volume_msg_sub_thread_id, "Msg_sub_vol");
 	ERR_CHK(ret);
 
@@ -402,12 +403,13 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 		return -EINVAL;
 	}
 
-	if ((CONFIG_AUDIO_DEV == GATEWAY) && IS_ENABLED(CONFIG_AUDIO_SOURCE_USB)) {
+	if ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && IS_ENABLED(CONFIG_NRF_AUDIO_SOURCE_USB)) {
 		shell_error(shell, "Can't select PDM mic if audio source is USB");
 		return -EINVAL;
 	}
 
-	if ((CONFIG_AUDIO_DEV == HEADSET) && !IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+	if ((CONFIG_NRF_AUDIO_DEV == HEADSET) &&
+	    !IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL)) {
 		shell_error(shell, "Can't select input if headset is not in bidirectional stream");
 		return -EINVAL;
 	}
@@ -421,7 +423,7 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 
 	switch (idx) {
 	case LINE_IN: {
-		if (CONFIG_AUDIO_DEV == HEADSET) {
+		if (CONFIG_NRF_AUDIO_DEV == HEADSET) {
 			ret = cs47l63_comm_reg_conf_write(line_in_enable,
 							  ARRAY_SIZE(line_in_enable));
 			if (ret) {
@@ -446,7 +448,7 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 		break;
 	}
 	case PDM_MIC: {
-		if (CONFIG_AUDIO_DEV == GATEWAY) {
+		if (CONFIG_NRF_AUDIO_DEV == GATEWAY) {
 			ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
 							  ARRAY_SIZE(pdm_mic_enable_configure));
 			if (ret) {

@@ -18,7 +18,7 @@
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(server_store, CONFIG_SERVER_STORE_LOG_LEVEL);
+LOG_MODULE_REGISTER(server_store, CONFIG_NRF_AUDIO_SERVER_STORE_LOG_LEVEL);
 
 static struct bt_bap_lc3_preset lc3_preset_48_4_1 = BT_BAP_LC3_UNICAST_PRESET_48_4_1(
 	BT_AUDIO_LOCATION_ANY, (BT_AUDIO_CONTEXT_TYPE_UNSPECIFIED));
@@ -211,24 +211,28 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 		}
 
 		if (lc3_min_frame_length >
-			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us) ||
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX,
+						     frame_dur_us) ||
 		    lc3_max_frame_length <
-			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us)) {
+			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN,
+						     frame_dur_us)) {
 			LOG_WRN("LC3 frame length %d - %d not in range [%d, %d], not possible to "
 				"find a preset that meets these capabilities",
 				lc3_min_frame_length, lc3_max_frame_length,
-				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us),
-				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us));
+				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN,
+							 frame_dur_us),
+				LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX,
+							 frame_dur_us));
 			memset(preset, 0, sizeof(struct bt_bap_lc3_preset));
 			return false;
 		}
 
-		lc3_min_frame_length =
-			MAX(lc3_min_frame_length,
-			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, frame_dur_us));
-		lc3_max_frame_length =
-			MIN(lc3_max_frame_length,
-			    LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, frame_dur_us));
+		lc3_min_frame_length = MAX(
+			lc3_min_frame_length,
+			LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN, frame_dur_us));
+		lc3_max_frame_length = MIN(
+			lc3_max_frame_length,
+			LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX, frame_dur_us));
 
 		int preset_octets_per_frame = 0;
 
@@ -268,7 +272,7 @@ static bool sink_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
-	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
+	return pac_parse(data, preset, CONFIG_NRF_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE);
 }
 
 /* Parse published audio capabilities (PAC) for source direction (server->client)/(headset->gateway)
@@ -277,7 +281,7 @@ static bool source_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
-	return pac_parse(data, preset, CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
+	return pac_parse(data, preset, CONFIG_NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE);
 }
 
 static void set_color_if_supported(char *str, uint16_t bitfield, uint16_t mask)
@@ -918,7 +922,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Sink PAC %d:", i);
 				ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
 							  server->snk.codec_caps[i].data_len,
@@ -946,7 +950,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 			if (srv_store_preset_validated(
 				    &(preset.codec_cfg), &(server->snk.lc3_preset[0].codec_cfg),
-				    CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE)) {
+				    CONFIG_NRF_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE)) {
 				memcpy(&server->snk.lc3_preset[0], &preset,
 				       sizeof(struct bt_bap_lc3_preset));
 			}
@@ -957,7 +961,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
-			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Source PAC %d:", i);
 				ret = bt_audio_data_parse(server->src.codec_caps[i].data,
 							  server->src.codec_caps[i].data_len,
@@ -986,7 +990,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 
 			if (srv_store_preset_validated(
 				    &(preset.codec_cfg), &(server->src.lc3_preset[0].codec_cfg),
-				    CONFIG_BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE)) {
+				    CONFIG_NRF_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE)) {
 				memcpy(&server->src.lc3_preset[0], &preset,
 				       sizeof(struct bt_bap_lc3_preset));
 			}
@@ -1214,7 +1218,7 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
 		/* num_codec_caps is an increasing index that starts at 0 */
 		if (server->snk.num_codec_caps >= ARRAY_SIZE(server->snk.codec_caps)) {
 			LOG_WRN("No more space (%d) for sink codec capabilities, increase "
-				"CONFIG_CODEC_CAP_COUNT_MAX(%d)",
+				"CONFIG_NRF_AUDIO_CODEC_CAP_COUNT_MAX(%d)",
 				server->snk.num_codec_caps, ARRAY_SIZE(server->snk.codec_caps));
 			return -ENOMEM;
 		}
@@ -1226,7 +1230,7 @@ int srv_store_codec_cap_set(struct bt_conn const *const conn, enum bt_audio_dir 
 		/* num_codec_caps is an increasing index that starts at 0 */
 		if (server->src.num_codec_caps >= ARRAY_SIZE(server->src.codec_caps)) {
 			LOG_WRN("No more space for source codec capabilities, increase "
-				"CONFIG_CODEC_CAP_COUNT_MAX");
+				"CONFIG_NRF_AUDIO_CODEC_CAP_COUNT_MAX");
 			return -ENOMEM;
 		}
 

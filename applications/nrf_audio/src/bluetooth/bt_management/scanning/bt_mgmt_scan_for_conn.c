@@ -19,10 +19,13 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(bt_mgmt_scan);
 
-#define BT_ADDR_LE_STR CONFIG_CONNECT_TO_BT_ADDR_LE_STR /* Replace with desired address */
+#define BT_ADDR_LE_STR                                                                             \
+	CONFIG_NRF_AUDIO_CONNECT_TO_BT_ADDR_LE_STR /* Replace with desired address                 \
+						    */
 #define CONNECTION_PARAMETERS                                                                      \
-	BT_LE_CONN_PARAM(CONFIG_BLE_ACL_CONN_INTERVAL, CONFIG_BLE_ACL_CONN_INTERVAL,               \
-			 CONFIG_BLE_ACL_SLAVE_LATENCY, CONFIG_BLE_ACL_SUP_TIMEOUT)
+	BT_LE_CONN_PARAM(                                                                          \
+		CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL, CONFIG_NRF_AUDIO_BLE_ACL_CONN_INTERVAL,    \
+		CONFIG_NRF_AUDIO_BLE_ACL_SLAVE_LATENCY, CONFIG_NRF_AUDIO_BLE_ACL_SUP_TIMEOUT)
 
 static uint8_t bonded_num;
 static struct bt_le_scan_cb scan_callback;
@@ -335,7 +338,7 @@ static void scan_recv_cb(const struct bt_le_scan_recv_info *info, struct net_buf
 		/* Note: May lead to connection creation */
 		if (bonded_num < CONFIG_BT_MAX_PAIRED) {
 			if (server_sirk == NULL) {
-				if (IS_ENABLED(CONFIG_BT_MGMT_CONNECT_BY_ADDR)) {
+				if (IS_ENABLED(CONFIG_NRF_AUDIO_MGMT_CONNECT_BY_ADDR)) {
 					bt_data_parse(ad, addr_check, (void *)info->addr);
 				} else {
 					bt_data_parse(ad, device_name_check, (void *)info->addr);

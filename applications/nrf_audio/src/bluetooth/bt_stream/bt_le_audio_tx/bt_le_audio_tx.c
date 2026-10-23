@@ -17,7 +17,7 @@
 #include "current_time.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_BT_LE_AUDIO_TX_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_le_audio_tx, CONFIG_NRF_AUDIO_TX_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(sdu_ref_chan, struct sdu_ref_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -608,9 +608,9 @@ int bt_le_audio_tx_send(struct bt_le_audio_tx_ctx *ctx, struct net_buf const *co
 			return -EINVAL;
 		}
 
-		if (!IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+		if (!IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS)) {
 			LOG_ERR("Num locations (%u) sent to all streams (%u)."
-				"CONFIG_MONO_TO_ALL_RECEIVERS must be enabled",
+				"CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS must be enabled",
 				num_loc, num_tx);
 			return -EINVAL;
 		}

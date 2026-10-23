@@ -14,7 +14,7 @@
 #include <../subsys/bluetooth/audio/cap_internal.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
+LOG_MODULE_REGISTER(le_audio, CONFIG_NRF_AUDIO_BLE_LOG_LEVEL);
 
 int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_stream *stream,
 			       const struct bt_iso_recv_info *info,
@@ -258,10 +258,11 @@ bool le_audio_bitrate_check(const struct bt_audio_codec_cfg *codec)
 		return false;
 	}
 
-	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, dur_us)) {
+	if (octets_per_sdu < LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN, dur_us)) {
 		LOG_WRN("Bitrate too low");
 		return false;
-	} else if (octets_per_sdu > LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, dur_us)) {
+	} else if (octets_per_sdu >
+		   LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX, dur_us)) {
 		LOG_WRN("Bitrate too high");
 		return false;
 	}

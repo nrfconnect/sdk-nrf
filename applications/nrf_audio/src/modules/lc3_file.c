@@ -8,7 +8,7 @@
 #include "sd_card.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sd_card_lc3_file, CONFIG_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL);
+LOG_MODULE_REGISTER(sd_card_lc3_file, CONFIG_NRF_AUDIO_MODULE_SD_CARD_LC3_FILE_LOG_LEVEL);
 
 #define LC3_FILE_ID 0xCC1C
 

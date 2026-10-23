@@ -8,7 +8,7 @@
 #include "uicr.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(location, CONFIG_DEVICE_LOCATION_LOG_LEVEL);
+LOG_MODULE_REGISTER(location, CONFIG_NRF_AUDIO_DEVICE_LOCATION_LOG_LEVEL);
 
 static uint32_t static_location;
 
@@ -17,7 +17,7 @@ void device_location_get(enum bt_audio_location *location)
 	*location = (enum bt_audio_location)static_location;
 }
 
-#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
+#if CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME
 void device_location_set(enum bt_audio_location location)
 {
 	int ret;
@@ -30,11 +30,11 @@ void device_location_set(enum bt_audio_location location)
 		LOG_WRN("Unable to write location to UICR: %d. Will revert on boot", ret);
 	}
 }
-#endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */
+#endif /* CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME */
 
 static int device_location_init(void)
 {
-#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
+#if CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME
 	static_location = uicr_location_get();
 
 	if (static_location >= BT_AUDIO_LOCATION_RIGHT_SURROUND) {
@@ -43,8 +43,8 @@ static int device_location_init(void)
 		static_location = DEVICE_LOCATION_DEFAULT;
 	}
 #else
-	static_location = CONFIG_DEVICE_LOCATION_AT_COMPILE_TIME;
-#endif /* CONFIG_DEVICE_LOCATION_SET_RUNTIME */
+	static_location = CONFIG_NRF_AUDIO_DEVICE_LOCATION_AT_COMPILE_TIME;
+#endif /* CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME */
 
 	LOG_DBG("Location bitfield is 0x%08x", static_location);
 	return 0;

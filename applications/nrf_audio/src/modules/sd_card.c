@@ -24,7 +24,7 @@
 #include <string.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sd_card, CONFIG_MODULE_SD_CARD_LOG_LEVEL);
+LOG_MODULE_REGISTER(sd_card, CONFIG_NRF_AUDIO_MODULE_SD_CARD_LOG_LEVEL);
 
 #define SD_CARD_LEVELS_MAX 8
 #define SD_CARD_BUF_SIZE   700

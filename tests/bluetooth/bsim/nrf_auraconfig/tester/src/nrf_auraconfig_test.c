@@ -20,7 +20,7 @@
 #include <bstests.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
 #define SEM_TIMEOUT K_SECONDS(60)
 

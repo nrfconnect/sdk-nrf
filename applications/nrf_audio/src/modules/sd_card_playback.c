@@ -18,11 +18,11 @@
 #include "audio_system.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(sd_card_playback, CONFIG_MODULE_SD_CARD_PLAYBACK_LOG_LEVEL);
+LOG_MODULE_REGISTER(sd_card_playback, CONFIG_NRF_AUDIO_MODULE_SD_CARD_PLAYBACK_LOG_LEVEL);
 
 #define MAX_PATH_LEN	    (CONFIG_FS_FATFS_MAX_LFN)
 #define LIST_FILES_BUF_SIZE 512
-#define FRAME_DURATION_MS   (CONFIG_AUDIO_FRAME_DURATION_US / 1000)
+#define FRAME_DURATION_MS   (CONFIG_NRF_AUDIO_FRAME_DURATION_US / 1000)
 
 #define WAV_FORMAT_PCM	    1
 #define WAV_SAMPLE_RATE_48K 48000
@@ -72,11 +72,11 @@ enum audio_formats {
 	SD_CARD_PLAYBACK_LC3,
 };
 
-RING_BUF_DECLARE(m_ringbuf_audio_data_lc3, CONFIG_SD_CARD_PLAYBACK_RING_BUF_SIZE);
+RING_BUF_DECLARE(m_ringbuf_audio_data_lc3, CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_RING_BUF_SIZE);
 K_SEM_DEFINE(m_sem_ringbuf_space_available, 0, 1);
 K_MUTEX_DEFINE(mtx_ringbuf);
 K_SEM_DEFINE(m_sem_playback, 0, 1);
-K_THREAD_STACK_DEFINE(sd_card_playback_thread_stack, CONFIG_SD_CARD_PLAYBACK_STACK_SIZE);
+K_THREAD_STACK_DEFINE(sd_card_playback_thread_stack, CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_STACK_SIZE);
 
 /* Thread */
 static struct k_thread sd_card_playback_thread_data;
@@ -179,7 +179,7 @@ static int sd_card_playback_check_wav_header(struct wav_header wav_file_header)
 		return -EPERM;
 	}
 
-	if (wav_file_header.bit_depth != CONFIG_AUDIO_BIT_DEPTH_BITS) {
+	if (wav_file_header.bit_depth != CONFIG_NRF_AUDIO_BIT_DEPTH_BITS) {
 		LOG_ERR("Bit depth in WAV file is not 16, but %d", wav_file_header.bit_depth);
 		return -EPERM;
 	}
@@ -471,8 +471,9 @@ int sd_card_playback_init(void)
 
 	sd_card_playback_thread_id = k_thread_create(
 		&sd_card_playback_thread_data, sd_card_playback_thread_stack,
-		CONFIG_SD_CARD_PLAYBACK_STACK_SIZE, (k_thread_entry_t)sd_card_playback_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_SD_CARD_PLAYBACK_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_STACK_SIZE,
+		(k_thread_entry_t)sd_card_playback_thread, NULL, NULL, NULL,
+		K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(sd_card_playback_thread_id, "sd_card_playback");
 	if (ret) {
 		return ret;

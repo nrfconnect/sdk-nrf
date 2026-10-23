@@ -2692,7 +2692,7 @@ OCT-3560: The audio application might be resource intensive, using significant a
   This is a known limitation.
 
   **Workaround:** Encode or decode at lower sample rates.
-  Set the :kconfig:option:`CONFIG_AUDIO_SOURCE_I2S` to ``y`` to use I2S instead of USB.
+  Set the :kconfig:option:`CONFIG_NRF_AUDIO_SOURCE_I2S` to ``y`` to use I2S instead of USB.
 
 .. rst-class:: v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-0-nRF54H20-1 v2-9-3 v2-9-2 v2-9-1 v2-9-0 v2-8-0 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0
 
@@ -2708,7 +2708,7 @@ OCT-3265: Test with nRF5340 DK as sink will cause the I2S to interfere with othe
 
 .. rst-class:: v3-1-1 v3-1-0
 
-OCT-3432: Selecting 32 bit (``CONFIG_AUDIO_BIT_DEPTH_32`` = ``y``) as the I2S input on gateway might cause choppy audio
+OCT-3432: Selecting 32 bit (``CONFIG_NRF_AUDIO_BIT_DEPTH_32`` = ``y``) as the I2S input on gateway might cause choppy audio
   Using 32-bit I2S input requires significantly more buffer handling and CPU time.
   Depending on the configuration, this might overload the system and cause I2S RX overruns.
 
@@ -2792,7 +2792,7 @@ OCT-2470: Discovery of Media Control Service fails
 .. rst-class:: v2-3-0
 
 OCT-2472: Headset fault upon gateway reset in the bidirectional stream mode
-  The headset might react with a usage fault when the :kconfig:option:`CONFIG_STREAM_BIDIRECTIONAL` application Kconfig option is set to ``y`` and the gateway is reset during a stream.
+  The headset might react with a usage fault when the :kconfig:option:`CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL` application Kconfig option is set to ``y`` and the gateway is reset during a stream.
   This issue is under investigation.
 
   **Affected platforms:** nRF5340 Audio DK

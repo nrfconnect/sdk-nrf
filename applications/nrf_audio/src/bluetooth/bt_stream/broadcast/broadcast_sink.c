@@ -24,7 +24,7 @@
 #include "audio_defines.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_sink, CONFIG_BROADCAST_SINK_LOG_LEVEL);
+LOG_MODULE_REGISTER(broadcast_sink, CONFIG_NRF_AUDIO_BROADCAST_SINK_LOG_LEVEL);
 
 BUILD_ASSERT(CONFIG_BT_BAP_BROADCAST_SNK_STREAM_COUNT <= 2,
 	     "A maximum of two broadcast streams are currently supported");
@@ -69,8 +69,9 @@ static struct bt_audio_codec_cap codec_cap = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
-	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, BT_AUDIO_CONTEXT_TYPE_ANY);
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MIN, 10000),
+	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_NRF_AUDIO_LC3_BITRATE_MAX, 10000), 1u,
+	BT_AUDIO_CONTEXT_TYPE_ANY);
 
 static struct bt_pacs_cap capabilities = {
 	.codec_cap = &codec_cap,
@@ -337,7 +338,7 @@ static bool bis_per_subgroup_parse(const struct bt_bap_base_subgroup_bis *bis, v
 		return true;
 	}
 
-	if (POPCOUNT(bis_index_bitfield) >= CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX) {
+	if (POPCOUNT(bis_index_bitfield) >= CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX) {
 		LOG_DBG("Maximum number of BISes reached, ignoring BIS index %d", bis->index);
 		return true;
 	}
@@ -636,7 +637,7 @@ static void base_recv_cb(struct bt_bap_broadcast_sink *sink, const struct bt_bap
 		}
 		le_audio_event_publish(LE_AUDIO_EVT_CONFIG_RECEIVED);
 
-		if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_BASE_PRINT)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_BROADCAST_BASE_PRINT)) {
 			base_print(sink, base);
 		}
 
@@ -673,9 +674,9 @@ static void syncable_cb(struct bt_bap_broadcast_sink *sink, const struct bt_iso_
 	/* NOTE: The string below is used by the Nordic CI system */
 	LOG_INF("Syncing to broadcast stream index 0x%04x (bitfield)", bis_index_bitfield);
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
-		memcpy(bis_encryption_key, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(strlen(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTED)) {
+		memcpy(bis_encryption_key, CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(strlen(CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTION_KEY),
 			   ARRAY_SIZE(bis_encryption_key)));
 	} else {
 		/* If the biginfo shows the stream is encrypted, then wait until broadcast code is
@@ -1007,17 +1008,17 @@ int broadcast_sink_enable(le_audio_receive_cb recv_cb)
 		return ret;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_SCAN_DELEGATOR)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SCAN_DELEGATOR)) {
 		if (IS_ENABLED(CONFIG_BT_CSIP_SET_MEMBER_TEST_SAMPLE_DATA)) {
 			LOG_WRN("CSIP test sample data is used, must be changed "
 				"before production");
 		} else {
-			if (strcmp(CONFIG_BT_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
-				   CONFIG_BT_SET_IDENTITY_RESOLVING_KEY) == 0) {
+			if (strcmp(CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY_DEFAULT,
+				   CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY) == 0) {
 				LOG_WRN("CSIP using the default SIRK, must be changed "
 					"before production");
 			}
-			memcpy(csip_param.sirk, CONFIG_BT_SET_IDENTITY_RESOLVING_KEY,
+			memcpy(csip_param.sirk, CONFIG_NRF_AUDIO_SET_IDENTITY_RESOLVING_KEY,
 			       BT_CSIP_SIRK_SIZE);
 		}
 
