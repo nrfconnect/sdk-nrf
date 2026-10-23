@@ -3,15 +3,13 @@
 .. ncs-sample::
    :title: AWS IoT
 
-   The Amazon Web Services Internet-of-Things (AWS IoT) sample demonstrates how to connect an nRF91 Series, nRF70 Series, or nRF54LM20 with nRF7002 EB2 device to the `AWS IoT Core`_ service over MQTT to publish and receive messages.
-   This sample showcases the use of the :ref:`lib_aws_iot` library, which includes support for FOTA using the :ref:`lib_aws_fota` library.
+   The AWS IoT sample demonstrates how to connect to the `AWS IoT Core`_ service over MQTT to publish and receive messages.
+   The sample connects either to an LTE network using an nRF91 Series device, or to Wi-Fi® using an nRF71 Series or nRF70 Series device combined with a compatible host platform.
+   It uses the :ref:`lib_aws_iot` library, which includes support for firmware over-the-air (FOTA) update using the :ref:`lib_aws_fota` library.
 
-   .. |wifi| replace:: Wi-Fi®
+   .. |wifi| replace:: Wi-Fi
 
    .. include:: /includes/net_connection_manager.txt
-
-   Before this sample can be used, an AWS IoT server instance needs to be setup in order for the device to connect to it.
-   Refer to :ref:`aws_iot_sample_server_setup` to complete the necessary steps.
 
 Requirements
 ************
@@ -28,7 +26,7 @@ Overview
 ********
 
 The sample publishes messages in the `JSON`_ string format to the `AWS IoT Device Shadow Service`_, addressed to the `AWS IoT Device Shadow Topic <AWS IoT Device Shadow Topics_>`_: ``$aws/things/<thingname>/shadow/update``.
-Messages are published once at an interval set by the :ref:`CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS` Kconfig option.
+Messages are published once at an interval set by the :option:`CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS` Kconfig option.
 The message has the following structure:
 
 .. parsed-literal::
@@ -70,89 +68,85 @@ In addition to publishing data to the AWS IoT shadow, the sample also subscribes
 The application-specific topics are not part of the AWS IoT shadow service and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_application_topics_set` function before connecting.
 How to add application-specific topics is documented in the :ref:`AWS IoT library usage <aws_iot_usage>` section.
 
-Configuration
-*************
+FOTA
+====
 
-|config|
+The sample supports FOTA updates using the :ref:`lib_aws_fota` library.
+The sample supports FOTA on nRF91 Series devices, the nRF7120 DK, and the nRF7002 DK.
+The sample does not support FOTA on other nRF71 Series and nRF70 Series configurations.
+The board configuration files enable it.
+
+To download the firmware over HTTPS, you must set the :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` Kconfig option to a security tag that contains the CA certificate of the firmware host.
+In this sample, the nRF7120 DK and nRF7002 DK board configuration files set the option to ``201``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, because the CA certificate provisioned for the MQTT connection also validates Amazon S3.
+If you change :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, you must also change :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` or provision the CA certificate under the FOTA security tag.
+For more information, see the :ref:`Requirements <aws_fota_requirements>` section of the :ref:`lib_aws_fota` library.
+
+On the nRF7002 DK, the primary and secondary MCUboot slots do not both fit into the internal flash.
+Therefore, the :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` file moves ``slot1_partition`` to the external flash.
 
 .. _aws_iot_sample_server_setup:
 
-Setup
-=====
+Setting up AWS IoT
+==================
 
-To run this sample and connect to AWS IoT, complete the steps described in the :ref:`aws_setup_and_configuration` section of the AWS IoT library documentation.
-This is to obtain the AWS IoT broker *hostname* and the *client ID* of the device and provision a device certificate to a *security tag*.
+Before you can use this sample, you must set up an AWS IoT server instance for the device to connect to.
+Complete the steps described in the :ref:`aws_setup_and_configuration` section of the AWS IoT library documentation.
+This gives you the AWS IoT broker *hostname* and the *client ID* of the device, and provisions a device certificate to a *security tag*.
 
-The corresponding options that must be set for each of these values are:
+Set the following options in the project configuration file :file:`samples/net/aws_iot/prj.conf`:
 
 * :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_STATIC`
 
-Set these options in the project configuration file located at :file:`samples/net/aws_iot/prj.conf`.
-For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
+For information about FOTA, see the `FOTA`_ section.
 
 .. note::
-   For nRF70 Series devices, certificates must be provisioned at runtime.
-   This is achieved by pasting the PEM content into the respective files in the :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
+   On nRF91 Series devices, you can provision certificates only while the modem is not connected to the network.
+   On nRF71 Series and nRF70 Series devices, certificates are provisioned at runtime.
+   To provision them, paste the PEM content into the files in the :file:`certs/` subdirectory and enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
+
+Configuration
+*************
+
+|config|
 
 Configuration options
 =====================
 
-Check and configure the following Kconfig options:
+The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/aws_iot/Kconfig`):
 
-General options
----------------
-
-The following lists the application-specific configurations used in the sample.
-They are located in :file:`samples/net/aws_iot/Kconfig`.
-
-.. _CONFIG_AWS_IOT_SAMPLE_APP_VERSION:
-
-CONFIG_AWS_IOT_SAMPLE_APP_VERSION
-   This configuration option sets the application version number.
-
-.. _CONFIG_AWS_IOT_SAMPLE_JSON_MESSAGE_SIZE_MAX:
-
-CONFIG_AWS_IOT_SAMPLE_JSON_MESSAGE_SIZE_MAX
-   This configuration option sets the maximum size of JSON messages that are sent to AWS IoT.
-
-.. _CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS:
-
-CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS
-   This configuration option configures the time interval between each message publication.
-
-.. _CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS:
-
-CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
-   This configuration option configures the number of seconds between each AWS IoT connection retry.
-   If the connection is lost, the sample attempts to reconnect at the frequency set by this option.
-
-.. _CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID:
-
-CONFIG_AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
-   This configuration option configures the sample to use the HW ID (IMEI, MAC) as the device ID in the MQTT connection.
+.. options-from-kconfig::
+   :show-type:
 
 .. include:: /includes/wifi_credentials_shell.txt
 
 .. include:: /includes/wifi_credentials_static.txt
 
+.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
+   :start-after: modem_lib_sending_traces_UART_start
+   :end-before: modem_lib_sending_traces_UART_end
+
 Configuration files
 ===================
 
-The sample includes pre-configured configuration files for the development kits that are supported:
+The sample provides predefined configuration files for the following development kits:
 
 * :file:`prj.conf` - General configuration file for all devices.
-* :file:`wifi.conf` - Common Wi-Fi and networking configuration shared by all Wi-Fi builds.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
 * :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
 * :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator board.
+* :file:`boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
+* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20A SoC) with the nRF7002-EB II.
+* :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC) with the nRF7002-EB II.
+* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+  Must be added explicitly for Wi-Fi builds.
 
-The following configuration and DTS overlay files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
+The following DTS overlay and configuration files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
 * :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
@@ -162,12 +156,27 @@ The following DTS overlay file is included to increase the non-secure RAM partit
 
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.overlay` - DTS overlay file for the nRF7120 DK.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
-Files that are located under the :file:`/sysbuild/mcuboot` folder are used to configure the MCUboot image.
+Board files under the :file:`boards/` folder are merged automatically for the selected target.
+Files under the :file:`sysbuild/mcuboot/` folder configure the MCUboot image.
+The :file:`wifi.conf` file is not board-specific and must be passed with ``aws_iot_EXTRA_CONF_FILE``.
 
-.. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
-   :start-after: modem_lib_sending_traces_UART_start
-   :end-before: modem_lib_sending_traces_UART_end
+To add a specific extra configuration file to the build, add the ``-- -Daws_iot_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
+
+Wi-Fi
+-----
+
+The default configuration does not include networking.
+Add it for the nRF71 Series and nRF70 Series devices with the :file:`wifi.conf` file:
+
+.. code-block:: console
+
+   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -Daws_iot_EXTRA_CONF_FILE="wifi.conf"
+
+To build for the nRF54LM20 DK with the nRF7002-EB II, also set the shield and the snippets:
+
+.. code-block:: console
+
+   west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp -- -Daws_iot_SHIELD="nrf7002eb2" -Daws_iot_SNIPPET="nrf70-wifi;wifi-credentials" -Daws_iot_EXTRA_CONF_FILE="wifi.conf"
 
 .. _aws_iot_sample_building_and_running:
 
@@ -178,6 +187,14 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
+To build and run the sample on the :zephyr:board:`native simulator <native_sim>`, first complete the steps in :ref:`networking_with_native_sim`.
+Then use the following commands:
+
+.. code-block:: console
+
+   west build -b native_sim -d build samples/net/aws_iot
+   ./build/aws_iot/zephyr/zephyr.exe
+
 Testing
 =======
 
@@ -185,16 +202,16 @@ Testing
 
 1. |connect_kit|
 #. |connect_terminal|
-#. Reset your board.
-#. Observe that the board connects to the network and the AWS IoT broker.
-   After the connection has been established, the device starts to publish messages to the AWS IoT shadow service.
-   The frequency of the messages that are published to the broker can be set by :ref:`CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS <CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS>`.
+#. Power on or reset the kit.
+#. Observe that the kit connects to the network and the AWS IoT broker.
+   After the connection is established, the device starts to publish messages to the AWS IoT shadow service.
+   The interval between messages is set by the :option:`CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS` Kconfig option.
 
 Sample output
 =============
 
-The following serial UART output is displayed in the terminal emulator when running the sample.
-The *modem_version* parameter in messages published to AWS IoT will not be present for Wi-Fi builds.
+The following output is displayed in the terminal emulator when running the sample.
+The *modem_version* parameter in messages published to AWS IoT is not present for Wi-Fi builds.
 
 .. code-block:: console
 
@@ -215,26 +232,17 @@ The *modem_version* parameter in messages published to AWS IoT will not be prese
 
 To observe incoming messages in the AWS IoT console, follow the steps documented in :ref:`aws_iot_testing_and_debugging`.
 
-Emulation
-=========
-
-The sample can run on the :zephyr:board:`native simulator <native_sim>`, which simplifies development and testing and removes the need for hardware.
-Before you build and run on the ``native_sim`` board, you need to perform the steps documented in :ref:`networking_with_native_sim`.
-
-When these steps are completed, you can build and run the sample by using the following commands:
-
-.. code-block:: console
-
-   west build -b native_sim samples/net/mqtt
-   ./samples/net/mqtt/build/zephyr/zephyr.exe
-
 Troubleshooting
 ===============
 
+If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
+This sample enables modem traces by default.
+
+If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic to debug connectivity issues.
+Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
+
 To enable more verbose logging from the AWS IoT library, enable the :kconfig:option:`CONFIG_AWS_IOT_LOG_LEVEL_DBG` option.
 
-* If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces in order to debug network traffic in Wireshark.
-  The sample enables modem traces by default.
 * If you have issues with the sample, refer to :ref:`testing`.
 * For issues related to connection towards AWS IoT, refer to :ref:`AWS IoT library troubleshooting <aws_iot_troubleshooting>`.
 * If the connection to the server times out with error -116 (``ETIMEDOUT``), increase the :kconfig:option:`CONFIG_NET_SOCKETS_CONNECT_TIMEOUT` value.
@@ -245,7 +253,12 @@ Dependencies
 
 This sample uses the following |NCS| and Zephyr libraries:
 
-* :ref:`net_if_interface`
 * :ref:`lib_aws_iot`
-* :ref:`net_mgmt_interface`
 * :ref:`lib_hw_id`
+* :ref:`net_if_interface`
+* :ref:`net_mgmt_interface`
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`
+* :ref:`modem_key_mgmt`
+* :ref:`lte_lc_readme`
+* :ref:`nrfxlib:nrf_modem`
+* :ref:`Trusted Firmware-M <ug_tfm>`
