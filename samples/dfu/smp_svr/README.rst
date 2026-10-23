@@ -273,7 +273,7 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 
    .. code-block:: console
 
-      nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      nrfutil mcu-manager serial ima-list --serial-port /dev/ttyACM0
 
    The output resembles the following example:
 

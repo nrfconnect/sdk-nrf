@@ -1,0 +1,88 @@
+name: nRF Util command check
+
+# Checks the structure of the nrfutil command examples in the rst files that a pull request changes.
+# The full and weekly scans of the documentation run in the nRF Util repository.
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - main
+      - 'v*-branch'
+    paths:
+      - '.github/workflows/nrfutil-command-check.yml'
+      - '**.rst'
+      - '**/includes/*.txt'
+      - 'doc/nrf/shortcuts.txt'
+      - 'doc/_scripts/validate_nrfutil_commands.py'
+      - 'doc/_scripts/tests/**'
+      - 'scripts/requirements-fixed.txt'
+      - 'scripts/tools-versions-*.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate-nrfutil-commands:
+    runs-on: ubuntu-24.04
+    steps:
+      - name: checkout
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      # Check only the rst files and the rst snippets in includes directories that the pull request
+      # changes, unless it changes the check itself
+      # or the nrfutil versions that the documentation uses, which can affect any file.
+      - name: Select files to check
+        id: scope
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          CHANGED=$(git diff --name-only --diff-filter=d "${BASE_SHA}...HEAD")
+          CHECK_INPUTS='^(doc/_scripts/validate_nrfutil_commands\.py|doc/_scripts/tests/|scripts/requirements-fixed\.txt$|scripts/tools-versions-[^/]*\.yml$|doc/nrf/shortcuts\.txt$|\.github/workflows/nrfutil-command-check\.yml$)'
+
+          if grep -qE "${CHECK_INPUTS}" <<< "${CHANGED}"; then
+            echo "mode=all" >> "${GITHUB_OUTPUT}"
+            echo "The check or the nrfutil versions changed, checking all files"
+          elif grep -E '(\.rst|(^|/)includes/[^/]*\.txt)$' <<< "${CHANGED}" > "${RUNNER_TEMP}/rst_files.txt"; then
+            echo "mode=files" >> "${GITHUB_OUTPUT}"
+            cat "${RUNNER_TEMP}/rst_files.txt"
+          else
+            echo "mode=none" >> "${GITHUB_OUTPUT}"
+            echo "No rst files changed"
+          fi
+
+      - name: Set up Python
+        if: steps.scope.outputs.mode != 'none'
+        uses: actions/setup-python@e797f83bcb11b83ae66e0230d6156d7c80228e7c # v6.0.0
+        with:
+          python-version: 3.12
+
+      - name: Install nrfutil
+        if: steps.scope.outputs.mode != 'none'
+        run: |
+          sudo wget -qO /usr/local/bin/nrfutil "https://files.nordicsemi.com/artifactory/swtools/external/nrfutil/executables/x86_64-unknown-linux-gnu/nrfutil"
+          sudo chmod +x /usr/local/bin/nrfutil
+
+      - name: Validate nrfutil command examples
+        if: steps.scope.outputs.mode != 'none'
+        env:
+          MODE: ${{ steps.scope.outputs.mode }}
+        run: |
+          # Install the versions locked in requirements-fixed.txt. pip doesn't allow extras in
+          # constraints files, so they are removed first.
+          sed -E 's/\[[^]]*\]==/==/' scripts/requirements-fixed.txt > "${RUNNER_TEMP}/constraints.txt"
+          pip install --only-binary :all: -c "${RUNNER_TEMP}/constraints.txt" pyyaml pytest
+          python -m pytest -q doc/_scripts/tests/test_validate_nrfutil_commands.py
+          if [[ "${MODE}" == "files" ]]; then
+            xargs -a "${RUNNER_TEMP}/rst_files.txt" -d '\n' python doc/_scripts/validate_nrfutil_commands.py
+          else
+            python doc/_scripts/validate_nrfutil_commands.py
+          fi

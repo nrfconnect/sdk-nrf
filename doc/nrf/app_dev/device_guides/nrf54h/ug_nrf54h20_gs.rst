@@ -270,7 +270,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
          .. parsed-literal::
             :class: highlight
 
-            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+            nrfutil sdk-manager launch --ncs-version *version* --shell
 
          For example:
 
