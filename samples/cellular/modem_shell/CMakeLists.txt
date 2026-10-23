@@ -34,6 +34,20 @@ add_subdirectory_ifdef(CONFIG_MOSH_NTN src/ntn)
 add_subdirectory_ifdef(CONFIG_SAMPLE_MOSH_IRONSIDE_SE_EVENT_REPORT src/ironside_se_event)
 add_subdirectory(src/cloud)
 
+if(CONFIG_SOC_NRF9251_CPUAPP AND CONFIG_CODE_DATA_RELOCATION)
+  # Only .noinit (thread stacks) of these files is moved to the local TCM. TCM is not
+  # accessible by EasyDMA or other cores, so these files must not have other .noinit objects
+  # used for DMA or IPC.
+  zephyr_code_relocate(FILES
+    src/main.c
+    ${ZEPHYR_BASE}/subsys/shell/backends/shell_uart.c
+    ${ZEPHYR_BASE}/kernel/init.c
+    ${ZEPHYR_BASE}/kernel/system_work_q.c
+    LOCATION TCM_NOINIT)
+  zephyr_code_relocate_ifdef(CONFIG_MOSH_SOCK FILES src/sock/sock.c LOCATION TCM_NOINIT)
+  zephyr_code_relocate_ifdef(CONFIG_MOSH_GNSS FILES src/gnss/gnss.c LOCATION TCM_NOINIT)
+endif()
+
 if(NOT ENV{PROJECT_NAME})
   zephyr_compile_definitions(
     PROJECT_NAME=${CMAKE_PROJECT_NAME}
