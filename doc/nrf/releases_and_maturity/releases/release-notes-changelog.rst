@@ -80,6 +80,10 @@ Bootloaders and DFU
   * MCUboot build failure with image encryption when the ECDSA P-256 signature was enabled on devices based on SoCs with the CryptoCell 310 peripheral, such as the nRF52840 SoC and the nRF9160 SiP.
     These configurations now use PSA Crypto instead of the CC310 backend, which supports only signature verification.
   * MCUboot serial recovery issue on the nRF5340 SoC where the direct upload of the network core image failed when MCUboot was configured for single-slot mode (``CONFIG_SINGLE_APPLICATION_SLOT``).
+  * An issue with signing MCUboot direct-XIP variant images where sysbuild used the Zephyr signing path instead of the |NCS| signing script for the secondary slot image.
+    The signed variant images could miss |NCS|-specific image metadata, such as the security counter or the ROM-fixed flag.
+    As a result, MCUboot could reject the secondary slot image unexpectedly.
+  * Potential out-of-bounds access in application's SMP by validating image and slot indexes before use, returning safe fallback values for invalid inputs.
 
 * Removed support for Device Firmware Update (DFU) of the nRF70 Series firmware patch, together with the ``SB_CONFIG_DFU_MULTI_IMAGE_PACKAGE_WIFI_FW_PATCH``, ``SB_CONFIG_DFU_ZIP_WIFI_FW_PATCH``, and ``CONFIG_NRF_WIFI_FW_PATCH_DFU`` Kconfig options.
   See the :ref:`migration_3.5` page for details.
@@ -1421,7 +1425,13 @@ The following list summarizes both the main changes inherited from upstream MCUb
   * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
     The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
 
-* Fixed an issue where key revocation might fail in multi-image configurations with KMU enabled.
+* Fixed:
+
+  * An issue where key revocation might fail in multi-image configurations with KMU enabled.
+  * An issue where MCUboot did not clear a serial recovery boot request after entering serial recovery when the :kconfig:option:`CONFIG_NRF_BOOT_SERIAL_BOOT_REQ` Kconfig option is enabled, causing the device to re-enter serial recovery on every reset instead of booting the application.
+  * A bus fault in the custom type-length-value (TLV) validation hook when MCUboot runs in single-slot mode on the nRF54H20 SoC.
+  * An issue where MCUboot did not validate image header size, image size, and protected TLV size against the boundaries of the flash partition that holds the installed image.
+  * An issue where MCUboot serial recovery with progressive erase (:kconfig:option:`CONFIG_BOOT_ERASE_PROGRESSIVELY`) could erase the last image sector of a large upload when the image extended into the slot trailer area in external flash (for example, on the nRF54H20 SoC).
 
 * Restored the :kconfig:option:`CONFIG_BOOT_ECDSA_NRF_OBERON` Kconfig option (for the Crypto implementation support), which was marked as deprecated in the previous release.
 
