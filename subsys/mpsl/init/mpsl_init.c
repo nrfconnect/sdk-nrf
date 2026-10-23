@@ -408,17 +408,16 @@ static uint8_t m_config_clock_source_get(void)
 #endif /* !CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-static atomic_t do_calibration;
+/* Set while mpsl_lib_init() or mpsl_lib_uninit() runs. */
+static atomic_t calibration_blocked;
 
 static void mpsl_calibration_work_handler(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
-	if (!atomic_get(&do_calibration)) {
-		return;
+	if (!atomic_get(&calibration_blocked)) {
+		mpsl_calibration_timer_handle();
 	}
-
-	mpsl_calibration_timer_handle();
 
 	mpsl_work_schedule(&calibration_work,
 			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
@@ -582,7 +581,6 @@ static int mpsl_low_prio_init(void)
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-	atomic_set(&do_calibration, 1);
 	mpsl_work_schedule(&calibration_work,
 			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
@@ -595,7 +593,16 @@ int32_t mpsl_lib_init(void)
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
 	int err = 0;
 
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	atomic_set(&calibration_blocked, 1);
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
+
 	err = mpsl_lib_init_internal();
+
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	atomic_set(&calibration_blocked, 0);
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
+
 	if (err) {
 		return err;
 	}
@@ -603,7 +610,6 @@ int32_t mpsl_lib_init(void)
 	mpsl_lib_irq_connect();
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-	atomic_set(&do_calibration, 1);
 	mpsl_work_schedule(&calibration_work,
 			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
@@ -622,12 +628,16 @@ int32_t mpsl_lib_uninit(void)
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL || CONFIG_MPSL_USE_ZEPHYR_PM */
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-	atomic_set(&do_calibration, 0);
+	atomic_set(&calibration_blocked, 1);
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 	mpsl_lib_irq_disable();
 
 	mpsl_uninit();
+
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	atomic_set(&calibration_blocked, 0);
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 	err = mpsl_clock_ctrl_uninit();

@@ -1166,7 +1166,8 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+* Updated the periodic calibration work (:kconfig:option:`CONFIG_MPSL_CALIBRATION_PERIOD`) to keep running after the :c:func:`mpsl_lib_uninit` function is called.
+  The RC oscillator is now also calibrated while MPSL is uninitialized, for example after :c:func:`bt_disable` when :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` is enabled.
 
 Libraries for networking
 ------------------------
