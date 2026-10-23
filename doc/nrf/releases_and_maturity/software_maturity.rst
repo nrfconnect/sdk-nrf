@@ -2326,10 +2326,10 @@ The following table indicates the software maturity levels of the support for Go
               - Supported
               - Experimental
               - Supported
-              - Experimental
+              - Supported
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
 
 The following table indicates the software maturity levels of the support for each Fast Pair feature:
 
@@ -2448,10 +2448,10 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - Supported
-              - Experimental
+              - Supported
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
             * - **Subsequent pairing**
               - Experimental
               - Experimental
@@ -2488,10 +2488,10 @@ The following table indicates the software maturity levels of the support for ea
               - Supported
               - Experimental
               - Supported
-              - Experimental
+              - Supported
               - --
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
 
 Find Hub Network extension
 ----------------------------
