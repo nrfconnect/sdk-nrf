@@ -334,12 +334,12 @@ The following table indicates the software maturity levels of the support for ea
            - Supported
            - Supported
            - Supported
-           - --
+           - Experimental
            - Supported
            - Supported
-           - Experimental
-           - --
-           - Experimental
+           - Supported
+           - Supported
+           - Supported
          * - **Bluetooth Mesh**
            - Supported
            - Supported
@@ -769,6 +769,7 @@ The following table indicates the software maturity levels of the support for ea
              - nRF54L05
              - nRF54L10
              - nRF54L15
+             - nRF54LC10A
              - nRF54LM20A
              - nRF54LM20B
              - nRF54LV10A
@@ -778,75 +779,84 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
              - Supported
-             - Supported
-             - Supported
              - Experimental
+             - Supported
+             - Supported
+             - Supported
              - --
              - --
            * - **Concurrent Roles**\ :sup:`1`
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Data Length Extensions**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Advertising Extensions**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Isochronous Channels**
              - Supported
              - Supported
              - Supported
-             - Supported
-             - Supported
              - Experimental
+             - Supported
+             - Supported
+             - Supported
              - --
-             - Experimental
+             - --
            * - **Direction Finding**\ :sup:`3`
+             - Experimental
              - Experimental
              - Experimental
              - Experimental
@@ -859,83 +869,92 @@ The following table indicates the software maturity levels of the support for ea
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Connection Subrating**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Channel Sounding**
              - Supported
              - Supported
              - Supported
-             - Supported
-             - Supported
              - Experimental
+             - Supported
+             - Supported
+             - Supported
              - --
              - --
            * - **GATT Database Hash**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Enhanced ATT**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Shorter Connection Intervals**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Frame Space Update**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Extended Feature Set**
              - Supported
              - Supported
              - Supported
+             - Experimental
              - Supported
              - Supported
-             - Experimental
-             - --
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
 
   | [1]: Subject to RAM availability
   | [2]: Do not support encrypting and decrypting the Isochronous Channels packets
