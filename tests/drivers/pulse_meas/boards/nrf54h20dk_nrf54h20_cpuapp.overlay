@@ -30,7 +30,7 @@
 };
 
 tester_pwm: &pwm130 {
-	status = "okay";
+	status = "reserved";
 	pinctrl-0 = <&pwm130_default>;
 	pinctrl-1 = <&pwm130_sleep>;
 	pinctrl-names = "default", "sleep";
@@ -43,5 +43,6 @@ tester_pwm: &pwm130 {
 		timer-instance = <&timer131>;
 		assert-gpios = <&gpio0 7 GPIO_ACTIVE_HIGH>;
 		deassert-gpios = <&gpio0 5 GPIO_ACTIVE_HIGH>;
+		zephyr,pm-device-runtime-auto;
 	};
 };
