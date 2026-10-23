@@ -61,11 +61,11 @@ Testing
 |test_sample|
 
 1. |connect_terminal_specific|
-#. In the terminal window, check for information similar to the following::
+#. In the terminal window, check for information similar to the following (example captured on the :ref:`nRF5340 DK <ug_nrf5340>`)::
 
       Bluetooth initialized
       <inf> bt_hci_core: HW Platform: Nordic Semiconductor (XxXXXX)
-      <inf> bt_hci_core: HW Variant: nRF52x (XxXXXX)
+      <inf> bt_hci_core: HW Variant: nRF53x (0x0003)
       <inf> bt_hci_core: Firmware: Standard Bluetooth controller (XxXX) Version 3.0 Build X
       <inf> bt_hci_core: Identity: XX:XX:XX:XX:XX (random)
       <inf> bt_hci_core: HCI: version 5.3 (XxXX) revision XxXXXX, manufacturer XxXXXX
