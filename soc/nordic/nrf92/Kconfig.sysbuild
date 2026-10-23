@@ -3,3 +3,22 @@
 
 config HAS_NORDIC_VPR_LAUNCHER_IMAGE
 	default y if SOC_NRF9251_CPUPPR || SOC_NRF9251_CPUFLPR
+
+config SOC_NRF9251_GENERATE_BICR
+	bool "Generate nRF9251 BICR file"
+	depends on SOC_NRF9251
+	default y
+	help
+	  This option generates a BICR file (bicr.hex) in the sysbuild build
+	  directory. Board directory must contain a "bicr.json" file for this
+	  option to work.
+
+config SOC_NRF9251_BICR_NAME
+	string "Name of nRF9251 BICR file to use"
+	depends on SOC_NRF9251_GENERATE_BICR
+	default "bicr.json"
+	help
+	  The file will be searched for in the main application folder first,
+	  then board folder if not found. The application can select a BICR by
+	  setting SB_CONFIG_SOC_NRF9251_BICR_NAME="some_bicr.json" in
+	  sysbuild.conf.
