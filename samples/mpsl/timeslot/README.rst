@@ -32,7 +32,7 @@ A separate thread reads the message queue and prints the timeslot signal type.
 The timeslot session is closed when any key is pressed in the terminal.
 
 .. note::
-   For the nRF52 and nRF53 Series ``mpsl_timer0`` is the ``timer0`` instance.
+   For the nRF53 Series ``mpsl_timer0`` is the ``timer0`` instance.
    For the nRF54L Series ``mpsl_timer0`` is the ``timer10`` instance.
    For the nRF54H Series ``mpsl_timer0`` is the ``timer020`` instance.
 

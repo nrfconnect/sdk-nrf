@@ -42,7 +42,7 @@ After programming the sample to both development kits, perform the following ste
 Sample output
 =============
 
-The result should look similar to the following output.
+The result should look similar to the following output (captured on the nRF5340 DK network core, ``nrf5340dk/nrf5340/cpunet``).
 
 For the central::
 
@@ -52,7 +52,7 @@ For the central::
    I: 2a a3 26 49 2a 4d a8 b3 |*.&I*M..
    I: 98 0e 07 7f             |....
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 214.51162 Build 1926957230
    I: Identity: FA:BB:79:57:D6:45 (random)
    I: HCI: version 5.4 (0x0d) revision 0x11fb, manufacturer 0x0059
@@ -85,7 +85,7 @@ For the peripheral::
    I: 2a a3 26 49 2a 4d a8 b3 |*.&I*M..
    I: 98 0e 07 7f             |....
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 214.51162 Build 1926957230
    I: Identity: CF:99:32:A5:4B:11 (random)
    I: HCI: version 5.4 (0x0d) revision 0x11fb, manufacturer 0x0059

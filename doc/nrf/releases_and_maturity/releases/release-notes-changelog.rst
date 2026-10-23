@@ -481,6 +481,13 @@ Bluetooth samples
     * :ref:`bt_scanning_while_connecting`
     * :ref:`ble_shorter_conn_intervals`
     * :ref:`ble_subrating`
+    * :ref:`ble_le_adv_report_chan_idx`
+    * :ref:`bluetooth_direction_finding_central`, :ref:`direction_finding_connectionless_rx`, :ref:`direction_finding_connectionless_tx`, and :ref:`direction_finding_peripheral`
+    * :ref:`ble_llpm`
+    * :ref:`bluetooth_path_loss_monitoring`
+    * :ref:`bluetooth_automated_power_control`
+    * :ref:`timeslot_sample`
+    * :ref:`radio_test`
 
   * The nRF52 Series board targets from the :ref:`samples_test_app` Twister configuration.
 

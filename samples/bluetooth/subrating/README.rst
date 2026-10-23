@@ -98,7 +98,7 @@ This behavior can be changed by setting `#define SUBRATE_INITIATOR_ROLE` to `BT_
 Sample output
 -------------
 
-The result should look similar to the following output:
+The result should look similar to the following output (captured on the :ref:`nRF5340 DK <ug_nrf5340>`):
 
 * For the central::
 
@@ -110,7 +110,7 @@ The result should look similar to the following output:
     I: 64 7f 04 47 8b 3c 4b ae |d..G.<K.
     I: 95 16 0d 96             |....
     I: HW Platform: Nordic Semiconductor (0x0002)
-    I: HW Variant: nRF52x (0x0002)
+    I: HW Variant: nRF53x (0x0003)
     I: Firmware: Standard Bluetooth controller (0x00) Version 15.51263 Build 3062726218
     I: Identity: EA:9C:4D:3A:2F:A8 (random)
     I: HCI: version 5.4 (0x0d) revision 0x1224, manufacturer 0x0059
@@ -140,7 +140,7 @@ The result should look similar to the following output:
     I: 64 7f 04 47 8b 3c 4b ae |d..G.<K.
     I: 95 16 0d 96             |....
     I: HW Platform: Nordic Semiconductor (0x0002)
-    I: HW Variant: nRF52x (0x0002)
+    I: HW Variant: nRF53x (0x0003)
     I: Firmware: Standard Bluetooth controller (0x00) Version 15.51263 Build 3062726218
     I: Identity: FD:AA:B8:5A:36:E2 (random)
     I: HCI: version 5.4 (0x0d) revision 0x1224, manufacturer 0x0059
