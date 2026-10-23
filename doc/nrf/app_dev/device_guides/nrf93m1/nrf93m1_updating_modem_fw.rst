@@ -23,10 +23,12 @@ Read the modem firmware version with a standard 3GPP command:
 .. code-block:: console
 
    AT+CGMR
-   mfw_nrf93m1_1.5.0
+   mfw_nrf93m1_1.5.1
    OK
 
 The version string identifies the module and the firmware revision.
+Modem firmware versions 1.x.x are for nRF93M1-LABA, and versions 2.x.x are for nRF93M1-LACA.
+Use a delta package that matches the variant of your module, as described in :ref:`ug_nrf93m1_variants`.
 
 Always include this version when you report an issue, and record it in device telemetry so you can correlate field behavior with a specific firmware release.
 
@@ -72,13 +74,135 @@ Updates over the air use ``AT%NRFCLOUDFOTA``, which serves both the module and t
    * - 4
      - Clear the cached host OTA download URL
 
-To check for and apply a modem firmware update:
+The following sections describe how to update the modem firmware with nRF Cloud.
 
-.. code-block:: console
+The delta package for modem firmware is named after the versions it connects, in the format ``<base_mfw>_to_<new_mfw>``.
+For example, ``mfw_nrf93m1_update_from_1.5.1_to_1.5.1-FOTA-TEST.bin`` updates a device running version 1.5.1 to the 1.5.1-FOTA-TEST test image.
+Nordic Semiconductor also provides test images in both directions, so you can verify the update flow on a device and return it to the release firmware.
 
-   AT%NRFCLOUDFOTA=3,"<projectKey>"
+.. _ug_nrf93m1_updating_modem_fw_ota_prereq:
 
-Unsolicited ``%COAP`` and ``%FOTA`` result codes can be emitted during the cloud transaction.
+Requirements
+============
+
+* A device that is provisioned and shows up in your nRF Cloud device list.
+  See :ref:`ug_93m1_cloud_connecting_provisioning`.
+* Modem firmware enabled with ``AT+CFUN=1`` and a working network connection.
+* The delta package for the version your device is running.
+  Use ``AT+CGMR`` to read the running version, as described in :ref:`ug_nrf93m1_updating_modem_fw_versions`.
+
+.. _ug_nrf93m1_updating_modem_fw_ota_release:
+
+Creating the OTA release in nRF Cloud
+=====================================
+
+An OTA release tells nRF Cloud which devices get which firmware.
+
+1. In the nRF Cloud left sidebar, click :guilabel:`OTA Releases`, then click :guilabel:`Create Release`.
+
+#. Enter the from and to versions of the delta package.
+   For example:
+
+   * :guilabel:`From Version`: ``mfw_nrf93m1_1.5.1``
+   * :guilabel:`To Version`: ``mfw_nrf93m1_z1.5.1_fotatest``
+
+   .. note::
+      nRF Cloud offers an update only to a version that sorts higher than the running one, using alphabetical order.
+      A test image with the same version number as the running firmware therefore needs a letter in front of the version, as the ``z`` in the preceding example.
+
+#. Click :guilabel:`Create release`.
+
+#. In the release tab, click :guilabel:`Add OTA Payload` and fill in the following fields:
+
+   * :guilabel:`Hardware Version`: The ``<model>`` part of the ``AT+CGMM`` response of your device, without the silicon revision in parentheses.
+     For example, ``nRF93M1-LABA-AFA`` for the response ``nRF93M1-LABA-AFA (R3)``.
+   * :guilabel:`Software Type`: ``mfw``
+   * :guilabel:`Payload`: The delta package, for example ``mfw_nrf93m1_update_from_1.5.1_to_1.5.1-FOTA-TEST.bin``.
+
+#. Click :guilabel:`+ Create Activation`, select the default cohort, and click :guilabel:`Activate`.
+
+#. Open :guilabel:`Project Settings` and copy the :guilabel:`Project Key`.
+   The AT commands in the next section need it.
+
+.. _ug_nrf93m1_updating_modem_fw_ota_apply:
+
+Checking for and applying the update
+====================================
+
+Run the following commands over the serial terminal, replacing ``<projectKey>`` with the key that you copied:
+
+1. Enable full functionality:
+
+   .. code-block:: console
+
+      AT+CFUN=1
+      OK
+
+#. Check whether an update is available for the device:
+
+   .. code-block:: console
+
+      AT%NRFCLOUDFOTA=2,"<projectKey>"
+      %FOTA: CHECKING
+      %FOTA: UPDATE_AVAILABLE
+      OK
+
+   ``%FOTA: NO_UPDATE`` means that no active release matches the device.
+   In that case, check the release activation, the :guilabel:`Hardware Version` of the payload, and the running version.
+
+#. Download and apply the update:
+
+   .. code-block:: console
+
+      AT%NRFCLOUDFOTA=3,"<projectKey>"
+      %FOTA: CHECKING
+      %COAP: RESPONSE,2.05
+      %COAP: DATA,153,{"data": {"url": "https://ota-cdn.memfault.com/11227/ota-payloads/..."}}
+      %FOTA: ZONE,1,462848
+      %FOTA: ERASING
+      %FOTA: DOWNLOADING
+      %FOTA: DOWNLOADING,16384
+      %FOTA: DOWNLOADING,32768
+      ...
+      %FOTA: DOWNLOAD_DONE,213657
+      %FOTA: VERIFYING
+      %FOTA: VERIFIED
+      %FOTA: UPGRADING
+      OK
+
+   The module downloads the delta package, verifies it, and then resets to apply it.
+
+#. Wait for the bootloader to apply the update.
+   The bootloader reports the progress and the module restarts:
+
+   .. code-block:: console
+
+      %FOTA: "APPLY"
+      %FOTA: "UPDATING",0
+      ...
+      %FOTA: "UPDATING",100
+      %FOTA: "DONE",0
+      RDY
+
+#. Confirm that the device runs the new firmware:
+
+   .. code-block:: console
+
+      AT+CGMR
+      mfw_nrf93m1_<new_version>
+      OK
+
+   The returned version must match the firmware that the delta package updates to.
+
+To return a device to the release firmware after a test, create a new release with the following versions:
+
+* :guilabel:`From Version`: ``mfw_nrf93m1_1.5.1_fotatest``
+* :guilabel:`To Version`: ``mfw_nrf93m1_z1.5.1``
+
+The ``z`` in front of the release version is needed for the same reason as in the test release, because nRF Cloud offers only a version that sorts higher than the running one.
+Upload the matching delta package, for example :file:`mfw_nrf93m1_update_from_1.5.1-FOTA-TEST_to_1.5.1.bin`, in the :guilabel:`Add OTA Payload` step, and repeat the commands in this section.
+
+If a command reports ``%FOTA: ERROR,<reason>``, see the ``%FOTA`` notifications in the `nRF93M1 AT Commands Reference Guide`_ for the meaning of each reason.
 
 Plan for the following in your host application:
 
@@ -129,8 +253,50 @@ Updating over serial
 
 A local update over the host serial link is useful during development, in production test, and for recovery when a device cannot reach the network.
 
-Use the :ref:`nrf93m1dk_modem_bypass` sample to expose the module UART to your computer, then drive the on-device DFU engine with ``AT%FWUPD``.
-The command writes an update package to the module over the serial link in numbered packets, each carrying a length and an XOR-8 checksum.
+Use the ``93-series`` command of `nRF Util`_ to upload and apply a delta package over the serial link:
+
+1. Flash the :ref:`nrf93m1dk_modem_bypass` sample on the host MCU, to expose the module AT interface over UART.
+   On the nRF93M1 DK, the AT interface is on ``vcom1``.
+
+#. Install the ``93-series`` command, which is required once:
+
+   .. code-block:: console
+
+      nrfutil install 93-series
+
+#. Identify the serial port of the AT interface:
+
+   .. code-block:: console
+
+      nrfutil device list
+
+#. Upload and apply the delta package:
+
+   .. code-block:: console
+
+      nrfutil 93-series modem-firmware-upgrade --serial-port <SERIAL_PORT> --firmware <FIRMWARE>
+
+   For example, to update from 1.5.1 to the 1.5.1-FOTA-TEST test image:
+
+   .. code-block:: console
+
+      nrfutil 93-series modem-firmware-upgrade --serial-port /dev/ttyACM1 --firmware mfw_nrf93m1_update_from_1.5.1_to_1.5.1-FOTA-TEST.bin
+      [00:00:21] ###### 100% [Modem firmware upgrade] Modem firmware upgrade
+
+#. Confirm the new version:
+
+   .. code-block:: console
+
+      nrfutil 93-series version-query --serial-port <SERIAL_PORT>
+
+The command drives the on-device DFU engine with ``AT%FWUPD``.
+By default, it uploads the package directly over UART within a timeout.
+Add ``--packet-mode`` on a slow or unstable connection.
+In packet mode, the package is uploaded in numbered packets that are each verified with a hash and retried if they fail, which is slower.
+The command waits for the module to apply the update before it exits.
+Add ``--skip-wait-for-apply`` if you do not want it to wait.
+
+To return the device to the release firmware, run the same command with the delta package for the opposite direction, for example ``mfw_nrf93m1_update_from_1.5.1-FOTA-TEST_to_1.5.1.bin``.
 
 Updating over HTTP or HTTPS
 ***************************
@@ -138,17 +304,90 @@ Updating over HTTP or HTTPS
 The ``AT%HTTPFOTADL`` command downloads a delta update package directly from a web server and applies it, without nRF Cloud and without the host having to carry the image.
 Use it when you host firmware yourself, for example, on your own CDN or an internal server during development.
 
-.. code-block:: console
+Nordic Semiconductor also hosts the delta packages at ``firmware.nrfcloud.com``, so you can use this method without hosting anything.
+The package file names have the following format, where the base version is the version that the device currently runs:
 
-   AT%HTTPFOTADL="https://example.com/delta.binpkg",100
-   OK
+.. code-block:: none
 
-   %HTTPURC: "FOTA","DOWNLOAD START"
-   %HTTPURC: "FOTA","DOWNLOADING",10
-   %HTTPURC: "FOTA","DOWNLOADING",50
-   %HTTPURC: "FOTA","DOWNLOADING",100
-   %HTTPURC: "FOTA","DOWNLOADED"
-   %HTTPURC: "FOTA","VERIFIED"
+   mfw_nrf93m1_update_from_<base_version>_to_<new_version>.bin
+
+For example, the following URLs are the packages that update a device to version 1.5.1:
+
+* ``https://firmware.nrfcloud.com/93m1/mfw_nrf93m1_update_from_1.4.1_to_1.5.1.bin``
+* ``https://firmware.nrfcloud.com/93m1/mfw_nrf93m1_update_from_1.5.0_to_1.5.1.bin``
+
+The following URLs are the packages that update a device from version 1.5.1 to the FOTA test image and back:
+
+* ``https://firmware.nrfcloud.com/93m1/mfw_nrf93m1_update_from_1.5.1_to_1.5.1-FOTA-TEST.bin``
+* ``https://firmware.nrfcloud.com/93m1/mfw_nrf93m1_update_from_1.5.1-FOTA-TEST_to_1.5.1.bin``
+
+Read the base version with ``AT+CGMR``, as described in :ref:`ug_nrf93m1_updating_modem_fw_versions`.
+A package updates only a device that runs exactly its base version.
+
+To update a device, complete the following steps:
+
+1. Enable full functionality and wait until the device is registered to the network.
+   The module boots with ``AT+CFUN=0``, and the download fails with a DNS error if the device is not registered.
+
+   .. code-block:: console
+
+      AT+CEREG=1
+      OK
+      AT+CFUN=1
+      OK
+      +CEREG: 2
+      +CEREG: 1
+
+#. If you use an ``https://`` URL, enable Server Name Indication (SNI) for the SSL context that is used for the download.
+   The context must also trust the certificate authority of the server.
+
+   .. code-block:: console
+
+      AT%SSLCFG="sni",0,1
+      OK
+
+#. Start the download.
+   The second parameter caps the download progress reporting:
+
+   .. code-block:: console
+
+      AT%HTTPFOTADL="http://firmware.nrfcloud.com/93m1/mfw_nrf93m1_update_from_1.5.1_to_1.5.1-FOTA-TEST.bin",50
+      OK
+      %HTTPURC: "FOTA","DOWNLOAD START"
+      %HTTPURC: "FOTA","DOWNLOADING",12
+      %HTTPURC: "FOTA","DOWNLOADING",25
+      %HTTPURC: "FOTA","DOWNLOADING",38
+      %HTTPURC: "FOTA","DOWNLOADING",50
+      %HTTPURC: "FOTA","DOWNLOADED"
+      %HTTPURC: "FOTA","VERIFIED"
+      +CEREG: 0
+
+#. Wait for the module to apply the delta.
+   After ``VERIFIED``, the module reboots and applies the delta in the bootloader phase, and it reports the progress with ``%FOTA`` notifications:
+
+   .. code-block:: console
+
+      %FOTA: "APPLY"
+      %FOTA: "UPDATING",0
+      %FOTA: "UPDATING",8
+      %FOTA: "UPDATING",16
+      ...
+      %FOTA: "UPDATING",91
+      %FOTA: "UPDATING",100
+      %FOTA: "DONE",0
+      RDY
+
+   ``DONE`` with error code ``0`` means that the update was applied.
+   Any other code is an error, for example ``104`` for a delta built for a different base version.
+   See the ``%FOTA`` command in the `nRF93M1 AT Commands Reference Guide`_ for the list.
+
+#. Check the new version:
+
+   .. code-block:: console
+
+      AT+CGMR
+      mfw_nrf93m1_1.5.1_fotatest
+      OK
 
 The URL must begin with ``http://`` or ``https://`` and is limited to 255 characters.
 The second parameter caps download progress reporting: 0 disables it, and a value from ``50`` to
@@ -173,8 +412,19 @@ URCs rather than treating ``OK`` as completion.
    * - ``VERIFIED``
      - The package passed verification and is about to be applied.
 
-After ``VERIFIED``, the module reboots and applies the delta during the bootloader phase.
-Confirm the result with ``AT+CGMR`` once it comes back, rather than assuming ``VERIFIED`` means the new firmware is running.
+If the download or the verification fails, the module sends a ``DOWNLOAD ERROR`` or ``VERIFICATION FAILURE`` URC with a cause and a detail, in the following format:
+
+.. code-block:: console
+
+   %HTTPURC: "FOTA","DOWNLOAD ERROR",<cause>,<detail>
+
+For example, ``%HTTPURC: "FOTA","DOWNLOAD ERROR",2,12`` means a transport error because the DNS resolution failed, and ``%HTTPURC: "FOTA","DOWNLOAD ERROR",6,8`` means a TLS error because the server certificate comes from a certificate authority that the SSL context does not trust.
+In the second case, provision the certificate authority of your server as described in :ref:`ug_nrf93m1_at_commands_credentials`, or use an ``http://`` URL.
+See the ``%HTTPFOTADL`` command in the `nRF93M1 AT Commands Reference Guide`_ for the causes and details.
+
+.. note::
+   On modem firmware v1.4.1, the first URC is ``HTTPSTART`` instead of ``DOWNLOAD START``, and there is no ``VERIFIED`` URC.
+   Modem firmware earlier than v1.5.0 cannot download from ``https://`` URLs, so use ``http://`` URLs there.
 
 .. _ug_nrf93m1_updating_modem_fw_production:
 

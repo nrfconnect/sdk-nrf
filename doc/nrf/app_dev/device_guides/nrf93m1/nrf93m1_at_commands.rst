@@ -105,10 +105,10 @@ A minimal bring-up sequence is as follows:
    AT
    OK
    AT+CGMR
-   <firmware version>
+   mfw_nrf93m1_1.5.1
    OK
    AT%BAND=?
-   <supported band bitmap>
+   %BAND: (1,3,5,7,8,20,28,38,40,41)
    OK
    AT+CLAC
    <list of all supported AT commands>
@@ -121,7 +121,7 @@ A minimal bring-up sequence is as follows:
 
 * ``AT+CGMR`` returns the modem firmware version.
   Use it when reporting issues.
-* ``AT%BAND=?`` returns the variant and supported band set.
+* ``AT%BAND=?`` returns the list of bands that the module variant supports.
 * ``AT+CLAC`` lists every command the running firmware supports, which is the fastest way to check availability without cross-referencing version tags.
 * ``AT+CEREG?`` reports network registration status.
   A second parameter of ``1`` or ``5`` means the module is registered.
@@ -188,6 +188,152 @@ Without it, a failing command returns a bare ``ERROR`` with no indication of the
 .. note::
    URCs arrive at any time, including in the middle of a command exchange.
    ``modem_chat`` handles this correctly, unlike a hand-written parser.
+
+.. _ug_nrf93m1_at_commands_credentials:
+
+Provisioning TLS credentials
+****************************
+
+The module runs TLS and DTLS itself, and it stores the credentials as files in its own file system.
+You provision them with AT commands, and you do not need a host-side TLS library.
+
+The module has six SSL contexts, numbered 0 to 5.
+Each context is configured with the ``%SSLCFG`` command, and refers to the following files:
+
+* ``cacert``, the certificate authority (CA) certificate that is used to verify the server.
+* ``clientcert`` and ``clientkey``, the client certificate and its private key, if the server requires client authentication.
+
+A secure connection then selects a context by its ID:
+
+* For sockets, use ``AT%SKTCFG="sslctxid",<fd>,<SSL_ctxID>``, where ``<fd>`` is the socket descriptor that ``%SKTCREATE`` returns.
+  The value ``255`` disables TLS and DTLS, and it is the default.
+  A TCP socket uses TLS, and a UDP socket uses DTLS.
+* For MQTT, use ``AT%MQTTCFG="sslctxid",<id>,<SSL_ctxID>``, where ``<id>`` is the MQTT context.
+  The value ``255`` disables TLS, and it is the default.
+* For HTTP and HTTPS, use ``AT%HTTPCFG="sslctxid",<SSL_ctxID>``.
+  The default is context ``0``.
+  The ``%HTTPFOTADL`` command also uses an SSL context, so the same steps apply when you update the modem firmware over HTTPS.
+  See :ref:`ug_nrf93m1_updating_modem_fw`.
+
+The ``sslctxid`` options of ``%SKTCFG`` and ``%MQTTCFG`` are available from modem firmware v1.5.1.
+
+The following example provisions the Amazon Root CA 1 certificate, which is the trust anchor of the ``firmware.nrfcloud.com`` and ``www.amazontrust.com`` servers, and uses it for HTTPS requests.
+It works the same way for the CA certificate of your own server.
+
+.. note::
+   The file system of the module is small.
+   Read ``AT%FSINFO`` to see the files that are stored, and the free space, before you add a certificate.
+   The file system already contains the default certificates, for example :file:`ca.crt`, which context ``0`` uses.
+
+1. Get the CA certificate of your server in PEM format, which starts with ``-----BEGIN CERTIFICATE-----``.
+   You can download it from the website of the certificate authority, or export it from your web browser.
+   Check the size of the file in bytes, because you need it in the next step:
+
+   .. code-block:: console
+
+      wc -c AmazonRootCA1.pem
+      1188 AmazonRootCA1.pem
+
+#. Create the file in the file system of the module.
+   Mode ``1`` creates the file, or overwrites it if it exists.
+   The file name is limited to 62 bytes.
+
+   .. code-block:: console
+
+      AT%FOPEN="amazon_root_ca1.pem",1
+      %FOPEN: 1
+      OK
+
+#. Write the certificate to the file.
+   The module switches to data mode and accepts the number of bytes that you give as the second parameter.
+   The third parameter is the time in seconds that the module waits for the data.
+   When the module responds with ``CONNECT``, send the content of the PEM file as it is, with exactly that number of bytes, from the terminal or from your host application:
+
+   .. code-block:: console
+
+      AT%FWRITE=1,1188,40
+      CONNECT
+      <content of the PEM file>
+      %FWRITE: 1188,1188
+      OK
+
+#. Close the file:
+
+   .. code-block:: console
+
+      AT%FCLOSE=1
+      OK
+
+#. Verify that the file was stored correctly by comparing its SHA-256 hash with the hash of the original file:
+
+   .. code-block:: console
+
+      AT%FSHA256="amazon_root_ca1.pem"
+      %FSHA256: 2c43952ee9e000ff2acc4e2ed0897c0a72ad5fa72c3d934e81741cbd54f05bd1
+      OK
+
+#. Select the file in the SSL context, require the module to verify the server, and enable Server Name Indication (SNI) so that the module sends the name of the server in the handshake.
+   Context ``0`` is the default context of the HTTP commands:
+
+   .. code-block:: console
+
+      AT%SSLCFG="cacert",0,"amazon_root_ca1.pem"
+      OK
+      AT%SSLCFG="seclevel",0,1
+      OK
+      AT%SSLCFG="sni",0,1
+      OK
+
+   The ``seclevel`` option selects the authentication mode of the context, and the default value is ``0``, which means no authentication.
+   The module then does not verify the certificate of the server, so the CA certificate has no effect.
+   Set it to ``1`` to verify the server.
+   Set it to ``2`` to also authenticate the client if the server requests it, as described at the end of this section.
+   Read the current settings of all contexts with ``AT%SSLCFG?``.
+   A context that does not exist returns ``%SSL ERROR: 1``.
+
+#. Use the context.
+   The following example downloads the same certificate from the server over HTTPS:
+
+   .. code-block:: console
+
+      AT%HTTPURL=56,60
+      CONNECT
+      https://www.amazontrust.com/repository/AmazonRootCA1.pem
+      OK
+      AT%HTTPGET
+      OK
+      AT%HTTPREAD
+      OK
+      CONNECT
+      %HTTPGET: 0,200,1188
+      -----BEGIN CERTIFICATE-----
+      MIIDQTCCAimgAwIBAgITBmyfz5m/jAo54vB4ikPmljZbyjANBgkqhkiG9w0BAQsF
+      ...
+      -----END CERTIFICATE-----
+      %HTTPGET: 100,200,1188
+
+If the server certificate is not signed by a CA that the context trusts, the request fails.
+For example, with the default :file:`ca.crt` file in context ``0``, the same request returns the following error, and ``%HTTPFOTADL`` reports ``DOWNLOAD ERROR`` with cause ``6`` and detail ``8`` for an untrusted CA:
+
+.. code-block:: console
+
+   %HTTP ERROR: 19
+
+To use client authentication, write the client certificate and the private key to files in the same way, select them with the ``clientcert`` and ``clientkey`` options of ``%SSLCFG``, and set the ``seclevel`` option to ``2``.
+To remove a file, open it with ``%FOPEN`` and delete it with ``AT%FDELETE=<filehandle>``.
+
+From modem firmware v1.5.1, the ``sslversion`` option selects the TLS and DTLS protocol version of the context:
+
+* ``3`` for TLS 1.2 and DTLS 1.2.
+* ``4`` for TLS 1.2 and TLS 1.3, and DTLS 1.2.
+  This is the default.
+* ``5`` for TLS 1.3 and DTLS 1.2.
+
+For example, ``AT%SSLCFG="sslversion",0,5`` allows only TLS 1.3 in context ``0``.
+
+.. note::
+   The file system of the module has no access control, so anyone with access to the AT interface can read, change, or delete the stored certificates and keys.
+   Compare the ``%FSHA256`` hash of a file with a known-good value before you use it.
 
 .. _ug_nrf93m1_limitations:
 
