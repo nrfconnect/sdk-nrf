@@ -82,10 +82,19 @@ config MQTT_HELPER_PAYLOAD_BUFFER_LEN
 	default 2048 if NRF_MODEM_LIB
 	default 4096
 
+choice MQTT_HELPER_CREDENTIALS
+	prompt "Source of the TLS credentials"
+	depends on TLS_CREDENTIALS
+	optional
+	default MQTT_HELPER_PROVISION_CERTIFICATES
+	help
+	  Select how the TLS credentials are installed. The options exclude each other, because
+	  credentials that are installed at run time from the certificates folder would conflict
+	  with credentials that are installed from the shell. Select none of them to install the
+	  credentials by other means.
+
 config MQTT_HELPER_PROVISION_CERTIFICATES
 	bool "Run-time provisioning of certificates"
-	depends on TLS_CREDENTIALS
-	default y
 	imply MBEDTLS_PEM_PARSE_C
 	imply MBEDTLS_PEM_WRITE_C
 	help
@@ -94,6 +103,25 @@ config MQTT_HELPER_PROVISION_CERTIFICATES
 	  This option is only intended for testing and should not be used in a production scenario.
 	  Enabling this option means that the credentials used in the TLS communication towards the
 	  server will be exposed in flash memory.
+
+config MQTT_HELPER_CREDENTIALS_KEYGEN
+	bool "Device generated private key [EXPERIMENTAL]"
+	depends on TLS_CREDENTIALS_BACKEND_PROTECTED_STORAGE
+	select EXPERIMENTAL
+	select TLS_CREDENTIALS_KEYGEN
+	select BASE64
+	imply TLS_CREDENTIALS_SHELL
+	imply MBEDTLS_PEM_PARSE_C
+	help
+	  Use a private key that is generated on the device and never leaves it, see
+	  TLS_CREDENTIALS_KEYGEN. The key is generated, and the device certificate and the root CA
+	  certificate are installed, with the TLS credentials shell, for example with the
+	  nrfcredstore tool. The key is registered for its security tag when it is generated, and
+	  the TLS credentials protected storage backend keeps the registration after a reboot.
+	  Certificates in PEM format are installed with the shell, so the credential buffer of the
+	  shell, TLS_CREDENTIALS_SHELL_CRED_BUF_SIZE, must fit the certificate chain.
+
+endchoice
 
 config MQTT_HELPER_CERTIFICATES_FOLDER
 	string "TLS certificates folder"

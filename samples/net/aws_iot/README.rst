@@ -93,8 +93,11 @@ Set these options in the project configuration file located at :file:`samples/ne
 For documentation related to FOTA DFU, see :ref:`lib_aws_fota`.
 
 .. note::
-   For nRF70 Series devices, certificates must be provisioned at runtime.
-   This is achieved by pasting the PEM content into the respective files in the :file:`certs/` subdirectory and ensuring the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option is enabled.
+   For nRF71 Series and nRF70 Series devices, the :file:`wifi.conf` file enables the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
+   The device generates the private key and you install the certificates at runtime with the TLS credentials shell.
+   For nRF70 Series, this applies to an nRF70 Series device that is hosted by an nRF53 Series or nRF54 Series SoC.
+   To provision the PEM content from the :file:`certs/` subdirectory instead, enable the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, which replaces the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` option.
+   See :ref:`generating_and_provisioning_certificates` for the steps.
 
 Configuration options
 =====================

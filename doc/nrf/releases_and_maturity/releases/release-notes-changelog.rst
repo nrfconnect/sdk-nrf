@@ -1209,6 +1209,9 @@ Libraries for networking
 
 * :ref:`lib_mqtt_helper` library:
 
+  * Added the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option to use a device private key generated on the device with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`).
+    The option excludes the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option, which is no longer enabled by default together with the TLS credentials, but is still the default selection of the credentials source.
+    See the :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub` libraries for how to generate the key and obtain the device certificate.
   * Fixed an issue where the library could stop after one resolved broker address.
     The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
 
