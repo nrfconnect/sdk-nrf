@@ -5,7 +5,10 @@
  */
 
 #include <zephyr/kernel.h>
+#include <limits.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <zephyr/data/json.h>
 #include <zephyr/net/tls_credentials.h>
 #include <net/fota_download.h>
@@ -18,6 +21,9 @@
 LOG_MODULE_REGISTER(aws_fota, CONFIG_AWS_FOTA_LOG_LEVEL);
 
 #define AWS_JOB_ID_DEFAULT "INVALID-JOB-ID"
+
+/* Maximum number of bytes of a job document to log. The log message length field is 12 bits. */
+#define JOB_DOC_LOG_LEN_MAX 256
 
 /* Maximum length of the status details JSON object that is reported to AWS IoT Jobs when a job
  * execution is marked as failed. Must fit {"reason":"<cause>","progress":"<0-100>"}.
@@ -159,6 +165,8 @@ static const char *error_cause2str(enum aws_fota_error_cause cause)
 		return "JOB_UPDATE_REJECTED";
 	case AWS_FOTA_ERROR_CAUSE_JOB_UPDATE_FAILED:
 		return "JOB_UPDATE_FAILED";
+	case AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE:
+		return "PAYLOAD_TOO_LARGE";
 	default:
 		return "UNKNOWN";
 	}
@@ -196,10 +204,11 @@ static void reset_library(void)
 static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_len)
 {
 #if defined(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	char debug_log[topic_len + 1];
+	char debug_log[AWS_JOBS_TOPIC_MAX_LEN];
+	size_t debug_log_len = MIN(topic_len, sizeof(debug_log) - 1);
 
-	memcpy(debug_log, incoming_topic, topic_len);
-	debug_log[topic_len] = '\0';
+	memcpy(debug_log, incoming_topic, debug_log_len);
+	debug_log[debug_log_len] = '\0';
 	LOG_DBG("Received topic: %s", debug_log); /* Make this debug */
 #endif
 
@@ -218,9 +227,72 @@ static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_l
 	return TOPIC_INVALID;
 }
 
+/* Internal result of reading a message that did not fit in the payload buffer. The message is
+ * read out completely and its beginning is in the buffer. It is outside of the errno range,
+ * so that it cannot be mixed up with an error from the MQTT library.
+ */
+#define PAYLOAD_TRUNCATED (-1000)
+
+/**
+ * @brief Read out and drop the payload of a published MQTT message.
+ *
+ * @param[in] client  Connected MQTT client instance.
+ * @param[in] length  Length of the payload to drop.
+ *
+ * @return 0 If successful otherwise a negative error code is returned.
+ */
+static int payload_discard(struct mqtt_client *client, size_t length)
+{
+	uint8_t scratch[64];
+
+	while (length > 0) {
+		int ret = mqtt_read_publish_payload_blocking(client, scratch,
+							     MIN(length, sizeof(scratch)));
+
+		if (ret < 0) {
+			return ret;
+		} else if (ret == 0) {
+			return -EIO;
+		}
+		length -= ret;
+	}
+
+	return 0;
+}
+
+/**
+ * @brief Read exactly the given number of payload bytes of a published MQTT message.
+ *
+ * @param[in] client  Connected MQTT client instance.
+ * @param[out] buf  Buffer where the payload is stored.
+ * @param[in] length  Number of bytes to read.
+ *
+ * @return 0 If successful otherwise a negative error code is returned.
+ */
+static int payload_read(struct mqtt_client *client, uint8_t *buf, size_t length)
+{
+	uint8_t *end = buf + length;
+
+	while (buf < end) {
+		int ret = mqtt_read_publish_payload_blocking(client, buf, end - buf);
+
+		if (ret < 0) {
+			return ret;
+		} else if (ret == 0) {
+			return -EIO;
+		}
+		buf += ret;
+	}
+
+	return 0;
+}
+
 /**
  * @brief Read the payload out of the published MQTT message from the MQTT
  *	  Client instance
+ *
+ * If the payload does not fit in the buffer, the beginning of the payload is stored as a
+ * null-terminated string, the rest is dropped and PAYLOAD_TRUNCATED is returned.
  *
  * @param[in] client  Connected MQTT client instance.
  * @param[out] write_buf  Buffer where the MQTT publish message's payload is
@@ -231,24 +303,27 @@ static enum jobs_topic topic_type_get(const char *incoming_topic, size_t topic_l
  */
 static int get_published_payload(struct mqtt_client *client, uint8_t *write_buf, size_t length)
 {
-	uint8_t *buf = write_buf;
-	uint8_t *end = buf + length;
+	int err;
 
 	if (length > sizeof(payload_buf)) {
-		return -EMSGSIZE;
-	}
-	while (buf < end) {
-		int ret = mqtt_read_publish_payload_blocking(client, buf,
-							     end - buf);
+		/* The payload must be read out also when it does not fit, otherwise the MQTT
+		 * client is left with an unread payload.
+		 */
+		size_t head_len = sizeof(payload_buf) - 1;
 
-		if (ret < 0) {
-			return ret;
-		} else if (ret == 0) {
-			return -EIO;
+		err = payload_read(client, write_buf, head_len);
+		if (err) {
+			return err;
 		}
-		buf += ret;
+
+		write_buf[head_len] = '\0';
+
+		err = payload_discard(client, length - head_len);
+
+		return err ? err : PAYLOAD_TRUNCATED;
 	}
-	return 0;
+
+	return payload_read(client, write_buf, length);
 }
 
 /**
@@ -347,6 +422,220 @@ static int set_current_job_failed(struct mqtt_client *const client,
 				    AWS_JOBS_FAILED, "");
 }
 
+/* The beginning of a job execution message is cut off, so it can not be parsed as JSON. The
+ * functions below walk through it, so that only the direct members of an object are matched.
+ * A function returns NULL if the part it works on is not complete.
+ */
+static const char *json_ws_skip(const char *p)
+{
+	while (*p == ' ' || *p == '\t' || *p == '\n' || *p == '\r') {
+		p++;
+	}
+
+	return p;
+}
+
+/* Skip a string. The pointer is at the opening quote. Return the pointer after the closing
+ * quote.
+ */
+static const char *json_string_skip(const char *p)
+{
+	for (p++; *p != '\0'; p++) {
+		if (*p == '\\') {
+			p++;
+			if (*p == '\0') {
+				return NULL;
+			}
+		} else if (*p == '"') {
+			return p + 1;
+		}
+	}
+
+	return NULL;
+}
+
+/* Skip a value of any type. Return the pointer after the value. */
+static const char *json_value_skip(const char *p)
+{
+	int depth = 0;
+
+	p = json_ws_skip(p);
+
+	if (*p != '"' && *p != '{' && *p != '[') {
+		p += strcspn(p, ",}] \t\n\r");
+
+		return *p == '\0' ? NULL : p;
+	}
+
+	while (*p != '\0') {
+		if (*p == '"') {
+			p = json_string_skip(p);
+			if (p == NULL) {
+				return NULL;
+			}
+			if (depth == 0) {
+				return p;
+			}
+			continue;
+		}
+
+		if (*p == '{' || *p == '[') {
+			depth++;
+		} else if (*p == '}' || *p == ']') {
+			depth--;
+		}
+
+		p++;
+		if (depth == 0) {
+			return p;
+		}
+	}
+
+	return NULL;
+}
+
+/* Return a pointer to the value of a direct member of the object, or NULL if the member is not
+ * in the complete part of the object. The pointer is at the beginning of the object.
+ */
+static const char *json_member_find(const char *object, const char *key)
+{
+	const size_t key_len = strlen(key);
+	const char *p = json_ws_skip(object);
+
+	if (*p != '{') {
+		return NULL;
+	}
+
+	p++;
+
+	while (true) {
+		const char *name_end;
+		bool match;
+
+		p = json_ws_skip(p);
+		if (*p != '"') {
+			return NULL;
+		}
+
+		name_end = json_string_skip(p);
+		if (name_end == NULL) {
+			return NULL;
+		}
+
+		match = (size_t)(name_end - p - 2) == key_len && memcmp(p + 1, key, key_len) == 0;
+
+		p = json_ws_skip(name_end);
+		if (*p != ':') {
+			return NULL;
+		}
+
+		p = json_ws_skip(p + 1);
+		if (match) {
+			return p;
+		}
+
+		p = json_value_skip(p);
+		if (p == NULL) {
+			return NULL;
+		}
+
+		p = json_ws_skip(p);
+		if (*p != ',') {
+			return NULL;
+		}
+
+		p++;
+	}
+}
+
+/* Find the job ID and the execution version number in the beginning of a job execution message.
+ * They must be direct members of the execution object, in the part that was kept.
+ */
+static int job_identify(const char *head, uint8_t *job_id, size_t job_id_size, int *version)
+{
+	const char *execution = json_member_find(head, "execution");
+	const char *value;
+	const char *id;
+	const char *end;
+	char *num_end;
+	size_t len;
+	long num;
+
+	if (execution == NULL) {
+		return -ENOENT;
+	}
+
+	id = json_member_find(execution, "jobId");
+	if (id == NULL || *id != '"') {
+		return -ENOENT;
+	}
+
+	end = json_string_skip(id);
+	if (end == NULL) {
+		return -ENOENT;
+	}
+
+	/* A job ID has no escaped characters. */
+	len = end - id - 2;
+	if (len == 0 || len >= job_id_size || memchr(id, '\\', end - id) != NULL) {
+		return -ENOENT;
+	}
+
+	value = json_member_find(execution, "versionNumber");
+	if (value == NULL) {
+		return -ENOENT;
+	}
+
+	/* The number is complete only if a delimiter follows it. The message can be cut in it. */
+	end = json_value_skip(value);
+	num = strtol(value, &num_end, 10);
+	if (end == NULL || num_end != end || num < 0 || num > INT_MAX) {
+		return -ENOENT;
+	}
+
+	memcpy(job_id, id + 1, len);
+	job_id[len] = '\0';
+	*version = num;
+
+	return 0;
+}
+
+/**
+ * @brief Fail the job of a job execution message that did not fit in the payload buffer.
+ *
+ * The beginning of the message is in the payload buffer. If the job can be identified from it,
+ * the job execution is set to failed, so that AWS IoT Jobs does not send the job again.
+ *
+ * @param client Connected MQTT client instance
+ *
+ * @return 0 If the job was failed, PAYLOAD_TRUNCATED if the job could not be identified, otherwise
+ *	   a negative error code is returned.
+ */
+static int job_too_large_fail(struct mqtt_client *const client)
+{
+	uint8_t job_id_incoming[AWS_JOBS_JOB_ID_MAX_LEN];
+	int version;
+
+	if (job_identify(payload_buf, job_id_incoming, sizeof(job_id_incoming), &version)) {
+		return PAYLOAD_TRUNCATED;
+	}
+
+	/* Check if the incoming job is already being handled. */
+	if (strncmp(job_id_incoming, job_id_handling, sizeof(job_id_incoming)) == 0) {
+		LOG_WRN("Job already being handled, ignore message");
+		return 0;
+	}
+
+	LOG_ERR("Job %s does not fit in the payload buffer of %zu bytes. "
+		"Increase CONFIG_AWS_FOTA_PAYLOAD_SIZE.",
+		(char *)job_id_incoming, sizeof(payload_buf));
+
+	set_current_job_id(job_id_incoming);
+	execution_version_number = version;
+
+	return set_current_job_failed(client, AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE);
+}
+
 /**
  * @brief Parsing an AWS IoT Job Execution response received on $next/get MQTT
  *	  topic or notify-next. If it is a valid response the program state is
@@ -366,18 +655,15 @@ static int parse_job_execution(struct mqtt_client *const client, uint32_t payloa
 	uint8_t job_id_incoming[AWS_JOBS_JOB_ID_MAX_LEN];
 
 	err = get_published_payload(client, payload_buf, payload_len);
-	if (err) {
+	if (err == PAYLOAD_TRUNCATED) {
+		return job_too_large_fail(client);
+	} else if (err) {
 		LOG_ERR("Error when getting the payload: %d", err);
 		return err;
 	}
 
-#if IS_ENABLED(CONFIG_AWS_FOTA_LOG_LEVEL_DBG)
-	char job_doc[payload_len + 1];
-
-	memcpy(job_doc, payload_buf, payload_len);
-	job_doc[payload_len] = '\0';
-	LOG_DBG("Job doc: %s", job_doc);
-#endif
+	/* The data is copied directly to the log buffer, not to the stack. */
+	LOG_HEXDUMP_DBG(payload_buf, MIN(payload_len, JOB_DOC_LOG_LEN_MAX), "Job doc");
 
 	/* Check if message received is a job. */
 	err = aws_fota_parse_DescribeJobExecution_rsp(payload_buf, payload_len,
@@ -558,7 +844,7 @@ static int job_update_rejected(struct mqtt_client *const client, uint32_t payloa
 		LOG_ERR("Error %d when getting the payload", err);
 		return err;
 	}
-	LOG_ERR("%s", (char *)payload_buf);
+	LOG_ERR("%.*s", (int)payload_len, (char *)payload_buf);
 	callback(&aws_fota_evt);
 	return -EFAULT;
 }
@@ -665,6 +951,23 @@ read_payload:
 
 	LOG_DBG("FOTA already in progress, message is ignored");
 	return 0;
+}
+
+/* Report that a job message was dropped because it did not fit in the payload buffer. */
+static void on_payload_too_large(void)
+{
+	struct aws_fota_event aws_fota_evt = {
+		.id = AWS_FOTA_EVT_ERROR,
+		.cause = AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE
+	};
+
+	LOG_ERR("Job message dropped, it does not fit in the payload buffer of %zu bytes. "
+		"Increase CONFIG_AWS_FOTA_PAYLOAD_SIZE.", sizeof(payload_buf));
+
+	/* Do not report an error to the application if a job is being handled. */
+	if (internal_state == STATE_INIT) {
+		callback(&aws_fota_evt);
+	}
 }
 
 static int on_connack_evt(struct mqtt_client *const client)
@@ -791,6 +1094,14 @@ int aws_fota_mqtt_evt_handler(struct mqtt_client *const client, const struct mqt
 				     p->message.topic.topic.utf8,
 				     p->message.topic.topic.size,
 				     p->message.payload.len);
+
+		if (err == PAYLOAD_TRUNCATED) {
+			/* The message was dropped. This is not a connection error, so keep the
+			 * connection and acknowledge the message.
+			 */
+			on_payload_too_large();
+			err = 0;
+		}
 
 		if (err < 0) {
 			goto cleanup;

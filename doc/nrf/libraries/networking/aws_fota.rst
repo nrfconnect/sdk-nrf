@@ -103,6 +103,7 @@ Configuration
 Configure the following parameters when using this library:
 
 * :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Sets the maximum payload size for AWS IoT job messages.
+  The default value is large enough for a job with a typical presigned URL.
 * :kconfig:option:`CONFIG_AWS_FOTA_DOWNLOAD_SECURITY_TAG` - Sets the security tag to be used in case of HTTPS downloads.
 
 Additionally, configure the :ref:`lib_downloader` library:
@@ -186,13 +187,20 @@ Content range is not defined:
    To fix this problem, configure the host server to provide this field.
    Also, confirm that your file is available from the browser without being logged into your AWS account.
 
+Job message does not fit in the payload buffer:
+   If a job message from AWS IoT Jobs is larger than :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`, the library drops the message and keeps the MQTT connection.
+   The application receives the :c:enumerator:`AWS_FOTA_ERROR_CAUSE_PAYLOAD_TOO_LARGE` error cause.
+   If the library can identify the job from the beginning of the message, it sets the job execution to ``FAILED`` with the ``PAYLOAD_TOO_LARGE`` reason in the status details.
+   AWS IoT Jobs then does not send the job again.
+   To fix this problem, increase the value of the :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` Kconfig option and create the job again.
+
 Presigned URLs
 ==============
 
 When using the presigned URLs, you might need to increase the value of the following Kconfig options to accommodate the long file name and payload size of the presigned URL and the secure download of the image:
 
 * :kconfig:option:`CONFIG_DOWNLOADER_MAX_FILENAME_SIZE`.
-* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE`.
+* :kconfig:option:`CONFIG_AWS_FOTA_PAYLOAD_SIZE` - Only if the job message is larger than the default value.
 * :kconfig:option:`CONFIG_MBEDTLS_HEAP_SIZE` - If running Mbed TLS on the application core (Wi-Fi® builds).
 
 Limitations
