@@ -1188,10 +1188,13 @@ Libraries for networking
 * :ref:`lib_nrf_cloud_pgps` library:
 
   * Updated to use a new parser for assistance data.
+  * Removed the dependency on the :kconfig:option:`CONFIG_MODEM_INFO` and :kconfig:option:`CONFIG_MODEM_INFO_ADD_NETWORK` Kconfig options.
 
 * :ref:`lib_nrf_cloud_agnss` library:
 
   * Updated to use a new parser for assistance data.
+  * Removed the dependency on the :kconfig:option:`CONFIG_MODEM_INFO` and :kconfig:option:`CONFIG_MODEM_INFO_ADD_NETWORK` Kconfig options.
+    Applications that supply the network information themselves, for example through the ``net_info`` field of :c:struct:`nrf_cloud_coap_agnss_request`, no longer need to enable the :ref:`modem_info_readme` library.
 
 * :ref:`lib_nrf_cloud` library:
 
@@ -1380,6 +1383,8 @@ nRF Cloud integration
     This is applied using the :c:func:`memfault_zephyr_fota_modem_project_key_set()` function and requires the :kconfig:option:`CONFIG_MEMFAULT_FOTA_MODEM_UPDATE` Kconfig option to be enabled.
 
   * The :kconfig:option:`CONFIG_NRF_CLOUD_FOTA_POLL_JOB_CHECK_PROGRESS_THRESHOLD` Kconfig option to the :ref:`lib_nrf_cloud` FOTA polling helpers, allowing the progress-based FOTA job re-check to be configured or disabled.
+
+* Updated :c:func:`nrf_cloud_modem_info_json_encode` to no longer query the modem when no information is to be set, that is, when all sections are :c:enumerator:`NRF_CLOUD_INFO_NO_CHANGE` or :c:enumerator:`NRF_CLOUD_INFO_CLEAR`.
 
 * Fixed a memory leak in the :ref:`lib_nrf_cloud` FOTA polling helpers where the temporary job info returned by each FOTA job check was not released on all code paths.
 

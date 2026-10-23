@@ -64,6 +64,8 @@ struct nrf_cloud_coap_agnss_request {
 	struct nrf_modem_gnss_agnss_data_frame *agnss_req;
 	/** Optional; provide network info or set to NULL. The cloud cannot
 	 * provide location assistance data if network info is NULL.
+	 * The network info is always supplied by the caller; the library does not
+	 * obtain it from the modem, so the modem_info library is not required.
 	 */
 	struct lte_lc_cells_info *net_info;
 	/** Reduce set of ephemerides to only those visible at current
