@@ -86,3 +86,13 @@ Trying to change them directly in an image will result in the new value being ov
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
 | :kconfig:option:`CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION`       + :kconfig:option:`SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER`                 | :ref:`b0 <bootloader>`  |
 +-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
+| :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT`                       + :kconfig:option:`SB_CONFIG_CRACEN_IKG_SEED_KMU_SLOT`                      | All images              |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
+| :kconfig:option:`CONFIG_CRACEN_KMU_PROVISIONING_SLOT`                   + :kconfig:option:`SB_CONFIG_CRACEN_KMU_PROVISIONING_SLOT`                  |                         |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
+| :kconfig:option:`CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT`                   + :kconfig:option:`SB_CONFIG_CRACEN_KMU_PROT_RAM_INV_SLOT`                  |                         |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+
+| :kconfig:option:`CONFIG_CRACEN_KMU_NS_SLOT_FIRST`                       + :kconfig:option:`SB_CONFIG_CRACEN_KMU_NS_SLOT_FIRST`                      | Main application        |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+                         |
+| :kconfig:option:`CONFIG_CRACEN_KMU_NS_SLOT_LAST`                        + :kconfig:option:`SB_CONFIG_CRACEN_KMU_NS_SLOT_LAST`                       |                         |
++-------------------------------------------------------------------------+---------------------------------------------------------------------------+-------------------------+

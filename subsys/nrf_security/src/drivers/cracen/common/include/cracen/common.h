@@ -84,7 +84,9 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 /**
  * @brief Prepare ik key.
  *
- * @param user_data    Owner ID.
+ * @param[in] user_data Owner ID, one 32-bit word. Used as the IKG key bundle when
+ *                      @kconfig{CONFIG_CRACEN_IKG_PERSONALIZED_KEYS} is enabled,
+ *                      ignored otherwise.
  *
  * @return sxsymcrypt status code.
  */
