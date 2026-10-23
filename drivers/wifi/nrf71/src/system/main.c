@@ -633,6 +633,13 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
 
+#ifdef CONFIG_NRF71_SR_COEX_DRIVER
+	/* Counterpart of the POWERED_UP_READY notification sent after bring-up. The
+	 * coexistence driver is told before the FMAC and its transport are torn down.
+	 */
+	nrf_wifi_coex_wifi_power_down();
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER */
+
 	nrf_wifi_sys_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
 
 	nrf_wifi_fmac_dev_rem(rpu_ctx_zep->rpu_ctx);

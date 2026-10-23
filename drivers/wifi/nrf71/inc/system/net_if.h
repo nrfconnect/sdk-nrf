@@ -55,6 +55,11 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx,
 enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 						enum nrf_wifi_fmac_if_carr_state carr_state);
 
+#ifdef CONFIG_NRF71_SR_COEX_DRIVER
+/** Notify the coexistence driver that Wi-Fi is powering down. */
+void nrf_wifi_coex_wifi_power_down(void);
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER */
+
 int nrf_wifi_stats_get(const struct device *dev,
 		       struct net_if *iface,
 		       struct net_stats_wifi *stats);
