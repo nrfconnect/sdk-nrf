@@ -1173,6 +1173,9 @@ Libraries for networking
 
 * Added:
 
+  * The :ref:`lib_tls_credentials_keygen_kmu` library (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN_KMU`, :ref:`experimental <software_maturity>`) that stores the TLS private keys generated on the device in the CRACEN KMU.
+    It is enabled by default on devices with a CRACEN KMU when the TLS credentials key generation (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`) is enabled.
+
   * The :ref:`lib_dect_tethering` library (:kconfig:option:`CONFIG_DECT_TETHER_IPV6_LIB`, :ref:`experimental <software_maturity>`) that turns a DECT NR+ uplink into an IPv6 gateway (GW) for a tethered host on Ethernet, without relying on host-side SLAAC.
     It performs the following operations:
 

@@ -1,0 +1,69 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Store the generated keys in the KMU on devices that have one.
+choice TLS_CREDENTIALS_KEYGEN_KEY_STORE
+	default TLS_CREDENTIALS_KEYGEN_KEY_STORE_CUSTOM if CRACEN_KMU
+endchoice
+
+menuconfig TLS_CREDENTIALS_KEYGEN_KMU
+	bool "Store the generated TLS keys in the KMU [EXPERIMENTAL]"
+	depends on TLS_CREDENTIALS_KEYGEN_KEY_STORE_CUSTOM
+	depends on CRACEN_KMU
+	default y
+	select EXPERIMENTAL
+	help
+	  Key store of the TLS credentials key generation (TLS_CREDENTIALS_KEYGEN) that stores the
+	  generated private keys in the CRACEN Key Management Unit (KMU). The keys are not stored
+	  in the flash, and they can only be used by CRACEN.
+
+	  The library owns the KMU slots that are set with TLS_CREDENTIALS_KEYGEN_KMU_SLOT_FIRST
+	  and TLS_CREDENTIALS_KEYGEN_KMU_KEY_COUNT. A key in these slots that no security tag is
+	  registered for is destroyed when a new key is generated.
+
+if TLS_CREDENTIALS_KEYGEN_KMU
+
+choice TLS_CREDENTIALS_KEYGEN_KMU_SCHEME
+	prompt "KMU key usage scheme"
+	default TLS_CREDENTIALS_KEYGEN_KMU_SCHEME_ENCRYPTED
+
+config TLS_CREDENTIALS_KEYGEN_KMU_SCHEME_ENCRYPTED
+	bool "Encrypted"
+	select PSA_WANT_KEY_TYPE_AES
+	select PSA_WANT_AES_KEY_SIZE_256
+	select PSA_WANT_ALG_GCM
+	select PSA_WANT_ALG_CMAC
+	select PSA_WANT_ALG_ECB_NO_PADDING
+	select PSA_WANT_ALG_SP800_108_COUNTER_CMAC
+	help
+	  The key is stored encrypted with a key that is derived from the CRACEN IKG seed. The
+	  seed must be provisioned. A key uses 4 KMU slots for P-256 and 5 KMU slots for P-384.
+
+config TLS_CREDENTIALS_KEYGEN_KMU_SCHEME_RAW
+	bool "Raw"
+	help
+	  The key is stored in plaintext in the KMU. A key uses 2 KMU slots for P-256 and 3 KMU
+	  slots for P-384.
+
+endchoice
+
+config TLS_CREDENTIALS_KEYGEN_KMU_SLOT_FIRST
+	int "First KMU slot"
+	range 0 179
+	default 100
+	help
+	  First KMU slot of the keys. Each key uses a block of slots that fits the largest enabled
+	  key type. The slots must not be used by anything else. On nRF71 Series devices, the
+	  Wi-Fi keys use the KMU slots from NRF_WIFI_KMU_SLOT_MIN.
+
+config TLS_CREDENTIALS_KEYGEN_KMU_KEY_COUNT
+	int "Number of keys"
+	range 1 36
+	default 2
+	help
+	  Maximum number of generated keys, one for each security tag.
+
+endif # TLS_CREDENTIALS_KEYGEN_KMU
