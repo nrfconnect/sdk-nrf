@@ -169,6 +169,24 @@ size_t cracen_ml_dsa_calc_vector_sz_bytes(uint32_t bit_len);
  */
 int32_t cracen_ml_dsa_reduce_to_zq(int32_t a);
 
+/** Returns its argument, but hides the value from the optimizer.
+ *
+ * Inspired by mldsa-native (mld_value_barrier_u32).
+ */
+
+/** @brief Return an argument hiding the value from the optimizer
+ *         (inspired by mldsa-native).
+ *
+ * @param[in] v Argument
+ *
+ * @return The value of argument v.
+ */
+static inline int32_t value_barrier_i32(int32_t v)
+{
+	__asm__ volatile("" : "+r"(v));
+	return v;
+}
+
 /** @brief Calculate absolute value of a signed coefficient.
  *
  * @note This function can be used in constant time operations.
@@ -177,7 +195,12 @@ int32_t cracen_ml_dsa_reduce_to_zq(int32_t a);
  *
  * @return Absolute value of a signed coefficient.
  */
-int32_t cracen_ml_dsa_abs_coeff(int32_t coeff);
+static inline int32_t cracen_ml_dsa_abs_coeff(int32_t coeff)
+{
+	int32_t sign_mask = value_barrier_i32(coeff >> 31);
+
+	return coeff - (sign_mask & (2 * coeff));
+}
 
 /** @brief Get a mask value indicating if the value is greater or equal
  *         than specified bound (magnitude >= bound).
@@ -189,7 +212,10 @@ int32_t cracen_ml_dsa_abs_coeff(int32_t coeff);
  *
  * @return All-ones mask when @p magnitude >= @p bound, zero otherwise.
  */
-int32_t cracen_ml_dsa_ge_bound_mask(int32_t magnitude, int32_t bound);
+static inline int32_t cracen_ml_dsa_ge_bound_mask(int32_t magnitude, int32_t bound)
+{
+	return value_barrier_i32(~(magnitude - bound) >> 31);
+}
 
 /** @brief Compute the SHAKE256 digest of a single buffer.
  *
