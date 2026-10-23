@@ -40,7 +40,7 @@ ap = {
 }
 
 wifi_ob = {
-	accessPoints => [2*20 ap]
+	accessPoints => [1*20 ap]
 }
 
 ground_fix_req = {

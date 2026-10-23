@@ -1207,6 +1207,8 @@ Libraries for networking
     This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
     The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
 
+  * Updated :c:enumerator:`NRF_CLOUD_LOCATION_WIFI_AP_CNT_MIN` to ``1`` to reflect the improvements on the service side.
+
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.
