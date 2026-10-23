@@ -38,13 +38,6 @@ Zephyr and the |NCS| provide support for developing networking applications with
      - | `Product Specification <nRF5340 Product Specification_>`_
        | `Quick Start app`_
        | `User Guide <nRF5340 DK User Guide_>`_
-   * - :zephyr:board:`nrf52840dk`
-     - nRF7002 EK
-     - PCA10056
-     - ``nrf52840dk/nrf52840``
-     - | `Product Specification <nRF52840 Product Specification_>`_
-       | `Quick Start app`_
-       | `User Guide <nRF52840 DK User Guide_>`_
    * - :zephyr:board:`nrf9151dk`
      - nRF7002 EK
      - PCA10171

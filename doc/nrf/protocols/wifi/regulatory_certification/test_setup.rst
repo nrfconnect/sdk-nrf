@@ -68,7 +68,7 @@ The nRF70 Series includes the following platforms:
 
 * nRF7002 :term:`Development Kit (DK)` – A single-board solution featuring the Wi-Fi 6 capabilities of the nRF7002 companion IC and the nRF5340 :term:`System on Chip (SoC)`.
 * nRF7002 :term:`Evaluation Kit (EK)` – A shield board used for evaluating the nRF7002 companion IC.
-  The EK is compatible with the nRF52840, nRF5340, and nRF91 DKs through its Arduino connector.
+  The EK is compatible with the nRF5340 and nRF91 DKs through its Arduino connector.
 
 For hardware information, see the user guides `nRF7002 DK Hardware`_ and `nRF7002 EK Hardware`_.
 For more information on the boards in nRF Connect for Desktop, see :ref:`Getting started with nRF70 Series <ug_nrf7002_gs>`.
