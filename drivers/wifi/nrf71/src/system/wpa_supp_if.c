@@ -416,9 +416,9 @@ void nrf_wifi_wpa_supp_event_proc_deauth(void *if_priv,
 		event.deauth_info.ie_len = (frame + frame_len - mgmt->u.deauth.variable);
 	}
 
-	if (!(deauth->valid_fields & NRF_WIFI_EVENT_MLME_RXDEAUTH_FROM_AP)) {
-		event.deauth_info.locally_generated = 1;
-	}
+	event.deauth_info.locally_generated =
+		ether_addr_equal(mgmt->sa,
+				 net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr);
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
 		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
@@ -451,6 +451,9 @@ void nrf_wifi_wpa_supp_event_proc_disassoc(void *if_priv,
 
 	event.disassoc_info.addr = &mgmt->sa[0];
 	event.disassoc_info.reason_code = le_to_host16(mgmt->u.disassoc.reason_code);
+	event.disassoc_info.locally_generated =
+		ether_addr_equal(mgmt->sa,
+				 net_if_get_link_addr(vif_ctx_zep->zep_net_if_ctx)->addr);
 	if (frame + frame_len > mgmt->u.disassoc.variable) {
 		event.disassoc_info.ie = mgmt->u.disassoc.variable;
 		event.disassoc_info.ie_len = (frame + frame_len - mgmt->u.disassoc.variable);
@@ -942,13 +945,29 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 			     NRF_WIFI_MAX_IE_LEN : params->ie_len;
 		memcpy(&auth_info.ie.ie, params->ie, max_ie_len);
 		auth_info.ie.ie_len = max_ie_len;
-	} else {
+	} else if (curr_bss) {
+		size_t bss_ie_len = curr_bss->ie_len;
+
 		auth_info.scan_width = 0; /* hard coded */
 		auth_info.nrf_wifi_signal = curr_bss->level;
 		auth_info.capability = curr_bss->caps;
 		auth_info.beacon_interval = curr_bss->beacon_int;
 		auth_info.tsf = curr_bss->tsf;
 		auth_info.from_beacon = 0; /* hard coded */
+
+		/* Probe/beacon IEs for UMAC BSS database when firmware has no
+		 * match. Not used for WPA3/SAE.
+		 */
+		if (params->auth_alg != WPA_AUTH_ALG_SAE &&
+		    (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION ||
+		     vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_P2P_CLIENT) &&
+		    bss_ie_len > 0) {
+			if (bss_ie_len > NRF_WIFI_MAX_IE_LEN) {
+				bss_ie_len = NRF_WIFI_MAX_IE_LEN;
+			}
+			memcpy(auth_info.bss_ie.ie, wpa_bss_ie_ptr(curr_bss), bss_ie_len);
+			auth_info.bss_ie.ie_len = bss_ie_len;
+		}
 	}
 
 	if (params->auth_data) {

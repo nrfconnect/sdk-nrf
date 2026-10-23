@@ -2164,6 +2164,10 @@ static int start_up_p2p_handler(struct packet_wrapper *req, struct packet_wrappe
 	CHECK_RET();
 	ret = run_qt_command("SET device_name 7002DK");
 	CHECK_RET();
+	ret = run_qt_command("SET p2p_listen_reg_class 81");
+	CHECK_RET();
+	ret = run_qt_command("SET p2p_listen_channel 6");
+	CHECK_RET();
 
 done:
 	fill_wrapper_message_hdr(resp, API_CMD_RESPONSE, req->hdr.seq);
