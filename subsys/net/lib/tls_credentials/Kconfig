@@ -9,6 +9,11 @@ config TLS_MAX_CREDENTIALS_NUMBER
 	# Increase default maximum number of TLS credentials that can be registered.
 	default 20 if TLS_CREDENTIALS_BACKEND_NRF_MODEM
 
+config TLS_CREDENTIALS_KEYGEN
+	# The CRACEN driver derives the public key of a key pair only with the key pair export
+	# support. The private key stays non-exportable, because the key has no export usage.
+	select PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT if PSA_CRYPTO_DRIVER_CRACEN
+
 choice TLS_CREDENTIALS_BACKEND
 	depends on TLS_CREDENTIALS
 	default TLS_CREDENTIALS_BACKEND_NRF_MODEM if NRF_MODEM_LIB
