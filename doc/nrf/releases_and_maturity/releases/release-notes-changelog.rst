@@ -1166,7 +1166,9 @@ Modem libraries
 Multiprotocol Service Layer libraries
 -------------------------------------
 
-|no_changes_yet_note|
+* Updated the periodic calibration work (:kconfig:option:`CONFIG_MPSL_CALIBRATION_PERIOD`) to keep running after the :c:func:`mpsl_lib_uninit` function is called, when the RC oscillator is used as the low-frequency clock source.
+  The RC oscillator is now also calibrated while MPSL is uninitialized, for example after :c:func:`bt_disable` when :kconfig:option:`CONFIG_BT_UNINIT_MPSL_ON_DISABLE` is enabled.
+  With the RC oscillator, MPSL reads the die temperature during calibration also while uninitialized, so read the temperature using the :c:func:`mpsl_temperature_get` function or the TEMP sensor driver instead of accessing the TEMP peripheral directly.
 
 Libraries for networking
 ------------------------

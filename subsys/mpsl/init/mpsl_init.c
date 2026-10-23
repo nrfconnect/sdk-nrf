@@ -423,6 +423,16 @@ static void mpsl_calibration_work_handler(struct k_work *work)
 	mpsl_work_schedule(&calibration_work,
 			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
 }
+
+/* The work handler stops when do_calibration is 0, so enabling calibration again
+ * must also reschedule the work.
+ */
+static void mpsl_calibration_start(void)
+{
+	atomic_set(&do_calibration, 1);
+	mpsl_work_schedule(&calibration_work,
+			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
+}
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 static int32_t mpsl_lib_init_internal(void)
@@ -582,9 +592,7 @@ static int mpsl_low_prio_init(void)
 		    mpsl_low_prio_irq_handler, NULL, 0);
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-	atomic_set(&do_calibration, 1);
-	mpsl_work_schedule(&calibration_work,
-			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
+	mpsl_calibration_start();
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 	return 0;
@@ -595,17 +603,24 @@ int32_t mpsl_lib_init(void)
 #if IS_ENABLED(CONFIG_MPSL_DYNAMIC_INTERRUPTS)
 	int err = 0;
 
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	atomic_val_t calibration_was_on = atomic_set(&do_calibration, 0);
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
+
 	err = mpsl_lib_init_internal();
 	if (err) {
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+		if (calibration_was_on) {
+			mpsl_calibration_start();
+		}
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 		return err;
 	}
 
 	mpsl_lib_irq_connect();
 
 #if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
-	atomic_set(&do_calibration, 1);
-	mpsl_work_schedule(&calibration_work,
-			   K_MSEC(CONFIG_MPSL_CALIBRATION_PERIOD));
+	mpsl_calibration_start();
 #endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 	return 0;
@@ -628,6 +643,13 @@ int32_t mpsl_lib_uninit(void)
 	mpsl_lib_irq_disable();
 
 	mpsl_uninit();
+
+#if defined(CONFIG_MPSL_CALIBRATION_PERIOD)
+	if (m_config_clock_source_get() == MPSL_CLOCK_LF_SRC_RC) {
+		/* MPSL calibrates the RC oscillator also while uninitialized. */
+		mpsl_calibration_start();
+	}
+#endif /* CONFIG_MPSL_CALIBRATION_PERIOD */
 
 #if defined(CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL)
 	err = mpsl_clock_ctrl_uninit();
