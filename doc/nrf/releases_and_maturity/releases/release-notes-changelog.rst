@@ -1324,6 +1324,8 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
   * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
     The default remains SPDX 2.3.
+  * Package dependency relationships collected from Ninja build inputs and GNU linker maps,
+    including nested GN and CMake builds in both SPDX output formats.
 
 * Updated:
 

@@ -8,10 +8,9 @@ Pre-processing of data before it goes to the output.
 '''
 
 from args import args
-from data_structure import Data, License, LicenseExpr, Package
+from data_structure import Data, License, LicenseExpr
+from dependency_graph import resolve_dependencies
 from license_utils import get_license, get_spdx_license_expr_info, is_spdx_license
-
-DEPENDENCY_PLACEHOLDER_ID = 'DEPENDENCY-INFORMATION-UNAVAILABLE'
 
 
 def make_license_expression(licenses: 'set[str]') -> str:
@@ -40,6 +39,7 @@ def pre_process(data: Data, built_date: 'str|None' = None):
     '''Do pre-processing of data for simpler usage by the output modules.
     built_date (UTC ISO 8601 or None) is stamped on application packages.
     '''
+    resolve_dependencies(data)
     # Sort files
     data.files.sort(key=lambda f: f.file_path)
     # Convert concluded licenses to a single SPDX license expression for each file.
@@ -138,10 +138,8 @@ def pre_process(data: Data, built_date: 'str|None' = None):
     files_by_package = group_files_by_package(data)
     # Drop the always-present empty catch-all package when nothing landed in it,
     # so a fully resolved run does not emit a stray "unknown-package" entry.
-    if '' in data.packages and not files_by_package.get(''):
+    if '' in data.packages and not files_by_package.get('') and '' not in data.application_packages:
         del data.packages['']
-    assign_application_dependencies(data, files_by_package)
-    add_dependency_placeholder_if_needed(data)
     assign_primary_package_purpose(data, files_by_package, built_date)
     data.packages_sorted = sorted(data.packages.keys())
 
@@ -151,22 +149,6 @@ def group_files_by_package(data: Data) -> 'dict[str,list]':
     for file in data.files:
         files_by_package.setdefault(file.package, []).append(file)
     return files_by_package
-
-
-def assign_application_dependencies(data: Data, files_by_package: dict):
-    '''Populate dependencies: each application package depends on all other packages detected.'''
-    if not data.application_roots:
-        return
-    application_packages = packages_for_roots(data.application_roots, files_by_package)
-    if not application_packages:
-        return
-    for package_id in application_packages:
-        if package_id not in data.packages:
-            continue
-        if data.packages[package_id].url is not None:
-            continue
-        deps = sorted(pkg for pkg in data.packages if pkg not in ('', package_id))
-        data.packages[package_id].dependencies = deps
 
 
 def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
@@ -188,6 +170,8 @@ def packages_for_roots(roots: 'set[str]', files_by_package: dict) -> 'set[str]':
 def application_packages(data: Data, files_by_package: dict) -> 'set[str]':
     '''Treat the non-empty '' catch-all (this build's generated artifacts) as the
     application package rather than leaving it unnamed as "unknown-package".'''
+    if data.build_dependencies:
+        return data.application_packages
     packages = packages_for_roots(data.application_roots, files_by_package)
     if data.application_roots and files_by_package.get(''):
         packages = packages | {''}
@@ -197,7 +181,6 @@ def application_packages(data: Data, files_by_package: dict) -> 'set[str]':
 def assign_primary_package_purpose(data: Data, files_by_package: dict,
                                    built_date: 'str|None' = None):
     '''Set Package.primary_package_purpose and (for APPLICATION) Package.built_date.
-      DEPENDENCY_PLACEHOLDER_ID                                -> OTHER
       no-URL package with files under data.application_roots   -> APPLICATION
       the unknown-package when an application is known         -> APPLICATION
       package.purl set (git-resolved)                          -> SOURCE
@@ -215,9 +198,7 @@ def assign_primary_package_purpose(data: Data, files_by_package: dict,
     # lives in boot/zephyr, so the basename would be the colliding name "zephyr".
     app_name = data.domain or application_name(data.application_roots)
     for pkg_id, package in data.packages.items():
-        if pkg_id == DEPENDENCY_PLACEHOLDER_ID:
-            package.primary_package_purpose = 'OTHER'
-        elif pkg_id in application_pkgs and package.url is None:
+        if pkg_id in application_pkgs and package.url is None:
             package.primary_package_purpose = 'APPLICATION'
             if built_date is not None:
                 package.built_date = built_date
@@ -242,27 +223,3 @@ def application_name(application_roots: 'set[str]') -> 'str|None':
         if name:
             return name
     return None
-
-
-def add_dependency_placeholder_if_needed(data: Data):
-    '''If no dependencies were collected, add a placeholder package and link others to it.'''
-    if data.application_roots:
-        return
-    placeholder_id = ensure_dependency_placeholder(data)
-    for package in data.packages.values():
-        if package.id == placeholder_id:
-            continue
-        if len(package.dependencies) == 0:
-            package.dependencies = [placeholder_id]
-
-
-def ensure_dependency_placeholder(data: Data) -> str:
-    if DEPENDENCY_PLACEHOLDER_ID in data.packages:
-        return DEPENDENCY_PLACEHOLDER_ID
-    package = Package()
-    package.id = DEPENDENCY_PLACEHOLDER_ID
-    package.name = 'Dependency information unavailable'
-    package.version = 'N/A'
-    package.url = 'NOASSERTION'
-    data.packages[package.id] = package
-    return package.id
