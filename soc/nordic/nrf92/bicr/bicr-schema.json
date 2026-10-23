@@ -1,0 +1,74 @@
+{
+  "title": "nRF9251 BICR Configuration",
+  "type": "object",
+  "properties": {
+    "ioPortPower": {
+      "type": "object",
+      "title": "IO port power configuration",
+      "properties": {
+        "p1Supply": {
+          "$ref": "#/definitions/ioPortSupply",
+          "title": "P1 power supply"
+        },
+        "p2Supply": {
+          "$ref": "#/definitions/ioPortSupply",
+          "title": "P2 power supply"
+        },
+        "p5Supply": {
+          "$ref": "#/definitions/ioPortSupply",
+          "title": "P5 power supply"
+        }
+      },
+      "required": [
+        "p1Supply",
+        "p2Supply",
+        "p5Supply"
+      ]
+    },
+    "ioPortImpedance": {
+      "type": "object",
+      "title": "IO port drive impedance",
+      "properties": {
+        "p5ImpedanceOhms": {
+          "type": "integer",
+          "title": "P5 drive impedance (ohms)",
+          "enum": [
+            33,
+            40,
+            50,
+            66,
+            100
+          ],
+          "default": 50
+        }
+      },
+      "required": [
+        "p5ImpedanceOhms"
+      ]
+    }
+  },
+  "definitions": {
+    "ioPortSupply": {
+      "type": "string",
+      "enumNames": [
+        "Unconfigured",
+        "Not connected",
+        "External supply",
+        "SWEXT switch (1V8_OUT), nominal maximum output current",
+        "SWEXT switch (1V8_OUT), limited output current"
+      ],
+      "enum": [
+        "UNCONFIGURED",
+        "DISCONNECTED",
+        "EXTERNAL",
+        "SW_EXT_HIGH",
+        "SW_EXT_LOW"
+      ],
+      "default": "DISCONNECTED"
+    }
+  },
+  "required": [
+    "ioPortPower",
+    "ioPortImpedance"
+  ]
+}
