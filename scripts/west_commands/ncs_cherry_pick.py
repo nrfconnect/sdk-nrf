@@ -238,7 +238,7 @@ class Repo:
 
     def _parse_log_output_(self, output: str) -> list[dict]:
         revert_expr = re.compile(r'This reverts commit (\w{40})\.')
-        sauce_tag_expr = re.compile(r'^\[(.+)\] (.+)$')
+        sauce_tag_expr = re.compile(r'(^|^Revert \")\[(.+)\] (.+)$')
         pr_number_expr = re.compile(r'Upstream PR #: (\d+)')
         rename_expr = re.compile(r'\{(.*?) => (.*?)\}')
         bare_rename_expr = re.compile(r'^(.+?) => (.+)$')
@@ -310,8 +310,10 @@ class Repo:
 
             tag_match = sauce_tag_expr.match(subject)
             if tag_match:
-                commit['sauce'] = tag_match.group(1)
-                commit['subject'] = tag_match.group(2)
+                if len(tag_match.group(1)):
+                    pass
+                commit['sauce'] = tag_match.group(2)
+                commit['subject'] = tag_match.group(3)
 
             pr_match = pr_number_expr.search(body)
             if pr_match:
@@ -1171,8 +1173,9 @@ class NcsCherryPick(WestCommand):
                 # Fromlist has not been merged, at least not cleanly. Update to noup.
                 commit['sauce'] = 'nrf noup'
 
-            # PR number has no relevance for fromtree nor noups, remove it.
-            commit.pop('pr-number')
+            # PR number has no relevance for fromtree nor noups, remove it if present
+            if 'pr-number' in commit:
+                commit.pop('pr-number')
 
     def _sort_commit_log_(self, commit_log: list[dict], reverse: bool = False):
         commit_log.sort(key=lambda c: c['order'], reverse=reverse)
