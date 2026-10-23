@@ -57,6 +57,17 @@ config NRF_CLOUD_COAP_MAX_RETRIES
 	  The maximum number of times a CoAP request will be retried before it is considered failed.
 	  A value of 0 means that no retries will be attempted.
 
+config NRF_CLOUD_COAP_SEND_TIMEOUT_SEC
+	int "Socket send timeout in seconds"
+	default 20
+	help
+	  Send timeout (SO_SNDTIMEO) applied to the CoAP socket after it connects.
+	  Without coverage, the modem buffers outgoing data until its send buffer is full,
+	  after which a send without a timeout blocks until coverage returns.
+	  A send that times out is retried as described for NRF_CLOUD_COAP_MAX_RETRIES,
+	  so a request can block for up to (NRF_CLOUD_COAP_MAX_RETRIES + 2) times this value.
+	  To disable, set the timeout duration to 0.
+
 config NRF_CLOUD_COAP_MAX_USER_OPTIONS
 	int "Maximum number of custom CoAP options a user can add to requests"
 	default 0
