@@ -25,6 +25,10 @@ The following :term:`Front-End Module (FEM)` implementations are available in th
      - 2-pin
      - SKY66112-11 and other compatible FEMs
      - :ref:`ug_radio_fem_skyworks`
+   * - nRF2240
+     - 2- or 3-pin + I2C
+     - nRF2240
+     - :ref:`ug_radio_fem_nrf2240`
 
 To use any of these implementations with your application, first complete the following steps:
 
@@ -69,6 +73,8 @@ To use any of these implementations with your application, first complete the fo
    * :ref:`nRF21540 GPIO+SPI <ug_radio_fem_nrf21540_spi_gpio>`: :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_GPIO_SPI` Kconfig option.
    * :ref:`2-pin simple GPIO <ug_radio_fem_skyworks>`: :kconfig:option:`CONFIG_MPSL_FEM_SIMPLE_GPIO` Kconfig option.
      This Kconfig option is enabled by default if a FEM compatible with generic two control pins is provided in devicetree.
+   * :ref:`nRF2240 <ug_radio_fem_nrf2240>`: :kconfig:option:`CONFIG_MPSL_FEM_NRF2240` Kconfig option.
+     This Kconfig option is enabled by default if a compatible FEM node is provided in devicetree.
 
 After connecting to the development kit and connecting the shield to the kit, you can :ref:`build your application <building>` and :ref:`program <programming>` the development kit with the created binary file.
 Use the ``SHIELD`` CMake variable for this purpose (see :ref:`cmake_options`).
@@ -84,3 +90,4 @@ If you are working with the nRF21540 EK, see also :ref:`ug_radio_fem_nrf21540ek`
    fem_nRF21540_optional_properties
    fem_simple_gpio
    fem_incomplete_connections
+   fem_nrf2240

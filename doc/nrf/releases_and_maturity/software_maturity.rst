@@ -3291,6 +3291,14 @@ The following table indicates the software maturity levels of the support for Fr
             - --
             - Supported
             - Supported
+          * - nRF2240
+            - nRF2240
+            - --
+            - --
+            - --
+            - --
+            - Supported
+            - Supported
 
     .. group-tab:: nRF53 Series
 
@@ -3310,6 +3318,9 @@ The following table indicates the software maturity levels of the support for Fr
           * - SKY66112-11
             - Simple GPIO
             - Supported
+          * - nRF2240
+            - nRF2240
+            - Supported
 
     .. group-tab:: nRF54H Series
 
@@ -3328,6 +3339,9 @@ The following table indicates the software maturity levels of the support for Fr
             - --
           * - SKY66112-11
             - Simple GPIO
+            - --
+          * - nRF2240
+            - nRF2240
             - --
 
     .. group-tab:: nRF54L Series
@@ -3391,6 +3405,17 @@ The following table indicates the software maturity levels of the support for Fr
             - --
             - Experimental
             - Experimental
+          * - nRF2240
+            - nRF2240
+            - Supported
+            - Supported
+            - Supported
+            - Supported
+            - Supported
+            - Supported
+            - --
+            - Supported
+            - Supported
 
     .. group-tab:: nRF91 Series
 
@@ -3418,6 +3443,12 @@ The following table indicates the software maturity levels of the support for Fr
             - --
           * - SKY66112-11
             - Simple GPIO
+            - --
+            - --
+            - --
+            - --
+          * - nRF2240
+            - nRF2240
             - --
             - --
             - --
