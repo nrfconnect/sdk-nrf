@@ -61,11 +61,12 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT) || ESB_NRF_TIMER_INSTANCE == 
 /* Radio Tx ramp-up time in microseconds. */
 #define TX_RAMP_UP_TIME_US 129
 
-/* Radio Rx fast ramp-up time in microseconds. */
 #define TX_FAST_RAMP_UP_TIME_US 40
 
 /* Radio Rx ramp-up time in microseconds. */
 #define RX_RAMP_UP_TIME_US 124
+
+#define RX_FAST_RAMP_UP_TIME_US 40
 
 /* Mask value to signal updating BASE0 radio address. */
 #define ADDR_UPDATE_MASK_BASE0  BIT(0)
@@ -583,9 +584,11 @@ static void esb_fem_for_rx_set(void)
 	if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
 		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CAPTURE1);
 		const uint32_t timer = nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1);
+		const uint16_t ramp_up =
+			esb_cfg.use_fast_ramp_up ? RX_FAST_RAMP_UP_TIME_US : RX_RAMP_UP_TIME_US;
 
 		rx_event.event.timer.counter_period.end =
-			(RX_RAMP_UP_TIME_US + timer) % ts_duration_params.rx_tx_sequence;
+			(ramp_up + timer) % ts_duration_params.rx_tx_sequence;
 	}
 
 	if (mpsl_fem_lna_configuration_set(&rx_event, &disable_event) == 0) {
@@ -606,9 +609,11 @@ static void esb_fem_for_ack_rx(void)
 	if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
 		/* CC1 captured on radio disabled */
 		const uint32_t timer = nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1);
+		const uint16_t ramp_up =
+			esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
 
 		rx_event.event.timer.counter_period.end =
-			(TX_RAMP_UP_TIME_US + timer) % ts_duration_params.rx_tx_sequence;
+			(ramp_up + timer) % ts_duration_params.rx_tx_sequence;
 	}
 
 	/* Timer is running and timer's shorts and PPI connections have been configured. */
@@ -621,9 +626,11 @@ static void esb_fem_for_tx_ack(void)
 	if (IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
 		/* CC1 captured on radio disabled */
 		const uint32_t timer = nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1);
+		const uint16_t ramp_up =
+			esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
 
 		tx_event.event.timer.counter_period.end =
-			(TX_RAMP_UP_TIME_US + timer) % ts_duration_params.rx_tx_sequence;
+			(ramp_up + timer) % ts_duration_params.rx_tx_sequence;
 	}
 
 	/* Timer is running and timer's shorts and PPI connections have been configured. */
@@ -701,8 +708,11 @@ void esb_fem_for_tx_retry(void)
 	/* The radio is ramped-up with delay set in the timer compare channel 1.
 	 * Calculate the ramp-up time for external front-end module.
 	 */
+	const uint16_t ramp_up =
+		esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
+
 	tx_time_shifted.event.timer.counter_period.end =
-		nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1) + TX_RAMP_UP_TIME_US;
+		nrf_timer_cc_get(esb_timer.p_reg, NRF_TIMER_CC_CHANNEL1) + ramp_up;
 
 	/* This starts the ESB TIMER on the radio disabled event. This connection is needed even
 	 * when front-end module is not used.
@@ -1403,6 +1413,13 @@ static void sys_timer_deinit(void)
 	nrfx_timer_uninit(&esb_timer);
 }
 
+static void clear_fast_ramp_up_timer_state(void)
+{
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_STOP);
+	nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_CLEAR);
+	nrf_timer_shorts_set(esb_timer.p_reg, 0);
+}
+
 static void start_tx_transaction(void)
 {
 	bool ack = true;
@@ -1425,6 +1442,8 @@ static void start_tx_transaction(void)
 							 NRF_RADIO_SHORT_TXREADY_START_MASK));
 			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		} else if (esb_cfg.use_fast_ramp_up) {
+			nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, (RADIO_NORMAL_SW_SHORTS |
 							 NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
@@ -1456,6 +1475,8 @@ static void start_tx_transaction(void)
 					(RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_TXREADY_START_MASK));
 				nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 				nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+			} else if (esb_cfg.use_fast_ramp_up) {
+				nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 			} else {
 				nrf_radio_shorts_set(NRF_RADIO,
 						     (RADIO_NORMAL_SW_SHORTS |
@@ -1604,6 +1625,11 @@ static void on_radio_disabled_tx(void)
 	esb_ppi_for_txrx_clear(false, true);
 	/* The timer was triggered on radio disabled event so we can clear PPI connections here. */
 	esb_ppi_for_fem_clear();
+
+	if (!fast_switching && esb_cfg.use_fast_ramp_up) {
+		clear_fast_ramp_up_timer_state();
+	}
+
 	esb_fem_for_rx_ack();
 
 	/* Remove the DISABLED -> RXEN shortcut, to make sure the radio stays
@@ -1654,6 +1680,9 @@ static void on_radio_disabled_tx(void)
 	if (fast_switching) {
 		nrf_radio_int_disable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_START);
+	} else if (esb_cfg.use_fast_ramp_up) {
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	}
 	on_radio_disabled = on_radio_disabled_tx_wait_for_ack;
 	esb_state = ESB_STATE_PTX_RX_ACK;
@@ -1668,6 +1697,8 @@ static void continue_retx(void)
 				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_TXREADY_START_MASK));
 		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+	} else if (esb_cfg.use_fast_ramp_up) {
+		nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 	} else {
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (RADIO_NORMAL_SW_SHORTS | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
@@ -1894,6 +1925,8 @@ static void start_retx_in_new_timeslot(void)
 				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_TXREADY_START_MASK));
 		nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 		nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+	} else if (esb_cfg.use_fast_ramp_up) {
+		nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 	} else {
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (RADIO_NORMAL_SW_SHORTS | NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
@@ -1938,6 +1971,8 @@ static void start_rx_listening(void)
 							 NRF_RADIO_SHORT_RXREADY_START_MASK));
 			nrf_radio_event_clear(NRF_RADIO, ESB_RADIO_EVENT_END);
 			nrf_radio_int_enable(NRF_RADIO, ESB_RADIO_INT_END_MASK);
+		} else if (esb_cfg.use_fast_ramp_up) {
+			nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, (RADIO_NORMAL_SW_SHORTS |
 							 NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
@@ -1993,6 +2028,8 @@ static void clear_events_restart_rx(void)
 	if (fast_switching) {
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_RXREADY_START_MASK));
+	} else if (esb_cfg.use_fast_ramp_up) {
+		nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
 	} else {
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (RADIO_NORMAL_SW_SHORTS | NRF_RADIO_SHORT_DISABLED_TXEN_MASK));
@@ -2080,6 +2117,11 @@ static void on_radio_disabled_rx(void)
 
 	/* Check if an ack should be sent */
 	if ((esb_cfg.selective_auto_ack == false) || rx_pdu->type.dpl_pdu.ack) {
+		if (!fast_switching && esb_cfg.use_fast_ramp_up &&
+		    !IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+			clear_fast_ramp_up_timer_state();
+		}
+
 		esb_fem_for_tx_ack();
 
 		switch (esb_cfg.protocol) {
@@ -2107,6 +2149,10 @@ static void on_radio_disabled_rx(void)
 			nrf_radio_shorts_set(NRF_RADIO, (RADIO_RSSI_SHORTS |
 							 NRF_RADIO_SHORT_TXREADY_START_MASK));
 			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
+		} else if (esb_cfg.use_fast_ramp_up) {
+			nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
+			nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
+			nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_TXEN);
 		} else {
 			nrf_radio_shorts_set(NRF_RADIO, (RADIO_NORMAL_SW_SHORTS |
 							 NRF_RADIO_SHORT_DISABLED_RXEN_MASK));
@@ -2131,6 +2177,11 @@ static void on_radio_disabled_rx(void)
 
 static void on_radio_disabled_rx_send_ack(void)
 {
+	if (!fast_switching && esb_cfg.use_fast_ramp_up &&
+	    !IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
+		clear_fast_ramp_up_timer_state();
+	}
+
 	esb_fem_for_ack_rx();
 
 	if (esb_cfg.protocol == ESB_PROTOCOL_ESB) {
@@ -2141,6 +2192,10 @@ static void on_radio_disabled_rx_send_ack(void)
 	if (fast_switching) {
 		nrf_radio_shorts_set(NRF_RADIO,
 				     (RADIO_RSSI_SHORTS | NRF_RADIO_SHORT_RXREADY_START_MASK));
+		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
+	} else if (esb_cfg.use_fast_ramp_up) {
+		nrf_radio_shorts_set(NRF_RADIO, RADIO_NORMAL_SW_SHORTS);
+		nrf_timer_task_trigger(esb_timer.p_reg, NRF_TIMER_TASK_START);
 		nrf_radio_task_trigger(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	} else {
 		nrf_radio_shorts_set(NRF_RADIO,
@@ -2375,6 +2430,11 @@ int esb_init(const struct esb_config *config)
 		err = -EINVAL;
 		goto error_cleanup;
 	}
+
+	rx_event.event.timer.counter_period.end =
+		esb_cfg.use_fast_ramp_up ? RX_FAST_RAMP_UP_TIME_US : RX_RAMP_UP_TIME_US;
+	tx_event.event.timer.counter_period.end =
+		esb_cfg.use_fast_ramp_up ? TX_FAST_RAMP_UP_TIME_US : TX_RAMP_UP_TIME_US;
 
 	if (!IS_ENABLED(CONFIG_ESB_MPSL_TIMESLOT)) {
 		if (!update_radio_parameters()) {
