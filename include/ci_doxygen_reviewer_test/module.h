@@ -11,7 +11,7 @@
  * @file module.h
  * @defgroup ci_doxygen_reviewer_test CI Doxygen reviewer test headers
  * @{
- * @brief Public headers used to validate the Doxygen pull request reviewer.
+ * @brief Public headers used to validate the Doxygen pull request reviewer service.
  */
 
 /** @} */
