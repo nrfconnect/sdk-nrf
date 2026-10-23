@@ -9,6 +9,7 @@
 
 #include <sys/types.h>
 
+/* Returns -ENOENT if the URL has no port, and -EINVAL if the port is not valid. */
 int dl_parse_url_port(const char *url, uint16_t *port);
 int dl_parse_url_host(const char *url, char *host, size_t len);
 int dl_parse_url_file(const char *url, char *file, size_t len);
