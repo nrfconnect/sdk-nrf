@@ -35,6 +35,7 @@
 #include "ipv6.h"
 
 #include <zephyr/net/net_pkt.h>
+#include <zephyr/sys/atomic.h>
 #include <zephyr/net/mld.h>
 #include <zephyr/net/dns_sd.h>
 #if defined(CONFIG_NET_L2_ETHERNET)
@@ -45,6 +46,9 @@
 
 #include <net/dect/dect_net_l2.h>
 #include <net/dect/dect_net_l2_mgmt.h>
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+#include <net/dect/dect_net_l2_rpc.h>
+#endif
 
 #include "dect_net_l2_ipv6.h"
 #include "dect_net_l2_sink.h"
@@ -55,6 +59,27 @@ LOG_MODULE_REGISTER(net_l2_dect, CONFIG_NET_L2_DECT_LOG_LEVEL);
 
 #include "net_private.h" /* For net_sprint_ipv6_addr */
 static K_MUTEX_DEFINE(associations_mutex);
+
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+static dect_net_l2_rpc_forward_cb_t dect_net_l2_rpc_forward_cb;
+static dect_net_l2_link_state_cb_t dect_net_l2_link_state_cb;
+static atomic_t rpc_client_connected;
+
+void dect_net_l2_rpc_forward_register(dect_net_l2_rpc_forward_cb_t cb)
+{
+	dect_net_l2_rpc_forward_cb = cb;
+}
+
+void dect_net_l2_link_state_register(dect_net_l2_link_state_cb_t cb)
+{
+	dect_net_l2_link_state_cb = cb;
+}
+
+void dect_net_l2_rpc_client_set_connected(bool connected)
+{
+	atomic_set(&rpc_client_connected, connected);
+}
+#endif /* CONFIG_DECT_NR_RPC_SERVER */
 
 static struct dect_net_l2_association_data
 	child_associations[CONFIG_DECT_CLUSTER_MAX_CHILD_ASSOCIATION_COUNT];
@@ -301,6 +326,27 @@ void dect_net_l2_status_info_fill_sink_data(struct net_if *iface,
  */
 static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *pkt)
 {
+	uint8_t vtc_vhl = NET_IPV6_HDR(pkt)->vtc & 0xf0;
+	int ret;
+
+	/* Need IPv6 header to decide single-egress for PC-destined packets. */
+	if (vtc_vhl != 0x60) {
+		goto exit;
+	}
+
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+	/* RPC mode: either handle only in RPC client or only locally (never both). */
+	if (atomic_get(&rpc_client_connected) && dect_net_l2_rpc_forward_cb) {
+		dect_net_l2_rpc_forward_cb(iface, pkt);
+		/* Forward callback copies out payload; caller still owns pkt. NET_OK means
+		 * consumed here (see net_core processing_data); do not leak the buffer.
+		 */
+		net_pkt_unref(pkt);
+		return NET_OK;
+	}
+	/* RPC client not connected: handle locally in server stack (fall through). */
+#endif
+
 	LOG_DBG("iface %p recv %d bytes from ipv6 addr %s", iface, net_pkt_get_len(pkt),
 		net_sprint_ipv6_addr((struct in6_addr *)NET_IPV6_HDR(pkt)->src));
 
@@ -309,12 +355,6 @@ static enum net_verdict dect_net_l2_recv(struct net_if *iface, struct net_pkt *p
 	 * OR
 	 * In case of multicast, we forward to all children (except the one who sent this)
 	 */
-	uint8_t vtc_vhl = NET_IPV6_HDR(pkt)->vtc & 0xf0;
-	int ret;
-
-	if (vtc_vhl != 0x60) {
-		goto exit;
-	}
 
 #if defined(CONFIG_NET_L2_ETHERNET)
 	/* Set type to IPV6 for Ethernet TX */
@@ -685,6 +725,11 @@ void dect_net_l2_init(struct net_if *iface, struct dect_settings *initial_settin
 	net_if_flag_set(iface, NET_IF_IPV6);
 	net_if_flag_set(iface, NET_IF_IPV6_NO_ND);
 	net_if_dormant_on(iface);
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+	if (dect_net_l2_link_state_cb) {
+		dect_net_l2_link_state_cb(iface);
+	}
+#endif
 	ctx->network_id = initial_settings->identities.network_id;
 	ctx->transmitter_long_rd_id = initial_settings->identities.transmitter_long_rd_id;
 	ctx->device_type = initial_settings->device_type;
@@ -748,6 +793,11 @@ void dect_net_l2_parent_association_created(struct net_if *iface, uint32_t targe
 		assoc, iface, target_long_rd_id, ipv6_prefix_config);
 	dect_mgmt_parent_association_created_evt(iface, target_long_rd_id);
 	net_if_dormant_off(iface);
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+	if (dect_net_l2_link_state_cb) {
+		dect_net_l2_link_state_cb(iface);
+	}
+#endif
 	dect_net_l2_join_ipv6_mdns_group(iface);
 }
 
@@ -796,6 +846,11 @@ send_event:
 	/* Put the carrier on if this was the first association */
 	if (first_child) {
 		net_if_dormant_off(iface);
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+		if (dect_net_l2_link_state_cb) {
+			dect_net_l2_link_state_cb(iface);
+		}
+#endif
 		dect_net_l2_join_ipv6_mdns_group(iface);
 	}
 
@@ -880,6 +935,11 @@ void dect_net_l2_association_removed(struct net_if *iface, uint32_t long_rd_id,
 	/* If this was the last association, set interface as dormant */
 	if (no_associations) {
 		net_if_dormant_on(iface);
+#if defined(CONFIG_DECT_NR_RPC_SERVER)
+		if (dect_net_l2_link_state_cb) {
+			dect_net_l2_link_state_cb(iface);
+		}
+#endif
 	}
 }
 

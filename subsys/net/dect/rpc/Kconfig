@@ -1,0 +1,204 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+menuconfig DECT_NR_RPC
+	bool "DECT NR+ over RPC [EXPERIMENTAL]"
+	select NRF_RPC
+	select NRF_RPC_CBOR
+	select EXPERIMENTAL
+	help
+	  EXPERIMENTAL: Use a DECT NR+ Zephyr net_if on an external MCU (no DECT NR+ modem on
+	  that chip): the client mirrors the server's DECT NR+ interface over nRF RPC;
+	  the server runs the DECT NR+ modem and stack.
+
+if DECT_NR_RPC
+
+config DECT_NR_RPC_UART_TRANSPORT
+	bool "Use UART transport for DECT RPC"
+	depends on NRF_RPC_UART_TRANSPORT
+	default y
+	help
+	  Use UART to communicate between DECT NR+ RPC client and server.
+
+choice DECT_NR_RPC_ROLE_CHOICE
+	prompt "DECT NR+ over RPC role"
+	default DECT_NR_RPC_SERVER if NET_L2_DECT
+	default DECT_NR_RPC_CLIENT
+	help
+	  Select client or server role for this image. Default is server when
+	  NET_L2_DECT is enabled, otherwise client.
+
+config DECT_NR_RPC_CLIENT
+	bool "DECT NR+ over RPC client"
+	help
+	  net_if on this core, no DECT NR+ modem. Application sees a DECT NR+
+	  net_if; send/recv go over DECT NR+ RPC.
+
+config DECT_NR_RPC_SERVER
+	bool "DECT NR+ over RPC server"
+	depends on NET_L2_DECT
+	help
+	  Runs DECT NR+ L2 and DECT NR+ modem on this core; forwards packets to/from the client.
+	  Receives raw IPv6 from client and injects into DECT NR+ L2 send path;
+	  forwards DECT NR+ receive traffic to client.
+
+endchoice
+
+config DECT_NR_RPC_NET_IF
+	bool "DECT NR+ over RPC network interface"
+	default y
+	help
+	  Client: enables IF_SEND/IF_RECEIVE decoders and creates the Zephyr DECT NR+
+	  network interface. Server: enables the RPC bridge (IF_SEND, IF_GET_ADDRS, IF_STATUS,
+	  PING, shell, forwarding) in dect_rpc_if.c.
+	  This must be enabled on both client and server for a working link.
+
+if DECT_NR_RPC_NET_IF
+
+config DECT_NR_RPC_MAX_IP_PKT
+	int "Max IPv6 packet size tunneled over RPC (bytes)"
+	range 500 1500
+	default 1500
+	help
+	  Maximum raw IPv6 payload size for IF_SEND (client to server) and
+	  IF_RECEIVE (server to client). The server RX memory pool uses one buffer of this
+	  size per slot. Default matches the maximum CONFIG_NET_L2_DECT_MTU (1500).
+	  Set the same value on the client and server; use the server's
+	  CONFIG_NET_L2_DECT_MTU if you use a lower L2 MTU (for example 1280).
+
+endif # DECT_NR_RPC_NET_IF
+
+config DECT_NR_RPC_SHELL
+	bool "DECT L2 shell over RPC (server)"
+	depends on DECT_NR_RPC_SERVER && GETOPT_LONG
+	select DECT_L2_SHELL_LIB
+	select DECT_L2_SHELL_RPC
+	help
+	  Run DECT L2 shell commands remotely over RPC. Client sends subcmd and
+	  args; server runs the same DECT L2 shell and returns captured output.
+	  Server-side DECT L2 shell has priority: remote shell RPC is rejected
+	  while a DECT L2 shell command is running on the server locally.
+
+config DECT_NR_RPC_SERVER_SHELL_RPC_INIT
+	bool "Shell command dect_rpc_init on server (when RPC not auto-init)"
+	depends on DECT_NR_RPC_SERVER && SHELL
+	depends on !NRF_RPC_INIT
+	default y
+	help
+	  Register shell command dect_rpc_init so the user can initialize RPC
+	  when the client is connected over UART (avoids boot timeout when no client).
+
+if DECT_NR_RPC_CLIENT
+
+config DECT_NR_RPC_CLIENT_SHELL
+	bool "DECT NR+ RPC shell on client"
+	depends on SHELL && DECT_NR_RPC_NET_IF
+	help
+	  Expose shell commands "dect status" and "dect run <subcmd> [args...]" to request
+	  DECT status or run DECT L2 shell commands on the server over RPC.
+
+config DECT_NR_RPC_CLIENT_SHELL_RPC_INIT
+	bool "Shell dect rpc init/ping on client (when RPC not auto-init)"
+	depends on DECT_NR_RPC_CLIENT_SHELL
+	depends on !NRF_RPC_INIT
+	default y
+	help
+	  Register "dect rpc init" so the user can call nrf_rpc_init() from the
+	  shell when the DECT NR+ server is connected over UART (typical when
+	  CONFIG_NRF_RPC_INIT is disabled). Disable on relay FT when main()
+
+endif # DECT_NR_RPC_CLIENT
+
+if DECT_NR_RPC_NET_IF && DECT_NR_RPC_CLIENT
+
+config NET_INTERFACE_NAME_LEN
+	default 9
+	depends on NET_INTERFACE_NAME
+
+config DECT_NR_RPC_CLIENT_IFACE_NAME
+	string "DECT NR+ RPC client interface logical name"
+	default "rpc-dect"
+	help
+	  Logical name passed to net_if_set_name() when CONFIG_NET_INTERFACE_NAME
+	  is enabled.
+
+config DECT_NR_RPC_AUTO_SYNC
+	bool "Auto-sync addresses a few seconds after RPC init"
+	default y
+	help
+	  Run one address sync from server shortly after DECT NR+ RPC init completes.
+	  Delay is set by DECT_NR_RPC_AUTO_SYNC_DELAY_SEC. "dect sync" remains available for
+	  manual sync.
+
+config DECT_NR_RPC_AUTO_SYNC_DELAY_SEC
+	int "Delay (seconds) after DECT NR+ RPC init before auto-sync"
+	depends on DECT_NR_RPC_AUTO_SYNC
+	default 3
+	help
+	  Seconds to wait after DECT NR+ RPC init before running the first address sync.
+
+config DECT_NR_RPC_ADDR_SYNC_INTERVAL_SEC
+	int "Periodic address sync interval (seconds)"
+	default 10
+	help
+	  Interval at which the client syncs IPv6 addresses and prefixes from the server,
+	  so the client net_if mirrors the server DECT NR+ iface.
+	  Set to 0 to disable periodic sync.
+
+config DECT_NR_RPC_CONN_MGR
+	bool "Connection Manager on DECT NR+ RPC client"
+	default y
+	select NET_CONNECTION_MANAGER
+	help
+	  Register a conn_mgr connectivity backend on the RPC client net_if.
+	  conn_mgr_if_connect() / disconnect() are sent to the server over RPC
+	  (DECT_RPC_CMD_CONNECT / DISCONNECT); the server runs conn_mgr on the real DECT NR+ modem
+	  interface. conn_mgr_monitor raises NET_EVENT_L4_* on the client from mirrored IPv6
+	  addresses and interface up state.
+	  DECT NR+ association policy (auto-connect, persistence, timeouts) is
+	  configured on the server via NET_L2_DECT_CONN_MGR_* only. The client
+	  binding does not auto-connect or auto-down the DECT NR+ tunnel iface.
+
+endif # DECT_NR_RPC_NET_IF && DECT_NR_RPC_CLIENT
+
+if DECT_NR_RPC_SERVER
+
+config DECT_NR_RPC_SERVER_CLIENT_IDLE_TIMEOUT_SEC
+	int "Idle time before RPC client session is cleared (seconds)"
+	range 0 3600
+	default 120
+	help
+	  When non-zero, the server clears the active RPC client session if no client
+	  command is received within the configured idle period. Local DECT L2 RX processing resumes
+	  until the client sends traffic again. Set to 0 to keep the session until reboot.
+
+config DECT_NR_RPC_SERVER_EVT_QUEUE_LEN
+	int "Server-to-client event queue depth"
+	range 4 64
+	default 16
+	help
+	  Depth of the message queue for IF_RECEIVE and IF_LINK_STATE events sent to the RPC client.
+	  IF_ADDRS_CHANGED notifications are coalesced separately from this queue.
+
+config DECT_NR_RPC_SERVER_EVT_PACING_MS
+	int "Milliseconds to pause after each DECT NR+ server-to-client RPC event"
+	range 0 500
+	default 20 if NRF_RPC_UART_RELIABLE
+	default 0
+	help
+	  Pause after DECT NR+ RPC server-originated DECT NR+ RPC events.
+	  Applies after DECT NR+ IF_LINK_STATE and DECT NR+ IF_ADDRS_CHANGED.
+	  After DECT NR+ IF_RECEIVE: only when CONFIG_NRF_RPC_UART_RELIABLE (default
+	  20 ms for HDLC ACK breathing room). When reliable is off, DECT NR+ IF_RECEIVE is not
+	  paced here (bulk traffic); default 0 disables pacing.
+
+endif # DECT_NR_RPC_SERVER
+
+module=NET_DECT_RPC
+module-str=DECT NR+ RPC
+source "${ZEPHYR_BASE}/subsys/logging/Kconfig.template.log_config"
+
+endif # DECT_NR_RPC

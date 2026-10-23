@@ -269,6 +269,10 @@ DECT NR+
 
 * Added:
 
+  * Experimental DECT NR+ RPC (:kconfig:option:`CONFIG_DECT_NR_RPC`): nRF91 keeps the modem and L2 while an external MCU gets a familiar ``dect0`` ``net_if`` over :ref:`nrf_rpc`, leaving more room on the host for your application.
+    DECT NR+ L2 and L2 shell integration mirrors IPv6 and link state and supports Connection Manager connect and disconnect and optional remote ``dect`` shell on the client side.
+    See :ref:`dect_rpc` for roles and Kconfig options.
+
   * DECT NR+ L2 Ethernet sink mode for IPv6 bridging over an Ethernet uplink:
 
     * Delegated ``/96`` prefix and ULA on DECT NR+
@@ -636,8 +640,14 @@ DFU samples
 DECT NR+ samples
 ----------------
 
-* Added the :ref:`dect_tether_ipv6_sample` sample for an nRF91x1 PT device that bridges a DECT NR+ uplink to a wired Ethernet host, acting as an IPv6 gateway (GW) using the new :ref:`lib_dect_tethering` library.
-  Ethernet connectivity uses a W5500 SPI shield (Arceli interrupt-driven or Seeed poll-mode) on the nRF9151 DK.
+* Added:
+
+  * The :ref:`dect_tether_ipv6_sample` sample for an nRF91x1 PT device that bridges a DECT NR+ uplink to a wired Ethernet host, acting as an IPv6 gateway (GW) using the new :ref:`lib_dect_tethering` library.
+    Ethernet connectivity uses a W5500 SPI shield (Arceli interrupt-driven or Seeed poll-mode) on the nRF9151 DK.
+  * The :ref:`dect_rpc_sample` sample that builds RPC client and server images from one tree using the :ref:`dect_rpc` library.
+    It showcases a split design.
+    Run your application on an nRF54L15 device while the nRF9151 device keeps the DECT NR+ modem and L2 stack.
+    On the host MCU, you use ``dect0`` ``net_if`` - IPv6, Connection Manager connect and disconnect, and optional ``dect`` shell and ping, without integrating the modem on that chip.
 
 * :ref:`dect_shell_application` sample:
 
@@ -1179,6 +1189,17 @@ Libraries for networking
     * Sends ICMPv6 Router Advertisements (default router, RDNSS, Managed flag, PIO with ``A=0``/``L=0``) so that the host uses DHCPv6 for addressing.
     * Provides a built-in minimal DHCPv6 server (UDP 547) that offers ULA and delegated GUA ``/128`` addresses derived from the DECT NR+ interface.
     * Optionally forwards IPv6 mDNS (UDP 5353) between the Ethernet and DECT NR+ interfaces through an ``AF_PACKET`` tap.
+
+  * The :ref:`dect_rpc` library (:kconfig:option:`CONFIG_DECT_NR_RPC`, :ref:`experimental <software_maturity>`) that offloads the DECT NR+ modem and L2 stack to the nRF91 device while an external MCU keeps a standard Zephyr ``net_if`` over :ref:`nrf_rpc` (UART by default).
+    It provides the following:
+
+    * A client role that mirrors server ``dect0`` IPv6 addresses, link state, and MTU, and tunnels send and receive over RPC.
+      With :kconfig:option:`CONFIG_DECT_NR_RPC_CONN_MGR`, Connection Manager on the tunneled ``net_if`` proxies connect/disconnect to the server.
+      The DECT association policy remains on the nRF91 device, with L4 events from the mirrored interface state.
+    * A server role on :kconfig:option:`CONFIG_NET_L2_DECT` (:kconfig:option:`CONFIG_DECT_NR_RPC_SERVER`) that injects client traffic into the DECT NR+ path, forwards IPv6 RX and link state to an active client, and drives Connection Manager connect and disconnect on server ``dect0`` when :kconfig:option:`CONFIG_NET_L2_DECT_CONN_MGR` is enabled.
+    * Optional remote ``dect`` L2 shell over RPC (:kconfig:option:`CONFIG_DECT_NR_RPC_SHELL`, :kconfig:option:`CONFIG_DECT_L2_SHELL_RPC`).
+
+    See the :ref:`dect_rpc_sample` sample for a two-board nRF54L15 + nRF9151 reference design.
 
   * The DECT ICMPv6 ping shell library (:kconfig:option:`CONFIG_DECT_ICMP_PING_LIB`), which provides ICMPv6 ping functionality for use from shell commands.
     The functionality was extracted from the ``ping`` command of the :ref:`dect_shell_application` application into a reusable library.

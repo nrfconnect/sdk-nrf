@@ -4,7 +4,7 @@
 
 config DECT_ICMP_PING_LIB
 	bool "DECT NR+ ICMPv6 ping shell library"
-	depends on DECT
+	depends on DECT || DECT_NR_RPC_NET_IF
 	depends on NET_IPV6 && NET_NATIVE && NET_SOCKETS
 	depends on NET_INTERFACE_NAME
 	depends on SHELL && GETOPT_LONG

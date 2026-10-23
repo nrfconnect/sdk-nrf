@@ -90,14 +90,25 @@ choice DECT_MDM_DRIVER
 config DECT_MDM_DRIVER_NRF
 	bool "nRF91x1 driver"
 
+config DECT_MDM_DRIVER_MOCK
+	bool "Minimal HAL mock (host tests)"
+	help
+	  Selects the mock DECT NR+ HAL for host-side tests (for example native_sim).
+
 endchoice
 
 config DECT_MDM_DEVICE_NAME
 	string "DECT NR+ device name"
-	default "dect0" if DECT_MDM_DRIVER_NRF
-	default "dect_none" if !DECT_MDM_DRIVER_NRF
+	default "dect0" if DECT_MDM_DRIVER_NRF || DECT_MDM_DRIVER_MOCK
+	default "dect_none"
 	help
-	  DECT NR+ device name.
+	  DECT NR+ network interface name (for example dect0).
+
+config NET_LINK_ADDR_CUSTOM_LENGTH
+	int "Size of custom link layer address length for DECT NR+"
+	default 8
+	help
+	  DECT NR+ HAL uses 8-byte link addresses.
 
 config DECT_MDM_DEFAULT_RSSI_SCAN_SUITABLE_PERCENT
 	int "Default RSSI scan suitable percentage"

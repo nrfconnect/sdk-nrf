@@ -1,0 +1,8 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+add_subdirectory_ifdef(CONFIG_NET_L2_DECT l2)
+add_subdirectory_ifdef(CONFIG_DECT_NR_RPC rpc)

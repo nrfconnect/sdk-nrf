@@ -179,6 +179,8 @@
 /doc/nrf/libraries/networking/coap_utils.rst @nrfconnect/ncs-terahertz-doc
 /doc/nrf/libraries/networking/dect_tethering.rst @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/images/lib_dect_tethering_architecture.mmd @nrfconnect/ncs-iot-oulu-tampere-doc
+/doc/nrf/libraries/networking/dect_rpc.rst @nrfconnect/ncs-iot-oulu-tampere-doc
+/doc/nrf/libraries/networking/images/lib_dect_rpc_* @nrfconnect/ncs-iot-oulu-tampere-doc
 /doc/nrf/libraries/networking/downloader.rst @nrfconnect/ncs-modem-doc
 /doc/nrf/libraries/networking/fota_download.rst @nrfconnect/ncs-eris-doc
 /doc/nrf/libraries/networking/icalendar_parser.rst @nrfconnect/ncs-doc-leads
@@ -609,6 +611,7 @@
 /samples/dect/hello_dect/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_shell/                 @nrfconnect/ncs-dect-nr-plus
 /samples/dect/dect_tether_ipv6/           @nrfconnect/ncs-dect-nr-plus
+/samples/dect/dect_rpc/                   @nrfconnect/ncs-dect-nr-plus
 /samples/dfu/                             @nrfconnect/ncs-eris
 /samples/esb/                             @nrfconnect/ncs-si-xcake
 /samples/event_manager_proxy/             @nrfconnect/ncs-si-bluebagel @nrfconnect/ncs-si-muffin @nrfconnect/ncs-si-xcake
@@ -734,6 +737,7 @@
 /samples/debug/memfault/*.rst             @nrfconnect/ncs-cia-doc
 /samples/debug/ppi_trace/*.rst            @nrfconnect/ncs-doc-leads
 /samples/dect/hello_dect/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
+/samples/dect/dect_rpc/*.rst              @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_shell/*.rst            @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_tether_ipv6/**/*.rst   @nrfconnect/ncs-iot-oulu-tampere-doc
 /samples/dect/dect_phy/dect_shell/*.rst   @nrfconnect/ncs-modem-tre-doc
@@ -988,7 +992,8 @@
 /subsys/mpsl/cx/                          @nrfconnect/ncs-radio-sw
 /subsys/mpsl/fem/                         @nrfconnect/ncs-radio-sw
 /subsys/net/                              @nrfconnect/ncs-co-networking
-/subsys/net/l2_dect/                      @nrfconnect/ncs-dect-nr-plus
+/subsys/net/dect/l2/                      @nrfconnect/ncs-dect-nr-plus
+/subsys/net/dect/rpc/                     @nrfconnect/ncs-dect-nr-plus
 /subsys/net/lib/mqtt_helper/              @nrfconnect/ncs-cia
 /subsys/net/lib/azure_*                   @nrfconnect/ncs-cia
 /subsys/net/lib/aws_*                     @nrfconnect/ncs-cia
@@ -1130,6 +1135,7 @@
 /tests/subsys/ipc/                        @nrfconnect/ncs-low-level-test @anangl
 /tests/subsys/kmu/                        @nrfconnect/ncs-eris @nrfconnect/ncs-eris-test
 /tests/subsys/mpsl/                       @nrfconnect/ncs-dragoon
+/tests/subsys/net/dect/                   @nrfconnect/ncs-dect-nr-plus
 /tests/subsys/net/lib/aws_*/              @nrfconnect/ncs-cia
 /tests/subsys/net/lib/azure_iot_hub/      @nrfconnect/ncs-cia
 /tests/subsys/net/lib/dect/tether_ipv6/   @nrfconnect/ncs-dect-nr-plus
