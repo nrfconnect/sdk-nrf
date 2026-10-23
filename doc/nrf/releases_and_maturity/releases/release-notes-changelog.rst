@@ -461,7 +461,10 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+* Added:
+
+  * The :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+  * The :ref:`bluetooth_log` sample that shows how to enable log messages from the SoftDevice Controller and MPSL.
 
 * Removed:
 
