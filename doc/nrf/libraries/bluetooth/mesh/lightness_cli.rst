@@ -105,7 +105,7 @@ mesh models lightness last-get
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/mesh/lightness_cli.h`
-| Source file: :file:`subsys/bluetooth/mesh/lightness_cli.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/lightness_cli.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/lightness_cli.c`
 
 .. doxygengroup:: bt_mesh_lightness_cli

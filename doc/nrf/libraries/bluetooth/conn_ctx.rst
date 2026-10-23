@@ -17,7 +17,7 @@ The :ref:`hids_readme` shows how to use this library.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/conn_ctx.h`
-| Source file: :file:`subsys/bluetooth/conn_ctx.c`
+| Header file: :ncs-file:`/include/bluetooth/conn_ctx.h`
+| Source file: :ncs-file:`/subsys/bluetooth/conn_ctx.c`
 
 .. doxygengroup:: bt_conn_ctx

@@ -251,7 +251,7 @@ Devicetree
     | ``cpuppr`` | ``grtc``, ``uart135``                                                                                                                                                             |
     +------------+-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 
-    * A peripheral is enabled at the SoC level in :file:`ncs/zephyr/dts/arm/nordic/nrf54h20_cpurad.dtsi`
+    * A peripheral is enabled at the SoC level in :ncs-file:`zephyr:/dts/arm/nordic/nrf54h20_cpurad.dtsi`
 
     * Some peripherals are no longer enabled by default.
 
@@ -264,7 +264,7 @@ Devicetree
   * Memory map:
 
     * Each memory region must now set ``status = "okay"`` in order to be included for UICR generation.
-    * For the nRF54H20 DK, the default memory regions are defined in :file:`ncs/zephyr/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi`.
+    * For the nRF54H20 DK, the default memory regions are defined in :ncs-file:`zephyr:/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-memory_map.dtsi`.
       All of them have ``status = "disabled"`` initially, which allows them to be specified in a common location.
       Some of them are only enabled for particular cores or relevant samples.
 
@@ -332,7 +332,7 @@ Devicetree
            };
 
         The ``nordic,allocatable-ram`` binding has been removed and is replaced here with ``nordic,owned-memory``, which supports the same ownership/permission properties.
-        For more information, see :file:`ncs/zephyr/dts/bindings/reserved-memory/nordic,owned-memory.yaml`.
+        For more information, see :ncs-file:`zephyr:/dts/bindings/reserved-memory/nordic,owned-memory.yaml`.
 
         Like before, these SRAM regions can be defined anywhere in the DTS, but it is recommended to place them under the ``/reserved-memory`` node.
         The global RAM nodes for ``ram0x`` (and others) no longer exist, so the regions should use absolute addresses.
@@ -424,14 +424,14 @@ Devicetree
         The ``mram_controller`` node has been removed.
 
         The ``nordic,allocatable-mram`` binding has been removed and is replaced here with ``nordic,owned-partitions``, which no longer derives from ``soc-nv-flash``.
-        For more information, see :file:`ncs/zephyr/dts/bindings/mtd/nordic,owned-partitions.yaml`.
+        For more information, see :ncs-file:`zephyr:/dts/bindings/mtd/nordic,owned-partitions.yaml`.
 
         Without the old ``mram`` nodes in between, all partition offsets are now correctly expressed as relative to ``mram1x``.
         The only limitation is that it is no longer possible to assign a different ``erase-block-size`` per MRAM region.
 
   * IPC configuration:
 
-    * For the nRF54H20 DK, the default IPC nodes are defined in :file:`ncs/zephyr/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-ipc_conf.dtsi`.
+    * For the nRF54H20 DK, the default IPC nodes are defined in :ncs-file:`zephyr:/boards/nordic/nrf54h20dk/nrf54h20dk_nrf54h20-ipc_conf.dtsi`.
       There is exactly one node for each relevant pair of processors, such as ``cpuapp_cpurad_ipc``.
       Each node also sets the channel numbers for both directions of communication.
 
@@ -519,7 +519,7 @@ Devicetree
 
   * Buttons on a custom board may need to include the new ``zephyr,code`` property.
     The nRF54H20 DK uses the values ``INPUT_KEY_0`` through ``INPUT_KEY_3``.
-    See :file:`ncs/zephyr/include/zephyr/dt-bindings/input/input-event-codes.h` for all supported values.
+    See :ncs-file:`zephyr:/include/zephyr/dt-bindings/input/input-event-codes.h` for all supported values.
 
 Matter
 ------

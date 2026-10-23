@@ -126,7 +126,7 @@ The logged nRF Profiler events are related to Application Event Manager event su
 API documentation
 *****************
 
-| Header file: :file:`include/app_event_manager_profiler_tracer.h`
+| Header file: :ncs-file:`/include/app_event_manager_profiler_tracer.h`
 | Source files: :file:`subsys/app_event_manager_profiler_tracer/`
 
 .. doxygengroup:: app_event_manager_profiler_tracer

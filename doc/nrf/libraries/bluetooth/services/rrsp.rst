@@ -51,7 +51,7 @@ You can set up the RRSP either as a Channel Sounding Initiator or Reflector.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/ras.h`
+| Header file: :ncs-file:`/include/bluetooth/services/ras.h`
 | Source files: :file:`subsys/bluetooth/services/ras`
 
 .. doxygengroup:: bt_ras

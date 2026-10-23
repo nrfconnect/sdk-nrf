@@ -55,7 +55,7 @@ If :kconfig:option:`CONFIG_BT_ENOCEAN_STORE` is enabled, the Silvair EnOcean Pro
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/mesh/vnd/silvair_enocean_srv.h`
-| Source file: :file:`subsys/bluetooth/mesh/vnd/silvair_enocean_srv.c`
+| Header file: :ncs-file:`/include/bluetooth/mesh/vnd/silvair_enocean_srv.h`
+| Source file: :ncs-file:`/subsys/bluetooth/mesh/vnd/silvair_enocean_srv.c`
 
 .. doxygengroup:: bt_mesh_silvair_enocean_srv

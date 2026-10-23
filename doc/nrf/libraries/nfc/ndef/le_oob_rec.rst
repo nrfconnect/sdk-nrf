@@ -30,8 +30,8 @@ The Bluetooth LE OOB record is used in the :ref:`peripheral_hids_keyboard` sampl
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/ndef/le_oob_rec.h`
-| Source file: :file:`subsys/nfc/ndef/le_oob_rec.c`
+| Header file: :ncs-file:`/include/nfc/ndef/le_oob_rec.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/le_oob_rec.c`
 
 .. _nfc_ndef_le_oob_rec:
 

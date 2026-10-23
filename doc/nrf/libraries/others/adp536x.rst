@@ -44,7 +44,7 @@ This library uses the I2C-capable hardware.
 API documentation
 *****************
 
-| Header file: :file:`include/adp536x`
+| Header file: :ncs-file:`/include/adp536x.h`
 | Source files: :file:`lib/adp536x/src`
 
 Following define VBUS current limit values, charging current values, and overcharge protection threshold values respectively:

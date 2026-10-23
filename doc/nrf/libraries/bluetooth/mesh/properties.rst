@@ -17,6 +17,6 @@ It is up to the application to implement property values that are compliant with
 API documentation
 ******************
 
-| Header file: :file:`include/bluetooth/mesh/properties.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/properties.h`
 
 .. doxygengroup:: bt_mesh_property_ids

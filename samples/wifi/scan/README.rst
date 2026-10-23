@@ -49,7 +49,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/scan/Kconfig`) :
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/scan/Kconfig`) :
 
 .. options-from-kconfig::
    :show-type:

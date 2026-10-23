@@ -42,7 +42,7 @@ Configuration
 Configuration options
 =====================
 
-You can customize the firmware files downloaded by the sample through the following Kconfig options in the :file:`prj.conf` file:
+You can customize the firmware files downloaded by the sample through the following Kconfig options in the :ncs-file:`/samples/cellular/http_update/modem_full_update/prj.conf` file:
 
 .. _CONFIG_DOWNLOAD_HOST:
 

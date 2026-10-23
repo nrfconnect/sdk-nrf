@@ -304,7 +304,7 @@ Google Fast Pair
    For applications and samples using the :ref:`bt_fast_pair_readme` library:
 
    * The devicetree (DTS) partition overlays of the Fast Pair samples and Fast Pair-enabled board targets have been migrated from the legacy ``fixed-partitions`` compatible string to the new ``zephyr,mapped-partition`` compatible string introduced in Zephyr.
-     The new layout matches the output of the Partition Manager-to-DTS helper script (:file:`scripts/pm_to_dts.py`) and aligns the Fast Pair sample overlays with the partition binding convention adopted by the rest of the Zephyr SoC devicetree.
+     The new layout matches the output of the Partition Manager-to-DTS helper script (:ncs-file:`/scripts/pm_to_dts.py`) and aligns the Fast Pair sample overlays with the partition binding convention adopted by the rest of the Zephyr SoC devicetree.
 
      If your application uses a Fast Pair DTS partition overlay derived from earlier |NCS| releases, update each :file:`<board_target>.overlay` file as follows:
 

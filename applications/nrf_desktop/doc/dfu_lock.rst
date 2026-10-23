@@ -43,7 +43,7 @@ The DFU lock utility uses the :ref:`zephyr:mutexes_v2` for synchronizing updates
 API documentation
 *****************
 
-| Header file: :file:`applications/nrf_desktop/src/util/dfu_lock.h`
-| Source files: :file:`applications/nrf_desktop/src/util/dfu_lock.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/dfu_lock.h`
+| Source files: :ncs-file:`/applications/nrf_desktop/src/util/dfu_lock.c`
 
 .. doxygengroup:: dfu_lock

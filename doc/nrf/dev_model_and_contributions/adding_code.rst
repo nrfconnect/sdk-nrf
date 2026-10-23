@@ -204,4 +204,4 @@ For example:
        path: application
 
 The variable values starting with *your-* in the above code block are just examples and you can replace them as needed.
-The above example includes a fork of the ``mcuboot`` project, but you can fork any project in :file:`nrf/west.yml`.
+The above example includes a fork of the ``mcuboot`` project, but you can fork any project in :ncs-file:`/west.yml`.

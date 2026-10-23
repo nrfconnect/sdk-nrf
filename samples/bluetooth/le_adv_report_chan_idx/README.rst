@@ -35,6 +35,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing

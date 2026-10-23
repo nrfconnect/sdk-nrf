@@ -53,8 +53,8 @@ API documentation
 Connection Handover records
 ===========================
 
-| Header file: :file:`include/nfc/ndef/ch.h`
-| Source file: :file:`subsys/nfc/ndef/ch.c`
+| Header file: :ncs-file:`/include/nfc/ndef/ch.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/ch.c`
 
 .. doxygengroup:: nfc_ndef_ch
 
@@ -64,7 +64,7 @@ Connection Handover records
 Connection Handover messages
 ============================
 
-| Header file: :file:`include/nfc/ndef/ch_msg.h`
-| Source file: :file:`subsys/nfc/ndef/ch_msg.c`
+| Header file: :ncs-file:`/include/nfc/ndef/ch_msg.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/ch_msg.c`
 
 .. doxygengroup:: nfc_ndef_ch_msg
