@@ -8,11 +8,9 @@ common:
     - sysbuild
     - ci_samples_bluetooth
 tests:
-  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf52_nrf53_54lx:
+  sample.bluetooth.direction_finding_peripheral.aoa.sdc.nrf53_54lx:
     sysbuild: true
     platform_allow:
-      - nrf52833dk/nrf52833
-      - nrf52833dk/nrf52820
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
@@ -24,7 +22,6 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     integration_platforms:
-      - nrf52833dk/nrf52833
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
     harness: console
@@ -35,17 +32,6 @@ tests:
         - "Bluetooth initialized"
         - "Advertising successfully started"
     timeout: 15
-  sample.bluetooth.direction_finding_peripheral.aoa.bt_ll_sw_split.nrf52:
-    sysbuild: false
-    build_only: true
-    extra_args:
-      - SNIPPET="bt-ll-sw-split"
-    platform_allow:
-      - nrf52833dk/nrf52833
-      - nrf52833dk/nrf52820
-    integration_platforms:
-      - nrf52833dk/nrf52833
-      - nrf52833dk/nrf52820
   sample.bluetooth.direction_finding_peripheral.aoa.bt_ll_sw_split.nrf53:
     sysbuild: true
     build_only: true
@@ -56,18 +42,6 @@ tests:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
-  sample.bluetooth.direction_finding_peripheral.all.bt_ll_sw_split.nrf52:
-    sysbuild: false
-    build_only: true
-    extra_args:
-      - OVERLAY_CONFIG="overlay-aod.conf;overlay-bt_ll_sw_split.conf"
-      - SNIPPET="bt-ll-sw-split"
-    platform_allow:
-      - nrf52833dk/nrf52833
-      - nrf52833dk/nrf52820
-    integration_platforms:
-      - nrf52833dk/nrf52833
-      - nrf52833dk/nrf52820
   sample.bluetooth.direction_finding_peripheral.all.bt_ll_sw_split.nrf53:
     sysbuild: true
     build_only: true

@@ -158,7 +158,7 @@ After programming the sample to both development kits, test it by performing the
 Sample output
 =============
 
-The result should look similar to the following output.
+The result should look similar to the following output (captured on the :ref:`nRF54L15 DK <ug_nrf54l>`).
 
 - For the central::
 
@@ -169,7 +169,7 @@ The result should look similar to the following output.
    I: a3 48 8d 2f 56 e0 59 c8 |.H./V.Y.
    I: 24 df 3d 58             |$.=X
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF54Lx (0x0005)
    I: Firmware: Standard Bluetooth controller (0x00) Version 1.43053 Build 635768276
    I: Identity: FF:FA:56:08:E1:DD (random)
    I: HCI: version 5.4 (0x0d) revision 0x10b7, manufacturer 0x0059
@@ -244,7 +244,7 @@ The result should look similar to the following output.
    I: a3 48 8d 2f 56 e0 59 c8 |.H./V.Y.
    I: 24 df 3d 58             |$.=X
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF54Lx (0x0005)
    I: Firmware: Standard Bluetooth controller (0x00) Version 1.43053 Build 635768276
    I: Identity: C3:06:3D:25:7F:73 (random)
    I: HCI: version 5.4 (0x0d) revision 0x10b7, manufacturer 0x0059
