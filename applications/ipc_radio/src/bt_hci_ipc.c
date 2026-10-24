@@ -50,7 +50,16 @@ static bool ipc_ept_ready;
 
 static K_SEM_DEFINE(ipc_bound_sem, 0, 1);
 
+static const struct device *m_hci_ipc_instance;
+
 static struct ipc_ept hci_ept;
+
+#if defined(CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT)
+static void hci_unbound_work_handler(struct k_work *work);
+static int ipc_hci_ipc_rebind(void);
+
+static K_WORK_DEFINE(m_hci_unbound_work, hci_unbound_work_handler);
+#endif /* CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT */
 
 struct ipc_block_item {
 	const void *ptr;
@@ -207,6 +216,26 @@ static void bound(void *priv)
 	k_sem_give(&ipc_bound_sem);
 }
 
+#if defined(CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT)
+static void hci_ep_unbound(void *priv)
+{
+	ARG_UNUSED(priv);
+
+#if defined(CONFIG_BT_CTLR_ASSERT_HANDLER) || defined(CONFIG_BT_HCI_VS_FATAL_ERROR)
+	ipc_ept_ready = false;
+#endif /* CONFIG_BT_CTLR_ASSERT_HANDLER || CONFIG_BT_HCI_VS_FATAL_ERROR */
+
+	(void)k_work_submit(&m_hci_unbound_work);
+}
+
+static void hci_unbound_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	(void)ipc_hci_ipc_rebind();
+}
+#endif /* CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT */
+
 static void recv(const void *data, size_t len, void *priv)
 {
 	struct ipc_block_item block;
@@ -304,9 +333,40 @@ static struct ipc_ept_cfg hci_ept_cfg = {
 	.name = "nrf_bt_hci",
 	.cb = {
 		.bound    = bound,
+#if defined(CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT)
+		.unbound  = hci_ep_unbound,
+#endif
 		.received = recv,
 	},
 };
+
+#if defined(CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT)
+static int ipc_hci_ipc_rebind(void)
+{
+	int err;
+
+	err = ipc_service_close_instance(m_hci_ipc_instance);
+	if (err) {
+		LOG_ERR("IPC instance close failed: %d", err);
+		return err;
+	}
+
+	err = ipc_service_open_instance(m_hci_ipc_instance);
+	if (err && (err != -EALREADY)) {
+		LOG_ERR("IPC instance open failed: %d", err);
+		return err;
+	}
+
+	err = ipc_service_register_endpoint(m_hci_ipc_instance, &hci_ept, &hci_ept_cfg);
+	if (err) {
+		LOG_ERR("IPC endpoint register failed: %d", err);
+		return err;
+	}
+
+	LOG_INF("HCI IPC re-bound after host unbound");
+	return 0;
+}
+#endif /* CONFIG_IPC_SERVICE_BACKEND_ICBMSG_DEINIT */
 
 #if defined(CONFIG_BT_CTLR_ASSERT_HANDLER)
 __weak void bt_ctlr_assert_handle(char *file, uint32_t line)
@@ -367,7 +427,8 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 int ipc_bt_init(void)
 {
 	int err;
-	const struct device *hci_ipc_instance = DEVICE_DT_GET(DT_CHOSEN(zephyr_bt_hci_ipc));
+
+	m_hci_ipc_instance = DEVICE_DT_GET(DT_CHOSEN(zephyr_bt_hci_ipc));
 
 	LOG_INF("Initializing ipc_radio bt_hci.");
 
@@ -377,13 +438,13 @@ int ipc_bt_init(void)
 		return err;
 	}
 
-	err = ipc_service_open_instance(hci_ipc_instance);
+	err = ipc_service_open_instance(m_hci_ipc_instance);
 	if ((err < 0) && (err != -EALREADY)) {
 		LOG_ERR("IPC service instance initialization failed: %d.", err);
 		return err;
 	}
 
-	err = ipc_service_register_endpoint(hci_ipc_instance, &hci_ept, &hci_ept_cfg);
+	err = ipc_service_register_endpoint(m_hci_ipc_instance, &hci_ept, &hci_ept_cfg);
 	if (err) {
 		LOG_ERR("Registering endpoint failed: %d.", err);
 		return err;
