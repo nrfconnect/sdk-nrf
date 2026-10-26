@@ -365,10 +365,11 @@ psa_status_t cracen_ecc_is_quadratic_residue(sx_pk_req *req,
 	safe_memzero(one_prsh_buf, op_size);
 	cracen_be_add(one_prsh_buf, op_size, 1);
 
-	bool is_zero = constant_memcmp_is_zero(tmp.bytes, tmp.sz);
-	bool is_one = constant_memcmp(tmp.bytes, one_prsh_buf, tmp.sz) == 0;
+	unsigned int is_zero = (unsigned int)constant_memcmp_is_zero(tmp.bytes, tmp.sz);
+	unsigned int is_one =
+		(unsigned int)(constant_memcmp(tmp.bytes, one_prsh_buf, tmp.sz) == 0);
 
-	*is_qr = is_zero | is_one;
+	*is_qr = (is_zero | is_one) != 0U;
 
 	return PSA_SUCCESS;
 #else

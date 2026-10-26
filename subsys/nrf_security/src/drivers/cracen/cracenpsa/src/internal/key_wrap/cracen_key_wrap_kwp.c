@@ -132,7 +132,7 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 	size_t pad_size;
 	size_t last_block;
 	uint8_t pad_bytes = 0;
-	bool sig_check_fail;
+	unsigned int validation_failure;
 	uint8_t cipher_output_block[SX_BLKCIPHER_AES_BLK_SZ];
 	psa_key_type_t key_type = psa_get_key_type(wrapping_key_attributes);
 
@@ -201,14 +201,15 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 		pad_bytes |= key_data[last_block + i] * (last_block + i >= length);
 	}
 
-	sig_check_fail = constant_memcmp(cipher_output_block,
-					 cracen_kwp_iv,
-					 CRACEN_KWP_IV_SIZE) != 0;
-	sig_check_fail |= (pad_size > (CRACEN_KEY_WRAP_BLOCK_SIZE - 1));
-	sig_check_fail |= (pad_bytes != 0);
+	validation_failure = (unsigned int)constant_memcmp(cipher_output_block,
+							   cracen_kwp_iv,
+							   CRACEN_KWP_IV_SIZE);
+	validation_failure |=
+		(unsigned int)(pad_size > (CRACEN_KEY_WRAP_BLOCK_SIZE - 1));
+	validation_failure |= (unsigned int)pad_bytes;
 
 	safe_memzero(cipher_output_block, SX_BLKCIPHER_AES_BLK_SZ);
-	if (sig_check_fail) {
+	if (validation_failure != 0U) {
 		status = PSA_ERROR_INVALID_SIGNATURE;
 		goto exit;
 	}
