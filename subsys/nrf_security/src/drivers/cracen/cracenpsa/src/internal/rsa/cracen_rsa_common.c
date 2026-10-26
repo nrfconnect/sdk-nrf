@@ -13,6 +13,7 @@
 #include <silexpk/sxbuf/sxbufop.h>
 #include <silexpk/sxops/rsa.h>
 #include <silexpk/cmddefs/rsa.h>
+#include <nrf_security_mem_helpers.h>
 
 #define NOT_ENABLED_HASH_ALG (0)
 
@@ -126,11 +127,7 @@ int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end,
 	}
 
 	/* Drop starting zeros, if any */
-	for (i = 0; i < len; i++) {
-		if ((*p)[i] != 0) {
-			break;
-		}
-	}
+	i = constant_count(*p, len, 0x00, MATCH_EQUAL);
 	op->bytes = (uint8_t *)(*p + i);
 	op->sz = len - i;
 
