@@ -78,8 +78,8 @@ class NrfBinaryRunnerNext(nrf_common.NrfBinaryRunner):
 
     def _get_core(self):
         if self.family in ('nrf54h', 'nrf71', 'nrf92'):
-            if (self.build_conf.getboolean('CONFIG_SOC_NRF7120_ENGA_CPUAPP') or
-                self.build_conf.getboolean('CONFIG_SOC_NRF7120_ENGA_CPUFLPR')):
+            if (self.build_conf.getboolean('CONFIG_SOC_NRF7120_CPUAPP') or
+                self.build_conf.getboolean('CONFIG_SOC_NRF7120_CPUFLPR')):
                 return 'Application'
             raise RuntimeError(f'Core not found for family: {self.family}')
         return None

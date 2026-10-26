@@ -45,8 +45,8 @@ config CRACEN_HW_VERSION_LITE
 		SOC_NRF54LM20B || \
 		SOC_NRF54LC10A || \
 		SOC_NRF54LV10A || \
-		SOC_NRF7120_ENGA || \
-		SOC_NRF7120E_ENGA
+		SOC_NRF7120 || \
+		SOC_NRF7120E
 	help
 	  Promptless Kconfig option indicating the lite CRACEN hardware implementation.
 
@@ -86,8 +86,8 @@ config PSA_NEED_CRACEN_IKG_INTERRUPT_WORKAROUND
 		SOC_NRF54LM20B || \
 		SOC_NRF54LC10A || \
 		SOC_NRF54LV10A || \
-		SOC_NRF7120_ENGA || \
-		SOC_NRF7120E_ENGA
+		SOC_NRF7120 || \
+		SOC_NRF7120E
 	help
 	  Promptless Kconfig option enabling the CRACEN IKG interrupt workaround.
 
