@@ -1,0 +1,39 @@
+;
+; Copyright (c) 2026 Nordic Semiconductor ASA
+;
+; SPDX-License-Identifier: Apache-2.0
+;
+
+; OTA bundle
+
+protocol_version = 1
+bundle_size = 2
+bundle_sha256 = 3
+elements = 4
+target = 5
+size = 6
+
+; targets for bundle
+nrf53_app = 0
+nrf53_net = 1
+nrf91_app = 2
+nrf91_mdm_delta = 3
+nrf91_mdm_full = 4
+
+ota_element = {
+    target: (nrf53_app/nrf53_net/nrf91_app/nrf91_mdm_delta/nrf91_mdm_full),
+    size: uint,
+}
+
+; header of the OTA bundle
+; bundle size excludes header, and equal sum of element sizes
+; bundle sha256 excludes header
+; element payloads follow in order after the header, no padding
+; version and authenticity checks are expected to be handled externally
+ota_bundle = {
+    protocol_version: 1,
+    bundle_size: uint,
+    bundle_sha256: bstr .size 32,
+    elements: [+ota_element],
+}
+
