@@ -109,11 +109,21 @@ int cd_coexc_configuration(enum coex_antenna_cfg_type antenna_cfg_type)
 		{0x11000000UL, 0x22000000UL, 0x44000000UL, 0x00000000UL},
 	};
 
+	/*
+	 * In mode 0 (Wi-Fi 2.4 GHz) the original rows of client 0 (Wi-Fi HP Rx) and client 2
+	 * (Wi-Fi LP Rx) were 0x00010000 = "allowed only together with SR Rx" and NOT with
+	 * each other. The firmware SW request raises all four Wi-Fi clients to the same priority
+	 * and requests on client 0 while client 2 holds the grant (GRANTED = 0x04). Client 0+2
+	 * not allowed together -> request refused forever. Mode 1 (5 GHz) already allows the
+	 * Wi-Fi clients together (0x00022222). Client 0 and client 2 are also allowed together
+	 * in mode 0.
+	 */
+
 	/* Same layout for shared-antenna configuration. */
 	static const uint32_t ccmallow_sha_ant[COEXC_NUM_CLIENTS][COEXC_NUM_MODES] = {
-		{0x00010000UL, 0x00022222UL, 0x00044444UL, 0x00000000UL},
+		{0x00010101UL,    0x00022222UL, 0x00044444UL, 0x00000000UL},
 		{0x00000000UL, 0x00202222UL, 0x00404444UL, 0x00000000UL},
-		{0x00010000UL, 0x00022222UL, 0x00044444UL, 0x00000000UL},
+		{0x00010101UL,    0x00022222UL, 0x00044444UL, 0x00000000UL},
 		{0x00000000UL, 0x00202222UL, 0x00404444UL, 0x00000000UL},
 		{0x00110101UL, 0x00220202UL, 0x00440404UL, 0x00000000UL},
 		{0x00110000UL, 0x00222020UL, 0x44000000UL, 0x00000000UL},
