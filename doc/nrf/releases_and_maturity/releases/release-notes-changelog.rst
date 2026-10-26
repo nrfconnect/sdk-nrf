@@ -1556,6 +1556,7 @@ Documentation
   * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
   * An :guilabel:`Open in VS Code` button for each sample page.
     It lets you quickly open the sample and install the required version of the |NCS| toolchain.
+  * The :ref:`lib_nrf_cloud_preconnect_provisioning` page, describing how to provision and onboard devices using nRF Cloud Utils.
 
 * Updated:
 

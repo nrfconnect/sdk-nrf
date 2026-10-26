@@ -67,28 +67,8 @@ nRF Cloud supports a variety of device ID formats:
 
   A device ID generated from one of a selection of hardware IDs.
 
-The `device_credentials_installer.py`_ script uses the device UUID format by default.
-See these command line options to use other device ID formats:
-
-* ``--id_str ID_STR``
-
-  Set a device ID that is used instead of UUID.
-  Will be set as a prefix if the ``--id_imei`` option is enabled.
-  The default value for the option is empty.
-
-* ``--id_imei``
-
-  Enable using IMEI for device ID instead of UUID.
-  You can add a prefix to the IMEI with the ``--id_str`` option.
-  The default value for the option is false.
-
-Your firmware's device ID configuration must align with the options used when executing the :file:`device_credentials_installer.py` script.
-See the :ref:`configuration_device_id` section of the :ref:`lib_nrf_cloud` library documentation for more information.
-
-The :file:`device_credentials_installer.py` script automatically connects over USB or RTT to your device and installs the certificates in the modem.
-Before running the script, you must install and run firmware on the device that allows it to accept AT commands over USB or RTT, such as the :ref:`AT Client <at_client_sample>` sample.
-
-If the device already contains certificates, delete the old certificates from the device by adding the ``--delete`` option.
+Your firmware's device ID configuration must match the device ID used when provisioning the device with the `device_credentials_installer.py`_ script, which uses the device UUID by default.
+See the :ref:`configuration_device_id` section of the :ref:`lib_nrf_cloud` library documentation for the firmware options and the `nRF Cloud Utilities documentation`_ for the script options.
 
 Choosing a protocol: CoAP and MQTT
 ***************************************
@@ -141,7 +121,7 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 * The device contains a correct x509 CA certificate, device certificate, and private key.
 * The device ID and device certificate are provisioned and onboarded with nRF Cloud.
 
-`nRF Cloud`_ supports the following three ways for creating and installing these certificates both in the device and the cloud:
+`nRF Cloud`_ supports the following ways for creating and installing these certificates both in the device and the cloud:
 
 * nRF Cloud provisioning service and library
 
@@ -162,19 +142,12 @@ A device can successfully connect to `nRF Cloud`_ using MQTT if the following re
 * Preconnect provisioning
 
   This is supported by CoAP and MQTT connections.
+  The `device_credentials_installer.py`_ script instructs the device to generate and store a private key, signs a device certificate with your CA, and installs it on the device.
+  The private key never leaves the device.
+  The `nrf_cloud_onboard.py`_ script then onboards the device to your nRF Cloud account.
 
-  1. Run the `device_credentials_installer.py`_ Python script to create and install credentials on the device:
-
-     * You need to specify a number of parameters including the device ID.
-     * The script instructs the device to securely generate and store a private key.
-     * The private key never leaves the device, which makes this a more secure option.
-     * It creates a device certificate and signs it with the specified CA.
-     * It writes the device certificate and AWS CA certificate to the device.
-
-  #. Run the `nrf_cloud_onboard.py`_ script to onboard the device to your nRF Cloud account.
-
+  For devices without a Nordic cellular modem, see :ref:`lib_nrf_cloud_preconnect_provisioning`.
   For more details about the scripts, refer to the `nRF Cloud Utilities documentation`_.
-
   See `Securely generating credentials`_ and `nRF Cloud Provisioning`_ for more details.
 
 

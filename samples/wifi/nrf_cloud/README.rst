@@ -23,7 +23,7 @@ The sample also requires the following:
 
 * A Wi-Fi access point with Internet access.
 * An `nRF Cloud`_ account.
-* The `nRF Cloud Utils`_ Python package, to onboard the device (see :ref:`wifi_nrf_cloud_install_nrf_utils`).
+* The `nRF Cloud Utils`_ Python package, to provision and onboard the device (see :ref:`nrf_cloud_preconnect_prerequisites`).
 
 .. include:: /includes/tfm.txt
 
@@ -84,7 +84,7 @@ Notifications of user association success are sent for every subsequent connecti
 This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function.
 
 When a CoAP device attempts to connect to nRF Cloud, the connection will fail to be authenticated until the device is onboarded to an nRF Cloud account.
-See :ref:`wifi_nrf_cloud_standard_onboarding` for details.
+See :ref:`wifi_nrf_cloud_provisioning` for details.
 
 Upon startup, the cloud connection loop also updates the `device shadow <nRF Cloud Device Shadows_>`_.
 This is performed in the :c:func:`update_shadow` function.
@@ -415,369 +415,14 @@ For example, to build the sample with the CoAP transport and FOTA support for th
 
    west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"
 
-.. _wifi_nrf_cloud_build_hardcoded:
+.. _wifi_nrf_cloud_provisioning:
 
-Building with hard-coded CA and device credentials
-==================================================
+Provisioning and onboarding
+===========================
 
-The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option allows you to use hard-coded CA and device credentials stored in unprotected program memory for connecting to nRF Cloud.
-
-.. important::
-   The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is not secure and must not be used in production.
-   It is only for testing and demonstration purposes.
-   Because this setting stores your device's private key in unprotected program memory, using it makes your device vulnerable to impersonation.
-   The private key is also generated on the host machine, so delete it from the host after provisioning.
-
-.. note::
-   This is only one of several mutually exclusive ways to install credentials to your device.
-   See :ref:`wifi_nrf_cloud_onboarding` for other methods.
-
-If you are certain you understand the inherent security risks, you can use this option as follows:
-
-1. Follow the instructions under :ref:`wifi_nrf_cloud_onboard_hardcoded`.
-
-#. Create a :file:`certs` folder directly in the :file:`samples/wifi/nrf_cloud` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem`, and :file:`ca-cert.pem` files into it.
-
-   Make sure not to place the new folder in the :file:`samples/wifi/nrf_cloud/src` folder by accident.
-
-   Now, these certificates are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
-
-   .. note::
-      This works through the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option, which defaults to the :file:`nrf_cloud-certs.h` file found in the :file:`subsys/net/lib/nrf_cloud/common/include` folder.
-      That header pulls in :file:`ca-cert.pem`, :file:`client-cert.pem`, and :file:`private-key.pem` files using unqualified, quoted ``#include`` directives, so the preprocessor looks in its own directory first before falling back to the sample's :file:`certs` folder.
-      Because of this, if you ever place :file:`.pem` files directly in :file:`subsys/net/lib/nrf_cloud/common/include` (for example, while experimenting), they will silently take precedence over the ones in the sample's :file:`certs` folder.
-      Keep your :file:`.pem` files only in the sample's :file:`certs` folder, or point the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option at a header file of your own instead.
-
-#. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
-
-   This is required for onboarding to succeed.
-
-   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
-
-   For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. tabs::
-
-      .. group-tab:: Bash
-
-         .. code-block:: bash
-            :class: highlight
-
-            west build --board *board_target* -p always -- -DEXTRA_CONF_FILE=mqtt.conf -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
-
-      .. group-tab:: PowerShell
-
-         .. code-block:: powershell
-            :class: highlight
-
-            west build --board *board_target* -p always -- -DEXTRA_CONF_FILE=mqtt.conf -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID='698d4c11-0ccc-4f04-89cd-6882724e3f6f'"
-
-.. _wifi_nrf_cloud_onboarding:
-
-Onboarding
-==========
-
-For your device to successfully connect to nRF Cloud, you must `onboard it <nRF Cloud Onboarding_>`_.
-The following sections outline the onboarding methods that this sample supports.
-
-  * Proceed to :ref:`wifi_nrf_cloud_standard_onboarding` (recommended).
-  * If you are building with :ref:`hard-coded credentials <wifi_nrf_cloud_build_hardcoded>`, proceed to :ref:`wifi_nrf_cloud_onboard_hardcoded`.
-
-.. note::
-   You only need to perform one of the above methods.
-   Select the one that best matches your needs, then build and run the sample with the required build configuration.
-
-.. _wifi_nrf_cloud_install_nrf_utils:
-
-Installing nRF Cloud Utils
---------------------------
-
-To perform many of the actions described in the other sections, you need to install the `nRF Cloud Utils <nRF Cloud Utils_>`_.
-
-To install the nRF Cloud Utils, run the following command to use this package as a dependency:
-
-.. parsed-literal::
-   :class: highlight
-
-   pip3 install nrfcloud-utils
-
-.. _wifi_nrf_cloud_standard_onboarding:
-
-Onboarding a device with the device credentials generated on device
--------------------------------------------------------------------
-
-To onboard your device with the device credentials generated on the device, follow :ref:`lib_nrf_cloud_credentials_keygen_onboarding`.
-
-Onboarding a device with the device credentials generated on the host machine
------------------------------------------------------------------------------
-
-With this method, the device private key and certificate are generated on the host machine and then installed onto the device over the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>`.
-Use this method only when on-device key generation is not available.
-
-.. caution::
-   This method is less secure than :ref:`generating the key on the device <wifi_nrf_cloud_standard_onboarding>`, which is the recommended approach.
-   Because the private key is generated on the host machine, it exists outside the device and can be copied or leaked.
-   Delete the private key from the host machine immediately after it has been installed on the device, and prefer on-device key generation for production.
-
-First, :ref:`create a self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-
-Then, complete the following steps for each device you wish to onboard:
-
-1. Make sure your device is plugged in and that this sample has been flashed to it.
-#. Install the device and server credentials using the :file:`device_credentials_installer` script from :ref:`nRF Cloud Utils <wifi_nrf_cloud_install_nrf_utils>`:
-
-   Select the protocol (MQTT or CoAP) you built the sample for:
-
-   .. tabs::
-      .. group-tab:: MQTT
-         .. parsed-literal::
-            :class: highlight
-
-            device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --verify --local-cert --cmd-type tls_cred_shell
-
-         Where:
-
-           * *device_id* is the (globally unique) ID for your device.
-             You must use the same device ID that you configured for the sample at build time.
-             See :ref:`wifi_nrf_cloud_build_hardcoded` for details on setting a compile-time device ID.
-           * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`.
-
-         The ``--cmd-type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management.
-
-         The ``--local-cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
-         This is necessary because the TLS Credentials Shell does not support CSR generation currently.
-         Delete the device private key from your machine after it is installed to the device by this script.
-
-      .. group-tab:: CoAP
-         .. parsed-literal::
-            :class: highlight
-
-            device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --verify --coap --local-cert --cmd-type tls_cred_shell
-
-         Where:
-
-           * *device_id* is the (globally unique) ID for your device.
-             You must use the same device ID that you configured for the sample at build time.
-             See :ref:`wifi_nrf_cloud_build_hardcoded` for details on setting a compile-time device ID.
-           * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`.
-
-         The ``--cmd-type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management.
-
-         The ``--local-cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
-         This is necessary because the TLS Credentials Shell does not support CSR generation currently.
-         Delete the device private key from your machine after it is installed to the device by this script.
-
-   This script generates and signs a device credential on the host machine and installs it onto the device.
-   Because the ``--local-cert`` option is used, the private key is generated on the host machine, not on the device.
-
-   This script also installs any nRF Cloud root CA certificates required in a single chain to the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
-   CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
-
-   If the script succeeds, you should see the following output:
-
-   .. code-block:: console
-
-      Saving nRF Cloud device onboarding CSV file onboard.csv...
-      Onboarding CSV file saved, row count: 1
-
-   And a new file, :file:`onboard.csv` should be created.
-   This file will be used in the next step.
-
-#. Onboard the device to your account using the :file:`nrf_cloud_onboard` script as follows:
-
-   .. parsed-literal::
-      :class: highlight
-
-      nrf_cloud_onboard --api-key *your_api_key* --csv onboard.csv
-
-   Where *your_api_key* is your nRF Cloud API key from your `User Account`_.
-
-   Alternatively, you can :ref:`Manually onboard the device to nRF Cloud <wifi_nrf_cloud_onboard_device_manually>`.
-
-.. _wifi_nrf_cloud_onboard_hardcoded:
-
-Onboarding with hard-coded device credentials
----------------------------------------------
-
-It is possible to onboard your devices using hard-coded device credentials.
-
-.. caution::
-   Hard-coded credentials must not be used in production.
-   The device private key is generated on the host machine and embedded in unprotected program memory, so it exists outside the device's secure storage and can be copied or leaked.
-   Delete the private key from the host machine after provisioning, and prefer :ref:`on-device key generation <wifi_nrf_cloud_standard_onboarding>` for production.
-
-If you are certain you understand the inherent security risks, you can do so as follows:
-
-First, create a :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-
-Next, complete the following steps for each device you wish to onboard:
-
-1. :ref:`Locally generate a device credential <wifi_nrf_cloud_create_device_cred_locally>`
-
-   In addition to the arguments prescribed in that section, also include the ``-embed_save`` argument when running the :file:`create_device_credentials.py` Python script:
-
-   .. parsed-literal::
-      :class: highlight
-
-      create_device_credentials --ca self_*_ca.pem --ca-key self_*_prv.pem -c US --cn *device_id* -p dev_credentials --embed-save
-
-   Where *device_id* is the device ID you created, and the :file:`.pem` files are the :ref:`self-signed CA certificate and private key files <wifi_nrf_cloud_create_self_signed_ca>`.
-
-   This automatically generates the following three files inside the :file:`dev_credentials` folder:
-
-     * :file:`client-cert.pem`
-     * :file:`private-key.pem`
-     * :file:`ca-cert.pem`
-
-   The :file:`client-cert.pem` and :file:`private-key.pem` files are specially formatted versions of the :file:`cred_<device_id>_crt.pem` and :file:`cred_<device_id>_prv.pem` files respectively.
-   The :file:`ca-cert.pem` is a copy of the nRF Cloud root CA in the same format.
-   Do not confuse this CA certificate with your :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-   See `CA certificates for server authentication in AWS IoT Core`_ for more details.
-
-   Your device needs these three credentials to connect successfully with nRF Cloud.
-
-#. Onboard the device to your account with the :file:`nrf_cloud_onboard` script:
-
-   .. parsed-literal::
-      :class: highlight
-
-      nrf_cloud_onboard --api-key *your_api_key* --csv onboard.csv
-
-   Where *your_api_key* is your nRF Cloud API key from your `User Account`_.
-
-   Alternatively, you can :ref:`Manually onboard the device to nRF Cloud <wifi_nrf_cloud_onboard_device_manually>`.
-
-#. Follow the instructions under :ref:`wifi_nrf_cloud_build_hardcoded`.
-
-.. _wifi_nrf_cloud_create_self_signed_ca:
-
-Creating a self-signed CA certificate for device certificate signing
---------------------------------------------------------------------
-
-Before a device can connect to nRF Cloud, it must have device credentials.
-You need to sign these credentials yourself using a CA certificate you create.
-This is referred to as your self-signed CA certificate.
-
-To create your self-signed CA certificate:
-
-1. :ref:`Install the nRF Cloud Utils <wifi_nrf_cloud_install_nrf_utils>`.
-#. Use the nRF Cloud Utils :file:`create_ca_cert` script to generate the certificate:
-
-   .. code-block:: console
-
-      create_ca_cert -c US -f self_
-
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create CA Cert <nRF Cloud Utils Create CA Cert_>`_ section in the nRF Cloud Utils documentation for more details.
-
-   You should now have the following three files:
-
-     * :file:`self_<self_cert_serial>_ca.pem`
-     * :file:`self_<self_cert_serial>_prv.pem`
-     * :file:`self_<self_cert_serial>_pub.pem`
-
-   Where ``<self_cert_serial>`` is your self-signed CA certificate's serial number in hex.
-   These three files are your self-signed CA certificate and private/public keypair.
-   You will use them to sign device credentials.
-
-   If you were directed here as part of other instructions, proceed to the next step of those instructions.
-
-   .. note::
-      You only need to generate these three files once.
-      You can use them to sign as many device credentials as you need.
-
-.. _wifi_nrf_cloud_create_device_cred_locally:
-
-Generating device credentials locally
--------------------------------------
-
-To generate and sign a device credential locally using your :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`, perform the following steps:
-
-1. Create a globally unique `device ID <nRF Cloud Device ID_>`_ for the device.
-
-   The ID can be anything you want, as long as it is not prefixed with ``nrf-`` and is globally unique.
-   See `nRF Cloud Device ID`_ for details.
-
-   Each device should have its own device ID, and you must use it exactly for all other actions involving that device, otherwise onboarding will fail.
-   This ID is referred to in other steps using the term *device_id*.
-
-#. Navigate to the folder where you :ref:`created your self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`, and use the :file:`create_device_credentials.py` Python script :ref:`you installed <wifi_nrf_cloud_install_nrf_utils>` to generate a self-signed certificate for the device:
-
-   .. parsed-literal::
-      :class: highlight
-
-      create_device_credentials -ca self_*_ca.pem -ca_key self_*_prv.pem -c US -cn *device_id* -f cred\_
-
-   Where *device_id* is the device ID you created, and the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_self_signed_ca>`.
-
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create Device Credentials <nRF Cloud Utils Create Device Credentials_>`_ section in the nRF Cloud Utils documentation for more details.
-
-   You should now have the following three files:
-
-     * :file:`cred_<device_id>_crt.pem`
-     * :file:`cred_<device_id>_pub.pem`
-     * :file:`cred_<device_id>_prv.pem`
-
-   These three files are your device credentials, and can only be used by a single device.
-
-   If you were directed here as part of other instructions, proceed to the next step of those instructions.
-
-   .. important::
-
-      If an attacker obtains the private key contained in :file:`cred_<device_id>_prv.pem`, they will be able to impersonate your device.
-
-.. _wifi_nrf_cloud_onboard_device_manually:
-
-Onboarding a device manually
-----------------------------
-
-Once you have obtained device credentials for your device, it can be `onboarded <nRF Cloud Onboarding_>`_.
-
-To onboard devices manually, you can use the `Bulk Onboard Devices <nRF Cloud Portal Bulk Onboard Devices_>`_ page of the nRF Cloud portal as follows:
-
-1. Create an onboarding CSV file named :file:`<device_id>_onboard.csv` and give it the following contents:
-
-   .. parsed-literal::
-      :class: highlight
-
-      *device_id*\ ,,,,"\ *device_cert*\ "
-
-   Where *device_id* is replaced by the device ID :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`, and *device_cert* is replaced by the exact contents of :file:`<device_id>_crt.pem`.
-
-   For example, if the device ID you created is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. code-block:: none
-
-      698d4c11-0ccc-4f04-89cd-6882724e3f6f,,,,"-----BEGIN CERTIFICATE-----
-      sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz
-      sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc
-      1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp
-      oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz
-      srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc
-      nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=
-      -----END CERTIFICATE-----
-      "
-
-   Do not attempt to use this example directly, it has been filled with dummy data.
-   See `nRF Cloud REST API ProvisionDevices`_ for more details.
-
-   If you are onboarding more than a single device at once, you can repeat this format (separated by a newline) for each device you are onboarding.
-   Alternatively, you can create a separate CSV file for each device you wish to onboard, and upload them individually.
-
-#. Navigate to the `Bulk Onboard Devices`_ page of the nRF Cloud portal and upload the :file:`<device_id>_onboard.csv` file you created.
-
-   To get there from the :guilabel:`Dashboard`, click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left, then click :guilabel:`Add Devices` and select **Bulk Onboard**.
-
-   Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`<device_id>_onboard.csv` file and click **Onboard**.
-
-   You should see a message stating that the file was uploaded successfully, and a device with the device IDs you created should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
-
-If you were directed here as part of other instructions, proceed to the next step of those instructions.
+Before the sample can connect to nRF Cloud, you must provision the device and onboard it to your nRF Cloud account, as described in :ref:`lib_nrf_cloud_preconnect_provisioning`.
+The sample supports all the provisioning methods described there.
+For :ref:`hard-coded credentials <nrf_cloud_preconnect_hardcoded>`, copy the :file:`.pem` files into a :file:`certs` folder directly in the :file:`samples/wifi/nrf_cloud` folder (not in :file:`src`), which the sample adds to the include path.
 
 .. _wifi_nrf_cloud_testing:
 
@@ -803,8 +448,7 @@ Testing
 
       <wrn> cloud_connection: nRF Cloud credentials are not installed. Please install and reboot.
 
-#. Install the nRF Cloud credentials and onboard the device to your nRF Cloud account, as described in :ref:`wifi_nrf_cloud_onboarding`.
-   Skip this step if you built the sample with :ref:`hard-coded credentials <wifi_nrf_cloud_build_hardcoded>`.
+#. Provision and onboard the device as described in :ref:`wifi_nrf_cloud_provisioning`.
 #. Add the credentials of your Wi-Fi access point, as described in :ref:`wifi_nrf_cloud_setup_wifi_cred`.
 #. Reset the kit.
 #. Observe that the sample connects to the Wi-Fi network, obtains the current date and time, and connects to nRF Cloud:
@@ -921,7 +565,7 @@ Troubleshooting
 If the sample does not connect to nRF Cloud, check the following:
 
 * The device has valid nRF Cloud credentials installed and is onboarded to your nRF Cloud account with the device ID that the sample logs at startup.
-  See :ref:`wifi_nrf_cloud_onboarding`.
+  See :ref:`wifi_nrf_cloud_provisioning`.
 * The credentials were installed for the transport the sample is built for.
   CoAP and MQTT use different root CA certificates.
 * The Wi-Fi credentials configured for your device match your access point.

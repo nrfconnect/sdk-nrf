@@ -228,6 +228,8 @@
 .. _`nRF Cloud Utils Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
 .. _`nRF Cloud Utils`: https://github.com/nRFCloud/utils/tree/main
 .. _`nRF Cloud Utils requirements`: https://github.com/nRFCloud/utils/blob/main/README.md#requirements
+.. _`nRF Cloud Utils devices without a modem`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#devices-without-a-modem
+.. _`nRF Cloud Utils onboarding`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
 .. _`nRF Cloud Utils documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 .. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 
@@ -1752,8 +1754,6 @@
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 .. _`nRF Cloud CoAP API`: https://docs.nrfcloud.com/docs/nrfcloud/coap-overview
 
-.. _`Bulk Onboard Devices`:
-.. _`nRF Cloud Portal Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
 .. _`nRF Cloud Portal Devices`: https://nrfcloud.com/#/devices
 
 .. ### Source: csa-iot.org
