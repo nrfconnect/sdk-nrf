@@ -17,7 +17,11 @@ logger = logging.getLogger(__name__)
 
 
 def reset_board(dev_id: str | None = None, reset_kind: str | None = None):
-    """Reset a board using nrfutil, optionally specifying a device ID."""
+    """Reset a board using nrfutil, optionally specifying a device ID.
+
+    :param dev_id: Optional serial number of the device to target.
+    :param reset_kind: Optional kind of reset to perform.
+    """
     command = ["nrfutil", "device", "reset"]
     if reset_kind:
         command.extend(["--reset-kind", reset_kind])
@@ -27,6 +31,10 @@ def reset_board(dev_id: str | None = None, reset_kind: str | None = None):
 
 
 def erase_board(dev_id: str | None):
+    """Erase a board using nrfutil.
+
+    :param dev_id: Optional serial number of the device to target.
+    """
     command = ['nrfutil', 'device', 'erase']
     if dev_id:
         command.extend(['--serial-number', dev_id])
@@ -36,9 +44,16 @@ def erase_board(dev_id: str | None):
 def flash_with_nrfutil(
     firmware: Path | str,
     dev_id: str,
-    erase_mode: ERASE_MODE | None,
+    erase_mode: ERASE_MODE | None = None,
     ext_mem_erase_mode: ERASE_MODE | None = None,
-):
+) -> None:
+    """Flash a firmware onto a device using nrfutil.
+
+    :param firmware: Path to the firmware file.
+    :param dev_id: Serial number of the device to target.
+    :param erase_mode: Optional erase mode for the chip.
+    :param ext_mem_erase_mode: Optional erase mode for external memory.
+    """
     command = ['nrfutil', 'device', 'program', '--firmware', str(firmware)]
     if dev_id:
         command.extend(['--serial-number', dev_id])
