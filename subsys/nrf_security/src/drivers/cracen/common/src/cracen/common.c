@@ -333,7 +333,7 @@ void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz)
 int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 {
 	unsigned int neq = 0;
-	unsigned int gt = 0;
+	unsigned int gt;
 	unsigned int ucarry;
 	unsigned int d;
 	unsigned int lt;
@@ -348,10 +348,12 @@ int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 	}
 
 	neq |= ucarry & 0xFF;
-	lt = ucarry < 0x100;
-	gt = neq && !lt;
 
-	return (gt ? 1 : 0) - (lt ? 1 : 0);
+	/* ucarry stays below 2^31 and neq below 0x100 */
+	lt = (ucarry - 0x100u) >> 31;
+	gt = ((neq + 0xFFu) >> 8) & (lt ^ 1u);
+
+	return (int)gt - (int)lt;
 }
 
 void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val)
