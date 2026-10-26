@@ -440,6 +440,9 @@ static psa_status_t cbc_crypt(const psa_key_attributes_t *attributes, const uint
 	*output_length = update_length + finish_length;
 
 exit:
+	if (status != PSA_SUCCESS && output != NULL) {
+		safe_memzero(output, output_size);
+	}
 	safe_memzero(&operation, sizeof(operation));
 	return status;
 }
