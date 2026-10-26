@@ -6,7 +6,15 @@ import random
 from pathlib import Path
 
 import pytest
-from intelhex import bin2hex
+from fw_info_hex_utils import (
+    _app_config_path,
+    assert_fw_info_discovery_rejection,
+    corrupt_fw_info_magic_patch,
+    get_firmware_info_magic_bytes,
+    get_fw_info_search_base,
+    locate_fw_info_address,
+)
+from intelhex import IntelHex, bin2hex
 from twister_harness import DeviceAdapter
 from twister_harness_ext.adapters.nrfutil import flash_with_nrfutil, reset_board
 from twister_harness_ext.utils.dts_helper import get_partition_address
@@ -77,3 +85,54 @@ def test_program_invalid_binary_to_s0_slot(dut: DeviceAdapter, tmp_path: Path):
     )
     matcher.no_fnmatch_line("*Attempting to boot slot 0*")
     matcher.no_fnmatch_line("*No fw_info struct found*")
+
+
+@pytest.mark.nightly
+def test_s0_corrupted_fw_info_magic_fallback_to_s1(dut: DeviceAdapter, tmp_path: Path):
+    """NSIB skips s0 when fw_info magic is invalid; a valid signed image in s1 boots.
+
+    Rejection must be due to firmware information discovery, not signature validation.
+    """
+    assert dut.device_config.app_build_dir is not None
+    app_name = dut.device_config.app_build_dir.name
+    edt_data = dut.device_config.app_build_dir / "zephyr" / "edt.pickle"
+
+    lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
+    pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 0*", "*Firmware version 1*"])
+
+    build_dir = get_required_build(
+        dut, extra_args="-- -DCONFIG_FW_INFO_FIRMWARE_VERSION=2", suffix="_v2"
+    )
+
+    flash_with_nrfutil(
+        build_dir / f"signed_by_b0_{app_name}_s1_variant.hex",
+        dut.device_config.id,
+        erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE",
+    )
+    reset_board(dut.device_config.id)
+
+    lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
+    pytest.LineMatcher(lines).fnmatch_lines(["*Attempting to boot slot 1*", "*Firmware version 2*"])
+
+    magic = get_firmware_info_magic_bytes(_app_config_path(dut))
+    signed_v1_hex = dut.device_config.build_dir / f"signed_by_b0_{app_name}.hex"
+    search_base = get_fw_info_search_base(dut, edt_data, "s0_partition")
+    magic_addr = locate_fw_info_address(IntelHex(str(signed_v1_hex)), search_base, magic)
+
+    patch_hex = tmp_path / "s0_fw_info_magic_corrupt.hex"
+    corrupt_fw_info_magic_patch(magic_addr).write_hex_file(str(patch_hex))
+
+    flash_with_nrfutil(
+        patch_hex, dut.device_config.id, erase_mode="ERASE_RANGES_TOUCHED_BY_FIRMWARE"
+    )
+    reset_board(dut.device_config.id)
+
+    lines = dut.readlines_until(regex="Hello World!", print_output=True, timeout=20)
+    matcher = pytest.LineMatcher(lines)
+    matcher.fnmatch_lines(
+        [
+            "*Attempting to boot slot 1*",
+            "*Firmware version 2*",
+        ]
+    )
+    assert_fw_info_discovery_rejection(matcher)

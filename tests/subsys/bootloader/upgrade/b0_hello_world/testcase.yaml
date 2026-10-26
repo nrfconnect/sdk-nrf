@@ -2,7 +2,7 @@ common:
   sysbuild: true
   slow: true
   build_only: false
-  timeout: 180
+  timeout: 300
   tags:
     - nsib
     - ci_tests_subsys_bootloader
@@ -49,3 +49,20 @@ tests:
     harness_config:
       pytest_root:
         - "../pytest/test_security_tampered_app.py"
+
+  nsib.image_validation.fw_info_discovery:
+    harness: pytest
+    timeout: 600
+    harness_config:
+      pytest_root:
+        - "../pytest/test_fw_info_discovery.py"
+    platform_allow:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    integration_platforms:
+      - nrf5340dk/nrf5340/cpuapp
+      - nrf54l15dk/nrf54l15/cpuapp
+    tags:
+      - nsib
+      - fw_info_discovery
+      - ci_tests_subsys_bootloader
