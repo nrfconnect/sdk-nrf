@@ -49,89 +49,56 @@ This sample implements or demonstrates the following features:
 Structure and theory of operation
 =================================
 
-This sample is separated into a number of smaller functional units.
-The top level functional unit and entry point for the sample is the :file:`src/main.c` file.
-This file starts three primary threads, each with a distinct function:
+The entry point is the :file:`src/main.c` file, which starts the following threads:
 
-* The cloud connection thread (``con_thread``, :file:`src/cloud_connection.c`) runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`, which maintains a connection to `nRF Cloud`_.
-* The application thread (``app_thread``, :file:`src/application.c`) runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`, which controls demo features and submits `device messages <nRF Cloud Device Messages_>`_ to the :ref:`wifi_nrf_cloud_device_message_queue`.
-* The message queue thread (``msg_thread``, :file:`src/message_queue.c`) then transmits these messages whenever there is an active connection.
-  See :ref:`wifi_nrf_cloud_device_message_queue`.
-
-:file:`src/main.c` also optionally starts a fourth thread, the ``led_thread``, which animates any onboard LEDs if :ref:`wifi_nrf_cloud_led_status_indication` is enabled.
-
-When using CoAP, one additional thread starts:
-The CoAP shadow delta checking thread (``coap_shadow``, :file:`src/shadow_support_coap.c`) runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` which periodically asks nRF Cloud for any shadow changes.
+* ``con_thread`` (:file:`src/cloud_connection.c`) - Runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`.
+* ``app_thread`` (:file:`src/application.c`) - Runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`.
+* ``msg_thread`` (:file:`src/message_queue.c`) - Sends the :ref:`wifi_nrf_cloud_device_message_queue` while connected.
+* ``led_thread`` (:file:`src/led_control.c`) - Animates the LEDs, see :ref:`wifi_nrf_cloud_led_status_indication`.
+* ``coap_shadow`` (:file:`src/shadow_support_coap.c`) - CoAP only, runs the :ref:`wifi_nrf_cloud_coap_shadow_loop`.
+* ``mflt_buttons`` (:file:`src/memfault_buttons.c`) - CoAP only, handles the :ref:`wifi_nrf_cloud_memfault_buttons`.
 
 .. _wifi_nrf_cloud_cloud_connection_loop:
 
 Cloud connection loop
 ---------------------
 
-The cloud connection loop (implemented in :file:`src/cloud_connection.c`) monitors network availability.
-It starts a connection with `nRF Cloud`_ whenever the Internet becomes reachable, and closes that connection whenever Internet access is lost.
-It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+The cloud connection loop (:file:`src/cloud_connection.c`) connects to `nRF Cloud`_ whenever the Internet becomes reachable, and disconnects when it is lost.
+Failed or lost connections are retried after :option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`.
 
-Whenever a connection to nRF Cloud is started, the cloud connection loop follows the :ref:`nRF Cloud connection process <lib_nrf_cloud_connect>`.
-The :ref:`lib_nrf_cloud` library handles most of the connection process, with exception to the following behavior:
+The :ref:`lib_nrf_cloud` library handles the :ref:`connection process <lib_nrf_cloud_connect>`, except for the following:
 
-When an MQTT device is first being associated with an nRF Cloud account, the `nRF Cloud MQTT API`_ will send a user association request notification to the device.
-Upon receiving this notification, the device must wait for a user association success notification, and then manually disconnect from and reconnect to nRF Cloud.
-Notifications of user association success are sent for every subsequent connection after this as well, so the device must only disconnect and reconnect if it previously received a user association request notification.
-This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function.
-
-When a CoAP device attempts to connect to nRF Cloud, the connection will fail to be authenticated until the device is onboarded to an nRF Cloud account.
-See :ref:`wifi_nrf_cloud_provisioning` for details.
-
-Upon startup, the cloud connection loop also updates the `device shadow <nRF Cloud Device Shadows_>`_.
-This is performed in the :c:func:`update_shadow` function.
+* MQTT - When the device is first associated with an nRF Cloud account, the sample waits for the association to complete and then reconnects (``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` in :c:func:`cloud_event_handler`).
+* CoAP - The connection fails authentication until the device is :ref:`onboarded <wifi_nrf_cloud_provisioning>`.
 
 .. _wifi_nrf_cloud_device_message_queue:
 
 Device message queue
 --------------------
 
-Any thread may submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (implemented in :file:`src/message_queue.c`), where they are stored until a working connection to `nRF Cloud`_ is established.
-Once this happens, the message thread transmits all enqueued messages, one at a time, to nRF Cloud.
-If an enqueued message fails to send, it is re-queued and retried later.
-Transmission is paused whenever the connection to nRF Cloud is lost.
-If more than :option:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES` messages in a row fail to send, the connection is reset and re-established after a delay (:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+Any thread can submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (:file:`src/message_queue.c`).
+The messages are sent one at a time while connected to nRF Cloud, and failed messages are re-queued.
+After more than :option:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES` consecutive failures, the connection is reset.
 
-The following are sent directly rather than through the queue:
-
-* `Device shadow <nRF Cloud Device Shadows_>`_ updates.
-* Ground fix requests from the :ref:`lib_location` library.
+Shadow updates and ground fix requests from the :ref:`lib_location` library bypass the queue.
 
 .. _wifi_nrf_cloud_application_thread_and_main_application_loop:
 
 Application thread and main application loop
 --------------------------------------------
 
-The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
+The application thread (:file:`src/application.c`) logs the reset reason, waits for connectivity, and starts periodic location tracking with the :ref:`lib_location` library.
+Then, every :option:`CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS` seconds, it performs the following operations in a loop:
 
-When it starts, it logs the reset reason code.
-
-It performs the following major tasks:
-
-* Establishes periodic position tracking (which the :ref:`lib_location` library performs).
-* Periodically samples temperature data (using the :file:`src/temperature.c` file).
-* Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
-* Sends sensor sample and location device messages to the :ref:`wifi_nrf_cloud_device_message_queue`.
-
-.. note::
-   Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
+* Samples the temperature (:file:`src/temperature.c`) and sends it as a timestamped device message to the :ref:`wifi_nrf_cloud_device_message_queue`.
+* Sends the :ref:`wifi_nrf_cloud_test_counter` value, if enabled.
 
 .. _wifi_nrf_cloud_coap_shadow_loop:
 
 CoAP shadow delta checking loop
 -------------------------------
 
-The CoAP shadow delta checking thread performs the following tasks:
-
-* Checks for a change in the device shadow with the :c:func:`nrf_cloud_coap_shadow_get` function.
-* Parse and process the JSON shadow delta document.
-* If a change is received, the thread sends the change back with the :c:func:`nrf_cloud_coap_shadow_state_update` function.
-  This is necessary to prevent the device from unnecessarily receiving the same shadow delta the next time through the loop.
+The CoAP shadow delta checking thread periodically gets the `device shadow <nRF Cloud Device Shadows_>`_ delta (:c:func:`nrf_cloud_coap_shadow_get`), applies the configuration changes, and reports them back (:c:func:`nrf_cloud_coap_shadow_state_update`) so that the same delta is not received again.
 
 .. _wifi_nrf_cloud_temperature_sensing:
 
@@ -141,36 +108,23 @@ Temperature sensing
 Temperature sensing is implemented in the :file:`src/temperature.c` file.
 If the ``temp`` devicetree node is enabled, the on-die temperature sensor is read using the :ref:`zephyr:sensor` API.
 This is the case for the nRF7120 and nRF54LM20 DKs.
-On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5430 as a host MCU, simulated temperature readings are generated instead.
-For temperature readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_ (handled in :file:`src/cloud_connection.c`).
+On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5340 as a host MCU, simulated temperature readings are generated instead.
 
 .. _wifi_nrf_cloud_location_tracking:
 
 Location tracking
 -----------------
 
-Location tracking is handled in :file:`src/location_tracking.c`.
-This sets up a periodic location request and passes results to a callback configured by :file:`src/application.c`.
-
-For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_ (handled in :file:`src/cloud_connection.c`).
-
-The device scans MAC addresses of nearby Wi-Fi access points and submits them to nRF Cloud to obtain a location estimate.
+The sample periodically scans nearby Wi-Fi access points and sends their MAC addresses to nRF Cloud for a location estimate (:file:`src/location_tracking.c`).
+The :file:`src/application.c` file logs the resulting location.
 
 .. _wifi_nrf_cloud_led_status_indication:
 
 LED status indication
 ---------------------
 
-On boards that support LED status indication, this sample can indicate its current status with any on-board LEDs.
-
-This is performed by a background thread implemented in the :file:`src/led_control.c` file.
-
-Other threads may request either a temporary or indefinite LED pattern.
-This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
-
-This feature is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
-
-The patterns displayed, the states they describe, and the options required for them to appear are as follows:
+On boards with LEDs, the ``led_thread`` (:file:`src/led_control.c`) shows the status of the sample.
+The patterns and their conditions are as follows:
 
 +------------------------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | Status                                               | Pattern                                                                                                | Conditions                                                                                                |
@@ -186,18 +140,12 @@ The patterns displayed, the states they describe, and the options required for t
 | Idle                                                 | Single LED lit, bouncing between opposite corners (LED1 and LED4)                                      | The :option:`CONFIG_LED_CONTINUOUS_INDICATION` option is enabled                                          |
 +------------------------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
-Under all other circumstances, on-board LEDs are turned off.
+Otherwise, the LEDs are off.
+The :option:`CONFIG_LED_VERBOSE_INDICATION` and :option:`CONFIG_LED_CONTINUOUS_INDICATION` Kconfig options are enabled by default.
+See :ref:`wifi_nrf_cloud_led_third_party` for third-party boards.
 
 .. note::
-   The nRF7002 DK has only two on-board LEDs, so LED status indication works only partially on that target.
-   Patterns that require four LEDs (such as the "Device message sent successfully" and "Idle" patterns) will not display as described.
-
-.. note::
-  The :option:`CONFIG_LED_VERBOSE_INDICATION` and :option:`CONFIG_LED_CONTINUOUS_INDICATION` options are enabled by default.
-
-See :ref:`wifi_nrf_cloud_customizing_LED_status_indication` for details on customizing the LED behavior.
-
-See :ref:`wifi_nrf_cloud_led_third_party` for details on configuring LED status indication on third-party boards.
+   The nRF7002 DK has only two LEDs, so the patterns that need four LEDs (``Device message sent successfully`` and ``Idle``) do not display as described.
 
 .. _wifi_nrf_cloud_memfault:
 
@@ -267,7 +215,7 @@ Enable it with :option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the followi
 
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
-* Drives the actual FOTA check periodically and independently, through the Memfault SDK's own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`), only once the app has confirmed nRF Cloud connectivity (see :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`).
+* Checks for updates on the Memfault periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`).
 * Lets you trigger a FOTA check on demand with a button press (see :ref:`wifi_nrf_cloud_memfault_buttons`).
 * Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
 
@@ -284,18 +232,14 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
    The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
    It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
 
-   To build with FOTA enabled on a supported target, merge in both :file:`coap.conf` and :file:`coap-fota.conf` (see :ref:`wifi_nrf_cloud_building_coap`):
-
-   ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
+   To build with FOTA enabled, see :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_test_counter:
 
 Test counter
 ------------
 
-Every time a sensor sample is sent, this counter is incremented and its current value is sent to `nRF Cloud`_.
-A plot of the counter value over time appears automatically in the nRF Cloud portal, useful for visualizing connection loss, resets, and re-establishment.
-
+Every time a sensor sample is sent, the sample also sends an incrementing counter to `nRF Cloud`_, whose plot in the portal shows connection losses and resets.
 You can enable or disable the counter using the device shadow's desired config section (``"counterEnable": true/false``), or force it always active with :option:`CONFIG_TEST_COUNTER`.
 
 .. _wifi_nrf_cloud_device_message_formatting:
@@ -303,17 +247,11 @@ You can enable or disable the counter using the device shadow's desired config s
 Device message formatting
 -------------------------
 
-This sample, when using MQTT to communicate with nRF Cloud, constructs JSON-based `device messages <nRF Cloud Device Messages_>`_.
+The sample builds its `device messages <nRF Cloud Device Messages_>`_ as :c:struct:`nrf_cloud_obj` objects, which the :ref:`lib_nrf_cloud` library encodes as JSON for MQTT and CBOR for CoAP.
+The temperature (``TEMP``) and test counter (``COUNT``) messages follow the general message schema of the `nRF Cloud application protocols for long-range devices <nRF Cloud JSON protocol schemas_>`_, so the nRF Cloud portal can display them.
 
-While any valid JSON string can be sent as a device message, and accepted and stored by `nRF Cloud`_, there are some pre-designed message structures, known as schemas.
-The nRF Cloud portal knows how to interpret these schemas.
-These schemas are described in `nRF Cloud application protocols for long-range devices <nRF Cloud JSON protocol schemas_>`_.
-The device messages constructed in the :file:`src/application.c` file all adhere to the general message schema.
-
-Temperature data device messages conform to the ``temp`` ``deviceToCloud`` schemas.
-
-This sample, when using CoAP to communicate with nRF Cloud, uses the :ref:`lib_nrf_cloud_coap` library to construct and transmit CBOR-based device messages.
-Some CoAP traffic, specifically AWS shadow traffic, remains in JSON format.
+The sample does not send location messages.
+nRF Cloud stores the location it computes from the ground fix requests.
 
 .. _wifi_nrf_cloud_configuration:
 
@@ -339,19 +277,6 @@ You can independently disable the following key features of this sample by setti
      - :option:`CONFIG_TEMP_TRACKING`
    * - Shadow handling when using CoAP
      - :option:`CONFIG_COAP_SHADOW`
-
-For examples, see the :ref:`Configuration options <wifi_nrf_cloud_configuration>` section, or disable individual features using their respective Kconfig options.
-
-.. _wifi_nrf_cloud_customizing_LED_status_indication:
-
-Customizing LED status indication
-=================================
-
-To disable LED status indication (other than the selected idle behavior) after a connection to nRF Cloud has been established at least once, disable :option:`CONFIG_LED_VERBOSE_INDICATION`.
-
-To turn the LED off while the sample is idle (rather than show an idle pattern), disable :option:`CONFIG_LED_CONTINUOUS_INDICATION`.
-
-If you disable both of these options together, the status indicator LED remains off after a connection to nRF Cloud has been established at least once.
 
 .. _wifi_nrf_cloud_led_third_party:
 
@@ -602,7 +527,7 @@ The following output is logged on the terminal when the sample is built with the
    [00:00:08.139,343] <inf> cloud_connection: Connected to nRF Cloud
    [00:00:08.139,587] <inf> application: Waiting for device to determine current date and time
    [00:00:08.139,587] <inf> application: Current date and time determined
-   [00:00:08.140,625] <inf> application: Temperature is 23 degrees C
+   [00:00:08.140,625] <inf> application: Die temperature is 23.0 C
    [00:00:08.140,869] <inf> shadow_support_coap: Checking for shadow delta...
    [00:00:08.255,645] <inf> shadow_config: Sending shadow reported configuration
    [00:00:13.465,179] <inf> location: LOCATION_REQ_MODE_ALL: all methods done
@@ -652,8 +577,8 @@ This sample uses the following |NCS| libraries and drivers:
 * :ref:`lib_date_time`
 * :ref:`lib_hw_id`
 * :ref:`mod_memfault`
-* :ref:`lib_fota_download`
-* :ref:`lib_dfu_target`
+* :ref:`lib_fota_download` (FOTA only)
+* :ref:`lib_dfu_target` (FOTA only)
 
 It uses the following Zephyr libraries:
 
