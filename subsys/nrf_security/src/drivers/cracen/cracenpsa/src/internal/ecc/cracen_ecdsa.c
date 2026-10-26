@@ -393,14 +393,7 @@ static int run_deterministic_ecdsa_hmac_step(struct sxhash *hashctx,
 		/* Only use the first qlen bits that was generated. */
 		bits2int(T, opsz, T, opsz * 8 - rshift);
 
-		bool is_zero = true;
-
-		for (size_t i = 0; i < opsz; i++) {
-			if (T[i]) {
-				is_zero = false;
-				break;
-			}
-		}
+		bool is_zero = constant_memcmp_is_zero(T, opsz);
 		int ge = cracen_be_cmp(T, curve_n, opsz, 0);
 		bool must_retry =
 			hmac_op->deterministic_retries < (MAX_ECDSA_ATTEMPTS - hmac_op->attempts);
