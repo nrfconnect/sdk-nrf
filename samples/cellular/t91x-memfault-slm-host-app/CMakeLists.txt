@@ -1,0 +1,13 @@
+# SPDX-License-Identifier: Apache-2.0
+
+cmake_minimum_required(VERSION 3.20.0)
+
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+project(t91x_memfault_slm_host_app)
+
+target_include_directories(app PRIVATE ota)
+
+target_sources(app PRIVATE src/main.c src/ota_download.c src/sm_xdfu.c ota/ota_bundle_decode.c)
+
+target_sources(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/fmfu_fdev/src/modem_update_decode.c)
+target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/subsys/dfu/fmfu_fdev/include)
