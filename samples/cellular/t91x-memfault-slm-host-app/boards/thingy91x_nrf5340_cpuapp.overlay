@@ -1,0 +1,184 @@
+/* Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&i2c2 {
+	status = "okay";
+};
+
+&spi3 {
+	status = "okay";
+};
+
+/ {
+	chosen {
+		zephyr,wifi = &nordic_wlan0;
+	};
+};
+
+/* Enable short range RF */
+&ldsw_rf_fe_sr_en {
+	/delete-property/ output-low;
+	output-high;
+};
+
+&flash_ext {
+	status = "okay";
+};
+
+&pmic_main {
+	status = "okay";
+
+	npm1300_gpios {
+		status = "okay";
+	};
+
+	regulators {
+		status = "okay";
+	};
+
+	charger {
+		status = "okay";
+	};
+};
+
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+/delete-node/ &storage_partition;
+
+&flash0 {
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-0";
+			reg = <0x8000 DT_SIZE_K(80)>;
+		};
+
+		s1_partition: partition@1c000 {
+			compatible = "zephyr,mapped-partition";
+			label = "b0-image-1";
+			reg = <0x1c000 DT_SIZE_K(80)>;
+		};
+
+		slot0_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x30000 DT_SIZE_K(816)>;
+		};
+
+		storage_partition: partition@fc000 {
+			compatible = "zephyr,mapped-partition";
+			label = "storage";
+			reg = <0xfc000 DT_SIZE_K(16)>;
+		};
+	};
+};
+
+/* MCUboot secondary slot in external flash */
+&flash_ext {
+	partitions {
+		compatible = "fixed-partitions";
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		slot1_partition: partition@0 {
+			label = "image-1";
+			reg = <0x0 DT_SIZE_K(816)>;
+		};
+
+		slot3_partition: partition@cc000 {
+			label = "image-3";
+			reg = <0xcc000 DT_SIZE_K(256)>;
+		};
+	};
+};
+
+&usbd {
+	compatible = "nordic,nrf-usbd";
+	status = "okay";
+};
+
+/ {
+	chosen {
+		zephyr,console = &cdc_acm_uart0;
+		zephyr,shell-uart = &cdc_acm_uart0;
+		zephyr,uart-mcumgr = &cdc_acm_uart0;
+		zephyr,bt-mon-uart = &cdc_acm_uart0;
+		zephyr,bt-c2h-uart = &cdc_acm_uart0;
+	};
+};
+
+&rtt0 {
+	status = "disabled";
+};
+
+&uart0 {
+	compatible = "nordic,nrf-uarte";
+	current-speed = <115200>;
+	hw-flow-control;
+	status = "okay";
+
+	dtr_uart0: dtr-uart {
+		compatible = "nordic,dtr-uart";
+		dtr-gpios = <&gpio1 0 (GPIO_PULL_UP | GPIO_ACTIVE_HIGH)>; /* shared GPIO3 */
+		ri-gpios = <&gpio1 1 GPIO_ACTIVE_LOW>; /* shared GPIO4 */
+		status = "okay";
+	};
+	pinctrl-0 = <&uart0_default_t91x>;
+	pinctrl-1 = <&uart0_sleep_t91x>;
+	pinctrl-names = "default", "sleep";
+
+	zephyr,pm-device-runtime-auto;
+
+	modem: modem {
+		compatible = "nordic,nrf91-slm";
+		status = "okay";
+		mdm-reset-gpios = <&gpio1 7 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
+		zephyr,pm-device-runtime-auto;
+		autostarts;
+	};
+};
+
+/ {
+	aliases {
+		modem-uart = &uart0;
+		modem = &modem;
+	};
+};
+
+&pinctrl {
+	uart0_default_t91x: uart0_default_t91x {
+		group1 {
+			psels = <NRF_PSEL(UART_RX, 1, 4)>, /* default t91x UART0_RX */
+				<NRF_PSEL(UART_CTS, 0, 31)>; /* shared GPIO2 */
+			bias-pull-up;
+		};
+		group2 {
+			psels = <NRF_PSEL(UART_TX, 0, 29)>, /* default t91x UART0_TX */
+				<NRF_PSEL(UART_RTS, 0, 30)>; /* shared GPIO1 */
+		};
+	};
+
+	uart0_sleep_t91x: uart0_sleep_t91x {
+		group1 {
+			psels = <NRF_PSEL(UART_TX, 0, 29)>,
+				<NRF_PSEL(UART_RX, 1, 4)>,
+				<NRF_PSEL(UART_RTS, 0, 30)>,
+				<NRF_PSEL(UART_CTS, 0, 31)>;
+			low-power-enable;
+		};
+	};
+};
