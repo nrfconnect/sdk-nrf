@@ -167,9 +167,10 @@ static int ed25519_sign_internal(const uint8_t *priv_key, uint8_t *signature,
 	}
 
 	memcpy(signature, pnt_r, SX_ED25519_DGST_SZ);
-	safe_memzero(workmem, sizeof(workmem));
 
 exit:
+	safe_memzero(workmem, sizeof(workmem));
+	safe_memzero(pnt_r, sizeof(pnt_r));
 	sx_hw_release(&ctx.dma);
 	sx_pk_release_req(&req);
 	return status;
