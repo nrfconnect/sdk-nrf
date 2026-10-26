@@ -6,7 +6,7 @@
 
 menuconfig NRF71_IDLE_POWER
 	bool "nRF71 idle power optimization helpers"
-	depends on SOC_NRF7120_ENGA_CPUAPP
+	depends on SOC_NRF7120_CPUAPP || SOC_NRF7120E_CPUAPP
 	# Idle current is dominated by devices (UART/console) keeping their
 	# clocks requested; device PM is what lets them suspend during idle.
 	imply PM
