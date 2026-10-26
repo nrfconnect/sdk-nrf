@@ -535,12 +535,11 @@ static psa_status_t cracen_srp_SHA_interleaved(cracen_srp_operation_t *operation
 					       size_t S_size)
 {
 	size_t K_length = 0;
+	size_t leading_zeros = constant_count(S, S_size, 0x00, MATCH_EQUAL);
 
 	/* S' = skip leading zero bytes of S*/
-	while (S_size > 0 && *S == 0) {
-		S++;
-		S_size--;
-	}
+	S += leading_zeros;
+	S_size -= leading_zeros;
 
 	/* SRP-6a:
 	 * k = H(S')
