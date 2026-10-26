@@ -194,6 +194,8 @@ The following samples demonstrate the Memfault integration in |NCS|:
 * :ref:`peripheral_mds` - This sample has an implementation of the Memfault Diagnostic Service (MDS).
   It sends data to the Memfault cloud through a Bluetooth gateway.
 * :ref:`memfault_sample` - This sample connects to an LTE network using an nRF91 Series DK, Thingy:91, or Thingy:91 X, or to Wi-Fi® using the nRF7002 DK, and sends the collected data to Memfault's cloud using HTTPS.
+* :ref:`wifi_nrf_cloud` - This sample connects to Wi-Fi and, when built with the CoAP transport, sends the collected data to Memfault through nRF Cloud CoAP, without a Memfault project key.
+  See :ref:`wifi_nrf_cloud_memfault` for details.
 
 Library support
 ***************

@@ -208,9 +208,35 @@ Memfault device monitoring
 --------------------------
 
 This sample uses `Memfault`_ (:kconfig:option:`CONFIG_MEMFAULT`) for general device monitoring and diagnostics whenever built with the CoAP transport.
-This includes periodic metrics reporting, as well as coredump and fault reporting on crash and reboot (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
-RAM-backed coredumps are enabled on the ``nrf7002dk/nrf5340/cpuapp/ns`` board target, see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+See :ref:`ug_memfault` for an overview of the Memfault integration in the |NCS|.
+By default, the sample reports the following data:
+
+* Reboot events, including the reboot reason (:kconfig:option:`CONFIG_MEMFAULT_REBOOT_REASON_GET_HWINFO`).
+* Coredumps on crash (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
+  Coredumps are stored in RAM and uploaded after the reboot (:kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`).
+  The ``nrf7002dk/nrf5340/cpuapp/ns`` board target reduces the coredump size to fit in RAM (see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+* Recent log lines, captured along with coredumps (:kconfig:option:`CONFIG_MEMFAULT_LOGGING_ENABLE`).
+* Heartbeat metrics, collected every :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` seconds (one hour by default).
+  The sample uses the built-in |NCS| metrics (:kconfig:option:`CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS`) and does not define custom metrics.
+  These include the following:
+
+  * Wi-Fi connection metrics, such as connected time, disconnect count, RSSI, channel, and TX rate (:kconfig:option:`CONFIG_MEMFAULT_METRICS_WIFI`).
+  * Memfault upload successes and failures (:kconfig:option:`CONFIG_MEMFAULT_METRICS_MEMFAULT_SYNC_SUCCESS`).
+  * CPU usage and uptime (:kconfig:option:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`).
+  * CPU temperature, on boards with a temperature sensor available to the application core (:kconfig:option:`CONFIG_MEMFAULT_METRICS_CPU_TEMP`).
+  * Heap usage (:kconfig:option:`CONFIG_MEMFAULT_METRICS_MEMORY_USAGE`).
+  * Thread stack usage (:kconfig:option:`CONFIG_MEMFAULT_METRICS_THREADS`).
+  * Boot time (:kconfig:option:`CONFIG_MEMFAULT_METRICS_BOOT_TIME`).
+
+  See `Memfault: Built-in metrics for nRF Connect SDK`_ for the full list.
+
+See :ref:`mod_memfault` for the configuration options of the Memfault integration.
+To try out triggering crashes and defining custom metrics, see the :ref:`memfault_sample` sample.
+
+The device appears on Memfault with its nRF Cloud device ID as serial.
 This data is uploaded through nRF Cloud's CoAP endpoint (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`), reusing the sample's existing nRF Cloud CoAP connection.
+No Memfault project key is needed, as nRF Cloud forwards the data to Memfault.
+See :ref:`wifi_nrf_cloud_testing_memfault` for how to view the data.
 
 The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD`), independently of the sample's own logic.
 To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
@@ -222,7 +248,7 @@ Memfault button actions
 =======================
 
 The periodic-upload timer fires only once in :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS`, and metrics heartbeats are only captured once in :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` (one hour by default).
-To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
+To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
 
 * First button (``sw0`` devicetree alias) - Captures a metrics heartbeat (:c:func:`memfault_metrics_heartbeat_debug_trigger`) and posts all pending Memfault chunks (:c:func:`memfault_zephyr_port_post_data_return_size`).
 * Second button (``sw1`` devicetree alias) - Checks for a FOTA update (:c:func:`memfault_zephyr_fota_start`), requires :ref:`wifi_nrf_cloud_fota` to be enabled.
@@ -240,7 +266,7 @@ Memfault FOTA
 -------------
 
 This sample optionally supports application Firmware Over-The-Air (FOTA) updates, delivered through `Memfault`_ Release Management, when built with the CoAP transport (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
-Enable it with :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
+Enable it with :option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
 
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
@@ -259,7 +285,7 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
    * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
 
    The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
-   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
+   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
 
    To build with FOTA enabled on a supported target, merge in both :file:`coap.conf` and :file:`coap-fota.conf` (see :ref:`wifi_nrf_cloud_building_coap`):
 
@@ -476,7 +502,37 @@ Testing
 
 #. Open the `nRF Cloud`_ portal, select your device on the `Devices <nRF Cloud Portal Devices_>`_ page, and observe that the temperature data and, except on the nRF7120 DK, the location data are displayed.
 #. When using CoAP, observe that `Memfault`_ metrics, reboots, and faults for the device are reported to nRF Cloud.
-   See :ref:`wifi_nrf_cloud_memfault` for details.
+   See :ref:`wifi_nrf_cloud_testing_memfault` for details.
+
+.. _wifi_nrf_cloud_testing_memfault:
+
+Testing Memfault device monitoring
+----------------------------------
+
+To test :ref:`wifi_nrf_cloud_memfault`, build and program the sample with the :file:`coap.conf` file, and onboard the device as described in the previous section.
+Then, complete the following steps:
+
+1. Upload the :file:`build/nrf_cloud/zephyr/zephyr.elf` file as a symbol file, using the `Memfault Dashboards`_ (**Software** > **Symbol Files**) or the `Memfault CLI tool`_.
+   Memfault needs the symbol file to decode metrics and coredumps.
+   It matches the symbol file to the firmware running on the device by its GNU build ID, so you do not need to link it to the device.
+   Upload a new symbol file every time you rebuild the sample.
+   See `Memfault: Upload a symbol file`_ for details.
+#. Open the `Memfault Dashboards`_, go to **Fleet** > **Devices**, and select your device by its device ID.
+#. Observe the data reported by the device in the following tabs:
+
+   * **Processing Log** - Each piece of data received from the device, such as ``Received reboot event`` or ``Received Metric Report (Heartbeat)``, and processing errors.
+     If the symbol file is missing, a ``Symbol file missing`` entry shows the GNU build ID of the expected symbol file.
+   * **Reboots** - Reboot events with reboot reasons and software versions.
+   * **Reports** - Heartbeat reports.
+     Click :guilabel:`Expand All` to view the metric values of each report.
+   * **Timeline** - Metrics and reboots over time.
+
+   Coredumps from crashes are grouped as issues under **Monitoring** > **Issues**.
+   Fleet-wide data is shown under **Fleet** > **Dashboards**.
+
+By default, the device sends the first heartbeat report after one hour of uptime.
+To see data sooner while testing, reduce the values of the :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` and :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS` Kconfig options.
+Memfault might throttle devices that upload too often, which is shown as ``Device Reporting Throttled`` in the **Processing Log** tab.
 
 .. _wifi_nrf_cloud_testing_fota:
 
