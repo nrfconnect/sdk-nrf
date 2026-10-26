@@ -2,6 +2,27 @@
 // SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 
 document.addEventListener("DOMContentLoaded", function () {
+    function preloadKapa() {
+        let k = window.Kapa;
+        if (!k) {
+            let i = function () {
+                i.c(arguments);
+            };
+            i.q = [];
+            i.c = function (args) {
+                i.q.push(args);
+            };
+            window.Kapa = i;
+        }
+    }
+
+    function getSearchString() {
+        params = new URLSearchParams(window.location.search);
+        return params.get("search");
+    }
+
+    preloadKapa();
+
     var script = document.createElement("script");
     script.src = "https://widget.kapa.ai/kapa-widget.bundle.js";
     script.setAttribute("data-website-id", "a5232253-05bb-40ed-8e4e-841cdff33180");
@@ -36,8 +57,8 @@ document.addEventListener("DOMContentLoaded", function () {
     script.onload = function () {
         var openSearch = function (e) {
             e.preventDefault();
-            if (window.Kapa && typeof window.Kapa.open === "function") {
-                window.Kapa.open({ mode: "search" });
+            if (window.Kapa) {
+                window.Kapa("open", { mode: "search" });
             }
         };
 
@@ -46,32 +67,42 @@ document.addEventListener("DOMContentLoaded", function () {
             el.addEventListener("click", openSearch);
         });
     };
-        // Position floating Kapa button (same as console test)
-        function applyKapaButtonPosition() {
-            var host = document.getElementById("kapa-widget-container");
-            if (!host || !host.shadowRoot) {
-                return false;
-            }
-
-            var style = host.shadowRoot.querySelector("style[data-ncs-kapa-position]");
-            if (!style) {
-                style = host.shadowRoot.appendChild(document.createElement("style"));
-                style.setAttribute("data-ncs-kapa-position", "1");
-            }
-
-            style.textContent =
-                "#kapa-button { right: -11px !important; bottom: 24px !important; }";
-            return true;
+    // Position floating Kapa button (same as console test)
+    function applyKapaButtonPosition() {
+        var host = document.getElementById("kapa-widget-container");
+        if (!host || !host.shadowRoot) {
+            return false;
         }
 
-        if (!applyKapaButtonPosition()) {
-            var attempts = 0;
-            var timer = setInterval(function () {
-                if (applyKapaButtonPosition() || ++attempts > 20) {
-                    clearInterval(timer);
-                }
-            }, 500);
+        var style = host.shadowRoot.querySelector("style[data-ncs-kapa-position]");
+        if (!style) {
+            style = host.shadowRoot.appendChild(document.createElement("style"));
+            style.setAttribute("data-ncs-kapa-position", "1");
         }
+
+        style.textContent =
+            "#kapa-button { right: -11px !important; bottom: 24px !important; }";
+        return true;
+    }
+
+    if (!applyKapaButtonPosition()) {
+        var attempts = 0;
+        var timer = setInterval(function () {
+            if (applyKapaButtonPosition() || ++attempts > 20) {
+                clearInterval(timer);
+            }
+        }, 500);
+    }
+
+    let search = getSearchString();
+
+    if (search) {
+        window.Kapa("open", {
+            mode: "search",
+            query: search,
+            submit: true,
+        });
+    }
 
     document.head.appendChild(script);
 });
