@@ -16,6 +16,7 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 #include <cracen_psa_primitives.h>
+#include <nrf_security_mem_helpers.h>
 
 psa_status_t cracen_aes_cbc_encrypt(const struct sxkeyref *key, const uint8_t *input,
 				    size_t input_length, uint8_t *output, size_t output_size,
@@ -125,7 +126,12 @@ psa_status_t cracen_aes_cbc_decrypt(const struct sxkeyref *key, const uint8_t *i
 		failure |= (output[i] ^ padding_length) * (i >= padding_index);
 	}
 
-	*output_length = padding_index;
+	if (failure != 0) {
+		safe_memzero(output, input_length);
+		*output_length = 0;
+	} else {
+		*output_length = padding_index;
+	}
 	goto exit;
 
 exit:
