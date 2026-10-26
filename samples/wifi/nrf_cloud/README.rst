@@ -16,9 +16,6 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. note::
-   The :zephyr:board:`nRF7120 DK <nrf7120dk>` has not been tested on target for this sample.
-
 The sample also requires the following:
 
 * A Wi-Fi access point with Internet access.
