@@ -51,10 +51,7 @@ This library supports the following nRF Cloud services:
 Requirements
 ************
 
-You must first preprovision the device on nRF Cloud as follows:
-
-1. Use the `device_credentials_installer.py`_ and `nrf_cloud_onboard.py`_ scripts.
-#. Specify the ``--coap`` option to ``device_credentials_installer.py`` to have the proper root CA certificates installed in the device.
+Before the device connects, it must be provisioned and onboarded as described in :ref:`nrf_cloud_onboarding`.
 
 Call the :c:func:`nrf_cloud_coap_init` function once to initialize the library.
 Connect the device to the network before calling the :c:func:`nrf_cloud_coap_connect` function.

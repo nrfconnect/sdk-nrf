@@ -223,11 +223,11 @@
 .. _`DCL Quick Start Guide`: https://github.com/zigbee-alliance/distributed-compliance-ledger/blob/master/docs/quickStartGuide.adoc
 .. _`nRF Cloud JSON protocol schemas`: https://github.com/nRFCloud/application-protocols
 .. _`device_credentials_installer.py`: https://github.com/nRFCloud/utils/blob/main/src/nrfcloud_utils/device_credentials_installer.py
-.. _`nrf_cloud_onboard.py`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
 .. _`nRF Cloud Utils Create CA Cert`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-ca-cert
 .. _`nRF Cloud Utils Create Device Credentials`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#create-device-credentials
 .. _`nRF Cloud Utils`: https://github.com/nRFCloud/utils/tree/main
-.. _`nRF Cloud Utils requirements`: https://github.com/nRFCloud/utils/blob/main/README.md#requirements
+.. _`nRF Cloud Utils devices without a modem`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#devices-without-a-modem
+.. _`nRF Cloud Utils onboarding`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md#nrf-cloud-device-onboarding
 .. _`nRF Cloud Utils documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 .. _`nRF Cloud Utilities documentation`: https://github.com/nRFCloud/utils/blob/main/ADVANCED.md
 
@@ -1728,6 +1728,8 @@
 .. _`nRF Cloud nRF93M1 Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding/nrf93m1-onboarding
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
+.. _`nRF Cloud device onboarding quickstart`: https://docs.nrfcloud.com/docs/best-practices/device-onboarding-quickstart
+.. _`nRF Cloud device onboarding prerequisites`: https://docs.nrfcloud.com/docs/best-practices/device-onboarding-quickstart#prerequisites
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview
 .. _`nRF Cloud MQTT FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview#mqtt-job-execution-notifications
 .. _`nRF Cloud Getting Started FOTA documentation`: https://docs.nrfcloud.com/docs/nrfcloud/fota-tutorial
@@ -1754,8 +1756,6 @@
 .. _`nRF Cloud RegisterPublicKeys Endpoint`: https://api.nrfcloud.com/v1/#operation/RegisterPublicKeys
 .. _`nRF Cloud CoAP API`: https://docs.nrfcloud.com/docs/nrfcloud/coap-overview
 
-.. _`Bulk Onboard Devices`:
-.. _`nRF Cloud Portal Bulk Onboard Devices`: https://nrfcloud.com/#/add-device/bulk
 .. _`nRF Cloud Portal Devices`: https://nrfcloud.com/#/devices
 
 .. ### Source: csa-iot.org
