@@ -712,34 +712,35 @@ psa_status_t cracen_cipher_finish(cracen_cipher_operation_t *operation, uint8_t 
 			sx_status = sx_blkcipher_wait(&operation->cipher);
 			sx_hw_release(&operation->cipher.dma);
 			if (sx_status != SX_OK) {
+				safe_memzero(out_with_padding, sizeof(out_with_padding));
 				return silex_statuscodes_to_psa(sx_status);
 			}
 
-			uint8_t padding = out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
-			/* Verify that padding is in the valid range. */
-			if (padding > SX_BLKCIPHER_AES_BLK_SZ || padding == 0) {
-				return PSA_ERROR_INVALID_PADDING;
+			psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+			size_t padding = out_with_padding[SX_BLKCIPHER_AES_BLK_SZ - 1];
+			size_t padding_index = SX_BLKCIPHER_AES_BLK_SZ - padding;
+			size_t failure = 0;
+
+			/* Verify the padding range and all padding bytes. */
+			failure |= (padding > SX_BLKCIPHER_AES_BLK_SZ);
+			failure |= (padding == 0);
+			for (size_t i = 0; i < SX_BLKCIPHER_AES_BLK_SZ; i++) {
+				failure |= (out_with_padding[i] ^ padding) * (i >= padding_index);
 			}
 
-			/* Verify all padding bytes. */
-			for (unsigned int i = SX_BLKCIPHER_AES_BLK_SZ;
-				i > (SX_BLKCIPHER_AES_BLK_SZ - padding); i--) {
-				if (out_with_padding[i - 1] != padding) {
-					return PSA_ERROR_INVALID_PADDING;
-				}
+			if (failure != 0) {
+				status = PSA_ERROR_INVALID_PADDING;
+			} else if (padding_index > output_size) {
+				status = PSA_ERROR_BUFFER_TOO_SMALL;
+			} else {
+				/* Copy plaintext without padding. */
+				memcpy(output, out_with_padding, padding_index);
+				*output_length = padding_index;
+				status = PSA_SUCCESS;
 			}
 
-			/* Verify output buffer. */
-			*output_length = SX_BLKCIPHER_AES_BLK_SZ - padding;
-			if (*output_length > output_size) {
-				*output_length = 0;
-				return PSA_ERROR_BUFFER_TOO_SMALL;
-			}
-
-			/* Copy plaintext without padding. */
-			memcpy(output, out_with_padding, *output_length);
-
-			return PSA_SUCCESS;
+			safe_memzero(out_with_padding, sizeof(out_with_padding));
+			return status;
 		}
 	}
 
