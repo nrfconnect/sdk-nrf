@@ -189,10 +189,9 @@ struct bt_fast_pair_fhn_pf_ranging_mgmt_cb {
 	 *  asynchronously if the capability preparation of certain ranging technologies requires
 	 *  time to complete.
 	 *
-	 *  This callback is executed in the cooperative thread context. You can learn about the
-	 *  exact thread context by analyzing the @kconfig{CONFIG_BT_RECV_CONTEXT} Kconfig option.
-	 *  By default, this callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the Bluetooth RX
+	 *  workqueue. The stack size of this workqueue is configured with the
+	 *  @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param conn            Connection object.
 	 *  @param ranging_tech_bm Bitmask of the ranging technologies requested by the connected
@@ -216,10 +215,9 @@ struct bt_fast_pair_fhn_pf_ranging_mgmt_cb {
 	 *  parameter indicates the number of elements in the @p config_payloads array. The
 	 *  @p config_payloads array is only valid during the callback execution.
 	 *
-	 *  This callback is executed in the cooperative thread context. You can learn about the
-	 *  exact thread context by analyzing the @kconfig{CONFIG_BT_RECV_CONTEXT} Kconfig option.
-	 *  By default, this callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the Bluetooth RX
+	 *  workqueue. The stack size of this workqueue is configured with the
+	 *  @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param conn               Connection object.
 	 *  @param ranging_tech_bm    Bitmask of the ranging technologies to configure and start,
@@ -244,10 +242,9 @@ struct bt_fast_pair_fhn_pf_ranging_mgmt_cb {
 	 *  requires time to complete. The @p ranging_tech_bm parameter contains the bitmask of the
 	 *  ranging technologies to stop.
 	 *
-	 *  This callback is executed in the cooperative thread context. You can learn about the
-	 *  exact thread context by analyzing the @kconfig{CONFIG_BT_RECV_CONTEXT} Kconfig option.
-	 *  By default, this callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the Bluetooth RX
+	 *  workqueue. The stack size of this workqueue is configured with the
+	 *  @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param conn            Connection object.
 	 *  @param ranging_tech_bm Bitmask of the ranging technologies to stop, composed of

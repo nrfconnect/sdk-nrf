@@ -13,9 +13,9 @@
  * @defgroup bt_fast_pair Fast Pair API
  * @brief Fast Pair API
  *
- * The Fast Pair subsystem needs the Bluetooth GATT operations to be run from the cooperative
- * thread context. It requires proper configuration of the @kconfig{CONFIG_BT_RECV_CONTEXT}
- * Kconfig option.
+ * The Fast Pair subsystem relies on the Bluetooth host to process GATT operations in the
+ * cooperative thread context of the Bluetooth RX workqueue. The stack size of this workqueue
+ * is configured with the @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
  *
  * @{
  */
@@ -160,7 +160,7 @@ struct bt_fast_pair_info_cb {
 	 *
 	 * This information can be used for example to update the Fast Pair advertising
 	 * data in the not discoverable mode. Due to execution context constraints
-	 * (Bluetooth RX thread), it is not recommended to block for long periods
+	 * (Bluetooth RX workqueue), it is not recommended to block for long periods
 	 * of time in this callback.
 	 *
 	 *  @param conn Connection object that wrote the Account Key.
