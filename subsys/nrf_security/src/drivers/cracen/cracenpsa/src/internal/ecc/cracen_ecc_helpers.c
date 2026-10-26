@@ -365,8 +365,10 @@ psa_status_t cracen_ecc_is_quadratic_residue(sx_pk_req *req,
 	safe_memzero(one_prsh_buf, op_size);
 	cracen_be_add(one_prsh_buf, op_size, 1);
 
-	*is_qr = constant_memcmp_is_zero(tmp.bytes, tmp.sz);
-	*is_qr = *is_qr || (constant_memcmp(tmp.bytes, one_prsh_buf, tmp.sz) == 0);
+	bool is_zero = constant_memcmp_is_zero(tmp.bytes, tmp.sz);
+	bool is_one = constant_memcmp(tmp.bytes, one_prsh_buf, tmp.sz) == 0;
+
+	*is_qr = is_zero | is_one;
 
 	return PSA_SUCCESS;
 #else
