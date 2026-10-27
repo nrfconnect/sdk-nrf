@@ -59,6 +59,10 @@
 #include "../clock_ctrl/mpsl_clock_ctrl.h"
 #endif /* CONFIG_MPSL_USE_EXTERNAL_CLOCK_CONTROL */
 
+#if defined(CONFIG_IRONSIDE_TE_CLIENT)
+#include <ironside_client/services/platform.h>
+#endif
+
 #if !defined(CONFIG_CLOCK_CONTROL_NRF)
 #define CLOCK_NODE_LFCLK DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_nrf_clock_lfclk)
 #endif /* !defined(CONFIG_CLOCK_CONTROL_NRF) */
@@ -725,6 +729,8 @@ void mpsl_low_latency_acquire_callback(void)
 	cfg.enable = false;
 	nrf_mramc_power_autopowerdown_set(NRF_MRAMC, &cfg);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#elif defined(CONFIG_IRONSIDE_TE_CLIENT)
+	(void)ironside_platform_rramc_lowpowerconfig_on();
 #endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
 }
 
@@ -749,6 +755,8 @@ void mpsl_low_latency_release_callback(void)
 #elif defined(MPSL_HW_HAS_MRAMC)
 	nrf_mramc_power_autopowerdown_set(NRF_MRAMC, &m_mram_autopowerdown_config);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
+#elif defined(CONFIG_IRONSIDE_TE_CLIENT)
+	(void)ironside_platform_rramc_lowpowerconfig_off();
 #endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
 }
 #endif /* defined(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
