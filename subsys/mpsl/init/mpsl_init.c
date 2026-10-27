@@ -181,7 +181,7 @@ static struct k_work mpsl_low_prio_work;
 struct k_work_q mpsl_work_q;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
 
-#if IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) && !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
 /* Check existence of rram_controller node in the device tree to figure out whether RRAMC is
  * supported.
  *
@@ -191,16 +191,13 @@ static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
  */
 #if DT_NODE_EXISTS(DT_NODELABEL(rram_controller))
 #define MPSL_HW_HAS_RRAMC 1
-
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 static int m_nvm_low_latency_event_handle = -1;
-#else
+#elif !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 static uint32_t m_rram_lowpower_config;
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
 #endif /* DT_NODE_EXISTS(DT_NODELABEL(rram_controller)) */
-#endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) &&
-	* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
-	*/
+#endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
 
 #define MPSL_TIMESLOT_SESSION_COUNT (\
 	CONFIG_MPSL_TIMESLOT_SESSION_COUNT + \
@@ -652,10 +649,6 @@ int32_t mpsl_lib_uninit(void)
 #if defined(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
 void mpsl_low_latency_acquire_callback(void)
 {
-/* We need to know whether RRAMC is supported on the platform. The IS_ENABLED() returns true if the
- * KConfig is set. In this case it is enough to check whether there is
- */
-#if defined(MPSL_HW_HAS_RRAMC)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int err;
 
@@ -669,6 +662,7 @@ void mpsl_low_latency_acquire_callback(void)
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 #endif /* NRF_POWER_HAS_CONST_LATENCY && NRF_POWER_HAS_LOW_POWER */
 
+#if defined(MPSL_HW_HAS_RRAMC)
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 	int event_handle;
@@ -695,7 +689,6 @@ void mpsl_low_latency_acquire_callback(void)
 
 void mpsl_low_latency_release_callback(void)
 {
-#if defined(MPSL_HW_HAS_RRAMC)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int ret;
 
@@ -709,6 +702,7 @@ void mpsl_low_latency_release_callback(void)
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
 
+#if defined(MPSL_HW_HAS_RRAMC)
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 	ret = nrf_sys_event_unregister(m_nvm_low_latency_event_handle, false);
