@@ -15,7 +15,15 @@
 
 #include <memfault/components.h>
 #include <memfault/ports/zephyr/http.h>
+#include <memfault/ports/zephyr/root_cert_storage.h>
 #include <memfault_ncs.h>
+
+#include "ota_download.h"
+
+static const int memfault_sec_tags[] = {
+    kMemfaultRootCert_DigicertRootG2,
+    kMemfaultRootCert_AmazonRootCa1,
+};
 
 #define L4_EVENT_MASK \
 	(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | NET_EVENT_DNS_SERVER_ADD)
@@ -132,6 +140,7 @@ int main(void)
 	} else {
 		/* Custom OTA handling goes here. */
 		printk("OTA update available: %s\n", url);
+		ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
 		memfault_zephyr_port_release_download_url(&url);
 	}
 
