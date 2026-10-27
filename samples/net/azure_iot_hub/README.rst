@@ -288,8 +288,8 @@ When the sample runs, the device boots, and the sample displays the following ou
    <inf> azure_iot_hub_sample: Azure IoT Hub sample started
    <inf> azure_iot_hub_sample: Bringing network interface up and connecting to the network
    <inf> azure_iot_hub_sample: Device ID: my-device
-   <inf> azure_iot_hub_sample: Connecting...
-   <inf> azure_iot_hub_sample: Network connectivity established and IP address assigned
+   <inf> azure_iot_hub_sample: Waiting for network...
+   <inf> azure_iot_hub_sample: Network ready
    <inf> azure_fota: Current firmware version: 0.0.1-dev
    <inf> azure_iot_hub_sample: Azure IoT Hub library initialized
    <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_CONNECTING
