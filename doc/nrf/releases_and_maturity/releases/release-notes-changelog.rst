@@ -891,6 +891,9 @@ Networking samples
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
 
+  * Fixed an issue where the sample could try to connect to AWS IoT before DNS was available and stop with a fatal error.
+    The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+
 * :ref:`download_sample` sample:
 
   * Added:
