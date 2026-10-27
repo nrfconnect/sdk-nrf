@@ -16,13 +16,18 @@ size = 6
 ; targets for bundle
 nrf53_app = 0
 nrf53_net = 1
-nrf91_app = 2
-nrf91_mdm_delta = 3
-nrf91_mdm_full = 4
+nrf53_bl = 2
+nrf91_app = 3
+nrf91_bl = 4
+nrf91_mdm_delta = 5
+nrf91_mdm_full = 6
+
+; non-empty, fits in 32 bits
+payload_size = 1..0xffffffff
 
 ota_element = {
-    target: (nrf53_app/nrf53_net/nrf91_app/nrf91_mdm_delta/nrf91_mdm_full),
-    size: uint,
+    target => (nrf53_app/nrf53_net/nrf53_bl/nrf91_app/nrf91_bl/nrf91_mdm_delta/nrf91_mdm_full),
+    size => payload_size,
 }
 
 ; header of the OTA bundle
@@ -30,10 +35,14 @@ ota_element = {
 ; bundle sha256 excludes header
 ; element payloads follow in order after the header, no padding
 ; version and authenticity checks are expected to be handled externally
+;
+; constraints not expressible in CDDL, a reader must reject the bundle if any are violated:
+; - each target appears at most once
+; - nrf91_mdm_delta and nrf91_mdm_full are mutually exclusive
+; - bundle_size equals the sum of element sizes
 ota_bundle = {
-    protocol_version: 1,
-    bundle_size: uint,
-    bundle_sha256: bstr .size 32,
-    elements: [+ota_element],
+    protocol_version => 1,
+    bundle_size => payload_size,
+    bundle_sha256 => bstr .size 32,
+    elements => [1*7 ota_element],
 }
-

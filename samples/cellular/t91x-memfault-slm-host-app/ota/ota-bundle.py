@@ -34,9 +34,11 @@ PROTOCOL_VERSION = 1
 TARGETS = {
     "nrf53_app": 0,
     "nrf53_net": 1,
-    "nrf91_app": 2,
-    "nrf91_mdm_delta": 3,
-    "nrf91_mdm_full": 4,
+    "nrf53_bl": 2,
+    "nrf91_app": 3,
+    "nrf91_bl": 4,
+    "nrf91_mdm_delta": 5,
+    "nrf91_mdm_full": 6,
 }
 
 MAX_SIZE = 2**32 - 1
