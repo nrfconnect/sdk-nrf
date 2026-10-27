@@ -10,7 +10,7 @@
 
 	chosen {
 		zephyr,code-partition = &slot0_partition;
-		zephyr,sram = &cpuapp_sram;
+		zephyr,sram = &cpuapp_sram_app;
 		zephyr,flash = &cpuapp_rram;
 		zephyr,flash-controller = &rram_controller;
 		zephyr,ieee802154 = &ieee802154;
@@ -92,6 +92,7 @@
 /dts-v1/;
 
 #include <nordic/{{ soc }}_{{ target['core'] }}.dtsi>
+#include <vendor/nordic/{{ soc }}_ipc_shared_ram.dtsi>
 #include "{{ board }}-pinctrl.dtsi"
 
 / {
