@@ -1,0 +1,30 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice NETCORE
+	default NETCORE_EMPTY
+
+endchoice
+
+if SUPPORT_PPRCORE
+
+choice PPRCORE
+	default PPRCORE_REMOTE
+
+config PPRCORE_REMOTE
+	bool "Remote image (NFC sample on CPUPPR)"
+
+endchoice
+
+config PPRCORE_IMAGE_NAME
+	default "remote_ppr" if PPRCORE_REMOTE
+
+config PPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/remote" if PPRCORE_REMOTE
+
+endif # SUPPORT_PPRCORE
+
+source "share/sysbuild/Kconfig"
