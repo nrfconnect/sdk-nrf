@@ -542,6 +542,36 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 	return 0;
 }
 
+static int iot_hub_connect(struct azure_iot_hub_config *cfg)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
+		/* Using the device ID as DPS registration ID. */
+		err = dps_run(&cfg->hostname, &cfg->device_id);
+		if (err) {
+			LOG_ERR("Failed to run DPS, error: %d", err);
+			return err;
+		}
+	}
+
+	err = azure_iot_hub_init(azure_event_handler);
+	if (err) {
+		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
+		return err;
+	}
+
+	LOG_INF("Azure IoT Hub library initialized");
+
+	err = azure_iot_hub_connect(cfg);
+	if (err < 0) {
+		LOG_ERR("azure_iot_hub_connect failed: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 int main(void)
 {
 	int err;
@@ -606,28 +636,16 @@ int main(void)
 
 	LOG_INF("Connected to network");
 
-	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
-		/* Using the device ID as DPS registration ID. */
-		err = dps_run(&cfg.hostname, &cfg.device_id);
-		if (err) {
-			LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt",
-				err);
-			return 0;
+	/* Retry on failure, for example if only one IP family was up and it failed */
+	while (true) {
+		err = iot_hub_connect(&cfg);
+		if (err == 0) {
+			break;
 		}
-	}
 
-	err = azure_iot_hub_init(azure_event_handler);
-	if (err) {
-		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
-		return 0;
-	}
-
-	LOG_INF("Azure IoT Hub library initialized");
-
-	err = azure_iot_hub_connect(&cfg);
-	if (err < 0) {
-		LOG_ERR("azure_iot_hub_connect failed: %d", err);
-		return 0;
+		LOG_INF("Next connection retry in %d seconds",
+			CONFIG_AZURE_IOT_HUB_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS);
+		k_sleep(K_SECONDS(CONFIG_AZURE_IOT_HUB_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS));
 	}
 
 	LOG_INF("Connection request sent to IoT Hub");
