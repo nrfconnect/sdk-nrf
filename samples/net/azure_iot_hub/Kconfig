@@ -16,6 +16,12 @@ config AZURE_IOT_HUB_SAMPLE_DEVICE_ID_USE_HW_ID
 	help
 	  Use the devices's hardware ID as device ID when connecting to Azure IOT Hub
 
+config AZURE_IOT_HUB_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
+	int "Number of seconds between each Azure IoT Hub connection retry"
+	default 30
+	help
+	  If the connection fails, the sample tries to connect again at this interval.
+
 endmenu
 
 menu "Zephyr Kernel"
