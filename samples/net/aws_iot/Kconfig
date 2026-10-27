@@ -28,7 +28,7 @@ config AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS
 	int "Number of seconds between each AWS IoT connection retry"
 	default 30
 	help
-	  If the connection is lost, the sample tries to reconnect at this interval.
+	  If the connection fails or is lost, the sample tries to reconnect at this interval.
 
 config AWS_IOT_SAMPLE_DEVICE_ID_USE_HW_ID
 	bool "Use HW ID as device ID"

@@ -805,6 +805,10 @@ Networking samples
     * An issue where the DTLS handshake failed on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target due to an under-dimensioned TF-M crypto IOVEC buffer.
 
 
+* :ref:`aws_iot` sample:
+
+  * Updated the sample to retry the connection to AWS IoT on any connection error, instead of only on timeouts.
+
 * :ref:`azure_iot_hub` sample:
 
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
