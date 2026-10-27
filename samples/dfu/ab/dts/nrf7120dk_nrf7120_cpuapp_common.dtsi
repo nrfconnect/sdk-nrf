@@ -34,8 +34,7 @@
 	};
 };
 
-&cpuapp_sram {
+&cpuapp_sram_app {
 	/* Keep top 16 bytes for retention-backed boot requests. */
-	reg = <0x20000000 0x7fff0>;
-	ranges = <0x0 0x20000000 0x7fff0>;
+	reg = <0x60 (0x7fff0 - 0x60)>;
 };

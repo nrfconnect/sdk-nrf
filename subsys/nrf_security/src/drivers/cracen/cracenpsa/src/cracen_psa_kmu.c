@@ -55,20 +55,21 @@
 
 extern nrf_security_mutex_t cracen_mutex_symmetric;
 
-#if DT_NODE_EXISTS(DT_NODELABEL(nrf_kmu_reserved_push_area))
+#if DT_NODE_EXISTS(DT_NODELABEL(kmu_push_area))
 
 #include <zephyr/dt-bindings/memory-attr/memory-attr.h>
 #include <zephyr/linker/devicetree_regions.h>
-#define KMU_PUSH_AREA_NODE DT_NODELABEL(nrf_kmu_reserved_push_area)
+#define KMU_PUSH_AREA_NODE DT_NODELABEL(kmu_push_area)
 uint8_t kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] Z_GENERIC_SECTION(
 	LINKER_DT_NODE_REGION_NAME(KMU_PUSH_AREA_NODE));
 
 #else
 
-/* The section .nrf_kmu_reserved_push_area is placed at the top RAM address
- * by the linker scripts. We do that for both the secure and non-secure builds.
- * Since this buffer is placed on the top of RAM we don't need to have the alignment
- * attribute anymore.
+/* Fallback for the builds where the kmu_push_area devicetree node is not available,
+ * which is the case when building with TF-M. TF-M places the section
+ * .nrf_kmu_reserved_push_area at the start of the secure RAM through its own linker
+ * template. Since this buffer is placed at the start of a memory region we don't need
+ * to have the alignment attribute.
  */
 uint8_t
 kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE] __attribute__((section(".nrf_kmu_reserved_push_area")));
