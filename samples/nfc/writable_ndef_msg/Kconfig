@@ -10,7 +10,7 @@ config NDEF_FILE_STORAGE_RAM
 	bool "Keep NDEF file in RAM only (no flash persistence)"
 	default y if RISCV_CORE_NORDIC_VPR
 	help
-	  Nordic VPR cores (for example nRF9251 CPUPPR) cannot use the MRAM
+	  Nordic VPR cores (for example nRF9251 CPUPPR/CPUFLPR) cannot use the MRAM
 	  flash driver (see SOC_FLASH_NRF_MRAM). Enable this to store the NDEF
 	  file in RAM, which is lost on reset.
 

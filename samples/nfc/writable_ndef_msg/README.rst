@@ -98,6 +98,14 @@ After programming the sample to your development kit, complete the following ste
       #. Touch the NFC antenna again.
          Observe that the new message is displayed.
 
+   .. group-tab:: nRF9251 DK (CPUFLPR)
+
+      1. Touch the NFC antenna with the smartphone or tablet.
+      #. Observe that the smartphone or tablet tries to open the URL "http\://www.nordicsemi.com" in a web browser.
+      #. Use a proper application (for example, NFC Tools for Android) to overwrite the existing NDEF message with your own message.
+      #. Touch the NFC antenna again.
+         Observe that the new message is displayed.
+
 Dependencies
 ************
 
