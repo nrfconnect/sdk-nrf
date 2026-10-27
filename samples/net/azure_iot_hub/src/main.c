@@ -10,6 +10,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/reboot.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/dfu/mcuboot.h>
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
@@ -29,8 +30,13 @@
 LOG_MODULE_REGISTER(azure_iot_hub_sample, CONFIG_AZURE_IOT_HUB_SAMPLE_LOG_LEVEL);
 
 /* Macros used to subscribe to specific Zephyr net management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK NET_EVENT_L4_DNS_LOST
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
+
+/* Any IP family, and DNS to resolve the host names */
+#define READY_MASK (CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
+
+#define CONNECT_RETRY_SECONDS 30
 
 /* Interval [s] between sending events to the IoT hub. The value can be changed
  * by setting a new desired value for property 'telemetryInterval' in the
@@ -52,7 +58,6 @@ static struct k_work_delayable reboot_work;
 
 static char recv_buf[RECV_BUF_SIZE];
 static void direct_method_handler(struct k_work *work);
-static K_SEM_DEFINE(network_connected_sem, 0, 1);
 static K_SEM_DEFINE(recv_buf_sem, 1, 1);
 static atomic_t event_interval = EVENT_INTERVAL;
 
@@ -388,11 +393,6 @@ static void twin_report_work_fn(struct k_work *work)
 	LOG_INF("New telemetry interval has been applied: %d",  new_interval);
 }
 
-static void on_net_event_l4_connected(void)
-{
-	k_sem_give(&network_connected_sem);
-}
-
 static void on_net_event_l4_disconnected(void)
 {
 	(void)azure_iot_hub_disconnect();
@@ -404,12 +404,8 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
 			     size_t info_length, void *user_data)
 {
 	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("Network connectivity established and IP address assigned");
-		on_net_event_l4_connected();
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("Network connectivity lost, no IP address assigned");
+	case NET_EVENT_L4_DNS_LOST:
+		LOG_INF("Network connectivity lost");
 		on_net_event_l4_disconnected();
 		break;
 	default:
@@ -547,9 +543,40 @@ static int dps_run(struct azure_iot_hub_buf *hostname, struct azure_iot_hub_buf 
 	return 0;
 }
 
+static int iot_hub_connect(struct azure_iot_hub_config *cfg)
+{
+	int err;
+
+	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
+		/* Using the device ID as DPS registration ID. */
+		err = dps_run(&cfg->hostname, &cfg->device_id);
+		if (err) {
+			LOG_ERR("Failed to run DPS, error: %d", err);
+			return err;
+		}
+	}
+
+	err = azure_iot_hub_init(azure_event_handler);
+	if (err) {
+		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
+		return err;
+	}
+
+	LOG_INF("Azure IoT Hub library initialized");
+
+	err = azure_iot_hub_connect(cfg);
+	if (err < 0) {
+		LOG_ERR("azure_iot_hub_connect failed: %d", err);
+		return err;
+	}
+
+	return 0;
+}
+
 int main(void)
 {
 	int err;
+	uint32_t last_seen = 0;
 	static char hostname[128] = CONFIG_AZURE_IOT_HUB_HOSTNAME;
 	static char device_id[128] = CONFIG_AZURE_IOT_HUB_DEVICE_ID;
 	static struct azure_iot_hub_config cfg = {
@@ -607,32 +634,26 @@ int main(void)
 	work_init();
 	cJSON_Init();
 
-	k_sem_take(&network_connected_sem, K_FOREVER);
+	LOG_INF("Waiting for network...");
+	(void)conn_mgr_wait_ready(READY_MASK, NULL, K_FOREVER);
+	LOG_INF("Network ready");
 
-	LOG_INF("Connected to network");
-
-	if (IS_ENABLED(CONFIG_AZURE_IOT_HUB_DPS)) {
-		/* Using the device ID as DPS registration ID. */
-		err = dps_run(&cfg.hostname, &cfg.device_id);
-		if (err) {
-			LOG_ERR("Failed to run DPS, error: %d, terminating connection attempt",
-				err);
-			return 0;
+	while (true) {
+		/* At once the first time, then after the delay or a network change */
+		err = conn_mgr_wait_ready(READY_MASK, &last_seen,
+					  K_SECONDS(CONNECT_RETRY_SECONDS));
+		if (err == -EAGAIN) {
+			/* The network is not ready. Keep waiting. */
+			continue;
+		} else if (err != 0) {
+			return err;
 		}
-	}
 
-	err = azure_iot_hub_init(azure_event_handler);
-	if (err) {
-		LOG_ERR("Azure IoT Hub could not be initialized, error: %d", err);
-		return 0;
-	}
+		if (iot_hub_connect(&cfg) == 0) {
+			break;
+		}
 
-	LOG_INF("Azure IoT Hub library initialized");
-
-	err = azure_iot_hub_connect(&cfg);
-	if (err < 0) {
-		LOG_ERR("azure_iot_hub_connect failed: %d", err);
-		return 0;
+		LOG_INF("Next connection retry in %d seconds", CONNECT_RETRY_SECONDS);
 	}
 
 	LOG_INF("Connection request sent to IoT Hub");

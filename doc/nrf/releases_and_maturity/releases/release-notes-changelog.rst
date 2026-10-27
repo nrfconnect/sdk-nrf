@@ -949,6 +949,7 @@ Networking samples
     * The sample documentation with the security tag requirements for the FOTA download over HTTPS.
     * The FOTA testing steps in the sample documentation with the version option to change and the steps to build the update image.
     * The FOTA download security tag (:kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`) in Wi-Fi builds from ``11`` to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`.
+    * The sample to wait for the Connection Manager to report the network as ready, and to retry the connection to Azure IoT Hub, including DPS, when it fails.
 
   * Fixed:
 
