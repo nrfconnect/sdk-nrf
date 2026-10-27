@@ -18,6 +18,8 @@
 #include <memfault/ports/zephyr/root_cert_storage.h>
 #include <memfault_ncs.h>
 
+#include <zephyr/dfu/mcuboot.h>
+
 #include "ota_download.h"
 
 static const int memfault_sec_tags[] = {
@@ -137,11 +139,17 @@ int main(void)
 
 	if (ret == 0) {
 		printk("Up to date\n");
+		if (!boot_is_img_confirmed()) {
+			// Mark the ota image as installed so we don't revert
+			printk("Confirming OTA update\n");
+			boot_write_img_confirmed();
+		}
 	} else {
 		/* Custom OTA handling goes here. */
 		printk("OTA update available: %s\n", url);
 		ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
 		memfault_zephyr_port_release_download_url(&url);
+		ota_bundle_apply();
 	}
 
 	return 0;

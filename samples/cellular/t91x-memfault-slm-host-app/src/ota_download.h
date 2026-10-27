@@ -27,3 +27,10 @@
 int ota_bundle_download(const char *url, const int *sec_tags, uint8_t sec_tag_count);
 
 #endif /* OTA_DOWNLOAD_H_ */
+
+/**
+ * @brief Process the downloaded OTA bundle and reboot.
+ *
+ * @retval 0 on success, negative errno on failure.
+ */
+int ota_bundle_apply(void);

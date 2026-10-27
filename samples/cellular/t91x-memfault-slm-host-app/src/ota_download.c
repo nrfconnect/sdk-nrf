@@ -6,6 +6,7 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <psa/crypto.h>
 
 #include <zephyr/kernel.h>
 #include <zephyr/fs/fs.h>
@@ -15,7 +16,31 @@
 
 #include "ota_download.h"
 
+#include "ota_bundle_decode.h"
+
 LOG_MODULE_REGISTER(ota_download, LOG_LEVEL_INF);
+
+static const char *ota_target_name(int target)
+{
+	switch (target) {
+	case ota_element_target_nrf53_app_m_c:
+		return "nrf53_app";
+	case ota_element_target_nrf53_net_m_c:
+		return "nrf53_net";
+	case ota_element_target_nrf53_bl_m_c:
+		return "nrf53_bl";
+	case ota_element_target_nrf91_app_m_c:
+		return "nrf91_app";
+	case ota_element_target_nrf91_bl_m_c:
+		return "nrf91_bl";
+	case ota_element_target_nrf91_mdm_delta_m_c:
+		return "nrf91_mdm_delta";
+	case ota_element_target_nrf91_mdm_full_m_c:
+		return "nrf91_mdm_full";
+	default:
+		return "unknown";
+	}
+}
 
 static struct downloader dl;
 static struct fs_file_t ota_file;
@@ -115,5 +140,122 @@ out_close:
 		LOG_INF("Bundle stored, %lu of %lu blocks free", sv.f_bfree, sv.f_blocks);
 	}
 
+	return err;
+}
+
+int ota_bundle_apply(void)
+{
+	uint8_t digest[32];
+	struct ota_bundle bundle = {0};
+	psa_hash_operation_t sha_ctx = {0};
+	size_t header_len = 0;
+	size_t digest_len = 0;
+	size_t payload_offset;
+	uint64_t elements_size = 0;
+	uint32_t remaining;
+	ssize_t bytes_read;
+	int err;
+	bool sha_initialized = false;
+
+	fs_file_t_init(&ota_file);
+	err = fs_open(&ota_file, OTA_BUNDLE_PATH, FS_O_READ);
+	if (err) {
+		LOG_ERR("fs_open failed: %d", err);
+		return err;
+	}
+
+	bytes_read = fs_read(&ota_file, dl_buf, sizeof(dl_buf));
+	if (bytes_read <= 0) {
+		err = bytes_read < 0 ? (int)bytes_read : -EBADMSG;
+		LOG_ERR("Failed to read OTA bundle header: %d", err);
+		goto out_close;
+	}
+
+	err = cbor_decode_ota_bundle(dl_buf, (size_t)bytes_read, &bundle, &header_len);
+	if (err != ZCBOR_SUCCESS || header_len == 0 || header_len > (size_t)bytes_read) {
+		LOG_ERR("Invalid OTA bundle header: %d", err);
+		err = -EBADMSG;
+		goto out_close;
+	}
+
+	err = fs_seek(&ota_file, (off_t)header_len, FS_SEEK_SET);
+	if (err) {
+		LOG_ERR("Failed to seek to OTA payload: %d", err);
+		goto out_close;
+	}
+
+	psa_status_t psa_err = psa_crypto_init();
+	if (psa_err != PSA_SUCCESS) {
+		LOG_ERR("Failed to initialize PSA Crypto: %d", psa_err);
+		err = -EIO;
+		goto out_close;
+	}
+	psa_err = psa_hash_setup(&sha_ctx, PSA_ALG_SHA_256);
+	if (psa_err != PSA_SUCCESS) {
+		LOG_ERR("Failed to initialize SHA-256: %d", psa_err);
+		err = -EIO;
+		goto out_close;
+	}
+	sha_initialized = true;
+
+	remaining = bundle.bundle_size;
+	while (remaining > 0) {
+		size_t read_size = remaining < sizeof(dl_buf) ? remaining : sizeof(dl_buf);
+
+		bytes_read = fs_read(&ota_file, dl_buf, read_size);
+		if (bytes_read <= 0) {
+			err = bytes_read < 0 ? (int)bytes_read : -EBADMSG;
+			LOG_ERR("Failed to read OTA payload: %d", err);
+			goto out_free_sha;
+		}
+		psa_err = psa_hash_update(&sha_ctx, dl_buf, (size_t)bytes_read);
+		if (psa_err != PSA_SUCCESS) {
+			LOG_ERR("Failed to update SHA-256: %d", psa_err);
+			err = -EIO;
+			goto out_free_sha;
+		}
+		remaining -= (uint32_t)bytes_read;
+	}
+
+	bytes_read = fs_read(&ota_file, dl_buf, 1);
+	if (bytes_read != 0) {
+		LOG_ERR("OTA bundle has trailing data or could not be read");
+		err = bytes_read < 0 ? (int)bytes_read : -EBADMSG;
+		goto out_free_sha;
+	}
+
+	psa_err = psa_hash_finish(&sha_ctx, digest, sizeof(digest), &digest_len);
+	sha_initialized = false;
+	if (psa_err != PSA_SUCCESS || digest_len != sizeof(digest)) {
+		LOG_ERR("Failed to finish SHA-256: %d", psa_err);
+		err = -EIO;
+		goto out_free_sha;
+	}
+	if (memcmp(digest, bundle.bundle_sha256.value, sizeof(digest)) != 0) {
+		LOG_ERR("OTA bundle SHA-256 mismatch");
+		err = -EBADMSG;
+		goto out_free_sha;
+	}
+	err = 0;
+
+	payload_offset = header_len;
+	LOG_INF("OTA bundle valid: %u payload bytes, %zu elements; SHA-256 verified",
+		bundle.bundle_size, bundle.ota_element_m_count);
+	for (size_t i = 0; i < bundle.ota_element_m_count; i++) {
+		const struct ota_element *element = &bundle.ota_element_m[i];
+
+		LOG_INF("  %s: offset %zu, size %u bytes", ota_target_name(element->target_choice),
+			payload_offset, element->size);
+		payload_offset += element->size;
+	}
+
+	LOG_INF("expected size: %u, actual size: %u", bundle.bundle_size + header_len, payload_offset);
+
+out_free_sha:
+	if (sha_initialized) {
+		(void)psa_hash_abort(&sha_ctx);
+	}
+out_close:
+	fs_close(&ota_file);
 	return err;
 }
