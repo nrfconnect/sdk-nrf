@@ -162,17 +162,14 @@ static void connect_work_fn(struct k_work *work)
 
 	LOG_INF("Connecting to AWS IoT");
 
+	/* Retry on any error, for example if only one IP family was up and it failed */
 	err = aws_iot_connect(&config);
-	if (err == -EAGAIN) {
-		LOG_INF("Connection attempt timed out, "
-			"Next connection retry in %d seconds",
+	if (err) {
+		LOG_WRN("aws_iot_connect, error: %d, next connection retry in %d seconds", err,
 			CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS);
 
 		(void)k_work_reschedule(&connect_work,
 				K_SECONDS(CONFIG_AWS_IOT_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS));
-	} else if (err) {
-		LOG_ERR("aws_iot_connect, error: %d", err);
-		FATAL_ERROR();
 	}
 }
 
