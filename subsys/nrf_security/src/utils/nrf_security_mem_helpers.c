@@ -61,14 +61,20 @@ size_t constant_count(const uint8_t *a, size_t sz, uint8_t val, enum constant_co
 	return count;
 }
 
-void constant_select_bin(bool select, const uint8_t *true_val, const uint8_t *false_val,
-			 uint8_t *dst, size_t sz)
+void constant_mask_select_bin(uint8_t mask, const uint8_t *true_val, const uint8_t *false_val,
+			      uint8_t *dst, size_t sz)
 {
-	int8_t mask = select ? 0xFF : 0x00;
-
 	for (size_t i = 0; i < sz; i++) {
 		dst[i] = (mask & true_val[i]) | (~mask & false_val[i]);
 	}
+}
+
+void constant_select_bin(bool select, const uint8_t *true_val, const uint8_t *false_val,
+			 uint8_t *dst, size_t sz)
+{
+	uint8_t mask = select ? 0xFF : 0x00;
+
+	constant_mask_select_bin(mask, true_val, false_val, dst, sz);
 }
 
 bool memcpy_check_non_zero(void *dest, size_t dest_size, const void *src, size_t src_size)

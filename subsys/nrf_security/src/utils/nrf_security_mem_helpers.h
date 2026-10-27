@@ -80,6 +80,20 @@ int constant_memdiff_array_value(const uint8_t *a, uint8_t val, size_t sz);
 size_t constant_count(const uint8_t *a, size_t sz, uint8_t val, enum constant_count_match match);
 
 /**
+ * @brief Copy binary buffer based on mask.
+ *
+ * This function operates in constant time.
+ *
+ * @param[in]  mask	 Mask that identifies which buffer to copy (0xFF or 0x00).
+ * @param[in]  true_val  Buffer to copy to @p dst if @p mask is 0xFF.
+ * @param[in]  false_val Buffer to copy to @p dst if @p mask is 0x00.
+ * @param[out] dst	 Destination buffer.
+ * @param[in]  sz	 Number of bytes to copy.
+ */
+void constant_mask_select_bin(uint8_t mask, const uint8_t *true_val, const uint8_t *false_val,
+			      uint8_t *dst, size_t sz);
+
+/**
  * @brief Copy binary buffer based on selection.
  *
  * This function operates in constant time.
