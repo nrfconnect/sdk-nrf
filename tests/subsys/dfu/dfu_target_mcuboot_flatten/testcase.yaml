@@ -1,0 +1,10 @@
+tests:
+  dfu.dfu_target.mcuboot.flatten:
+    platform_allow:
+      - native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - dfu
+      - mcuboot
+      - ci_tests_subsys_dfu
