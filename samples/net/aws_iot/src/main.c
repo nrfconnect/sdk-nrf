@@ -22,7 +22,7 @@
 LOG_MODULE_REGISTER(aws_iot_sample, CONFIG_AWS_IOT_SAMPLE_LOG_LEVEL);
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK (NET_EVENT_L4_DNS_READY | NET_EVENT_L4_DNS_LOST)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 #define MODEM_FIRMWARE_VERSION_SIZE_MAX 50
@@ -325,11 +325,11 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
 			     size_t info_length, void *user_data)
 {
 	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
+	case NET_EVENT_L4_DNS_READY:
 		LOG_INF("Network connectivity established");
 		on_net_event_l4_connected();
 		break;
-	case NET_EVENT_L4_DISCONNECTED:
+	case NET_EVENT_L4_DNS_LOST:
 		LOG_INF("Network connectivity lost");
 		on_net_event_l4_disconnected();
 		break;
