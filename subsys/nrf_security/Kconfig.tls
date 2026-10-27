@@ -49,6 +49,7 @@ config MBEDTLS_X509_CRT_PARSE_C
 config MBEDTLS_X509_CSR_WRITE_C
 	bool "X.509 - CSR writing"
 	select MBEDTLS_PK_WRITE_C
+	select MBEDTLS_X509_CREATE_C
 	help
 	  Enable creating X.509 Certificate Signing Requests (CSR).
 
