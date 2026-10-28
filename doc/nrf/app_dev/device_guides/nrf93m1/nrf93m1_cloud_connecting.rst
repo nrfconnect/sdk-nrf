@@ -64,73 +64,10 @@ Each device presents two stable identities and two short-lived credentials.
 Provisioning a device
 *********************
 
-Onboarding needs your nRF Cloud Team ID, then a UUID and registration JWT read from the device.
+To provision the device, onboard it to your nRF Cloud project with the registration JWT that ``AT%REGJWT`` returns.
+For the step-by-step procedure, see `nRF Cloud nRF93M1 Onboarding`_.
 
-1. Register for an `nRF Cloud`_ account.
-
-#. Find your Team ID.
-
-   a. Open the :guilabel:`Legacy App` from the bottom-left panel.
-   #. Open the top-right menu.
-   #. Select :guilabel:`Team` and note the Team ID displayed at the top of the screen.
-   #. Return to the new nRF Cloud experience by clicking :guilabel:`NEW EXPERIENCE` in the bottom-left panel.
-
-#. Read the device credentials (``AT%DEVICEUUID`` and ``AT%REGJWT="<team-id>"``) over the serial terminal, substituting your Team ID.
-   The following output is displayed:
-
-   .. code-block:: console
-
-      AT%DEVICEUUID
-      %DEVICEUUID: xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-      OK
-      AT%REGJWT="<team-id>"
-      %REGJWT: xxxxx.xxxxx.xxxxx
-      OK
-
-#. In nRF Cloud:
-
-   a. Navigate to :guilabel:`Fleet`.
-   #. Select :guilabel:`Devices`.
-   #. Click on :guilabel:`Add Devices`:
-
-      .. figure:: images/nrf93m1_cloud_add_devices.png
-         :alt: nRF Cloud - Add Devices
-
-   #. Choose the nRF93M1 from the device chooser:
-
-      .. figure:: images/nrf93m1_cloud_select.png
-         :alt: nRF Cloud - Select nRF93M1
-
-#. Enter the UUID and the registration JWT from step 3, then review and confirm.
-
-   You can upload up to 1000 nRF93M1 devices by using the Bulk Upload feature with a CSV file.
-   Each line in the CSV must contain comma-separated fields in the format: deviceId, onboardingToken.
-
-   .. figure:: images/nrf93m1_cloud_bulk_upload.png
-      :alt: nRF Cloud - Bulk upload
-
-#. Confirm the device appears in the device list.
-
-   This might take a few seconds.
-
-   .. figure:: images/nrf93m1_cloud_devices_list.png
-      :alt: nRF Cloud - Devices
-
-   You can also verify that the device was added successfully by going to Legacy nRF Cloud Experience:
-
-   a. Open the bottom-left panel and click :guilabel:`Legacy App`.
-   #. In the left-hand panel, select :guilabel:`Device Management`.
-   #. Click :guilabel:`Devices`.
-   #. Check the device list to confirm that your newly added devices are displayed.
-
-      .. figure:: images/nrf93m1_cloud_Legacy_devices_list.png
-         :alt: nRF Cloud - Legacy Devices
-
-The device is now provisioned and authenticated.
-
-.. note::
-   For more than a handful of devices, use the bulk upload option instead of entering credentials by hand.
-   It accepts a CSV of up to 1000 devices, one device per line, with comma-separated ``deviceId, onboardingToken`` fields.
+To onboard several devices at once, see `nRF Cloud Device Onboarding`_.
 
 .. _ug_93m1_cloud_connecting_location:
 
@@ -263,10 +200,11 @@ See :ref:`ug_nrf93m1_updating_modem_fw`.
 Moving to production
 ********************
 
-The flow in this guide provisions one device by hand.
+The onboarding flow described in :ref:`ug_93m1_cloud_connecting_provisioning` provisions one device by hand.
 A production flow differs in the following ways:
 
-* Credentials are collected and registered in bulk at manufacture, using the CSV upload path, rather than typed into a terminal.
+* You collect and register the credentials in bulk during manufacturing, instead of typing them into a terminal.
+  See `nRF Cloud Device Onboarding`_ for the available bulk onboarding options.
 * Your host application issues the AT sequence, rather than a person.
 * SIM provisioning uses SGP.32 remote provisioning or SoftSIM rather than the physical trial SIM supplied with the DK. See :ref:`ug_nrf93m1_features_sim`.
 

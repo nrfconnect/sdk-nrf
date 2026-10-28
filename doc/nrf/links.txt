@@ -1721,6 +1721,8 @@
 .. _`nRF Cloud Auto-onboarding`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nrfcloud.com/docs/nrfcloud/claiming-device-ownership-portal
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#preconnect-onboarding
+.. _`nRF Cloud Device Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding
+.. _`nRF Cloud nRF93M1 Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding/nrf93m1-onboarding
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview
