@@ -29,7 +29,9 @@ zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_SMP
 zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_SMP_TRANSPORT_BT
   src/dfu_target_smp_bt.c
 )
-zephyr_library_sources(src/dfu_stream_flatten.c)
+zephyr_library_sources_ifdef(CONFIG_DFU_TARGET_STREAM_FLATTEN
+  src/dfu_stream_flatten.c
+)
 
 if(CONFIG_DFU_TARGET_SMP OR CONFIG_DFU_TARGET_MCUBOOT)
   zephyr_library_link_libraries(MCUBOOT_BOOTUTIL)
