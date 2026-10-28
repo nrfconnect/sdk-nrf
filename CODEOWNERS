@@ -80,6 +80,14 @@
 /doc/zephyr/zephyr.doxyfile.in            @nrfconnect/ncs-doc-leads
 /doc/nrf/*.rst                            @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/                         @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc
+/doc/nrf/app_dev/board_names.rst          @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/config_and_build/building.rst @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/config_and_build/cmake/index.rst @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/config_and_build/kconfig/index.rst @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/config_and_build/output_build_files.rst @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/create_application.rst   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/device_guides/custom/programming_custom_board.rst @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
+/doc/nrf/app_dev/programming.rst          @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
 /doc/nrf/app_dev/bootloaders_dfu/         @nrfconnect/ncs-eris-doc
 /doc/nrf/app_dev/device_guides/fem/       @nrfconnect/ncs-doc-leads
 /doc/nrf/app_dev/device_guides/kmu_guides/    @nrfconnect/ncs-aegir-doc @nrfconnect/ncs-eris-doc
@@ -124,17 +132,17 @@
 /doc/nrf/external_comp/edgeai.rst         @nrfconnect/ncs-si-muffin-doc
 /doc/nrf/external_comp/memfault.rst       @nrfconnect/ncs-cia-doc
 /doc/nrf/external_comp/nrf_cloud.rst      @nrfconnect/ncs-nrf-cloud-doc
-/doc/nrf/gsg_guides.rst                   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
+/doc/nrf/gsg_guides.rst                   @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
 /doc/nrf/images/aws_mqtt_test_client.PNG   @nrfconnect/ncs-cia
 /doc/nrf/images/chiptool_relative_humidity.gif @nrfconnect/ncs-thread
 /doc/nrf/images/chiptool_sensor_cluster.gif @nrfconnect/ncs-thread
 /doc/nrf/images/chiptool_temperature_read.gif @nrfconnect/ncs-thread
 /doc/nrf/images/chiptool_temperature_watch.gif @nrfconnect/ncs-thread
-/doc/nrf/images/switcher_docset_snipped.gif @nrfconnect/ncs-wayland-doc
-/doc/nrf/images/switcher_version_snipped.gif @nrfconnect/ncs-wayland-doc
+/doc/nrf/images/switcher_docset_snipped.gif @nrfconnect/swtools-doc
+/doc/nrf/images/switcher_version_snipped.gif @nrfconnect/swtools-doc
 /doc/nrf/includes/                        @nrfconnect/ncs-doc-leads
 /doc/nrf/includes/boardname_tables/sample_boardnames.txt @nrfconnect/ncs-co-doc
-/doc/nrf/installation/                    @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/ncs-wayland-doc
+/doc/nrf/installation/                    @nrfconnect/ncs-doc-leads @nrfconnect/ncs-vestavind-doc @nrfconnect/swtools-doc
 /doc/nrf/libraries/bin/                   @nrfconnect/ncs-doc-leads
 /doc/nrf/libraries/bin/lwm2m_carrier/     @nrfconnect/ncs-carrier-doc
 /doc/nrf/libraries/bluetooth/             @nrfconnect/ncs-si-muffin-doc @nrfconnect/ncs-dragoon-doc @nrfconnect/ncs-blenders-doc
@@ -300,6 +308,10 @@
 /doc/nrf/security/                        @nrfconnect/ncs-aegir-doc
 /doc/nrf/templates/                       @nrfconnect/ncs-doc-leads
 /doc/nrf/test_and_optimize/               @nrfconnect/ncs-doc-leads
+/doc/nrf/test_and_optimize/debugging.rst  @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/test_and_optimize/logging.rst    @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/test_and_optimize/optimizing/power_general.rst @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/test_and_optimize/optimizing/power_opp.rst @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
 /doc/tfm/                                 @nrfconnect/ncs-aegir-doc
 /doc/wifi/                                @nrfconnect/ncs-wifi-doc
 
@@ -307,6 +319,16 @@
 /doc/**/*.png                             @nrfconnect/ncs-doc-leads
 /doc/**/*.webp                            @nrfconnect/ncs-doc-leads
 /doc/**/*.txt                             @nrfconnect/ncs-doc-leads
+/doc/nrf/includes/application_build_and_run.txt @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/application_build_and_run_ns.txt @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/build_and_run.txt       @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/build_and_run_bootloader.txt @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/build_and_run_ns.txt    @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/build_and_run_test.txt  @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/connecting_soc.txt      @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/install_sdk_common_prerequisites.txt @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/vsc_build_and_run.txt   @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
+/doc/nrf/includes/vsc_build_and_run_series.txt @nrfconnect/ncs-doc-leads @nrfconnect/swtools-doc
 
 # Drivers
 /drivers/bluetooth/                       @nrfconnect/ncs-co-drivers @nrfconnect/ncs-dragoon
