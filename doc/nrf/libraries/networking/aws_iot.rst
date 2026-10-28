@@ -453,7 +453,7 @@ Setting the AWS host name at runtime
 
 The library supports passing in the endpoint URL at runtime.
 To use this feature, set the ``host_name`` entry in the :c:struct:`aws_iot_config` structure that is passed in the :c:func:`aws_iot_connect` function when connecting.
-The ``client_id`` entry must be a null-terminated string.
+The ``host_name`` entry must be a null-terminated string.
 
 .. _aws_iot_testing_and_debugging:
 
