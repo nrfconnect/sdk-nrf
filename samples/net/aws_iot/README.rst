@@ -68,6 +68,16 @@ In addition to publishing data to the AWS IoT shadow, the sample also subscribes
 The application-specific topics are not part of the AWS IoT shadow service and must therefore be passed to the :ref:`lib_aws_iot` library using the :c:func:`aws_iot_application_topics_set` function before connecting.
 How to add application-specific topics is documented in the :ref:`AWS IoT library usage <aws_iot_usage>` section.
 
+Direct messages
+===============
+
+The sample can also receive direct messages that are sent to the client ID of the device using the ``SendDirectMessage`` API of AWS IoT Core.
+The device does not need to subscribe to the topic of a direct message.
+The sample does not process these messages.
+It logs the topic and the payload of every message that it receives.
+
+For information on how the library handles direct messages and on the requirements for the device policy, see the :ref:`lib_aws_iot_direct_messages` section of the AWS IoT library documentation.
+
 FOTA
 ====
 

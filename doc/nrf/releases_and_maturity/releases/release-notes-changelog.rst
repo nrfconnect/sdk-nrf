@@ -759,6 +759,7 @@ Networking samples
 
 * :ref:`aws_iot` sample:
 
+  * Added documentation explaining that the sample logs direct messages received through the AWS IoT Core ``SendDirectMessage`` API.
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
 * :ref:`download_sample` sample:
