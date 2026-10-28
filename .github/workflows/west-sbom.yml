@@ -1,0 +1,75 @@
+name: NCS west ncs-sbom
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - .github/workflows/west-sbom.yml
+      - scripts/west_commands/sbom/**
+      - scripts/requirements-west-ncs-sbom.txt
+
+permissions:
+  contents: read
+
+jobs:
+  toolchain-image:
+    name: Find NCS toolchain Docker image
+    runs-on: ubuntu-24.04
+    outputs:
+      image: ${{ steps.find.outputs.image }}
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+        with:
+          persist-credentials: false
+
+      - name: Find image matching the toolchain
+        id: find
+        run: |
+          IMAGE=ghcr.io/nrfconnect/sdk-nrf-toolchain
+          TOOLCHAIN_ID=$(./scripts/print_toolchain_checksum.sh)
+          if docker manifest inspect "$IMAGE:$TOOLCHAIN_ID" > /dev/null 2>&1; then
+            echo "image=$IMAGE:$TOOLCHAIN_ID" >> "$GITHUB_OUTPUT"
+          else
+            echo "No toolchain image for $TOOLCHAIN_ID, using $IMAGE:latest"
+            echo "image=$IMAGE:latest" >> "$GITHUB_OUTPUT"
+          fi
+
+  run-west-sbom:
+    name: Run smoke tests for ncs-sbom in the NCS toolchain
+    needs: toolchain-image
+    runs-on: ubuntu-24.04
+    container:
+      image: ${{ needs.toolchain-image.outputs.image }}
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          path: nrf
+      - name: Install requirements
+        run: |
+          pip3 install -r nrf/scripts/requirements-west-ncs-sbom.txt
+      - name: Smoke test ncs-sbom
+        run: |
+          west ncs-sbom -h
+
+          # create a dummy file
+          echo "/* SPDX-License-Identifier: LicenseRef-Nordic-5-Clause */" > test_file.c
+
+          # run ncs-sbom with scancode-toolkit
+          west ncs-sbom \
+            --input-files test_file.c \
+            --license-detectors scancode-toolkit \
+            --output-html scancode_report.html
+
+          # generate an SPDX 3.0 report and validate it
+          west ncs-sbom \
+            --input-files test_file.c \
+            --license-detectors spdx-tag \
+            --spdx-version 3.0 \
+            --output-spdx report.jsonld
+
+          spdx3-validate --spdx-version auto --json report.jsonld
