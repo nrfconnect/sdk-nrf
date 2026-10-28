@@ -496,6 +496,13 @@ static void on_disconnect(int result)
 static enum aws_iot_shadow_topic_received_type topic_type_set(const char *topic_str,
 							      size_t topic_len)
 {
+	/* Shadow topics always start with '$aws/'. Topics without a leading '$' can be
+	 * application topics or direct messages, so do not look for shadow topic names in them.
+	 */
+	if (topic_len == 0 || topic_str[0] != '$') {
+		return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+	}
+
 	if (strnstr(topic_str, "get/accepted", topic_len)) {
 		return AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED;
 	} else if (strnstr(topic_str, "get/rejected", topic_len)) {

@@ -553,6 +553,36 @@ void test_on_publish_should_set_topic_type(void)
 	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
 }
 
+void test_on_publish_should_not_set_shadow_type_for_non_shadow_topics(void)
+{
+	mqtt_helper_handlers_register(event_handler_topic_type_check);
+
+	struct mqtt_helper_buf topic = { 0 };
+	struct mqtt_helper_buf payload = { 0 };
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+
+	/* Topics that contain a shadow topic name, but do not start with '$'.
+	 * Direct messages can be received on such topics.
+	 */
+	topic.ptr = "fw/update/delta";
+	topic.size = strlen("fw/update/delta");
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic.ptr = "site/get/accepted";
+	topic.size = strlen("site/get/accepted");
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic.ptr = "cmd/delete/rejected/reboot";
+	topic.size = strlen("cmd/delete/rejected/reboot");
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	/* Empty topic. */
+	topic.ptr = "";
+	topic.size = 0;
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+}
+
 int main(void)
 {
 	(void)unity_main();
