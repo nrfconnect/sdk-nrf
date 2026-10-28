@@ -46,7 +46,7 @@ The archive is used to update the existing |ISE| firmware on the nRF54H20 and co
        Do not use this file on a snapshot-enabled device.
    * - Update application
      - :file:`update_application.hex`
-     - The local domain :zephyr:code-sample:`update application <nrf_ironside_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
+     - The local domain :zephyr:code-sample:`update application <ironside_se_update>` that is used to perform an |ISE| update. See :ref:`ug_nrf54h20_ironside_se_update_architecture` for details on its role.
 
 For more information on |ISE| release binaries, see :ref:`abi_compatibility`.
 

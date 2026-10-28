@@ -50,7 +50,7 @@ The update can be verified by checking the listed versions in the :ref:`boot rep
    Updating through the service is limited to a single image at a time.
    Updating both |ISE| and |ISE| Recovery images requires performing two rounds of the update service procedure, in which the |ISE| Recovery image is updated first.
 
-See the :zephyr:code-sample:`update application <nrf_ironside_update>` sample for an example on calling the service at runtime.
+See the :zephyr:code-sample:`update application <ironside_se_update>` sample for an example on calling the service at runtime.
 
 .. _ug_nrf54h20_ironside_se_counter_service:
 
