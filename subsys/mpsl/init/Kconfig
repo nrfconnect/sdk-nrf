@@ -130,7 +130,7 @@ config MPSL_FORCE_RRAM_ON_ALL_THE_TIME
 
 config MPSL_LOW_LATENCY_CALLBACKS
 	bool
-	default y if SOC_COMPATIBLE_NRF54LX
+	default y if SOC_COMPATIBLE_NRF54LX || SOC_COMPATIBLE_NRF71
 	help
 	  This option enables the use of low latency callbacks implemented in the MPSL subsystem.
 	  These callbacks are used to acquire and release low latency settings to the system when
