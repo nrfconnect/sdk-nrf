@@ -588,6 +588,8 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		 */
 		if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) &&
 		    operation->alg == PSA_ALG_ECB_NO_PADDING) {
+			size_t ecb_length;
+
 			if (operation->unprocessed_input_bytes) {
 				__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
 						operation->blk_size);
@@ -595,10 +597,11 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					&operation->cipher, &operation->keyref,
 					operation->unprocessed_input,
 					operation->unprocessed_input_bytes, output,
-					output_size, output_length, operation->dir);
+					output_size, &ecb_length, operation->dir);
 				if (psa_status != PSA_SUCCESS) {
 					return psa_status;
 				}
+				*output_length += ecb_length;
 				output += (uint32_t)operation->unprocessed_input_bytes;
 				operation->unprocessed_input_bytes = 0;
 			}
@@ -606,11 +609,13 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 			if (block_bytes) {
 				psa_status =
 					crypt_ecb(&operation->cipher, &operation->keyref,
-							input, block_bytes, output, output_size,
-							output_length, operation->dir);
+							input, block_bytes, output,
+							output_size - *output_length,
+							&ecb_length, operation->dir);
 				if (psa_status != PSA_SUCCESS) {
 					return psa_status;
 				}
+				*output_length += ecb_length;
 			}
 
 		} else {
