@@ -1,6 +1,6 @@
-identifier: {{ board }}/nrf5340/{{ target['core'] }}{{ '/ns' if target['ns'] else '' }}
-name: {{ board_desc }}
-vendor: {{ vendor }}
+identifier: "{{ board }}/nrf5340/{{ target['core'] }}{{ '/ns' if target['ns'] else '' }}"
+name: {{ board_desc | tojson }}
+vendor: "{{ vendor }}"
 type: mcu
 arch: arm
 {% if target['core'] == 'cpunet' %}
