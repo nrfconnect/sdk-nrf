@@ -50,22 +50,19 @@ Depending on your preferred development method, you can start the correct CLI to
 
          .. tab:: Windows
 
-            .. parsed-literal::
-               :class: highlight
+            .. nrfutil-command::
 
                nrfutil sdk-manager toolchain launch --ncs-version |release|  --terminal
 
          .. tab:: Linux
 
-            .. parsed-literal::
-               :class: highlight
+            .. nrfutil-command::
 
                nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 
          .. tab:: macOS
 
-            .. parsed-literal::
-               :class: highlight
+            .. nrfutil-command::
 
                nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 

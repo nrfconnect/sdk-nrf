@@ -245,7 +245,7 @@ To test that the bootloader no longer boots images signed with the earlier keys,
 
 #. To facilitate testing, use `nRF Util`_ to program this image directly into a slot (where ``<app_name>`` is the name of the application):
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device program --family nrf54 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/signed_by_b0_<app_name>.hex
 

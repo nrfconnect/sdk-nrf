@@ -185,15 +185,21 @@ Using the nRF54H20 DK with the |NCS| v2.7.0 requires the following:
 
 #. On MacOS and Linux, give ``nrfutil`` execute permissions by typing ``chmod +x nrfutil`` in a terminal or using a file browser.
    This is typically a checkbox found under file properties.
-#. Verify the version of the nRF Util installation on your machine by running the following command::
+#. Verify the version of the nRF Util installation on your machine by running the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil --version
 
-#. If your version is below 7.11.1, run the following command to update nRF Util::
+#. If your version is below 7.11.1, run the following command to update nRF Util:
+
+   .. nrfutil-command:: console
 
       nrfutil self-upgrade
 
-#. Install the nRF Util ``device`` command to version 2.4.0 as follows::
+#. Install the nRF Util ``device`` command to version 2.4.0 as follows:
+
+   .. nrfutil-command:: console
 
       nrfutil install device=2.4.0 --force
 
@@ -222,11 +228,15 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
    To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
 #. |open_terminal_window_with_environment|
-#. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+#. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
+
+   .. nrfutil-command:: console
 
       nrfutil device list
 
-#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr_ext_loadcap.hex --core Secure --serial-number <serial_number>
 
@@ -245,7 +255,9 @@ To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the Sys
 
 #. Move the :file:`.zip` bundle to a folder of your choice.
 #. |open_terminal_window_with_environment|
-#. Run nRF Util to program the binaries using the following command::
+#. Run nRF Util to program the binaries using the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
@@ -291,7 +303,9 @@ To correctly operate, its lifecycle state must be transitioned to Root of Trust 
 
 To transition the LCS to ``RoT``, do the following:
 
-1. Verify the current lifecycle state of the nRF54H20::
+1. Verify the current lifecycle state of the nRF54H20:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-adac-discovery --serial-number <serial_number>
 
@@ -315,11 +329,15 @@ To transition the LCS to ``RoT``, do the following:
       TargetIdentity: [ff, ff, ff, ff, ff, ff, ff, ff]
 
 #. If the lifecycle state (``psa_lifecycle``) shown is ``RoT`` (``LIFECYCLE_ROT (0x2000)``), no LCS transition is required.
-   If the lifecycle state (``psa_lifecycle``) shown is not ``RoT`` (``LIFECYCLE_EMPTY (0x1000)`` means the LCS is set to ``EMPTY``), set it to Root of Trust using the following command::
+   If the lifecycle state (``psa_lifecycle``) shown is not ``RoT`` (``LIFECYCLE_EMPTY (0x1000)`` means the LCS is set to ``EMPTY``), set it to Root of Trust using the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
 
-#. Verify again the current lifecycle state of the nRF54H20::
+#. Verify again the current lifecycle state of the nRF54H20:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-adac-discovery --serial-number <serial_number>
 
@@ -344,7 +362,9 @@ To transition the LCS to ``RoT``, do the following:
 
    The lifecycle state (``psa_lifecycle``) is now correctly set to *Root of Trust* (``LIFECYCLE_ROT (0x2000)``)
 
-#. After the LCS transition, reset the device::
+#. After the LCS transition, reset the device:
+
+   .. nrfutil-command:: console
 
       nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 

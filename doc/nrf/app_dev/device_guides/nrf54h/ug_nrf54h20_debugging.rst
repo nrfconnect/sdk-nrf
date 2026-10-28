@@ -53,7 +53,7 @@ The cores can then be started individually.
 
 The following example demonstrates how to debug the early boot phase on the application core:
 
-.. code-block:: shell
+.. nrfutil-command:: shell
 
   nrfutil device reset --reset-kind RESET_VIA_SECDOM
   nrfutil device go --core Network
