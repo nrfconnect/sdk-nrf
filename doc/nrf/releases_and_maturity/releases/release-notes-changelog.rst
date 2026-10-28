@@ -960,6 +960,7 @@ Networking samples
 
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
+    * Documentation explaining that the sample logs direct messages received through the AWS IoT Core ``SendDirectMessage`` API.
 
   * Updated the Wi-Fi configuration to generate the private key on the device with the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option.
     In Wi-Fi builds, the sample no longer reads the credentials from the :file:`certs/` folder.
