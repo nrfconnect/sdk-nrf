@@ -22,7 +22,9 @@ nRF54H20 DK compatibility
 nrfutil device
   ``nrfutil device`` has been updated to version 2.4.6.
 
-  Install the nRF Util ``device`` command version 2.4.6 as follows::
+  Install the nRF Util ``device`` command version 2.4.6 as follows:
+
+  .. nrfutil-command:: console
 
      nrfutil install device=2.4.6 --force
 
@@ -40,11 +42,15 @@ nRF54H20 BICR
         On MacOS, connecting the DK might cause a popup containing the message ``Disk Not Ejected Properly`` to repeatedly appear on screen.
         To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
-  #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+  #. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
+
+     .. nrfutil-command:: console
 
         nrfutil device list
 
-  #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+  #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command:
+
+     .. nrfutil-command:: console
 
         nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serialnumber>
 
@@ -61,6 +67,8 @@ SDFW and SCFW firmwares
      .. note::
         On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-  #. Move the bundle's :file:`.zip` archive to a folder of your choice, unzip the archive, and then run nRF Util to program the :file:`nordic_top.suit` using the following command::
+  #. Move the bundle's :file:`.zip` archive to a folder of your choice, unzip the archive, and then run nRF Util to program the :file:`nordic_top.suit` using the following command:
+
+     .. nrfutil-command:: console
 
         nrfutil device x-suit-dfu --firmware nordic_top.suit --serial-number <serialnumber>

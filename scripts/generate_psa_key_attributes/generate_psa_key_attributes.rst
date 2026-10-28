@@ -104,8 +104,7 @@ It functions as a transport layer, transferring the key data to the correct loca
 
 To provision keys onto the KMU, use the following nRF Util command, with the ``<snr>`` being the serial number of the device and ``<key-file>`` being the name of the key file in the JSON format:
 
-.. parsed-literal::
-   :class: highlight
+.. nrfutil-command::
 
    nrfutil device x-provision-keys --serial-number <snr> --key-file <JSON-key-file>
 

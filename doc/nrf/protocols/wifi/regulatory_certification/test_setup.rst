@@ -148,7 +148,7 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 #. Open a command prompt window.
 #. If the read back protection mechanism on the DK or EK is enabled, use the following command to unlock the device and disable the read back protection mechanism before loading the firmware:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
        $ nrfutil device recover
 
@@ -159,19 +159,19 @@ To program firmware in the nRF7002 DK or EK setup, complete the following steps.
 
    * For Wi-Fi Radio test in combined mode:
 
-     .. code-block:: console
+     .. nrfutil-command:: console
 
         $ nrfutil device program --firmware merged.hex --core Application --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
    * For Station (STA), Shell, and stand-alone Wi-Fi Radio test samples:
 
-     .. code-block:: console
+     .. nrfutil-command:: console
 
         $ nrfutil device program --firmware merged.hex --core Application --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
 #. Program the relevant hex (binaries) to the network core on the nRF7002 DK:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       $  nrfutil device program --firmware merged_CPUNET.hex --core Network --options chip_erase_mode=ERASE_ALL,reset=RESET_SYSTEM
 
@@ -196,7 +196,7 @@ Complete the following steps to set the VCOM settings for the nRF7002 DK or EK:
 #. Verify the mapping of the serial ports based on the available commands for each port.
    See the following code example and figures:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       $ nrfutil device list
       1050753610

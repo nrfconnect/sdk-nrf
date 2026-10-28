@@ -70,7 +70,7 @@ To install the required versions of the nRF Util commands, complete the followin
       See `Locking nRF Util home directory`_ in the tool documentation for more information.
    #. Run the following command to update the core module to the latest version:
 
-      .. code-block::
+      .. nrfutil-command::
 
          nrfutil self-upgrade
 
@@ -78,17 +78,16 @@ To install the required versions of the nRF Util commands, complete the followin
 
 #. Install the required versions of the nRF Util commands:
 
-   .. parsed-literal::
-      :class: highlight
+   .. nrfutil-command::
 
-      nrfutil install device=\ |54H_nrfutil_device_ver|\  --force
-      nrfutil install trace=\ |54H_nrfutil_trace_ver|\  --force
+      nrfutil install device=|54H_nrfutil_device_ver| --force
+      nrfutil install trace=|54H_nrfutil_trace_ver| --force
 
    For more information, see the `Installing specific versions of nRF Util commands`_ documentation.
 
 #. Verify the installation of the nRF Util commands:
 
-   .. code-block::
+   .. nrfutil-command::
 
       nrfutil device --version
       nrfutil trace --version
@@ -200,11 +199,15 @@ To prepare the nRF54H20 DK for its first use, you must manually program the requ
       On macOS, when connecting the DK, you might see a popup with the message ``Disk Not Ejected Properly`` appearing multiple times.
       See :ref:`ug_nrf54h20_gs_bringup_msd` to disable MSD on the onboard debugger.
 
-#. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+#. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
+
+   .. nrfutil-command::
 
       nrfutil device list
 
-#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command:
+
+   .. nrfutil-command::
 
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
@@ -251,15 +254,13 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
       .. tab:: Windows
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
-            nrfutil sdk-manager toolchain launch --ncs-version *version* --terminal
+            nrfutil sdk-manager toolchain launch --ncs-version <version> --terminal
 
          For example:
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
             nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
 
@@ -267,15 +268,13 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
       .. tab:: Linux
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
-            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+            nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
 
          For example:
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
             nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 
@@ -283,15 +282,13 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
       .. tab:: macOS
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
-            nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
+            nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
 
          For example:
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
             nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
 
