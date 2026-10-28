@@ -8,9 +8,9 @@
 #include "cracen_ml_dsa.h"
 #include "cracen_ml_dsa_internal.h"
 
+#include <psa/crypto.h>
 #include <psa/crypto_types.h>
 #include <psa/crypto_values.h>
-#include <psa/crypto_struct.h>
 #include <psa/crypto_extra.h>
 #include <string.h>
 #include <zephyr/sys/util.h>
