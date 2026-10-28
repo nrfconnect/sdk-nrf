@@ -23,10 +23,6 @@ config DECT_MDM_NRF_RX_MCS1_EXPECTED_RSSI_LEVEL
 	  RX RSSI level for power control in modem, value in dBm.
 	  Device expects to receive transmissions (MCS#1) at this RSSI level.
 
-config NET_LINK_ADDR_CUSTOM_LENGTH
-	int "Size of custom link layer address length for DECT NR+"
-	default 8
-
 config DECT_MDM_NRF_TX_FLOW_CTRL_BASED_ON_MDM_TX_DLC_REQS
 	bool "TX flow control support"
 	default y
