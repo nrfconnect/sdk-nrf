@@ -10,11 +10,11 @@
 
 / {
 	chosen {
-		zephyr,entropy = &prng;
+		zephyr,entropy = &rng;
 	};
 };
 
-&prng {
+&rng {
 	status = "okay";
 };
 
