@@ -545,7 +545,10 @@ unsigned char get_nrf_wifi_op_band(void)
 	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
 		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 	}
-	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
+	if (IS_ENABLED(CONFIG_NRF_WIFI_6G_SUPPORT)) {
+		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
+	}
+	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 }
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep)
