@@ -916,6 +916,7 @@ Networking samples
 
     * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
     * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
+    * Documentation explaining that the sample logs direct messages received through the AWS IoT Core ``SendDirectMessage`` API.
 
 * :ref:`download_sample` sample:
 
