@@ -171,7 +171,7 @@ To add other versions of the documentation to your local documentation output, b
 nRF Util command examples
 =========================
 
-The documentation build checks the nRF Util commands in ``nrfutil-command`` directives.
+The documentation build checks the nRF Util commands in ``nrfutil-command`` directives, described in :ref:`doc_styleguide_nrfutil_commands`.
 A line is treated as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
 The build reports subcommands and options that do not exist in the nRF Util versions used by the |NCS|, as warnings at the file and line of the command.
 Placeholders in angle brackets, such as ``<serial_number>``, are accepted as any value.

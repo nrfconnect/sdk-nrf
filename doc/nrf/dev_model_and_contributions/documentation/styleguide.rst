@@ -193,6 +193,36 @@ To link to the Kconfig options from RST, use the ``:kconfig:option:`` domain::
 
    :kconfig:option:`CONFIG_DEBUG`
 
+.. _doc_styleguide_nrfutil_commands:
+
+nRF Util commands
+=================
+
+Use the ``nrfutil-command`` directive for examples of nRF Util commands.
+The directive renders the example like a ``code-block`` directive with the ``console`` language, and it also does the following:
+
+* Checks each line that starts with ``nrfutil`` against the nRF Util version used by the |NCS|.
+  The documentation build fails if a subcommand or option does not exist.
+* Replaces substitutions, such as ``|release|``, with their values.
+* Shows placeholders in angle brackets, such as ``<serial_number>``, in italics.
+* Adds links to the nRF Util documentation of the commands after the example.
+
+See the following example:
+
+.. code-block:: none
+
+   .. nrfutil-command::
+
+      nrfutil device program --firmware <hex_file> --serial-number <serial_number>
+
+Write placeholders in angle brackets, not as emphasis, because the directive does not process inline markup other than substitutions.
+To use a language other than ``console``, add it as the argument, such as ``.. nrfutil-command:: shell``.
+The directive accepts the options of the ``code-block`` directive, such as ``:caption:``.
+
+The check does not cover commands in Windows and macOS tabs, because it uses the Linux version of nRF Util.
+If a command must not be checked, add the ``:no-validate:`` option to the directive.
+For more information about the check, see :ref:`doc_build_nrfutil_commands`.
+
 Kconfig |gl|
 ************
 

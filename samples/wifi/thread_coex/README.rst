@@ -181,7 +181,7 @@ Testing
 
 #. Run the following command to check the available devices:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device list
 

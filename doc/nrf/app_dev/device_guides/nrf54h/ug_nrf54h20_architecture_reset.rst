@@ -67,11 +67,15 @@ The following is the reset behavior when the LCS of the nRF54H20 SoC is either i
 Reset your device using nRF Util
 ================================
 
-To trigger a specific reset type on your nRF54H20 SoC-based device, use the ``nrfutil device reset`` command::
+To trigger a specific reset type on your nRF54H20 SoC-based device, use the ``nrfutil device reset`` command:
+
+.. nrfutil-command::
 
    nrfutil device reset --serial-number <serial_number> --reset-kind <reset_kind>
 
-For a detailed list of commands for each reset type, run the following::
+For a detailed list of commands for each reset type, run the following:
+
+.. nrfutil-command::
 
    nrfutil device reset --help
 

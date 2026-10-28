@@ -244,13 +244,13 @@ After programming the test to your development kit, complete the following steps
 
          .. group-tab:: Merged slot configuration
 
-            .. code-block:: console
+            .. nrfutil-command:: console
 
                nrfutil device program --firmware build/zephyr_secondary_app.merged.hex  --options chip_erase_mode=ERASE_NONE
 
          .. group-tab:: Split slot configuration
 
-            .. code-block:: console
+            .. nrfutil-command:: console
 
                nrfutil device program --firmware build/mcuboot_secondary_app/zephyr/zephyr.signed.hex  --options chip_erase_mode=ERASE_NONE
                nrfutil device program --firmware build/radio_loader_secondary_app/zephyr/zephyr.signed.hex  --options chip_erase_mode=ERASE_NONE
@@ -258,7 +258,7 @@ After programming the test to your development kit, complete the following steps
 
    #. Reset the development kit.
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device reset
 

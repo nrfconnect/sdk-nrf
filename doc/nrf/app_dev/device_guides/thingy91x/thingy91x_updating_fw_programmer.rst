@@ -38,7 +38,9 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
       1. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Open a terminal window.
-      #. Enter the following command to list the connected devices and their traits::
+      #. Enter the following command to list the connected devices and their traits:
+
+         .. nrfutil-command::
 
           nrfutil device list
 
@@ -50,7 +52,7 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
       #. Enter the following command to update both the application and network core of the nRF5340 application core with a multi-image :file:`dfu_application.zip` file:
 
-         .. code-block:: console
+         .. nrfutil-command:: console
 
             nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number>
 
@@ -66,7 +68,9 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Set the programming target select switch **SW2** to **nRF53** on the Thingy:91 X.
       #. Open a terminal window.
-      #. Enter the following command to list the connected devices and their traits::
+      #. Enter the following command to list the connected devices and their traits:
+
+         .. nrfutil-command::
 
           nrfutil device list
 
@@ -74,13 +78,13 @@ This section describes how you can update the firmware of the nRF5340 SoC on the
 
       #. Enter the following command to program the application binary to the nRF5340 application core:
 
-         .. code-block:: console
+         .. nrfutil-command:: console
 
             nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf53 --core Application
 
       #. Enter the following command to program the application binary to the nRF5340 network core:
 
-         .. code-block:: console
+         .. nrfutil-command:: console
 
             nrfutil device program --firmware <name_of_network_core_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf53 --core Network
 
@@ -102,7 +106,9 @@ When updating the firmware through USB and MCUboot method, you must not connect 
       1. Connect the Thingy:91 X to your computer with a USB-C cable.
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Open a terminal window.
-      #. Enter the following command to list the connected devices and their traits::
+      #. Enter the following command to list the connected devices and their traits:
+
+         .. nrfutil-command::
 
           nrfutil device list
 
@@ -113,7 +119,7 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
       #. Enter the following command to program the application binary to the nRF9151 application core:
 
-         .. code-block:: console
+         .. nrfutil-command:: console
 
             nrfutil device program --firmware dfu_application.zip --serial-number <Thingy:91 X Serial number>
 
@@ -129,7 +135,9 @@ When updating the firmware through USB and MCUboot method, you must not connect 
       #. Power on the device by switching **SW1** to the **ON** position.
       #. Set the programming target select switch **SW2** to **nRF91** on the Thingy:91 X.
       #. Open a terminal window.
-      #. Enter the following command to list the connected devices and their traits::
+      #. Enter the following command to list the connected devices and their traits:
+
+         .. nrfutil-command::
 
           nrfutil device list
 
@@ -137,7 +145,7 @@ When updating the firmware through USB and MCUboot method, you must not connect 
 
       #. Enter the following command to program the application binary to the nRF9151 application core:
 
-         .. code-block:: console
+         .. nrfutil-command:: console
 
             nrfutil device program --firmware <name_of_application_binary.hex> --serial-number <J-Link Serial number> --traits jlink --family nrf91 --core Application
 
@@ -157,7 +165,9 @@ To update the nRF9151 modem firmware using an external debug probe, complete the
 #. Power on the device by switching **SW1** to the **ON** position.
 #. Set the programming target select switch **SW2** to **nRF91** on the Thingy:91 X.
 #. Open a terminal window.
-#. Enter the following command to list the connected devices and their traits::
+#. Enter the following command to list the connected devices and their traits:
+
+   .. nrfutil-command::
 
     nrfutil device list
 
@@ -165,6 +175,6 @@ To update the nRF9151 modem firmware using an external debug probe, complete the
 
 #. Enter the following command to program the modem firmware on the nRF9151 SiP:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device program --firmware <modem.zip> --serial-number <J-Link Serial number> --traits jlink --family nrf91

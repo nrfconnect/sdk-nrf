@@ -403,7 +403,9 @@ Program the BICR binary
 
 After the |NCS| build system generates the BICR binary, you must flash this binary manually.
 The content of BICR should be loaded to the SoC only once and should not be erased nor modified unless the PCB layout changes.
-To manually program the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows::
+To manually program the generated :file:`bicr.hex` file to the SoC, use nRF Util as follows:
+
+.. nrfutil-command::
 
     nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr.hex --core Application --serial-number <serial_number>
 
@@ -421,11 +423,15 @@ Validate the BICR binary
 
 After programming the BICR binary onto the device, validate whether the BICR works with your device as follows:
 
-1. Reset the device::
+1. Reset the device:
+
+   .. nrfutil-command::
 
       nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 
-2. When in LCS ``EMPTY``, use ``nrfutil`` to validate the BICR status by reading the memory::
+2. When in LCS ``EMPTY``, use ``nrfutil`` to validate the BICR status by reading the memory:
+
+   .. nrfutil-command::
 
       nrfutil device read --address 0x2F88FF1C --serial-number 1051164514 --core Secure
 
@@ -451,7 +457,9 @@ This can be useful for confirming that the BICR was programmed correctly, or for
 
 To read the current BICR configuration from a device, complete the following steps:
 
-1. Read the BICR memory area using nRF Util::
+1. Read the BICR memory area using nRF Util:
+
+   .. nrfutil-command::
 
       nrfutil device read --address 0x0FFF87B0 --bytes 0x40 --to-file bicr_readout.hex
 

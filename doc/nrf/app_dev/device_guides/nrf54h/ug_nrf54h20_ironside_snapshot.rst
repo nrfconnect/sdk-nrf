@@ -509,7 +509,7 @@ Identify support in lifecycle state EMPTY
 
 To identify whether an nRF54H20 device in lifecycle state ``EMPTY`` supports the |ISE| snapshot service, read the FICR directly:
 
-.. code-block:: console
+.. nrfutil-command:: console
 
    nrfutil device read --traits jlink --core secure --direct --address 0x0FFFE054
 

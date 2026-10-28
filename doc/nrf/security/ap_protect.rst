@@ -297,7 +297,7 @@ nRF91 Series
 
       To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -307,7 +307,7 @@ nRF91 Series
 
       To enable Secure AP-Protect on the hardware side, use the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set SecureRegions
 
@@ -317,7 +317,7 @@ nRF91 Series
 
       To keep AP-Protect disabled on the hardware side after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -427,7 +427,7 @@ nRF91 Series
 
       To enable AP-Protect, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -437,7 +437,7 @@ nRF91 Series
 
       To enable Secure AP-Protect, write ``Enabled`` to ``UICR.SECUREAPPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set SecureRegions
 
@@ -453,7 +453,7 @@ nRF91 Series
 
       To disable AP-Protect or Secure AP-Protect (or both), run the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -474,7 +474,7 @@ nRF91 Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -643,7 +643,7 @@ nRF54L Series
 
       To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -653,7 +653,7 @@ nRF54L Series
 
       To enable Secure AP-Protect on the hardware side, write ``Enabled`` to ``UICR.SECUREAPPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set SecureRegions
 
@@ -669,7 +669,7 @@ nRF54L Series
 
       To disable AP-Protect or Secure AP-Protect (or both), run the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -691,7 +691,7 @@ nRF54L Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -881,7 +881,7 @@ nRF54L Series
 
       To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -893,7 +893,7 @@ nRF54L Series
 
       To disable AP-Protect, run the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -910,7 +910,7 @@ nRF54L Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -958,7 +958,7 @@ nRF54L Series
 
       To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -970,7 +970,7 @@ nRF54L Series
 
       To disable AP-Protect, run the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -987,7 +987,7 @@ nRF54L Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -1043,7 +1043,7 @@ nRF54H Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -1143,7 +1143,7 @@ nRF53 Series
 
       To enable AP-Protect on the hardware side on both cores, write ``Enabled`` to ``UICR.APPROTECT`` using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All --core Network
          nrfutil device protection-set All
@@ -1155,7 +1155,7 @@ nRF53 Series
 
       To enable Secure AP-Protect on the hardware side, use the following nRF Util command with the serial number of your device:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set SecureRegions --core Application --serial-number <serial_number>
 
@@ -1173,7 +1173,7 @@ nRF53 Series
 
       To disable AP-Protect or Secure AP-Protect (or both), run the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -1194,7 +1194,7 @@ nRF53 Series
 
       To force AP-Protect to be disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 
@@ -1270,7 +1270,7 @@ nRF52 Series
       To enable AP-Protect on the hardware side, write ``Enabled`` to ``UICR.APPROTECT`` to lock the register and reset the device.
       For example, you can use the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device protection-set All
 
@@ -1286,7 +1286,7 @@ nRF52 Series
 
       To keep AP-Protect disabled after hard reset, issue an ``ERASEALL`` command using the following nRF Util command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil device recover
 

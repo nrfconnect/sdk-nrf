@@ -351,19 +351,19 @@ Use the combined bitfield values, depending on which headset you want to configu
 
   * Left headset (``--value 1``):
 
-    .. code-block:: console
+    .. nrfutil-command:: console
 
        nrfutil device write --address 0x00FF80F4 --value 1
 
   * Right headset (``--value 2``):
 
-    .. code-block:: console
+    .. nrfutil-command:: console
 
        nrfutil device write --address 0x00FF80F4 --value 2
 
 * One stereo headset (``--value 3``):
 
-  .. code-block:: console
+  .. nrfutil-command:: console
 
      nrfutil device write --address 0x00FF80F4 --value 3
 

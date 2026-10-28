@@ -133,7 +133,7 @@ You can set the location for each headset in the following ways, depending on th
   Use the combined bitfield values from the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file to define the headset location.
   For example, if you want to use the stereo configuration, use the ``0x3`` value, which is the combined bitfield value of the left (``0x01``) and right (``0x02``) location:
 
-  .. code-block:: console
+  .. nrfutil-command:: console
 
      nrfutil device write --address 0x00FF80F4 --value 3
 
