@@ -1,12 +1,12 @@
 board:
-  name: {{ board }}
-  full_name: {{ board }}
-  vendor: {{ vendor }}
+  name: "{{ board }}"
+  full_name: "{{ board }}"
+  vendor: "{{ vendor }}"
   socs:
-  - name: {{ soc }}
+  - name: "{{ soc }}"
     variants:
-    - name: xip
-      cpucluster: cpuflpr
+    - name: "xip"
+      cpucluster: "cpuflpr"
 runners:
   run_once:
     '--recover':
@@ -16,9 +16,9 @@ runners:
         run: first
         groups:
           - boards:
-              - {{ board }}/{{ soc }}/cpuapp
-              - {{ board }}/{{ soc }}/cpuflpr
-              - {{ board }}/{{ soc }}/cpuflpr/xip
+              - "{{ board }}/{{ soc }}/cpuapp"
+              - "{{ board }}/{{ soc }}/cpuflpr"
+              - "{{ board }}/{{ soc }}/cpuflpr/xip"
     '--erase':
       - runners:
           - nrfjprog
@@ -27,9 +27,9 @@ runners:
         run: first
         groups:
           - boards:
-              - {{ board }}/{{ soc }}/cpuapp
-              - {{ board }}/{{ soc }}/cpuflpr
-              - {{ board }}/{{ soc }}/cpuflpr/xip
+              - "{{ board }}/{{ soc }}/cpuapp"
+              - "{{ board }}/{{ soc }}/cpuflpr"
+              - "{{ board }}/{{ soc }}/cpuflpr/xip"
     '--reset':
       - runners:
           - nrfjprog
@@ -38,6 +38,6 @@ runners:
         run: last
         groups:
           - boards:
-              - {{ board }}/{{ soc }}/cpuapp
-              - {{ board }}/{{ soc }}/cpuflpr
-              - {{ board }}/{{ soc }}/cpuflpr/xip
+              - "{{ board }}/{{ soc }}/cpuapp"
+              - "{{ board }}/{{ soc }}/cpuflpr"
+              - "{{ board }}/{{ soc }}/cpuflpr/xip"

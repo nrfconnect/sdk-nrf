@@ -1,6 +1,6 @@
-identifier: {{ board }}/{{ soc }}
-name: {{ board_desc }}
-vendor: {{ vendor }}
+identifier: "{{ board }}/{{ soc }}"
+name: {{ board_desc | tojson }}
+vendor: "{{ vendor }}"
 type: mcu
 arch: arm
 ram: {{ target["ram"] }}
