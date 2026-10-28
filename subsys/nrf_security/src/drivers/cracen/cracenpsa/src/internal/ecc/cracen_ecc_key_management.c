@@ -25,6 +25,11 @@
 #define ED25519_BITS 255
 #define ED448_BITS   448
 
+/* RFC 8032 encodes Edwards private and public keys with one bit more than the curve size:
+ * 32 bytes for Ed25519 and 57 bytes for Ed448, as PSA_EXPORT_KEY_OUTPUT_SIZE() does.
+ */
+#define EDWARDS_KEY_BYTES(bits) PSA_BITS_TO_BYTES((bits) + 1)
+
 /* True if alg_ is the prehash algorithm ph_alg_ but the key is not bits_ wide. */
 #define PH_ALG_BITS_MISMATCH(alg_, ph_alg_, key_bits_, bits_)                                      \
 	((alg_) == (ph_alg_) && (key_bits_) != (bits_))
@@ -149,6 +154,10 @@ psa_status_t cracen_generate_ecc_private_key(const psa_key_attributes_t *attribu
 
 	*key_buffer_length = 0;
 
+	if (psa_curve == PSA_ECC_FAMILY_TWISTED_EDWARDS) {
+		key_size_bytes = EDWARDS_KEY_BYTES(key_bits_attr);
+	}
+
 	if (key_size_bytes > key_buffer_size) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
@@ -217,8 +226,9 @@ static size_t get_expected_pub_key_size(psa_ecc_family_t psa_curve, size_t key_b
 	case PSA_ECC_FAMILY_SECP_K1:
 		return cracen_ecc_wstr_expected_pub_key_bytes(PSA_BITS_TO_BYTES(key_bits_attr));
 	case PSA_ECC_FAMILY_MONTGOMERY:
-	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
 		return PSA_BITS_TO_BYTES(key_bits_attr);
+	case PSA_ECC_FAMILY_TWISTED_EDWARDS:
+		return EDWARDS_KEY_BYTES(key_bits_attr);
 	default:
 		return 0;
 	}
