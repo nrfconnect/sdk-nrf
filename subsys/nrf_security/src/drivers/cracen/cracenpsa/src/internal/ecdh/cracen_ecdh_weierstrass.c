@@ -7,6 +7,7 @@
 #include <internal/ecdh/cracen_ecdh_weierstrass.h>
 #include <internal/ecc/cracen_ecc_helpers.h>
 
+#include <string.h>
 #include <cracen/common.h>
 #include <nrf_security_mem_helpers.h>
 #include <silexpk/sxbuf/sxbufop.h>
@@ -62,11 +63,11 @@ psa_status_t cracen_ecdh_wrstr_calc_secret(const struct sx_pk_ecurve *curve,
 
 	sx_status = sx_ecp_ptmult(&req, curve, &priv_key_buff, &publ_key_pnt, &scratch_pnt);
 	if (sx_status == SX_OK) {
-		sx_pk_const_affine_point c_scratch_pnt;
-
-		sx_get_const_affine_point(&scratch_pnt, &c_scratch_pnt);
-		sx_pk_ecop2mem(&c_scratch_pnt.x, output, c_scratch_pnt.x.sz);
-		*output_length = c_scratch_pnt.x.sz;
+		/* The PK memory writers are for CRACEN memory and on nRF54LM20A/B use
+		 * word accesses, so copy the caller's output with memcpy().
+		 */
+		memcpy(output, scratch_pnt.x.bytes, scratch_pnt.x.sz);
+		*output_length = scratch_pnt.x.sz;
 	}
 
 	safe_memzero(scratch_pnt.x.bytes, scratch_pnt.x.sz);
