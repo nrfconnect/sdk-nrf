@@ -647,7 +647,8 @@ int32_t mpsl_lib_uninit(void)
 }
 
 #if defined(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
-void mpsl_low_latency_acquire_callback(void)
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+static void mpsl_constlat_request(void)
 {
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int err;
@@ -660,7 +661,31 @@ void mpsl_low_latency_acquire_callback(void)
 	(void)nrfx_power_constlat_mode_request();
 #else
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-#endif /* NRF_POWER_HAS_CONST_LATENCY && NRF_POWER_HAS_LOW_POWER */
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+}
+
+static void mpsl_constlat_release(void)
+{
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
+	int err;
+
+	err = nrf_sys_event_release_global_constlat();
+	if (err) {
+		LOG_ERR("NVM low latency release has failed (%d)", err);
+	}
+#elif IS_ENABLED(CONFIG_NRFX_POWER)
+	(void)nrfx_power_constlat_mode_free();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+}
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
+
+void mpsl_low_latency_acquire_callback(void)
+{
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+	mpsl_constlat_request();
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
 
 #if defined(MPSL_HW_HAS_RRAMC)
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
@@ -689,22 +714,15 @@ void mpsl_low_latency_acquire_callback(void)
 
 void mpsl_low_latency_release_callback(void)
 {
-#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
-	int ret;
-
-	ret = nrf_sys_event_release_global_constlat();
-	if (ret) {
-		LOG_ERR("NVM low latency release has failed (%d)", ret);
-	}
-#elif IS_ENABLED(CONFIG_NRFX_POWER)
-	(void)nrfx_power_constlat_mode_free();
-#else
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
-#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+	mpsl_constlat_release();
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
 
 #if defined(MPSL_HW_HAS_RRAMC)
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	int ret;
+
 	ret = nrf_sys_event_unregister(m_nvm_low_latency_event_handle, false);
 	if (ret != 0) {
 		LOG_ERR("NVM low latency release has failed (%d)", ret);
