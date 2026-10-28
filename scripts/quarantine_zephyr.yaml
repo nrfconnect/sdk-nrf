@@ -410,6 +410,7 @@
 
 - scenarios:
     - .*secure_storage.*
+    - arch.interrupt
     - benchmark.crypto.psa
     - cpp.libcxx.glibcxx.picolibc
     - drivers.can.shell
