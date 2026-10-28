@@ -6,6 +6,8 @@
 
 menuconfig DOWNLOADER
 	bool "Download client"
+	depends on NET_SOCKETS
+	select READY_RESOLVE
 
 if DOWNLOADER
 

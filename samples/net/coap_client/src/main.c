@@ -21,12 +21,12 @@
 #include <zephyr/net/coap.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/conn_mgr_connectivity.h>
-#include <zephyr/net/conn_mgr_monitor.h>
 #include <zephyr/random/random.h>
 #include <zephyr/net/coap_client.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_ctrl.h>
 #include <zephyr/net/tls_credentials.h>
+#include <net/ready_resolve.h>
 
 /* CONFIG_COAP_SAMPLE_DTLS_SEC_TAG and CONFIG_COAP_SAMPLE_DTLS_HANDSHAKE_TIMEOUT_MAX_MS
  * are defined in Kconfig under "if COAP_SAMPLE_DTLS", so they don't exist at all when
@@ -43,8 +43,7 @@
 
 LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 
-/* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+/* Macro used to subscribe to specific Zephyr NET management events. */
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 #define MAX_CONSECUTIVE_BUSY_RETRIES 5
@@ -55,99 +54,11 @@ LOG_MODULE_REGISTER(coap_client_sample, CONFIG_COAP_CLIENT_SAMPLE_LOG_LEVEL);
 	LOG_PANIC();					\
 	IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)))
 
-/* Zephyr NET management event callback structures. */
-static struct net_mgmt_event_callback l4_cb;
+/* Zephyr NET management event callback structure. */
 static struct net_mgmt_event_callback conn_cb;
 
-/* Variable used to indicate if network is connected. */
-static bool is_connected;
-
-/* Mutex and conditional variable used to signal network connectivity. */
-K_MUTEX_DEFINE(network_connected_lock);
-K_CONDVAR_DEFINE(network_connected);
-
-static void server_addr_set_ipv4(struct sockaddr_storage *server, struct addrinfo *result)
-{
-	struct sockaddr_in *server4 = (struct sockaddr_in *)server;
-	char addr_str[NET_IPV6_ADDR_LEN];
-
-	server4->sin_addr.s_addr = ((struct sockaddr_in *)result->ai_addr)->sin_addr.s_addr;
-	server4->sin_family = AF_INET;
-	server4->sin_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
-
-	inet_ntop(AF_INET, &server4->sin_addr.s_addr, addr_str, sizeof(addr_str));
-	LOG_INF("IPv4 Address found %s", addr_str);
-}
-
-static void server_addr_set_ipv6(struct sockaddr_storage *server, struct addrinfo *result)
-{
-	struct sockaddr_in6 *server6 = (struct sockaddr_in6 *)server;
-	char addr_str[NET_IPV6_ADDR_LEN];
-
-	memcpy(&server6->sin6_addr,
-	       &((struct sockaddr_in6 *)result->ai_addr)->sin6_addr,
-	       sizeof(server6->sin6_addr));
-	server6->sin6_family = AF_INET6;
-	server6->sin6_port = htons(CONFIG_COAP_SAMPLE_SERVER_PORT);
-
-	inet_ntop(AF_INET6, &server6->sin6_addr, addr_str, sizeof(addr_str));
-	LOG_INF("IPv6 Address found %s", addr_str);
-}
-
-static int server_resolve(struct sockaddr_storage *server)
-{
-	int err;
-	struct addrinfo *result;
-	struct addrinfo hints = {
-		.ai_family = AF_UNSPEC,
-		.ai_socktype = SOCK_DGRAM
-	};
-
-	err = getaddrinfo(CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints, &result);
-	if (err) {
-		LOG_ERR("getaddrinfo, error: %d", err);
-		return err;
-	}
-
-	if (result == NULL) {
-		LOG_ERR("Address not found");
-		return -ENOENT;
-	}
-
-	/* Resolve either IPv4 or IPv6 */
-	switch (result->ai_family) {
-	case AF_INET:
-		server_addr_set_ipv4(server, result);
-		break;
-	case AF_INET6:
-		if (IS_ENABLED(CONFIG_NET_IPV6)) {
-			server_addr_set_ipv6(server, result);
-			break;
-		}
-		__fallthrough;
-	default:
-		LOG_ERR("Unexpected address family: %d", result->ai_family);
-		freeaddrinfo(result);
-		return -EAFNOSUPPORT;
-	}
-
-	/* Free the address. */
-	freeaddrinfo(result);
-
-	return 0;
-}
-
-static void wait_for_network(void)
-{
-	k_mutex_lock(&network_connected_lock, K_FOREVER);
-
-	if (!is_connected) {
-		LOG_INF("Waiting for network connectivity");
-		k_condvar_wait(&network_connected, &network_connected_lock, K_FOREVER);
-	}
-
-	k_mutex_unlock(&network_connected_lock);
-}
+/* Track failure of the current request. */
+static volatile bool request_failed;
 
 static void response_cb(const struct coap_client_response_data *data, void *user_data)
 {
@@ -156,6 +67,10 @@ static void response_cb(const struct coap_client_response_data *data, void *user
 			data->result_code, data->payload);
 	} else {
 		LOG_INF("Response received with error code: %d", data->result_code);
+		/* Don't count cancellation as failure */
+		if (data->result_code != -ECANCELED) {
+			request_failed = true;
+		}
 	}
 }
 
@@ -214,20 +129,12 @@ static int credentials_add(void)
 	return 0;
 }
 
-/* Resolves the server and opens a socket to it, performing the DTLS handshake if enabled.
- * Returns the socket on success, or a negative error code on a recoverable failure.
- */
-static int server_connect(struct sockaddr_storage *server)
+/* Opens a socket and connects it, performing the DTLS handshake if enabled */
+static int server_connect(const struct net_sockaddr *addr, net_socklen_t addrlen)
 {
 	int err, sock;
 
-	err = server_resolve(server);
-	if (err) {
-		LOG_ERR("Failed to resolve server name");
-		return err;
-	}
-
-	sock = socket(server->ss_family, SOCK_DGRAM,
+	sock = socket(addr->sa_family, SOCK_DGRAM,
 		      IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS) ? IPPROTO_DTLS_1_2 : IPPROTO_UDP);
 	if (sock < 0) {
 		LOG_ERR("Failed to create CoAP socket: %d.", -errno);
@@ -271,25 +178,19 @@ static int server_connect(struct sockaddr_storage *server)
 			return -errno;
 		}
 
-		/* Explicitly connect to trigger the DTLS handshake now so we can log
-		 * the outcome and negotiated ciphersuite before handing the socket to
-		 * the CoAP client.
-		 */
-		LOG_INF("Performing DTLS handshake with %s:%d (mutual TLS)...",
-			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
-			CONFIG_COAP_SAMPLE_SERVER_PORT);
+		LOG_INF("Performing DTLS handshake (mutual TLS)...");
+	}
 
-		err = zsock_connect(sock, (struct sockaddr *)server,
-				    server->ss_family == AF_INET6 ?
-					    sizeof(struct sockaddr_in6) :
-					    sizeof(struct sockaddr_in));
-		if (err < 0) {
-			err = -errno;
-			LOG_ERR("DTLS handshake failed: %d", err);
-			(void)zsock_close(sock);
-			return err;
-		}
+	/* For DTLS, connecting performs the handshake. For plain UDP it only sets the peer. */
+	err = connect(sock, (const struct sockaddr *)addr, addrlen);
+	if (err < 0) {
+		err = -errno;
+		LOG_ERR("Connect failed: %d", err);
+		(void)zsock_close(sock);
+		return err;
+	}
 
+	if (IS_ENABLED(CONFIG_COAP_SAMPLE_DTLS)) {
 		int cipher_id;
 		socklen_t cipher_id_len = sizeof(cipher_id);
 
@@ -305,11 +206,66 @@ static int server_connect(struct sockaddr_storage *server)
 	return sock;
 }
 
+/* Connects to the next resolved address that accepts a connection */
+static int server_connect_next(struct ready_resolve *host, struct net_sockaddr_storage *server)
+{
+	const struct net_sockaddr *addr;
+	net_socklen_t addrlen;
+	int sock = -1;
+
+	while (sock < 0 && ready_resolve_next(host, &addr, &addrlen) == 0) {
+		sock = server_connect(addr, addrlen);
+	}
+
+	if (sock >= 0) {
+		/* coap_client_req() needs the peer address */
+		memcpy(server, addr, addrlen);
+	}
+
+	return sock;
+}
+
+/* Connects to the next server address. Plain UDP connect() always succeeds, so addresses are
+ * kept across failed requests and the host is resolved again only once all were tried.
+ */
+static int server_connect_retry(struct ready_resolve *host, struct net_sockaddr_storage *server)
+{
+	const struct zsock_addrinfo hints = {
+		.ai_socktype = NET_SOCK_DGRAM,
+	};
+	int sock = server_connect_next(host, server);
+	int err;
+
+	if (sock < 0) {
+		LOG_INF("Connecting to %s", CONFIG_COAP_SAMPLE_SERVER_HOSTNAME);
+	}
+
+	while (sock < 0) {
+		err = ready_resolve(host, CONFIG_COAP_SAMPLE_SERVER_HOSTNAME, NULL, &hints,
+				    CONFIG_COAP_SAMPLE_SERVER_PORT);
+		if (err == 0) {
+			sock = server_connect_next(host, server);
+			if (sock >= 0) {
+				break;
+			}
+		}
+
+		/* -ENETDOWN: waiting for the network to come up */
+		if (err != -ENETDOWN) {
+			LOG_WRN("Failed to connect to server, retrying");
+		}
+		ready_resolve_wait_change(host, K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
+	}
+
+	return sock;
+}
+
 static void server_disconnect(struct coap_client *coap_client, int *sock)
 {
 	coap_client_cancel_requests(coap_client);
 	(void)zsock_close(*sock);
 	*sock = -1;
+	request_failed = false;
 }
 
 /* Only returns on fatal errors. Recoverable errors close the socket and reconnect. */
@@ -318,8 +274,9 @@ static int periodic_coap_request_loop(void)
 	int err;
 	int sock = -1;
 	int consecutive_busy_retries = 0;
-	struct sockaddr_storage server = { 0 };
 	struct coap_client coap_client = { 0 };
+	struct ready_resolve host = { 0 };
+	struct net_sockaddr_storage server;
 	struct coap_client_request req = {
 		.method = COAP_METHOD_GET,
 		.confirmable = true,
@@ -343,68 +300,38 @@ static int periodic_coap_request_loop(void)
 	}
 
 	while (true) {
-		wait_for_network();
+		if (sock >= 0 && request_failed) {
+			LOG_WRN("Request failed, reconnecting");
+			server_disconnect(&coap_client, &sock);
+		}
 
 		if (sock < 0) {
-			sock = server_connect(&server);
-			if (sock < 0) {
-				LOG_WRN("Failed to connect to server: %d, retrying in %d seconds",
-					sock, CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS);
-				k_sleep(K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
-				continue;
-			}
+			sock = server_connect_retry(&host, &server);
 		}
 
 		/* Send request */
-		err = coap_client_req(&coap_client, sock, (struct sockaddr *)&server, &req, NULL);
+		err = coap_client_req(&coap_client, sock, (struct net_sockaddr *)&server, &req,
+				      NULL);
 		if (err == -EAGAIN &&
 		    ++consecutive_busy_retries < MAX_CONSECUTIVE_BUSY_RETRIES) {
 			LOG_WRN("CoAP client busy, retrying later");
-			k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
-			continue;
-		}
-
-		consecutive_busy_retries = 0;
-
-		if (err) {
+		} else if (err) {
+			consecutive_busy_retries = 0;
 			LOG_ERR("Failed to send request: %d, reconnecting", err);
 			server_disconnect(&coap_client, &sock);
-			k_sleep(K_SECONDS(CONFIG_SAMPLE_RECONNECT_DELAY_SECONDS));
 			continue;
+		} else {
+			consecutive_busy_retries = 0;
+			LOG_INF("CoAP GET request sent to %s:%d, resource: %s",
+				CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
+				CONFIG_COAP_SAMPLE_SERVER_PORT,
+				CONFIG_COAP_SAMPLE_RESOURCE);
 		}
-
-		LOG_INF("CoAP GET request sent to %s:%d, resource: %s",
-			CONFIG_COAP_SAMPLE_SERVER_HOSTNAME,
-			CONFIG_COAP_SAMPLE_SERVER_PORT,
-			CONFIG_COAP_SAMPLE_RESOURCE);
 
 		k_sleep(K_SECONDS(CONFIG_COAP_SAMPLE_REQUEST_INTERVAL_SECONDS));
 	}
 }
 
-static void l4_event_handler(struct net_mgmt_event_callback *cb,
-			     uint64_t event,
-			     struct net_if *iface)
-{
-	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
-		LOG_INF("Network connectivity established");
-		k_mutex_lock(&network_connected_lock, K_FOREVER);
-		is_connected = true;
-		k_condvar_signal(&network_connected);
-		k_mutex_unlock(&network_connected_lock);
-		break;
-	case NET_EVENT_L4_DISCONNECTED:
-		LOG_INF("Network connectivity lost");
-		k_mutex_lock(&network_connected_lock, K_FOREVER);
-		is_connected = false;
-		k_mutex_unlock(&network_connected_lock);
-		break;
-	default:
-		/* Don't care */
-		return;
-	}
-}
 static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 						uint64_t event,
 						struct net_if *iface)
@@ -422,10 +349,7 @@ int main(void)
 
 	LOG_INF("The CoAP client sample started");
 
-	/* Setup handler for Zephyr NET Connection Manager events and Connectivity layer. */
-	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
-	net_mgmt_add_event_callback(&l4_cb);
-
+	/* Setup handler for Zephyr NET Connection Manager Connectivity layer. */
 	net_mgmt_init_event_callback(&conn_cb, connectivity_event_handler, CONN_LAYER_EVENT_MASK);
 	net_mgmt_add_event_callback(&conn_cb);
 
@@ -447,18 +371,6 @@ int main(void)
 		FATAL_ERROR();
 		return err;
 	}
-
-	/* Resend connection status if the sample is built for NATIVE_SIM.
-	 * This is necessary because the network interface is automatically brought up
-	 * at SYS_INIT() before main() is called.
-	 * This means that NET_EVENT_L4_CONNECTED fires before the
-	 * appropriate handler l4_event_handler() is registered.
-	 */
-	if (IS_ENABLED(CONFIG_BOARD_NATIVE_SIM)) {
-		conn_mgr_mon_resend_status();
-	}
-
-	wait_for_network();
 
 	err = periodic_coap_request_loop();
 	if (err) {

@@ -11,13 +11,12 @@
 #include <stdio.h>
 #include <stdbool.h>
 
+#include <net/ready_resolve.h>
+
 #include "dl_socket.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_DECLARE(downloader, CONFIG_DOWNLOADER_LOG_LEVEL);
-
-#define SIN6(A) ((struct net_sockaddr_in6 *)(A))
-#define SIN(A)	((struct net_sockaddr_in *)(A))
 
 #define MS_TO_TIMEVAL(ms) \
 	.tv_sec = (ms / 1000), \
@@ -162,93 +161,40 @@ static bool is_ip_address(const char *hostname)
 	return false;
 }
 
-static int dl_socket_host_lookup(const char *const hostname, uint32_t pdn_id,
-				 struct net_sockaddr *sa, int family)
+static int socket_create_and_connect(int proto, int type, const struct net_sockaddr *addr,
+				     net_socklen_t addrlen, const char *hostname,
+				     struct downloader_host_cfg *dl_host_cfg)
 {
+	int fd;
 	int err;
-	char pdnserv[4];
-	char *servname = NULL;
-	struct zsock_addrinfo *ai;
-	struct zsock_addrinfo hints = {
-		.ai_family = family,
-	};
 
-#if !defined(CONFIG_NET_IPV6)
-	if (family == NET_AF_INET6) {
-		return -EINVAL;
-	}
-#endif
+	LOG_DBG("family: %s, type: %d, proto: %d", str_family(addr->sa_family), type, proto);
 
-	LOG_DBG("host lookup %s, pdn id %d, family %d", hostname, pdn_id, family);
-
-	if (pdn_id) {
-		hints.ai_flags = AI_PDNSERV;
-		(void)snprintf(pdnserv, sizeof(pdnserv), "%d", pdn_id);
-		servname = pdnserv;
-	}
-
-	err = zsock_getaddrinfo(hostname, servname, &hints, &ai);
-	if (err) {
-		/* We expect this to fail on IPv6 sometimes */
-		LOG_DBG("Failed to resolve hostname %s on %s, err %d", hostname,
-			str_family(hints.ai_family), err);
-		return -EHOSTUNREACH;
-	}
-
-	memcpy(sa, ai->ai_addr, ai->ai_addrlen);
-	zsock_freeaddrinfo(ai);
-
-	return 0;
-}
-
-static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t port,
-					struct net_sockaddr *remote_addr, const char *hostname,
-					struct downloader_host_cfg *dl_host_cfg)
-{
-	int err;
-	net_socklen_t addrlen;
-
-	switch (remote_addr->sa_family) {
-	case NET_AF_INET6:
-		SIN6(remote_addr)->sin6_port = net_htons(port);
-		addrlen = sizeof(struct net_sockaddr_in6);
-		break;
-	case NET_AF_INET:
-		SIN(remote_addr)->sin_port = net_htons(port);
-		addrlen = sizeof(struct net_sockaddr_in);
-		break;
-	default:
-		err = -EAFNOSUPPORT;
-		goto cleanup;
-	}
-
-	LOG_DBG("family: %d, type: %d, proto: %d", remote_addr->sa_family, type, proto);
-
-	*fd = zsock_socket(remote_addr->sa_family, type, proto);
-	if (*fd < 0) {
+	fd = zsock_socket(addr->sa_family, type, proto);
+	if (fd < 0) {
 		err = -errno;
 		LOG_ERR("Failed to create socket, errno %d", -err);
-		goto cleanup;
+		return err;
 	}
 
-	LOG_DBG("Socket opened, fd %d", *fd);
+	LOG_DBG("Socket opened, fd %d", fd);
 
 	if (IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
-		err = socket_tls_native_enable(*fd);
+		err = socket_tls_native_enable(fd);
 		if (err < 0) {
 			goto cleanup;
 		}
 	}
 
 	if (dl_host_cfg->if_name != NULL) {
-		err = socket_if_name_set(*fd, dl_host_cfg->if_name);
+		err = socket_if_name_set(fd, dl_host_cfg->if_name);
 		if (err < 0) {
 			goto cleanup;
 		}
 	}
 
 	if (dl_host_cfg->pdn_id) {
-		err = socket_pdn_id_set(*fd, dl_host_cfg->pdn_id);
+		err = socket_pdn_id_set(fd, dl_host_cfg->pdn_id);
 		if (err) {
 			goto cleanup;
 		}
@@ -256,13 +202,13 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 	if ((proto == NET_IPPROTO_TLS_1_2 || proto == NET_IPPROTO_DTLS_1_2) &&
 	    (dl_host_cfg->sec_tag_list != NULL) && (dl_host_cfg->sec_tag_count > 0)) {
-		err = socket_sectag_set(*fd, dl_host_cfg->sec_tag_list, dl_host_cfg->sec_tag_count);
+		err = socket_sectag_set(fd, dl_host_cfg->sec_tag_list, dl_host_cfg->sec_tag_count);
 		if (err) {
 			goto cleanup;
 		}
 
 		if (!is_ip_address(hostname)) {
-			err = socket_ZSOCK_TLS_HOSTNAME_set(*fd, hostname);
+			err = socket_ZSOCK_TLS_HOSTNAME_set(fd, hostname);
 			if (err) {
 				goto cleanup;
 			}
@@ -270,30 +216,14 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 		if (proto == NET_IPPROTO_DTLS_1_2 && dl_host_cfg->cid) {
 			LOG_DBG("enabling CID");
-			err = socket_dtls_cid_enable(*fd);
+			err = socket_dtls_cid_enable(fd);
 			if (err) {
 				goto cleanup;
 			}
 		}
 	}
 
-	if (IS_ENABLED(CONFIG_LOG)) {
-		char ip_addr_str[NET_IPV6_ADDR_LEN];
-		void *sin_addr;
-
-		if (remote_addr->sa_family == NET_AF_INET6) {
-			sin_addr = &((struct net_sockaddr_in6 *)remote_addr)->sin6_addr;
-		} else {
-			sin_addr = &((struct net_sockaddr_in *)remote_addr)->sin_addr;
-		}
-		zsock_inet_ntop(remote_addr->sa_family, sin_addr, ip_addr_str,
-				sizeof(ip_addr_str));
-		LOG_INF("Connecting to %s", ip_addr_str);
-	}
-	LOG_DBG("fd %d, addrlen %d, fam %s, port %d", *fd, addrlen,
-		str_family(remote_addr->sa_family), port);
-
-	err = zsock_connect(*fd, remote_addr, addrlen);
+	err = zsock_connect(fd, addr, addrlen);
 	if (err) {
 		err = -errno;
 		/* Make sure that ECONNRESET is not returned as it has a special meaning
@@ -306,58 +236,57 @@ static int dl_socket_create_and_connect(int *fd, int proto, int type, uint16_t p
 
 cleanup:
 	if (err) {
-		dl_socket_close(fd);
+		dl_socket_close(&fd);
+		return err;
 	}
 
-	return err;
+	return fd;
 }
 
 int dl_socket_configure_and_connect(int *fd, int proto, int type, uint16_t port,
 				    struct net_sockaddr *remote_addr, const char *hostname,
 				    struct downloader_host_cfg *dl_host_cfg)
 {
-	int err = -1;
-	int fam;
+	struct zsock_addrinfo hints = {
+		.ai_family = dl_host_cfg->family,
+		.ai_socktype = type & ~SOCK_NATIVE_TLS,
+	};
+	struct ready_resolve host = {0};
+	const struct net_sockaddr *addr;
+	net_socklen_t addrlen;
+	char pdn_serv[4];
+	const char *service = NULL;
+	int ret;
 
-	if (remote_addr->sa_family) {
-		goto connect;
+	if (dl_host_cfg->pdn_id) {
+		(void)snprintf(pdn_serv, sizeof(pdn_serv), "%d", dl_host_cfg->pdn_id);
+		service = pdn_serv;
+		hints.ai_flags = AI_PDNSERV;
 	}
 
-	fam = dl_host_cfg->family ? dl_host_cfg->family : NET_AF_INET6;
-
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, fam);
-	if (!err) {
-		goto connect;
-	} else if (dl_host_cfg->family) {
-		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
-		return err;
-	}
-
-	LOG_INF("Host lookup failed for hostname %s on IPv6 (err %d), attempting IPv4",
-		hostname, err);
-
-
-fallback_ipv4:
-	err = dl_socket_host_lookup(hostname, dl_host_cfg->pdn_id, remote_addr, NET_AF_INET);
-	if (err) {
-		LOG_ERR("Host lookup failed for hostname %s, err %d", hostname, err);
-		return err;
-	}
-
-connect:
-	err = dl_socket_create_and_connect(fd, proto, type, port, remote_addr, hostname,
-					   dl_host_cfg);
-	if (err) {
-		if (remote_addr->sa_family == NET_AF_INET6) {
-			LOG_INF("Failed to connect on IPv6 (err %d), attempting IPv4", err);
-			goto fallback_ipv4;
+	/* Try each resolved address once, leaving retries to the caller */
+	ret = ready_resolve(&host, hostname, service, &hints, port);
+	if (ret == 0) {
+		ret = -EHOSTUNREACH;
+		while (ret < 0 && ready_resolve_next(&host, &addr, &addrlen) == 0) {
+			ret = socket_create_and_connect(proto, type, addr, addrlen, hostname,
+							dl_host_cfg);
 		}
-
-		LOG_ERR("Failed to connect, err %d", err);
-		return err;
+		if (ret >= 0) {
+			/* Kept for transports that need the peer address, such as CoAP */
+			memcpy(remote_addr, addr, addrlen);
+			*fd = ret;
+			ret = 0;
+		}
 	}
 
-	return 0;
+	ready_resolve_free(&host);
+
+	if (ret) {
+		LOG_ERR("Failed to connect to %s, err %d", hostname, ret);
+	}
+
+	return ret;
 }
 
 int dl_socket_close(int *fd)

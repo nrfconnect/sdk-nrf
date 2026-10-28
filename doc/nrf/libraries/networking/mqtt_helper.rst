@@ -9,6 +9,8 @@ MQTT helper
 
 This library simplifies Zephyr MQTT API and socket handling.
 
+The library resolves the broker with the :ref:`lib_ready_resolve` library and tries the resolved addresses in order.
+
 Configuration
 *************
 

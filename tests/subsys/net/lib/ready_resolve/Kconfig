@@ -1,0 +1,14 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_MODEM_READINESS
+	bool "Test modem readiness with a faked AT interface"
+
+# Takes precedence over the library default
+config READY_RESOLVE_TRACK_MODEM
+	default y if TEST_MODEM_READINESS
+
+source "Kconfig.zephyr"

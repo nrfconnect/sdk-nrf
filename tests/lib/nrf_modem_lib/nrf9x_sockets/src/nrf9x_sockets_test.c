@@ -214,6 +214,107 @@ void test_nrf9x_socket_offload_getaddrinfo_ipv6_success(void)
 	TEST_ASSERT_EQUAL(res->ai_protocol, NET_IPPROTO_TCP);
 }
 
+static struct test_state_nrf_getaddrinfo_unspec {
+	int ret4;
+	int ret6;
+	int calls[NRF_AF_INET6 + 1];
+} test_state_unspec;
+
+static int nrf_getaddrinfo_family_stub(const char *p_node, const char *p_service,
+				       const struct nrf_addrinfo *p_hints,
+				       struct nrf_addrinfo **pp_res,
+				       int cmock_num_calls)
+{
+	static struct nrf_sockaddr_in6 addr6;
+	static struct nrf_sockaddr_in addr4;
+	int family = p_hints->ai_family;
+	int ret = (family == NRF_AF_INET6) ? test_state_unspec.ret6 : test_state_unspec.ret4;
+
+	TEST_ASSERT_TRUE(family == NRF_AF_INET || family == NRF_AF_INET6);
+	test_state_unspec.calls[family]++;
+
+	if (ret != 0) {
+		return ret;
+	}
+
+	*pp_res = k_calloc(1, sizeof(struct nrf_addrinfo));
+	(*pp_res)->ai_family = family;
+	(*pp_res)->ai_socktype = NRF_SOCK_STREAM;
+	(*pp_res)->ai_protocol = NRF_IPPROTO_TCP;
+	(*pp_res)->ai_addr = (family == NRF_AF_INET6) ? (struct nrf_sockaddr *)&addr6
+						      : (struct nrf_sockaddr *)&addr4;
+
+	return 0;
+}
+
+static int getaddrinfo_unspec(int ret6, int ret4, struct zsock_addrinfo **res)
+{
+	struct zsock_addrinfo hints = {
+		.ai_family = NET_AF_UNSPEC,
+		.ai_socktype = NET_SOCK_STREAM,
+	};
+
+	memset(&test_state_unspec, 0, sizeof(test_state_unspec));
+	test_state_unspec.ret6 = ret6;
+	test_state_unspec.ret4 = ret4;
+
+	__cmock_nrf_getaddrinfo_Stub(nrf_getaddrinfo_family_stub);
+	__cmock_nrf_freeaddrinfo_Stub(nrf_freeaddrinfo_stub);
+
+	return zsock_getaddrinfo(HTTPS_HOSTNAME, NULL, &hints, res);
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_unspec_both(void)
+{
+	struct zsock_addrinfo *res;
+	int ret = getaddrinfo_unspec(0, 0, &res);
+
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(1, test_state_unspec.calls[NRF_AF_INET6]);
+	TEST_ASSERT_EQUAL(1, test_state_unspec.calls[NRF_AF_INET]);
+	TEST_ASSERT_NOT_NULL(res);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, res->ai_family);
+	TEST_ASSERT_NOT_NULL(res->ai_next);
+	TEST_ASSERT_EQUAL(NET_AF_INET, res->ai_next->ai_family);
+	TEST_ASSERT_NULL(res->ai_next->ai_next);
+
+	zsock_freeaddrinfo(res);
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_unspec_ipv4_only(void)
+{
+	struct zsock_addrinfo *res;
+	int ret = getaddrinfo_unspec(NRF_EAI_NONAME, 0, &res);
+
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_NOT_NULL(res);
+	TEST_ASSERT_EQUAL(NET_AF_INET, res->ai_family);
+	TEST_ASSERT_NULL(res->ai_next);
+
+	zsock_freeaddrinfo(res);
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_unspec_ipv6_only(void)
+{
+	struct zsock_addrinfo *res;
+	int ret = getaddrinfo_unspec(0, NRF_EAI_NONAME, &res);
+
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_NOT_NULL(res);
+	TEST_ASSERT_EQUAL(NET_AF_INET6, res->ai_family);
+	TEST_ASSERT_NULL(res->ai_next);
+
+	zsock_freeaddrinfo(res);
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_unspec_none(void)
+{
+	struct zsock_addrinfo *res;
+	int ret = getaddrinfo_unspec(NRF_EAI_AGAIN, NRF_EAI_NONAME, &res);
+
+	TEST_ASSERT_EQUAL(DNS_EAI_NONAME, ret);
+}
+
 void test_nrf9x_socket_offload_close_ebadf(void)
 {
 	int ret;

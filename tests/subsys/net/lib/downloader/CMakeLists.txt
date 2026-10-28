@@ -22,6 +22,7 @@ target_sources(app
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/dl_sanity.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/coap.c
   ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/src/transports/http.c
+  ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/ready_resolve/ready_resolve.c
 )
 
 zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/include/net/)
@@ -29,6 +30,7 @@ zephyr_include_directories(${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/in
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/net/ip/)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/net/lib/sockets)
 zephyr_include_directories(${ZEPHYR_BASE}/subsys/testsuite/include)
+zephyr_include_directories(${ZEPHYR_NRFXLIB_MODULE_DIR}/nrf_modem/include)
 
 zephyr_linker_sources(RODATA ${ZEPHYR_NRF_MODULE_DIR}/subsys/net/lib/downloader/dl_transports.ld)
 
@@ -38,8 +40,8 @@ target_compile_options(app
   -DCONFIG_DOWNLOADER_MAX_FILENAME_SIZE=256
   -DCONFIG_DOWNLOADER_TRANSPORT_PARAMS_SIZE=256
   -DCONFIG_DOWNLOADER_STACK_SIZE=2048
-  -DCONFIG_NET_IPV6=y
-  -DCONFIG_NET_IPV4=y
+  -DCONFIG_NET_IPV6=1
+  -DCONFIG_NET_IPV4=1
   -DCONFIG_COAP_MAX_RETRANSMIT=2
   -DCONFIG_COAP_INIT_ACK_TIMEOUT_MS=100
   -DCONFIG_COAP_BACKOFF_PERCENT=5
@@ -51,4 +53,7 @@ target_compile_options(app
   -DCONFIG_NET_IF_MCAST_IPV4_ADDR_COUNT=1
   -DCONFIG_NET_IF_IPV6_PREFIX_COUNT=2
   -DCONFIG_DOWNLOADER_LOG_LEVEL=4
+  -DCONFIG_READY_RESOLVE_LOG_LEVEL=4
+  -DCONFIG_READY_RESOLVE_TRACK_MODEM=1
+  -DCONFIG_READY_RESOLVE_MODEM_POLL_INTERVAL_MS=10
 )

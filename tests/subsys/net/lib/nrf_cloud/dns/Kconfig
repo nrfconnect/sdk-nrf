@@ -1,0 +1,13 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_NRF_CLOUD_IPV6
+	bool "Test with CONFIG_NRF_CLOUD_IPV6"
+
+config TEST_NRF_CLOUD_STATIC_IPV4
+	bool "Test with CONFIG_NRF_CLOUD_STATIC_IPV4"
+
+source "Kconfig.zephyr"
