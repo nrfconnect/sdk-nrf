@@ -1283,6 +1283,7 @@ Libraries for networking
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
     Previously, the event carried no payload.
   * Fixed an issue where a non-shadow topic containing a Device Shadow operation name, such as ``update/delta``, was reported as a shadow topic.
+  * Fixed an issue where named shadow topics and other AWS reserved topics were reported as classic shadow topics when they ended with a recognized classic shadow operation.
 
 Libraries for NFC
 -----------------

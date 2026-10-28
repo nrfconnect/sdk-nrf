@@ -583,6 +583,49 @@ void test_on_publish_should_not_set_shadow_type_for_non_shadow_topics(void)
 	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
 }
 
+void test_on_publish_should_not_set_shadow_type_for_other_aws_topics(void)
+{
+	mqtt_helper_handlers_register(event_handler_topic_type_check);
+
+	struct mqtt_helper_buf topic = { 0 };
+	struct mqtt_helper_buf payload = { 0 };
+
+	topic_type_expected = AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+
+	/* Named shadow topic. */
+	topic.ptr = "$aws/things/" MQTT_CLIENT_ID "/shadow/name/my-shadow/update/delta";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	/* Shadow topic with an operation that the library does not handle. */
+	topic.ptr = "$aws/things/" MQTT_CLIENT_ID "/shadow/update/documents";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	/* Jobs topic. */
+	topic.ptr = "$aws/things/" MQTT_CLIENT_ID "/jobs/get/accepted";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	/* Shadow topic with extra levels. */
+	topic.ptr = SHADOW_TOPIC_UPDATE_DELTA "/extra";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	/* Incomplete topics. */
+	topic.ptr = "$aws/things/";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic.ptr = "$aws/things/" MQTT_CLIENT_ID;
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+
+	topic.ptr = "$aws/things/" MQTT_CLIENT_ID "/shadow/";
+	topic.size = strlen(topic.ptr);
+	test_mqtt_helper_cfg.cb.on_publish(topic, payload);
+}
+
 int main(void)
 {
 	(void)unity_main();
