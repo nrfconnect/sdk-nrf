@@ -157,7 +157,7 @@ enum nrf_wifi_umac_commands {
 	NRF_WIFI_UMAC_CMD_SQI_SET_THRESHOLD,
 	/** Command to enable/disable ftm responder */
 	NRF_WIFI_UMAC_CMD_FTM_RESPONDER_CONFIG,
-	/** Command to abort meas */
+	/** Comnmand to abort meas */
 	NRF_WIFI_UMAC_CMD_MEAS_ABORT
 };
 
@@ -622,7 +622,7 @@ struct nrf_wifi_sae {
 	unsigned char sae_data[NRF_WIFI_MAX_SAE_DATA_LENGTH];
 } __NRF_WIFI_PKD;
 
-#define NRF_WIFI_MAX_FRAME_LEN 600
+#define NRF_WIFI_MAX_FRAME_LEN 800
 
 /**
  * @brief This structure defines the frame that is intended for transmission.
@@ -2751,13 +2751,9 @@ struct nrf_wifi_umac_event_new_scan_results {
 #define NRF_WIFI_MFP_REQUIRED (1 << 0)
 #define NRF_WIFI_MFP_CAPABLE  (1 << 1)
 
-#define NRF_WIFI_PASN_SUPPORT (1 << 0)
-#define NRF_WIFI_FTM_SUPPORT (1 << 1)
-#define NRF_WIFI_SENSING_SUPPORT (1 << 2)
-#define NRF_WIFI_RANGING_TB (1 << 3)
-#define NRF_WIFI_RANGING_NON_TB (1 << 4)
-#define NRF_WIFI_RANGING_SECURITY (1 << 5)
-
+#define NRF_WIFI_RANGING_TB (1 << 0)
+#define NRF_WIFI_RANGING_NON_TB (1 << 1)
+#define NRF_WIFI_RANGING_SECURITY (1 << 2)
 /**
  * @brief This structure represents the response for NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS.
  *  It contains the displayed scan result.
@@ -2787,9 +2783,18 @@ struct umac_display_results {
 	unsigned char twt_support;
 	/** management frame protection NRF_WIFI_MFP_REQUIRED/NRF_WIFI_MFP_CAPABLE */
 	unsigned char mfp_flag;
+	/** MSMR capabilities */
 	unsigned char msmr_capabilities;
-	/** FTM capabilities */
-	unsigned char ftm_capabilities;
+	/** PASN enable/disable */
+	unsigned char pasn_support;
+	/** FTM enable/disable */
+	unsigned char ftm_support;
+	/** Ranging enable/disable */
+	unsigned char ranging_support;
+	/** Sensing enable/disable */
+	unsigned char sensing_support;
+	/** reserved */
+	unsigned char reserved3;
 	/** reserved */
 	unsigned char reserved4;
 } __NRF_WIFI_PKD;
@@ -3871,7 +3876,7 @@ struct nrf_wifi_tx_buff_done {
 	unsigned char timestamp_t1[6];
 	/** Frame ack received time at Phy */
 	unsigned char timestamp_t4[6];
-	/** Last successful Tx PHY rate in kbps; 0 if unknown or no success */
+	/** Last successful Tx PHY rate in kbps; 0 if unknown */
 	unsigned int tx_rate_kbps;
 	/** Status of Tx packet. Maximum of MAX_TX_AGG_SIZE */
 	unsigned char tx_status_code[0];
@@ -4201,49 +4206,56 @@ enum nrf_wifi_peer_meas_ftm_failure_reasons {
 } __NRF_WIFI_PKD;
 
 /**
- * @brief Bit indices used within the FTM event bitmap to indicate which
- * optional fields are present and valid in a given FTM result report.
+ * @brief - Bit indices used within the FTM (Fine Timing Measurement) event
+ *          bitmap to indicate which optional fields/parameters are present
+ *          and valid in a given FTM event/result report.
  *
- * Each enumerator is a bit position (1 << index) in
- * @ref nrf_wifi_umac_ftm_result.valid_bitmap.
+ *          Each enumerator represents a specific bit position (not a value)
+ *          within the bitmap. A bit is set (1 << index) when the
+ *          corresponding field has been populated with valid data in the
+ *          FTM event structure, allowing the consumer to selectively parse
+ *          only the fields that are actually present (e.g., RTT, distance,
+ *          burst statistics, MAC addresses, timestamps, and location data
+ *          such as LCI/Civic reports).
+ *
  */
 enum NRF_WIFI_FTM_EVENT_BITMAP_INDEX {
-	/** RTT value is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT = 0,
-	/** Distance (derived from RTT) value is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_DIST,
-	/** RTT spread is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT_SPREAD,
-	/** RTT variance is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT_VARIANCE,
-	/** Aggregated RTT across multiple bursts is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_MULTI_BURST_RTT,
-	/** Number of bursts in multi-burst measurement is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_MULTI_BURST_COUNT,
-	/** Current burst index is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_BURST_INDEX,
-	/** Total number of bursts expected is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_TOTAL_BURST,
-	/** Successful FTM count in current burst is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_COUNT,
-	/** Total FTM count across all bursts is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_TOTAL_COUNT,
-	/** Generic measurement value field is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_VALUE,
-	/** Non-ASAP delay value is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_NON_ASAP_DELAY,
-	/** Burst period is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_BURST_PERIOD,
-	/** Local interface MAC address is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_IF_MAC_ADDR,
-	/** Peer MAC address is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_PEER_MAC_ADDR,
-	/** FTM measurement timestamp is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_FTM_TIMESTAMP,
-	/** LCI data is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_LCI_DATA,
-	/** Civic location data is present */
-	NRF_WIFI_FTM_EVENT_BITMAP_INDEX_CIVIC_DATA,
+    /* Bit index: RTT value is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT = 0,
+    /* Bit index: Distance (derived from RTT) value is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_DIST,
+    /* Bit index: RTT spread (max-min variation across samples) is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT_SPREAD,
+    /* Bit index: RTT variance (statistical spread) is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_RTT_VARIANCE,
+    /* Bit index: Aggregated/averaged RTT across multiple bursts is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_MULTI_BURST_RTT,
+    /* Bit index: Number of bursts used in multi-burst measurement is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_MULTI_BURST_COUNT,
+    /* Bit index: Current burst index (sequence number) is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_BURST_INDEX,
+    /* Bit index: Total number of bursts configured/expected is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_TOTAL_BURST,
+    /* Bit index: Number of successful FTM frames/measurements in current burst is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_COUNT,
+    /* Bit index: Total number of FTM frames/measurements across all bursts is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_TOTAL_COUNT,
+    /* Bit index: Generic/raw measurement value field is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_VALUE,
+    /* Bit index: Delay value used for non-ASAP (scheduled) FTM sessions is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_NON_ASAP_DELAY,
+    /* Bit index: Burst period (time between bursts) is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_BURST_PERIOD,
+    /* Bit index: Local interface MAC address is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_IF_MAC_ADDR,
+    /* Bit index: Peer (responder) MAC address is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_PEER_MAC_ADDR,
+    /* Bit index: Timestamp of the FTM measurement/event is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_FTM_TIMESTAMP,
+    /* Bit index: LCI (Location Configuration Information) data is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_LCI_DATA,
+    /* Bit index: Civic location data is present */
+    NRF_WIFI_FTM_EVENT_BITMAP_INDEX_CIVIC_DATA,
 } __NRF_WIFI_PKD;
 
 #define NRF_WIFI_EVENT_RESULT_RSSI_VALID (1 << 0)
@@ -4294,7 +4306,7 @@ struct nrf_wifi_umac_ftm_result {
 	signed long long dist_variance;
 	/** distance spread measured */
 	signed long long dist_spread;
-	/** Valid-field bitmap; bit index see @ref NRF_WIFI_FTM_EVENT_BITMAP_INDEX */
+	/** ftm index bitmap */
 	unsigned int valid_bitmap;
 } __NRF_WIFI_PKD;
 
