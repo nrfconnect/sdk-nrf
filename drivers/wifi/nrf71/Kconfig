@@ -484,6 +484,7 @@ config WIFI_NRF71_SCAN_TIMEOUT_S
 
 choice NRF_WIFI_OP_BAND
 	prompt "nRF Wi-Fi operation bands"
+	default NRF_WIFI_ALL_BAND if SOC_NRF7120E
 	default NRF_WIFI_DUAL_BAND
 
 config NRF_WIFI_ALL_BAND
