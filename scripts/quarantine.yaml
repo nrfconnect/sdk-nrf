@@ -57,7 +57,7 @@
     - nrf.extended.drivers.uart.uart_elementary_dual.pm
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr
+    - nrf54lv10dk/nrf54lv10a/cpuflpr
   comment: "RAM Overflow"
 
 - scenarios:
