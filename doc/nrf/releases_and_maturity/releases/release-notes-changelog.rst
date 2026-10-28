@@ -258,6 +258,8 @@ Bluetooth® LE
     The option is disabled by default, and enabling it might cause deprecation warnings or errors during compilation.
   * Support for Channel Classification in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_CHANNEL_CLASSIFICATION` Kconfig option.
   * Support for Decision Based Advertising Filtering in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING` Kconfig option.
+  * Support for a vendor-specific minimum connection event length mode.
+  * The :kconfig:option:`CONFIG_BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT` Kconfig option to set the minimum connection event length mode on boot.
 
 Bluetooth Mesh
 --------------
