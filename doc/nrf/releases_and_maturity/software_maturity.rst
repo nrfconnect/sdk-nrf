@@ -351,9 +351,9 @@ The following table indicates the software maturity levels of the support for ea
            - Experimental
            - Supported
            - Supported
-           - Experimental
-           - Experimental
-           - Experimental
+           - Supported
+           - Supported
+           - Supported
          * - **Bluetooth Mesh**
            - Supported
            - Supported
@@ -795,9 +795,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Coded PHY (Long Range)**
              - Supported
              - Supported
@@ -805,7 +805,7 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - --
              - --
            * - **Concurrent Roles**\ :sup:`1`
@@ -815,9 +815,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Data Length Extensions**
              - Supported
              - Supported
@@ -825,9 +825,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Advertising Extensions**
              - Supported
              - Supported
@@ -835,9 +835,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Periodic Advertising with Responses**
              - Supported
              - Supported
@@ -845,9 +845,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Periodic Advertising Sync Transfer**
              - Supported
              - Supported
@@ -855,9 +855,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Isochronous Channels**
              - Supported
              - Supported
@@ -865,7 +865,7 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - --
              - --
            * - **Direction Finding**\ :sup:`3`
@@ -885,9 +885,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Connection Subrating**
              - Supported
              - Supported
@@ -895,9 +895,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Channel Sounding**
              - Supported
              - Supported
@@ -905,7 +905,7 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
+             - Supported
              - --
              - --
            * - **GATT Database Hash**
@@ -915,9 +915,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Enhanced ATT**
              - Supported
              - Supported
@@ -925,9 +925,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **L2CAP Connection Oriented Channels**
              - Supported
              - Supported
@@ -935,9 +935,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Shorter Connection Intervals**
              - Supported
              - Supported
@@ -945,9 +945,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Frame Space Update**
              - Supported
              - Supported
@@ -955,9 +955,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
            * - **Extended Feature Set**
              - Supported
              - Supported
@@ -965,9 +965,9 @@ The following table indicates the software maturity levels of the support for ea
              - Experimental
              - Supported
              - Supported
-             - Experimental
-             - Experimental
-             - Experimental
+             - Supported
+             - Supported
+             - Supported
 
   | [1]: Subject to RAM availability
   | [2]: Do not support encrypting and decrypting the Isochronous Channels packets
@@ -1090,9 +1090,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **Multi-protocol Support**
               - Supported
               - Supported
@@ -1100,9 +1100,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **QoS Conn Event Reports**
               - Supported
               - Supported
@@ -1110,9 +1110,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **QoS Channel Survey**
               - Supported
               - Supported
@@ -1120,9 +1120,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
             * - **Radio Coexistence**
               - Supported
               - Supported
@@ -1130,9 +1130,9 @@ The following table indicates the software maturity levels of the support for ea
               - Experimental
               - Supported
               - Supported
-              - Experimental
-              - Experimental
-              - Experimental
+              - Supported
+              - Supported
+              - Supported
 
 Thread features support
 ***********************
