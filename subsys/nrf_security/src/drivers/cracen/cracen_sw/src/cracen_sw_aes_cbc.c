@@ -146,11 +146,16 @@ static psa_status_t complete_partial_block(cracen_cipher_operation_t *operation,
 	size_t bytes_to_copy;
 
 	bytes_to_copy = SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes;
-	if (bytes_to_copy > *remaining_input) {
-		/* Not enough data to complete a block, just buffer it */
+	if (bytes_to_copy > *remaining_input ||
+	    (bytes_to_copy == *remaining_input && operation->dir == CRACEN_DECRYPT &&
+	     operation->alg == PSA_ALG_CBC_PKCS7)) {
+		/* Not enough data to complete a block, or the last block of a CBC_PKCS7
+		 * decryption, which is kept for finish(). Just buffer it.
+		 */
 		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
 		       *current_input, *remaining_input);
 		operation->unprocessed_input_bytes += *remaining_input;
+		*remaining_input = 0;
 		return PSA_SUCCESS;
 	}
 
