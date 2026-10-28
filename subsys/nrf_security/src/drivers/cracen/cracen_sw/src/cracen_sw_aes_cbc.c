@@ -138,41 +138,6 @@ static psa_status_t process_block(cracen_cipher_operation_t *operation, const ui
 						  : cbc_decrypt_block(operation, input, output);
 }
 
-static psa_status_t complete_partial_block(cracen_cipher_operation_t *operation,
-					   const uint8_t **current_input, uint8_t **current_output,
-					   size_t *remaining_input, size_t *bytes_written)
-{
-	psa_status_t status;
-	size_t bytes_to_copy;
-
-	bytes_to_copy = SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes;
-	if (bytes_to_copy > *remaining_input) {
-		/* Not enough data to complete a block, just buffer it */
-		memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
-		       *current_input, *remaining_input);
-		operation->unprocessed_input_bytes += *remaining_input;
-		return PSA_SUCCESS;
-	}
-
-	/* Complete the partial block */
-	memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes, *current_input,
-	       bytes_to_copy);
-
-	/* Process the completed block */
-	status = process_block(operation, operation->unprocessed_input, *current_output);
-	if (status != PSA_SUCCESS) {
-		return status;
-	}
-
-	*current_input += bytes_to_copy;
-	*current_output += SX_BLKCIPHER_AES_BLK_SZ;
-	*remaining_input -= bytes_to_copy;
-	*bytes_written += SX_BLKCIPHER_AES_BLK_SZ;
-	operation->unprocessed_input_bytes = 0;
-
-	return PSA_SUCCESS;
-}
-
 psa_status_t cracen_sw_aes_cbc_update(cracen_cipher_operation_t *operation, const uint8_t *input,
 				      size_t input_length, uint8_t *output, size_t output_size,
 				      size_t *output_length)
@@ -202,42 +167,39 @@ psa_status_t cracen_sw_aes_cbc_update(cracen_cipher_operation_t *operation, cons
 	current_input = input;
 	current_output = output;
 
-	/* Process any leftover data from previous update */
-	if (operation->unprocessed_input_bytes > 0) {
-		status = complete_partial_block(operation, &current_input, &current_output,
-						&remaining_input, &bytes_written);
+	while (remaining_input > 0) {
+		const uint8_t *block = current_input;
+		size_t bytes_to_copy = SX_BLKCIPHER_AES_BLK_SZ - operation->unprocessed_input_bytes;
+
+		/* Buffer an incomplete block, and keep the last block of a CBC_PKCS7 decryption
+		 * for finish().
+		 */
+		if (remaining_input < bytes_to_copy ||
+		    (remaining_input == bytes_to_copy && operation->dir == CRACEN_DECRYPT &&
+		     operation->alg == PSA_ALG_CBC_PKCS7)) {
+			memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
+			       current_input, remaining_input);
+			operation->unprocessed_input_bytes += remaining_input;
+			break;
+		}
+
+		/* Complete the buffered partial block from previous updates */
+		if (operation->unprocessed_input_bytes > 0) {
+			memcpy(operation->unprocessed_input + operation->unprocessed_input_bytes,
+			       current_input, bytes_to_copy);
+			block = operation->unprocessed_input;
+		}
+
+		status = process_block(operation, block, current_output);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
-	}
 
-	/* Process complete blocks */
-	while (remaining_input >= SX_BLKCIPHER_AES_BLK_SZ) {
-		/* For CBC_PKCS7 decryption, we need to keep the last block for finish() */
-		if (operation->dir == CRACEN_DECRYPT && operation->alg == PSA_ALG_CBC_PKCS7) {
-			if (remaining_input == SX_BLKCIPHER_AES_BLK_SZ) {
-				memcpy(operation->unprocessed_input, current_input,
-				       SX_BLKCIPHER_AES_BLK_SZ);
-				operation->unprocessed_input_bytes = SX_BLKCIPHER_AES_BLK_SZ;
-				break;
-			}
-		}
-
-		status = process_block(operation, current_input, current_output);
-		if (status != PSA_SUCCESS) {
-			return status;
-		}
-
-		current_input += SX_BLKCIPHER_AES_BLK_SZ;
+		current_input += bytes_to_copy;
 		current_output += SX_BLKCIPHER_AES_BLK_SZ;
-		remaining_input -= SX_BLKCIPHER_AES_BLK_SZ;
+		remaining_input -= bytes_to_copy;
 		bytes_written += SX_BLKCIPHER_AES_BLK_SZ;
-	}
-
-	/* Buffer any remaining incomplete block */
-	if (remaining_input > 0) {
-		memcpy(operation->unprocessed_input, current_input, remaining_input);
-		operation->unprocessed_input_bytes = remaining_input;
+		operation->unprocessed_input_bytes = 0;
 	}
 
 	*output_length = bytes_written;
