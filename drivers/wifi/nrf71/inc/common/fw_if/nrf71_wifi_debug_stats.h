@@ -106,8 +106,11 @@ struct umac_rx_dbg_params {
 	unsigned int max_coalesce_pkts;
 	/** Packets received with null skb pointer from LMAC */
 	unsigned int null_skb_pointer_from_lmac;
+	/** Packets received with null skb pointer from host RX buffer command */
 	unsigned int null_skb_pointer_from_host;
+	/** Null skb pointer while resubmitting RX buffers to LMAC */
 	unsigned int null_skb_pointer_resubmitted;
+	/** Non-data management frame in coalesced MPDU secondary skb path */
 	unsigned int unexpected_mgmt_pkt;
 	/** Number of packets flushed from reorder buffer before going to sleep */
 	unsigned int reorder_flush_pkt_count;
@@ -115,11 +118,18 @@ struct umac_rx_dbg_params {
 	unsigned int unsecured_data_error;
 	/** Packets received with null skb pointer from LMAC in coalesce event */
 	unsigned int pkts_in_null_skb_pointer_event;
+	/** Total RX buffer resubmit operations to LMAC */
 	unsigned int rx_buffs_resubmit_cnt;
+	/** AMSDU packets received in reorder path */
 	unsigned int rx_packet_amsdu_cnt;
+	/** MPDU entries processed in coalesced RX event */
 	unsigned int rx_packet_mpdu_cnt;
+	/** Failed to prepare secondary skb for coalesced MPDU */
 	unsigned int rx_err_secondary_pkt;
+	/** Invalid pkt_info type on host RX buffer release */
 	unsigned int rx_err_invalid_pkt_info_type;
+	/** Number of HE TB frames received */
+	unsigned int rx_he_tb_frame_cnt;
 } __NRF_WIFI_PKD;
 
 /**
@@ -201,6 +211,8 @@ struct umac_tx_dbg_params {
 	unsigned int tx_packet_non_mgmt_data_count;
 	/** Number of EAPOL packets sent */
 	unsigned int tx_packet_eapol_count;
+	/** Number of HE TB frames sent */
+	unsigned int tx_he_tb_frame_cnt;
 } __NRF_WIFI_PKD;
 
 /**
@@ -301,6 +313,8 @@ struct umac_cmd_evnt_dbg_params {
 	unsigned int LMAC_CMD_PS;
 	/** Current power save state configured to LMAC through LMAC_CMD_PS command */
 	unsigned int CURR_STATE;
+	/** Call site of the most recent disconnect, @ref umac_disc_site */
+	unsigned int last_disconnect_site;
 } __NRF_WIFI_PKD;
 
 /**
@@ -327,21 +341,21 @@ struct umac_scan_dbg_params {
 	unsigned int scan_complete_from_lmac_6g;
 	/** Scan-done notifications toward upper layers (cfg80211) */
 	unsigned int scan_done_to_host;
-	/** Display scan: ieee80211_abort_scan when DB is at cap and a stronger new BSS arrives */
+	/** Display scans aborted because the BSS limit was reached */
 	unsigned int display_scan_abort_bss_limit;
-	/** Host NL80211 abort-scan (rdev_abort_scan / cancel_hw_scan path) */
+	/** Abort-scan requests from the host */
 	unsigned int scan_abort_req_from_host;
-	/** LMAC_CMD_SCAN_ABORT successfully queued to LMAC */
+	/** LMAC_CMD_SCAN_ABORT queued to LMAC */
 	unsigned int scan_abort_cmd_to_lmac;
-	/** LMAC_CMD_SCAN_ABORT not sent (e.g. kmalloc failure in rpu_scan_abort) */
+	/** LMAC_CMD_SCAN_ABORT not sent, rpu_scan_abort alloc failed */
 	unsigned int scan_abort_cmd_alloc_fail;
-	/** wait_for_scan_abort timed out waiting for SCAN_ABORT_DONE */
+	/** wait_for_scan_abort gave up waiting for SCAN_ABORT_DONE */
 	unsigned int scan_abort_wait_timeout;
-	/** LMAC_EVENT_SCAN_ABORT_COMPLETE handled in rpu_scan_complete (IRQ path) */
+	/** LMAC_EVENT_SCAN_ABORT_COMPLETE seen in rpu_scan_complete */
 	unsigned int scan_abort_complete_lmac_irq;
-	/** cancel_hw_scan: wait succeeded; mac80211 completed from LMAC IRQ */
+	/** cancel_hw_scan: the LMAC event completed the scan for us */
 	unsigned int scan_abort_cancel_scan_irq_done;
-	/** cancel_hw_scan: forced ieee80211_scan_completed after abort wait timeout */
+	/** cancel_hw_scan: completed the scan itself after the timeout */
 	unsigned int scan_abort_cancel_scan_timeout_umac;
 } __NRF_WIFI_PKD;
 
@@ -404,6 +418,8 @@ struct umac_sleep_stats {
 	unsigned int pending_cmd_resubmit;
 	unsigned int umac_goto_sleep;
 	unsigned int max_twt_awake_cnt;
+	unsigned int last_sleep_req_status;
+	unsigned int umac_goto_sleep_failed;
 };
 /**
  * @brief This structure specifies the UMAC SoftAP debug parameters used for debugging purpose.
@@ -770,7 +786,7 @@ struct ftm_debug_stats {
 	unsigned int beacon_not_captured;
 	unsigned int ftm_event;
 	unsigned int ftm_event_failed;
-	unsigned int ftm_timer_expired;
+    unsigned int ftm_timer_expired;
 	unsigned int ftm_initiator_cpy_params_cnt;
 	unsigned int ftm_null_frm_send_success;
 	unsigned int ftm_null_frm_send_fail;
@@ -812,6 +828,8 @@ struct ftm_debug_stats {
 	unsigned int ftm_inv_req_cnt;
 	unsigned int lci_buffer_overflow;
 	unsigned int civic_buffer_overflow;
+	unsigned int ftm_mac_addr_override_cnt;
+	unsigned int ftm_mac_addr_restore_cnt;
 };
 
 struct lp_rx_stats {
@@ -1114,6 +1132,12 @@ struct rpu_lmac_stats {
 	unsigned int warmBootCnt;
 } __NRF_WIFI_PKD;
 
+/*! LMAC error event status */
+enum LMAC_ERROR_ID {
+	/*! LMAC internal memory full */
+	LMAC_FW_PEER_DATA_BASE_FULL = 0,
+};
+
 /**
  * @brief This structure defines the PHY (Physical Layer) debug statistics.
  *
@@ -1178,7 +1202,7 @@ struct nrf_wifi_rf_get_rx_debug_stats {
 struct phy_debug_stats {
 	unsigned int stats_category;
 	union {
-		unsigned int phy_stats[64];
+		unsigned int phy_stats[84];
 	};
 } __NRF_WIFI_PKD;
 
@@ -1191,6 +1215,6 @@ struct nrf_wifi_rpu_debug_stats {
 } __NRF_WIFI_PKD;
 
 /**
- * @}
+ *
  */
 #endif /* __NRF71_WIFI_STATS_H__ */

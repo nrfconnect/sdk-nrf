@@ -242,7 +242,7 @@ enum nrf_wifi_sys_commands {
 	NRF_WIFI_CMD_UPDATE_XO,
 	/** Command to configure LMAC tuning parameters */
 	NRF_WIFI_CMD_LMAC_TUNING_PARAMS,
-	/** Radio test: push full @ref rpu_conf_params (MAC/PHY update) to LMAC/PHY */
+	/** Radio test: update the MAC parameters while a test is running */
 	NRF_WIFI_CMD_MAC_PARAM_UPDATE,
 };
 
@@ -327,7 +327,7 @@ struct rpu_conf_rx_radio_test_params {
 	struct chan_params chan;
 	/** Copy OTP params to this memory */
 	signed char phy_threshold;
-	/** Calibration bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB.
+	/** Calibration bit map value. More information can be found in the phy_rf_params.h file.
 	 */
 	unsigned int phy_calib;
 	/** Start Rx : 1, Stop Rx :0 */
@@ -439,7 +439,7 @@ struct nrf_wifi_sys_params {
 	unsigned int bcn_time_out;
 	/** Set to 1 if rpu is expected to perform sleep clock calibration */
 	unsigned int calib_sleep_clk;
-	/** calib bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB */
+	/** calib bit map value. More info can be found in phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
 	unsigned int phy_calib;
 	/** MAC address of the interface. Not applicable to Radio Test mode */
 	unsigned char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
@@ -707,6 +707,19 @@ struct nrf_wifi_cmd_mode {
 	signed int mode;
 
 } __NRF_WIFI_PKD;
+
+/**
+ * @brief Operating power mode applied at radio-test channels.
+ */
+enum nrf_wifi_rt_oper_power_mode {
+	/** Low power mode */
+	low_power_mode = 0,
+	/** Normal power mode */
+	normal_mode = 1,
+};
+
+typedef enum nrf_wifi_rt_oper_power_mode sys_oper_mode_e;
+
 /**
  * @brief This structure describes different Physical Layer (PHY) configuration parameters used
  *  in RF test and Radio test scenarios. These parameters are specific to testing and evaluating
@@ -832,6 +845,8 @@ struct rpu_conf_params {
 	unsigned int vtf_buffer_addr;
 	/** BSS check in RX filter: 0=disable, 1=enable */
 	unsigned char bss_check_enable;
+	/** Operating power mode (@ref sys_oper_mode_e). Default: @c normal_mode. */
+	unsigned char power_mode;
 } __NRF_WIFI_PKD;
 
 /**
@@ -868,12 +883,14 @@ struct nrf_wifi_radio_test_init_info {
 	struct chan_params chan;
 	/** Phy threshold value to be sent to LMAC in channel programming */
 	signed char phy_threshold;
-	/** Calibration bit map value. See nrf71_wifi_rf.h NRF_WIFI_DEF_PHY_CALIB */
+	/** Calibration bit map value. refer phy_rf_params.h NRF_WIFI_DEF_PHY_CALIB */
 	unsigned int phy_calib;
 	/** Receive BSS color value (1 to 63) */
 	unsigned char rx_bss_color;
 	/** Receive station ID value (1 to 2047) */
 	unsigned short rx_station_id;
+	/** Operating power mode (@ref sys_oper_mode_e). Default: @c normal_mode. */
+	unsigned char power_mode;
 } __NRF_WIFI_PKD;
 
 /**
@@ -901,13 +918,13 @@ struct nrf_wifi_cmd_rx {
 } __NRF_WIFI_PKD;
 
 /**
- * @brief Radio test command for MAC/PHY update using the full set
- *  of @ref rpu_conf_params (see LMAC_CMD_CONFIG_MAC_PARAMS).
+ * @brief This structure defines the command used to update the MAC parameters
+ *  without restarting an ongoing radio test.
  */
 struct nrf_wifi_cmd_mac_param_update {
 	/** UMAC header, @ref nrf_wifi_sys_head */
 	struct nrf_wifi_sys_head sys_head;
-	/** Full radio-test configuration @ref rpu_conf_params */
+	/** radio test configuration parameters @ref rpu_conf_params */
 	struct rpu_conf_params conf;
 } __NRF_WIFI_PKD;
 
@@ -992,7 +1009,7 @@ struct nrf_wifi_umac_event_error_stats {
 	struct nrf_wifi_sys_head sys_head;
 	/** Statistics type &enum rpu_stats_type */
 	signed int stats_type;
-	/** Error code, see &enum lmac_fail_events or &enum umac_fail_events */
+	/** @ref enum LMAC_ERROR_ID OR @ref enum UMAC_ERROR_ID*/
 	unsigned int status_code;
 } __NRF_WIFI_PKD;
 
@@ -1509,7 +1526,9 @@ enum nrf_wifi_cmd_status {
 	/** Invalid channel error */
 	NRF_WIFI_UMAC_INVALID_CHNL,
 	/** Invalid power error wrt configured regulatory domain */
-	NRF_WIFI_UMAC_INVALID_TXPWR
+	NRF_WIFI_UMAC_INVALID_TXPWR,
+	/** Invalid rate error wrt configured regulatory domain */
+	NRF_WIFI_UMAC_INVALID_RATE
 };
 
 /**
@@ -1585,7 +1604,7 @@ struct nrf_wifi_cmd_gi_config {
 #define HW_SLEEP_ENABLE 2
 #define SW_SLEEP_ENABLE 1
 #define SLEEP_DISABLE 0
-#define HW_DELAY 1100
+#define HW_DELAY 4000
 #define SW_DELAY 5000
 #define BCN_TIMEOUT 20000
 #define CALIB_SLEEP_CLOCK_ENABLE 1
@@ -1772,7 +1791,9 @@ enum nrf_wifi_rf_test {
 	NRF_WIFI_RF_TEST_RX_DYN_PKT_CAP,
 	NRF_WIFI_RF_TEST_TX_TONE,
 	NRF_WIFI_RF_TEST_XO_TUNE,
-	NRF_WIFI_RF_TEST_MAX,
+	NRF_WIFI_RF_TEST_RX_AGC_ENB_CAP,
+	NRF_WIFI_RF_TEST_RX_EXT_EVENT_CAP,
+	NRF_WIFI_RF_TEST_MAX
 };
 
 /**
@@ -1785,7 +1806,9 @@ enum nrf_wifi_rf_test_event {
 	NRF_WIFI_RF_TEST_EVENT_RX_DYN_PKT_CAP,
 	NRF_WIFI_RF_TEST_EVENT_TX_TONE_START,
 	NRF_WIFI_RF_TEST_EVENT_XO_TUNE,
-	NRF_WIFI_RF_TEST_EVENT_MAX,
+	NRF_WIFI_RF_TEST_EVENT_RX_AGC_ENB_CAP,
+	NRF_WIFI_RF_TEST_EVENT_RX_EXT_EVENT_CAP,
+	NRF_WIFI_RF_TEST_EVENT_MAX
 };
 
 #define NRF_WIFI_RF_TEST_RX_CAPTURE_MAX_SAMPLES 12256
@@ -1798,7 +1821,7 @@ struct nrf_wifi_rf_test_capture_params {
 	unsigned char test;
 
 	/* Number of samples to be captured. */
-	unsigned short int cap_len;
+	unsigned int cap_len;
 
 	/* Capture timeout in seconds. */
 	unsigned short int cap_time;
@@ -1830,6 +1853,10 @@ struct nrf_wifi_rf_test_capture_params {
 
 	/* address of the capture data */
 	unsigned int *capture_addr;
+
+	/* End address of the capture buffer in external RAM after DMA transfer is completed */
+    unsigned int *cap_buf_end_addr;
+
 } __NRF_WIFI_PKD;
 
 /** Tone type for RF test TX tone: 0 = complex, 1 = real-only, 2 = imag-only. */
@@ -1991,48 +2018,29 @@ struct nrf_wifi_board_params {
 } __NRF_WIFI_PKD;
 
 /**
- * @struct host_rpu_umac_info
+ * @brief This structure represents the bitmap of STA (Station)
+ *  pending frames in SoftAP power save mode.
+ *
+ */
+ struct sap_pend_frames_bitmap {
+	/** STA MAC address */
+	unsigned char mac_addr[6];
+	/** Pending frames bitmap for each access category */
+	unsigned char pend_frames_bitmap;
+} __NRF_WIFI_PKD;
+
+/**
  * @brief This structure represents the information related to UMAC.
  *
  */
-struct host_rpu_umac_info {
+struct host_rpu_umac_if_info {
 	/** Boot status signature */
 	unsigned int boot_status;
 	/** UMAC version */
 	unsigned int version;
-	/** OTP params */
-	unsigned int info_part;
-	/** OTP params */
-	unsigned int info_variant;
-	/** OTP params */
-	unsigned int info_lromversion;
-	/** OTP params */
-	unsigned int info_uromversion;
-	/** OTP params */
-	unsigned int info_uuid[4];
-	/** OTP params */
-	unsigned int info_spare0;
-	/** OTP params */
-	unsigned int info_spare1;
-	/** OTP params */
-	unsigned int mac_address0[2];
-	/** OTP params */
-	unsigned int mac_address1[2];
-	/** OTP params */
-	unsigned int calib[9];
+	/** @ref sap_pend_frames_bitmap */
+	struct sap_pend_frames_bitmap sap_bitmap[NRF_WIFI_MAX_SAP_CLIENTS];
 } __NRF_WIFI_PKD;
-
-/**
- * @brief Structure to hold OTP region information.
- *
- */
-struct nrf_wifi_fmac_otp_info {
-	/** OTP region information. */
-	struct host_rpu_umac_info info;
-	/** Flags indicating which OTP regions are valid. */
-	unsigned int flags;
-};
-
 
 /** XO adjustment value */
 struct nrf_wifi_xo_freq_offset {
@@ -2208,7 +2216,7 @@ struct nrf_wifi_cmd_xo_tune {
 #define NRF_WIFI_SQI_RSSI_HYST_DEF 4
 
 /**
- * @enum nrf_wifi_sqi
+ * @enum nrf_wifi_sqi_signal_source
  * @brief Enumerates the available signal sources for SQI measurement.
  *
  * This enumeration defines the various signal sources that can be used for
@@ -2257,6 +2265,8 @@ struct nrf_wifi_cmd_sqi {
 	unsigned int nrf_wifi_avg_cnt;
 } __NRF_WIFI_PKD;
 
+#define FTM_MUSIC_NUM_PARAMS 4
+
 struct lmac_tuning_params {
 	unsigned int ofdm_sifs_value;
 	unsigned int dsss_sifs_value;
@@ -2302,6 +2312,17 @@ struct lmac_tuning_params {
 	int tod_offset;
 	int toa_offset;
 	unsigned int clock_mode;
+	unsigned int clear_int_ext_clk_req;
+	/* spare getFtmMusic() inputs */
+	int ftm_music_param[FTM_MUSIC_NUM_PARAMS];
+	/* Receive buffered broadcast/multicast in LP RX instead of switching to TRX. Disabled at cold boot */
+	unsigned int lp_rx_bcast_enable;
+	/* Highest broadcast/multicast rate received in LP RX, encoded like a TX rate: DSSS/CCK and
+	 * legacy OFDM in 500 kbps units (4 = 2 Mbps, 18 = 9 Mbps), HT/VHT/HE as 0x80 + MCS (0x82 = MCS2)
+	 */
+	unsigned int lp_rx_max_dsss_rate;
+	unsigned int lp_rx_max_ofdm_rate;
+	unsigned int lp_rx_max_mcs;
 	/* reserved for patching */
 	unsigned int reserved[16];
 } __NRF_WIFI_PKD;
