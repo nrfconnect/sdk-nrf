@@ -1825,6 +1825,10 @@ static uint8_t vs_cmd_put(uint8_t const *const cmd, uint8_t *const raw_event_out
 #if defined(CONFIG_BT_CONN)
 	case SDC_HCI_OPCODE_CMD_VS_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_SET:
 		return sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set((void *)cmd_params);
+#if defined(CONFIG_BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE)
+	case SDC_HCI_OPCODE_CMD_VS_MIN_CONN_EVENT_LENGTH_MODE_ENABLE:
+		return sdc_hci_cmd_vs_min_conn_event_length_mode_enable((void *)cmd_params);
+#endif
 #endif
 #if defined(CONFIG_BT_CTLR_ISO_TX_BUFFERS)
 	case SDC_HCI_OPCODE_CMD_VS_ISO_READ_TX_TIMESTAMP:

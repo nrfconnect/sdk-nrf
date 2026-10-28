@@ -1521,6 +1521,17 @@ static int hci_driver_open(const struct device *dev)
 		MULTITHREADING_LOCK_RELEASE();
 		return -ENOTSUP;
 	}
+
+	if (IS_ENABLED(CONFIG_BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT)) {
+		sdc_hci_cmd_vs_min_conn_event_length_mode_enable_t params = {
+			.enable = 1
+		};
+		err = sdc_hci_cmd_vs_min_conn_event_length_mode_enable(&params);
+		if (err) {
+			MULTITHREADING_LOCK_RELEASE();
+			return -ENOTSUP;
+		}
+	}
 #endif /* CONFIG_BT_CONN */
 
 #if defined(CONFIG_BT_CENTRAL)

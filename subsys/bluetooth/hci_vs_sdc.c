@@ -281,6 +281,14 @@ int hci_vs_sdc_min_val_of_max_acl_tx_payload_set(
 				 sizeof(*params));
 }
 
+int hci_vs_sdc_min_conn_event_length_mode_enable(
+	const sdc_hci_cmd_vs_min_conn_event_length_mode_enable_t *params)
+{
+	return hci_vs_cmd_no_rsp(SDC_HCI_OPCODE_CMD_VS_MIN_CONN_EVENT_LENGTH_MODE_ENABLE,
+				 params,
+				 sizeof(*params));
+}
+
 int hci_vs_sdc_iso_read_tx_timestamp(const sdc_hci_cmd_vs_iso_read_tx_timestamp_t *params,
 				     sdc_hci_cmd_vs_iso_read_tx_timestamp_return_t *return_params)
 {
