@@ -571,8 +571,12 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	    operation->dir == CRACEN_DECRYPT) {
 		/* The last block contains padding. The block containing padding
 		 * must be handled in finish operation. If input data is block
-		 * aligned we must postpone processing of the last block.
+		 * aligned we must postpone processing of the last block. If the input
+		 * only filled the buffered block, that block is the last one.
 		 */
+		if (input_length == 0) {
+			return PSA_SUCCESS;
+		}
 		if (block_bytes == input_length) {
 			block_bytes -= (uint32_t)operation->blk_size;
 		}
