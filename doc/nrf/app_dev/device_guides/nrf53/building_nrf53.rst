@@ -83,7 +83,7 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
             1. |open_terminal_window_with_environment|
             #. Run the following command to erase the flash memory of the network core and program the network sample:
 
-               .. code-block:: console
+               .. nrfutil-command:: console
 
                   nrfutil device program --firmware zephyr.hex --options chip_erase_mode=ERASE_ALL --core Network
 
@@ -97,7 +97,7 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
 
             #. Navigate to the build folder of the application sample and run the following command to erase the flash memory of the application core and program the application sample:
 
-               .. code-block:: console
+               .. nrfutil-command:: console
 
                   nrfutil device program --firmware zephyr.hex  --options chip_erase_mode=ERASE_ALL
 
@@ -106,7 +106,7 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
 
             #. Reset the development kit:
 
-               .. code-block:: console
+               .. nrfutil-command:: console
 
                   nrfutil device reset --reset-kind=RESET_PIN
 
@@ -135,7 +135,7 @@ To program the nRF5340 DK from the command line, use either west or :ref:`nRF Ut
 
             Enter the following commands to program multiple image builds for different cores:
 
-            .. code-block:: console
+            .. nrfutil-command:: console
 
                nrfutil device program --firmware merged_<board>_nrf5340_cpunet.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP
                nrfutil device program --firmware merged_<board>_nrf5340_cpuapp.hex --options verify=VERIFY_READ,chip_erase_mode=ERASE_CTRL_AP

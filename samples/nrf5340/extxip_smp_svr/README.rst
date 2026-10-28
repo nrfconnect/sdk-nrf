@@ -130,7 +130,7 @@ Use ``nrfutil mcu-manager serial`` on a computer to upload images and control th
 #. List images on the device.
    Replace ``<serial_port>`` with your port (for example, :file:`/dev/ttyACM0` or :file:`COM3`).
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
@@ -139,7 +139,7 @@ Use ``nrfutil mcu-manager serial`` on a computer to upload images and control th
 #. Upload each signed image that is part of the update.
    Repeat the command for every image you need to update, setting ``--image-number`` and ``--firmware`` accordingly:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 0 --firmware build_v2/extxip_smp_svr/zephyr/zephyr.internal.signed.bin
       nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 1 --firmware build_v2/signed_by_mcuboot_and_b0_<net_core_app_name>.bin
@@ -147,7 +147,7 @@ Use ``nrfutil mcu-manager serial`` on a computer to upload images and control th
 
 #. List the images again and note the hash of each uploaded image in the secondary slot:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
@@ -159,7 +159,7 @@ Use ``nrfutil mcu-manager serial`` on a computer to upload images and control th
 
 #. Mark each uploaded image for test, using the hash from the previous step:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-test --serial-port <serial_port> --hash <hash>
 
@@ -167,7 +167,7 @@ Use ``nrfutil mcu-manager serial`` on a computer to upload images and control th
 
 #. Reset the device:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial reset --serial-port <serial_port>
 

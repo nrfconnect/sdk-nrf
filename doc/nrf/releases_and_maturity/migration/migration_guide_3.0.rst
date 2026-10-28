@@ -81,7 +81,7 @@ Build system
      1. Follow the steps for `Installing nRF Util`_ in its official documentation.
      2. Install the `nrfutil device <Device command overview_>`_ using the following command:
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil install device=2.8.8 --force
 
@@ -169,13 +169,13 @@ nRF Util
       #. On macOS, to run the nRF Util executable, you need to allow it in the system settings.
       #. Verify the version of the nRF Util installation on your machine by running the following command:
 
-         .. code-block::
+         .. nrfutil-command:: console
 
             nrfutil --version
 
       #. If your version is lower than 7.13.0, run the following command to update nRF Util:
 
-         .. code-block::
+         .. nrfutil-command:: console
 
             nrfutil self-upgrade
 
@@ -190,7 +190,7 @@ nRF Util device
 
     Install the nRF Util ``device`` command v2.8.8 as follows:
 
-    .. code-block::
+    .. nrfutil-command:: console
 
        nrfutil install device=2.8.8 --force
 
@@ -204,7 +204,7 @@ nRF Util trace
   * nRF Util ``trace`` command has been updated to v3.3.0.
     Install the nRF Util ``trace`` command v3.3.0 as follows:
 
-    .. code-block::
+    .. nrfutil-command:: console
 
        nrfutil install trace=3.3.0 --force
 
@@ -218,7 +218,7 @@ nRF Util suit
    * nRF Util ``suit`` command has been updated to v0.9.0.
      Install the nRF Util ``suit`` command v0.9.0 as follows:
 
-     .. code-block::
+     .. nrfutil-command:: console
 
         nrfutil install suit=0.9.0 --force
 
@@ -242,13 +242,13 @@ nRF54H20 BICR
 
      #. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil device list
 
      #. Program the BICR by running nRF Util from your application folder using the following command:
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware ./build/<your_application_name>/zephyr/bicr.hex --core Application --serial-number <serial_number>
 
@@ -276,7 +276,7 @@ nRF54H20 SoC binaries
 
      #. Purge the device as follows:
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil device recover --core Application --serial-number <serial_number>
            nrfutil device recover --core Network --serial-number <serial_number>
@@ -285,13 +285,13 @@ nRF54H20 SoC binaries
      #. Run ``west update``.
      #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command:
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.9.6.zip --serial-number <serial_number>
 
      #. Purge the device again as follows:
 
-        .. code-block::
+        .. nrfutil-command:: console
 
            nrfutil device recover --core Application --serial-number <serial_number>
            nrfutil device recover --core Network --serial-number <serial_number>

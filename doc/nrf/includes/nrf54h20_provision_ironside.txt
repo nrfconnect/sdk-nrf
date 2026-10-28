@@ -15,6 +15,8 @@ To provision the nRF54H20 IronSide SE binaries to the nRF54H20 SoC, complete the
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command:
+
+   .. nrfutil-command::
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>

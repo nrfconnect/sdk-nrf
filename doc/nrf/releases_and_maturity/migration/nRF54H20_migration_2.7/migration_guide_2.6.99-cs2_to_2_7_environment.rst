@@ -128,11 +128,15 @@ Updating nRF Util and its commands
 
 |NCS| v2.7.0 requires nRF Util version 7.11.1 or above.
 
-1. Verify the version of the nRF Util installation on your machine by running the following command::
+1. Verify the version of the nRF Util installation on your machine by running the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil --version
 
-#. If your version is below 7.11.1, run the following command to update nRF Util::
+#. If your version is below 7.11.1, run the following command to update nRF Util:
+
+   .. nrfutil-command:: console
 
       nrfutil self-upgrade
 
@@ -144,7 +148,9 @@ Updating nRF Util and its commands
 
 #. On MacOS and Linux, give ``nrfutil`` execute permissions by typing ``chmod +x nrfutil`` in a terminal or using a file browser.
    This is typically a checkbox found under file properties.
-#. Update the nRF Util ``device`` command to version 2.4.0 as follows::
+#. Update the nRF Util ``device`` command to version 2.4.0 as follows:
+
+   .. nrfutil-command:: console
 
       nrfutil install device=2.4.0 --force
 
@@ -163,7 +169,9 @@ To be compatible with |NCS| v2.7.0, the nRF54H20 SoC binaries programmed on the 
    The forward transition to LCS ``RoT`` is permanent.
    After the transition, it is not possible to transition backward to LCS ``EMPTY``.
 
-You can verify the current lifecycle state of the nRF54H20 as follows::
+You can verify the current lifecycle state of the nRF54H20 as follows:
+
+.. nrfutil-command:: console
 
    nrfutil device x-adac-discovery --serial-number <serial_number>
 
@@ -219,11 +227,15 @@ To prepare the nRF54H20 DK for first use, you must manually program the values o
    On MacOS, connecting the DK might cause a popup containing the message ``“Disk Not Ejected Properly`` to repeatedly appear on screen.
    To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
-#. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+#. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
+
+   .. nrfutil-command:: console
 
       nrfutil device list
 
-#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+#. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware bicr_ext_loadcap.hex --core Secure --serial-number <serial_number>
 
@@ -240,7 +252,9 @@ To program the Secure Domain Firmware (SDFW, also known as ``urot``) and the Sys
    .. note::
       On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+#. Move the :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-provision-nrf54h --firmware <path-to_bundle_zip_file> --serial-number <serial_number>
 
@@ -277,11 +291,15 @@ To update the FICR, you must run a J-Link script:
 Transitioning the nRF54H20 SoC to RoT
 =====================================
 
-Set the device to Root of Trust using the following command::
+Set the device to Root of Trust using the following command:
 
-      nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
+.. nrfutil-command:: console
 
-#. Verify again the current lifecycle state of the nRF54H20::
+   nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
+
+#. Verify again the current lifecycle state of the nRF54H20:
+
+   .. nrfutil-command:: console
 
       nrfutil device x-adac-discovery --serial-number <serial_number>
 
@@ -306,7 +324,9 @@ Set the device to Root of Trust using the following command::
 
    The lifecycle state (``psa_lifecycle``) is now correctly set to *Root of Trust* (``LIFECYCLE_ROT (0x2000)``)
 
-#. After the LCS transition, reset the device::
+#. After the LCS transition, reset the device:
+
+   .. nrfutil-command:: console
 
       nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 
