@@ -76,11 +76,15 @@ nRF Util
       #. On macOS and Linux, give ``nrfutil`` execute permissions by typing ``chmod +x nrfutil`` in a terminal or using a file browser.
          This is typically a checkbox found under file properties.
       #. On macOS, to run the nRF Util executable, you need to allow it in the system settings.
-      #. Verify the version of the nRF Util installation on your machine by running the following command::
+      #. Verify the version of the nRF Util installation on your machine by running the following command:
+
+         .. nrfutil-command:: console
 
             nrfutil --version
 
-      #. If your version is below 7.13.0, run the following command to update nRF Util::
+      #. If your version is below 7.13.0, run the following command to update nRF Util:
+
+         .. nrfutil-command:: console
 
             nrfutil self-upgrade
 
@@ -93,7 +97,9 @@ nRF Util device
 
   * nRF Util ``device`` command has been updated to v2.7.15.
 
-    Install the nRF Util ``device`` command v2.7.15 as follows::
+    Install the nRF Util ``device`` command v2.7.15 as follows:
+
+    .. nrfutil-command:: console
 
        nrfutil install device=2.7.15 --force
 
@@ -106,7 +112,9 @@ nRF Util trace
 
   * nRF Util ``trace`` command has been updated to v3.1.0.
 
-    Install the nRF Util ``trace`` command v3.1.0 as follows::
+    Install the nRF Util ``trace`` command v3.1.0 as follows:
+
+    .. nrfutil-command:: console
 
        nrfutil install trace=3.1.0 --force
 
@@ -119,7 +127,9 @@ nRF Util suit
 
   * nRF Util ``suit`` command has been updated to v0.9.0.
 
-    Install the nRF Util ``suit`` command v0.9.0 as follows::
+    Install the nRF Util ``suit`` command v0.9.0 as follows:
+
+    .. nrfutil-command:: console
 
        nrfutil install suit=0.9.0 --force
 
@@ -144,18 +154,24 @@ nRF54H20 SoC binaries
        .. note::
           On macOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-    #. Purge the device as follows::
+    #. Purge the device as follows:
+
+       .. nrfutil-command:: console
 
           nrfutil device recover --core Application --serial-number <serial_number>
           nrfutil device recover --core Network --serial-number <serial_number>
           nrfutil device reset --reset-kind RESET_PIN --serial-number <serial_number>
 
     #. Run ``west update``.
-    #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command::
+    #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using the following command:
+
+       .. nrfutil-command:: console
 
           nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.9.2.zip --serial-number <serial_number>
 
-    #. Purge the device again as follows::
+    #. Purge the device again as follows:
+
+       .. nrfutil-command:: console
 
           nrfutil device recover --core Application --serial-number <serial_number>
           nrfutil device recover --core Network --serial-number <serial_number>

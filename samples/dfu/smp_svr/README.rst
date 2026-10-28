@@ -239,7 +239,7 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 #. List the images on the device.
    The serial port might differ depending on your development kit and operating system.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
        nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
@@ -265,13 +265,13 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 
 #. Upload the second version of the image to the device using the SMP protocol:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM0 --image-number 0 --firmware ./build_v2/smp_svr/zephyr/zephyr.signed.bin
 
 #. List the images on the device again to get the hash of the second version of the image:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
 
@@ -300,7 +300,7 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 
 #. Set the test flag for the second version of the image, using the acquired hash:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-test --serial-port /dev/ttyACM0 --hash 35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
 
@@ -312,7 +312,7 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 
 #. To make the new version permanent, confirm the image:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil mcu-manager serial image-confirm --serial-port /dev/ttyACM0 --hash 35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
 

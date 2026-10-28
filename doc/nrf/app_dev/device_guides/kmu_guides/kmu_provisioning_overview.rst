@@ -150,7 +150,7 @@ Before uploading keys, ensure that the SoC is unprovisioned.
 If the SoC has been previously provisioned and you need to use a different set of keys, you must first erase the SoC.
 You can use `nrfutil device erase`_ command for this purpose:
 
-.. code-block::
+.. nrfutil-command::
 
    nrfutil device erase --all
 

@@ -120,31 +120,31 @@ Manual update
 
     #. Erase non-volatile memory:
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device recover --serial-number <serial>
 
     #. Program the update application:
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device program --firmware /tmp/update_dir/update/update_application.hex --serial-number <serial>
 
     #. Program the |ISE| update firmware:
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_update.hex --serial-number <serial>
 
     #. Reset the device to execute the update service:
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device reset --serial-number <serial>
 
     #. Reset through Secure Domain to trigger the installation of the update:
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
@@ -152,26 +152,26 @@ Manual update
 
        a. Program the |ISE| Recovery update firmware:
 
-          .. code-block:: console
+          .. nrfutil-command:: console
 
              nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware /tmp/update_dir/update/ironside_se_recovery_update.hex --serial-number <serial>
 
        #. Reset again to execute the update service:
 
-          .. code-block:: console
+          .. nrfutil-command:: console
 
              nrfutil device reset --serial-number <serial>
 
        #. Reset again through Secure Domain to trigger the installation of the update:
 
-          .. code-block:: console
+          .. nrfutil-command:: console
 
              nrfutil device reset --reset-kind RESET_VIA_SECDOM --serial-number <serial>
 
 
     #. Erase the update application (regardless of whether you update one or both slots):
 
-       .. code-block:: console
+       .. nrfutil-command:: console
 
           nrfutil device erase --all --serial-number <serial>
 

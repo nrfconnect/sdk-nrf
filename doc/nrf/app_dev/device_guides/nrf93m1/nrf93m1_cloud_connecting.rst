@@ -26,7 +26,7 @@ Requirements
 
 Connect USB1 on the DK to your computer, then identify the AT command port:
 
-.. code-block:: console
+.. nrfutil-command:: console
 
    nrfutil device list
 
