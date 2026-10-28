@@ -16,10 +16,9 @@
 	};
 };
 
-&cpuapp_sram {
+&cpuapp_sram_app {
 	/* Shrink SRAM size to avoid overlap with retained memory region:
 	 * 96 - 16 = 80KB = 0x14000
 	 */
-	reg = <0x20000000 0x014000>;
-	ranges = <0x0 0x20000000 0x014000>;
+	reg = <0x60 (0x014000 - 0x60)>;
 };

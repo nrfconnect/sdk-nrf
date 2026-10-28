@@ -99,9 +99,8 @@ See an example of memory partition configuration:
                   };
          };
    };
-   &cpuapp_sram {
-         reg = <0x20000000 DT_SIZE_K(160)>;
-         ranges = <0x0 0x20000000 0x28000>;
+   &cpuapp_sram_app {
+         reg = <0x60 (DT_SIZE_K(160) - 0x60)>;
    };
 
 1. Adjust the following partitions:
@@ -127,10 +126,11 @@ See an example of memory partition configuration:
       * Location: 0x20028000
       * Size: 96KB
 
-   * ``cpuapp_sram`` - This configuration defines the RAM limit for the CPUAPP application.
+   * ``cpuapp_sram_app`` - This configuration defines the RAM limit for the CPUAPP application.
+     It starts after the 96-byte KMU push area (``kmu_push_area``) at the beginning of the SRAM.
 
-      * Location: 0x20000000
-      * Size: 160KB
+      * Location: 0x20000060
+      * Size: 160KB minus the 96 bytes of the KMU push area
 
 #. Configure the CPUAPP application as follows for it to recognize the placement of the FLPR code:
 
