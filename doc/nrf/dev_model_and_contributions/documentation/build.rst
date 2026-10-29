@@ -175,6 +175,7 @@ The documentation build checks the nRF Util commands in ``nrfutil-command`` dire
 The build treats a line as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
 The build reports subcommands and options that do not exist in the nRF Util versions used by the |NCS|, as warnings at the file and line of the command.
 The build accepts any value for placeholders in angle brackets, such as ``<serial_number>``.
+For directives with the ``:values:`` option, the build checks the commands both with the placeholders and with the example values filled in.
 
 The check is disabled by default.
 To enable it, set the ``NRFUTIL_COMMAND_CHECK`` CMake option to ``ON`` when generating the build files:
