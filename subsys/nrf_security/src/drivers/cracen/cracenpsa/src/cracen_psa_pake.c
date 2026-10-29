@@ -155,7 +155,11 @@ psa_status_t cracen_pake_set_role(cracen_pake_operation_t *operation, psa_pake_r
 		status = PSA_ERROR_NOT_SUPPORTED;
 #endif /* PSA_NEED_CRACEN_SPAKE2P */
 	} else if (PSA_ALG_IS_WPA3_SAE(operation->alg)) {
+#ifdef PSA_NEED_CRACEN_WPA3_SAE
+		status = (role == PSA_PAKE_ROLE_NONE) ? PSA_SUCCESS : PSA_ERROR_NOT_SUPPORTED;
+#else
 		status = PSA_ERROR_NOT_SUPPORTED;
+#endif /* PSA_NEED_CRACEN_WPA3_SAE */
 	} else {
 		status = PSA_ERROR_BAD_STATE;
 	}
