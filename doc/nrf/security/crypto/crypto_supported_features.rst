@@ -2643,7 +2643,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
+               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -4332,7 +4332,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
+                 - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
@@ -4343,7 +4343,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
+                 - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
                  - Experimental (with exceptions, see note)
@@ -4354,7 +4354,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
                The CRACEN driver does not support unwrapping RSA keys with ``psa_unwrap_key()``.
 
-               The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
+               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -4597,7 +4597,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Experimental (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
@@ -4617,7 +4617,7 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
+               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -4806,7 +4806,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                * - Kconfig option
                  - Supported MAC algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_MAC_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` (all AES key sizes except the 192-bit key size on nRF54LM20A, nRF54LM20B, and nRF54LV10A)
+                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` (all AES key sizes except the 192-bit key size on nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
 
          .. tab:: nrf_oberon
@@ -5070,7 +5070,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - Experimental (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
                  - Supported (with exceptions, see note)
@@ -5113,7 +5113,7 @@ The options are grouped by Series and drivers available for the device Series, a
             .. note::
 
                 * CRACEN only supports a 96-bit IV for AES GCM.
-                * The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
+                * The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
                   * 192-bit keys are not supported.
                     See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
@@ -5378,7 +5378,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                  - Supported AEAD algorithms
                * - :kconfig:option:`CONFIG_PSA_USE_CRACEN_AEAD_DRIVER`
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (all AES key sizes except the 192-bit key size on nRF54LM20A, nRF54LM20B, and nRF54LV10A)
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM` (all AES key sizes except the 192-bit key size on nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A)
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
 
          .. tab:: nrf_oberon
@@ -11824,7 +11824,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
-                 - Experimental
+                 - --
                  - --
                  - --
                  - --
@@ -11841,6 +11841,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - --
                  - --
+
+            .. note::
+
+               The CRACEN driver does not support 192-bit AES keys on nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A.
+               Operations with locally stored keys of this size return ``PSA_ERROR_NOT_SUPPORTED``.
+               These keys cannot be imported, generated, or copied into the KMU, and a 192-bit key already stored in the KMU returns ``PSA_ERROR_NOT_PERMITTED`` when used.
+               If the nrf_oberon driver is enabled (:kconfig:option:`CONFIG_PSA_CRYPTO_DRIVER_OBERON`), it serves cipher, AEAD, and CMAC operations with locally stored 192-bit keys.
+               Key wrapping with a 192-bit wrapping key and CMAC-based key derivation with a 192-bit key are not available on these devices.
 
          .. tab:: nrf_oberon
 
