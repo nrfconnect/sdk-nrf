@@ -21,6 +21,7 @@ psa_status_t cracen_srp_password_hash_setup(cracen_key_derivation_operation_t *o
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 	operation->capacity = CRACEN_SRP_HASH_LENGTH;
+	operation->state = CRACEN_KD_STATE_SRP_PASSWORD_HASH_INIT;
 	return PSA_SUCCESS;
 }
 
