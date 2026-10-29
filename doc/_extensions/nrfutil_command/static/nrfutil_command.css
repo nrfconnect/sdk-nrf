@@ -18,7 +18,8 @@
 /* sphinx_ncs_theme narrows code blocks with !important to leave room for the right table of
  * contents. The block is narrowed instead, so the code fills it up to the buttons.
  */
-.rst-content div.nrfutil-command > div[class^=highlight] {
+.rst-content div.nrfutil-command > div[class^=highlight],
+.rst-content div.nrfutil-command > div.nrfutil-command-os-variant > div[class^=highlight] {
     max-width: none !important;
     margin: 0;
     border: none;
@@ -27,6 +28,23 @@
 /* Long commands wrap, so the code keeps clear of the documentation and copy buttons */
 .rst-content div.nrfutil-command:has(> a.nrfutil-command-docs-button) div.highlight pre {
     padding-right: 4.5em;
+}
+
+/* Without scripts, all operating system copies show, each under its label */
+.rst-content div.nrfutil-command:not(.nrfutil-command-os-switched)
+    div.nrfutil-command-os-variant + div.nrfutil-command-os-variant {
+    border-top: 1px solid #e1e4e5;
+}
+
+.rst-content div.nrfutil-command p.nrfutil-command-os-label {
+    margin: 0;
+    padding: .3em 12px 0;
+    font-size: 90%;
+    font-weight: bold;
+}
+
+.rst-content div.nrfutil-command-os-switched p.nrfutil-command-os-label {
+    display: none;
 }
 
 /* Placeholders, which the lexers of the extension mark */
@@ -113,8 +131,95 @@
     }
 }
 
+/* The controls, inside the border of the nrfutil-command block */
+.rst-content div.nrfutil-command div.nrfutil-command-footer {
+    padding: .3em 12px;
+    line-height: 1.4;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    font-size: 90%;
+}
+
+.rst-content div.nrfutil-command label.nrfutil-command-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+/* The operating system buttons, joined into one group */
+.rst-content div.nrfutil-command div.nrfutil-command-os {
+    display: inline-flex;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button {
+    margin: 0;
+    padding: 1px 10px;
+    border: 1px solid #c8c8c8;
+    background-color: #fff;
+    color: #333;
+    font-size: inherit;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button + button {
+    border-left: none;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:hover {
+    background-color: #f0f0f0;
+}
+
+/* The selected system is marked by its fill and its bold text, not by color alone */
+.rst-content div.nrfutil-command div.nrfutil-command-os button[aria-pressed="true"] {
+    border-color: #0077c8;
+    background-color: #0077c8;
+    color: #fff;
+    font-weight: bold;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:focus-visible {
+    position: relative;
+    outline: 2px solid #00a9ce;
+    outline-offset: 1px;
+}
+
+.rst-content div.nrfutil-command span.nrfutil-os-value {
+    font-style: normal;
+}
+
+.rst-content div.nrfutil-command span.nrfutil-editable {
+    font-style: normal;
+    padding: 0 2px;
+    border-radius: 2px;
+    outline: 1px dashed #00a9ce;
+    background-color: #fff;
+    cursor: text;
+}
+
+.rst-content div.nrfutil-command span.nrfutil-editable:focus {
+    outline: 2px solid #00a9ce;
+}
+
 @media print {
-    .rst-content div.nrfutil-command a.nrfutil-command-docs-button {
+    .rst-content div.nrfutil-command a.nrfutil-command-docs-button,
+    .rst-content div.nrfutil-command div.nrfutil-command-footer {
         display: none;
     }
 }
