@@ -14,6 +14,12 @@ feature via :c:func:`sdc_support_chan_idx_in_adv_report()` and appends a
 scan receive callback exposes the value in
 :c:member:`bt_le_scan_recv_info.chan_idx`.
 
+When :kconfig:option:`CONFIG_BT_EXT_ADV` is enabled, the host uses the
+extended scanning HCI commands. The controller then appends the ``chan_idx``
+octet after the advertising data in LE Extended Advertising Report events for
+legacy advertising PDUs. For extended advertising PDUs,
+:c:member:`bt_le_scan_recv_info.chan_idx` is set to ``UINT8_MAX``.
+
 Requirements
 ************
 
@@ -31,6 +37,11 @@ Building and running
 .. |sample path| replace:: :file:`samples/bluetooth/le_adv_report_chan_idx`
 
 .. include:: /includes/build_and_run.txt
+
+To use the extended scanning HCI commands, build the sample with
+:kconfig:option:`CONFIG_BT_EXT_ADV` enabled for both the application and the
+``ipc_radio`` image, for example, by adding the
+``-DCONFIG_BT_EXT_ADV=y -Dipc_radio_CONFIG_BT_EXT_ADV=y`` CMake arguments.
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
