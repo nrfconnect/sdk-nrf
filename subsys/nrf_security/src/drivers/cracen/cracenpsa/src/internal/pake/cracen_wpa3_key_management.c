@@ -17,6 +17,9 @@
 #include <cracen_psa.h>
 #include <cracen/common.h>
 
+/* P-256 is the only supported group. */
+#define WPA3_SAE_PT_KEY_BITS PSA_BYTES_TO_BITS(CRACEN_P256_KEY_SIZE)
+
 static psa_status_t cracen_hkdf_sha256_hmac(const uint8_t *seed,
 					    const uint8_t *label,
 					    size_t label_len,
@@ -125,15 +128,14 @@ psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 
-		if (key_bits_attr != 0u && key_bits_attr != 256u) {
+		if (key_bits_attr != 0u && key_bits_attr != WPA3_SAE_PT_KEY_BITS) {
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
 		/* check point on curve */
 		const struct sx_pk_ecurve *sx_curve;
 
-		status = cracen_ecc_get_ecurve_from_psa(psa_curve, key_bits_attr,
-							&sx_curve);
+		status = cracen_ecc_get_ecurve_from_psa(psa_curve, WPA3_SAE_PT_KEY_BITS, &sx_curve);
 		if (status != PSA_SUCCESS) {
 			return status;
 		}
@@ -153,7 +155,7 @@ psa_status_t import_wpa3_sae_pt_key(const psa_key_attributes_t *attributes,
 		}
 
 		*key_buffer_length = data_length;
-		*key_bits = key_bits_attr;
+		*key_bits = WPA3_SAE_PT_KEY_BITS;
 
 		return PSA_SUCCESS;
 	default:
