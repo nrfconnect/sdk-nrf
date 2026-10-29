@@ -159,7 +159,7 @@ psa_status_t cracen_sw_aes_gcm_set_nonce(cracen_aead_operation_t *operation, con
 					 size_t nonce_length)
 {
 	if (!is_nonce_length_valid(nonce_length)) {
-		return PSA_ERROR_INVALID_ARGUMENT;
+		return PSA_ERROR_NOT_SUPPORTED;
 	}
 	memcpy(operation->nonce, nonce, nonce_length);
 	operation->nonce_length = nonce_length;
