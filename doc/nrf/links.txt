@@ -119,6 +119,7 @@
 .. _`sdk-nrf PR #28440`: https://github.com/nrfconnect/sdk-nrf/pull/28440
 .. _`sdk-nrf PR #30994`: https://github.com/nrfconnect/sdk-nrf/pull/30994
 .. _`sdk-nrf PR #31064`: https://github.com/nrfconnect/sdk-nrf/pull/31064
+.. _`sdk-nrf PR #32336`: https://github.com/nrfconnect/sdk-nrf/pull/32336
 
 .. _`sdk-zephyr PR #3323`: https://github.com/nrfconnect/sdk-zephyr/pull/3323
 .. _`sdk-zephyr PR #3617`: https://github.com/nrfconnect/sdk-zephyr/pull/3617

@@ -2355,6 +2355,19 @@ The issues in this section are related to the :ref:`nrf_desktop` application.
    nRF Desktop is also affected by :ref:`hogp_readme` library's issue :ref:`NCSDK-30288 <ncsdk_30288>`.
    The issue might cause accessing data under the ``NULL`` pointer in case of Bluetooth disconnection while forwarding a configuration channel operation in the :ref:`nrf_desktop_hid_forward`.
 
+.. rst-class:: v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0
+
+NCSDK-42092: Wheel module assertion failure after wake-up from the suspended state
+  The :ref:`nrf_desktop_wheel` might trigger an assertion failure in the GPIO wake-up callback right after the device is woken up, for example, on USB resume or on a button press.
+  The wheel module detects wake-up using GPIO level sense on the QDEC pins.
+  Disabling the GPIO interrupt with the :c:func:`gpio_pin_interrupt_configure` function does not clear the GPIO **LATCH** register.
+  As a result, a level detected right before the interrupt was disabled is still reported to the wake-up callback after the module switched to the active state.
+
+  **Affected platforms:** nRF52 Series, nRF53 Series, nRF54L Series
+
+  **Workaround:** Manually cherry-pick and apply the commit with the fix from `sdk-nrf PR #32336`_.
+  The fix clears the **LATCH** register of the QDEC pins right after the wake-up interrupt is disabled.
+
 .. rst-class:: v3-1-1 v3-1-0
 
 NCSDK-35718: USB selective HID report subscription triggers assertion failure
