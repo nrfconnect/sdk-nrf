@@ -121,6 +121,16 @@ static int mqtt_readall_publish_payload_stub(struct mqtt_client *client, uint8_t
 	return 0;
 }
 
+static size_t payload_drained;
+
+static int mqtt_read_publish_payload_blocking_stub(struct mqtt_client *client, void *buffer,
+						   size_t length, int num_calls)
+{
+	payload_drained += length;
+
+	return length;
+}
+
 static int poll_stub_pollin(struct zsock_pollfd *fds, int nfds, int timeout, int num_calls)
 {
 	fds[0].revents = fds[0].events & ZSOCK_POLLIN;
@@ -900,19 +910,29 @@ void test_on_publish(void)
 	TEST_ASSERT_EQUAL(0, k_sem_take(&publish_sem, K_SECONDS(1)));
 }
 
+/* An oversize payload must be read out of the socket. Otherwise the Zephyr MQTT client keeps
+ * remaining_payload > 0, and the next mqtt_input() returns -EBUSY and ends the poll loop.
+ * The message is dropped, so no PUBACK is expected for the QoS 1 message.
+ */
 void test_on_publish_too_large_incoming_msg(void)
 {
 	struct mqtt_evt evt = {
 		.type = MQTT_EVT_PUBLISH,
 		.param.publish.message = {
+			.topic.qos = MQTT_QOS_1_AT_LEAST_ONCE,
 			.payload = {
 				.len = CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN + 1,
 			},
 		}
 	};
 
+	payload_drained = 0;
+	__cmock_mqtt_read_publish_payload_blocking_Stub(mqtt_read_publish_payload_blocking_stub);
+
 	mqtt_evt_handler(&mqtt_client, &evt);
+
 	TEST_ASSERT_EQUAL(0, k_sem_take(&error_msg_size_sem, K_SECONDS(1)));
+	TEST_ASSERT_EQUAL(evt.param.publish.message.payload.len, payload_drained);
 }
 
 void test_mqtt_helper_disconnect_when_connected(void)
