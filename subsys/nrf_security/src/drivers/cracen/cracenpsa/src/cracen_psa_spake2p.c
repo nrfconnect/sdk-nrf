@@ -663,10 +663,6 @@ psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, cons
 psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
 					const uint8_t *context, size_t context_len)
 {
-	if (context_len == 0) {
-		return PSA_SUCCESS;
-	}
-
 	return cracen_update_hash_with_length(&operation->hash_op, context, context_len, 0);
 }
 
