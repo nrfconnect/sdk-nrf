@@ -36,7 +36,7 @@ Before you start the |NCS| integration with AVSystem's Coiote IoT Device Managem
 * :ref:`Installation of the nRF Connect SDK <installation>`.
 * :ref:`Setup of an nRF91 Series DK <ug_nrf91>`.
 * Creation of an account in `AVSystem's Coiote Device Management <Coiote Device Management_>`_.
-* :ref:`Creation of an nRF Cloud account <creating_cloud_account>` (if you are utilizing nRF Cloud Location Services).
+* Creation of an `nRF Cloud`_ account, if you use nRF Cloud Location Services.
 
 Solution architecture
 *********************
