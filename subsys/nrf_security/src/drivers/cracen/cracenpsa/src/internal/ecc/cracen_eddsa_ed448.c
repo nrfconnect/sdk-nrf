@@ -188,8 +188,6 @@ int cracen_ed448ph_sign(const uint8_t *priv_key, uint8_t *signature, const uint8
 static int ed448_verify_internal(const uint8_t *pub_key, const uint8_t *message,
 				   size_t message_length, const uint8_t *signature, bool prehash)
 {
-	/* update the PHflag in dom4*/
-	dom4[PHFLAG_BYTE] = prehash ? 0x01 : 0x00;
 	int status;
 	uint8_t digest[SX_ED448_DGST_SZ];
 	size_t ed448_sz = SX_ED448_SZ;
@@ -199,14 +197,22 @@ static int ed448_verify_internal(const uint8_t *pub_key, const uint8_t *message,
 	uint8_t const *hash_array[] = {dom4, signature, pub_key, message};
 	size_t hash_array_lengths[] = {sizeof(dom4), ed448_sz, ed448_sz, message_length};
 
+	/* Hold the PK HW while dom4 is updated and hashed, as ed448_sign_internal() does, so
+	 * that concurrent signs and verifies do not change each other's PHflag.
+	 */
+	sx_pk_acquire_hw(&req);
+
+	/* update the PHflag in dom4*/
+	dom4[PHFLAG_BYTE] = prehash ? 0x01 : 0x00;
+
 	/* cracen_hash_all_inputs handles hardware acquire and release. */
 	status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count,
 					&sxhashalg_shake256_114, digest);
 	if (status != SX_OK) {
+		sx_pk_release_req(&req);
 		return status;
 	}
 
-	sx_pk_acquire_hw(&req);
 	sx_pk_set_cmd(&req, SX_PK_CMD_EDDSA_VER);
 
 	status = sx_ed448_verify(&req, (struct sx_ed448_dgst *)digest,
