@@ -92,6 +92,10 @@ psa_status_t cracen_hkdf_input_bytes(cracen_key_derivation_operation_t *operatio
 	if (PSA_ALG_IS_HKDF_EXPAND(operation->alg) &&
 	    step == PSA_KEY_DERIVATION_INPUT_SECRET) {
 
+		if (data_length != PSA_HASH_LENGTH(PSA_ALG_GET_HASH(operation->alg))) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
+
 		if (data_length > sizeof(operation->hkdf.prk)) {
 			return PSA_ERROR_INSUFFICIENT_MEMORY;
 		}
