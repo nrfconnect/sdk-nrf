@@ -69,17 +69,16 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 /** @brief Decrypt data using RSA PKCS#1 v1.5.
  *
  * @param[in] rsa_key		 RSA key structure.
- * @param[in] text		     Ciphertext to decrypt. Size must not exceed the
- *				             RSA modulus size. Ciphertext smaller than the modulus
- *				             is implicitly zero-padded.
+ * @param[in] text		     Ciphertext to decrypt. Size must be equal to the
+ *				             RSA modulus size.
  * @param[out] output		 Buffer to store the plaintext.
  * @param[in] output_size	 Size of the output buffer in bytes.
  * @param[out] output_length Length of the decrypted plaintext.
  *
  * @retval 0 (::SX_OK)                       Operation completed successfully.
  * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer is too small.
- * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small (must be > 11 bytes).
- * @retval ::SX_ERR_TOO_BIG                  Ciphertext larger than the RSA modulus.
+ * @retval ::SX_ERR_INVALID_ARG              RSA modulus too small (must be > 11 bytes), or
+ *                                           ciphertext size not equal to the modulus size.
  * @retval ::SX_ERR_INVALID_CIPHERTEXT	     Ciphertext is invalid or decryption failed.
  * @retval ::SX_ERR_WORKMEM_BUFFER_TOO_SMALL Internal work memory insufficient for key size.
  * @retval ::SX_ERR_PK_RETRY			     Hardware resources unavailable; retry later.
