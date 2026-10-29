@@ -17,6 +17,7 @@
 
 psa_status_t cracen_wpa3_sae_h2e_setup(cracen_key_derivation_operation_t *operation)
 {
+	operation->capacity = PSA_HASH_LENGTH(PSA_ALG_GET_HASH(operation->alg));
 	operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_INIT;
 	return PSA_SUCCESS;
 }
@@ -96,6 +97,12 @@ psa_status_t cracen_wpa3_sae_h2e_output_bytes(cracen_key_derivation_operation_t 
 		operation->state != CRACEN_KD_STATE_WPA3_SAE_H2E_INFO) {
 		return PSA_ERROR_BAD_STATE;
 	}
+
+	/* The output is a single MAC */
+	if (output_length != PSA_HASH_LENGTH(PSA_ALG_GET_HASH(operation->alg))) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
 	operation->state = CRACEN_KD_STATE_WPA3_SAE_H2E_OUTPUT;
 	status = cracen_mac_sign_finish(&operation->mac_op, output, output_length, &outlen);
 
