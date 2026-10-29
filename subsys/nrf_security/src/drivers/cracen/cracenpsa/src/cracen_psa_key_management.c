@@ -105,6 +105,23 @@ static psa_status_t import_key_for_kmu(const psa_key_attributes_t *attributes, c
 	status = cracen_kmu_get_builtin_key(slot_id, &stored_attributes, key_buffer,
 						key_buffer_size, key_buffer_length);
 	if (status != PSA_SUCCESS) {
+		psa_key_lifetime_t stored_lifetime;
+		psa_drv_slot_number_t stored_slot;
+		psa_status_t slot_status = PSA_ERROR_DOES_NOT_EXIST;
+
+		/* The PSA core does not destroy a key whose import failed. Locked slots cannot be
+		 * revoked, and the protected RAM invalidation slots are left as they are.
+		 */
+		if (slot_id != PROTECTED_RAM_INVALIDATION_DATA_SLOT1 &&
+		    slot_id != PROTECTED_RAM_INVALIDATION_DATA_SLOT2) {
+			slot_status = cracen_kmu_get_key_slot(psa_get_key_id(attributes),
+							      &stored_lifetime, &stored_slot);
+		}
+		if (slot_status == PSA_SUCCESS &&
+		    PSA_KEY_LIFETIME_GET_PERSISTENCE(stored_lifetime) !=
+			    CRACEN_KEY_PERSISTENCE_READ_ONLY) {
+			(void)cracen_kmu_destroy_key(attributes);
+		}
 		return status;
 	}
 
