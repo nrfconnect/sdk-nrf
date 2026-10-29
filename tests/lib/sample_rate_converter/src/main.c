@@ -17,6 +17,27 @@ static void test_setup(void *f)
 }
 
 #ifdef CONFIG_SAMPLE_RATE_CONVERTER_BIT_DEPTH_16
+/** @brief Guard full-frame interpolation output while exercising buffered scratch overflow. */
+ZTEST(suite_sample_rate_converter, test_full_frame_interpolation_with_buffered_samples)
+{
+	int16_t input[160] = {0};
+	struct {
+		int16_t samples[480];
+		uint32_t canary;
+	} output = {.canary = 0x12345678};
+	size_t written;
+
+	/* Exercises the internal 486-sample interpolation scratch on the first frame. */
+	for (int frame = 0; frame < 4; frame++) {
+		zassert_ok(sample_rate_converter_process(
+			&conv_ctx, SAMPLE_RATE_FILTER_SIMPLE, input, sizeof(input), 16000,
+			output.samples, sizeof(output.samples), &written, 48000));
+
+		zassert_equal(written, sizeof(output.samples));
+		zassert_equal(output.canary, 0x12345678);
+	}
+}
+
 ZTEST(suite_sample_rate_converter, test_init_valid_decimate_24khz_16bit)
 {
 	int ret;

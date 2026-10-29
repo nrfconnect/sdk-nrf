@@ -225,6 +225,22 @@ config SW_CODEC_LC3
 	help
 	  LC3 is the mandatory codec for LE Audio.
 
+config SW_CODEC_G722
+	bool "G.722 (vendor-specific)"
+	select EXPERIMENTAL
+	depends on TRANSPORT_CIS
+	depends on !SD_CARD_PLAYBACK
+	depends on AUDIO_FRAME_DURATION_10_MS
+	depends on AUDIO_BIT_DEPTH_16
+	depends on AUDIO_SAMPLE_RATE_16000_HZ || \
+		(SAMPLE_RATE_CONVERTER && SAMPLE_RATE_CONVERTER_BIT_DEPTH_16 && \
+		AUDIO_SAMPLE_RATE_48000_HZ)
+	help
+	  ITU-T G.722 at 16 kHz and 64 kbps, signalled as a vendor-specific codec
+	  over BAP unicast. The encoded frame is 80 octets per channel (10 ms).
+	  At a 48 kHz application rate, the sample rate converter must use
+	  16-bit samples.
+
 config SW_CODEC_NONE
 	bool "None"
 	help
@@ -258,6 +274,22 @@ config LC3_BITRATE
 osource "../nrfxlib/lc3/Kconfig"
 
 endmenu # LC3
+
+# ---------------------------------------------------------------------------- #
+menu "G722"
+visible if SW_CODEC_G722
+
+config SW_CODEC_G722_COMPANY_ID
+	hex "Company ID used for the G.722 vendor-specific codec"
+	range 0x0000 0xFFFF
+	default 0x0000
+
+config SW_CODEC_G722_VENDOR_CODEC_ID
+	hex "Vendor codec ID used for the G.722 vendor-specific codec"
+	range 0x0000 0xFFFF
+	default 0x0001
+
+endmenu # G722
 endmenu # SW Codec
 
 #----------------------------------------------------------------------------#

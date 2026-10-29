@@ -264,7 +264,7 @@ static bool pac_parse(struct bt_data *data, struct bt_bap_lc3_preset *preset,
 
 /* Parse published audio capabilities (PAC) for sink direction (client->server)/(gateway->headset)
  */
-static bool sink_pac_parse(struct bt_data *data, void *user_data)
+static bool __maybe_unused sink_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
@@ -273,7 +273,7 @@ static bool sink_pac_parse(struct bt_data *data, void *user_data)
 
 /* Parse published audio capabilities (PAC) for source direction (server->client)/(headset->gateway)
  */
-static bool source_pac_parse(struct bt_data *data, void *user_data)
+static bool __maybe_unused source_pac_parse(struct bt_data *data, void *user_data)
 {
 	struct bt_bap_lc3_preset *preset = (struct bt_bap_lc3_preset *)user_data;
 
@@ -882,6 +882,69 @@ int srv_store_location_set(struct bt_conn const *const conn, enum bt_audio_dir d
 	return 0;
 }
 
+#if CONFIG_SW_CODEC_G722
+/**
+ * @brief Adapt a 16 kHz, 10 ms LC3 preset to the fixed vendor G.722 profile.
+ *
+ * @pre Peer capabilities have passed le_audio_g722_cap_check().
+ *
+ * Reports rate and duration mismatches before modifying the preset.
+ *
+ * @param[in,out]	preset		Non-NULL preset copied from the existing 16_2_1 template.
+ * @param[in]		codec_cap	Non-NULL validated capability supplying the vendor identity.
+ *
+ * @retval	0		Preset codec fields and QoS updated to 80 bytes per 10 ms SDU.
+ * @retval	-ENOTSUP	Template has an unsupported rate or duration.
+ * @return Negative codec-field setter error on failure. Discard a failed preset;
+ *         updates are applied in place and may be partial.
+ */
+static int g722_preset_apply(struct bt_bap_lc3_preset *preset,
+			     struct bt_audio_codec_cap const *const codec_cap)
+{
+	int ret;
+	bool invalid = false;
+
+	ret = bt_audio_codec_cfg_get_freq(&preset->codec_cfg);
+	if (ret != BT_AUDIO_CODEC_CFG_FREQ_16KHZ) {
+		LOG_WRN("G.722 preset requires the 16 kHz frequency value %d (got %d)",
+			BT_AUDIO_CODEC_CFG_FREQ_16KHZ, ret);
+		invalid = true;
+	}
+
+	ret = bt_audio_codec_cfg_get_frame_dur(&preset->codec_cfg);
+	if (ret != BT_AUDIO_CODEC_CFG_DURATION_10) {
+		LOG_WRN("G.722 preset requires the 10 ms frame duration value %d (got %d)",
+			BT_AUDIO_CODEC_CFG_DURATION_10, ret);
+		invalid = true;
+	}
+
+	if (invalid) {
+		return -ENOTSUP;
+	}
+
+	preset->codec_cfg.id = codec_cap->id;
+	preset->codec_cfg.cid = codec_cap->cid;
+	preset->codec_cfg.vid = codec_cap->vid;
+
+	ret = bt_audio_codec_cfg_set_octets_per_frame(&preset->codec_cfg,
+						      LE_AUDIO_G722_OCTETS_PER_FRAME);
+	if (ret < 0) {
+		return ret;
+	}
+
+	/* The Zephyr fallback to 1 frame block per SDU only applies to LC3 */
+	ret = bt_audio_codec_cfg_set_frame_blocks_per_sdu(&preset->codec_cfg, 1);
+	if (ret < 0) {
+		return ret;
+	}
+
+	preset->qos.sdu = LE_AUDIO_G722_OCTETS_PER_FRAME;
+	preset->qos.interval = 10000; /* Fixed 10 ms SDU interval, in microseconds. */
+
+	return 0;
+}
+#endif /* CONFIG_SW_CODEC_G722 */
+
 int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_audio_dir dir,
 				    uint32_t *valid_codec_caps,
 				    struct client_supp_configs const **const client_supp_cfgs,
@@ -895,7 +958,7 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 	ARG_UNUSED(num_client_supp_cfgs);
 
 	int ret;
-	struct bt_bap_lc3_preset zero_preset = {0};
+	struct bt_bap_lc3_preset zero_preset __maybe_unused = {0};
 
 	if (conn == NULL || valid_codec_caps == NULL) {
 		LOG_ERR("Invalid parameters: conn or valid_codec_caps is NULL");
@@ -918,6 +981,12 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->snk.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
+#if CONFIG_SW_CODEC_G722
+			if (le_audio_g722_cap_check(&server->snk.codec_caps[i])) {
+				continue;
+			}
+#endif
+
 			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Sink PAC %d:", i);
 				ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
@@ -929,6 +998,9 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 				LOG_INF("__________________________");
 			}
 
+#if CONFIG_SW_CODEC_G722
+			preset = lc3_preset_16_2_1;
+#else
 			ret = bt_audio_data_parse(server->snk.codec_caps[i].data,
 						  server->snk.codec_caps[i].data_len,
 						  sink_pac_parse, &preset);
@@ -940,6 +1012,13 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 			if (memcmp(&preset, &zero_preset, sizeof(struct bt_bap_lc3_preset)) == 0) {
 				continue;
 			}
+#endif
+
+#if CONFIG_SW_CODEC_G722
+			if (g722_preset_apply(&preset, &server->snk.codec_caps[i])) {
+				continue;
+			}
+#endif /* CONFIG_SW_CODEC_G722 */
 
 			LOG_DBG("Valid codec capabilities found for server, sink EP %d", i);
 			*valid_codec_caps |= 1 << i;
@@ -957,6 +1036,12 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 		for (int i = 0; i < server->src.num_codec_caps; i++) {
 			struct bt_bap_lc3_preset preset = {0};
 
+#if CONFIG_SW_CODEC_G722
+			if (le_audio_g722_cap_check(&server->src.codec_caps[i])) {
+				continue;
+			}
+#endif
+
 			if (IS_ENABLED(CONFIG_BT_AUDIO_PAC_REC_PRINT)) {
 				LOG_INF("Source PAC %d:", i);
 				ret = bt_audio_data_parse(server->src.codec_caps[i].data,
@@ -968,6 +1053,9 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 				LOG_INF("__________________________");
 			}
 
+#if CONFIG_SW_CODEC_G722
+			preset = lc3_preset_16_2_1;
+#else
 			ret = bt_audio_data_parse(server->src.codec_caps[i].data,
 						  server->src.codec_caps[i].data_len,
 						  source_pac_parse, &preset);
@@ -980,6 +1068,13 @@ int srv_store_valid_codec_cap_check(struct bt_conn const *const conn, enum bt_au
 			if (memcmp(&preset, &zero_preset, sizeof(struct bt_bap_lc3_preset)) == 0) {
 				continue;
 			}
+#endif
+
+#if CONFIG_SW_CODEC_G722
+			if (g722_preset_apply(&preset, &server->src.codec_caps[i])) {
+				continue;
+			}
+#endif /* CONFIG_SW_CODEC_G722 */
 
 			LOG_DBG("Valid codec capabilities found for server, source EP %d", i);
 			*valid_codec_caps |= 1 << i;
