@@ -10121,6 +10121,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
+            .. note::
+
+               With the CRACEN driver, SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
+
          .. tab:: nrf_oberon
 
             .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF54L Series
