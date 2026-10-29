@@ -4352,6 +4352,8 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
+               The CRACEN driver does not support unwrapping RSA keys with ``psa_unwrap_key()``.
+
                The following limitations apply for nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
 
                * 192-bit keys are not supported.
