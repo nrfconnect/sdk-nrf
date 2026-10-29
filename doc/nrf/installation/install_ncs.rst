@@ -207,51 +207,13 @@ Complete the following steps:
 
    #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
-      .. tabs::
+      .. nrfutil-command::
+         :values: version=|release|
+         :values-windows: shell_option=--terminal
+         :values-linux: shell_option=--shell
+         :values-macos: shell_option=--shell
 
-         .. tab:: Windows
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version <version> --terminal
-
-            For example:
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-         .. tab:: Linux
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
-
-            For example:
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-         .. tab:: macOS
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
-
-            For example:
-
-            .. nrfutil-command::
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-      ..
+         nrfutil sdk-manager toolchain launch --ncs-version <version> <shell_option>
 
       .. note::
 

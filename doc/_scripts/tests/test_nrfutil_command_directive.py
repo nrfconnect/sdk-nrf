@@ -135,6 +135,8 @@ def test_valid_command_renders_with_link(tmp_path):
     assert 'target="_blank" rel="noopener"' in html
     # The button is moved into the block, where the copy button goes
     assert DOCS_BUTTON_RE.search(html)
+    # Without values, the block has no controls and no footer
+    assert "nrfutil-command-footer" not in html
     assert "nrfutil_command.css" in html
     assert '<div class="highlight-console notranslate nrfutil-command">' in html
 
@@ -237,8 +239,8 @@ def test_placeholders_are_accepted_and_emphasized(tmp_path):
         "   nrfutil device program --firmware <hex file> --core <core> --serial-number <SN>\n",
     )
     assert warnings == ""
-    assert '<em class="nrfutil-placeholder">&lt;hex file&gt;</em>' in html
-    assert '<em class="nrfutil-placeholder">&lt;core&gt;</em>' in html
+    assert '<em class="nrfutil-placeholder" data-name="hex file">&lt;hex file&gt;</em>' in html
+    assert '<em class="nrfutil-placeholder" data-name="core">&lt;core&gt;</em>' in html
 
 
 def test_button_opens_the_first_command(tmp_path):
@@ -394,3 +396,128 @@ def test_snapshot_platform_selects_tabs(tmp_path):
     )
     assert warnings.count("Found unrecognized syntax element 'lst'") == 1
     assert "index.rst:10:" in warnings
+
+
+VALUES_INDEX = (
+    "Title\n=====\n\n.. nrfutil-command::\n"
+    "   :values: core=Network\n"
+    "   :values-windows: image=app.hex\n"
+    "   :values-linux: image=app.elf\n\n"
+    "   nrfutil device program --firmware <image> --core <core> --serial-number <SN>\n"
+)
+
+
+def test_values_render_controls_and_placeholders(tmp_path):
+    html, warnings = build(tmp_path, VALUES_INDEX)
+    assert warnings == ""
+    controls = re.search(r'<div class="nrfutil-command-controls"([^>]*)></div>', html)
+    assert controls
+    assert "data-values=\"{&quot;core&quot;: &quot;Network&quot;}\"" in controls.group(1)
+    assert "&quot;windows&quot;: {&quot;image&quot;: &quot;app.hex&quot;}" in controls.group(1)
+    # The documentation button stays next to the copy button, and the controls go in the footer
+    # inside the border of the block
+    assert re.search(
+        r'</pre><a class="nrfutil-command-docs-button[^>]*>.*?</a></div>'
+        r'<div class="nrfutil-command-footer"><div class="nrfutil-command-controls"[^>]*></div>'
+        r"</div>\s*</div>",
+        html,
+    )
+    assert '<em class="nrfutil-placeholder" data-name="core">&lt;core&gt;</em>' in html
+    # Without JavaScript, operating system placeholders show the values of the first system
+    assert '<em class="nrfutil-placeholder nrfutil-os-value" data-name="image">app.hex</em>' in html
+    assert "nrfutil_command.js" in html
+    # The example values switch starts on
+    assert "data-example-toggle-off" not in html
+
+
+def test_example_toggle_off_starts_with_the_placeholders(tmp_path):
+    html, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n"
+        "   :values: core=Network\n"
+        "   :example-toggle-off:\n\n"
+        "   nrfutil device program --firmware app.hex --core <core>\n",
+    )
+    assert warnings == ""
+    assert re.search(
+        r'<div class="nrfutil-command-controls"[^>]* data-example-toggle-off></div>', html
+    )
+    # The rewrite still finds the controls, so the placeholders are marked
+    assert 'data-name="core"' in html
+
+
+def test_example_toggle_off_without_values_warns(tmp_path):
+    _, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n   :example-toggle-off:\n\n   nrfutil device list\n",
+    )
+    assert "The :example-toggle-off: option has no effect without :values:" in warnings
+
+
+def test_values_expand_substitutions(tmp_path):
+    html, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n   :values: file=app-|release|.hex\n\n"
+        "   nrfutil device program --firmware <file>\n",
+    )
+    assert warnings == ""
+    assert "app-3.4.0.hex" in html
+
+
+def test_example_values_are_validated(tmp_path):
+    _, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n   :values: subcommand=lst\n\n"
+        "   nrfutil device <subcommand>\n",
+    )
+    assert "With the example values: Found unrecognized syntax element 'lst'" in warnings
+    assert "nRF Util command: nrfutil device lst" in warnings
+
+
+def test_os_values_are_validated_for_the_snapshot_platform(tmp_path):
+    snapshot = Snapshot("8.1.1", CORE, {"device": "2.20.0"}, {"device": DEVICE}, "windows")
+    _, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n"
+        "   :values-windows: list=list\n"
+        "   :values-linux: list=lst\n\n"
+        "   nrfutil device <list>\n",
+        snapshot=snapshot,
+    )
+    assert warnings == ""
+
+    snapshot = Snapshot("8.1.1", CORE, {"device": "2.20.0"}, {"device": DEVICE}, "linux")
+    linux_dir = tmp_path / "linux"
+    linux_dir.mkdir()
+    _, warnings = build(
+        linux_dir,
+        "Title\n=====\n\n.. nrfutil-command::\n"
+        "   :values-windows: list=list\n"
+        "   :values-linux: list=lst\n\n"
+        "   nrfutil device <list>\n",
+        snapshot=snapshot,
+    )
+    assert warnings.count("Found unrecognized syntax element 'lst'") == 1
+
+
+def test_values_without_placeholder_or_system_warn(tmp_path):
+    _, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n"
+        "   :values: nope=1\n"
+        "   :values-windows: image=app.hex\n"
+        "   :values-linux: other=x\n\n"
+        "   nrfutil device program --firmware <image>\n",
+    )
+    assert "Value for '<nope>', which isn't a placeholder" in warnings
+    assert "Value for '<other>', which isn't a placeholder" in warnings
+    assert "Placeholder '<image>' has no value in :values-linux:" in warnings
+    assert "Placeholder '<other>' has no value in :values-windows:" in warnings
+
+
+def test_values_must_be_name_value_pairs(tmp_path):
+    _, warnings = build(
+        tmp_path,
+        "Title\n=====\n\n.. nrfutil-command::\n   :values: version\n\n   nrfutil device list\n",
+    )
+    assert "expected name=value, got 'version'" in warnings

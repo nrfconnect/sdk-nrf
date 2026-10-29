@@ -12,7 +12,16 @@ It renders like ``code-block`` with ``console`` as the default language, and in 
   output of the pinned nrfutil versions, unless the ``:no-validate:`` option is set,
 * shows placeholders such as ``<serial_number>`` in italics, and accepts them as any value,
 * adds a button that opens the nRF Util documentation of the first documented command in the
-  block.
+  block,
+* with the ``:values:`` option, adds a switch that fills the placeholders with example values,
+  which readers can edit before they copy the command, for example ``:values: version=|release|``.
+  The switch starts on, unless the ``:example-toggle-off:`` option is set because the text
+  explains the placeholders before the reader fills them,
+* with the ``:values-windows:``, ``:values-linux:`` and ``:values-macos:`` options, adds
+  operating system buttons that fill the placeholders with the values for that system.
+
+Both forms of each command are validated: with placeholders and with the example values, for
+each operating system that has values.
 
 The snapshot is generated when the build starts if it doesn't hold the pinned versions. This needs
 nrfutil on the PATH. Without it, the build prints a message and doesn't validate the commands,
@@ -28,7 +37,9 @@ from __future__ import annotations
 
 import functools
 import html
+import json
 import re
+import shlex
 import shutil
 from pathlib import Path
 from typing import Any
@@ -59,17 +70,48 @@ DOCS_ICON = (
     '<path d="M3 19a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/><path d="M3 6a9 9 0 0 1 9 0a9 9 0 0 1 9 0"/>'
     '<path d="M3 6v13"/><path d="M12 6v13"/><path d="M21 6v13"/></svg>'
 )
+CONTROLS_CLASS = "nrfutil-command-controls"
+FOOTER_CLASS = "nrfutil-command-footer"
 STATIC_DIR = Path(__file__).parent / "static"
+OS_VALUE_OPTIONS = {"values-windows": "windows", "values-linux": "linux", "values-macos": "macos"}
 
 SUBSTITUTION_RE = re.compile(r"\|([^|\s][^|]*)\|")
 # Sphinx resolves these substitutions from the configuration, not from substitution definitions
 SPHINX_CONFIG_SUBSTITUTIONS = ("release", "version", "today")
 
-BLOCK_RE = re.compile(r'(<div class="[^"]*\b' + BLOCK_CLASS + r'\b[^"]*">)(.*?)(</pre>)', re.DOTALL)
+PLACEHOLDER_RE = re.compile(r"<([^<>\s][^<>]*?)>")
 PLACEHOLDER_HTML_RE = re.compile(r"&lt;([^&<>\s][^&<>]*?)&gt;")
-DOCS_BUTTON_RE = re.compile(
-    r'(</pre>)(\s*</div>\s*</div>\s*)(<a class="' + DOCS_BUTTON_CLASS + r'\b.*?</a>)', re.DOTALL
+DOCS_BUTTON = r'<a class="' + DOCS_BUTTON_CLASS + r'\b.*?</a>'
+DOCS_BUTTON_RE = re.compile(r"(</pre>)(\s*</div>\s*</div>\s*)(" + DOCS_BUTTON + ")", re.DOTALL)
+# The controls that follow the block, after its documentation button has moved into it
+FOOTER_RE = re.compile(
+    r"(</pre>(?:" + DOCS_BUTTON + r")?\s*</div>)(\s*</div>\s*)"
+    r'(<div class="' + CONTROLS_CLASS + r'"[^>]*></div>)',
+    re.DOTALL,
 )
+BLOCK_RE = re.compile(
+    r'(<div class="[^"]*\b' + BLOCK_CLASS + r'\b[^"]*">)(.*?</pre>)'
+    r"((?:" + DOCS_BUTTON + r")?\s*</div>(?:<div class=\"" + FOOTER_CLASS + r'">'
+    r'<div class="' + CONTROLS_CLASS + r'" data-values="[^"]*" data-os-values="([^"]*)"[^>]*>'
+    r"</div></div>)?)?",
+    re.DOTALL,
+)
+
+
+def _values(argument: str | None) -> dict[str, str]:
+    """Parse name=value pairs separated by spaces. Quote a pair that contains spaces."""
+    values = {}
+    for pair in shlex.split(argument or ""):
+        name, equals, value = pair.partition("=")
+        if not equals or not name:
+            raise ValueError(f"expected name=value, got '{pair}'")
+        values[name] = value
+    return values
+
+
+def _fill(text: str, values: dict[str, str]) -> str:
+    """Replace the placeholders that have a value."""
+    return PLACEHOLDER_RE.sub(lambda m: values.get(m.group(1), m.group(0)), text)
 
 
 class NrfutilCommand(CodeBlock):
@@ -81,6 +123,9 @@ class NrfutilCommand(CodeBlock):
         **CodeBlock.option_spec,
         "no-validate": directives.flag,
         "os": lambda value: directives.choice(value, tuple(specs.OS_OPTIONS)),
+        "values": _values,
+        **{option: _values for option in OS_VALUE_OPTIONS},
+        "example-toggle-off": directives.flag,
     }
 
     def run(self) -> list[nodes.Node]:
@@ -95,6 +140,13 @@ class NrfutilCommand(CodeBlock):
                 "validate": "no-validate" not in self.options,
                 "platforms": self._platforms(),
                 "locations": [(source, offset + 1) for source, offset in locations],
+                "values": self.options.get("values", {}),
+                "os_values": {
+                    platform: self.options[option]
+                    for option, platform in OS_VALUE_OPTIONS.items()
+                    if option in self.options
+                },
+                "example_toggle_off": "example-toggle-off" in self.options,
             }
         return result
 
@@ -174,17 +226,89 @@ class NrfutilCommandTransform(SphinxTransform):
             block.children = []
             block += nodes.Text(text)
 
-        snapshot = _snapshot(*getattr(self.env, ENV_ATTRIBUTE, ("", 0)))
-        if snapshot is None:
-            return
-        platforms = data["platforms"]
-        report = data["validate"] and (platforms is None or snapshot.platform in platforms)
-        links = self._validate(snapshot, text, location, report)
+        block_location = _location(*default)
+        values = self._substitute_values(data["values"], block_location)
+        os_values = {
+            platform: self._substitute_values(platform_values, block_location)
+            for platform, platform_values in data["os_values"].items()
+        }
+        self._check_values(text, values, os_values, block_location)
+        if data["example_toggle_off"] and not values:
+            logger.warning(
+                "The :example-toggle-off: option has no effect without :values:",
+                location=block_location,
+                type="nrfutil",
+                subtype="values",
+            )
+
+        links = self._validate_variants(text, values, os_values, data, location)
+        # The documentation button must directly follow the block, so it goes in last
+        if values or os_values:
+            _insert_after(block, _controls(values, os_values, data["example_toggle_off"]))
         if links:
             _insert_after(block, _docs_button(links))
 
+    def _validate_variants(
+        self,
+        text: str,
+        values: dict[str, str],
+        os_values: dict[str, dict[str, str]],
+        data: dict[str, Any],
+        location,
+    ) -> dict[str, str]:
+        """Validate the block for each operating system that has values, with the placeholders
+        and with the example values, and return the URLs of the command documentation.
+        """
+        snapshot = _snapshot(*getattr(self.env, ENV_ATTRIBUTE, ("", 0)))
+        if snapshot is None:
+            return {}
+
+        variants = [(platform, _fill(text, os_values[platform])) for platform in os_values]
+        links: dict[str, str] = {}
+        for platform, variant in variants or [(None, text)]:
+            platforms = [platform] if platform else data["platforms"]
+            report = data["validate"] and (platforms is None or snapshot.platform in platforms)
+            for command, url in self._validate(snapshot, variant, location, report).items():
+                if url not in links.values():
+                    links[command] = url
+            if values:
+                self._validate(
+                    snapshot, _fill(variant, values), location, report, "With the example values: "
+                )
+        return links
+
+    def _substitute_values(self, values: dict[str, str], location: nodes.Element) -> dict[str, str]:
+        return {name: self._substitute(value, location) for name, value in values.items()}
+
+    def _check_values(
+        self,
+        text: str,
+        values: dict[str, str],
+        os_values: dict[str, dict[str, str]],
+        location: nodes.Element,
+    ) -> None:
+        """Warn about values without a placeholder and about incomplete operating system values."""
+        placeholders = set(PLACEHOLDER_RE.findall(text))
+        os_names = {name for platform_values in os_values.values() for name in platform_values}
+
+        def warn(message: str, *args: Any) -> None:
+            logger.warning(message, *args, location=location, type="nrfutil", subtype="values")
+
+        for name in sorted((set(values) | os_names) - placeholders):
+            warn("Value for '<%s>', which isn't a placeholder in the nrfutil-command block", name)
+        for name in sorted(set(values) & os_names):
+            warn("Placeholder '<%s>' has both an example value and operating system values", name)
+        for platform, platform_values in os_values.items():
+            for name in sorted(os_names - set(platform_values)):
+                warn("Placeholder '<%s>' has no value in :values-%s:", name, platform)
+
     def _validate(
-        self, snapshot: specs.Snapshot, text: str, location, report: bool
+        self,
+        snapshot: specs.Snapshot,
+        text: str,
+        location,
+        report: bool,
+        prefix: str = "",
     ) -> dict[str, str]:
         """Validate the commands in text and return the URLs of their documentation."""
         base_url, urls = _command_urls(
@@ -198,7 +322,8 @@ class NrfutilCommandTransform(SphinxTransform):
             except ValidationError as e:
                 if report:
                     logger.warning(
-                        "%s\nnRF Util command: %s",
+                        "%s%s\nnRF Util command: %s",
+                        prefix,
                         e,
                         command,
                         location=_location(*location(index)),
@@ -227,6 +352,20 @@ def _docs_button(links: dict[str, str]) -> nodes.raw:
         f'<a class="{DOCS_BUTTON_CLASS} o-tooltip--left" href="{url}" target="_blank" '
         f'rel="noopener" '
         f'aria-label="{label}" data-tooltip="{html.escape(DOCS_TOOLTIP)}">{DOCS_ICON}</a>'
+    )
+    return nodes.raw("", markup, format="html")
+
+
+def _controls(
+    values: dict[str, str], os_values: dict[str, dict[str, str]], example_toggle_off: bool
+) -> nodes.raw:
+    """The element that nrfutil_command.js turns into the example values switch and the operating
+    system buttons. Only HTML builders render it.
+    """
+    markup = (
+        f'<div class="{CONTROLS_CLASS}" data-values="{html.escape(json.dumps(values))}" '
+        f'data-os-values="{html.escape(json.dumps(os_values))}"'
+        f'{" data-example-toggle-off" if example_toggle_off else ""}></div>'
     )
     return nodes.raw("", markup, format="html")
 
@@ -312,28 +451,47 @@ def prepare_snapshot(app: Sphinx) -> None:
     setattr(app.env, ENV_ATTRIBUTE, (str(directory), stamp))
 
 
-def _emphasize_placeholders(match: re.Match) -> str:
+def _move_footer(match: re.Match) -> str:
+    return f'{match.group(1)}<div class="{FOOTER_CLASS}">{match.group(3)}</div>{match.group(2)}'
+
+
+def _rewrite_block(match: re.Match) -> str:
     # Themes style code blocks with div[class^=highlight], so the highlight-<language> class
     # that Sphinx adds must stay first
     classes = match.group(1).split('"')[1].split()
     classes.remove(BLOCK_CLASS)
     opening = f'<div class="{" ".join([*classes, BLOCK_CLASS])}">'
-    body = PLACEHOLDER_HTML_RE.sub(
-        lambda m: f'<em class="nrfutil-placeholder">&lt;{m.group(1)}&gt;</em>', match.group(2)
-    )
-    return opening + body + match.group(3)
+
+    # Without JavaScript, the operating system placeholders show the values of the first system
+    os_values = json.loads(html.unescape(match.group(4))) if match.group(4) else {}
+    defaults = next(iter(os_values.values()), {})
+
+    def placeholder(m: re.Match) -> str:
+        name = html.unescape(m.group(1))
+        attributes = f'data-name="{html.escape(name)}"'
+        if name in defaults:
+            return (
+                f'<em class="nrfutil-placeholder nrfutil-os-value" {attributes}>'
+                f"{html.escape(defaults[name])}</em>"
+            )
+        return f'<em class="nrfutil-placeholder" {attributes}>&lt;{m.group(1)}&gt;</em>'
+
+    body = PLACEHOLDER_HTML_RE.sub(placeholder, match.group(2))
+    return opening + body + (match.group(3) or "")
 
 
 def rewrite_blocks(
     _app: Sphinx, _pagename: str, _templatename: str, context: dict, _doctree
 ) -> None:
-    """Show placeholders such as <serial_number> in nrfutil-command blocks in italics, and move
-    each documentation button into its block, next to the copy button.
+    """Move the documentation button of each nrfutil-command block next to the copy button and
+    the controls into the border of the block, and mark the placeholders, which are shown in
+    italics.
     """
     body = context.get("body")
     if body and BLOCK_CLASS in body:
-        body = BLOCK_RE.sub(_emphasize_placeholders, body)
-        context["body"] = DOCS_BUTTON_RE.sub(r"\1\3\2", body)
+        body = DOCS_BUTTON_RE.sub(r"\1\3\2", body)
+        body = FOOTER_RE.sub(_move_footer, body)
+        context["body"] = BLOCK_RE.sub(_rewrite_block, body)
 
 
 def add_static_path(app: Sphinx, _config) -> None:
@@ -355,6 +513,7 @@ def setup(app: Sphinx) -> dict[str, Any]:
     app.connect("html-page-context", rewrite_blocks)
     app.connect("config-inited", add_static_path)
     app.add_css_file("nrfutil_command.css")
+    app.add_js_file("nrfutil_command.js", loading_method="defer")
 
     return {
         "version": "0.1",

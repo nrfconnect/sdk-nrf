@@ -175,6 +175,7 @@ The documentation build checks the nRF Util commands in ``nrfutil-command`` dire
 A line is treated as a command if it starts with ``nrfutil``, optionally preceded by a ``$`` or ``>`` prompt.
 The build reports subcommands and options that do not exist in the nRF Util versions used by the |NCS|, as warnings at the file and line of the command.
 Placeholders in angle brackets, such as ``<serial_number>``, are accepted as any value.
+For directives with the ``:values:`` option, the build checks the commands both with the placeholders and with the example values filled in.
 
 The check needs nRF Util on your ``PATH``.
 If nRF Util is not found, the build prints a message and skips the check, and the documentation builds as usual.
