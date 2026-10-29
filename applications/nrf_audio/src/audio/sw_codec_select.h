@@ -11,10 +11,11 @@
  *
  * This module provides the software codec interface for audio encoding and decoding operations.
  * It supports the LC3 (Low Complexity Communication Codec) as specified in the
- * Bluetooth LE Audio standard. The module handles codec initialization and codec configuration.
- * It provides encoding/decoding functions with support for different sample rates,
- * bitrates, and channel modes (mono/stereo). It integrates with @ref audio_app_system to
- * process audio data for both unicast (CIS) and broadcast (BIS) streaming modes.
+ * Bluetooth LE Audio standard, and optionally G.722 as a vendor-specific codec. The module handles
+ * codec initialization and codec configuration. It provides encoding/decoding functions with
+ * support for different sample rates, bitrates, and channel modes (mono/stereo). It integrates with
+ * @ref audio_app_system to process audio data for both unicast (CIS) and broadcast (BIS) streaming
+ * modes.
  */
 
 #ifndef _SW_CODEC_SELECT_H_
@@ -23,6 +24,30 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net_buf.h>
 #include "device_location.h"
+
+#if (CONFIG_SW_CODEC_G722)
+#define G722_SAMPLE_RATE_HZ	 16000
+#define G722_BITRATE_BPS	 64000
+#define G722_MAX_FRAME_SIZE_US	 10000
+#define G722_ENC_MONO_FRAME_SIZE (G722_BITRATE_BPS * G722_MAX_FRAME_SIZE_US / (8 * USEC_PER_SEC))
+
+/* PCM buffers hold audio at the application rate before/after sample rate conversion */
+#define G722_PCM_NUM_BYTES_MONO                                                                    \
+	(CONFIG_AUDIO_SAMPLE_RATE_HZ * CONFIG_AUDIO_BIT_DEPTH_OCTETS * G722_MAX_FRAME_SIZE_US /    \
+	 USEC_PER_SEC)
+
+/* Per-mono-frame budgets including SRC, with margin over observed 3041/1949 us maxima.
+ * Measured on nRF5340 Audio DK, 128 MHz, 48 kHz application PCM, 10 ms G.722 frames.
+ * Live-stream observations with interrupts enabled, not guaranteed worst-case bounds.
+ */
+#define G722_ENC_TIME_US 4000
+#define G722_DEC_TIME_US 2500
+#else
+#define G722_ENC_MONO_FRAME_SIZE 0
+#define G722_PCM_NUM_BYTES_MONO	 0
+#define G722_ENC_TIME_US	 0
+#define G722_DEC_TIME_US	 0
+#endif /* CONFIG_SW_CODEC_G722 */
 
 #if (CONFIG_SW_CODEC_LC3)
 #define LC3_MAX_FRAME_SIZE_US	10000
@@ -41,11 +66,11 @@
 #endif /* CONFIG_SW_CODEC_LC3 */
 
 /* Max will be used when multiple codecs are supported */
-#define ENC_MAX_FRAME_SIZE	      MAX(LC3_ENC_MONO_FRAME_SIZE, 0)
-#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (LC3_ENC_MONO_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX)
-#define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, 0)
-#define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, 0)
-#define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, 0)
+#define ENC_MAX_FRAME_SIZE	      MAX(LC3_ENC_MONO_FRAME_SIZE, G722_ENC_MONO_FRAME_SIZE)
+#define ENC_MULTI_CHAN_MAX_FRAME_SIZE (ENC_MAX_FRAME_SIZE * CONFIG_AUDIO_ENCODE_CHANNELS_MAX)
+#define ENC_TIME_US		      MAX(LC3_ENC_TIME_US, G722_ENC_TIME_US)
+#define DEC_TIME_US		      MAX(LC3_DEC_TIME_US, G722_DEC_TIME_US)
+#define PCM_NUM_BYTES_MONO	      MAX(LC3_PCM_NUM_BYTES_MONO, G722_PCM_NUM_BYTES_MONO)
 #define PCM_NUM_BYTES_MULTI_CHAN                                                                   \
 	(PCM_NUM_BYTES_MONO * MAX(CONFIG_AUDIO_DECODE_CHANNELS_MAX, CONFIG_AUDIO_OUTPUT_CHANNELS))
 
@@ -55,6 +80,7 @@
 enum sw_codec_select {
 	SW_CODEC_NONE, /**< No codec selected */
 	SW_CODEC_LC3,  /**< Low Complexity Communication Codec */
+	SW_CODEC_G722, /**< ITU G.722 audio codec */
 };
 
 /**

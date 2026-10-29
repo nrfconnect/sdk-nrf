@@ -24,6 +24,64 @@
 #define LE_AUDIO_ZBUS_EVENT_WAIT_TIME	  K_MSEC(5)
 #define LE_AUDIO_SDU_SIZE_OCTETS(bitrate, dur_us) (bitrate / (USEC_PER_SEC / dur_us) / 8)
 
+#if CONFIG_SW_CODEC_G722
+/* G.722 is signalled as a vendor-specific codec: 16 kHz, 64 kbps, 10 ms frames */
+#define LE_AUDIO_G722_OCTETS_PER_FRAME LE_AUDIO_SDU_SIZE_OCTETS(64000, 10000)
+
+/* All five LTV fields are explicit: vendor codecs have no implicit LC3 defaults. */
+#define LE_AUDIO_G722_CAP_DATA                                                                     \
+	{                                                                                          \
+		BT_AUDIO_CODEC_DATA(BT_AUDIO_CODEC_CAP_TYPE_FREQ,                                  \
+				    BT_BYTES_LIST_LE16(BT_AUDIO_CODEC_CAP_FREQ_16KHZ)),            \
+			BT_AUDIO_CODEC_DATA(BT_AUDIO_CODEC_CAP_TYPE_DURATION,                      \
+					    BT_AUDIO_CODEC_CAP_DURATION_10 |                       \
+						    BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),        \
+			BT_AUDIO_CODEC_DATA(BT_AUDIO_CODEC_CAP_TYPE_CHAN_COUNT,                    \
+					    BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1)),             \
+			BT_AUDIO_CODEC_DATA(BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN,                     \
+					    BT_BYTES_LIST_LE16(LE_AUDIO_G722_OCTETS_PER_FRAME),    \
+					    BT_BYTES_LIST_LE16(LE_AUDIO_G722_OCTETS_PER_FRAME)),   \
+			BT_AUDIO_CODEC_DATA(BT_AUDIO_CODEC_CAP_TYPE_FRAME_COUNT, 1)                \
+	}
+
+#define LE_AUDIO_CODEC_IS_G722(_codec)                                                             \
+	((_codec)->id == BT_HCI_CODING_FORMAT_VS &&                                                \
+	 (_codec)->cid == CONFIG_SW_CODEC_G722_COMPANY_ID &&                                       \
+	 (_codec)->vid == CONFIG_SW_CODEC_G722_VENDOR_CODEC_ID)
+
+/**
+ * @brief Validate a peer's explicit fixed-profile G.722 configuration.
+ *
+ * Requires matching vendor identity, 16 kHz, 10 ms, 80 octets, one frame per SDU
+ * and mono allocation (zero or one valid location bit).
+ * Reports independent invalid profile values before returning. NULL configurations,
+ * oversized data and malformed LTV fields stop validation before field parsing.
+ *
+ * @param[in]	codec	Codec configuration to check; NULL is rejected.
+ *
+ * @retval	0	Supported configuration.
+ * @retval	-EINVAL	Missing/malformed fields, mismatched identity or unsupported profile.
+ */
+int le_audio_g722_config_check(const struct bt_audio_codec_cfg *codec);
+
+/**
+ * @brief Check that peer capabilities include the complete fixed G.722 profile.
+ *
+ * Additional rates/durations are allowed if 16 kHz, 10 ms, mono, 80 octets and
+ * at least one frame per SDU are supported under the matching vendor identity.
+ * Reports all incompatible profile values before returning. NULL capabilities,
+ * oversized data and malformed LTV fields stop validation before field parsing.
+ *
+ * @param[in]	codec	Codec capabilities to check; NULL is rejected.
+ *
+ * @retval	0	Capabilities support the profile.
+ * @retval	-EINVAL	Missing/malformed fields, mismatched identity or incompatible capabilities.
+ */
+int le_audio_g722_cap_check(const struct bt_audio_codec_cap *codec);
+#else
+#define LE_AUDIO_CODEC_IS_G722(_codec) false
+#endif /* CONFIG_SW_CODEC_G722 */
+
 #if CONFIG_SAMPLE_RATE_CONVERTER && CONFIG_AUDIO_SAMPLE_RATE_48000_HZ
 #define BT_AUDIO_CODEC_CAPABILIY_FREQ                                                              \
 	BT_AUDIO_CODEC_CAP_FREQ_48KHZ | BT_AUDIO_CODEC_CAP_FREQ_24KHZ |                            \

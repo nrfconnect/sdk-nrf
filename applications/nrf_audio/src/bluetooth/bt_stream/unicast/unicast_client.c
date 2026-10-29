@@ -747,7 +747,12 @@ static void bap_pac_record_cb(struct bt_conn *conn, enum bt_audio_dir dir,
 
 	LOG_DBG("CB BAP PAC record for conn %p, dir %d", conn, dir);
 
-	if (codec->id != BT_HCI_CODING_FORMAT_LC3) {
+	if (IS_ENABLED(CONFIG_SW_CODEC_G722)) {
+		if (!LE_AUDIO_CODEC_IS_G722(codec)) {
+			LOG_DBG("Only the G.722 vendor codec is supported");
+			return;
+		}
+	} else if (codec->id != BT_HCI_CODING_FORMAT_LC3) {
 		LOG_DBG("Only the LC3 codec is supported");
 		return;
 	}
