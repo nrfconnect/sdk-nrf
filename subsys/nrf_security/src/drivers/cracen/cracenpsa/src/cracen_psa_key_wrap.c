@@ -59,5 +59,32 @@ psa_status_t cracen_unwrap_key(const psa_key_attributes_t *attributes,
 		status = PSA_ERROR_NOT_SUPPORTED;
 	}
 
+	if (status == PSA_SUCCESS && PSA_KEY_TYPE_IS_ECC(psa_get_key_type(attributes))) {
+		psa_key_type_t key_type = psa_get_key_type(attributes);
+		psa_ecc_family_t family = PSA_KEY_TYPE_ECC_GET_FAMILY(key_type);
+		size_t key_bytes = *key_length;
+
+		/* Weierstrass public keys are 0x04 || x || y. */
+		if (PSA_KEY_TYPE_IS_PUBLIC_KEY(key_type) && PSA_ECC_FAMILY_IS_WEIERSTRASS(family)) {
+			if (key_bytes % 2 == 0 || key[0] != 0x04) {
+				return PSA_ERROR_INVALID_ARGUMENT;
+			}
+			key_bytes /= 2;
+		}
+
+		*bits = PSA_BYTES_TO_BITS(key_bytes);
+		if (family == PSA_ECC_FAMILY_SECP_R1 && key_bytes == 66) {
+			*bits = 521;
+		} else if ((family == PSA_ECC_FAMILY_MONTGOMERY ||
+			    family == PSA_ECC_FAMILY_TWISTED_EDWARDS) &&
+			   key_bytes == 32) {
+			*bits = 255;
+		} else if (family == PSA_ECC_FAMILY_TWISTED_EDWARDS && key_bytes == 57) {
+			*bits = 448;
+		} else {
+			/* For compliance */
+		}
+	}
+
 	return status;
 }
