@@ -1586,16 +1586,24 @@ Libraries for networking
 
 * :ref:`lib_mqtt_helper` library:
 
-  * Added the experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option to use a private key that is generated on the device.
-    The key is generated with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`).
-    The option and the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option exclude each other.
-    The :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option remains the default.
-  * Added the :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_NONE` Kconfig option for applications that install the TLS credentials themselves.
-    It replaces disabling the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
-    See the :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub` libraries for how to generate the key and obtain the device certificate.
-  * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses.
-    In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
+  * Added:
+
+    * The experimental :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_KEYGEN` Kconfig option to use a private key that is generated on the device.
+      The key is generated with the TLS credentials key generation of Zephyr (:kconfig:option:`CONFIG_TLS_CREDENTIALS_KEYGEN`).
+      The option and the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option exclude each other.
+      The :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option remains the default.
+    * The :kconfig:option:`CONFIG_MQTT_HELPER_CREDENTIALS_NONE` Kconfig option for applications that install the TLS credentials themselves.
+      It replaces disabling the :kconfig:option:`CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES` Kconfig option.
+      See the :ref:`lib_aws_iot` and :ref:`lib_azure_iot_hub` libraries for how to generate the key and obtain the device certificate.
+
+  * Fixed:
+
+    * An issue where the library could stop after one resolved broker address.
+      The library now iterates all resolved IPv4/IPv6 addresses.
+      In dual-stack builds, the library resolves the broker only for the address families that the Connection Manager reports as ready.
+    * An issue where the library did not read a received message from the socket when the message was larger than the value of the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` Kconfig option.
+      The next read from the MQTT connection failed.
+      The library now drops the payload of such a message, keeps the connection and reports the :c:enumerator:`MQTT_HELPER_ERROR_MSG_SIZE` error.
 
 * :ref:`lib_downloader` library:
 
