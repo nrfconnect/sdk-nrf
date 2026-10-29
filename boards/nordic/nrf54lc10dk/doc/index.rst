@@ -63,7 +63,7 @@ Flashing
 
 As an example, the following section shows how to build and flash the :zephyr:code-sample:`hello_world` application.
 
-.. warning::
+.. caution::
 
    When programming the device, you might get an error similar to the following message::
 
