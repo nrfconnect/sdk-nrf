@@ -23,6 +23,7 @@
 		group1 {
 			psels = <NRF_PSEL(PDM_CLK, 2, 3)>,
 				<NRF_PSEL(PDM_DIN, 1, 4)>;
+			nordic,drive-mode = <NRF_DRIVE_H0H1>;
 		};
 	};
 };
@@ -35,9 +36,9 @@ pdm_dev: &pdm0 {
 	memory-regions = <&cpuapp_dma_region>;
 };
 
-&audiopll {
+&audio_auxpll {
 	status = "okay";
-	frequency = <NRFS_AUDIOPLL_FREQ_AUDIO_48K>;
+	nordic,frequency = <NRF_AUXPLL_FREQ_DIV_AUDIO_48K>;
 };
 
 &gpio1 {
