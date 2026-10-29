@@ -122,11 +122,13 @@ psa_status_t cracen_import_ml_kem_public_key(const psa_key_attributes_t *attribu
 		return status;
 	}
 
-	/** Note: the modulus check of the encapsulation key (FIPS 203, Section 7.2)
-	 *  is not done here now. Oberon does this check before import, however even without it
-	 *  an attempt to use invalid key must fail.
-	 */
 	memcpy(key_buffer, data, data_length);
+
+	/* Check the copy, not data: data is the caller's buffer, which must be read only once. */
+	if (!cracen_ml_kem_check_encapsulation_key(cracen_ml_kem_params_get(bits), key_buffer)) {
+		safe_memzero(key_buffer, key_buffer_size);
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
 
 	*key_bits = bits;
 	*key_buffer_length = data_length;

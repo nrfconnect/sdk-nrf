@@ -15,6 +15,7 @@
 #define CRACEN_ML_KEM_INTERNAL_H
 
 #include <psa/crypto_values.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
 
@@ -99,5 +100,14 @@ typedef struct ml_kem_params_s ml_kem_params_t;
  *         enabled in the build.
  */
 const ml_kem_params_t *cracen_ml_kem_params_get(size_t bits);
+
+/** @brief Check the encapsulation key modulus (FIPS 203, Section 7.2).
+ *
+ * @param[in] params  Parameter set of the key.
+ * @param[in] ek      Encapsulation key of params->pk_size bytes.
+ *
+ * @return true if every coefficient of ek is in the range [0, q-1].
+ */
+bool cracen_ml_kem_check_encapsulation_key(const ml_kem_params_t *params, const uint8_t *ek);
 
 #endif /* CRACEN_ML_KEM_INTERNAL_H */
