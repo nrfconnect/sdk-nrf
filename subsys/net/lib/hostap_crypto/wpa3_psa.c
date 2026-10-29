@@ -1690,6 +1690,7 @@ static int wpa3_psa_derive_keys(struct wpa3_psa_operation *op)
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_id_t shared_key_id = PSA_KEY_ID_NULL;
 	size_t pmk_len;
+	size_t pmkid_len = 0;
 	uint8_t *pmk_buf = NULL;
 	int ret = -1;
 
@@ -1700,6 +1701,14 @@ static int wpa3_psa_derive_keys(struct wpa3_psa_operation *op)
 
 	/* PSA PAKE returns PMK directly - no keyseed derivation needed */
 	/* Key derivation is handled internally by PSA PAKE */
+
+	/* KEY_ID must be read before psa_pake_get_shared_key(), which ends the operation */
+	status = psa_pake_output(&op->pake_op, PSA_PAKE_STEP_KEY_ID, op->pmkid,
+				 sizeof(op->pmkid), &pmkid_len);
+	if (status != PSA_SUCCESS || pmkid_len != SAE_PMKID_LEN) {
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to get PMKID: %d", status);
+		return -1;
+	}
 
 	/* Get the shared key from PSA PAKE */
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT);
