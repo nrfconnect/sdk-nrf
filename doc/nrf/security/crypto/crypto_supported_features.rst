@@ -886,13 +886,13 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
               * - RSA Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                - Supported
-                - Supported
-                - Supported
-                - Experimental
-                - Supported
-                - Supported
-                - Supported
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
+                - --
                 - --
                 - --
               * - RSA Public Key
@@ -10577,13 +10577,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
 
@@ -11142,13 +11142,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                * - Derive
