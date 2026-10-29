@@ -28,6 +28,7 @@ struct rx_stats {
 static bool initialized;
 static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
+static enum bt_audio_location audio_frame_stream_locations;
 K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
 
 K_MSGQ_DEFINE(ble_q_rx, sizeof(struct net_buf *), CONFIG_BUF_BLE_RX_PACKET_NUM, sizeof(void *));
@@ -94,6 +95,43 @@ static int audio_frame_add(struct net_buf *audio_frame, struct net_buf const *co
 	}
 
 	return 0;
+}
+
+/**
+ * @brief Finalize an incomplete aggregate before passing it to the decoder.
+ *
+ * Zeroes payload slots for absent locations, marks them in bad_data, and updates
+ * the aggregate's locations to describe its full allocated layout. Received
+ * payload and existing loss flags are preserved.
+ *
+ * @pre The buffer contains one bytes_per_location-sized slot per active location,
+ *      packed in ascending location-bit order.
+ *
+ * @param[in,out] audio_frame Non-NULL aggregate buffer with audio metadata.
+ * @param[in] stream_locations Active location mask used when allocating the aggregate.
+ */
+static void audio_frame_missing_streams_mark(struct net_buf *audio_frame,
+					     enum bt_audio_location stream_locations)
+{
+	struct audio_metadata *meta = net_buf_user_data(audio_frame);
+	enum bt_audio_location missing_locations = stream_locations & ~meta->locations;
+	uint8_t channel = 0;
+
+	for (uint32_t bit = 1; bit != 0; bit <<= 1) {
+		if (!(stream_locations & bit)) {
+			continue;
+		}
+
+		if (missing_locations & bit) {
+			memset(audio_frame->data + channel * meta->bytes_per_location, 0,
+			       meta->bytes_per_location);
+		}
+
+		channel++;
+	}
+
+	meta->bad_data |= missing_locations;
+	meta->locations = stream_locations;
 }
 
 /* Callback for handling ISO RX */
@@ -185,9 +223,13 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		struct audio_metadata *existing_meta = net_buf_user_data(audio_frame);
 		uint32_t ref_ts_diff = abs((meta->ref_ts_us - existing_meta->ref_ts_us));
 
-		if (ref_ts_diff < SDU_REF_CH_DELTA_MAX_US) {
+		/* If the reference timestamp difference is within the allowed delta and the
+		 * aggregated locations match, we consider this frame as part of the same group.
+		 */
+		if (ref_ts_diff < SDU_REF_CH_DELTA_MAX_US &&
+		    stream_locations == audio_frame_stream_locations) {
 			/* We already have a frame with this timestamp, so we will add these
-			 * together if the locations are different
+			 * together if the stream locations are different.
 			 */
 			if (existing_meta->locations != meta->locations) {
 				/* Add location and bad_frame status to the joint audio frame */
@@ -198,8 +240,12 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 						      stream_locations);
 				if (ret) {
 					LOG_ERR("Failed to add audio frame data");
+					/* Reset the current audio frame as it failed to add new
+					 * data.
+					 */
 					net_buf_unref(audio_frame);
 					audio_frame = NULL;
+					audio_frame_stream_locations = 0;
 					return;
 				}
 
@@ -211,11 +257,14 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 				return;
 			}
 		} else {
-			/* We have a new frame with a different timestamp, so we will send the
-			 * old frame and create a new one. This will usually happen if we miss a
-			 * frame or we suddenly go from one to two or more streams.
+			/* Send the incomplete frame when its timestamp or active channel layout
+			 * changes. Mark absent channels bad before exposing the aggregate. This
+			 * will usually happen if we miss a frame from one of the channels or we
+			 * suddenly go from one to two or more streams.
 			 */
-			LOG_WRN("Received audio frame with different timestamp, sending old frame, "
+			audio_frame_missing_streams_mark(audio_frame, audio_frame_stream_locations);
+
+			LOG_WRN("Received audio frame with different timestamp or channel layout, "
 				"old ts: %u, new ts: %u",
 				existing_meta->ref_ts_us, meta->ref_ts_us);
 
@@ -226,6 +275,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 			}
 
 			audio_frame = NULL;
+			audio_frame_stream_locations = 0;
 		}
 	}
 
@@ -240,6 +290,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 
 	/* Store metadata from the first frame */
 	memcpy(net_buf_user_data(audio_frame), meta, sizeof(struct audio_metadata));
+	audio_frame_stream_locations = stream_locations;
 
 	/* Set aside memory in net_buf for all locations */
 	net_buf_add(audio_frame, meta->bytes_per_location * num_active_streams);
@@ -247,8 +298,10 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 	ret = audio_frame_add(audio_frame, audio_frame_rx, meta, stream_locations);
 	if (ret) {
 		LOG_ERR("Failed to add audio frame data");
+		/* Reset the current audio frame as it failed to add new data */
 		net_buf_unref(audio_frame);
 		audio_frame = NULL;
+		audio_frame_stream_locations = 0;
 		return;
 	}
 
@@ -265,6 +318,7 @@ check_send:
 		}
 
 		audio_frame = NULL;
+		audio_frame_stream_locations = 0;
 	}
 }
 
