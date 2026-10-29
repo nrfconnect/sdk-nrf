@@ -1738,6 +1738,7 @@
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#preconnect-onboarding
 .. _`nRF Cloud Device Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding
 .. _`nRF Cloud nRF93M1 Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding/nrf93m1-onboarding
+.. _`nRF Cloud manual device certificate provisioning`: https://docs.nrfcloud.com/docs/best-practices/device-onboarding-quickstart#manually-provisioning-a-device-certificate
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
 .. _`nRF Cloud device onboarding quickstart`: https://docs.nrfcloud.com/docs/best-practices/device-onboarding-quickstart

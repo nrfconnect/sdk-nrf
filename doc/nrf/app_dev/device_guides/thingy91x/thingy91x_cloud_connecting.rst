@@ -7,17 +7,9 @@ Connecting the |DK| to nRF Cloud
 
 .. |DK| replace:: Thingy:91x
 
-To transmit data from your |DK| to nRF Cloud, you need an `nRF Cloud`_ account.
-nRF Cloud is Nordic Semiconductor's platform for connecting your IoT devices to the cloud, viewing and analyzing device message data, prototyping ideas that use Nordic Semiconductor's chips, and more.
-
-Once you have an account, add the device to your nRF Cloud account.
-
-Creating an nRF Cloud account
-*****************************
-
 .. include:: ../nrf91/nrf91_cloud_connecting.rst
-   :start-after: nrf_cloud_account_start
-   :end-before: nrf_cloud_account_end
+   :start-after: dk_nrf_cloud_start
+   :end-before: dk_nrf_cloud_end
 
 Adding the Thingy:91x to nRF Cloud
 **********************************
