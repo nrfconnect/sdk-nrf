@@ -188,7 +188,9 @@ psa_status_t cracen_signature_rsa_verify(bool is_message,
 	    PSA_SIGN_OUTPUT_SIZE(PSA_KEY_TYPE_RSA_KEY_PAIR, key_bits_attr, alg)) {
 		return PSA_ERROR_INVALID_SIGNATURE;
 	}
-	if (PSA_ALG_IS_RSA_PSS(alg)) {
+	if (PSA_ALG_IS_RSA_PSS_ANY_SALT(alg)) {
+		saltsz = CRACEN_RSA_PSS_ANY_SALT;
+	} else if (PSA_ALG_IS_RSA_PSS(alg)) {
 		saltsz = sx_hash_get_alg_digestsz(hashalgpointer);
 	} else if (PSA_ALG_IS_RSA_PKCS1V15_SIGN(alg)) {
 		saltsz = 0;
