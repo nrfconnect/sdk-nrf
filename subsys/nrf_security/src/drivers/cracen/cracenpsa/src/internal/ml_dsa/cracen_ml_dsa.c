@@ -23,6 +23,14 @@
 #include <string.h>
 #include <zephyr/sys/util.h>
 
+static size_t hash_ml_dsa_digest_size(psa_algorithm_t alg)
+{
+	psa_algorithm_t hash_alg = PSA_ALG_GET_HASH(alg);
+
+	/* PSA_HASH_LENGTH() has no entry for SHAKE128_256. */
+	return hash_alg == PSA_ALG_SHAKE128_256 ? 32 : PSA_HASH_LENGTH(hash_alg);
+}
+
 /* Public-key derivation (FIPS 204, Algorithm 6 followed by pkEncode, Algorithm 22): expand
  * the seed and keep only the encoded public key; the secret vectors are wiped on return.
  */
@@ -109,6 +117,10 @@ psa_status_t cracen_ml_dsa_verify(bool is_message,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		oid_len = ML_DSA_HASH_OID_BYTES;
+
+		if (input_length != hash_ml_dsa_digest_size(alg)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
 	}
 
 	alg_params = cracen_ml_dsa_params_get(psa_get_key_bits(attributes));
@@ -185,6 +197,10 @@ psa_status_t cracen_ml_dsa_sign(bool is_message,
 			return PSA_ERROR_NOT_SUPPORTED;
 		}
 		oid_len = ML_DSA_HASH_OID_BYTES;
+
+		if (input_length != hash_ml_dsa_digest_size(alg)) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
 	}
 
 	alg_params = cracen_ml_dsa_params_get(psa_get_key_bits(attributes));
