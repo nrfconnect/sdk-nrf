@@ -245,7 +245,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	}
 
 	if (PSA_BYTES_TO_BITS(modulus->sz) > PSA_MAX_KEY_BITS) {
-		return PSA_ERROR_NOT_SUPPORTED;
+		return SX_ERR_INVALID_ARG;
 	}
 
 	/* Import E */
