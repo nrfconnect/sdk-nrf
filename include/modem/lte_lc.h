@@ -1444,6 +1444,78 @@ struct lte_lc_periodic_search_cfg {
 	struct lte_lc_periodic_search_pattern patterns[4];
 };
 
+/**
+ * @brief Data profile, which tells the modem about the application use case.
+ *
+ * The modem uses it to optimize its power consumption. The default is
+ * @ref LTE_LC_DATA_PROFILE_NORMAL.
+ *
+ * Each profile has a default periodic search pattern, which sets the sleep time between searches
+ * in limited service. The times below are counted from when limited service started. At the end of
+ * a list of sleep times, the last one is repeated, as the default patterns do not loop or return
+ * to an earlier pattern.
+ *
+ * UICC deactivation during eDRX requires modem firmware v1.3.2 or later on the nRF9160.
+ *
+ * @note Only the sleep times are specified. The search times depend on enabled bands, the number
+ *       of PLMNs to search for, and the network conditions. The default band optimization of the
+ *       modem also depends on the profile.
+ */
+enum lte_lc_data_profile {
+	/**
+	 * Ultra-low power.
+	 *
+	 * The sleep time starts at 10 s and goes up to 40 s during the first 5 minutes. After that,
+	 * the sleep times are 5, 10, 30 and 30 minutes, then 60 minutes from then on.
+	 *
+	 * The UICC is deactivated during eDRX if the eDRX cycle is longer than 60 s and the UICC
+	 * allows it.
+	 */
+	LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER = 0,
+
+	/**
+	 * Low power.
+	 *
+	 * The sleep time starts at 10 s and goes up to 40 s during the first 5 minutes. After that,
+	 * the sleep time is 5 minutes, then 10 minutes from then on.
+	 *
+	 * The UICC is deactivated during eDRX if the eDRX cycle is longer than 5 minutes.
+	 */
+	LTE_LC_DATA_PROFILE_LOW_POWER = 1,
+
+	/**
+	 * Normal.
+	 *
+	 * The sleep time starts at 10 s and goes up to 40 s during the first 5 minutes, and stays
+	 * at 40 s until 15 minutes. After that, the sleep times are 1 and 1.5 minutes, then
+	 * 5 minutes from then on.
+	 *
+	 * The UICC is deactivated during eDRX if the eDRX cycle is longer than 5 minutes.
+	 */
+	LTE_LC_DATA_PROFILE_NORMAL = 2,
+
+	/**
+	 * Performance.
+	 *
+	 * The sleep time starts at 10 s and goes up to 40 s during the first 5 minutes, and stays
+	 * at 40 s until 15 minutes. After that, the sleep time is 1 minute, then 1.5 minutes from
+	 * then on.
+	 *
+	 * The UICC is deactivated during eDRX if the eDRX cycle is longer than 5 minutes.
+	 */
+	LTE_LC_DATA_PROFILE_PERFORMANCE = 3,
+
+	/**
+	 * High performance.
+	 *
+	 * The sleep time starts at 10 s and goes up to 40 s until 15 minutes. After that,
+	 * the sleep time stays at 40 s.
+	 *
+	 * The UICC is deactivated during eDRX if the eDRX cycle is longer than 5 minutes.
+	 */
+	LTE_LC_DATA_PROFILE_HIGH_PERFORMANCE = 4,
+};
+
 #if defined(CONFIG_LTE_LC_ENV_EVAL_MODULE)
 /**
  * @brief Environment evaluation results.
@@ -2486,6 +2558,47 @@ int lte_lc_periodic_search_clear(void);
  * @retval -EFAULT if an AT command could not be sent to the modem.
  */
 int lte_lc_periodic_search_request(void);
+
+/**
+ * @brief Set the data profile.
+ *
+ * The data profile controls the periodic search pattern and UICC deactivation during eDRX.
+ * See "nRF91 AT Commands - Command Reference Guide" for more information.
+ *
+ * A periodic search configuration set using @ref lte_lc_periodic_search_set overrides the search
+ * defaults of the profile.
+ *
+ * The modem stores the profile to NVM about every 48 hours and when the functional mode is set to
+ * @ref LTE_LC_FUNC_MODE_POWER_OFF. An active %XPOFWARN warning blocks the storing.
+ *
+ * @note Consider UICC NVM wear when setting the data profile. On the nRF91x1, %UICCPOWERSAVE can
+ *       overrule the conditions for deactivating the UICC.
+ *
+ * @note Requires `CONFIG_LTE_LC_DATA_PROFILE_MODULE` to be enabled.
+ *
+ * @param[in] profile Data profile.
+ *
+ * @retval 0 if the data profile was successfully sent to the modem.
+ * @retval -EINVAL if the data profile was invalid.
+ * @retval -EFAULT if an AT command could not be sent to the modem.
+ * @retval -EBADMSG if the modem responded with an error to an AT command.
+ */
+int lte_lc_data_profile_set(enum lte_lc_data_profile profile);
+
+/**
+ * @brief Get the data profile.
+ *
+ * @note Requires `CONFIG_LTE_LC_DATA_PROFILE_MODULE` to be enabled.
+ *
+ * @param[out] profile Data profile.
+ *
+ * @retval 0 if the data profile was found and populated to the provided pointer.
+ * @retval -EINVAL if input parameter was @c NULL.
+ * @retval -EFAULT if an AT command could not be sent to the modem.
+ * @retval -EBADMSG if the modem responded with an error to an AT command or the
+ *         response could not be parsed.
+ */
+int lte_lc_data_profile_get(enum lte_lc_data_profile *profile);
 
 /**
  * @brief Create a PDP context.

@@ -382,6 +382,7 @@ static int sys_init_helper(void)
 }
 
 extern void on_modem_init(int err, void *ctx);
+extern int xdataprfl_init_apply(enum lte_lc_data_profile profile);
 extern void lte_lc_on_modem_cfun(int mode, void *ctx);
 
 void enable_notifications(void)
@@ -5165,6 +5166,159 @@ void test_lte_lc_periodic_search_set_at_cme_fail(void)
 
 	ret = lte_lc_periodic_search_set(&cfg);
 	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_data_profile_set_all_levels_success(void)
+{
+	int ret;
+	const char *const commands[] = {
+		"AT%XDATAPRFL=0",
+		"AT%XDATAPRFL=1",
+		"AT%XDATAPRFL=2",
+		"AT%XDATAPRFL=3",
+		"AT%XDATAPRFL=4",
+	};
+	const enum lte_lc_data_profile profiles[] = {
+		LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER,
+		LTE_LC_DATA_PROFILE_LOW_POWER,
+		LTE_LC_DATA_PROFILE_NORMAL,
+		LTE_LC_DATA_PROFILE_PERFORMANCE,
+		LTE_LC_DATA_PROFILE_HIGH_PERFORMANCE,
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(profiles); ++i) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn(commands[i], EXIT_SUCCESS);
+
+		ret = lte_lc_data_profile_set(profiles[i]);
+		TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+	}
+}
+
+void test_lte_lc_data_profile_set_out_of_range_fail(void)
+{
+	int ret;
+
+	/* No AT command is expected for invalid input. */
+	ret = lte_lc_data_profile_set(-1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_data_profile_set(LTE_LC_DATA_PROFILE_HIGH_PERFORMANCE + 1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_data_profile_set_at_fail(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XDATAPRFL=1", -NRF_ENOMEM);
+
+	ret = lte_lc_data_profile_set(LTE_LC_DATA_PROFILE_LOW_POWER);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_data_profile_set_at_cme_fail(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XDATAPRFL=1", 1);
+
+	ret = lte_lc_data_profile_set(LTE_LC_DATA_PROFILE_LOW_POWER);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_data_profile_get_null_fail(void)
+{
+	int ret;
+
+	ret = lte_lc_data_profile_get(NULL);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_data_profile_get_all_levels_success(void)
+{
+	int ret;
+	enum lte_lc_data_profile profile;
+
+	for (uint16_t level = 0; level <= 4; ++level) {
+		__mock_nrf_modem_at_scanf_ExpectAndReturn(
+			"AT%XDATAPRFL?", "%%XDATAPRFL: %hu", 1);
+		__mock_nrf_modem_at_scanf_ReturnVarg_uint16(level);
+
+		ret = lte_lc_data_profile_get(&profile);
+		TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+		TEST_ASSERT_EQUAL(level, profile);
+	}
+}
+
+void test_lte_lc_data_profile_get_invalid_level_fail(void)
+{
+	int ret;
+	enum lte_lc_data_profile profile;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%XDATAPRFL?", "%%XDATAPRFL: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(5);
+
+	ret = lte_lc_data_profile_get(&profile);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_data_profile_get_no_match_fail(void)
+{
+	int ret;
+	enum lte_lc_data_profile profile;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XDATAPRFL?", "%%XDATAPRFL: %hu", -NRF_EBADMSG);
+
+	ret = lte_lc_data_profile_get(&profile);
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+}
+
+void test_lte_lc_data_profile_get_at_fail(void)
+{
+	int ret;
+	enum lte_lc_data_profile profile;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XDATAPRFL?", "%%XDATAPRFL: %hu", -NRF_ENOMEM);
+
+	ret = lte_lc_data_profile_get(&profile);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+}
+
+void test_lte_lc_data_profile_init_apply_differs_success(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%XDATAPRFL?", "%%XDATAPRFL: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_DATA_PROFILE_NORMAL);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XDATAPRFL=0", EXIT_SUCCESS);
+
+	ret = xdataprfl_init_apply(LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_data_profile_init_apply_same_skips_write(void)
+{
+	int ret;
+
+	/* No AT%XDATAPRFL write is expected when the profile already matches. */
+	__mock_nrf_modem_at_scanf_ExpectAndReturn("AT%XDATAPRFL?", "%%XDATAPRFL: %hu", 1);
+	__mock_nrf_modem_at_scanf_ReturnVarg_uint16(LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER);
+
+	ret = xdataprfl_init_apply(LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_data_profile_init_apply_get_fail_skips_write(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_scanf_ExpectAndReturn(
+		"AT%XDATAPRFL?", "%%XDATAPRFL: %hu", -NRF_ENOMEM);
+
+	ret = xdataprfl_init_apply(LTE_LC_DATA_PROFILE_ULTRA_LOW_POWER);
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
 }
 
 void test_lte_lc_periodic_search_clear_success(void)
