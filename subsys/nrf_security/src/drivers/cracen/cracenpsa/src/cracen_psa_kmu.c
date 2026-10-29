@@ -1151,6 +1151,9 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		metadata->size = METADATA_ALG_KEY_BITS_128;
 		break;
 	case 192:
+		if (cracen_is_unsupported_aes_key(key_attr, psa_get_key_bits(key_attr))) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
 		metadata->size = METADATA_ALG_KEY_BITS_192;
 		break;
 	case 255:

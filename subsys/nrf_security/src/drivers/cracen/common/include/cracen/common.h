@@ -74,6 +74,16 @@ psa_status_t cracen_rnd_in_range(uint8_t *n, size_t sz, const uint8_t *upperlimi
 void cracen_xorbytes(uint8_t *a, const uint8_t *b, size_t sz);
 
 /**
+ * @brief Check if a key is an AES key of a size that the CRACEN hardware does not support.
+ *
+ * @param[in] attributes Key attributes.
+ * @param[in] key_bits   Key size in bits.
+ *
+ * @return true for a 192-bit AES key on CRACEN Lite, false otherwise.
+ */
+bool cracen_is_unsupported_aes_key(const psa_key_attributes_t *attributes, size_t key_bits);
+
+/**
  * @brief Loads key buffer and attributes.
  *
  * @return PSA status code.
