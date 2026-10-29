@@ -70,12 +70,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34573"
 
 - scenarios:
-    - sample.mcumgr.smp_svr.ram_load.*
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-24488"
-
-- scenarios:
     - sample.bluetooth.central.multilink
     - sample.bluetooth.peripheral_identity
   platforms:
@@ -93,13 +87,6 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34577"
-
-- scenarios:
-    - mgmt.mcumgr.fs.mgmt.hash.supported.sha256
-  platforms:
-    - nrf54h20dk@0.9.0/nrf54h20/cpurad
-    - nrf54lm20dk/nrf54lm20a/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-34575 and NCSDK-35492"
 
 - scenarios:
     - libraries.encoding.jwt.rsa.psa
