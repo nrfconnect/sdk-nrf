@@ -1,4 +1,5 @@
 /*
+ *
  * Copyright (c) 2026 Nordic Semiconductor ASA
  *
  * SPDX-License-Identifier: Apache-2.0
@@ -6,7 +7,7 @@
 
 /**
  * @file
- * @addtogroup nrf71_wifi_fw_if Wi-Fi driver and firmware interface
+ * @addtogroup Coexistence interface
  * @{
  * @brief Coexistence interface between Coexistence Driver and Short-Range Driver
  */
@@ -17,12 +18,12 @@
 #include <common/fw_if/pack_def.h>
 
 /** Number of elements in CCCONF priority range buffers. */
-#define NUM_ELEMENTS_IN_CCCONF_PTI_RANGE 3U
+#define NUM_ELEMENTS_IN_CCCONF_PTI_RANGE        3U
 
 /** Maximum number of SR CCCONF PTI values. */
-#define MAX_NUM_SR_CCCONF_PTI_VALUES 6U
+#define MAX_NUM_SR_CCCONF_PTI_VALUES            6U
 
-#define COEX_SR_PRIORITY_LEVEL_UNUSED 0xFF
+#define COEX_SR_PRIORITY_LEVEL_UNUSED           0xFF
 
 /**
  * SR SW client request status.
@@ -30,10 +31,10 @@
  * Indicates whether the SR SW client request was granted or not.
  */
 enum coex_sr_sw_client_req_status_t {
-	/** Indicates the SR SW client request is granted. */
-	SR_SW_CLIENT_REQ_SUCCESS = 0,
-	/** Indicates the SR SW client request is NOT granted. */
-	SR_SW_CLIENT_REQ_FAIL
+    /** Indicates the SR SW client request is granted. */
+    SR_SW_CLIENT_REQ_SUCCESS = 0,
+    /** Indicates the SR SW client request is NOT granted. */
+    SR_SW_CLIENT_REQ_FAIL
 };
 
 /**
@@ -42,10 +43,10 @@ enum coex_sr_sw_client_req_status_t {
  * Indicates the type of SW client operation.
  */
 enum coex_sr_sw_client_req_type_t {
-	/** Indicates the SW client release. */
-	SR_SW_CLIENT_RELEASE = 0,
-	/** Indicates the SW client request. */
-	SR_SW_CLIENT_REQUEST = 1
+    /** Indicates the SW client release. */
+    SR_SW_CLIENT_RELEASE = 0,
+    /** Indicates the SW client request. */
+    SR_SW_CLIENT_REQUEST = 1
 };
 
 /**
@@ -54,16 +55,16 @@ enum coex_sr_sw_client_req_type_t {
  * Indicates the priority level of the SW client request.
  */
 enum coex_sr_sw_client_req_pti_level_t {
-	/** Low priority level. */
-	SR_SW_CLIENT_REQ_PTI_LOW = 0,
-	/** Medium priority level. */
-	SR_SW_CLIENT_REQ_PTI_MEDIUM,
-	/** High priority level. */
-	SR_SW_CLIENT_REQ_PTI_HIGH,
-	/** Highest priority level. */
-	SR_SW_CLIENT_REQ_PTI_HIGHEST,
-	/** Total number of priority levels. */
-	SR_SW_CLIENT_REQ_PTI_COUNT
+    /** Low priority level. */
+    SR_SW_CLIENT_REQ_PTI_LOW = 0,
+    /** Medium priority level. */
+    SR_SW_CLIENT_REQ_PTI_MEDIUM,
+    /** High priority level. */
+    SR_SW_CLIENT_REQ_PTI_HIGH,
+    /** Highest priority level. */
+    SR_SW_CLIENT_REQ_PTI_HIGHEST,
+    /** Total number of priority levels. */
+    SR_SW_CLIENT_REQ_PTI_COUNT
 };
 
 /**
@@ -72,8 +73,8 @@ enum coex_sr_sw_client_req_pti_level_t {
  * Indicates power down and power up scenarios.
  */
 enum coex_sr_power_event_t {
-	COEX_SR_PREPARE_POWER_DOWN = 0,
-	COEX_SR_POWERED_UP_READY
+    COEX_SR_PREPARE_POWER_DOWN = 0,
+    COEX_SR_POWERED_UP_READY
 };
 
 /**
@@ -82,22 +83,22 @@ enum coex_sr_power_event_t {
  * Indicates different SR SW clients that can request COEX resources.
  */
 enum sr_sw_client_t {
-	/** To protect connection phase from Wi-Fi interference. */
-	SR_CONNECTION,
-	/** To protect calibrations from Wi-Fi interference. */
-	SR_CALIBRATIONS,
-	/** To protect connection event from Wi-Fi interference. */
-	SR_CONNECTION_EVENT,
-	/** Total number of SR SW client types. */
-	MAX_SR_SW_CLIENT_COUNT
+    /** To protect connection phase from Wi-Fi interference. */
+    SR_CONNECTION,
+    /** To protect calibrations from Wi-Fi interference. */
+    SR_CALIBRATIONS,
+    /** To protect connection event from Wi-Fi interference. */
+    SR_CONNECTION_EVENT,
+    /** Total number of SR SW client types. */
+    MAX_SR_SW_CLIENT_COUNT
 };
 
 /** RF band selection */
 enum sr_rf_freq_band_t {
-	/** SR operating in 2.4G band */
-	SR_BAND_2PT4G,
-	/** SR operating in non 2.4G band */
-	SR_BAND_NON_2PT4G
+    /** SR operating in 2.4G band */
+    SR_BAND_2PT4G,
+    /** SR operating in non 2.4G band */
+    SR_BAND_NON_2PT4G
 };
 
 /**
@@ -106,26 +107,26 @@ enum sr_rf_freq_band_t {
  * This holds the type of Short-Range activity.
  */
 enum short_range_activity_type_t {
-	/** BLE advertisement . periodic*/
-	SR_BLE_ADV = 0,
-	/** BLE scan. periodic or continuous based on the parameters */
-	SR_BLE_SCAN,
-	/** BLE connected data transfer. periodic (connection events) */
-	SR_BLE_CONNECTED_DATA_TRANSFER,
-	/** Thread discovery .. one shot process*/
-	SR_THREAD_DISCOVERY,
-	/** Thread end device date transfer .. periodic? depends on application */
-	SR_THREAD_ED_DATA_TRANSFER,
-	/** Thread end device polling . periodic */
-	SR_THREAD_ED_POLLING,
+    /** BLE advertisement. periodic*/
+    SR_BLE_ADV = 0,
+    /** BLE scan. periodic or continuous based on the parameters */
+    SR_BLE_SCAN,
+    /** BLE connected data transfer. periodic (connection events) */
+    SR_BLE_CONNECTED_DATA_TRANSFER,
+    /** Thread discovery. one shot process*/
+    SR_THREAD_DISCOVERY,
+    /** Thread end device data transfer. periodic? depends on application */
+    SR_THREAD_ED_DATA_TRANSFER,
+    /** Thread end device polling. periodic */
+    SR_THREAD_ED_POLLING,
 };
 
 /** Short_Range activity action type */
 enum short_range_activity_action_t {
-	/** Activity start */
-	SR_ACTIVITY_START,
-	/**  Activity end */
-	SR_ACTIVITY_END
+    /** Activity start */
+    SR_ACTIVITY_START,
+    /**  Activity end */
+    SR_ACTIVITY_END
 };
 
 /**
@@ -135,16 +136,14 @@ enum short_range_activity_action_t {
  * for generating Periodic Priority Windows (PPWs) for Wi-Fi and SR radios.
  */
 struct short_range_activity_info_t {
-	/** Short-Range activity type. see &enum short_range_activity_type_t */
-	unsigned int sr_activity_type;
-	/** Short-Range activity action: start or end. see &enum short_range_activity_action_t */
-	unsigned int sr_activity_action;
-	/*
-	 * Start time of the periodic activity. An absolute timestamp in the common GRTC domain,
-	 * expressed in milliseconds and rounded down to the nearest integer.
-	 * Set to zero for a non-aligned activity.
-	 */
-	unsigned int start_time_of_activity;
+    /** Short-Range activity type. see &enum short_range_activity_type_t */
+    unsigned int sr_activity_type;
+    /** Short-Range activity action: start or end. see &enum short_range_activity_action_t */
+    unsigned int sr_activity_action;
+    /** Start time of the periodic activity. An absolute timestamp in the common GRTC domain,
+        expressed in milliseconds and rounded down to the nearest integer.
+        Set to zero for a non-aligned activity. */
+    unsigned int start_time_of_activity;
 
 	/** Short-Range activity parameters */
 	/** Activity periodicity/interval in milliseconds*/
@@ -168,22 +167,27 @@ struct short_range_activity_info_t {
  * ranges; the critical ranges are consumed by the Short-Range driver.
  */
 struct coex_sr_priority_range_t {
-	/** SR Rx client CCCONF priority range. */
-	unsigned char sr_rx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/** SR Tx client CCCONF priority range. */
-	unsigned char sr_tx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/**
-	 * Optional index into the applicable populated priority array. When
-	 * equal to COEX_SR_PRIORITY_LEVEL_UNUSED (0xFF), the SR driver selects
-	 * a priority value according to packet type and activity criticality.
-	 */
-	unsigned char client_priority_level;
-
-	/** Critical-activity SR Rx client CCCONF priority range. */
-	unsigned char sr_rx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-	/** Critical-activity SR Tx client CCCONF priority range. */
-	unsigned char sr_tx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
-
+    /** SR Rx client CCCONF priority range. */
+    unsigned char sr_rx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+    /** SR Tx client CCCONF priority range. */
+    unsigned char sr_tx_client_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+     /**
+     * Optional index into the applicable populated priority arrays.
+     *
+     * Values 0 through (number_of_populated_values - 1) select a
+     * priority value from the populated array.
+     *
+     * When equal to COEX_SR_PRIORITY_LEVEL_UNUSED (0xFF), the SR
+     * driver shall ignore this field and select priority values
+     * according to packet type and activity criticality.
+     *
+     * Any other out-of-range value is invalid.
+     */
+    unsigned char client_priority_level;
+    /** Critical activity SR Rx client CCCONF priority range. */
+    unsigned char sr_rx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
+    /** Critical activity SR Tx client CCCONF priority range. */
+    unsigned char sr_tx_client_critical_ccconf_pti_range[NUM_ELEMENTS_IN_CCCONF_PTI_RANGE];
 } __NRF_WIFI_PKD;
 
 /**
@@ -217,7 +221,8 @@ unsigned int coex_sr_enable(unsigned int enable_coex);
  *
  * Returns true when both ranges and client_priority_level are valid and stored.
  */
-unsigned int coex_sr_set_client_priority(const struct coex_sr_priority_range_t *sr_priority_range);
+unsigned int coex_sr_set_client_priority(
+    const struct coex_sr_priority_range_t *sr_priority_range);
 
 /**
  * Request or release an SR Single Priority Window through CD.
@@ -226,8 +231,9 @@ unsigned int coex_sr_set_client_priority(const struct coex_sr_priority_range_t *
  * validation, state, transport, or response-timeout failure. On a zero return,
  * grant_status contains the CM grant decision.
  */
-int coex_cd_sr_software_client_request(const struct coex_sr_sw_client_params_t *client_params,
-				       enum coex_sr_sw_client_req_status_t *grant_status);
+int coex_cd_sr_software_client_request(
+    const struct coex_sr_sw_client_params_t *client_params,
+    enum coex_sr_sw_client_req_status_t *grant_status);
 
 /**
  * Report SR activity information used by CD for PPW selection and generation.
@@ -235,7 +241,7 @@ int coex_cd_sr_software_client_request(const struct coex_sr_sw_client_params_t *
  * Returns zero on success or a negative errno value.
  */
 int coex_cd_update_short_range_activity_info(
-	const struct short_range_activity_info_t *activity_info);
+    const struct short_range_activity_info_t *activity_info);
 
 /**
  * Notify CD before SR power-down and after SR is ready following power-up.
