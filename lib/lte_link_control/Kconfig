@@ -54,6 +54,9 @@ config LTE_LC_NEIGHBOR_CELL_MEAS_MODULE
 config LTE_LC_PERIODIC_SEARCH_MODULE
 	bool "Periodic Search Configuration module"
 
+config LTE_LC_DATA_PROFILE_MODULE
+	bool "Data Profile module"
+
 config LTE_LC_PSM_MODULE
 	bool "Power Saving Mode (PSM) module"
 
@@ -412,6 +415,48 @@ config LTE_MODE_PREFERENCE_VALUE
 	default 2 if LTE_MODE_PREFERENCE_NBIOT
 	default 3 if LTE_MODE_PREFERENCE_LTE_M_PLMN_PRIO
 	default 4 if LTE_MODE_PREFERENCE_NBIOT_PLMN_PRIO
+
+if LTE_LC_DATA_PROFILE_MODULE
+
+choice LTE_DATA_PROFILE_INIT
+	prompt "Data profile to set at modem initialization"
+	default LTE_DATA_PROFILE_INIT_NONE
+	help
+	  Data profile to set using AT%XDATAPRFL at modem initialization.
+	  The current profile is read first and written only if it differs.
+	  A periodic search configuration overrides the search defaults of the profile.
+
+config LTE_DATA_PROFILE_INIT_NONE
+	bool "Do not set"
+	help
+	  Keep the profile stored in the modem.
+
+config LTE_DATA_PROFILE_INIT_ULTRA_LOW_POWER
+	bool "Ultra-low power"
+
+config LTE_DATA_PROFILE_INIT_LOW_POWER
+	bool "Low power"
+
+config LTE_DATA_PROFILE_INIT_NORMAL
+	bool "Normal"
+
+config LTE_DATA_PROFILE_INIT_PERFORMANCE
+	bool "Performance"
+
+config LTE_DATA_PROFILE_INIT_HIGH_PERFORMANCE
+	bool "High performance"
+
+endchoice
+
+config LTE_DATA_PROFILE_INIT_VALUE
+	int
+	default 0 if LTE_DATA_PROFILE_INIT_ULTRA_LOW_POWER
+	default 1 if LTE_DATA_PROFILE_INIT_LOW_POWER
+	default 2 if LTE_DATA_PROFILE_INIT_NORMAL
+	default 3 if LTE_DATA_PROFILE_INIT_PERFORMANCE
+	default 4 if LTE_DATA_PROFILE_INIT_HIGH_PERFORMANCE
+
+endif # LTE_LC_DATA_PROFILE_MODULE
 
 if LTE_LC_RAI_MODULE
 

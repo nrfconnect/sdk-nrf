@@ -51,7 +51,8 @@ Making periodic cell searches less frequent
 -------------------------------------------
 
 You can modify the periodic cell search configuration to perform periodic searches less frequently.
-Use the ``AT%XDATAPRFL`` command to set the data profile to "ultra-low power" or modify the cell search configuration directly using ``AT%PERIODICSEARCHCONF`` or the :c:func:`lte_lc_periodic_search_set` function.
+To set the data profile to ultra-low power, use the ``AT%XDATAPRFL`` command or the :c:func:`lte_lc_data_profile_set` function.
+Alternatively, modify the cell search configuration directly using the ``AT%PERIODICSEARCHCONF`` command or the :c:func:`lte_lc_periodic_search_set` function.
 For example, you can configure periodic searches to be performed infrequently and when data connectivity is needed, trigger an extra search immediately using ``AT%PERIODICSEARCHCONF=3`` or the :c:func:`lte_lc_periodic_search_request` function.
 In addition to periodic cell searches, the modem may remain in limited service on a cell that does not provide normal service for the device.
 This prevents the modem from going to deep sleep between periodic cell searches.

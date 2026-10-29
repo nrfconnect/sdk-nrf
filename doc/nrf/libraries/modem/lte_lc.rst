@@ -116,6 +116,55 @@ Periodic Search Configuration:
   * :c:func:`lte_lc_periodic_search_get`
   * :c:func:`lte_lc_periodic_search_set`
 
+  A periodic search configuration overrides the default search pattern of the data profile.
+
+Data Profile:
+  Use the :kconfig:option:`CONFIG_LTE_LC_DATA_PROFILE_MODULE` Kconfig option to enable all the following functionalities related to the data profile:
+
+  * :c:func:`lte_lc_data_profile_set`
+  * :c:func:`lte_lc_data_profile_get`
+  * :kconfig:option:`CONFIG_LTE_DATA_PROFILE_INIT`, to set a data profile when the modem is initialized
+
+  The data profile tells the modem about the application use case, so that the modem can optimize its power consumption.
+  It controls how often the modem searches for a cell and when it deactivates the UICC during eDRX.
+  The profiles are listed in :c:enum:`lte_lc_data_profile`.
+  The normal profile is the default data profile.
+
+  The modem deactivates the UICC during eDRX to save power.
+  It activates the UICC again on every eDRX wake-up before it sets up any signaling or data connection.
+  With the ultra-low power profile, the modem deactivates the UICC if the eDRX cycle is longer than 60 seconds and the UICC allows it.
+  With the other profiles, the modem deactivates the UICC if the eDRX cycle is longer than 5 minutes.
+  On the nRF9160, this requires modem firmware v1.3.2 or later.
+  On the nRF91x1, the ``AT%UICCPOWERSAVE`` command can overrule these conditions.
+
+  Each profile has a default periodic search pattern.
+  The sleep times of the defaults are the same as in the following ``AT%PERIODICSEARCHCONF`` commands:
+
+  .. list-table::
+     :header-rows: 1
+
+     * - Data profile
+       - Command
+     * - Ultra-low power
+       - ``AT%PERIODICSEARCHCONF=0,0,0,1,"0,10,40,,5","1,300,600,1800,1800,3600"``
+     * - Low power
+       - ``AT%PERIODICSEARCHCONF=0,0,0,1,"0,10,40,,5","1,300,600"``
+     * - Normal
+       - ``AT%PERIODICSEARCHCONF=0,0,0,1,"0,10,40,5,15","1,60,90,300"``
+     * - Performance
+       - ``AT%PERIODICSEARCHCONF=0,0,0,1,"0,10,40,5,15","1,60,90"``
+     * - High performance
+       - ``AT%PERIODICSEARCHCONF=0,0,0,1,"1,10","0,10,40,,15"``
+
+  The commands use the default band optimization of the modem, which also depends on the data profile.
+
+  If you set a periodic search configuration using the :c:func:`lte_lc_periodic_search_set` function, it replaces the default pattern of the current data profile.
+  For the meaning of the parameters, see the `nRF91x1 AT Commands Reference Guide`_ or the `nRF9160 AT Commands Reference Guide`_, depending on the SiP you are using.
+
+  The modem stores the data profile to non-volatile memory about every 48 hours and when the functional mode is set to power off.
+  Consider UICC non-volatile memory wear when you select the profile.
+  When the library sets the profile at initialization, it reads the current profile first and writes the new profile only if it differs.
+
 PSM (Power Saving Mode):
   Use the :kconfig:option:`CONFIG_LTE_LC_PSM_MODULE` Kconfig option to enable all the following functionalities related to PSM:
 
