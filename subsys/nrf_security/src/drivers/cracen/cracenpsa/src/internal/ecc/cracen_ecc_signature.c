@@ -20,6 +20,15 @@
 #include <sxsymcrypt/hash.h>
 #include <sxsymcrypt/trng.h>
 
+static psa_status_t check_ecdsa_hash_length(psa_algorithm_t alg, size_t hash_length)
+{
+	if (hash_length == 0 || hash_length < PSA_HASH_LENGTH(PSA_ALG_SIGN_GET_HASH(alg))) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	return PSA_SUCCESS;
+}
+
 static psa_status_t handle_eddsa_sign(bool is_message, const psa_key_attributes_t *attributes,
 				      const uint8_t *key_buffer, psa_algorithm_t alg,
 				      uint8_t *signature, const uint8_t *input, size_t input_length,
@@ -202,10 +211,17 @@ psa_status_t cracen_signature_ecc_sign(bool is_message,
 		return status;
 	}
 
-	if (IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256) &&
-	    PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
-		    PSA_KEY_LOCATION_CRACEN) {
-		if (IS_ENABLED(CONFIG_CRACEN_IKG)) {
+	if (!is_message && PSA_ALG_IS_ECDSA(alg)) {
+		status = check_ecdsa_hash_length(alg, input_length);
+		if (status != PSA_SUCCESS) {
+			return status;
+		}
+	}
+
+	if (PSA_KEY_LIFETIME_GET_LOCATION(psa_get_key_lifetime(attributes)) ==
+	    PSA_KEY_LOCATION_CRACEN) {
+		if (IS_ENABLED(CONFIG_CRACEN_IKG) &&
+		    IS_ENABLED(PSA_NEED_CRACEN_ECDSA_SECP_R1_256)) {
 			return handle_ikg_sign(is_message, key_buffer, key_buffer_size, alg, input,
 					       input_length, ecurve, signature, signature_length);
 		} else {
@@ -406,6 +422,10 @@ psa_status_t cracen_signature_ecc_verify(bool is_message,
 								input, input_length, curve,
 								signature);
 		} else {
+			psa_status = check_ecdsa_hash_length(alg, input_length);
+			if (psa_status != PSA_SUCCESS) {
+				return psa_status;
+			}
 			sx_status = cracen_ecdsa_verify_digest(pubkey_buffer, input, input_length,
 							       curve, signature);
 		}
