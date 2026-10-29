@@ -306,6 +306,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_255) &&
+	    psa_get_key_bits(attributes) == 255 &&
 	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED25519PH)) {
 		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
@@ -316,6 +317,7 @@ cracen_signature_prepare_ec_pubkey(const uint8_t *key_buffer, size_t key_buffer_
 	}
 
 	if (IS_ENABLED(PSA_NEED_CRACEN_PURE_EDDSA_TWISTED_EDWARDS_448) &&
+	    psa_get_key_bits(attributes) == 448 &&
 	    (alg == PSA_ALG_PURE_EDDSA || alg == PSA_ALG_ED448PH)) {
 		if (PSA_KEY_TYPE_IS_ECC_PUBLIC_KEY(key_type)) {
 			memcpy(pubkey_buffer, key_buffer, key_buffer_size);
