@@ -185,6 +185,11 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	cracen_cipher_operation_t operation = {0};
 	*output_length = 0;
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING &&
+	    input_length == 0) {
+		return PSA_SUCCESS;
+	}
+
 #if defined(PSA_NEED_CRACEN_CTR_SIZE_WORKAROUNDS) && defined(PSA_NEED_CRACEN_CTR_AES)
 	/* Route AES_CTR to software implementation due to 16-bit counter limitation */
 	if (alg == PSA_ALG_CTR) {
