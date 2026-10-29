@@ -1247,6 +1247,8 @@ Libraries for networking
 
   * Fixed an issue where the library could stop after one resolved broker address.
     The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+  * Fixed an issue where a received message that was larger than the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` Kconfig option was not read from the socket, which made the next read from the MQTT connection fail.
+    The library now drops the payload of such a message, keeps the connection and reports the :c:enumerator:`MQTT_HELPER_ERROR_MSG_SIZE` error.
 
 * :ref:`lib_nrf_provisioning` library:
 
