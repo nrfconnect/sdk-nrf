@@ -118,6 +118,26 @@ psa_status_t cracen_key_derivation_set_capacity(cracen_key_derivation_operation_
 	return PSA_SUCCESS;
 }
 
+#if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
+/* The secret of SP 800-108 counter HMAC can also be given as bytes. It is then passed on as a
+ * volatile PSA_KEY_TYPE_DERIVE key with no key ID, so that it is handled as a key input.
+ */
+static psa_status_t sp800_108_ctr_hmac_input_bytes(cracen_key_derivation_operation_t *operation,
+						   psa_key_derivation_step_t step,
+						   const uint8_t *data, size_t data_length)
+{
+	if (step == PSA_KEY_DERIVATION_INPUT_SECRET) {
+		psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+
+		psa_set_key_type(&attributes, PSA_KEY_TYPE_DERIVE);
+		return cracen_sp800_108_ctr_mac_input_key(operation, step, &attributes, data,
+							  data_length);
+	}
+
+	return cracen_sp800_108_ctr_mac_input_bytes(operation, step, data, data_length);
+}
+#endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
+
 psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t *operation,
 					       psa_key_derivation_step_t step, const uint8_t *data,
 					       size_t data_length)
@@ -144,7 +164,7 @@ psa_status_t cracen_key_derivation_input_bytes(cracen_key_derivation_operation_t
 
 #if defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 	if (PSA_ALG_IS_SP800_108_COUNTER_HMAC(operation->alg)) {
-		return cracen_sp800_108_ctr_mac_input_bytes(operation, step, data, data_length);
+		return sp800_108_ctr_hmac_input_bytes(operation, step, data, data_length);
 	}
 #endif /* PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC */
 
