@@ -20,6 +20,9 @@
 
 #include <cracen_psa_primitives.h>
 
+/** Salt size for the verify functions: accept any salt size, as for PSA_ALG_RSA_PSS_ANY_SALT. */
+#define CRACEN_RSA_PSS_ANY_SALT SIZE_MAX
+
 /** @brief Sign a message using RSA PSS.
  *
  * @param[in] rsa_key        RSA key structure. Must not be NULL.
@@ -98,7 +101,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
  *                           (unless message_length is 0).
  * @param[in] message_length Length of the message in bytes. Can be 0.
  * @param[in] saltsz         Salt size in bytes. Must match the salt size
- *                           used during signing.
+ *                           used during signing, or be CRACEN_RSA_PSS_ANY_SALT.
  *
  * @retval 0 (::SX_OK)                       The signature is valid.
  * @retval ::SX_ERR_INVALID_SIGNATURE        The signature verification failed.
@@ -127,7 +130,7 @@ int cracen_rsa_pss_verify_message(struct cracen_rsa_key *rsa_key,
  * @param[in] digest_length Length of the digest in bytes.  Must be at least the
  *                          output size of the specified hash algorithm.
  * @param[in] saltsz        Expected salt size in bytes. Must match the salt size
- *                          used during signing.
+ *                          used during signing, or be CRACEN_RSA_PSS_ANY_SALT.
  *
  * @retval 0 (::SX_OK)                       The signature is valid.
  * @retval ::SX_ERR_INVALID_SIGNATURE        The signature verification failed.

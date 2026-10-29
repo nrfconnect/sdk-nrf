@@ -297,6 +297,11 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	int sx_status;
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
 	size_t emsz; /* emsz: size in bytes of the encoded message (called emLen in RFC 8017) */
+	bool any_salt = (saltsz == CRACEN_RSA_PSS_ANY_SALT);
+
+	if (any_salt) {
+		saltsz = 0;
+	}
 
 	if (cracen_ffkey_bitsz(rsa_key) % 8 == 1) {
 		emsz = modulussz - 1;
@@ -389,8 +394,14 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	uint8_t *zeros;
 
 	zeros = workmem.workmem;
-	/* number of bytes in DB that must be equal to zero */
-	zero_len = masksz - saltsz - 1;
+	if (any_salt) {
+		/* The salt size follows from the position of the 0x01 octet in DB. */
+		zero_len = constant_count(workmem.db, masksz - 1, 0x00, MATCH_EQUAL);
+		saltsz = masksz - zero_len - 1;
+	} else {
+		/* number of bytes in DB that must be equal to zero */
+		zero_len = masksz - saltsz - 1;
+	}
 
 	/* step 10 of EMSA-PSS-VERIFY in RFC 8017 */
 	r = constant_memdiff_array_value(workmem.db, 0, zero_len);
