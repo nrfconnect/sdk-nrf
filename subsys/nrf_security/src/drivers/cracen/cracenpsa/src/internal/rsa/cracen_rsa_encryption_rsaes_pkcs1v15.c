@@ -195,7 +195,8 @@ int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 		paddingstrstart = paddingstrend - zeros;
 		paddingstrsz = paddingstrend - paddingstrstart;
 	} while (retryctr > 0 && zeros > 0);
-	if (retryctr == 0) {
+	if (zeros > 0) {
+		safe_memzero(workmem, sizeof(workmem));
 		return SX_ERR_TOO_MANY_ATTEMPTS;
 	}
 
