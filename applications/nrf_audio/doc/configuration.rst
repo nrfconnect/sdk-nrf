@@ -197,8 +197,18 @@ The nRF Audio application uses both software and hardware codecs.
 The software codec is responsible for encoding and decoding, while the hardware codec is responsible for DAC/ADC and other audio processing.
 See :ref:`nrf_audio_app_overview_architecture` for information about how both codecs are integrated into the firmware architecture.
 
-You can enable the software codec using the :option:`CONFIG_SW_CODEC_LC3` Kconfig option.
-This codec is mandatory for LE Audio.
+.. _nrf_audio_codec_configuration_lc3:
+
+LC3 software codec (mandatory)
+==============================
+
+Select LC3 with the :option:`CONFIG_SW_CODEC_LC3` Kconfig option (default).
+LC3 is mandatory for LE Audio.
+
+.. _nrf_audio_codec_configuration_cs47l63:
+
+CS47L63 hardware codec (optional)
+=================================
 
 You can enable the CS47L63 hardware codec using the :option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER` Kconfig option.
 

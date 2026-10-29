@@ -19,8 +19,9 @@
  * @{
  */
 
-#ifdef CONFIG_SAMPLE_RATE_CONVERTER
 #include <zephyr/sys/ring_buffer.h>
+
+#ifdef CONFIG_SAMPLE_RATE_CONVERTER
 #include <dsp/filtering_functions.h>
 #endif /* CONFIG_SAMPLE_RATE_CONVERTER */
 
