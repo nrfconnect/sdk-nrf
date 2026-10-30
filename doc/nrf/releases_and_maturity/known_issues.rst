@@ -4648,7 +4648,7 @@ NCSDK-38624: An application might hang until the SoC USB is disconnected when us
 NCSDK-38697: Updating compressed DFU for an old project does not work with the new partitioning approach with DTS
   An attempt to update using a compressed image produced in a project with DTS partitioning fails if the project (especially the instance of MCUboot) was initially executed using the Partition Manager.
 
-  **Workaround:** Revert the Partition Manager configuration to the project.
+  **Workaround:** Cherry-pick the commits from `sdk-nrf PR #32340`_ and `sdk-mcuboot PR #776`_.
 
 .. rst-class:: v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-0
 
