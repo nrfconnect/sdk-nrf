@@ -3,6 +3,21 @@ sample:
   name: OpenThread CoAP Client
 
 tests:
+  sample.openthread.coap_client.ite:
+    sysbuild: true
+    build_only: true
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_openthread
+    extra_args:
+      - coap_client_SNIPPET="ot-ci;ot-logging"
+      - CONFIG_OTPERF=y
+      - CONFIG_OPENTHREAD_SOURCES=y
+    platform_allow:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp/ite
   sample.openthread.coap_client:
     sysbuild: true
     build_only: true
