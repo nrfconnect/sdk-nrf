@@ -37,7 +37,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.5.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 Supported modem firmware
 ************************
@@ -954,7 +954,7 @@ Documentation
 In addition to documentation related to the changes listed above, the following documentation has been updated:
 
 * :ref:`ncs_introduction` - Added information about the repositories, tools and configuration, and west.
-* :ref:`gs_installing` - Updated with information about installing `GN tool`_.
+* :ref:`install_ncs` - Updated with information about installing `GN tool`_.
 * :ref:`gs_programming` -  Added more information about west flash.
 * Restructured the User guides section and moved the content to :ref:`dev-model`, :ref:`ug_app_dev`, :ref:`protocols`, and the root level.
 * Added the following user guides:

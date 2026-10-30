@@ -32,7 +32,7 @@ A new home
 Starting with this release, the |NCS| has moved to a new GitHub organization, `nrfconnect <https://github.com/nrfconnect>`_.
 All repositories were renamed to provide clear and concise names that better reflect the composition of the codebase.
 If you are a new |NCS| user, there are no actions you need to take.
-If you used previous releases of the |NCS|, you should follow the instructions in :ref:`repo_move`.
+If you used previous releases of the |NCS|, you should follow the instructions in :ref:`updating`.
 
 Release tag
 ***********
@@ -41,7 +41,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v1.3.0**.
 Check the ``west.yml`` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` for more information.
+See :ref:`command-line installation <command_line_installation>` for more information.
 
 
 Supported modem firmware
@@ -423,7 +423,7 @@ In addition to documentation related to the changes listed above, the following 
 * :ref:`doc_build` - updated to reflect that Kconfig options are now built as a separate documentation set
 * :ref:`doc_styleguide` - updated
 * :ref:`gs_assistant` - updated to recommend the use of the toolchain manager
-* :ref:`gs_installing` - updated to align the instructions for all operating systems, added :ref:`repo_move`
+* :ref:`install_ncs` - updated to align the instructions for all operating systems, added :ref:`updating`
 * :ref:`gs_programming` - updated :ref:`programming_board_names`
 * :ref:`gs_testing` - added How to connect with LTE Link Monitor
 * :ref:`gs_modifying`  - added :ref:`gs_modifying_build_types`

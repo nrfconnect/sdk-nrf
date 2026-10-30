@@ -115,7 +115,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v3.0.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v3.0.0`_.
 
@@ -186,7 +186,7 @@ IDE, OS, and tool support
   * The required `SEGGER J-Link`_ version to v8.18.
   * The :ref:`installation` page with the following:
 
-    * The :ref:`installing_vsc` section with a list valid for both development environments.
+    * The :ref:`install_ncs` section with a list valid for both development environments.
       The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>`  for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
     * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
       You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
@@ -266,7 +266,7 @@ Developing with nRF54H Series
 
 * Added a new documentation page ``ug_nrf54h20_suit_signing`` under ``ug_nrf54h20_suit_dfu``.
 * Removed the note on installing SEGGER USB Driver for J-Link on Windows from the :ref:`ug_nrf54h20_gs` page and moved its contents to the `nRF Util prerequisites`_ documentation.
-  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`installing_vsc` section on the :ref:`installation` page.
+  The Windows-only requirement to install the SEGGER USB Driver for J-Link is now mentioned in the :ref:`install_ncs` section on the :ref:`installation` page.
 
 Developing with Front-End Modules
 =================================
@@ -1413,7 +1413,7 @@ Documentation
   * The :ref:`ug_nrf91` documentation to use `nRF Util`_ instead of nrfjprog.
   * The :ref:`dm-revisions` section of the :ref:`dm_code_base` page with information about the preview release tag, which replaces the development tag.
   * The :ref:`ug_bt_mesh_configuring` page with the security toolbox section and the key importer functionality.
-  * The :ref:`ug_nrf7002_gs` documentation to use `nRF Util`_ instead of nrfjprog.
+  * The :ref:`Getting started with nRF7002 DK <gsg_guides>` documentation to use `nRF Util`_ instead of nrfjprog.
 
 * Removed:
 

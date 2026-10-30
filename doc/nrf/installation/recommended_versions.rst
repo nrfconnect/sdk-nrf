@@ -1,4 +1,3 @@
-.. _gs_recommended_versions:
 .. _requirements:
 
 Requirements reference
@@ -11,7 +10,6 @@ Requirements reference
 This page summarizes the requirements for installing and working with the |NCS|.
 All of these requirements are installed when you :ref:`install the nRF Connect SDK <install_ncs>`.
 
-.. _gs_supported_OS:
 .. _supported_OS:
 
 Supported operating systems (firmware)
@@ -306,14 +304,13 @@ When working with the recommended |nRFVSC|, the extension informs you about the 
 On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
 The recommended |nRFVSC| extension has the related checkbox selected when you open the J-Link Software installation wizard.
 
-.. _toolchain_management_tools:
 .. _additional_nordic_sw_tools:
 
 Additional software tools
 *************************
 
 Nordic Semiconductor provides proprietary tools for working with Nordic Semiconductor devices, as well as different |NCS| toolchain management tools that streamline the process of installing the |NCS| and its toolchain.
-Depending on your development environment, you need to install only some of them when you :ref:`installing_vsc`.
+Depending on your development environment, you need to install only some of them when :ref:`install_ncs`.
 
 .. _additional_nordic_sw_tools_os_support:
 
@@ -437,7 +434,7 @@ Its functionality is provided through installable and upgradeable commands that 
 The utility follows its own release cycle and has its own `operating system requirements <nRF Util_>`_.
 
 The |NCS| toolchain bundle includes the nRF Util version :ncs-tool-version:`NRFUTIL_VERSION_WIN10` and the device command version :ncs-tool-version:`NRFUTIL_DEVICE_VERSION_WIN10`, as listed in :ref:`requirements_toolchain_tools`.
-When you :ref:`gs_installing_toolchain`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
+When :ref:`install_ncs`, you get both these versions `locked <Locking nRF Util home directory_>`_ to prevent unwanted changes to the toolchain bundle.
 
 .. note::
 

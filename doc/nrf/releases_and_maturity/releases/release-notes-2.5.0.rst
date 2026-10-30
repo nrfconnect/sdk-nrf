@@ -103,7 +103,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.5.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.5.0`_.
 
@@ -1330,7 +1330,7 @@ Documentation
     * :ref:`release_notes`, :ref:`software_maturity`, :ref:`known_issues`, :ref:`glossary`, and :ref:`dev-model` are now located under :ref:`releases_and_maturity`.
 
   * The :ref:`ug_thread` documentation to improve the overall presentation and add additional details where necessary.
-  * The :ref:`ug_nrf9160_gs` and :ref:`ug_thingy91_gsg` instructions to use the `Cellular Monitor app`_ instead of Programmer for the respective sections about updating firmware.
+  * The :ref:`Getting started with nRF9160 DK <gsg_guides>` and :ref:`Getting started with Thingy:91 <gsg_guides>` instructions to use the `Cellular Monitor app`_ instead of Programmer for the respective sections about updating firmware.
     The instructions for using Programmer were moved to the :ref:`ug_nrf9160` and :ref:`ug_thingy91` pages.
   * All instances of LTE Link Monitor and Trace Collector apps by replacing them with the `Serial Terminal app`_ and the `Cellular Monitor app`_.
   * Renamed nRF91 AT Commands Reference Guide to `nRF9160 AT Commands Reference Guide`_, and added references to the `nRF91x1 AT Commands Reference Guide`_ in the documentation.

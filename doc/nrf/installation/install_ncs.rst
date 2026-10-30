@@ -1,7 +1,4 @@
 .. _install_ncs:
-.. _gs_installing:
-.. _installing_vsc:
-.. _gs_installing_toolchain:
 
 Installing the |NCS|
 ####################
@@ -77,9 +74,7 @@ In this simplified structure preview, *<toolchain-installation>* corresponds to 
 There are also additional directories, and the structure might change over time, for example if you later :ref:`change the state of development to a different revision <updating_repos>`.
 The full set of repositories and directories is defined in the :ref:`manifest file <zephyr:west-manifest-files>` (`see the file in the repository <west manifest file_>`_).
 
-.. _gs_installing_tools:
-.. _cloning_the_repositories_win:
-.. _cloning_the_repositories:
+.. _command_line_installation:
 
 Alternative method: Installing using command line
 *************************************************
@@ -419,7 +414,7 @@ Define the required environment variables as follows, depending on your operatin
       This file is loaded automatically when you run the above command.
       See :ref:`Zephyr documentation about using zephyrrc files <zephyr:env_vars_zephyrrc>` for more information.
 
-.. _additional_deps:
+.. _system_wide_installation:
 
 Alternative method: System-wide installation
 ********************************************
