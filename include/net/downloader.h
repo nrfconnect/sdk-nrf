@@ -52,7 +52,7 @@ enum downloader_evt_id {
 	 * - -EHOSTDOWN: Host went down during download.
 	 * - -EBADMSG: HTTP response header not as expected.
 	 * - -ERANGE: HTTP response does not support range requests.
-	 * - -E2BIG: HTTP response header could not fit in buffer.
+	 * - -E2BIG: HTTP request or response header could not fit in buffer.
 	 * - -EPROTONOSUPPORT: Protocol is not supported.
 	 * - -EINVAL: Invalid configuration.
 	 * - -EAFNOSUPPORT: Unsupported address family (IPv4/IPv6).
@@ -64,6 +64,9 @@ enum downloader_evt_id {
 	 * - @c -ECONNRESET: the downloader automatically closes the connection, reconnects,
 	 *   and resumes the download without invoking the callback. The
 	 *   @c DOWNLOADER_EVT_ERROR event is only generated if the reconnection itself fails.
+	 * - @c -E2BIG: the HTTP request or response header does not fit in the buffer. The
+	 *   @c DOWNLOADER_EVT_ERROR event is generated, and the download is stopped whatever
+	 *   the callback returns, because reconnecting does not help.
 	 * - Any other error (including the CoAP @c -ECONNREFUSED and @c -ECONNABORTED above):
 	 *   the @c DOWNLOADER_EVT_ERROR event is generated. Return a non-zero value from the
 	 *   callback to stop the download, or zero to let the downloader reconnect and resume.
