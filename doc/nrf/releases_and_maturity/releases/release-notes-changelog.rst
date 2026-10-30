@@ -188,8 +188,31 @@ Security
     The new version has minor updates in internal APIs, restructures the directory hierarchy, and improves native support for built-in keys.
   * nrf_cc3xx_platform and nrf_cc3xx_mbedcrypto libraries to version v0.9.23.
     Improved PSA driver error reporting and fixed an issue that caused incorrect authentication tag generation in GCM when multiple calls to :c:func:`psa_aead_update_ad` were made.
+  * The :ref:`CRACEN <crypto_drivers_cracen>` driver:
+
+    * SPAKE2+ now includes the length of an empty context in the transcript, as specified in RFC 9383.
+    * RSA keys with data after the key, or with malformed CRT values, are now rejected at import and when used.
+    * ML-KEM encapsulation keys are now checked at import.
+    * Signing and verifying with ECDSA and HashML-DSA now return ``PSA_ERROR_INVALID_ARGUMENT`` for a hash that is shorter than the output of the algorithm's hash.
+    * RSA decryption now returns ``PSA_ERROR_INVALID_PADDING`` for an invalid padding.
 
 * Fixed:
+
+  * The following issues in the :ref:`CRACEN <crypto_drivers_cracen>` driver:
+
+    * PBKDF2-AES-CMAC-PRF-128 failed for passwords that were not 16 bytes long.
+    * SP 800-108 counter mode with HMAC failed for ``PSA_KEY_TYPE_DERIVE`` secrets and for secrets passed as bytes.
+    * RSA-PSS verification with ``PSA_ALG_RSA_PSS_ANY_SALT`` rejected signatures with a salt size other than the hash length.
+    * WPA3-SAE failed with the ``PSA_PAKE_ROLE_NONE`` role.
+    * A failed key import into the KMU left the KMU slots in use.
+    * Unwrapping an ECC key gave the wrong key size.
+    * Verifying an Ed448 signature with an Ed448 key pair failed.
+
+  * Issues with incorrect support status of the CRACEN driver on the :ref:`ug_crypto_supported_features` page:
+
+    * RSA key pair derivation and SRP and SPAKE2+ key pair generation are now correctly listed as not supported.
+    * 192-bit AES keys are now correctly listed as not supported on the nRF54LC10A SoC.
+    * The limitations of SRP password hashing and RSA key unwrapping are now documented.
 
   * The :kconfig:option:`CONFIG_MBEDTLS_X509_REMOVE_INFO` Kconfig option, which had no effect.
     It now defaults to ``n``.
