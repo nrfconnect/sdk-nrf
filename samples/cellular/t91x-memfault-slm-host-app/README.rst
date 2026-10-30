@@ -23,6 +23,20 @@ the modem driver creates the only PPP network interface.
 nRF91 application updates
 ************************
 
+OTA download and application are started explicitly from the shell, not at boot:
+
+.. code-block:: shell
+
+        ota download
+        ota apply
+
+``ota download`` checks Memfault for an available update and saves its bundle to
+``/ota/bundle.bin`` without applying it. ``ota apply`` verifies and applies the
+saved bundle without downloading it again. Both commands block until completion.
+Download requires a connected network; apply can run offline after the sample
+has completed startup. Boot still initializes networking, uploads Memfault data,
+and confirms the host MCUboot image.
+
 After downloading a Memfault OTA bundle, the application verifies the complete
 payload SHA-256 and element sizes before applying an ``nrf91_app`` element.
 The element must contain the MCUboot-signed nRF91 application binary, not a ZIP

@@ -13,6 +13,7 @@
 #include <zephyr/net/net_mgmt.h>
 #include <zephyr/pm/device.h>
 #include <zephyr/drivers/cellular.h>
+#include <zephyr/shell/shell.h>
 
 #include <memfault/components.h>
 #include <memfault/ports/zephyr/http.h>
@@ -34,6 +35,7 @@ static const int memfault_sec_tags[] = {
 	(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED | NET_EVENT_DNS_SERVER_ADD)
 #define L4_CONNECTED 1
 #define L4_DNS_ADDED 2
+#define APP_READY 4
 
 #define IMEI_LEN 15
 
@@ -57,7 +59,7 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info, s
 		k_event_post(&l4_event, L4_DNS_ADDED);
 		break;
 	case NET_EVENT_L4_DISCONNECTED:
-		k_event_set(&l4_event, 0);
+		k_event_clear(&l4_event, L4_CONNECTED | L4_DNS_ADDED);
 		break;
 	default:
 		break;
@@ -65,6 +67,65 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info, s
 }
 
 NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
+
+static int cmd_ota_download(const struct shell *sh, size_t argc, char **argv)
+{
+	char *url = NULL;
+	int ret;
+
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	if (k_event_test(&l4_event, APP_READY | L4_CONNECTED) != (APP_READY | L4_CONNECTED)) {
+		shell_error(sh, "Application/network is not ready");
+		return -EAGAIN;
+	}
+	ret = memfault_zephyr_port_get_download_url(&url);
+	if (ret < 0) {
+		shell_error(sh, "OTA check failed (%d)", ret);
+		return ret;
+	}
+	if (ret == 0) {
+		shell_print(sh, "Up to date");
+		return 0;
+	}
+
+	shell_print(sh, "Downloading OTA bundle");
+	ret = ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
+	memfault_zephyr_port_release_download_url(&url);
+	if (ret < 0) {
+		shell_error(sh, "OTA download failed (%d)", ret);
+	} else {
+		shell_print(sh, "Bundle saved to %s", OTA_BUNDLE_PATH);
+	}
+	return ret;
+}
+
+static int cmd_ota_apply(const struct shell *sh, size_t argc, char **argv)
+{
+	int ret;
+
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	if (k_event_test(&l4_event, APP_READY) == 0) {
+		shell_error(sh, "Application is not ready");
+		return -EAGAIN;
+	}
+	ret = ota_bundle_apply();
+	if (ret < 0) {
+		shell_error(sh, "OTA apply failed (%d)", ret);
+	} else {
+		shell_print(sh, "OTA application transfer complete");
+	}
+	return ret;
+}
+
+SHELL_STATIC_SUBCMD_SET_CREATE(ota_commands,
+	SHELL_CMD_ARG(download, NULL, "Download the available Memfault OTA bundle",
+		      cmd_ota_download, 1, 0),
+	SHELL_CMD_ARG(apply, NULL, "Verify and apply the saved OTA bundle", cmd_ota_apply, 1, 0),
+	SHELL_SUBCMD_SET_END);
+
+SHELL_CMD_REGISTER(ota, &ota_commands, "OTA bundle operations", NULL);
 
 static int memfault_device_id_init(void)
 {
@@ -84,7 +145,6 @@ static int memfault_device_id_init(void)
 
 int main(void)
 {
-	char *url = NULL;
 	int ret;
 
 	ppp_iface = net_if_get_first_by_type(&NET_L2_GET_NAME(PPP));
@@ -133,36 +193,15 @@ int main(void)
 		return -1;
 	}
 
-	LOG_INF("Checking for OTA update");
-	ret = memfault_zephyr_port_get_download_url(&url);
-	if (ret < 0) {
-		LOG_ERR("OTA check failed (%d)", ret);
-		return -1;
-	}
-
-	if (ret == 0) {
-		LOG_INF("Up to date");
-		if (!boot_is_img_confirmed()) {
-			// Mark the ota image as installed so we don't revert
-			LOG_INF("Confirming OTA update");
-			boot_write_img_confirmed();
-		}
-	} else {
-		/* Custom OTA handling goes here. */
-		LOG_INF("OTA update available: %s", url);
-		LOG_INF("Downloading");
-		ret = ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
-		memfault_zephyr_port_release_download_url(&url);
+	if (!boot_is_img_confirmed()) {
+		LOG_INF("Confirming OTA update");
+		ret = boot_write_img_confirmed();
 		if (ret < 0) {
-			LOG_ERR("OTA download failed (%d)", ret);
-			return ret;
-		}
-		ret = ota_bundle_apply();
-		if (ret < 0) {
-			LOG_ERR("OTA apply failed (%d)", ret);
+			LOG_ERR("Image confirmation failed (%d)", ret);
 			return ret;
 		}
 	}
 
+	k_event_post(&l4_event, APP_READY);
 	return 0;
 }
