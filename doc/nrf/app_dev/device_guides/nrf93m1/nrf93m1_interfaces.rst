@@ -23,13 +23,12 @@ The following table lists the host interfaces and peripherals for the nRF93M1 mo
    * - Interface
      - Details
    * - USB
-     - USB 2.0 device. High speed 480 Mbps, full speed 12 Mbps. Supports RNDIS and CDC-ECM.
+     - USB 2.0 device. High speed 480 Mbps, full speed 12 Mbps. Composite device with CDC-ACM, RNDIS, and CDC-ECM functions, used for AT commands, network data, and trace.
    * - UART
-     - Three UARTs, up to 3 Mbps. UART1 carries the AT command interface and includes DTR, RI, RTS,
-       and CTS.
-   * - IO
-     - Four always-on I/O pins, 1.8 V logic. **RFC1** (RF Control interface) through **RFC3**
-       are assigned to RF tuner control.
+     - Three UARTs. UART1 is the primary AT command and data port, up to 3 Mbps, and includes DTR, RI, RTS, and CTS.
+       UART0 is dedicated to modem trace. UART2 is reserved as an auxiliary channel, up to 3 Mbps.
+   * - RF control
+     - Three pins, **RFC1** through **RFC3**, assigned to RF tuner control.
    * - Coexistence
      - Two programmable pins, for arbitration with a co-located radio.
    * - Modem status
@@ -67,23 +66,65 @@ Beyond the data interface, a host design needs the following module signals:
        Can serve as the host MCU wake source.
    * - ``NETWORK``
      - Module to host
-     - Network registration status, readable without an AT command.
-   * - Modem status
+     - Network status, readable without an AT command. See :ref:`ug_nrf93m1_interfaces_status`.
+   * - ``STATUS``
      - Module to host
-     - Modem activity state.
+     - Module status. See :ref:`ug_nrf93m1_interfaces_status`.
 
 There are following timings for the power and reset pins:
 
 * ``POWERKEY`` low for at least 10 ms turns the module on into System ON.
 * ``POWERKEY`` low for at least 650 ms powers it down to System Disabled.
-* ``nRESET`` low for at least 100 ms, then released, triggers a full module reset.
-  It is active low with an internal 120 kΩ pull-up, so no external pull-up is needed, and it may be left floating in designs that do not use it.
+* ``nRESET`` low for at least 10 ms, then released, triggers a full module reset.
+  It is active low with an internal pull-up, so no external pull-up is needed, and it may be left floating in designs that do not use it.
 
 .. important::
    Do not drive module pins while the module is unpowered, and observe the power sequencing in the `nRF93M1 Datasheet`_.
    Module GPIO logic is 1.8 V, driven from the module's internal LDO.
    If your host runs at a different voltage, level shifting is required.
    The nRF54L15 host on the nRF93M1 DK is configured for this already.
+
+.. _ug_nrf93m1_interfaces_status:
+
+Status indicators
+-----------------
+
+The ``STATUS`` and ``NETWORK`` pins indicate the module and network state in all modes except System OFF.
+
+The ``STATUS`` pin is high when the module is powered, initialized, and running normally.
+It is low when the module is not properly powered, or is not initialized and running normally.
+
+The ``NETWORK`` pin blinks according to the network status:
+
+.. list-table::
+   :header-rows: 1
+
+   * - Network status
+     - Pin high (ms)
+     - Pin low (ms)
+     - Pattern
+   * - Initializing
+     - 200
+     - 1800
+     - Slow blink
+   * - Connected
+     - 1800
+     - 200
+     - Mostly on
+   * - Disconnected
+     - 200
+     - 1800
+     - Slow blink
+   * - Out of service
+     - 200
+     - 1800
+     - Slow blink
+   * - Data transfer
+     - 125
+     - 125
+     - Fast blink
+
+To disable both indicator outputs, use ``AT%MODULECFG="ledMode",0``.
 
 .. _ug_nrf93m1_interfaces_at:
 
@@ -103,12 +144,20 @@ Use this model when:
 Configure the UART in devicetree on the host side as an ordinary UART peripheral, then use the Zephyr UART API or the modem chat helpers.
 See :ref:`ug_nrf93m1_at_commands` for command handling patterns.
 
-Default serial settings are given in the `nRF93M1 AT Commands Reference Guide`_.
-Set the baud rate using the ``AT+IPR`` command.
+UART1 runs at 115200 bps by default.
+Set the baud rate using the ``AT+IPR`` command, from 600 bps up to 3 Mbps, or use ``AT+IPR=0`` to enable autobauding.
+See the `nRF93M1 AT Commands Reference Guide`_ for the serial settings.
+
+The other two UARTs have dedicated roles:
+
+* UART0 is dedicated to the modem trace output, a proprietary binary stream that you capture with Nordic cellular monitoring tools, using nRF Util.
+  The default baud rate is 3 Mbps, and the port supports up to 6 Mbps.
+* UART2 is an auxiliary interface for applications that need a second data or communication channel.
 
 .. note::
    If the module enters a deep sleep state, set the baud rate to 9600 bps or lower first.
-   At higher rates the UART cannot wake the module, and recovery requires ``POWERKEY`` or a power cycle.
+   At higher rates, incoming UART data cannot wake the module.
+   Wake the module with ``UART1_DTR`` instead, which works at any baud rate, or with ``POWERKEY``.
    See :ref:`ug_nrf93m1_power_optimization`.
 
 Enable hardware flow control using ``RTS`` and ``CTS``.
@@ -253,8 +302,9 @@ The module still handles the LTE connection itself, so you configure APN and pow
 USB
 ***
 
-The module presents a USB 2.0 device interface supporting RNDIS or CDC-ECM.
+The module presents a USB 2.0 device interface with CDC-ACM, RNDIS, and CDC-ECM functions.
 A host running Linux, Windows, or another rich OS enumerates the module as a network interface with no driver development.
+The CDC-ACM function carries AT commands, and trace output is also available over USB.
 
 Use this model for gateways, single-board computers, and any host where the OS already owns the network stack.
 
@@ -262,8 +312,10 @@ High speed operation reaches 480 Mbps on the USB link, well above the LTE throug
 Full speed at 12 Mbps is also supported.
 
 .. note::
-   USB draws more current than UART and generally prevents the module from reaching its deepest sleep states.
+   USB draws more current than UART and an attached USB host can keep the module awake.
    Do not use USB as the data interface in a battery-powered design that depends on PSM.
+   To prevent USB activity from keeping the module awake, use ``AT%MODULECFG="usbSlpMask",1``.
+   To disable the USB interface, use ``AT%MODULECFG="usbCtrl",2``, but keep it enabled if you use USB ``VBUS`` detection as a wake source.
    USB ``VBUS`` detect is a wake source from System OFF, which is useful for mains-powered or intermittently connected designs.
 
 .. _ug_nrf93m1_interfaces_coex:
@@ -280,7 +332,8 @@ SIM interfaces
 **************
 
 The module provides two (e)UICC interfaces.
-Both support Class B 1.8 V and Class C 3 V SIMs.
+Both support Class B (3.0 V) and Class C (1.8 V) SIMs, and the module selects the voltage from the class of the inserted SIM.
+If two external SIMs are used, both must be the same class.
 ``SIM1_VOUT`` and ``SIM2_VOUT`` supply the cards, so the host does not need its own SIM regulator.
 
 SIM hot-swap detect is a wake source from System OFF, which lets a device react to a SIM change without staying awake to poll.

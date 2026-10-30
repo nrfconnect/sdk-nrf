@@ -600,7 +600,8 @@
 
 .. _`nRF93M1 Datasheet`: https://docs.nordicsemi.com/r/bundle/ps_nrf93m1/page/keyfeatures_html5.html
 .. _`nRF93M1 AT Commands Reference Guide`: https://docs.nordicsemi.com/r/bundle/ref_at_commands_nrf93m1/page/ref/at_commands_93/intro.html
-.. _`nRF93M1 DK Hardware User Guide`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/nRF93M1_DK_HW_User_Guide_v0.4.0.pdf
+.. _`nRF93M1 DK Hardware User Guide`: https://docs.nordicsemi.com/r/bundle/ug_nrf93m1_dk/page/ug/nrf93m1_dk/intro/intro.html
+.. _`nRF93M1 Hardware Design Guidelines`: https://www.nordicsemi.com/-/media/Software-and-other-downloads/Product-Briefs/ngl_005_1427.pdf
 
 .. _`AT Commands Reference Guide`:
 .. _`nRF9160 AT Commands Reference Guide`: https://docs.nordicsemi.com/bundle/ref_at_commands/page/REF/at_commands/intro_nrf9160.html
@@ -838,6 +839,10 @@
 .. _`sdk-manager Starting and inspecting the toolchain environment`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-sdk-manager/guides/sdk_manager_env_launch.html
 .. _`nrfutil trace command`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/CHANGELOG.html
 .. _`nrfutil trace stm`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/guides/tracing_stm.html
+.. _`nrfutil trace lte`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/nrfutil-trace-lte.html
+.. _`Viewing modem traces in Wireshark`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/wireshark_modem_trace.html
+.. _`Converting modem trace data`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-trace/tracing_converting_data.html
+.. _`nRF Util Wireshark plugins`: https://docs.nordicsemi.com/bundle/nrfutil/page/guides/wireshark_plugins.html
 .. _`nRF Sniffer for Bluetooth LE`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/overview.html
 .. _`nRF Logger for Bluetooth HCI`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-ble-sniffer/guides/hci_logger_wireshark.html
 .. _`Device command overview`: https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-device/nrfutil-device.html

@@ -86,22 +86,44 @@ Electrical design
    * - ``LDO_OUT``
      - 1.8 V nominal, up to 120 mA, available to the host
    * - Operating temperature
-     - -35 to +75 °C
+     - –35 to +75 °C ambient
 
 The most common custom board issues are as follows:
 
 Peak transmit current
    The module draws several hundred milliamps during transmit bursts.
+   At 23 dBm, the typical average current is 515 mA to 605 mA on bands B8, B28, B3, and B7, and 225 mA on B40.
    Your supply must hold regulation through those bursts, and your decoupling must be sized for them.
+   Place the bulk and high-frequency decoupling capacitors close to the VDD pins, following the `nRF93M1 Hardware Design Guidelines`_.
    A supply that works at idle and browns out on transmit produces registration failures that look like RF problems.
+
+Undervoltage
+   If the VDD voltage falls below the minimum operating voltage, the module goes to minimum functionality.
+   The host must send ``AT+CFUN=1`` to restore full functionality.
 
 Level shifting
    Module GPIO logic is 1.8 V.
-   If your host runs at 3.3 V, level shift every signal, including ``POWERKEY``, ``nRESET``, the UART lines, and the status pins.
+   If your host runs at 3.3 V, level shift the UART lines and the status pins.
+   For the input levels, see the `nRF93M1 Datasheet`_.
 
 Power sequencing
    Follow the sequencing in the `nRF93M1 Datasheet`_.
    Do not drive module pins while the module is unpowered.
+   When VDD is applied, the module stays in System Disabled until you pull ``POWERKEY`` low:
+
+   * ``POWERKEY`` has an internal pull-up.
+     Pull it low for at least 10 ms to start the module and for at least 650 ms to power it down.
+   * ``nRESET`` has an internal pull-up, so you do not need an external pull-up.
+     If you do not use ``nRESET``, you can leave it floating.
+     Pull it low for at least 10 ms to reset the module.
+     Use ``nRESET`` only for emergency or production-line reset, and use the AT reset commands in normal operation.
+
+Thermal design
+   The ambient operating temperature range is –35 °C to .+75 °C
+   To keep the module within limits at elevated ambient temperature, use a copper pour without thermal relief under the module footprint.
+   Add thermal vias beneath the module if the host PCB has inner ground planes.
+   Do not place heat-generating components, such as high-current regulators, RF power amplifiers, or the host CPU, directly next to the module.
+   Read the on-chip temperature with ``AT%ADC="temp"``.
 
 .. _ug_nrf93m1_custom_board_rf:
 
@@ -114,6 +136,10 @@ There is no diversity or MIMO routing to lay out, which is a meaningful simplifi
 * Design the antenna feed as a 50 ohm controlled-impedance trace, kept as short as practical.
 * Include a matching network footprint, even if your antenna does not require tuning.
 * Follow the reference layout and keep-out guidance in the `nRF93M1 Datasheet`_ and the DK design files.
+* Use the 3-pin RF control interface (**RFC1** to **RFC3**) to control an external antenna tuner.
+  It covers the 700 MHz to 2700 MHz range and can improve radiated efficiency in compact single-antenna designs.
+* If a companion radio, such as an external positioning or Bluetooth device, shares the antenna area, use the two-pin coexistence interface.
+  For both interfaces, see the `nRF93M1 AT Commands Reference Guide`_.
 * Validate the antenna with ``AT%RFTEST``, which measures RSSI without a network connection.
   See :ref:`ug_nrf93m1_testing_rf`.
 
@@ -131,6 +157,11 @@ The two variants in :ref:`ug_nrf93m1_variants` are pin, size, and software compa
 Each variant requires its own board design and modem firmware image.
 You select the variant by which part you place.
 
+The variants differ in SIM support.
+Only nRF93M1-LACA supports SoftSIM.
+When you use two external SIMs, both must operate at the same voltage class.
+If you do not use ``SIM1_DET``, leave it floating.
+
 Design for this deliberately:
 
 * Develop and qualify on nRF93M1-LABA, then place nRF93M1-LACA for markets that need the wider band set, with no PCB change.
@@ -142,6 +173,19 @@ Design for this deliberately:
    Module pre-certification reduces your certification effort but does not remove it.
    Confirm the scope of the module certifications for your target markets and variant early, because this affects schedule more than it affects design.
 
+.. _ug_nrf93m1_custom_board_assembly:
+
+Assembly
+********
+
+Follow the assembly guidance in the `nRF93M1 Datasheet`_:
+
+* Use a reflow profile compatible with IPC-7530, with a peak temperature of 240 °C ±5 °C, and do not exceed three reflow cycles.
+* Connect the RESERVED pins thermally and mechanically to the host PCB, but leave them electrically unconnected.
+* Route the **ANT** pin with a controlled-impedance 50 Ω transmission line that is short and isolated from digital signal sources.
+* Observe the dry-pack storage and floor-life limits, which are 168 hours at 30°C or lower and 60% RH or lower for MSL 3.
+  If you exceed the limits, bake the modules according to JEDEC J-STD-033.
+
 .. _ug_nrf93m1_custom_board_checklist:
 
 Design review checklist
@@ -150,9 +194,11 @@ Design review checklist
 The following is the design review checklist to be considered:
 
 * Supply holds regulation through peak transmit current.
-* All host-to-module signals are level shifted to 1.8 V if required.
+* UART and other GPIO signals are level shifted to 1.8 V if required.
+* ``POWERKEY`` and ``nRESET`` are driven within the input levels in the datasheet.
 * Power sequencing matches the datasheet.
-* ``POWERKEY`` and ``nRESET`` are both host controllable.
+* ``POWERKEY`` is host controllable.
+  ``nRESET`` is optional and can be left floating.
 * ``UART1_DTR`` is connected.
   It is the only baud-rate-independent wake path.
 * ``UART1_RI`` is connected if the host will sleep and needs the module to wake it.
@@ -163,4 +209,5 @@ The following is the design review checklist to be considered:
 * Current measurement points are available for bring-up.
 * A serial path exists for modem firmware recovery.
   See :ref:`ug_nrf93m1_updating_modem_fw_serial`.
-* SIM interface matches your SIM class, 1.8 V Class B or 3 V Class C.
+* SIM interface matches your SIM class, 3 V Class B or 1.8 V Class C.
+  With two SIMs, both use the same class.
