@@ -309,6 +309,8 @@ if(NOT HW_FEATURES)
 endif()
 
 add_docset(zephyr ${Zephyr_VERSION} SPHINXOPTS ${ZEPHYR_SPHINXOPTS})
+configure_file(${ZEPHYR_BASE}/doc/zephyr.doxyfile.in ${CMAKE_BINARY_DIR}/upstream.doxyfile)
+file(READ ${CMAKE_BINARY_DIR}/upstream.doxyfile ZEPHYR_UPSTREAM_DOXYFILE)
 add_doxygen_docset(zephyr ${ZEPHYR_BASE} ${Zephyr_VERSION})
 add_dependencies(zephyr zephyr-devicetree)
 add_dependencies(zephyr-all zephyr-devicetree)

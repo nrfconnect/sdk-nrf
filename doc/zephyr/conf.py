@@ -30,7 +30,7 @@ ZEPHYR_BASE = utils.get_projdir("zephyr")
 os.environ["ZEPHYR_BASE"] = str(ZEPHYR_BASE)
 os.environ["OUTPUT_DIR"] = str(utils.get_builddir() / "html" / "zephyr")
 
-conf = eval_config_file(str(ZEPHYR_BASE / "doc" / "conf.py"), tags)
+conf = eval_config_file(ZEPHYR_BASE / "doc" / "conf.py", tags)
 locals().update(conf)
 
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
@@ -74,6 +74,12 @@ if kconfig_mapping:
 
 # -- Options for doxyrunner plugin ---------------------------------------------
 
+_UPSTREAM_DOXYFILE = utils.get_builddir() / "upstream.doxyfile"
+
+def get_upstream_doxyfile() -> str:
+    with open(_UPSTREAM_DOXYFILE) as f:
+        return f.read()
+
 _doxyrunner_outdir = utils.get_builddir() / "html" / "zephyr" / "doxygen"
 
 doxyrunner_doxygen = os.environ.get("DOXYGEN_EXECUTABLE", "doxygen")
@@ -87,6 +93,7 @@ doxyrunner_projects = {
             "DOCSET_SOURCE_BASE": str(ZEPHYR_BASE),
             "DOCSET_BUILD_DIR": str(_doxyrunner_outdir),
             "DOCSET_VERSION": version,
+            "ZEPHYR_UPSTREAM_DOXYFILE": get_upstream_doxyfile(),
         }
     }
 }
