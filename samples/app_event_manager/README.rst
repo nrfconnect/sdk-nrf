@@ -45,7 +45,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/app_event_manager`
+.. |sample path| replace:: :ncs-file:`samples/app_event_manager </samples/app_event_manager>`
 
 .. include:: /includes/build_and_run_ns.txt
 
