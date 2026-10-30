@@ -206,13 +206,13 @@ Before you program the sample to your development kit, complete the following st
 #. Perform a full erase of the device.
    You can use `nrfutil device erase`_ command for this purpose:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device erase --all
 
 #. Run the following nRF Util command to provision the example keys to the board:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device x-provision-keys --key-file keys\keys.json
 
@@ -392,7 +392,7 @@ Complete the following steps instead of the ones listed in the `Testing`_ sectio
 #. |connect_terminal|
 #. Run the following command to perform a full erase of the device:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device erase --all
 
@@ -401,7 +401,7 @@ Complete the following steps instead of the ones listed in the `Testing`_ sectio
    The sample also runs the steps listed in the `Sample operations`_ section and generates a second pair of keys.
 #. Run the following command to provision the example keys to the board:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device x-provision-keys --key-file keys\keys.json
 

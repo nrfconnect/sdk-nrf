@@ -156,10 +156,11 @@ To perform a partial update using a manifest, follow these steps:
 1. Build and program a sample that uses the manifest-based update strategy, such as the :ref:`ab_split_sample` sample.
 #. Read the digests of the currently running images using the SMP protocol.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
       :emphasize-lines: 6, 7, 16, 17
 
-      $ nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      $ nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
       Image
          image number: 0
@@ -184,11 +185,12 @@ To perform a partial update using a manifest, follow these steps:
 
 #. Send the initial secondary slot radio image to the device using the SMP protocol.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
       :emphasize-lines: 15, 16, 17, 18, 19
 
-      $ nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM0 --image-number 1 --firmware ./build/ipc_radio_secondary_app/zephyr/zephyr.signed.bin
-      $ nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      $ nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 1 --firmware ./build/ipc_radio_secondary_app/zephyr/zephyr.signed.bin
+      $ nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
       Image
          image number: 0
@@ -264,17 +266,19 @@ To perform a partial update using a manifest, follow these steps:
 
 #. Use the SMP protocol to upload only the new application core image to the device.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
 
-      $ nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM0 --firmware ./build/mcuboot_secondary_app/zephyr/zephyr.signed.bin
+      $ nrfutil mcu-manager serial image-upload --serial-port <serial_port> --firmware ./build/mcuboot_secondary_app/zephyr/zephyr.signed.bin
 
 #. Verify that even if only the application core image has been updated, the manifest is still satisfied.
    This can be done by checking the ``bootable`` flag of the manifest image using the SMP protocol.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
       :emphasize-lines: 13, 28
 
-      $ nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      $ nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
       Image
          image number: 0
@@ -309,10 +313,11 @@ To perform a partial update using a manifest, follow these steps:
 
 #. Mark the update candidate as pending and reboot the device to apply the update.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0 hash=47c8d6213ef304a78d4738c47ffe71b0c3f3d33fbefa9cf3294643ca5ca5444459648dd28548514850ad1c2238a393f1722f942f193ed7fcf9cbb561b4a96607
       :emphasize-lines: 14, 29
 
-      $ nrfutil mcu-manager serial image-test --serial-port /dev/ttyACM0 --hash 47c8d6213ef304a78d4738c47ffe71b0c3f3d33fbefa9cf3294643ca5ca5444459648dd28548514850ad1c2238a393f1722f942f193ed7fcf9cbb561b4a96607
+      $ nrfutil mcu-manager serial image-test --serial-port <serial_port> --hash <hash>
 
       Image
          image number: 0
@@ -345,14 +350,15 @@ To perform a partial update using a manifest, follow these steps:
          active: false
          permanent: false
 
-      $ nrfutil mcu-manager serial reset --serial-port /dev/ttyACM0
+      $ nrfutil mcu-manager serial reset --serial-port <serial_port>
 
 #. Use the SMP protocol to verify that the device is running the new application core image.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
       :emphasize-lines: 16, 31
 
-      $ nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      $ nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
       Image
          image number: 0
@@ -389,10 +395,11 @@ To perform a partial update using a manifest, follow these steps:
    Note that confirming the manifest image also confirms all other images described by the manifest.
    There is no need to issue separate confirmation or testing commands for each image.
 
-   .. code-block:: console
+   .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0 hash=47c8d6213ef304a78d4738c47ffe71b0c3f3d33fbefa9cf3294643ca5ca5444459648dd28548514850ad1c2238a393f1722f942f193ed7fcf9cbb561b4a96607
       :emphasize-lines: 15, 30
 
-      $ nrfutil mcu-manager serial image-confirm --serial-port /dev/ttyACM0 --hash 47c8d6213ef304a78d4738c47ffe71b0c3f3d33fbefa9cf3294643ca5ca5444459648dd28548514850ad1c2238a393f1722f942f193ed7fcf9cbb561b4a96607
+      $ nrfutil mcu-manager serial image-confirm --serial-port <serial_port> --hash <hash>
 
       Image
          image number: 0

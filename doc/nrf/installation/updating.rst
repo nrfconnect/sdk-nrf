@@ -44,32 +44,15 @@ Depending on your preferred development method, you can start the correct CLI to
    .. group-tab:: Command line
 
       Use the command for your operating system with the ``--ncs-version`` corresponding to the version of the |NCS| you are working with.
-      The following commands start the command line environment for the latest release (|release|):
+      With the example values, the following command starts the command line environment for the latest release (|release|):
 
-      .. tabs::
+      .. nrfutil-command::
+         :values: version=|release|
+         :values-windows: shell_option=--terminal
+         :values-linux: shell_option=--shell
+         :values-macos: shell_option=--shell
 
-         .. tab:: Windows
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release|  --terminal
-
-         .. tab:: Linux
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-         .. tab:: macOS
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-      ..
+         nrfutil sdk-manager toolchain launch --ncs-version <version> <shell_option>
 
       You can also use other options instead of ``--ncs-version``.
       See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.

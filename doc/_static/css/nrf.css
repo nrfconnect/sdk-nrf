@@ -134,3 +134,13 @@
 #versions-select option {
   font-weight: normal;
 }
+
+/* The copy icon has a title, which the browser shows as a second tooltip on hover */
+.rst-content button.copybtn svg {
+  pointer-events: none;
+}
+
+/* sphinx-copybutton sets "Copy" while idle and "Copied!" after copying */
+.rst-content button.copybtn[data-tooltip="Copy"]:after {
+  content: "Copy command";
+}

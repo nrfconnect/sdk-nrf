@@ -81,7 +81,7 @@ Testing
 
 #. Upload the second version of the images to the device using ``nrfutil device``:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device program --firmware package_v2.hex  --options chip_erase_mode=ERASE_NONE
 

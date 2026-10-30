@@ -1,0 +1,172 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* The documentation button, left of the sphinx-copybutton button and styled like it */
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button {
+    position: absolute;
+    display: flex;
+    box-sizing: border-box;
+    top: .3em;
+    right: 2.3em;
+    width: 1.7em;
+    height: 1.7em;
+    opacity: 0;
+    transition: opacity .3s, border .3s, background-color .3s;
+    border: #1b1f2426 1px solid;
+    border-radius: .4em;
+    background-color: #f6f8fa;
+    text-decoration: none;
+}
+
+/* The theme sets the color of all links with !important, so the icon sets its own stroke */
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button svg {
+    stroke: #57606a;
+    width: 1.5em;
+    height: 1.5em;
+    padding: .1em;
+}
+
+.rst-content div.nrfutil-command div.highlight:hover a.nrfutil-command-docs-button,
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:focus-visible {
+    opacity: 1;
+}
+
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:hover {
+    background-color: rgb(235, 235, 235);
+}
+
+.rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button:active {
+    background-color: rgb(187, 187, 187);
+}
+
+/* The tooltips of both buttons, left of the buttons and centered on them. They inherit no line
+ * height from the code block, so they set one that fits the text.
+ */
+.rst-content div.nrfutil-command div.highlight .o-tooltip--left:after {
+    top: 50%;
+    line-height: 1.4;
+    transform: translateX(-102%) translateY(-50%);
+}
+
+.rst-content div.nrfutil-command div.highlight .o-tooltip--left:hover:after {
+    transform: translateX(-100%) translateY(-50%);
+}
+
+/* The copy tooltip starts left of the documentation button, so that it doesn't cover it. The
+ * offset is the width of that button and the gap, in the .8em font size of the tooltip.
+ */
+.rst-content div.nrfutil-command div.highlight:has(a.nrfutil-command-docs-button) button.copybtn:after {
+    left: -2.7em;
+}
+
+/* sphinx-copybutton sets "Copy" while idle and "Copied!" after copying */
+.rst-content div.nrfutil-command div.highlight button.copybtn[data-tooltip="Copy"]:after {
+    content: "Copy command";
+}
+
+/* The copy icon has a title, which the browser shows as a second tooltip on hover */
+.rst-content div.nrfutil-command div.highlight button.copybtn svg {
+    pointer-events: none;
+}
+
+@media (hover: none) {
+    .rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button {
+        opacity: 1;
+    }
+}
+
+/* The controls, inside the border of the nrfutil-command block */
+.rst-content div.nrfutil-command div.nrfutil-command-footer {
+    padding: .3em 12px;
+    line-height: 1.4;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px 16px;
+    font-size: 90%;
+}
+
+.rst-content div.nrfutil-command label.nrfutil-command-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+/* The operating system buttons, joined into one group */
+.rst-content div.nrfutil-command div.nrfutil-command-os {
+    display: inline-flex;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button {
+    margin: 0;
+    padding: 1px 10px;
+    border: 1px solid #c8c8c8;
+    background-color: #fff;
+    color: #333;
+    font-size: inherit;
+    line-height: 1.4;
+    cursor: pointer;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button + button {
+    border-left: none;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:first-child {
+    border-radius: 4px 0 0 4px;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:last-child {
+    border-radius: 0 4px 4px 0;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:hover {
+    background-color: #f0f0f0;
+}
+
+/* The selected system is marked by its fill and its bold text, not by color alone */
+.rst-content div.nrfutil-command div.nrfutil-command-os button[aria-pressed="true"] {
+    border-color: #0077c8;
+    background-color: #0077c8;
+    color: #fff;
+    font-weight: bold;
+}
+
+.rst-content div.nrfutil-command div.nrfutil-command-os button:focus-visible {
+    position: relative;
+    outline: 2px solid #00a9ce;
+    outline-offset: 1px;
+}
+
+.rst-content div.nrfutil-command em.nrfutil-os-value {
+    font-style: normal;
+}
+
+.rst-content div.nrfutil-command em.nrfutil-editable {
+    font-style: normal;
+    padding: 0 2px;
+    border-radius: 2px;
+    outline: 1px dashed #00a9ce;
+    background-color: #fff;
+    cursor: text;
+}
+
+.rst-content div.nrfutil-command em.nrfutil-editable:focus {
+    outline: 2px solid #00a9ce;
+}
+
+@media print {
+    .rst-content div.nrfutil-command div.highlight a.nrfutil-command-docs-button,
+    .rst-content div.nrfutil-command div.nrfutil-command-footer {
+        display: none;
+    }
+}

@@ -1,0 +1,7 @@
+# Versions of the nrfutil commands that the nrfutil-command directive validates against, for the
+# commands that scripts/tools-versions-<os>.yml and the nrfutil_<command>_ver substitutions in
+# doc/nrf/shortcuts.txt don't pin. Those files take precedence over this one.
+#
+# The documentation build regenerates the json-args snapshot when any of these versions changes.
+mcu-manager: 0.12.2
+sdk-manager: 1.16.1
