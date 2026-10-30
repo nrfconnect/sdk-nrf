@@ -189,6 +189,22 @@ config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
 	    See also: Bluetooth Core Specification, Vol 6, Part B, Section 4.5.6.
 	  - There are no conflicts with other roles of equal or higher priority.
 
+config BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT
+	bool "Minimum connection event length mode by default"
+	depends on BT_CONN && BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE
+	select EXPERIMENTAL
+	help
+	  This sets Minimum Connection Event Length Mode on boot.
+	  See sdc_hci_cmd_vs_min_conn_event_length_mode_enable.
+
+config BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE
+	bool "Minimum connection event length mode"
+	depends on BT_CONN
+	select EXPERIMENTAL
+	help
+	  This adds support for enabling Minimum Connection Event Length Mode.
+	  See sdc_hci_cmd_vs_min_conn_event_length_mode_enable.
+
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
 	depends on BT_CENTRAL
@@ -202,7 +218,7 @@ config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	  This configuration allows the application to set a different value for event spacing
 	  than BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT. This will result in holes in the scheduling
 	  timeline if the connection interval is longer than the ACL event spacing.
-	  This gap can be used for other scheduling activites like isochronous streams.
+	  This gap can be used for other scheduling activities like isochronous streams.
 
 config BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
 	int "Default minimum value that will be used as maximum Tx octets for ACL connections"
@@ -328,7 +344,7 @@ config BT_CTLR_SDC_MPSL_COEX
 	  This is not supported with Coded Phy and FEM on the nRF5340 SoC.
 
 # As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
-# only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
+# only, and BT_CTLR_DF_ADV_CTE_TX expects it existence, we define it as an empty
 # configuration here.
 config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
 	bool
@@ -458,7 +474,7 @@ config BT_UNINIT_MPSL_ON_DISABLE
 	bool "Uninitializes MPSL on BT disable"
 	depends on MPSL_DYNAMIC_INTERRUPTS
 	help
-	  This option unitializes MPSL on BT disable. HCI driver close calls
+	  This option uninitializes MPSL on BT disable. HCI driver close calls
 	  mpsl_lib_uninit, which releases all peripherals and allows the user to
 	  override any interrupt handlers used by MPSL.
 
