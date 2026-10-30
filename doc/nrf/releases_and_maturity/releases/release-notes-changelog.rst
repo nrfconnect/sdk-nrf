@@ -1500,6 +1500,7 @@ The following list summarizes both the main changes inherited from upstream MCUb
   * The ``--header-size`` imgtool parameter to accept ``auto`` as a value and automatically calculate the smallest possible header.
   * The sysbuild signing scripts for nRF5340 network core to automatically use the smallest needed MCUboot image header instead of the :kconfig:option:`CONFIG_ROM_START_OFFSET` Kconfig value, which has to account for proper VTOR alignment.
     The size of network core firmware image signed for MCUboot is reduced by 480 bytes.
+  * Default PSA_CORE_LITE size optimization similar to that for NSIB when siganture algorithm is ED25519 and encryption is disabled. This affects the defult configuration of nRF54L SoCs with excuse to nRF54LS05 SoCs.
 
 * Fixed:
 
