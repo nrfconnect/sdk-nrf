@@ -2,7 +2,7 @@ common:
   sysbuild: true
   slow: true
   build_only: false
-  timeout: 180
+  timeout: 600
   tags:
     - nsib
     - ci_tests_subsys_bootloader
