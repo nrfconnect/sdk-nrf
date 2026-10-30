@@ -576,6 +576,7 @@
 /samples/bluetooth/iso_time_sync/         @nrfconnect/ncs-dragoon
 /samples/bluetooth/le_adv_report_chan_idx/ @nrfconnect/ncs-dragoon
 /samples/bluetooth/llpm/                  @nrfconnect/ncs-dragoon
+/samples/bluetooth/log/                   @nrfconnect/ncs-dragoon
 /samples/bluetooth/mesh/                  @nrfconnect/ncs-paladin
 /samples/bluetooth/multiple_adv_sets/     @nrfconnect/ncs-blenders
 /samples/bluetooth/nrf_dm/                @nrfconnect/ncs-blenders
@@ -712,6 +713,7 @@
 /samples/bluetooth/iso_combined_bis_and_cis/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/iso_time_sync/*.rst    @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/llpm/*.rst             @nrfconnect/ncs-dragoon-doc
+/samples/bluetooth/log/*.rst              @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/multiple_adv_sets/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/path_loss_monitoring/*.rst @nrfconnect/ncs-dragoon-doc
