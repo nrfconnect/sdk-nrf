@@ -32,6 +32,23 @@ If this call fails, the application must not use any functions of the module.
 .. note::
    Initialize the module before starting any timers, sensor drivers, or communication on the link.
 
+.. _nrf_cloud_onboarding:
+
+Provisioning and onboarding
+***************************
+
+Before a device can connect to nRF Cloud, it must be provisioned with credentials and onboarded to an nRF Cloud account.
+The available methods depend on the device:
+
+* Devices with a Nordic cellular modem, such as nRF91 Series devices:
+
+  * Preconnect provisioning - Install the credentials and onboard the device using `nRF Cloud Utils`_ before the device connects, as described in :ref:`lib_nrf_cloud_preconnect_provisioning`.
+  * The :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_ - The device is provisioned over the air and listed in your account once the process completes.
+
+* Devices without a Nordic cellular modem, such as nRF71 Series and nRF70 Series Wi-Fi devices - Use preconnect provisioning, as described in :ref:`lib_nrf_cloud_preconnect_provisioning`.
+
+Refer to the `Adding a device to your account`_ section of the nRF Cloud documentation for more information.
+
 .. _lib_nrf_cloud_connect:
 
 Connecting
@@ -63,18 +80,6 @@ There are multiple configuration options for the device or client ID.
 See :ref:`configuration_device_id` for more information.
 
 As the next step, the API subscribes to an MQTT topic to start receiving requests from the cloud.
-
-.. _nrf_cloud_onboarding:
-
-nRF Cloud onboarding options
-============================
-
-You can add a device to an nRF Cloud account in the following ways:
-
-* Using `nRF Cloud Utils`_ for provisioning and onboarding - Follow the instructions in the README section for single or bulk onboarding.
-* Using the :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_ - Once the process completes, the device will be listed in your account.
-
-Refer to the `Adding a device to your account`_ section of the nRF Cloud documentation for more information.
 
 .. _configuration_device_id:
 

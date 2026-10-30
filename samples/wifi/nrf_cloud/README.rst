@@ -3,7 +3,7 @@
 .. ncs-sample::
    :title: Wi-Fi: nRF Cloud
 
-   The nRF Cloud sample demonstrates an nRF Cloud application running on nRF70 Series and nRF71 Series hardware, using Wi-Fi® as the transport.
+   The nRF Cloud sample demonstrates an nRF Cloud application running on nRF71 Series and nRF70 Series hardware, using Wi-Fi® as the transport.
    It integrates Wi-Fi-based location services, periodic sensor sampling, and more.
    It also demonstrates how to build connected, error-tolerant applications using Zephyr's ``conn_mgr`` connectivity management framework.
 
@@ -16,14 +16,17 @@ The sample supports the following development kits:
 
 .. table-from-sample-yaml::
 
-.. note::
-   The :zephyr:board:`nRF7120 DK <nrf7120dk>` has not been tested on target for this sample.
+The sample also requires the following:
+
+* A Wi-Fi access point with Internet access.
+* An `nRF Cloud`_ account.
+* The `nRF Cloud Utils`_ Python package, to provision and onboard the device (see :ref:`nrf_cloud_preconnect_prerequisites`).
 
 .. include:: /includes/tfm.txt
 
 .. _wifi_nrf_cloud_features:
 
-Features
+Overview
 ********
 
 This sample implements or demonstrates the following features:
@@ -44,130 +47,84 @@ This sample implements or demonstrates the following features:
 .. _wifi_nrf_cloud_structure_and_theory_of_operation:
 
 Structure and theory of operation
-*********************************
+=================================
 
-This sample is separated into a number of smaller functional units.
-The top level functional unit and entry point for the sample is the :file:`src/main.c` file.
-This file starts three primary threads, each with a distinct function:
+The entry point is the :file:`src/main.c` file, which starts the following threads:
 
-* The cloud connection thread (``con_thread``, :file:`src/cloud_connection.c`) runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`, which maintains a connection to `nRF Cloud`_.
-* The application thread (``app_thread``, :file:`src/application.c`) runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`, which controls demo features and submits `device messages <nRF Cloud Device Messages_>`_ to the :ref:`wifi_nrf_cloud_device_message_queue`.
-* The message queue thread (``msg_thread``, :file:`src/message_queue.c`) then transmits these messages whenever there is an active connection.
-  See :ref:`wifi_nrf_cloud_device_message_queue`.
-
-:file:`src/main.c` also optionally starts a fourth thread, the ``led_thread``, which animates any onboard LEDs if :ref:`wifi_nrf_cloud_led_status_indication` is enabled.
-
-When using CoAP, one additional thread starts:
-The CoAP shadow delta checking thread (``coap_shadow``, :file:`src/shadow_support_coap.c`) runs the :ref:`wifi_nrf_cloud_coap_shadow_loop` which periodically asks nRF Cloud for any shadow changes.
+* ``con_thread`` (:file:`src/cloud_connection.c`) - Runs the :ref:`wifi_nrf_cloud_cloud_connection_loop`.
+* ``app_thread`` (:file:`src/application.c`) - Runs the :ref:`wifi_nrf_cloud_application_thread_and_main_application_loop`.
+* ``msg_thread`` (:file:`src/message_queue.c`) - Sends the :ref:`wifi_nrf_cloud_device_message_queue` while connected.
+* ``led_thread`` (:file:`src/led_control.c`) - Animates the LEDs, see :ref:`wifi_nrf_cloud_led_status_indication`.
+* ``coap_shadow`` (:file:`src/shadow_support_coap.c`) - CoAP only, runs the :ref:`wifi_nrf_cloud_coap_shadow_loop`.
+* ``mflt_buttons`` (:file:`src/memfault_buttons.c`) - CoAP only, handles the :ref:`wifi_nrf_cloud_memfault_buttons`.
 
 .. _wifi_nrf_cloud_cloud_connection_loop:
 
 Cloud connection loop
-=====================
+---------------------
 
-The cloud connection loop (implemented in :file:`src/cloud_connection.c`) monitors network availability.
-It starts a connection with `nRF Cloud`_ whenever the Internet becomes reachable, and closes that connection whenever Internet access is lost.
-It has error handling and timeout features to ensure that failed or lost connections are re-established after a waiting period (:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+The cloud connection loop (:file:`src/cloud_connection.c`) connects to `nRF Cloud`_ whenever the Internet becomes reachable, and disconnects when it is lost.
+Failed or lost connections are retried after :option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`.
 
-Whenever a connection to nRF Cloud is started, the cloud connection loop follows the :ref:`nRF Cloud connection process <lib_nrf_cloud_connect>`.
-The :ref:`lib_nrf_cloud` library handles most of the connection process, with exception to the following behavior:
+The :ref:`lib_nrf_cloud` library handles the :ref:`connection process <lib_nrf_cloud_connect>`, except for the following:
 
-When an MQTT device is first being associated with an nRF Cloud account, the `nRF Cloud MQTT API`_ will send a user association request notification to the device.
-Upon receiving this notification, the device must wait for a user association success notification, and then manually disconnect from and reconnect to nRF Cloud.
-Notifications of user association success are sent for every subsequent connection after this as well, so the device must only disconnect and reconnect if it previously received a user association request notification.
-This behavior is handled by the ``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` cases inside the :c:func:`cloud_event_handler` function.
-
-When a CoAP device attempts to connect to nRF Cloud, the connection will fail to be authenticated until the device is onboarded to an nRF Cloud account.
-See :ref:`wifi_nrf_cloud_standard_onboarding` for details.
-
-Upon startup, the cloud connection loop also updates the `device shadow <nRF Cloud Device Shadows_>`_.
-This is performed in the :c:func:`update_shadow` function.
+* MQTT - When the device is first associated with an nRF Cloud account, the sample waits for the association to complete and then reconnects (``NRF_CLOUD_EVT_USER_ASSOCIATION_REQUEST`` and ``NRF_CLOUD_EVT_USER_ASSOCIATED`` in :c:func:`cloud_event_handler`).
+* CoAP - The connection fails authentication until the device is :ref:`onboarded <wifi_nrf_cloud_provisioning>`.
 
 .. _wifi_nrf_cloud_device_message_queue:
 
 Device message queue
-====================
+--------------------
 
-Any thread may submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (implemented in :file:`src/message_queue.c`), where they are stored until a working connection to `nRF Cloud`_ is established.
-Once this happens, the message thread transmits all enqueued messages, one at a time, to nRF Cloud.
-If an enqueued message fails to send, it is re-queued and retried later.
-Transmission is paused whenever the connection to nRF Cloud is lost.
-If more than :option:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES` messages in a row fail to send, the connection is reset and re-established after a delay (:option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS`).
+Any thread can submit `device messages <nRF Cloud Device Messages_>`_ to the device message queue (:file:`src/message_queue.c`).
+The messages are sent one at a time while connected to nRF Cloud, and failed messages are re-queued.
+After more than :option:`CONFIG_MAX_CONSECUTIVE_SEND_FAILURES` consecutive failures, the connection is reset.
 
-The following are sent directly rather than through the queue:
-
-* `Device shadow <nRF Cloud Device Shadows_>`_ updates.
-* Ground fix requests from the :ref:`lib_location` library.
+Shadow updates and ground fix requests from the :ref:`lib_location` library bypass the queue.
 
 .. _wifi_nrf_cloud_application_thread_and_main_application_loop:
 
 Application thread and main application loop
-============================================
+--------------------------------------------
 
-The application thread is implemented in the :file:`src/application.c` file, and is responsible for the high-level behavior of this sample.
+The application thread (:file:`src/application.c`) logs the reset reason, waits for connectivity, and starts periodic location tracking with the :ref:`lib_location` library.
+Then, every :option:`CONFIG_SENSOR_SAMPLE_INTERVAL_SECONDS` seconds, it performs the following operations in a loop:
 
-When it starts, it logs the reset reason code.
-
-It performs the following major tasks:
-
-* Establishes periodic position tracking (which the :ref:`lib_location` library performs).
-* Periodically samples temperature data (using the :file:`src/temperature.c` file).
-* Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
-* Sends sensor sample and location device messages to the :ref:`wifi_nrf_cloud_device_message_queue`.
-
-.. note::
-   Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
+* Samples the temperature (:file:`src/temperature.c`) and sends it as a timestamped device message to the :ref:`wifi_nrf_cloud_device_message_queue`.
+* Sends the :ref:`wifi_nrf_cloud_test_counter` value, if enabled.
 
 .. _wifi_nrf_cloud_coap_shadow_loop:
 
 CoAP shadow delta checking loop
-===============================
+-------------------------------
 
-The CoAP shadow delta checking thread performs the following tasks:
-
-* Checks for a change in the device shadow with the :c:func:`nrf_cloud_coap_shadow_get` function.
-* Parse and process the JSON shadow delta document.
-* If a change is received, the thread sends the change back with the :c:func:`nrf_cloud_coap_shadow_state_update` function.
-  This is necessary to prevent the device from unnecessarily receiving the same shadow delta the next time through the loop.
+The CoAP shadow delta checking thread periodically gets the `device shadow <nRF Cloud Device Shadows_>`_ delta (:c:func:`nrf_cloud_coap_shadow_get`), applies the configuration changes, and reports them back (:c:func:`nrf_cloud_coap_shadow_state_update`) so that the same delta is not received again.
 
 .. _wifi_nrf_cloud_temperature_sensing:
 
 Temperature sensing
-===================
+-------------------
 
 Temperature sensing is implemented in the :file:`src/temperature.c` file.
 If the ``temp`` devicetree node is enabled, the on-die temperature sensor is read using the :ref:`zephyr:sensor` API.
 This is the case for the nRF7120 and nRF54LM20 DKs.
-On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5430 as a host MCU, simulated temperature readings are generated instead.
-For temperature readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_ (handled in :file:`src/cloud_connection.c`).
+On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5340 as a host MCU, simulated temperature readings are generated instead.
 
 .. _wifi_nrf_cloud_location_tracking:
 
 Location tracking
-=================
+-----------------
 
-Location tracking is handled in :file:`src/location_tracking.c`.
-This sets up a periodic location request and passes results to a callback configured by :file:`src/application.c`.
-
-For location readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_ (handled in :file:`src/cloud_connection.c`).
-
-The device scans MAC addresses of nearby Wi-Fi access points and submits them to nRF Cloud to obtain a location estimate.
+The sample periodically scans nearby Wi-Fi access points and sends their MAC addresses to nRF Cloud for a location estimate (:file:`src/location_tracking.c`).
+The :file:`src/application.c` file logs the resulting location.
 
 .. _wifi_nrf_cloud_led_status_indication:
 
 LED status indication
-=====================
+---------------------
 
-On boards that support LED status indication, this sample can indicate its current status with any on-board LEDs.
-
-This is performed by a background thread implemented in the :file:`src/led_control.c` file.
-
-Other threads may request either a temporary or indefinite LED pattern.
-This wakes up the ``led_thread``, which begins animating the requested pattern, sleeping for 100 milliseconds at a time between animation frames, until the requested pattern has completed (if it is temporary), or until a new pattern is requested in its place.
-
-This feature is enabled by default for the *board_target* mentioned in the `Requirements`_ sections.
-
-The patterns displayed, the states they describe, and the options required for them to appear are as follows:
+On boards with LEDs, the ``led_thread`` (:file:`src/led_control.c`) shows the status of the sample.
+The patterns and their conditions are as follows:
 
 +------------------------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 | Status                                               | Pattern                                                                                                | Conditions                                                                                                |
@@ -183,28 +140,48 @@ The patterns displayed, the states they describe, and the options required for t
 | Idle                                                 | Single LED lit, bouncing between opposite corners (LED1 and LED4)                                      | The :option:`CONFIG_LED_CONTINUOUS_INDICATION` option is enabled                                          |
 +------------------------------------------------------+--------------------------------------------------------------------------------------------------------+-----------------------------------------------------------------------------------------------------------+
 
-Under all other circumstances, on-board LEDs are turned off.
+Otherwise, the LEDs are off.
+The :option:`CONFIG_LED_VERBOSE_INDICATION` and :option:`CONFIG_LED_CONTINUOUS_INDICATION` Kconfig options are enabled by default.
+See :ref:`wifi_nrf_cloud_led_third_party` for third-party boards.
 
 .. note::
-   The nRF7002 DK has only two on-board LEDs, so LED status indication works only partially on that target.
-   Patterns that require four LEDs (such as the "Device message sent successfully" and "Idle" patterns) will not display as described.
-
-.. note::
-  The :option:`CONFIG_LED_VERBOSE_INDICATION` and :option:`CONFIG_LED_CONTINUOUS_INDICATION` options are enabled by default.
-
-See :ref:`wifi_nrf_cloud_customizing_LED_status_indication` for details on customizing the LED behavior.
-
-See :ref:`wifi_nrf_cloud_led_third_party` for details on configuring LED status indication on third-party boards.
+   The nRF7002 DK has only two LEDs, so the patterns that need four LEDs (``Device message sent successfully`` and ``Idle``) do not display as described.
 
 .. _wifi_nrf_cloud_memfault:
 
 Memfault device monitoring
-==========================
+--------------------------
 
 This sample uses `Memfault`_ (:kconfig:option:`CONFIG_MEMFAULT`) for general device monitoring and diagnostics whenever built with the CoAP transport.
-This includes periodic metrics reporting, as well as coredump and fault reporting on crash and reboot (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
-RAM-backed coredumps are enabled on the ``nrf7002dk/nrf5340/cpuapp/ns`` board target, see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+See :ref:`ug_memfault` for an overview of the Memfault integration in the |NCS|.
+By default, the sample reports the following data:
+
+* Reboot events, including the reboot reason (:kconfig:option:`CONFIG_MEMFAULT_REBOOT_REASON_GET_HWINFO`).
+* Coredumps on crash (:kconfig:option:`CONFIG_MEMFAULT_FAULT_HANDLER_RETURN`).
+  Coredumps are stored in RAM and uploaded after the reboot (:kconfig:option:`CONFIG_MEMFAULT_RAM_BACKED_COREDUMP`).
+  The ``nrf7002dk/nrf5340/cpuapp/ns`` board target reduces the coredump size to fit in RAM (see :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf`).
+* Recent log lines, captured along with coredumps (:kconfig:option:`CONFIG_MEMFAULT_LOGGING_ENABLE`).
+* Heartbeat metrics, collected every :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` seconds (one hour by default).
+  The sample uses the built-in |NCS| metrics (:kconfig:option:`CONFIG_MEMFAULT_NCS_USE_DEFAULT_METRICS`) and does not define custom metrics.
+  These include the following:
+
+  * Wi-Fi connection metrics, such as connected time, disconnect count, RSSI, channel, and TX rate (:kconfig:option:`CONFIG_MEMFAULT_METRICS_WIFI`).
+  * Memfault upload successes and failures (:kconfig:option:`CONFIG_MEMFAULT_METRICS_MEMFAULT_SYNC_SUCCESS`).
+  * CPU usage and uptime (:kconfig:option:`CONFIG_MEMFAULT_METRICS_DEFAULT_SET_ENABLE`).
+  * CPU temperature, on boards with a temperature sensor available to the application core (:kconfig:option:`CONFIG_MEMFAULT_METRICS_CPU_TEMP`).
+  * Heap usage (:kconfig:option:`CONFIG_MEMFAULT_METRICS_MEMORY_USAGE`).
+  * Thread stack usage (:kconfig:option:`CONFIG_MEMFAULT_METRICS_THREADS`).
+  * Boot time (:kconfig:option:`CONFIG_MEMFAULT_METRICS_BOOT_TIME`).
+
+  See `Memfault: Built-in metrics for nRF Connect SDK`_ for the full list.
+
+See :ref:`mod_memfault` for the configuration options of the Memfault integration.
+To try out triggering crashes and defining custom metrics, see the :ref:`memfault_sample` sample.
+
+The device appears on Memfault with its nRF Cloud device ID as serial.
 This data is uploaded through nRF Cloud's CoAP endpoint (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`), reusing the sample's existing nRF Cloud CoAP connection.
+No Memfault project key is needed, as nRF Cloud forwards the data to Memfault.
+See :ref:`wifi_nrf_cloud_testing_memfault` for how to view the data.
 
 The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD`), independently of the sample's own logic.
 To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
@@ -216,7 +193,7 @@ Memfault button actions
 =======================
 
 The periodic-upload timer fires only once in :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS`, and metrics heartbeats are only captured once in :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` (one hour by default).
-To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
+To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
 
 * First button (``sw0`` devicetree alias) - Captures a metrics heartbeat (:c:func:`memfault_metrics_heartbeat_debug_trigger`) and posts all pending Memfault chunks (:c:func:`memfault_zephyr_port_post_data_return_size`).
 * Second button (``sw1`` devicetree alias) - Checks for a FOTA update (:c:func:`memfault_zephyr_fota_start`), requires :ref:`wifi_nrf_cloud_fota` to be enabled.
@@ -231,14 +208,14 @@ Button presses are ignored until the sample is connected to nRF Cloud.
 .. _wifi_nrf_cloud_fota:
 
 Memfault FOTA
-=============
+-------------
 
 This sample optionally supports application Firmware Over-The-Air (FOTA) updates, delivered through `Memfault`_ Release Management, when built with the CoAP transport (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
-Enable it with :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
+Enable it with :option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
 
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
-* Drives the actual FOTA check periodically and independently, through the Memfault SDK's own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`), only once the app has confirmed nRF Cloud connectivity (see :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`).
+* Checks for updates on the Memfault periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`).
 * Lets you trigger a FOTA check on demand with a button press (see :ref:`wifi_nrf_cloud_memfault_buttons`).
 * Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
 
@@ -253,38 +230,28 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
    * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
 
    The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
-   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
+   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
 
-   To build with FOTA enabled on a supported target, merge in both :file:`coap.conf` and :file:`coap-fota.conf` (see :ref:`wifi_nrf_cloud_building_coap`):
-
-   ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
+   To build with FOTA enabled, see :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_test_counter:
 
 Test counter
-============
+------------
 
-Every time a sensor sample is sent, this counter is incremented and its current value is sent to `nRF Cloud`_.
-A plot of the counter value over time appears automatically in the nRF Cloud portal, useful for visualizing connection loss, resets, and re-establishment.
-
+Every time a sensor sample is sent, the sample also sends an incrementing counter to `nRF Cloud`_, whose plot in the portal shows connection losses and resets.
 You can enable or disable the counter using the device shadow's desired config section (``"counterEnable": true/false``), or force it always active with :option:`CONFIG_TEST_COUNTER`.
 
 .. _wifi_nrf_cloud_device_message_formatting:
 
 Device message formatting
-=========================
+-------------------------
 
-This sample, when using MQTT to communicate with nRF Cloud, constructs JSON-based `device messages <nRF Cloud Device Messages_>`_.
+The sample builds its `device messages <nRF Cloud Device Messages_>`_ as :c:struct:`nrf_cloud_obj` objects, which the :ref:`lib_nrf_cloud` library encodes as JSON for MQTT and CBOR for CoAP.
+The temperature (``TEMP``) and test counter (``COUNT``) messages follow the general message schema of the `nRF Cloud application protocols for long-range devices <nRF Cloud JSON protocol schemas_>`_, so the nRF Cloud portal can display them.
 
-While any valid JSON string can be sent as a device message, and accepted and stored by `nRF Cloud`_, there are some pre-designed message structures, known as schemas.
-The nRF Cloud portal knows how to interpret these schemas.
-These schemas are described in `nRF Cloud application protocols for long-range devices <nRF Cloud JSON protocol schemas_>`_.
-The device messages constructed in the :file:`src/application.c` file all adhere to the general message schema.
-
-Temperature data device messages conform to the ``temp`` ``deviceToCloud`` schemas.
-
-This sample, when using CoAP to communicate with nRF Cloud, uses the :ref:`lib_nrf_cloud_coap` library to construct and transmit CBOR-based device messages.
-Some CoAP traffic, specifically AWS shadow traffic, remains in JSON format.
+The sample does not send location messages.
+nRF Cloud stores the location it computes from the ground fix requests.
 
 .. _wifi_nrf_cloud_configuration:
 
@@ -311,19 +278,6 @@ You can independently disable the following key features of this sample by setti
    * - Shadow handling when using CoAP
      - :option:`CONFIG_COAP_SHADOW`
 
-For examples, see the :ref:`Configuration options <wifi_nrf_cloud_configuration>` section, or disable individual features using their respective Kconfig options.
-
-.. _wifi_nrf_cloud_customizing_LED_status_indication:
-
-Customizing LED status indication
-=================================
-
-To disable LED status indication (other than the selected idle behavior) after a connection to nRF Cloud has been established at least once, disable :option:`CONFIG_LED_VERBOSE_INDICATION`.
-
-To turn the LED off while the sample is idle (rather than show an idle pattern), disable :option:`CONFIG_LED_CONTINUOUS_INDICATION`.
-
-If you disable both of these options together, the status indicator LED remains off after a connection to nRF Cloud has been established at least once.
-
 .. _wifi_nrf_cloud_led_third_party:
 
 Configuring LED status indication for third-party boards
@@ -344,10 +298,39 @@ See also the :ref:`wifi_nrf_cloud_test_counter`.
 Configuration options
 =====================
 
-Check and configure the following Kconfig options for the sample:
+This sample uses the following Kconfig options:
 
 .. options-from-kconfig::
    :show-type:
+
+.. _wifi_nrf_cloud_setup_wifi_cred:
+
+.. include:: /includes/wifi_credentials_shell.txt
+
+.. important::
+   Do not use any special characters in the SSID or password, such as spaces or quotes.
+
+.. include:: /includes/wifi_credentials_static.txt
+
+.. _wifi_nrf_cloud_configuration_files:
+
+Configuration files
+===================
+
+The sample provides predefined configuration files for the following use cases:
+
+* :file:`prj.conf` - General configuration file for all board targets.
+* :file:`mqtt.conf` - Configuration file for the MQTT transport.
+* :file:`coap.conf` - Configuration file for the CoAP transport, including `Memfault`_ device monitoring.
+* :file:`coap-fota.conf` - Additional configuration file for :ref:`wifi_nrf_cloud_fota`.
+  Must be used together with :file:`coap.conf`.
+* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` and :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration files for the nRF54LM20 DK with the nRF7002-EB II shield.
+* :file:`boards/nrf7120dk_nrf7120_cpuapp.conf` and :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
+* :file:`sysbuild/mcuboot/` - Configuration of the MCUboot bootloader image used for FOTA.
+
+Board and SoC files under the :file:`boards/` and :file:`socs/` folders are merged automatically for the selected target.
+The :file:`mqtt.conf`, :file:`coap.conf`, and :file:`coap-fota.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_building_and_running:
 
@@ -358,93 +341,10 @@ Building and running
 
 .. include:: /includes/build_and_run_ns.txt
 
-.. _wifi_nrf_cloud_build_hardcoded:
-
-Building with hard-coded CA and device credentials
-==================================================
-
-The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option allows you to use hard-coded CA and device credentials stored in unprotected program memory for connecting to nRF Cloud.
-
-.. important::
-   The :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is not secure and must not be used in production.
-   It is only for testing and demonstration purposes.
-   Because this setting stores your device's private key in unprotected program memory, using it makes your device vulnerable to impersonation.
-   The private key is also generated on the host machine, so delete it from the host after provisioning.
-
-.. note::
-   This is only one of several mutually exclusive ways to install credentials to your device.
-   See :ref:`wifi_nrf_cloud_onboarding` for other methods.
-
-If you are certain you understand the inherent security risks, you can use this option as follows:
-
-1. Follow the instructions under :ref:`wifi_nrf_cloud_onboard_hardcoded`.
-
-#. Create a :file:`certs` folder directly in the :file:`samples/wifi/nrf_cloud` folder, and copy :file:`client-cert.pem`, :file:`private-key.pem`, and :file:`ca-cert.pem` files into it.
-
-   Make sure not to place the new folder in the :file:`samples/wifi/nrf_cloud/src` folder by accident.
-
-   Now, these certificates are automatically used if the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option is enabled.
-
-   .. note::
-      This works through the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option, which defaults to the :file:`nrf_cloud-certs.h` file found in the :file:`subsys/net/lib/nrf_cloud/common/include` folder.
-      That header pulls in :file:`ca-cert.pem`, :file:`client-cert.pem`, and :file:`private-key.pem` files using unqualified, quoted ``#include`` directives, so the preprocessor looks in its own directory first before falling back to the sample's :file:`certs` folder.
-      Because of this, if you ever place :file:`.pem` files directly in :file:`subsys/net/lib/nrf_cloud/common/include` (for example, while experimenting), they will silently take precedence over the ones in the sample's :file:`certs` folder.
-      Keep your :file:`.pem` files only in the sample's :file:`certs` folder, or point the :kconfig:option:`CONFIG_NRF_CLOUD_CERTIFICATES_FILE` Kconfig option at a header file of your own instead.
-
-#. Build the sample with the :kconfig:option:`CONFIG_NRF_CLOUD_PROVISION_CERTIFICATES` Kconfig option enabled and the device ID you created configured.
-
-   This is required for onboarding to succeed.
-
-   Enable the :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME` Kconfig option and set :kconfig:option:`CONFIG_NRF_CLOUD_CLIENT_ID` to the device ID.
-
-   For example, if the device ID is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
-
-   .. tabs::
-
-      .. group-tab:: Bash
-
-         .. code-block:: bash
-            :class: highlight
-
-            west build --board *board_target* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y -DCONFIG_NRF_CLOUD_CLIENT_ID=\"698d4c11-0ccc-4f04-89cd-6882724e3f6f\"
-
-      .. group-tab:: PowerShell
-
-         .. code-block:: powershell
-            :class: highlight
-
-            west build --board *board_target* -p always -- -DCONFIG_NRF_CLOUD_PROVISION_CERTIFICATES=y -DCONFIG_NRF_CLOUD_CLIENT_ID_SRC_COMPILE_TIME=y  "-DCONFIG_NRF_CLOUD_CLIENT_ID='698d4c11-0ccc-4f04-89cd-6882724e3f6f'"
-
-
-.. _wifi_nrf_cloud_setup_wifi_cred:
-
-Setting up Wi-Fi access point credentials
-=========================================
-
-This sample uses the :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>` library to manage Wi-Fi credentials.
-Before the sample can connect to a Wi-Fi network, you must add at least one credential set.
-
-Once your device has been flashed with this sample, you can add a credential by connecting to your device's UART interface and then entering the following command:
-
-.. parsed-literal::
-   :class: highlight
-
-   wifi cred add -s *NetworkSSID* -k 1 -p *NetworkPassword*
-
-Where *NetworkSSID* is replaced with the SSID of the Wi-Fi access point you want your device to connect to, and *NetworkPassword* is its password.
-Then, either reboot the device or use the ``wifi cred auto_connect`` command to manually trigger a connection attempt.
-
-.. important::
-   Do not use any special characters in the SSID or password, such as spaces or quotes.
-
-From now on, these credentials will automatically be used when the configured network is reachable.
-
-See the :ref:`Wi-Fi shell sample documentation <wifi_shell_sample>` for more details on the ``wifi`` commands.
-
 .. _wifi_nrf_cloud_building_coap:
 
 Selecting the transport: MQTT or CoAP
-======================================
+=====================================
 
 The sample does not default to a transport.
 You must select either MQTT or CoAP by adding one of the following parameters to your build command:
@@ -452,317 +352,206 @@ You must select either MQTT or CoAP by adding one of the following parameters to
 * For MQTT, add ``-DEXTRA_CONF_FILE=mqtt.conf``.
 * For CoAP, add ``-DEXTRA_CONF_FILE=coap.conf``.
 
-If you also want to enable :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :file:`coap-fota.conf` file in addition to the :file:`coap.conf` file.
+If you also want to enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :file:`coap-fota.conf` file in addition to the :file:`coap.conf` file.
 The :file:`coap-fota.conf` file only extends the CoAP transport and cannot be used on its own:
 
 ``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
 
-.. _wifi_nrf_cloud_onboarding:
+For example, to build the sample with the CoAP transport and FOTA support for the nRF7002 DK, use the following command:
 
-Onboarding
-**********
+.. code-block:: console
 
-For your device to successfully connect to nRF Cloud, you must `onboard it <nRF Cloud Onboarding_>`_.
-The following sections outline the onboarding methods that this sample supports.
+   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"
 
-  * Proceed to :ref:`wifi_nrf_cloud_standard_onboarding` (recommended).
-  * If you are building with :ref:`hard-coded credentials <wifi_nrf_cloud_build_hardcoded>`, proceed to :ref:`wifi_nrf_cloud_onboard_hardcoded`.
+.. _wifi_nrf_cloud_provisioning:
 
-.. note::
-   You only need to perform one of the above methods.
-   Select the one that best matches your needs, then build and run the sample with the required build configuration.
+Provisioning and onboarding
+===========================
 
-.. _wifi_nrf_cloud_install_nrf_utils:
+Before the sample can connect to nRF Cloud, you must provision the device and onboard it to your nRF Cloud account, as described in :ref:`lib_nrf_cloud_preconnect_provisioning`.
+The sample supports all the provisioning methods described there.
+For :ref:`hard-coded credentials <nrf_cloud_preconnect_hardcoded>`, copy the :file:`.pem` files into a :file:`certs` folder directly in the :file:`samples/wifi/nrf_cloud` folder (not in :file:`src`), which the sample adds to the include path.
 
-Installing nRF Cloud Utils
-==========================
+.. _wifi_nrf_cloud_testing:
 
-To perform many of the actions described in the other sections, you need to install the `nRF Cloud Utils <nRF Cloud Utils_>`_.
+Testing
+=======
 
-To install the nRF Cloud Utils, run the following command to use this package as a dependency:
+|test_sample|
 
-.. parsed-literal::
-   :class: highlight
-
-   pip3 install nrfcloud-utils
-
-.. _wifi_nrf_cloud_standard_onboarding:
-
-Onboarding a device with the device credentials generated on device
-===================================================================
-
-To onboard your device with the device credentials generated on the device, follow :ref:`lib_nrf_cloud_credentials_keygen_onboarding`.
-
-Onboarding a device with the device credentials generated on the host machine
-=============================================================================
-
-With this method, the device private key and certificate are generated on the host machine and then installed onto the device over the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>`.
-Use this method only when on-device key generation is not available.
-
-.. caution::
-   This method is less secure than :ref:`generating the key on the device <wifi_nrf_cloud_standard_onboarding>`, which is the recommended approach.
-   Because the private key is generated on the host machine, it exists outside the device and can be copied or leaked.
-   Delete the private key from the host machine immediately after it has been installed on the device, and prefer on-device key generation for production.
-
-First, :ref:`create a self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-
-Then, complete the following steps for each device you wish to onboard:
-
-1. Make sure your device is plugged in and that this sample has been flashed to it.
-#. Install the device and server credentials using the :file:`device_credentials_installer` script from :ref:`nRF Cloud Utils <wifi_nrf_cloud_install_nrf_utils>`:
-
-   Select the protocol (MQTT or CoAP) you built the sample for:
-
-   .. tabs::
-      .. group-tab:: MQTT
-         .. parsed-literal::
-            :class: highlight
-
-            device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --verify --local-cert --cmd-type tls_cred_shell
-
-         Where:
-
-           * *device_id* is the (globally unique) ID for your device.
-             You must use the same device ID that you configured for the sample at build time.
-             See :ref:`wifi_nrf_cloud_build_hardcoded` for details on setting a compile-time device ID.
-           * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`.
-
-         The ``--cmd-type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management.
-
-         The ``--local-cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
-         This is necessary because the TLS Credentials Shell does not support CSR generation currently.
-         Delete the device private key from your machine after it is installed to the device by this script.
-
-      .. group-tab:: CoAP
-         .. parsed-literal::
-            :class: highlight
-
-            device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str *device_id* -s -d --verify --coap --local-cert --cmd-type tls_cred_shell
-
-         Where:
-
-           * *device_id* is the (globally unique) ID for your device.
-             You must use the same device ID that you configured for the sample at build time.
-             See :ref:`wifi_nrf_cloud_build_hardcoded` for details on setting a compile-time device ID.
-           * The :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`.
-
-         The ``--cmd-type tls_cred_shell`` option indicates that the device is using the :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>` for run-time credentials management.
-
-         The ``--local-cert`` option indicates that the device private key and certificate should be generated on the host machine, not on-device.
-         This is necessary because the TLS Credentials Shell does not support CSR generation currently.
-         Delete the device private key from your machine after it is installed to the device by this script.
-
-   This script generates and signs a device credential on the host machine and installs it onto the device.
-   Because the ``--local-cert`` option is used, the private key is generated on the host machine, not on the device.
-
-   This script also installs any nRF Cloud root CA certificates required in a single chain to the :kconfig:option:`CONFIG_NRF_CLOUD_SEC_TAG` security tag (``sec_tag``).
-   CoAP connections use one root CA certificate, whereas HTTPS and MQTT use another.
-
-   If the script succeeds, you should see the following output:
+1. |connect_kit|
+#. |connect_terminal|
+#. Power on or reset the kit.
+#. Observe that the sample starts and logs the device ID, which you need for onboarding:
 
    .. code-block:: console
 
-      Saving nRF Cloud device onboarding CSV file onboard.csv...
-      Onboarding CSV file saved, row count: 1
+      <inf> main: Wi-Fi nRF Cloud sample has started, version: 1.0.0, protocol: CoAP
+      ...
+      <inf> nrf_cloud_info: Device ID: <device_id>
 
-   And a new file, :file:`onboard.csv` should be created.
-   This file will be used in the next step.
-
-#. Onboard the device to your account using the :file:`nrf_cloud_onboard` script as follows:
-
-   .. parsed-literal::
-      :class: highlight
-
-      nrf_cloud_onboard --api-key *your_api_key* --csv onboard.csv
-
-   Where *your_api_key* is your nRF Cloud API key from your `User Account`_.
-
-   Alternatively, you can :ref:`Manually onboard the device to nRF Cloud <wifi_nrf_cloud_onboard_device_manually>`.
-
-.. _wifi_nrf_cloud_onboard_hardcoded:
-
-Onboarding with hard-coded device credentials
-=============================================
-
-It is possible to onboard your devices using hard-coded device credentials.
-
-.. caution::
-   Hard-coded credentials must not be used in production.
-   The device private key is generated on the host machine and embedded in unprotected program memory, so it exists outside the device's secure storage and can be copied or leaked.
-   Delete the private key from the host machine after provisioning, and prefer :ref:`on-device key generation <wifi_nrf_cloud_standard_onboarding>` for production.
-
-If you are certain you understand the inherent security risks, you can do so as follows:
-
-First, create a :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-
-Next, complete the following steps for each device you wish to onboard:
-
-1. :ref:`Locally generate a device credential <wifi_nrf_cloud_create_device_cred_locally>`
-
-   In addition to the arguments prescribed in that section, also include the ``-embed_save`` argument when running the :file:`create_device_credentials.py` Python script:
-
-   .. parsed-literal::
-      :class: highlight
-
-      create_device_credentials --ca self_*_ca.pem --ca-key self_*_prv.pem -c US --cn *device_id* -p dev_credentials --embed-save
-
-   Where *device_id* is the device ID you created, and the :file:`.pem` files are the :ref:`self-signed CA certificate and private key files <wifi_nrf_cloud_create_self_signed_ca>`.
-
-   This automatically generates the following three files inside the :file:`dev_credentials` folder:
-
-     * :file:`client-cert.pem`
-     * :file:`private-key.pem`
-     * :file:`ca-cert.pem`
-
-   The :file:`client-cert.pem` and :file:`private-key.pem` files are specially formatted versions of the :file:`cred_<device_id>_crt.pem` and :file:`cred_<device_id>_prv.pem` files respectively.
-   The :file:`ca-cert.pem` is a copy of the nRF Cloud root CA in the same format.
-   Do not confuse this CA certificate with your :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`.
-   See `CA certificates for server authentication in AWS IoT Core`_ for more details.
-
-   Your device needs these three credentials to connect successfully with nRF Cloud.
-
-#. Onboard the device to your account with the :file:`nrf_cloud_onboard` script:
-
-   .. parsed-literal::
-      :class: highlight
-
-      nrf_cloud_onboard --api-key *your_api_key* --csv onboard.csv
-
-   Where *your_api_key* is your nRF Cloud API key from your `User Account`_.
-
-   Alternatively, you can :ref:`Manually onboard the device to nRF Cloud <wifi_nrf_cloud_onboard_device_manually>`.
-
-#. Follow the instructions under :ref:`wifi_nrf_cloud_build_hardcoded`.
-
-.. _wifi_nrf_cloud_create_self_signed_ca:
-
-Creating a self-signed CA certificate for device certificate signing
-====================================================================
-
-Before a device can connect to nRF Cloud, it must have device credentials.
-You need to sign these credentials yourself using a CA certificate you create.
-This is referred to as your self-signed CA certificate.
-
-To create your self-signed CA certificate:
-
-1. :ref:`Install the nRF Cloud Utils <wifi_nrf_cloud_install_nrf_utils>`.
-#. Use the nRF Cloud Utils :file:`create_ca_cert` script to generate the certificate:
+   If the device does not have nRF Cloud credentials yet, the sample logs the following message and waits:
 
    .. code-block:: console
 
-      create_ca_cert -c US -f self_
+      <wrn> cloud_connection: nRF Cloud credentials are not installed. Please install and reboot.
 
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create CA Cert <nRF Cloud Utils Create CA Cert_>`_ section in the nRF Cloud Utils documentation for more details.
+#. Provision and onboard the device as described in :ref:`wifi_nrf_cloud_provisioning`.
+#. Add the credentials of your Wi-Fi access point, as described in :ref:`wifi_nrf_cloud_setup_wifi_cred`.
+#. Reset the kit.
+#. Observe that the sample connects to the Wi-Fi network, obtains the current date and time, and connects to nRF Cloud:
 
-   You should now have the following three files:
+   .. code-block:: console
 
-     * :file:`self_<self_cert_serial>_ca.pem`
-     * :file:`self_<self_cert_serial>_prv.pem`
-     * :file:`self_<self_cert_serial>_pub.pem`
+      <inf> cloud_connection: Network connectivity gained!
+      <inf> cloud_connection: Network is ready
+      <inf> cloud_connection: Waiting to obtain date/time
+      <inf> cloud_connection: Connecting to nRF Cloud
+      <inf> cloud_connection: Connected to nRF Cloud
 
-   Where ``<self_cert_serial>`` is your self-signed CA certificate's serial number in hex.
-   These three files are your self-signed CA certificate and private/public keypair.
-   You will use them to sign device credentials.
+   On boards that support :ref:`wifi_nrf_cloud_led_status_indication`, the LEDs show the connection status.
+#. Except on the nRF7120 DK, where location tracking is disabled, observe that the sample periodically scans for nearby Wi-Fi access points and logs the location obtained from nRF Cloud:
 
-   If you were directed here as part of other instructions, proceed to the next step of those instructions.
+   .. code-block:: console
 
-   .. note::
-      You only need to generate these three files once.
-      You can use them to sign as many device credentials as you need.
+      <inf> application: Location Updated: lat: <latitude>, lon: <longitude>, accuracy: <accuracy> m, Method: Wi-Fi
 
-.. _wifi_nrf_cloud_create_device_cred_locally:
+#. Observe that the sample periodically logs temperature readings:
 
-Generating device credentials locally
-=====================================
+   .. code-block:: console
 
-To generate and sign a device credential locally using your :ref:`self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`, perform the following steps:
+      <inf> application: Die temperature is <temperature> C
 
-1. Create a globally unique `device ID <nRF Cloud Device ID_>`_ for the device.
+#. Open the `nRF Cloud`_ portal, select your device on the `Devices <nRF Cloud Portal Devices_>`_ page, and observe that the temperature data and, except on the nRF7120 DK, the location data are displayed.
+#. When using CoAP, observe that `Memfault`_ metrics, reboots, and faults for the device are reported to nRF Cloud.
+   See :ref:`wifi_nrf_cloud_testing_memfault` for details.
 
-   The ID can be anything you want, as long as it is not prefixed with ``nrf-`` and is globally unique.
-   See `nRF Cloud Device ID`_ for details.
+.. _wifi_nrf_cloud_testing_memfault:
 
-   Each device should have its own device ID, and you must use it exactly for all other actions involving that device, otherwise onboarding will fail.
-   This ID is referred to in other steps using the term *device_id*.
+Testing Memfault device monitoring
+----------------------------------
 
-#. Navigate to the folder where you :ref:`created your self-signed CA certificate <wifi_nrf_cloud_create_self_signed_ca>`, and use the :file:`create_device_credentials.py` Python script :ref:`you installed <wifi_nrf_cloud_install_nrf_utils>` to generate a self-signed certificate for the device:
+To test :ref:`wifi_nrf_cloud_memfault`, build and program the sample with the :file:`coap.conf` file, and onboard the device as described in the previous section.
+Then, complete the following steps:
 
-   .. parsed-literal::
-      :class: highlight
+1. Upload the :file:`build/nrf_cloud/zephyr/zephyr.elf` file as a symbol file, using the `Memfault Dashboards`_ (**Software** > **Symbol Files**) or the `Memfault CLI tool`_.
+   Memfault needs the symbol file to decode metrics and coredumps.
+   It matches the symbol file to the firmware running on the device by its GNU build ID, so you do not need to link it to the device.
+   Upload a new symbol file every time you rebuild the sample.
+   See `Memfault: Upload a symbol file`_ for details.
+#. Open the `Memfault Dashboards`_, go to **Fleet** > **Devices**, and select your device by its device ID.
+#. Observe the data reported by the device in the following tabs:
 
-      create_device_credentials -ca self_*_ca.pem -ca_key self_*_prv.pem -c US -cn *device_id* -f cred\_
+   * **Processing Log** - Each piece of data received from the device, such as ``Received reboot event`` or ``Received Metric Report (Heartbeat)``, and processing errors.
+     If the symbol file is missing, a ``Symbol file missing`` entry shows the GNU build ID of the expected symbol file.
+   * **Reboots** - Reboot events with reboot reasons and software versions.
+   * **Reports** - Heartbeat reports.
+     Click :guilabel:`Expand All` to view the metric values of each report.
+   * **Timeline** - Metrics and reboots over time.
 
-   Where *device_id* is the device ID you created, and the :file:`.pem` files are the self-signed CA certificate and private key files :ref:`you created <wifi_nrf_cloud_create_self_signed_ca>`.
+   Coredumps from crashes are grouped as issues under **Monitoring** > **Issues**.
+   Fleet-wide data is shown under **Fleet** > **Dashboards**.
 
-   Remember to set ``-c`` to your two-letter country code.
-   See the `Create Device Credentials <nRF Cloud Utils Create Device Credentials_>`_ section in the nRF Cloud Utils documentation for more details.
+By default, the device sends the first heartbeat report after one hour of uptime.
+To see data sooner while testing, reduce the values of the :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` and :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS` Kconfig options.
+Memfault might throttle devices that upload too often, which is shown as ``Device Reporting Throttled`` in the **Processing Log** tab.
 
-   You should now have the following three files:
+.. _wifi_nrf_cloud_testing_fota:
 
-     * :file:`cred_<device_id>_crt.pem`
-     * :file:`cred_<device_id>_pub.pem`
-     * :file:`cred_<device_id>_prv.pem`
+Testing FOTA
+------------
 
-   These three files are your device credentials, and can only be used by a single device.
+To test :ref:`wifi_nrf_cloud_fota`, build and program the sample with the :file:`coap.conf` and :file:`coap-fota.conf` files on a supported board target, and onboard the device as described in the previous section.
+Then, complete the following steps:
 
-   If you were directed here as part of other instructions, proceed to the next step of those instructions.
+1. Create a new version of the sample by increasing the ``PATCHLEVEL`` value in the :file:`VERSION` file.
+#. Build the sample again, but do not program it.
+#. Upload the :file:`build/nrf_cloud/zephyr/zephyr.signed.bin` file as a new release and deploy it to your device, using the `nRF Cloud`_ portal or the `Memfault CLI tool`_.
+   See the `Memfault OTA Integration Guide`_ for details.
+#. Wait for the device to check for updates.
+   The first check runs within :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS` seconds plus one minute after the device connects to nRF Cloud.
+   To shorten the wait while testing, reduce the value of this option.
+#. Observe that the sample downloads the update and reboots to apply it:
 
-   .. important::
+   .. code-block:: console
 
-      If an attacker obtains the private key contained in :file:`cred_<device_id>_prv.pem`, they will be able to impersonate your device.
+      <inf> memfault_fota_support: FOTA update downloaded, rebooting to apply it
 
-.. _wifi_nrf_cloud_onboard_device_manually:
+#. Observe that, after the reboot, MCUboot swaps the images and the sample confirms the new image and reports the new version:
 
-Onboarding a device manually
-============================
+   .. code-block:: console
 
-Once you have obtained device credentials for your device, it can be `onboarded <nRF Cloud Onboarding_>`_.
+      <inf> main: Memfault software_version: <new_version>
+      <inf> memfault_fota_support: Confirming FOTA update image
 
-To onboard devices manually, you can use the `Bulk Onboard Devices <nRF Cloud Portal Bulk Onboard Devices_>`_ page of the nRF Cloud portal as follows:
+.. _wifi_nrf_cloud_sample_output:
 
-1. Create an onboarding CSV file named :file:`<device_id>_onboard.csv` and give it the following contents:
+Sample output
+=============
 
-   .. parsed-literal::
-      :class: highlight
+The following output is logged on the terminal when the sample is built with the CoAP transport and FOTA support, and a FOTA update is pending for the device:
 
-      *device_id*\ ,,,,"\ *device_cert*\ "
+.. code-block:: console
 
-   Where *device_id* is replaced by the device ID :ref:`you created <wifi_nrf_cloud_create_device_cred_locally>`, and *device_cert* is replaced by the exact contents of :file:`<device_id>_crt.pem`.
+   [00:00:00.224,151] <inf> mflt: Periodic background upload scheduled - initial delay=7s period=10s
+   [00:00:00.225,006] <inf> mflt: Reset Reason, HWINFO=0x0001
+   [00:00:00.225,067] <inf> mflt: Reset Cause: Pin Reset
+   [00:00:00.225,128] <inf> mflt: Reset Cause Stored: 0x000a
+   [00:00:00.225,952] <inf> mflt: GNU Build ID: 9a7cca2db55f6d436522d814465b2149725a4a37
+   [00:00:00.230,316] <inf> main: Wi-Fi nRF Cloud sample has started, version: 1.0.0, protocol: CoAP
+   [00:00:00.230,346] <inf> main: Memfault software_version: 3.4.99+0
+   [00:00:00.231,323] <inf> wifi_supplicant: wpa_supplicant initialized
+   [00:00:00.232,025] <inf> cloud_connection: Setting up nRF Cloud library...
+   [00:00:00.232,055] <inf> nrf_cloud_info: Device ID: DE2FB693AC38CD79
+   [00:00:00.232,086] <inf> nrf_cloud_info: Protocol:          CoAP
+   [00:00:00.232,116] <inf> nrf_cloud_info: Download protocol: CoAP
+   [00:00:00.232,116] <inf> nrf_cloud_info: Sec tag:           16842753
+   [00:00:00.232,116] <inf> nrf_cloud_info: CoAP JWT Sec tag:  16842753
+   [00:00:00.232,147] <inf> nrf_cloud_info: Host name:         coap.nrfcloud.com
+   [00:00:00.276,367] <inf> nrf_cloud_credentials: Sec Tag: 16842753; CA: Yes, Client Cert: Yes, Private Key: Yes
+   [00:00:00.276,397] <inf> nrf_cloud_credentials: CA Size: 1792, AWS: Likely, CoAP: Likely
+   [00:00:00.335,083] <inf> cloud_connection: Enabling connectivity...
+   [00:00:00.335,113] <inf> cloud_connection: Waiting for network ready...
+   [00:00:02.603,332] <inf> net_wifi_mgmt: Connection requested
+   Connected
+   [00:00:06.737,518] <inf> net_dhcpv4: Received: 192.168.0.125
+   [00:00:06.738,098] <inf> cloud_connection: Network connectivity gained!
+   [00:00:06.738,616] <inf> cloud_connection: Network is ready
+   [00:00:06.738,647] <inf> cloud_connection: Waiting to obtain date/time
+   [00:00:06.778,839] <inf> cloud_connection: Connecting to nRF Cloud
+   [00:00:07.392,211] <inf> nrf_cloud_dns: Connected to server coap.nrfcloud.com via IPv4 address 23.22.110.24, port 5684
+   [00:00:07.530,364] <inf> nrf_cloud_coap_transport: Request authorization with JWT
+   [00:00:07.729,644] <inf> nrf_cloud_coap_transport: Authorization result_code: 2.01
+   [00:00:07.730,163] <inf> nrf_cloud_coap_transport: Authorized
+   [00:00:07.730,194] <inf> nrf_cloud_coap_transport: DTLS CID is active
+   [00:00:08.139,343] <inf> cloud_connection: Connected to nRF Cloud
+   [00:00:08.139,587] <inf> application: Waiting for device to determine current date and time
+   [00:00:08.139,587] <inf> application: Current date and time determined
+   [00:00:08.140,625] <inf> application: Die temperature is 23.0 C
+   [00:00:08.140,869] <inf> shadow_support_coap: Checking for shadow delta...
+   [00:00:08.255,645] <inf> shadow_config: Sending shadow reported configuration
+   [00:00:13.465,179] <inf> location: LOCATION_REQ_MODE_ALL: all methods done
+   [00:00:13.465,240] <inf> application: Location Updated: lat: <latitude>, lon: <longitude>, accuracy: 24.0 m, Method: Wi-Fi
+   [00:00:17.766,479] <inf> mflt: FOTA Update Available. Starting Download with URL: https://ota-cdn.memfault.com/<path>
+   [00:00:17.768,768] <inf> mflt: FOTA In Progress
 
-   For example, if the device ID you created is ``698d4c11-0ccc-4f04-89cd-6882724e3f6f``:
+.. _wifi_nrf_cloud_troubleshooting:
 
-   .. code-block:: none
+Troubleshooting
+===============
 
-      698d4c11-0ccc-4f04-89cd-6882724e3f6f,,,,"-----BEGIN CERTIFICATE-----
-      sCC8AtbNQhzbp4y01FEzXaf5Fko3Qdq0o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RnwzoA2dF4wR0rMP5vR6dqBblaGAA5hN7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eeadE1HdVnUj8nb+7CGm39vJ4fuNk9vogH0nMdxjCnXAinoOMRx8EklQsR747+Gz
-      sxcdVYuNEb/E2vWBHTDNZGJ6tZC1JC9d6/RC3Vb1JC4tWnK9mk/Jw984ZuYugpMc
-      1t9umoGFYCz0nMdxjCnXAbnoOMC5A0RxcWPzxfC5A0RH+j+mwoMxwhgfFY4EhVxp
-      oCC8labNQhzRC3Vc1JC4tWnK9mpVA7k/o5LbuNpVA7S6AKAkjt17QzKJAiGWHakh
-      RXwcoAndF4wPzxfC5A0RHponmwBHTDoM7GE2vPBHTDNZGJ6tZ9dnO6446dg9gGds
-      eefdE1HcVnULbuNpVA7S6AKAkjxjCnt1gH0nMdxjCnXAinoOMRx8EklQsR747+Fz
-      srm/VYaNEb/E2vPBHTDNZGJ6tZc1JC9d6/RC3Vc1JC4tWnK9mk/Jr984ZuYugpMc
-      nt9uZTGFYCzZD0FFAA5NAC4i1PARStFycWPzxfC5A0RqodhswoMxwhgfFY4EhVx=
-      -----END CERTIFICATE-----
-      "
+If the sample does not connect to nRF Cloud, check the following:
 
-   Do not attempt to use this example directly, it has been filled with dummy data.
-   See `nRF Cloud REST API ProvisionDevices`_ for more details.
+* The device has valid nRF Cloud credentials installed and is onboarded to your nRF Cloud account with the device ID that the sample logs at startup.
+  See :ref:`wifi_nrf_cloud_provisioning`.
+* The credentials were installed for the transport the sample is built for.
+  CoAP and MQTT use different root CA certificates.
+* The Wi-Fi credentials configured for your device match your access point.
+  See :ref:`wifi_nrf_cloud_setup_wifi_cred`.
 
-   If you are onboarding more than a single device at once, you can repeat this format (separated by a newline) for each device you are onboarding.
-   Alternatively, you can create a separate CSV file for each device you wish to onboard, and upload them individually.
+If you have issues with Wi-Fi connectivity, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic to debug connectivity issues.
 
-#. Navigate to the `Bulk Onboard Devices`_ page of the nRF Cloud portal and upload the :file:`<device_id>_onboard.csv` file you created.
-
-   To get there from the :guilabel:`Dashboard`, click :guilabel:`Devices` under :guilabel:`Device Management` in the navigation pane on the left, then click :guilabel:`Add Devices` and select **Bulk Onboard**.
-
-   Once the `Bulk Onboard Devices`_ page is open, drag in the :file:`<device_id>_onboard.csv` file and click **Onboard**.
-
-   You should see a message stating that the file was uploaded successfully, and a device with the device IDs you created should appear in the `Devices <nRF Cloud Portal Devices_>`_ page.
-
-If you were directed here as part of other instructions, proceed to the next step of those instructions.
+To get more detailed log output, see `Useful debugging options`_.
 
 .. _wifi_nrf_cloud_dependencies:
 
@@ -782,13 +571,24 @@ Dependencies
 This sample uses the following |NCS| libraries and drivers:
 
 * :ref:`lib_nrf_cloud`
+* :ref:`lib_nrf_cloud_coap`
+* :ref:`lib_nrf_cloud_credentials_keygen`
 * :ref:`lib_location`
+* :ref:`lib_date_time`
+* :ref:`lib_hw_id`
+* :ref:`mod_memfault`
+* :ref:`lib_fota_download` (FOTA only)
+* :ref:`lib_dfu_target` (FOTA only)
 
 It uses the following Zephyr libraries:
 
+* :ref:`Connection Manager <zephyr:conn_mgr_overview>`
+* :ref:`Wi-Fi credentials <zephyr:lib_wifi_credentials>`
+* :ref:`TLS Credentials Shell <zephyr:tls_credentials_shell>`
 * :ref:`CoAP <zephyr:networking_api>`
 * :ref:`CoAP Client <zephyr:coap_client_interface>`
 
-In addition, it uses the following secure firmware component:
+In addition, it uses the following secure firmware components:
 
 * :ref:`Trusted Firmware-M <ug_tfm>`
+* :ref:`MCUboot <mcuboot_index_ncs>`

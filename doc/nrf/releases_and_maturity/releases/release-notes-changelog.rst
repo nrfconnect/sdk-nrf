@@ -981,7 +981,7 @@ Wi-Fi samples
 
     * Support for FOTA and device monitoring through `Memfault`_, using the CoAP transport.
     * Support for dual-slot MCUboot (with FOTA support) on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20b/cpuapp/ns``, and ``nrf7120dk/nrf7120/cpuapp`` board targets.
-    * Button-triggered Memfault FOTA checks and chunk posting (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`), demonstrating how the application can drive these actions on demand.
+    * Button-triggered Memfault FOTA checks and chunk posting (:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`), demonstrating how the application can drive these actions on demand.
 
   * Updated:
 
@@ -996,6 +996,7 @@ Wi-Fi samples
     * The settings storage on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets from :ref:`NVS <zephyr:nvs_api>` (:kconfig:option:`CONFIG_NVS`) to :ref:`ZMS <zephyr:zms_api>` (:kconfig:option:`CONFIG_ZMS`).
     * Temperature reporting to use the on-die temperature sensor instead of simulated values.
       The ``nrf7002dk/nrf5340/cpuapp/ns`` board target still reports simulated values, as no temperature sensor is available to the nRF5340 application core.
+    * The sample documentation with restructured provisioning and onboarding instructions, and a description of the device monitoring data reported to `Memfault`_.
 
   * Fixed:
 
@@ -1556,6 +1557,7 @@ Documentation
   * The API Reference documentation set to serve as an entry point to doxygen-generated API documentation for various components.
   * An :guilabel:`Open in VS Code` button for each sample page.
     It lets you quickly open the sample and install the required version of the |NCS| toolchain.
+  * The :ref:`lib_nrf_cloud_preconnect_provisioning` page, describing how to provision and onboard devices using nRF Cloud Utils.
 
 * Updated:
 

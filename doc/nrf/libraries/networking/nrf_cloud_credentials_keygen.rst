@@ -18,13 +18,14 @@ The key is referenced for TLS by its PSA key ID through the ``TLS_CREDENTIAL_PRI
 
 A typical provisioning flow is as follows:
 
-1. If you do not already have one, create your own CA certificate and key (for example, using the :file:`create_ca_cert.py` script from nRF Cloud Utils) to sign your device certificates.
-#. Generate the device key on the device.
+1. Generate the device key on the device.
 #. Generate a CSR signed by the device key and transfer it off the device (over the shell, or using the API).
-#. Sign the device certificate locally with your CA certificate.
+#. Sign the device certificate on the host with your own CA certificate.
    nRF Cloud does not issue the device certificate.
-#. Onboard the device to your nRF Cloud account by uploading the device public key in a CSV file.
-#. Upload your self-signed CA certificate and the AWS root CA certificate (for CoAP, the nRF Cloud CoAP server root CA certificate) to the device.
+#. Install the device certificate and the nRF Cloud root CA certificates on the device.
+#. Onboard the device to your nRF Cloud account by uploading the device certificate.
+
+See `nRF Cloud Utils: Devices without a modem <nRF Cloud Utils devices without a modem_>`_ for the complete provisioning and onboarding process.
 
 The device key is re-registered with the TLS credentials module from the Secure Storage during nRF Cloud initialization, so a key generated in a previous session is available for the TLS handshake after a reboot.
 
@@ -69,52 +70,11 @@ The previously issued device certificate no longer matches the new key and must 
 Onboarding a device with the credentials installer
 ***************************************************
 
-The :file:`device_credentials_installer.py` script from the nRF Cloud Utils package can drive the whole on-device key flow over the shell using the ``nrf_cloud_cred_shell`` command type.
-With this command type, the device generates the key and CSR itself, so the ``--local-cert`` option (required by the ``tls_cred_shell`` command type) is not used, and the private key never leaves the device.
+The ``device_credentials_installer`` script from `nRF Cloud Utils`_ can perform this flow over the shell using the ``nrf_cloud_cred_shell`` command type, which requires the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_SHELL` Kconfig option.
 
-If you do not already have a CA certificate and private key, use the :file:`create_ca_cert.py` script to create a CA and a key that you can use to sign all your device certificates:
-
-.. code-block:: console
-
-   create_ca_cert -f self_
-
-This generates the :file:`self_*_ca.pem` and :file:`self_*_prv.pem` files used in the following commands.
-
-Run the appropriate command for the transport in use, replacing *device_id* with your device ID.
-The ``--verify`` option confirms that the installed device certificate matches the on-device key (see the explanation that follows).
-
-.. tabs::
-
-   .. tab:: MQTT
-
-      .. code-block:: console
-
-         device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str device_id -s -d --cmd-type nrf_cloud_cred_shell --verify
-
-   .. tab:: CoAP
-
-      .. code-block:: console
-
-         device_credentials_installer --ca self_*_ca.pem --ca-key self_*_prv.pem --id-str device_id -s -d --cmd-type nrf_cloud_cred_shell --verify --coap
-
-The ``--coap`` option installs the CoAP root CA certificate required for the CoAP transport.
-The command generates an :file:`onboard.csv` file.
-Complete the onboarding by adding the device to your nRF Cloud account, for example, using the ``nrf_cloud_onboard`` script:
-
-.. parsed-literal::
-   :class: highlight
-
-   nrf_cloud_onboard --api-key *your_api_key* --csv onboard.csv
-
-Because the private key is non-exportable, ``--verify`` cannot compare key hashes.
-Instead, the installer reads the device public key (with the ``pubkey`` command) and compares it against the public key in the installed device certificate.
-This requires the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option to be enabled on the device.
-If you do not need verification, omit the ``--verify`` option.
-
-.. note::
-   Do not pass ``--local-cert`` or ``--local-cert-file`` with the ``nrf_cloud_cred_shell`` command type.
-   The key and CSR are generated on the device.
-   The installer rejects this combination to prevent accidentally generating a key on the host.
+Because the private key is non-exportable, the ``--verify`` option of the script cannot compare key hashes.
+Instead, the script reads the device public key with the ``pubkey`` command and compares it against the public key in the installed device certificate.
+This requires the :kconfig:option:`CONFIG_NRF_CLOUD_CREDENTIALS_KEYGEN_VERIFY` Kconfig option.
 
 API documentation
 *****************
