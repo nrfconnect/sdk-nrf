@@ -21,6 +21,7 @@
 #include "modules/cfun.h"
 #include "modules/coneval.h"
 #include "modules/cscon.h"
+#include "modules/xdataprfl.h"
 #include "modules/edrx.h"
 #include "modules/ncellmeas.h"
 #include "modules/periodicsearchconf.h"
@@ -213,6 +214,16 @@ int lte_lc_periodic_search_request(void)
 int lte_lc_periodic_search_get(struct lte_lc_periodic_search_cfg *const cfg)
 {
 	return periodicsearchconf_get(cfg);
+}
+
+int lte_lc_data_profile_set(enum lte_lc_data_profile profile)
+{
+	return xdataprfl_set(profile);
+}
+
+int lte_lc_data_profile_get(enum lte_lc_data_profile *profile)
+{
+	return xdataprfl_get(profile);
 }
 
 /* PDN API wrappers */

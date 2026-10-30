@@ -1205,6 +1205,8 @@ Modem libraries
     * Support for the ``%MDMEV: SEARCH STATUS 3`` and ``%MDMEV: SEARCH STATUS 4`` notifications, reported in the :c:enumerator:`LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START` and :c:enumerator:`LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE` modem events.
     * The :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option and the :c:func:`lte_lc_band_lock_set` and :c:func:`lte_lc_band_lock_remove` functions to set and remove the permanent and runtime band locks.
       The runtime band lock is stored by the library and set again when the modem is initialized or has been powered off.
+    * The :kconfig:option:`CONFIG_LTE_LC_DATA_PROFILE_MODULE` Kconfig option to enable the :c:func:`lte_lc_data_profile_set` and :c:func:`lte_lc_data_profile_get` functions, which set and get the data profile using the ``AT%XDATAPRFL`` command.
+      You can use the :kconfig:option:`CONFIG_LTE_DATA_PROFILE_INIT` Kconfig choice to set a data profile when the modem is initialized.
 
   * Updated the :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to select the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option.
     The bands set using the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` and :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig options are now used as the initial runtime band lock.

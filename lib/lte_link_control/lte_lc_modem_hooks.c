@@ -13,6 +13,7 @@
 #include "modules/rai.h"
 #include "modules/dns.h"
 #include "modules/xbandlock.h"
+#include "modules/xdataprfl.h"
 #include "common/helpers.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
@@ -122,6 +123,13 @@ static void on_modem_init(int err, void *ctx)
 
 #if defined(CONFIG_LTE_LC_DNS_FALLBACK_MODULE)
 	dns_fallback_set();
+#endif
+
+#if defined(CONFIG_LTE_LC_DATA_PROFILE_MODULE) && !defined(CONFIG_LTE_DATA_PROFILE_INIT_NONE)
+	err = xdataprfl_init_apply(CONFIG_LTE_DATA_PROFILE_INIT_VALUE);
+	if (err) {
+		LOG_ERR("Failed to apply data profile, err %d", err);
+	}
 #endif
 }
 
