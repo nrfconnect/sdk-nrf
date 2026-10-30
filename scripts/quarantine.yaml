@@ -122,3 +122,9 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
+
+- scenarios:
+    - sample.cellular.modem_shell_modem_uart_trace
+  platforms:
+    - thingy91/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42195"
