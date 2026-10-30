@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-module = MODULE_REGULATOR
+module = NRF_AUDIO_MODULE_REGULATOR
 module-str = module-regulator
 source "subsys/logging/Kconfig.template.log_config"
 

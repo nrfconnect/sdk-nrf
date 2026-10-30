@@ -15,7 +15,7 @@
 #include "macros_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(nrf5340_audio_dk_version, CONFIG_NRF5340_AUDIO_DK_VERSION_LOG_LEVEL);
+LOG_MODULE_REGISTER(nrf5340_audio_dk_version, CONFIG_NRF_AUDIO_DK_VERSION_LOG_LEVEL);
 
 #define BOARD_ID DT_NODELABEL(board_id)
 

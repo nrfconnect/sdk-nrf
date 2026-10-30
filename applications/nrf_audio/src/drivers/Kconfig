@@ -14,17 +14,17 @@ menuconfig NRF_AUDIO_CS47L63_DRIVER
 
 if NRF_AUDIO_CS47L63_DRIVER
 
-config CS47L63_THREAD_PRIO
+config NRF_AUDIO_CS47L63_THREAD_PRIO
 	int "Priority for CS47L63 thread"
 	default 5
 	help
 	  This is a preemptible thread
 
-config CS47L63_STACK_SIZE
+config NRF_AUDIO_CS47L63_STACK_SIZE
 	int "Stack size for CS47L63"
 	default 700
 
-module = CS47L63
+module = NRF_AUDIO_CS47L63
 module-str = cs47l63
 source "subsys/logging/Kconfig.template.log_config"
 

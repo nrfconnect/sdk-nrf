@@ -13,7 +13,7 @@ uint32_t current_time_us_get(void)
 {
 #if defined(CONFIG_HAS_HW_NRF_GRTC)
 	return (uint32_t)current_time_grtc_us_get();
-#elif defined(CONFIG_AUDIO_SYNC_TIMER_USES_RTC)
+#elif defined(CONFIG_NRF_AUDIO_SYNC_TIMER_USES_RTC)
 	return audio_sync_timer_capture();
 #else
 #error "No audio time source defined"

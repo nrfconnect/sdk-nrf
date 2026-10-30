@@ -14,7 +14,7 @@ You can use these options to select between gateway and headset roles, choose be
 The nRF Audio applications align the configuration with the nRF Audio use case by overlaying Kconfig defaults and selecting or implying the required Kconfig options.
 Among others, the Kconfig options for Bluetooth, Zephyr's audio subsystems, and hardware peripherals are selected to ensure they are enabled.
 
-The :option:`CONFIG_APP_NRF_AUDIO` option is the main Kconfig option that activates all nRF Audio functionality.
+The :option:`CONFIG_NRF_AUDIO_APP` option is the main Kconfig option that activates all nRF Audio functionality.
 See the :file:`Kconfig.defaults` file in the :file:`nrf_audio` directory for details related to the default common configuration.
 
 .. note::
@@ -39,8 +39,8 @@ See :ref:`nrf_audio_app_overview_gateway_headsets` for more information about th
 
 You can :ref:`select gateway or headset build <nrf_audio_app_configuration_select_build>` when :ref:`nrf_audio_app_building`.
 
-The :option:`CONFIG_AUDIO_DEV` Kconfig option defines the nRF Audio device role.
-The device role can be either a gateway (:option:`CONFIG_AUDIO_DEV` set to ``2``) or a headset (:option:`CONFIG_AUDIO_DEV` set to ``1``).
+The :option:`CONFIG_NRF_AUDIO_DEV` Kconfig option defines the nRF Audio device role.
+The device role can be either a gateway (:option:`CONFIG_NRF_AUDIO_DEV` set to ``2``) or a headset (:option:`CONFIG_NRF_AUDIO_DEV` set to ``1``).
 
 Each role automatically implies the nRF Audio modules needed for the role.
 For example, the gateway role automatically enables USB audio source support, while the headset role enables I2S audio output.
@@ -59,9 +59,9 @@ See :ref:`nrf_audio_app_overview_modes` for detailed information about these mod
 
 The transport mode is selected using the following Kconfig options:
 
-* (Default mode) :option:`CONFIG_TRANSPORT_CIS` - Enables CIS mode for clients and servers (unicast applications).
+* (Default mode) :option:`CONFIG_NRF_AUDIO_TRANSPORT_CIS` - Enables CIS mode for clients and servers (unicast applications).
   With this option enabled, you can configure application Kconfig options specific to unicast communication (see :file:`applications/nrf_audio/src/bluetooth/bt_stream/unicast/Kconfig`).
-* :option:`CONFIG_TRANSPORT_BIS` - Enables BIS mode for `Auracast™`_ sources and sinks (broadcast applications).
+* :option:`CONFIG_NRF_AUDIO_TRANSPORT_BIS` - Enables BIS mode for `Auracast™`_ sources and sinks (broadcast applications).
   With this option enabled, you can configure application Kconfig options specific to broadcast communication (see :file:`applications/nrf_audio/src/bluetooth/bt_stream/broadcast/Kconfig`).
 
 The transport mode selection automatically configures the appropriate Bluetooth stack components and audio processing modules.
@@ -71,7 +71,7 @@ The transport mode selection automatically configures the appropriate Bluetooth 
 Selecting the CIS bidirectional communication
 =============================================
 
-To switch to the bidirectional mode, set the :option:`CONFIG_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to the bidirectional mode, set the :option:`CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_enable_walkie_talkie:
 
@@ -80,12 +80,12 @@ Enabling the walkie-talkie demo
 
 The walkie-talkie demo uses one or two bidirectional streams from the gateway to one or two headsets.
 The PDM microphone is used as input on both the gateway and headset device.
-To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to using the walkie-talkie, set the :option:`CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 Enabling the Auracast™ (broadcast) mode
 =======================================
 
-If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :option:`CONFIG_NRF_AUDIO_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_select_bis_two_gateways:
 
@@ -95,8 +95,8 @@ Enabling the BIS mode with two gateways
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
 The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
-To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
-You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
+To configure the second gateway, add both the :option:`CONFIG_NRF_AUDIO_TRANSPORT_BIS` and the :option:`CONFIG_NRF_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
+You can provide an alternative name to the second gateway using the :option:`CONFIG_NRF_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf_audio_app_building`.
 After building the first gateway, configure the required Kconfig options for the second gateway and build the second gateway firmware.
@@ -168,8 +168,8 @@ See :ref:`nrf_audio_app_overview_architecture_usb` and :ref:`nrf_audio_app_overv
 
 The audio source is selected using the following Kconfig options:
 
-* USB audio source (:option:`CONFIG_AUDIO_SOURCE_USB`) - Uses USB as the audio source (default for gateway)
-* I2S audio source (:option:`CONFIG_AUDIO_SOURCE_I2S`) - Uses 3.5 mm jack analog input using I2S
+* USB audio source (:option:`CONFIG_NRF_AUDIO_SOURCE_USB`) - Uses USB as the audio source (default for gateway)
+* I2S audio source (:option:`CONFIG_NRF_AUDIO_SOURCE_I2S`) - Uses 3.5 mm jack analog input using I2S
 
 In the default configuration, the gateway application uses USB as the audio source.
 The :ref:`nrf_audio_app_building` and testing steps also refer to using the USB serial connection.
@@ -182,7 +182,7 @@ USB audio source is limited to unidirectional streams due to CPU load considerat
 Selecting the analog jack input using I2S
 =========================================
 
-To switch to using the 3.5-mm jack analog input, set the :option:`CONFIG_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+To switch to using the 3.5-mm jack analog input, set the :option:`CONFIG_NRF_AUDIO_SOURCE_I2S` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 
 When testing the application, an additional audio jack cable is required to use I2S.
 Use this cable to connect the audio source (PC) to the analog **LINE IN** on the development kit.
@@ -196,7 +196,7 @@ The nRF Audio application uses both software and hardware codecs.
 The software codec is responsible for encoding and decoding, while the hardware codec is responsible for DAC/ADC and other audio processing.
 See :ref:`nrf_audio_app_overview_architecture` for information about how both codecs are integrated into the firmware architecture.
 
-You can enable the software codec using the :option:`CONFIG_SW_CODEC_LC3` Kconfig option.
+You can enable the software codec using the :option:`CONFIG_NRF_AUDIO_SW_CODEC_LC3` Kconfig option.
 This codec is mandatory for LE Audio.
 
 You can enable the CS47L63 hardware codec using the :option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER` Kconfig option.
@@ -213,10 +213,10 @@ These settings affect the :ref:`nrf_audio_app_overview_architecture_sync_module`
 
 See :ref:`nrf_audio_app_config_audio_app_options` for the list of options to configure the following audio quality settings:
 
-* Frame duration (example: :option:`CONFIG_AUDIO_FRAME_DURATION_10_MS`)
-* Sample rates (example: :option:`CONFIG_AUDIO_SAMPLE_RATE_16000_HZ`)
-* Bit depth (example: :option:`CONFIG_AUDIO_BIT_DEPTH_16`)
-* Presentation delay (example: :option:`CONFIG_AUDIO_MIN_PRES_DLY_US`)
+* Frame duration (example: :option:`CONFIG_NRF_AUDIO_FRAME_DURATION_10_MS`)
+* Sample rates (example: :option:`CONFIG_NRF_AUDIO_SAMPLE_RATE_16000_HZ`)
+* Bit depth (example: :option:`CONFIG_NRF_AUDIO_BIT_DEPTH_16`)
+* Presentation delay (example: :option:`CONFIG_NRF_AUDIO_MIN_PRES_DLY_US`)
 
 .. _nrf_audio_bluetooth_configuration:
 
@@ -226,7 +226,7 @@ Configuring Bluetooth LE Audio
 The nRF Audio application introduces application-specific configuration options related to Bluetooth LE Audio.
 These options configure the Bluetooth stack components described in :ref:`nrf_audio_app_overview_architecture`.
 
-See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CONFIG_BT_AUDIO``.
+See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CONFIG_NRF_AUDIO_*``.
 
 .. _nrf_audio_app_configuration_power_measurements:
 
@@ -239,7 +239,7 @@ The power measurements are disabled by default in the :ref:`main configuration f
    Enabling power measurements together with :ref:`debug logging <ug_logging>` increases the power consumption.
    For better results, consider using the `Power Profiler Kit II (PPK2)`_ and the `Power Profiler app`_ from nRF Connect for Desktop to measure the power consumption.
 
-To enable power measurements, set the :kconfig:option:`CONFIG_NRF5340_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`prj.conf` file.
+To enable power measurements, set the :kconfig:option:`CONFIG_NRF_AUDIO_POWER_MEASUREMENT` Kconfig option to ``y`` in the :file:`prj.conf` file.
 
 .. _nrf_audio_app_configuration_sd_card_playback:
 
@@ -273,13 +273,13 @@ Configuring SD card playback
 To enable SD card playback functionality, you need to set the following Kconfig options to ``y``:
 
 * :option:`CONFIG_NRF_AUDIO_SD_CARD_MODULE` - to enable the SD card module; this option is enabled by default on nRF5340 Audio DK
-* :option:`CONFIG_SD_CARD_PLAYBACK` - to enable the playback functionality
+* :option:`CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK` - to enable the playback functionality
 
 Optionally, you can also set the following Kconfig options:
 
-* :option:`CONFIG_SD_CARD_PLAYBACK_STACK_SIZE`
-* :option:`CONFIG_SD_CARD_PLAYBACK_RING_BUF_SIZE`
-* :option:`CONFIG_SD_CARD_PLAYBACK_THREAD_PRIO`
+* :option:`CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_STACK_SIZE`
+* :option:`CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_RING_BUF_SIZE`
+* :option:`CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK_THREAD_PRIO`
 
 Shell commands for SD card playback
 ===================================

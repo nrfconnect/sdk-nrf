@@ -4,17 +4,16 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-menuconfig APP_NRF_AUDIO
+menuconfig NRF_AUDIO_APP
 	 bool "nRF Audio [EXPERIMENTAL]"
 	 select EXPERIMENTAL
 
-config CUSTOM_BROADCASTER
+config NRF_AUDIO_CUSTOM_BROADCASTER
 	bool "Allow custom broadcasters"
-	default n
 	help
 	  Incomplete feature for now, but will introduce support for multiple BIGs and subgroups.
 
-config AUDIO_DEV
+config NRF_AUDIO_DEV
 	int "Select which device type to compile for. 1=HEADSET or 2=GATEWAY"
 	range 1 2
 	default 1
@@ -25,13 +24,13 @@ config AUDIO_DEV
 
 choice NRF_AUDIO_TRANSPORT_MODE
 	prompt "Choose BIS or CIS for ISO transport"
-	default TRANSPORT_CIS if WALKIE_TALKIE_DEMO
-	default TRANSPORT_CIS
+	default NRF_AUDIO_TRANSPORT_CIS if NRF_AUDIO_WALKIE_TALKIE_DEMO
+	default NRF_AUDIO_TRANSPORT_CIS
 
-config TRANSPORT_BIS
+config NRF_AUDIO_TRANSPORT_BIS
 	bool "Use BIS (Broadcast Isochronous Stream)"
 
-config TRANSPORT_CIS
+config NRF_AUDIO_TRANSPORT_CIS
 	bool "Use CIS (Connected Isochronous Stream)"
 
 endchoice
@@ -47,11 +46,11 @@ rsource "src/utils/Kconfig"
 #----------------------------------------------------------------------------#
 menu "Logging"
 
-module = MAIN
+module = NRF_AUDIO_MAIN
 module-str = main
 source "subsys/logging/Kconfig.template.log_config"
 
-config PRINT_STACK_USAGE_MS
+config NRF_AUDIO_PRINT_STACK_USAGE_MS
 	depends on THREAD_ANALYZER && INIT_STACKS
 	int "Print stack usage every x milliseconds"
 	default 5000

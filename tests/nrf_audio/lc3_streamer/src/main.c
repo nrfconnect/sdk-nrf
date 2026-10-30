@@ -188,7 +188,7 @@ ZTEST(lc3_streamer, test_lc3_streamer_stream_register_invalid_too_many_streams)
 
 	int num_active = lc3_streamer_num_active_streams();
 
-	zassert_equal(CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS, num_active,
+	zassert_equal(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS, num_active,
 		      "lc3_streamer_num_active_streams should return maximum number of streams");
 
 	/* Fourth stream should fail */
@@ -340,7 +340,7 @@ ZTEST(lc3_streamer, test_lc3_streamer_next_frame_get_invalid_index)
 	int ret;
 	const uint8_t *frame_buffer = NULL;
 
-	ret = lc3_streamer_next_frame_get(CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS,
+	ret = lc3_streamer_next_frame_get(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS,
 					  &frame_buffer);
 	zassert_equal(-EINVAL, ret, "lc3_streamer_next_frame_get should return -EINVAL");
 }
@@ -567,7 +567,7 @@ ZTEST(lc3_streamer, test_lc3_streamer_stream_close_invalid_index)
 {
 	int ret;
 
-	ret = lc3_streamer_stream_close(CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS);
+	ret = lc3_streamer_stream_close(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS);
 	zassert_equal(-EINVAL, ret, "lc3_streamer_stream_close should return -EINVAL");
 }
 
@@ -602,8 +602,8 @@ ZTEST(lc3_streamer, test_lc3_streamer_file_path_get_invalid)
 	uint8_t streamer_idx;
 	char file_path[CONFIG_FS_FATFS_MAX_LFN];
 
-	ret = lc3_streamer_file_path_get(CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS, file_path,
-					 sizeof(file_path));
+	ret = lc3_streamer_file_path_get(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS,
+					 file_path, sizeof(file_path));
 	zassert_equal(-EINVAL, ret,
 		      "lc3_streamer_file_path_get should return -EINVAL on invalid index");
 
@@ -652,7 +652,7 @@ ZTEST(lc3_streamer, test_lc3_streamer_is_looping_invalid)
 {
 	bool is_looping;
 
-	is_looping = lc3_streamer_is_looping(CONFIG_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS);
+	is_looping = lc3_streamer_is_looping(CONFIG_NRF_AUDIO_SD_CARD_LC3_STREAMER_MAX_NUM_STREAMS);
 	zassert_equal(false, is_looping,
 		      "lc3_streamer_is_looping should return false on an invalid index");
 }
