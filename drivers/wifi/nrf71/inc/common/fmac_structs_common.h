@@ -163,6 +163,13 @@ struct nrf_wifi_fmac_dev_ctx {
 	bool debug_stats_req;
 	/** Debug statistics destination. */
 	void *debug_stats;
+	/**
+	 * Called from the event context for periodic debug statistics reports,
+	 * i.e. those that do not answer a pending request.
+	 */
+	void (*debug_stats_periodic_cb)(void *priv, const struct nrf_wifi_rpu_debug_stats *stats);
+	/** Private data passed to debug_stats_periodic_cb. */
+	void *debug_stats_periodic_priv;
 	/** UMAC internal (memory) stats requested. */
 	bool umac_int_stats_req;
 	/** UMAC internal stats destination. */

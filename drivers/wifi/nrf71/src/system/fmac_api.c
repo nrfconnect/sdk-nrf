@@ -3725,6 +3725,8 @@ out:
 enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						       enum rpu_stats_type stats_type,
 						       unsigned int stats_ctrl,
+						       unsigned int periodic_count,
+						       unsigned int periodic_interval,
 						       struct nrf_wifi_rpu_debug_stats *stats)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
@@ -3750,7 +3752,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_
 	fmac_dev_ctx->debug_stats_req = true;
 	fmac_dev_ctx->debug_stats = stats;
 
-	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type, stats_ctrl);
+	status = umac_cmd_sys_debug_stats_get(fmac_dev_ctx, stats_type, stats_ctrl,
+					      periodic_count, periodic_interval);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		fmac_dev_ctx->debug_stats_req = false;
 		goto out;

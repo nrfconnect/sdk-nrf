@@ -32,7 +32,9 @@ enum nrf_wifi_status umac_cmd_sys_clear_stats(struct nrf_wifi_fmac_dev_ctx *fmac
 
 enum nrf_wifi_status umac_cmd_sys_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						  enum rpu_stats_type stats_type,
-						  unsigned int stats_ctrl);
+						  unsigned int stats_ctrl,
+						  unsigned int periodic_count,
+						  unsigned int periodic_interval);
 
 enum nrf_wifi_status umac_cmd_sys_umac_int_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 
