@@ -440,6 +440,7 @@ nRF Audio (formerly nRF5340 Audio)
   * Experimental support for the nRF54LM20 SoC in the nRF Audio applications.
     The support is limited to the :ref:`unicast client app <nrf_audio_unicast_client_app>` application with USB as audio source, which can be built for the ``nrf54lm20dk/nrf54lm20a/cpuapp`` board target.
     The support is experimental and not yet fully tested, so it is not recommended for production use.
+  * The :term:`Set Identity Resolving Key (SIRK)` glossary entry and the firmware architecture source diagrams in documentation.
 
 * Removed:
 
@@ -449,7 +450,18 @@ nRF Audio (formerly nRF5340 Audio)
   * The :kconfig:option:`CONFIG_BT_BAP_UNICAST_CONFIGURABLE` Kconfig option from the unicast client and server applications.
     This option was not useful because the unicast server range settings overwrite the bitrate configuration.
 
-* Updated audio_datapath to use the new audio rate control API.
+* Updated:
+
+  * ``audio_datapath`` to use the new audio rate control API.
+  * The nRF Audio application documentation to align with the current application structure and user feedback.
+    The updates clarify the following topics:
+
+    * Building and programming (device roles, required overlay files, SIRK configuration with links to the Bluetooth CSIP and CSIS specifications)
+    * Transport and audio source configuration
+    * Headset location (including UICR versus runtime overrides)
+    * User interface behavior across supported development kits
+
+  * Button and LED names to match development kit silkscreen labels.
 
 nRF Desktop
 -----------

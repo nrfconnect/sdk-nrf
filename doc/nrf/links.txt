@@ -1440,6 +1440,8 @@
 
 .. _`Auracast™`: https://www.bluetooth.com/auracast/how-it-works/
 .. _`Basic Audio Profile specification`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/16212-BAP-html5/out/en/index-en.html#UUID-c9d31763-9ede-2270-6b9c-c042ae684cc3
+.. _`Bluetooth CSIP specification`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/CSIP_v1.0/out/en/index-en.html
+.. _`Bluetooth CSIS specification`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/28085-CSIS-html5/out/en/index-en.html
 
 .. _`Distance estimation based on phase and amplitude information`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-60/out/en/architecture,-change-history,-and-conventions/architecture.html#UUID-a8d03618-5fcf-3043-2198-559653272b1b
 .. _`Distance estimation based on RTT packets`: https://www.bluetooth.com/wp-content/uploads/Files/Specification/HTML/Core-60/out/en/architecture,-change-history,-and-conventions/architecture.html#UUID-9d4969af-baa6-b7e4-03ca-70b340877adf

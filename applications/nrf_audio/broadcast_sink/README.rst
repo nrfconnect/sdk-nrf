@@ -42,12 +42,12 @@ This application uses specific mapping for the following user interface elements
   * **VOL+** - Turns the playback volume up.
   * **BTN 5** - Changes the gateway, if more than one is available.
 
-* **LED1**:
+* **LED 1**:
 
   * Solid blue - Devices have synchronized with a broadcasted stream.
   * Blinking blue - Devices have started streaming audio (BIS mode).
 
-* **LED2** - Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).
+* **LED 2** - Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).
 * **RGB**:
 
   * Solid blue - The device is programmed as the left headset.
@@ -58,7 +58,7 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-The application requires the ``CONFIG_TRANSPORT_BIS`` Kconfig option to be set to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file for `Building and running`_ to succeed.
+The application-specific overlay file :ncs-file:`/applications/nrf_audio/broadcast_sink/overlay-broadcast_sink.conf` sets the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y``, so you do not need to set it in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
 
 For other configuration options, see :ref:`nrf_audio_app_configuration`.
 
@@ -86,13 +86,10 @@ This application can be found under :file:`applications/nrf_audio/broadcast_sink
 The nRF5340 Audio DK comes preprogrammed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf_audio_app_dk_testing_out_of_the_box` for more information.
 
-To build the application, complete the following steps:
+To build the application, complete the steps for building and programming common to all audio applications using one of the following methods:
 
-1. Select the BIS mode by setting the ``CONFIG_TRANSPORT_BIS`` Kconfig option to ``y`` in the :ncs-file:`/applications/nrf_audio/prj.conf` file.
-#. Complete the steps for building and programming common to all audio applications using one of the following methods:
-
-   * :ref:`nrf_audio_app_building_script`
-   * :ref:`nrf_audio_app_building_standard`
+* :ref:`nrf_audio_app_building_script`
+* :ref:`nrf_audio_app_building_standard`
 
 .. _nrf_audio_broadcast_sink_app_testing:
 
