@@ -7,6 +7,15 @@
 #include <nrf_security_mem_helpers.h>
 #include <zephyr/sys/util.h>
 
+#if defined(__GNUC__) || defined(__clang__)
+#define SAFE_MEMZERO_WORDWISE
+/* uint32_t that may alias any object type, like uint8_t. */
+typedef uint32_t __attribute__((__may_alias__)) safe_memzero_word_t;
+#define SAFE_MEMZERO_WORD_SIZE	sizeof(safe_memzero_word_t)
+/* Four words are cleared per pass of the unrolled loop in safe_memzero(). */
+#define SAFE_MEMZERO_BLOCK_SIZE (4U * SAFE_MEMZERO_WORD_SIZE)
+#endif /* defined(__GNUC__) || defined(__clang__) */
+
 int constant_memcmp(const void *s1, const void *s2, size_t n)
 {
 	const volatile uint8_t *a = s1;
@@ -111,18 +120,45 @@ void safe_memset(void *dest, const size_t dest_size, const uint8_t ch, const siz
 
 void safe_memzero(void *dest, const size_t dest_size)
 {
-	/* Solution is heavily based on the sodium_memzero function here:
-	 * https://github.com/jedisct1/libsodium/blob/18fad78494956bef63db887f5a9efcc13b89e1a7/
-	 * src/libsodium/sodium/utils.c#L125
-	 * We use the fallback solution used on this project which seems to work at the moment.
-	 * We need to note that this is not a perfect solution since compilers might still manage
-	 * to ignore this memset so we might want to check that this is working if we decide to
-	 * use another compiler than GCC.
+#ifdef SAFE_MEMZERO_WORDWISE
+	/** Volatile access to every store restricts the compiler from removing
+	 *  them and from turning the loops into a byte-wise memset() calls.
 	 */
+	volatile uint8_t *p = dest;
+	size_t n = dest_size;
+
+	/* Clearing single bytes up to the first word boundary. */
+	for (; (n > 0U) && (((uintptr_t)p % SAFE_MEMZERO_WORD_SIZE) != 0U); n--, p++) {
+		*p = 0U;
+	}
+
+	/* Clearing four aligned words per pass. */
+	for (; n >= SAFE_MEMZERO_BLOCK_SIZE;
+	     n -= SAFE_MEMZERO_BLOCK_SIZE, p += SAFE_MEMZERO_BLOCK_SIZE) {
+		volatile safe_memzero_word_t *w = (volatile safe_memzero_word_t *)p;
+
+		w[0] = 0U;
+		w[1] = 0U;
+		w[2] = 0U;
+		w[3] = 0U;
+	}
+
+	/* Clearing remaining whole words (at most three). */
+	for (; n >= SAFE_MEMZERO_WORD_SIZE;
+	     n -= SAFE_MEMZERO_WORD_SIZE, p += SAFE_MEMZERO_WORD_SIZE) {
+		*(volatile safe_memzero_word_t *)p = 0U;
+	}
+
+	/* Clearing trailing bytes (at most three). */
+	for (; n > 0U; n--, p++) {
+		*p = 0U;
+	}
+#else
 	volatile uint8_t *volatile byte_pnt = (volatile uint8_t *volatile)dest;
 	size_t i = (size_t)0U;
 
 	for (; i < dest_size; i++) {
 		byte_pnt[i] = 0U;
 	}
+#endif /* SAFE_MEMZERO_WORDWISE */
 }
