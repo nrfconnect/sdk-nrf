@@ -59,7 +59,7 @@ The buttonless variants build with the :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_F
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/single_slot`
+.. |sample path| replace:: :ncs-file:`samples/dfu/single_slot </samples/dfu/single_slot>`
 
 By default, the sample builds with the :ref:`fw_loader_ble_mcumgr` firmware loader image.
 To build the sample with the :ref:`fw_loader_ble_mcumgr` firmware loader image and Bluetooth LE buttonless DFU support, append ``FILE_SUFFIX=ble_enter`` to the build command.

@@ -84,6 +84,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/ntn.h`
-| Source files: :file:`lib/ntn/`
+| Source files: :ncs-file:`lib/ntn/ </lib/ntn>`
 
 .. doxygengroup:: ntn

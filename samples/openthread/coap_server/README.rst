@@ -94,7 +94,7 @@ Snippets
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/openthread/coap_server`
+.. |sample path| replace:: :ncs-file:`samples/openthread/coap_server </samples/openthread/coap_server>`
 
 |enable_thread_before_testing|
 

@@ -103,7 +103,7 @@ Check and configure the following Kconfig options:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_with_multiple_identities`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_with_multiple_identities </samples/bluetooth/peripheral_with_multiple_identities>`
 
 .. include:: /includes/build_and_run_ns.txt
 

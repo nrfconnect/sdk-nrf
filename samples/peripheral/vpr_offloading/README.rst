@@ -107,7 +107,7 @@ The sample supports the following configurations defined in the :file:`sample.ya
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/peripheral/vpr_offloading`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/vpr_offloading </samples/peripheral/vpr_offloading>`
 
 .. include:: /includes/build_and_run.txt
 

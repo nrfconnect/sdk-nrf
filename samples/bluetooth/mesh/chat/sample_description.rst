@@ -99,7 +99,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/chat`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/chat </samples/bluetooth/mesh/chat>`
 
 .. include:: /includes/build_and_run.txt
 

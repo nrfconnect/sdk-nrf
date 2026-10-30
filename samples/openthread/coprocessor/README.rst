@@ -104,7 +104,7 @@ Check and configure the following library option that is used by the sample:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/openthread/coprocessor`
+.. |sample path| replace:: :ncs-file:`samples/openthread/coprocessor </samples/openthread/coprocessor>`
 
 |enable_thread_before_testing|
 

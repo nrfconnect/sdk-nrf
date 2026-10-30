@@ -158,7 +158,7 @@ Modem library
 
      * The option ``CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_ZEPHYR`` is now deprecated.
        To enable the UART trace backend, use the ``nrf91-modem-trace-uart`` snippet instead, or add a similar configuration in application overlays.
-       The snippet is located in :file:`snippets/nrf91-modem-trace-uart/`.
+       The snippet is located in :ncs-file:`snippets/nrf91-modem-trace-uart/ </snippets/nrf91-modem-trace-uart>`.
 
 .. _migration_2.7_recommended:
 

@@ -65,7 +65,7 @@ To provision the credentials, complete the following steps:
 Automated provisioning
 ----------------------
 
-For automated provisioning of credentials, you can use the script :file:`provision.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
+For automated provisioning of credentials, you can use the script :file:`provision.py` that is available in the :ncs-file:`samples/cellular/lwm2m_client/scripts/ </samples/cellular/lwm2m_client/scripts>` folder.
 If you use AVSystem's Coiote Device Management server, you must set your username and password for the server as environment variables when you run the script.
 See the following code:
 

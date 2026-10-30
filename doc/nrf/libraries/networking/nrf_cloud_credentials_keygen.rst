@@ -69,6 +69,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/net/nrf_cloud_credentials_keygen.h`
-| Source files: :file:`subsys/net/lib/nrf_cloud/common/src/`
+| Source files: :ncs-file:`subsys/net/lib/nrf_cloud/common/src/ </subsys/net/lib/nrf_cloud/common/src>`
 
 .. doxygengroup:: nrf_cloud_credentials_keygen

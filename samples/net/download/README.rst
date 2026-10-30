@@ -45,7 +45,7 @@ Set :option:`CONFIG_SAMPLE_FILE_URL` (with :option:`CONFIG_SAMPLE_FILE_CUSTOM` s
 Using TLS and DTLS
 ==================
 
-By default, the :option:`CONFIG_SAMPLE_PROVISION_CERT` option is set, which means that the sample provisions the certificate found in the :file:`samples/net/download/cert` folder.
+By default, the :option:`CONFIG_SAMPLE_PROVISION_CERT` option is set, which means that the sample provisions the certificate found in the :ncs-file:`samples/net/download/cert </samples/net/download/cert>` folder.
 The :option:`CONFIG_SAMPLE_CERT_FILE` option indicates the certificate file name.
 This certificate will work for the default test files.
 If you are using a custom download test file, you must provision the correct certificate for the servers from which the certificates will be downloaded.
@@ -68,7 +68,7 @@ Enable the :option:`CONFIG_SAMPLE_PROVISION_CLIENT_CERT` option to provision a c
 Set :option:`CONFIG_SAMPLE_CLIENT_CERT_FILE` and :option:`CONFIG_SAMPLE_CLIENT_KEY_FILE` to the client certificate and private key to provision.
 This must match what the server you connect to expects.
 
-The sample includes an example client certificate and private key, together with a matching CA trust store, under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interop server:
+The sample includes an example client certificate and private key, together with a matching CA trust store, under :ncs-file:`cert/ </samples/net/download/cert>`, for use against the `Eclipse Californium`_ CoAP interop server:
 
 * :file:`cert/cf-ca.pem` - CA trust store (root + intermediate)
 * :file:`cert/cf-client.pem` - Client leaf certificate
@@ -119,7 +119,7 @@ The sample provides predefined configuration files for the following development
   Must be added explicitly for Wi-Fi builds.
 * :file:`wifi-mutual-dtls.conf` - Additional configuration for mutual DTLS downloads from the Californium interop server.
 
-Board files under :file:`boards/` are merged automatically for the selected target.
+Board files under :ncs-file:`boards/ </samples/net/download/boards>` are merged automatically for the selected target.
 The :file:`wifi.conf` and :file:`wifi-mutual-dtls.conf` files are not board-specific and must be passed with ``download_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Ddownload_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
@@ -127,7 +127,7 @@ To add a specific extra configuration file to the build, add the ``-- -Ddownload
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/download`
+.. |sample path| replace:: :ncs-file:`samples/net/download </samples/net/download>`
 
 .. include:: /includes/build_and_run_ns.txt
 

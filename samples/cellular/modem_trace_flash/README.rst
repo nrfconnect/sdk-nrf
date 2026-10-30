@@ -67,7 +67,7 @@ Button 1:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/modem_trace_flash`
+.. |sample path| replace:: :ncs-file:`samples/cellular/modem_trace_flash </samples/cellular/modem_trace_flash>`
 
 .. include:: /includes/build_and_run_ns.txt
 

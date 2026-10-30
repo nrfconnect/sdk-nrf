@@ -71,6 +71,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/nrf71_idle_power.h`
-| Source files: :file:`lib/nrf71_idle_power/`
+| Source files: :ncs-file:`lib/nrf71_idle_power/ </lib/nrf71_idle_power>`
 
 .. doxygengroup:: nrf71_idle_power

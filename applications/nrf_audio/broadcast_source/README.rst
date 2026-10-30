@@ -56,7 +56,7 @@ For information about how to configure applications in the |NCS|, see :ref:`conf
 Building and running
 ********************
 
-This application can be found under :file:`applications/nrf_audio/broadcast_source` in the nRF Connect SDK folder structure, but it uses :file:`.conf` files at :file:`applications/nrf_audio/`.
+This application can be found under :ncs-file:`applications/nrf_audio/broadcast_source </applications/nrf_audio/broadcast_source>` in the nRF Connect SDK folder structure, but it uses :file:`.conf` files at :ncs-file:`applications/nrf_audio/ </applications/nrf_audio>`.
 
 The nRF5340 Audio DK comes preprogrammed with basic firmware that indicates if the kit is functional.
 See :ref:`nrf_audio_app_dk_testing_out_of_the_box` for more information.

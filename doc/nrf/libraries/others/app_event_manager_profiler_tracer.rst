@@ -127,6 +127,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/app_event_manager_profiler_tracer.h`
-| Source files: :file:`subsys/app_event_manager_profiler_tracer/`
+| Source files: :ncs-file:`subsys/app_event_manager_profiler_tracer/ </subsys/app_event_manager_profiler_tracer>`
 
 .. doxygengroup:: app_event_manager_profiler_tracer

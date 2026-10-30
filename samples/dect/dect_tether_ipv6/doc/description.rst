@@ -71,7 +71,7 @@ See :ref:`dect_tether_ipv6_windows` and :ref:`dect_tether_ipv6_ubuntu` for OS-sp
 Building
 ********
 
-.. |sample path| replace:: :file:`samples/dect/dect_tether_ipv6`
+.. |sample path| replace:: :ncs-file:`samples/dect/dect_tether_ipv6 </samples/dect/dect_tether_ipv6>`
 
 .. include:: /includes/build_and_run_ns.txt
 

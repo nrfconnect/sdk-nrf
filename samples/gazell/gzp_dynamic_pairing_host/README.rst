@@ -79,8 +79,8 @@ LED 1-4:
 Building and running
 ********************
 
-The Device sample is under :file:`samples/gazell/gzp_dynamic_pairing_device` in the |NCS| folder structure.
-The Host sample is under :file:`samples/gazell/gzp_dynamic_pairing_host` in the |NCS| folder structure.
+The Device sample is under :ncs-file:`samples/gazell/gzp_dynamic_pairing_device </samples/gazell/gzp_dynamic_pairing_device>` in the |NCS| folder structure.
+The Host sample is under :ncs-file:`samples/gazell/gzp_dynamic_pairing_host </samples/gazell/gzp_dynamic_pairing_host>` in the |NCS| folder structure.
 
 See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 

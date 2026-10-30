@@ -118,7 +118,7 @@ nRF Desktop
            Other ways of partitioning the application and radio core images are not covered by this migration guide.
 
      #. Add the configuration files for the MCUboot bootloader image to your application configuration.
-        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot` directory for an example.
+        See the :ncs-file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot </applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot>` directory for an example.
 
         Note the following Kconfig options that are specific to the nRF54H configuration of the MCUboot bootloader:
 

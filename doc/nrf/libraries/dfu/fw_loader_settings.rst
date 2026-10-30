@@ -28,6 +28,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/dfu/fw_loader_settings.h`
-| Source files: :file:`subsys/dfu/fw_loader_settings/src/`
+| Source files: :ncs-file:`subsys/dfu/fw_loader_settings/src/ </subsys/dfu/fw_loader_settings/src>`
 
 .. doxygengroup:: fw_loader_settings

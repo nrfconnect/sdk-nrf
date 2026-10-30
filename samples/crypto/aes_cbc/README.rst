@@ -25,7 +25,7 @@ The sample :ref:`enables PSA Crypto API <psa_crypto_support_enable>` and configu
 
 .. crypto_sample_overview_driver_selection_start
 
-The sample also configures the cryptographic drivers for each board target using Kconfig options in the overlay files in the :file:`boards` directory.
+The sample also configures the cryptographic drivers for each board target using Kconfig options in the overlay files in the :ncs-file:`boards </samples/crypto/aes_cbc/boards>` directory.
 
 These Kconfig options are then used by the build system to compile the required cryptographic PSA directives and make the configured cryptographic drivers available at runtime.
 See :ref:`crypto_drivers_driver_selection` for more information about this process.
@@ -57,7 +57,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/aes_cbc`
+.. |sample path| replace:: :ncs-file:`samples/crypto/aes_cbc </samples/crypto/aes_cbc>`
 
 .. include:: /includes/build_and_run_ns.txt
 

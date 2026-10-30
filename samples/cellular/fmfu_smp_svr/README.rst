@@ -41,7 +41,7 @@ See :ref:`lib_fmfu_mgmt` for more details.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/fmfu_smp_svr`
+.. |sample path| replace:: :ncs-file:`samples/cellular/fmfu_smp_svr </samples/cellular/fmfu_smp_svr>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -37,6 +37,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/bluetooth/cs_de.h`
-| Source files: :file:`subsys/bluetooth/cs_de`
+| Source files: :ncs-file:`subsys/bluetooth/cs_de </subsys/bluetooth/cs_de>`
 
 .. doxygengroup:: bt_cs_de

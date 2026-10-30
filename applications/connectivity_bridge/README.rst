@@ -55,7 +55,7 @@ The sample also requires a USB host that can communicate with CDC ACM devices, s
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`applications/connectivity_bridge`
+.. |sample path| replace:: :ncs-file:`applications/connectivity_bridge </applications/connectivity_bridge>`
 
 .. include:: /includes/build_and_run.txt
 

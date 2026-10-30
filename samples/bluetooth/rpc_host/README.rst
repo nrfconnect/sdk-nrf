@@ -28,7 +28,7 @@ When the sample starts, it displays the welcome prompt ``Starting nRF RPC blueto
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/rpc_host`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/rpc_host </samples/bluetooth/rpc_host>`
 
 You must program this sample to the nRF5340 network core.
 

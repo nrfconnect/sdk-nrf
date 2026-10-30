@@ -29,7 +29,7 @@ Next, the service is deselected.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nfc/tnep_poller`
+.. |sample path| replace:: :ncs-file:`samples/nfc/tnep_poller </samples/nfc/tnep_poller>`
 
 .. include:: /includes/build_and_run.txt
 

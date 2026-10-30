@@ -35,7 +35,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/uicc_lwm2m`
+.. |sample path| replace:: :ncs-file:`samples/cellular/uicc_lwm2m </samples/cellular/uicc_lwm2m>`
 
 .. include:: /includes/build_and_run_ns.txt
 

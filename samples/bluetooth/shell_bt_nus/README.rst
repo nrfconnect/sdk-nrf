@@ -27,7 +27,7 @@ Alternatively, you can use :ref:`ble_console_readme` for connecting, using Linux
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/shell_bt_nus`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/shell_bt_nus </samples/bluetooth/shell_bt_nus>`
 
 .. include:: /includes/build_and_run_ns.txt
 

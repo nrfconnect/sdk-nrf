@@ -168,7 +168,7 @@ Snippets
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/openthread/coap_client`
+.. |sample path| replace:: :ncs-file:`samples/openthread/coap_client </samples/openthread/coap_client>`
 
 |enable_thread_before_testing|
 

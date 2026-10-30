@@ -59,7 +59,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/multiple_adv_sets`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/multiple_adv_sets </samples/bluetooth/multiple_adv_sets>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -116,7 +116,7 @@ To connect your DK to the nPM1300 or nPM1304 EK, complete the following steps:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/pmic/native/npm13xx_fuel_gauge`
+.. |sample path| replace:: :ncs-file:`samples/pmic/native/npm13xx_fuel_gauge </samples/pmic/native/npm13xx_fuel_gauge>`
 
 .. include:: /includes/build_and_run.txt
 

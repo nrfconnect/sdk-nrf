@@ -50,7 +50,7 @@ There are three test configurations in the :file:`testcase.yaml`.
 Building and running
 ********************
 
-.. |test path| replace:: :file:`tests/benchmarks/multicore/idle_pwm_led`
+.. |test path| replace:: :ncs-file:`tests/benchmarks/multicore/idle_pwm_led </tests/benchmarks/multicore/idle_pwm_led>`
 
 .. include:: /includes/build_and_run_test.txt
 

@@ -25,6 +25,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/bl_validation.h`
-| Source files: :file:`subsys/bootloader/bl_validation/`
+| Source files: :ncs-file:`subsys/bootloader/bl_validation/ </subsys/bootloader/bl_validation>`
 
 .. doxygengroup:: bl_validation

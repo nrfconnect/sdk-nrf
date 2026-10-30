@@ -158,6 +158,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_key_mgmt.h`
-| Source files: :file:`lib/modem_key_mgmt/`
+| Source files: :ncs-file:`lib/modem_key_mgmt/ </lib/modem_key_mgmt>`
 
 .. doxygengroup:: modem_key_mgmt

@@ -57,7 +57,7 @@ The sample's own Kconfig allows the user to configure the amount of RAM that is 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`nrf/samples/benchmarks/power_consumption`
+.. |sample path| replace:: :ncs-file:`nrf/samples/benchmarks/power_consumption </samples/benchmarks/power_consumption>`
 
 .. include:: /includes/build_and_run.txt
 

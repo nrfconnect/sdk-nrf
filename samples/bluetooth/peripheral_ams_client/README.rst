@@ -77,7 +77,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_ams_client`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_ams_client </samples/bluetooth/peripheral_ams_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -129,7 +129,7 @@ Testing with Bluetooth Low Energy app
 
    a. Select the :guilabel:`SERVER SETUP` tab.
    #. Select :guilabel:`Dongle configuration` > :guilabel:`Load setup`.
-   #. Load the :file:`AMS_central.ncs` file located under :file:`samples/bluetooth/peripheral_ams_client` in the |NCS| folder structure.
+   #. Load the :file:`AMS_central.ncs` file located under :ncs-file:`samples/bluetooth/peripheral_ams_client </samples/bluetooth/peripheral_ams_client>` in the |NCS| folder structure.
    #. Click :guilabel:`Apply to device`.
 
 #. Select the :guilabel:`CONNECTION MAP` tab.

@@ -218,6 +218,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/downloader.h`, :file:`include/downloader_transport.h`, :file:`include/downloader_transport_http.h`, :file:`include/downloader_transpot_coap.h`
-| Source files: :file:`subsys/net/lib/downloader/src/`
+| Source files: :ncs-file:`subsys/net/lib/downloader/src/ </subsys/net/lib/downloader/src>`
 
 .. doxygengroup:: downloader

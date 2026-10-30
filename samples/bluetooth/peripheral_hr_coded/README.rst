@@ -50,7 +50,7 @@ The user interface of the sample depends on the hardware platform you are using.
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hr_coded`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_hr_coded </samples/bluetooth/peripheral_hr_coded>`
 
 .. include:: /includes/build_and_run.txt
 

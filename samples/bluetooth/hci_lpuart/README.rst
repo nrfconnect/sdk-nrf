@@ -24,7 +24,7 @@ Firmware updates over serial using MCUboot are not supported for either of the M
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/hci_lpuart`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/hci_lpuart </samples/bluetooth/hci_lpuart>`
 
 .. include:: /includes/build_and_run.txt
 

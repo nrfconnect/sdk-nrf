@@ -51,7 +51,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/central_bas`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_bas </samples/bluetooth/central_bas>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -124,7 +124,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+         Load the :file:`hids_keyboard.ncs` file that is located under :ncs-file:`samples/bluetooth/central_bas </samples/bluetooth/central_bas>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
@@ -173,7 +173,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :file:`hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_bas` in the |NCS| folder structure.
+         Load the :file:`hids_keyboard.ncs` file that is located under :ncs-file:`samples/bluetooth/central_bas </samples/bluetooth/central_bas>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.

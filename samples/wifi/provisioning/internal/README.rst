@@ -223,7 +223,7 @@ The sample provides the following shell commands for testing Wi-Fi provisioning 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/provisioning/internal`
+.. |sample path| replace:: :ncs-file:`samples/wifi/provisioning/internal </samples/wifi/provisioning/internal>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -23,6 +23,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/net/wifi_ready.h`
-| Source files: :file:`subsys/net/lib/wifi_ready`
+| Source files: :ncs-file:`subsys/net/lib/wifi_ready </subsys/net/lib/wifi_ready>`
 
 .. doxygengroup:: wifi_ready

@@ -13,7 +13,7 @@ However, Zephyr samples and applications are not tested and verified to work wit
 
 .. |sample_test| replace:: samples
 
-.. |sample_test_file| replace:: :file:`nrf/samples/zephyr`
+.. |sample_test_file| replace:: :ncs-file:`nrf/samples/zephyr </samples/zephyr>`
 
 .. |zephyr_sample_test_file| replace:: :file:`zephyr/samples`
 

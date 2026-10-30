@@ -46,7 +46,7 @@ Configuration
 
 Building and Running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/direction_finding_peripheral`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/direction_finding_peripheral </samples/bluetooth/direction_finding_peripheral>`
 
 .. include:: /includes/build_and_run.txt
 

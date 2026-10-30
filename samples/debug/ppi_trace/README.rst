@@ -46,7 +46,7 @@ FEM support
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/debug/ppi_trace`
+.. |sample path| replace:: :ncs-file:`samples/debug/ppi_trace </samples/debug/ppi_trace>`
 
 .. include:: /includes/build_and_run.txt
 

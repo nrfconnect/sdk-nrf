@@ -98,7 +98,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/thread_coex`
+.. |sample path| replace:: :ncs-file:`samples/wifi/thread_coex </samples/wifi/thread_coex>`
 
 .. include:: /includes/build_and_run_ns.txt
 

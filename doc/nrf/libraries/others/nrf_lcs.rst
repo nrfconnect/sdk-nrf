@@ -29,6 +29,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/nrf_lcs/nrf_lcs.h`
-| Source files: :file:`subsys/nrf_lcs/`
+| Source files: :ncs-file:`subsys/nrf_lcs/ </subsys/nrf_lcs>`
 
 .. doxygengroup:: nrf_lcs

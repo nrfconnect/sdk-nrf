@@ -53,6 +53,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/debug/etb_trace.h`
-| Source files: :file:`subsys/debug/etb_trace/`
+| Source files: :ncs-file:`subsys/debug/etb_trace/ </subsys/debug/etb_trace>`
 
 .. doxygengroup:: etb_trace

@@ -56,7 +56,7 @@ To successfully use the direction finding locator when the AoA mode is enabled, 
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/direction_finding_connectionless_rx`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/direction_finding_connectionless_rx </samples/bluetooth/direction_finding_connectionless_rx>`
 
 .. include:: /includes/build_and_run.txt
 

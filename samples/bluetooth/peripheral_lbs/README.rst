@@ -85,7 +85,7 @@ The user interface of the sample depends on the hardware platform you are using.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_lbs`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_lbs </samples/bluetooth/peripheral_lbs>`
 
 .. include:: /includes/build_and_run_ns.txt
 

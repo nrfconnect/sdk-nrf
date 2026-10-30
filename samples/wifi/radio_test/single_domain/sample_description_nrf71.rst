@@ -41,7 +41,7 @@ See :ref:`wifi_radio_subcommands_nrf71` for a list of available statistics.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/radio_test/single_domain`
+.. |sample path| replace:: :ncs-file:`samples/wifi/radio_test/single_domain </samples/wifi/radio_test/single_domain>`
 
 .. include:: /includes/build_and_run.txt
 

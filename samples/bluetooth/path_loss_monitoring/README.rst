@@ -74,7 +74,7 @@ Check and configure the following Kconfig options:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/path_loss_monitoring`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/path_loss_monitoring </samples/bluetooth/path_loss_monitoring>`
 
 .. include:: /includes/build_and_run.txt
 
@@ -89,8 +89,8 @@ Testing
 
 |test_sample|
 
-1. Program one DK with the :file:`samples/bluetooth/path_loss_monitoring/central` code.
-#. Program another DK with the :file:`samples/bluetooth/path_loss_monitoring/peripheral` code.
+1. Program one DK with the :ncs-file:`samples/bluetooth/path_loss_monitoring/central </samples/bluetooth/path_loss_monitoring/central>` code.
+#. Program another DK with the :ncs-file:`samples/bluetooth/path_loss_monitoring/peripheral </samples/bluetooth/path_loss_monitoring/peripheral>` code.
 #. Power on both devices.
 #. The Central will start scanning and connect automatically to the Peripheral.
 #. Once connected, observe the LEDs on the Central to evaluate signal strength:

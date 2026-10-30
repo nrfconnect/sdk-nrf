@@ -107,7 +107,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/central_smp_client`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_smp_client </samples/bluetooth/central_smp_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -713,7 +713,7 @@ You can also configure the following feature in the nRF Desktop application:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`applications/nrf_desktop`
+.. |sample path| replace:: :ncs-file:`applications/nrf_desktop </applications/nrf_desktop>`
 
 The nRF Desktop application is built the same way to any other |NCS| application or sample.
 
@@ -728,7 +728,7 @@ Memory footprint usage
 You can display a detailed memory footprint report for either the main application image or for other sysbuild images that are built together with the main application image (for example, ``mcuboot`` or the ``b0`` bootloader).
 
 Memory footprint information is displayed separately per every sysbuild image.
-To get the memory footprint for a given image, run the following commands from the application directory (:file:`nrf/applications/nrf_desktop`):
+To get the memory footprint for a given image, run the following commands from the application directory (:ncs-file:`nrf/applications/nrf_desktop </applications/nrf_desktop>`):
 
 .. parsed-literal::
    :class: highlight
@@ -1007,5 +1007,5 @@ This application uses the following |NCS| libraries and drivers:
 * :ref:`hogp_readme`
 * :ref:`nrf_bt_scan_readme`
 * :ref:`gatt_dm_readme`
-* :file:`drivers/sensor/paw3212`
-* :file:`drivers/sensor/pmw3360`
+* :ncs-file:`drivers/sensor/paw3212 </drivers/sensor/paw3212>`
+* :ncs-file:`drivers/sensor/pmw3360 </drivers/sensor/pmw3360>`

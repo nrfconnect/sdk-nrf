@@ -25,7 +25,7 @@ For more information on TF-M partitions, see :ref:`ug_tfm_partitioning`.
 The sample demonstrates how to configure peripherals as secure peripherals and use them in a TF-M partition.
 In this way, the peripheral is only accessible from the :ref:`Secure Processing Environment (SPE) <app_boards_spe_nspe>`, or from a TF-M partition with :ref:`isolation level 2 or higher<ug_tfm_architecture_isolation_lvls>`.
 
-The TF-M partition used in this sample is located in the :file:`secure_peripheral_partition` directory at the sample root.
+The TF-M partition used in this sample is located in the :ncs-file:`secure_peripheral_partition </samples/tfm/tfm_secure_peripheral/secure_peripheral_partition>` directory at the sample root.
 It contains the partition sources, build files and build configuration files.
 The partition is built by the :ref:`TF-M build system <tfm_build_system>`, which is called by the |NCS| build system.
 
@@ -37,7 +37,7 @@ Configuration
 Configuration files
 ===================
 
-The partition configuration and source files are in the :file:`secure_peripheral_partition` directory.
+The partition configuration and source files are in the :ncs-file:`secure_peripheral_partition </samples/tfm/tfm_secure_peripheral/secure_peripheral_partition>` directory.
 
 The following files are available:
 
@@ -181,7 +181,7 @@ For example, to allow access to the Protected Storage partition, add it to the `
 Building and Running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_secure_peripheral`
+.. |sample path| replace:: :ncs-file:`samples/tfm/tfm_secure_peripheral </samples/tfm/tfm_secure_peripheral>`
 
 .. include:: /includes/build_and_run.txt
 

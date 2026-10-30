@@ -21,7 +21,7 @@ When protected memory is modified, the integrity check fails on the next boot, c
 Building and running
 *********************
 
-.. |sample path| replace:: :file:`samples/ironside_se/protectedmem_periphconf`
+.. |sample path| replace:: :ncs-file:`samples/ironside_se/protectedmem_periphconf </samples/ironside_se/protectedmem_periphconf>`
 
 .. include:: /includes/build_and_run.txt
 

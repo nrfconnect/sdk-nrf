@@ -39,6 +39,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/modem/modem_info.h`
-| Source files: :file:`lib/modem_info/`
+| Source files: :ncs-file:`lib/modem_info/ </lib/modem_info>`
 
 .. doxygengroup:: modem_info

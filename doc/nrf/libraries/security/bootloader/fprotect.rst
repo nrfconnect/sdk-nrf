@@ -34,6 +34,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/fprotect.h`
-| Source files: :file:`lib/fprotect/`
+| Source files: :ncs-file:`lib/fprotect/ </lib/fprotect>`
 
 .. doxygengroup:: fprotect

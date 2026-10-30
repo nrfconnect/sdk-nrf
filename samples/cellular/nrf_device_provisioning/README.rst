@@ -115,7 +115,7 @@ The following files are available:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nrf_device_provisioning`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nrf_device_provisioning </samples/cellular/nrf_device_provisioning>`
 
 .. note::
 

@@ -36,7 +36,7 @@ The library has the following dependency:
 API documentation
 *****************
 
-| Header files: :file:`include/nrf_rpc/rpc_utils`
-| Source files: :file:`subsys/nrf_rpc/rpc_utils`
+| Header files: :ncs-file:`include/nrf_rpc/rpc_utils </include/nrf_rpc/rpc_utils>`
+| Source files: :ncs-file:`subsys/nrf_rpc/rpc_utils </subsys/nrf_rpc/rpc_utils>`
 
 .. doxygengroup:: nrf_rpc_utils

@@ -131,7 +131,7 @@ To enable secondary firmware support, you must complete the following steps:
       CONFIG_GEN_UICR_SECONDARY_TRIGGER=y
       CONFIG_GEN_UICR_SECONDARY_TRIGGER_APPLICATIONLOCKUP=y
 
-For more examples of secondary firmware configuration, see the samples in :file:`nrf/samples/ironside_se/`:
+For more examples of secondary firmware configuration, see the samples in :ncs-file:`nrf/samples/ironside_se/ </samples/ironside_se>`:
 
 * :ref:`secondary_boot_sample` - Basic secondary firmware configuration
 * :ref:`secondary_boot_trigger_lockup_sample` - Secondary firmware with automatic triggers

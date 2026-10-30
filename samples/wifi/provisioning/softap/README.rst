@@ -53,7 +53,7 @@ The sample includes the following pre-configured configuration file for the deve
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/provisioning/softap`
+.. |sample path| replace:: :ncs-file:`samples/wifi/provisioning/softap </samples/wifi/provisioning/softap>`
 
 .. include:: /includes/build_and_run_ns.txt
 

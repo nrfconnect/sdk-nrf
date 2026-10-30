@@ -179,6 +179,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/nrf_compress/implementation.h`
-| Source files: :file:`subsys/nrf_compress/src/`
+| Source files: :ncs-file:`subsys/nrf_compress/src/ </subsys/nrf_compress/src>`
 
 .. doxygengroup:: compression_decompression_subsystem

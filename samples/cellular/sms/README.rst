@@ -60,7 +60,7 @@ Check and configure the following optional library options that are used by the 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/sms`
+.. |sample path| replace:: :ncs-file:`samples/cellular/sms </samples/cellular/sms>`
 
 .. include:: /includes/build_and_run_ns.txt
 

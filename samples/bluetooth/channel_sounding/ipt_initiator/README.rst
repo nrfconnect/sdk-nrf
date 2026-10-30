@@ -114,7 +114,7 @@ The first LED on the development kit will be lit when a connection has been esta
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/channel_sounding/ipt_initiator`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/channel_sounding/ipt_initiator </samples/bluetooth/channel_sounding/ipt_initiator>`
 
 .. include:: /includes/build_and_run.txt
 

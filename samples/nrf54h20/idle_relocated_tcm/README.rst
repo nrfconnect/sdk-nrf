@@ -35,7 +35,7 @@ To configure the system to use the MCUboot in the direct-xip mode in the split s
 Memory map configuration
 ========================
 
-The memory maps are defined in the :file:`common` directory and are shared between all images to ensure consistency.
+The memory maps are defined in the :ncs-file:`common </samples/nrf54h20/idle_relocated_tcm/common>` directory and are shared between all images to ensure consistency.
 
 The following changes are included in the project overlay files:
 
@@ -60,7 +60,7 @@ Enabling the Radio Loader
 The radio loader is automatically added to the build when you enable it in sysbuild configuration.
 
 Set the :kconfig:option:`SB_CONFIG_NRF_RADIO_LOADER` Kconfig option to ``y`` in the :file:`sysbuild.conf` file.
-This single configuration option automatically adds the ``radio_loader`` application located in the :file:`nrf/samples/nrf54h20/radio_loader` folder and builds it for the CPURAD core.
+This single configuration option automatically adds the ``radio_loader`` application located in the :ncs-file:`nrf/samples/nrf54h20/radio_loader </samples/nrf54h20/radio_loader>` folder and builds it for the CPURAD core.
 No manual ``ExternalZephyrProject_Add()`` is needed in sysbuild.
 
 You must provide the DTS overlay file for the radio loader that includes the following DTS node labels:
@@ -107,7 +107,7 @@ To use the radio loader pattern, you must configure the remote radio firmware in
 Building and running
 ********************
 
-.. |test path| replace:: :file:`samples/nrf54h20/idle_relocated_tcm`
+.. |test path| replace:: :ncs-file:`samples/nrf54h20/idle_relocated_tcm </samples/nrf54h20/idle_relocated_tcm>`
 
 .. include:: /includes/build_and_run_test.txt
 

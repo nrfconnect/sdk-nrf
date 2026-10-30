@@ -87,7 +87,7 @@ MCUboot runs in secure mode, so sysbuild builds it for the ``thingy91/nrf9160`` 
 Consider the following when replacing the default layout:
 
 * Adding a partition for the :ref:`liblwm2m_carrier_readme` library - Define an ``lwm2m_carrier`` partition and select it with the ``nordic,lwm2m-carrier-partition`` chosen node.
-  For an example, see the overlay files in the :file:`nrf/samples/cellular/lwm2m_carrier/boards/` directory.
+  For an example, see the overlay files in the :ncs-file:`nrf/samples/cellular/lwm2m_carrier/boards/ </samples/cellular/lwm2m_carrier/boards>` directory.
 * Adding the |NSIB| - Enable the :kconfig:option:`SB_CONFIG_SECURE_BOOT_APPCORE` Kconfig option and reserve space for the immutable bootloader and the two MCUboot slots in the overlay, as described in :ref:`ug_bootloader_adding_sysbuild`.
   You need a debugger to program the Thingy:91 for the first time.
 

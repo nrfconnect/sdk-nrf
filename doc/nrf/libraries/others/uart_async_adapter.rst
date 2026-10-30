@@ -95,6 +95,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/uart_async_adapter.h`
-| Source files: :file:`subsys/uart_async_adapter/`
+| Source files: :ncs-file:`subsys/uart_async_adapter/ </subsys/uart_async_adapter>`
 
 .. doxygengroup:: uart_async_adapter

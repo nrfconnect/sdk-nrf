@@ -156,7 +156,7 @@ The following DTS overlay file is included to increase the non-secure RAM partit
 
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.overlay` - DTS overlay file for the nRF7120 DK.
 
-Board files under the :file:`boards/` folder are merged automatically for the selected target.
+Board files under the :ncs-file:`boards/ </samples/net/aws_iot/boards>` folder are merged automatically for the selected target.
 Files under the :file:`sysbuild/mcuboot/` folder configure the MCUboot image.
 The :file:`wifi.conf` file is not board-specific and must be passed with ``aws_iot_EXTRA_CONF_FILE``.
 
@@ -183,7 +183,7 @@ To build for the nRF54LM20 DK with the nRF7002-EB II, also set the shield and th
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/aws_iot`
+.. |sample path| replace:: :ncs-file:`samples/net/aws_iot </samples/net/aws_iot>`
 
 .. include:: /includes/build_and_run_ns.txt
 

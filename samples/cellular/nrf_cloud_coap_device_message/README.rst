@@ -60,7 +60,7 @@ Configuration options
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_coap_device_message`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nrf_cloud_coap_device_message </samples/cellular/nrf_cloud_coap_device_message>`
 
 .. include:: /includes/build_and_run_ns.txt
 

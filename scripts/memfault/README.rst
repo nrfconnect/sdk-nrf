@@ -27,7 +27,7 @@ Requirements
    This script depends on the ``pc_ble_driver_py`` Python package, which is no longer maintained.
    As a result, only Python versions above or equal to 3.7 and below 3.11 are supported.
 
-The script source files are located in the :file:`scripts/memfault` directory.
+The script source files are located in the :ncs-file:`scripts/memfault </scripts/memfault>` directory.
 
 To install the script's requirements, run the following command in its directory:
 
@@ -41,7 +41,7 @@ Using the script
 ****************
 
 1. Connect your nRF52 Series development kit to your PC.
-#. Run the script commands in the :file:`scripts/memfault` directory.
+#. Run the script commands in the :ncs-file:`scripts/memfault </scripts/memfault>` directory.
 
 Your DK will be programmed with the connectivity firmware.
 To list the script arguments, run the following command:

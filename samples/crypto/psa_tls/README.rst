@@ -221,7 +221,7 @@ This functionality is called *TAP adapter*.
 
    .. tab:: Linux
 
-      The TAP adapter functionality is included in the `Ethernet over RTT for Linux`_ executable, named :file:`eth_rtt_link`, located in the :file:`samples/crypto/psa_tls` folder.
+      The TAP adapter functionality is included in the `Ethernet over RTT for Linux`_ executable, named :file:`eth_rtt_link`, located in the :ncs-file:`samples/crypto/psa_tls </samples/crypto/psa_tls>` folder.
       You must pass the development kit's SEGGER ID and the TAP IPv4 as parameters when calling the executable.
       See the examples in the `Testing`_ section.
 
@@ -245,7 +245,7 @@ For more information, see the `Testing`_ section.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/psa_tls`
+.. |sample path| replace:: :ncs-file:`samples/crypto/psa_tls </samples/crypto/psa_tls>`
 
 .. include:: /includes/build_and_run_ns.txt
 

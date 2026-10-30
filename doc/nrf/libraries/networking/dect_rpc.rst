@@ -219,7 +219,7 @@ Server L2 hooks (see :file:`include/net/dect/dect_net_l2_rpc.h`):
 Address sync, connect, and disconnect are handled by the subsystem (auto-sync, ``dect`` shell, conn_mgr) and are not additional public C entry points.
 
 | Header file: :file:`include/net/dect/dect_rpc.h`
-| Source files: :file:`subsys/net/dect/rpc/` (``common/``, ``client/``, ``server/``); server L2 integration in :file:`subsys/net/dect/l2/dect_net_l2.c`
+| Source files: :ncs-file:`subsys/net/dect/rpc/ </subsys/net/dect/rpc>` (``common/``, ``client/``, ``server/``); server L2 integration in :file:`subsys/net/dect/l2/dect_net_l2.c`
 | RPC command IDs (internal): :file:`subsys/net/dect/rpc/common/dect_rpc_ids.h`
 
 The UART transport setup is described in the :ref:`Configuration <dect_rpc_configuration>` page.

@@ -33,7 +33,7 @@ The sample's interface is implemented using shell commands, which are accessible
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/dfu_multi_image`
+.. |sample path| replace:: :ncs-file:`samples/dfu/dfu_multi_image </samples/dfu/dfu_multi_image>`
 
 .. include:: /includes/build_and_run.txt
 

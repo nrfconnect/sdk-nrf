@@ -69,11 +69,11 @@ Check and configure the following configuration options for the sample:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_mqtt_fota`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nrf_cloud_mqtt_fota </samples/cellular/nrf_cloud_mqtt_fota>`
 
 .. include:: /includes/build_and_run_ns.txt
 
-The configuration files for this sample are located in the :file:`samples/cellular/nrf_cloud_mqtt_fota` folder.
+The configuration files for this sample are located in the :ncs-file:`samples/cellular/nrf_cloud_mqtt_fota </samples/cellular/nrf_cloud_mqtt_fota>` folder.
 See :ref:`configure_application` on how to configure the parameters.
 
 To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :file:`VERSION` file.

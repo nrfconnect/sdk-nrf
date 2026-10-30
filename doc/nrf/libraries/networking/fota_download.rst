@@ -61,6 +61,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/net/fota_download.h`
-| Source files: :file:`subsys/net/lib/fota_download/src/`
+| Source files: :ncs-file:`subsys/net/lib/fota_download/src/ </subsys/net/lib/fota_download/src>`
 
 .. doxygengroup:: fota_download

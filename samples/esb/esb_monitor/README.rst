@@ -105,7 +105,7 @@ CONFIG_ESB_SNIFFER
 Building and running
 ********************
 
-The Monitor sample is located in the :file:`samples/esb/esb_monitor` folder in the |NCS| folder structure.
+The Monitor sample is located in the :ncs-file:`samples/esb/esb_monitor </samples/esb/esb_monitor>` folder in the |NCS| folder structure.
 
 See :ref:`building` and :ref:`programming` for information on how to build and program the application, respectively.
 

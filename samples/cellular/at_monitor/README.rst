@@ -29,7 +29,7 @@ Once the device registers with the network, the sample reads the modem PSM mode 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/at_monitor`
+.. |sample path| replace:: :ncs-file:`samples/cellular/at_monitor </samples/cellular/at_monitor>`
 
 .. include:: /includes/build_and_run_ns.txt
 

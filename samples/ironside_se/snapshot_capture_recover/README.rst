@@ -50,7 +50,7 @@ The sample configures the following UICR settings:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ironside_se/snapshot_capture_recover`
+.. |sample path| replace:: :ncs-file:`samples/ironside_se/snapshot_capture_recover </samples/ironside_se/snapshot_capture_recover>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -43,12 +43,12 @@ The application core runs a simple application that replaces the entropy driver 
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/nrf_rpc/entropy_nrf53`
+.. |sample path| replace:: :ncs-file:`samples/nrf_rpc/entropy_nrf53 </samples/nrf_rpc/entropy_nrf53>`
 
 .. include:: /includes/build_and_run.txt
 
 .. |sample_or_app| replace:: sample
-.. |ipc_radio_dir| replace:: :file:`remote/`
+.. |ipc_radio_dir| replace:: :ncs-file:`remote/ </samples/nrf_rpc/entropy_nrf53/remote>`
 
 .. include:: /includes/ipc_radio_conf.txt
 

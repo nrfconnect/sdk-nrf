@@ -175,6 +175,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/net/dect/dect_tether_ipv6.h`
-| Source files: :file:`subsys/net/lib/dect/tether_ipv6/`
+| Source files: :ncs-file:`subsys/net/lib/dect/tether_ipv6/ </subsys/net/lib/dect/tether_ipv6>`
 
 .. doxygengroup:: dect_tether_ipv6

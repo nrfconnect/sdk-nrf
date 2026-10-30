@@ -49,7 +49,7 @@ To provide the best performance and to minimize the number of conflicts between 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/iso_combined_bis_and_cis`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/iso_combined_bis_and_cis </samples/bluetooth/iso_combined_bis_and_cis>`
 
 .. include:: /includes/build_and_run_ns.txt
 

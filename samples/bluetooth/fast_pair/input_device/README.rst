@@ -164,7 +164,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/fast_pair/input_device`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/fast_pair/input_device </samples/bluetooth/fast_pair/input_device>`
 
 .. include:: /includes/build_and_run.txt
 

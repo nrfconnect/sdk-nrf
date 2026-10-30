@@ -20,6 +20,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/debug/ppi_trace.h`
-| Source files: :file:`subsys/debug/ppi_trace/`
+| Source files: :ncs-file:`subsys/debug/ppi_trace/ </subsys/debug/ppi_trace>`
 
 .. doxygengroup:: ppi_trace

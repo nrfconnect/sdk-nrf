@@ -165,6 +165,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/event_manager_proxy.h`
-| Source files: :file:`subsys/event_manager_proxy/`
+| Source files: :ncs-file:`subsys/event_manager_proxy/ </subsys/event_manager_proxy>`
 
 .. doxygengroup:: event_manager_proxy

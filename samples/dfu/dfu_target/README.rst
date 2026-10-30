@@ -34,7 +34,7 @@ The sample's interface is implemented using the shell, which is accessible via t
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/dfu_target`
+.. |sample path| replace:: :ncs-file:`samples/dfu/dfu_target </samples/dfu/dfu_target>`
 
 .. include:: /includes/build_and_run.txt
 

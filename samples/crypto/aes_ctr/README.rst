@@ -52,7 +52,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/aes_ctr`
+.. |sample path| replace:: :ncs-file:`samples/crypto/aes_ctr </samples/crypto/aes_ctr>`
 
 .. include:: /includes/build_and_run_ns.txt
 

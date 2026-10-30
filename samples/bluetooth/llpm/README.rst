@@ -84,7 +84,7 @@ By default, the following values are used to demonstrate the interaction of the 
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/llpm`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/llpm </samples/bluetooth/llpm>`
 
 .. include:: /includes/build_and_run.txt
 

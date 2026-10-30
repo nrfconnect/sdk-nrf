@@ -178,7 +178,7 @@ To ensure the updated build is preferred after a DFU, set this option to a highe
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/ab`
+.. |sample path| replace:: :ncs-file:`samples/dfu/ab </samples/dfu/ab>`
 
 .. include:: /includes/build_and_run.txt
 

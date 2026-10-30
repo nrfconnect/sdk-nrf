@@ -28,7 +28,7 @@ works).
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/le_adv_report_chan_idx`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/le_adv_report_chan_idx </samples/bluetooth/le_adv_report_chan_idx>`
 
 .. include:: /includes/build_and_run.txt
 

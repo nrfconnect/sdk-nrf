@@ -52,7 +52,7 @@ For example, when building on the command line, enter the following command:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf93m1dk/modem_bypass`
+.. |sample path| replace:: :ncs-file:`samples/nrf93m1dk/modem_bypass </samples/nrf93m1dk/modem_bypass>`
 
 .. include:: /includes/build_and_run.txt
 

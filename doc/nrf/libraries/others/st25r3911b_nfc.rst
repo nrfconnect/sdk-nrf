@@ -58,6 +58,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/st25r3911b_nfca.h`
-| Source files: :file:`lib/st25r3911b/`
+| Source files: :ncs-file:`lib/st25r3911b/ </lib/st25r3911b>`
 
 .. doxygengroup:: st25r3911b_nfca

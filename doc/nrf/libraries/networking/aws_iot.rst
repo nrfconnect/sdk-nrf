@@ -494,6 +494,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/net/aws_iot.h`
-| Source files: :file:`subsys/net/lib/aws_iot/src/`
+| Source files: :ncs-file:`subsys/net/lib/aws_iot/src/ </subsys/net/lib/aws_iot/src>`
 
 .. doxygengroup:: aws_iot
