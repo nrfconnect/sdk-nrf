@@ -6,6 +6,7 @@
 
 #include <errno.h>
 #include <stdlib.h>
+#include <string.h>
 #include <psa/crypto.h>
 
 #include <zephyr/kernel.h>
@@ -145,6 +146,7 @@ out_close:
 int ota_bundle_apply(void)
 {
 	uint8_t digest[32];
+	uint8_t expected_digest[32];
 	struct ota_bundle bundle = {0};
 	psa_hash_operation_t sha_ctx = {0};
 	size_t header_len = 0;
@@ -176,6 +178,8 @@ int ota_bundle_apply(void)
 		err = -EBADMSG;
 		goto out_close;
 	}
+
+	memcpy(expected_digest, bundle.bundle_sha256.value, sizeof(expected_digest));
 
 	err = fs_seek(&ota_file, (off_t)header_len, FS_SEEK_SET);
 	if (err) {
@@ -230,7 +234,7 @@ int ota_bundle_apply(void)
 		err = -EIO;
 		goto out_free_sha;
 	}
-	if (memcmp(digest, bundle.bundle_sha256.value, sizeof(digest)) != 0) {
+	if (memcmp(digest, expected_digest, sizeof(digest)) != 0) {
 		LOG_ERR("OTA bundle SHA-256 mismatch");
 		err = -EBADMSG;
 		goto out_free_sha;
