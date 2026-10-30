@@ -40,7 +40,7 @@ QoS connection event reports
    When reports are enabled, one report will be generated on every connection event.
    The report gives information about the quality of service of the connection event.
    The values in the report are used to describe the quality of links.
-   For parameter descriptions, see :c:type:`sdc_hci_vs_subevent_qos_conn_event_report_t` (in :file:`sdc_hci_vs.h`).
+   For parameter descriptions, see :c:type:`sdc_hci_vs_subevent_qos_conn_event_report_t` (in :ncs-file:`nrfxlib:/softdevice_controller/include/sdc_hci_vs.h`).
 
 Transmission latency
    The definition of the latency used in this example counts the time interval from the sender's application to the GATT service of the receiver.
@@ -90,6 +90,8 @@ Building and running
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
 
 .. include:: /includes/ipc_radio_conf.txt
 
@@ -304,22 +306,22 @@ This sample uses the following `sdk-nrfxlib`_ libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/console.h`
+* :ncs-file:`zephyr:/include/zephyr/console/console.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
-* :file:`include/sys/printk.h`
-* :file:`include/zephyr/types.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/conn.h`
-  * :file:`include/bluetooth/gatt.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/uuid.h`
-  * :file:`include/bluetooth/scan.h`
-  * :file:`include/bluetooth/gatt_dm.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/uuid.h`
+  * :ncs-file:`/include/bluetooth/scan.h`
+  * :ncs-file:`/include/bluetooth/gatt_dm.h`
 
 
 References

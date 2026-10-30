@@ -132,8 +132,8 @@ This sample uses the following |NCS| libraries:
 
 * :ref:`doc_fw_info`
 * :ref:`fprotect_readme`
-* ``include/bl_validation.h``
-* ``include/bl_crypto.h``
+* :ncs-file:`/include/bl_validation.h`
+* :ncs-file:`/include/bl_crypto.h`
 * ``subsys/bootloader/include/provision.h``
 
 The sample also uses drivers from nrfx.

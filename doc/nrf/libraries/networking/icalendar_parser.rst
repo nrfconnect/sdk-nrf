@@ -34,7 +34,7 @@ It supports parsing the following calendar properties:
 API documentation
 *****************
 
-| Header file: :file:`include/net/icalendar_parser.h`
+| Header file: :ncs-file:`/include/net/icalendar_parser.h`
 | Source files: :file:`subsys/net/lib/icalendar_parser/src/`
 
 .. doxygengroup:: icalendar_parser

@@ -209,8 +209,8 @@ HID report map update
 If your HID report provider implementation uses a different HID input report format or you add a new HID input report, you need to align the HID report configuration (including the HID report map).
 If the default HID report descriptor is used (:option:`CONFIG_DESKTOP_USE_DEFAULT_REPORT_DESCR`), the configuration is defined by the following files:
 
-* :file:`configuration/common/hid_report_desc.h`
-* :file:`configuration/common/hid_report_desc.c`
+* :ncs-file:`/applications/nrf_desktop/configuration/common/hid_report_desc.h`
+* :ncs-file:`/applications/nrf_desktop/configuration/common/hid_report_desc.c`
 
 .. note::
    nRF Desktop dongles share a common HID report format with the nRF Desktop peripherals.

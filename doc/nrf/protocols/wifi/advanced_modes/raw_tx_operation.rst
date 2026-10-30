@@ -128,7 +128,7 @@ The following table lists the raw packet transmit header elements:
    * - raw_tx_flag
      - Flag indicating raw packet transmission. This is reserved for driver use.
 
-You can refer to the relevant structures in the :file:`modules/lib/nrf_wifi/fw_if/umac_if/inc/system/fmac_structs.h` file:
+You can refer to the relevant structures in the :ncs-file:`nrf_wifi:/fw_if/umac_if/inc/system/fmac_structs.h` file:
 
 * ``raw_tx_pkt_header`` - For the raw packet header.
 
@@ -234,5 +234,5 @@ Error handling for raw packet transmission
 
 The raw packet transmission errors can be obtained by invoking the ``NET_REQUEST_STATS_GET_WIFI`` network management API.
 
-After invoking the API, you can use the ``struct net_stats_wifi`` struct in the :file:`zephyr/include/zephyr/net/net_stats.h` header file.
+After invoking the API, you can use the ``struct net_stats_wifi`` struct in the :ncs-file:`zephyr:/include/zephyr/net/net_stats.h` header file.
 The ``error`` member in ``struct net_stats_wifi`` will provide the transmit errors for all packets including raw packet transmit failure.

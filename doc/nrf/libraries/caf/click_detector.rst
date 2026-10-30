@@ -49,7 +49,7 @@ Complete the following steps:
         };
 
    .. note::
-        The :c:macro:`KEY_ID` macro is defined in :file:`include/caf/key_id.h`.
+        The :c:macro:`KEY_ID` macro is defined in :ncs-file:`/include/caf/key_id.h`.
 
 #. Specify the location of the file with the :kconfig:option:`CONFIG_CAF_CLICK_DETECTOR_DEF_PATH` Kconfig option.
 
@@ -75,7 +75,7 @@ The module records the following click types:
 * :c:enumerator:`CLICK_LONG` - Button pressed and held for a long period of time.
 * :c:enumerator:`CLICK_DOUBLE` - Two sequences of the button press and release in a short time interval.
 
-The exact values of time intervals for click types are defined in the :file:`subsys/caf/modules/click_detector.c` file.
+The exact values of time intervals for click types are defined in the :ncs-file:`/subsys/caf/modules/click_detector.c` file.
 
 Power management states
 =======================

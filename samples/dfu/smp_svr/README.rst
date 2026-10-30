@@ -30,17 +30,17 @@ For more information about MCUmgr and SMP, see :ref:`device_mgmt`.
 
 The sample supports the serial (UART) MCUmgr transport by default.
 
-Bluetooth LE transport is supported when building with the overlay that enables it (for example, :file:`overlay-bt.conf`).
+Bluetooth LE transport is supported when building with the overlay that enables it (for example, :ncs-file:`/samples/dfu/smp_svr/overlay-bt.conf`).
 
 The sample is built with sysbuild and includes MCUboot as the bootloader.
 Various build configurations are provided for different boards, MCUboot modes (including swap, direct-XIP and overwrite), signature types, and optional features such as encryption and compression, as well as external flash support.
 
-The various sample build configurations are defined in the :file:`sample.yaml` file.
+The various sample build configurations are defined in the :ncs-file:`sample.yaml` file.
 The following table describes the available configurations.
 
 .. note::
    Not all configuration and board combinations are supported.
-   Refer to the :file:`sample.yaml` file for the list of supported boards for each configuration.
+   Refer to the :ncs-file:`sample.yaml` file for the list of supported boards for each configuration.
 
 .. list-table::
    :widths: auto
@@ -173,7 +173,7 @@ Building and running
 The steps described above build the basic configuration with the UART transport and MCUboot using swap mode.
 Other build configurations are available for different boards, MCUboot modes, signature types, and optional features.
 
-When building a ``<configuration_name>`` configuration from the :file:`sample.yaml` file, you can use the following command:
+When building a ``<configuration_name>`` configuration from the :ncs-file:`sample.yaml` file, you can use the following command:
 
 .. code-block:: console
 

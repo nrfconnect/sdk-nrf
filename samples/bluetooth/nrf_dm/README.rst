@@ -148,6 +148,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -244,17 +246,17 @@ In addition, it uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:pwm_api`:
 
-  * :file:`drivers/pwm.h`
+  * :ncs-file:`zephyr:/include/zephyr/drivers/pwm.h`
 
-* :file:`include/sys/printk.h`
-* :file:`include/sys/byteorder.h`
-* :file:`include/random/random.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/random/random.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/scan.h`
-* :file:`ext/hal/nordic/nrfx/hal/nrf_radio.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`/include/bluetooth/scan.h`
+* :ncs-file:`hal_nordic:/nrfx/hal/nrf_radio.h`

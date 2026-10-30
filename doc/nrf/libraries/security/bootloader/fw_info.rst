@@ -85,7 +85,7 @@ Binary compatibility
 When exposing an interface between images that have not been compiled and linked together, you must take extra care to ensure binary-compatibility between how the interface is implemented and how it is used.
 The data placed into EXT_APIs must always have the same format for a given ID/version/flags combination.
 
-To facilitate this, the :file:`fw_info.h` file contains a number of static asserts to ensure that the memory mapping of structures is the same every time the code is compiled.
+To facilitate this, the :ncs-file:`/include/fw_info.h` file contains a number of static asserts to ensure that the memory mapping of structures is the same every time the code is compiled.
 There are a number of things that can change from compilation to compilation, depending on compiler options or just chance interactions with the rest of the code.
 
 Some things to look out for are:
@@ -182,7 +182,7 @@ To create an EXT_API request, complete the following steps:
 API documentation
 *****************
 
-| Header file: :file:`include/fw_info.h`
+| Header file: :ncs-file:`/include/fw_info.h`
 | Source files: :file:`subsys/fw_info/`
 
 .. doxygengroup:: fw_info

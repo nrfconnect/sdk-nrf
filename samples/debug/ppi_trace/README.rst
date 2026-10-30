@@ -83,5 +83,5 @@ In addition, it uses the following Zephyr libraries:
 * :ref:`zephyr:counter_api`
 * :ref:`zephyr:device_model_api`
 * :ref:`zephyr:logging_api`
-* ``ext/hal/nordic/nrfx/hal/nrf_rtc.h``
-* ``ext/hal/nordic/nrfx/hal/nrf_clock.h``
+* :ncs-file:`hal_nordic:/nrfx/hal/nrf_rtc.h`
+* :ncs-file:`hal_nordic:/nrfx/hal/nrf_clock.h`

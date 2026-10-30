@@ -17,7 +17,7 @@ For more information, see :ref:`lib_dfu_target_full_modem_update`.
 
 The serialized modem firmware contains the hash of the firmware and a signature.
 These fields are used to pre-validate the modem firmware before it is programmed to the modem, ensuring that the data about to be written corresponds to the data that have been signed.
-Once the modem firmware is pre-validated, it is written to the modem using the :file:`nrf_modem_bootloader.h` API.
+Once the modem firmware is pre-validated, it is written to the modem using the :ncs-file:`nrfxlib:/nrf_modem/include/nrf_modem_bootloader.h` API.
 
 .. _lib_fmfu_fdev_serialization:
 
@@ -41,7 +41,7 @@ Prerequisites
 API documentation
 *****************
 
-| Header file: :file:`include/dfu/fmfu_fdev.h`
+| Header file: :ncs-file:`/include/dfu/fmfu_fdev.h`
 | Source files: :file:`subsys/dfu/fmfu_fdev/src/`
 
 .. doxygengroup:: fmfu_fdev

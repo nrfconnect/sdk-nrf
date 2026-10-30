@@ -83,8 +83,8 @@ Using this information, GNSS can calculate which satellites it should search for
 The sample includes a factory almanac that is written to the file system when the sample starts.
 There are two versions of the factory almanac:
 
-* :file:`factory_almanac_v2.h`: Used by nRF9160 devices.
-* :file:`factory_almanac_v3.h`: Used by nRF91x1 devices.
+* :ncs-file:`src/factory_almanac_v2.h`: Used by nRF9160 devices.
+* :ncs-file:`src/factory_almanac_v3.h`: Used by nRF91x1 devices.
 
 The date when the factory almanac was generated is found in the header files.
 The files are updated in the repository approximately once a month.

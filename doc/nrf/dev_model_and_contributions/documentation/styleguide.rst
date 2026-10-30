@@ -151,7 +151,7 @@ Whenever you use the tag in an RST document, it will be replaced with the text s
 You can reuse the content with the tag either on one page or on multiple pages:
 
 * To reuse the text on one page, define the ``|tag|`` and the replacement text before the reference label and the page title.
-* To reuse the text on multiple pages, define the ``|tag|`` and the replacement text in :file:`nrf/doc/nrf/shortcuts.txt`.
+* To reuse the text on multiple pages, define the ``|tag|`` and the replacement text in :ncs-file:`/doc/nrf/shortcuts.txt`.
 
 For example, on this page, the ``|gl|`` tag is defined for local usage and will be replaced with |gl|.
 This tag is not available on other pages.

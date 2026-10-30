@@ -46,7 +46,7 @@ The implementation does not react to the power management events.
 Movement data from motion sensors
 =================================
 
-Selecting either of the motion sensors (:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`) adds the :file:`src/hw_interface/motion_sensor.c` file to the compilation.
+Selecting either of the motion sensors (:option:`CONFIG_DESKTOP_MOTION_SENSOR_PMW3360_ENABLE` or :option:`CONFIG_DESKTOP_MOTION_SENSOR_PAW3212_ENABLE`) adds the :ncs-file:`/applications/nrf_desktop/src/hw_interface/motion_sensor.c` file to the compilation.
 
 The motion sensor is sampled from the context of a dedicated thread.
 The option :option:`CONFIG_DESKTOP_MOTION_SENSOR_THREAD_STACK_SIZE` is used to set the thread's stack size.
@@ -63,7 +63,7 @@ For more information, see the sensor documentation and the Kconfig help.
 Movement data from buttons
 ==========================
 
-Selecting the :option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` option adds the :file:`src/hw_interface/motion_buttons.c` file to the compilation.
+Selecting the :option:`CONFIG_DESKTOP_MOTION_BUTTONS_ENABLE` option adds the :ncs-file:`/applications/nrf_desktop/src/hw_interface/motion_buttons.c` file to the compilation.
 
 The movement data is generated when pressing a button.
 The module detects the button presses by relying on the received :c:struct:`button_event`.
@@ -82,7 +82,7 @@ By default, ``1000`` of motion is generated per second during a button press.
 Simulated movement data
 =======================
 
-Selecting the :option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :file:`src/hw_interface/motion_simulated.c` file to the compilation.
+Selecting the :option:`CONFIG_DESKTOP_MOTION_SIMULATED_ENABLE` option adds the :ncs-file:`/applications/nrf_desktop/src/hw_interface/motion_simulated.c` file to the compilation.
 
 The generated movement data traces a predefined octagon path.
 As soon as the HID subscriber connects, the motion data is sent to it automatically.
@@ -117,7 +117,7 @@ In these configurations, the module is a configuration channel listener and it p
     For the motion sensor, the module variant is a sensor model written in lowercase, for example ``pmw3360`` or ``paw3212``.
 
     The :ref:`nrf_desktop_config_channel_script` uses the sensor model to identify the descriptions of the configuration options.
-    These descriptions are defined in the :file:`nrf/scripts/hid_configurator/modules/module_config.py`.
+    These descriptions are defined in the :ncs-file:`/scripts/hid_configurator/modules/module_config.py`.
 * ``cpi``
     The motion sensor CPI.
 * ``downshift``, ``rest1``, ``rest2``
@@ -148,7 +148,7 @@ The motion module samples movement data from the motion sensor using the motion 
 
 The name of the device linked with the driver changes depending on the selected sensor.
 The same is true for the names of sensor configuration options.
-The nRF Desktop application aggregates the sensor-specific information and translates them to the application abstracts in the :file:`configuration/common/motion_sensor.h` header file.
+The nRF Desktop application aggregates the sensor-specific information and translates them to the application abstracts in the :ncs-file:`/applications/nrf_desktop/configuration/common/motion_sensor.h` header file.
 
 Sampling thread
 ---------------

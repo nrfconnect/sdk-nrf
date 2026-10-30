@@ -49,7 +49,7 @@ Selecting ICMSG backend
 On the nRF5340 DK, this sample uses by default the OpenAMP backend provided by the IPC Service.
 You can instead select the ICMSG backend configuration, which has smaller memory requirements.
 
-The ICMSG backend configuration is provided in the :file:`prj_icmsg.conf` file.
+The ICMSG backend configuration is provided in the :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp_icmsg.conf` file.
 To provide the ICMSG backend configuration, specify the ``-DFILE_SUFFIX=icmsg`` parameter along with the build command when building the sample:
 
    .. code-block:: console
@@ -66,6 +66,8 @@ Building and running
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`remote/`
+
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`remote/prj.conf`
 
 .. include:: /includes/ipc_radio_conf.txt
 
@@ -179,5 +181,5 @@ This sample uses the following |NCS| subsystems:
 
 In addition, it uses the following Zephyr subsystems:
 
-* :file:`include/ipc/ipc_service.h`
+* :ncs-file:`zephyr:/include/zephyr/ipc/ipc_service.h`
 * :ref:`zephyr:logging_api`

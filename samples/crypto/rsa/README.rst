@@ -38,7 +38,7 @@ Once built and run, the sample performs the following operations:
       The key pair is configured with usage flags for hash signing.
 
       .. note::
-         The keys are provided in the :file:`key.h` file in the sample directory.
+         The keys are provided in the :ncs-file:`src/key.h` file in the sample directory.
          These are for demonstration purposes only and must never be used in a product.
 
    #. The public key is imported into the PSA crypto keystore using :c:func:`psa_import_key`.

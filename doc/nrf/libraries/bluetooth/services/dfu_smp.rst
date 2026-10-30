@@ -80,7 +80,7 @@ If the connection is lost while a command is outstanding, use the :c:func:`bt_df
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/services/dfu_smp.h`
-| Source file: :file:`subsys/bluetooth/services/dfu_smp.c`
+| Header file: :ncs-file:`/include/bluetooth/services/dfu_smp.h`
+| Source file: :ncs-file:`/subsys/bluetooth/services/dfu_smp.c`
 
 .. doxygengroup:: bt_dfu_smp

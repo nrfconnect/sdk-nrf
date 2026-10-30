@@ -17,7 +17,7 @@ This section describes the needed interaction between the LwM2M carrier library 
 
 The LwM2M carrier library has an OS abstraction layer.
 This abstraction layer makes the LwM2M carrier library independent of the |NCS| modules and underlying implementation of primitives such as timers, non-volatile storage, and heap allocation.
-For more information, see the :file:`lwm2m_os.h` file or the :ref:`liblwm2m_os` section for available APIs.
+For more information, see the :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_os.h` file or the :ref:`liblwm2m_os` section for available APIs.
 
 .. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_os_abstraction.svg
     :alt: LwM2M library OS abstraction overview
@@ -46,12 +46,12 @@ It provides an abstraction of the following modules:
 
 * Zephyr modules:
 
-  * :ref:`zephyr:kernel_api` (``include/kernel.h``)
+  * :ref:`zephyr:kernel_api` (:ncs-file:`zephyr:/include/zephyr/kernel.h`)
   * :ref:`zephyr:nvs_api`
 
 The OS abstraction layer is fully implemented for the |NCS|, and it needs to be ported if used with other RTOS or on other systems.
 
-When the LwM2M carrier library is enabled in your application, it includes the file :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
+When the LwM2M carrier library is enabled in your application, it includes the file :ncs-file:`/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
 This automatically runs the library's main function (:c:func:`lwm2m_carrier_main`).
 
 .. _lwm2m_configuration:
@@ -62,7 +62,7 @@ Configuration
 To run the library in an application, you must implement the application with the API of the library.
 Enable the library by setting the :kconfig:option:`CONFIG_LWM2M_CARRIER` Kconfig option to ``y``.
 
-The :ref:`lwm2m_carrier` sample project configuration (:file:`nrf/samples/cellular/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
+The :ref:`lwm2m_carrier` sample project configuration (:ncs-file:`/samples/cellular/lwm2m_carrier/prj.conf`) contains all the configurations that are needed by the LwM2M carrier library.
 
 To overwrite the carrier default settings, you can provide the initialization parameter :c:type:`lwm2m_carrier_config_t` with the Kconfig options specified in the following sections.
 You can also use the provided :ref:`lwm2m_carrier_shell` to quickly get started and experiment with the API.
@@ -223,7 +223,7 @@ LwM2M carrier library events
 
 The :c:func:`lwm2m_carrier_event_handler` function can be implemented by your application.
 This is shown in the :ref:`lwm2m_carrier` sample.
-A ``__weak`` implementation is included in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
+A ``__weak`` implementation is included in :ncs-file:`/lib/bin/lwm2m_carrier/os/lwm2m_carrier.c`.
 
 The ``__weak`` implementation acts as default handling and should be sufficient for most needs, but certain events could need handling specific to your application.
 
@@ -239,7 +239,7 @@ For example:
   When received, the application should re-evaluate the errors and signal relevant errors again using the :c:func:`lwm2m_carrier_error_code_add` function.
   This is not handled in the ``__weak`` implementation since the applicable errors to report is application dependent.
 
-See the :ref:`liblwm2m_carrier_events` section of the API documentation for a complete overview over the events, which are defined in the :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
+See the :ref:`liblwm2m_carrier_events` section of the API documentation for a complete overview over the events, which are defined in the :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
 
 .. _lwm2m_carrier_shell:
 
@@ -258,7 +258,7 @@ The :kconfig:option:`CONFIG_LWM2M_CARRIER_SHELL` Kconfig option has the followin
 * :kconfig:option:`CONFIG_SHELL`
 * :kconfig:option:`CONFIG_SETTINGS`
 
-In the :ref:`lwm2m_carrier` sample, you can enable the LwM2M carrier shell by :ref:`building with the overlay file <lwm2m_carrier_shell_overlay>` :file:`overlay-shell.conf`.
+In the :ref:`lwm2m_carrier` sample, you can enable the LwM2M carrier shell by :ref:`building with the overlay file <lwm2m_carrier_shell_overlay>` :ncs-file:`/samples/cellular/lwm2m_carrier/overlay-shell.conf`.
 
 .. figure:: /libraries/bin/lwm2m_carrier/images/lwm2m_carrier_os_abstraction_shell.svg
     :alt: LwM2M carrier shell
@@ -311,13 +311,13 @@ To allow time to change configurations before the library applies them, the appl
 
 The settings are applied by the function :c:func:`lwm2m_carrier_custom_init`.
 
-This function is implemented in :file:`nrf/lib/bin/lwm2m_carrier/os/lwm2m_settings.c` that is included in the project when you enable the LwM2M carrier shell.
+This function is implemented in :ncs-file:`/lib/bin/lwm2m_carrier/os/lwm2m_settings.c` that is included in the project when you enable the LwM2M carrier shell.
 The library thread calls the :c:func:`lwm2m_carrier_custom_init` function before calling the :c:func:`lwm2m_carrier_main` function.
 
 carrier_api
 ===========
 
-The LwM2M carrier shell command group ``carrier_api`` allows you to access the public LwM2M API as shown in :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`.
+The LwM2M carrier shell command group ``carrier_api`` allows you to access the public LwM2M API as shown in :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h`.
 
 For example, to indicate the battery level of the device to the carrier, the function :c:func:`lwm2m_carrier_battery_level_set` is used.
 This can also be done through the ``carrier_api`` command:
@@ -385,7 +385,7 @@ Many of these resources have no application API, and the reporting is automatica
 An example is the Network Bearer or Radio Signal Strength resources in the Connectivity Monitoring object are simply read from the modem directly by the library.
 
 Every resource, which is *not* automatically managed by the library, can be set using the resource APIs.
-See the :ref:`liblwm2m_carrier_objects` section for more details on the resource APIs, which are defined in the :file:`nrf/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
+See the :ref:`liblwm2m_carrier_objects` section for more details on the resource APIs, which are defined in the :ncs-file:`/lib/bin/lwm2m_carrier/include/lwm2m_carrier.h` file.
 
 For example, your operator's LwM2M Server might observe the battery level of your device.
 The battery level is not automatically known to the LwM2M carrier library, (or if there is no battery at all).

@@ -37,7 +37,7 @@ The functions must have global linkage and connect directly to the sensor stub d
 API documentation
 *****************
 
-| Header file: :file:`include/drivers/sensor_stub.h`
-| Source file: :file:`drivers/sensor/sensor_stub/sensor_stub.c`
+| Header file: :ncs-file:`/include/drivers/sensor_stub.h`
+| Source file: :ncs-file:`/drivers/sensor/sensor_stub/sensor_stub.c`
 
 .. doxygengroup:: sensor_stub

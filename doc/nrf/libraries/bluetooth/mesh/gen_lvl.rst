@@ -26,6 +26,6 @@ Common types
 
 This section lists the types common to the Generic Level mesh models.
 
-| Header file: :file:`include/bluetooth/mesh/gen_lvl.h`
+| Header file: :ncs-file:`/include/bluetooth/mesh/gen_lvl.h`
 
 .. doxygengroup:: bt_mesh_lvl

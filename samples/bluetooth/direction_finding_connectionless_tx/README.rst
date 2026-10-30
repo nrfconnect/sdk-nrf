@@ -65,7 +65,7 @@ Antenna matrix configuration for angle of departure mode
 ========================================================
 
 To use this sample when AoD mode is enabled, additional configuration of GPIOs is required to control the antenna array.
-An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpuapp.overlay`.
+An example of such configuration is provided in a devicetree overlay file :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay`.
 
 The overlay file provides the information of which GPIOs should be used by the Radio peripheral to switch between antenna patches during the CTE transmission in the AoD mode.
 At least two GPIOs must be provided to enable antenna switching.
@@ -94,6 +94,8 @@ Building and Running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -119,14 +121,14 @@ Dependencies
 
 This sample uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
-* :file:`include/sys/printk.h`
-* :file:`include/sys/byteorder.h`
-* :file:`include/sys/util.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/util.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/direction.h`
-  * :file:`include/bluetooth/gatt.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/direction.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/gatt.h`

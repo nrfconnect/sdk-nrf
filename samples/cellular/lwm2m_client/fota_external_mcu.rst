@@ -43,7 +43,7 @@ Verifying image update
 
 The following steps use generic MCUmgr client mode and Coiote without bootstrap.
 
-#. Set up the :file:`/scripts/fota.py` script by using the same username and password that you used for AVSystem's `Coiote Device Management server`_:
+#. Set up the :ncs-file:`scripts/fota.py` script by using the same username and password that you used for AVSystem's `Coiote Device Management server`_:
 
    .. code-block:: console
 
@@ -59,7 +59,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
       west build --pristine -b nrf9160dk/nrf52840 -- -DEXTRA_CONF_FILE="overlay-serial.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_srv.overlay"
       west flash --erase
 
-#. Open the :file:`prj.conf` file.
+#. Open the :ncs-file:`/samples/cellular/lwm2m_client/prj.conf` file.
 #. Change :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``1.1.0``.
 #. Rebuild the sample and copy the binary file to the :file:`lwm2m_client` folder:
 
@@ -98,7 +98,7 @@ The following steps use generic MCUmgr client mode and Coiote without bootstrap.
       west flash --erase
 
 #. Wait for the device registration to complete.
-#. Use the :file:`/scripts/fota.py` script to update the nRF52840 SoC firmware.
+#. Use the :ncs-file:`scripts/fota.py` script to update the nRF52840 SoC firmware.
 
    .. code-block:: console
 

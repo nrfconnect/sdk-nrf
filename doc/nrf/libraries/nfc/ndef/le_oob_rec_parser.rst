@@ -28,8 +28,8 @@ This library is used in the :ref:`nfc_tag_reader` sample.
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/ndef/le_oob_rec_parser.h`
-| Source file: :file:`subsys/nfc/ndef/le_oob_rec_parser.c`
+| Header file: :ncs-file:`/include/nfc/ndef/le_oob_rec_parser.h`
+| Source file: :ncs-file:`/subsys/nfc/ndef/le_oob_rec_parser.c`
 
 .. _nfc_ndef_le_oob_rec_parser:
 

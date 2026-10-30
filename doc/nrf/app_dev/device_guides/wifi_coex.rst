@@ -306,10 +306,10 @@ To add a custom coexistence implementation, complete following steps:
 
 1. Determine the hardware interface of your PTA.
    If your PTA uses an interface different from the ones already provided by the |NCS|, you need to provide a devicetree binding file.
-   See the :file:`nrf/dts/bindings/radio_coex/generic-radio-coex-three-wire.yaml` file for an example.
+   See the :ncs-file:`/dts/bindings/radio_coex/generic-radio-coex-three-wire.yaml` file for an example.
 #. Extend the Kconfig choice :kconfig:option:`CONFIG_MPSL_CX_CHOICE` with a Kconfig option allowing to select the new coex implementation.
 #. Write the implementation for your PTA.
-   See the :file:`nrf/subsys/mpsl/cx/3wire/mpsl_cx_3wire.c` file for an example.
+   See the :ncs-file:`/subsys/mpsl/cx/3wire/mpsl_cx_3wire.c` file for an example.
    Add the C source files with the implementation, which must contain the following parts:
 
    * The implementation of the functions required by the interface structure :c:struct:`mpsl_cx_interface_t`.

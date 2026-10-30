@@ -52,7 +52,7 @@ The ETB buffer can hold the maximum of 2 KB of data.
 API documentation
 *****************
 
-| Header file: :file:`include/debug/etb_trace.h`
+| Header file: :ncs-file:`/include/debug/etb_trace.h`
 | Source files: :file:`subsys/debug/etb_trace/`
 
 .. doxygengroup:: etb_trace

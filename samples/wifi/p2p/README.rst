@@ -35,16 +35,16 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/wifi/p2p/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/wifi/p2p/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
 
 The sample provides configuration files that select a mode together with its common options:
 
-* :file:`echo-cli.conf` - Client mode with the TCP echo client.
-* :file:`echo-go.conf` - Autonomous Group Owner mode with the TCP echo server.
-* :file:`go-persistent.conf` - Persistent Group Owner mode with persistence verification.
+* :ncs-file:`echo-cli.conf` - Client mode with the TCP echo client.
+* :ncs-file:`echo-go.conf` - Autonomous Group Owner mode with the TCP echo server.
+* :ncs-file:`go-persistent.conf` - Persistent Group Owner mode with persistence verification.
 
 In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` Kconfig option to the Group Owner's MAC address to connect to it.
 

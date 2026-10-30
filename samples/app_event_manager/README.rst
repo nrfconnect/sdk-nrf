@@ -13,17 +13,17 @@ The sample application consists of three modules that communicate using events:
 
 .. event_manager_sample_modules_start
 
-Sensor (``sensor_simulated.c``):
-  This module waits for a configuration event (which is sent by ``main.c``).
+Sensor (:ncs-file:`/samples/app_event_manager/src/modules/sensor_simulated.c`):
+  This module waits for a configuration event (which is sent by :ncs-file:`/samples/app_event_manager/src/main.c`).
   After receiving this event, it simulates measured data at constant intervals.
   Every time the data is updated, the module sends the current values as measurement event.
   When the module receives a control event from the Controller, it responds with an ACK event.
 
-Controller (``controller.c``):
+Controller (:ncs-file:`/samples/app_event_manager/src/modules/controller.c`):
   This module waits for measurement events from the sensor.
   Every time a measurement event is received, the module checks one of the measurement values that are transmitted as part of the event and, if the value exceeds a static threshold, sends a control event.
 
-Statistics (``stats.c``):
+Statistics (:ncs-file:`/samples/app_event_manager/src/modules/stats.c`):
   This module waits for measurement events from the sensor.
   The module calculates and logs basic statistics about one of the measurement values that are transmitted as part of the event.
 

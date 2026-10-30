@@ -74,25 +74,25 @@ Application uses the following API elements:
 Zephyr driver
 =============
 
-* Header file: :file:`drivers/gpio/gpio_hpf.h`
-* Source file: :file:`drivers/gpio/gpio_hpf.c`
+* Header file: :ncs-file:`/drivers/gpio/gpio_hpf.h`
+* Source file: :ncs-file:`/drivers/gpio/gpio_hpf.c`
 
 The following source files depend on the selected IPC backend:
 
-* Source file: :file:`drivers/gpio/gpio_hpf_icmsg.c`
-* Source file: :file:`drivers/gpio/gpio_hpf_mbox.c`
+* Source file: :ncs-file:`/drivers/gpio/gpio_hpf_icmsg.c`
+* Source file: :ncs-file:`/drivers/gpio/gpio_hpf_mbox.c`
 
 FLPR application
 ================
 
-Source file: :file:`applications/hpf/gpio/src/main.c`
+Source file: :ncs-file:`/applications/hpf/gpio/src/main.c`
 
 FLPR application HRT
 ====================
 
- * Header file: :file:`applications/hpf/gpio/src/hrt/hrt.h`
- * Source file: :file:`applications/hpf/gpio/src/hrt/hrt.c`
+ * Header file: :ncs-file:`/applications/hpf/gpio/src/hrt/hrt.h`
+ * Source file: :ncs-file:`/applications/hpf/gpio/src/hrt/hrt.c`
  * Assembly:
 
-   * :file:`applications/hpf/gpio/src/hrt/hrt-nrf54l15.s`
-   * :file:`applications/hpf/gpio/src/hrt/hrt-nrf54lm20a.s`
+   * :ncs-file:`/applications/hpf/gpio/src/hrt/hrt-nrf54l15.s`
+   * :ncs-file:`/applications/hpf/gpio/src/hrt/hrt-nrf54lm20a.s`

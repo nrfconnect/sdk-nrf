@@ -107,7 +107,7 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* ``include/sys/until.h``
+* :ncs-file:`zephyr:/include/zephyr/sys/util.h`
 
 The sample also uses the following secure firmware component:
 

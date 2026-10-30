@@ -212,12 +212,12 @@ This sample uses the following Zephyr libraries:
 
 * :ref:`zephyr:kernel_api`:
 
-  * ``include/kernel.h``
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:thread_protocol_interface`
 
 * :ref:`zephyr:logging_api`:
 
-  * ``include/logging/log.h``
+  * :ncs-file:`zephyr:/include/zephyr/logging/log.h`
 
 * :ref:`zephyr:bluetooth-hci`
