@@ -468,7 +468,7 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 	}
 
 	err = dl_parse_url_port(url, &coap->sock.port);
-	if (err) {
+	if (err == -ENOENT) {
 		switch (coap->sock.proto) {
 		case NET_IPPROTO_DTLS_1_2:
 			coap->sock.port = DEFAULT_PORT_DTLS;
@@ -478,6 +478,9 @@ static int dl_coap_init(struct downloader *dl, struct downloader_host_cfg *dl_ho
 			break;
 		}
 		LOG_DBG("Port not specified, using default: %d", coap->sock.port);
+	} else if (err) {
+		LOG_ERR("Invalid port in URL");
+		return err;
 	}
 
 	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl_host_cfg->set_native_tls) {
