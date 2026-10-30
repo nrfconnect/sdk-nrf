@@ -1,0 +1,14 @@
+common:
+  platform_allow:
+    - native_sim/native/64
+  integration_platforms:
+    - native_sim/native/64
+  tags:
+    - nrf_audio
+    - ci_tests_nrf_audio
+  timeout: 60
+tests:
+  nrf_audio.sw_codec_g722: {}
+  nrf_audio.sw_codec_g722.mono_duplication:
+    extra_args:
+      - TEST_MONO_DUPLICATION=ON

@@ -92,6 +92,8 @@ static void audio_gateway_configure(void)
 {
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_G722)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_G722;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
@@ -113,6 +115,8 @@ static void audio_headset_configure(void)
 {
 	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
 		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	} else if (IS_ENABLED(CONFIG_SW_CODEC_G722)) {
+		sw_codec_cfg.sw_codec = SW_CODEC_G722;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
@@ -172,7 +176,8 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			 */
 			*meta_out = *meta_in;
 
-			meta_out->data_coding = LC3;
+			meta_out->data_coding =
+				(sw_codec_cfg.sw_codec == SW_CODEC_G722) ? G722 : LC3;
 			meta_out->sample_rate_hz = sw_codec_cfg.encoder.sample_rate_hz;
 			meta_out->bitrate_bps = sw_codec_cfg.encoder.bitrate;
 			meta_out->bytes_per_location =

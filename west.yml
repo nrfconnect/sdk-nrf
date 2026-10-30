@@ -35,6 +35,8 @@ manifest:
       url-base: https://github.com/boschsensortec
     - name: eembc
       url-base: https://github.com/eembc
+    - name: sippy
+      url-base: https://github.com/sippy
 
   # If not otherwise specified, the projects below should be obtained
   # from the ncs remote.
@@ -267,6 +269,11 @@ manifest:
       repo-path: sdk-hostap
       path: modules/lib/hostap
       revision: 48d8aa596238cbee26019550cb7a474b2335e902
+    - name: g722
+      repo-path: libg722
+      remote: sippy
+      path: modules/lib/g722
+      revision: v1.2.8
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

@@ -199,6 +199,20 @@ See :ref:`nrf_audio_app_overview_architecture` for information about how both co
 You can enable the software codec using the :option:`CONFIG_SW_CODEC_LC3` Kconfig option.
 This codec is mandatory for LE Audio.
 
+For controlled BAP unicast peers, you can instead select :option:`CONFIG_SW_CODEC_G722` on both endpoints.
+The codec-specific helpers are implemented in :file:`src/audio/sw_codec_g722.c` and declared in :file:`src/audio/sw_codec_g722.h`; :file:`src/audio/sw_codec_select.c` retains shared routing, sample rate conversion and codec selection.
+This optional vendor-specific profile uses 16 kHz, signed 16-bit PCM at 64 kbit/s per channel, with 10 ms frames (80 octets per channel) and one frame block per SDU.
+LC3 remains the default; G.722 does not support broadcast or 7.5 ms frames.
+The application PCM rate must be 16 kHz, or 48 kHz with the sample rate converter enabled.
+At 48 kHz, the converter must use :option:`CONFIG_SAMPLE_RATE_CONVERTER_BIT_DEPTH_16` to match the codec's PCM format.
+An incompatible configuration makes G.722 unavailable in the codec choice.
+If Kconfig warnings are not fatal, a requested G.722 selection can resolve to the default LC3 codec instead; check the configuration warnings and generated configuration on both peers.
+Both peers must use matching :option:`CONFIG_SW_CODEC_G722_COMPANY_ID` and :option:`CONFIG_SW_CODEC_G722_VENDOR_CODEC_ID` values (currently defaulting to 0x0000 and 0x0001).
+These identifiers are project configuration, not a claim of an assigned interoperable G.722 profile.
+The client adapts the existing 16 kHz LC3 preset only after checking that the peer advertises the complete G.722 profile.
+Lost or corrupt channels produce a full frame of silence, including after rate conversion.
+This is not packet loss concealment: the decoder predictor state does not advance through missing encoded samples, so recovery artifacts can occur.
+
 You can enable the CS47L63 hardware codec using the :option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER` Kconfig option.
 
 The codec selection affects audio quality, processing requirements, and power consumption.

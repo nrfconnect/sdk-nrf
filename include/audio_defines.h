@@ -36,7 +36,10 @@ enum coding {
 	PCM = 1,
 
 	/* LC3-coded audio data */
-	LC3
+	LC3,
+
+	/* G.722-coded audio data */
+	G722
 };
 
 struct audio_metadata {
