@@ -1,9 +1,16 @@
 {
+	"schema_version": 2,
 	"files": {
-		{% for file in files %}"{{file.file_rel_path}}": {
-				"sha1": "{{file.sha1}}",
+		{% for file in files %}{{ file.file_rel_path | string | tojson }}: {
+				"sha1": {{ file.sha1 | tojson }},
 				"license": [
-					{% for license in file.licenses %} "{{license}}"{{ ", " if not loop.last else "" }}
+					{% for license in file.licenses | sort(case_sensitive=true) %} {{ license | tojson }}{{ ", " if not loop.last else "" }}
+				{% endfor %}],
+				"license_in_file": [
+					{% for license in file.licenses_in_file | sort(case_sensitive=true) %} {{ license | tojson }}{{ ", " if not loop.last else "" }}
+				{% endfor %}],
+				"copyright": [
+					{% for copyright in file.copyright_texts | sort(case_sensitive=true) %} {{ copyright | tojson }}{{ ", " if not loop.last else "" }}
 				{% endfor %}]
 		}{{ ", " if not loop.last else "" }}
 		{% endfor %}

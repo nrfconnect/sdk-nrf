@@ -22,15 +22,15 @@ The process of using the ``ncs-sbom`` command involves the following steps:
 
 #. Create a list of input files based on provided command-line arguments,
    for example, all source files used for building a specific application.
-   For details, see :ref:`west_sbom Specifying input`.
+   For details, see :ref:`west_sbom_specifying_input`.
 
 #. Detect the license applied to each file,
    for example, read `SPDX identifier`_ from ``SPDX-License-Identifier`` tag.
-   For details, see :ref:`west_sbom Detectors`.
+   For details, see :ref:`west_sbom_detectors`.
 
 #. Create an output report containing all the files and license information related to them.
    Depending on the selected output format, the command can also group files into packages and include package metadata in the report, for example, write a report file in HTML format.
-   For details, see :ref:`west_sbom Specifying output`.
+   For details, see :ref:`west_sbom_specifying_output`.
 
 When the input is a build directory, the command starts from the linked target, walks the Ninja dependency graph to collect build inputs, validates the result against the :file:`.map` file, and checks archive contents with the GNU ar tool.
 
@@ -72,15 +72,15 @@ Use the following command to install the requirements.
 
 .. note::
    The ``scancode-toolkit`` detector relies on the `Scancode-Toolkit`_, which is not part of the standard |NCS| toolchain bundle.
-   On Windows and Linux, the :file:`requirements-west-ncs-sbom.txt` file installs ScanCode Toolkit together with its Python dependencies.
+   The :file:`requirements-west-ncs-sbom.txt` file installs ``scancode-toolkit-mini``, a Python build of the ScanCode Toolkit that uses the same license detection engine and license database on all supported platforms, including macOS on ARM64.
 
-   On Linux, ScanCode Toolkit requires installation of additional system dependencies.
-   To install the required tools on Ubuntu, run::
+   The ``mini`` build ships the same Python code as the full ScanCode Toolkit, but without the pre-built native plugins.
+   Those plugins add archive extraction through ``extractcode`` and file type identification through ``libmagic``.
+   License and copyright detection is unaffected, so both builds report the same results for the same files.
+   The ``ncs-sbom`` command scans files that are already unpacked and never extracts archives, so it does not use the omitted plugins.
 
-      sudo apt install python-dev bzip2 xz-utils zlib1g libxml2-dev libxslt1-dev libpopt0
-
-   On macOS with Apple Silicon installing ScanCode Toolkit with ``pip`` is not supported.
-   Install ScanCode Toolkit separately from a release archive and use ``--scancode`` to point to the executable if needed.
+   The ScanCode Toolkit also requires the libmagic library.
+   The requirements file installs this library as well, so no additional installation steps are needed.
 
    For more details, see `Scancode-Toolkit Installation`_.
 
@@ -124,7 +124,7 @@ The input options and output options can be combined as needed.
 
      west ncs-sbom --input-files *file1* *file2* --output-spdx *file-name.spdx*
 
-.. _west_sbom Specifying input:
+.. _west_sbom_specifying_input:
 
 Specifying input
 ================
@@ -144,7 +144,7 @@ You can also mix them, for example, to generate a report for the application and
 
   You can skip this option if you are in the application directory and you have a default :file:`build` directory there - the same way as in ``west build`` command.
 
-  The :ref:`west_sbom Extracting from build` section describes in detail how to extract a list of files from a build directory.
+  The :ref:`west_sbom_extracting_from_build` section describes in detail how to extract a list of files from a build directory.
 
   You can use the ``-d`` option multiple times.
   For example, to include both the ``mcuboot`` child image and the main application, use the following command:
@@ -205,6 +205,23 @@ You can also mix them, for example, to generate a report for the application and
 
      --input-files '**/*.c' '!**/main.c'
 
+* Provide an input directory whose files are all analyzed recursively:
+
+  .. parsed-literal::
+     :class: highlight
+
+     --input-dir *directory*
+
+  This is equivalent to ``--input-files`` with the ``directory/**/*`` glob.
+  All files inside the directory and its subdirectories are added.
+  You can use this option more than once.
+
+  For example, to analyze all files under an absolute path:
+
+  .. code-block:: bash
+
+     --input-dir /nordicsemi/somedir
+
 * Read a list of input files from a file:
 
   .. parsed-literal::
@@ -217,7 +234,7 @@ You can also mix them, for example, to generate a report for the application and
   Comments starting with a ``#`` character are allowed.
 
 
-.. _west_sbom Specifying output:
+.. _west_sbom_specifying_output:
 
 Specifying output
 =================
@@ -231,13 +248,13 @@ You can specify the format of the report output using the ``output`` argument.
 
      --output-html *file-name.html*
 
-  The :ref:`west_sbom HTML report overview` section provides more details about the report.
+  The :ref:`west_sbom_HTML_report_overview` section provides more details about the report.
 
   If you use the ``-d`` option, you do not need to specify any output argument.
   The :file:`sbom_report.html` file is generated in your build directory
   (the first one if you specify more than one build directory).
 
-* To generate an SPDX 2.2 format report (for CRA/EO 14028/FDA compliance):
+* To generate an SPDX 2.3 format report (for CRA/EO 14028/FDA compliance):
 
   .. parsed-literal::
      :class: highlight
@@ -247,13 +264,18 @@ You can specify the format of the report output using the ``output`` argument.
   The SPDX report groups files into packages and includes:
 
   * Package supplier information (auto-detected from git URLs or specified via ``--package-supplier``)
-  * Component name, version, and download location
+  * Component name, version, and ``PackageDownloadLocation`` (``git+<url>@<sha>`` for git-resolved packages; use ``--package-download-format github-archive`` to emit a GitHub archive zip URL instead)
+  * ``PackageHomePage`` for browsable project links
   * Package URLs (PURLs) for unique package identification
-  * Common Platform Enumeration (CPE) identifiers when specified via ``--package-cpe``
+  * Upstream ``ExternalRef`` entries taken from each Zephyr module's :file:`zephyr/module.yml`
+    (see :ref:`upstream_external_references`)
+  * A Common Platform Enumeration (CPE) identifier for the application package when specified using ``--package-cpe``
   * Dependency relationships showing supply chain connections
   * File checksums and license information
+  * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
+  * ``BuiltDate`` on the application package, taken from the newest build-artifact timestamp
 
-  SPDX 2.2 is currently the supported machine-readable standardized output format.
+  SPDX 2.3 is the supported machine-readable standardized output format.
 
   This format meets requirements from:
 
@@ -270,7 +292,7 @@ You can specify the format of the report output using the ``output`` argument.
 
   For details, see ``cache-database`` detector.
 
-.. _west_sbom Detectors:
+.. _west_sbom_detectors:
 
 Detectors
 =========
@@ -285,7 +307,7 @@ The ``ncs-sbom`` command includes the following detectors:
 
   The database is part of the ``ncs-sbom`` command. Enabled by default.
 
-* ``scancode-toolkit`` - License detection by the `Scancode-Toolkit`_. Enabled and optional by default.
+* ``scancode-toolkit`` - License and copyright detection by the `Scancode-Toolkit`_. Enabled and optional by default.
 
   If the ``scancode`` command is not on your ``PATH``, you can use the ``--scancode`` option to provide it, for example:
 
@@ -330,8 +352,12 @@ The ``ncs-sbom`` command includes the following detectors:
 
      --input-cache-database *cache-database.json*
 
-  Each database entry has a path relative to the west workspace directory, a hash, and a list of detected licenses.
-  If the file under detection has the same path and hash, the list of licenses from the database is used.
+  Each version 2 database entry has a path relative to the west workspace directory, a hash,
+  concluded license evidence, license information detected in the file, and copyright notices.
+  If the file under detection has the same path and hash, the cached information is merged with
+  results from earlier detectors.
+
+  Version 1 databases containing only the merged license list remain supported.
 
   .. note::
      To generate the database based on, for example the ``scancode-toolkit`` detector, run the following command:
@@ -377,17 +403,53 @@ The following options enhance SBOM compliance with CRA, EO 14028, and FDA requir
 
   If not specified, the supplier is auto-detected from git repository owner/organization names.
 
-* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier:
+* ``--package-cpe`` - Set the Common Platform Enumeration (CPE) identifier of the application:
 
   .. code-block:: bash
 
      --package-cpe "cpe:2.3:a:nordicsemi:nrf_connect_sdk:2.0.0:*:*:*:*:*:*:*"
 
   CPE identifiers follow the CPE 2.3 specification and help identify software packages in vulnerability databases.
+  A CPE names one product so this option applies to the application package only.
+
+  The identifiers of the components you build on come from their Zephyr modules instead as described in :ref:`upstream_external_references`.
 
 These options ensure that generated SBOMs include all required fields for regulatory compliance.
 
-.. _west_sbom HTML report overview:
+.. _upstream_external_references:
+
+Upstream external references
+============================
+
+Most |NCS| components are redistributed rather than taken from the project that develops them.
+Some are Nordic forks under ``nrfconnect`` some are hosted under ``zephyrproject-rtos`` and a few come straight from their original project.
+A package is reported under the name and revision that was actually built, for example ``nrfconnect/sdk-mbedtls`` or ``zephyrproject-rtos/cmsis``.
+Vulnerability databases carry entries for the originating project.
+
+Zephyr modules declare the upstream project they are derived from in :file:`zephyr/module.yml`:
+
+.. code-block:: yaml
+
+   security:
+     external-references:
+       - cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+       - pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+When a repository declares that block the entries are emitted as additional ``ExternalRef`` records on its package next to the fork's own package URL::
+
+   PackageName: nrfconnect/sdk-mbedtls
+   PackageVersion: v3.6.3-ncs1
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/nrfconnect/sdk-mbedtls@<commit>
+   ExternalRef: SECURITY cpe23Type cpe:2.3:a:arm:mbed_tls:3.6.3:*:*:*:*:*:*:*
+   ExternalRef: PACKAGE-MANAGER purl pkg:github/Mbed-TLS/mbedtls@v3.6.3
+
+The fork keeps describing what was built and the upstream references say which product the code came from.
+Only the module at the root of a repository is read and a reference that is neither a CPE 2.3 name nor a package URL is skipped with a warning.
+
+An upstream reference describes the product a fork is derived from.
+Where a fix has been backported the upstream version does not change so a scanner can still report an issue that is already fixed.
+
+.. _west_sbom_HTML_report_overview:
 
 HTML report overview
 ********************
@@ -432,12 +494,12 @@ The HTML report has following structure:
 
 * License texts added to this report.
 
-.. _west_sbom Extracting from build:
+.. _west_sbom_extracting_from_build:
 
 Extracting a list of files from a build directory
 *************************************************
 
-The ``ncs-sbom`` extracts a list of files from a build directory.
+The ``ncs-sbom`` command extracts a list of files from a build directory.
 It queries ninja for the targets and dependencies.
 
 The entry point is the :file:`zephyr/zephyr.elf` target file.
@@ -460,7 +522,7 @@ There are two additional methods for improving the correctness of the above algo
   If the list of files returned by the GNU ar tool is covered by the list returned from the ninja, the list is assumed to be valid.
   Otherwise, the library is assumed to be a leaf, so it is shown in the report and its inputs are not analyzed further.
 
-* The ``ncs-sbom`` parses the :file:`.map` file created during the :file:`zephyr/zephyr.elf` linking.
+* The ``ncs-sbom`` command parses the :file:`.map` file created during the :file:`zephyr/zephyr.elf` linking.
 
   It provides a list of all object files and libraries linked to the :file:`zephyr/zephyr.elf` file.
   The script ends with a fatal error if any file in the :file:`.map` file is not visible by ninja.

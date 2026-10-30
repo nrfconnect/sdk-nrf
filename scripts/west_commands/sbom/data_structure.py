@@ -28,17 +28,24 @@ class FileInfo(DataBaseClass):
         file_path           File path
         file_rel_path       Path relative to west workspace
         licenses            Set of detected SPDX license IDs and expressions
+        licenses_in_file    Subset of licenses detected in the file itself
         license_expr        Contains SPDX license expression that covers all detected licesens
+        infile_lics         Friendly SPDX entries for licenses detected in the file itself
+        copyright_texts     Copyright notices detected in the file
         package             Package ID of this file
         local_modifications The file was modified and does not match version of this package
         sha1                SHA-1 of the file
-        detectors           Set of detectors that contributed to the list of licenses
-                             for the file
+        detectors           Set of detectors that contributed license or copyright
+                            information for the file
     '''
     file_path: Path
     file_rel_path: Path
     licenses: 'set[str]' = set()
+    licenses_in_file: 'set[str]' = set()
     license_expr: str
+    license_expr_friendly: str = ''
+    infile_lics: 'list[str]' = list()
+    copyright_texts: 'set[str]' = set()
     package: 'str' = ''
     local_modifications: bool = False
     sha1: str
@@ -70,15 +77,19 @@ class License(DataBaseClass):
 class Package(DataBaseClass):
     ''' Contains package information
     Attributes:
-        id             ID of this package
-        name           User friendly name
-        url            URL pointing to the source of this package
-        version        Version string of this package
-        browser_url    URL that can be opened in a web browser
-        supplier       Supplier name
-        purl           Package URL (PURL) identifier
-        cpe            Common Platform Enumeration (CPE) identifier
-        dependencies   List of package IDs this package depends on
+        id                      ID of this package
+        name                    User friendly name
+        url                     URL pointing to the source of this package
+        version                 Version string of this package
+        browser_url             URL that can be opened in a web browser
+        supplier                Supplier name
+        purl                    Package URL (PURL) identifier
+        cpe                     Common Platform Enumeration (CPE) identifier
+        external_refs           Additional SPDX external references as
+                                (category, type, locator) tuples.
+        dependencies            List of package IDs this package depends on
+        primary_package_purpose Estimate of the most likely package usage; None to omit
+        built_date              Actual date the package was built; None to omit
     '''
     id: str = ''
     name: 'str|None' = None
@@ -88,7 +99,10 @@ class Package(DataBaseClass):
     supplier: 'str|None' = None
     purl: 'str|None' = None
     cpe: 'str|None' = None
+    external_refs: 'list[tuple[str,str,str]]' = list()
     dependencies: 'list[str]' = list()
+    primary_package_purpose: 'str|None' = None
+    built_date: 'str|None' = None
 
 
 class LicenseExpr(DataBaseClass):
@@ -133,6 +147,7 @@ class Data(DataBaseClass):
         application_roots Set of application source roots detected from build directories.
         module_roots     Set of module source roots detected from build directories.
         toolchain_paths  Mapping of detected toolchain root paths (resolved) to package IDs.
+        domain           Sysbuild domain name for this run. None for non-sysbuild builds.
     '''
     files: 'list[FileInfo]' = list()
     licenses: 'dict[License|LicenseExpr]' = dict()
@@ -141,7 +156,12 @@ class Data(DataBaseClass):
     packages_sorted: 'list[str]' = list()
     inputs: 'list[str]' = list()
     detectors: 'set[str]' = set()
-    report_uuid: 'str' = uuid4()
+    report_uuid: str = ''
     application_roots: 'set[str]' = set()
     module_roots: 'set[str]' = set()
     toolchain_paths: 'dict[str,str]' = dict()
+    domain: 'str|None' = None
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.report_uuid = str(uuid4())
