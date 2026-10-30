@@ -1714,7 +1714,6 @@
 
 .. _`nRF Cloud documentation`:
 .. _`nRF Connect for Cloud documentation`: https://docs.nrfcloud.com/docs/nrfcloud/introduction
-.. _`Adding a device to your account`: https://docs.nrfcloud.com/docs/nrfcloud/getting-started#adding-a-device-to-your-account
 .. _`nRF Cloud Device Messages`: https://docs.nrfcloud.com/docs/nrfcloud/device-messages
 .. _`nRF Cloud Device ID`: https://docs.nrfcloud.com/docs/nrfcloud/device-id
 .. _`nRF Cloud Device Shadows`: https://docs.nrfcloud.com/docs/nrfcloud/device-shadow
@@ -1722,6 +1721,8 @@
 .. _`nRF Cloud Auto-onboarding`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#auto-onboarding
 .. _`nRF Cloud device claiming`: https://docs.nrfcloud.com/docs/nrfcloud/claiming-device-ownership-portal
 .. _`nRF Cloud Preconnect Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/onboarding#preconnect-onboarding
+.. _`nRF Cloud Device Onboarding`: https://docs.nrfcloud.com/docs/category/onboarding
+.. _`nRF Cloud manual device certificate provisioning`: https://docs.nrfcloud.com/docs/best-practices/device-onboarding-quickstart#manually-provisioning-a-device-certificate
 .. _`nRF Cloud Onboarding`:
 .. _`nRF Cloud Provisioning`: https://docs.nrfcloud.com/docs/nrfcloud/provisioning-overview
 .. _`nRF Cloud FOTA`: https://docs.nrfcloud.com/docs/nrfcloud/fota-overview
