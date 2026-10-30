@@ -134,7 +134,10 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER=y
-      - CONFIG_TEST_PDM_SAMPLING_RATE=44100
+      # The PDM peripheral has no decimation ratio 32, so out of the 44.1 kHz
+      # clock family only 22.05 kHz lands on an integer prescaler while keeping
+      # PDM_CLK within the range the pulse counter can follow.
+      - CONFIG_TEST_PDM_SAMPLING_RATE=22050
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1411200
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
       - CONFIG_CLOCK_CONTROL=y
@@ -145,7 +148,8 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
     extra_args:
       - CONFIG_NRFX_TIMER=y
-      - CONFIG_TEST_PDM_SAMPLING_RATE=48000
+      # See the 44.1 kHz scenario above for why the rate is halved.
+      - CONFIG_TEST_PDM_SAMPLING_RATE=24000
       - CONFIG_TEST_PDM_EXPECTED_FREQUENCY=1536000
       - CONFIG_TEST_PDM_SAMPLING_TIME=10
       - CONFIG_CLOCK_CONTROL=y
