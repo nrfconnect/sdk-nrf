@@ -178,6 +178,7 @@ static int apply_nrf91_app(off_t offset, size_t length)
 		LOG_ERR("Failed to resume modem after XDFU: %d", restore_err);
 		return err < 0 ? err : restore_err;
 	}
+	LOG_INF("Transfer complete!");
 
 restore_interface:
 	if (was_up) {
@@ -189,6 +190,7 @@ restore_interface:
 			}
 		}
 	}
+	LOG_INF("Apply nRF91 app done!");
 	return err;
 }
 

@@ -32,7 +32,11 @@ OTA download and application are started explicitly from the shell, not at boot:
 
 ``ota download`` checks Memfault for an available update and saves its bundle to
 ``/ota/bundle.bin`` without applying it. ``ota apply`` verifies and applies the
-saved bundle without downloading it again. Both commands block until completion.
+saved bundle without downloading it again. Both commands queue the operation on
+a dedicated OTA thread and return immediately, leaving the shell responsive to
+input and log output. Progress and completion are reported through logging.
+Only one OTA operation can be queued or running; another request returns
+``-EBUSY`` until it finishes.
 Download requires a connected network; apply can run offline after the sample
 has completed startup. Boot still initializes networking, uploads Memfault data,
 and confirms the host MCUboot image.

@@ -14,6 +14,7 @@
 #include <zephyr/pm/device.h>
 #include <zephyr/drivers/cellular.h>
 #include <zephyr/shell/shell.h>
+#include <zephyr/sys/atomic.h>
 
 #include <memfault/components.h>
 #include <memfault/ports/zephyr/http.h>
@@ -44,6 +45,15 @@ const struct device *modem = DEVICE_DT_GET(DT_ALIAS(modem));
 static struct net_if *ppp_iface;
 static K_EVENT_DEFINE(l4_event);
 
+enum ota_operation {
+	OTA_IDLE,
+	OTA_DOWNLOAD,
+	OTA_APPLY,
+};
+
+static atomic_t ota_operation;
+static K_SEM_DEFINE(ota_request, 0, 1);
+
 static void l4_event_handler(uint64_t event, struct net_if *iface, void *info, size_t info_length,
 			     void *user_data)
 {
@@ -68,55 +78,89 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info, s
 
 NET_MGMT_REGISTER_EVENT_HANDLER(l4_events, L4_EVENT_MASK, l4_event_handler, NULL);
 
-static int cmd_ota_download(const struct shell *sh, size_t argc, char **argv)
+static void ota_download_run(void)
 {
 	char *url = NULL;
 	int ret;
 
-	ARG_UNUSED(argc);
-	ARG_UNUSED(argv);
-	if (k_event_test(&l4_event, APP_READY | L4_CONNECTED) != (APP_READY | L4_CONNECTED)) {
-		shell_error(sh, "Application/network is not ready");
-		return -EAGAIN;
-	}
+	LOG_INF("Checking for OTA update");
 	ret = memfault_zephyr_port_get_download_url(&url);
 	if (ret < 0) {
-		shell_error(sh, "OTA check failed (%d)", ret);
-		return ret;
+		LOG_ERR("OTA check failed (%d)", ret);
+		return;
 	}
 	if (ret == 0) {
-		shell_print(sh, "Up to date");
-		return 0;
+		LOG_INF("Up to date");
+		return;
 	}
 
-	shell_print(sh, "Downloading OTA bundle");
+	LOG_INF("Downloading OTA bundle");
 	ret = ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
 	memfault_zephyr_port_release_download_url(&url);
 	if (ret < 0) {
-		shell_error(sh, "OTA download failed (%d)", ret);
+		LOG_ERR("OTA download failed (%d)", ret);
 	} else {
-		shell_print(sh, "Bundle saved to %s", OTA_BUNDLE_PATH);
+		LOG_INF("Bundle saved to %s", OTA_BUNDLE_PATH);
 	}
-	return ret;
 }
 
-static int cmd_ota_apply(const struct shell *sh, size_t argc, char **argv)
+static void ota_thread_fn(void *unused1, void *unused2, void *unused3)
 {
-	int ret;
+	ARG_UNUSED(unused1);
+	ARG_UNUSED(unused2);
+	ARG_UNUSED(unused3);
 
-	ARG_UNUSED(argc);
-	ARG_UNUSED(argv);
+	while (true) {
+		k_sem_take(&ota_request, K_FOREVER);
+		if (atomic_get(&ota_operation) == OTA_DOWNLOAD) {
+			ota_download_run();
+		} else {
+			int ret = ota_bundle_apply();
+
+			if (ret < 0) {
+				LOG_ERR("OTA apply failed (%d)", ret);
+			} else {
+				LOG_INF("OTA application transfer complete");
+			}
+		}
+		atomic_set(&ota_operation, OTA_IDLE);
+	}
+}
+
+K_THREAD_DEFINE(ota_thread, 8192, ota_thread_fn, NULL, NULL, NULL,
+		K_LOWEST_APPLICATION_THREAD_PRIO, 0, 0);
+
+static int ota_submit(const struct shell *sh, enum ota_operation operation)
+{
 	if (k_event_test(&l4_event, APP_READY) == 0) {
 		shell_error(sh, "Application is not ready");
 		return -EAGAIN;
 	}
-	ret = ota_bundle_apply();
-	if (ret < 0) {
-		shell_error(sh, "OTA apply failed (%d)", ret);
-	} else {
-		shell_print(sh, "OTA application transfer complete");
+	if (operation == OTA_DOWNLOAD && k_event_test(&l4_event, L4_CONNECTED) == 0) {
+		shell_error(sh, "Network is not ready");
+		return -EAGAIN;
 	}
-	return ret;
+	if (!atomic_cas(&ota_operation, OTA_IDLE, operation)) {
+		shell_error(sh, "An OTA operation is already running");
+		return -EBUSY;
+	}
+	shell_print(sh, "OTA %s queued", operation == OTA_DOWNLOAD ? "download" : "apply");
+	k_sem_give(&ota_request);
+	return 0;
+}
+
+static int cmd_ota_download(const struct shell *sh, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	return ota_submit(sh, OTA_DOWNLOAD);
+}
+
+static int cmd_ota_apply(const struct shell *sh, size_t argc, char **argv)
+{
+	ARG_UNUSED(argc);
+	ARG_UNUSED(argv);
+	return ota_submit(sh, OTA_APPLY);
 }
 
 SHELL_STATIC_SUBCMD_SET_CREATE(ota_commands,
