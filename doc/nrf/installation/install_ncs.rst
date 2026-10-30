@@ -163,16 +163,12 @@ Complete the following steps:
    #. Run the following command to install the SDK and the toolchain for the SDK version of your choice:
 
       .. nrfutil-command::
+         :values: version=|release|
+         :example-toggle-off:
 
          nrfutil sdk-manager install <version>
 
-      For example:
-
-      .. nrfutil-command::
-
-         nrfutil sdk-manager install |release|
-
-      This example command installs both the SDK code and the toolchain for the |NCS| |release|.
+      With the example values, this command installs both the SDK code and the toolchain for the |NCS| |release|.
       |install_latest_version|
 
       .. note::
@@ -209,6 +205,7 @@ Complete the following steps:
 
       .. nrfutil-command::
          :values: version=|release|
+         :example-toggle-off:
          :values-windows: shell_option=--terminal
          :values-linux: shell_option=--shell
          :values-macos: shell_option=--shell

@@ -250,49 +250,16 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 1. Connect the nRF54H20 DK to your computer using the **DEBUGGER** port on the DK.
 #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
-   .. tabs::
+   .. nrfutil-command::
+      :values: version=|release|
+      :example-toggle-off:
+      :values-windows: shell_option=--terminal
+      :values-linux: shell_option=--shell
+      :values-macos: shell_option=--shell
 
-      .. tab:: Windows
+      nrfutil sdk-manager toolchain launch --ncs-version <version> <shell_option>
 
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version <version> --terminal
-
-         For example:
-
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
-
-         This example command starts the toolchain environment for the |NCS| |release|.
-
-      .. tab:: Linux
-
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
-
-         For example:
-
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-         This example command starts the toolchain environment for the |NCS| |release|.
-
-      .. tab:: macOS
-
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version <version> --shell
-
-         For example:
-
-         .. nrfutil-command::
-
-            nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-         This example command starts the toolchain environment for the |NCS| |release|.
+   With the example values, this command starts the toolchain environment for the |NCS| |release|.
 
 #. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
 #. Run the following command to build the sample for application and radio cores::
