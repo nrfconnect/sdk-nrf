@@ -134,8 +134,9 @@ You can set the location for each headset in the following ways, depending on th
   For example, if you want to use the stereo configuration, use the ``0x3`` value, which is the combined bitfield value of the left (``0x01``) and right (``0x02``) location:
 
   .. nrfutil-command:: console
+     :values: value=3
 
-     nrfutil device write --address 0x00FF80F4 --value 3
+     nrfutil device write --address 0x00FF80F4 --value <value>
 
 The following table lists some of the available locations and their bitfield values:
 

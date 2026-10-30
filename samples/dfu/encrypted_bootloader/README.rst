@@ -159,14 +159,16 @@ Complete the following steps to perform DFU using the `nRF Util development tool
 #. Upload the encrypted second version of the MCUboot image to the device using the SMP protocol:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1
 
-      nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM1 --image-number 1 --firmware ./build/signed_by_mcuboot_and_b0_mcuboot_s1_variant.bin
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 1 --firmware ./build/signed_by_mcuboot_and_b0_mcuboot_s1_variant.bin
 
 #. List the images on the device again to get the hash of the second version of the MCUboot image:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1
 
-      nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM1
+      nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
    The output resembles the following example:
 
@@ -194,8 +196,9 @@ Complete the following steps to perform DFU using the `nRF Util development tool
 #. Set the confirmed flag for the second version of the image, using the acquired hash:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1 hash=631f61740f3ecf5955570a9b608364555df93af1f3fd0250e7ed9433dd9f97abc61e888f6916bc831fa07f916e89301d51d059a61a712e487b0aace4832c0ec5
 
-      nrfutil mcu-manager serial image-confirm --serial-port /dev/ttyACM1 --hash 631f61740f3ecf5955570a9b608364555df93af1f3fd0250e7ed9433dd9f97abc61e888f6916bc831fa07f916e89301d51d059a61a712e487b0aace4832c0ec5
+      nrfutil mcu-manager serial image-confirm --serial-port <serial_port> --hash <hash>
 
    The MCUboot updates do not support the test flag.
    If the MCUboot update candidate for an inactive slot is deteted, the slot is overwritten with the new image.
@@ -260,14 +263,16 @@ Complete the following steps to perform DFU using the `nRF Util development tool
 #. Upload the encrypted second version of the application image to the device using the SMP protocol:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1
 
-      nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM1 --image-number 0 --firmware ./build/encrypted_bootloader/zephyr/zephyr.signed.encrypted.bin
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 0 --firmware ./build/encrypted_bootloader/zephyr/zephyr.signed.encrypted.bin
 
 #. List the images on the device again to get the hash of the second version of the application image:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1
 
-      nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM1
+      nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
    The output resembles the following example:
 
@@ -295,8 +300,9 @@ Complete the following steps to perform DFU using the `nRF Util development tool
 #. Set the test flag for the second version of the image, using the acquired hash:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1 hash=b192841fbc9a158ff374c56ce0922ed13683d50cce50e32915984df077043ea802da9679bd651e57ce652f39f08cb034385fe135510731dd015770b526ff1bfd
 
-      nrfutil mcu-manager serial image-test --serial-port /dev/ttyACM1 --hash b192841fbc9a158ff374c56ce0922ed13683d50cce50e32915984df077043ea802da9679bd651e57ce652f39f08cb034385fe135510731dd015770b526ff1bfd
+      nrfutil mcu-manager serial image-test --serial-port <serial_port> --hash <hash>
 
 #. Reconnect to the terminal.
 #. Reboot the device.
@@ -304,8 +310,9 @@ Complete the following steps to perform DFU using the `nRF Util development tool
 #. To make the new version permanent, confirm the image:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM1 hash=b192841fbc9a158ff374c56ce0922ed13683d50cce50e32915984df077043ea802da9679bd651e57ce652f39f08cb034385fe135510731dd015770b526ff1bfd
 
-      nrfutil mcu-manager serial image-confirm --serial-port /dev/ttyACM1 --hash b192841fbc9a158ff374c56ce0922ed13683d50cce50e32915984df077043ea802da9679bd651e57ce652f39f08cb034385fe135510731dd015770b526ff1bfd
+      nrfutil mcu-manager serial image-confirm --serial-port <serial_port> --hash <hash>
 
 Dependencies
 ************
