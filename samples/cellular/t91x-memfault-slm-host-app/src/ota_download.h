@@ -26,11 +26,18 @@
  */
 int ota_bundle_download(const char *url, const int *sec_tags, uint8_t sec_tag_count);
 
-#endif /* OTA_DOWNLOAD_H_ */
-
 /**
- * @brief Process the downloaded OTA bundle and reboot.
+ * @brief Verify the downloaded bundle and apply its nRF91 application element.
+ *
+ * Verifies element metadata, payload size, and SHA-256 before any transfer.
+ * Temporarily suspends the modem and PPP interface, streams the application
+ * using AT#XDFU, resets the modem, and restores networking. Network registration
+ * completes asynchronously. Other targets are logged but not applied.
+ * The nRF91 application must confirm its new MCUboot image after booting.
  *
  * @retval 0 on success, negative errno on failure.
+ * @retval -ENOTSUP if the bundle contains no supported application element.
  */
 int ota_bundle_apply(void);
+
+#endif /* OTA_DOWNLOAD_H_ */

@@ -7,4 +7,4 @@ project(t91x_memfault_slm_host_app)
 
 target_include_directories(app PRIVATE ota)
 
-target_sources(app PRIVATE src/main.c src/ota_download.c ota/ota_bundle_decode.c)
+target_sources(app PRIVATE src/main.c src/ota_download.c src/sm_xdfu.c ota/ota_bundle_decode.c)

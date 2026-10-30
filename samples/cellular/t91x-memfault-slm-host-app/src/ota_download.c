@@ -12,10 +12,13 @@
 #include <zephyr/kernel.h>
 #include <zephyr/fs/fs.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/net/net_if.h>
+#include <zephyr/pm/device.h>
 
 #include <net/downloader.h>
 
 #include "ota_download.h"
+#include "sm_xdfu.h"
 
 #include "ota_bundle_decode.h"
 
@@ -143,6 +146,52 @@ out_close:
 	return err;
 }
 
+static int apply_nrf91_app(off_t offset, size_t length)
+{
+	const struct device *modem = DEVICE_DT_GET(DT_ALIAS(modem));
+	struct net_if *iface = net_if_get_first_by_type(&NET_L2_GET_NAME(PPP));
+	bool was_up;
+	int err;
+	int restore_err;
+
+	if (iface == NULL) {
+		return -ENODEV;
+	}
+	was_up = net_if_is_up(iface);
+	if (was_up) {
+		err = net_if_down(iface);
+		if (err < 0) {
+			return err;
+		}
+	}
+	err = pm_device_action_run(modem, PM_DEVICE_ACTION_SUSPEND);
+	if (err < 0) {
+		LOG_ERR("Failed to suspend modem for XDFU: %d", err);
+		goto restore_interface;
+	}
+
+	LOG_INF("Transferring nRF91 application: offset %lld, size %zu",
+		(long long)offset, length);
+	err = sm_xdfu_app_run(modem, OTA_BUNDLE_PATH, offset, length);
+	restore_err = pm_device_action_run(modem, PM_DEVICE_ACTION_RESUME);
+	if (restore_err < 0) {
+		LOG_ERR("Failed to resume modem after XDFU: %d", restore_err);
+		return err < 0 ? err : restore_err;
+	}
+
+restore_interface:
+	if (was_up) {
+		restore_err = net_if_up(iface);
+		if (restore_err < 0) {
+			LOG_ERR("Failed to restore PPP interface: %d", restore_err);
+			if (err == 0) {
+				err = restore_err;
+			}
+		}
+	}
+	return err;
+}
+
 int ota_bundle_apply(void)
 {
 	uint8_t digest[32];
@@ -151,7 +200,7 @@ int ota_bundle_apply(void)
 	psa_hash_operation_t sha_ctx = {0};
 	size_t header_len = 0;
 	size_t digest_len = 0;
-	size_t payload_offset;
+	uint64_t payload_offset;
 	uint32_t remaining;
 	ssize_t bytes_read;
 	int err;
@@ -246,18 +295,51 @@ int ota_bundle_apply(void)
 	for (size_t i = 0; i < bundle.ota_element_m_count; i++) {
 		const struct ota_element *element = &bundle.ota_element_m[i];
 
-		LOG_INF("  %s: offset %zu, size %u bytes", ota_target_name(element->target_choice),
-			payload_offset, element->size);
+		LOG_INF("  %s: offset %llu, size %u bytes", ota_target_name(element->target_choice),
+			(unsigned long long)payload_offset, element->size);
 		payload_offset += element->size;
 	}
 
-	LOG_INF("expected size: %u, actual size: %u", bundle.bundle_size + header_len, payload_offset);
+	LOG_INF("expected size: %llu, actual size: %llu",
+		(unsigned long long)bundle.bundle_size + header_len,
+		(unsigned long long)payload_offset);
+	if (payload_offset != (uint64_t)bundle.bundle_size + header_len) {
+		LOG_ERR("OTA bundle element sizes do not match bundle_size");
+		err = -EBADMSG;
+	}
 
 out_free_sha:
 	if (sha_initialized) {
 		(void)psa_hash_abort(&sha_ctx);
 	}
 out_close:
-	fs_close(&ota_file);
+	if (err) {
+		fs_close(&ota_file);
+		return err;
+	}
+	err = fs_close(&ota_file);
+	if (err) {
+		return err;
+	}
+
+	payload_offset = header_len;
+	err = -ENOTSUP;
+	for (size_t i = 0; i < bundle.ota_element_m_count; i++) {
+		const struct ota_element *element = &bundle.ota_element_m[i];
+
+		switch (element->target_choice) {
+		case ota_element_target_nrf91_app_m_c:
+			err = apply_nrf91_app((off_t)payload_offset, element->size);
+			if (err) {
+				return err;
+			}
+			break;
+		default:
+			LOG_WRN("Not applying %s: target not implemented",
+				ota_target_name(element->target_choice));
+			break;
+		}
+		payload_offset += element->size;
+	}
 	return err;
 }

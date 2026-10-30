@@ -20,6 +20,32 @@ This sample uses the devicetree alias ``modem`` to identify
 the modem instance to use. The sample also presumes that
 the modem driver creates the only PPP network interface.
 
+nRF91 application updates
+************************
+
+After downloading a Memfault OTA bundle, the application verifies the complete
+payload SHA-256 and element sizes before applying an ``nrf91_app`` element.
+The element must contain the MCUboot-signed nRF91 application binary, not a ZIP
+archive or the complete OTA bundle.
+
+The local XDFU helper in ``src/sm_xdfu.c`` is adapted from the serial-modem
+``sm_xdfu`` library. It reads a bounded range directly from ``/ota/bundle.bin``
+without extracting a second file. It uses ``AT#XDFUINIT=0``, chunks of at most
+4096 bytes with ``AT#XDFUWRITE=0``, and ``AT#XDFUAPPLY=0``. Each write and apply
+must report a successful ``#XDFU`` completion before processing continues.
+
+PPP is brought down and the cellular driver suspended before the helper takes
+over its UART. After applying the image, the helper resets the nRF91 and waits
+for ``Ready`` before releasing the UART and restoring networking. A reset GPIO
+is needed to recover if a transfer fails while the modem may be in binary mode.
+Network registration after restoration is asynchronous.
+
+The nRF91 firmware must support these XDFU commands and confirm its MCUboot test
+image after a successful boot. The host's own MCUboot confirmation does not
+confirm the nRF91 image. Other bundle targets are logged and skipped; modem
+delta/full firmware and nRF53 updates are not applied by this implementation.
+The bundle is retained on external flash for inspection or retry.
+
 Setup
 *****
 
