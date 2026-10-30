@@ -266,14 +266,16 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 #. Upload the second version of the image to the device using the SMP protocol:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
 
-      nrfutil mcu-manager serial image-upload --serial-port /dev/ttyACM0 --image-number 0 --firmware ./build_v2/smp_svr/zephyr/zephyr.signed.bin
+      nrfutil mcu-manager serial image-upload --serial-port <serial_port> --image-number 0 --firmware ./build_v2/smp_svr/zephyr/zephyr.signed.bin
 
 #. List the images on the device again to get the hash of the second version of the image:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0
 
-      nrfutil mcu-manager serial image-list --serial-port /dev/ttyACM0
+      nrfutil mcu-manager serial image-list --serial-port <serial_port>
 
    The output resembles the following example:
 
@@ -301,8 +303,9 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 #. Set the test flag for the second version of the image, using the acquired hash:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0 hash=35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
 
-      nrfutil mcu-manager serial image-test --serial-port /dev/ttyACM0 --hash 35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
+      nrfutil mcu-manager serial image-test --serial-port <serial_port> --hash <hash>
 
 #. Reconnect to the terminal.
 
@@ -313,8 +316,9 @@ For example, if the overwrite only mode is used, no confirmation is needed.
 #. To make the new version permanent, confirm the image:
 
    .. nrfutil-command:: console
+      :values: serial_port=/dev/ttyACM0 hash=35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
 
-      nrfutil mcu-manager serial image-confirm --serial-port /dev/ttyACM0 --hash 35bd50242ad991aa5fd9374b33bc8ebcd2332fe26cae44f5f32172a62b7c4adcde1467f33b783e7c7090eb6dffc358bcb9a4efb8f50b99d587131418cd5da375
+      nrfutil mcu-manager serial image-confirm --serial-port <serial_port> --hash <hash>
 
 Testing over Bluetooth LE
 -------------------------
