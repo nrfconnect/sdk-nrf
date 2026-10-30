@@ -54,17 +54,20 @@ char *state_to_str(int state)
 }
 #endif
 
-static void state_set(struct downloader *dl, unsigned int before_state, unsigned int new_state)
+/* Returns true if the transition was made. */
+static bool state_set(struct downloader *dl, unsigned int before_state, unsigned int new_state)
 {
 	k_mutex_lock(&dl->mutex, K_FOREVER);
 	if ((dl->state != before_state) && (before_state != STATE_ALLOW_ANY)) {
 		k_mutex_unlock(&dl->mutex);
-		return;
+		return false;
 	}
 
 	dl->state = new_state;
 	k_mutex_unlock(&dl->mutex);
 	LOG_DBG("state = %d (%s)", new_state, state_to_str(new_state));
+
+	return true;
 }
 
 static bool is_state(struct downloader *dl, enum downloader_state state)
@@ -153,26 +156,34 @@ static int reconnect(struct downloader *dl)
 	return  transport_connect(dl);
 }
 
-static void restart_and_suspend(struct downloader *dl)
+/* Leaves the DOWNLOADING state. Returns false if the download was already stopped, for example
+ * by a concurrent downloader_cancel(). The state transition decides the winner, and only the
+ * winner sends STOPPED.
+ */
+static bool restart_and_suspend(struct downloader *dl)
 {
+	const bool keep_connection = dl->host_cfg.keep_connection;
+	/* Read before the transition, a new download may reset it right after. */
+	const bool complete = dl->complete;
+
 	if (!is_state(dl, DOWNLOADER_DOWNLOADING)) {
-		return;
+		return false;
 	}
 
-	if (!dl->host_cfg.keep_connection) {
+	if (!keep_connection) {
 		transport_close(dl);
-		if (!dl->complete) {
-			stopped_evt_send(dl);
-		}
-
-		state_set(dl, DOWNLOADER_DOWNLOADING, DOWNLOADER_IDLE);
-		return;
 	}
 
-	if (!dl->complete) {
+	if (!state_set(dl, DOWNLOADER_DOWNLOADING,
+		       keep_connection ? DOWNLOADER_CONNECTED : DOWNLOADER_IDLE)) {
+		return false;
+	}
+
+	if (!complete) {
 		stopped_evt_send(dl);
 	}
-	state_set(dl, DOWNLOADER_DOWNLOADING, DOWNLOADER_CONNECTED);
+
+	return true;
 }
 
 static int data_evt_send(const struct downloader *dl, void *data, size_t len)
@@ -239,16 +250,53 @@ int dl_transport_evt_data(struct downloader *dl, void *data, size_t len)
 
 	err = data_evt_send(dl, data, len);
 	if (err) {
-		/* Application refused data, suspend */
-		restart_and_suspend(dl);
+		/* Application refused data. Only mark the download as stopped here: the transport
+		 * is still running, so the thread closes and reports STOPPED when it returns.
+		 */
+		state_set(dl, DOWNLOADER_DOWNLOADING, DOWNLOADER_STOPPING);
 	}
 
 	return 0;
 }
 
+/* Reconnects and resumes the download, retrying as long as the application asks for it.
+ *
+ * The reconnect is claimed by moving from DOWNLOADING to CONNECTING. A concurrent
+ * downloader_cancel() either wins before the claim, and nothing is reconnected, or after it,
+ * and the download is stopped when the reconnect has finished.
+ */
+static void reconnect_and_resume(struct downloader *dl)
+{
+	int err;
+
+	if (!state_set(dl, DOWNLOADER_DOWNLOADING, DOWNLOADER_CONNECTING)) {
+		return;
+	}
+
+	while (true) {
+		err = reconnect(dl);
+		if (err == 0) {
+			/* Fails if stopped meanwhile, then the STOPPING state is handled next. */
+			state_set(dl, DOWNLOADER_CONNECTING, DOWNLOADER_DOWNLOADING);
+			return;
+		}
+
+		LOG_ERR("Failed to reconnect, err %d", err);
+
+		if (error_evt_send(dl, err) || !is_state(dl, DOWNLOADER_CONNECTING)) {
+			break;
+		}
+	}
+
+	transport_close(dl);
+	if (state_set(dl, DOWNLOADER_CONNECTING, DOWNLOADER_IDLE)) {
+		stopped_evt_send(dl);
+	}
+}
+
 void download_thread(void *cli, void *a, void *b)
 {
-	int rc, rc2;
+	int rc;
 	struct downloader *const dl = cli;
 
 	while (true) {
@@ -287,39 +335,25 @@ void download_thread(void *cli, void *a, void *b)
 			 * (separate event).
 			 */
 			rc = transport_download(dl);
+			if (rc && !is_state(dl, DOWNLOADER_DOWNLOADING)) {
+				/* Stopped during the call, for example by a refused fragment. */
+				rc = 0;
+			}
 			if (rc) {
-				if (rc == -ECONNRESET) {
-					goto reconnect;
+				if (rc != -ECONNRESET) {
+					rc = error_evt_send(dl, rc);
+					if (rc) {
+						restart_and_suspend(dl);
+						continue;
+					}
 				}
 
-				rc = error_evt_send(dl, rc);
-				if (rc) {
-					restart_and_suspend(dl);
-					continue;
-				}
-
-reconnect:
-				rc2 = reconnect(dl);
-				if (rc2 == 0) {
-					continue;
-				}
-
-				LOG_ERR("Failed to reconnect, err %d", rc2);
-
-				rc2 = error_evt_send(dl, rc2);
-				if (rc2 == 0 && is_state(dl, DOWNLOADER_DOWNLOADING)) {
-					goto reconnect;
-				}
-
-				transport_close(dl);
-				stopped_evt_send(dl);
-				state_set(dl, DOWNLOADER_DOWNLOADING, DOWNLOADER_IDLE);
+				reconnect_and_resume(dl);
 				continue;
 			}
 
-			if (dl->complete) {
+			if (dl->complete && restart_and_suspend(dl)) {
 				LOG_INF("Download complete");
-				restart_and_suspend(dl);
 				download_complete_evt_send(dl);
 			}
 		}
