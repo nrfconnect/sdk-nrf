@@ -48,7 +48,7 @@ To use this option, you must also set the following Kconfig options:
 
 * :kconfig:option:`CONFIG_DFU_TARGET_STREAM_SAVE_PROGRESS` - Allows DFU multi-image to calculate its current progress based on offsets stored by the underlying DFU targets.
 * :kconfig:option:`CONFIG_SETTINGS` - Allows the use of a settings area to store progress information.
-* :kconfig:option:`CONFIG_NVS` (the nRF52 and nRF53 Series) or :kconfig:option:`CONFIG_ZMS` (the nRF54L and nRF54H Series) - Enables the settings backend to store data in NVM.
+* :kconfig:option:`CONFIG_NVS` (the nRF53 Series) or :kconfig:option:`CONFIG_ZMS` (the nRF54L and nRF54H Series) - Enables the settings backend to store data in NVM.
 
 .. note::
    Enabling this option uses space in the settings area in NVM to store the progress information.

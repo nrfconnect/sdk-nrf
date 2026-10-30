@@ -63,322 +63,6 @@ The options are grouped by Series and drivers available for the device Series, a
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the supported key types for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Key type support per device (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key type
-                 - Configuration option
-                 - nRF52840
-               * - AES
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-                 - Supported
-               * - Chacha20
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-                 - Supported
-               * - ECC Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                 - Supported
-               * - ECC Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                 - Supported
-               * - ECC Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                 - Supported
-               * - ECC Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                 - Supported
-               * - ECC Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-                 - Supported
-               * - RSA Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                 - Supported
-               * - RSA Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                 - Supported
-               * - RSA Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-               * - RSA Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-               * - RSA Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-                 - Supported
-               * - XChaCha20
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
-                 - --
-               * - HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - Supported
-               * - HSS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - --
-               * - LMS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - --
-               * - XMSS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - --
-               * - XMSS-MT Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - --
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - --
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - --
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - --
-               * - ML-DSA Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - --
-               * - ML-DSA Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - --
-               * - ML-DSA Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - --
-               * - ML-DSA Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - --
-               * - ML-DSA Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - --
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - --
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - --
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - --
-               * - ML-KEM Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - --
-               * - ML-KEM Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - --
-               * - ML-KEM Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - --
-               * - ML-KEM Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - --
-               * - ML-KEM Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - --
-               * - WPA3-SAE PT key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
-                 - --
-               * - ASCON
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key type support per device (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key type
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - AES
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Chacha20
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECC Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECC Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECC Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECC Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECC Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - XChaCha20
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HSS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - LMS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - XMSS Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - XMSS-MT Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-44
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-65
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA-87
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-768
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM-1024
-                 - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM Key Pair Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM Key Pair Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM Key Pair Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM Key Pair Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-KEM Public Key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - WPA3-SAE PT key
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ASCON
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-
    .. tab:: nRF53 Series
 
       The following tables list the supported key types for nRF53 Series devices.
@@ -2057,79 +1741,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the key management support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Key management support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported key types
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key management support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported key types
-               * - Configuration automatically generated based on the enabled key types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_AES`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_CHACHA20`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XCHACHA20`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_HSS_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_LMS_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_XMSS_MT_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_44`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ASCON`
-
    .. tab:: nRF53 Series
 
       The following tables list the key management support for nRF53 Series devices.
@@ -2372,82 +1983,6 @@ The options are grouped by Series and drivers available for the device Series, a
    The :ref:`nrf_security_drivers_cc3xx` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported cipher modes for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Cipher mode support per device (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Cipher mode
-                 - Configuration option
-                 - nRF52840
-               * - ECB no padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
-                 - Supported
-               * - CBC no padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
-                 - Supported
-               * - CBC PKCS#7 padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
-                 - Supported
-               * - CTR
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                 - Supported
-               * - CCM* no tag
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
-                 - --
-               * - Stream cipher
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
-                 - Supported
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Cipher mode support per device (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Cipher mode
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - ECB no padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - CBC no padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - CBC PKCS#7 padding
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - CTR
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - CCM* no tag
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Stream cipher
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -2844,43 +2379,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the cipher driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Cipher driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported cipher modes
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_CIPHER_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Cipher driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported cipher modes
-               * - Configuration automatically generated based on the enabled cipher modes. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECB_NO_PADDING`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_NO_PADDING`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CBC_PKCS7`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM_STAR_NO_TAG`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_STREAM_CIPHER`
-
    .. tab:: nRF53 Series
 
       The following tables list the cipher driver support for nRF53 Series devices.
@@ -3007,42 +2505,6 @@ The options are grouped by Series and drivers available for the device Series, a
    The algorithm support when using ECC key types is dependent on one or more Kconfig options enabling curve support according to `ECC curve types`_.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported key agreement algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Key agreement algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key agreement algorithm
-                 - Configuration option
-                 - nRF52840
-               * - ECDH
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
-                 - Supported
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key agreement algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key agreement algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - ECDH
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -3216,34 +2678,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the key agreement driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Key agreement driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported key agreement algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_AGREEMENT_DRIVER`
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key agreement driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported key agreement algorithms
-               * - Configuration automatically generated based on the enabled key agreement algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDH` (limited to curve types secp224r1, secp256r1, secp384r1, and Curve25519)
-
    .. tab:: nRF53 Series
 
       The following tables list the key agreement driver support for nRF53 Series devices.
@@ -3339,29 +2773,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported key encapsulation algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key encapsulation algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key encapsulation algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - ML-KEM
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -3475,23 +2886,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the key encapsulation driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key encapsulation driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported key encapsulation algorithms
-               * - Configuration automatically generated based on the enabled key encapsulation algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
-
    .. tab:: nRF53 Series
 
       The following tables list the key encapsulation driver support for nRF53 Series devices.
@@ -3565,79 +2959,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following table lists the supported KDF algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: KDF algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - KDF algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - HKDF
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HKDF-Extract
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXTRACT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HKDF-Expand
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXPAND`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - PBKDF2-HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - PBKDF2-AES-CMAC-PRF-128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - TLS 1.2 PRF
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - TLS 1.2 PSK to MS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - TLS 1.2 EC J-PAKE to PMS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SP 800-108r1 CMAC w/counter
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SP 800-108 HMAC counter mode
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - WPA3-SAE hash-to-element
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
-                 - --
-                 - --
-                 - --
 
    .. tab:: nRF53 Series
 
@@ -4119,32 +3440,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following table lists the KDF driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: KDF driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported KDF algorithms
-               * - Configuration automatically generated based on the enabled KDF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXTRACT`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HKDF_EXPAND`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_HMAC`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_PBKDF2_AES_CMAC_PRF_128`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PRF`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_PSK_TO_MS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_TLS12_ECJPAKE_TO_PMS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_CMAC`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SP800_108_COUNTER_HMAC`
-
    .. tab:: nRF53 Series
 
       The following table lists the KDF driver support for nRF53 Series devices.
@@ -4253,34 +3548,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported AES key wrapping algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Key wrapping support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Key wrapping algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - AES Key wrap (AES-KW)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KW`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - AES Key wrap with Padding (AES-KWP)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_AES_KWP`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -4443,55 +3710,6 @@ The options are grouped by Series and drivers available for the device Series, a
    Key size configuration for CMAC is supported as described in `AES key size configuration`_.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported MAC algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: MAC algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - MAC algorithm
-                 - Configuration option
-                 - nRF52840
-               * - CMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
-                 - Supported
-               * - HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
-                 - Supported
-
-            .. note::
-
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` is limited to SHA-1, SHA-224, and SHA-256
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: MAC algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - MAC algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - CMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -4729,36 +3947,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the MAC driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: MAC driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported MAC algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_MAC_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC` (limited to SHA-1, SHA-224, and SHA-256)
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: MAC driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported MAC algorithms
-               * - Configuration automatically generated based on the enabled MAC algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CMAC`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC`
-
    .. tab:: nRF53 Series
 
       The following tables list the MAC driver support for nRF53 Series devices.
@@ -4863,78 +4051,6 @@ The options are grouped by Series and drivers available for the device Series, a
    Key size configuration for CCM and GCM is supported as described in `AES key size configuration`_.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported AEAD algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: AEAD algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - AEAD algorithm
-                 - Configuration option
-                 - nRF52840
-               * - CCM
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                 - Supported
-               * - GCM
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
-                 - --
-               * - ChaCha20-Poly1305
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
-                 - Supported
-               * - XChaCha20-Poly1305
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
-                 - --
-               * - ASCON AEAD128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
-                 - --
-
-            .. note::
-
-               :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` is limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310.
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: AEAD algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - AEAD algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - CCM
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - GCM
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ChaCha20-Poly1305
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - XChaCha20-Poly1305
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ASCON AEAD128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -5293,39 +4409,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the AEAD driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: AEAD driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported AEAD algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_AEAD_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM` (limited to AES key sizes of 128 bits on devices with Arm CryptoCell CC310)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: AEAD driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported AEAD algorithms
-               * - Configuration automatically generated based on the enabled AEAD algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_GCM`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_CHACHA20_POLY1305`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_XCHACHA20_POLY1305`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_AEAD128`
-
    .. tab:: nRF53 Series
 
       The following tables list the AEAD driver support for nRF53 Series devices.
@@ -5442,145 +4525,6 @@ The options are grouped by Series and drivers available for the device Series, a
    * RSA key size configuration is supported as described in `RSA key size configuration`_.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported asymmetric signature algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Asymmetric signature algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Asymmetric signature algorithm
-                 - Configuration option
-                 - nRF52840
-               * - ECDSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`
-                 - Supported
-               * - ECDSA (deterministic)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
-                 - Supported
-               * - PureEdDSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
-                 - Supported
-               * - HashEdDSA Edwards25519
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
-               * - HashEdDSA Edwards448
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
-               * - RSA PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                 - Supported
-               * - RSA PSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-               * - HSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
-                 - --
-               * - LMS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
-                 - --
-               * - ML-DSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
-                 - --
-               * - XMSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS`
-                 - --
-               * - XMSS-MT
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Asymmetric signature algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Asymmetric signature algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - ECDSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ECDSA (deterministic)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - PureEdDSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HashEdDSA Edwards25519
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
-                 - --
-                 - --
-               * - HashEdDSA Edwards448
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
-                 - --
-                 - --
-               * - RSA PKCS#1 v1.5 sign
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - LMS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ML-DSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - XMSS
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - XMSS-MT
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - Hash ML-DSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HASH_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - Deterministic ML-DSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - Deterministic Hash ML-DSA
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -6335,47 +5279,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the asymmetric signature driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Asymmetric signature driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported asymmetric signature algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_SIGNATURE_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Asymmetric signature driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported asymmetric signature algorithms
-               * - Configuration automatically generated based on the enabled asymmetric signature algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` (limited to ECC curve types secp224r1, secp256r1, and secp384r1)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ECDSA`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_PURE_EDDSA` (limited to ECC curve type Ed25519)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_LMS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_DSA`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS_MT`
-
    .. tab:: nRF53 Series
 
       The following tables list the asymmetric signature driver support for nRF53 Series devices.
@@ -6514,56 +5417,6 @@ The options are grouped by Series and drivers available for the device Series, a
    RSA key size configuration is supported as described in `RSA key size configuration`_.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported asymmetric encryption algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Asymmetric encryption algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Asymmetric encryption algorithm
-                 - Configuration option
-                 - nRF52840
-               * - RSA OAEP
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
-                 - Supported
-               * - RSA PKCS#1 v1.5 crypt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT`
-                 - Supported
-
-            .. note::
-               :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` is limited to key sizes ≤ 2048 bits.
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Asymmetric encryption algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Asymmetric encryption algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - RSA OAEP
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - RSA PKCS#1 v1.5 crypt
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT`
-                 - Supported
-                 - Supported
-                 - Supported
-
-            .. note::
-               :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` does not support RSA key pair generation.
 
    .. tab:: nRF53 Series
 
@@ -6768,36 +5621,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the asymmetric encryption driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Asymmetric encryption driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported asymmetric encryption algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_ASYMMETRIC_ENCRYPTION_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` (limited to key sizes ≤ 2048 bits)
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Asymmetric encryption driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported asymmetric encryption algorithms
-               * - Configuration automatically generated based on the enabled asymmetric encryption algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_OAEP`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_CRYPT` (does not support RSA key pair generation)
-
    .. tab:: nRF53 Series
 
       The following tables list the asymmetric encryption driver support for nRF53 Series devices.
@@ -6899,146 +5722,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported ECC curve types for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: ECC curve type support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - ECC curve type
-                 - Configuration option
-                 - nRF52840
-               * - BrainpoolP224r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
-                 - --
-               * - BrainpoolP256r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
-                 - Supported
-               * - BrainpoolP320r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320`
-                 - --
-               * - BrainpoolP384r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`
-                 - --
-               * - BrainpoolP512r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
-                 - --
-               * - Curve25519 (X25519)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
-                 - Supported
-               * - Curve448 (X448)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
-                 - --
-               * - Edwards25519 (Ed25519)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                 - Supported
-               * - Edwards448 (Ed448)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
-                 - --
-               * - secp256k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - Supported
-               * - secp224r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
-                 - Supported
-               * - secp256r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
-                 - Supported
-               * - secp384r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
-                 - Supported
-               * - secp521r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: ECC curve type support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - ECC curve type
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - BrainpoolP224r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_224`
-                 - --
-                 - --
-                 - --
-               * - BrainpoolP256r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
-                 - --
-                 - --
-                 - --
-               * - BrainpoolP320r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_320`
-                 - --
-                 - --
-                 - --
-               * - BrainpoolP384r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_384`
-                 - --
-                 - --
-                 - --
-               * - BrainpoolP512r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_512`
-                 - --
-                 - --
-                 - --
-               * - Curve25519 (X25519)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Curve448 (X448)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Edwards25519 (Ed25519)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Edwards448 (Ed448)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - secp256k1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-               * - secp224r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - secp256r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - secp384r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - secp521r1
-                 - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
-                 - --
-                 - --
 
    .. tab:: nRF53 Series
 
@@ -7774,46 +6457,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the ECC curve driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: ECC curve driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported ECC curve types
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_KEY_MANAGEMENT_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ECC_BRAINPOOL_P_R1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: ECC curve driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported ECC curve types
-               * - Configuration automatically generated based on the enabled ECC curve types. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_MONTGOMERY_448`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_255`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_TWISTED_EDWARDS_448`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_384`
-
    .. tab:: nRF53 Series
 
       The following tables list the ECC curve driver support for nRF53 Series devices.
@@ -7958,65 +6601,6 @@ The options are grouped by Series and drivers available for the device Series, a
    * If multiple PRNG algorithms are enabled at the same time, CTR-DRBG will be prioritized for random number generation through the front-end APIs for PSA Crypto.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported RNG algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: RNG algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - PRNG algorithm
-                 - Configuration option
-                 - nRF52840
-               * - RNG support
-                 - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM`
-                 - Supported
-               * - CTR-DRBG
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
-                 - Supported
-               * - HMAC-DRBG
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG`
-                 - Supported
-
-            .. note::
-               - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM` is enabled by default for nRF52840.
-               - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` is limited to 1024 bytes per request.
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: RNG algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - PRNG algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - RNG support
-                 - :kconfig:option:`CONFIG_PSA_WANT_GENERATE_RANDOM`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - CTR-DRBG
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - HMAC-DRBG
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG`
-                 - Supported
-                 - Supported
-                 - Supported
-
-            .. note::
-               :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` is implemented in software, with entropy provided by the hardware RNG peripheral.
 
    .. tab:: nRF53 Series
 
@@ -8293,36 +6877,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the RNG driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: RNG driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported RNG algorithms
-               * - Enabled by default for nRF52840, nRF91 Series, and nRF5340 devices
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (limited to 1024 bytes per request)
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: RNG driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported RNG algorithms
-               * - Configuration automatically generated based on the enabled RNG algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (software implementation, entropy provided by the hardware RNG peripheral)
-
    .. tab:: nRF53 Series
 
       The following tables list the RNG driver support for nRF53 Series devices.
@@ -8337,7 +6891,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
                * - Kconfig option
                  - Supported RNG algorithms
-               * - Enabled by default for nRF52840, nRF91 Series, and nRF5340 devices
+               * - Enabled by default for nRF5340 devices
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (limited to 1024 bytes per request)
 
@@ -8396,7 +6950,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
                * - Kconfig option
                  - Supported RNG algorithms
-               * - Enabled by default for nRF52840, nRF91 Series, and nRF5340 devices
+               * - Enabled by default for nRF91 Series devices
                  - | :kconfig:option:`CONFIG_PSA_WANT_ALG_CTR_DRBG`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_HMAC_DRBG` (limited to 1024 bytes per request)
 
@@ -8426,154 +6980,6 @@ The options are grouped by Series and drivers available for the device Series, a
    The SHA-1 hash is weak and deprecated and is only recommended for use in legacy protocols.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported hash algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Hash algorithm support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Hash algorithm
-                 - Configuration option
-                 - nRF52840
-               * - SHA-1 (weak)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
-                 - Supported
-               * - SHA-224
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`
-                 - Supported
-               * - SHA-256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
-                 - Supported
-               * - SHA-384
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`
-                 - --
-               * - SHA-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`
-                 - --
-               * - SHA3-224
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
-               * - SHA3-256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
-               * - SHA3-384
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
-               * - SHA3-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
-               * - SHA-256/192
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - --
-               * - SHAKE128 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                 - --
-               * - SHAKE256 192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - --
-               * - SHAKE256 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - --
-               * - SHAKE256 512 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
-                 - --
-               * - ASCON HASH256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Hash algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Hash algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - SHA-1 (weak)
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SHA-224
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SHA-256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SHA-384
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SHA-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SHA3-224
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
-                 - --
-                 - --
-               * - SHA3-256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
-                 - --
-                 - --
-               * - SHA3-384
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
-                 - --
-                 - --
-               * - SHA3-512
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
-                 - --
-                 - --
-               * - SHA-256/192
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SHAKE128 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SHAKE256 192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SHAKE256 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SHAKE256 512 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - ASCON HASH256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -9346,46 +7752,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the hash driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: Hash driver support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported hash algorithms
-               * - :kconfig:option:`CONFIG_PSA_USE_CC3XX_HASH_DRIVER`
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1` (weak)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: Hash driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported hash algorithms
-               * - Configuration automatically generated based on the enabled hash algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_1` (weak)
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_224`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_384`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_192`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_HASH256`
-
    .. tab:: nRF53 Series
 
       The following tables list the hash driver support for nRF53 Series devices.
@@ -9525,44 +7891,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following table lists the supported XOF algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: XOF algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - XOF algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - SHAKE128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SHAKE256
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ASCON XOF128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - ASCON CXOF128
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -9778,26 +8106,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following table lists the XOF driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: XOF driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported XOF algorithms
-               * - Configuration automatically generated based on the enabled XOF algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
-
    .. tab:: nRF53 Series
 
       The following table lists the XOF driver support for nRF53 Series devices.
@@ -9881,54 +8189,6 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following table lists the supported PAKE algorithms for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - PAKE algorithm
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - EC J-PAKE
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SPAKE2+ with HMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_HMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SPAKE2+ with CMAC
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_CMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SPAKE2+ for Matter
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - SRP-6
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
-                 - Experimental
-                 - Experimental
-                 - Experimental
-               * - SRP password hashing
-                 - :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
-                 - Experimental
-                 - Experimental
-                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -10281,28 +8541,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following table lists the PAKE driver support for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: PAKE driver support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - Kconfig option
-                 - Supported PAKE algorithms
-               * - Configuration automatically generated based on the enabled PAKE algorithms. Acts as :ref:`software fallback <crypto_drivers_software_fallback>` for the other drivers.
-                 - | :kconfig:option:`CONFIG_PSA_WANT_ALG_JPAKE`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_HMAC`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_CMAC`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_MATTER`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6`
-                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_PASSWORD_HASH`
-
    .. tab:: nRF53 Series
 
       The following table lists the PAKE driver support for nRF53 Series devices.
@@ -10408,66 +8646,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported RSA key pair operations for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: RSA key pair operation support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - RSA key pair operation
-                 - Configuration option
-                 - nRF52840
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                 - Supported
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: RSA key pair operation support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - RSA key pair operation
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - --
-                 - --
-                 - --
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -10739,44 +8917,6 @@ The options are grouped by Series and drivers available for the device Series, a
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following table lists the supported SRP key pair operations for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: SRP key pair operation support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - SRP key pair operation
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE`
-                 - --
-                 - --
-                 - --
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-
    .. tab:: nRF53 Series
 
       The following table lists the supported SRP key pair operations for nRF53 Series devices.
@@ -10989,44 +9129,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following table lists the supported SPAKE2P key pair operations for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: SPAKE2P key pair operation support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - SPAKE2P key pair operation
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -11273,66 +9375,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported ECC key pair operations for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: ECC key pair operation support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - ECC key pair operation
-                 - Configuration option
-                 - nRF52840
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                 - Supported
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                 - Supported
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                 - Supported
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: ECC key pair operation support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - ECC key pair operation
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - Generate
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Import
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_IMPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Export
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_EXPORT`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - Derive
-                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ECC_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -11647,58 +9689,6 @@ The options are grouped by Series and drivers available for the device Series, a
 
 .. tabs::
 
-   .. tab:: nRF52 Series
-
-      The following tables list the supported AES key sizes for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: AES key size support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - AES key size
-                 - Configuration option
-                 - nRF52840
-               * - 128 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_128`
-                 - Supported
-               * - 192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_192`
-                 - --
-               * - 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_256`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: AES key size support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - AES key size
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - 128 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_128`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_192`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 256 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_AES_KEY_SIZE_256`
-                 - Supported
-                 - Supported
-                 - Supported
-
    .. tab:: nRF53 Series
 
       The following tables list the supported AES key sizes for nRF53 Series devices.
@@ -11960,90 +9950,6 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
 .. tabs::
-
-   .. tab:: nRF52 Series
-
-      The following tables list the supported RSA key sizes for nRF52 Series devices.
-
-      .. tabs::
-
-         .. tab:: nrf_cc3xx
-
-            .. list-table:: RSA key size support (nrf_cc3xx driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - RSA key size
-                 - Configuration option
-                 - nRF52840
-               * - 1024 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1024`
-                 - Supported
-               * - 1536 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1536`
-                 - Supported
-               * - 2048 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048`
-                 - Supported
-               * - 3072 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_3072`
-                 - --
-               * - 4096 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_4096`
-                 - --
-               * - 6144 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_6144`
-                 - --
-               * - 8192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_8192`
-                 - --
-
-         .. tab:: nrf_oberon
-
-            .. list-table:: RSA key size support (nrf_oberon driver) - nRF52 Series
-               :header-rows: 1
-               :widths: auto
-
-               * - RSA key size
-                 - Configuration option
-                 - nRF52832
-                 - nRF52833
-                 - nRF52840
-               * - 1024 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1024`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 1536 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_1536`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 2048 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_2048`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 3072 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_3072`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 4096 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_4096`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 6144 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_6144`
-                 - Supported
-                 - Supported
-                 - Supported
-               * - 8192 bits
-                 - :kconfig:option:`CONFIG_PSA_WANT_RSA_KEY_SIZE_8192`
-                 - Supported
-                 - Supported
-                 - Supported
 
    .. tab:: nRF53 Series
 

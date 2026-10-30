@@ -135,8 +135,8 @@ MCUboot output build files
 **************************
 
 .. note::
-    MCUboot's :doc:`direct-xip mode <mcuboot:design>` and the related :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options are currently supported only on the single-core devices such as the nRF52 Series.
-    For more details, see the :ref:`more information <ug_nrf52_developing_ble_fota_mcuboot_direct_xip_mode>` section of the :ref:`ug_nrf52_developing` page.
+    MCUboot's :doc:`direct-xip mode <mcuboot:design>` and the related :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP` and :kconfig:option:`SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT` Kconfig options are supported on selected single-core SoCs where this is documented in the device guide for your target.
+    For general DFU and bootloader setup, see :ref:`app_dfu` and :ref:`ug_bootloader_adding_sysbuild`.
 
 +-----------------------------------------------------+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------+
 | File                                                | Description                                                                                                                                                                                                                                       |

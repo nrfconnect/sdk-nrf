@@ -119,23 +119,11 @@ Before using the trusted storage library with its default settings and options, 
     Also, see the Mounting the Storage system section of the :ref:`ZMS documentation <zephyr:zms_api>`.
 
 
-Currently, the :ref:`lib_hw_unique_key` library is supported on nRF52840, nRF5340, and nRF54L devices (more may be supported in the future), but for most samples in the |NCS|, it is only enabled for the nRF5340 and nRF54L devices:
+Currently, the :ref:`lib_hw_unique_key` library is supported on nRF5340 and nRF54L devices (more may be supported in the future), and for most samples in the |NCS| it is enabled for those targets:
 
 * For nRF5340 devices, the HUK is generated at first boot and stored in the Key Management Unit (KMU).
   No changes to the existing partition layout are needed for products in the field.
 * For nRF54L15 devices using TF-M, the HUK generation and management is handled by TF-M.
-
-  You can use the :ref:`lib_hw_unique_key` library with the nRF52840 SoC, but it requires employing the :ref:`bootloader` that would generate the AEAD key at first boot and store it in the dedicated HUK partition that can be accessed only by the CryptoCell peripheral.
-
-  .. note::
-
-     Modifying the partition layout, such as adding another partition in the FLASH layout, will break the firmware backward compatibility in already deployed devices.
-
-* Devices that do not have TrustZone separation (for example, nRF52840) use hardware unique keys to reach level 1 PSA certification.
-
-  .. note::
-
-     Any nRF52 Series devices that do not use NSIB need to use for example UID hashing for key derivation.
 
 .. _trusted_storage_configuration:
 
