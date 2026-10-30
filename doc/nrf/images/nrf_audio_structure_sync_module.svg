@@ -391,24 +391,24 @@
 			<text x="25.28" y="578.72" class="st32">audio_system.c</text>		</g>
 		<g id="shape184-266" transform="translate(22.3845,-485.254)">
 			<title>Sheet.184</title>
-			<desc>streamctrl_unicast_client.c</desc>
+			<desc>unicast_client/main.c</desc>
 			<rect x="0" y="570.823" width="112.677" height="9.44466" class="st7"/>
-			<text x="9.21" y="577.95" class="st38">streamctrl_unicast_client.c</text>		</g>
+			<text x="56.34" y="577.95" class="st38" text-anchor="middle">unicast_client/main.c</text>		</g>
 		<g id="shape185-269" transform="translate(22.8439,-473.303)">
 			<title>Sheet.185</title>
-			<desc>streamctrl_unicast_server.c</desc>
+			<desc>unicast_server/main.c</desc>
 			<rect x="0" y="570.823" width="112.677" height="9.44466" class="st7"/>
-			<text x="7.43" y="577.95" class="st38">streamctrl_unicast_server.c</text>		</g>
+			<text x="56.34" y="577.95" class="st38" text-anchor="middle">unicast_server/main.c</text>		</g>
 		<g id="shape186-272" transform="translate(22.8439,-461.63)">
 			<title>Sheet.186</title>
-			<desc>streamctrl_broadcast_source.c</desc>
+			<desc>broadcast_source/main.c</desc>
 			<rect x="0" y="570.823" width="112.677" height="9.44466" class="st7"/>
-			<text x="5.07" y="577.8" class="st39">streamctrl_broadcast_source.c</text>		</g>
+			<text x="56.34" y="577.8" class="st39" text-anchor="middle">broadcast_source/main.c</text>		</g>
 		<g id="shape187-275" transform="translate(22.8439,-450.291)">
 			<title>Sheet.187</title>
-			<desc>streamctrl_broadcast_sink.c</desc>
+			<desc>broadcast_sink/main.c</desc>
 			<rect x="0" y="570.823" width="112.677" height="9.44466" class="st7"/>
-			<text x="6.54" y="577.95" class="st38">streamctrl_broadcast_sink.c</text>		</g>
+			<text x="56.34" y="577.95" class="st38" text-anchor="middle">broadcast_sink/main.c</text>		</g>
 		<g id="shape188-278" transform="translate(36.4331,-264.622)">
 			<title>Sheet.188</title>
 			<desc>sw_codec_select.c</desc>

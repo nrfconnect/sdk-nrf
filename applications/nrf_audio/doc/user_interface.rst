@@ -86,7 +86,8 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                       |
-     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                           |
+     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons,     |                                           |
+     |               | if a location was programmed. See :ref:`nrf_audio_app_configuration_headset_location`.                    |                                           |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
 
   .. group-tab:: nRF5340 DK
@@ -119,7 +120,8 @@ The application uses the following buttons on the supported development kit:
      |               | Pressed on a BIS headset during playback: Change the gateway, if more than one is available.              | :ref:`nrf_audio_broadcast_sink_app`       |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **RESET**     | Resets the device to the originally programmed settings.                                                  | All                                       |
-     |               | This reverts any changes made during testing, for example the location switches with **VOL** buttons.     |                                           |
+     |               | This reverts any changes made during testing, for example the location switches with **Button 1** and     |                                           |
+     |               | **Button 2**, if a location was programmed. See :ref:`nrf_audio_app_configuration_headset_location`.      |                                           |
      +---------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
 
 .. _nrf_audio_app_ui_leds:
@@ -231,7 +233,7 @@ To indicate the tasks performed, the application uses the LED behavior described
      |                          | Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).       | * :ref:`nrf_audio_broadcast_sink_app`     |
      |                          |                                                                                                           | * :ref:`nrf_audio_unicast_server_app`     |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
-     | **LED3**                 | Blinking green - The nRF5340 Audio DK application core is running.                                        | All                                       |
+     | **LED3**                 | Blinking green - The nRF5340 DK application core is running.                                              | All                                       |
      +--------------------------+-----------------------------------------------------------------------------------------------------------+-------------------------------------------+
      | **LED1,2,3 and 4**       | All solid green - Fault in the application core has occurred.                                             | * :ref:`nrf_audio_broadcast_source_app`   |
      |                          | See UART log for details and use the RESET button to reset the device.                                    | * :ref:`nrf_audio_unicast_client_app`     |
