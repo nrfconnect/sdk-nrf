@@ -9,6 +9,12 @@ menuconfig DFU_TARGET
 
 if DFU_TARGET
 
+config DFU_TARGET_STREAM_FLATTEN
+	bool "stream flash flatten helper"
+	default y
+	help
+	  Build stream_flash_flatten_page() in the dfu_target library.
+
 config DFU_TARGET_MCUBOOT
 	bool "MCUBoot update support"
 	default y
