@@ -38,14 +38,14 @@ This application uses specific mapping for the following user interface elements
 
   * **VOL-** - Changes the headset location to left.
   * **VOL+** - Changes the headset location to right.
-  * **BTN5** - Clears the previously stored bonding information.
+  * **BTN 5** - Clears the previously stored bonding information.
 
 * Pressed on the unicast server device during playback:
 
   * **PLAY/PAUSE** - Starts or pauses the playback of the stream.
   * **VOL-** - Turns the playback volume down.
   * **VOL+** - Turns the playback volume up.
-  * **BTN5** - Mutes the playback volume (and unmutes).
+  * **BTN 5** - Mutes the playback volume (and unmutes).
 
 * **LED1** - Blinking blue - Kits have started streaming audio.
 * **LED2** - Solid green - Sync achieved (both drift and presentation compensation are in the ``LOCKED`` state).
@@ -59,7 +59,8 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf_audio/`, the nRF5340 build script tries to build the CIS applications in the CIS unidirectional mode.
+The unicast server application always supports bidirectional streams.
+The :ref:`unicast client <nrf_audio_unicast_client_app>` decides whether the stream is unidirectional or bidirectional, and it uses the CIS unidirectional mode by default.
 To switch to the bidirectional mode, see :ref:`nrf_audio_app_configuration_select_bidirectional`.
 
 For other configuration options, see :ref:`nrf_audio_app_configuration`.

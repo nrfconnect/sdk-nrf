@@ -7,7 +7,7 @@ Building and running nRF Audio applications
    :local:
    :depth: 2
 
-This nRF Audio application source files can be found in their respective folders under :file:`applications/nrf_audio` in the nRF Connect SDK folder structure.
+The nRF Audio application source files can be found in their respective folders under :file:`applications/nrf_audio` in the nRF Connect SDK folder structure.
 
 You can build and program the applications in one of the following ways:
 
@@ -30,7 +30,7 @@ Each development kit comes preprogrammed with basic firmware that indicates if t
 Before building the application, you can verify if the kit is working by completing the following steps:
 
 1. Plug the device into the USB port.
-#. Turn on the development kit using the On/Off switch.
+#. Turn on the development kit using the **POWER** switch.
 #. Observe **RGB** (bottom side LEDs around the center opening that illuminate the Nordic Semiconductor logo) turn solid yellow, **OB/EXT** turn solid green, and **LED3** start blinking green.
 
 You can now program the development kit.
@@ -67,10 +67,14 @@ When preparing the JSON file, update the following fields:
 * ``nrf5340_audio_dk_dev`` - This field assigns the specific nRF5340 Audio development kit to be ``headset`` or ``gateway``.
 * ``location`` - This field is valid only for headsets.
   It sets the location on which the headset is meant to work, especially when using the :ref:`default CIS transport mode configuration <nrf_audio_transport_mode_configuration>`.
+  Use this field to make a headset the left headset (``FRONT_LEFT``) or the right headset (``FRONT_RIGHT``).
   For more information, see :ref:`nrf_audio_app_configuration_headset_location`.
-* ``sirk`` - This field sets the SIRK for the device set, which is used in the unicast applications.
-  The SIRK must be 16 characters long and cannot be the default SIRK defined in the Kconfig file (``NRF5340_TWS_DEMO``).
-  If the default SIRK is used, the script will raise an error and stop building.
+* ``sirk`` - This field sets the Set Identity Resolving Key (SIRK), which is shared by all headsets in the same device set.
+  In the unicast applications, the gateway reads the SIRK from the first headset it connects to and uses it to find the other headsets of the same set.
+  You can use any string of exactly 16 ASCII characters, for example ``MY_AUDIO_SET_001``, except the default SIRK defined in the Kconfig file (``NRF5340_TWS_DEMO``).
+  If the SIRK has a different length or is the default SIRK, the script raises an error and stops building.
+  The script applies the SIRK to every headset build, for both unicast and broadcast transport.
+  For more information, see :term:`Set Identity Resolving Key (SIRK)`.
 
 .. _nrf_audio_app_building_script_running:
 
@@ -106,7 +110,7 @@ The building command for running the script requires providing the following par
      - ``headset``, ``gateway``, ``both``
      - :ref:`nrf_audio_app_overview_gateway_headsets`
 
-For example, the following command builds headset and gateway applications using the script for the application core with the ``debug`` application version:
+For example, the following command builds the unicast headset and gateway applications for the application core:
 
 .. code-block:: console
 
@@ -139,8 +143,8 @@ The command for programming can look as follows:
 
    python buildprog.py -c both -d both -t unicast -p
 
-This command builds the unicast headset and the gateway applications with ``debug`` version of both the application core binary and the network core binary - and programs each to its respective core.
-If you want to rebuild from scratch, you can add the ``--pristine`` parameter to the command (west's ``-p`` for cannot be used for a pristine build with the script).
+This command builds the unicast headset and gateway applications for both the application core and the network core, and programs each binary to its respective core.
+If you want to rebuild from scratch, you can add the ``--pristine`` parameter to the command (west's ``-p`` parameter cannot be used for a pristine build with the script).
 
 .. note::
    If the programming command fails because of a :ref:`readback protection error <readback_protection_error>`, run :file:`buildprog.py` with the ``--recover_on_fail`` or ``-f`` parameter to recover and re-program automatically when programming fails.
@@ -224,43 +228,38 @@ Application configuration files
 ===============================
 
 The application uses a :file:`prj.conf` configuration file located in the application root directory for the default configuration.
-The application is by default built in a debug configuration.
+The application is by default built in a debug configuration, with full logging capabilities and debug optimizations to ease development.
 If you want to create a release version, you must modify the :file:`prj.conf` file to match your project requirements (for example, reduce code size, speed up execution, and avoid sensitive information being exposed over debug interfaces - see :ref:`nrf_audio_app_configuration` for some possible options.)
-Each application also uses its own application-specific overlay file and can use additional files for different custom configurations.
-When you build the application, you can select one of these configurations using the :makevar:`FILE_SUFFIX` variable.
+
+The :file:`prj.conf` file alone does not build an application.
+You must also add one application-specific overlay file using the ``EXTRA_CONF_FILE`` CMake option.
+The overlay file selects the application and the device role.
+If you do not add an overlay file, the build stops with the ``No conf file specified`` error.
+You can also use additional files for different custom configurations, and select them using the :makevar:`FILE_SUFFIX` variable.
 
 See :ref:`nrf_audio_app_configuration_files`, :ref:`app_build_file_suffixes`, and :ref:`cmake_options` for more information.
 
-The nRF Audio applications come with the following configuration files:
+The nRF Audio applications come with the following application-specific overlay files:
 
-.. list-table:: Application configurations
+.. list-table:: Application-specific overlay files
    :widths: auto
    :header-rows: 1
 
-   * - Configuration
+   * - Application
+     - Device role
      - File name
-     - FILE_SUFFIX
-     - Description
-   * - Debug (default)
-     - :file:`prj.conf`
-     - No suffix
-     - Debug version of the application. Provides full logging capabilities and debug optimizations to ease development.
-   * - Application-specific overlay file
+   * - :ref:`nrf_audio_unicast_server_app`
+     - Unicast headset
      - :file:`unicast_server/overlay-unicast_server.conf`
-     - ``unicast_server``
-     - Configuration file for the unicast server application.
-   * - Application-specific overlay file
+   * - :ref:`nrf_audio_unicast_client_app`
+     - Unicast gateway
      - :file:`unicast_client/overlay-unicast_client.conf`
-     - ``unicast_client``
-     - Configuration file for the unicast client application.
-   * - Application-specific overlay file
+   * - :ref:`nrf_audio_broadcast_sink_app`
+     - Broadcast headset
      - :file:`broadcast_sink/overlay-broadcast_sink.conf`
-     - ``broadcast_sink``
-     - Configuration file for the broadcast sink application.
-   * - Application-specific overlay file
+   * - :ref:`nrf_audio_broadcast_source_app`
+     - Broadcast gateway
      - :file:`broadcast_source/overlay-broadcast_source.conf`
-     - ``broadcast_source``
-     - Configuration file for the broadcast source application.
 
 .. _nrf_audio_app_configuration_select_build:
 
@@ -273,7 +272,10 @@ When you build the application, make sure to create the combination of configura
    :start-after: nrf_audio_app_overview_table_start
    :end-before: nrf_audio_app_overview_table_end
 
-Complete the following steps to build each of the configurations you need:
+Each build creates the firmware for one device role, for example the unicast gateway or the unicast headset.
+Both headsets of a pair use the same firmware, and you set the location of each headset after you program it, as described in :ref:`nrf_audio_app_building_standard_programming`.
+
+Complete the following steps to build the firmware for each device role you need:
 
 .. tabs::
 
@@ -288,7 +290,8 @@ Complete the following steps to build each of the configurations you need:
          * :guilabel:`Base configuration files (Kconfig fragments)`: No file selected.
            The extension will automatically select :file:`prj.conf`.
 
-         * :guilabel:`Extra Kconfig fragments`:
+         * :guilabel:`Extra Kconfig fragments`: One application-specific overlay file is required.
+           If you do not select one, the build fails.
 
            * For the unicast server application: :file:`unicast_server/overlay-unicast_server.conf`
            * For the unicast client application: :file:`unicast_client/overlay-unicast_client.conf`
@@ -299,6 +302,7 @@ Complete the following steps to build each of the configurations you need:
 
       #. Make sure the :guilabel:`Generate only` checkbox is *not* selected.
       #. Generate and build the application by clicking the :guilabel:`Generate and Build` button.
+      #. Repeat steps 3 to 5 for each other device role you need, creating one build configuration for each role.
 
       You can now program the application to one or more development kits.
       See :ref:`nrf_audio_app_building_standard_programming`.
@@ -309,17 +313,17 @@ Complete the following steps to build each of the configurations you need:
 
          a. Choose the configuration file for the device selected by using one of the following options:
 
-            * For unicast headset: ``-DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"``
-            * For unicast gateway: ``-DEXTRA_CONF_FILE=".\unicast_client\overlay-unicast_client.conf"``
-            * For broadcast headset: ``-DEXTRA_CONF_FILE=".\broadcast_sink\overlay-broadcast_sink.conf"``
-            * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
+            * For unicast headset: ``-DEXTRA_CONF_FILE="unicast_server/overlay-unicast_server.conf"``
+            * For unicast gateway: ``-DEXTRA_CONF_FILE="unicast_client/overlay-unicast_client.conf"``
+            * For broadcast headset: ``-DEXTRA_CONF_FILE="broadcast_sink/overlay-broadcast_sink.conf"``
+            * For broadcast gateway: ``-DEXTRA_CONF_FILE="broadcast_source/overlay-broadcast_source.conf"``
 
       #. Build the application using the standard :ref:`build steps <building>` for the command line.
          For example, if you want to build the unicast firmware for the application core as a headset, you can run the following command from the :file:`applications/nrf_audio/` directory:
 
          .. code-block:: console
 
-            west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf"
+            west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE="unicast_server/overlay-unicast_server.conf"
 
          This command creates the build files directly in the :file:`build` directory.
          This means that you cannot create build files for all devices you want to program, because the subsequent commands will overwrite the files in the :file:`build` directory.
@@ -328,12 +332,15 @@ Complete the following steps to build each of the configurations you need:
          This way, you can build firmware for different device configurations to separate directories before programming the development kits.
          Alternatively, you can use the :ref:`nrf_audio_app_building_script`, which handles this automatically.
 
+      #. Repeat steps 1 and 2 for each other device role you need, using a different build directory for each role.
+
 .. _nrf_audio_app_building_standard_programming:
 
 Programming the application
 ===========================
 
 After building the files for the development kit you want to program, follow the :ref:`standard procedure for programming applications <programming>` in the |NCS|.
+Program each development kit with the firmware for its device role, for example the gateway firmware to the gateway kit and the headset firmware to each headset kit.
 
 If you want to program the same audio application to multiple development kits connected to your PC, you can use the following methods:
 
@@ -353,19 +360,19 @@ Use the combined bitfield values, depending on which headset you want to configu
 
     .. code-block:: console
 
-       nrfutil device x-write --address 0x00FF80F4 --value 1
+       nrfutil device write --address 0x00FF80F4 --value 1
 
   * Right headset (``--value 2``):
 
     .. code-block:: console
 
-       nrfutil device x-write --address 0x00FF80F4 --value 2
+       nrfutil device write --address 0x00FF80F4 --value 2
 
 * One stereo headset (``--value 3``):
 
   .. code-block:: console
 
-     nrfutil device x-write --address 0x00FF80F4 --value 3
+     nrfutil device write --address 0x00FF80F4 --value 3
 
 Select the correct board when prompted with the popup.
 Alternatively, you can add the ``--serial-number`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfutil device`` command.
