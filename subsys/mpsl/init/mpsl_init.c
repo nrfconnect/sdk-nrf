@@ -33,6 +33,10 @@
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 #include <nrf_sys_event.h>
 #endif /* CONFIG_NRF_SYS_EVENT */
+
+#if DT_NODE_EXISTS(DT_NODELABEL(mram_controller))
+#include <hal/nrf_mramc.h>
+#endif /* DT_NODE_EXISTS(DT_NODELABEL(mram_controller)) */
 #endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
 
 /* Include SoC-specific parameters for MPSL init.
@@ -182,21 +186,28 @@ struct k_work_q mpsl_work_q;
 static K_THREAD_STACK_DEFINE(mpsl_work_stack, CONFIG_MPSL_WORK_STACK_SIZE);
 
 #if IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
-/* Check existence of rram_controller node in the device tree to figure out whether RRAMC is
- * supported.
+/* Check existence of rram_controller or mram_controller node in the device tree to figure out
+ * whether RRAMC or MRAMC is supported.
  *
- * Note: The standard CONFIG_HAS_HW_NRF_RRAMC expects the DTS node to be set (okay).
- *       The CONFIG_NRFX_RRAMC informs if the node is in DTS but it is not selected by default
- *       so it is not defined for preprocessor.
+ * Note: The standard CONFIG_HAS_HW_NRF_RRAMC and CONFIG_HAS_HW_NRF_MRAMC expect the DTS node to
+ *       be set (okay). The CONFIG_NRFX_RRAMC and CONFIG_NRFX_MRAMC inform if the node is in DTS
+ *       but they are not selected by default so they are not defined for preprocessor.
  */
 #if DT_NODE_EXISTS(DT_NODELABEL(rram_controller))
 #define MPSL_HW_HAS_RRAMC 1
+#elif DT_NODE_EXISTS(DT_NODELABEL(mram_controller))
+#define MPSL_HW_HAS_MRAMC 1
+#endif
+
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 static int m_nvm_low_latency_event_handle = -1;
 #elif !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
+#if defined(MPSL_HW_HAS_RRAMC)
 static uint32_t m_rram_lowpower_config;
+#elif defined(MPSL_HW_HAS_MRAMC)
+static nrf_mramc_power_autopowerdown_t m_mram_autopowerdown_config;
+#endif /* defined(MPSL_HW_HAS_RRAMC) */
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
-#endif /* DT_NODE_EXISTS(DT_NODELABEL(rram_controller)) */
 #endif /* IS_ENABLED(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
 
 #define MPSL_TIMESLOT_SESSION_COUNT (\
@@ -647,7 +658,8 @@ int32_t mpsl_lib_uninit(void)
 }
 
 #if defined(CONFIG_MPSL_LOW_LATENCY_CALLBACKS)
-void mpsl_low_latency_acquire_callback(void)
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+static void mpsl_constlat_request(void)
 {
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
 	int err;
@@ -660,9 +672,32 @@ void mpsl_low_latency_acquire_callback(void)
 	(void)nrfx_power_constlat_mode_request();
 #else
 	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
-#endif /* NRF_POWER_HAS_CONST_LATENCY && NRF_POWER_HAS_LOW_POWER */
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+}
 
-#if defined(MPSL_HW_HAS_RRAMC)
+static void mpsl_constlat_release(void)
+{
+#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
+	int err;
+
+	err = nrf_sys_event_release_global_constlat();
+	if (err) {
+		LOG_ERR("NVM low latency release has failed (%d)", err);
+	}
+#elif IS_ENABLED(CONFIG_NRFX_POWER)
+	(void)nrfx_power_constlat_mode_free();
+#else
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
+#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
+}
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
+
+void mpsl_low_latency_acquire_callback(void)
+{
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+	mpsl_constlat_request();
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
+
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
 	int event_handle;
@@ -673,7 +708,7 @@ void mpsl_low_latency_acquire_callback(void)
 	}
 
 	m_nvm_low_latency_event_handle = event_handle;
-#else
+#elif defined(MPSL_HW_HAS_RRAMC)
 	m_rram_lowpower_config = NRF_RRAMC->POWER.LOWPOWERCONFIG;
 #if IS_ENABLED(CONFIG_MPSL_RRAM_LOW_LATENCY_MODE_IDLE)
 	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Idle
@@ -682,40 +717,39 @@ void mpsl_low_latency_acquire_callback(void)
 	NRF_RRAMC->POWER.LOWPOWERCONFIG = RRAMC_POWER_LOWPOWERCONFIG_MODE_Standby
 					  << RRAMC_POWER_LOWPOWERCONFIG_MODE_Pos;
 #endif /* IS_ENABLED(CONFIG_MPSL_RRAM_LOW_LATENCY_MODE_IDLE) */
+#elif defined(MPSL_HW_HAS_MRAMC)
+	nrf_mramc_power_autopowerdown_t cfg;
+
+	nrf_mramc_power_autopowerdown_get(NRF_MRAMC, &m_mram_autopowerdown_config);
+	cfg = m_mram_autopowerdown_config;
+	cfg.enable = false;
+	nrf_mramc_power_autopowerdown_set(NRF_MRAMC, &cfg);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
 #endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
-#endif /* defined(MPSL_HW_HAS_RRAMC) */
 }
 
 void mpsl_low_latency_release_callback(void)
 {
-#if IS_ENABLED(CONFIG_NRF_SYS_EVENT)
-	int ret;
+#if defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT)
+	mpsl_constlat_release();
+#endif /* defined(CONFIG_MPSL_LOW_LATENCY_CONSTLAT) */
 
-	ret = nrf_sys_event_release_global_constlat();
-	if (ret) {
-		LOG_ERR("NVM low latency release has failed (%d)", ret);
-	}
-#elif IS_ENABLED(CONFIG_NRFX_POWER)
-	(void)nrfx_power_constlat_mode_free();
-#else
-	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_LOWPWR);
-#endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT) */
-
-#if defined(MPSL_HW_HAS_RRAMC)
 #if !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE)
 #if IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY)
+	int ret;
+
 	ret = nrf_sys_event_unregister(m_nvm_low_latency_event_handle, false);
 	if (ret != 0) {
 		LOG_ERR("NVM low latency release has failed (%d)", ret);
 	}
 
 	m_nvm_low_latency_event_handle = -1;
-#else
+#elif defined(MPSL_HW_HAS_RRAMC)
 	NRF_RRAMC->POWER.LOWPOWERCONFIG = m_rram_lowpower_config;
+#elif defined(MPSL_HW_HAS_MRAMC)
+	nrf_mramc_power_autopowerdown_set(NRF_MRAMC, &m_mram_autopowerdown_config);
 #endif /* IS_ENABLED(CONFIG_NRF_SYS_EVENT_IRQ_LATENCY) */
 #endif /* !IS_ENABLED(CONFIG_TRUSTED_EXECUTION_NONSECURE) */
-#endif /* defined(MPSL_HW_HAS_RRAMC) */
 }
 #endif /* defined(CONFIG_MPSL_LOW_LATENCY_CALLBACKS) */
 
