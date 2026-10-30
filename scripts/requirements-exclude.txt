@@ -1,0 +1,4 @@
+# Package names removed from requirements inputs before pip-compile (one per line).
+# Applied in place by nrf/scripts/requirements-fixed.sh.
+
+spsdk
