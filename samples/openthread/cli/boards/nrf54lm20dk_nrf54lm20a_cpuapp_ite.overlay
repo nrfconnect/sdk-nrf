@@ -1,0 +1,25 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * IronSide TE PSA key slot storage of 5632 bytes (29 key slots), so that a Thread
+ * commissioner or joiner fits its DTLS session keys next to the Thread keys.
+ * The non-secure RAM starts where the key slot storage ends: 0x20007A00 + 5632.
+ * The device must be installed with the same size:
+ *   ironside_bundle.py update-config --key-slot-storage-size-bytes 5632
+ */
+
+/delete-node/ &sram_ns;
+
+&cpuapp_sram {
+	sram_ns: sram@9000 {
+		compatible = "mmio-sram";
+		#address-cells = <1>;
+		#size-cells = <1>;
+		reg = <0x9000 DT_SIZE_K(471)>;
+		ranges = <0x0 0x9000 DT_SIZE_K(471)>;
+	};
+};
