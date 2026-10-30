@@ -37,6 +37,8 @@ struct nrf_802154_radio_client_config {
 	uint8_t pan_id[PAN_ID_SIZE];
 	uint8_t short_address[SHORT_ADDRESS_SIZE];
 	uint8_t mac[EXTENDED_ADDRESS_SIZE];
+	uint8_t alt_short_address[SHORT_ADDRESS_SIZE];
+	bool alt_short_address_set;
 };
 
 /**

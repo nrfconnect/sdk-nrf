@@ -190,6 +190,34 @@ ZTEST(nrf_802154_callbacks_dispatcher, test_switch_to_client_initializes_and_app
 			  EXTENDED_ADDRESS_SIZE);
 }
 
+ZTEST(nrf_802154_callbacks_dispatcher, test_alternate_short_address_is_restored)
+{
+	client_a_config.alt_short_address[0] = 0x9a;
+	client_a_config.alt_short_address[1] = 0xbc;
+	client_a_config.alt_short_address_set = true;
+
+	zassert_ok(nrf_802154_callbacks_dispatcher_switch("client_a"));
+	zassert_true(nrf_802154_stub_stats.alt_short_address_present);
+	zassert_mem_equal(nrf_802154_stub_stats.last_alt_short_address,
+			  client_a_config.alt_short_address, SHORT_ADDRESS_SIZE);
+
+	/* Another client has no alternate address configured; it must not inherit it. */
+	zassert_ok(nrf_802154_callbacks_dispatcher_switch("client_b"));
+	zassert_false(nrf_802154_stub_stats.alt_short_address_present);
+
+	/* Switching back restores the retained alternate address. */
+	zassert_ok(nrf_802154_callbacks_dispatcher_switch("client_a"));
+	zassert_true(nrf_802154_stub_stats.alt_short_address_present);
+	zassert_mem_equal(nrf_802154_stub_stats.last_alt_short_address,
+			  client_a_config.alt_short_address, SHORT_ADDRESS_SIZE);
+
+	/* A disabled alternate address is restored as cleared. */
+	client_a_config.alt_short_address_set = false;
+	zassert_ok(nrf_802154_callbacks_dispatcher_switch(NULL));
+	zassert_ok(nrf_802154_callbacks_dispatcher_switch("client_a"));
+	zassert_false(nrf_802154_stub_stats.alt_short_address_present);
+}
+
 ZTEST(nrf_802154_callbacks_dispatcher, test_switch_same_client_is_noop)
 {
 	uint32_t reinit_before;

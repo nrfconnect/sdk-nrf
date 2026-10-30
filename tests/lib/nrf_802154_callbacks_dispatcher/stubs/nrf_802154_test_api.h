@@ -25,6 +25,7 @@ void nrf_802154_ack_data_remove_all(bool extended, nrf_802154_ack_data_t data_ty
 bool nrf_802154_reinit(void);
 void nrf_802154_pan_id_set(const uint8_t *p_pan_id);
 void nrf_802154_short_address_set(const uint8_t *p_short_address);
+void nrf_802154_alternate_short_address_set(const uint8_t *p_short_address);
 void nrf_802154_extended_address_set(const uint8_t *p_extended_address);
 void nrf_802154_init(void);
 
