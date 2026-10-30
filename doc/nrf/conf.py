@@ -66,6 +66,7 @@ extensions = [
     "external_sw_versions",
     "ncs_file",
     "nrfutil_command",
+    "parsed_literal_block",
 ]
 
 linkcheck_ignore = [
