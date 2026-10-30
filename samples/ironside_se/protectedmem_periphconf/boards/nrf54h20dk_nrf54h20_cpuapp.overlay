@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Delete the original partitions before redefining them */
+/delete-node/ &cpuapp_boot_partition;
+/delete-node/ &cpuapp_slot0_partition;
+/delete-node/ &periphconf_partition;
+/delete-node/ &secondary_partition;
+/delete-node/ &secondary_periphconf_partition;
+
+&mram1x {
+	partitions {
+		/* UICR.PROTECTEDMEM region covers cpuapp_boot_partition + periphconf_partition */
+		protectedmem_partition: partition@30000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x30000 DT_SIZE_K(72)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x30000 DT_SIZE_K(72)>;
+
+			cpuapp_boot_partition: boot_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x0 DT_SIZE_K(64)>;
+			};
+
+			/* Place UICR.PERIPHCONF partition right after cpuapp_boot_partition */
+			periphconf_partition: partition@10000 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x10000 DT_SIZE_K(8)>;
+			};
+		};
+
+		/* Move cpuapp_slot0_partition to start after periphconf_partition */
+		/* periphconf_partition ends at 0x42000, so slot0 starts there */
+		cpuapp_slot0_partition: partition@42000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x42000 DT_SIZE_K(328)>;
+		};
+
+		/* UICR.SECONDARY.PROTECTEDMEM region
+		 * covers secondary_partition + secondary_periphconf_partition
+		 */
+		secondary_protectedmem_partition: partition@1b0000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x1b0000 DT_SIZE_K(72)>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+			ranges = <0x0 0x1b0000 DT_SIZE_K(72)>;
+
+			secondary_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x0 DT_SIZE_K(64)>;
+			};
+
+			secondary_periphconf_partition: partition@10000 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x10000 DT_SIZE_K(8)>;
+			};
+		};
+	};
+};
