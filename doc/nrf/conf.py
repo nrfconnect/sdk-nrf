@@ -67,6 +67,7 @@ extensions = [
     "ncs_file",
     "glossary_term_tooltip",
     "nrfutil_command",
+    "parsed_literal_block",
 ]
 
 linkcheck_ignore = [
