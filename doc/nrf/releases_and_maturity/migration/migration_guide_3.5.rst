@@ -230,6 +230,11 @@ This section describes the changes related to the build and configuration system
      All boards and applications must now use DTS partitioning.
      For details about porting from |NCS| 3.3, see the :ref:`migration_partitions` page.
 
+   * For the nRF54L Series devices, sysbuild now sets the :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` Kconfig option in all images from the :kconfig:option:`SB_CONFIG_CRACEN_IKG_SEED_KMU_SLOT` sysbuild Kconfig option.
+     If you set :kconfig:option:`CONFIG_CRACEN_IKG_SEED_KMU_SLOT` in an image configuration, sysbuild overwrites it with the default value ``183``.
+     Set :kconfig:option:`SB_CONFIG_CRACEN_IKG_SEED_KMU_SLOT` in the sysbuild configuration instead.
+     Otherwise, the images use a different IKG seed and derive different keys.
+
 Samples and applications
 ========================
 

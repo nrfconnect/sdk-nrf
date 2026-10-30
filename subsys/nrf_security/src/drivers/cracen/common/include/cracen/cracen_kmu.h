@@ -18,6 +18,7 @@
 
 #include <stdint.h>
 #include <cracen_psa.h>
+#include <cracen/cracen_kmu_layout.h>
 
 #define CRACEN_KMU_PUSH_AREA_SIZE 96u
 #define CRACEN_KMU_MAX_KEY_SIZE   48u
@@ -44,8 +45,8 @@ typedef struct {
  * an actual key is being used so that the key material does not reside in the protected
  * RAM for more than the required time.
  */
-#define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 248
-#define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 249
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 CRACEN_KMU_PROT_RAM_INV_SLOT
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 (CRACEN_KMU_PROT_RAM_INV_SLOT + 1)
 #define PROTECTED_RAM_INVALIDATION_DATA_SLOTS_COUNT 2
 
 extern uint8_t kmu_push_area[CRACEN_KMU_PUSH_AREA_SIZE];
