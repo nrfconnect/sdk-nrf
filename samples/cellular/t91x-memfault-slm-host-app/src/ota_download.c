@@ -152,7 +152,6 @@ int ota_bundle_apply(void)
 	size_t header_len = 0;
 	size_t digest_len = 0;
 	size_t payload_offset;
-	uint64_t elements_size = 0;
 	uint32_t remaining;
 	ssize_t bytes_read;
 	int err;
