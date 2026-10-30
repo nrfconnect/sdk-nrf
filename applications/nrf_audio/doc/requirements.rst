@@ -11,7 +11,11 @@ The nRF Audio applications are designed to be used only with the following hardw
 
 .. table-from-rows:: /includes/sample_board_rows.txt
    :header: heading
-   :rows: nrf5340_audio_dk_nrf5340, nrf5340dk_nrf5340_cpuapp
+   :rows: nrf5340_audio_dk_nrf5340, nrf5340dk_nrf5340_cpuapp, nrf54lm20dk_nrf54lm20a_cpuapp
+
+.. note::
+   The support for the nRF54LM20 DK is :ref:`experimental <software_maturity>`.
+   It is limited to the :ref:`unicast client application <nrf_audio_unicast_client_app>` with USB as the audio source.
 
 You need at least two nRF5340 development kits (one with the gateway firmware and one with headset firmware) to test each of the applications.
 For CIS with TWS in mind, three kits are required.

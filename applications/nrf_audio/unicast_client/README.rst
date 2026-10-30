@@ -34,7 +34,7 @@ This application uses specific mapping for the following user interface elements
 
 * Long-pressed on the unicast client device during startup:
 
-  * **BTN5** - Clears the previously stored bonding information.
+  * **BTN 5** - Clears the previously stored bonding information.
 
 * Pressed on the unicast client device during playback:
 
@@ -42,7 +42,7 @@ This application uses specific mapping for the following user interface elements
   * **VOL-** - Turns the playback volume down (and unmutes).
   * **VOL+** - Turns the playback volume up (and unmutes).
   * **BTN 4** - Sends a test tone generated on the device. Use this tone to check the synchronization of headsets.
-  * **BTN5** - Mutes the playback volume (and unmutes).
+  * **BTN 5** - Mutes the playback volume (and unmutes).
 
 * **LED1** - Blinking blue - Kit is streaming audio to a headset.
 * **RGB** - Solid green - The device is programmed as the gateway.
@@ -52,7 +52,7 @@ This application uses specific mapping for the following user interface elements
 Configuration
 *************
 
-By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf_audio/`, the nRF5340 build script tries to build the CIS applications in the CIS unidirectional mode.
+By default, if you have not made any changes to :file:`.conf` files at :file:`applications/nrf_audio/`, the unicast client application is built in the CIS unidirectional mode.
 To switch to the bidirectional mode, see :ref:`nrf_audio_app_configuration_select_bidirectional`.
 
 For other configuration options, see :ref:`nrf_audio_app_configuration`.

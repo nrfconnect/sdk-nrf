@@ -85,7 +85,8 @@ To switch to using the walkie-talkie, set the :option:`CONFIG_WALKIE_TALKIE_DEMO
 Enabling the Auracast™ (broadcast) mode
 =======================================
 
-If you want to work with `Auracast™`_ (broadcast) sources and sinks, set the :option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
+If you want to work with `Auracast™`_ (broadcast) sources and sinks, build the :ref:`broadcast source <nrf_audio_broadcast_source_app>` and :ref:`broadcast sink <nrf_audio_broadcast_sink_app>` applications.
+Their :ref:`application-specific overlay files <nrf_audio_app_building_config_files>` set the :option:`CONFIG_TRANSPORT_BIS` Kconfig option to ``y``, so you do not need to set it in the :file:`applications/nrf_audio/prj.conf` file.
 
 .. _nrf_audio_app_configuration_select_bis_two_gateways:
 
@@ -95,7 +96,7 @@ Enabling the BIS mode with two gateways
 In addition to the standard BIS mode with one gateway, you can also add a second gateway device.
 The BIS headsets can then switch between the two gateways and receive the audio stream from one of the two gateways.
 
-To configure the second gateway, add both the :option:`CONFIG_TRANSPORT_BIS` and the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig options set to ``y`` to the :file:`applications/nrf_audio/prj.conf` file.
+To configure the second gateway, set the :option:`CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT` Kconfig option to ``y`` in the :file:`applications/nrf_audio/prj.conf` file.
 You can provide an alternative name to the second gateway using the :option:`CONFIG_BT_AUDIO_BROADCAST_NAME_ALT` or use the default alternative name.
 
 You build each BIS gateway separately using the normal procedures from :ref:`nrf_audio_app_building`.
@@ -111,7 +112,7 @@ When using the :ref:`default CIS transport mode configuration <nrf_audio_transpo
 
 The nRF Audio applications use audio location definitions from the Audio Location Definition chapter in the `Bluetooth Assigned Numbers`_ specification.
 These correspond to the bitfields in the :file:`bt_audio_location` enum in the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file.
-When building the audio application, the location value is used to populate the UICR with the correct bitfield for each headset.
+When programming the audio application, the location value is written to the UICR with the correct bitfield for each headset.
 
 You can set the location for each headset in the following ways, depending on the building and programming method:
 
@@ -121,13 +122,16 @@ You can set the location for each headset in the following ways, depending on th
 
   .. code-block:: json
 
-     [
-      {
-        "nrf5340_audio_dk_snr": 1000,
-        "nrf5340_audio_dk_dev": "headset",
-        "location": ["FRONT_LEFT"]
-      }
-     ]
+     {
+       "sirk": "MY_AUDIO_SET_001",
+       "devices": [
+         {
+           "nrf5340_audio_dk_snr": 1000,
+           "nrf5340_audio_dk_dev": "headset",
+           "location": ["FRONT_LEFT"]
+         }
+       ]
+     }
 
 * When :ref:`nrf_audio_app_building_standard`, set the location for each headset when running the :ref:`programming command <nrf_audio_app_building_standard_programming>`.
   Use the combined bitfield values from the :file:`zephyr/include/zephyr/bluetooth/assigned_numbers.h` file to define the headset location.
@@ -135,7 +139,17 @@ You can set the location for each headset in the following ways, depending on th
 
   .. code-block:: console
 
-     nrfutil device x-write --address 0x00FF80F4 --value 3
+     nrfutil device write --address 0x00FF80F4 --value 3
+
+* When you want a fixed location in the firmware, set the :option:`CONFIG_DEVICE_LOCATION_SET_COMPILE_TIME` Kconfig option to ``y`` and the :option:`CONFIG_DEVICE_LOCATION_AT_COMPILE_TIME` Kconfig option to the combined bitfield value.
+  In this case, the headset ignores the location in the UICR and the location buttons.
+
+.. note::
+   Unless the location is set at compile time, you can also change the location of a programmed headset without rebuilding it.
+   On the nRF5340 Audio DK, long-press **VOL-** (left), **VOL+** (right), or both buttons (stereo) during startup.
+   If a location is already programmed in the UICR, the new location applies until the next reset, and pressing **RESET** restores the programmed location.
+   If no location is programmed, the headset writes the selected location to the UICR permanently, and you cannot change it with the buttons until you erase the device.
+   For the buttons on other development kits, see :ref:`nrf_audio_app_ui`.
 
 The following table lists some of the available locations and their bitfield values:
 
@@ -175,7 +189,7 @@ In the default configuration, the gateway application uses USB as the audio sour
 The :ref:`nrf_audio_app_building` and testing steps also refer to using the USB serial connection.
 
 The audio source selection affects the firmware architecture and available features.
-USB audio source is limited to unidirectional streams due to CPU load considerations, while I2S supports bidirectional communication.
+Both the USB and the I2S audio sources support unidirectional and bidirectional streams.
 
 .. _nrf_audio_app_configuration_select_i2s:
 
@@ -233,7 +247,7 @@ See :ref:`nrf_audio_app_config_audio_app_options` for options starting with ``CO
 Configuring power measurements
 ******************************
 
-The power measurements are disabled by default in the :ref:`main configuration file of the application <nrf_audio_app_building_config_files>` (:file:`applications/nrf_audio/prj.conf`).
+The power measurements are disabled by default.
 
 .. note::
    Enabling power measurements together with :ref:`debug logging <ug_logging>` increases the power consumption.
@@ -335,7 +349,7 @@ To play audio from the SD card, complete the following steps:
          sd_card_playback play_lc3 <filename>.lc3
 
    The audio from the SD card will be mixed with any existing audio stream and played through the device's audio output.
-#. To stop the playback, issue the ``sd_card_playback stop`` command.
+#. To stop the playback, issue the ``sd_card_playback stop`` command or wait for the end of the file.
 #. To exit the shell, issue the ``exit`` command.
 
 .. _nrf_audio_app_adding_FEM_support:
@@ -360,7 +374,7 @@ You can use one of the following options, depending on how you decide to build t
 
   .. code-block:: console
 
-     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE=".\unicast_server\overlay-unicast_server.conf" -Dnrf_audio_SHIELD=nrf21540ek -Dipc_radio_SHIELD=nrf21540ek
+     west build -b nrf5340_audio_dk/nrf5340/cpuapp --pristine -- -DEXTRA_CONF_FILE="unicast_server/overlay-unicast_server.conf" -Dnrf_audio_SHIELD=nrf21540ek -Dipc_radio_SHIELD=nrf21540ek
 
 To set the TX power output, use the :kconfig:option:`CONFIG_BT_CTLR_TX_PWR_ANTENNA` and :kconfig:option:`CONFIG_MPSL_FEM_NRF21540_TX_GAIN_DB` Kconfig options in :file:`applications/nrf_audio/sysbuild/ipc_radio/prj.conf`.
 

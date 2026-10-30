@@ -9,10 +9,10 @@ nRF Audio overview and firmware architecture
 
 Each nRF Audio application corresponds to one specific LE Audio role: unicast client (gateway), unicast server (headset), broadcast source (gateway), or broadcast sink (headset).
 
-Likewise, each nRF Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or in the *broadcast isochronous stream* (BIS) mode.
+Likewise, each nRF Audio application is configured for one specific LE Audio mode: the *connected isochronous stream* (CIS, unicast) mode or the *broadcast isochronous stream* (BIS) mode.
 See :ref:`nrf_audio_app_overview_modes` for more information.
 
-The audio applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the Audio LE roles and modes.
+The audio applications use the same code base, but use different :file:`main.c` files and include different modules and libraries depending on the LE Audio roles and modes.
 See :ref:`nrf_audio_app_overview_files` for more information.
 
 You might need to configure and program two applications for testing the interoperability, depending on your use case.
@@ -227,7 +227,7 @@ See the following figure for an overview of the synchronization module.
    nRF Audio synchronization module overview
 
 Both synchronization methods use the SDU reference timestamps (:c:type:`sdu_ref`) as the reference variable.
-If the device is a gateway that is :ref:`using I2S as audio source <nrf_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the LE Audio Controller Subsystem for nRF53 on the gateway.
+If the device is a gateway that is :ref:`using I2S as audio source <nrf_audio_app_overview_architecture_i2s>` and the stream is unidirectional (gateway to headsets), :c:type:`sdu_ref` is continuously being extracted from the SoftDevice Controller on the gateway.
 The extraction happens inside the :file:`unicast_client.c` and :file:`broadcast_source.c` files' send functions.
 The :c:type:`sdu_ref` values are then sent to the gateway's synchronization module, and used for drift compensation.
 
@@ -238,7 +238,7 @@ The :c:type:`sdu_ref` values are then sent to the gateway's synchronization modu
 As the nRF5340 is a dual-core SoC, and both cores need the same concept of time, each core runs a free-running timer in an infinite loop.
 These two timers are reset at the same time, and they run from the same clock source.
 This means that they should always show the same values for the same points in time.
-The network core of the nRF5340 running the LE controller for nRF53 uses its timer to generate the :c:type:`sdu_ref` timestamp for every audio packet received.
+The network core of the nRF5340 running the SoftDevice Controller uses its timer to generate the :c:type:`sdu_ref` timestamp for every audio packet received.
 The application core running the nRF Audio application uses its timer to generate :c:type:`cur_time` and :c:type:`frame_start_ts`.
 
 After the decoding takes place, the audio data is divided into smaller blocks and added to a FIFO.
@@ -271,7 +271,7 @@ Synchronization module flow
 The received audio data in the I2S-based firmware devices follows the following path:
 
 1. The SoftDevice Controller running on the network core receives the compressed audio data.
-#. The controller, running in the :zephyr:code-sample:`bluetooth_hci_ipc` sample on the nRF5340 SoC network core, sends the audio data to the Zephyr Bluetooth LE host running on the nRF5340 SoC application core.
+#. The controller, running in the :ref:`ipc_radio` application on the nRF5340 SoC network core, sends the audio data to the Zephyr Bluetooth LE host running on the nRF5340 SoC application core.
 #. The host sends the data to the stream control module.
 #. The data is sent to a FIFO buffer.
 #. The data is sent from the FIFO buffer to the :file:`audio_datapath.c` synchronization module.

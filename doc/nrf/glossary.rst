@@ -900,6 +900,12 @@ Glossary
       Sometimes referred to as a network name.
       This name allows stations to connect to the desired network when multiple independent networks operate in the same physical area.
 
+   Set Identity Resolving Key (SIRK)
+      A key shared by all members of a coordinated set of :term:`LE Audio` devices, such as a pair of earbuds.
+      The set members use the SIRK to generate the identifiers they include in their advertising data.
+      A client device that knows the SIRK can use these identifiers to find the other members of the same set.
+      The SIRK is defined by the Bluetooth Coordinated Set Identification Profile (CSIP).
+
    Shield
       A hardware add-on that you can attach to the development kit to extend its feature and functionalities.
       See :ref:`shield_names_nrf`.
