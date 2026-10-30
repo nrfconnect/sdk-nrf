@@ -94,7 +94,6 @@ int ota_bundle_download(const char *url, const int *sec_tags, uint8_t sec_tag_co
 	struct downloader_host_cfg host_cfg = {
 		.sec_tag_list = sec_tags,
 		.sec_tag_count = sec_tag_count,
-		.set_native_tls = true, /* TLS terminates on this MCU, the modem only carries PPP */
 		.range_override = sizeof(dl_buf),
 	};
 	struct fs_statvfs sv;

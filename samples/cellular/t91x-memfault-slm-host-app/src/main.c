@@ -8,6 +8,7 @@
 
 #include <zephyr/device.h>
 #include <zephyr/kernel.h>
+#include <zephyr/logging/log.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_mgmt.h>
 #include <zephyr/pm/device.h>
@@ -21,6 +22,8 @@
 #include <zephyr/dfu/mcuboot.h>
 
 #include "ota_download.h"
+
+LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);
 
 static const int memfault_sec_tags[] = {
     kMemfaultRootCert_DigicertRootG2,
@@ -70,11 +73,11 @@ static int memfault_device_id_init(void)
 
 	ret = cellular_get_modem_info(modem, CELLULAR_MODEM_INFO_IMEI, imei, sizeof(imei));
 	if (ret < 0) {
-		printk("Failed to get IMEI (%d)\n", ret);
+		LOG_ERR("Failed to get IMEI (%d)", ret);
 		return ret;
 	}
 
-	printk("IMEI: %s\n", imei);
+	LOG_INF("IMEI: %s", imei);
 
 	return memfault_ncs_device_id_set(imei, strlen(imei));
 }
@@ -86,26 +89,26 @@ int main(void)
 
 	ppp_iface = net_if_get_first_by_type(&NET_L2_GET_NAME(PPP));
 
-	printk("Powering on modem\n");
+	LOG_INF("Powering on modem");
 	pm_device_action_run(modem, PM_DEVICE_ACTION_RESUME);
 
-	printk("Bring up network interface\n");
+	LOG_INF("Bring up network interface");
 	ret = net_if_up(ppp_iface);
 	if (ret < 0) {
-		printk("Failed to bring up network interface\n");
+		LOG_ERR("Failed to bring up network interface");
 		return -1;
 	}
 
-	printk("Waiting for L4 connected\n");
+	LOG_INF("Waiting for L4 connected");
 	ret = k_event_wait(&l4_event, L4_CONNECTED, false, K_SECONDS(120));
 	if (ret != L4_CONNECTED) {
-		printk("L4 was not connected in time\n");
+		LOG_ERR("L4 was not connected in time");
 		return -1;
 	}
 
 	ret = k_event_wait(&l4_event, L4_DNS_ADDED, false, K_SECONDS(10));
 	if (ret != L4_DNS_ADDED) {
-		printk("DNS server was not added in time\n");
+		LOG_ERR("DNS server was not added in time");
 		return -1;
 	}
 
@@ -116,40 +119,49 @@ int main(void)
 
 	ret = memfault_zephyr_port_install_root_certs();
 	if (ret < 0) {
-		printk("Failed to install Memfault root certs (%d)\n", ret);
+		LOG_ERR("Failed to install Memfault root certs (%d)", ret);
 		return -1;
 	}
 
 	/* Capture a heartbeat now instead of waiting for the periodic timer. */
 	memfault_metrics_heartbeat_debug_trigger();
 
-	printk("Uploading data to Memfault\n");
+	LOG_INF("Uploading data to Memfault");
 	ret = memfault_zephyr_port_post_data();
 	if (ret < 0) {
-		printk("Memfault upload failed (%d)\n", ret);
+		LOG_ERR("Memfault upload failed (%d)", ret);
 		return -1;
 	}
 
-	printk("Checking for OTA update\n");
+	LOG_INF("Checking for OTA update");
 	ret = memfault_zephyr_port_get_download_url(&url);
 	if (ret < 0) {
-		printk("OTA check failed (%d)\n", ret);
+		LOG_ERR("OTA check failed (%d)", ret);
 		return -1;
 	}
 
 	if (ret == 0) {
-		printk("Up to date\n");
+		LOG_INF("Up to date");
 		if (!boot_is_img_confirmed()) {
 			// Mark the ota image as installed so we don't revert
-			printk("Confirming OTA update\n");
+			LOG_INF("Confirming OTA update");
 			boot_write_img_confirmed();
 		}
 	} else {
 		/* Custom OTA handling goes here. */
-		printk("OTA update available: %s\n", url);
-		ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
+		LOG_INF("OTA update available: %s", url);
+		LOG_INF("Downloading");
+		ret = ota_bundle_download(url, memfault_sec_tags, ARRAY_SIZE(memfault_sec_tags));
 		memfault_zephyr_port_release_download_url(&url);
-		ota_bundle_apply();
+		if (ret < 0) {
+			LOG_ERR("OTA download failed (%d)", ret);
+			return ret;
+		}
+		ret = ota_bundle_apply();
+		if (ret < 0) {
+			LOG_ERR("OTA apply failed (%d)", ret);
+			return ret;
+		}
 	}
 
 	return 0;
