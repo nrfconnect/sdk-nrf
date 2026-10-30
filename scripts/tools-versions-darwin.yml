@@ -27,7 +27,7 @@ ccache:
 doxygen:
   version: 1.12.0
 pip:
-  version: 26.1.2
+  version: 26.2.2
 nrfutil:
   version: 8.1.1
   subcommands:
