@@ -16,32 +16,3 @@
 		nordic,modem-trace-uart = &uart132;
 	};
 };
-
-/delete-node/ &cpuapp_cpucell_ipc_shm_ctrl;
-/delete-node/ &cpuapp_cpucell_ipc_shm_heap;
-/delete-node/ &cpucell_cpuapp_ipc_shm_heap;
-
-/* Reduce size of application RAM to make room for trace. */
-&cpuapp_ram0x_sram {
-	reg = <0x2f000000 DT_SIZE_K(332)>;
-	ranges = <0x0 0x2f000000 0x53000>;
-};
-
-&cpuapp_cpucell_ram0x_region {
-	/* Move IPC shared memory and add trace region. */
-	cpuapp_cpucell_ipc_shm_ctrl: memory@3000 {
-		reg = <0x3000 DT_SIZE_K(4)>;
-	};
-
-	cpuapp_cpucell_ipc_shm_heap: memory@4000 {
-		reg = <0x4000 DT_SIZE_K(16)>;
-	};
-
-	cpucell_cpuapp_ipc_shm_heap: memory@8000 {
-		reg = <0x8000 DT_SIZE_K(16)>;
-	};
-
-	cpucell_cpuapp_ipc_shm_trace: memory@c000 {
-		reg = <0xc000 DT_SIZE_K(16)>;
-	};
-};

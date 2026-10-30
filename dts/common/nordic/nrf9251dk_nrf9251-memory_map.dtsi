@@ -24,17 +24,22 @@
 			ranges = <0x0 0x2f050000 0x10000>;
 
 			/* IPC Ctrl */
-			cpuapp_cpucell_ipc_shm_ctrl: memory@7000 {
-				reg = <0x7000 DT_SIZE_K(4)>;
+			cpuapp_cpucell_ipc_shm_ctrl: memory@0 {
+				reg = <0x0 DT_SIZE_K(4)>;
 			};
 
 			/* IPC TX heap, user defined */
-			cpuapp_cpucell_ipc_shm_heap: memory@8000 {
-				reg = <0x8000 DT_SIZE_K(16)>;
+			cpuapp_cpucell_ipc_shm_heap: memory@1000 {
+				reg = <0x1000 DT_SIZE_K(36)>;
 			};
 
 			/* IPC RX heap, user defined */
-			cpucell_cpuapp_ipc_shm_heap: memory@c000 {
+			cpucell_cpuapp_ipc_shm_heap: memory@a000 {
+				reg = <0xa000 DT_SIZE_K(8)>;
+			};
+
+			/* IPC Trace, user defined */
+			cpucell_cpuapp_ipc_shm_trace: memory@c000 {
 				reg = <0xc000 DT_SIZE_K(16)>;
 			};
 		};
