@@ -134,3 +134,9 @@
 #versions-select option {
   font-weight: normal;
 }
+
+/* Glossary :term: links — italic like Nordic bundle documentation terms. */
+.rst-content a.reference.internal span.std.std-term,
+.rst-content a.reference.internal > span.xref.std.std-term {
+  font-style: italic;
+}
