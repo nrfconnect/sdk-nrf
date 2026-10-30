@@ -325,7 +325,7 @@ static bool encode_wifi_ob(zcbor_state_t *state, const struct wifi_ob *input)
 		      (((((zcbor_uint32_put(state, (18)))) &&
 			 (zcbor_list_start_encode(state, 20) &&
 			  ((zcbor_multi_encode_minmax(
-				   2, 20, &(*input).wifi_ob_accessPoints_ap_m_count,
+				   1, 20, &(*input).wifi_ob_accessPoints_ap_m_count,
 				   (zcbor_encoder_t *)encode_ap, state,
 				   (*&(*input).wifi_ob_accessPoints_ap_m), sizeof(struct ap))) ||
 			   (zcbor_list_map_end_force_encode(state), false)) &&
