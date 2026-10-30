@@ -437,6 +437,40 @@ The following code example shows how to publish to non-AWS specific topics:
 		return err;
 	}
 
+.. _lib_aws_iot_direct_messages:
+
+Receiving direct messages
+=========================
+
+AWS IoT Core can send a message to one connected device by its client ID, using the ``SendDirectMessage`` API.
+For details, see `AWS IoT Direct Messaging`_.
+The device does not need to subscribe to the topic of a direct message.
+
+The library does not need any special configuration to receive direct messages.
+It handles them in the same way as any other incoming message:
+
+* The library passes the message to the application with the :c:enumerator:`AWS_IOT_EVT_DATA_RECEIVED` event.
+  The topic type in the event is :c:enumerator:`AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC`.
+  The library cannot tell a direct message from a message on a topic that the application subscribed to.
+  If the application needs to know the difference, it must compare the topic with the topics it has subscribed to.
+* If the message is received with QoS 1, the library sends the MQTT PUBACK before it passes the message to the application.
+  AWS IoT Core uses QoS 1 when the sender sets ``confirmation=true``.
+  The PUBACK therefore confirms that the library received the message, not that the application handled it.
+* The topic and the payload pointers in the event are valid only during the event handler.
+  Copy the data if the application needs it later.
+
+Observe the following when using direct messages:
+
+* The device policy must allow ``iot:Receive`` on the topic of the message.
+  The policy does not need to allow ``iot:Subscribe``.
+  If ``iot:Receive`` is missing, AWS IoT Core does not deliver the message.
+* The payload must fit in the buffer set by the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` option.
+  If it does not, the library drops the message, reports an error, and does not send the PUBACK.
+  The sender then gets an HTTP 504 error when it requests a confirmation.
+* The device must be connected when the message is sent.
+  AWS IoT Core does not queue direct messages for offline devices and does not retain them.
+* AWS IoT rules do not process direct messages.
+
 .. _lib_set_client_id:
 
 Setting client ID at run-time

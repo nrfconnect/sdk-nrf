@@ -771,6 +771,7 @@ Networking samples
 
 * :ref:`aws_iot` sample:
 
+  * Added documentation explaining that the sample logs direct messages received through the AWS IoT Core ``SendDirectMessage`` API.
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
 * :ref:`download_sample` sample:
@@ -1279,6 +1280,8 @@ Libraries for networking
 
   * Fixed an issue where the library could stop after one resolved broker address.
     The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+  * Fixed an issue where a received message that was larger than the :kconfig:option:`CONFIG_MQTT_HELPER_PAYLOAD_BUFFER_LEN` Kconfig option was not read from the socket, which made the next read from the MQTT connection fail.
+    The library now drops the payload of such a message, keeps the connection and reports the :c:enumerator:`MQTT_HELPER_ERROR_MSG_SIZE` error.
 
 * :ref:`lib_nrf_provisioning` library:
 
@@ -1310,8 +1313,11 @@ Libraries for networking
 
 * :ref:`lib_aws_iot` library:
 
+  * Added documentation describing how the library receives direct messages sent with the AWS IoT Core ``SendDirectMessage`` API.
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
     Previously, the event carried no payload.
+  * Fixed an issue where a non-shadow topic containing a Device Shadow operation name, such as ``update/delta``, was reported as a shadow topic.
+  * Fixed an issue where named shadow topics and other AWS reserved topics were reported as classic shadow topics when they ended with a recognized classic shadow operation.
 
 Libraries for NFC
 -----------------
