@@ -37,8 +37,21 @@ endif # VTF_DIE_TEMP_MONITOR
 config VTF_FREQ_OFFSET_MONITOR
 	bool "Monitor frequency offset"
 
-config VTF_BATTERY_VOLTAGE_MONITOR
+menuconfig VTF_BATTERY_VOLTAGE_MONITOR
 	bool "Monitor battery voltage"
+	depends on DT_HAS_NORDIC_NRF_VBAT_ENABLED
+	select SENSOR
+	select NRF_VBAT
+
+if VTF_BATTERY_VOLTAGE_MONITOR
+
+config VTF_BATTERY_VOLTAGE_MONITOR_INTERVAL_MS
+	int "Battery voltage measurement interval (ms)"
+	default 10000
+	help
+	  Interval between battery voltage measurements in milliseconds.
+
+endif # VTF_BATTERY_VOLTAGE_MONITOR
 
 config VTF_LOG_LEVEL
 	int "Logging level in VTF monitoring system"

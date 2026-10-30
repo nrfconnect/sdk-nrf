@@ -23,7 +23,7 @@ The sample periodically logs the following :ref:`vtf_monitoring` channels:
 
 * Die temperature - Supplied by the subsystem built-in provider, which reads the SoC internal die temperature sensor.
 * Battery voltage - In the default configuration, the :kconfig:option:`CONFIG_VTF_BATTERY_VOLTAGE_MONITOR` Kconfig option is enabled.
-  Live capture for battery voltage is not yet implemented in the subsystem, so the snapshot holds the default value of the Kconfig option.
+  The battery voltage is supplied by the subsystem's built-in provider, which configures the SAADC to read VBAT.
 * Crystal oscillator (XO) frequency offset - Since the :kconfig:option:`CONFIG_VTF_FREQ_OFFSET_MONITOR` Kconfig option is disabled, the snapshot holds the default value of the Kconfig option.
 
 The sample includes a mock provider in the :file:`src/mock_battery_provider.c` file to demonstrate a custom channel monitoring backend.
@@ -80,11 +80,12 @@ Testing
    .. code-block:: console
 
       [00:00:00.013,670] <inf> vtf_monitoring_sample: die temp: 25 C
-      [00:00:00.013,680] <inf> vtf_monitoring_sample: battery voltage: 3500 mV
+      [00:00:00.013,680] <inf> vtf_monitoring_sample: battery voltage: 3600 mV
       [00:00:00.013,688] <inf> vtf_monitoring_sample: XO offset: 0 ppm
 
    Die temperature reflects live readings from the die temperature sensor.
-   Battery voltage and XO offset show the configured default values.
+   Battery voltage reflects live readings from the SAADC.
+   XO offset show the configured default value.
 
 #. Build and run the :ref:`custom battery voltage backend <vtf_monitoring_sample_custom_battery>` variant and observe that the battery voltage decreases over time.
 
