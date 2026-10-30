@@ -11,7 +11,6 @@
 #include <zephyr/storage/flash_map.h>
 
 #include <cJSON.h>
-#include <modem/modem_info.h>
 #include <date_time.h>
 #include <net/nrf_cloud_agnss.h>
 #include <net/nrf_cloud_pgps.h>
