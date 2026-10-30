@@ -8,6 +8,7 @@
 #include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/pm/device.h>
+#include <hal/nrf_reset.h>
 
 #if defined(CONFIG_RAM_POWER_DOWN_LIBRARY)
 #include <ram_pwrdn.h>
@@ -45,6 +46,10 @@ static void configure_ram_retention(void)
 
 int main(void)
 {
+	uint32_t resetreas = nrf_reset_resetreas_get(NRF_RESET);
+
+	nrf_reset_resetreas_clear(NRF_RESET, resetreas);
+
 #if defined(CONFIG_SERIAL)
 	const struct device *const console = DEVICE_DT_GET(DT_CHOSEN(zephyr_console));
 	int err;
