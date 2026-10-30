@@ -84,11 +84,13 @@ API deprecation
 ***************
 
 The **Deprecated** status is assigned to API that has gone through all maturity levels, but is being phased out.
-The deprecated API will be removed in one of future releases, no earlier than two releases after the deprecation is announced and only when the code has transitioned to not using the deprecated API.
+The deprecated API will be removed after the deprecation period defined in :ref:`ncs_deprecation_policy`.
 The experimental API can be removed without deprecation notification.
-Following :ref:`Zephyr's guidelines for API lifecycle <zephyr:api_lifecycle>`, the API documentation informs about the deprecation and attempts to use a deprecated API at build time will log a warning to the console.
+
+.. include:: /includes/deprecation_common.txt
 
 For information about LTS-specific handling of experimental and deprecated features, see :ref:`lts_releases`.
+For the full deprecation policy and user workflows, see :ref:`ncs_deprecation_policy`.
 
 .. _software_maturity_application:
 
