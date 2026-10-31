@@ -13,3 +13,7 @@ libusb>=1.0.26
 matter_idl
 python-path>=0.1.3
 sh>=2.2.4 # https://github.com/advisories/GHSA-q38v-wp89-2w55
+
+pylink-square>=1.0,<2.0  # pyocd requires pylink-square>=1.0,<2.0
+mypy>=2.1.0,<2.3.0  # mypy 2.3+ needs librt>=0.13; mirror has 0.12 until pip_requestor
+PyJWT>=2.15.1
