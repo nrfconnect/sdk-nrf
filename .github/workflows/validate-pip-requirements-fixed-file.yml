@@ -9,6 +9,8 @@ on:
     paths:
       - 'scripts/requirements*.txt'
       - 'scripts/requirements-fixed.in'
+      - 'scripts/requirements-fixed.sh'
+      - 'scripts/requirements-exclude.txt'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
 permissions:
@@ -29,6 +31,7 @@ jobs:
           sudo snap install --channel=v4 yq
           PYTHON_VERSION=$(yq '.python.version' ./ncs/nrf/scripts/tools-versions-linux.yml)
           echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+          echo "min_python_version=${PYTHON_VERSION%.*}" >> $GITHUB_OUTPUT
 
       - name: Setup python version
         uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
@@ -71,11 +74,15 @@ jobs:
             pip3 install \
               --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
               pip-compile-cross-platform==1.4.2+nordic.3 --upgrade
-            # Expand requirements-fixed.in to CLI args (paths are west-topdir-relative).
+            NCS_TOP="$TOPDIR"
+            export NCS_TOP
+            # shellcheck source=/dev/null
+            source ./nrf/scripts/requirements-fixed.sh
+            apply_requirements_excludes
             pip-compile-cross-platform \
               $(grep -Ev '^\s*(#|$)' nrf/scripts/requirements-fixed.in | xargs) \
               --output-file nrf/scripts/requirements-fixed.txt \
-              --min-python-version 3.12 \
+              --min-python-version ${{ steps.pyv.outputs.min_python_version }} \
               --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
 
             deactivate

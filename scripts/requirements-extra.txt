@@ -5,11 +5,17 @@ Pillow>=10.3.0 #  https://github.com/advisories/GHSA-44wm-f244-xhp3
 editdistance>=0.5.0
 PyGithub
 jinja2>=3.1.6 # https://github.com/advisories/GHSA-cpwx-vrp4-4pq7
+markupsafe==3.0.4  # cp312 wheels for linux, win, mac on Nordic PyPI
 zcbor>=0.8.0
 nrfcredstore>=2.0.6
 nrfcloud-utils>=3.0.12
 idna>=3.7 # https://github.com/advisories/GHSA-jjg7-2v4v-x38h
 libusb>=1.0.26
+grpcio==1.81.1  # match grpcio-tools; cp312 wheels on Nordic PyPI (1.84.x incomplete)
 matter_idl
 python-path>=0.1.3
 sh>=2.2.4 # https://github.com/advisories/GHSA-q38v-wp89-2w55
+
+pylink-square>=1.0,<2.0  # pyocd requires pylink-square>=1.0,<2.0
+mypy>=2.1.0,<2.3.0  # mypy 2.3+ needs librt>=0.13; mirror has 0.12 until pip_requestor
+PyJWT>=2.15.1
