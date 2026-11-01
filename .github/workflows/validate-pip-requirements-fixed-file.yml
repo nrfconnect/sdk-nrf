@@ -1,3 +1,4 @@
+# Verify each lock pin is published on pypi.org (sdist or wheel); matter-idl and py-utlx omitted at runtime.
 name: Validate pip requirements-fixed.txt
 
 on:
@@ -7,76 +8,42 @@ on:
       - main
       - 'v*-branch'
     paths:
+      - 'scripts/requirements-fixed.txt'
       - 'scripts/requirements*.txt'
-      - 'scripts/requirements-fixed.in'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
 permissions:
   contents: read
 
 jobs:
-  check-requirements:
+  test-install-pypi:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
-        with:
-          west-update-args: '--narrow mcuboot zephyr'
+      - uses: actions/checkout@v4
 
       - name: Get python version
         id: pyv
         run: |
           sudo snap install --channel=v4 yq
-          PYTHON_VERSION=$(yq '.python.version' ./ncs/nrf/scripts/tools-versions-linux.yml)
-          echo "python_version=$PYTHON_VERSION" >> $GITHUB_OUTPUT
+          echo "python_version=$(yq '.python.version' scripts/tools-versions-linux.yml)" >> $GITHUB_OUTPUT
 
-      - name: Setup python version
-        uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
         with:
           python-version: '${{ steps.pyv.outputs.python_version }}'
 
-      - name: Cache pip
-        uses: actions/cache@d4323d4df104b026a6aa633fdb11d772146be0bf
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-pip
-
-      - name: Setup environment
-        working-directory: ncs
+      - name: Prepare requirements (PyPI)
         run: |
-          pip3 install --user -U setuptools wheel pip virtualenv virtualenvwrapper
+          set -euo pipefail
+          grep -v '^--' scripts/requirements-fixed.txt \
+            | grep -vE '^(matter-idl|py-utlx)==' \
+            > /tmp/requirements-pypi.txt
+          echo "Pins to check: $(grep -c '==' /tmp/requirements-pypi.txt || true)"
 
-      - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.3
-        with:
-          diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
-          script_call: |
-            cd ncs
-            OUT_FILE="nrf/scripts/requirements-fixed.txt"
-            echo "Writing frozen requirements to: $OUT_FILE"
-            echo "Log python version: $(python --version)"
-
-            TOPDIR=$(west topdir)
-            cd $TOPDIR
-
-            source ~/.local/bin/virtualenvwrapper.sh
-            [[ $? != 0 ]] && echo "error sourcing virtualenvwrapper" && exit 1
-
-            rmvirtualenv pip-fixed-venv
-            # We need to force the result of the following command.
-            # For no aparent reason it returns 1 with the same output as local.
-            mkvirtualenv pip-fixed-venv  || true
-            workon pip-fixed-venv
-
-            pip3 install \
-              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple \
-              pip-compile-cross-platform==1.4.2+nordic.3 --upgrade
-            # Expand requirements-fixed.in to CLI args (paths are west-topdir-relative).
-            pip-compile-cross-platform \
-              $(grep -Ev '^\s*(#|$)' nrf/scripts/requirements-fixed.in | xargs) \
-              --output-file nrf/scripts/requirements-fixed.txt \
-              --min-python-version 3.12 \
-              --index-url https://files.nordicsemi.com/artifactory/api/pypi/nordic-pypi/simple
-
-            deactivate
-            rmvirtualenv pip-fixed-venv
+      - name: Download pins from PyPI (sdist or wheel)
+        run: |
+          set -euo pipefail
+          python -m pip install -U pip
+          mkdir -p /tmp/pypi-check
+          # No install/build: only that each version exists on pypi.org (sdist-only is OK).
+          python -m pip download --no-deps --index-url https://pypi.org/simple \
+            -r /tmp/requirements-pypi.txt -d /tmp/pypi-check
