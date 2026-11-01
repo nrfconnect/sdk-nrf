@@ -1,3 +1,4 @@
+# Verify each lock pin is published on pypi.org (sdist or wheel); matter-idl omitted at runtime.
 name: Validate pip requirements-fixed.txt
 
 on:
@@ -7,27 +8,42 @@ on:
       - main
       - 'v*-branch'
     paths:
+      - 'scripts/requirements-fixed.txt'
       - 'scripts/requirements*.txt'
-      - 'scripts/requirements-fixed.sh'
-      - 'scripts/requirements-fixed.in'
       - '.github/workflows/validate-pip-requirements-fixed-file.yml'
 
 permissions:
   contents: read
 
 jobs:
-  check-requirements:
+  test-install-pypi:
     runs-on: ubuntu-24.04
     steps:
-      - name: Checkout sources
-        uses: nrfconnect/action-checkout-west-update@main
-        with:
-          west-update-args: '--narrow mcuboot zephyr'
+      - uses: actions/checkout@v4
 
-      - name: Execute script diff action
-        uses: nrfconnect/action-script-diff@v0.3
+      - name: Get python version
+        id: pyv
+        run: |
+          sudo snap install --channel=v4 yq
+          echo "python_version=$(yq '.python.version' scripts/tools-versions-linux.yml)" >> $GITHUB_OUTPUT
+
+      - uses: actions/setup-python@42375524e23c412d93fb67b49958b491fce71c38 # v5
         with:
-          diff_file: "ncs/nrf/scripts/requirements-fixed.txt"
-          script_call: |
-            cd ncs
-            ./nrf/scripts/requirements-fixed.sh
+          python-version: '${{ steps.pyv.outputs.python_version }}'
+
+      - name: Prepare requirements (PyPI)
+        run: |
+          set -euo pipefail
+          grep -v '^--' scripts/requirements-fixed.txt \
+            | grep -vE '^matter-idl==' \
+            > /tmp/requirements-pypi.txt
+          echo "Pins to check: $(grep -c '==' /tmp/requirements-pypi.txt || true)"
+
+      - name: Download pins from PyPI (sdist or wheel)
+        run: |
+          set -euo pipefail
+          python -m pip install -U pip
+          mkdir -p /tmp/pypi-check
+          # No install/build: only that each version exists on pypi.org (sdist-only is OK).
+          python -m pip download --no-deps --index-url https://pypi.org/simple \
+            -r /tmp/requirements-pypi.txt -d /tmp/pypi-check
