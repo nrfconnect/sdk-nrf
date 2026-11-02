@@ -555,6 +555,8 @@ Bluetooth Mesh samples
   * :ref:`bluetooth_mesh_sensor_client`
   * :ref:`bluetooth_mesh_sensor_server`
   * :ref:`bluetooth_mesh_silvair_enocean`
+  * :ref:`ble_mesh_dfu_target`
+  * :ref:`ble_mesh_dfu_distributor`
 
 * Removed support for the ``thingy53/nrf5340/cpuapp`` board target from the following samples:
 
