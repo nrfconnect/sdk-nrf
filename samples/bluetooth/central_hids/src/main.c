@@ -26,10 +26,10 @@
 
 #include <zephyr/settings/settings.h>
 
-#if defined(CONFIG_SOC_SERIES_NRF54H) || defined(CONFIG_SOC_SERIES_NRF54L)
-#define BUTTON_NUM_FOR_BOARD(button) (button)
-#else
+#if defined(CONFIG_SOC_SERIES_NRF52) || defined(CONFIG_SOC_SERIES_NRF53)
 #define BUTTON_NUM_FOR_BOARD(button) ((button) + 1)
+#else
+#define BUTTON_NUM_FOR_BOARD(button) (button)
 #endif
 
 /**
@@ -1507,10 +1507,10 @@ static void auth_passkey_confirm(struct bt_conn *conn, unsigned int passkey)
 
 	printk("Passkey for %s: %06u\n", addr, passkey);
 
-	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF54H) || IS_ENABLED(CONFIG_SOC_SERIES_NRF54L)) {
-		printk("Press Button 0 to confirm, Button 1 to reject.\n");
-	} else {
+	if (IS_ENABLED(CONFIG_SOC_SERIES_NRF52) || IS_ENABLED(CONFIG_SOC_SERIES_NRF53)) {
 		printk("Press Button 1 to confirm, Button 2 to reject.\n");
+	} else {
+		printk("Press Button 0 to confirm, Button 1 to reject.\n");
 	}
 }
 
