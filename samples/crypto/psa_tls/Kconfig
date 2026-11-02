@@ -46,4 +46,11 @@ config SAMPLE_PSA_TLS_TYPE_CLIENT
 
 endchoice
 
+config SAMPLE_PSA_TLS_SERVER_PORT
+	int "Server port number for the PSA TLS sample"
+	range 1 65535
+	default 4243
+	help
+	  The server port number for the PSA_TLS sample's network connection.
+
 endmenu

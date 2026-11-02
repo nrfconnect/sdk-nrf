@@ -37,7 +37,7 @@ static int setup_dtls_server_socket(void)
 
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
-	my_addr.sin_port = htons(SERVER_PORT);
+	my_addr.sin_port = htons(CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
 
 	sock = socket(my_addr.sin_family, SOCK_DGRAM, IPPROTO_DTLS_1_2);
 	if (sock < 0) {
@@ -100,7 +100,8 @@ void process_psa_tls(void)
 			continue;
 		}
 
-		LOG_INF("Waiting for DTLS connection on port %d ...", SERVER_PORT);
+		LOG_INF("Waiting for DTLS connection on port %d ...",
+			CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
 
 		while (true) {
 			/* Try to receive data while connected */

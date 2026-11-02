@@ -37,15 +37,14 @@ static int setup_tls_server_socket(void)
 
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
-	my_addr.sin_port = htons(SERVER_PORT);
+	my_addr.sin_port = htons(CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
 #if defined(CONFIG_MBEDTLS_TLS_VERSION_1_3)
 	sock = socket(my_addr.sin_family, SOCK_STREAM, IPPROTO_TLS_1_3);
 #else
 	sock = socket(my_addr.sin_family, SOCK_STREAM, IPPROTO_TLS_1_2);
 #endif
 
-	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_list));
+	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_list));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS security TAG list. Err: %d", errno);
 		(void)close(sock);
@@ -101,9 +100,8 @@ retry:
 
 	while (true) {
 		LOG_INF("Waiting for TLS connection on port %d ...",
-			SERVER_PORT);
-		client = accept(sock, (struct sockaddr *)&client_addr,
-				&client_addr_len);
+			CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
+		client = accept(sock, (struct sockaddr *)&client_addr, &client_addr_len);
 
 		if (client < 0) {
 			LOG_ERR("TLS accept error (%d)", -errno);
@@ -116,8 +114,7 @@ retry:
 
 		while (true) {
 			/* Try to receive data while connected */
-			received = recv(client, recv_buffer,
-					sizeof(recv_buffer), 0);
+			received = recv(client, recv_buffer, sizeof(recv_buffer), 0);
 
 			if (received == 0) {
 				/* Connection closed */

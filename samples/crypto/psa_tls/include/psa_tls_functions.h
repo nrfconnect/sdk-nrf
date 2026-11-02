@@ -12,7 +12,6 @@ extern "C" {
 #endif
 
 
-#define SERVER_PORT 4243		/* The port number the TLS server will use. */
 #define RECV_BUFFER_SIZE 2400		/* Receive-buffer size in bytes. */
 #define MAX_CLIENT_QUEUE 1		/* Max number of connections in listen queue. */
 #define TLS_PEER_HOSTNAME "localhost"	/* Peer TLS hostname when functioning as client. */
