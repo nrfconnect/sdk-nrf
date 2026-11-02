@@ -69,12 +69,9 @@ As the next step, the API subscribes to an MQTT topic to start receiving request
 nRF Cloud onboarding options
 ============================
 
-You can add a device to an nRF Cloud account in the following ways:
+To add a device to nRF Cloud, see `nRF Cloud Device Onboarding`_.
 
-* Using `nRF Cloud Utils`_ for provisioning and onboarding - Follow the instructions in the README section for single or bulk onboarding.
-* Using the :ref:`lib_nrf_provisioning` service and `nRF Cloud Auto-onboarding`_ - Once the process completes, the device will be listed in your account.
-
-Refer to the `Adding a device to your account`_ section of the nRF Cloud documentation for more information.
+For nRF9160 devices, see `nRF Cloud manual device certificate provisioning`_.
 
 .. _configuration_device_id:
 
