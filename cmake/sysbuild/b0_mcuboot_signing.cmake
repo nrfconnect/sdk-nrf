@@ -102,7 +102,7 @@ function(ncs_secure_boot_mcuboot_sign application bin_files signed_targets prefi
   if(NOT "${keyfile_enc}" STREQUAL "")
     if(SB_CONFIG_BOOT_ENCRYPTION_ALG_AES_256)
       # Note: this overrides the default behavior of using AES-128
-      set(imgtool_extra ${imgtool_extra} --encrypt-keylen 256 --load-addr ${slot_address})
+      set(imgtool_extra ${imgtool_extra} --encrypt-keylen 256)
     endif()
 
     # Signature type determines key exchange scheme; ED25519 here means
