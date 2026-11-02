@@ -94,8 +94,9 @@ config SB_DISABLE_SELF_RWX
 	bool "Disable read and execution on self NVM"
 	depends on SB_DISABLE_SELF_RWX_SUPPORTED && !FPROTECT_ALLOW_COMBINED_REGIONS
 	help
-	  Sets RRAMC's BOOTCONF region protection before jumping to application.
-	  It disables reads writes and execution memory area which holds NSIB.
+	  Sets the BOOTCONF region protection (RRAMC on nRF54L, MRAMC on nRF71)
+	  before jumping to application. It disables reads, writes and execution
+	  of the memory area which holds NSIB.
 
 config SB_DISABLE_SELF_RWX_SKIP_SIZE
 	hex
@@ -114,7 +115,7 @@ config SB_DISABLE_NEXT_W
 	  NSIB disables writes on next stage in bootloading chain.
 	  It uses RRAMC's region 4 and is limited to 31KB for nRF54L15, nRF54L10 and nRF54L05
 	  and to 127KB for nRF54LV10a, nRF54LC10a and nRF54LM20 (A/B).
-	  On nRF71 it uses MRAMC's region 4.
+	  On nRF71 it uses MRAMC's region 4, continued in region 5, for up to 62KB.
 
 config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	bool "HW monotonic version counter rollback protection (informative only, do not change)"
