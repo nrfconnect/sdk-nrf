@@ -437,7 +437,7 @@ ZTEST(fota_download_tests, test_download_with_offset)
 ZTEST(fota_download_tests, test_socket_retries)
 {
 	int err;
-	int retryable_errors[] = {-ECONNRESET, -EAGAIN, -ENETDOWN};
+	int retryable_errors[] = {-ECONNRESET, -EAGAIN, -ENETDOWN, -EHOSTUNREACH, -ENETUNREACH};
 
 	for (int i = 0; i < ARRAY_SIZE(retryable_errors); i++) {
 		/* Init */
