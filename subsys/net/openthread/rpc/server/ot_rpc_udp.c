@@ -227,7 +227,8 @@ static void ot_rpc_udp_close(const struct nrf_rpc_group *group, struct nrf_rpc_c
 	socket = nrf_udp_find_socket(soc_key);
 
 	if (socket == NULL) {
-		error = OT_ERROR_NO_BUFS;
+		/* Match otUdpClose(): closing a socket that is not open succeeds. */
+		error = OT_ERROR_NONE;
 		goto exit;
 	}
 
