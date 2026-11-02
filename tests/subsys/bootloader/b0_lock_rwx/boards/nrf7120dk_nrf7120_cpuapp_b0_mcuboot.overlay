@@ -1,0 +1,49 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_mram {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 DT_SIZE_K(32)>;
+		};
+
+		/* In this configuration s0/s1 are occupied by MCUboot. NSIB locks
+		 * the booted one with two chained MRAMC regions of up to 31k each.
+		 */
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x8000 DT_SIZE_K(64)>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x18000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x28000 DT_SIZE_K(128)>;
+		};
+
+		slot1_partition: partition@48000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x48000 DT_SIZE_K(128)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &slot0_partition;
+	};
+};
