@@ -1991,48 +1991,29 @@ struct nrf_wifi_board_params {
 } __NRF_WIFI_PKD;
 
 /**
- * @struct host_rpu_umac_info
+ * @brief This structure represents the bitmap of STA (Station)
+ *  pending frames in SoftAP power save mode.
+ *
+ */
+struct sap_pend_frames_bitmap {
+	/** STA MAC address */
+	unsigned char mac_addr[6];
+	/** Pending frames bitmap for each access category */
+	unsigned char pend_frames_bitmap;
+} __NRF_WIFI_PKD;
+
+/**
  * @brief This structure represents the information related to UMAC.
  *
  */
-struct host_rpu_umac_info {
+struct host_rpu_umac_if_info {
 	/** Boot status signature */
 	unsigned int boot_status;
 	/** UMAC version */
 	unsigned int version;
-	/** OTP params */
-	unsigned int info_part;
-	/** OTP params */
-	unsigned int info_variant;
-	/** OTP params */
-	unsigned int info_lromversion;
-	/** OTP params */
-	unsigned int info_uromversion;
-	/** OTP params */
-	unsigned int info_uuid[4];
-	/** OTP params */
-	unsigned int info_spare0;
-	/** OTP params */
-	unsigned int info_spare1;
-	/** OTP params */
-	unsigned int mac_address0[2];
-	/** OTP params */
-	unsigned int mac_address1[2];
-	/** OTP params */
-	unsigned int calib[9];
+	/** @ref sap_pend_frames_bitmap */
+	struct sap_pend_frames_bitmap sap_bitmap[NRF_WIFI_MAX_SAP_CLIENTS];
 } __NRF_WIFI_PKD;
-
-/**
- * @brief Structure to hold OTP region information.
- *
- */
-struct nrf_wifi_fmac_otp_info {
-	/** OTP region information. */
-	struct host_rpu_umac_info info;
-	/** Flags indicating which OTP regions are valid. */
-	unsigned int flags;
-};
-
 
 /** XO adjustment value */
 struct nrf_wifi_xo_freq_offset {
