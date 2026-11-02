@@ -1,0 +1,48 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/*
+ * NSIB + MCUboot layout. The partitions above 0x2e0000 (Wi-Fi patches and
+ * storage) are kept from the default layout.
+ */
+
+/delete-node/ &boot_partition;
+/delete-node/ &slot0_partition;
+/delete-node/ &slot1_partition;
+
+&cpuapp_mram {
+	partitions {
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			label = "nsib";
+			reg = <0x0 DT_SIZE_K(30)>;
+		};
+
+		s0_partition: boot_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot";
+			reg = <0x8000 DT_SIZE_K(64)>;
+		};
+
+		s1_partition: partition@18000 {
+			compatible = "zephyr,mapped-partition";
+			label = "mcuboot_s1";
+			reg = <0x18000 DT_SIZE_K(64)>;
+		};
+
+		slot0_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-0";
+			reg = <0x28000 DT_SIZE_K(1392)>;
+		};
+
+		slot1_partition: partition@184000 {
+			compatible = "zephyr,mapped-partition";
+			label = "image-1";
+			reg = <0x184000 DT_SIZE_K(1392)>;
+		};
+	};
+};
