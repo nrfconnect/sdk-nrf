@@ -295,6 +295,7 @@ enum nrf_wifi_status nrf_wifi_rt_fmac_radio_test_init(struct nrf_wifi_fmac_dev_c
 
 	init_params.phy_threshold = params->phy_threshold;
 	init_params.phy_calib = params->phy_calib;
+	init_params.power_mode = params->power_mode;
 
 	rt_dev_ctx->radio_cmd_done = false;
 	status = umac_cmd_rt_prog_init(fmac_dev_ctx,

@@ -369,6 +369,7 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->ru_index = 1;
 	conf_params->tx_pkt_cw = 15;
 	conf_params->phy_calib = NRF_WIFI_DEF_PHY_CALIB;
+	conf_params->power_mode = normal_mode;
 
 	/* Store back the currently set country code */
 	if (strlen(country_code)) {
@@ -1021,9 +1022,22 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long band, chan_num = 0;
+	unsigned long power_mode = normal_mode;
 
 	band = strtoul(argv[1], &ptr, 10);
 	chan_num = strtoul(argv[2], &ptr, 10);
+
+	if (argc >= 4) {
+		power_mode = strtoul(argv[3], &ptr, 10);
+
+		if (power_mode > normal_mode) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "Invalid power_mode %lu (use 0=low power, 1=normal power)\n",
+				      power_mode);
+			return -ENOEXEC;
+		}
+	}
 
 	switch (band) {
 	case NRF_WIFI_FREQ_BAND_2_4_GHZ:
@@ -1144,6 +1158,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 
 	ctx->conf_params.chan.op_band = (1 << band);
 	ctx->conf_params.chan.primary_num = chan_num;
+	ctx->conf_params.power_mode = (unsigned char)power_mode;
 
 	status = nrf_wifi_rt_fmac_radio_test_init(ctx->rpu_ctx,
 					       &ctx->conf_params);
@@ -1214,6 +1229,14 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 	}
 
 	if (val == 1) {
+		if (ctx->conf_params.power_mode == low_power_mode) {
+			shell_fprintf(shell,
+				      SHELL_ERROR,
+				      "TX enable not allowed in low power mode "
+				      "(use init with power_mode 1 for normal power)\n");
+			return -ENOEXEC;
+		}
+
 		if (!check_test_in_prog(shell)) {
 			return -ENOEXEC;
 		}
@@ -2006,6 +2029,11 @@ static int nrf_wifi_radio_test_show_cfg(const struct shell *shell,
 
 	shell_fprintf(shell,
 		      SHELL_INFO,
+		      "init_power_mode = %u\n",
+		      conf_params->power_mode);
+
+	shell_fprintf(shell,
+		      SHELL_INFO,
 		      "tx = %d\n",
 		      conf_params->tx);
 
@@ -2382,14 +2410,15 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 	SHELL_CMD_ARG(init,
 		      NULL,
 		      "<band> - 0=2.4 GHz, 1=5 GHz, 2=6 GHz\n"
-		      "<channel> - Primary channel number",
+		      "<channel> - Primary channel number\n"
+		      "[power_mode] - 0=low power, 1=normal power (default: 1)",
 		      nrf_wifi_radio_test_init,
 		      3,
-		      0),
+		      1),
 	SHELL_CMD_ARG(tx,
 		      NULL,
 		      "0 - Disable TX\n"
-		      "1 - Enable TX",
+		      "1 - Enable TX ",
 		      nrf_wifi_radio_test_set_tx,
 		      2,
 		      0),
