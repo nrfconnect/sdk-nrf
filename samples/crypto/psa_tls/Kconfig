@@ -26,6 +26,12 @@ config SAMPLE_PSA_TLS_CERTIFICATE_TYPE_ECDSA
 
 endchoice
 
+config SERVER_PORT
+    int "Server port number for network connection"
+    default 4243
+    help
+        Set the port number for the network connection.
+
 choice SAMPLE_PSA_TLS_TYPE
 	prompt "Server or client selection"
 	default SAMPLE_PSA_TLS_TYPE_SERVER

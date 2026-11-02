@@ -37,7 +37,7 @@ static int setup_tls_server_socket(void)
 
 	memset(&my_addr, 0, sizeof(my_addr));
 	my_addr.sin_family = AF_INET;
-	my_addr.sin_port = htons(SERVER_PORT);
+	my_addr.sin_port = htons(CONFIG_SERVER_PORT);
 #if defined(CONFIG_MBEDTLS_TLS_VERSION_1_3)
 	sock = socket(my_addr.sin_family, SOCK_STREAM, IPPROTO_TLS_1_3);
 #else
@@ -101,7 +101,7 @@ retry:
 
 	while (true) {
 		LOG_INF("Waiting for TLS connection on port %d ...",
-			SERVER_PORT);
+			CONFIG_SERVER_PORT);
 		client = accept(sock, (struct sockaddr *)&client_addr,
 				&client_addr_len);
 

@@ -95,7 +95,7 @@ void process_psa_tls(void)
 	socklen_t server_addr_len = sizeof(server_addr);
 
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(SERVER_PORT);
+	server_addr.sin_port = htons(CONFIG_SERVER_PORT);
 	inet_pton(AF_INET, CONFIG_NET_CONFIG_PEER_IPV4_ADDR,
 		  &server_addr.sin_addr);
 
@@ -109,7 +109,7 @@ void process_psa_tls(void)
 		}
 
 		LOG_INF("Initiates TLS connection on port %d ...",
-			SERVER_PORT);
+			CONFIG_SERVER_PORT);
 		ret = connect(sock, (struct sockaddr *)&server_addr,
 			      server_addr_len);
 

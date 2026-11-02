@@ -89,7 +89,7 @@ void process_psa_tls(void)
 	socklen_t server_addr_len = sizeof(server_addr);
 
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(SERVER_PORT);
+	server_addr.sin_port = htons(CONFIG_SERVER_PORT);
 	inet_pton(AF_INET, CONFIG_NET_CONFIG_PEER_IPV4_ADDR, &server_addr.sin_addr);
 
 	while (true) {
@@ -102,7 +102,7 @@ void process_psa_tls(void)
 			continue;
 		}
 
-		LOG_INF("Initiates DTLS connection on port %d ...", SERVER_PORT);
+		LOG_INF("Initiates DTLS connection on port %d ...", CONFIG_SERVER_PORT);
 		ret = connect(sock, (struct sockaddr *)&server_addr, server_addr_len);
 		if (ret != 0) {
 			LOG_WRN("Cannot make DTLS connection. Err: %d", errno);
