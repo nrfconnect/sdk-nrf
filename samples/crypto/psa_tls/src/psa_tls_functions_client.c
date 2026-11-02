@@ -46,24 +46,21 @@ static int setup_tls_client_socket(void)
 		return -errno;
 	}
 
-	err = setsockopt(sock, SOL_TLS, TLS_PEER_VERIFY,
-			 &verify, sizeof(verify));
+	err = setsockopt(sock, SOL_TLS, TLS_PEER_VERIFY, &verify, sizeof(verify));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS peer verification. Err %d", errno);
 		(void)close(sock);
 		return -errno;
 	}
 
-	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list,
-			 sizeof(sec_tag_list));
+	err = setsockopt(sock, SOL_TLS, TLS_SEC_TAG_LIST, sec_tag_list, sizeof(sec_tag_list));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS security TAG list. Err: %d", errno);
 		(void)close(sock);
 		return -errno;
 	}
 
-	err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME,
-			 TLS_PEER_HOSTNAME, sizeof(TLS_PEER_HOSTNAME));
+	err = setsockopt(sock, SOL_TLS, TLS_HOSTNAME, TLS_PEER_HOSTNAME, sizeof(TLS_PEER_HOSTNAME));
 	if (err < 0) {
 		LOG_ERR("Failed to set TLS_HOSTNAME option. Err: %d", errno);
 		(void)close(sock);
@@ -95,9 +92,8 @@ void process_psa_tls(void)
 	socklen_t server_addr_len = sizeof(server_addr);
 
 	server_addr.sin_family = AF_INET;
-	server_addr.sin_port = htons(SERVER_PORT);
-	inet_pton(AF_INET, CONFIG_NET_CONFIG_PEER_IPV4_ADDR,
-		  &server_addr.sin_addr);
+	server_addr.sin_port = htons(CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
+	inet_pton(AF_INET, CONFIG_NET_CONFIG_PEER_IPV4_ADDR, &server_addr.sin_addr);
 
 	while (true) {
 
@@ -109,9 +105,8 @@ void process_psa_tls(void)
 		}
 
 		LOG_INF("Initiates TLS connection on port %d ...",
-			SERVER_PORT);
-		ret = connect(sock, (struct sockaddr *)&server_addr,
-			      server_addr_len);
+			CONFIG_SAMPLE_PSA_TLS_SERVER_PORT);
+		ret = connect(sock, (struct sockaddr *)&server_addr, server_addr_len);
 
 		if (ret < 0) {
 			LOG_WRN("Cannot make TLS connection. Err: %d", errno);
@@ -124,8 +119,7 @@ void process_psa_tls(void)
 
 		while (true) {
 			/* Try to receive data while connected */
-			received = recv(sock, recv_buffer,
-					sizeof(recv_buffer), 0);
+			received = recv(sock, recv_buffer, sizeof(recv_buffer), 0);
 
 			if (received == 0) {
 				/* Connection closed */
