@@ -59,4 +59,17 @@ ZTEST(ot_rpc_udp, test_otUdpIsOpen_false)
 	zassert_equal(otUdpIsOpen_fake.call_count, 0);
 }
 
+/*
+ * Test reception of otUdpClose() with non-existent socket key.
+ * Test serialization of the result: OT_ERROR_NONE (same as native otUdpClose()).
+ */
+ZTEST(ot_rpc_udp, test_otUdpClose_unknown_key)
+{
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_UDP_CLOSE, CBOR_UINT32(1)));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otUdpClose_fake.call_count, 0);
+}
+
 ZTEST_SUITE(ot_rpc_udp, NULL, NULL, tc_setup, NULL, NULL);
