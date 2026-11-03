@@ -183,7 +183,7 @@ Ethernet with W5500 shield (Seeed Studio board)
 Use this when the host leg should use Ethernet through the Zephyr :ref:`seeed_w5500` shield (Seeed Studio v1.1 shield was used) on the nRF9151 DK.
 Merge :file:`eth_common.conf`, :file:`eth_w5500.conf`, and :file:`eth_w5500_seeed.conf`.
 For tethering, also append :file:`dect_rx_pool.conf` and :file:`dlc_resilient.conf` (recommended, see :ref:`dect_tether_ipv6_dect_rx_pool` and :ref:`dect_tether_ipv6_dlc_resilient`)—without the private DECT RX pool, sustained PC traffic can starve buffers and stall eth0 in poll mode.
-The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster :kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`.
+The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster :kconfig:option:`CONFIG_ETH_WIZNET_POLL_PERIOD`.
 Devicetree comes from the Zephyr shield devicetree :file:`zephyr/boards/shields/seeed_w5500/seeed_w5500.overlay`
 plus a sample overlay: default :file:`w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).
 
