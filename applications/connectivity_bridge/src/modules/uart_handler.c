@@ -279,10 +279,7 @@ static int uart_tx_start(uint8_t dev_idx)
 	int err;
 	uint8_t *buf;
 
-	len = ring_buf_get_claim(
-			&uart_tx_ringbufs[dev_idx].rb,
-			&buf,
-			sizeof(uart_tx_ringbufs[dev_idx].buf));
+	len = ring_buf_get_ptr(&uart_tx_ringbufs[dev_idx].rb, &buf, 0);
 
 	err = uart_tx(devices[dev_idx], buf, len, 0);
 	if (err) {
@@ -296,12 +293,7 @@ static int uart_tx_start(uint8_t dev_idx)
 
 static void uart_tx_finish(uint8_t dev_idx, size_t len)
 {
-	int err;
-
-	err = ring_buf_get_finish(&uart_tx_ringbufs[dev_idx].rb, len);
-	if (err) {
-		LOG_ERR("ring_buf_get_finish: %d", err);
-	}
+	ring_buf_consume(&uart_tx_ringbufs[dev_idx].rb, len);
 }
 
 static int uart_tx_enqueue(uint8_t *data, size_t data_len, uint8_t dev_idx)
