@@ -348,8 +348,8 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 	LOG_DBG("Writing %d bytes to output buffer", bytes_to_write);
 	while (bytes_to_write) {
 		uint8_t *data;
-		size_t ringbuf_write_size =
-			ring_buf_put_claim(&ctx->output_ringbuf, &data, bytes_to_write);
+		size_t ringbuf_write_size = MIN(ring_buf_put_ptr(&ctx->output_ringbuf, &data, 0),
+						(uint32_t)bytes_to_write);
 		if (ringbuf_write_size == 0) {
 			LOG_ERR("Ring buffer storage exhausted");
 			return -EFAULT;
@@ -357,11 +357,7 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 
 		memcpy(data, ringbuf_write_ptr, ringbuf_write_size);
 
-		ret = ring_buf_put_finish(&ctx->output_ringbuf, ringbuf_write_size);
-		if (ret) {
-			LOG_ERR("Ringbuf err: %d", ret);
-			return -EFAULT;
-		}
+		ring_buf_commit(&ctx->output_ringbuf, ringbuf_write_size);
 
 		ringbuf_write_ptr += ringbuf_write_size;
 		bytes_to_write -= ringbuf_write_size;
@@ -372,8 +368,8 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 	LOG_DBG("Reading %d bytes from output_buffer", bytes_to_read);
 	while (bytes_to_read) {
 		uint8_t *data;
-		size_t ringbuf_read_size =
-			ring_buf_get_claim(&ctx->output_ringbuf, &data, bytes_to_read);
+		size_t ringbuf_read_size = MIN(ring_buf_get_ptr(&ctx->output_ringbuf, &data, 0),
+					       (uint32_t)bytes_to_read);
 
 		if (ringbuf_read_size == 0) {
 			LOG_ERR("Ring buffer storage empty");
@@ -384,11 +380,7 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 		ringbuf_output_ptr += ringbuf_read_size;
 		bytes_to_read -= ringbuf_read_size;
 
-		ret = ring_buf_get_finish(&ctx->output_ringbuf, ringbuf_read_size);
-		if (ret) {
-			LOG_ERR("Ring buf read err: %d", ret);
-			return -EFAULT;
-		}
+		ring_buf_consume(&ctx->output_ringbuf, ringbuf_read_size);
 	}
 
 	return 0;
