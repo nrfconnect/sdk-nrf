@@ -340,10 +340,13 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	vif_ctx_zep = vif_ctx;
 	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
-	/* Delayed event (after scan timeout) or rogue event after scan done */
+	/* Delayed event (after scan timeout) or rogue event after scan done. The
+	 * database still has to be freed: allocations block on the control heap,
+	 * so leaking it makes the next scan hang once the heap is exhausted.
+	 */
 	if (!cb) {
 		LOG_ERR("%s: disp_scan_cb is NULL", __func__);
-		return;
+		goto out;
 	}
 
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
@@ -409,6 +412,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	vif_ctx_zep->scan_in_progress = false;
 	vif_ctx_zep->disp_scan_cb = NULL;
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
+out:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 			  (void *)(uintptr_t)scan_done_event->scan_db_addr);
 	memset(&vif_ctx_zep->scan_done_event, 0, sizeof(vif_ctx_zep->scan_done_event));
