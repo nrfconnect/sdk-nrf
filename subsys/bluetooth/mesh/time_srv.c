@@ -4,6 +4,7 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
+#include <zephyr/devicetree.h>
 #include <bluetooth/mesh/time_srv.h>
 #include "time_internal.h"
 #include "model_utils.h"
@@ -11,6 +12,16 @@
 
 #define SUBSEC_STEPS 256U
 #define STATUS_INTERVAL_MIN 30000ll
+
+/* The clock accuracy is taken from the LFCLK node. When it is not available, use the
+ * worst accuracy supported by the LFCLK.
+ */
+#define LFCLK_NODE DT_NODELABEL(lfclk)
+#if DT_NODE_HAS_PROP(LFCLK_NODE, k32src_accuracy_ppm)
+#define CLOCK_ACCURACY_PPM DT_PROP(LFCLK_NODE, k32src_accuracy_ppm)
+#else
+#define CLOCK_ACCURACY_PPM 500
+#endif
 
 struct bt_mesh_time_srv_settings_data {
 	uint8_t role;
@@ -81,7 +92,7 @@ static uint64_t get_uncertainty_ms(const struct bt_mesh_time_srv *srv,
 				   int64_t uptime)
 {
 	uint64_t drift = ((uptime - srv->data.sync.uptime) *
-			  CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY) /
+			  CLOCK_ACCURACY_PPM) /
 			 USEC_PER_SEC;
 
 	return srv->data.sync.status.uncertainty + drift;
