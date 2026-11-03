@@ -7,6 +7,7 @@ tests:
     integration_platforms:
       - nrf9160dk/nrf9160
       - nrf5340dk/nrf5340/cpuapp
+    ignore_faults: true
     tags:
       - b0
       - fprotect
