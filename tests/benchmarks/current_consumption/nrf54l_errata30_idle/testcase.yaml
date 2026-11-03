@@ -31,7 +31,7 @@ tests:
   benchmarks.current_consumption.nrf54l_errata30_idle.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
       # Enable periodic HFINT calibration to activate Errata 30 workaround
       - CONFIG_CLOCK_CONTROL_NRF_HFINT_CALIBRATION=y
       # Make calibration period low so it impacts power consumption.
