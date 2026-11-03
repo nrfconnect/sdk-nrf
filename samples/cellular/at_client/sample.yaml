@@ -60,7 +60,7 @@ tests:
       - ci_samples_cellular
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
   sample.cellular.at_client.tracing.legacy:
     sysbuild: true
     build_only: true
@@ -81,4 +81,4 @@ tests:
       - at_client_SNIPPET=nrf91-modem-trace-uart
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n

@@ -19,7 +19,7 @@ tests:
     sysbuild: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - thingy53/nrf5340/cpuapp

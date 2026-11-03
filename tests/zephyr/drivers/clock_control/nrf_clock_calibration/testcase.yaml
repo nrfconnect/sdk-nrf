@@ -29,7 +29,7 @@ tests:
       - ci_tests_zephyr_drivers_clock_control
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
       - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
       - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_MAX_SKIP=1
       - CONFIG_CLOCK_CONTROL_NRF_CALIBRATION_TEMP_DIFF=2
