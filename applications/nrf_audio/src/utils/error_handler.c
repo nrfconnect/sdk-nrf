@@ -71,8 +71,10 @@ void k_sys_fatal_error_handler(unsigned int reason, const struct arch_esf *esf)
 	error_handler(reason, esf);
 }
 
-void assert_post_action(const char *file, unsigned int line)
+void zassert_post_action(const char *file, unsigned int line)
 {
 	LOG_ERR("Assert post action: file: %s, line %d", file, line);
 	error_handler(0, NULL);
+
+	CODE_UNREACHABLE;
 }

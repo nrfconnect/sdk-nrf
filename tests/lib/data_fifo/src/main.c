@@ -9,7 +9,7 @@
 #include <data_fifo.h>
 
 /* Catch asserts to fail test */
-void assert_post_action(const char *file, unsigned int line)
+void zassert_post_action(const char *file, unsigned int line)
 {
 	zassert_unreachable("reached assert file %s %x", file, line);
 }
