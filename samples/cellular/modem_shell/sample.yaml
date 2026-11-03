@@ -163,6 +163,32 @@ tests:
       - ci_build
       - sysbuild
       - ci_samples_cellular
+  sample.cellular.modem_shell.perf_test.nrf9251:
+    sysbuild: true
+    build_only: true
+    extra_args: EXTRA_DTC_OVERLAY_FILE="nrf9251dk_perf_test.overlay"
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
+  sample.cellular.modem_shell.perf_test_modem_trace_uart.nrf9251:
+    sysbuild: true
+    build_only: true
+    extra_args:
+      - EXTRA_CONF_FILE="nrf9251dk_perf_test_modem_trace_uart.conf"
+      - EXTRA_DTC_OVERLAY_FILE="nrf9251dk_perf_test_modem_trace_uart.overlay"
+    integration_platforms:
+      - nrf9251dk/nrf9251/cpuapp
+    platform_allow:
+      - nrf9251dk/nrf9251/cpuapp
+    tags:
+      - ci_build
+      - sysbuild
+      - ci_samples_cellular
   sample.cellular.modem_shell.carrier:
     sysbuild: true
     build_only: true

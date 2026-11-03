@@ -1,0 +1,47 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Enable uart132 for tracing. */
+&uart132 {
+	status = "okay";
+	current-speed = <1000000>;
+	memory-regions = <&cpuapp_dma_region>;
+};
+
+/ {
+	chosen {
+		nordic,modem-trace-uart = &uart132;
+	};
+};
+
+/delete-node/ &cpuapp_cpucell_ipc_shm_ctrl;
+/delete-node/ &cpuapp_cpucell_ipc_shm_heap;
+/delete-node/ &cpucell_cpuapp_ipc_shm_heap;
+
+/* Reduce size of application RAM. */
+&cpuapp_ram0x_sram {
+	reg = <0x2f000000 DT_SIZE_K(320)>;
+	ranges = <0x0 0x2f000000 0x50000>;
+};
+
+/* Use the whole shared memory region, bump TX buffer size to 36 kB and add trace buffer. */
+&cpuapp_cpucell_ram0x_region {
+	cpuapp_cpucell_ipc_shm_ctrl: memory@0 {
+		reg = <0x0 DT_SIZE_K(4)>;
+	};
+
+	cpuapp_cpucell_ipc_shm_heap: memory@1000 {
+		reg = <0x1000 DT_SIZE_K(36)>;
+	};
+
+	cpucell_cpuapp_ipc_shm_heap: memory@a000 {
+		reg = <0xa000 DT_SIZE_K(8)>;
+	};
+
+	cpucell_cpuapp_ipc_shm_trace: memory@c000 {
+		reg = <0xc000 DT_SIZE_K(16)>;
+	};
+};
