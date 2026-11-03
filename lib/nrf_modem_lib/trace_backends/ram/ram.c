@@ -79,7 +79,7 @@ int trace_backend_write(const void *data, size_t len)
 	uint32_t free_space = ring_buf_space_get(&ram_trace_buf);
 
 	if (len > free_space) {
-		ring_buf_get(&ram_trace_buf, NULL, len - free_space);
+		ring_buf_consume(&ram_trace_buf, len - free_space);
 	}
 
 	int result = ring_buf_put(&ram_trace_buf, data, len);
