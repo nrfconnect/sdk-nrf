@@ -11,6 +11,7 @@ zephyr_library_sources(
   src/nrf71_sr_coex_cm.c
   src/nrf71_sr_coex_hw.c
 )
+zephyr_library_sources_ifdef(CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP src/nrf71_sr_coex_ble.c)
 zephyr_library_sources_ifdef(CONFIG_NRF71_SR_COEX_SHELL src/nrf71_sr_coex_shell.c)
 
 # The coexistence firmware interface headers are private to the drivers.

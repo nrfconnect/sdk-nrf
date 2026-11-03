@@ -19,6 +19,8 @@ tests:
       - CONFIG_SHELL=y
       - CONFIG_NRF71_SR_COEX_SHELL=y
       - CONFIG_NRF71_SR_COEX_WAIT_FOR_APP_INIT=y
+      - CONFIG_BT_CENTRAL=y
+      - CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP=y
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp

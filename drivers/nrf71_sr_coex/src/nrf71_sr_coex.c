@@ -654,6 +654,16 @@ static void cd_wifi_state_cb(const struct nrf71_wifi_coex_state_evt *evt, void *
 	case NRF71_WIFI_COEX_STATE_ADMIN_DOWN:
 		LOG_DBG("Wi-Fi admin down");
 		cd_wifi_admin_down();
+		cd_ble_wifi_disconnected();
+		break;
+	case NRF71_WIFI_COEX_STATE_CONNECTED:
+		LOG_DBG("Wi-Fi connected at %u MHz, %u MHz wide", evt->center_freq_mhz,
+			evt->bandwidth_mhz);
+		cd_ble_wifi_connected(evt->center_freq_mhz, evt->bandwidth_mhz);
+		break;
+	case NRF71_WIFI_COEX_STATE_DISCONNECTED:
+		LOG_DBG("Wi-Fi disconnected");
+		cd_ble_wifi_disconnected();
 		break;
 	default:
 		break;
@@ -950,6 +960,7 @@ static int nrf71_sr_coex_sys_init(void)
 	int ret;
 
 	cd_coexc_configure(NRF71_SR_COEX_ANTENNA_SHARED);
+	cd_ble_init();
 
 	k_work_queue_start(&cd_wq, cd_wq_stack, K_THREAD_STACK_SIZEOF(cd_wq_stack),
 			   CONFIG_NRF71_SR_COEX_WQ_PRIORITY, &wq_cfg);

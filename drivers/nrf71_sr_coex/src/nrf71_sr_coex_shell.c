@@ -159,7 +159,18 @@ static int cmd_status(const struct shell *sh, size_t argc, char **argv)
 	ARG_UNUSED(argc);
 	ARG_UNUSED(argv);
 
+	uint8_t chan_map[CD_BLE_CHAN_MAP_SIZE];
+
 	shell_print(sh, "CM configuration: %s", cd_wifi_state_name());
+
+	if (IS_ENABLED(CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP)) {
+		if (cd_ble_last_chan_map(chan_map)) {
+			shell_print(sh, "BLE channel map: %02x %02x %02x %02x %02x", chan_map[0],
+				    chan_map[1], chan_map[2], chan_map[3], chan_map[4]);
+		} else {
+			shell_print(sh, "BLE channel map: default");
+		}
+	}
 
 	return 0;
 }
