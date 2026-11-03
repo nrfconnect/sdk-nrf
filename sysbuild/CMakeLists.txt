@@ -29,9 +29,10 @@ function(configure_cache)
   # A dependency on the image's cache file cause unneccessary CMake re-runs for
   # all sysbuild images whenever a setting in the cache changes, even for not
   # sysbuild relevant changes.
-  zephyr_file_copy("${BINARY_DIR}/CMakeCache.txt" "${BINARY_DIR}/CMakeCache.tmp" ONLY_IF_DIFFERENT)
+  file(COPY_FILE "${BINARY_DIR}/CMakeCache.txt" "${BINARY_DIR}/CMakeCache.tmp" ONLY_IF_DIFFERENT)
   configure_file("${BINARY_DIR}/CMakeCache.tmp" "${BINARY_DIR}/CMakeCache.txt.tmp" @ONLY)
-  zephyr_file_copy("${BINARY_DIR}/CMakeCache.txt.tmp" "${BINARY_DIR}/CMakeCache.txt" ONLY_IF_DIFFERENT)
+  file(COPY_FILE "${BINARY_DIR}/CMakeCache.txt.tmp" "${BINARY_DIR}/CMakeCache.txt"
+       ONLY_IF_DIFFERENT)
 endfunction()
 
 function(store_ncs_vars)
