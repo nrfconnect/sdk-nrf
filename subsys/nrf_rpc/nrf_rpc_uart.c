@@ -234,13 +234,12 @@ static void work_handler(struct k_work *work)
 	struct nrf_rpc_uart *uart_tr = CONTAINER_OF(work, struct nrf_rpc_uart, rx_work);
 	uint8_t *data;
 	size_t len;
-	int ret;
 	uint16_t crc_received = 0;
 	uint16_t crc_calculated = 0;
 
 	while (!ring_buf_is_empty(&uart_tr->rx_ringbuf)) {
-		len = ring_buf_get_claim(&uart_tr->rx_ringbuf, &data,
-					 CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE);
+		len = MIN(ring_buf_get_ptr(&uart_tr->rx_ringbuf, &data, 0),
+			  CONFIG_NRF_RPC_UART_MAX_PACKET_SIZE);
 		for (size_t i = 0; i < len; i++) {
 			hdlc_decode_byte(&uart_tr->rx_pkt_ctx, uart_tr->rx_pkt, data[i]);
 
@@ -278,10 +277,7 @@ static void work_handler(struct k_work *work)
 			}
 		}
 
-		ret = ring_buf_get_finish(&uart_tr->rx_ringbuf, len);
-		if (ret < 0) {
-			LOG_DBG("Cannot flush ring buffer: %d", ret);
-		}
+		ring_buf_consume(&uart_tr->rx_ringbuf, len);
 	}
 }
 
@@ -310,19 +306,16 @@ static void serial_cb(const struct device *uart, void *user_data)
 			break;
 		}
 
-		rx_len = ring_buf_put_claim(&uart_tr->rx_ringbuf, &rx_buffer,
-					    uart_tr->rx_ringbuf.size);
+		rx_len = ring_buf_put_ptr(&uart_tr->rx_ringbuf, &rx_buffer, 0);
 		if (rx_len > 0) {
 			rx_len = uart_fifo_read(uart, rx_buffer, rx_len);
 			decode_ack(uart_tr, rx_buffer, rx_len);
-			int err = ring_buf_put_finish(&uart_tr->rx_ringbuf, rx_len);
-			(void)err; /*silence the compiler*/
-			__ASSERT_NO_MSG(err == 0);
 			if (rx_len <= 0) {
 				continue;
-			} else {
-				new_data = true;
 			}
+
+			ring_buf_commit(&uart_tr->rx_ringbuf, rx_len);
+			new_data = true;
 		} else {
 			uint8_t dummy;
 
