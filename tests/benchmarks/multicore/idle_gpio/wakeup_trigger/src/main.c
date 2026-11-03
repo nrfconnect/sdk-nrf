@@ -11,7 +11,7 @@
 
 static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 
-#define SPI_MODE (SPI_OP_MODE_MASTER | SPI_WORD_SET(8))
+#define SPI_MODE (SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8))
 static const struct spi_dt_spec spim = SPI_DT_SPEC_GET(DT_NODELABEL(spim_dt), SPI_MODE);
 
 LOG_MODULE_REGISTER(wakeup_trigger);

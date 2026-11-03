@@ -16,7 +16,7 @@
 #define MEASUREMENT_REPEATS	       CONFIG_TEST_MEASUREMENT_REPEATS
 
 #define SPI_MODE                                                                                   \
-	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
+	(SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |      \
 	 SPI_MODE_CPHA | SPI_MODE_CPOL)
 
 #define MAX_TEST_BUFFER_SIZE CONFIG_TEST_MAX_BUFFER_SIZE
