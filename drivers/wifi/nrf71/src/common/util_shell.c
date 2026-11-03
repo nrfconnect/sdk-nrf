@@ -943,6 +943,26 @@ unlock:
 }
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
+static int nrf_wifi_util_drv_stats(const struct shell *sh,
+				   size_t argc,
+				   const char *argv[])
+{
+	if (argc == 2) {
+		if (strcmp(argv[1], "clear")) {
+			shell_fprintf(sh, SHELL_ERROR, "Invalid argument %s\n", argv[1]);
+			shell_help(sh);
+			return -ENOEXEC;
+		}
+
+		nrf_wifi_drv_dbg_stats_clear(ctx);
+		shell_fprintf(sh, SHELL_INFO, "Driver debug stats cleared\n");
+		return 0;
+	}
+
+	nrf_wifi_drv_dbg_stats_show(sh, ctx);
+	return 0;
+}
+
 static int nrf_wifi_util_req_extended_sleep(const struct shell *sh,
 					    size_t argc,
 					    const char *argv[])
@@ -1160,6 +1180,14 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      1,
 		      0),
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+	SHELL_CMD_ARG(drv_stats,
+		      NULL,
+		      "Display host driver error and RPU response timeout counters\n"
+		      "Parameters:\n"
+		      "    clear : (optional) reset the counters\n",
+		      nrf_wifi_util_drv_stats,
+		      1,
+		      1),
 	SHELL_CMD_ARG(extended_sleep,
 		      NULL,
 		      "<duration_sec> - Extended sleep interval in seconds.\n"

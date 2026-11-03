@@ -28,6 +28,7 @@
 #include <common/mem_mgmt.h>
 #include <common/fmac_structs_common.h>
 #include <common/wifi_ipc.h>
+#include <system/drv_dbg_stats.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
@@ -720,6 +721,7 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	int ret;
 
 	if (!inst || !inst->locks_inited) {
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_CMD_SEND);
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
@@ -735,6 +737,10 @@ enum nrf_wifi_status nrf_wifi_ipc_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_de
 
 	if (ret < 0) {
 		LOG_ERR("%s: Sending command to RPU failed", __func__);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_CMD_SEND);
+		if (ret == -ETIMEDOUT) {
+			nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_IPC_TX);
+		}
 		return NRF_WIFI_STATUS_FAIL;
 	}
 

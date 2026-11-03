@@ -187,6 +187,7 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
+	nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SCAN);
 
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	if (vif_ctx_zep->disp_scan_cb) {

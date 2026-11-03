@@ -30,6 +30,7 @@
 #endif /* CONFIG_NRF71_STA_MODE */
 
 #include <system/fmac_api.h>
+#include <system/drv_dbg_stats.h>
 #include <common/util.h>
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/rf_params.h>
@@ -129,6 +130,7 @@ struct nrf_wifi_ctx_zep {
 #ifdef CONFIG_NRF71_UTIL
 	struct rpu_conf_params conf_params;
 	unsigned int extended_sleep_sec;
+	struct nrf_wifi_drv_dbg_stats drv_dbg_stats;
 #endif /* CONFIG_NRF71_UTIL */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
