@@ -17,9 +17,8 @@ menuconfig NRF71_SR_COEX_DRIVER
 	  Coexistence only makes sense when both radios are present, so this
 	  depends on both the nRF71 Wi-Fi driver (WIFI_NRF71) and Bluetooth (BT):
 	  the CD<->CM messaging is carried over the Wi-Fi host<->RPU path, and the
-	  Short-Range (BLE) radio is the other party being arbitrated. At runtime
-	  the driver additionally disables coexistence whenever either radio is
-	  powered down.
+	  Short-Range (BLE) radio is the other party being arbitrated. The
+	  Coexistence Manager is configured every time Wi-Fi comes up.
 
 if NRF71_SR_COEX_DRIVER
 
@@ -28,8 +27,9 @@ config NRF71_SR_COEX_DRIVER_INIT_PRIORITY
 	default 90
 	help
 	  Initialisation priority of the coexistence driver within the
-	  APPLICATION init level. Kept after the Wi-Fi driver so the FMAC
-	  transport used for CD<->CM messaging is available.
+	  APPLICATION init level. The driver learns the Wi-Fi state through the
+	  Wi-Fi driver's state notifier, which replays the current state on
+	  registration, so the order against the Wi-Fi driver doesn't matter.
 
 config NRF71_SR_COEX_CM_EVENT_WAIT_MS
 	int "CM2CD event wait timeout (ms)"
@@ -38,6 +38,32 @@ config NRF71_SR_COEX_CM_EVENT_WAIT_MS
 	help
 	  Maximum time to wait for a CM2CD completion event after posting a
 	  CD2CM command. Increase on slow FPGA targets if commands are timing out.
+
+config NRF71_SR_COEX_CM_RETRY_MAX
+	int "Retries of a failed CM configuration"
+	range 0 10
+	default 3
+	help
+	  Number of times the CM configuration is repeated after it fails,
+	  spaced by NRF71_SR_COEX_CM_RETRY_INTERVAL_MS. Retries stop at the first
+	  success or when Wi-Fi goes down. A CM that doesn't answer the first
+	  command at all is not retried.
+
+config NRF71_SR_COEX_CM_RETRY_INTERVAL_MS
+	int "Delay between CM configuration retries (ms)"
+	range 100 60000
+	default 1000
+
+config NRF71_SR_COEX_WQ_STACK_SIZE
+	int "Stack size of the coexistence work queue"
+	default 1536
+	help
+	  The work queue runs the CD2CM/CM2CD transactions that configure the
+	  Coexistence Manager.
+
+config NRF71_SR_COEX_WQ_PRIORITY
+	int "Priority of the coexistence work queue"
+	default 10
 
 module = NRF71_SR_COEX_DRIVER
 module-str = Log level for the nRF71 SR coexistence driver

@@ -38,27 +38,19 @@
 
 LOG_MODULE_DECLARE(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
 
+/* Binary length of the built-in NRF_COEX_PARAMS hex string (two chars per byte). */
+#define NRF_COEX_PARAMS_BIN_LEN ((sizeof(NRF_COEX_PARAMS) - 1U) / 2U)
+
 /**
  * Post a CD2CM command to the CM over the Wi-Fi FMAC path.
  *
  * Transport-only helper: it hands the buffer to the Wi-Fi driver and does not
  * wait for a reply. Callers that need completion use coex_cd_cm_send_and_wait().
- *
- * The transport reports -ENODEV while the RPU is down. That is remapped to
- * -EACCES so callers can tell "coexistence is not available yet" apart from a
- * genuinely missing device.
+ * Returns -ENETDOWN while Wi-Fi is down.
  */
 int coex_cm_send(const void *cmd, size_t len)
 {
-	int ret = nrf71_wifi_coex_cmd_send(cmd, len);
-
-	if (ret == -ENODEV) {
-		/* CM transport not ready (RPU not up yet). */
-		LOG_DBG("CD2CM command not sent: transport not ready");
-		return -EACCES;
-	}
-
-	return ret;
+	return nrf71_wifi_coex_cmd_send(cmd, len);
 }
 
 /**
@@ -129,7 +121,7 @@ int coex_cm_update_user_params(const struct coex_user_params_t *user_params)
  */
 int coex_cm_update_coex_params(void)
 {
-	uint8_t cmd[sizeof(uint32_t) + (sizeof(NRF_COEX_PARAMS) / 2U)];
+	uint8_t cmd[sizeof(uint32_t) + NRF_COEX_PARAMS_BIN_LEN];
 	size_t blob_len;
 
 	/* Set the message ID in the command header. */
