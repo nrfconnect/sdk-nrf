@@ -118,7 +118,7 @@ The following properties are optional for use with the simple GPIO implementatio
 Support for TX and RX bypass for SKY66409-11
 ********************************************
 
-This is an :ref:`experimental <software_maturity>` feature on the nRF54L Series.
+This is a :ref:`supported <software_maturity>` feature on the nRF54L Series.
 The SKY66409-11 FEM supports TX and RX bypass modes controlled through the existing ``ctx-gpios`` and ``crx-gpios`` pins (for details, see the official documentation at the `SKY66409-11 page`_).
 The simple GPIO FEM integration can enable bypass when the devicetree node uses compatible ``skyworks,sky66409-11``:
 

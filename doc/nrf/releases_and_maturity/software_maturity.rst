@@ -3422,14 +3422,14 @@ The following table indicates the software maturity levels of the support for Fr
           * - SKY66409-11
             - Simple GPIO
             - --
-            - Experimental
-            - Experimental
-            - Experimental
+            - Supported
+            - Supported
+            - Supported
             - --
-            - Experimental
+            - Supported
             - --
-            - Experimental
-            - Experimental
+            - Supported
+            - Supported
           * - nRF2240
             - nRF2240
             - Supported
