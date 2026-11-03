@@ -19,9 +19,9 @@ static bool expect_assert;
  * error in Application Event Manager.
  */
 BUILD_ASSERT(!IS_ENABLED(CONFIG_ASSERT_NO_FILE_INFO));
-void assert_post_action(const char *file, unsigned int line)
+void zassert_post_action(const char *file, unsigned int line)
 {
-	printk("assert_post_action - file: %s (line: %u)\n", file, line);
+	printk("zassert_post_action - file: %s (line: %u)\n", file, line);
 	if (expect_assert) {
 		expect_assert = false;
 		printk("Assertion was expected.\n");
