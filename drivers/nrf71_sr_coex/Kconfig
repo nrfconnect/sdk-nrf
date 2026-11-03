@@ -73,6 +73,55 @@ config NRF71_SR_COEX_WAIT_FOR_APP_INIT
 	  applied first. Without it, the defaults are applied as soon as Wi-Fi
 	  is up and replaced once the application configuration arrives.
 
+menuconfig NRF71_SR_COEX_BLE_CHAN_MAP
+	bool "Keep BLE off the Wi-Fi channel"
+	depends on BT_CENTRAL || BT_BROADCASTER
+	help
+	  While the Wi-Fi station is connected on 2.4 GHz, mark the BLE data
+	  channels under the Wi-Fi channel as bad through bt_le_set_chan_map(),
+	  and restore the default map on disconnect and Wi-Fi down.
+
+	  With this enabled the coexistence driver owns the BLE host channel
+	  classification and overwrites any map the application sets. Leave it
+	  disabled if the application manages the channel map itself.
+
+if NRF71_SR_COEX_BLE_CHAN_MAP
+
+config NRF71_SR_COEX_BLE_GUARD_BAND_MHZ
+	int "Guard band either side of the Wi-Fi channel (MHz)"
+	range 0 3
+	default 3
+
+config NRF71_SR_COEX_BLE_WORKQ_STACK_SIZE
+	int "Stack size of the BLE channel map work queue"
+	range 1024 8192
+	default 2048
+	help
+	  bt_le_set_chan_map() ends in a blocking HCI command, so the driver
+	  applies BLE channel maps from its own work queue rather than from the
+	  Wi-Fi driver's context or the system work queue.
+
+config NRF71_SR_COEX_BLE_CHAN_MAP_RETRIES
+	int "Retries of a rejected BLE channel map"
+	range 0 10
+	default 1
+	help
+	  bt_le_set_chan_map() fails, for example, when the Bluetooth stack is
+	  not enabled yet at the time Wi-Fi connects. When the call fails the
+	  driver repeats it this many times,
+	  NRF71_SR_COEX_BLE_CHAN_MAP_RETRY_DELAY_MS apart, unless a newer map has
+	  been queued. Set to 0 to disable the retries.
+
+config NRF71_SR_COEX_BLE_CHAN_MAP_RETRY_DELAY_MS
+	int "Delay between BLE channel map retries (ms)"
+	range 1000 60000
+	default 2000
+	help
+	  The lower limit is the minimum interval the Bluetooth host requires
+	  between two channel map updates.
+
+endif # NRF71_SR_COEX_BLE_CHAN_MAP
+
 config NRF71_SR_COEX_SHELL
 	bool "Coexistence driver shell"
 	depends on SHELL

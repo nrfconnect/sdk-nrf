@@ -77,4 +77,43 @@ void cd_coexc_configure(enum nrf71_sr_coex_antenna antenna);
 /** Name of the current CM configuration state, for diagnostics. */
 const char *cd_wifi_state_name(void);
 
+/** Octets in a BLE Host Channel Classification map. */
+#define CD_BLE_CHAN_MAP_SIZE 5U
+
+#ifdef CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP
+
+/** Start the work queue that applies BLE channel maps. */
+void cd_ble_init(void);
+
+/** Wi-Fi is connected on the given channel: keep BLE off it. Does not block. */
+void cd_ble_wifi_connected(unsigned int center_freq_mhz, unsigned int bandwidth_mhz);
+
+/** Wi-Fi left the channel: restore the default BLE map. Does not block. */
+void cd_ble_wifi_disconnected(void);
+
+/** Copy the last non-default map applied to the Controller, false if none. */
+bool cd_ble_last_chan_map(uint8_t chan_map[CD_BLE_CHAN_MAP_SIZE]);
+
+#else
+
+static inline void cd_ble_init(void)
+{
+}
+
+static inline void cd_ble_wifi_connected(unsigned int center_freq_mhz,
+					 unsigned int bandwidth_mhz)
+{
+}
+
+static inline void cd_ble_wifi_disconnected(void)
+{
+}
+
+static inline bool cd_ble_last_chan_map(uint8_t chan_map[CD_BLE_CHAN_MAP_SIZE])
+{
+	return false;
+}
+
+#endif /* CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP */
+
 #endif /* NRF71_SR_COEX_INTERNAL_H__ */
