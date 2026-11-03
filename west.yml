@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 9f45b1f460cafad693b534732a0f0cc393c007be
+      revision: pull/4732/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -79,8 +79,6 @@ manifest:
         #
         # Please keep this list sorted alphabetically.
         name-allowlist:
-          - canopennode
-          - chre
           - cmsis
           - cmsis-dsp
           - cmsis-nn
@@ -129,7 +127,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: acad37e7a5603ccbf1b4769aa015a5c4e84db991
+      revision: pull/792/head
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -150,7 +148,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: ee59add42d4ce60756d0482f5e0a7115d61780b7
+      revision: pull/2361/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -183,7 +181,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 4e34ae0c49d66fbe53c0864f6d477b31300981fa
+      revision: pull/513/head
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -235,7 +233,7 @@ manifest:
       remote: throwtheswitch
     - name: memfault-firmware-sdk
       path: modules/lib/memfault-firmware-sdk
-      revision: 1.47.0
+      revision: 1.47.1
       remote: memfault
     - name: bsim
       repo-path: bsim_west
@@ -266,7 +264,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 2affc05ed61860bf82bc5626d5cd10b1db3190d6
+      revision: pull/193/head
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.
