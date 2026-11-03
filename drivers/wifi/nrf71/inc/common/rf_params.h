@@ -53,5 +53,6 @@ void configure_tx_pwr_settings(struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_p
 
 enum nrf_wifi_status rf_params_apply_radio_test_max_tx_ceilings(uint8_t ceil_dbm);
 enum nrf_wifi_status rf_params_apply_board_tx_ceilings(void);
+enum nrf_wifi_status rf_params_apply_radio_test_disable_vt_calib(void);
 
 #endif /* __RF_PARAMS_H__ */

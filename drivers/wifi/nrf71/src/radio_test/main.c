@@ -75,6 +75,12 @@ static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv 
 		goto err;
 	}
 
+	status = rf_params_apply_radio_test_disable_vt_calib();
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to disable VT calibration for radio test", __func__);
+		goto err;
+	}
+
 	/* Firmware reads 3 words from here; index 0 is the init word. */
 	drv_ctx->vtf_buffer_start_address =
 		(unsigned int)&vtf_snapshots[VTF_CH_BATTERY_VOLTAGE];

@@ -343,6 +343,12 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			goto out;
 		}
+
+		status = rf_params_apply_radio_test_disable_vt_calib();
+		if (status != NRF_WIFI_STATUS_SUCCESS) {
+			goto out;
+		}
+
 		memcpy(conf_params->rf_params_addr, rf_params_tmp,
 		       sizeof(conf_params->rf_params_addr));
 

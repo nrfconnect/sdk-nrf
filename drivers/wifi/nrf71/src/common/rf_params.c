@@ -336,6 +336,31 @@ cleanup:
 	return NRF_WIFI_STATUS_FAIL;
 }
 
+#define RF_PARAMS_TEMP_VOLT_RECAL_PARAM_INDEX 5
+#define RF_PARAMS_TEMP_VOLT_RECAL_CALIB_OFST  28
+#define RF_PARAMS_VT_CALIB_ENABLE_MASK        0x03
+
+enum nrf_wifi_status rf_params_apply_radio_test_disable_vt_calib(void)
+{
+	uint8_t *calib_byte;
+
+	if (rf_params_bytes_init() != NRF_WIFI_STATUS_SUCCESS) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	if (rf_params[RF_PARAMS_TEMP_VOLT_RECAL_PARAM_INDEX].bytes_len <=
+	    RF_PARAMS_TEMP_VOLT_RECAL_CALIB_OFST) {
+		LOG_ERR("%s: temp/volt recalib RF param buffer too small", __func__);
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	calib_byte = &rf_params[RF_PARAMS_TEMP_VOLT_RECAL_PARAM_INDEX]
+			      .bytes[RF_PARAMS_TEMP_VOLT_RECAL_CALIB_OFST];
+	*calib_byte &= (uint8_t)~RF_PARAMS_VT_CALIB_ENABLE_MASK;
+
+	return NRF_WIFI_STATUS_SUCCESS;
+}
+
 enum nrf_wifi_status rf_params_apply_radio_test_max_tx_ceilings(uint8_t ceil_dbm)
 {
 	if (rf_params_bytes_init() != NRF_WIFI_STATUS_SUCCESS) {
