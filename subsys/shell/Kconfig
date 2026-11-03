@@ -10,7 +10,6 @@ menuconfig SHELL_BT_NUS
 	depends on BT
 	select SHELL
 	select BT_NUS
-	select RING_BUFFER
 	help
 	  Enable shell BT NUS transport.
 
@@ -81,7 +80,6 @@ endif #SHELL_BT_NUS
 menuconfig SHELL_IPC
 	bool "Shell IPC transport"
 	depends on IPC_SERVICE
-	select RING_BUFFER
 	help
 	  Enable Shell IPC transport
 
