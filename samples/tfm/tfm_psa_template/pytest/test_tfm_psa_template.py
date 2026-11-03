@@ -44,7 +44,7 @@ BOOT_TIMEOUT = 30.0
 
 
 def _west_flash(build_dir: Path, dev_id: str, extra_args: list[str] | None = None) -> None:
-    command = ["west", "flash", "--skip-rebuild", "-d", str(build_dir), "--dev-id", dev_id]
+    command = ["west", "flash", "--no-rebuild", "-d", str(build_dir), "--dev-id", dev_id]
     run_command(command + (extra_args or []), timeout=FLASH_TIMEOUT)
 
 
