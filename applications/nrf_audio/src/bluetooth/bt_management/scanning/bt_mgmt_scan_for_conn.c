@@ -206,7 +206,7 @@ static bool addr_check(struct bt_data *data, void *user_data)
 	bt_addr_le_t cmp_addr;
 	/* BT_ADDR_LE_STR defined at the start of this file */
 
-	ret = bt_addr_le_from_str(BT_ADDR_LE_STR, "public", &cmp_addr);
+	ret = bt_addr_le_from_str(BT_ADDR_LE_STR, &cmp_addr);
 	if (ret) {
 		LOG_ERR("Failed to create bt_addr_le from string: %d", ret);
 		return true;
