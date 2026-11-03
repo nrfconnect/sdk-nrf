@@ -87,6 +87,8 @@ DEFINE_FAKE_VALUE_FUNC(int, boot_read_bank_header, uint8_t, struct mcuboot_img_h
 DEFINE_FAKE_VOID_FUNC(clear_attrs, uint8_t, void *);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer_path, const struct lwm2m_obj_path *);
 DEFINE_FAKE_VOID_FUNC(engine_remove_observer_by_id, uint16_t, int32_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_update_service_period, k_work_handler_t, uint32_t);
+DEFINE_FAKE_VALUE_FUNC(int, lwm2m_engine_call_at, k_work_handler_t, int64_t);
 DEFINE_FAKE_VALUE_FUNC(int, lwm2m_firmware_start_transfer, uint16_t, char *);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_stream_init);
 DEFINE_FAKE_VALUE_FUNC(int, fota_download_util_dfu_target_init, enum dfu_target_image_type);
