@@ -95,7 +95,7 @@ struct nrf_wifi_vif_ctx_zep {
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool cookie_resp_received;
-	unsigned long rssi_record_timestamp_us;
+	uint64_t rssi_record_timestamp_us;
 	signed short rssi;
 	unsigned int tx_rate_kbps;
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
