@@ -65,7 +65,7 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	k_sem_reset(&wifi_scan_ready);
 
 	if (wifi_config != NULL) {
-		scan_wifi_execute(wifi_config->timeout, &wifi_scan_ready);
+		scan_wifi_execute(wifi_config, &wifi_scan_ready);
 	}
 #endif
 
@@ -108,6 +108,7 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 #else
 	struct location_data location;
 	struct location_data location_result = { 0 };
+	enum nrf_cloud_error cloud_err;
 	struct cloud_service_pos_req params = {
 		.cell_data = scan_cellular_info,
 		.wifi_data = scan_wifi_info,
@@ -139,9 +140,10 @@ static void method_cloud_location_positioning_work_fn(struct k_work *work)
 	}
 
 	/* Request location from the cloud */
-	err = cloud_service_location_get(&params, &location);
+	err = cloud_service_location_get(&params, &location, &cloud_err);
 	if (err) {
-		LOG_ERR("Failed to acquire location using cloud location, error: %d", err);
+		LOG_WRN("Failed to acquire location using cloud location, error: %d, "
+			"nRF Cloud error: %d", err, cloud_err);
 	} else {
 		location_result.latitude = location.latitude;
 		location_result.longitude = location.longitude;

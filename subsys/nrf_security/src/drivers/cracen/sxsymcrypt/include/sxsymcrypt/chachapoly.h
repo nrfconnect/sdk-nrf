@@ -103,10 +103,11 @@ extern "C" {
  * @param[in] key key used for the AEAD operation, expected size 32 bytes
  * @param[in] nonce nonce used for the AEAD operation, size must be 12 bytes
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be 16
  *
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEY_SZ
+ * @return ::SX_ERR_INVALID_TAG_SIZE
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *
@@ -132,10 +133,11 @@ int sx_aead_create_chacha20poly1305_enc(struct sxaead *c, struct sxkeyref *key,
  * @param[in] key key used for the AEAD operation, expected size 32 bytes
  * @param[in] nonce nonce used for the AEAD operation, size must be 12 bytes
  * @param[in] tagsz size, in bytes, of the tag used for the AEAD operation,
- *            must be a value in {4, 6, 8, 10, 12, 14, 16}
+ *            must be 16
  *
  * @return ::SX_OK
  * @return ::SX_ERR_INVALID_KEY_SZ
+ * @return ::SX_ERR_INVALID_TAG_SIZE
  * @return ::SX_ERR_INCOMPATIBLE_HW
  * @return ::SX_ERR_RETRY
  *

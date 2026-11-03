@@ -18,6 +18,8 @@
 #include <nrfx_gpiote.h>
 #include <gpiote_nrfx.h>
 #include <drivers/pulse_meas.h>
+#include <zephyr/pm/device.h>
+#include <zephyr/pm/device_runtime.h>
 
 LOG_MODULE_REGISTER(pulse_meas, CONFIG_PULSE_MEAS_LOG_LEVEL);
 
@@ -236,7 +238,12 @@ static void meas_stop(const struct device *dev)
 #if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
 	clock_release();
 #endif
+	pulse_meas_state_t old_state = p_data->state;
+
 	p_data->state = PULSE_MEAS_STATE_IDLE;
+	if (old_state != PULSE_MEAS_STATE_IDLE) {
+		pm_device_runtime_put(dev);
+	}
 }
 
 static struct pulse_meas_block *buffer_prepare(const struct device *dev)
@@ -506,6 +513,11 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
 	p_data->user_handler = cfg->user_handler;
 	p_data->user_context = cfg->user_context;
 
+	ret = pm_device_runtime_get(dev);
+	if (ret < 0) {
+		return ret;
+	}
+
 	ret = gpiote_configure(dev);
 	if (ret < 0) {
 		return ret;
@@ -516,7 +528,10 @@ int pulse_meas_configure(const struct device *dev, const struct pulse_meas_confi
 		return ret;
 	}
 
-	return gppi_init(dev);
+	ret = gppi_init(dev);
+	pm_device_runtime_put(dev);
+
+	return ret;
 }
 
 static void discard_active_buffers(struct pulse_meas_drv_data *p_data)
@@ -530,9 +545,7 @@ static void discard_active_buffers(struct pulse_meas_drv_data *p_data)
 int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 {
 	struct pulse_meas_drv_data *p_data = dev->data;
-#if IS_ENABLED(CONFIG_PULSE_MEAS_USE_HFCLK)
 	int ret;
-#endif
 
 	if (slab == NULL) {
 		return -EINVAL;
@@ -559,6 +572,16 @@ int pulse_meas_start(const struct device *dev, struct k_mem_slab *slab)
 	}
 #endif
 
+	ret = pm_device_runtime_get(dev);
+	if (ret < 0) {
+#ifdef CONFIG_PULSE_MEAS_USE_HFCLK
+		hf_clock_release();
+#endif
+		discard_active_buffers(p_data);
+		p_data->state = PULSE_MEAS_STATE_IDLE;
+		return ret;
+	}
+
 	nrfx_timer_clear(&p_data->timer);
 	nrfx_timer_enable(&p_data->timer);
 	gppi_enable(dev);
@@ -574,7 +597,6 @@ int pulse_meas_stop(const struct device *dev, bool immediate)
 	if (immediate) {
 		struct pulse_meas_block *block = p_data->curr_block;
 
-		p_data->state = PULSE_MEAS_STATE_IDLE;
 		meas_stop(dev);
 		if (block != NULL) {
 			k_mem_slab_free(p_data->mem_slab, block);
@@ -635,6 +657,109 @@ uint32_t pulse_meas_pending(const struct device *dev)
 
 	return atomic_get(&p_data->pending_series);
 }
+
+static void pin_retain_set(uint32_t pin, bool enable)
+{
+#if NRF_GPIO_HAS_RETENTION_SETCLEAR
+	if (enable) {
+		nrf_gpio_pin_retain_enable(pin);
+	} else {
+		nrf_gpio_pin_retain_disable(pin);
+	}
+#else
+	ARG_UNUSED(pin);
+	ARG_UNUSED(enable);
+#endif
+}
+
+static void pin_clock_set(uint32_t pin, bool enable)
+{
+#if NRF_GPIO_HAS_CLOCKPIN
+	nrf_gpio_pin_clock_set(pin, enable);
+#else
+	ARG_UNUSED(pin);
+	ARG_UNUSED(enable);
+#endif
+}
+
+static void pin_low_power_enter(uint32_t pin)
+{
+	pin_retain_set(pin, false);
+	nrfy_gpio_cfg(pin, NRF_GPIO_PIN_DIR_INPUT, NRF_GPIO_PIN_INPUT_DISCONNECT,
+		      NRF_GPIO_PIN_NOPULL, NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
+	pin_clock_set(pin, false);
+	pin_retain_set(pin, true);
+}
+
+static void pin_low_power_exit(uint32_t pin, nrf_gpio_pin_pull_t pull)
+{
+	/* Retention must be released before the pin registers can be written. */
+	pin_retain_set(pin, false);
+	nrfy_gpio_cfg(pin, NRF_GPIO_PIN_DIR_INPUT, NRF_GPIO_PIN_INPUT_CONNECT, pull,
+		      NRF_GPIO_PIN_S0S1, NRF_GPIO_PIN_NOSENSE);
+	pin_retain_set(pin, true);
+}
+
+static int pulse_meas_pm_suspend(const struct device *dev)
+{
+	struct pulse_meas_drv_data *p_data = dev->data;
+	const struct pulse_meas_drv_cfg *p_config = dev->config;
+
+	if (p_data->state != PULSE_MEAS_STATE_IDLE) {
+		return -EBUSY;
+	}
+
+	if (!p_data->gpiote_ready) {
+		return 0;
+	}
+
+	pin_low_power_enter(p_config->assert_pin);
+	pin_low_power_enter(p_config->deassert_pin);
+
+	return 0;
+}
+
+static int pulse_meas_pm_resume(const struct device *dev)
+{
+	struct pulse_meas_drv_data *p_data = dev->data;
+	const struct pulse_meas_drv_cfg *p_config = dev->config;
+
+	if (!p_data->gpiote_ready) {
+		return 0;
+	}
+
+	pin_low_power_exit(p_config->assert_pin, p_data->pull_cfg);
+	pin_low_power_exit(p_config->deassert_pin, p_data->pull_cfg);
+
+	return 0;
+}
+
+static int pulse_meas_pm_action(const struct device *dev, enum pm_device_action action)
+{
+	int ret;
+
+	switch (action) {
+	case PM_DEVICE_ACTION_SUSPEND:
+		ret = pulse_meas_pm_suspend(dev);
+		break;
+
+	case PM_DEVICE_ACTION_RESUME:
+		ret = pulse_meas_pm_resume(dev);
+		break;
+
+	case PM_DEVICE_ACTION_TURN_OFF:
+	case PM_DEVICE_ACTION_TURN_ON:
+		ret = -ENOTSUP;
+		break;
+
+	default:
+		ret = -EINVAL;
+		break;
+	}
+
+	return ret;
+}
+
 #define GPIOTE_PHANDLE(instance, gpio)                                                             \
 	DT_PROP(DT_GPIO_CTLR(DT_DRV_INST(instance), gpio), gpiote_instance)
 #define TIMER_PHANDLE(instance) DT_INST_PHANDLE(instance, timer_instance)
@@ -658,17 +783,17 @@ uint32_t pulse_meas_pending(const struct device *dev)
 	};                                                                                         \
 	static int pulse_meas_##inst##_init(const struct device *dev)                              \
 	{                                                                                          \
-		ARG_UNUSED(dev);                                                                   \
 		COND_CODE_0(                                                                       \
 			IS_ENABLED(CONFIG_GPIO),                                                   \
 			(NRF_DT_IRQ_CONNECT(                                                       \
 				 GPIOTE_PHANDLE(inst, assert_gpios), nrfx_gpiote_irq_handler,      \
 				 &GPIOTE_NRFX_INST_BY_NODE(GPIOTE_PHANDLE(inst, assert_gpios)));), \
 			())                                                                        \
-		return 0;                                                                          \
+		return pm_device_driver_init(dev, pulse_meas_pm_action);                           \
 	}                                                                                          \
-	DEVICE_DT_INST_DEFINE(inst, pulse_meas_##inst##_init, NULL, &drv_data_##inst,              \
-			      &drv_cfg_##inst, POST_KERNEL, CONFIG_PULSE_MEAS_INIT_PRIORITY,       \
-			      NULL);
+	PM_DEVICE_DT_INST_DEFINE(inst, pulse_meas_pm_action, PM_DEVICE_ISR_SAFE);                  \
+	DEVICE_DT_INST_DEFINE(inst, pulse_meas_##inst##_init, PM_DEVICE_DT_INST_GET(inst),         \
+			      &drv_data_##inst, &drv_cfg_##inst, POST_KERNEL,                      \
+			      CONFIG_PULSE_MEAS_INIT_PRIORITY, NULL);
 
 DT_INST_FOREACH_STATUS_OKAY(PULSE_MEAS_DEVICE)

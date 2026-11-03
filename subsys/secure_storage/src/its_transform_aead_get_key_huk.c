@@ -1,7 +1,7 @@
 /* Copyright (c) 2025 Nordic Semiconductor ASA
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
-#include <zephyr/secure_storage/its/transform/aead_get.h>
+#include <zephyr/secure_storage/its/transform/aead.h>
 #include <zephyr/logging/log.h>
 #include <hw_unique_key.h>
 #include <psa/crypto_values.h>

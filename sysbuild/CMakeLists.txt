@@ -357,7 +357,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
       set_config_bool(mcuboot CONFIG_PSA_CRYPTO y)
     endif()
 
-    if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF91 OR SB_CONFIG_SOC_SERIES_NRF52)
+    if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF91)
       if(SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA)
         set_config_bool(mcuboot CONFIG_BOOT_SIGNATURE_TYPE_RSA y)
         set_config_bool(mcuboot CONFIG_PSA_CRYPTO y)
@@ -457,7 +457,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
        SB_CONFIG_MCUBOOT_COMPRESSED_IMAGE_SUPPORT OR
        SB_CONFIG_MCUBOOT_HARDWARE_DOWNGRADE_PREVENTION OR
        SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF54L OR SB_CONFIG_SOC_SERIES_NRF54H OR
-       SB_CONFIG_QSPI_XIP_SPLIT_IMAGE OR SB_CONFIG_SOC_SERIES_NRF52 OR
+       SB_CONFIG_QSPI_XIP_SPLIT_IMAGE OR
        SB_CONFIG_SOC_SERIES_NRF91 OR SB_CONFIG_BOARD_IS_NON_SECURE OR SB_CONFIG_SOC_SERIES_NRF71 OR
        SB_CONFIG_SOC_SERIES_NRF92
     )
@@ -487,10 +487,10 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_HAVE_CUSTOM_LINKER_SCRIPT y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_BUILD_NO_GAP_FILL y)
 
-        # Set required options if MCUmgr img mgmt is used
+        # Extended MCUmgr img mgmt for QSPI XIP split (slot selection, confirm policy)
+        set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_NRF y)
         if(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP)
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE y)
-          set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_NRF y)
         else()
           set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
         endif()
@@ -507,6 +507,13 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
           set(${image}_SIGNING_SCRIPT "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake" CACHE INTERNAL "MCUboot signing script" FORCE)
           set_config_bool(${image} CONFIG_MCUMGR_GRP_IMG_QSPI_XIP_SPLIT_IMAGE n)
         endforeach()
+
+        if(SB_CONFIG_MCUBOOT_DIRECT_XIP_GENERATE_VARIANT)
+          set(${DEFAULT_IMAGE}_slot1_variant_SIGNING_SCRIPT
+            "${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/image_signing.cmake"
+            CACHE INTERNAL "MCUboot signing script" FORCE
+          )
+        endif()
       endif()
 
       if(SB_CONFIG_SECURE_BOOT_APPCORE)
@@ -631,7 +638,7 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         # MCUboot, with space left for MCUboot image header.
         set_config_int(mcuboot CONFIG_ROM_START_OFFSET 0)
       else()
-        if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF91 OR SB_CONFIG_SOC_SERIES_NRF52)
+        if(SB_CONFIG_SOC_SERIES_NRF53 OR SB_CONFIG_SOC_SERIES_NRF91)
           set_config_int(b0 CONFIG_SB_IMAGE_BOOT_OFFSET 0x200)
         elseif(SB_CONFIG_SOC_SERIES_NRF54L)
           set_config_int(b0 CONFIG_SB_IMAGE_BOOT_OFFSET 0x800)
@@ -677,6 +684,8 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
 
     if(SB_CONFIG_SECURE_BOOT_MONOTONIC_COUNTER)
       set_config_bool(b0 CONFIG_SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION y)
+      set_config_int(b0 CONFIG_SB_NUM_VER_COUNTER_SLOTS
+                     ${SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS})
 
       if(SB_CONFIG_BOOTLOADER_MCUBOOT)
         set_config_bool(mcuboot CONFIG_SB_MONOTONIC_COUNTER_IS_ENABLED y)

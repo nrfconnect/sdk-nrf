@@ -207,6 +207,27 @@ config BT_FAST_PAIR_FHN_BEACON_ACTIONS
 	help
 	  Add Fast Pair FHN Beacon Actions source file.
 
+config BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN
+	int
+	default 255 if BT_FAST_PAIR_FHN_PF
+	default 48
+	range 48 255
+	help
+	  Indicate the maximum value of the Data Length parameter that the Beacon
+	  Actions characteristic accepts in a request and generates in a response.
+	  Requests and responses that declare a larger Data Length are rejected.
+	  The value bounds the size of the authentication data buffer.
+
+	  The lower bound covers the maximum request and response lengths of all of
+	  the core Beacon Actions opcodes (Data ID 0x00 to 0x08), which a build-time
+	  assertion verifies. The upper bound follows from the Data Length field
+	  being one byte wide.
+
+	  With Precision Finding enabled, the value is fixed at the maximum that the
+	  Data Length field can express, so that every conformant Ranging request
+	  and response is accepted regardless of the ranging technologies that the
+	  application declares at runtime.
+
 config BT_FAST_PAIR_FHN_CALLBACKS
 	bool
 	default y

@@ -31,10 +31,13 @@
 #define WPA3_PSA_MAX_COMMIT_LEN	 1024
 #define WPA3_PSA_MAX_CONFIRM_LEN 1024
 /* SAE commit: wire = [group(2)][scalar(32)][element(64)]; PSA/Oberon = [scalar][element] */
-#define WPA3_PSA_SAE_COMMIT_WIRE_LEN 98
+#define WPA3_PSA_SAE_GROUP_LEN       2
 #define WPA3_PSA_SAE_COMMIT_PSA_LEN  96
+#define WPA3_PSA_SAE_COMMIT_WIRE_LEN (WPA3_PSA_SAE_GROUP_LEN + WPA3_PSA_SAE_COMMIT_PSA_LEN)
 #define WPA3_PSA_SAE_GROUP_19        19
 #define WPA3_PSA_MAX_PT_PASSWORD_MAP 8
+/* Password Identifier element length octet also covers the Element ID Extension */
+#define WPA3_PSA_MAX_PW_ID_LEN       254
 
 /* Password storage for PT-based operations */
 struct wpa3_psa_pt_password {
@@ -43,6 +46,8 @@ struct wpa3_psa_pt_password {
 	size_t password_len;
 	u8 ssid[32];
 	size_t ssid_len;
+	char *pw_id;
+	size_t pw_id_len;
 };
 
 static struct wpa3_psa_pt_password pt_password_map[WPA3_PSA_MAX_PT_PASSWORD_MAP];
@@ -56,6 +61,8 @@ struct wpa3_psa_setup_params {
 	size_t password_len;
 	const u8 *ssid;
 	size_t ssid_len;
+	const char *pw_id;
+	size_t pw_id_len;
 	int group;
 	bool h2e;
 	bool gdh;
@@ -364,44 +371,79 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 		     const char *identifier)
 {
 	struct wpa3_psa_operation *op;
-	u8 *pos;
+	const u8 *scalar_elem;
+	u16 group = WPA3_PSA_SAE_GROUP_19;
+	size_t hdr_len;
+	size_t commit_wire_len;
 
 	op = get_psa_op(sae);
 	if (!op || sae->state != SAE_COMMITTED) {
 		return -1;
 	}
 
-	/* Get commit data from PSA operation */
-	if (op->shared_key_len == 0) {
+	/*
+	 * IEEE Std 802.11-2020 requires H2E whenever a password identifier is
+	 * used; only the H2E PT derivation takes the identifier into account.
+	 */
+	if (identifier && !sae->h2e) {
+		wpa_printf(MSG_ERROR,
+			   "WPA3-PSA: SAE Password Identifier requires H2E (identifier=%s)",
+			   identifier);
+		return -1;
+	}
+
+	/* Own commit; shared_key may already hold the peer's commit after sae_parse_commit() */
+	if (op->local_commit_len == 0) {
 		wpa_printf(MSG_DEBUG, "WPA3-PSA: No commit data available");
 		return -1;
 	}
 
-	/* PSA outputs 96 bytes (scalar+element); wire format is 98 (group+scalar+element) */
-	size_t commit_wire_len;
-
-	if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_PSA_LEN) {
-		commit_wire_len = WPA3_PSA_SAE_COMMIT_WIRE_LEN;
-		pos = wpabuf_put(buf, commit_wire_len);
-		/* Group ID in wire format is little-endian (matches hostap wpabuf_put_le16) */
-		pos[0] = WPA3_PSA_SAE_GROUP_19 & 0xff;
-		pos[1] = (WPA3_PSA_SAE_GROUP_19 >> 8) & 0xff;
-		os_memcpy(pos + 2, op->shared_key, WPA3_PSA_SAE_COMMIT_PSA_LEN);
-	} else if (op->shared_key_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
-		commit_wire_len = op->shared_key_len;
-		pos = wpabuf_put(buf, commit_wire_len);
-		os_memcpy(pos, op->shared_key, op->shared_key_len);
+	/* PSA outputs 96 bytes (scalar+element), or 98 with the group already prepended */
+	if (op->local_commit_len == WPA3_PSA_SAE_COMMIT_PSA_LEN) {
+		scalar_elem = op->local_commit;
+	} else if (op->local_commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
+		group = WPA_GET_LE16(op->local_commit);
+		scalar_elem = op->local_commit + WPA3_PSA_SAE_GROUP_LEN;
 	} else {
 		wpa_printf(MSG_DEBUG,
 			   "WPA3-PSA: Commit data wrong size (%zu bytes, expected %d or %d)",
-			   op->shared_key_len, WPA3_PSA_SAE_COMMIT_PSA_LEN,
+			   op->local_commit_len, WPA3_PSA_SAE_COMMIT_PSA_LEN,
 			   WPA3_PSA_SAE_COMMIT_WIRE_LEN);
 		return -1;
 	}
 
-	/* Caller (sme) may prepend 4 bytes (transaction seq + status); total frame = 4 + 98 */
+	hdr_len = wpabuf_len(buf);
+
+	/* Field order follows IEEE 802.11 SAE commit and upstream sae_write_commit() */
+	wpabuf_put_le16(buf, group);
+	if (!sae->h2e && token) {
+		wpabuf_put_buf(buf, token);
+		wpa_hexdump_buf(MSG_DEBUG, "WPA3-PSA: Anti-clogging token", token);
+	}
+	wpabuf_put_data(buf, scalar_elem, WPA3_PSA_SAE_COMMIT_PSA_LEN);
+
+	if (identifier) {
+		wpabuf_put_u8(buf, WLAN_EID_EXTENSION);
+		wpabuf_put_u8(buf, 1 + os_strlen(identifier));
+		wpabuf_put_u8(buf, WLAN_EID_EXT_PASSWORD_IDENTIFIER);
+		wpabuf_put_str(buf, identifier);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: own Password Identifier: %s", identifier);
+	}
+
+	if (sae->h2e && token) {
+		wpabuf_put_u8(buf, WLAN_EID_EXTENSION);
+		wpabuf_put_u8(buf, 1 + wpabuf_len(token));
+		wpabuf_put_u8(buf, WLAN_EID_EXT_ANTI_CLOGGING_TOKEN);
+		wpabuf_put_buf(buf, token);
+		wpa_hexdump_buf(MSG_DEBUG, "WPA3-PSA: Anti-clogging token (in container)", token);
+	}
+
+	commit_wire_len = wpabuf_len(buf) - hdr_len;
+
+	/* Caller (sme) may prepend 4 bytes (transaction seq + status) */
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Commit payload written (%zu bytes)", commit_wire_len);
-	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload", pos, commit_wire_len);
+	wpa_hexdump(MSG_DEBUG, "WPA3-PSA: Commit payload", wpabuf_head_u8(buf) + hdr_len,
+		    commit_wire_len);
 	return 0;
 }
 
@@ -422,7 +464,6 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 		     size_t *token_len, int *allowed_groups, int h2e, int *ie_offset)
 {
 	struct wpa3_psa_operation *op;
-	u16 res = WLAN_STATUS_SUCCESS;
 
 	op = get_psa_op(sae);
 	if (!op) {
@@ -441,6 +482,19 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 		return WLAN_STATUS_UNSPECIFIED_FAILURE;
 	}
 
+	/*
+	 * A peer commit carrying our own scalar and element is a reflection
+	 * attack. Discard it before it reaches PSA, which would otherwise
+	 * accept it and derive a confirm.
+	 */
+	if (op->local_commit_len >= WPA3_PSA_SAE_COMMIT_PSA_LEN &&
+	    os_memcmp(data + WPA3_PSA_SAE_GROUP_LEN,
+		      op->local_commit + op->local_commit_len - WPA3_PSA_SAE_COMMIT_PSA_LEN,
+		      WPA3_PSA_SAE_COMMIT_PSA_LEN) == 0) {
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Peer commit reflects own commit, discarding");
+		return SAE_SILENTLY_DISCARD;
+	}
+
 	/* Store the full commit message for PSA processing */
 	os_memcpy(op->shared_key, data, len);
 	op->shared_key_len = len;
@@ -449,10 +503,13 @@ u16 sae_parse_commit(struct sae_data *sae, const u8 *data, size_t len, const u8 
 	os_memcpy(op->peer_commit, data, len);
 	op->peer_commit_len = len;
 
-	/* Process the commit using PSA */
-	res = wpa3_psa_process_commit(op, op->shared_key, op->shared_key_len);
-	if (res != WLAN_STATUS_SUCCESS) {
-		return res;
+	/*
+	 * Process the commit using PSA. Do not propagate the -1 error as u16, it
+	 * would alias SAE_SILENTLY_DISCARD and keep the exchange alive.
+	 */
+	if (wpa3_psa_process_commit(op, op->shared_key, op->shared_key_len) < 0) {
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: Invalid peer commit, rejecting");
+		return WLAN_STATUS_UNSPECIFIED_FAILURE;
 	}
 
 	/* Parse optional fields */
@@ -574,15 +631,15 @@ int sae_check_confirm(struct sae_data *sae, const u8 *data, size_t len, int *ie_
  * @allowed_groups: Allowed groups
  * @group: Group to check
  *
- * Returns: 0 if allowed, -1 if not allowed
+ * Returns: WLAN_STATUS_SUCCESS if allowed, WLAN_STATUS_FINITE_CYCLIC_GROUP_NOT_SUPPORTED otherwise
  */
 u16 sae_group_allowed(struct sae_data *sae, int *allowed_groups, u16 group)
 {
 	/* Only allow group 19 */
 	if (group == 19) {
-		return 0;
+		return WLAN_STATUS_SUCCESS;
 	}
-	return -1;
+	return WLAN_STATUS_FINITE_CYCLIC_GROUP_NOT_SUPPORTED;
 }
 
 /**
@@ -626,6 +683,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 			  const u8 *addr2, int *rejected_groups, const struct sae_pk *pk)
 {
 	struct wpa3_psa_operation *op;
+	const struct wpa3_psa_pt_password *pt_entry = NULL;
 	int res;
 
 	wpa_printf(MSG_DEBUG, "WPA3-PSA: Prepare commit with PT (PSA mode)");
@@ -678,6 +736,7 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 					op->ssid_len = pt_password_map[i].ssid_len;
 				}
 
+				pt_entry = &pt_password_map[i];
 				found = true;
 				wpa_printf(MSG_DEBUG,
 					   "WPA3-PSA: Retrieved password and SSID from PT map "
@@ -708,6 +767,8 @@ int sae_prepare_commit_pt(struct sae_data *sae, const struct sae_pt *pt, const u
 		.password_len = op->password_len,
 		.ssid = op->ssid,
 		.ssid_len = op->ssid_len,
+		.pw_id = pt_entry ? pt_entry->pw_id : NULL,
+		.pw_id_len = pt_entry ? pt_entry->pw_id_len : 0,
 		.group = op->group,
 		.h2e = true, /* PT implies H2E */
 		.gdh = op->gdh_enabled,
@@ -834,8 +895,11 @@ void sae_deinit_pt(struct sae_pt *pt)
 				  sizeof(pt_password_map[i].password));
 			os_memset(pt_password_map[i].ssid, 0,
 				  sizeof(pt_password_map[i].ssid));
+			os_free(pt_password_map[i].pw_id);
+			pt_password_map[i].pw_id = NULL;
 			pt_password_map[i].password_len = 0;
 			pt_password_map[i].ssid_len = 0;
+			pt_password_map[i].pw_id_len = 0;
 			pt_password_map[i].pt = NULL;
 		}
 	}
@@ -1029,6 +1093,8 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 					       const u8 *password, size_t password_len,
 					       const char *identifier)
 {
+	size_t pw_id_len = identifier ? os_strlen(identifier) : 0;
+	char *pw_id = NULL;
 	struct sae_pt *pt;
 	int i;
 
@@ -1051,6 +1117,12 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 		return NULL;
 	}
 
+	if (pw_id_len > WPA3_PSA_MAX_PW_ID_LEN) {
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Password Identifier too long (%zu > %d)",
+			   pw_id_len, WPA3_PSA_MAX_PW_ID_LEN);
+		return NULL;
+	}
+
 	pt = os_zalloc(sizeof(*pt));
 	if (!pt) {
 		return NULL;
@@ -1058,7 +1130,16 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 
 	pt->group = group;
 
-	/* Store password and SSID for later use in sae_prepare_commit_pt */
+	/* Only allocated when an identifier is configured, as few networks use one */
+	if (pw_id_len > 0) {
+		pw_id = os_memdup(identifier, pw_id_len);
+		if (!pw_id) {
+			os_free(pt);
+			return NULL;
+		}
+	}
+
+	/* Store password, SSID and identifier for later use in sae_prepare_commit_pt */
 	if (password && password_len > 0 && password_len <= 256) {
 		/* Find empty slot or reuse existing for this PT */
 		for (i = 0; i < WPA3_PSA_MAX_PT_PASSWORD_MAP; i++) {
@@ -1072,6 +1153,9 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 				} else {
 					pt_password_map[i].ssid_len = 0;
 				}
+				pt_password_map[i].pw_id = pw_id;
+				pt_password_map[i].pw_id_len = pw_id_len;
+				pw_id = NULL;
 				if (i >= pt_password_map_count) {
 					pt_password_map_count = i + 1;
 				}
@@ -1083,6 +1167,9 @@ static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t
 			}
 		}
 	}
+
+	/* Not stored if the map is full or there is no password */
+	os_free(pw_id);
 
 	/* PSA PAKE handles PWE derivation internally, no need for EC/ECC structures */
 	pt->ec = NULL;
@@ -1247,6 +1334,22 @@ static int wpa3_psa_setup_operation(struct wpa3_psa_operation *op,
 		}
 
 		psa_destroy_key(pw_key);
+
+		/* Optional password identifier, appended to the password in the PT seed */
+		if (params->pw_id_len > 0) {
+			status = psa_key_derivation_input_bytes(&kdf,
+								PSA_KEY_DERIVATION_INPUT_INFO,
+								(const u8 *)params->pw_id,
+								params->pw_id_len);
+			if (status != PSA_SUCCESS) {
+				wpa_printf(MSG_ERROR,
+					   "WPA3-PSA: Failed to input password identifier: %d",
+					   status);
+				psa_key_derivation_abort(&kdf);
+				return -1;
+			}
+			wpa_printf(MSG_DEBUG, "WPA3-PSA: H2E PT includes password identifier");
+		}
 
 		/* PT for P-256: 32 bits from H2E KDF, Oberon derive_key expands to 64-byte PT.
 		 * Set algorithm so psa_pake_setup() policy check permits this key for PAKE.
@@ -1420,7 +1523,7 @@ static int wpa3_psa_process_commit(struct wpa3_psa_operation *op, const u8 *comm
 
 	/* Wire format is 98 bytes [group][scalar][element]; PSA expects 96 [scalar][element] */
 	if (commit_len == WPA3_PSA_SAE_COMMIT_WIRE_LEN) {
-		commit_data += 2;
+		commit_data += WPA3_PSA_SAE_GROUP_LEN;
 		commit_len = WPA3_PSA_SAE_COMMIT_PSA_LEN;
 	} else if (commit_len != WPA3_PSA_SAE_COMMIT_PSA_LEN) {
 		wpa_printf(MSG_DEBUG,
@@ -1587,6 +1690,7 @@ static int wpa3_psa_derive_keys(struct wpa3_psa_operation *op)
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_id_t shared_key_id = PSA_KEY_ID_NULL;
 	size_t pmk_len;
+	size_t pmkid_len = 0;
 	uint8_t *pmk_buf = NULL;
 	int ret = -1;
 
@@ -1597,6 +1701,14 @@ static int wpa3_psa_derive_keys(struct wpa3_psa_operation *op)
 
 	/* PSA PAKE returns PMK directly - no keyseed derivation needed */
 	/* Key derivation is handled internally by PSA PAKE */
+
+	/* KEY_ID must be read before psa_pake_get_shared_key(), which ends the operation */
+	status = psa_pake_output(&op->pake_op, PSA_PAKE_STEP_KEY_ID, op->pmkid,
+				 sizeof(op->pmkid), &pmkid_len);
+	if (status != PSA_SUCCESS || pmkid_len != SAE_PMKID_LEN) {
+		wpa_printf(MSG_ERROR, "WPA3-PSA: Failed to get PMKID: %d", status);
+		return -1;
+	}
 
 	/* Get the shared key from PSA PAKE */
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_DERIVE | PSA_KEY_USAGE_EXPORT);

@@ -21,6 +21,8 @@ exclude:
   # - nrf/tests
   # - nrfxlib/blocked_dir
   # - modules/crypto/mbedtls
+  - modules/lib/openthread/third_party
+  - modules/lib/openthread/tests
   files:
   # - modules/crypto/oberon-psa-crypto/a_new_file.h
   patterns:
@@ -93,6 +95,7 @@ Apache-2.0: |
   ^nrf/drivers/flash/soc_flash_nrf_non_secure.c
   ^nrf/applications/nrf_audio/src/modules/audio_usb_init.c
   ^nrf/subsys/mgmt/mcumgr/grp/img_mgmt/bootutil_hooks/nrf53_hooks.c
+  ^scripts/ci/check_compliance.py
 curl: "^nrf/ext/"
 MIT: |
   "^nrf/ext/"
@@ -101,8 +104,10 @@ MIT: |
   ^nrf/doc/_doxygen/doxygen-awesome-interactive-toc.js
   ^nrf/doc/_doxygen/doxygen-awesome-paragraph-link.js
 BSD-3-CLAUSE: |
+  ^modules/lib/openthread/
   ^modules/tee/tf-m/psa-arch-tests/
   ^modules/tee/tf-m/trusted-firmware-m/
+  ^nrfxlib/openthread/include/openthread/
   ^nrf/ext/
   ^nrf/drivers/wifi/nrf71/
 BSD-2-CLAUSE-NETBSD: "^nrf/ext/"

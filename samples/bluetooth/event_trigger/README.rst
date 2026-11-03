@@ -61,7 +61,7 @@ After programming the sample to both development kits, test it by performing the
 Sample output
 =============
 
-The sample displays the data in the following format::
+The sample displays the data in the following format (captured on the nRF5340 DK network core, ``nrf5340dk/nrf5340/cpunet``)::
 
    *** Booting nRF Connect SDK v3.4.99-ncs1-4802-g41e34920abf4 ***
    Starting Event Trigger Sample.
@@ -70,7 +70,7 @@ The sample displays the data in the following format::
    I: 82 1d 9c b3 eb de c5 1f |........
    I: 22 d8 45 99             |".E.
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 186.21451 Build 3737772700
    I: Identity: DA:1A:7B:0E:CC:5E (random)
    I: HCI: version 5.4 (0x0d) revision 0x1174, manufacturer 0x0059

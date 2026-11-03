@@ -394,6 +394,7 @@ class PatchLicenseChecker:
             'diff',
             '--name-only',
             '--diff-filter=A',
+            '--no-renames',
             f'{old_rev}..{new_rev}',
             cwd=project_dir,
         )

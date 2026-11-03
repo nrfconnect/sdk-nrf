@@ -330,6 +330,47 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+  # nrf7120: PCLK32 and internal RC
+  drivers.i2s.samplerate.nrf7120.pclk32m.rc:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_TEST_8000_TOLERANCE=80
+      - CONFIG_TEST_16000_TOLERANCE=159
+      - CONFIG_TEST_32000_TOLERANCE=323
+      - CONFIG_TEST_44100_TOLERANCE=435
+      - CONFIG_TEST_48000_TOLERANCE=476
+      - CONFIG_TEST_88200_TOLERANCE=909
+      - CONFIG_TEST_96000_TOLERANCE=1000
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+  # nrf7120: PCLK32 and HFXO
+  drivers.i2s.samplerate.nrf7120.pclk32m.hfxo:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_TEST_START_HFXO=y
+      - CONFIG_TEST_8000_TOLERANCE=10
+      - CONFIG_TEST_16000_TOLERANCE=10
+      - CONFIG_TEST_32000_TOLERANCE=10
+      - CONFIG_TEST_44100_TOLERANCE=10
+      - CONFIG_TEST_48000_TOLERANCE=10
+      - CONFIG_TEST_88200_TOLERANCE=15
+      - CONFIG_TEST_96000_TOLERANCE=15
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=n
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
 
   drivers.i2s.samplerate.rc.legacy:
     harness_config:
@@ -664,3 +705,46 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
       - nrf54h20dk/nrf54h20/cpuapp
+  # nrf7120: PCLK32 and internal RC
+  drivers.i2s.samplerate.nrf7120.pclk32m.rc.legacy:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_TEST_8000_TOLERANCE=80
+      - CONFIG_TEST_16000_TOLERANCE=159
+      - CONFIG_TEST_32000_TOLERANCE=323
+      - CONFIG_TEST_44100_TOLERANCE=435
+      - CONFIG_TEST_48000_TOLERANCE=476
+      - CONFIG_TEST_88200_TOLERANCE=909
+      - CONFIG_TEST_96000_TOLERANCE=1000
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+  # nrf7120: PCLK32 and HFXO
+  drivers.i2s.samplerate.nrf7120.pclk32m.hfxo.legacy:
+    harness_config:
+      fixture: gpio_loopback
+    extra_args:
+      - CONFIG_TEST_START_HFXO=y
+      - CONFIG_TEST_8000_TOLERANCE=10
+      - CONFIG_TEST_16000_TOLERANCE=10
+      - CONFIG_TEST_32000_TOLERANCE=10
+      - CONFIG_TEST_44100_TOLERANCE=10
+      - CONFIG_TEST_48000_TOLERANCE=10
+      - CONFIG_TEST_88200_TOLERANCE=15
+      - CONFIG_TEST_96000_TOLERANCE=15
+    extra_configs:
+      - CONFIG_CLOCK_CONTROL_NRF=y
+      - CONFIG_DEPRECATION_TEST=y
+    platform_allow:
+      - nrf7120dk/nrf7120/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp

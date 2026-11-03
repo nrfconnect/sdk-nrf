@@ -5,6 +5,7 @@
  */
 
 #include <nrf_rpc/nrf_rpc_serialize.h>
+#include <ot_rpc_callback.h>
 #include <ot_rpc_ids.h>
 #include <ot_rpc_common.h>
 #include <ot_rpc_lock.h>
@@ -20,54 +21,6 @@
 #include <zephyr/net/openthread.h>
 #include <zephyr/settings/settings.h>
 #include <zephyr/sys/__assert.h>
-
-/* TODO: move to common */
-typedef struct ot_rpc_callback {
-	uint32_t callback;
-	uint32_t context;
-} ot_rpc_callback_t;
-
-static ot_rpc_callback_t ot_rpc_callbacks[10];
-
-static struct ot_rpc_callback *ot_rpc_callback_put(uint32_t callback, uint32_t context)
-{
-	ot_rpc_callback_t *free = NULL;
-	ot_rpc_callback_t *cb = ot_rpc_callbacks;
-
-	while (cb < ot_rpc_callbacks + ARRAY_SIZE(ot_rpc_callbacks)) {
-		if (cb->callback == 0) {
-			free = cb;
-		} else if (cb->callback == callback && cb->context == context) {
-			return cb;
-		}
-
-		++cb;
-	}
-
-	if (free != NULL) {
-		free->callback = callback;
-		free->context = context;
-	}
-
-	return free;
-}
-
-static ot_rpc_callback_t *ot_rpc_callback_del(uint32_t callback, uint32_t context)
-{
-	ot_rpc_callback_t *cb = ot_rpc_callbacks;
-
-	while (cb < ot_rpc_callbacks + ARRAY_SIZE(ot_rpc_callbacks)) {
-		if (cb->callback == callback && cb->context == context) {
-			cb->callback = 0;
-			cb->context = 0;
-			return cb;
-		}
-
-		++cb;
-	}
-
-	return NULL;
-}
 
 static void ot_rpc_cmd_instance_init_single(const struct nrf_rpc_group *group,
 					    struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
@@ -202,11 +155,10 @@ NRF_RPC_CBOR_CMD_DECODER(ot_group, ot_rpc_cmd_instance_factory_reset,
 static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 {
 	struct nrf_rpc_cbor_ctx ctx;
-	ot_rpc_callback_t *cb = aContext;
+	ot_rpc_callback_id cb_id = (ot_rpc_callback_id)(uintptr_t)aContext;
 
-	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 15);
-	nrf_rpc_encode_uint(&ctx, cb->callback);
-	nrf_rpc_encode_uint(&ctx, cb->context);
+	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, 2 + sizeof(cb_id) + sizeof(aFlags));
+	nrf_rpc_encode_uint(&ctx, cb_id);
 	nrf_rpc_encode_uint(&ctx, aFlags);
 
 	ot_rpc_mutex_unlock();
@@ -218,33 +170,22 @@ static void ot_state_changed_callback(otChangedFlags aFlags, void *aContext)
 static void ot_rpc_cmd_set_state_changed_callback(const struct nrf_rpc_group *group,
 						  struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
-	uint32_t callback;
-	uint32_t context;
-	ot_rpc_callback_t *cb;
+	ot_rpc_callback_id cb_id;
 	otError error;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	callback = nrf_rpc_decode_uint(ctx);
-	context = nrf_rpc_decode_uint(ctx);
+	cb_id = nrf_rpc_decode_uint(ctx);
 
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx) || cb_id == OT_RPC_CALLBACK_ID_NULL) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_SET_STATE_CHANGED_CALLBACK);
 		return;
 	}
 
-	cb = ot_rpc_callback_put(callback, context);
-
-	if (!cb) {
-		error = OT_ERROR_NO_BUFS;
-		goto out;
-	}
-
 	ot_rpc_mutex_lock();
 	error = otSetStateChangedCallback(openthread_get_default_instance(),
-					  ot_state_changed_callback, cb);
+					  ot_state_changed_callback, (void *)(uintptr_t)cb_id);
 	ot_rpc_mutex_unlock();
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 5);
 	nrf_rpc_encode_uint(&rsp_ctx, error);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
@@ -258,31 +199,21 @@ static void ot_rpc_cmd_remove_state_changed_callback(const struct nrf_rpc_group 
 						     struct nrf_rpc_cbor_ctx *ctx,
 						     void *handler_data)
 {
-	uint32_t callback;
-	uint32_t context;
-	ot_rpc_callback_t *cb;
+	ot_rpc_callback_id cb_id;
 	struct nrf_rpc_cbor_ctx rsp_ctx;
 
-	callback = nrf_rpc_decode_uint(ctx);
-	context = nrf_rpc_decode_uint(ctx);
+	cb_id = nrf_rpc_decode_uint(ctx);
 
-	if (!nrf_rpc_decoding_done_and_check(group, ctx)) {
+	if (!nrf_rpc_decoding_done_and_check(group, ctx) || cb_id == OT_RPC_CALLBACK_ID_NULL) {
 		ot_rpc_report_cmd_decoding_error(OT_RPC_CMD_REMOVE_STATE_CHANGED_CALLBACK);
 		return;
 	}
 
-	cb = ot_rpc_callback_del(callback, context);
-
-	if (!cb) {
-		goto out;
-	}
-
 	ot_rpc_mutex_lock();
 	otRemoveStateChangeCallback(openthread_get_default_instance(), ot_state_changed_callback,
-				    cb);
+				    (void *)(uintptr_t)cb_id);
 	ot_rpc_mutex_unlock();
 
-out:
 	NRF_RPC_CBOR_ALLOC(group, rsp_ctx, 0);
 	nrf_rpc_cbor_rsp_no_err(group, &rsp_ctx);
 }

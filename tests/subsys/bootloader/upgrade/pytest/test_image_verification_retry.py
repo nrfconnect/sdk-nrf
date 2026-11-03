@@ -12,9 +12,15 @@ import intelhex
 import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config
-from twister_harness_ext.utils.common import flash_with_nrfutil, go_cpu, halt_cpu, reset_board
+from twister_harness_ext.adapters.nrfutil import (
+    flash_with_nrfutil,
+    go_cpu,
+    halt_cpu,
+    nrfutil_read,
+    nrfutil_write,
+    reset_board,
+)
 from twister_harness_ext.utils.dts_helper import get_code_partition_address
-from twister_harness_ext.utils.helpers import nrfutil_read, nrfutil_write
 
 logger = logging.getLogger(__name__)
 DAMAGE_VALUE = 0xDEADBEEF

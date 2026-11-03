@@ -306,8 +306,12 @@ class Filters:
             scope_found = False
             while not scope_found and d:
                 head, tail = os.path.split(d)
-                if (os.path.exists(os.path.join(d, "testcase.yaml")) or \
-                    os.path.exists(os.path.join(d, "sample.yaml"))) and \
+                test_defs = [
+                    "sample.yaml",
+                    "testcase.yaml",
+                    "tests.yaml",
+                ]
+                if any(os.path.exists(os.path.join(d, td)) for td in test_defs) and \
                     not os.path.exists(os.path.join(d, "find_test.ignore")):
                     if self.is_in_testsuite_root(d):
                         tests.add(d)
@@ -318,9 +322,11 @@ class Filters:
                         d = os.path.dirname(d)
                 elif tail == "common" and self.is_in_testsuite_root(head):
                     # Look for yamls in directories collocated with common
-
-                    yamls_found = [yaml for yaml in glob.iglob(head + '/**/testcase.yaml', recursive=True)]
-                    yamls_found.extend([yaml for yaml in glob.iglob(head + '/**/sample.yaml', recursive=True)])
+                    yamls_found = [
+                        y
+                        for pattern in test_defs
+                        for y in glob.iglob(f"{head}/**/{pattern}", recursive=True)
+                    ]
                     if yamls_found and self.is_in_testsuite_root(head):
                         for yaml in yamls_found:
                             tests.add(os.path.dirname(yaml))

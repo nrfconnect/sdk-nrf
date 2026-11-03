@@ -126,7 +126,7 @@ static int cert_provision(void)
 {
 	int err;
 
-	printk("Provisioning certificate\n");
+	LOG_INF("Provisioning certificate");
 
 #if CONFIG_MODEM_KEY_MGMT
 	bool exists;
@@ -135,18 +135,17 @@ static int cert_provision(void)
 				    MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 				    &exists);
 	if (err) {
-		printk("Failed to check for certificates err %d\n", err);
+		LOG_ERR("Failed to check for certificates err %d", err);
 		return err;
 	}
 
 	if (exists) {
-		printk("Certificate ");
 		/* Let's compare the existing credential */
 		err = modem_key_mgmt_cmp(SEC_TAG,
 					 MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 					 cert, sizeof(cert));
 
-		printk("%s\n", err ? "mismatch" : "match");
+		LOG_INF("Certificate %s", err ? "mismatch" : "match");
 
 		if (!err) {
 			return 0;
@@ -158,7 +157,7 @@ static int cert_provision(void)
 				   MODEM_KEY_MGMT_CRED_TYPE_CA_CHAIN,
 				   cert, sizeof(cert));
 	if (err) {
-		printk("Failed to provision certificate, err %d\n", err);
+		LOG_ERR("Failed to provision certificate, err %d", err);
 		return err;
 	}
 
@@ -171,9 +170,9 @@ static int cert_provision(void)
 				 cert,
 				 sizeof(cert));
 	if (err == -EEXIST) {
-		printk("CA certificate already exists, sec tag: %d\n", SEC_TAG);
+		LOG_INF("CA certificate already exists, sec tag: %d", SEC_TAG);
 	} else if (err < 0) {
-		printk("Failed to register CA certificate: %d\n", err);
+		LOG_ERR("Failed to register CA certificate: %d", err);
 		return err;
 	}
 
@@ -183,9 +182,9 @@ static int cert_provision(void)
 					 client_cert,
 					 sizeof(client_cert));
 		if (err == -EEXIST) {
-			printk("Client certificate already exists, sec tag: %d\n", SEC_TAG);
+			LOG_INF("Client certificate already exists, sec tag: %d", SEC_TAG);
 		} else if (err < 0) {
-			printk("Failed to register client certificate: %d\n", err);
+			LOG_ERR("Failed to register client certificate: %d", err);
 			return err;
 		}
 
@@ -194,9 +193,9 @@ static int cert_provision(void)
 					 client_key,
 					 sizeof(client_key));
 		if (err == -EEXIST) {
-			printk("Client private key already exists, sec tag: %d\n", SEC_TAG);
+			LOG_INF("Client private key already exists, sec tag: %d", SEC_TAG);
 		} else if (err < 0) {
-			printk("Failed to register client private key: %d\n", err);
+			LOG_ERR("Failed to register client private key: %d", err);
 			return err;
 		}
 	}
@@ -228,22 +227,22 @@ static void l4_event_handler(struct net_mgmt_event_callback *cb,
 	case NET_EVENT_L4_IPV4_CONNECTED:
 		net_if = iface;
 		atomic_set_bit(network_state, NETWORK_STATE_IPV4_READY);
-		printk("IPv4 connectivity established\n");
+		LOG_INF("IPv4 connectivity established");
 		on_net_event_l4_connected();
 		break;
 	case NET_EVENT_L4_IPV4_DISCONNECTED:
 		atomic_clear_bit(network_state, NETWORK_STATE_IPV4_READY);
-		printk("IPv4 connectivity lost\n");
+		LOG_INF("IPv4 connectivity lost");
 		break;
 	case NET_EVENT_L4_IPV6_CONNECTED:
 		net_if = iface;
 		atomic_set_bit(network_state, NETWORK_STATE_IPV6_READY);
-		printk("IPv6 connectivity established\n");
+		LOG_INF("IPv6 connectivity established");
 		on_net_event_l4_connected();
 		break;
 	case NET_EVENT_L4_IPV6_DISCONNECTED:
 		atomic_clear_bit(network_state, NETWORK_STATE_IPV6_READY);
-		printk("IPv6 connectivity lost\n");
+		LOG_INF("IPv6 connectivity lost");
 		break;
 	default:
 		break;
@@ -256,23 +255,23 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 {
 	int err;
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
-		printk("Fatal error received from the connectivity layer, "
-		       "rebooting network interface\n");
+		LOG_ERR("Fatal error received from the connectivity layer, "
+			"rebooting network interface");
 
 		(void)conn_mgr_if_disconnect(iface);
 		(void)conn_mgr_all_if_down(true);
 
 		err = conn_mgr_all_if_up(true);
 		if (err) {
-			printk("conn_mgr_all_if_up, error: %d\n", err);
+			LOG_ERR("conn_mgr_all_if_up, error: %d", err);
 			return;
 		}
 
-		printk("Reconnecting to network\n");
+		LOG_INF("Reconnecting to network");
 
 		err = conn_mgr_all_if_connect(true);
 		if (err) {
-			printk("conn_mgr_all_if_connect, error: %d\n", err);
+			LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 			return;
 		}
 
@@ -301,20 +300,6 @@ static int select_family(void)
 	return -1;
 }
 
-static void progress_print(size_t downloaded, size_t file_size)
-{
-	static int prev_percent;
-	const int percent = (downloaded * 100) / file_size;
-
-	if (percent == prev_percent) {
-		return;
-	}
-
-	prev_percent = percent;
-
-	printk("[ %3d%% ] (%d/%d bytes)\r", percent, downloaded, file_size);
-}
-
 static int callback(const struct downloader_evt *event)
 {
 	static size_t downloaded;
@@ -332,16 +317,11 @@ static int callback(const struct downloader_evt *event)
 	switch (event->id) {
 	case DOWNLOADER_EVT_FRAGMENT:
 		downloaded += event->fragment.len;
-		if (file_size) {
-			progress_print(downloaded, file_size);
-		} else {
-			printk("\r[ %d bytes ]\n", downloaded);
-		}
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		status = psa_hash_update(&hash_ctx, event->fragment.buf, event->fragment.len);
 		if (status != PSA_SUCCESS) {
-			printk("Error during hash update: %d\n", status);
+			LOG_ERR("Error during hash update: %d", status);
 			return status;
 		}
 #endif
@@ -350,8 +330,8 @@ static int callback(const struct downloader_evt *event)
 	case DOWNLOADER_EVT_DONE:
 		ms_elapsed = k_uptime_delta(&ref_time);
 		speed = ((float)file_size / ms_elapsed) * MSEC_PER_SEC;
-		printk("\nDownload completed in %lld ms @ %d bytes per sec, total %d bytes\n",
-		       ms_elapsed, speed, downloaded);
+		LOG_INF("Download completed in %lld ms @ %u bytes per sec, total %zu bytes",
+			ms_elapsed, speed, downloaded);
 
 #if CONFIG_SAMPLE_COMPUTE_HASH
 		uint8_t hash[32];
@@ -360,23 +340,23 @@ static int callback(const struct downloader_evt *event)
 
 		status = psa_hash_finish(&hash_ctx, hash, sizeof(hash), &hash_length);
 		if (status != PSA_SUCCESS) {
-			printk("Error during hash finish: %d\n", status);
+			LOG_ERR("Error during hash finish: %d", status);
 			k_sem_give(&download_result_sem);
 			return status;
 		}
 
 		bin2hex(hash, sizeof(hash), hash_str, sizeof(hash_str));
 
-		printk("SHA256: %s\n", hash_str);
+		LOG_INF("SHA256: %s", hash_str);
 
 		if (IS_ENABLED(CONFIG_SAMPLE_COMPARE_HASH) &&
 		    strcmp(hash_str, CONFIG_SAMPLE_SHA256_HASH)) {
-			printk("Expect: %s\n", CONFIG_SAMPLE_SHA256_HASH);
-			printk("SHA256 mismatch!\n");
+			LOG_ERR("Expect: %s", CONFIG_SAMPLE_SHA256_HASH);
+			LOG_ERR("SHA256 mismatch!");
 		}
 #endif /* CONFIG_SAMPLE_COMPUTE_HASH */
 
-		printk("Done\n");
+		LOG_INF("Done");
 		download_succeeded = true;
 		k_sem_give(&download_result_sem);
 		return 0;
@@ -385,20 +365,20 @@ static int callback(const struct downloader_evt *event)
 		if (event->error == -ECONNRESET) {
 			/* With ECONNRESET, allow library to attempt a reconnect by returning 0 */
 		} else {
-			printk("Error %d during download\n", event->error);
+			LOG_ERR("Error %d during download", event->error);
 			/* Stop download */
 			return -1;
 		}
 		break;
 	case DOWNLOADER_EVT_STOPPED:
-		printk("Download canceled\n");
+		LOG_WRN("Download canceled");
 		downloaded = 0;
 		file_size = 0;
 		download_succeeded = false;
 		k_sem_give(&download_result_sem);
 		break;
 	case DOWNLOADER_EVT_DEINITIALIZED:
-		printk("Client deinitialized\n");
+		LOG_INF("Client deinitialized");
 		break;
 	}
 
@@ -409,7 +389,7 @@ int main(void)
 {
 	int err;
 
-	printk("Download client sample started\n");
+	LOG_INF("Download client sample started");
 
 	/* Setup handler for Zephyr NET Connection Manager events. */
 	net_mgmt_init_event_callback(&l4_cb, l4_event_handler, L4_EVENT_MASK);
@@ -421,7 +401,7 @@ int main(void)
 
 	err = conn_mgr_all_if_up(true);
 	if (err) {
-		printk("conn_mgr_all_if_up, error: %d\n", err);
+		LOG_ERR("conn_mgr_all_if_up, error: %d", err);
 		return err;
 	}
 
@@ -432,11 +412,11 @@ int main(void)
 			return 0;
 		}
 	}
-	printk("Connecting to network\n");
+	LOG_INF("Connecting to network");
 
 	err = conn_mgr_all_if_connect(true);
 	if (err) {
-		printk("conn_mgr_all_if_connect, error: %d\n", err);
+		LOG_ERR("conn_mgr_all_if_connect, error: %d", err);
 		return err;
 	}
 
@@ -452,11 +432,11 @@ int main(void)
 
 	k_sem_take(&network_connected_sem, K_FOREVER);
 
-	printk("Network connected\n");
+	LOG_INF("Network connected");
 
 	err = downloader_init(&downloader, &dl_cfg);
 	if (err) {
-		printk("Failed to initialize the client, err %d", err);
+		LOG_ERR("Failed to initialize the client, err %d", err);
 		return 0;
 	}
 
@@ -489,7 +469,7 @@ int main(void)
 
 		status = psa_hash_setup(&hash_ctx, PSA_ALG_SHA_256);
 		if (status != PSA_SUCCESS) {
-			printk("psa_hash_setup, error: %d\n", status);
+			LOG_ERR("psa_hash_setup, error: %d", status);
 			break;
 		}
 #endif
@@ -497,34 +477,34 @@ int main(void)
 		const int family = select_family();
 
 		if (family < 0) {
-			printk("Failed to select a valid address family\n");
+			LOG_ERR("Failed to select a valid address family");
 			continue;
 		}
 
 		host_dl_cfg.family = family;
-		printk("Starting download over %s\n",
-		       host_dl_cfg.family == AF_INET6 ? "IPv6" :
-		       host_dl_cfg.family == AF_INET ? "IPv4" :
-		       "IPv6/IPv4");
+		LOG_INF("Starting download over %s",
+			host_dl_cfg.family == AF_INET6 ? "IPv6" :
+			host_dl_cfg.family == AF_INET ? "IPv4" :
+			"IPv6/IPv4");
 
 		ref_time = k_uptime_get();
 
 		err = downloader_get(&downloader, &host_dl_cfg, URL, STARTING_OFFSET);
 		if (err) {
-			printk("Failed to start the downloader, err %d\n", err);
+			LOG_ERR("Failed to start the downloader, err %d", err);
 			continue;
 		}
 
-		printk("Downloading %s\n", URL);
+		LOG_INF("Downloading %s", URL);
 
 		k_sem_take(&download_result_sem, K_FOREVER);
 	} while (!download_succeeded);
 
 	if (!download_succeeded) {
-		printk("Giving up after %d failed attempts\n", attempt);
+		LOG_ERR("Giving up after %d failed attempts", attempt);
 	}
 
-	printk("Download finished, bringing network interfaces down\n");
+	LOG_INF("Download finished, bringing network interfaces down");
 	(void)conn_mgr_if_disconnect(net_if);
 	(void)conn_mgr_all_if_down(true);
 

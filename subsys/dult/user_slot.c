@@ -113,18 +113,10 @@ void dult_user_slot_release(const struct dult_user *user)
 void dult_user_slot_foreach(void (*cb)(const struct dult_user *user, const void *user_data),
 			    const void *user_data)
 {
-	/* Re-entrancy guard only: a nested dult_user_slot_foreach() is forbidden. Slot
-	 * mutation from within a callback is made safe by the snapshot taken below.
-	 */
-	static bool in_foreach;
-
 	const struct dult_user *snapshot[CONFIG_DULT_USER_MAX] = {0};
 	size_t count = 0;
 
 	__ASSERT_NO_MSG(cb);
-	__ASSERT_NO_MSG(!in_foreach);
-
-	in_foreach = true;
 
 	/* Snapshot the bound users before dispatch: a callback may release its own (or
 	 * another) slot, so the delivery loop must not walk the live table.
@@ -143,8 +135,6 @@ void dult_user_slot_foreach(void (*cb)(const struct dult_user *user, const void 
 			cb(snapshot[i], user_data);
 		}
 	}
-
-	in_foreach = false;
 }
 
 int dult_user_slot_mem_ref_register(size_t *id)

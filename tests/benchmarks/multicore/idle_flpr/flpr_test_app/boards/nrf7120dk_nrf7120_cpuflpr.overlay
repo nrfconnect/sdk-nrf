@@ -1,0 +1,18 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&led0 {
+	gpios = <&gpio3 0 GPIO_ACTIVE_HIGH>;
+};
+
+&uart21 {
+	zephyr,pm-device-runtime-auto;
+	disable-rx;
+};
+
+&gpio4 {
+	status = "disabled";
+};

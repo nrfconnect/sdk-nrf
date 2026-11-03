@@ -40,7 +40,8 @@
 /*
  * !!! ORDER MATTERS !!!
  */
-#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#if	defined(PSA_NEED_CRACEN_SHAKE128) || \
+	defined(PSA_NEED_CRACEN_SHAKE128_256)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHAKE_128
 #elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_MAX_ENABLED_BLOCK_SIZE SX_HASH_BLOCKSZ_SHA3_224
@@ -73,7 +74,8 @@
  *
  * !!! ORDER MATTERS !!!
  */
-#if	defined(PSA_NEED_CRACEN_SHAKE128)
+#if	defined(PSA_NEED_CRACEN_SHAKE128) || \
+	defined(PSA_NEED_CRACEN_SHAKE128_256)
 #define SX_HASH_OPERATION_CONTEXT_SZ 368
 #elif	defined(PSA_NEED_CRACEN_SHA3_224)
 #define SX_HASH_OPERATION_CONTEXT_SZ 344
@@ -115,6 +117,7 @@
 struct sx_digesttags {
 	uint32_t cfg;
 	uint32_t initialstate;
+	/* Unused. Remove it when the layout can change for prebuilt libraries. */
 	uint32_t keycfg;
 	uint32_t data;
 };
@@ -197,6 +200,9 @@ extern const struct sxhashalg sxhashalg_sha3_512;
 extern const struct sxhashalg sxhashalg_shake256_114;
 extern const struct sxhashalg sxhashalg_shake256_64;
 
+/** Hash algorithm SHAKE128, with output size fixed to 32 bytes. */
+extern const struct sxhashalg sxhashalg_shake128_32;
+
 extern const struct sxhashalg sxhashalg_shake128;
 extern const struct sxhashalg sxhashalg_shake256;
 
@@ -204,10 +210,7 @@ extern const struct sxhashalg sxhashalg_shake256;
 extern const struct sxhashalg sxhashalg_sm3;
 
 #define CMDMA_BA413_BUS_MSK 3
-#define HASH_INVALID_BYTES  4 /* number of invalid bytes when empty message, required by HW */
 #define OFFSET_EXTRAMEM(c)  (sizeof((c)->dma.dmamem) + sizeof((c)->descs))
-
-#define CMDMA_BA418_BUS_MSK (3)
 
 /**
  * @brief Checks if the provided algorithm is configured as SHAKE-128 or SHAKE-256 XOF.

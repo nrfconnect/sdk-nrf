@@ -483,6 +483,19 @@ enum lte_lc_evt_type {
 	 */
 	LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE	= 15,
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+	/**
+	 * UICC state update.
+	 *
+	 * Reports the state of the UICC (SIM card), for example whether it has been initialized or
+	 * requires a PIN.
+	 *
+	 * The associated payload is the @c lte_lc_evt.uicc_state member of type
+	 * @ref lte_lc_uicc_state_evt in the event.
+	 */
+	LTE_LC_EVT_UICC_STATE			= 16,
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 };
 
 /** @brief RRC connection state. */
@@ -835,6 +848,30 @@ enum lte_lc_modem_evt_type {
 	 * scan for service periodically.
 	 */
 	LTE_LC_MODEM_EVT_SEARCH_DONE,
+
+	/**
+	 * A periodic network search has started.
+	 *
+	 * This typically occurs when the device is in limited service state and the modem is
+	 * attempting to find service according to its configuration.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
+	 */
+	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START,
+
+	/**
+	 * A periodic network search has completed.
+	 *
+	 * This indicates that the periodic search signaled by
+	 * @ref LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START has ended.
+	 *
+	 * @note This is only supported by the following modem firmware:
+	 *       - mfw_nrf9151-ntn
+	 *       - lpwa-cellular_nrf92
+	 */
+	LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE,
 
 	/**
 	 * The modem has detected a reset loop.
@@ -1572,6 +1609,70 @@ struct lte_lc_cellular_profile_evt {
 	int8_t profile_id;
 };
 
+/**
+ * @brief UICC (SIM card) state.
+ *
+ * Reported by the modem in the `%XSIM` notification.
+ */
+enum lte_lc_uicc_state {
+	/** UICC not initialized. */
+	LTE_LC_UICC_STATE_NOT_INITIALIZED	= 0,
+	/** UICC initialization OK. */
+	LTE_LC_UICC_STATE_INITIALIZED		= 1,
+};
+
+/** @brief Cause for the UICC state if it was uninitialized. */
+enum lte_lc_uicc_state_cause {
+	/** No specific cause. */
+	LTE_LC_UICC_STATE_CAUSE_NONE			= 0,
+
+	/** PIN required. */
+	LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED		= 1,
+
+	/** PIN2 required. */
+	LTE_LC_UICC_STATE_CAUSE_PIN2_REQUIRED		= 2,
+
+	/** PUK required (PIN blocked). */
+	LTE_LC_UICC_STATE_CAUSE_PUK_REQUIRED		= 3,
+
+	/** PUK2 required (PIN2 blocked). */
+	LTE_LC_UICC_STATE_CAUSE_PUK2_REQUIRED		= 4,
+
+	/** PUK blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PUK_BLOCKED		= 5,
+
+	/** PUK2 blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PUK2_BLOCKED		= 6,
+
+	/** Device personalization blocked. */
+	LTE_LC_UICC_STATE_CAUSE_PERSONALIZATION_BLOCKED	= 7,
+
+	/** IMEI lock blocked. */
+	LTE_LC_UICC_STATE_CAUSE_IMEI_LOCK_BLOCKED	= 8,
+
+	/** USIM card failure. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_FAILURE		= 9,
+
+	/** USIM card changed. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_CHANGED		= 10,
+
+	/** USIM profile changed. */
+	LTE_LC_UICC_STATE_CAUSE_USIM_PROFILE_CHANGED	= 11,
+};
+
+/** @brief UICC (SIM card) state event payload. */
+struct lte_lc_uicc_state_evt {
+	/** @brief UICC state. */
+	enum lte_lc_uicc_state state;
+
+	/**
+	 * @brief Cause for the UICC state. @ref LTE_LC_UICC_STATE_CAUSE_NONE if not reported.
+	 *
+	 * Causes that are not known by the library are forwarded as reported by the modem.
+	 */
+	enum lte_lc_uicc_state_cause cause;
+};
+
 /** @brief LTE event. */
 struct lte_lc_evt {
 	/** @brief Event type. */
@@ -1642,6 +1743,11 @@ struct lte_lc_evt {
 		/** @brief Payload for event @ref LTE_LC_EVT_CELLULAR_PROFILE_ACTIVE. */
 		struct lte_lc_cellular_profile_evt cellular_profile;
 #endif /* CONFIG_LTE_LC_CELLULAR_PROFILE_MODULE */
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+		/** @brief Payload for event @ref LTE_LC_EVT_UICC_STATE. */
+		struct lte_lc_uicc_state_evt uicc_state;
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 	};
 };
 
@@ -1767,6 +1873,14 @@ struct lte_lc_cellular_profile {
 	enum lte_lc_uicc uicc;
 };
 
+/** @brief Band lock type. */
+enum lte_lc_band_lock_type {
+	/** Permanent band lock, stored to non-volatile memory in the modem. */
+	LTE_LC_BAND_LOCK_PERMANENT		= 1,
+
+	/** Runtime band lock, reset when the modem is powered off. */
+	LTE_LC_BAND_LOCK_RUNTIME		= 2,
+};
 
 /**
  * @brief Handler for LTE events.
@@ -2582,6 +2696,66 @@ int lte_lc_cellular_profile_configure(struct lte_lc_cellular_profile *profile);
  * @retval 0 on success, otherwise negative error code.
  */
 int lte_lc_cellular_profile_remove(uint8_t id);
+
+/**
+ * @brief Set the band lock.
+ *
+ * Bands up to 88 are set using a band mask and bands above 88 using a band list.
+ *
+ * The runtime band lock is stored by the library and set again when the modem is initialized
+ * or has been powered off. It replaces the bands set using `CONFIG_LTE_LOCK_BAND_MASK` and
+ * `CONFIG_LTE_LOCK_BAND_LIST`.
+ *
+ * When both the permanent and the runtime band lock are set, the modem only uses the bands that
+ * are in both. The second band lock must have at least one band in common with the first one,
+ * otherwise the modem rejects it. When `CONFIG_LTE_LOCK_BANDS` is enabled, a runtime band lock
+ * is always set, so a permanent band lock must include at least one of its bands.
+ *
+ * @note Requires `CONFIG_LTE_LC_BAND_LOCK_MODULE` to be enabled.
+ *
+ * @note The modem library must be initialized, and the band lock can only be set when the modem
+ *       is offline or powered off.
+ *
+ * @note Bands above 88 are only supported by the following modem firmware:
+ *       - mfw_nrf91x1 v2.0.3 or later
+ *       - mfw_nrf9151-ntn
+ *       - lpwa-cellular_nrf92
+ *
+ * @param[in] type Band lock type.
+ * @param[in] bands Pointer to a list of band numbers.
+ * @param[in] band_count Number of bands in the list.
+ *
+ * @retval 0 if successful.
+ * @retval -EINVAL if input argument was invalid.
+ * @retval -E2BIG if there are too many bands above 88.
+ * @retval -EPERM if the modem library is not initialized.
+ * @retval -EBUSY if the modem is active.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if the modem responded with an error to the AT command, for example because
+ *         the bands are not supported by the modem firmware or have no band in common with the
+ *         other band lock.
+ */
+int lte_lc_band_lock_set(enum lte_lc_band_lock_type type, const uint16_t *bands, size_t band_count);
+
+/**
+ * @brief Remove the permanent and runtime band locks.
+ *
+ * The stored runtime band lock is also removed, including the bands set using
+ * `CONFIG_LTE_LOCK_BAND_MASK` and `CONFIG_LTE_LOCK_BAND_LIST`. These bands are not set again until
+ * the device is rebooted.
+ *
+ * @note Requires `CONFIG_LTE_LC_BAND_LOCK_MODULE` to be enabled.
+ *
+ * @note The modem library must be initialized, and the band locks can only be removed when the
+ *       modem is offline or powered off.
+ *
+ * @retval 0 if successful.
+ * @retval -EPERM if the modem library is not initialized.
+ * @retval -EBUSY if the modem is active.
+ * @retval -EFAULT if AT command failed.
+ * @retval -EBADMSG if the modem responded with an error to the AT command.
+ */
+int lte_lc_band_lock_remove(void);
 
 /** @} */
 

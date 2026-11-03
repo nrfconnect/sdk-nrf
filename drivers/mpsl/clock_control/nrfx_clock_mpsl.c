@@ -277,6 +277,11 @@ int nrfx_clock_lfclk_init(nrfx_clock_lfclk_event_handler_t lfclk_event_handler)
 {
 	m_lfclk_event_handler = lfclk_event_handler;
 
+#if NRF_LFRC_HAS_CALIBRATION
+	IRQ_CONNECT(LFRC_IRQn, DT_IRQ(DT_NODELABEL(clock), priority), nrfx_isr,
+		    nrfx_clock_irq_handler, 0);
+#endif
+
 	return 0;
 }
 

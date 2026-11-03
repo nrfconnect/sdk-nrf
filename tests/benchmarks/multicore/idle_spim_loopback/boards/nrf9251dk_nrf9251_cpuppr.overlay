@@ -68,6 +68,7 @@
 	pinctrl-0 = <&spi130_default_alt>;
 	pinctrl-1 = <&spi130_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio1 0 GPIO_ACTIVE_LOW>;
 

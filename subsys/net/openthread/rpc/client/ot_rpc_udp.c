@@ -21,6 +21,54 @@
 
 #include <string.h>
 
+/*
+ * On the RPC client, OpenThread does not maintain a UDP socket list; mNext is
+ * unused by the stack and links locally registered sockets for receive CB lookup.
+ */
+static otUdpSocket * ot_rpc_udp_registered;
+
+static bool ot_rpc_udp_socket_is_registered(const otUdpSocket *socket)
+{
+	for (const otUdpSocket *s = ot_rpc_udp_registered; s != NULL; s = s->mNext) {
+		if (s == socket) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+static otUdpSocket *ot_rpc_udp_socket_lookup(ot_socket_key key)
+{
+	otUdpSocket *socket = (otUdpSocket *)(uintptr_t)key;
+
+	return ot_rpc_udp_socket_is_registered(socket) ? socket : NULL;
+}
+
+static void ot_rpc_udp_socket_register(otUdpSocket *socket)
+{
+	if (ot_rpc_udp_socket_is_registered(socket)) {
+		return;
+	}
+
+	socket->mNext = ot_rpc_udp_registered;
+	ot_rpc_udp_registered = socket;
+}
+
+static void ot_rpc_udp_socket_unregister(otUdpSocket *socket)
+{
+	otUdpSocket **prev_next = &ot_rpc_udp_registered;
+
+	for (otUdpSocket *s = ot_rpc_udp_registered; s != NULL;
+	     prev_next = &s->mNext, s = s->mNext) {
+		if (s == socket) {
+			*prev_next = s->mNext;
+			s->mNext = NULL;
+			return;
+		}
+	}
+}
+
 otError otUdpConnect(otInstance *aInstance, otUdpSocket *aSocket, const otSockAddr *aSockName)
 {
 	struct nrf_rpc_cbor_ctx ctx;
@@ -59,6 +107,10 @@ otError otUdpClose(otInstance *aInstance, otUdpSocket *aSocket)
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 2);
 	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_CLOSE, &ctx, ot_rpc_decode_error, &error);
+
+	if (error == OT_ERROR_NONE) {
+		ot_rpc_udp_socket_unregister(aSocket);
+	}
 
 	return error;
 }
@@ -106,9 +158,9 @@ static void ot_rpc_cmd_udp_receive_cb(const struct nrf_rpc_group *group,
 		return;
 	}
 
-	socket = (otUdpSocket *)soc_key;
-
 	ot_rpc_mutex_lock();
+
+	socket = ot_rpc_udp_socket_lookup(soc_key);
 
 	if (socket != NULL && socket->mHandler != NULL) {
 		socket->mHandler(socket->mContext, (otMessage *)msg_key, &message_info);
@@ -140,6 +192,10 @@ otError otUdpOpen(otInstance *aInstance, otUdpSocket *aSocket, otUdpReceive aCal
 	NRF_RPC_CBOR_ALLOC(&ot_group, ctx, sizeof(key) + 1);
 	nrf_rpc_encode_uint(&ctx, key);
 	nrf_rpc_cbor_cmd_no_err(&ot_group, OT_RPC_CMD_UDP_OPEN, &ctx, ot_rpc_decode_error, &error);
+
+	if (error == OT_ERROR_NONE) {
+		ot_rpc_udp_socket_register(aSocket);
+	}
 
 	return error;
 }

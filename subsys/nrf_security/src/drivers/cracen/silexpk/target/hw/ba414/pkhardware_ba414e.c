@@ -177,7 +177,6 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	sx_pk_blind_factor bld_factor;
 
 	if (sx_pk_ik_mode(req)) {
-		sx_pk_release_req(req);
 		return SX_ERR_IK_MODE;
 	}
 
@@ -190,7 +189,6 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 		max_opsz = caps->max_gfp_opsz;
 	}
 	if (curve->sz > max_opsz) {
-		sx_pk_release_req(req);
 		return SX_ERR_OPERAND_TOO_LARGE;
 	}
 	req->op_size = curve->sz;
@@ -217,7 +215,6 @@ int sx_pk_list_ecc_inslots(sx_pk_req *req, const struct sx_pk_ecurve *curve, int
 	if (cmd->blind_flags) {
 		status = sx_pk_get_blinding_factor(&bld_factor);
 		if (status != SX_OK) {
-			sx_pk_release_req(req);
 			return status;
 		}
 
@@ -295,7 +292,6 @@ int sx_pk_list_gfp_inslots(sx_pk_req *req, const int *opsizes, struct sx_pk_slot
 	if (flags) {
 		status = sx_pk_get_blinding_factor(&bld_factor);
 		if (status != SX_OK) {
-			sx_pk_release_req(req);
 			return status;
 		}
 

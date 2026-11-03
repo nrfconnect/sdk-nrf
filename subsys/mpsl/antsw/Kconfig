@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config MPSL_NRF71_ANTSW
+	bool "nRF71 antenna switch control for Wi-Fi and short-range [EXPERIMENTAL]"
+	select EXPERIMENTAL
+	depends on SOC_SERIES_NRF71
+	depends on MPSL
+	depends on DT_HAS_NORDIC_NRF71_ANTSW_ENABLED
+	depends on DT_HAS_NORDIC_NRF_PWR_ANTSWC_ENABLED
+	depends on !TRUSTED_EXECUTION_NONSECURE
+	depends on !MPSL_DYNAMIC_INTERRUPTS
+	default y
+	help
+	  Use the ANTSWC peripheral to arbitrate access to the shared 2.4 GHz
+	  antenna between Wi-Fi and short-range protocols.

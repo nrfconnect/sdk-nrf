@@ -214,9 +214,9 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	LOG_DBG("%s: max_bss_cnt = %d", __func__, max_bss_cnt);
 	scan_info->scan_db_len = max_bss_cnt * sizeof(struct umac_display_results);
 
-#ifdef CONFIG_NRF71_PASSIVE_SCAN_ONLY
+#ifdef CONFIG_NRF71_PASSIVE_SCAN
 	scan_info->scan_params.passive_scan = 1;
-#endif /* CONFIG_NRF71_PASSIVE_SCAN_ONLY */
+#endif /* CONFIG_NRF71_PASSIVE_SCAN */
 
 	status = nrf_wifi_sys_fmac_scan(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx, scan_info);
 

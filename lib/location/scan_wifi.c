@@ -6,11 +6,14 @@
 
 #include <stdio.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/device.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_event.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi.h>
+#include <zephyr/net/wifi_utils.h>
 #include <modem/location.h>
 #include <net/wifi_ready.h>
 
@@ -19,6 +22,15 @@
 #include "cloud_service.h"
 
 LOG_MODULE_DECLARE(location, CONFIG_LOCATION_LOG_LEVEL);
+
+BUILD_ASSERT((int)LOCATION_WIFI_SCAN_TYPE_ACTIVE == (int)WIFI_SCAN_TYPE_ACTIVE);
+BUILD_ASSERT((int)LOCATION_WIFI_SCAN_TYPE_PASSIVE == (int)WIFI_SCAN_TYPE_PASSIVE);
+BUILD_ASSERT(LOCATION_WIFI_BAND_2_4_GHZ == BIT(WIFI_FREQ_BAND_2_4_GHZ));
+BUILD_ASSERT(LOCATION_WIFI_BAND_5_GHZ == BIT(WIFI_FREQ_BAND_5_GHZ));
+BUILD_ASSERT(CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX <=
+	     CONFIG_WIFI_MGMT_SCAN_CHAN_MAX_MANUAL,
+	     "CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX must not exceed "
+	     "CONFIG_WIFI_MGMT_SCAN_CHAN_MAX_MANUAL");
 
 static struct net_if *wifi_iface;
 static struct net_mgmt_event_callback scan_wifi_net_mgmt_cb;
@@ -133,11 +145,89 @@ static int scan_wifi_startup_interface(struct net_if *iface)
 }
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
-void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
+int scan_wifi_validate_params(const struct location_method_config *config)
+{
+	const struct location_wifi_config *wifi = &config->wifi;
+	bool channel_list_empty = true;
+
+	if (wifi->scan_type != LOCATION_WIFI_SCAN_TYPE_ACTIVE &&
+	    wifi->scan_type != LOCATION_WIFI_SCAN_TYPE_PASSIVE) {
+		LOG_ERR("Invalid Wi-Fi scan type: %d", wifi->scan_type);
+		return -EINVAL;
+	}
+
+	if (wifi->bands & ~(LOCATION_WIFI_BAND_2_4_GHZ | LOCATION_WIFI_BAND_5_GHZ)) {
+		LOG_ERR("Invalid Wi-Fi scan bands: 0x%x", wifi->bands);
+		return -EINVAL;
+	}
+
+	for (int i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+		if (wifi->channels[i].channel == 0) {
+			break;
+		}
+
+		channel_list_empty = false;
+
+		if (wifi->channels[i].band != WIFI_FREQ_BAND_2_4_GHZ &&
+		    wifi->channels[i].band != WIFI_FREQ_BAND_5_GHZ) {
+			LOG_ERR("Invalid Wi-Fi scan channel band: %d", wifi->channels[i].band);
+			return -EINVAL;
+		}
+
+		if (!wifi_utils_validate_chan(wifi->channels[i].band,
+					      wifi->channels[i].channel)) {
+			LOG_ERR("Invalid Wi-Fi scan channel %u for band %u",
+				wifi->channels[i].channel, wifi->channels[i].band);
+			return -EINVAL;
+		}
+	}
+
+	if (!channel_list_empty && wifi->bands != 0) {
+		for (int i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+			if (wifi->channels[i].channel == 0) {
+				break;
+			}
+
+			if (!(wifi->bands & BIT(wifi->channels[i].band))) {
+				LOG_ERR("Wi-Fi scan channel band %u not in bands bitmap 0x%x",
+					wifi->channels[i].band, wifi->bands);
+				return -EINVAL;
+			}
+		}
+	}
+
+	return 0;
+}
+
+static void scan_wifi_params_set(struct wifi_scan_params *scan_params,
+				 const struct location_wifi_config *config)
+{
+	scan_params->scan_type = (enum wifi_scan_type)config->scan_type;
+	scan_params->bands = config->bands;
+	scan_params->dwell_time_active = config->dwell_time_active;
+	scan_params->dwell_time_passive = config->dwell_time_passive;
+	scan_params->max_bss_cnt = config->max_bss_cnt;
+
+	for (int i = 0; i < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX; i++) {
+		if (config->channels[i].channel == 0) {
+			break;
+		}
+
+		scan_params->band_chan[i].band = config->channels[i].band;
+		scan_params->band_chan[i].channel = config->channels[i].channel;
+	}
+}
+
+void scan_wifi_execute(const struct location_wifi_config *config, struct k_sem *wifi_scan_ready)
 {
 	int ret;
+	int32_t timeout;
+	struct wifi_scan_params scan_params = {0};
+
+	__ASSERT_NO_MSG(config != NULL);
 
 	scan_wifi_ready = wifi_scan_ready;
+	timeout = config->timeout;
 
 	LOG_DBG("Triggering start of Wi-Fi scanning");
 
@@ -155,25 +245,19 @@ void scan_wifi_execute(int32_t timeout, struct k_sem *wifi_scan_ready)
 	}
 #endif /* defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN) */
 
-#if defined(CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE)
-	struct wifi_scan_params scan_params = {0};
+	scan_wifi_params_set(&scan_params, config);
 
-	scan_params.dwell_time_active = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_ACTIVE;
-	scan_params.dwell_time_passive = CONFIG_LOCATION_METHOD_WIFI_SCANNING_DWELL_TIME_PASSIVE;
-
-	LOG_DBG("Scan params: dwell_active=%d, dwell_passive=%d",
-		scan_params.dwell_time_active,
-		scan_params.dwell_time_passive);
+	LOG_DBG("Scan params: type=%d, bands=0x%x, dwell_active=%u, dwell_passive=%u, "
+		"max_bss=%u",
+		scan_params.scan_type, scan_params.bands, scan_params.dwell_time_active,
+		scan_params.dwell_time_passive, scan_params.max_bss_cnt);
 
 	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, &scan_params, sizeof(scan_params));
-#else
-	ret = net_mgmt(NET_REQUEST_WIFI_SCAN, wifi_iface, NULL, 0);
-#endif /* CONFIG_LOCATION_METHOD_WIFI_SCANNING_PARAMS_OVERRIDE */
 	if (ret) {
 		LOG_ERR("Failed to initiate Wi-Fi scanning: %d", ret);
-		ret = -EFAULT;
-		k_sem_give(wifi_scan_ready);
-		wifi_scan_ready = NULL;
+		k_sem_give(scan_wifi_ready);
+		scan_wifi_ready = NULL;
+		return;
 	}
 
 	if (timeout != SYS_FOREVER_MS && timeout > 0) {
@@ -263,10 +347,25 @@ int scan_wifi_cancel(void)
 
 int scan_wifi_init(void)
 {
-	const struct device *wifi_dev;
-#if defined(CONFIG_LOCATION_METHOD_WIFI_NET_IF_UPDOWN)
 	int ret;
-#endif
+	const struct device *wifi_dev;
+
+	/* Verify that the number of default Wi-Fi channels does not exceed the configured maximum
+	 * number of channels.
+	 */
+	if (sizeof(CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS) > 1) {
+		char chan_str[] = CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS;
+		struct wifi_band_channel parsed[
+			CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX];
+
+		memset(parsed, 0, sizeof(parsed));
+		ret = wifi_utils_parse_scan_chan(chan_str, parsed, ARRAY_SIZE(parsed));
+		if (ret) {
+			LOG_ERR("Failed to parse CONFIG_LOCATION_REQUEST_DEFAULT_WIFI_CHANNELS: %d",
+				ret);
+			return -EINVAL;
+		}
+	}
 
 	wifi_dev = DEVICE_DT_GET(DT_CHOSEN(zephyr_wifi));
 	if (!wifi_dev) {

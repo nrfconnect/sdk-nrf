@@ -212,6 +212,11 @@ const struct sxhashalg sxhashalg_shake256_64 = {
 	SX_HASH_BLOCKSZ_SHA3_256, 200, 136, sx_hash_create_ba418_shake
 };
 
+const struct sxhashalg sxhashalg_shake128_32 = {
+	SHA3_MODE_SHAKE(3, 32), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 32,
+	SX_HASH_BLOCKSZ_SHAKE_128, 200, 168, sx_hash_create_ba418_shake
+};
+
 /** Variable-output SHAKE-128 XOF. */
 const struct sxhashalg sxhashalg_shake128 = {
 	SHA3_MODE_SHAKE(3, 0), SHA3_SW_PAD, SHA3_SAVE_CONTEXT, 0,

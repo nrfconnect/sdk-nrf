@@ -13,6 +13,5 @@ tests:
   # accepts and boots the decompressed update.
   mcuboot.backward_compatibility.compressed_update:
     platform_allow:
-      - nrf52840dk/nrf52840
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp

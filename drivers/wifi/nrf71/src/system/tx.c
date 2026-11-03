@@ -20,6 +20,7 @@
 #include <common/wifi_ipc.h>
 #include <system/fmac_api.h>
 #include <system/fmac_peer.h>
+#include <system/core.h>
 #include <system/fmac_tx.h>
 #include <common/util.h>
 #include <zephyr/kernel.h>
@@ -213,6 +214,12 @@ static int nrf_wifi_get_tid(void *nwb)
 	 */
 	case NRF_WIFI_FMAC_ETH_P_80221:
 		/* 802.21 is always network control traffic */
+		priority = 0x07;
+		break;
+	/* EAPOL must not queue behind bulk BE data: the supplicant deauths if
+	 * a 4-way or group key handshake frame cannot be queued.
+	 */
+	case NRF_WIFI_FMAC_ETH_P_PAE:
 		priority = 0x07;
 		break;
 	default:
@@ -728,9 +735,11 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	config->tx_buff_info[frame_indx].ddr_ptr =
 		(unsigned long long)nwb_data;
 	config->tx_buff_info[frame_indx].pkt_length = buf_len;
-	if (!nrf_wifi_nbuf_get_chksum_done(nbuf)) {
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (info->chksum_offload_ok && !nrf_wifi_nbuf_get_chksum_done(nbuf)) {
 		config->csum_bitmap |= (1u << frame_indx);
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 	config->num_tx_pkts++;
 
 	status = NRF_WIFI_STATUS_SUCCESS;
@@ -931,12 +940,18 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	unsigned char vif_id;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	unsigned int txq_len;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	bool chksum_offload_ok;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 	sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
 
 	vif_id = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
 	vif_ctx = sys_dev_ctx->vif_ctx[vif_id];
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	chksum_offload_ok = nrf_wifi_fmac_tcp_ip_chksum_offload_ok(vif_ctx);
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	txq_len = (unsigned int)sys_dlist_len(txq);
 
@@ -976,6 +991,8 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	config->mac_hdr_info.etype =
 		nrf_wifi_util_tx_get_eth_type(nwb_data);
 
+	config->mac_hdr_info.dscp_or_tos = nrf_wifi_get_tid(nwb);
+
 	config->mac_hdr_info.tx_flags =
 		nrf_wifi_get_tid(nwb) & NRF_WIFI_TX_FLAGS_DSCP_TOS_MASK;
 
@@ -983,9 +1000,11 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_TWT_EMERGENCY_TX;
 	}
 
-	if (nrf_wifi_nbuf_get_chksum_done(nwb)) {
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	if (nrf_wifi_nbuf_get_chksum_done(nwb) && chksum_offload_ok) {
 		config->mac_hdr_info.tx_flags |= NRF_WIFI_TX_FLAG_CHKSUM_AVAILABLE;
 	}
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	config->csum_bitmap = 0;
 
@@ -1000,6 +1019,9 @@ static enum nrf_wifi_status tx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_de
 	info.fmac_dev_ctx = fmac_dev_ctx;
 	info.config = config;
 	info.total_data_len = 0;
+#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+	info.chksum_offload_ok = chksum_offload_ok;
+#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
 	SYS_DLIST_FOR_EACH_CONTAINER(txq, nwb, queue_node) {
 		status = tx_cmd_prep_callbk_fn(&info, nwb);
@@ -1559,6 +1581,44 @@ out:
 }
 #endif
 
+#ifdef CONFIG_NRF71_STA_MODE
+static void tx_done_rate_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
+				struct nrf_wifi_tx_buff_done *buff)
+{
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	struct nrf_wifi_sys_fmac_priv *sys_fpriv = wifi_fmac_priv(fmac_dev_ctx->fpriv);
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
+	unsigned int peer_id;
+	unsigned char if_idx;
+
+	if (!buff->tx_rate_kbps || !sys_fpriv->callbk_fns.process_tx_rate_from_tx_done) {
+		return;
+	}
+
+	if (buff->tx_desc_num >= sys_fpriv->num_tx_tokens) {
+		return;
+	}
+
+	peer_id = sys_dev_ctx->tx_config.pkt_info_p[buff->tx_desc_num].peer_id;
+	if (peer_id >= MAX_SW_PEERS) {
+		return;
+	}
+
+	if_idx = sys_dev_ctx->tx_config.peers[peer_id].if_idx;
+	if (if_idx >= MAX_NUM_VIFS) {
+		return;
+	}
+
+	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+	if (!vif_ctx || !vif_ctx->os_vif_ctx) {
+		return;
+	}
+
+	sys_fpriv->callbk_fns.process_tx_rate_from_tx_done(vif_ctx->os_vif_ctx,
+							   buff->tx_rate_kbps);
+}
+#endif /* CONFIG_NRF71_STA_MODE */
+
 enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	struct nrf_wifi_tx_buff_done *buff)
@@ -1581,6 +1641,11 @@ enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	}
 
 	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
+
+#ifdef CONFIG_NRF71_STA_MODE
+	/* Resolve the VIF before tx_done_process() as it may reuse the descriptor */
+	tx_done_rate_update(fmac_dev_ctx, buff);
+#endif /* CONFIG_NRF71_STA_MODE */
 
 	status = tx_done_process(fmac_dev_ctx,
 				 buff->tx_desc_num);

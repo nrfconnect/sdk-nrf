@@ -123,6 +123,15 @@ static void date_time_update_work_fn(struct k_work *work)
 
 	LOG_DBG("Updating date time UTC...");
 
+	/* The scheduled update is now running, so it must not block scheduling the next one,
+	 * which is also done when previously obtained time is used. A manual update does not clear
+	 * the flag here, because if previously obtained time is used, the pending scheduled update
+	 * must not be postponed.
+	 */
+	if (work == &date_time_update_work.work) {
+		atomic_clear(&reschedule_blocked);
+	}
+
 	err = date_time_core_current_check();
 	if (err == 0) {
 		LOG_DBG("Using previously obtained time");

@@ -759,7 +759,7 @@ static void mltpan_6(nrf_radio_mode_t mode)
 {
 #if defined(NRF54L_SERIES) && CONFIG_HAS_HW_NRF_RADIO_IEEE802154
 	if (mode == NRF_RADIO_MODE_IEEE802154_250KBIT) {
-		*((volatile uint32_t *)0x5008A810) = 2;
+		*((volatile uint32_t *)((uintptr_t)NRF_RADIO + 0x810UL)) = 2;
 	}
 #else
 	ARG_UNUSED(mode);

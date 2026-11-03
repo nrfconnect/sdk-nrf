@@ -21,7 +21,6 @@ config SB_IMAGE_BOOT_OFFSET
 	hex "Offset of executable code within firmware image"
 	default 0x800 if SOC_SERIES_NRF54L
 	default 0x200 if SOC_SERIES_NRF53 || SOC_SERIES_NRF91
-	default 0x200 if SOC_SERIES_NRF52
 	default 0
 	help
 	  Sysbuild, when used, will enforce the value by own logic in CMake files.
@@ -122,6 +121,13 @@ config SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
 	  If it is enabled, the secure bootloader prevents FW_INFO_FIRMWARE_VERSION
 	  from being decremented for an image.
 	  Images that do not meet this requirement will be rejected and not booted.
+
+config SB_NUM_VER_COUNTER_SLOTS
+	int "Number of monotonic counter slots (informative only, do not change)"
+	depends on SB_MONOTONIC_COUNTER_ROLLBACK_PROTECTION
+	help
+	  This option is set by sysbuild to SB_CONFIG_SECURE_BOOT_NUM_VER_COUNTER_SLOTS.
+	  It must match the number of firmware version counter slots in the provisioned data.
 
 endif # IS_SECURE_BOOTLOADER
 

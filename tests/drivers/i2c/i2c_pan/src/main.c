@@ -152,7 +152,7 @@ ZTEST(i2c_pan, test_clock_stretching_recovery)
 	 */
 	ret = i2c_read(fixture.dev, fixture.master_buffer, TEST_BUFFER_SIZE, fixture.addr);
 	if (NRF_ERRATA_DYNAMIC_CHECK(54H, 244) || NRF_ERRATA_DYNAMIC_CHECK(54L, 105) ||
-	    NRF_ERRATA_DYNAMIC_CHECK(71, 105)) {
+	    NRF_ERRATA_DYNAMIC_CHECK(71, 105) || NRF_ERRATA_DYNAMIC_CHECK(92, 244)) {
 		zassert_equal(ret, -ETIMEDOUT,
 			      "i2c_read failed with different error than expeced (ETIMEDOUT) %d\n",
 			      ret);

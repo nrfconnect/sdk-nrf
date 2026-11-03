@@ -92,7 +92,18 @@ static void connected(struct bt_conn *conn, uint8_t conn_err)
 		return;
 	}
 
-	LOG_INF("Bluetooth connected");
+	struct bt_conn_info info;
+	char peer[BT_ADDR_LE_STR_LEN] = "unknown";
+	int rc;
+
+	rc = bt_conn_get_info(conn, &info);
+	if (rc) {
+		LOG_WRN("Failed to get connection info (rc %d)", rc);
+	} else {
+		bt_addr_le_to_str(info.le.remote, peer, sizeof(peer));
+	}
+
+	LOG_INF("Bluetooth connected, peer %s", peer);
 }
 
 static void disconnected(struct bt_conn *conn, uint8_t reason)

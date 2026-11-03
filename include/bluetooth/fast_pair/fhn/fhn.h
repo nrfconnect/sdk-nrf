@@ -156,11 +156,12 @@ struct bt_fast_pair_fhn_ring_cb {
 	 *  you can start the ringing action on it and indicate it using the
 	 *  @ref bt_fast_pair_fhn_ring_state_update API.
 	 *
-	 *  This callback is executed in the cooperative thread context. You
-	 *  can learn about the exact thread context by analyzing the
-	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
-	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the
+	 *  Bluetooth RX workqueue, except for the
+	 *  @ref BT_FAST_PAIR_FHN_RING_SRC_DULT_MOTION_DETECTOR source, for which
+	 *  it is executed in the system workqueue context. The stack size of the
+	 *  Bluetooth RX workqueue is configured with the
+	 *  @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param src   Source of the ringing activity.
 	 *  @param param Requested ringing parameters.
@@ -216,11 +217,9 @@ struct bt_fast_pair_fhn_ring_cb {
 	 *  you can stop the ringing action on it and indicate it using the
 	 *  @ref bt_fast_pair_fhn_ring_state_update API.
 	 *
-	 *  This callback is executed in the cooperative thread context. You
-	 *  can learn about the exact thread context by analyzing the
-	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
-	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the
+	 *  Bluetooth RX workqueue. The stack size of this workqueue is
+	 *  configured with the @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param src Source of the ringing activity.
 	 */
@@ -499,11 +498,9 @@ struct bt_fast_pair_fhn_info_cb {
 	 *  advertising as a mechanism to synchronize devices after a long clock
 	 *  drift.
 	 *
-	 *  This callback is executed in the cooperative thread context. You
-	 *  can learn about the exact thread context by analyzing the
-	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
-	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the
+	 *  Bluetooth RX workqueue. The stack size of this workqueue is
+	 *  configured with the @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 */
 	void (*clock_synced)(void);
 
@@ -525,11 +522,9 @@ struct bt_fast_pair_fhn_info_cb {
 	 *  peer (smartphone) to notify the user about the outdated firmware
 	 *  and the pending firmware update.
 	 *
-	 *  This callback is executed in the cooperative thread context. You
-	 *  can learn about the exact thread context by analyzing the
-	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
-	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the
+	 *  Bluetooth RX workqueue. The stack size of this workqueue is
+	 *  configured with the @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param conn Authenticated connection object.
 	 */
@@ -545,11 +540,9 @@ struct bt_fast_pair_fhn_info_cb {
 	 *  user enables Fast Pair with the @ref bt_fast_pair_enable API. To check
 	 *  the initial state, use the @ref bt_fast_pair_fhn_is_provisioned API.
 	 *
-	 *  This callback is executed in the cooperative thread context. You
-	 *  can learn about the exact thread context by analyzing the
-	 *  @kconfig{CONFIG_BT_RECV_CONTEXT} configuration choice. By default, this
-	 *  callback is executed in the Bluetooth-specific workqueue thread
-	 *  (@kconfig{CONFIG_BT_RECV_WORKQ_BT}).
+	 *  This callback is executed in the cooperative thread context of the
+	 *  Bluetooth RX workqueue. The stack size of this workqueue is
+	 *  configured with the @kconfig{CONFIG_BT_RX_STACK_SIZE} Kconfig option.
 	 *
 	 *  @param provisioned true if the accessory has been successfully provisioned.
 	 *                     false if the accessory has been successfully unprovisioned.

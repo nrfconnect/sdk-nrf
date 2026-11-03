@@ -35,7 +35,7 @@ endif # NRF5_VENDOR_OUI_ENABLE
 config NRF5_UICR_EUI64_ENABLE
 	bool "Support usage of EUI64 value stored in UICR registers"
 	depends on !NRF5_VENDOR_OUI_ENABLE
-	depends on SOC_SERIES_NRF52 || SOC_SERIES_NRF53 || SOC_SERIES_NRF54L
+	depends on SOC_SERIES_NRF53 || SOC_SERIES_NRF54L
 	help
 	  This option enables setting custom vendor EUI64 value
 	  stored in User information configuration registers (UICR).
@@ -47,7 +47,6 @@ if NRF5_UICR_EUI64_ENABLE
 
 config NRF5_UICR_EUI64_REG
 	int "UICR base register for the EUI64 value"
-	range 0 30 if SOC_SERIES_NRF52
 	range 0 190 if SOC_SERIES_NRF53
 	range 0 318 if SOC_SERIES_NRF54L
 	default 0
@@ -69,9 +68,7 @@ config NRF5_LOG_RX_FAILURES
 
 config NRF5_DELAY_TRX_ACC
 	int "Clock accuracy for delayed operations"
-	default CLOCK_CONTROL_NRF_ACCURACY if BOARD_NRF52840DONGLE_NRF52840 && (CLOCK_CONTROL_NRF && (CLOCK_CONTROL_NRF_ACCURACY < $(UINT8_MAX)))
-	default $(dt_node_int_prop_int,lfclk,k32src-accuracy-ppm) if BOARD_NRF52840DONGLE_NRF52840 && (CLOCK_CONTROL_NRF_LFCLK && ($(dt_node_int_prop_int,lfclk,k32src-accuracy-ppm) < $(UINT8_MAX)))
-	default 20 # Value agreed after research as the best for power consumption and system reliability.
+	default 20
 	help
 	  Accuracy of the clock used for scheduling radio delayed operations (delayed transmission
 	  or delayed reception), in ppm.

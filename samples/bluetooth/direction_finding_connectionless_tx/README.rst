@@ -65,7 +65,7 @@ Antenna matrix configuration for angle of departure mode
 ========================================================
 
 To use this sample when AoD mode is enabled, additional configuration of GPIOs is required to control the antenna array.
-An example of such configuration is provided in a devicetree overlay file :file:`nrf52833dk_nrf52833.overlay`.
+An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpuapp.overlay`.
 
 The overlay file provides the information of which GPIOs should be used by the Radio peripheral to switch between antenna patches during the CTE transmission in the AoD mode.
 At least two GPIOs must be provided to enable antenna switching.

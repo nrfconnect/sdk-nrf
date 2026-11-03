@@ -43,6 +43,20 @@ static unsigned char nrf_wifi_fmac_vif_idx_get(struct nrf_wifi_fmac_dev_ctx *fma
 	return i;
 }
 
+/* Interface down parks the OS-side index at MAX_NUM_VIFS while the FMAC device
+ * stays up, so callers racing teardown can pass an index one past vif_ctx[].
+ */
+static struct nrf_wifi_fmac_vif_ctx *nrf_wifi_sys_fmac_vif_get(
+	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx,
+	unsigned char if_idx)
+{
+	if (if_idx >= MAX_NUM_VIFS) {
+		return NULL;
+	}
+
+	return sys_dev_ctx->vif_ctx[if_idx];
+}
+
 
 #ifdef CONFIG_NRF71_DATA_TX
 static enum nrf_wifi_status nrf_wifi_sys_fmac_init_tx(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
@@ -589,6 +603,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_scan(void *dev_ctx,
 	scan_cmd->umac_hdr.ids.wdev_id = if_idx;
 	scan_cmd->umac_hdr.ids.valid_fields |= NRF_WIFI_INDEX_IDS_WDEV_ID_VALID;
 
+	/* 2.4 GHz scan coexistence: 0 leaves firmware defaults unchanged. */
+	scan_info->scan_params.bt_grant_time = CONFIG_NRF_WIFI_SCAN_BT_GRANT_TIME_MS;
+	scan_info->scan_params.bt_grant_tolerance_time =
+		CONFIG_NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS;
+
 	nrf_wifi_mem_cpy(&scan_cmd->info,
 			      scan_info,
 			      (sizeof(scan_cmd->info) + channel_info_len));
@@ -716,7 +735,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_auth(void *dev_ctx,
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(sys_dev_ctx, if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
+		goto out;
+	}
 
 	auth_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*auth_cmd));
 
@@ -836,7 +859,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_assoc(void *dev_ctx,
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
 
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(sys_dev_ctx, if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
+		goto out;
+	}
 
 	nrf_wifi_mem_cpy(vif_ctx->bssid,
 			      assoc_info->nrf_wifi_bssid,
@@ -974,6 +1001,28 @@ out:
 	return status;
 }
 
+#ifdef CONFIG_NRF_WIFI_USE_KMU
+/**
+ * @brief Whether UMAC needs IGTK/BIP key bytes (PMF mgmt MIC), not host crypto alone.
+ */
+static bool nrf_wifi_fmac_umac_needs_mgmt_key_material(unsigned int cipher_suite,
+						       enum nrf_wifi_key_type key_type)
+{
+	if (key_type != NRF_WIFI_KEYTYPE_GROUP) {
+		return false;
+	}
+
+	switch (cipher_suite) {
+	case NRF_WIFI_FMAC_CIPHER_SUITE_AES_128_CMAC:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_GMAC_128:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_GMAC_256:
+	case NRF_WIFI_FMAC_CIPHER_SUITE_BIP_CMAC_256:
+		return true;
+	default:
+		return false;
+	}
+}
+#endif /* CONFIG_NRF_WIFI_USE_KMU */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 					       unsigned char if_idx,
@@ -996,7 +1045,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(sys_dev_ctx, if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
+		goto out;
+	}
 
 	key_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*key_cmd));
 
@@ -1012,6 +1065,28 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 	nrf_wifi_mem_cpy(&key_cmd->key_info,
 			      key_info,
 			      sizeof(key_cmd->key_info));
+
+#ifdef CONFIG_NRF_WIFI_USE_KMU
+	struct nrf_wifi_key *key = &key_cmd->key_info.key;
+
+	if (!nrf_wifi_fmac_umac_needs_mgmt_key_material(key_cmd->key_info.cipher_suite,
+							key_cmd->key_info.key_type) &&
+	    key->nrf_wifi_key_len) {
+		/* Encryption keys live in KMU; do not send key bytes to UMAC. */
+		nrf_wifi_mem_set(key->nrf_wifi_key, 0, key->nrf_wifi_key_len);
+	}
+
+	/* TKIP MIC is computed in UMAC, not in HW crypto. */
+	if ((key_cmd->key_info.cipher_suite == NRF_WIFI_FMAC_CIPHER_SUITE_TKIP) &&
+	    ((key_cmd->key_info.key_type == NRF_WIFI_KEYTYPE_PAIRWISE) ||
+	     (key_cmd->key_info.key_type == NRF_WIFI_KEYTYPE_GROUP))) {
+		/* KEY (16 bytes) - TX MIC (8 bytes) - RX MIC (8 bytes) */
+		nrf_wifi_mem_cpy(&key->nrf_wifi_key[16],
+				 &key_info->key.nrf_wifi_key[16],
+				 16);
+		key->nrf_wifi_key_len = 32;
+	}
+#endif /* CONFIG_NRF_WIFI_USE_KMU */
 
 	if (mac_addr) {
 		nrf_wifi_mem_cpy(key_cmd->mac_addr,
@@ -1075,6 +1150,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
+	int peer_id = -1;
 
 	fmac_dev_ctx = dev_ctx;
 
@@ -1085,6 +1161,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(sys_dev_ctx, if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
+		goto out;
+	}
 
 	key_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL, sizeof(*key_cmd));
 
@@ -1113,10 +1194,21 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_key(void *dev_ctx,
 	key_cmd->key_info.valid_fields |= NRF_WIFI_KEY_IDX_VALID;
 	key_cmd->key_info.valid_fields |= NRF_WIFI_KEY_TYPE_VALID;
 
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
-
 	if (key_info->key_type == NRF_WIFI_KEYTYPE_GROUP) {
 		vif_ctx->groupwise_cipher = 0;
+	} else if (key_info->key_type == NRF_WIFI_KEYTYPE_PAIRWISE) {
+		if (mac_addr) {
+			peer_id = nrf_wifi_fmac_peer_get_id(fmac_dev_ctx,
+							    (const unsigned char *)mac_addr);
+		}
+
+		if (peer_id >= 0 && peer_id < MAX_PEERS) {
+			sys_dev_ctx->tx_config.peers[peer_id].pairwise_cipher = 0;
+		}
+	} else {
+		LOG_ERR("%s: Invalid key type %d",
+			      __func__,
+			      key_info->key_type);
 	}
 
 	status = umac_cmd_cfg(fmac_dev_ctx,
@@ -2272,12 +2364,19 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif(void *dev_ctx,
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_umac_cmd_chg_vif_attr *chg_vif_cmd = NULL;
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx = NULL;
+	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 
 	fmac_dev_ctx = dev_ctx;
 
 	if (fmac_dev_ctx->op_mode != NRF_WIFI_OP_MODE_SYS) {
 		LOG_ERR("%s: Invalid op mode",
 				      __func__);
+		goto out;
+	}
+
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(wifi_dev_priv(fmac_dev_ctx), if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
 		goto out;
 	}
 
@@ -2331,15 +2430,11 @@ out:
 	}
 
 	if (status == NRF_WIFI_STATUS_SUCCESS) {
-		struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
-
-		sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
-
 		nrf_wifi_fmac_vif_update_if_type(fmac_dev_ctx,
 						 if_idx,
 						 vif_info->iftype);
 
-		sys_dev_ctx->vif_ctx[if_idx]->if_type = vif_info->iftype;
+		vif_ctx->if_type = vif_info->iftype;
 	}
 
 	return status;
@@ -2368,6 +2463,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 	}
 
 	sys_dev_ctx = wifi_dev_priv(fmac_dev_ctx);
+	vif_ctx = nrf_wifi_sys_fmac_vif_get(sys_dev_ctx, if_idx);
+	if (!vif_ctx) {
+		LOG_ERR("%s: No VIF for index %d", __func__, if_idx);
+		goto out;
+	}
 
 	chg_vif_state_cmd = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 						sizeof(*chg_vif_state_cmd));
@@ -2387,13 +2487,16 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			      vif_info,
 			      sizeof(chg_vif_state_cmd->info));
 
-	vif_ctx = sys_dev_ctx->vif_ctx[if_idx];
-
 	vif_ctx->ifflags = false;
+	vif_ctx->ifflags_status = 0;
 
 	status = umac_cmd_cfg(fmac_dev_ctx,
 			      chg_vif_state_cmd,
 			      sizeof(*chg_vif_state_cmd));
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		LOG_ERR("%s: Failed to send set interface flags", __func__);
+		goto out;
+	}
 
 	while (!vif_ctx->ifflags && (--count > 0)) {
 		k_msleep(1);
@@ -2403,6 +2506,13 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 		status = NRF_WIFI_STATUS_FAIL;
 		LOG_ERR("%s: RPU is unresponsive for %d sec",
 				      __func__, RPU_CMD_TIMEOUT_MS / 1000);
+		goto out;
+	}
+
+	if (vif_ctx->ifflags_status < 0) {
+		status = NRF_WIFI_STATUS_FAIL;
+		LOG_ERR("%s: RPU rejected interface state %d: %d",
+			__func__, vif_info->state, vif_ctx->ifflags_status);
 		goto out;
 	}
 #ifdef CONFIG_NRF71_AP_MODE

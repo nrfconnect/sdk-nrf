@@ -17,6 +17,7 @@
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
+	memory-regions = <&cpuppr_dma_region>;
 
 	channel@0 {
 		reg = <0>;

@@ -81,3 +81,11 @@ jobs:
             --input-files test_file.c \
             --license-detectors scancode-toolkit \
             --output-html scancode_report.html
+
+          # generate an SPDX 3.0 report and validate it
+          west ncs-sbom \
+            --input-files test_file.c \
+            --license-detectors spdx-tag \
+            --spdx-version 3.0 \
+            --output-spdx report.jsonld
+          spdx3-validate --spdx-version auto --json report.jsonld

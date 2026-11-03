@@ -1,0 +1,15 @@
+.vscode-button-inline {
+  margin-right: 0 !important;
+  width: fit-content !important;
+  max-width: 100% !important;
+  display: inline-block;
+}
+
+.vscode-button-inline p {
+  width: fit-content;
+}
+
+.vscode-button-inline a {
+  width: fit-content;
+  padding: 0 1em;
+}

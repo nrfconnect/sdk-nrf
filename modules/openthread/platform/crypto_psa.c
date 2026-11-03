@@ -165,6 +165,8 @@ static psa_key_type_t toPsaKeyType(otCryptoKeyType aType)
 		return PSA_KEY_TYPE_HMAC;
 	case OT_CRYPTO_KEY_TYPE_ECDSA:
 		return PSA_KEY_TYPE_ECC_KEY_PAIR(PSA_ECC_FAMILY_SECP_R1);
+	case OT_CRYPTO_KEY_TYPE_DERIVE:
+		return PSA_KEY_TYPE_DERIVE;
 	default:
 		return PSA_KEY_TYPE_NONE;
 	}
@@ -188,6 +190,8 @@ static psa_algorithm_t toPsaAlgorithm(otCryptoKeyAlgorithm aAlgorithm)
 #else
 		return PSA_ALG_DETERMINISTIC_ECDSA(PSA_ALG_SHA_256);
 #endif
+	case OT_CRYPTO_KEY_ALG_HKDF_SHA256:
+		return PSA_ALG_HKDF(PSA_ALG_SHA_256);
 	default:
 		/*
 		 * There is currently no constant like PSA_ALG_NONE, but 0 is used
@@ -221,6 +225,10 @@ static psa_key_usage_t toPsaKeyUsage(int aUsage)
 		usage |= PSA_KEY_USAGE_VERIFY_HASH;
 	}
 
+	if (aUsage & OT_CRYPTO_KEY_USAGE_DERIVE) {
+		usage |= PSA_KEY_USAGE_DERIVE;
+	}
+
 	return usage;
 }
 
@@ -229,7 +237,7 @@ static bool checkKeyUsage(int aUsage)
 	/* Check if only supported flags have been passed */
 	int supported_flags = OT_CRYPTO_KEY_USAGE_EXPORT | OT_CRYPTO_KEY_USAGE_ENCRYPT |
 			      OT_CRYPTO_KEY_USAGE_DECRYPT | OT_CRYPTO_KEY_USAGE_SIGN_HASH |
-			      OT_CRYPTO_KEY_USAGE_VERIFY_HASH;
+			      OT_CRYPTO_KEY_USAGE_VERIFY_HASH | OT_CRYPTO_KEY_USAGE_DERIVE;
 
 	return (aUsage & ~supported_flags) == 0;
 }
@@ -268,7 +276,7 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 #endif
 
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_status_t status = 0;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
 	if (aKeyRef == NULL || aKey == NULL || !checkKeyUsage(aKeyUsage)) {
 		return OT_ERROR_INVALID_ARGS;
@@ -322,6 +330,7 @@ otError otPlatCryptoImportKey(otCryptoKeyRef *aKeyRef, otCryptoKeyType aKeyType,
 		status = psa_import_key(&attributes, aKey, aKeyLen, &keyRef);
 	} break;
 	case OT_CRYPTO_KEY_STORAGE_VOLATILE:
+		psa_set_key_bits(&attributes, getKeyBits(aKeyType));
 		psa_set_key_lifetime(&attributes, PSA_KEY_LIFETIME_VOLATILE);
 		status = psa_import_key(&attributes, aKey, aKeyLen, aKeyRef);
 		break;
@@ -356,7 +365,7 @@ otError otPlatCryptoDestroyKey(otCryptoKeyRef aKeyRef)
 bool otPlatCryptoHasKey(otCryptoKeyRef aKeyRef)
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
@@ -396,7 +405,7 @@ otError otPlatCryptoHmacSha256Deinit(otCryptoContext *aContext)
 otError otPlatCryptoHmacSha256Start(otCryptoContext *aContext, const otCryptoKey *aKey)
 {
 	psa_mac_operation_t *operation;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
 	if (aKey == NULL || !checkContext(aContext, sizeof(psa_mac_operation_t))) {
 		return OT_ERROR_INVALID_ARGS;
@@ -440,6 +449,143 @@ otError otPlatCryptoHmacSha256Finish(otCryptoContext *aContext, uint8_t *aBuf, s
 	return psaToOtError(psa_mac_sign_finish(operation, aBuf, aBufLength, &mac_length));
 }
 
+otError otPlatCryptoHkdfInit(otCryptoContext *aContext)
+{
+	psa_key_derivation_operation_t *operation;
+
+	if (!checkContext(aContext, sizeof(psa_key_derivation_operation_t))) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	operation = aContext->mContext;
+
+	*operation = psa_key_derivation_operation_init();
+
+	return psaToOtError(psa_key_derivation_setup(operation, PSA_ALG_HKDF(PSA_ALG_SHA_256)));
+}
+
+otError otPlatCryptoHkdfExtract(otCryptoContext *aContext, const uint8_t *aSalt,
+				uint16_t aSaltLength, const otCryptoKey *aInputKey)
+{
+	otError error = OT_ERROR_NONE;
+	psa_status_t status = PSA_SUCCESS;
+	psa_key_derivation_operation_t *operation = NULL;
+	otCryptoKeyRef input_key_ref = PSA_KEY_ID_NULL;
+	otCryptoKeyRef key_ref = PSA_KEY_ID_NULL;
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+	psa_algorithm_t key_alg = PSA_ALG_NONE;
+	size_t key_length = 0;
+	const size_t key_buffer_size = 80;
+	uint8_t key_buffer[key_buffer_size];
+
+	if (!checkContext(aContext, sizeof(psa_key_derivation_operation_t)) ||
+	    (aInputKey == NULL) || (aSaltLength != 0 && aSalt == NULL)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	operation = aContext->mContext;
+
+	if (aSaltLength != 0) {
+		status = psa_key_derivation_input_bytes(operation, PSA_KEY_DERIVATION_INPUT_SALT,
+							aSalt, aSaltLength);
+		if (status != PSA_SUCCESS) {
+			error = psaToOtError(status);
+			goto exit;
+		}
+	}
+
+	input_key_ref = aInputKey->mKeyRef;
+	GET_KEY_REF(&input_key_ref, NULL);
+
+	status = psa_get_key_attributes(input_key_ref, &attributes);
+	if (status != PSA_SUCCESS) {
+		error = psaToOtError(status);
+		goto exit;
+	}
+
+	key_alg = psa_get_key_algorithm(&attributes);
+
+	if (key_alg != toPsaAlgorithm(OT_CRYPTO_KEY_ALG_HKDF_SHA256)) {
+		error = otPlatCryptoExportKey(aInputKey->mKeyRef, key_buffer, sizeof(key_buffer),
+					      &key_length);
+		if (error != OT_ERROR_NONE) {
+			goto exit;
+		}
+		error = otPlatCryptoImportKey(
+			&key_ref, OT_CRYPTO_KEY_TYPE_DERIVE, OT_CRYPTO_KEY_ALG_HKDF_SHA256,
+			OT_CRYPTO_KEY_USAGE_DERIVE, OT_CRYPTO_KEY_STORAGE_VOLATILE, key_buffer,
+			key_length);
+		if (error != OT_ERROR_NONE) {
+			goto exit;
+		}
+
+		status = psa_key_derivation_input_key(operation, PSA_KEY_DERIVATION_INPUT_SECRET,
+						      key_ref);
+		if (status != PSA_SUCCESS) {
+			error = psaToOtError(status);
+			goto exit;
+		}
+	} else {
+		status = psa_key_derivation_input_key(operation, PSA_KEY_DERIVATION_INPUT_SECRET,
+						      input_key_ref);
+		if (status != PSA_SUCCESS) {
+			error = psaToOtError(status);
+			goto exit;
+		}
+	}
+
+exit:
+	psa_reset_key_attributes(&attributes);
+	if (key_ref != PSA_KEY_ID_NULL) {
+		otPlatCryptoDestroyKey(key_ref);
+	}
+
+	return error;
+}
+
+otError otPlatCryptoHkdfExpand(otCryptoContext *aContext, const uint8_t *aInfo,
+			       uint16_t aInfoLength, uint8_t *aOutputKey, uint16_t aOutputKeyLength)
+{
+	psa_status_t status = PSA_SUCCESS;
+	psa_key_derivation_operation_t *operation;
+
+	if (!checkContext(aContext, sizeof(psa_key_derivation_operation_t)) ||
+	    (aOutputKey == NULL) || (aOutputKeyLength == 0) ||
+	    (aInfoLength != 0 && aInfo == NULL)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	operation = aContext->mContext;
+
+	if (aInfoLength != 0) {
+		status = psa_key_derivation_input_bytes(operation, PSA_KEY_DERIVATION_INPUT_INFO,
+							aInfo, aInfoLength);
+		if (status != PSA_SUCCESS) {
+			return psaToOtError(status);
+		}
+	}
+
+	status = psa_key_derivation_output_bytes(operation, aOutputKey, aOutputKeyLength);
+	if (status != PSA_SUCCESS) {
+		return psaToOtError(status);
+	}
+
+	return OT_ERROR_NONE;
+}
+
+otError otPlatCryptoHkdfDeinit(otCryptoContext *aContext)
+{
+	psa_key_derivation_operation_t *operation;
+
+	if (!checkContext(aContext, sizeof(psa_key_derivation_operation_t))) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
+	operation = aContext->mContext;
+
+	return psaToOtError(psa_key_derivation_abort(operation));
+}
+
 otError otPlatCryptoAesInit(otCryptoContext *aContext)
 {
 	psa_key_id_t *key_ref;
@@ -462,6 +608,11 @@ otError otPlatCryptoAesSetKey(otCryptoContext *aContext, const otCryptoKey *aKey
 		return OT_ERROR_INVALID_ARGS;
 	}
 
+	if (aKey->mKey != NULL || aKey->mKeyRef == PSA_KEY_ID_NULL ||
+	    !otPlatCryptoHasKey(aKey->mKeyRef)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
 	key_ref = aContext->mContext;
 	*key_ref = aKey->mKeyRef;
 
@@ -471,9 +622,9 @@ otError otPlatCryptoAesSetKey(otCryptoContext *aContext, const otCryptoKey *aKey
 otError otPlatCryptoAesEncrypt(otCryptoContext *aContext, const uint8_t *aInput, uint8_t *aOutput)
 {
 	const size_t block_size = PSA_BLOCK_CIPHER_BLOCK_LENGTH(PSA_KEY_TYPE_AES);
-	psa_status_t status = PSA_SUCCESS;
-	psa_key_id_t key_ref;
-	size_t cipher_length;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
+	psa_key_id_t key_ref = PSA_KEY_ID_NULL;
+	size_t cipher_length = 0;
 
 	if (aInput == NULL || aOutput == NULL || !checkContext(aContext, sizeof(psa_key_id_t))) {
 		return OT_ERROR_INVALID_ARGS;
@@ -481,7 +632,15 @@ otError otPlatCryptoAesEncrypt(otCryptoContext *aContext, const uint8_t *aInput,
 
 	memcpy(&key_ref, aContext->mContext, sizeof(psa_key_id_t));
 
+	if (key_ref == PSA_KEY_ID_NULL) {
+		return OT_ERROR_INVALID_ARGS;
+	}
+
 	GET_KEY_REF(&key_ref, NULL);
+
+	if (!otPlatCryptoHasKey(key_ref)) {
+		return OT_ERROR_INVALID_ARGS;
+	}
 
 	status = psa_cipher_encrypt(key_ref, PSA_ALG_ECB_NO_PADDING, aInput, block_size, aOutput,
 				    block_size, &cipher_length);
@@ -580,8 +739,8 @@ otError otPlatCryptoRandomGet(uint8_t *aBuffer, uint16_t aSize)
 otError otPlatCryptoEcdsaGenerateKey(otPlatCryptoEcdsaKeyPair *aKeyPair)
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_key_id_t key_id = 0;
-	psa_status_t status;
+	psa_key_id_t key_id = PSA_KEY_ID_NULL;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	size_t exported_length;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_EXPORT);
@@ -614,7 +773,7 @@ otError otPlatCryptoEcdsaSign(const otPlatCryptoEcdsaKeyPair *aKeyPair,
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_id_t key_id;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	size_t signature_length;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_SIGN_HASH);
@@ -647,7 +806,7 @@ otError otPlatCryptoEcdsaVerify(const otPlatCryptoEcdsaPublicKey *aPublicKey,
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_key_id_t key_id;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	uint8_t buffer[1 + OT_CRYPTO_ECDSA_PUBLIC_KEY_SIZE];
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH);
@@ -684,7 +843,7 @@ otError otPlatCryptoEcdsaSignUsingKeyRef(otCryptoKeyRef aKeyRef,
 					 const otPlatCryptoSha256Hash *aHash,
 					 otPlatCryptoEcdsaSignature *aSignature)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	size_t signature_length;
 
 	GET_KEY_REF(&aKeyRef, NULL);
@@ -705,7 +864,7 @@ otError otPlatCryptoEcdsaVerifyUsingKeyRef(otCryptoKeyRef aKeyRef,
 					   const otPlatCryptoSha256Hash *aHash,
 					   const otPlatCryptoEcdsaSignature *aSignature)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 
 	GET_KEY_REF(&aKeyRef, NULL);
 
@@ -723,7 +882,7 @@ out:
 otError otPlatCryptoEcdsaExportPublicKey(otCryptoKeyRef aKeyRef,
 					 otPlatCryptoEcdsaPublicKey *aPublicKey)
 {
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	size_t exported_length;
 	uint8_t buffer[1 + OT_CRYPTO_ECDSA_PUBLIC_KEY_SIZE];
 
@@ -744,7 +903,7 @@ out:
 otError otPlatCryptoEcdsaGenerateAndImportKey(otCryptoKeyRef aKeyRef)
 {
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
-	psa_status_t status;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	psa_key_id_t key_id = (psa_key_id_t)aKeyRef;
 
 	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_HASH | PSA_KEY_USAGE_SIGN_HASH);
@@ -772,7 +931,7 @@ otError otPlatCryptoPbkdf2GenerateKey(const uint8_t *aPassword, uint16_t aPasswo
 				      const uint8_t *aSalt, uint16_t aSaltLen,
 				      uint32_t aIterationCounter, uint16_t aKeyLen, uint8_t *aKey)
 {
-	psa_status_t status = PSA_SUCCESS;
+	psa_status_t status = PSA_ERROR_GENERIC_ERROR;
 	psa_key_id_t key_id = PSA_KEY_ID_NULL;
 	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
 	psa_algorithm_t algorithm = PSA_ALG_PBKDF2_AES_CMAC_PRF_128;

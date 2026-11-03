@@ -14,6 +14,11 @@
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/device.h>
+#include <zephyr/devicetree.h>
+
+#include <nrfx.h>
+#include <hal/nrf_gpio.h>
+#include <soc_nrf_common.h>
 
 #include <common/rf_params.h>
 #include <common/util.h>
@@ -106,9 +111,29 @@ err:
 	return status;
 }
 
+#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf71_antsw)
+/* For nrf71 wifi radio test sample configuring ANTSW mode to be controlled
+ * by ANTSWC peripheral instead of GPIO.
+ */
+#define ANTSW_NODE     DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_nrf71_antsw)
+#define ANTSW_SEL_PSEL NRF_DT_GPIOS_TO_PSEL(ANTSW_NODE, sel_gpios)
+
+static void antsw_give_to_antswc(void)
+{
+	nrf_gpio_cfg_output(ANTSW_SEL_PSEL);
+	nrf_gpio_pin_control_select(ANTSW_SEL_PSEL,
+				    (nrf_gpio_pin_sel_t)GPIO_PIN_CNF_CTRLSEL_ANTSWC);
+}
+
+#endif /* DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf71_antsw) */
+
 static int nrf_wifi_rt_drv_main(const struct device *dev)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
+
+#if DT_HAS_COMPAT_STATUS_OKAY(nordic_nrf71_antsw)
+	antsw_give_to_antswc();
+#endif
 
 	rt_drv_priv.fmac_priv = nrf_wifi_rt_fmac_init();
 

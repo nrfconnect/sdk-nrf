@@ -667,14 +667,16 @@ static void check_return_code_and_notify(int ret)
 			err = modem_attest_token_get(&token);
 			if (err) {
 				LOG_ERR("Failed to get token, err %d", err);
+				__ASSERT(false, "Failed to get token, err %d", err);
+				event_data.type = NRF_PROVISIONING_EVENT_FATAL_ERROR;
 				callback_local(&event_data);
-			} else {
-				event_data.token = &token;
-				callback_local(&event_data);
-
-				modem_attest_token_free(&token);
+				return;
 			}
 
+			event_data.token = &token;
+			callback_local(&event_data);
+
+			modem_attest_token_free(&token);
 		} else {
 			callback_local(&event_data);
 		}

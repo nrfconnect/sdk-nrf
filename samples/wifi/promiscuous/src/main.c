@@ -455,14 +455,13 @@ int main(void)
 	net_config_init_app(dev, "Initializing network");
 #endif
 
-	if (wifi_set_mode(true)) {
-		return -1;
-	}
-
-	/* TODO: Implement waiting for WPA supplicant to manage the Wi-Fi interface.*/
 	ret = try_wifi_connect();
 	if (ret < 0) {
 		return ret;
+	}
+
+	if (wifi_set_mode(true)) {
+		return -1;
 	}
 
 #ifdef CONFIG_NET_CAPTURE

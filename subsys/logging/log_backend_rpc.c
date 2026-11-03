@@ -47,6 +47,7 @@ LOG_MODULE_REGISTER(log_rpc);
 	((meta).assert_line ? (strlen((meta).assert_filename) + 3) : 1)
 
 #ifdef CONFIG_LOG_BACKEND_RPC_CRASH_LOG
+/* Must match zephyr/arch/arm/core/cortex_m/coredump.c (incl. callee footer). */
 struct arm_arch_block {
 	struct {
 		uint32_t r0;
@@ -69,6 +70,10 @@ struct arm_arch_block {
 		uint32_t r10;
 		uint32_t r11;
 	} r;
+	struct {
+		uint32_t callee_saved_valid;
+		uint32_t callee_saved_offset;
+	} callee;
 } __packed;
 
 struct dump_metadata {

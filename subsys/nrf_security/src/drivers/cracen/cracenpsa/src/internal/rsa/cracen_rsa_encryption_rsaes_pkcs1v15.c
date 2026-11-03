@@ -29,6 +29,7 @@
 #define WORKMEM_SIZE	PSA_BITS_TO_BYTES(PSA_MAX_RSA_KEY_BITS)
 #define HEADER_BYTES	2
 #define NUMBER_OF_SLOTS 6
+#define SIZE_TOP_BIT	(sizeof(size_t) * 8 - 1)
 
 int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_crypt_text *text,
 				uint8_t *output, size_t output_size, size_t *output_length)
@@ -64,6 +65,7 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 	int r = 0;
 	uint8_t *paddingstr;
 	size_t paddingstrsz;
+	size_t scansz;
 
 	/* copy output of exponentiation (the encoded message EM) to workmem */
 	const uint8_t **outputs = (const uint8_t **)sx_pk_get_output_ops(&req);
@@ -75,18 +77,18 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 	/*  pointer to the first octet after the encoded message */
 	const uint8_t *encodedmsgend = workmem + opsz;
 
-	r |= (workmem[0] != 0x00);
-	r |= (workmem[1] != 0x02);
+	r |= workmem[0];
+	r |= workmem[1] ^ 0x02;
 
 	/* scan the padding string and find the 0x00 octet that marks it end */
 	paddingstr = workmem + HEADER_BYTES;
-	paddingstr += constant_count(paddingstr, (size_t)(encodedmsgend - paddingstr), 0x00,
-				     MATCH_NOT_EQUAL);
+	scansz = (size_t)(encodedmsgend - paddingstr);
+	paddingstrsz = constant_count(paddingstr, scansz, 0x00, MATCH_NOT_EQUAL);
+	paddingstr += paddingstrsz;
 
-	r |= (paddingstr == encodedmsgend); /* 0x00 octet not found */
-
-	paddingstrsz = (size_t)(paddingstr - workmem) - HEADER_BYTES;
-	r |= (paddingstrsz < 8); /* padding string must be at least 8 bytes long */
+	/* The sizes are small, so the top bit is only set when the subtraction wraps. */
+	r |= (int)(((paddingstrsz ^ scansz) - 1) >> SIZE_TOP_BIT); /* 0x00 octet not found */
+	r |= (int)((paddingstrsz - 8) >> SIZE_TOP_BIT); /* padding string shorter than 8 bytes */
 
 	/* step 3 of RSAES-PKCS1-V1_5-DECRYPT in RFC 8017 */
 	if (r != 0) {

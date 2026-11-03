@@ -4,13 +4,16 @@
 if SOC_NRF9251_CPUAPP
 
 config NUM_IRQS
-	default 471
+	default 439
 
 config ROM_START_OFFSET
 	default 0x800 if BOOTLOADER_MCUBOOT
 
 config NRF_REGTOOL_GENERATE_UICR
 	default n
+
+config CODE_DATA_RELOCATION
+	default y if (PM || POWEROFF) && !MCUBOOT
 
 config NRF_PERIPHCONF_SECTION
 	default y if $(dt_nodelabel_exists,periphconf_partition)

@@ -42,7 +42,7 @@ To build |NSIB| with a Zephyr or |NCS| sample, enable the :kconfig:option:`SB_CO
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- -DSB_CONFIG_SECURE_BOOT_APPCORE=y
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- -DSB_CONFIG_SECURE_BOOT_APPCORE=y
 
 |how_to_configure|
 
@@ -53,7 +53,7 @@ To ensure that the immutable bootloader occupies as little flash memory as possi
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
    -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
    -Db0_FILE_SUFFIX=minimal
 
@@ -189,7 +189,7 @@ To use a custom signing command with this bootloader, set the following options 
 
       .. code-block:: console
 
-         west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+         west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
          -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
          -DSB_CONFIG_SECURE_BOOT_SIGNING_CUSTOM=y \
          -DSB_CONFIG_SECURE_BOOT_SIGNING_PUBLIC_KEY=\"/path/to/pub.pem\" \
@@ -229,7 +229,7 @@ To build :doc:`MCUboot <mcuboot:index-ncs>` with a Zephyr or |NCS| sample, enabl
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- -DSB_CONFIG_BOOTLOADER_MCUBOOT=y
 
 |how_to_configure|
 Like other images, you can assign image-specific configurations at build time to further customize the bootloader's functionality.
@@ -273,7 +273,7 @@ The key type must also be set correctly:
 
 .. code-block:: console
 
-   west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+   west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
    -DSB_CONFIG_BOOTLOADER_MCUBOOT=y \
    -DSB_CONFIG_BOOT_SIGNATURE_KEY_FILE=\"\${APPLICATION_CONFIG_DIR}/../../priv-ecdsa256.pem\" \
    -DSB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
@@ -311,7 +311,7 @@ To use MCUboot as an upgradable bootloader to your application, complete the fol
 
    .. code-block::
 
-      west build -b nrf52840dk/nrf52840 zephyr/samples/hello_world -- \
+      west build -b nrf54l15dk/nrf54l15/cpuapp zephyr/samples/hello_world -- \
       -DSB_CONFIG_SECURE_BOOT_APPCORE=y \
       -DSB_CONFIG_BOOTLOADER_MCUBOOT=y
 

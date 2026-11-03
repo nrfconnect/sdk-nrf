@@ -308,6 +308,17 @@ int hci_vs_sdc_allow_parallel_connection_establishments(
 int hci_vs_sdc_min_val_of_max_acl_tx_payload_set(
 	const sdc_hci_cmd_vs_min_val_of_max_acl_tx_payload_set_t *params);
 
+/** @brief Enable the minimum connection event length mode.
+ *
+ * For the complete API description, see sdc_hci_cmd_vs_min_conn_event_length_mode_enable().
+ *
+ * @param[in] params Input parameters.
+ *
+ * @return 0 on success or negative error value on failure.
+ */
+int hci_vs_sdc_min_conn_event_length_mode_enable(
+	const sdc_hci_cmd_vs_min_conn_event_length_mode_enable_t *params);
+
 /** @brief Iso Read Tx Timestamp.
  *
  * For the complete API description, see sdc_hci_cmd_vs_iso_read_tx_timestamp().

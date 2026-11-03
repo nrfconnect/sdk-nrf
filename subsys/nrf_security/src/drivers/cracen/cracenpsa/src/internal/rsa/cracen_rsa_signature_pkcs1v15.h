@@ -62,6 +62,7 @@ int cracen_rsa_pkcs1v15_sign_message(struct cracen_rsa_key *rsa_key,
  * @retval ::SX_ERR_INPUT_BUFFER_TOO_SMALL   @p digest too short for the hash algorithm, or
  *                                           RSA modulus too small for the hash algorithm.
  * @retval ::SX_ERR_WORKMEM_BUFFER_TOO_SMALL Internal work memory insufficient.
+ * @retval ::SX_ERR_OUTPUT_BUFFER_TOO_SMALL  Output buffer too short for the signature.
  * @retval ::SX_ERR_PK_RETRY                 Hardware resources unavailable; retry later.
  * @retval Other SX status codes from @ref cracen_status_codes on internal errors.
  */

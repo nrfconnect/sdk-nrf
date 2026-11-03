@@ -28,10 +28,11 @@ The :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN` choice selects how much
    * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_FULL` (default)
      - No RAM power-down call is made.
        All application RAM stays retained.
-   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY`
+   * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY`
      - Calls :c:func:`power_down_unused_ram` at boot.
-       The unused memory range is computed from the image layout, ensuring that the active image, stack, and buffer memory are never modified.
-       This is the recommended tier for a Wi-Fi build.
+       Only the RAM used by the running image remains powered, the rest is powered down.
+       RAM beyond ``_image_ram_end`` is powered down, placing the runtime heap there can cause a bus fault (see :ref:`lib_ram_pwrdn`).
+       Do not use this option in Wi-Fi builds because it is known to cause issues.
    * - :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_64K`
      - Calls :c:func:`power_down_ram` at boot to power down everything past the first 64 KiB of application RAM.
        Only safe if the whole image fits below that boundary.
@@ -46,7 +47,7 @@ The :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN` choice selects how much
        Only safe if the whole image fits below that boundary.
 
 Powering down RAM that the running image still uses corrupts live data, so the fixed-size tiers only make sense for a trivial image that fits below the selected boundary.
-For a Wi-Fi build, use :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_UNUSED_ONLY` instead.
+For Wi-Fi builds, keep the default :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_FULL` tier.
 
 Console suspend and resume
 **************************

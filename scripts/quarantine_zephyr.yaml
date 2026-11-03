@@ -410,6 +410,7 @@
 
 - scenarios:
     - .*secure_storage.*
+    - arch.interrupt
     - benchmark.crypto.psa
     - cpp.libcxx.glibcxx.picolibc
     - drivers.can.shell
@@ -511,14 +512,6 @@
     - nrf54l15dk/nrf54l15/cpuflpr
     - qemu_cortex_m3/ti_lm3s6965
   comment: "https://github.com/zephyrproject-rtos/zephyr/issues/74536 - overflow"
-
-- scenarios:
-    - sample.net.openthread.coprocessor
-    - sample.net.openthread.coprocessor.usb
-    - sample.openthread.coprocessor.rcp
-  platforms:
-    - nrf52840dk/nrf52840
-  comment: "Not compatible with NCS. https://nordicsemi.atlassian.net/browse/KRKNWK-20183"
 
 - scenarios:
     - buildsystem.sbom.spdx
@@ -690,6 +683,7 @@
 
 - scenarios:
     - bluetooth.mesh.settings
+    - bluetooth.mesh.settings.no_bt_settings
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"

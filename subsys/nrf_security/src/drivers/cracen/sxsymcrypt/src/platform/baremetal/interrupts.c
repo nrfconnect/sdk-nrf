@@ -108,6 +108,28 @@ uint32_t cracen_wait_for_cm_interrupt(void)
 	return cracen_wait_for_interrupt(cracen_irq_event_for_cryptomaster);
 }
 
+void cracen_cm_interrupt_mask(void)
+{
+	nrf_cracen_int_disable(NRF_CRACEN, CRACEN_INTENCLR_CRYPTOMASTER_Msk);
+}
+
+void cracen_cm_interrupt_unmask(void)
+{
+	nrf_cracen_int_enable(NRF_CRACEN, CRACEN_INTENSET_CRYPTOMASTER_Msk);
+}
+
+uint32_t cracen_cm_interrupt_take(void)
+{
+	nrf_cracen_event_clear(NRF_CRACEN, NRF_CRACEN_EVENT_CRYPTOMASTER);
+	/* An event raised while unmasked can leave the interrupt pending before the ISR has run,
+	 * as before the kernel starts, and the ISR would then find no event. A PKE interrupt
+	 * that is still raised becomes pending again.
+	 */
+	NVIC_ClearPendingIRQ(CRACEN_IRQn);
+
+	return nrf_security_event_take(cracen_irq_event_for_cryptomaster, UINT32_MAX);
+}
+
 uint32_t cracen_wait_for_pke_interrupt(void)
 {
 #if !defined(__NRF_TFM__)

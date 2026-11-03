@@ -87,6 +87,14 @@ zephyr_compile_definitions(UNITY_INCLUDE_DOUBLE)
 
 target_sources(app PRIVATE src/location_test.c)
 
+# The library uses the Wi-Fi channel validation from Zephyr Wi-Fi utilities, which are not
+# enabled because Wi-Fi management is mocked.
+if(CONFIG_LOCATION_METHOD_WIFI)
+  target_sources(app PRIVATE ${ZEPHYR_BASE}/subsys/net/l2/wifi/wifi_utils.c)
+  set_source_files_properties(${ZEPHYR_BASE}/subsys/net/l2/wifi/wifi_utils.c
+    PROPERTIES COMPILE_DEFINITIONS "CONFIG_NET_L2_WIFI_MGMT_LOG_LEVEL=0")
+endif()
+
 target_include_directories(app PRIVATE ${ZEPHYR_NRF_MODULE_DIR}/include/net)
 
 # This is needed due to parsing issues in CMock for static inline declarations

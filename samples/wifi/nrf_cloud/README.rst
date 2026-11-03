@@ -36,12 +36,10 @@ This sample implements or demonstrates the following features:
   Available only when built with the CoAP transport.
   See :ref:`wifi_nrf_cloud_memfault` for details.
 * Periodic Wi-Fi location tracking by scanning nearby access points and submitting them to nRF Cloud, using the :ref:`lib_location` library.
-* Fake temperature measurements.
+* Temperature measurements using the on-die temperature sensor, or simulated measurements on boards without one.
 * Transmission of sensor samples to the nRF Cloud portal as `nRF Cloud Device Messages`_.
 * Construction of valid `nRF Cloud Device Messages`_.
 * Minimal LED status indication using the `Zephyr LED API`_.
-* Definition of a user config Trace Event (``temperature_alert``).
-* Transmission of an Alert Trace Event whenever a specified temperature limit is exceeded.
 
 .. _wifi_nrf_cloud_structure_and_theory_of_operation:
 
@@ -116,7 +114,6 @@ It performs the following major tasks:
 * Periodically samples temperature data (using the :file:`src/temperature.c` file).
 * Constructs timestamped sensor sample and location `device messages <nRF Cloud Device Messages_>`_.
 * Sends sensor sample and location device messages to the :ref:`wifi_nrf_cloud_device_message_queue`.
-* Prints temperature alerts.
 
 .. note::
    Periodic location tracking is handled by the :ref:`lib_location` library once it has been requested, whereas temperature samples are individually requested by the Main Application Loop.
@@ -138,7 +135,10 @@ The CoAP shadow delta checking thread performs the following tasks:
 Temperature sensing
 ===================
 
-Temperature sensing is implemented in :file:`src/temperature.c`, including generation of simulated temperature readings.
+Temperature sensing is implemented in the :file:`src/temperature.c` file.
+If the ``temp`` devicetree node is enabled, the on-die temperature sensor is read using the :ref:`zephyr:sensor` API.
+This is the case for the nRF7120 and nRF54LM20 DKs.
+On boards without an on-die temperature sensor available to the application core, such as the nRF7002 DK with nRF5430 as a host MCU, simulated temperature readings are generated instead.
 For temperature readings to be visible in the nRF Cloud portal, they must be marked as enabled in the `Device Shadow <nRF Cloud Device Shadows_>`_ (handled in :file:`src/cloud_connection.c`).
 
 .. _wifi_nrf_cloud_location_tracking:
@@ -210,6 +210,24 @@ The Memfault SDK drives this upload on its own periodic-upload timer (:kconfig:o
 To avoid this timer firing before the device actually has network or cloud connectivity, it is disabled by default (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`) and only enabled once the sample's cloud connection loop confirms connectivity (see the :c:func:`cloud_ready` function in the :file:`src/cloud_connection.c` file).
 This same timer also drives FOTA checks when :ref:`wifi_nrf_cloud_fota` is enabled.
 
+.. _wifi_nrf_cloud_memfault_buttons:
+
+Memfault button actions
+=======================
+
+The periodic-upload timer fires only once in :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_INTERVAL_SECS`, and metrics heartbeats are only captured once in :kconfig:option:`CONFIG_MEMFAULT_METRICS_HEARTBEAT_INTERVAL_SECS` (one hour by default).
+To show how an application can drive Memfault on demand, the sample also uses the following DK buttons (:kconfig:option:`CONFIG_SAMPLE_MEMFAULT_BUTTONS`, see the :file:`src/memfault_buttons.c` file) to trigger these actions:
+
+* First button (``sw0`` devicetree alias) - Captures a metrics heartbeat (:c:func:`memfault_metrics_heartbeat_debug_trigger`) and posts all pending Memfault chunks (:c:func:`memfault_zephyr_port_post_data_return_size`).
+* Second button (``sw1`` devicetree alias) - Checks for a FOTA update (:c:func:`memfault_zephyr_fota_start`), requires :ref:`wifi_nrf_cloud_fota` to be enabled.
+
+Depending on the DK, these buttons are labeled as **Button 1** and **Button 2**, or **Button 0** and **Button 1**.
+The sample logs the labels of the buttons at startup.
+Button presses are ignored until the sample is connected to nRF Cloud.
+
+.. note::
+   Button actions are disabled on the ``nrf7002dk/nrf5340/cpuapp/ns``, ``nrf54lm20dk/nrf54lm20a/cpuapp/ns``, and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+
 .. _wifi_nrf_cloud_fota:
 
 Memfault FOTA
@@ -221,6 +239,7 @@ Enable it with :kconfig:option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :file:`src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
 * Drives the actual FOTA check periodically and independently, through the Memfault SDK's own periodic-upload timer (:kconfig:option:`CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK`), only once the app has confirmed nRF Cloud connectivity (see :kconfig:option:`CONFIG_MEMFAULT_PERIODIC_UPLOAD_ENABLED_DEFAULT`).
+* Lets you trigger a FOTA check on demand with a button press (see :ref:`wifi_nrf_cloud_memfault_buttons`).
 * Reboots automatically (through the sample's reboot helper) to apply a downloaded update.
 
 This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud's native FOTA job-polling API, for application updates.

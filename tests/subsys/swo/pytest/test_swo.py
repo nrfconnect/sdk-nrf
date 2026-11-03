@@ -98,13 +98,13 @@ def test_swo_logging(dut: DeviceAdapter):
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp": {
-            "device": "NRF54LV10A_M33",
+            "device": "NRF54LC10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf54lc10dk@0.8.0/nrf54lc10a/cpuapp/ns": {
-            "device": "NRF54LV10A_M33",
+            "device": "NRF54LC10A_M33",
             "cpufreq": 128000000,
             "swofreq": 1000000,
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
@@ -128,6 +128,12 @@ def test_swo_logging(dut: DeviceAdapter):
             "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
         },
         "nrf7120dk/nrf7120/cpuapp/ns": {
+            "device": "Cortex-M33",
+            "cpufreq": 256000000,
+            "swofreq": 1000000,
+            "args": f"-jlinkscriptfile {TRACEPORT_JLINK_SCRIPT}",
+        },
+        "nrf7120dk/nrf7120e/cpuapp": {
             "device": "Cortex-M33",
             "cpufreq": 256000000,
             "swofreq": 1000000,

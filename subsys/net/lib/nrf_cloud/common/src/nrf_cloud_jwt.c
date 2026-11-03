@@ -206,9 +206,19 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 		return -EINVAL;
 	}
 
+	uint32_t exp_delta_s = time_valid_s;
+
+	if (time_valid_s > NRF_CLOUD_JWT_VALID_TIME_S_MAX) {
+		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_MAX;
+	} else if (time_valid_s == 0) {
+		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_DEF;
+	}
+
+#if defined(CONFIG_NRF_CLOUD_JWT_SOURCE_APP)
+	return nrf_cloud_jwt_app_generate(exp_delta_s, jwt_buf, jwt_buf_sz);
+#else
 	int err;
 	const char *id_ptr;
-	uint32_t exp_delta_s = time_valid_s;
 	int sec_tag = IS_ENABLED(CONFIG_NRF_CLOUD_COAP) ? nrf_cloud_sec_tag_coap_jwt_get()
 							: nrf_cloud_sec_tag_get();
 	const char *subject;
@@ -223,11 +233,6 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 		return -ETIME;
 	}
 #endif
-	if (time_valid_s > NRF_CLOUD_JWT_VALID_TIME_S_MAX) {
-		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_MAX;
-	} else if (time_valid_s == 0) {
-		exp_delta_s = NRF_CLOUD_JWT_VALID_TIME_S_DEF;
-	}
 
 	if (!IS_ENABLED(CONFIG_NRF_CLOUD_JWT_SOURCE_CUSTOM) &&
 	    (IS_ENABLED(CONFIG_NRF_CLOUD_CLIENT_ID_SRC_INTERNAL_UUID) ||
@@ -268,4 +273,5 @@ int nrf_cloud_jwt_generate(uint32_t time_valid_s, char *const jwt_buf, size_t jw
 #endif
 
 	return err;
+#endif /* CONFIG_NRF_CLOUD_JWT_SOURCE_APP */
 }

@@ -46,22 +46,8 @@ int set_monotonic_version(counter_t version, uint16_t slot)
 	LOG_INF("Setting monotonic counter (version: %d, slot: %d)",
 		version, slot);
 
-	uint16_t num_cnt_slots;
-	int err;
-
-	err = num_monotonic_counter_slots(BL_MONOTONIC_COUNTERS_DESC_NSIB, &num_cnt_slots);
-	if (err != 0) {
-		LOG_ERR("Failed during reading of the number of the counter slots, error: %d",
-		       err);
-		return err;
-	}
-
-	if (num_cnt_slots == 0) {
-		LOG_ERR("Monotonic version counter is disabled.");
-		return -EINVAL;
-	}
-
-	err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB, (version << 1) | !slot);
+	int err = set_monotonic_counter(BL_MONOTONIC_COUNTERS_DESC_NSIB,
+					(version << 1) | !slot);
 	if (err != 0) {
 		LOG_ERR("Failed during setting the monotonic counter, error: %d", err);
 	}

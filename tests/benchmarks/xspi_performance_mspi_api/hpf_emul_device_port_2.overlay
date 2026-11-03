@@ -1,0 +1,57 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/delete-node/ &mx25r64;
+
+&hpf_mspi {
+	dut_mspi_dev: emul_device@1 {
+		compatible = "zephyr,emul-device-mspi";
+		status = "okay";
+		reg = <1>;
+
+		mspi-max-frequency = <DT_FREQ_M(4)>;
+		mspi-io-mode = "MSPI_IO_MODE_QUAD_1_4_4";
+		mspi-data-rate = "MSPI_DATA_RATE_SINGLE";
+		mspi-hardware-ce-num = <1>;
+		mspi-cpp-mode = "MSPI_CPP_MODE_0";
+		mspi-endian = "MSPI_BIG_ENDIAN";
+		mspi-ce-polarity = "MSPI_CE_ACTIVE_LOW";
+	};
+};
+
+&pinctrl {
+	hpf_mspi_default: hpf_mspi_default {
+		group1 {
+			psels = <NRF_PSEL(HPF_MSPI_SCK, 2, 1)>,
+				<NRF_PSEL(HPF_MSPI_DQ0, 2, 2)>,
+				<NRF_PSEL(HPF_MSPI_DQ1, 2, 4)>,
+				<NRF_PSEL(HPF_MSPI_DQ2, 2, 3)>,
+				<NRF_PSEL(HPF_MSPI_DQ3, 2, 0)>,
+				<NRF_PSEL(HPF_MSPI_CS0, 2, 5)>,
+				<NRF_PSEL(HPF_MSPI_CS1, 2, 6)>;
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
+			bias-pull-up;
+		};
+	};
+
+	hpf_mspi_sleep: hpf_mspi_sleep {
+		group1 {
+			psels = <NRF_PSEL(HPF_MSPI_SCK, 2, 1)>,
+				<NRF_PSEL(HPF_MSPI_DQ0, 2, 2)>,
+				<NRF_PSEL(HPF_MSPI_DQ1, 2, 4)>,
+				<NRF_PSEL(HPF_MSPI_DQ2, 2, 3)>,
+				<NRF_PSEL(HPF_MSPI_DQ3, 2, 0)>,
+				<NRF_PSEL(HPF_MSPI_CS0, 2, 5)>,
+				<NRF_PSEL(HPF_MSPI_CS1, 2, 6)>;
+			low-power-enable;
+		};
+	};
+};
+
+&hpf_mspi {
+	pinctrl-0 = <&hpf_mspi_default>;
+	pinctrl-1 = <&hpf_mspi_sleep>;
+};

@@ -44,6 +44,33 @@ static psa_status_t derive_pk(const ml_dsa_params_t *alg_params, const uint8_t *
 	return status;
 }
 
+static psa_status_t verify_sk(const ml_dsa_params_t *alg_params, uint8_t domain,
+			      const uint8_t *oid, size_t oid_len,
+			      const uint8_t *key_buffer, size_t key_buffer_size,
+			      const uint8_t *input, size_t input_length,
+			      const uint8_t *context, size_t context_length,
+			      const uint8_t *signature, size_t signature_length)
+{
+	psa_status_t status = PSA_ERROR_CORRUPTION_DETECTED;
+	uint8_t public_key[ML_DSA_PK_SIZE_MAX_BYTES];
+
+	if (key_buffer_size != ML_DSA_KEY_PAIR_SEED_SZ_BYTES ||
+	    context_length > ML_DSA_MAX_CONTEXT_LENGTH ||
+	    signature_length != alg_params->sig_size) {
+		return PSA_ERROR_INVALID_ARGUMENT;
+	}
+
+	status = derive_pk(alg_params, key_buffer, public_key);
+	if (status != PSA_SUCCESS) {
+		return status;
+	}
+
+	return cracen_ml_dsa_verify_internal(alg_params, public_key, signature,
+					     domain,
+					     context, context_length, oid, oid_len,
+					     input, input_length);
+}
+
 /** Implements FIPS 204, Algorithm 3 (ML-DSA.Verify) or Algorithm 5 (HashML-DSA.Verify),
  *  depending on the is_message parameter.
  */
@@ -59,8 +86,9 @@ psa_status_t cracen_ml_dsa_verify(bool is_message,
 	psa_key_type_t key_type = psa_get_key_type(attributes);
 	const uint8_t *oid = NULL;
 	size_t oid_len = 0;
+	uint8_t domain = is_message ? 0 : 1;
 
-	if (key_type != PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY ||
+	if (!PSA_KEY_TYPE_IS_ML_DSA(key_type) ||
 	    (is_message && alg != PSA_ALG_ML_DSA && alg != PSA_ALG_DETERMINISTIC_ML_DSA) ||
 	    (!is_message && !PSA_ALG_IS_HASH_ML_DSA(alg))) {
 		return PSA_ERROR_NOT_SUPPORTED;
@@ -88,6 +116,17 @@ psa_status_t cracen_ml_dsa_verify(bool is_message,
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
+	if (key_type == PSA_KEY_TYPE_ML_DSA_KEY_PAIR) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT) ||
+		    IS_ENABLED(PSA_NEED_CRACEN_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT)) {
+			return verify_sk(alg_params, domain, oid, oid_len,
+					 key_buffer, key_buffer_size, input, input_length,
+					 context, context_length, signature, signature_length);
+		} else {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+	}
+
 	if (context_length > ML_DSA_MAX_CONTEXT_LENGTH ||
 	    key_buffer_size  != alg_params->pk_size    ||
 	    signature_length != alg_params->sig_size) {
@@ -95,7 +134,7 @@ psa_status_t cracen_ml_dsa_verify(bool is_message,
 	}
 
 	return cracen_ml_dsa_verify_internal(alg_params, key_buffer, signature,
-					     is_message ? 0 : 1,
+					     domain,
 					     context, context_length, oid, oid_len,
 					     input, input_length);
 }

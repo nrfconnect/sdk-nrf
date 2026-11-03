@@ -79,11 +79,9 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 		return SX_ERR_INVALID_ARG;
 	}
 
-	/* the ciphertext must not be longer than the modulus (modified step 1.b
-	 * of RSAES-OAEP-DECRYPT)
-	 */
-	if (text->sz > modulussz) {
-		return SX_ERR_TOO_BIG;
+	/* step 1.b of RSAES-OAEP-DECRYPT in RFC 8017 */
+	if (text->sz != modulussz) {
+		return SX_ERR_INVALID_CIPHERTEXT;
 	}
 	/* modular exponentiation m^e mod n (RSAEP encryption primitive) */
 	int input_sizes[NUMBER_OF_SLOTS];
@@ -141,17 +139,11 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 	datab += digestsz;
 
 	/* Scan the padding string PS and find the 0x01 octet that separates PS
-	 * from the message M. Pointer datablockend points to the first octet after DB.
+	 * from the message M. The scan stops at the last octet of DB at the latest, so
+	 * datab stays inside DB even when DB has no 0x01 octet.
 	 */
-	datab += constant_count(datab, (size_t)(workmem.datablockend - datab), 0x00, MATCH_EQUAL);
+	datab += constant_count(datab, modulussz - 2 * digestsz - 2, 0x00, MATCH_EQUAL);
 
-	r |= (datab == workmem.datablockend);
-
-	/* The following memory access is never a problem, even in the case
-	 * where datab points one byte past the end of the EM. In fact, in such case,
-	 * datab would still be pointing inside the workmem area, more precisely in the
-	 * part dedicated to the MGF1XOR sub-function.
-	 */
 	r |= (*datab != 0x01);
 	datab++;
 

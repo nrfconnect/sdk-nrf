@@ -1498,10 +1498,13 @@ static int dect_phy_rx_cmd(const struct shell *shell, size_t argc, char **argv)
 
 	sys_getopt_init();
 
-	sys_getopt_optind = 2;
 	if (argv[1] != NULL && !strcmp(argv[1], "stop")) {
 		dect_phy_ctrl_rx_stop();
 	} else if (argv[1] != NULL && !strcmp(argv[1], "start")) {
+		struct sys_getopt_state *getopt_state = sys_getopt_state_get();
+
+		getopt_state->optind = 2;
+
 		/* Defaults */
 		params.handle = DECT_PHY_COMMON_RX_CMD_HANDLE;
 		params.channel = 1665;
@@ -1572,8 +1575,9 @@ static int dect_phy_rx_cmd(const struct shell *shell, size_t argc, char **argv)
 				goto show_usage;
 			}
 		}
-		if (sys_getopt_optind < argc) {
-			desh_error("Arguments without '-' not supported: %s", argv[argc - 1]);
+		if (getopt_state->optind < (int)argc) {
+			desh_error("Arguments without '-' not supported: %s",
+				   argv[getopt_state->optind]);
 			goto show_usage;
 		}
 

@@ -44,6 +44,13 @@ extern void at_monitor_dispatch(const char *at_notif);
  */
 extern void lte_lc_edrx_on_modem_cfun(int mode, void *ctx);
 
+/* xbandlock_runtime_lock_apply() and xbandlock_runtime_lock_clear() are implemented in lte_lc
+ * library and we'll call them directly to fake the modem hooks and to reset the stored runtime
+ * band lock between tests.
+ */
+extern void xbandlock_runtime_lock_apply(void);
+extern void xbandlock_runtime_lock_clear(void);
+
 static void lte_lc_connect_inprogress_work_fn(struct k_work *work)
 {
 	int ret;
@@ -319,6 +326,11 @@ static void lte_lc_event_handler(const struct lte_lc_evt *const evt)
 		}
 		break;
 
+	case LTE_LC_EVT_UICC_STATE:
+		TEST_ASSERT_EQUAL(test_event_data[index].uicc_state.state, evt->uicc_state.state);
+		TEST_ASSERT_EQUAL(test_event_data[index].uicc_state.cause, evt->uicc_state.cause);
+		break;
+
 	default:
 		TEST_FAIL_MESSAGE("Unhandled test event");
 		break;
@@ -341,6 +353,7 @@ void setUp(void)
 	mock_nrf_modem_at_Init();
 
 	helper_lte_lc_data_clear();
+	xbandlock_runtime_lock_clear();
 	lte_lc_register_handler(lte_lc_event_handler);
 
 	lte_lc_callback_count_occurred = 0;
@@ -385,6 +398,9 @@ void enable_notifications(void)
 	}
 	if (IS_ENABLED(CONFIG_LTE_LC_MODEM_EVENTS_MODULE)) {
 		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
+	}
+	if (IS_ENABLED(CONFIG_LTE_LC_UICC_STATE_MODULE)) {
+		__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
 	}
 }
 
@@ -2166,6 +2182,9 @@ void test_lte_lc_func_mode_set_all_modes(void)
 	};
 
 	for (size_t i = 0; i < ARRAY_SIZE(modes); ++i) {
+		if (modes[i] == LTE_LC_FUNC_MODE_ACTIVATE_UICC) {
+			__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
+		}
 		sprintf(at_cmd, "AT+CFUN=%d", modes[i]);
 		__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_SUCCESS);
 		ret = lte_lc_func_mode_set(modes[i]);
@@ -2688,6 +2707,138 @@ void test_lte_lc_cscon(void)
 	/* Missing RRC mode value does not trigger event */
 	strcpy(at_notif, "+CSCON:\r\n");
 	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state(void)
+{
+	int index = 0;
+
+	/* Cause omitted */
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_NONE;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_NONE;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED;
+	index++;
+
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PUK_REQUIRED;
+	index++;
+
+	/* Highest defined cause value */
+	test_event_data[index].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[index].uicc_state.state = LTE_LC_UICC_STATE_INITIALIZED;
+	test_event_data[index].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_USIM_PROFILE_CHANGED;
+	index++;
+
+	lte_lc_callback_count_expected = index;
+
+	strcpy(at_notif, "%XSIM: 1\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0,1\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 0,3\r\n");
+	at_monitor_dispatch(at_notif);
+
+	strcpy(at_notif, "%XSIM: 1,11\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_invalid(void)
+{
+	/* None of these trigger an event */
+	lte_lc_callback_count_expected = 0;
+
+	/* Invalid state */
+	strcpy(at_notif, "%XSIM: 2\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Missing state */
+	strcpy(at_notif, "%XSIM:\r\n");
+	at_monitor_dispatch(at_notif);
+
+	/* Non-numeric state */
+	strcpy(at_notif, "%XSIM: \"1\"\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_unknown_cause(void)
+{
+	/* Unknown cause is forwarded as reported by the modem */
+	test_event_data[0].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[0].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[0].uicc_state.cause = 12;
+
+	lte_lc_callback_count_expected = 1;
+
+	strcpy(at_notif, "%XSIM: 0,12\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_subscribe_fail_is_ignored(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CEREG=5", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CSCON=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XMODEMSLEEP=1,5000,1200000", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XT3412=1,5000,1200000", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_SUCCESS);
+
+	/* %XSIM not supported by the modem firmware */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_FAILURE);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", EXIT_SUCCESS);
+
+	ret = lte_lc_normal();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_uicc_state_subscribe_on_uicc_activation(void)
+{
+	int ret;
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+	test_event_data[0].type = LTE_LC_EVT_UICC_STATE;
+	test_event_data[0].uicc_state.state = LTE_LC_UICC_STATE_NOT_INITIALIZED;
+	test_event_data[0].uicc_state.cause = LTE_LC_UICC_STATE_CAUSE_PIN_REQUIRED;
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
+
+	lte_lc_callback_count_expected = 1;
+
+	/* Only %XSIM is subscribed, not the LTE notifications */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=41", EXIT_SUCCESS);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_UICC);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	strcpy(at_notif, "%XSIM: 0,1\r\n");
+	at_monitor_dispatch(at_notif);
+}
+
+void test_lte_lc_uicc_state_subscribe_fail_does_not_block_uicc_activation(void)
+{
+	int ret;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", -NRF_ENOMEM);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=41", EXIT_SUCCESS);
+
+	ret = lte_lc_func_mode_set(LTE_LC_FUNC_MODE_ACTIVATE_UICC);
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
 }
 
 void test_lte_lc_xt3412(void)
@@ -4482,6 +4633,7 @@ void test_lte_lc_modem_events_enable_fallback(void)
 	/* Return failure to trigger fallback to legacy events */
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=2", EXIT_FAILURE);
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%MDMEV=1", EXIT_SUCCESS);
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XSIM=1", EXIT_SUCCESS);
 
 	__mock_nrf_modem_at_printf_ExpectAndReturn("AT+CFUN=1", 0);
 
@@ -4497,7 +4649,7 @@ void test_lte_lc_modem_events(void)
 		TEST_IGNORE();
 	}
 
-	lte_lc_callback_count_expected = 11;
+	lte_lc_callback_count_expected = 13;
 
 	strcpy(at_notif, "%MDMEV: ME OVERHEATED\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
@@ -4532,6 +4684,18 @@ void test_lte_lc_modem_events(void)
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 2\r\n");
 	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
 	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_SEARCH_DONE;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_PERIODIC_SEARCH_START;
+	at_monitor_dispatch(at_notif);
+	index++;
+
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 4\r\n");
+	test_event_data[index].type = LTE_LC_EVT_MODEM_EVENT;
+	test_event_data[index].modem_evt.type = LTE_LC_MODEM_EVT_PERIODIC_SEARCH_DONE;
 	at_monitor_dispatch(at_notif);
 	index++;
 
@@ -4584,7 +4748,7 @@ void test_lte_lc_modem_events_unknown(void)
 {
 	/* No lte_lc event generated for these notifications */
 
-	strcpy(at_notif, "%MDMEV: SEARCH STATUS 3\r\n");
+	strcpy(at_notif, "%MDMEV: SEARCH STATUS 5\r\n");
 	at_monitor_dispatch(at_notif);
 
 	strcpy(at_notif, "%MDMEV: SEARCH STATUS 1 and then some\r\n");
@@ -5780,6 +5944,240 @@ void test_lte_lc_env_eval_cancel(void)
 
 	ret = lte_lc_env_eval_cancel();
 	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+/* Modem responds with ERROR */
+static void band_lock_at_error_expect(const char *at_cmd)
+{
+	__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, EXIT_FAILURE);
+}
+
+/* Modem responds with +CME ERROR 518: Not allowed in active state */
+static void band_lock_at_active_state_expect(const char *at_cmd)
+{
+	/* Error type in bits 16-23 and error code in bits 0-15, see nrf_modem_at_err_type() */
+	const int cme_518 = (NRF_MODEM_AT_CME_ERROR << 16) | 518;
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(at_cmd, cme_518);
+}
+
+void test_lte_lc_band_lock_set_runtime_mask(void)
+{
+	int ret;
+	const uint16_t bands[] = { 13, 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000000001000\"",
+						   EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_runtime_mask_and_list(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4, 13, 255, 256 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(
+		"AT%XBANDLOCK=2,\"1000000001000\",\"255,256\"", EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_runtime_list_only(void)
+{
+	int ret;
+	const uint16_t bands[] = { 256, 255 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,,\"256,255\"", EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_set_highest_mask_band(void)
+{
+	int ret;
+	const uint16_t bands[] = { 88, 1 };
+	char expected[sizeof("AT%XBANDLOCK=2,\"\"") + 88];
+
+	/* Band 88 is the MSB and band 1 the LSB of an 88 character bit string. */
+	memset(expected, 0, sizeof(expected));
+	strcpy(expected, "AT%XBANDLOCK=2,\"1");
+	memset(&expected[strlen(expected)], '0', 86);
+	strcat(expected, "1\"");
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn(expected, EXIT_SUCCESS);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+}
+
+void test_lte_lc_band_lock_runtime_applied(void)
+{
+	int ret;
+	const uint16_t runtime_bands[] = { 1, 4 };
+	const uint16_t permanent_bands[] = { 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, runtime_bands,
+				   ARRAY_SIZE(runtime_bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Permanent band lock is stored by the modem and is not applied again */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=1,\"1000\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_PERMANENT, permanent_bands,
+				   ARRAY_SIZE(permanent_bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Modem init and power off hooks apply the runtime band lock again */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=0", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* No band lock is applied after it has been removed */
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_set_before_modem_init_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+	const uint16_t new_bands[] = { 13 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Modem library is not initialized */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000000000000\"",
+						   -NRF_EPERM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EPERM, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=1,\"1000000000000\"",
+						   -NRF_EPERM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_PERMANENT, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EPERM, ret);
+
+	/* The stored runtime band lock is not changed */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_remove_before_modem_init_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	/* Modem library is not initialized */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=0", -NRF_EPERM);
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EPERM, ret);
+
+	/* The stored runtime band lock is not cleared */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_set_inval(void)
+{
+	int ret;
+	const uint16_t bands[] = { 4 };
+	const uint16_t bands_with_zero[] = { 4, 0 };
+
+	/* Erase-protected band lock is not supported */
+	ret = lte_lc_band_lock_set(3, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(0, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, NULL, 1);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, 0);
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands_with_zero,
+				   ARRAY_SIZE(bands_with_zero));
+	TEST_ASSERT_EQUAL(-EINVAL, ret);
+}
+
+void test_lte_lc_band_lock_set_too_many_bands(void)
+{
+	int ret;
+	uint16_t bands[40];
+
+	/* Band list above band 88 does not fit the buffer */
+	for (size_t i = 0; i < ARRAY_SIZE(bands); i++) {
+		bands[i] = 100 + i;
+	}
+
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(-E2BIG, ret);
+}
+
+void test_lte_lc_band_lock_set_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+	const uint16_t new_bands[] = { 13 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1000000000000\"",
+						   -NRF_ENOMEM);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	band_lock_at_error_expect("AT%XBANDLOCK=2,\"1000000000000\"");
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+
+	band_lock_at_active_state_expect("AT%XBANDLOCK=2,\"1000000000000\"");
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, new_bands, ARRAY_SIZE(new_bands));
+	TEST_ASSERT_EQUAL(-EBUSY, ret);
+
+	/* The stored runtime band lock is not changed by a failed set */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
+}
+
+void test_lte_lc_band_lock_remove_fail(void)
+{
+	int ret;
+	const uint16_t bands[] = { 1, 4 };
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	ret = lte_lc_band_lock_set(LTE_LC_BAND_LOCK_RUNTIME, bands, ARRAY_SIZE(bands));
+	TEST_ASSERT_EQUAL(EXIT_SUCCESS, ret);
+
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=0", -NRF_ENOMEM);
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EFAULT, ret);
+
+	band_lock_at_error_expect("AT%XBANDLOCK=0");
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+
+	band_lock_at_active_state_expect("AT%XBANDLOCK=0");
+	ret = lte_lc_band_lock_remove();
+	TEST_ASSERT_EQUAL(-EBUSY, ret);
+
+	/* The stored runtime band lock is not cleared by a failed removal */
+	__mock_nrf_modem_at_printf_ExpectAndReturn("AT%XBANDLOCK=2,\"1001\"", EXIT_SUCCESS);
+	xbandlock_runtime_lock_apply();
 }
 
 /* It is required to be added to each test. That is because unity's

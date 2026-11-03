@@ -7,9 +7,10 @@
 #define _TEMPERATURE_H_
 
 /**
- * @brief Take a fake temperature sample.
+ * @brief Take a temperature sample.
  *
- * Returns a pseudorandom dummy temperature reading.
+ * Reads the on-die temperature sensor if the temp devicetree node is enabled.
+ * Otherwise, returns a pseudorandom dummy temperature reading.
  *
  * @param[out] temp - Pointer to the double to be filled with the taken temperature sample.
  * @return int - 0 on success, otherwise, negative error code.

@@ -112,15 +112,16 @@ static int sx_aead_create_chacha20poly1305(struct sxaead *aead_ctx, const struct
 		return SX_ERR_INVALID_KEY_SZ;
 	}
 
+	if (tagsz != SX_CHACHAPOLY_TAG_SIZE) {
+		return SX_ERR_INVALID_TAG_SIZE;
+	}
+
 	/* ChaCha20Poly1305 doesn't use countermeasures */
 	aead_ctx->has_countermeasures = false;
 	aead_ctx->key = key;
-
-	if (key->prepare_key) {
-		err = key->prepare_key(key->user_data);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = sx_aead_prepare_key(aead_ctx);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	aead_ctx->cfg = &ba417chachapolycfg;
@@ -163,12 +164,9 @@ static int sx_blkcipher_create_chacha20(struct sxblkcipher *cipher_ctx, struct s
 	}
 
 	cipher_ctx->key = key;
-
-	if (key->prepare_key) {
-		err = key->prepare_key(key->user_data);
-		if (err != SX_OK) {
-			return err;
-		}
+	err = sx_blkcipher_prepare_key(cipher_ctx);
+	if (err != SX_OK) {
+		return err;
 	}
 
 	cipher_ctx->cfg = &ba417chacha20cfg;

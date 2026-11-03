@@ -899,8 +899,8 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 			LOG_ERR("%s: Failed to set interface flags: %d",
 					      __func__,
 						evnt_vif_state->status);
-			goto out;
 		}
+		vif_ctx->ifflags_status = evnt_vif_state->status;
 		vif_ctx->ifflags = true;
 		break;
 #if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
@@ -1221,7 +1221,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_event_callback(void *mac_dev_ctx,
 	case NRF_WIFI_HOST_RPU_MSG_TYPE_UMAC:
 		status = umac_event_ctrl_process(fmac_dev_ctx,
 						 rpu_msg->msg,
-						 rpu_msg->hdr.len);
+						 rpu_msg->hdr.len - sizeof(struct host_rpu_msg));
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: umac_event_ctrl_process failed",

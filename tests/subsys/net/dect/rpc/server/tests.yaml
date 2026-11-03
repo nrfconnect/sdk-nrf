@@ -1,0 +1,24 @@
+tests:
+  net.dect.rpc.server:
+    sysbuild: true
+    platform_allow: native_sim
+    tags:
+      - dect
+      - ci_build
+      - sysbuild
+      - ci_tests_subsys_net_dect
+    integration_platforms:
+      - native_sim
+
+  net.dect.rpc.server.no_shell:
+    sysbuild: true
+    platform_allow: native_sim
+    tags:
+      - dect
+      - ci_build
+      - sysbuild
+      - ci_tests_subsys_net_dect
+    integration_platforms:
+      - native_sim
+    extra_args:
+      - EXTRA_CONF_FILE=shell_disabled.conf

@@ -265,6 +265,23 @@ static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
 	vif_ctx_zep->rssi_record_timestamp_us =
 		k_ticks_to_us_floor64(k_uptime_ticks());
 }
+
+static void nrf_wifi_process_tx_rate_from_tx_done(void *vif_ctx,
+						   unsigned int tx_rate_kbps)
+{
+	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = vif_ctx;
+
+	if (!vif_ctx_zep) {
+		LOG_ERR("%s: vif_ctx_zep is NULL", __func__);
+		return;
+	}
+
+	if (vif_ctx_zep->if_type != NRF_WIFI_IFTYPE_STATION) {
+		return;
+	}
+
+	vif_ctx_zep->tx_rate_kbps = tx_rate_kbps;
+}
 #endif /* CONFIG_NRF71_STA_MODE */
 
 void nrf_wifi_event_get_reg_zep(void *vif_ctx,
@@ -719,6 +736,7 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 	callbk_fns.event_get_ps_info = nrf_wifi_event_proc_get_power_save_info;
 	callbk_fns.cookie_rsp_callbk_fn = nrf_wifi_event_proc_cookie_rsp;
 	callbk_fns.process_rssi_from_rx = nrf_wifi_process_rssi_from_rx;
+	callbk_fns.process_tx_rate_from_tx_done = nrf_wifi_process_tx_rate_from_tx_done;
 	callbk_fns.scan_res_callbk_fn = nrf_wifi_wpa_supp_event_proc_scan_res;
 	callbk_fns.auth_resp_callbk_fn = nrf_wifi_wpa_supp_event_proc_auth_resp;
 	callbk_fns.assoc_resp_callbk_fn = nrf_wifi_wpa_supp_event_proc_assoc_resp;

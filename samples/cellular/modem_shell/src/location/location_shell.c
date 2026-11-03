@@ -13,11 +13,16 @@
 #include <zephyr/posix/unistd.h>
 #endif
 #include <zephyr/sys/sys_getopt.h>
+#include <zephyr/sys/util.h>
 #include <net/nrf_cloud.h>
 #if defined(CONFIG_NRF_CLOUD_COAP)
 #include <net/nrf_cloud_coap.h>
 #endif
 #include <modem/location.h>
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+#include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/net/wifi_utils.h>
+#endif
 #include <dk_buttons_and_leds.h>
 #include <date_time.h>
 #if defined(CONFIG_MOSH_CLOUD_LWM2M)
@@ -84,6 +89,11 @@ static const char location_get_usage_str[] =
 #endif
 	"       [--cellular_timeout <timeout in secs>] [--cellular_cell_count <cell count>]\n"
 	"       [--wifi_timeout <timeout in secs>]\n"
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	"       [--wifi_scan_type <active|passive>] [--wifi_bands <2,5>]\n"
+	"       [--wifi_dwell_active <ms>] [--wifi_dwell_passive <ms>]\n"
+	"       [--wifi_max_bss <count>] [--wifi_channels <channel list>]\n"
+#endif
 	"       [--cloud_resp_disabled]\n"
 	"\n"
 	"Options:\n"
@@ -110,6 +120,14 @@ static const char location_get_usage_str[] =
 	"  --cellular_cell_count, [int]\n"
 	"                              Requested number of cells\n"
 	"  --wifi_timeout, [float]     Wi-Fi timeout in seconds. Zero means timeout is disabled.\n"
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	"  --wifi_scan_type, [str]     Wi-Fi scan type: 'active' or 'passive'.\n"
+	"  --wifi_bands, [str]         Wi-Fi bands to scan, e.g. '2', '5', or '2,5'.\n"
+	"  --wifi_dwell_active, [int]  Active scan dwell time in milliseconds.\n"
+	"  --wifi_dwell_passive, [int] Passive scan dwell time in milliseconds.\n"
+	"  --wifi_max_bss, [int]       Maximum number of Wi-Fi scan results to return.\n"
+	"  --wifi_channels, [str]      Wi-Fi channel list, e.g. '2:1,6,11_5:36'.\n"
+#endif
 	"  --cloud_resp_disabled,      Do not wait for location response from cloud.\n"
 	"                              Valid if CONFIG_LOCATION_SERVICE_EXTERNAL is set.\n"
 	"  -h, --help,                 Shows this help information";
@@ -130,6 +148,14 @@ enum {
 	LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT,
 	LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED,
 	LOCATION_SHELL_OPT_WIFI_TIMEOUT,
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	LOCATION_SHELL_OPT_WIFI_SCAN_TYPE,
+	LOCATION_SHELL_OPT_WIFI_BANDS,
+	LOCATION_SHELL_OPT_WIFI_DWELL_ACTIVE,
+	LOCATION_SHELL_OPT_WIFI_DWELL_PASSIVE,
+	LOCATION_SHELL_OPT_WIFI_MAX_BSS,
+	LOCATION_SHELL_OPT_WIFI_CHANNELS,
+#endif
 };
 
 /* Specifying the expected options */
@@ -151,6 +177,16 @@ static struct sys_getopt_option long_options[] = {
 	 LOCATION_SHELL_OPT_CELLULAR_CELL_COUNT},
 	{"cloud_resp_disabled", sys_getopt_no_argument, 0, LOCATION_SHELL_OPT_CLOUD_RESP_DISABLED},
 	{"wifi_timeout", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_TIMEOUT},
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	{"wifi_scan_type", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_SCAN_TYPE},
+	{"wifi_bands", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_BANDS},
+	{"wifi_dwell_active", sys_getopt_required_argument, 0,
+	 LOCATION_SHELL_OPT_WIFI_DWELL_ACTIVE},
+	{"wifi_dwell_passive", sys_getopt_required_argument, 0,
+	 LOCATION_SHELL_OPT_WIFI_DWELL_PASSIVE},
+	{"wifi_max_bss", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_MAX_BSS},
+	{"wifi_channels", sys_getopt_required_argument, 0, LOCATION_SHELL_OPT_WIFI_CHANNELS},
+#endif
 	{"help", sys_getopt_no_argument, 0, 'h'},
 	{0, 0, 0, 0}};
 
@@ -502,6 +538,20 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 
 	float wifi_timeout = 0;
 	bool wifi_timeout_set = false;
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+	enum location_wifi_scan_type wifi_scan_type = LOCATION_WIFI_SCAN_TYPE_ACTIVE;
+	bool wifi_scan_type_set = false;
+	char wifi_bands_str[16];
+	bool wifi_bands_set = false;
+	int wifi_dwell_active;
+	bool wifi_dwell_active_set = false;
+	int wifi_dwell_passive;
+	bool wifi_dwell_passive_set = false;
+	int wifi_max_bss;
+	bool wifi_max_bss_set = false;
+	char wifi_channels_str[128];
+	bool wifi_channels_set = false;
+#endif
 
 	arg_cloud_gnss_format = NRF_CLOUD_GNSS_TYPE_PVT;
 	arg_cloud_gnss = false;
@@ -563,6 +613,48 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 			wifi_timeout = atof(sys_getopt_optarg);
 			wifi_timeout_set = true;
 			break;
+
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+		case LOCATION_SHELL_OPT_WIFI_SCAN_TYPE:
+			if (strcmp(sys_getopt_optarg, "active") == 0) {
+				wifi_scan_type = LOCATION_WIFI_SCAN_TYPE_ACTIVE;
+			} else if (strcmp(sys_getopt_optarg, "passive") == 0) {
+				wifi_scan_type = LOCATION_WIFI_SCAN_TYPE_PASSIVE;
+			} else {
+				mosh_error("Unknown Wi-Fi scan type. See usage:");
+				goto show_usage;
+			}
+			wifi_scan_type_set = true;
+			break;
+		case LOCATION_SHELL_OPT_WIFI_BANDS:
+			if (strlen(sys_getopt_optarg) >= sizeof(wifi_bands_str)) {
+				mosh_error("Wi-Fi bands string too long");
+				return -EINVAL;
+			}
+			strcpy(wifi_bands_str, sys_getopt_optarg);
+			wifi_bands_set = true;
+			break;
+		case LOCATION_SHELL_OPT_WIFI_DWELL_ACTIVE:
+			wifi_dwell_active = atoi(sys_getopt_optarg);
+			wifi_dwell_active_set = true;
+			break;
+		case LOCATION_SHELL_OPT_WIFI_DWELL_PASSIVE:
+			wifi_dwell_passive = atoi(sys_getopt_optarg);
+			wifi_dwell_passive_set = true;
+			break;
+		case LOCATION_SHELL_OPT_WIFI_MAX_BSS:
+			wifi_max_bss = atoi(sys_getopt_optarg);
+			wifi_max_bss_set = true;
+			break;
+		case LOCATION_SHELL_OPT_WIFI_CHANNELS:
+			if (strlen(sys_getopt_optarg) >= sizeof(wifi_channels_str)) {
+				mosh_error("Wi-Fi channels string too long");
+				return -EINVAL;
+			}
+			strcpy(wifi_channels_str, sys_getopt_optarg);
+			wifi_channels_set = true;
+			break;
+#endif
 
 		case LOCATION_SHELL_OPT_INTERVAL:
 			interval = atoi(sys_getopt_optarg);
@@ -685,6 +777,62 @@ static int cmd_location_get(const struct shell *shell, size_t argc, char **argv)
 				config.methods[i].wifi.timeout = (wifi_timeout == 0) ?
 					SYS_FOREVER_MS : wifi_timeout * MSEC_PER_SEC;
 			}
+#if defined(CONFIG_LOCATION_METHOD_WIFI)
+			if (wifi_scan_type_set) {
+				config.methods[i].wifi.scan_type = wifi_scan_type;
+			}
+			if (wifi_bands_set) {
+				ret = wifi_utils_parse_scan_bands(wifi_bands_str,
+								  &config.methods[i].wifi.bands);
+				if (ret) {
+					mosh_error("Failed to parse Wi-Fi bands: %d", ret);
+					return -EINVAL;
+				}
+			}
+			if (wifi_dwell_active_set) {
+				if (wifi_dwell_active < 0 || wifi_dwell_active > UINT16_MAX) {
+					mosh_error("Wi-Fi active dwell time is out of range");
+					return -EINVAL;
+				}
+				config.methods[i].wifi.dwell_time_active = wifi_dwell_active;
+			}
+			if (wifi_dwell_passive_set) {
+				if (wifi_dwell_passive < 0 || wifi_dwell_passive > UINT16_MAX) {
+					mosh_error("Wi-Fi passive dwell time is out of range");
+					return -EINVAL;
+				}
+				config.methods[i].wifi.dwell_time_passive = wifi_dwell_passive;
+			}
+			if (wifi_max_bss_set) {
+				if (wifi_max_bss < 0 || wifi_max_bss > UINT16_MAX) {
+					mosh_error("Wi-Fi maximum BSS count is out of range");
+					return -EINVAL;
+				}
+				config.methods[i].wifi.max_bss_cnt = wifi_max_bss;
+			}
+			if (wifi_channels_set) {
+				struct wifi_band_channel parsed[
+					CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX];
+
+				memset(parsed, 0, sizeof(parsed));
+				memset(config.methods[i].wifi.channels, 0,
+				       sizeof(config.methods[i].wifi.channels));
+				ret = wifi_utils_parse_scan_chan(
+					wifi_channels_str, parsed, ARRAY_SIZE(parsed));
+				if (ret) {
+					mosh_error("Failed to parse Wi-Fi channels: %d", ret);
+					return -EINVAL;
+				}
+				for (int j = 0;
+				     j < CONFIG_LOCATION_METHOD_WIFI_SCANNING_CHANNELS_MAX &&
+				     parsed[j].channel != 0;
+				     j++) {
+					config.methods[i].wifi.channels[j].band = parsed[j].band;
+					config.methods[i].wifi.channels[j].channel =
+						parsed[j].channel;
+				}
+			}
+#endif
 		}
 	}
 

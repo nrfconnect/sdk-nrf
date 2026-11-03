@@ -9,7 +9,7 @@ Power management
 
 .. caution::
 
-   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15 and nRF54LM20 devices.
+   The High-Performance Framework (HPF) support in the |NCS| is :ref:`experimental <software_maturity>` and is limited to the nRF54L15, nRF54LM20, nRF54LC10A, and nRF54LV10A devices.
 
 The following page outlines the approaches and mechanisms employed to ensure efficient power management in High-Performance Framework (HPF) systems, focusing on resource allocation, system states, and interactions between different components.
 

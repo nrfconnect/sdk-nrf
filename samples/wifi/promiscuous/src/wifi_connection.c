@@ -11,11 +11,17 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(wifi_connect, CONFIG_LOG_DEFAULT_LEVEL);
 
+#include <errno.h>
 #include <stdlib.h>
+#include <zephyr/init.h>
+#include <zephyr/kernel.h>
 #include <zephyr/net/wifi_mgmt.h>
 #include <zephyr/net/wifi.h>
 #include "net_private.h"
 
+#ifdef CONFIG_WIFI_READY_LIB
+#include <net/wifi_ready.h>
+#endif /* CONFIG_WIFI_READY_LIB */
 
 #define WIFI_SHELL_MGMT_EVENTS (NET_EVENT_WIFI_CONNECT_RESULT |		\
 				NET_EVENT_WIFI_DISCONNECT_RESULT)
@@ -26,17 +32,62 @@ static struct net_mgmt_event_callback wifi_shell_mgmt_cb;
 static struct net_mgmt_event_callback net_shell_mgmt_cb;
 
 static struct {
-	const struct shell *sh;
-	union {
-		struct {
-			uint8_t connected	: 1;
-			uint8_t connect_result	: 1;
-			uint8_t disconnect_requested	: 1;
-			uint8_t _unused		: 5;
-		};
-		uint8_t all;
-	};
+	bool connected;
+	bool disconnect_requested;
+	int connect_result;
 } context;
+
+#ifdef CONFIG_WIFI_READY_LIB
+static K_SEM_DEFINE(wifi_ready_sem, 0, 1);
+static bool wifi_ready_status;
+
+static void promiscuous_wifi_ready_cb(bool wifi_ready)
+{
+	if (wifi_ready_status != wifi_ready) {
+		LOG_INF("Wi-Fi is %sready", wifi_ready ? "" : "not ");
+	}
+
+	wifi_ready_status = wifi_ready;
+	if (wifi_ready) {
+		k_sem_give(&wifi_ready_sem);
+	}
+}
+
+static int promiscuous_register_wifi_ready(void)
+{
+	struct net_if *iface = net_if_get_first_wifi();
+	wifi_ready_callback_t cb;
+	int ret;
+
+	if (!iface) {
+		return -ENODEV;
+	}
+
+	cb.wifi_ready_cb = promiscuous_wifi_ready_cb;
+
+	ret = register_wifi_ready_callback(cb, iface);
+	if (ret == -EALREADY) {
+		return 0;
+	}
+
+	return ret;
+}
+
+static int promiscuous_wait_wifi_ready(k_timeout_t timeout)
+{
+	if (wifi_ready_status) {
+		return 0;
+	}
+
+	if (k_sem_take(&wifi_ready_sem, timeout) != 0) {
+		return -ETIMEDOUT;
+	}
+
+	return wifi_ready_status ? 0 : -EAGAIN;
+}
+
+SYS_INIT(promiscuous_register_wifi_ready, APPLICATION, 94);
+#endif /* CONFIG_WIFI_READY_LIB */
 
 static int cmd_wifi_status(void)
 {
@@ -92,13 +143,14 @@ static void handle_wifi_connect_result(struct net_mgmt_event_callback *cb)
 	}
 
 	if (status->status) {
-		LOG_ERR("Connection failed (%d)", status->status);
+		LOG_ERR("Connection failed (%s)",
+			wifi_conn_status_txt((enum wifi_conn_status)status->status));
 	} else {
 		LOG_INF("Connected");
 		context.connected = true;
 	}
 
-	context.connect_result = status->conn_status;
+	context.connect_result = status->status;
 	k_sem_give(&wait_for_wifi_connection);
 }
 
@@ -188,6 +240,8 @@ static int wifi_connect(void)
 
 int try_wifi_connect(void)
 {
+	int ret;
+
 	memset(&context, 0, sizeof(context));
 
 	net_mgmt_init_event_callback(&wifi_shell_mgmt_cb,
@@ -202,7 +256,16 @@ int try_wifi_connect(void)
 
 	net_mgmt_add_event_callback(&net_shell_mgmt_cb);
 
+#ifdef CONFIG_WIFI_READY_LIB
+	ret = promiscuous_wait_wifi_ready(
+		K_SECONDS(CONFIG_PROMISCUOUS_SAMPLE_CONNECTION_TIMEOUT_S));
+	if (ret != 0) {
+		LOG_ERR("Wi-Fi subsystem not ready (%d)", ret);
+		return ret;
+	}
+#else
 	k_sleep(K_SECONDS(1));
+#endif /* CONFIG_WIFI_READY_LIB */
 
 	LOG_INF("Static IP address (overridable): %s/%s -> %s",
 		CONFIG_NET_CONFIG_MY_IPV4_ADDR,
@@ -222,7 +285,8 @@ int try_wifi_connect(void)
 			   K_SECONDS(CONFIG_PROMISCUOUS_SAMPLE_DHCP_TIMEOUT_S));
 		cmd_wifi_status();
 	} else if (context.connect_result) {
-		LOG_ERR("Connection unsuccessful with reason (%d)", context.connect_result);
+		LOG_ERR("Connection unsuccessful with reason (%s)",
+			wifi_conn_status_txt((enum wifi_conn_status)context.connect_result));
 		return -1;
 	}
 

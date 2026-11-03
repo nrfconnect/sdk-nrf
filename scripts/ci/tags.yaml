@@ -1206,9 +1206,12 @@ ci_tests_drivers_dect:
   files:
     - nrf/include/net/dect/
     - nrf/drivers/dect/
-    - nrf/subsys/net/l2_dect/
+    - nrf/subsys/net/dect/l2/
+    - nrf/subsys/net/dect/rpc/
     - nrf/subsys/net/lib/dect/
     - nrf/tests/drivers/dect/
+    - nrf/tests/subsys/net/dect/
+    - nrf/tests/subsys/net/lib/dect/
     - nrfxlib/nrf_modem/include/nrf_modem_dect.h
 
 ci_tests_unity:
@@ -1292,7 +1295,10 @@ ci_tests_benchmarks_spi_performance:
     - zephyr/soc/nordic/
     - zephyr/dts/vendor/nordic/
     - zephyr/boards/nordic/nrf54*
+    - nrf/drivers/mspi/
+    - nrf/applications/hpf/mspi/
     - nrf/tests/benchmarks/xspi_performance/
+    - nrf/tests/benchmarks/xspi_performance_mspi_api/
 
 ci_tests_benchmarks_can_performance:
   files:
@@ -1513,7 +1519,8 @@ ci_samples_dect:
     - nrf/lib/nrf_modem_lib/
     - nrf/samples/dect/
     - nrf/drivers/dect/
-    - nrf/subsys/net/l2_dect/
+    - nrf/subsys/net/dect/l2/
+    - nrf/subsys/net/dect/rpc/
     - nrf/subsys/net/lib/dect/
     - nrfxlib/nrf_modem/
     - zephyr/drivers/hwinfo/

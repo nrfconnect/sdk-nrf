@@ -179,6 +179,9 @@ Which capabilities are mandatory depends on the declared :ref:`ug_dult_accessory
   The motion detector unwanted tracking capability is optional.
 * With the :kconfig:option:`CONFIG_DULT_ACCESSORY_TYPE_LARGE` Kconfig option, all accessory capabilities are optional and the DULT subsystem does not validate them.
 
+The DULT user registration also fails if the same DULT user structure is already registered or if another registered DULT user uses the same network ID in the :c:member:`dult_user.network_id` field.
+Each registered DULT user must represent a different accessory-locating network.
+
 How you release a registered DULT user depends on the selected :ref:`ug_dult_api_variant`:
 
 .. tabs::

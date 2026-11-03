@@ -3,4 +3,4 @@
 #
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
-add_subdirectory_ifdef(CONFIG_DECT_MDM dect_mdm)
+add_subdirectory_ifdef(CONFIG_DECT_MDM_DRIVER_NRF dect_mdm)

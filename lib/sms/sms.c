@@ -241,6 +241,7 @@ static void sms_at_cmd_handler_cms(const char *at_notif)
  *
  * @return Zero on success, or a negative error code. The EBUSY error
  *         indicates that one SMS client has already been registered.
+ *         The EFAULT error indicates that the modem returned an AT error.
  */
 static int sms_init(void)
 {
@@ -258,7 +259,7 @@ static int sms_init(void)
 	ret = nrf_modem_at_cmd(sms_buf_tmp, SMS_BUF_TMP_LEN, AT_SMS_SUBSCRIBER_READ);
 	if (ret) {
 		LOG_ERR("Unable to check if an SMS client exists, err: %d", ret);
-		return ret;
+		return ret < 0 ? ret : -EFAULT;
 	}
 
 	ret = sscanf(
@@ -295,7 +296,7 @@ static int sms_init(void)
 		at_monitor_pause(&sms_at_handler_cds);
 #endif
 		LOG_ERR("Unable to register a new SMS client, err: %d", ret);
-		return ret;
+		return ret < 0 ? ret : -EFAULT;
 	}
 
 	sms_client_registered = true;

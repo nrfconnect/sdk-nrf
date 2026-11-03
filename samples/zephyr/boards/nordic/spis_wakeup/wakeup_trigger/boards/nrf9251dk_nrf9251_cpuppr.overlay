@@ -65,6 +65,7 @@
 	pinctrl-0 = <&spi131_default_alt>;
 	pinctrl-1 = <&spi131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	overrun-character = <0x00>;
 	cs-gpios = <&gpio1 9 GPIO_ACTIVE_LOW>;
 	wake-gpios = <&gpio1 1 GPIO_ACTIVE_HIGH>;

@@ -16,6 +16,9 @@
 #if defined(CONFIG_SAMPLE_MEMFAULT_FOTA)
 #include "memfault_fota_support.h"
 #endif
+#if defined(CONFIG_SAMPLE_MEMFAULT_BUTTONS)
+#include "memfault_buttons.h"
+#endif
 
 LOG_MODULE_REGISTER(main, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 
@@ -48,6 +51,12 @@ K_THREAD_DEFINE(coap_shadow, CONFIG_COAP_SHADOW_THREAD_STACK_SIZE, coap_shadow_t
 #endif
 #endif /* CONFIG_NRF_CLOUD_COAP */
 
+#if defined(CONFIG_SAMPLE_MEMFAULT_BUTTONS)
+/* Define, and automatically start the Memfault buttons thread. See memfault_buttons.c */
+K_THREAD_DEFINE(mflt_buttons, CONFIG_SAMPLE_MEMFAULT_BUTTONS_THREAD_STACK_SIZE,
+		memfault_buttons_thread_fn, NULL, NULL, NULL, 0, 0, 0);
+#endif
+
 /* main() is called from the main thread, which defaults to priority zero,
  * but for illustrative purposes we don't use it. main_application() could be called directly
  * from this function, rather than given its own dedicated thread.
@@ -71,8 +80,9 @@ int main(void)
 
 #if defined(CONFIG_SAMPLE_MEMFAULT_FOTA)
 	/* Confirm the running image so MCUboot does not roll back after a successful
-	 * FOTA update reboot. FOTA checks/downloads themselves are driven independently,
-	 * periodically, by the Memfault SDK (see CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK).
+	 * FOTA update reboot. FOTA checks/downloads themselves are driven periodically by
+	 * the Memfault SDK (see CONFIG_MEMFAULT_PERIODIC_FOTA_CHECK), or on demand by a
+	 * button press (see memfault_buttons.c).
 	 */
 	memfault_fota_support_init();
 #endif

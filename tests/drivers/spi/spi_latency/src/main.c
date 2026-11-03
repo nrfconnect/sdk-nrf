@@ -19,7 +19,7 @@
 	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
 	 SPI_MODE_CPHA | SPI_MODE_CPOL)
 
-#define MAX_TEST_BUFFER_SIZE 2000
+#define MAX_TEST_BUFFER_SIZE CONFIG_TEST_MAX_BUFFER_SIZE
 
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi), SPI_MODE);
 const struct device *const tst_timer_dev = DEVICE_DT_GET(DT_ALIAS(tst_timer));
@@ -143,7 +143,7 @@ ZTEST(spim_transmission_latency, test_spim_transceive_call_latencty)
 	test_spim_transmission_latency(1);
 	test_spim_transmission_latency(128);
 	test_spim_transmission_latency(512);
-	test_spim_transmission_latency(2000);
+	test_spim_transmission_latency(MAX_TEST_BUFFER_SIZE);
 }
 
 ZTEST_SUITE(spim_transmission_latency, NULL, test_setup, NULL, cleanup_buffers, NULL);

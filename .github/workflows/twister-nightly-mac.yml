@@ -1,0 +1,134 @@
+name: Twister nightly mac
+
+on:
+  schedule:
+    - cron: "42 20 * * *"
+  workflow_dispatch:
+  push:
+    tags:
+      - 'v*'
+
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event_name }}-${{ github.head_ref || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  twister-build:
+    runs-on: macos-26
+    strategy:
+      fail-fast: false
+      matrix:
+        subset: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+    defaults:
+      run:
+        working-directory: ncs
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          west-update-args: '--narrow -o=--depth=1 --group-filter=+bsec'
+
+      - name: Setup ncs toolchain
+        uses: nrfconnect/action-ncs-toolchain-setup@main
+
+      - name: Run twister
+        run: |
+          nrf/scripts/ci/twister_runner.sh --ninja --inline-logs --verbose --overflow-as-errors \
+            --integration --jobs 4 \
+            --quarantine-list nrf/scripts/quarantine.yaml \
+            --quarantine-list nrf/scripts/quarantine_windows_mac.yaml \
+            --subset ${{ matrix.subset }}/${{ strategy.job-total }} --outdir twister-build \
+            --report-dir results_samples \
+            -T nrf/samples
+
+      - name: Upload twister results
+        if: success() || failure()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Twister results dir macOS ${{ matrix.subset }}
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            ncs/results_samples/twister.xml
+            ncs/results_samples/twister.json
+            ncs/results_samples/**/*
+            ncs/twister-build/**/*.hex
+            ncs/twister-build/**/*.log
+
+  twister-test-results:
+    name: Publish Unit Test Results
+    needs: twister-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      checks: write
+    if: success() || failure()
+    steps:
+      - name: Checkout sources
+        uses: nrfconnect/action-checkout-west-update@main
+        with:
+          west-update-args: '--narrow -o=--depth=1 --group-filter=+bsec'
+
+      - name: Install Python packages
+        run: |
+          pip install -r ncs/zephyr/scripts/requirements-actions.txt --require-hashes
+
+      - name: Download Artifacts
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7.0.0
+        with:
+          path: artifacts
+
+      - name: Merge Test Results
+        run: |
+          python ncs/zephyr/scripts/ci/merge_junit.py junit.xml \
+            'artifacts/*/ncs/results_samples/twister.xml' \
+            'artifacts/**/twister.xml'
+          junit2html junit.xml junit.html
+
+      - name: Upload Unit Test Results
+        if: always()
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Unit Test Results
+          if-no-files-found: ignore
+          path: |
+            junit.html
+            junit.xml
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@d0a4676d0e0b938bc201470d88276b7c74c712b3 # v2.24.0
+        with:
+          check_name: Twister macOS Unit Test Results
+          files: "artifacts/**/twister.xml"
+          comment_mode: off
+
+      - name: Analyze Twister Reports
+        if: needs.twister-build.result == 'failure'
+        run: |
+          mapfile -d '' json_files < <(find artifacts -name 'twister.json' -print0)
+          if [ ${#json_files[@]} -eq 0 ]; then
+            echo "No twister.json files found in downloaded artifacts"
+            exit 1
+          fi
+          python3 ncs/zephyr/scripts/ci/twister_report_analyzer.py \
+            "${json_files[@]}" --long-summary --platforms --output-md errors.md
+          if [[ -s errors.md ]]; then
+            echo '### Error Summary! 🚀' >> "$GITHUB_STEP_SUMMARY"
+            cat errors.md >> "$GITHUB_STEP_SUMMARY"
+          fi
+
+      - name: Upload Twister Analysis Results
+        if: needs.twister-build.result == 'failure'
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: Twister Analysis Results
+          if-no-files-found: ignore
+          retention-days: 7
+          path: |
+            twister_report_summary.json
+            errors.md

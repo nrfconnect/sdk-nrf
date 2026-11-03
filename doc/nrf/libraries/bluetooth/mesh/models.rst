@@ -35,5 +35,4 @@ Below is an overview of all model implementations available in the |NCS|.
    scene.rst
    scheduler.rst
    vnd/silvair_enocean_srv.rst
-   vnd/dm.rst
    vnd/le_pair_resp.rst

@@ -102,6 +102,18 @@ static struct rf_hex_param rf_params[NUM_WIFI_PARAMS] = {
 #define TX_PWR_CEIL_6G_MCS7    19
 #define TX_PWR_CEIL_6G_MCS0    25
 
+static const uint8_t tx_pwr_ceil_idx[] = {
+	TX_PWR_CEIL_2G_DSSS,
+	TX_PWR_CEIL_2G_MCS7,
+	TX_PWR_CEIL_2G_MCS0,
+	TX_PWR_CEIL_5G_MCS7, TX_PWR_CEIL_5G_MCS7 + 1, TX_PWR_CEIL_5G_MCS7 + 2,
+	TX_PWR_CEIL_5G_MCS0, TX_PWR_CEIL_5G_MCS0 + 1, TX_PWR_CEIL_5G_MCS0 + 2,
+	TX_PWR_CEIL_6G_MCS7 + 0, TX_PWR_CEIL_6G_MCS7 + 1, TX_PWR_CEIL_6G_MCS7 + 2,
+	TX_PWR_CEIL_6G_MCS7 + 3, TX_PWR_CEIL_6G_MCS7 + 4, TX_PWR_CEIL_6G_MCS7 + 5,
+	TX_PWR_CEIL_6G_MCS0 + 0, TX_PWR_CEIL_6G_MCS0 + 1, TX_PWR_CEIL_6G_MCS0 + 2,
+	TX_PWR_CEIL_6G_MCS0 + 3, TX_PWR_CEIL_6G_MCS0 + 4, TX_PWR_CEIL_6G_MCS0 + 5,
+};
+
 /* Number of 6 GHz sub-bands in the TX power ceiling and antenna gain
  * categories. The edge ceilings use two, UNII-5 and UNII-6, instead.
  */
@@ -193,17 +205,6 @@ static enum nrf_wifi_status rf_params_apply_board_values(void)
 		MAX_TX_PWR_DBM(wifi_max_tx_pwr_6g_band4_mcs0),
 		MAX_TX_PWR_DBM(wifi_max_tx_pwr_6g_band5_mcs0),
 		MAX_TX_PWR_DBM(wifi_max_tx_pwr_6g_band6_mcs0),
-	};
-	static const uint8_t tx_pwr_ceil_idx[] = {
-		TX_PWR_CEIL_2G_DSSS,
-		TX_PWR_CEIL_2G_MCS7,
-		TX_PWR_CEIL_2G_MCS0,
-		TX_PWR_CEIL_5G_MCS7, TX_PWR_CEIL_5G_MCS7 + 1, TX_PWR_CEIL_5G_MCS7 + 2,
-		TX_PWR_CEIL_5G_MCS0, TX_PWR_CEIL_5G_MCS0 + 1, TX_PWR_CEIL_5G_MCS0 + 2,
-		TX_PWR_CEIL_6G_MCS7 + 0, TX_PWR_CEIL_6G_MCS7 + 1, TX_PWR_CEIL_6G_MCS7 + 2,
-		TX_PWR_CEIL_6G_MCS7 + 3, TX_PWR_CEIL_6G_MCS7 + 4, TX_PWR_CEIL_6G_MCS7 + 5,
-		TX_PWR_CEIL_6G_MCS0 + 0, TX_PWR_CEIL_6G_MCS0 + 1, TX_PWR_CEIL_6G_MCS0 + 2,
-		TX_PWR_CEIL_6G_MCS0 + 3, TX_PWR_CEIL_6G_MCS0 + 4, TX_PWR_CEIL_6G_MCS0 + 5,
 	};
 	static const uint8_t edge_ceil[] = {
 			DT_PROP(NRF71_WIFI_NODE, nordic_wifi_2g_lower_edge_ceiling_dsss),
@@ -333,6 +334,31 @@ cleanup:
 		}
 	}
 	return NRF_WIFI_STATUS_FAIL;
+}
+
+enum nrf_wifi_status rf_params_apply_radio_test_max_tx_ceilings(uint8_t ceil_dbm)
+{
+	if (rf_params_bytes_init() != NRF_WIFI_STATUS_SUCCESS) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	for (unsigned int i = 0; i < ARRAY_SIZE(tx_pwr_ceil_idx); i++) {
+		if (rf_params_set(RF_PARAMS_TX_PWR_CEIL_OFST + tx_pwr_ceil_idx[i],
+				  ceil_dbm) != NRF_WIFI_STATUS_SUCCESS) {
+			return NRF_WIFI_STATUS_FAIL;
+		}
+	}
+
+	return NRF_WIFI_STATUS_SUCCESS;
+}
+
+enum nrf_wifi_status rf_params_apply_board_tx_ceilings(void)
+{
+	if (rf_params_bytes_init() != NRF_WIFI_STATUS_SUCCESS) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	return rf_params_apply_board_values();
 }
 
 enum nrf_wifi_status nrf_wifi_fmac_config_rf_params(void *dev_ctx, unsigned int *rf_params_addr)

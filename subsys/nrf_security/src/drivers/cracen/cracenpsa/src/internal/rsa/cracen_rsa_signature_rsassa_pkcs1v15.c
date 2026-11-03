@@ -119,6 +119,10 @@ int cracen_rsa_pkcs1v15_sign_digest(struct cracen_rsa_key *rsa_key,
 		return SX_ERR_INPUT_BUFFER_TOO_SMALL;
 	}
 
+	if (modulussz > signature->sz) {
+		return SX_ERR_OUTPUT_BUFFER_TOO_SMALL;
+	}
+
 	memcpy(workmem, digest, digestsz);
 
 	/* Complete message encoding and start the modular exponentiation. */

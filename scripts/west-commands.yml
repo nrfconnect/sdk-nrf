@@ -59,3 +59,8 @@ west-commands:
       - name: ncs-mergehex
         class: NcsMergeHex
         help: Merge sysbuild output hex files based on mergehex.yaml file.
+  - file: scripts/west_commands/ncs_ln.py
+    commands:
+      - name: ncs-ln
+        class: NcsLn
+        help: west link handling

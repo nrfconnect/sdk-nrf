@@ -57,6 +57,7 @@ dut_twim: &i2c130 {
 	pinctrl-0 = <&i2c130_default_alt>;
 	pinctrl-1 = <&i2c130_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	clock-frequency = <I2C_BITRATE_STANDARD>;
 
 	sensor: sensor@54 {
@@ -70,4 +71,5 @@ dut_twim: &i2c130 {
 	pinctrl-0 = <&i2c131_default_alt>;
 	pinctrl-1 = <&i2c131_sleep_alt>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 };

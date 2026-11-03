@@ -20,6 +20,7 @@
 #include "modules/xmodemsleep.h"
 #include "modules/xt3412.h"
 #include "modules/mdmev.h"
+#include "modules/xsim.h"
 
 LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 
@@ -63,6 +64,10 @@ static int enable_notifications(void)
 		return err;
 	}
 #endif /* CONFIG_LTE_LC_MODEM_EVENTS_MODULE */
+
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+	xsim_notifications_enable();
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 
 	return 0;
 }
@@ -140,6 +145,13 @@ int cfun_mode_set(enum lte_lc_func_mode mode)
 		break;
 	case LTE_LC_FUNC_MODE_ACTIVATE_UICC:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_ACTIVATE_UICC);
+
+		/* The UICC is activated without LTE, so subscribe to UICC state
+		 * notifications to get the initial UICC state.
+		 */
+#if defined(CONFIG_LTE_LC_UICC_STATE_MODULE)
+		xsim_notifications_enable();
+#endif /* CONFIG_LTE_LC_UICC_STATE_MODULE */
 		break;
 	case LTE_LC_FUNC_MODE_OFFLINE_UICC_ON:
 		LTE_LC_TRACE(LTE_LC_TRACE_FUNC_MODE_OFFLINE_UICC_ON);

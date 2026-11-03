@@ -79,7 +79,7 @@ static int handle_coap_auth(int socket)
 	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX,
 				     packet_buf + COAP_AUTH_REQ_HEADER_SIZE, JWT_BUF_SZ);
 	if (err) {
-		LOG_ERR("Error generating JWT with modem: %d", err);
+		LOG_ERR("Error generating JWT: %d", err);
 		goto end;
 	}
 

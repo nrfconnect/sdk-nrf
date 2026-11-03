@@ -26,7 +26,7 @@ You will notice that all valid DNs begin with the letter Q while older QDID numb
 
 If your product uses a qualified Bluetooth stack provided as part of the |NCS|, you can inherit this qualification from Nordic Semiconductor, provided that you do not introduce any changes to the stack.
 
-To find the applicable DNs, go to the Compatibility Matrix relevant for the SoC or SiP model you use (for example, the `nRF52840 Compatibility Matrix`_), and open the Bluetooth DNs and QDIDs section.
+To find the applicable DNs, go to the Compatibility Matrix relevant for the SoC or SiP model you use (for example, the `nRF5340 Compatibility Matrix`_), and open the Bluetooth DNs and QDIDs section.
 
 You can independently qualify any qualified design offered by Nordic Semiconductor by performing all of the required testing yourself.
 However, this process might be complex and time-consuming.

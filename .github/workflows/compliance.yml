@@ -84,6 +84,17 @@ jobs:
           -e KconfigBasicNoModules -e ClangFormat -e SysbuildKconfigBasicNoModules \
           -e LicenseAndCopyrightCheck -c origin/${BASE_REF}..
 
+      - name: Run NCS Compliance Tests
+        continue-on-error: true
+        id: ncs_compliance
+        env:
+          BASE_REF: ${{ github.base_ref }}
+        working-directory: ncs/nrf
+        if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
+        run: |
+          export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
+          ./scripts/ci/check_compliance.py --annotate -c origin/${BASE_REF}..
+
       - name: upload-results
         uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
         continue-on-error: true
@@ -91,6 +102,15 @@ jobs:
         with:
           name: compliance.xml
           path: ncs/nrf/compliance.xml
+          overwrite: true
+
+      - name: upload-ncs-results
+        uses: actions/upload-artifact@4cec3d8aa04e39d1a68397de0c4cd6fb9dce8ec1 # v4
+        continue-on-error: true
+        if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
+        with:
+          name: ncs_compliance.xml
+          path: ncs/nrf/ncs_compliance.xml
           overwrite: true
 
       - name: check-warns
@@ -103,6 +123,32 @@ jobs:
           fi
 
           files=($($ZEPHYR_BASE/scripts/ci/check_compliance.py -l))
+          for file in "${files[@]}"; do
+            f="${file}.txt"
+            if [[ -s $f ]]; then
+              errors=$(cat $f)
+              errors="${errors//'%'/'%25'}"
+              errors="${errors//$'\n'/'%0A'}"
+              errors="${errors//$'\r'/'%0D'}"
+              echo "::error file=${f}::$errors"
+              exit=1
+            fi
+          done
+
+          if [ "${exit}" == "1" ]; then
+            exit 1;
+          fi
+
+      - name: check-ncs-warns
+        working-directory: ncs/nrf
+        if: contains(github.event.pull_request.user.login, 'dependabot[bot]') != true
+        run: |
+          export ZEPHYR_BASE="$(dirname "$(pwd)")/zephyr"
+          if [[ ! -s "ncs_compliance.xml" ]]; then
+            exit 1;
+          fi
+
+          files=($(./scripts/ci/check_compliance.py -l))
           for file in "${files[@]}"; do
             f="${file}.txt"
             if [[ -s $f ]]; then

@@ -13,7 +13,9 @@
 #include <zephyr/kernel.h>
 #include <zephyr/net/net_if.h>
 #include <zephyr/net/net_offload.h>
+#include <zephyr/net/wifi.h>
 #include <zephyr/net/wifi_mgmt.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/logging/log.h>
 
 #include <nrf_modem_wifi_scan.h>
@@ -86,6 +88,62 @@ static void nrf92_wifi_scan_evt_handler(const struct nrf_modem_wifi_scan_event *
 	}
 }
 
+static uint16_t nrf92_wifi_scan_time_ms_get(const struct wifi_scan_params *params)
+{
+	uint16_t scan_time_ms;
+
+	if (params == NULL) {
+		return 0;
+	}
+
+	scan_time_ms = params->dwell_time_passive;
+
+	if (scan_time_ms > 0 && scan_time_ms < NRF_MODEM_WIFI_SCAN_TIME_MS_MIN) {
+		LOG_WRN("Scan dwell time %u ms below modem minimum (%u ms), using minimum",
+			scan_time_ms, NRF_MODEM_WIFI_SCAN_TIME_MS_MIN);
+		scan_time_ms = NRF_MODEM_WIFI_SCAN_TIME_MS_MIN;
+	}
+
+	return scan_time_ms;
+}
+
+static int nrf92_wifi_channels_bitmap_set(const struct wifi_scan_params *params,
+					  uint16_t *channels_bitmap)
+{
+	bool channel_requested = false;
+	bool channel_mapped = false;
+
+	*channels_bitmap = 0;
+
+	if (params == NULL) {
+		return 0;
+	}
+
+	for (int i = 0; i < ARRAY_SIZE(params->band_chan); i++) {
+		if (params->band_chan[i].channel == 0) {
+			break;
+		}
+
+		channel_requested = true;
+
+		if (params->band_chan[i].band == WIFI_FREQ_BAND_2_4_GHZ &&
+		    params->band_chan[i].channel > 0 &&
+		    params->band_chan[i].channel <= 14) {
+			*channels_bitmap |= BIT(params->band_chan[i].channel - 1);
+			channel_mapped = true;
+		} else {
+			LOG_WRN("Ignoring unsupported scan channel (band %u, channel %u)",
+				params->band_chan[i].band, params->band_chan[i].channel);
+		}
+	}
+
+	if (channel_requested && !channel_mapped) {
+		return -EINVAL;
+	}
+
+	return 0;
+}
+
 static int nrf92_wifi_scan(const struct device *dev,
 			   struct net_if *iface __unused,
 			   struct wifi_scan_params *params,
@@ -115,23 +173,28 @@ static int nrf92_wifi_scan(const struct device *dev,
 		nrf_modem_params.actions |= NRF_MODEM_WIFI_SCAN_ACTIONS_ENABLE_OFFLINE_PROCESSING;
 	}
 
-	if (params) {
-		/* Channels */
-		nrf_modem_params.channels_bitmap = 0;
-		for (int i = 0; i < ARRAY_SIZE(params->band_chan); i++) {
-			if (params->band_chan[i].band == WIFI_FREQ_BAND_2_4_GHZ &&
-			    params->band_chan[i].channel > 0 &&
-			    params->band_chan[i].channel <= 14) {
-				nrf_modem_params.channels_bitmap |=
-					BIT(params->band_chan[i].channel - 1);
-			}
+	if (params != NULL) {
+		if (params->bands != 0 &&
+		    (params->bands & BIT(WIFI_FREQ_BAND_2_4_GHZ)) == 0) {
+			LOG_ERR("nRF92 Wi-Fi scan supports 2.4 GHz band only (bands 0x%x)",
+				params->bands);
+			return -ENOTSUP;
 		}
 
-		/* Scan time */
-		nrf_modem_params.scan_time_desired_ms = params->dwell_time_passive;
+		err = nrf92_wifi_channels_bitmap_set(params, &nrf_modem_params.channels_bitmap);
+		if (err) {
+			return err;
+		}
 
-		/* Max. AP count */
-		nrf_modem_params.ap_max_count = params->max_bss_cnt;
+		nrf_modem_params.scan_time_desired_ms = nrf92_wifi_scan_time_ms_get(params);
+
+		if (params->max_bss_cnt > UINT8_MAX) {
+			LOG_WRN("max_bss_cnt %u exceeds modem limit, using %u",
+				params->max_bss_cnt, UINT8_MAX);
+			nrf_modem_params.ap_max_count = UINT8_MAX;
+		} else {
+			nrf_modem_params.ap_max_count = (uint8_t)params->max_bss_cnt;
+		}
 	}
 
 	/* If no channels were specified, default to all channels */

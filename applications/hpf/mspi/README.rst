@@ -41,7 +41,12 @@ Configuration and data transfer management
 Data transfer between the MSPI driver and the HPF application is done through the ICMsg.
 Data can be configured to be passed either by copy or by reference.
 By default, data is passed by reference.
-To enable data passing by copy, you must disable the ``HPF_MSPI_IPC_NO_COPY`` and its MSPI driver-side equivalent ``MSPI_HPF_IPC_NO_COPY`` Kconfig options.
+To enable data passing by copy, disable the :kconfig:option:`SB_CONFIG_HPF_MSPI_IPC_NO_COPY` sysbuild Kconfig option.
+It sets both the ``CONFIG_HPF_MSPI_IPC_NO_COPY`` Kconfig option of the HPF application and the equivalent ``CONFIG_MSPI_HPF_IPC_NO_COPY`` option on the MSPI driver side, as both images must use the same IPC message format.
+The HPF application rejects the following types of messages and responds with the ``HPF_MSPI_WRONG_OPCODE`` opcode:
+
+* Messages whose length does not match the size defined by the application's IPC message format.
+* Receive requests whose response exceeds the size set by the ``CONFIG_HPF_MSPI_MAX_RESPONSE_SIZE`` Kconfig option, when data is passed by copy.
 
 Initialization phase
 ====================

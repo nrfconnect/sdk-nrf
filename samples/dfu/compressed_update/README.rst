@@ -57,7 +57,7 @@ For the testing scenario to work, make sure you meet the following requirements:
 * Your update image differs from the base image so that the update can be applied.
 * Change the firmware version by setting :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` to ``"2.0.0"``.
 * Set the :option:`CONFIG_OUTPUT_BOOT_MESSAGE` Kconfig option to ``y``.
-* You are familiar with the FOTA over Bluetooth LE method (see :ref:`the guide for the nRF52840 DK <ug_nrf52_developing_ble_fota_steps>`, :ref:`the guide for the nRF5340 DK <ug_nrf53_developing_ble_fota_steps>`, and :ref:`the guide for the nRF54L15 DK <ug_nrf54l_developing_ble_fota_steps>`).
+* You are familiar with the FOTA over Bluetooth LE method (see :ref:`the guide for the nRF5340 DK <ug_nrf53_developing_ble_fota_steps>` and :ref:`the guide for the nRF54L15 DK <ug_nrf54l_developing_ble_fota_steps>`).
 * You have the `nRF Connect Device Manager`_ mobile app installed on your smartphone to update your device with the new firmware over Bluetooth LE.
 
 Meeting these requirements requires rebuilding the sample.
@@ -70,7 +70,6 @@ Meeting these requirements requires rebuilding the sample.
 #. Follow the testing steps for the FOTA over Bluetooth LE.
    See the following sections of the documentation:
 
-   * :ref:`Testing steps for FOTA over Bluetooth LE with nRF52840 <ug_nrf52_developing_ble_fota_steps_testing>`
    * :ref:`Testing steps for FOTA over Bluetooth LE with nRF5340 <ug_nrf53_developing_ble_fota_steps_testing>`
    * :ref:`Testing steps for FOTA over Bluetooth LE with nRF54L15 <ug_nrf54l_developing_ble_fota_steps_testing>`
 

@@ -578,7 +578,7 @@ Cellular samples
 
   * Removed redundant logging now done by the :ref:`lib_nrf_cloud` library.
 
-* :ref:`smp_svr` sample:
+* Cellular: SMP Server sample:
 
   * Added sysbuild configuration files.
 

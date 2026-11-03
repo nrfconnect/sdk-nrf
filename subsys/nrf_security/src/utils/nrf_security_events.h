@@ -69,3 +69,17 @@ void nrf_security_event_clear(nrf_security_event_t event, uint32_t events_mask);
  * @return The previous value of the event & events_mask.
  */
 uint32_t nrf_security_event_set(nrf_security_event_t event, uint32_t events_mask);
+
+/**
+ * @brief Read and clear events without waiting.
+ *
+ * The read and the clear can't interleave with nrf_security_event_set() from an
+ * ISR. k_event_clear() takes the same spinlock as k_event_set(), and without
+ * CONFIG_EVENTS interrupts are locked around them.
+ *
+ * @param[in] event The event to take.
+ * @param[in] events_mask The mask of events to take.
+ *
+ * @return The value of the event & events_mask before it was cleared.
+ */
+uint32_t nrf_security_event_take(nrf_security_event_t event, uint32_t events_mask);

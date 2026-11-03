@@ -10,7 +10,8 @@ from typing import Literal
 from twister_harness import DeviceAdapter
 from twister_harness.helpers.utils import find_in_config
 
-from .helpers import normalize_path, run_command
+from ..adapters.cmd import run_command
+from .helpers import normalize_path
 
 KEY_TYPES = Literal["UROT_PUBKEY", "BL_PUBKEY", "APP_PUBKEY"]
 POLICY_TYPES = Literal["revokable", "lock", "lock-last"]

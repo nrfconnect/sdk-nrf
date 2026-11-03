@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: 8ef4223c4e749ac3c8b4d9b4e831637b12b3fa9c
+      revision: 8cfc6b8ee86a21a002783adf1d85bea7f26d226c
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -129,7 +129,7 @@ manifest:
           compare-by-default: true
     - name: mcuboot
       repo-path: sdk-mcuboot
-      revision: 2b21b8b1bd3e93b0538dd50768dab71b8836ac25
+      revision: f54bd5ba89cc9894227eeb0ff434c2f0a521e0e5
       path: bootloader/mcuboot
     - name: qcbor
       repo-path: sdk-qcbor
@@ -150,11 +150,11 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: b825ef01e22744f5733ca6b27f5460cbbb19859c
+      revision: 73e2293a27574187214c8d317e7816a27329160e
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
-      revision: 39329596a865299ff77a1f7036986ae3f8032bac
+      revision: 6dc41cd86919d32583bceec98f633a09d40e782d
     - name: psa-arch-tests
       repo-path: sdk-psa-arch-tests
       path: modules/tee/tf-m/psa-arch-tests
@@ -162,14 +162,14 @@ manifest:
     - name: nrf-802154
       repo-path: sdk-nrf-802154
       path: nrf-802154
-      revision: 80acd8153c59a21e6897eb53ac71036d997509dd
+      revision: 451aa5d47477bb2b24b3f8e239adb8886ceba2fd
       groups:
         - nrf-802154
     - name: dragoon
       # Only for internal Nordic development
       repo-path: dragoon.git
       remote: dragoon
-      revision: c9acfb06f87b8fe42f6c3423f102f589b9acd64b
+      revision: 61338155a2de77b597ee7d4c57fb1aeb70b2d2f3
       groups:
         - dragoon
     - name: cjson
@@ -183,7 +183,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: 98d3466d911b22e156c9a7fb16a9265059ccd545
+      revision: f2c0e6094875a37d478119efd2a2a0830f7a9a77
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -211,7 +211,7 @@ manifest:
     - name: openthread
       repo-path: sdk-openthread
       path: modules/lib/openthread
-      revision: 0fe68ff23527e8bb9a9821ca96a255fccfbb44a7
+      revision: e33f40435949fcf2afc6326bb802d217a9e50db2
       userdata:
         ncs:
           upstream-url: https://github.com/openthread/openthread
@@ -224,7 +224,7 @@ manifest:
       groups:
         - doc-internal
     - name: nrf_wifi
-      revision: 3ef388f588bd241e5aa5261fdb5840bba9abe0fc
+      revision: 3424d7fe3fee1dbd938b8c78993765dd204442cb
       path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
@@ -266,7 +266,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 09cf9bf998b9e70c2926203447f620c01d68a064
+      revision: 48d8aa596238cbee26019550cb7a474b2335e902
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

@@ -8,7 +8,7 @@ from pathlib import Path
 import pytest
 from intelhex import bin2hex
 from twister_harness import DeviceAdapter
-from twister_harness_ext.utils.common import flash_with_nrfutil, reset_board
+from twister_harness_ext.adapters.nrfutil import flash_with_nrfutil, reset_board
 from twister_harness_ext.utils.dts_helper import get_partition_address
 from twister_harness_ext.utils.required_build import get_required_build
 

@@ -155,6 +155,9 @@ Testing
 
 After programming the sample to your development kit, you can test it either by connecting to another development kit that is running the :ref:`peripheral_hids_keyboard` sample, or by using the `Bluetooth Low Energy app`_ that emulates a HIDS server.
 
+.. note::
+   You can use development kits from different SoC series for the central and peripheral roles.
+   However, button and LED numbering varies between series, so refer to the tab for the kit you are using in each role.
 
 Testing with another development kit
 ------------------------------------
@@ -168,15 +171,16 @@ Testing with another development kit
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 4** on the peripheral kit to make it start advertising.
       #. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+         You must confirm the passkey value on both devices to allow bonding and HID data access by the Central HIDS sample.
       #. Wait until the HIDS keyboard is detected by the central.
          All detected descriptors are listed.
          In the terminal window, check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe to report id: 1
+            Subscribe to report id: 0
             Subscribe to boot keyboard report
 
-      #. Press **Button 1** and **Button 2** one after another on the kit that runs the keyboard sample and observe the notification values in the terminal window.
+      #. Press either **Button 1** or **Button 2** on the kit that runs the keyboard sample and observe the notification values similar to the following ones in the terminal window.
          See :ref:`peripheral_hids_keyboard` for the expected values::
 
             Notification, id: 0, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
@@ -186,22 +190,22 @@ Testing with another development kit
 
             Setting protocol mode: BOOT
 
-      #. Press **Button 1** and **Button 2** one after another on the kit that runs the keyboard sample and observe the notification of the boot report values::
+      #. Press either **Button 1** or **Button 2** on the kit that runs the keyboard sample and observe the notification of the boot report values similar to the following ones::
 
             Notification, keyboard boot, size: 8, data: 0x0 0x0 0xf 0x0 0x0 0x0 0x0 0x0
             Notification, keyboard boot, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
-      #. Press **Button 1** and **Button 3** one after another on the Central HIDS kit and observe that **LED 1** on the keyboard kit changes its state.
-         The following information is also displayed in the terminal window.
+      #. Press either **Button 1** or **Button 3** on the Central HIDS kit and observe that **LED 3** (Caps Lock LED) on the keyboard kit changes its state.
+         Information similar to the following is also displayed in the terminal window (depending on the current state of the Caps Lock LED, either ``0x2`` or ``0x0`` will be displayed).
 
          If **Button 1** was pressed::
 
-            Caps lock send (val: 0x2)
+            Caps lock sent (val: 0x2)
             Caps lock sent
 
          If **Button 3** was pressed::
 
-            Caps lock send using write with response (val: 0x2)
+            Caps lock send using write with response, val: 0x2
             Capslock write result: 0
             Received data (size: 1, data[0]: 0x2)
 
@@ -212,15 +216,16 @@ Testing with another development kit
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 3** on the peripheral kit in order for it to start advertising.
       #. When connected, press **Button 0** on both devices to confirm the passkey value used for bonding, or press **Button 1** to reject it.
+         You must confirm the passkey value on both devices to allow bonding and HID data access by the Central HIDS sample.
       #. Wait until the HIDS keyboard is detected by the central.
          All detected descriptors are listed.
          In the terminal window, check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe to report id: 1
+            Subscribe to report id: 0
             Subscribe to boot keyboard report
 
-      #. Press **Button 0** and **Button 1** one after another on the kit that runs the keyboard sample and observe the notification values in the terminal window.
+      #. Press either **Button 0** or **Button 1** on the kit that runs the keyboard sample and observe the notification values similar to the following ones in the terminal window.
          See :ref:`peripheral_hids_keyboard` for the expected values::
 
             Notification, id: 0, size: 8, data: 0x0 0x0 0xb 0x0 0x0 0x0 0x0 0x0
@@ -230,22 +235,22 @@ Testing with another development kit
 
             Setting protocol mode: BOOT
 
-      #. Press **Button 0** and **Button 1** one after another on the kit that runs the keyboard sample and observe the notification of the boot report values::
+      #. Press either **Button 0** or **Button 1** on the kit that runs the keyboard sample and observe the notification of the boot report values similar to the following ones::
 
             Notification, keyboard boot, size: 8, data: 0x0 0x0 0xf 0x0 0x0 0x0 0x0 0x0
             Notification, keyboard boot, size: 8, data: 0x0 0x0 0x0 0x0 0x0 0x0 0x0 0x0
 
-      #. Press **Button 0** and **Button 2** one after another on the Central HIDS kit and observe that **LED 0** on the keyboard kit changes its state.
-         The following information is also displayed in the terminal window.
+      #. Press either **Button 0** or **Button 2** on the Central HIDS kit and observe that **LED 2** (Caps Lock LED) on the keyboard kit changes its state.
+         Information similar to the following is also displayed in the terminal window (depending on the current state of the Caps Lock LED, either ``0x2`` or ``0x0`` will be displayed).
 
          If **Button 0** was pressed::
 
-            Caps lock send (val: 0x2)
+            Caps lock sent (val: 0x2)
             Caps lock sent
 
          If **Button 2** was pressed::
 
-            Caps lock send using write with response (val: 0x2)
+            Caps lock send using write with response, val: 0x2
             Capslock write result: 0
             Received data (size: 1, data[0]: 0x2)
 
@@ -363,11 +368,12 @@ To test the sample with HID SCI support, both the central and the peripheral you
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 4** on the peripheral kit to make it start start advertising.
       #. When connected, press **Button 1** on both devices to confirm the passkey value used for bonding, or press **Button 2** to reject it.
+         You must confirm the passkey value on both devices to allow bonding and HID data access by the Central HIDS sample.
       #. Wait until the HIDS keyboard is detected by the central.
          Check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe in report id: 1
+            Subscribe in report id: 0
             Subscribe in boot keyboard report
       #. Press **Button 4** on the central kit to enter the "Alternative button functions" mode.
       #. Press **Button 2** on the central kit and wait for the SCI mode to change to DEFAULT.
@@ -385,11 +391,12 @@ To test the sample with HID SCI support, both the central and the peripheral you
       #. Program the other kit with the :ref:`peripheral_hids_keyboard` sample and reset it.
       #. If you see "NFC configuration done" on the peripheral kit, press **Button 3** on the peripheral kit to make it start start advertising.
       #. When connected, press **Button 0** on both devices to confirm the passkey value used for bonding, or press **Button 1** to reject it.
+         You must confirm the passkey value on both devices to allow bonding and HID data access by the Central HIDS sample.
       #. Wait until the HIDS keyboard is detected by the central.
          Check for information similar to the following::
 
             HIDS is ready to work
-            Subscribe in report id: 1
+            Subscribe in report id: 0
             Subscribe in boot keyboard report
       #. Press **Button 3** on the central kit to enter the "Alternative button functions" mode.
       #. Press **Button 1** on the central kit and wait for the SCI mode to change to DEFAULT.

@@ -453,6 +453,16 @@ ZTEST(suite_crypto, test_bloom_filter)
 			  "Invalid resulting filter.");
 }
 
+ZTEST(suite_crypto, test_bloom_filter_sizes)
+{
+	static const size_t expected_sizes[] = {0, 4, 5, 6, 7, 9, 10, 11, 12, 13, 15};
+
+	for (size_t n = 0; n < ARRAY_SIZE(expected_sizes); n++) {
+		zassert_equal(fp_crypto_account_key_filter_size(n), expected_sizes[n],
+			      "Invalid filter size for %zu Account Keys.", n);
+	}
+}
+
 ZTEST(suite_crypto, test_additional_data_packet)
 {
 	static const uint8_t input_data[] = {0x53, 0x6F, 0x6D, 0x65, 0x6F, 0x6E, 0x65, 0x27, 0x73,

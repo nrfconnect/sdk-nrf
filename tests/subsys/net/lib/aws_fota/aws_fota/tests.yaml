@@ -1,0 +1,11 @@
+tests:
+  net.lib.aws_fota:
+    sysbuild: true
+    platform_allow: native_sim
+    integration_platforms:
+      - native_sim
+    tags:
+      - aws
+      - fota
+      - sysbuild
+      - ci_tests_subsys_net

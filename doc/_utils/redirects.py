@@ -56,7 +56,6 @@ NRF = (
     ("libraries/bluetooth/mesh/scheduler/index", "libraries/bluetooth/mesh/scheduler"),
     ("libraries/bluetooth/mesh/sensor_models/index", "libraries/bluetooth/mesh/sensor_models"),
     ("libraries/bluetooth/mesh/time/index", "libraries/bluetooth/mesh/time"),
-    ("libraries/bluetooth/mesh/vnd/dm/index", "libraries/bluetooth/mesh/vnd/dm"),
     ("libraries/bluetooth/mesh/index", "libraries/bluetooth/mesh"),
     ("protocols/bt/bt_mesh/fota/index", "protocols/bt/bt_mesh/fota"),
     ("protocols/index", "protocols"),
@@ -141,6 +140,7 @@ NRF = (
     ("app_dev/board_support/index", "app_dev/board_names"),
     ("config_and_build/board_support/board_names", "app_dev/board_names"), # Board names (moved to top of the hierarchy in v3.0.0)
     ("app_dev/board_support/board_names", "app_dev/board_names"),
+    ("boards/nordic/nrf54lv10dk/doc/index", "app_dev/board_names"), # nRF54LV10 DK (moved to Zephyr in v3.5.0)
     ("config_and_build/board_support/processing_environments", "security/tfm/processing_environments"), # Processing environments (moved under Security > TF-M in v3.0.0)
     ("app_dev/board_support/processing_environments", "security/tfm/processing_environments"),
     ("security/processing_environments", "security/tfm/processing_environments"),
@@ -695,9 +695,6 @@ NRF = (
     ("libraries/bluetooth_services/mesh/scheduler_srv", "libraries/bluetooth/mesh/scheduler_srv"),
     ("libraries/bluetooth_services/mesh/scheduler_cli", "libraries/bluetooth/mesh/scheduler_cli"),
     ("libraries/bluetooth_services/mesh/vnd/silvair_enocean_srv", "libraries/bluetooth/mesh/vnd/silvair_enocean_srv"),
-    ("libraries/bluetooth_services/mesh/vnd/dm", "libraries/bluetooth/mesh/vnd/dm"),
-    ("libraries/bluetooth_services/mesh/vnd/dm_srv", "libraries/bluetooth/mesh/vnd/dm_srv"),
-    ("libraries/bluetooth_services/mesh/vnd/dm_cli", "libraries/bluetooth/mesh/vnd/dm_cli"),
     ("libraries/bluetooth_services/mesh/vnd/le_pair_resp", "libraries/bluetooth/mesh/vnd/le_pair_resp"),
     ("libraries/bluetooth_services/mesh/models", "libraries/bluetooth/mesh/models"),
     ("libraries/bluetooth_services/mesh/properties", "libraries/bluetooth/mesh/properties"),

@@ -126,6 +126,17 @@ config BT_CTLR_SDC_QOS_CONN_EVENT_REPORT
 	help
 	  Quality of Service connection event report feature support
 
+config BT_CTLR_SDC_LOG
+	bool "SoftDevice Controller logging [EXPERIMENTAL]"
+	depends on SOC_SERIES_NRF54L || SOC_SERIES_BSIM_NRF54LX
+	select MPSL_LOG_HANDLER
+	select EXPERIMENTAL
+	help
+	  Contribute the SoftDevice Controller message table to the shared MPSL
+	  log handler (see MPSL_LOG_HANDLER).
+	  Can be used to simplify debugging of HCI errors or
+	  other kinds of SDC failures.
+
 config BT_CTLR_SDC_ALLOW_PARALLEL_SCANNING_AND_INITIATING
 	bool "Allow scanning and initiating at the same time"
 	depends on BT_CENTRAL
@@ -178,6 +189,22 @@ config BT_CTLR_SDC_CONN_EVENT_EXTEND_DEFAULT
 	    See also: Bluetooth Core Specification, Vol 6, Part B, Section 4.5.6.
 	  - There are no conflicts with other roles of equal or higher priority.
 
+config BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT
+	bool "Minimum connection event length mode by default"
+	depends on BT_CONN && BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE
+	select EXPERIMENTAL
+	help
+	  This sets Minimum Connection Event Length Mode on boot.
+	  See sdc_hci_cmd_vs_min_conn_event_length_mode_enable.
+
+config BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE
+	bool "Minimum connection event length mode"
+	depends on BT_CONN
+	select EXPERIMENTAL
+	help
+	  This adds support for enabling Minimum Connection Event Length Mode.
+	  See sdc_hci_cmd_vs_min_conn_event_length_mode_enable.
+
 config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	int "Default central ACL event spacing [us]"
 	depends on BT_CENTRAL
@@ -191,7 +218,7 @@ config BT_CTLR_SDC_CENTRAL_ACL_EVENT_SPACING_DEFAULT
 	  This configuration allows the application to set a different value for event spacing
 	  than BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT. This will result in holes in the scheduling
 	  timeline if the connection interval is longer than the ACL event spacing.
-	  This gap can be used for other scheduling activites like isochronous streams.
+	  This gap can be used for other scheduling activities like isochronous streams.
 
 config BT_CTLR_MIN_VAL_OF_MAX_ACL_TX_PAYLOAD_DEFAULT
 	int "Default minimum value that will be used as maximum Tx octets for ACL connections"
@@ -219,7 +246,7 @@ config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 config BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT
 	int "Default periodic advertising event length [us]"
 	depends on BT_PER_ADV
-	default 2500 if BT_ISO && !BT_CTLR_SDC_MAX_CONN_EVENT_LEN_DEFAULT_OVERRIDE
+	default 2500 if BT_ISO && !BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 	default 7500 if !BT_CTLR_SDC_PERIODIC_ADV_EVENT_LEN_DEFAULT_OVERRIDE
 	range 0 4000000
 	help
@@ -317,7 +344,7 @@ config BT_CTLR_SDC_MPSL_COEX
 	  This is not supported with Coded Phy and FEM on the nRF5340 SoC.
 
 # As CONFIG_BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY is defined for the Zephyr LL
-# only, and BT_CLTR_DF_ADV_CTE_TX expects it existence, we define it as an empty
+# only, and BT_CTLR_DF_ADV_CTE_TX expects it existence, we define it as an empty
 # configuration here.
 config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
 	bool
@@ -325,25 +352,26 @@ config BT_CTLR_ADV_EXT_PDU_EXTRA_DATA_MEMORY
 choice BT_LL_SOFTDEVICE_VARIANT
 	prompt "SoftDevice Controller variant"
 	default BT_LL_SOFTDEVICE_MULTIROLE if ((BT_OBSERVER && BT_BROADCASTER) || \
-						     BT_CTLR_SDC_LLPM || \
-						     BT_CTLR_ADV_EXT || \
-						     BT_CTLR_PHY_CODED || \
-						     BT_CTLR_ADV_PERIODIC || \
-						     BT_CTLR_DF_CTE_TX || \
-						     BT_CTLR_SDC_MPSL_COEX || \
-						     BT_CTLR_SYNC_PERIODIC || \
-						     BT_CTLR_SCA_UPDATE || \
-						     BT_CTLR_SUBRATING || \
-						     BT_CTLR_SDC_PAWR_ADV || \
-						     BT_CTLR_SDC_PAWR_SYNC || \
-						     BT_ISO || \
-						     BT_CTLR_CHANNEL_SOUNDING || \
-						     BT_CTLR_EXTENDED_FEAT_SET || \
-						     BT_CTLR_FRAME_SPACE_UPDATE || \
-						     BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
-						     BT_CTLR_LE_FLUSHABLE_ACL_DATA || \
-						     SOC_COMPATIBLE_NRF5340_CPUNET || \
-						     SOC_SERIES_NRF71)
+		BT_CTLR_SDC_LLPM || \
+		BT_CTLR_ADV_EXT || \
+		BT_CTLR_PHY_CODED || \
+		BT_CTLR_ADV_PERIODIC || \
+		BT_CTLR_DF_CTE_TX || \
+		BT_CTLR_SDC_MPSL_COEX || \
+		BT_CTLR_SYNC_PERIODIC || \
+		BT_CTLR_SCA_UPDATE || \
+		BT_CTLR_SUBRATING || \
+		BT_CTLR_SDC_PAWR_ADV || \
+		BT_CTLR_SDC_PAWR_SYNC || \
+		BT_ISO || \
+		BT_CTLR_CHANNEL_SOUNDING || \
+		BT_CTLR_EXTENDED_FEAT_SET || \
+		BT_CTLR_FRAME_SPACE_UPDATE || \
+		BT_CTLR_SHORTER_CONNECTION_INTERVALS || \
+		BT_CTLR_LE_FLUSHABLE_ACL_DATA || \
+		BT_CTLR_SDC_LOG || \
+		SOC_COMPATIBLE_NRF5340_CPUNET || \
+		SOC_SERIES_NRF71)
 	default BT_LL_SOFTDEVICE_CENTRAL if BT_OBSERVER
 	default BT_LL_SOFTDEVICE_PERIPHERAL if BT_BROADCASTER
 	help
@@ -352,6 +380,7 @@ choice BT_LL_SOFTDEVICE_VARIANT
 config BT_LL_SOFTDEVICE_PERIPHERAL
 	bool "SoftDevice Controller peripheral library optimized for peripheral role applications"
 	depends on !BT_OBSERVER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_CTLR_SDC_LOG
 	help
 	  The peripheral library variant is optimized for simpler applications only
 	  requiring the peripheral role.
@@ -359,6 +388,7 @@ config BT_LL_SOFTDEVICE_PERIPHERAL
 config BT_LL_SOFTDEVICE_CENTRAL
 	bool "SoftDevice Controller optimized for central role applications"
 	depends on !BT_BROADCASTER && !BT_CTLR_SDC_LLPM && !BT_CTLR_ADV_EXT && !BT_CTLR_PHY_CODED
+	depends on !BT_CTLR_SDC_LOG
 	help
 	  The central library variant is optimized for simpler applications only
 	  requiring the central role.
@@ -444,7 +474,7 @@ config BT_UNINIT_MPSL_ON_DISABLE
 	bool "Uninitializes MPSL on BT disable"
 	depends on MPSL_DYNAMIC_INTERRUPTS
 	help
-	  This option unitializes MPSL on BT disable. HCI driver close calls
+	  This option uninitializes MPSL on BT disable. HCI driver close calls
 	  mpsl_lib_uninit, which releases all peripherals and allows the user to
 	  override any interrupt handlers used by MPSL.
 
@@ -789,6 +819,23 @@ config BT_CTLR_CHANNEL_CLASSIFICATION
 	help
 	  Enable support for the Bluetooth Channel Classification feature
 	  in the controller.
+
+config BT_CTLR_DECISION_BASED_ADV_FILTERING
+	bool "Decision Based Advertising Filtering [EXPERIMENTAL]"
+	depends on BT_BROADCASTER || BT_OBSERVER
+	depends on BT_CTLR_ADV_EXT
+	select EXPERIMENTAL
+	help
+	  Enables support for the Bluetooth Decision Based Advertising Filtering
+	  feature in the controller.
+
+config BT_CTLR_SCAN_DECISION_INSTRUCTION_COUNT
+	int "Number of scan decision instructions"
+	depends on BT_CTLR_DECISION_BASED_ADV_FILTERING && BT_OBSERVER
+	range 8 32
+	default 8
+	help
+	  The number of scan decision instructions the controller will support.
 
 config BT_LL_SOFTDEVICE_INIT_PRIORITY
 	int

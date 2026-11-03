@@ -122,10 +122,6 @@ The following table describes the available configurations.
      - Bluetooth LE
      - Swap
      - External flash
-   * - sample.dfu.smp_svr.bt.nrf54l15
-     - Bluetooth LE
-     - Swap
-     -
    * - sample.dfu.smp_svr.bt.nrf54l15dk.ext_flash
      - Bluetooth LE
      - Swap
@@ -329,7 +325,6 @@ To perform DFU using the `nRF Connect Device Manager`_ mobile app over Bluetooth
 #. Follow the testing steps for the FOTA over Bluetooth LE.
    For more information, see the following documentation pages:
 
-   * :ref:`Testing steps for FOTA over Bluetooth LE with nRF52840 <ug_nrf52_developing_ble_fota_steps_testing>`
    * :ref:`Testing steps for FOTA over Bluetooth LE with nRF5340 <ug_nrf53_developing_ble_fota_steps_testing>`
    * :ref:`Testing steps for FOTA over Bluetooth LE with nRF54L15 <ug_nrf54l_developing_ble_fota_steps_testing>`
    * :ref:`Testing steps for FOTA over Bluetooth LE with nRF54H20 <ug_nrf54h_developing_ble_fota_steps_testing>`

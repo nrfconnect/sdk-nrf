@@ -59,6 +59,7 @@
 	pinctrl-0 = <&i2c130_default_test>;
 	pinctrl-1 = <&i2c130_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	zephyr,concat-buf-size = <512>;
 };
 
@@ -68,6 +69,7 @@
 	pinctrl-0 = <&i2c131_default_test>;
 	pinctrl-1 = <&i2c131_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	zephyr,concat-buf-size = <512>;
 };
 
@@ -79,5 +81,6 @@
 	pinctrl-0 = <&i2c133_default_test>;
 	pinctrl-1 = <&i2c133_sleep_test>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 	zephyr,concat-buf-size = <512>;
 };

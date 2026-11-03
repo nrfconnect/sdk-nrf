@@ -128,7 +128,7 @@ static void assess_measurement_result(uint64_t timer_value_us,
 		maximal_allowed_transmission_time_us = (1 + 2) * theoretical_transmission_time_us;
 	}
 
-	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
+	zexpect_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured call latency is over the specified limit");
 }
 

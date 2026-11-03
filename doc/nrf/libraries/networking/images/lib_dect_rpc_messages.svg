@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 820 620" role="img">
+  <title>DECT NR+ RPC: commands and events sequence</title>
+  <defs>
+    <marker id="arrow-fwd" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#333f48"/>
+    </marker>
+    <marker id="arrow-ret" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+      <path d="M0,0 L8,4 L0,8 Z" fill="#768692"/>
+    </marker>
+    <style type="text/css"><![CDATA[
+      .box-participant { fill:#00a9ce; stroke:#333f48; stroke-width:1.5; }
+      .box-section { fill:#eef4fb; stroke:#768692; stroke-width:1; }
+      .lifeline { stroke:#768692; stroke-width:1; stroke-dasharray:4,4; fill:none; }
+      .title { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:13px; font-weight:600; }
+      .title-light { fill:#ffffff; font-family:Calibri,Arial,sans-serif; font-size:12px; font-weight:600; }
+      .subtitle-light { fill:#eef4fb; font-family:Calibri,Arial,sans-serif; font-size:10px; }
+      .section-title { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:11px; font-weight:600; }
+      .msg { fill:#333f48; font-family:Calibri,Arial,sans-serif; font-size:11px; }
+      .note { fill:#768692; font-family:Calibri,Arial,sans-serif; font-size:10px; font-style:italic; }
+      .edge-cmd { stroke:#333f48; stroke-width:1.4; fill:none; marker-end:url(#arrow-fwd); }
+      .edge-rsp { stroke:#768692; stroke-width:1.3; fill:none; marker-end:url(#arrow-ret); stroke-dasharray:5,3; }
+      .edge-evt { stroke:#0077c8; stroke-width:1.4; fill:none; marker-end:url(#arrow-fwd); }
+    ]]></style>
+  </defs>
+
+  <!-- Participants -->
+  <rect class="box-participant" x="40" y="16" width="200" height="52" rx="6"/>
+  <text class="title-light" x="140" y="38" text-anchor="middle">Client</text>
+  <text class="subtitle-light" x="140" y="54" text-anchor="middle">app / tunneled net_if</text>
+
+  <rect class="box-participant" x="480" y="16" width="280" height="52" rx="6"/>
+  <text class="title-light" x="620" y="38" text-anchor="middle">Server</text>
+  <text class="subtitle-light" x="620" y="54" text-anchor="middle">RPC decoder / L2 / dect0</text>
+
+  <line class="lifeline" x1="140" y1="68" x2="140" y2="600"/>
+  <line class="lifeline" x1="620" y1="68" x2="620" y2="600"/>
+
+  <!-- Commands section -->
+  <rect class="box-section" x="24" y="82" width="772" height="338" rx="8"/>
+  <text class="section-title" x="410" y="98" text-anchor="middle">Commands (client → server, response on same RPC transaction)</text>
+
+  <text class="msg" x="380" y="122" text-anchor="middle">IF_GET_ADDRS</text>
+  <path class="edge-cmd" d="M148 128 H612"/>
+  <text class="msg" x="380" y="148" text-anchor="middle">addrs, MTU, carrier, dormant</text>
+  <path class="edge-rsp" d="M612 154 H148"/>
+
+  <text class="msg" x="380" y="178" text-anchor="middle">IF_STATUS</text>
+  <path class="edge-cmd" d="M148 184 H612"/>
+  <text class="msg" x="380" y="204" text-anchor="middle">status + associations</text>
+  <path class="edge-rsp" d="M612 210 H148"/>
+
+  <text class="msg" x="380" y="234" text-anchor="middle">CONNECT / DISCONNECT</text>
+  <path class="edge-cmd" d="M148 240 H612"/>
+  <text class="note" x="628" y="248">conn_mgr on server dect0</text>
+  <text class="msg" x="380" y="268" text-anchor="middle">int32 status</text>
+  <path class="edge-rsp" d="M612 274 H148"/>
+
+  <text class="msg" x="380" y="298" text-anchor="middle">IF_SEND (IPv6 payload)</text>
+  <path class="edge-cmd" d="M148 304 H612"/>
+  <text class="note" x="628" y="312">net_if_send_data on dect0</text>
+  <text class="msg" x="380" y="332" text-anchor="middle">int32 bytes or -errno (before TX completes)</text>
+  <path class="edge-rsp" d="M612 338 H148"/>
+
+  <text class="msg" x="380" y="362" text-anchor="middle">SHELL</text>
+  <path class="edge-cmd" d="M148 368 H612"/>
+  <text class="msg" x="380" y="388" text-anchor="middle">0 or BUSY; output via SHELL_LINE events</text>
+  <path class="edge-rsp" d="M612 394 H148"/>
+
+  <text class="msg" x="380" y="412" text-anchor="middle">PING</text>
+  <path class="edge-cmd" d="M148 418 H612"/>
+  <text class="msg" x="380" y="438" text-anchor="middle">0</text>
+  <path class="edge-rsp" d="M612 444 H148"/>
+
+  <!-- Events section -->
+  <rect class="box-section" x="24" y="432" width="772" height="168" rx="8"/>
+  <text class="section-title" x="410" y="448" text-anchor="middle">Events (server → client, queued, no command response)</text>
+
+  <text class="msg" x="380" y="472" text-anchor="middle">IF_RECEIVE (one RX IPv6 packet)</text>
+  <path class="edge-evt" d="M612 478 H148"/>
+  <text class="note" x="148" y="486">net_recv_data() on client</text>
+
+  <text class="msg" x="380" y="506" text-anchor="middle">IF_LINK_STATE (carrier + dormant)</text>
+  <path class="edge-evt" d="M612 512 H148"/>
+
+  <text class="msg" x="380" y="540" text-anchor="middle">IF_ADDRS_CHANGED (trigger re-sync)</text>
+  <path class="edge-evt" d="M612 546 H148"/>
+
+  <text class="msg" x="380" y="574" text-anchor="middle">SHELL_LINE (one output line)</text>
+  <path class="edge-evt" d="M612 580 H148"/>
+</svg>

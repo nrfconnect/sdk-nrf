@@ -7,9 +7,9 @@
 #include "nrf9251dk_nrf9251_cpuapp.overlay"
 
 &spi130 {
-	/delete-property/ memory-regions;
+	memory-regions = <&cpuppr_dma_region>;
 };
 
 &dut_spis {
-	/delete-property/ memory-regions;
+	memory-regions = <&cpuppr_dma_region>;
 };

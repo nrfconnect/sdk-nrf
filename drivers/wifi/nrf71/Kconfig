@@ -1,4 +1,4 @@
-# Nordic Wi-Fi driver for nRF70 series SoCs
+# Nordic Wi-Fi driver for nRF71 series SoCs
 #
 # Copyright (c) 2024 Nordic Semiconductor
 #
@@ -53,46 +53,29 @@ config NRF71_IPC_SEND_RETRY_INTERVAL_US
 	  Delay between retries when the IPC busy queue is not ready.
 
 choice NRF71_OPER_MODES
-	bool "nRF70 operating modes"
-	default NRF71_SYSTEM_MODE if !WIFI_USAGE_MODE_SCAN_ONLY
-	default NRF71_SCAN_ONLY
+	bool "nRF71 operating modes"
+	default NRF71_SYSTEM_MODE
 	help
-	  Select the operating mode of the nRF70 driver
-
-config NRF71_SCAN_ONLY
-	bool "nRF70 scan only mode"
-	help
-	  Select this option to enable scan-only mode of the nRF70 driver.
-	  In this mode, the driver can only perform scanning operations
-	  to discover nearby Wi-Fi networks, but cannot establish connections
-	  or transmit/receive data. Mainly used for location accuracy
-	  improvement.
+	  Select the operating mode of the nRF71 driver
 
 config NRF71_SYSTEM_MODE
-	bool "System mode of the nRF70 driver"
+	bool "System mode of the nRF71 driver"
 	help
-	  Select this option to enable system mode of the nRF70 driver.
+	  Select this option to enable system mode of the nRF71 driver.
 	  This is the normal operating mode that supports full Wi-Fi
 	  functionality including sub-modes like STA, AP, and P2P.
+	  Scan functionality is available as a sub-option of system mode.
 
 config NRF71_RADIO_TEST
-	bool "Radio test mode of the nRF70 driver"
+	bool "Radio test mode of the nRF71 driver"
 	help
-	  Select this option to enable radio test mode of the nRF70 driver.
+	  Select this option to enable radio test mode of the nRF71 driver.
 	  This mode is used for testing RF performance and regulatory
 	  compliance. It provides direct control of the radio hardware
 	  for transmitting test patterns and measuring RF parameters.
 
-config NRF71_RADIO_TEST_SHELL
-	bool "Radio test shell commands"
-	default y
-	depends on NRF71_RADIO_TEST && SHELL
-	help
-	  Register the wifi_radio_test shell command set for nRF71 radio test
-	  mode. Disable to provide a custom shell integration in the application.
-
 config NRF71_OFFLOADED_RAW_TX
-	bool "Offloaded raw TX mode of the nRF70 driver"
+	bool "Offloaded raw TX mode of the nRF71 driver"
 	help
 	  Select this option to enable offloaded raw TX mode.
 	  In this mode, raw 802.11 frames can be transmitted directly
@@ -107,37 +90,42 @@ config NET_L2_ETHERNET
 
 if NRF71_SYSTEM_MODE
 
+config NRF71_SCAN
+	bool "Wi-Fi scan support"
+	default y if WIFI_USAGE_MODE_SCAN_ONLY
+	help
+	  Enable Wi-Fi scanning functionality in system mode.
+	  Automatically selected by STA, AP, and P2P modes (AP needs scan
+	  for OBSS and related operation).
+	  When enabled without any connection sub-mode, the driver
+	  operates in scan-only mode for discovering nearby networks.
+
 config NRF71_STA_MODE
-	bool "nRF70 STA mode"
+	bool "nRF71 STA mode"
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
 	select NRF71_DATA_TX
+	select NRF71_SCAN
 	help
-	  Select this option to enable STA mode of the nRF70 driver.
+	  Select this option to enable STA mode of the nRF71 driver.
 
 config NRF71_AP_MODE
 	bool "Access point mode"
-	select NRF71_DATA_TX
 	depends on WIFI_NM_WPA_SUPPLICANT_AP
+	select NRF71_DATA_TX
+	select NRF71_SCAN
 	default y if WIFI_USAGE_MODE_AP || WIFI_USAGE_MODE_STA_AP
-
-config NRF71_ENABLE_DUAL_VIF
-	bool "Dual virtual Wi-Fi interfaces"
-	default y if WIFI_NM_MAX_MANAGED_INTERFACES = 2
-	help
-	  Enable support for two virtual Wi-Fi interfaces (VIFs).
-	  When enabled, the driver can operate two VIFs simultaneously,
-	  allowing use cases such as one interface in AP mode and another in STA mode.
 
 config NRF71_P2P_MODE
 	bool "P2P support in driver"
 	default y if WIFI_NM_WPA_SUPPLICANT_P2P
+	select NRF71_SCAN
 
 config NRF71_SYSTEM_WITH_RAW_MODES
-	bool "nRF70 system mode with raw modes"
+	bool "nRF71 system mode with raw modes"
 	default y if (NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX)
 	help
-	  Select this option to enable system mode of the nRF70 driver with raw modes.
+	  Select this option to enable system mode of the nRF71 driver with raw modes.
 
 config NRF71_RAW_DATA_TX
 	bool "RAW TX data path in the driver [EXPERIMENTAL]"
@@ -155,6 +143,21 @@ config NRF71_PROMISC_DATA_RX
 
 config NRF71_DATA_TX
 	bool
+
+config NRF71_SCAN_ONLY
+	bool
+	default y if NRF71_SCAN && !NRF71_STA_MODE && !NRF71_AP_MODE && \
+		!NRF71_P2P_MODE && !NRF71_RAW_DATA_TX && !NRF71_RAW_DATA_RX && \
+		!NRF71_PROMISC_DATA_RX
+
+config NRF71_ENABLE_DUAL_VIF
+	bool "Dual virtual Wi-Fi interfaces"
+	depends on !NRF71_SCAN_ONLY
+	default y if WIFI_NM_MAX_MANAGED_INTERFACES = 2
+	help
+	  Enable support for two virtual Wi-Fi interfaces (VIFs).
+	  When enabled, the driver can operate two VIFs simultaneously,
+	  allowing use cases such as one interface in AP mode and another in STA mode.
 
 endif # NRF71_SYSTEM_MODE
 
@@ -186,6 +189,7 @@ config NRF_WIFI_BET
 
 config NRF71_TCP_IP_CHECKSUM_OFFLOAD
 	bool "TCP/IP checksum offload"
+	depends on NRF71_DATA_TX
 	default y if !NRF71_RADIO_TEST
 	help
 	  Enable TCP/IP checksum offload for Wi-Fi driver.
@@ -222,16 +226,24 @@ config NRF71_MAX_TX_PENDING_QLEN
 
 config NRF71_UTIL
 	bool "Utility shell in nRF71 driver"
-	depends on SHELL && (NRF71_SYSTEM_MODE || NRF71_SCAN_ONLY)
+	depends on SHELL && NRF71_SYSTEM_MODE
 
 config NRF71_DEBUG_SHELL
 	bool "Debug shell in nRF71 driver"
-	depends on SHELL && (NRF71_SYSTEM_MODE || NRF71_SCAN_ONLY)
+	depends on SHELL && NRF71_SYSTEM_MODE
 	select SYS_HEAP_RUNTIME_STATS
 	help
 	  Register the "nrf71 dbg" shell commands to read and clear
 	  UMAC/LMAC/PHY statistics and debug statistics from the RPU,
 	  and to show host TX queue and driver heap usage statistics.
+
+config NRF71_RADIO_TEST_SHELL
+	bool "Radio test shell commands"
+	default y
+	depends on NRF71_RADIO_TEST && SHELL
+	help
+	  Register the wifi_radio_test shell command set for nRF71 radio test
+	  mode. Disable to provide a custom shell integration in the application.
 
 # Antenna gain, band edge ceilings and the transmit power ceilings all
 # describe the board RF front-end rather than the SoC, so they come from the
@@ -380,21 +392,18 @@ config WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM
 	  Disable this option to bring up the interface only with a MAC address
 	  that has been programmed.
 
-config NRF71_RSSI_STALE_TIMEOUT_MS
-	int "RSSI stale timeout in milliseconds"
+config NRF71_GET_STA_STALE_TIMEOUT_MS
+	int "Station info stale timeout in milliseconds"
 	default 1000
 	help
-	  RSSI stale timeout is the period after which the driver queries
-	  RPU to get the RSSI value.
-	  If data is active (for example, ping), the driver stores the RSSI value from
-	  the received frames and provides this stored information
-	  to wpa_supplicant. In this case, a higher value will be suitable
-	  as the stored RSSI value at the driver will be updated regularly.
-	  If data is not active or after the stale timeout duration,
-	  the driver queries the RPU to get the RSSI value
-	  and provides it to wpa_supplicant. The value should be set to a lower
-	  value as the driver does not store it and requires RPU to provide the
-	  information.
+	  Period after which the driver queries the RPU for station
+	  information (RSSI and TX PHY rate) on a signal poll.
+	  While data is active, the driver stores the RSSI of received
+	  frames and the TX PHY rate of successfully transmitted frames, and
+	  reports these stored values without querying the RPU, so as not to
+	  disturb the data path.
+	  If no frame has been received within this period, the driver
+	  queries the RPU instead.
 
 config NRF_WIFI_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
@@ -429,15 +438,15 @@ config NRF_WIFI_USE_VARIABLE_NET_BUFS
 	bool "Use variable network buffers"
 	default y
 	help
-	  This option enables the use of variable network buffers in the nRF70 driver.
+	  This option enables the use of variable network buffers in the nRF71 driver.
 	  Variable network buffers optimize RAM usage by allocating buffers of different sizes
 	  based on the data size. This option is enabled by default to optimize RAM usage.
 	  Samples and applications can override this option for higher performance.
 
 if NRF_WIFI_USE_VARIABLE_NET_BUFS
 
-# nRF70 now uses variable buffers as default to optimize RAM usage. Default pool sizes are used, samples/apps can override
-# for higher performance.
+# nRF71 now uses variable buffers as default to optimize RAM usage. Default pool
+# sizes are used; samples/apps can override for higher performance.
 choice NET_PKT_DATA_ALLOC_TYPE
 	default NET_BUF_VARIABLE_DATA_SIZE
 endchoice
@@ -527,13 +536,21 @@ config NRF_WIFI_AP_DEAD_DETECT_TIMEOUT
 	  The number of seconds after which the AP is declared dead if no beacons
 	  are received from the AP. This is used to detect AP silently going down, for example, due to power off.
 
+config WIFI_NRF71_VHT_HT_FALLBACK
+	bool "Allow fallback from VHT to HT on 802.11ac access points"
+	default y
+	help
+	  On 802.11ac 80 MHz access points, allow the link to fall back from
+	  VHT to HT when needed. Clear this option to keep VHT mode. Applies
+	  only to 802.11ac 80 MHz links; other modes are unaffected.
+
 config NRF_WIFI_RPU_RECOVERY
 	bool "RPU recovery mechanism [EXPERIMENTAL]"
 	# Relies on power-save mode, so, LPM is needed
 	depends on NRF_WIFI_LOW_POWER
 	select EXPERIMENTAL
 	help
-	  Enable the RPU recovery mechanism to recover from an RPU (nRF70) hang.
+	  Enable the RPU recovery mechanism to recover from an RPU (nRF71) hang.
 	  This feature performs an interface reset (down and up), which triggers
 	  a RPU cold boot. The application's network connection will be lost during
 	  the recovery process, and it is the application's responsibility to
@@ -715,9 +732,9 @@ config NRF_WIFI_PS_INT_PS
 
 endchoice
 
-config NRF71_PASSIVE_SCAN_ONLY
+config NRF71_PASSIVE_SCAN
 	bool "Forced Passive scan"
-	depends on NRF71_SCAN_ONLY
+	depends on NRF71_SCAN
 	help
 	  Enable this configuration to force passive scan on all channels.
 	  This will override application-specified scan type.
@@ -757,6 +774,25 @@ config NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	help
 	  Enable this configuration to disable priority window for scan
 	  in the case of coexistence with Short Range radio.
+
+config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
+	int "BT grant time during Wi-Fi scan (milliseconds)"
+	default 0
+	range 0 10000
+	help
+	  Time in milliseconds that Bluetooth coexistence logic attempts to
+	  allocate between Wi-Fi scan channel operations. Applies only to 2.4 GHz
+	  band scan. Use 0 for the firmware default (no explicit grant time).
+
+config NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
+	int "BT grant tolerance time during Wi-Fi scan (milliseconds)"
+	default 0
+	range 0 10000
+	help
+	  Maximum time in milliseconds Wi-Fi may operate without a BT grant during
+	  scan before Bluetooth access is required. Applies only to 2.4 GHz band
+	  scan. Minimum effective value when non-zero is 30 ms. Use 0 for the
+	  firmware default (no explicit tolerance).
 
 if NETWORKING
 

@@ -33,4 +33,21 @@ int dect_net_l2_shell_init(const struct dect_net_lib_shell_print_fns *print_fns)
 char *dect_net_l2_shell_util_mac_err_to_string(enum dect_status_values status, char *out_str_buff,
 					       size_t out_str_buff_len);
 
+#if defined(CONFIG_DECT_L2_SHELL_RPC)
+/**
+ * Execute a DECT L2 shell subcommand by name (for example, "status" or "nw_join").
+ * Output is appended to @p out_buf. Used by DECT RPC server for remote shell.
+ * Caller must hold the shell session lock when calling (for example, after try_lock on server).
+ *
+ * @param subcmd Subcommand name (for example, "status" or "nw_join").
+ * @param argc   Argument count (including subcmd as argv[0]).
+ * @param argv   Argument vector (argv[0] = subcmd, argv[1] = first arg, ...).
+ * @param out_buf Buffer for captured output (null-terminated).
+ * @param out_len Size of @p out_buf.
+ * @return 0 on success, -ENOENT if subcommand unknown, negative on other error.
+ */
+int dect_shell_exec_by_name(const char *subcmd, int argc, char **argv,
+			    char *out_buf, size_t out_len);
+#endif /* CONFIG_DECT_L2_SHELL_RPC */
+
 #endif /* DECT_NET_L2_SHELL_UTIL_H */

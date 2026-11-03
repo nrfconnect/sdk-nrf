@@ -1,0 +1,65 @@
+"""
+Copyright (c) 2026 Nordic Semiconductor ASA
+
+SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+"""
+
+from docutils.parsers.rst import directives
+from sphinx.util.docutils import SphinxDirective
+from vscode_button.common import get_latest_stable_version, render_vscode_button
+
+INSTALL_IN_VSCODE_URL = (
+    "vscode://nordic-semiconductor.nrf-connect/installTools"
+    "?sdkType=nRF%20Connect%20SDK"
+    "&sdkVersion={version}"
+)
+
+INSTALL_EXTENSION_URL = "vscode://nordic-semiconductor.nrf-connect-extension-pack/quickstart"
+
+
+class VSCodeSDKInstallDirective(SphinxDirective):
+    has_content = False
+    required_arguments = 0
+    optional_arguments = 0
+    option_spec = {
+        "version": directives.unchanged,
+        "label": directives.unchanged,
+    }
+
+    def run(self) -> list:
+        version = self.options.get("version") or get_latest_stable_version(self.env.app)
+        if not version:
+            return []
+
+        uri = INSTALL_IN_VSCODE_URL.format(version=version)
+        return render_vscode_button(
+            self.env,
+            label=self.options.get("label", "Install SDK in VS Code"),
+            uri=uri,
+            tooltip=(
+                "This installs the extension (if needed) and starts the installation "
+                f"of the nRF Connect SDK and toolchain v{version}."
+            ),
+            inline=True,
+        )
+
+
+class VSCodeExtensionInstallDirective(SphinxDirective):
+    has_content = False
+    required_arguments = 0
+    optional_arguments = 0
+    option_spec = {
+        "label": directives.unchanged,
+    }
+
+    def run(self) -> list:
+        return render_vscode_button(
+            self.env,
+            label=self.options.get("label", "Install nRF Connect for VS Code"),
+            uri=INSTALL_EXTENSION_URL,
+            tooltip=(
+                "This opens VS Code, installs the nRF Connect extension, "
+                "and starts the quick start walkthrough."
+            ),
+            inline=True,
+        )

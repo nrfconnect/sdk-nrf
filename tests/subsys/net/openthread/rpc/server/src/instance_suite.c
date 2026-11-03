@@ -6,6 +6,7 @@
 
 #include <mock_nrf_rpc_transport.h>
 #include <ot_rpc_ids.h>
+#include <ot_rpc_lock.h>
 #include <test_rpc_env.h>
 
 #include <zephyr/fff.h>
@@ -202,6 +203,46 @@ ZTEST(ot_rpc_instance, test_otGetVersionString)
 	mock_nrf_rpc_tr_expect_done();
 
 	zassert_equal(otGetVersionString_fake.call_count, 1);
+}
+
+/*
+ * Test reception of otSetStateChangedCallback() and otRemoveStateChangeCallback() commands
+ * and serialization of the state changed callback.
+ */
+ZTEST(ot_rpc_instance, test_state_changed_callback)
+{
+	const uint8_t cb_id = 1;
+	const otChangedFlags flags = OT_CHANGED_THREAD_ROLE | OT_CHANGED_THREAD_RLOC_ADDED;
+	void *expected_ctx = (void *)(uintptr_t)cb_id;
+
+	otSetStateChangedCallback_fake.return_val = OT_ERROR_NONE;
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(OT_ERROR_NONE), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_SET_STATE_CHANGED_CALLBACK, cb_id));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otSetStateChangedCallback_fake.call_count, 1);
+	zassert_equal(otSetStateChangedCallback_fake.arg0_val, openthread_get_default_instance());
+	zassert_not_null(otSetStateChangedCallback_fake.arg1_val);
+	zassert_equal(otSetStateChangedCallback_fake.arg2_val, expected_ctx);
+
+	mock_nrf_rpc_tr_expect_add(RPC_CMD(OT_RPC_CMD_STATE_CHANGED, cb_id, CBOR_UINT8(flags)),
+				   RPC_RSP());
+	ot_rpc_mutex_lock();
+	otSetStateChangedCallback_fake.arg1_val(flags, expected_ctx);
+	ot_rpc_mutex_unlock();
+	mock_nrf_rpc_tr_expect_done();
+
+	mock_nrf_rpc_tr_expect_add(RPC_RSP(), NO_RSP);
+	mock_nrf_rpc_tr_receive(RPC_CMD(OT_RPC_CMD_REMOVE_STATE_CHANGED_CALLBACK, cb_id));
+	mock_nrf_rpc_tr_expect_done();
+
+	zassert_equal(otRemoveStateChangeCallback_fake.call_count, 1);
+	zassert_equal(otRemoveStateChangeCallback_fake.arg0_val,
+		      openthread_get_default_instance());
+	zassert_equal(otRemoveStateChangeCallback_fake.arg1_val,
+		      otSetStateChangedCallback_fake.arg1_val);
+	zassert_equal(otRemoveStateChangeCallback_fake.arg2_val, expected_ctx);
 }
 
 ZTEST_SUITE(ot_rpc_instance, NULL, NULL, tc_setup, NULL, NULL);

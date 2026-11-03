@@ -17,6 +17,7 @@ NRF_BASE = Path(__file__).absolute().parents[2]
 sys.path.insert(0, str(NRF_BASE / "doc" / "_utils"))
 import redirects
 import utils
+from versions import Versions
 
 ZEPHYR_BASE = utils.get_projdir("zephyr")
 MCUBOOT_BASE = utils.get_projdir("mcuboot")
@@ -27,7 +28,7 @@ MBEDTLS_BASE = NRF_BASE / ".." / "modules" / "crypto" / "mbedtls"
 project = "nRF Connect SDK"
 copyright = "2019-2026, Nordic Semiconductor"
 author = "Nordic Semiconductor"
-version = release = os.environ.get("DOCSET_VERSION")
+version = release = Versions.from_topdir().latest()
 
 sys.path.insert(0, str(ZEPHYR_BASE / "doc" / "_extensions"))
 sys.path.insert(0, str(NRF_BASE / "doc" / "_extensions"))
@@ -51,6 +52,7 @@ extensions = [
     "sphinx_tabs.tabs",
     "software_maturity_table",
     "sphinx_togglebutton",
+    "toggle_custom_hints",
     "sphinx_copybutton",
     "notfound.extension",
     "ncs_tool_versions",
@@ -58,7 +60,8 @@ extensions = [
     "sphinxcontrib.plantuml",
     "sphinxcontrib.programoutput",
     "sphinxcontrib.jquery",
-    "samples",
+    "vscode_open_sample",
+    "vscode_install_sdk",
     "sphinx_sitemap",
     "external_sw_versions",
     "ncs_file",

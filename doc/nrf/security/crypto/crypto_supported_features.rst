@@ -8889,13 +8889,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SHAKE128 256 bits
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
                  - --
                  - --
                * - SHAKE256 192 bits
@@ -9450,6 +9450,7 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
+                   | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128_256`
                    | :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256_512`
 
          .. tab:: nrf_oberon
@@ -9608,6 +9609,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -9621,10 +9623,12 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                  - --
                  - --
                * - SHAKE256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE256`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9643,8 +9647,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
                  - --
+                 - --
                * - ASCON CXOF128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - --
                  - --
                  - --
                  - --
@@ -9656,8 +9662,8 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               - The output of SHAKE128 and SHAKE256 is limited to 65535 bytes.
-               - XOF algorithms are optimized to be used by the CRACEN driver for ML-DSA algorithms rather than generic XOFs.
+               - The output of SHAKE128 and SHAKE256 is limited to 65535 bytes (summed over all calls).
+               - The CRACEN implementation of SHAKE128 and SHAKE256 is optimized for the ML-DSA and ML-KEM algorithms.
 
          .. tab:: nrf_oberon
 
@@ -9670,6 +9676,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -9677,6 +9684,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LS05B
                * - SHAKE128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHAKE128`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -9695,6 +9703,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON XOF128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_XOF128`
                  - Experimental
@@ -9705,8 +9714,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
+                 - Experimental
                * - ASCON CXOF128
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ASCON_CXOF128`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental

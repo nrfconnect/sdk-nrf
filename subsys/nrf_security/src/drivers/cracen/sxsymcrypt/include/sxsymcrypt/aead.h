@@ -5,6 +5,13 @@
  *
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  *
+ * When sx_aead_feed_aad(), sx_aead_crypt(), sx_aead_produce_tag(),
+ * sx_aead_verify_tag(), sx_aead_resume_state(), sx_aead_save_state(),
+ * sx_aead_status() or sx_aead_wait() returns an error other than
+ * ::SX_ERR_UNINITIALIZED_OBJ or ::SX_ERR_HW_PROCESSING, the operation has
+ * ended. The key is released and the context is wiped, apart from the hardware
+ * reservation, which the caller still releases with sx_hw_release().
+ *
  * Examples:
  * The following examples show typical sequences of function calls for
  * encryption and decryption a message.

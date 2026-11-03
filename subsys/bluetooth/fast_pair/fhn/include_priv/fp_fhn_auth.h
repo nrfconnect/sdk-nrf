@@ -27,6 +27,16 @@ extern "C" {
 /* Length in bytes of the authentication segment. */
 #define FP_FHN_AUTH_SEG_LEN (CONFIG_BT_FAST_PAIR_FHN_AUTH_SEG_LEN)
 
+/* Maximum value of the Data Length parameter. */
+#if defined(CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN)
+#define FP_FHN_AUTH_DATA_LEN_MAX (CONFIG_BT_FAST_PAIR_FHN_BEACON_ACTIONS_MAX_DATA_LEN)
+#else
+/* The deprecated FMDN Kconfig tree does not define the option. The value covers the core
+ * Beacon Actions operations, which the Beacon Actions module verifies at build time.
+ */
+#define FP_FHN_AUTH_DATA_LEN_MAX (48U)
+#endif
+
 /* Length in bytes of the Recovery Key. */
 #define FP_FHN_AUTH_KEY_RECOVERY_LEN (8U)
 /* Length in bytes of the Ring Key. */

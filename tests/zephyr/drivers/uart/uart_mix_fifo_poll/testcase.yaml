@@ -13,36 +13,28 @@ tests:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=n
       - CONFIG_UART_ASYNC_API=n
-    platform_allow:
+    platform_allow: &platform_allow_spec
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.uart.uart_mix_poll_fifo:
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
-    platform_allow:
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lc10dk/nrf54lc10a/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+    platform_allow: *platform_allow_spec
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.uart.uart_mix_poll_async_api:
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
-    platform_allow:
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lc10dk/nrf54lc10a/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+    platform_allow: *platform_allow_spec
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -50,12 +42,7 @@ tests:
     extra_args: TEST_CONST_BUFFER=1
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
-    platform_allow:
-      - nrf54ls05dk/nrf54ls05a/cpuapp
-      - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
-      - nrf54lc10dk/nrf54lc10a/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+    platform_allow: *platform_allow_spec
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 

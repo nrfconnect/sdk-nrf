@@ -1,0 +1,34 @@
+%% DECT NR+ RPC - commands, data TX, and server events (sequence)
+%% Authoritative figure: lib_dect_rpc_messages.svg (Nordic styling, matches lib_dect_rpc_architecture.svg).
+%% Use this Mermaid source for quick edits; re-sync the SVG or paste at https://mermaid.live for a draft.
+
+sequenceDiagram
+    participant Client as Client (app / net_if)
+    participant Server as Server (RPC decoder / L2)
+
+    rect rgb(245, 245, 245)
+        Note over Client,Server: Commands (client → server, response on same RPC)
+        Client->>Server: IF_GET_ADDRS
+        Server-->>Client: addrs, MTU, carrier, dormant
+        Client->>Server: IF_STATUS
+        Server-->>Client: status + associations
+        Client->>Server: CONNECT / DISCONNECT
+        Note right of Server: conn_mgr on dect0
+        Server-->>Client: int32 status
+        Client->>Server: IF_SEND (IPv6 payload)
+        Note right of Server: net_if_send_data on dect0
+        Server-->>Client: int32 bytes or -errno
+        Client->>Server: SHELL
+        Server-->>Client: 0 or BUSY (DECT_RPC_CMD_SHELL_LINE events)
+        Client->>Server: PING
+        Server-->>Client: 0
+    end
+
+    rect rgb(245, 245, 245)
+        Note over Client,Server: Events (server → client, queued, no command response)
+        Server->>Client: IF_RECEIVE (one RX IPv6 packet)
+        Note right of Client: net_recv_data()
+        Server->>Client: IF_LINK_STATE (carrier + dormant)
+        Server->>Client: IF_ADDRS_CHANGED (trigger re-sync)
+        Server->>Client: SHELL_LINE (one output line)
+    end

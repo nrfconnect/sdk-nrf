@@ -6,9 +6,9 @@
 .. |release_tt| replace:: ``v3.4.1``
 .. |release_number_tt| replace:: ``3.4.1``
 
-.. |jlink_ver| replace:: v9.24a
+.. |jlink_ver| replace:: v9.82
 
-.. |54H_nrfutil_device_ver| replace:: 2.17.2
+.. |54H_nrfutil_device_ver| replace:: 2.21.0
 .. |54H_nrfutil_trace_ver| replace:: 4.4.0
 .. |ironside_se_ver| replace:: v23.8.0+33
 
@@ -19,6 +19,8 @@
 .. |config| replace:: See :ref:`configure_application` for information about how to permanently or temporarily change the configuration.
 
 .. |test_sample| replace:: After programming the sample to your development kit, complete the following steps to test it:
+
+.. |test_combo_sample| replace:: Complete the following steps to test the Bluetooth® LE radio on the default single-domain nRF71 Series build:
 
 .. |test_application| replace:: After programming the application to your development kit, complete the following steps to test it:
 
@@ -183,8 +185,6 @@
 .. |external_flash_size| replace:: external flash memory with minimum 4 MB
 
 .. |gnss_tradeoffs| replace:: For more information on the various trade-offs of using A-GNSS compared to using P-GPS, see the `nRF Cloud Location Services documentation`_.
-
-.. |thingy53_sample_note| replace:: If you build this application for Thingy:53, it enables additional features. See :ref:`thingy53_app_guide` for details.
 
 .. |nrf5340_mesh_sample_note| replace:: For nRF5340 and Thingy:53, the extended advertiser has to be set manually for the network core, because the Bluetooth® Low Energy does not know that the Bluetooth Mesh is enabled when built for this core. This is already done for this sample by setting ``CONFIG_BT_EXT_ADV=y`` for the network core.
 

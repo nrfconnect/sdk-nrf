@@ -5,6 +5,7 @@
  */
 
 #include <cracen/common.h>
+#include <cracen/cracen_kmu.h>
 
 #include <psa/crypto.h>
 #include <psa/crypto_values.h>
@@ -81,26 +82,23 @@ static const cracen_builtin_kmu_key_policy_t g_builtin_kmu_policy[] = {
 	 .key_slot_end = 179,
 	 .kmu_entry_type = KMU_ENTRY_SLOT_RANGE}};
 
-bool cracen_kmu_key_user_allowed(const psa_key_attributes_t *attributes)
+static bool kmu_slot_allowed(mbedtls_key_owner_id_t owner_id, psa_drv_slot_number_t slot)
 {
-	mbedtls_svc_key_id_t svc_key_id = psa_get_key_id(attributes);
-	mbedtls_key_owner_id_t owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(svc_key_id);
-	psa_key_id_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(svc_key_id);
-	psa_drv_slot_number_t slot_number = CRACEN_PSA_GET_KMU_SLOT(key_id);
-
 	for (uint32_t i = 0; i < NRFX_ARRAY_SIZE(g_builtin_kmu_policy); i++) {
+		const cracen_builtin_kmu_key_policy_t *entry = &g_builtin_kmu_policy[i];
 
-		switch (g_builtin_kmu_policy[i].kmu_entry_type) {
+		if (entry->owner != owner_id) {
+			continue;
+		}
+
+		switch (entry->kmu_entry_type) {
 		case KMU_ENTRY_SLOT_SINGLE:
-			if (g_builtin_kmu_policy[i].owner == owner_id &&
-			    g_builtin_kmu_policy[i].key_slot_start == slot_number) {
+			if (slot == entry->key_slot_start) {
 				return true;
 			}
 			break;
 		case KMU_ENTRY_SLOT_RANGE:
-			if (g_builtin_kmu_policy[i].owner == owner_id &&
-			    (slot_number >= g_builtin_kmu_policy[i].key_slot_start &&
-			     slot_number <= g_builtin_kmu_policy[i].key_slot_end)) {
+			if (slot >= entry->key_slot_start && slot <= entry->key_slot_end) {
 				return true;
 			}
 			break;
@@ -110,6 +108,28 @@ bool cracen_kmu_key_user_allowed(const psa_key_attributes_t *attributes)
 	}
 
 	return false;
+}
+
+bool cracen_kmu_key_user_allowed(const psa_key_attributes_t *attributes)
+{
+	mbedtls_svc_key_id_t svc_key_id = psa_get_key_id(attributes);
+	mbedtls_key_owner_id_t owner_id = MBEDTLS_SVC_KEY_ID_GET_OWNER_ID(svc_key_id);
+	psa_key_id_t key_id = MBEDTLS_SVC_KEY_ID_GET_KEY_ID(svc_key_id);
+	psa_drv_slot_number_t first_slot = CRACEN_PSA_GET_KMU_SLOT(key_id);
+	unsigned int slot_count;
+
+	/* Deny access if the slot count cannot be determined. */
+	if (cracen_kmu_get_slot_count(attributes, &slot_count) != PSA_SUCCESS) {
+		return false;
+	}
+
+	for (unsigned int i = 0; i < slot_count; i++) {
+		if (!kmu_slot_allowed(owner_id, first_slot + i)) {
+			return false;
+		}
+	}
+
+	return true;
 }
 #endif /* PSA_NEED_CRACEN_KMU_DRIVER */
 

@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/ {
+	aliases {
+		led = &led0;
+	};
+};
+
+&gpio1 {
+	status = "okay";
+};
+
+&gpio2 {
+	status = "okay";
+};
+
+&spi00 {
+	status = "disabled";
+};
+
+&wicr {
+	status = "disabled";
+};
+
+&wifi {
+	status = "disabled";
+};
+
+&ieee802154 {
+	status = "disabled";
+};
+
+&radio {
+	status = "disabled";
+};
+
+&mspi00 {
+	status = "okay";
+	op-mode = "MSPI_OP_MODE_CONTROLLER";
+	zephyr,pm-device-runtime-auto;
+};
+
+&mx25u25645g {
+	status = "okay";
+	/delete-property/ reset-gpios;
+};

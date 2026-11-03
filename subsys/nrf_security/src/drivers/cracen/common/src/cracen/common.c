@@ -120,6 +120,9 @@ psa_status_t cracen_hash_get_algo(psa_algorithm_t alg, const struct sxhashalg **
 	case PSA_ALG_SHA3_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHA3_512, (*sx_hash_algo = &sxhashalg_sha3_512));
 		break;
+	case PSA_ALG_SHAKE128_256:
+		IF_ENABLED(PSA_NEED_CRACEN_SHAKE128_256, (*sx_hash_algo = &sxhashalg_shake128_32));
+		break;
 	case PSA_ALG_SHAKE256_512:
 		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256_512, (*sx_hash_algo = &sxhashalg_shake256_64));
 		break;
@@ -354,7 +357,7 @@ void cracen_be_rshift(const uint8_t *a, int n, uint8_t *r, size_t sz)
 int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 {
 	unsigned int neq = 0;
-	unsigned int gt = 0;
+	unsigned int gt;
 	unsigned int ucarry;
 	unsigned int d;
 	unsigned int lt;
@@ -369,10 +372,12 @@ int cracen_be_cmp(const uint8_t *a, const uint8_t *b, size_t sz, int carry)
 	}
 
 	neq |= ucarry & 0xFF;
-	lt = ucarry < 0x100;
-	gt = neq && !lt;
 
-	return (gt ? 1 : 0) - (lt ? 1 : 0);
+	/* ucarry stays below 2^31 and neq below 0x100 */
+	lt = (ucarry - 0x100u) >> 31;
+	gt = ((neq + 0xFFu) >> 8) & (lt ^ 1u);
+
+	return (int)gt - (int)lt;
 }
 
 void cracen_be_xor(uint8_t *buf, size_t buf_sz, size_t xor_val)

@@ -299,10 +299,12 @@ J-Link Software and Documentation Pack
 SEGGER's `J-Link Software and Documentation Pack`_ is a package of tools that is required for SEGGER J-Link to work correctly with both Intel and ARM assemblies.
 Among others, this package includes the J-Link RTT Viewer, which can be used for :ref:`test_and_optimize`.
 
-Use the J-Link |jlink_ver| when working with the |NCS|, as also listed in the :ref:`installing_vsc` section on the |NCS| installation page.
+Use the J-Link |jlink_ver| when working with the |NCS|.
+
+When working with the recommended |nRFVSC|, the extension informs you about the required version of the J-Link Software and Documentation Pack and guides you through the installation process.
 
 On Windows, you also need to install SEGGER USB Driver for J-Link, which is required for support of older Nordic Semiconductor devices in :ref:`requirements_nrf_util`.
-For information on how to install the USB Driver, see the `nRF Util prerequisites`_ documentation.
+The recommended |nRFVSC| extension has the related checkbox selected when you open the J-Link Software installation wizard.
 
 .. _toolchain_management_tools:
 .. _additional_nordic_sw_tools:
@@ -410,6 +412,9 @@ Use the latest available release for development.
 The extensions are available for download from the following websites:
 
 * |VSC| Marketplace, where you can install the main `nRF Connect for VS Code`_ extension to get the full set of extensions.
+
+  .. ncs-install-vscode-ext::
+
 * `Open VSX Registry`_, from where you can install the extensions separately to editors based on |VSC| and compatible with the VSIX format.
 
   .. note::
@@ -418,6 +423,8 @@ The extensions are available for download from the following websites:
 
 See the :ref:`install_ncs` page for information about how to use the extension to manage |NCS| toolchain installations.
 For more information about the extension and what it offers, visit the `nRF Connect for Visual Studio Code`_ documentation.
+
+|nRFVSC| comes with its own bundled version of some of the nRF Util commands.
 
 .. _requirements_nrf_util:
 

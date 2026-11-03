@@ -11,8 +11,6 @@ common:
   platform_allow:
     - nrf54ls05dk/nrf54ls05a/cpuapp
     - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp
-    - nrf54lv10dk/nrf54lv10a/cpuapp/ns
     - nrf54lc10dk/nrf54lc10a/cpuapp
     - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     - nrf9251dk/nrf9251/cpuapp
@@ -78,7 +76,7 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
   # No Fast SPI instance on nrf54ls05a/b
-  # No Fast SPI instance on nrf54lv10a, nor nrf54lc10a
+  # No Fast SPI instance on nrf54lc10a
   # Missing test setup for nrf9251dk SPI fast instance
 
   nrf.extended.drivers.spi.pm_runtime:

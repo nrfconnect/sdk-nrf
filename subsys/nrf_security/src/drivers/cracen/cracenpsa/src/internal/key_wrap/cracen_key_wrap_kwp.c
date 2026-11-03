@@ -130,7 +130,9 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 	int sx_status;
 	size_t length;
 	size_t pad_size;
-	bool sig_check_fail;
+	size_t last_block;
+	uint8_t pad_bytes = 0;
+	unsigned int validation_failure;
 	uint8_t cipher_output_block[SX_BLKCIPHER_AES_BLK_SZ];
 	psa_key_type_t key_type = psa_get_key_type(wrapping_key_attributes);
 
@@ -193,16 +195,21 @@ psa_status_t cracen_key_wrap_kwp_unwrap(const psa_key_attributes_t *wrapping_key
 	decode_be_value(&length, CRACEN_KWP_MLI_SIZE, cipher_output_block + CRACEN_KWP_IV_SIZE);
 	pad_size = blocks_count * CRACEN_KEY_WRAP_BLOCK_SIZE - length;
 
-	sig_check_fail = constant_memcmp(cipher_output_block,
-					 cracen_kwp_iv,
-					 CRACEN_KWP_IV_SIZE) != 0;
-	sig_check_fail = sig_check_fail || (pad_size > (CRACEN_KEY_WRAP_BLOCK_SIZE - 1));
-	sig_check_fail = sig_check_fail ||
-			 (pad_size > 0 &&
-			  !constant_memcmp_is_zero(key_data + length, pad_size));
+	/* Any padding is in the last semiblock, so check all of its bytes past length. */
+	last_block = (blocks_count - 1) * CRACEN_KEY_WRAP_BLOCK_SIZE;
+	for (size_t i = 0; i < CRACEN_KEY_WRAP_BLOCK_SIZE; i++) {
+		pad_bytes |= key_data[last_block + i] * (last_block + i >= length);
+	}
+
+	validation_failure = (unsigned int)constant_memcmp(cipher_output_block,
+							   cracen_kwp_iv,
+							   CRACEN_KWP_IV_SIZE);
+	validation_failure |=
+		(unsigned int)(pad_size > (CRACEN_KEY_WRAP_BLOCK_SIZE - 1));
+	validation_failure |= (unsigned int)pad_bytes;
 
 	safe_memzero(cipher_output_block, SX_BLKCIPHER_AES_BLK_SZ);
-	if (sig_check_fail) {
+	if (validation_failure != 0U) {
 		status = PSA_ERROR_INVALID_SIGNATURE;
 		goto exit;
 	}

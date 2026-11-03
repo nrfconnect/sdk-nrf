@@ -14,6 +14,7 @@
 #include <zephyr/drivers/gpio.h>
 #include <zephyr/pm/device.h>
 #include <pinctrl_soc.h>
+#include <hal/nrf_gpio.h>
 
 #include <app_event_manager.h>
 #include "wheel_event.h"
@@ -175,6 +176,15 @@ static int wakeup_int_ctrl_nolock(bool enable)
 								 GPIO_INT_LEVEL_HIGH);
 		} else {
 			err = gpio_pin_interrupt_configure(port, pin, GPIO_INT_DISABLE);
+#if defined(NRF_GPIO_LATCH_PRESENT)
+			/* Disabling sense does not clear the latch. A level detected
+			 * before disabling would be reported by the GPIO driver after
+			 * the module leaves the suspended state.
+			 */
+			if (!err) {
+				nrf_gpio_pin_latch_clear(qdec_pin[i]);
+			}
+#endif
 		}
 
 		if (err) {

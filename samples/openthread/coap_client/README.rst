@@ -59,7 +59,7 @@ The following LED and buttons of the client development kit are used by this sam
 
 .. tabs::
 
-   .. group-tab:: nRF52 and nRF53 DKs
+   .. group-tab:: nRF53 DKs
 
       LED 1:
          On when the OpenThread connection is established.

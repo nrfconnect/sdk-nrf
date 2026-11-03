@@ -14,7 +14,7 @@ import pytest
 from twister_harness import DeviceAdapter
 from twister_harness.fixtures import determine_scope
 from twister_harness.helpers.utils import match_lines
-from twister_harness_ext.utils.common import reset_board
+from twister_harness_ext.adapters.nrfutil import reset_board
 from twister_harness_ext.utils.key_provisioning import provision_keys_for_kmu
 
 logger = logging.getLogger(__name__)

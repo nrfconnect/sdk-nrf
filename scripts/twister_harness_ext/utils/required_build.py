@@ -18,7 +18,9 @@ from twister_harness import DeviceAdapter
 from twister_harness.helpers.domains_helper import get_default_domain_name
 from twister_harness.helpers.utils import find_in_config
 
-from .helpers import run_command, timer
+from twister_harness_ext.adapters.cmd import run_command
+
+from .helpers import timer
 
 logger = logging.getLogger(__name__)
 

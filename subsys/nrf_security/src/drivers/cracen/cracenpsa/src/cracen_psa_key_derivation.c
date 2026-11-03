@@ -244,7 +244,7 @@ psa_status_t cracen_key_agreement(const psa_key_attributes_t *attributes, const 
 
 	psa_status = cracen_ecc_get_ecurve_from_psa(curve_family, curve_bits, &curve);
 	if (psa_status != PSA_SUCCESS) {
-		return PSA_SUCCESS;
+		return psa_status;
 	}
 
 	if (sx_pk_curve_opsize(curve) != priv_key_size) {

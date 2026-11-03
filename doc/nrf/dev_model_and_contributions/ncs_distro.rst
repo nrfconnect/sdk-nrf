@@ -29,13 +29,13 @@ Some examples of this type of integration are:
 * :ref:`Memfault <mod_memfault>`.
   This functionality is present through the addition of a `west project in the nRF Connect SDK manifest <Memfault entry in the manifest_>`_.
   The `repository provided by Memfault <Memfault firmware SDK_>`_ is public.
-  By default, |NCS| users will obtain a copy of it (as well as the integration code necessary for |NCS| based applications) when :ref:`getting the code <cloning_the_repositories>`.
+  By default, |NCS| users will obtain a copy of it (as well as the integration code necessary for |NCS| based applications) when :ref:`getting the code <install_ncs>`.
 
 * ANT protocol support.
   The code and documentation of this protocol is confidential, and access to the private module repository requires the GitHub user to be added to it.
   This is why the west project is disabled by default, using the :ref:`project groups <zephyr:west-manifest-groups>` feature of west.
   This means that the ANT entry in the manifest is disabled by default through its presence in the `manifest group filter`_.
-  You will not get a copy of this repository when :ref:`getting the code <cloning_the_repositories>`, and instead, need to enable the repository first using west itself to fetch it locally::
+  You will not get a copy of this repository when :ref:`getting the code <install_ncs>`, and instead, need to enable the repository first using west itself to fetch it locally::
 
     west config manifest.group-filter +ant
     west update

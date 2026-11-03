@@ -140,7 +140,6 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 	int ret;
 	uint32_t audio_q_num_used;
 	static uint32_t test_tone_finite_pos;
-	struct net_buf *audio_frame_out = NULL;
 	int debug_trans_count = 0;
 
 	while (1) {
@@ -150,6 +149,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 
 		/* Get complete PCM frame from USB */
 		struct net_buf *audio_frame_in;
+		struct net_buf *audio_frame_out = NULL;
 
 		ret = k_msgq_get(&audio_q_in, (void *)&audio_frame_in, K_FOREVER);
 		ERR_CHK_MSG(ret, "Failed to get complete audio frame from IN queue");
@@ -201,7 +201,11 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			}
 
 			ret = sw_codec_encode(audio_frame_in, audio_frame_out);
-			ERR_CHK_MSG(ret, "Encode failed");
+			if (ret) {
+				LOG_ERR("Encode failed: %d", ret);
+				net_buf_unref(audio_frame_out);
+				audio_frame_out = NULL;
+			}
 		} else {
 			LOG_INF_RATELIMIT("Encoder not initialized or enabled, data dropped");
 		}
@@ -215,7 +219,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 			debug_trans_count = 0;
 		}
 
-		if (sw_codec_cfg.encoder.enabled) {
+		if (audio_frame_out != NULL) {
 			streamctrl_send(audio_frame_out);
 			net_buf_unref(audio_frame_out);
 		}
@@ -429,6 +433,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 			usb_out_spillover = NULL;
 			return ret;
 		}
+		usb_out_spillover = NULL;
 	}
 
 	/* Split decoded frame into 1ms blocks */
@@ -456,7 +461,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 	}
 
 	if (audio_frame_out->len != 0) {
-		struct net_buf *usb_out_spillover = net_buf_alloc(&audio_q_out_pool, K_NO_WAIT);
+		usb_out_spillover = net_buf_alloc(&audio_q_out_pool, K_NO_WAIT);
 
 		if (unlikely(usb_out_spillover == NULL)) {
 			LOG_ERR("Out of USB OUT buffers");

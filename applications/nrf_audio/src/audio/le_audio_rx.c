@@ -220,7 +220,11 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 				existing_meta->ref_ts_us, meta->ref_ts_us);
 
 			ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
-			ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
+			if (ret) {
+				LOG_ERR("Failed to put audio frame into queue: %d", ret);
+				net_buf_unref(audio_frame);
+			}
+
 			audio_frame = NULL;
 		}
 	}
@@ -255,7 +259,11 @@ check_send:
 		 * the next module
 		 */
 		ret = k_msgq_put(&ble_q_rx, (void *)&audio_frame, K_NO_WAIT);
-		ERR_CHK_MSG(ret, "Failed to put audio frame into queue");
+		if (ret) {
+			LOG_ERR("Failed to put audio frame into queue: %d", ret);
+			net_buf_unref(audio_frame);
+		}
+
 		audio_frame = NULL;
 	}
 }

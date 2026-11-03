@@ -10,6 +10,7 @@
 #include <modem/location.h>
 #include <modem/lte_lc.h>
 #include <net/wifi_location_common.h>
+#include <net/nrf_cloud.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -33,14 +34,19 @@ struct cloud_service_pos_req {
  *
  * @param[in] params Cloud positioning parameters to be used.
  * @param[out] location Storage for the result from response parsing.
+ * @param[out] cloud_err nRF Cloud error code if the cloud responded with an error,
+ *                       otherwise NRF_CLOUD_ERROR_NONE.
  *
- * @return 0 on success, or negative error code on failure.
- * @retval -ENOMEM Out of memory.
- * @retval -ENOMSG Parsing response from the location service failed.
+ * @return 0 on success, positive CoAP result code if the cloud responded with an
+ *         error over CoAP, or negative error code on failure.
+ * @retval -ETIMEDOUT No response from the cloud in time.
+ * @retval -EACCES Cloud connection is not established.
+ * @retval -EFAULT The cloud responded with an error over MQTT.
  */
 int cloud_service_location_get(
 	const struct cloud_service_pos_req *params,
-	struct location_data *location);
+	struct location_data *location,
+	enum nrf_cloud_error *cloud_err);
 
 #ifdef __cplusplus
 }

@@ -78,9 +78,9 @@ static psa_status_t cracen_ctr_cmac_generate_K_0(cracen_key_derivation_operation
  * r = 32 bits (counter is a uint32_t)
  * h = 128 bits (since we use CMAC the output block is 128 bit long)
  *
- * The algorithm specifies L as the bit length of the requested data length but the
- * PSA APIS don't support setting the length of the requested output so here we
- * always set L = 128 bits since we always output a single block.
+ * The algorithm specifies L as the bit length of the derived keying material. The
+ * PSA APIs don't fix the output length up front, so L is set to 8 times the
+ * capacity in bytes when the first output is requested.
  *
  */
 static psa_status_t cracen_ctr_mac_generate_block(cracen_key_derivation_operation_t *operation)

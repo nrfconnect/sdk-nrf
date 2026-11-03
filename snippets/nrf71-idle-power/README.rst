@@ -17,7 +17,10 @@ Overview
 ********
 
 This snippet enables the :ref:`lib_nrf71_idle_power` library, which reduces the System ON idle current of an application running on the nRF71 Series application core.
-It applies the ``UNUSED_ONLY`` RAM retention level, which lets the ``ram_pwrdn`` library compute the unused RAM range from the image layout at boot and power it down, without touching any RAM the image itself uses.
+It keeps the default ``RAM_RETAIN_FULL`` tier from the library.
+Use the :kconfig:option:`CONFIG_NRF71_IDLE_POWER_RAM_RETAIN_USED_ONLY` Kconfig option in the application if you need image-sized RAM retention instead of a fixed KiB boundary.
+Do not select it for Wi-Fi builds.
+Only image-linked RAM through ``_image_ram_end`` stays powered, see :ref:`lib_ram_pwrdn` for heap limits.
 
 Combine it with ``nrf71-idle-power-quiet`` snippet for a clean current measurement build, or with ``nrf71-idle-power-diag`` to print a power-state register snapshot for debugging.
 

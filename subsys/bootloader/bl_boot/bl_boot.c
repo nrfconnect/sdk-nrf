@@ -125,9 +125,16 @@ static int disable_next_w(const uint32_t address)
 
 #define RRAMC_REGION_RWX_LSB 0
 #define RRAMC_REGION_RWX_WIDTH 3
-#define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[3].CONFIG
+#if defined(CONFIG_SOC_NRF54LS05A_CPUAPP) || defined(CONFIG_SOC_NRF54LS05B_CPUAPP)
+#define RRAMC_REGION_TO_LOCK 2
+#else
+#define RRAMC_REGION_TO_LOCK 3
+#endif
+#define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[RRAMC_REGION_TO_LOCK].CONFIG
 #define RRAMC_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) >> 16)
 #define RRAMC_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
+#define RRAMC_REGION_SIZE_MASK_H (RRAMC_REGION_CONFIG_SIZE_Msk >> 16)
+#define RRAMC_REGION_SIZE_MASK_L (RRAMC_REGION_CONFIG_SIZE_Msk & 0x0000fffful)
 #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 
 static void __ramfunc jump_in(uint32_t reset)
@@ -175,7 +182,9 @@ static void __ramfunc jump_in(uint32_t reset)
 		 * by provisioning through BOOTCONF.
 		 * If not, set it according partition size.
 		 */
-		"   ands r4, r2, %12\n"
+		"   movw r4, %12\n"
+		"   movt r4, %13\n"
+		"   ands r4, r2\n"
 		"   cbnz r4, clear_rwx\n"
 		"   movt r2, %8\n"
 		"clear_rwx:\n"
@@ -204,7 +213,8 @@ static void __ramfunc jump_in(uint32_t reset)
 		  "i" (RRAMC_REGION_RWX_LSB),
 		  "i" (RRAMC_REGION_RWX_WIDTH),
 		  "i" (RRAMC_REGION_CONFIG_LOCK_Msk),
-		  "i" (RRAMC_REGION_CONFIG_SIZE_Msk)
+		  "i" (RRAMC_REGION_SIZE_MASK_L),
+		  "i" (RRAMC_REGION_SIZE_MASK_H)
 #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 		: "r0", "r1", "r2", "r3", "r4", "r5", "r6", "memory"
 	);

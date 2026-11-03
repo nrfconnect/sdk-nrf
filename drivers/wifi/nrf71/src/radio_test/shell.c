@@ -17,6 +17,7 @@
 #include <radio_test/core.h>
 #include <radio_test/fmac_api.h>
 #include <radio_test/fmac_structs.h>
+#include <common/rf_params.h>
 #include <common/status.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 
@@ -353,7 +354,7 @@ enum nrf_wifi_status nrf_wifi_radio_test_conf_init(struct rpu_conf_params *conf_
 	conf_params->tx_pkt_nss = 1;
 	conf_params->tx_pkt_gap_us = 0;
 
-	conf_params->tx_power = MAX_TX_PWR_SYS_TEST;
+	conf_params->tx_power = MAX_TX_PWR_SYS;
 
 	conf_params->chan.primary_num = 1;
 	conf_params->tx_mode = 1;
@@ -755,12 +756,13 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 					    size_t argc,
 					    const char *argv[])
 {
+	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	char *ptr = NULL;
 	unsigned long val = 0;
 
 	val = strtoul(argv[1], &ptr, 10);
 
-	if (((val > MAX_TX_PWR_RADIO_TEST) && (val != MAX_TX_PWR_SYS_TEST))) {
+	if (((val > MAX_TX_PWR_RADIO_TEST) && (val != MAX_TX_PWR_SYS))) {
 		shell_fprintf(shell,
 			      SHELL_ERROR,
 			      "Invalid TX power setting\n");
@@ -772,6 +774,19 @@ static int nrf_wifi_radio_test_set_tx_power(const struct shell *shell,
 	}
 
 	ctx->conf_params.tx_power = val;
+
+	if (val == MAX_TX_PWR_SYS) {
+		status = rf_params_apply_board_tx_ceilings();
+	} else {
+		status = rf_params_apply_radio_test_max_tx_ceilings(MAX_TX_PWR_RADIO_TEST);
+	}
+
+	if (status != NRF_WIFI_STATUS_SUCCESS) {
+		shell_fprintf(shell,
+			      SHELL_ERROR,
+			      "Failed to apply TX power ceilings\n");
+		return -ENOEXEC;
+	}
 
 	return 0;
 }
@@ -1041,7 +1056,7 @@ static int nrf_wifi_radio_test_init(const struct shell *shell,
 	default:
 		shell_fprintf(shell,
 			      SHELL_ERROR,
-			      "Invalid band %lu\n",
+			      "Invalid band %lu (use 0=2.4 GHz, 1=5 GHz, 2=6 GHz)\n",
 			      band);
 		return -ENOEXEC;
 	}
@@ -1211,7 +1226,6 @@ static int nrf_wifi_radio_test_set_tx(const struct shell *shell,
 				      "Invalid channel settings\n");
 			return -ENOEXEC;
 		}
-
 	}
 
 	ctx->conf_params.tx = val;
@@ -2367,8 +2381,8 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(init,
 		      NULL,
-		      "<val> - Band\n"
-		      "<val> - Primary channel number",
+		      "<band> - 0=2.4 GHz, 1=5 GHz, 2=6 GHz\n"
+		      "<channel> - Primary channel number",
 		      nrf_wifi_radio_test_init,
 		      3,
 		      0),
@@ -2563,7 +2577,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      0),
 	SHELL_CMD_ARG(rx_capture_ed_thresh,
 		      NULL,
-		      "<ofdm> <dsss> - ED thresholds dynamic packet capture (-100..0)",
+		      "<ofdm> <dsss> - ED thresholds in dBm (-100 to 0, 1 dBm steps)",
 		      nrf_wifi_radio_test_set_rx_capture_ed_thresh,
 		      3,
 		      0),

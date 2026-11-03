@@ -2,6 +2,11 @@
 # will be skipped if quarantine is used. More details here:
 # https://docs.zephyrproject.org/latest/guides/test/twister.html#quarantine
 
+- platforms:
+    - nrf52.*
+    - thingy52.*
+  comment: "NCSDK-41231: nrf52 family reached the end of their life cycle"
+
 - scenarios:
     - nrf.extended.sample.ipc.icmsg.nrf54h_nrf92_no_multithreading
   platforms:
@@ -36,12 +41,6 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40216"
 
 - scenarios:
-    - sample.bluetooth.peripheral_nsms_no_security
-  platforms:
-    - thingy53/nrf5340/cpuapp/ns
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-40677"
-
-- scenarios:
     - nrf.extended.kernel.timer.timer
   platforms:
     - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
@@ -52,7 +51,7 @@
     - nrf.extended.drivers.uart.uart_elementary_dual.pm
   platforms:
     - nrf54lc10dk@0.8.0/nrf54lc10a/cpuflpr
-    - nrf54lv10dk@0.7.0/nrf54lv10a/cpuflpr
+    - nrf54lv10dk/nrf54lv10a/cpuflpr
   comment: "RAM Overflow"
 
 - scenarios:
@@ -105,7 +104,21 @@
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41708"
 
 - scenarios:
-    - bluetooth.mesh.build_models.emds
+    - mcuboot.kmu.west.provision.basic
+    - mcuboot.kmu.west_flash_default_provision
   platforms:
-    - nrf52840dk/nrf52840
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41727"
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41547"
+
+- scenarios:
+    - benchmarks.bootup_time.mcuboot
+  platforms:
+    - nrf7120dk/nrf7120/cpuapp/ns
+    - nrf7120dk/nrf7120e/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
+
+- scenarios:
+    - sample.cellular.modem_shell_modem_uart_trace
+  platforms:
+    - thingy91/nrf9160/ns
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42195"

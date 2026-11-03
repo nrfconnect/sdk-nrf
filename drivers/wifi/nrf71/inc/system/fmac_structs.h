@@ -270,6 +270,10 @@ struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
 				     signed short signal);
+
+	/** Callback function to be called when TX PHY rate is to be processed from TX done. */
+	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
+					     unsigned int tx_rate_kbps);
 #endif /* CONFIG_NRF71_STA_MODE */
 #if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
@@ -667,8 +671,10 @@ struct nrf_wifi_fmac_vif_ctx {
 	char mac_addr[NRF_WIFI_ETH_ADDR_LEN];
 	/** Groupwise cipher being used on this VIF. */
 	int groupwise_cipher;
-	/** Interface flags related to this VIF. */
+	/** Set when the RPU has answered the last set interface flags command. */
 	bool ifflags;
+	/** Status the RPU returned for the last set interface flags command. */
+	int ifflags_status;
 	/** Interface type of this VIF. */
 	int if_type;
 	/** BSSID of the AP to which this VIF is connected (applicable only in STA mode). */

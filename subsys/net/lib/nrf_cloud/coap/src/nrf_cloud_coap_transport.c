@@ -30,7 +30,7 @@
 #include <net/nrf_cloud_codec.h>
 #include <net/nrf_cloud_coap.h>
 #include <cJSON.h>
-#include <zephyr/version.h>
+#include <ncs_version.h>
 #include "nrf_cloud_codec_internal.h"
 #include "nrf_cloud_dns.h"
 #include "nrfc_dtls.h"
@@ -47,8 +47,8 @@ LOG_MODULE_REGISTER(nrf_cloud_coap_transport, CONFIG_NRF_CLOUD_COAP_LOG_LEVEL);
 #define CDDL_VERSION "1"
 #define JWT_BUF_SZ 700
 #define VER_STRING_FMT "mver=%s&cver=%s&dver=%s"
-#define VER_STRING_FMT2 "cver=" CDDL_VERSION "&dver=" BUILD_VERSION_STR
-#define BUILD_VERSION_STR STRINGIFY(BUILD_VERSION)
+#define VER_STRING_FMT2 "cver=" CLIENT_VERSION "&dver=" CDDL_VERSION
+#define CLIENT_VERSION NCS_VERSION_STRING
 #define NON_RESP_WAIT_S 3
 #define MAX_XFERS (CONFIG_COAP_CLIENT_MAX_INSTANCES * CONFIG_COAP_CLIENT_MAX_REQUESTS)
 #define NRF_CLOUD_COAP_NUM_INTERNAL_OPTIONS 1
@@ -495,7 +495,15 @@ static void client_callback(const struct coap_client_response_data *data, void *
 		LOG_WRN("CoAP request timed out; reconnection required.");
 		xfer->nrfc_cc->authenticated = false;
 	} else if ((data->result_code >= COAP_RESPONSE_CODE_BAD_REQUEST) && data->payload_len) {
-		LOG_ERR("Unexpected response: %*s", data->payload_len, data->payload);
+		enum nrf_cloud_error nrf_err = NRF_CLOUD_ERROR_NONE;
+
+		/* "Data not found" is a normal outcome, e.g. with unknown Wi-Fi APs */
+		(void)coap_codec_error_resp_decode(data->payload, data->payload_len, &nrf_err);
+		if (nrf_err == NRF_CLOUD_ERROR_DATA_NOT_FOUND) {
+			LOG_DBG("Data not found. Response: %.*s", data->payload_len, data->payload);
+		} else {
+			LOG_ERR("Unexpected response: %.*s", data->payload_len, data->payload);
+		}
 	}
 	/* Sanitize the xfer struct to ensure callback is valid, in case transfer
 	 * was cancelled or timed out.
@@ -860,6 +868,14 @@ static int nrf_cloud_coap_connect_host_cb(struct sockaddr *const addr)
 		goto out;
 	}
 
+	if (CONFIG_NRF_CLOUD_COAP_SEND_TIMEOUT_SEC > 0) {
+		struct timeval timeout = {.tv_sec = CONFIG_NRF_CLOUD_COAP_SEND_TIMEOUT_SEC};
+
+		if (zsock_setsockopt(sock, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof(timeout))) {
+			LOG_WRN("Failed to set socket send timeout, errno: %d", errno);
+		}
+	}
+
 out:
 	if (err) {
 		if (sock >= 0) {
@@ -959,25 +975,27 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 
 #if defined(CONFIG_MODEM_INFO) && !defined(CONFIG_DECT)
 	char mfw_string[MODEM_INFO_FWVER_SIZE];
-	char ver_string[strlen(VER_STRING_FMT) +
-			MODEM_INFO_FWVER_SIZE +
-			strlen(BUILD_VERSION_STR) +
-			strlen(CDDL_VERSION)];
+	char ver_buf[strlen(VER_STRING_FMT) +
+		     MODEM_INFO_FWVER_SIZE +
+		     strlen(CLIENT_VERSION) +
+		     strlen(CDDL_VERSION)];
+	const char *ver_string = VER_STRING_FMT2;
 
 	err = modem_info_get_fw_version(mfw_string, sizeof(mfw_string));
-	if (!err) {
-		err = snprintk(ver_string, sizeof(ver_string), VER_STRING_FMT,
-			       mfw_string, BUILD_VERSION_STR, CDDL_VERSION);
-		if ((err < 0) || (err >= sizeof(ver_string))) {
+	if (err) {
+		LOG_WRN("Unable to obtain the modem firmware version: %d", err);
+	} else {
+		err = snprintk(ver_buf, sizeof(ver_buf), VER_STRING_FMT,
+			       mfw_string, CLIENT_VERSION, CDDL_VERSION);
+		if ((err < 0) || (err >= sizeof(ver_buf))) {
 			LOG_ERR("Could not format string");
 			err = -ETXTBSY;
 			goto fail;
 		}
-	} else {
-		LOG_ERR("Unable to obtain the modem firmware version: %d", err);
+		ver_string = ver_buf;
 	}
 #else
-	char *ver_string = VER_STRING_FMT2;
+	const char *ver_string = VER_STRING_FMT2;
 #endif
 
 	LOG_DBG("Generate JWT");
@@ -988,7 +1006,7 @@ int nrf_cloud_coap_transport_authenticate(struct nrf_cloud_coap_client *const cl
 	}
 	err = nrf_cloud_jwt_generate(NRF_CLOUD_JWT_VALID_TIME_S_MAX, jwt, JWT_BUF_SZ);
 	if (err) {
-		LOG_ERR("Error generating JWT with modem: %d", err);
+		LOG_ERR("Error generating JWT: %d", err);
 		nrf_cloud_free(jwt);
 		goto fail;
 	}

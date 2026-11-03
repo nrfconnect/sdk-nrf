@@ -273,15 +273,15 @@
 
 .. nrf54lv10dk_nrf54lv10a_cpuapp
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp`` |
 
 .. nrf54lv10dk_nrf54lv10a_cpuapp_ns
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuapp/ns`` |
 
 .. nrf54lv10dk_nrf54lv10a_cpuflpr
 
-| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :ref:`nrf54lv10dk <board_nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuflpr`` |
+| :ref:`nRF54LV10 DK <ug_nrf54l>` | PCA10188 | :zephyr:board:`nrf54lv10dk <nrf54lv10dk>` | ``nrf54lv10dk/nrf54lv10a/cpuflpr`` |
 
 .. nrf54lc10dk_nrf54lc10a_cpuapp
 
@@ -349,15 +349,27 @@
 
 .. nrf7120dk_nrf7120_cpuapp
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuapp`` |
 
 .. nrf7120dk_nrf7120_cpuapp_ns
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuapp/ns`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuapp/ns`` |
 
 .. nrf7120dk_nrf7120_cpuflpr
 
-| nRF7120 DK |   | nrf7120dk | ``nrf7120dk/nrf7120/cpuflpr`` |
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120/cpuflpr`` |
+
+.. nrf7120dk_nrf7120e_cpuapp
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuapp`` |
+
+.. nrf7120dk_nrf7120e_cpuapp_ns
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuapp/ns`` |
+
+.. nrf7120dk_nrf7120e_cpuflpr
+
+| :ref:`nRF7120 DK <ug_nrf71>` | PCA10217 | :zephyr:board:`nrf7120dk <nrf7120dk>` | ``nrf7120dk/nrf7120e/cpuflpr`` |
 
 .. nrf9251dk_nrf9251_cpuapp
 

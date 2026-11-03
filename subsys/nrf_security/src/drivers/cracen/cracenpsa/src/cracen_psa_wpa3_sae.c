@@ -219,8 +219,8 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 	uint8_t seed_lsb;
 	uint8_t x[CRACEN_P256_KEY_SIZE];
 	uint8_t x_cand[CRACEN_P256_KEY_SIZE];
+	uint8_t y_sqr_cand[CRACEN_P256_KEY_SIZE];
 	uint8_t y_sqr[CRACEN_P256_KEY_SIZE];
-	uint8_t y_cand[CRACEN_P256_KEY_SIZE];
 	uint8_t y[CRACEN_P256_KEY_SIZE];
 	uint8_t p_y[CRACEN_P256_KEY_SIZE];
 
@@ -228,11 +228,14 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 	uint8_t counter = 1;
 	int sx_status;
 	bool pwd_value_in_range;
+	bool is_qr;
 	int mask;
 	int found = 0;
 	const char *label = "SAE Hunting and Pecking";
 
 	sx_pk_req req;
+	sx_const_op modulo = {.sz = sx_pk_curve_opsize(op->curve),
+			      .bytes = sx_pk_curve_prime(op->curve)};
 
 	sx_pk_acquire_hw(&req);
 
@@ -241,7 +244,7 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 		/* seed = H(addr1 | addr2, pw | cnt) */
 		status = cracen_calc_pwd_seed_hnp(op, &counter, seed, &length);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto release_hw;
 		}
 
 		/** pwd-value = KDF-Hash-Length(pwd-seed, “SAE Hunting and Pecking”, p)
@@ -254,7 +257,7 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 					  sx_pk_curve_opsize(op->curve), 1, 256,
 					  x_cand, CRACEN_P256_KEY_SIZE);
 		if (status != PSA_SUCCESS) {
-			return status;
+			goto release_hw;
 		}
 
 		/**
@@ -267,59 +270,70 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 						    CRACEN_P256_KEY_SIZE, 0) == -1);
 
 		sx_const_op x_cand_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = x_cand};
-		sx_op y_sqr_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_sqr};
+		sx_op y_sqr_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_sqr_cand};
 
 		sx_status = cracen_ec_pt_calc_y_sqr(&req, op->curve, &x_cand_op, &y_sqr_op);
 		if (sx_status != SX_OK) {
-			sx_pk_release_req(&req);
-			return silex_statuscodes_to_psa(sx_status);
+			status = silex_statuscodes_to_psa(sx_status);
+			goto release_hw;
 		}
 
-		/** Currently sqrt calculation on CRACEN is used instead of this check
-		 *  for quadratic residue.
-		 *  It is able to report if the value is not a quadratic residue.
+		/** Quadratic residue check with the Euler criterion,
+		 *  (y^2)^((p - 1) / 2) mod p. The square root is computed once,
+		 *  after the loop, for the selected candidate.
 		 */
 		sx_const_op y_sqr_cop;
-		sx_const_op modulo = {.sz = sx_pk_curve_opsize(op->curve),
-				      .bytes = sx_pk_curve_prime(op->curve)};
-		sx_op sqrt_y = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_cand};
-		const struct sx_pk_cmd_def *cmd = SX_PK_CMD_MOD_SQRT;
 
 		sx_get_const_op(&y_sqr_op, &y_sqr_cop);
-
-		sx_status = sx_mod_single_op_cmd(&req, cmd, &modulo, &y_sqr_cop, &sqrt_y);
+		status = cracen_ecc_is_quadratic_residue(&req, &modulo, &y_sqr_cop, &is_qr);
+		if (status != PSA_SUCCESS) {
+			goto release_hw;
+		}
 
 		/** save if !found
 		 *
-		 *  the mask is used to save "candidate x", "candidate y"
+		 *  the mask is used to save "candidate x", "candidate y^2"
 		 *  and seed_lsb values in constant time
 		 */
 		mask = found - 1;
-		for (uint8_t i = 0; i < CRACEN_P256_KEY_SIZE; i++) {
-			x[i] = (uint8_t)((x[i] & ~mask) | (x_cand[i] & mask));
-			y[i] = (uint8_t)((y[i] & ~mask) | (y_cand[i] & mask));
-		}
+		constant_mask_select_bin((uint8_t)mask, x_cand, x, x, sizeof(x));
+		constant_mask_select_bin((uint8_t)mask, y_sqr_cand, y_sqr, y_sqr, sizeof(y_sqr));
 		seed_lsb = (uint8_t)((seed_lsb & ~mask) |
 				     ((int)(seed[CRACEN_P256_KEY_SIZE - 1] & 0x01) & mask));
-		found |= (pwd_value_in_range && sx_status == SX_OK);
+		found |= (int)((unsigned int)pwd_value_in_range & (unsigned int)is_qr);
 
 		counter++;
 		if (counter == UINT8_MAX) {
-			return PSA_ERROR_INSUFFICIENT_ENTROPY;
+			status = PSA_ERROR_INSUFFICIENT_ENTROPY;
+			goto release_hw;
 		}
 	} while (counter <= CRACEN_WPA3_SAE_HNP_LOOP_LIMIT || !found);
 
-	sx_pk_release_req(&req);
+	/* y = sqrt(x^3 + ax + b) mod p for the selected candidate, which is a residue */
+	sx_const_op y_sqr_sel = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y_sqr};
+	sx_op y_op = {.sz = CRACEN_P256_KEY_SIZE, .bytes = y};
 
-	/* y = sqrt(x^3 + ax + b) mod p
-	 * if LSB(save) == LSB(y): PWE = (x, y)
+	sx_status = sx_mod_single_op_cmd(&req, SX_PK_CMD_MOD_SQRT, &modulo, &y_sqr_sel, &y_op);
+	if (sx_status != SX_OK) {
+		status = silex_statuscodes_to_psa(sx_status);
+	}
+
+release_hw:
+	sx_pk_release_req(&req);
+	safe_memzero(seed, sizeof(seed));
+	safe_memzero(x_cand, sizeof(x_cand));
+	safe_memzero(y_sqr_cand, sizeof(y_sqr_cand));
+	safe_memzero(y_sqr, sizeof(y_sqr));
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
+
+	/* if LSB(save) == LSB(y): PWE = (x, y)
 	 * else: PWE = (x, p - y)
 	 *
-	 * Calculate y and the two possible values for PWE and after that,
+	 * Calculate the two possible values for PWE and after that,
 	 * copy the correct alternative with constant time.
 	 */
-
-	/* y is already calculated */
 
 	/* p_y = p - y */
 	cracen_be_sub(sx_pk_curve_prime(op->curve), y, p_y, CRACEN_P256_KEY_SIZE);
@@ -329,10 +343,13 @@ static psa_status_t cracen_wpa3_sae_calc_pwe_hnp(cracen_wpa3_sae_operation_t *op
 
 	lsb_eq -= 1; /* 0xFF if equal, 0x00 otherwise */
 	memcpy(op->pwe, x, CRACEN_P256_KEY_SIZE);
-	for (uint8_t i = 0; i < CRACEN_P256_KEY_SIZE; i++) {
-		op->pwe[i + CRACEN_P256_KEY_SIZE] = (uint8_t)((p_y[i] & ~lsb_eq) | (y[i] & lsb_eq));
-	}
+	constant_mask_select_bin((uint8_t)lsb_eq, y, p_y, op->pwe + CRACEN_P256_KEY_SIZE,
+				 CRACEN_P256_KEY_SIZE);
 
+exit:
+	safe_memzero(x, sizeof(x));
+	safe_memzero(y, sizeof(y));
+	safe_memzero(p_y, sizeof(p_y));
 	return status;
 }
 
@@ -662,8 +679,8 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 	sx_pk_acquire_hw(&req);
 	status = cracen_wpa3_sae_calc_k(&req, op, k);
 	if (status != PSA_SUCCESS) {
-		sx_pk_release_req(&req);
-		return PSA_ERROR_INVALID_ARGUMENT;
+		status = PSA_ERROR_INVALID_ARGUMENT;
+		goto release_hw;
 	}
 
 	/**
@@ -680,17 +697,17 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 		safe_memzero(salt, op->hash_length);
 		status = cracen_wpa3_sae_setup_hmac(&op->mac_op, salt, op->hash_length);
 		if (status != PSA_SUCCESS) {
-			goto exit;
+			goto release_hw;
 		}
 	} /* else hmac is already set up with salt = rejected group list - Oberon */
 
 	status = cracen_mac_update(&op->mac_op, k, CRACEN_P256_KEY_SIZE);
 	if (status != PSA_SUCCESS) {
-		goto exit;
+		goto release_hw;
 	}
 	status = cracen_mac_sign_finish(&op->mac_op, keyseed, PSA_HASH_MAX_SIZE, &length);
 	if (status != PSA_SUCCESS) {
-		goto exit;
+		goto release_hw;
 	}
 
 	/* context = (commit-scalar + peer-commit-scalar) mod r */
@@ -705,11 +722,13 @@ static psa_status_t cracen_wpa3_sae_calc_keys(cracen_wpa3_sae_operation_t *op)
 
 	sx_status = sx_mod_primitive_cmd(&req, cmd_add, &modulo, &cmt_scalar,
 					 &peer_cmt_scalar, &result);
-	if (sx_status != SX_OK) {
-		sx_pk_release_req(&req);
-		return silex_statuscodes_to_psa(sx_status);
-	}
+	status = silex_statuscodes_to_psa(sx_status);
+
+release_hw:
 	sx_pk_release_req(&req);
+	if (status != PSA_SUCCESS) {
+		goto exit;
+	}
 
 	/** KCK | PMK = KDF-Hash-Length(keyseed, "SAE KCK and PMK", context)
 	 *

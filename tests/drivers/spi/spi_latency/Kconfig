@@ -8,4 +8,10 @@ config TEST_MEASUREMENT_REPEATS
 	int "Number of latency measurements repeats"
 	default 100
 
+config TEST_MAX_BUFFER_SIZE
+	int "Maximum SPI transceive buffer size allocated and tested"
+	default 512 if SOC_NRF9251_CPUPPR
+	default 512 if SOC_NRF54H20_CPUPPR
+	default 2000
+
 source "Kconfig.zephyr"

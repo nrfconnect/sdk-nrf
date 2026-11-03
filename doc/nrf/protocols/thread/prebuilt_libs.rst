@@ -311,12 +311,12 @@ There is a set of commands to update the libraries without debug symbols.
 * When using the command line, run the commands in the project folder.
 * When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the commands there.
 
-Use the following commands:
+Use the following commands on the nRF54L15 DK:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840 -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
+   west build -b nrf54l15dk/nrf54l15/cpuapp -- -DOPENTHREAD_BUILD_OUTPUT_STRIPPED=y
    west build -d build/cli -t install_openthread_libraries
 
 This command builds two versions of the libraries, with and without debug symbols, and installs only the version without debug symbols.
@@ -331,12 +331,12 @@ There is a set of commands to update the libraries with debug symbols.
 * When using the command line, run the commands in the project folder.
 * When using the |nRFVSC|, open a terminal and choose :guilabel:`nRF Terminal`, then run the commands there.
 
-Use the following commands:
+Use the following commands on the nRF54L15 DK:
 
 .. parsed-literal::
    :class: highlight
 
-   west build -b nrf52840dk/nrf52840
+   west build -b nrf54l15dk/nrf54l15/cpuapp
    west build -d build/cli -t install_openthread_libraries
 
 |board_note_for_updating_libs|

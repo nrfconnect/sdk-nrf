@@ -100,7 +100,8 @@ enum nrf_provisioning_event {
 	 * The event carries a pointer to the modem's attestation token in the 'token'
 	 * field and is only provided if CONFIG_NRF_PROVISIONING_PROVIDE_ATTESTATION_TOKEN
 	 * is enabled. The token pointer is valid only during the callback execution and
-	 * should not be stored.
+	 * should not be stored. If the modem fails to generate the token,
+	 * NRF_PROVISIONING_EVENT_FATAL_ERROR is sent instead.
 	 */
 	NRF_PROVISIONING_EVENT_FAILED_DEVICE_NOT_CLAIMED,
 

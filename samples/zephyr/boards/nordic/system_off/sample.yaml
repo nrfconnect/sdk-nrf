@@ -13,10 +13,10 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
     harness: console
     harness_config:
       type: multi_line
@@ -33,10 +33,10 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
     harness: console
@@ -58,10 +58,10 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
-      - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_GRTC_WAKEUP_ENABLE=y
       - CONFIG_GPIO_WAKEUP_ENABLE=n
@@ -88,11 +88,10 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
       - nrf54ls05dk/nrf54ls05a/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-      - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp/ns
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
-      - nrf9251dk/nrf9251/cpuapp
+      - nrf7120dk/nrf7120e/cpuapp
     extra_configs:
       - CONFIG_APP_USE_RETAINED_MEM=y
       - CONFIG_GRTC_WAKEUP_ENABLE=y

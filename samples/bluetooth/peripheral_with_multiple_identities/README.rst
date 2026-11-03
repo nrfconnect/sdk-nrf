@@ -130,14 +130,14 @@ Testing
 Sample output
 =============
 
-The result should look similar to the following output::
+The result should look similar to the following output (captured on the :ref:`nRF5340 DK <ug_nrf5340>`)::
 
    I: SoftDevice Controller build revision:
    I: d6 da c7 ae 08 db 72 6f |......ro
    I: 2a a3 26 49 2a 4d a8 b3 |*.&I*M..
    I: 98 0e 07 7f             |....
    I: HW Platform: Nordic Semiconductor (0x0002)
-   I: HW Variant: nRF52x (0x0002)
+   I: HW Variant: nRF53x (0x0003)
    I: Firmware: Standard Bluetooth controller (0x00) Version 58.49843 Build 3849690618
    I: Identity: FA:BB:79:57:D6:45 (random)
    I: HCI: version 6.0 (0x0e) revision 0x1055, manufacturer 0x0059

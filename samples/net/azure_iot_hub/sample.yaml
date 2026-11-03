@@ -24,12 +24,11 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
     extra_args:
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf"
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
-  # The nRF7120 DK has no external flash, so it builds without the FOTA configuration.
   sample.net.azure_iot_hub.nrf7120.wifi:
     sysbuild: true
     build_only: true
@@ -38,7 +37,7 @@ tests:
     platform_allow:
       - nrf7120dk/nrf7120/cpuapp/ns
     extra_args:
-      - azure_iot_hub_EXTRA_CONF_FILE=wifi.conf
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf"
     tags:
       - ci_build
       - sysbuild
@@ -55,7 +54,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf"
     tags:
       - ci_build
       - sysbuild
@@ -70,7 +69,8 @@ tests:
       - nrf9160dk/nrf9160/ns
       - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151/ns
-    extra_args: EXTRA_CONF_FILE=dps.conf
+    extra_args:
+      - azure_iot_hub_EXTRA_CONF_FILE=dps.conf
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
@@ -85,14 +85,13 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp/ns
     extra_args:
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;dps.conf"
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:
       - ci_build
       - sysbuild
       - ci_samples_net
-  # The nRF7120 DK has no external flash, so it builds without the FOTA configuration.
   sample.net.azure_iot_hub.dps.nrf7120.wifi:
     sysbuild: true
     build_only: true
@@ -120,7 +119,7 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp/ns
     extra_args:
       - azure_iot_hub_SHIELD="nrf7002eb2"
-      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf"
+      - azure_iot_hub_EXTRA_CONF_FILE="wifi.conf;dps.conf"
     extra_configs:
       - CONFIG_AZURE_IOT_HUB_DPS_ID_SCOPE="test-scope"
     tags:

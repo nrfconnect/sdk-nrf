@@ -87,6 +87,50 @@ static int user_struct_validate(const struct dult_user *user)
 	return 0;
 }
 
+struct network_id_lookup {
+	enum dult_network_id network_id;
+	bool *found;
+};
+
+static void network_id_lookup_cb(const struct dult_user *user, const void *user_data)
+{
+	const struct network_id_lookup *lookup = user_data;
+
+	if (user->network_id == lookup->network_id) {
+		*lookup->found = true;
+	}
+}
+
+static bool network_id_is_registered(enum dult_network_id network_id)
+{
+	bool found = false;
+	const struct network_id_lookup lookup = {
+		.network_id = network_id,
+		.found = &found,
+	};
+
+	dult_user_slot_foreach(&network_id_lookup_cb, &lookup);
+
+	return found;
+}
+
+static int user_uniqueness_validate(const struct dult_user *user)
+{
+	if (dult_user_is_registered(user)) {
+		LOG_ERR("DULT user already registered");
+		return -EALREADY;
+	}
+
+	if (IS_ENABLED(CONFIG_DULT_MULTI_USER) &&
+	    network_id_is_registered(user->network_id)) {
+		LOG_ERR("DULT network ID 0x%02X already registered by another user",
+			user->network_id);
+		return -EEXIST;
+	}
+
+	return 0;
+}
+
 int dult_user_register(const struct dult_user *user)
 {
 	int err;
@@ -96,9 +140,9 @@ int dult_user_register(const struct dult_user *user)
 		return err;
 	}
 
-	if (dult_user_is_registered(user)) {
-		LOG_ERR("DULT user already registered");
-		return -EALREADY;
+	err = user_uniqueness_validate(user);
+	if (err) {
+		return err;
 	}
 
 	err = dult_user_slot_claim(user);

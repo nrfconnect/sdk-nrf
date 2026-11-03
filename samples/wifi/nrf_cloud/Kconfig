@@ -106,15 +106,9 @@ endif
 config TEMP_TRACKING
 	bool "Track temperature"
 	default y
+	select SENSOR if $(dt_nodelabel_enabled,temp)
 	help
 	  Sets whether to take temperature measurements.
-
-config TEMP_ALERT_LIMIT
-	int "Temperature limit to print alert"
-	default 30
-	help
-	  Sets the temperature in degrees C over which a temperature alert will
-	  be printed through serial terminal.
 
 choice
 	prompt "LED indication"
@@ -215,6 +209,25 @@ config SAMPLE_MEMFAULT_FOTA
 	  Release Management. Requires a MCUboot mode that supports the
 	  test/confirm revert mechanism, since the sample relies on
 	  boot_write_img_confirmed() to mark an update as good.
+
+config SAMPLE_MEMFAULT_BUTTONS
+	bool "Trigger Memfault actions with DK buttons"
+	default y
+	depends on MEMFAULT
+	select DK_LIBRARY
+	help
+	  Lets the application trigger Memfault actions on demand, instead of
+	  waiting for the Memfault SDK's periodic upload timer:
+	  The first button (sw0) captures a metrics heartbeat and posts all pending chunks.
+	  The second button (sw1) checks for a FOTA update (requires SAMPLE_MEMFAULT_FOTA).
+
+config SAMPLE_MEMFAULT_BUTTONS_THREAD_STACK_SIZE
+	int "Memfault buttons thread stack size (bytes)"
+	default 4096
+	depends on SAMPLE_MEMFAULT_BUTTONS
+	help
+	  Sets the stack size (in bytes) for the thread that runs the
+	  button-triggered Memfault actions.
 
 endif
 

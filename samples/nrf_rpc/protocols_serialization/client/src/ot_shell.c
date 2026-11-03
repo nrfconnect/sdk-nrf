@@ -1980,7 +1980,7 @@ static otError cmd_udp_bind_impl(const struct shell *sh, size_t argc, char *argv
 	} else if (strcmp(argv[1], "-b") == 0) {
 		netif = OT_NETIF_BACKBONE;
 	} else {
-		netif = OT_NETIF_THREAD;
+		netif = OT_NETIF_THREAD_INTERNAL;
 	}
 
 	if (net_addr_pton(AF_INET6, argv[argc - 2], (struct in6_addr *)&sock_addr.mAddress)) {

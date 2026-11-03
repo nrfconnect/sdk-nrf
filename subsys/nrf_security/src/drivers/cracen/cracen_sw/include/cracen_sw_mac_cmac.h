@@ -74,10 +74,15 @@ psa_status_t cracen_sw_cmac_finish(cracen_mac_operation_t *op);
  *
  * @note This function assumes the setup function is called first.
  *
+ * @note On success the full CMAC block is written to @p op->input_buffer. The caller copies
+ *       out op->mac_size bytes, which is shorter than the block for a truncated MAC. The MAC
+ *       is deliberately not written to a caller-supplied buffer, because its length is fixed
+ *       by the algorithm rather than by the requested MAC size.
+ *
  * @return PSA_SUCCESS on success or a valid PSA status code.
  */
 psa_status_t cracen_cmac_compute(cracen_mac_operation_t *op, const uint8_t *input,
-				 size_t input_length, uint8_t *mac);
+				 size_t input_length);
 
 /** @} */
 

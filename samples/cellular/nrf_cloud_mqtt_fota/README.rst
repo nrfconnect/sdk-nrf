@@ -91,14 +91,14 @@ To enable SMP FOTA (nRF9160 DK only), add the following parameters to your build
 * ``-DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"``
 
 Once you have flashed your nRF9160 DK, change the switch **SW10** to the **nRF52** position to be able to flash the nRF52840 firmware on the DK.
-The nRF52840 device on your DK must be running firmware compatible with SMP, such as the :ref:`smp_svr` sample.
+The nRF52840 device on your DK must be running firmware compatible with SMP, such as the SMP Server sample from a previous release.
 Otherwise, the MQTT FOTA sample cannot connect to the nRF52840 and will keep trying to connect.
-Build the :ref:`smp_svr` sample for the ``nrf9160dk/nrf52840`` board target with the following parameters:
+Build the SMP Server sample from a previous release for the ``nrf9160dk/nrf52840`` board target with the following parameters:
 
 * ``-DEXTRA_CONF_FILE="overlay-serial.conf"``
 * ``-DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_svr.overlay"``
 
-To change :ref:`smp_svr` sample's application version, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
+To change the version of the SMP Server sample from the previous release, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 
 Testing
 =======

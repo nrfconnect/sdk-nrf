@@ -40,6 +40,11 @@ uint32_t nrf_security_event_set(nrf_security_event_t event, uint32_t events_mask
 	return k_event_set(event, events_mask);
 }
 
+uint32_t nrf_security_event_take(nrf_security_event_t event, uint32_t events_mask)
+{
+	return k_event_clear(event, events_mask);
+}
+
 #else
 
 void nrf_security_event_init(nrf_security_event_t event)
@@ -67,6 +72,29 @@ uint32_t nrf_security_event_set(nrf_security_event_t event, uint32_t events_mask
 	uint32_t prev = *event & events_mask;
 
 	*event |= events_mask;
+
+	return prev;
+}
+
+uint32_t nrf_security_event_take(nrf_security_event_t event, uint32_t events_mask)
+{
+	uint32_t prev;
+#if defined(__NRF_TFM__)
+	uint32_t primask = __get_PRIMASK();
+
+	__disable_irq();
+#else
+	unsigned int key = irq_lock();
+#endif
+
+	prev = *event & events_mask;
+	*event &= ~events_mask;
+
+#if defined(__NRF_TFM__)
+	__set_PRIMASK(primask);
+#else
+	irq_unlock(key);
+#endif
 
 	return prev;
 }

@@ -99,9 +99,9 @@ Receiving messages
 If the model is to receive messages, create an opcode list that will define a list of messages that your model will receive.
 To create the opcode list, initialize an array of :c:struct:`bt_mesh_model_op` type with the following required parameters:
 
-1. Message opcode, :c:member:`bt_mesh_model_op.opcode`, to register a message to be received by the model.
-#. Minimal message length, :c:member:`bt_mesh_model_op.len`, that prevents the model from receiving messages shorter than the specified value.
-#. Message handler, :c:member:`bt_mesh_model_op.func`, which is used to process the received message.
+* Message opcode - :c:member:`bt_mesh_model_op.opcode`, to register a message to be received by the model.
+* Minimal message length - :c:member:`bt_mesh_model_op.len`, that prevents the model from receiving messages shorter than the specified value.
+* Message handler - :c:member:`bt_mesh_model_op.func`, used to process the received message.
 
 The last element in the opcode list is always the :c:macro:`BT_MESH_MODEL_OP_END` macro:
 
@@ -166,8 +166,8 @@ To set the opcode of the message, call :c:func:`bt_mesh_model_msg_init`:
 
 As described in :ref:`Access API <zephyr:bluetooth_mesh_access>`, the model can send a message in two ways:
 
-1. By using a custom :c:struct:`bt_mesh_msg_ctx`.
-#. By using a model publication context.
+* By using a custom :c:struct:`bt_mesh_msg_ctx`.
+* By using a model publication context.
 
 If you want your model to control a destination address or some other parameters of a message, you can initialize :c:struct:`bt_mesh_msg_ctx` with custom parameters, and pass it together with a message buffer to :c:func:`bt_mesh_model_send`:
 

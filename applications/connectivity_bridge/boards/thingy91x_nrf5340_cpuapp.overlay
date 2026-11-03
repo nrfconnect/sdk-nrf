@@ -12,7 +12,7 @@
 		status = "okay";
 		clk-gpios = <&gpio0 25 GPIO_ACTIVE_HIGH>;
 		dio-gpios = <&gpio0 27 GPIO_ACTIVE_HIGH>;
-		reset-gpios = <&gpio1 7 GPIO_ACTIVE_HIGH>;
+		reset-gpios = <&gpio1 7 GPIO_ACTIVE_LOW>;
 		port-write-cycles = <12>;
 	};
 

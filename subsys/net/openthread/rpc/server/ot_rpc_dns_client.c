@@ -13,6 +13,7 @@
 #include <nrf_rpc/nrf_rpc_cbkproxy.h>
 
 #include <zephyr/net/openthread.h>
+#include <openthread/dns.h>
 
 static void ot_rpc_dns_client_get_default_config(const struct nrf_rpc_group *group,
 						 struct nrf_rpc_cbor_ctx *ctx, void *handler_data)

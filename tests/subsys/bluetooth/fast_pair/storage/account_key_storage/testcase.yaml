@@ -7,7 +7,6 @@ tests:
   fast_pair.storage.account_key_storage.default:
     sysbuild: true
     platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -17,7 +16,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - qemu_cortex_m3
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
@@ -62,7 +60,6 @@ tests:
   fast_pair.storage.account_key_storage.minimal:
     sysbuild: true
     platform_allow:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -72,7 +69,6 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - qemu_cortex_m3
     integration_platforms:
-      - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp

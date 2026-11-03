@@ -231,18 +231,6 @@ int public_key_data_read(uint32_t key_idx, uint8_t *p_buf);
 void invalidate_public_key(uint32_t key_idx);
 
 /**
- * @brief Get the number of monotonic counter slots.
- *
- * @param[in]   counter_desc  Counter description.
- * @param[out]  counter_slots Number of slots occupied by the counter.
- *
- * @retval 0        Success
- * @retval -EINVAL  Cannot find counters with description @p counter_desc or the pointer to
- *                  @p counter_slots is NULL.
- */
-int num_monotonic_counter_slots(uint16_t counter_desc, uint16_t *counter_slots);
-
-/**
  * @brief Get the current HW monotonic counter.
  *
  * @param[in]  counter_desc  Counter description.

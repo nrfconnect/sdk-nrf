@@ -20,6 +20,7 @@
 	pinctrl-0 = <&uart133_default>;
 	pinctrl-1 = <&uart133_sleep>;
 	pinctrl-names = "default", "sleep";
+	memory-regions = <&cpuppr_dma_region>;
 };
 
 &pinctrl {
@@ -64,4 +65,5 @@ sample_spi: &spi130 {
 	cs-gpios = <&gpio1 8 GPIO_ACTIVE_LOW>;
 	frequency = <DT_FREQ_M(8)>;
 	rtc = <&rtc130>;
+	memory-regions = <&cpuppr_dma_region>;
 };

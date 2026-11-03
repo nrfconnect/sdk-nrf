@@ -15,17 +15,17 @@ The DFU specification is implemented in the Zephyr Bluetooth Mesh DFU subsystem 
 
 For more information about the Zephyr Bluetooth Mesh DFU subsystem, see :ref:`zephyr:bluetooth_mesh_dfu`.
 
-The Bluetooth Mesh subsystem in |NCS| provides a set of samples that can be used for evaluation of the Bluetooth Mesh DFU specification and subsystem:
+The Bluetooth Mesh subsystem in |NCS| provides a set of samples that you can use for evaluation of the Bluetooth Mesh DFU specification and subsystem:
 
 * :ref:`ble_mesh_dfu_target` sample
 * :ref:`ble_mesh_dfu_distributor` sample
 
 To configure and control DFU on the Firmware Distribution Server, use either the Firmware Distribution Client model or the shell commands.
 
-You can use either the nRF Mesh app or the shell commands to configure and control the DFU process.
+You can use either the `nRF Mesh mobile app`_ or the shell commands to configure and control the DFU process.
 
 .. note::
-   The Mesh DFU feature in the nRF Mesh app is currently supported only on iOS.
+   The Mesh DFU feature in the nRF Mesh mobile app is currently supported only on iOS.
 
 .. _dfu_over_bt_mesh_roles_and_transport:
 
@@ -109,11 +109,11 @@ Provisioning and configuring the devices
 After programming the samples onto the boards, they need to be provisioned into the same Bluetooth Mesh network with an external provisioner device.
 See the documentation for :ref:`provisioning the mesh DFU target device <ble_mesh_dfu_target_provisioning>` and :ref:`provisioning the mesh DFU distributor device <ble_mesh_dfu_distributor_provisioning>` for how this is done.
 
-After the provisioning is completed, a Configuration Client needs to add a common application key to all devices.
+After the provisioning has completed, a Configuration Client needs to add a common application key to all devices.
 The added application key must be bound:
 
-* On the Distributor: to the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Server and BLOB Transfer Client models instantiated on the primary element, and to the Firmware Update Server and BLOB Transfer Server models instantiated on the secondary element of the device (see :ref:`Configuring models on the Distributor node <ble_mesh_dfu_distributor_model_config>`).
-* On Target nodes: to the Firmware Update Server and BLOB Transfer Server models instantiated on the primary element of the device (see :ref:`Configuring models on the Target node <ble_mesh_dfu_target_model_config>`).
+* On the Distributor - To the Firmware Distribution Server, Firmware Update Client, BLOB Transfer Server and BLOB Transfer Client models instantiated on the primary element, and to the Firmware Update Server and BLOB Transfer Server models instantiated on the secondary element of the device (see :ref:`Configuring models on the Distributor node <ble_mesh_dfu_distributor_model_config>`).
+* On Target nodes - To the Firmware Update Server and BLOB Transfer Server models instantiated on the primary element of the device (see :ref:`Configuring models on the Target node <ble_mesh_dfu_target_model_config>`).
 
 The bound application key will be used in the firmware distribution procedure.
 
@@ -128,6 +128,8 @@ Uploading the firmware
       .. note::
          When using the `nRF Mesh mobile app for iOS`_ for DFU, bind the application key to the Firmware Distribution Server model on the distributor node.
          The app binds the application key to the Firmware Update Server models on the Target nodes automatically.
+
+	  To upload the firmware:
 
       1. Navigate to the **Network** screen and tap the :guilabel:`Update` button in the top right corner.
 
@@ -182,6 +184,7 @@ Populating the Distributor's receivers list
    .. group-tab:: nRF Mesh app (iOS)
 
       To add Target nodes to the receivers list:
+
       1. Scroll down to the **AVAILABLE TARGET NODES** section.
       #. Select the nodes to update, or tap :guilabel:`Select All` to select all nodes.
       #. Tap :guilabel:`Next` in the top right corner of the screen to open the **Firmware Distribution** screen.
@@ -210,6 +213,7 @@ Initiating the distribution
 
    .. group-tab:: nRF Mesh app (iOS)
 
+      To initialize the distribution:
 
       1. Set the transfer TTL, Timeout, Transfer Mode, and Update Policy (you may leave default values as is).
       #. To transfer the firmware to several Target nodes simultaneously, select the desired group address under the **Multicast Distribution** section.
@@ -223,6 +227,7 @@ Initiating the distribution
 
       To start the DFU transfer, use the ``mesh models dfd start`` shell command.
       This command requires two mandatory arguments, ``app_idx`` and ``slot_idx``:
+
       * For ``app_idx``, use the application key index that is bound to the Firmware Distribution Server and other Firmware Update and BLOB Transfer models on the Distributor and Target nodes.
       * For ``slot_idx``, use the ID of the slot allocated by the ``mesh models dfu slot add`` shell command.
 
@@ -365,7 +370,7 @@ Depending on the :c:enum:`bt_mesh_dfu_effect` value received from the Target nod
   Otherwise, the DFU is considered successful.
 
 The DFU ends after the Distributor stops polling the Target nodes.
-If the DFU completes successfully for at least one Target node, the firmware distribution is considered as successful.
+If the DFU completes successfully for at least one Target node, the firmware distribution is considered successful.
 In this case, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_COMPLETED`.
 If the DFU does not complete successfully, the distribution phase is set to :c:enum:`BT_MESH_DFD_PHASE_FAILED`.
 
@@ -448,7 +453,7 @@ Using the DFU metadata extraction script is the most efficient way of generating
 Automated metadata generation
 =============================
 
-By enabling the :kconfig:option:`SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA` option in sysbuild, the metadata will be automatically parsed from the ``.elf`` and ``.config`` files.
+By enabling the :kconfig:option:`SB_CONFIG_DFU_ZIP_BLUETOOTH_MESH_METADATA` option in sysbuild, the metadata will be automatically parsed from the :file:`.elf` and :file:`.config` files.
 The parsed data is stored in the :file:`ble_mesh_metadata.json` file.
 The file is placed in the :file:`dfu_application.zip` archive in the build folder of the application.
 Additionally, the metadata string and, optionally, the firmware ID required by the ``mesh models dfu slot add`` command are printed in the command-line window when the application is built::
@@ -475,13 +480,13 @@ You can generate the Firmware ID using one of the following options:
    This ensures that after the firmware update is applied, the node will respond with the correct Current Firmware ID in the Firmware Update Information Status message.
 
 .. note::
-   It is required that the Composition Data is declared with the ``const`` qualifier.
+   The Composition Data must be declared with the ``const`` qualifier.
    If the application contains more than one Composition Data structure (for example, when the structure to be used is picked at runtime), the script will not print any encoded metadata.
    In this case, use the JSON file to find the encoded metadata matching the Composition Data to be used by the device after the update.
    Additionally, the script is hardcoded to produce a metadata string where the firmware is targeted for the application core.
 
-A separate west command can be utilized to print the metadata to the console, given that it is already generated by the build system.
-This gives the user easy access to this information, without having to enter the ``.json`` file in the build folder or to rebuild the application::
+You can use a separate west command to print the metadata to the console, given that it is already generated by the build system.
+This gives you an easy access to this information, without having to enter the :file:`.json` file in the build folder or to rebuild the application::
 
   west build -t ble_mesh_dfu_metadata
 
@@ -526,7 +531,7 @@ For this particular example, the following output is generated:
 Manual metadata generation
 ==========================
 
-The Bluetooth Mesh DFU subsystem provides a set of shell commands that can be used to compose a firmware metadata.
+The Bluetooth Mesh DFU subsystem provides a set of shell commands that you can use to compose firmware metadata.
 The format of metadata is defined in the :c:struct:`bt_mesh_dfu_metadata` structure.
 For the complete list of commands, see :ref:`zephyr:bluetooth_mesh_shell_dfu_metadata`.
 
@@ -535,7 +540,7 @@ For example, for a Target node with product ID 0x0059, zero company and version 
 
   mesh models dfu metadata comp-add 0x59 0 0 10 7
 
-Now you need to encode elements that are present on a new image.
+Now, you need to encode elements that are present on a new image.
 For each element to encode, use the ``mesh models dfu metadata comp-elem-add`` shell command specifying the location of the element, number of Bluetooth SIG and vendor models and their IDs.
 For example, for :ref:`ble_mesh_dfu_target` sample, which has only one element containing Configuration and Health Server models as well as DFU and BLOB Transfer Server models, the command will be the following::
 
