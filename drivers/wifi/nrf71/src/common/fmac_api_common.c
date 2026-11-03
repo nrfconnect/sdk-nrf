@@ -40,10 +40,20 @@ void nrf_wifi_fmac_dev_rem(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 enum nrf_wifi_status nrf_wifi_fmac_ver_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					  unsigned int *fw_ver)
 {
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-	*fw_ver = 0x01020304;
-	status = NRF_WIFI_STATUS_SUCCESS;
-	return status;
+	uintptr_t umac_if_addr =
+		(uintptr_t)NRF_WICR->IPCCONFIG.SPAREMBOXADDR;
+	volatile struct host_rpu_umac_if_info *umac_if_info =
+		(volatile struct host_rpu_umac_if_info *)umac_if_addr;
+
+	ARG_UNUSED(fmac_dev_ctx);
+
+	if (!fw_ver || !umac_if_info) {
+		return NRF_WIFI_STATUS_FAIL;
+	}
+
+	*fw_ver = umac_if_info->version;
+
+	return NRF_WIFI_STATUS_SUCCESS;
 }
 
 
