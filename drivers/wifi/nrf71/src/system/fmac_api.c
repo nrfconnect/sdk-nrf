@@ -15,6 +15,7 @@
 
 #include <common/mem_mgmt.h>
 #include <common/util.h>
+#include <system/drv_dbg_stats.h>
 #include <system/fmac_api.h>
 #include <system/fmac_cmd.h>
 #include <system/fmac_event.h>
@@ -242,6 +243,7 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 	if (!fmac_dev_ctx->fw_init_done) {
 		LOG_ERR("%s: UMAC init timed out",
 				      __func__);
+		nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_FW_INIT);
 		nrf_wifi_sys_fmac_deinit_rx(fmac_dev_ctx);
 #ifdef CONFIG_NRF71_DATA_TX
 		nrf_wifi_sys_fmac_deinit_tx(fmac_dev_ctx);
@@ -3507,6 +3509,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *f
 		fmac_dev_ctx->stats_req = false;
 		LOG_ERR("%s: Timed out (%d ms)", __func__,
 				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_FW_STATS);
 		goto out;
 	}
 
@@ -3772,6 +3775,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_
 		fmac_dev_ctx->debug_stats_req = false;
 		LOG_ERR("%s: Timed out (%d ms)", __func__,
 				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_FW_STATS);
 		goto out;
 	}
 
@@ -3823,6 +3827,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 		fmac_dev_ctx->umac_int_stats_req = false;
 		LOG_ERR("%s: Timed out (%d ms)", __func__,
 				      NRF_WIFI_FMAC_STATS_RECV_TIMEOUT);
+		nrf_wifi_drv_dbg_fmac_tmo(fmac_dev_ctx, NRF_WIFI_DRV_DBG_TMO_FW_STATS);
 		goto out;
 	}
 

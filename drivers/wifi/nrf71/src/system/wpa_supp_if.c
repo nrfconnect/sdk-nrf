@@ -701,6 +701,7 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	if (sem_ret) {
 		LOG_ERR("%s: Timedout waiting for scan abort response, ret = %d",
 			    __func__, sem_ret);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SCAN_ABORT);
 		return NRF_WIFI_STATUS_FAIL;
 	}
 
@@ -1494,6 +1495,7 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 		sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 		if (sem_ret) {
 			LOG_ERR("%s: Failed to get station info, ret = %d", __func__, sem_ret);
+			nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_GET_STATION);
 			ret = NRF_WIFI_STATUS_FAIL;
 			goto out;
 		}
@@ -1511,6 +1513,7 @@ int nrf_wifi_wpa_supp_signal_poll(void *if_priv, struct wpa_signal_info *si, uns
 	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
 		LOG_ERR("%s: Failed to get interface info, ret = %d", __func__, sem_ret);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_GET_INTERFACE);
 		ret = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}
@@ -1792,6 +1795,7 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 		if (!vif_ctx_zep->cookie_resp_received) {
 			LOG_ERR("%s: cookie response not received (%dms)", __func__,
 				timeout);
+			nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_MGMT_TX);
 			status = NRF_WIFI_STATUS_FAIL;
 			goto out;
 		}
@@ -2202,6 +2206,7 @@ int nrf_wifi_supp_get_conn_info(void *if_priv, struct wpa_conn_info *info)
 	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
 		LOG_ERR("%s: Timeout: failed to get connection info, ret = %d", __func__, sem_ret);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_GET_CONN_INFO);
 		ret = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}
@@ -2545,6 +2550,7 @@ static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 
 	if (!vif_ctx->ifflags) {
 		LOG_ERR("%s: set interface state event not received (%dms)", __func__, timeout);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_IF_STATE);
 		goto out;
 	}
 	ret = 0;
@@ -2601,6 +2607,7 @@ static int nrf_wifi_iftype_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep, int 
 
 	if (!vif_ctx_zep->set_if_event_received) {
 		LOG_ERR("%s: set interface event not received (%dms)", __func__, timeout);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_IF_TYPE);
 		goto out;
 	}
 
@@ -2653,6 +2660,7 @@ static int nrf_wifi_wait_for_carrier_status(struct nrf_wifi_vif_ctx_zep *vif_ctx
 		LOG_ERR("%s: Carrier %s event not received in %dms", __func__,
 			carrier_status == NRF_WIFI_FMAC_IF_CARR_STATE_ON ? "ON" : "OFF",
 			timeout);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_CARRIER);
 		goto out;
 	}
 
@@ -3407,6 +3415,7 @@ int nrf_wifi_wpa_supp_sta_get_inact_sec(void *if_priv, const u8 *addr)
 	sem_ret = k_sem_take(&wait_for_event_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
 		LOG_ERR("%s: Timed out to get station info, ret = %d", __func__, sem_ret);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_GET_STATION);
 		ret = NRF_WIFI_STATUS_FAIL;
 		goto out;
 	}

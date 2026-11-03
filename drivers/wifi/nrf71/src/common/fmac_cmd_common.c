@@ -15,6 +15,7 @@
 #include <common/fw_if/nrf71_wifi_ctrl.h>
 #include <common/fmac_structs_common.h>
 #include <common/util.h>
+#include <system/drv_dbg_stats.h>
 #include <zephyr/logging/log.h>
 
 LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
@@ -30,6 +31,7 @@ struct host_rpu_msg *umac_cmd_alloc(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	if (!umac_cmd) {
 		LOG_ERR("%s: Failed to allocate UMAC cmd",
 				      __func__);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_CMD_ALLOC);
 		goto out;
 	}
 
@@ -55,6 +57,7 @@ enum nrf_wifi_status umac_cmd_cfg(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		LOG_ERR("%s: UMAC buff config not yet done(%d)",
 				      __func__,
 				      umac_hdr->cmd_evnt);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_CMD_NOT_READY);
 		goto out;
 	}
 

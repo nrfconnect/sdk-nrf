@@ -227,6 +227,7 @@ int nrf_wifi_get_power_save_config(const struct device *dev,
 	if (count == NRF_WIFI_FMAC_PS_CONF_EVNT_RECV_TIMEOUT) {
 		LOG_ERR("%s: Timed out",
 				      __func__);
+		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_PS_INFO);
 		goto out;
 	}
 
@@ -966,6 +967,7 @@ int nrf_wifi_channel(const struct device *dev,
 		if (k_sem_take(&rpu_ctx_zep->channel_set_done_sem, K_MSEC(2000)) != 0) {
 			LOG_ERR("%s: set channel timed out waiting for "
 				"NRF_WIFI_EVENT_CHANNEL_SET_DONE", __func__);
+			nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SET_CHANNEL);
 			ret = -ETIMEDOUT;
 			goto out;
 		}
