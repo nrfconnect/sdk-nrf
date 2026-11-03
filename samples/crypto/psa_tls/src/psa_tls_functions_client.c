@@ -36,7 +36,7 @@ static int setup_tls_client_socket(void)
 		PSK_TAG,
 	};
 
-#if defined(CONFIG_MBEDTLS_TLS_VERSION_1_3)
+#if defined(CONFIG_MBEDTLS_SSL_PROTO_TLS1_3)
 	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_3);
 #else
 	sock = socket(AF_INET, SOCK_STREAM, IPPROTO_TLS_1_2);
