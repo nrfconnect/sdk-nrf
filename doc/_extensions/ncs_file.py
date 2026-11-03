@@ -100,14 +100,14 @@ class NcsFile(SphinxRole):
         prb = self.inliner.problematic(self.rawtext, self.rawtext, msg)
         return [prb], [msg]
 
-    def get_url_non_nrf(self, project: Project, path: str | os.PathLike) -> str:
+    def get_url_non_nrf(self, project: Project, path: str | os.PathLike[str]) -> str:
         path = Path(path)
         revision = project.revision
         url = project.url
         path = path.relative_to(path.anchor)
         if not project.abspath:
             raise FileNotFoundError
-        if not (Path(project.abspath) / path).is_file():
+        if not (Path(project.abspath) / path).exists():
             raise FileNotFoundError
         return os.path.join(url, "blob", revision, path)
 
