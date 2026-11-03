@@ -184,7 +184,7 @@ nrf_wifi_sys_fmac_fw_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned i
 			  struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 			  unsigned char *country_code)
 {
-	unsigned long start_time_us = 0;
+	uint64_t start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	struct nrf_wifi_rx_buf *rx_buf_ipc = NULL, *rx_buf_info_iter = NULL;
@@ -306,7 +306,7 @@ static void nrf_wifi_sys_fmac_fw_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 {
 	/* TODO: To be activated once UMAC supports deinit */
 #ifdef NOTYET
-	unsigned long start_time_us = 0;
+	uint64_t start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	status = umac_cmd_deinit(fmac_dev_ctx);
