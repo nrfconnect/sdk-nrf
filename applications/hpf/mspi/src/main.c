@@ -735,19 +735,16 @@ void init_trap_handler(void)
 }
 
 #if defined(CONFIG_ASSERT)
-#ifdef CONFIG_ASSERT_NO_FILE_INFO
-void assert_post_action(void)
-#else
-void assert_post_action(const char *file, unsigned int line)
-#endif
+void zassert_post_action(const char *file, unsigned int line)
 {
-#ifndef CONFIG_ASSERT_NO_FILE_INFO
 	ARG_UNUSED(file);
 	ARG_UNUSED(line);
-#endif
 
 	/* force send trap_handler signal */
 	trap_entry();
+
+	/* trap_handler() does not return */
+	CODE_UNREACHABLE;
 }
 #endif
 
