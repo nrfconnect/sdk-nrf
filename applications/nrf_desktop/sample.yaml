@@ -298,7 +298,7 @@ tests:
   applications.nrf_desktop.zdebug.uart.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
       - nrf54l15dk/nrf54l05/cpuapp
@@ -318,7 +318,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
     integration_platforms:
@@ -326,7 +326,7 @@ tests:
   applications.nrf_desktop.zdebug_fast_pair.gmouse.uart.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -339,7 +339,7 @@ tests:
   applications.nrf_desktop.zdebug_dongle.uart.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -350,7 +350,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
     integration_platforms:
@@ -359,7 +359,7 @@ tests:
   applications.nrf_desktop.zdebug_keyboard.uart.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54l15dk/nrf54l10/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
@@ -374,7 +374,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
@@ -392,13 +392,13 @@ tests:
       - ipc_radio_SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
       - CONFIG_CAF_BLE_USE_LLPM=n
   applications.nrf_desktop.zrelease.legacy:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54h20dk/nrf54h20/cpuapp
@@ -418,7 +418,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
     integration_platforms:
@@ -429,7 +429,7 @@ tests:
     toolchain_allow: llvm
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     platform_allow:
@@ -439,7 +439,7 @@ tests:
   applications.nrf_desktop.zdebug_ram_load.uart.legacy:
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
     integration_platforms:
@@ -450,7 +450,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
