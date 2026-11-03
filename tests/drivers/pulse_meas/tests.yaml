@@ -27,3 +27,6 @@ tests:
       - CONFIG_PULSE_MEAS_USE_HFCLK=y
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y
+  drivers.pulse_meas.single_pin:
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="single_pin.overlay"
