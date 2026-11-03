@@ -147,8 +147,8 @@ static int cd_stats_result;
 	{ \
 		.sr_rx_client_ccconf_pti_range = {30, 25, 1}, \
 		.sr_tx_client_ccconf_pti_range = {40, 30, 2}, \
-		.sr_rx_client_critical_ccconf_pti_range = {20, 15, 1}, \
-		.sr_tx_client_critical_ccconf_pti_range = {25, 20, 1}, \
+		.sr_rx_client_critical_ccconf_pti_range = {5, 0, 1}, \
+		.sr_tx_client_critical_ccconf_pti_range = {5, 0, 1}, \
 		.client_priority_level = 5, \
 	}
 
@@ -167,7 +167,7 @@ static int cd_stats_result;
 		.wifi_beacon_prot_prob = 100, \
 		.wifi_conn_prot_prob = 100, \
 		.wifi_calib_prot_prob = 100, \
-		.shared_ant_control = ANT_ALLOC_STATIC_WIFI, \
+		.shared_ant_control = ANT_ALLOC_DYNAMIC, \
 	}
 
 /** CM configuration state, see the file header. */
