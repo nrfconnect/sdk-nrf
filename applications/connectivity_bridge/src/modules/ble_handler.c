@@ -155,7 +155,7 @@ static void bt_send_work_handler(struct k_work *work)
 	bool notif_disabled = false;
 
 	do {
-		len = ring_buf_get_claim(&ble_tx_ring_buf, &buf, nus_max_send_len);
+		len = MIN(ring_buf_get_ptr(&ble_tx_ring_buf, &buf, 0), nus_max_send_len);
 
 		err = bt_nus_send(current_conn, buf, len);
 		if (err == -EINVAL) {
@@ -165,11 +165,7 @@ static void bt_send_work_handler(struct k_work *work)
 			len = 0;
 		}
 
-		err = ring_buf_get_finish(&ble_tx_ring_buf, len);
-		if (err) {
-			LOG_ERR("ring_buf_get_finish: %d", err);
-			break;
-		}
+		ring_buf_consume(&ble_tx_ring_buf, len);
 	} while (len != 0 && !ring_buf_is_empty(&ble_tx_ring_buf));
 
 	if (notif_disabled) {
