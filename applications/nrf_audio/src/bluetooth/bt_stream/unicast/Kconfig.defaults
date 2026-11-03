@@ -22,9 +22,6 @@ config BT_SMP
 config BT_GAP_AUTO_UPDATE_CONN_PARAMS
 	default n
 
-config BT_AUTO_PHY_UPDATE
-	default n
-
 config BT_AUTO_DATA_LEN_UPDATE
 	default n
 
