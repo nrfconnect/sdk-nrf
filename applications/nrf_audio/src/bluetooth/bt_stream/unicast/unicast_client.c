@@ -1368,8 +1368,8 @@ static void stream_disconnected_cb(struct bt_bap_stream *stream, uint8_t reason)
 }
 
 static struct bt_bap_stream_ops stream_ops = {
-	.configured = stream_codec_configured_cb,
-	.qos_set = stream_qos_configured_cb,
+	.codec_configured = stream_codec_configured_cb,
+	.qos_configured = stream_qos_configured_cb,
 	.enabled = stream_enabled_cb,
 	.metadata_updated = stream_metadata_updated_cb,
 	.disabled = stream_disabled_cb,
