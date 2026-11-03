@@ -636,6 +636,14 @@ Cellular samples
 
   * Updated the sample to use the new nRF Cloud CoAP FOTA API.
 
+* Removed:
+
+  * Support for nRF9160 DK, nRF9161 DK, and Thingy:91 in the following cellular samples:
+
+    * :ref:`http_application_update_sample`
+    * :ref:`http_modem_delta_update_sample`
+    * :ref:`http_modem_full_update_sample`
+
 Cryptography samples
 --------------------
 
