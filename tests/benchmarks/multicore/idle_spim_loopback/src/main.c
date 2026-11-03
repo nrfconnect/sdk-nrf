@@ -18,7 +18,7 @@ static const struct gpio_dt_spec led = GPIO_DT_SPEC_GET(DT_ALIAS(led), gpios);
 #define DELTA (1)
 
 #define SPI_MODE_DEFAULT                                                                           \
-	(SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |              \
+	(SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB |      \
 	 SPI_MODE_CPHA | SPI_MODE_CPOL)
 
 #if defined(CONFIG_TEST_SPI_HOLD_ON_CS) && defined(CONFIG_TEST_SPI_LOCK_ON)

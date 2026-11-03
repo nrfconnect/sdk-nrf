@@ -9,7 +9,9 @@
 
 #define BUF_SIZE 32
 static const struct device *spis_dev = DEVICE_DT_GET(DT_ALIAS(spis));
-static const struct spi_config spis_config = {.operation = SPI_OP_MODE_SLAVE | SPI_WORD_SET(8)};
+static const struct spi_config spis_config = {
+	.operation = SPI_OP_MODE_PERIPHERAL | SPI_WORD_SET(8),
+};
 
 int main(void)
 {

@@ -31,7 +31,7 @@ typedef bool (*capability_func_t)(const struct device *dev);
 
 static struct spi_config default_spi_cfg = {
 	.frequency = 4000000,
-	.operation = (SPI_OP_MODE_MASTER | SPI_MODE_CPOL | SPI_WORD_SET(8) | SPI_LINES_SINGLE),
+	.operation = (SPI_OP_MODE_CONTROLLER | SPI_MODE_CPOL | SPI_WORD_SET(8) | SPI_LINES_SINGLE),
 };
 
 static void setup_instance(const struct device *dev)
