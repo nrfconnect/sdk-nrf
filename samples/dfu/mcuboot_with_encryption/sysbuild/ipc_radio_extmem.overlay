@@ -1,0 +1,13 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include "../boards/nrf54h20dk_nrf54h20_memory_map_extmem.dtsi"
+
+/ {
+	chosen {
+		zephyr,code-partition = &cpurad_slot0_partition;
+	};
+};
