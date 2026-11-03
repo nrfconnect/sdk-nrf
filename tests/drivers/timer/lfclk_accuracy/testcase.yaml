@@ -50,7 +50,7 @@ tests:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
       - CONFIG_TEST_GRTC_TIMER_INTERVAL_US=4000
       - CONFIG_TEST_DURATION_MS=20000
       - CONFIG_TEST_ABS_TIMIMG_DEVIATION_US=150

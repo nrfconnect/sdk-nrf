@@ -50,8 +50,8 @@ tests:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     harness_config:
       fixture: gpio_loopback
       pytest_root:

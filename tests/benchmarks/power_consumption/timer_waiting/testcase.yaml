@@ -35,7 +35,7 @@ tests:
     platform_allow: *54l_platforms
     extra_args:
       - DTC_OVERLAY_FILE="boards/nrf54l_16M.overlay"
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
 
   benchmarks.power_consumption.timer_waiting_16M_nrf54h:
     sysbuild: true
