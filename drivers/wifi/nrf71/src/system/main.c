@@ -31,6 +31,7 @@
 #include <common/rf_params.h>
 #include <common/util.h>
 #include <system/core.h>
+#include <system/coex_notify.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
@@ -632,6 +633,8 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
 	rpu_ctx_zep = &drv_priv_zep->rpu_ctx_zep;
+
+	nrf_wifi_coex_dev_rem();
 
 	nrf_wifi_sys_fmac_dev_deinit(rpu_ctx_zep->rpu_ctx);
 
