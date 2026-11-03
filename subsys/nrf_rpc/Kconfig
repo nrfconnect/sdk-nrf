@@ -36,7 +36,6 @@ config NRF_RPC_IPC_SERVICE
 config NRF_RPC_UART_TRANSPORT
 	bool "nRF RPC over UART"
 	select UART_NRFX
-	select RING_BUFFER
 	select CRC
 	help
 	  If enabled, selects the UART as a transport layer for the nRF RPC.
