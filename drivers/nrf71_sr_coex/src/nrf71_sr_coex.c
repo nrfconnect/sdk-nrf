@@ -23,6 +23,11 @@
  *   CM sends CM2CD_* event -> coex_event_handler() queues the event header and
  *   wakes up whoever was waiting for that event.
  *
+ * COEXC:
+ *   The on-chip arbiter is programmed by the host at init with a shared-antenna
+ *   layout, and again from nrf71_sr_coex_init() if the application selects a
+ *   separate antenna. It lives in the global domain and survives RPU resets.
+ *
  * CM lifecycle:
  *   The Wi-Fi driver reports ADMIN_UP/ADMIN_DOWN through its state notifier.
  *   Every ADMIN_UP (boot, interface up, RPU recovery) re-applies the full CM
@@ -882,6 +887,11 @@ int nrf71_sr_coex_init(const struct nrf71_sr_coex_cfg *cfg)
 		return -EINVAL;
 	}
 
+	if ((cfg->antenna != NRF71_SR_COEX_ANTENNA_SHARED) &&
+	    (cfg->antenna != NRF71_SR_COEX_ANTENNA_SEPARATE)) {
+		return -EINVAL;
+	}
+
 	if ((cfg->coex_params != NULL) &&
 	    ((cfg->coex_params_len == 0U) ||
 	     (cfg->coex_params_len > NRF71_SR_COEX_PARAMS_MAX_LEN))) {
@@ -916,6 +926,10 @@ int nrf71_sr_coex_init(const struct nrf71_sr_coex_cfg *cfg)
 		cd_state.coex_params_len = cfg->coex_params_len;
 	}
 
+	if (cfg->antenna != NRF71_SR_COEX_ANTENNA_SHARED) {
+		cd_coexc_configure(cfg->antenna);
+	}
+
 	/* The CM may already hold the defaults; replace them. */
 	if (cd_state.wifi_state != CD_WIFI_DOWN) {
 		cd_start_configuration_locked();
@@ -934,6 +948,8 @@ static int nrf71_sr_coex_sys_init(void)
 		.name = "nrf71_coex_cm",
 	};
 	int ret;
+
+	cd_coexc_configure(NRF71_SR_COEX_ANTENNA_SHARED);
 
 	k_work_queue_start(&cd_wq, cd_wq_stack, K_THREAD_STACK_SIZEOF(cd_wq_stack),
 			   CONFIG_NRF71_SR_COEX_WQ_PRIORITY, &wq_cfg);

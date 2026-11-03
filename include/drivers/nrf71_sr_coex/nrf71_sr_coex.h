@@ -34,6 +34,14 @@ extern "C" {
 /** Largest coexistence parameter blob accepted in @ref nrf71_sr_coex_cfg. */
 #define NRF71_SR_COEX_PARAMS_MAX_LEN 128U
 
+/** @brief Antenna layout of the board. */
+enum nrf71_sr_coex_antenna {
+	/** Wi-Fi and the SR radio share one antenna. */
+	NRF71_SR_COEX_ANTENNA_SHARED,
+	/** Wi-Fi and the SR radio have separate antennas. */
+	NRF71_SR_COEX_ANTENNA_SEPARATE,
+};
+
 /** @brief Wi-Fi client priority ranges. */
 struct nrf71_sr_coex_wifi_prio {
 	/** Wi-Fi software request range. */
@@ -102,6 +110,8 @@ struct nrf71_sr_coex_user_params {
  * referenced after nrf71_sr_coex_init() returns.
  */
 struct nrf71_sr_coex_cfg {
+	/** Antenna layout. The driver assumes a shared antenna until this is set. */
+	enum nrf71_sr_coex_antenna antenna;
 	/** Priority ranges. */
 	const struct nrf71_sr_coex_prio *prio;
 	/** User preferences. */

@@ -22,6 +22,8 @@
 
 #include <nrf71_coex_if.h>
 
+#include <drivers/nrf71_sr_coex/nrf71_sr_coex.h>
+
 /**
  * Post a CD2CM command over the Wi-Fi FMAC transport.
  *
@@ -68,6 +70,9 @@ int coex_cm_get_stats(void);
  */
 int cd_stats_fetch(struct cm_stats_t *stats, struct cm_fsm_patch_stats_t *patch_stats,
 		   bool *patch_valid);
+
+/** Program the COEXC arbitration tables for the given antenna layout. */
+void cd_coexc_configure(enum nrf71_sr_coex_antenna antenna);
 
 /** Name of the current CM configuration state, for diagnostics. */
 const char *cd_wifi_state_name(void);
