@@ -15,7 +15,7 @@
 #include <psa/crypto_extra.h>
 
 #include <zephyr/sys/util.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/ztest.h>
 #include "psa_tests_common.h"
