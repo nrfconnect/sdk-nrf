@@ -24,7 +24,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_BLE_BOND_LOG_LEVEL);
 #define CONFIRM_TIMEOUT			K_SECONDS(10)
 #define ERASE_ADV_TIMEOUT		K_SECONDS(30)
 
-#if CONFIG_DESKTOP_BLE_ENABLE_PASSKEY
+#ifdef CONFIG_DESKTOP_BLE_ENABLE_PASSKEY
  #define ERASE_ADV_NEW_CONN_TIMEOUT_MS	30000
 #else
  #define ERASE_ADV_NEW_CONN_TIMEOUT_MS	5000
@@ -72,31 +72,31 @@ static void erase_confirm(void);
 
 static const struct state_switch state_switch[] = {
 	 /* State                 Event         Next state               Callback */
-#if CONFIG_DESKTOP_BLE_PEER_SELECT
+#ifdef CONFIG_DESKTOP_BLE_PEER_SELECT
 	{STATE_IDLE,              CLICK_SHORT,  STATE_SELECT_PEER,       select_start},
 	{STATE_SELECT_PEER,       CLICK_SHORT,  STATE_SELECT_PEER,       select_next},
 	{STATE_SELECT_PEER,       CLICK_DOUBLE, STATE_IDLE,              select_confirm},
 #endif
 
-#if CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
+#ifdef CONFIG_DESKTOP_BLE_NEW_PEER_SCAN_REQUEST
 	{STATE_IDLE,              CLICK_SHORT,  STATE_IDLE,              scan_request},
 #endif
 
-#if CONFIG_DESKTOP_BLE_PEER_ERASE
+#ifdef CONFIG_DESKTOP_BLE_PEER_ERASE
 	{STATE_IDLE,              CLICK_LONG,   STATE_ERASE_PEER,        erase_start},
-#if CONFIG_DESKTOP_BT_PERIPHERAL
+#ifdef CONFIG_DESKTOP_BT_PERIPHERAL
 	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_ERASE_ADV,         erase_adv_confirm},
-#elif CONFIG_DESKTOP_BT_CENTRAL
+#elif defined(CONFIG_DESKTOP_BT_CENTRAL)
 	{STATE_ERASE_PEER,        CLICK_DOUBLE, STATE_IDLE,              erase_confirm},
 #endif
 
-#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
+#ifdef CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON
 	{STATE_DONGLE,            CLICK_LONG,   STATE_DONGLE_ERASE_PEER, erase_start},
 	{STATE_DONGLE_ERASE_PEER, CLICK_DOUBLE, STATE_DONGLE_ERASE_ADV,  erase_adv_confirm},
 #endif /* CONFIG_DESKTOP_BLE_DONGLE_PEER_ERASE_BOND_BUTTON */
 #endif /* CONFIG_DESKTOP_BLE_PEER_ERASE */
 
-#if CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START
+#ifdef CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START
 	{STATE_IDLE,	ON_START_CLICK(CLICK_LONG), STATE_ERASE_ADV, erase_adv_confirm},
 #endif /* CONFIG_DESKTOP_BLE_PEER_ERASE_ON_START */
 };
@@ -123,7 +123,7 @@ static bool dongle_peer_selected_on_init;
 static bool erase_adv_was_extended;
 
 
-#if CONFIG_DESKTOP_BT_PERIPHERAL
+#ifdef CONFIG_DESKTOP_BT_PERIPHERAL
 /* nRF Desktop peripheral requires a minimum of three Bluetooth identities:
  * - BT_ID_DEFAULT is not used as it cannot be reset.
  * - one identity is used for bonding with a peer.
@@ -133,7 +133,7 @@ static bool erase_adv_was_extended;
  */
 BUILD_ASSERT(CONFIG_BT_ID_MAX >= (IS_ENABLED(CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE) ? 4 : 3));
 #define BT_STACK_ID_LUT_SIZE (CONFIG_BT_ID_MAX - 1)
-#elif CONFIG_DESKTOP_BT_CENTRAL
+#elif defined(CONFIG_DESKTOP_BT_CENTRAL)
 #define BT_STACK_ID_LUT_SIZE 0
 #else
 #error Device must be Bluetooth peripheral or central.
@@ -147,7 +147,7 @@ static uint8_t bt_stack_id_lut[BT_STACK_ID_LUT_SIZE];
 static bool bt_stack_id_lut_valid;
 
 #define TEMP_PEER_ID (BT_STACK_ID_LUT_SIZE - 1)
-#if CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
+#ifdef CONFIG_DESKTOP_BLE_DONGLE_PEER_ENABLE
 #define DONGLE_PEER_ID (TEMP_PEER_ID - 1)
 #else
 #define DONGLE_PEER_ID (TEMP_PEER_ID)

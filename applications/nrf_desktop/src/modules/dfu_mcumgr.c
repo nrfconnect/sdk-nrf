@@ -178,6 +178,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if CONFIG_MCUMGR_TRANSPORT_BT
+#ifdef CONFIG_MCUMGR_TRANSPORT_BT
 APP_EVENT_SUBSCRIBE_FINAL(MODULE, ble_smp_transfer_event);
 #endif

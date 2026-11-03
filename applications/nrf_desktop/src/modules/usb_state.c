@@ -35,7 +35,7 @@ LOG_MODULE_REGISTER(MODULE, CONFIG_DESKTOP_USB_STATE_LOG_LEVEL);
 #include "config_event.h"
 #include <caf/events/power_event.h>
 
-#if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+#ifdef CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
   #include "usb_state_def.h"
 #endif /* CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION */
 
@@ -98,7 +98,7 @@ BUILD_ASSERT(IS_ENABLED(CONFIG_DESKTOP_USB_STACK_NEXT) ||
 	     IS_ENABLED(CONFIG_DESKTOP_USB_STACK_LEGACY),
 	     "Unsupported USB stack");
 
-#if CONFIG_DESKTOP_USB_STACK_NEXT
+#ifdef CONFIG_DESKTOP_USB_STACK_NEXT
 #define USB_NEXT_USB_HID_DEVICE_INIT(node_id)	\
 {						\
 	.dev = DEVICE_DT_GET(node_id),		\
@@ -112,7 +112,7 @@ static struct usb_hid_device usb_hid_device[] = {
 static struct usb_hid_device usb_hid_device[CONFIG_USB_HID_DEVICE_COUNT];
 #endif
 
-#if CONFIG_DESKTOP_USB_STACK_NEXT && DT_NODE_EXISTS(DT_NODELABEL(usbhs))
+#if defined(CONFIG_DESKTOP_USB_STACK_NEXT) && DT_NODE_EXISTS(DT_NODELABEL(usbhs))
 #define USB_DT_NODELABEL	DT_NODELABEL(usbhs)
 #define NUM_IN_ENDPOINTS	DT_PROP(USB_DT_NODELABEL, num_in_eps)
 #elif DT_NODE_EXISTS(DT_NODELABEL(usbd))
@@ -129,7 +129,7 @@ BUILD_ASSERT(!IS_ENABLED(CONFIG_DESKTOP_HID_STATE_ENABLE) ||
 	     IS_ENABLED(CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION) ||
 	     (ARRAY_SIZE(usb_hid_device) <= 1));
 
-#if CONFIG_SOC_SERIES_NRF54H
+#ifdef CONFIG_SOC_SERIES_NRF54H
 BUILD_ASSERT(CONFIG_UDC_DWC2_USBHS_VBUS_READY_TIMEOUT > 0,
 	     "Timeout must be set to prevent the usbd_enable() function from blocking the "
 	     "application forever when the USB cable is not connected.");
@@ -755,7 +755,7 @@ static uint32_t get_report_bm(size_t hid_id)
 {
 	BUILD_ASSERT(REPORT_ID_COUNT <=
 		     sizeof(usb_hid_device[0].report_bm) * CHAR_BIT);
-#if CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
+#ifdef CONFIG_DESKTOP_USB_SELECTIVE_REPORT_SUBSCRIPTION
 	BUILD_ASSERT(ARRAY_SIZE(usb_hid_report_bm) ==
 		     ARRAY_SIZE(usb_hid_device));
 	return usb_hid_report_bm[hid_id];
@@ -1582,9 +1582,9 @@ static bool app_event_handler(const struct app_event_header *aeh)
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, hid_report_event);
-#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+#ifdef CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
-#if CONFIG_DESKTOP_USB_REMOTE_WAKEUP
+#ifdef CONFIG_DESKTOP_USB_REMOTE_WAKEUP
 APP_EVENT_SUBSCRIBE(MODULE, wake_up_event);
 #endif

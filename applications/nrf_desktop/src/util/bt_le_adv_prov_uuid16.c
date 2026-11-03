@@ -18,10 +18,10 @@ static int get_data(struct bt_data *ad, const struct bt_le_adv_prov_adv_state *s
 	}
 
 	static const uint8_t data[] = {
-#if CONFIG_DESKTOP_HIDS_ENABLE
+#ifdef CONFIG_DESKTOP_HIDS_ENABLE
 		BT_UUID_16_ENCODE(BT_UUID_HIDS_VAL),
 #endif
-#if CONFIG_DESKTOP_BAS_ENABLE
+#ifdef CONFIG_DESKTOP_BAS_ENABLE
 		BT_UUID_16_ENCODE(BT_UUID_BAS_VAL),
 #endif
 	};

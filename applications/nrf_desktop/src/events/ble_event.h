@@ -20,7 +20,7 @@
 #include <app_event_manager_profiler_tracer.h>
 #include "hwid.h"
 
-#if CONFIG_DESKTOP_BLE_QOS_ENABLE
+#ifdef CONFIG_DESKTOP_BLE_QOS_ENABLE
 #include "chmap_filter.h"
 #endif
 
@@ -48,7 +48,7 @@ struct ble_discovery_complete_event {
 };
 APP_EVENT_TYPE_DECLARE(ble_discovery_complete_event);
 
-#if CONFIG_DESKTOP_BLE_QOS_ENABLE
+#ifdef CONFIG_DESKTOP_BLE_QOS_ENABLE
 /** @brief BLE QoS event. */
 struct ble_qos_event {
 	struct app_event_header header;

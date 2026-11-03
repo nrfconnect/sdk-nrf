@@ -45,6 +45,6 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, hid_report_event);
-#if CONFIG_CAF_POWER_MANAGER_EVENTS
+#ifdef CONFIG_CAF_POWER_MANAGER_EVENTS
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, power_manager_restrict_event);
 #endif /* CONFIG_CAF_POWER_MANAGER_EVENTS */

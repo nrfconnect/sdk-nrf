@@ -691,7 +691,7 @@ APP_EVENT_SUBSCRIBE(MODULE, hid_notification_event);
  * non-volatile memory.
  */
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, module_state_event);
-#if CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
+#ifdef CONFIG_DESKTOP_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, config_event);
 #endif
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, ble_peer_event);

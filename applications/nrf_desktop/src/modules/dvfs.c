@@ -328,10 +328,10 @@ static void dvfs_retry_work_handler(struct k_work *work)
 static void get_req_modules(struct module_flags *mf)
 {
 	module_flags_set_bit(mf, MODULE_IDX(main));
-#if CONFIG_CAF_SETTINGS_LOADER
+#ifdef CONFIG_CAF_SETTINGS_LOADER
 	module_flags_set_bit(mf, MODULE_IDX(settings_loader));
 #endif
-#if CONFIG_DESKTOP_BLE_BOND_ENABLE
+#ifdef CONFIG_DESKTOP_BLE_BOND_ENABLE
 	module_flags_set_bit(mf, MODULE_IDX(ble_bond));
 #endif
 }
@@ -443,16 +443,16 @@ static bool app_event_handler(const struct app_event_header *aeh)
 
 APP_EVENT_LISTENER(MODULE, app_event_handler);
 APP_EVENT_SUBSCRIBE(MODULE, module_state_event);
-#if CONFIG_DESKTOP_DVFS_STATE_LLPM_CONNECTED_ENABLE
+#ifdef CONFIG_DESKTOP_DVFS_STATE_LLPM_CONNECTED_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_conn_params_event);
 APP_EVENT_SUBSCRIBE(MODULE, ble_peer_event);
 #endif
-#if CONFIG_DESKTOP_DVFS_STATE_USB_CONNECTED_ENABLE
+#ifdef CONFIG_DESKTOP_DVFS_STATE_USB_CONNECTED_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, usb_state_event);
 #endif
-#if CONFIG_DESKTOP_DVFS_STATE_SMP_TRANSFER_ENABLE
+#ifdef CONFIG_DESKTOP_DVFS_STATE_SMP_TRANSFER_ENABLE
 APP_EVENT_SUBSCRIBE(MODULE, ble_smp_transfer_event);
 #endif
-#if CONFIG_DESKTOP_DVFS_STATE_CONFIG_CHANNEL_ENABLE
+#ifdef CONFIG_DESKTOP_DVFS_STATE_CONFIG_CHANNEL_ENABLE
 APP_EVENT_SUBSCRIBE_EARLY(MODULE, config_event);
 #endif

@@ -20,7 +20,7 @@ APP_EVENT_TYPE_DEFINE(ble_discovery_complete_event,
 				(APP_EVENT_TYPE_FLAGS_INIT_LOG_ENABLE))));
 
 
-#if CONFIG_DESKTOP_BLE_QOS_ENABLE
+#ifdef CONFIG_DESKTOP_BLE_QOS_ENABLE
 static void log_ble_qos_event(const struct app_event_header *aeh)
 {
 	const struct ble_qos_event *event = cast_ble_qos_event(aeh);
