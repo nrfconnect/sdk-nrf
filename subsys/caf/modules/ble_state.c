@@ -269,6 +269,18 @@ static void le_param_updated(struct bt_conn *conn, uint16_t interval,
 	APP_EVENT_SUBMIT(event);
 }
 
+#ifdef CONFIG_BT_USER_CONN_PARAM_REJECTED
+static void le_param_update_rejected(struct bt_conn *conn, uint8_t hci_err)
+{
+	LOG_WRN("Connection parameter update rejected (reason 0x%02x)", hci_err);
+
+	/* The connection parameters did not change. Report the parameters in use,
+	 * as it was done when le_param_updated was called for a failed update.
+	 */
+	broadcast_init_conn_params(conn);
+}
+#endif /* CONFIG_BT_USER_CONN_PARAM_REJECTED */
+
 #if CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS
 static void conn_rate_changed(struct bt_conn *conn, uint8_t status,
 			      const struct bt_conn_le_conn_rate_changed *params)
@@ -352,6 +364,9 @@ static int ble_state_init(void)
 		.security_changed = security_changed,
 		.le_param_req = le_param_req,
 		.le_param_updated = le_param_updated,
+#ifdef CONFIG_BT_USER_CONN_PARAM_REJECTED
+		.le_param_update_rejected = le_param_update_rejected,
+#endif /* CONFIG_BT_USER_CONN_PARAM_REJECTED */
 #if CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS
 		.conn_rate_changed = conn_rate_changed,
 #endif /* CONFIG_CAF_BLE_SCI_CONN_RATE_EVENTS */
