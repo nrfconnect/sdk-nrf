@@ -9,7 +9,6 @@ menuconfig SAMPLE_RATE_CONVERTER
 	select CMSIS_DSP
 	select CMSIS_DSP_FILTERING
 	select TIMING_FUNCTIONS
-	select RING_BUFFER
 	help
 	  Enable the sample rate conversion library. The library uses CMSIS DSP filters to
 	  preserve quality during the conversion. Conversion between 16kHz, 24kHz and 48kHz
