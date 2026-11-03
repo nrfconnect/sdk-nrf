@@ -23,15 +23,36 @@ LOG_MODULE_REGISTER(rest_client, CONFIG_REST_CLIENT_LOG_LEVEL);
 
 #define HTTP_PROTOCOL "HTTP/1.1"
 
+/* Append data to the response buffer, which is kept NULL terminated.
+ * Data that does not fit is dropped, but it is still counted in the total
+ * response length.
+ */
+static void rest_client_resp_append(struct rest_client_resp_context *resp_ctx,
+				    const uint8_t *data, size_t len)
+{
+	size_t resp_buff_len = resp_ctx->req_ctx->resp_buff_len - 1;
+	char *resp_buff = resp_ctx->req_ctx->resp_buff;
+	size_t buf_remaining_len = resp_ctx->total_response_len < resp_buff_len ?
+				   resp_buff_len - resp_ctx->total_response_len : 0;
+	size_t copy_len = MIN(len, buf_remaining_len);
+
+	if (copy_len < len) {
+		LOG_DBG("Receive buffer too small, dropping %zd bytes",
+			len - copy_len);
+	}
+
+	if (copy_len > 0) {
+		memcpy(resp_buff + resp_ctx->total_response_len, data, copy_len);
+	}
+
+	resp_ctx->total_response_len += len;
+}
+
 static int rest_client_http_response_cb(struct http_response *rsp,
 					enum http_final_call final_data,
 					void *user_data)
 {
 	struct rest_client_resp_context *resp_ctx = NULL;
-	size_t buf_remaining_len;
-	size_t resp_buff_len;
-	uint8_t *resp_buff;
-	size_t copy_len;
 
 	if (user_data) {
 		resp_ctx = (struct rest_client_resp_context *)user_data;
@@ -42,36 +63,32 @@ static int rest_client_http_response_cb(struct http_response *rsp,
 		return 0;
 	}
 
-	/* Ensure receive buffer stays NULL terminated */
-	resp_buff_len = resp_ctx->req_ctx->resp_buff_len - 1;
-	resp_buff = resp_ctx->req_ctx->resp_buff;
-	buf_remaining_len = resp_ctx->total_response_len < resp_buff_len ?
-			    resp_buff_len - resp_ctx->total_response_len : 0;
-	copy_len = MIN(rsp->data_len, buf_remaining_len);
-
-	if (copy_len < rsp->data_len) {
-		LOG_DBG("Receive buffer too small, dropping %zd bytes",
-			rsp->data_len - copy_len);
-	}
-
-	/* Copy data to the REST buffer. */
-	if (copy_len > 0) {
-		memcpy(resp_buff + resp_ctx->total_response_len,
-		       rsp->recv_buf, copy_len);
-	}
-
-	/* If the entire HTTP response is not received in a single "recv" call
-	 * then this could be called multiple times, with a different value in
-	 * rsp->body_start. Only set rest_ctx->response once, the first time,
-	 * which will be the start of the body.
+	/* This could be called multiple times for one received buffer, once
+	 * for each body fragment, for example for each chunk of a chunked
+	 * response. The response buffer has the HTTP headers followed by the
+	 * body, so copy each part only once: the received data as long as it
+	 * belongs to the headers, the headers before the first body fragment,
+	 * and then the body fragment of this call.
 	 */
-	if (!resp_ctx->response && rsp->body_found && rsp->body_frag_start) {
-		size_t cur_body_offset = rsp->body_frag_start - rsp->recv_buf;
+	if (!resp_ctx->response && !rsp->body_frag_start) {
+		rest_client_resp_append(resp_ctx, rsp->recv_buf, rsp->data_len);
+	} else {
+		if (!resp_ctx->response) {
+			rest_client_resp_append(resp_ctx, rsp->recv_buf,
+						rsp->body_frag_start - rsp->recv_buf);
 
-		resp_ctx->response = resp_buff + resp_ctx->total_response_len +
-				     cur_body_offset;
+			/* Only set rest_ctx->response once, the first time,
+			 * which will be the start of the body.
+			 */
+			resp_ctx->response = resp_ctx->req_ctx->resp_buff +
+					     resp_ctx->total_response_len;
+		}
+
+		if (rsp->body_frag_start) {
+			rest_client_resp_append(resp_ctx, rsp->body_frag_start,
+						rsp->body_frag_len);
+		}
 	}
-	resp_ctx->total_response_len += rsp->data_len;
 
 	if (final_data == HTTP_DATA_MORE) {
 		LOG_DBG("Partial data received(%zd bytes)", rsp->data_len);
