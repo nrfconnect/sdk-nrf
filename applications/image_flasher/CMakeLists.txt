@@ -53,7 +53,7 @@ foreach(key ${${base_image}_kconfig_keys})
 endforeach()
 
 file(WRITE ${PROJECT_BINARY_DIR}/.config.new ${image_flasher_config})
-zephyr_file_copy(${PROJECT_BINARY_DIR}/.config.new ${PROJECT_BINARY_DIR}/.config
+file(COPY_FILE ${PROJECT_BINARY_DIR}/.config.new ${PROJECT_BINARY_DIR}/.config
   ONLY_IF_DIFFERENT
 )
 import_kconfig(CONFIG_ ${PROJECT_BINARY_DIR}/.config)
