@@ -22,8 +22,6 @@ int main(void)
 {
 	(void)coex_cd_sr_power_notify(COEX_SR_POWERED_UP_READY);
 	(void)coex_cd_sr_power_notify(COEX_SR_PREPARE_POWER_DOWN);
-	(void)coex_cd_wifi_power_notify(COEX_WIFI_POWERED_UP_READY);
-	(void)coex_cd_wifi_power_notify(COEX_WIFI_PREPARE_POWER_DOWN);
 
 	printk("nRF71 SR coexistence driver built\n");
 
