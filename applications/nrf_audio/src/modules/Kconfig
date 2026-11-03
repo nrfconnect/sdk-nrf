@@ -219,7 +219,6 @@ menuconfig SD_CARD_PLAYBACK
 	depends on NRF_AUDIO_SD_CARD_MODULE
 	select EXPERIMENTAL
 	default n
-	select RING_BUFFER
 
 if SD_CARD_PLAYBACK
 
