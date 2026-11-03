@@ -9,6 +9,7 @@
 #include <zephyr/kernel.h>
 #include <zephyr/sys/printk.h>
 
+#include <drivers/nrf71_sr_coex/nrf71_sr_coex.h>
 #include <drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h>
 
 static int test_sr_enable(bool enable)
@@ -37,6 +38,22 @@ static const struct nrf71_sr_coex_sr_driver_cb test_sr_cb = {
  */
 int main(void)
 {
+	const struct nrf71_sr_coex_user_params user = {
+		.sr_rx_prot_ps_listen2inactive = 100,
+		.sr_rx_prot_ps_inactive2listen = 100,
+		.sr_rx_prot_calib_listen2inactive = 100,
+		.sr_rx_prot_calib_inactive2listen = 100,
+		.wifi_scan_prot = 100,
+		.wifi_beacon_prot = 100,
+		.wifi_conn_prot = 100,
+		.wifi_calib_prot = 100,
+		.ant_alloc = NRF71_SR_COEX_ANT_ALLOC_DYNAMIC,
+	};
+	const struct nrf71_sr_coex_cfg cfg = {
+		.user = &user,
+	};
+
+	(void)nrf71_sr_coex_init(&cfg);
 	(void)nrf71_sr_coex_sr_register(&test_sr_cb);
 	(void)nrf71_sr_coex_sr_power_notify(NRF71_SR_COEX_SR_POWERED_UP_READY);
 	(void)nrf71_sr_coex_sr_power_notify(NRF71_SR_COEX_SR_PREPARE_POWER_DOWN);

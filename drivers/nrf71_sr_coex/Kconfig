@@ -65,6 +65,21 @@ config NRF71_SR_COEX_WQ_PRIORITY
 	int "Priority of the coexistence work queue"
 	default 10
 
+config NRF71_SR_COEX_WAIT_FOR_APP_INIT
+	bool "Configure the CM only after the application configuration"
+	help
+	  Don't configure the Coexistence Manager until the application has
+	  called nrf71_sr_coex_init(), so the built-in defaults are never
+	  applied first. Without it, the defaults are applied as soon as Wi-Fi
+	  is up and replaced once the application configuration arrives.
+
+config NRF71_SR_COEX_SHELL
+	bool "Coexistence driver shell"
+	depends on SHELL
+	help
+	  Shell commands to show the Coexistence Manager configuration state
+	  and to read its statistics.
+
 module = NRF71_SR_COEX_DRIVER
 module-str = Log level for the nRF71 SR coexistence driver
 source "subsys/logging/Kconfig.template.log_config"
