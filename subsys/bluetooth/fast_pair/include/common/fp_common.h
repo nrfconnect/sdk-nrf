@@ -7,6 +7,9 @@
 #ifndef _FP_COMMON_H_
 #define _FP_COMMON_H_
 
+#include <stddef.h>
+#include <zephyr/net_buf.h>
+
 /**
  * @defgroup fp_common Fast Pair common data
  * @brief Internal API for Fast Pair common data
@@ -26,6 +29,20 @@ struct fp_account_key {
 	/** Account Key. */
 	uint8_t key[FP_ACCOUNT_KEY_LEN];
 };
+
+/** @brief Get the size of the data area that starts at the buffer data pointer.
+ *
+ * It is the number of bytes already in the buffer plus the room left for more data.
+ * It replaces the deprecated net_buf_simple_max_len().
+ *
+ * @param[in] buf Buffer to check.
+ *
+ * @return Size of the data area that starts at the buffer data pointer, in bytes.
+ */
+static inline size_t fp_buf_simple_data_area_len(const struct net_buf_simple *buf)
+{
+	return buf->len + net_buf_simple_tailroom(buf);
+}
 
 
 #ifdef __cplusplus

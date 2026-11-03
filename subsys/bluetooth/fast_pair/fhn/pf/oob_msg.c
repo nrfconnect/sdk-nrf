@@ -12,6 +12,7 @@ LOG_MODULE_REGISTER(fp_fhn_pf_oob_msg, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
 
 #include <bluetooth/fast_pair/fhn/pf/pf.h>
 
+#include "fp_common.h"
 #include "fp_fhn_pf_oob_msg.h"
 
 #include "oob_msg_defs.h"
@@ -30,7 +31,7 @@ static int pf_oob_msg_ranging_capability_req_decode(struct net_buf_simple *msg_b
 {
 	__ASSERT_NO_MSG(msg_desc->id == FP_FHN_PF_OOB_MSG_ID_RANGING_CAPABILITY_REQ);
 
-	if (net_buf_simple_max_len(msg_buf) != OOB_MSG_RANGING_CAPABILITY_REQ_PAYLOAD_LEN) {
+	if (fp_buf_simple_data_area_len(msg_buf) != OOB_MSG_RANGING_CAPABILITY_REQ_PAYLOAD_LEN) {
 		LOG_WRN("Precision Finding: OOB message: Ranging Capability Request: "
 			"invalid payload length");
 
@@ -56,7 +57,7 @@ static int pf_oob_msg_ranging_config_payload_decode(
 
 	__ASSERT_NO_MSG(tech_payload);
 
-	if (net_buf_simple_max_len(msg_buf) < OOB_MSG_RANGING_TECH_HDR_LEN) {
+	if (fp_buf_simple_data_area_len(msg_buf) < OOB_MSG_RANGING_TECH_HDR_LEN) {
 		LOG_WRN("Precision Finding: OOB message: Ranging Configuration: "
 			"Configuration Payload: invalid length");
 
@@ -74,7 +75,7 @@ static int pf_oob_msg_ranging_config_payload_decode(
 
 	payload_len = net_buf_simple_pull_u8(msg_buf);
 	if ((payload_len < OOB_MSG_RANGING_TECH_HDR_LEN) ||
-	    (payload_len > (net_buf_simple_max_len(msg_buf) + OOB_MSG_RANGING_TECH_HDR_LEN))) {
+	    (payload_len > (fp_buf_simple_data_area_len(msg_buf) + OOB_MSG_RANGING_TECH_HDR_LEN))) {
 		LOG_WRN("Precision Finding: OOB message: Ranging Configuration: "
 			"Configuration Payload: invalid size field: %u", payload_len);
 
@@ -106,7 +107,7 @@ static int pf_oob_msg_ranging_config_req_decode(struct net_buf_simple *msg_buf,
 		return -EINVAL;
 	}
 
-	if (net_buf_simple_max_len(msg_buf) <
+	if (fp_buf_simple_data_area_len(msg_buf) <
 		(OOB_MSG_RANGING_CONFIG_REQ_BM_LEN + OOB_MSG_RANGING_CONFIG_REQ_RFU_LEN)) {
 		LOG_WRN("Precision Finding: OOB message: Ranging Configuration: "
 			"invalid initial payload length");
@@ -162,7 +163,7 @@ static int pf_oob_msg_ranging_config_req_decode(struct net_buf_simple *msg_buf,
 
 		msg_desc->ranging_config_req.config_payload_num--;
 		config_payload_num++;
-	} while (net_buf_simple_max_len(msg_buf) != 0);
+	} while (fp_buf_simple_data_area_len(msg_buf) != 0);
 
 	if (rfu != 0) {
 		LOG_WRN("Precision Finding: OOB message: Ranging Configuration: "
@@ -183,7 +184,7 @@ static int pf_oob_msg_stop_ranging_req_decode(struct net_buf_simple *msg_buf,
 {
 	__ASSERT_NO_MSG(msg_desc->id == FP_FHN_PF_OOB_MSG_ID_STOP_RANGING_REQ);
 
-	if (net_buf_simple_max_len(msg_buf) != OOB_MSG_STOP_RANGING_REQ_PAYLOAD_LEN) {
+	if (fp_buf_simple_data_area_len(msg_buf) != OOB_MSG_STOP_RANGING_REQ_PAYLOAD_LEN) {
 		LOG_WRN("Precision Finding: OOB message: Stop Ranging: "
 			"invalid payload length");
 
@@ -207,7 +208,7 @@ int fp_fhn_pf_oob_msg_decode(struct net_buf_simple *msg_buf,
 	__ASSERT_NO_MSG(msg_desc);
 	__ASSERT_NO_MSG(msg_buf);
 
-	if (net_buf_simple_max_len(msg_buf) < OOB_MSG_MSG_ID_HDR_LEN) {
+	if (fp_buf_simple_data_area_len(msg_buf) < OOB_MSG_MSG_ID_HDR_LEN) {
 		LOG_WRN("Precision Finding: OOB message: packet does not contain header");
 
 		return -EINVAL;
@@ -364,9 +365,9 @@ static int pf_oob_msg_ranging_capability_rsp_encode(const struct fp_fhn_pf_oob_m
 
 	/* Validate the provided buffer. */
 	msg_buf_min_len = pf_oob_msg_len_get(msg_desc);
-	if (net_buf_simple_max_len(msg_buf) < msg_buf_min_len) {
+	if (fp_buf_simple_data_area_len(msg_buf) < msg_buf_min_len) {
 		LOG_ERR("Precision Finding: OOB message: Ranging Capability Response: "
-			"response buffer too small: %d < %d", net_buf_simple_max_len(msg_buf),
+			"response buffer too small: %d < %d", fp_buf_simple_data_area_len(msg_buf),
 			msg_buf_min_len);
 
 		return -ENOMEM;
@@ -399,9 +400,9 @@ static int pf_oob_msg_ranging_config_rsp_encode(const struct fp_fhn_pf_oob_msg *
 
 	/* Validate the provided buffer. */
 	msg_buf_min_len = pf_oob_msg_len_get(msg_desc);
-	if (net_buf_simple_max_len(msg_buf) < msg_buf_min_len) {
+	if (fp_buf_simple_data_area_len(msg_buf) < msg_buf_min_len) {
 		LOG_ERR("Precision Finding: OOB message: Ranging Configuration Response: "
-			"response buffer too small: %d < %d", net_buf_simple_max_len(msg_buf),
+			"response buffer too small: %d < %d", fp_buf_simple_data_area_len(msg_buf),
 			msg_buf_min_len);
 
 		return -ENOMEM;
@@ -424,9 +425,9 @@ static int pf_oob_msg_stop_ranging_rsp_encode(const struct fp_fhn_pf_oob_msg *ms
 
 	/* Validate the provided buffer. */
 	msg_buf_min_len = pf_oob_msg_len_get(msg_desc);
-	if (net_buf_simple_max_len(msg_buf) < msg_buf_min_len) {
+	if (fp_buf_simple_data_area_len(msg_buf) < msg_buf_min_len) {
 		LOG_ERR("Precision Finding: OOB message: Stop Ranging Response: "
-			"response buffer too small: %d < %d", net_buf_simple_max_len(msg_buf),
+			"response buffer too small: %d < %d", fp_buf_simple_data_area_len(msg_buf),
 			msg_buf_min_len);
 
 		return -ENOMEM;
