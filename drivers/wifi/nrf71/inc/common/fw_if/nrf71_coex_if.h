@@ -549,26 +549,6 @@ struct cd2cm_coex_user_params_t {
 } __NRF_WIFI_PKD;
 
 /**
- * Wi-Fi power-state events reported to the Coexistence Driver.
- *
- * Host-side (Wi-Fi driver to CD) notification; not part of the CD to CM wire
- * ABI.
- */
-enum coex_wifi_power_event_t {
-	/** Wi-Fi is about to power down. */
-	COEX_WIFI_PREPARE_POWER_DOWN = 0,
-	/** Wi-Fi has powered up and is ready. */
-	COEX_WIFI_POWERED_UP_READY
-};
-
-/**
- * Notify CD before Wi-Fi power-down and after Wi-Fi is ready following power-up.
- *
- * Returns zero on success or a negative errno value.
- */
-int coex_cd_wifi_power_notify(enum coex_wifi_power_event_t event);
-
-/**
  * @}
  */
 #endif /* __NRF71_COEX_IF_H__ */
