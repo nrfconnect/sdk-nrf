@@ -20,6 +20,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <net_private.h>
 
 #include <system/core.h>
+#include <system/coex_notify.h>
 #include <common/util.h>
 #include <system/wifi_mgmt.h>
 #include <system/wpa_supp_if.h>
@@ -377,6 +378,11 @@ void nrf_wifi_wpa_supp_event_proc_assoc_resp(void *if_priv,
 			event.assoc_info.req_ies_len = assoc_resp->req_ie_len;
 		}
 
+		if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
+			nrf_wifi_coex_sta_connected(vif_ctx_zep->assoc_freq,
+						    event.assoc_info.resp_ies,
+						    event.assoc_info.resp_ies_len);
+		}
 	}
 
 	if (vif_ctx_zep->supp_drv_if_ctx &&
@@ -424,6 +430,10 @@ void nrf_wifi_wpa_supp_event_proc_deauth(void *if_priv,
 		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
 			&event, mgmt);
 	}
+
+	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
+		nrf_wifi_coex_sta_disconnected();
+	}
 }
 
 void nrf_wifi_wpa_supp_event_proc_disassoc(void *if_priv,
@@ -461,6 +471,10 @@ void nrf_wifi_wpa_supp_event_proc_disassoc(void *if_priv,
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.disassoc)	{
 		vif_ctx_zep->supp_callbk_fns.disassoc(vif_ctx_zep->supp_drv_if_ctx, &event);
+	}
+
+	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
+		nrf_wifi_coex_sta_disconnected();
 	}
 
 	(void) nrf_wifi_twt_teardown_flows(vif_ctx_zep, 0, NRF_WIFI_MAX_TWT_FLOWS);

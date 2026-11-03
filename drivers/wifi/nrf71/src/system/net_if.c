@@ -31,6 +31,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/fmac_peer.h>
 #include <system/fmac_tx.h>
 #include <system/core.h>
+#include <system/coex_notify.h>
 #include <system/wpa_supp_if.h>
 #include <system/net_if.h>
 #include <common/mac_addr.h>
@@ -1180,6 +1181,8 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
+	nrf_wifi_coex_vif_up();
+
 	ret = 0;
 
 	goto out;
@@ -1236,6 +1239,14 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 	 * goes away. vif_ctx_zep is device data and survives the down/up cycle,
 	 * so state left behind here is state the next bring-up inherits.
 	 */
+	if (vif_ctx_zep->if_op_state == NRF_WIFI_FMAC_IF_OP_STATE_UP) {
+		if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
+			nrf_wifi_coex_sta_disconnected();
+		}
+		/* Coex must stop posting CD2CM before the VIF goes away in the RPU. */
+		nrf_wifi_coex_vif_down();
+	}
+
 	nrf_wifi_if_reset_vif_state(vif_ctx_zep);
 
 	rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
