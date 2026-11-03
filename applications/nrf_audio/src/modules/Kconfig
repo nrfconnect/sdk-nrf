@@ -217,7 +217,6 @@ menuconfig NRF_AUDIO_SD_CARD_PLAYBACK
 	bool "Enable playback from SD card [EXPERIMENTAL]"
 	depends on NRF_AUDIO_SD_CARD_MODULE
 	select EXPERIMENTAL
-	select RING_BUFFER
 
 if NRF_AUDIO_SD_CARD_PLAYBACK
 
