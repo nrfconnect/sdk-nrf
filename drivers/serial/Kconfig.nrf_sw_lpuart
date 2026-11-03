@@ -8,7 +8,6 @@ config NRF_SW_LPUART
 	depends on DT_HAS_NORDIC_NRF_SW_LPUART_ENABLED
 	select GPIO
 	select UART_ASYNC_API
-	select RING_BUFFER
 	default y
 	help
 	  Low power UART implements UART API and extends standard UART
