@@ -6664,6 +6664,26 @@ KRKNWK-21227: RXERROR event not detected during NFC frame reception
 
   Fix for the issue is provided in the nrfx 4.1.0.
 
+.. _known_issues_nrfx_gpiote:
+
+nrfx_gpiote driver
+==================
+
+.. rst-class:: v3-4-2 v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0
+
+NRFX-10439: Disabled GPIOTE trigger can still generate an interrupt when the GPIO DETECT signal is used
+  The ``nrfx_gpiote`` driver does not clear the ``LATCH`` register when a trigger is disabled with the :c:func:`nrfx_gpiote_trigger_disable` function.
+  The driver uses the value of the ``LATCH`` register to decide whether to invoke the user handler.
+  If the trigger is disabled before the last interrupt has been serviced, for example, in a context that cannot be preempted by the GPIOTE interrupt (a spinlock or another interrupt handler), the pin remains latched.
+  As a result, the handler is called for a pin that has already been disabled when the ``PORT`` event is processed after the context is left.
+
+  The issue affects only pins that use the GPIO DETECT signal to generate an interrupt (interrupt using ``PORT`` instead of an ``IN`` event).
+  Interrupts that use a GPIOTE ``IN`` event are not affected.
+
+  **Affected platforms:** nRF52 Series, nRF5340, nRF54L Series, nRF54H20, nRF7120, nRF91 Series, nRF9251
+
+  **Workaround:** Call the :c:func:`nrf_gpio_pin_latch_clear` function for the pin manually after disabling the trigger.
+
 Integrations
 ************
 
@@ -6934,6 +6954,23 @@ Zephyr
 ******
 
 The issues in this section are related to the Zephyr downstream in the |NCS|.
+
+.. rst-class:: v3-4-2 v3-4-1 v3-4-0 v3-3-4 v3-3-3 v3-3-2 v3-3-1 v3-3-0 v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0 v3-1-1 v3-1-0 v3-0-2 v3-0-1 v3-0-0 v2-9-3 v2-9-2 v2-9-1 v2-9-0-nRF54H20-1 v2-9-0 v2-8-0 v2-7-99-cs2 v2-7-99-cs1 v2-7-0 v2-6-6 v2-6-5 v2-6-4 v2-6-3 v2-6-2 v2-6-99-cs2 v2-6-99-cs1 v2-6-1 v2-6-0 v2-5-3 v2-5-2 v2-5-1 v2-5-0 v2-4-4 v2-4-3 v2-4-2 v2-4-1 v2-4-0 v2-3-0 v2-2-0 v2-1-4 v2-1-3 v2-1-2 v2-1-1 v2-1-0 v2-0-2 v2-0-1 v2-0-0 v1-9-2-dev1 v1-9-2 v1-9-1 v1-9-0
+
+NRFX-10439: Zephyr GPIO callback is called after the interrupt has been disabled with the :c:func:`gpio_pin_interrupt_configure` function when the GPIO DETECT signal is used
+  The Zephyr ``gpio_nrfx`` driver uses the ``nrfx_gpiote`` driver and inherits its issue (see :ref:`known_issues_nrfx_gpiote`).
+  The driver does not clear the ``LATCH`` register when the interrupt is disabled and uses its value to decide whether to invoke the user callback.
+  When the :c:func:`gpio_pin_interrupt_configure` function is called with the :c:macro:`GPIO_INT_DISABLE` macro before the last interrupt of the pin has been serviced, the GPIO callback is still called after the interrupt has been disabled.
+  This can happen when the function is called in a context that cannot be preempted by the GPIO interrupt (a spinlock or another interrupt handler).
+
+  The issue affects only pins that use the GPIO DETECT signal to generate an interrupt:
+
+  * Pins set in the ``sense-edge-mask`` property of the GPIO node
+  * Pins with a level-triggered interrupt
+
+  **Affected platforms:** nRF52 Series, nRF5340, nRF54L Series, nRF54H20, nRF7120, nRF91 Series, nRF9251
+
+  **Workaround:** Call the :c:func:`nrf_gpio_pin_latch_clear` function for the pin manually after disabling the interrupt using the :c:func:`gpio_pin_interrupt_configure` function.
 
 .. rst-class:: v3-2-6 v3-2-5 v3-2-4 v3-2-3 v3-2-2 v3-2-1 v3-2-0
 
