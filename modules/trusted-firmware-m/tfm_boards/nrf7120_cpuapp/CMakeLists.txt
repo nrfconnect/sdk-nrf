@@ -29,6 +29,18 @@ target_include_directories(platform_s
   ${ZEPHYR_BASE}/soc/nordic/common
   )
 
+# A previous boot image has already applied this MDK setup and locked
+# OSCILLATORS/REGULATORS as non-secure.
+if(CONFIG_SOC_SERIES_NRF71_SKIP_PREV_IMAGE_INIT)
+  target_compile_definitions(platform_s
+    PRIVATE
+    NRF_SKIP_CLOCK_CONFIGURATION
+    NRF_SKIP_TAMPC_SETUP
+    NRF_DISABLE_FICR_TRIMCNF
+    NRF_DONT_RESET_BOOTCOUNT
+  )
+endif()
+
 install(FILES       ${CMAKE_CURRENT_LIST_DIR}/ns/cpuarch_ns.cmake
         DESTINATION ${INSTALL_PLATFORM_NS_DIR}
         RENAME      cpuarch.cmake)
