@@ -23,9 +23,6 @@
 
 LOG_MODULE_REGISTER(dfu_target_smp_bt, CONFIG_DFU_TARGET_LOG_LEVEL);
 
-/* ATT Write Without Response header overhead (opcode + handle). */
-#define ATT_WRITE_HEADER_SIZE 3U
-
 static struct smp_transport ble_smpt;
 static struct smp_client_transport_entry ble_smpt_entry;
 static struct bt_dfu_smp *smp_bt_client;
@@ -160,25 +157,6 @@ BT_CONN_CB_DEFINE(dfu_target_smp_bt_conn_callbacks) = {
 	.disconnected = disconnected,
 };
 
-/* Returns the maximum payload size for a single GATT write */
-static uint16_t ble_smp_get_mtu(const struct net_buf *nb)
-{
-	struct bt_conn *conn;
-
-	ARG_UNUSED(nb);
-
-	if (smp_bt_client == NULL) {
-		return 0;
-	}
-
-	conn = bt_dfu_smp_conn(smp_bt_client);
-	if (conn == NULL) {
-		return 0;
-	}
-
-	return (bt_gatt_get_mtu(conn) - ATT_WRITE_HEADER_SIZE);
-}
-
 int dfu_target_smp_bt_transport_register(struct bt_dfu_smp *smp_client)
 {
 	int rc;
@@ -195,7 +173,6 @@ int dfu_target_smp_bt_transport_register(struct bt_dfu_smp *smp_client)
 	}
 
 	ble_smpt.functions.output = ble_smp_output;
-	ble_smpt.functions.get_mtu = ble_smp_get_mtu;
 
 	rc = smp_transport_init(&ble_smpt);
 	if (rc) {
