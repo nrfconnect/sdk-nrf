@@ -16,8 +16,8 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 		clk-gpios = <&gpio2 0 GPIO_ACTIVE_HIGH>;
-		mosi-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
-		miso-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
+		sdo-gpios = <&gpio2 3 GPIO_ACTIVE_HIGH>;
+		sdi-gpios = <&gpio2 9 GPIO_ACTIVE_HIGH>;
 		cs-gpios = <&gpio2 3 GPIO_ACTIVE_LOW>;
 	};
 };
