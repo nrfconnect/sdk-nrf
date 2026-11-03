@@ -46,8 +46,8 @@ tests:
     platform_allow: *54l_test_platforms
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     harness_config:
       fixture: ppk_power_measure
       pytest_root:
