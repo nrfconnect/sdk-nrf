@@ -171,8 +171,8 @@ static int fp_gatt_rsp_notify(struct bt_conn *conn, const struct bt_gatt_attr *a
 	size_t salt_len;
 	int err = 0;
 
-	if (net_buf_simple_max_len(rsp) != FP_CRYPTO_AES128_BLOCK_LEN) {
-		LOG_ERR("Unsupported response size %zu", net_buf_simple_max_len(rsp));
+	if (fp_buf_simple_data_area_len(rsp) != FP_CRYPTO_AES128_BLOCK_LEN) {
+		LOG_ERR("Unsupported response size %zu", fp_buf_simple_data_area_len(rsp));
 		return -ENOTSUP;
 	}
 
@@ -547,7 +547,7 @@ static ssize_t write_key_based_pairing(struct bt_conn *conn,
 	net_buf_simple_init_with_data(&gatt_write, (void *)buf, len);
 
 	keygen_params.req_enc = net_buf_simple_pull_mem(&gatt_write, FP_CRYPTO_AES128_BLOCK_LEN);
-	if (net_buf_simple_max_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
+	if (fp_buf_simple_data_area_len(&gatt_write) == FP_CRYPTO_ECDH_PUBLIC_KEY_LEN) {
 		keygen_params.public_key = net_buf_simple_pull_mem(&gatt_write,
 								   FP_CRYPTO_ECDH_PUBLIC_KEY_LEN);
 	} else if (!IS_ENABLED(CONFIG_BT_FAST_PAIR_SUBSEQUENT_PAIRING)) {
