@@ -485,7 +485,6 @@ function(${SYSBUILD_CURRENT_MODULE_NAME}_pre_cmake)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_XIP y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_CODE_DATA_RELOCATION y)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_HAVE_CUSTOM_LINKER_SCRIPT y)
-        set_config_bool(${DEFAULT_IMAGE} CONFIG_BUILD_NO_GAP_FILL y)
 
         # Extended MCUmgr img mgmt for QSPI XIP split (slot selection, confirm policy)
         set_config_bool(${DEFAULT_IMAGE} CONFIG_MCUMGR_GRP_IMG_NRF y)
