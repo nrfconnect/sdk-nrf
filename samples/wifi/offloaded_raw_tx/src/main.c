@@ -9,7 +9,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 #include <stdio.h>
 #include <stdint.h>
 #include <stdbool.h>

@@ -6,7 +6,7 @@
 
 #include <stdint.h>
 #include <zephyr/kernel.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 #include <zephyr/sys/util.h>
 
 #include <app_event_manager.h>
