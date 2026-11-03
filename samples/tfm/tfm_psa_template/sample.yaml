@@ -32,6 +32,8 @@ common:
 tests:
   sample.tfm.psa_template:
     sysbuild: true
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp/ns:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     tags:
       - ci_build
       - sysbuild

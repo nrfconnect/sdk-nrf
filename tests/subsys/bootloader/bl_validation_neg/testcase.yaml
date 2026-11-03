@@ -38,6 +38,8 @@ tests:
         - "No bootable image found. Aborting boot."
   bootloader.bl_validation.negative.no_otp_keys:
     sysbuild: true
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     platform_allow:
       - nrf54l15dk/nrf54l05/cpuapp
       - nrf54l15dk/nrf54l10/cpuapp

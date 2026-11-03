@@ -403,6 +403,15 @@ config SECURE_BOOT_BOOTCONF_LOCK_WRITES
 	  Sets the BOOTCONF region protection in the memory controller
 	  (RRAMC on nRF54L, MRAMC on nRF71) to disable writes.
 
+config SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED
+	bool "Allow undersized BOOTCONF protection [EXPERIMENTAL]"
+	depends on SECURE_BOOT_BOOTCONF_LOCK_WRITES
+	select EXPERIMENTAL
+	help
+	  Allow generating bootconf.hex when the immutable bootloader partition exceeds the maximum
+	  region size supported by the SoC. BOOTCONF only protects memory up to the SoC limit,
+	  leaving the remainder of the bootloader partition writable.
+
 config SECURE_BOOT_DEBUG_SIGNATURE_PUBLIC_KEY_LAST
 	bool "[DEBUG] Place signing public key last"
 	help

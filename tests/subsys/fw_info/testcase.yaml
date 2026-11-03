@@ -18,4 +18,5 @@ tests:
     platform_allow:
       - nrf54l15dk/nrf54l15/cpuapp
     extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
       - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=y

@@ -1,6 +1,8 @@
 tests:
   bootloader.bl_validation:
     sysbuild: true
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
       - nrf54l15dk/nrf54l15/cpuapp
