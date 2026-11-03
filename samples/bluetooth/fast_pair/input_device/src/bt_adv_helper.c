@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/random/random.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 #include <zephyr/sys/__assert.h>
 
 #include <zephyr/bluetooth/bluetooth.h>
