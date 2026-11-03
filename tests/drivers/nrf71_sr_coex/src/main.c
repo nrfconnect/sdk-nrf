@@ -50,6 +50,7 @@ int main(void)
 		.ant_alloc = NRF71_SR_COEX_ANT_ALLOC_DYNAMIC,
 	};
 	const struct nrf71_sr_coex_cfg cfg = {
+		.antenna = NRF71_SR_COEX_ANTENNA_SHARED,
 		.user = &user,
 	};
 
