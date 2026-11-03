@@ -10,7 +10,7 @@ nRF71 short-range coexistence driver
 The nRF71 short-range (SR) coexistence driver coordinates the concurrent operation of the Wi-Fi® and short-range (Bluetooth® LE) radios on an nRF71 Series device, which integrates both radios on a single die.
 
 Coexistence is arbitrated on-chip by the Coexistence Controller (COEXC) hardware together with a Coexistence Manager (CM) that runs in the Wi-Fi processor firmware.
-The Coexistence Driver (CD) is the host-side coordination layer between the Wi-Fi driver, the short-range driver, and the Coexistence Manager.
+The Coexistence Driver (CD) is the host-side coordination layer between the application, the Wi-Fi driver, the short-range driver, and the Coexistence Manager.
 This differs from the nRF70 Series, where a separate Wi-Fi companion arbitrates with an external short-range SoC over a wired Packet Traffic Arbitration (PTA) interface.
 
 Overview
@@ -18,12 +18,13 @@ Overview
 
 The coexistence driver performs the following functions:
 
-* Exposes APIs (``coex_cd_*``) that the short-range and Wi-Fi drivers call to request short-range priority windows, report short-range activity, and notify radio power state changes.
-* Invokes APIs (``coex_sr_*``) on the short-range driver to enable coexistence and to configure the short-range priorities.
-* Forwards coexistence commands to, and processes events from, the Coexistence Manager over the Wi-Fi host-to-firmware control path.
+* Programs the COEXC client allow masks, priority mapping, and turnaround times for the shared or separate antenna setup.
+* Follows the Wi-Fi interface state through a notifier in the Wi-Fi driver, and configures the Coexistence Manager every time Wi-Fi comes up.
+* Stores the coexistence configuration that the application passes once, and applies it on every Wi-Fi bring-up.
+* Enables coexistence on the short-range driver and sets its priorities through callbacks that the short-range driver registers.
+* Optionally keeps Bluetooth LE off the data channels used by the connected Wi-Fi station.
 
-The users of the driver are the nRF71 *Wi-Fi driver* and the *short-range (Bluetooth LE) driver*.
-Applications do not call it directly.
+The driver starts at the ``APPLICATION`` initialization level and works with built-in defaults, so an application does not have to call it.
 The driver depends on the nRF71 Wi-Fi driver, because the command and event path to the Coexistence Manager runs over it, and it is only meaningful when the Wi-Fi radio is present.
 
 Architecture
@@ -39,9 +40,11 @@ The following diagram shows the components and the interfaces between them:
    skinparam defaultTextAlignment center
 
    package "Host (Cortex-M33)" {
+     [Application] as APP
      [Wi-Fi driver] as WIFID
      [Coexistence Driver\n(CD)] as CD
      [short-range (BLE) driver] as SRD
+     [Bluetooth host] as BTH
    }
 
    package "Wi-Fi core (RPU)" {
@@ -52,28 +55,58 @@ The following diagram shows the components and the interfaces between them:
    [short-range radio\nHW clients 4-5] as SRR
    [Coexistence Controller (COEXC)] as COEXC
 
-   WIFID --> CD : power notify\n(coex_cd_wifi_power_notify)
-   SRD --> CD : coex_cd_*\n(SR request / activity / power)
-   CD --> SRD : coex_sr_*\n(enable / set priority)
+   APP --> CD : one-time configuration\n(nrf71_sr_coex_init)
+   WIFID --> CD : state notifier\n(admin up / down,\nconnected / disconnected)
+   SRD --> CD : register callbacks,\npower notify
+   CD --> SRD : enable / set priority\n(registered callbacks)
    CD --> WIFID : send CD2CM\n(nrf71_wifi_coex_cmd_send)
-   WIFID --> CD : deliver CM2CD\n(nrf71_wifi_coex_on_event)
+   WIFID --> CD : deliver CM2CD\n(event callback)
+   CD --> BTH : channel map\n(optional)
+   CD --> COEXC : CCMALLOW / CCCONF /\nTURNAROUND
    WIFID <--> MAC : FMAC / IPC\n(host <-> RPU)
    CD ..> CM : CD2CM commands /\nCM2CD events (via FMAC)
-   CM --> COEXC : configure / CCCONF
+   CM --> COEXC : band mode
    MAC --> COEXC : HW requests (0-3)
    SRR --> COEXC : HW requests (4-5)
    @enduml
 
 The main interfaces are:
 
-* *Wi-Fi driver ↔ CD* - Radio power state notifications (``coex_cd_wifi_power_notify()``), and the transport the CD uses to reach the Coexistence Manager (``nrf71_wifi_coex_cmd_send()`` and ``nrf71_wifi_coex_on_event()``).
-* *short-range driver ↔ CD* - The short-range driver requests priority windows, reports activity, and notifies power state changes through ``coex_cd_*``.
-  The CD configures the short-range driver through ``coex_sr_*``.
+* *Application ↔ CD* - The application can pass its antenna setup, priorities, user parameters, and an optional coexistence parameter blob once, using the :c:func:`nrf71_sr_coex_init` function.
+* *Wi-Fi driver ↔ CD* - The Wi-Fi driver reports its state through a single-consumer notifier, and carries ``CD2CM`` commands and ``CM2CD`` events between the CD and the Coexistence Manager.
+  The interface is declared in :file:`include/drivers/wifi/nrf71/nrf71_wifi_coex.h`.
+* *short-range driver ↔ CD* - The short-range driver registers its enable and set-priority callbacks with the :c:func:`nrf71_sr_coex_sr_register` function, and reports power-down and power-up with the :c:func:`nrf71_sr_coex_sr_power_notify` function.
 * *CD ↔ Coexistence Manager* - ``CD2CM`` commands and ``CM2CD`` events, carried over the Wi-Fi control path.
-  The Coexistence Manager programs the COEXC hardware and handles hardware requests from the radios.
+  Each command waits for its matching event before the next one is sent.
+
+Wi-Fi state notifications
+=========================
+
+The Wi-Fi driver reports the following events to the coexistence driver:
+
+* Admin up - The first Wi-Fi interface is up and the firmware accepts commands.
+* Admin down - The last Wi-Fi interface is going down, reported before the interface is torn down.
+  This is also reported when the Wi-Fi device is removed, for example during recovery.
+* Connected - The station has associated, with the center frequency and the bandwidth of the operating channel.
+* Disconnected - The station has left the channel, reported before admin down when the interface goes down while connected.
+
+The Wi-Fi driver calls the notifier from its own context, so the coexistence driver only records the event and schedules work.
+When the coexistence driver registers, the Wi-Fi driver replays the current state, so the order of initialization does not matter.
+
+Coexistence Manager configuration
+=================================
+
+On every admin up event, the coexistence driver configures the Coexistence Manager from its own work queue.
+It sends the priority ranges, passes the short-range ranges to the short-range driver, and sends the user parameters, the coexistence parameters, and the enable command, in this order.
+The short-range driver enables its side of coexistence when it reports power-up with the :c:func:`nrf71_sr_coex_sr_power_notify` function, and disables it before power-down.
+The configuration is retried if the Coexistence Manager reports a failure, and it is stopped if Wi-Fi goes down in the middle of it.
+If the first attempt times out, the driver does not retry, as the firmware is not expected to answer.
+
+The driver keeps the configuration across Wi-Fi restarts.
+If the application calls :c:func:`nrf71_sr_coex_init` while Wi-Fi is up, the new configuration is applied right away.
 
 Relationship to MPSL coexistence
---------------------------------
+================================
 
 The Multiprotocol Service Layer (MPSL) coexistence feature (``mpsl_cx``) implements a wired-PTA request/grant interface for arbitrating a Nordic short-range radio against an *external* Wi-Fi companion.
 The nRF71 coexistence driver targets a different topology, supporting on-die arbitration between co-located radios through the COEXC hardware and the firmware Coexistence Manager.
@@ -84,17 +117,19 @@ Feature support
 
 The following coexistence features are implemented in the current release:
 
-* Startup coexistence configuration (Wi-Fi and short-range priority ranges and user parameters).
-* Runtime Wi-Fi coexistence enable and disable.
-* Radio power-down and power-up handling for the Wi-Fi and short-range drivers.
+* COEXC programming for the shared and separate antenna setups.
+* Coexistence Manager configuration on every Wi-Fi bring-up, with built-in defaults or the application configuration.
+* Short-range driver power-down and power-up handling.
+* Optional Bluetooth LE bad-channel mapping from the channel of the connected Wi-Fi station.
+* Shell commands for the driver state and the Coexistence Manager statistics.
 
 The following features are planned for a later phase, and are not available in the current release:
 
-* Short-range Single Priority Window requests (a request returns ``-ENOTSUP``).
-* Periodic Priority Window generation, without and with alignment (a request returns ``-ENOTSUP``).
+* Short-range Single Priority Window requests.
+* Periodic Priority Window generation, without and with alignment.
 * Thread activity Periodic Priority Windows.
 * Scheduling service and runtime adaptive priority optimization.
-* Wi-Fi channel or band change handling and the associated Bluetooth LE bad-channel mapping.
+* Following Wi-Fi channel switches after association, for the Bluetooth LE channel map.
 
 Configuration
 *************
@@ -105,26 +140,77 @@ As coexistence involves both radios, the driver depends on the nRF71 Wi-Fi drive
 The following Kconfig options configure the driver:
 
 * :kconfig:option:`CONFIG_NRF71_SR_COEX_DRIVER_INIT_PRIORITY` - Sets the initialization priority within the ``APPLICATION`` initialization level, kept after the Wi-Fi driver.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_CM_EVENT_WAIT_MS` - Sets how long the driver waits for the Coexistence Manager to answer a command.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_CM_RETRY_MAX` and :kconfig:option:`CONFIG_NRF71_SR_COEX_CM_RETRY_INTERVAL_MS` - Set how many times, and how often, a failed configuration is retried.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_WQ_STACK_SIZE` and :kconfig:option:`CONFIG_NRF71_SR_COEX_WQ_PRIORITY` - Set the stack size and the priority of the driver work queue.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_WAIT_FOR_APP_INIT` - Holds back the Coexistence Manager configuration until the application has called :c:func:`nrf71_sr_coex_init`, so the built-in defaults are never applied.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP` - Enables the Bluetooth LE bad-channel mapping, see :ref:`nrf71_sr_coex_ble_chan_map`.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_SHELL` - Enables the ``nrf71_coex`` shell commands.
 * :kconfig:option:`CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL` - Sets the log level for the driver.
+
+Application configuration
+=========================
+
+To replace the built-in defaults, fill in a :c:struct:`nrf71_sr_coex_cfg` structure and pass it to the :c:func:`nrf71_sr_coex_init` function once, for example from ``main()``:
+
+.. code-block:: c
+
+   #include <drivers/nrf71_sr_coex/nrf71_sr_coex.h>
+
+   static const struct nrf71_sr_coex_cfg coex_cfg = {
+           .antenna = NRF71_SR_COEX_ANTENNA_SHARED,
+           .prio = {
+                   /* Wi-Fi and short-range priority ranges */
+           },
+           .user = {
+                   .ant_alloc = NRF71_SR_COEX_ANT_ALLOC_DYNAMIC,
+                   /* Protection times */
+           },
+   };
+
+   int err = nrf71_sr_coex_init(&coex_cfg);
+
+The driver copies the configuration, so the structure does not have to stay valid after the call.
+A second call returns ``-EALREADY``.
+
+.. _nrf71_sr_coex_ble_chan_map:
+
+Bluetooth LE channel map
+========================
+
+When the :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP` Kconfig option is enabled, the driver marks the Bluetooth LE data channels under the 2.4 GHz Wi-Fi channel as bad while the station is connected.
+It applies the map with the ``bt_le_set_chan_map()`` function, which requires the :kconfig:option:`CONFIG_BT_CENTRAL` or :kconfig:option:`CONFIG_BT_BROADCASTER` Kconfig option.
+The default map is restored when the station disconnects and when Wi-Fi goes down.
+
+While this option is enabled, the driver owns the Bluetooth LE host channel classification and overwrites any map that the application sets.
+Keep the option disabled if the application manages the channel map itself.
+
+You can use the following Kconfig options to tune the channel map handling:
+
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_GUARD_BAND_MHZ` - Sets the guard band left on both sides of the Wi-Fi channel.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP_RETRIES` and :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_CHAN_MAP_RETRY_DELAY_MS` - Set how a channel map that the Bluetooth host rejected is retried.
+* :kconfig:option:`CONFIG_NRF71_SR_COEX_BLE_WORKQ_STACK_SIZE` - Sets the stack size of the work queue that applies the channel map.
+
+Shell commands
+==============
+
+When the :kconfig:option:`CONFIG_NRF71_SR_COEX_SHELL` Kconfig option is enabled, the following commands are available:
+
+* ``nrf71_coex status`` - Shows the Coexistence Manager configuration state and, if enabled, the last Bluetooth LE channel map.
+* ``nrf71_coex stats`` - Reads the statistics from the Coexistence Manager and prints them.
 
 API documentation
 *****************
 
-The coexistence API contract (the ``coex_cd_*`` and ``coex_sr_*`` functions and the ``CD2CM``/``CM2CD`` message types) is defined by the coexistence firmware interface headers, which match the interface of the ROMed nRF71 firmware.
-
-| CD-to-CM interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_coex_if.h`
-| CD-to-short-range interface header: :file:`drivers/wifi/nrf71/inc/common/fw_if/nrf71_cd_sr_if.h`
-| Wi-Fi transport header: :file:`include/drivers/wifi/nrf71/nrf71_wifi_coex.h`
+| Header files: :file:`include/drivers/nrf71_sr_coex/nrf71_sr_coex.h`, :file:`include/drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h`
 | Source files: :file:`drivers/nrf71_sr_coex/src/`
 
-The following APIs are exposed by the coexistence driver to the short-range and Wi-Fi drivers:
+Application interface
+=====================
 
-* :c:func:`coex_cd_sr_software_client_request` - Requests or releases a short-range Single Priority Window (Phase 2; currently returns ``-ENOTSUP``).
-* :c:func:`coex_cd_update_short_range_activity_info` - Reports short-range activity for Periodic Priority Window generation (Phase 2; currently returns ``-ENOTSUP``).
-* :c:func:`coex_cd_sr_power_notify` - Notifies the coexistence driver of short-range power-down and power-up events.
-* :c:func:`coex_cd_wifi_power_notify` - Notifies the coexistence driver of Wi-Fi power-down and power-up events.
+.. doxygengroup:: nrf71_sr_coex
 
-The following APIs are exposed by the short-range driver and invoked by the coexistence driver:
+Short-range driver interface
+============================
 
-* :c:func:`coex_sr_enable` - Enables or disables short-range coexistence.
-* :c:func:`coex_sr_set_client_priority` - Configures the short-range client priority ranges.
+.. doxygengroup:: nrf71_sr_coex_sr
