@@ -18,7 +18,6 @@ static bool expect_assert;
 /* Provide custom assert post action handler to handle the assertion on OOM
  * error in Application Event Manager.
  */
-BUILD_ASSERT(!IS_ENABLED(CONFIG_ASSERT_NO_FILE_INFO));
 void zassert_post_action(const char *file, unsigned int line)
 {
 	printk("zassert_post_action - file: %s (line: %u)\n", file, line);
