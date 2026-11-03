@@ -421,6 +421,7 @@
 /include/drivers/gpio/                    @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
 /include/drivers/bme68x_iaq.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
 /include/drivers/mspi/hpf_mspi.h          @nrfconnect/ncs-co-drivers @nrfconnect/ncs-ll-ursus
+/include/drivers/nrf71_sr_coex/           @nrfconnect/ncs-wcg-coex
 /include/drivers/ppi_seq/                 @nrfconnect/ncs-ll-izera
 /include/drivers/saadct.h                 @nrfconnect/ncs-ll-izera
 /include/drivers/sensor_sim.h             @nrfconnect/ncs-co-drivers @nrfconnect/ncs-cia
