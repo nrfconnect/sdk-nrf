@@ -34,12 +34,16 @@
 /* CD to Short-Range driver interface. */
 #include <nrf71_cd_sr_if.h>
 
+#include <drivers/nrf71_sr_coex/nrf71_sr_coex.h>
 #include "nrf71_sr_coex_internal.h"
 
 LOG_MODULE_DECLARE(nrf71_sr_coex, CONFIG_NRF71_SR_COEX_DRIVER_LOG_LEVEL);
 
 /* Binary length of the built-in NRF_COEX_PARAMS hex string (two chars per byte). */
 #define NRF_COEX_PARAMS_BIN_LEN ((sizeof(NRF_COEX_PARAMS) - 1U) / 2U)
+
+BUILD_ASSERT(NRF_COEX_PARAMS_BIN_LEN <= NRF71_SR_COEX_PARAMS_MAX_LEN,
+	     "NRF_COEX_PARAMS no longer fits the CD2CM_UPDATE_COEX_PARAMS buffer");
 
 /**
  * Post a CD2CM command to the CM over the Wi-Fi FMAC path.
@@ -135,6 +139,25 @@ int coex_cm_update_coex_params(void)
 		LOG_ERR("Malformed NRF_COEX_PARAMS");
 		return -EINVAL;
 	}
+
+	return coex_cd_cm_send_and_wait(cmd, sizeof(uint32_t) + blob_len,
+					CM2CD_UPDATE_COEX_PARAMS_EVENT);
+}
+
+/**
+ * Post CD2CM_UPDATE_COEX_PARAMS with an application-provided blob and wait for
+ * CM2CD_UPDATE_COEX_PARAMS_EVENT.
+ */
+int coex_cm_update_coex_params_blob(const uint8_t *blob, size_t blob_len)
+{
+	uint8_t cmd[sizeof(uint32_t) + NRF71_SR_COEX_PARAMS_MAX_LEN];
+
+	if ((blob == NULL) || (blob_len == 0U) || (blob_len > NRF71_SR_COEX_PARAMS_MAX_LEN)) {
+		return -EINVAL;
+	}
+
+	sys_put_le32(CD2CM_UPDATE_COEX_PARAMS, cmd);
+	memcpy(&cmd[sizeof(uint32_t)], blob, blob_len);
 
 	return coex_cd_cm_send_and_wait(cmd, sizeof(uint32_t) + blob_len,
 					CM2CD_UPDATE_COEX_PARAMS_EVENT);

@@ -52,7 +52,24 @@ int coex_cm_update_user_params(const struct coex_user_params_t *user_params);
 /** Post CD2CM_UPDATE_COEX_PARAMS and wait for CM2CD_UPDATE_COEX_PARAMS_EVENT. */
 int coex_cm_update_coex_params(void);
 
+/** Post CD2CM_UPDATE_COEX_PARAMS with a caller-provided blob and wait for the event. */
+int coex_cm_update_coex_params_blob(const uint8_t *blob, size_t blob_len);
+
 /** Post CD2CM_GET_STATS and wait for CM2CD_STATISTICS_EVENT. */
 int coex_cm_get_stats(void);
+
+/**
+ * Fetch CM statistics through the CD work queue.
+ *
+ * @retval 0          Statistics copied. @p patch_valid tells whether the patch
+ *                    statistics were present in the reply.
+ * @retval -ENETDOWN  The CM is not configured.
+ * @retval -ETIMEDOUT No reply in time.
+ */
+int cd_stats_fetch(struct cm_stats_t *stats, struct cm_fsm_patch_stats_t *patch_stats,
+		   bool *patch_valid);
+
+/** Name of the current CM configuration state, for diagnostics. */
+const char *cd_wifi_state_name(void);
 
 #endif /* NRF71_SR_COEX_INTERNAL_H__ */

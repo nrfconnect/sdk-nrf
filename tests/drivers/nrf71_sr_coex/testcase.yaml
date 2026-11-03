@@ -12,3 +12,13 @@ tests:
     integration_platforms:
       - nrf7120dk/nrf7120/cpuapp
     platform_allow: nrf7120dk/nrf7120/cpuapp
+  drivers.nrf71_sr_coex.build.shell:
+    sysbuild: true
+    build_only: true
+    extra_configs:
+      - CONFIG_SHELL=y
+      - CONFIG_NRF71_SR_COEX_SHELL=y
+      - CONFIG_NRF71_SR_COEX_WAIT_FOR_APP_INIT=y
+    integration_platforms:
+      - nrf7120dk/nrf7120/cpuapp
+    platform_allow: nrf7120dk/nrf7120/cpuapp

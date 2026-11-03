@@ -33,6 +33,7 @@
  *     CONFIGURING --fail-->       RETRY_WAIT, back to CONFIGURING after
  *                                 CM_RETRY_INTERVAL_MS, up to CM_RETRY_MAX
  *                                 times, then FAILED
+ *     ACTIVE      --app init-->   CONFIGURING (re-apply)
  *     any         --ADMIN_DOWN--> WIFI_DOWN
  *
  *   Each ADMIN_UP/ADMIN_DOWN bumps wifi_epoch. The apply work checks the epoch
@@ -64,6 +65,7 @@
 /* CD to Short-Range driver interface. */
 #include <nrf71_cd_sr_if.h>
 
+#include <drivers/nrf71_sr_coex/nrf71_sr_coex.h>
 #include <drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h>
 
 #include "nrf71_sr_coex_internal.h"
@@ -110,6 +112,14 @@ static K_WORK_DELAYABLE_DEFINE(cd_apply_work, cd_apply_work_handler);
 
 /* Bumped on every Wi-Fi ADMIN_UP/ADMIN_DOWN, see the file header. */
 static atomic_t wifi_epoch;
+
+static atomic_t app_init_done = ATOMIC_INIT(0);
+
+static void cd_stats_work_handler(struct k_work *work);
+static K_WORK_DEFINE(cd_stats_work, cd_stats_work_handler);
+static K_SEM_DEFINE(cd_stats_done, 0, 1);
+static K_MUTEX_DEFINE(cd_stats_lock);
+static int cd_stats_result;
 
 /*
  * Default Wi-Fi priority ranges sent to the CM at startup.
@@ -174,6 +184,9 @@ static struct {
 	struct coex_wifi_priority_range_t wifi_range;
 	struct coex_sr_priority_range_t sr_range;
 	struct coex_user_params_t user_params;
+	/* Application-provided CM tuning blob; 0 length selects NRF_COEX_PARAMS. */
+	uint8_t coex_params[NRF71_SR_COEX_PARAMS_MAX_LEN];
+	size_t coex_params_len;
 
 	bool stats_valid;          /* last_stats filled from CM2CD_STATISTICS_EVENT. */
 	bool patch_stats_valid;    /* last_patch_stats filled from same event. */
@@ -464,12 +477,16 @@ static int cd_apply_cm_config(atomic_val_t epoch)
 	struct coex_wifi_priority_range_t wifi_range;
 	struct coex_sr_priority_range_t sr_range;
 	struct coex_user_params_t user_params;
+	uint8_t coex_params[NRF71_SR_COEX_PARAMS_MAX_LEN];
+	size_t coex_params_len;
 	int ret;
 
 	k_mutex_lock(&cd_lock, K_FOREVER);
 	wifi_range = cd_state.wifi_range;
 	sr_range = cd_state.sr_range;
 	user_params = cd_state.user_params;
+	coex_params_len = cd_state.coex_params_len;
+	memcpy(coex_params, cd_state.coex_params, coex_params_len);
 	k_mutex_unlock(&cd_lock);
 
 	ret = coex_cm_set_priority_ranges(&wifi_range, &sr_range);
@@ -499,7 +516,11 @@ static int cd_apply_cm_config(atomic_val_t epoch)
 		return -ECANCELED;
 	}
 
-	ret = coex_cm_update_coex_params();
+	if (coex_params_len > 0) {
+		ret = coex_cm_update_coex_params_blob(coex_params, coex_params_len);
+	} else {
+		ret = coex_cm_update_coex_params();
+	}
 	if (ret != 0) {
 		return ret;
 	}
@@ -567,15 +588,31 @@ out:
 
 /* ---- Wi-Fi state notifier ---- */
 
-static void cd_wifi_admin_up(void)
+static bool cd_may_configure(void)
 {
-	k_mutex_lock(&cd_lock, K_FOREVER);
+	return !IS_ENABLED(CONFIG_NRF71_SR_COEX_WAIT_FOR_APP_INIT) ||
+	       atomic_get(&app_init_done) != 0;
+}
+
+/* Called with cd_lock held. */
+static void cd_start_configuration_locked(void)
+{
 	atomic_inc(&wifi_epoch);
 	cd_state.wifi_state = CD_WIFI_CONFIGURING;
 	cd_state.retries_left = CONFIG_NRF71_SR_COEX_CM_RETRY_MAX;
-	k_mutex_unlock(&cd_lock);
 
-	(void)k_work_reschedule_for_queue(&cd_wq, &cd_apply_work, K_NO_WAIT);
+	if (cd_may_configure()) {
+		(void)k_work_reschedule_for_queue(&cd_wq, &cd_apply_work, K_NO_WAIT);
+	} else {
+		LOG_DBG("CM configuration waits for nrf71_sr_coex_init()");
+	}
+}
+
+static void cd_wifi_admin_up(void)
+{
+	k_mutex_lock(&cd_lock, K_FOREVER);
+	cd_start_configuration_locked();
+	k_mutex_unlock(&cd_lock);
 }
 
 /*
@@ -675,6 +712,218 @@ int nrf71_sr_coex_sr_power_notify(enum nrf71_sr_coex_sr_power_event event)
 	default:
 		return -EINVAL;
 	}
+}
+
+/* ---- Statistics ---- */
+
+static void cd_stats_work_handler(struct k_work *work)
+{
+	ARG_UNUSED(work);
+
+	cd_stats_result = coex_cm_get_stats();
+	k_sem_give(&cd_stats_done);
+}
+
+int cd_stats_fetch(struct cm_stats_t *stats, struct cm_fsm_patch_stats_t *patch_stats,
+		   bool *patch_valid)
+{
+	bool active;
+	int ret;
+
+	k_mutex_lock(&cd_stats_lock, K_FOREVER);
+
+	k_mutex_lock(&cd_lock, K_FOREVER);
+	active = (cd_state.wifi_state == CD_WIFI_ACTIVE);
+	k_mutex_unlock(&cd_lock);
+
+	if (!active) {
+		ret = -ENETDOWN;
+		goto out;
+	}
+
+	/* All CM transactions run on cd_wq, so this may queue behind a bring-up. */
+	k_sem_reset(&cd_stats_done);
+	(void)k_work_submit_to_queue(&cd_wq, &cd_stats_work);
+
+	if (k_sem_take(&cd_stats_done, K_MSEC(CM2CD_EVENT_WAIT_MS * 5)) != 0) {
+		ret = -ETIMEDOUT;
+		goto out;
+	}
+
+	ret = cd_stats_result;
+	if (ret != 0) {
+		goto out;
+	}
+
+	k_mutex_lock(&cd_lock, K_FOREVER);
+	if (cd_state.stats_valid) {
+		*stats = cd_state.last_stats;
+		*patch_stats = cd_state.last_patch_stats;
+		*patch_valid = cd_state.patch_stats_valid;
+	} else {
+		/* Wi-Fi went down after the reply arrived. */
+		ret = -ENETDOWN;
+	}
+	k_mutex_unlock(&cd_lock);
+out:
+	k_mutex_unlock(&cd_stats_lock);
+
+	return ret;
+}
+
+const char *cd_wifi_state_name(void)
+{
+	static const char *const names[] = {
+		[CD_WIFI_DOWN] = "wifi down",
+		[CD_WIFI_CONFIGURING] = "configuring",
+		[CD_WIFI_RETRY_WAIT] = "retry wait",
+		[CD_WIFI_ACTIVE] = "active",
+		[CD_WIFI_FAILED] = "failed",
+	};
+	enum cd_wifi_state state;
+
+	k_mutex_lock(&cd_lock, K_FOREVER);
+	state = cd_state.wifi_state;
+	k_mutex_unlock(&cd_lock);
+
+	return names[state];
+}
+
+/* ---- Application API ---- */
+
+static int cd_pti_range_to_wire(unsigned char *dst, const struct nrf71_sr_coex_pti_range *src)
+{
+	if ((src->step == 0U) || (src->start < src->end)) {
+		return -EINVAL;
+	}
+
+	dst[0] = src->start;
+	dst[1] = src->end;
+	dst[2] = src->step;
+
+	return 0;
+}
+
+static int cd_prio_to_wire(const struct nrf71_sr_coex_prio *prio,
+			   struct coex_wifi_priority_range_t *wifi,
+			   struct coex_sr_priority_range_t *sr)
+{
+	int ret = 0;
+
+	ret |= cd_pti_range_to_wire(wifi->sw_request_priority_range, &prio->wifi.sw_request);
+	ret |= cd_pti_range_to_wire(wifi->client0_ccconf_pti_range, &prio->wifi.hp_rx);
+	ret |= cd_pti_range_to_wire(wifi->client1_ccconf_pti_range, &prio->wifi.hp_tx);
+	ret |= cd_pti_range_to_wire(wifi->client2_ccconf_pti_range, &prio->wifi.lp_rx);
+	ret |= cd_pti_range_to_wire(wifi->client3_ccconf_pti_range, &prio->wifi.lp_tx);
+	wifi->hw_client_priority_level = prio->wifi.level;
+
+	ret |= cd_pti_range_to_wire(sr->sr_rx_client_ccconf_pti_range, &prio->sr.rx);
+	ret |= cd_pti_range_to_wire(sr->sr_tx_client_ccconf_pti_range, &prio->sr.tx);
+	ret |= cd_pti_range_to_wire(sr->sr_rx_client_critical_ccconf_pti_range,
+				    &prio->sr.rx_critical);
+	ret |= cd_pti_range_to_wire(sr->sr_tx_client_critical_ccconf_pti_range,
+				    &prio->sr.tx_critical);
+	sr->client_priority_level = prio->sr.level;
+
+	return (ret != 0) ? -EINVAL : 0;
+}
+
+static int cd_user_params_to_wire(const struct nrf71_sr_coex_user_params *user,
+				  struct coex_user_params_t *wire)
+{
+	const uint8_t prot[] = {
+		user->sr_rx_prot_ps_listen2inactive, user->sr_rx_prot_ps_inactive2listen,
+		user->sr_rx_prot_calib_listen2inactive, user->sr_rx_prot_calib_inactive2listen,
+		user->wifi_scan_prot, user->wifi_beacon_prot, user->wifi_conn_prot,
+		user->wifi_calib_prot,
+	};
+
+	for (size_t i = 0; i < ARRAY_SIZE(prot); i++) {
+		if (prot[i] > 100U) {
+			return -EINVAL;
+		}
+	}
+
+	switch (user->ant_alloc) {
+	case NRF71_SR_COEX_ANT_ALLOC_DYNAMIC:
+		wire->shared_ant_control = ANT_ALLOC_DYNAMIC;
+		break;
+	case NRF71_SR_COEX_ANT_ALLOC_STATIC_WIFI:
+		wire->shared_ant_control = ANT_ALLOC_STATIC_WIFI;
+		break;
+	case NRF71_SR_COEX_ANT_ALLOC_STATIC_SR:
+		wire->shared_ant_control = ANT_ALLOC_STATIC_SR;
+		break;
+	default:
+		return -EINVAL;
+	}
+
+	wire->message_id = CD2CM_UPDATE_COEX_USER_PARAMS;
+	wire->listen2inactive_sr_rx_prot_prob_ps = user->sr_rx_prot_ps_listen2inactive;
+	wire->inactive2listen_sr_rx_prot_prob_ps = user->sr_rx_prot_ps_inactive2listen;
+	wire->listen2inactive_sr_rx_prot_prob_calib = user->sr_rx_prot_calib_listen2inactive;
+	wire->inactive2listen_sr_rx_prot_prob_calib = user->sr_rx_prot_calib_inactive2listen;
+	wire->wifi_scan_puncture_info.wifi_scan_prot_prob = user->wifi_scan_prot;
+	wire->wifi_beacon_prot_prob = user->wifi_beacon_prot;
+	wire->wifi_conn_prot_prob = user->wifi_conn_prot;
+	wire->wifi_calib_prot_prob = user->wifi_calib_prot;
+
+	return 0;
+}
+
+int nrf71_sr_coex_init(const struct nrf71_sr_coex_cfg *cfg)
+{
+	struct coex_wifi_priority_range_t wifi_range = CD_DEFAULT_WIFI_RANGE;
+	struct coex_sr_priority_range_t sr_range = CD_DEFAULT_SR_RANGE;
+	struct coex_user_params_t user_params = CD_DEFAULT_USER_PARAMS;
+	int ret;
+
+	if (cfg == NULL) {
+		return -EINVAL;
+	}
+
+	if ((cfg->coex_params != NULL) &&
+	    ((cfg->coex_params_len == 0U) ||
+	     (cfg->coex_params_len > NRF71_SR_COEX_PARAMS_MAX_LEN))) {
+		return -EINVAL;
+	}
+
+	if (cfg->prio != NULL) {
+		ret = cd_prio_to_wire(cfg->prio, &wifi_range, &sr_range);
+		if (ret != 0) {
+			return ret;
+		}
+	}
+
+	if (cfg->user != NULL) {
+		ret = cd_user_params_to_wire(cfg->user, &user_params);
+		if (ret != 0) {
+			return ret;
+		}
+	}
+
+	if (!atomic_cas(&app_init_done, 0, 1)) {
+		return -EALREADY;
+	}
+
+	k_mutex_lock(&cd_lock, K_FOREVER);
+
+	cd_state.wifi_range = wifi_range;
+	cd_state.sr_range = sr_range;
+	cd_state.user_params = user_params;
+	if (cfg->coex_params != NULL) {
+		memcpy(cd_state.coex_params, cfg->coex_params, cfg->coex_params_len);
+		cd_state.coex_params_len = cfg->coex_params_len;
+	}
+
+	/* The CM may already hold the defaults; replace them. */
+	if (cd_state.wifi_state != CD_WIFI_DOWN) {
+		cd_start_configuration_locked();
+	}
+
+	k_mutex_unlock(&cd_lock);
+
+	return 0;
 }
 
 /* ---- Initialisation ---- */
