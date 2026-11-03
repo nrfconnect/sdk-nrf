@@ -26,6 +26,21 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf7120dk/nrf7120/cpuapp
 
+  sample.mcuboot_with_encryption.extmem:
+    build_only: true
+    extra_args:
+      - SB_EXTRA_CONF_FILE=sysbuild_kmu.conf
+      - mcuboot_CONFIG_FPROTECT=n
+      - FILE_SUFFIX=extmem
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+
   sample.mcuboot_with_encryption.nrf54ls05a:
     build_only: true
     extra_args:
@@ -53,6 +68,20 @@ tests:
       - SB_CONFIG_NETCORE_IPC_RADIO=y
       - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
       - mcuboot_CONFIG_PSA_CRYPTO=y
+    extra_configs:
+      - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
+    platform_allow:
+      - nrf54h20dk/nrf54h20/cpuapp
+    integration_platforms:
+      - nrf54h20dk/nrf54h20/cpuapp
+
+  sample.mcuboot_with_encryption.multicore.extmem:
+    build_only: true
+    extra_args:
+      - SB_CONFIG_NETCORE_IPC_RADIO=y
+      - SB_CONFIG_NETCORE_IPC_RADIO_BT_HCI_IPC=y
+      - mcuboot_CONFIG_PSA_CRYPTO=y
+      - FILE_SUFFIX=extmem
     extra_configs:
       - CONFIG_MCUMGR_GRP_IMG_ALLOW_CONFIRM_NON_ACTIVE_IMAGE_ANY=y
     platform_allow:
