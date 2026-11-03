@@ -6,7 +6,7 @@
 
 #include "cpu_load_monitor.h"
 #include <zephyr/kernel.h>
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 
 #define CPU_LOAD_MONITOR_THREAD_STACK_SIZE 4096
 #define CPU_LOAD_MONITOR_PERIOD_MS	   25
