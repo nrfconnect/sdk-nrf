@@ -59,7 +59,7 @@ def get_max_size_kb(soc):
     else:
         sys.exit("error: unsupported SoC")
 
-def get_bootconf_reg_32bit_value(soc, size):
+def get_bootconf_reg_32bit_value(soc, size, allow_undersized=False):
     value = READ_ALLOWED | EXECUTE_ALLOWED | LOCK
 
     if soc not in ["nrf54ls05a", "nrf54ls05b"]:
@@ -68,8 +68,17 @@ def get_bootconf_reg_32bit_value(soc, size):
     size_kb = size // 1024
     max_size_kb = get_max_size_kb(soc)
 
+    if size_kb > max_size_kb and not allow_undersized:
+        sys.exit(
+            f"error: requested size ({size_kb} kB) exceeds the "
+            f"{soc} BOOTCONF limit ({max_size_kb} kB)"
+        )
+
     if size_kb > max_size_kb:
-        warnings.warn("warning: requested size too big; Setting to allowed maximum")
+        warnings.warn(
+            f"requested size ({size_kb} kB) exceeds the {soc} BOOTCONF limit "
+            f"({max_size_kb} kB); generating an undersized BOOTCONF"
+        )
         size_kb = max_size_kb
 
     value |= size_kb << SIZE_OFFSET
@@ -89,6 +98,8 @@ def parse_args():
     parser.add_argument("--soc", required=True,
                         type=str,
                         help="SoC for which to generate the bootconf.")
+    parser.add_argument("--allow-undersized", action="store_true",
+                        help="Allow BOOTCONF to protect less memory than requested.")
     return parser.parse_args()
 
 
@@ -100,7 +111,7 @@ def main():
     if args.soc not in supported_socs:
         sys.exit("error: unsupported SoC")
 
-    reg_value = get_bootconf_reg_32bit_value(args.soc, size)
+    reg_value = get_bootconf_reg_32bit_value(args.soc, size, args.allow_undersized)
 
     payload = struct.pack('<I', reg_value)
 

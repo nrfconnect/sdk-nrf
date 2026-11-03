@@ -7,6 +7,11 @@ include(${ZEPHYR_NRF_MODULE_DIR}/cmake/sysbuild/bootloader_dts_utils.cmake)
 
 set(bootconf_hex ${CMAKE_BINARY_DIR}/bootconf.hex)
 set(bootconf_dependency)
+set(bootconf_optional_args)
+
+if(SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED)
+  list(APPEND bootconf_optional_args --allow-undersized)
+endif()
 
 dt_partition_size(bootconf_size LABEL b0_partition TARGET b0 REQUIRED)
 
@@ -19,6 +24,7 @@ if(NOT bootconf_size EQUAL 0)
       --output ${bootconf_hex}
       --size ${bootconf_size}
       --soc ${SB_CONFIG_SOC}
+      ${bootconf_optional_args}
     DEPENDS ${bootconf_dependency}
     VERBATIM
   )

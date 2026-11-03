@@ -9,6 +9,10 @@ common:
 
 tests:
   nsib.update.invalid_image:
+    extra_args:
+      - platform:nrf54l15dk/nrf54l05/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      - platform:nrf54l15dk/nrf54l10/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
+      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     harness: pytest
     harness_config:
       pytest_root:
@@ -29,6 +33,8 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
 
   nsib.security.tampered_app:
+    extra_args:
+      - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
     harness: pytest
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
