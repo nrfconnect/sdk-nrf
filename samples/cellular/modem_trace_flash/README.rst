@@ -8,15 +8,11 @@
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
-For the nRF9160 DK, version 0.14.0 or higher is supported by the sample.
-
 .. include:: /includes/tfm.txt
-
-.. include:: /includes/external_flash_nrf91.txt
 
 Overview
 ********
@@ -36,11 +32,6 @@ Write performance
 
 A modem trace backend must be able to handle the trace data as fast as they are produced to avoid dropping traces.
 It is recommended to handle the trace data at approximately 1 Mbps.
-
-The Macronix MX25R6435 Ultra Low Power Flash on the nRF9160 DK is optimized for low power consumption rather than write speed, but it features a high performance mode.
-The high-performance mode consumes more power but is able to erase and write at roughly double the speed.
-Use the device tree property ``mxicy,mx25r-power-mode`` to configure MX25R6435 in either high-performance or low-power mode.
-In this sample, the MX25R6435 is configured in high-performance mode.
 
 The use of :kconfig:option:`CONFIG_PM_DEVICE_RUNTIME` option to enable deep-power-down mode significantly reduces the stand-by power consumption.
 However, it adds overhead to SPI instructions, which causes a reduction in write performance.
