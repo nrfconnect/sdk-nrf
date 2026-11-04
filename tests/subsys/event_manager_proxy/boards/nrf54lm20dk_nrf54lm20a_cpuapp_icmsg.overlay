@@ -26,6 +26,8 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
