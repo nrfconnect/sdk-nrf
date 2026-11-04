@@ -5,6 +5,7 @@
  */
 
 #include <zephyr/devicetree.h>
+#include <zephyr/init.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/util.h>
 #include <stdint.h>
@@ -188,3 +189,14 @@ void power_up_unused_ram(void)
 {
 	power_up_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
 }
+
+#if defined(CONFIG_RAM_POWER_DOWN_AUTO)
+static int ram_pwrdn_auto_init(void)
+{
+	power_down_unused_ram();
+
+	return 0;
+}
+
+SYS_INIT(ram_pwrdn_auto_init, PRE_KERNEL_1, 0);
+#endif
