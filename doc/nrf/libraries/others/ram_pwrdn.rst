@@ -38,6 +38,10 @@ Configuration
 
 To enable the library, set the :kconfig:option:`CONFIG_RAM_POWER_DOWN_LIBRARY` Kconfig option.
 
+To power down unused RAM during system initialization without any application code, enable the :kconfig:option:`CONFIG_RAM_POWER_DOWN_AUTO` Kconfig option.
+This option is available only with the minimal C library or picolibc, and only if the :kconfig:option:`CONFIG_COMMON_LIBC_MALLOC_ARENA_SIZE` Kconfig option is set to ``0`` or a positive value.
+In that case, the C library heap has a fixed size and is part of the linked application image.
+
 Usage
 *****
 

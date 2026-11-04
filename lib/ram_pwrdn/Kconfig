@@ -23,6 +23,18 @@ menuconfig RAM_POWER_DOWN_LIBRARY
 
 if RAM_POWER_DOWN_LIBRARY
 
+config RAM_POWER_DOWN_AUTO
+	bool "Power down unused RAM sections automatically at boot"
+	# The C library heap must not use the RAM after the application image.
+	depends on MINIMAL_LIBC || PICOLIBC
+	depends on !COMMON_LIBC_MALLOC || COMMON_LIBC_MALLOC_ARENA_SIZE >= 0
+	# nrf71_idle_power powers down RAM itself for the other retention levels.
+	depends on !NRF71_IDLE_POWER || NRF71_IDLE_POWER_RAM_RETAIN_FULL
+	help
+	  Call power_down_unused_ram() during system initialization.
+	  On nRF7120, Wi-Fi relies on its IPC shared memory being a
+	  /reserved-memory child node in devicetree, so that it stays powered.
+
 module = RAM_POWERDOWN
 module-str = RAM power-down library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
