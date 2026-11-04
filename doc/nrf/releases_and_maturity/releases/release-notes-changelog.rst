@@ -905,7 +905,10 @@ Networking samples
 
   * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
 
-  * Fixed an issue where the FOTA download failed on Wi-Fi builds because the Mbed TLS heap was too small for the MQTT and download TLS connections at the same time.
+  * Fixed:
+
+    * An issue where the FOTA download failed on Wi-Fi builds because the Mbed TLS heap was too small for the MQTT and download TLS connections at the same time.
+    * An issue where the FOTA download from Azure Blob Storage failed on Wi-Fi builds because the PSA crypto configuration did not support RSA 4096-bit keys.
 
 * :ref:`https_client` sample:
 
