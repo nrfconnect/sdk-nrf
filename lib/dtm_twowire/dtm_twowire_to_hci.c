@@ -309,7 +309,7 @@ static uint16_t on_vendor_specific_cmd(uint8_t channel, uint8_t length, struct n
 	 * and the channel parameter as a subcommand parameter.
 	 */
 	switch (length) {
-	case CARRIER_TEST:
+	case CARRIER_TEST: {
 		/* Generate HCI command to send constant, unmodulated carrier */
 		uint8_t hci_param_channel;
 
@@ -327,6 +327,7 @@ static uint16_t on_vendor_specific_cmd(uint8_t channel, uint8_t length, struct n
 		cp->tx_power_level = dtm_hci_parameters.transmit_power;
 
 		return HCI_GENERATED;
+	}
 
 	default:
 		return DTM_TW_EVENT_TEST_STATUS_ERROR;
