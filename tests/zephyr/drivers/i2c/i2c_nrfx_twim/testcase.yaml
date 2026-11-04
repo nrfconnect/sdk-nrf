@@ -4,6 +4,7 @@ common:
     - drivers
     - i2c
     - ci_tests_zephyr_drivers_i2c_i2c_nrfx_twim
+  timeout: 30
   harness: ztest
   harness_config:
     fixture: i2c_bus_short
