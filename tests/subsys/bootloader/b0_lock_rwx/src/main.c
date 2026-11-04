@@ -12,7 +12,11 @@
 #define RWX_SKIP_SIZE           CONFIG_SB_IMAGE_BOOT_OFFSET
 
 #if defined(CONFIG_TEST_MCUBOOT_ALONE)
+#if CONFIG_TEST_MCUBOOT_PROTECTED_REGION_SIZE
+	#define RRAMC_REGION_FOR_TEST_SIZE   CONFIG_TEST_MCUBOOT_PROTECTED_REGION_SIZE
+#else
 	#define RRAMC_REGION_FOR_TEST_SIZE   PARTITION_SIZE(boot_partition)
+#endif
 	#define RRAM_REGION_FOR_TEST_ADDRESS PARTITION_OFFSET(boot_partition)
 	#define RRAMC_REGION_FOR_TEST CONFIG_TEST_ADDITIONAL_REGION
 #elif defined(CONFIG_TEST_B0_LOCK_USE_S1)
@@ -63,7 +67,7 @@ void *get_config(void)
 			"Write permission isn't cleared");
 #endif
 	zassert_equal(config.size_kb, RRAMC_REGION_FOR_TEST_SIZE / 1024,
-		      "Protected region size doesn't match protected partition size.");
+		      "Protected region size doesn't match expected size.");
 	zassert_equal(
 		config.address, RRAM_REGION_FOR_TEST_ADDRESS,
 		"Protected region start address doesn't match protected partition start address.");

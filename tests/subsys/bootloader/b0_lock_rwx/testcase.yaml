@@ -75,6 +75,30 @@ tests:
       - nrf54lm20dk/nrf54lm20b/cpuapp
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54ls05dk/nrf54ls05a/cpuapp
+  mcuboot.rwx.custom_size:
+    extra_args:
+      - FILE_SUFFIX=mcuboot_custom_size
+      - SB_CONFIG_SECURE_BOOT_APPCORE=n
+      - SB_CONFIG_SECURE_BOOT_GENERATE_DEFAULT_KMU_KEYFILE=n
+      - SB_CONFIG_SECURE_BOOT_BOOTCONF_LOCK_WRITES=n
+      - mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX=y
+      - platform:nrf54l15dk/nrf54l15/cpuapp:mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SIZE=0x7c00
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SIZE=0x8000
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:mcuboot_CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SIZE=0x10000
+      - SB_CONFIG_BOOTLOADER_MCUBOOT=y
+      - CONFIG_TEST_MCUBOOT_ALONE=y
+      - platform:nrf54l15dk/nrf54l15/cpuapp:CONFIG_TEST_MCUBOOT_PROTECTED_REGION_SIZE=0x7c00
+      - platform:nrf54lv10dk/nrf54lv10a/cpuapp:CONFIG_TEST_MCUBOOT_PROTECTED_REGION_SIZE=0x8000
+      - platform:nrf54lm20dk/nrf54lm20a/cpuapp:CONFIG_TEST_MCUBOOT_PROTECTED_REGION_SIZE=0x10000
+      - CONFIG_NRFX_RRAMC=y
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+      - nrf54lv10dk/nrf54lv10a/cpuapp
+      - nrf54lm20dk/nrf54lm20a/cpuapp
   b0.mcuboot.rwx:
     extra_args:
       - platform:nrf54l15dk/nrf54l15/cpuapp:SB_CONFIG_SECURE_BOOT_BOOTCONF_ALLOW_UNDERSIZED=y
