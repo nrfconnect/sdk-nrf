@@ -39,6 +39,26 @@ static bool log_retention_ready;
 
 #define LOG_RETENTION_WARM_MAGIC 0x6c6f6772U /* "logr" */
 
+static void log_rpc_history_repair_after_warm_reset(void)
+{
+	union mpsc_pbuf_generic *item;
+
+	k_sched_lock();
+
+	/* Crash or stop during fetch can leave a claimed packet and non-overwrite mode. */
+	if (log_history_pbuf.tmp_rd_idx != log_history_pbuf.rd_idx) {
+		item = (union mpsc_pbuf_generic *)&log_history_pbuf.buf[log_history_pbuf.rd_idx];
+
+		if (item->hdr.busy) {
+			mpsc_pbuf_free(&log_history_pbuf, item);
+		}
+	}
+
+	log_history_pbuf.flags |= MPSC_PBUF_MODE_OVERWRITE;
+
+	k_sched_unlock();
+}
+
 static uint32_t calculate_pbuf_checksum(const struct mpsc_pbuf_buffer *pbuf)
 {
 	size_t len = sizeof(*pbuf);
@@ -102,6 +122,8 @@ void log_rpc_history_init(void)
 			 */
 			memset(&log_history_pbuf.lock, 0, sizeof(log_history_pbuf.lock));
 			(void)k_sem_init(&log_history_pbuf.sem, 0, 1);
+			log_rpc_history_repair_after_warm_reset();
+			log_retention_pbuf_checksum = calculate_pbuf_checksum(&log_history_pbuf);
 			log_retention_ready = true;
 			return;
 		}
