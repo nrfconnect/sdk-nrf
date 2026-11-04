@@ -26,6 +26,13 @@ config TEST_B0_LOCK_USE_S1
 config TEST_MCUBOOT_ALONE
 	bool "b0 absent"
 
+config TEST_MCUBOOT_PROTECTED_REGION_SIZE
+	hex "Expected MCUboot protected region size in bytes"
+	default 0
+	help
+	  Expected size of the RRAMC region used to protect MCUboot.
+	  A value of zero uses the MCUboot partition size.
+
 menu "Zephyr"
 source "Kconfig.zephyr"
 endmenu
