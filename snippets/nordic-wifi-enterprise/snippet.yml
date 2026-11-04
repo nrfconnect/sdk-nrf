@@ -9,3 +9,9 @@ boards:
   /.*/nrf.*/cpuapp/ns/:
     append:
       EXTRA_CONF_FILE: nordic-wifi-enterprise-ns.conf
+  /.*/nrf5340/cpuapp/:
+    append:
+      EXTRA_CONF_FILE: nordic-wifi-enterprise-nrf5340.conf
+  /.*/nrf5340/cpuapp/ns/:
+    append:
+      EXTRA_CONF_FILE: nordic-wifi-enterprise-nrf5340.conf
