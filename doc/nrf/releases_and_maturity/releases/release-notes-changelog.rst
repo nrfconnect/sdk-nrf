@@ -650,6 +650,7 @@ Cellular samples
     * :ref:`location_sample`
     * :ref:`lwm2m_carrier`
     * :ref:`modem_callbacks_sample`
+    * :ref:`modem_trace_backend_sample`
 
 Cryptography samples
 --------------------
