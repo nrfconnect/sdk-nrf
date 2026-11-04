@@ -103,6 +103,56 @@ static uintptr_t ram_end_addr(void)
 	return DT_REG_ADDR(DT_CHOSEN(zephyr_sram)) + DT_REG_SIZE(DT_CHOSEN(zephyr_sram));
 }
 
+/*
+ * RAM used outside of the application image: children of /reserved-memory that are not disabled,
+ * for example IPC shared memory, and mmio-sram nodes with status "reserved", for example memory of
+ * another core. The end is 64-bit so that address + size cannot overflow.
+ */
+struct ram_reserved_range {
+	uint64_t start;
+	uint64_t end;
+};
+
+#define RAM_RESERVED_REG_BLOCK(idx, node_id)                                                       \
+	{                                                                                          \
+		.start = DT_REG_ADDR_BY_IDX(node_id, idx),                                         \
+		.end = (uint64_t)DT_REG_ADDR_BY_IDX(node_id, idx) +                                \
+		       DT_REG_SIZE_BY_IDX(node_id, idx),                                           \
+	},
+
+#define RAM_RESERVED_NODE(node_id)                                                                 \
+	IF_ENABLED(DT_NODE_HAS_PROP(node_id, reg),                                                 \
+		   (LISTIFY(DT_NUM_REGS(node_id), RAM_RESERVED_REG_BLOCK, (), node_id)))
+
+#define RAM_RESERVED_MEMORY_CHILD(node_id)                                                         \
+	COND_CODE_1(DT_NODE_HAS_STATUS(node_id, disabled), (), (RAM_RESERVED_NODE(node_id)))
+
+#define RAM_RESERVED_SRAM(node_id)                                                                 \
+	COND_CODE_1(DT_NODE_HAS_STATUS(node_id, reserved),                                         \
+		    (COND_CODE_1(DT_NODE_HAS_COMPAT(node_id, mmio_sram),                           \
+				 (RAM_RESERVED_NODE(node_id)), ())),                               \
+		    ())
+
+static const struct ram_reserved_range ram_reserved_ranges[] = {
+#if DT_NODE_EXISTS(DT_PATH(reserved_memory))
+	DT_FOREACH_CHILD(DT_PATH(reserved_memory), RAM_RESERVED_MEMORY_CHILD)
+#endif
+	DT_FOREACH_NODE(RAM_RESERVED_SRAM)
+	/* Empty entry, so that the table is never empty. */
+	{ .start = 0, .end = 0 },
+};
+
+static bool ram_section_is_reserved(uintptr_t start, uintptr_t end)
+{
+	for (size_t i = 0; i < ARRAY_SIZE(ram_reserved_ranges); ++i) {
+		if (ram_reserved_ranges[i].start < end && start < ram_reserved_ranges[i].end) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void power_down_ram(uintptr_t start_address, uintptr_t end_address)
 {
 	ram_sections_power_set(start_address, end_address, false);
@@ -115,7 +165,23 @@ void power_up_ram(uintptr_t start_address, uintptr_t end_address)
 
 void power_down_unused_ram(void)
 {
-	power_down_ram(RAM_IMAGE_END_ADDR, ram_end_addr());
+	for (size_t i = 0; i < ARRAY_SIZE(ram_regions); ++i) {
+		const struct ram_region *region = &ram_regions[i];
+		const uintptr_t size = region->section_size;
+		const uintptr_t end = ROUND_DOWN(MIN(ram_end_addr(), region->start + region->size),
+						 size);
+		uintptr_t run_start = ROUND_UP(MAX(RAM_IMAGE_END_ADDR, region->start), size);
+
+		/* Power down the complete sections between the reserved ones. */
+		for (uintptr_t section = run_start; section < end; section += size) {
+			if (ram_section_is_reserved(section, section + size)) {
+				power_down_ram(run_start, section);
+				run_start = section + size;
+			}
+		}
+
+		power_down_ram(run_start, end);
+	}
 }
 
 void power_up_unused_ram(void)
