@@ -652,6 +652,7 @@ Cellular samples
     * :ref:`modem_callbacks_sample`
     * :ref:`modem_trace_backend_sample`
     * :ref:`modem_trace_flash`
+    * :ref:`nidd_sample`
 
 Cryptography samples
 --------------------
