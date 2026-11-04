@@ -8,13 +8,11 @@
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
 .. include:: /includes/tfm.txt
-
-.. include:: /includes/external_flash_nrf91.txt
 
 Overview
 ********
