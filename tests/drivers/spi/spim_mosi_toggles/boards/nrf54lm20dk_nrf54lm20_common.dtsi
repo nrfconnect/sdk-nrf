@@ -5,13 +5,13 @@
  */
 
 /* Test requires wire connection:
- *  - SPIM_MOSI with test-gpios -> P2.8 - P3.3.
+ *  - SPIM_MOSI with test-gpios -> P2.8 - P3.0.
  *  - Disable External Memory in NRF Connect for Desktop -> Board Configurator
  */
 
 / {
 	zephyr,user {
-		test-gpios = <&gpio3 3 GPIO_ACTIVE_LOW>;
+		test-gpios = <&gpio3 0 GPIO_ACTIVE_LOW>;
 	};
 };
 

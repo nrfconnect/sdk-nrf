@@ -8,21 +8,22 @@ common:
   harness_config:
     fixture: gpio_spi_loopback
   timeout: 15
-  platform_allow:
-    - nrf54ls05dk/nrf54ls05a/cpuapp
-    - nrf54ls05dk/nrf54ls05b/cpuapp
-    - nrf54lc10dk/nrf54lc10a/cpuapp
-    - nrf54lc10dk/nrf54lc10a/cpuapp/ns
-    - nrf9251dk/nrf9251/cpuapp
-    - nrf9251dk/nrf9251/cpuppr
-    - nrf7120dk/nrf7120/cpuapp/ns
-    - nrf7120dk/nrf7120e/cpuapp
+
 
 tests:
   nrf.extended.drivers.spi.spi_mode0:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/250khz.overlay"
+    platform_allow: &default_platform_allow
+      - nrf54ls05dk/nrf54ls05a/cpuapp
+      - nrf54ls05dk/nrf54ls05b/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp
+      - nrf54lc10dk/nrf54lc10a/cpuapp/ns
+      - nrf9251dk/nrf9251/cpuapp
+      - nrf9251dk/nrf9251/cpuppr
+      - nrf7120dk/nrf7120/cpuapp/ns
+      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -30,6 +31,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/500khz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -37,6 +39,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1mhz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -44,6 +47,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=3
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2mhz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -51,6 +55,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/1m333333hz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -58,6 +63,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=0
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/2m666666hz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -65,6 +71,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=2
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/4mhz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -72,6 +79,7 @@ tests:
     extra_configs:
       - CONFIG_TESTED_SPI_MODE=1
     extra_args: EXTRA_DTC_OVERLAY_FILE="${ZEPHYR_TEST_DIR}/8mhz.overlay"
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
@@ -83,14 +91,63 @@ tests:
     extra_configs:
       - CONFIG_PM_DEVICE=y
       - CONFIG_PM_DEVICE_RUNTIME=y
+    platform_allow: *default_platform_allow
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
 
   nrf.extended.drivers.spi.direct_xfer:
+    platform_allow: *default_platform_allow
     extra_configs:
       - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=0
 
   nrf.extended.drivers.spi.direct_xfer.no_prealloc:
+    platform_allow: *default_platform_allow
     extra_configs:
       - CONFIG_SPI_NRFX_RAM_BUFFER_SIZE=0
       - CONFIG_PREALLOC_BUFFERS=n
+
+  nrf.extended.drivers.spi.spi_mode0.fast_spis:
+    harness_config:
+      fixture: spim_mosi_toggles
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=0
+    extra_args:
+      - FILE_SUFFIX=fast_spis
+    platform_allow: &fast_spis_platform_allow
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+      - nrf54lm20dk/nrf54lm20b/cpuapp
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  nrf.extended.drivers.spi.spi_mode1.fast_spis:
+    harness_config:
+      fixture: spim_mosi_toggles
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=1
+    extra_args:
+      - FILE_SUFFIX=fast_spis
+    platform_allow: *fast_spis_platform_allow
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  nrf.extended.drivers.spi.spi_mode2.fast_spis:
+    harness_config:
+      fixture: spim_mosi_toggles
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=2
+    extra_args:
+      - FILE_SUFFIX=fast_spis
+    platform_allow: *fast_spis_platform_allow
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
+
+  nrf.extended.drivers.spi.spi_mode3.fast_spis:
+    harness_config:
+      fixture: spim_mosi_toggles
+    extra_configs:
+      - CONFIG_TESTED_SPI_MODE=3
+    extra_args:
+      - FILE_SUFFIX=fast_spis
+    platform_allow: *fast_spis_platform_allow
+    integration_platforms:
+      - nrf54lm20dk/nrf54lm20a/cpuapp
