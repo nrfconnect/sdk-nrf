@@ -12,7 +12,7 @@ The LwM2M carrier sample demonstrates how to run the :ref:`liblwm2m_carrier_read
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
