@@ -8,7 +8,7 @@
 Requirements
 ************
 
-The sample supports the following development kits:
+The sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -26,7 +26,7 @@ Finally, the sample prints the PDP context IDs and PDN IDs of both the default P
 .. note::
    The sample uses the :ref:`lte_lc_readme` library to change the modem's functional mode.
    Hence, the :ref:`lte_lc_readme` library can automatically register to the necessary packet domain events notifications using the ``AT+CGEREP=1`` AT command, and notifications for unsolicited reporting of error codes sent by the network using the ``AT+CNEC=16`` AT command.
-   See the `AT+CGEREP set command`_ and the `AT+CNEC set command`_ sections, respectively, in the nRF9160 AT Commands Reference Guide or the `nRF91x1 AT+CGEREP set command`_  and the `nRF91x1 AT+CNEC set command`_ sections in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+   See the `nRF91x1 AT+CGEREP set command`_  and the `nRF91x1 AT+CNEC set command`_ sections, respectively, in the nRF91x1 AT Commands Reference Guide.
    If your application does not use the :ref:`lte_lc_readme` library to change the modem's functional mode, you have to subscribe to these notifications manually before the functional mode is changed.
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
