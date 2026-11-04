@@ -651,6 +651,7 @@ Cellular samples
     * :ref:`lwm2m_carrier`
     * :ref:`modem_callbacks_sample`
     * :ref:`modem_trace_backend_sample`
+    * :ref:`modem_trace_flash`
 
 Cryptography samples
 --------------------
