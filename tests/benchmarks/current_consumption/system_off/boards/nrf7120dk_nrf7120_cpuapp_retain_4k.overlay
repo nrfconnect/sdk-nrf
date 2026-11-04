@@ -24,6 +24,10 @@
 	ranges = <0x0 0x20000000 0x1f000>;
 };
 
+&cpuapp_sram_app {
+	reg = <0x60 (DT_SIZE_K(124) - 0x60)>;
+};
+
 &gpio4 {
 	status = "disabled";
 };

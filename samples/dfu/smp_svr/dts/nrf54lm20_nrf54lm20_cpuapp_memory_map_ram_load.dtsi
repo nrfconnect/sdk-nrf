@@ -50,6 +50,13 @@
 };
 
 / {
+	chosen {
+		/* The board points zephyr,sram at the "cpuapp_sram_app" DTS node, which is removed
+		 * together with the "cpuapp_sram" DTS node. Use the redefined "cpuapp_sram".
+		 */
+		zephyr,sram = &cpuapp_sram;
+	};
+
 	soc {
 		/* Remove the DTS node with the "cpuapp_sram" label to redefine the RAM layout. */
 		/delete-node/ memory@20000000;
