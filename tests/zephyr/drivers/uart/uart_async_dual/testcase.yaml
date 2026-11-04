@@ -46,7 +46,6 @@ tests:
       - CONFIG_TEST_CHOPPED_TX=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER_LEGACY=n
-      - CONFIG_UART_1_NRF_HW_ASYNC=n
   nrf.extended.drivers.uart.async_dual.ppr.9251:
     platform_allow: &platform_nrf92_ppr
       - nrf9251dk/nrf9251/cpuppr
@@ -100,4 +99,3 @@ tests:
       - CONFIG_TEST_CHOPPED_TX=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER=n
       - CONFIG_UARTE_NRFX_UARTE_COUNT_BYTES_WITH_TIMER_LEGACY=n
-      - CONFIG_UART_1_NRF_HW_ASYNC=n
