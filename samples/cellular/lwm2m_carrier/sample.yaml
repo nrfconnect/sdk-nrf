@@ -6,11 +6,8 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     tags:
       - ci_build
       - sysbuild
@@ -20,10 +17,8 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     extra_args: EXTRA_CONF_FILE="overlay-shell.conf"
     tags:
       - ci_build
@@ -34,10 +29,8 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     extra_args:
       - EXTRA_CONF_FILE="overlay-softbank.conf"
       - SB_EXTRA_CONF_FILE="sysbuild-softbank.conf"
@@ -51,10 +44,8 @@ tests:
     build_only: true
     integration_platforms:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
     extra_args:
       - EXTRA_CONF_FILE="overlay-lgu.conf"
       - SB_EXTRA_CONF_FILE="sysbuild-lgu.conf"
