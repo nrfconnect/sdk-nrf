@@ -49,17 +49,22 @@ In a telemetry message, ``temperature`` is a value between ``25.0`` and ``25.9``
 The sample handles the `Azure IoT Hub direct method`_ with the name ``led``.
 If the device receives a direct method invocation with the name ``led`` and payload ``1`` or ``0``, LED 1 on the device is turned on or off, depending on the payload.
 
-Firmware update
-===============
+FOTA
+====
 
 The sample subscribes to incoming `Azure IOT Hub device twin messages`_ that contain the firmware update information.
 By default, the sample requests the device twin document when the device connects to the IoT hub.
 Thus, the sample parses any existing firmware information in the *desired* property.
 See :ref:`lib_azure_fota` for more details on the content of the firmware information in the device twin.
 
-.. note::
-   This sample requires a file server instance that hosts the new firmware image.
-   The :ref:`lib_azure_fota` library does not require a specific host, but it has been tested using `Azure Blob Storage`_.
+This sample requires a file server instance that hosts the new firmware image.
+The :ref:`lib_azure_fota` library does not require a specific host, but it has been tested using `Azure Blob Storage`_.
+
+To download the firmware over HTTPS, you must set the :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` Kconfig option to a security tag that contains the CA certificate of the server hosting the firmware image.
+The download does not require a client certificate or a private key.
+In this sample, the :file:`wifi.conf` file sets the option to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, because the `DigiCert Global Root G2`_ CA certificate provisioned for the MQTT connection also validates Azure Blob Storage.
+If you change the value of :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, you must also change the value of :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG` or provision the CA certificate under the FOTA security tag.
+If you use a different server to host the firmware image, provision its CA certificate under the security tag set in :kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`.
 
 Configuration
 *************

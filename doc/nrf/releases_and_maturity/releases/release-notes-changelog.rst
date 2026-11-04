@@ -903,7 +903,11 @@ Networking samples
 
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
-  * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+  * Updated:
+
+    * The MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+    * The sample documentation with the security tag requirements for the FOTA download over HTTPS.
+    * The FOTA download security tag (:kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`) in Wi-Fi builds from ``11`` to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`.
 
   * Fixed:
 
