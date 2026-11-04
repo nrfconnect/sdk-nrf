@@ -1,0 +1,19 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config CODE_EXTENDER
+	bool "Expand code size"
+	help
+	  This module is used to measure the performance of boot and update
+	  process, in function of application size.
+
+if CODE_EXTENDER
+
+config CODE_EXTENDER_SIZE
+	int "Extended code size (in bytes)"
+	default 524288
+
+endif # CODE_EXTENDER

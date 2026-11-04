@@ -8,5 +8,6 @@ menu "Test"
 
 rsource "unity/Kconfig"
 rsource "mocks/Kconfig"
+rsource "code_extender/Kconfig"
 
 endmenu
