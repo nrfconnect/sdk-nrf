@@ -5,12 +5,24 @@
  */
 
 #include <net/nrf_cloud.h>
+#include <modem/nrf_modem_lib.h>
+#include <nrf_modem.h>
 #include "fakes.h"
+
+/* Simulate the modem library reporting a DFU result on initialization */
+static void modem_dfu_result_set(int dfu_res)
+{
+	STRUCT_SECTION_FOREACH(nrf_modem_lib_dfu_cb, e) {
+		e->callback(dfu_res, e->context);
+	}
+}
 
 /* This function runs before each test */
 static void run_before(void *fixture)
 {
 	ARG_UNUSED(fixture);
+
+	modem_dfu_result_set(0);
 
 	RESET_FAKE(fota_download_s0_active_get);
 	RESET_FAKE(boot_is_img_confirmed);
@@ -269,6 +281,90 @@ ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_pending_fota_job_process_job_no
 
 	zassert_equal(-ENODEV, ret,
 		      "return should be -ENODEV when job type is NRF_CLOUD_FOTA_TYPE__INVALID");
+}
+
+/* Verify that no reboot is required when the modem library has reported a successful
+ * MODEM_DELTA update, since the modem is already running the new firmware.
+ */
+ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_pending_fota_job_process_modem_delta_pass)
+{
+	bool reboot_required = true;
+	struct nrf_cloud_settings_fota_job job = {
+		.validate = NRF_CLOUD_FOTA_VALIDATE_PENDING,
+		.type = NRF_CLOUD_FOTA_MODEM_DELTA
+	};
+
+	modem_dfu_result_set(NRF_MODEM_DFU_RESULT_OK);
+
+	int ret = nrf_cloud_pending_fota_job_process(&job, &reboot_required);
+
+	zassert_equal(0, ret, "return should be 0 when MODEM_DELTA FOTA succeeds");
+	zassert_equal(NRF_CLOUD_FOTA_VALIDATE_PASS, job.validate,
+		      "validate status should be PASS on success");
+	zassert_false(reboot_required,
+		      "reboot_required should be false when the modem runs the new firmware");
+}
+
+/* Verify that no reboot is required when the modem library has reported a failed
+ * MODEM_DELTA update and the modem is running the old firmware.
+ */
+ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_pending_fota_job_process_modem_delta_fail)
+{
+	bool reboot_required = true;
+	struct nrf_cloud_settings_fota_job job = {
+		.validate = NRF_CLOUD_FOTA_VALIDATE_PENDING,
+		.type = NRF_CLOUD_FOTA_MODEM_DELTA
+	};
+
+	modem_dfu_result_set(NRF_MODEM_DFU_RESULT_AUTH_ERROR);
+
+	int ret = nrf_cloud_pending_fota_job_process(&job, &reboot_required);
+
+	zassert_equal(0, ret, "return should be 0 when MODEM_DELTA FOTA is processed as failure");
+	zassert_equal(NRF_CLOUD_FOTA_VALIDATE_FAIL, job.validate,
+		      "validate status should be FAIL on DFU error");
+	zassert_false(reboot_required,
+		      "reboot_required should be false when the modem runs the old firmware");
+}
+
+/* Verify that a reboot is required when the MODEM_DELTA update was postponed due to
+ * low voltage, since the modem retries the update the next time it is started.
+ */
+ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_pending_fota_job_process_modem_delta_volt_low)
+{
+	bool reboot_required = false;
+	struct nrf_cloud_settings_fota_job job = {
+		.validate = NRF_CLOUD_FOTA_VALIDATE_PENDING,
+		.type = NRF_CLOUD_FOTA_MODEM_DELTA
+	};
+
+	modem_dfu_result_set(NRF_MODEM_DFU_RESULT_VOLTAGE_LOW);
+
+	int ret = nrf_cloud_pending_fota_job_process(&job, &reboot_required);
+
+	zassert_equal(0, ret, "return should be 0 when MODEM_DELTA FOTA is postponed");
+	zassert_equal(NRF_CLOUD_FOTA_VALIDATE_FAIL, job.validate,
+		      "validate status should be FAIL on low voltage");
+	zassert_true(reboot_required,
+		     "reboot_required should be true when the update was postponed");
+}
+
+/* Verify that a reboot is required when the MODEM_DELTA DFU result is not known yet. */
+ZTEST(nrf_cloud_fota_common_test, test_nrf_cloud_pending_fota_job_process_modem_delta_unknown)
+{
+	bool reboot_required = false;
+	struct nrf_cloud_settings_fota_job job = {
+		.validate = NRF_CLOUD_FOTA_VALIDATE_PENDING,
+		.type = NRF_CLOUD_FOTA_MODEM_DELTA
+	};
+
+	int ret = nrf_cloud_pending_fota_job_process(&job, &reboot_required);
+
+	zassert_equal(0, ret, "return should be 0 when MODEM_DELTA DFU result is unknown");
+	zassert_equal(NRF_CLOUD_FOTA_VALIDATE_UNKNOWN, job.validate,
+		      "validate status should be UNKNOWN when DFU result is unknown");
+	zassert_true(reboot_required,
+		     "reboot_required should be true when the DFU result is unknown");
 }
 
 /* Verify that nrf_cloud_pending_fota_job_process succeeds when a pending

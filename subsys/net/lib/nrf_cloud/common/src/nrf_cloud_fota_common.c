@@ -363,6 +363,25 @@ static enum nrf_cloud_fota_validate_status modem_delta_fota_validate_get(void)
 	return NRF_CLOUD_FOTA_VALIDATE_UNKNOWN;
 }
 
+static bool modem_delta_fota_reboot_required(void)
+{
+#if defined(CONFIG_NRF_MODEM_LIB)
+	switch (dfu_result) {
+	case NRF_MODEM_DFU_RESULT_OK:
+	case NRF_MODEM_DFU_RESULT_UUID_ERROR:
+	case NRF_MODEM_DFU_RESULT_AUTH_ERROR:
+		/* The modem is running, with either the updated or the previous
+		 * firmware, so a reboot would not change anything.
+		 */
+		return false;
+	default:
+		break;
+	}
+#endif /* CONFIG_NRF_MODEM_LIB*/
+
+	return true;
+}
+
 static enum nrf_cloud_fota_validate_status modem_full_fota_validate_get(void)
 {
 	int err = -1;
@@ -460,8 +479,11 @@ int nrf_cloud_pending_fota_job_process(struct nrf_cloud_settings_fota_job *const
 	if (job->type == NRF_CLOUD_FOTA_MODEM_DELTA) {
 		job->validate = modem_delta_fota_validate_get();
 
-		*reboot_required = true;
-		LOG_INF("Modem (delta) FOTA complete on modem library reinit or reboot");
+		*reboot_required = modem_delta_fota_reboot_required();
+
+		if (*reboot_required) {
+			LOG_INF("Modem (delta) FOTA complete on modem library reinit or reboot");
+		}
 
 	} else if (job->type == NRF_CLOUD_FOTA_MODEM_FULL) {
 
