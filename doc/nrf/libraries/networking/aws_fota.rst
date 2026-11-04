@@ -38,6 +38,8 @@ The firmware URL, for example, a presigned Amazon S3 URL, authorizes the downloa
 You can use the same security tag as for the MQTT connection if its CA certificate also validates the firmware host.
 Otherwise, provision a separate security tag that contains the required CA certificate.
 
+.. _aws_fota_creating_job:
+
 Creating a FOTA job
 *******************
 
