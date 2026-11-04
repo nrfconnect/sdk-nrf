@@ -649,6 +649,7 @@ Cellular samples
     * :ref:`http_modem_full_update_sample`
     * :ref:`location_sample`
     * :ref:`lwm2m_carrier`
+    * :ref:`modem_callbacks_sample`
 
 Cryptography samples
 --------------------
