@@ -10,7 +10,7 @@
 Requirements
 ************
 
-This sample supports the following development kits:
+This sample supports the following development kit:
 
 .. table-from-sample-yaml::
 
@@ -63,42 +63,21 @@ After programming the sample to your development kit, test it by performing the 
 
 1. Connect the USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
-#. Call the provided :file:`update_modem.py` script specifying the serial port, the firmware ZIP file, and the UART baud rate shown in the following examples.
+#. Call the provided :file:`update_modem.py` script specifying the serial port, the firmware ZIP file, and the UART baud rate shown in the following example.
 
-   .. tabs::
+  * For the :ref:`default baud rate (115200) <test_and_optimize>`, use the following command:
 
-      .. group-tab:: nRF91x1 DK
+  .. parsed-literal::
+     :class: highlight
 
-         * For the :ref:`default baud rate (115200) <test_and_optimize>`, use the following command:
+     python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *115200*
 
-         .. parsed-literal::
-            :class: highlight
+  * For the baud rate valid for the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
 
-            python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *115200*
+  .. parsed-literal::
+     :class: highlight
 
-         * For the baud rate valid for the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
-
-         .. parsed-literal::
-            :class: highlight
-
-            python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *1000000*
-
-
-      .. group-tab:: nRF9160 DK
-
-         * For the :ref:`default baud rate (115200) <test_and_optimize>`, use the following command:
-
-         .. parsed-literal::
-            :class: highlight
-
-            python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *115200*
-
-         * For the baud rate valid for the ``-DEXTRA_DTC_OVERLAY_FILE=uart.overlay`` flag, use the following command:
-
-         .. parsed-literal::
-            :class: highlight
-
-            python update_modem.py mfw_nrf9160_1.3.5.zip /dev/ttyACM0 *1000000*
+     python update_modem.py mfw_nrf91x1_2.0.0.zip /dev/ttyACM0 *1000000*
 
 
 Sample output
