@@ -40,6 +40,8 @@ void power_up_ram(uintptr_t start_address, uintptr_t end_address);
  * @brief Request powering down unused RAM sections.
  *
  * Power down RAM sections which are not used by the application image.
+ * Sections that overlap a /reserved-memory child node that is not disabled or an
+ * mmio-sram node with status "reserved" in devicetree are kept powered.
  *
  * @note
  * Some libc implementations use the memory area following the application

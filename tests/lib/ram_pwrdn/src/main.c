@@ -58,10 +58,35 @@ static volatile uint32_t *unused_ram_word(void)
 	return (volatile uint32_t *)probe;
 }
 
+#if DT_NODE_EXISTS(DT_NODELABEL(ipc_shm_area_cpuapp_cpuuma))
+/* The nRF7120 DK describes the Wi-Fi IPC shared memory as a /reserved-memory child, so it must stay
+ * powered. It belongs to another core, so it is only read. A non-zero word is used as the probe,
+ * so that a loss of content is detectable before power-up.
+ */
+#define IPC_SHM_NODE DT_NODELABEL(ipc_shm_area_cpuapp_cpuuma)
+
+static volatile uint32_t *ipc_shm_word(void)
+{
+	volatile uint32_t *word = (volatile uint32_t *)DT_REG_ADDR(IPC_SHM_NODE);
+
+	for (size_t i = 0; i < DT_REG_SIZE(IPC_SHM_NODE) / sizeof(uint32_t); ++i) {
+		if (word[i] != 0) {
+			return &word[i];
+		}
+	}
+
+	return NULL;
+}
+#endif
+
 /* Returns true if the unused RAM was confirmed to be powered down. */
 static bool verify_power_down(void)
 {
 	volatile uint32_t *unused_ram = unused_ram_word();
+#if defined(IPC_SHM_NODE)
+	volatile uint32_t *ipc_shm = ipc_shm_word();
+	const uint32_t ipc_shm_value = (ipc_shm != NULL) ? *ipc_shm : 0;
+#endif
 
 	*unused_ram = PROBE_PATTERN;
 	work_buf[0] = PROBE_PATTERN;
@@ -73,6 +98,14 @@ static bool verify_power_down(void)
 	printk("ram_pwrdn: entering System ON idle\n");
 	k_msleep(1000);
 	printk("ram_pwrdn: woke from idle\n");
+
+#if defined(IPC_SHM_NODE)
+	if (ipc_shm == NULL || *ipc_shm != ipc_shm_value) {
+		printk("ram_pwrdn: ERROR IPC shared memory lost its content\n");
+		return false;
+	}
+	printk("ram_pwrdn: IPC shared memory retained content\n");
+#endif
 
 	power_up_unused_ram();
 	printk("ram_pwrdn: powered up unused RAM\n");
