@@ -655,7 +655,8 @@ Cellular samples
     * :ref:`nidd_sample`
     * :ref:`pdn_sample`
     * :ref:`sms_sample`
-    * :ref:`_ciphersuites`
+    * :ref:`ciphersuites`
+    * :ref:`udp`
 
 Cryptography samples
 --------------------

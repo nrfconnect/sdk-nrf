@@ -35,12 +35,7 @@ This is due to the simple UDP/IP behavior demonstrated by the sample, which make
 Measuring current
 =================
 
-Refer to the following documents for measuring currents:
-
-* nRF9151 DK- `Measuring Current on nRF9151 DK`_
-* nRF9161 DK- `Measuring Current on nRF9161 DK`_
-* nRF9160 DK- `Measuring Current on nRF9160 DK`_
-* Thingy:91- `Measuring Current on Thingy:91`_
+Refer to the `Measuring Current on nRF9151 DK`_ document for measuring currents.
 
 Configuration
 *************
@@ -127,7 +122,7 @@ The following configurations are recommended for low power behavior:
    In applications where downlink messaging from the cloud to the device is expected, it is recommended to set the :kconfig:option:`CONFIG_LTE_PSM_REQ_RAT` option to a value higher than ``0`` to ensure data is received before the device enters PSM.
 
 PSM and eDRX timers are set with binary strings that signify a time duration in seconds.
-For a conversion chart of these timer values, see the `Power saving mode setting`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 Power saving mode setting_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+For a conversion chart of these timer values, see the `nRF91x1 Power saving mode setting`_ in the nRF91x1 AT Commands Reference Guide.
 
 .. note::
    The availability of power saving features or timers is entirely dependent on the cellular network.

@@ -179,21 +179,6 @@ int main(void)
 		return -1;
 	}
 
-#if defined(CONFIG_UDP_RAI_ENABLE) && defined(CONFIG_SOC_NRF9160)
-	/* Enable Access Stratum RAI support for nRF9160.
-	 * Note: The 1.3.x modem firmware release is certified to be compliant with 3GPP Release 13.
-	 * %REL14FEAT enables selected optional features from 3GPP Release 14. The 3GPP Release 14
-	 * features are not GCF or PTCRB conformance certified by Nordic and must be certified
-	 * by MNO before being used in commercial products.
-	 * nRF9161 is certified to be compliant with 3GPP Release 14.
-	 */
-	err = nrf_modem_at_printf("AT%%REL14FEAT=0,1,0,0,0");
-	if (err) {
-		printk("Failed to enable Access Stratum RAI support, error: %d\n", err);
-		return -1;
-	}
-#endif
-
 	err = lte_lc_connect_async(lte_handler);
 	if (err) {
 		printk("Failed to connect to LTE network, error: %d\n", err);
