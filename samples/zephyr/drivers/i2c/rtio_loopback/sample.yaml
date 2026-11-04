@@ -6,6 +6,7 @@ common:
     - rtio
     - i2c_target
     - ci_samples_zephyr_drivers_i2c
+  timeout: 30
   harness: console
   harness_config:
     fixture: i2c_bus_short
