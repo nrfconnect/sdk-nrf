@@ -850,6 +850,8 @@ Networking samples
 
   * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
 
+  * Fixed an issue where the FOTA download failed on Wi-Fi builds because the Mbed TLS heap was too small for the MQTT and download TLS connections at the same time.
+
 * :ref:`https_client` sample:
 
   * Fixed an issue where the sample could try to connect over IPv4 or IPv6 even when the device had no local address for that family.
