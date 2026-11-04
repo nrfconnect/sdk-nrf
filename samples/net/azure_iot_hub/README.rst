@@ -227,9 +227,23 @@ Optionally, follow the instructions at `Azure IoT Explorer`_ to install and conf
 #. In the `Azure IoT Explorer`_, navigate to the :guilabel:`Telemetry` tab and click :guilabel:`start`.
 #. Observe that the event messages from the device are displayed in the `Azure IoT Explorer`_ within the specified telemetry interval.
 
-To test FOTA update:
+.. _azure_iot_hub_sample_testing_fota:
 
-1. Navigate to the view where you can update the device twin using the `Azure IoT Explorer`_ or `Azure Portal`_.
+Testing FOTA
+------------
+
+To test a FOTA update, complete the following steps:
+
+1. Build and program the sample as described in `Building and running`_, and check that the device connects to the IoT hub.
+#. Create a new version of the sample by setting the :kconfig:option:`CONFIG_AZURE_FOTA_APP_VERSION` Kconfig option to a new value in the :file:`prj.conf` file.
+   For example, ``CONFIG_AZURE_FOTA_APP_VERSION="0.0.2-dev"``.
+   The default value is ``0.0.0-dev``.
+#. Build the sample again in a separate build directory, but do not program it.
+   For example, add ``-d build_v2`` to your ``west build`` command.
+   The update image is the :file:`build_v2/azure_iot_hub/zephyr/zephyr.signed.bin` file.
+#. Upload the update image to your file server, for example, `Azure Blob Storage`_.
+   The device downloads the image without authentication, so the file must allow anonymous read access.
+#. Navigate to the view where you can update the device twin using the `Azure IoT Explorer`_ or `Azure Portal`_.
 #. Create a ``firmware`` JSON object inside the *desired* object of the device twin document, containing information about the binary to download:
 
    .. parsed-literal::
@@ -237,7 +251,7 @@ To test FOTA update:
 
       {
           "firmware": {
-              "fwVersion": "v0.0.2-dev",
+              "fwVersion": "0.0.2-dev",
               "jobId": "ca186d4b-4171-4209-a49d-700c35567d1d",
               "fwLocation": {
                   "host": "example.com",
@@ -247,11 +261,22 @@ To test FOTA update:
           }
       }
 
+   Set ``fwVersion`` to the value of :kconfig:option:`CONFIG_AZURE_FOTA_APP_VERSION` in the update image.
+   The device starts the download only if ``fwVersion`` is different from its current version.
+   Set ``jobId`` to a new UUID (RFC 4122) for each update, for example, ``ca186d4b-4171-4209-a49d-700c35567d1d``.
+   The device does not start a job with a job ID that it has already attempted.
+
 #. Click :guilabel:`Save` to apply the changes to the device twin.
    Updating the device twin causes a message to be sent to the device, containing the updates to the *desired* object.
 #. In the terminal emulator, observe that the new firmware image is downloaded and installed as shown in :ref:`sampoutput_azure_iot`.
-#. Observe that the sample displays the logs from the new application when the development kit reboots.
-#. Confirm that the device twin contains the updated application version in the ``reported.firmware.fwVersion`` field in `Azure IoT Explorer`_ or `Azure Portal`_.
+#. Observe that, after the reboot, the sample starts with the new version:
+
+   .. code-block:: console
+
+      <inf> azure_fota: Current firmware version: 0.0.2-dev
+
+   The sample confirms the new image when it connects to the IoT hub, so MCUboot does not revert to the previous image at the next reboot.
+#. Confirm that the device twin contains the new version in the ``reported.firmware.currentFwVersion`` field in `Azure IoT Explorer`_ or `Azure Portal`_.
 
 .. _sampoutput_azure_iot:
 
@@ -295,23 +320,21 @@ If a new FOTA update is initiated, the console output is like this:
 
 .. code-block:: console
 
-   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 140
-   <inf> azure_fota: Attempting to download firmware (version 'v0.0.2-dev') from example.com/firmware/app_update.bin
-   <inf> downloader: Downloading: firmware/app_update.bin [0]
+   <inf> azure_fota: Attempting to download firmware (version '0.0.2-dev') from example.com/firmware/app_update.bin
+   <wrn> downloader: Protocol not specified for example.com/firmware/app_update.bin, attempting https://
    <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_FOTA_START
    <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_DESIRED_RECEIVED
+   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 191
    <inf> downloader: Setting up TLS credentials, sec tag count 1
-   <inf> downloader: Connecting to example.com
-   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 190
-   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 190
-   <inf> downloader: Downloaded 1800/674416 bytes (0%)
+   <inf> downloader: Connecting to 192.0.2.1
+   <inf> downloader: Downloaded 1612/1037380 bytes (0%)
    ...
-   <inf> downloader: Downloaded 674416/674416 bytes (100%)
+   <inf> downloader: Downloaded 1037380/1037380 bytes (100%)
    <inf> downloader: Download complete
    <inf> dfu_target_mcuboot: MCUBoot image-0 upgrade scheduled. Reset device to apply
    <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_FOTA_DONE
    <inf> azure_iot_hub_sample: The device will reboot in 5 seconds to apply update
-   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 109
+   <inf> azure_iot_hub_sample: AZURE_IOT_HUB_EVT_TWIN_RESULT_SUCCESS, ID: 196
 
 Troubleshooting
 ===============
