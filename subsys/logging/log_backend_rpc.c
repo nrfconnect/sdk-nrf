@@ -708,6 +708,14 @@ static void log_rpc_set_history_level_handler(const struct nrf_rpc_group *group,
 NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_history_level_handler,
 			 LOG_RPC_CMD_SET_HISTORY_LEVEL, log_rpc_set_history_level_handler, NULL);
 
+static void history_transfer_release_claimed(void)
+{
+	if (history_cur_msg) {
+		log_rpc_history_free(history_cur_msg);
+		history_cur_msg = NULL;
+	}
+}
+
 static void history_transfer_task(struct k_work *work)
 {
 	const uint32_t flags = common_output_flags | LOG_OUTPUT_FLAG_CRLF_NONE;
@@ -718,15 +726,15 @@ static void history_transfer_task(struct k_work *work)
 	size_t length;
 	size_t max_length;
 
-	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE);
-
 	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
 
 	if (history_transfer_id == 0) {
-		/* History transfer has been stopped */
+		history_transfer_release_claimed();
 		k_mutex_unlock(&history_transfer_mtx);
 		return;
 	}
+
+	NRF_RPC_CBOR_ALLOC(&log_rpc_group, ctx, CONFIG_LOG_BACKEND_RPC_HISTORY_UPLOAD_CHUNK_SIZE);
 
 	nrf_rpc_encode_uint(&ctx, history_transfer_id);
 
@@ -763,12 +771,13 @@ static void history_transfer_task(struct k_work *work)
 		any_msg_consumed = true;
 	}
 
-	/* Determine if the work should be resubmitted to continue the transfer. */
+	/* Resubmit if this round encoded any full messages; otherwise finish the transfer
+	 * and restore overwriting.
+	 */
 	if (any_msg_consumed) {
 		k_work_submit_to_queue(&history_transfer_workq, work);
 	} else {
-		log_rpc_history_free(history_cur_msg);
-		history_cur_msg = NULL;
+		history_transfer_release_claimed();
 		log_rpc_history_set_overwriting(true);
 		history_threshold_active = history_threshold > 0;
 	}
@@ -808,6 +817,7 @@ static void log_rpc_stop_fetch_history_handler(const struct nrf_rpc_group *group
 					       struct nrf_rpc_cbor_ctx *ctx, void *handler_data)
 {
 	bool pause;
+	struct k_work_sync sync;
 
 	pause = nrf_rpc_decode_bool(ctx);
 
@@ -819,6 +829,15 @@ static void log_rpc_stop_fetch_history_handler(const struct nrf_rpc_group *group
 
 	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
 	history_transfer_id = 0;
+	k_mutex_unlock(&history_transfer_mtx);
+
+	/* Wait for the transfer worker to finish before changing overwrite mode or
+	 * freeing a claimed history message (see mpsc_pbuf_free()).
+	 */
+	(void)k_work_cancel_sync(&history_transfer_work, &sync);
+
+	k_mutex_lock(&history_transfer_mtx, K_FOREVER);
+	history_transfer_release_claimed();
 	log_rpc_history_set_overwriting(!pause);
 	history_threshold_active = history_threshold > 0;
 	k_mutex_unlock(&history_transfer_mtx);
