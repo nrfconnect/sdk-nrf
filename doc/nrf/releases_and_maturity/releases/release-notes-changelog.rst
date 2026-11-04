@@ -640,6 +640,7 @@ Cellular samples
 
   * Support for nRF9160 DK, nRF9161 DK, and Thingy:91 in the following cellular samples:
 
+    * :ref:`at_client_sample`
     * :ref:`http_application_update_sample`
     * :ref:`http_modem_delta_update_sample`
     * :ref:`http_modem_full_update_sample`
