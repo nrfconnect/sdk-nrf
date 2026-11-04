@@ -9,7 +9,6 @@ choice NRF_MODEM_LIB_TRACE_BACKEND
 
 config NRF_MODEM_LIB_TRACE_BACKEND_RAM
 	bool "Stream modem traces to RAM buffer"
-	depends on RING_BUFFER
 	help
 	  Use RAM trace backend.
 
