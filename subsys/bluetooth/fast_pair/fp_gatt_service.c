@@ -16,11 +16,10 @@
 #include <bluetooth/fast_pair/fast_pair.h>
 #include <bluetooth/fast_pair/uuid.h>
 
-/* Those headers are included to make a workaround of Android issue with sending old RPA address
+/* This header is included to make a workaround of Android issue with sending old RPA address
  * during Key-based Pairing write.
  */
 #include "host/hci_core.h"
-#include "common/rpa.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(fast_pair, CONFIG_BT_FAST_PAIR_LOG_LEVEL);
@@ -317,8 +316,8 @@ static int parse_key_based_pairing_write(const struct bt_conn *conn,
 		 * Key-based Pairing write. Normally, error value should be returned at this point.
 		 */
 		BUILD_ASSERT(sizeof(bt_addr_t) == sizeof(parsed_req->provider_address));
-		if (!bt_rpa_irk_matches(bt_dev.irk[conn_info.id],
-					(const bt_addr_t *)parsed_req->provider_address)) {
+		if (!bt_addr_matches_irk((const bt_addr_t *)parsed_req->provider_address,
+					 bt_dev.irk[conn_info.id])) {
 			return -EINVAL;
 		}
 
