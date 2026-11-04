@@ -5,7 +5,5 @@ find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 project(wdt_soft_reset)
 
 target_include_directories(app PRIVATE ../common/)
-target_sources(app PRIVATE ../common/hw_info_helper.c)
 
-FILE(GLOB app_sources src/*.c)
-target_sources(app PRIVATE ${app_sources})
+target_sources(app PRIVATE src/main.c ../common/hw_info_helper.c)
