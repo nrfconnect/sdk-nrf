@@ -629,8 +629,8 @@ static int dect_net_l2_send(struct net_if *iface, struct net_pkt *pkt)
 				dect_utils_lib_dst_long_rd_id_get_from_dst_sock_ll_addr(
 					dst_addr);
 			if (dect_net_l2_association_exists(target_long_rd_id)) {
-				struct sockaddr_ll_ptr *src_addr =
-					(struct sockaddr_ll_ptr *)&context->local;
+				struct sockaddr_ll *src_addr =
+					(struct sockaddr_ll *)&context->local;
 
 				/* Set destination to pkt for the driver level */
 				__ASSERT_NO_MSG(dst_addr->sll_halen <=
