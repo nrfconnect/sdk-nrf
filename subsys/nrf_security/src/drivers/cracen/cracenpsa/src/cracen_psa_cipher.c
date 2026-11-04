@@ -502,8 +502,12 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 	    operation->dir == CRACEN_DECRYPT) {
 		/* The last block contains padding. The block containing padding
 		 * must be handled in finish operation. If input data is block
-		 * aligned we must postpone processing of the last block.
+		 * aligned we must postpone processing of the last block. If the input
+		 * only filled the buffered block, that block is the last one.
 		 */
+		if (input_length == 0) {
+			return PSA_SUCCESS;
+		}
 		if (block_bytes == input_length) {
 			block_bytes -= (uint32_t)operation->blk_size;
 		}
@@ -518,6 +522,8 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 		 */
 		if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) &&
 		    operation->alg == PSA_ALG_ECB_NO_PADDING) {
+			size_t ecb_length;
+
 			if (operation->unprocessed_input_bytes) {
 				__ASSERT_NO_MSG(operation->unprocessed_input_bytes ==
 						operation->blk_size);
@@ -525,11 +531,12 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 					&operation->cipher, &operation->keyref,
 					operation->unprocessed_input,
 					operation->unprocessed_input_bytes, output,
-					output_size, output_length, operation->dir);
+					output_size, &ecb_length, operation->dir);
 				if (psa_status != PSA_SUCCESS) {
 					return psa_status;
 				}
 				output += (uint32_t)operation->unprocessed_input_bytes;
+				output_size -= operation->unprocessed_input_bytes;
 				operation->unprocessed_input_bytes = 0;
 			}
 
@@ -537,7 +544,7 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 				psa_status =
 					crypt_ecb(&operation->cipher, &operation->keyref,
 							input, block_bytes, output, output_size,
-							output_length, operation->dir);
+							&ecb_length, operation->dir);
 				if (psa_status != PSA_SUCCESS) {
 					return psa_status;
 				}
@@ -600,9 +607,9 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 			if (sx_status != SX_OK) {
 				return silex_statuscodes_to_psa(sx_status);
 			}
-
-			*output_length += total_output;
 		}
+
+		*output_length += total_output;
 	}
 
 	/* Store unprocessed bytes until next update or finalization of crypto
