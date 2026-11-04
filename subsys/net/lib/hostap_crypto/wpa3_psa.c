@@ -124,7 +124,7 @@ static int wpa3_psa_derive_keys(struct wpa3_psa_operation *op);
 static void wpa3_psa_cleanup_operation(struct wpa3_psa_operation *op);
 static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t ssid_len,
 					       const u8 *password, size_t password_len,
-					       const char *identifier);
+					       const u8 *identifier, size_t identifier_len);
 /* Map sae_data to internal PSA operation */
 static struct wpa3_psa_operation *get_psa_op(struct sae_data *sae)
 {
@@ -364,11 +364,12 @@ int sae_prepare_commit(const u8 *addr1, const u8 *addr2, const u8 *password, siz
  * @buf: Buffer to write commit message
  * @token: Token
  * @identifier: Identifier
+ * @identifier_len: Identifier length
  *
  * Returns: 0 on success, -1 on failure
  */
 int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpabuf *token,
-		     const char *identifier)
+		     const u8 *identifier, size_t identifier_len)
 {
 	struct wpa3_psa_operation *op;
 	const u8 *scalar_elem;
@@ -387,8 +388,8 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 	 */
 	if (identifier && !sae->h2e) {
 		wpa_printf(MSG_ERROR,
-			   "WPA3-PSA: SAE Password Identifier requires H2E (identifier=%s)",
-			   identifier);
+			   "WPA3-PSA: SAE Password Identifier requires H2E (identifier=%.*s)",
+			   (int)identifier_len, identifier);
 		return -1;
 	}
 
@@ -424,10 +425,11 @@ int sae_write_commit(struct sae_data *sae, struct wpabuf *buf, const struct wpab
 
 	if (identifier) {
 		wpabuf_put_u8(buf, WLAN_EID_EXTENSION);
-		wpabuf_put_u8(buf, 1 + os_strlen(identifier));
+		wpabuf_put_u8(buf, 1 + identifier_len);
 		wpabuf_put_u8(buf, WLAN_EID_EXT_PASSWORD_IDENTIFIER);
-		wpabuf_put_str(buf, identifier);
-		wpa_printf(MSG_DEBUG, "WPA3-PSA: own Password Identifier: %s", identifier);
+		wpabuf_put_data(buf, identifier, identifier_len);
+		wpa_printf(MSG_DEBUG, "WPA3-PSA: own Password Identifier: %.*s",
+			   (int)identifier_len, identifier);
 	}
 
 	if (sae->h2e && token) {
@@ -843,11 +845,13 @@ int sae_process_commit(struct sae_data *sae)
  * @password: Password
  * @password_len: Password length
  * @identifier: Identifier
+ * @identifier_len: Identifier length
  *
  * Returns: SAE PT structure or NULL on failure
  */
-struct sae_pt *sae_derive_pt(int *groups, const u8 *ssid, size_t ssid_len, const u8 *password,
-			     size_t password_len, const char *identifier)
+struct sae_pt *sae_derive_pt(const int *groups, const u8 *ssid, size_t ssid_len,
+			     const u8 *password, size_t password_len, const u8 *identifier,
+			     size_t identifier_len)
 {
 	struct sae_pt *pt = NULL, *last = NULL, *tmp;
 	int default_groups[] = {19, 0};
@@ -860,7 +864,7 @@ struct sae_pt *sae_derive_pt(int *groups, const u8 *ssid, size_t ssid_len, const
 	}
 	for (i = 0; groups[i] > 0; i++) {
 		tmp = wpa3_psa_derive_pt_group(groups[i], ssid, ssid_len, password, password_len,
-					       identifier);
+					       identifier, identifier_len);
 		if (!tmp) {
 			continue;
 		}
@@ -1086,14 +1090,15 @@ int sae_get_kck(struct sae_data *sae, u8 *kck, size_t *kck_len)
  * @password: Password
  * @password_len: Password length
  * @identifier: Password identifier
+ * @identifier_len: Password identifier length
  *
  * Returns: SAE PT structure or NULL on failure
  */
 static struct sae_pt *wpa3_psa_derive_pt_group(int group, const u8 *ssid, size_t ssid_len,
 					       const u8 *password, size_t password_len,
-					       const char *identifier)
+					       const u8 *identifier, size_t identifier_len)
 {
-	size_t pw_id_len = identifier ? os_strlen(identifier) : 0;
+	size_t pw_id_len = identifier ? identifier_len : 0;
 	char *pw_id = NULL;
 	struct sae_pt *pt;
 	int i;
