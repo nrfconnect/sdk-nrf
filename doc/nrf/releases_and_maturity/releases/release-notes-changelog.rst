@@ -855,7 +855,10 @@ Networking samples
 
 * :ref:`aws_iot` sample:
 
-  * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
+  * Added:
+
+    * Support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
+    * Steps for testing a FOTA update in the :ref:`aws_iot_sample_testing_fota` section of the sample documentation.
 
 * :ref:`download_sample` sample:
 
