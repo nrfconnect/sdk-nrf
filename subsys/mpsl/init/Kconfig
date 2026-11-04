@@ -139,10 +139,10 @@ config MPSL_LOW_LATENCY_CALLBACKS
 config MPSL_LOW_LATENCY_CONSTLAT
 	bool
 	depends on MPSL_LOW_LATENCY_CALLBACKS
-	default y if SOC_COMPATIBLE_NRF54LX
+	default y if SOC_COMPATIBLE_NRF54LX || SOC_COMPATIBLE_NRF71
 	help
 	  This option makes the MPSL low latency callbacks request constant latency mode.
-	  This is required for radio operation on the nRF54L Series.
+	  This is required for radio operation on the nRF54L Series and nRF71 Series.
 
 config MPSL_RRAM_LOW_LATENCY_MODE_IDLE
 	bool "Use RRAM Idle mode during low-latency acquire"
