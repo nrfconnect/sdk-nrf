@@ -6,7 +6,7 @@
 
 menuconfig NRF71_SR_COEX_DRIVER
 	bool "nRF71 Wi-Fi / Short-Range coexistence driver"
-	depends on WIFI_NRF71 && BT
+	depends on WIFI_NRF71
 	help
 	  Standalone coexistence coordination driver for the nRF71 combo SoC.
 
@@ -14,11 +14,9 @@ menuconfig NRF71_SR_COEX_DRIVER
 	  forwards CD2CM commands to the Coexistence Manager over the Wi-Fi FMAC
 	  control path, and coordinates with the Wi-Fi and Short-Range drivers.
 
-	  Coexistence only makes sense when both radios are present, so this
-	  depends on both the nRF71 Wi-Fi driver (WIFI_NRF71) and Bluetooth (BT):
-	  the CD<->CM messaging is carried over the Wi-Fi host<->RPU path, and the
-	  Short-Range (BLE) radio is the other party being arbitrated. The
-	  Coexistence Manager is configured every time Wi-Fi comes up.
+	  The CD<->CM messaging is carried over the Wi-Fi host<->RPU path, so this
+	  depends on the nRF71 Wi-Fi driver (WIFI_NRF71). The Coexistence Manager
+	  is configured every time Wi-Fi comes up.
 
 if NRF71_SR_COEX_DRIVER
 
