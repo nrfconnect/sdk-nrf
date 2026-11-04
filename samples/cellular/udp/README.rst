@@ -35,12 +35,7 @@ This is due to the simple UDP/IP behavior demonstrated by the sample, which make
 Measuring current
 =================
 
-Refer to the following documents for measuring currents:
-
-* nRF9151 DK- `Measuring Current on nRF9151 DK`_
-* nRF9161 DK- `Measuring Current on nRF9161 DK`_
-* nRF9160 DK- `Measuring Current on nRF9160 DK`_
-* Thingy:91- `Measuring Current on Thingy:91`_
+Refer to the `Measuring Current on nRF9151 DK`_ document for measuring currents.
 
 Configuration
 *************
