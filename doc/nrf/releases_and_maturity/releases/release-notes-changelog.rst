@@ -657,6 +657,7 @@ Cellular samples
     * :ref:`sms_sample`
     * :ref:`ciphersuites`
     * :ref:`udp`
+    * :ref:`uicc_lwm2m_sample`
 
 Cryptography samples
 --------------------
