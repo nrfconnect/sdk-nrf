@@ -1,0 +1,54 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/regulator/npm13xx.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
+
+&i2c_pmic {
+	npm1012: pmic@6a {
+		reg = <0x6a>;
+		compatible = "nordic,npm10xx";
+
+		pmic-int-gpio-config = <2 (GPIO_ACTIVE_LOW | GPIO_OPEN_DRAIN)>;
+		host-int-gpios = <&gpio0 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
+
+		npm1012_charger: charger {
+			compatible = "nordic,npm10xx-charger";
+			charging-enable;
+			term-voltage-microvolt = <4200000>;
+			charge-current-microamp = <10000>;
+			term-current-percent = "6.25%";
+
+			/* (weak charger) add vbus-limit-microamp and vbusdpm-microvolt as needed */
+		};
+
+		npm1012_adc: adc {
+			compatible = "nordic,npm10xx-adc";
+			thermistor-beta = <3434>;
+		};
+
+		npm1012_gpio: gpio {
+			compatible = "nordic,npm10xx-gpio";
+			gpio-controller;
+			#gpio-cells = <2>;
+			ngpios = <3>;
+		};
+
+		npm1012_led: led {
+			compatible = "nordic,npm10xx-led";
+
+			charge_indicator: led0 {
+				led-mode = "charge";
+				index = <1>;
+				label = "LED indicating charging connected to GPIO1";
+			};
+		};
+
+		npm1012_watchdog: watchdog {
+			compatible = "nordic,npm10xx-wdt";
+		};
+	};
+};
