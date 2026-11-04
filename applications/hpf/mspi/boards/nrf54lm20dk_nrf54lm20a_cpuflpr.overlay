@@ -97,3 +97,10 @@
 &pwm20 {
 	status = "disabled";
 };
+
+/* The committed HRT assembly is generated without the bit-manipulation
+ * and compressed extensions that the SoC devicetree enables.
+ */
+&cpuflpr {
+	riscv,isa-extensions = "e", "m", "c", "zicsr";
+};

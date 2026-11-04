@@ -5,3 +5,10 @@
  */
 
 #include "nrf54lm20dk_nrf54lm20a_cpuflpr.overlay"
+
+/* The committed HRT assembly is generated without the bit-manipulation
+ * and compressed extensions that the SoC devicetree enables.
+ */
+&cpuflpr {
+	riscv,isa-extensions = "e", "m", "c", "zicsr";
+};
