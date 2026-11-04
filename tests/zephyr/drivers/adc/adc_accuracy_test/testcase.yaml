@@ -2,6 +2,7 @@ common:
   tags:
     - drivers
     - ci_tests_zephyr_drivers_adc
+  timeout: 30
 tests:
   nrf.extended.drivers.adc.accuracy.ref_volt:
     harness_config:
