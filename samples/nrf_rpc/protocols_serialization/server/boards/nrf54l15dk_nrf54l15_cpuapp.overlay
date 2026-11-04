@@ -141,6 +141,10 @@
 	ranges = <0x0 0x20000000 0x33f00>;
 };
 
+&cpuapp_sram_app {
+	reg = <0x60 (0x33f00 - 0x60)>;
+};
+
 &rram_controller {
 	/delete-node/ cpuflpr_sram;
 	/delete-node/ cpuflpr_rram;
