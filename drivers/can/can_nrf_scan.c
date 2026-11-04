@@ -196,10 +196,6 @@ static void notify_state_change(const struct device *dev)
 	enum can_state state;
 	nrf_scan_status_t status;
 
-	if (dev_data->common.state_change_cb == NULL) {
-		return;
-	}
-
 	status = nrf_scan_get_status(&dev_config->scan);
 	state = scan_state_to_zephyr(status.state, dev_data->common.started);
 
@@ -208,8 +204,7 @@ static void notify_state_change(const struct device *dev)
 	}
 
 	dev_data->last_state = state;
-	dev_data->common.state_change_cb(dev, state, (struct can_bus_err_cnt){0},
-					 dev_data->common.state_change_cb_user_data);
+	can_fire_state_change_callbacks(dev, state, (struct can_bus_err_cnt){0});
 }
 
 #ifdef CONFIG_CAN_MANUAL_RECOVERY_MODE
@@ -749,16 +744,6 @@ static int api_recover(const struct device *dev, k_timeout_t timeout)
 }
 #endif /* CONFIG_CAN_MANUAL_RECOVERY_MODE */
 
-static void api_set_state_change_callback(const struct device *dev,
-					  can_state_change_callback_t callback,
-					  void *user_data)
-{
-	struct driver_data *dev_data = dev->data;
-
-	dev_data->common.state_change_cb = callback;
-	dev_data->common.state_change_cb_user_data = user_data;
-}
-
 static int init_scan(const struct device *dev)
 {
 	struct driver_data *dev_data = dev->data;
@@ -837,6 +822,7 @@ static int driver_init(const struct device *dev)
 {
 	struct driver_data *dev_data = dev->data;
 
+	sys_slist_init(&dev_data->common.state_change_callbacks);
 	k_sem_init(&dev_data->ctx_lock, 1, 1);
 	k_sem_init(&dev_data->tx_sem, 1, 1);
 
@@ -870,7 +856,6 @@ static DEVICE_API(can, driver_api) = {
 	.add_rx_filter = api_add_rx_filter,
 	.remove_rx_filter = api_remove_rx_filter,
 	.get_state = api_get_state,
-	.set_state_change_callback = api_set_state_change_callback,
 	.get_core_clock = api_get_core_clock,
 	.get_max_filters = api_get_max_filters,
 #ifdef CONFIG_CAN_MANUAL_RECOVERY_MODE
