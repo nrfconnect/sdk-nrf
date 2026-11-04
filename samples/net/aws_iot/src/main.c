@@ -247,6 +247,8 @@ static void on_aws_iot_evt_fota_done(const struct aws_iot_evt *const evt)
 
 	} else if (evt->data.image & DFU_TARGET_IMAGE_TYPE_ANY_APPLICATION) {
 		LOG_INF("Application FOTA done, rebooting");
+		log_flush();
+		LOG_PANIC();
 		IF_ENABLED(CONFIG_REBOOT, (sys_reboot(0)));
 	} else {
 		LOG_WRN("Unexpected FOTA image type");
