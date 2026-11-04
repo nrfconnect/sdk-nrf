@@ -1,0 +1,36 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+#include <zephyr/dt-bindings/gpio/gpio.h>
+
+/ {
+	aliases {
+		tac5112-0 = &tac5112_0;
+	};
+
+	/* Emulated GPIO controller carrying the codec's active-low IRQ output;
+	 * driven by the I2C emulator (drivers/audio/tac5112_emul.c).
+	 */
+	tac5112_gpio: gpio@200 {
+		compatible = "zephyr,gpio-emul";
+		reg = <0x200 0x4>;
+		gpio-controller;
+		#gpio-cells = <2>;
+		ngpios = <1>;
+		rising-edge;
+		falling-edge;
+		high-level;
+		low-level;
+	};
+};
+
+&i2c0 {
+	tac5112_0: audio-codec@50 {
+		compatible = "ti,tac5112";
+		reg = <0x50>;
+		interrupt-gpios = <&tac5112_gpio 0 GPIO_ACTIVE_LOW>;
+	};
+};
