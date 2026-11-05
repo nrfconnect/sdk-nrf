@@ -42,6 +42,23 @@ config NRF_MODEM_LIB_TRANSPORT_MBOX
 	select IPC_SERVICE_ICMSG
 	select IPC_SERVICE_ICMSG_SHMEM_ACCESS_SYNC
 
+config NRF_MODEM_LIB_RESET_REQUEST
+	bool "Modem reset request"
+	help
+	  Enable nrf_modem_lib_reset(), which resets the modem instead of turning it off
+	  and waits for IronSide SE to report the cellcore reset with a CELL event.
+	  Requires a Modem library with reset request support.
+
+config NRF_MODEM_LIB_CELL_EVENT_FORWARD
+	bool "Application forwards IronSide SE CELL events"
+	depends on NRF_MODEM_LIB_RESET_REQUEST
+	help
+	  The application owns the application bellboard channel of the IronSide SE CELL
+	  event report, and forwards the notifications to the Modem library by calling
+	  nrf_modem_lib_cell_event_notify(). Otherwise, the Modem library registers the channel
+	  itself while initialized. The Modem library uses the CELL event to know when the
+	  cellcore has been reset by nrf_modem_lib_reset().
+
 endif # SOC_SERIES_NRF92
 
 config NRF_MODEM_LIB_SENDMSG_BUF_SIZE
