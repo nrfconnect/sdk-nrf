@@ -153,7 +153,6 @@ The sample provides predefined configuration files for the following development
 * :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC).
 * :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
-* :file:`wifi-fota.conf` - FOTA configuration for Wi-Fi builds.
 * :file:`dps.conf` - Enables provisioning of the device using DPS.
 
 Board files under the :file:`boards/` folder are merged automatically for the selected target.
@@ -165,18 +164,18 @@ Wi-Fi
 -----
 
 Networking, TLS, and FOTA are not part of the default configuration when you build for Wi-Fi.
-Add them with the :file:`wifi.conf` and :file:`wifi-fota.conf` files.
+Add them with the :file:`wifi.conf` file.
 For example, to build for the nRF7002 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
+   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf"
 
 To build for the nRF54LM20 DK with the nRF7002 EB2 shield, also add the shield:
 
 .. code-block:: console
 
-   west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp/ns -- -Dazure_iot_hub_SHIELD="nrf7002eb2" -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf"
+   west build -p -b nrf54lm20dk/nrf54lm20a/cpuapp/ns -- -Dazure_iot_hub_SHIELD="nrf7002eb2" -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf"
 
 Device Provisioning Service
 ---------------------------
@@ -192,7 +191,7 @@ To use DPS on a Wi-Fi build, add it to the other files:
 
 .. code-block:: console
 
-   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf;wifi-fota.conf;dps.conf"
+   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE="wifi.conf;dps.conf"
 
 Building and running
 ********************
