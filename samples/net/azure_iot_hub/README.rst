@@ -139,8 +139,6 @@ The sample provides predefined configuration files for the following development
 
 * :file:`prj.conf` - General configuration file for all devices.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
@@ -177,11 +175,11 @@ Device Provisioning Service
 ---------------------------
 
 To use DPS, add the :file:`dps.conf` file to the build.
-For example, to build with DPS for the nRF9161 DK:
+For example, to build with DPS for the nRF9151 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE=dps.conf
+   west build -p -b nrf9151dk/nrf9151/ns -- -Dazure_iot_hub_EXTRA_CONF_FILE=dps.conf
 
 To use DPS on a Wi-Fi build, add it to the other files:
 
@@ -316,7 +314,7 @@ To enable modem traces, build the sample with the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -- -Dazure_iot_hub_SNIPPET="nrf91-modem-trace-uart"
+   west build -p -b nrf9151dk/nrf9151/ns -- -Dazure_iot_hub_SNIPPET="nrf91-modem-trace-uart"
 
 If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic to debug connectivity issues.
 Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
