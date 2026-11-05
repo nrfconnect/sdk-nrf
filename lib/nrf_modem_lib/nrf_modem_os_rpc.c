@@ -11,6 +11,7 @@
 #include <nrf_errno.h>
 #include <nrf_modem.h>
 #include <nrf_modem_os_rpc.h>
+#include <modem/nrf_modem_lib.h>
 
 #include <zephyr/cache.h>
 #include <zephyr/device.h>
@@ -19,6 +20,9 @@
 #include <zephyr/ipc/icmsg.h>
 #include <zephyr/ipc/pbuf.h>
 #include <ironside/se/api.h>
+#if CONFIG_NRF_MODEM_SOC_SERIES_NRF92X
+#include <ironside/se/event_report.h>
+#endif
 
 #define DCACHE_LINE_SIZE (CONFIG_DCACHE_LINE_SIZE)
 BUILD_ASSERT(DCACHE_LINE_SIZE == 32,
@@ -101,6 +105,9 @@ struct nrf_modem_os_rpc_signal inst_app_fault;
 struct nrf_modem_os_rpc_signal inst_modem_fault;
 struct nrf_modem_os_rpc_signal inst_modem_trace;
 struct nrf_modem_os_rpc_signal inst_modem_sysoff;
+#if CONFIG_NRF_MODEM_SOC_SERIES_NRF92X
+struct nrf_modem_os_rpc_signal inst_cell_event;
+#endif
 
 /**
  * Variable to control cellcore ironside start on cold boot.
@@ -157,6 +164,27 @@ int nrf_modem_os_rpc_cellcore_boot(void)
 int nrf_modem_os_rpc_cellcore_boot_bootloader(uint32_t loader_addr)
 {
 	return cellcore_boot(loader_addr, NRF_MODEM_SHMEM_BOOTLOADER_SIZE, loader_addr);
+}
+
+bool nrf_modem_os_rpc_cellcore_reset_event_get(uint32_t *resetreas)
+{
+	struct ironside_se_event_report *report = IRONSIDE_SE_EVENT_REPORT;
+
+	if (!ironside_se_cell_reset_event_check(report)) {
+		return false;
+	}
+
+	ironside_se_cell_resetreas_get(report, resetreas);
+	ironside_se_cell_reset_event_clear(report);
+
+	/* IronSide SE clears the cellcore boot status on a reset requested through RESETHUB,
+	 * the cellcore must then be started with cpuconf again.
+	 */
+	if (*resetreas == 0) {
+		ironside_se_cellcore_is_booted = false;
+	}
+
+	return true;
 }
 
 static inline void pbuf_configure(struct pbuf_cfg *pb_cfg, uintptr_t mem_addr, size_t size)
@@ -255,6 +283,13 @@ int nrf_modem_os_rpc_signal_init(struct nrf_modem_os_rpc_signal *instance,
 		return 0;
 	}
 
+#if CONFIG_NRF_MODEM_LIB_CELL_EVENT_FORWARD
+	if (instance == &inst_cell_event) {
+		/* The application owns the channel, see nrf_modem_lib_cell_event_notify(). */
+		return 0;
+	}
+#endif
+
 	err = mbox_register_callback_dt(&instance->mbox, mbox_common_callback, (void *)instance);
 	if (err) {
 		goto errout;
@@ -287,8 +322,27 @@ int nrf_modem_os_rpc_signal_deinit(struct nrf_modem_os_rpc_signal *instance)
 		return 0;
 	}
 
+#if CONFIG_NRF_MODEM_LIB_CELL_EVENT_FORWARD
+	if (instance == &inst_cell_event) {
+		instance->recv = NULL;
+		return 0;
+	}
+#endif
+
 	return mbox_set_enabled_dt(&instance->mbox, false);
 }
+
+#if CONFIG_NRF_MODEM_LIB_CELL_EVENT_FORWARD
+void nrf_modem_lib_cell_event_notify(void)
+{
+	/* May race with nrf_modem_os_rpc_signal_deinit(), read the callback once. */
+	nrf_modem_os_rpc_signal_cb_t recv = inst_cell_event.recv;
+
+	if (recv != NULL) {
+		recv(inst_cell_event.mbox.channel_id, inst_cell_event.priv);
+	}
+}
+#endif
 
 int nrf_modem_os_rpc_cache_data_flush(void *addr, size_t size)
 {
