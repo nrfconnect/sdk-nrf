@@ -823,6 +823,7 @@ Networking samples
     * :ref:`net_coap_client_sample`
     * :ref:`download_sample`
     * :ref:`http_server`
+    * :ref:`https_client`
 
 * :ref:`aws_iot` sample:
 
