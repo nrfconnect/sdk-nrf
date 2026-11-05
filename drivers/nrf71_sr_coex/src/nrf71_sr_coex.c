@@ -230,7 +230,7 @@ static void cd_pti_range_from_wire(struct nrf71_sr_coex_pti_range *dst, const un
 }
 
 /* Without a registered SR driver, report success so the CD runs unchanged. */
-static int cd_sr_enable(bool enable)
+int cd_sr_enable(bool enable)
 {
 	const struct nrf71_sr_coex_sr_driver_cb *cb = atomic_ptr_get(&sr_driver_cb);
 
