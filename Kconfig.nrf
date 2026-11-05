@@ -51,6 +51,12 @@ config BOARD_THINGY91_NRF9160_NS
 config NET_SOCKETS_OFFLOAD_TLS
 	bool
 
+# Zephyr removed the prompt of this option, the SoC or the board is expected
+# to select it and implement the hook. In nRF Connect SDK, MCUboot and some
+# tests implement soc_early_reset_hook() themselves, so keep it configurable.
+config SOC_EARLY_RESET_HOOK
+	bool "Run SoC-specific early reset hook"
+
 # nRF Connect SDK needs a larger default stacks in certain configurations
 #  - For CC3XX RNG
 #  - For Cracen RNG
