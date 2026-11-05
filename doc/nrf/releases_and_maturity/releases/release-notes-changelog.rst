@@ -804,6 +804,7 @@ Networking samples
   * Support for the nRF9160 DK, the nRF9161 DK, and the Thingy:91 from the following samples:
 
     * :ref:`aws_iot`
+    * :ref:`azure_iot_hub_sample`
 
 * :ref:`aws_iot` sample:
 
