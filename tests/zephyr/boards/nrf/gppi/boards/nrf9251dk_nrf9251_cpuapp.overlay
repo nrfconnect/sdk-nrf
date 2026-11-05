@@ -16,6 +16,10 @@ dut_timer2: &timer132 {
 	status = "reserved";
 };
 
+dut_egu: &egu130 {
+	status = "reserved";
+};
+
 &pdm0 {
 	status = "reserved";
 };
