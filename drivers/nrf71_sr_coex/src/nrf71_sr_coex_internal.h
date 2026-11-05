@@ -71,6 +71,15 @@ int coex_cm_get_stats(void);
 int cd_stats_fetch(struct cm_stats_t *stats, struct cm_fsm_patch_stats_t *patch_stats,
 		   bool *patch_valid);
 
+/**
+ * Enable or disable posting of SR hardware client requests to COEXC through
+ * the registered SR driver callback.
+ *
+ * @retval 0 On success, or when no SR driver (or enable callback) is registered.
+ * @retval <0 Negative errno returned by the SR driver.
+ */
+int cd_sr_enable(bool enable);
+
 /** Program the COEXC arbitration tables for the given antenna layout. */
 void cd_coexc_configure(enum nrf71_sr_coex_antenna antenna);
 
