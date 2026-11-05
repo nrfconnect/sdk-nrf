@@ -10057,7 +10057,10 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               With the CRACEN driver, SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
+               With the CRACEN driver:
+
+               * SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
+               * WPA3-SAE (fixed and GDH) supports only SHA-256 with secp256r1 curve.
 
          .. tab:: nrf_oberon
 
