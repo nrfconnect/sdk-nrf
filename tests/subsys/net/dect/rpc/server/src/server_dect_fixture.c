@@ -53,6 +53,13 @@ struct net_if *server_dect_fixture_ensure_booted(void)
 		return NULL;
 	}
 
+	/*
+	 * Boot-time L2 shell prints (for example ACTIVATE_DONE) go out as RPC SHELL_LINE
+	 * events from the system workqueue, where the sink RS work may run first. Let them
+	 * flush before any suite arms RPC expectations.
+	 */
+	k_msleep(100);
+
 	booted = true;
 	return server_dect_iface;
 }
