@@ -10063,13 +10063,13 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - SPAKE2+ with CMAC
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SPAKE2P_CMAC`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                * - SPAKE2+ for Matter
@@ -10130,7 +10130,10 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               With the CRACEN driver, SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
+               With the CRACEN driver:
+
+               * SPAKE2+ with HMAC supports only SHA-256 (``PSA_ALG_SPAKE2P_HMAC(PSA_ALG_SHA_256)``).
+               * SRP password hashing supports only SHA-512 (``PSA_ALG_SRP_PASSWORD_HASH(PSA_ALG_SHA_512)``).
 
          .. tab:: nrf_oberon
 
