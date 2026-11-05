@@ -192,8 +192,6 @@ The sample provides predefined configuration files for the following development
 
 * :file:`prj.conf` - General configuration file for all devices.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 * :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
@@ -338,11 +336,12 @@ Troubleshooting
 ===============
 
 If you have issues with connectivity on nRF91 Series devices, see the `Cellular Monitor app`_ documentation to learn how to capture modem traces to debug network traffic in Wireshark.
-Modem traces can be enabled by providing a snippet with the west build command as shown in the following example for nRF9161 DK:
+You can enable modem traces by providing a snippet with the ``west build`` command.
+The following example shows the command for the nRF9151 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -- -Dhttp_server_SNIPPET="nrf91-modem-trace-uart"
+   west build -p -b nrf9151dk/nrf9151/ns -- -Dhttp_server_SNIPPET="nrf91-modem-trace-uart"
 
 If you have issues with connectivity on nRF71 Series or nRF70 Series devices, see the :ref:`wifi_monitor_sample` sample documentation to learn how to capture and analyze Wi-Fi traffic in order to debug connectivity issues.
 Also verify that the Wi-Fi credentials configured for your device match your access point, as described in the `Configuration options`_ section on this page.
