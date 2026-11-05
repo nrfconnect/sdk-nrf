@@ -66,9 +66,6 @@ The sample provides predefined configuration files for the following development
 
 * :file:`prj.conf` - General configuration file for all devices.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 * :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.

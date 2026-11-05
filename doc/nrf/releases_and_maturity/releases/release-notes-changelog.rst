@@ -810,6 +810,7 @@ Networking samples
     * :ref:`http_server`
     * :ref:`https_client`
     * :ref:`mqtt_sample`
+    * :ref:`udp_sample`
 
 * :ref:`aws_iot` sample:
 
