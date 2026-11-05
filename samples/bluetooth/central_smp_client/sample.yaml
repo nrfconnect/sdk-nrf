@@ -30,5 +30,5 @@ tests:
       regex:
         - "Starting Bluetooth Central SMP Client sample"
         - "Bluetooth initialized"
-        - "Scanning successfully started"
+        - "Press the connection button to connect to the remote target"
     timeout: 15

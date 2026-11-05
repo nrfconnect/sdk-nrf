@@ -30,8 +30,9 @@
 
 LOG_MODULE_REGISTER(central_smp_client, LOG_LEVEL_INF);
 
-#define KEY_DFU_MASK    DK_BTN1_MSK
-#define KEY_UPLOAD_MASK DK_BTN2_MSK
+#define KEY_DFU_MASK     DK_BTN1_MSK
+#define KEY_UPLOAD_MASK  DK_BTN2_MSK
+#define KEY_CONNECT_MASK DK_BTN3_MSK
 
 #define RUN_STATUS_LED              DK_LED1
 #define RUN_LED_BLINK_INTERVAL_MS   500U
@@ -77,9 +78,16 @@ static int scan_start(void)
 {
 	int err;
 
+	if (central_conn != NULL) {
+		LOG_WRN("A connection to the remote target is already active");
+		return -EALREADY;
+	}
+
 	err = bt_scan_start(BT_SCAN_TYPE_SCAN_ACTIVE);
 	if (err) {
 		LOG_ERR("Scanning failed to start (err %d)", err);
+	} else {
+		LOG_INF("Scanning successfully started");
 	}
 
 	return err;
@@ -327,7 +335,7 @@ static void disconnected(struct bt_conn *conn, uint8_t reason)
 	bt_conn_unref(central_conn);
 	central_conn = NULL;
 
-	(void)scan_start();
+	LOG_INF("Press the connection button to reconnect to the remote target");
 }
 
 BT_CONN_CB_DEFINE(conn_callbacks) = {
@@ -669,6 +677,10 @@ K_THREAD_DEFINE(dfu_thread_id, DFU_THREAD_STACK_SIZE, dfu_thread_fn, NULL, NULL,
 
 static void button_handler(uint32_t button_state, uint32_t has_changed)
 {
+	if ((has_changed & KEY_CONNECT_MASK) && (button_state & KEY_CONNECT_MASK)) {
+		(void)scan_start();
+	}
+
 	if ((has_changed & KEY_DFU_MASK) && (button_state & KEY_DFU_MASK)) {
 		if (!atomic_get(&dfu_ready)) {
 			LOG_WRN("SMP DFU client not ready: connect and complete "
@@ -733,12 +745,7 @@ int main(void)
 		return err;
 	}
 
-	err = scan_start();
-	if (err) {
-		return err;
-	}
-
-	LOG_INF("Scanning successfully started");
+	LOG_INF("Press the connection button to connect to the remote target");
 
 	while (true) {
 		dk_set_led(RUN_STATUS_LED, (++blink_status) % 2);
