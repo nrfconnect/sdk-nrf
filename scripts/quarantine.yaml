@@ -108,3 +108,9 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
+
+- scenarios:
+    - sample.nrf7002_eb.thingy53.thread_coex
+  platforms:
+    - thingy53/nrf5340/cpuapp
+  comment: "region FLASH overflowed after the Zephyr v4.5 upmerge, the new hostap adds about 13 kB"
