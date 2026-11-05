@@ -61,6 +61,10 @@ Based on this setting and the corresponding ``CONFIG_PSA_USE_*`` Kconfig option,
 
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
+.. note::
+   None of the drivers support deriving an RSA key pair from a key derivation operation.
+   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add RSA key pair derivation support.
+
 .. tabs::
 
    .. tab:: nRF52 Series
@@ -110,7 +114,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -245,14 +249,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -426,7 +430,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -541,10 +545,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
+                 - --
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -980,7 +984,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-DSA-65
@@ -991,7 +995,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-DSA-87
@@ -1002,7 +1006,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Import
@@ -1013,7 +1017,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Export
@@ -1024,29 +1028,29 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Generate
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA Key Pair Derive
                 - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
-                - --
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
+                - Experimental
                 - --
                 - --
               * - ML-DSA Public Key
@@ -1057,7 +1061,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM-512
@@ -1068,7 +1072,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM-768
@@ -1079,7 +1083,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM-1024
@@ -1090,7 +1094,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM Key Pair Import
@@ -1101,7 +1105,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM Key Pair Export
@@ -1112,7 +1116,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM Key Pair Generate
@@ -1123,7 +1127,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM Key Pair Derive
@@ -1134,7 +1138,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - ML-KEM Public Key
@@ -1145,7 +1149,7 @@ The options are grouped by Series and drivers available for the device Series, a
                 - Experimental
                 - Experimental
                 - Experimental
-                - --
+                - Experimental
                 - --
                 - --
               * - WPA3-SAE key
@@ -1170,6 +1174,9 @@ The options are grouped by Series and drivers available for the device Series, a
                 - --
                 - --
                 - --
+
+            .. note::
+               ML-DSA and ML-KEM key pair generate and derive operations are implemented in TF-PSA-Crypto (Oberon PSA Crypto), not in the CRACEN driver.
 
          .. tab:: nrf_oberon
 
@@ -1289,26 +1296,26 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -1395,8 +1402,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA-65
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_65`
                  - Experimental
@@ -1406,8 +1413,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA-87
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_DSA_KEY_SIZE_87`
                  - Experimental
@@ -1417,8 +1424,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_IMPORT`
                  - Experimental
@@ -1428,8 +1435,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_EXPORT`
                  - Experimental
@@ -1439,8 +1446,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_GENERATE`
                  - Experimental
@@ -1450,8 +1457,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_KEY_PAIR_DERIVE`
                  - Experimental
@@ -1461,8 +1468,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-DSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY`
                  - Experimental
@@ -1472,8 +1479,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_512`
                  - Experimental
@@ -1483,8 +1490,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM-768
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_768`
                  - Experimental
@@ -1494,8 +1501,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM-1024
                  - :kconfig:option:`CONFIG_PSA_WANT_ML_KEM_KEY_SIZE_1024`
                  - Experimental
@@ -1505,8 +1512,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM Key Pair Import
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_IMPORT`
                  - Experimental
@@ -1516,8 +1523,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM Key Pair Export
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_EXPORT`
                  - Experimental
@@ -1527,8 +1534,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_GENERATE`
                  - Experimental
@@ -1538,8 +1545,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_KEY_PAIR_DERIVE`
                  - Experimental
@@ -1549,8 +1556,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - ML-KEM Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_ML_KEM_PUBLIC_KEY`
                  - Experimental
@@ -1560,8 +1567,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - WPA3-SAE PT key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_WPA3_SAE`
                  - Experimental
@@ -1665,10 +1672,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Experimental
@@ -1888,16 +1895,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - RSA Key Pair Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA Key Pair Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
                * - RSA Public Key
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY`
                  - Supported
@@ -2623,10 +2630,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Supported
+                 - Experimental
                  - Supported
                  - Supported
                  - Supported
-                 - --
                  - --
                  - --
                * - Stream cipher
@@ -2643,10 +2650,8 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
-
-               * 192-bit keys are not supported.
-                 See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+               See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
 
@@ -3399,6 +3404,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3406,6 +3412,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54LS05B
                * - ML-KEM
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ML_KEM`
+                 - Experimental
                  - Experimental
                  - Experimental
                  - Experimental
@@ -3426,6 +3433,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - nRF54L05
                  - nRF54L10
                  - nRF54L15
+                 - nRF54LC10A
                  - nRF54LM20A
                  - nRF54LM20B
                  - nRF54LV10A
@@ -3440,7 +3448,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
+                 - --
+                 - --
 
    .. tab:: nRF91 Series
 
@@ -3635,9 +3644,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - WPA3-SAE hash-to-element
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
    .. tab:: nRF53 Series
 
@@ -3686,7 +3695,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - WPA3-SAE hash-to-element
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
-                 - --
+                 - Experimental
 
    .. tab:: nRF54H Series
 
@@ -4106,10 +4115,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - WPA3-SAE hash-to-element
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_WPA3_SAE_H2E`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
+                 - Experimental
 
 Key derivation function driver
 ------------------------------
@@ -4352,11 +4361,8 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The CRACEN driver does not support unwrapping RSA keys with ``psa_unwrap_key()``.
-
-               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
-
-               * 192-bit keys are not supported.
+               * The CRACEN driver does not support unwrapping RSA keys with ``psa_unwrap_key()``.
+               * 192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
                  See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
@@ -4617,10 +4623,8 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-               The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
-
-               * 192-bit keys are not supported.
-                 See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+               192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+               See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
 
@@ -5112,11 +5116,9 @@ The options are grouped by Series and drivers available for the device Series, a
 
             .. note::
 
-                * CRACEN only supports a 96-bit IV for AES GCM.
-                * The following limitations apply for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver:
-
-                  * 192-bit keys are not supported.
-                    See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
+               * CRACEN only supports a 96-bit IV for AES GCM.
+               * 192-bit keys are not supported for nRF54LC10A, nRF54LM20A, nRF54LM20B, and nRF54LV10A when using the CRACEN driver.
+                 See also :ref:`ug_crypto_supported_features_aes_key_sizes`.
 
          .. tab:: nrf_oberon
 
@@ -5525,14 +5527,14 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - HashEdDSA Edwards448
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -5656,10 +5658,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
+                 - Supported
                * - HashEdDSA Edwards448
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
+                 - Supported
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -5885,7 +5887,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - --
+                 - Experimental
                  - --
                  - --
                * - XMSS
@@ -5996,26 +5998,26 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - HashEdDSA Edwards448
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -6069,8 +6071,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - XMSS
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_XMSS`
                  - Experimental
@@ -6102,8 +6104,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - Deterministic ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_ML_DSA`
                  - Experimental
@@ -6113,8 +6115,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
                * - Deterministic Hash ML-DSA
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_DETERMINISTIC_HASH_ML_DSA`
                  - Experimental
@@ -6124,8 +6126,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Experimental
-                 - Experimental
+                 - --
+                 - --
 
             .. note::
                - :kconfig:option:`CONFIG_PSA_WANT_ALG_ECDSA` is limited to ECC curve types secp224r1, secp256r1, and secp384r1.
@@ -6254,16 +6256,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - HashEdDSA Edwards25519
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED25519PH`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - HashEdDSA Edwards448
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_ED448PH`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - RSA PKCS#1 v1.5 sign
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_RSA_PKCS1V15_SIGN`
                  - Supported
@@ -7018,9 +7020,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
@@ -7038,9 +7040,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp521r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
 
    .. tab:: nRF53 Series
 
@@ -7138,7 +7140,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
+                 - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
@@ -7150,7 +7152,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp521r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
+                 - Supported
 
    .. tab:: nRF54H Series
 
@@ -7514,15 +7516,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
@@ -7558,15 +7560,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp521r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
 
    .. tab:: nRF91 Series
 
@@ -7739,10 +7741,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp256k1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_K1_256`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - secp224r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_224`
                  - Supported
@@ -7763,10 +7765,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - secp521r1
                  - :kconfig:option:`CONFIG_PSA_WANT_ECC_SECP_R1_521`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
 
 ECC curve driver
 ----------------
@@ -8533,24 +8535,24 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SHA3-224
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-384
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
                  - Experimental
@@ -8669,16 +8671,16 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SHA3-224
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
+                 - Supported
                * - SHA3-256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
+                 - Supported
                * - SHA3-384
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
+                 - Supported
                * - SHA3-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
+                 - Supported
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
                  - Experimental
@@ -9024,48 +9026,48 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SHA3-224
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-384
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Experimental
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
                  - Experimental
@@ -9286,28 +9288,28 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - SHA3-224
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_224`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-256
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_256`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-384
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_384`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA3-512
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA3_512`
-                 - --
-                 - --
-                 - --
-                 - --
+                 - Supported
+                 - Supported
+                 - Supported
+                 - Supported
                * - SHA-256/192
                  - :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_256_192`
                  - Experimental
@@ -10421,6 +10423,10 @@ Based on this setting, Oberon PSA Crypto selects the most appropriate driver for
 
 The options are grouped by Series and drivers available for the device Series, and support level for each device is listed.
 
+.. note::
+   None of the drivers support deriving an RSA key pair from a key derivation operation.
+   The :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE` Kconfig option is available, but enabling it does not add RSA key pair derivation support.
+
 .. tabs::
 
    .. tab:: nRF52 Series
@@ -10449,7 +10455,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -10479,9 +10485,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
 
    .. tab:: nRF53 Series
 
@@ -10509,7 +10515,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -10531,7 +10537,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
+                 - --
 
    .. tab:: nRF54L Series
 
@@ -10653,15 +10659,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
 
    .. tab:: nRF91 Series
 
@@ -10701,10 +10707,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
 
          .. tab:: nrf_oberon
 
@@ -10738,10 +10744,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_RSA_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
 
 SRP key pair operations
 -----------------------
@@ -10867,7 +10873,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - Supported
+                 - Experimental
                  - --
                  - --
                * - Generate
@@ -11039,9 +11045,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
                  - Supported
@@ -11071,7 +11077,7 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
                  - Supported
@@ -11218,15 +11224,15 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
                  - Supported
@@ -11271,10 +11277,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SPAKE2P_KEY_PAIR_DERIVE`
                  - Supported
