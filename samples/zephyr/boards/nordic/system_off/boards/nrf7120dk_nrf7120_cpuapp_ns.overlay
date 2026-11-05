@@ -34,3 +34,7 @@
 &gpio4 {
 	gpiote-instance = <&gpiote20>;
 };
+
+&reset {
+	status = "okay";
+};
