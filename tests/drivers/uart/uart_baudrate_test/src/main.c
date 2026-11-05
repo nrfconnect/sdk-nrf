@@ -14,6 +14,9 @@
 #include <stdlib.h>
 #include <math.h>
 
+#define UARTE_HAS_BAUDRATE_FORMULA                                                                 \
+	(!DT_ALL_COMPAT_HAS_BOOL_STATUS_OKAY(nordic_nrf_uarte, current_speed_is_enum))
+
 static NRF_GPIO_Type *gpio_port =
 	((NRF_GPIO_Type *)DT_REG_ADDR(DT_GPIO_CTLR(DT_PATH(zephyr_user), gpios)));
 static uint32_t pin_mask = BIT(DT_GPIO_PIN(DT_PATH(zephyr_user), gpios));
@@ -82,7 +85,7 @@ static void check_timing(uint32_t baudrate)
 	test_uart_config.baudrate = baudrate;
 	test_uart_config.data_bits = UART_CFG_DATA_BITS_8;
 	ret = uart_configure(uart_dev, &test_uart_config);
-	if (ret == -ENOTSUP) {
+	if ((ret == -ENOTSUP) && !UARTE_HAS_BAUDRATE_FORMULA) {
 		TC_PRINT("[%d] Not supported\n", baudrate);
 		ztest_test_skip();
 	}
