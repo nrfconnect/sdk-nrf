@@ -713,6 +713,7 @@
 /samples/bluetooth/hci_lpuart/*.rst       @nrfconnect/ncs-doc-leads
 /samples/bluetooth/iso_combined_bis_and_cis/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/iso_time_sync/*.rst    @nrfconnect/ncs-dragoon-doc
+/samples/bluetooth/le_adv_report_chan_idx/*.rst @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/llpm/*.rst             @nrfconnect/ncs-dragoon-doc
 /samples/bluetooth/multiple_adv_sets/*.rst @nrfconnect/ncs-blenders-doc
 /samples/bluetooth/nrf_dm/*.rst           @nrfconnect/ncs-blenders-doc
