@@ -30,6 +30,8 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 +----------------------+                                                                    +---------------------------------------+
 | nRF9151 SMA DK       |                                                                    | `nRF9151 SMA DK Hardware`_            |
 +----------------------+                                                                    +---------------------------------------+
+| nRF93M1 DK           |                                                                    | `nRF93M1 DK Hardware User Guide`_     |
++----------------------+                                                                    +---------------------------------------+
 | nRF7002 DK           |                                                                    | `nRF7002 DK Hardware`_                |
 +----------------------+                                                                    +---------------------------------------+
 | nRF54LC10 DK         |                                                                    | `nRF54LC10 DK User Guide`_            |
