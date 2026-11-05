@@ -14,4 +14,15 @@ config TEST_MAX_BUFFER_SIZE
 	default 512 if SOC_NRF54H20_CPUPPR
 	default 2000
 
+config TEST_SPI_LATENCY_BASE_OVERHEAD_US
+	int "Base overhead time for SPI latency measurement"
+	default 130 if SOC_NRF9251_CPUPPR || SOC_NRF54H20_CPUPPR
+	default 55
+
+config TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US
+	int "Overhead time per byte for SPI latency measurement"
+	default 2 if RISCV_CORE_NORDIC_VPR && XIP
+	default 1 if HAS_NORDIC_DMM
+	default 0
+
 source "Kconfig.zephyr"
