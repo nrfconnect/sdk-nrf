@@ -122,3 +122,10 @@
   platforms:
     - thingy91/nrf9160/ns
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42195"
+
+- scenarios:
+    - bootloader.bl_validation.negative.no_otp_keys
+  platforms:
+    - nrf54l15dk/nrf54l05/cpuapp
+    - nrf54l15dk/nrf54l10/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42261"
