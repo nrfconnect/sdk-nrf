@@ -260,6 +260,8 @@ Bluetooth® LE
   * Support for Decision Based Advertising Filtering in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_DECISION_BASED_ADV_FILTERING` Kconfig option.
   * Support for a vendor-specific minimum connection event length mode.
   * The :kconfig:option:`CONFIG_BT_CTLR_SDC_MIN_CONN_EVENT_LENGTH_MODE_DEFAULT` Kconfig option to set the minimum connection event length mode on boot.
+  * Support for the channel index in advertising reports for legacy advertising PDUs in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_SDC_CHAN_IDX_IN_ADV_REPORT` Kconfig option.
+    The host exposes the channel index in the :c:member:`bt_le_scan_recv_info.chan_idx` field when the :kconfig:option:`CONFIG_BT_HCI_ADV_REPORT_CHAN_IDX` Kconfig option is enabled.
 
 Bluetooth Mesh
 --------------
@@ -485,7 +487,11 @@ This section provides detailed lists of changes by :ref:`sample <samples>`.
 Bluetooth samples
 -----------------
 
-* Added the :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+* Added:
+
+  * The :ref:`ble_channel_classification` sample that demonstrates peripheral-initiated channel classification reports and the central applying them as the channel map.
+
+  * The :ref:`ble_le_adv_report_chan_idx` sample that demonstrates the channel index in advertising reports for legacy advertising PDUs.
 
 * Removed:
 
