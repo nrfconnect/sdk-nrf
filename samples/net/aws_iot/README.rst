@@ -36,7 +36,7 @@ The message has the following structure:
 		"state": {
 			"reported": {
 				"app_version": "v1.0.0",
-				"modem_version": "nrf9160-1.3.4", /\* Not present for Wi-Fi builds \*/
+				"modem_version": "nrf91x1_2.0.4", /\* Not present for Wi-Fi builds \*/
 				"uptime": 2469
 			}
 		}
@@ -134,9 +134,6 @@ The sample provides predefined configuration files for the following development
 
 * :file:`prj.conf` - General configuration file for all devices.
 * :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
 * :file:`boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
 * :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
 * :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
@@ -221,8 +218,8 @@ The *modem_version* parameter in messages published to AWS IoT is not present fo
    [00:00:02.486,297] <inf> aws_iot_sample: Network connectivity established
    [00:00:07.486,419] <inf> aws_iot_sample: Connecting to AWS IoT
    [00:00:11.061,981] <inf> aws_iot_sample: AWS_IOT_EVT_CONNECTED
-   [00:00:11.062,866] <inf> aws_iot_sample: Publishing message: {"state":{"reported":{"uptime":11062,"app_version":"v1.0.0","modem_version":"nrf9160_1.3.4"}}} to AWS IoT shadow
-   [00:01:11.073,120] <inf> aws_iot_sample: Publishing message: {"state":{"reported":{"uptime":71063,"app_version":"v1.0.0","modem_version":"nrf9160_1.3.4"}}} to AWS IoT shadow
+   [00:00:11.062,866] <inf> aws_iot_sample: Publishing message: {"state":{"reported":{"uptime":11062,"app_version":"v1.0.0","modem_version":"nrf91x1_2.0.4"}}} to AWS IoT shadow
+   [00:01:11.073,120] <inf> aws_iot_sample: Publishing message: {"state":{"reported":{"uptime":71063,"app_version":"v1.0.0","modem_version":"nrf91x1_2.0.4"}}} to AWS IoT shadow
 
 .. note::
    For nRF91 Series devices, the output differs from the above example output.

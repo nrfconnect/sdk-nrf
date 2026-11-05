@@ -816,6 +816,10 @@ Networking samples
     * :ref:`https_client`
     * :ref:`udp_sample`
 
+  * Support for the nRF9160 DK, the nRF9161 DK, and the Thingy:91 from the following samples:
+
+    * :ref:`aws_iot`
+
 * :ref:`aws_iot` sample:
 
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
