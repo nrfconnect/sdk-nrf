@@ -14,6 +14,8 @@
 #include <nrfx_nvmc.h>
 #elif defined(CONFIG_NRFX_RRAMC)
 #include <nrfx_rramc.h>
+#elif defined(CONFIG_NRFX_MRAMC)
+#include <nrfx_mramc.h>
 #endif
 #include <zephyr/sys/printk.h>
 #include <zephyr/kernel.h>
@@ -215,7 +217,7 @@ BUILD_ASSERT((INVALID_VAL & CONFIG_FW_INFO_VALID_VAL)
 
 #ifdef CONFIG_FW_INFO_INVALIDATE_API
 #if defined(CONFIG_FLASH)
-#warning FW info structures cannot be updated using flash API. NVMC/RRAMC API will be used instead.
+#warning FW info structures cannot be updated using flash API. NVM controller API is used instead.
 #endif
 
 void fw_info_invalidate(const struct fw_info *fw_info)
@@ -231,6 +233,14 @@ void fw_info_invalidate(const struct fw_info *fw_info)
 	if (err != 0 && err != -EALREADY) {
 		return;
 	}
+#elif defined(CONFIG_NRFX_MRAMC)
+	nrfx_mramc_config_t config = NRFX_MRAMC_DEFAULT_CONFIG();
+
+	int err = nrfx_mramc_init(&config, NULL);
+
+	if (err != 0 && err != -EALREADY) {
+		return;
+	}
 #endif
 
 	/* Check if value has been written. */
@@ -239,6 +249,8 @@ void fw_info_invalidate(const struct fw_info *fw_info)
 		nrfx_nvmc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #elif defined(CONFIG_NRFX_RRAMC)
 		nrfx_rramc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
+#elif defined(CONFIG_NRFX_MRAMC)
+		nrfx_mramc_word_write((uint32_t)&(fw_info->valid), INVALID_VAL);
 #endif
 	}
 }

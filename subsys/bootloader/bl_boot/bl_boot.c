@@ -19,7 +19,8 @@
 #include <hal/nrf_gpio.h>
 #endif
 /* Address of storage as seen in processor address space */
-#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr) || \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf71_uicr)
 #define BL_STORAGE_ADDRESS	DT_REG_ADDR(DT_NODELABEL(bl_storage))
 #define BL_STORAGE_SIZE		DT_REG_SIZE(DT_NODELABEL(bl_storage))
 #else
@@ -35,11 +36,18 @@
 #define CLEANUP_RAM_GAP_SIZE ((int) (__ramfunc_end - __ramfunc_region_start))
 
 #if defined(CONFIG_SB_DISABLE_NEXT_W)
-#include <hal/nrf_rramc.h>
-#define RRAMC_REGION_FOR_NEXT_W 4
-#define NRF_RRAM_REGION_SIZE_UNIT 0x400
-#define NRF_RRAM_REGION_ADDRESS_RESOLUTION 0x400
+#define NVM_REGION_FOR_NEXT_W 4
+#define NVM_REGION_SIZE_UNIT 0x400
+#define NVM_REGION_ADDRESS_RESOLUTION 0x400
 
+#if defined(CONFIG_HAS_HW_NRF_MRAMC)
+#include <hal/nrf_mramc.h>
+/* A single MRAMC region covers at most 31 KiB, so REGION[5] continues REGION[4]. */
+#define NVM_REGION_FOR_NEXT_W_CONT 5
+#define NVM_REGION_MAX_SIZE_KB 31
+#define MAX_NEXT_W_SIZE (2 * NVM_REGION_MAX_SIZE_KB * 1024)
+#else
+#include <hal/nrf_rramc.h>
 #if defined(CONFIG_SOC_NRF54L15_CPUAPP) || defined(CONFIG_SOC_NRF54L05_CPUAPP) ||                  \
 	defined(CONFIG_SOC_NRF54L10_CPUAPP)
 #define MAX_NEXT_W_SIZE (31 * 1024)
@@ -49,6 +57,7 @@
 #elif defined(CONFIG_SOC_NRF54LS05B_CPUAPP)
 #define MAX_NEXT_W_SIZE (1023 * 1024)
 #endif
+#endif /* CONFIG_HAS_HW_NRF_MRAMC */
 
 /* Note: the write protection is only applied to the image itself, not the header (pad).
  * When building with MCUBoot, applying protection to the header is not needed, as the
@@ -60,34 +69,70 @@
 #define S1_IMAGE_ADDRESS	(PARTITION_OFFSET(s1_partition) + RWX_SKIP_SIZE)
 #define S1_IMAGE_SIZE		(PARTITION_SIZE(s1_partition) - RWX_SKIP_SIZE)
 
-BUILD_ASSERT((S0_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+BUILD_ASSERT((S0_IMAGE_ADDRESS % NVM_REGION_ADDRESS_RESOLUTION) == 0,
 	     "Start of S0 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT((S0_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+BUILD_ASSERT((S0_IMAGE_SIZE % NVM_REGION_SIZE_UNIT) == 0,
 	     "Size of S0 image region is not aligned - not possible to protect");
 
 BUILD_ASSERT(S0_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S0 partition is too big for protection");
 
-BUILD_ASSERT((S1_IMAGE_ADDRESS % NRF_RRAM_REGION_ADDRESS_RESOLUTION) == 0,
+BUILD_ASSERT((S1_IMAGE_ADDRESS % NVM_REGION_ADDRESS_RESOLUTION) == 0,
 	     "Start of S1 image region is not aligned - not possible to protect");
 
-BUILD_ASSERT((S1_IMAGE_SIZE % NRF_RRAM_REGION_SIZE_UNIT) == 0,
+BUILD_ASSERT((S1_IMAGE_SIZE % NVM_REGION_SIZE_UNIT) == 0,
 	     "Size of S1 image region is not aligned - not possible to protect");
 
 BUILD_ASSERT(S1_IMAGE_SIZE <= MAX_NEXT_W_SIZE, "Size of S1 partition is too big for protection");
+
+#if defined(CONFIG_HAS_HW_NRF_MRAMC)
+static int lock_next_w_region(uint8_t region, uint32_t address, uint32_t size_kb)
+{
+	nrf_mramc_region_config_t config = {
+		.read = true,
+		.write = false,
+		.execute = true,
+		.write_once = false,
+		/* The next stage can still clear R/X on a locked region. */
+		.lock = true,
+		.size = size_kb,
+	};
+
+	nrf_mramc_region_address_set(NRF_MRAMC, region, address);
+	nrf_mramc_region_config_set(NRF_MRAMC, region, &config);
+	nrf_mramc_region_config_get(NRF_MRAMC, region, &config);
+	if (config.write || config.size != size_kb) {
+		return -ENOSPC;
+	}
+
+	return 0;
+}
+#endif
 
 static int disable_next_w(const uint32_t address)
 {
 	uint32_t region_size_kb = 0;
 
 	if (address == S0_IMAGE_ADDRESS) {
-		region_size_kb = S0_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
+		region_size_kb = S0_IMAGE_SIZE / NVM_REGION_SIZE_UNIT;
 	} else if (address == S1_IMAGE_ADDRESS) {
-		region_size_kb = S1_IMAGE_SIZE / NRF_RRAM_REGION_SIZE_UNIT;
+		region_size_kb = S1_IMAGE_SIZE / NVM_REGION_SIZE_UNIT;
 	} else {
 		return -EINVAL;
 	}
 
+#if defined(CONFIG_HAS_HW_NRF_MRAMC)
+	uint32_t first_kb = MIN(region_size_kb, NVM_REGION_MAX_SIZE_KB);
+	int err = lock_next_w_region(NVM_REGION_FOR_NEXT_W, address, first_kb);
+
+	if (err == 0 && region_size_kb > first_kb) {
+		err = lock_next_w_region(NVM_REGION_FOR_NEXT_W_CONT,
+					 address + first_kb * NVM_REGION_SIZE_UNIT,
+					 region_size_kb - first_kb);
+	}
+
+	return err;
+#else
 	nrf_rramc_region_config_t config = {
 		.address = address,
 		.permissions =  NRF_RRAMC_REGION_PERM_READ_MASK |
@@ -101,8 +146,8 @@ static int disable_next_w(const uint32_t address)
 		.size_kb = region_size_kb,
 	};
 
-	nrf_rramc_region_config_set(NRF_RRAMC, RRAMC_REGION_FOR_NEXT_W, &config);
-	nrf_rramc_region_config_get(NRF_RRAMC, RRAMC_REGION_FOR_NEXT_W, &config);
+	nrf_rramc_region_config_set(NRF_RRAMC, NVM_REGION_FOR_NEXT_W, &config);
+	nrf_rramc_region_config_get(NRF_RRAMC, NVM_REGION_FOR_NEXT_W, &config);
 	if (config.permissions & (NRF_RRAMC_REGION_PERM_WRITE_MASK)) {
 		return -ENOSPC;
 	}
@@ -111,6 +156,7 @@ static int disable_next_w(const uint32_t address)
 	}
 
 	return 0;
+#endif /* CONFIG_HAS_HW_NRF_MRAMC */
 }
 
 #endif
@@ -121,20 +167,30 @@ static int disable_next_w(const uint32_t address)
  * RAM has been cleared, therefore these operations are performed while executing from RAM.
  * RAM cleanup ommits portion of the memory where code lives.
  */
+#if defined(CONFIG_HAS_HW_NRF_MRAMC)
+#include <hal/nrf_mramc.h>
+/* MRAMC REGION[n].CONFIG has the same R/W/X, LOCK and SIZE layout as RRAMC. */
+#define NVM_REGION_TO_LOCK_ADDR NRF_MRAMC->REGION[3].CONFIG
+#define NVM_REGION_CONFIG_LOCK_Msk MRAMC_REGION_CONFIG_LOCK_Msk
+#define NVM_REGION_CONFIG_SIZE_Msk MRAMC_REGION_CONFIG_SIZE_Msk
+#else
 #include <hal/nrf_rramc.h>
-
-#define RRAMC_REGION_RWX_LSB 0
-#define RRAMC_REGION_RWX_WIDTH 3
 #if defined(CONFIG_SOC_NRF54LS05A_CPUAPP) || defined(CONFIG_SOC_NRF54LS05B_CPUAPP)
 #define RRAMC_REGION_TO_LOCK 2
 #else
 #define RRAMC_REGION_TO_LOCK 3
 #endif
-#define RRAMC_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[RRAMC_REGION_TO_LOCK].CONFIG
-#define RRAMC_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) >> 16)
-#define RRAMC_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(RRAMC_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
-#define RRAMC_REGION_SIZE_MASK_H (RRAMC_REGION_CONFIG_SIZE_Msk >> 16)
-#define RRAMC_REGION_SIZE_MASK_L (RRAMC_REGION_CONFIG_SIZE_Msk & 0x0000fffful)
+#define NVM_REGION_TO_LOCK_ADDR NRF_RRAMC->REGION[RRAMC_REGION_TO_LOCK].CONFIG
+#define NVM_REGION_CONFIG_LOCK_Msk RRAMC_REGION_CONFIG_LOCK_Msk
+#define NVM_REGION_CONFIG_SIZE_Msk RRAMC_REGION_CONFIG_SIZE_Msk
+#endif
+
+#define NVM_REGION_RWX_LSB 0
+#define NVM_REGION_RWX_WIDTH 3
+#define NVM_REGION_TO_LOCK_ADDR_H (((uint32_t)(&(NVM_REGION_TO_LOCK_ADDR))) >> 16)
+#define NVM_REGION_TO_LOCK_ADDR_L (((uint32_t)(&(NVM_REGION_TO_LOCK_ADDR))) & 0x0000fffful)
+#define NVM_REGION_SIZE_MASK_H (NVM_REGION_CONFIG_SIZE_Msk >> 16)
+#define NVM_REGION_SIZE_MASK_L (NVM_REGION_CONFIG_SIZE_Msk & 0x0000fffful)
 #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 
 static void __ramfunc jump_in(uint32_t reset)
@@ -207,14 +263,14 @@ static void __ramfunc jump_in(uint32_t reset)
 		  "r" (CLEANUP_RAM_GAP_SIZE),
 		  "i" (0)
 #ifdef CONFIG_SB_DISABLE_SELF_RWX
-		  , "i" (RRAMC_REGION_TO_LOCK_ADDR_L),
-		  "i" (RRAMC_REGION_TO_LOCK_ADDR_H),
+		  , "i" (NVM_REGION_TO_LOCK_ADDR_L),
+		  "i" (NVM_REGION_TO_LOCK_ADDR_H),
 		  "i" (RWX_PROTECTION_REGION / 1024),
-		  "i" (RRAMC_REGION_RWX_LSB),
-		  "i" (RRAMC_REGION_RWX_WIDTH),
-		  "i" (RRAMC_REGION_CONFIG_LOCK_Msk),
-		  "i" (RRAMC_REGION_SIZE_MASK_L),
-		  "i" (RRAMC_REGION_SIZE_MASK_H)
+		  "i" (NVM_REGION_RWX_LSB),
+		  "i" (NVM_REGION_RWX_WIDTH),
+		  "i" (NVM_REGION_CONFIG_LOCK_Msk),
+		  "i" (NVM_REGION_SIZE_MASK_L),
+		  "i" (NVM_REGION_SIZE_MASK_H)
 #endif /* CONFIG_SB_DISABLE_SELF_RWX */
 		: "r0", "r1", "r2", "r3", "r4", "r5", "r6", "memory"
 	);
@@ -276,6 +332,7 @@ void bl_boot(const struct fw_info *fw_info)
 {
 #if !(defined(CONFIG_SOC_SERIES_NRF91) \
 	|| defined(CONFIG_SOC_SERIES_NRF54L) \
+	|| defined(CONFIG_SOC_SERIES_NRF71) \
 	|| defined(CONFIG_SOC_NRF5340_CPUNET) \
 	|| defined(CONFIG_SOC_NRF5340_CPUAPP))
 	/* Protect bootloader storage data after firmware is validated so

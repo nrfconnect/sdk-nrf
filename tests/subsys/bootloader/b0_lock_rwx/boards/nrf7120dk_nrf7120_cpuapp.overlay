@@ -1,0 +1,39 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+&cpuapp_mram {
+	/delete-node/ partitions;
+
+	partitions {
+		ranges;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		/* In this configuration NSIB protects itself only.
+		 * On nRF7120 BOOTCONF can lock up to 31k, so the partition is sized at 31k.
+		 */
+		b0_partition: partition@0 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x0 DT_SIZE_K(31)>;
+		};
+
+		s0_partition: partition@8000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x8000 DT_SIZE_K(128)>;
+		};
+
+		s1_partition: partition@28000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x28000 DT_SIZE_K(128)>;
+		};
+	};
+};
+
+/ {
+	chosen {
+		zephyr,code-partition = &s0_partition;
+	};
+};
