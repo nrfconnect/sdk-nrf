@@ -570,4 +570,6 @@ zcbor
 Documentation
 =============
 
-|no_changes_yet_note|
+* Updated:
+
+  * The :ref:`software_maturity_security_features_psa` section on the :ref:`software_maturity` page by changing the support level of the :ref:`nrf_oberon <crypto_drivers_oberon>` driver on the nRF54LS05A SoC from experimental to supported.
