@@ -101,6 +101,7 @@ enum kmu_metadata_algorithm {
 	METADATA_ALG_AES_GCM = 12,
 	METADATA_ALG_AES_CCM = 16,
 	METADATA_ALG_AES_CCM_STAR = 17,
+	METADATA_ALG_AES_CCM_STAR_ANY_TAG = 18,
 	METADATA_ALG_AES_ECB = 20,
 	METADATA_ALG_AES_CTR = 24,
 	METADATA_ALG_AES_CBC = 28,
@@ -801,6 +802,12 @@ static psa_status_t convert_to_psa_attributes(kmu_metadata *metadata,
 		psa_set_key_algorithm(key_attr, PSA_ALG_CCM_STAR_NO_TAG);
 		break;
 #endif /* PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES */
+#if defined(PSA_NEED_CRACEN_CCM_AES) || defined(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES)
+	case METADATA_ALG_AES_CCM_STAR_ANY_TAG:
+		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
+		psa_set_key_algorithm(key_attr, PSA_ALG_CCM_STAR_ANY_TAG);
+		break;
+#endif /* PSA_NEED_CRACEN_CCM_AES || PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES */
 #ifdef PSA_NEED_CRACEN_ECB_NO_PADDING_AES
 	case METADATA_ALG_AES_ECB:
 		psa_set_key_type(key_attr, PSA_KEY_TYPE_AES);
@@ -1031,6 +1038,14 @@ static psa_status_t convert_from_psa_attributes(const psa_key_attributes_t *key_
 		}
 		break;
 #endif /* PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES */
+#if defined(PSA_NEED_CRACEN_CCM_AES) || defined(PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES)
+	case PSA_ALG_CCM_STAR_ANY_TAG:
+		metadata->algorithm = METADATA_ALG_AES_CCM_STAR_ANY_TAG;
+		if (key_type != PSA_KEY_TYPE_AES) {
+			return PSA_ERROR_NOT_SUPPORTED;
+		}
+		break;
+#endif /* PSA_NEED_CRACEN_CCM_AES || PSA_NEED_CRACEN_CCM_STAR_NO_TAG_AES */
 #ifdef PSA_NEED_CRACEN_ECB_NO_PADDING_AES
 	case PSA_ALG_ECB_NO_PADDING:
 		metadata->algorithm = METADATA_ALG_AES_ECB;

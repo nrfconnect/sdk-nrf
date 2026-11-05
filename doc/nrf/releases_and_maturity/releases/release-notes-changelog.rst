@@ -183,7 +183,7 @@ Security
   * Support for the SHAKE128/256 hash algorithm in the CRACEN driver on the nRF54L Series devices.
   * Support for the AES-CCM* no tag cipher mode in the CRACEN driver.
     The :ref:`Supported cryptographic operations in the nRF Connect SDK <ug_crypto_supported_features_cipher_modes>` page has been updated accordingly.
-  * Support for storing AES-CCM* keys in the KMU.
+  * Support for storing AES-CCM* keys in the KMU, including keys with the ``PSA_ALG_CCM_STAR_ANY_TAG`` wildcard policy.
 
 * Updated:
 
