@@ -150,6 +150,9 @@ class PsaAlgorithm(IntEnum):
     # PSA_ALG_CCM_STAR_NO_TAG
     CCM_STAR_NO_TAG = 0x04C01300
 
+    # PSA_ALG_CCM_STAR_ANY_TAG
+    CCM_STAR_ANY_TAG = 0x04C09300
+
     # PSA_ALG_ECB_NO_PADDING
     ECB = 0x04404400
 
@@ -263,6 +266,7 @@ class PlatformKeyAttributes:
             PsaAlgorithm.CBC_PKCS7,
             PsaAlgorithm.CTR,
             PsaAlgorithm.CCM_STAR_NO_TAG,
+            PsaAlgorithm.CCM_STAR_ANY_TAG,
             PsaAlgorithm.ECB,
             PsaAlgorithm.CCM,
             PsaAlgorithm.GCM,
