@@ -32,9 +32,11 @@ In a production application, the firmware update image can therefore come from a
 For demonstration purposes, this sample uses a LittleFS partition in non-volatile memory as intermediate storage for the firmware update image.
 To allow the image to be uploaded to that storage, the sample also acts as a Bluetooth LE peripheral that exposes an mcumgr SMP server with the File System management group.
 
-On boot, the sample mounts the LittleFS file system and starts scanning as a central for the remote SMP server.
+On boot, the sample mounts the LittleFS file system and waits for you to press the connection button.
+After you press the button, the sample starts scanning as a central for the remote SMP server.
 The sample automatically connects to any device that advertises the SMP Service UUID.
-To connect based on other criteria, such as the device name, update the scan filter configuration in the :ncs-file:`prj.conf` and :ncs-file:`src/main.c` files.
+After a disconnection, press the connection button again to reconnect.
+To connect based on other criteria, such as the device name, update the scan filter configuration in the :file:`prj.conf` and :file:`src/main.c` files.
 For details about the available filter types, see :ref:`lib_nrf_bt_scan_readme_filters`.
 
 To upload the firmware update image for the remote target, press the following button:
@@ -56,6 +58,18 @@ Press the same button again to restart advertising.
 By default, the File System management group grants a connected mcumgr client access to every file in the file system.
 The sample registers a file access hook (:kconfig:option:`CONFIG_MCUMGR_GRP_FS_FILE_ACCESS_HOOK`) that rejects any path other than :file:`/lfs1/update.bin`.
 The SMP transport is also configured without authentication, so it accepts any client that is in range.
+
+To connect to the remote target, press the following button:
+
+.. tabs::
+
+   .. group-tab:: nRF53 DKs
+
+      Press **Button 3**.
+
+   .. group-tab:: nRF54 DKs
+
+      Press **Button 2**.
 
 To start the update of the remote target, press the following button:
 
@@ -96,6 +110,9 @@ User interface
       Button 2:
          Start advertising so a host can upload the firmware update image using the File System management group over SMP.
 
+      Button 3:
+         Start scanning for a remote SMP server and connect to it.
+
    .. group-tab:: nRF54 DKs
 
       Button 0:
@@ -103,6 +120,9 @@ User interface
 
       Button 1:
          Start advertising so a host can upload the firmware update image using the File System management group over SMP.
+
+      Button 2:
+         Start scanning for a remote SMP server and connect to it.
 
 Building and running
 ********************
@@ -131,13 +151,14 @@ See the :ref:`bluetooth_central_dfu_smp_user_interface` section for the assignme
    Use the resulting :file:`zephyr.signed.bin` file as the firmware update image.
 #. Reset the Central SMP Client.
 #. Observe that the text "Starting Bluetooth Central SMP Client sample" is printed on the COM listener running on the computer.
-   The device starts scanning for peripherals with the SMP service.
+   The device waits for you to press the connection button.
 #. Press the advertising button on the Central SMP Client, then upload the signed image to the LittleFS file system using the nRF Device Manager mobile app:
 
    a. Start the `nRF Device Manager mobile app for Android`_ or the `nRF Device Manager mobile app for iOS`_.
    #. Connect to the device that advertises as ``SMP Client Sample``.
    #. Open the File System management (**Files**) section, select the signed image file, and upload it to :file:`/lfs1/update.bin`.
 
+#. Press the connection button on the Central SMP Client.
 #. Observe that the kits connect.
    After service discovery completes, the sample reports that the SMP DFU client is ready.
 #. Press the firmware update button on the Central SMP Client.
