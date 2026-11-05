@@ -7,7 +7,7 @@ tests:
     integration_platforms:
       - native_sim
     platform_allow:
-      - nrf9161dk/nrf9161/ns
+      - nrf9151dk/nrf9151/ns
       - native_sim
     tags:
       - ci_build

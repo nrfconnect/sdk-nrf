@@ -821,6 +821,7 @@ Networking samples
     * :ref:`aws_iot`
     * :ref:`azure_iot_hub_sample`
     * :ref:`net_coap_client_sample`
+    * :ref:`download_sample`
 
 * :ref:`aws_iot` sample:
 
