@@ -37,6 +37,10 @@ tests:
     extra_args:
       - accel_polling_SHIELD=pca63566
       - vpr_launcher_SHIELD=pca63566_fwd
+      # The PPR RAM is too small for the RTIO workqueue of the SPI driver that
+      # the BMI270 driver selects: use one thread and drop the exception dump.
+      - CONFIG_RTIO_WORKQ_THREADS_POOL=1
+      - CONFIG_EXCEPTION_DUMP=n
     platform_allow: nrf54h20dk/nrf54h20/cpuppr
 
   nrf.extended.sample.sensor.accel_polling.nrf54h_coverage:
