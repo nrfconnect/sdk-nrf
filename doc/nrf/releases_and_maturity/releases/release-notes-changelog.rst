@@ -859,6 +859,7 @@ Networking samples
 
     * An issue where the FOTA download failed on Wi-Fi builds because the Mbed TLS heap was too small for the MQTT and download TLS connections at the same time.
     * An issue where the FOTA download from Azure Blob Storage failed on Wi-Fi builds because the PSA crypto configuration did not support RSA 4096-bit keys.
+    * An issue where the sample crashed on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target with the nRF7002-EB II shield because of a stack overflow in the socket service thread.
 
 * :ref:`https_client` sample:
 
