@@ -15,6 +15,7 @@
 #include <net/azure_iot_hub.h>
 #include <net/azure_iot_hub_dps.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/logging/log_ctrl.h>
 
 #include <dk_buttons_and_leds.h>
 #include <cJSON.h>
@@ -172,6 +173,8 @@ static void reboot_work_fn(struct k_work *work)
 {
 	ARG_UNUSED(work);
 
+	log_flush();
+	LOG_PANIC();
 	sys_reboot(SYS_REBOOT_COLD);
 }
 
@@ -426,6 +429,8 @@ static void connectivity_event_handler(struct net_mgmt_event_callback *cb,
 {
 	if (event == NET_EVENT_CONN_IF_FATAL_ERROR) {
 		LOG_ERR("Fatal error received from the connectivity layer, rebooting");
+		log_flush();
+		LOG_PANIC();
 		sys_reboot(SYS_REBOOT_COLD);
 		CODE_UNREACHABLE;
 	}
