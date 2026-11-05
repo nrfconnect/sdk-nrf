@@ -547,6 +547,8 @@
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
 
 - scenarios:
+    - net.tls_credentials.protected_storage.secure_storage
+    - net.tls_credentials.protected_storage.secure_storage.parse_crt
     - sample.psa.its.secure_storage.entropy_driver
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
