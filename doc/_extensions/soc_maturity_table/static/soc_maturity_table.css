@@ -1,0 +1,11 @@
+.soc-maturity-table {
+  width: auto !important;
+}
+
+.wy-table-responsive .soc-maturity-table thead tr th {
+  padding: 8px 2em 8px 2em !important;
+}
+
+.wy-table-responsive .soc-maturity-table tbody tr td {
+  padding: 0 2em 0 2em !important;
+}
