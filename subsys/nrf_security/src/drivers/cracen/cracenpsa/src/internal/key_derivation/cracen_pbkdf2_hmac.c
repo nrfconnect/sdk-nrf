@@ -158,7 +158,7 @@ psa_status_t cracen_pbkdf2_hmac_input_bytes(cracen_key_derivation_operation_t *o
 			return PSA_ERROR_INVALID_ARGUMENT;
 		}
 
-		if (data_length > block_length) {
+		if (IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && data_length > block_length) {
 			size_t hash_length = 0;
 			/* Password needs to be hashed. */
 			psa_status_t status = cracen_hash_compute(

@@ -504,10 +504,11 @@ struct cracen_key_derivation_operation {
 			bool info_set;
 		} hkdf;
 #endif /* PSA_NEED_CRACEN_HKDF */
-#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC)
+#if defined(PSA_NEED_CRACEN_PBKDF2_HMAC) || defined(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128)
 		struct {
 			uint64_t input_cost;
-			uint8_t password[SX_HASH_MAX_ENABLED_BLOCK_SIZE];
+			uint8_t password[SX_MAX(SX_HASH_MAX_ENABLED_BLOCK_SIZE,
+						SX_BLKCIPHER_AES_BLK_SZ)];
 			size_t password_length;
 			uint8_t salt[CRACEN_PBKDF_MAX_SALT_SIZE];
 			size_t salt_length;
@@ -515,7 +516,7 @@ struct cracen_key_derivation_operation {
 			uint8_t uj[PSA_MAC_MAX_SIZE];
 			uint8_t tj[PSA_MAC_MAX_SIZE];
 		} pbkdf2;
-#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC */
+#endif /* PSA_NEED_CRACEN_PBKDF2_HMAC || PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128 */
 #if	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_CMAC) || \
 	defined(PSA_NEED_CRACEN_SP800_108_COUNTER_HMAC)
 		struct {
