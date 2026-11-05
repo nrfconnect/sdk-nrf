@@ -824,6 +824,7 @@ Networking samples
     * :ref:`download_sample`
     * :ref:`http_server`
     * :ref:`https_client`
+    * :ref:`mqtt_sample`
 
 * :ref:`aws_iot` sample:
 
