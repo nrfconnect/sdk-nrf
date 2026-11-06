@@ -82,10 +82,16 @@ dut_twis: &i2c21 {
 	pinctrl-names = "default", "sleep";
 };
 
+&vbat_monitor {
+	status = "disabled";
+};
+
 &adc {
 	#address-cells = <1>;
 	#size-cells = <0>;
 	status = "okay";
+
+	/delete-node/ channel@0;
 
 	channel@0 {
 		reg = <0>;
