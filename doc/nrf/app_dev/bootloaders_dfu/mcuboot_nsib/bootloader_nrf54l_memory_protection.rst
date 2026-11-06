@@ -85,6 +85,23 @@ On the nRF54L Series devices you can replace the :ref:`fprotect_readme` library 
 This programs an RRAMC region (region 4 by default) so that later stages lose read, write, and execute access to the MCUboot partition.
 To use this option you must disable :kconfig:option:`CONFIG_FPROTECT` on the MCUboot image, because the two approaches are mutually exclusive in Kconfig.
 
+You can use the :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option to prevent later boot stages from reading, writing, or executing the MCUboot partition.
+How MCUboot applies this restriction depends on whether BOOTCONF protection is enabled:
+
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is enabled, MCUboot adds read and execute restrictions to the immutable region (RRAMC region 3), which :file:`bootconf.hex` write-locks at reset.
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is disabled, MCUboot configures RRAMC region 4.
+  In this case, you cannot enable :kconfig:option:`CONFIG_FPROTECT` for the MCUboot image.
+
+By default, the protected region spans the MCUboot partition, excluding any initial area configured with :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SKIP_SIZE`.
+To adjust the protected region size independently of the partition size, set :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SIZE` to a nonzero size in bytes.
+The start address remains unchanged.
+The size must be aligned to 1 kB, must not exceed the maximum RRAMC region size for the selected SoC, and must cover all MCUboot code that later stages must not access.
+A value of zero preserves the default partition-derived size.
+
+In firmware loader mode, MCUboot also uses RRAMC region 4 to write-protect the firmware loader partition before it boots either the firmware loader or the application.
+The exception is an authenticated installer image, which is marked by a protected image TLV.
+For such an image, MCUboot leaves the firmware loader partition writable so that the installer can replace the firmware loader.
+
 If MCUboot is used without NSIB and fits within a single RRAMC region, the default layout can rely on FPROTECT alone for overwrite protection, as described in :ref:`ug_nrf54l_dfu_config`.
 
 .. _ug_bootloader_nrf54l_memory_protection_application:
