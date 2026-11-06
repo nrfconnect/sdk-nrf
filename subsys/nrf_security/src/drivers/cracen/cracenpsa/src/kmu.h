@@ -32,8 +32,8 @@ typedef struct {
  * an actual key is being used so that the key material does not reside in the protected
  * RAM for more than the required time.
  */
-#define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 248
-#define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 249
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT1 126
+#define PROTECTED_RAM_INVALIDATION_DATA_SLOT2 127
 
 extern uint8_t kmu_push_area[64];
 
