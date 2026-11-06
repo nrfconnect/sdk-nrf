@@ -1451,6 +1451,7 @@ int coap_packet_init_ok(struct coap_packet *cpkt, uint8_t *data, uint16_t max_le
 		     uint8_t ver, uint8_t type, uint8_t token_len,
 		     const uint8_t *token, uint8_t code, uint16_t id)
 {
+	cpkt->offset = 1;
 	return 0;
 }
 uint8_t *coap_next_token_ok(void)
@@ -2798,6 +2799,7 @@ void test_downloader_get_coap_unauthorized_response(void)
 	z_impl_zsock_sendto_fake.custom_fake = z_impl_zsock_sendto_ok;
 	z_impl_zsock_recvfrom_fake.custom_fake = z_impl_zsock_recvfrom_coap;
 
+	coap_packet_init_fake.custom_fake = coap_packet_init_ok;
 	coap_get_transmission_parameters_fake.custom_fake = coap_get_transmission_parameters_ok;
 	coap_pending_cycle_fake.custom_fake = coap_pending_cycle_ok;
 	coap_header_get_type_fake.custom_fake = coap_header_get_type_ack;
