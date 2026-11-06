@@ -10,9 +10,9 @@
 	};
 
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2000fc00 {
 			reg = <0x2000fc00 0x8000>;

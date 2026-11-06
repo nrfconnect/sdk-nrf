@@ -24,9 +24,9 @@
 		cpuflpr_sram_code_data: memory@20067c00 {
 			compatible = "mmio-sram";
 			reg = <0x20067c00 DT_SIZE_K(96)>;
+			ranges = <0x0 0x20067c00 DT_SIZE_K(96)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x20067c00 DT_SIZE_K(96)>;
 		};
 	};
 };
@@ -45,9 +45,9 @@
 };
 
 &cpuflpr_vpr {
-	status = "okay";
 	execution-memory = <&cpuflpr_sram_code_data>;
 	source-memory = <&cpuflpr_code_partition>;
+	status = "okay";
 };
 
 &cpuapp_vevif_tx {
