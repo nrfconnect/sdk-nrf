@@ -1,6 +1,10 @@
 #include "nrf7120dk_nrf7120_cpuapp.overlay"
 
 / {
+	aliases {
+		retainedmemdevice = &retainedmem0;
+	};
+
 	cpuapp_sram@2001f000 {
 		compatible = "zephyr,memory-region", "mmio-sram";
 		reg = <0x2001f000 DT_SIZE_K(4)>;
@@ -11,10 +15,6 @@
 			compatible = "zephyr,retained-ram";
 			status = "okay";
 		};
-	};
-
-	aliases {
-		retainedmemdevice = &retainedmem0;
 	};
 };
 

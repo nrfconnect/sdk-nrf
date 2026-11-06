@@ -8,9 +8,9 @@
 
 / {
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2007bc00 {
 			reg = <0x2007bc00 0x0800>;
@@ -25,9 +25,9 @@
 		cpuflpr_code_data_sram: memory@2007cc00 {
 			compatible = "mmio-sram";
 			reg = <0x2007cc00 DT_SIZE_K(12)>;
+			ranges = <0x0 0x2007cc00 DT_SIZE_K(12)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2007cc00 DT_SIZE_K(12)>;
 		};
 	};
 
@@ -41,10 +41,10 @@
 &rram_controller {
 	cpuflpr_rram: rram@1fa000 {
 		compatible = "soc-nv-flash";
-		erase-block-size = <4096>;
-		write-block-size = <16>;
 		reg = <0x1fa000 DT_SIZE_K(12)>;
 		ranges = <0x0 0x1fa000 DT_SIZE_K(12)>;
+		erase-block-size = <4096>;
+		write-block-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
@@ -78,9 +78,9 @@
 };
 
 &hpf_gpio {
-	status = "okay";
 	ngpios = <11>;
 	port = <2>;
+	status = "okay";
 };
 
 #define WITH_FLPR_PARTITIONS

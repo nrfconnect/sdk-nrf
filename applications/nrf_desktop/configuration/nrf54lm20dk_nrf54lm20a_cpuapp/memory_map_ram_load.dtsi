@@ -12,35 +12,35 @@
 	/delete-node/ partitions;
 
 	partitions {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		/* Significantly increase the size of the MCUboot partition to make it fit
 		 * for the LLVM configuration variant.
 		 */
 		boot_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			label = "mcuboot";
 			reg = <0x0 DT_SIZE_K(48)>;
+			label = "mcuboot";
 		};
 
 		slot0_partition: partition@c000 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0";
 			reg = <0xc000 DT_SIZE_K(984)>;
+			label = "image-0";
 		};
 
 		slot1_partition: partition@102000 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-1";
 			reg = <0x102000 DT_SIZE_K(984)>;
+			label = "image-1";
 		};
 
 		storage_partition: partition@1f8000 {
 			compatible = "zephyr,mapped-partition";
-			label = "storage";
 			reg = <0x1f8000 DT_SIZE_K(20)>;
+			label = "storage";
 		};
 	};
 };
@@ -62,8 +62,8 @@
 		 * provisioning functionality. The section must also have size of 96 bytes.
 		 */
 		nrf_kmu_reserved_push_area: memory@20000000 {
-			reg = <0x20000000 0x60>;
 			compatible = "zephyr,memory-region", "mmio-sram";
+			reg = <0x20000000 0x60>;
 			zephyr,memory-region = "nrf_kmu_reserved_push_area";
 			status = "okay";
 		};
@@ -81,14 +81,14 @@
 
 			retainedmem {
 				compatible = "zephyr,retained-ram";
-				status = "okay";
 				#address-cells = <1>;
 				#size-cells = <1>;
+				status = "okay";
 
 				boot_info0: boot_info@0 {
 					compatible = "zephyr,retention";
-					status = "okay";
 					reg = <0x0 0x100>;
+					status = "okay";
 				};
 			};
 		};
@@ -104,9 +104,9 @@
 		cpuapp_sram: memory@20000800 {
 			compatible = "mmio-sram";
 			reg = <0x20000800 DT_SIZE_K(509)>;
+			ranges = <0x0 0x20000800 DT_SIZE_K(509)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x20000800 DT_SIZE_K(509)>;
 
 			/* SRAM region for storing the ROM section (code) and RAM section (data) of
 			 * the application image. The RAM section of the application image may also
@@ -124,9 +124,9 @@
 			cpuapp_sram_app_rxm_region: memory@0 {
 				compatible = "mmio-sram";
 				reg = <0x0 DT_SIZE_K(489)>;
+				ranges = <0x0 0x0 DT_SIZE_K(489)>;
 				#address-cells = <1>;
 				#size-cells = <1>;
-				ranges = <0x0 0x0 DT_SIZE_K(489)>;
 			};
 
 			/* SRAM region for storing the RAM section (data) of the MCUboot image. The
@@ -140,9 +140,9 @@
 			cpuapp_sram_mcuboot_ram_region: memory@7a400 {
 				compatible = "mmio-sram";
 				reg = <0x7a400 DT_SIZE_K(20)>;
+				ranges = <0x0 0x7a400 DT_SIZE_K(20)>;
 				#address-cells = <1>;
 				#size-cells = <1>;
-				ranges = <0x0 0x7a400 DT_SIZE_K(20)>;
 			};
 		};
 	};
