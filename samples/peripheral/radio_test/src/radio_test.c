@@ -38,6 +38,11 @@
 #include <zephyr/drivers/mbox.h>
 #endif /* NRF_ERRATA_STATIC_CHECK(54H, 216) */
 
+#if CONFIG_HAS_HW_NRF_RRAMC && !CONFIG_TRUSTED_EXECUTION_NONSECURE
+#define RADIO_TEST_RRAM_LOW_LATENCY
+#include <hal/nrf_rramc.h>
+#endif /* CONFIG_HAS_HW_NRF_RRAMC && !CONFIG_TRUSTED_EXECUTION_NONSECURE */
+
 #define ZEPHYR_USER_NODE DT_PATH(zephyr_user)
 
 #if DT_NODE_HAS_PROP(ZEPHYR_USER_NODE, ready_disabled_gpios) && \
@@ -1565,6 +1570,13 @@ int radio_test_init(struct radio_test_config *config)
 {
 	int nrfx_err;
 	uint32_t rad_domain = nrfx_gppi_domain_id_get((uint32_t)NRF_RADIO);
+
+#if defined(RADIO_TEST_RRAM_LOW_LATENCY)
+	/* Back-to-back packets are restarted from the radio interrupt. Keep RRAM out of
+	 * power-down, so that waking it up does not delay that interrupt.
+	 */
+	nrf_rramc_lp_mode_set(NRF_RRAMC, NRF_RRAMC_LP_STANDBY);
+#endif /* RADIO_TEST_RRAM_LOW_LATENCY */
 
 	timer_init(config);
 	IRQ_CONNECT(RADIO_TEST_TIMER_IRQn, IRQ_PRIO_LOWEST,
