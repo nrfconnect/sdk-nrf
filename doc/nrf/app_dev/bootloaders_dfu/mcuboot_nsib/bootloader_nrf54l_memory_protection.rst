@@ -89,20 +89,33 @@ You cannot combine the :kconfig:option:`CONFIG_SB_DISABLE_SELF_RWX` Kconfig opti
 During MCUboot execution
 ========================
 
-If MCUboot is part of the chain, it manages slots, verifies signatures, then starts the application (or another loadable image).
+If MCUboot is part of the chain, it manages slots, verifies signatures, and then starts the application or another loadable image.
 
-You can use the :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` Kconfig option to prevent later boot stages from reading, writing, or executing the MCUboot partition.
-How MCUboot applies this restriction depends on whether BOOTCONF protection is enabled:
+On nRF54L Series devices, enable :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX` to prevent later stages from reading, writing, or executing the MCUboot partition.
+The RRAMC region used depends on the protection configuration:
 
-* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is enabled, MCUboot adds read and execute restrictions to the immutable region (RRAMC region 3), which :file:`bootconf.hex` write-locks at reset.
-* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is disabled, MCUboot configures RRAMC region 4.
-  In this case, you cannot enable :kconfig:option:`CONFIG_FPROTECT` for the MCUboot image.
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is enabled, :file:`bootconf.hex` write-protects MCUboot at reset.
+  Before hand-off, MCUboot also disables read and execute access to its partition.
+  To do so, it uses RRAMC region 2 on the nRF54LS05 SoC and region 3 on other supported nRF54L Series SoCs.
+  In this configuration, :kconfig:option:`CONFIG_FPROTECT` can remain enabled.
+* If :kconfig:option:`SB_CONFIG_MCUBOOT_BOOTCONF_LOCK_WRITES` is disabled, MCUboot uses RRAMC region 4.
+  In this configuration, :kconfig:option:`CONFIG_FPROTECT` must be disabled because the two features use the same protection resources.
 
-In firmware loader mode, MCUboot also uses RRAMC region 4 to write-protect the firmware loader partition before it boots either the firmware loader or the application.
-The exception is an authenticated installer image, which is marked by a protected image TLV.
-For such an image, MCUboot leaves the firmware loader partition writable so that the installer can replace the firmware loader.
+When MCUboot configures an unused RRAMC region, the protected size is derived from the MCUboot partition by default.
+For second-stage MCUboot, the initial area selected by :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SKIP_SIZE` is excluded.
 
-If MCUboot is used without NSIB and fits within a single RRAMC region, the default layout can rely on FPROTECT alone for overwrite protection, as described in :ref:`ug_nrf54l_dfu_config`.
+When Partition Manager is disabled, you can set :kconfig:option:`CONFIG_NCS_MCUBOOT_DISABLE_SELF_RWX_SIZE` to a nonzero value to select a different protected size.
+The value must be aligned to 1024 bytes and must not exceed the maximum RRAMC region size for the selected SoC.
+It must also cover all MCUboot code that later stages must not access.
+A value of zero uses the partition-derived size.
+If BOOTCONF or NSIB has already configured the RRAMC region size, MCUboot preserves that size and this option does not override it.
+
+In firmware loader mode with BOOTCONF protection enabled, :kconfig:option:`CONFIG_NCS_MCUBOOT_FIRMWARE_LOADER_PROTECTION` write-protects the firmware loader partition.
+It uses FPROTECT and RRAMC region 4, and applies the protection before MCUboot starts the firmware loader or application.
+MCUboot does not apply this protection when it starts a validated installer image that has the protected installer-image Type-Length-Value (TLV) entry.
+This allows the installer to replace the firmware loader.
+
+If MCUboot is used without NSIB and fits within a single RRAMC region, the layout can instead rely on FPROTECT alone for overwrite protection, as described in :ref:`ug_nrf54l_dfu_config`.
 
 .. _ug_bootloader_nrf54l_memory_protection_application:
 .. rst-class:: numbered-step
