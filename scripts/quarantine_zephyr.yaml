@@ -741,3 +741,15 @@
   platforms:
     - qemu_cortex_m3/ti_lm3s6965
   comment: "region RAM overflowed"
+
+- scenarios:
+    - net.mdns.offload
+  platforms:
+    - native_sim/native
+  comment: "The pytest harness fails, the Python package zeroconf is missing in the CI environment"
+
+- scenarios:
+    - net.wifi.interop
+  platforms:
+    - native_sim/native
+  comment: "native_sim Wi-Fi build fails, libnl-3.0/libnl-genl-3.0 not found"
