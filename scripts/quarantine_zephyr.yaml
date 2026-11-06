@@ -519,6 +519,19 @@
   comment: "clang is not available in our toolchain"
 
 - scenarios:
+    - drivers.video.build
+    - drivers.video.spi.build
+  platforms:
+    - native_sim/native
+  comment: "The LLVM build fails: CMake cannot find clang, not investigated"
+
+- scenarios:
+    - sca.dtdoctor
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "The LLVM build fails: CMake cannot find clang, not investigated"
+
+- scenarios:
     - sample.bluetooth.peripheral_hr.frdm_kw41z_shield
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
