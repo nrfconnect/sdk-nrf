@@ -33,13 +33,13 @@ While the board name is always present, other elements, such as the board revisi
   For example, :ref:`building <building>` for the ``nRF9160dk@1.0.0/nrf9160`` board target adds the external flash on the nRF9160 DK that was available since :ref:`board version v0.14.0 <nrf9160_board_revisions>`.
 
 * :term:`System on Chip (SoC)` - When you choose a board target with this qualifier, you build for this specific SoC on this board.
-  For example, :ref:`building <building>` for the ``thingy53/nrf5340/cpuapp`` board target builds the application core firmware for the nRF5340 SoC on the Nordic Thingy:53 prototyping platform.
+  For example, :ref:`building <building>` for the ``nrf5340dk/nrf5340/cpuapp`` board target builds the application core firmware for the nRF5340 SoC on the nRF5340 DK.
 
 * :ref:`CPU cluster <zephyr:glossary>` - You can use this board qualifier to build for a group of one or more CPU cores, all executing the same image within the same address space and in a symmetrical (SMP) configuration.
   The CPU cluster board qualifier varies depending on the SoC and SoC Series.
   See the following examples:
 
-  * :ref:`Building <building>` for the ``thingy53/nrf5340/cpunet`` board target builds the network core firmware for Nordic Thingy:53.
+  * :ref:`Building <building>` for the ``nrf5340dk/nrf5340/cpunet`` board target builds the network core firmware for the nRF5340 DK.
   * Building for ``nrf54h20dk/nrf54h20/cpuapp`` builds the application core firmware for the nRF54H20 DK.
   * Building for ``nrf54h20dk/nrf54h20/cpurad`` builds the radio core firmware for the nRF54H20 DK.
 
@@ -162,12 +162,6 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 |                   |            |                                                        | ``nrf5340dk/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)      |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF5340 Audio     | PCA10121   | :zephyr:board:`nrf5340_audio_dk <nrf5340_audio_dk>`    | ``nrf5340_audio_dk/nrf5340/cpuapp``                                      |
-+-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
-| Thingy:53         | PCA20053   | :zephyr:board:`thingy53 <thingy53>`                    | ``thingy53/nrf5340/cpunet``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``thingy53/nrf5340/cpuapp``                                              |
-|                   |            |                                                        |                                                                          |
-|                   |            |                                                        | ``thingy53/nrf5340/cpuapp/ns`` (:ref:`TF-M <app_boards_spe_nspe>`)       |
 +-------------------+------------+--------------------------------------------------------+--------------------------------------------------------------------------+
 | nRF52840 DK       | PCA10056   | :zephyr:board:`nrf52840dk <nrf52840dk>`                | ``nrf52840dk/nrf52840``                                                  |
 |                   |            +--------------------------------------------------------+--------------------------------------------------------------------------+

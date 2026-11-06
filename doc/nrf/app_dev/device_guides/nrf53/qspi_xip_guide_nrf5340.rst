@@ -63,7 +63,7 @@ The QSPI flash DTS must be available for the application and the MCUboot.
 You must correctly set up the QSPI flash chip in the board devicetree file, including the operating mode.
 The flash chip does not have to run in the QSPI mode for XIP to function, but using other modes will reduce the execution speed of the application.
 
-See the following snippet for an example of the Nordic Thingy:53 configuration that supports DSPI:
+See the following snippet for an example of a board configuration that supports DSPI:
 
 .. code-block:: devicetree
 
@@ -203,12 +203,11 @@ You can change this behavior by using a custom :file:`Qspi.json` configuration f
 This file is used to set up the QSPI flash device and its parameters.
 
 .. note::
-    The :file:`Qspi.json` file is required to work on the Nordic Thingy:53.
-    Its QSPI configuration is different from the default one, for example, it uses the ``PP`` command for programming and ``READ2IO`` for reading.
+    The :file:`Qspi.json` file is required for boards whose QSPI configuration is different from the default one, for example, boards that use the ``PP`` command for programming and ``READ2IO`` for reading.
 
 To use such a file automatically in a project, update the ``CMakeLists.txt`` file by :ref:`adding the mention of the new file <modifying_files_compiler>`.
 This way, the file can be applied globally for every board built with a project or applied to specific boards if a project supports multiple board targets, each with different configurations.
-The following code shows how to set the configuration file used when flashing the Thingy:53 only.
+The following code shows how to set the configuration file used when flashing a specific board target only.
 
 .. note::
     This code must be placed before the ``find_package`` line.
@@ -218,9 +217,9 @@ The following code shows how to set the configuration file used when flashing th
     cmake_minimum_required(VERSION 3.20.0)
 
     macro(app_set_runner_args)
-      if(CONFIG_BOARD_THINGY53_NRF5340_CPUAPP)
-        # Use alternative QSPI configuration file when flashing Thingy53
-        board_runner_args(nrfutil "--ext-mem-config-file=${CMAKE_CURRENT_SOURCE_DIR}/qspi_thingy53.json")
+      if(CONFIG_BOARD_MY_CUSTOM_BOARD_NRF5340_CPUAPP)
+        # Use alternative QSPI configuration file when flashing my_custom_board
+        board_runner_args(nrfutil "--ext-mem-config-file=${CMAKE_CURRENT_SOURCE_DIR}/qspi_my_custom_board.json")
       endif()
     endmacro()
 

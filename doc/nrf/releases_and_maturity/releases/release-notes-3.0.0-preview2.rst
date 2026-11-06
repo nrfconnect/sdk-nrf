@@ -1115,7 +1115,7 @@ Documentation
     * :ref:`defining_custom_board` - Previously located under :ref:`app_boards`.
     * :ref:`programming_custom_board` - New page.
 
-  * New page :ref:`thingy53_precompiled` under :ref:`ug_thingy53`.
+  * New page Preloaded and precompiled Thingy:53 firmware under Developing with Thingy:53.
     This page includes some of the information previously located on the standalone page for getting started with Nordic Thingy:53.
   * New page :ref:`add_new_led_example` under :ref:`configuring_devicetree`.
     This page includes information previously located in the |nRFVSC| documentation.
@@ -1133,7 +1133,7 @@ Documentation
   * The entire Zigbee protocol, application and samples documentation.
     It is now available as separate `Zigbee R22`_ and `Zigbee R23`_ add-on repositories.
   * The standalone page for getting started with Nordic Thingy:53.
-    The contents of this page have been moved to the :ref:`thingy53_precompiled` page and to the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ section in the Programmer app documentation.
+    The contents of this page have been moved to the Preloaded and precompiled Thingy:53 firmware page and to the `Programming Nordic Thingy:53 <Programming Nordic Thingy53_>`_ section in the Programmer app documentation.
   * The standalone page for getting started with Nordic Thingy:91.
     The contents of this page are covered by the `Cellular IoT Fundamentals course`_ in the `Nordic Developer Academy`_.
     The part about connecting the prototyping platform to nRF Cloud is now a standalone :ref:`thingy91_connect_to_cloud` page in the :ref:`thingy91_ug_intro` section.
