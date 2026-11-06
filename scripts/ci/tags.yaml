@@ -269,6 +269,14 @@ ci_samples_vtf_monitoring:
     - nrf/samples/vtf_monitoring
     - nrf/subsys/vtf_monitoring
 
+ci_samples_vpr_vio_hw:
+  files:
+    - modules/hal/nordic/ironside/se/tool/ironside/
+    - nrf/samples/vpr/
+    - zephyr/drivers/misc/nordic_vpr_launcher/
+    - zephyr/drivers/pinctrl/
+    - zephyr/soc/nordic/common/uicr/gen_uicr/
+
 ci_tests_subsys_sd:
   files:
     - nrf/drivers/sdhc/
