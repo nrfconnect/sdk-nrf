@@ -214,6 +214,55 @@ void test_nrf9x_socket_offload_getaddrinfo_ipv6_success(void)
 	TEST_ASSERT_EQUAL(res->ai_protocol, NET_IPPROTO_TCP);
 }
 
+static int nrf_getaddrinfo_hints_family;
+static int nrf_getaddrinfo_hints_null;
+
+static int nrf_getaddrinfo_hints_stub(const char *p_node, const char *p_service,
+				      const struct nrf_addrinfo *p_hints,
+				      struct nrf_addrinfo **pp_res,
+				      int cmock_num_calls)
+{
+	if (p_hints == NULL) {
+		nrf_getaddrinfo_hints_null++;
+	} else {
+		nrf_getaddrinfo_hints_family = p_hints->ai_family;
+	}
+
+	return NRF_EAI_NONAME;
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_unspec_single_query(void)
+{
+	int ret;
+	struct zsock_addrinfo *res;
+	struct zsock_addrinfo hints = {
+		.ai_family = NET_AF_UNSPEC,
+		.ai_socktype = NET_SOCK_STREAM,
+	};
+
+	nrf_getaddrinfo_hints_family = WRONG_VALUE;
+	__cmock_nrf_getaddrinfo_Stub(nrf_getaddrinfo_hints_stub);
+
+	ret = zsock_getaddrinfo(HTTPS_HOSTNAME, NULL, &hints, &res);
+
+	TEST_ASSERT_EQUAL(DNS_EAI_NONAME, ret);
+	TEST_ASSERT_EQUAL(NRF_AF_UNSPEC, nrf_getaddrinfo_hints_family);
+}
+
+void test_nrf9x_socket_offload_getaddrinfo_null_hints_single_query(void)
+{
+	int ret;
+	struct zsock_addrinfo *res;
+
+	nrf_getaddrinfo_hints_null = 0;
+	__cmock_nrf_getaddrinfo_Stub(nrf_getaddrinfo_hints_stub);
+
+	ret = zsock_getaddrinfo(HTTPS_HOSTNAME, NULL, NULL, &res);
+
+	TEST_ASSERT_EQUAL(DNS_EAI_NONAME, ret);
+	TEST_ASSERT_EQUAL(1, nrf_getaddrinfo_hints_null);
+}
+
 void test_nrf9x_socket_offload_close_ebadf(void)
 {
 	int ret;
