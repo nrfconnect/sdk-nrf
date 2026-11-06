@@ -12,6 +12,19 @@
 /delete-node/ &storage_partition;
 /delete-node/ &periphconf_partition;
 /delete-node/ &secure_storage_partition;
+/delete-node/ &mpcconf_partition;
+/delete-node/ &secondary_partition;
+/delete-node/ &secondary_periphconf_partition;
+/delete-node/ &secondary_mpcconf_partition;
+/delete-node/ &boot_request;
+/delete-node/ &boot_request_backup;
+
+/ {
+	chosen {
+		/delete-property/ nrf,bootloader-request;
+		/delete-property/ nrf,bootloader-request-backup;
+	};
+};
 
 &cpuppr_vpr {
 	status = "disabled";
