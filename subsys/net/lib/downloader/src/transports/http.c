@@ -5,6 +5,7 @@
  */
 
 #include <ctype.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -213,6 +214,45 @@ send:
 	return 0;
 }
 
+/* Reads the decimal number after the first 'sep' in the header line [hdr, end). Returns false
+ * if there is no number, if anything but spaces or tabs follows it, or if it does not fit in a
+ * size_t.
+ */
+static bool header_number_get(const char *hdr, const char *end, char sep, size_t *value)
+{
+	const char *p = memchr(hdr, sep, end - hdr);
+	size_t number = 0;
+	bool digits = false;
+
+	if (!p) {
+		return false;
+	}
+
+	for (p++; p < end && (*p == ' ' || *p == '\t'); p++) {
+	}
+
+	for (; p < end && isdigit((unsigned char)*p); p++) {
+		size_t digit = *p - '0';
+
+		if (number > (SIZE_MAX - digit) / 10) {
+			return false;
+		}
+		number = number * 10 + digit;
+		digits = true;
+	}
+
+	for (; p < end && (*p == ' ' || *p == '\t'); p++) {
+	}
+
+	if (!digits || p != end) {
+		return false;
+	}
+
+	*value = number;
+
+	return true;
+}
+
 /* Returns:
  * Number of bytes parsed on success.
  * Negative errno on error.
@@ -326,41 +366,39 @@ static int http_header_parse(struct downloader *dl, size_t buf_len)
 	 */
 	do {
 		if (dl->file_size == 0) {
+			size_t value;
+
+			p = strnstr(dl->cfg.buf,
+				    http->ranged ? "\r\ncontent-range:" : "\r\ncontent-length:",
+				    parse_len);
+			if (!p) {
+				break;
+			}
+
+			/* Skip the CRLF and keep to the header line. */
+			p += strlen("\r\n");
+			q = strnstr(p, "\r\n", parse_len - (p - dl->cfg.buf));
+			if (!q) {
+				/* Missing end of line */
+				break;
+			}
+
+			if (!header_number_get(p, q, http->ranged ? '/' : ':', &value)) {
+				break;
+			}
+
 			if (http->ranged) {
-				p = strnstr(dl->cfg.buf, "\r\ncontent-range", parse_len);
-				if (!p) {
-					break;
-				}
-				p = strnstr(p, "/", parse_len - (p - dl->cfg.buf));
-				if (!p) {
-					break;
-				}
-				q = strnstr(p, "\r\n", parse_len - (p - dl->cfg.buf));
-				if (!q) {
-					/* Missing end of line */
-					break;
-				}
-			} else { /* proto == PROTO_HTTP */
-				p = strnstr(dl->cfg.buf, "\r\ncontent-length", parse_len);
-				if (!p) {
-					break;
-				}
-				p = strstr(p, ":");
-				if (!p) {
-					break;
-				}
-				q = strnstr(p, "\r\n", parse_len - (p - dl->cfg.buf));
-				if (!q) {
-					/* Missing end of line */
-					break;
-				}
+				dl->file_size = value;
+			} else {
 				/* Accumulate any eventual progress (starting offset)
 				 * when reading the file size from Content-Length
 				 */
-				dl->file_size = dl->progress;
+				if (value > SIZE_MAX - dl->progress) {
+					break;
+				}
+				dl->file_size = dl->progress + value;
 			}
 
-			dl->file_size += atoi(p + 1);
 			LOG_DBG("File size = %u", dl->file_size);
 		}
 	} while (0);
@@ -504,7 +542,7 @@ static int parse_protocol(struct downloader *dl, const char *url)
 	}
 
 	err = dl_parse_url_port(url, &http->sock.port);
-	if (err) {
+	if (err == -ENOENT) {
 		switch (http->sock.proto) {
 		case NET_IPPROTO_TLS_1_2:
 			http->sock.port = DEFAULT_PORT_TLS;
@@ -514,6 +552,9 @@ static int parse_protocol(struct downloader *dl, const char *url)
 			break;
 		}
 		LOG_DBG("Port not specified, using default: %d", http->sock.port);
+	} else if (err) {
+		LOG_ERR("Invalid port in URL");
+		return err;
 	}
 
 	if (!IS_ENABLED(CONFIG_NET_SOCKETS_OFFLOAD_DISPATCHER) && dl->host_cfg.set_native_tls) {
