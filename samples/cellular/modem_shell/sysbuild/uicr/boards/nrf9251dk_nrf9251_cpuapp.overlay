@@ -40,14 +40,14 @@
 
 &mram1x {
 	partitions {
-		cpuapp_boot_partition: partition@312000 {
+		cpuapp_boot_partition: partition@300000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x312000 DT_SIZE_K(64)>;
+			reg = <0x300000 DT_SIZE_K(64)>;
 		};
 
-		cpuapp_slot0_partition: partition@322000 {
+		cpuapp_slot0_partition: partition@310000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x322000 DT_SIZE_K(888)>;
+			reg = <0x310000 DT_SIZE_K(960)>;
 		};
 
 		storage_partition: partition@400000 {

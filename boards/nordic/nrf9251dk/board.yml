@@ -14,6 +14,7 @@ board:
     default: "0.1.0"
     revisions:
     - name: "0.1.0"
+    - name: "0.5.0"
 runners:
   run_once:
     '--recover':
@@ -27,6 +28,12 @@ runners:
         - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
         - nrf9251dk@0.1.0/nrf9251/cpuflpr
         - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+      - boards:
+        - nrf9251dk@0.5.0/nrf9251/cpuapp
+        - nrf9251dk@0.5.0/nrf9251/cpuppr
+        - nrf9251dk@0.5.0/nrf9251/cpuppr/xip
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr/xip
     '--erase':
     - runners:
       - jlink
@@ -39,6 +46,12 @@ runners:
         - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
         - nrf9251dk@0.1.0/nrf9251/cpuflpr
         - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+      - boards:
+        - nrf9251dk@0.5.0/nrf9251/cpuapp
+        - nrf9251dk@0.5.0/nrf9251/cpuppr
+        - nrf9251dk@0.5.0/nrf9251/cpuppr/xip
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr/xip
     '--reset':
     - runners:
       - jlink
@@ -51,3 +64,9 @@ runners:
         - nrf9251dk@0.1.0/nrf9251/cpuppr/xip
         - nrf9251dk@0.1.0/nrf9251/cpuflpr
         - nrf9251dk@0.1.0/nrf9251/cpuflpr/xip
+      - boards:
+        - nrf9251dk@0.5.0/nrf9251/cpuapp
+        - nrf9251dk@0.5.0/nrf9251/cpuppr
+        - nrf9251dk@0.5.0/nrf9251/cpuppr/xip
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr
+        - nrf9251dk@0.5.0/nrf9251/cpuflpr/xip

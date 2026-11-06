@@ -1,0 +1,102 @@
+/*
+ * Copyright (c) 2026 Nordic Semiconductor ASA
+ *
+ * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+ */
+
+/* Application MRAM region of revision 0.1.0 starts from 0x312000. */
+
+&mram1x {
+	/delete-node/ partitions;
+};
+
+&mram1x {
+	partitions {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		ranges;
+
+		cpuapp_boot_partition: partition@312000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x312000 DT_SIZE_K(64)>;
+		};
+
+		cpuapp_slot0_partition: partition@322000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x322000 DT_SIZE_K(652)>;
+		};
+
+		periphconf_partition: partition@3c5000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3c5000 DT_SIZE_K(8)>;
+		};
+
+		mpcconf_partition: partition@3c7000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3c7000 512>;
+		};
+
+		cpuppr_code_partition: partition@3cd000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3cd000 DT_SIZE_K(64)>;
+		};
+
+		cpuflpr_code_partition: partition@3dd000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3dd000 DT_SIZE_K(64)>;
+		};
+
+		secondary_partition: partition@3ed000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ed000 DT_SIZE_K(64)>;
+		};
+
+		secondary_periphconf_partition: partition@3fd000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3fd000 DT_SIZE_K(8)>;
+		};
+
+		secondary_mpcconf_partition: partition@3ff000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff000 512>;
+		};
+
+		boot_request: partition@3ff200 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff200 16>;
+		};
+
+		boot_request_backup: partition@3ff210 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x3ff210 16>;
+		};
+
+		storage_partition: partition@400000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x400000 DT_SIZE_K(40)>;
+		};
+
+		cpuapp_slot1_partition: partition@40a000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x40a000 DT_SIZE_K(652)>;
+		};
+
+		secure_storage_partition: partition@4ad000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x4ad000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x4ad000 0x2000>;
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			cpuapp_crypto_partition: partition@0 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x0 DT_SIZE_K(4)>;
+			};
+
+			cpuapp_its_partition: partition@1000 {
+				compatible = "zephyr,mapped-partition";
+				reg = <0x1000 DT_SIZE_K(4)>;
+			};
+		};
+	};
+};

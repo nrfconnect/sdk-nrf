@@ -112,75 +112,70 @@
 		#size-cells = <1>;
 		ranges;
 
-		cpuapp_boot_partition: partition@312000 {
+		cpuapp_boot_partition: partition@300000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x312000 DT_SIZE_K(64)>;
+			reg = <0x300000 DT_SIZE_K(64)>;
 		};
 
-		cpuapp_slot0_partition: partition@322000 {
+		cpuapp_slot0_partition: partition@310000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x322000 DT_SIZE_K(652)>;
+			reg = <0x310000 DT_SIZE_K(700)>;
 		};
 
-		periphconf_partition: partition@3c5000 {
+		storage_partition: partition@3bf000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3c5000 DT_SIZE_K(8)>;
+			reg = <0x3bf000 DT_SIZE_K(40)>;
 		};
 
-		mpcconf_partition: partition@3c7000 {
+		periphconf_partition: partition@3c9000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3c7000 512>;
+			reg = <0x3c9000 DT_SIZE_K(8)>;
 		};
 
-		cpuppr_code_partition: partition@3cd000 {
+		cpuppr_code_partition: partition@3cb000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3cd000 DT_SIZE_K(64)>;
+			reg = <0x3cb000 DT_SIZE_K(64)>;
 		};
 
-		cpuflpr_code_partition: partition@3dd000 {
+		cpuflpr_code_partition: partition@3db000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3dd000 DT_SIZE_K(64)>;
+			reg = <0x3db000 DT_SIZE_K(64)>;
 		};
 
-		secondary_partition: partition@3ed000 {
+		secondary_partition: partition@3eb000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3ed000 DT_SIZE_K(64)>;
+			reg = <0x3eb000 DT_SIZE_K(64)>;
 		};
 
-		secondary_periphconf_partition: partition@3fd000 {
+		secondary_periphconf_partition: partition@3fb000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3fd000 DT_SIZE_K(8)>;
+			reg = <0x3fb000 DT_SIZE_K(8)>;
 		};
 
-		secondary_mpcconf_partition: partition@3ff000 {
+		mpcconf_partition: partition@3fd000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3ff000 512>;
+			reg = <0x3fd000 512>;
 		};
 
-		boot_request: partition@3ff200 {
+		secondary_mpcconf_partition: partition@3fd200 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3ff200 16>;
+			reg = <0x3fd200 512>;
 		};
 
-		boot_request_backup: partition@3ff210 {
+		boot_request: partition@3fd400 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x3ff210 16>;
+			reg = <0x3fd400 16>;
 		};
 
-		storage_partition: partition@400000 {
+		boot_request_backup: partition@3fd410 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x400000 DT_SIZE_K(40)>;
+			reg = <0x3fd410 16>;
 		};
 
-		cpuapp_slot1_partition: partition@40a000 {
+		secure_storage_partition: partition@3fe000 {
 			compatible = "zephyr,mapped-partition";
-			reg = <0x40a000 DT_SIZE_K(652)>;
-		};
-
-		secure_storage_partition: partition@4ad000 {
-			compatible = "zephyr,mapped-partition";
-			reg = <0x4ad000 DT_SIZE_K(8)>;
-			ranges = <0x0 0x4ad000 0x2000>;
+			reg = <0x3fe000 DT_SIZE_K(8)>;
+			ranges = <0x0 0x3fe000 0x2000>;
 			#address-cells = <1>;
 			#size-cells = <1>;
 
@@ -193,6 +188,11 @@
 				compatible = "zephyr,mapped-partition";
 				reg = <0x1000 DT_SIZE_K(4)>;
 			};
+		};
+
+		cpuapp_slot1_partition: partition@400000 {
+			compatible = "zephyr,mapped-partition";
+			reg = <0x400000 DT_SIZE_K(700)>;
 		};
 	};
 };
