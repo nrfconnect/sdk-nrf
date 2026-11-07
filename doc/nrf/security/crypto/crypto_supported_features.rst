@@ -10121,6 +10121,10 @@ The options are grouped by Series and drivers available for the device Series, a
                  - --
                  - --
 
+            .. note::
+
+               The CRACEN driver supports WPA3-SAE (fixed and GDH) only with the secp256r1 curve and SHA-256.
+
          .. tab:: nrf_oberon
 
             .. list-table:: PAKE algorithm support (nrf_oberon driver) - nRF54L Series
