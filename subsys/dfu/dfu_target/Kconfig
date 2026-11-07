@@ -89,8 +89,9 @@ config DFU_TARGET_STREAM_SYNCHRONOUS
 
 config DFU_TARGET_MODEM_DELTA
 	bool "Modem delta update support"
-	default y
-	depends on SOC_SERIES_NRF91
+	default y if SOC_SERIES_NRF91
+	default n
+	depends on SOC_SERIES_NRF91 || SOC_SERIES_NRF92
 	help
 	  Enable support for updates to the modem firmware.
 
