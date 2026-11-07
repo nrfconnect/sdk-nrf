@@ -28,7 +28,7 @@ API documentation
 *****************
 
 | Header file: :file:`include/dk_buttons_and_leds.h`
-| Source files: :file:`lib/dk_buttons_and_leds/`
+| Source files: :ncs-file:`lib/dk_buttons_and_leds/ </lib/dk_buttons_and_leds>`
 
 .. doxygengroup:: dk_buttons_and_leds
 

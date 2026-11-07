@@ -452,6 +452,6 @@ API documentation
 CRACEN driver API
 =================
 
-| Header files: :file:`subsys/nrf_security/src/drivers/cracen/`
+| Header files: :ncs-file:`subsys/nrf_security/src/drivers/cracen/ </subsys/nrf_security/src/drivers/cracen>`
 
 .. doxygengroup:: cracen_driver_apis

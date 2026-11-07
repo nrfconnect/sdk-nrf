@@ -209,6 +209,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/dfu/dfu_target.h`
-| Source files: :file:`subsys/dfu/dfu_target/src/`
+| Source files: :ncs-file:`subsys/dfu/dfu_target/src/ </subsys/dfu/dfu_target/src>`
 
 .. doxygengroup:: dfu_target

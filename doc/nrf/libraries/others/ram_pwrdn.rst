@@ -23,6 +23,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/ram_pwrdn.h`
-| Source files: :file:`lib/ram_pwrdn/`
+| Source files: :ncs-file:`lib/ram_pwrdn/ </lib/ram_pwrdn>`
 
 .. doxygengroup:: ram_pwrdn

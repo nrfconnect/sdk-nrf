@@ -57,7 +57,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/scan`
+.. |sample path| replace:: :ncs-file:`samples/wifi/scan </samples/wifi/scan>`
 
 .. include:: /includes/build_and_run_ns.txt
 

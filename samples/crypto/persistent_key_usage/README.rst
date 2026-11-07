@@ -73,7 +73,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/persistent_key_usage`
+.. |sample path| replace:: :ncs-file:`samples/crypto/persistent_key_usage </samples/crypto/persistent_key_usage>`
 
 .. include:: /includes/build_and_run_ns.txt
 

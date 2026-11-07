@@ -14,7 +14,7 @@ This ensures that the partitions match the actual requirements and maximizes the
 Including default partition layouts
 ***********************************
 
-The easiest way is to include two of the ``.dtsi`` files from the :file:`nrf/dts/samples/cellular` folder to your board's :file:`.overlay` file.
+The easiest way is to include two of the ``.dtsi`` files from the :ncs-file:`nrf/dts/samples/cellular </dts/samples/cellular>` folder to your board's :file:`.overlay` file.
 
 .. code-block:: devicetree
 

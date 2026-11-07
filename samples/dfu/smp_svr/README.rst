@@ -166,7 +166,7 @@ The following table describes the available configurations.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/smp_svr`
+.. |sample path| replace:: :ncs-file:`samples/dfu/smp_svr </samples/dfu/smp_svr>`
 
 .. include:: /includes/build_and_run.txt
 

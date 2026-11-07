@@ -25,7 +25,7 @@ A driver instance can be made configurable through a devicetree node that is com
 
 You can create a devicetree binding YAML file for your driver in the :file:`dts/bindings` directory of your project.
 If applicable, you can also use one of the existing DTS bindings available in the |NCS| or Zephyr.
-For implementation examples, see :file:`nrf/dts/bindings` and :file:`zephyr/dts/bindings` directories.
+For implementation examples, see :ncs-file:`nrf/dts/bindings </dts/bindings>` and :file:`zephyr/dts/bindings` directories.
 See also :ref:`zephyr:devicetree` documentation for more information about devicetree.
 
 .. rst-class:: numbered-step

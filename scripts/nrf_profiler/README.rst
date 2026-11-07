@@ -231,7 +231,7 @@ Fields:
 
 * ``end_event`` - Configuration for the end event (same format as ``start_event``)
 
-For examples of the test preset JSON file, see the :file:`stats_nordic_presets/` directory.
+For examples of the test preset JSON file, see the :ncs-file:`stats_nordic_presets/ </scripts/nrf_profiler/stats_nordic_presets>` directory.
 
 Dependencies
 ************

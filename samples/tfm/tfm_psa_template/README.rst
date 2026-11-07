@@ -63,7 +63,7 @@ Building and flashing the provisioning image depends on the target device and it
 Using own NSIB signing key
 ++++++++++++++++++++++++++
 
-By default, the sample signs the NSIB image with the sample key in :file:`samples/tfm/common/keys/`.
+By default, the sample signs the NSIB image with the sample key in :ncs-file:`samples/tfm/common/keys/ </samples/tfm/common/keys>`.
 This is a publicly known development key and must not be used in production.
 
 To use your own NSIB signing key, set the :kconfig:option:`SB_CONFIG_SECURE_BOOT_SIGNING_KEY_FILE` Kconfig option to your key file.
@@ -346,7 +346,7 @@ Building and running
    When re-flashing the application after provisioning, use plain programming command (``west flash``) without any additional arguments, such as ``--erase`` or ``--recover``.
    These additional arguments wipe the provisioned lifecycle state and keys.
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_psa_template`
+.. |sample path| replace:: :ncs-file:`samples/tfm/tfm_psa_template </samples/tfm/tfm_psa_template>`
 
 .. include:: /includes/build_and_run_ns.txt
 

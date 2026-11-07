@@ -43,7 +43,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/promiscuous`
+.. |sample path| replace:: :ncs-file:`samples/wifi/promiscuous </samples/wifi/promiscuous>`
 
 .. include:: /includes/build_and_run_ns.txt
 

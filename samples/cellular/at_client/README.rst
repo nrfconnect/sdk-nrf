@@ -32,7 +32,7 @@ For more information on the AT commands, see the `nRF91x1 AT Commands Reference 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/at_client`
+.. |sample path| replace:: :ncs-file:`samples/cellular/at_client </samples/cellular/at_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 

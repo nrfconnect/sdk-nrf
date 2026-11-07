@@ -199,7 +199,7 @@ Wi-Fi®
 
    * The Wi-Fi Enterprise snippet has changed.
      Use the |NCS| ``nordic-wifi-enterprise`` snippet instead of Zephyr's ``wifi-enterprise`` snippet for Wi-Fi Enterprise builds.
-     The |NCS| snippet is available in :file:`snippets/nordic-wifi-enterprise`.
+     The |NCS| snippet is available in :ncs-file:`snippets/nordic-wifi-enterprise </snippets/nordic-wifi-enterprise>`.
 
 
 .. _migration_3.4_recommended:
@@ -342,7 +342,7 @@ Google Fast Pair
             };
         };
 
-     Refer to the partition overlays under the :file:`nrf/samples/bluetooth/fast_pair/locator_tag/` and :file:`nrf/samples/bluetooth/fast_pair/input_device/` sample directories for complete examples of the updated layout.
+     Refer to the partition overlays under the :ncs-file:`nrf/samples/bluetooth/fast_pair/locator_tag/ </samples/bluetooth/fast_pair/locator_tag>` and :ncs-file:`nrf/samples/bluetooth/fast_pair/input_device/ </samples/bluetooth/fast_pair/input_device>` sample directories for complete examples of the updated layout.
 
      .. important::
         This migration is mandatory on nRF53 Series board targets.

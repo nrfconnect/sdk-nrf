@@ -22,7 +22,7 @@ Requirements
    This script depends on the ``pc_ble_driver_py`` Python package, which is no longer maintained.
    As a result, only Python versions above or equal to 3.7 and below 3.11 are supported.
 
-The script source files are located in the :file:`scripts/shell` directory.
+The script source files are located in the :ncs-file:`scripts/shell </scripts/shell>` directory.
 
 To install the script's requirements, run the following command in its directory:
 
@@ -36,7 +36,7 @@ Using the script
 ****************
 
 1. Connect your nRF52 Series development kit to your PC.
-#. Run the script commands in the :file:`scripts/shell` directory.
+#. Run the script commands in the :ncs-file:`scripts/shell </scripts/shell>` directory.
 
 If you provide the ``--snr`` argument, your DK will be programmed with the connectivity firmware.
 To list the script arguments, run the following command:

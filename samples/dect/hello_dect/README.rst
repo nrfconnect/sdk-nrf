@@ -101,7 +101,7 @@ Additional options
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dect/hello_dect`
+.. |sample path| replace:: :ncs-file:`samples/dect/hello_dect </samples/dect/hello_dect>`
 
 .. include:: /includes/build_and_run_ns.txt
 

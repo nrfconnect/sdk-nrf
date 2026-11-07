@@ -73,14 +73,14 @@ The sample provides predefined configuration files for the following development
 * :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
 
-Files that are located under the :file:`/boards` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
+Files that are located under the :ncs-file:`/boards </samples/net/udp/boards>` folder are automatically merged with the :file:`prj.conf` file when you build for the corresponding target.
 
 To add a specific extra configuration file to the build, add the ``-- -DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your build.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/udp`
+.. |sample path| replace:: :ncs-file:`samples/net/udp </samples/net/udp>`
 
 .. include:: /includes/build_and_run_ns.txt
 

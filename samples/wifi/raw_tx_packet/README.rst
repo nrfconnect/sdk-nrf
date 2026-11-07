@@ -98,7 +98,7 @@ You can change the following default static configuration in the :file:`prj.conf
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/raw_tx_packet`
+.. |sample path| replace:: :ncs-file:`samples/wifi/raw_tx_packet </samples/wifi/raw_tx_packet>`
 
 .. include:: /includes/build_and_run_ns.txt
 

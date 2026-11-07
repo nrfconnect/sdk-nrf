@@ -133,7 +133,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/sensor_client`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/sensor_client </samples/bluetooth/mesh/sensor_client>`
 
 .. include:: /includes/build_and_run.txt
 

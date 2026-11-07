@@ -310,7 +310,7 @@ These structures are crucial for configuring and executing data transfers effici
 Building and running
 ********************
 
-.. |application path| replace:: :file:`applications/hpf/mspi`
+.. |application path| replace:: :ncs-file:`applications/hpf/mspi </applications/hpf/mspi>`
 
 .. include:: /includes/application_build_and_run.txt
 

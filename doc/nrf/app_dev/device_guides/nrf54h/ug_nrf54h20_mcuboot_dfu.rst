@@ -17,13 +17,13 @@ For full introduction to the bootloader and DFU solution, see :ref:`ug_bootloade
    |NSIB| is not supported on the nRF54H20 SoC.
 
 You must select a sample that supports DFU to ensure proper testing of its functionality.
-In the following sections, the SMP server sample variant in the :file:`samples/dfu/smp_svr` folder is used.
+In the following sections, the SMP server sample variant in the :ncs-file:`samples/dfu/smp_svr </samples/dfu/smp_svr>` folder is used.
 It extends the Zephyr's :zephyr:code-sample:`smp-svr` sample and adapts it for nRF54H20 platform.
 
 .. note::
    There are two variants of the SMP server sample:
 
-   * The new ``sdk-nrf`` sample supporting the nRF54H20 SoC, located in the :file:`samples/dfu/smp_svr` folder.
+   * The new ``sdk-nrf`` sample supporting the nRF54H20 SoC, located in the :ncs-file:`samples/dfu/smp_svr </samples/dfu/smp_svr>` folder.
    * The :zephyr:code-sample:`smp-svr`, located in the :file:`samples/subsys/mgmt/mcumgr/smp_svr` folder, is the Zephyr sample that supports MCUboot and DFU.
 
 Configuring MCUboot on the nRF54H20 DK
@@ -89,7 +89,7 @@ DFU configuration example
 MCUboot supports various methods for updating firmware images.
 On the nRF54H platform, you can use :ref:`swap and direct-xip modes<ug_bootloader_main_config>`.
 
-For more information, see the :file:`samples/dfu/smp_svr` sample.
+For more information, see the :ncs-file:`samples/dfu/smp_svr </samples/dfu/smp_svr>` sample.
 This sample demonstrates how to configure DFU feature in both MCUboot and user application in your project.
 It uses Simple Management Protocol for DFU and querying device information from the application.
 

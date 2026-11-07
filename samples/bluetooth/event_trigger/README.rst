@@ -21,7 +21,7 @@ Note that the Event Trigger feature involves triggering a (D)PPI task directly f
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/event_trigger`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/event_trigger </samples/bluetooth/event_trigger>`
 
 .. include:: /includes/build_and_run.txt
 

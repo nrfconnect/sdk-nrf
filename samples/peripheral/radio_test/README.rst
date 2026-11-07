@@ -186,7 +186,7 @@ Configuration
 |config|
 
 The default shell transport is UART.
-Alternative shell transports (SEGGER RTT or USB CDC ACM) are configured at build time using Zephyr snippets and the configuration fragments in the :file:`conf/` folder.
+Alternative shell transports (SEGGER RTT or USB CDC ACM) are configured at build time using Zephyr snippets and the configuration fragments in the :ncs-file:`conf/ </samples/peripheral/radio_test/conf>` folder.
 See :ref:`radio_test_shell_transport` for details.
 
 The following sample-specific Kconfig options are used in this sample (located in :file:`samples/peripheral/radio_test/Kconfig`) :
@@ -197,7 +197,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/peripheral/radio_test`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/radio_test </samples/peripheral/radio_test>`
 
 .. include:: /includes/build_and_run.txt
 

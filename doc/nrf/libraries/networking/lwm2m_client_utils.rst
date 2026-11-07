@@ -311,6 +311,6 @@ API documentation
 *****************
 
 | Header files: :file:`include/net/lwm2m_client_utils.h`
-| Source files: :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
+| Source files: :ncs-file:`subsys/net/lib/lwm2m_client_utils/lwm2m </subsys/net/lib/lwm2m_client_utils/lwm2m>`
 
 .. doxygengroup:: lwm2m_client_utils

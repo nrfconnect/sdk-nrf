@@ -109,7 +109,7 @@ To connect your DK to the nPM2100 EK, complete the following steps:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/pmic/native/npm2100_fuel_gauge`
+.. |sample path| replace:: :ncs-file:`samples/pmic/native/npm2100_fuel_gauge </samples/pmic/native/npm2100_fuel_gauge>`
 
 .. include:: /includes/build_and_run.txt
 

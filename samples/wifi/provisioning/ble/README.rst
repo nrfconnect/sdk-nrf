@@ -95,7 +95,7 @@ If the device is not provisioned, the interval is 100 ms. If it is provisioned, 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/provisioning/ble`
+.. |sample path| replace:: :ncs-file:`samples/wifi/provisioning/ble </samples/wifi/provisioning/ble>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -150,7 +150,7 @@ If all bonding information is used and there is still no connection, the regular
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_mouse`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_hids_mouse </samples/bluetooth/peripheral_hids_mouse>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -221,7 +221,7 @@ Use the following command to build the sample in ``release`` configuration:
 
    west build -b *board_target* -- -DFILE_SUFFIX=release
 
-To get the memory footprint, run the following commands from the sample directory (:file:`nrf/samples/bluetooth/peripheral_hids_mouse`):
+To get the memory footprint, run the following commands from the sample directory (:ncs-file:`nrf/samples/bluetooth/peripheral_hids_mouse </samples/bluetooth/peripheral_hids_mouse>`):
 
 .. parsed-literal::
    :class: highlight

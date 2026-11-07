@@ -41,7 +41,7 @@ For more information about secondary firmware configuration and other available 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ironside_se/secondary_boot_trigger_lockup`
+.. |sample path| replace:: :ncs-file:`samples/ironside_se/secondary_boot_trigger_lockup </samples/ironside_se/secondary_boot_trigger_lockup>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -71,7 +71,7 @@ Button 4:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/central_nfc_pairing`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_nfc_pairing </samples/bluetooth/central_nfc_pairing>`
 
 .. include:: /includes/build_and_run.txt
 

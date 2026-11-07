@@ -104,7 +104,7 @@ To connect your DK to the nPM2100 EK, complete the following steps:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/pmic/native/npm2100_one_button`
+.. |sample path| replace:: :ncs-file:`samples/pmic/native/npm2100_one_button </samples/pmic/native/npm2100_one_button>`
 
 .. include:: /includes/build_and_run.txt
 

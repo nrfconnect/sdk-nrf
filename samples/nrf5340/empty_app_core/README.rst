@@ -33,7 +33,7 @@ It does the following:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf5340/empty_app_core`
+.. |sample path| replace:: :ncs-file:`samples/nrf5340/empty_app_core </samples/nrf5340/empty_app_core>`
 
 .. include:: /includes/build_and_run.txt
 

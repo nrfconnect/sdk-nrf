@@ -134,7 +134,7 @@ To provide this extra overlay file, use the :ref:`EXTRA_CONF_FILE CMake option<b
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/aes_kw`
+.. |sample path| replace:: :ncs-file:`samples/crypto/aes_kw </samples/crypto/aes_kw>`
 
 .. include:: /includes/build_and_run.txt
 

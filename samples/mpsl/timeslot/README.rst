@@ -42,7 +42,7 @@ The timeslot session is closed when any key is pressed in the terminal.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/mpsl/timeslot`
+.. |sample path| replace:: :ncs-file:`samples/mpsl/timeslot </samples/mpsl/timeslot>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -183,6 +183,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/fw_info.h`
-| Source files: :file:`subsys/fw_info/`
+| Source files: :ncs-file:`subsys/fw_info/ </subsys/fw_info>`
 
 .. doxygengroup:: fw_info

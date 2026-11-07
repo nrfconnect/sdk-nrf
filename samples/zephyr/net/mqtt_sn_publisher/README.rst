@@ -65,7 +65,7 @@ Use the :ref:`Wi-Fi snippet <zephyr:snippet-wifi-ipv4>` to build and run the sam
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/zephyr/net/mqtt_sn_publisher`
+.. |sample path| replace:: :ncs-file:`samples/zephyr/net/mqtt_sn_publisher </samples/zephyr/net/mqtt_sn_publisher>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -169,7 +169,7 @@ Snippets
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/openthread/cli`
+.. |sample path| replace:: :ncs-file:`samples/openthread/cli </samples/openthread/cli>`
 
 |enable_thread_before_testing|
 

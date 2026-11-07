@@ -390,6 +390,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/app_event_manager.h`
-| Source files: :file:`subsys/app_event_manager/`
+| Source files: :ncs-file:`subsys/app_event_manager/ </subsys/app_event_manager>`
 
 .. doxygengroup:: app_event_manager

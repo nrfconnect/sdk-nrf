@@ -33,7 +33,7 @@ This triggers the callbacks for :c:func:`on_modem_init`, :c:func:`on_cfun` and :
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/modem_callbacks`
+.. |sample path| replace:: :ncs-file:`samples/cellular/modem_callbacks </samples/cellular/modem_callbacks>`
 
 .. include:: /includes/build_and_run_ns.txt
 

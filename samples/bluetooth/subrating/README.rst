@@ -61,7 +61,7 @@ By default, the following connection parameters are used:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/subrating`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/subrating </samples/bluetooth/subrating>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -21,7 +21,7 @@ Building and running
 This project outputs sensor data to the console.
 It requires a BME68X sensor.
 
-.. |sample path| replace:: :file:`samples/sensor/bme68x_iaq`
+.. |sample path| replace:: :ncs-file:`samples/sensor/bme68x_iaq </samples/sensor/bme68x_iaq>`
 
 .. include:: /includes/build_and_run.txt
 

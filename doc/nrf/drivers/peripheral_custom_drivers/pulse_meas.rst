@@ -390,6 +390,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/drivers/pulse_meas.h`
-| Source files: :file:`drivers/pulse_meas/`
+| Source files: :ncs-file:`drivers/pulse_meas/ </drivers/pulse_meas>`
 
 .. doxygengroup:: pulse_meas

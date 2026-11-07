@@ -16,6 +16,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/esb.h`
-| Source files: :file:`subsys/esb/`
+| Source files: :ncs-file:`subsys/esb/ </subsys/esb>`
 
 .. doxygengroup:: esb

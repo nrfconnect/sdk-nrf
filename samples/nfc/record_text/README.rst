@@ -43,7 +43,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nfc/record_text`
+.. |sample path| replace:: :ncs-file:`samples/nfc/record_text </samples/nfc/record_text>`
 
 .. include:: /includes/build_and_run_ns.txt
 

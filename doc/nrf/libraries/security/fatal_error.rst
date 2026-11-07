@@ -25,7 +25,7 @@ To have the application enter an endless loop, change the :kconfig:option:`CONFI
 Library files
 *************
 
-This library can be found under :file:`lib/fatal_error/` in the |NCS| folder structure.
+This library can be found under :ncs-file:`lib/fatal_error/ </lib/fatal_error>` in the |NCS| folder structure.
 The Zephyr file it overrides is :file:`fatal.c` under :file:`zephyr/kernel/` in the |NCS| folder structure.
 
 API documentation

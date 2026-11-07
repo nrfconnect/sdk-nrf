@@ -50,7 +50,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/ecdh`
+.. |sample path| replace:: :ncs-file:`samples/crypto/ecdh </samples/crypto/ecdh>`
 
 .. include:: /includes/build_and_run_ns.txt
 

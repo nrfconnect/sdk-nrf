@@ -42,7 +42,7 @@ Configuration options
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/compressed_update`
+.. |sample path| replace:: :ncs-file:`samples/dfu/compressed_update </samples/dfu/compressed_update>`
 
 .. include:: /includes/build_and_run.txt
 

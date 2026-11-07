@@ -33,6 +33,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/bl_storage.h`
-| Source files: :file:`subsys/bootloader/bl_storage/`
+| Source files: :ncs-file:`subsys/bootloader/bl_storage/ </subsys/bootloader/bl_storage>`
 
 .. doxygengroup:: bl_storage

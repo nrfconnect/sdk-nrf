@@ -679,7 +679,7 @@ Check and configure the following Kconfig options:
 Building
 ********
 
-.. |sample path| replace:: :file:`samples/dect/dect_shell`
+.. |sample path| replace:: :ncs-file:`samples/dect/dect_shell </samples/dect/dect_shell>`
 
 .. include:: /includes/build_and_run_ns.txt
 

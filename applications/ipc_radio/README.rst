@@ -122,7 +122,7 @@ The following files are available:
 Building and running as a single image
 **************************************
 
-.. |application path| replace:: :file:`applications/ipc_radio`
+.. |application path| replace:: :ncs-file:`applications/ipc_radio </applications/ipc_radio>`
 
 .. include:: /includes/application_build_and_run.txt
 

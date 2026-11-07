@@ -100,7 +100,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/provisioning_image`
+.. |sample path| replace:: :ncs-file:`samples/tfm/provisioning_image </samples/tfm/provisioning_image>`
 
 .. include:: /includes/build_and_run.txt
 

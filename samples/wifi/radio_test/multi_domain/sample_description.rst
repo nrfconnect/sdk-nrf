@@ -50,7 +50,7 @@ See :ref:`wifi_ficr_prog` for a list of available subcommands.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/radio_test/multi_domain`
+.. |sample path| replace:: :ncs-file:`samples/wifi/radio_test/multi_domain </samples/wifi/radio_test/multi_domain>`
 
 .. include:: /includes/build_and_run.txt
 

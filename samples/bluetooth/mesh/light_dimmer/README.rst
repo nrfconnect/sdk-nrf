@@ -168,7 +168,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_dimmer`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/light_dimmer </samples/bluetooth/mesh/light_dimmer>`
 
 .. include:: /includes/build_and_run_ns.txt
 

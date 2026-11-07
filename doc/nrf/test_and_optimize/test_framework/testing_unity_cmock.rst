@@ -19,7 +19,7 @@ For more information, see :ref:`running_unit_tests`.
 Setting up a unit test
 **********************
 
-An example for a unit test can be found in :file:`tests/unity/example_test`.
+An example for a unit test can be found in :ncs-file:`tests/unity/example_test </tests/unity/example_test>`.
 The file `tests/unity/example_test/CMakeLists.txt`_ shows how to set up the generation of the test runner file and mocks.
 
 To run the unit test, enable the Unity module (:kconfig:option:`CONFIG_UNITY`) and the module under test.

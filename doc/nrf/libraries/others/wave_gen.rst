@@ -20,6 +20,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/wave_gen.h`
-| Source files: :file:`lib/wave_gen/`
+| Source files: :ncs-file:`lib/wave_gen/ </lib/wave_gen>`
 
 .. doxygengroup:: wave_gen

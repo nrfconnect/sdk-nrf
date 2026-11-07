@@ -28,7 +28,7 @@ Each reported value represents the pulse width in microseconds.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/pulse_meas`
+.. |sample path| replace:: :ncs-file:`samples/pulse_meas </samples/pulse_meas>`
 
 .. include:: /includes/build_and_run.txt
 

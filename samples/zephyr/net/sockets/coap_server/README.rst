@@ -93,7 +93,7 @@ Use the :ref:`wifi-ipv4 snippet <zephyr:snippet-wifi-ipv4>` to build and run the
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/zephyr/net/sockets/coap_server`
+.. |sample path| replace:: :ncs-file:`samples/zephyr/net/sockets/coap_server </samples/zephyr/net/sockets/coap_server>`
 
 .. include:: /includes/build_and_run.txt
 

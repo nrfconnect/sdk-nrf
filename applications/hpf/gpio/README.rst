@@ -43,7 +43,7 @@ You can enable the following IPC backends:
 Building and running
 ********************
 
-.. |application path| replace:: :file:`applications/hpf/gpio`
+.. |application path| replace:: :ncs-file:`applications/hpf/gpio </applications/hpf/gpio>`
 
 .. include:: /includes/application_build_and_run.txt
 

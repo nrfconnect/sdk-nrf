@@ -92,4 +92,4 @@ API documentation
 This library does not define a new NFC API.
 
 | Header files: :file:`nrfxlib/nfc/include/nfc_t2t_lib.h`, :file:`nrfxlib/nfc/include/nfc_t4t_lib.h`
-| Source files: :file:`subsys/nfc/rpc/`
+| Source files: :ncs-file:`subsys/nfc/rpc/ </subsys/nfc/rpc>`

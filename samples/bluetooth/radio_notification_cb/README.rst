@@ -23,7 +23,7 @@ Additionally, the sample requires a connection to a computer with a serial termi
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/radio_notification_cb`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/radio_notification_cb </samples/bluetooth/radio_notification_cb>`
 
 .. include:: /includes/build_and_run.txt
 

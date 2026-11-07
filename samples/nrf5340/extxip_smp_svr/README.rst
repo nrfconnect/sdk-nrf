@@ -41,14 +41,14 @@ The sample enables the splitting by:
 * Using the project's CMake file which describes relocation of certain libraries or objects to an external XIP area.
 * Using a linker script that describes the external QSPI area.
   (The execution code from the external memory should link to it.)
-* Using devicetree memory maps in the :file:`dts` folder for appropriate flash partitioning.
+* Using devicetree memory maps in the :ncs-file:`dts </samples/nrf5340/extxip_smp_svr/dts>` folder for appropriate flash partitioning.
 
 For details on SMP features implemented by the sample, see the Zephyr :zephyr:code-sample:`smp-svr` documentation.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf5340/extxip_smp_svr`
+.. |sample path| replace:: :ncs-file:`samples/nrf5340/extxip_smp_svr </samples/nrf5340/extxip_smp_svr>`
 .. include:: /includes/build_and_run.txt
 
 .. parsed-literal::
@@ -220,5 +220,5 @@ The sample uses the following Zephyr library:
 
 * :ref:`zephyr:mcu_mgr`
 
-The memory layout is defined in the sample devicetree files located in the :file:`dts` folder.
+The memory layout is defined in the sample devicetree files located in the :ncs-file:`dts </samples/nrf5340/extxip_smp_svr/dts>` folder.
 See :ref:`devicetree-based partitioning <zephyr:dt-guide>` for more information.

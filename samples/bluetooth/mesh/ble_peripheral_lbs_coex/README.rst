@@ -154,7 +154,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/ble_peripheral_lbs_coex`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/ble_peripheral_lbs_coex </samples/bluetooth/mesh/ble_peripheral_lbs_coex>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -247,6 +247,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/bluetooth/fast_pair/adv_manager.h`
-| Source files: :file:`subsys/bluetooth/fast_pair/adv_manager`
+| Source files: :ncs-file:`subsys/bluetooth/fast_pair/adv_manager </subsys/bluetooth/fast_pair/adv_manager>`
 
 .. doxygengroup:: bt_fast_pair_adv_manager

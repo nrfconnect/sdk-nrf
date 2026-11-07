@@ -52,12 +52,12 @@ Building and running
 For the MCU with multiple cores, the default configuration ensures that all the required cores are built.
 You can build and flash all the required images by completing the following steps for all the required cores.
 
-.. |sample path| replace:: :file:`samples/caf_sensor_manager`
+.. |sample path| replace:: :ncs-file:`samples/caf_sensor_manager </samples/caf_sensor_manager>`
 
 .. include:: /includes/build_and_run.txt
 
 .. |sample_or_app| replace:: sample
-.. |ipc_radio_dir| replace:: :file:`remote/`
+.. |ipc_radio_dir| replace:: :ncs-file:`remote/ </samples/caf_sensor_manager/remote>`
 
 .. include:: /includes/ipc_radio_conf.txt
 

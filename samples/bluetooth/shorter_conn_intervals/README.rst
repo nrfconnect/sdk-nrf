@@ -79,7 +79,7 @@ The initiating device cycles through the following connection intervals:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/shorter_conn_intervals`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/shorter_conn_intervals </samples/bluetooth/shorter_conn_intervals>`
 
 .. include:: /includes/build_and_run.txt
 

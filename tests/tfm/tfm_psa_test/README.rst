@@ -38,7 +38,7 @@ The following Kconfig options can be used to choose a test suite:
 Building and running
 ********************
 
-.. |test path| replace:: :file:`tests/tfm/tfm_psa_test/`
+.. |test path| replace:: :ncs-file:`tests/tfm/tfm_psa_test/ </tests/tfm/tfm_psa_test>`
 
 .. include:: /includes/build_and_run_test.txt
 

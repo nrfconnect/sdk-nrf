@@ -32,7 +32,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/nrf_profiler`
+.. |sample path| replace:: :ncs-file:`samples/nrf_profiler </samples/nrf_profiler>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -41,7 +41,7 @@ Testing
 
 After programming the sample to your development kit, you can test it by performing the following steps:
 
-1. Go to the :file:`scripts/nrf_profiler` folder.
+1. Go to the :ncs-file:`scripts/nrf_profiler </scripts/nrf_profiler>` folder.
 #. Run the script :file:`real_time_plot.py`, with the name that should be used to store the data as the argument.
    For example:
 

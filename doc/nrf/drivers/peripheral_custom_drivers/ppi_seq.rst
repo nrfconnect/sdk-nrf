@@ -251,6 +251,6 @@ API documentation
 *****************
 
 | Header file: :file:`include/drivers/ppi_seq/ppi_seq.h`
-| Source files: :file:`drivers/ppi_seq/`
+| Source files: :ncs-file:`drivers/ppi_seq/ </drivers/ppi_seq>`
 
 .. doxygengroup:: ppi_seq

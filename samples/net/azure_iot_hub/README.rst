@@ -151,7 +151,7 @@ The sample provides predefined configuration files for the following development
 * :file:`wifi-fota.conf` - FOTA configuration for Wi-Fi builds.
 * :file:`dps.conf` - Enables provisioning of the device using DPS.
 
-Board files under the :file:`boards/` folder are merged automatically for the selected target.
+Board files under the :ncs-file:`boards/ </samples/net/azure_iot_hub/boards>` folder are merged automatically for the selected target.
 The :file:`wifi.conf` and other extra configuration files are not board-specific and must be passed with ``azure_iot_hub_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dazure_iot_hub_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
@@ -192,7 +192,7 @@ To use DPS on a Wi-Fi build, add it to the other files:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/azure_iot_hub`
+.. |sample path| replace:: :ncs-file:`samples/net/azure_iot_hub </samples/net/azure_iot_hub>`
 
 .. include:: /includes/build_and_run_ns.txt
 

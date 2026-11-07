@@ -121,7 +121,7 @@ In addition, the sample provides the following configuration overlay files, whic
 * :file:`wifi.conf` - Configuration overlay file for Wi-Fi devices.
 * :file:`wifi-tls.conf` - TLS configuration overlay file for Wi-Fi devices.
 
-They are located in :file:`samples/net/mqtt` folder.
+They are located in :ncs-file:`samples/net/mqtt </samples/net/mqtt>` folder.
 
 To add a specific configuration overlay file to the build, add the ``-- -DEXTRA_CONF_FILE=<overlay_config_file>`` flag to your build.
 
@@ -145,7 +145,7 @@ For Thingy:91, with TLS and debug logging enabled for the :ref:`lib_mqtt_helper`
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/mqtt`
+.. |sample path| replace:: :ncs-file:`samples/net/mqtt </samples/net/mqtt>`
 
 .. include:: /includes/build_and_run_ns.txt
 

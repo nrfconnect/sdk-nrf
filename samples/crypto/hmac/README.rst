@@ -51,7 +51,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/hmac`
+.. |sample path| replace:: :ncs-file:`samples/crypto/hmac </samples/crypto/hmac>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -117,7 +117,7 @@ The sample can either be configured by editing the :file:`prj.conf` file and the
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/lwm2m_carrier`
+.. |sample path| replace:: :ncs-file:`samples/cellular/lwm2m_carrier </samples/cellular/lwm2m_carrier>`
 
 .. include:: /includes/build_and_run_ns.txt
 

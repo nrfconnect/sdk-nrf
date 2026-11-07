@@ -26,7 +26,7 @@ Solution architecture
 Adding the CoreMark repository to the |NCS| manifest automatically includes it in the repository as the |NCS| module.
 You can find it under the :file:`modules/benchmark/coremark` path.
 CoreMark needs a porting layer to run correctly on a SoC.
-You can find the files of porting layer for devices supported in the |NCS| under the :file:`nrf/modules/coremark` path.
+You can find the files of porting layer for devices supported in the |NCS| under the :ncs-file:`nrf/modules/coremark </modules/coremark>` path.
 
 CoreMark benchmark consists of continuously repeated iterations.
 Each iteration, in turn, consists of the following workloads:

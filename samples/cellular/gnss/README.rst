@@ -168,7 +168,7 @@ Check and configure the following library option that is used by the sample:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/gnss`
+.. |sample path| replace:: :ncs-file:`samples/cellular/gnss </samples/cellular/gnss>`
 
 .. include:: /includes/build_and_run_ns.txt
 

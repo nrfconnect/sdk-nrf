@@ -59,7 +59,7 @@ You can use this sample's board overlay as an example.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/radio_coex_1wire`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/radio_coex_1wire </samples/bluetooth/radio_coex_1wire>`
 
 .. include:: /includes/build_and_run.txt
 

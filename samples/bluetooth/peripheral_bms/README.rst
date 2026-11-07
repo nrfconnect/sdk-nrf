@@ -44,7 +44,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_bms`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_bms </samples/bluetooth/peripheral_bms>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -140,7 +140,7 @@ For a conversion chart of these timer values, see the `Power saving mode setting
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/udp`
+.. |sample path| replace:: :ncs-file:`samples/cellular/udp </samples/cellular/udp>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -331,8 +331,8 @@ Google Fast Pair
 
    For applications and samples using the :ref:`bt_fast_pair_readme` library:
 
-   * The Fast Pair public headers have been relocated from :file:`include/bluetooth/services/fast_pair/` to :file:`include/bluetooth/fast_pair/`.
-     The Fast Pair implementation has been relocated from :file:`subsys/bluetooth/services/fast_pair/` to :file:`subsys/bluetooth/fast_pair/`.
+   * The Fast Pair public headers have been relocated from :ncs-file:`include/bluetooth/services/fast_pair/ </include/bluetooth/services/fast_pair>` to :ncs-file:`include/bluetooth/fast_pair/ </include/bluetooth/fast_pair>`.
+     The Fast Pair implementation has been relocated from :file:`subsys/bluetooth/services/fast_pair/` to :ncs-file:`subsys/bluetooth/fast_pair/ </subsys/bluetooth/fast_pair>`.
 
      The old header paths still work through deprecated forwarding headers, but they will emit a compiler warning.
      To avoid these warnings, update all Fast Pair includes in your application from the old paths to the new paths:
@@ -354,7 +354,7 @@ Google Fast Pair
      The FMDN API header (:file:`fmdn.h`) has been additionally renamed to FHN (:file:`fhn/fhn.h`).
      See the next point for details on the FMDN to FHN rename and further migration steps.
 
-     If your project references the Fast Pair source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/services/fast_pair` to :file:`subsys/bluetooth/fast_pair`.
+     If your project references the Fast Pair source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/services/fast_pair` to :ncs-file:`subsys/bluetooth/fast_pair </subsys/bluetooth/fast_pair>`.
 
    * The Find My Device Network (FMDN) extension has been renamed to Find Hub Network (FHN), aligning with the updated `Fast Pair Find Hub Network extension`_ specification from Google.
 
@@ -409,8 +409,8 @@ Google Fast Pair
            CONFIG_BT_FAST_PAIR_FHN=y
            CONFIG_BT_FAST_PAIR_FHN_DULT=y
 
-     The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :file:`subsys/bluetooth/fast_pair/fhn/`.
-     If your project references the FMDN source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/fast_pair/fmdn` to :file:`subsys/bluetooth/fast_pair/fhn`.
+     The FMDN implementation directory has been renamed from :file:`subsys/bluetooth/services/fast_pair/fmdn/` to :ncs-file:`subsys/bluetooth/fast_pair/fhn/ </subsys/bluetooth/fast_pair/fhn>`.
+     If your project references the FMDN source directory directly (for example, in test :file:`CMakeLists.txt` files), update the path from :file:`subsys/bluetooth/fast_pair/fmdn` to :ncs-file:`subsys/bluetooth/fast_pair/fhn </subsys/bluetooth/fast_pair/fhn>`.
 
    * The Partition Manager approach for defining the Fast Pair partition is now deprecated in favor of devicetree (DTS).
      The :ref:`fast_pair_input_device` and :ref:`fast_pair_locator_tag` samples have been migrated to use DTS overlay files instead of the Partition Manager for defining the ``bt_fast_pair`` partition.

@@ -23,7 +23,7 @@ It does not work on QEMU.
 The example below uses the Thingy:91.
 
 
-.. |sample path| replace:: :file:`samples/sensor/bh1749`
+.. |sample path| replace:: :ncs-file:`samples/sensor/bh1749 </samples/sensor/bh1749>`
 
 .. include:: /includes/build_and_run.txt
 
