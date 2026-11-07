@@ -155,11 +155,11 @@ Working with nRF53 Series
 * Developing with Thingy:53:
 
   * Added the :kconfig:option:`CONFIG_BOARD_SERIAL_BACKEND_CDC_ACM` Kconfig option to configure USB CDC ACM to be used as logger's backend by default.
-    See details in the :ref:`thingy53_app_usb` section of the Developing with Thingy:53 guide.
+    See details in the USB section of the Developing with Thingy:53 guide.
   * Provided support for Thingy:53 FOTA updates within the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` option.
-    See details in the :ref:`thingy53_app_fota_smp` section of the Developing with Thingy:53 guide.
+    See details in the FOTA over Bluetooth Low Energy section of the Developing with Thingy:53 guide.
   * Enabled MCUboot bootloader in Thingy:53 board configuration by default.
-    See details in the :ref:`thingy53_app_mcuboot_bootloader` section of the Developing with Thingy:53 guide.
+    See details in the MCUboot bootloader section of the Developing with Thingy:53 guide.
   * Cleaned up Thingy:53 configuration files of samples and applications as a result of introducing simplifications.
 
 Protocols
@@ -1027,7 +1027,7 @@ Documentation
 
   * The :ref:`software_maturity` page with details about Wi-Fi feature support.
   * The :ref:`app_power_opt` user guide by adding sections about power saving features and PSM usage.
-  * The :ref:`ug_thingy53` guide by aligning with current simplified configuration.
+  * The Developing with Thingy:53 guide by aligning with current simplified configuration.
   * The :ref:`ug_nrf52_developing` guide by aligning with current simplified FOTA configuration.
   * The :file:`doc/nrf` folder by significantly changing the folder structure.
     See `commit #d55314`_ for details.

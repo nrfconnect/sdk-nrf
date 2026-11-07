@@ -114,10 +114,11 @@ NRF = (
     ("device_guides/working_with_nrf/nrf53/nrf5340_gs", "gsg_guides"), # Getting started with nRF5340 DK (removed in v2.8.0)
     ("gsg_guides/nrf5340_gs", "gsg_guides"),
     ("gsg_other", "gsg_guides"), # Getting started with other DKs (removed in v3.1.0)
-    ("ug_thingy53_gs", "app_dev/device_guides/thingy53/thingy53_precompiled"), # Getting started with Thingy:53 (removed in v3.0.0)
-    ("working_with_nrf/nrf53/thingy53_gs", "app_dev/device_guides/thingy53/thingy53_precompiled"),
-    ("device_guides/working_with_nrf/nrf53/thingy53_gs", "app_dev/device_guides/thingy53/thingy53_precompiled"),
-    ("gsg_guides/thingy53_gs", "app_dev/device_guides/thingy53/thingy53_precompiled"),
+    ("ug_thingy53_gs", "app_dev/device_guides/nrf53/index"), # Getting started with Thingy:53 (removed in v3.0.0)
+    ("working_with_nrf/nrf53/thingy53_gs", "app_dev/device_guides/nrf53/index"),
+    ("device_guides/working_with_nrf/nrf53/thingy53_gs", "app_dev/device_guides/nrf53/index"),
+    ("gsg_guides/thingy53_gs", "app_dev/device_guides/nrf53/index"),
+    ("app_dev/device_guides/thingy53/thingy53_precompiled", "app_dev/device_guides/nrf53/index"), # Preloaded and precompiled Thingy:53 firmware (removed in v3.5.0)
     ("ug_nrf52_gs", "gsg_guides"), # Getting started with nRF52 Series (removed in v2.8.0)
     ("working_with_nrf/nrf52/gs", "gsg_guides"),
     ("device_guides/working_with_nrf/nrf52/gs", "gsg_guides"),
@@ -309,9 +310,11 @@ NRF = (
     ("working_with_nrf/nrf53/nrf5340", "app_dev/device_guides/nrf53/index"),
     ("device_guides/working_with_nrf/nrf53/nrf5340", "app_dev/device_guides/nrf53/index"),
     ("device_guides/nrf53/index", "app_dev/device_guides/nrf53/index"),
-    ("ug_thingy53", "app_dev/device_guides/thingy53/index"), # Developing with Thingy:53 (removed for 2.7.0)
-    ("working_with_nrf/nrf53/thingy53", "app_dev/device_guides/thingy53/index"),
-    ("device_guides/working_with_nrf/nrf53/thingy53", "app_dev/device_guides/thingy53/index"),
+    ("ug_thingy53", "app_dev/device_guides/nrf53/index"), # Developing with Thingy:53 (removed for 2.7.0)
+    ("working_with_nrf/nrf53/thingy53", "app_dev/device_guides/nrf53/index"),
+    ("device_guides/working_with_nrf/nrf53/thingy53", "app_dev/device_guides/nrf53/index"),
+    ("app_dev/device_guides/thingy53/index", "app_dev/device_guides/nrf53/index"), # Developing with Thingy:53 (removed in v3.5.0)
+    ("app_dev/device_guides/thingy53/building_thingy53", "app_dev/device_guides/nrf53/index"), # Building and programming with Thingy:53 (removed in v3.5.0)
     ("device_guides/nrf53/features_nrf53", "app_dev/device_guides/nrf53/features_nrf53"), # Features of nRF53 Series
     ("device_guides/nrf53/building_nrf53", "app_dev/device_guides/nrf53/building_nrf53"), # Building and programming with nRF53 Series
     ("device_guides/nrf53/fota_update_nrf5340", "app_dev/device_guides/nrf53/fota_update_nrf5340"), # FOTA updates with nRF5340 DK
@@ -319,9 +322,10 @@ NRF = (
     ("device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340", "app_dev/device_guides/nrf53/simultaneous_multi_image_dfu_nrf5340"), # Simultaneous multi-image DFU with nRF5340 DK
     ("device_guides/nrf53/serial_recovery", "app_dev/device_guides/nrf53/serial_recovery"), # MCUboot’s serial recovery of the networking core image
     ("device_guides/nrf53/logging_nrf5340", "app_dev/device_guides/nrf53/logging_nrf5340"), # Getting logging output with nRF5340 DK
-    ("device_guides/nrf53/thingy53_application_guide", "app_dev/device_guides/thingy53/thingy53_application_guide"), # Application guide for Thingy:53
+    ("device_guides/nrf53/thingy53_application_guide", "app_dev/device_guides/nrf53/index"), # Application guide for Thingy:53 (removed in v3.5.0)
     ("app_dev/device_guides/nrf53/multi_image_nrf5340", "app_dev/config_and_build/sysbuild/index"),
-    ("app_dev/device_guides/nrf53/thingy53_application_guide", "app_dev/device_guides/thingy53/thingy53_application_guide"),
+    ("app_dev/device_guides/nrf53/thingy53_application_guide", "app_dev/device_guides/nrf53/index"),
+    ("app_dev/device_guides/thingy53/thingy53_application_guide", "app_dev/device_guides/nrf53/index"),
     ("device_guides/working_with_nrf/nrf53/qspi_xip_guide", "app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340"), # External execute in place (XIP) configuration on the nRF5340 SoC
     ("device_guides/nrf53/qspi_xip_guide_nrf5340", "app_dev/device_guides/nrf53/qspi_xip_guide_nrf5340"),
     ("ug_nrf52", "app_dev/device_guides/nrf52/index"), # Developing with nRF52 Series (landing)

@@ -162,21 +162,21 @@
 
 .. thingy53_nrf5340_cpuapp
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp`` |
+| Thingy:53 | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp`` |
 
 .. thingy53_nrf5340_cpuapp_ns
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp/ns`` |
+| Thingy:53 | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp/ns`` |
 
 .. thingy53_nrf5340_cpuapp_and_cpuapp_ns
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp``    |
-|                                |          |                                     |                                |
-|                                |          |                                     | ``thingy53/nrf5340/cpuapp/ns`` |
+| Thingy:53 | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpuapp``    |
+|           |          |                                     |                                |
+|           |          |                                     | ``thingy53/nrf5340/cpuapp/ns`` |
 
 .. thingy53_nrf5340_cpunet
 
-| :ref:`Thingy:53 <ug_thingy53>` | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpunet`` |
+| Thingy:53 | PCA20053 | :zephyr:board:`thingy53 <thingy53>` | ``thingy53/nrf5340/cpunet`` |
 
 .. nrf7002dk_nrf5340_cpuapp
 

@@ -88,10 +88,6 @@ See :ref:`app_boards_names` for the complete list of boards and board targets su
      - PCA10095
      - :zephyr:board:`nrf5340dk <nrf5340dk>`
      - ``nrf5340dk/nrf5340/cpuapp/ns``
-   * - Thingy:53
-     - PCA20053
-     - :zephyr:board:`thingy53 <thingy53>`
-     - ``thingy53/nrf5340/cpuapp/ns``
    * - nRF7002 DK
      - PCA10143
      - :zephyr:board:`nrf7002dk <nrf7002dk>`
