@@ -1,5 +1,3 @@
-.. _gs_updating:
-.. _repo_move:
 .. _updating:
 
 Updating repositories and tools
@@ -74,9 +72,6 @@ Depending on your preferred development method, you can start the correct CLI to
       You can also use other options instead of ``--ncs-version``.
       See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.
 
-.. _gs_updating_repos:
-.. _gs_updating_repos_examples:
-.. _updating_repos_examples:
 .. _updating_repos:
 
 Updating the repositories

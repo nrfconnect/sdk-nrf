@@ -31,7 +31,7 @@ IDE, OS, and tool support
 =========================
 
 * Updated documentation build requirements to replace ``m2r2`` with ``myst-parser``.
-  See the :ref:`gs_recommended_versions` page for the updated tool list.
+  See the :ref:`Requirements reference <requirements>` page for the updated tool list.
 
 Board support
 =============

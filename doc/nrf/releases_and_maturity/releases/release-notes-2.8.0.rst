@@ -117,7 +117,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v2.8.0**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v2.8.0`_.
 
@@ -184,13 +184,13 @@ IDE, OS, and tool support
 
 * Added:
 
-  * Explicit mention of the :ref:`requirements_jlink` being required in the :ref:`installing_vsc` section of the installation page.
+  * Explicit mention of the :ref:`requirements_jlink` being required in the :ref:`install_ncs` section of the installation page.
   * :ref:`nrf_toolchain_docker_image`, a containerized version of the |NCS| toolchain that can be used for development and testing.
 
 * Updated:
 
   * The required `SEGGER J-Link`_ version to v7.94i.
-  * The :ref:`gs_recommended_versions` page by splitting the supported OS table into :ref:`supported_OS` and :ref:`additional_nordic_sw_tools_os_support`.
+  * The :ref:`Requirements reference <requirements>` page by splitting the supported OS table into :ref:`supported_OS` and :ref:`additional_nordic_sw_tools_os_support`.
     The latter has received the following updates:
 
     * Linux 24.04 and macOS 15 have been added to the list.

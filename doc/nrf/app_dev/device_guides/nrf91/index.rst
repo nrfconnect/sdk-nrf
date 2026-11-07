@@ -46,7 +46,7 @@ Zephyr and the |NCS| provide support for developing cellular applications using 
      - PCA10090
      - ``nrf9160dk/nrf9160``, ``nrf9160dk/nrf9160/ns``
      - | `Product Specification <nRF9160 Product Specification_>`_
-       | :ref:`Getting started <ug_nrf9160_gs>`
+       | :ref:`Getting started <gsg_guides>`
        | `User Guide <nRF9160 DK Hardware_>`_
      - | `nRF9160 DK product page`_
        | `nRF9160 System in Package (SiP) <nRF9160 product website_>`_

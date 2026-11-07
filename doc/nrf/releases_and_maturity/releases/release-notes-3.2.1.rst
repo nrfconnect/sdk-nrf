@@ -29,7 +29,7 @@ The release tag for the |NCS| manifest repository (|ncs_repo|) is **v3.2.1**.
 Check the :file:`west.yml` file for the corresponding tags in the project repositories.
 
 To use this release, check out the tag in the manifest repository and run ``west update``.
-See :ref:`cloning_the_repositories` and :ref:`gs_updating_repos_examples` for more information.
+See :ref:`command-line installation <command_line_installation>` and :ref:`updating the repositories <updating_repos>` for more information.
 
 For information on the included repositories and revisions, see `Repositories and revisions for v3.2.1`_.
 
@@ -107,5 +107,5 @@ Documentation
 
 * Updated:
 
-  * The :ref:`install_ncs` page with minor updates and fixes to the :ref:`additional_deps` section.
+  * The :ref:`install_ncs` page with minor updates and fixes to the :ref:`system-wide installation <system_wide_installation>` section.
   * The ABI compatibility page has been renamed to :ref:`abi_compatibility`.
