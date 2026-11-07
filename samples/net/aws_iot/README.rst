@@ -207,6 +207,57 @@ Testing
    After the connection is established, the device starts to publish messages to the AWS IoT shadow service.
    The interval between messages is set by the :option:`CONFIG_AWS_IOT_SAMPLE_PUBLICATION_INTERVAL_SECONDS` Kconfig option.
 
+.. _aws_iot_sample_testing_fota:
+
+Testing FOTA
+------------
+
+To test a FOTA update on a development kit that supports it (see `FOTA`_), complete the following steps:
+
+1. Build and program the sample as described in `Building and running`_, and check that the device connects to AWS IoT.
+#. Create a new version of the sample by setting the :option:`CONFIG_AWS_IOT_SAMPLE_APP_VERSION` Kconfig option to a new value in the :file:`prj.conf` file.
+   For example, ``CONFIG_AWS_IOT_SAMPLE_APP_VERSION="v2.0.0"``.
+#. Build the sample again in a separate build directory, but do not program it.
+   For example, add ``-d build_v2`` to your ``west build`` command.
+   The update image is the :file:`build_v2/aws_iot/zephyr/zephyr.signed.bin` file.
+#. Upload the update image and create a FOTA job for your device, as described in the :ref:`aws_fota_creating_job` section of the :ref:`lib_aws_fota` library documentation.
+   In the job document, set the ``size`` field to the size of the update image in bytes.
+#. Observe that the device starts to download the update image as soon as it receives the job:
+
+   .. code-block:: console
+
+      <inf> aws_iot_sample: AWS_IOT_EVT_FOTA_START
+      <inf> downloader: Downloaded 2048/1037380 bytes (0%)
+      ...
+      <inf> downloader: Downloaded 1037380/1037380 bytes (100%)
+
+   The device does not poll for jobs.
+   If the device is connected, AWS IoT sends the job to the device right away.
+   If the device is not connected, it receives the job the next time it connects to AWS IoT.
+
+#. Observe that the device reboots when the download is complete:
+
+   .. code-block:: console
+
+      <inf> downloader: Download complete
+      <inf> dfu_target_mcuboot: MCUBoot image-0 upgrade scheduled. Reset device to apply
+      <inf> aws_iot_sample: AWS_IOT_EVT_FOTA_DL_PROGRESS, (100%)
+      <inf> aws_iot_sample: AWS_IOT_EVT_FOTA_DONE
+      <inf> aws_iot_sample: AWS_IOT_EVT_DISCONNECTED
+      <inf> aws_iot_sample: Application FOTA done, rebooting
+
+#. Observe that, after the reboot, the sample starts with the new version and reports it to the AWS IoT shadow:
+
+   .. code-block:: console
+
+      <inf> aws_iot_sample: The AWS IoT sample started, version: v2.0.0
+      ...
+      <inf> aws_iot_sample: AWS_IOT_EVT_CONNECTED
+      <inf> aws_iot_sample: Publishing message: {"state":{"reported":{"uptime":15614,"app_version":"v2.0.0"}}} to AWS IoT shadow
+
+   The sample confirms the new image when it connects to AWS IoT, so MCUboot does not revert to the previous image at the next reboot.
+#. In the `AWS IoT console`_, check that the status of the job is **Succeeded**.
+
 Sample output
 =============
 
