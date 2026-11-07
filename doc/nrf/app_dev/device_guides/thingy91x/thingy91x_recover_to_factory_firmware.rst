@@ -39,10 +39,10 @@ Complete the following steps to recover the Thingy:91 X to factory firmware:
 
 #. Run the following command to program the device:
 
-   .. code-block:: none
+   .. nrfutil-command:: none
 
-      nrfutil device recover --x-family nrf53 --core Network --traits jlink
-      nrfutil device recover --x-family nrf53 --core Application --traits jlink
+      nrfutil device recover --family nrf53 --core Network --traits jlink
+      nrfutil device recover --family nrf53 --core Application --traits jlink
 
    Even though the device shows up as unrecoverable, the soft-lock can be removed with these commands.
    You might have to repeat them for a successful result.
@@ -55,14 +55,14 @@ Complete the following steps to recover the Thingy:91 X to factory firmware:
 #. Set the SWD switch back to **nRF91**.
 #. Run the following command to program the device:
 
-   .. code-block:: none
+   .. nrfutil-command:: none
 
       nrfutil device program --firmware hello.nrfcloud.com-v2.0.1+debug-thingy91x-nrf91.hex
 
 #. Set the SWD switch again to **nRF53**.
 #. Run the following command to program the device:
 
-   .. code-block:: none
+   .. nrfutil-command:: none
 
       nrfutil device program --core Network --options reset=RESET_NONE,chip_erase_mode=ERASE_ALL,verify=VERIFY_NONE --firmware connectivity-bridge-v2.0.1-thingy91x-nrf53-net.hex
       nrfutil device program --options reset=RESET_SYSTEM,chip_erase_mode=ERASE_ALL,verify=VERIFY_NONE --firmware connectivity-bridge-v2.0.1-thingy91x-nrf53-app.hex

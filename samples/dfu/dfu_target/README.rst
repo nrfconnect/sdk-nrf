@@ -76,7 +76,7 @@ After programming the sample to your development kit, perform the following step
 
 #. Upload the second version of the image to the device using ``nrfutil device``:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device program --firmware image_v2.hex  --options chip_erase_mode=ERASE_NONE
 

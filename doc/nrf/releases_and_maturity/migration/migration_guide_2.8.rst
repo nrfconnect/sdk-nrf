@@ -133,11 +133,15 @@ nRF54H20 BICR
           On MacOS, connecting the DK might repeatedly trigger a popup displaying the message ``Disk Not Ejected Properly``.
           To disable this, run ``JLinkExe``, then run ``MSDDisable`` in the J-Link Commander interface.
 
-    #. List all the connected development kits to see their serial number (matching the one on the DK's sticker)::
+    #. List all the connected development kits to see their serial number (matching the one on the DK's sticker):
+
+       .. nrfutil-command:: console
 
           nrfutil device list
 
-    #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command::
+    #. Move the BICR HEX file to a folder of your choice, then program the BICR by running nRF Util from that folder using the following command:
+
+       .. nrfutil-command:: console
 
           nrfutil device program --options chip_erase_mode=ERASE_NONE --firmware <path_to_bicr.hex> --core Application --serial-number <serial_number>
 
@@ -161,7 +165,9 @@ nRF54H20 SoC binaries
        .. note::
           On MacOS, ensure that the ZIP file is not unpacked automatically upon download.
 
-    #. Purge the device as follows::
+    #. Purge the device as follows:
+
+       .. nrfutil-command:: console
 
           nrfutil device recover --core Application --serial-number <serial_number>
           nrfutil device recover --core Network --serial-number <serial_number>
@@ -169,11 +175,15 @@ nRF54H20 SoC binaries
     #. Run ``west update``.
     #. Move the correct :file:`.zip` bundle to a folder of your choice, then run nRF Util to program the binaries using one of the following commands, depending on your DK:
 
-       * For Engineering B::
+       * For Engineering B:
+
+         .. nrfutil-command:: console
 
             nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.7.0_<revision>.zip --serial-number <serial_number>
 
-       * For Engineering C::
+       * For Engineering C:
+
+         .. nrfutil-command:: console
 
             nrfutil device x-suit-dfu --firmware nrf54h20_soc_binaries_v0.7.0_<revision>.zip --serial-number <serial_number> --update-candidate-info-address 0x0e1ef340
 
@@ -184,7 +194,9 @@ nrfutil device
 
   * ``nrfutil device`` has been updated to version 2.7.2.
 
-    Install the nRF Util ``device`` command version 2.7.2 as follows::
+    Install the nRF Util ``device`` command version 2.7.2 as follows:
+
+    .. nrfutil-command:: console
 
        nrfutil install device=2.7.2 --force
 
@@ -197,7 +209,9 @@ nrfutil trace
 
   * ``nrfutil trace`` has been updated to version 2.11.0.
 
-    Install the nRF Util ``trace`` command version 2.11.0 as follows::
+    Install the nRF Util ``trace`` command version 2.11.0 as follows:
+
+    .. nrfutil-command:: console
 
        nrfutil install trace=2.11.0 --force
 

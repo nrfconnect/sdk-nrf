@@ -104,7 +104,7 @@ After programming the sample to your development kit, complete the following ste
 
 #. Program the network core update image using nRF Util:
 
-   .. code-block:: console
+   .. nrfutil-command:: console
 
       nrfutil device program --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE --firmware zephyr/net_core_app_moved_test_update.hex
 

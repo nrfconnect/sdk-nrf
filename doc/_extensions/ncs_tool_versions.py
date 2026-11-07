@@ -79,8 +79,6 @@ def tool_version_replace(app: Sphinx) -> Callable:
     content of the mapping.
     """
 
-    app.config.init_values()
-
     versions = {}
     for path in app.config.ncs_tool_versions_host_deps:
         if not path.exists():

@@ -351,21 +351,21 @@ Use the combined bitfield values, depending on which headset you want to configu
 
   * Left headset (``--value 1``):
 
-    .. code-block:: console
+    .. nrfutil-command:: console
 
-       nrfutil device x-write --address 0x00FF80F4 --value 1
+       nrfutil device write --address 0x00FF80F4 --value 1
 
   * Right headset (``--value 2``):
 
-    .. code-block:: console
+    .. nrfutil-command:: console
 
-       nrfutil device x-write --address 0x00FF80F4 --value 2
+       nrfutil device write --address 0x00FF80F4 --value 2
 
 * One stereo headset (``--value 3``):
 
-  .. code-block:: console
+  .. nrfutil-command:: console
 
-     nrfutil device x-write --address 0x00FF80F4 --value 3
+     nrfutil device write --address 0x00FF80F4 --value 3
 
 Select the correct board when prompted with the popup.
 Alternatively, you can add the ``--serial-number`` parameter followed by the SEGGER serial number of the correct board at the end of the ``nrfutil device`` command.

@@ -149,32 +149,26 @@ Complete the following steps:
       See `Locking nRF Util home directory`_ in the tool documentation for more information.
    #. Run the following command to install the nRF Util's ``sdk-manager`` command:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil install sdk-manager
 
    #. Run the following command to list the available installations:
 
-      .. code-block:: console
+      .. nrfutil-command:: console
 
          nrfutil sdk-manager search
 
-      The versions from this list correspond to the |NCS| versions and will be *version* in the following step.
+      The versions from this list correspond to the |NCS| versions and will be ``<version>`` in the following step.
    #. Run the following command to install the SDK and the toolchain for the SDK version of your choice:
 
-      .. parsed-literal::
-         :class: highlight
+      .. nrfutil-command::
+         :values: version=|release|
+         :example-toggle-off:
 
-         nrfutil sdk-manager install *version*
+         nrfutil sdk-manager install <version>
 
-      For example:
-
-      .. parsed-literal::
-         :class: highlight
-
-         nrfutil sdk-manager install |release|
-
-      This example command installs both the SDK code and the toolchain for the |NCS| |release|.
+      With the example values, this command installs both the SDK code and the toolchain for the |NCS| |release|.
       |install_latest_version|
 
       .. note::
@@ -194,74 +188,29 @@ Complete the following steps:
 
          If you have received a custom URL for installing the toolchain, you can use the following commands to set it as default, replacing the respective parameters:
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
-            nrfutil sdk-manager config toolchain-index add *index-name* *custom_toolchain_URL*
-            nrfutil sdk-manager config toolchain-index set *index-name*
+            nrfutil sdk-manager config toolchain-index add <index-name> <custom_toolchain_URL>
+            nrfutil sdk-manager config toolchain-index set <index-name>
 
          If you have received a custom bundle ID for installing a specific toolchain version, you can use the following commands to provide it, replacing the respective parameter:
 
-         .. parsed-literal::
-            :class: highlight
+         .. nrfutil-command::
 
-            nrfutil sdk-manager toolchain install --toolchain-bundle-id *custom_bundle_ID*
+            nrfutil sdk-manager toolchain install --toolchain-bundle-id <custom_bundle_ID>
 
          To learn more about ``sdk-manager`` commands, use the ``nrfutil sdk-manager --help`` command, or see the `command documentation <sdk-manager command_>`_.
 
    #. Start the toolchain environment for your operating system using the following command pattern, with ``--ncs-version`` corresponding to the |NCS| version you have installed:
 
-      .. tabs::
+      .. nrfutil-command::
+         :values: version=|release|
+         :example-toggle-off:
+         :values-windows: shell_option=--terminal
+         :values-linux: shell_option=--shell
+         :values-macos: shell_option=--shell
 
-         .. tab:: Windows
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version *version* --terminal
-
-            For example:
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --terminal
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-         .. tab:: Linux
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
-
-            For example:
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-         .. tab:: macOS
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version *version* --shell
-
-            For example:
-
-            .. parsed-literal::
-               :class: highlight
-
-               nrfutil sdk-manager toolchain launch --ncs-version |release| --shell
-
-            This example command starts the toolchain environment for the |NCS| |release|.
-
-      ..
+         nrfutil sdk-manager toolchain launch --ncs-version <version> <shell_option>
 
       .. note::
 
