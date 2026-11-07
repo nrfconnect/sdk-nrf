@@ -183,12 +183,11 @@ int nrf_modem_lib_bootloader_init(void)
 	return nrf_modem_bootloader_init(&bootloader_init_params);
 }
 
-int nrf_modem_lib_shutdown(void)
+static void shutdown_prepare(void)
 {
 	int ret;
 	uint16_t mode;
 
-	LOG_DBG("Shutting down modem library");
 	STRUCT_SECTION_FOREACH(nrf_modem_lib_shutdown_cb, e) {
 		LOG_DBG("Modem shutdown callback: %p", e->callback);
 		e->callback(e->context);
@@ -203,9 +202,10 @@ int nrf_modem_lib_shutdown(void)
 			"shutting down modem library");
 		nrf_modem_at_printf("AT+CFUN=0");
 	}
+}
 
-	nrf_modem_shutdown();
-
+static void shutdown_complete(void)
+{
 #if CONFIG_NRF_MODEM_LIB_TRACE
 	/* Before returning, make sure that there isn't any
 	 * pending trace data when the library is
@@ -213,6 +213,37 @@ int nrf_modem_lib_shutdown(void)
 	 */
 	nrf_modem_lib_trace_processing_done_wait(K_FOREVER);
 #endif
+}
+
+int nrf_modem_lib_shutdown(void)
+{
+	LOG_DBG("Shutting down modem library");
+
+	shutdown_prepare();
+
+	nrf_modem_shutdown();
+
+	shutdown_complete();
 
 	return 0;
 }
+
+#if CONFIG_NRF_MODEM_LIB_RESET_REQUEST
+int nrf_modem_lib_reset(void)
+{
+	int err;
+
+	LOG_DBG("Resetting modem");
+
+	shutdown_prepare();
+
+	err = nrf_modem_reset();
+	if (err) {
+		LOG_ERR("Modem reset failed, err %d", err);
+	}
+
+	shutdown_complete();
+
+	return err;
+}
+#endif /* CONFIG_NRF_MODEM_LIB_RESET_REQUEST */
