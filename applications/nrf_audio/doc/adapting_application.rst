@@ -38,10 +38,11 @@ Application configuration sources
 The application configuration source file defines a set of options used by the given nRF Audio application.
 This is a :file:`.conf` file that modifies the default Kconfig values defined in the Kconfig files.
 
-Only one :file:`.conf` file is included at a time.
+Each build includes the :file:`prj.conf` file and one application-specific overlay file.
 The :file:`prj.conf` file is the default configuration file and it implements the debug application version.
+For more information, see :ref:`nrf_audio_app_building_config_files`.
 
-Each nRF Audio application also uses its own :file:`Kconfig.default` file to change configuration defaults automatically.
+All nRF Audio applications also use the same :file:`Kconfig.defaults` file in the :file:`nrf_audio` directory to change configuration defaults automatically.
 
 You need to edit :file:`prj.conf` if you want to add new functionalities to your application, but editing this file when adding a new board is not required.
 
