@@ -266,7 +266,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 48d8aa596238cbee26019550cb7a474b2335e902
+      revision: pull/192/head
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

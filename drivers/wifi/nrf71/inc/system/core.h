@@ -95,7 +95,7 @@ struct nrf_wifi_vif_ctx_zep {
 	struct wifi_ps_config *ps_info;
 	bool ps_config_info_evnt;
 	bool cookie_resp_received;
-	unsigned long rssi_record_timestamp_us;
+	uint64_t rssi_record_timestamp_us;
 	signed short rssi;
 	unsigned int tx_rate_kbps;
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
@@ -135,7 +135,8 @@ struct nrf_wifi_ctx_zep {
 	struct k_mutex rpu_lock;
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	bool rpu_recovery_in_progress;
-	unsigned long last_rpu_recovery_time_ms;
+	k_timepoint_t rpu_recovery_quiet_end;
+	k_timepoint_t rpu_recovery_retry_window_end;
 	unsigned int rpu_recovery_retries;
 	int rpu_recovery_success;
 	int rpu_recovery_failure;

@@ -38,7 +38,7 @@ static enum nrf_wifi_status nrf_wifi_rt_fmac_fw_init(
 	struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl,
 	unsigned char *country_code)
 {
-	unsigned long start_time_us = 0;
+	uint64_t start_time_us = 0;
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 
 	if (!fmac_dev_ctx) {
