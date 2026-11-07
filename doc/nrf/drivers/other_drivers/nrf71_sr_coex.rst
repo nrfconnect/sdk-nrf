@@ -135,7 +135,7 @@ Configuration
 *************
 
 To enable the driver, use the :kconfig:option:`CONFIG_NRF71_SR_COEX_DRIVER` Kconfig option.
-As coexistence involves both radios, the driver depends on the nRF71 Wi-Fi driver (:kconfig:option:`CONFIG_WIFI_NRF71`) and Bluetooth (:kconfig:option:`CONFIG_BT`).
+The driver communicates with the Coexistence Manager through the nRF71 Wi-Fi driver, so it depends on the :kconfig:option:`CONFIG_WIFI_NRF71` Kconfig option.
 
 The following Kconfig options configure the driver:
 
