@@ -102,7 +102,7 @@ For details about each advertising provider, see the Kconfig option description.
 API documentation
 *****************
 
-| Header file: :file:`include/bluetooth/adv_prov.h`
+| Header file: :ncs-file:`/include/bluetooth/adv_prov.h`
 | Source files: :file:`subsys/bluetooth/adv_prov/`
 
 .. doxygengroup:: bt_le_adv_prov
@@ -110,15 +110,15 @@ API documentation
 Fast Pair provider API
 ======================
 
-| Header file: :file:`include/bluetooth/adv_prov/fast_pair.h`
-| Source files: :file:`subsys/bluetooth/adv_prov/providers/fast_pair.c`
+| Header file: :ncs-file:`/include/bluetooth/adv_prov/fast_pair.h`
+| Source files: :ncs-file:`/subsys/bluetooth/adv_prov/providers/fast_pair.c`
 
 .. doxygengroup:: bt_le_adv_prov_fast_pair
 
 Swift Pair provider API
 =======================
 
-| Header file: :file:`include/bluetooth/adv_prov/swift_pair.h`
-| Source files: :file:`subsys/bluetooth/adv_prov/providers/swift_pair.c`
+| Header file: :ncs-file:`/include/bluetooth/adv_prov/swift_pair.h`
+| Source files: :ncs-file:`/subsys/bluetooth/adv_prov/providers/swift_pair.c`
 
 .. doxygengroup:: bt_le_adv_prov_swift_pair

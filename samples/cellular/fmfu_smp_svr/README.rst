@@ -63,7 +63,7 @@ After programming the sample to your development kit, test it by performing the 
 
 1. Connect the USB cable and power on or reset your nRF91 Series DK.
 #. Open a terminal emulator, observe that the sample starts, and then close the terminal emulator.
-#. Call the provided :file:`update_modem.py` script specifying the serial port, the firmware ZIP file, and the UART baud rate shown in the following examples.
+#. Call the provided :ncs-file:`/samples/cellular/fmfu_smp_svr/update_modem.py` script specifying the serial port, the firmware ZIP file, and the UART baud rate shown in the following examples.
 
    .. tabs::
 

@@ -18,7 +18,7 @@ Combined build for Radio test and Wi-Fi Radio test
 **************************************************
 
 The combined build configuration builds the binary files for the Wi-Fi Radio test that resides in the application core and the Radio test (short-range) that resides in the network core.
-In the :file:`<ncs_repo>/nrf/samples/wifi/radio_test/multi_domain/prj.conf` file, set :kconfig:option:`CONFIG_NRF70_SR_COEX` = ``y``, :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` = ``y``, and :kconfig:option:`CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST` = ``y`` Kconfig options.
+In the :ncs-file:`/samples/wifi/radio_test/multi_domain/prj.conf` file, set :kconfig:option:`CONFIG_NRF70_SR_COEX` = ``y``, :kconfig:option:`CONFIG_NRF70_SR_COEX_RF_SWITCH` = ``y``, and :kconfig:option:`CONFIG_SUPPORT_NETCORE_PERIPHERAL_RADIO_TEST` = ``y`` Kconfig options.
 
 .. code-block:: shell
 

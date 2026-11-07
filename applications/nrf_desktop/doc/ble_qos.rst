@@ -28,7 +28,7 @@ Configuration
 
 The module requires the basic Bluetooth configuration, as described in :ref:`nrf_desktop_bluetooth_guide`.
 
-The QoS module uses the ``chmap_filter`` library, whose API is described in :file:`src/util/chmap_filter/include/chmap_filter.h`.
+The QoS module uses the ``chmap_filter`` library, whose API is described in :ncs-file:`/applications/nrf_desktop/src/util/chmap_filter/include/chmap_filter.h`.
 The library is linked if the :option:`CONFIG_DESKTOP_BLE_QOS_ENABLE` Kconfig option is enabled.
 
 Enable the module using the :option:`CONFIG_DESKTOP_BLE_QOS_ENABLE` Kconfig option.

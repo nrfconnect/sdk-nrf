@@ -95,7 +95,7 @@ The models are used for the following purposes:
 * The last model is the Scene Client which controls the Scene Server in the target devices, storing or restoring scenes of the current LED states.
 
 
-The model handling is implemented in :file:`src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control the buttons on the development kit.
+The model handling is implemented in :ncs-file:`/samples/bluetooth/mesh/light_dimmer/src/model_handler.c`, which uses the :ref:`dk_buttons_and_leds_readme` library to control the buttons on the development kit.
 
 User interface
 **************
@@ -157,8 +157,8 @@ Source file setup
 
 This sample is split into the following source files:
 
-* A :file:`main.c` file to handle initialization.
-* A file for handling mesh models, :file:`model_handler.c`.
+* A :ncs-file:`src/main.c` file to handle initialization.
+* A file for handling mesh models, :ncs-file:`src/model_handler.c`.
 
 FEM support
 ===========
@@ -174,6 +174,8 @@ Building and running
 
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
+
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
 
 .. include:: /includes/ipc_radio_conf.txt
 
@@ -247,18 +249,18 @@ This sample uses the following |NCS| libraries:
 
 In addition, it uses the following Zephyr libraries:
 
-* :file:`include/drivers/hwinfo.h`
+* :ncs-file:`zephyr:/include/zephyr/drivers/hwinfo.h`
 * :ref:`zephyr:kernel_api`:
 
-  * :file:`include/kernel.h`
+  * :ncs-file:`zephyr:/include/zephyr/kernel.h`
 
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
 
 * :ref:`zephyr:bluetooth_mesh`:
 
-  * :file:`include/bluetooth/mesh.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/mesh.h`
 
 The sample also uses the following secure firmware component:
 

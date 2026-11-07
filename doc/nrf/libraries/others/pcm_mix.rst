@@ -26,7 +26,7 @@ To enable the library, set the :kconfig:option:`CONFIG_PCM_MIX` Kconfig option t
 API documentation
 *****************
 
-| Header file: :file:`include/pcm_mix.h`
-| Source file: :file:`lib/pcm_mix/pcm_mix.c`
+| Header file: :ncs-file:`/include/pcm_mix.h`
+| Source file: :ncs-file:`/lib/pcm_mix/pcm_mix.c`
 
 .. doxygengroup:: pcm_mix

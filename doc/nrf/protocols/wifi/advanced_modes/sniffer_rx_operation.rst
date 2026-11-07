@@ -91,7 +91,7 @@ The IEEE 802.11 packet that is captured by the Nordic Wi-Fi device will prepend 
      - Provides the data rate at which the packet was received.
        It can be a ``legacy rate`` or an ``MCS rate`` based on the ``rate_flags`` value.
 
-You can refer to the relevant structure at :file:`nrfxlib/nrf_wifi/fw_if/umac_if/inc/default/fmac_structs.h` - for the raw RX header.
+You can refer to the relevant structure at :ncs-file:`nrf_wifi:/fw_if/umac_if/inc/system/fmac_structs.h` - for the raw RX header.
 
 .. _ug_nrf70_developing_monitor_mode_receive_operation:
 

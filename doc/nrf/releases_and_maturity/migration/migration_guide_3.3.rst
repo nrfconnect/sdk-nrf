@@ -379,7 +379,7 @@ Google Fast Pair
         err = bt_fast_pair_fhn_id_set(bt_id);
         provisioned = bt_fast_pair_fhn_is_provisioned();
 
-     The deprecated FMDN API symbols are still available through the :file:`include/bluetooth/services/fast_pair/fmdn.h` header and will trigger compiler deprecation warnings.
+     The deprecated FMDN API symbols are still available through the :ncs-file:`/include/bluetooth/services/fast_pair/fmdn.h` header and will trigger compiler deprecation warnings.
 
      The Kconfig options have been renamed from ``CONFIG_BT_FAST_PAIR_FMDN_*`` to ``CONFIG_BT_FAST_PAIR_FHN_*``.
      The deprecated ``CONFIG_BT_FAST_PAIR_FMDN_*`` Kconfig options remain available as a full set of standalone options for backward compatibility.

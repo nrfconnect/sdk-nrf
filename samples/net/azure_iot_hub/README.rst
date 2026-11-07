@@ -84,7 +84,7 @@ See :ref:`prereq_connect_to_azure_iot_hub` for information on provisioning the c
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/azure_iot_hub/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/net/azure_iot_hub/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -137,22 +137,22 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20A SoC).
-* :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC).
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+* :ncs-file:`/samples/net/azure_iot_hub/prj.conf` - General configuration file for all devices.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20A SoC).
+* :ncs-file:`/samples/net/azure_iot_hub/boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC).
+* :ncs-file:`/samples/net/azure_iot_hub/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
 * :file:`wifi-fota.conf` - FOTA configuration for Wi-Fi builds.
-* :file:`dps.conf` - Enables provisioning of the device using DPS.
+* :ncs-file:`/samples/net/azure_iot_hub/dps.conf` - Enables provisioning of the device using DPS.
 
 Board files under the :file:`boards/` folder are merged automatically for the selected target.
-The :file:`wifi.conf` and other extra configuration files are not board-specific and must be passed with ``azure_iot_hub_EXTRA_CONF_FILE``.
+The :ncs-file:`/samples/net/azure_iot_hub/wifi.conf` and other extra configuration files are not board-specific and must be passed with ``azure_iot_hub_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dazure_iot_hub_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 
@@ -160,7 +160,7 @@ Wi-Fi
 -----
 
 Networking, TLS, and FOTA are not part of the default configuration when you build for Wi-Fi.
-Add them with the :file:`wifi.conf` and :file:`wifi-fota.conf` files.
+Add them with the :ncs-file:`/samples/net/azure_iot_hub/wifi.conf` and :file:`wifi-fota.conf` files.
 For example, to build for the nRF7002 DK:
 
 .. code-block:: console
@@ -176,7 +176,7 @@ To build for the nRF54LM20 DK with the nRF7002 EB2 shield, also add the shield:
 Device Provisioning Service
 ---------------------------
 
-To use DPS, add the :file:`dps.conf` file to the build.
+To use DPS, add the :ncs-file:`/samples/net/azure_iot_hub/dps.conf` file to the build.
 For example, to build with DPS for the nRF9161 DK:
 
 .. code-block:: console

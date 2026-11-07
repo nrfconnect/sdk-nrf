@@ -40,11 +40,13 @@ Configuration
 
 .. bt_dir_finding_central_conf_start
 
+.. |direction_finding_generic_prj_conf| replace:: \ :ncs-file:`prj.conf`
+
 |config|
 
 This sample configuration is split into the following two files:
 
-* Generic configuration available in the :file:`prj.conf` file
+* Generic configuration available in the |direction_finding_generic_prj_conf| file
 * Board-specific configuration available in the :file:`boards/<BOARD>.conf` file
 
 .. bt_dir_finding_central_conf_end
@@ -58,7 +60,7 @@ The following additional configuration files are available for the :ref:`nRF5340
 
 * The Bluetooth LE controller is part of an image meant to run on the network core.
   The configuration for the image is stored in the :file:`sysbuild/` subdirectory.
-* The DTS overlay file :file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` is available for the application core.
+* The DTS overlay file :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` is available for the application core.
   This file forwards the control over GPIOs to network core, which provides control over GPIOs to the radio peripheral in order to execute antenna switching.
 
 .. bt_dir_finding_central_5340_conf_end
@@ -68,11 +70,11 @@ The following additional configuration files are available for the :ref:`nRF5340
 Angle of departure mode
 =======================
 
-To build this sample with AoD mode only, set :makevar:`EXTRA_CONF_FILE` to the :file:`overlay-aod.conf` file using the respective :ref:`CMake option <cmake_options>`.
+To build this sample with AoD mode only, set :makevar:`EXTRA_CONF_FILE` to the :ncs-file:`overlay-aod.conf` file using the respective :ref:`CMake option <cmake_options>`.
 
 For more information about configuration files in the |NCS|, see :ref:`app_build_system`.
 
-To build this sample for the :ref:`nRF5340 DK <ug_nrf5340>` with AoD mode only, add the content of the :file:`overlay-aod.conf` file to the :file:`sysbuild/hci_ipc/prj.conf` file.
+To build this sample for the :ref:`nRF5340 DK <ug_nrf5340>` with AoD mode only, add the content of the :ncs-file:`overlay-aod.conf` file to the :ncs-file:`sysbuild/ipc_radio/prj.conf` file.
 
 .. bt_dir_finding_central_aod_end
 
@@ -82,7 +84,7 @@ Antenna matrix configuration for angle of arrival mode
 ======================================================
 
 To use this sample when AoA mode is enabled, additional configuration of GPIOs is required to control the antenna array.
-An example of such configuration is provided in a devicetree overlay file :file:`nrf5340dk_nrf5340_cpuapp.overlay`.
+An example of such configuration is provided in a devicetree overlay file :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay`.
 
 The overlay file provides the information of which GPIOs should be used by the Radio peripheral to switch between antenna patches during the CTE reception in the AoA mode.
 At least two GPIOs must be provided to enable antenna switching.
@@ -96,9 +98,9 @@ To successfully use the direction finding central when the AoA mode is enabled, 
 
 .. bt_dir_finding_central_conf_list_start
 
-* The GPIO pins to ``dfegpio#-gpios`` properties in the :file:`nrf5340dk_nrf5340_cpuapp.overlay` file.
-* The default antenna that will be used to receive a PDU ``dfe-pdu-antenna`` property in the :file:`nrf5340dk_nrf5340_cpuapp.overlay` file.
-* Update the antenna switching patterns of the :c:member:`ant_patterns` array in the :file:`main.c` file.
+* The GPIO pins to ``dfegpio#-gpios`` properties in the :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` file.
+* The default antenna that will be used to receive a PDU ``dfe-pdu-antenna`` property in the :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` file.
+* Update the antenna switching patterns of the :c:member:`ant_patterns` array in the :ncs-file:`src/main.c` file.
 
 .. bt_dir_finding_central_conf_list_end
 
@@ -211,6 +213,8 @@ Building and running
 .. |sample_or_app| replace:: sample
 .. |ipc_radio_dir| replace:: :file:`sysbuild/ipc_radio`
 
+.. |ipc_radio_prj_conf| replace:: \ :ncs-file:`sysbuild/ipc_radio/prj.conf`
+
 .. include:: /includes/ipc_radio_conf.txt
 
 Testing
@@ -244,14 +248,14 @@ Dependencies
 
 This sample uses the following Zephyr libraries:
 
-* :file:`include/zephyr/types.h`
-* :file:`lib/libc/minimal/include/errno.h`
-* :file:`include/sys/printk.h`
-* :file:`include/sys/byteorder.h`
-* :file:`include/sys/util.h`
+* :ncs-file:`zephyr:/include/zephyr/types.h`
+* :ncs-file:`zephyr:/lib/libc/minimal/include/errno.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/printk.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/byteorder.h`
+* :ncs-file:`zephyr:/include/zephyr/sys/util.h`
 * :ref:`zephyr:bluetooth_api`:
 
-  * :file:`include/bluetooth/bluetooth.h`
-  * :file:`include/bluetooth/hci.h`
-  * :file:`include/bluetooth/direction.h`
-  * :file:`include/bluetooth/conn.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/bluetooth.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/hci.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/direction.h`
+  * :ncs-file:`zephyr:/include/zephyr/bluetooth/conn.h`

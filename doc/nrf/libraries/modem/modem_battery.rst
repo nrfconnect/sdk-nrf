@@ -87,7 +87,7 @@ The modem battery library uses the :ref:`at_monitor_readme` library.
 API documentation
 *****************
 
-| Header file: :file:`include/modem/modem_battery.h`
+| Header file: :ncs-file:`/include/modem/modem_battery.h`
 | Source files: :file:`lib/modem_battery/`
 
 .. doxygengroup:: modem_battery

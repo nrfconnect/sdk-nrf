@@ -200,7 +200,7 @@ It uses the following Zephyr libraries:
 API documentation
 *****************
 
-| Header file: :file:`include/net/nrf_provisioning.h`
+| Header file: :ncs-file:`/include/net/nrf_provisioning.h`
 | Source files: :file:`subsys/net/lib/nrf_provisioning/src/`
 
 .. doxygengroup:: nrf_provisioning

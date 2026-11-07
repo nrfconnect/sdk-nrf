@@ -137,7 +137,7 @@ The various callback functions implemented in the SUPL client library and their 
 A-GNSS handler
    Callback function to handle nRF assistance data types defined in :ref:`agnss_data_type_enum_api`.
    This callback writes the A-GNSS data to the GNSS module.
-   The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF A-GNSS data structures defined in :file:`nrf_modem_gnss.h` that can be written directly using the GNSS API.
+   The `LTE Positioning Protocol (LPP)`_ data contained within the SUPL payload is converted to nRF A-GNSS data structures defined in :ncs-file:`nrfxlib:/nrf_modem/include/nrf_modem_gnss.h` that can be written directly using the GNSS API.
 
 SUPL logger
    Callback function to output the SUPL client library debug messages.
@@ -223,7 +223,7 @@ See steps 3, 4 and 5 in the :ref:`SUPL session MSC description <supl_session_msc
 API documentation
 =================
 
-| Header file: :file:`include/supl_os_client.h`
+| Header file: :ncs-file:`/include/supl_os_client.h`
 | Source files: :file:`lib/supl/`
 
 .. doxygengroup:: supl_os

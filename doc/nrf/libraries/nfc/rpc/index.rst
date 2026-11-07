@@ -29,8 +29,8 @@ The NFC RPC solution consists of the following components:
 You can add support for serializing NFC-related custom APIs by implementing your own client and server procedures.
 You can use the following files as examples:
 
-  * :file:`subsys/nfc/rpc/client/nfc_rpc_t2t_client.c`
-  * :file:`subsys/nfc/rpc/server/nfc_rpc_t2t_server.c`
+  * :ncs-file:`/subsys/nfc/rpc/client/nfc_rpc_t2t_client.c`
+  * :ncs-file:`/subsys/nfc/rpc/server/nfc_rpc_t2t_server.c`
 
 Requirements
 ************
@@ -91,5 +91,5 @@ API documentation
 
 This library does not define a new NFC API.
 
-| Header files: :file:`nrfxlib/nfc/include/nfc_t2t_lib.h`, :file:`nrfxlib/nfc/include/nfc_t4t_lib.h`
+| Header files: :ncs-file:`nrfxlib:/nfc/include/nfc_t2t_lib.h`, :ncs-file:`nrfxlib:/nfc/include/nfc_t4t_lib.h`
 | Source files: :file:`subsys/nfc/rpc/`

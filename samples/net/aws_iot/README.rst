@@ -82,7 +82,7 @@ If you change :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`, you must also change
 For more information, see the :ref:`Requirements <aws_fota_requirements>` section of the :ref:`lib_aws_fota` library.
 
 On the nRF7002 DK, the primary and secondary MCUboot slots do not both fit into the internal flash.
-Therefore, the :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` file moves ``slot1_partition`` to the external flash.
+Therefore, the :ncs-file:`/samples/net/aws_iot/boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` file moves ``slot1_partition`` to the external flash.
 
 .. _aws_iot_sample_server_setup:
 
@@ -93,7 +93,7 @@ Before you can use this sample, you must set up an AWS IoT server instance for t
 Complete the steps described in the :ref:`aws_setup_and_configuration` section of the AWS IoT library documentation.
 This process provides the AWS IoT broker *hostname* and the *client ID* of the device, and provisions a device certificate to a *security tag*.
 
-Set the following options in the project configuration file :file:`samples/net/aws_iot/prj.conf`:
+Set the following options in the project configuration file :ncs-file:`/samples/net/aws_iot/prj.conf`:
 
 * :kconfig:option:`CONFIG_AWS_IOT_BROKER_HOST_NAME`
 * :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`
@@ -114,7 +114,7 @@ Configuration
 Configuration options
 =====================
 
-The following sample-specific Kconfig options are used in this sample (located in :file:`samples/net/aws_iot/Kconfig`):
+The following sample-specific Kconfig options are used in this sample (located in :ncs-file:`/samples/net/aws_iot/Kconfig`):
 
 .. options-from-kconfig::
    :show-type:
@@ -132,33 +132,33 @@ Configuration files
 
 The sample provides predefined configuration files for the following development kits:
 
-* :file:`prj.conf` - General configuration file for all devices.
-* :file:`boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
-* :file:`boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
-* :file:`boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
-* :file:`boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
-* :file:`boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
-* :file:`boards/native_sim.conf` - Configuration file for the native simulator emulation.
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
-* :file:`boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20A SoC) with the nRF7002-EB II.
-* :file:`boards/nrf54lm20dk_nrf54lm20b_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC) with the nRF7002-EB II.
-* :file:`wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
+* :ncs-file:`/samples/net/aws_iot/prj.conf` - General configuration file for all devices.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9151dk_nrf9151_ns.conf` - Configuration file for the nRF9151 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9161dk_nrf9161_ns.conf` - Configuration file for the nRF9161 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf9160dk_nrf9160_ns.conf` - Configuration file for the nRF9160 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/thingy91_nrf9160_ns.conf` - Configuration file for the Thingy:91.
+* :ncs-file:`/samples/net/aws_iot/boards/thingy91x_nrf9151_ns.conf` - Configuration file for the Thingy:91 X.
+* :ncs-file:`/samples/net/aws_iot/boards/native_sim.conf` - Configuration file for the native simulator emulation.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf54lm20dk_nrf54lm20a_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20A SoC) with the nRF7002-EB II.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf54lm20dk_nrf54lm20b_cpuapp.conf` - Configuration file for the nRF54LM20 DK (nRF54LM20B SoC) with the nRF7002-EB II.
+* :ncs-file:`/samples/net/aws_iot/wifi.conf` - Wi-Fi networking configuration, common to the nRF71 Series and nRF70 Series devices.
   Must be added explicitly for Wi-Fi builds.
 
 The following DTS overlay and configuration files are included to host the MCUboot secondary image slot on external flash for the nRF7002 DK:
 
-* :file:`boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
-* :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
-* :file:`sysbuild/mcuboot/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot image.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7002dk_nrf5340_cpuapp_ns.overlay` - DTS overlay file for the application image.
+* :ncs-file:`/samples/net/aws_iot/sysbuild/mcuboot/boards/nrf7002dk_nrf5340_cpuapp.overlay` - DTS overlay file for the MCUboot image.
+* :ncs-file:`/samples/net/aws_iot/sysbuild/mcuboot/boards/nrf7002dk_nrf5340_cpuapp.conf` - Configuration file for the MCUboot image.
 
 The following DTS overlay file is included to increase the non-secure RAM partition size to provide more memory for the application:
 
-* :file:`boards/nrf7120dk_nrf7120_cpuapp_ns.overlay` - DTS overlay file for the nRF7120 DK.
+* :ncs-file:`/samples/net/aws_iot/boards/nrf7120dk_nrf7120_cpuapp_ns.overlay` - DTS overlay file for the nRF7120 DK.
 
 Board files under the :file:`boards/` folder are merged automatically for the selected target.
 Files under the :file:`sysbuild/mcuboot/` folder configure the MCUboot image.
-The :file:`wifi.conf` file is not board-specific and must be passed with ``aws_iot_EXTRA_CONF_FILE``.
+The :ncs-file:`/samples/net/aws_iot/wifi.conf` file is not board-specific and must be passed with ``aws_iot_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Daws_iot_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 
@@ -166,7 +166,7 @@ Wi-Fi
 -----
 
 The default configuration does not include networking.
-Add it for the nRF71 Series and nRF70 Series devices with the :file:`wifi.conf` file:
+Add it for the nRF71 Series and nRF70 Series devices with the :ncs-file:`/samples/net/aws_iot/wifi.conf` file:
 
 .. code-block:: console
 

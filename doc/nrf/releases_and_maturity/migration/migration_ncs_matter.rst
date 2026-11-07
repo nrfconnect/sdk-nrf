@@ -377,7 +377,7 @@ Documentation and tooling
 Documentation
 =============
 
-Matter sample documentation, getting started guides, and protocol documentation that previously lived under :file:`nrf/doc/nrf/protocols/matter/` and :file:`nrf/doc/nrf/samples/matter.rst` are published from the ``ncs-matter`` add-on documentation set.
+Matter sample documentation, getting started guides, and protocol documentation that previously lived under :file:`nrf/doc/nrf/protocols/matter/` and :ncs-file:`/doc/nrf/samples/matter.rst` are published from the ``ncs-matter`` add-on documentation set.
 After migrating your project, use the add-on documentation as the primary reference for building, configuring, and testing Matter samples.
 
 The |NCS| documentation retains high-level Matter integration information and links to the add-on, similar to how :ref:`zigbee_samples` references the Zigbee add-on repositories.

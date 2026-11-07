@@ -433,7 +433,7 @@ Details are described in the :ref:`nrf_desktop_config_channel_script`.
 To register an application module as a configuration channel listener, complete the following steps:
 
 1. Make sure that the application module is an :ref:`app_event_manager` listener.
-#. Include the :file:`config_event.h` header.
+#. Include the :ncs-file:`/applications/nrf_desktop/src/events/config_event.h` header.
 #. Subscribe for the :c:struct:`config_event` using the :c:macro:`APP_EVENT_SUBSCRIBE_EARLY` macro:
 
    .. code-block:: c
@@ -564,10 +564,10 @@ To register an application module as a configuration channel listener, complete 
 
 For an example of a module that uses the configuration channel, see the following files:
 
-* :file:`src/modules/ble_qos.c`
-* :file:`src/modules/led_stream.c`
-* :file:`src/modules/dfu.c`
-* :file:`src/hw_interface/motion_sensor.c`
+* :ncs-file:`/applications/nrf_desktop/src/modules/ble_qos.c`
+* :ncs-file:`/applications/nrf_desktop/src/modules/led_stream.c`
+* :ncs-file:`/applications/nrf_desktop/src/modules/dfu.c`
+* :ncs-file:`/applications/nrf_desktop/src/hw_interface/motion_sensor.c`
 
 Dependencies
 ************
@@ -582,7 +582,7 @@ API documentation
 The following API is used by the configuration channel transports.
 The configurable application modules (configuration channel listeners) do not use it.
 
-| Header file: :file:`applications/nrf_desktop/src/util/config_channel_transport.h`
-| Source file: :file:`applications/nrf_desktop/src/util/config_channel_transport.c`
+| Header file: :ncs-file:`/applications/nrf_desktop/src/util/config_channel_transport.h`
+| Source file: :ncs-file:`/applications/nrf_desktop/src/util/config_channel_transport.c`
 
 .. doxygengroup:: config_channel_transport

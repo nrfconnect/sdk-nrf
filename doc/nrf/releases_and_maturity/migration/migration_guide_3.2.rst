@@ -128,7 +128,7 @@ nRF Desktop
         * :kconfig:option:`CONFIG_NRF_SECURITY`, :kconfig:option:`CONFIG_MULTITHREADING` and :kconfig:option:`CONFIG_PSA_SSF_CRYPTO_CLIENT` to ``y`` - These options are required to support the hardware cryptography in the MCUboot bootloader and its dependencies.
 
      #. Since the MCUboot bootloader in the direct-xip mode uses a merged image slot for the ``nrf54h20dk/nrf54h20/cpuapp`` board target, define the custom memory layout in DTS (the ``partitions`` DTS node) and ensure that this DTS customization is propagated to every image that is built as part of the nRF Desktop application.
-        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/memory_map.dtsi` file for an example of the memory layout file and the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot/app.overlay` file for an example integration of the custom memory layout into the MCUboot bootloader image.
+        See the :ncs-file:`/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/memory_map.dtsi` file for an example of the memory layout file and the :ncs-file:`/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/mcuboot/app.overlay` file for an example integration of the custom memory layout into the MCUboot bootloader image.
         Apart from the MCUboot bootloader image, include the custom memory layout in the following images:
 
         * The ``nrf_desktop`` image (the default application image)
@@ -140,7 +140,7 @@ nRF Desktop
         .. note::
            The |NCS| v3.2.0 introduces a new image ``uicr`` for the ``nrf54h20dk/nrf54h20/cpuapp`` board target.
            Include the custom memory layout in the ``uicr`` image as well to prevent runtime issues.
-           See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/uicr/app.overlay` file for an example integration of the custom memory layout into the ``uicr`` image.
+           See the :ncs-file:`/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/images/uicr/app.overlay` file for an example integration of the custom memory layout into the ``uicr`` image.
 
         Assign the secondary image partition to the ``secondary_app_partition`` DTS label in the DTS configuration of your primary image:
 
@@ -191,7 +191,7 @@ nRF Desktop
         * :kconfig:option:`CONFIG_ISR_TABLES_LOCAL_DECLARATION`
 
      #. Replace the ``interface-name`` property with the ``label`` property in all DTS nodes that set the ``compatible`` property to ``zephyr,hid-device``.
-        See the :file:`nrf/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/app.overlay` file for an example.
+        See the :ncs-file:`/applications/nrf_desktop/configuration/nrf54h20dk_nrf54h20_cpuapp/app.overlay` file for an example.
 
      For more information regarding differences between SUIT and IronSide SE solutions, see the :ref:`migration_3.1_54h_suit_ironside` document.
 

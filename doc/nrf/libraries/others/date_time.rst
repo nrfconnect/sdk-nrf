@@ -111,7 +111,7 @@ Dependencies
 API documentation
 *****************
 
-| Header file: :file:`include/date_time.h`
+| Header file: :ncs-file:`/include/date_time.h`
 | Source files: :file:`lib/date_time/src/`
 
 .. doxygengroup:: date_time

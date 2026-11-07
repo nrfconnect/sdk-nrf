@@ -63,8 +63,8 @@ SW2           1 byte   yes      Specifies the second status word.
 API documentation
 *****************
 
-| Header file: :file:`include/nfc/t4t/apdu.h`
-| Source file: :file:`subsys/nfc/t4t/apdu.c`
+| Header file: :ncs-file:`/include/nfc/t4t/apdu.h`
+| Source file: :ncs-file:`/subsys/nfc/t4t/apdu.c`
 
 .. doxygengroup:: nfc_t4t_apdu
 

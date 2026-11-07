@@ -97,7 +97,7 @@ To enable persistent storing of device commissioning data, you must also enable 
 API documentation
 =================
 
-| Header file: :file:`include/bluetooth/enocean.h`
-| Source file: :file:`subsys/bluetooth/enocean.c`
+| Header file: :ncs-file:`/include/bluetooth/enocean.h`
+| Source file: :ncs-file:`/subsys/bluetooth/enocean.c`
 
 .. doxygengroup:: bt_enocean

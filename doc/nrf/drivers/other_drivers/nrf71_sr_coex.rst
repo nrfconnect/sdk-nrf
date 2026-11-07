@@ -74,7 +74,7 @@ The main interfaces are:
 
 * *Application ↔ CD* - The application can pass its antenna setup, priorities, user parameters, and an optional coexistence parameter blob once, using the :c:func:`nrf71_sr_coex_init` function.
 * *Wi-Fi driver ↔ CD* - The Wi-Fi driver reports its state through a single-consumer notifier, and carries ``CD2CM`` commands and ``CM2CD`` events between the CD and the Coexistence Manager.
-  The interface is declared in :file:`include/drivers/wifi/nrf71/nrf71_wifi_coex.h`.
+  The interface is declared in :ncs-file:`/include/drivers/wifi/nrf71/nrf71_wifi_coex.h`.
 * *short-range driver ↔ CD* - The short-range driver registers its enable and set-priority callbacks with the :c:func:`nrf71_sr_coex_sr_register` function, and reports power-down and power-up with the :c:func:`nrf71_sr_coex_sr_power_notify` function.
 * *CD ↔ Coexistence Manager* - ``CD2CM`` commands and ``CM2CD`` events, carried over the Wi-Fi control path.
   Each command waits for its matching event before the next one is sent.
@@ -202,7 +202,7 @@ When the :kconfig:option:`CONFIG_NRF71_SR_COEX_SHELL` Kconfig option is enabled,
 API documentation
 *****************
 
-| Header files: :file:`include/drivers/nrf71_sr_coex/nrf71_sr_coex.h`, :file:`include/drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h`
+| Header files: :ncs-file:`/include/drivers/nrf71_sr_coex/nrf71_sr_coex.h`, :ncs-file:`/include/drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h`
 | Source files: :file:`drivers/nrf71_sr_coex/src/`
 
 Application interface

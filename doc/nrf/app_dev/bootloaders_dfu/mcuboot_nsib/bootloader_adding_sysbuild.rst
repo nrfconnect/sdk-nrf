@@ -140,7 +140,7 @@ For example, if a directory named :file:`_keys` located in :file:`/home/user/ncs
 
    Environment variables (like :envvar:`$HOME`, :envvar:`$PWD`, or :envvar:`$USER`) and the ``~`` character on Unix systems are not expanded when setting an absolute path from a :file:`sysbuild.conf` file but are expanded correctly in key file paths from the command line that are not given as strings.
 
-You can find specific configuration options for keys with this bootloader in :file:`nrf/sysbuild/Kconfig.secureboot`.
+You can find specific configuration options for keys with this bootloader in :ncs-file:`/sysbuild/Kconfig.secureboot`.
 
 See :ref:`ug_fw_update_keys` for information on how to generate custom keys for a project.
 
@@ -357,7 +357,7 @@ The benefit of this configuration is having a dedicated application for loading 
 This allows the main application to be larger in comparison to any symmetric size dual-bank mode update, which helps on devices with limited flash or RAM.
 
 If your application uses a custom memory layout (a very common scenario), you must include it in the overlay file for the firmware loader image.
-For reference, see :file:`nrf/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54l15dk_nrf54l15_cpuapp.overlay`.
+For reference, see :ncs-file:`/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54l15dk_nrf54l15_cpuapp.overlay`.
 The firmware loader will be automatically placed in the ``slot1_partition`` partition by the build system.
 For devices with a separate radio core, the firmware loader solution has a different architecture.
 For details, see :ref:`ug_bootloader_firmware_loader_mode_nrf54h20`.
@@ -398,7 +398,7 @@ MCUboot treats this merged package as a single image.
 For details on the merged slot update strategy, see :ref:`ug_nrf54h20_partitioning_merged`.
 
 The usage of the merged slot update strategy requires the chosen ``zephyr,code-partition`` devicetree node for the firmware loader image to be explicitly set to the ``cpuapp_slot1_partition`` node.
-For reference, see :file:`nrf/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54h20dk_nrf54h20_cpuapp.overlay`.
+For reference, see :ncs-file:`/samples/dfu/single_slot/sysbuild/ble_mcumgr/boards/nrf54h20dk_nrf54h20_cpuapp.overlay`.
 
 .. _ug_bootloader_firmware_loader_update:
 
