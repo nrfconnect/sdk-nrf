@@ -69,13 +69,10 @@ static void assess_measurement_result(uint64_t timer_value_us,
 {
 	uint64_t maximal_allowed_transmission_time_us;
 
-	if (buffer_size == 1) {
-		/* 6000% */
-		maximal_allowed_transmission_time_us = (1 + 60) * theoretical_transmission_time_us;
-	} else {
-		/* 300% */
-		maximal_allowed_transmission_time_us = (1 + 3) * theoretical_transmission_time_us;
-	}
+	maximal_allowed_transmission_time_us = theoretical_transmission_time_us +
+		CONFIG_TEST_SPI_LATENCY_BASE_OVERHEAD_US +
+		CONFIG_TEST_SPI_LATENCY_PER_BYTE_OVERHEAD_US * buffer_size;
+
 	zassert_true(timer_value_us < maximal_allowed_transmission_time_us,
 		     "Measured transmission call latency is over the specified limit %llu > %llu",
 		     timer_value_us, maximal_allowed_transmission_time_us);
