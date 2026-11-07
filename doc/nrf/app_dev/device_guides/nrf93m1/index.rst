@@ -44,6 +44,7 @@ Zephyr and the |NCS| provide support for developing Cat 1 bis applications using
        | ``nrf93m1dk/nrf54l15/cpuflpr``
      - | `nRF93M1 Datasheet`_
        | `nRF93M1 AT Commands Reference Guide`_
+       | `Quick Start app`_
        | `nRF93M1 DK Hardware User Guide`_
      - | `nRF93M1 DK product page`_
        | `nRF93M1 module product page`_
@@ -69,4 +70,5 @@ If you want to go through a hands-on online training to familiarize yourself wit
    nrf93m1_updating_modem_fw
    nrf93m1_power_optimization
    nrf93m1_testing
+   nrf93m1_debugging
    nrf93m1_custom_board
