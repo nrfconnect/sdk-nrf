@@ -19,8 +19,8 @@
 #include <zephyr/linker/linker-defs.h>
 #include <zephyr/linker/linker-tool.h>
 
-/* Let SystemInit() be called in place of z_arm_platform_init() by default. */
-PROVIDE(z_arm_platform_init = SystemInit);
+/* Let SystemInit() be called in place of soc_reset_hook() by default. */
+PROVIDE(soc_reset_hook = SystemInit);
 
 /*
  * Select the MCUboot slot for the QSPI XIP image based on the assigned image

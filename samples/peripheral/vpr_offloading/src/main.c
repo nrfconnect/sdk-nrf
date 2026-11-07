@@ -10,7 +10,7 @@
 #include <zephyr/logging/log.h>
 
 #ifdef CONFIG_CPU_LOAD
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 #elif defined(CONFIG_NRF_CPU_LOAD)
 #include <debug/cpu_load.h>
 #endif

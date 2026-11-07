@@ -35,8 +35,8 @@ tests:
 
 
   benchmarks.early_system_off.lfrc:
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     harness: pytest
     harness_config:
       pytest_root:

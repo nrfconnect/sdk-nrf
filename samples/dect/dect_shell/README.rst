@@ -844,7 +844,7 @@ For mDNS advertisement (PT discovers the sink), append the :file:`mdns-common.co
 
 To also run ``dect discover`` on the sink, add :file:`eth_sink_mdns-discover.conf` after :file:`mdns-discover.conf`.
 
-The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster speed (:kconfig:option:`CONFIG_ETH_W5500_POLL_PERIOD`).
+The Seeed shield (Rev 1.01) leaves the W5500 INTn disconnected, so the :file:`w5500-seeed*.overlay` files remove ``int-gpios`` for devicetree polling mode and :file:`eth_w5500_seeed.conf` sets a faster speed (:kconfig:option:`CONFIG_ETH_WIZNET_POLL_PERIOD`).
 
 Devicetree comes from the :file:`zephyr/boards/shields/seeed_w5500/seeed_w5500.overlay` file plus a sample overlay.
 The default file is :file:`w5500-seeed-static-mac.overlay` (fixed locally administered Ethernet MAC), or :file:`w5500-seeed.overlay` for ``zephyr,random-mac-address`` (new MAC each boot).

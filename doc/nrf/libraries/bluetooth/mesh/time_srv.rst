@@ -64,8 +64,8 @@ As crystal hardware is not perfectly accurate, it will gradually drift away from
 The potential range of this clock drift is generally a known property of the onboard hardware, even if the actual drift fluctuates.
 As it is impossible to measure the actual clock drift at any given moment, the Time Server gradually increases the uncertainty of its timestamp based on the known clock accuracy.
 
-The Time Server's notion of the local clock accuracy can be configured with :kconfig:option:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`.
-By default, it uses the configured kernel clock control accuracy.
+The Time Server uses the accuracy of the low-frequency clock, which is the ``k32src-accuracy-ppm`` property of the ``lfclk`` devicetree node.
+If the ``lfclk`` node is not available, the Time Server assumes an accuracy of 500 ppm.
 
 Leap seconds and time zones
 ***************************
@@ -159,10 +159,9 @@ This function can be used in combination with the three others to determine the 
 Configuration
 =============
 
-The clock uncertainty of the Time Server model can be configured with the following configuration options:
+The clock uncertainty of the Time Server model can be configured with the following configuration option:
 
 * :kconfig:option:`CONFIG_BT_MESH_TIME_MESH_HOP_UNCERTAINTY`: The amount of uncertainty introduced in the mesh stack through sending a single message, in milliseconds.
-* :kconfig:option:`CONFIG_BT_MESH_TIME_SRV_CLOCK_ACCURACY`: The largest possible clock drift introduced by the kernel clock's hardware, in parts per million.
 
 States
 ======

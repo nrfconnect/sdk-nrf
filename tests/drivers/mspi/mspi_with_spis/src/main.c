@@ -29,7 +29,7 @@ static const struct mspi_dev_id mspi_id = {
 };
 
 static const struct spi_config spis_config = {
-	.operation = SPI_OP_MODE_SLAVE | SPI_WORD_SET(8) | SPI_LINES_SINGLE |
+	.operation = SPI_OP_MODE_PERIPHERAL | SPI_WORD_SET(8) | SPI_LINES_SINGLE |
 		     SPI_TRANSFER_MSB
 };
 #define SPIS_DEV_ENTRY(i, _) DEVICE_DT_GET(DT_NODELABEL(test_line##i))

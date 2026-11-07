@@ -177,7 +177,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
       - nrf7002dk/nrf5340/cpunet
@@ -212,7 +212,7 @@ tests:
     extra_args: SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -229,7 +229,7 @@ tests:
       - EXTRA_CONF_FILE=conf/usb.conf
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -247,7 +247,7 @@ tests:
       - EXTRA_CONF_FILE=conf/usb.conf
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
     platform_allow: nrf5340dk/nrf5340/cpunet
@@ -262,7 +262,7 @@ tests:
     extra_args: SHIELD=nrf21540ek
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
       - CONFIG_RADIO_TEST_POWER_CONTROL_AUTOMATIC=n
     integration_platforms:
       - nrf5340dk/nrf5340/cpunet
@@ -278,7 +278,7 @@ tests:
     build_only: true
     extra_configs:
       - CONFIG_CLOCK_CONTROL_NRF=y
-      - CONFIG_DEPRECATION_TEST=y
+      - CONFIG_WARN_DEPRECATED=n
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54l15tag/nrf54l15/cpuapp

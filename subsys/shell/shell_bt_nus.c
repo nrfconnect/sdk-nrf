@@ -51,14 +51,13 @@ static void tx_try(const struct shell_bt_nus *bt_nus)
 		__ASSERT(false, "Cannot lock mutex");
 	}
 
-	size = ring_buf_get_claim(bt_nus->tx_ringbuf, &buf, req_len);
+	size = MIN(ring_buf_get_ptr(bt_nus->tx_ringbuf, &buf, 0), req_len);
 
 	if (size) {
-		int err, err2;
+		int err;
 
 		err = bt_nus_send(bt_nus->ctrl_blk->conn, buf, size);
-		err2 = ring_buf_get_finish(bt_nus->tx_ringbuf, size);
-		__ASSERT_NO_MSG(err2 == 0);
+		ring_buf_consume(bt_nus->tx_ringbuf, size);
 
 		if (err == 0) {
 			LOG_DBG("Sent %d bytes", size);

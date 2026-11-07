@@ -65,7 +65,7 @@ manifest:
     # https://developer.nordicsemi.com/nRF_Connect_SDK/doc/latest/zephyr/guides/modules.html
     - name: zephyr
       repo-path: sdk-zephyr
-      revision: aaff853d750c19236984539a15d89727a67173d4
+      revision: pull/4732/head
       import:
         # In addition to the zephyr repository itself, NCS also
         # imports the contents of zephyr/west.yml at the above
@@ -79,8 +79,6 @@ manifest:
         #
         # Please keep this list sorted alphabetically.
         name-allowlist:
-          - canopennode
-          - chre
           - cmsis
           - cmsis-dsp
           - cmsis-nn
@@ -183,7 +181,7 @@ manifest:
           compare-by-default: false
     - name: find-my
       repo-path: sdk-find-my
-      revision: f2c0e6094875a37d478119efd2a2a0830f7a9a77
+      revision: pull/513/head
       groups:
         - find-my
     - name: azure-sdk-for-c
@@ -266,7 +264,7 @@ manifest:
     - name: hostap
       repo-path: sdk-hostap
       path: modules/lib/hostap
-      revision: 48d8aa596238cbee26019550cb7a474b2335e902
+      revision: pull/193/head
   # West-related configuration for the nrf repository.
   self:
     # This repository should be cloned to ncs/nrf.

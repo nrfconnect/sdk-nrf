@@ -30,8 +30,8 @@ tests:
       - nrf54l15dk/nrf54l15/cpuapp
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-    extra_configs:
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
 
   benchmarks.power_consumption.flash.hpf_mspi:
     sysbuild: true

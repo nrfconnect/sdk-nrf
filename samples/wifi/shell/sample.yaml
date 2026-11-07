@@ -210,6 +210,10 @@ tests:
   sample.nrf7002.shell.full_stack_thingy91x:
     sysbuild: true
     build_only: true
+    extra_args:
+      # The image does not fit in the flash with the stubs of the disabled net
+      # shell commands.
+      - CONFIG_NET_SHELL_SHOW_DISABLED_COMMANDS=n
     platform_allow:
       - thingy91x/nrf5340/cpuapp
     tags:
@@ -625,6 +629,8 @@ tests:
     extra_args:
       - CONFIG_HOSTAP_CRYPTO_WPA3_PSA=y
       - CONFIG_HOSTAP_CRYPTO_ALT_PSA=y
+      # HostAP crypto still uses the deprecated legacy MbedTLS symbols.
+      - CONFIG_DEPRECATED_KCONFIGS_AS_ERRORS=n
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp

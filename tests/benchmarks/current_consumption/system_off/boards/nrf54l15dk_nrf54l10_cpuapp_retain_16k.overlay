@@ -1,4 +1,8 @@
 / {
+	aliases {
+		retainedmemdevice = &retainedmem0;
+	};
+
 	cpuapp_sram@2002c000 {
 		compatible = "zephyr,memory-region", "mmio-sram";
 		reg = <0x2002c000 DT_SIZE_K(16)>;
@@ -10,10 +14,6 @@
 			status = "okay";
 		};
 	};
-
-	aliases {
-		retainedmemdevice = &retainedmem0;
-	};
 };
 
 &cpuapp_sram {
@@ -22,4 +22,8 @@
 	 */
 	reg = <0x20000000 0x2c000>;
 	ranges = <0x0 0x20000000 0x2c000>;
+};
+
+&cpuapp_sram_app {
+	reg = <0x60 (0x2c000 - 0x60)>;
 };

@@ -46,14 +46,14 @@ config NET_L2_DECT_IPV6_IFACE_UNICAST_INSTALL
 config NET_L2_DECT_BR
 	bool "Border router support for DECT NR+"
 	default y if NET_L2_ETHERNET || MODEM_CELLULAR
-	select NET_ROUTING if NET_IPV6 && NET_ROUTE
+	select NET_IPV6_FORWARDING if NET_IPV6 && NET_IPV6_ROUTE
 	help
 	  Fixed Terminal (FT) could act also as a DECT NR+ border router:
 	  it obtains an IPv6 delegated prefix on a "sink" uplink and extends
 	  connectivity to Portable Terminals (PTs) on DECT NR+.
 	  The sink may be cellular (PPP / MODEM_CELLULAR) or Ethernet
 	  (NET_L2_ETHERNET). Only one sink type is used at a time.
-	  When NET_IPV6 and NET_ROUTE are enabled, selects IPv6 routing support needed
+	  When NET_IPV6 and NET_IPV6_ROUTE are enabled, selects IPv6 routing support needed
 	  for forwarding between the sink and DECT NR+.
 
 config NET_L2_DECT_BR_IPV6_SINK_PREFIX96
@@ -69,7 +69,7 @@ config NET_L2_DECT_BR_IPV6_SINK_PREFIX96
 config NET_L2_DECT_BR_IPV6_SINK_ROUTE96
 	bool "IPv6 /96 connected route on DECT NR+ Sink"
 	default y
-	depends on NET_L2_DECT_BR_IPV6_SINK_PREFIX96 && NET_ROUTE && NET_IPV6_NBR_CACHE
+	depends on NET_L2_DECT_BR_IPV6_SINK_PREFIX96 && NET_IPV6_ROUTE && NET_IPV6_NBR_CACHE
 	help
 	  Install a high-preference /96 connected route + matching neighbor
 	  entry on the DECT NR+ iface for the promoted /96, so locally originated
@@ -109,7 +109,7 @@ config NET_L2_DECT_BR_IPV6_ETH_ND_PROXY_PT_NS_UNICAST_INTERCEPT
 	select NET_PKT_FILTER_IPV6_HOOK
 	help
 	  Some routers send NUD NS with the PT GUA as unicast dst instead of the
-	  solicited-node multicast; with NET_ROUTING, Zephyr forwards those to DECT NR+
+	  solicited-node multicast; with NET_IPV6_FORWARDING, Zephyr forwards those to DECT NR+
 	  before the ND proxy NS ICMP handler runs, so no NA is sent and the router
 	  entry expires. An IPv6 recv packet-filter rule matches these on Ethernet,
 	  queues the same deferred proxy NA, and drops the packet.

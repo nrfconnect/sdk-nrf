@@ -62,7 +62,6 @@ static void work_resubmit(struct k_work *work, struct ring_buf *buf)
 static int ring_buf_get_data(struct ring_buf *buf, uint8_t **data, uint32_t size, bool *is_alloc)
 {
 	uint32_t tmp;
-	int err;
 
 	if (!buf || !data || !is_alloc) {
 		return -EINVAL;
@@ -74,14 +73,8 @@ static int ring_buf_get_data(struct ring_buf *buf, uint8_t **data, uint32_t size
 	 * If this fails (for example, the data wraps in ring buffer), try to allocate a buffer
 	 * and copy data into it.
 	 */
-	tmp = ring_buf_get_claim(buf, data, size);
+	tmp = ring_buf_get_ptr(buf, data, 0);
 	if (tmp < size) {
-		err = ring_buf_get_finish(&nfc_cb_ring, 0);
-		if (err) {
-			LOG_DBG("Tried to finish a read with 0 bytes, err %i.", err);
-			return err;
-		}
-
 		*data = k_malloc(size);
 		if (*data == NULL) {
 			LOG_DBG("Could not allocate %d bytes.", size);
@@ -155,11 +148,7 @@ static void cb_work(struct k_work *work)
 	if (is_alloc) {
 		k_free(data);
 	} else {
-		err = ring_buf_get_finish(&nfc_cb_ring, header.data_size);
-		if (err) {
-			LOG_ERR("Tried to finish a read with %u bytes, err %i.",
-									header.data_size, err);
-		}
+		ring_buf_consume(&nfc_cb_ring, header.data_size);
 	}
 
 	work_resubmit(work, &nfc_cb_ring);

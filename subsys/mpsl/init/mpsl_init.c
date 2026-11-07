@@ -354,7 +354,7 @@ static void m_assert_handler(const char *const file, const uint32_t line)
 
 	strncpy((char *)assert_file_id, file, sizeof(assert_file_id) - 1);
 
-#if defined(CONFIG_ASSERT) && defined(CONFIG_ASSERT_VERBOSE) && !defined(CONFIG_ASSERT_NO_MSG_INFO)
+#if defined(CONFIG_ASSERT) && (CONFIG_ASSERT_MODULE_DEFAULT_LEVEL >= ZASSERT_LEVEL_VERBOSE)
 	__ASSERT(false, "MPSL ASSERT: %s, 0x%04x\n", (char *)assert_file_id, assert_line);
 #elif defined(CONFIG_LOG)
 	LOG_ERR("MPSL ASSERT: %s, 0x%04x", (char *)assert_file_id, assert_line);

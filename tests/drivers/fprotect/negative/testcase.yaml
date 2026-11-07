@@ -1,4 +1,5 @@
 common:
+  ignore_faults: true
   platform_allow:
     - nrf9160dk/nrf9160
     - nrf5340dk/nrf5340/cpuapp

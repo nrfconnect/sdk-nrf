@@ -34,10 +34,10 @@ static const struct device *spi_dev = DEVICE_DT_GET(DT_BUS(ST25R3911B_NODE));
 /* SPI hardware configuration. */
 static const struct spi_config spi_cfg =  {
 	.frequency = DT_PROP(ST25R3911B_NODE, spi_max_frequency),
-	.operation = (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) |
+	.operation = (SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8) |
 		      SPI_TRANSFER_MSB | SPI_LINES_SINGLE |
 		      SPI_MODE_CPHA),
-	.slave = DT_REG_ADDR(ST25R3911B_NODE),
+	.peripheral = DT_REG_ADDR(ST25R3911B_NODE),
 	.cs = {
 		.gpio = SPI_CS_GPIOS_DT_SPEC_GET(ST25R3911B_NODE),
 		.delay = T_NCS_SCLK,

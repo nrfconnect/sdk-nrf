@@ -6,9 +6,9 @@
 
 / {
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2002b000 {
 			reg = <0x2002b000 0x07f0>;
@@ -37,6 +37,8 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
@@ -96,8 +98,8 @@
 				<NRF_PSEL(HPF_MSPI_DQ2, 1, 18)>,
 				<NRF_PSEL(HPF_MSPI_DQ3, 1, 15)>,
 				<NRF_PSEL(HPF_MSPI_CS0, 1, 20)>;
-			nordic,drive-mode = <NRF_DRIVE_S0S1>;
 			bias-pull-up;
+			nordic,drive-mode = <NRF_DRIVE_S0S1>;
 		};
 	};
 

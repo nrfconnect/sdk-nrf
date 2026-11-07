@@ -10,9 +10,9 @@
 	};
 
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2000fc00 {
 			reg = <0x2000fc00 0x8000>;
@@ -26,6 +26,8 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;

@@ -84,6 +84,8 @@ DECLARE_FAKE_VALUE_FUNC(int, boot_read_bank_header, uint8_t, struct mcuboot_img_
 DECLARE_FAKE_VOID_FUNC(clear_attrs, uint8_t, void *);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_notify_observer_path, const struct lwm2m_obj_path *);
 DECLARE_FAKE_VOID_FUNC(engine_remove_observer_by_id, uint16_t, int32_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_update_service_period, k_work_handler_t, uint32_t);
+DECLARE_FAKE_VALUE_FUNC(int, lwm2m_engine_call_at, k_work_handler_t, int64_t);
 DECLARE_FAKE_VALUE_FUNC(int, lwm2m_firmware_start_transfer, uint16_t, char *);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_stream_init);
 DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_dfu_target_init, enum dfu_target_image_type);
@@ -156,6 +158,8 @@ DECLARE_FAKE_VALUE_FUNC(int, fota_download_util_apply_update, enum dfu_target_im
 		FUNC(clear_attrs)                                                                  \
 		FUNC(lwm2m_notify_observer_path)                                                   \
 		FUNC(engine_remove_observer_by_id)                                                 \
+		FUNC(lwm2m_engine_update_service_period)                                           \
+		FUNC(lwm2m_engine_call_at)                                                         \
 		FUNC(lwm2m_firmware_start_transfer)                                                \
 		FUNC(fota_download_util_stream_init)                                               \
 		FUNC(fota_download_util_dfu_target_init)                                           \

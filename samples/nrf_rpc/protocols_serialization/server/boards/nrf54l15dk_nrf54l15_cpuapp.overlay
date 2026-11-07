@@ -78,20 +78,20 @@
 	partitions {
 		slot0_partition: partition@0 {
 			compatible = "zephyr,mapped-partition";
-			label = "image-0";
 			reg = <0x00000000 0x00178000>;
+			label = "image-0";
 		};
 
 		storage_partition: partition@178000 {
 			compatible = "zephyr,mapped-partition";
-			label = "storage";
 			reg = <0x00178000 0x00002000>;
+			label = "storage";
 		};
 
 		coredump_partition: partition@17a000 {
 			compatible = "zephyr,mapped-partition";
-			label = "";
 			reg = <0x0017a000 0x00003000>;
+			label = "";
 		};
 	};
 };
@@ -122,12 +122,12 @@
 };
 
 &uart21 {
-	status = "okay";
 	current-speed = <1000000>;
 	pinctrl-0 = <&uart21_default>;
 	pinctrl-1 = <&uart21_sleep>;
 	pinctrl-names = "default", "sleep";
 	hw-flow-control;
+	status = "okay";
 };
 
 /* restore full RRAM and SRAM space - by default some parts are dedicated to FLRP */
@@ -139,6 +139,10 @@
 &cpuapp_sram {
 	reg = <0x20000000 0x33f00>;
 	ranges = <0x0 0x20000000 0x33f00>;
+};
+
+&cpuapp_sram_app {
+	reg = <0x60 (0x33f00 - 0x60)>;
 };
 
 &rram_controller {

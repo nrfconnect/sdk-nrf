@@ -25,6 +25,8 @@
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
@@ -50,10 +52,10 @@
 };
 
 &cpuflpr_vevif_rx {
-	status = "okay";
 	interrupts = <16 NRF_DEFAULT_IRQ_PRIORITY>;
 	nordic,tasks = <1>;
 	nordic,tasks-mask = <0x00010000>;
+	status = "okay";
 };
 
 &cpuflpr_vevif_tx {
@@ -94,4 +96,11 @@
 
 &pwm20 {
 	status = "disabled";
+};
+
+/* The committed HRT assembly is generated without the bit-manipulation
+ * and compressed extensions that the SoC devicetree enables.
+ */
+&cpuflpr {
+	riscv,isa-extensions = "e", "m", "c", "zicsr";
 };
