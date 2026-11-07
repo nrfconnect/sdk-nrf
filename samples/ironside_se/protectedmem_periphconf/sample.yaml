@@ -5,8 +5,8 @@ sample:
     The sample relocates periphconf_partition to be right after
     cpuapp_boot_partition and configures PROTECTEDMEM to protect both partitions.
     The sample writes to the protected area, reboots, and demonstrates that the
-    integrity check fails on boot, preventing the device from booting when the
-    protected memory is modified.
+    integrity check fails on boot. The secondary firmware then reverts the
+    corruption and reboots back into the primary firmware.
 
 common:
   sysbuild: true
@@ -16,9 +16,10 @@ common:
     ordered: true
     regex:
       - "Writing test pattern to protected memory\\.\\.\\."
-      - "Rebooting\\. Secondary firmware should boot if protection is working\\."
-      # When PROTECTEDMEM integrity check fails, secondary firmware boots
-      - "PROTECTEDMEM integrity check failed - secondary firmware booted"
+      - "Rebooting after 1s\\."
+      - "Secondary: Secondary firmware booted"
+      - "Secondary: Booted because of PROTECTEDMEM failure"
+      - "Secondary: Rebooting after 1s\\."
 
 tests:
   samples.protectedmem_periphconf.nrf54h20dk:
