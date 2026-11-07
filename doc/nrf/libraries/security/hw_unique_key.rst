@@ -44,13 +44,6 @@ The |NCS| supports the following types of HUKs through this library:
      - :ref:`key_storage_kmu`
      - | - Regenerated on each CRACEN power cycle from the IKG seed
        | - Supported on nRF54L Series devices; see :ref:`ug_kmu_guides_cracen_ikg`
-   * - Device Root Key (KDR)
-     - Deriving general-purpose keys
-     - Non-volatile memory locked by `ACL <nRF52840 DK Access Control Lists_>`_
-     - | - Should be written to CryptoCell by the bootloader using the :c:func:`hw_unique_key_load_kdr` function.
-       |   The nRF Secure Immutable Bootloader does this automatically if you enable :kconfig:option:`CONFIG_HW_UNIQUE_KEY` in the bootloader image.
-       | - Supported on and recommended for nRF52840
-
 See the following table for an overview of the key types supported by each device:
 
 .. list-table::
@@ -72,17 +65,10 @@ See the following table for an overview of the key types supported by each devic
       - CryptoCell CC312
       - Yes
       - MKEK, MEXT
-    * - nRF52840
-      - CryptoCell CC310
-      - No
-      - KDR only
 
 In devices with a Key Management Unit (KMU), the keys are either derived or reside in reserved slots in the KMU itself.
 The KMU can make the keys non-readable and non-writable from the application, while still accessible by the Arm CryptoCell or CRACEN.
 On the nRF54L Series devices, the keys are derived from the HUKs by the CRACEN driver using the IKG seed.
-
-In devices without a KMU, like nRF52840, the bootloader writes the key to the Arm CryptoCell and locks the flash memory page where the key is stored.
-In this case, only one key is supported.
 
 Prerequisites
 *************

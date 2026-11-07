@@ -1057,7 +1057,7 @@ Documentation
   * :ref:`app_power_opt` guide with information on how to disable serial logging when using TF-M.
   * Replaced reference to Secure Partition Manager with reference to Trusted Firmware-M for multi-image project builds (nRF9160 samples) in :ref:`gs_programming` page.
   * :ref:`gs_updating` page with information about updating |VSC| and the toolchain.
-  * :ref:`ug_nrf52` and :ref:`ug_nrf5340` user guides with information about FOTA upgrades for Matter, Thread, and Zigbee.
+  * Developing with nRF52 Series and :ref:`ug_nrf5340` user guides with information about FOTA upgrades for Matter, Thread, and Zigbee.
   * Protocol architecture diagram in Matter Architecture page.
   * :ref:`app_memory` page with sections for Matter and Zigbee.
   * :ref:`thread_ug_feature_updating_libs` section to clarify the use, and added |VSC| instructions.

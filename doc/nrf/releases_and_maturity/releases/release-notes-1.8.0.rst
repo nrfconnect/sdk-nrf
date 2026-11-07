@@ -835,7 +835,7 @@ In addition to documentation related to the changes listed above, the following 
 
 * :ref:`gs_updating` - Added a section about updating SEGGER Embedded Studio packages.
 * :ref:`glossary` - Added new terms related to Matter and :ref:`ug_zigbee`.
-* :ref:`ug_nrf52` - Added a section describing Bluetooth mesh under the Supported protocols section.
+* Developing with nRF52 Series - Added a section describing Bluetooth mesh under the Supported protocols section.
 * :ref:`ug_nrf5340`:
 
   * Added a note about varying folder names of the network core child image when programming with nrfjprog.

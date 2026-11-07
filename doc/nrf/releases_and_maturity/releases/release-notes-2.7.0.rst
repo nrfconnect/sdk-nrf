@@ -229,7 +229,7 @@ Working with nRF52 Series
 
 * Updated:
 
-  * The name and the structure of the section, with :ref:`ug_nrf52` as the landing page.
+  * The name and the structure of the section, with Developing with nRF52 Series as the landing page.
   * The :ref:`ug_nrf52_gs` guide has been moved to the :ref:`gsg_guides` section.
 
 Working with PMIC
@@ -1354,7 +1354,7 @@ Documentation
   * The :ref:`ug_bt_mesh_configuring` page with an example of possible entries in the Settings NVS name cache.
   * The :ref:`lib_security` page to include all security-related libraries.
   * The secure storage support table in the :ref:`secure_storage_in_ncs` page by adding nRF52833 and replacing nRF9160 with nRF91 Series.
-  * The :ref:`ug_nrf52_developing` and :ref:`ug_nrf5340` by adding notes about how to perform FOTA updates with samples using random HCI identities, some specifically relevant when using the iOS app.
+  * Developing with nRF52 Series and :ref:`ug_nrf5340` by adding notes about how to perform FOTA updates with samples using random HCI identities, some specifically relevant when using the iOS app.
   * Improved the :ref:`ug_radio_fem` user guide to be up-to-date and more informative.
   * The :ref:`bt_fast_pair_readme` page to document support for the FMDN extension and aligned the page with the sysbuild migration.
   * The :ref:`ug_bt_fast_pair` guide to document integration steps for the FMDN extension, the locator tag use case, and aligned the page with the sysbuild migration.

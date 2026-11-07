@@ -16,8 +16,8 @@ The CPU executes these flash patches on the next system reset instead of the reg
 A rogue application can use the FPB to patch away parts of the secure boot code on next system reset.
 Hence, you can disable the Flash Patch and Breakpoint (FPB) feature using this library and increase the security of the device.
 
-The library is intended to be used only on the nRF52840 and nRF52833 SoCs.
-Though all the Cortex-M4 SoCs have the FPB feature, only the nRF52840 and nRF52833 SOCs have the option to disable it.
+The library is intended for SoCs that implement UICR-controlled disable of the FPB feature.
+Though all Cortex-M4 SoCs have the FPB feature, only some devices provide the option to disable it; see your SoC product specification.
 
 Implementation
 ==============
