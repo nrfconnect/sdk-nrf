@@ -178,7 +178,10 @@ unsigned char nrf_wifi_utils_get_op_band(void)
 	if (IS_ENABLED(CONFIG_NRF_WIFI_DUAL_BAND)) {
 		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 	}
-	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
+	if (IS_ENABLED(CONFIG_NRF_WIFI_ALL_BAND) && IS_ENABLED(CONFIG_NRF_WIFI_6G_SUPPORT)) {
+		return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ | NRF_WIFI_OP_BAND_6GHZ;
+	}
+	return NRF_WIFI_OP_BAND_2GHZ | NRF_WIFI_OP_BAND_5GHZ;
 }
 
 bool nrf_wifi_util_is_multicast_addr(const unsigned char *addr)
