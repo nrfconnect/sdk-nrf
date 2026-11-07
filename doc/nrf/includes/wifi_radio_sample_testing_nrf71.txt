@@ -201,6 +201,19 @@
         dsss_crc32_pass_cnt=449
         dsss_crc32_fail_cnt=9
 
+   * To read die temperature in degree Celsius, execute the following command:
+
+     .. code-block:: console
+
+        wifi_radio_test get_temperature
+
+     The sample shows output similar to the following:
+
+     .. code-block:: console
+
+        Temperature reading success:
+        The temperature is = 25 degree Celsius
+
    * To transmit a continuous tone with the following configuration:
 
      * Band: 5 GHz

@@ -178,6 +178,11 @@ Wi-Fi radio test subcommands
      - N/A
      - Action
      - Display statistics.
+   * - get_temperature
+     - | No arguments required
+     - N/A
+     - Action
+     - Get temperature.
    * - tx_pkt_cw
      - <val> - Contention window value to be configured (0, 3, 7, 15, 31, 63, 127, 255, 511, 1023)
      - N/A
