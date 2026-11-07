@@ -199,7 +199,7 @@ See :ref:`nrf_audio_app_overview_architecture` for information about how both co
 You can enable the software codec using the :option:`CONFIG_SW_CODEC_LC3` Kconfig option.
 This codec is mandatory for LE Audio.
 
-You can enable the CS47L63 hardware codec using the :option:`CONFIG_NRF_AUDIO_CS47L63_DRIVER` Kconfig option.
+You can enable the CS47L63 hardware codec driver using the :kconfig:option:`CONFIG_AUDIO_CODEC_CS47L63` Kconfig option.
 
 The codec selection affects audio quality, processing requirements, and power consumption.
 

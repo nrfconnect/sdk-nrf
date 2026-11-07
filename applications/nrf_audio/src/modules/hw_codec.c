@@ -10,29 +10,43 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <ctype.h>
-#include <zephyr/drivers/gpio.h>
+#include <zephyr/audio/codec.h>
 #include <zephyr/device.h>
+#include <zephyr/drivers/audio/cs47l63.h>
 #include <zephyr/shell/shell.h>
 #include <zephyr/zbus/zbus.h>
 
 #include "macros_common.h"
 #include "zbus_common.h"
-#include "cs47l63.h"
-#include "cs47l63_spec.h"
-#include "cs47l63_reg_conf.h"
-#include "cs47l63_comm.h"
 
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(hw_codec, CONFIG_MODULE_HW_CODEC_LOG_LEVEL);
 
 #define VOLUME_ADJUST_STEP_DB 3
+#define VOLUME_DEFAULT_DB     (-15)
+#define VOLUME_MIN_DB	      (-64)
+#define VOLUME_MAX_DB	      0
+#define MAX_VOLUME_REG_VAL    128
 #define BASE_10		      10
+#define I2S_MCK_FREQ_HZ	      6144000
+
+#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S))
+#define CODEC_INPUT (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO) ? CS47L63_INPUT_PDM : CS47L63_INPUT_LINE)
+#elif ((CONFIG_AUDIO_DEV == HEADSET) && CONFIG_STREAM_BIDIRECTIONAL)
+#define CODEC_INPUT CS47L63_INPUT_PDM
+#endif
+
+#if defined(CODEC_INPUT)
+#define CODEC_DIR AUDIO_DAI_DIR_TXRX
+#else
+#define CODEC_DIR AUDIO_DAI_DIR_TX
+#endif
 
 ZBUS_SUBSCRIBER_DEFINE(volume_evt_sub, CONFIG_VOLUME_MSG_SUB_QUEUE_SIZE);
 
-static uint32_t prev_volume_reg_val = OUT_VOLUME_DEFAULT;
+static const struct device *const codec_dev = DEVICE_DT_GET(DT_NODELABEL(cs47l63));
 
-static cs47l63_t cs47l63_driver;
+static int volume_db = VOLUME_DEFAULT_DB;
 
 static k_tid_t volume_msg_sub_thread_id;
 static struct k_thread volume_msg_sub_thread_data;
@@ -120,37 +134,55 @@ static void volume_msg_sub_thread(void)
 	}
 }
 
-/**
- * @brief Write to multiple registers in CS47L63.
- */
-static int cs47l63_comm_reg_conf_write(const uint32_t config[][2], uint32_t num_of_regs)
+static int output_property_set(audio_property_t property, audio_property_value_t val)
 {
 	int ret;
-	uint32_t reg;
-	uint32_t value;
 
-	for (int i = 0; i < num_of_regs; i++) {
-		reg = config[i][0];
-		value = config[i][1];
-
-		if (reg == SPI_BUSY_WAIT) {
-			LOG_DBG("Busy waiting instead of writing to CS47L63");
-			/* Wait for us defined in value */
-			k_busy_wait(value);
-		} else {
-			ret = cs47l63_write_reg(&cs47l63_driver, reg, value);
-			if (ret) {
-				return ret;
-			}
-		}
+	ret = audio_codec_set_property(codec_dev, property, AUDIO_CHANNEL_ALL, val);
+	if (ret) {
+		return ret;
 	}
+
+	return audio_codec_apply_properties(codec_dev);
+}
+
+static int volume_apply(int new_volume_db)
+{
+	int ret;
+
+	ret = output_property_set(AUDIO_PROPERTY_OUTPUT_VOLUME,
+				  (audio_property_value_t){.vol = new_volume_db});
+	if (ret) {
+		return ret;
+	}
+
+	ret = output_property_set(AUDIO_PROPERTY_OUTPUT_MUTE,
+				  (audio_property_value_t){.mute = false});
+	if (ret) {
+		return ret;
+	}
+
+	volume_db = new_volume_db;
+
+	LOG_DBG("Volume: %d dB", volume_db);
 
 	return 0;
 }
 
-int hw_codec_volume_set(uint8_t set_val)
+static void codec_error_cb(const struct device *dev, uint32_t errors)
 {
 	int ret;
+
+	LOG_ERR("HW codec error: 0x%x", errors);
+
+	ret = audio_codec_clear_errors(dev);
+	if (ret) {
+		LOG_ERR("Failed to clear HW codec errors: %d", ret);
+	}
+}
+
+int hw_codec_volume_set(uint8_t set_val)
+{
 	uint32_t volume_reg_val;
 
 	volume_reg_val = set_val;
@@ -161,59 +193,30 @@ int hw_codec_volume_set(uint8_t set_val)
 		volume_reg_val = MAX_VOLUME_REG_VAL;
 	}
 
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				volume_reg_val | CS47L63_OUT_VU);
-	if (ret) {
-		return ret;
-	}
-
-	prev_volume_reg_val = volume_reg_val;
-
 	/* This is rounded down to nearest integer */
-	LOG_DBG("Volume: %" PRId32 " dB", (volume_reg_val / 2) - MAX_VOLUME_DB);
-
-	return 0;
+	return volume_apply((volume_reg_val / 2) + VOLUME_MIN_DB);
 }
 
 int hw_codec_volume_adjust(int8_t adjustment_db)
 {
-	int ret;
-	int32_t new_volume_reg_val;
+	int new_volume_db;
 
 	LOG_DBG("Adj dB in: %d", adjustment_db);
 
 	if (adjustment_db == 0) {
-		new_volume_reg_val = prev_volume_reg_val;
-	} else {
-		uint32_t volume_reg_val;
-
-		ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
-		if (ret) {
-			LOG_ERR("Failed to get volume from CS47L63");
-			return ret;
-		}
-
-		volume_reg_val &= CS47L63_OUT1L_VOL_MASK;
-
-		/* The adjustment is in dB, 1 bit equals 0.5 dB,
-		 * so multiply by 2 to get increments of 1 dB
-		 */
-		new_volume_reg_val = volume_reg_val + (adjustment_db * 2);
-		if (new_volume_reg_val <= 0) {
-			LOG_WRN("Volume at MIN (-64dB)");
-			new_volume_reg_val = 0;
-		} else if (new_volume_reg_val >= MAX_VOLUME_REG_VAL) {
-			LOG_WRN("Volume at MAX (0dB)");
-			new_volume_reg_val = MAX_VOLUME_REG_VAL;
-		}
+		return volume_apply(volume_db);
 	}
 
-	ret = hw_codec_volume_set(new_volume_reg_val);
-	if (ret) {
-		return ret;
+	new_volume_db = volume_db + adjustment_db;
+	if (new_volume_db <= VOLUME_MIN_DB) {
+		LOG_WRN("Volume at MIN (-64dB)");
+		new_volume_db = VOLUME_MIN_DB;
+	} else if (new_volume_db >= VOLUME_MAX_DB) {
+		LOG_WRN("Volume at MAX (0dB)");
+		new_volume_db = VOLUME_MAX_DB;
 	}
 
-	return 0;
+	return volume_apply(new_volume_db);
 }
 
 int hw_codec_volume_decrease(void)
@@ -242,139 +245,74 @@ int hw_codec_volume_increase(void)
 
 int hw_codec_volume_mute(void)
 {
-	int ret;
-	uint32_t volume_reg_val;
-
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
-	if (ret) {
-		return ret;
-	}
-
-	BIT_SET(volume_reg_val, CS47L63_OUT1L_MUTE_MASK);
-
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				volume_reg_val | CS47L63_OUT_VU);
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
+	return output_property_set(AUDIO_PROPERTY_OUTPUT_MUTE,
+				   (audio_property_value_t){.mute = true});
 }
 
 int hw_codec_volume_unmute(void)
 {
-	int ret;
-	uint32_t volume_reg_val;
-
-	ret = cs47l63_read_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1, &volume_reg_val);
-	if (ret) {
-		return ret;
-	}
-
-	BIT_CLEAR(volume_reg_val, CS47L63_OUT1L_MUTE_MASK);
-
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_VOLUME_1,
-				volume_reg_val | CS47L63_OUT_VU);
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
+	return output_property_set(AUDIO_PROPERTY_OUTPUT_MUTE,
+				   (audio_property_value_t){.mute = false});
 }
 
 int hw_codec_default_conf_enable(void)
 {
 	int ret;
 
-	ret = cs47l63_comm_reg_conf_write(clock_configuration, ARRAY_SIZE(clock_configuration));
+	ret = audio_codec_route_output(codec_dev, AUDIO_CHANNEL_ALL, CS47L63_OUTPUT_HP);
 	if (ret) {
 		return ret;
 	}
 
-	ret = cs47l63_comm_reg_conf_write(GPIO_configuration, ARRAY_SIZE(GPIO_configuration));
+#if defined(CODEC_INPUT)
+	ret = audio_codec_route_input(codec_dev, AUDIO_CHANNEL_ALL, CODEC_INPUT);
 	if (ret) {
 		return ret;
 	}
-
-	ret = cs47l63_comm_reg_conf_write(asp1_enable, ARRAY_SIZE(asp1_enable));
-	if (ret) {
-		return ret;
-	}
-
-	ret = cs47l63_comm_reg_conf_write(output_enable, ARRAY_SIZE(output_enable));
-	if (ret) {
-		return ret;
-	}
+#endif /* defined(CODEC_INPUT) */
 
 	ret = hw_codec_volume_adjust(0);
 	if (ret) {
 		return ret;
 	}
 
-#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S))
-	if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
-		ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
-						  ARRAY_SIZE(pdm_mic_enable_configure));
-		if (ret) {
-			return ret;
-		}
-	} else {
-		ret = cs47l63_comm_reg_conf_write(line_in_enable, ARRAY_SIZE(line_in_enable));
-		if (ret) {
-			return ret;
-		}
-	}
-#endif /* ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_I2S)) */
-
-#if ((CONFIG_AUDIO_DEV == HEADSET) && CONFIG_STREAM_BIDIRECTIONAL)
-	ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
-					  ARRAY_SIZE(pdm_mic_enable_configure));
-	if (ret) {
-		return ret;
-	}
-#endif /* ((CONFIG_AUDIO_DEV == HEADSET) && CONFIG_STREAM_BIDIRECTIONAL) */
-
-	/* Toggle FLL to start up CS47L63 */
-	ret = cs47l63_comm_reg_conf_write(FLL_toggle, ARRAY_SIZE(FLL_toggle));
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
+	return audio_codec_start(codec_dev, CODEC_DIR);
 }
 
 int hw_codec_soft_reset(void)
 {
-	int ret;
-
-	ret = cs47l63_comm_reg_conf_write(output_disable, ARRAY_SIZE(output_disable));
-	if (ret) {
-		return ret;
-	}
-
-	ret = cs47l63_comm_reg_conf_write(soft_reset, ARRAY_SIZE(soft_reset));
-	if (ret) {
-		return ret;
-	}
-
-	return 0;
+	return audio_codec_stop(codec_dev, CODEC_DIR);
 }
 
 int hw_codec_init(void)
 {
 	int ret;
+	struct audio_codec_cfg cfg = {
+		.mclk_freq = I2S_MCK_FREQ_HZ,
+		.dai_type = AUDIO_DAI_TYPE_I2S,
+		.dai_cfg.i2s.word_size = CONFIG_AUDIO_BIT_DEPTH_BITS,
+		.dai_cfg.i2s.channels = CONFIG_I2S_CH_NUM,
+		.dai_cfg.i2s.format = I2S_FMT_DATA_FORMAT_I2S,
+		.dai_cfg.i2s.options = I2S_OPT_BIT_CLK_TARGET | I2S_OPT_FRAME_CLK_TARGET,
+		.dai_cfg.i2s.frame_clk_freq = CONFIG_I2S_LRCK_FREQ_HZ,
+		.dai_route = (CODEC_DIR & AUDIO_DAI_DIR_RX) ? AUDIO_ROUTE_PLAYBACK_CAPTURE
+							    : AUDIO_ROUTE_PLAYBACK,
+	};
 
-	ret = cs47l63_comm_init(&cs47l63_driver);
+	if (!device_is_ready(codec_dev)) {
+		LOG_ERR("HW codec not ready");
+		return -ENODEV;
+	}
+
+	ret = audio_codec_configure(codec_dev, &cfg);
 	if (ret) {
 		return ret;
 	}
 
-	/* Run a soft reset on start to make sure all registers are default values */
-	ret = cs47l63_comm_reg_conf_write(soft_reset, ARRAY_SIZE(soft_reset));
+	ret = audio_codec_register_error_callback(codec_dev, codec_error_cb);
 	if (ret) {
 		return ret;
 	}
-	cs47l63_driver.state = CS47L63_STATE_STANDBY;
 
 	volume_msg_sub_thread_id = k_thread_create(
 		&volume_msg_sub_thread_data, volume_msg_sub_thread_stack,
@@ -420,23 +358,8 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 	idx = strtoul(argv[1], NULL, BASE_10);
 
 	switch (idx) {
-	case LINE_IN: {
-		if (CONFIG_AUDIO_DEV == HEADSET) {
-			ret = cs47l63_comm_reg_conf_write(line_in_enable,
-							  ARRAY_SIZE(line_in_enable));
-			if (ret) {
-				shell_error(shell, "Failed to enable LINE-IN");
-				return ret;
-			}
-		}
-
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX1_INPUT1, 0x800012);
-		if (ret) {
-			shell_error(shell, "Failed to route LINE-IN to I2S");
-			return ret;
-		}
-
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX2_INPUT1, 0x800013);
+	case LINE_IN:
+		ret = audio_codec_route_input(codec_dev, AUDIO_CHANNEL_ALL, CS47L63_INPUT_LINE);
 		if (ret) {
 			shell_error(shell, "Failed to route LINE-IN to I2S");
 			return ret;
@@ -444,24 +367,8 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 
 		shell_print(shell, "Selected LINE-IN as input");
 		break;
-	}
-	case PDM_MIC: {
-		if (CONFIG_AUDIO_DEV == GATEWAY) {
-			ret = cs47l63_comm_reg_conf_write(pdm_mic_enable_configure,
-							  ARRAY_SIZE(pdm_mic_enable_configure));
-			if (ret) {
-				shell_error(shell, "Failed to enable PDM mic");
-				return ret;
-			}
-		}
-
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX1_INPUT1, 0x800010);
-		if (ret) {
-			shell_error(shell, "Failed to route PDM mic to I2S");
-			return ret;
-		}
-
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_ASP1TX2_INPUT1, 0x800011);
+	case PDM_MIC:
+		ret = audio_codec_route_input(codec_dev, AUDIO_CHANNEL_ALL, CS47L63_INPUT_PDM);
 		if (ret) {
 			shell_error(shell, "Failed to route PDM mic to I2S");
 			return ret;
@@ -469,27 +376,9 @@ static int cmd_input(const struct shell *shell, size_t argc, char **argv)
 
 		shell_print(shell, "Selected PDM mic as input");
 		break;
-	}
 	default:
 		shell_error(shell, "Invalid input");
 		return -EINVAL;
-	}
-
-	return 0;
-}
-
-static int analog_out1l_disconnect(void)
-{
-	int ret;
-
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808000);
-	if (ret) {
-		return ret;
-	}
-
-	ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808000);
-	if (ret) {
-		return ret;
 	}
 
 	return 0;
@@ -508,6 +397,7 @@ static int cmd_i2s_to_output_mapping(const struct shell *shell, size_t argc, cha
 {
 	int ret;
 	uint8_t idx;
+	audio_channel_t channel;
 
 	enum hw_codec_i2s_channel_to_mono_output {
 		LEFT,
@@ -525,46 +415,28 @@ static int cmd_i2s_to_output_mapping(const struct shell *shell, size_t argc, cha
 		shell_error(shell, "Supplied argument is not numeric");
 		return -EINVAL;
 	}
-	/* Remove all outputs */
-	ret = analog_out1l_disconnect();
-	if (ret) {
-		shell_error(shell, "Failed to clear outputs");
-		return ret;
-	}
 
 	idx = strtoul(argv[1], NULL, BASE_10);
 
 	switch (idx) {
 	case LEFT:
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808020);
-		if (ret) {
-			shell_error(shell, "Failed to route I2S to left channel");
-			return ret;
-		}
+		channel = AUDIO_CHANNEL_FRONT_LEFT;
 		break;
 	case RIGHT:
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808021);
-		if (ret) {
-			shell_error(shell, "Failed to route I2S to right channel");
-			return ret;
-		}
+		channel = AUDIO_CHANNEL_FRONT_RIGHT;
 		break;
 	case MIXED_STEREO:
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT1, 0x808020);
-		if (ret) {
-			shell_error(shell, "Failed to route I2S to left channel");
-			return ret;
-		}
-
-		ret = cs47l63_write_reg(&cs47l63_driver, CS47L63_OUT1L_INPUT2, 0x808021);
-		if (ret) {
-			shell_error(shell, "Failed to route I2S to right channel");
-			return ret;
-		}
+		channel = AUDIO_CHANNEL_ALL;
 		break;
 	default:
 		shell_error(shell, "Invalid output");
 		return -EINVAL;
+	}
+
+	ret = audio_codec_route_output(codec_dev, channel, CS47L63_OUTPUT_HP);
+	if (ret) {
+		shell_error(shell, "Failed to route I2S to output");
+		return ret;
 	}
 
 	return 0;
