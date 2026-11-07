@@ -1,0 +1,86 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+# Bluetooth LE controller settings. These symbols only exist in the image that contains
+# the controller, which is the application image on single-core SoCs such as the nRF7120.
+# They must come before Kconfig.zephyr so they take precedence over the driver defaults,
+# and are set here instead of in prj.conf so that they are silently ignored when the
+# controller does not support the feature.
+if HAS_BT_CTLR
+
+config BT_CTLR_DATA_LENGTH_MAX
+	default 251
+
+config BT_CTLR_PHY_2M
+	default y
+
+config BT_CTLR_PHY_CODED
+	default y
+
+endif # HAS_BT_CTLR
+
+source "Kconfig.zephyr"
+
+menu "Wi-Fi and Short-Range coexistence shell sample"
+
+config COEX_SHELL_BT_INTERVAL_MIN
+	int "Bluetooth LE minimum connection interval"
+	range 6 3200
+	default 80
+	help
+	  Minimum connection interval requested for the throughput test, in units of
+	  1.25 ms. For example, 6 is 7.5 ms and 80 is 100 ms. The value must not be
+	  larger than COEX_SHELL_BT_INTERVAL_MAX.
+
+config COEX_SHELL_BT_INTERVAL_MAX
+	int "Bluetooth LE maximum connection interval"
+	range 6 3200
+	default 80
+	help
+	  Maximum connection interval requested for the throughput test, in units of
+	  1.25 ms. The connection is only updated when the current interval differs
+	  from this value.
+
+config COEX_SHELL_BT_CONN_LATENCY
+	int "Bluetooth LE connection latency"
+	range 0 499
+	default 0
+	help
+	  Peripheral latency, in number of connection events that the peripheral may
+	  skip. It is used for both the initial connection and the throughput test.
+
+config COEX_SHELL_BT_SUPERVISION_TIMEOUT
+	int "Bluetooth LE supervision timeout"
+	range 10 3200
+	default 3200
+	help
+	  Supervision timeout requested for the throughput test, in units of 10 ms.
+	  It must be longer than twice the maximum connection interval multiplied
+	  by (1 + COEX_SHELL_BT_CONN_LATENCY). This is checked at build time.
+
+config SR_COEX_BRINGUP_IN_MAIN
+	bool "Bring up the coexistence manager from main"
+	depends on NRF71_SR_COEX_DRIVER
+	default y
+	help
+	  After the network interface is up, main() waits for the Wi-Fi FMAC
+	  transport and then for the coexistence driver to finish sending the
+	  coexistence configuration to the Coexistence Manager on the RPU and
+	  enabling it. The driver starts this sequence itself when Wi-Fi comes up.
+
+config SR_COEX_SR_NOTIFY_IN_MAIN
+	bool "Report the Short-Range radio as ready from main"
+	depends on SR_COEX_BRINGUP_IN_MAIN
+	default y
+	help
+	  Send an NRF71_SR_COEX_SR_POWERED_UP_READY notification from main() using
+	  nrf71_sr_coex_sr_power_notify() after the CM becomes active. This opens
+	  the coexistence gate without waiting for Bluetooth. The sample sends the
+	  same notification when Bluetooth is enabled by the first bt_cfg_tput
+	  command, so sending it twice is harmless. Disable this option to keep
+	  coexistence off until Bluetooth is enabled.
+
+endmenu

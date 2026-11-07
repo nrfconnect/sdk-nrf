@@ -986,6 +986,9 @@ Thread samples
 Wi-Fi samples
 -------------
 
+* Added the :ref:`wifi_coexistence_shell_sample` sample that demonstrates Wi-Fi and Bluetooth LE coexistence on the nRF7120 DK.
+  The sample provides shell commands to measure Wi-Fi UDP upload throughput, Bluetooth LE throughput, or both simultaneously.
+
 * Added support for the ``nrf7120dk/nrf7120/cpuapp`` board target in the following Zephyr samples:
 
   * :zephyr:code-sample:`mqtt-sn-publisher`
