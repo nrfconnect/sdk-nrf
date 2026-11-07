@@ -673,15 +673,6 @@
   comment: "https://github.com/zephyrproject-rtos/zephyr/pull/107156 - changes in robot framework"
 
 - scenarios:
-    - bluetooth.gatt
-    - bluetooth.gatt.no_bt_conn_dynamic_callbacks
-    - bluetooth.gatt.psa
-    - bluetooth.gatt.psa_memory_leak
-  platforms:
-    - qemu_cortex_m3/ti_lm3s6965
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41365"
-
-- scenarios:
     - bluetooth.mesh.settings
     - bluetooth.mesh.settings.no_bt_settings
   platforms:
