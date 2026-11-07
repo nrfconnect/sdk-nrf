@@ -936,7 +936,7 @@ Peripheral samples
 PMIC samples
 ------------
 
-|no_changes_yet_note|
+* Added the :ref:`npm10xx_fuel_gauge` sample.
 
 Protocol serialization samples
 ------------------------------
