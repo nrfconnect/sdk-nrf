@@ -27,9 +27,9 @@ cpusys_vevif: &cpusys_vevif_tx {};
 		interrupt-parent = <&cpuppr_clic>;
 		ranges;
 
-		stmesp: memory@ad000000 {
+		stmesp: memory@ae000000 {
 			compatible = "arm,stmesp";
-			reg = <0xad000000 0x1000000>;
+			reg = <0xae000000 0x1000000>;
 		};
 	};
 };
