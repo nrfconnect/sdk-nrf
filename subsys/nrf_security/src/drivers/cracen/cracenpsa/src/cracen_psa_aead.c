@@ -519,6 +519,8 @@ static __maybe_unused psa_status_t cracen_aead_update_internal(
 	uint8_t *output, size_t output_size, size_t *output_length, bool is_ad_update)
 {
 	psa_status_t psa_status = PSA_ERROR_CORRUPTION_DETECTED;
+	size_t block_size = get_block_size(operation->alg);
+	size_t buffered_bytes = 0;
 	size_t blk_bytes = 0;
 	size_t out_bytes = 0;
 
@@ -526,50 +528,52 @@ static __maybe_unused psa_status_t cracen_aead_update_internal(
 		return PSA_SUCCESS;
 	}
 
-	if (operation->unprocessed_input_bytes || input_length < get_block_size(operation->alg)) {
+	if (operation->unprocessed_input_bytes || input_length < block_size) {
 		if (buffer_small_input(operation, &input, &input_length, output_length)) {
 			return PSA_SUCCESS;
 		}
 	}
 
-	if (operation->unprocessed_input_bytes == get_block_size(operation->alg)) {
-		if (!is_ad_update && output_size < operation->unprocessed_input_bytes) {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		}
+	/* A full buffered block, from this or an earlier call, is processed first */
+	if (operation->unprocessed_input_bytes == block_size) {
+		buffered_bytes = block_size;
+	}
 
+	/* Clamp input length to a multiple of the block size. */
+	blk_bytes = input_length & ~(block_size - 1);
+
+	bool input_is_block_aligned = blk_bytes != 0 && blk_bytes == input_length;
+	bool is_ccm = IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation->alg == PSA_ALG_CCM;
+	bool outputs_buffered_block = buffered_bytes != 0 && !is_ad_update;
+
+	/* Keep the last block buffered: sxsymcrypt needs CCM input left for finish,
+	 * and outputting it on top of a buffered block exceeds
+	 * PSA_AEAD_UPDATE_OUTPUT_SIZE().
+	 */
+	if (input_is_block_aligned && (is_ccm || outputs_buffered_block)) {
+		blk_bytes -= block_size;
+	}
+
+	/* Check before anything is fed, so that no hardware is left reserved */
+	if (!is_ad_update && output_size < buffered_bytes + blk_bytes) {
+		return PSA_ERROR_BUFFER_TOO_SMALL;
+	}
+
+	if (buffered_bytes != 0) {
 		psa_status = cracen_feed_data_to_hw(operation, operation->unprocessed_input,
-						    operation->unprocessed_input_bytes, output,
-						    is_ad_update);
+						    buffered_bytes, output, is_ad_update);
 		if (psa_status) {
 			return psa_status;
 		}
 		if (!is_ad_update) {
-			output = output + operation->unprocessed_input_bytes;
+			output = output + buffered_bytes;
 		}
 
-		out_bytes = operation->unprocessed_input_bytes;
+		out_bytes = buffered_bytes;
 		operation->unprocessed_input_bytes = 0;
 	}
 
-	/* Clamp input length to a multiple of the block size. */
-	blk_bytes = input_length & ~(get_block_size(operation->alg) - 1);
-
-	/* For CCM, in multi-part mode sxsymcrypt needs a chunk of input data to produce a tag
-	 * therefore we buffer the last block until finish will be called.
-	 * blk_bytes tracks the amount of block-sized input that will be
-	 * processed immediately. So to buffer the input and prevent processing
-	 * we subtract one block from blk_bytes.
-	 */
-	if (IS_ENABLED(PSA_NEED_CRACEN_CCM_AES) && operation->alg == PSA_ALG_CCM &&
-	    input_length != 0 && blk_bytes == input_length) {
-		blk_bytes -= get_block_size(operation->alg);
-	}
-
 	if (blk_bytes > 0) {
-		if (!is_ad_update && (output_size < (blk_bytes + out_bytes))) {
-			return PSA_ERROR_BUFFER_TOO_SMALL;
-		}
-
 		/* Feed the full blocks to the device. */
 		psa_status =
 			cracen_feed_data_to_hw(operation, input, blk_bytes, output, is_ad_update);
