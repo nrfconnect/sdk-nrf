@@ -640,9 +640,24 @@ Cellular samples
 
   * Support for nRF9160 DK, nRF9161 DK, and Thingy:91 in the following cellular samples:
 
+    * :ref:`at_client_sample`
+    * :ref:`at_monitor_sample`
+    * :ref:`battery`
+    * :ref:`fmfu_smp_svr_sample`
     * :ref:`http_application_update_sample`
     * :ref:`http_modem_delta_update_sample`
     * :ref:`http_modem_full_update_sample`
+    * :ref:`location_sample`
+    * :ref:`lwm2m_carrier`
+    * :ref:`modem_callbacks_sample`
+    * :ref:`modem_trace_backend_sample`
+    * :ref:`modem_trace_flash`
+    * :ref:`nidd_sample`
+    * :ref:`pdn_sample`
+    * :ref:`sms_sample`
+    * :ref:`ciphersuites`
+    * :ref:`udp`
+    * :ref:`uicc_lwm2m_sample`
 
 Cryptography samples
 --------------------

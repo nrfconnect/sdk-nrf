@@ -8,9 +8,6 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
-      - thingy91/nrf9160/ns
       - thingy91x/nrf9151/ns
     tags:
       - ci_build
@@ -26,8 +23,6 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     tags:
       - ci_build
       - sysbuild
@@ -39,8 +34,6 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
       - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
@@ -57,8 +50,6 @@ tests:
       - nrf9151dk/nrf9151/ns
     platform_allow:
       - nrf9151dk/nrf9151/ns
-      - nrf9160dk/nrf9160/ns
-      - nrf9161dk/nrf9161/ns
     extra_args:
       - SHIELD=nrf7002ek_nrf7000
       - EXTRA_CONF_FILE=nrf700x-wifi-scan-only.conf
