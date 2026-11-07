@@ -1306,9 +1306,14 @@ Libraries for networking
   * Updated the logging of location requests that nRF Cloud cannot resolve (error code ``40410``).
     Instead of several errors, the library now logs a single warning, as this can happen in normal circumstances, for example, with unknown Wi-Fi access points.
 
-  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
-    This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
-    The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+  * Fixed:
+
+    * An issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+      This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
+      The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+
+    * An issue where the :c:func:`nrf_cloud_pending_fota_job_process` function always requested a reboot after a modem delta FOTA update.
+      A reboot is no longer requested if the reported DFU result shows that the modem is running, with either the updated or the previous firmware.
 
 * :ref:`lib_mqtt_helper` library:
 

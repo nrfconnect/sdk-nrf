@@ -1009,7 +1009,9 @@ int nrf_cloud_jwt_app_generate(uint32_t time_valid_s, char *jwt_buf, size_t jwt_
  *        It is called internally if @kconfig{CONFIG_NRF_CLOUD_FOTA} is enabled.
  *        For pending NRF_CLOUD_FOTA_MODEM_DELTA jobs the modem library must
  *        be initialized before calling this function, otherwise the job will
- *        be marked as completed without validation.
+ *        be marked as completed without validation and a reboot is requested.
+ *        No reboot is requested if the reported DFU result shows that the modem
+ *        is running, with either the updated or the previous firmware.
  *
  * @param[in] job FOTA job state information.
  * @param[out] reboot_required A reboot is needed to complete a FOTA update.
