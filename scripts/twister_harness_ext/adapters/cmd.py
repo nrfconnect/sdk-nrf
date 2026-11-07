@@ -19,5 +19,7 @@ def run_command(command: list[str], timeout: int = 30) -> subprocess.CompletedPr
     if ret.returncode:
         logger.error(f"Failed command: {shlex.join(command)}")
         logger.info(ret.stdout)
-        raise subprocess.CalledProcessError(ret.returncode, command)
+        raise subprocess.CalledProcessError(
+            ret.returncode, command, output=ret.stdout, stderr=ret.stderr
+        )
     return ret
