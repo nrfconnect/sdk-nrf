@@ -22,7 +22,8 @@ from output_template import (
     get_ncs_version,
     group_by,
     log_output_written,
-    relative_path,
+    package_roots,
+    spdx_file_name,
     verification_code,
 )
 from spdx_python_model import v3_0_1 as spdx
@@ -57,9 +58,9 @@ def parse_timestamp(value: str) -> datetime:
 class Spdx3Builder:
     '''Builds the SPDX 3.0.1 object graph from the pipeline data.'''
 
-    def __init__(self, data: Data, output_directory: Path):
+    def __init__(self, data: Data):
         self.data = data
-        self.output_directory = output_directory
+        self.package_roots = package_roots(data)
         # The same namespace as the SPDX 2.3 "DocumentNamespace" field.
         self.namespace = f'http://spdx.org/spdxdocs/west-ncs-sbom-{data.report_uuid}'
         self.objects = []
@@ -213,7 +214,7 @@ class Spdx3Builder:
     def _create_file(self, file: FileInfo, index: int) -> spdx.software_File:
         element = spdx.software_File()
         element._id = self._id(f'file-{index}')
-        element.name = relative_path(file.file_path, self.output_directory)
+        element.name = spdx_file_name(file, self.package_roots)
         element.software_fileKind = spdx.software_FileKindType.file
         checksum = spdx.Hash()
         checksum.algorithm = spdx.HashAlgorithm.sha1
@@ -317,7 +318,7 @@ class Spdx3Builder:
 def generate(data: Data, output_file: 'Path|str'):
     '''Generate SPDX 3.0.1 JSON-LD output_file from data.'''
     output_file = Path(output_file)
-    object_set = Spdx3Builder(data, output_file.parent.resolve()).build()
+    object_set = Spdx3Builder(data).build()
     with open(output_file, 'wb') as fd:
         spdx.JSONLDSerializer().write(object_set, fd, force_at_graph=True, indent=2)
     log_output_written(output_file)
