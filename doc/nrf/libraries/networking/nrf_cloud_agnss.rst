@@ -142,8 +142,8 @@ Dependencies
 
 This library uses the following |NCS| libraries:
 
-* :ref:`modem_info_readme`
 * :ref:`lib_nrf_cloud`
+* :ref:`modem_info_readme` (optional, only needed when the library is used to obtain network information from the modem)
 
 It uses the following `sdk-nrfxlib`_ library:
 
