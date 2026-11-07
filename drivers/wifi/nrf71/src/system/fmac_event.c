@@ -18,6 +18,7 @@
 
 #include <common/mem_mgmt.h>
 #include <common/util.h>
+#include <system/drv_dbg_stats.h>
 #include <system/fmac_ap.h>
 #include <system/fmac_event.h>
 #include <system/fmac_peer.h>
@@ -478,10 +479,16 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 #endif
 		break;
 	case NRF_WIFI_EVENT_ERROR_STATS: {
-#if CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 		struct nrf_wifi_umac_event_error_stats *err_ev =
 			(struct nrf_wifi_umac_event_error_stats *)sys_head;
 
+		if (err_ev->stats_type == RPU_STATS_TYPE_UMAC) {
+			nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_FW_UMAC);
+		} else if (err_ev->stats_type == RPU_STATS_TYPE_LMAC) {
+			nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_FW_LMAC);
+		}
+
+#if CONFIG_WIFI_NRF71_LOG_LEVEL >= NRF_WIFI_LOG_LEVEL_INF
 		switch (err_ev->stats_type) {
 		case RPU_STATS_TYPE_UMAC:
 			log_error_stats(__func__, "UMAC", err_ev->status_code,
@@ -524,6 +531,7 @@ static enum nrf_wifi_status umac_event_sys_proc_events(struct nrf_wifi_fmac_dev_
 		LOG_ERR("%s: Unknown event recd: %d",
 				      __func__,
 				      ((struct nrf_wifi_sys_head *)sys_head)->cmd_event);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_EVT_UNKNOWN);
 		break;
 	}
 	return status;
@@ -641,6 +649,7 @@ out:
 		LOG_ERR("%s: Failed for event = %d",
 				      __func__,
 				      event);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_EVT_DATA);
 	}
 
 	return status;
@@ -785,7 +794,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		LOG_ERR("%s: Invalid wdev_id recd from UMAC %d",
 				      __func__,
 				      if_id);
-
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_EVT_INVALID_VIF);
 		goto out;
 	}
 
@@ -810,6 +819,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		LOG_DBG("%s: No host VIF for wdev_id %d (teardown or bring-up)",
 				      __func__,
 				      if_id);
+		nrf_wifi_drv_dbg_fmac_err(fmac_dev_ctx, NRF_WIFI_DRV_DBG_ERR_EVT_NO_VIF);
 		goto out;
 	}
 	callbk_fns = &sys_fpriv->callbk_fns;

@@ -107,6 +107,7 @@ endif()
 
 zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL
   src/common/util_shell.c
+  src/system/drv_dbg_stats.c
 )
 
 zephyr_library_sources_ifdef(CONFIG_NRF71_DEBUG_SHELL
