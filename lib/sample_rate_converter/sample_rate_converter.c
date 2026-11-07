@@ -22,16 +22,25 @@ LOG_MODULE_REGISTER(sample_rate_converter, CONFIG_SAMPLE_RATE_CONVERTER_LOG_LEVE
 	(CONFIG_SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX +                                             \
 	 SAMPLE_RATE_CONVERTER_INPUT_BUFFER_NUMBER_OVERFLOW_SAMPLES)
 
+/* 3x interpolation can consume buffered input in addition to the current block. */
+#define INTERNAL_OUTPUT_BUF_NUMBER_SAMPLES                                                         \
+	(CONFIG_SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX +                                             \
+	 SAMPLE_RATE_CONVERTER_OUTPUT_BUFFER_NUMBER_OVERFLOW_SAMPLES)
+
 #ifdef CONFIG_SAMPLE_RATE_CONVERTER_BIT_DEPTH_16
 #define SAMPLE_RATE_CONVERTER_INTERNAL_INPUT_BUF_SIZE                                              \
 	(INTERNAL_INPUT_BUF_NUMBER_SAMPLES * sizeof(uint16_t))
 #define SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_BUF_SIZE                                             \
 	(CONFIG_SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX * sizeof(uint16_t))
+#define SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_SCRATCH_SIZE                                         \
+	(INTERNAL_OUTPUT_BUF_NUMBER_SAMPLES * sizeof(uint16_t))
 #elif CONFIG_SAMPLE_RATE_CONVERTER_BIT_DEPTH_32
 #define SAMPLE_RATE_CONVERTER_INTERNAL_INPUT_BUF_SIZE                                              \
 	(INTERNAL_INPUT_BUF_NUMBER_SAMPLES * sizeof(uint32_t))
 #define SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_BUF_SIZE                                             \
 	(CONFIG_SAMPLE_RATE_CONVERTER_BLOCK_SIZE_MAX * sizeof(uint32_t))
+#define SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_SCRATCH_SIZE                                         \
+	(INTERNAL_OUTPUT_BUF_NUMBER_SAMPLES * sizeof(uint32_t))
 #endif
 
 static int validate_sample_rates(uint32_t sample_rate_input, uint32_t sample_rate_output)
@@ -211,7 +220,7 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 	size_t samples_to_process;
 
 	uint8_t internal_input_buf[SAMPLE_RATE_CONVERTER_INTERNAL_INPUT_BUF_SIZE];
-	uint8_t internal_output_buf[SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_BUF_SIZE];
+	uint8_t internal_output_buf[SAMPLE_RATE_CONVERTER_INTERNAL_OUTPUT_SCRATCH_SIZE];
 
 #if CONFIG_SAMPLE_RATE_CONVERTER_BIT_DEPTH_16
 	size_t bytes_per_sample = sizeof(uint16_t);
@@ -294,6 +303,16 @@ int sample_rate_converter_process(struct sample_rate_converter_ctx *ctx,
 		/* Merge bytes in input buffer and incoming bytes into the internal buffer
 		 * for processing
 		 */
+		/* Buffered samples can expand a nominal 160-to-480 conversion to 486
+		 * intermediate samples. Bound scratch writes before calling the FIR.
+		 */
+		if (ctx->input_buf.bytes_in_buf + input_size > sizeof(internal_input_buf) ||
+		    samples_to_process * ctx->conversion_ratio * bytes_per_sample >
+			    sizeof(internal_output_buf)) {
+			LOG_ERR("Buffered conversion exceeds internal scratch capacity");
+			return -EINVAL;
+		}
+
 		memcpy(internal_input_buf, ctx->input_buf.buf, ctx->input_buf.bytes_in_buf);
 		memcpy(internal_input_buf + ctx->input_buf.bytes_in_buf, input, input_size);
 	} else {

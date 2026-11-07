@@ -1,0 +1,89 @@
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config SW_CODEC_G722
+	bool
+	default y
+
+config SW_CODEC_G722_COMPANY_ID
+	hex
+	default 0
+
+config SW_CODEC_G722_VENDOR_CODEC_ID
+	hex
+	default 1
+
+config AUDIO_SAMPLE_RATE_48000_HZ
+	bool
+	default y
+
+config AUDIO_SAMPLE_RATE_HZ
+	int
+	default 48000
+
+config AUDIO_BIT_DEPTH_BITS
+	int
+	default 16
+
+config AUDIO_BIT_DEPTH_OCTETS
+	int
+	default 2
+
+config AUDIO_FRAME_DURATION_US
+	int
+	default 10000
+
+config AUDIO_ENCODE_CHANNELS_MAX
+	int
+	default 2
+
+config AUDIO_DECODE_CHANNELS_MAX
+	int
+	default 2
+
+config AUDIO_INPUT_CHANNELS
+	int
+	default 2
+
+config AUDIO_OUTPUT_CHANNELS
+	int
+	default 2
+
+config SW_CODEC_SELECT_LOG_LEVEL
+	int
+	default 3
+
+config BLE_LOG_LEVEL
+	int
+	default 3
+
+config SERVER_STORE_LOG_LEVEL
+	int
+	default 3
+
+config CODEC_CAP_COUNT_MAX
+	int
+	default 5
+
+config BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE
+	hex
+	default 8
+
+config BT_AUDIO_PREF_SOURCE_SAMPLE_RATE_VALUE
+	hex
+	default 8
+
+config LC3_BITRATE_MIN
+	int
+	default 32000
+
+config LC3_BITRATE_MAX
+	int
+	default 124000
+
+config MONO_TO_ALL_RECEIVERS
+	bool "Duplicate mono input to all output channels"
+	default n
+
+source "Kconfig"

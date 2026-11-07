@@ -16,6 +16,213 @@
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(le_audio, CONFIG_BLE_LOG_LEVEL);
 
+#if CONFIG_SW_CODEC_G722
+/**
+ * @brief Check complete LTV records before calling the codec field getters.
+ *
+ * @param[in]	data		LTV bytes; non-NULL when @p size is nonzero.
+ * @param[in]	size		Number of available bytes.
+ * @param[in]	capability	Select capability field widths instead of configuration widths.
+ *
+ * @retval	true	All five profile fields occur exactly once with correct widths.
+ * @retval	false	Truncated record, malformed/duplicate profile field or missing field.
+ *
+ * @note Unknown types are permitted if structurally valid, but do not satisfy required fields.
+ */
+static bool g722_ltv_check(const uint8_t *data, size_t size, bool capability)
+{
+	/* Bluetooth audio field widths, also used by this vendor-specific profile.
+	 * Entries count value bytes only, excluding the LTV length and type bytes.
+	 */
+	static const uint8_t cap_lengths[] = {
+		[BT_AUDIO_CODEC_CAP_TYPE_FREQ] = sizeof(uint16_t),
+		[BT_AUDIO_CODEC_CAP_TYPE_DURATION] = sizeof(uint8_t),
+		[BT_AUDIO_CODEC_CAP_TYPE_CHAN_COUNT] = sizeof(uint8_t),
+		/* Minimum and maximum octets per codec frame are separate 16-bit values. */
+		[BT_AUDIO_CODEC_CAP_TYPE_FRAME_LEN] = 2 * sizeof(uint16_t),
+		[BT_AUDIO_CODEC_CAP_TYPE_FRAME_COUNT] = sizeof(uint8_t),
+	};
+
+	static const uint8_t cfg_lengths[] = {
+		[BT_AUDIO_CODEC_CFG_FREQ] = sizeof(uint8_t),
+		[BT_AUDIO_CODEC_CFG_DURATION] = sizeof(uint8_t),
+		[BT_AUDIO_CODEC_CFG_CHAN_ALLOC] = sizeof(uint32_t),
+		[BT_AUDIO_CODEC_CFG_FRAME_LEN] = sizeof(uint16_t),
+		[BT_AUDIO_CODEC_CFG_FRAME_BLKS_PER_SDU] = sizeof(uint8_t),
+	};
+
+	uint8_t seen = 0;
+
+	for (size_t offset = 0; offset < size;) {
+		uint8_t len = data[offset];
+		uint8_t type;
+
+		/* L includes T and V but excludes its own byte; require the entire record. */
+		if (len < 1 || len >= size - offset) {
+			return false;
+		}
+
+		type = data[offset + 1];
+
+		if (type > 0 && type < ARRAY_SIZE(cap_lengths)) {
+			if ((seen & BIT(type)) ||
+			    len - 1 != (capability ? cap_lengths : cfg_lengths)[type]) {
+				return false;
+			}
+
+			seen |= BIT(type);
+		}
+
+		offset += len + 1;
+	}
+
+	/* Vendor codecs cannot rely on the omitted-field defaults supplied only for LC3. */
+	return seen == GENMASK(5, 1);
+}
+
+int le_audio_g722_config_check(const struct bt_audio_codec_cfg *codec)
+{
+	enum bt_audio_location location;
+	int value;
+	bool invalid = false;
+
+	if (codec == NULL) {
+		LOG_WRN("G.722 codec configuration is NULL");
+		return -EINVAL;
+	}
+
+	if (!LE_AUDIO_CODEC_IS_G722(codec)) {
+		LOG_WRN("G.722 codec identity mismatch: id 0x%02x, company 0x%04x, vendor 0x%04x",
+			codec->id, codec->cid, codec->vid);
+		invalid = true;
+	}
+
+	if (codec->data_len > sizeof(codec->data)) {
+		LOG_WRN("G.722 codec configuration data exceeds buffer capacity: %u",
+			codec->data_len);
+		return -EINVAL;
+	}
+
+	if (!g722_ltv_check(codec->data, codec->data_len, false)) {
+		LOG_WRN("G.722 codec configuration has malformed, duplicate or missing LTV fields");
+		return -EINVAL;
+	}
+
+	value = bt_audio_codec_cfg_get_freq(codec);
+	if (value != BT_AUDIO_CODEC_CFG_FREQ_16KHZ) {
+		LOG_WRN("G.722 requires the 16 kHz frequency value %d (got %d)",
+			BT_AUDIO_CODEC_CFG_FREQ_16KHZ, value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cfg_get_frame_dur(codec);
+	if (value != BT_AUDIO_CODEC_CFG_DURATION_10) {
+		LOG_WRN("G.722 requires the 10 ms frame duration value %d (got %d)",
+			BT_AUDIO_CODEC_CFG_DURATION_10, value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cfg_get_octets_per_frame(codec);
+	if (value != LE_AUDIO_G722_OCTETS_PER_FRAME) {
+		LOG_WRN("G.722 requires %d octets per frame (got %d)",
+			LE_AUDIO_G722_OCTETS_PER_FRAME, value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cfg_get_frame_blocks_per_sdu(codec, false);
+	if (value != 1) {
+		LOG_WRN("G.722 requires one frame block per SDU (got %d)", value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cfg_get_chan_allocation(codec, &location, false);
+	if (value != 0) {
+		LOG_WRN("Failed to get G.722 channel allocation: %d", value);
+		invalid = true;
+	} else {
+		if (location & ~BT_AUDIO_LOCATION_ANY) {
+			LOG_WRN("G.722 channel allocation contains unsupported location bits: "
+				"0x%08x",
+				(unsigned int)location);
+			invalid = true;
+		} else if (POPCOUNT(location) > 1) {
+			LOG_WRN("G.722 requires mono channel allocation (got 0x%08x)",
+				(unsigned int)location);
+			invalid = true;
+		}
+	}
+
+	return invalid ? -EINVAL : 0;
+}
+
+int le_audio_g722_cap_check(const struct bt_audio_codec_cap *codec)
+{
+	struct bt_audio_codec_octets_per_codec_frame octets;
+	int value;
+	bool invalid = false;
+
+	if (codec == NULL) {
+		LOG_WRN("G.722 codec capabilities are NULL");
+		return -EINVAL;
+	}
+
+	if (!LE_AUDIO_CODEC_IS_G722(codec)) {
+		LOG_WRN("G.722 capability identity mismatch: id 0x%02x, company 0x%04x, "
+			"vendor 0x%04x",
+			codec->id, codec->cid, codec->vid);
+		invalid = true;
+	}
+
+	if (codec->data_len > sizeof(codec->data)) {
+		LOG_WRN("G.722 codec capability data exceeds buffer capacity: %u", codec->data_len);
+		return -EINVAL;
+	}
+
+	if (!g722_ltv_check(codec->data, codec->data_len, true)) {
+		LOG_WRN("G.722 codec capabilities have malformed, duplicate or missing LTV fields");
+		return -EINVAL;
+	}
+
+	value = bt_audio_codec_cap_get_freq(codec);
+	if (value < 0 || !(value & BT_AUDIO_CODEC_CAP_FREQ_16KHZ)) {
+		LOG_WRN("G.722 capabilities must support 16 kHz (got %d)", value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cap_get_frame_dur(codec);
+	if (value < 0 || !(value & BT_AUDIO_CODEC_CAP_DURATION_10)) {
+		LOG_WRN("G.722 capabilities must support 10 ms frames (got %d)", value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cap_get_supported_audio_chan_counts(codec, false);
+	if (value < 0 || !(value & BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1))) {
+		LOG_WRN("G.722 capabilities must support mono (got %d)", value);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cap_get_octets_per_frame(codec, &octets);
+	if (value != 0) {
+		LOG_WRN("Failed to get G.722 capability octets per frame: %d", value);
+		invalid = true;
+	} else if (octets.min > LE_AUDIO_G722_OCTETS_PER_FRAME ||
+		   octets.max < LE_AUDIO_G722_OCTETS_PER_FRAME) {
+		LOG_WRN("G.722 capabilities must include %d octets per frame (got %u-%u)",
+			LE_AUDIO_G722_OCTETS_PER_FRAME, octets.min, octets.max);
+		invalid = true;
+	}
+
+	value = bt_audio_codec_cap_get_max_codec_frames_per_sdu(codec, false);
+	if (value < 1) {
+		LOG_WRN("G.722 capabilities must support at least one frame per SDU (got %d)",
+			value);
+		invalid = true;
+	}
+
+	return invalid ? -EINVAL : 0;
+}
+#endif
+
 int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_stream *stream,
 			       const struct bt_iso_recv_info *info,
 			       const struct net_buf *audio_frame)
@@ -50,6 +257,8 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 
 	if (stream->codec_cfg->id == BT_HCI_CODING_FORMAT_LC3) {
 		meta->data_coding = LC3;
+	} else if (LE_AUDIO_CODEC_IS_G722(stream->codec_cfg)) {
+		meta->data_coding = G722;
 	} else {
 		LOG_ERR("Unsupported codec ID: %d", stream->codec_cfg->id);
 		return -EINVAL;
@@ -59,7 +268,8 @@ int le_audio_metadata_populate(struct audio_metadata *meta, const struct bt_bap_
 
 	if (!(info->flags & BT_ISO_FLAGS_VALID) ||
 	    audio_frame->len != bt_audio_codec_cfg_get_octets_per_frame(stream->codec_cfg)) {
-		meta->bad_data = meta->locations;
+		/* Location zero means mono, but a zero bad-data mask would mean no loss. */
+		meta->bad_data = meta->locations ? meta->locations : 1;
 	}
 
 	return 0;
@@ -314,7 +524,7 @@ bool le_audio_freq_check(const struct bt_audio_codec_cfg *codec)
 
 void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_dir dir)
 {
-	if (codec->id == BT_HCI_CODING_FORMAT_LC3) {
+	if (codec->id == BT_HCI_CODING_FORMAT_LC3 || LE_AUDIO_CODEC_IS_G722(codec)) {
 		/* LC3 uses the generic LTV format - other codecs might do as well */
 		int ret;
 		enum bt_audio_location chan_allocation;
@@ -363,12 +573,14 @@ void le_audio_print_codec(const struct bt_audio_codec_cfg *codec, enum bt_audio_
 			return;
 		}
 
+		const char *codec_name = LE_AUDIO_CODEC_IS_G722(codec) ? "G.722" : "LC3";
+
 		if (dir == BT_AUDIO_DIR_SINK) {
-			LOG_INF("LC3 codec config for sink:");
+			LOG_INF("%s codec config for sink:", codec_name);
 		} else if (dir == BT_AUDIO_DIR_SOURCE) {
-			LOG_INF("LC3 codec config for source:");
+			LOG_INF("%s codec config for source:", codec_name);
 		} else {
-			LOG_ERR("LC3 codec config for <unknown dir>:");
+			LOG_ERR("%s codec config for <unknown dir>:", codec_name);
 		}
 
 		LOG_INF("\tFrequency:\t %d Hz", freq_hz);
