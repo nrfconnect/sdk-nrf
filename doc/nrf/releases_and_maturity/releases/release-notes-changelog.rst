@@ -848,7 +848,18 @@ Networking samples
 
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
-  * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+  * Updated:
+
+    * The MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+    * The sample documentation with the security tag requirements for the FOTA download over HTTPS.
+    * The FOTA testing steps in the sample documentation with the version option to change and the steps to build the update image.
+    * The FOTA download security tag (:kconfig:option:`CONFIG_AZURE_FOTA_SEC_TAG`) in Wi-Fi builds from ``11`` to ``10``, the same value as :kconfig:option:`CONFIG_MQTT_HELPER_SEC_TAG`.
+
+  * Fixed:
+
+    * An issue where the FOTA download failed on Wi-Fi builds because the Mbed TLS heap was too small for the MQTT and download TLS connections at the same time.
+    * An issue where the FOTA download from Azure Blob Storage failed on Wi-Fi builds because the PSA crypto configuration did not support RSA 4096-bit keys.
+    * An issue where the sample crashed on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` board target with the nRF7002-EB II shield because of a stack overflow in the socket service thread.
 
 * :ref:`https_client` sample:
 
