@@ -34,7 +34,7 @@ static const char GW_TAG[] = "GW";
  */
 void device_location_get(enum bt_audio_location *location);
 
-#if CONFIG_DEVICE_LOCATION_SET_RUNTIME
+#if CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME
 /**
  * @brief Assign audio location.
  *

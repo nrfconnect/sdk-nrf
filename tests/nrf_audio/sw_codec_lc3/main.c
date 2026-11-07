@@ -452,7 +452,7 @@ static const int16_t sample_sine_100hz[] = {
 #define DEC_BUF_SIZE	  960
 #define PCM_SAMPLE_RATE	  48000
 #define PCM_BIT_DEPTH	  16
-#define LC3_BITRATE	  96000
+#define NRF_AUDIO_LC3_BITRATE 96000
 #define LC3_FRAME_SIZE_US 10000
 #define LC3_NUM_CHANNELS  2
 #define AUDIO_CH_L	  0
@@ -476,8 +476,8 @@ static void *test_sw_codec_lc3_init(void)
 	sw_codec_lc3_single_rate_init(PCM_SAMPLE_RATE, PCM_SAMPLE_RATE,
 				      NULL, NULL, LC3_FRAME_SIZE_US);
 
-	ret = sw_codec_lc3_enc_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US, LC3_BITRATE,
-				    LC3_NUM_CHANNELS, &pcm_bytes_req_enc);
+	ret = sw_codec_lc3_enc_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US,
+				    NRF_AUDIO_LC3_BITRATE, LC3_NUM_CHANNELS, &pcm_bytes_req_enc);
 	zassert_equal(ret, 0, "lc3_enc_init did not return zero");
 
 	ret = sw_codec_lc3_dec_init(PCM_SAMPLE_RATE, PCM_BIT_DEPTH, LC3_FRAME_SIZE_US,

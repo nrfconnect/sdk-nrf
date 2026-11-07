@@ -11,7 +11,7 @@
 #include <errno.h>
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(rate_control, CONFIG_MODULE_RATE_CONTROL_LOG_LEVEL);
+LOG_MODULE_REGISTER(rate_control, CONFIG_NRF_AUDIO_MODULE_RATE_CONTROL_LOG_LEVEL);
 
 static struct audio_rate_control_ctx contexts[AUDIO_RATE_CONTROL_TYPE_COUNT];
 

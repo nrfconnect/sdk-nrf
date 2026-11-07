@@ -23,11 +23,11 @@
 #include "fw_info_app.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX);
 
-ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
@@ -46,8 +46,8 @@ static k_tid_t le_audio_msg_sub_thread_id;
 
 struct bt_le_ext_adv *ext_adv;
 
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 
 static enum stream_state strm_state = STATE_PAUSED;
 
@@ -61,21 +61,21 @@ NET_BUF_SIMPLE_DEFINE_STATIC(base_data, 128);
 NET_BUF_SIMPLE_DEFINE_STATIC(base_data2, 128);
 
 /* Extended advertising buffer. */
-static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_EXT_ADV_BUF_MAX];
+static struct bt_data ext_adv_buf[CONFIG_BT_ISO_MAX_BIG][CONFIG_NRF_AUDIO_EXT_ADV_BUF_MAX];
 
 /* Periodic advertising buffer. */
 static struct bt_data per_adv_buf[CONFIG_BT_ISO_MAX_BIG];
 
-#if (CONFIG_AURACAST)
+#if (CONFIG_NRF_AUDIO_AURACAST)
 /* Total size of the PBA buffer includes the 16-bit UUID, 8-bit features and the
  * meta data size.
  */
 #define BROADCAST_SRC_PBA_BUF_SIZE                                                                 \
-	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE)
+	(BROADCAST_SOURCE_PBA_HEADER_SIZE + CONFIG_NRF_AUDIO_BROADCAST_PBA_METADATA_SIZE)
 
 /* Number of metadata items that can be assigned. */
 #define BROADCAST_SOURCE_PBA_METADATA_VACANT                                                       \
-	(CONFIG_BT_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
+	(CONFIG_NRF_AUDIO_BROADCAST_PBA_METADATA_SIZE / (sizeof(struct bt_data)))
 
 /* Make sure pba_buf is large enough for a 16bit UUID and meta data
  * (any addition to pba_buf requires an increase of this value)
@@ -98,7 +98,7 @@ static struct broadcast_source_ext_adv_data ext_adv_data[] = {
  */
 static struct broadcast_source_ext_adv_data ext_adv_data[] = {{.uuid_buf = &uuid_data},
 							      {.uuid_buf = &uuid_data2}};
-#endif /* (CONFIG_AURACAST) */
+#endif /* (CONFIG_NRF_AUDIO_AURACAST) */
 
 /**
  * @brief	Broadcast source static periodic advertising data.
@@ -156,7 +156,7 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_4:
-			if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_TEST_TONE)) {
 				if (strm_state != STATE_STREAMING) {
 					LOG_WRN("Not in streaming state");
 					break;
@@ -256,18 +256,20 @@ static int zbus_subscribers_create(void)
 
 	button_msg_sub_thread_id = k_thread_create(
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_THREAD_PRIO), 0,
+		K_NO_WAIT);
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
 	if (ret) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
 	}
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
@@ -374,27 +376,27 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	int ret;
 	size_t ext_adv_buf_cnt = 0;
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_NAME_ALT)) {
-		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) >
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_USE_BROADCAST_NAME_ALT)) {
+		if (sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME_ALT) >
 		    ARRAY_SIZE(ext_adv_data->brdcst_name_buf)) {
-			LOG_ERR("CONFIG_BT_AUDIO_BROADCAST_NAME_ALT is too long");
+			LOG_ERR("CONFIG_NRF_AUDIO_BROADCAST_NAME_ALT is too long");
 			return -EINVAL;
 		}
 
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME_ALT) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME_ALT) - 1;
 
-		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME_ALT,
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_NRF_AUDIO_BROADCAST_NAME_ALT,
 		       brdcst_name_size);
 	} else {
-		if (sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) >
+		if (sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) >
 		    ARRAY_SIZE(ext_adv_data->brdcst_name_buf)) {
-			LOG_ERR("CONFIG_BT_AUDIO_BROADCAST_NAME is too long");
+			LOG_ERR("CONFIG_NRF_AUDIO_BROADCAST_NAME is too long");
 			return -EINVAL;
 		}
 
-		size_t brdcst_name_size = sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME) - 1;
+		size_t brdcst_name_size = sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME) - 1;
 
-		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_BT_AUDIO_BROADCAST_NAME,
+		memcpy(ext_adv_data->brdcst_name_buf, CONFIG_NRF_AUDIO_BROADCAST_NAME,
 		       brdcst_name_size);
 	}
 
@@ -403,21 +405,21 @@ static int ext_adv_populate(uint8_t big_index, struct broadcast_source_ext_adv_d
 	ext_adv_buf_cnt++;
 
 	ret = bt_mgmt_manufacturer_uuid_populate(ext_adv_data->uuid_buf,
-						 CONFIG_BT_DEVICE_MANUFACTURER_ID);
+						 CONFIG_NRF_AUDIO_DEVICE_MANUFACTURER_ID);
 	if (ret) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
 	}
 
 	uint32_t broadcast_id = 0x000000;
-	bool fixed_id = !IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_RANDOM);
+	bool fixed_id = !IS_ENABLED(CONFIG_NRF_AUDIO_USE_BROADCAST_ID_RANDOM);
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_FICR)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_USE_BROADCAST_ID_FICR)) {
 		LOG_DBG("Using FICR ID");
 		broadcast_id = NRF_FICR->NFC.TAGHEADER0 >> 8;
-	} else if (IS_ENABLED(CONFIG_BT_AUDIO_USE_BROADCAST_ID_FIXED)) {
+	} else if (IS_ENABLED(CONFIG_NRF_AUDIO_USE_BROADCAST_ID_FIXED)) {
 		LOG_DBG("Using fixed ID");
-		broadcast_id = CONFIG_BT_AUDIO_BROADCAST_ID_FIXED;
+		broadcast_id = CONFIG_NRF_AUDIO_BROADCAST_ID_FIXED;
 	} else {
 		LOG_DBG("Using random broadcast ID");
 		/* The random broadcast ID will be generated by the Bluetooth module */
@@ -507,7 +509,7 @@ void streamctrl_send(struct net_buf const *const audio_frame)
 	}
 }
 
-#if CONFIG_CUSTOM_BROADCASTER
+#if CONFIG_NRF_AUDIO_CUSTOM_BROADCASTER
 /* Example of how to create a custom broadcaster */
 /**
  * Remember to increase:
@@ -557,7 +559,7 @@ static void broadcast_create(struct broadcast_source_big *broadcast_param)
 	broadcast_param->subgroups = subgroups;
 	broadcast_param->num_subgroups = 2;
 }
-#endif /* CONFIG_CUSTOM_BROADCASTER */
+#endif /* CONFIG_NRF_AUDIO_CUSTOM_BROADCASTER */
 
 int main(void)
 {
@@ -598,8 +600,8 @@ int main(void)
 	ERR_CHK_MSG(ret, "Failed to enable broadcaster(s)");
 
 	ret = audio_system_config_set(
-		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_BT_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE),
-		CONFIG_BT_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
+		bt_audio_codec_cfg_freq_to_freq_hz(CONFIG_NRF_AUDIO_PREF_SINK_SAMPLE_RATE_VALUE),
+		CONFIG_NRF_AUDIO_BITRATE_BROADCAST_SRC, VALUE_NOT_SET);
 	ERR_CHK_MSG(ret, "Failed to set sample- and bitrate");
 
 	/* Get advertising set for BIG0 */

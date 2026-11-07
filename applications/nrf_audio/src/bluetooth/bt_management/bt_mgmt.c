@@ -22,7 +22,7 @@
 #include "button_assignments.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_mgmt, CONFIG_BT_MGMT_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_mgmt, CONFIG_NRF_AUDIO_MGMT_LOG_LEVEL);
 
 ZBUS_CHAN_DEFINE(bt_mgmt_chan, struct bt_mgmt_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -466,7 +466,7 @@ int bt_mgmt_init(void)
 		return ret;
 	}
 
-	if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_TESTING_BLE_ADDRESS_RANDOM)) {
 		ret = random_static_addr_set();
 		if (ret) {
 			return ret;
@@ -484,7 +484,7 @@ int bt_mgmt_init(void)
 			return ret;
 		}
 
-		if (IS_ENABLED(CONFIG_TESTING_BLE_ADDRESS_RANDOM)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_TESTING_BLE_ADDRESS_RANDOM)) {
 			ret = bt_mgmt_bonding_clear();
 			if (ret) {
 				return ret;

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
-module = MODULE_RATE_CONTROL
+module = NRF_AUDIO_MODULE_RATE_CONTROL
 module-str = module-rate-control
 source "subsys/logging/Kconfig.template.log_config"
 
