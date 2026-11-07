@@ -33,8 +33,8 @@ Live channel capture
 
 Each channel can capture new data asynchronously from the monitoring system's snapshot cache rate.
 This allows other processes to use the captured data at higher rates, if required.
-Currently, only die temperature supports live data reading.
-Battery voltage and frequency offset live data capture will be added later.
+Currently, only die temperature and battery voltage support live data reading.
+Frequency offset live data capture will be added later.
 
 To enable live data capture, valid ``init()`` and ``sample()`` functions must be provided to ``VTF_CHANNEL_DEFINE`` and enabled using, for example, the :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR` Kconfig option.
 
@@ -61,8 +61,11 @@ Use the following Kconfig options to enable and configure the die temperature mo
 * :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR`
 * :kconfig:option:`CONFIG_VTF_DIE_TEMP_MONITOR_INTERVAL_MS`
 
-.. note::
-   Live data capture for battery voltage and frequency offset will be added at a later date.
+Battery voltage
+---------------
+
+* :kconfig:option:`CONFIG_VTF_BATTERY_VOLTAGE_MONITOR`
+* :kconfig:option:`CONFIG_VTF_BATTERY_VOLTAGE_MONITOR_INTERVAL_MS`
 
 Default values
 ==============
