@@ -603,6 +603,16 @@ int cracen_ecdsa_verify_digest_finish(sx_pk_req *req)
 
 	sx_pk_release_req(req);
 
+	/* The PK engine returns SX_ERR_NOT_INVERTIBLE when u1 * G + u2 * Q is the point at
+	 * infinity. ECDSA_VER uses no blinding, so this status is not a countermeasure failure
+	 * that a retry clears: the inputs are well-formed and the signature is invalid. Passed
+	 * on unchanged, it would become PSA_ERROR_INVALID_ARGUMENT instead of
+	 * PSA_ERROR_INVALID_SIGNATURE.
+	 */
+	if (status == SX_ERR_NOT_INVERTIBLE) {
+		return SX_ERR_INVALID_SIGNATURE;
+	}
+
 	return status;
 }
 
