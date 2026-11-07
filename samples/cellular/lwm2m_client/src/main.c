@@ -58,7 +58,7 @@ LOG_MODULE_REGISTER(app_lwm2m_client, CONFIG_APP_LOG_LEVEL);
 
 /* Client State Machine states */
 static enum client_state {
-	START,		/* Start Connection to a server*/
+	START,		/* Start Connection to a server */
 	CONNECTING,	/* LwM2M engine is connecting to server */
 	BOOTSTRAP,	/* LwM2M engine is doing a bootstrap */
 	CONNECTED,	/* LwM2M Client connection establisment to server */
