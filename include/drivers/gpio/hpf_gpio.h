@@ -14,18 +14,18 @@
 extern "C" {
 #endif
 
-/** @brief eGPIO opcodes. */
+/** @brief HPF GPIO opcodes. */
 typedef enum {
-	HPF_GPIO_PIN_CONFIGURE = 0, /* Configure eGPIO pin. */
-	HPF_GPIO_PIN_CLEAR     = 1, /* Clear eGPIO pin. */
-	HPF_GPIO_PIN_SET       = 2, /* Set eGPIO pin. */
-	HPF_GPIO_PIN_TOGGLE    = 3, /* Toggle eGPIO pin. */
-	HPF_GPIO_PORT_SET_MASKED = 4, /* Atomically update selected eGPIO pins. */
+	HPF_GPIO_PIN_CONFIGURE = 0, /* Configure HPF GPIO pin. */
+	HPF_GPIO_PIN_CLEAR     = 1, /* Clear HPF GPIO pin. */
+	HPF_GPIO_PIN_SET       = 2, /* Set HPF GPIO pin. */
+	HPF_GPIO_PIN_TOGGLE    = 3, /* Toggle HPF GPIO pin. */
+	HPF_GPIO_PORT_SET_MASKED = 4, /* Atomically update selected HPF GPIO pins. */
 } hpf_gpio_opcode_t;
 
-/** @brief eGPIO data packet. */
+/** @brief HPF GPIO data packet. */
 typedef struct __packed {
-	uint8_t opcode; /* eGPIO opcode. */
+	uint8_t opcode; /* HPF GPIO opcode. */
 	uint32_t pin; /* Pin number when opcode is HPF_GPIO_PIN_CONFIGURE, pin mask otherwise. */
 	uint8_t port; /* Port number. */
 	uint32_t flags; /* Configuration flags when opcode
