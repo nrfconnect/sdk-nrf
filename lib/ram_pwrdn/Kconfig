@@ -23,6 +23,14 @@ menuconfig RAM_POWER_DOWN_LIBRARY
 
 if RAM_POWER_DOWN_LIBRARY
 
+config RAM_POWER_DOWN_AUTO
+	bool "Power down unused RAM sections automatically at boot"
+	# The C library heap must not use the RAM after the application image.
+	depends on MINIMAL_LIBC || PICOLIBC
+	depends on !COMMON_LIBC_MALLOC || COMMON_LIBC_MALLOC_ARENA_SIZE >= 0
+	help
+	  Call power_down_unused_ram() during system initialization.
+
 module = RAM_POWERDOWN
 module-str = RAM power-down library
 source "$(ZEPHYR_BASE)/subsys/logging/Kconfig.template.log_config"
