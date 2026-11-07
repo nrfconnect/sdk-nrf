@@ -192,7 +192,7 @@ struct aws_iot_topic_data {
 
 		/** Type of shadow topic that the incoming message is received on.
 		 *  If a message is received on an application specific topic the type will be set
-		 *  to AWS_IOT_SHADOW_TOPIC_NONE.
+		 *  to AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC.
 		 */
 		enum aws_iot_shadow_topic_received_type type_received;
 	};
