@@ -15,7 +15,9 @@
 #include <hal/nrf_lrcconf.h>
 #endif
 #include <nrfx.h>
-#if NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
+#if defined(NRF7120_XXAA)
+#include <hal/nrf_power.h>
+#elif NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
 #include <hal/nrf_power.h>
 #endif /* NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20) */
 
@@ -57,7 +59,9 @@ static void clock_init(void)
 		}
 	} while (err);
 
-#if NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
+#if defined(NRF7120_XXAA)
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#elif NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
 	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20) || NRF_ERRATA_DYNAMIC_CHECK(71, 20)) {
 		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 	}
@@ -110,7 +114,9 @@ static void clock_init(void)
 		}
 	} while (err == -EAGAIN);
 
-#if NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
+#if defined(NRF7120_XXAA)
+	nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
+#elif NRF_ERRATA_STATIC_CHECK(54L, 20) || NRF_ERRATA_STATIC_CHECK(71, 20)
 	if (NRF_ERRATA_DYNAMIC_CHECK(54L, 20) || NRF_ERRATA_DYNAMIC_CHECK(71, 20)) {
 		nrf_power_task_trigger(NRF_POWER, NRF_POWER_TASK_CONSTLAT);
 	}
