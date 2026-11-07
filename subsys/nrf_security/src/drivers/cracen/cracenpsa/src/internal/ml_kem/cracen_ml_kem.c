@@ -372,7 +372,7 @@ static void kpke_decrypt(const ml_kem_params_t *params, const uint8_t *dk,
  *  This check ensures that the integers encoded in the public key
  *  are in the valid range [0, q−1].
  */
-static bool check_encapsulation_key(const ml_kem_params_t *params, const uint8_t *ek)
+bool cracen_ml_kem_check_encapsulation_key(const ml_kem_params_t *params, const uint8_t *ek)
 {
 	ml_kem_poly_t poly;
 	uint8_t reencoded_poly_buf[ML_KEM_POLY_PACKED_SZ_BYTES];
@@ -487,7 +487,7 @@ psa_status_t cracen_ml_kem_encapsulate(const psa_key_attributes_t *attributes, c
 		goto exit;
 	}
 
-	if (!check_encapsulation_key(alg_params, encapsulation_key)) {
+	if (!cracen_ml_kem_check_encapsulation_key(alg_params, encapsulation_key)) {
 		status = PSA_ERROR_INVALID_ARGUMENT;
 		goto exit;
 	}

@@ -46,11 +46,9 @@ int cracen_rsa_pkcs1v15_decrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 		return SX_ERR_INVALID_ARG;
 	}
 
-	/* check ciphertext size (step 1 of RSAES-PKCS1-V1_5-DECRYPT modified:
-	 * we allow the ciphertext to have length <= than the modulus length)
-	 */
-	if (text->sz > modulussz) {
-		return SX_ERR_TOO_BIG;
+	/* check ciphertext size (step 1 of RSAES-PKCS1-V1_5-DECRYPT) */
+	if (text->sz != modulussz) {
+		return SX_ERR_INVALID_ARG;
 	}
 	int input_sizes[NUMBER_OF_SLOTS];
 	sx_pk_req req;
@@ -195,7 +193,8 @@ int cracen_rsa_pkcs1v15_encrypt(struct cracen_rsa_key *rsa_key, struct cracen_cr
 		paddingstrstart = paddingstrend - zeros;
 		paddingstrsz = paddingstrend - paddingstrstart;
 	} while (retryctr > 0 && zeros > 0);
-	if (retryctr == 0) {
+	if (zeros > 0) {
+		safe_memzero(workmem, sizeof(workmem));
 		return SX_ERR_TOO_MANY_ATTEMPTS;
 	}
 

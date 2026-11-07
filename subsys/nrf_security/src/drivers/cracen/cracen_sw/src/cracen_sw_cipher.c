@@ -149,6 +149,11 @@ psa_status_t cracen_cipher_encrypt(const psa_key_attributes_t *attributes,
 	*output_length = 0;
 	cracen_cipher_operation_t operation = {0};
 
+	if (IS_ENABLED(PSA_NEED_CRACEN_ECB_NO_PADDING_AES) && alg == PSA_ALG_ECB_NO_PADDING &&
+	    input_length == 0) {
+		return PSA_SUCCESS;
+	}
+
 	if (is_ctr_based(alg)) {
 		if (output_size < input_length) {
 			return PSA_ERROR_BUFFER_TOO_SMALL;
@@ -471,7 +476,13 @@ psa_status_t cracen_cipher_update(cracen_cipher_operation_t *operation, const ui
 						output_length);
 	}
 
-	if (output == NULL || output_size < input_length + operation->unprocessed_input_bytes) {
+	size_t required_output = input_length + operation->unprocessed_input_bytes;
+
+	if (operation->alg == PSA_ALG_STREAM_CIPHER) {
+		required_output &= ~((uint32_t)operation->blk_size - 1);
+	}
+
+	if ((output == NULL && required_output != 0) || output_size < required_output) {
 		return PSA_ERROR_BUFFER_TOO_SMALL;
 	}
 

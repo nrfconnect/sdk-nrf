@@ -136,6 +136,45 @@ int cracen_signature_asn1_get_operand(const uint8_t **p, const uint8_t *end,
 	return SX_OK;
 }
 
+/* Skips the RSA algorithm identifier prefix of a public key, if it is present. The BIT STRING
+ * and the RSAPublicKey SEQUENCE in it must then end at the end of the key.
+ */
+static int skip_rsa_algorithm_identifier(const uint8_t **parser_ptr, const uint8_t *end)
+{
+	const uint8_t *id_seq = *parser_ptr;
+	size_t len;
+	int ret;
+
+	ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+	if (ret) {
+		return SX_OK;
+	}
+
+	if (len != sizeof(RSA_ALGORITHM_IDENTIFIER)) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	if (memcmp(id_seq, RSA_ALGORITHM_IDENTIFIER, len) != 0) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	id_seq += len;
+
+	ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_BIT_STRING);
+	if (ret != 0 || len == 0 || len != (size_t)(end - id_seq) || *id_seq != 0) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	*parser_ptr = id_seq + 1;
+
+	ret = cracen_asn1_get_tag(parser_ptr, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
+	if (ret || len != (size_t)(end - *parser_ptr)) {
+		return SX_ERR_INVALID_KEYREF;
+	}
+
+	return SX_OK;
+}
+
 int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey, bool is_key_pair,
 				 const uint8_t *key, size_t keylen, struct sx_buf *modulus,
 				 struct sx_buf *exponent)
@@ -178,11 +217,9 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	 *  if it is present.
 	 */
 	ret = cracen_asn1_get_tag(&parser_ptr, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
-	if (ret) {
+	if (ret || len != (size_t)(end - parser_ptr)) {
 		return SX_ERR_INVALID_KEYREF;
 	}
-
-	end = parser_ptr + len;
 
 	if (is_key_pair) {
 		ret = cracen_asn1_get_int(&parser_ptr, end, &version);
@@ -193,33 +230,9 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 			return SX_ERR_INVALID_KEYREF;
 		}
 	} else {
-		/* Skip algorithm identifier prefix. */
-		const uint8_t *id_seq = parser_ptr;
-
-		ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_CONSTRUCTED | ASN1_SEQUENCE);
-		if (ret == 0) {
-			if (len != sizeof(RSA_ALGORITHM_IDENTIFIER)) {
-				return SX_ERR_INVALID_KEYREF;
-			}
-
-			if (memcmp(id_seq, RSA_ALGORITHM_IDENTIFIER, len) != 0) {
-				return SX_ERR_INVALID_KEYREF;
-			}
-
-			id_seq += len;
-
-			ret = cracen_asn1_get_tag(&id_seq, end, &len, ASN1_BIT_STRING);
-			if (ret != 0 || *id_seq != 0) {
-				return SX_ERR_INVALID_KEYREF;
-			}
-
-			parser_ptr = id_seq + 1;
-
-			ret = cracen_asn1_get_tag(&parser_ptr, end, &len,
-						  ASN1_CONSTRUCTED | ASN1_SEQUENCE);
-			if (ret) {
-				return SX_ERR_INVALID_KEYREF;
-			}
+		ret = skip_rsa_algorithm_identifier(&parser_ptr, end);
+		if (ret) {
+			return ret;
 		}
 	}
 
@@ -232,7 +245,7 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	}
 
 	if (PSA_BYTES_TO_BITS(modulus->sz) > PSA_MAX_KEY_BITS) {
-		return PSA_ERROR_NOT_SUPPORTED;
+		return SX_ERR_INVALID_ARG;
 	}
 
 	/* Import E */
@@ -241,6 +254,9 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 		return ret;
 	}
 	if (extract_pubkey) {
+		if (!is_key_pair && parser_ptr != end) {
+			return SX_ERR_INVALID_KEYREF;
+		}
 		return SX_OK;
 	}
 
@@ -248,6 +264,21 @@ int cracen_signature_get_rsa_key(struct cracen_rsa_key *rsa, bool extract_pubkey
 	ret = cracen_signature_asn1_get_operand(&parser_ptr, end, exponent);
 	if (ret) {
 		return ret;
+	}
+
+	/* Parse p, q, dp, dq and qinv. They are not used, so only their encoding is checked:
+	 * each must be a non-empty, non-negative INTEGER.
+	 */
+	for (int i = 0; i < 5; i++) {
+		ret = cracen_asn1_get_tag(&parser_ptr, end, &len, ASN1_INTEGER);
+		if (ret || len == 0 || len > (size_t)(end - parser_ptr) || (parser_ptr[0] & 0x80)) {
+			return SX_ERR_INVALID_KEYREF;
+		}
+		parser_ptr += len;
+	}
+
+	if (parser_ptr != end) {
+		return SX_ERR_INVALID_KEYREF;
 	}
 
 	return SX_OK;

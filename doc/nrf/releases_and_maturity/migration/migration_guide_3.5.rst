@@ -379,6 +379,13 @@ This section describes the changes related to drivers.
                   hs-bias = <2>;
           };
 
+   * :ref:`CRACEN <crypto_drivers_cracen>` driver:
+
+     * RSA keys with data after the key, or with ``prime1``, ``prime2``, ``exponent1``, ``exponent2``, or ``coefficient`` values that are not non-empty, non-negative integers, are now rejected.
+       This also applies to persistent RSA keys stored with an earlier release, as the key is checked each time it is used.
+       Operations with a key that has data after it fail, and a key pair with malformed values can no longer be used to sign or decrypt.
+       If your device stores such keys, destroy them and import them again in the format described in the PSA Certified Crypto API specification.
+
 Clock control nrf deprecation
 -----------------------------
 

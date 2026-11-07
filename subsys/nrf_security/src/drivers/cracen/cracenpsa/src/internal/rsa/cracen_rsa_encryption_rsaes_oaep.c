@@ -81,7 +81,7 @@ int cracen_rsa_oaep_decrypt(const struct sxhashalg *hashalg, struct cracen_rsa_k
 
 	/* step 1.b of RSAES-OAEP-DECRYPT in RFC 8017 */
 	if (text->sz != modulussz) {
-		return SX_ERR_INVALID_CIPHERTEXT;
+		return SX_ERR_INVALID_ARG;
 	}
 	/* modular exponentiation m^e mod n (RSAEP encryption primitive) */
 	int input_sizes[NUMBER_OF_SLOTS];

@@ -228,6 +228,6 @@ config CRACEN_HYBRID_VERIFY
 	  its result. This way, the PKE and the CryptoMaster run in
 	  parallel instead of idling one while the other runs.
 
-rsource 'psa_driver.Kconfig'
+rsource 'Kconfig.psa_driver'
 
 endif # PSA_CRYPTO_DRIVER_CRACEN

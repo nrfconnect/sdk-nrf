@@ -228,6 +228,12 @@ static psa_status_t cracen_load_ikg_keyref(const psa_key_attributes_t *attribute
 	return PSA_SUCCESS;
 }
 
+bool cracen_is_unsupported_aes_key(const psa_key_attributes_t *attributes, size_t key_bits)
+{
+	return IS_ENABLED(CONFIG_CRACEN_HW_VERSION_LITE) &&
+	       psa_get_key_type(attributes) == PSA_KEY_TYPE_AES && key_bits == 192;
+}
+
 psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const uint8_t *key_buffer,
 				size_t key_buffer_size, struct sxkeyref *k)
 {
@@ -239,6 +245,11 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 	if (key_location == PSA_KEY_LOCATION_CRACEN_KMU) {
 		kmu_opaque_key_buffer *key = (kmu_opaque_key_buffer *)key_buffer;
 		enum cracen_kmu_metadata_key_usage_scheme key_usage_scheme = key->key_usage_scheme;
+
+		/* Not PSA_ERROR_NOT_SUPPORTED: no other driver can use a KMU key. */
+		if (cracen_is_unsupported_aes_key(attributes, psa_get_key_bits(attributes))) {
+			return PSA_ERROR_NOT_PERMITTED;
+		}
 
 		k->clean_key = cracen_kmu_clean_key;
 		k->prepare_key = cracen_kmu_prepare_key;
@@ -293,6 +304,10 @@ psa_status_t cracen_load_keyref(const psa_key_attributes_t *attributes, const ui
 		if (key_buffer_size == 0) {
 			return PSA_ERROR_CORRUPTION_DETECTED;
 		}
+	}
+
+	if (cracen_is_unsupported_aes_key(attributes, PSA_BYTES_TO_BITS(key_buffer_size))) {
+		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
 	k->key = key_buffer;

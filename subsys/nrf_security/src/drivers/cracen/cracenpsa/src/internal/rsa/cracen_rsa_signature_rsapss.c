@@ -180,7 +180,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 
 	psa_status = cracen_get_random(NULL, workmem.salt, saltsz);
 	if (psa_status != PSA_SUCCESS) {
-		return SX_ERR_UNKNOWN_ERROR;
+		sx_status = SX_ERR_UNKNOWN_ERROR;
+		goto exit;
 	}
 
 	/* prepare padding string PS (step 7 of EMSA-PSS-ENCODE) */
@@ -204,7 +205,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	sx_status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count, hashalg,
 					   workmem.H);
 	if (sx_status != SX_OK) {
-		return sx_status;
+		goto exit;
 	}
 
 	uint8_t *xorinout = workmem.mHash - emsz;
@@ -212,7 +213,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	sx_status = cracen_run_mgf1xor(workmem.workmem, WORKMEM_SIZE, hashalg, workmem.seed,
 				       digestsz, xorinout, masksz);
 	if (sx_status != SX_OK) {
-		return sx_status;
+		goto exit;
 	}
 
 	uint8_t bitmask;
@@ -237,7 +238,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		sx_pk_release_req(&req);
-		return sx_status;
+		goto exit;
 	}
 	/* Get result of modular exponentiation, placing it in user's output buffer. the output of
 	 * the exponentiation is the signature
@@ -251,6 +252,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	 * called even if an error occurred
 	 */
 	sx_pk_release_req(&req);
+
+exit:
 	safe_memzero(workmem.workmem, WORKMEM_SIZE);
 
 	return sx_status;
@@ -294,6 +297,11 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	int sx_status;
 	size_t modulussz = CRACEN_RSA_KEY_OPSZ(rsa_key);
 	size_t emsz; /* emsz: size in bytes of the encoded message (called emLen in RFC 8017) */
+	bool any_salt = (saltsz == CRACEN_RSA_PSS_ANY_SALT);
+
+	if (any_salt) {
+		saltsz = 0;
+	}
 
 	if (cracen_ffkey_bitsz(rsa_key) % 8 == 1) {
 		emsz = modulussz - 1;
@@ -386,8 +394,14 @@ int cracen_rsa_pss_verify_digest(struct cracen_rsa_key *rsa_key,
 	uint8_t *zeros;
 
 	zeros = workmem.workmem;
-	/* number of bytes in DB that must be equal to zero */
-	zero_len = masksz - saltsz - 1;
+	if (any_salt) {
+		/* The salt size follows from the position of the 0x01 octet in DB. */
+		zero_len = constant_count(workmem.db, masksz - 1, 0x00, MATCH_EQUAL);
+		saltsz = masksz - zero_len - 1;
+	} else {
+		/* number of bytes in DB that must be equal to zero */
+		zero_len = masksz - saltsz - 1;
+	}
 
 	/* step 10 of EMSA-PSS-VERIFY in RFC 8017 */
 	r = constant_memdiff_array_value(workmem.db, 0, zero_len);

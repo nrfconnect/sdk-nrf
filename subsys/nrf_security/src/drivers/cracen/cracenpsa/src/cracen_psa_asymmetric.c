@@ -97,6 +97,12 @@ cracen_asymmetric_crypt_internal(const psa_key_attributes_t *attributes, const u
 
 	if (sx_status != SX_OK) {
 		safe_memzero(output, output_size);
+		if (sx_status == SX_ERR_INVALID_CIPHERTEXT) {
+			return PSA_ERROR_INVALID_PADDING;
+		}
+		if (sx_status == SX_ERR_TOO_BIG) {
+			return PSA_ERROR_INVALID_ARGUMENT;
+		}
 		return silex_statuscodes_to_psa(sx_status);
 	}
 	if (*output_length > output_size) {

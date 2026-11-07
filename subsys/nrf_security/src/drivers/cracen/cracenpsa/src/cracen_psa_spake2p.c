@@ -587,9 +587,16 @@ psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
 				  size_t password_length,
 				  const psa_pake_cipher_suite_t *cipher_suite)
 {
+	psa_algorithm_t alg = psa_pake_cs_get_algorithm(cipher_suite);
+
 	if (psa_pake_cs_get_primitive(cipher_suite) !=
 		    PSA_PAKE_PRIMITIVE(PSA_PAKE_PRIMITIVE_TYPE_ECC, PSA_ECC_FAMILY_SECP_R1, 256) ||
 	    psa_pake_cs_get_key_confirmation(cipher_suite) != PSA_PAKE_CONFIRMED_KEY) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	/* The transcript, key schedule and confirmation use SHA-256 and HMAC-SHA-256 only. */
+	if (alg != PSA_ALG_SPAKE2P_MATTER && alg != PSA_ALG_SPAKE2P_HMAC(PSA_ALG_SHA_256)) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
 
@@ -605,7 +612,7 @@ psa_status_t cracen_spake2p_setup(cracen_spake2p_operation_t *operation,
 		return status;
 	}
 
-	operation->alg = psa_pake_cs_get_algorithm(cipher_suite);
+	operation->alg = alg;
 
 	/* Initialize hash for protocol transcript TT. */
 	return cracen_hash_setup(&operation->hash_op, PSA_ALG_SHA_256);
@@ -656,10 +663,6 @@ psa_status_t cracen_spake2p_set_peer(cracen_spake2p_operation_t *operation, cons
 psa_status_t cracen_spake2p_set_context(cracen_spake2p_operation_t *operation,
 					const uint8_t *context, size_t context_len)
 {
-	if (context_len == 0) {
-		return PSA_SUCCESS;
-	}
-
 	return cracen_update_hash_with_length(&operation->hash_op, context, context_len, 0);
 }
 
