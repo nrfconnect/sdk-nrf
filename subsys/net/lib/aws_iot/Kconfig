@@ -35,6 +35,19 @@ config AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST
 	bool "Request the device shadow automatically upon a connection to AWS"
 	default y
 
+config AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT
+	bool "Subscribe to topics on every connection, also when a session is resumed"
+	help
+	  By default, the library does not send its subscription lists when the
+	  broker reports in the CONNACK that a previous session is present. It then
+	  relies on the broker to have kept the subscriptions of that session.
+	  If the resumed session does not hold all of them, the device stays
+	  connected and can publish, but it no longer receives messages on the
+	  missing topics, such as shadow deltas or application topics, and no error
+	  is reported. Enable this option to subscribe on every connection.
+	  Subscribing again to a topic replaces the existing subscription, so the
+	  messages that the broker has queued for the session are still delivered.
+
 config AWS_IOT_TOPIC_GET_ACCEPTED_SUBSCRIBE
 	bool "Subscribe to get accepted shadow topic, $aws/things/<thing-name>/shadow/get/accepted"
 

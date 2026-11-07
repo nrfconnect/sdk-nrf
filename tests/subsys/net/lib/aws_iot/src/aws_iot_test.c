@@ -68,6 +68,12 @@ static void event_handler(const struct aws_iot_evt *const evt)
 	TEST_ASSERT_EQUAL(evt->type, event_type_expected);
 }
 
+static void event_handler_persistent_session_check(const struct aws_iot_evt *const evt)
+{
+	TEST_ASSERT_EQUAL(AWS_IOT_EVT_CONNECTED, evt->type);
+	TEST_ASSERT_TRUE(evt->data.persistent_session);
+}
+
 static void event_handler_topic_type_check(const struct aws_iot_evt *const evt)
 {
 	TEST_ASSERT_EQUAL(evt->type, AWS_IOT_EVT_DATA_RECEIVED);
@@ -159,6 +165,11 @@ void test_init_should_return_success(void)
 
 void test_connect_should_use_static_connection_parameters(void)
 {
+	if (IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
+		TEST_IGNORE_MESSAGE("Covered by the net.lib.aws_iot scenario");
+		return;
+	}
+
 	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
@@ -176,6 +187,11 @@ void test_connect_should_use_static_connection_parameters(void)
 
 void test_connect_should_use_run_time_parameters(void)
 {
+	if (IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
+		TEST_IGNORE_MESSAGE("Covered by the net.lib.aws_iot scenario");
+		return;
+	}
+
 	mqtt_helper_handlers_register(event_handler);
 
 	struct aws_iot_config config = {
@@ -204,6 +220,11 @@ void test_connect_should_return_error_if_mqtt_helper_connect_fails(void)
 
 void test_connect_should_return_success(void)
 {
+	if (IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
+		TEST_IGNORE_MESSAGE("Covered by the net.lib.aws_iot scenario");
+		return;
+	}
+
 	mqtt_helper_handlers_register(event_handler);
 
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
@@ -339,6 +360,11 @@ void test_on_connack_should_notify_error_on_failure(void)
 
 void test_on_connack_should_notify_connected_without_subscribing(void)
 {
+	if (IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
+		TEST_IGNORE_MESSAGE("Subscribes on a resumed session when this option is enabled");
+		return;
+	}
+
 	mqtt_helper_handlers_register(event_handler);
 
 	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
@@ -359,6 +385,30 @@ void test_on_connack_should_notify_connected_with_subscribing(void)
 	event_type_expected = AWS_IOT_EVT_CONNECTED;
 
 	test_mqtt_helper_cfg.cb.on_connack(MQTT_RESULT_SUCCESS, MQTT_SESSION_INVALID);
+}
+
+void test_on_connack_should_subscribe_on_resumed_session(void)
+{
+	if (!IS_ENABLED(CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT)) {
+		TEST_IGNORE_MESSAGE("Requires CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT");
+		return;
+	}
+
+	mqtt_helper_handlers_register(event_handler_persistent_session_check);
+
+	__cmock_mqtt_helper_subscribe_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_subscribe_ExpectAnyArgsAndReturn(0);
+
+	test_mqtt_helper_cfg.cb.on_connack(MQTT_RESULT_SUCCESS, MQTT_SESSION_VALID);
+
+	/* Connected, with the session still reported as resumed, only once both subscription
+	 * lists are acknowledged.
+	 */
+	__cmock_mqtt_helper_publish_ExpectAnyArgsAndReturn(0);
+	__cmock_mqtt_helper_msg_id_get_ExpectAndReturn(1);
+
+	test_mqtt_helper_cfg.cb.on_suback(APP_SUBS_MESSAGE_ID, 0);
+	test_mqtt_helper_cfg.cb.on_suback(AWS_SUBS_MESSAGE_ID, 0);
 }
 
 void test_on_disconnect_should_notify_disconnect(void)
