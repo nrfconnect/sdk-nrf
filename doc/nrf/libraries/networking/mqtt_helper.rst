@@ -9,6 +9,9 @@ MQTT helper
 
 This library simplifies Zephyr MQTT API and socket handling.
 
+The library resolves the broker for the address families that the :ref:`Connection Manager <zephyr:conn_mgr_overview>` reports as ready and tries the resolved addresses in order.
+If the network is not ready, the :c:func:`mqtt_helper_connect` function returns ``-ENETDOWN``, and the application decides when to retry.
+
 Configuration
 *************
 

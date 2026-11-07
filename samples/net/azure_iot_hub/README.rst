@@ -29,6 +29,7 @@ Overview
 The sample supports the direct connection of an IoT device that is already registered to an Azure IoT Hub instance.
 Alternatively, it supports the provisioning of the device using `Azure IoT Hub Device Provisioning Service (DPS)`_ to an IoT hub.
 See the documentation on :ref:`lib_azure_iot_hub` library for more information.
+If the connection fails, the sample retries it at the interval set by the :option:`CONFIG_AZURE_IOT_HUB_SAMPLE_CONNECTION_RETRY_TIMEOUT_SECONDS` Kconfig option.
 
 The sample periodically publishes telemetry messages (events) to the connected Azure IoT Hub instance.
 By default, telemetry messages are sent every 20 seconds.

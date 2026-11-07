@@ -824,7 +824,7 @@ Networking samples
     * The HTTP file link, which was previously broken.
     * An issue where network interface teardown was attempted with uninitialized ``net_if``.
     * An issue where the sample could try to download over an IP family for which the device had no address.
-      The sample now catches IPv4 and IPv6 connectivity events separately and restricts the download to the available family or families.
+      The sample now relies on the :ref:`lib_downloader` library to select the address family.
 
 * :ref:`udp_sample` sample:
 
@@ -837,23 +837,35 @@ Networking samples
 
     * Support for mutual DTLS (client X.509 certificate authentication), using the new :option:`CONFIG_COAP_SAMPLE_DTLS` Kconfig option.
     * A :file:`wifi-dtls.conf` extra-conf file with example client certificate and CA trust chain for testing against the Eclipse Californium CoAP interop server.
-  * Updated the sample to only reboot on fatal errors and reconnect to the server on recoverable errors.
+
+  * Updated:
+
+    * The sample to reboot only on fatal errors and reconnect to the server on recoverable errors.
+    * The sample to wait for the network to be ready, resolve the server for the address families that the Connection Manager reports as ready, and try all resolved addresses.
+
   * Fixed:
 
     * An issue with the sample's IPv6 support, where the device crashes when trying to communicate over IPv6.
     * An issue where the DTLS handshake failed on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target due to an under-dimensioned TF-M crypto IOVEC buffer.
 
 
+* :ref:`aws_iot` sample:
+
+  * Updated the sample to retry the connection to AWS IoT on any connection error, instead of only on timeouts.
+
 * :ref:`azure_iot_hub` sample:
 
   * Added support for FOTA on the ``nrf7120dk/nrf7120/cpuapp/ns`` board target.
 
-  * Updated the MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+  * Updated:
+
+    * The MCUboot boot partition size from 54 KB to 64 KB on the ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` board targets.
+    * The sample to retry the connection to Azure IoT Hub, including DPS, when it fails.
 
 * :ref:`https_client` sample:
 
   * Fixed an issue where the sample could try to connect over IPv4 or IPv6 even when the device had no local address for that family.
-    The sample now uses only resolved addresses that match a ready local IPv4/IPv6 address.
+    The sample now resolves the server only for the address families that the Connection Manager reports as ready.
 
 * :ref:`http_server` sample:
 
@@ -1192,6 +1204,7 @@ Modem libraries
 * :ref:`nrf_modem_lib_readme`:
 
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
+  * Updated the :c:func:`getaddrinfo` function to query both IPv6 and IPv4 addresses when the address family is ``AF_UNSPEC``, returning IPv6 addresses first.
 
 * :ref:`lib_location` library:
 
@@ -1306,14 +1319,25 @@ Libraries for networking
   * Updated the logging of location requests that nRF Cloud cannot resolve (error code ``40410``).
     Instead of several errors, the library now logs a single warning, as this can happen in normal circumstances, for example, with unknown Wi-Fi access points.
 
-  * Fixed an issue where the library would always attempt an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
-    This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
-    The library now checks for its own IPv6 (or IPv4) address before attempting a connection over that address family.
+  * Fixed:
+
+    * An issue where the library always attempted an IPv6 connection to nRF Cloud, even if the device had no IPv6 address.
+      This led to delays of seconds or tens of seconds, as well as unnecessary traffic and warnings.
+      The library now resolves the host only for the address families that the Connection Manager reports as ready.
+    * An issue where the static IPv4 address set with the :kconfig:option:`CONFIG_NRF_CLOUD_STATIC_IPV4` Kconfig option was always used with the default port, ignoring the port given by the application.
 
 * :ref:`lib_mqtt_helper` library:
 
   * Fixed an issue where the library could stop after one resolved broker address.
-    The library now iterates all resolved IPv4/IPv6 addresses and only tries families for which the device has a local address.
+    The library now resolves the broker only for the address families that the Connection Manager reports as ready and tries all resolved addresses.
+
+  * Updated the :c:func:`mqtt_helper_connect` function to return ``-ENETDOWN`` or ``-EHOSTUNREACH`` when the network is not ready or the broker cannot be resolved, instead of positive :c:func:`getaddrinfo` error codes.
+
+* :ref:`lib_downloader` library:
+
+  * Updated the library to resolve the host only for the address families that the Connection Manager reports as ready.
+    When the address family is ``AF_UNSPEC``, the library now tries all resolved addresses in order, instead of trying IPv6 and then falling back to IPv4.
+    If the network is not ready when connecting, the library sends a :c:enumerator:`DOWNLOADER_EVT_ERROR` event with the ``-ENETDOWN`` error.
 
 * :ref:`lib_nrf_provisioning` library:
 
