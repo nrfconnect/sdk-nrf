@@ -1330,14 +1330,12 @@ static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
 			break;
 		}
 		case TS_NEXT_ACTION_RX_LAST:
+		case TS_NEXT_ACTION_CLOSE:
 			clear_ts_peripherals();
 
+			on_radio_disabled = NULL;
 			esb_state = ESB_STATE_WAIT_MPSL;
 			ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
-			break;
-
-		case TS_NEXT_ACTION_CLOSE:
-			/* nothing to do */
 			break;
 
 		default:
@@ -3208,6 +3206,9 @@ static mpsl_timeslot_signal_return_param_t *ts_extend_failed_action(void)
 				 ts_duration_params.rx_tx_sequence - margin);
 		break;
 	}
+	case TS_NEXT_ACTION_CLOSE:
+		break;
+
 	default:
 		__ASSERT(false, "Unexpected ts_next_action: %d", ts_next_action);
 		break;
@@ -3235,6 +3236,10 @@ static mpsl_timeslot_signal_return_param_t *ts_extend_succeeded_action(void)
 		}
 		break;
 	}
+	case TS_NEXT_ACTION_CLOSE:
+		/* Clean up is done by on_radio_disabled_suspend */
+		break;
+
 	default:
 		__ASSERT(false, "Unexpected ts_next_action: %d", ts_next_action);
 		break;
