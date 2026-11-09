@@ -109,10 +109,9 @@
 			 * copies the application image. If this copied data overlaps with the
 			 * MCUboot RAM region, MCUboot may encounter runtime errors. It is
 			 * recommended to use this DTS node for configuration of the executable
-			 * SRAM region in the MCUboot image. This RAM region should be aligned with
-			 * the following Kconfig options in MCUboot:
-			 * - CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START
-			 * - CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE
+			 * SRAM region in the MCUboot image. Point /chosen/mcuboot,image-ram at
+			 * this node in both MCUboot and application images so
+			 * CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START/SIZE default from devicetree.
 			 */
 			cpuapp_sram_app_rxm_region: memory@0 {
 				compatible = "mmio-sram";
