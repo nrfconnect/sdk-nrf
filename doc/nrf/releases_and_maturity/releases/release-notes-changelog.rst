@@ -644,6 +644,7 @@ Cellular samples
     * :ref:`at_monitor_sample`
     * :ref:`battery`
     * :ref:`fmfu_smp_svr_sample`
+    * :ref:`gnss_sample`
     * :ref:`http_application_update_sample`
     * :ref:`http_modem_delta_update_sample`
     * :ref:`http_modem_full_update_sample`
