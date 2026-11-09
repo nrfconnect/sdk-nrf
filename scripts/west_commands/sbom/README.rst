@@ -85,6 +85,9 @@ Use the following command to install the requirements.
    For more details, see `Scancode-Toolkit Installation`_.
 
 .. note::
+   The ``reuse`` detector uses the ``reuse`` package to extract licenses and copyright notices.
+
+.. note::
    The requirements file also installs the ``spdx-python-model`` package.
    The command uses it to write SPDX 3.0 reports (``--spdx-version 3.0``).
 
@@ -292,7 +295,7 @@ You can specify the format of the report output using the ``output`` argument.
     (see :ref:`upstream_external_references`)
   * A Common Platform Enumeration (CPE) identifier for the application package when specified using ``--package-cpe``
   * Dependency relationships showing supply chain connections
-  * File checksums and license information
+  * File checksums, license information, and copyright notices
   * ``PrimaryPackagePurpose`` (``APPLICATION``, ``SOURCE``, or ``OTHER``) auto-detected for each package
   * ``BuiltDate`` on the application package, taken from the newest build-artifact timestamp
 
@@ -407,11 +410,34 @@ The ``ncs-sbom`` command includes the following detectors:
 
   For guidelines, see `SPDX identifier`_. Enabled by default.
 
+* ``reuse`` - License and copyright detection by the `REUSE tool`_.
+  Enabled and optional by default.
+
+  This detector reads the ``SPDX-License-Identifier`` and ``SPDX-FileCopyrightText`` tags, and the other copyright notices.
+  It does not identify a license from the text of the license, which is what ``full-text`` and ``scancode-toolkit`` do.
+  It is fast enough to run on every file.
+  It is executed right after ``spdx-tag``, so it provides the licenses and copyright notices before the slower detectors are executed.
+
+  The licenses and the copyright notices are taken from the following locations:
+
+    * The file itself, unless it has an associated :file:`.license` file.
+    * The :file:`.license` file associated with the file, for example :file:`lib.a.license`.
+    * The :file:`REUSE.toml` files in the directory of the file and in its parent directories, if the file itself has no such information.
+
+  The licenses from the file and from its :file:`.license` file are reported as the license information in the file.
+  The licenses from :file:`REUSE.toml` are reported only as the concluded licenses, because :file:`REUSE.toml` is not a part of the file.
+  The notices are reported in the normalized form of the REUSE tool, for example ``Copyright (c) 2016 - 2026, Foo`` is reported as ``Copyright (C) 2016-2026 Foo``.
+
+  .. note::
+     The REUSE tool recognizes the word ``Copyright`` with this exact capitalization, the ``©`` symbol, and the ``SPDX-FileCopyrightText`` tag.
+     Files that use a different form, for example ``COPYRIGHT (c) 2020 Foo`` or a stand-alone ``(c) 2020 Foo``, are reported with no copyright text unless the ``scancode-toolkit`` detector processes them.
+
 * ``full-text`` - Compare the contents of the source file with a small database of reference texts.
 
   The database is part of the ``ncs-sbom`` command. Enabled by default.
 
-* ``scancode-toolkit`` - License and copyright detection by the `Scancode-Toolkit`_. Enabled and optional by default.
+* ``scancode-toolkit`` - License and copyright detection by the `Scancode-Toolkit`_.
+  Enabled and optional by default.
 
   If the ``scancode`` command is not on your ``PATH``, you can use the ``--scancode`` option to provide it, for example:
 
@@ -485,11 +511,12 @@ If you prefer a non-default set of detectors, you can provide a list of comma-se
 
 Some of the detectors are optional, which means that they are not executed for a file that
 already has licenses detected by some other previously executed detector.
+The optional ``reuse`` detector adds licenses only to the files that have no license detected yet, and copyright notices only to the files that have no copyright notices detected yet.
 Detectors are executed from left to right using a list provided by the ``--license-detectors``.
 
   .. code-block:: bash
 
-     --optional-license-detectors scancode-toolkit
+     --optional-license-detectors scancode-toolkit,reuse
 
 Some detectors may run in parallel on all available CPU cores, which speeds up the detection time.
 Use the ``-n`` option to limit the number of parallel threads or processes.

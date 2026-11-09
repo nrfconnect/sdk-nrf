@@ -34,6 +34,11 @@ spdx-tag
   For guidelines, see:
   https://spdx.github.io/spdx-spec/using-SPDX-short-identifiers-in-source-files
 
+reuse
+  License and copyright detection by the REUSE tool.
+  Reads the file, its ".license" file and REUSE.toml.
+  For more details see: https://reuse.software/
+
 full-text
   Compare the contents of the license with the references that are stored in the database.
 
@@ -122,12 +127,14 @@ def add_arguments(parser: argparse.ArgumentParser):
                              'with arguments from each line of the file.'
                              'You can provide this option more than once.')
     parser.add_argument('--license-detectors',
-                        default='spdx-tag,full-text,external-file,scancode-toolkit,git-info',
+                        default='spdx-tag,reuse,full-text,external-file,scancode-toolkit,git-info',
                         help='Comma separated list of enabled license detectors.')
-    parser.add_argument('--optional-license-detectors', default='scancode-toolkit',
+    parser.add_argument('--optional-license-detectors', default='scancode-toolkit,reuse',
                         help='Comma separated list of optional license detectors. Optional license '
                              'detector is skipped if any of the previous detectors has already '
-                             'detected any license.')
+                             'detected any license. The "reuse" detector adds licenses only to '
+                             'the files without a license and copyright notices only to the files '
+                             'without a copyright notice.')
     parser.add_argument('--output-html', default=None,
                         help='Generate output HTML report.')
     parser.add_argument('--output-spdx', default=None,

@@ -1659,6 +1659,9 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     No signature, report digest, or signing identity is sent to the public Sigstore services.
   * ``--public-key-out`` option to export the public key of the signing key.
   * ``--verify-spdx`` and ``--verify-key`` options to verify signed SPDX reports.
+  * The ``reuse`` detector for extracting licenses and copyright notices using the `REUSE tool`_, enabled by default.
+    The reports now include copyright text for files that also have an SPDX license tag.
+    The detector also reads the licenses from :file:`.license` files and :file:`REUSE.toml`.
 
 * Updated:
 
