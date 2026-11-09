@@ -109,6 +109,89 @@ struct bt_conn_set_pcr_params {
  */
 int bt_conn_set_power_control_request_params(struct bt_conn_set_pcr_params *params);
 
+/** @brief Set Power Control request parameters for a single connection
+ *
+ *  The parameters are the same as for @ref bt_conn_set_power_control_request_params,
+ *  but they apply to the given connection only.
+ *  Once they have been set for a connection, the connection is no longer affected by
+ *  @ref bt_conn_set_power_control_request_params.
+ *  The parameters are discarded when the connection is terminated.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param conn          Connection object.
+ *  @param params        See @ref bt_conn_set_pcr_params for details.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -EINVAL Invalid parameters.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_conn_set_conn_power_control_request_params(struct bt_conn *conn,
+						  struct bt_conn_set_pcr_params *params);
+
+/** @brief Set the bounds of the local transmit power of a connection
+ *
+ *  The local transmit power is limited to the bounds when the peer requests a change of it
+ *  (LE Power Control Request procedure), or when it is changed because of the received
+ *  Acceptable Power Reduction (APR).
+ *  A requested change is never rounded beyond the bounds.
+ *  The minimum and maximum power flags that the peer receives report the bounds, so that the peer
+ *  does not request a change beyond them.
+ *  If the local transmit power is already outside the bounds, it is not changed in the opposite
+ *  direction by a request in the direction of the bounds.
+ *  The bounds do not limit the transmit power set by the application, and the transmit power is not
+ *  changed when the bounds are set.
+ *  The minimum and maximum power flags are updated when the bounds are set or removed, so that the
+ *  peer gets the flags for the new bounds in the next response, even if the transmit power is not
+ *  changed.
+ *  When the application sets the transmit power, the flags only report the hardware limits, until
+ *  the transmit power is next changed on request from the peer.
+ *  The bounds are discarded when the connection is terminated.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param conn          Connection object.
+ *  @param min_tx_power  Lowest transmit power in dBm, in the same reference as the transmit power
+ *                       reported by the Bluetooth host, for example in @ref bt_conn_le_tx_power.
+ *                       Use -127 for no lower bound.
+ *  @param max_tx_power  Highest transmit power in dBm. Use 127 for no upper bound.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -EINVAL @p min_tx_power is greater than @p max_tx_power.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_conn_set_tx_power_bounds(struct bt_conn *conn, int8_t min_tx_power, int8_t max_tx_power);
+
+/** @brief Enable or disable the power control response reports
+ *
+ *  When enabled, the controller reports the full content of the LL_POWER_CONTROL_RSP PDU
+ *  to the host for every LE Power Control Request procedure that the host initiated with
+ *  @ref bt_conn_set_remote_tx_power_level or @ref bt_conn_le_get_remote_tx_power_level,
+ *  once the procedure has completed.
+ *  This includes the transmit power and the minimum and maximum power flags of the peer after the
+ *  change, the delta the peer applied, and the Acceptable Power Reduction (APR) of the peer,
+ *  which the standard @ref bt_conn_cb::tx_power_report callback does not provide.
+ *  A report is also generated when the peer rejected the request or does not support the procedure.
+ *
+ *  The reports are vendor-specific HCI events. To receive them, enable the
+ *  @kconfig{CONFIG_BT_HCI_VS_EVT_USER} Kconfig option and register a callback with
+ *  @c bt_hci_register_vnd_evt_cb(). The callback gets events with the
+ *  @c SDC_HCI_SUBEVENT_VS_POWER_CONTROL_RSP_REPORT subevent code, and the event parameters are
+ *  described by the @c sdc_hci_subevent_vs_power_control_rsp_report_t type from @c sdc_hci_vs.h.
+ *  If the callback does not pull a report before the next procedure on the same connection
+ *  completes, the report is overwritten.
+ *
+ *  The reports are disabled by default.
+ *
+ *  Requires the @kconfig{CONFIG_BT_NRF_LE_POWER_CONTROL_EXT} Kconfig option.
+ *
+ *  @param enable        True to enable the reports, false to disable them.
+ *
+ *  @return Zero on success or (negative) error code on failure.
+ *  @retval -ENOBUFS HCI command buffer is not available.
+ */
+int bt_nrf_power_control_rsp_report_enable(bool enable);
+
 /** @brief Reduce the priority of the initiator when following AUX packets.
  *
  *  @param reduce Set to true to reduce the priority. Set to false to restore the default priority.
