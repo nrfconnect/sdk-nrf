@@ -1,0 +1,1 @@
+source "tests/drivers/can/timing/Kconfig"
