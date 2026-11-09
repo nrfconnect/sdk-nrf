@@ -9,5 +9,6 @@
 / {
 	chosen {
 		zephyr,bootloader-info = &boot_info0;
+		mcuboot,image-ram = &cpuapp_sram_app_rxm_region;
 	};
 };
