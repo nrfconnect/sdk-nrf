@@ -7,7 +7,10 @@ choice NRF_MODEM_LIB_TRACE_BACKEND
 	prompt "Trace backend"
 endchoice
 
+DT_CHOSEN_NORDIC_MODEM_TRACE_UART := nordic,modem-trace-uart
+
 rsource "uart/Kconfig"
+rsource "uart_nrfx/Kconfig"
 rsource "flash/Kconfig"
 rsource "rtt/Kconfig"
 rsource "ram/Kconfig"

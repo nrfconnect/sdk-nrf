@@ -1217,6 +1217,10 @@ Modem libraries
 
 * :ref:`nrf_modem_lib_readme`:
 
+  * Added the :kconfig:option:`CONFIG_NRF_MODEM_LIB_TRACE_BACKEND_UART_NRFX` Kconfig option to send modem traces over a UARTE instance driven directly by the nrfx UARTE driver.
+    Transfers are DMA and interrupt driven, and consecutive transfers are linked, which allows using high-speed UARTE instances at baud rates of several Mbaud.
+    The UARTE instance is selected using the ``nordic,modem-trace-uart`` chosen node, which must have the ``reserved`` status.
+
   * Updated the diagnostic counters of memory allocation failures to depend on the :kconfig:option:`CONFIG_NRF_MODEM_LIB_MEM_DIAG` Kconfig option.
 
 * :ref:`lib_location` library:

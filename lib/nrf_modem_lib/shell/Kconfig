@@ -10,7 +10,6 @@ config NRF_MODEM_LIB_SHELL_TRACE
 
 if NRF_MODEM_LIB_SHELL_TRACE
 
-DT_CHOSEN_NORDIC_MODEM_TRACE_UART := nordic,modem-trace-uart
 config NRF_MODEM_LIB_SHELL_TRACE_UART
 	bool
 	default $(dt_chosen_enabled,$(DT_CHOSEN_NORDIC_MODEM_TRACE_UART))
