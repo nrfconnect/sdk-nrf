@@ -1,6 +1,11 @@
 sample:
   description: WFA QuickTrack control application
   name: WFA QT App
+common:
+  tags:
+    - ci_build
+    - sysbuild
+    - ci_samples_wifi
 tests:
   sample.nrf7002.wfa_qt_app:
     sysbuild: true
@@ -8,10 +13,6 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002.enterprise_mode.wfa_qt_app.netusb:
     sysbuild: true
     build_only: true
@@ -21,10 +22,6 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002.enterprise_mode.wfa_qt_app.slip:
     sysbuild: true
     build_only: true
@@ -35,10 +32,6 @@ tests:
     integration_platforms:
       - nrf7002dk/nrf5340/cpuapp
     platform_allow: nrf7002dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002_eks.wfa_qt_app:
     sysbuild: true
     build_only: true
@@ -46,10 +39,6 @@ tests:
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp
     platform_allow: nrf5340dk/nrf5340/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7002eb_interposer_p1.nrf7002eb.wfa_qt_app:
     sysbuild: true
     build_only: true
@@ -62,10 +51,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     platform_allow:
       - nrf54h20dk/nrf54h20/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.54lm20dk.nrf7002eb2.wfa_qt_app.netusb:
     sysbuild: true
     build_only: true
@@ -79,10 +64,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.54lm20dk.nrf7002eb2.wfa_qt_app.slip:
     sysbuild: true
     build_only: true
@@ -96,10 +77,6 @@ tests:
     platform_allow:
       - nrf54lm20dk/nrf54lm20a/cpuapp
       - nrf54lm20dk/nrf54lm20b/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
-      - ci_samples_wifi
   sample.nrf7120.wfa_qt_app.slip:
     sysbuild: true
     build_only: true
@@ -113,8 +90,6 @@ tests:
       - nrf7120dk/nrf7120/cpuapp
       - nrf7120dk/nrf7120/cpuapp/ns
     tags:
-      - ci_build
-      - sysbuild
       - ci_samples_nrf71_wifi
   sample.wfa_qt_app.rtt:
     sysbuild: true
@@ -127,6 +102,3 @@ tests:
     platform_allow:
       - nrf7002dk/nrf5340/cpuapp
       - nrf7120dk/nrf7120/cpuapp
-    tags:
-      - ci_build
-      - sysbuild
