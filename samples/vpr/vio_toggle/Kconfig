@@ -1,0 +1,30 @@
+# Copyright (c) 2026 Nordic Semiconductor ASA
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+
+menu "VPR VIO sample"
+
+config APP_VIO_PIN
+	int "VIO bit index to drive"
+	range 0 15
+	default 0
+	help
+	  The VPR VIO pin number that the sample toggles. This must match the physical pin routed to
+	  this VPR core in the vpr_launcher devicetree overlay.
+
+config APP_PULSE_HIGH_CYCLES
+	int "Pulse HIGH width in core cycles"
+	default 4
+	help
+	  Total number of clock cycles the pin is held high.
+	  This can be as low as 1 cycle as that is how long a pin write takes.
+
+config APP_PULSE_LOW_CYCLES
+	int "Pulse LOW width in core cycles"
+	default 12
+	help
+	  Total number of clock cycles the pin is held low.
+	  This must be at least the 4 cycles needed for the loop and pin write.
+
+endmenu
+
+source "Kconfig.zephyr"

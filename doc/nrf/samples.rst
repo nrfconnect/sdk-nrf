@@ -67,6 +67,7 @@ General information about samples in the |NCS|
    samples/sensor
    samples/thread
    samples/tfm
+   samples/vpr
    samples/wifi
    samples/zigbee
    samples/other
