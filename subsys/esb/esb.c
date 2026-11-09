@@ -1308,7 +1308,6 @@ static void clear_ts_peripherals(void)
 {
 	irq_disable(ESB_RADIO_IRQ_NUMBER);
 	clear_peripherals();
-	esb_ppi_deinit();
 }
 
 static void esb_timer_handler(nrf_timer_event_t event_type, void *context)
@@ -2326,6 +2325,7 @@ static void esb_irq_disable(void)
 int esb_init(const struct esb_config *config)
 {
 	int err;
+	bool esb_ppi_initialized = false;
 
 	if (!config) {
 		return -EINVAL;
@@ -2394,6 +2394,7 @@ int esb_init(const struct esb_config *config)
 			LOG_ERR("Failed to initialize PPI");
 			return err;
 		}
+		esb_ppi_initialized = true;
 
 		disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
@@ -2419,6 +2420,15 @@ int esb_init(const struct esb_config *config)
 			LOG_ERR("Failed to update radio parameters");
 			return -EINVAL;
 		}
+
+		err = esb_ppi_init();
+		if (err) {
+			LOG_ERR("Failed to initialize PPI");
+			goto error_cleanup;
+		}
+		esb_ppi_initialized = true;
+
+		disable_event.event.generic.event = esb_ppi_radio_disabled_get();
 
 		multithreading_lock_acquire(K_FOREVER);
 		err = mpsl_timeslot_session_open(ts_callback, &ts_session_id);
@@ -2480,6 +2490,13 @@ int esb_init(const struct esb_config *config)
 	}
 
 	return 0;
+
+error_cleanup:
+	if (esb_ppi_initialized) {
+		esb_ppi_deinit();
+	}
+
+	return err;
 }
 
 int esb_suspend(void)
@@ -2562,6 +2579,10 @@ void esb_disable(void)
 		mpsl_timeslot_session_close(ts_session_id);
 		multithreading_lock_release();
 		ts_session_id = 0xFF;
+
+		esb_irq_disable();
+		esb_ppi_deinit();
+
 		esb_state = ESB_STATE_UNINITIALIZED;
 	}
 }
@@ -3096,23 +3117,6 @@ static mpsl_timeslot_signal_return_param_t *ts_start_action(void)
 
 	apply_radio_init_workarounds();
 
-	int err = esb_ppi_init();
-
-	if (err) {
-		LOG_ERR("Failed to initialize PPI");
-
-		atomic_set_bit(&interrupt_flags, ESB_EVENT_TIMESLOT_FAILED);
-		set_evt_interrupt();
-
-		esb_state = ESB_STATE_IDLE;
-		ts_next_action = TS_NEXT_ACTION_IDLE;
-		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
-
-		return &ts_return_action;
-	}
-
-	disable_event.event.generic.event = esb_ppi_radio_disabled_get();
-
 	ts_duration_params.extend_count = 0;
 
 	switch (ts_next_action) {
@@ -3142,8 +3146,6 @@ static mpsl_timeslot_signal_return_param_t *ts_start_action(void)
 		break;
 
 	case TS_NEXT_ACTION_CLOSE:
-		esb_ppi_deinit();
-
 		esb_state = ESB_STATE_IDLE;
 		ts_next_action = TS_NEXT_ACTION_IDLE;
 		ts_return_action.callback_action = MPSL_TIMESLOT_SIGNAL_ACTION_END;
