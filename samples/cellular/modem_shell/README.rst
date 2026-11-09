@@ -14,8 +14,6 @@ The sample supports the following development kits:
 
 .. include:: /includes/tfm.txt
 
-.. include:: /includes/external_flash_nrf91.txt
-
 Overview
 ********
 
@@ -36,12 +34,6 @@ MoSh command: ``link``
 LTE link control changes and queries the state of the LTE connection.
 Many of the changes are applied when going to online mode for the next time.
 You can store some link subcommand parameters into settings, which are persistent between sessions.
-
-For nRF9160, 3GPP Release 14 features are enabled by default, which means they are set when going into normal mode and when booting up.
-To disable these features in normal mode,  use the ``link funmode --normal_no_rel14`` command.
-During autoconnect in bootup, use the ``link nmodeauto --enable_no_rel14`` command.
-For the list of supported features, refer to the `3GPP Release 14 features AT command`_ section in the nRF9160 AT Commands Reference Guide.
-For nRF91x1, 3GPP Release 14 features are always enabled and cannot be disabled.
 
 Examples
 --------
@@ -340,7 +332,7 @@ Examples
 
   .. note::
      The certificate must have been written beforehand to security tag ``123``.
-     See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 credential storage management %CMNG_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+     See the `nRF91x1 credential storage management %CMNG`_ section in the nRF91x1 AT Commands Reference Guide.
 
 * Open a raw socket:
 
@@ -564,7 +556,7 @@ The MoSh command is simple but you need to have a normal dial-up setup in your P
 
    On Windows, dial-up connection is not functional when using SEGGER virtual UART ports.
    PPP has been used successfully with FTDI UART port though.
-   Refer to `nRF9160 Hardware Verification Guidelines - UART interface`_.
+   Refer to `nRF9151 Hardware Verification Guidelines - UART interface`_.
 
    PPP has been successfully used running Ubuntu Linux in a virtualization environment hosted by Windows.
    In the hosted virtual Linux environment, using PPP is possible also with plain SEGGER UART ports.
@@ -972,7 +964,7 @@ nRF91 Series DKs:
 * **LED 3** indicates the LTE registration status.
 * **LED 4** is lit for five seconds when the current location has been successfully retrieved by using the ``location get`` command.
 
-Thingy:91 and Thingy:91 X RGB LED:
+Thingy:91 X RGB LED:
 
 * LTE connected:
 
@@ -1174,11 +1166,11 @@ nRF91 Series DK with full modem FOTA support
 ============================================
 
 To build the MoSh sample for an nRF91 Series DK with full modem FOTA support, use the devicetree overlay for external flash corresponding to your device and the ``-DEXTRA_CONF_FILE=modem_fota_full.conf`` option.
-The following is an example for the nRF9161 DK:
+The following is an example for the nRF9151 DK:
 
 .. code-block:: console
 
-   west build -p -b nrf9161dk/nrf9161/ns -- -DEXTRA_CONF_FILE=modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9161dk_ext_flash.overlay
+   west build -p -b nrf9151dk/nrf9151/ns -- -DEXTRA_CONF_FILE=modem_fota_full.conf -DDTC_OVERLAY_FILE=nrf9151dk_ext_flash.overlay
 
 LwM2M carrier library support
 =============================
@@ -1402,7 +1394,7 @@ To build the sample with the performance testing configuration and modem tracing
 References
 **********
 
-* `nRF9160 Hardware Verification Guidelines - UART interface`_
+* `nRF9151 Hardware Verification Guidelines - UART interface`_
 
 Dependencies
 ************

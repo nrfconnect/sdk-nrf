@@ -1609,12 +1609,10 @@ int gnss_inject_agnss_data(void)
 	agnss_need.system[system_count].sv_mask_alm = 0xffffffffu;
 	system_count++;
 #if defined(CONFIG_NRF_CLOUD_AGNSS)
-#if !defined(CONFIG_SOC_NRF9160)
 	agnss_need.system[system_count].system_id = NRF_MODEM_GNSS_SYSTEM_QZSS;
 	agnss_need.system[system_count].sv_mask_ephe = 0x3ffu;
 	agnss_need.system[system_count].sv_mask_alm = 0x3ffu;
 	system_count++;
-#endif /* !CONFIG_SOC_NRF9160 */
 #if defined(CONFIG_SOC_SERIES_NRF92)
 	agnss_need.data_flags |= NRF_MODEM_GNSS_AGNSS_GGTO_REQUEST;
 	agnss_need.system[system_count].system_id = NRF_MODEM_GNSS_SYSTEM_GAL;
