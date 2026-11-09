@@ -155,6 +155,14 @@ ci_tests_subsys_net_openthread:
     - nrfxlib/nrf_rpc/
     - zephyr/subsys/net/
 
+ci_tests_subsys_net_dect:
+  files:
+    - nrf/tests/subsys/net/dect/
+    - nrf/subsys/net/dect/
+    - nrf/subsys/nrf_rpc/
+    - nrf/tests/mocks/nrf_rpc/
+    - nrfxlib/nrf_rpc/
+
 ci_samples_wifi:
   files:
     - modules/lib/hostap/
