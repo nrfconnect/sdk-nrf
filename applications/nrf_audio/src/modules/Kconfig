@@ -202,7 +202,6 @@ endif # NRF_AUDIO_SD_CARD_MODULE
 config NRF_AUDIO_SD_CARD_LC3_FILE
 	bool "SD card LC3 file support"
 	depends on NRF_AUDIO_SD_CARD_MODULE
-	default n
 	help
 	  Include support for reading and parsing LC3 files from an SD card.
 
@@ -215,10 +214,9 @@ source "subsys/logging/Kconfig.template.log_config"
 endif # NRF_AUDIO_SD_CARD_LC3_FILE
 
 menuconfig SD_CARD_PLAYBACK
-	bool "Enable playback from SD card"
+	bool "Enable playback from SD card [EXPERIMENTAL]"
 	depends on NRF_AUDIO_SD_CARD_MODULE
 	select EXPERIMENTAL
-	default n
 	select RING_BUFFER
 
 if SD_CARD_PLAYBACK
@@ -243,7 +241,7 @@ source "subsys/logging/Kconfig.template.log_config"
 endif # SD_CARD_PLAYBACK
 
 menuconfig NRF_AUDIO_SD_CARD_LC3_STREAMER
-	bool "Audio SD Card LC3 Streamer"
+	bool "Audio SD Card LC3 Streamer [EXPERIMENTAL]"
 	depends on NRF_AUDIO_SD_CARD_LC3_FILE
 	select EXPERIMENTAL
 
