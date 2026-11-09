@@ -2532,6 +2532,7 @@ void esb_disable(void)
 		esb_suspend();
 
 		sys_timer_deinit();
+		esb_ppi_disable_all();
 		esb_ppi_deinit();
 
 		esb_state = ESB_STATE_UNINITIALIZED;

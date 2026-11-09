@@ -48,6 +48,11 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 
 	nrf_egu_subscribe_set(ESB_EGU, ESB_EGU_TASK, disabled_phy_end_egu);
 
+	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, disabled_phy_end_egu);
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_PHYEND, disabled_phy_end_egu);
+	}
+
 	if (timer_start) {
 		nrf_timer_subscribe_set(ESB_NRF_TIMER_INSTANCE, NRF_TIMER_TASK_START,
 					egu_timer_start);
@@ -58,7 +63,8 @@ void esb_ppi_for_txrx_set(bool rx, bool timer_start)
 	}
 
 	channels_mask = (BIT(egu_timer_start) |
-			 BIT(egu_ramp_up));
+			 BIT(egu_ramp_up) |
+			 BIT(disabled_phy_end_egu));
 
 	nrf_dppi_channels_enable(ESB_DPPIC, channels_mask);
 }
@@ -125,11 +131,14 @@ void esb_ppi_for_retransmission_set(void)
 	nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_TXEN, timer_compare1_radio_txen);
 	nrf_egu_subscribe_set(ESB_EGU, ESB_EGU_TASK, disabled_phy_end_egu);
 
+	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, disabled_phy_end_egu);
 	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_PHYEND, disabled_phy_end_egu);
 		nrf_radio_subscribe_set(NRF_RADIO, NRF_RADIO_TASK_RXEN, disabled_phy_end_egu);
 	}
 
-	nrf_dppi_channels_enable(ESB_DPPIC, BIT(timer_compare1_radio_txen));
+	nrf_dppi_channels_enable(ESB_DPPIC,
+				 BIT(timer_compare1_radio_txen) | BIT(disabled_phy_end_egu));
 }
 
 void esb_ppi_for_retransmission_clear(void)
@@ -271,12 +280,6 @@ int esb_ppi_init(void)
 	}
 	ramp_up_dppi_group = (uint8_t)ch;
 
-	nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_DISABLED, disabled_phy_end_egu);
-	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
-		nrf_radio_publish_set(NRF_RADIO, NRF_RADIO_EVENT_PHYEND, disabled_phy_end_egu);
-	}
-	nrf_dppi_channels_enable(ESB_DPPIC, BIT(disabled_phy_end_egu));
-
 	return 0;
 
 error:
@@ -306,6 +309,10 @@ void esb_ppi_disable_all(void)
 
 	/* Clear Radio */
 	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_ADDRESS);
+	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
+	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
+		nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
+	}
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_RXEN);
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_TXEN);
 	nrf_radio_subscribe_clear(NRF_RADIO, NRF_RADIO_TASK_DISABLE);
@@ -324,12 +331,6 @@ void esb_ppi_disable_all(void)
 
 void esb_ppi_deinit(void)
 {
-	nrf_dppi_channels_disable(ESB_DPPIC, BIT(disabled_phy_end_egu));
-	nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_DISABLED);
-	if (IS_ENABLED(CONFIG_ESB_FAST_SWITCHING)) {
-		nrf_radio_publish_clear(NRF_RADIO, NRF_RADIO_EVENT_PHYEND);
-	}
-
 	uint32_t domain_id = nrfx_gppi_domain_id_get((uint32_t)ESB_DPPIC);
 
 	nrfx_gppi_channel_free(domain_id, radio_address_timer_stop);
