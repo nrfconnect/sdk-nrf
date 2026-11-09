@@ -19,6 +19,7 @@ import input_build
 import input_post_process
 import output_pre_process
 import output_template
+import reuse_detector
 import scancode_toolkit_detector
 import spdx_tag_detector
 from args import SPDX_VERSION_3_0, args, init_args
@@ -36,6 +37,7 @@ detectors = {
     'git-info': git_info_detector.detect,
     'full-text': full_text_detector.detect,
     'scancode-toolkit': scancode_toolkit_detector.detect,
+    'reuse': reuse_detector.detect,
     'cache-database': cache_database_detector.detect,
     'external-file': external_file_detector.detect,
 }
