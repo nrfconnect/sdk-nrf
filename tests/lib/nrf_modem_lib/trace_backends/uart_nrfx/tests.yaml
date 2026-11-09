@@ -1,0 +1,14 @@
+common:
+  sysbuild: true
+  platform_allow: native_sim
+  integration_platforms:
+    - native_sim
+  tags:
+    - nrf_modem_lib
+    - modem_trace
+    - ci_tests_lib_nrf_modem_lib
+tests:
+  trace_backends.uart_nrfx: {}
+  trace_backends.uart_nrfx.no_bounce_buf:
+    extra_args:
+      - uart_nrfx_TEST_BOUNCE_BUF_SZ=0

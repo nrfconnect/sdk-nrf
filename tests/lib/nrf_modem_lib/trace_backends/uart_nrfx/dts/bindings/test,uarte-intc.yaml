@@ -1,0 +1,15 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+description: Dummy interrupt controller for the UARTE trace backend unit test
+
+compatible: "test,uarte-intc"
+
+include: [base.yaml, interrupt-controller.yaml]
+
+interrupt-cells:
+  - irq
+  - priority
