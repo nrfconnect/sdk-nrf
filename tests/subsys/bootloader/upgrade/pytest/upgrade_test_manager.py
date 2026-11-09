@@ -151,7 +151,12 @@ class UpgradeTestManager(ABC):
         logger.debug(f"Hardware counter value set to {value}")
 
     def generate_image(
-        self, app_to_sign: Path | None = None, confirmed: bool = False, rom_fixed: str | None = None
+        self,
+        app_to_sign: Path | None = None,
+        confirmed: bool = False,
+        rom_fixed: str | None = None,
+        overwrite_only: bool = False,
+        overwrite_confirm: bool = False,
     ) -> Path:
         """Sign application image with current version."""
         logger.info(f"Sign app with version {self.get_current_sign_version()}")
@@ -168,12 +173,20 @@ class UpgradeTestManager(ABC):
             rom_fixed_addr = get_code_partition_address(edt_data)
             self.build_params.imgtool_params.rom_fixed = rom_fixed_addr
 
+        extra_args = []
+        if confirmed:
+            extra_args.append("--confirm")
+        if overwrite_only:
+            extra_args.append("--overwrite-only")
+        if overwrite_confirm:
+            extra_args.append("--overwrite-confirm")
+
         if not app_to_sign:
             app_to_sign = self.build_params.app_to_sign
         updated_app = imgtool_sign(
             app_to_sign,
             self.build_params.imgtool_params,
-            extra_args=["--confirm"] if confirmed else None,
+            extra_args=extra_args,
         )
         assert updated_app.is_file()
         return updated_app
