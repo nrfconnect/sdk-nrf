@@ -67,7 +67,7 @@ function(zephyr_mcuboot_tasks)
     message(WARNING "zephyr,flash write block size devicetree parameter is missing, assuming write block size is 4")
   endif()
 
-  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot1_size} --header-size ${CONFIG_ROM_START_OFFSET})
+  set(imgtool_sign ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION} --align ${write_block_size} --slot-size ${slot1_size} --header-size ${CONFIG_ROM_START_OFFSET} --overwrite-only)
 
   # Arguments to imgtool.
   if(NOT CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS STREQUAL "")

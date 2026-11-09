@@ -5,6 +5,150 @@
 # data coming from the devicetree for configurations using
 # a bootloader.
 
+# Takes a node path to a partition and goes up until a parent with the soc-nv-flash compatible
+# is found, then returns the path for that device
+function(dt_get_nvm_device node nvm_device dt_source)
+  string(FIND "${node}" "/" node_first_slash)
+  string(FIND "${node}" "/" node_final_slash REVERSE)
+  string(SUBSTRING "${node}" 0 ${node_final_slash} current_path)
+
+  while(${node_final_slash} GREATER ${node_first_slash})
+    set(current_compatible)
+    dt_prop(current_compatible PATH "${current_path}" PROPERTY "compatible" TARGET ${dt_source})
+
+    if("soc-nv-flash" IN_LIST current_compatible)
+      set(${nvm_device} ${current_path} PARENT_SCOPE)
+      break()
+    elseif("fixed-partitions" IN_LIST current_compatible)
+      string(FIND "${current_path}" "/" node_final_slash REVERSE)
+      string(SUBSTRING "${current_path}" 0 ${node_final_slash} current_path)
+      set(${nvm_device} ${current_path} PARENT_SCOPE)
+      break()
+    endif()
+
+    string(FIND "${current_path}" "/" node_final_slash REVERSE)
+    string(SUBSTRING "${current_path}" 0 ${node_final_slash} current_path)
+  endwhile()
+endfunction()
+
+# Takes a node path to a partition and goes up until a parent with the soc-nv-flash compatible
+# is found, then reads the erase and write block sizes from it
+function(dt_get_erase_write_block_sizes node erase_block_size write_block_size dt_source)
+  dt_get_nvm_device(${node} nvm_path "${dt_source}")
+  if(DEFINED nvm_path)
+    dt_prop(erase_size PATH "${nvm_path}" PROPERTY "erase-block-size" TARGET ${dt_source})
+    dt_prop(write_size PATH "${nvm_path}" PROPERTY "write-block-size" TARGET ${dt_source})
+    set(${erase_block_size} ${erase_size} PARENT_SCOPE)
+    set(${write_block_size} ${write_size} PARENT_SCOPE)
+  endif()
+endfunction()
+
+# Calculate the maximum number of sectors required to update the firmware
+function(dt_get_max_sectors var)
+  set(image 0)
+  set(auto_min_sectors 0)
+
+  if("mcuboot" IN_LIST IMAGES)
+    set(dt_source "mcuboot")
+  else()
+    set(dt_source "${DEFAULT_IMAGE}")
+  endif()
+
+  if(SB_CONFIG_BOOTLOADER_MCUBOOT)
+    # If sysbuild configs are available, use them to determine the number of updateable images
+    math(EXPR mcuboot_total_images "${SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES} +
+      ${SB_CONFIG_MCUBOOT_ADDITIONAL_UPDATEABLE_IMAGES}")
+  elseif(CONFIG_UPDATEABLE_IMAGE_NUMBER)
+    # If image-level config is available, use it to determine the number of updateable images
+    set(mcuboot_total_images ${CONFIG_UPDATEABLE_IMAGE_NUMBER})
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_FIRMWARE_UPDATER)
+    set(mcuboot_total_images 1)
+  else()
+    set(${var} 0 PARENT_SCOPE)
+    return()
+  endif()
+
+  while(${image} LESS ${mcuboot_total_images})
+    set(secondary_slot_flash)
+    set(secondary_slot_size)
+    set(erase_size_secondary_slot)
+    set(write_size_secondary_slot)
+    math(EXPR primary_slot "${image} * 2")
+
+    dt_nodelabel(primary_slot_flash NODELABEL "slot${primary_slot}_partition" TARGET ${dt_source})
+    if(NOT DEFINED primary_slot_flash)
+      message(STATUS
+        "slot${primary_slot}_partition not found. Skip reading erase/write block sizes.")
+      math(EXPR image "${image} + 1")
+      continue()
+    endif()
+
+    dt_get_erase_write_block_sizes(${primary_slot_flash} erase_size_primary_slot
+      write_size_primary_slot "${dt_source}")
+
+    dt_prop(primary_slot_size PATH "${primary_slot_flash}" PROPERTY "reg" INDEX 1 TARGET
+      ${dt_source})
+    if(DEFINED primary_slot_size AND DEFINED erase_size_primary_slot)
+      math(EXPR remainder "${primary_slot_size} % ${erase_size_primary_slot}")
+      if(NOT remainder EQUAL 0)
+        message(FATAL_ERROR "slot${primary_slot}_partition size (${primary_slot_size}) is not "
+          "divisible by erase block size (${erase_size_primary_slot})"
+        )
+      endif()
+      math(EXPR slot_min_sectors "${primary_slot_size} / ${erase_size_primary_slot}")
+
+      if(${slot_min_sectors} GREATER ${auto_min_sectors})
+        set(auto_min_sectors ${slot_min_sectors})
+      endif()
+    else()
+      message(WARNING "Unable to determine erase size/total size of slot${primary_slot} partition")
+    endif()
+
+    # Check if the selected bootloader mode requires a secondary slot.
+    if(NOT CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP AND NOT
+      CONFIG_MCUBOOT_BOOTLOADER_MODE_SINGLE_APP_RAM_LOAD AND NOT
+      CONFIG_MCUBOOT_BOOTLOADER_MODE_OVERWRITE_ONLY
+    )
+      math(EXPR secondary_slot "${primary_slot} + 1")
+
+      dt_nodelabel(secondary_slot_flash NODELABEL "slot${secondary_slot}_partition" TARGET
+        ${dt_source})
+      if(NOT DEFINED secondary_slot_flash)
+        message(STATUS
+          "slot${secondary_slot}_partition not found. Skip reading erase/write block sizes.")
+        math(EXPR image "${image} + 1")
+        continue()
+      endif()
+
+      dt_get_erase_write_block_sizes(${secondary_slot_flash} erase_size_secondary_slot
+        write_size_secondary_slot "${dt_source}")
+
+      dt_prop(secondary_slot_size PATH "${secondary_slot_flash}" PROPERTY "reg" INDEX 1 TARGET
+        ${dt_source})
+      if(DEFINED secondary_slot_size AND DEFINED erase_size_secondary_slot)
+        math(EXPR remainder "${secondary_slot_size} % ${erase_size_secondary_slot}")
+        if(NOT remainder EQUAL 0)
+          message(FATAL_ERROR "slot${secondary_slot}_partition size (${secondary_slot_size}) is "
+            "not divisible by erase block size (${erase_size_secondary_slot})"
+          )
+        endif()
+        math(EXPR slot_min_sectors "${secondary_slot_size} / ${erase_size_secondary_slot}")
+
+        if(${slot_min_sectors} GREATER ${auto_min_sectors})
+          set(auto_min_sectors ${slot_min_sectors})
+        endif()
+      else()
+        message(WARNING
+          "Unable to determine erase size/total size of slot${secondary_slot} partition")
+      endif()
+    endif()
+
+    math(EXPR image "${image} + 1")
+  endwhile()
+
+  set(${var} ${auto_min_sectors} PARENT_SCOPE)
+endfunction()
+
 function(dt_get_parent node)
   string(FIND "${${node}}" "/" pos REVERSE)
 

@@ -134,6 +134,26 @@ function(zephyr_mcuboot_tasks)
     set(imgtool_internal_rom_command --rom-fixed ${slot_address})
   endif()
 
+  dt_get_max_sectors(mcuboot_image_max_sectors)
+  if(mcuboot_image_max_sectors GREATER 0)
+    set(imgtool_internal_rom_command ${imgtool_internal_rom_command} --max-sectors ${mcuboot_image_max_sectors})
+    set(imgtool_external_rom_command ${imgtool_external_rom_command} --max-sectors ${mcuboot_image_max_sectors})
+  else()
+    message(WARNING "CONFIG_BOOT_MAX_IMG_SECTORS is not defined, falling back to 128 (default).")
+  endif()
+
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP OR CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+    # Do not reserve space for the swap area.
+    set(imgtool_internal_rom_command ${imgtool_internal_rom_command} --overwrite-only)
+    set(imgtool_external_rom_command ${imgtool_external_rom_command} --overwrite-only)
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
+    CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
+  )
+    # Reserve space only for the image_ok/copy_done/swap_info fields.
+    set(imgtool_internal_rom_command ${imgtool_internal_rom_command} --overwrite-confirm)
+    set(imgtool_external_rom_command ${imgtool_external_rom_command} --overwrite-confirm)
+  endif()
+
   if(CONFIG_BUILD_WITH_TFM)
     set(imgtool_header_size ${CONFIG_TFM_MCUBOOT_HEADER_SIZE})
     set(imgtool_internal_pad_header --pad-header)

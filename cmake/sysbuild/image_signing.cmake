@@ -71,9 +71,27 @@ function(zephyr_mcuboot_tasks)
   dt_reg_size(slot_size PATH "${slot0_flash}" REQUIRED)
 
   set(imgtool_rom_command)
+
+  dt_get_max_sectors(mcuboot_image_max_sectors)
+  if(mcuboot_image_max_sectors GREATER 0)
+    set(imgtool_rom_command ${imgtool_rom_command} --max-sectors ${mcuboot_image_max_sectors})
+  else()
+    message(WARNING "CONFIG_BOOT_MAX_IMG_SECTORS is not defined, falling back to 128 (default).")
+  endif()
+
+  if(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP OR CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
+    # Do not reserve space for the swap area.
+    set(imgtool_rom_command ${imgtool_rom_command} --overwrite-only)
+  elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
+    CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
+  )
+    # Reserve space only for the image_ok/copy_done/swap_info fields.
+    set(imgtool_rom_command ${imgtool_rom_command} --overwrite-confirm)
+  endif()
+
   if(CONFIG_MCUBOOT_IMGTOOL_OVERWRITE_ONLY)
     # Use overwrite-only instead of swap upgrades.
-    set(imgtool_rom_command --overwrite-only --align 1)
+    set(imgtool_rom_command ${imgtool_rom_command} --overwrite-only --align 1)
   elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD OR
     CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
   )
@@ -86,9 +104,10 @@ function(zephyr_mcuboot_tasks)
     dt_reg_addr(slot1_partition_address PATH ${slot1_partition})
 
     if(CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD)
-      set(imgtool_rom_command --align 1 --load-addr ${chosen_ram_address})
+      set(imgtool_rom_command ${imgtool_rom_command} --align 1 --load-addr ${chosen_ram_address})
     else() # CONFIG_MCUBOOT_BOOTLOADER_MODE_RAM_LOAD_WITH_REVERT
-      set(imgtool_rom_command --align ${write_block_size} --load-addr ${chosen_ram_address})
+      set(imgtool_rom_command ${imgtool_rom_command} --align ${write_block_size} --load-addr
+        ${chosen_ram_address})
     endif()
     set(imgtool_rom_command ${imgtool_rom_command} --hex-addr ${slot0_partition_address})
     set(imgtool_rom_alt_slot_command ${imgtool_rom_command} --hex-addr ${slot1_partition_address})
@@ -100,16 +119,17 @@ function(zephyr_mcuboot_tasks)
       dt_chosen(chosen_ram PROPERTY "zephyr,sram")
       dt_reg_addr(load_address PATH ${chosen_ram})
     endif()
-    set(imgtool_rom_command --align 1 --load-addr ${load_address})
+    set(imgtool_rom_command ${imgtool_rom_command} --align 1 --load-addr ${load_address})
   elseif(CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP_WITH_REVERT OR
     CONFIG_MCUBOOT_BOOTLOADER_MODE_DIRECT_XIP
   )
     dt_chosen(code_partition PROPERTY "zephyr,code-partition")
     dt_partition_addr(code_partition_offset PATH "${code_partition}" REQUIRED)
     dt_reg_size(slot_size PATH "${code_partition}" REQUIRED)
-    set(imgtool_rom_command --rom-fixed ${code_partition_offset} --align ${write_block_size})
+    set(imgtool_rom_command ${imgtool_rom_command} --rom-fixed ${code_partition_offset} --align
+      ${write_block_size})
   else()
-    set(imgtool_rom_command --align ${write_block_size})
+    set(imgtool_rom_command ${imgtool_rom_command} --align ${write_block_size})
   endif()
 
   # Set ih_load_addr to the code partition address using --rom-fixed.

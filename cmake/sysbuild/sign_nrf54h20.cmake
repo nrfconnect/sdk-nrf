@@ -17,7 +17,8 @@ function(check_merged_slot_boundaries merged_partition images)
 
   # Calculate boundaries of the usable area.
   sysbuild_get(mcuboot_image_footer_size IMAGE mcuboot CACHE)
-  math(EXPR slot_max_addr "${slot_addr} + ${slot_size} - ${mcuboot_image_footer_size}" OUTPUT_FORMAT HEXADECIMAL)
+  math(EXPR slot_max_addr "${slot_addr} + ${slot_size} - ${mcuboot_image_footer_size}" OUTPUT_FORMAT
+    HEXADECIMAL)
   math(EXPR slot_min_addr "${slot_addr} + ${MCUBOOT_HEADER_SIZE}" OUTPUT_FORMAT HEXADECIMAL)
 
   # Iterate over images and check that they fit in the merged slots.
@@ -316,8 +317,23 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
     list(APPEND imgtool_depends ${tlv_extra_sign_depends})
   endif()
 
+  dt_get_max_sectors(mcuboot_image_max_sectors)
+  if(mcuboot_image_max_sectors GREATER 0)
+    set(imgtool_args ${imgtool_args} --max-sectors ${mcuboot_image_max_sectors})
+  else()
+    message(WARNING "CONFIG_BOOT_MAX_IMG_SECTORS is not defined, falling back to 128 (default).")
+  endif()
+
   if(SB_CONFIG_MCUBOOT_MODE_FIRMWARE_UPDATER OR SB_CONFIG_MCUBOOT_MODE_OVERWRITE_ONLY)
     set(imgtool_args --overwrite-only ${imgtool_args})
+  elseif(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP OR SB_CONFIG_MCUBOOT_MODE_RAM_LOAD)
+    # Do not reserve space for the swap area.
+    set(imgtool_args ${imgtool_args} --overwrite-only)
+  elseif(SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT OR
+         SB_CONFIG_MCUBOOT_MODE_RAM_LOAD_WITH_REVERT
+  )
+    # Reserve space only for the image_ok/copy_done/swap_info fields.
+    set(imgtool_args ${imgtool_args} --overwrite-confirm)
   endif()
 
   # Basic 'imgtool sign' command with known image information.
@@ -351,10 +367,12 @@ function(mcuboot_sign_merged_nrf54h20 merged_hex main_image merged_images)
   # Set --rom_fixed parameter to the code partition address.
   # This allows to use the header load_address field during image resolution for encrypted images.
   set(imgtool_set_rom_fixed_address)
-  sysbuild_get(imgtool_set_rom_fixed_address IMAGE ${main_image} VAR CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS KCONFIG)
+  sysbuild_get(imgtool_set_rom_fixed_address IMAGE ${main_image} VAR
+    CONFIG_NCS_MCUBOOT_IMGTOOL_SET_ROM_FIXED_ADDRESS KCONFIG)
   if(imgtool_set_rom_fixed_address)
     dt_chosen(code_partition PROPERTY "zephyr,code-partition" TARGET "${main_image}")
-    dt_partition_addr(code_partition_address PATH "${code_partition}" TARGET "${main_image}" ABSOLUTE REQUIRED)
+    dt_partition_addr(code_partition_address PATH "${code_partition}" TARGET "${main_image}"
+      ABSOLUTE REQUIRED)
     set(imgtool_args ${imgtool_args} --rom-fixed ${code_partition_address})
   endif()
 
