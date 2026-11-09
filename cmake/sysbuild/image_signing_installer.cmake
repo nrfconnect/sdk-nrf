@@ -89,7 +89,7 @@ set(imgtool_rom_command --rom-fixed ${slot0_addr})
 set(imgtool_sign
   ${PYTHON_EXECUTABLE} ${IMGTOOL} sign --version ${fw_loader_version}
   --align ${write_block_size} --slot-size ${slot0_size} ${pad_header}
-  --header-size ${header_size} ${imgtool_rom_command})
+  --header-size ${header_size} ${imgtool_rom_command} --overwrite-only)
 
 # Fetch extra arguments to imgtool from the main image Kconfig.
 set(CONFIG_MCUBOOT_EXTRA_IMGTOOL_ARGS)
