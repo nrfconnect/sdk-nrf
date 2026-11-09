@@ -205,7 +205,8 @@ To set the MCUboot mode of operations to the RAM load mode, enable the :kconfig:
 To support the RAM load mode, you must define the custom memory layout for the RAM in your target board configuration.
 Your RAM layout must define the following DTS child nodes as part of the ``cpuapp_sram`` DTS node in the address order listed below:
 
-* ``cpuapp_sram_app_rxm_region`` - This DTS node defines the hard limits for the executable ROM section (with the application image) and must be aligned with the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START` and the :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE` Kconfig options that are set in the MCUboot image configuration.
+* ``cpuapp_sram_app_rxm_region`` - This DTS node defines the hard limits for the executable ROM section (with the application image).
+  Set ``/chosen/mcuboot,image-ram`` in both the MCUboot and application images to point to this node so that the Kconfig options :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_START` and :kconfig:option:`CONFIG_BOOT_IMAGE_EXECUTABLE_RAM_SIZE` default from the devicetree (they can still be overridden in the :file:`.conf` file if needed).
   This DTS node describes the region in which the build system places the executable ROM section (code) and RAM section (data) of the application image.
   The RAM section is located right after the ROM section - the RAM section may overflow the ``cpuapp_sram_app_rxm_region`` region and spill into the subsequent ``cpuapp_sram_mcuboot_ram_region`` region or even be entirely contained in this subsequent region.
   The ``cpuapp_sram_mcuboot_ram_region`` region can be filled with the RAM section of the application image, as the application and bootloader code cannot run simultaneously.
