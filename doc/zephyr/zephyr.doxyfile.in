@@ -15,23 +15,6 @@ STRIP_FROM_PATH        = @DOCSET_SOURCE_BASE@/include
 
 STRIP_FROM_INC_PATH    =
 
-ALIASES               += "kconfig{1}=\verbatim \1 \endverbatim" \
-                         "req{1}=\ref ZEPH_\1 \"ZEPH-\1\"" \
-                         "satisfy{1}=\xrefitem satisfy \"Satisfies requirement\" \"Requirement Implementation\" \1" \
-                         "verify{1}=\xrefitem verify \"Verifies requirement\" \"Requirement Verification\" \1" \
-                         "kconfig_dep{1}=\attention Available only when the following Kconfig option is enabled: \kconfig{\1}." \
-                         "kconfig_dep{2}=\attention Available only when the following Kconfig options are enabled: \kconfig{\1}, \kconfig{\2}." \
-                         "kconfig_dep{3}=\attention Available only when the following Kconfig options are enabled: \kconfig{\1}, \kconfig{\2}, \kconfig{\3}." \
-                         "funcprops=\par \"Function properties (list may not be complete)\"" \
-                         "reschedule=\qualifier reschedule" \
-                         "sleep=\qualifier sleep" \
-                         "no_wait=\qualifier no-wait" \
-                         "isr_ok=\qualifier isr-ok" \
-                         "pre_kernel_ok=\qualifier pre-kernel-ok" \
-                         "async=\qualifier async" \
-                         "atomic_api=As for all atomic APIs, includes a full/sequentially-consistent memory barrier (where applicable)." \
-                         "supervisor=\qualifier supervisor"
-
 # Aliases to help structure the API documentation for "driver ops"
 ALIASES               += "def_driverbackendgroup{2}=\defgroup \2_backend \1 Driver Backend API ^^\
                                                     \brief This group contains the API type definitions, callback signatures, and other helpers required to implement a \1 driver. ^^\
