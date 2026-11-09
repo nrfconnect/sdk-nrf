@@ -260,10 +260,10 @@ void esb_ppi_disable_all(void)
 	nrf_ppi_channel_and_fork_endpoint_setup(NRF_PPI, egu_timer_start, 0, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_address_timer_stop, 0, 0);
 	nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare0_radio_disable, 0, 0);
-	nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start, 0, 0);
+	nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare1_radio_txen, 0, 0);
 
 	if (IS_ENABLED(CONFIG_ESB_NEVER_DISABLE_TX)) {
-		nrf_ppi_channel_endpoint_setup(NRF_PPI, timer_compare1_radio_txen, 0, 0);
+		nrf_ppi_channel_endpoint_setup(NRF_PPI, radio_end_timer_start, 0, 0);
 	}
 
 	/* Remove channel from group */
