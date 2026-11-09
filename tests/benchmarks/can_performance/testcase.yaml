@@ -3,12 +3,15 @@ common:
     - drivers
     - can
     - ci_tests_benchmarks_can_performance
-  timeout: 60
+  timeout: 90
   sysbuild: true
   integration_platforms:
     - nrf54h20dk/nrf54h20/cpuapp
   platform_allow:
     - nrf54h20dk/nrf54h20/cpuapp
+    - nrf54l15dk/nrf54l15/cpuapp
+    - nrf54lm20dk/nrf54lm20a/cpuapp
+    - nrf54lm20dk/nrf54lm20b/cpuapp
 
 tests:
   benchmarks.can_performance.manual:
