@@ -55,7 +55,7 @@ static __maybe_unused uint32_t coeff_from_half_byte_eta4(uint8_t b, int32_t *out
  * 192 -> ML-DSA-65, 256 -> ML-DSA-87.
  */
 
-#if defined(PSA_NEED_CRACEN_ML_DSA_44)
+#if defined(PSA_NEED_CRACEN_ML_DSA_44) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_44)
 static const ml_dsa_params_t ml_dsa_44_params = {
 	.rows_k = 4,
 	.columns_l = 4,
@@ -71,9 +71,9 @@ static const ml_dsa_params_t ml_dsa_44_params = {
 	.pk_size = 1312,
 	.sig_size = 2420,
 };
-#endif /* PSA_NEED_CRACEN_ML_DSA_44 */
+#endif /* PSA_NEED_CRACEN_ML_DSA_44 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_44 */
 
-#if defined(PSA_NEED_CRACEN_ML_DSA_65)
+#if defined(PSA_NEED_CRACEN_ML_DSA_65) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_65)
 static const ml_dsa_params_t ml_dsa_65_params = {
 	.rows_k = 6,
 	.columns_l = 5,
@@ -89,9 +89,9 @@ static const ml_dsa_params_t ml_dsa_65_params = {
 	.pk_size = 1952,
 	.sig_size = 3309,
 };
-#endif /* PSA_NEED_CRACEN_ML_DSA_65 */
+#endif /* PSA_NEED_CRACEN_ML_DSA_65 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_65 */
 
-#if defined(PSA_NEED_CRACEN_ML_DSA_87)
+#if defined(PSA_NEED_CRACEN_ML_DSA_87) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_87)
 static const ml_dsa_params_t ml_dsa_87_params = {
 	.rows_k = 8,
 	.columns_l = 7,
@@ -107,23 +107,23 @@ static const ml_dsa_params_t ml_dsa_87_params = {
 	.pk_size = 2592,
 	.sig_size = 4627,
 };
-#endif /* PSA_NEED_CRACEN_ML_DSA_87 */
+#endif /* PSA_NEED_CRACEN_ML_DSA_87 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_87 */
 
 const ml_dsa_params_t *cracen_ml_dsa_params_get(size_t bits)
 {
 	switch (bits) {
-#if defined(PSA_NEED_CRACEN_ML_DSA_44)
+#if defined(PSA_NEED_CRACEN_ML_DSA_44) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_44)
 	case 128:
 		return &ml_dsa_44_params;
-#endif /* PSA_NEED_CRACEN_ML_DSA_44 */
-#if defined(PSA_NEED_CRACEN_ML_DSA_65)
+#endif /* PSA_NEED_CRACEN_ML_DSA_44 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_44 */
+#if defined(PSA_NEED_CRACEN_ML_DSA_65) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_65)
 	case 192:
 		return &ml_dsa_65_params;
-#endif /* PSA_NEED_CRACEN_ML_DSA_65 */
-#if defined(PSA_NEED_CRACEN_ML_DSA_87)
+#endif /* PSA_NEED_CRACEN_ML_DSA_65 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_65 */
+#if defined(PSA_NEED_CRACEN_ML_DSA_87) || defined(CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_87)
 	case 256:
 		return &ml_dsa_87_params;
-#endif /* PSA_NEED_CRACEN_ML_DSA_87 */
+#endif /* PSA_NEED_CRACEN_ML_DSA_87 || CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_87 */
 	default:
 		return NULL;
 	}

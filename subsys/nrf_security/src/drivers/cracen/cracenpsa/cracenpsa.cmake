@@ -88,7 +88,7 @@ if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_RSA)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA)
+if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA OR CONFIG_NEED_CRACEN_HYBRID_VERIFY_ML_DSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa.c
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/ml_dsa/cracen_ml_dsa_verify.c
@@ -114,7 +114,9 @@ if(CONFIG_PSA_NEED_CRACEN_ML_KEM)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA OR CONFIG_PSA_NEED_CRACEN_ML_KEM)
+if(CONFIG_PSA_NEED_CRACEN_ASYMMETRIC_SIGNATURE_ANY_ML_DSA OR
+   CONFIG_NEED_CRACEN_HYBRID_VERIFY_ML_DSA OR
+   CONFIG_PSA_NEED_CRACEN_ML_KEM)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/internal/pqc/cracen_pqc_xof.c
   )
@@ -126,7 +128,8 @@ if(CONFIG_CRACEN_HYBRID_VERIFY)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER)
+# The XOF functions use the hash functions, also when only used internally.
+if(CONFIG_PSA_NEED_CRACEN_HASH_DRIVER OR CONFIG_NEED_CRACEN_HYBRID_VERIFY_ML_DSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_hash.c
   )
@@ -140,7 +143,15 @@ if(CONFIG_PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
   )
 endif()
 
-if(CONFIG_PSA_NEED_CRACEN_XOF_DRIVER)
+# AES-MMO is composed from single-block AES-ECB operations instead of using the
+# hash hardware, so it does not depend on the cipher sources being available.
+if(CONFIG_PSA_NEED_CRACEN_AES_MMO_ZIGBEE)
+  list(APPEND cracen_driver_sources
+    ${CMAKE_CURRENT_LIST_DIR}/src/internal/aes/cracen_aes_mmo.c
+  )
+endif()
+
+if(CONFIG_PSA_NEED_CRACEN_XOF_DRIVER OR CONFIG_NEED_CRACEN_HYBRID_VERIFY_ML_DSA)
   list(APPEND cracen_driver_sources
     ${CMAKE_CURRENT_LIST_DIR}/src/cracen_psa_xof.c
   )
