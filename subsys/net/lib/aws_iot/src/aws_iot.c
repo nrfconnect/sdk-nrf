@@ -11,6 +11,7 @@
 #include <net/aws_fota.h>
 #include <net/mqtt_helper.h>
 #include <stdio.h>
+#include <string.h>
 
 LOG_MODULE_REGISTER(aws_iot, CONFIG_AWS_IOT_LOG_LEVEL);
 
@@ -119,32 +120,6 @@ static struct suback_conf {
 
 /* Semaphore used to wait for acknowledgment of MQTT subscriptions. */
 static K_SEM_DEFINE(subs_acked_sem, 0, 1);
-
-/* Include size flavour of strstr for safety. */
-#if defined(CONFIG_EXTERNAL_LIBC)
-/* Pull in memmem and strnstr due to being an extension to the C library and
- * not included by default.
- */
-extern void *memmem(const void *haystack, size_t hs_len, const void *needle, size_t ne_len);
-extern size_t strnlen(const char *s, size_t maxlen);
-static char *strnstr(const char *haystack, const char *needle, size_t haystack_len)
-{
-	if (!haystack || !needle) {
-		return NULL;
-	}
-	size_t needle_len = strnlen(needle, haystack_len);
-
-	if (needle_len < haystack_len || !needle[needle_len]) {
-		char *x = memmem(haystack, haystack_len, needle, needle_len);
-	if (x && !memchr(haystack, 0, x - haystack))
-		return x;
-	}
-
-	return NULL;
-}
-#else
-extern char *strnstr(const char *haystack, const char *needle, size_t haystack_sz);
-#endif
 
 /* Forward declarations */
 static void device_shadow_document_request(void);
@@ -493,26 +468,63 @@ static void on_disconnect(int result)
 	module_evt_handler(&evt);
 }
 
+/* Check if a topic that is not null-terminated is equal to a string. */
+static bool topic_equals(const char *topic_str, size_t topic_len, const char *str)
+{
+	return (topic_len == strlen(str)) && (memcmp(topic_str, str, topic_len) == 0);
+}
+
+/* The library recognizes supported classic shadow response topics by the format
+ * $aws/things/<thing-name>/shadow/<operation>. The function reports any other topic as
+ * AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC.
+ */
 static enum aws_iot_shadow_topic_received_type topic_type_set(const char *topic_str,
 							      size_t topic_len)
 {
-	if (strnstr(topic_str, "get/accepted", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED;
-	} else if (strnstr(topic_str, "get/rejected", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_GET_REJECTED;
-	} else if (strnstr(topic_str, "update/delta", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_UPDATE_DELTA;
-	} else if (strnstr(topic_str, "update/accepted", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_UPDATE_ACCEPTED;
-	} else if (strnstr(topic_str, "update/rejected", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_UPDATE_REJECTED;
-	} else if (strnstr(topic_str, "delete/accepted", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_DELETE_ACCEPTED;
-	} else if (strnstr(topic_str, "delete/rejected", topic_len)) {
-		return AWS_IOT_SHADOW_TOPIC_DELETE_REJECTED;
-	} else {
+	const char *const shadow = "shadow/";
+	const char *name_end;
+
+	if (topic_len <= strlen(AWS_TOPIC) ||
+	    memcmp(topic_str, AWS_TOPIC, strlen(AWS_TOPIC)) != 0) {
 		return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
 	}
+
+	topic_str += strlen(AWS_TOPIC);
+	topic_len -= strlen(AWS_TOPIC);
+
+	/* Skip the thing name. */
+	name_end = memchr(topic_str, '/', topic_len);
+	if (name_end == NULL) {
+		return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+	}
+
+	topic_len -= (name_end + 1) - topic_str;
+	topic_str = name_end + 1;
+
+	if (topic_len <= strlen(shadow) || memcmp(topic_str, shadow, strlen(shadow)) != 0) {
+		return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
+	}
+
+	topic_str += strlen(shadow);
+	topic_len -= strlen(shadow);
+
+	if (topic_equals(topic_str, topic_len, "get/accepted")) {
+		return AWS_IOT_SHADOW_TOPIC_GET_ACCEPTED;
+	} else if (topic_equals(topic_str, topic_len, "get/rejected")) {
+		return AWS_IOT_SHADOW_TOPIC_GET_REJECTED;
+	} else if (topic_equals(topic_str, topic_len, "update/delta")) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_DELTA;
+	} else if (topic_equals(topic_str, topic_len, "update/accepted")) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_ACCEPTED;
+	} else if (topic_equals(topic_str, topic_len, "update/rejected")) {
+		return AWS_IOT_SHADOW_TOPIC_UPDATE_REJECTED;
+	} else if (topic_equals(topic_str, topic_len, "delete/accepted")) {
+		return AWS_IOT_SHADOW_TOPIC_DELETE_ACCEPTED;
+	} else if (topic_equals(topic_str, topic_len, "delete/rejected")) {
+		return AWS_IOT_SHADOW_TOPIC_DELETE_REJECTED;
+	}
+
+	return AWS_IOT_SHADOW_TOPIC_APPLICATION_SPECIFIC;
 }
 
 static void on_publish(struct mqtt_helper_buf topic, struct mqtt_helper_buf payload)

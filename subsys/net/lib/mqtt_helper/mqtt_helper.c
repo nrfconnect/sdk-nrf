@@ -242,10 +242,39 @@ static int certificates_provision(void)
 }
 #endif /* CONFIG_MQTT_HELPER_PROVISION_CERTIFICATES */
 
+/* Read out and drop the payload of a message that does not fit in the payload buffer.
+ * An unread payload would keep the MQTT client busy and the next mqtt_input() call would fail.
+ */
+static int publish_payload_discard(struct mqtt_client *const mqtt_client, size_t length)
+{
+	while (length > 0) {
+		int ret = mqtt_read_publish_payload_blocking(mqtt_client, payload_buf,
+							     MIN(length, sizeof(payload_buf)));
+
+		if (ret < 0) {
+			return ret;
+		} else if (ret == 0) {
+			return -EIO;
+		}
+
+		length -= ret;
+	}
+
+	return 0;
+}
+
 static int publish_get_payload(struct mqtt_client *const mqtt_client, size_t length)
 {
 	if (length > sizeof(payload_buf)) {
+		int err;
+
 		LOG_ERR("Incoming MQTT message too large for payload buffer");
+
+		err = publish_payload_discard(mqtt_client, length);
+		if (err) {
+			LOG_ERR("Failed to discard the payload, error: %d", err);
+		}
+
 		return -EMSGSIZE;
 	}
 
