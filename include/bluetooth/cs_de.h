@@ -118,6 +118,13 @@ cs_de_quality_t cs_de_calc(cs_de_report_t *p_report);
  * @brief Calculates a distance estimate based on the IFFT magnitude of the input IQ values.
  * Note! After calling this function, the input IQ values in iq_tones_comb are overwritten with the
  * IFFT magnitude.
+ *
+ * @note All CS_DE_NUM_CHANNELS slots are used. A slot without a measured tone, for example, a
+ * tone rejected by its quality indicator or a channel excluded from the channel map, must be
+ * passed as zero. A large contiguous block of zero slots acts as a window on the channel response
+ * and creates side lobes in the IFFT magnitude, which can be selected as the first path and give a
+ * distance that is too short. Check the number of measured tones and the largest contiguous gap
+ * before relying on this estimate.
  * @param[inout] iq_tones_comb combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
  * elements should match the format described in @ref cs_de_combined_iq_calculate, and the
  * remaining elements must be zero. On return, element k, for k from 0 to

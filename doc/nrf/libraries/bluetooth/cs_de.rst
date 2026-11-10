@@ -33,6 +33,20 @@ Usage
 
 See :ref:`channel_sounding_ras_initiator`.
 
+Missing tones
+=============
+
+The distance estimation functions expect IQ values for all 75 channels, from channel 2 to channel 76.
+A channel without a measured tone must be passed as zero.
+This is the case for channels 23 to 25, for channels excluded from the channel map, and for tones that the application rejects, for example, due to their tone quality indicator.
+
+A large contiguous block of missing tones acts as a window on the channel response and creates side lobes in the magnitude of the inverse fast Fourier transform (IFFT).
+The IFFT method can select such a side lobe as the first path, which gives a too short distance.
+This can happen, for example, when a busy Wi-Fi channel lowers the quality of the tones that overlap it.
+The phase slope method uses only pairs of adjacent measured tones and is less affected by gaps.
+
+Before you rely on the IFFT estimate, check the number of measured tones and the largest contiguous gap in the procedure.
+
 API documentation
 *****************
 
