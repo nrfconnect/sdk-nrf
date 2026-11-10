@@ -9,5 +9,6 @@ zephyr_library_sources(vtf_capture.c)
 
 zephyr_library_sources_ifdef(CONFIG_VTF_DIE_TEMP_MONITOR temperature_monitor.c)
 zephyr_library_sources_ifdef(CONFIG_VTF_BATTERY_VOLTAGE_MONITOR battery_monitor.c)
+zephyr_library_sources_ifdef(CONFIG_VTF_FREQ_OFFSET_MONITOR xo_offset_monitor.c)
 
 zephyr_include_directories(.)
