@@ -20,3 +20,6 @@ tests:
     extra_configs:
       - CONFIG_VTF_BATTERY_VOLTAGE_MONITOR=n
       - CONFIG_SAMPLE_VTF_CUSTOM_BATTERY_VOLTAGE_MONITOR=y
+  sample.vtf_monitoring.xo_offset_uicr_override:
+    extra_dtc_overlay_files:
+      - "xo_offset_uicr.overlay"
