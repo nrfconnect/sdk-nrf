@@ -24,7 +24,7 @@ Programming the AT Client sample
 ********************************
 
 You must program the :ref:`at_client_sample` sample to your device to control the security tags in the modem.
-See the `nRF91x1 AT Commands Reference Guide`_  or `nRF9160 AT Commands Reference Guide`_ for documentation on each AT command.
+See the `nRF91x1 AT Commands Reference Guide`_ for documentation on each AT command.
 Also, you must provision the bootstrap credentials for the security tag (that you have specified in :kconfig:option:`CONFIG_LWM2M_CLIENT_UTILS_BOOTSTRAP_TLS_TAG` Kconfig option) to the nRF91 Series modem.
 
 Provisioning the identity and security credentials
@@ -39,7 +39,7 @@ To provision the credentials, complete the following steps:
       AT%CMNG=3,<TAG>,3
       AT%CMNG=3,<TAG>,4
 
-   See the `Credential storage management %CMNG`_ section in the nRF9160 AT Commands Reference Guide or the `same section <nRF91x1 credential storage management %CMNG_>`_ in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
+   See the `Credential storage management %CMNG <nRF91x1 credential storage management %CMNG_>`_ section in the nRF91x1 AT Commands Reference Guide.
 
 #. Identify the device IMEI by issuing the command ``AT+CGSN``:
 
