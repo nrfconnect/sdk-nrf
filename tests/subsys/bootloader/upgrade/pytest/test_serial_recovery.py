@@ -108,3 +108,16 @@ def test_serial_recovery_timeout(dut: DeviceAdapter, mcumgr: MCUmgr):
     assert shell.wait_for_prompt(timeout=10), (
         "Application shell should be available after recovery timeout"
     )
+
+
+@pytest.mark.usefixtures("no_reset")
+def test_direct_upload(dut: DeviceAdapter, mcumgr: MCUmgr):
+    """Verify direct upload to a selected image slot."""
+    dut.disconnect()
+    reset_board(dut.device_config.id, reset_kind="RESET_PIN")
+    time.sleep(2)
+
+    signed_image = dut.device_config.app_build_dir / "zephyr" / "zephyr.signed.bin"  # type: ignore
+    mcumgr.image_upload(signed_image, slot=2, timeout=60)
+    images = get_image_list(mcumgr)
+    assert any(image.image == 0 and image.slot == 1 for image in images)

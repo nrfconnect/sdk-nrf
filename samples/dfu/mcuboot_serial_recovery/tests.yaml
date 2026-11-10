@@ -1,0 +1,60 @@
+sample:
+  description: MCUboot serial recovery over raw SMP
+  name: MCUboot serial recovery
+
+common:
+  sysbuild: true
+  timeout: 900
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  tags:
+    - ci_samples_dfu
+    - mcuboot
+    - mcumgr
+    - serial_recovery
+
+tests:
+  sample.dfu.mcuboot_serial_recovery:
+    harness: console
+    harness_config:
+      type: multi_line
+      ordered: false
+      regex:
+        - "smp_sample: build time"
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  sample.dfu.mcuboot_serial_recovery.no_application:
+    slow: true
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "../../../tests/subsys/bootloader/upgrade/pytest/test_serial_recovery.py::test_serial_recovery_after_damaging_app"
+    extra_args:
+      - mcuboot_CONFIG_BOOT_SERIAL_NO_APPLICATION=y
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  sample.dfu.mcuboot_serial_recovery.pin_reset:
+    slow: true
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "../../../tests/subsys/bootloader/upgrade/pytest/test_serial_recovery.py::test_serial_recovery_after_pin_reset"
+        - "../../../tests/subsys/bootloader/upgrade/pytest/test_serial_recovery.py::test_direct_upload"
+    extra_args:
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp
+
+  sample.dfu.mcuboot_serial_recovery.timeout:
+    slow: true
+    harness: pytest
+    harness_config:
+      pytest_root:
+        - "../../../tests/subsys/bootloader/upgrade/pytest/test_serial_recovery.py::test_serial_recovery_timeout"
+    extra_args:
+      - mcuboot_CONFIG_BOOT_SERIAL_PIN_RESET=y
+      - mcuboot_CONFIG_BOOT_SERIAL_RECOVERY_TIMEOUT_MS=2000
+    integration_platforms:
+      - nrf54l15dk/nrf54l15/cpuapp

@@ -26,6 +26,7 @@ The following categories of samples are available:
    :caption: DFU samples:
    :glob:
 
+   ../../../samples/dfu/mcuboot_serial_recovery/README
    ../../../samples/dfu/smp_svr/README
    ../../../samples/dfu/ab/README
    ../../../samples/dfu/ab_split/README
