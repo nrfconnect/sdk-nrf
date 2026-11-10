@@ -1640,3 +1640,6 @@ Documentation
   * The :ref:`ug_nrf54h20_ironside_se_snapshot` page by adding a note about the snapshot services limitations.
   * The :ref:`abi_compatibility` page by adding a section about |ISE| known issues.
   * The :ref:`ug_nrf70_features` page by moving the :ref:`ug_nrf70_features_hostap` section to the :ref:`ug_wifi_overview` page.
+  * The :ref:`ug_nrf54h20_mcuboot_requests` page by adding figures that illustrate the initialization, read, clear, and write procedures of the bootloader requests module.
+  * The :ref:`ug_nrf54h20_partitioning_merged` page by adding figures that illustrate the partition layouts, the bootchains, the radio core slot selection, and the image version dependencies.
+  * The :ref:`ug_nrf54h20_mcuboot_manifest` page by adding figures that illustrate the manifest partitions and the manifest TLV structure, and by spelling out the term TLV.
