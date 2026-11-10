@@ -5,7 +5,6 @@
 
    The nRF Cloud MQTT FOTA sample demonstrates how to use the `nRF Cloud MQTT API`_ to perform :term:`Firmware Over-the-Air (FOTA) <Firmware Over-the-Air (FOTA) update>` updates over MQTT on your device.
    This covers modem, application, and full modem FOTA updates (FMFU).
-   Also, with the nRF9160 DK, it supports SMP FOTA updates to the firmware on the nRF52840 SoC present on the DK board (not a separate device).
 
    When using MQTT, the `FOTA update <nRF Cloud Getting Started FOTA Documentation_>`_ support is almost entirely implemented by enabling the :kconfig:option:`CONFIG_NRF_CLOUD_FOTA` option, which is implicitly enabled by :kconfig:option:`CONFIG_NRF_CLOUD_MQTT`.
 
@@ -24,14 +23,6 @@ The sample requires an `nRF Cloud`_ account.
 
 Your device must be onboarded to nRF Cloud.
 If it is not, follow the instructions in `Device onboarding <nrf_cloud_mqtt_fota_sample_onboarding_>`_.
-
-.. note::
-   This sample requires modem firmware v1.3.x or later for an nRF9160 SiP and v2.0.0 or later for nRF9161 and nRF9151 SiPs.
-
-.. include:: /includes/external_flash_nrf91.txt
-
-.. note::
-   Full modem FOTA requires development kit version 0.14.0 or higher if you are using an nRF9160 DK.
 
 Overview
 ********
@@ -81,24 +72,6 @@ To create a FOTA test version of this sample, change the ``PATCHLEVEL`` in the :
 To enable full modem FOTA, add the following parameter to your build command:
 
 ``-DEXTRA_CONF_FILE="full_modem_fota.conf"``
-
-Also, if you are using an nRF9160 DK, specify your development kit version by appending it to the board target.
-For example, if you are using version 0.14.0, use the board target ``nrf9160dk@0.14.0/nrf9160/ns`` in your build command.
-
-To enable SMP FOTA (nRF9160 DK only), add the following parameters to your build command:
-
-* ``-DEXTRA_CONF_FILE="smp_fota.conf"``
-* ``-DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"``
-
-Once you have flashed your nRF9160 DK, change the switch **SW10** to the **nRF52** position to be able to flash the nRF52840 firmware on the DK.
-The nRF52840 device on your DK must be running firmware compatible with SMP, such as the SMP Server sample from a previous release.
-Otherwise, the MQTT FOTA sample cannot connect to the nRF52840 and will keep trying to connect.
-Build the SMP Server sample from a previous release for the ``nrf9160dk/nrf52840`` board target with the following parameters:
-
-* ``-DEXTRA_CONF_FILE="overlay-serial.conf"``
-* ``-DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_nrf52840_mcumgr_svr.overlay"``
-
-To change the version of the SMP Server sample from the previous release, set the :kconfig:option:`CONFIG_MCUBOOT_IMGTOOL_SIGN_VERSION` Kconfig option.
 
 Testing
 =======
