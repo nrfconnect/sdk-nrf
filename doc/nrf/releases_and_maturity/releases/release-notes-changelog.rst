@@ -656,6 +656,7 @@ Cellular samples
     * :ref:`nrf_cloud_coap_cell_location`
     * :ref:`nrf_cloud_coap_device_message`
     * :ref:`nrf_cloud_coap_fota_sample`
+    * :ref:`nrf_cloud_mqtt_cell_location`
     * :ref:`pdn_sample`
     * :ref:`sms_sample`
     * :ref:`ciphersuites`
