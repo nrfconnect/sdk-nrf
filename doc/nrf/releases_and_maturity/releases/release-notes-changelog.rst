@@ -576,19 +576,26 @@ Bluetooth samples
 Bluetooth Mesh samples
 ----------------------
 
-* Added Link-Time Optimization (LTO) through the :kconfig:option:`CONFIG_LTO` Kconfig option to reduce flash usage in the following samples:
+* Added:
 
-  * :ref:`bluetooth_ble_peripheral_lbs_coex`
-  * :ref:`bt_mesh_chat`
-  * :ref:`bluetooth_mesh_light`
-  * :ref:`bluetooth_mesh_light_lc`
-  * :ref:`bluetooth_mesh_light_dim`
-  * :ref:`bluetooth_mesh_light_switch`
-  * :ref:`bluetooth_mesh_sensor_client`
-  * :ref:`bluetooth_mesh_sensor_server`
-  * :ref:`bluetooth_mesh_silvair_enocean`
-  * :ref:`ble_mesh_dfu_target`
-  * :ref:`ble_mesh_dfu_distributor`
+  * Link-Time Optimization (LTO) through the :kconfig:option:`CONFIG_LTO` Kconfig option to reduce flash usage in the following samples:
+
+    * :ref:`bluetooth_ble_peripheral_lbs_coex`
+    * :ref:`bt_mesh_chat`
+    * :ref:`bluetooth_mesh_light`
+    * :ref:`bluetooth_mesh_light_lc`
+    * :ref:`bluetooth_mesh_light_dim`
+    * :ref:`bluetooth_mesh_light_switch`
+    * :ref:`bluetooth_mesh_sensor_client`
+    * :ref:`bluetooth_mesh_sensor_server`
+    * :ref:`bluetooth_mesh_silvair_enocean`
+    * :ref:`ble_mesh_dfu_target`
+    * :ref:`ble_mesh_dfu_distributor`
+
+  * Support for the ``nrf54lc10dk/nrf54lc10a/cpuapp`` board target in the following samples:
+
+    * :ref:`bluetooth_mesh_light`
+    * :ref:`bluetooth_mesh_light_switch`
 
 * Removed support for the ``thingy53/nrf5340/cpuapp`` board target from the following samples:
 
