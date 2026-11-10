@@ -38,24 +38,14 @@ void sx_wrpkmem(void *dst, const void *src, size_t sz);
 
 /** Write a byte to device memory at dst.
  *
- * Byte accesses don't have alignments requirements
- * since they are always aligned.
- * This function is created to have a consistent strategy
- * when we write to device memory.
+ * Uses a byte write, or a read-modify-write of the containing word on devices
+ * that only allow word accesses.
  *
  * @param[out] dst Destination of write operation.
  * Will be modified after this call
  * @param[in] input_byte The byte value to be written.
  */
-#if !defined(CONFIG_PSA_NEED_CRACEN_MEMORY_ACCESS_WORKAROUND)
-static inline void sx_wrpkmem_byte(void *dst, uint8_t input_byte)
-{
-	volatile uint8_t *d = (volatile uint8_t *)dst;
-	*d = input_byte;
-}
-#else
 void sx_wrpkmem_byte(void *dst, uint8_t input_byte);
-#endif
 
 /** Read from device memory at src into normal memory at dst.
  *
@@ -71,19 +61,13 @@ void sx_rdpkmem(void *dst, const void *src, size_t sz);
 
 /** Read a byte from device memory at src.
  *
- * Byte accesses don't have alignment requirements
- * since they are always aligned.
- * This function is created to have a consistent strategy
- * when we write to device memory.
+ * Uses a byte read, or a read of the containing word on devices that only
+ * allow word accesses.
  *
  * @param[in] src Address of read operation.
  *
  * @return Byte value from the src.
  */
-static inline uint8_t sx_rdpkmem_byte(const void *src)
-{
-	volatile uint8_t *s = (volatile uint8_t *)src;
-	return s[0];
-}
+uint8_t sx_rdpkmem_byte(const void *src);
 
 #endif
