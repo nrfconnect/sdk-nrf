@@ -20,9 +20,6 @@ The sample requires an `nRF Cloud`_ account.
 Your device must be onboarded to nRF Cloud.
 If it is not, follow the instructions in `Device on-boarding <nrf_cloud_coap_fota_sample_onboarding_>`_.
 
-.. note::
-   This sample requires modem firmware v1.3.x or later for an nRF9160 SiP and v2.0.0 or later for nRF9161 and nRF9151 SiPs.
-
 Overview
 ********
 
