@@ -218,7 +218,7 @@ static void calculate_ifft_mag(float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE
 	/* This function calculates the magnitude of the IFFT of the input IQ values.
 	 * Note that the result is written back to the input array.
 	 * Also note that the input array is a complex array of size CONFIG_BT_CS_DE_NFFT_SIZE
-	 * Odd indexes contain the real part and even indexes contain the imaginary part.
+	 * Even indexes contain the real part and odd indexes contain the imaginary part.
 	 *
 	 * To find the IFFT this the function uses FFT functions provided by the CMSIS-DSP library.
 	 * To calculate the IFFT using FFT the following steps can be used:

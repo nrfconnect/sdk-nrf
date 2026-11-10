@@ -98,8 +98,8 @@ typedef struct {
  * This is done through an element wise complex multiplication of the local and remote IQ values.
  * @param[in] cs_de_iq_tones to IQ values to combine
  * @param[out] iq_tones_comb pointer to allocated memory for combined IQ values. In the combined
- * memory even indexes are the imaginary component of the combined IQ value and odd indexes are the
- * real component.
+ * memory even indexes are the real component of the combined IQ value and odd indexes are the
+ * imaginary component.
  */
 void cs_de_combined_iq_calculate(cs_de_iq_tones_t *cs_de_iq_tones,
 				 float iq_tones_comb[CS_DE_NUM_CHANNELS * 2]);
@@ -119,7 +119,10 @@ cs_de_quality_t cs_de_calc(cs_de_report_t *p_report);
  * Note! After calling this function, the input IQ values in iq_tones_comb are overwritten with the
  * IFFT magnitude.
  * @param[inout] iq_tones_comb combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
- * elements should match the format described in @ref cs_de_combined_iq_calculate
+ * elements should match the format described in @ref cs_de_combined_iq_calculate, and the
+ * remaining elements must be zero. On return, element k, for k from 0 to
+ * CONFIG_BT_CS_DE_NFFT_SIZE - 1, holds the IFFT magnitude of bin k, scaled by
+ * 1/CONFIG_BT_CS_DE_NFFT_SIZE.
  * @return Distance estimate between the two devices in meters
  */
 float cs_de_ifft(float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE]);
