@@ -130,8 +130,15 @@ static psa_status_t pbkdf2_aes_cmac_prf_key(cracen_key_derivation_operation_t *o
 
 psa_status_t cracen_pbkdf2_hmac_setup(cracen_key_derivation_operation_t *operation)
 {
-	size_t output_length = pbkdf2_prf_output_length(operation->alg);
+	size_t output_length;
 
+	if (!(IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_HMAC) && PSA_ALG_IS_PBKDF2_HMAC(operation->alg)) &&
+	    !(IS_ENABLED(PSA_NEED_CRACEN_PBKDF2_AES_CMAC_PRF_128) &&
+	      operation->alg == PSA_ALG_PBKDF2_AES_CMAC_PRF_128)) {
+		return PSA_ERROR_NOT_SUPPORTED;
+	}
+
+	output_length = pbkdf2_prf_output_length(operation->alg);
 	if (output_length == 0) {
 		return PSA_ERROR_NOT_SUPPORTED;
 	}
