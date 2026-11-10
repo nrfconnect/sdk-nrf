@@ -4,47 +4,10 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-/* The nordic-flpr snippet splits the 192k RAM into 127k for the application core,
- * 64k for the FLPR code and data, and 1k for the FLPR hibernation space.
- * The IPC buffers below take the top 8k of the application core RAM.
- */
-
 / {
-	soc {
-		reserved-memory {
-			#address-cells = <1>;
-			#size-cells = <1>;
-
-			sram_rx: memory@2001dc00 {
-				reg = <0x2001dc00 0x1000>;
-			};
-
-			sram_tx: memory@2001ec00 {
-				reg = <0x2001ec00 0x1000>;
-			};
-		};
-	};
-
-	ipc {
-		ipc0: ipc0 {
-			compatible = "zephyr,ipc-icbmsg";
-			tx-region = <&sram_tx>;
-			rx-region = <&sram_rx>;
-			tx-blocks = <15>;
-			rx-blocks = <15>;
-			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 21>;
-			mbox-names = "rx", "tx";
-			status = "okay";
-		};
-	};
-
 	aliases {
 		remote-temp-monitor-ipc = &ipc0;
 	};
-};
-
-&cpuapp_vevif_rx {
-	status = "okay";
 };
 
 &pinctrl {
