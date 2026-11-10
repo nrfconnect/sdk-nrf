@@ -1141,6 +1141,8 @@ Wi-Fi samples
     * Temperature reporting to use the on-die temperature sensor instead of simulated values.
       The ``nrf7002dk/nrf5340/cpuapp/ns`` board target still reports simulated values, as no temperature sensor is available to the nRF5340 application core.
     * The sample documentation with restructured provisioning and onboarding instructions, and a description of the device monitoring data reported to `Memfault`_.
+    * The sample to retry the connection to nRF Cloud early when the Connection Manager reports a network readiness change.
+    * The sample to connect to nRF Cloud only when the Connection Manager reports both IP connectivity and DNS as ready.
 
   * Fixed:
 

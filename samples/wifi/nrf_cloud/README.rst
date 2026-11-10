@@ -65,6 +65,7 @@ Cloud connection loop
 
 The cloud connection loop (:ncs-file:`/samples/wifi/nrf_cloud/src/cloud_connection.c`) connects to `nRF Cloud`_ whenever the Internet becomes reachable and disconnects when Internet access is lost.
 After a failed or lost connection, the loop waits for the time set by the :option:`CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS` option before it retries.
+The loop retries earlier if the network readiness changes.
 
 The :ref:`lib_nrf_cloud` library handles the :ref:`connection process <lib_nrf_cloud_connect>`, except for the following:
 
@@ -404,8 +405,7 @@ Testing
 
    .. code-block:: console
 
-      <inf> cloud_connection: Network connectivity gained!
-      <inf> cloud_connection: Network is ready
+      <inf> cloud_connection: Network ready
       <inf> cloud_connection: Waiting to obtain date/time
       <inf> cloud_connection: Connecting to nRF Cloud
       <inf> cloud_connection: Connected to nRF Cloud
@@ -513,12 +513,11 @@ The following output is logged on the terminal when the sample is built with the
    [00:00:00.276,367] <inf> nrf_cloud_credentials: Sec Tag: 16842753; CA: Yes, Client Cert: Yes, Private Key: Yes
    [00:00:00.276,397] <inf> nrf_cloud_credentials: CA Size: 1792, AWS: Likely, CoAP: Likely
    [00:00:00.335,083] <inf> cloud_connection: Enabling connectivity...
-   [00:00:00.335,113] <inf> cloud_connection: Waiting for network ready...
+   [00:00:00.335,113] <inf> cloud_connection: Waiting for network...
    [00:00:02.603,332] <inf> net_wifi_mgmt: Connection requested
    Connected
    [00:00:06.737,518] <inf> net_dhcpv4: Received: 192.168.0.125
-   [00:00:06.738,098] <inf> cloud_connection: Network connectivity gained!
-   [00:00:06.738,616] <inf> cloud_connection: Network is ready
+   [00:00:06.738,616] <inf> cloud_connection: Network ready
    [00:00:06.738,647] <inf> cloud_connection: Waiting to obtain date/time
    [00:00:06.778,839] <inf> cloud_connection: Connecting to nRF Cloud
    [00:00:07.392,211] <inf> nrf_cloud_dns: Connected to server coap.nrfcloud.com via IPv4 address 23.22.110.24, port 5684

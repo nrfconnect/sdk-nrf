@@ -15,15 +15,6 @@
 typedef void (*dev_msg_handler_cb_t)(const struct nrf_cloud_data *const dev_msg);
 
 /**
- * @brief Sleep until the network is ready for use, or the specified timeout elapses.
- *
- * @param timeout - The time to wait before timing out.
- * @return true if the network became ready in time.
- * @return false if timed out.
- */
-bool await_network_ready(k_timeout_t timeout);
-
-/**
  * @brief Sleep until the nRF Cloud connection is ready for use, or the specified timeout elapses.
  *
  * @param timeout - The time to wait before timing out.
