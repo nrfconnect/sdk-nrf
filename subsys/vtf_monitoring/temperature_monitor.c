@@ -51,18 +51,13 @@ static void die_temp_work_handler(struct k_work *work)
 		err = sensor_channel_get(temp_dev, SENSOR_CHAN_DIE_TEMP, &val);
 	}
 
-	if (err < 0) {
-		LOG_ERR("Die temperature read failed: %d", err);
-	} else {
-		LOG_DBG("DIE_TEMP is %d.%02d", val.val1, abs(val.val2 / 10000));
-	}
-
 	k_sem_take(&sensor_state_lock, K_FOREVER);
 	if (err < 0) {
 		LOG_ERR("Failed to read DIE_TEMP: %d", err);
 		sensor_state.status = VTF_STATUS_ERROR;
 	} else {
 		/* Wi-Fi/VTF expect die temp in whole degC (int8 range). */
+		LOG_DBG("DIE_TEMP is %d.%02d", val.val1, abs(val.val2 / 10000));
 		temp = (int32_t)DIV_ROUND_CLOSEST(sensor_value_to_deci(&val), 10);
 		sensor_state.value.i32 = (int8_t)(temp > INT8_MAX ? INT8_MAX :
 						  temp < INT8_MIN ? INT8_MIN : temp);
