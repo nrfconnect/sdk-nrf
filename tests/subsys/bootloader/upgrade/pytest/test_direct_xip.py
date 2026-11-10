@@ -41,14 +41,20 @@ class UpgradeTestDirectXipUseMCUmgr(UpgradeTestWithMCUmgr):
         else:
             raise ValueError("No direct XIP variant image found")
         logger.info("Generate image for direct xip secondary slot")
-        return self.generate_image(app_to_sign=self.build_params.mcuboot_secondary_app_to_sign)
+        return self.generate_image(
+            app_to_sign=self.build_params.mcuboot_secondary_app_to_sign,
+            overwrite_only=True,
+            overwrite_confirm=True,
+        )
 
     def generate_image_for_direct_xip_primary_slot(self) -> Path:
         """Generate image for direct XIP primary slot."""
         edt_data = self.build_params.app_build_dir / "zephyr" / "edt.pickle"
         self.build_params.imgtool_params.rom_fixed = get_code_partition_address(edt_data)
         logger.info("Generate image for direct xip primary slot")
-        return self.generate_image(app_to_sign=self.build_params.app_to_sign)
+        return self.generate_image(
+            app_to_sign=self.build_params.app_to_sign, overwrite_only=True, overwrite_confirm=True
+        )
 
     def verify_direct_xip_secondary_slot_loaded(self, version: str | None = None):
         """Verify that the secondary slot is loaded in Direct XIP mode."""

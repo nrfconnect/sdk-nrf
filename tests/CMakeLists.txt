@@ -8,3 +8,4 @@ zephyr_include_directories(include)
 
 add_subdirectory_ifdef(CONFIG_UNITY unity)
 add_subdirectory(mocks)
+add_subdirectory_ifdef(CONFIG_CODE_EXTENDER code_extender)

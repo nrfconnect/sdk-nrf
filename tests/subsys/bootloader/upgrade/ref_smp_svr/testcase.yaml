@@ -10,6 +10,85 @@ common:
     - ci_tests_subsys_bootloader
 
 tests:
+  mcuboot.upgrade.full_swap:
+    timeout: 3600
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_upgrade.py"
+    extra_args:
+      - mcuboot_CONFIG_MCUBOOT_DOWNGRADE_PREVENTION=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ED25519=y
+      - SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512=y
+      - CONFIG_CODE_EXTENDER=y
+      # Partition layout (total size: 716kB / 733184 bytes):
+      #   MCUboot padding: 2kB (2048 bytes)
+      #   (image binary)
+      #   MCUboot protected TLV (signature): 208 bytes
+      #   MCUboot protected TLV (encryption): 0 bytes
+      #   MCUboot swap sector: 4kB (4096 bytes)
+      #   (empty space)
+      #   [~3.5kB unused - trailer must be aligned to the erase block size]
+      #   MCUboot swap status area: 8.4kB (3 * 16 * 179 = 8592 bytes)
+      #   MCUboot swap data (flags): 64 bytes
+      #   MCUboot magic: 16 bytes
+      #
+      # MCUboot overhead (excl. padding): ~16kB (16592 bytes)
+      # Maximum image size (incl. padding): ~699kB (716592 bytes)
+      - CONFIG_CODE_EXTENDER_SIZE=716592
+
+  mcuboot.upgrade.full_xip:
+    timeout: 1800
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_direct_xip.py::TestDirectXip"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_ECDSA_P256=y
+      - SB_CONFIG_BOOT_IMG_HASH_ALG_SHA512=n
+      - FILE_SUFFIX=direct_xip
+      - CONFIG_CODE_EXTENDER=y
+      # Partition layout (total size: 716kB / 733184 bytes):
+      #   MCUboot padding: 2kB (2048 bytes)
+      #   (image binary)
+      #   MCUboot protected TLV (signature): 152 bytes
+      #   MCUboot protected TLV (encryption): 0 bytes
+      #   (empty space)
+      #   MCUboot swap data (flags): 48 bytes
+      #   MCUboot magic: 16 bytes
+      #
+      # MCUboot overhead (excl. padding): <1kB (216 bytes)
+      # Maximum image size (incl. padding): ~715.8kB (732968 bytes)
+      - CONFIG_CODE_EXTENDER_SIZE=732968
+
+  mcuboot.upgrade.full_xip_with_revert:
+    timeout: 1800
+    platform_allow:
+      - nrf54l15dk/nrf54l15/cpuapp
+    harness_config:
+      pytest_root:
+        - "../pytest/test_direct_xip.py::TestDirectXipWithRevert"
+    extra_args:
+      - SB_CONFIG_MCUBOOT_MODE_DIRECT_XIP_WITH_REVERT=y
+      - SB_CONFIG_BOOT_SIGNATURE_TYPE_RSA=y
+      - FILE_SUFFIX=direct_xip
+      - CONFIG_CODE_EXTENDER=y
+      # Partition layout (total size: 716kB / 733184 bytes):
+      #   MCUboot padding: 2kB (2048 bytes)
+      #   (image binary)
+      #   MCUboot protected TLV (signature): 336 bytes
+      #   MCUboot protected TLV (encryption): 0 bytes
+      #   (empty space)
+      #   MCUboot swap data (flags): 48 bytes
+      #   MCUboot magic: 16 bytes
+      #
+      # MCUboot overhead (excl. padding): ~0.5kB (400 bytes)
+      # Maximum image size (incl. padding): ~715.5kB (732784 bytes)
+      - CONFIG_CODE_EXTENDER_SIZE=732784
+
   mcuboot.upgrade.basic:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp
