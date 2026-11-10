@@ -88,8 +88,8 @@ struct vtf_channel {
 	/**
 	 * Fetch the channel's latest sample.
 	 *
-	 * Must be non-NULL. Returns 0 on success or a negative errno;
-	 * on error, the aggregator marks the snapshot entry with
+	 * May be NULL for an initialization-only channel. Returns 0 on success
+	 * or a negative errno; on error, the aggregator marks the snapshot entry with
 	 * ``VTF_STATUS_ERROR`` and keeps the previous value.
 	 */
 	int (*sample)(struct vtf_sample *out);
@@ -108,7 +108,8 @@ struct vtf_channel {
  *
  * @param _sym         C symbol name for the descriptor.
  * @param _id          ``enum vtf_channel_id`` this channel handles.
- * @param _sample_fn   Per-channel sample callback. Must be non-NULL.
+ * @param _sample_fn   Optional per-channel sample callback. Use NULL for an
+ *                     initialization-only channel.
  * @param _init_fn     Optional init callback (NULL if not needed).
  * @param _type        Default value's ``enum vtf_sample_type``.
  * @param _field       Member of ``union vtf_sample_value`` to assign
