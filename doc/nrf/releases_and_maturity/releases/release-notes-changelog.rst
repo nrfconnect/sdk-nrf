@@ -551,7 +551,10 @@ For the list of |NCS| specific commits added since v3.4.0, including commits che
 Additions specific to |NCS|
 ---------------------------
 
-|no_changes_yet_note|
+* Fixed an issue where the GRTC settings for nrfx were not applied according to Kconfig.
+  When one of the :kconfig:option:`CONFIG_NRF_GRTC_TIMER_AUTO_KEEP_ALIVE`, :kconfig:option:`CONFIG_NRF_GRTC_START_SYSCOUNTER`, :kconfig:option:`CONFIG_NRF_GRTC_TIMER_STOP_AT_UNINIT`, or :kconfig:option:`CONFIG_NRF_GRTC_TIMER_CLEAR_AT_UNINIT` Kconfig options was disabled, the default nrfx configuration was used instead.
+  As a result, the corresponding behavior could still be enabled.
+  For example, the GRTC counter could be cleared when the GRTC driver was uninitialized.
 
 zcbor
 =====
