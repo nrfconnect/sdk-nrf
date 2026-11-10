@@ -28,12 +28,13 @@ LOG_MODULE_REGISTER(cloud_connection, CONFIG_WIFI_NRF_CLOUD_LOG_LEVEL);
 /* Internal state */
 
 /* Pendable events that threads can wait for. */
-#define NETWORK_READY			BIT(0)
 #define CLOUD_CONNECTED			BIT(1)
 #define CLOUD_READY			BIT(2)
 #define CLOUD_DISCONNECTED		BIT(3)
 #define DATE_TIME_KNOWN			BIT(4)
-#define L4_EVENT_MASK		(NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK		(NET_EVENT_L4_DNS_LOST)
+/* Any IP family, and DNS to resolve the nRF Cloud host name */
+#define READY_MASK		(CONN_MGR_READY_IP_ANY | CONN_MGR_READY_DNS)
 static K_EVENT_DEFINE(cloud_events);
 
 /* Atomic status flag tracking whether an initial association is in progress. */
@@ -42,11 +43,6 @@ static bool device_deleted;
 static int reconnect_seconds = CONFIG_CLOUD_CONNECTION_RETRY_TIMEOUT_SECONDS;
 
 /* Helper functions for pending on pendable events. */
-bool await_network_ready(k_timeout_t timeout)
-{
-	return k_event_wait(&cloud_events, NETWORK_READY, false, timeout) != 0;
-}
-
 bool await_cloud_ready(k_timeout_t timeout)
 {
 	return k_event_wait(&cloud_events, CLOUD_READY, false, timeout) != 0;
@@ -306,7 +302,7 @@ static bool connect_cloud(void)
 /* External event handlers */
 
 /* Handler for L4/connectivity events
- * This allows the cloud module to react to network gain and loss.
+ * This allows the cloud module to react to network loss.
  * The conn_mgr subsystem is responsible for seeking / maintaining network connectivity and
  * firing these events.
  */
@@ -314,18 +310,8 @@ static struct net_mgmt_event_callback l4_callback;
 static void l4_event_handler(struct net_mgmt_event_callback *cb,
 			     uint64_t event, struct net_if *iface)
 {
-	if (event == NET_EVENT_L4_CONNECTED) {
-		LOG_INF("Network connectivity gained!");
-
-		/* Set the network ready flag */
-		k_event_post(&cloud_events, NETWORK_READY);
-
-		date_time_update_async(NULL);
-	} else if (event == NET_EVENT_L4_DISCONNECTED) {
+	if (event == NET_EVENT_L4_DNS_LOST) {
 		LOG_INF("Network connectivity lost!");
-
-		/* Clear the network ready flag */
-		k_event_clear(&cloud_events, NETWORK_READY);
 
 		/* Network is now disconnected */
 		network_disconnected();
@@ -589,6 +575,9 @@ static void check_credentials(void)
 
 void cloud_connection_thread_fn(void)
 {
+	uint32_t last_seen = 0;
+	int err;
+
 	long_led_pattern(LED_WAITING);
 
 	/* Setup handler for Zephyr NET Connection Manager events. */
@@ -619,21 +608,35 @@ void cloud_connection_thread_fn(void)
 	conn_mgr_all_if_connect(true);
 
 	/* Indefinitely maintain a connection to nRF Cloud whenever the network is reachable. */
+	LOG_INF("Waiting for network...");
+	(void)conn_mgr_wait_ready(READY_MASK, NULL, K_FOREVER);
+	LOG_INF("Network ready");
+
 	while (true) {
-		LOG_INF("Waiting for network ready...");
-
-		if (IS_ENABLED(CONFIG_LED_VERBOSE_INDICATION)) {
-			long_led_pattern(LED_WAITING);
+		/* At once the first time, then after the delay or a network change */
+		err = conn_mgr_wait_ready(READY_MASK, &last_seen, K_SECONDS(reconnect_seconds));
+		if (err == -EAGAIN) {
+			/* The network is not ready. Keep waiting. */
+			continue;
+		} else if (err != 0) {
+			LOG_ERR("Fatal: waiting for network failed: %d", err);
+			long_led_pattern(LED_FAILURE);
+			return;
 		}
-		(void)await_network_ready(K_FOREVER);
-
-		LOG_INF("Network is ready");
 
 		/* Obtain time before connecting to the cloud,
 		 * otherwise NTP query will fail.
 		 */
 		LOG_INF("Waiting to obtain date/time");
-		(void)await_date_time_known(K_FOREVER);
+		if (!date_time_is_valid()) {
+			date_time_update_async(NULL);
+		}
+		if (!await_date_time_known(
+			    K_SECONDS(CONFIG_DATE_TIME_ESTABLISHMENT_TIMEOUT_SECONDS))) {
+			/* Request it again on the next iteration */
+			LOG_WRN("Failed to obtain date/time, retrying");
+			continue;
+		}
 
 		/* Attempt to connect to nRF Cloud. */
 		if (connect_cloud()) {
@@ -645,9 +648,10 @@ void cloud_connection_thread_fn(void)
 			LOG_INF("Disconnected from nRF Cloud");
 		}
 
-		LOG_INF("Retrying in %d seconds...", reconnect_seconds);
+		if (IS_ENABLED(CONFIG_LED_VERBOSE_INDICATION)) {
+			long_led_pattern(LED_WAITING);
+		}
 
-		/* Wait a bit before trying again. */
-		k_sleep(K_SECONDS(reconnect_seconds));
+		LOG_INF("Retrying in %d seconds...", reconnect_seconds);
 	}
 }
