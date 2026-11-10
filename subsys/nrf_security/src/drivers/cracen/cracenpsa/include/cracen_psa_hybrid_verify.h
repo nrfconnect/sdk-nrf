@@ -23,7 +23,10 @@
  *
  * @c alg is PSA_ALG_ML_DSA or PSA_ALG_DETERMINISTIC_ML_DSA. @c key_bits
  * selects the parameter set: 128 (ML-DSA-44), 192 (ML-DSA-65) or 256
- * (ML-DSA-87).
+ * (ML-DSA-87). The parameter set must be enabled with the matching
+ * CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_* option. ML-DSA support in the PSA
+ * configuration is not required, as the public key is not imported into a
+ * PSA key slot.
  */
 struct cracen_hybrid_verify_ml_dsa {
 	psa_algorithm_t alg;

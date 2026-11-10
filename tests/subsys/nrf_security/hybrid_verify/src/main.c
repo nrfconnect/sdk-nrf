@@ -19,6 +19,15 @@
 
 #define BENCHMARK_ITERATIONS 10
 
+/* ML-DSA sizes, FIPS 204, Table 2 */
+#define ML_DSA_44_PUBLIC_KEY_SIZE 1312
+#define ML_DSA_87_SIGNATURE_SIZE  4627
+
+#if !defined(PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY)
+BUILD_ASSERT(PSA_EXPORT_PUBLIC_KEY_MAX_SIZE < ML_DSA_44_PUBLIC_KEY_SIZE,
+	     "PSA public-key buffers are sized for ML-DSA without ML-DSA in the PSA configuration");
+#endif /* !PSA_WANT_KEY_TYPE_ML_DSA_PUBLIC_KEY */
+
 /* An ML-DSA known-answer test paired with an ECDSA signature over the same
  * message. The curve and the hash algorithm are only needed to verify the
  * ECDSA component on its own in the benchmark.
@@ -136,7 +145,7 @@ static struct hybrid_profile profiles[] = {
 };
 
 /* Corrupted copies of the vectors under test, kept out of the test stacks. */
-static uint8_t ml_dsa_signature_copy[PSA_VENDOR_ML_DSA_MAX_SIGNATURE_BYTES];
+static uint8_t ml_dsa_signature_copy[ML_DSA_87_SIGNATURE_SIZE];
 static uint8_t ecdsa_signature_copy[PSA_ECDSA_SIGNATURE_SIZE(521)];
 
 static psa_status_t verify_profile(const struct hybrid_profile *profile)
@@ -150,6 +159,11 @@ static void *setup_crypto(void)
 	psa_status_t status = psa_crypto_init();
 
 	zassert_equal(status, PSA_SUCCESS, "PSA Crypto initialization failed: %d", status);
+
+	/* The keys are only used to benchmark against psa_verify_message(). */
+	if (!IS_ENABLED(PSA_WANT_ALG_ML_DSA)) {
+		return NULL;
+	}
 
 	for (size_t i = 0; i < ARRAY_SIZE(profiles); i++) {
 		psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
@@ -335,6 +349,7 @@ ZTEST(hybrid_verify, test_pke_released_after_failure)
 	}
 }
 
+#if defined(PSA_WANT_ALG_ML_DSA)
 static void benchmark_profile(const struct hybrid_profile *profile)
 {
 	uint64_t ecdsa_cycles = 0;
@@ -414,3 +429,24 @@ ZTEST(hybrid_verify, test_benchmark)
 		benchmark_profile(&profiles[i]);
 	}
 }
+#else
+
+ZTEST(hybrid_verify, test_ml_dsa_not_in_psa)
+{
+	psa_key_attributes_t attributes = PSA_KEY_ATTRIBUTES_INIT;
+	psa_key_id_t key_id = PSA_KEY_ID_NULL;
+	psa_status_t status;
+
+	psa_set_key_type(&attributes, PSA_KEY_TYPE_ML_DSA_PUBLIC_KEY);
+	psa_set_key_usage_flags(&attributes, PSA_KEY_USAGE_VERIFY_MESSAGE);
+	psa_set_key_algorithm(&attributes, PSA_ALG_ML_DSA);
+
+	status = psa_import_key(&attributes, ml_dsa44_kat_pk, sizeof(ml_dsa44_kat_pk), &key_id);
+	if (status == PSA_SUCCESS) {
+		(void)psa_destroy_key(key_id);
+	}
+
+	zassert_equal(status, PSA_ERROR_NOT_SUPPORTED,
+		      "ML-DSA public-key import returned %d", status);
+}
+#endif /* PSA_WANT_ALG_ML_DSA */
