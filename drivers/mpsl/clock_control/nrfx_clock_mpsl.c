@@ -23,6 +23,7 @@
 #include <mpsl.h>
 #include <mpsl_clock.h>
 
+#include <zephyr/devicetree.h>
 #include <zephyr/logging/log.h>
 LOG_MODULE_REGISTER(nrfx_clock_mpsl, CONFIG_CLOCK_CONTROL_LOG_LEVEL);
 
@@ -92,39 +93,85 @@ static void mpsl_hfclk_src_callback(mpsl_clock_evt_type_t evt_type)
 }
 
 /*
- * LFCLK initialization flow:
- * 1. Zephyr lfclk driver init (PRE_KERNEL): nrfx_clock_lfclk_init() stores the event
- *    handler; onoff manager is created with LF off. No HW access.
- * 2. mpsl_init(): MPSL starts LFCLK in HW (clock_ctrl_init), optionally waits for
- *    LFSTAT, and handles LFCLKSTARTED in MPSL_IRQ_CLOCK_Handler().
- * 3. Later Zephyr LF request (onoff / z_nrf_clock_control_lf_on): lfclk_start() calls
- *    nrfx_clock_lfclk_start() below.
+ * LFCLK with MPSL (split lfclk driver):
  *
- * Short turnaround: nrfx_clock_lfclk_start() does not start HW, wait for an IRQ, or
- * poll LFSTAT. LF is started by mpsl_init() (step 2). We only synchronously deliver
- * LFCLK_STARTED so the Zephyr onoff manager can leave STARTING (common_clkstarted_handle).
+ * 1. Zephyr lfclk init (PRE_KERNEL): nrfx_clock_lfclk_init() stores the Zephyr
+ *    event handler; onoff keeps LF off until a client requests it. No HW start.
  *
- * Do not block here waiting for LF: this path can run from another driver's init
- * before mpsl_init(), while LF HW is still off. Blocking would stall that init (and
- * can deadlock if mpsl_init depends on it). HW readiness is established by mpsl_init
- * and, when needed, by lfclk_spinwait() in the caller (e.g. z_nrf_clock_control_lf_on).
- * Ensure mpsl_init runs before LF consumers (MPSL uses PRE_KERNEL_1 for CLOCK_CONTROL_MPSL)
- * or use CONFIG_SYSTEM_CLOCK_NO_WAIT to skip lfclk_spinwait().
+ * 2. mpsl_init(): MPSL starts LFCLK in clock_ctrl (m_clock_ctrl_lfclk_start).
+ *    With skip_wait_lfclk_started (e.g. GRTC defer LFXO + WAIT_FOR_AVAILABILITY),
+ *    init does not block on LFSTAT; LFCLK may still be starting when the OS runs.
  *
- * No Zephyr calibration handling: CLOCK_CONTROL_NRF_FORCE_ALT disables the Zephyr
- * driver calibration module. LFCLKSTARTED and CAL_DONE from HW are consumed in
- * MPSL_IRQ_CLOCK_Handler() (clock_ctrl_lfclk_calibration_init and ongoing RC cal).
- * They are not forwarded to the lfclk event handler; nrfx_clock_lfclk_irq_handler()
- * is intentionally empty.
+ * 3. LF onoff request: lfclk_start() → nrfx_clock_lfclk_start() below.
+ *
+ *    On SoCs with GRTC in devicetree (except nRF54H20): mpsl_clock_lfclk_request()
+ *    registers for LFCLKSTARTED in MPSL. EVENTS_LFCLKSTARTED is handled in
+ *    MPSL_IRQ_CLOCK_Handler; mpsl_lfclk_started_callback forwards
+ *    NRFX_CLOCK_LFCLK_EVT_LFCLK_STARTED to the handler registered in step 1.
+ *    That completes the onoff notify (e.g. GRTC grtc_post_init() deferred LFXO
+ *    path: wait for LFXO ready, then run the safe GRTC clock-source switch).
+ *
+ *    Other builds: nrfx_clock_lfclk_start() still signals LFCLK started
+ *    immediately so onoff can finish without a second HW wait (LF already
+ *    owned and started by MPSL init).
+ *
+ * z_nrf_clock_control_lf_on() may still lfclk_spinwait() per SYSTEM_CLOCK_* policy
+ * after onoff; that is separate from the LFCLKSTARTED notify above.
+ *
+ * LFCLKSTARTED and LF RC CAL_DONE from HW are consumed in MPSL_IRQ_CLOCK_Handler();
+ * nrfx_clock_lfclk_irq_handler() is empty. Zephyr calibration module is off when
+ * CLOCK_CONTROL_NRF_FORCE_ALT is set.
  */
+#if !defined(CONFIG_CLOCK_CONTROL_NRF) && DT_NODE_EXISTS(DT_NODELABEL(grtc)) &&                  \
+	!defined(CONFIG_SOC_NRF54H20)
+static void mpsl_lfclk_started_callback(mpsl_clock_evt_type_t evt_type)
+{
+	if ((evt_type == MPSL_CLOCK_EVT_LFCLK_STARTED) && (m_lfclk_event_handler != NULL)) {
+		m_lfclk_event_handler(NRFX_CLOCK_LFCLK_EVT_LFCLK_STARTED);
+	}
+}
+
+#define CLOCK_NODE_LFCLK DT_COMPAT_GET_ANY_STATUS_OKAY(nordic_nrf_clock_lfclk)
+
+#if (!DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, rc) &&                                           \
+	!DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, xtal) &&                                      \
+	!DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, synth) &&                                     \
+	!DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_low_swing) &&                             \
+	!DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_full_swing))
+#error "Unsupported LFCLK source configured in devicetree"
+#endif
+
+#if DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, rc)
+#define MPSL_LFCLK_SRC MPSL_CLOCK_LF_SRC_RC
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, xtal)
+#define MPSL_LFCLK_SRC MPSL_CLOCK_LF_SRC_XTAL
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, synth)
+#define MPSL_LFCLK_SRC MPSL_CLOCK_LF_SRC_SYNTH
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_low_swing)
+#define MPSL_LFCLK_SRC MPSL_CLOCK_LF_SRC_EXT_LOW_SWING
+#elif DT_ENUM_HAS_VALUE(CLOCK_NODE_LFCLK, k32src, ext_full_swing)
+#define MPSL_LFCLK_SRC MPSL_CLOCK_LF_SRC_EXT_FULL_SWING
+#endif
+#endif /* !CONFIG_CLOCK_CONTROL_NRF && GRTC SoC (not nRF54H20) */
+
 void nrfx_clock_lfclk_start(void)
 {
 #if defined(CONFIG_CLOCK_CONTROL_NRF)
 	m_event_handler(NRFX_CLOCK_EVT_LFCLK_STARTED);
 #else
+#if DT_NODE_EXISTS(DT_NODELABEL(grtc)) && !defined(CONFIG_SOC_NRF54H20)
+	int err;
+
+	err = mpsl_clock_lfclk_request(MPSL_LFCLK_SRC, mpsl_lfclk_started_callback);
+	if (err < 0) {
+		LOG_ERR("mpsl_clock_lfclk_request failed: %d", err);
+		__ASSERT_NO_MSG(false);
+	}
+#else
 	if (m_lfclk_event_handler != NULL) {
 		m_lfclk_event_handler(NRFX_CLOCK_LFCLK_EVT_LFCLK_STARTED);
 	}
+#endif /* DT_NODELABEL(grtc) && !CONFIG_SOC_NRF54H20 */
 #endif /* CONFIG_CLOCK_CONTROL_NRF */
 }
 
