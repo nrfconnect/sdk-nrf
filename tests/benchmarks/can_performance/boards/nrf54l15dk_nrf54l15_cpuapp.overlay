@@ -64,4 +64,14 @@
 			};
 		};
 	};
+
+	aliases {
+		/delete-property/ sw3;
+	};
+};
+
+/delete-node/ &button3;
+
+&led0 {
+	gpios = <&gpio0 4 GPIO_ACTIVE_HIGH>;
 };
