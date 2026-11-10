@@ -666,6 +666,36 @@ Cellular samples
   * :ref:`location_sample`
   * :ref:`modem_shell_application`
 
+* Removed support for nRF9160 DK, nRF9161 DK, and Thingy:91 in the following cellular samples:
+
+  * :ref:`at_client_sample`
+  * :ref:`at_monitor_sample`
+  * :ref:`battery`
+  * :ref:`fmfu_smp_svr_sample`
+  * :ref:`gnss_sample`
+  * :ref:`http_application_update_sample`
+  * :ref:`http_modem_delta_update_sample`
+  * :ref:`http_modem_full_update_sample`
+  * :ref:`location_sample`
+  * :ref:`lwm2m_carrier`
+  * :ref:`modem_callbacks_sample`
+  * :ref:`modem_shell_application`
+  * :ref:`modem_trace_backend_sample`
+  * :ref:`modem_trace_flash`
+  * :ref:`nidd_sample`
+  * :ref:`nrf_cloud_coap_cell_location`
+  * :ref:`nrf_cloud_coap_device_message`
+  * :ref:`nrf_cloud_coap_fota_sample`
+  * :ref:`nrf_cloud_mqtt_cell_location`
+  * :ref:`nrf_cloud_mqtt_device_message`
+  * :ref:`nrf_cloud_mqtt_fota`
+  * :ref:`pdn_sample`
+  * :ref:`sms_sample`
+  * :ref:`ciphersuites`
+  * :ref:`udp`
+  * :ref:`uicc_lwm2m_sample`
+  * :ref:`lwm2m_client`
+
 * :ref:`modem_shell_application` sample:
 
   * Added Wi-Fi scan parameter options to the ``location get`` command.
@@ -674,37 +704,6 @@ Cellular samples
 * :ref:`nrf_cloud_coap_fota_sample` sample:
 
   * Updated the sample to use the new nRF Cloud CoAP FOTA API.
-
-* Removed:
-
-  * Support for nRF9160 DK, nRF9161 DK, and Thingy:91 in the following cellular samples:
-
-    * :ref:`at_client_sample`
-    * :ref:`at_monitor_sample`
-    * :ref:`battery`
-    * :ref:`fmfu_smp_svr_sample`
-    * :ref:`gnss_sample`
-    * :ref:`http_application_update_sample`
-    * :ref:`http_modem_delta_update_sample`
-    * :ref:`http_modem_full_update_sample`
-    * :ref:`location_sample`
-    * :ref:`lwm2m_carrier`
-    * :ref:`modem_callbacks_sample`
-    * :ref:`modem_shell_application`
-    * :ref:`modem_trace_backend_sample`
-    * :ref:`modem_trace_flash`
-    * :ref:`nidd_sample`
-    * :ref:`nrf_cloud_coap_cell_location`
-    * :ref:`nrf_cloud_coap_device_message`
-    * :ref:`nrf_cloud_coap_fota_sample`
-    * :ref:`nrf_cloud_mqtt_cell_location`
-    * :ref:`nrf_cloud_mqtt_device_message`
-    * :ref:`nrf_cloud_mqtt_fota`
-    * :ref:`pdn_sample`
-    * :ref:`sms_sample`
-    * :ref:`ciphersuites`
-    * :ref:`udp`
-    * :ref:`uicc_lwm2m_sample`
 
 Cryptography samples
 --------------------

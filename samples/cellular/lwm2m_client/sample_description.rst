@@ -7,7 +7,7 @@ Sample description
    :local:
    :depth: 2
 
-The LwM2M Client sample demonstrates the usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect a Thingy:91 or an nRF91 Series DK to an LwM2M Server through LTE.
+The LwM2M Client sample demonstrates the usage of the :term:`Lightweight Machine to Machine (LwM2M)` protocol to connect an nRF9151 DK or Thingy:91 X to an LwM2M Server through LTE.
 To achieve this, the sample uses the Zephyr's :ref:`lwm2m_interface` client and |NCS| :ref:`lib_lwm2m_client_utils` library.
 The former provides a device vendor agnostic client implementation, whereas the latter includes all the Nordic specific bits and pieces.
 
@@ -33,8 +33,8 @@ Overview
 
 LwM2M is an application layer protocol based on CoAP over UDP.
 It is designed to expose various resources for reading, writing, and executing through an LwM2M Server in a very lightweight environment.
-The client sends data such as button and switch states, accelerometer data, temperature, and GNSS position to the LwM2M Server.
-It can also receive activation commands such as buzzer activation and light control.
+The client sends data such as button states, accelerometer data, temperature, and GNSS position to the LwM2M Server.
+It can also receive activation commands such as light control.
 
 .. note::
    The GNSS module interferes with the LTE connection.
@@ -49,102 +49,74 @@ The sample implements the following LwM2M objects:
 
    *  - LwM2M objects
       - Object ID
-      - Thingy:91
       - Thingy:91 X
-      - nRF91 Series DK
+      - nRF9151 DK
    *  - LwM2M Server
       - 1
-      - Yes
       - Yes
       - Yes
    *  - Device
       - 3
       - Yes
       - Yes
-      - Yes
    *  - Connectivity Monitoring
       - 4
-      - Yes
       - Yes
       - Yes
    *  - FOTA
       - 5
       - Yes
       - Yes
-      - Yes
    *  - Location
       - 6
       - Yes
       - Yes
-      - Yes
    *  - Accelerometer
       - 3313
-      - Yes
       - No
       - Simulated
    *  - Color
       - 3335
-      - Yes
       - No
       - Simulated
    *  - Temperature
       - 3303
       - Yes
-      - Yes
       - Simulated
    *  - Pressure
       - 3323
-      - Yes
       - Yes
       - Simulated
    *  - Humidity
       - 3304
       - Yes
-      - Yes
       - Simulated
    *  - Generic Sensor
       - 3300
-      - Yes
       - Yes
       - Simulated
    *  - Light Control
       - 3311
       - Yes
       - Yes
-      - Yes
    *  - Push Button
       - 3347
       - Yes
       - Yes
-      - Yes
-   *  - Buzzer
-      - 3338
-      - Yes
-      - No
-      - No
-   *  - On/Off Switch
-      - 3342
-      - No
-      - No
-      - Yes
    *  - GNSS Assistance
       - 33625
-      - Yes
       - Yes
       - Yes
    *  - Ground Fix
       - 33626
       - Yes
       - Yes
-      - Yes
    *  - Visible Wi-Fi® Access Point
       - 33627
       - Yes
       - Yes
-      - Yes
    *  - Advanced Firmware Update
       - 33629
-      - Yes
       - Yes
       - Yes
 
@@ -479,14 +451,6 @@ See `nRF91x1 Feature configuration %FEACONF`_ for more information.
 Configuration for external FOTA
 -------------------------------
 
-The sample supports UART2 connection on the nRF9160 SiP to onboard an nRF52840 SiP with or without MCUboot recovery mode.
-The nRF9160 SiP needs to enable UART2 on the devicetree using the following configuration files and recovery mode overlay files:
-
-* :ncs-file:`/samples/cellular/lwm2m_client/overlay-mcumgr_client.conf` - Defines the configuration for external FOTA client.
-  This requires an additional devicetree overlay file :ncs-file:`/samples/cellular/lwm2m_client/nrf9160dk_mcumgr_client_uart2.overlay`.
-* :ncs-file:`/samples/cellular/lwm2m_client/overlay-mcumgr_reset.conf` - Enables MCUboot recovery mode.
-  This requires an additional devicetree overlay file :ncs-file:`/samples/cellular/lwm2m_client/nrf9160dk_recovery.overlay`.
-
 .. _overlay_advanced_fw_object:
 
 To enable the experimental Advanced Firmware Update object for the external FOTA, use the following overlay configuration files:
@@ -542,14 +506,6 @@ Check and configure the following LwM2M options that are used by the sample:
 .. note::
    The nRF91 Series modem negotiates PSM and eDRX modes with the network it is trying to connect.
    The network can either accept the values, assign different values or reject them.
-
-For Thingy:91, configure the ADXL362 accelerometer sensor range by choosing one of the following options (default value is |plusminus| 2 g):
-
-* :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_2G` - Sensor range of |plusminus| 2 g.
-* :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_4G` - Sensor range of |plusminus| 4 g.
-* :kconfig:option:`CONFIG_ADXL362_ACCEL_RANGE_8G` - Sensor range of |plusminus| 8 g.
-
-Resolution depends on range: |plusminus| 2 g has higher resolution than |plusminus| 4 g, which again has higher resolution than |plusminus| 8 g.
 
 If you use an external GNSS antenna, add the following configuration:
 
@@ -668,49 +624,6 @@ For example:
 In bootstrap mode, application does not overwrite the PSK key from the modem so :ref:`CONFIG_APP_LWM2M_PSK <CONFIG_APP_LWM2M_PSK>` is not used.
 Please refer to :ref:`lwm2m_client_provisioning` for instructions how to provision bootstrap keys.
 
-
-MCUmgr client for external FOTA
-===============================
-
-Use one of the following build commands to evaluate external FOTA:
-
-   .. tabs::
-
-      .. group-tab:: MCUboot recovery mode with bootstrap
-
-         To build for MCUboot recovery mode with bootstrap, use the following command:
-
-         .. code-block:: console
-
-            west build  --pristine -b nrf9160dk/nrf9160/ns --  -DEXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
-
-      .. group-tab:: MCUboot recovery mode without bootstrap
-
-         To build for MCUboot recovery mode without bootstrap, use the following command:
-
-         .. code-block:: console
-
-            west build  --pristine -b nrf9160dk/nrf9160/ns --  -DEXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf; overlay-mcumgr_reset.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay;nrf9160dk_recovery.overlay"
-
-      .. group-tab:: MCUmgr client with bootstrap
-
-         To build for MCUmgr client with bootstrap, use the following command:
-
-         .. code-block:: console
-
-            west build  --pristine -b nrf9160dk/nrf9160/ns --  -DEXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem-bootstrap.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
-
-      .. group-tab:: MCUmgr client without bootstrap
-
-         To build for MCUmgr client without bootstrap, use the following command:
-
-         .. code-block:: console
-
-            west build  --pristine -b nrf9160dk/nrf9160/ns --  -DEXTRA_CONF_FILE="overlay-adv-firmware.conf;overlay-fota_helper.conf;overlay-avsystem.conf;overlay-lwm2m-1.1.conf;overlay-mcumgr_client.conf" -DEXTRA_DTC_OVERLAY_FILE="nrf9160dk_mcumgr_client_uart2.overlay"
-
-
-See :ref:`lwm2m_client_fota_external_mcu` for details.
-
 Testing
 =======
 
@@ -720,7 +633,7 @@ Testing
    #. |connect_terminal|
    #. Observe that the sample starts in the terminal window.
    #. Check that the device is connected to the chosen LwM2M Server.
-   #. Press **Button 1** on nRF91 Series DK or **SW3** on Thingy:91 and confirm that the button event appears in the terminal.
+   #. Press **Button 1** and confirm that the button event appears in the terminal.
    #. Check that the button press event has been registered on the LwM2M Server by confirming that the press count has been updated.
    #. Retrieve sensor data from various sensors and check if values are reasonable.
    #. Test GNSS module:
