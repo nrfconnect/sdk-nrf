@@ -982,6 +982,11 @@ Networking samples
     * The HTTP response to GET requests.
       An extra blank line after the ``Content-Type`` header terminated the header section early, putting the ``Content-Length`` header in the response body.
 
+* :ref:`mqtt_sample` sample:
+
+  * Fixed an issue where the sample could try to connect to the MQTT broker before DNS was available.
+    The sample now connects once the Connection Manager reports both IP connectivity and DNS as ready.
+
 * :ref:`nrf_coap_server_sample` sample:
 
   * Added a dedicated sample documentation page, and updated the :file:`wifi_zephyr.rst` page to link to it instead of the Zephyr sample documentation.

@@ -17,7 +17,7 @@ LOG_MODULE_REGISTER(network, CONFIG_MQTT_SAMPLE_NETWORK_LOG_LEVEL);
 /* This module does not subscribe to any channels */
 
 /* Macros used to subscribe to specific Zephyr NET management events. */
-#define L4_EVENT_MASK (NET_EVENT_L4_CONNECTED | NET_EVENT_L4_DISCONNECTED)
+#define L4_EVENT_MASK (NET_EVENT_L4_DNS_READY | NET_EVENT_L4_DNS_LOST)
 #define CONN_LAYER_EVENT_MASK (NET_EVENT_CONN_IF_FATAL_ERROR)
 
 static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
@@ -27,11 +27,11 @@ static void l4_event_handler(uint64_t event, struct net_if *iface, void *info,
 	enum network_status status;
 
 	switch (event) {
-	case NET_EVENT_L4_CONNECTED:
+	case NET_EVENT_L4_DNS_READY:
 		LOG_INF("Network connectivity established");
 		status = NETWORK_CONNECTED;
 		break;
-	case NET_EVENT_L4_DISCONNECTED:
+	case NET_EVENT_L4_DNS_LOST:
 		LOG_INF("Network connectivity lost");
 		status = NETWORK_DISCONNECTED;
 		break;
