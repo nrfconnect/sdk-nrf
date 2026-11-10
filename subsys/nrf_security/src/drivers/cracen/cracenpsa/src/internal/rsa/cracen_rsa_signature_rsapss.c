@@ -180,7 +180,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 
 	psa_status = cracen_get_random(NULL, workmem.salt, saltsz);
 	if (psa_status != PSA_SUCCESS) {
-		return SX_ERR_UNKNOWN_ERROR;
+		sx_status = SX_ERR_UNKNOWN_ERROR;
+		goto exit;
 	}
 
 	/* prepare padding string PS (step 7 of EMSA-PSS-ENCODE) */
@@ -204,7 +205,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	sx_status = cracen_hash_all_inputs(hash_array, hash_array_lengths, input_count, hashalg,
 					   workmem.H);
 	if (sx_status != SX_OK) {
-		return sx_status;
+		goto exit;
 	}
 
 	uint8_t *xorinout = workmem.mHash - emsz;
@@ -212,7 +213,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	sx_status = cracen_run_mgf1xor(workmem.workmem, WORKMEM_SIZE, hashalg, workmem.seed,
 				       digestsz, xorinout, masksz);
 	if (sx_status != SX_OK) {
-		return sx_status;
+		goto exit;
 	}
 
 	uint8_t bitmask;
@@ -237,7 +238,7 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 		cracen_rsa_modexp(&req, inputs, rsa_key, workmem.wmem, modulussz, input_sizes);
 	if (sx_status != SX_OK) {
 		sx_pk_release_req(&req);
-		return sx_status;
+		goto exit;
 	}
 	/* Get result of modular exponentiation, placing it in user's output buffer. the output of
 	 * the exponentiation is the signature
@@ -251,6 +252,8 @@ int cracen_rsa_pss_sign_digest(struct cracen_rsa_key *rsa_key, struct cracen_sig
 	 * called even if an error occurred
 	 */
 	sx_pk_release_req(&req);
+
+exit:
 	safe_memzero(workmem.workmem, WORKMEM_SIZE);
 
 	return sx_status;
