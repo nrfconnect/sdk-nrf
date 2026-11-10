@@ -34,8 +34,34 @@ config VTF_DIE_TEMP_MONITOR_INTERVAL_MS
 
 endif # VTF_DIE_TEMP_MONITOR
 
-config VTF_FREQ_OFFSET_MONITOR
+menuconfig VTF_FREQ_OFFSET_MONITOR
 	bool "Monitor frequency offset"
+	depends on SOC_SERIES_NRF71
+	select SOC_SERIES_NRF71_READ_ICR
+	help
+	  Read the crystal oscillator frequency offset from UICR or FICR during
+	  initialization. If both registers are erased, use the configured
+	  default value.
+
+if VTF_FREQ_OFFSET_MONITOR
+
+config VTF_FREQ_OFFSET_MONITOR_INTERVAL_MS
+	int "Frequency offset measurement interval (ms)"
+	default 10000
+	help
+	  Interval between frequency offset measurements in milliseconds.
+
+endif # VTF_FREQ_OFFSET_MONITOR
+
+if VTF_BATTERY_VOLTAGE_MONITOR
+
+config VTF_BATTERY_VOLTAGE_MONITOR_INTERVAL_MS
+	int "Battery voltage measurement interval (ms)"
+	default 10000
+	help
+	  Interval between battery voltage measurements in milliseconds.
+
+endif # VTF_BATTERY_VOLTAGE_MONITOR
 
 menuconfig VTF_BATTERY_VOLTAGE_MONITOR
 	bool "Monitor battery voltage"
