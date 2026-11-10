@@ -116,21 +116,35 @@ struct bt_csip_set_member_register_param csip_param = {
 };
 
 #if defined(CONFIG_BT_AUDIO_RX)
-static struct bt_audio_codec_cap lc3_codec_sink = BT_AUDIO_CODEC_CAP_LC3(
+#if CONFIG_SW_CODEC_G722
+static struct bt_audio_codec_cap codec_sink =
+	BT_AUDIO_CODEC_CAP(BT_HCI_CODING_FORMAT_VS, CONFIG_SW_CODEC_G722_COMPANY_ID,
+			   CONFIG_SW_CODEC_G722_VENDOR_CODEC_ID, LE_AUDIO_G722_CAP_DATA,
+			   BT_AUDIO_CODEC_CAP_LC3_META(AVAILABLE_SINK_CONTEXT));
+#else
+static struct bt_audio_codec_cap codec_sink = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, AVAILABLE_SINK_CONTEXT);
+#endif /* CONFIG_SW_CODEC_G722 */
 #endif /* (CONFIG_BT_AUDIO_RX) */
 
 #if defined(CONFIG_BT_AUDIO_TX)
-static struct bt_audio_codec_cap lc3_codec_source = BT_AUDIO_CODEC_CAP_LC3(
+#if CONFIG_SW_CODEC_G722
+static struct bt_audio_codec_cap codec_source =
+	BT_AUDIO_CODEC_CAP(BT_HCI_CODING_FORMAT_VS, CONFIG_SW_CODEC_G722_COMPANY_ID,
+			   CONFIG_SW_CODEC_G722_VENDOR_CODEC_ID, LE_AUDIO_G722_CAP_DATA,
+			   BT_AUDIO_CODEC_CAP_LC3_META(AVAILABLE_SOURCE_CONTEXT));
+#else
+static struct bt_audio_codec_cap codec_source = BT_AUDIO_CODEC_CAP_LC3(
 	BT_AUDIO_CODEC_CAPABILIY_FREQ,
 	(BT_AUDIO_CODEC_CAP_DURATION_10 | BT_AUDIO_CODEC_CAP_DURATION_PREFER_10),
 	BT_AUDIO_CODEC_CAP_CHAN_COUNT_SUPPORT(1),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MIN, 10000),
 	LE_AUDIO_SDU_SIZE_OCTETS(CONFIG_LC3_BITRATE_MAX, 10000), 1u, AVAILABLE_SOURCE_CONTEXT);
+#endif /* CONFIG_SW_CODEC_G722 */
 #endif /* (CONFIG_BT_AUDIO_TX) */
 
 static enum bt_audio_dir caps_dirs[] = {
@@ -151,12 +165,12 @@ static struct bt_bap_qos_cfg_pref qos_pref = BT_BAP_QOS_CFG_PREF(
 static struct bt_pacs_cap caps[] = {
 #if (CONFIG_BT_AUDIO_RX)
 				{
-					 .codec_cap = &lc3_codec_sink,
+					 .codec_cap = &codec_sink,
 				},
 #endif
 #if (CONFIG_BT_AUDIO_TX)
 				{
-					 .codec_cap = &lc3_codec_source,
+					 .codec_cap = &codec_source,
 				}
 #endif /* (CONFIG_BT_AUDIO_TX) */
 };
@@ -174,8 +188,8 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 			 const struct bt_audio_codec_cfg *codec, struct bt_bap_stream **stream,
 			 struct bt_bap_qos_cfg_pref *const pref, struct bt_bap_ascs_rsp *rsp)
 {
-	int ret;
-	LOG_DBG("LC3 config callback");
+	int ret __maybe_unused;
+	LOG_DBG("Codec config callback");
 
 	for (int i = 0; i < ARRAY_SIZE(cap_audio_streams); i++) {
 		struct bt_cap_stream *cap_audio_stream = &cap_audio_streams[i];
@@ -183,6 +197,11 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 		if (!cap_audio_stream->bap_stream.conn) {
 			LOG_DBG("ASE Codec Config stream %p", (void *)cap_audio_stream);
 
+#if CONFIG_SW_CODEC_G722
+			if (le_audio_g722_config_check(codec)) {
+				return -EINVAL;
+			}
+#else
 			ret = le_audio_bitrate_check(codec);
 			if (!ret) {
 				LOG_WRN("Bitrate check failed");
@@ -194,6 +213,7 @@ static int lc3_config_cb(struct bt_conn *conn, const struct bt_bap_ep *ep, enum 
 				LOG_WRN("Sample rate not supported");
 				return -EINVAL;
 			}
+#endif /* CONFIG_SW_CODEC_G722 */
 
 			if (dir == BT_AUDIO_DIR_SINK) {
 				LOG_DBG("BT_AUDIO_DIR_SINK");
@@ -232,6 +252,14 @@ static int lc3_reconfig_cb(struct bt_bap_stream *stream, enum bt_audio_dir dir,
 {
 	LOG_DBG("ASE Codec Reconfig: stream %p", (void *)stream);
 
+#if CONFIG_SW_CODEC_G722
+	if (le_audio_g722_config_check(codec)) {
+		return -EINVAL;
+	}
+
+	*pref = qos_pref;
+#endif
+
 	return 0;
 }
 
@@ -239,6 +267,13 @@ static int lc3_qos_cb(struct bt_bap_stream *stream, const struct bt_bap_qos_cfg 
 		      struct bt_bap_ascs_rsp *rsp)
 {
 	enum bt_audio_dir dir;
+
+#if CONFIG_SW_CODEC_G722
+	if (qos->interval != 10000 || qos->sdu != LE_AUDIO_G722_OCTETS_PER_FRAME) {
+		LOG_WRN("Unsupported G.722 QoS: interval %u, SDU %u", qos->interval, qos->sdu);
+		return -EINVAL;
+	}
+#endif
 
 	dir = le_audio_stream_dir_get(stream);
 	if (dir <= 0) {
