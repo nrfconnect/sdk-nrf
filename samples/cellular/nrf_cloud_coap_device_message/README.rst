@@ -20,9 +20,6 @@ The sample requires an `nRF Cloud`_ account.
 Your device must be onboarded with `nRF Cloud`_.
 If it is not, follow the instructions in `Device on-boarding <nrf_cloud_coap_device_message_onboarding_>`_.
 
-.. note::
-   This sample requires modem firmware v1.3.x or later for an nRF9160 DK, or modem firmware v2.x.x for the nRF9161 and nRF9151 DKs.
-
 User interface
 **************
 

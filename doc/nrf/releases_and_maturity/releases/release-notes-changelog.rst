@@ -688,6 +688,7 @@ Cellular samples
     * :ref:`modem_trace_flash`
     * :ref:`nidd_sample`
     * :ref:`nrf_cloud_coap_cell_location`
+    * :ref:`nrf_cloud_coap_device_message`
     * :ref:`pdn_sample`
     * :ref:`sms_sample`
     * :ref:`ciphersuites`
