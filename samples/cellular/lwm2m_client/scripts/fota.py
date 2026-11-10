@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "python-dotenv",
+#     "requests",
+# ]
+# ///
 #
 # Copyright (c) 2023 Nordic Semiconductor ASA
 #

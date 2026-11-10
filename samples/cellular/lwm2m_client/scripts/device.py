@@ -1,4 +1,11 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "pyserial>=3.5",
+#     "python-dotenv",
+# ]
+# ///
 #
 # Copyright (c) 2021 Nordic Semiconductor ASA
 #
@@ -7,25 +14,30 @@
 """Device requests"""
 
 import argparse
+import json
 import logging
 import os
-import re
 import subprocess
 import sys
 import time
 
 import serial
-from serial.tools.list_ports import comports
 
-NRF91_VID = 4966
-THINGY91_VID = 6421
-SEGGER_HEADER_9161 = "10"
+# Board (PCA) name to Zephyr build target
+BOARDS = {
+    "PCA10090": "nrf9160dk/nrf9160/ns",
+    "PCA10153": "nrf9161dk/nrf9161/ns",
+    "PCA10171": "nrf9151dk/nrf9151/ns",
+    "PCA20065": "thingy91x/nrf9151/ns",
+}
 
 class Device:
     """Generate requests for device using AT commands"""
     def __init__(self):
-        self.sid = self.select_device()
-        self.com_port = self.get_com_ports(self.sid)[0]
+        device = self.select_device()
+        self.sid = device["serialNumber"].lstrip("0")
+        self.pca = device["devkit"]["boardVersion"]
+        self.com_port = self.get_com_port(device)
         self.sample_path = os.path.join("/".join(os.path.abspath(__file__).split("/")[:-3]), "at_client")
         self.at_client = None
 
@@ -42,28 +54,15 @@ class Device:
 
     def build_at_client(self):
         logging.info("Building AT client")
-        if str(self.sid).startswith(SEGGER_HEADER_9161):
-            cmd = f"west build --board nrf9161dk/nrf9161/ns --build-dir build --pristine always {self.sample_path}"
-        else:
-            cmd = f"west build --board nrf9160dk/nrf9160/ns --build-dir build --pristine always {self.sample_path}"
+        cmd = f"west build --board {BOARDS[self.pca]} --build-dir build --pristine always {self.sample_path}"
         logging.info(f"{cmd}")
         subprocess.run(cmd.split(), cwd=self.sample_path, check=True, capture_output=True)
         logging.info("Done!")
 
     def flash_at_client(self):
-        logging.info(f"Erasing device {self.sid}")
-        if str(self.sid).startswith(SEGGER_HEADER_9161):
-            logging.info("Recover")
-            cmd = f"nrfjprog --snr {self.sid} --recover"
-            subprocess.run(cmd.split(), check=True)
-        cmd = f"nrfjprog --snr {self.sid} --eraseall"
-        subprocess.run(cmd.split(), check=True, capture_output=True)
-        logging.info("Done!")
-
-        logging.info(f"Programming device {self.sid} at port {self.com_port}")
-        at_hex_path = os.path.join(self.sample_path, "build", "zephyr", "merged.hex")
-        cmd = f"nrfjprog --snr {self.sid} --program {at_hex_path} --verify --reset"
-        subprocess.run(cmd.split(), check=True, capture_output=True)
+        logging.info(f"Recovering and programming device {self.sid} at port {self.com_port}")
+        cmd = "west flash --build-dir build --recover"
+        subprocess.run(cmd.split(), cwd=self.sample_path, check=True, capture_output=True)
         logging.info("Done!")
 
     def get_imei(self):
@@ -111,54 +110,63 @@ class Device:
         logging.info('PSK credentials stored to sec_tag %d', int(tag))
 
     def select_device(self):
-        sids = self.get_devices(NRF91_VID) + self.get_devices(THINGY91_VID)
+        devices = self.get_devices()
 
         # No connected devices, abort
-        if len(sids) == 0:
-            logging.error("No connected devices")
+        if len(devices) == 0:
+            logging.error("No connected supported devices")
             sys.exit(1)
 
         # Only 1 connected device, return it
-        if len(sids) == 1:
-            return sids[0]
+        if len(devices) == 1:
+            return devices[0]
 
         # Multiple connected devices, make the user choose
-        for i, x in enumerate(sids):
-            print(f"{i + 1}) {x}")
+        for i, x in enumerate(devices):
+            print(f"{i + 1}) {x['serialNumber'].lstrip('0')} ({x['devkit']['boardVersion']})")
 
         while True:
-            index = input("Select device (number): ")
-            index = int(index) - 1
-            if index < 0 or index >= len(sids):
+            try:
+                index = int(input("Select device (number): ")) - 1
+            except ValueError:
+                index = -1
+            if index < 0 or index >= len(devices):
                 print("Invalid choice, please try again")
                 continue
-            break
-
-        return sids[index]
+            return devices[index]
 
     @classmethod
-    def get_devices(cls, vid):
-        sids = []
-        for item in comports():
-            if item.vid == vid:
-                snr = item.serial_number.lstrip("0")
-                if snr not in sids:
-                    sids.append(snr)
-        return sids
+    def get_devices(cls):
+        """List connected devices with a supported board version using nrfutil"""
+        try:
+            result = subprocess.run(["nrfutil", "device", "list", "--json"],
+                                    check=True, capture_output=True, text=True)
+        except FileNotFoundError:
+            logging.error("nrfutil not found, install it and the 'device' command")
+            sys.exit(1)
+        except subprocess.CalledProcessError as e:
+            logging.exception("nrfutil device list failed: %s", e.stderr.strip())
+            sys.exit(1)
 
-    @classmethod
-    def get_com_ports(cls, sid):
-        com_ports = []
-        for item in comports():
-            manufacturer_match = item.manufacturer in ('SEGGER', 'Nordic Semiconductor')
-            if not manufacturer_match:
+        devices = []
+        for line in result.stdout.splitlines():
+            try:
+                msg = json.loads(line)
+            except json.JSONDecodeError:
                 continue
-            serial_match = item.serial_number.lstrip("0") == sid
-            if serial_match:
-                com_ports.append(item.device)
-        # Sort com ports on their integer identifiers, which takes care of corner case
-        # where we have a cross-over from N digit to N + 1 digit identifiers
-        return sorted(com_ports, key=lambda x: int(re.search(r"\d+", x).group(0)))
+            if msg.get("type") != "info":
+                continue
+            for item in msg["data"].get("devices", []):
+                pca = (item.get("devkit") or {}).get("boardVersion")
+                if pca in BOARDS and item.get("serialPorts"):
+                    devices.append(item)
+        return devices
+
+    @classmethod
+    def get_com_port(cls, device):
+        """Return the first virtual COM port of the device, used for AT commands"""
+        ports = sorted(device["serialPorts"], key=lambda p: p["vcom"])
+        return ports[0]["comName"]
 
 if __name__ == "__main__":
     try:
@@ -171,14 +179,14 @@ if __name__ == "__main__":
         """Delete content of sec_tag"""
         dev.delete_sec_tag(args.tag)
 
-    def imei():
+    def imei(_args):
         print(dev.get_imei())
 
     def read(args):
         for line in dev.read_sec_tag(args.tag):
             print(line)
 
-    def list():
+    def list(_args):
         for line in dev.read_sec_tag(None):
             print(line)
 

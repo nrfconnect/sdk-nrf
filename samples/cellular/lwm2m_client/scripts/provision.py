@@ -1,4 +1,12 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run --script
+# /// script
+# requires-python = ">=3.9"
+# dependencies = [
+#     "pyserial>=3.5",
+#     "python-dotenv",
+#     "requests",
+# ]
+# ///
 #
 # Copyright (c) 2021 Nordic Semiconductor ASA
 #
