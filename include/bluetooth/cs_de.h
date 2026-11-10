@@ -96,8 +96,8 @@ typedef struct {
 /**
  * @brief Combine the local and remote IQ values in a cs_de_iq_tones_t to one array.
  * This is done through an element wise complex multiplication of the local and remote IQ values.
- * @param[in] cs_de_iq_tones to IQ values to combine
- * @param[out] iq_tones_comb pointer to allocated memory for combined IQ values. In the combined
+ * @param[in] cs_de_iq_tones Pointer to the IQ values to combine.
+ * @param[out] iq_tones_comb Pointer to allocated memory for combined IQ values. In the combined
  * memory even indexes are the real component of the combined IQ value and odd indexes are the
  * imaginary component.
  */
@@ -116,7 +116,8 @@ cs_de_quality_t cs_de_calc(cs_de_report_t *p_report);
 
 /**
  * @brief Calculates a distance estimate based on the IFFT magnitude of the input IQ values.
- * Note! After calling this function, the input IQ values in iq_tones_comb are overwritten with the
+ *
+ * @note After calling this function, the input IQ values in iq_tones_comb are overwritten with the
  * IFFT magnitude.
  *
  * @note All CS_DE_NUM_CHANNELS slots are used. A slot without a measured tone, for example, a
@@ -125,7 +126,7 @@ cs_de_quality_t cs_de_calc(cs_de_report_t *p_report);
  * and creates side lobes in the IFFT magnitude, which can be selected as the first path and give a
  * distance that is too short. Check the number of measured tones and the largest contiguous gap
  * before relying on this estimate.
- * @param[inout] iq_tones_comb combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
+ * @param[inout] iq_tones_comb Combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
  * elements should match the format described in @ref cs_de_combined_iq_calculate, and the
  * remaining elements must be zero. On return, element k, for k from 0 to
  * CONFIG_BT_CS_DE_NFFT_SIZE - 1, holds the IFFT magnitude of bin k, scaled by
@@ -137,16 +138,16 @@ float cs_de_ifft(float iq_tones_comb[2 * CONFIG_BT_CS_DE_NFFT_SIZE]);
 /**
  * @brief Calculate a distance estimate based on the accumulated RTT
  * To do this, average time of flight is calculated and multiplied with the speed of light.
- * @param[in] rtt_accumulated_half_ns the accumulated total of RTT values over a CS procedure in
+ * @param[in] rtt_accumulated_half_ns The accumulated total of RTT values over a CS procedure in
  * units of 0.5 ns.
- * @param[in] rtt_count the total number of rtt measurements in the procedure
+ * @param[in] rtt_count The total number of RTT measurements in the procedure
  * @return Distance estimate between the two devices in meters
  */
 float cs_de_rtt(int32_t rtt_accumulated_half_ns, uint8_t rtt_count);
 
 /**
  * @brief Calculate distance estimate based on the phase slope of the input IQ values
- * @param[in] iq_tones_comb combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
+ * @param[in] iq_tones_comb Combined IQ values from two devices. The first CS_DE_NUM_CHANNELS * 2
  * elements should match the format described in @ref cs_de_combined_iq_calculate
  * @return Distance estimate between the two devices in meters
  */
