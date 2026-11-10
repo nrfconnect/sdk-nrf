@@ -139,10 +139,14 @@ psa_status_t cracen_xof_get_algo(psa_algorithm_t alg, const struct sxhashalg **s
 
 	switch (alg) {
 	case PSA_ALG_SHAKE128:
-		IF_ENABLED(PSA_NEED_CRACEN_SHAKE128, (*sx_xof_algo = &sxhashalg_shake128));
+#if defined(PSA_NEED_CRACEN_SHAKE128) || defined(CONFIG_NEED_CRACEN_HYBRID_VERIFY_SHAKE128)
+		*sx_xof_algo = &sxhashalg_shake128;
+#endif
 		break;
 	case PSA_ALG_SHAKE256:
-		IF_ENABLED(PSA_NEED_CRACEN_SHAKE256, (*sx_xof_algo = &sxhashalg_shake256));
+#if defined(PSA_NEED_CRACEN_SHAKE256) || defined(CONFIG_NEED_CRACEN_HYBRID_VERIFY_SHAKE256)
+		*sx_xof_algo = &sxhashalg_shake256;
+#endif
 		break;
 	default:
 		return PSA_ALG_IS_XOF(alg) ? PSA_ERROR_NOT_SUPPORTED : PSA_ERROR_INVALID_ARGUMENT;

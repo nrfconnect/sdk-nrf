@@ -13,10 +13,15 @@
 #include <internal/ecc/cracen_ecc_helpers.h>
 #include <internal/ecc/cracen_ecdsa.h>
 #include <internal/ml_dsa/cracen_ml_dsa.h>
+#include <internal/ml_dsa/cracen_ml_dsa_internal.h>
 #include <nrf_security_mutexes.h>
 #include <silexpk/core.h>
 #include <silexpk/ec_curves.h>
 #include <sxsymcrypt/hash.h>
+
+_Static_assert(ML_DSA_MATRIX_ROWS_MAX != 1,
+	       "CONFIG_CRACEN_HYBRID_VERIFY requires at least one "
+	       "CONFIG_CRACEN_HYBRID_VERIFY_ML_DSA_* option to be enabled.");
 
 extern nrf_security_mutex_t cracen_mutex_asymmetric;
 extern nrf_security_mutex_t cracen_mutex_symmetric;

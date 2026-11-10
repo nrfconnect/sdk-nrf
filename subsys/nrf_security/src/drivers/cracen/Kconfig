@@ -158,7 +158,7 @@ config CRACEN_XOF_OUT_POOL_BUF_SIZE
 	int "CRACEN XOF output pool buffer size in bytes"
 	range 168 8192
 	default 168
-	depends on PSA_NEED_CRACEN_XOF_DRIVER
+	depends on PSA_NEED_CRACEN_XOF_DRIVER || NEED_CRACEN_HYBRID_VERIFY_XOF
 	help
 	  Size of the per-operation output pool used by the CRACEN XOF driver,
 	  needed to decrease the number of calls to hardware when XOF
@@ -217,16 +217,7 @@ config CRACEN_BASE_RSA_COUNTERMEASURES_EXTENDED
 	  The countermeasures are available for the following operation:
 	  - RSA modular exponentiation
 
-config CRACEN_HYBRID_VERIFY
-	bool "CRACEN hybrid ML-DSA and ECDSA verification"
-	depends on !BUILD_WITH_TFM
-	depends on PSA_NEED_CRACEN_ML_DSA || PSA_NEED_CRACEN_DETERMINISTIC_ML_DSA
-	depends on PSA_NEED_CRACEN_ECDSA || PSA_NEED_CRACEN_DETERMINISTIC_ECDSA
-	help
-	  Enable cracen_hybrid_verify(), which starts an ECDSA verification
-	  before an ML-DSA verification over the same message and collects
-	  its result. This way, the PKE and the CryptoMaster run in
-	  parallel instead of idling one while the other runs.
+rsource 'Kconfig.hybrid_verify'
 
 rsource 'Kconfig.psa_driver'
 
