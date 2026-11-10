@@ -653,6 +653,7 @@ Cellular samples
     * :ref:`modem_trace_backend_sample`
     * :ref:`modem_trace_flash`
     * :ref:`nidd_sample`
+    * :ref:`nrf_cloud_coap_cell_location`
     * :ref:`pdn_sample`
     * :ref:`sms_sample`
     * :ref:`ciphersuites`
