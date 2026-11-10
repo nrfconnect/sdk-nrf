@@ -16,7 +16,7 @@ static int xo_offset_init(void)
 	uint32_t xo_offset = (uint32_t)CONFIG_VTF_FREQ_OFFSET_DEFAULT_VALUE;
 	int source;
 
-	source = nrf71_icr_read(XTALCOMP_OFFSET, &xo_offset);
+	source = nrf71_icr_read(NRF71_ICR_XTALCOMP_OFFSET, &xo_offset);
 	if (source < 0) {
 		LOG_ERR("Failed to read XO offset: %d", source);
 		return source;
