@@ -405,13 +405,13 @@ config NRF71_GET_STA_STALE_TIMEOUT_MS
 	  If no frame has been received within this period, the driver
 	  queries the RPU instead.
 
-config NRF_WIFI_CTRL_HEAP_SIZE
+config NRF71_CTRL_HEAP_SIZE
 	int "Dedicated memory pool for control plane"
 	# New IPC design uses RAM for commands and events and hold till
 	# Wi-Fi core processes them, so, need more RAM.
 	default 40000
 
-config NRF_WIFI_DATA_HEAP_SIZE
+config NRF71_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
 	default 0 if NRF71_RADIO_TEST_MODE || NRF71_OFFLOADED_RAW_TX_MODE
 	default 8000 if NRF71_SCAN_ONLY

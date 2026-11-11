@@ -31,11 +31,11 @@
 #endif
 #if defined(CONFIG_NOCACHE_MEMORY)
 K_HEAP_DEFINE_NOCACHE(wifi_drv_ctrl_mem_pool,
-		      CONFIG_NRF_WIFI_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
-K_HEAP_DEFINE_NOCACHE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_SIZE);
+		      CONFIG_NRF71_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
+K_HEAP_DEFINE_NOCACHE(wifi_drv_data_mem_pool, CONFIG_NRF71_DATA_HEAP_SIZE);
 #else
-K_HEAP_DEFINE(wifi_drv_ctrl_mem_pool, CONFIG_NRF_WIFI_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
-K_HEAP_DEFINE(wifi_drv_data_mem_pool, CONFIG_NRF_WIFI_DATA_HEAP_SIZE);
+K_HEAP_DEFINE(wifi_drv_ctrl_mem_pool, CONFIG_NRF71_CTRL_HEAP_SIZE + NRF_WIFI_CTRL_HEAP_EXTRA);
+K_HEAP_DEFINE(wifi_drv_data_mem_pool, CONFIG_NRF71_DATA_HEAP_SIZE);
 #endif /* CONFIG_NOCACHE_MEMORY */
 static struct k_heap *const wifi_ctrl_pool = &wifi_drv_ctrl_mem_pool;
 static struct k_heap *const wifi_data_pool = &wifi_drv_data_mem_pool;
