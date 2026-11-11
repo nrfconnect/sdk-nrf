@@ -1017,13 +1017,13 @@ enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
  */
 enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode);
 
-#if defined(CONFIG_NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_RPU_RECOVERY) || defined(__DOXYGEN__)
 /** @cond INTERNAL_HIDDEN */
 enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 						void *event_data,
 						unsigned int len);
 /** @endcond */
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 #ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 /**
