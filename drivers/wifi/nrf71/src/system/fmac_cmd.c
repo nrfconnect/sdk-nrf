@@ -172,9 +172,9 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		umac_cmd_data->dynamic_ed = 1;
 	#endif /* CONFIG_NRF_WIFI_DYNAMIC_ED */
 
-#ifdef CONFIG_NRF_WIFI_DISPLAY_SCAN_ABORT_ON_BSS_LIMIT
+#ifdef CONFIG_NRF71_WIFI_DISPLAY_SCAN_ABORT_ON_BSS_LIMIT
 	umac_cmd_data->display_scan_abort_on_bss_limit = 1;
-#endif /* CONFIG_NRF_WIFI_DISPLAY_SCAN_ABORT_ON_BSS_LIMIT */
+#endif /* CONFIG_NRF71_WIFI_DISPLAY_SCAN_ABORT_ON_BSS_LIMIT */
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,
