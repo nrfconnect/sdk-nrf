@@ -697,7 +697,7 @@ config NRF71_MGMT_BUFF_OFFLOAD
 	  from having to exchange commands and events for every management packet even if it is
 	  consumed by UMAC.
 
-config NRF_WIFI_FEAT_KEEPALIVE
+config NRF71_KEEPALIVE_SUPPORT
 	bool "Wi-Fi keepalive feature for connection maintenance"
 	depends on NRF71_STA_SUPPORT
 	default y
@@ -707,9 +707,9 @@ config NRF_WIFI_FEAT_KEEPALIVE
 	  that disconnect idle clients without any explicit checks. It slightly increases
 	  power consumption.
 
-if NRF_WIFI_FEAT_KEEPALIVE
+if NRF71_KEEPALIVE_SUPPORT
 
-config NRF_WIFI_KEEPALIVE_PERIOD_S
+config NRF71_KEEPALIVE_PERIOD_S
 	int "Keepalive period in seconds"
 	range 30 3600
 	default 30

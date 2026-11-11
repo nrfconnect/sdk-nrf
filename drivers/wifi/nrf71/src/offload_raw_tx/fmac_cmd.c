@@ -78,12 +78,12 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 	umac_cmd_data->mgmt_buff_offload =  1;
 	LOG_DBG("Management buffer offload enabled");
 #endif /* CONFIG_NRF71_MGMT_BUFF_OFFLOAD */
-#ifdef CONFIG_NRF_WIFI_FEAT_KEEPALIVE
+#ifdef CONFIG_NRF71_KEEPALIVE_SUPPORT
 	umac_cmd_data->keep_alive_enable = KEEP_ALIVE_ENABLED;
-	umac_cmd_data->keep_alive_period = CONFIG_NRF_WIFI_KEEPALIVE_PERIOD_S;
+	umac_cmd_data->keep_alive_period = CONFIG_NRF71_KEEPALIVE_PERIOD_S;
 	LOG_DBG("Keepalive enabled with period %d",
 				   umac_cmd_data->keep_alive_enable);
-#endif /* CONFIG_NRF_WIFI_FEAT_KEEPALIVE */
+#endif /* CONFIG_NRF71_KEEPALIVE_SUPPORT */
 
 	umac_cmd_data->op_band = op_band;
 
