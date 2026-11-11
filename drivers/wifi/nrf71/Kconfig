@@ -165,21 +165,21 @@ config NRF71_IF_AUTO_START_SUPPORT
 	bool "Wi-Fi interface auto start on boot"
 	default y
 
-config NRF_WIFI_LOW_POWER
+config NRF71_LOW_POWER_SUPPORT
 	bool "Low power mode in nRF Wi-Fi chipsets"
 	depends on !NRF71_RADIO_TEST_MODE && !NRF71_AP_SUPPORT
 	default y
 
 config NRF_WIFI_LP_RX
 	bool "Low power RF mode in nRF Wi-Fi chipsets"
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_LOW_POWER_SUPPORT
 	default y
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
 config NRF_WIFI_BET
 	bool "Beacon early termination (BET) in nRF Wi-Fi chipsets"
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_LOW_POWER_SUPPORT
 	default y
 	help
 	  Enable beacon early termination in the LMAC tuning parameters sent
@@ -307,7 +307,7 @@ config NRF71_RX_WQ_STACK_SIZE
 
 endif # NRF71_RX_WQ_ENABLED
 
-if NRF_WIFI_LOW_POWER
+if NRF71_LOW_POWER_SUPPORT
 
 config NRF71_RPU_PS_IDLE_TIMEOUT_MS
 	int "RPU power save idle timeout in milliseconds"
@@ -328,7 +328,7 @@ config NRF71_RPU_EXTEND_TWT_SP
 	  Note that if a frame is sent after the SP starts, it will be queued, and this
 	  mechanism is not used.
 
-endif # NRF_WIFI_LOW_POWER
+endif # NRF71_LOW_POWER_SUPPORT
 
 config WIFI_FIXED_MAC_ADDRESS
 	string "Wi-Fi Fixed MAC address in format XX:XX:XX:XX:XX:XX"
@@ -555,7 +555,7 @@ config WIFI_NRF71_VHT_HT_FALLBACK
 config NRF_WIFI_RPU_RECOVERY
 	bool "RPU recovery mechanism [EXPERIMENTAL]"
 	# Relies on power-save mode, so, LPM is needed
-	depends on NRF_WIFI_LOW_POWER
+	depends on NRF71_LOW_POWER_SUPPORT
 	select EXPERIMENTAL
 	help
 	  Enable the RPU recovery mechanism to recover from an RPU (nRF71) hang.

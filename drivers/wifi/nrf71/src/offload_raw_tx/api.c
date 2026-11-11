@@ -130,9 +130,9 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	configure_tx_pwr_settings(&tx_pwr_ctrl_params, &tx_pwr_ceil_params);
 
 	status = nrf_wifi_off_raw_tx_fmac_dev_init(drv_ctx->rpu_ctx,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 						   HW_SLEEP_ENABLE,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 						   NRF_WIFI_DEF_PHY_CALIB,
 						   op_band,
 						   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),

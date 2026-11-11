@@ -1173,7 +1173,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 #ifdef CONFIG_NRF71_STA_SUPPORT
 	nrf_wifi_wpa_supp_event_mac_chgd(vif_ctx_zep);
 
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 	status = nrf_wifi_sys_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_ENABLED);
@@ -1184,7 +1184,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 		ret = -EIO;
 		goto dev_rem;
 	}
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
@@ -1270,7 +1270,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 	}
 
 #ifdef CONFIG_NRF71_STA_SUPPORT
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 	status = nrf_wifi_sys_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
 					      NRF_WIFI_PS_DISABLED);
@@ -1279,7 +1279,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 		LOG_ERR("%s: nrf_wifi_sys_fmac_set_power_save failed",
 			__func__);
 	}
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
 	memset(&vif_info,

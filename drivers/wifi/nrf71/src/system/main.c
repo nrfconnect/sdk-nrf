@@ -559,9 +559,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	void *rpu_ctx = NULL;
 	unsigned char op_band = nrf_wifi_utils_get_op_band();
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 	int sleep_type = HW_SLEEP_ENABLE;
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
 	unsigned int fw_ver = 0;
@@ -610,9 +610,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 
 	status = nrf_wifi_sys_fmac_dev_init(
 		rpu_ctx_zep->rpu_ctx,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 		sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
 		&tx_pwr_ctrl_params, &tx_pwr_ceil_params,
 		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
