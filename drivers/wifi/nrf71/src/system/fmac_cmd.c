@@ -158,7 +158,7 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	umac_cmd_data->raw_scan_enable = 0;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 
-	umac_cmd_data->max_ps_poll_fail_cnt = CONFIG_NRF_WIFI_MAX_PS_POLL_FAIL_CNT;
+	umac_cmd_data->max_ps_poll_fail_cnt = CONFIG_NRF71_MAX_PS_POLL_FAIL_CNT;
 
 	#ifdef CONFIG_NRF_WIFI_RX_STBC_HT
 		umac_cmd_data->stbc_enable_in_ht = 1;
