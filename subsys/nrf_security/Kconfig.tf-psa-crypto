@@ -72,10 +72,3 @@ config MBEDTLS_PK_C
 	default y if (MBEDTLS_TLS_LIBRARY && \
 		(PSA_WANT_KEY_TYPE_ECC_PUBLIC_KEY || PSA_WANT_KEY_TYPE_RSA_PUBLIC_KEY)) || \
 		MBEDTLS_PK_PARSE_C || MBEDTLS_PK_WRITE_C
-
-if !MBEDTLS
-# This file gets included only if MBEDTLS, but it defines TF-PSA-Crypto
-# Kconfig options that we make use of even when !MBEDTLS.
-# Include it in this scenario to make said options available.
-rsource "$(ZEPHYR_BASE)/modules/mbedtls/Kconfig.tf-psa-crypto"
-endif

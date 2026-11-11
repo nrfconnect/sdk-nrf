@@ -4,6 +4,9 @@
 # SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
 #
 
+configdefault TF_PSA_CRYPTO
+	default y
+
 # We use MBEDTLS_BUILTIN, but with nrf_security we bring our own TF-PSA-Crypto (Oberon PSA Crypto).
 choice TF_PSA_CRYPTO_IMPLEMENTATION
 	default TF_PSA_CRYPTO_CUSTOM
