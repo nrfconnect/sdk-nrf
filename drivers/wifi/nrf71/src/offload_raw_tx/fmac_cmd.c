@@ -113,7 +113,7 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 	umac_cmd_data->ps_exit_strategy = EVERY_TIM;
 #endif  /* CONFIG_NRF71_PS_INTELLIGENT_EXIT */
 
-	umac_cmd_data->display_scan_bss_limit = CONFIG_NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT;
+	umac_cmd_data->display_scan_bss_limit = CONFIG_NRF71_DISPLAY_SCAN_BSS_LIMIT;
 
 #ifdef CONFIG_NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	umac_cmd_data->coex_disable_ptiwin_for_wifi_scan = 1;
