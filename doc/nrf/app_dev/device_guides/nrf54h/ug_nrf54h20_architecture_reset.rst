@@ -78,5 +78,3 @@ For a detailed list of commands for each reset type, run the following:
 .. nrfutil-command::
 
    nrfutil device reset --help
-
-For more information on ``nrfutil device reset``, see `nRF Util documentation pages <Device command overview_>`_.

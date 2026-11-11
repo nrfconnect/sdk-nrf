@@ -152,8 +152,6 @@ Updating nRF Util and its commands
 
       nrfutil install device=2.4.0 --force
 
-For more information, consult the `nRF Util`_ documentation.
-
 .. _migration_cs2_to_2_7_env_bringup:
 
 Verify the LCS of the device
