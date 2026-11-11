@@ -544,7 +544,7 @@ config NRF71_AP_DEAD_DETECT_TIMEOUT
 	  The number of seconds after which the AP is declared dead if no beacons
 	  are received from the AP. This is used to detect AP silently going down, for example, due to power off.
 
-config WIFI_NRF71_VHT_HT_FALLBACK
+config NRF71_VHT_HT_FALLBACK
 	bool "Allow fallback from VHT to HT on 802.11ac access points"
 	default y
 	help
