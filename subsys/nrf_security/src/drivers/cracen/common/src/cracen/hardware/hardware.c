@@ -59,7 +59,10 @@ void cracen_acquire(void)
 		nrf_cracen_module_enable(NRF_CRACEN, CRACEN_ENABLE_CRYPTOMASTER_Msk |
 							     CRACEN_ENABLE_RNG_Msk |
 							     CRACEN_ENABLE_PKEIKG_Msk);
-		irq_enable(CRACEN_IRQn);
+		if (IS_ENABLED(CONFIG_CRACEN_USE_INTERRUPTS)) {
+			irq_enable(CRACEN_IRQn);
+		}
+
 		LOG_DBG_MSG("Powered on CRACEN.");
 
 #ifdef CONFIG_CRACEN_HW_VERSION_LITE
