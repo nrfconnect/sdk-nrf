@@ -161,7 +161,7 @@ config NRF71_DUAL_VIF_SUPPORT
 
 endif # NRF71_SYSTEM_MODE
 
-config NRF_WIFI_IF_AUTO_START
+config NRF71_IF_AUTO_START_SUPPORT
 	bool "Wi-Fi interface auto start on boot"
 	default y
 
