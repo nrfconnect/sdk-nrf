@@ -126,9 +126,9 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 #ifdef CONFIG_NRF71_RPU_EXTEND_TWT_SP
 	 umac_cmd_data->feature_flags |= TWT_EXTEND_SP_EDCA;
 #endif
-#ifdef CONFIG_WIFI_NRF71_SCAN_DISABLE_DFS_CHANNELS
+#ifdef CONFIG_NRF71_SCAN_DISABLE_DFS_CHANNELS
 	umac_cmd_data->feature_flags |= DISABLE_DFS_CHANNELS;
-#endif /* NRF71_SCAN_DISABLE_DFS_CHANNELS */
+#endif /* CONFIG_NRF71_SCAN_DISABLE_DFS_CHANNELS */
 
 #ifndef CONFIG_WIFI_NRF71_VHT_HT_FALLBACK
 	umac_cmd_data->nrf_wifi_11ac_downgrade_disable = 1;
