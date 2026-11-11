@@ -56,7 +56,7 @@ The following list includes the summary of the most relevant changes introduced 
 
   * DFU:
 
-    * :ref:`Direct XiP mode for MCUboot <ug_nrf52_developing_ble_fota_mcuboot_direct_xip_mode>`, reducing downtime during the DFU process.
+    * Direct XiP mode for MCUboot, reducing downtime during the DFU process.
 
 * Added :ref:`experimental support <software_maturity>` for the following features:
 
@@ -186,10 +186,10 @@ Working with nRF91 Series
 Working with nRF52 Series
 =========================
 
-* :ref:`ug_nrf52_developing`:
+* Developing with nRF52 Series:
 
   * Updated the :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` Kconfig option to support MCUboot bootloader in the direct-xip mode, and added the related documentation.
-    For details, see :ref:`ug_nrf52_developing_ble_fota_mcuboot_direct_xip_mode`.
+    For details, see the Build configuration additions for MCUboot in the direct-xip mode section in the FOTA documentation.
 
 Protocols
 =========

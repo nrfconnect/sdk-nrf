@@ -7,7 +7,7 @@ FOTA updates with nRF5340 DK
    :local:
    :depth: 2
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_intro.rst
    :start-after: fota_upgrades_intro_start
    :end-before: fota_upgrades_intro_end
 
@@ -19,15 +19,15 @@ FOTA over Bluetooth Low Energy
 .. note::
    |bluetooth_fota_note|
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_over_ble_intro.rst
    :start-after: fota_upgrades_over_ble_intro_start
    :end-before: fota_upgrades_over_ble_intro_end
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_over_ble_mandatory_mcuboot.rst
    :start-after: fota_upgrades_over_ble_mandatory_mcuboot_start
    :end-before: fota_upgrades_over_ble_mandatory_mcuboot_end
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_over_ble_additional_information.rst
    :start-after: fota_upgrades_over_ble_additional_information_start
    :end-before: fota_upgrades_over_ble_additional_information_end
 
@@ -36,14 +36,14 @@ FOTA over Bluetooth Low Energy
 Testing steps
 =============
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_ble_testing_nrfcdm.rst
    :start-after: fota_upgrades_outro_start
    :end-before: fota_upgrades_outro_end
 
 FOTA update sample
 ******************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_update_sample.rst
    :start-after: fota_upgrades_update_start
    :end-before: fota_upgrades_update_end
 
@@ -64,13 +64,13 @@ See the `Matter Add-on`_ documentation for more information about FOTA in Matter
 FOTA over Thread
 ****************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_thread_zigbee.rst
    :start-after: fota_upgrades_thread_start
    :end-before: fota_upgrades_thread_end
 
 FOTA over Zigbee
 ****************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_thread_zigbee.rst
    :start-after: fota_upgrades_zigbee_start
    :end-before: fota_upgrades_zigbee_end
