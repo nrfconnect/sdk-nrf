@@ -129,7 +129,7 @@ int nrf_wifi_disp_scan_zep(const struct device *dev,
 	memset(scan_info, 0, sizeof(*scan_info) + (num_scan_channels *
 		sizeof(scan_info->scan_params.center_frequency[0])));
 
-	static uint8_t skip_local_admin_mac = IS_ENABLED(CONFIG_WIFI_NRF71_SKIP_LOCAL_ADMIN_MAC);
+	static uint8_t skip_local_admin_mac = IS_ENABLED(CONFIG_NRF71_SCAN_SKIP_LOCAL_ADMIN_MAC);
 
 	scan_info->scan_params.skip_local_admin_macs = skip_local_admin_mac;
 
