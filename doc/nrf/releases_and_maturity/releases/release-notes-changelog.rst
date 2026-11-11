@@ -543,6 +543,7 @@ Bluetooth samples
     * :ref:`radio_test`
 
   * The nRF52 Series board targets from the :ref:`samples_test_app` Twister configuration.
+  * The Bluetooth: HCI low power UART sample.
 
 * :ref:`central_nfc_pairing` and :ref:`peripheral_nfc_pairing` samples:
 
