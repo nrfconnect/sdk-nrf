@@ -12,7 +12,7 @@
 Requirements
 ************
 
-The sample supports the following development kits, and requires at least two kits:
+The sample supports the following development kit, and requires at least two kits:
 
 .. table-from-sample-yaml::
 
