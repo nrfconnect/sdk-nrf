@@ -129,9 +129,9 @@ struct nrf_wifi_fmac_reg_info {
 struct nrf_wifi_fmac_priv {
 	/** RPU event callback for this operation mode. */
 	enum nrf_wifi_status (*rpu_event_cb)(void *fmac_dev_ctx,
-					     void *event_data,
-					     unsigned int len);
-	/** Operation mode. \ref nrf_wifi_op_mode */
+			      void *event_data,
+			      unsigned int len);
+	/** Operation mode. @ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Data pointer to mode specific parameters */
 	char priv[];
@@ -146,14 +146,19 @@ struct nrf_wifi_fmac_dev_ctx {
 	struct nrf_wifi_fmac_priv *fpriv;
 	/** Handle to the OS abstraction layer. */
 	void *os_dev_ctx;
-#if defined(CONFIG_NRF_WIFI_RPU_RECOVERY) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_RPU_RECOVERY) || defined(__DOXYGEN__)
+	/** Timestamp (ms) when the last wakeup-now signal was asserted. */
 	unsigned long wakeup_now_asserted_time_prev_ms;
+	/** Timestamp (ms) when the last wakeup-now signal was deasserted. */
 	unsigned long wakeup_now_deasserted_time_prev_ms;
+	/** Timestamp (ms) of the last observed RPU sleep opportunity. */
 	unsigned long rpu_sleep_opp_time_prev_ms;
+	/** Count of watchdog IRQ events received during RPU recovery. */
 	int wdt_irq_recd;
+	/** Count of watchdog IRQ events ignored during RPU recovery. */
 	int wdt_irq_ignored;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
-	/** Operation mode. \ref nrf_wifi_op_mode */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
+	/** Operation mode. @ref nrf_wifi_op_mode */
 	int op_mode;
 	/** Firmware statistics. */
 	void *fw_stats;

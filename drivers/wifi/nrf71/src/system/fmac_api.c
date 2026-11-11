@@ -442,7 +442,7 @@ void nrf_wifi_sys_fmac_dev_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx)
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, fmac_dev_ctx->tx_pwr_ceil_params);
 }
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 							     void *event_data,
 							     unsigned int len)
@@ -488,7 +488,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 out:
 	return status;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 struct nrf_wifi_fmac_priv *nrf_wifi_sys_fmac_init(struct nrf_wifi_data_config_params *data_config,
 						  struct rx_buf_pool_params *rx_buf_pools,
