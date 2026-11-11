@@ -58,23 +58,23 @@ void nrf_wifi_event_proc_get_power_save_info(void *vif_ctx,
 		unsigned int event_len);
 #endif /* CONFIG_NRF71_STA_MODE */
 
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 int nrf_wifi_mode(const struct device *dev,
 		  struct net_if *iface,
 		  struct wifi_mode_info *mode);
 #endif
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 int nrf_wifi_channel(const struct device *dev,
 		     struct net_if *iface,
 		     struct wifi_channel_info *channel);
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 int nrf_wifi_filter(const struct device *dev,
 		    struct net_if *iface,
 		    struct wifi_filter_info *filter);
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 int nrf_wifi_set_rts_threshold(const struct device *dev,
 			       struct net_if *iface,

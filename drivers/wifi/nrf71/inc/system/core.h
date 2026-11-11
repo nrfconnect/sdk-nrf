@@ -84,7 +84,7 @@ struct nrf_wifi_vif_ctx_zep {
 	enum nrf_wifi_fmac_if_carr_state if_carr_state;
 	struct k_work nrf_wifi_net_iface_work;
 #endif /* CONFIG_NRF71_DATA_TX */
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	/** Last base mode from WiFi mgmt set_mode (e.g. MONITOR/STA). Used when
 	 *  building combined mode for TX injection so we send the intended base
 	 *  even before the async mode event has been applied.
@@ -152,7 +152,7 @@ struct nrf_wifi_ctx_zep {
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	unsigned int vtf_buffer_start_address;
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	struct k_sem channel_set_done_sem;
 	volatile int channel_set_status;
 #endif
@@ -195,7 +195,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 		return false;
 	}
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	{
 		struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 		unsigned int i;
@@ -213,7 +213,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 			}
 		}
 	}
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
 
 	return true;
 }
@@ -221,7 +221,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 
 static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
 	return fmac_vif_ctx && fmac_vif_ctx->txinjection_mode;
@@ -229,12 +229,12 @@ static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_
 	ARG_UNUSED(vif_ctx_zep);
 
 	return false;
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 }
 
 static inline void nrf_wifi_clear_txinjection(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	struct nrf_wifi_fmac_vif_ctx *fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
 	if (fmac_vif_ctx) {
@@ -242,7 +242,7 @@ static inline void nrf_wifi_clear_txinjection(struct nrf_wifi_vif_ctx_zep *vif_c
 	}
 #else
 	ARG_UNUSED(vif_ctx_zep);
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 }
 
 static inline void nrf_wifi_clear_session_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)

@@ -61,7 +61,7 @@ struct tx_pkt_info {
 	unsigned int peer_id;
 };
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 /**
  * @brief Structure containing information for preparing a raw TX command.
  */
@@ -73,7 +73,7 @@ struct tx_cmd_prep_raw_info {
 	/** Number of TX packets. */
 	unsigned char num_tx_pkts;
 };
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Structure containing information for preparing a TX command.
@@ -116,7 +116,7 @@ void tx_deinit(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 enum nrf_wifi_status nrf_wifi_fmac_tx_done_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		struct nrf_wifi_tx_buff_done *buff);
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 /**
  * @brief Process the raw TX done event.
  *
@@ -127,7 +127,7 @@ enum nrf_wifi_status nrf_wifi_fmac_tx_done_event_process(struct nrf_wifi_fmac_de
 enum nrf_wifi_status
 nrf_wifi_fmac_rawtx_done_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		struct nrf_wifi_event_raw_tx_done *config);
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Get a TX descriptor from the specified queue.

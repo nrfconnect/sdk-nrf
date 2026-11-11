@@ -73,7 +73,7 @@ enum nrf_wifi_fmac_if_carr_state {
 	NRF_WIFI_FMAC_IF_CARR_STATE_INVALID
 };
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 /**
  * @brief Structure to hold raw rx packet information.
  *
@@ -90,7 +90,7 @@ struct raw_rx_pkt_header {
 	/** Data rate of the packet (MCS or Legacy). */
 	unsigned char rate;
 };
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 /**
  * @brief Callback functions to be invoked by UMAC IF layer when a particular event occurs.
@@ -144,7 +144,7 @@ struct nrf_wifi_fmac_callbk_fns {
 		struct nrf_wifi_reg *get_reg,
 		unsigned int event_len);
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
 				 struct nrf_wifi_umac_event_set_interface *set_if_event,
@@ -275,21 +275,36 @@ struct nrf_wifi_fmac_callbk_fns {
 	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
 					     unsigned int tx_rate_kbps);
 #endif /* CONFIG_NRF71_STA_MODE */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
+	/**
+	 * Callback on raw RX in monitor or promiscuous mode.
+	 *
+	 * @p os_vif_ctx OS VIF context registered at interface add.
+	 * @p frm Received frame payload (may be freed when @p pkt_free is true).
+	 * @p raw_hdr PHY/MAC metadata for the frame.
+	 * @p pkt_free When true, the driver may free @p frm after the callback returns.
+	 */
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
 				  void *frm,
 				  struct raw_rx_pkt_header *,
 				  bool pkt_free);
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+	/**
+	 * Callback on regulatory domain change events from the firmware.
+	 *
+	 * @p os_vif_ctx OS VIF context registered at interface add.
+	 * @p reg_change Regulatory change event payload from the RPU.
+	 * @p event_len Length of @p reg_change in bytes.
+	 */
 	void (*reg_change_callbk_fn)(void *os_vif_ctx,
 				     struct nrf_wifi_event_regulatory_change *reg_change,
 				     unsigned int event_len);
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	/** Callback when NRF_WIFI_EVENT_CHANNEL_SET_DONE is received. */
 	void (*channel_set_done_callbk_fn)(void *os_vif_ctx,
 					  struct nrf_wifi_event_set_channel *channel_event,
 					  unsigned int event_len);
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 	/** Callback when a coexistence (CM2CD) event NRF_WIFI_EVENT_COEX_CONFIG
 	 *  is received. Delivers the coexistence event payload to the host
 	 *  coexistence driver.
@@ -310,7 +325,7 @@ enum nrf_wifi_fmac_twt_state {
 };
 #endif /* CONFIG_NRF71_STA_MODE */
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
 /**
  * @brief Structure to hold peer context information.
  *
@@ -502,7 +517,7 @@ struct tx_config {
 	/** TX token debug statistics. */
 	struct tx_token_stats token_stats;
 };
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
 
 #if defined(CONFIG_NRF71_RX_WQ_ENABLED) || defined(__DOXYGEN__)
 /** RX work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_rx_buff). */
@@ -551,7 +566,7 @@ struct nrf_wifi_sys_fmac_priv {
 #endif /* CONFIG_NRF71_STA_MODE */
 };
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 
 /**
  * @brief Transmit modes for raw packets.
@@ -613,7 +628,7 @@ struct raw_tx_stats {
 	/** Total number of raw packets sent. */
 	unsigned int raw_pkt_send_success;
 };
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Structure to hold per device context information for the UMAC IF layer.
@@ -638,7 +653,7 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	unsigned char num_ap;
 	/** Queue for storing mapping info of RX buffers. */
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info;
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	/** Context information related to TX path. */
 	struct tx_config tx_config;
 #endif
@@ -648,12 +663,20 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 #if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
 	/** Deferred TX-done processing work item. */
 	struct k_work tx_done_work;
+<<<<<<< HEAD
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
 #endif /* CONFIG_NRF71_STA_MODE */
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
+=======
+#endif /* CONFIG_NRF71_WIFI_TX_DONE_WQ_ENABLED */
+#endif /* CONFIG_NRF71_WIFI_STA_SUPPORT */
+#ifdef CONFIG_NRF71_WIFI_TX_INJECTION_SUPPORT
+	/** Last raw TX header fields used for offloaded raw transmission. */
+>>>>>>> 9f6fd30117 (fixup! drivers: wifi: nrf71: Refine and rename raw mode Kconfig symbols)
 	struct raw_tx_pkt_header raw_tx_config;
+	/** Cumulative raw TX success and failure counters for the device. */
 	struct raw_tx_stats raw_pkt_stats;
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 };
 
 /**
@@ -681,20 +704,20 @@ struct nrf_wifi_fmac_vif_ctx {
 	unsigned char bssid[NRF_WIFI_ETH_ADDR_LEN];
 	/** Mode setting for the current VIF */
 	unsigned char mode;
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	/** Channel setting for the current VIF */
 	unsigned char channel;
 	/** TX injection mode setting */
 	bool txinjection_mode;
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	/** Filter setting for Monitor and Promiscuous modes */
 	unsigned char packet_filter;
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 	/** Promiscuous mode setting */
 	bool promisc_mode;
-#endif /* CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 };
 
 /**

@@ -121,25 +121,25 @@ config NRF71_P2P_MODE
 	default y if WIFI_NM_WPA_SUPPLICANT_P2P
 	select NRF71_SCAN
 
-config NRF71_SYSTEM_WITH_RAW_MODES
-	bool "nRF71 system mode with raw modes"
-	default y if (NRF71_RAW_DATA_TX || NRF71_RAW_DATA_RX || NRF71_PROMISC_DATA_RX)
-	help
-	  Select this option to enable system mode of the nRF71 driver with raw modes.
+config NRF71_RAW_DATA_SUPPORT
+	bool
 
-config NRF71_RAW_DATA_TX
+config NRF71_TX_INJECTION_SUPPORT
 	bool "RAW TX data path in the driver [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select NRF71_RAW_DATA_SUPPORT
 
-config NRF71_RAW_DATA_RX
+config NRF71_MONITOR_SUPPORT
 	bool "RAW RX sniffer operation in the driver [EXPERIMENTAL]"
 	select EXPERIMENTAL
+	select NRF71_RAW_DATA_SUPPORT
 
-config NRF71_PROMISC_DATA_RX
+config NRF71_PROMISCUOUS_SUPPORT
 	bool "Promiscuous RX sniffer operation in the driver [EXPERIMENTAL]"
 	select WIFI_NM_WPA_SUPPLICANT
 	select EXPERIMENTAL
 	select NET_PROMISCUOUS_MODE
+	select NRF71_RAW_DATA_SUPPORT
 
 config NRF71_DATA_TX
 	bool
@@ -147,8 +147,8 @@ config NRF71_DATA_TX
 config NRF71_SCAN_ONLY
 	bool
 	default y if NRF71_SCAN && !NRF71_STA_MODE && !NRF71_AP_MODE && \
-		!NRF71_P2P_MODE && !NRF71_RAW_DATA_TX && !NRF71_RAW_DATA_RX && \
-		!NRF71_PROMISC_DATA_RX
+		!NRF71_P2P_MODE && !NRF71_TX_INJECTION_SUPPORT && !NRF71_MONITOR_SUPPORT && \
+		!NRF71_PROMISCUOUS_SUPPORT
 
 config NRF71_ENABLE_DUAL_VIF
 	bool "Dual virtual Wi-Fi interfaces"
