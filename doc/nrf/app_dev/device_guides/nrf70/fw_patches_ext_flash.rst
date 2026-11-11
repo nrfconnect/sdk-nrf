@@ -158,7 +158,7 @@ For example, for nRF Util:
 
 .. nrfutil-command:: console
 
-   nrfutil device program --x-family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged_<board_target>.hex
+   nrfutil device program --family nrf53 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,qspi_erase_mode=ERASE_ALL,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/merged_<board_target>.hex
 
 Updating firmware patches
 =========================

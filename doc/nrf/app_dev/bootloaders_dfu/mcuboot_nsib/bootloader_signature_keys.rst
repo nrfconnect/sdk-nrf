@@ -247,7 +247,7 @@ To test that the bootloader no longer boots images signed with the earlier keys,
 
    .. nrfutil-command:: console
 
-      nrfutil device program --x-family nrf52 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/signed_by_b0_<app_name>.hex
+      nrfutil device program --family nrf52 --options chip_erase_mode=ERASE_RANGES_TOUCHED_BY_FIRMWARE,verify=VERIFY_HASH,reset=RESET_SOFT --firmware build/signed_by_b0_<app_name>.hex
 
 #. Observe the bootloader skipping the invalid image and booting the valid image in the other slot:
 

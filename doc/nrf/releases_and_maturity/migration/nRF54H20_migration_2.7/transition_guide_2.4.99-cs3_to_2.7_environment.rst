@@ -305,7 +305,7 @@ To correctly operate, its lifecycle state must be transitioned to Root of Trust 
 
 To transition the LCS to ``RoT``, do the following:
 
-1. Verify the current lifecycle state of the nRF54H20:
+1. Verify the current lifecycle state of the nRF54H20 device:
 
    .. nrfutil-command:: console
 
@@ -337,7 +337,7 @@ To transition the LCS to ``RoT``, do the following:
 
       nrfutil device x-adac-lcs-change --life-cycle rot --serial-number <serial_number>
 
-#. Verify again the current lifecycle state of the nRF54H20:
+#. Verify again the current lifecycle state of the nRF54H20 device:
 
    .. nrfutil-command:: console
 
