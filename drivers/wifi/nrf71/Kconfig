@@ -740,7 +740,7 @@ config NRF71_PS_INTELLIGENT_EXIT
 
 endchoice
 
-config NRF71_PASSIVE_SCAN
+config NRF71_FORCE_PASSIVE_SCAN
 	bool "Forced Passive scan"
 	depends on NRF71_SCAN_SUPPORT
 	help
