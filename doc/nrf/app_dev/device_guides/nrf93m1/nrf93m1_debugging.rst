@@ -265,7 +265,6 @@ To capture a RAM dump, complete the following steps:
 #. Start a trace capture on the trace port, as described in :ref:`ug_nrf93m1_debugging_trace`, and give a directory for the dump with the ``--x-output-ramdump-dir`` option:
 
    .. nrfutil-command:: console
-      :no-validate:
       :values: directory_name=ramdumps
       :values-windows: serial_port=COM1
       :values-macos: serial_port=/dev/ttyACM3
