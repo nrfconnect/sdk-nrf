@@ -842,7 +842,7 @@ config NRF71_DYN_BW_SIGNALLING_SUPPORT
 	help
 	  This option enables support for dynamic bandwidth signalling.
 
-config NRF_WIFI_DYNAMIC_ED
+config NRF71_DYNAMIC_ED_SUPPORT
 	bool "Dynamic ED"
 	help
 	  This option enables support for proprietary algorithm to

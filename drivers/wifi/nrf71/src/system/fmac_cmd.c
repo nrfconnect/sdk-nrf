@@ -168,9 +168,9 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 		umac_cmd_data->dbs_war_ctrl = 1;
 	#endif /* CONFIG_NRF71_DYN_BW_SIGNALLING_SUPPORT */
 
-	#ifdef CONFIG_NRF_WIFI_DYNAMIC_ED
+	#ifdef CONFIG_NRF71_DYNAMIC_ED_SUPPORT
 		umac_cmd_data->dynamic_ed = 1;
-	#endif /* CONFIG_NRF_WIFI_DYNAMIC_ED */
+	#endif /* CONFIG_NRF71_DYNAMIC_ED_SUPPORT */
 
 	status = nrf_wifi_ipc_cmd_send(fmac_dev_ctx,
 				       umac_cmd,
