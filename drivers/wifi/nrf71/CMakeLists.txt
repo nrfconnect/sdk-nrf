@@ -42,7 +42,7 @@ if(CONFIG_NRF71_RADIO_TEST_MODE)
   )
 endif()
 
-if(CONFIG_NRF71_OFFLOADED_RAW_TX)
+if(CONFIG_NRF71_OFFLOADED_RAW_TX_MODE)
   zephyr_library_sources(
     src/offload_raw_tx/fmac_api.c
     src/offload_raw_tx/fmac_cmd.c

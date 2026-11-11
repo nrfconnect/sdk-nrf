@@ -74,7 +74,7 @@ config NRF71_RADIO_TEST_MODE
 	  compliance. It provides direct control of the radio hardware
 	  for transmitting test patterns and measuring RF parameters.
 
-config NRF71_OFFLOADED_RAW_TX
+config NRF71_OFFLOADED_RAW_TX_MODE
 	bool "Offloaded raw TX mode of the nRF71 driver"
 	help
 	  Select this option to enable offloaded raw TX mode.
@@ -86,7 +86,7 @@ config NRF71_OFFLOADED_RAW_TX
 endchoice
 
 config NET_L2_ETHERNET
-	default y if (!NRF71_RADIO_TEST_MODE && !NRF71_OFFLOADED_RAW_TX)
+	default y if (!NRF71_RADIO_TEST_MODE && !NRF71_OFFLOADED_RAW_TX_MODE)
 
 if NRF71_SYSTEM_MODE
 
@@ -413,7 +413,7 @@ config NRF_WIFI_CTRL_HEAP_SIZE
 
 config NRF_WIFI_DATA_HEAP_SIZE
 	int "Dedicated memory pool for data plane"
-	default 0 if NRF71_RADIO_TEST_MODE || NRF71_OFFLOADED_RAW_TX
+	default 0 if NRF71_RADIO_TEST_MODE || NRF71_OFFLOADED_RAW_TX_MODE
 	default 8000 if NRF71_SCAN_ONLY
 	default 110000 if !SOC_FAMILY_NORDIC_NRF
 	default 65536
