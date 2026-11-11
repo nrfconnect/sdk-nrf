@@ -17,7 +17,8 @@ from collections.abc import Iterator
 from typing import Any
 
 from pygments.lexer import Lexer
-from pygments.lexers import BashLexer, BashSessionLexer, TextLexer
+from pygments.lexers.shell import BashLexer, BashSessionLexer
+from pygments.lexers.special import TextLexer
 from pygments.token import Token
 
 PLACEHOLDER = Token.Generic.Emph.Placeholder
