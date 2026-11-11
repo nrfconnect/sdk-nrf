@@ -1862,6 +1862,14 @@ struct lte_lc_pdn_pdp_context_opts {
 };
 
 /**
+ * @brief Maximum length of an Access Point Name (APN), excluding the null terminator.
+ *
+ * This is the longest APN that the modem accepts in a PDP context configuration. 3GPP TS 23.003,
+ * clause 9.1, allows longer APNs.
+ */
+#define LTE_LC_PDN_APN_LEN_MAX 64
+
+/**
  * @brief PDN connection dynamic information structure.
  *
  * This structure holds dynamic information about the PDN connection.
@@ -1879,6 +1887,31 @@ struct lte_lc_pdn_dynamic_info {
 	struct net_in6_addr dns_addr6_primary;
 	/** @brief Secondary IPv6 DNS address. */
 	struct net_in6_addr dns_addr6_secondary;
+	/**
+	 * @brief IPv4 address of the PDN connection.
+	 *
+	 * Set to the unspecified address (all zeros) if no IPv4 address is assigned, or if it
+	 * cannot be read.
+	 */
+	struct net_in_addr ipv4_addr;
+	/**
+	 * @brief IPv6 address of the PDN connection.
+	 *
+	 * Set to the unspecified address (all zeros) if no IPv6 address is assigned, or if it
+	 * cannot be read.
+	 * The IPv6 address is available after the @ref LTE_LC_EVT_PDN_IPV6_UP event has been
+	 * received for the PDN connection.
+	 */
+	struct net_in6_addr ipv6_addr;
+	/**
+	 * @brief Access Point Name (APN) of the PDN connection, null-terminated.
+	 *
+	 * This is the APN in use by the active PDN connection, as reported by the modem. It can
+	 * differ from the APN configured for the PDP context, for example, by including the APN
+	 * Operator Identifier (`internet.mnc001.mcc001.gprs` for the configured APN `internet`),
+	 * or by being assigned by the network when no APN is configured.
+	 */
+	char apn[LTE_LC_PDN_APN_LEN_MAX + 1];
 };
 
 /** @brief Authentication method. */
@@ -2718,11 +2751,28 @@ int lte_lc_pdn_id_get(uint8_t cid);
 /**
  * @brief Retrieve dynamic parameters of a given PDN connection.
  *
+ * The APN, the DNS server addresses and the MTU sizes are read using the `AT+CGCONTRDP`
+ * command, and the IP addresses using the `AT+CGPADDR` command. The PDN connection must be
+ * active. Parameters that are not read are set to zero.
+ *
+ * The parameters of each IP family are read in order: primary DNS server address, secondary
+ * DNS server address, MTU. If one of them is not reported by the modem, it and the parameters
+ * after it are not read. For example, if the network provides no DNS server addresses, the
+ * function succeeds, but only the APN and the IP addresses are set. To find out whether the
+ * network provided a DNS server address, check it for the unspecified address.
+ *
+ * The IP addresses are read on a best-effort basis: an address that is not assigned or cannot
+ * be read is set to zero, and does not cause the function to fail.
+ *
+ * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
+ *
  * @param[in] cid The context ID.
  * @param[out] info PDN dynamic info.
  *
  * @retval 0 On success.
- * @return A negative errno otherwise.
+ * @retval -EINVAL If @p info is NULL.
+ * @retval -EBADMSG If the PDN connection is not active, or the response cannot be parsed.
+ * @return Another negative errno on other failures.
  */
 int lte_lc_pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *info);
 
@@ -2747,7 +2797,10 @@ int lte_lc_pdn_default_ctx_events_disable(void);
 /**
  * @brief Retrieve the default Access Point Name (APN).
  *
- * The default APN is the APN of the default PDP context (zero).
+ * The default APN is the APN of the default PDP context (zero), as defined with the
+ * `AT+CGDCONT` command. This is the APN that is configured for the PDP context, and it might
+ * differ from the APN that the network has assigned to the PDN connection. Use
+ * @ref lte_lc_pdn_dynamic_info_get to retrieve the APN of an active PDN connection.
  *
  * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
  *

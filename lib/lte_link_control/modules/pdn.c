@@ -42,20 +42,36 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define MODEM_CFUN_ACTIVATE_LTE 21
 
 #define AT_CMD_PDN_CONTEXT_READ_INFO  "AT+CGCONTRDP=%u"
-#define AT_CMD_PDN_CONTEXT_READ_INFO_DNS_ADDR_PRIMARY_INDEX 6
-#define AT_CMD_PDN_CONTEXT_READ_INFO_DNS_ADDR_SECONDARY_INDEX 7
-#define AT_CMD_PDN_CONTEXT_READ_INFO_MTU_INDEX 12
 
-#define AT_CMD_PDN_CONTEXT_READ_RSP_DELIM "\r\n"
-
-     /* "+CGCONTRDP: 0,,"example.com","","","198.176.154.230","12.34.56.78",,,,,1464\r\n
-      *  +CGCONTRDP: 0,,"example.com","","","1111:2222:3:FFF::55","1111:2222:3:FFF::55",,,,,1464"
-      */
+/* Example response for a dual stack PDN connection. The first line contains the IPv4
+ * parameters and the second line the IPv6 parameters:
+ *
+ * +CGCONTRDP: 0,,"example.com","","","192.0.2.1","192.0.2.2",,,,,1464
+ * +CGCONTRDP: 0,,"example.com","","","2001:db8::1","2001:db8::2",,,,,1464
+ *
+ * An IPv6-only PDN connection has a single line with the IPv6 parameters, so the DNS
+ * addresses on the first line are matched as either family. The second line format skips
+ * the first line.
+ *
+ * LTE_LC_PDN_APN_LEN_MAX is used as a scanf field width, so it must be a plain integer literal.
+ */
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1 \
-	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u"
+	"+CGCONTRDP: %*u,,\"%" STRINGIFY(LTE_LC_PDN_APN_LEN_MAX) "[^\"]\",\"\",\"\"," \
+	"\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\",,,,,%u"
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2 \
-	"+%*[^+]"\
-	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%39[0-9A-Fa-f:]\",\"%39[0-9A-Fa-f:]\",,,,,%u"
+	"+%*[^+]" \
+	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\",,,,,%u"
+
+#define AT_CMD_PDN_IP_ADDR_READ "AT+CGPADDR=%u"
+
+/* +CGPADDR: <cid>,"<PDP_addr_1>"[,"<PDP_addr_2>"]
+ * PDN type "IP": PDP_addr_1 is the IPv4 address.
+ * PDN type "IPV6": PDP_addr_1 is the IPv6 address.
+ * PDN type "IPV4V6": PDP_addr_1 is the IPv4 address and PDP_addr_2 is the IPv6 address, or
+ * PDP_addr_1 is the only assigned address (IPv4 or IPv6).
+ */
+#define AT_CMD_PDN_IP_ADDR_READ_PARSE \
+	"+CGPADDR: %*u,\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\""
 
 static K_MUTEX_DEFINE(list_mutex);
 
@@ -720,12 +736,63 @@ static void pdn_dynamic_info_dns_addr_fill(struct lte_lc_pdn_dynamic_info *pdn_i
 	}
 }
 
+/**
+ * @brief Fill PDN dynamic info with the IP addresses of the PDN connection.
+ *
+ * This is best effort: if the addresses cannot be read, they are left as the unspecified address,
+ * so that the other parameters are still returned.
+ *
+ * @param addr1, addr2 Scratch buffers of NET_INET6_ADDRSTRLEN bytes, reused from the caller to
+ *		       limit stack usage.
+ */
+static void pdn_dynamic_info_ip_addr_fill(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info,
+					  char *addr1, char *addr2)
+{
+	int ret;
+	char at_cmd_buf[sizeof("AT+CGPADDR=###")];
+
+	ret = snprintk(at_cmd_buf, sizeof(at_cmd_buf), AT_CMD_PDN_IP_ADDR_READ, cid);
+	if (ret < 0 || ret >= (int)sizeof(at_cmd_buf)) {
+		LOG_ERR("Failed to format AT command, ret %d", ret);
+
+		return;
+	}
+
+	ret = nrf_modem_at_scanf(at_cmd_buf, AT_CMD_PDN_IP_ADDR_READ_PARSE, addr1, addr2);
+	if (ret == -NRF_EBADMSG) {
+		/* Nothing matched, because the PDN connection has no IP address (for example
+		 * Non-IP), or because the modem responded with an error.
+		 */
+		return;
+	} else if (ret < 0) {
+		LOG_WRN("Failed to read IP addresses, err %d", ret);
+
+		return;
+	}
+
+	/* The format string has two conversions, so ret is 1 or 2, both valid. */
+	for (int i = 0; i < ret; i++) {
+		const char *addr = (i == 0) ? addr1 : addr2;
+		/* An IPv6 address always contains a colon, an IPv4 address never does. */
+		const bool is_ipv6 = (strchr(addr, ':') != NULL);
+		void *dst = is_ipv6 ? (void *)&pdn_info->ipv6_addr : (void *)&pdn_info->ipv4_addr;
+
+		if (nrf_inet_pton(is_ipv6 ? NET_AF_INET6 : NET_AF_INET, addr, dst) != 1) {
+			LOG_WRN("Unexpected address format: %s", addr);
+
+			/* Don't leave a partially converted address behind. */
+			memset(dst, 0, is_ipv6 ? sizeof(pdn_info->ipv6_addr) :
+						 sizeof(pdn_info->ipv4_addr));
+		}
+	}
+}
+
 int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info)
 {
 	int ret;
 	char at_cmd_buf[sizeof("AT+CGCONTRDP=###")];
-	char dns_addr_str_primary[NET_INET6_ADDRSTRLEN];
-	char dns_addr_str_secondary[NET_INET6_ADDRSTRLEN];
+	char dns_addr_str_primary[NET_INET6_ADDRSTRLEN] = {0};
+	char dns_addr_str_secondary[NET_INET6_ADDRSTRLEN] = {0};
 	uint32_t mtu = 0;
 
 	if (!pdn_info) {
@@ -735,13 +802,19 @@ int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info)
 	/* Reset PDN dynamic info. */
 	memset(pdn_info, 0, sizeof(struct lte_lc_pdn_dynamic_info));
 
-	/* Clear secondary DNS address buffer. */
-	memset(dns_addr_str_secondary, 0, sizeof(dns_addr_str_secondary));
+	ret = snprintk(at_cmd_buf, sizeof(at_cmd_buf), AT_CMD_PDN_CONTEXT_READ_INFO, cid);
+	if (ret < 0 || ret >= (int)sizeof(at_cmd_buf)) {
+		LOG_ERR("Failed to format AT command, ret %d", ret);
 
-	(void)snprintf(at_cmd_buf, sizeof(at_cmd_buf), AT_CMD_PDN_CONTEXT_READ_INFO, cid);
+		return -EFAULT;
+	}
 
+	/* The APN is the same on both lines of a dual stack response, so it is only read from
+	 * the first line. If the network did not provide DNS server addresses, only the APN is
+	 * matched, and the DNS address buffers remain empty.
+	 */
 	ret = nrf_modem_at_scanf(at_cmd_buf, AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1,
-				 dns_addr_str_primary, dns_addr_str_secondary, &mtu);
+				 pdn_info->apn, dns_addr_str_primary, dns_addr_str_secondary, &mtu);
 	if (ret < 1) {
 		/* Don't log an error if no PDN connections are active, this may not be considered
 		 * an error by the caller.
@@ -760,15 +833,16 @@ int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info)
 
 	mtu = 0;
 
-	/* Scan second line if PDN has dual stack capabilities. */
+	/* Scan second line if PDN has dual stack capabilities. Only getting one line is ok. */
 	ret = nrf_modem_at_scanf(at_cmd_buf, AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2,
 				 dns_addr_str_primary, dns_addr_str_secondary, &mtu);
-	if (ret < 1) {
-		/* We only got one entry, but that is ok. */
-		return 0;
+	if (ret >= 1) {
+		pdn_dynamic_info_dns_addr_fill(pdn_info, mtu, dns_addr_str_primary,
+					       dns_addr_str_secondary);
 	}
 
-	pdn_dynamic_info_dns_addr_fill(pdn_info, mtu, dns_addr_str_primary, dns_addr_str_secondary);
+	/* The DNS address strings are no longer needed, so reuse their buffers. */
+	pdn_dynamic_info_ip_addr_fill(cid, pdn_info, dns_addr_str_primary, dns_addr_str_secondary);
 
 	return 0;
 }

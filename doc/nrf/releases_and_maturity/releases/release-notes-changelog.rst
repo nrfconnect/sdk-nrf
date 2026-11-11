@@ -1336,10 +1336,22 @@ Modem libraries
       The runtime band lock is stored by the library and set again when the modem is initialized or has been powered off.
     * The :kconfig:option:`CONFIG_LTE_LC_DATA_PROFILE_MODULE` Kconfig option to enable the :c:func:`lte_lc_data_profile_set` and :c:func:`lte_lc_data_profile_get` functions, which set and get the data profile using the ``AT%XDATAPRFL`` command.
       You can use the :kconfig:option:`CONFIG_LTE_DATA_PROFILE_INIT` Kconfig choice to set a data profile when the modem is initialized.
+    * The following members to the :c:struct:`lte_lc_pdn_dynamic_info` structure, retrieved with the :c:func:`lte_lc_pdn_dynamic_info_get` function:
 
-  * Updated the :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to select the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option.
-    The bands set using the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` and :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig options are now used as the initial runtime band lock.
-    You can change the runtime band lock using the :c:func:`lte_lc_band_lock_set` function.
+      * :c:member:`lte_lc_pdn_dynamic_info.apn` - The APN of the active PDN connection as reported by the ``AT+CGCONTRDP`` command.
+      * :c:member:`lte_lc_pdn_dynamic_info.ipv4_addr` and :c:member:`lte_lc_pdn_dynamic_info.ipv6_addr` - The IPv4 and IPv6 addresses of the PDN connection as reported by the ``AT+CGPADDR`` command.
+
+  * Updated:
+
+    * The :kconfig:option:`CONFIG_LTE_LOCK_BANDS` Kconfig option to select the :kconfig:option:`CONFIG_LTE_LC_BAND_LOCK_MODULE` Kconfig option.
+      The bands set using the :kconfig:option:`CONFIG_LTE_LOCK_BAND_MASK` and :kconfig:option:`CONFIG_LTE_LOCK_BAND_LIST` Kconfig options are now used as the initial runtime band lock.
+      You can change the runtime band lock using the :c:func:`lte_lc_band_lock_set` function.
+    * The :c:func:`lte_lc_pdn_dynamic_info_get` function to succeed and return the APN when the network did not provide DNS server addresses.
+      Previously, the function returned ``-EBADMSG`` in this case.
+      To find out whether the network provided a DNS server address, check the DNS address members for the unspecified address instead of checking the return value.
+      As before, if a DNS server address of an IP family is missing, the MTU of that family is not returned.
+
+  * Fixed an issue where the :c:func:`lte_lc_pdn_dynamic_info_get` function did not return the DNS server addresses and MTU of an IPv6-only PDN connection.
 
 Multiprotocol Service Layer libraries
 -------------------------------------

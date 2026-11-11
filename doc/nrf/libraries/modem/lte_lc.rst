@@ -420,6 +420,8 @@ Following are the AT commands that are used by the PDN functionality:
 * ``AT+CGACT`` - To activate or deactivate a PDN connection
 * ``AT%XGETPDNID`` - To retrieve the PDN ID for a given PDP context
 * ``AT+CGAUTH`` - To set the PDN connection authentication parameters
+* ``AT+CGCONTRDP`` - To retrieve the dynamic parameters of a PDN connection
+* ``AT+CGPADDR`` - To retrieve the IP addresses of a PDN connection (as part of the dynamic parameters)
 
 For more information about these commands, see `Packet Domain AT commands`_ in the nRF9160 AT Commands Reference Guide or the `nRF91x1 packet Domain AT commands`_ section in the nRF91x1 AT Commands Reference Guide, depending on the SiP you are using.
 
@@ -446,8 +448,12 @@ The application can use the following functions to manage PDP contexts and PDN c
   The PDN connection must be inactive when the PDP context is destroyed.
 * :c:func:`lte_lc_pdn_id_get` - Retrieves the PDN ID for a given PDP context.
   The PDN ID can be used to route traffic through a specific PDN connection.
-* :c:func:`lte_lc_pdn_dynamic_info_get` - Retrieves dynamic parameters such as DNS addresses and MTU sizes for a given PDN connection.
-* :c:func:`lte_lc_pdn_default_ctx_apn_get` - Retrieves the default Access Point Name (APN) of the default PDP context (CID 0).
+* :c:func:`lte_lc_pdn_dynamic_info_get` - Retrieves dynamic parameters such as the Access Point Name (APN), IP addresses, DNS addresses, and MTU sizes for a given PDN connection.
+  The APN is the one in use by the active PDN connection, as reported by the modem.
+  It can differ from the configured APN, for example, by including the APN Operator Identifier, or by being assigned by the network when no APN is configured.
+* :c:func:`lte_lc_pdn_default_ctx_apn_get` - Retrieves the APN configured for the default PDP context (CID 0).
+  This APN might differ from the APN assigned by the network.
+  To retrieve the APN of the active PDN connection, use the :c:func:`lte_lc_pdn_dynamic_info_get` function.
 
 PDN events
 ----------
