@@ -853,7 +853,7 @@ static int nrf_wifi_util_show_vers(const struct shell *sh,
 	return status;
 }
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 static int nrf_wifi_util_trigger_rpu_recovery(const struct shell *sh,
 					      size_t argc,
 					      const char *argv[])
@@ -942,7 +942,7 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 static int nrf_wifi_util_drv_stats(const struct shell *sh,
 				   size_t argc,
@@ -1167,7 +1167,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_show_vers,
 		      1,
 		      0),
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 	SHELL_CMD_ARG(rpu_recovery_test,
 		      NULL,
 		      "Trigger RPU recovery",
@@ -1180,7 +1180,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_rpu_recovery_info,
 		      1,
 		      0),
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 	SHELL_CMD_ARG(drv_stats,
 		      NULL,
 		      "Display host driver error and RPU response timeout counters\n"

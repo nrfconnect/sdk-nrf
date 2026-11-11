@@ -69,7 +69,7 @@ out:
 	return;
 }
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = CONTAINER_OF(work,
@@ -107,7 +107,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	}
 
 	if (rpu_ctx_zep->rpu_recovery_in_progress) {
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 		LOG_ERR("%s: RPU recovery already in progress", __func__);
 #else
 		LOG_DBG("%s: RPU recovery already in progress", __func__);
@@ -116,7 +116,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	}
 
 	if (!sys_timepoint_expired(rpu_ctx_zep->rpu_recovery_quiet_end)) {
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 		LOG_ERR("%s: In quiet period, ignoring", __func__);
 #else
 		LOG_DBG("%s: In quiet period, ignoring", __func__);
@@ -124,17 +124,17 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 		return;
 	}
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Starting RPU recovery", __func__);
 #else
 	LOG_DBG("%s: Starting RPU recovery", __func__);
 #endif
 	k_mutex_lock(&rpu_ctx_zep->rpu_lock, K_FOREVER);
-#if CONFIG_NRF_WIFI_RPU_RECOVERY_MAX_RETRIES > 0
+#if CONFIG_NRF71_RPU_RECOVERY_MAX_RETRIES > 0
 	if (sys_timepoint_expired(rpu_ctx_zep->rpu_recovery_retry_window_end)) {
 		rpu_ctx_zep->rpu_recovery_retries = 0;
 	}
-	if (rpu_ctx_zep->rpu_recovery_retries >= CONFIG_NRF_WIFI_RPU_RECOVERY_MAX_RETRIES) {
+	if (rpu_ctx_zep->rpu_recovery_retries >= CONFIG_NRF71_RPU_RECOVERY_MAX_RETRIES) {
 		LOG_ERR("%s: Maximum recovery retries reached, rebooting system", __func__);
 		sys_reboot(SYS_REBOOT_COLD);
 	}
@@ -143,7 +143,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	rpu_ctx_zep->rpu_recovery_in_progress = true;
 	rpu_ctx_zep->wdt_irq_received += fmac_dev_ctx->wdt_irq_recd;
 	rpu_ctx_zep->wdt_irq_ignored += fmac_dev_ctx->wdt_irq_ignored;
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Bringing the interface down", __func__);
 #else
 	LOG_DBG("%s: Bringing the interface down", __func__);
@@ -161,7 +161,7 @@ static void nrf_wifi_rpu_recovery_work_handler(struct k_work *work)
 	 * Mutex is released in the next phase.
 	 */
 	k_work_reschedule(&vif_ctx_zep->nrf_wifi_rpu_recovery_bringup_work,
-			  K_MSEC(CONFIG_NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS));
+			  K_MSEC(CONFIG_NRF71_RPU_RECOVERY_PROPAGATION_DELAY_MS));
 }
 
 static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
@@ -173,7 +173,7 @@ static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = vif_ctx_zep->rpu_ctx_zep;
 	int ret;
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: Bringing the interface up", __func__);
 #else
 	LOG_DBG("%s: Bringing the interface up", __func__);
@@ -184,11 +184,11 @@ static void nrf_wifi_rpu_recovery_bringup_work_handler(struct k_work *work)
 	}
 	rpu_ctx_zep->rpu_recovery_in_progress = false;
 	rpu_ctx_zep->rpu_recovery_quiet_end =
-		sys_timepoint_calc(K_MSEC(CONFIG_NRF_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS));
+		sys_timepoint_calc(K_MSEC(CONFIG_NRF71_RPU_RECOVERY_QUIET_PERIOD_MS));
 	rpu_ctx_zep->rpu_recovery_retry_window_end =
-		sys_timepoint_calc(K_SECONDS(CONFIG_NRF_WIFI_RPU_RECOVERY_RETRY_WINDOW_S));
+		sys_timepoint_calc(K_SECONDS(CONFIG_NRF71_RPU_RECOVERY_RETRY_WINDOW_S));
 	k_mutex_unlock(&rpu_ctx_zep->rpu_lock);
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY_DEBUG
+#ifdef CONFIG_NRF71_RPU_RECOVERY_DEBUG
 	LOG_ERR("%s: RPU recovery done", __func__);
 #else
 	LOG_DBG("%s: RPU recovery done", __func__);
@@ -225,7 +225,7 @@ void nrf_wifi_rpu_recovery_cb(void *vif_ctx_handle,
 out:
 	return;
 }
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 #ifdef CONFIG_NRF71_DATA_TX
 static void nrf_wifi_net_iface_work_handler(struct k_work *work)
@@ -939,12 +939,12 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	conn_mgr_ignore_iface(iface);
 #endif /* CONFIG_NRF71_SCAN_ONLY */
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 	k_work_init(&vif_ctx_zep->nrf_wifi_rpu_recovery_work,
 		    nrf_wifi_rpu_recovery_work_handler);
 	k_work_init_delayable(&vif_ctx_zep->nrf_wifi_rpu_recovery_bringup_work,
 			      nrf_wifi_rpu_recovery_bringup_work_handler);
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 #if !defined(CONFIG_NRF71_IF_AUTO_START_SUPPORT)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);

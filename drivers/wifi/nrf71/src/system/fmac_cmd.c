@@ -66,13 +66,13 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 #endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 
 	umac_cmd_data->discon_timeout = CONFIG_NRF71_AP_DEAD_DETECT_TIMEOUT;
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 	umac_cmd_data->watchdog_timer_val =
-		(CONFIG_NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) / 1000;
+		(CONFIG_NRF71_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) / 1000;
 #else
 	/* Disable watchdog */
 	umac_cmd_data->watchdog_timer_val = 0xFFFFFF;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 	LOG_DBG("RPU LPM type: %s",
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :

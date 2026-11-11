@@ -110,10 +110,10 @@ struct nrf_wifi_vif_ctx_zep {
 #ifdef CONFIG_NRF71_AP_SUPPORT
 	int inactive_time_sec;
 #endif /* CONFIG_NRF71_AP_SUPPORT */
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 	struct k_work nrf_wifi_rpu_recovery_work;
 	struct k_work_delayable nrf_wifi_rpu_recovery_bringup_work;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 	int rts_threshold_value;
 	unsigned short bss_max_idle_period;
 };
@@ -135,7 +135,7 @@ struct nrf_wifi_ctx_zep {
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
 	struct k_mutex rpu_lock;
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 	bool rpu_recovery_in_progress;
 	k_timepoint_t rpu_recovery_quiet_end;
 	k_timepoint_t rpu_recovery_retry_window_end;
@@ -144,7 +144,7 @@ struct nrf_wifi_ctx_zep {
 	int rpu_recovery_failure;
 	int wdt_irq_received;
 	int wdt_irq_ignored;
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 	unsigned int phy_rf_params_addr[NUM_RF_PARAM_ADDRS];
 	unsigned int vtf_buffer_start_address;
 #if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
@@ -284,11 +284,11 @@ struct nrf_wifi_drv_priv_zep {
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+#ifdef CONFIG_NRF71_RPU_RECOVERY
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
 		void *event_data,
 		unsigned int event_len);
-#endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
+#endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);

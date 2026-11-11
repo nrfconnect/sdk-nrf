@@ -552,7 +552,7 @@ config NRF71_VHT_HT_FALLBACK
 	  VHT to HT when needed. Clear this option to keep VHT mode. Applies
 	  only to 802.11ac 80 MHz links; other modes are unaffected.
 
-config NRF_WIFI_RPU_RECOVERY
+config NRF71_RPU_RECOVERY
 	bool "RPU recovery mechanism [EXPERIMENTAL]"
 	# Relies on power-save mode, so, LPM is needed
 	depends on NRF71_LOW_POWER_SUPPORT
@@ -564,9 +564,9 @@ config NRF_WIFI_RPU_RECOVERY
 	  the recovery process, and it is the application's responsibility to
 	  re-establish the network connection.
 
-if NRF_WIFI_RPU_RECOVERY
+if NRF71_RPU_RECOVERY
 
-config NRF_WIFI_RPU_RECOVERY_PROPAGATION_DELAY_MS
+config NRF71_RPU_RECOVERY_PROPAGATION_DELAY_MS
 	int "RPU recovery propagation delay in milliseconds"
 	default 2000
 	help
@@ -579,7 +579,7 @@ config NET_MGMT_EVENT_QUEUE_SIZE
 	# Doing interface down and up even with delay puts a lot of events in the queue
 	default 16
 
-config NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
+config NRF71_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
 	int "RPU recovery power save active timeout in milliseconds"
 	default 50000
 	help
@@ -587,7 +587,7 @@ config NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS
 	  mechanism will be triggered. This timeout is used to ensure that the
 	  RPU attempts to enter power save mode in case of inactivity.
 
-config NRF_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
+config NRF71_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
 	int "Minimum idle time to enter sleep in milliseconds"
 	range 100 40000
 	default 5000
@@ -596,40 +596,40 @@ config NRF_WIFI_RPU_MIN_TIME_TO_ENTER_SLEEP_MS
 	  sleep mode, assuming there is no activity. Please note that higher values
 	  of this value may increase the power consumption.
 
-config NRF_WIFI_RPU_RECOVERY_DEBUG
+config NRF71_RPU_RECOVERY_DEBUG
 	bool "RPU recovery debug logs"
 	help
 	  Enable RPU recovery debug logs to help debug the RPU recovery mechanism.
 
-config NRF_WIFI_RPU_RECOVERY_QUIET_PERIOD_MS
+config NRF71_RPU_RECOVERY_QUIET_PERIOD_MS
 	int "RPU recovery quiet period in milliseconds"
 	default 5000
 	help
 	  Quiet period in milliseconds after RPU recovery is triggered. During
 	  this period, no new RPU recovery will be triggered.
 
-config NRF_WIFI_RPU_RECOVERY_MAX_RETRIES
+config NRF71_RPU_RECOVERY_MAX_RETRIES
 	int "Maximum number of consecutive RPU recovery retries, 0 to disable"
 	default 0
 	help
 	  Maximum number of consecutive RPU recovery retries before giving up
 	  and resetting the system. Set it to 0 to keep retrying indefinitely.
 
-config NRF_WIFI_RPU_RECOVERY_RETRY_WINDOW_S
+config NRF71_RPU_RECOVERY_RETRY_WINDOW_S
 	int "RPU recovery retry window in seconds"
 	default 900
 	help
 	  Window in seconds during which the number of consecutive RPU recovery
 	  retries are counted. If the number of consecutive RPU recovery retries
-	  exceeds NRF_WIFI_RPU_RECOVERY_MAX_RETRIES within this window, the system
+	  exceeds NRF71_RPU_RECOVERY_MAX_RETRIES within this window, the system
 	  will be reset.
 
-config NRF_WIFI_RPU_RECOVERY_PS_STATE_DEBUG
+config NRF71_RPU_RECOVERY_PS_STATE_DEBUG
 	bool "RPU recovery power save state debug logs"
 	help
 	  Enable RPU recovery power save state debug logs to help debug the RPU recovery mechanism.
 
-endif # NRF_WIFI_RPU_RECOVERY
+endif # NRF71_RPU_RECOVERY
 
 config NRF_WIFI_FEAT_WMM
 	bool "WMM/QoS support"
