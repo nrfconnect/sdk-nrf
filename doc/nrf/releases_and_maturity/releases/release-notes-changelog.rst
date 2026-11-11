@@ -764,6 +764,7 @@ DECT NR+ samples
 * Removed support for the nRF9161 DK and the nRF9131 EK from the following DECT NR+ samples:
 
   * :ref:`dect_phy_shell_application`
+  * :ref:`nrf_modem_dect_phy_hello`
 
 * :ref:`dect_shell_application` sample:
 
