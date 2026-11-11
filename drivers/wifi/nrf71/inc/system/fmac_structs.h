@@ -144,7 +144,8 @@ struct nrf_wifi_fmac_callbk_fns {
 	      struct nrf_wifi_reg *get_reg,
 	      unsigned int event_len);
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+	defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
 	      struct nrf_wifi_umac_event_set_interface *set_if_event,
@@ -325,7 +326,8 @@ enum nrf_wifi_fmac_twt_state {
 };
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+	defined(__DOXYGEN__)
 /**
  * @brief Structure to hold peer context information.
  *
