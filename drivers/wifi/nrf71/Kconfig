@@ -471,7 +471,7 @@ config NRF71_SCAN_MAX_BSS_CNT
 	help
 	  Maximum number of scan results to return. 0 represents unlimited number of BSSes.
 
-config NRF_WIFI_BEAMFORMING
+config NRF71_BEAMFORMING
 	bool "Wi-Fi beamforming"
 	default y
 	help

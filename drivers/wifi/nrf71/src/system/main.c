@@ -613,7 +613,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep 
 #ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 		sleep_type,
 #endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
-		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+		NRF_WIFI_DEF_PHY_CALIB, op_band, IS_ENABLED(CONFIG_NRF71_BEAMFORMING),
 		&tx_pwr_ctrl_params, &tx_pwr_ceil_params,
 		STRINGIFY(CONFIG_NRF71_REG_DOMAIN), rpu_ctx_zep->phy_rf_params_addr,
 			  rpu_ctx_zep->vtf_buffer_start_address);

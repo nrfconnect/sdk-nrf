@@ -90,7 +90,7 @@ static enum nrf_wifi_status nrf_wifi_rt_drv_dev_add(struct nrf_wifi_rt_drv_priv 
 #endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 					   NRF_WIFI_DEF_PHY_CALIB,
 					   op_band,
-					   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+					   IS_ENABLED(CONFIG_NRF71_BEAMFORMING),
 					   &tx_pwr_ctrl_params,
 					   &tx_pwr_ceil_params,
 					   STRINGIFY(CONFIG_NRF71_REG_DOMAIN),

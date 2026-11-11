@@ -135,7 +135,7 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 #endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 						   NRF_WIFI_DEF_PHY_CALIB,
 						   op_band,
-						   IS_ENABLED(CONFIG_NRF_WIFI_BEAMFORMING),
+						   IS_ENABLED(CONFIG_NRF71_BEAMFORMING),
 						   &tx_pwr_ctrl_params,
 						   &tx_pwr_ceil_params,
 						   country_code,
