@@ -946,9 +946,9 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 			      nrf_wifi_rpu_recovery_bringup_work_handler);
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
-#if !defined(CONFIG_NRF_WIFI_IF_AUTO_START)
+#if !defined(CONFIG_NRF71_IF_AUTO_START_SUPPORT)
 	net_if_flag_set(iface, NET_IF_NO_AUTO_START);
-#endif /* CONFIG_NRF_WIFI_IF_AUTO_START */
+#endif /* CONFIG_NRF71_IF_AUTO_START_SUPPORT */
 	net_if_flag_set(iface, NET_IF_NO_TX_LOCK);
 }
 
