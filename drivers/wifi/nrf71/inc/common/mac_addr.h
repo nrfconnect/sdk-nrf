@@ -37,7 +37,7 @@ enum nrf_wifi_mac_addr_src {
  *      non-secure builds where UICR is mapped to the secure domain only)
  *   2. FICR MACADDR[n]
  *   3. A locally administered address derived at runtime, if
- *      CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM is enabled
+ *      CONFIG_NRF71_XICR_MAC_ADDRESS_FALLBACK_RANDOM is enabled
  *
  * A source is used in its entirety, that is, slots are never mixed between
  * UICR and FICR. Within the selected source:
