@@ -665,20 +665,20 @@ config NRF71_QOS_NOACK_POLICY_TID
 
 endif # NRF71_QOS_NOACK_POLICY
 
-choice NRF_WIFI_PS_DATA_RETRIEVAL_MECHANISM
+choice NRF71_PS_DATA_RETRIEVAL_MECHANISM
 	prompt "Power save data retrieval mechanism"
-	default NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+	default NRF71_PS_POLL_BASED_DATA_RETRIEVAL
 	help
 	  Select the mechanism to retrieve buffered data from AP.
 
-config NRF_WIFI_PS_POLL_BASED_RETRIEVAL
+config NRF71_PS_POLL_BASED_DATA_RETRIEVAL
 	bool "PS-Poll frame-based mechanism to retrieve buffered data from AP"
 	help
 	  When the AP notifies about the availability of buffered data, the STA stays in power save
 	  and retrieves the frames one-by-one. This conserves more power but adds latency
 	  to the traffic. It is ideal for minimum number of frames.
 
-config NRF_WIFI_QOS_NULL_BASED_RETRIEVAL
+config NRF71_PS_QOS_NULL_BASED_DATA_RETRIEVAL
 	bool "QoS null frame-based mechanism to retrieve buffered data from AP"
 	help
 	  When the AP notifies about the availability of buffered data, the STA comes out of
