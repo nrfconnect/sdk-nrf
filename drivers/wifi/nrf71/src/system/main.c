@@ -895,7 +895,7 @@ ETH_NET_DEVICE_DT_INST_DEFINE(0,
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
 		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
-#ifdef CONFIG_NRF71_ENABLE_DUAL_VIF
+#ifdef CONFIG_NRF71_DUAL_VIF_SUPPORT
 /* Register second interface */
 ETH_NET_DEVICE_DT_INST_DEFINE(1,
 		    nrf_wifi_sys_drv_main_zep, /* init_fn */
@@ -905,7 +905,7 @@ ETH_NET_DEVICE_DT_INST_DEFINE(1,
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
 		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
-#endif /* NRF71_ENABLE_DUAL_VIF */
+#endif /* NRF71_DUAL_VIF_SUPPORT */
 #endif /* CONFIG_NET_L2_ETHERNET */
 
 #ifdef CONFIG_NET_CONNECTION_MANAGER_CONNECTIVITY_WIFI_MGMT
