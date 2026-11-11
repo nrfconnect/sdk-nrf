@@ -59,7 +59,7 @@ struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 #ifdef CONFIG_NRF71_DATA_TX
 
 #define MAX_TX_FRAME_SIZE \
-	(CONFIG_NRF_WIFI_IFACE_MTU + NRF_WIFI_FMAC_ETH_HDR_LEN + TX_BUF_HEADROOM)
+	(CONFIG_NRF71_IF_MTU + NRF_WIFI_FMAC_ETH_HDR_LEN + TX_BUF_HEADROOM)
 #define TOTAL_TX_SIZE \
 	(CONFIG_NRF71_MAX_TX_TOKENS * CONFIG_NRF71_TX_MAX_DATA_SIZE)
 #define TOTAL_RX_SIZE \
@@ -894,7 +894,7 @@ ETH_NET_DEVICE_DT_INST_DEFINE(0,
 		    NULL, /* cfg */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
-		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
+		    CONFIG_NRF71_IF_MTU); /*mtu */
 #ifdef CONFIG_NRF71_DUAL_VIF_SUPPORT
 /* Register second interface */
 ETH_NET_DEVICE_DT_INST_DEFINE(1,
@@ -904,7 +904,7 @@ ETH_NET_DEVICE_DT_INST_DEFINE(1,
 		    NULL, /* cfg */
 		    CONFIG_WIFI_INIT_PRIORITY, /* prio */
 		    &wifi_offload_ops, /* api */
-		    CONFIG_NRF_WIFI_IFACE_MTU); /*mtu */
+		    CONFIG_NRF71_IF_MTU); /*mtu */
 #endif /* NRF71_DUAL_VIF_SUPPORT */
 #endif /* CONFIG_NET_L2_ETHERNET */
 

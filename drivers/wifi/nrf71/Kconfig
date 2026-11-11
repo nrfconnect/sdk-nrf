@@ -511,7 +511,7 @@ config NRF71_OP_BAND_ALL
 
 endchoice
 
-config NRF_WIFI_IFACE_MTU
+config NRF71_IF_MTU
 	int "MTU for Wi-Fi interface"
 	range 576 2304 if NET_IPV4
 	range 1280 2304 if NET_IPV6
