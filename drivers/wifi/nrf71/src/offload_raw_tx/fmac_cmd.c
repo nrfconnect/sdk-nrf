@@ -19,9 +19,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 enum nrf_wifi_status
 umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned int *rf_params_addr,
 			 unsigned int vtf_buffer_start_address,
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 			 int sleep_type,
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 			 unsigned int phy_calib, unsigned char op_band, bool beamforming,
 			 struct nrf_wifi_tx_pwr_ctrl_params *tx_pwr_ctrl_params,
 			 unsigned char *country_code)
@@ -58,9 +58,9 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 	umac_cmd_data->sys_params.sw_bringup_time = SW_DELAY;
 	umac_cmd_data->sys_params.bcn_time_out = BCN_TIMEOUT;
 	umac_cmd_data->sys_params.calib_sleep_clk = CALIB_SLEEP_CLOCK_ENABLE;
-#ifdef CONFIG_NRF_WIFI_LOW_POWER
+#ifdef CONFIG_NRF71_LOW_POWER_SUPPORT
 	umac_cmd_data->sys_params.sleep_enable = sleep_type;
-#endif /* CONFIG_NRF_WIFI_LOW_POWER */
+#endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 	umac_cmd_data->discon_timeout = CONFIG_NRF_WIFI_AP_DEAD_DETECT_TIMEOUT;
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	umac_cmd_data->watchdog_timer_val =
