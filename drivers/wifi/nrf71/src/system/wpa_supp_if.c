@@ -2122,7 +2122,7 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	if (IS_ENABLED(CONFIG_NRF71_AP_SUPPORT)) {
 		capa->flags |= WPA_DRIVER_FLAGS_AP;
 	}
-	if (IS_ENABLED(CONFIG_NRF71_P2P_MODE)) {
+	if (IS_ENABLED(CONFIG_NRF71_P2P_SUPPORT)) {
 		capa->flags |= WPA_DRIVER_FLAGS_P2P_CAPABLE;
 	}
 
@@ -2373,7 +2373,7 @@ int nrf_wifi_supp_remain_on_channel(void *if_priv, unsigned int freq,
 				    unsigned int duration, u64 host_cookie)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	struct remain_on_channel_info roc_info;
@@ -2413,14 +2413,14 @@ int nrf_wifi_supp_remain_on_channel(void *if_priv, unsigned int freq,
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_MODE */
+#endif /* CONFIG_NRF71_P2P_SUPPORT */
 	return status;
 }
 
 int nrf_wifi_supp_cancel_remain_on_channel(void *if_priv, u64 cookie)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
@@ -2449,14 +2449,14 @@ int nrf_wifi_supp_cancel_remain_on_channel(void *if_priv, u64 cookie)
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_MODE */
+#endif /* CONFIG_NRF71_P2P_SUPPORT */
 	return status;
 }
 
 int nrf_wifi_supp_set_p2p_powersave(void *if_priv, int legacy_ps, int opp_ps, int ctwindow)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_P2P_SUPPORT
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 
@@ -2494,7 +2494,7 @@ int nrf_wifi_supp_set_p2p_powersave(void *if_priv, int legacy_ps, int opp_ps, in
 	}
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_P2P_MODE */
+#endif /* CONFIG_NRF71_P2P_SUPPORT */
 	return status;
 }
 

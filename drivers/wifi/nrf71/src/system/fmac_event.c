@@ -1143,7 +1143,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 				   event_data);
 		break;
 #endif /* CONFIG_NRF71_STA_SUPPORT */
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_P2P_SUPPORT
 	case NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL:
 		if (callbk_fns->roc_callbk_fn) {
 			callbk_fns->roc_callbk_fn(vif_ctx->os_vif_ctx,
@@ -1166,7 +1166,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 					      umac_hdr->cmd_evnt);
 		}
 		break;
-#endif /* CONFIG_NRF71_P2P_MODE */
+#endif /* CONFIG_NRF71_P2P_SUPPORT */
 	case NRF_WIFI_UMAC_EVENT_GET_CONNECTION_INFO:
 		if (callbk_fns->get_conn_info_callbk_fn) {
 			callbk_fns->get_conn_info_callbk_fn(vif_ctx->os_vif_ctx,

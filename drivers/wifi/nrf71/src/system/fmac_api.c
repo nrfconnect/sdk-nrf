@@ -1814,7 +1814,7 @@ out:
 
 #endif /* CONFIG_NRF71_AP_SUPPORT */
 
-#ifdef CONFIG_NRF71_P2P_MODE
+#ifdef CONFIG_NRF71_P2P_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_p2p_dev_start(void *dev_ctx,
 						     unsigned char if_idx)
 {
@@ -1989,7 +1989,7 @@ out:
 	return status;
 }
 
-#endif /* CONFIG_NRF71_P2P_MODE */
+#endif /* CONFIG_NRF71_P2P_SUPPORT */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_mgmt_tx(void *dev_ctx,
