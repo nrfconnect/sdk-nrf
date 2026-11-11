@@ -20,7 +20,7 @@
  * once, so only reserve what the connect one needs beyond the display one.
  */
 #define NRF_WIFI_DISP_SCAN_DB                                                                      \
-	(CONFIG_NRF_WIFI_SCAN_MAX_BSS_CNT * sizeof(struct umac_display_results))
+	(CONFIG_NRF71_SCAN_MAX_BSS_CNT * sizeof(struct umac_display_results))
 #define NRF_WIFI_CONN_SCAN_DB CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE
 #define NRF_WIFI_CTRL_HEAP_EXTRA                                                                   \
 	(NRF_WIFI_CONN_SCAN_DB > NRF_WIFI_DISP_SCAN_DB                                             \

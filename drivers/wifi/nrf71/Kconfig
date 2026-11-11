@@ -464,7 +464,7 @@ config SHELL_STACK_SIZE
 config WIFI_MGMT_SCAN_SSID_FILT_MAX
 	default 2
 
-config NRF_WIFI_SCAN_MAX_BSS_CNT
+config NRF71_SCAN_MAX_BSS_CNT
 	int "Maximum number of scan results to return."
 	default 200
 	range 0 65535
