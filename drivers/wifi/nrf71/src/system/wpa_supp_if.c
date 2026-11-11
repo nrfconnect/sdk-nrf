@@ -645,7 +645,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	vif_ctx_zep->scan_in_progress = true;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
-		K_SECONDS(CONFIG_WIFI_NRF71_SCAN_TIMEOUT_S));
+		K_SECONDS(CONFIG_NRF71_SCAN_TIMEOUT));
 
 	ret = 0;
 out:

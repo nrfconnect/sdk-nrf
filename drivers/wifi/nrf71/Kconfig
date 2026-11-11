@@ -478,7 +478,7 @@ config NRF71_BEAMFORMING
 	  Enable this option to enable Wi-Fi beamforming.
 	  Beamforming can provide a slight improvement in performance, whereas disabling it can provide better power savings in low network activity applications.
 
-config WIFI_NRF71_SCAN_TIMEOUT_S
+config NRF71_SCAN_TIMEOUT
 	int "Scan timeout in seconds"
 	default 30
 
