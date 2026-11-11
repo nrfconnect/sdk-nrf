@@ -848,7 +848,7 @@ config NRF71_DYNAMIC_ED_SUPPORT
 	  This option enables support for proprietary algorithm to
 	  enhance performance in high-traffic channels.
 
-config NRF_WIFI_TWT_SETUP_TIMEOUT_MS
+config NRF71_TWT_SETUP_TIMEOUT_MS
 	int "TWT setup timeout (ms)"
 	range 100 10000
 	default 250
