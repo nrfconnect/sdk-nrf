@@ -687,7 +687,7 @@ config NRF71_PS_QOS_NULL_BASED_DATA_RETRIEVAL
 	  depending on the delay. It is ideal for heavy buffered traffic.
 endchoice
 
-config NRF_WIFI_MGMT_BUFF_OFFLOAD
+config NRF71_MGMT_BUFF_OFFLOAD
 	bool "Management buffer offload"
 	# Raw scan results need host based refilling
 	depends on !WIFI_MGMT_RAW_SCAN_RESULTS
