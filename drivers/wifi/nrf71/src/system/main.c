@@ -659,7 +659,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_dev_rem_zep(struct nrf_wifi_drv_priv_zep 
 	return NRF_WIFI_STATUS_SUCCESS;
 }
 
-#if defined(CONFIG_NRF71_SR_COEX_DRIVER) && !defined(CONFIG_NRF71_RADIO_TEST)
+#if defined(CONFIG_NRF71_SR_COEX_DRIVER) && !defined(CONFIG_NRF71_RADIO_TEST_MODE)
 /* FMAC delivers CM2CD coexistence events (NRF_WIFI_EVENT_COEX_CONFIG) here;
  * forward the payload to the coexistence driver.
  */
@@ -668,7 +668,7 @@ static void nrf_wifi_coex_event_cb(void *os_dev_ctx, void *event, unsigned int l
 	ARG_UNUSED(os_dev_ctx);
 	nrf71_wifi_coex_on_event(event, (size_t)len);
 }
-#endif /* CONFIG_NRF71_SR_COEX_DRIVER && !CONFIG_NRF71_RADIO_TEST */
+#endif /* CONFIG_NRF71_SR_COEX_DRIVER && !CONFIG_NRF71_RADIO_TEST_MODE */
 
 static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 {

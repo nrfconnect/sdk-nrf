@@ -24,7 +24,7 @@ zephyr_library_sources(
   src/common/mac_addr.c
 )
 
-if(CONFIG_NRF71_RADIO_TEST)
+if(CONFIG_NRF71_RADIO_TEST_MODE)
   zephyr_library_sources(
     src/radio_test/fmac_api.c
     src/radio_test/fmac_cmd.c
