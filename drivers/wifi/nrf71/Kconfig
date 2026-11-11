@@ -866,7 +866,7 @@ config NRF71_USE_KMU
 	  Use KMU for key installation. This is the default KMU for the
 	  nRF71 Wi-Fi chip.
 
-config NRF_WIFI_CMD_EVENT_LOG
+config NRF71_CMD_EVENT_LOG
 	bool "Log HAL command/events (debug)"
 	help
 	  When enabled, log HAL command/events (debug only).
