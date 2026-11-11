@@ -761,6 +761,10 @@ DECT NR+ samples
     Run your application on an nRF54L15 device while the nRF9151 device keeps the DECT NR+ modem and L2 stack.
     On the host MCU, you use ``dect0`` ``net_if`` - IPv6, Connection Manager connect and disconnect, and optional ``dect`` shell and ping, without integrating the modem on that chip.
 
+* Removed support for the nRF9161 DK and the nRF9131 EK from the following DECT NR+ samples:
+
+  * :ref:`dect_phy_shell_application`
+
 * :ref:`dect_shell_application` sample:
 
   * Added:
