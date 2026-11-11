@@ -22,19 +22,11 @@ tests:
     platform_allow:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160/ns
-      - nrf9160dk/nrf9160
-      - nrf9161dk/nrf9161
-      - nrf9161dk/nrf9161/ns
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
     integration_platforms:
       - nrf5340dk/nrf5340/cpuapp/ns
       - nrf5340dk/nrf5340/cpuapp
-      - nrf9160dk/nrf9160/ns
-      - nrf9160dk/nrf9160
-      - nrf9161dk/nrf9161/ns
-      - nrf9161dk/nrf9161
       - nrf9151dk/nrf9151
       - nrf9151dk/nrf9151/ns
   sample.sha256.oberon:
