@@ -109,11 +109,11 @@ enum nrf_wifi_status umac_cmd_rt_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx
 		umac_cmd_data->disable_beamforming = 1;
 	}
 
-#if defined(CONFIG_NRF_WIFI_PS_INT_PS)
+#if defined(CONFIG_NRF71_PS_INTELLIGENT_EXIT)
 	umac_cmd_data->ps_exit_strategy = INT_PS;
 #else
 	umac_cmd_data->ps_exit_strategy = EVERY_TIM;
-#endif  /* CONFIG_NRF_WIFI_PS_INT_PS */
+#endif  /* CONFIG_NRF71_PS_INTELLIGENT_EXIT */
 
 	umac_cmd_data->display_scan_bss_limit = CONFIG_NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT;
 

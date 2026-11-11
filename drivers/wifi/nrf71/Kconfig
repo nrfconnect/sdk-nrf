@@ -718,19 +718,19 @@ config NRF71_KEEPALIVE_PERIOD_S
 
 endif
 
-choice NRF_WIFI_PS_EXIT_STRATEGY
+choice NRF71_PS_EXIT_STRATEGY
 	prompt "Power save exit strategy"
-	default NRF_WIFI_PS_INT_PS
+	default NRF71_PS_INTELLIGENT_EXIT
 	help
 	  Select the power save exit strategy to retrieve buffered data from AP.
 
-config NRF_WIFI_PS_EXIT_EVERY_TIM
+config NRF71_PS_EXIT_EVERY_TIM
 	bool "Exit power save every time to retrieve buffered data from AP"
 	help
 	  Exit power save every time to retrieve buffered data from AP. Entering back to
 	  power save mode might take some time and power.
 
-config NRF_WIFI_PS_INT_PS
+config NRF71_PS_INTELLIGENT_EXIT
 	bool "Exit power save based on an intelligent algorithm"
 	help
 	  Exit power save based on an intelligent algorithm to retrieve buffered data from the AP.
