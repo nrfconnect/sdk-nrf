@@ -14,10 +14,10 @@
 #include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_BT_MGMT_ADV_LOG_LEVEL);
+LOG_MODULE_REGISTER(bt_mgmt_adv, CONFIG_NRF_AUDIO_MGMT_ADV_LOG_LEVEL);
 
 struct k_work_q adv_work_q;
-K_THREAD_STACK_DEFINE(adv_work_q_stack_area, CONFIG_BT_MGMT_ADV_STACK_SIZE);
+K_THREAD_STACK_DEFINE(adv_work_q_stack_area, CONFIG_NRF_AUDIO_MGMT_ADV_STACK_SIZE);
 
 ZBUS_CHAN_DECLARE(bt_mgmt_chan);
 
@@ -42,11 +42,11 @@ K_MSGQ_DEFINE(adv_q, sizeof(uint8_t), CONFIG_BT_EXT_ADV_MAX_ADV_SET, sizeof(void
 
 static struct bt_le_adv_param ext_adv_param = {
 	.id = BT_ID_DEFAULT,
-	.sid = CONFIG_BLE_ACL_ADV_SID,
+	.sid = CONFIG_NRF_AUDIO_BLE_ACL_ADV_SID,
 	.secondary_max_skip = 0,
 	.options = BT_LE_ADV_OPT_EXT_ADV,
-	.interval_min = CONFIG_BLE_ACL_EXT_ADV_INT_MIN,
-	.interval_max = CONFIG_BLE_ACL_EXT_ADV_INT_MAX,
+	.interval_min = CONFIG_NRF_AUDIO_BLE_ACL_EXT_ADV_INT_MIN,
+	.interval_max = CONFIG_NRF_AUDIO_BLE_ACL_EXT_ADV_INT_MAX,
 	.peer = NULL,
 };
 
@@ -478,7 +478,7 @@ void bt_mgmt_adv_init(void)
 	k_work_init(&adv_work, advertising_process);
 	k_work_queue_init(&adv_work_q);
 	k_work_queue_start(&adv_work_q, adv_work_q_stack_area,
-			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area), CONFIG_BT_MGMT_ADV_WQ_PRIO,
-			   NULL);
+			   K_THREAD_STACK_SIZEOF(adv_work_q_stack_area),
+			   CONFIG_NRF_AUDIO_MGMT_ADV_WQ_PRIO, NULL);
 	k_thread_name_set(adv_work_q.thread_id, "BT_adv_WQ");
 }

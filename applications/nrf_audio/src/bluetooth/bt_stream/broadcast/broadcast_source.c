@@ -22,12 +22,12 @@
 #include "zbus_common.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(broadcast_source, CONFIG_BROADCAST_SOURCE_LOG_LEVEL);
+LOG_MODULE_REGISTER(broadcast_source, CONFIG_NRF_AUDIO_BROADCAST_SOURCE_LOG_LEVEL);
 
 /* Length-type-value size for channel allocation */
 #define LTV_CHAN_ALLOC_SIZE 6
 
-#if (CONFIG_AURACAST)
+#if (CONFIG_NRF_AUDIO_AURACAST)
 /* Index values into the PBA advertising data format.
  *
  * See Table 4.1 of the Public Broadcast Profile, Bluetooth® Profile Specification, v1.0.
@@ -36,7 +36,7 @@ LOG_MODULE_REGISTER(broadcast_source, CONFIG_BROADCAST_SOURCE_LOG_LEVEL);
 #define PBA_FEATURES_INDEX	 (2)
 #define PBA_METADATA_SIZE_INDEX	 (3)
 #define PBA_METADATA_START_INDEX (4)
-#endif /* CONFIG_AURACAST */
+#endif /* CONFIG_NRF_AUDIO_AURACAST */
 
 ZBUS_CHAN_DEFINE(le_audio_chan, struct le_audio_msg, NULL, NULL, ZBUS_OBSERVERS_EMPTY,
 		 ZBUS_MSG_INIT(0));
@@ -148,7 +148,7 @@ static void stream_sent_cb(struct bt_bap_stream *stream)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_BROADCAST_ZBUS_EVT_STREAM_SENT)) {
 		le_audio_event_publish(LE_AUDIO_EVT_STREAM_SENT, &idx);
 	}
 
@@ -238,7 +238,7 @@ static struct bt_bap_stream_ops stream_ops = {
 	.stopped = stream_stopped_cb,
 };
 
-#if (CONFIG_AURACAST)
+#if (CONFIG_NRF_AUDIO_AURACAST)
 static void public_broadcast_features_set(uint8_t *features, uint8_t big_index)
 {
 	if (features == NULL) {
@@ -276,7 +276,7 @@ static void public_broadcast_features_set(uint8_t *features, uint8_t big_index)
 		}
 	}
 }
-#endif /* (CONFIG_AURACAST) */
+#endif /* (CONFIG_NRF_AUDIO_AURACAST) */
 
 int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t broadcast_id,
 				      struct broadcast_source_ext_adv_data *ext_adv_data,
@@ -337,7 +337,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t
 		return ret;
 	}
 
-#if (CONFIG_AURACAST)
+#if (CONFIG_NRF_AUDIO_AURACAST)
 	uint8_t meta_data_buf_size = 0;
 
 	sys_put_le16(BT_UUID_PBA_VAL, &ext_adv_data->pba_buf[PBA_UUID_INDEX]);
@@ -347,7 +347,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t
 	/* Parental rating */
 	ret = metadata_u8_add(&ext_adv_data->pba_buf[PBA_METADATA_START_INDEX], &meta_data_buf_size,
 			      BT_AUDIO_METADATA_TYPE_PARENTAL_RATING,
-			      CONFIG_BT_AUDIO_BROADCAST_PARENTAL_RATING);
+			      CONFIG_NRF_AUDIO_BROADCAST_PARENTAL_RATING);
 	if (ret) {
 		return ret;
 	}
@@ -371,7 +371,7 @@ int broadcast_source_ext_adv_populate(uint8_t big_index, bool fixed_id, uint32_t
 		return ret;
 	}
 
-#endif /* (CONFIG_AURACAST) */
+#endif /* (CONFIG_NRF_AUDIO_AURACAST) */
 
 	return ext_adv_buf_cnt;
 }
@@ -617,7 +617,7 @@ int broadcast_source_stop(uint8_t big_index)
 /* TODO: Use the function below once
  * https://github.com/zephyrproject-rtos/zephyr/pull/72908 is merged
  */
-#if CONFIG_CUSTOM_BROADCASTER
+#if CONFIG_NRF_AUDIO_CUSTOM_BROADCASTER
 static uint8_t audio_map_location_get(struct bt_bap_stream *bap_stream)
 {
 	int ret;
@@ -776,31 +776,31 @@ void broadcast_source_default_create(struct broadcast_source_big *broadcast_para
 	broadcast_param->subgroups = &subgroups;
 	broadcast_param->num_subgroups = 1;
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_PACKING_INTERLEAVED)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_PACKING_INTERLEAVED)) {
 		broadcast_param->packing = BT_ISO_PACKING_INTERLEAVED;
 	} else {
 		broadcast_param->packing = BT_ISO_PACKING_SEQUENTIAL;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTED)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTED)) {
 		broadcast_param->encryption = true;
 		memset(broadcast_param->broadcast_code, 0, sizeof(broadcast_param->broadcast_code));
-		memcpy(broadcast_param->broadcast_code, CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY,
-		       MIN(sizeof(CONFIG_BT_AUDIO_BROADCAST_ENCRYPTION_KEY),
+		memcpy(broadcast_param->broadcast_code, CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTION_KEY,
+		       MIN(sizeof(CONFIG_NRF_AUDIO_BROADCAST_ENCRYPTION_KEY),
 			   sizeof(broadcast_param->broadcast_code)));
 	} else {
 		broadcast_param->encryption = false;
 	}
 
-	if (IS_ENABLED(CONFIG_BT_AUDIO_BROADCAST_IMMEDIATE_FLAG)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_BROADCAST_IMMEDIATE_FLAG)) {
 		bt_audio_codec_cfg_meta_set_bcast_audio_immediate_rend_flag(
 			&subgroups.group_lc3_preset.codec_cfg);
 	}
 
 	bt_audio_codec_cfg_meta_set_lang(&subgroups.group_lc3_preset.codec_cfg, "eng");
 
-	memcpy(broadcast_param->broadcast_name, CONFIG_BT_AUDIO_BROADCAST_NAME,
-	       sizeof(CONFIG_BT_AUDIO_BROADCAST_NAME));
+	memcpy(broadcast_param->broadcast_name, CONFIG_NRF_AUDIO_BROADCAST_NAME,
+	       sizeof(CONFIG_NRF_AUDIO_BROADCAST_NAME));
 }
 
 void broadcast_started_cb(struct bt_cap_broadcast_source *source)

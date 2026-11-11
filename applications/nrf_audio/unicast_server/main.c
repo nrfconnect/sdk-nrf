@@ -27,12 +27,12 @@
 #include "fw_info_app.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(main, CONFIG_MAIN_LOG_LEVEL);
+LOG_MODULE_REGISTER(main, CONFIG_NRF_AUDIO_MAIN_LOG_LEVEL);
 
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_AUDIO_DECODE_CHANNELS_MAX);
-BUILD_ASSERT(CONFIG_BT_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_AUDIO_ENCODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX <= CONFIG_NRF_AUDIO_DECODE_CHANNELS_MAX);
+BUILD_ASSERT(CONFIG_NRF_AUDIO_CONCURRENT_TX_STREAMS_MAX <= CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX);
 
-ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_BUTTON_MSG_SUB_QUEUE_SIZE);
+ZBUS_SUBSCRIBER_DEFINE(button_evt_sub, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_QUEUE_SIZE);
 
 ZBUS_MSG_SUBSCRIBER_DEFINE(le_audio_evt_sub);
 
@@ -49,8 +49,8 @@ static struct k_thread le_audio_msg_sub_thread_data;
 static k_tid_t button_msg_sub_thread_id;
 static k_tid_t le_audio_msg_sub_thread_id;
 
-K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_BUTTON_MSG_SUB_STACK_SIZE);
-K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(button_msg_sub_thread_stack, CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE);
+K_THREAD_STACK_DEFINE(le_audio_msg_sub_thread_stack, CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE);
 
 #define STEREO_PRES_DLY_MIN_US 5000
 
@@ -89,12 +89,12 @@ static void button_msg_sub_thread(void)
 
 		switch (msg.button_pin) {
 		case BUTTON_PLAY_PAUSE:
-			if (!IS_ENABLED(CONFIG_BT_CONTENT_CTRL_MEDIA)) {
+			if (!IS_ENABLED(CONFIG_NRF_AUDIO_CONTENT_CTRL_MEDIA)) {
 				LOG_WRN("Play/pause not supported");
 				break;
 			}
 
-			if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO)) {
 				LOG_WRN("Play/pause not supported in walkie-talkie mode");
 				break;
 			}
@@ -134,8 +134,8 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_4:
-			if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-				if (IS_ENABLED(CONFIG_WALKIE_TALKIE_DEMO)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_TEST_TONE)) {
+				if (IS_ENABLED(CONFIG_NRF_AUDIO_WALKIE_TALKIE_DEMO)) {
 					LOG_DBG("Test tone is disabled in walkie-talkie mode");
 					break;
 				}
@@ -156,7 +156,7 @@ static void button_msg_sub_thread(void)
 			break;
 
 		case BUTTON_5:
-			if (IS_ENABLED(CONFIG_AUDIO_MUTE)) {
+			if (IS_ENABLED(CONFIG_NRF_AUDIO_MUTE)) {
 				ret = bt_r_and_c_volume_mute(false);
 				if (ret) {
 					LOG_WRN("Failed to mute, ret: %d", ret);
@@ -313,18 +313,20 @@ static int zbus_subscribers_create(void)
 
 	button_msg_sub_thread_id = k_thread_create(
 		&button_msg_sub_thread_data, button_msg_sub_thread_stack,
-		CONFIG_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_BUTTON_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_STACK_SIZE, (k_thread_entry_t)button_msg_sub_thread,
+		NULL, NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_BUTTON_MSG_SUB_THREAD_PRIO), 0,
+		K_NO_WAIT);
 	ret = k_thread_name_set(button_msg_sub_thread_id, "Msg_sub_btn");
 	if (ret) {
 		LOG_ERR("Failed to create button_msg thread");
 		return ret;
 	}
 
-	le_audio_msg_sub_thread_id = k_thread_create(
-		&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
-		CONFIG_LE_AUDIO_MSG_SUB_STACK_SIZE, (k_thread_entry_t)le_audio_msg_sub_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_LE_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
+	le_audio_msg_sub_thread_id =
+		k_thread_create(&le_audio_msg_sub_thread_data, le_audio_msg_sub_thread_stack,
+				CONFIG_NRF_AUDIO_MSG_SUB_STACK_SIZE,
+				(k_thread_entry_t)le_audio_msg_sub_thread, NULL, NULL, NULL,
+				K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_MSG_SUB_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(le_audio_msg_sub_thread_id, "Msg_sub_LE_Audio");
 	if (ret) {
 		LOG_ERR("Failed to create le_audio_msg thread");
@@ -458,7 +460,7 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 	int ret;
 	size_t ext_adv_buf_cnt = 0;
 
-	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_EXT_ADV_UUID_BUF_MAX);
+	NET_BUF_SIMPLE_DEFINE_STATIC(uuid_buf, CONFIG_NRF_AUDIO_EXT_ADV_UUID_BUF_MAX);
 
 	ext_adv_buf[ext_adv_buf_cnt].type = BT_DATA_UUID16_SOME;
 	ext_adv_buf[ext_adv_buf_cnt].data = uuid_buf.data;
@@ -478,7 +480,8 @@ static int ext_adv_populate(struct bt_data *ext_adv_buf, size_t ext_adv_buf_size
 		return ret;
 	}
 
-	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf, CONFIG_BT_DEVICE_MANUFACTURER_ID);
+	ret = bt_mgmt_manufacturer_uuid_populate(&uuid_buf,
+						 CONFIG_NRF_AUDIO_DEVICE_MANUFACTURER_ID);
 	if (ret) {
 		LOG_ERR("Failed to add adv data with manufacturer ID: %d", ret);
 		return ret;
@@ -539,7 +542,7 @@ int main(void)
 {
 	int ret;
 	enum bt_audio_location location;
-	static struct bt_data ext_adv_buf[CONFIG_EXT_ADV_BUF_MAX];
+	static struct bt_data ext_adv_buf[CONFIG_NRF_AUDIO_EXT_ADV_BUF_MAX];
 
 	LOG_DBG("Main started");
 

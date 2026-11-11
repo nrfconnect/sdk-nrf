@@ -20,7 +20,7 @@
 #include "cs47l63.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(CS47L63, CONFIG_CS47L63_LOG_LEVEL);
+LOG_MODULE_REGISTER(CS47L63, CONFIG_NRF_AUDIO_CS47L63_LOG_LEVEL);
 
 #define CS47L63_DEVID_VAL 0x47A63
 #define PAD_LEN 4 /* Four bytes padding after address */
@@ -41,7 +41,7 @@ static void *bsp_callback_arg;
 static struct gpio_callback gpio_cb;
 
 static struct k_thread cs47l63_data;
-static K_THREAD_STACK_DEFINE(cs47l63_stack, CONFIG_CS47L63_STACK_SIZE);
+static K_THREAD_STACK_DEFINE(cs47l63_stack, CONFIG_NRF_AUDIO_CS47L63_STACK_SIZE);
 
 static K_SEM_DEFINE(sem_cs47l63, 0, 1);
 
@@ -367,9 +367,9 @@ int cs47l63_comm_init(cs47l63_t *cs47l63_driver)
 	}
 
 	/* Start thread to handle events from CS47L63 */
-	(void)k_thread_create(&cs47l63_data, cs47l63_stack, CONFIG_CS47L63_STACK_SIZE,
+	(void)k_thread_create(&cs47l63_data, cs47l63_stack, CONFIG_NRF_AUDIO_CS47L63_STACK_SIZE,
 			      (k_thread_entry_t)cs47l63_comm_thread, (void *)cs47l63_driver, NULL,
-			      NULL, K_PRIO_PREEMPT(CONFIG_CS47L63_THREAD_PRIO), 0,
+			      NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_CS47L63_THREAD_PRIO), 0,
 			      K_MSEC(CS47L63_PROCESS_THREAD_DELAY_MS));
 
 	ret = k_thread_name_set(&cs47l63_data, "HW_Codec_CS47L63");

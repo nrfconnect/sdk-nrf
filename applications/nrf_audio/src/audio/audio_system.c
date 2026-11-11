@@ -22,10 +22,11 @@
 #include "audio_rate_control.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
+LOG_MODULE_REGISTER(audio_system, CONFIG_NRF_AUDIO_SYSTEM_LOG_LEVEL);
 
-#define FIFO_OUT_BLOCK_COUNT (USB_1MS_BLOCKS_NUM_MAX * CONFIG_FIFO_TX_FRAME_COUNT)
-#define FIFO_IN_BLOCK_COUNT  (CONFIG_FIFO_FRAME_SPLIT_NUM * CONFIG_FIFO_RX_FRAME_COUNT)
+#define FIFO_OUT_BLOCK_COUNT (USB_1MS_BLOCKS_NUM_MAX * CONFIG_NRF_AUDIO_FIFO_TX_FRAME_COUNT)
+#define FIFO_IN_BLOCK_COUNT                                                                        \
+	(CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM * CONFIG_NRF_AUDIO_FIFO_RX_FRAME_COUNT)
 
 /* Size these to fit the use case as part of optimization (e.g. increase decoder pool when it is
  * wrapped in a thread).
@@ -36,7 +37,7 @@ LOG_MODULE_REGISTER(audio_system, CONFIG_AUDIO_SYSTEM_LOG_LEVEL);
 #define DEBUG_INTERVAL_NUM     1000
 #define TEST_TONE_BASE_FREQ_HZ 1000
 
-K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE);
+K_THREAD_STACK_DEFINE(encoder_thread_stack, CONFIG_NRF_AUDIO_ENCODER_STACK_SIZE);
 
 K_MSGQ_DEFINE(audio_q_out, sizeof(struct net_buf *), FIFO_OUT_BLOCK_COUNT, sizeof(void *));
 K_MSGQ_DEFINE(audio_q_in, sizeof(struct net_buf *), FIFO_IN_BLOCK_COUNT, sizeof(void *));
@@ -62,7 +63,7 @@ static struct k_poll_event encoder_evt =
 
 static struct sw_codec_config sw_codec_cfg;
 /* Buffer which can hold max 1 period test tone at 1000 Hz */
-static int16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 1000];
+static int16_t test_tone_buf[CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ / 1000];
 static size_t test_tone_size;
 
 static struct net_buf *usb_out_spillover;
@@ -72,8 +73,9 @@ static struct net_buf *usb_out_spillover;
  */
 static struct audio_metadata decoder_meta = {.data_coding = PCM,
 					     .sample_rate_hz = 48000,
-					     .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-					     .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+					     .bits_per_sample = CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
+					     .carried_bits_per_sample =
+						     CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
 					     .bytes_per_location = PCM_NUM_BYTES_MONO,
 					     .interleaved = false,
 					     .locations = BT_AUDIO_LOCATION_MONO_AUDIO,
@@ -90,18 +92,18 @@ bool sample_rate_valid(uint32_t sample_rate_hz)
 
 static void audio_gateway_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SW_CODEC_LC3)) {
+		sw_codec_cfg.sw_codec = NRF_AUDIO_SW_CODEC_LC3;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL)) {
 		sw_codec_cfg.decoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.decoder.num_ch = 1;
 	}
 
-	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS)) {
 		sw_codec_cfg.encoder.num_ch = 1;
 		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 	}
@@ -111,13 +113,13 @@ static void audio_gateway_configure(void)
 
 static void audio_headset_configure(void)
 {
-	if (IS_ENABLED(CONFIG_SW_CODEC_LC3)) {
-		sw_codec_cfg.sw_codec = SW_CODEC_LC3;
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SW_CODEC_LC3)) {
+		sw_codec_cfg.sw_codec = NRF_AUDIO_SW_CODEC_LC3;
 	} else {
 		ERR_CHK_MSG(-EINVAL, "No codec selected");
 	}
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL)) {
 		sw_codec_cfg.encoder.audio_loc = BT_AUDIO_LOCATION_MONO_AUDIO;
 		sw_codec_cfg.encoder.num_ch = 1;
 	}
@@ -129,7 +131,7 @@ static void audio_headset_configure(void)
 		sw_codec_cfg.decoder.num_ch = POPCOUNT(sw_codec_cfg.decoder.audio_loc);
 	}
 
-	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK)) {
 		/* Need an extra decoder channel to decode data from SD card */
 		sw_codec_cfg.decoder.num_ch++;
 	}
@@ -190,7 +192,7 @@ static void encoder_thread(void *arg1, void *arg2, void *arg3)
 				ERR_CHK(ret);
 
 				ret = pscm_copy_pad(tmp, FRAME_SIZE_BYTES / 2,
-						    CONFIG_AUDIO_BIT_DEPTH_BITS,
+						    CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
 						    audio_frame_in->data, &num_bytes);
 				ERR_CHK(ret);
 
@@ -257,9 +259,9 @@ int audio_system_encode_test_tone_set(uint32_t freq)
 		return 0;
 	}
 
-	if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-		ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ,
-			       1);
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_TEST_TONE)) {
+		ret = tone_gen(test_tone_buf, &test_tone_size, freq,
+			       CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ, 1);
 		ERR_CHK(ret);
 	} else {
 		LOG_ERR("Test tone is not enabled");
@@ -278,7 +280,7 @@ int audio_system_encode_test_tone_step(void)
 	int ret;
 	static uint32_t test_tone_hz;
 
-	if (CONFIG_AUDIO_BIT_DEPTH_BITS != 16) {
+	if (CONFIG_NRF_AUDIO_BIT_DEPTH_BITS != 16) {
 		LOG_WRN("Tone gen only supports 16 bits");
 		return -ECANCELED;
 	}
@@ -480,7 +482,7 @@ int audio_system_decode(struct net_buf *audio_frame_in)
 		uint32_t audio_q_num_used = k_msgq_num_used_get(&audio_q_out);
 
 		LOG_DBG(COLOR_MAGENTA "OUT fill grade: %d/%d" COLOR_RESET, audio_q_num_used,
-			CONFIG_FIFO_TX_FRAME_COUNT);
+			CONFIG_NRF_AUDIO_FIFO_TX_FRAME_COUNT);
 		debug_trans_count = 0;
 	} else {
 		debug_trans_count++;
@@ -495,12 +497,12 @@ void audio_system_start(void)
 {
 	int ret;
 
-	if (CONFIG_AUDIO_DEV == HEADSET) {
+	if (CONFIG_NRF_AUDIO_DEV == HEADSET) {
 		audio_headset_configure();
-	} else if (CONFIG_AUDIO_DEV == GATEWAY) {
+	} else if (CONFIG_NRF_AUDIO_DEV == GATEWAY) {
 		audio_gateway_configure();
 	} else {
-		LOG_ERR("Invalid CONFIG_AUDIO_DEV: %d", CONFIG_AUDIO_DEV);
+		LOG_ERR("Invalid CONFIG_NRF_AUDIO_DEV: %d", CONFIG_NRF_AUDIO_DEV);
 		ERR_CHK(-EINVAL);
 	}
 
@@ -511,14 +513,15 @@ void audio_system_start(void)
 
 	if (sw_codec_cfg.encoder.enabled && encoder_thread_id == NULL) {
 		encoder_thread_id = k_thread_create(
-			&encoder_thread_data, encoder_thread_stack, CONFIG_ENCODER_STACK_SIZE,
-			(k_thread_entry_t)encoder_thread, NULL, NULL, NULL,
-			K_PRIO_PREEMPT(CONFIG_ENCODER_THREAD_PRIO), 0, K_NO_WAIT);
+			&encoder_thread_data, encoder_thread_stack,
+			CONFIG_NRF_AUDIO_ENCODER_STACK_SIZE, (k_thread_entry_t)encoder_thread, NULL,
+			NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_ENCODER_THREAD_PRIO), 0,
+			K_NO_WAIT);
 		ret = k_thread_name_set(encoder_thread_id, "Encoder");
 		ERR_CHK(ret);
 	}
 
-#if ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))
+#if ((CONFIG_NRF_AUDIO_SOURCE_USB) && (CONFIG_NRF_AUDIO_DEV == GATEWAY))
 	ret = audio_usb_start(&audio_q_out, &audio_q_in);
 	ERR_CHK(ret);
 #else
@@ -529,7 +532,7 @@ void audio_system_start(void)
 
 	ret = audio_datapath_start(&audio_q_in);
 	ERR_CHK(ret);
-#endif /* ((CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY))) */
+#endif /* ((CONFIG_NRF_AUDIO_SOURCE_USB) && (CONFIG_NRF_AUDIO_DEV == GATEWAY))) */
 }
 
 void audio_system_stop(void)
@@ -543,7 +546,7 @@ void audio_system_stop(void)
 
 	LOG_DBG("Stopping codec");
 
-#if ((CONFIG_AUDIO_DEV == GATEWAY) && CONFIG_AUDIO_SOURCE_USB)
+#if ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && CONFIG_NRF_AUDIO_SOURCE_USB)
 	audio_usb_stop();
 #else
 	if (IS_ENABLED(CONFIG_BOARD_NRF5340_AUDIO_DK_NRF5340_CPUAPP)) {
@@ -553,7 +556,7 @@ void audio_system_stop(void)
 
 	ret = audio_datapath_stop();
 	ERR_CHK(ret);
-#endif /* ((CONFIG_AUDIO_DEV == GATEWAY) && CONFIG_AUDIO_SOURCE_USB) */
+#endif /* ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && CONFIG_NRF_AUDIO_SOURCE_USB) */
 
 	ret = sw_codec_uninit(sw_codec_cfg);
 	ERR_CHK_MSG(ret, "Failed to uninit codec");
@@ -567,8 +570,9 @@ int audio_system_decoder_num_ch_get(void)
 
 int audio_system_encoder_num_ch_set(uint32_t locations)
 {
-	if (IS_ENABLED(CONFIG_MONO_TO_ALL_RECEIVERS)) {
-		LOG_DBG("Cannot set encoder channels when MONO_TO_ALL_RECEIVERS is enabled");
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_MONO_TO_ALL_RECEIVERS)) {
+		LOG_DBG("Cannot set encoder channels when NRF_AUDIO_MONO_TO_ALL_RECEIVERS is "
+			"enabled");
 		return 0;
 	}
 
@@ -576,7 +580,7 @@ int audio_system_encoder_num_ch_set(uint32_t locations)
 
 	LOG_DBG("Setting encoder channels to %d based on locations 0x%08x", num_ch, locations);
 
-	sw_codec_cfg.encoder.num_ch = CONFIG_AUDIO_ENCODE_CHANNELS_MAX;
+	sw_codec_cfg.encoder.num_ch = CONFIG_NRF_AUDIO_ENCODE_CHANNELS_MAX;
 	sw_codec_cfg.encoder.audio_loc = locations;
 
 	return 0;
@@ -594,8 +598,8 @@ int audio_system_init(void)
 		}
 	}
 
-#if ((CONFIG_AUDIO_DEV == GATEWAY) && (CONFIG_AUDIO_SOURCE_USB))
-	bool host_in = IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL);
+#if ((CONFIG_NRF_AUDIO_DEV == GATEWAY) && (CONFIG_NRF_AUDIO_SOURCE_USB))
+	bool host_in = IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL);
 	/* TODO: OCT-3116 Change when microphone-only support (headset with only an audio source)
 	 * is added
 	 */

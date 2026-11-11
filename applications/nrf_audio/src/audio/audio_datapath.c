@@ -28,7 +28,7 @@
 #include "audio_rate_control.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
+LOG_MODULE_REGISTER(audio_datapath, CONFIG_NRF_AUDIO_DATAPATH_LOG_LEVEL);
 
 /*
  * Terminology
@@ -41,11 +41,11 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 #define BLK_PERIOD_US 500
 
 /* Total sample FIFO period in microseconds */
-#define FIFO_CHANNELS_MAX   MAX(CONFIG_AUDIO_INPUT_CHANNELS, CONFIG_AUDIO_OUTPUT_CHANNELS)
-#define FIFO_SMPL_PERIOD_US (CONFIG_AUDIO_MAX_PRES_DLY_US * FIFO_CHANNELS_MAX)
+#define FIFO_CHANNELS_MAX   MAX(CONFIG_NRF_AUDIO_INPUT_CHANNELS, CONFIG_NRF_AUDIO_OUTPUT_CHANNELS)
+#define FIFO_SMPL_PERIOD_US (CONFIG_NRF_AUDIO_MAX_PRES_DLY_US * FIFO_CHANNELS_MAX)
 #define FIFO_NUM_BLKS	    NUM_BLKS(FIFO_SMPL_PERIOD_US)
 #define MAX_FIFO_SIZE                                                                              \
-	(FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ) * FIFO_CHANNELS_MAX)
+	(FIFO_NUM_BLKS * BLK_SIZE_SAMPLES(CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ) * FIFO_CHANNELS_MAX)
 
 /* Number of audio blocks given a duration */
 #define NUM_BLKS(d) ((d) / BLK_PERIOD_US)
@@ -58,13 +58,13 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* Decrement sample FIFO index by one block */
 #define PREV_IDX(i) (((i) > 0) ? ((i) - 1) : (FIFO_NUM_BLKS - 1))
 
-#define NUM_BLKS_IN_FRAME	   NUM_BLKS(CONFIG_AUDIO_FRAME_DURATION_US)
-#define BLK_MONO_NUM_SAMPS	   BLK_SIZE_SAMPLES(CONFIG_AUDIO_SAMPLE_RATE_HZ)
-#define BLK_MULTI_CHAN_NUM_SAMPS   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_OUTPUT_CHANNELS)
+#define NUM_BLKS_IN_FRAME	 NUM_BLKS(CONFIG_NRF_AUDIO_FRAME_DURATION_US)
+#define BLK_MONO_NUM_SAMPS	 BLK_SIZE_SAMPLES(CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ)
+#define BLK_MULTI_CHAN_NUM_SAMPS (BLK_MONO_NUM_SAMPS * CONFIG_NRF_AUDIO_OUTPUT_CHANNELS)
 
 /* Number of octets in a single audio block */
-#define BLK_MONO_SIZE_OCTETS	   (BLK_MONO_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
-#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MULTI_CHAN_NUM_SAMPS * CONFIG_AUDIO_BIT_DEPTH_OCTETS)
+#define BLK_MONO_SIZE_OCTETS	   (BLK_MONO_NUM_SAMPS * CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS)
+#define BLK_MULTI_CHAN_SIZE_OCTETS (BLK_MULTI_CHAN_NUM_SAMPS * CONFIG_NRF_AUDIO_BIT_DEPTH_OCTETS)
 
 /* Number of decoder buffers. */
 #define FIFO_NUM_BUFS 2
@@ -72,12 +72,12 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* How many function calls before moving on with drift compensation */
 #define DRIFT_COMP_WAITING_CNT (DRIFT_MEAS_PERIOD_US / BLK_PERIOD_US)
 /* How much data to be collected before moving on with presentation compensation */
-#define PRES_COMP_NUM_DATA_PTS (DRIFT_MEAS_PERIOD_US / CONFIG_AUDIO_FRAME_DURATION_US)
+#define PRES_COMP_NUM_DATA_PTS (DRIFT_MEAS_PERIOD_US / CONFIG_NRF_AUDIO_FRAME_DURATION_US)
 /* How many microseconds two timestamps can be apart before they are considered
  * non-consecutive
  */
 #define CONSECUTIVE_TS_LIMIT_US                                                                    \
-	(CONFIG_AUDIO_FRAME_DURATION_US + (CONFIG_AUDIO_FRAME_DURATION_US / 2))
+	(CONFIG_NRF_AUDIO_FRAME_DURATION_US + (CONFIG_NRF_AUDIO_FRAME_DURATION_US / 2))
 
 /* Use nanoseconds to reduce rounding errors */
 /* clang-format off */
@@ -93,8 +93,8 @@ LOG_MODULE_REGISTER(audio_datapath, CONFIG_AUDIO_DATAPATH_LOG_LEVEL);
 /* How often to print under-run warning */
 #define LOG_INTERVAL_BLKS 5000
 
-NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS / CONFIG_FIFO_FRAME_SPLIT_NUM,
-			  (BLK_MULTI_CHAN_SIZE_OCTETS * CONFIG_FIFO_FRAME_SPLIT_NUM),
+NET_BUF_POOL_FIXED_DEFINE(pool_i2s_rx, FIFO_NUM_BLKS / CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM,
+			  (BLK_MULTI_CHAN_SIZE_OCTETS * CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM),
 			  sizeof(struct audio_metadata), NULL);
 NET_BUF_POOL_FIXED_DEFINE(audio_pcm_pool, FIFO_NUM_BUFS, PCM_NUM_BYTES_MULTI_CHAN,
 			  sizeof(struct audio_metadata), NULL);
@@ -139,9 +139,9 @@ static struct {
 	} in;
 
 	struct {
-#if CONFIG_AUDIO_BIT_DEPTH_16
+#if CONFIG_NRF_AUDIO_BIT_DEPTH_16
 		int16_t __aligned(sizeof(uint32_t)) fifo[MAX_FIFO_SIZE];
-#elif CONFIG_AUDIO_BIT_DEPTH_32
+#elif CONFIG_NRF_AUDIO_BIT_DEPTH_32
 		int32_t __aligned(sizeof(uint32_t)) fifo[MAX_FIFO_SIZE];
 #endif
 		uint16_t prod_blk_idx; /* Output producer audio block index */
@@ -188,9 +188,9 @@ static int filled_blocks_get(void)
 
 static struct audio_metadata i2s_meta = {.data_coding = PCM,
 					 .data_len_us = BLK_PERIOD_US,
-					 .sample_rate_hz = CONFIG_AUDIO_SAMPLE_RATE_HZ,
-					 .bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
-					 .carried_bits_per_sample = CONFIG_AUDIO_BIT_DEPTH_BITS,
+					 .sample_rate_hz = CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ,
+					 .bits_per_sample = CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
+					 .carried_bits_per_sample = CONFIG_NRF_AUDIO_BIT_DEPTH_BITS,
 					 .bytes_per_location = BLK_MONO_SIZE_OCTETS,
 					 .interleaved = true,
 					 .locations = BT_AUDIO_LOCATION_FRONT_LEFT |
@@ -199,7 +199,7 @@ static struct audio_metadata i2s_meta = {.data_coding = PCM,
 
 static bool tone_active;
 /* Buffer which can hold max 1 period test tone at 100 Hz */
-static uint16_t test_tone_buf[CONFIG_AUDIO_SAMPLE_RATE_HZ / 100];
+static uint16_t test_tone_buf[CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ / 100];
 static size_t test_tone_size;
 
 /* Upon first received audio frame, the delta will be invalid (as there is no
@@ -269,7 +269,7 @@ static inline void audio_datapath_drift_compensation(uint32_t frame_start_ts_us)
 {
 	int ret;
 
-	if (CONFIG_AUDIO_DEV == HEADSET) {
+	if (CONFIG_NRF_AUDIO_DEV == HEADSET) {
 		/** For headsets we do not use the timestamp gotten from hci_tx_sync_get to
 		 * adjust for drift
 		 */
@@ -446,7 +446,7 @@ static void audio_datapath_presentation_compensation(uint32_t recv_frame_ts_us, 
 	}
 	case PRES_STATE_WAIT: {
 		if (ctrl_blk.pres_comp.ctr++ >
-		    (FIFO_SMPL_PERIOD_US / CONFIG_AUDIO_FRAME_DURATION_US)) {
+		    (FIFO_SMPL_PERIOD_US / CONFIG_NRF_AUDIO_FRAME_DURATION_US)) {
 			pres_comp_state_set(PRES_STATE_INIT);
 		}
 
@@ -542,9 +542,9 @@ int audio_datapath_tone_play(uint16_t freq, uint16_t dur_ms, float amplitude)
 		return -EBUSY;
 	}
 
-	if (IS_ENABLED(CONFIG_AUDIO_TEST_TONE)) {
-		ret = tone_gen(test_tone_buf, &test_tone_size, freq, CONFIG_AUDIO_SAMPLE_RATE_HZ,
-			       amplitude);
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_TEST_TONE)) {
+		ret = tone_gen(test_tone_buf, &test_tone_size, freq,
+			       CONFIG_NRF_AUDIO_SAMPLE_RATE_HZ, amplitude);
 		if (ret) {
 			return ret;
 		}
@@ -672,7 +672,8 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 	/********** I2S TX **********/
 	static uint8_t *tx_buf;
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == HEADSET)) {
 		static bool underrun_condition;
 
 		if (tx_buf_released == NULL) {
@@ -767,7 +768,7 @@ static void audio_datapath_i2s_blk_complete(uint32_t frame_start_ts_us, uint32_t
 		i2s_blocks_in_current_frame++;
 
 		/* Check if we have a complete 10ms frame */
-		if (i2s_blocks_in_current_frame >= CONFIG_FIFO_FRAME_SPLIT_NUM) {
+		if (i2s_blocks_in_current_frame >= CONFIG_NRF_AUDIO_FIFO_FRAME_SPLIT_NUM) {
 			if (unlikely(k_msgq_num_free_get(ctrl_blk.in.audio_q) == 0)) {
 				LOG_DBG("RX queue full, dropping I2S RX frame");
 				if (unlikely((++num_overruns % 100) == 1)) {
@@ -826,7 +827,8 @@ static void audio_datapath_i2s_start(void)
 	static uint32_t rx_buf_1[BLK_MULTI_CHAN_SIZE_OCTETS];
 
 	/* TX */
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) || (CONFIG_AUDIO_DEV == HEADSET)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) ||
+	    (CONFIG_NRF_AUDIO_DEV == HEADSET)) {
 		ctrl_blk.out.cons_blk_idx = PREV_IDX(ctrl_blk.out.cons_blk_idx);
 		tx_buf_0 = (uint8_t *)&ctrl_blk.out
 				   .fifo[ctrl_blk.out.cons_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS];
@@ -915,7 +917,7 @@ static void audio_datapath_just_in_time_check_and_adjust(uint32_t tx_sync_ts_us,
  */
 static void audio_datapath_sdu_ref_update(const struct zbus_channel *chan)
 {
-	if (IS_ENABLED(CONFIG_AUDIO_SOURCE_I2S)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SOURCE_I2S)) {
 		uint32_t tx_sync_ts_us;
 		uint32_t curr_ts_us;
 		bool adjust;
@@ -943,7 +945,8 @@ ZBUS_LISTENER_DEFINE(sdu_ref_msg_listen, audio_datapath_sdu_ref_update);
 
 int audio_datapath_pres_delay_us_set(uint32_t delay_us)
 {
-	if (!IN_RANGE(delay_us, CONFIG_AUDIO_MIN_PRES_DLY_US, CONFIG_AUDIO_MAX_PRES_DLY_US)) {
+	if (!IN_RANGE(delay_us, CONFIG_NRF_AUDIO_MIN_PRES_DLY_US,
+		      CONFIG_NRF_AUDIO_MAX_PRES_DLY_US)) {
 		LOG_WRN("Presentation delay not supported: %d us", delay_us);
 		LOG_WRN("Keeping current value: %d us", ctrl_blk.pres_comp.pres_delay_us);
 		return -EINVAL;
@@ -1005,8 +1008,8 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 		consec_invalid_ts_deltas++;
 
 	} else if (!IN_RANGE(sdu_ref_delta_us,
-			     CONFIG_AUDIO_FRAME_DURATION_US - SDU_REF_CH_DELTA_MAX_US,
-			     CONFIG_AUDIO_FRAME_DURATION_US + SDU_REF_CH_DELTA_MAX_US)) {
+			     CONFIG_NRF_AUDIO_FRAME_DURATION_US - SDU_REF_CH_DELTA_MAX_US,
+			     CONFIG_NRF_AUDIO_FRAME_DURATION_US + SDU_REF_CH_DELTA_MAX_US)) {
 		/* If timestamp is consecutive but has invalid delta: Estimate the timestamp
 		 */
 		if (consec_invalid_ts_deltas) {
@@ -1025,7 +1028,8 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 		 */
 		uint32_t ref_ts_temp_us = meta_in->ref_ts_us;
 
-		meta_in->ref_ts_us = ctrl_blk.prev_pres_sdu_ref_us + CONFIG_AUDIO_FRAME_DURATION_US;
+		meta_in->ref_ts_us =
+			ctrl_blk.prev_pres_sdu_ref_us + CONFIG_NRF_AUDIO_FRAME_DURATION_US;
 		ctrl_blk.prev_pres_sdu_ref_us = ref_ts_temp_us;
 
 		consec_invalid_ts_deltas++;
@@ -1068,16 +1072,16 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 		return;
 	}
 
-	if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK)) {
 		if (sd_card_playback_is_active()) {
 			sd_card_playback_mix_with_stream((void *const)audio_frame_out->data,
 							 audio_frame_out->len);
 		}
 	}
 
-	if (audio_frame_out->len != PCM_NUM_BYTES_MONO * CONFIG_AUDIO_OUTPUT_CHANNELS) {
+	if (audio_frame_out->len != PCM_NUM_BYTES_MONO * CONFIG_NRF_AUDIO_OUTPUT_CHANNELS) {
 		LOG_WRN("Decoded audio has wrong size: %d. Expected: %d", audio_frame_out->len,
-			PCM_NUM_BYTES_MONO * CONFIG_AUDIO_OUTPUT_CHANNELS);
+			PCM_NUM_BYTES_MONO * CONFIG_NRF_AUDIO_OUTPUT_CHANNELS);
 		/* Discard frame */
 		net_buf_unref(audio_frame_out);
 		return;
@@ -1097,10 +1101,10 @@ void audio_datapath_stream_out(struct net_buf *audio_frame_in)
 	uint32_t out_blk_idx = ctrl_blk.out.prod_blk_idx;
 
 	for (uint32_t i = 0; i < NUM_BLKS_IN_FRAME; i++) {
-		if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_16)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_BIT_DEPTH_16)) {
 			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS],
 			       (int16_t *)audio_frame_out->data, BLK_MULTI_CHAN_SIZE_OCTETS);
-		} else if (IS_ENABLED(CONFIG_AUDIO_BIT_DEPTH_32)) {
+		} else if (IS_ENABLED(CONFIG_NRF_AUDIO_BIT_DEPTH_32)) {
 			memcpy(&ctrl_blk.out.fifo[out_blk_idx * BLK_MULTI_CHAN_NUM_SAMPS],
 			       (int32_t *)audio_frame_out->data, BLK_MULTI_CHAN_SIZE_OCTETS);
 		}
@@ -1170,7 +1174,8 @@ int audio_datapath_init(void)
 	ctrl_blk.drift_comp.enabled = true;
 	ctrl_blk.pres_comp.enabled = true;
 
-	if (IS_ENABLED(CONFIG_STREAM_BIDIRECTIONAL) && (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (IS_ENABLED(CONFIG_NRF_AUDIO_STREAM_BIDIRECTIONAL) &&
+	    (CONFIG_NRF_AUDIO_DEV == GATEWAY)) {
 		/* Disable presentation compensation feature for microphone return on
 		 * gateway, since there's only one stream output from gateway for now, so no
 		 * need to qhave presentation compensation.
@@ -1180,7 +1185,7 @@ int audio_datapath_init(void)
 		ctrl_blk.pres_comp.enabled = true;
 	}
 
-	ctrl_blk.pres_comp.pres_delay_us = CONFIG_BT_AUDIO_PRESENTATION_DELAY_US;
+	ctrl_blk.pres_comp.pres_delay_us = CONFIG_NRF_AUDIO_PRESENTATION_DELAY_US;
 
 	return 0;
 }

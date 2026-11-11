@@ -5,9 +5,9 @@
 #
 
 # GATEWAY
-if AUDIO_DEV = 2
+if NRF_AUDIO_DEV = 2
 
-if AUDIO_SOURCE_USB
+if NRF_AUDIO_SOURCE_USB
 
 config UDC_NRF_THREAD_STACK_SIZE
 	default 1024
@@ -36,6 +36,6 @@ config UDC_DRIVER_LOG_LEVEL
 config USBD_MAX_SPEED
 	default 0 # FULL
 
-endif # AUDIO_SOURCE_USB
+endif # NRF_AUDIO_SOURCE_USB
 
-endif # AUDIO_DEV = 2 (GATEWAY)
+endif # NRF_AUDIO_DEV = 2 (GATEWAY)

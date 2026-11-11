@@ -18,7 +18,7 @@
 #include "le_audio.h"
 
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(le_audio_rx, CONFIG_LE_AUDIO_RX_LOG_LEVEL);
+LOG_MODULE_REGISTER(le_audio_rx, CONFIG_NRF_AUDIO_RX_LOG_LEVEL);
 
 struct rx_stats {
 	uint64_t good_frame_cnt;
@@ -28,11 +28,12 @@ struct rx_stats {
 static bool initialized;
 static struct k_thread audio_datapath_thread_data;
 static k_tid_t audio_datapath_thread_id;
-K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_AUDIO_DATAPATH_STACK_SIZE);
+K_THREAD_STACK_DEFINE(audio_datapath_thread_stack, CONFIG_NRF_AUDIO_DATAPATH_STACK_SIZE);
 
-K_MSGQ_DEFINE(ble_q_rx, sizeof(struct net_buf *), CONFIG_BUF_BLE_RX_PACKET_NUM, sizeof(void *));
-NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_BUF_BLE_RX_PACKET_NUM,
-			  (CONFIG_BT_ISO_RX_MTU * CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX),
+K_MSGQ_DEFINE(ble_q_rx, sizeof(struct net_buf *), CONFIG_NRF_AUDIO_BUF_BLE_RX_PACKET_NUM,
+	      sizeof(void *));
+NET_BUF_POOL_FIXED_DEFINE(ble_rx_pool, CONFIG_NRF_AUDIO_BUF_BLE_RX_PACKET_NUM,
+			  (CONFIG_BT_ISO_RX_MTU * CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX),
 			  sizeof(struct audio_metadata), NULL);
 
 static int location_to_net_buf_index(enum bt_audio_location total_loc,
@@ -102,7 +103,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 {
 	int ret;
 	static struct net_buf *audio_frame;
-	static struct rx_stats rx_stats[CONFIG_BT_AUDIO_CONCURRENT_RX_STREAMS_MAX];
+	static struct rx_stats rx_stats[CONFIG_NRF_AUDIO_CONCURRENT_RX_STREAMS_MAX];
 	static uint32_t num_overruns;
 	static uint32_t num_thrown;
 
@@ -148,7 +149,7 @@ void le_audio_rx_data_handler(struct net_buf *audio_frame_rx, struct audio_metad
 		return;
 	}
 
-	if (location_index != 0 && (CONFIG_AUDIO_DEV == GATEWAY)) {
+	if (location_index != 0 && (CONFIG_NRF_AUDIO_DEV == GATEWAY)) {
 		/* Only the first device will be used as mic input on gateway */
 		return;
 	}
@@ -284,7 +285,7 @@ static void audio_datapath_thread(void *dummy1, void *dummy2, void *dummy3)
 		ret = k_msgq_get(&ble_q_rx, (void *)&audio_frame, K_FOREVER);
 		ERR_CHK(ret);
 
-		if (IS_ENABLED(CONFIG_AUDIO_SOURCE_USB) && (CONFIG_AUDIO_DEV == GATEWAY)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_SOURCE_USB) && (CONFIG_NRF_AUDIO_DEV == GATEWAY)) {
 			ret = audio_system_decode(audio_frame);
 			ERR_CHK(ret);
 		} else {
@@ -303,8 +304,8 @@ static int audio_datapath_thread_create(void)
 
 	audio_datapath_thread_id = k_thread_create(
 		&audio_datapath_thread_data, audio_datapath_thread_stack,
-		CONFIG_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
-		NULL, NULL, K_PRIO_PREEMPT(CONFIG_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
+		CONFIG_NRF_AUDIO_DATAPATH_STACK_SIZE, (k_thread_entry_t)audio_datapath_thread, NULL,
+		NULL, NULL, K_PRIO_PREEMPT(CONFIG_NRF_AUDIO_DATAPATH_THREAD_PRIO), 0, K_NO_WAIT);
 	ret = k_thread_name_set(audio_datapath_thread_id, "Audio_datapath");
 	if (ret) {
 		LOG_ERR("Failed to create audio_datapath thread");

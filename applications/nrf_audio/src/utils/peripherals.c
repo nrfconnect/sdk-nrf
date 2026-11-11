@@ -16,7 +16,7 @@
 
 #include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>
-LOG_MODULE_REGISTER(peripherals, CONFIG_PERIPHERALS_LOG_LEVEL);
+LOG_MODULE_REGISTER(peripherals, CONFIG_NRF_AUDIO_PERIPHERALS_LOG_LEVEL);
 
 static struct board_version board_rev;
 #define CPU_LOAD_HIGH_THRESHOLD_PERCENT 98
@@ -36,7 +36,7 @@ static int leds_set(void)
 		return ret;
 	}
 
-#if (CONFIG_AUDIO_DEV == HEADSET)
+#if (CONFIG_NRF_AUDIO_DEV == HEADSET)
 	enum bt_audio_location location;
 
 	device_location_get(&location);
@@ -48,9 +48,9 @@ static int leds_set(void)
 	} else {
 		ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_WHITE);
 	}
-#elif (CONFIG_AUDIO_DEV == GATEWAY)
+#elif (CONFIG_NRF_AUDIO_DEV == GATEWAY)
 	ret = led_on(LED_AUDIO_DEVICE_TYPE, LED_COLOR_GREEN);
-#endif /* (CONFIG_AUDIO_DEV == HEADSET) */
+#endif /* (CONFIG_NRF_AUDIO_DEV == HEADSET) */
 
 	if (ret) {
 		return ret;
@@ -61,7 +61,7 @@ static int leds_set(void)
 
 static int location_assign_check(void)
 {
-#if (CONFIG_AUDIO_DEV == HEADSET) && CONFIG_DEVICE_LOCATION_SET_RUNTIME
+#if (CONFIG_NRF_AUDIO_DEV == HEADSET) && CONFIG_NRF_AUDIO_DEVICE_LOCATION_SET_RUNTIME
 	int ret;
 	bool pressed_vol_down;
 	bool pressed_vol_up;
@@ -136,7 +136,7 @@ int peripherals_init(void)
 			}
 		}
 
-		if (IS_ENABLED(CONFIG_SD_CARD_PLAYBACK)) {
+		if (IS_ENABLED(CONFIG_NRF_AUDIO_SD_CARD_PLAYBACK)) {
 			ret = sd_card_playback_init();
 			if (ret) {
 				LOG_ERR("Failed to initialize SD card playback");
