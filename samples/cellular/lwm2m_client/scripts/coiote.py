@@ -211,20 +211,25 @@ class Coiote:
             return None
 
     def fota_app_binary_get(self, file_name):
-        """Discover Binary from root folder or build/zephyr"""
-        os.chdir(self.callerPath)
-        os.getcwd()
-        file_list = os.listdir()
-        for filename in file_list:
-            if fnmatch.fnmatch(filename, file_name):
-                return filename
+        """Discover Binary by absolute or relative path, or from build/zephyr
 
-        os.chdir('build/zephyr')
-        os.getcwd()
-        file_list = os.listdir()
-        for filename in file_list:
-            if fnmatch.fnmatch(filename, file_name):
-                return filename
+        Returns the path of the matching file, or None if not found.
+        """
+        pattern = os.path.expanduser(file_name)
+        if not os.path.isabs(pattern):
+            pattern = os.path.join(self.callerPath, pattern)
+        search_patterns = [pattern]
+        if not os.path.isabs(os.path.expanduser(file_name)):
+            search_patterns.append(os.path.join(self.callerPath, 'build', 'zephyr', file_name))
+
+        for candidate in search_patterns:
+            directory, name = os.path.split(candidate)
+            if not os.path.isdir(directory):
+                continue
+            for filename in sorted(os.listdir(directory)):
+                path = os.path.join(directory, filename)
+                if fnmatch.fnmatch(filename, name) and os.path.isfile(path):
+                    return path
         return None
 
     def upload_fota_file(self, fota_id, file):
