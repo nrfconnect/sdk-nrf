@@ -204,7 +204,7 @@ Before you program the sample to your development kit, complete the following st
 1. |connect_kit|
 #. |connect_terminal|
 #. Perform a full erase of the device.
-   You can use `nrfutil device erase`_ command for this purpose:
+   You can use the following command for this purpose:
 
    .. nrfutil-command:: console
 
@@ -411,8 +411,11 @@ Testing with seed value provisioned first
 -----------------------------------------
 
 .. note::
-   This method is supported only using ``nrfutil device`` v2.14.1 and later.
-   See `Installing specific versions of nRF Util commands`_ for more information.
+   This method is supported only using ``nrfutil device`` v2.14.1 and later:
+
+   .. nrfutil-command:: console
+
+      nrfutil install device
 
 You can also provision the seed value before other keys or key pairs and before programming the sample.
 For this, you need to create a second JSON file with a single entry with a SEED value of 384 bits and then provision it to the board.

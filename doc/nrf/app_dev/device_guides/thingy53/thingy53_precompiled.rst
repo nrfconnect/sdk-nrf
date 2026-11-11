@@ -110,4 +110,4 @@ You can update the precompiled firmware using any of the following methods:
 
    .. tab:: nRF Util
 
-      See `Programming application firmware using MCUboot serial recovery`_ in the tool documentation for more information.
+      See the `device command page <nrfutil device program programming_application_mcuboot_>`_ in the tool documentation for detailed steps.

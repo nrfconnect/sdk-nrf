@@ -28,8 +28,6 @@ nrfutil device
 
      nrfutil install device=2.4.6 --force
 
-  For more information, consult the `nRF Util`_ documentation.
-
 nRF54H20 BICR
   The nRF54H20 BICR has been updated.
 
