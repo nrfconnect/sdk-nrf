@@ -7,7 +7,7 @@ Enabling support for front-end modules using Simple GPIO interface
    :local:
    :depth: 2
 
-You can use the Skyworks range extenders with nRF52, nRF53 and nRF54L Series devices.
+You can use the Skyworks range extenders with nRF53 and nRF54L Series devices.
 SKY66112-11 is one of many FEM devices that support the 2-pin PA/LNA interface.
 You can use SKY66112-11 as an example on how to create bindings for different devices that support the 2-pin PA/LNA interface.
 

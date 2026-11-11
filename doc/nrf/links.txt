@@ -102,6 +102,7 @@
 .. _`hwmv2 conversion script`: https://github.com/nrfconnect/sdk-zephyr/blob/v4.0.99-ncs1/scripts/utils/board_v1_to_v2.py
 .. _`sdk-zephyr west build patch`: https://github.com/nrfconnect/sdk-zephyr/blob/1a5d3b4a4ff98a33222856526afdf9c089b96d2b/scripts/west_commands/build.py#L585-L598
 .. _`nRF52840 DK board.cmake`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf52840dk/board.cmake
+.. _`nRF5340 DK board.cmake`: https://github.com/nrfconnect/sdk-zephyr/blob/main/boards/nordic/nrf5340dk/board.cmake
 
 .. _`ncs-example-application commit f9f2da`: https://github.com/nrfconnect/ncs-example-application/commit/f9f2da24041a7b1923e49893cca912482c138aae
 

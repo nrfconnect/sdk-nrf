@@ -17,11 +17,11 @@ For additional information, see the following documentation:
 
 * The `Quick Start app`_ to start development with the nRF7002 DK.
 * `nRF70 Series`_ for the technical documentation on the nRF70 Series devices.
-* :ref:`ug_nrf70_developing` documentation for topics related to developing Wi-Fi applications on nRF52, nRF53, and nRF91 Series, using the nRF70 companion IC devices.
+* :ref:`ug_nrf70_developing` documentation for topics related to developing Wi-Fi applications on nRF53, nRF54, and nRF91 Series hosts, using the nRF70 companion IC devices.
 * :ref:`installation` and :ref:`configuration_and_build` documentation to install the |NCS| and learn more about its development environment.
 
 The nRF70 Series devices are Wi-Fi companion ICs and do not serve as standalone platforms for developing applications.
-Wi-Fi applications may be developed on nRF52, nRF53, and nRF91 Series SoCs that support the nRF70 Series companion ICs.
+Wi-Fi applications may be developed on nRF53, nRF54, and nRF91 Series SoCs that support the nRF70 Series companion ICs.
 
 Supported protocols
 *******************

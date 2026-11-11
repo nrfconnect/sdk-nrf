@@ -97,13 +97,13 @@ To use the **ANT2** antenna, disable the :kconfig:option:`CONFIG_MPSL_FEM` Kconf
 FOTA over Bluetooth Low Energy
 ******************************
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_over_ble_intro.rst
    :start-after: fota_upgrades_over_ble_intro_start
    :end-before: fota_upgrades_over_ble_intro_end
 
 Thingy:53 supports network core upgrade out of the box.
 
-.. include:: /app_dev/device_guides/nrf52/fota_update.rst
+.. include:: /includes/fota_upgrades_over_ble_additional_information.rst
    :start-after: fota_upgrades_over_ble_additional_information_start
    :end-before: fota_upgrades_over_ble_additional_information_end
 

@@ -1,4 +1,5 @@
 .. _ug_app_dev:
+.. _ug_nrf52:
 .. _device_guides:
 
 Application development
@@ -8,6 +9,10 @@ The user guides in this section cover topics related to the general processes go
 Read these guides together with Zephyr's :ref:`zephyr:application` documentation.
 
 For detailed integration instructions of specific technologies and components, check the pages in other top sections of the documentation (like Protocols, Applications, or Samples).
+
+.. note::
+   Starting with the |NCS| release v3.5.0, the nRF52 Series is considered feature complete in the |NCS| and is no longer supported for new application development.
+   For new designs, use the nRF53, nRF54, nRF91, and other Series platforms supported in the |NCS|.
 
 .. figure:: /images/ncs_app_dev.svg
    :alt: Application development section overview
@@ -33,7 +38,6 @@ For detailed integration instructions of specific technologies and components, c
    app_dev/device_guides/nrf54l/index
    app_dev/device_guides/nrf54h/index
    app_dev/device_guides/nrf53/index
-   app_dev/device_guides/nrf52/index
    app_dev/device_guides/thingy91x/index
    app_dev/device_guides/thingy91/index
    app_dev/device_guides/thingy53/index

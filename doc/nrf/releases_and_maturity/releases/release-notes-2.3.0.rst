@@ -137,11 +137,11 @@ Build system
 Working with nRF52 Series
 =========================
 
-* :ref:`ug_nrf52_developing`:
+* Developing with nRF52 Series:
 
   * Added Kconfig options :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU` and :kconfig:option:`CONFIG_NCS_SAMPLE_MCUMGR_BT_OTA_DFU_SPEEDUP` to configure FOTA updates over Bluetooth Low Energy in the default setup.
     The default setup uses MCUmgr libraries with the Bluetooth transport layer and requires the user to enable MCUboot bootloader.
-    See details in the :ref:`FOTA updates <ug_nrf52_developing_ble_fota>` section of the :ref:`ug_nrf52_developing` guide.
+    See details in the FOTA updates section of the Developing with nRF52 Series guide.
 
 Working with nRF53 Series
 =========================
@@ -1028,6 +1028,6 @@ Documentation
   * The :ref:`software_maturity` page with details about Wi-Fi feature support.
   * The :ref:`app_power_opt` user guide by adding sections about power saving features and PSM usage.
   * The :ref:`ug_thingy53` guide by aligning with current simplified configuration.
-  * The :ref:`ug_nrf52_developing` guide by aligning with current simplified FOTA configuration.
+  * The Developing with nRF52 Series guide by aligning with current simplified FOTA configuration.
   * The :file:`doc/nrf` folder by significantly changing the folder structure.
     See `commit #d55314`_ for details.

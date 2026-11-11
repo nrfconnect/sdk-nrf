@@ -56,7 +56,7 @@ The following steps describe how to connect your custom board to a debug probe.
 
       1. Locate the SWD debug output header pins on your DK.
          Check the DK user guide on `Nordic Semiconductor TechDocs`_ for the exact location of these pins.
-         For example, for the nRF52840 DK, read the `Debug output <nRF52840 DK Debug output_>`_ page.
+         For example, for the nRF54L15 DK, see the `nRF54L15 DK User Guide`_.
       #. Connect the required pins to your custom board.
       #. Connect the DK to your PC using the USB cable.
       #. Install required J-Link drivers if not already present.
