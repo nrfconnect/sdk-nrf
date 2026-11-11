@@ -858,7 +858,7 @@ config NRF71_TWT_SETUP_TIMEOUT_MS
 	  continuing until this timeout value is reached. If no response is
 	  received before the timeout expires, the TWT setup is considered failed.
 
-config NRF_WIFI_USE_KMU
+config NRF71_USE_KMU
 	bool "Use KMU for key installation"
 	depends on NRF_WIFI_KMU
 	default y
