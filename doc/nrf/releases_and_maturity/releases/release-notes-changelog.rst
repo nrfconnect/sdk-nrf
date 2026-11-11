@@ -1343,6 +1343,13 @@ Bluetooth libraries and services
   * Removed the serialization of the ``bt_passkey_set()`` function, following the removal of the deprecated ``CONFIG_BT_FIXED_PASSKEY`` Kconfig option and the ``bt_passkey_set()`` function in Zephyr.
     Setting a fixed passkey is not supported over Bluetooth LE RPC.
 
+* :ref:`cs_de_readme` library:
+
+  * Added a section on how :ref:`missing tones <cs_de_missing_tones>` affect the IFFT distance estimate.
+  * Updated the documentation of the :c:func:`cs_de_ifft` function with the required buffer contents and the output layout.
+  * Fixed the documentation of the :c:func:`cs_de_combined_iq_calculate` function.
+    Even indexes of the combined IQ values hold the real component and odd indexes hold the imaginary component.
+
 Common Application Framework
 ----------------------------
 
