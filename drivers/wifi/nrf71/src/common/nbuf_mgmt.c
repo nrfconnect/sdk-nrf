@@ -67,12 +67,12 @@ void nrf_wifi_nbuf_free(void *nbuf)
 		return;
 	}
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_ZERO_COPY_TX
 	if (nwb->pkt) {
 		net_pkt_unref(nwb->pkt);
 		nwb->pkt = NULL;
 	}
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_ZERO_COPY_TX */
 
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_DATA, nwb->priv);
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_DATA, nwb);
@@ -209,7 +209,7 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf)
 }
 #endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_ZERO_COPY_TX
 static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 {
 	struct nrf_wifi_nwb *nbuff;
@@ -240,7 +240,7 @@ static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
 
 	return nbuff;
 }
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_ZERO_COPY_TX */
 
 void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 {
@@ -252,11 +252,11 @@ void *nrf_wifi_net_pkt_to_nbuf(struct net_pkt *pkt)
 		return NULL;
 	}
 
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_ZERO_COPY_TX
 	if (pkt->buffer && !pkt->buffer->frags) {
 		return nrf_wifi_net_pkt_to_nbuf_zc(pkt);
 	}
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_ZERO_COPY_TX */
 
 	len = net_pkt_get_len(pkt);
 

@@ -40,9 +40,9 @@ struct nrf_wifi_nwb {
 #ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	void *raw_tx_hdr;
 #endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_ZERO_COPY_TX
 	struct net_pkt *pkt;
-#endif /* CONFIG_NRF_WIFI_ZERO_COPY_TX */
+#endif /* CONFIG_NRF71_ZERO_COPY_TX */
 };
 
 /**

@@ -1401,7 +1401,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 		}
 	}
 #endif
-#ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
+#ifdef CONFIG_NRF71_ZERO_COPY_TX
 	if (type == ETHERNET_CONFIG_TYPE_EXTRA_TX_PKT_HEADROOM) {
 		config->extra_tx_pkt_headroom = NRF_WIFI_EXTRA_TX_HEADROOM;
 	}
