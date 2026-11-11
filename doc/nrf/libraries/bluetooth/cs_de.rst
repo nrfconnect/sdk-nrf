@@ -33,6 +33,8 @@ Usage
 
 See :ref:`channel_sounding_ras_initiator`.
 
+.. _cs_de_missing_tones:
+
 Missing tones
 =============
 
