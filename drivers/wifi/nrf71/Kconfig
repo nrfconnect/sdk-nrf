@@ -517,7 +517,7 @@ config NRF71_IF_MTU
 	range 1280 2304 if NET_IPV6
 	default 1500
 
-config WIFI_NRF71_SKIP_LOCAL_ADMIN_MAC
+config NRF71_SCAN_SKIP_LOCAL_ADMIN_MAC
 	bool "Suppress networks with non-individual MAC addresses as BSSID in the scan results"
 	help
 	  Wi-Fi access points use locally administered MAC addresses to manage
