@@ -114,6 +114,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/wifi_prov_core/wifi_prov_core.h`
-| Source files: :file:`subsys/bluetooth/services/wifi_prov`
+| Source files: :ncs-file:`subsys/bluetooth/services/wifi_prov </subsys/bluetooth/services/wifi_prov>`
 
 .. doxygengroup:: bt_wifi_prov

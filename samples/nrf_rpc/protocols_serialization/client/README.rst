@@ -69,7 +69,7 @@ For automated testing, CI builds might add global snippets such as ``ci-shell`` 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf_rpc/protocols_serialization/client`
+.. |sample path| replace:: :ncs-file:`samples/nrf_rpc/protocols_serialization/client </samples/nrf_rpc/protocols_serialization/client>`
 
 .. include:: /includes/build_and_run.txt
 

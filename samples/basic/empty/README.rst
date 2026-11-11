@@ -27,7 +27,7 @@ The sample supports the following development kits:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/basic/empty`
+.. |sample path| replace:: :ncs-file:`samples/basic/empty </samples/basic/empty>`
 
 .. include:: /includes/build_and_run.txt
 

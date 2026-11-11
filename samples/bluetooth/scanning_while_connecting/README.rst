@@ -128,7 +128,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/scanning_while_connecting`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/scanning_while_connecting </samples/bluetooth/scanning_while_connecting>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -194,6 +194,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/wifi_prov_core/wifi_prov_core.h`
-| Source files: :file:`subsys/net/lib/wifi_prov_core`
+| Source files: :ncs-file:`subsys/net/lib/wifi_prov_core </subsys/net/lib/wifi_prov_core>`
 
 .. doxygengroup:: wifi_prov_core

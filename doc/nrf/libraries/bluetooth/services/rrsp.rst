@@ -46,12 +46,12 @@ Usage
 
 You can set up the RRSP either as a Channel Sounding Initiator or Reflector.
 
-| See the sample: :file:`samples/bluetooth/channel_sounding/ras_reflector`
+| See the sample: :ncs-file:`samples/bluetooth/channel_sounding/ras_reflector </samples/bluetooth/channel_sounding/ras_reflector>`
 
 API documentation
 *****************
 
 | Header file: :ncs-file:`/include/bluetooth/services/ras.h`
-| Source files: :file:`subsys/bluetooth/services/ras`
+| Source files: :ncs-file:`subsys/bluetooth/services/ras </subsys/bluetooth/services/ras>`
 
 .. doxygengroup:: bt_ras

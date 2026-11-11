@@ -131,7 +131,7 @@ API callback functions
 Callback functions are needed to achieve platform independence.
 If your application uses the SUPL client library, you must implement these callback functions.
 For an example of the implementation, see the :ref:`gnss_sample` sample.
-The implementation is located in the :file:`samples/cellular/gnss/src/` directory.
+The implementation is located in the :ncs-file:`samples/cellular/gnss/src/ </samples/cellular/gnss/src>` directory.
 The various callback functions implemented in the SUPL client library and their purposes are listed below.
 
 A-GNSS handler
@@ -224,6 +224,6 @@ API documentation
 =================
 
 | Header file: :ncs-file:`/include/supl_os_client.h`
-| Source files: :file:`lib/supl/`
+| Source files: :ncs-file:`lib/supl/ </lib/supl>`
 
 .. doxygengroup:: supl_os

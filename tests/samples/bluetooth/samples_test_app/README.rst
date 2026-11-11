@@ -86,7 +86,7 @@ Check and configure the following configuration options for the sample:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`tests/samples/bluetooth/samples_test_app`
+.. |sample path| replace:: :ncs-file:`tests/samples/bluetooth/samples_test_app </tests/samples/bluetooth/samples_test_app>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -194,7 +194,7 @@ Building and running
 
 When running the benchmark, an extra build flag (:kconfig:option:`CONFIG_COMPILER_OPT`) is set to ``-O3`` to achieve the best CoreMark results.
 
-.. |sample path| replace:: :file:`samples/benchmarks/coremark`
+.. |sample path| replace:: :ncs-file:`samples/benchmarks/coremark </samples/benchmarks/coremark>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -88,6 +88,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/modem/modem_battery.h`
-| Source files: :file:`lib/modem_battery/`
+| Source files: :ncs-file:`lib/modem_battery/ </lib/modem_battery>`
 
 .. doxygengroup:: modem_battery

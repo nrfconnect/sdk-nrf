@@ -32,6 +32,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/coap_utils.h`
-| Source files: :file:`subsys/net/lib/coap_utils/`
+| Source files: :ncs-file:`subsys/net/lib/coap_utils/ </subsys/net/lib/coap_utils>`
 
 .. doxygengroup:: coap_utils

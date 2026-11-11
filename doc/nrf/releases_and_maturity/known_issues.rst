@@ -7417,7 +7417,7 @@ NCSDK-6852: Extra CMake options might not be applied in version 5.10d
 
 NCSDK-8372: Project name collision causes SES Nordic Edition to load the wrong project
   Some samples that are located in different folders use the same project name.
-  For example, there is a ``light_switch`` project both in the :file:`samples/bluetooth/mesh/` folder and in the :file:`samples/zigbee/` folder.
+  For example, there is a ``light_switch`` project both in the :ncs-file:`samples/bluetooth/mesh/ </samples/bluetooth/mesh>` folder and in the :file:`samples/zigbee/` folder.
   When you select one of these samples from the project list in the **Open nRF Connect SDK Project** dialog, the wrong sample might be selected.
   Check the **Build Directory** field in the dialog to see if this is the case.
   The field indicates the path to the project that SES Nordic Edition will load.

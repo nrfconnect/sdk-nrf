@@ -69,7 +69,7 @@ The following files are available:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/location`
+.. |sample path| replace:: :ncs-file:`samples/cellular/location </samples/cellular/location>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -58,7 +58,7 @@ In this configuration, the sample logs a decreasing battery voltage until it res
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/vtf_monitoring`
+.. |sample path| replace:: :ncs-file:`samples/vtf_monitoring </samples/vtf_monitoring>`
 
 To build for the nRF7120 DK, use the ``nrf7120dk/nrf7120/cpuapp`` board target.
 The following is an example of the CLI command:

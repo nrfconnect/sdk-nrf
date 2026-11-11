@@ -29,6 +29,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/hw_id.h`
-| Source files: :file:`lib/hw_id/`
+| Source files: :ncs-file:`lib/hw_id/ </lib/hw_id>`
 
 .. doxygengroup:: hw_id

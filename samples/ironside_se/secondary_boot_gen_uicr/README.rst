@@ -23,7 +23,7 @@ The sample consists of two applications:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ironside_se/secondary_boot_gen_uicr`
+.. |sample path| replace:: :ncs-file:`samples/ironside_se/secondary_boot_gen_uicr </samples/ironside_se/secondary_boot_gen_uicr>`
 
 .. include:: /includes/build_and_run_ns.txt
 

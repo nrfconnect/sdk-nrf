@@ -206,7 +206,7 @@ See :file:`subsys/net/dect/rpc/Kconfig` for tunneled packet size, event pacing, 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dect/dect_rpc`
+.. |sample path| replace:: :ncs-file:`samples/dect/dect_rpc </samples/dect/dect_rpc>`
 
 .. include:: /includes/build_and_run.txt
 
@@ -221,7 +221,7 @@ See :ref:`cmake_options` for instructions on how to provide CMake options, for e
 Building the RPC client
 =======================
 
-When you build the client on an nRF9151 DK, files under :file:`boards/` select the client devicetree (RPC UART, modem disabled in the :file:`nrf9151dk_nrf9151_ns.conf` and :file:`nrf9151dk_nrf9151_ns.overlay` files).
+When you build the client on an nRF9151 DK, files under :ncs-file:`boards/ </samples/dect/dect_rpc/boards>` select the client devicetree (RPC UART, modem disabled in the :file:`nrf9151dk_nrf9151_ns.conf` and :file:`nrf9151dk_nrf9151_ns.overlay` files).
 
 nRF54L15 DK (default)
 ---------------------

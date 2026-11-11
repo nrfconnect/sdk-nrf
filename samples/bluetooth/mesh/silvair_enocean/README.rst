@@ -129,7 +129,7 @@ Building and running
 Make sure to enable the Bluetooth Mesh in |NCS| before building and testing this sample.
 See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/silvair_enocean`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/silvair_enocean </samples/bluetooth/mesh/silvair_enocean>`
 
 .. include:: /includes/build_and_run_ns.txt
 

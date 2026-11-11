@@ -50,7 +50,7 @@ To onboard your device, install `nRF Cloud Utils`_ and follow the instructions i
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_mqtt_device_message`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nrf_cloud_mqtt_device_message </samples/cellular/nrf_cloud_mqtt_device_message>`
 
 .. include:: /includes/build_and_run_ns.txt
 

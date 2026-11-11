@@ -773,7 +773,7 @@ Make sure you format the SD card with a FAT file system.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/nrf_auraconfig`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/nrf_auraconfig </samples/bluetooth/nrf_auraconfig>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -119,7 +119,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/throughput`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/throughput </samples/bluetooth/throughput>`
 
 .. include:: /includes/build_and_run_ns.txt
 

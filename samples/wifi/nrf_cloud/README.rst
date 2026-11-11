@@ -330,7 +330,7 @@ The sample provides predefined configuration files for the following use cases:
 * :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
 * :file:`sysbuild/mcuboot/` - Configuration of the MCUboot bootloader image used for FOTA.
 
-Board and SoC files under the :file:`boards/` and :file:`socs/` folders are merged automatically for the selected target.
+Board and SoC files under the :ncs-file:`boards/ </samples/wifi/nrf_cloud/boards>` and :ncs-file:`socs/ </samples/wifi/nrf_cloud/socs>` folders are merged automatically for the selected target.
 The :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf`, :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`, and :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_building_and_running:
@@ -338,7 +338,7 @@ The :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf`, :ncs-file:`/samples/wifi/nrf_
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/nrf_cloud`
+.. |sample path| replace:: :ncs-file:`samples/wifi/nrf_cloud </samples/wifi/nrf_cloud>`
 
 .. include:: /includes/build_and_run_ns.txt
 

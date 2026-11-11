@@ -158,7 +158,7 @@ Configuration
 
 The Peripheral Power Profiling sample allows configuring some of its settings using Kconfig.
 You can set different options to monitor the power consumption of your development kit.
-You can modify the following options (available in the Kconfig file at :file:`samples/bluetooth/peripheral_power_profiling`):
+You can modify the following options (available in the Kconfig file at :ncs-file:`samples/bluetooth/peripheral_power_profiling </samples/bluetooth/peripheral_power_profiling>`):
 
 .. _CONFIG_BT_POWER_PROFILING_DATA_LENGTH:
 
@@ -235,7 +235,7 @@ To enable the console, set the following Kconfig options to ``y``:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_power_profiling`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_power_profiling </samples/bluetooth/peripheral_power_profiling>`
 
 .. include:: /includes/build_and_run.txt
 

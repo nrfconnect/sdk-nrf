@@ -242,11 +242,11 @@ Samples and applications
 
 The following samples use the nRF93M1 DK in the |NCS|:
 
-* :ref:`nrf93m1dk_modem_bypass`, located under the :file:`samples/nrf93m1dk/modem_bypass` folder, configures the modem UART switch in bypass mode and forwards it to the USB CDC-ACM VCOM port, so a host PC can send AT commands straight to the module.
+* :ref:`nrf93m1dk_modem_bypass`, located under the :ncs-file:`samples/nrf93m1dk/modem_bypass </samples/nrf93m1dk/modem_bypass>` folder, configures the modem UART switch in bypass mode and forwards it to the USB CDC-ACM VCOM port, so a host PC can send AT commands straight to the module.
   It also handles modem power sequencing at startup.
   **Button 1** triggers ``POWER_KEY`` and **Button 2** triggers ``RESET``.
   Use the sample for bring-up, AT command exploration, and modem firmware work.
-* :ref:`nrf93m1dk_ppp_shell`, located under the :file:`samples/nrf93m1dk/modem_bypass` folder, establishes a PPP connection between the nRF54L15 host and the module over a CMUX-multiplexed UART, and exposes the AT channel through the AT command shell.
+* :ref:`nrf93m1dk_ppp_shell`, located under the :ncs-file:`samples/nrf93m1dk/modem_bypass </samples/nrf93m1dk/modem_bypass>` folder, establishes a PPP connection between the nRF54L15 host and the module over a CMUX-multiplexed UART, and exposes the AT channel through the AT command shell.
   IPv4, IPv6, DNS, TCP, UDP, and POSIX sockets are enabled, and zperf is included for throughput testing.
 
 Both samples are built for the ``nrf93m1dk/nrf54l15/cpuapp`` build target and run the UART at 115200 baud.

@@ -114,6 +114,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/dm.h`
-| Source files: :file:`subsys/dm/`
+| Source files: :ncs-file:`subsys/dm/ </subsys/dm>`
 
 .. doxygengroup:: dm

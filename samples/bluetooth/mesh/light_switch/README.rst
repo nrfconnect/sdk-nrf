@@ -251,7 +251,7 @@ Building and running
 Make sure to enable the Bluetooth Mesh in |NCS| before building and testing this sample.
 See :ref:`Bluetooth Mesh user guide <ug_bt_mesh>` for more information.
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light_switch`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/light_switch </samples/bluetooth/mesh/light_switch>`
 
 .. include:: /includes/build_and_run_ns.txt
 

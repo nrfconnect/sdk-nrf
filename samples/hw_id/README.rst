@@ -35,7 +35,7 @@ You can change the hardware ID source by using one of the following :file:`conf`
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/hw_id`
+.. |sample path| replace:: :ncs-file:`samples/hw_id </samples/hw_id>`
 
 .. include:: /includes/build_and_run_ns.txt
 

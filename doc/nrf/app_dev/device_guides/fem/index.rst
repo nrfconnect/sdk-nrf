@@ -32,7 +32,7 @@ The following hardware platforms with :term:`Front-End Module (FEM)` are support
        | `User Guide <nRF21540 DK User Guide_>`_
      - `nRF21540 DK product page`_
 
-The following FEM :term:`Shield` is available and defined in the :file:`nrf/boards/shields` folder:
+The following FEM :term:`Shield` is available and defined in the :ncs-file:`nrf/boards/shields </boards/shields>` folder:
 
 .. list-table::
    :header-rows: 1

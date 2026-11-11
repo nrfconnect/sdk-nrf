@@ -17,9 +17,9 @@ Follow these instructions to make sure that the application runs as expected.
 
 .. |sample_test| replace:: tests
 
-.. |sample_test_file| replace:: :file:`nrf/tests/zephyr`
+.. |sample_test_file| replace:: :ncs-file:`nrf/tests/zephyr </tests/zephyr>`
 
-.. |zephyr_sample_test_file| replace:: :file:`zephyr/tests`
+.. |zephyr_sample_test_file| replace:: :ncs-file:`zephyr/tests <zephyr:/tests>`
 
 .. include:: /includes/zephyr_sample_test.txt
 

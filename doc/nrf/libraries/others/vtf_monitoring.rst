@@ -104,6 +104,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/vtf_monitoring/vtf_monitoring.h`
-| Source files: :file:`subsys/vtf_monitoring/`
+| Source files: :ncs-file:`subsys/vtf_monitoring/ </subsys/vtf_monitoring>`
 
 .. doxygengroup:: vtf_monitoring

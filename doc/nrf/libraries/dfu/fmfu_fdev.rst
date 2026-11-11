@@ -42,6 +42,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/dfu/fmfu_fdev.h`
-| Source files: :file:`subsys/dfu/fmfu_fdev/src/`
+| Source files: :ncs-file:`subsys/dfu/fmfu_fdev/src/ </subsys/dfu/fmfu_fdev/src>`
 
 .. doxygengroup:: fmfu_fdev

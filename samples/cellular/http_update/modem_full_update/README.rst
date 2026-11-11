@@ -73,7 +73,7 @@ CONFIG_DOWNLOAD_MODEM_1_FILE
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/http_update/modem_full_update`
+.. |sample path| replace:: :ncs-file:`samples/cellular/http_update/modem_full_update </samples/cellular/http_update/modem_full_update>`
 
 .. include:: /includes/build_and_run_ns.txt
 

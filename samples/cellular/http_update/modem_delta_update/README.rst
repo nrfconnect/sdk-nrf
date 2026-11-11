@@ -31,7 +31,7 @@ The sample automatically downloads the correct delta image to go from the base v
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/http_update/modem_delta_update`
+.. |sample path| replace:: :ncs-file:`samples/cellular/http_update/modem_delta_update </samples/cellular/http_update/modem_delta_update>`
 
 .. include:: /includes/build_and_run_ns.txt
 

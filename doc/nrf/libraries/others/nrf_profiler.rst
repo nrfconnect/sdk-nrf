@@ -132,6 +132,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/nrf_profiler.h`
-| Source files: :file:`subsys/nrf_profiler/`
+| Source files: :ncs-file:`subsys/nrf_profiler/ </subsys/nrf_profiler>`
 
 .. doxygengroup:: nrf_profiler

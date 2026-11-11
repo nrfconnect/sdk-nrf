@@ -64,7 +64,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_ancs_client`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_ancs_client </samples/bluetooth/peripheral_ancs_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -113,7 +113,7 @@ Testing with Bluetooth Low Energy app
 #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
 #. Click the :guilabel:`SERVER SETUP` tab.
    Click the dongle configuration and select :guilabel:`Load setup`.
-   Load the :ncs-file:`/samples/bluetooth/peripheral_ancs_client/ANCS_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_ancs_client` in the |NCS| folder structure.
+   Load the :ncs-file:`/samples/bluetooth/peripheral_ancs_client/ANCS_central.ncs` file that is located under :ncs-file:`samples/bluetooth/peripheral_ancs_client </samples/bluetooth/peripheral_ancs_client>` in the |NCS| folder structure.
 #. Click :guilabel:`Apply to device`.
 #. Click the :guilabel:`CONNECTION MAP` tab.
    Click the dongle configuration and select :guilabel:`Security parameters`.

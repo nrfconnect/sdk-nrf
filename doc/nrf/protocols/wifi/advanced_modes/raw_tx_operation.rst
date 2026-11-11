@@ -174,7 +174,7 @@ Performance profiling
 *********************
 
 You can profile raw transmit throughput in a lab setup by combining Zephyr's ``zperf raw upload`` command on the device with host-side capture and aggregation on a separate device.
-The SDK includes two helper scripts under :file:`nrf/scripts/wifi_test/` that automate common steps.
+The SDK includes two helper scripts under :ncs-file:`nrf/scripts/wifi_test/ </scripts/wifi_test>` that automate common steps.
 These are provided as optional conveniences.
 You can also manually create the equivalent hexadecimal strings and **tshark** commands.
 Run either script with ``--help`` for the full option list and defaults.

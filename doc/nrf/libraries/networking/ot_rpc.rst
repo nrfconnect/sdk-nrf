@@ -225,6 +225,6 @@ Please refer to `OpenThread Reference`_ for the OpenThread C API documentation.
 In addition, the library also implements some API additions.
 
 | Header file: :ncs-file:`/include/net/ot_rpc.h`
-| Source files: :file:`subsys/net/openthread/rpc`
+| Source files: :ncs-file:`subsys/net/openthread/rpc </subsys/net/openthread/rpc>`
 
 .. doxygengroup:: ot_rpc

@@ -60,6 +60,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/debug/cpu_load.h`
-| Source files: :file:`subsys/debug/cpu_load/`
+| Source files: :ncs-file:`subsys/debug/cpu_load/ </subsys/debug/cpu_load>`
 
 .. doxygengroup:: cpu_load

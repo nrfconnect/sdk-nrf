@@ -296,7 +296,7 @@ Images
    Figure caption
 
 Make sure to correctly specify the path to the image file.
-A slash at the beginning of the path indicates an absolute path and will link to the common image folder in :file:`doc/nrf`.
+A slash at the beginning of the path indicates an absolute path and will link to the common image folder in :ncs-file:`doc/nrf </doc/nrf>`.
 Starting the path without the forward slash indicates a relative path.
 
 Math equations

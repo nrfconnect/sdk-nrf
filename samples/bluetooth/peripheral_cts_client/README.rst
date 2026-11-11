@@ -52,7 +52,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_cts_client`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_cts_client </samples/bluetooth/peripheral_cts_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -73,7 +73,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select **Load setup**.
-         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :ncs-file:`samples/bluetooth/peripheral_cts_client </samples/bluetooth/peripheral_cts_client>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.
@@ -143,7 +143,7 @@ After programming the sample to your development kit, you can test it with the `
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select **Load setup**.
-         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :file:`samples/bluetooth/peripheral_cts_client` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/peripheral_cts_client/cts_central.ncs` file that is located under :ncs-file:`samples/bluetooth/peripheral_cts_client </samples/bluetooth/peripheral_cts_client>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select **Security parameters**.

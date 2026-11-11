@@ -23,7 +23,7 @@ When connected to another device, the sample discovers the services of the conne
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_gatt_dm`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_gatt_dm </samples/bluetooth/peripheral_gatt_dm>`
 
 .. include:: /includes/build_and_run_ns.txt
 

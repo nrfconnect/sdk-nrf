@@ -43,7 +43,7 @@ You can enable the following IPC backends:
 Building and running
 ********************
 
-.. |application path| replace:: :file:`applications/hpf/gpio`
+.. |application path| replace:: :ncs-file:`applications/hpf/gpio </applications/hpf/gpio>`
 
 .. include:: /includes/application_build_and_run.txt
 
@@ -62,7 +62,7 @@ Upon successful execution, **LED0** will start flashing.
 Dependencies
 ************
 
-* :file:`zephyr/doc/services/ipc/ipc_service` - Used for transferring data between application core and the FLPR core (if you are not using the mbox backend).
+* :ncs-file:`zephyr/doc/services/ipc/ipc_service <zephyr:/doc/services/ipc/ipc_service>` - Used for transferring data between application core and the FLPR core (if you are not using the mbox backend).
 * :file:`zephyr/doc/hardware/peripherals/mbox.rst` - Used for transferring data between application core and the FLPR core (if you are not using the ipc backend).
 * `nrf HAL <nrfx API documentation_>`_ - Enables access to the VPR CSR registers for direct hardware control.
 

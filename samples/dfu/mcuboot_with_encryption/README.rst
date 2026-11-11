@@ -193,7 +193,7 @@ You can find these in the build directory configuration files.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/mcuboot_with_encryption`
+.. |sample path| replace:: :ncs-file:`samples/dfu/mcuboot_with_encryption </samples/dfu/mcuboot_with_encryption>`
 
 .. include:: /includes/build_and_run.txt
 

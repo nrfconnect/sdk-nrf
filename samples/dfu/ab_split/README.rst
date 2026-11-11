@@ -194,7 +194,7 @@ To ensure the updated build is preferred after a DFU, set this option to a highe
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/ab_split`
+.. |sample path| replace:: :ncs-file:`samples/dfu/ab_split </samples/dfu/ab_split>`
 
 .. include:: /includes/build_and_run.txt
 

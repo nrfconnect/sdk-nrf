@@ -47,7 +47,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/sha256`
+.. |sample path| replace:: :ncs-file:`samples/crypto/sha256 </samples/crypto/sha256>`
 
 .. include:: /includes/build_and_run_ns.txt
 

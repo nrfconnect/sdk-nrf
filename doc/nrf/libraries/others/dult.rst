@@ -109,7 +109,7 @@ API documentation
 *****************
 
 | Header files: :ncs-file:`/include/dult/dult.h`, :ncs-file:`/include/dult/bt.h`, :ncs-file:`/include/dult/multi_user.h`, :ncs-file:`/include/dult/test.h`
-| Source files: :file:`subsys/dult`
+| Source files: :ncs-file:`subsys/dult </subsys/dult>`
 
 .. doxygengroup:: dult
 

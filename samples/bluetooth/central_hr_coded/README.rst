@@ -29,7 +29,7 @@ When the :kconfig:option:`CONFIG_BT_EXT_ADV_CODING_SELECTION` Kconfig option is 
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/central_hr_coded`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_hr_coded </samples/bluetooth/central_hr_coded>`
 
 .. include:: /includes/build_and_run.txt
 

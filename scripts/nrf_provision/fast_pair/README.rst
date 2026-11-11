@@ -27,7 +27,7 @@ See `Fast Pair Model Registration`_ in the Google Fast Pair Service documentatio
 Requirements
 ************
 
-The script source files are located in the :file:`scripts/nrf_provision/fast_pair` directory.
+The script source files are located in the :ncs-file:`scripts/nrf_provision/fast_pair </scripts/nrf_provision/fast_pair>` directory.
 
 The script uses the `IntelHex`_ Python library to generate the hexadecimal file.
 
@@ -40,7 +40,7 @@ To install the script's requirements, run the following command in its directory
 Using the script
 ****************
 
-Run the script commands in the :file:`scripts/nrf_provision/fast_pair` directory to start using the script.
+Run the script commands in the :ncs-file:`scripts/nrf_provision/fast_pair </scripts/nrf_provision/fast_pair>` directory to start using the script.
 To list the script arguments, run the following command:
 
 .. code-block:: console

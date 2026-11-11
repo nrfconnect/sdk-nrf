@@ -230,6 +230,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/aws_fota.h`
-| Source files: :file:`subsys/net/lib/aws_fota/`
+| Source files: :ncs-file:`subsys/net/lib/aws_fota/ </subsys/net/lib/aws_fota>`
 
 .. doxygengroup:: aws_fota

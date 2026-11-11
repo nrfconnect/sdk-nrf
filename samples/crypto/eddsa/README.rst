@@ -51,7 +51,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/eddsa`
+.. |sample path| replace:: :ncs-file:`samples/crypto/eddsa </samples/crypto/eddsa>`
 
 .. include:: /includes/build_and_run_ns.txt
 

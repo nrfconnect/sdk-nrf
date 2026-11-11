@@ -172,6 +172,6 @@ This library does not define a new Bluetooth API except for ``flags`` modificati
 Instead, it uses Zephyr's :ref:`zephyr:bluetooth_api`.
 
 | Header file: :ncs-file:`/include/bluetooth/bt_rpc.h`
-| Source files: :file:`subsys/bluetooth/rpc/`
+| Source files: :ncs-file:`subsys/bluetooth/rpc/ </subsys/bluetooth/rpc>`
 
 .. doxygengroup:: bt_rpc

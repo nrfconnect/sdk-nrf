@@ -45,7 +45,7 @@ LED 2 and LED 3:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/enocean`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/enocean </samples/bluetooth/enocean>`
 
 .. include:: /includes/build_and_run.txt
 

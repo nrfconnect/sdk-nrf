@@ -75,7 +75,7 @@ The OpenThread network stack components are located in the following directories
 * OpenThread stack: :file:`modules/lib/openthread/`
 * OpenThread shim layer:
 
-  * Thread entry point function, callbacks, utils, L2 registration: :file:`zephyr/subsys/net/l2/openthread/`
+  * Thread entry point function, callbacks, utils, L2 registration: :ncs-file:`zephyr/subsys/net/l2/openthread/ <zephyr:/subsys/net/l2/openthread>`
   * OpenThread platform layer location: :file:`zephyr/subsys/net/lib/openthread/platform/`
 
 The responsibilities of the OpenThread shim layer are as follows:
@@ -88,7 +88,7 @@ The responsibilities of the OpenThread shim layer are as follows:
 
 The nRF IEEE 802.15.4 radio driver is located in the following directories:
 
-* nRF IEEE 802.15.4 radio driver shim layer: :file:`zephyr/drivers/ieee802154/` (:ncs-file:`zephyr:/drivers/ieee802154/ieee802154_nrf5.c` and :ncs-file:`zephyr:/drivers/ieee802154/ieee802154_nrf5.h`)
+* nRF IEEE 802.15.4 radio driver shim layer: :ncs-file:`zephyr/drivers/ieee802154/ <zephyr:/drivers/ieee802154>` (:ncs-file:`zephyr:/drivers/ieee802154/ieee802154_nrf5.c` and :ncs-file:`zephyr:/drivers/ieee802154/ieee802154_nrf5.h`)
 * nRF IEEE 802.15.4 radio driver: :file:`modules/hal/nordic/drivers/nrf_radio_802154`
 
 Radio driver's RX and TX connections

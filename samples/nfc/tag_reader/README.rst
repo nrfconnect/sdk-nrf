@@ -35,7 +35,7 @@ Supported tag types are:
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/nfc/tag_reader`
+.. |sample path| replace:: :ncs-file:`samples/nfc/tag_reader </samples/nfc/tag_reader>`
 
 .. include:: /includes/build_and_run.txt
 

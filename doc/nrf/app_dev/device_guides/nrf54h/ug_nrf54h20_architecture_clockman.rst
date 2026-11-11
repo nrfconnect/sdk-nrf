@@ -158,7 +158,7 @@ For more details, see the following links:
 
 * :ref:`zephyr:clock_control_api`.
 * The following calls in the `Zephyr's nRF clock control API extensions`_ (:ncs-file:`zephyr:/include/zephyr/drivers/clock_control/nrf_clock_control.h`):
-* The sample at :file:`zephyr/samples/boards/nordic/clock_control`.
+* The sample at :ncs-file:`zephyr/samples/boards/nordic/clock_control <zephyr:/samples/boards/nordic/clock_control>`.
 
   * ``nrf_clock_control_request()`` - Requests a reservation to use a given clock with specified attributes.
   * ``nrf_clock_control_release()`` - Releases a reserved use of a clock.

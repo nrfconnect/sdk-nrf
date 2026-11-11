@@ -232,9 +232,9 @@ You can edit the DTS files to change the priority of the peripheral's interrupt.
 This can be useful when :ref:`adding a new custom board <porting_guide_adding_board>` or whenever you need to change the interrupt priority.
 
 The ``interrupts`` property is an array, where the meaning of each element is defined by the specification of the interrupt controller.
-These specification files are located at :file:`zephyr/dts/bindings/interrupt-controller/` DTS binding file directory.
+These specification files are located at :ncs-file:`zephyr/dts/bindings/interrupt-controller/ <zephyr:/dts/bindings/interrupt-controller>` DTS binding file directory.
 
-For example, for an Arm Cortex-M device, see the corresponding devicetree binding files in :file:`zephyr/dts/bindings/interrupt-controller/`.
+For example, for an Arm Cortex-M device, see the corresponding devicetree binding files in :ncs-file:`zephyr/dts/bindings/interrupt-controller/ <zephyr:/dts/bindings/interrupt-controller>`.
 The ``interrupts`` property is an array, where the meaning of each element is defined by the specification of the interrupt controller.
 The default values for these elements for the given peripheral are in the :file:`dtsi` file specific for the device.
 

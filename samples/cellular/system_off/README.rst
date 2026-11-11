@@ -43,7 +43,7 @@ Check and configure the following Kconfig options:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/system_off`
+.. |sample path| replace:: :ncs-file:`samples/cellular/system_off </samples/cellular/system_off>`
 
 .. include:: /includes/build_and_run.txt
 

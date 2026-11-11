@@ -115,7 +115,7 @@ This option is for stress testing and should remain disabled for baseline measur
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/subsys/rtfw/hid`
+.. |sample path| replace:: :ncs-file:`samples/subsys/rtfw/hid </samples/subsys/rtfw/hid>`
 
 .. include:: /includes/build_and_run.txt
 

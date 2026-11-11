@@ -7,7 +7,7 @@ Building and running nRF Audio applications
    :local:
    :depth: 2
 
-This nRF Audio application source files can be found in their respective folders under :file:`applications/nrf_audio` in the nRF Connect SDK folder structure.
+This nRF Audio application source files can be found in their respective folders under :ncs-file:`applications/nrf_audio </applications/nrf_audio>` in the nRF Connect SDK folder structure.
 
 You can build and program the applications in one of the following ways:
 
@@ -44,7 +44,7 @@ The suggested method for building each of the applications and programming it to
 The script automates the process of selecting :ref:`configuration files <nrf_audio_app_configuration_files>` and building different applications.
 This eases the process of building and programming images for multiple development kits.
 
-The script is located in the :file:`applications/nrf_audio/tools/buildprog` directory.
+The script is located in the :ncs-file:`applications/nrf_audio/tools/buildprog </applications/nrf_audio/tools/buildprog>` directory.
 
   .. note::
      The :file:`buildprog.py` script is an app-specific script for building and programming multiple kits and cores with various audio application configurations. The script will be deprecated in a future release. The audio applications will gradually shift only to using standard tools for building and programming development kits.
@@ -315,7 +315,7 @@ Complete the following steps to build each of the configurations you need:
             * For broadcast gateway: ``-DEXTRA_CONF_FILE=".\broadcast_source\overlay-broadcast_source.conf"``
 
       #. Build the application using the standard :ref:`build steps <building>` for the command line.
-         For example, if you want to build the unicast firmware for the application core as a headset, you can run the following command from the :file:`applications/nrf_audio/` directory:
+         For example, if you want to build the unicast firmware for the application core as a headset, you can run the following command from the :ncs-file:`applications/nrf_audio/ </applications/nrf_audio>` directory:
 
          .. code-block:: console
 

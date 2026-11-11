@@ -226,7 +226,7 @@ Migration script
 A utility script is provided to automatically migrate the devicetree files of any Nordic-based board to include pin control.
 The script modifies the file initially by removing old pin-related properties and replacing them with pin control states.
 
-The script is located in the :file:`zephyr/scripts/utils/` folder, and can be used in the following way:
+The script is located in the :ncs-file:`zephyr/scripts/utils/ <zephyr:/scripts/utils>` folder, and can be used in the following way:
 
 .. code-block::
 

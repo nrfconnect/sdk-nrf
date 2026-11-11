@@ -36,7 +36,7 @@ Finally, the sample prints the PDP context IDs and PDN IDs of both the default P
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/pdn`
+.. |sample path| replace:: :ncs-file:`samples/cellular/pdn </samples/cellular/pdn>`
 
 .. include:: /includes/build_and_run_ns.txt
 

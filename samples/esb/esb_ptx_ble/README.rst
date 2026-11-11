@@ -77,7 +77,7 @@ Configuration
 Building and running
 ********************
 
-The Transmitter sample is located under :file:`samples/esb/esb_ptx_ble` in the |NCS| folder structure.
+The Transmitter sample is located under :ncs-file:`samples/esb/esb_ptx_ble </samples/esb/esb_ptx_ble>` in the |NCS| folder structure.
 
 See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 

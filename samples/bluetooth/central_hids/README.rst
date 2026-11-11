@@ -142,7 +142,7 @@ The following sample-specific Kconfig options are used in this sample (defined i
 
 Building and Running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/central_hids`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_hids </samples/bluetooth/central_hids>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -268,7 +268,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :ncs-file:`/samples/bluetooth/central_hids/hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_hids/hids_keyboard.ncs` file that is located under :ncs-file:`samples/bluetooth/central_hids </samples/bluetooth/central_hids>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.
@@ -315,7 +315,7 @@ Testing with Bluetooth Low Energy app
       #. Open the `Bluetooth Low Energy app`_ and select the connected dongle that is used for communication.
       #. Open the :guilabel:`SERVER SETUP` tab.
          Click the dongle configuration and select :guilabel:`Load setup`.
-         Load the :ncs-file:`/samples/bluetooth/central_hids/hids_keyboard.ncs` file that is located under :file:`samples/bluetooth/central_hids` in the |NCS| folder structure.
+         Load the :ncs-file:`/samples/bluetooth/central_hids/hids_keyboard.ncs` file that is located under :ncs-file:`samples/bluetooth/central_hids </samples/bluetooth/central_hids>` in the |NCS| folder structure.
       #. Click :guilabel:`Apply to device`.
       #. Open the :guilabel:`CONNECTION MAP` tab.
          Click the dongle configuration and select :guilabel:`Advertising setup`.

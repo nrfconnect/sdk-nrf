@@ -75,7 +75,7 @@ The nRF54L Series platforms use the following cryptographic algorithms:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/encrypted_bootloader`
+.. |sample path| replace:: :ncs-file:`samples/dfu/encrypted_bootloader </samples/dfu/encrypted_bootloader>`
 
 .. include:: /includes/build_and_run.txt
 

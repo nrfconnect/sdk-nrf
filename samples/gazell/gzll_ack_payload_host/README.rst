@@ -86,8 +86,8 @@ Button 1-4:
 Building and running
 ********************
 
-The Device sample is under :file:`samples/gazell/gzll_ack_payload_device` in the |NCS| folder structure.
-The Host sample is under :file:`samples/gazell/gzll_ack_payload_host` in the |NCS| folder structure.
+The Device sample is under :ncs-file:`samples/gazell/gzll_ack_payload_device </samples/gazell/gzll_ack_payload_device>` in the |NCS| folder structure.
+The Host sample is under :ncs-file:`samples/gazell/gzll_ack_payload_host </samples/gazell/gzll_ack_payload_host>` in the |NCS| folder structure.
 
 See :ref:`building` and :ref:`programming` for information about how to build and program the application, respectively.
 

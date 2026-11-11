@@ -51,7 +51,7 @@ The provided Bluetooth data can depend on any of the following options:
 
 For example, a provider may fill in the Bluetooth data only if the used Bluetooth local identity has no bond.
 The provider returns ``-ENOENT`` to desist from providing data if bonded.
-Examples of provider implementations can be found in the :file:`subsys/bluetooth/adv_prov/providers/` folder.
+Examples of provider implementations can be found in the :ncs-file:`subsys/bluetooth/adv_prov/providers/ </subsys/bluetooth/adv_prov/providers>` folder.
 
 Advertising control
 ===================
@@ -103,7 +103,7 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/bluetooth/adv_prov.h`
-| Source files: :file:`subsys/bluetooth/adv_prov/`
+| Source files: :ncs-file:`subsys/bluetooth/adv_prov/ </subsys/bluetooth/adv_prov>`
 
 .. doxygengroup:: bt_le_adv_prov
 

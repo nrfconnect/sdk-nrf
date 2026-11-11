@@ -60,7 +60,7 @@ CONFIG_APP_IPC_SERVICE_SEND_INTERVAL - Time interval to send data through the IP
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/ipc/ipc_service`
+.. |sample path| replace:: :ncs-file:`samples/ipc/ipc_service </samples/ipc/ipc_service>`
 
 .. include:: /includes/build_and_run.txt
 

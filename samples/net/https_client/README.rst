@@ -34,7 +34,7 @@ Obtaining a certificate
 =======================
 
 The sample connects to ``www.example.com``, which requires an X.509 certificate.
-This certificate is provided in the :file:`samples/net/https_client/cert` folder.
+This certificate is provided in the :ncs-file:`samples/net/https_client/cert </samples/net/https_client/cert>` folder.
 |hex_format|
 
 To connect to other servers, you might need to provision a different certificate.
@@ -76,13 +76,13 @@ The sample provides predefined configuration files for the following development
 * :ncs-file:`/samples/net/https_client/overlay-tfm-nrf91.conf` - Additional configuration for Mbed TLS and TF-M on nRF91 Series DKs.
 * :ncs-file:`/samples/net/https_client/overlay-pdn-nrf91-ipv4.conf` - Additional configuration to force IPv4-only packet data network on nRF91 Series DKs.
 
-Board files under the :file:`boards/` folder are merged automatically for the selected target.
+Board files under the :ncs-file:`boards/ </samples/net/https_client/boards>` folder are merged automatically for the selected target.
 The other configuration files are not board-specific and must be passed with ``EXTRA_CONF_FILE``.
 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/https_client`
+.. |sample path| replace:: :ncs-file:`samples/net/https_client </samples/net/https_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 

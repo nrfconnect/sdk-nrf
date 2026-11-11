@@ -30,7 +30,7 @@ The console is not suspended in this sample so that the interactive shell remain
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/shell`
+.. |sample path| replace:: :ncs-file:`samples/wifi/shell </samples/wifi/shell>`
 
 .. include:: /includes/build_and_run_ns.txt
 

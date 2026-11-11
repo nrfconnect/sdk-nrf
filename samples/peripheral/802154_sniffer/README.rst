@@ -94,7 +94,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/peripheral/802154_sniffer`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/802154_sniffer </samples/peripheral/802154_sniffer>`
 
 .. include:: /includes/build_and_run.txt
 

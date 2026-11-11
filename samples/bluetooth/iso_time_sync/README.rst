@@ -290,7 +290,7 @@ The sample code is divided into multiple source files, which makes it easier to 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/iso_time_sync`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/iso_time_sync </samples/bluetooth/iso_time_sync>`
 
 .. include:: /includes/build_and_run.txt
 

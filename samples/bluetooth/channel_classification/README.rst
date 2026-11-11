@@ -26,7 +26,7 @@ The central enables reporting with :c:func:`hci_vs_sdc_channel_reporting_enable`
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/channel_classification`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/channel_classification </samples/bluetooth/channel_classification>`
 
 .. include:: /includes/build_and_run.txt
 

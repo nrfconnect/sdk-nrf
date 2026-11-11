@@ -56,7 +56,7 @@ The sample can optionally use DTLS to secure the CoAP communication (CoAPS), wit
 Enable the :option:`CONFIG_COAP_SAMPLE_DTLS` option to provision a CA certificate, a client certificate, and a client private key, and to connect over CoAPS using mutual X.509 authentication.
 Set :option:`CONFIG_COAP_SAMPLE_CA_CERT_FILE`, :option:`CONFIG_COAP_SAMPLE_CLIENT_CERT_FILE`, and :option:`CONFIG_COAP_SAMPLE_CLIENT_KEY_FILE` to the CA certificate, client certificate, and client private key to provision, matching what the server you connect to expects.
 
-The sample includes an example CA trust chain and client certificate and private key under :file:`cert/`, for use against the `Eclipse Californium`_ CoAP interoperability server:
+The sample includes an example CA trust chain and client certificate and private key under :ncs-file:`cert/ </samples/net/coap_client/cert>`, for use against the `Eclipse Californium`_ CoAP interoperability server:
 
 * :ncs-file:`/samples/net/coap_client/cert/cf-ca.pem` — CA trust chain, used to validate the server certificate
 * :ncs-file:`/samples/net/coap_client/cert/cf-client.pem` — client certificate
@@ -104,7 +104,7 @@ The sample provides predefined configuration files for the following development
   Must be added explicitly for Wi-Fi builds.
 * :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` - Additional configuration for mutual DTLS with the Californium interop server.
 
-Board files under the :file:`boards/` folder are merged automatically for the selected target.
+Board files under the :ncs-file:`boards/ </samples/net/coap_client/boards>` folder are merged automatically for the selected target.
 The :ncs-file:`/samples/net/coap_client/wifi.conf` and :ncs-file:`/samples/net/coap_client/wifi-dtls.conf` files are not board-specific and must be passed with ``coap_client_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dcoap_client_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
@@ -112,7 +112,7 @@ To add a specific extra configuration file to the build, add the ``-- -Dcoap_cli
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/coap_client`
+.. |sample path| replace:: :ncs-file:`samples/net/coap_client </samples/net/coap_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 

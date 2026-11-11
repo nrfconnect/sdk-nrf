@@ -201,6 +201,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/nrf_provisioning.h`
-| Source files: :file:`subsys/net/lib/nrf_provisioning/src/`
+| Source files: :ncs-file:`subsys/net/lib/nrf_provisioning/src/ </subsys/net/lib/nrf_provisioning/src>`
 
 .. doxygengroup:: nrf_provisioning

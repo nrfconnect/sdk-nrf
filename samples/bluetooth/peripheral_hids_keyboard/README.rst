@@ -153,7 +153,7 @@ The HID service specification does not require encryption (:kconfig:option:`CONF
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_hids_keyboard`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_hids_keyboard </samples/bluetooth/peripheral_hids_keyboard>`
 
 .. include:: /includes/build_and_run_ns.txt
 
