@@ -823,7 +823,7 @@ config NRF71_ZERO_COPY_TX
 
 endif # NETWORKING
 
-config NRF_WIFI_MAX_PS_POLL_FAIL_CNT
+config NRF71_MAX_PS_POLL_FAIL_CNT
 	int "Maximum number of PS-Poll failures"
 	default 10
 	range 10 4294967295
