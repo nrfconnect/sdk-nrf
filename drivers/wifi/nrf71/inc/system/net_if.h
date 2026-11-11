@@ -45,12 +45,12 @@ int nrf_wifi_if_send(const struct device *dev,
 void nrf_wifi_if_rx_frm(void *os_vif_ctx,
 			void *frm);
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx,
 				void *frm,
 				struct raw_rx_pkt_header *raw_rx_hdr,
 				bool pkt_free);
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_if_carr_state_chg(void *os_vif_ctx,
 						enum nrf_wifi_fmac_if_carr_state carr_state);

@@ -2105,11 +2105,11 @@ unsigned char nrf_wifi_sys_fmac_add_vif(void *dev_ctx,
 	switch (vif_info->iftype) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -2143,7 +2143,7 @@ unsigned char nrf_wifi_sys_fmac_add_vif(void *dev_ctx,
 	 * packet_filter settings to appropriate value as
 	 * desired by application.
 	 */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	vif_ctx->packet_filter = 1;
 #endif
 
@@ -2256,11 +2256,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 	switch (vif_ctx->if_type) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -2293,12 +2293,12 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_del_vif(void *dev_ctx,
 			reset_status = nrf_wifi_sys_fmac_chg_vif(fmac_dev_ctx, if_idx,
 						  &sta_info);
 		}
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 		else {
 			reset_status = nrf_wifi_sys_fmac_set_mode(fmac_dev_ctx, if_idx,
 						   NRF_WIFI_STA_MODE);
 		}
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
 	}
 
 	if (reset_status != NRF_WIFI_STATUS_SUCCESS) {
@@ -2385,11 +2385,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif(void *dev_ctx,
 	switch (vif_info->iftype) {
 	case NRF_WIFI_IFTYPE_STATION:
 	case NRF_WIFI_IFTYPE_P2P_CLIENT:
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 	case NRF_WIFI_STA_TX_INJECTOR:
 	case NRF_WIFI_STA_PROMISC:
 	case NRF_WIFI_STA_PROMISC_TX_INJECTOR:
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
+#endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
 	case NRF_WIFI_IFTYPE_AP:
 	case NRF_WIFI_IFTYPE_P2P_GO:
 		break;
@@ -3519,7 +3519,7 @@ out:
 }
 
 
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
 						unsigned char if_idx,
 						unsigned char mode)
@@ -3567,7 +3567,7 @@ out:
 }
 #endif
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned char if_idx,
 						   unsigned int channel,
@@ -3615,9 +3615,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx, unsigned char filter,
 							 unsigned char if_idx,
 							 unsigned short buffer_size)
@@ -3663,7 +3663,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx, unsigned
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 
 #ifdef CONFIG_NRF71_UTIL

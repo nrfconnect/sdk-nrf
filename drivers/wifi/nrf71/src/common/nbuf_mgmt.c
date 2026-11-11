@@ -163,7 +163,7 @@ void nrf_wifi_nbuf_set_chksum_done(void *nbuf, unsigned char chksum_done)
 	((struct nrf_wifi_nwb *)nbuf)->chksum_done = (bool)chksum_done;
 }
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT)
 void *nrf_wifi_nbuf_set_raw_tx_hdr(void *nbuf, unsigned short raw_hdr_len)
 {
 	struct nrf_wifi_nwb *nwb = nbuf;
@@ -207,7 +207,7 @@ bool nrf_wifi_nbuf_is_raw_tx(void *nbuf)
 
 	return (nwb->raw_tx_hdr != NULL);
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 #ifdef CONFIG_NRF_WIFI_ZERO_COPY_TX
 static void *nrf_wifi_net_pkt_to_nbuf_zc(struct net_pkt *pkt)
@@ -307,7 +307,7 @@ out:
 	return pkt;
 }
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 struct net_pkt *nrf_wifi_net_raw_pkt_from_nbuf(void *iface, void *frm,
 					       unsigned short raw_hdr_len,
 					       void *raw_rx_hdr,
@@ -360,4 +360,4 @@ out:
 
 	return pkt;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */

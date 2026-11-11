@@ -365,7 +365,7 @@ int nrf_wifi_reg_domain(const struct device *dev,
 		goto out;
 	}
 
-#if defined(CONFIG_NRF71_SCAN_ONLY) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_SCAN_ONLY) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	if (reg_domain->oper == WIFI_MGMT_SET) {
 		memcpy(reg_domain_info.alpha2, reg_domain->country_code, WIFI_COUNTRY_CODE_LEN);
 
@@ -380,7 +380,7 @@ int nrf_wifi_reg_domain(const struct device *dev,
 		ret = 0;
 		goto out;
 	}
-#endif /* CONFIG_NRF71_SCAN_ONLY || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_SCAN_ONLY || CONFIG_NRF71_MONITOR_SUPPORT */
 	if (reg_domain->oper != WIFI_MGMT_GET) {
 		LOG_ERR("%s: Invalid operation: %d", __func__, reg_domain->oper);
 		goto out;
@@ -505,7 +505,7 @@ void reg_change_callbk_fn(void *vif_ctx,
 	fmac_dev_ctx->reg_set_status = true;
 }
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 void nrf_wifi_event_proc_channel_set_done_zep(void *os_vif_ctx,
 	struct nrf_wifi_event_set_channel *channel_event,
 	unsigned int event_len)
@@ -524,7 +524,7 @@ void nrf_wifi_event_proc_channel_set_done_zep(void *os_vif_ctx,
 		k_sem_give(&rpu_ctx_zep->channel_set_done_sem);
 	}
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
 /**
  * @brief Get operating band bitmap from Kconfig (see NRF_WIFI_OP_BAND_* in
@@ -710,9 +710,9 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 	callbk_fns.if_carr_state_chg_callbk_fn = nrf_wifi_if_carr_state_chg;
 	callbk_fns.rx_frm_callbk_fn = nrf_wifi_if_rx_frm;
 #endif /* CONFIG_NRF71_DATA_TX */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	callbk_fns.sniffer_callbk_fn = nrf_wifi_if_sniffer_rx_frm;
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 	rx_buf_pools[0].num_bufs = rx1_num_bufs;
 	rx_buf_pools[1].num_bufs = rx2_num_bufs;
 	rx_buf_pools[2].num_bufs = rx3_num_bufs;
@@ -730,9 +730,9 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	callbk_fns.set_if_callbk_fn = nrf_wifi_set_iface_event_handler;
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
 #ifdef CONFIG_NRF71_STA_MODE
 	callbk_fns.twt_config_callbk_fn = nrf_wifi_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = nrf_wifi_event_proc_twt_teardown_zep;
@@ -756,9 +756,9 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 	callbk_fns.roc_callbk_fn = nrf_wifi_supp_event_remain_on_channel;
 	callbk_fns.roc_cancel_callbk_fn = nrf_wifi_supp_event_roc_cancel_complete;
 #endif /* CONFIG_NRF71_STA_MODE */
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	callbk_fns.channel_set_done_callbk_fn = nrf_wifi_event_proc_channel_set_done_zep;
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 #if defined(CONFIG_NRF71_SR_COEX_DRIVER)
 	callbk_fns.coex_event_callbk_fn = nrf_wifi_coex_event_cb;
 #endif
@@ -789,9 +789,9 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 #endif /* CONFIG_NRF71_DATA_TX */
 
 	k_mutex_init(&rpu_drv_priv_zep.rpu_ctx_zep.rpu_lock);
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	k_sem_init(&rpu_drv_priv_zep.rpu_ctx_zep.channel_set_done_sem, 0, 1);
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
 	return 0;
 err:
@@ -805,9 +805,9 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.get_stats = nrf_wifi_stats_get,
 	.reset_stats = nrf_wifi_stats_reset,
 #endif /* CONFIG_NET_STATISTICS_WIFI */
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	.reg_domain = nrf_wifi_reg_domain,
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
 #ifdef CONFIG_NRF71_STA_MODE
 	.set_power_save = nrf_wifi_set_power_save,
 	.set_twt = nrf_wifi_set_twt,
@@ -816,15 +816,15 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.get_rts_threshold = nrf_wifi_get_rts_threshold,
 	.set_bss_max_idle_period = nrf_wifi_set_bss_max_idle_period,
 #endif /* CONFIG_NRF71_STA_MODE */
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 	.mode = nrf_wifi_mode,
-#endif /* CONFIG_NRF71_SYSTEM_WITH_RAW_MODES */
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	.channel = nrf_wifi_channel,
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	.filter = nrf_wifi_filter,
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 };
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 

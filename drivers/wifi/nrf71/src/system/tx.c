@@ -442,11 +442,11 @@ static int tx_aggr_check(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		return false;
 	}
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	if (nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
 		return false;
 	}
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 	pending_pkt_queue = &sys_dev_ctx->tx_config.pend_pkt_q[peer][ac];
 
@@ -568,7 +568,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	max_txq_len = sys_fpriv->data_config.max_tx_aggregation;
 	avail_ampdu_len_per_token = sys_fpriv->avail_ampdu_len_per_token;
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	struct nrf_wifi_nwb *pend_head = NULL;
 
 	/* Check for Raw packets first, if not found, then check for
@@ -587,7 +587,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		}
 
 		pend_pkt_q = &sys_dev_ctx->tx_config.pend_pkt_q[peer_id][ac];
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	}
 #endif
 
@@ -674,7 +674,7 @@ static size_t _tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	return len;
 }
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 enum nrf_wifi_status rawtx_cmd_prep_callbk_fn(void *callbk_data,
 					      void *nbuf)
 {
@@ -703,7 +703,7 @@ enum nrf_wifi_status rawtx_cmd_prep_callbk_fn(void *callbk_data,
 	status = NRF_WIFI_STATUS_SUCCESS;
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 					   void *nbuf)
@@ -746,7 +746,7 @@ static enum nrf_wifi_status tx_cmd_prep_callbk_fn(void *callbk_data,
 	return status;
 }
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				       struct host_rpu_msg *umac_cmd,
 				       int desc,
@@ -819,7 +819,7 @@ enum nrf_wifi_status rawtx_cmd_prepare(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 err:
 	return NRF_WIFI_STATUS_FAIL;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 /* Account one TX command against the token (descriptor) that carries it.
  *
@@ -1065,7 +1065,7 @@ err:
 	return NRF_WIFI_STATUS_FAIL;
 }
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				    sys_dlist_t *txq,
 				    int desc,
@@ -1110,7 +1110,7 @@ enum nrf_wifi_status rawtx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 enum nrf_wifi_status tx_cmd_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				 sys_dlist_t *txq,
@@ -1179,7 +1179,7 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 					      __func__);
 			goto out;
 		}
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 		if (nrf_wifi_nbuf_is_raw_tx(first_nwb)) {
 			status = rawtx_cmd_init(fmac_dev_ctx,
 						&sys_dev_ctx->tx_config.pkt_info_p[desc].pkt_q,
@@ -1191,7 +1191,7 @@ enum nrf_wifi_status tx_pending_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_c
 					     &sys_dev_ctx->tx_config.pkt_info_p[desc].pkt_q,
 					     desc,
 					     sys_dev_ctx->tx_config.pkt_info_p[desc].peer_id);
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 		}
 #endif
 	} else {
@@ -1448,7 +1448,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 	pkts_pending = tx_buff_req_free(fmac_dev_ctx, tx_desc_num, &queue);
 
 	if (pkts_pending) {
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 		struct nrf_wifi_fmac_vif_ctx *vif_ctx;
 		unsigned char if_idx;
 
@@ -1461,7 +1461,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 		nwb = SYS_DLIST_PEEK_HEAD_CONTAINER(&pkt_info->pkt_q, nwb, queue_node);
 
 		if (!nrf_wifi_nbuf_is_raw_tx(nwb)) {
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 			if (sys_dev_ctx->twt_sleep_status ==
 			    NRF_WIFI_FMAC_TWT_STATE_AWAKE) {
 				pkt_info = &sys_dev_ctx->tx_config.pkt_info_p[desc];
@@ -1472,7 +1472,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 			} else {
 				status = NRF_WIFI_STATUS_SUCCESS;
 			}
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 		} else {
 			/**
 			 * check if the if_type is STA_TX_INJECTOR
@@ -1491,7 +1491,7 @@ static enum nrf_wifi_status tx_done_process(struct nrf_wifi_fmac_dev_ctx *fmac_d
 							pkt_info->peer_id);
 			}
 		}
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 	} else {
 		status = NRF_WIFI_STATUS_SUCCESS;
 	}
@@ -1533,7 +1533,7 @@ out:
 }
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 enum nrf_wifi_status nrf_wifi_fmac_rawtx_done_event_process(
 		     struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		     struct nrf_wifi_event_raw_tx_done *config)
@@ -1910,7 +1910,7 @@ static int get_ac(unsigned int tid,
 }
 
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 static bool nrf_wifi_raw_pkt_mode_enabled(struct nrf_wifi_fmac_vif_ctx *vif)
 {
 	if ((vif->if_type == NRF_WIFI_STA_TX_INJECTOR) ||
@@ -2011,7 +2011,7 @@ fail:
 
 	return NRF_WIFI_STATUS_FAIL;
 }
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_fmac_start_xmit(void *dev_ctx,
 					      unsigned char if_idx,
