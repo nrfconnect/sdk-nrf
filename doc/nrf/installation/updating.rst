@@ -53,7 +53,6 @@ Depending on your preferred development method, you can start the correct CLI to
          nrfutil sdk-manager toolchain launch --ncs-version <version> <shell_option>
 
       You can also use other options instead of ``--ncs-version``.
-      See the `sdk-manager command documentation <sdk-manager Starting and inspecting the toolchain environment_>`_ for more information.
 
 .. _updating_repos:
 

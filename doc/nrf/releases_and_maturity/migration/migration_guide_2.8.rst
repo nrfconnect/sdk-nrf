@@ -202,8 +202,6 @@ nrfutil device
 
        nrfutil install device=2.7.2 --force
 
-    For more information, consult the `nRF Util`_ documentation.
-
 nrfutil trace
 +++++++++++++
 
@@ -216,8 +214,6 @@ nrfutil trace
     .. nrfutil-command:: console
 
        nrfutil install trace=2.11.0 --force
-
-    For more information, consult the `nRF Util`_ documentation.
 
 nrf-regtool
 +++++++++++

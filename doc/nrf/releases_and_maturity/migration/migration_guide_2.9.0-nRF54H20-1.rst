@@ -90,8 +90,6 @@ nRF Util
 
             nrfutil self-upgrade
 
-         For more information, see the `nRF Util`_ documentation.
-
 nRF Util device
 +++++++++++++++
 
@@ -104,8 +102,6 @@ nRF Util device
     .. nrfutil-command:: console
 
        nrfutil install device=2.7.15 --force
-
-    For more information, consult the `nRF Util`_ documentation.
 
 nRF Util trace
 ++++++++++++++
@@ -120,8 +116,6 @@ nRF Util trace
 
        nrfutil install trace=3.1.0 --force
 
-    For more information, consult the `nRF Util`_ documentation.
-
 nRF Util suit
 +++++++++++++
 
@@ -134,8 +128,6 @@ nRF Util suit
     .. nrfutil-command:: console
 
        nrfutil install suit=0.9.0 --force
-
-    For more information, consult the `nRF Util`_ documentation.
 
 nRF54H20 SoC binaries
 +++++++++++++++++++++

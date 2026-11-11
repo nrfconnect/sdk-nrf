@@ -183,8 +183,6 @@ The following are the prefixes used to indicate the cores:
    Fast Lightweight Processor (FLPR), ``flpr``, 0x2d
    Peripheral Processor (PPR), ``ppr``, 0x2e
 
-For more information, see `nrfutil trace stm`_ command page.
-
 Additional considerations
 -------------------------
 

@@ -163,7 +163,7 @@ IDE, OS, and tool support
 =========================
 
 * Updated the required `SEGGER J-Link`_ version to v8.42.
-* Removed the separate requirement for installation of the `nRF Util's device command <Device command overview_>`_ from the :ref:`install_ncs` page under :ref:`install_ncs`.
+* Removed the separate requirement for installation of the `nRF Util's device command <nrfutil device_>`_ from the :ref:`install_ncs` page.
   The tool and the command are now included in the |NCS| toolchain bundle.
 
   .. note::
