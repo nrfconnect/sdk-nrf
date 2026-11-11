@@ -806,20 +806,21 @@ if NETWORKING
 
 config NRF_WIFI_ZERO_COPY_TX
 	bool "Zero copy Transmit path [EXPERIMENTAL]"
-	select NET_L2_ETHERNET_RESERVE_HEADER
+	select NET_L2_ETHERNET_EXTRA_TX_PKT_HEADROOM
 	select EXPERIMENTAL
 	# 54L has lower RAM
 	default y if SOC_SERIES_NRF54L
 	help
 	  Enable this configuration to use zero copy Transmit path.
 	  The driver will use the network buffer directly for transmission
-	  without copying the data to the driver's buffer. This reduces the
-	  driver heap memory usage without much impact on the performance.
+	  without copying the data to the driver's buffer. This saves the copy
+	  and the driver heap memory for the payload.
 
-	  The application should configure the network buffers to ensure that
-	  the whole packet fits in a single buffer, else the driver will fallback
-	  to the normal copy path, but the memory requirements would still match
-	  to the zero copy path and may be sub-optimal for the normal copy path.
+	  The stack reserves the RPU TX headroom in front of the payload. A
+	  packet that does not fit in a single buffer, or lacks the headroom
+	  (or the MIC tailroom with TKIP), falls back to the normal copy path,
+	  but the memory requirements would still match to the zero copy path
+	  and may be sub-optimal for the normal copy path.
 
 endif # NETWORKING
 
