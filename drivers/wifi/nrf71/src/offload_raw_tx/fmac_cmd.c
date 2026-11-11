@@ -74,10 +74,10 @@ umac_cmd_off_raw_tx_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx, unsigned in
 		umac_cmd_data->sys_params.sleep_enable == 2 ? "HW" :
 		umac_cmd_data->sys_params.sleep_enable == 1 ? "SW" : "DISABLED");
 
-#ifdef CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD
+#ifdef CONFIG_NRF71_MGMT_BUFF_OFFLOAD
 	umac_cmd_data->mgmt_buff_offload =  1;
 	LOG_DBG("Management buffer offload enabled");
-#endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
+#endif /* CONFIG_NRF71_MGMT_BUFF_OFFLOAD */
 #ifdef CONFIG_NRF_WIFI_FEAT_KEEPALIVE
 	umac_cmd_data->keep_alive_enable = KEEP_ALIVE_ENABLED;
 	umac_cmd_data->keep_alive_period = CONFIG_NRF_WIFI_KEEPALIVE_PERIOD_S;
