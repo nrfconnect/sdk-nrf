@@ -777,13 +777,13 @@ config NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE
 	  holds around ten results, enough for roaming. The control plane heap it
 	  is allocated from grows with this, so it is safe to increase.
 
-config NRF_WIFI_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
+config NRF71_COEX_DISABLE_PRIORITY_WINDOW_FOR_SCAN
 	bool "Force disable priority window for scan in the case of coexistence with Short Range radio"
 	help
 	  Enable this configuration to disable priority window for scan
 	  in the case of coexistence with Short Range radio.
 
-config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
+config NRF71_SCAN_BT_GRANT_TIME_MS
 	int "BT grant time during Wi-Fi scan (milliseconds)"
 	default 0
 	range 0 10000
@@ -792,7 +792,7 @@ config NRF_WIFI_SCAN_BT_GRANT_TIME_MS
 	  allocate between Wi-Fi scan channel operations. Applies only to 2.4 GHz
 	  band scan. Use 0 for the firmware default (no explicit grant time).
 
-config NRF_WIFI_SCAN_BT_GRANT_TOLERANCE_TIME_MS
+config NRF71_SCAN_BT_GRANT_TOLERANCE_TIME_MS
 	int "BT grant tolerance time during Wi-Fi scan (milliseconds)"
 	default 0
 	range 0 10000
