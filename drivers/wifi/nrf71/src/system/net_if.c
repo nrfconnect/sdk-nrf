@@ -336,7 +336,7 @@ static bool is_eapol(struct net_pkt *pkt)
 }
 #endif /* CONFIG_NRF71_DATA_TX */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 				struct raw_rx_pkt_header *raw_rx_hdr,
 				bool pkt_free)
@@ -367,7 +367,7 @@ void nrf_wifi_if_sniffer_rx_frm(void *os_vif_ctx, void *frm,
 		net_pkt_unref(pkt);
 	}
 }
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 					   struct net_if *iface __unused)
@@ -382,10 +382,10 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 	}
 #endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	caps |= ETHERNET_TXINJECTION_MODE;
 #endif
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 	caps |= ETHERNET_PROMISC_MODE;
 #endif
 	return caps;
@@ -463,7 +463,7 @@ int nrf_wifi_if_send(const struct device *dev,
 		goto drop;
 	}
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	/*
 	 * Check for raw TX magic number in both byte orders:
 	 * - Little-endian: programmatic API stores native uint32_t
@@ -479,7 +479,7 @@ int nrf_wifi_if_send(const struct device *dev,
 						      vif_ctx_zep->vif_idx,
 						      nbuf);
 	} else {
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 		fmac_vif_ctx = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 		if (!fmac_vif_ctx) {
@@ -525,9 +525,9 @@ int nrf_wifi_if_send(const struct device *dev,
 		ret = nrf_wifi_fmac_start_xmit(rpu_ctx_zep->rpu_ctx,
 					       vif_ctx_zep->vif_idx,
 					       nbuf);
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	}
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 	if (ret == NRF_WIFI_STATUS_FAIL) {
 		/* FMAC API takes care of freeing the nbuf */
 		host_stats->total_tx_drop_pkts++;
@@ -1375,7 +1375,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 	}
 
 	memset(config, 0, sizeof(struct ethernet_config));
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
 
@@ -1477,7 +1477,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto unlock;
 	}
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	if (type == ETHERNET_CONFIG_TYPE_TXINJECTION_MODE) {
 		unsigned char mode;
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
@@ -1532,7 +1532,7 @@ int nrf_wifi_if_set_config_zep(const struct device *dev,
 		goto unlock;
 	}
 #endif
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 	else if (type == ETHERNET_CONFIG_TYPE_PROMISC_MODE) {
 		unsigned char mode;
 		struct nrf_wifi_fmac_vif_ctx *vif = nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep);
@@ -1718,9 +1718,9 @@ int nrf_wifi_stats_get(const struct device *dev,
 	zstats->errors.rx = stats.host.total_rx_drop_pkts +
 			stats.fw.umac.interface_data_stats.rx_checksum_error_count;
 	zstats->overrun_count = stats.host.total_tx_drop_pkts + stats.host.total_rx_drop_pkts;
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	zstats->errors.tx += sys_dev_ctx->raw_pkt_stats.raw_pkt_send_failure;
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 	/* FMAC statistics */
 	status = nrf_wifi_sys_fmac_stats_get(rpu_ctx_zep->rpu_ctx,

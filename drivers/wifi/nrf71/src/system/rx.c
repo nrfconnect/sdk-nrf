@@ -338,12 +338,12 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 	struct nrf_wifi_fmac_vif_ctx *vif_ctx = NULL;
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info = NULL;
 	struct nrf_wifi_fmac_rx_pool_map_info pool_info;
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	struct raw_rx_pkt_header raw_rx_hdr;
-#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	unsigned short frame_control;
 #endif
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 	void *nwb = NULL;
 	void *nwb_data = NULL;
 	unsigned int num_pkts = 0;
@@ -411,14 +411,14 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 		rx_buf_info->nwb = 0;
 		rx_buf_info->mapped = false;
 
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 		nrf_wifi_mem_cpy(&frame_control,
 					  nwb_data,
 					  sizeof(unsigned short));
 #endif
 
 		if (config->rx_pkt_type == NRF_WIFI_RX_PKT_DATA) {
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 			if (vif_ctx->promisc_mode) {
 				raw_rx_hdr.frequency = config->frequency;
 				raw_rx_hdr.signal = config->signal;
@@ -485,23 +485,23 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			continue;
 #endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
 		}
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 		else if (config->rx_pkt_type == NRF_WIFI_RAW_RX_PKT) {
 			raw_rx_hdr.frequency = config->frequency;
 			raw_rx_hdr.signal = config->signal;
 			raw_rx_hdr.rate_flags = config->rate_flags;
 			raw_rx_hdr.rate = config->rate;
-#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 			if (nrf_wifi_util_check_filt_setting(vif_ctx, &frame_control)) {
 #endif
 				sys_fpriv->callbk_fns.sniffer_callbk_fn(vif_ctx->os_vif_ctx,
 						nwb,
 						&raw_rx_hdr,
 						true);
-#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 			}
 #endif
-#if defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 			/**
 			 * In the case of Monitor mode, the sniffer callback function
 			 * will free the packet. For promiscuous mode, if the packet
@@ -513,7 +513,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			}
 #endif
 		}
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 		else {
 			LOG_ERR("%s: Invalid frame type received %d",
 						  __func__,

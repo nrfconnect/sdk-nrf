@@ -222,11 +222,11 @@ enum nrf_wifi_status nrf_wifi_check_mode_validity(unsigned char mode)
 	if ((mode ^ NRF_WIFI_STA_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#ifdef CONFIG_NRF71_RAW_DATA_RX
+#ifdef CONFIG_NRF71_MONITOR_SUPPORT
 	else if ((mode ^ NRF_WIFI_MONITOR_MODE) == 0) {
 		return NRF_WIFI_STATUS_SUCCESS;
 	}
-#endif /* CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT */
 	return NRF_WIFI_STATUS_FAIL;
 }
 
@@ -247,10 +247,10 @@ unsigned char *nrf_wifi_util_get_ra(struct nrf_wifi_fmac_vif_ctx *vif,
 				    void *nwb)
 {
 	if ((vif->if_type == NRF_WIFI_IFTYPE_STATION)
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	    || (vif->if_type == NRF_WIFI_STA_TX_INJECTOR)
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
-#ifdef CONFIG_NRF71_PROMISC_DATA_RX
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
+#ifdef CONFIG_NRF71_PROMISCUOUS_SUPPORT
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC)
 	    || (vif->if_type == NRF_WIFI_STA_PROMISC_TX_INJECTOR)
 #endif

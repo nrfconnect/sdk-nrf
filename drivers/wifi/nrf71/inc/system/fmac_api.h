@@ -976,7 +976,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_ps_exit_strategy(
 						unsigned char if_idx,
 						unsigned int ps_exit_strategy);
 
-#ifdef CONFIG_NRF71_RAW_DATA_TX
+#ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 /**
  * @brief Transmit a raw unaltered frame to the RPU.
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1001,7 +1001,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_ps_exit_strategy(
 enum nrf_wifi_status nrf_wifi_fmac_start_rawpkt_xmit(void *dev_ctx,
 						     unsigned char if_idx,
 						     void *net_packet);
-#endif /* CONFIG_NRF71_RAW_DATA_TX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT */
 
 /**
  * @brief Check if a valid mode is being set.
@@ -1025,7 +1025,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_rpu_recovery_callback(void *mac_dev_ctx,
 /** @endcond */
 #endif /* CONFIG_NRF_WIFI_RPU_RECOVERY */
 
-#ifdef CONFIG_NRF71_SYSTEM_WITH_RAW_MODES
+#ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 /**
  * @brief Set the current mode of operation
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1043,7 +1043,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_mode(void *dev_ctx,
 						unsigned char mode);
 #endif
 
-#if defined(CONFIG_NRF71_RAW_DATA_TX) || defined(CONFIG_NRF71_RAW_DATA_RX)
+#if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 /**
  * @brief Set the current channel
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1063,9 +1063,9 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_channel(void *dev_ctx,
 						   unsigned int channel,
 						   unsigned char op_band);
 
-#endif /* CONFIG_NRF71_RAW_DATA_TX || CONFIG_NRF71_RAW_DATA_RX */
+#endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
-#if defined(CONFIG_NRF71_RAW_DATA_RX) || defined(CONFIG_NRF71_PROMISC_DATA_RX)
+#if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 /**
  * @brief Set packet filter settings
  * @param dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1082,7 +1082,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx,
 							 unsigned char filter,
 							 unsigned char if_idx,
 							 unsigned short buffer_size);
-#endif /* CONFIG_NRF71_RAW_DATA_RX || CONFIG_NRF71_PROMISC_DATA_RX */
+#endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 #if defined(CONFIG_NRF71_UTIL) || defined(__DOXYGEN__)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,

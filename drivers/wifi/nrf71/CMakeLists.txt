@@ -72,7 +72,7 @@ if(CONFIG_NRF71_SYSTEM_MODE)
     zephyr_library_sources(src/system/fmac_peer.c)
   endif()
 
-  if(CONFIG_NRF71_PROMISC_DATA_RX)
+  if(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
     zephyr_library_sources(src/system/fmac_promisc.c)
   endif()
 
