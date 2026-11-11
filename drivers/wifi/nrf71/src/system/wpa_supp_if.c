@@ -611,7 +611,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	scan_info->scan_reason = SCAN_CONNECT;
 
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	/* Free any database left unread from a previous scan. */
 	if (vif_ctx_zep->connect_scan_db_addr) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
@@ -621,8 +621,8 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	}
 
 	/* Firmware builds the results database in a buffer of this size. */
-	scan_info->scan_db_len = CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+	scan_info->scan_db_len = CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 
 	/* Copy extra_ies */
 	if (params->extra_ies_len && params->extra_ies_len <= NRF_WIFI_MAX_IE_LEN) {
@@ -711,7 +711,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 /* Relay the cached connect scan database to the supplicant and free it. With
  * no results, send one empty result to end the supplicant's wait.
  */
@@ -725,7 +725,7 @@ static void nrf_wifi_wpa_supp_scan_res_relay(struct nrf_wifi_vif_ctx_zep *vif_ct
 
 	db = (struct nrf_wifi_umac_event_new_scan_results *)
 		(uintptr_t)vif_ctx_zep->connect_scan_db_addr;
-	end = (unsigned char *)db + CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
+	end = (unsigned char *)db + CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
 
 	/* Deliver each entry once the next is known valid, so the walk stays
 	 * bounded and the last result carries more_res = false.
@@ -774,16 +774,16 @@ static void nrf_wifi_wpa_supp_scan_res_relay(struct nrf_wifi_vif_ctx_zep *vif_ct
 	vif_ctx_zep->connect_scan_db_addr = 0;
 	vif_ctx_zep->connect_scan_res_cnt = 0;
 }
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 
 int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	int ret = -1;
-#ifndef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifndef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 
 	if (!if_priv) {
 		LOG_ERR("%s: Invalid params", __func__);
@@ -803,7 +803,7 @@ int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 		goto out;
 	}
 
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	nrf_wifi_wpa_supp_scan_res_relay(vif_ctx_zep);
 	ret = 0;
 #else
@@ -816,7 +816,7 @@ int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 	}
 
 	ret = 0;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;

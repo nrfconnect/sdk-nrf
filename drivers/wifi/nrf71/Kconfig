@@ -758,7 +758,7 @@ config NRF71_DISPLAY_SCAN_BSS_LIMIT
 	help
 	  Number of BSS entries in scan result.
 
-config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+config NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	bool "Read connect scan results from the scan results database"
 	depends on NRF71_STA_SUPPORT
 	default y
@@ -767,9 +767,9 @@ config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	  GDRAM instead of the NRF_WIFI_UMAC_CMD_GET_SCAN_RESULTS command. This
 	  lifts the per-SSID result limit and is mainly useful for roaming.
 
-config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM_SIZE
+config NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE
 	int "Connect scan results database buffer size"
-	depends on NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+	depends on NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	range 1024 65535
 	default 8192
 	help

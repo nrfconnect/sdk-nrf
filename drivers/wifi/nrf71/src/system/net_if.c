@@ -998,14 +998,14 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 	vif_ctx_zep->twt_flow_in_progress_map = 0;
 	vif_ctx_zep->ps_config_info_evnt = false;
 	vif_ctx_zep->cookie_resp_received = false;
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	if (vif_ctx_zep->connect_scan_db_addr) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 				  (void *)(uintptr_t)vif_ctx_zep->connect_scan_db_addr);
 		vif_ctx_zep->connect_scan_db_addr = 0;
 	}
 	vif_ctx_zep->connect_scan_res_cnt = 0;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 }
 

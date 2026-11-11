@@ -99,13 +99,13 @@ struct nrf_wifi_vif_ctx_zep {
 	uint64_t rssi_record_timestamp_us;
 	signed short rssi;
 	unsigned int tx_rate_kbps;
-#ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
+#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	/* Connect scan results database cached from the scan done event, read
 	 * on the supplicant's get scan results call and freed right after.
 	 */
 	unsigned int connect_scan_db_addr;
 	unsigned int connect_scan_res_cnt;
-#endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
+#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_AP_SUPPORT
 	int inactive_time_sec;
