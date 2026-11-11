@@ -110,8 +110,6 @@ To provision keys onto the KMU, use the following nRF Util command, with the ``<
 
 You can call this command multiple times also to provision multiple keys, as long as each key has a different ID that is part of the ``metadata`` string.
 
-For more information about this command, see the `nrfutil device x-provision-keys`_ command page.
-
 .. nrfutil_provision_keys_command_end
 
 Requirements

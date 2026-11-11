@@ -28,8 +28,6 @@ nrfutil device
 
      nrfutil install device=2.5.4 --force
 
-  For more information, consult the `nRF Util`_ documentation.
-
 nrfutil trace
   ``nrfutil trace`` has been updated to version 2.11.0.
 
@@ -38,8 +36,6 @@ nrfutil trace
   .. nrfutil-command:: console
 
      nrfutil install trace=2.11.0 --force
-
-  For more information, consult the `nRF Util`_ documentation.
 
 nRF54H20 BICR
   The nRF54H20 BICR has been updated (from the one supporting |NCS| v2.7.0).

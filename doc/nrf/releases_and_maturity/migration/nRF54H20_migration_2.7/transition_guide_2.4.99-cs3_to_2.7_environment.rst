@@ -203,8 +203,6 @@ Using the nRF54H20 DK with the |NCS| v2.7.0 requires the following:
 
       nrfutil install device=2.4.0 --force
 
-For more information, consult the `nRF Util`_ documentation.
-
 .. _transition_cs3_to_2_7_env_bringup:
 
 nRF54H20 DK bring-up

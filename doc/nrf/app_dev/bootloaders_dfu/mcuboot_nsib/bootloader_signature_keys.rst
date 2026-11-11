@@ -243,7 +243,7 @@ To test that the bootloader no longer boots images signed with the earlier keys,
 
       CONFIG_FW_INFO_FIRMWARE_VERSION=3
 
-#. To facilitate testing, use `nRF Util`_ to program this image directly into a slot (where ``<app_name>`` is the name of the application):
+#. To facilitate testing, use the following command to program this image directly into a slot (where ``<app_name>`` is the name of the application):
 
    .. nrfutil-command:: console
 
