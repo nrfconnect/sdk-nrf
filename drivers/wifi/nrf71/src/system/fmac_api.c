@@ -1344,7 +1344,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_bss(void *dev_ctx,
 					       unsigned char if_idx,
 					       struct nrf_wifi_umac_bss_info *bss_info)
@@ -1812,7 +1812,7 @@ out:
 	return status;
 }
 
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */
 
 #ifdef CONFIG_NRF71_P2P_MODE
 enum nrf_wifi_status nrf_wifi_sys_fmac_p2p_dev_start(void *dev_ctx,
@@ -2517,7 +2517,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			__func__, vif_info->state, vif_ctx->ifflags_status);
 		goto out;
 	}
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 	if (vif_ctx->if_type == NRF_WIFI_IFTYPE_AP) {
 		if (vif_info->state == 1) {
 			sys_dev_ctx->tx_config.peers[MAX_PEERS].peer_id = MAX_PEERS;
@@ -2527,7 +2527,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_chg_vif_state(
 			sys_dev_ctx->tx_config.peers[MAX_PEERS].if_idx = if_idx;
 		}
 	}
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */
 out:
 	if (chg_vif_state_cmd) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, chg_vif_state_cmd);
