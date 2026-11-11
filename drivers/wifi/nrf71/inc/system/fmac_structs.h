@@ -101,194 +101,195 @@ struct raw_rx_pkt_header {
 struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when RPU recovery is required. */
 	void (*rpu_recovery_callbk_fn)(void *os_vif_ctx,
-		void *event_data,
-		unsigned int event_len);
+	      void *event_data,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a scan is started. */
 	void (*scan_start_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_trigger_scan *scan_start_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a scan is done. */
 	void (*scan_done_callbk_fn)(void *os_vif_ctx,
-				    struct nrf_wifi_umac_event_scan_done *scan_done_event,
-				    unsigned int event_len);
+	      struct nrf_wifi_umac_event_scan_done *scan_done_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a scan is aborted. */
 	void (*scan_abort_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_trigger_scan *scan_done_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a scan result is received. */
 	void (*scan_res_callbk_fn)(void *os_vif_ctx,
-				   struct nrf_wifi_umac_event_new_scan_results *scan_res,
-				   unsigned int event_len,
-				   bool more_res);
+	      struct nrf_wifi_umac_event_new_scan_results *scan_res,
+	      unsigned int event_len,
+	      bool more_res);
 
 	/** Callback function to be called when a display scan result is received. */
 	void (*disp_scan_res_callbk_fn)(void *os_vif_ctx,
-				  void *scan_res,
-				  unsigned int event_len,
-				  bool more_res);
+	      void *scan_res,
+	      unsigned int event_len,
+	      bool more_res);
 
 #if defined(CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS) || defined(__DOXYGEN__)
 	/** Callback function to be called when a beacon/probe response is received. */
 	void (*rx_bcn_prb_resp_callbk_fn)(void *os_vif_ctx,
-					  void *frm,
-					  unsigned short frequency,
-					  signed short signal);
+	      void *frm,
+	      unsigned short frequency,
+	      signed short signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 
 	/** Callback function to be called when a get regulatory response is received. */
 	void (*event_get_reg)(void *if_priv,
-		struct nrf_wifi_reg *get_reg,
-		unsigned int event_len);
+	      struct nrf_wifi_reg *get_reg,
+	      unsigned int event_len);
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+	defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
-				 struct nrf_wifi_umac_event_set_interface *set_if_event,
-				 unsigned int event_len);
+	      struct nrf_wifi_umac_event_set_interface *set_if_event,
+	      unsigned int event_len);
 #endif
 
 #if defined(CONFIG_NRF71_STA_SUPPORT) || defined(__DOXYGEN__)
 	/** Callback function to be called when an interface association state changes. */
 	enum nrf_wifi_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
-							    enum nrf_wifi_fmac_if_carr_state cs);
+			      enum nrf_wifi_fmac_if_carr_state cs);
 
 	/** Callback function to be called when a frame is received. */
 	void (*rx_frm_callbk_fn)(void *os_vif_ctx,
-				 void *frm);
+	      void *frm);
 
 	/** Callback function to be called when an authentication response is received. */
 	void (*auth_resp_callbk_fn)(void *os_vif_ctx,
-				    struct nrf_wifi_umac_event_mlme *auth_resp_event,
-				    unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *auth_resp_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when an association response is received. */
 	void (*assoc_resp_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_mlme *assoc_resp_event,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *assoc_resp_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a deauthentication frame is received. */
 	void (*deauth_callbk_fn)(void *os_vif_ctx,
-				 struct nrf_wifi_umac_event_mlme *deauth_event,
-				 unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *deauth_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a disassociation frame is received. */
 	void (*disassoc_callbk_fn)(void *os_vif_ctx,
-				   struct nrf_wifi_umac_event_mlme *disassoc_event,
-				   unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *disassoc_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a management frame is received. */
 	void (*mgmt_rx_callbk_fn)(void *os_vif_ctx,
-				  struct nrf_wifi_umac_event_mlme *mgmt_rx_event,
-				  unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *mgmt_rx_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when an unprotected management frame is received. */
 	void (*unprot_mlme_mgmt_rx_callbk_fn)(void *os_vif_ctx,
-					      struct nrf_wifi_umac_event_mlme *unprot_mlme_event,
-					      unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *unprot_mlme_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get TX power response is received. */
 	void (*tx_pwr_get_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_get_tx_power *info,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_get_tx_power *info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get channel response is received. */
 	void (*chnl_get_callbk_fn)(void *os_vif_ctx,
-				   struct nrf_wifi_umac_event_get_channel *info,
-				   unsigned int event_len);
+	      struct nrf_wifi_umac_event_get_channel *info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a cookie response is received. */
 	void (*cookie_rsp_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a TX status is received. */
 	void (*tx_status_callbk_fn)(void *os_vif_ctx,
-				    struct nrf_wifi_umac_event_mlme *tx_status_event,
-				    unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *tx_status_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a remain on channel response is received. */
 	void (*roc_callbk_fn)(void *os_vif_ctx,
-			      struct nrf_wifi_event_remain_on_channel *roc_event,
-			      unsigned int event_len);
+	      struct nrf_wifi_event_remain_on_channel *roc_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a remain on channel cancel response is received. */
 	void (*roc_cancel_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_event_remain_on_channel *roc_cancel_event,
-				     unsigned int event_len);
+	      struct nrf_wifi_event_remain_on_channel *roc_cancel_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get station response is received. */
 	void (*get_station_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_umac_event_new_station *info,
-				     unsigned int event_len);
+	      struct nrf_wifi_umac_event_new_station *info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get interface response is received. */
 	void (*get_interface_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_interface_info *info,
-				     unsigned int event_len);
+	      struct nrf_wifi_interface_info *info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a management TX status is received. */
 	void (*mgmt_tx_status)(void *if_priv,
-					struct nrf_wifi_umac_event_mlme *mlme_event,
-					unsigned int event_len);
+	      struct nrf_wifi_umac_event_mlme *mlme_event,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a TWT configuration response is received. */
 	void (*twt_config_callbk_fn)(void *if_priv,
-		struct nrf_wifi_umac_cmd_config_twt *twt_config_event_info,
-		unsigned int event_len);
+	      struct nrf_wifi_umac_cmd_config_twt *twt_config_event_info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a TWT teardown response is received. */
 	void (*twt_teardown_callbk_fn)(void *if_priv,
-		struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_event_info,
-		unsigned int event_len);
+	      struct nrf_wifi_umac_cmd_teardown_twt *twt_teardown_event_info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get wiphy response is received. */
 	void (*event_get_wiphy)(void *if_priv,
-		struct nrf_wifi_event_get_wiphy *get_wiphy,
-		unsigned int event_len);
+	      struct nrf_wifi_event_get_wiphy *get_wiphy,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a TWT sleep response is received. */
 	void (*twt_sleep_callbk_fn)(void *if_priv,
-		struct nrf_wifi_umac_event_twt_sleep *twt_sleep_event_info,
-		unsigned int event_len);
+	      struct nrf_wifi_umac_event_twt_sleep *twt_sleep_event_info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get power save information
 	 * response is received.
 	 */
 	void (*event_get_ps_info)(void *if_priv,
-		struct nrf_wifi_umac_event_power_save_info *get_ps_config,
-		unsigned int event_len);
+	      struct nrf_wifi_umac_event_power_save_info *get_ps_config,
+	      unsigned int event_len);
 
 	/** Callback function to be called when a get connection info response is received. */
 	void (*get_conn_info_callbk_fn)(void *os_vif_ctx,
-					struct nrf_wifi_umac_event_conn_info *info,
-					unsigned int event_len);
+	      struct nrf_wifi_umac_event_conn_info *info,
+	      unsigned int event_len);
 
 	/** Callback function to be called when rssi is to be processed from the received frame. */
 	void (*process_rssi_from_rx)(void *os_vif_ctx,
-				     signed short signal);
+	      signed short signal);
 
 	/** Callback function to be called when TX PHY rate is to be processed from TX done. */
 	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
-					     unsigned int tx_rate_kbps);
+	      unsigned int tx_rate_kbps);
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 #if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
-				  void *frm,
-				  struct raw_rx_pkt_header *,
-				  bool pkt_free);
+	      void *frm,
+	      struct raw_rx_pkt_header *,
+	      bool pkt_free);
 #endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 	void (*reg_change_callbk_fn)(void *os_vif_ctx,
-				     struct nrf_wifi_event_regulatory_change *reg_change,
-				     unsigned int event_len);
+	      struct nrf_wifi_event_regulatory_change *reg_change,
+	      unsigned int event_len);
 #if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	/** Callback when NRF_WIFI_EVENT_CHANNEL_SET_DONE is received. */
 	void (*channel_set_done_callbk_fn)(void *os_vif_ctx,
-					  struct nrf_wifi_event_set_channel *channel_event,
-					  unsigned int event_len);
+	      struct nrf_wifi_event_set_channel *channel_event,
+	      unsigned int event_len);
 #endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 	/** Callback when a coexistence (CM2CD) event NRF_WIFI_EVENT_COEX_CONFIG
 	 *  is received. Delivers the coexistence event payload to the host
@@ -310,7 +311,8 @@ enum nrf_wifi_fmac_twt_state {
 };
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
-#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || \
+	defined(__DOXYGEN__)
 /**
  * @brief Structure to hold peer context information.
  *

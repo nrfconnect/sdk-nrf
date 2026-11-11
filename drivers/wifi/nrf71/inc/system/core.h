@@ -99,13 +99,11 @@ struct nrf_wifi_vif_ctx_zep {
 	uint64_t rssi_record_timestamp_us;
 	signed short rssi;
 	unsigned int tx_rate_kbps;
-#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	/* Connect scan results database cached from the scan done event, read
 	 * on the supplicant's get scan results call and freed right after.
 	 */
 	unsigned int connect_scan_db_addr;
 	unsigned int connect_scan_res_cnt;
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_AP_SUPPORT
 	int inactive_time_sec;
@@ -286,8 +284,8 @@ extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
 #ifdef CONFIG_NRF71_RPU_RECOVERY
 void nrf_wifi_rpu_recovery_cb(void *vif_ctx,
-		void *event_data,
-		unsigned int event_len);
+			      void *event_data,
+			      unsigned int event_len);
 #endif /* CONFIG_NRF71_RPU_RECOVERY */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_dev_add_zep(struct nrf_wifi_drv_priv_zep *drv_priv_zep);

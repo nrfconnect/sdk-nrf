@@ -146,7 +146,6 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NRF71_STA_SUPPORT
 	case SCAN_CONNECT:
-#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 		/* Cache for the get scan results call, under vif_lock as the
 		 * supplicant path reads and frees it; free any unread previous one.
 		 */
@@ -158,7 +157,6 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		vif_ctx_zep->connect_scan_db_addr = scan_done_event->scan_db_addr;
 		vif_ctx_zep->connect_scan_res_cnt = scan_done_event->scan_results_cnt;
 		k_mutex_unlock(&vif_ctx_zep->vif_lock);
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 		nrf_wifi_wpa_supp_event_proc_scan_done(vif_ctx_zep,
 						       scan_done_event,
 						       event_len,

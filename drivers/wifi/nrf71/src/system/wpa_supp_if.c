@@ -140,9 +140,9 @@ void nrf_wifi_wpa_supp_event_proc_scan_start(void *if_priv)
 }
 
 void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
-					struct nrf_wifi_umac_event_scan_done *scan_done_event,
-					unsigned int event_len,
-					int aborted)
+					    struct nrf_wifi_umac_event_scan_done *scan_done_event,
+					    unsigned int event_len,
+					    int aborted)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	union wpa_event_data event;
@@ -161,7 +161,7 @@ void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
 	if (vif_ctx_zep->supp_drv_if_ctx &&
 		vif_ctx_zep->supp_callbk_fns.scan_done) {
 		vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
-			&event);
+						       &event);
 	}
 	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
 	vif_ctx_zep->scan_in_progress = false;
@@ -169,9 +169,9 @@ void nrf_wifi_wpa_supp_event_proc_scan_done(void *if_priv,
 }
 
 void nrf_wifi_wpa_supp_event_proc_scan_res(void *if_priv,
-					struct nrf_wifi_umac_event_new_scan_results *scan_res,
-					unsigned int event_len,
-					bool more_res)
+					   struct nrf_wifi_umac_event_new_scan_results *scan_res,
+					   unsigned int event_len,
+					   bool more_res)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wpa_scan_res *r = NULL;
@@ -386,7 +386,7 @@ void nrf_wifi_wpa_supp_event_proc_assoc_resp(void *if_priv,
 	if (vif_ctx_zep->supp_drv_if_ctx &&
 		vif_ctx_zep->supp_callbk_fns.assoc_resp) {
 		vif_ctx_zep->supp_callbk_fns.assoc_resp(vif_ctx_zep->supp_drv_if_ctx,
-			&event, status);
+							&event, status);
 	}
 }
 
@@ -426,7 +426,7 @@ void nrf_wifi_wpa_supp_event_proc_deauth(void *if_priv,
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.deauth) {
 		vif_ctx_zep->supp_callbk_fns.deauth(vif_ctx_zep->supp_drv_if_ctx,
-			&event, mgmt);
+						    &event, mgmt);
 	}
 
 	if (vif_ctx_zep->if_type == NRF_WIFI_IFTYPE_STATION) {
@@ -609,7 +609,6 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 
 	scan_info->scan_reason = SCAN_CONNECT;
 
-#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	/* Free any database left unread from a previous scan. */
 	if (vif_ctx_zep->connect_scan_db_addr) {
 		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
@@ -619,8 +618,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	}
 
 	/* Firmware builds the results database in a buffer of this size. */
-	scan_info->scan_db_len = CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
+	scan_info->scan_db_len = NRF71_CONNECT_SCAN_DB_SIZE;
 
 	/* Copy extra_ies */
 	if (params->extra_ies_len && params->extra_ies_len <= NRF_WIFI_MAX_IE_LEN) {
@@ -643,7 +641,7 @@ int nrf_wifi_wpa_supp_scan2(void *if_priv, struct wpa_driver_scan_params *params
 	vif_ctx_zep->scan_in_progress = true;
 
 	k_work_schedule(&vif_ctx_zep->scan_timeout_work,
-		K_SECONDS(CONFIG_NRF71_SCAN_TIMEOUT));
+			K_SECONDS(CONFIG_NRF71_SCAN_TIMEOUT));
 
 	ret = 0;
 out:
@@ -698,7 +696,7 @@ int nrf_wifi_wpa_supp_scan_abort(void *if_priv)
 	sem_ret = k_sem_take(&wait_for_scan_resp_sem, K_MSEC(RPU_RESP_EVENT_TIMEOUT));
 	if (sem_ret) {
 		LOG_ERR("%s: Timedout waiting for scan abort response, ret = %d",
-			    __func__, sem_ret);
+			__func__, sem_ret);
 		nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SCAN_ABORT);
 		return NRF_WIFI_STATUS_FAIL;
 	}
@@ -709,7 +707,6 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 /* Relay the cached connect scan database to the supplicant and free it. With
  * no results, send one empty result to end the supplicant's wait.
  */
@@ -723,7 +720,7 @@ static void nrf_wifi_wpa_supp_scan_res_relay(struct nrf_wifi_vif_ctx_zep *vif_ct
 
 	db = (struct nrf_wifi_umac_event_new_scan_results *)
 		(uintptr_t)vif_ctx_zep->connect_scan_db_addr;
-	end = (unsigned char *)db + CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM_SIZE;
+	end = (unsigned char *)db + NRF71_CONNECT_SCAN_DB_SIZE;
 
 	/* Deliver each entry once the next is known valid, so the walk stays
 	 * bounded and the last result carries more_res = false.
@@ -772,16 +769,12 @@ static void nrf_wifi_wpa_supp_scan_res_relay(struct nrf_wifi_vif_ctx_zep *vif_ct
 	vif_ctx_zep->connect_scan_db_addr = 0;
 	vif_ctx_zep->connect_scan_res_cnt = 0;
 }
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 
 int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	int ret = -1;
-#ifndef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
-	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 
 	if (!if_priv) {
 		LOG_ERR("%s: Invalid params", __func__);
@@ -801,20 +794,8 @@ int nrf_wifi_wpa_supp_scan_results_get(void *if_priv)
 		goto out;
 	}
 
-#ifdef CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM
 	nrf_wifi_wpa_supp_scan_res_relay(vif_ctx_zep);
 	ret = 0;
-#else
-	status = nrf_wifi_sys_fmac_scan_res_get(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
-					    SCAN_CONNECT);
-
-	if (status != NRF_WIFI_STATUS_SUCCESS) {
-		LOG_ERR("%s: nrf_wifi_sys_fmac_scan_res_get failed", __func__);
-		goto out;
-	}
-
-	ret = 0;
-#endif /* CONFIG_NRF71_CONNECT_SCAN_RESULTS_GDRAM */
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return ret;
@@ -900,7 +881,7 @@ int nrf_wifi_wpa_supp_add_key(struct nrf_wifi_umac_key_info *key_info, enum wpa_
 }
 
 int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params *params,
-				struct wpa_bss *curr_bss)
+				   struct wpa_bss *curr_bss)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -1001,8 +982,8 @@ int nrf_wifi_wpa_supp_authenticate(void *if_priv, struct wpa_driver_auth_params 
 
 		key_info->cipher_suite = wpa_alg_to_cipher_suite(params->auth_alg, key_len);
 		memcpy(key_info->key.nrf_wifi_key,
-			   params->wep_key[params->wep_tx_keyidx],
-			   key_len);
+		       params->wep_key[params->wep_tx_keyidx],
+		       key_len);
 		key_info->key.nrf_wifi_key_len = key_len;
 		key_info->valid_fields |= NRF_WIFI_KEY_VALID | NRF_WIFI_KEY_IDX_VALID |
 			NRF_WIFI_CIPHER_SUITE_VALID;
@@ -1301,7 +1282,7 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 
 	if (alg == WPA_ALG_NONE) {
 		status = nrf_wifi_sys_fmac_del_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
-					       &key_info, mac_addr);
+						   &key_info, mac_addr);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_sys_fmac_del_key failed", __func__);
@@ -1310,7 +1291,7 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 		}
 	} else {
 		status = nrf_wifi_sys_fmac_add_key(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
-					       &key_info, mac_addr);
+						   &key_info, mac_addr);
 
 		if (status != NRF_WIFI_STATUS_SUCCESS) {
 			LOG_ERR("%s: nrf_wifi_sys_fmac_add_key failed", __func__);
@@ -1519,8 +1500,8 @@ out:
 }
 
 void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
-					   struct nrf_wifi_umac_event_new_station *info,
-					   unsigned int event_len)
+					  struct nrf_wifi_umac_event_new_station *info,
+					  unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wpa_signal_info *signal_info = NULL;
@@ -1577,8 +1558,8 @@ out:
 }
 
 void nrf_wifi_wpa_supp_event_proc_get_if(void *if_priv,
-					   struct nrf_wifi_interface_info *info,
-					   unsigned int event_len)
+					 struct nrf_wifi_interface_info *info,
+					 unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_chan_definition *chan_def_info = NULL;
@@ -1608,8 +1589,8 @@ void nrf_wifi_wpa_supp_event_proc_get_if(void *if_priv,
 }
 
 void nrf_wifi_wpa_supp_event_mgmt_tx_status(void *if_priv,
-		struct nrf_wifi_umac_event_mlme *mlme_event,
-		unsigned int event_len)
+					    struct nrf_wifi_umac_event_mlme *mlme_event,
+					    unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	bool acked = false;
@@ -1628,20 +1609,20 @@ void nrf_wifi_wpa_supp_event_mgmt_tx_status(void *if_priv,
 
 	acked = mlme_event->nrf_wifi_flags & NRF_WIFI_EVENT_MLME_ACK ? true : false;
 	LOG_DBG("%s: Mgmt frame %llx tx status: %s",
-		    __func__, mlme_event->cookie, acked ? "ACK" : "NOACK");
+		__func__, mlme_event->cookie, acked ? "ACK" : "NOACK");
 
 	if (vif_ctx_zep->supp_drv_if_ctx &&
 		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status) {
 		vif_ctx_zep->supp_callbk_fns.mgmt_tx_status(vif_ctx_zep->supp_drv_if_ctx,
-				mlme_event->frame.frame,
-				mlme_event->frame.frame_len,
-				acked);
+							    mlme_event->frame.frame,
+							    mlme_event->frame.frame_len,
+							    acked);
 	}
 }
 
 void nrf_wifi_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
-		struct nrf_wifi_umac_event_mlme *unprot_mgmt,
-		unsigned int event_len)
+					      struct nrf_wifi_umac_event_mlme *unprot_mgmt,
+					      unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	union wpa_event_data event;
@@ -1672,23 +1653,23 @@ void nrf_wifi_wpa_supp_event_proc_unprot_mgmt(void *if_priv,
 		event.unprot_deauth.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
 		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_deauth) {
 			vif_ctx_zep->supp_callbk_fns.unprot_deauth(vif_ctx_zep->supp_drv_if_ctx,
-									  &event);
+								   &event);
 		}
 	} else if (cmd_evnt == NRF_WIFI_UMAC_EVENT_UNPROT_DISASSOCIATE) {
 		event.unprot_disassoc.reason_code = le_to_host16(mgmt->u.deauth.reason_code);
 		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.unprot_disassoc) {
 			vif_ctx_zep->supp_callbk_fns.unprot_disassoc(vif_ctx_zep->supp_drv_if_ctx,
-										&event);
+								     &event);
 		}
 	}
 }
 
 int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
-		size_t data_len, int noack,
-		unsigned int freq, int no_cck,
-		int offchanok,
-		unsigned int wait_time,
-		int cookie)
+			       size_t data_len, int noack,
+			       unsigned int freq, int no_cck,
+			       int offchanok,
+			       unsigned int wait_time,
+			       int cookie)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -1763,10 +1744,10 @@ int nrf_wifi_nl80211_send_mlme(void *if_priv, const u8 *data,
 	vif_ctx_zep->cookie_resp_received = false;
 
 	LOG_DBG("%s: Sending frame to RPU: cookie=%d wait_time=%d no_ack=%d", __func__,
-		    cookie, wait_time, noack);
+		cookie, wait_time, noack);
 	status = nrf_wifi_sys_fmac_mgmt_tx(rpu_ctx_zep->rpu_ctx,
-			vif_ctx_zep->vif_idx,
-			mgmt_tx_info);
+					   vif_ctx_zep->vif_idx,
+					   mgmt_tx_info);
 
 	if (status == NRF_WIFI_STATUS_FAIL) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_mgmt_tx failed", __func__);
@@ -1901,8 +1882,8 @@ enum nrf_wifi_status nrf_wifi_parse_sband(
 }
 
 void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
-		struct nrf_wifi_event_get_wiphy *wiphy_info,
-		unsigned int event_len)
+				       struct nrf_wifi_event_get_wiphy *wiphy_info,
+				       unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -1924,7 +1905,7 @@ void nrf_wifi_wpa_supp_event_get_wiphy(void *if_priv,
 		}
 		if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.get_wiphy_res) {
 			vif_ctx_zep->supp_callbk_fns.get_wiphy_res(vif_ctx_zep->supp_drv_if_ctx,
-									&band);
+								   &band);
 		}
 	}
 
@@ -1996,8 +1977,8 @@ out:
 }
 
 int nrf_wifi_supp_register_frame(void *if_priv,
-			u16 type, const u8 *match, size_t match_len,
-			bool multicast)
+				 u16 type, const u8 *match, size_t match_len,
+				 bool multicast)
 {
 	enum nrf_wifi_status status = NRF_WIFI_STATUS_FAIL;
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
@@ -2035,7 +2016,7 @@ int nrf_wifi_supp_register_frame(void *if_priv,
 	}
 
 	status = nrf_wifi_sys_fmac_register_frame(rpu_ctx_zep->rpu_ctx, vif_ctx_zep->vif_idx,
-			&frame_info);
+						  &frame_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_register_frame failed", __func__);
@@ -2066,10 +2047,10 @@ void nrf_wifi_wpa_supp_event_mgmt_rx_callbk_fn(void *if_priv,
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.mgmt_rx) {
 		vif_ctx_zep->supp_callbk_fns.mgmt_rx(vif_ctx_zep->supp_drv_if_ctx,
-				mlme_event->frame.frame,
-				mlme_event->frame.frame_len,
-				mlme_event->frequency,
-				mlme_event->rx_signal_dbm);
+						     mlme_event->frame.frame,
+						     mlme_event->frame.frame_len,
+						     mlme_event->frequency,
+						     mlme_event->rx_signal_dbm);
 	}
 }
 
@@ -2285,8 +2266,8 @@ out:
 }
 
 void nrf_wifi_supp_event_proc_get_conn_info(void *if_priv,
-					   struct nrf_wifi_umac_event_conn_info *info,
-					   unsigned int event_len)
+					    struct nrf_wifi_umac_event_conn_info *info,
+					    unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct wpa_conn_info *conn_info = NULL;
@@ -2306,8 +2287,8 @@ void nrf_wifi_supp_event_proc_get_conn_info(void *if_priv,
 }
 
 void nrf_wifi_supp_event_remain_on_channel(void *if_priv,
-				      struct nrf_wifi_event_remain_on_channel *roc_complete,
-				      unsigned int event_len)
+					   struct nrf_wifi_event_remain_on_channel *roc_complete,
+					   unsigned int event_len)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 
@@ -2324,13 +2305,13 @@ void nrf_wifi_supp_event_remain_on_channel(void *if_priv,
 	}
 
 	LOG_DBG("%s: ROC complete on freq %d, dur %d, vif_idx %d",
-		    __func__, roc_complete->frequency,
-		    roc_complete->dur, vif_ctx_zep->vif_idx);
+		__func__, roc_complete->frequency,
+		roc_complete->dur, vif_ctx_zep->vif_idx);
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.roc_complete) {
 		vif_ctx_zep->supp_callbk_fns.roc_complete(vif_ctx_zep->supp_drv_if_ctx,
-				roc_complete->frequency,
-				roc_complete->dur, roc_complete->cookie);
+							  roc_complete->frequency,
+							  roc_complete->dur, roc_complete->cookie);
 	}
 }
 
@@ -2354,12 +2335,13 @@ void nrf_wifi_supp_event_roc_cancel_complete(void *if_priv,
 	}
 
 	LOG_DBG("%s: ROC cancel complete on freq %d, vif_idx %d",
-		    __func__, roc_cancel_complete->frequency,
-		    vif_ctx_zep->vif_idx);
+		__func__, roc_cancel_complete->frequency,
+		vif_ctx_zep->vif_idx);
 
 	if (vif_ctx_zep->supp_drv_if_ctx && vif_ctx_zep->supp_callbk_fns.roc_cancel_complete) {
 		vif_ctx_zep->supp_callbk_fns.roc_cancel_complete(vif_ctx_zep->supp_drv_if_ctx,
-				roc_cancel_complete->frequency, roc_cancel_complete->cookie);
+								 roc_cancel_complete->frequency,
+								 roc_cancel_complete->cookie);
 	}
 }
 
@@ -2494,7 +2476,7 @@ out:
 
 #ifdef CONFIG_NRF71_AP_SUPPORT
 static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
-	enum nrf_wifi_fmac_if_op_state state)
+				     enum nrf_wifi_fmac_if_op_state state)
 {
 	struct nrf_wifi_umac_chg_vif_state_info vif_state_info = {0};
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -2529,8 +2511,8 @@ static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	vif_state_info.if_index = vif_ctx_zep->vif_idx;
 	vif_ctx->ifflags = false;
 	status = nrf_wifi_sys_fmac_chg_vif_state(rpu_ctx_zep->rpu_ctx,
-					     vif_ctx_zep->vif_idx,
-					     &vif_state_info);
+						 vif_ctx_zep->vif_idx,
+						 &vif_state_info);
 
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_chg_vif_state failed",
@@ -2623,7 +2605,7 @@ out:
 }
 
 static int nrf_wifi_wait_for_carrier_status(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
-	enum nrf_wifi_fmac_if_carr_state carrier_status)
+					    enum nrf_wifi_fmac_if_carr_state carrier_status)
 {
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
 	int ret = -1;
@@ -2726,7 +2708,7 @@ static int wpas_cipher_to_nrf(int cipher)
 }
 
 static int nrf_wifi_set_beacon_data(const struct wpa_driver_ap_params *params,
-		struct nrf_wifi_beacon_data *beacon_data)
+				    struct nrf_wifi_beacon_data *beacon_data)
 {
 	int ret = -1;
 
@@ -2770,7 +2752,7 @@ out:
 }
 
 int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
-	u16 frame_type, size_t match_len, const u8 *match)
+				      u16 frame_type, size_t match_len, const u8 *match)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -2806,8 +2788,8 @@ int nrf_wifi_supp_register_mgmt_frame(void *if_priv,
 	memcpy(mgmt_frame_info.frame_match.frame_match, match, match_len);
 
 	status = nrf_wifi_sys_fmac_mgmt_frame_reg(rpu_ctx_zep->rpu_ctx,
-					      vif_ctx_zep->vif_idx,
-					      &mgmt_frame_info);
+						  vif_ctx_zep->vif_idx,
+						  &mgmt_frame_info);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_mgmt_frame_reg failed", __func__);
 		goto out;
@@ -2826,7 +2808,7 @@ static int is_ap_dynamic_iface(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 }
 
 static int nrf_wifi_set_bss(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
-	 struct wpa_driver_ap_params *params)
+			    struct wpa_driver_ap_params *params)
 {
 	struct nrf_wifi_umac_bss_info bss_info = {0};
 	struct nrf_wifi_ctx_zep *rpu_ctx_zep = NULL;
@@ -2882,7 +2864,7 @@ out:
 
 
 static enum nrf_wifi_chan_width wpa_supp_chan_width_to_nrf(enum hostapd_hw_mode mode,
-	int bandwidth, int cfreq1, int cfreq2)
+							   int bandwidth, int cfreq1, int cfreq2)
 {
 	switch (bandwidth) {
 	case 20:
@@ -2951,8 +2933,10 @@ int nrf_wifi_wpa_supp_start_ap(void *if_priv, struct wpa_driver_ap_params *param
 		}
 	}
 
-	ch_width = wpa_supp_chan_width_to_nrf(params->freq->mode, params->freq->bandwidth,
-			params->freq->center_freq1, params->freq->center_freq2);
+	ch_width = wpa_supp_chan_width_to_nrf(params->freq->mode,
+					      params->freq->bandwidth,
+					      params->freq->center_freq1,
+					      params->freq->center_freq2);
 
 	start_ap_info.freq_params.frequency = params->freq->freq;
 	start_ap_info.freq_params.channel_width = ch_width;
@@ -3216,14 +3200,14 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 		nrf_wifi_sta_flags_to_nrf(params->flags_mask);
 	if (params->ht_capabilities) {
 		memcpy(&sta_info.ht_capability,
-			   params->ht_capabilities,
-			   sizeof(sta_info.ht_capability));
+		       params->ht_capabilities,
+		       sizeof(sta_info.ht_capability));
 	}
 
 	if (params->vht_capabilities) {
 		memcpy(&sta_info.vht_capability,
-			   params->vht_capabilities,
-			   sizeof(sta_info.vht_capability));
+		       params->vht_capabilities,
+		       sizeof(sta_info.vht_capability));
 	}
 
 	memcpy(sta_info.mac_addr, params->addr, sizeof(sta_info.mac_addr));
@@ -3233,12 +3217,12 @@ int nrf_wifi_wpa_supp_sta_add(void *if_priv, struct hostapd_sta_add_params *para
 
 	if (params->set) {
 		status = nrf_wifi_sys_fmac_chg_sta(rpu_ctx_zep->rpu_ctx,
-					vif_ctx_zep->vif_idx,
-					(struct nrf_wifi_umac_chg_sta_info *)&sta_info);
+						   vif_ctx_zep->vif_idx,
+						   (struct nrf_wifi_umac_chg_sta_info *)&sta_info);
 	} else {
 		status = nrf_wifi_sys_fmac_add_sta(rpu_ctx_zep->rpu_ctx,
-					vif_ctx_zep->vif_idx,
-					&sta_info);
+						   vif_ctx_zep->vif_idx,
+						   &sta_info);
 	}
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_add_sta failed", __func__);
@@ -3293,8 +3277,8 @@ out:
 }
 
 int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
-			unsigned int total_flags, unsigned int flags_or,
-			unsigned int flags_and)
+				    unsigned int total_flags, unsigned int flags_or,
+				    unsigned int flags_and)
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct nrf_wifi_umac_chg_sta_info chg_sta = {0};
@@ -3328,7 +3312,7 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 	if (!net_eth_is_addr_valid((struct net_eth_addr *)&chg_sta.mac_addr)) {
 		LOG_ERR("%s: Invalid peer MAC address: %s", __func__,
 			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
-					       sizeof(buf)));
+			sizeof(buf)));
 		goto out;
 	}
 
@@ -3336,14 +3320,14 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 	if (peer_id == -1) {
 		LOG_ERR("%s: Unknown PEER: %s", __func__,
 			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
-					       sizeof(buf)));
+			sizeof(buf)));
 		goto out;
 	}
 
 	if (peer_id == MAX_PEERS) {
 		LOG_ERR("%s: Invalid PEER (group): %s", __func__,
 			net_sprint_ll_addr_buf(chg_sta.mac_addr, NET_ETH_ADDR_LEN, buf,
-					       sizeof(buf)));
+			sizeof(buf)));
 		goto out;
 	}
 
@@ -3354,7 +3338,7 @@ int nrf_wifi_wpa_supp_sta_set_flags(void *if_priv, const u8 *addr,
 		chg_sta.sta_flags2.nrf_wifi_set, chg_sta.sta_flags2.nrf_wifi_mask);
 
 	status = nrf_wifi_sys_fmac_chg_sta(rpu_ctx_zep->rpu_ctx,
-		vif_ctx_zep->vif_idx, &chg_sta);
+					   vif_ctx_zep->vif_idx, &chg_sta);
 	if (status != NRF_WIFI_STATUS_SUCCESS) {
 		LOG_ERR("%s: nrf_wifi_sys_fmac_chg_sta failed", __func__);
 		goto out;
