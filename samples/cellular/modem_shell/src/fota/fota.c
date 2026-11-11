@@ -50,7 +50,7 @@ static void fota_update_apply(void)
 	int err;
 	int target;
 
-	link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, true);
+	link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 
 	target = fota_download_target();
 	if (target == DFU_TARGET_IMAGE_TYPE_MCUBOOT) {
@@ -67,7 +67,7 @@ static void fota_update_apply(void)
 			mosh_print("FOTA: Modem firmware update successful!");
 		}
 
-		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL, true);
+		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	}
 }
 
