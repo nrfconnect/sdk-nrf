@@ -160,9 +160,9 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 
 	umac_cmd_data->max_ps_poll_fail_cnt = CONFIG_NRF71_MAX_PS_POLL_FAIL_CNT;
 
-	#ifdef CONFIG_NRF_WIFI_RX_STBC_HT
+	#ifdef CONFIG_NRF71_RX_STBC_HT_SUPPORT
 		umac_cmd_data->stbc_enable_in_ht = 1;
-	#endif /* CONFIG_NRF_WIFI_RX_STBC_HT */
+	#endif /* CONFIG_NRF71_RX_STBC_HT_SUPPORT */
 
 	#ifdef CONFIG_NRF_WIFI_DYNAMIC_BANDWIDTH_SIGNALLING
 		umac_cmd_data->dbs_war_ctrl = 1;

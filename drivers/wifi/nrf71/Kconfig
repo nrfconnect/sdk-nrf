@@ -830,7 +830,7 @@ config NRF71_MAX_PS_POLL_FAIL_CNT
 	help
 	  Maximum number of PS-Poll failures before entering qos null-based power save.
 
-config NRF_WIFI_RX_STBC_HT
+config NRF71_RX_STBC_HT_SUPPORT
 	bool "Receive packets encoded with STBC in HT (Wi-Fi4) mode"
 	default y
 	help
