@@ -187,10 +187,10 @@ config NRF71_BET_SUPPORT
 	  determines that none of the fields the host cares about have
 	  changed, cutting short the RX window and saving power.
 
-config NRF71_TCP_IP_CHECKSUM_OFFLOAD
+config NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	bool "TCP/IP checksum offload"
 	depends on NRF71_DATA_TX
-	default y if !NRF71_RADIO_TEST_MODE
+	default y if NRF71_SYSTEM_MODE
 	help
 	  Enable TCP/IP checksum offload for Wi-Fi driver.
 
