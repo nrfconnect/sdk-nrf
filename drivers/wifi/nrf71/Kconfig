@@ -177,7 +177,7 @@ config NRF71_LP_RX_SUPPORT
 	help
 	  Enable low power RX in the LMAC tuning parameters sent to the RPU.
 
-config NRF_WIFI_BET
+config NRF71_BET_SUPPORT
 	bool "Beacon early termination (BET) in nRF Wi-Fi chipsets"
 	depends on NRF71_LOW_POWER_SUPPORT
 	default y

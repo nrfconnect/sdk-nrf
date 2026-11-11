@@ -403,11 +403,11 @@ enum nrf_wifi_status umac_cmd_sys_lmac_tuning_params(
 	/* Enable internal recovery */
 	umac_cmd_data->params.internal_recovery_enable = 1;
 
-#ifdef CONFIG_NRF_WIFI_BET
+#ifdef CONFIG_NRF71_BET_SUPPORT
 	umac_cmd_data->params.cfg_bet_enable = 1;
 #else
 	umac_cmd_data->params.cfg_bet_enable = 0;
-#endif /* CONFIG_NRF_WIFI_BET */
+#endif /* CONFIG_NRF71_BET_SUPPORT */
 
 #ifdef CONFIG_NRF71_LP_RX_SUPPORT
 	umac_cmd_data->params.lp_rx_enable = 1;
