@@ -700,7 +700,7 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 
 #ifdef CONFIG_NRF71_DATA_TX
 	data_config.aggregation = aggregation;
-	data_config.wmm = IS_ENABLED(CONFIG_NRF_WIFI_FEAT_WMM);
+	data_config.wmm = IS_ENABLED(CONFIG_NRF71_WMM_SUPPORT);
 	data_config.max_num_tx_agg_sessions = max_num_tx_agg_sessions;
 	data_config.max_num_rx_agg_sessions = max_num_rx_agg_sessions;
 	data_config.max_tx_aggregation = max_tx_aggregation;

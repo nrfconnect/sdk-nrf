@@ -631,13 +631,13 @@ config NRF71_RPU_RECOVERY_PS_STATE_DEBUG
 
 endif # NRF71_RPU_RECOVERY
 
-config NRF_WIFI_FEAT_WMM
+config NRF71_WMM_SUPPORT
 	bool "WMM/QoS support"
 	default y
 	help
 	  This option controls disable/enable of the WMM (Wireless Multi-Media) feature.
 
-config NRF_WIFI_QOS_NOACK_POLICY
+config NRF71_QOS_NOACK_POLICY
 	bool "QoS No-ACK policy for Tx packets"
 	help
 	  Enable this option to set No-ACK policy for Tx packets with a specific TID.
@@ -652,9 +652,9 @@ config NRF_WIFI_QOS_NOACK_POLICY
 	  Ideally for VI (Video) or VO (Voice) access category.
 	  The application must correctly encode TID via TOS to activate this feature.
 
-if NRF_WIFI_QOS_NOACK_POLICY
+if NRF71_QOS_NOACK_POLICY
 
-config NRF_WIFI_QOS_NOACK_POLICY_TID
+config NRF71_QOS_NOACK_POLICY_TID
 	int "TID (Traffic Identifier) for No-ACK policy"
 	range 0 7
 	default 0
@@ -663,7 +663,7 @@ config NRF_WIFI_QOS_NOACK_POLICY_TID
 	  TID values range from 0 to 7, corresponding to different QoS priority levels.
 	  All Tx frames with this TID will be marked with the No-ACK policy flag.
 
-endif # NRF_WIFI_QOS_NOACK_POLICY
+endif # NRF71_QOS_NOACK_POLICY
 
 choice NRF_WIFI_PS_DATA_RETRIEVAL_MECHANISM
 	prompt "Power save data retrieval mechanism"
