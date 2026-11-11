@@ -185,7 +185,7 @@ static int nrf_wifi_util_set_he_ltf_gi(const struct shell *sh,
 	return 0;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static int nrf_wifi_util_set_uapsd_queue(const struct shell *sh,
 					 size_t argc,
 					 const char *argv[])
@@ -222,7 +222,7 @@ static int nrf_wifi_util_set_uapsd_queue(const struct shell *sh,
 
 	return 0;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 
 static int nrf_wifi_util_show_cfg(const struct shell *sh,
@@ -273,7 +273,7 @@ static int nrf_wifi_util_show_cfg(const struct shell *sh,
 	return 0;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static const char *ac_str(int ac)
 {
 	static const char * const names[NRF_WIFI_FMAC_AC_MAX] = {
@@ -752,7 +752,7 @@ unlock:
 	k_mutex_unlock(&ctx->rpu_lock);
 	return ret;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 
 static int nrf_wifi_util_tx_rate(const struct shell *sh,
@@ -1116,21 +1116,21 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_set_he_ltf_gi,
 		      2,
 		      0),
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	SHELL_CMD_ARG(uapsd_queue,
 		      NULL,
 		      "<val> - 0 to 15",
 		      nrf_wifi_util_set_uapsd_queue,
 		      2,
 		      0),
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	SHELL_CMD_ARG(show_config,
 		      NULL,
 		      "Display the current configuration values",
 		      nrf_wifi_util_show_cfg,
 		      1,
 		      0),
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	SHELL_CMD_ARG(tx_stats,
 		      NULL,
 		      "Displays a TX statistics summary: aggregation, token usage\n"
@@ -1142,7 +1142,7 @@ SHELL_STATIC_SUBCMD_SET_CREATE(
 		      nrf_wifi_util_tx_stats,
 		      2,
 		      2),
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	SHELL_CMD_ARG(tx_rate,
 		      NULL,
 		      "Sets TX data rate to either a fixed value or AUTO\n"

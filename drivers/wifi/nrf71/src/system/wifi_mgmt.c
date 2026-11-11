@@ -25,7 +25,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 extern struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 int nrf_wifi_set_power_save(const struct device *dev,
 			    struct net_if *iface __unused,
 			    struct wifi_ps_params *params)
@@ -747,7 +747,7 @@ void nrf_wifi_event_proc_twt_sleep_zep(void *vif_ctx,
 out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 #ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 int nrf_wifi_mode(const struct device *dev,

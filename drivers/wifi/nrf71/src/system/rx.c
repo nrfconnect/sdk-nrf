@@ -85,7 +85,7 @@ out:
 	return 0;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 int nrf_wifi_get_skip_header_bytes(unsigned short eth_type)
 {
 	/* Ethernet-II snap header (RFC1042 for most EtherTypes) */
@@ -207,7 +207,7 @@ static void nrf_wifi_convert_to_eth(void *nwb,
 		ehdr->proto = len;
 	}
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_fmac_rx_cmd_send(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   enum nrf_wifi_fmac_rx_cmd_type cmd_type,
@@ -350,11 +350,11 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 	unsigned int desc_id = 0;
 	unsigned int i = 0;
 	unsigned int pkt_len = 0;
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	struct nrf_wifi_fmac_ieee80211_hdr hdr;
 	unsigned short eth_type = 0;
 	unsigned int size = 0;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx = NULL;
 	struct nrf_wifi_sys_fmac_priv *sys_fpriv = NULL;
 	unsigned int buf_addr = 0;
@@ -365,12 +365,12 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 
 	vif_ctx = sys_dev_ctx->vif_ctx[config->wdev_id];
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	if (config->rx_pkt_type != NRF_WIFI_RAW_RX_PKT) {
 		sys_fpriv->callbk_fns.process_rssi_from_rx(vif_ctx->os_vif_ctx,
 							  config->signal);
 	}
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	num_pkts = config->rx_pkt_cnt;
 	rx_buf_ipc = nrf_wifi_mem_zalloc(NRF_WIFI_MEM_POOL_TYPE_CTRL,
 					 num_pkts * sizeof(struct nrf_wifi_rx_buf));
@@ -432,7 +432,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 				}
 			}
 #endif
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 			switch (config->rx_buff_info[i].pkt_type) {
 			case PKT_TYPE_MPDU:
 				nrf_wifi_mem_cpy(&hdr,
@@ -471,7 +471,7 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 			}
 			sys_fpriv->callbk_fns.rx_frm_callbk_fn(vif_ctx->os_vif_ctx,
 									 nwb);
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 		} else if (config->rx_pkt_type == NRF_WIFI_RX_PKT_BCN_PRB_RSP) {
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 			sys_fpriv->callbk_fns.rx_bcn_prb_resp_callbk_fn(
