@@ -1542,9 +1542,9 @@ void nrf_wifi_wpa_supp_event_proc_get_sta(void *if_priv,
 		goto out;
 	}
 
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 	vif_ctx_zep->inactive_time_sec = info->sta_info.inactive_time;
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */
 
 	signal_info = vif_ctx_zep->signal_info;
 	/* Semaphore timedout */
@@ -2119,7 +2119,7 @@ int nrf_wifi_supp_get_capa(void *if_priv, struct wpa_driver_capa *capa)
 	capa->flags |= WPA_DRIVER_FLAGS_CONTROL_PORT;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_RRM;
 	capa->rrm_flags |= WPA_DRIVER_FLAGS_SUPPORT_BEACON_REPORT;
-	if (IS_ENABLED(CONFIG_NRF71_AP_MODE)) {
+	if (IS_ENABLED(CONFIG_NRF71_AP_SUPPORT)) {
 		capa->flags |= WPA_DRIVER_FLAGS_AP;
 	}
 	if (IS_ENABLED(CONFIG_NRF71_P2P_MODE)) {
@@ -2498,7 +2498,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 static int nrf_wifi_vif_state_change(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep,
 	enum nrf_wifi_fmac_if_op_state state)
 {
@@ -3425,4 +3425,4 @@ out:
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 	return inactive_time_sec;
 }
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */

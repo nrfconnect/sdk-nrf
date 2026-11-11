@@ -76,7 +76,7 @@ if(CONFIG_NRF71_SYSTEM_MODE)
     zephyr_library_sources(src/system/fmac_promisc.c)
   endif()
 
-  if(CONFIG_NRF71_AP_MODE)
+  if(CONFIG_NRF71_AP_SUPPORT)
     zephyr_library_sources(src/system/fmac_ap.c)
   endif()
 endif()

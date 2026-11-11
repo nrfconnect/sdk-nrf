@@ -107,9 +107,9 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned int connect_scan_res_cnt;
 #endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
 #endif /* CONFIG_NRF71_STA_SUPPORT */
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 	int inactive_time_sec;
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	struct k_work nrf_wifi_rpu_recovery_work;
 	struct k_work_delayable nrf_wifi_rpu_recovery_bringup_work;

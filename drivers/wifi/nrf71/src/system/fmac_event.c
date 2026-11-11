@@ -630,7 +630,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 								NRF_WIFI_FMAC_IF_CARR_STATE_OFF);
 		break;
 #endif /* CONFIG_NRF71_DATA_TX */
-#ifdef CONFIG_NRF71_AP_MODE
+#ifdef CONFIG_NRF71_AP_SUPPORT
 	case NRF_WIFI_CMD_PM_MODE:
 		status = sap_client_update_pmmode(fmac_dev_ctx,
 						  umac_head);
@@ -639,7 +639,7 @@ nrf_wifi_fmac_data_event_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 		status = sap_client_ps_get_frames(fmac_dev_ctx,
 						  umac_head);
 		break;
-#endif /* CONFIG_NRF71_AP_MODE */
+#endif /* CONFIG_NRF71_AP_SUPPORT */
 	default:
 		break;
 	}
