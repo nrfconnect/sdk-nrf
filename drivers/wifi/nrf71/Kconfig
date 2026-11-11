@@ -90,7 +90,7 @@ config NET_L2_ETHERNET
 
 if NRF71_SYSTEM_MODE
 
-config NRF71_SCAN
+config NRF71_SCAN_SUPPORT
 	bool "Wi-Fi scan support"
 	default y if WIFI_USAGE_MODE_SCAN_ONLY
 	help
@@ -105,7 +105,7 @@ config NRF71_STA_MODE
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
 	select NRF71_DATA_TX
-	select NRF71_SCAN
+	select NRF71_SCAN_SUPPORT
 	help
 	  Select this option to enable STA mode of the nRF71 driver.
 
@@ -113,13 +113,13 @@ config NRF71_AP_MODE
 	bool "Access point mode"
 	depends on WIFI_NM_WPA_SUPPLICANT_AP
 	select NRF71_DATA_TX
-	select NRF71_SCAN
+	select NRF71_SCAN_SUPPORT
 	default y if WIFI_USAGE_MODE_AP || WIFI_USAGE_MODE_STA_AP
 
 config NRF71_P2P_MODE
 	bool "P2P support in driver"
 	default y if WIFI_NM_WPA_SUPPLICANT_P2P
-	select NRF71_SCAN
+	select NRF71_SCAN_SUPPORT
 
 config NRF71_RAW_DATA_SUPPORT
 	bool
@@ -146,7 +146,7 @@ config NRF71_DATA_TX
 
 config NRF71_SCAN_ONLY
 	bool
-	default y if NRF71_SCAN && !NRF71_STA_MODE && !NRF71_AP_MODE && \
+	default y if NRF71_SCAN_SUPPORT && !NRF71_STA_MODE && !NRF71_AP_MODE && \
 		!NRF71_P2P_MODE && !NRF71_TX_INJECTION_SUPPORT && !NRF71_MONITOR_SUPPORT && \
 		!NRF71_PROMISCUOUS_SUPPORT
 
@@ -742,7 +742,7 @@ endchoice
 
 config NRF71_PASSIVE_SCAN
 	bool "Forced Passive scan"
-	depends on NRF71_SCAN
+	depends on NRF71_SCAN_SUPPORT
 	help
 	  Enable this configuration to force passive scan on all channels.
 	  This will override application-specified scan type.
