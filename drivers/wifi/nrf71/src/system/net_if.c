@@ -13,7 +13,7 @@
 #include <common/nbuf_mgmt.h>
 #include <stdlib.h>
 
-#ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#ifdef CONFIG_NRF71_RANDOM_MAC_ADDRESS
 #include <zephyr/random/random.h>
 #endif
 
@@ -783,8 +783,8 @@ unlock:
 }
 #endif /* CONFIG_NRF71_STA_SUPPORT */
 
-#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
-BUILD_ASSERT(sizeof(CONFIG_WIFI_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
+#ifdef CONFIG_NRF71_FIXED_MAC_ADDRESS_ENABLED
+BUILD_ASSERT(sizeof(CONFIG_NRF71_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
 					"Invalid fixed MAC address length");
 #endif
 
@@ -816,16 +816,16 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 
 	fmac_dev_ctx = rpu_ctx_zep->rpu_ctx;
 
-#ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
+#ifdef CONFIG_NRF71_FIXED_MAC_ADDRESS_ENABLED
 	char fixed_mac_addr[WIFI_MAC_ADDR_LEN];
 
 	ret = net_bytes_from_str(fixed_mac_addr,
 			WIFI_MAC_ADDR_LEN,
-			CONFIG_WIFI_FIXED_MAC_ADDRESS);
+			CONFIG_NRF71_FIXED_MAC_ADDRESS);
 	if (ret < 0) {
 		LOG_ERR("%s: Failed to parse MAC address: %s",
 			__func__,
-			CONFIG_WIFI_FIXED_MAC_ADDRESS);
+			CONFIG_NRF71_FIXED_MAC_ADDRESS);
 		goto unlock;
 	}
 
@@ -840,7 +840,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		nrf_wifi_mac_addr_derive(vif_ctx_zep->mac_addr.addr,
 					 vif_ctx_zep->vif_idx);
 	}
-#elif CONFIG_WIFI_RANDOM_MAC_ADDRESS
+#elif CONFIG_NRF71_RANDOM_MAC_ADDRESS
 	char random_mac_addr[WIFI_MAC_ADDR_LEN];
 
 	sys_rand_get(random_mac_addr, WIFI_MAC_ADDR_LEN);
@@ -849,7 +849,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 	memcpy(vif_ctx_zep->mac_addr.addr,
 		random_mac_addr,
 		WIFI_MAC_ADDR_LEN);
-#elif CONFIG_WIFI_NRF71_XICR_MAC_ADDRESS
+#elif CONFIG_NRF71_XICR_MAC_ADDRESS
 	ret = nrf_wifi_xicr_mac_addr_get(vif_ctx_zep->vif_idx,
 					 vif_ctx_zep->mac_addr.addr,
 					 NULL);
@@ -860,7 +860,7 @@ enum nrf_wifi_status nrf_wifi_get_mac_addr(struct nrf_wifi_vif_ctx_zep *vif_ctx_
 		goto unlock;
 	}
 #else
-#error "No Wi-Fi MAC address type selected, see choice WIFI_MAC_ADDRESS"
+#error "No Wi-Fi MAC address type selected, see choice NRF71_MAC_ADDRESS"
 #endif
 
 	if (!nrf_wifi_utils_is_mac_addr_valid(vif_ctx_zep->mac_addr.addr)) {
