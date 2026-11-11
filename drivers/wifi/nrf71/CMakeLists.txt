@@ -101,11 +101,11 @@ zephyr_library_sources_ifdef(CONFIG_NRF71_STA_SUPPORT
   src/system/wpa_supp_if.c
 )
 
-if(CONFIG_NRF71_UTIL OR CONFIG_NRF71_DEBUG_SHELL)
+if(CONFIG_NRF71_UTIL_SHELL OR CONFIG_NRF71_DEBUG_SHELL)
   zephyr_library_sources(src/common/shell.c)
 endif()
 
-zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL
+zephyr_library_sources_ifdef(CONFIG_NRF71_UTIL_SHELL
   src/common/util_shell.c
   src/system/drv_dbg_stats.c
 )
