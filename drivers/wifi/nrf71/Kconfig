@@ -170,7 +170,7 @@ config NRF71_LOW_POWER_SUPPORT
 	depends on !NRF71_RADIO_TEST_MODE && !NRF71_AP_SUPPORT
 	default y
 
-config NRF_WIFI_LP_RX
+config NRF71_LP_RX_SUPPORT
 	bool "Low power RF mode in nRF Wi-Fi chipsets"
 	depends on NRF71_LOW_POWER_SUPPORT
 	default y
