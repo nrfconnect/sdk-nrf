@@ -101,16 +101,19 @@ Manual update
 
     Use the ``--help`` option to see all possible options and descriptions of their use.
 
-  .. group-tab:: nrf Util
+  .. group-tab:: nRF Util
 
     .. note::
 
-      To use nRF Util for the update, you must install the nRF Util `device` command v2.14.0 or higher.
-      See `Installing specific versions of nRF Util commands`_ for more information.
+       To use nRF Util for the update, you must install the nRF Util ``device`` command v2.14.0 or higher:
+
+       .. nrfutil-command:: console
+
+          nrfutil install device
 
     You can update |ISE| by manually executing nRF Util commands that perform the same steps that the ``west`` command performs.
 
-    To perform the manual update process using nRF Util's `device <Device command overview_>`_ command, complete the following steps:
+    To perform the manual update process using nRF Util's `device <nrfutil device_>`_ command, complete the following steps:
 
     1. Extract the update bundle:
 

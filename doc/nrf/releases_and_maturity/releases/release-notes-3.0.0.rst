@@ -189,7 +189,7 @@ IDE, OS, and tool support
     * The :ref:`install_ncs` section with a list valid for both development environments.
       The list now includes nRF Util as an additional requirement for :ref:`west runner <programming_selecting_runner>`  for the |nRFVSC|, and the Windows-only requirement to install SEGGER USB Driver for J-Link for both development environments.
     * The command-line instructions now use the ``nrfutil sdk-manager`` command instead of the ``nrfutil toolchain-manager`` command.
-      You can read more about the new command in the `nRF Util documentation <sdk-manager command_>`_.
+      You can read more about the new command in the `nRF Util documentation <nrfutil sdk-manager_>`_.
 
   * Mentions of commands that use tools from the nRF Command Line Tools to use nRF Util.
     |nrf_CLT_deprecation_note|
