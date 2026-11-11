@@ -6,11 +6,13 @@
 
 #include <unity.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/fff.h>
+#include <nrf_errno.h>
 #include <nrf_modem_at.h>
 #include <nrf_socket.h>
 
@@ -36,6 +38,8 @@ DEFINE_FFF_GLOBALS;
 #define IPv4_DNS_SECONDARY_STR		"192.168.1.24"
 #define IPv6_DNS_PRIMARY_STR		"1111:2222:3:fff::55"
 #define IPv6_DNS_SECONDARY_STR		"2222:3333:4:eee:7777::66"
+#define IPv4_ADDR_STR			"10.0.0.130"
+#define IPv6_ADDR_STR			"1050:0000:0000:0000:0005:0600:300c:326b"
 
 #define CMD_CGDCONT_CID			"AT+CGDCONT=%u"
 #define CMD_CGDCONT_CID_FAM		"AT+CGDCONT=%u,%s"
@@ -54,6 +58,18 @@ DEFINE_FFF_GLOBALS;
 #define FAM_IPV4V6_STR			"IPV4V6"
 #define FAM_NONIP_STR			"Non-IP"
 #define APN_DEFAULT			"apn0"
+#define CGCONTRDP_APN			"internet.mnc001.mcc242.gprs"
+
+#define RESP_CGCONTRDP_IPV4 \
+	"+CGCONTRDP: 0,,\"" CGCONTRDP_APN "\",\"\",\"\",\"" \
+	IPv4_DNS_PRIMARY_STR "\",\"" IPv4_DNS_SECONDARY_STR "\",,,,,1500\r\n"
+#define RESP_CGCONTRDP_IPV6 \
+	"+CGCONTRDP: 0,,\"" CGCONTRDP_APN "\",\"\",\"\",\"" \
+	IPv6_DNS_PRIMARY_STR "\",\"" IPv6_DNS_SECONDARY_STR "\",,,,,1600\r\n"
+#define RESP_OK				"OK\r\n"
+
+#define AT_CMD_PDN_IP_ADDR_READ_PARSE \
+	"+CGPADDR: %*u,\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\""
 
 #define OPT_IPv4_ADDR_ALLOC_EXP		0xbe
 #define OPT_NSLPI_EXP			0x1
@@ -91,6 +107,29 @@ static struct lte_lc_evt pdn_evt;
 static uint8_t pdn_detach_cids[4];
 static size_t pdn_detach_cid_count;
 
+/* Response type returned by nrf_modem_at_scanf_custom_cgcontrdp(). */
+enum cgcontrdp_resp {
+	CGCONTRDP_RESP_IPV4V6,
+	CGCONTRDP_RESP_IPV4,
+	CGCONTRDP_RESP_IPV6,
+	CGCONTRDP_RESP_APN_ONLY,
+};
+
+static enum cgcontrdp_resp cgcontrdp_resp;
+
+/* Addresses and error returned by nrf_modem_at_scanf_custom_cgpaddr(). */
+static const char *cgpaddr_addr1;
+static const char *cgpaddr_addr2;
+static int cgpaddr_err;
+
+/* Response text parsed by nrf_modem_at_scanf_custom_resp(). */
+static const char *resp_cgcontrdp;
+static const char *resp_cgpaddr;
+
+static const uint8_t ipv4_addr[] = {10, 0, 0, 130};
+static const uint8_t ipv6_addr[] = {
+	0x10, 0x50, 0, 0, 0, 0, 0, 0, 0, 0x05, 0x06, 0, 0x30, 0x0c, 0x32, 0x6b
+};
 static const char ipv4_dns_primary[] = {192, 168, 1, 23};
 static const char ipv4_dns_secondary[] = {192, 168, 1, 24};
 static const char ipv6_dns_primary[] = {17, 17, 34, 34, 0, 3, 15, 255, 0, 0, 0, 0, 0, 0, 0, 85};
@@ -167,6 +206,11 @@ static void k_free_PDN2(void *data)
 	TEST_ASSERT_EQUAL_PTR(&pdn2, data);
 }
 
+/* When set, nrf_inet_pton_custom() writes garbage to dst before failing, to check that the
+ * caller does not keep a partially converted address.
+ */
+static bool inet_pton_scribble_on_failure;
+
 static int nrf_inet_pton_custom(int family, const char *src, void *dst)
 {
 	switch (family) {
@@ -179,6 +223,10 @@ static int nrf_inet_pton_custom(int family, const char *src, void *dst)
 			memcpy(dst, ipv4_dns_secondary, sizeof(ipv4_dns_secondary));
 			return 1;
 		}
+		if (strcmp(src, IPv4_ADDR_STR) == 0) {
+			memcpy(dst, ipv4_addr, sizeof(ipv4_addr));
+			return 1;
+		}
 		break;
 	case NRF_AF_INET6:
 		if (memcmp(src, IPv6_DNS_PRIMARY_STR, strlen(IPv6_DNS_PRIMARY_STR)) == 0) {
@@ -189,7 +237,16 @@ static int nrf_inet_pton_custom(int family, const char *src, void *dst)
 			memcpy(dst, ipv6_dns_secondary, sizeof(ipv6_dns_secondary));
 			return 1;
 		}
+		if (strcmp(src, IPv6_ADDR_STR) == 0) {
+			memcpy(dst, ipv6_addr, sizeof(ipv6_addr));
+			return 1;
+		}
 		break;
+	}
+
+	if (inet_pton_scribble_on_failure) {
+		memset(dst, 0xab, (family == NRF_AF_INET6) ? sizeof(struct net_in6_addr) :
+							      sizeof(struct net_in_addr));
 	}
 
 	return 0;
@@ -731,32 +788,101 @@ static int nrf_modem_at_scanf_custom_cgdcont(const char *cmd, const char *fmt, v
 }
 
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1 \
-	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%15[0-9.]\",\"%15[0-9.]\",,,,,%u"
+	"+CGCONTRDP: %*u,,\"%64[^\"]\",\"\",\"\",\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\",,,,,%u"
 #define AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2 \
 	"+%*[^+]" \
-	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%39[0-9A-Fa-f:]\",\"%39[0-9A-Fa-f:]\",,,,,%u"
+	"+CGCONTRDP: %*u,,\"%*[^\"]\",\"\",\"\",\"%45[.:0-9A-Fa-f]\",\"%45[.:0-9A-Fa-f]\",,,,,%u"
+
+static int nrf_modem_at_scanf_custom_cgpaddr(const char *cmd, const char *fmt, va_list args)
+{
+	char *addr1;
+	char *addr2;
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGPADDR=0", cmd);
+	TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_IP_ADDR_READ_PARSE, fmt);
+
+	if (cgpaddr_err) {
+		return cgpaddr_err;
+	}
+
+	addr1 = va_arg(args, char *);
+	addr2 = va_arg(args, char *);
+
+	if (!cgpaddr_addr1) {
+		/* "+CGPADDR: 0", no address assigned. */
+		return -NRF_EBADMSG;
+	}
+
+	strcpy(addr1, cgpaddr_addr1);
+
+	if (!cgpaddr_addr2) {
+		return 1;
+	}
+
+	strcpy(addr2, cgpaddr_addr2);
+
+	return 2;
+}
 
 static int nrf_modem_at_scanf_custom_cgcontrdp(const char *cmd, const char *fmt, va_list args)
 {
+	char *apn;
 	char *dns1;
 	char *dns2;
 	unsigned int *mtu;
 
-	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
+	if (strcmp(cmd, "AT+CGPADDR=0") == 0) {
+		/* The IP addresses are read after the two AT+CGCONTRDP lines. */
+		TEST_ASSERT_EQUAL(3, nrf_modem_at_scanf_fake.call_count);
 
-	dns1 = va_arg(args, char *);
-	dns2 = va_arg(args, char *);
-	mtu = va_arg(args, unsigned int *);
+		return nrf_modem_at_scanf_custom_cgpaddr(cmd, fmt, args);
+	}
+
+	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
 
 	switch (nrf_modem_at_scanf_fake.call_count) {
 	case 1:
 		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
-		strcpy(dns1, IPv4_DNS_PRIMARY_STR);
-		strcpy(dns2, IPv4_DNS_SECONDARY_STR);
-		*mtu = 1500;
-		return 3;
+
+		apn = va_arg(args, char *);
+		dns1 = va_arg(args, char *);
+		dns2 = va_arg(args, char *);
+		mtu = va_arg(args, unsigned int *);
+
+		strcpy(apn, CGCONTRDP_APN);
+
+		switch (cgcontrdp_resp) {
+		case CGCONTRDP_RESP_IPV4V6:
+		case CGCONTRDP_RESP_IPV4:
+			strcpy(dns1, IPv4_DNS_PRIMARY_STR);
+			strcpy(dns2, IPv4_DNS_SECONDARY_STR);
+
+			*mtu = 1500;
+
+			return 4;
+		case CGCONTRDP_RESP_IPV6:
+			strcpy(dns1, IPv6_DNS_PRIMARY_STR);
+			strcpy(dns2, IPv6_DNS_SECONDARY_STR);
+
+			*mtu = 1600;
+
+			return 4;
+		case CGCONTRDP_RESP_APN_ONLY:
+			/* No DNS addresses, so the scan stops after the APN. */
+			return 1;
+		}
+		break;
 	case 2:
 		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
+
+		if (cgcontrdp_resp != CGCONTRDP_RESP_IPV4V6) {
+			return -NRF_EBADMSG;
+		}
+
+		dns1 = va_arg(args, char *);
+		dns2 = va_arg(args, char *);
+		mtu = va_arg(args, unsigned int *);
+
 		strcpy(dns1, IPv6_DNS_PRIMARY_STR);
 		strcpy(dns2, IPv6_DNS_SECONDARY_STR);
 		*mtu = 1600;
@@ -766,69 +892,7 @@ static int nrf_modem_at_scanf_custom_cgcontrdp(const char *cmd, const char *fmt,
 		break;
 	}
 
-	return -EBADMSG;
-}
-
-static int nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4(
-	const char *cmd, const char *fmt, va_list args)
-{
-	char *dns1;
-	char *dns2;
-	unsigned int *mtu;
-
-	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
-
-	dns1 = va_arg(args, char *);
-	dns2 = va_arg(args, char *);
-	mtu = va_arg(args, unsigned int *);
-
-	switch (nrf_modem_at_scanf_fake.call_count) {
-	case 1:
-		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
-		strcpy(dns1, IPv4_DNS_PRIMARY_STR);
-		strcpy(dns2, IPv4_DNS_SECONDARY_STR);
-		*mtu = 1500;
-		return 3;
-	case 2:
-		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
-		return -EBADMSG;
-	default:
-		TEST_ASSERT(false);
-		break;
-	}
-
-	return -EBADMSG;
-}
-
-static int nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6(
-	const char *cmd, const char *fmt, va_list args)
-{
-	char *dns1;
-	char *dns2;
-	unsigned int *mtu;
-
-	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
-
-	dns1 = va_arg(args, char *);
-	dns2 = va_arg(args, char *);
-	mtu = va_arg(args, unsigned int *);
-
-	switch (nrf_modem_at_scanf_fake.call_count) {
-	case 1:
-		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE1, fmt);
-		strcpy(dns1, IPv6_DNS_PRIMARY_STR);
-		strcpy(dns2, IPv6_DNS_SECONDARY_STR);
-		*mtu = 1600;
-		return 3;
-	case 2:
-		TEST_ASSERT_EQUAL_STRING(AT_CMD_PDN_CONTEXT_READ_INFO_PARSE_LINE2, fmt);
-		return -EBADMSG;
-	default:
-		TEST_ASSERT(false);
-		break;
-	}
-
-	return -EBADMSG;
+	return -NRF_EBADMSG;
 }
 
 static int nrf_modem_at_scanf_custom_cgcontrdp_no_match(
@@ -836,7 +900,28 @@ static int nrf_modem_at_scanf_custom_cgcontrdp_no_match(
 {
 	TEST_ASSERT_EQUAL_STRING("AT+CGCONTRDP=0", cmd);
 
-	return -EBADMSG;
+	return -NRF_EBADMSG;
+}
+
+/* Parses the response text with the format string, like nrf_modem_at_scanf() does. */
+static int nrf_modem_at_scanf_custom_resp(const char *cmd, const char *fmt, va_list args)
+{
+	const char *resp;
+	int ret;
+
+	if (strcmp(cmd, "AT+CGCONTRDP=0") == 0) {
+		resp = resp_cgcontrdp;
+	} else if (strcmp(cmd, "AT+CGPADDR=0") == 0) {
+		resp = resp_cgpaddr;
+	} else {
+		TEST_FAIL_MESSAGE("Unexpected AT command");
+
+		return -EINVAL;
+	}
+
+	ret = vsscanf(resp, fmt, args);
+
+	return (ret > 0) ? ret : -NRF_EBADMSG;
 }
 
 static int nrf_modem_at_printf_cellularprfl(const char *cmd, va_list args)
@@ -983,11 +1068,20 @@ void setUp(void)
 	RESET_FAKE(nrf_modem_at_printf);
 	RESET_FAKE(nrf_modem_at_scanf);
 	RESET_FAKE(nrf_modem_at_cmd);
+	RESET_FAKE(nrf_inet_pton);
 
 	memset(&pdn_evt, 0, sizeof(struct lte_lc_evt));
 	memset(pdn_detach_cids, 0, sizeof(pdn_detach_cids));
 
 	pdn_detach_cid_count = 0;
+
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV4V6;
+	cgpaddr_addr1 = NULL;
+	cgpaddr_addr2 = NULL;
+	cgpaddr_err = 0;
+	resp_cgcontrdp = NULL;
+	resp_cgpaddr = NULL;
+	inet_pton_scribble_on_failure = false;
 
 	nrf_inet_pton_fake.custom_fake = nrf_inet_pton_custom;
 	k_malloc_fake.custom_fake = k_malloc_custom;
@@ -1707,7 +1801,10 @@ void test_lte_lc_pdn_dynamic_info_get_ebadmsg(void)
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_no_match;
 
 	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
-	TEST_ASSERT_EQUAL(-EBADMSG, ret);
+	TEST_ASSERT_EQUAL(-NRF_EBADMSG, ret);
+
+	/* The IP addresses are not read when AT+CGCONTRDP fails. */
+	TEST_ASSERT_EQUAL(1, nrf_modem_at_scanf_fake.call_count);
 }
 
 void test_lte_lc_pdn_dynamic_info_get(void)
@@ -1715,11 +1812,16 @@ void test_lte_lc_pdn_dynamic_info_get(void)
 	int ret;
 	struct lte_lc_pdn_dynamic_info pdn_info = {};
 
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV4V6;
+	cgpaddr_addr1 = IPv4_ADDR_STR;
+	cgpaddr_addr2 = IPv6_ADDR_STR;
 	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
 
 	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL(3, nrf_modem_at_scanf_fake.call_count);
 
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
 	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
 	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
@@ -1730,18 +1832,24 @@ void test_lte_lc_pdn_dynamic_info_get(void)
 				 sizeof(ipv6_dns_primary));
 	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
 				 sizeof(ipv6_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
 }
 
 void test_lte_lc_pdn_dynamic_info_get_match_ipv4(void)
 {
 	int ret;
 	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in6_addr zero6 = {};
 
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv4;
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV4;
+	cgpaddr_addr1 = IPv4_ADDR_STR;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
 
 	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
 	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
 	TEST_ASSERT_EQUAL(0, pdn_info.ipv6_mtu);
 
@@ -1749,18 +1857,25 @@ void test_lte_lc_pdn_dynamic_info_get_match_ipv4(void)
 				 sizeof(ipv4_dns_primary));
 	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_secondary, &pdn_info.dns_addr4_secondary,
 				 sizeof(ipv4_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
 }
 
 void test_lte_lc_pdn_dynamic_info_get_match_ipv6(void)
 {
 	int ret;
 	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
 
-	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp_match_ipv6;
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV6;
+	/* For an IPv6-only PDN connection, the IPv6 address is the first address. */
+	cgpaddr_addr1 = IPv6_ADDR_STR;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
 
 	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
 	TEST_ASSERT_EQUAL(0, ret);
 
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
 	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
 	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
 
@@ -1768,6 +1883,267 @@ void test_lte_lc_pdn_dynamic_info_get_match_ipv6(void)
 				 sizeof(ipv6_dns_primary));
 	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
 				 sizeof(ipv6_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_ipv6_not_up(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in6_addr zero6 = {};
+
+	/* Dual stack PDN connection, but the IPv6 address is not assigned yet. */
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV4V6;
+	cgpaddr_addr1 = IPv4_ADDR_STR;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_apn_only(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info;
+	struct lte_lc_pdn_dynamic_info expected;
+
+	/* Fill with garbage to check that all fields are reset. */
+	memset(&pdn_info, 0xab, sizeof(pdn_info));
+
+	memset(&expected, 0, sizeof(expected));
+	strcpy(expected.apn, CGCONTRDP_APN);
+
+	/* No DNS addresses and no IP address assigned. */
+	cgcontrdp_resp = CGCONTRDP_RESP_APN_ONLY;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+	TEST_ASSERT_EQUAL_MEMORY(&expected, &pdn_info, sizeof(expected));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_cgpaddr_error(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
+	const struct net_in6_addr zero6 = {};
+
+	/* Failing to read the IP addresses does not discard the other parameters. */
+	cgcontrdp_resp = CGCONTRDP_RESP_IPV4;
+	cgpaddr_err = -NRF_ESHUTDOWN;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_cgcontrdp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
+				 sizeof(ipv4_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_ipv4v6(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_CGCONTRDP_IPV6 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv4_ADDR_STR "\",\"" IPv6_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
+				 sizeof(ipv4_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_secondary, &pdn_info.dns_addr4_secondary,
+				 sizeof(ipv4_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_primary, &pdn_info.dns_addr6_primary,
+				 sizeof(ipv6_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
+				 sizeof(ipv6_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_ipv6_only(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
+
+	/* An IPv6-only PDN connection has a single line with the IPv6 parameters. */
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV6 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv6_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_primary, &pdn_info.dns_addr6_primary,
+				 sizeof(ipv6_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_secondary, &pdn_info.dns_addr6_secondary,
+				 sizeof(ipv6_dns_secondary));
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_ipv4_only(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in6_addr zero6 = {};
+
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv4_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_dns_primary, &pdn_info.dns_addr4_primary,
+				 sizeof(ipv4_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_ipv6_not_up(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in6_addr zero6 = {};
+
+	/* Dual stack PDN connection, but only the IPv4 address is assigned so far. */
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_CGCONTRDP_IPV6 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv4_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_no_ip_addr(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
+	const struct net_in6_addr zero6 = {};
+
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_cgpaddr_error(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
+	const struct net_in6_addr zero6 = {};
+
+	/* An error response matches nothing, so it is handled like no address. */
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_OK;
+	resp_cgpaddr = "ERROR\r\n";
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL(1500, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(&zero6, &pdn_info.ipv6_addr, sizeof(zero6));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_invalid_ip_addr(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+	const struct net_in_addr zero4 = {};
+
+	/* The IPv4 address is not accepted by nrf_inet_pton(), which writes garbage before
+	 * failing. The IPv6 address is still converted.
+	 */
+	inet_pton_scribble_on_failure = true;
+	resp_cgcontrdp = RESP_CGCONTRDP_IPV4 RESP_CGCONTRDP_IPV6 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"10.0.0.999\",\"" IPv6_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_MEMORY(&zero4, &pdn_info.ipv4_addr, sizeof(zero4));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_no_dns(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+
+	/* The DNS fields are empty, so the scan stops after the APN, and the MTU is not read. */
+	resp_cgcontrdp = "+CGCONTRDP: 0,,\"" CGCONTRDP_APN "\",\"\",\"\",\"\",\"\",,,,,1500\r\n"
+			 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv4_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+}
+
+void test_lte_lc_pdn_dynamic_info_get_resp_ipv4v6_no_ipv4_dns(void)
+{
+	int ret;
+	struct lte_lc_pdn_dynamic_info pdn_info = {};
+
+	/* Dual stack PDN connection where only the IPv6 line has DNS addresses. */
+	resp_cgcontrdp = "+CGCONTRDP: 0,,\"" CGCONTRDP_APN "\",\"\",\"\",\"\",\"\",,,,,1500\r\n"
+			 RESP_CGCONTRDP_IPV6 RESP_OK;
+	resp_cgpaddr = "+CGPADDR: 0,\"" IPv4_ADDR_STR "\",\"" IPv6_ADDR_STR "\"\r\n" RESP_OK;
+	nrf_modem_at_scanf_fake.custom_fake = nrf_modem_at_scanf_custom_resp;
+
+	ret = lte_lc_pdn_dynamic_info_get(0, &pdn_info);
+	TEST_ASSERT_EQUAL(0, ret);
+
+	TEST_ASSERT_EQUAL_STRING(CGCONTRDP_APN, pdn_info.apn);
+	TEST_ASSERT_EQUAL(0, pdn_info.ipv4_mtu);
+	TEST_ASSERT_EQUAL(1600, pdn_info.ipv6_mtu);
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_dns_primary, &pdn_info.dns_addr6_primary,
+				 sizeof(ipv6_dns_primary));
+	TEST_ASSERT_EQUAL_MEMORY(ipv4_addr, &pdn_info.ipv4_addr, sizeof(ipv4_addr));
+	TEST_ASSERT_EQUAL_MEMORY(ipv6_addr, &pdn_info.ipv6_addr, sizeof(ipv6_addr));
 }
 
 void test_lte_lc_cellular_profile_configure_einval(void)
