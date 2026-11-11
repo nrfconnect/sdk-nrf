@@ -283,11 +283,11 @@ void nrf_wifi_if_rx_frm(void *os_vif_ctx, void *frm)
 		return;
 	}
 
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(vif_ctx_zep))) {
 		net_pkt_set_chksum_done(pkt, true);
 	}
-#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
 	status = net_recv_data(iface, pkt);
 
@@ -375,12 +375,12 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 	enum ethernet_hw_caps caps = (ETHERNET_LINK_10BASE |
 			ETHERNET_LINK_100BASE | ETHERNET_LINK_1000BASE);
 
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(nrf_wifi_get_fmac_vif_ctx(dev->data))) {
 		caps |= ETHERNET_HW_TX_CHKSUM_OFFLOAD |
 			ETHERNET_HW_RX_CHKSUM_OFFLOAD;
 	}
-#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
 #ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	caps |= ETHERNET_TXINJECTION_MODE;
@@ -1387,7 +1387,7 @@ int nrf_wifi_if_get_config_zep(const struct device *dev,
 		config->txinjection_mode = vif->txinjection_mode;
 	}
 #endif
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	if (type  == ETHERNET_CONFIG_TYPE_TX_CHECKSUM_SUPPORT ||
 	    type == ETHERNET_CONFIG_TYPE_RX_CHECKSUM_SUPPORT) {
 		if (nrf_wifi_fmac_tcp_ip_chksum_offload_ok(
