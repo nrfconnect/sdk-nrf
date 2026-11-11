@@ -65,7 +65,7 @@ enum nrf_wifi_status umac_cmd_sys_init(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ct
 	umac_cmd_data->sys_params.sleep_enable = sleep_type;
 #endif /* CONFIG_NRF71_LOW_POWER_SUPPORT */
 
-	umac_cmd_data->discon_timeout = CONFIG_NRF_WIFI_AP_DEAD_DETECT_TIMEOUT;
+	umac_cmd_data->discon_timeout = CONFIG_NRF71_AP_DEAD_DETECT_TIMEOUT;
 #ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
 	umac_cmd_data->watchdog_timer_val =
 		(CONFIG_NRF_WIFI_RPU_RECOVERY_PS_ACTIVE_TIMEOUT_MS) / 1000;
