@@ -689,7 +689,7 @@ out:
 }
 
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static void umac_event_connect(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 			       void *event_data)
 {
@@ -745,7 +745,7 @@ static void umac_event_connect(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	return;
 
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 
 static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -913,7 +913,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		vif_ctx->ifflags_status = evnt_vif_state->status;
 		vif_ctx->ifflags = true;
 		break;
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	case NRF_WIFI_UMAC_EVENT_SET_INTERFACE:
 		if (callbk_fns->set_if_callbk_fn) {
 			callbk_fns->set_if_callbk_fn(vif_ctx->os_vif_ctx,
@@ -926,7 +926,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 		}
 		break;
 #endif
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	case NRF_WIFI_UMAC_EVENT_TWT_SLEEP:
 		if (callbk_fns->twt_sleep_callbk_fn) {
 			callbk_fns->twt_sleep_callbk_fn(vif_ctx->os_vif_ctx,
@@ -1136,13 +1136,13 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 					      umac_hdr->cmd_evnt);
 		}
 		break;
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	case NRF_WIFI_UMAC_EVENT_NEW_STATION:
 	case NRF_WIFI_UMAC_EVENT_DEL_STATION:
 		umac_event_connect(fmac_dev_ctx,
 				   event_data);
 		break;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_P2P_MODE
 	case NRF_WIFI_UMAC_EVENT_REMAIN_ON_CHANNEL:
 		if (callbk_fns->roc_callbk_fn) {
@@ -1178,7 +1178,7 @@ static enum nrf_wifi_status umac_event_ctrl_process(struct nrf_wifi_fmac_dev_ctx
 					      umac_hdr->cmd_evnt);
 		}
 		break;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	default:
 		LOG_DBG("%s: No callback registered for event %d",
 				      __func__,
