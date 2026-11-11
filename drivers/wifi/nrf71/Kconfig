@@ -16,6 +16,7 @@ menuconfig WIFI_NRF71
 	select SPSC_PBUF
 	select SOC_NRF71_WIFI_BOOT
 	select VTF_MONITORING
+	select NRF_WIFI_KMU
 	default y
 	depends on DT_HAS_NORDIC_NRF7120_WIFI_ENABLED
 	help
@@ -857,14 +858,6 @@ config NRF71_TWT_SETUP_TIMEOUT_MS
 	  The STA will transmit a TWT setup request every 100 milliseconds,
 	  continuing until this timeout value is reached. If no response is
 	  received before the timeout expires, the TWT setup is considered failed.
-
-config NRF71_USE_KMU
-	bool "Use KMU for key installation"
-	depends on NRF_WIFI_KMU
-	default y
-	help
-	  Use KMU for key installation. This is the default KMU for the
-	  nRF71 Wi-Fi chip.
 
 config NRF71_CMD_EVENT_LOG
 	bool "Log HAL command/events (debug)"

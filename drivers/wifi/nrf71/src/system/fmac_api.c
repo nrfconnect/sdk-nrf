@@ -1003,7 +1003,6 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_USE_KMU
 /**
  * @brief Whether UMAC needs IGTK/BIP key bytes (PMF mgmt MIC), not host crypto alone.
  */
@@ -1024,7 +1023,6 @@ static bool nrf_wifi_fmac_umac_needs_mgmt_key_material(unsigned int cipher_suite
 		return false;
 	}
 }
-#endif /* CONFIG_NRF71_USE_KMU */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 					       unsigned char if_idx,
@@ -1068,7 +1066,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 			      key_info,
 			      sizeof(key_cmd->key_info));
 
-#ifdef CONFIG_NRF71_USE_KMU
 	struct nrf_wifi_key *key = &key_cmd->key_info.key;
 
 	if (!nrf_wifi_fmac_umac_needs_mgmt_key_material(key_cmd->key_info.cipher_suite,
@@ -1088,7 +1085,6 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_add_key(void *dev_ctx,
 				 16);
 		key->nrf_wifi_key_len = 32;
 	}
-#endif /* CONFIG_NRF71_USE_KMU */
 
 	if (mac_addr) {
 		nrf_wifi_mem_cpy(key_cmd->mac_addr,

@@ -26,9 +26,7 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/wpa_supp_if.h>
 #include <system/fmac_peer.h>
 
-#ifdef CONFIG_NRF71_USE_KMU
 #include <wifi_kmu/wifi_kmu.h>
-#endif
 
 K_SEM_DEFINE(wait_for_event_sem, 0, 1);
 K_SEM_DEFINE(wait_for_scan_resp_sem, 0, 1);
@@ -1117,7 +1115,6 @@ out:
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_USE_KMU
 static bool is_mic_cipher_suite(unsigned int suite)
 {
 	return (suite == RSN_CIPHER_SUITE_AES_128_CMAC ||
@@ -1219,7 +1216,6 @@ static int wifi_import_key_to_crypto(unsigned int suite, const unsigned char *ke
 
 	return 0;
 }
-#endif /* CONFIG_NRF71_USE_KMU */
 
 int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum wpa_alg alg,
 			      const unsigned char *addr, int key_idx, int set_tx,
@@ -1267,13 +1263,11 @@ int nrf_wifi_wpa_supp_set_key(void *if_priv, const unsigned char *ifname, enum w
 		if (!suite) {
 			goto out;
 		}
-#ifdef CONFIG_NRF71_USE_KMU
 		ret = wifi_import_key_to_crypto(suite, key, key_len, addr, key_idx, 0);
 		if (ret) {
 			LOG_ERR("%s: Failed to import key to crypto: %d", __func__, ret);
 			goto out;
 		}
-#endif /* CONFIG_NRF71_USE_KMU */
 
 		memcpy(key_info.key.nrf_wifi_key, key, key_len);
 		key_info.key.nrf_wifi_key_len = key_len;
