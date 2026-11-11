@@ -481,9 +481,9 @@ enum nrf_wifi_status nrf_wifi_fmac_rx_event_process(struct nrf_wifi_fmac_dev_ctx
 							config->signal);
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
 			nrf_wifi_nbuf_free(nwb);
-#ifdef CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD
+#ifdef CONFIG_NRF71_MGMT_BUFF_OFFLOAD
 			continue;
-#endif /* CONFIG_NRF_WIFI_MGMT_BUFF_OFFLOAD */
+#endif /* CONFIG_NRF71_MGMT_BUFF_OFFLOAD */
 		}
 #if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 		else if (config->rx_pkt_type == NRF_WIFI_RAW_RX_PKT) {
