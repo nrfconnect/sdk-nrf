@@ -181,7 +181,8 @@ class Fota:
         # Generate a random 16-character hex string for instance_id
         random_instance_id = binascii.b2a_hex(os.urandom(8)).decode()
         logging.info(f'Generated random instance_id: {random_instance_id}')
-        app_resource_id = self.coiote.fota_resource_allocate(app_binary, random_instance_id)
+        app_resource_id = self.coiote.fota_resource_allocate(os.path.basename(app_binary),
+                                                             random_instance_id)
         if app_resource_id:
             resp = self.coiote.upload_fota_file(app_resource_id, f_payload)
             if resp is None:
