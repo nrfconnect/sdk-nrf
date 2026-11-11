@@ -125,16 +125,15 @@ int lwm2m_carrier_event_handler(const lwm2m_carrier_event_t *event)
 	switch (event->type) {
 	case LWM2M_CARRIER_EVENT_LTE_LINK_UP:
 		mosh_print("LwM2M carrier event: request LTE Link up");
-		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
-				   link_sett_is_normal_mode_autoconn_rel14_used());
+		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 		return 0;
 	case LWM2M_CARRIER_EVENT_LTE_LINK_DOWN:
 		mosh_print("LwM2M carrier event: request LTE Link down");
-		link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE, false);
+		link_func_mode_set(LTE_LC_FUNC_MODE_OFFLINE);
 		break;
 	case LWM2M_CARRIER_EVENT_LTE_POWER_OFF:
 		mosh_print("LwM2M carrier event: request LTE Power off");
-		link_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF, false);
+		link_func_mode_set(LTE_LC_FUNC_MODE_POWER_OFF);
 		break;
 	case LWM2M_CARRIER_EVENT_BOOTSTRAPPED:
 		mosh_print("LwM2M carrier event: bootstrapped");

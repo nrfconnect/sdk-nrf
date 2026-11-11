@@ -249,8 +249,7 @@ void link_init(void)
 	}
 
 	if (link_sett_is_normal_mode_autoconn_enabled() == true) {
-		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL,
-				   link_sett_is_normal_mode_autoconn_rel14_used());
+		link_func_mode_set(LTE_LC_FUNC_MODE_NORMAL);
 	}
 }
 
@@ -542,24 +541,6 @@ static int link_default_pdp_context_auth_set(void)
 	return 0;
 }
 
-static int link_enable_disable_rel14_features(bool enable)
-{
-	int ret;
-
-	if (enable) {
-		ret = nrf_modem_at_printf("AT%%REL14FEAT=1,1,1,1,1");
-	} else {
-		ret = nrf_modem_at_printf("AT%%REL14FEAT=0,0,0,0,0");
-	}
-
-	if (ret < 0) {
-		mosh_warn("Release 14 features %s AT-command failed, err %d",
-			((enable) ? "enable" : "disable"),
-			ret);
-	}
-	return 0;
-}
-
 static int link_normal_mode_at_cmds_run(void)
 {
 	char *normal_mode_at_cmd;
@@ -687,7 +668,7 @@ void link_modem_tau_notifications_unsubscribe(void)
 	}
 }
 
-int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
+int link_func_mode_set(enum lte_lc_func_mode fun)
 {
 	int ret = 0;
 	int sysmode;
@@ -703,9 +684,6 @@ int link_func_mode_set(enum lte_lc_func_mode fun, bool rel14_used)
 		ret = lte_lc_offline();
 		break;
 	case LTE_LC_FUNC_MODE_NORMAL:
-		/* Enable/disable Rel14 features before going to normal mode */
-		link_enable_disable_rel14_features(rel14_used);
-
 		/* (Re)register for rsrp notifications */
 		modem_info_rsrp_register(link_rsrp_signal_handler);
 

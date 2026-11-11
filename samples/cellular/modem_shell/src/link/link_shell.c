@@ -151,7 +151,6 @@ static const char link_funmode_usage_str[] =
 	"  -r, --read,            Read modem functional mode\n"
 	"  -0, --pwroff,          Set modem to minimum functionality mode\n"
 	"  -1, --normal,          Set modem to normal mode\n"
-	"      --normal_no_rel14, Set modem to normal mode without enabling Release 14 features\n"
 	"  -2, --rxonly,          Set modem to RX only mode\n"
 	"  -4, --flightmode,      Set modem to flight mode\n"
 	"      --lteoff,          Deactivate LTE\n"
@@ -181,13 +180,12 @@ static const char link_normal_mode_at_usage_str[] =
 	"  -h, --help,       Shows this help information";
 
 static const char link_normal_mode_auto_usage_str[] =
-	"Usage: link nmodeauto --read | --enable | --enable_no_rel14 | --disable\n"
+	"Usage: link nmodeauto --read | --enable | --disable\n"
 	"Options:\n"
-	"  -r, --read,            Read and print current setting\n"
-	"  -e, --enable,          Enable autoconnect (default)\n"
-	"      --enable_no_rel14, Enable autoconnect without setting Release 14 features\n"
-	"  -d, --disable,         Disable autoconnect\n"
-	"  -h, --help,            Shows this help information";
+	"  -r, --read,    Read and print current setting\n"
+	"  -e, --enable,  Enable autoconnect (default)\n"
+	"  -d, --disable, Disable autoconnect\n"
+	"  -h, --help,    Shows this help information";
 
 static const char link_edrx_usage_str[] =
 	"Usage: link edrx --enable [options] | --disable | --read\n"
@@ -447,7 +445,6 @@ enum {
 	LINK_SHELL_OPT_SEARCH_CFG,
 	LINK_SHELL_OPT_SEARCH_PATTERN_RANGE,
 	LINK_SHELL_OPT_SEARCH_PATTERN_TABLE,
-	LINK_SHELL_OPT_NMODE_NO_REL14,
 	LINK_SHELL_OPT_WRITE,
 	LINK_SHELL_OPT_REDMOB_DEFAULT,
 	LINK_SHELL_OPT_REDMOB_NORDIC,
@@ -497,7 +494,6 @@ static struct sys_getopt_option long_options[] = {
 	{"ltem_gnss", sys_getopt_no_argument, 0, 'M'},
 	{"nbiot_gnss", sys_getopt_no_argument, 0, 'N'},
 	{"enable", sys_getopt_no_argument, 0, 'e'},
-	{"enable_no_rel14", sys_getopt_no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14},
 	{"disable", sys_getopt_no_argument, 0, 'd'},
 	{"ltem_edrx", sys_getopt_required_argument, 0, LINK_SHELL_OPT_LTEM_EDRX},
 	{"ltem_ptw", sys_getopt_required_argument, 0, LINK_SHELL_OPT_LTEM_PTW},
@@ -544,7 +540,6 @@ static struct sys_getopt_option long_options[] = {
 	 LINK_SHELL_OPT_SEARCH_PATTERN_RANGE},
 	{"search_pattern_table", sys_getopt_required_argument, 0,
 	 LINK_SHELL_OPT_SEARCH_PATTERN_TABLE},
-	{"normal_no_rel14", sys_getopt_no_argument, 0, LINK_SHELL_OPT_NMODE_NO_REL14},
 	{"default", sys_getopt_no_argument, 0, LINK_SHELL_OPT_REDMOB_DEFAULT},
 	{"nordic", sys_getopt_no_argument, 0, LINK_SHELL_OPT_REDMOB_NORDIC},
 	{"init", sys_getopt_no_argument, 0, LINK_SHELL_OPT_MODEM_INIT},
@@ -1608,7 +1603,6 @@ show_usage:
 static int link_shell_funmode(const struct shell *shell, size_t argc, char **argv)
 {
 	int ret = 0;
-	bool nmode_use_rel14 = true;
 	enum lte_lc_func_mode funmode_option = LINK_FUNMODE_NONE;
 	enum lte_lc_func_mode functional_mode;
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
@@ -1672,10 +1666,6 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 		case LINK_SHELL_OPT_FUNMODE_FLIGHTMODE_KEEPREG_UICCON:
 			funmode_option = LTE_LC_FUNC_MODE_OFFLINE_KEEP_REG_UICC_ON;
 			break;
-		case LINK_SHELL_OPT_NMODE_NO_REL14:
-			funmode_option = LTE_LC_FUNC_MODE_NORMAL;
-			nmode_use_rel14 = false;
-			break;
 
 		case 'h':
 			goto show_usage;
@@ -1701,7 +1691,7 @@ static int link_shell_funmode(const struct shell *shell, size_t argc, char **arg
 				link_shell_funmode_to_string(functional_mode, snum));
 		}
 	} else if (funmode_option != LINK_FUNMODE_NONE) {
-		ret = link_func_mode_set(funmode_option, nmode_use_rel14);
+		ret = link_func_mode_set(funmode_option);
 		if (ret < 0) {
 			mosh_error("Cannot set functional mode: %d", ret);
 		} else {
@@ -2009,7 +1999,6 @@ show_usage:
 static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **argv)
 {
 	enum link_shell_operation operation = LINK_OPERATION_NONE;
-	bool nmode_use_rel14 = true;
 
 	sys_getopt_init();
 
@@ -2025,11 +2014,6 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 				goto show_usage;
 			}
 			link_shell_getopt_operation(opt, &operation);
-			break;
-
-		case LINK_SHELL_OPT_NMODE_NO_REL14:
-			operation = LINK_OPERATION_ENABLE;
-			nmode_use_rel14 = false;
 			break;
 
 		case 'h':
@@ -2049,9 +2033,9 @@ static int link_shell_nmodeauto(const struct shell *shell, size_t argc, char **a
 	if (operation == LINK_OPERATION_READ) {
 		link_sett_normal_mode_autoconn_shell_print();
 	} else if (operation == LINK_OPERATION_ENABLE) {
-		link_sett_save_normal_mode_autoconn_enabled(true, nmode_use_rel14);
+		link_sett_save_normal_mode_autoconn_enabled(true);
 	} else if (operation == LINK_OPERATION_DISABLE) {
-		link_sett_save_normal_mode_autoconn_enabled(false, nmode_use_rel14);
+		link_sett_save_normal_mode_autoconn_enabled(false);
 	} else {
 		goto show_usage;
 	}

@@ -669,7 +669,12 @@ Cellular samples
 * :ref:`modem_shell_application` sample:
 
   * Added Wi-Fi scan parameter options to the ``location get`` command.
-  * Removed support for Bluetooth shell.
+
+  * Removed:
+
+    * Support for Bluetooth shell.
+    * Support for the ``--normal_no_rel14`` option from the ``link funmode`` command and the ``--enable_no_rel14`` option from the ``link nmodeauto`` command.
+      The ``AT%REL14FEAT`` AT command used for the feature is only supported by the nRF9160 SiP.
 
 * :ref:`nrf_cloud_coap_fota_sample` sample:
 
