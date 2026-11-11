@@ -423,10 +423,17 @@ static int at_cmd_callback_cmgw(char *buf, size_t len, char *at_cmd)
 		s1[0] = '\r';
 		/* Move s1 to after <CR>. */
 		s1 = &s1[4];
-		s2 = strstr(at_cmd, "<ESC>");
+		s2 = strstr(s1, "<ESC>");
 	}
 
 	if (s2 != NULL) {
+		const int pdu_len = (int)(s2 - s1);
+
+		if (pdu_len < 0 || pdu_len + 1 > SMS_BUFFER_PDU_SIZE_MAX) {
+			LOG_ERR("PDU length out of range (%d).", pdu_len);
+			return at_cmd_custom_respond(buf, len, "ERROR\r\n");
+		}
+
 		/* Find first available SMS buffer. */
 		for (int i = 0; i < SMS_BUFFER_ARRAY_SIZE; i++) {
 			if (sms_buffers[i].pdu_size != 0) {
@@ -434,14 +441,8 @@ static int at_cmd_callback_cmgw(char *buf, size_t len, char *at_cmd)
 			}
 			/* Store size. */
 			sms_buffers[i].pdu_size = strtol(&(at_cmd[8]), NULL, 10);
-			/* Verify that the buffer is large enough. */
-			if ((int)(s2 - s1) + 1 > SMS_BUFFER_PDU_SIZE_MAX) {
-				LOG_ERR("PDU buffer size is too small (%d > %d).",
-					(int)(s2 - s1) + 1, SMS_BUFFER_PDU_SIZE_MAX);
-			}
-			/* Store in SMS buffer. */
-			strncpy(sms_buffers[i].data, s1, (size_t)(s2 - s1));
-			sms_buffers[i].data[(int)(s2 - s1)] = '\0';
+			memcpy(sms_buffers[i].data, s1, pdu_len);
+			sms_buffers[i].data[pdu_len] = '\0';
 			/* Make AT response. */
 			return at_cmd_custom_respond(buf, len,
 						     "+CMGW: %d\r\nOK\r\n", i);

@@ -55,6 +55,14 @@ static char response[64];
 #define RES_CMGW_E_1 "+CMGW: 1"
 #define RES_CMGW_E_2 "+CMGW: 2"
 
+/* Must match SMS_BUFFER_PDU_SIZE_MAX in lib/gcf_sms/gcf_sms.c */
+#define CMGW_PDU_BUF_SIZE_MAX 352
+#define CMGW_PDU_TOO_LONG (CMGW_PDU_BUF_SIZE_MAX)
+
+#define CMD_CMGW_ESC_BEFORE_CR "AT+CMGW=5<ESC>payload<CR>trailer"
+
+static char cmgw_oversize_cmd[CMGW_PDU_BUF_SIZE_MAX + 48];
+
 #define CMD_CONCAT_1 "AT+CMGD=1;+CMGD=2"
 #define RES_CONCAT_1 "OK\r\nOK\r\n"
 
@@ -150,6 +158,31 @@ ZTEST(gcf_sms, test_gcf_sms_cmgd)
 	err = nrf_modem_at_cmd(response, sizeof(response), CMD_CMGD_EQ);
 	zassert_equal(0, err, "nrf_modem_at_cmd failed, error: %d", err);
 	zassert_mem_equal(response, RES_CMGD_EQ_OK, strlen(RES_CMGD_EQ_OK), NULL);
+}
+
+ZTEST(gcf_sms, test_gcf_sms_cmgw_pdu_length)
+{
+	int err;
+	char *p = cmgw_oversize_cmd;
+
+	strcpy(p, "AT+CMGW=1,9<CR>");
+	p += strlen(p);
+	memset(p, '0', CMGW_PDU_TOO_LONG);
+	p += CMGW_PDU_TOO_LONG;
+	strcpy(p, "<CR><ESC>");
+
+	err = nrf_modem_at_cmd(response, sizeof(response), "%s", cmgw_oversize_cmd);
+	zassert_equal(1 << 16, err, "Expected AT ERROR, got: %d", err);
+	zassert_mem_equal(response, RES_ERROR, strlen(RES_ERROR), NULL);
+}
+
+ZTEST(gcf_sms, test_gcf_sms_cmgw_esc_before_cr)
+{
+	int err;
+
+	err = nrf_modem_at_cmd(response, sizeof(response), "%s", CMD_CMGW_ESC_BEFORE_CR);
+	zassert_equal(1 << 16, err, "Expected AT ERROR, got: %d", err);
+	zassert_mem_equal(response, RES_ERROR, strlen(RES_ERROR), NULL);
 }
 
 ZTEST(gcf_sms, test_gcf_sms_cmgw)
