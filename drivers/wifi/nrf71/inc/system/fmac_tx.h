@@ -85,10 +85,10 @@ struct tx_cmd_prep_info {
 	struct nrf_wifi_tx_buff *config;
 	/** Total packet data added to the command, in bytes. */
 	unsigned int total_data_len;
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 	/** Whether TCP/IP checksum offload is allowed for this TX command (e.g. not TKIP). */
 	bool chksum_offload_ok;
-#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 };
 
 /**

@@ -174,7 +174,7 @@ static inline struct nrf_wifi_fmac_vif_ctx *nrf_wifi_get_fmac_vif_ctx(
 	return sys_dev_ctx ? sys_dev_ctx->vif_ctx[vif_ctx_zep->vif_idx] : NULL;
 }
 
-#ifdef CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD
+#ifdef CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT
 /**
  * @brief Whether TCP/IP checksum offload to the RPU is allowed on this VIF.
  *
@@ -212,7 +212,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 
 	return true;
 }
-#endif /* CONFIG_NRF71_TCP_IP_CHECKSUM_OFFLOAD */
+#endif /* CONFIG_NRF71_TCP_IP_CHKSUM_OFFLOAD_SUPPORT */
 
 static inline bool nrf_wifi_txinjection_active(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep)
 {
