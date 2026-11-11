@@ -1581,7 +1581,7 @@ out:
 }
 #endif
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static void tx_done_rate_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 				struct nrf_wifi_tx_buff_done *buff)
 {
@@ -1617,7 +1617,7 @@ static void tx_done_rate_update(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 	sys_fpriv->callbk_fns.process_tx_rate_from_tx_done(vif_ctx->os_vif_ctx,
 							   buff->tx_rate_kbps);
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 	struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -1642,10 +1642,10 @@ enum nrf_wifi_status (nrf_wifi_fmac_tx_done_event_process)(
 
 	k_mutex_lock(&sys_dev_ctx->tx_config.tx_lock, K_FOREVER);
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	/* Resolve the VIF before tx_done_process() as it may reuse the descriptor */
 	tx_done_rate_update(fmac_dev_ctx, buff);
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 	status = tx_done_process(fmac_dev_ctx,
 				 buff->tx_desc_num);

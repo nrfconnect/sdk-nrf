@@ -100,7 +100,7 @@ config NRF71_SCAN_SUPPORT
 	  When enabled without any connection sub-mode, the driver
 	  operates in scan-only mode for discovering nearby networks.
 
-config NRF71_STA_MODE
+config NRF71_STA_SUPPORT
 	bool "nRF71 STA mode"
 	default y if WIFI_USAGE_MODE_STA || WIFI_USAGE_MODE_STA_AP
 	select WIFI_NM_WPA_SUPPLICANT
@@ -146,7 +146,7 @@ config NRF71_DATA_TX
 
 config NRF71_SCAN_ONLY
 	bool
-	default y if NRF71_SCAN_SUPPORT && !NRF71_STA_MODE && !NRF71_AP_MODE && \
+	default y if NRF71_SCAN_SUPPORT && !NRF71_STA_SUPPORT && !NRF71_AP_MODE && \
 		!NRF71_P2P_MODE && !NRF71_TX_INJECTION_SUPPORT && !NRF71_MONITOR_SUPPORT && \
 		!NRF71_PROMISCUOUS_SUPPORT
 
@@ -699,7 +699,7 @@ config NRF_WIFI_MGMT_BUFF_OFFLOAD
 
 config NRF_WIFI_FEAT_KEEPALIVE
 	bool "Wi-Fi keepalive feature for connection maintenance"
-	depends on NRF71_STA_MODE
+	depends on NRF71_STA_SUPPORT
 	default y
 	help
 	  Enable the Wi-Fi keepalive feature to keep the connection alive by sending
@@ -760,7 +760,7 @@ config NRF_WIFI_DISPLAY_SCAN_BSS_LIMIT
 
 config NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 	bool "Read connect scan results from the scan results database"
-	depends on NRF71_STA_MODE
+	depends on NRF71_STA_SUPPORT
 	default y
 	help
 	  Read connect scan results from the database the firmware builds in

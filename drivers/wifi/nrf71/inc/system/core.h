@@ -25,9 +25,9 @@
 #include <system/net_if.h>
 #endif /* CONFIG_NETWORKING */
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 #include <drivers/driver_zephyr.h>
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 #include <system/fmac_api.h>
 #include <system/drv_dbg_stats.h>
@@ -86,7 +86,7 @@ struct nrf_wifi_vif_ctx_zep {
 	 */
 	unsigned char requested_wifi_mode;
 #endif
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	unsigned int assoc_freq;
 	struct wpa_signal_info *signal_info;
 	struct wpa_conn_info *conn_info;
@@ -106,7 +106,7 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned int connect_scan_db_addr;
 	unsigned int connect_scan_res_cnt;
 #endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_AP_MODE
 	int inactive_time_sec;
 #endif /* CONFIG_NRF71_AP_MODE */
@@ -190,7 +190,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 		return false;
 	}
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	{
 		struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx;
 		unsigned int i;
@@ -208,7 +208,7 @@ static inline bool nrf_wifi_fmac_tcp_ip_chksum_offload_ok(struct nrf_wifi_fmac_v
 			}
 		}
 	}
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_STA_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
 	return true;
 }

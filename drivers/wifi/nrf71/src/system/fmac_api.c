@@ -717,7 +717,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_auth(void *dev_ctx,
 					    unsigned char if_idx,
 					    struct nrf_wifi_umac_auth_info *auth_info)
@@ -1990,7 +1990,7 @@ out:
 }
 
 #endif /* CONFIG_NRF71_P2P_MODE */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_mgmt_tx(void *dev_ctx,
 					       unsigned char if_idx,
@@ -2700,7 +2700,7 @@ out:
 	return status;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 enum nrf_wifi_status nrf_wifi_sys_fmac_get_tx_power(void *dev_ctx,
 						    unsigned int if_idx)
 {
@@ -3468,7 +3468,7 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 enum nrf_wifi_status nrf_wifi_sys_fmac_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						 enum rpu_stats_type stats_type,

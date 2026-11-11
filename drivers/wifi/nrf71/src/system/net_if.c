@@ -36,9 +36,9 @@ LOG_MODULE_DECLARE(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 #include <system/net_if.h>
 #include <common/mac_addr.h>
 #include <system/wifi_pm.h>
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static struct net_if_mcast_monitor mcast_monitor;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 void nrf_wifi_set_iface_event_handler(void *os_vif_ctx,
 						struct nrf_wifi_umac_event_set_interface *event,
@@ -391,7 +391,7 @@ enum ethernet_hw_caps nrf_wifi_if_caps_get(const struct device *dev,
 	return caps;
 }
 
-#if defined(CONFIG_NRF71_DATA_TX) && defined(CONFIG_NRF71_STA_MODE)
+#if defined(CONFIG_NRF71_DATA_TX) && defined(CONFIG_NRF71_STA_SUPPORT)
 static struct tx_token_stats *tx_token_stats_get(struct nrf_wifi_sys_fmac_dev_ctx *sys_dev_ctx)
 {
 	return sys_dev_ctx ? &sys_dev_ctx->tx_config.token_stats : NULL;
@@ -406,7 +406,7 @@ static struct tx_token_stats *tx_token_stats_get(struct nrf_wifi_sys_fmac_dev_ct
 	} while (false)
 #else
 #define TX_TOKEN_STAT_INC(_sys_dev_ctx, _field) ((void)0)
-#endif /* CONFIG_NRF71_DATA_TX && CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_DATA_TX && CONFIG_NRF71_STA_SUPPORT */
 
 int nrf_wifi_if_send(const struct device *dev,
 		     struct net_pkt *pkt)
@@ -685,7 +685,7 @@ out:
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 /* If the interface is not Wi-Fi then errors are expected, so, fail silently */
 static struct nrf_wifi_vif_ctx_zep *nrf_wifi_get_vif_ctx(struct net_if *iface)
 {
@@ -781,7 +781,7 @@ unlock:
 	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL, mcast_info);
 	k_mutex_unlock(&vif_ctx_zep->vif_lock);
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 #ifdef CONFIG_WIFI_FIXED_MAC_ADDRESS_ENABLED
 BUILD_ASSERT(sizeof(CONFIG_WIFI_FIXED_MAC_ADDRESS) - 1 == ((WIFI_MAC_ADDR_LEN * 2) + 5),
@@ -926,9 +926,9 @@ void nrf_wifi_if_init_zep(struct net_if *iface)
 	net_eth_carrier_on(iface);
 	net_if_dormant_on(iface);
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	net_if_mcast_mon_register(&mcast_monitor, iface, ip_maddr_event_handler);
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_DATA_TX
 	k_work_init(&vif_ctx_zep->nrf_wifi_net_iface_work,
 		    nrf_wifi_net_iface_work_handler);
@@ -992,7 +992,7 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 
 	nrf_wifi_clear_session_state(vif_ctx_zep);
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	vif_ctx_zep->assoc_freq = 0;
 	vif_ctx_zep->twt_flows_map = 0;
 	vif_ctx_zep->twt_flow_in_progress_map = 0;
@@ -1006,7 +1006,7 @@ static void nrf_wifi_if_reset_vif_state(struct nrf_wifi_vif_ctx_zep *vif_ctx_zep
 	}
 	vif_ctx_zep->connect_scan_res_cnt = 0;
 #endif /* CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 }
 
 int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
@@ -1170,7 +1170,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 		goto del_vif;
 	}
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	nrf_wifi_wpa_supp_event_mac_chgd(vif_ctx_zep);
 
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
@@ -1185,7 +1185,7 @@ int nrf_wifi_if_start_zep(const struct device *dev, struct net_if *iface)
 		goto dev_rem;
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 	vif_ctx_zep->if_op_state = NRF_WIFI_FMAC_IF_OP_STATE_UP;
 
@@ -1269,7 +1269,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 		goto unlock;
 	}
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 #ifdef CONFIG_NRF_WIFI_LOW_POWER
 	status = nrf_wifi_sys_fmac_set_power_save(rpu_ctx_zep->rpu_ctx,
 					      vif_ctx_zep->vif_idx,
@@ -1280,7 +1280,7 @@ int nrf_wifi_if_stop_zep(const struct device *dev, struct net_if *iface __unused
 			__func__);
 	}
 #endif /* CONFIG_NRF_WIFI_LOW_POWER */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 	memset(&vif_info,
 	       0,

@@ -68,7 +68,7 @@ if(CONFIG_NRF71_SYSTEM_MODE)
       src/system/tx.c
       src/system/fmac_peer.c
     )
-  elseif(CONFIG_NRF71_STA_MODE)
+  elseif(CONFIG_NRF71_STA_SUPPORT)
     zephyr_library_sources(src/system/fmac_peer.c)
   endif()
 
@@ -97,7 +97,7 @@ endif()
 
 zephyr_library_sources(src/system/wifi_pm.c)
 
-zephyr_library_sources_ifdef(CONFIG_NRF71_STA_MODE
+zephyr_library_sources_ifdef(CONFIG_NRF71_STA_SUPPORT
   src/system/wpa_supp_if.c
 )
 

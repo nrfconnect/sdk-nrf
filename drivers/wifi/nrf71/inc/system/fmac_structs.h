@@ -144,14 +144,14 @@ struct nrf_wifi_fmac_callbk_fns {
 		struct nrf_wifi_reg *get_reg,
 		unsigned int event_len);
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
 	/** Callback function to be called when a set interface response is received. */
 	void (*set_if_callbk_fn)(void *os_vif_ctx,
 				 struct nrf_wifi_umac_event_set_interface *set_if_event,
 				 unsigned int event_len);
 #endif
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(__DOXYGEN__)
 	/** Callback function to be called when an interface association state changes. */
 	enum nrf_wifi_status (*if_carr_state_chg_callbk_fn)(void *os_vif_ctx,
 							    enum nrf_wifi_fmac_if_carr_state cs);
@@ -274,7 +274,7 @@ struct nrf_wifi_fmac_callbk_fns {
 	/** Callback function to be called when TX PHY rate is to be processed from TX done. */
 	void (*process_tx_rate_from_tx_done)(void *os_vif_ctx,
 					     unsigned int tx_rate_kbps);
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #if defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(CONFIG_NRF71_PROMISCUOUS_SUPPORT)
 	void (*sniffer_callbk_fn)(void *os_vif_ctx,
 				  void *frm,
@@ -297,7 +297,7 @@ struct nrf_wifi_fmac_callbk_fns {
 	void (*coex_event_callbk_fn)(void *os_dev_ctx, void *coex_event, unsigned int event_len);
 };
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(__DOXYGEN__)
 /**
  * @brief The TWT sleep state of device.
  *
@@ -308,9 +308,9 @@ enum nrf_wifi_fmac_twt_state {
 	/** RPU in TWT awake state. */
 	NRF_WIFI_FMAC_TWT_STATE_AWAKE
 };
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT) || defined(__DOXYGEN__)
 /**
  * @brief Structure to hold peer context information.
  *
@@ -502,7 +502,7 @@ struct tx_config {
 	/** TX token debug statistics. */
 	struct tx_token_stats token_stats;
 };
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
+#endif /* CONFIG_NRF71_STA_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
 
 #if defined(CONFIG_NRF71_RX_WQ_ENABLED) || defined(__DOXYGEN__)
 /** RX work-queue list element (CTRL-pool copy of UMAC @c nrf_wifi_rx_buff). */
@@ -537,7 +537,7 @@ struct nrf_wifi_sys_fmac_priv {
 	unsigned int rx_desc[MAX_NUM_OF_RX_QUEUES];
 	/** Maximum number of host buffers needed for RX frames. */
 	unsigned int num_rx_bufs;
-#if defined(CONFIG_NRF71_STA_MODE)
+#if defined(CONFIG_NRF71_STA_SUPPORT)
 	/** Maximum number of tokens available for TX. */
 	unsigned char num_tx_tokens;
 	/** Maximum number of TX tokens available reserved per AC. */
@@ -548,7 +548,7 @@ struct nrf_wifi_sys_fmac_priv {
 	unsigned int max_ampdu_len_per_token;
 	/** Available (remaining) AMPDU length per token. */
 	unsigned int avail_ampdu_len_per_token;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 };
 
 #ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
@@ -638,18 +638,18 @@ struct nrf_wifi_sys_fmac_dev_ctx {
 	unsigned char num_ap;
 	/** Queue for storing mapping info of RX buffers. */
 	struct nrf_wifi_fmac_buf_map_info *rx_buf_info;
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	/** Context information related to TX path. */
 	struct tx_config tx_config;
 #endif
-#if defined(CONFIG_NRF71_STA_MODE)
+#if defined(CONFIG_NRF71_STA_SUPPORT)
 	/** TWT state of the RPU. */
 	enum nrf_wifi_fmac_twt_state twt_sleep_status;
 #if defined(CONFIG_NRF71_TX_DONE_WQ_ENABLED)
 	/** Deferred TX-done processing work item. */
 	struct k_work tx_done_work;
 #endif /* CONFIG_NRF71_TX_DONE_WQ_ENABLED */
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_TX_INJECTION_SUPPORT
 	struct raw_tx_pkt_header raw_tx_config;
 	struct raw_tx_stats raw_pkt_stats;

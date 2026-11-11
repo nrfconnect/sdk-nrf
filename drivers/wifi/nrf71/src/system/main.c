@@ -35,15 +35,15 @@
 #include <vtf_monitoring/vtf_monitoring.h>
 #include <drivers/wifi/nrf71/nrf71_wifi_coex.h>
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 #include <zephyr/net/wifi_nm.h>
 #include <system/wifi_mgmt_scan.h>
 #include <system/wifi_mgmt.h>
 #include <system/wpa_supp_if.h>
-#else /* CONFIG_NRF71_STA_MODE */
+#else /* CONFIG_NRF71_STA_SUPPORT */
 #include <system/wifi_mgmt_scan.h>
 #include <system/wifi_mgmt.h>
-#endif /* !CONFIG_NRF71_STA_MODE */
+#endif /* !CONFIG_NRF71_STA_SUPPORT */
 
 #include <system/fmac_api.h>
 #include <common/fw_if/nrf71_wifi_rf.h>
@@ -115,9 +115,9 @@ static void nrf_wifi_event_proc_scan_start_zep(
 		return;
 	}
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	nrf_wifi_wpa_supp_event_proc_scan_start(if_priv);
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 }
 
 void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
@@ -144,7 +144,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		k_work_submit(&vif_ctx_zep->disp_scan_res_work);
 		break;
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	case SCAN_CONNECT:
 #ifdef CONFIG_NRF_WIFI_CONNECT_SCAN_RESULTS_GDRAM
 		/* Cache for the get scan results call, under vif_lock as the
@@ -164,7 +164,7 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 						       event_len,
 						       0);
 		break;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 	default:
 		LOG_ERR("%s: Scan type = %d not supported yet", __func__, vif_ctx_zep->scan_type);
 		return;
@@ -196,7 +196,7 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 		vif_ctx_zep->disp_scan_cb = NULL;
 	} else {
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 		/* WPA supplicant scan */
 		union wpa_event_data event;
 		struct scan_info *info = NULL;
@@ -214,7 +214,7 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 			vif_ctx_zep->supp_callbk_fns.scan_done(vif_ctx_zep->supp_drv_if_ctx,
 				&event);
 		}
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	}
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
@@ -239,7 +239,7 @@ void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
 	vif_ctx_zep->scan_in_progress = false;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static void nrf_wifi_process_rssi_from_rx(void *vif_ctx,
 					    signed short signal)
 {
@@ -284,7 +284,7 @@ static void nrf_wifi_process_tx_rate_from_tx_done(void *vif_ctx,
 
 	vif_ctx_zep->tx_rate_kbps = tx_rate_kbps;
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 void nrf_wifi_event_get_reg_zep(void *vif_ctx,
 				struct nrf_wifi_reg *get_reg_event,
@@ -416,7 +416,7 @@ out:
 	return ret;
 }
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 void nrf_wifi_event_proc_cookie_rsp(void *vif_ctx,
 				    struct nrf_wifi_umac_event_cookie_rsp *cookie_rsp_event,
 				    unsigned int event_len)
@@ -455,7 +455,7 @@ void nrf_wifi_event_proc_cookie_rsp(void *vif_ctx,
 			cookie_rsp_event->host_cookie, cookie_rsp_event->cookie);
 		}
 }
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 void reg_change_callbk_fn(void *vif_ctx,
 			  struct nrf_wifi_event_regulatory_change *reg_change_event,
@@ -730,10 +730,10 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 #ifdef CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS
 	callbk_fns.rx_bcn_prb_resp_callbk_fn = nrf_wifi_rx_bcn_prb_resp_frm;
 #endif /* CONFIG_WIFI_MGMT_RAW_SCAN_RESULTS */
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	callbk_fns.set_if_callbk_fn = nrf_wifi_set_iface_event_handler;
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
-#ifdef CONFIG_NRF71_STA_MODE
+#endif /* CONFIG_NRF71_STA_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	callbk_fns.twt_config_callbk_fn = nrf_wifi_event_proc_twt_setup_zep;
 	callbk_fns.twt_teardown_callbk_fn = nrf_wifi_event_proc_twt_teardown_zep;
 	callbk_fns.twt_sleep_callbk_fn = nrf_wifi_event_proc_twt_sleep_zep;
@@ -755,7 +755,7 @@ static int nrf_wifi_sys_drv_main_zep(const struct device *dev)
 	callbk_fns.get_conn_info_callbk_fn = nrf_wifi_supp_event_proc_get_conn_info;
 	callbk_fns.roc_callbk_fn = nrf_wifi_supp_event_remain_on_channel;
 	callbk_fns.roc_cancel_callbk_fn = nrf_wifi_supp_event_roc_cancel_complete;
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #if defined(CONFIG_NRF71_TX_INJECTION_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	callbk_fns.channel_set_done_callbk_fn = nrf_wifi_event_proc_channel_set_done_zep;
 #endif /* CONFIG_NRF71_TX_INJECTION_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
@@ -805,17 +805,17 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 	.get_stats = nrf_wifi_stats_get,
 	.reset_stats = nrf_wifi_stats_reset,
 #endif /* CONFIG_NET_STATISTICS_WIFI */
-#if defined(CONFIG_NRF71_STA_MODE) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
+#if defined(CONFIG_NRF71_STA_SUPPORT) || defined(CONFIG_NRF71_MONITOR_SUPPORT)
 	.reg_domain = nrf_wifi_reg_domain,
-#endif /* CONFIG_NRF71_STA_MODE || CONFIG_NRF71_MONITOR_SUPPORT */
-#ifdef CONFIG_NRF71_STA_MODE
+#endif /* CONFIG_NRF71_STA_SUPPORT || CONFIG_NRF71_MONITOR_SUPPORT */
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	.set_power_save = nrf_wifi_set_power_save,
 	.set_twt = nrf_wifi_set_twt,
 	.get_power_save_config = nrf_wifi_get_power_save_config,
 	.set_rts_threshold = nrf_wifi_set_rts_threshold,
 	.get_rts_threshold = nrf_wifi_get_rts_threshold,
 	.set_bss_max_idle_period = nrf_wifi_set_bss_max_idle_period,
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 #ifdef CONFIG_NRF71_RAW_DATA_SUPPORT
 	.mode = nrf_wifi_mode,
 #endif /* CONFIG_NRF71_RAW_DATA_SUPPORT */
@@ -828,7 +828,7 @@ static const struct wifi_mgmt_ops nrf_wifi_mgmt_ops = {
 };
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.init = nrf_wifi_wpa_supp_dev_init,
 	.deinit = nrf_wifi_wpa_supp_dev_deinit,
@@ -865,7 +865,7 @@ static const struct zep_wpa_supp_dev_ops wpa_supp_ops = {
 	.get_inact_sec = nrf_wifi_wpa_supp_sta_get_inact_sec,
 #endif /* CONFIG_NRF71_AP_MODE */
 };
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 
 #ifdef CONFIG_NET_L2_ETHERNET
 static const struct net_wifi_mgmt_offload wifi_offload_ops = {
@@ -882,9 +882,9 @@ static const struct net_wifi_mgmt_offload wifi_offload_ops = {
 #ifdef CONFIG_NET_L2_WIFI_MGMT
 	.wifi_mgmt_api = &nrf_wifi_mgmt_ops,
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
-#ifdef CONFIG_NRF71_STA_MODE
+#ifdef CONFIG_NRF71_STA_SUPPORT
 	.wifi_drv_ops = &wpa_supp_ops,
-#endif /* CONFIG_NRF71_STA_MODE */
+#endif /* CONFIG_NRF71_STA_SUPPORT */
 };
 
 ETH_NET_DEVICE_DT_INST_DEFINE(0,
