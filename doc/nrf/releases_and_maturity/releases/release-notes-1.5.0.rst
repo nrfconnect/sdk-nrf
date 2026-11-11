@@ -971,7 +971,7 @@ In addition to documentation related to the changes listed above, the following 
   * TF-M, multiprotocol support, and available samples for Thread and Zigbee.
   * Building and programming using SEGGER Embedded Studio, multi-image build using west, and disabling readback protection.
 
-* :ref:`ug_nrf52` - Added sections on Project CHIP, Thread, and Zigbee support.
+* Developing with nRF52 Series - Added sections on Project CHIP, Thread, and Zigbee support.
 * :ref:`ug_bt_mesh` - Added :ref:`ug_bt_mesh_model_config_app`, :ref:`bt_mesh_ug_reserved_ids`, and :ref:`ug_bt_mesh_vendor_model` (plus subpages).
 * :ref:`ug_thread`:
 

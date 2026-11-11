@@ -1877,3 +1877,4 @@ Documentation
   * The :ref:`ug_nrf54h20_mcuboot_requests` page by adding figures that illustrate the initialization, read, clear, and write procedures of the bootloader requests module.
   * The :ref:`ug_nrf54h20_partitioning_merged` page by adding figures that illustrate the partition layouts, the bootchains, the radio core slot selection, and the image version dependencies.
   * The :ref:`ug_nrf54h20_mcuboot_manifest` page by adding figures that illustrate the manifest partitions and the manifest TLV structure, and by spelling out the term TLV.
+  * Removed the Developing with nRF52 Series guide and nRF52 Series references from the documentation.

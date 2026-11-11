@@ -247,7 +247,7 @@ Enabling the GPIOs
 
 In general, boards in Zephyr configure and enable the GPIO drivers by default, so no additional configuration is needed.
 You can also use the LED GPIO driver to control LEDs connected using a GPIO expander supported by Zephyr.
-For example, the DTS configuration of the ``thingy52_nrf52832`` board supports ``sx1509b`` GPIO expander, which is used to control lightwell RGB LEDs.
+For example, you can use an ``sx1509b`` GPIO expander in devicetree to control RGB LEDs connected through the expander.
 
 Enabling the LED GPIO nodes
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
