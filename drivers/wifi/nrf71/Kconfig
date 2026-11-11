@@ -482,32 +482,32 @@ config NRF71_SCAN_TIMEOUT
 	int "Scan timeout in seconds"
 	default 30
 
-config NRF_WIFI_6G_SUPPORT
+config NRF71_6G_SUPPORT
 	bool
 	default y if SOC_NRF7120E
 	help
 	  The SoC supports operation in the 6GHz band.
 
-choice NRF_WIFI_OP_BAND
+choice NRF71_OP_BAND
 	prompt "nRF Wi-Fi operation bands"
-	default NRF_WIFI_ALL_BAND if NRF_WIFI_6G_SUPPORT
-	default NRF_WIFI_DUAL_BAND
+	default NRF71_OP_BAND_ALL if NRF71_6G_SUPPORT
+	default NRF71_OP_BAND_DUAL
 
-config NRF_WIFI_ALL_BAND
-	bool "Set operation band to all supported bands"
-
-config NRF_WIFI_2G_BAND
+config NRF71_OP_BAND_2G
 	bool "Set operation band to 2.4GHz"
 
-config NRF_WIFI_5G_BAND
+config NRF71_OP_BAND_5G
 	bool "Set operation band to 5GHz"
 
-config NRF_WIFI_6G_BAND
+config NRF71_OP_BAND_6G
 	bool "Set operation band to 6GHz"
-	depends on NRF_WIFI_6G_SUPPORT
+	depends on NRF71_6G_SUPPORT
 
-config NRF_WIFI_DUAL_BAND
+config NRF71_OP_BAND_DUAL
 	bool "Set operation band to 2.4GHz and 5GHz"
+
+config NRF71_OP_BAND_ALL
+	bool "Set operation band to all supported bands"
 
 endchoice
 
