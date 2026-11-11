@@ -127,11 +127,11 @@ struct nrf_wifi_ctx_zep {
 	void *drv_priv_zep;
 	void *rpu_ctx;
 	struct nrf_wifi_vif_ctx_zep vif_ctx_zep[MAX_NUM_VIFS];
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_UTIL_SHELL
 	struct rpu_conf_params conf_params;
 	unsigned int extended_sleep_sec;
 	struct nrf_wifi_drv_dbg_stats drv_dbg_stats;
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL_SHELL */
 	unsigned char *extended_capa, *extended_capa_mask;
 	unsigned int extended_capa_len;
 	struct k_mutex rpu_lock;

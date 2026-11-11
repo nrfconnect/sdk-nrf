@@ -1084,11 +1084,11 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_set_packet_filter(void *dev_ctx,
 							 unsigned short buffer_size);
 #endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
-#if defined(CONFIG_NRF71_UTIL) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_UTIL_SHELL) || defined(__DOXYGEN__)
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate);
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL_SHELL */
 
 /**
  * @brief Configure HE LTF and GI parameters.
@@ -1152,7 +1152,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 	struct umac_int_stats *stats);
 #endif /* CONFIG_NRF71_DEBUG_SHELL */
 
-#if defined(CONFIG_NRF71_UTIL) || defined(__DOXYGEN__)
+#if defined(CONFIG_NRF71_UTIL_SHELL) || defined(__DOXYGEN__)
 /**
  * @brief Request an extended sleep interval for the nRF71.
  * @param fmac_dev_ctx Pointer to the UMAC IF context for a RPU WLAN device.
@@ -1173,7 +1173,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_umac_int_stats_get(
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *fmac_dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec);
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL_SHELL */
 
 /**
  * @brief Send  Rx buffer details to firmware.

@@ -224,7 +224,7 @@ config NRF71_MAX_TX_PENDING_QLEN
 	int "Maximum number of pending TX packets"
 	default 18
 
-config NRF71_UTIL
+config NRF71_UTIL_SHELL
 	bool "Utility shell in nRF71 driver"
 	depends on SHELL && NRF71_SYSTEM_MODE
 

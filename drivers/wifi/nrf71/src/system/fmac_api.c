@@ -3666,7 +3666,7 @@ out:
 #endif /* CONFIG_NRF71_MONITOR_SUPPORT || CONFIG_NRF71_PROMISCUOUS_SUPPORT */
 
 
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_UTIL_SHELL
 enum nrf_wifi_status nrf_wifi_sys_fmac_set_tx_rate(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 						   unsigned char rate_flag,
 						   int data_rate)
@@ -3727,7 +3727,7 @@ enum nrf_wifi_status nrf_wifi_sys_fmac_conf_ltf_gi(struct nrf_wifi_fmac_dev_ctx 
 out:
 	return status;
 }
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL_SHELL */
 
 #ifdef CONFIG_NRF71_DEBUG_SHELL
 enum nrf_wifi_status nrf_wifi_sys_fmac_debug_stats_get(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
@@ -3837,7 +3837,7 @@ out:
 }
 #endif /* CONFIG_NRF71_DEBUG_SHELL */
 
-#ifdef CONFIG_NRF71_UTIL
+#ifdef CONFIG_NRF71_UTIL_SHELL
 enum nrf_wifi_status nrf_wifi_fmac_req_extended_sleep(void *dev_ctx,
 						      unsigned char if_idx,
 						      unsigned int duration_sec)
@@ -3885,7 +3885,7 @@ out:
 
 	return status;
 }
-#endif /* CONFIG_NRF71_UTIL */
+#endif /* CONFIG_NRF71_UTIL_SHELL */
 
 
 #define MAX_BUFS_PER_CMD 32
