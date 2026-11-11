@@ -808,8 +808,8 @@ config NRF_WIFI_ZERO_COPY_TX
 	bool "Zero copy Transmit path [EXPERIMENTAL]"
 	select NET_L2_ETHERNET_EXTRA_TX_PKT_HEADROOM
 	select EXPERIMENTAL
-	# 54L has lower RAM
-	default y if SOC_SERIES_NRF54L
+	# Saves heap on 54L (lower RAM) and CPU cycles per packet on nRF71
+	default y if SOC_SERIES_NRF54L || SOC_SERIES_NRF71
 	help
 	  Enable this configuration to use zero copy Transmit path.
 	  The driver will use the network buffer directly for transmission
