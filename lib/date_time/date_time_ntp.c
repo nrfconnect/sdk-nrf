@@ -8,6 +8,7 @@
 #include <zephyr/net/sntp.h>
 #include <zephyr/net/socket.h>
 #include <zephyr/net/socketutils.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 #if defined(CONFIG_LTE_LINK_CONTROL)
 #include <modem/lte_lc.h>
 #endif
@@ -36,7 +37,7 @@ static int sntp_time_request(const char *server, uint32_t timeout, struct sntp_t
 
 	struct zsock_addrinfo hints = {
 		.ai_flags = ZSOCK_AI_NUMERICSERV,
-		.ai_family = NET_AF_UNSPEC /* Allow both IPv4 and IPv6 addresses */
+		.ai_family = conn_mgr_get_ready_addr_family(),
 	};
 
 	err = zsock_getaddrinfo(server, STRINGIFY(NTP_PORT), &hints, &addrinfo);
