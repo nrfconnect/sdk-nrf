@@ -28,10 +28,13 @@ extern "C" {
  *
  * Convenience structure to handle variable length response layout.
  */
-typedef struct __PACKED __ALIGN(1)
+typedef union __PACKED __ALIGN(1)
 {
 	sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t head;
-	sdc_hci_vs_zephyr_static_address_t addr[1];
+	struct {
+		uint8_t head_pad[sizeof(sdc_hci_cmd_vs_zephyr_read_static_addresses_return_t)];
+		sdc_hci_vs_zephyr_static_address_t addr[1];
+	} __PACKED __ALIGN(1);
 } sdc_hci_cmd_vs_zephyr_read_static_addresses_return_helper_t;
 
 

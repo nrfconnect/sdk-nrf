@@ -290,6 +290,8 @@ Bluetooth® LE
   * Support for the channel index in advertising reports for legacy advertising PDUs in the SoftDevice Controller through the :kconfig:option:`CONFIG_BT_CTLR_SDC_CHAN_IDX_IN_ADV_REPORT` Kconfig option.
     The host exposes the channel index in the :c:member:`bt_le_scan_recv_info.chan_idx` field when the :kconfig:option:`CONFIG_BT_HCI_ADV_REPORT_CHAN_IDX` Kconfig option is enabled.
 
+* Fixed an issue where including the :file:`include/bluetooth/hci_vs_sdc.h` header in C++ source files caused a build error.
+
 Bluetooth Mesh
 --------------
 
