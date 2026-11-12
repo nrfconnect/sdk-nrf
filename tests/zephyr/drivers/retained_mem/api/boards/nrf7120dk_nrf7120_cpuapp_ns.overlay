@@ -1,1 +1,21 @@
-#include "nrf7120dk_nrf7120_cpuapp.overlay"
+/*
+ * The non-secure address map has no cpuapp_sram_app node (the KMU push area
+ * belongs to the secure image), so shrink the non-secure RAM directly to make
+ * room for the retained memory region at 0x2002e000.
+ */
+#include "nrf7120dk_nrf7120_common.dtsi"
+
+/delete-node/ &sram01_ns;
+/delete-node/ &sram02_ns;
+/delete-node/ &sram03_ns;
+
+&sram0_ns {
+	/* 0x2001_8000 - 0x2002_e000 */
+	reg = <0x18000 DT_SIZE_K(88)>;
+	ranges = <0x0 0x18000 DT_SIZE_K(88)>;
+};
+
+&sram00_ns {
+	reg = <0x0 DT_SIZE_K(88)>;
+	ranges = <0x0 0x0 DT_SIZE_K(88)>;
+};
