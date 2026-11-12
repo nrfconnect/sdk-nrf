@@ -14,6 +14,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/net/http/client.h>
 #include <zephyr/net/http/parser.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 
 #include <zephyr/logging/log.h>
 
@@ -184,7 +185,7 @@ static int rest_client_sckt_connect(int *const fd,
 	char portstr[6] = { 0 };
 	struct zsock_addrinfo hints = {
 		.ai_flags = AI_NUMERICSERV, /* Let getaddrinfo() set port to addrinfo */
-		.ai_family = AF_UNSPEC, /* Both IPv4 and IPv6 addresses accepted */
+		.ai_family = conn_mgr_get_ready_addr_family(),
 		.ai_socktype = SOCK_STREAM,
 		.ai_next = NULL,
 	};
