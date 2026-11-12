@@ -144,9 +144,6 @@ This section describes the changes related to the build and configuration system
         * - ``NRF9220_XXAA``
           - :kconfig:option:`CONFIG_SOC_NRF9251_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF9251_CPUPPR`, or :kconfig:option:`CONFIG_SOC_NRF9251_CPUFLPR`
           - Board-selected
-        * - ``NRF9230_ENGB_XXAA``
-          - :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUAPP`, :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPURAD`, or :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUPPR`
-          - Board-selected
         * - ``NRF_APPLICATION``
           - Matching ``CONFIG_SOC_*_CPUAPP`` symbol for your board target (for example, :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUAPP` or :kconfig:option:`CONFIG_SOC_NRF9251_CPUAPP`)
           - Board-selected
@@ -154,10 +151,10 @@ This section describes the changes related to the build and configuration system
           - Matching ``CONFIG_SOC_*_CPUFLPR`` symbol for your board target (for example, :kconfig:option:`CONFIG_SOC_NRF54LC10A_CPUFLPR` or :kconfig:option:`CONFIG_SOC_NRF9251_CPUFLPR`)
           - Board-selected
         * - ``NRF_RADIOCORE``
-          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPURAD` or :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPURAD`
+          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPURAD`
           - Board-selected
         * - ``NRF_PPR``
-          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPUPPR`, :kconfig:option:`CONFIG_SOC_NRF9230_ENGB_CPUPPR`, or :kconfig:option:`CONFIG_SOC_NRF9251_CPUPPR`
+          - :kconfig:option:`CONFIG_SOC_NRF54H20_CPUPPR` or :kconfig:option:`CONFIG_SOC_NRF9251_CPUPPR`
           - Board-selected
         * - ``NRF_TRUSTZONE_NONSECURE``
           - :kconfig:option:`CONFIG_ARM_NONSECURE_FIRMWARE`
