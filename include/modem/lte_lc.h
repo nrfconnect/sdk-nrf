@@ -2659,12 +2659,13 @@ int lte_lc_pdn_ctx_create(uint8_t *cid);
  * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
  *
  * @param[in] cid The context ID.
- * @param[in] apn The Access Point Name.
+ * @param[in] apn The Access Point Name, at most @ref LTE_LC_PDN_APN_LEN_MAX characters.
  * @param[in] family The IP address family for the PDN connection.
  * @param[in] opts Additional configuration options. Optional, can be NULL.
  *
  * @retval 0 On success.
- * @return A negative errno otherwise.
+ * @retval -EINVAL If the APN is too long, or the family is unknown.
+ * @return Another negative errno on other failures.
  */
 int lte_lc_pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_family family,
 			     struct lte_lc_pdn_pdp_context_opts *opts);
@@ -2805,10 +2806,12 @@ int lte_lc_pdn_default_ctx_events_disable(void);
  * @note Requires `CONFIG_LTE_LC_PDN_MODULE` to be enabled.
  *
  * @param[out] buf The buffer to copy the APN into. The string is null-terminated.
- * @param[in] len The size of the output buffer.
+ * @param[in] len The size of the output buffer. A buffer of @ref LTE_LC_PDN_APN_LEN_MAX + 1
+ *		  bytes fits any APN.
  *
  * @retval 0 On success.
- * @return A negative errno otherwise.
+ * @retval -E2BIG If the APN does not fit in the buffer.
+ * @return Another negative errno on other failures.
  */
 int lte_lc_pdn_default_ctx_apn_get(char *buf, size_t len);
 
