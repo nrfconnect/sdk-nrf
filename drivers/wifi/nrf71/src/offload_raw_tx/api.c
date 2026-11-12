@@ -22,6 +22,7 @@
 #include <common/util.h>
 #include <common/mac_addr.h>
 #include <offload_raw_tx/api.h>
+#include <system/wifi_pm.h>
 #include <vtf_monitoring/vtf_monitoring.h>
 
 #ifdef CONFIG_WIFI_RANDOM_MAC_ADDRESS
@@ -75,6 +76,13 @@ int nrf_wifi_off_raw_tx_init(uint8_t *mac_addr, unsigned char *country_code)
 	struct nrf_wifi_tx_pwr_ctrl_params tx_pwr_ctrl_params;
 	struct nrf_wifi_tx_pwr_ceil_params tx_pwr_ceil_params;
 	unsigned int fw_ver = 0;
+	int ret;
+
+	ret = nrf_wifi_power_on();
+	if (ret) {
+		LOG_ERR("%s: Failed to power on Wi-Fi: %d", __func__, ret);
+		return ret;
+	}
 
 	key = k_spin_lock(&off_raw_tx_drv_priv.lock);
 

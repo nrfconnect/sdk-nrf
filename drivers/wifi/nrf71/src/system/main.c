@@ -220,6 +220,12 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 	vif_ctx_zep->scan_in_progress = false;
+#ifdef CONFIG_NRF_WIFI_RPU_RECOVERY
+	if (fmac_dev_ctx && fmac_dev_ctx->fw_init_done && !fmac_dev_ctx->fw_deinit_done) {
+		LOG_ERR("Scan response timeout, scheduling RPU recovery");
+		nrf_wifi_sys_fmac_rpu_recovery_callback(fmac_dev_ctx, NULL, 0);
+	}
+#endif
 }
 
 void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
