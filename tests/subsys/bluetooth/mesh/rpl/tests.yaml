@@ -8,3 +8,15 @@ tests:
       - ci_tests_subsys_bluetooth_mesh
     integration_platforms:
       - native_sim
+  # Flash without explicit erase, like RRAM: the backup is invalidated by overwriting its header.
+  bluetooth.mesh.rpl.ncs.no_explicit_erase:
+    platform_allow:
+      - native_sim
+    tags:
+      - bluetooth
+      - mesh
+      - ci_tests_subsys_bluetooth_mesh
+    integration_platforms:
+      - native_sim
+    extra_configs:
+      - CONFIG_FLASH_SIMULATOR_EXPLICIT_ERASE=n

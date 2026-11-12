@@ -9,7 +9,13 @@
 		rpl_partition: partition@100000 {
 			compatible = "zephyr,mapped-partition";
 			label = "rpl";
-			reg = <0x00100000 0x00004000>; /* 16 KiB = 4 sectors of 4 KiB */
+			reg = <0x00100000 0x00003000>; /* 3 sectors of 4 KiB */
+		};
+
+		rpl_backup_partition: partition@103000 {
+			compatible = "zephyr,mapped-partition";
+			label = "rpl_backup";
+			reg = <0x00103000 0x00001000>; /* 1 sector of 4 KiB */
 		};
 	};
 };
