@@ -6,4 +6,7 @@ if BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ s
 config BOARD_{{ board | upper }}
 	select USE_DT_CODE_PARTITION if BOARD_{{ board | upper }}_{{ soc | upper }}_NS
 
+configdefault BUILD_WITH_TFM
+	default y if BOARD_{{ board | upper }}_{{ soc | upper }}_NS
+
 endif # BOARD_{{ board | upper }}_{{ soc | upper }} || BOARD_{{ board | upper }}_{{ soc | upper }}_NS
