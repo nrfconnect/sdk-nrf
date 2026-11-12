@@ -11,3 +11,12 @@ config DESKTOP_ADV_PROV_UUID16_ALL
 	help
 	  Adds all UUID16 to the advertising payload if used Bluetooth local
 	  identity has no bond.
+
+if DESKTOP_ADV_PROV_UUID16_ALL
+config DESKTOP_ADV_PROV_UUID16_ALL_SD
+	bool "Move UUID16 to scan response"
+	default y
+	help
+	  Adds all UUID16 to scan response data. If this option is
+	  disabled, the UUID16 is included in the advertising data.
+endif
