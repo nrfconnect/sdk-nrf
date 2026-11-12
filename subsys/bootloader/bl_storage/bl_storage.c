@@ -61,7 +61,68 @@ BUILD_ASSERT(CONFIG_MCUBOOT_HW_DOWNGRADE_PREVENTION_COUNTER_SLOTS % 2 == 0,
 void tfm_core_panic(void);
 #endif
 
+#if defined(CONFIG_NRFX_RRAMC) && !defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR) && \
+	DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+#define BL_STORAGE_UICR_OTP_INVALIDATE 1
+#endif
+
 #if defined(CONFIG_NRFX_RRAMC) && !defined(CONFIG_SOC_FLASH_NRF_RRAM_UICR)
+#include <hal/nrf_rramc.h>
+
+#if defined(BL_STORAGE_UICR_OTP_INVALIDATE)
+#if DT_NODE_EXISTS(DT_NODELABEL(revocation_partition))
+#define BL_STORAGE_HAS_REVOCATION_PARTITION 1
+#define BL_STORAGE_REVOCATION_ADDR DT_REG_ADDR(DT_NODELABEL(revocation_partition))
+#endif
+
+static bool rramc_configure(void);
+
+/*
+ * nRF54L UICR OTP valid tokens cannot be reprogrammed at runtime (CPU stores hang).
+ * Track revoked keys in a dedicated RRAM word instead.
+ */
+static uint32_t revocation_mask_read(void)
+{
+#if defined(BL_STORAGE_HAS_REVOCATION_PARTITION)
+	uint32_t mask = nrfx_rramc_word_read(BL_STORAGE_REVOCATION_ADDR);
+
+	return (mask == 0xFFFFFFFFU) ? 0U : mask;
+#else
+	return 0U;
+#endif
+}
+
+static void revocation_mask_invalidate_key(uint32_t key_idx)
+{
+#if defined(BL_STORAGE_HAS_REVOCATION_PARTITION)
+	uint32_t mask;
+
+	if (!rramc_configure()) {
+		return;
+	}
+
+	mask = revocation_mask_read();
+	mask |= (1UL << key_idx);
+	nrfx_rramc_word_write(BL_STORAGE_REVOCATION_ADDR, mask);
+#endif
+}
+
+/* Fresh UICR OTP word program (e.g. LCS), not reprogrammed key tokens. */
+static void bl_storage_rram_uicr_word_write(uint32_t address, uint32_t value)
+{
+	nrf_rramc_config_t prev_config;
+	nrf_rramc_config_t config;
+
+	nrf_rramc_config_get(NRF_RRAMC, &prev_config);
+	config = prev_config;
+	config.mode_write = true;
+	nrf_rramc_config_set(NRF_RRAMC, &config);
+	*(volatile uint32_t *)address = value;
+	__DSB();
+	nrf_rramc_config_set(NRF_RRAMC, &prev_config);
+}
+#endif /* bl_storage in UICR */
+
 static bool rramc_configure(void)
 {
 	nrfx_rramc_config_t config = NRFX_RRAMC_DEFAULT_CONFIG(0);
@@ -146,9 +207,14 @@ static uint32_t bl_storage_word_write(uint32_t address, uint32_t value)
 	nrfx_nvmc_word_write(address, value);
 	return 0;
 #elif defined(CONFIG_NRFX_RRAMC)
-	if (rramc_configure()) {
-		nrfx_rramc_word_write(address, value);
+	if (!rramc_configure()) {
+		return 0;
 	}
+#if DT_NODE_HAS_COMPAT(DT_PARENT(DT_NODELABEL(bl_storage)), nordic_nrf_uicr)
+	bl_storage_rram_uicr_word_write(address, value);
+#else
+	nrfx_rramc_word_write(address, value);
+#endif
 	return 0;
 #endif
 }
@@ -215,6 +281,12 @@ static bool key_is_valid(uint32_t key_idx)
 	if (key_idx >= num_public_keys_read()) {
 		return false;
 	}
+
+#if defined(BL_STORAGE_UICR_OTP_INVALIDATE)
+	if (revocation_mask_read() & (1UL << key_idx)) {
+		return false;
+	}
+#endif
 
 	const uint32_t token = bl_storage_word_read((uint32_t)&BL_STORAGE->key_data[key_idx].valid);
 	const uint32_t invalid_val = INVALID_VAL | key_idx << TOKEN_IDX_OFFSET;
@@ -328,7 +400,11 @@ void invalidate_public_key(uint32_t key_idx)
 
 	if (key_is_valid(key_idx)) {
 		/* Write if not already written. */
+#if defined(BL_STORAGE_UICR_OTP_INVALIDATE)
+		revocation_mask_invalidate_key(key_idx);
+#else
 		bl_storage_word_write((uint32_t)invalidation_token, INVALID_WRITE_VAL);
+#endif
 	}
 }
 
