@@ -28,7 +28,7 @@
 #endif
 
 #define MSPI_BUS_NODE	    DT_ALIAS(mspi0)
-#define SPIS_OP		    (SPI_OP_MODE_SLAVE | SPI_MODE)
+#define SPIS_OP		    (SPI_OP_MODE_PERIPHERAL | SPI_MODE)
 #define TEST_AREA_OFFSET    0xff000
 #define TEST_MEMORY_DEV_IDX 0
 #define TEST_SPIS_DEV_IDX   1

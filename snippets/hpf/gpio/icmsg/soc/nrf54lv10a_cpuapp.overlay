@@ -8,9 +8,9 @@
 
 / {
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2002bc00 {
 			reg = <0x2002bc00 0x0800>;
@@ -25,15 +25,17 @@
 		cpuflpr_code_data_sram: memory@2002cc00 {
 			compatible = "mmio-sram";
 			reg = <0x2002cc00 DT_SIZE_K(12)>;
+			ranges = <0x0 0x2002cc00 DT_SIZE_K(12)>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2002cc00 DT_SIZE_K(12)>;
 		};
 	};
 
 	ipc {
 		ipc0: ipc0 {
 			compatible = "zephyr,ipc-icmsg";
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			dcache-alignment = <32>;
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
@@ -47,10 +49,10 @@
 &rram_controller {
 	cpuflpr_rram: rram@fa000 {
 		compatible = "soc-nv-flash";
-		erase-block-size = <4096>;
-		write-block-size = <16>;
 		reg = <0xfa000 DT_SIZE_K(12)>;
 		ranges = <0x0 0xfa000 DT_SIZE_K(12)>;
+		erase-block-size = <4096>;
+		write-block-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
@@ -79,7 +81,7 @@
 };
 
 &hpf_gpio {
-	status = "okay";
 	ngpios = <25>;
 	port = <1>;
+	status = "okay";
 };

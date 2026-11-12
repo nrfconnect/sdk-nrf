@@ -306,6 +306,10 @@
     - drivers.can.shell
     - drivers.eeprom.shell
     - drivers.gpio.build
+    - drivers.led.build
+    - drivers.sensor.generic
+    - drivers.sensor.generic.fpu
+    - drivers.sensor.shell
     - drivers.uart.async_api
     - filesystem.lib_link
     - kernel.common
@@ -320,8 +324,14 @@
     - kernel.context
     - kernel.context.minimallibc
     - kernel.lifo.usage
+    - kernel.mutex
+    - kernel.mutex.scalable
+    - kernel.obj_core
+    - kernel.pipe.api.poll
     - kernel.poll
     - kernel.poll.minimallibc
+    - kernel.queue
+    - kernel.queue.minimallibc
     - kernel.scheduler
     - kernel.scheduler.multiq
     - kernel.scheduler.multiq_no_timeslicing
@@ -349,6 +359,11 @@
     - libraries.heap.hardening_full
     - libraries.heap.hardening_none
     - libraries.heap_kasan
+    - libraries.heap_stats_log
+    - libraries.heap_stats_log.no_caller
+    - libraries.heap_stats_log.no_runtime_stats
+    - libraries.heap_stats_log.no_thread_name
+    - libraries.heap_stats_log.random_canary
     - libraries.libc.c11_threads.minimal
     - libraries.libc.c11_threads.newlib
     - libraries.libc.c11_threads.newlib_nano
@@ -363,7 +378,9 @@
     - libraries.libc.common.picolibc.module
     - libraries.libc.common.picolibc.notls
     - libraries.net_buf.buf
+    - libraries.net_buf.buf.no_assert
     - libraries.ring_buffer
+    - libraries.ring_buffer.deprecated
     - logging.backend.uart.multi
     - logging.immediate.*
     - logging.thread
@@ -377,6 +394,7 @@
     - mgmt.mcumgr.os.info
     - mgmt.mcumgr.os.info.no_hooks
     - multidut.basic
+    - net.ethernet.l2_only
     - net.http.server.common
     - net.http.server.crime
     - net.mqtt_sn.packet
@@ -397,6 +415,7 @@
     - sample.pytest.shell.vt100_colors_off
     - sample.sensor.shell
     - sample.sensor.shell.pytest
+    - sample.shell.devmem_load.polled
     - sample.shell.shell_module
     - sample.shell.shell_module.getopt
     - sample.shell.shell_module.login
@@ -414,6 +433,7 @@
     - benchmark.crypto.psa
     - cpp.libcxx.glibcxx.picolibc
     - drivers.can.shell
+    - drivers.sensor.shell
     - kernel.common
     - kernel.common.lto
     - kernel.common.lto.singlethreaded
@@ -423,12 +443,21 @@
     - kernel.common.nano64
     - kernel.common.picolibc
     - kernel.common.tls
+    - kernel.mutex
+    - kernel.mutex.scalable
     - kernel.timer.timer
     - libraries.encoding.jwt.rsa.psa
     - libraries.hash_map.cxx.djb2
     - libraries.heap.hardening_full
+    - libraries.heap_stats_log
+    - libraries.heap_stats_log.no_caller
+    - libraries.heap_stats_log.no_runtime_stats
+    - libraries.heap_stats_log.no_thread_name
+    - libraries.heap_stats_log.random_canary
+    - net.ethernet.l2_only
     - net.http.server.common
     - net.http.server.crime
+    - net.mqtt_sn.packet
     - portability.cmsis_rtos_v1
     - portability.cmsis_rtos_v2
     - portability.posix.common
@@ -490,6 +519,19 @@
   comment: "clang is not available in our toolchain"
 
 - scenarios:
+    - drivers.video.build
+    - drivers.video.spi.build
+  platforms:
+    - native_sim/native
+  comment: "The LLVM build fails: CMake cannot find clang, not investigated"
+
+- scenarios:
+    - sca.dtdoctor
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "The LLVM build fails: CMake cannot find clang, not investigated"
+
+- scenarios:
     - sample.bluetooth.peripheral_hr.frdm_kw41z_shield
   platforms:
     - nrf5340dk/nrf5340/cpuapp/ns
@@ -518,6 +560,8 @@
   comment: "Missing toolchain python package. https://nordicsemi.atlassian.net/browse/NCSDK-35387"
 
 - scenarios:
+    - net.tls_credentials.protected_storage.secure_storage
+    - net.tls_credentials.protected_storage.secure_storage.parse_crt
     - sample.psa.its.secure_storage.entropy_driver
   platforms:
     - nrf54h20dk@0.9.0/nrf54h20/cpuapp
@@ -687,3 +731,25 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"
+
+- scenarios:
+    - libraries.heap_stats_log
+    - libraries.heap_stats_log.no_caller
+    - libraries.heap_stats_log.no_runtime_stats
+    - libraries.heap_stats_log.no_thread_name
+    - libraries.heap_stats_log.random_canary
+  platforms:
+    - qemu_cortex_m3/ti_lm3s6965
+  comment: "region RAM overflowed"
+
+- scenarios:
+    - net.mdns.offload
+  platforms:
+    - native_sim/native
+  comment: "The pytest harness fails, the Python package zeroconf is missing in the CI environment"
+
+- scenarios:
+    - net.wifi.interop
+  platforms:
+    - native_sim/native
+  comment: "native_sim Wi-Fi build fails, libnl-3.0/libnl-genl-3.0 not found"

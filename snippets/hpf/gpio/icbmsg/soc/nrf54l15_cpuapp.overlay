@@ -11,9 +11,9 @@
 		cpuflpr_code_data_sram: memory@2003c800 {
 			compatible = "mmio-sram";
 			reg = <0x2003c800 DT_SIZE_K(14)>;
+			ranges = <0x0 0x2003c800 0x3800>;
 			#address-cells = <1>;
 			#size-cells = <1>;
-			ranges = <0x0 0x2003c800 0x3800>;
 		};
 	};
 
@@ -31,9 +31,9 @@
 	};
 
 	reserved-memory {
+		ranges;
 		#address-cells = <1>;
 		#size-cells = <1>;
-		ranges;
 
 		sram_rx: memory@2003b800 {
 			reg = <0x2003b800 0x0800>;
@@ -56,10 +56,10 @@
 &rram_controller {
 	cpuflpr_code_partition: rram@179800 {
 		compatible = "soc-nv-flash";
-		erase-block-size = <0x1000>;
-		write-block-size = <16>;
 		reg = <0x179800 DT_SIZE_K(14)>;
 		ranges = <0x0 0x179800 DT_SIZE_K(14)>;
+		erase-block-size = <0x1000>;
+		write-block-size = <16>;
 		#address-cells = <1>;
 		#size-cells = <1>;
 	};
@@ -68,6 +68,10 @@
 &cpuapp_sram {
 	reg = <0x20000000 DT_SIZE_K(242)>;
 	ranges = <0x0 0x20000000 0x3d000>;
+};
+
+&cpuapp_sram_app {
+	reg = <0x60 (DT_SIZE_K(242) - 0x60)>;
 };
 
 &cpuflpr_vpr {
@@ -84,9 +88,9 @@
 };
 
 &hpf_gpio {
-	status = "okay";
 	ngpios = <11>;
 	port = <2>;
+	status = "okay";
 };
 
 #define WITH_FLPR_PARTITIONS

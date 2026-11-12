@@ -5,8 +5,8 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/debug/cpu_load.h>
 #include <zephyr/logging/log.h>
+#include <zephyr/sys/cpu_load.h>
 #include "bt_test.h"
 
 LOG_MODULE_REGISTER(main, LOG_LEVEL_INF);

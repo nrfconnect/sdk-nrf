@@ -13,7 +13,7 @@
 #endif
 #include <zephyr/drivers/disk.h>
 #include <zephyr/drivers/counter.h>
-#include <zephyr/debug/cpu_load.h>
+#include <zephyr/sys/cpu_load.h>
 #include <zephyr/drivers/gpio.h>
 
 #define MAX_CPU_LOAD_VALUES_HELD	   32

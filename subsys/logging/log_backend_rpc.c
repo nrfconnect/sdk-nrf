@@ -20,7 +20,7 @@
 
 #include <zephyr/debug/coredump.h>
 #include <zephyr/kernel.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/logging/log_backend.h>
 #include <zephyr/logging/log_backend_std.h>
@@ -967,8 +967,7 @@ NRF_RPC_CBOR_CMD_DECODER(log_rpc_group, log_rpc_set_time_handler, LOG_RPC_CMD_SE
 #ifdef CONFIG_LOG_BACKEND_RPC_CRASH_LOG
 
 #ifdef CONFIG_ASSERT
-#ifndef CONFIG_ASSERT_NO_FILE_INFO
-void assert_post_action(const char *file, unsigned int line)
+void zassert_post_action(const char *file, unsigned int line)
 {
 	size_t start = 0;
 	size_t len = strlen(file);
@@ -986,8 +985,11 @@ void assert_post_action(const char *file, unsigned int line)
 	dump_region.size = sizeof(next_dump_info);
 
 	k_panic();
-}
+
+#ifndef CONFIG_ASSERT_TEST
+	CODE_UNREACHABLE;
 #endif
+}
 #endif
 
 static int init_dump_metadata(void)

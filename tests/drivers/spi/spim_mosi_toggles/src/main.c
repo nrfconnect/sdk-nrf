@@ -19,7 +19,7 @@ LOG_MODULE_REGISTER(spim_mosi_toggles, LOG_LEVEL_INF);
 /* Number of bytes transmitted in single transaction. */
 #define TEST_DATA_SIZE 6
 
-#define SPI_MODE (SPI_OP_MODE_MASTER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB)
+#define SPI_MODE (SPI_OP_MODE_CONTROLLER | SPI_WORD_SET(8) | SPI_LINES_SINGLE | SPI_TRANSFER_MSB)
 
 static struct spi_dt_spec spim_spec = SPI_DT_SPEC_GET(DT_NODELABEL(dut_spi_dt), SPI_MODE);
 static uint8_t spim_buffer[2 * TEST_DATA_SIZE] DMM_MEMORY_SECTION(DT_BUS(DT_NODELABEL(dut_spi_dt)));

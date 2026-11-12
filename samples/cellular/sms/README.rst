@@ -51,7 +51,7 @@ Check and configure the following optional library options that are used by the 
 * :kconfig:option:`CONFIG_SMS_SUBSCRIBERS_MAX_CNT`
 * :kconfig:option:`CONFIG_LOG`
 * :kconfig:option:`CONFIG_ASSERT`
-* :kconfig:option:`CONFIG_ASSERT_VERBOSE`
+* :kconfig:option:`CONFIG_ASSERT_MODULE_DEFAULT_LEVEL_VERBOSE`
 
 .. include:: /libraries/modem/nrf_modem_lib/nrf_modem_lib_trace.rst
    :start-after: modem_lib_sending_traces_UART_start

@@ -52,7 +52,6 @@ ZTEST(dect_rpc_client_connect, test_dect_connect_shell_success)
 
 	shell_backend_dummy_clear_output(sh);
 
-	MOCK_DECT_RPC_EXPECT_ANY_SEND;
 	mock_dect_rpc_tr_expect_add(RPC_CMD(DECT_RPC_CMD_CONNECT), RPC_RSP(CBOR_UINT_SMALL(0)));
 	err = shell_execute_cmd(sh, "dect connect");
 	mock_dect_rpc_tr_expect_done();

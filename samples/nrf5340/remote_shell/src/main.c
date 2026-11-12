@@ -73,19 +73,17 @@ static void ipc_host_receive(const uint8_t *data, size_t len, void *context)
 
 static void uart_tx_procces(const struct device *dev, const struct uart_irq_context *uart_ctrl)
 {
-	int err;
 	int send_len = 0;
 	uint8_t *data;
 
-	send_len  = ring_buf_get_claim(uart_ctrl->tx_buf, &data, uart_ctrl->tx_buf->size);
+	send_len = ring_buf_get_ptr(uart_ctrl->tx_buf, &data, 0);
 	if (send_len) {
 		if (IS_ENABLED(CONFIG_UART_LINE_CTRL)) {
 			uart_dtr_wait(dev);
 		}
 
 		send_len = uart_fifo_fill(dev, data, send_len);
-		err = ring_buf_get_finish(uart_ctrl->tx_buf, send_len);
-		__ASSERT_NO_MSG(err == 0);
+		ring_buf_consume(uart_ctrl->tx_buf, send_len);
 	} else {
 		uart_irq_tx_disable(dev);
 	}
@@ -96,14 +94,14 @@ static void uart_rx_process(const struct device *dev, const struct uart_irq_cont
 	int recv_len = 0;
 	uint8_t *data;
 
-	recv_len = ring_buf_put_claim(uart_ctrl->rx_buf, &data, uart_ctrl->rx_buf->size);
+	recv_len = ring_buf_put_ptr(uart_ctrl->rx_buf, &data, 0);
 	if (recv_len) {
 		recv_len = uart_fifo_read(dev, data, recv_len);
 		if (recv_len < 0) {
 			LOG_ERR("Failed to read UART FIFO, err %d", recv_len);
 			recv_len = 0;
 		} else {
-			ring_buf_put_finish(uart_ctrl->rx_buf, recv_len);
+			ring_buf_commit(uart_ctrl->rx_buf, recv_len);
 		}
 
 		if (recv_len) {
@@ -190,13 +188,13 @@ int main(void)
 
 		k_sem_take(&shell_ipc_write_sem, K_FOREVER);
 
-		data_size = ring_buf_get_claim(&rx_ringbuf, &data, rx_ringbuf.size);
+		data_size = ring_buf_get_ptr(&rx_ringbuf, &data, 0);
 
 		if (data_size) {
 			data_size = shell_ipc_host_write(data, data_size);
 			if (data_size >= 0) {
 				LOG_DBG("Sent %d bytes", data_size);
-				ring_buf_get_finish(&rx_ringbuf, data_size);
+				ring_buf_consume(&rx_ringbuf, data_size);
 			} else {
 				LOG_INF("Failed to send %d bytes (%d error)",
 					data_size, data_size);

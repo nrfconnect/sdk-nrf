@@ -19,16 +19,16 @@
 
 		retainedmem {
 			compatible = "zephyr,retained-ram";
-			status = "okay";
 			#address-cells = <1>;
 			#size-cells = <1>;
+			status = "okay";
 
 			boot_request: boot_request@0 {
 				compatible = "zephyr,retention";
-				status = "okay";
 				reg = <0x0 0x10>;
 				prefix = [0b 01];
 				checksum = <4>;
+				status = "okay";
 			};
 		};
 	};
@@ -38,4 +38,8 @@
 	/* Keep top 16 bytes for retention-backed boot requests. */
 	reg = <0x20000000 0x7fff0>;
 	ranges = <0x0 0x20000000 0x7fff0>;
+};
+
+&cpuapp_sram_app {
+	reg = <0x60 (0x7fff0 - 0x60)>;
 };

@@ -176,10 +176,10 @@ static ssize_t beacon_parameters_read_handle(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(rsp_data_buf, BEACON_PARAMETERS_RSP_ADD_DATA_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, BEACON_PARAMETERS_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Beacon Parameters Read request:"
 			"Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -284,10 +284,10 @@ static ssize_t provisioning_state_read_handle(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(rsp_data_buf, PROVISIONING_STATE_RSP_ADD_DATA_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, PROVISIONING_STATE_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Provisioning State Read request:"
 			"Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -400,10 +400,10 @@ static ssize_t ephemeral_identity_key_set_handle(struct bt_conn *conn,
 
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, EPHEMERAL_IDENTITY_KEY_SET_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Set request:"
 			"Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -533,10 +533,10 @@ static ssize_t ephemeral_identity_key_clear_handle(struct bt_conn *conn,
 
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, EPHEMERAL_IDENTITY_KEY_CLEAR_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Clear request:"
 			"Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -652,10 +652,10 @@ static ssize_t ephemeral_identity_key_read_handle(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(rsp_data_buf, EPHEMERAL_IDENTITY_KEY_READ_RSP_ADD_DATA_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, EPHEMERAL_IDENTITY_KEY_READ_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Ephemeral Identity Key Read request:"
 			"Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -786,9 +786,9 @@ static ssize_t ring_handle(struct bt_conn *conn,
 	struct bt_fast_pair_fhn_ring_req_param ring_param;
 	static const uint8_t req_data_len = RING_REQ_PAYLOAD_LEN;
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Ring request: Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -880,10 +880,10 @@ static ssize_t ringing_state_read_handle(struct bt_conn *conn,
 	NET_BUF_SIMPLE_DEFINE(rsp_data_buf, RINGING_STATE_READ_RSP_ADD_DATA_LEN);
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, RINGING_STATE_READ_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Ringing State Read request:"
 			" Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -964,14 +964,14 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 
 	/* If no control flag is being set, it is valid to omit this field in the request. */
 	if ((req_data_len - ACTIVATE_UTP_MODE_REQ_CONTROL_FLAGS_LEN) ==
-		net_buf_simple_max_len(req_data_buf)) {
+		fp_buf_simple_data_area_len(req_data_buf)) {
 		req_data_len -= ACTIVATE_UTP_MODE_REQ_CONTROL_FLAGS_LEN;
 	}
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Activate Unwanted Tracking Protection mode request:"
 			" Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -1008,7 +1008,7 @@ static ssize_t activate_utp_mode_handle(struct bt_conn *conn,
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_UNAUTHENTICATED);
 	}
 
-	if (net_buf_simple_max_len(req_data_buf) > 0) {
+	if (fp_buf_simple_data_area_len(req_data_buf) > 0) {
 		control_flags = net_buf_simple_pull_u8(req_data_buf);
 	}
 
@@ -1064,10 +1064,10 @@ static ssize_t deactivate_utp_mode_handle(struct bt_conn *conn,
 
 	NET_BUF_SIMPLE_DEFINE(rsp_buf, DEACTIVATE_UTP_MODE_RSP_LEN);
 
-	if (req_data_len != net_buf_simple_max_len(req_data_buf)) {
+	if (req_data_len != fp_buf_simple_data_area_len(req_data_buf)) {
 		LOG_ERR("Beacon Actions: Deactivate Unwanted Tracking Protection mode request:"
 			" Incorrect length: %d!=%d",
-			req_data_len, net_buf_simple_max_len(req_data_buf));
+			req_data_len, fp_buf_simple_data_area_len(req_data_buf));
 
 		return BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 	}
@@ -1266,7 +1266,7 @@ static ssize_t pf_ranging_operation_handle(enum beacon_actions_data_id pf_data_i
 		 "Non-PF identifiers should be handled by the previous function "
 		 "in the call stack");
 
-	req_data_len = net_buf_simple_max_len(req_data_buf);
+	req_data_len = fp_buf_simple_data_area_len(req_data_buf);
 	if (req_data_len <= BEACON_ACTIONS_ONE_TIME_AUTH_KEY_LEN) {
 		LOG_WRN("Beacon Actions: Precision Finding request (0x%02X): "
 			"Incorrect length: %d <= %d",
@@ -1593,9 +1593,9 @@ ssize_t fp_fhn_beacon_actions_write(struct bt_conn *conn,
 	data_id = net_buf_simple_pull_u8(&fhn_beacon_actions_buf);
 	data_len = net_buf_simple_pull_u8(&fhn_beacon_actions_buf);
 
-	if (data_len != net_buf_simple_max_len(&fhn_beacon_actions_buf)) {
+	if (data_len != fp_buf_simple_data_area_len(&fhn_beacon_actions_buf)) {
 		LOG_ERR("Beacon Actions: request with incorrect length: %d!=%d",
-			data_len, net_buf_simple_max_len(&fhn_beacon_actions_buf));
+			data_len, fp_buf_simple_data_area_len(&fhn_beacon_actions_buf));
 		res = BT_GATT_ERR(BEACON_ACTIONS_ATT_ERR_INVALID_VALUE);
 		goto finish;
 	}

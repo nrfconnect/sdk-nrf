@@ -32,7 +32,8 @@ config BLE_LOG_LEVEL
 
 config BT_LE_AUDIO_TX_LOG_LEVEL
 	int
-	default 4
+	# Simulated time stays at 0, rate limited debug logs are never suppressed
+	default 3
 
 config BT_BUF_EVT_RX_COUNT
 	int

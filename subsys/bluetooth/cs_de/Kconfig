@@ -10,8 +10,6 @@ menuconfig BT_CS_DE
 	imply FPU
 	select FPU_SHARING if FPU
 	select CMSIS_DSP
-	select CMSIS_DSP_TRANSFORM
-	select CMSIS_DSP_STATISTICS
 	select EXPERIMENTAL
 
 

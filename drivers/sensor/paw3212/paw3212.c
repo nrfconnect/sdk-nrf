@@ -963,7 +963,7 @@ static DEVICE_API(sensor, paw3212_driver_api) = {
 				.operation = SPI_WORD_SET(8) |		       \
 					     SPI_TRANSFER_MSB |		       \
 					     SPI_MODE_CPOL | SPI_MODE_CPHA,    \
-				.slave = DT_INST_REG_ADDR(n),		       \
+				.peripheral = DT_INST_REG_ADDR(n),		       \
 			},						       \
 		},							       \
 		.cs_gpio = SPI_CS_GPIOS_DT_SPEC_GET(DT_DRV_INST(n)),	       \

@@ -96,7 +96,7 @@ kernel:
     - zephyr/include/zephyr/kernel*.h
     - zephyr/include/zephyr/kernel/
     - zephyr/include/zephyr/spinlock.h
-    - zephyr/include/zephyr/sys_clock.h
+    - zephyr/include/zephyr/sys/clock.h
     - zephyr/kernel/
     - zephyr/samples/kernel/
     - zephyr/tests/arch/
@@ -826,11 +826,6 @@ lz4:
     - zephyr/modules/lz4/
     - zephyr/samples/modules/compression/lz4/
 
-chre:
-  files:
-    - zephyr/samples/modules/chre/
-    - zephyr/modules/Kconfig.chre
-
 userspace:
   files:
     - zephyr/include/zephyr/internal/syscall_handler.h
@@ -1236,12 +1231,12 @@ video:
   files:
     - zephyr/drivers/video/
     - zephyr/dts/bindings/video/
-    - zephyr/include/zephyr/drivers/video-controls.h
     - zephyr/include/zephyr/drivers/video.h
     - zephyr/include/zephyr/dt-bindings/video/
-    - zephyr/samples/drivers/video/
+    - zephyr/include/zephyr/video/
+    - zephyr/samples/subsys/video/
     - zephyr/tests/drivers/*/video/
-    - zephyr/tests/drivers/video/
+    - zephyr/tests/subsys/video/
 
 psa.secure_storage:
   files:
@@ -1317,9 +1312,10 @@ nvmem:
 
 cpu_load:
   files:
-    - zephyr/include/zephyr/debug/cpu_load.h
-    - zephyr/subsys/debug/cpu_load.c
-    - zephyr/tests/subsys/debug/cpu_load/
+    - zephyr/include/zephyr/sys/cpu_load.h
+    - zephyr/include/zephyr/sys/cpu_load_metric.h
+    - zephyr/lib/os/cpu_load/
+    - zephyr/tests/lib/cpu_load/
 
 auxdisplay:
   files:
@@ -1355,11 +1351,6 @@ emul:
   files:
     - zephyr/tests/subsys/emul/
     - zephyr/include/zephyr/drivers/emul*
-
-assert_custom_header:
-  files:
-    - zephyr/sys/__assert.h
-    - zephyr/tests/subsys/debug/assert_custom_header/
 
 kconfigoptions:
   files:

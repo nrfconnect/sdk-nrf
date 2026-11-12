@@ -55,23 +55,26 @@ tests:
       - nrf54ls05dk/nrf54ls05b/cpuapp
       - nrf54lv10dk/nrf54lv10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     extra_configs:
       - CONFIG_UART_ASYNC_API=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
 
   benchmarks.power_consumption.uart.interrupt.nrf54l_lfrc:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: *pm_uart_54l_lfrc_platforms
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     extra_configs:
       - CONFIG_UART_INTERRUPT_DRIVEN=y
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
 
   benchmarks.power_consumption.uart.polling.nrf54l_lfrc:
     integration_platforms:
       - nrf54l15dk/nrf54l15/cpuapp
     platform_allow: *pm_uart_54l_lfrc_platforms
+    extra_args:
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
     extra_configs:
       - CONFIG_UART_ASYNC_API=n
       - CONFIG_UART_INTERRUPT_DRIVEN=n
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y

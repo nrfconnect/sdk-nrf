@@ -61,7 +61,7 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
@@ -88,7 +88,7 @@ tests:
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
@@ -115,7 +115,7 @@ tests:
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
@@ -142,7 +142,7 @@ tests:
     platform_allow: *ppk_power_measure_54l_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_RC=y
+      - EXTRA_DTC_OVERLAY_FILE="lfrc.overlay"
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
@@ -185,7 +185,6 @@ tests:
       - nrf54h20dk/nrf54h20/cpuapp
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
@@ -196,7 +195,6 @@ tests:
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
@@ -207,7 +205,6 @@ tests:
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
@@ -218,7 +215,6 @@ tests:
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_PLUS_8=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30
@@ -229,7 +225,6 @@ tests:
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_non_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=31
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=100
@@ -240,7 +235,6 @@ tests:
     platform_allow: *ppk_power_measure_platform_allow
     extra_args:
       - FILE_SUFFIX=auto_non_conn_advert
-      - CONFIG_CLOCK_CONTROL_NRF_K32SRC_XTAL=y
       - CONFIG_BT_CTLR_TX_PWR_0=y
       - CONFIG_BT_POWER_PROFILING_DATA_LENGTH=27
       - CONFIG_BT_POWER_PROFILING_NOTIFICATION_INTERVAL=30

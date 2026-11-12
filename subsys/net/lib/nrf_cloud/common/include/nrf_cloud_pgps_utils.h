@@ -5,7 +5,7 @@
  */
 
 #include <zephyr/kernel.h>
-#include <zephyr/sys_clock.h>
+#include <zephyr/sys/clock.h>
 
 #ifndef NRF_CLOUD_PGPS_UTILS_H_
 #define NRF_CLOUD_PGPS_UTILS_H_
