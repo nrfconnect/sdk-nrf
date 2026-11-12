@@ -1441,6 +1441,10 @@ Libraries for networking
   * Updated the library to try all resolved addresses for the address families that the Connection Manager reports as ready when the address family is ``AF_UNSPEC``.
     Previously, the library tried IPv6 and then fell back to IPv4.
 
+* :ref:`lib_rest_client` library:
+
+  * Updated the library to resolve the host only for the address families that the Connection Manager reports as ready.
+
 * :ref:`lib_nrf_provisioning` library:
 
   * Added a configurable heap allocator for the library's dynamic allocations, selected with the :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_KERNEL` (default) and :kconfig:option:`CONFIG_NRF_PROVISIONING_HEAP_SYSTEM` Kconfig options.
