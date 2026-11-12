@@ -12,9 +12,15 @@
 	};
 };
 
+&vbat_monitor {
+	status = "disabled";
+};
+
 &adc {
 	#address-cells = <1>;
 	#size-cells = <0>;
+
+	/delete-node/ channel@0;
 
 	channel@0 {
 		reg = <0>;
