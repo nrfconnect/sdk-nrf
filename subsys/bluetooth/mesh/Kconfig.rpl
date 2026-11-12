@@ -24,12 +24,25 @@ config BT_MESH_NRF_RPL_STORAGE_MODE_ZMS
 	depends on ZMS
 	depends on !ZMS_ID_64BIT
 	depends on FLASH_PAGE_LAYOUT
+	depends on FLASH_MAP
 	select BT_MESH_RPL_NCS
 	select BT_MESH_PENDING_STORE
+	select CRC
 	select EXPERIMENTAL
 	help
 	  Persistent storage of RPL directly in a dedicated ZMS partition.
 	  This approach does not use the Settings subsystem for RPL storage.
+
+	  ZMS uses the partition with the devicetree node label rpl_partition,
+	  and needs at least two sectors. The partition with the node label
+	  rpl_backup_partition holds a backup of the RPL, which keeps the RPL
+	  safe across a power loss while it is rewritten after an IV Index
+	  update. The backup partition must hold a 6 byte header and 8 bytes
+	  per BT_MESH_CRPL entry, each rounded up to the flash write block
+	  size. For example, with 16 byte write blocks and BT_MESH_CRPL=255,
+	  that is 16 + 2048 = 2064 bytes. The partition layout usually can't
+	  change in a firmware update, so size it for the largest BT_MESH_CRPL
+	  any future firmware may use. Init fails if the partition is too small.
 
 endchoice
 
