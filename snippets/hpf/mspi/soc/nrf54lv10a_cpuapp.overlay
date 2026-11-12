@@ -39,6 +39,8 @@
 			compatible = "zephyr,ipc-icmsg";
 			tx-region = <&sram_tx>;
 			rx-region = <&sram_rx>;
+			/delete-property/ tx-blocks;
+			/delete-property/ rx-blocks;
 			mboxes = <&cpuapp_vevif_rx 20>, <&cpuapp_vevif_tx 16>;
 			mbox-names = "rx", "tx";
 			status = "okay";
