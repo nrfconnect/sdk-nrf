@@ -687,3 +687,10 @@
   platforms:
     - native_sim/native
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41602"
+
+- scenarios:
+    - sample.bluetooth.audio.ccp_call_control_client
+    - sample.bluetooth.audio.ccp_call_control_server
+  platforms:
+    - nrf5340dk/nrf5340/cpuapp
+  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42358"
