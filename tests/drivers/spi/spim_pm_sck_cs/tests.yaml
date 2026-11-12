@@ -1,0 +1,73 @@
+common:
+  sysbuild: true
+  tags:
+    - drivers
+    - spim
+    - ci_tests_drivers_spi
+  harness: console
+  harness_config:
+    fixture: gpio_loopback
+    type: multi_line
+    regex:
+      - "Test passed"
+  platform_allow:
+    - nrf54l15dk/nrf54l15/cpuapp
+  integration_platforms:
+    - nrf54l15dk/nrf54l15/cpuapp
+
+tests:
+  drivers.spi.spim_pm_sck_cs.mode0:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=0
+
+  drivers.spi.spim_pm_sck_cs.mode1:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=1
+
+  drivers.spi.spim_pm_sck_cs.mode2:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=2
+
+  drivers.spi.spim_pm_sck_cs.mode3:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=3
+
+  drivers.spi.spim_pm_sck_cs.rtio_queued.mode0:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=0
+      - SB_CONFIG_TEST_SCENARIO_RTIO_QUEUED=y
+
+  drivers.spi.spim_pm_sck_cs.rtio_queued.mode3:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=3
+      - SB_CONFIG_TEST_SCENARIO_RTIO_QUEUED=y
+
+  drivers.spi.spim_pm_sck_cs.rtio_callback.mode0:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=0
+      - SB_CONFIG_TEST_SCENARIO_RTIO_CALLBACK=y
+
+  drivers.spi.spim_pm_sck_cs.rtio_callback.mode3:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=3
+      - SB_CONFIG_TEST_SCENARIO_RTIO_CALLBACK=y
+
+  drivers.spi.spim_pm_sck_cs.rtio_hold_on_cs.mode0:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=0
+      - SB_CONFIG_TEST_SCENARIO_RTIO_HOLD_ON_CS=y
+
+  drivers.spi.spim_pm_sck_cs.rtio_hold_on_cs.mode3:
+    extra_args:
+      - spim_pm_sck_cs_SNIPPET=nordic-flpr
+      - SB_CONFIG_TEST_SPI_MODE=3
+      - SB_CONFIG_TEST_SCENARIO_RTIO_HOLD_ON_CS=y
