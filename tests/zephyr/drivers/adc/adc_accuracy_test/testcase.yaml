@@ -5,6 +5,9 @@ common:
   timeout: 30
 tests:
   nrf.extended.drivers.adc.accuracy.ref_volt:
+    extra_configs:
+      - CONFIG_REFERENCE_VOLTAGE_TEST=y
+    filter: CONFIG_REFERENCE_VOLTAGE_TEST
     harness_config:
       fixture: adc_ref_volt
     integration_platforms:
@@ -15,6 +18,9 @@ tests:
       - nrf54lc10dk/nrf54lc10a/cpuapp
       - nrf54lc10dk/nrf54lc10a/cpuapp/ns
   nrf.extended.drivers.adc.accuracy.ref_volt.nrf9251:
+    extra_configs:
+      - CONFIG_REFERENCE_VOLTAGE_TEST=y
+    filter: CONFIG_REFERENCE_VOLTAGE_TEST
     harness_config:
       # any setup that sets AINx to logic high
       fixture: gpio_loopback
