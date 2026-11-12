@@ -1350,6 +1350,7 @@ Modem libraries
       Previously, the function returned ``-EBADMSG`` in this case.
       To find out whether the network provided a DNS server address, check the DNS address members for the unspecified address instead of checking the return value.
       As before, if a DNS server address of an IP family is missing, the MTU of that family is not returned.
+    * The maximum length of the APN accepted by the :c:func:`lte_lc_pdn_ctx_configure` function and returned by the :c:func:`lte_lc_pdn_default_ctx_apn_get` function from 63 to 64 characters, the maximum length that the modem accepts, defined by the :c:macro:`LTE_LC_PDN_APN_LEN_MAX` macro.
 
   * Fixed an issue where the :c:func:`lte_lc_pdn_dynamic_info_get` function did not return the DNS server addresses and MTU of an IPv6-only PDN connection.
 

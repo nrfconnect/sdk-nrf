@@ -35,8 +35,6 @@ LOG_MODULE_DECLARE(lte_lc, CONFIG_LTE_LINK_CONTROL_LOG_LEVEL);
 #define PDN_ACT_REASON_IPV4_ONLY (0)
 #define PDN_ACT_REASON_IPV6_ONLY (1)
 
-#define APN_STR_MAX_LEN 64
-
 #define MODEM_CFUN_POWER_OFF 0
 #define MODEM_CFUN_NORMAL 1
 #define MODEM_CFUN_ACTIVATE_LTE 21
@@ -491,7 +489,7 @@ int pdn_ctx_configure(uint8_t cid, const char *apn, enum lte_lc_pdn_family famil
 	int err;
 	char type_str[] = "IPV4V6"; /* longest type */
 
-	if (apn != NULL && strlen(apn) >= APN_STR_MAX_LEN) {
+	if (apn != NULL && strlen(apn) > LTE_LC_PDN_APN_LEN_MAX) {
 		return -EINVAL;
 	}
 
@@ -850,11 +848,11 @@ int pdn_dynamic_info_get(uint8_t cid, struct lte_lc_pdn_dynamic_info *pdn_info)
 int pdn_ctx_default_apn_get(char *buf, size_t len)
 {
 	int err;
-	char apn[64] = {0};
+	char apn[LTE_LC_PDN_APN_LEN_MAX + 1] = {0};
 
 	/* +CGDCONT: 0,"family","apn.name" */
 	err = nrf_modem_at_scanf("AT+CGDCONT?",
-		"+CGDCONT: 0,\"%*[^\"]\",\"%63[^\"]\"", apn);
+		"+CGDCONT: 0,\"%*[^\"]\",\"%" STRINGIFY(LTE_LC_PDN_APN_LEN_MAX) "[^\"]\"", apn);
 	if (err < 0) {
 		LOG_ERR("Failed to read PDP contexts, err %d", err);
 		return err;

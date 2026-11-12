@@ -779,7 +779,7 @@ static int nrf_modem_at_scanf_custom_cgdcont(const char *cmd, const char *fmt, v
 	int *apn;
 
 	TEST_ASSERT_EQUAL_STRING("AT+CGDCONT?", cmd);
-	TEST_ASSERT_EQUAL_STRING("+CGDCONT: 0,\"%*[^\"]\",\"%63[^\"]\"", fmt);
+	TEST_ASSERT_EQUAL_STRING("+CGDCONT: 0,\"%*[^\"]\",\"%64[^\"]\"", fmt);
 
 	apn = va_arg(args, int *);
 	*apn = 1;
@@ -1202,9 +1202,9 @@ void test_lte_lc_pdp_context_create_cid2(void)
 void test_lte_lc_pdp_context_configure_einval(void)
 {
 	int ret;
-	/* APN_STR_MAX_LEN + 1 */
 	static const char apn_toobig[] = "loremipsumdolorsitametconsectet "
-					 "uradipiscingelitnamaceleifendaug";
+					 "uradipiscingelitnamaceleifendaugu";
+	BUILD_ASSERT(sizeof(apn_toobig) - 1 == LTE_LC_PDN_APN_LEN_MAX + 1);
 	enum lte_lc_pdn_family fam = LTE_LC_PDN_FAM_IPV4;
 	struct lte_lc_pdn_pdp_context_opts opt;
 
