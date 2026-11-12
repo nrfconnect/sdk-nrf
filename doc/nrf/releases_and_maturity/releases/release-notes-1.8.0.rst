@@ -120,8 +120,8 @@ Gazell
 
 * Added support for nRF52 Series.
 * Added documentation pages about Gazell protocol under :ref:`protocols`.
-* Added :ref:`lib_gazell`.
-* Added :ref:`gazell_samples`.
+* Added ``lib_gazell``.
+* Added ``gazell_samples``.
 
 HomeKit
 -------
@@ -305,8 +305,8 @@ Gazell samples
 * New section.
 * Added:
 
-  * :ref:`Gazell ACK Payload <gzll_ack_payload_host>`
-  * :ref:`Gazell Dynamic Pairing <gzp_dynamic_pairing_host>`
+  * Gazell ACK Payload
+  * Gazell Dynamic Pairing
 
 HomeKit samples
 ---------------
@@ -502,8 +502,8 @@ Gazell libraries
 * New section.
 * Added the following libraries:
 
-  * :ref:`gzll_glue`
-  * :ref:`gzp`
+  * ``gzll_glue``
+  * ``gzp``
 
 Modem libraries
 ---------------

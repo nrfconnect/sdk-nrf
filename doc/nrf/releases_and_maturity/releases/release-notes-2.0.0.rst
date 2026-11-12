@@ -1074,7 +1074,7 @@ Documentation
   * :ref:`lwm2m_client` sample documentation with a state diagram.
   * The relevant Thread sample documentation pages with information about support for :ref:`Trusted Firmware-M <ug_tfm>`.
   * All Thread samples documentation with a Configuration section, and organized relevant information under that section.
-  * Gazell samples documentation by separating the :ref:`gazell_samples` into their own pages for Host and Device.
+  * Gazell samples documentation by separating the ``gazell_samples`` into their own pages for Host and Device.
     There are now four different sample pages, where each Host sample must be used along with its corresponding Device sample.
   * Moved the :ref:`ug_nrf_cloud` page to the top level of the navigation.
 

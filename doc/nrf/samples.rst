@@ -54,7 +54,6 @@ General information about samples in the |NCS|
    samples/dfu
    samples/edge_impulse
    samples/esb
-   samples/gazell
    samples/keys
    samples/matter
    samples/net
