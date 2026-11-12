@@ -19,6 +19,9 @@
 
 LOG_MODULE_REGISTER(identity_key);
 
+BUILD_ASSERT(CONFIG_MAIN_STACK_SIZE >= 2048,
+	     "IDENTITY_KEY requires CONFIG_MAIN_STACK_SIZE >= 2048");
+
 #if defined(CONFIG_IDENTITY_KEY_RANDOM)
 static int generate_random_secp256r1_private_key(uint8_t *key_buff)
 {
