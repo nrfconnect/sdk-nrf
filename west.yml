@@ -150,7 +150,7 @@ manifest:
     - name: nrfxlib
       repo-path: sdk-nrfxlib
       path: nrfxlib
-      revision: 908e7a9a5411a131034603cb5276550dedf015bf
+      revision: pull/2362/head
     - name: trusted-firmware-m
       repo-path: sdk-trusted-firmware-m
       path: modules/tee/tf-m/trusted-firmware-m
@@ -224,7 +224,7 @@ manifest:
       groups:
         - doc-internal
     - name: nrf_wifi
-      revision: 3424d7fe3fee1dbd938b8c78993765dd204442cb
+      revision: pull/13/head
       path: modules/lib/nrf_wifi
 
     # Other third-party repositories.
