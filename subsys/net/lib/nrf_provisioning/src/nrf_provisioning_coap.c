@@ -20,6 +20,7 @@
 #include <zephyr/net/tls_credentials.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/net/coap_client.h>
+#include <zephyr/net/conn_mgr_monitor.h>
 
 #include <net/nrf_provisioning.h>
 #include "nrf_provisioning_at.h"
@@ -178,15 +179,7 @@ static int socket_connect(int *const fd)
 	struct net_sockaddr *sa;
 	char peer_addr[NET_INET6_ADDRSTRLEN];
 
-#if defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4)
-	hints.ai_family = NET_AF_UNSPEC;
-#elif defined(CONFIG_NET_IPV6)
-	hints.ai_family = NET_AF_INET6;
-#elif defined(CONFIG_NET_IPV4)
-	hints.ai_family = NET_AF_INET;
-#else
-	hints.ai_family = NET_AF_UNSPEC;
-#endif /* defined(CONFIG_NET_IPV6) && defined(CONFIG_NET_IPV4) */
+	hints.ai_family = conn_mgr_get_ready_addr_family();
 
 	LOG_DBG("CoAP host: %s", COAP_HOST);
 	hints.ai_socktype = NET_SOCK_DGRAM;
