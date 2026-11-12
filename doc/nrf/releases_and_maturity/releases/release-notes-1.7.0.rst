@@ -407,7 +407,7 @@ The code for integrating MCUboot into |NCS| is located in :file:`ncs/nrf/modules
 The following list summarizes the most important changes inherited from upstream MCUboot:
 
 * Added support for simultaneous multi-image DFU for the nRF53 Series.
-  For more information, see the :ref:`ug_nrf5340` and :ref:`ug_thingy53` user guides.
+  For more information, see the :ref:`ug_nrf5340` and Developing with Thingy:53 user guides.
 * Added AES support for image encryption (based on mbedTLS).
 * MCUboot serial: Ported encoding to use the cddl-gen module (which removes dependency on the `TinyCBOR`_ library).
 * bootutil_public library: Made ``boot_read_swap_state()`` declaration public.
@@ -420,7 +420,7 @@ The mcumgr library contains all commits from the upstream mcumgr repository up t
 The following list summarizes the most important changes inherited from upstream mcumgr:
 
 * Added support for simultaneous multi-image DFU for the nRF53 Series.
-  For more information, see the :ref:`ug_nrf5340` and :ref:`ug_thingy53` user guides.
+  For more information, see the :ref:`ug_nrf5340` and Developing with Thingy:53 user guides.
 * Fixed an issue with SMP file management commands that would fail to read or write files, or both.
 
 Zephyr
@@ -485,7 +485,7 @@ In addition to documentation related to the changes listed above, the following 
 
 * Added pages:
 
-  * Added the :ref:`ug_thingy53` user guide.
+  * Added the Developing with Thingy:53 user guide.
   * Added the :ref:`ug_nrf_cloud` user guide.
   * Added Serial LTE modem application pages:
 

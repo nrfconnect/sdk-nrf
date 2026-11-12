@@ -9,7 +9,7 @@ MCUboot's serial recovery of the networking core image
 
 
 In addition to the recovery of the application core image, also the networking core image can be recovered.
-When you build MCUboot for the nRF5340 DK or the Thingy:53, you can use this feature with one of the following options:
+When you build MCUboot for the nRF5340 DK, you can use this feature with one of the following options:
 
 * :ref:`ug_nrf5340_multi_image_dfu`
 * Serial recovery for the network core in the one image pair mode, where sysbuild Kconfig option :kconfig:option:`SB_CONFIG_MCUBOOT_UPDATEABLE_IMAGES` is set to ``== 1``.

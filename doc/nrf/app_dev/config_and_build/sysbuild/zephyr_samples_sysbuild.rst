@@ -28,8 +28,7 @@ For applications and samples in the |NCS| repository, this is handled automatica
 | :kconfig:option:`SB_CONFIG_NETCORE_NONE`         | No image                                   | n/a       | n/a      |                                                                                                                     |
 +--------------------------------------------------+--------------------------------------------+-----------+----------+---------------------------------------------------------------------------------------------------------------------+
 
-The default for Thingy:53 is the :ref:`nrf5340_empty_net_core` sample application.
-The default for other nRF53 devices is having no image added to the build.
+By default, no image is added to the build for nRF53 Series devices.
 
 When configuring an application, such as :zephyr:code-sample:`ble_peripheral_hr`, you must configure it with a supported network core image to ensure proper functionality.
 For basic Bluetooth samples, you can use :zephyr:code-sample:`bluetooth_hci_ipc`, or :ref:`ipc_radio` (one of the :ref:`companion components <companion_components>`).

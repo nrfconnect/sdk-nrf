@@ -47,8 +47,6 @@ The application uses Nordic Semiconductor tools and precompiled binaries and doe
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | Thingy:91            | `Get started <Nordic Thingy:91 get started_>`_ on the product page | `Nordic Thingy:91 User Guide`_        |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
-| Thingy:53            | `Get started <Nordic Thingy:53 get started_>`_ on the product page | `Nordic Thingy:53 Hardware`_          |
-+----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nPM1300 EK           | `Get started <nPM1300 EK get started_>`_ on the product page       | `nPM1300 EK User Guide`_              |
 +----------------------+--------------------------------------------------------------------+---------------------------------------+
 | nPM1304 EK           | `Get started <nPM1304 EK get started_>`_ on the product page       | `nPM1304 EK User Guide`_              |

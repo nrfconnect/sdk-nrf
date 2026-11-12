@@ -31,7 +31,7 @@ The following table lists the available companion components:
      - Integration instructions
    * - :ref:`ipc_radio`
      - Companion component that allows to use the radio peripheral from another core in a multicore device.
-     - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`, :ref:`nRF5340 DK <ug_nrf5340>`, :ref:`Thingy:53 <ug_thingy53>`
+     - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`, :ref:`nRF5340 DK <ug_nrf5340>`
      - :file:`applications/ipc_radio`
      - :ref:`Application's configuration section <ipc_radio_config>`
    * - :ref:`MCUboot <mcuboot:mcuboot_wrapper>`
@@ -41,7 +41,7 @@ The following table lists the available companion components:
      - :ref:`mcuboot:mcuboot_ncs`
    * - `Trusted Firmware-M (TF-M) <TF-M documentation_>`_
      - Platform security architecture reference implementation aligning with PSA Certified guidelines, enabling chips, Real Time Operating Systems and devices to become PSA Certified.
-     - :ref:`nRF91 Series devices <ug_nrf91>`, :ref:`nRF54L15 DK <ug_nrf54l>`, :ref:`nRF54H20 DK <ug_nrf54h20_gs>`, :ref:`nRF5340 DK <ug_nrf5340>`, :ref:`Thingy:53 <ug_thingy53>`
+     - :ref:`nRF91 Series devices <ug_nrf91>`, :ref:`nRF54L15 DK <ug_nrf54l>`, :ref:`nRF54H20 DK <ug_nrf54h20_gs>`, :ref:`nRF5340 DK <ug_nrf5340>`
      - :file:`ncs/modules/tee/tf-m` (external module), :file:`ncs/nrf/modules/trusted-firmware-m` (integration files)
      - :ref:`ug_tfm`
    * - :ref:`bootloader`
