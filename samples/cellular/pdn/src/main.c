@@ -4,9 +4,9 @@
  * SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
  */
 
-#include <stdio.h>
 #include <stdint.h>
 #include <zephyr/kernel.h>
+#include <zephyr/sys/util.h>
 #include <zephyr/net/net_ip.h>
 #include <zephyr/net/socket.h>
 #include <modem/lte_lc.h>
@@ -15,6 +15,15 @@
 #include <nrf_socket.h>
 
 #define SIN(addr)  ((struct nrf_sockaddr_in *)(addr))
+
+/* How long to wait for IPv6 to come up after a PDN connection has been activated. */
+#define IPV6_UP_TIMEOUT K_SECONDS(3)
+
+/* Given by the event handler when IPv6 is up for the default PDP context (CID 0), and for the
+ * PDP context created by the sample.
+ */
+static K_SEM_DEFINE(ipv6_up_default_ctx_sem, 0, 1);
+static K_SEM_DEFINE(ipv6_up_new_ctx_sem, 0, 1);
 
 static const char * const fam_str[] = {
 	[LTE_LC_PDN_FAM_IPV4V6] = "IPV4V6",
@@ -32,7 +41,18 @@ static const char * const event_str[] = {
 	[LTE_LC_EVT_PDN_APN_RATE_CONTROL_ON] = "APN rate control on",
 	[LTE_LC_EVT_PDN_APN_RATE_CONTROL_OFF] = "APN rate control off",
 	[LTE_LC_EVT_PDN_CTX_DESTROYED] = "context destroyed",
+	[LTE_LC_EVT_PDN_SUSPENDED] = "suspended",
+	[LTE_LC_EVT_PDN_RESUMED] = "resumed",
 };
+
+static const char *pdn_event_str(enum lte_lc_pdn_evt_type type)
+{
+	if (type >= ARRAY_SIZE(event_str) || event_str[type] == NULL) {
+		return "unknown event";
+	}
+
+	return event_str[type];
+}
 
 static void snprintaddr(int fam, char *str, size_t size, void *addr)
 {
@@ -40,8 +60,36 @@ static void snprintaddr(int fam, char *str, size_t size, void *addr)
 
 	ret = zsock_inet_ntop(fam, addr, str, size);
 	if (!ret) {
-		snprintf(str, size, "Unable to parse");
+		snprintk(str, size, "Unable to parse");
 	}
+}
+
+/* Print an address, or that it is not available if it is the unspecified address. */
+static void dynamic_info_addr_print(const char *name, int fam, void *addr)
+{
+	char buf[NET_INET6_ADDRSTRLEN];
+	const bool unspecified = (fam == NET_AF_INET) ?
+				 net_ipv4_is_addr_unspecified(addr) :
+				 net_ipv6_is_addr_unspecified(addr);
+
+	if (unspecified) {
+		printk("%s: not available\n", name);
+
+		return;
+	}
+
+	snprintaddr(fam, buf, sizeof(buf), addr);
+	printk("%s: %s\n", name, buf);
+}
+
+static void dynamic_info_mtu_print(const char *name, uint32_t mtu)
+{
+	if (mtu == 0) {
+		printk("%s: not available\n", name);
+		return;
+	}
+
+	printk("%s: %u\n", name, mtu);
 }
 
 static void ifaddrs_print(void)
@@ -79,11 +127,10 @@ static void ifaddrs_print(void)
 	nrf_freeifaddrs(ifaddrs);
 }
 
-static void dynamic_info_print(uint32_t cid)
+static void dynamic_info_print(uint8_t cid, bool ipv6_up)
 {
 	int err;
 	struct lte_lc_pdn_dynamic_info info;
-	char buf[NRF_INET6_ADDRSTRLEN] = {0};
 
 	err = lte_lc_pdn_dynamic_info_get(cid, &info);
 	if (err) {
@@ -91,18 +138,29 @@ static void dynamic_info_print(uint32_t cid)
 		return;
 	}
 
-	printk("Dynamic info for cid %d:\n", cid);
-	if (info.dns_addr4_primary.s_addr) {
-		snprintaddr(AF_INET, buf, sizeof(buf), &info.dns_addr4_primary);
-		printk("Primary IPv4 DNS address: %s\n", buf);
-		snprintaddr(AF_INET, buf, sizeof(buf), &info.dns_addr4_primary);
-		printk("Secondary IPv4 DNS address: %s\n", buf);
-		snprintaddr(AF_INET6, buf, sizeof(buf), &info.dns_addr6_primary);
-		printk("Primary IPv6 DNS address: %s\n", buf);
-		snprintaddr(AF_INET6, buf, sizeof(buf), &info.dns_addr6_primary);
-		printk("Secondary IPv6 DNS address: %s\n", buf);
-		printk("IPv4 MTU: %d, IPv6 MTU: %d\n", info.ipv4_mtu, info.ipv6_mtu);
+	printk("Dynamic info for cid %u:\n", cid);
+
+	printk("APN: %s\n", info.apn);
+
+	dynamic_info_addr_print("IPv4 address", NET_AF_INET, &info.ipv4_addr);
+	dynamic_info_addr_print("Primary IPv4 DNS address", NET_AF_INET, &info.dns_addr4_primary);
+	dynamic_info_addr_print("Secondary IPv4 DNS address", NET_AF_INET,
+				&info.dns_addr4_secondary);
+	dynamic_info_mtu_print("IPv4 MTU", info.ipv4_mtu);
+
+	/* The IPv6 address is only assigned when IPv6 is up. */
+	if (!ipv6_up) {
+		printk("IPv6 is not up\n");
+
+		return;
 	}
+
+	dynamic_info_addr_print("IPv6 address", NET_AF_INET6, &info.ipv6_addr);
+	dynamic_info_addr_print("Primary IPv6 DNS address", NET_AF_INET6,
+				&info.dns_addr6_primary);
+	dynamic_info_addr_print("Secondary IPv6 DNS address", NET_AF_INET6,
+				&info.dns_addr6_secondary);
+	dynamic_info_mtu_print("IPv6 MTU", info.ipv6_mtu);
 }
 
 void lte_lc_evt_handler(const struct lte_lc_evt *const evt)
@@ -114,9 +172,20 @@ void lte_lc_evt_handler(const struct lte_lc_evt *const evt)
 			printk("Event: PDP context %d, %s\n", evt->pdn.cid,
 			       lte_lc_pdn_esm_strerror(evt->pdn.esm_err));
 			break;
+		case LTE_LC_EVT_PDN_IPV6_UP:
+			printk("Event: PDP context %d %s\n", evt->pdn.cid,
+							     pdn_event_str(evt->pdn.type));
+
+			/* The sample creates one PDP context in addition to the default one. */
+			if (evt->pdn.cid == 0) {
+				k_sem_give(&ipv6_up_default_ctx_sem);
+			} else {
+				k_sem_give(&ipv6_up_new_ctx_sem);
+			}
+			break;
 		default:
 			printk("Event: PDP context %d %s\n", evt->pdn.cid,
-							     event_str[evt->pdn.type]);
+							     pdn_event_str(evt->pdn.type));
 			break;
 		}
 		break;
@@ -130,7 +199,8 @@ int main(void)
 	int err;
 	int esm;
 	uint8_t cid;
-	char apn[32];
+	bool ipv6_up;
+	char apn[LTE_LC_PDN_APN_LEN_MAX + 1];
 
 	printk("PDN sample started\n");
 
@@ -154,6 +224,7 @@ int main(void)
 
 	err = lte_lc_connect();
 	if (err) {
+		printk("lte_lc_connect() failed, err %d\n", err);
 		return 0;
 	}
 
@@ -188,15 +259,21 @@ int main(void)
 	err = lte_lc_pdn_activate(cid, &esm, NULL);
 	if (err) {
 		printk("lte_lc_pdn_activate() failed, err %d esm %d %s\n",
-			err, esm, lte_lc_pdn_esm_strerror(err));
+			err, esm, lte_lc_pdn_esm_strerror(esm));
 		return 0;
 	}
 
 	printk("PDP Context %d, PDN ID %d\n", 0, lte_lc_pdn_id_get(0));
 	printk("PDP Context %d, PDN ID %d\n", cid, lte_lc_pdn_id_get(cid));
 
-	dynamic_info_print(0);
-	dynamic_info_print(cid);
+	/* IPv6 comes up after the PDN connection has been activated. Wait for it, so that the
+	 * IPv6 address can be printed. If the network does not support IPv6, the wait times out.
+	 */
+	ipv6_up = (k_sem_take(&ipv6_up_default_ctx_sem, IPV6_UP_TIMEOUT) == 0);
+	dynamic_info_print(0, ipv6_up);
+
+	ipv6_up = (k_sem_take(&ipv6_up_new_ctx_sem, IPV6_UP_TIMEOUT) == 0);
+	dynamic_info_print(cid, ipv6_up);
 
 	ifaddrs_print();
 

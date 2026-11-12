@@ -710,6 +710,16 @@ Cellular samples
 
   * Updated the sample to use the new nRF Cloud CoAP FOTA API.
 
+* :ref:`pdn_sample` sample:
+
+  * Added printing of the APN and IP addresses of the PDN connections.
+  * Updated the sample to wait for IPv6 to come up before printing the IPv6 parameters of a PDN connection.
+  * Fixed:
+
+    * An issue where the secondary DNS server addresses were printed as the primary ones, and the dynamic information of an IPv6-only PDN connection was not printed.
+    * An issue where the sample failed if the default APN was longer than 31 characters.
+    * An issue where the ESM error string printed when the PDN activation failed did not match the ESM error.
+
 Cryptography samples
 --------------------
 
