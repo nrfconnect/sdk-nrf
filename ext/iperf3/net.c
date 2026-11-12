@@ -64,6 +64,12 @@
 #include "iperf_util.h"
 #include "net.h"
 #include "timer.h"
+#include "iperf_time.h"
+#include <sys/select.h>
+
+/* Bound Nread() so a stalled peer can't hang the control channel (CVE-2023-7250) */
+static int nread_read_timeout = 10;
+static int nread_overall_timeout = 30;
 
 /*
  * Declaration of gerror in iperf_error.c.  Most other files in iperf3 can get this
@@ -449,6 +455,61 @@ netannounce(int domain, int proto, const char *local, int port)
 
 int
 Nread(int fd, char *buf, size_t count, int prot)
+{
+    register ssize_t r;
+    register size_t nleft = count;
+    struct iperf_time deadline;
+
+    /*
+     * Stricter than upstream 3.16: the deadline starts before the first
+     * wait and caps every wait, so total time is bounded by
+     * nread_overall_timeout even if bytes trickle in.
+     */
+    iperf_time_now(&deadline);
+    iperf_time_add_usecs(&deadline, nread_overall_timeout * 1000000L);
+
+    while (nleft > 0) {
+        struct iperf_time now, remaining;
+        struct timeval timeout = { nread_read_timeout, 0 };
+        fd_set rfdset;
+
+        iperf_time_now(&now);
+        if (iperf_time_diff(&deadline, &now, &remaining)) {
+            break;
+        }
+        if (remaining.secs < (uint32_t)nread_read_timeout) {
+            timeout.tv_sec = remaining.secs;
+            timeout.tv_usec = remaining.usecs;
+        }
+
+        FD_ZERO(&rfdset);
+        FD_SET(fd, &rfdset);
+        r = select(fd + 1, &rfdset, NULL, NULL, &timeout);
+        if (r < 0) {
+            return NET_HARDERROR;
+        }
+        if (r == 0) {
+            break;
+        }
+
+        r = read(fd, buf, nleft);
+        if (r < 0) {
+            if (errno == EINTR || errno == EAGAIN || errno == EWOULDBLOCK)
+                break;
+            else
+                return NET_HARDERROR;
+        } else if (r == 0)
+            break;
+
+        nleft -= r;
+        buf += r;
+    }
+    return count - nleft;
+}
+
+/* Data-stream variant: no select(), so throughput isn't affected */
+int
+Nread_no_select(int fd, char *buf, size_t count, int prot)
 {
     register ssize_t r;
     register size_t nleft = count;

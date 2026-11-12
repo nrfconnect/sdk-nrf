@@ -350,12 +350,12 @@ iperf_handle_message_client(struct iperf_test *test)
             test->i_errno = IEACCESSDENIED;
             return -1;
         case SERVER_ERROR:
-            if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) < 0) {
+            if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) != (int)sizeof(err)) {
                 test->i_errno = IECTRLREAD;
                 return -1;
             }
 	    test->i_errno = ntohl(err);
-            if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) < 0) {
+            if (Nread(test->ctrl_sck, (char*) &err, sizeof(err), Ptcp) != (int)sizeof(err)) {
                 test->i_errno = IECTRLREAD;
                 return -1;
             }

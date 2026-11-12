@@ -709,6 +709,12 @@ Cellular samples
     * Support for the ``--normal_no_rel14`` option from the ``link funmode`` command and the ``--enable_no_rel14`` option from the ``link nmodeauto`` command.
       The ``AT%REL14FEAT`` AT command used for the feature is only supported by the nRF9160 SiP.
 
+  * Fixed security vulnerabilities CVE-2023-38403 and CVE-2023-7250 in iperf3, where a malicious iperf3 peer could cause a heap buffer overflow or make the iperf3 server hang indefinitely.
+    The fixes also apply to the :ref:`dect_shell_application` and :ref:`dect_rpc_sample` samples, which use the same iperf3 implementation.
+    The iperf3 functionality is intended for testing and debugging purposes only.
+    You must start the iperf3 server manually from the shell.
+    Do not use iperf3 in production applications.
+
 * :ref:`nrf_cloud_coap_fota_sample` sample:
 
   * Updated the sample to use the new nRF Cloud CoAP FOTA API.
