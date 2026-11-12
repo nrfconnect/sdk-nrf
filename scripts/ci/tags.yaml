@@ -1036,11 +1036,6 @@ ci_samples_debug:
     - zephyr/subsys/debug/
     - zephyr/subsys/net/
 
-ci_samples_gazell:
-  files:
-    - nrf/samples/gazell/
-    - nrf/subsys/gazell/
-
 ci_tests_lib_hw_unique_key_tfm:
   files:
     - mbedtls/

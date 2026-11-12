@@ -65,16 +65,6 @@ Enhanced ShockBurst
 See the :ref:`ug_esb` user guide for information about how to work with Enhanced ShockBurst.
 To start developing, check out the :ref:`esb_ptx` and :ref:`esb_prx` samples.
 
-Gazell
-======
-
-.. include:: /protocols/gazell/index.rst
-   :start-after: gz_intro_start
-   :end-before: gz_intro_end
-
-See the :ref:`ug_gzll` user guide and the :ref:`ug_gzp` user guide for information about how to work with Gazell.
-To start developing, check out the :ref:`gazell_samples`.
-
 Near Field Communication
 ========================
 
