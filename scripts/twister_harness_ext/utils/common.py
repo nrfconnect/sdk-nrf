@@ -98,3 +98,42 @@ def provision_keys_for_kmu(
 
     run_command(command)
     logger.info("Keys provisioned successfully")
+
+
+def halt_cpu(dev_id: str | None = None, core: str | None = None) -> None:
+    """Halt CPU execution on a device using nrfutil.
+
+    :param dev_id: Optional serial number of the device to target.
+    :param core: Optional core selector (e.g., "Application").
+    """
+    command = ["nrfutil", "device", "halt"]
+    if dev_id:
+        command.extend(["--serial-number", dev_id])
+    if core:
+        command.extend(["--core", core])
+    run_command(command)
+
+
+def go_cpu(
+    dev_id: str | None = None,
+    core: str | None = None,
+    program_counter: int | None = None,
+    stack_pointer: int | None = None,
+) -> None:
+    """Resume CPU execution on a device using nrfutil.
+
+    :param dev_id: Optional serial number of the device to target.
+    :param core: Optional core selector (e.g., "Application").
+    :param program_counter: Optional initial program counter address.
+    :param stack_pointer: Optional initial stack pointer address.
+    """
+    command = ["nrfutil", "device", "go"]
+    if program_counter is not None:
+        command.extend(["--program-counter", hex(program_counter)])
+    if stack_pointer is not None:
+        command.extend(["--stack-pointer", hex(stack_pointer)])
+    if dev_id:
+        command.extend(["--serial-number", dev_id])
+    if core:
+        command.extend(["--core", core])
+    run_command(command)
