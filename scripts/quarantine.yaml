@@ -108,10 +108,3 @@
     - nrf7120dk/nrf7120/cpuapp/ns
     - nrf7120dk/nrf7120e/cpuapp
   comment: "https://nordicsemi.atlassian.net/browse/NCSDK-41934"
-
-- scenarios:
-    - sample.nrf7002.enterprise_mode
-    - sample.nrf7002.enterprise_mode.wfa_qt_app.netusb
-  platforms:
-    - nrf7002dk/nrf5340/cpuapp
-  comment: "https://nordicsemi.atlassian.net/browse/NCSDK-42357"
