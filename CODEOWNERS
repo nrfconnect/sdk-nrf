@@ -940,6 +940,7 @@
 /snippets/ci-shell/                       @nrfconnect/ncs-protocols-serialization
 /snippets/ci-shell/*.rst                  @nrfconnect/ncs-terahertz-doc
 /snippets/coverage_support/               @nrfconnect/ncs-low-level-test
+/snippets/coverage_support/*.rst          @nrfconnect/ncs-lowlevel-doc
 /snippets/hpf/                            @nrfconnect/ncs-ll-ursus
 /snippets/hw-flow-control/                @nrfconnect/ncs-low-level-test @miha-nordic
 /snippets/nordic-bt-rpc/                  @ppryga-nordic
