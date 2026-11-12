@@ -68,6 +68,9 @@ enum peer_rpa {
 
 static enum peer_rpa peer_is_rpa[CONFIG_BT_ID_MAX];
 
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+static struct bt_le_ext_adv *ext_adv_set;
+#endif
 
 static void update_state(enum state new_state);
 
@@ -245,7 +248,20 @@ static int ble_adv_start_directed(void)
 
 	adv_param.id = cur_identity;
 
-	int err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+	int err = 0;
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+	adv_param.options |= BT_LE_ADV_OPT_EXT_ADV;
+
+	err = bt_le_ext_adv_create(&adv_param, NULL, &ext_adv_set);
+	if (err) {
+		return err;
+	}
+
+	struct bt_le_ext_adv_start_param ext_adv_start_param = {0};
+	err = bt_le_ext_adv_start(ext_adv_set, &ext_adv_start_param);
+#else
+	err = bt_le_adv_start(&adv_param, NULL, 0, NULL, 0);
+#endif
 
 	if (err) {
 		return err;
@@ -314,12 +330,31 @@ static int update_undirected_advertising(struct bt_le_adv_param *adv_param)
 	}
 
 	if (adv_param) {
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+		err = bt_le_ext_adv_update_param(ext_adv_set, adv_param);
+		if (err) {
+			return err;
+		}
+
+		err = bt_le_ext_adv_set_data(ext_adv_set, ad, ad_len, sd, sd_len);
+		if (err) {
+			return err;
+		}
+
+		struct bt_le_ext_adv_start_param ext_adv_start_param = {0};
+		return bt_le_ext_adv_start(ext_adv_set, &ext_adv_start_param);
+#else
 		return bt_le_adv_start(adv_param, ad, ad_len, sd, sd_len);
+#endif
 	} else {
 		__ASSERT_NO_MSG(!adv_state.new_adv_session);
 		__ASSERT_NO_MSG(!adv_state.rpa_rotated);
 
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+		return bt_le_ext_adv_set_data(ext_adv_set, ad, ad_len, sd, sd_len);
+#else
 		return bt_le_adv_update_data(ad, ad_len, sd, sd_len);
+#endif
 	}
 }
 
@@ -391,6 +426,18 @@ static int ble_adv_start_undirected(void)
 		adv_param.options |= BT_LE_ADV_OPT_FILTER_CONN;
 	}
 
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+	adv_param.options |= BT_LE_ADV_OPT_EXT_ADV;
+#if CONFIG_BT_ADV_PROV_TX_POWER
+	adv_param.options |= BT_LE_ADV_OPT_USE_TX_POWER;
+#endif
+
+	int err = bt_le_ext_adv_create(&adv_param, NULL, &ext_adv_set);
+	if (err) {
+		return err;
+	}
+#endif
+
 	return update_undirected_advertising(&adv_param);
 }
 
@@ -398,7 +445,25 @@ static void ble_adv_start(void)
 {
 	__ASSERT_NO_MSG((state == STATE_ACTIVE) || (state == STATE_GRACE_PERIOD));
 
-	int err = bt_le_adv_stop();
+	int err = 0;
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+	if (ext_adv_set) {
+		err = bt_le_ext_adv_stop(ext_adv_set);
+		if (unlikely(err)) {
+			LOG_ERR("Failed to stop advertising set (%d)", err);
+			goto finish;
+		}
+
+		err = bt_le_ext_adv_delete(ext_adv_set);
+		ext_adv_set = NULL;
+		if (err) {
+			LOG_ERR("Failed to delete advertising set (%d)", err);
+			goto finish;
+		}
+	}
+#else
+	err = bt_le_adv_stop();
+#endif
 
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
@@ -461,7 +526,14 @@ static void ble_adv_stop(void)
 	__ASSERT_NO_MSG((state == STATE_SUSPENDED) || (state == STATE_SUSPENDED_OFF) ||
 			(state == STATE_OFF) || (state == STATE_IDLE) || (state == STATE_ERROR));
 
-	int err = bt_le_adv_stop();
+	int err = 0;
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+	if (ext_adv_set) {
+		err = bt_le_ext_adv_stop(ext_adv_set);
+	}
+#else
+	err = bt_le_adv_stop();
+#endif
 
 	if (err) {
 		LOG_ERR("Cannot stop advertising (err %d)", err);
@@ -752,7 +824,23 @@ static void rpa_rotate_fn(struct k_work *work)
 	__ASSERT_NO_MSG(state == STATE_ACTIVE);
 	__ASSERT_NO_MSG(!direct_adv);
 
-	int err = bt_le_adv_stop();
+	int err = 0;
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+	if (ext_adv_set) {
+		err = bt_le_ext_adv_stop(ext_adv_set);
+		if (unlikely(err)) {
+			LOG_ERR("Failed to stop advertising set (%d)", err);
+		}
+
+		err = bt_le_ext_adv_delete(ext_adv_set);
+		ext_adv_set = NULL;
+		if (err) {
+			LOG_ERR("Failed to delete advertising set (%d)", err);
+		}
+	}
+#else
+	err = bt_le_adv_stop();
+#endif
 
 	if (!err) {
 		__ASSERT_NO_MSG(!req_new_adv_session);
@@ -1032,7 +1120,17 @@ static bool handle_ble_peer_operation_event(const struct ble_peer_operation_even
 		req_new_adv_session = true;
 
 		/* Advertising must be stopped while getting the connection object. */
-		int err = bt_le_adv_stop();
+		int err = 0;
+#if CONFIG_CAF_BLE_ADV_EXT_ADV
+		if (ext_adv_set) {
+			err = bt_le_ext_adv_stop(ext_adv_set);
+			if (unlikely(err)) {
+				LOG_ERR("Failed to stop advertising set (%d)", err);
+			}
+		}
+#else
+		err = bt_le_adv_stop();
+#endif
 
 		if (err) {
 			LOG_ERR("Cannot stop advertising (err %d)", err);

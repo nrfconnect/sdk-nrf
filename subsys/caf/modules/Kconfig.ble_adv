@@ -197,6 +197,12 @@ config CAF_BLE_ADV_BLE_BOND_SUPPORTED
 	  advertising module should not start advertising before the Bluetooth LE bond module is
 	  initialized.
 
+config CAF_BLE_ADV_EXT_ADV
+	bool "Use Extended Advertising"
+	depends on BT_EXT_ADV
+	help
+	  Use Extended Advertising instead of Standard Advertising.
+
 module = CAF_BLE_ADV
 module-str = caf module BLE advertising
 source "subsys/logging/Kconfig.template.log_config"
