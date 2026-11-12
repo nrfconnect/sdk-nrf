@@ -10009,8 +10009,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
                  - Experimental
                  - --
                  - --
@@ -10020,8 +10020,8 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Experimental
                  - Experimental
                  - Experimental
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
                  - Experimental
                  - --
                  - --
@@ -10740,6 +10740,12 @@ The options are grouped by Series and drivers available for the device Series, a
 
          .. tab:: CRACEN
 
+            .. note::
+               - The CRACEN driver supports SRP keys only when you also enable the :kconfig:option:`CONFIG_PSA_WANT_ALG_SRP_6` Kconfig option.
+                 Without it, importing an SRP key pair or an SRP public key returns ``PSA_ERROR_NOT_SUPPORTED``.
+               - The CRACEN implementation of SRP-6 uses only SHA-512, so also enable the :kconfig:option:`CONFIG_PSA_WANT_ALG_SHA_512` Kconfig option.
+                 Exporting the public key from an SRP key pair using :c:func:`psa_export_public_key` is not supported.
+
             .. list-table:: SRP key pair operation support (CRACEN driver) - nRF54L Series
                :header-rows: 1
                :widths: auto
@@ -10761,9 +10767,9 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Experimental
-                 - --
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
+                 - Experimental
                  - --
                  - --
                * - Export
@@ -10772,31 +10778,31 @@ The options are grouped by Series and drivers available for the device Series, a
                  - Supported
                  - Supported
                  - Experimental
-                 - --
-                 - --
+                 - Experimental
+                 - Experimental
                  - Supported
                  - --
                  - --
                * - Generate
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_GENERATE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
                  - --
                  - --
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
                * - Derive
                  - :kconfig:option:`CONFIG_PSA_WANT_KEY_TYPE_SRP_KEY_PAIR_DERIVE`
-                 - Supported
-                 - Supported
-                 - Supported
-                 - Experimental
                  - --
                  - --
-                 - Supported
+                 - --
+                 - --
+                 - --
+                 - --
+                 - --
                  - --
                  - --
 
