@@ -28,6 +28,7 @@ The following Kconfig options are available for this module:
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_FILTER_ACCEPT_LIST`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_GRACE_PERIOD`
 * :kconfig:option:`CONFIG_CAF_BLE_ADV_ROTATE_RPA`
+* :kconfig:option:`CONFIG_CAF_BLE_ADV_EXT_ADV`
 
 Read about some of these options in the following sections.
 
@@ -47,12 +48,25 @@ Using directed advertising
 ==========================
 
 By default, the module uses indirect advertising.
-Set the :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` option to use directed advertising.
+Set the :kconfig:option:`CONFIG_CAF_BLE_ADV_DIRECT_ADV` Kconfig option to use directed advertising.
 The directed advertising can be used to call the selected peer device to connect as quickly as possible.
 
 .. note::
    The module will not advertise directly towards a Central that uses Resolvable Private Address (RPA).
    The Bluetooth LE Peripheral does not read the Central Address Resolution GATT characteristic of the Bluetooth LE Central, so the Peripheral does not know if the remote device supports the address resolution of directed advertisements.
+
+.. _caf_ble_adv_extended_advertising:
+
+Using extended advertising
+==========================
+
+Set the :kconfig:option:`CONFIG_CAF_BLE_ADV_EXT_ADV` Kconfig option to use Bluetooth LE Extended Advertising for undirected advertising.
+The option is available when the :kconfig:option:`CONFIG_BT_EXT_ADV` Kconfig option is enabled.
+
+When this option is enabled, the module creates an extended advertising set and uses the Extended Advertising API to update parameters and data and to start and stop the set.
+The module also enables the TX power option for the advertising set if the :kconfig:option:`CONFIG_BT_ADV_PROV_TX_POWER` Kconfig option is enabled.
+This option applies to undirected advertising.
+Directed advertising continues to use the standard directed advertising API.
 
 Changing advertising interval
 =============================
