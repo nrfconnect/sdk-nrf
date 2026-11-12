@@ -332,20 +332,30 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 {
 	struct nrf_wifi_vif_ctx_zep *vif_ctx_zep = NULL;
 	struct umac_display_results *display_results = NULL;
+	struct nrf_wifi_umac_event_scan_done scan_done;
 	struct wifi_scan_result res;
 	uint16_t max_bss_cnt = 0;
 	unsigned int i = 0;
 	unsigned int scan_db_addr;
 	scan_result_cb_t cb = NULL;
+	k_spinlock_key_t key;
 
 	vif_ctx_zep = vif_ctx;
-	cb = (scan_result_cb_t)vif_ctx_zep->disp_scan_cb;
 
-	/* Clear the stored address before invoking callbacks that may trigger
-	 * interface teardown. This handler frees the buffer after processing.
+	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
+
+	/* Claim the callback and the result buffer so that a concurrent scan
+	 * timeout cannot report the same scan or clear the callback mid-delivery.
+	 * scan_in_progress stays set until delivery ends, which blocks new scans.
 	 */
-	scan_db_addr = scan_done_event->scan_db_addr;
-	scan_done_event->scan_db_addr = 0;
+	key = k_spin_lock(&vif_ctx_zep->scan_lock);
+	cb = vif_ctx_zep->disp_scan_cb;
+	vif_ctx_zep->disp_scan_cb = NULL;
+	memcpy(&scan_done, scan_done_event, sizeof(scan_done));
+	memset(scan_done_event, 0, sizeof(*scan_done_event));
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+	scan_db_addr = scan_done.scan_db_addr;
 
 	/* Delayed event (after scan timeout) or rogue event after scan done. The
 	 * database still has to be freed: allocations block on the control heap,
@@ -353,7 +363,11 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	 */
 	if (!cb) {
 		LOG_ERR("%s: disp_scan_cb is NULL", __func__);
-		goto out;
+		if (scan_db_addr) {
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					  (void *)(uintptr_t)scan_db_addr);
+		}
+		return;
 	}
 
 	max_bss_cnt = vif_ctx_zep->max_bss_cnt ?
@@ -362,16 +376,16 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 	display_results = (struct umac_display_results *)(uintptr_t)scan_db_addr;
 
 	LOG_DBG("%s: scan_results_cnt = %d", __func__,
-		scan_done_event->scan_results_cnt);
+		scan_done.scan_results_cnt);
 
-	if (display_results && (scan_done_event->scan_results_cnt > 1)) {
+	if (display_results && (scan_done.scan_results_cnt > 1)) {
 		qsort(display_results,
-		      scan_done_event->scan_results_cnt,
+		      scan_done.scan_results_cnt,
 		      sizeof(struct umac_display_results),
 		      nrf_wifi_scan_res_rssi_cmp);
 	}
 
-	for (i = 0; i < scan_done_event->scan_results_cnt; i++) {
+	for (i = 0; display_results && (i < scan_done.scan_results_cnt); i++) {
 		struct umac_display_results *r = &display_results[i];
 
 		/* Limit the scan results to the configured maximum */
@@ -403,9 +417,7 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 			res.rssi = (r->signal.signal.unspec_signal);
 		}
 
-		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx,
-					  0,
-					  &res);
+		cb(vif_ctx_zep->zep_net_if_ctx, 0, &res);
 
 		vif_ctx_zep->scan_res_cnt++;
 
@@ -413,15 +425,19 @@ void nrf_wifi_event_proc_disp_scan_res_zep(void *vif_ctx,
 		k_yield();
 	}
 
-	/* All results delivered, call with NULL to indicate scan end */
-	vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, 0, NULL);
+	if (scan_db_addr) {
+		nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+				  (void *)(uintptr_t)scan_db_addr);
+	}
+
+	/* All results delivered, call with NULL to indicate scan end. Report the
+	 * end before allowing a new scan, so it cannot be taken for that scan's end.
+	 */
+	cb(vif_ctx_zep->zep_net_if_ctx, 0, NULL);
+
+	key = k_spin_lock(&vif_ctx_zep->scan_lock);
 	vif_ctx_zep->scan_in_progress = false;
-	vif_ctx_zep->disp_scan_cb = NULL;
-	k_work_cancel_delayable(&vif_ctx_zep->scan_timeout_work);
-out:
-	nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
-			  (void *)(uintptr_t)scan_db_addr);
-	memset(&vif_ctx_zep->scan_done_event, 0, sizeof(vif_ctx_zep->scan_done_event));
+	k_spin_unlock(&vif_ctx_zep->scan_lock, key);
 }
 
 
