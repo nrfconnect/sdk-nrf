@@ -1,0 +1,40 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+choice TEST_SCENARIO
+	prompt "SPI test scenario"
+	default TEST_SCENARIO_SYNC
+	help
+	  Selected by sysbuild from SB_CONFIG_TEST_SCENARIO_*.
+
+config TEST_SCENARIO_SYNC
+	bool "Single synchronous transaction"
+	help
+	  One byte sent with spi_write_dt(). Expected: 1 CS window, 16 SCK edges.
+
+config TEST_SCENARIO_RTIO_QUEUED
+	bool "Two queued RTIO transactions"
+	select SPI_RTIO if SPI
+	help
+	  Two independent one-byte RTIO transactions submitted at once, so that
+	  the second one is queued in the driver when the first one completes.
+	  Expected: 2 CS windows, 16 SCK edges each.
+
+config TEST_SCENARIO_RTIO_CALLBACK
+	bool "RTIO transaction submitted from a completion callback"
+	select SPI_RTIO if SPI
+	help
+	  One-byte RTIO transaction chained with a callback that submits
+	  another one-byte transaction. Expected: 2 CS windows, 16 SCK edges each.
+
+config TEST_SCENARIO_RTIO_HOLD_ON_CS
+	bool "Two queued RTIO transactions, first with SPI_HOLD_ON_CS"
+	select SPI_RTIO if SPI
+	help
+	  Like the queued scenario, but the first transaction keeps CS active.
+	  Expected: 1 CS window, 32 SCK edges.
+
+endchoice

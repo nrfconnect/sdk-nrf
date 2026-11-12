@@ -1,0 +1,17 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+config TEST_SPI_MODE
+	int "SPI mode"
+	range 0 3
+	default 0
+	help
+	  SPI mode used by the SPIM controlled by the application core:
+	  0 - CPOL = 0, CPHA = 0,
+	  1 - CPOL = 0, CPHA = 1,
+	  2 - CPOL = 1, CPHA = 0,
+	  3 - CPOL = 1, CPHA = 1.
+	  Value is set by sysbuild from SB_CONFIG_TEST_SPI_MODE.

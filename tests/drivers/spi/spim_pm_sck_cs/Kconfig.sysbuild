@@ -1,0 +1,54 @@
+#
+# Copyright (c) 2026 Nordic Semiconductor ASA
+#
+# SPDX-License-Identifier: LicenseRef-Nordic-5-Clause
+#
+
+if SUPPORT_FLPRCORE
+
+choice FLPRCORE
+	default FLPRCORE_TESTAPP
+
+config FLPRCORE_TESTAPP
+	bool "testapp image"
+
+endchoice
+
+config FLPRCORE_IMAGE_NAME
+	default "testapp" if FLPRCORE_TESTAPP
+
+config FLPRCORE_IMAGE_PATH
+	default "$(APP_DIR)/testapp" if FLPRCORE_TESTAPP
+
+endif # SUPPORT_FLPRCORE
+
+config TEST_SPI_MODE
+	int "SPI mode"
+	range 0 3
+	default 0
+	help
+	  SPI mode used by the SPIM controlled by the application core.
+	  Propagated as CONFIG_TEST_SPI_MODE to both the application and FLPR images.
+
+choice TEST_SCENARIO
+	prompt "SPI test scenario"
+	default TEST_SCENARIO_SYNC
+	help
+	  Propagated as CONFIG_TEST_SCENARIO_* to both the application
+	  and FLPR images.
+
+config TEST_SCENARIO_SYNC
+	bool "Single synchronous transaction"
+
+config TEST_SCENARIO_RTIO_QUEUED
+	bool "Two queued RTIO transactions"
+
+config TEST_SCENARIO_RTIO_CALLBACK
+	bool "RTIO transaction submitted from a completion callback"
+
+config TEST_SCENARIO_RTIO_HOLD_ON_CS
+	bool "Two queued RTIO transactions, first with SPI_HOLD_ON_CS"
+
+endchoice
+
+source "share/sysbuild/Kconfig"
