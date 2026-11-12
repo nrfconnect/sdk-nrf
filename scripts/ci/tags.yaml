@@ -168,6 +168,7 @@ ci_samples_wifi:
     - modules/lib/hostap/
     - modules/lib/nrf_wifi/
     - nrf/boards/shields/nrf7002eb2/
+    - nrf/drivers/wifi/
     - nrf/samples/peripheral/radio_test
     - nrf/samples/wifi/
     - nrf/subsys/net/lib/hostap_crypto/
