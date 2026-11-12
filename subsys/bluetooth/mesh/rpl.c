@@ -31,9 +31,14 @@ EMDS_STATIC_ENTRY_DEFINE(rpl_store, CONFIG_BT_MESH_RPL_INDEX, replay_list, sizeo
 #include <zephyr/kvss/zms.h>
 #include <zephyr/drivers/flash.h>
 #include <zephyr/storage/flash_map.h>
+#include <zephyr/sys/crc.h>
 
 #if !PARTITION_EXISTS(rpl_partition)
 #error "CONFIG_BT_MESH_NRF_RPL_STORAGE_MODE_ZMS requires a dedicated rpl_partition"
+#endif
+
+#if !PARTITION_EXISTS(rpl_backup_partition)
+#error "CONFIG_BT_MESH_NRF_RPL_STORAGE_MODE_ZMS requires a dedicated rpl_backup_partition"
 #endif
 
 #define PAIR_SIZE (2)
@@ -54,6 +59,8 @@ BUILD_ASSERT(sizeof(struct rpl_val[PAIR_SIZE]) <= ZMS_DATA_IN_ATE_SIZE,
 
 enum {
 	FLAGS_CLEAR_PENDING,
+	/* The pending clear must back up the RPL before clearing storage. */
+	FLAGS_BACKUP_PENDING,
 	FLAGS_COUNT,
 };
 static ATOMIC_DEFINE(flags, FLAGS_COUNT);
@@ -66,7 +73,7 @@ static int most_recent_half_pair_idx = -1;
  */
 BUILD_ASSERT(!IS_ENABLED(CONFIG_SMP), "RPL ZMS storage relies on k_sched_lock() for atomicity");
 
-/* Serializes all ZMS access and most_recent_half_pair_idx across init and store callers. */
+/* Ensures exclusive access to ZMS and most_recent_half_pair_idx across init and store callers. */
 static K_MUTEX_DEFINE(rpl_store_lock);
 
 static uint32_t rpl_zms_id(uint16_t src1, uint16_t src2)
@@ -107,6 +114,13 @@ static const struct bt_mesh_rpl *pair_second(int pair_idx)
 	}
 
 	return &replay_list[idx];
+}
+
+static void mark_pairs_for_rewrite(void)
+{
+	for (int i = 0; i < PAIR_COUNT; i++) {
+		atomic_set_bit_to(store_pairs, i, pair_first(i)->src != 0);
+	}
 }
 
 struct pair_snapshot {
@@ -172,13 +186,13 @@ static bool store_claimed(int pair_idx, const struct pair_snapshot *snapshot)
 	return true;
 }
 
-static bool store_pair(int pair_idx, uint16_t addr_filter)
+static void store_pair(int pair_idx, uint16_t addr_filter)
 {
 	struct pair_snapshot snapshot = { 0 };
 	struct pair_snapshot most_recent_half_pair = { 0 };
 
 	if (!pair_claim_atomic(pair_idx, &snapshot, false, addr_filter)) {
-		return false;
+		return;
 	}
 
 	if (snapshot.src[1] == 0 && most_recent_half_pair_idx != pair_idx &&
@@ -190,11 +204,11 @@ static bool store_pair(int pair_idx, uint16_t addr_filter)
 		if (!pair_claim_atomic(most_recent_half_pair_idx, &most_recent_half_pair, true,
 				       BT_MESH_ADDR_ALL_NODES) ||
 		    !store_claimed(most_recent_half_pair_idx, &most_recent_half_pair)) {
-			return false;
+			return;
 		}
 	}
 
-	return store_claimed(pair_idx, &snapshot);
+	(void)store_claimed(pair_idx, &snapshot);
 }
 
 static void clear_storage(void)
@@ -216,6 +230,338 @@ static void clear_storage(void)
 	most_recent_half_pair_idx = -1;
 }
 
+/* Must be a multiple of the write block size. */
+#define BACKUP_BUF_SIZE 64U
+
+/* An erased header means there is no backup. Anything else is a backup to verify. */
+struct __packed backup_header {
+	uint16_t count;
+	/* Covers count and all entries. */
+	uint32_t crc;
+};
+
+BUILD_ASSERT(sizeof(struct backup_header) <= BACKUP_BUF_SIZE,
+	     "Backup header must fit in a buffer");
+
+/* The stored form of an RPL entry, independent of the struct bt_mesh_rpl layout. */
+struct __packed backup_entry {
+	struct rpl_val val;
+	uint16_t src;
+	/* Pads the entry to a power-of-two size, so that whole entries fill a buffer. */
+	uint16_t pad;
+};
+
+BUILD_ASSERT(BACKUP_BUF_SIZE % sizeof(struct backup_entry) == 0,
+	     "Backup entries must fill a buffer exactly");
+
+#define BACKUP_BUF_ENTRIES (BACKUP_BUF_SIZE / sizeof(struct backup_entry))
+#define BACKUP_DATA_SIZE (ARRAY_SIZE(replay_list) * sizeof(struct backup_entry))
+
+/* Set up on mount. */
+static struct {
+	struct flash_area area;
+	/* The header rounded up to a write block. The data follows it. */
+	size_t header_size;
+	/*
+	 * What invalidating the backup erases or fills. An erased header is enough, so this is
+	 * the header's sector on explicit-erase flash, and the header on other flash.
+	 */
+	size_t invalidate_size;
+	size_t write_block_size;
+	uint8_t erase_value;
+	bool explicit_erase;
+	/* A committed backup is in flash. */
+	bool valid;
+} backup = {
+	.area = {
+		.fa_off = PARTITION_OFFSET(rpl_backup_partition),
+		.fa_size = PARTITION_SIZE(rpl_backup_partition),
+		.fa_dev = PARTITION_DEVICE(rpl_backup_partition),
+	},
+};
+
+static bool backup_header_is_erased(const struct backup_header *header)
+{
+	const uint8_t *bytes = (const uint8_t *)header;
+
+	for (size_t i = 0; i < sizeof(*header); i++) {
+		if (bytes[i] != backup.erase_value) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+static uint32_t backup_crc_init(uint16_t count)
+{
+	return crc32_ieee_update(0, (const uint8_t *)&count, sizeof(count));
+}
+
+/* Writes the header padded up to a whole write block, and returns whether it succeeded. */
+static bool backup_write_header(const struct backup_header *header)
+{
+	uint8_t buf[BACKUP_BUF_SIZE];
+	int err;
+
+	(void)memset(buf, backup.erase_value, sizeof(buf));
+	(void)memcpy(buf, header, sizeof(*header));
+
+	err = flash_area_write(&backup.area, 0, buf, backup.header_size);
+	if (err) {
+		LOG_ERR("Failed to write RPL backup header, err %d", err);
+	}
+
+	return err == 0;
+}
+
+static void backup_invalidate(void)
+{
+	int err;
+
+	/* ZMS was cleared but not remounted, so the backup is the only copy until reboot. */
+	if (!rpl_zms_fs.ready) {
+		return;
+	}
+
+	err = flash_area_flatten(&backup.area, 0, backup.invalidate_size);
+	if (err) {
+		LOG_ERR("Failed to invalidate RPL backup, err %d", err);
+		/* Stays valid, so that backup_release() retries. */
+		return;
+	}
+
+	backup.valid = false;
+}
+
+/* Writes the RPL data, then commits it. */
+static void backup_store(void)
+{
+	struct backup_header header = {
+		.count = ARRAY_SIZE(replay_list),
+		.crc = backup_crc_init(ARRAY_SIZE(replay_list)),
+	};
+	struct backup_entry chunk[BACKUP_BUF_ENTRIES];
+	size_t count;
+	size_t len;
+	int err;
+
+	if (backup.explicit_erase) {
+		err = flash_area_erase(&backup.area, 0, backup.area.fa_size);
+		if (err) {
+			LOG_ERR("Failed to erase RPL backup, err %d", err);
+			return;
+		}
+	}
+
+	for (size_t i = 0; i < ARRAY_SIZE(replay_list); i += ARRAY_SIZE(chunk)) {
+		count = MIN(ARRAY_SIZE(chunk), ARRAY_SIZE(replay_list) - i);
+		len = count * sizeof(chunk[0]);
+
+		/* Pads the last chunk up to a whole write block. */
+		(void)memset(chunk, backup.erase_value, sizeof(chunk));
+
+		k_sched_lock();
+		for (size_t j = 0; j < count; j++) {
+			chunk[j] = (struct backup_entry){
+				.val.seq = replay_list[i + j].seq,
+				.val.old_iv = replay_list[i + j].old_iv,
+				.src = replay_list[i + j].src,
+			};
+		}
+		k_sched_unlock();
+
+		header.crc = crc32_ieee_update(header.crc, (const uint8_t *)chunk, len);
+
+		err = flash_area_write(&backup.area, backup.header_size + i * sizeof(chunk[0]),
+				       chunk, ROUND_UP(len, backup.write_block_size));
+		if (err) {
+			LOG_ERR("Failed to write RPL backup data, err %d", err);
+			return;
+		}
+	}
+
+	/* A reset/clear may have started during chunked flash writes;
+	 * do not commit an inconsistent backup.
+	 */
+	if (atomic_test_bit(flags, FLAGS_CLEAR_PENDING)) {
+		return;
+	}
+
+	/* Commit the backup */
+	backup.valid = backup_write_header(&header);
+}
+
+/* Loads as many backup entries as fit into replay_list, and checks the CRC over all of them. */
+static bool backup_load(const struct backup_header *header)
+{
+	struct backup_entry chunk[BACKUP_BUF_ENTRIES];
+	uint32_t crc = backup_crc_init(header->count);
+	size_t count;
+	size_t len;
+	int err = 0;
+
+	if (backup.header_size + (size_t)header->count * sizeof(chunk[0]) > backup.area.fa_size) {
+		LOG_WRN("RPL backup header is invalid, entry count %u", header->count);
+		return false;
+	}
+
+	for (size_t i = 0; i < header->count; i += ARRAY_SIZE(chunk)) {
+		count = MIN(ARRAY_SIZE(chunk), header->count - i);
+		len = count * sizeof(chunk[0]);
+
+		err = flash_area_read(&backup.area, backup.header_size + i * sizeof(chunk[0]),
+				      chunk, len);
+		if (err) {
+			LOG_ERR("Failed to read RPL backup data, err %d", err);
+			break;
+		}
+
+		crc = crc32_ieee_update(crc, (const uint8_t *)chunk, len);
+
+		for (size_t j = 0; j < count && i + j < ARRAY_SIZE(replay_list); j++) {
+			replay_list[i + j].src = chunk[j].src;
+			replay_list[i + j].seq = chunk[j].val.seq;
+			replay_list[i + j].old_iv = chunk[j].val.old_iv;
+		}
+	}
+
+	if (!err && crc != header->crc) {
+		LOG_WRN("RPL backup CRC mismatch");
+		err = -EBADMSG;
+	}
+
+	if (!err && header->count > ARRAY_SIZE(replay_list)) {
+		LOG_WRN("RPL backup has %u entries, only the first %zu were restored",
+			header->count, ARRAY_SIZE(replay_list));
+	}
+
+	if (err) {
+		(void)memset(replay_list, 0, sizeof(replay_list));
+	}
+
+	return err == 0;
+}
+
+/* Returns 0 if replay_list was loaded from a committed backup, and ZMS rewritten from it,
+ * -ENOMEM if it was, but not all entries fit, or -ENOENT if there was no valid backup.
+ * The backup is dropped afterwards, whether it was restored or rejected.
+ */
+static int backup_restore(void)
+{
+	struct backup_header header;
+	bool loaded;
+	int err;
+
+	backup.valid = false;
+
+	err = flash_area_read(&backup.area, 0, &header, sizeof(header));
+	if (err) {
+		LOG_ERR("Failed to read RPL backup header, err %d", err);
+		return -ENOENT;
+	}
+
+	if (backup_header_is_erased(&header)) {
+		return -ENOENT;
+	}
+
+	backup.valid = true;
+
+	loaded = backup_load(&header);
+	if (loaded) {
+		/* ZMS may be partial, so rewrite it before dropping the backup. */
+		clear_storage();
+		mark_pairs_for_rewrite();
+		for (int i = 0; i < PAIR_COUNT; i++) {
+			store_pair(i, BT_MESH_ADDR_ALL_NODES);
+		}
+	}
+
+	/* The backup must not be restored again on a later boot. */
+	backup_invalidate();
+
+	if (!loaded) {
+		return -ENOENT;
+	}
+
+	return header.count > ARRAY_SIZE(replay_list) ? -ENOMEM : 0;
+}
+
+/* Returns false if IV reset or clear was requested again while the RPL backup was being
+ * written to flash. ZMS was not cleared yet, the caller must schedule the store again.
+ */
+static bool clear_storage_with_backup(bool backup_pending)
+{
+	/* A valid backup may be the only complete copy, so never overwrite it. */
+	if (backup_pending && !backup.valid) {
+		backup_store();
+
+		if (atomic_test_bit(flags, FLAGS_CLEAR_PENDING)) {
+			return false;
+		}
+	}
+
+	clear_storage();
+
+	return true;
+}
+
+/* The backup is needed until ZMS holds the whole RPL, which a pending reset prevents. */
+static void backup_release(void)
+{
+	if (backup.valid && !atomic_test_bit(flags, FLAGS_BACKUP_PENDING)) {
+		backup_invalidate();
+	}
+}
+
+/* Reads the backup partition's flash parameters, and checks that it can hold the RPL. */
+static int backup_init(void)
+{
+	const struct flash_parameters *params;
+	struct flash_pages_info info;
+	size_t needed;
+	int err;
+
+	if (!device_is_ready(backup.area.fa_dev)) {
+		LOG_ERR("RPL backup flash device not ready");
+		return -ENODEV;
+	}
+
+	err = flash_get_page_info_by_offs(backup.area.fa_dev, backup.area.fa_off, &info);
+	if (err) {
+		LOG_ERR("Failed to get RPL backup partition page info, err %d", err);
+		return err;
+	}
+
+	params = flash_get_parameters(backup.area.fa_dev);
+	if ((BACKUP_BUF_SIZE % params->write_block_size) != 0U) {
+		LOG_ERR("Unsupported write block size %zu", params->write_block_size);
+		return -ENOTSUP;
+	}
+
+	backup.write_block_size = params->write_block_size;
+	backup.erase_value = params->erase_value;
+	backup.explicit_erase = (flash_params_get_erase_cap(params) & FLASH_ERASE_C_EXPLICIT) != 0;
+	backup.header_size = ROUND_UP(sizeof(struct backup_header), backup.write_block_size);
+
+	needed = backup.header_size + ROUND_UP(BACKUP_DATA_SIZE, backup.write_block_size);
+	if (backup.area.fa_size < needed) {
+		LOG_ERR("RPL backup partition has %zu bytes, the backup needs %zu",
+			backup.area.fa_size, needed);
+		return -ENOSPC;
+	}
+
+	if (backup.explicit_erase &&
+	    (backup.area.fa_off % info.size != 0 || backup.area.fa_size % info.size != 0)) {
+		LOG_ERR("RPL backup partition is not aligned to %zu byte pages", info.size);
+		return -EINVAL;
+	}
+
+	backup.invalidate_size = backup.explicit_erase ? info.size : backup.header_size;
+
+	return 0;
+}
+
 static int rpl_zms_mount(void)
 {
 	struct flash_pages_info info;
@@ -229,6 +575,11 @@ static int rpl_zms_mount(void)
 	err = flash_get_page_info_by_offs(rpl_zms_fs.flash_device, rpl_zms_fs.offset, &info);
 	if (err != 0) {
 		LOG_ERR("Failed to get RPL partition page info, err %d", err);
+		return err;
+	}
+
+	err = backup_init();
+	if (err) {
 		return err;
 	}
 
@@ -432,6 +783,13 @@ static int rpl_restore(void)
 	struct rpl_restore_ctx ctx = { 0 };
 	struct rpl_val data[PAIR_SIZE] = { 0 };
 
+	err = backup_restore();
+	if (err == 0 || err == -ENOMEM) {
+		return err;
+	}
+
+	/* If there was no valid backup, continue with ZMS restore. */
+
 	err = zms_iter_init(&rpl_zms_fs, &iter);
 	if (err != 0) {
 		LOG_ERR("Failed to initialize ZMS iterator, err %d", err);
@@ -587,10 +945,9 @@ void bt_mesh_rpl_clear(void)
 #if IS_ENABLED(CONFIG_BT_MESH_NRF_RPL_STORAGE_MODE_ZMS)
 	k_sched_lock();
 	(void)memset(replay_list, 0, sizeof(replay_list));
-	for (int i = 0; i < PAIR_COUNT; i++) {
-		atomic_clear_bit(store_pairs, i);
-	}
+	mark_pairs_for_rewrite();
 	atomic_set_bit(flags, FLAGS_CLEAR_PENDING);
+	atomic_clear_bit(flags, FLAGS_BACKUP_PENDING);
 	k_sched_unlock();
 
 	bt_mesh_settings_store_schedule(BT_MESH_SETTINGS_RPL_RESET_PENDING);
@@ -634,19 +991,11 @@ void bt_mesh_rpl_reset(void)
 	(void) memset(&replay_list[last - shift + 1], 0, sizeof(struct bt_mesh_rpl) * shift);
 
 #if IS_ENABLED(CONFIG_BT_MESH_NRF_RPL_STORAGE_MODE_ZMS)
-	for (int i = 0; i < PAIR_COUNT; i++) {
-		atomic_clear_bit(store_pairs, i);
-	}
-
 	/* Schedule rewrite of every pair after clearing. */
-	for (int i = 0; i < PAIR_COUNT; i++) {
-		if (!pair_first(i)->src) {
-			break;
-		}
-		atomic_set_bit(store_pairs, i);
-	}
+	mark_pairs_for_rewrite();
 
 	atomic_set_bit(flags, FLAGS_CLEAR_PENDING);
+	atomic_set_bit(flags, FLAGS_BACKUP_PENDING);
 	k_sched_unlock();
 
 	bt_mesh_settings_store_schedule(BT_MESH_SETTINGS_RPL_RESET_PENDING);
@@ -658,6 +1007,7 @@ void bt_mesh_rpl_pending_store(uint16_t addr)
 #if IS_ENABLED(CONFIG_BT_MESH_NRF_RPL_STORAGE_MODE_ZMS)
 	bool store_all_pending = (addr == BT_MESH_ADDR_ALL_NODES);
 	bool clear_pending;
+	bool backup_pending;
 
 	if (!BT_MESH_ADDR_IS_UNICAST(addr) && !store_all_pending) {
 		return;
@@ -665,7 +1015,10 @@ void bt_mesh_rpl_pending_store(uint16_t addr)
 
 	(void)k_mutex_lock(&rpl_store_lock, K_FOREVER);
 
+	k_sched_lock();
 	clear_pending = atomic_test_and_clear_bit(flags, FLAGS_CLEAR_PENDING);
+	backup_pending = atomic_test_and_clear_bit(flags, FLAGS_BACKUP_PENDING);
+	k_sched_unlock();
 	/* A clear requires storing all pairs, even if a specific address was requested. */
 	store_all_pending = store_all_pending || clear_pending;
 
@@ -674,14 +1027,17 @@ void bt_mesh_rpl_pending_store(uint16_t addr)
 		bt_mesh_settings_store_cancel(BT_MESH_SETTINGS_RPL_RESET_PENDING);
 	}
 
-	if (clear_pending) {
-		clear_storage();
+	if (clear_pending && !clear_storage_with_backup(backup_pending)) {
+		goto end;
 	}
 
 	for (int i = 0; i < PAIR_COUNT; i++) {
-		(void)store_pair(i, store_all_pending ? BT_MESH_ADDR_ALL_NODES : addr);
+		store_pair(i, store_all_pending ? BT_MESH_ADDR_ALL_NODES : addr);
 	}
 
+	backup_release();
+
+end:
 	/* A reset or clear during this store may have had its scheduled store cancelled above. */
 	if (atomic_test_bit(flags, FLAGS_CLEAR_PENDING)) {
 		bt_mesh_settings_store_schedule(BT_MESH_SETTINGS_RPL_RESET_PENDING);
