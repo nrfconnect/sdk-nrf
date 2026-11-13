@@ -1553,6 +1553,12 @@ This section provides detailed lists of changes by :ref:`script <scripts>`.
     It recursively adds all files in the given directory to the report, equivalent to ``--input-files DIR/**/*``.
   * ``--spdx-version`` option to generate SPDX 3.0 (JSON-LD) reports.
     The default remains SPDX 2.3.
+  * ``--sign-key`` option to sign the SPDX report, using either a private key file or an AWS KMS key URI (``awskms://``).
+    The command writes a Sigstore bundle next to each generated report, appending ``.sigstore.json`` to the report file name, which `Sigstore cosign`_ can also verify.
+    Signing is private.
+    No signature, report digest, or signing identity is sent to the public Sigstore services.
+  * ``--public-key-out`` option to export the public key of the signing key.
+  * ``--verify-spdx`` and ``--verify-key`` options to verify signed SPDX reports.
 
 * Updated:
 
