@@ -7,6 +7,7 @@
 #include <openthread/platform/crypto.h>
 #include <psa/crypto.h>
 #include <zephyr/sys/__assert.h>
+#include <zephyr/sys/util.h>
 #include <string.h>
 
 #if !defined(CONFIG_BUILD_WITH_TFM) && defined(CONFIG_OPENTHREAD_CRYPTO_PSA)
@@ -24,6 +25,16 @@
 /* Reserved for six 128-bit keys, and one 256-bit key */
 #define OPENTHREAD_KMU_DEDICATED_SLOTS	    (8)
 #endif /* CONFIG_OPENTHREAD_PSA_NVM_BACKEND_KMU */
+
+/*
+ * The AES, HMAC and HKDF hooks below operate on PSA key references only.
+ * For nRF Connect SDK crypto implementation, all operations in OpenThread requires
+ * a PSA key reference.
+ * If CONFIG_OPENTHREAD_PLATFORM_KEY_REF is not enabled, the AES, HMAC and HKDF hooks below
+ * operate on literal keys.
+ */
+BUILD_ASSERT(IS_ENABLED(CONFIG_OPENTHREAD_PLATFORM_KEY_REF),
+	     "crypto_psa.c requires CONFIG_OPENTHREAD_PLATFORM_KEY_REF");
 
 /**
  * @brief Returns a PSA key reference.
