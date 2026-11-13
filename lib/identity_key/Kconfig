@@ -9,12 +9,12 @@ menuconfig IDENTITY_KEY
 	depends on NRF_CC3XX_PLATFORM
 	depends on NRF_SECURITY
 	depends on !TRUSTED_EXECUTION_NONSECURE
-	depends on MAIN_STACK_SIZE >= 2048
 	help
 	  This option adds support for an identity key stored in the KMU.
 	  The key is stored in an encrypted form and is decrypted
 	  by the identity key APIs.
 	  The identity key is an ECC secp256r1 key pair.
+	  Requires CONFIG_MAIN_STACK_SIZE of at least 2048.
 
 if IDENTITY_KEY
 
