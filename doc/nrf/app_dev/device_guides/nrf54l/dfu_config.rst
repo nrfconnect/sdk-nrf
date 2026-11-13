@@ -28,7 +28,7 @@ Configuring NSIB with MCUboot
 
 To configure and build firmware using NSIB and MCUboot, complete the following steps:
 
-1. Navigate to the :file:`zephyr/samples/subsys/mgmt/mcumgr/smp_svr` directory.
+1. Navigate to the :ncs-file:`zephyr/samples/subsys/mgmt/mcumgr/smp_svr <zephyr:/samples/subsys/mgmt/mcumgr/smp_svr>` directory.
 
 #. Build the firmware with the following configurations:
 
@@ -56,7 +56,7 @@ Configuring MCUboot only
 
 To build with MCUboot only, complete the following steps:
 
-1. Navigate to the :file:`zephyr/samples/subsys/mgmt/mcumgr/smp_svr` directory.
+1. Navigate to the :ncs-file:`zephyr/samples/subsys/mgmt/mcumgr/smp_svr <zephyr:/samples/subsys/mgmt/mcumgr/smp_svr>` directory.
 
 #. Build the firmware:
 

@@ -139,7 +139,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_uart`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_uart </samples/bluetooth/peripheral_uart>`
 
 .. include:: /includes/build_and_run_ns.txt
 

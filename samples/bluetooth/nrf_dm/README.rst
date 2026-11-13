@@ -141,7 +141,7 @@ LED 3:
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/nrf_dm`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/nrf_dm </samples/bluetooth/nrf_dm>`
 
 .. include:: /includes/build_and_run.txt
 

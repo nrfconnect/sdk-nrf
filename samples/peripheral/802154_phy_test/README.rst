@@ -915,7 +915,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/peripheral/802154_phy_test`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/802154_phy_test </samples/peripheral/802154_phy_test>`
 
 .. include:: /includes/build_and_run.txt
 

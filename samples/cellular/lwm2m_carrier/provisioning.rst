@@ -35,7 +35,7 @@ To pre-program the certificates, use one of the following methods:
   See `Managing credentials`_ for more information.
 * Build and flash the LwM2M carrier sample, while making sure that:
 
-  * The appropriate certificates (:file:`*.pem`) are included in the :file:`certs` folder.
+  * The appropriate certificates (:file:`*.pem`) are included in the :ncs-file:`certs </samples/cellular/lwm2m_carrier/certs>` folder.
   * |hex_format|
 
 Other samples such as the :ref:`modem_shell_application` with the carrier library integration do not write any certificates in the application.

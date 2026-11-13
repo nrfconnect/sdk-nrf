@@ -66,9 +66,9 @@ Configuration
 Defining LED effects
 ====================
 
-The configuration for each board is different and defined in the overlay file available in the respective directory in the :file:`boards` directory.
+The configuration for each board is different and defined in the overlay file available in the respective directory in the :ncs-file:`boards </samples/caf/boards>` directory.
 Additionally, each of the stock CAF modules has a header configuration file for each board, because the LEDs of each board are connected to different GPIO pins.
-These files are available in the :file:`configuration` directory and you can modify them.
+These files are available in the :ncs-file:`configuration </samples/caf/configuration>` directory and you can modify them.
 
 For example, the sample defines a few LED effects that can be displayed on LEDs.
 By pressing the buttons, you can change the displayed effect for the LED or toggle another LED.
@@ -89,7 +89,7 @@ When testing the sample, you can change the defined effects or add your own effe
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/caf`
+.. |sample path| replace:: :ncs-file:`samples/caf </samples/caf>`
 
 .. include:: /includes/build_and_run.txt
 

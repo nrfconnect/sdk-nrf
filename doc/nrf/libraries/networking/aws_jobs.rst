@@ -31,6 +31,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/aws_jobs.h`
-| Source files: :file:`subsys/net/lib/aws_jobs/`
+| Source files: :ncs-file:`subsys/net/lib/aws_jobs/ </subsys/net/lib/aws_jobs>`
 
 .. doxygengroup:: aws_jobs

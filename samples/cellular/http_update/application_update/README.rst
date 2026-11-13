@@ -65,7 +65,7 @@ CONFIG_DOWNLOAD_FILE_V2
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/http_update/application_update`
+.. |sample path| replace:: :ncs-file:`samples/cellular/http_update/application_update </samples/cellular/http_update/application_update>`
 
 .. include:: /includes/build_and_run_ns.txt
 

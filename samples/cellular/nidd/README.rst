@@ -59,7 +59,7 @@ CONFIG_NIDD_PAYLOAD - Payload for NIDD transmission
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nidd`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nidd </samples/cellular/nidd>`
 
 .. include:: /includes/build_and_run_ns.txt
 

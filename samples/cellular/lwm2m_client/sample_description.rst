@@ -577,7 +577,7 @@ LwM2M v1.1 conformance testing:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/lwm2m_client`
+.. |sample path| replace:: :ncs-file:`samples/cellular/lwm2m_client </samples/cellular/lwm2m_client>`
 
 .. include:: /includes/build_and_run_ns.txt
 

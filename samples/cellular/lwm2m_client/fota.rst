@@ -117,7 +117,7 @@ Advanced Firmware Update helper script
 **************************************
 
 For working with the `AVSystem Coiote server <Coiote Device Management_>`_, a helper script has been provided.
-To automate the firmware update, you can use the script :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` that is available in the :file:`samples/cellular/lwm2m_client/scripts/` folder.
+To automate the firmware update, you can use the script :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` that is available in the :ncs-file:`samples/cellular/lwm2m_client/scripts/ </samples/cellular/lwm2m_client/scripts>` folder.
 The :ncs-file:`/samples/cellular/lwm2m_client/scripts/fota.py` file supports ``update`` and ``upload`` commands for firmware updates.
 
 The commands can be used in the following way:
@@ -163,7 +163,7 @@ To use a binary name, run the script with the following parameters:
 
    ./scripts/fota.py -id *device_id* -to *timeout* update *instance_id* file *binary_name*
 
-When binary type is ``file``, script tries to discover given binary name from the :file:`samples/cellular/lwm2m_client/` file, or the :file:`samples/cellular/lwm2m_client/build/zephyr`.
+When binary type is ``file``, script tries to discover given binary name from the :ncs-file:`samples/cellular/lwm2m_client/ </samples/cellular/lwm2m_client>` file, or the :file:`samples/cellular/lwm2m_client/build/zephyr`.
 The ``update`` command uploads and generates binary resource IDs automatically when a binary file is used.
 The update default task timeout is 800 seconds.
 

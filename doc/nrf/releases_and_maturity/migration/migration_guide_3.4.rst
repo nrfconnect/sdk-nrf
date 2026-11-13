@@ -199,7 +199,7 @@ Wi-Fi®
 
    * The Wi-Fi Enterprise snippet has changed.
      Use the |NCS| ``nordic-wifi-enterprise`` snippet instead of Zephyr's ``wifi-enterprise`` snippet for Wi-Fi Enterprise builds.
-     The |NCS| snippet is available in :file:`snippets/nordic-wifi-enterprise`.
+     The |NCS| snippet is available in :ncs-file:`snippets/nordic-wifi-enterprise </snippets/nordic-wifi-enterprise>`.
 
 
 .. _migration_3.4_recommended:
@@ -241,7 +241,7 @@ Nordic SoC platform symbols (Haltium / Lumos)
      * Replace ``CONFIG_NRF_PLATFORM_LUMOS`` with :kconfig:option:`CONFIG_SOC_SERIES_NRF54L` or :kconfig:option:`CONFIG_SOC_SERIES_NRF71` (whichever applies).
      * Replace ``SB_CONFIG_NRF_HALTIUM_GENERATE_UICR`` with :kconfig:option:`SB_CONFIG_NRF_GENERATE_UICR` in your :file:`sysbuild.conf` file.
 
-   * C headers (:file:`zephyr/soc/nordic/common/`):
+   * C headers (:ncs-file:`zephyr/soc/nordic/common/ <zephyr:/soc/nordic/common>`):
 
      * Replace ``#include <haltium_power.h>`` with ``#include <soc_power.h>``.
      * Replace ``#include <haltium_pm_s2ram.h>`` with ``#include <soc_pm_s2ram.h>``.
@@ -342,7 +342,7 @@ Google Fast Pair
             };
         };
 
-     Refer to the partition overlays under the :file:`nrf/samples/bluetooth/fast_pair/locator_tag/` and :file:`nrf/samples/bluetooth/fast_pair/input_device/` sample directories for complete examples of the updated layout.
+     Refer to the partition overlays under the :ncs-file:`nrf/samples/bluetooth/fast_pair/locator_tag/ </samples/bluetooth/fast_pair/locator_tag>` and :ncs-file:`nrf/samples/bluetooth/fast_pair/input_device/ </samples/bluetooth/fast_pair/input_device>` sample directories for complete examples of the updated layout.
 
      .. important::
         This migration is mandatory on nRF53 Series board targets.

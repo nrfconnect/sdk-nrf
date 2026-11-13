@@ -32,11 +32,11 @@ File and directory layout
 =========================
 
 The application is divided into host and remote.
-The host configuration is placed directly in the :file:`samples/event_manager_proxy` folder.
-The remote configuration is placed in the :file:`samples/event_manager_proxy/remote` folder.
+The host configuration is placed directly in the :ncs-file:`samples/event_manager_proxy </samples/event_manager_proxy>` folder.
+The remote configuration is placed in the :ncs-file:`samples/event_manager_proxy/remote </samples/event_manager_proxy/remote>` folder.
 The remote configuration is added to the host as a subproject, which means that it builds as part of the host application build.
 
-Both the remote and the host use common event declarations and definitions that are located in the :file:`samples/event_manager_proxy/common_events` folder, and modules that are located in the :file:`samples/event_manager_proxy/modules` folder.
+Both the remote and the host use common event declarations and definitions that are located in the :ncs-file:`samples/event_manager_proxy/common_events </samples/event_manager_proxy/common_events>` folder, and modules that are located in the :ncs-file:`samples/event_manager_proxy/modules </samples/event_manager_proxy/modules>` folder.
 
 Configuration
 *************
@@ -60,12 +60,12 @@ The nRF54H20 target supports only ICMSG backend.
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/event_manager_proxy`
+.. |sample path| replace:: :ncs-file:`samples/event_manager_proxy </samples/event_manager_proxy>`
 
 .. include:: /includes/build_and_run.txt
 
 .. |sample_or_app| replace:: sample
-.. |ipc_radio_dir| replace:: :file:`remote/`
+.. |ipc_radio_dir| replace:: :ncs-file:`remote/ </samples/event_manager_proxy/remote>`
 
 .. |ipc_radio_prj_conf| replace:: \ :ncs-file:`remote/prj.conf`
 

@@ -41,7 +41,7 @@ The reference test setup shows the connections between the following devices:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/throughput`
+.. |sample path| replace:: :ncs-file:`samples/wifi/throughput </samples/wifi/throughput>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -179,7 +179,7 @@ Example excerpt (application core, internal flash only):
 More complex maps are used on some SoCs:
 
 * **nRF54H20** — per-core slots, merged-slot updates, and optional external flash.
-  See :ref:`ug_nrf54h20_partitioning_merged` and the memory-map examples under :file:`nrf/samples/dfu/smp_svr/dts/`.
+  See :ref:`ug_nrf54h20_partitioning_merged` and the memory-map examples under :ncs-file:`nrf/samples/dfu/smp_svr/dts/ </samples/dfu/smp_svr/dts>`.
 * **nRF5340** — simultaneous multi-image DFU (application and network core), external secondary slot, and QSPI execute-in-place (XIP) split images.
   See :ref:`ug_nrf5340_multi_image_dfu`, :ref:`qspi_xip_split_image`, and :ref:`smp_svr_ext_xip`.
 
@@ -212,7 +212,7 @@ You do not need a driver with single-byte program support specifically for exter
 
 The Quad Serial Peripheral Interface (QSPI) NOR flash memory driver is able to satisfy these requirements on a board with QSPI-connected external flash.
 
-See the test in :file:`tests/modules/mcuboot/external_flash` for reference.
+See the test in :ncs-file:`tests/modules/mcuboot/external_flash </tests/modules/mcuboot/external_flash>` for reference.
 This test passes both devicetree overlay files and Kconfig fragments to the MCUboot image through its :file:`sysbuild` folder.
 
 Troubleshooting

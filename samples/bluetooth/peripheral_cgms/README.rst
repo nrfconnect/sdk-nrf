@@ -25,7 +25,7 @@ You can also use the `nRF Connect for Mobile`_ to interact with the CGMS module.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_cgms`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_cgms </samples/bluetooth/peripheral_cgms>`
 
 .. include:: /includes/build_and_run_ns.txt
 

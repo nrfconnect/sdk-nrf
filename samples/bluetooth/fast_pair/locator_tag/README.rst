@@ -565,7 +565,7 @@ The following Kconfig options are specific to the chosen hardware platform.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/fast_pair/locator_tag`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/fast_pair/locator_tag </samples/bluetooth/fast_pair/locator_tag>`
 
 .. include:: /includes/build_and_run.txt
 

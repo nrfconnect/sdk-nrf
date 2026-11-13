@@ -21,7 +21,7 @@ The PSA API call is handled by the TF-M secure firmware.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/tfm_hello_world`
+.. |sample path| replace:: :ncs-file:`samples/tfm/tfm_hello_world </samples/tfm/tfm_hello_world>`
 
 .. include:: /includes/build_and_run.txt
 

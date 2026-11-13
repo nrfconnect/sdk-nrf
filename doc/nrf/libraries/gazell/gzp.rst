@@ -68,6 +68,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/gzp.h` and :ncs-file:`/include/gzp_config.h`
-| Source file: :file:`subsys/gazell/`
+| Source file: :ncs-file:`subsys/gazell/ </subsys/gazell>`
 
 .. doxygengroup:: gzp

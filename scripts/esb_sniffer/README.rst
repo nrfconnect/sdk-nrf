@@ -27,7 +27,7 @@ There are two separate scripts you can use with the DK configured as an |ESB| sn
 Requirements
 ************
 
-The script source files are located in the :file:`scripts/esb_sniffer` directory.
+The script source files are located in the :ncs-file:`scripts/esb_sniffer </scripts/esb_sniffer>` directory.
 Complete the following steps to install scripts requirements:
 
 1. Install the Python requirements:

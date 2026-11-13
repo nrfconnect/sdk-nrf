@@ -35,6 +35,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/bluetooth/services/cgms.h`
-| Source files: :file:`subsys/bluetooth/services/cgms`
+| Source files: :ncs-file:`subsys/bluetooth/services/cgms </subsys/bluetooth/services/cgms>`
 
 .. doxygengroup:: bt_cgms

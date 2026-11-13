@@ -108,6 +108,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net_core_monitor.h`
-| Source files: :file:`subsys/net_core_monitor/`
+| Source files: :ncs-file:`subsys/net_core_monitor/ </subsys/net_core_monitor>`
 
 .. doxygengroup:: net_core_monitor

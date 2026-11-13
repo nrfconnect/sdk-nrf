@@ -23,7 +23,7 @@ You need to define a new GPIO pin devicetree node for the pin.
 The devicetree node needs to be compatible with the GPIO devicetree binding.
 GPIO APIs use the devicetree node to refer to the specified GPIO pin.
 
-If you work with a Nordic Semiconductor device, you can use the binding definition in :file:`nrf/dts/bindings/gpio`.
+If you work with a Nordic Semiconductor device, you can use the binding definition in :ncs-file:`nrf/dts/bindings/gpio </dts/bindings/gpio>`.
 
 See Zephyr's documentation about :ref:`zephyr:devicetree` and :ref:`zephyr:gpio_api` for more information.
 
@@ -60,7 +60,7 @@ In this snippet:
 
 * The GPIO pin node is labelled as ``user_dbg_pin`` (with the ``user-dbg-pin`` node name).
 
-  * ``compatible`` specifies the binding definition to be used (``nordic,gpio-pins`` from :file:`nrf/dts/bindings/gpio`).
+  * ``compatible`` specifies the binding definition to be used (``nordic,gpio-pins`` from :ncs-file:`nrf/dts/bindings/gpio </dts/bindings/gpio>`).
   * ``gpios`` specifies which pin node is being used (**Pin 2** of **GPIO0**).
   * ``status`` enables the pin node when it is set to ``"okay"``.
 

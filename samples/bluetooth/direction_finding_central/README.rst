@@ -59,7 +59,7 @@ nRF5340 configuration files
 The following additional configuration files are available for the :ref:`nRF5340 DK <ug_nrf5340>`:
 
 * The Bluetooth LE controller is part of an image meant to run on the network core.
-  The configuration for the image is stored in the :file:`sysbuild/` subdirectory.
+  The configuration for the image is stored in the :ncs-file:`sysbuild/ </samples/bluetooth/direction_finding_central/sysbuild>` subdirectory.
 * The DTS overlay file :ncs-file:`boards/nrf5340dk_nrf5340_cpuapp.overlay` is available for the application core.
   This file forwards the control over GPIOs to network core, which provides control over GPIOs to the radio peripheral in order to execute antenna switching.
 
@@ -206,7 +206,7 @@ The total number of samples is 62.
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/direction_finding_central`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/direction_finding_central </samples/bluetooth/direction_finding_central>`
 
 .. include:: /includes/build_and_run.txt
 

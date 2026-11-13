@@ -46,7 +46,7 @@ Once built and run, the sample performs the following operations:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/crypto/ml_dsa`
+.. |sample path| replace:: :ncs-file:`samples/crypto/ml_dsa </samples/crypto/ml_dsa>`
 
 .. include:: /includes/build_and_run.txt
 

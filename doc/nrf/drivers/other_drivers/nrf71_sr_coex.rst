@@ -203,7 +203,7 @@ API documentation
 *****************
 
 | Header files: :ncs-file:`/include/drivers/nrf71_sr_coex/nrf71_sr_coex.h`, :ncs-file:`/include/drivers/nrf71_sr_coex/nrf71_sr_coex_sr.h`
-| Source files: :file:`drivers/nrf71_sr_coex/src/`
+| Source files: :ncs-file:`drivers/nrf71_sr_coex/src/ </drivers/nrf71_sr_coex/src>`
 
 Application interface
 =====================

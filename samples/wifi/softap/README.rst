@@ -61,7 +61,7 @@ To specify the DHCP pool start address, you can edit the :kconfig:option:`CONFIG
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/softap`
+.. |sample path| replace:: :ncs-file:`samples/wifi/softap </samples/wifi/softap>`
 
 .. include:: /includes/build_and_run_ns.txt
 

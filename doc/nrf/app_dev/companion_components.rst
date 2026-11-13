@@ -32,7 +32,7 @@ The following table lists the available companion components:
    * - :ref:`ipc_radio`
      - Companion component that allows to use the radio peripheral from another core in a multicore device.
      - :ref:`nRF54H20 DK <ug_nrf54h20_gs>`, :ref:`nRF5340 DK <ug_nrf5340>`, :ref:`Thingy:53 <ug_thingy53>`
-     - :file:`applications/ipc_radio`
+     - :ncs-file:`applications/ipc_radio </applications/ipc_radio>`
      - :ref:`Application's configuration section <ipc_radio_config>`
    * - :ref:`MCUboot <mcuboot:mcuboot_wrapper>`
      - Secure bootloader for 32-bit microcontrollers.
@@ -47,7 +47,7 @@ The following table lists the available companion components:
    * - :ref:`bootloader`
      - Bootloader tailored for the :ref:`two-stage bootloader <immutable_bootloader>`.
      - :ref:`Bootloader requirements <bootloader_rot>`
-     - :file:`samples/bootloader`
+     - :ncs-file:`samples/bootloader </samples/bootloader>`
      - :ref:`ug_bootloader_adding_sysbuild_immutable_b0`
    * - :ref:`Secure Domain Firmware <ug_nrf54h20_secure_domain>`
      - Secure Domain Firmware exposes security services to the other cores through an IPC interface and is part of Platform Root of Trust (PRoT).

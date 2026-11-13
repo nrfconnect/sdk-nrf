@@ -65,7 +65,7 @@ FEM support
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/peripheral/lpuart`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/lpuart </samples/peripheral/lpuart>`
 
 .. include:: /includes/build_and_run_ns.txt
 

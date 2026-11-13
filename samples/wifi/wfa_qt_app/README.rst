@@ -55,7 +55,7 @@ Set the :kconfig:option:`CONFIG_WIFI_NM_WPA_SUPPLICANT_HEAP` Kconfig option acco
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/wfa_qt_app`
+.. |sample path| replace:: :ncs-file:`samples/wifi/wfa_qt_app </samples/wifi/wfa_qt_app>`
 
 .. include:: /includes/build_and_run_ns.txt
 

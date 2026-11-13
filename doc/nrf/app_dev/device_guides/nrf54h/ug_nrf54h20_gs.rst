@@ -261,7 +261,7 @@ To build and program the sample to the nRF54H20 DK, complete the following steps
 
    With the example values, this command starts the toolchain environment for the |NCS| |release|.
 
-#. In the terminal window, navigate to the :file:`zephyr/samples/sysbuild/hello_world` folder containing the sample.
+#. In the terminal window, navigate to the :ncs-file:`zephyr/samples/sysbuild/hello_world <zephyr:/samples/sysbuild/hello_world>` folder containing the sample.
 #. Run the following command to build the sample for application and radio cores::
 
       west build -p -b nrf54h20dk/nrf54h20/cpuapp -T sample.sysbuild.hello_world.nrf54h20dk_cpuapp_cpurad .

@@ -66,6 +66,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/dfu/dfu_multi_image.h`
-| Source files: :file:`subsys/dfu/dfu_multi_image/src/`
+| Source files: :ncs-file:`subsys/dfu/dfu_multi_image/src/ </subsys/dfu/dfu_multi_image/src>`
 
 .. doxygengroup:: dfu_multi_image

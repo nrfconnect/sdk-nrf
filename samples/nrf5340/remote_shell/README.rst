@@ -23,7 +23,7 @@ You can use this sample to demonstrate how to forward shell data from the networ
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf5340/remote_shell`
+.. |sample path| replace:: :ncs-file:`samples/nrf5340/remote_shell </samples/nrf5340/remote_shell>`
 
 .. include:: /includes/build_and_run.txt
 

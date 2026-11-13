@@ -101,7 +101,7 @@ See :ref:`zephyr:menuconfig` in the Zephyr documentation for instructions on how
 
 * Wi-Fi throughput test: Set the :kconfig:option:`CONFIG_NET_CONFIG_PEER_IPV4_ADDR` Kconfig option appropriately as per the Wi-Fi interface IP address of the test PC on which iPerf is run.
 
-Set up the test duration configuration parameters in the :file:`Kconfig.conf` file of the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder.
+Set up the test duration configuration parameters in the :file:`Kconfig.conf` file of the Bluetooth throughput sample from the :ncs-file:`nrf/samples/bluetooth/throughput </samples/bluetooth/throughput>` folder.
 Use :kconfig:option:`CONFIG_BT_THROUGHPUT_DURATION` to set the duration of the Bluetooth LE throughput test only when running Bluetooth LE throughput in central role.
 The units are in milliseconds.
 
@@ -111,7 +111,7 @@ The units are in milliseconds.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/ble_coex`
+.. |sample path| replace:: :ncs-file:`samples/wifi/ble_coex </samples/wifi/ble_coex>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -179,7 +179,7 @@ Add the following SHIELD options for the nRF7002 EK and nRF7001 EK.
 
 The generated HEX file to be used is :file:`ble_coex/build/merged.hex`.
 
-Use the Bluetooth throughput sample from the :file:`nrf/samples/bluetooth/throughput` folder on the peer nRF5340 DK device.
+Use the Bluetooth throughput sample from the :ncs-file:`nrf/samples/bluetooth/throughput </samples/bluetooth/throughput>` folder on the peer nRF5340 DK device.
 
 Build for the nRF5340 DK:
 

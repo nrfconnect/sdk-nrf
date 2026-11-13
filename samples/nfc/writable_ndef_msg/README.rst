@@ -60,7 +60,7 @@ User interface
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/nfc/writable_ndef_msg`
+.. |sample path| replace:: :ncs-file:`samples/nfc/writable_ndef_msg </samples/nfc/writable_ndef_msg>`
 
 .. include:: /includes/build_and_run_ns.txt
 

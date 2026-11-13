@@ -87,7 +87,7 @@ To successfully use the direction finding beacon when the AoD mode is enabled, p
 
 Building and Running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/direction_finding_connectionless_tx`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/direction_finding_connectionless_tx </samples/bluetooth/direction_finding_connectionless_tx>`
 
 .. include:: /includes/build_and_run.txt
 

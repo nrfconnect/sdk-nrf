@@ -197,7 +197,7 @@ To provision the device, complete the following steps:
    The ``--embed-save`` option saves the three :file:`.pem` files in the :file:`dev_credentials` folder.
    See `Create Device Credentials <nRF Cloud Utils Create Device Credentials_>`_ for more details.
 #. Add the folder containing the files to the include path of your application, for example by using ``zephyr_include_directories(certs)`` in your :file:`CMakeLists.txt` file.
-   Do not place them in :file:`subsys/net/lib/nrf_cloud/common/include`, because files in that folder take precedence.
+   Do not place them in :ncs-file:`subsys/net/lib/nrf_cloud/common/include </subsys/net/lib/nrf_cloud/common/include>`, because files in that folder take precedence.
 #. Build and program the firmware.
 
 .. _nrf_cloud_preconnect_onboarding:

@@ -99,7 +99,7 @@ See :ref:`dtm_twowire_to_hci_readme` for details.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/direct_test_mode`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/direct_test_mode </samples/bluetooth/direct_test_mode>`
 
 .. include:: /includes/build_and_run.txt
 

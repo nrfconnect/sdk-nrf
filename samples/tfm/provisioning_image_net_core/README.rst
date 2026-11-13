@@ -20,7 +20,7 @@ The following development kits are supported:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/tfm/provisioning_image_net_core`
+.. |sample path| replace:: :ncs-file:`samples/tfm/provisioning_image_net_core </samples/tfm/provisioning_image_net_core>`
 
 .. include:: /includes/build_and_run.txt
 

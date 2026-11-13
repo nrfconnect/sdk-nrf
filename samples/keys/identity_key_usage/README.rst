@@ -43,7 +43,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/keys/identity_key_usage`
+.. |sample path| replace:: :ncs-file:`samples/keys/identity_key_usage </samples/keys/identity_key_usage>`
 
 .. include:: /includes/build_and_run.txt
 

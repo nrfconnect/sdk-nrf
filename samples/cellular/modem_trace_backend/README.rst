@@ -28,7 +28,7 @@ See :ref:`adding_custom_modem_trace_backends` for details.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/modem_trace_backend`
+.. |sample path| replace:: :ncs-file:`samples/cellular/modem_trace_backend </samples/cellular/modem_trace_backend>`
 
 .. include:: /includes/build_and_run_ns.txt
 

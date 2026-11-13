@@ -28,7 +28,7 @@ The UART baud rate is 115200.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf93m1dk/ppp_shell`
+.. |sample path| replace:: :ncs-file:`samples/nrf93m1dk/ppp_shell </samples/nrf93m1dk/ppp_shell>`
 
 .. include:: /includes/build_and_run.txt
 

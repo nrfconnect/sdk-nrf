@@ -73,7 +73,7 @@ While the board name is always present, other elements, such as the board revisi
 Boards included in sdk-zephyr
 *****************************
 
-The following boards are defined in the :file:`zephyr/boards/nordic/` folder.
+The following boards are defined in the :ncs-file:`zephyr/boards/nordic/ <zephyr:/boards/nordic>` folder.
 Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 
 .. note::
@@ -224,7 +224,7 @@ Also see the :ref:`zephyr:boards` section in the Zephyr documentation.
 Boards included in sdk-nrf
 **************************
 
-The following boards are defined in the :file:`nrf/boards/nordic/` folder.
+The following boards are defined in the :ncs-file:`nrf/boards/nordic/ </boards/nordic>` folder.
 
 +-------------------+------------+----------------------------------------------------------+---------------------------------------------------------------------------+
 | Hardware platform | PCA number | Board name                                               | Board targets                                                             |
@@ -293,7 +293,7 @@ Out of the :ref:`app_boards_names_nrf`, the following boards have dedicated defi
 Shields included in sdk-nrf
 ***************************
 
-The following shields are defined in the :file:`nrf/boards/shields` folder.
+The following shields are defined in the :ncs-file:`nrf/boards/shields </boards/shields>` folder.
 
 +-----------------------------------------------------+------------+---------------------------------------------+------------------------------------------------------------------------------+
 | Hardware platform                                   | PCA number | Board name                                  | Board targets                                                                |

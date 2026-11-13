@@ -213,7 +213,7 @@ For this sample, the device ID is ``ncs-ble-testdevice`` by default.
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/peripheral_mds`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/peripheral_mds </samples/bluetooth/peripheral_mds>`
 
 .. include:: /includes/build_and_run_ns.txt
 

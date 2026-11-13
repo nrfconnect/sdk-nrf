@@ -68,7 +68,7 @@ CONFIG_POFWARN_REFRESH_INTERVAL_SEC
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/battery`
+.. |sample path| replace:: :ncs-file:`samples/cellular/battery </samples/cellular/battery>`
 
 .. include:: /includes/build_and_run_ns.txt
 

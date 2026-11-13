@@ -27,7 +27,7 @@ The sample supports the following development kits:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/dfu/smp_svr_mini_boot`
+.. |sample path| replace:: :ncs-file:`samples/dfu/smp_svr_mini_boot </samples/dfu/smp_svr_mini_boot>`
 
 .. include:: /includes/build_and_run.txt
 

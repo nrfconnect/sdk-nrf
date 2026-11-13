@@ -102,7 +102,7 @@ The sample provides the following configuration files:
      - JSON file used for provisioning keys to the device before programming the sample.
        This file was created with the :ref:`generate_psa_key_attributes_script` and is meant to be provisioned to the KMU using `nRF Util`_.
        See `Generating example keys from scratch`_ for information on how to generate these keys from scratch.
-     - :file:`keys`
+     - :ncs-file:`keys </samples/crypto/kmu_cracen_usage/keys>`
    * - :file:`aes_128_key.txt`
      - :file:`keys/sources`
      - Source file for the AES-128 key that is used for crating the :file:`keys.json` file.
@@ -144,7 +144,7 @@ Generating the JSON file
 After keys have been generated, you must put them to the :file:`keys.json` file, which then will be used to manually provision the keys using nRF Util.
 See :ref:`generate_psa_key_attributes_script` for more information.
 
-The following commands were used to generate the :file:`keys.json` file available as an example in the :file:`keys` directory:
+The following commands were used to generate the :file:`keys.json` file available as an example in the :ncs-file:`keys </samples/crypto/kmu_cracen_usage/keys>` directory:
 
 * The following command was used to add the AES-128 key to the :file:`keys.json` file:
 
@@ -192,7 +192,7 @@ Building and running
    Program the sample only after provisioning the keys to the board using nRF Util.
    See the `Testing`_ section for more information.
 
-.. |sample path| replace:: :file:`samples/crypto/kmu_cracen_usage`
+.. |sample path| replace:: :ncs-file:`samples/crypto/kmu_cracen_usage </samples/crypto/kmu_cracen_usage>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -51,7 +51,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/keys/hw_unique_key`
+.. |sample path| replace:: :ncs-file:`samples/keys/hw_unique_key </samples/keys/hw_unique_key>`
 
 .. include:: /includes/build_and_run_ns.txt
 

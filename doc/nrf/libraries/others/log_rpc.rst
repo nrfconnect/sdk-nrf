@@ -58,6 +58,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/logging/log_rpc.h`
-| Source files: :file:`subsys/logging`
+| Source files: :ncs-file:`subsys/logging </subsys/logging>`
 
 .. doxygengroup:: log_rpc

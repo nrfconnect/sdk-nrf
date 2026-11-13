@@ -33,7 +33,7 @@ Both the application and remote cores use the same :file:`main.c` that prints th
 Building and running
 ********************
 
-.. |test path| replace:: :file:`tests/benchmarks/multicore/idle_gpio`
+.. |test path| replace:: :ncs-file:`tests/benchmarks/multicore/idle_gpio </tests/benchmarks/multicore/idle_gpio>`
 
 .. include:: /includes/build_and_run_test.txt
 

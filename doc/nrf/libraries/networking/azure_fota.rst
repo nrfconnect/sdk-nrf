@@ -73,6 +73,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/azure_fota.h`
-| Source files: :file:`subsys/net/lib/azure_fota/`
+| Source files: :ncs-file:`subsys/net/lib/azure_fota/ </subsys/net/lib/azure_fota>`
 
 .. doxygengroup:: azure_fota

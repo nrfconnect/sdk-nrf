@@ -31,7 +31,7 @@ Protobuf
 ========
 
 The library supports protobuf to encode or decode messages that are exchanged between the HTTP server and client.
-The protobuf schema used for HTTP message content encoding is located under :file:`subsys/net/lib/softap_wifi_provision/proto/`.
+The protobuf schema used for HTTP message content encoding is located under :ncs-file:`subsys/net/lib/softap_wifi_provision/proto/ </subsys/net/lib/softap_wifi_provision/proto>`.
 
 .. _softap_wifi_provision_http_resources:
 
@@ -221,6 +221,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/net/softap_wifi_provision.h`
-| Source files: :file:`subsys/net/lib/softap_wifi_provision`
+| Source files: :ncs-file:`subsys/net/lib/softap_wifi_provision </subsys/net/lib/softap_wifi_provision>`
 
 .. doxygengroup:: softap_wifi_provision_library

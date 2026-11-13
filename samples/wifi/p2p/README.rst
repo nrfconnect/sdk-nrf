@@ -51,7 +51,7 @@ In CLI mode, you must set the :kconfig:option:`CONFIG_SAMPLE_P2P_PEER_ADDRESS` K
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/p2p`
+.. |sample path| replace:: :ncs-file:`samples/wifi/p2p </samples/wifi/p2p>`
 
 .. include:: /includes/build_and_run_ns.txt
 

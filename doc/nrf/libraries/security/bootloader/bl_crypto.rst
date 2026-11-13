@@ -49,6 +49,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/bl_crypto.h`
-| Source files: :file:`subsys/bootloader/bl_crypto/` and :file:`subsys/bootloader/bl_crypto_client/`
+| Source files: :ncs-file:`subsys/bootloader/bl_crypto/ </subsys/bootloader/bl_crypto>` and :ncs-file:`subsys/bootloader/bl_crypto_client/ </subsys/bootloader/bl_crypto_client>`
 
 .. doxygengroup:: bl_crypto

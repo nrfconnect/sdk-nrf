@@ -85,7 +85,7 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/nfc/tnep/ch.h`
-| Source files: :file:`subsys/nfc/tnep/ch/`
+| Source files: :ncs-file:`subsys/nfc/tnep/ch/ </subsys/nfc/tnep/ch>`
 
 .. _nfc_tnep_ch:
 

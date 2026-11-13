@@ -115,7 +115,7 @@ To keep the interface up and idle instead of shutting Wi-Fi down, enable the :kc
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/shutdown`
+.. |sample path| replace:: :ncs-file:`samples/wifi/shutdown </samples/wifi/shutdown>`
 
 .. include:: /includes/build_and_run_ns.txt
 

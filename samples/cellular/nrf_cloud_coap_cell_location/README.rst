@@ -55,7 +55,7 @@ Check and configure the following Kconfig options for the sample:
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/cellular/nrf_cloud_coap_cell_location`
+.. |sample path| replace:: :ncs-file:`samples/cellular/nrf_cloud_coap_cell_location </samples/cellular/nrf_cloud_coap_cell_location>`
 
 .. include:: /includes/build_and_run_ns.txt
 

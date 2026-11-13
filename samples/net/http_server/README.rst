@@ -200,7 +200,7 @@ The sample provides predefined configuration files for the following development
 * :ncs-file:`/samples/net/http_server/wifi-tls.conf` - Additional configuration file that enables TLS support (server authentication, with optional mutual authentication) for Wi-Fi builds.
 * :ncs-file:`/samples/net/http_server/overlay-tls-nrf91.conf` - Additional configuration file that enables TLS support for nRF91 Series DKs.
 
-Board files under :file:`boards/` are merged automatically for the selected target.
+Board files under :ncs-file:`boards/ </samples/net/http_server/boards>` are merged automatically for the selected target.
 The :ncs-file:`/samples/net/http_server/wifi.conf` and :ncs-file:`/samples/net/http_server/wifi-tls.conf` extra configuration files are not board-specific and must be passed explicitly with ``http_server_EXTRA_CONF_FILE``.
 
 To add a specific extra configuration file to the build, add the ``-- -Dhttp_server_EXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
@@ -213,7 +213,7 @@ Multiple extra configuration files can be combined by separating them with a sem
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/net/http_server`
+.. |sample path| replace:: :ncs-file:`samples/net/http_server </samples/net/http_server>`
 
 .. include:: /includes/build_and_run_ns.txt
 

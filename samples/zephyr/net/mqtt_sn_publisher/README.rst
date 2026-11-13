@@ -53,7 +53,7 @@ The following sample-specific Kconfig options are used in this sample (located i
 Configuration files
 ====================
 
-The sample provides a default configuration file, :ncs-file:`zephyr:/samples/net/mqtt_sn_publisher/prj.conf`, configured for a statically defined gateway, located in :file:`zephyr/samples/net/mqtt_sn_publisher`.
+The sample provides a default configuration file, :ncs-file:`zephyr:/samples/net/mqtt_sn_publisher/prj.conf`, configured for a statically defined gateway, located in :ncs-file:`zephyr/samples/net/mqtt_sn_publisher <zephyr:/samples/net/mqtt_sn_publisher>`.
 
 To add a specific extra configuration file to the build, add the ``-DEXTRA_CONF_FILE=<extra_conf_file>`` flag to your west build command.
 
@@ -65,7 +65,7 @@ Use the :ref:`Wi-Fi snippet <zephyr:snippet-wifi-ipv4>` to build and run the sam
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/zephyr/net/mqtt_sn_publisher`
+.. |sample path| replace:: :ncs-file:`samples/zephyr/net/mqtt_sn_publisher </samples/zephyr/net/mqtt_sn_publisher>`
 
 .. include:: /includes/build_and_run.txt
 

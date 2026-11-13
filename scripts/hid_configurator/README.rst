@@ -88,7 +88,7 @@ Complete the following steps:
 .. note::
    Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
    This may result in rejecting proper DFU images (``DFU image is invalid``).
-   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:file:`ncs/bootloader/mcuboot/scripts` directory of the |NCS|).
+   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:ncs-file:`ncs/bootloader/mcuboot/scripts <mcuboot:/scripts>` directory of the |NCS|).
    Run the following commands in the source directory to install ``imgtool`` and the required dependencies:
 
    .. parsed-literal::
@@ -136,7 +136,7 @@ Complete the following steps:
 .. note::
    Currently, the ``imgtool`` from PyPI does not support pure ED25519 signature (used by nRF54L-based devices that enable MCUboot hardware cryptography).
    This may result in rejecting proper DFU images (``DFU image is invalid``).
-   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:file:`ncs/bootloader/mcuboot/scripts` directory of the |NCS|).
+   ``imgtool`` supporting pure ED25519 signature can be installed from the ``sdk-mcuboot`` repository (:ncs-file:`ncs/bootloader/mcuboot/scripts <mcuboot:/scripts>` directory of the |NCS|).
    Run the following commands in the source directory to install ``imgtool`` and the required dependencies:
 
    .. parsed-literal::

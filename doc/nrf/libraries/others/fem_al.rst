@@ -36,6 +36,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/fem_al/fem_al.h`
-| Source files: :file:`lib/fem_al/`
+| Source files: :ncs-file:`lib/fem_al/ </lib/fem_al>`
 
 .. doxygengroup:: fem_al

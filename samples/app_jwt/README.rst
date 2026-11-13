@@ -51,7 +51,7 @@ You can convert the DER key into PEM format by encoding it in base64 and adding 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/app_jwt`
+.. |sample path| replace:: :ncs-file:`samples/app_jwt </samples/app_jwt>`
 
 .. include:: /includes/build_and_run_ns.txt
 

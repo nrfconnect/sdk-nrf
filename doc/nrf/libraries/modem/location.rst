@@ -208,7 +208,7 @@ You can use an external Wi-Fi chip, such as nRF7002 EK, and connect it to the nR
 Library files
 *************
 
-.. |library path| replace:: :file:`lib/location`
+.. |library path| replace:: :ncs-file:`lib/location </lib/location>`
 
 This library is found under |library path| in the |NCS| folder structure.
 
@@ -444,6 +444,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/modem/location.h`
-| Source files: :file:`lib/location/`
+| Source files: :ncs-file:`lib/location/ </lib/location>`
 
 .. doxygengroup:: location

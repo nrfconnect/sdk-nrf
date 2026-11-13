@@ -60,7 +60,7 @@ Configuration
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/app_event_manager_profiler_tracer`
+.. |sample path| replace:: :ncs-file:`samples/app_event_manager_profiler_tracer </samples/app_event_manager_profiler_tracer>`
 
 .. include:: /includes/build_and_run_ns.txt
 
@@ -69,7 +69,7 @@ Testing
 
 After programming the sample to your development kit, test it by performing the following steps:
 
-1. Run the script :file:`real_time_plot.py` located in the :file:`scripts/nrf_profiler` folder, with the name that is to be used to store the data as argument.
+1. Run the script :file:`real_time_plot.py` located in the :ncs-file:`scripts/nrf_profiler </scripts/nrf_profiler>` folder, with the name that is to be used to store the data as argument.
    For example, run the following command to generate a :file:`test_name.csv` and a :file:`test_name.json` file using the *test_name* argument:
 
    .. code-block:: console

@@ -33,7 +33,7 @@ Prepare the configuration files for your custom board in the |NCS|
 
 Use `nRF Connect for VS Code`_ with the related extensions to generate a custom board skeleton.
 
-Use the nRF54H20 DK board files found in :file:`sdk-zephyr/boards/nordic/nrf54h20dk` as a reference point for configuring your own custom board.
+Use the nRF54H20 DK board files found in :ncs-file:`sdk-zephyr/boards/nordic/nrf54h20dk <zephyr:/boards/nordic/nrf54h20dk>` as a reference point for configuring your own custom board.
 
 See the following documentation pages for more information:
 
@@ -43,7 +43,7 @@ See the following documentation pages for more information:
 * The :ref:`dm_adding_code` documentation for details on the best user workflows to add your own code to the |NCS|.
 
 .. caution::
-   The configuration of board files is based on the nRF54H20 common SoC files located in :file:`sdk-zephyr/dts/vendor/nordic/`.
+   The configuration of board files is based on the nRF54H20 common SoC files located in :ncs-file:`sdk-zephyr/dts/vendor/nordic/ <zephyr:/dts/vendor/nordic>`.
    Each new |NCS| revision might change these files, breaking the compatibility with your custom board files created for previous revisions.
    Ensure the compatibility of your custom board files when migrating to a new |NCS| release.
 

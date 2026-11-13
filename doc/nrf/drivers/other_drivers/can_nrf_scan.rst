@@ -8,7 +8,7 @@ sCAN CAN shim driver
    :depth: 2
 
 This driver integrates the :ref:`sCAN` soft peripheral with the Zephyr CAN API, enabling control over the peripheral.
-This allows for using the :ref:`sCAN` soft peripheral with higher layer zephyr libraries like :ref:`can_isotp` and ``socket_can``, external modules like :ref:`external_module_cannectivity`, the CAN shell :ref:`can_shell`, along with any native zephyr applications/samples like :file:`zephyr/samples/drivers/can`.
+This allows for using the :ref:`sCAN` soft peripheral with higher layer zephyr libraries like :ref:`can_isotp` and ``socket_can``, external modules like :ref:`external_module_cannectivity`, the CAN shell :ref:`can_shell`, along with any native zephyr applications/samples like :ncs-file:`zephyr/samples/drivers/can <zephyr:/samples/drivers/can>`.
 
 Configuration
 *************
@@ -74,7 +74,7 @@ The following example is for the nRF54L15DK
            };
    };
 
-More example devicetree overlays can be found in the board overlays for the tests in :file:`nrf/tests/zephyr/drivers/can/`.
+More example devicetree overlays can be found in the board overlays for the tests in :ncs-file:`nrf/tests/zephyr/drivers/can/ </tests/zephyr/drivers/can>`.
 Relevant porting information regarding RAM layout and pin configuration can be found here :ref:`scan_nrf54L_series_porting_guide`.
 
 To configure the sCAN CAN shim driver with the devicetree, complete the following steps:
@@ -87,11 +87,11 @@ To configure the sCAN CAN shim driver with the devicetree, complete the followin
 Testing
 *******
 
-There are tests available in :file:`nrf/tests/zephyr/drivers/can/` which can be built and run.
+There are tests available in :ncs-file:`nrf/tests/zephyr/drivers/can/ </tests/zephyr/drivers/can>` which can be built and run.
 The :ref:`can_shell` can optionally be enabled to allow for locally testing the sCAN CAN shim driver.
 This is the simplest way to quickly send and receive some messages to validate its functionality.
 
-There are also samples at :file:`zephyr/samples/drivers/can/` which can be built and run for any board defining the ``zephyr,canbus`` chosen node:
+There are also samples at :ncs-file:`zephyr/samples/drivers/can/ <zephyr:/samples/drivers/can>` which can be built and run for any board defining the ``zephyr,canbus`` chosen node:
 
 .. code:: dts
 

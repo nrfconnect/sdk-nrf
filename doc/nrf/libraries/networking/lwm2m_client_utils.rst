@@ -203,7 +203,7 @@ Extending the library with new object types
 If the library is not supporting the object type that you need, it is possible to extend the support by introducing completely new object types.
 This is currently possible only by using an internal API from the LwM2M engine.
 
-Before creating new object types, see the existing implementation of IPSO objects from :file:`zephyr/subsys/net/lib/lwm2m` directory.
+Before creating new object types, see the existing implementation of IPSO objects from :ncs-file:`zephyr/subsys/net/lib/lwm2m <zephyr:/subsys/net/lib/lwm2m>` directory.
 Select one of the existing object types, for example Push Button, and refactor it according to your need.
 
 The following example shows how to create a new object type that follows the IPSO Digital Output definition:
@@ -311,6 +311,6 @@ API documentation
 *****************
 
 | Header files: :ncs-file:`/include/net/lwm2m_client_utils.h`
-| Source files: :file:`subsys/net/lib/lwm2m_client_utils/lwm2m`
+| Source files: :ncs-file:`subsys/net/lib/lwm2m_client_utils/lwm2m </subsys/net/lib/lwm2m_client_utils/lwm2m>`
 
 .. doxygengroup:: lwm2m_client_utils

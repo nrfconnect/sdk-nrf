@@ -120,7 +120,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/conn_time_sync`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/conn_time_sync </samples/bluetooth/conn_time_sync>`
 
 .. include:: /includes/build_and_run.txt
 

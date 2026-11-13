@@ -53,7 +53,7 @@ During the boot process, the network core bootloader sample and MCUboot interact
 Building and running
 ********************
 
-This sample can be found under :file:`samples/nrf5340/netboot/` in the |NCS| folder structure.
+This sample can be found under :ncs-file:`samples/nrf5340/netboot/ </samples/nrf5340/netboot>` in the |NCS| folder structure.
 
 .. caution::
    You must include the |NSIB| as an image in a project using sysbuild, rather than building it stand-alone.

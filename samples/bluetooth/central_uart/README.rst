@@ -98,7 +98,7 @@ FEM support
 
 Building and running
 ********************
-.. |sample path| replace:: :file:`samples/bluetooth/central_uart`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/central_uart </samples/bluetooth/central_uart>`
 
 .. include:: /includes/build_and_run_ns.txt
 

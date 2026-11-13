@@ -27,7 +27,7 @@ Configuration
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/peripheral/ppi_seq_spi`
+.. |sample path| replace:: :ncs-file:`samples/peripheral/ppi_seq_spi </samples/peripheral/ppi_seq_spi>`
 
 .. include:: /includes/build_and_run.txt
 

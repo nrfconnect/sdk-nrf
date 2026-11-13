@@ -141,7 +141,7 @@ FEM support
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/bluetooth/mesh/light`
+.. |sample path| replace:: :ncs-file:`samples/bluetooth/mesh/light </samples/bluetooth/mesh/light>`
 
 .. include:: /includes/build_and_run_ns.txt
 

@@ -132,7 +132,7 @@ The board configurations select ZLI priorities according to the requirements in 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/subsys/rtfw/timer_gpio`
+.. |sample path| replace:: :ncs-file:`samples/subsys/rtfw/timer_gpio </samples/subsys/rtfw/timer_gpio>`
 
 .. include:: /includes/build_and_run.txt
 

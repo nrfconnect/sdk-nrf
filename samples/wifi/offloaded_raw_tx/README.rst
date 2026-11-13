@@ -33,7 +33,7 @@ Configuration options
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/wifi/offloaded_raw_tx`
+.. |sample path| replace:: :ncs-file:`samples/wifi/offloaded_raw_tx </samples/wifi/offloaded_raw_tx>`
 
 .. include:: /includes/build_and_run_ns.txt
 

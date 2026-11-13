@@ -87,7 +87,7 @@ User interface
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/nrf_rpc/protocols_serialization/server`
+.. |sample path| replace:: :ncs-file:`samples/nrf_rpc/protocols_serialization/server </samples/nrf_rpc/protocols_serialization/server>`
 
 .. include:: /includes/build_and_run.txt
 

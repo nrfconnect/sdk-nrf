@@ -24,7 +24,7 @@ For each series, the sample logs the first and the last sample, and reports the 
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/saadct`
+.. |sample path| replace:: :ncs-file:`samples/saadct </samples/saadct>`
 
 .. include:: /includes/build_and_run.txt
 

@@ -85,7 +85,7 @@ Zephyr and the |NCS| provide support for developing networking applications with
        | :ref:`Developing with nRF54L Series <ug_nrf54l15_gs>`
 
 
-The following nRF70 Series shields are available and defined in the :file:`nrf/boards/shields` folder:
+The following nRF70 Series shields are available and defined in the :ncs-file:`nrf/boards/shields </boards/shields>` folder:
 
 .. list-table::
    :header-rows: 1

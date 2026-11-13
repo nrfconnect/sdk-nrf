@@ -310,7 +310,7 @@ These structures are crucial for configuring and executing data transfers effici
 Building and running
 ********************
 
-.. |application path| replace:: :file:`applications/hpf/mspi`
+.. |application path| replace:: :ncs-file:`applications/hpf/mspi </applications/hpf/mspi>`
 
 .. include:: /includes/application_build_and_run.txt
 
@@ -366,7 +366,7 @@ These tests report results over the serial port, using the USB debug port on the
 Dependencies
 ************
 
-* :file:`zephyr/doc/services/ipc/ipc_service` - Used for transferring data between application core and the FLPR core.
+* :ncs-file:`zephyr/doc/services/ipc/ipc_service <zephyr:/doc/services/ipc/ipc_service>` - Used for transferring data between application core and the FLPR core.
 * `nrf HAL <nrfx API documentation_>`_ - Enables access to the VPR CSR registers for direct hardware control.
 * :ref:`hpf_assembly_management` - Used to optimize performance-critical sections.
 

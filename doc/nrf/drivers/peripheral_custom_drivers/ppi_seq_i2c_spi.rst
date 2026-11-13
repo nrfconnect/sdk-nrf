@@ -125,6 +125,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/drivers/ppi_seq/ppi_seq_i2c_spi.h`
-| Source files: :file:`drivers/ppi_seq/`
+| Source files: :ncs-file:`drivers/ppi_seq/ </drivers/ppi_seq>`
 
 .. doxygengroup:: ppi_seq_i2c_spi

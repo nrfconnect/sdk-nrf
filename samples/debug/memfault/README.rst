@@ -157,7 +157,7 @@ To enable this feature, include the :file:`overlay-modem_trace_to_memfault.conf`
 Building and running
 ********************
 
-.. |sample path| replace:: :file:`samples/debug/memfault`
+.. |sample path| replace:: :ncs-file:`samples/debug/memfault </samples/debug/memfault>`
 
 .. include:: /includes/build_and_run_ns.txt
 

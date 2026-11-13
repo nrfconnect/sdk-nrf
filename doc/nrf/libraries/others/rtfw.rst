@@ -62,7 +62,7 @@ The implementation centers on a client-owned source ZLI, a latest-wins command p
 The following terms describe the framework components and communication paths used throughout this page.
 
 Framework core
-   The reusable command mailbox, status tracking, event queue, doorbell, and delivery implementation in :file:`nrf/subsys/rtfw`.
+   The reusable command mailbox, status tracking, event queue, doorbell, and delivery implementation in :ncs-file:`nrf/subsys/rtfw </subsys/rtfw>`.
 
 Client
    The code that configures one RTFW instance and provides its callbacks.
@@ -350,6 +350,6 @@ API documentation
 *****************
 
 | Header file: :ncs-file:`/include/rtfw/rtfw.h`
-| Source files: :file:`subsys/rtfw/`
+| Source files: :ncs-file:`subsys/rtfw/ </subsys/rtfw>`
 
 .. doxygengroup:: rtfw
