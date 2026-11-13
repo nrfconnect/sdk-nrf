@@ -59,7 +59,7 @@ static void fota_check(void)
 		LOG_INF("FOTA update download started");
 	}
 #else
-	LOG_WRN("FOTA not enabled, build with coap-fota.conf");
+	LOG_WRN("FOTA not enabled, build with CONFIG_SAMPLE_MEMFAULT_FOTA=y");
 #endif
 }
 
