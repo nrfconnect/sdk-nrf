@@ -210,8 +210,8 @@ Button presses are ignored until the sample is connected to nRF Cloud.
 Memfault FOTA
 -------------
 
-This sample optionally supports application Firmware Over-The-Air (FOTA) updates, delivered through `Memfault`_ Release Management, when built with the CoAP transport (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
-Enable it with :option:`CONFIG_SAMPLE_MEMFAULT_FOTA`, which performs the following operations:
+This sample supports application Firmware Over-The-Air (FOTA) updates, delivered through `Memfault`_ Release Management, when built with the CoAP transport (:kconfig:option:`CONFIG_NRF_CLOUD_COAP`).
+The :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` file enables it with the :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` Kconfig option, which performs the following operations:
 
 * Uses nRF Cloud CoAP as the download transport for Memfault (:kconfig:option:`CONFIG_MEMFAULT_USE_NRF_CLOUD_COAP`) and Memfault's FOTA Download backend (:kconfig:option:`CONFIG_MEMFAULT_ZEPHYR_FOTA_BACKEND_NCS`).
 * Confirms the running image at startup (see :ncs-file:`/samples/wifi/nrf_cloud/src/memfault_fota_support.c`), so MCUboot does not roll back after a successful FOTA update reboot.
@@ -227,10 +227,8 @@ This sample intentionally uses only Memfault's FOTA mechanism, and not nRF Cloud
 
    * ``nrf7002dk/nrf5340/cpuapp/ns`` (``slot1_partition`` is placed in the board's external QSPI flash, since the 1 MB internal flash is too small to fit two full images).
    * ``nrf54lm20dk/nrf54lm20a/cpuapp/ns`` and ``nrf54lm20dk/nrf54lm20b/cpuapp/ns`` (both slots fit in internal flash).
-   * ``nrf7120dk/nrf7120/cpuapp`` (secure-only build).
-
-   The ``nrf7120dk/nrf7120/cpuapp/ns`` board target does not support FOTA.
-   It builds with :kconfig:option:`SB_CONFIG_BOOTLOADER_NONE` instead of MCUboot (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf`), so you cannot enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` for that target.
+   * ``nrf7120dk/nrf7120/cpuapp/ns`` (both slots fit in internal MRAM).
+     The secure image area is reduced to 160 KB, so that the non-secure image fits below the Wi-Fi ROM patches at address ``0x100000`` (see :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.overlay`).
 
    To build with FOTA enabled, see :ref:`wifi_nrf_cloud_building_coap`.
 
@@ -322,16 +320,14 @@ The sample provides predefined configuration files for the following use cases:
 
 * :ncs-file:`/samples/wifi/nrf_cloud/prj.conf` - General configuration file for all board targets.
 * :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf` - Configuration file for the MQTT transport.
-* :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` - Configuration file for the CoAP transport, including `Memfault`_ device monitoring.
-* :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` - Additional configuration file for :ref:`wifi_nrf_cloud_fota`.
-  Must be used together with :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`.
+* :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` - Configuration file for the CoAP transport, including `Memfault`_ device monitoring and :ref:`wifi_nrf_cloud_fota`.
 * :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7002dk_nrf5340_cpuapp_ns.conf` - Configuration file for the nRF7002 DK.
 * :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20a_cpuapp_ns.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf54lm20dk_nrf54lm20b_cpuapp_ns.conf` - Configuration files for the nRF54LM20 DK with the nRF7002-EB II shield.
-* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp.conf` and :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration files for the nRF7120 DK.
+* :ncs-file:`/samples/wifi/nrf_cloud/boards/nrf7120dk_nrf7120_cpuapp_ns.conf` - Configuration file for the nRF7120 DK.
 * :file:`sysbuild/mcuboot/` - Configuration of the MCUboot bootloader image used for FOTA.
 
 Board and SoC files under the :file:`boards/` and :file:`socs/` folders are merged automatically for the selected target.
-The :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf`, :ncs-file:`/samples/wifi/nrf_cloud/coap.conf`, and :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
+The :ncs-file:`/samples/wifi/nrf_cloud/mqtt.conf` and :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` files are not board-specific and must be passed with ``EXTRA_CONF_FILE``, as described in :ref:`wifi_nrf_cloud_building_coap`.
 
 .. _wifi_nrf_cloud_building_and_running:
 
@@ -353,16 +349,12 @@ You must select either MQTT or CoAP by adding one of the following parameters to
 * For MQTT, add ``-DEXTRA_CONF_FILE=mqtt.conf``.
 * For CoAP, add ``-DEXTRA_CONF_FILE=coap.conf``.
 
-If you also want to enable :option:`CONFIG_SAMPLE_MEMFAULT_FOTA` on a board target that supports it (see :ref:`wifi_nrf_cloud_fota` for the list of supported targets), merge in the :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` file in addition to the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` file.
-The :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` file only extends the CoAP transport and cannot be used on its own:
-
-``-DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"``
-
-For example, to build the sample with the CoAP transport and FOTA support for the nRF7002 DK, use the following command:
+The CoAP transport also enables :ref:`wifi_nrf_cloud_fota`.
+For example, to build the sample with the CoAP transport for the nRF7002 DK, use the following command:
 
 .. code-block:: console
 
-   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -DEXTRA_CONF_FILE="coap.conf;coap-fota.conf"
+   west build -p -b nrf7002dk/nrf5340/cpuapp/ns -- -DEXTRA_CONF_FILE=coap.conf
 
 .. _wifi_nrf_cloud_provisioning:
 
@@ -462,7 +454,7 @@ Memfault might throttle devices that upload too often, which is shown as ``Devic
 Testing FOTA
 ------------
 
-To test :ref:`wifi_nrf_cloud_fota`, build and program the sample with the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` and :ncs-file:`/samples/wifi/nrf_cloud/coap-fota.conf` files on a supported board target, and onboard the device as described in the previous section.
+To test :ref:`wifi_nrf_cloud_fota`, build and program the sample with the :ncs-file:`/samples/wifi/nrf_cloud/coap.conf` file, and onboard the device as described in the previous section.
 Then, complete the following steps:
 
 1. Create a new version of the sample by increasing the ``PATCHLEVEL`` value in the :ncs-file:`/samples/wifi/nrf_cloud/VERSION` file.
