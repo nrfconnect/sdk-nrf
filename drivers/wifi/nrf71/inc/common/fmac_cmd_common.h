@@ -35,4 +35,6 @@ enum nrf_wifi_status umac_cmd_prog_stats_reset(struct nrf_wifi_fmac_dev_ctx *fma
 
 enum nrf_wifi_status umac_cmd_set_ps_exit_strategy(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx,
 					enum ps_exit_strategy ps_exit_strategy);
+
+enum nrf_wifi_status umac_cmd_lmac_tuning_params(struct nrf_wifi_fmac_dev_ctx *fmac_dev_ctx);
 #endif /* __FMAC_CMD_COMMON_H__ */
