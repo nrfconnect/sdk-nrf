@@ -1446,6 +1446,8 @@ Libraries for networking
 
 * :ref:`lib_aws_iot` library:
 
+  * Added the :kconfig:option:`CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT` Kconfig option to send the subscription lists on every connection, also when the broker resumes a previous session.
+    Without it, a resumed session that does not hold all of the library's subscriptions leaves the device unable to receive on the missing topics, with no error reported.
   * Updated the :c:enumerator:`AWS_IOT_EVT_FOTA_ERROR` event to report the cause of the FOTA failure in the ``data.err`` field, as a value of the :c:enum:`aws_fota_error_cause` enumeration.
     Previously, the event carried no payload.
 

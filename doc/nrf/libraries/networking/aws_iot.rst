@@ -313,6 +313,7 @@ Other options:
 * :kconfig:option:`CONFIG_AWS_IOT_CLIENT_ID_MAX_LEN`
 * :kconfig:option:`CONFIG_AWS_IOT_CONNECT_TIMEOUT_SECONDS`
 * :kconfig:option:`CONFIG_AWS_IOT_AUTO_DEVICE_SHADOW_REQUEST`
+* :kconfig:option:`CONFIG_AWS_IOT_RESUBSCRIBE_ON_SESSION_PRESENT`
 
 MQTT helper library specific options:
 
