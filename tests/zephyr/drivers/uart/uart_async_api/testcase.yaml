@@ -15,7 +15,6 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuppr
       - nrf9251dk/nrf9251/cpuppr/xip
-      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and not CONFIG_UART_MCUX_LPUART
@@ -29,7 +28,6 @@ tests:
       - nrf9251dk/nrf9251/cpuapp
       - nrf9251dk/nrf9251/cpuppr
       - nrf9251dk/nrf9251/cpuppr/xip
-      - nrf7120dk/nrf7120e/cpuapp
     integration_platforms:
       - nrf54ls05dk/nrf54ls05b/cpuapp
     filter: CONFIG_SERIAL_SUPPORT_ASYNC and CONFIG_HAS_SEGGER_RTT
