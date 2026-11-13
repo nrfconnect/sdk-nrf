@@ -6,7 +6,8 @@ on:
     paths:
       - .github/workflows/west-commands.yml
       - scripts/west_commands/**
-      - scripts/requirements-west-ncs-sbom.txt
+      # ncs-sbom code changes are tested in the NCS toolchain by west-sbom.yml
+      - '!scripts/west_commands/sbom/**'
       - scripts/requirements-extra.txt
       - scripts/requirements-fixed.txt
 
@@ -68,6 +69,7 @@ jobs:
         run: |
           west ncs-loot -h
           west ncs-compare -h
+      # Keep the ncs-sbom test to see if changes to requirements are affecting it
       - name: Smoke test ncs-sbom
         shell: bash
         run: |
