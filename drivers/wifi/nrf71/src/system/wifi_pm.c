@@ -9,10 +9,12 @@
  * state of the Wi-Fi subsystem.
  */
 
+#include <zephyr/devicetree.h>
 #include <zephyr/kernel.h>
 #include <zephyr/logging/log.h>
 #include <zephyr/sys/sys_io.h>
 
+#include <hal/nrf_bellboard.h>
 #include <hal/nrf_lrcconf.h>
 #include <hal/nrf_vpr.h>
 #include <nrfx.h>
@@ -49,10 +51,15 @@ LOG_MODULE_REGISTER(wifi_pm, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 int nrf_wifi_power_on(void)
 {
-	/* Already started by SoC init */
 	if (nrf_vpr_cpurun_get(NRF_WIFICORE_LMAC_VPR)) {
-		LOG_DBG("LMAC already running, skipping Wi-Fi power on");
-		return 0;
+		int ret;
+
+		LOG_WRN("LMAC running at power-on, restarting Wi-Fi");
+		ret = nrf_wifi_power_off();
+		if (ret) {
+			LOG_ERR("Failed to reset running Wi-Fi subsystem: %d", ret);
+			return ret;
+		}
 	}
 
 	LOG_DBG("Powering on Wi-Fi subsystem");
@@ -86,6 +93,8 @@ static void vpr_reset(NRF_VPR_Type *vpr)
 
 int nrf_wifi_power_off(void)
 {
+	NRF_BELLBOARD_Type *const wifi_bellboard =
+		(NRF_BELLBOARD_Type *)DT_REG_ADDR(DT_NODELABEL(wifi_bellboard));
 	uint32_t timeout_us = RPU_RESET_TIMEOUT_US;
 	int ret = 0;
 
@@ -125,6 +134,13 @@ int nrf_wifi_power_off(void)
 
 	sys_write32(0xFFFFFFFF, WIFI_RESET_DEASSERT1);
 
+	for (uint8_t event_index = 0; event_index < NRF_BELLBOARD_EVENTS_TRIGGERED_COUNT;
+	     event_index++) {
+		nrf_bellboard_event_clear(wifi_bellboard,
+					 nrf_bellboard_triggered_event_get(event_index));
+	}
+	__DSB();
+
 	/* Disable automatic clock gating and RAMs */
 	sys_write32(1, WIFI_AUTOCG_CLR_ALL);
 	sys_write32(1, WIFI_RAM_ENABLE_CLR_ALL);
@@ -143,5 +159,33 @@ int nrf_wifi_power_off(void)
 				      false);
 	__DSB();
 
+	/* Allow the power-off sequence to settle. The 10 us delay is empirical.
+	 * A hardware-specified minimum has not been confirmed.
+	 */
+	k_busy_wait(10);
+
 	return ret;
 }
+
+#if defined(CONFIG_NRF71_SYSTEM_MODE) || defined(CONFIG_NRF71_OFFLOADED_RAW_TX)
+/*
+ * An application core reset can leave Wi-Fi state from the previous kernel.
+ * SOC_NRF71_WIFI_BOOT currently starts LMAC before this hook, so cleanup
+ * normally powers Wi-Fi off before system or offloaded-raw initialization restarts it.
+ * CPURUN alone does not detect every retained state if that setup is removed.
+ * SoC setup runs from the Arm reset hook before the init table. EARLY priority 0
+ * places cleanup after that setup and before GRTC initialization at priority 1.
+ */
+static int nrf_wifi_power_init(void)
+{
+	int ret = 0;
+
+	if (nrf_vpr_cpurun_get(NRF_WIFICORE_LMAC_VPR)) {
+		ret = nrf_wifi_power_off();
+	}
+
+	return ret;
+}
+
+SYS_INIT(nrf_wifi_power_init, EARLY, 0);
+#endif
