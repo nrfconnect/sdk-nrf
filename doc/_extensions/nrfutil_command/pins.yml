@@ -3,5 +3,6 @@
 # doc/nrf/shortcuts.txt don't pin. Those files take precedence over this one.
 #
 # The documentation build regenerates the json-args snapshot when any of these versions changes.
+93-series: 0.1.2
 mcu-manager: 0.12.2
 sdk-manager: 1.16.1
