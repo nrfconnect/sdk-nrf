@@ -13,6 +13,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include <zephyr/init.h>
 #include <zephyr/kernel.h>
 #ifdef CONFIG_NET_L2_ETHERNET
 #include <zephyr/net/ethernet.h>
@@ -52,6 +53,51 @@
 LOG_MODULE_REGISTER(wifi_nrf, CONFIG_WIFI_NRF71_LOG_LEVEL);
 
 struct nrf_wifi_drv_priv_zep rpu_drv_priv_zep;
+
+#ifdef CONFIG_NET_L2_WIFI_MGMT
+/* Priority of the thread that runs net_mgmt event handlers, as chosen by net_mgmt */
+#if defined(CONFIG_NET_MGMT_EVENT_SYSTEM_WORKQUEUE)
+#define NET_MGMT_HANDLER_PRIO CONFIG_SYSTEM_WORKQUEUE_PRIORITY
+#elif defined(CONFIG_NET_MGMT_THREAD_PRIO_CUSTOM)
+#define NET_MGMT_HANDLER_PRIO CONFIG_NET_MGMT_THREAD_PRIORITY
+#elif defined(CONFIG_NET_TC_THREAD_COOPERATIVE)
+#define NET_MGMT_HANDLER_PRIO K_PRIO_COOP(CONFIG_NUM_COOP_PRIORITIES - 1)
+#else
+#define NET_MGMT_HANDLER_PRIO K_PRIO_PREEMPT(CONFIG_NUM_PREEMPT_PRIORITIES - 1)
+#endif
+
+#if defined(CONFIG_NRF71_DISP_SCAN_RES_WQ_PRIO_CUSTOM)
+#define DISP_SCAN_RES_WQ_PRIO CONFIG_NRF71_DISP_SCAN_RES_WQ_PRIORITY
+#else
+#define DISP_SCAN_RES_WQ_PRIO NET_MGMT_HANDLER_PRIO
+#endif
+
+BUILD_ASSERT(DISP_SCAN_RES_WQ_PRIO >= -CONFIG_NUM_COOP_PRIORITIES &&
+	     DISP_SCAN_RES_WQ_PRIO < CONFIG_NUM_PREEMPT_PRIORITIES,
+	     "Invalid display scan results workqueue priority");
+#if !defined(CONFIG_NET_MGMT_EVENT_DIRECT)
+BUILD_ASSERT(DISP_SCAN_RES_WQ_PRIO >= NET_MGMT_HANDLER_PRIO,
+	     "Display scan results workqueue must not preempt the net_mgmt event handler");
+#endif
+
+K_THREAD_STACK_DEFINE(nrf_wifi_disp_scan_res_wq_stack, CONFIG_NRF71_DISP_SCAN_RES_WQ_STACK_SIZE);
+static struct k_work_q nrf_wifi_disp_scan_res_wq;
+
+static int nrf_wifi_disp_scan_res_wq_init(void)
+{
+	k_work_queue_init(&nrf_wifi_disp_scan_res_wq);
+	k_work_queue_start(&nrf_wifi_disp_scan_res_wq,
+			   nrf_wifi_disp_scan_res_wq_stack,
+			   K_THREAD_STACK_SIZEOF(nrf_wifi_disp_scan_res_wq_stack),
+			   DISP_SCAN_RES_WQ_PRIO,
+			   NULL);
+	k_thread_name_set(nrf_wifi_disp_scan_res_wq.thread_id, "nrf71_scan_res_wq");
+
+	return 0;
+}
+
+SYS_INIT(nrf_wifi_disp_scan_res_wq_init, POST_KERNEL, 0);
+#endif /* CONFIG_NET_L2_WIFI_MGMT */
 
 /* 3 bytes for addreess, 3 bytes for length */
 #define MAX_PKT_RAM_TX_ALIGN_OVERHEAD 6
@@ -138,11 +184,26 @@ void nrf_wifi_event_proc_scan_done_zep(void *vif_ctx,
 		__func__, scan_done_event->scan_results_cnt, vif_ctx_zep->scan_type);
 	switch (vif_ctx_zep->scan_type) {
 #ifdef CONFIG_NET_L2_WIFI_MGMT
-	case SCAN_DISPLAY:
-		memcpy(&vif_ctx_zep->scan_done_event, scan_done_event, event_len);
-		/* Schedule scan result processing in system workqueue to avoid deadlock */
-		k_work_submit(&vif_ctx_zep->disp_scan_res_work);
+	case SCAN_DISPLAY: {
+		k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+		unsigned int stale_db_addr = vif_ctx_zep->scan_done_event.scan_db_addr;
+
+		memcpy(&vif_ctx_zep->scan_done_event, scan_done_event,
+		       MIN(event_len, sizeof(vif_ctx_zep->scan_done_event)));
+		k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+		if (stale_db_addr) {
+			nrf_wifi_mem_free(NRF_WIFI_MEM_POOL_TYPE_CTRL,
+					  (void *)(uintptr_t)stale_db_addr);
+		}
+		/* Deliver results outside the event context to avoid deadlock. Not on the
+		 * system workqueue: delivery can block on a full net_mgmt queue, and the
+		 * event consumers may need the system workqueue to make progress.
+		 */
+		k_work_submit_to_queue(&nrf_wifi_disp_scan_res_wq,
+				       &vif_ctx_zep->disp_scan_res_work);
 		break;
+	}
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NRF71_STA_MODE
 	case SCAN_CONNECT:
@@ -191,9 +252,22 @@ static void nrf_wifi_scan_timeout_work(struct k_work *work)
 	nrf_wifi_drv_dbg_tmo(rpu_ctx_zep, NRF_WIFI_DRV_DBG_TMO_SCAN);
 
 #ifdef CONFIG_NET_L2_WIFI_MGMT
-	if (vif_ctx_zep->disp_scan_cb) {
-		vif_ctx_zep->disp_scan_cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, NULL);
+	if (vif_ctx_zep->scan_type == SCAN_DISPLAY) {
+		k_spinlock_key_t key = k_spin_lock(&vif_ctx_zep->scan_lock);
+		scan_result_cb_t cb = vif_ctx_zep->disp_scan_cb;
+
+		/* A NULL callback means the result work already owns this scan */
 		vif_ctx_zep->disp_scan_cb = NULL;
+		k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+
+		if (cb) {
+			cb(vif_ctx_zep->zep_net_if_ctx, -ETIMEDOUT, NULL);
+
+			key = k_spin_lock(&vif_ctx_zep->scan_lock);
+			vif_ctx_zep->scan_in_progress = false;
+			k_spin_unlock(&vif_ctx_zep->scan_lock, key);
+		}
+		return;
 	} else {
 #endif /* CONFIG_NET_L2_WIFI_MGMT */
 #ifdef CONFIG_NRF71_STA_MODE
@@ -236,7 +310,6 @@ void nrf_wifi_disp_scan_res_work_handler(struct k_work *work)
 	nrf_wifi_event_proc_disp_scan_res_zep(vif_ctx_zep,
 		&vif_ctx_zep->scan_done_event,
 		sizeof(vif_ctx_zep->scan_done_event));
-	vif_ctx_zep->scan_in_progress = false;
 }
 
 #ifdef CONFIG_NRF71_STA_MODE

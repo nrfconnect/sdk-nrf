@@ -57,6 +57,11 @@ struct nrf_wifi_vif_ctx_zep {
 	unsigned int scan_res_cnt;
 	struct k_work_delayable scan_timeout_work;
 	struct k_work disp_scan_res_work;
+	/* Guards disp_scan_cb, scan_in_progress and scan_done_event between the
+	 * scan timeout and display scan result works. Not vif_lock: interface
+	 * teardown holds vif_lock while synchronously cancelling both works.
+	 */
+	struct k_spinlock scan_lock;
 
 	struct net_eth_addr mac_addr;
 	int if_type;

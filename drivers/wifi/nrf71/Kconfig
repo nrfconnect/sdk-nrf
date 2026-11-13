@@ -307,6 +307,37 @@ config NRF71_RX_WQ_STACK_SIZE
 
 endif # NRF71_RX_WQ_ENABLED
 
+if NET_L2_WIFI_MGMT
+
+config NRF71_DISP_SCAN_RES_WQ_PRIO_CUSTOM
+	bool "Customize display scan results workqueue priority"
+	help
+	  Scan results are raised as network management events from this
+	  workqueue. Delivery can block while the network management event
+	  queue is full, so it must not run on the system workqueue, which
+	  other subsystems (for example Bluetooth ATT buffer release) depend on.
+	  By default the workqueue runs at the priority of the thread that
+	  handles network management events, so that the k_yield() between
+	  results lets that thread drain the event queue.
+
+config NRF71_DISP_SCAN_RES_WQ_PRIORITY
+	int "Priority of the workqueue for delivering display scan results"
+	depends on NRF71_DISP_SCAN_RES_WQ_PRIO_CUSTOM
+	range -16 14
+	default 0
+	help
+	  Must be a valid thread priority and must not be higher (numerically
+	  lower) than the priority of the network management event thread.
+
+config NRF71_DISP_SCAN_RES_WQ_STACK_SIZE
+	int "Stack size of the workqueue for delivering display scan results"
+	default 4096
+	help
+	  With NET_MGMT_EVENT_DIRECT, network management event handlers run on
+	  this workqueue, so it needs room for the application handlers.
+
+endif # NET_L2_WIFI_MGMT
+
 if NRF_WIFI_LOW_POWER
 
 config NRF71_RPU_PS_IDLE_TIMEOUT_MS
